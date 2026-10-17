@@ -105,6 +105,10 @@ export class Autosave {
       this.rejected = error instanceof SaveFailure && [400, 413].includes(error.status);
       this.acceptCorrection();
       if (!this.disposed) {
+        if (!this.dirty) {
+          this.state({ dirty: false, message: 'All changes saved.', failed: false });
+          return;
+        }
         this.state({
           dirty: true,
           message:

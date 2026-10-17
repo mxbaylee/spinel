@@ -153,3 +153,30 @@ test('edits made during a validation rejection are retried without losing the ne
   expect(save.dirty).toBe(false);
   save.dispose();
 });
+
+test('undo to the saved snapshot during a rejected write clears the unsaved warning', async () => {
+  vi.useFakeTimers();
+  let reject!: (error: Error) => void;
+  const send = vi.fn<Autosave['send']>().mockImplementation(
+    () =>
+      new Promise((_resolve, fail) => {
+        reject = fail;
+      }),
+  );
+  const state = vi.fn();
+  const save = new Autosave(0, { text: 'original' }, send, state);
+  save.changed({ text: 'too large' });
+  const pending = save.flush();
+  save.changed({ text: 'original' });
+  reject(new SaveFailure(413, 'Too large.'));
+  await pending;
+  await vi.runAllTimersAsync();
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(save.dirty).toBe(false);
+  expect(state.mock.lastCall?.[0]).toEqual({
+    dirty: false,
+    message: 'All changes saved.',
+    failed: false,
+  });
+  save.dispose();
+});
