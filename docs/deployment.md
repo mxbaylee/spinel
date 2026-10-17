@@ -6,7 +6,8 @@ owner’s fresh-host run, external port scan, measured memory and update/reconne
 evidence are recorded. The editor-enabled image was deployed successfully;
 live editor recovery across a subsequent restart and a two-editor memory sample
 also passed. The owner reports the public firewall is attached; private access still
-works. External IPv4 scan evidence remains pending. The owner waived the external
+works. A leftover public SSH rule was detected and removed; targeted public IPv4 checks
+now receive no response. The complete TCP scan remains pending. The owner waived the external
 IPv6 check on 2026-10-17; it is not a completion requirement for SPN-029.
 
 ## Topology
@@ -124,8 +125,9 @@ measured target-host results, including total OS/Tailscale overhead.
 
 ## Remaining acceptance evidence
 
-- Complete the external IPv4 TCP scan and applicable UDP checks. The first full
-  TCP attempt timed out and provides no complete scan result.
+- Complete the full external IPv4 TCP scan after the owner removed the leftover
+  inbound SSH rule. Targeted TCP and UDP probes received no responses, as detailed
+  below. The first full TCP attempt timed out and is not a complete result.
 - The external IPv6 check was removed by the owner; it is not a pending task.
 
 Private Mac HTTPS/SSH, reboot/unlock recovery, two-editor memory and editor
@@ -262,3 +264,27 @@ the Owner and Collaborator keep the same private deployment and data protection;
 the Link guest's access boundaries are unchanged. The tradeoff is absent external
 IPv6 verification, accepted by the owner. IPv6 configuration and firewall rules
 are unchanged. No IPv6 scan success is claimed.
+
+A subsequent targeted public IPv4 scan at 16:45 PDT used
+`nmap -Pn -sT -p 22,80,443,3000 --reason --max-retries 1 --initial-rtt-timeout 250ms --max-rtt-timeout 750ms --host-timeout 15s 147.182.177.128`.
+TCP 22 was **open** (`syn-ack`); 80, 443 and 3000 were `filtered` (`no-response`).
+The firewall report therefore does not yet establish private management access;
+public SSH closure remains a blocker. The owner is checking inbound rules,
+attached droplets and any additional/tag-applied firewall rules.
+
+The owner supplied an external UDP result at 16:43 PDT from the Mac:
+`sudo nmap -Pn -sU -p 443,41641 --reason --max-retries 2 --host-timeout 60s 147.182.177.128`.
+Both ports were `open|filtered` with `no-response`; the scan completed in 3.64
+seconds. Neither answered the probes, but this result cannot distinguish a
+filtered port from a silent service. Host listener inspection showed no UDP 443
+listener and Tailscale on UDP 41641. This is limited UDP evidence, not a claim
+that those ports were conclusively proven closed.
+
+The owner then found and deleted the only inbound rule, SSH TCP 22, retaining the
+three outbound rules. A fresh targeted scan at 16:48 PDT used the same TCP command
+above with `--max-retries 2`. Ports 22, 80, 443 and 3000 were all `filtered`
+(`no-response`), completed in 2.10 seconds. Private SSH subsequently confirmed
+`systemctl is-active spinel` returned `active`, and private verified HTTPS returned
+200. The full TCP retry started before the correction was interrupted; the post-correction connect scan also stalled and was interrupted. The owner
+has been given a privileged SYN scan command to complete the full IPv4 check.
+No full-port result is claimed yet.
