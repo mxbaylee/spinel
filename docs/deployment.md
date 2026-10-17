@@ -1,10 +1,10 @@
 # Private droplet deployment (SPN-029, acceptance pending)
 
-This package targets a fresh Ubuntu droplet with 2 GB RAM and one CPU. It has not
-yet been exercised on the owner’s droplet. Do not mark SPN-029 complete until the
+This package targets a fresh Ubuntu droplet with 2 GB RAM and one CPU. Initial
+startup on the owner's droplet passed on 2026-10-17. Do not mark SPN-029 complete until the
 owner’s fresh-host run, external port scan, measured memory and update/reconnect
-evidence are recorded. Editors are not present yet, so editor reconnection cannot
-be demonstrated by the current scaffold.
+evidence are recorded. The initial deployed image predates the spreadsheet editor;
+an update to an editor-enabled image is still needed for that evidence.
 
 ## Topology
 
@@ -127,3 +127,31 @@ app-only Docker Desktop sample was 148.3 MiB; this does not establish memory use
 on the target. [Decision #16](https://github.com/mxbaylee/spinel/issues/16) records
 the proposed startup gate. [Owner check #17](https://github.com/mxbaylee/spinel/issues/17)
 tracks the outstanding live evidence.
+
+### Initial target-host run, 2026-10-17
+
+Ubuntu 24.04.5 amd64, 1 CPU, 1967 MiB RAM, no swap, and a separate 10 GiB volume.
+The owner created and unlocked LUKS2 interactively; the passphrase was not supplied
+to the agent or saved on the host. Ext4 is mounted at the configured encrypted root.
+Docker 29.9.1, Compose 5.6.0, Tailscale 1.104.1 and Node 24.19.0 are installed.
+The Node archive checksum was verified and Docker's test container passed.
+
+An amd64 image built from e58be54 was transferred to the host. The imported local
+image ID is `sha256:0b4c903fa3f997444d70f931f0f7202d135a86ee87d2dcd0a9361e8aed899952`;
+its architecture and filesystem layer digests match the build. Always inspect the
+image ID on the destination after transfer: Docker's image stores can report a
+different top-level digest for the imported image.
+
+The first Compose startup found unquoted commas splitting tmpfs options into
+separate YAML list entries. Both entries are now quoted. Normalized Compose
+configuration shows one tmpfs entry per service, and actual startup passed.
+Preflight passed and systemd runs both containers. A host-side curl returned
+HTTP 200 from the sign-in page with certificate verification and TLS 1.3; a
+TLS-1.2-only request was rejected. Socket inspection showed Node only on loopback
+port 3000 and Caddy only on the Tailscale IPv4 address port 443.
+
+Idle `docker stats --no-stream`: Node 44.08 MiB, Caddy 9.684 MiB. Host `free -m`:
+515 MiB used and 1452 MiB available. These are one idle sample, not the required
+two-editor load result. Public SSH remains available during bootstrap. Private
+client connectivity, cloud-firewall closure, external IPv4/IPv6 scans,
+reboot/unlock, passkey setup, renewal and update/editor checks remain pending.
