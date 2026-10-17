@@ -13,11 +13,37 @@ import type {
 import { signSetupProof } from './setup.ts';
 import { api } from './api.ts';
 import { AdminInvites } from './AdminInvites.tsx';
+import { Dashboard } from './Dashboard.tsx';
 
 type User = { id: string; name: string; isAdmin: boolean };
 type Passkey = { id: string; name: string; provider: string };
 
 export function App() {
+  const unsaved = useRef(false);
+  const navigation = {
+    allow() {
+      if (
+        unsaved.current &&
+        !window.confirm('Your changes have not been saved. Leave and discard unsaved changes?')
+      )
+        return false;
+      unsaved.current = false;
+      return true;
+    },
+    dirty(value: boolean) {
+      unsaved.current = value;
+    },
+  };
+  useEffect(() => {
+    const warn = (event: BeforeUnloadEvent) => {
+      if (unsaved.current) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, []);
   const [user, setUser] = useState<User | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [keys, setKeys] = useState<Passkey[]>([]);
@@ -151,17 +177,30 @@ export function App() {
     }
   }
   async function signOut() {
+    const hadUnsavedChanges = unsaved.current;
+    if (!navigation.allow()) return;
     cancel();
     try {
       await api('sign-out', {});
       location.assign('/sign-in');
     } catch {
+      unsaved.current ||= hadUnsavedChanges;
       setError('Could not sign out. Check your connection and try again.');
     }
   }
   return (
     <div className="workspace">
-      <header>
+      <header
+        onClick={(event) => {
+          if (
+            (event.target as Element).closest('a') &&
+            !event.metaKey &&
+            !event.ctrlKey &&
+            !navigation.allow()
+          )
+            event.preventDefault();
+        }}
+      >
         <a className="brand" href="/">
           Spinel
         </a>
@@ -286,15 +325,7 @@ export function App() {
             </section>
           </>
         ) : (
-          <>
-            <p className="eyebrow">Your workspace</p>
-            <h1>Dashboard</h1>
-            <section aria-labelledby="welcome-title" className="welcome">
-              <h2 id="welcome-title">A place for your everyday work</h2>
-              <p>Your spreadsheets, documents and slides will live here.</p>
-              <p className="placeholder">This workspace is being built. Check back soon.</p>
-            </section>
-          </>
+          <Dashboard navigation={navigation} />
         )}
         {busy && (
           <p role="status">

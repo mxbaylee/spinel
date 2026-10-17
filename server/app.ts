@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { openDatabase } from './database.ts';
 import { AuthStore } from '../src/server/auth/store.ts';
 import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
+import { workspaceRoutes } from '../src/server/workspace/routes.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
 
@@ -33,6 +34,7 @@ export async function createApp(options: AppOptions) {
       }
       next();
     });
+    app.use('/api/items', workspaceRoutes(auth, options.origin ?? 'http://localhost:3000'));
     app.get('/api/health', (_request, response) => {
       database.prepare('SELECT 1').get();
       response.json({ status: 'ok' });
