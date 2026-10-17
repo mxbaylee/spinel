@@ -77,7 +77,8 @@ Install `deploy/spinel.service` as `/etc/systemd/system/spinel.service` and run
 the deployment environment and executes the TypeScript preflight before Compose.
 Preflight refuses a missing/unmounted/non-LUKS data path, wrong directory owners,
 a mutable image, mismatched tailnet identity or a non-private runtime file.
-Compose refuses to create missing data directories. Do not bypass preflight with
+Preflight also rejects nested mounts beneath the encrypted root and checks the actual
+backing filesystem for both app and Caddy directories. Compose refuses to create missing data directories. Do not bypass preflight with
 a direct `docker compose up` during deployment.
 
 The service supervises both containers: a container exit brings down the pair and
@@ -97,7 +98,7 @@ that a TLS 1.2 client fails while TLS 1.3 succeeds. `ss -lntup` should show the 
 loopback and Caddy only on the Tailscale IP; investigate all other listeners.
 
 From a machine outside the tailnet, scan the public IPv4 and IPv6 addresses:
-`nmap -Pn -sT -p- ADDRESS`. Also test public UDP 443 and the Tailscale UDP listener
+`nmap -Pn -sT -p- IPV4` and `nmap -6 -Pn -sT -p- IPV6`. Also test public UDP 443 and the Tailscale UDP listener
 as applicable; no public service should answer. Record date, vantage point,
 commands and results. A local scan or firewall screenshot is insufficient.
 

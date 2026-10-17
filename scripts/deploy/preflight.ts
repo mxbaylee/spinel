@@ -29,20 +29,49 @@ interface BlockDevice {
   path?: string;
   children?: BlockDevice[];
 }
-export function verifyHost(env: NodeJS.ProcessEnv) {
-  if (process.platform !== 'linux')
+export interface Host {
+  platform: string;
+  run: (command: string, args: string[]) => string;
+  realpath: (path: string) => string;
+  stat: (path: string) => {
+    uid: number;
+    mode: number;
+    isDirectory(): boolean;
+    isSocket(): boolean;
+    isFile(): boolean;
+  };
+}
+const localHost: Host = {
+  platform: process.platform,
+  run: (command, args) =>
+    execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim(),
+  realpath: realpathSync,
+  stat: statSync,
+};
+export function verifyHost(env: NodeJS.ProcessEnv, host: Host = localHost) {
+  if (host.platform !== 'linux')
     throw new Error('Deployment preflight requires the target Linux host.');
   const config = configuration(env);
-  const run = (command: string, args: string[]) =>
-    execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
-  if (realpathSync(config.root) !== config.root)
+  const { run, realpath, stat: inspect } = host;
+  if (realpath(config.root) !== config.root)
     throw new Error('Encrypted mount path must be canonical, without symlinks.');
   const mount = JSON.parse(
-    run('findmnt', ['--json', '--mountpoint', config.root, '--output', 'SOURCE,TARGET']),
+    run('findmnt', [
+      '--json',
+      '--submounts',
+      '--mountpoint',
+      config.root,
+      '--output',
+      'SOURCE,TARGET',
+    ]),
   ).filesystems?.[0];
   if (!mount || mount.target !== config.root)
     throw new Error(
       'The data path is not an active mount point. Unlock and mount the LUKS volume first.',
+    );
+  if (mount.children?.length)
+    throw new Error(
+      'Nested data mounts are not supported. Keep app and caddy directly on the encrypted volume.',
     );
   const devices = JSON.parse(
     run('lsblk', ['--json', '--inverse', '--output', 'TYPE,PATH', mount.source]),
@@ -66,11 +95,16 @@ export function verifyHost(env: NodeJS.ProcessEnv) {
     ['caddy', 10001],
   ] as const) {
     const path = `${config.root}/${name}`;
-    const stat = statSync(path);
+    const backing = JSON.parse(
+      run('findmnt', ['--json', '--target', path, '--output', 'SOURCE,TARGET']),
+    ).filesystems?.[0];
+    if (!backing || backing.target !== config.root || backing.source !== mount.source)
+      throw new Error(`${name} must use the encrypted root filesystem, without a nested mount.`);
+    const stat = inspect(path);
     if (
       !stat.isDirectory() ||
       stat.uid !== uid ||
-      realpathSync(path) !== path ||
+      realpath(path) !== path ||
       (stat.mode & 0o007) !== 0
     )
       throw new Error(`Prepare ${name} with owner ${uid} and no access for other users.`);
@@ -82,10 +116,10 @@ export function verifyHost(env: NodeJS.ProcessEnv) {
     status.Self.DNSName?.replace(/\.$/, '') !== config.hostname
   )
     throw new Error('Configured hostname/IP do not match this running Tailscale node.');
-  const socket = statSync('/var/run/tailscale/tailscaled.sock');
+  const socket = inspect('/var/run/tailscale/tailscaled.sock');
   if (!socket.isSocket()) throw new Error('Tailscale local socket is unavailable.');
   const runtime = env.SPINEL_RUNTIME_ENV ?? '/etc/spinel/runtime.env';
-  const stat = statSync(runtime);
+  const stat = inspect(runtime);
   if (!stat.isFile() || (stat.mode & 0o077) !== 0)
     throw new Error('Runtime environment file must be private (mode0600).');
   run('docker', ['image', 'inspect', config.image]);
