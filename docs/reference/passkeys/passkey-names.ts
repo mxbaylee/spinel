@@ -1,4 +1,4 @@
-// Copied unchanged from mxbaylee/circus-health src/server/passkey-names.ts at 2ab77af (MIT).
+// Copied unchanged from mxbaylee/circus-health src/server/passkey-names.ts at 2ab77af.
 import providers from './passkey-provider-names.json' with { type: 'json' };
 
 // Factual name mappings from passkeydeveloper/passkey-authenticator-aaguids,

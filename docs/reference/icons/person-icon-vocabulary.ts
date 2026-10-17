@@ -1,4 +1,4 @@
-// Copied unchanged from mxbaylee/circus-health src/shared/person-icon-vocabulary.ts at 2ab77af (MIT).
+// Copied unchanged from mxbaylee/circus-health src/shared/person-icon-vocabulary.ts at 2ab77af.
 // Local vocabulary augments upstream tags without renaming the actual Lucide icon.
 export const ICON_EXTRA_TAGS: Record<string, string[]> = {
   'flower-2': [

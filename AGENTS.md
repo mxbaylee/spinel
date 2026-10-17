@@ -19,6 +19,9 @@ says what is next.
   merge only.
 - **Weigh every persona** in [docs/product/personas.md](docs/product/personas.md)
   when deciding anything, and log the decision as described in process.md.
+- **TypeScript only.** Server, frontend, tests, scripts and config are `.ts` or
+  `.tsx`, never `.js`, `.mjs` or `.cjs`. Node runs scripts directly, so use only
+  syntax it can strip (no enums or namespaces). Owner, chat 2026-10-17.
 - **Univer Pro packages** (`@univerjs-pro/*`) are closed source under Univer's
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or
@@ -26,4 +29,4 @@ says what is next.
 - **Code copied from Univer Workspace** or any other Apache-2.0 project keeps its
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
-- Run `npm test` and `npm run backlog:check` before pushing.
+- Run `npm run typecheck`, `npm test` and `npm run backlog:check` before pushing.

@@ -27,6 +27,10 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
+      - name: Install
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
       - name: Checker tests
         run: npm test
       - name: Tickets and index
@@ -51,4 +55,4 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
-        run: node scripts/backlog/cli.mjs pr --base "origin/$BASE_REF" --title "$PR_TITLE"
+        run: node scripts/backlog/cli.ts pr --base "origin/$BASE_REF" --title "$PR_TITLE"

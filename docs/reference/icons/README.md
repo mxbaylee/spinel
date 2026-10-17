@@ -6,7 +6,7 @@ names, synonyms and typos. SPN-036 moves what it uses into `src/` and deletes th
 folder in the same PR.
 
 Source: [mxbaylee/circus-health](https://github.com/mxbaylee/circus-health) at
-`2ab77af`, MIT, same author. Listed in [THIRD-PARTY-NOTICES.md](../../../THIRD-PARTY-NOTICES.md).
+`2ab77af`, written by Spinel's owner, so it isn't listed in the third-party notices.
 
 ## Copied as-is
 

@@ -7,10 +7,18 @@
     "node": ">=24"
   },
   "scripts": {
-    "test": "node --test scripts/backlog/tests/*.test.mjs",
-    "backlog:check": "node scripts/backlog/cli.mjs check",
-    "backlog:index": "node scripts/backlog/cli.mjs index",
-    "backlog:new": "node scripts/backlog/cli.mjs new",
-    "backlog:pr": "node scripts/backlog/cli.mjs pr"
+    "test": "node --test scripts/backlog/tests/*.test.ts",
+    "typecheck": "tsc -p .",
+    "design": "node scripts/design-preview.ts",
+    "backlog:check": "node scripts/backlog/cli.ts check",
+    "backlog:index": "node scripts/backlog/cli.ts index",
+    "backlog:new": "node scripts/backlog/cli.ts new",
+    "backlog:pr": "node scripts/backlog/cli.ts pr"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "typescript": "7.0.2"
   }
 }

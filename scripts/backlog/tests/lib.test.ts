@@ -9,11 +9,17 @@ import {
   renderIndex,
   score,
   validateBacklog,
-} from '../lib.mjs';
+  parseTicket,
+  type Backlog,
+  type BacklogConfig,
+  type Size,
+} from '../lib.ts';
 
 const PERSONAS = '# Personas\n\n## Owner\n\n## Link guest\n';
 
-function ticket(id, over = {}, body) {
+type Fixture = { name: string; text: string };
+
+function ticket(id: string, over: Record<string, string> = {}, body?: string): Fixture {
   const fm = {
     emoji: '🪞',
     effort: 'M',
@@ -35,7 +41,7 @@ function ticket(id, over = {}, body) {
   return { name: `${id}.md`, text };
 }
 
-function config(over = {}) {
+function config(over: Partial<BacklogConfig> = {}): BacklogConfig {
   return {
     name: 'Test',
     prefix: 'SPN',
@@ -49,8 +55,7 @@ function config(over = {}) {
 }
 
 // Builds a backlog the same way loadBacklog does, without touching disk.
-import { parseTicket } from '../lib.mjs';
-function backlog(tickets, cfg = config()) {
+function backlog(tickets: Fixture[], cfg = config()): Backlog {
   return {
     config: cfg,
     tickets: tickets.map((t) => parseTicket(t.name, t.text)),
@@ -59,7 +64,7 @@ function backlog(tickets, cfg = config()) {
   };
 }
 
-function check(tickets, cfg) {
+function check(tickets: Fixture[], cfg?: BacklogConfig) {
   return validateBacklog(backlog(tickets, cfg));
 }
 
@@ -81,7 +86,7 @@ test('a well-formed ticket passes', () => {
 });
 
 test('ticket shape errors are reported', () => {
-  const cases = [
+  const cases: [Fixture, RegExp][] = [
     [ticket('SPN-001', { effort: 'XL' }), /effort must be S, M or L/],
     [ticket('SPN-001', { emoji: '💎' }), /reserved/],
     [ticket('SPN-001', { must_ship: 'yes' }), /must_ship/],
@@ -174,7 +179,15 @@ test('changed lines skip excluded files, binaries and follow renames', () => {
   assert.deepEqual(counted.map(([p]) => p), ['src/a.ts', 'img.png', 'src/new/b.ts']);
 });
 
-function pr(title, { base = [ticket('SPN-001')], head = [], baseCfg = config(), headCfg, numstat = '' } = {}) {
+interface PrOptions {
+  base?: Fixture[];
+  head?: Fixture[];
+  baseCfg?: BacklogConfig;
+  headCfg?: BacklogConfig;
+  numstat?: string;
+}
+
+function pr(title: string, { base = [ticket('SPN-001')], head = [], baseCfg = config(), headCfg, numstat = '' }: PrOptions = {}) {
   headCfg ??= config({ grooming: { every: 7, last: '2026-10-17', completed_since: ['SPN-001'] } });
   return checkPullRequest({ title, base: backlog(base, baseCfg), head: backlog(head, headCfg), numstat, today: '2026-10-17' });
 }
@@ -227,14 +240,14 @@ test('PR size: soft limit warns, hard limit fails', () => {
 
 test('PR size: effort-S tickets are exempt, judged by the base ticket', () => {
   const headCfg = config({ grooming: { every: 7, last: '2026-10-17', completed_since: ['SPN-001'] } });
-  const land = (effort) => pr('🪞 SPN-001 Do the thing', { base: [ticket('SPN-001', { effort })], headCfg, numstat: '5000\t0\ta.ts\n' });
+  const land = (effort: Size) => pr('🪞 SPN-001 Do the thing', { base: [ticket('SPN-001', { effort })], headCfg, numstat: '5000\t0\ta.ts\n' });
   assert.deepEqual(land('S').errors, []);
   assert.match(land('S').warnings.join(), /effort-S tickets have no size limit/);
   assert.match(land('M').errors.join(), /hard limit/);
 });
 
 test('a PR cannot loosen its own limits', () => {
-  const headCfg = (over) => config({ grooming: { every: 7, last: '2026-10-17', completed_since: ['SPN-001'] }, ...over });
+  const headCfg = (over: Partial<BacklogConfig>) => config({ grooming: { every: 7, last: '2026-10-17', completed_since: ['SPN-001'] }, ...over });
   const full = ['SPN-002', 'SPN-003', 'SPN-004', 'SPN-005', 'SPN-006', 'SPN-007', 'SPN-008'];
   const baseCfg = config({ grooming: { every: 7, last: '2026-10-17', completed_since: full } });
   const raised = config({ grooming: { every: 8, last: '2026-10-17', completed_since: [...full, 'SPN-001'] } });
@@ -256,8 +269,8 @@ test('only grooming PRs remove tickets other than the one landing', () => {
 });
 
 test('grooming dates never go backwards or into the future', () => {
-  const at = (last) => config({ grooming: { every: 7, last, completed_since: [] } });
-  const groom = (last) => pr('🧹 Groom backlog', { head: [ticket('SPN-001')], headCfg: at(last) }).errors.join();
+  const at = (last: string) => config({ grooming: { every: 7, last, completed_since: [] } });
+  const groom = (last: string) => pr('🧹 Groom backlog', { head: [ticket('SPN-001')], headCfg: at(last) }).errors.join();
   assert.equal(groom('2026-10-17'), '');
   assert.match(groom('2026-10-01'), /grooming.last is 2026-10-01/);
   assert.match(groom('2026-11-30'), /grooming.last is 2026-11-30/);
@@ -265,5 +278,5 @@ test('grooming dates never go backwards or into the future', () => {
 });
 
 test('repeated frontmatter keys are an error', () => {
-  assert.match(parseFrontmatter('---\nmust_ship: true\nmust_ship: false\n---\n').error, /repeats "must_ship"/);
+  assert.match(parseFrontmatter('---\nmust_ship: true\nmust_ship: false\n---\n').error ?? '', /repeats "must_ship"/);
 });

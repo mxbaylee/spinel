@@ -202,6 +202,7 @@ Owner setup, once, in the repository settings:
 ## Commands
 
 ```bash
+npm run typecheck                          # type-check every .ts and .tsx file
 npm test                                   # the checker's own tests
 npm run backlog:check                      # validate tickets and the index
 npm run backlog:index                      # regenerate readme.md

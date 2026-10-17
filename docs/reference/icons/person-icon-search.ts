@@ -1,4 +1,4 @@
-// Copied unchanged from mxbaylee/circus-health src/shared/person-icon-search.ts at 2ab77af (MIT).
+// Copied unchanged from mxbaylee/circus-health src/shared/person-icon-search.ts at 2ab77af.
 import catalog from './person-icon-catalog.json' with { type: 'json' };
 
 import { ICON_EXTRA_TAGS, ICON_SEARCH_ALIASES } from './person-icon-vocabulary.ts';
