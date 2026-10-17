@@ -186,15 +186,17 @@ Grooming isn't a ticket and doesn't count toward the seven.
   base branch, so a PR can't loosen its own.
 - CI runs the PR's own copy of the checker. Review any change under
   `scripts/backlog/` or `.github/` as a change to the rules.
-- The **Backlog** and **Pull request** CI jobs are required. The application's
-  lint, typecheck and test jobs join them when SPN-001 lands.
+- The **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests** and
+  **Playwright smoke** CI jobs are required. Playwright smoke builds the app and
+  checks development and production servers (SPN-001).
 
 Owner setup, once, in the repository settings:
 
 1. General → Pull Requests: allow only squash merging; default commit message
    "Pull request title"; delete head branches automatically.
 2. Rules → new branch ruleset for `main`: require a pull request, require the
-   status checks **Backlog** and **Pull request**, require branches to be up to
+   status checks **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
+   and **Playwright smoke**, require branches to be up to
    date before merging, block force pushes and deletions. Up to date matters:
    the checks compare against `main` as it was when they ran.
 3. Issues → Labels: create `decision` and `needs-owner`.
@@ -203,7 +205,7 @@ Owner setup, once, in the repository settings:
 
 ```bash
 npm run typecheck                          # type-check every .ts and .tsx file
-npm test                                   # the checker's own tests
+npm test                                   # backlog and application unit tests
 npm run backlog:check                      # validate tickets and the index
 npm run backlog:index                      # regenerate readme.md
 npm run backlog:new -- 🪞 "Restore a document"   # new ticket with the next ID

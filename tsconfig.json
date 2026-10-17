@@ -7,7 +7,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "types": ["node"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "strict": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
@@ -17,5 +17,5 @@
     "allowUmdGlobalAccess": true,
     "skipLibCheck": true
   },
-  "include": ["scripts/**/*.ts", "docs/**/*.ts", "docs/**/*.tsx"]
+  "include": ["scripts/**/*.ts", "docs/**/*.ts", "docs/**/*.tsx", "server/**/*.ts", "web/**/*.ts", "web/**/*.tsx", "e2e/**/*.ts", "*.config.ts"]
 }

@@ -7,18 +7,37 @@
     "node": ">=24"
   },
   "scripts": {
-    "test": "node --test scripts/backlog/tests/*.test.ts",
+    "test": "node --test scripts/backlog/tests/*.test.ts && vitest run",
     "typecheck": "tsc -p .",
     "design": "node scripts/design-preview.ts",
     "backlog:check": "node scripts/backlog/cli.ts check",
     "backlog:index": "node scripts/backlog/cli.ts index",
     "backlog:new": "node scripts/backlog/cli.ts new",
-    "backlog:pr": "node scripts/backlog/cli.ts pr"
+    "backlog:pr": "node scripts/backlog/cli.ts pr",
+    "dev": "node --watch server/index.ts --dev",
+    "build": "vite build",
+    "start": "node server/index.ts",
+    "lint": "oxlint --deny-warnings . && npm run format:check",
+    "format": "prettier --write web server e2e *.config.ts",
+    "format:check": "prettier --check web server e2e *.config.ts",
+    "e2e": "npm run build && playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/express": "5.0.6",
     "@types/node": "24.19.2",
     "@types/react": "18.3.31",
     "@types/react-dom": "18.3.7",
-    "typescript": "7.0.2"
+    "@vitejs/plugin-react": "6.1.2",
+    "oxlint": "1.88.0",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   }
 }
