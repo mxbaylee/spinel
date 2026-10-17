@@ -3,8 +3,8 @@
 This package targets a fresh Ubuntu droplet with 2 GB RAM and one CPU. Initial
 startup on the owner's droplet passed on 2026-10-17. Do not mark SPN-029 complete until the
 owner’s fresh-host run, external port scan, measured memory and update/reconnect
-evidence are recorded. The initial deployed image predates the spreadsheet editor;
-an update to an editor-enabled image is still needed for that evidence.
+evidence are recorded. The editor-enabled image was deployed successfully;
+live editor reconnection and two-editor load checks remain pending.
 
 ## Topology
 
@@ -117,9 +117,11 @@ measured target-host results, including total OS/Tailscale overhead.
 ## Remaining acceptance evidence
 
 - Reliable private client/management access alongside the owner's VPN configuration.
-- LUKS reboot/unlock behavior and certificate renewal; initial startup and TLS passed.
+- Recovery after owner unlocks the rebooted volume, and certificate renewal;
+  locked-volume startup refusal, initial startup and TLS passed.
 - Public firewall closure, external IPv4/IPv6 scans and two-editor memory on the target.
-- Deploy the editor-enabled image and verify persistence, update and editor reconnection.
+- Verify document persistence and editor reconnection across an update; the
+  editor-enabled image is deployed and existing user/passkey counts are preserved.
 
 Local preparation on 2026-10-17 passed Docker build, Caddy configuration validation,
 container access checks and SQLite persistence across container restart. An idle
@@ -154,5 +156,23 @@ Idle `docker stats --no-stream`: Node 44.08 MiB, Caddy 9.684 MiB. Host `free -m`
 515 MiB used and 1452 MiB available. These are one idle sample, not the required
 two-editor load result. Public SSH remains available during bootstrap. Private
 client connectivity, cloud-firewall closure, external IPv4/IPv6 scans,
-reboot/unlock, renewal and update/editor checks remain pending. The owner subsequently
+renewal and live editor checks remain pending. The owner subsequently
 confirmed first-admin setup, an invitation and invited-user sign-in succeeded.
+
+### Editor image update and locked reboot, 2026-10-17
+
+An amd64 image built from d5fa3cc (including merged SPN-007) was imported and
+activated as `sha256:76645e34c35d138f4afeb8107f42357b856a799df811c17fea092103fa10940b`.
+Before activation, Spinel was stopped and its complete app directory copied into
+`backups/before-editors-20261017T230934Z.tar` on the encrypted volume with private
+permissions. Archive listing passed; this is not a tested restore or a substitute
+for SPN-030. Preflight/startup and certificate-verified HTTPS returned successfully.
+Counts remained two users and two passkeys, and the sheet snapshot table exists.
+No document contents were inspected. Live editor continuity is not yet verified.
+
+With the owner's explicit readiness and passphrase available, the host rebooted.
+The boot ID changed from `5c086f12-6cc2-4716-8219-379d8781a1c1` to
+`7d84c749-aac6-4f67-a7da-32356a6f7da5`. The volume remained `crypto_LUKS`, with no
+mapper device or mounted data root. No Docker containers ran. Systemd retried,
+and preflight refused startup because the encrypted mount was absent. Recovery
+after the owner unlocks and mounts the volume is pending.
