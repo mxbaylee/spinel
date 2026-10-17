@@ -116,10 +116,10 @@ measured target-host results, including total OS/Tailscale overhead.
 
 ## Remaining acceptance evidence
 
-- Owner-supplied droplet, tailnet identity, access and encrypted volume.
-- Fresh-host guide run, LUKS reboot/unlock behavior, tailnet TLS and certificate renewal.
-- External public IPv4/IPv6 port scan and measured memory on the 2 GB target.
-- Update with persistent data and live editor reconnection after editors exist.
+- Reliable private client/management access alongside the owner's VPN configuration.
+- LUKS reboot/unlock behavior and certificate renewal; initial startup and TLS passed.
+- Public firewall closure, external IPv4/IPv6 scans and two-editor memory on the target.
+- Deploy the editor-enabled image and verify persistence, update and editor reconnection.
 
 Local preparation on 2026-10-17 passed Docker build, Caddy configuration validation,
 container access checks and SQLite persistence across container restart. An idle
@@ -154,4 +154,5 @@ Idle `docker stats --no-stream`: Node 44.08 MiB, Caddy 9.684 MiB. Host `free -m`
 515 MiB used and 1452 MiB available. These are one idle sample, not the required
 two-editor load result. Public SSH remains available during bootstrap. Private
 client connectivity, cloud-firewall closure, external IPv4/IPv6 scans,
-reboot/unlock, passkey setup, renewal and update/editor checks remain pending.
+reboot/unlock, renewal and update/editor checks remain pending. The owner subsequently
+confirmed first-admin setup, an invitation and invited-user sign-in succeeded.
