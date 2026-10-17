@@ -61,7 +61,9 @@ test('builds and renames a nested tree, opens all document types, moves safely a
       await create(`${type} example`, type);
       await expect(
         page.getByRole('region', { name: `${type} document`, exact: true }),
-      ).toContainText('Empty document');
+      ).toContainText(type === 'Sheet' ? 'All changes saved.' : 'Empty document', {
+        timeout: 20000,
+      });
       await breadcrumb.getByRole('button', { name: '2027', exact: true }).click();
     }
     await files.getByRole('button', { name: 'Move Sheet example', exact: true }).click();
@@ -100,7 +102,10 @@ test('builds and renames a nested tree, opens all document types, moves safely a
     ).toBeVisible();
     await files.getByRole('button', { name: 'Sheet example Sheet', exact: true }).click();
     await page.reload();
-    await expect(page.getByRole('region', { name: 'Sheet document', exact: true })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Sheet document', exact: true })).toContainText(
+      'All changes saved.',
+      { timeout: 20000 },
+    );
     await page.goBack();
     await expect(breadcrumb).toHaveText('My files / Personal');
     await page.setViewportSize({ width: 375, height: 812 });

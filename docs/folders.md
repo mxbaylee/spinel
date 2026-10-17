@@ -8,7 +8,8 @@ has no access to this tree.
 Choose **New**, a type (Folder, Sheet, Doc or Slides), and a name. Folders are
 created inside the current folder. Documents are created there and immediately
 open an empty document view. Their identity, type, name and location are saved;
-content editors arrive in SPN-007, SPN-008 and SPN-009. Reloading or returning to
+Sheets open the [spreadsheet editor](spreadsheets.md); Docs and Slides editors
+arrive in SPN-008 and SPN-009. Reloading or returning to
 the view does not create another document.
 
 Use the folder list or breadcrumb to navigate. **Rename** updates an item's name
@@ -22,13 +23,13 @@ owner while signed in.
 Names are trimmed and contain 1–120 characters, without control characters or
 slashes. Duplicate names are allowed, since IDs identify items. The move picker
 shows full paths to distinguish locations. Deleting, trash, tags, pins, search,
-sharing and content editing remain separate tickets.
+sharing and the remaining content editors remain separate tickets.
 
 ## Storage and access
 
 `workspace_items` stores UUID, owner, parent folder (null at root), kind, name and
-timestamps in the existing SQLite database. No editor snapshot format is chosen
-until the editor integration. Parent validation, cycle detection and writes run
+timestamps in the existing SQLite database. Spreadsheet snapshots use the
+[native Univer format](spreadsheets.md). Parent validation, cycle detection and writes run
 inside an immediate transaction; a failed rename/move combination rolls back.
 SQLite connections wait up to five seconds for another local writer instead of
 immediately rejecting a valid save on a brief lock. The owner cannot change an item's owner or kind through the API.
