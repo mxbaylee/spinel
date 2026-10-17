@@ -24,3 +24,5 @@ To run tickets continuously, use the [backlog runbook](docs/run-backlog.md):
 
 Licensed under [Apache-2.0](LICENSE). Third-party code is listed in
 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+
+Private folders and empty document creation are described in [Folders](docs/folders.md).

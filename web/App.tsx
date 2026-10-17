@@ -13,6 +13,7 @@ import type {
 import { signSetupProof } from './setup.ts';
 import { api } from './api.ts';
 import { AdminInvites } from './AdminInvites.tsx';
+import { Dashboard } from './Dashboard.tsx';
 
 type User = { id: string; name: string; isAdmin: boolean };
 type Passkey = { id: string; name: string; provider: string };
@@ -286,15 +287,7 @@ export function App() {
             </section>
           </>
         ) : (
-          <>
-            <p className="eyebrow">Your workspace</p>
-            <h1>Dashboard</h1>
-            <section aria-labelledby="welcome-title" className="welcome">
-              <h2 id="welcome-title">A place for your everyday work</h2>
-              <p>Your spreadsheets, documents and slides will live here.</p>
-              <p className="placeholder">This workspace is being built. Check back soon.</p>
-            </section>
-          </>
+          <Dashboard />
         )}
         {busy && (
           <p role="status">
