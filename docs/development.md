@@ -13,7 +13,10 @@ React dashboard through Vite, and creates `data/spinel.sqlite` on first startup.
 Vite updates the frontend as you edit; Node watch restarts the server on changes.
 Use `npm run dev -- --no-open` to suppress the browser opening, and Ctrl+C to stop.
 No database service or environment file is needed. An empty database has no accounts;
-use [the isolated passkey check](authentication.md#manual-provider-check) to try authentication until account setup lands.
+run `npm run setup` in another terminal to [claim the first admin](setup.md).
+The [isolated passkey check](authentication.md#manual-provider-check) still provides
+a disposable everyday-account fixture. Use [Admin invites](invitations.md) for
+normal account creation.
 
 To check the production build locally:
 

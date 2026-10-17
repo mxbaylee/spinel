@@ -5,29 +5,17 @@ import {
   WebAuthnAbortService,
 } from '@simplewebauthn/browser';
 import type {
+  RegistrationResponseJSON,
   PublicKeyCredentialCreationOptionsJSON,
   PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/browser';
 
+import { signSetupProof } from './setup.ts';
+import { api } from './api.ts';
+import { AdminInvites } from './AdminInvites.tsx';
+
 type User = { id: string; name: string; isAdmin: boolean };
 type Passkey = { id: string; name: string; provider: string };
-async function api<T>(path: string, body?: unknown): Promise<T> {
-  const response = await fetch(
-    `/api/auth/${path}`,
-    body === undefined
-      ? {}
-      : {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        },
-  );
-  if (response.status === 401 && location.pathname !== '/sign-in') location.assign('/sign-in');
-  if (response.status === 204) return undefined as T;
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error ?? 'Something went wrong. Try again.');
-  return data;
-}
 
 export function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -38,9 +26,36 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
   const settings = location.pathname === '/settings';
+  const setup = location.pathname === '/setup';
+  const invitation = location.pathname === '/invite';
+  const [inviteToken] = useState(() =>
+    invitation ? (new URLSearchParams(location.search).get('token') ?? '') : '',
+  );
+  const [inviteDetails, setInviteDetails] = useState<{ recovery: boolean; name: string } | null>(
+    null,
+  );
+  const [inviteName, setInviteName] = useState('');
+  const [setupLink] = useState(() => (setup ? location.hash.slice(1).split('.') : []));
+  const [setupId, setupSecret] = setupLink;
   const refreshKeys = async () =>
     setKeys((await api<{ passkeys: Passkey[] }>('passkeys')).passkeys);
   useEffect(() => {
+    if (invitation) {
+      history.replaceState(null, '', '/invite');
+      void api<{ recovery: boolean; name: string }>('invite/details', { token: inviteToken })
+        .then((details) => {
+          setInviteDetails(details);
+          setInviteName(details.name);
+        })
+        .catch((failure) => setError(failure.message))
+        .finally(() => setLoaded(true));
+      return;
+    }
+    if (setup) {
+      history.replaceState(null, '', '/setup');
+      setLoaded(true);
+      return;
+    }
     void api<{ user: User }>('session')
       .then(async ({ user }) => {
         setUser(user);
@@ -50,7 +65,7 @@ export function App() {
         if (location.pathname !== '/sign-in') location.assign('/sign-in');
       })
       .finally(() => setLoaded(true));
-  }, [settings]);
+  }, [settings, setup, invitation, inviteToken]);
 
   function cancel() {
     const current = attempt.current;
@@ -71,11 +86,20 @@ export function App() {
     try {
       if (!window.PublicKeyCredential || !window.isSecureContext)
         throw new Error('Passkeys need a supported browser at Spinel’s secure address.');
-      const kind = register ? 'registration' : 'authentication';
+      const kind = setup
+        ? 'setup'
+        : invitation
+          ? 'invite'
+          : register
+            ? 'registration'
+            : 'authentication';
       const { options, challengeId } = await api<{
         options: PublicKeyCredentialCreationOptionsJSON & PublicKeyCredentialRequestOptionsJSON;
         challengeId: string;
-      }>(`${kind}/options`, {});
+      }>(
+        `${kind}/options`,
+        setup ? { setupId } : invitation ? { token: inviteToken, name: inviteName } : {},
+      );
       current.challengeId = challengeId;
       if (current.cancelled) {
         void api('cancel', { challengeId }).catch(() => {});
@@ -85,12 +109,22 @@ export function App() {
         ? await startRegistration({ optionsJSON: options })
         : await startAuthentication({ optionsJSON: options });
       if (current.cancelled) return;
+      const proof = setup
+        ? await signSetupProof(
+            setupSecret,
+            setupId,
+            options.challenge,
+            response as RegistrationResponseJSON,
+          )
+        : undefined;
+      if (current.cancelled) return;
       const result = await api<{ redirect?: string; name?: string }>(`${kind}/verify`, {
         challengeId,
         response,
+        ...(setup ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
       });
       if (current.cancelled) return;
-      if (register) {
+      if (register && !setup && !invitation) {
         await refreshKeys();
         setNotice(`${result.name} added. You can use it to sign in.`);
       } else location.assign(result.redirect ?? '/');
@@ -142,6 +176,63 @@ export function App() {
       <main>
         {!loaded ? (
           <p role="status">Loading…</p>
+        ) : setup ? (
+          <>
+            <p className="eyebrow">A new workspace</p>
+            <h1>Set up Spinel</h1>
+            <section className="welcome">
+              <h2>Create your admin passkey</h2>
+              <p>
+                Your admin account manages the workspace. It cannot open documents; you will invite
+                a separate everyday account for that.
+              </p>
+              {setupId && setupSecret ? (
+                <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
+                  Create admin passkey
+                </button>
+              ) : (
+                <p role="alert">
+                  Open the one-time setup link printed on the server. If it expired, run the setup
+                  command again.
+                </p>
+              )}
+            </section>
+          </>
+        ) : invitation ? (
+          <>
+            <p className="eyebrow">Your private workspace</p>
+            <h1>{inviteDetails?.recovery ? 'Recover your account' : 'Join Spinel'}</h1>
+            {inviteDetails && (
+              <section className="welcome">
+                {inviteDetails.recovery ? (
+                  <>
+                    <h2>{inviteDetails.name}</h2>
+                    <p>
+                      Adding your new passkey will replace all old passkeys and sign out your other
+                      devices. Your account and documents stay yours.
+                    </p>
+                  </>
+                ) : (
+                  <label>
+                    Your name
+                    <input
+                      value={inviteName}
+                      maxLength={80}
+                      onChange={(event) => setInviteName(event.target.value)}
+                      autoComplete="name"
+                    />
+                  </label>
+                )}
+                <button
+                  className="primary"
+                  disabled={busy || !inviteName.trim()}
+                  onClick={() => void ceremony(true)}
+                >
+                  {inviteDetails.recovery ? 'Recover with a passkey' : 'Join with a passkey'}
+                </button>
+              </section>
+            )}
+          </>
         ) : !user ? (
           <>
             <p className="eyebrow">Your private workspace</p>
@@ -187,7 +278,11 @@ export function App() {
             <h1>Admin</h1>
             <section className="welcome">
               <h2>Workspace administration</h2>
-              <p>Admin tools are being built. Your account can manage its passkeys in Settings.</p>
+              <p>
+                Invite people or help them recover their passkeys. Use a separate everyday account
+                for documents.
+              </p>
+              <AdminInvites />
             </section>
           </>
         ) : (

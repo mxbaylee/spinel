@@ -20,6 +20,7 @@
     "lint": "oxlint --deny-warnings . && npm run format:check",
     "format": "prettier --write web server src e2e scripts/passkey-check.ts scripts/deploy *.config.ts",
     "format:check": "prettier --check web server src e2e scripts/passkey-check.ts scripts/deploy *.config.ts",
+    "setup": "node server/setup.ts",
     "passkey:check": "npm run build && node scripts/passkey-check.ts",
     "e2e": "npm run build && playwright test"
   },

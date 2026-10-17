@@ -89,8 +89,10 @@ unmounting or locking the volume. No deployment step removes the data directory.
 
 ## Validate and update
 
-From the tailnet, open the configured HTTPS hostname, claim the first admin and
-create a separate everyday account. Check passkey sign-in, the certificate, and
+Print the first-admin setup link on the host with
+`docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml exec app node server/setup.ts`.
+Open that one-time link from the tailnet, create the admin passkey, then use Admin
+to invite a separate everyday account. Check passkey sign-in, the certificate, and
 that a TLS 1.2 client fails while TLS 1.3 succeeds. `ss -lntup` should show the app on
 loopback and Caddy only on the Tailscale IP; investigate all other listeners.
 
@@ -117,3 +119,10 @@ measured target-host results, including total OS/Tailscale overhead.
 - Fresh-host guide run, LUKS reboot/unlock behavior, tailnet TLS and certificate renewal.
 - External public IPv4/IPv6 port scan and measured memory on the 2 GB target.
 - Update with persistent data and live editor reconnection after editors exist.
+
+Local preparation on 2026-10-17 passed Docker build, Caddy configuration validation,
+container access checks and SQLite persistence across container restart. An idle
+app-only Docker Desktop sample was 148.3 MiB; this does not establish memory use
+on the target. [Decision #16](https://github.com/mxbaylee/spinel/issues/16) records
+the proposed startup gate. [Owner check #17](https://github.com/mxbaylee/spinel/issues/17)
+tracks the outstanding live evidence.

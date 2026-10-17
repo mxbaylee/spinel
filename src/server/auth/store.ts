@@ -29,7 +29,7 @@ export interface Session {
 export interface Challenge {
   id: string;
   session_hash: string;
-  kind: 'authentication' | 'registration';
+  kind: 'authentication' | 'registration' | 'setup' | 'invite';
   challenge: string;
   expires_at: number;
   used: number;
@@ -78,6 +78,20 @@ export class AuthStore {
       ) STRICT;
       CREATE INDEX IF NOT EXISTS auth_challenges_session ON auth_challenges(session_hash);
     `);
+  }
+  userCount() {
+    return Number(this.database.prepare('SELECT COUNT(*) AS total FROM auth_users').get()!.total);
+  }
+  transaction<T>(action: () => T): T {
+    this.database.exec('BEGIN IMMEDIATE');
+    try {
+      const result = action();
+      this.database.exec('COMMIT');
+      return result;
+    } catch (error) {
+      this.database.exec('ROLLBACK');
+      throw error;
+    }
   }
   // Internal seam for first-admin/invite tickets and isolated test fixtures, never an HTTP signup.
   createUser(name: string, admin = false): User {
