@@ -5,9 +5,12 @@ import {
   WebAuthnAbortService,
 } from '@simplewebauthn/browser';
 import type {
+  RegistrationResponseJSON,
   PublicKeyCredentialCreationOptionsJSON,
   PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/browser';
+
+import { signSetupProof } from './setup.ts';
 
 type User = { id: string; name: string; isAdmin: boolean };
 type Passkey = { id: string; name: string; provider: string };
@@ -22,7 +25,8 @@ async function api<T>(path: string, body?: unknown): Promise<T> {
           body: JSON.stringify(body),
         },
   );
-  if (response.status === 401 && location.pathname !== '/sign-in') location.assign('/sign-in');
+  if (response.status === 401 && !['/sign-in', '/setup'].includes(location.pathname))
+    location.assign('/sign-in');
   if (response.status === 204) return undefined as T;
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Something went wrong. Try again.');
@@ -38,9 +42,17 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
   const settings = location.pathname === '/settings';
+  const setup = location.pathname === '/setup';
+  const [setupLink] = useState(() => (setup ? location.hash.slice(1).split('.') : []));
+  const [setupId, setupSecret] = setupLink;
   const refreshKeys = async () =>
     setKeys((await api<{ passkeys: Passkey[] }>('passkeys')).passkeys);
   useEffect(() => {
+    if (setup) {
+      history.replaceState(null, '', '/setup');
+      setLoaded(true);
+      return;
+    }
     void api<{ user: User }>('session')
       .then(async ({ user }) => {
         setUser(user);
@@ -50,7 +62,7 @@ export function App() {
         if (location.pathname !== '/sign-in') location.assign('/sign-in');
       })
       .finally(() => setLoaded(true));
-  }, [settings]);
+  }, [settings, setup]);
 
   function cancel() {
     const current = attempt.current;
@@ -71,11 +83,11 @@ export function App() {
     try {
       if (!window.PublicKeyCredential || !window.isSecureContext)
         throw new Error('Passkeys need a supported browser at Spinel’s secure address.');
-      const kind = register ? 'registration' : 'authentication';
+      const kind = setup ? 'setup' : register ? 'registration' : 'authentication';
       const { options, challengeId } = await api<{
         options: PublicKeyCredentialCreationOptionsJSON & PublicKeyCredentialRequestOptionsJSON;
         challengeId: string;
-      }>(`${kind}/options`, {});
+      }>(`${kind}/options`, setup ? { setupId } : {});
       current.challengeId = challengeId;
       if (current.cancelled) {
         void api('cancel', { challengeId }).catch(() => {});
@@ -85,12 +97,22 @@ export function App() {
         ? await startRegistration({ optionsJSON: options })
         : await startAuthentication({ optionsJSON: options });
       if (current.cancelled) return;
+      const proof = setup
+        ? await signSetupProof(
+            setupSecret,
+            setupId,
+            options.challenge,
+            response as RegistrationResponseJSON,
+          )
+        : undefined;
+      if (current.cancelled) return;
       const result = await api<{ redirect?: string; name?: string }>(`${kind}/verify`, {
         challengeId,
         response,
+        ...(setup ? { setupId, proof } : {}),
       });
       if (current.cancelled) return;
-      if (register) {
+      if (register && !setup) {
         await refreshKeys();
         setNotice(`${result.name} added. You can use it to sign in.`);
       } else location.assign(result.redirect ?? '/');
@@ -142,6 +164,28 @@ export function App() {
       <main>
         {!loaded ? (
           <p role="status">Loading…</p>
+        ) : setup ? (
+          <>
+            <p className="eyebrow">A new workspace</p>
+            <h1>Set up Spinel</h1>
+            <section className="welcome">
+              <h2>Create your admin passkey</h2>
+              <p>
+                Your admin account manages the workspace. It cannot open documents; you will invite
+                a separate everyday account for that.
+              </p>
+              {setupId && setupSecret ? (
+                <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
+                  Create admin passkey
+                </button>
+              ) : (
+                <p role="alert">
+                  Open the one-time setup link printed on the server. If it expired, run the setup
+                  command again.
+                </p>
+              )}
+            </section>
+          </>
         ) : !user ? (
           <>
             <p className="eyebrow">Your private workspace</p>

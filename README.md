@@ -5,7 +5,8 @@ the open-source [Univer](https://github.com/dream-num/univer) SDK. Spinel is
 meant for a handful of people on one small self-hosted server.
 
 Passkey sign-in protects a placeholder dashboard and a Node server backed by SQLite.
-Account setup and editors are still on the [backlog](docs/todo/readme.md).
+[Claim the first admin](docs/setup.md) with `npm run setup`; invites and editors
+are still on the [backlog](docs/todo/readme.md).
 See [authentication](docs/authentication.md) for the isolated passkey check.
 
 Use Node from `.nvmrc`, then run:
