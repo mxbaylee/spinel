@@ -1,0 +1,154 @@
+/*
+ * Spinel theme tokens: reference for SPN-027.
+ * Light is younger Spinel, dark is older Spinel. Set data-theme="light" or
+ * "dark" on <html>; with neither, the system setting decides.
+ * SPN-027 moves these into src/ and deletes docs/design/ in the same PR.
+ */
+
+:root,
+:root[data-theme="light"] {
+  --sp-bg: #fff5f2;
+  --sp-panel: #ffffff;
+  --sp-rail: #c42c58;
+  --sp-rail-ink: #ffe4ec;
+  --sp-accent: #c42c58;
+  --sp-on-accent: #ffffff;
+  --sp-accent-2: #c24a35;
+  --sp-text: #4a1e33;
+  --sp-muted: #7e4d61;
+  --sp-border: #f0c2cf;
+  --sp-header: #ffeaf0;
+  --sp-tint-1: #ffdde6;
+  --sp-tint-2: #ffe6dc;
+  --sp-select: rgba(196, 44, 88, 0.1);
+
+  /* Cell fill presets: a soft and a strong fill per role, each with its text colour. */
+  --fill-primary-soft-bg: #ffdde6;   --fill-primary-soft-fg: #8a1d3f;
+  --fill-primary-strong-bg: #c42c58; --fill-primary-strong-fg: #ffffff;
+  --fill-secondary-soft-bg: #ffe3da;   --fill-secondary-soft-fg: #8a3020;
+  --fill-secondary-strong-bg: #c24a35; --fill-secondary-strong-fg: #ffffff;
+  --fill-success-soft-bg: #ddf3e8;   --fill-success-soft-fg: #1b5e42;
+  --fill-success-strong-bg: #23825a; --fill-success-strong-fg: #ffffff;
+  --fill-warning-soft-bg: #fff0d2;   --fill-warning-soft-fg: #7a4e05;
+  --fill-warning-strong-bg: #f2a93b; --fill-warning-strong-fg: #3a2500;
+  --fill-error-soft-bg: #fddcd8;   --fill-error-soft-fg: #8a1f18;
+  --fill-error-strong-bg: #c3352c; --fill-error-strong-fg: #ffffff;
+  --fill-info-soft-bg: #e0e9fb;   --fill-info-soft-fg: #22427f;
+  --fill-info-strong-bg: #3f6cc9; --fill-info-strong-fg: #ffffff;
+  --fill-neutral-soft-bg: #f1e8ec;   --fill-neutral-soft-fg: #4a3640;
+  --fill-neutral-strong-bg: #6e5864; --fill-neutral-strong-fg: #ffffff;
+  --fill-highlight-soft-bg: #fff6b8;   --fill-highlight-soft-fg: #5a4a00;
+  --fill-highlight-strong-bg: #f2d433; --fill-highlight-strong-fg: #3a3000;
+
+  /* The logo gem's facet tones, darkest to lightest, and its outline. */
+  --gem-1: #a8124a; --gem-2: #d4245d; --gem-3: #f0457c;
+  --gem-4: #ff7aa3; --gem-5: #ffaec6; --gem-6: #ffe1ea;
+  --gem-edge: #5e0b29;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sp-bg: #1a1225;
+    --sp-panel: #221832;
+    --sp-rail: #120d1a;
+    --sp-rail-ink: #ff2a85;
+    --sp-accent: #ff2a85;
+    --sp-on-accent: #1a1225;
+    --sp-accent-2: #b48cff;
+    --sp-text: #ece2f7;
+    --sp-muted: #a898bc;
+    --sp-border: #3b2b4e;
+    --sp-header: #160f20;
+    --sp-tint-1: #3a1730;
+    --sp-tint-2: #2c2045;
+    --sp-select: rgba(255, 42, 133, 0.16);
+
+    --fill-primary-soft-bg: #4a1734;   --fill-primary-soft-fg: #ff9cc6;
+    --fill-primary-strong-bg: #ff2a85; --fill-primary-strong-fg: #1a1225;
+    --fill-secondary-soft-bg: #33264f;   --fill-secondary-soft-fg: #d6c2ff;
+    --fill-secondary-strong-bg: #b48cff; --fill-secondary-strong-fg: #1a1225;
+    --fill-success-soft-bg: #173a2c;   --fill-success-soft-fg: #8be9b9;
+    --fill-success-strong-bg: #3dd68c; --fill-success-strong-fg: #0f2a1d;
+    --fill-warning-soft-bg: #3d2b12;   --fill-warning-soft-fg: #ffd08a;
+    --fill-warning-strong-bg: #ffb547; --fill-warning-strong-fg: #2a1800;
+    --fill-error-soft-bg: #451a1c;   --fill-error-soft-fg: #ffa39c;
+    --fill-error-strong-bg: #ff5a4e; --fill-error-strong-fg: #2a0a08;
+    --fill-info-soft-bg: #1c2a4a;   --fill-info-soft-fg: #a9c9ff;
+    --fill-info-strong-bg: #6ea8ff; --fill-info-strong-fg: #0b1a33;
+    --fill-neutral-soft-bg: #2a2236;   --fill-neutral-soft-fg: #cdbfdd;
+    --fill-neutral-strong-bg: #8e7fa3; --fill-neutral-strong-fg: #120d1a;
+    --fill-highlight-soft-bg: #3d3714;   --fill-highlight-soft-fg: #fff08a;
+    --fill-highlight-strong-bg: #f5e05a; --fill-highlight-strong-fg: #241f00;
+
+    --gem-1: #8a0040; --gem-2: #c2005e; --gem-3: #ff1a85;
+    --gem-4: #ff6ab4; --gem-5: #ffa6d6; --gem-6: #ffd9f2;
+    --gem-edge: #4d0026;
+  }
+}
+
+/* The explicit dark theme repeats the block above; keep the two in step. */
+:root[data-theme="dark"] {
+  --sp-bg: #1a1225;
+  --sp-panel: #221832;
+  --sp-rail: #120d1a;
+  --sp-rail-ink: #ff2a85;
+  --sp-accent: #ff2a85;
+  --sp-on-accent: #1a1225;
+  --sp-accent-2: #b48cff;
+  --sp-text: #ece2f7;
+  --sp-muted: #a898bc;
+  --sp-border: #3b2b4e;
+  --sp-header: #160f20;
+  --sp-tint-1: #3a1730;
+  --sp-tint-2: #2c2045;
+  --sp-select: rgba(255, 42, 133, 0.16);
+
+  --fill-primary-soft-bg: #4a1734;   --fill-primary-soft-fg: #ff9cc6;
+  --fill-primary-strong-bg: #ff2a85; --fill-primary-strong-fg: #1a1225;
+  --fill-secondary-soft-bg: #33264f;   --fill-secondary-soft-fg: #d6c2ff;
+  --fill-secondary-strong-bg: #b48cff; --fill-secondary-strong-fg: #1a1225;
+  --fill-success-soft-bg: #173a2c;   --fill-success-soft-fg: #8be9b9;
+  --fill-success-strong-bg: #3dd68c; --fill-success-strong-fg: #0f2a1d;
+  --fill-warning-soft-bg: #3d2b12;   --fill-warning-soft-fg: #ffd08a;
+  --fill-warning-strong-bg: #ffb547; --fill-warning-strong-fg: #2a1800;
+  --fill-error-soft-bg: #451a1c;   --fill-error-soft-fg: #ffa39c;
+  --fill-error-strong-bg: #ff5a4e; --fill-error-strong-fg: #2a0a08;
+  --fill-info-soft-bg: #1c2a4a;   --fill-info-soft-fg: #a9c9ff;
+  --fill-info-strong-bg: #6ea8ff; --fill-info-strong-fg: #0b1a33;
+  --fill-neutral-soft-bg: #2a2236;   --fill-neutral-soft-fg: #cdbfdd;
+  --fill-neutral-strong-bg: #8e7fa3; --fill-neutral-strong-fg: #120d1a;
+  --fill-highlight-soft-bg: #3d3714;   --fill-highlight-soft-fg: #fff08a;
+  --fill-highlight-strong-bg: #f5e05a; --fill-highlight-strong-fg: #241f00;
+
+  --gem-1: #8a0040; --gem-2: #c2005e; --gem-3: #ff1a85;
+  --gem-4: #ff6ab4; --gem-5: #ffa6d6; --gem-6: #ffd9f2;
+  --gem-edge: #4d0026;
+}
+
+.fill-primary-soft { background: var(--fill-primary-soft-bg); color: var(--fill-primary-soft-fg); }
+.fill-primary-strong { background: var(--fill-primary-strong-bg); color: var(--fill-primary-strong-fg); }
+.fill-secondary-soft { background: var(--fill-secondary-soft-bg); color: var(--fill-secondary-soft-fg); }
+.fill-secondary-strong { background: var(--fill-secondary-strong-bg); color: var(--fill-secondary-strong-fg); }
+.fill-success-soft { background: var(--fill-success-soft-bg); color: var(--fill-success-soft-fg); }
+.fill-success-strong { background: var(--fill-success-strong-bg); color: var(--fill-success-strong-fg); }
+.fill-warning-soft { background: var(--fill-warning-soft-bg); color: var(--fill-warning-soft-fg); }
+.fill-warning-strong { background: var(--fill-warning-strong-bg); color: var(--fill-warning-strong-fg); }
+.fill-error-soft { background: var(--fill-error-soft-bg); color: var(--fill-error-soft-fg); }
+.fill-error-strong { background: var(--fill-error-strong-bg); color: var(--fill-error-strong-fg); }
+.fill-info-soft { background: var(--fill-info-soft-bg); color: var(--fill-info-soft-fg); }
+.fill-info-strong { background: var(--fill-info-strong-bg); color: var(--fill-info-strong-fg); }
+.fill-neutral-soft { background: var(--fill-neutral-soft-bg); color: var(--fill-neutral-soft-fg); }
+.fill-neutral-strong { background: var(--fill-neutral-strong-bg); color: var(--fill-neutral-strong-fg); }
+.fill-highlight-soft { background: var(--fill-highlight-soft-bg); color: var(--fill-highlight-soft-fg); }
+.fill-highlight-strong { background: var(--fill-highlight-strong-bg); color: var(--fill-highlight-strong-fg); }
+
+/* The logo gem is a heart pointing down in light (younger Spinel) and turns
+   upside down in dark (older Spinel). */
+.gem { transition: transform 0.8s cubic-bezier(0.5, -0.4, 0.3, 1.4); }
+:root[data-theme="dark"] .gem { transform: rotate(180deg); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .gem { transform: rotate(180deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gem { transition: none; }
+}
