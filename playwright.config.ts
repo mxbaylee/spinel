@@ -10,20 +10,20 @@ export default defineConfig({
   projects: [
     {
       name: 'development',
-      use: { ...devices['Desktop Chrome'], baseURL: 'http://127.0.0.1:3100' },
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
     },
-    { name: 'production', use: { ...devices['Desktop Chrome'], baseURL: 'http://127.0.0.1:3101' } },
+    { name: 'production', use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' } },
   ],
   webServer: [
     {
       command: 'npm run dev -- --no-open',
-      url: 'http://127.0.0.1:3100/api/health',
+      url: 'http://localhost:3100/sign-in',
       env: { PORT: '3100', HOST: '127.0.0.1', DATABASE_PATH: 'test-results/dev.sqlite' },
       reuseExistingServer: false,
     },
     {
       command: 'npm start',
-      url: 'http://127.0.0.1:3101/api/health',
+      url: 'http://localhost:3101/sign-in',
       env: { PORT: '3101', HOST: '127.0.0.1', DATABASE_PATH: 'test-results/production.sqlite' },
       reuseExistingServer: false,
     },

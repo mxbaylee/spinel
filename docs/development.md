@@ -8,11 +8,12 @@ npm ci
 npm run dev
 ```
 
-The Node server opens `http://127.0.0.1:3000` in your browser, serves a placeholder
+The Node server opens `http://localhost:3000` in your browser, serves passkey sign-in and a protected placeholder
 React dashboard through Vite, and creates `data/spinel.sqlite` on first startup.
 Vite updates the frontend as you edit; Node watch restarts the server on changes.
 Use `npm run dev -- --no-open` to suppress the browser opening, and Ctrl+C to stop.
-No database service, credentials or environment file is needed.
+No database service or environment file is needed. An empty database has no accounts;
+use [the isolated passkey check](authentication.md#manual-provider-check) to try authentication until account setup lands.
 
 To check the production build locally:
 
@@ -29,16 +30,19 @@ running it. Deployment packaging is SPN-029.
 ## Local settings
 
 - `PORT`: HTTP port, default `3000`; `0` asks the OS for an available port.
-- `HOST`: bind address, default `127.0.0.1`. Leave this at loopback while the app
-  has no authentication; public deployment is out of scope for the scaffold.
+- `HOST`: bind address, default `127.0.0.1`. Keep this at loopback; deployment must expose HTTPS through the private proxy (SPN-029).
+- `APP_ORIGIN`: exact browser origin, default `http://localhost:PORT`. Production
+  must set its HTTPS hostname, with no trailing slash. Passkeys are bound to that
+  hostname; an IP address is rejected. Port `0` is for startup tests only.
 - `DATABASE_PATH`: SQLite filename, default `data/spinel.sqlite` under the repo.
   Relative overrides resolve from the current working directory. Parent folders
   are created automatically. Database files and sidecars are ignored by Git.
 
-`GET /api/health` verifies a database query and returns `{"status":"ok"}`. Unknown
-API paths return JSON 404s; they never fall through to the dashboard. No document
-or account endpoints exist yet. An empty database is intentional: domain tables
-arrive with the tickets that use them. Startup preserves existing data.
+`GET /api/health` requires a signed-in session, verifies a database query and
+returns `{"status":"ok"}`. Signed-out APIs return 401 with sign-in guidance;
+unknown signed-in APIs return JSON 404s. `/sign-in` is the public startup probe.
+Authentication tables are created without resetting existing data or migration
+metadata. See [authentication](authentication.md) for sessions and access rules.
 
 ## Checks
 
@@ -54,8 +58,8 @@ npm run backlog:check
 `npm test` runs the existing Node backlog tests and Vitest server tests.
 `npm run e2e` builds the frontend, then Playwright starts isolated development and
 production servers on ports 3100 and 3101 with databases in `test-results/`.
-It checks rendering, mobile width, browser errors and same-origin API responses
-in Chromium. It never reuses a running server or the everyday database.
+It checks access boundaries, mobile width, real WebAuthn verification with two
+virtual authenticators, session persistence, cancellation and revocation in Chromium. It never reuses a running server or the everyday database.
 On Linux, use `npx playwright install --with-deps chromium` for system libraries.
 
 `npm run lint` checks repository TypeScript with Oxlint and formatting of the new
@@ -65,8 +69,8 @@ formatting. All TypeScript, including existing scripts/reference code, extends
 the root `tsconfig.json` and is checked by `npm run typecheck`.
 
 CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
-and **Playwright smoke**. The owner must add the four new application checks to
-the `main` ruleset; see [the process](todo/process.md#pull-requests-and-main).
+and **Playwright smoke**. These are required by the active default-branch ruleset;
+see [the process](todo/process.md#pull-requests-and-main).
 
 ## Architecture decisions
 

@@ -18,8 +18,9 @@
     "build": "vite build",
     "start": "node server/index.ts",
     "lint": "oxlint --deny-warnings . && npm run format:check",
-    "format": "prettier --write web server e2e *.config.ts",
-    "format:check": "prettier --check web server e2e *.config.ts",
+    "format": "prettier --write web server src e2e scripts/passkey-check.ts *.config.ts",
+    "format:check": "prettier --check web server src e2e scripts/passkey-check.ts *.config.ts",
+    "passkey:check": "npm run build && node scripts/passkey-check.ts",
     "e2e": "npm run build && playwright test"
   },
   "devDependencies": {
@@ -36,6 +37,8 @@
     "vitest": "5.0.5"
   },
   "dependencies": {
+    "@simplewebauthn/browser": "14.0.0",
+    "@simplewebauthn/server": "14.0.3",
     "express": "5.3.0",
     "react": "18.3.1",
     "react-dom": "18.3.1"

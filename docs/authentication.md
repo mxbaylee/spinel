@@ -1,0 +1,98 @@
+# Passkeys and sessions
+
+Spinel signs in with discoverable passkeys from a browser, password manager or
+phone. Settings adds another passkey to the signed-in account and lists provider
+names. Account creation belongs to first-admin setup (SPN-003) and invites
+(SPN-004); there is no public signup or password fallback. Recovery is an
+Operator-issued invite. Sign-in does not use PRF or encryption key wrapping.
+These are the owner’s SPN-002 rules, 2026-10-17.
+
+## Access and storage
+
+`APP_ORIGIN` is the exact HTTPS browser origin (no trailing slash); only
+`http://localhost:PORT` is allowed for local work. Its hostname is the WebAuthn
+relying-party ID, never the request Host header or an IP. Keep the hostname stable:
+passkeys created on localhost cannot sign in at the deployed hostname.
+
+Authenticated sessions live in SQLite for a fixed 30 days, anonymous ceremony
+sessions for five minutes. Cookies are `__Host-spinel-session`, HttpOnly, Secure,
+SameSite=Strict and Path=/; only SHA-256 hashes of random 256-bit tokens are
+stored. Sign-in rotates the session. Sign-out deletes its row and challenges;
+expiry, disabling a user or deleting their sessions takes effect on the next
+request. Session lifetime is fixed, not extended on every read.
+
+Pages redirect signed-out users to `/sign-in`. APIs return 401 with sign-in
+guidance, and never document data; the frontend navigates to sign-in on an
+expired session. Authentication POSTs require the configured Origin and JSON.
+Authentication and protected API responses are not cached. Static frontend assets
+are public and contain no document data. Invite/share access will be added only
+through their tickets, with separate access checks. Admin accounts are sent to
+`/admin`, a placeholder for admin tools, rather than the document dashboard.
+
+The initial schema is in `src/server/auth/store.ts`: users, credentials, hashed
+sessions and session-bound challenges. `createUser` is an internal seam for
+first-admin/invite flows and test fixtures; it has no HTTP route. Credentials
+store public keys, counters and transports. Provider names are display hints,
+never evidence that an authenticator is trusted.
+
+These choices favour revocation and a small SQLite footprint for the Operator,
+reload persistence and clear recovery for the Owner, equivalent access for the
+Collaborator, and a closed workspace boundary for the Link guest. Recorded
+2026-10-17 in [decision #8](https://github.com/mxbaylee/spinel/issues/8).
+
+## Reused reference behaviour
+
+The circus-health reference at `2ab77af`, written by Spinel’s owner, supplied the
+options and lifecycle below. Its unchanged naming helper and 56 AAGUID names now
+live under `src/server/auth/`; the factual mapping source and revision remain in
+that helper and [the notices](../THIRD-PARTY-NOTICES.md). The temporary
+`docs/reference/passkeys/` folder has been removed.
+
+- Registration uses `rpName: Spinel`, an opaque stable user ID, no attestation,
+  required resident keys and user verification, and excludes the user’s existing
+  credential IDs with their stored transports. It does not force an authenticator
+  attachment, allowing phone and external-provider choices.
+- Discoverable sign-in omits `allowCredentials`. Verification checks the challenge,
+  configured origin, RP ID and user verification; sign-in also matches the returned
+  user handle to the credential owner.
+- Random 32-byte challenge IDs expire after five minutes; at most 1,000 are live.
+  Each is tied to its requesting session and ceremony. Taking marks it used;
+  finishing deletes it. Replays and cross-session use fail. Cancellation,
+  revocation and expiry are checked again after asynchronous verification.
+- Counter updates compare-and-set against the value used during verification;
+  stale writes or removed credentials fail. Synced passkeys reporting 0 → 0 work.
+- Cancel aborts the browser ceremony immediately and requests server cancellation
+  without waiting for the network. Browser error names are translated to retry
+  guidance. No PRF extension or second confirmation ceremony is used.
+
+SimpleWebAuthn performs WebAuthn cryptographic verification; see its
+[server documentation](https://simplewebauthn.dev/docs/packages/server) and
+[browser documentation](https://simplewebauthn.dev/docs/packages/browser).
+
+## Manual provider check
+
+SPN-002 requires the owner to sign in once with a browser passkey, 1Password and
+Proton Pass. Mocked verification and virtual authenticators cannot prove real
+provider compatibility. Record each result and browser/provider versions in the
+PR; missing or failed results block merging. Also check adding a passkey from a
+phone if that is how the second device will be used.
+
+Run `npm run passkey:check` in this branch. This separate script creates a
+disposable database in the OS temporary directory and serves the built app only
+on `127.0.0.1:3102`. It prints a random one-use localhost link valid for five minutes
+that opens Settings already signed in as a fixture user. The application server
+has no such link or environment-based authentication bypass. This fixture does
+not touch `data/spinel.sqlite` and is not deployed.
+
+1. Open the printed link in a browser with your passkey managers installed.
+2. Add one passkey using the browser, one using 1Password and one using Proton
+   Pass. Confirm the provider labels in Settings (some browsers return a generic
+   AAGUID, displayed as “Passkey”; numbered names distinguish duplicates).
+3. Sign out, sign in with the browser passkey, and reload the dashboard.
+4. Repeat sign-out/sign-in with 1Password, then with Proton Pass.
+5. Report each success or the exact visible error. Stop the fixture with Ctrl+C.
+   Its printed temporary directory can be deleted afterwards; remove the test
+   credentials from your managers when finished. They belong to this fixture.
+
+Restarting the script creates a new fixture account, so use its latest entry link
+and newly registered credentials. It cannot restore an earlier fixture session.

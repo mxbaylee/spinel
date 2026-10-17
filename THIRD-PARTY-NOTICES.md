@@ -6,13 +6,13 @@ ship with them.
 
 | Path in Spinel | Source | License | Changes |
 | --- | --- | --- | --- |
-| `docs/reference/passkeys/passkey-provider-names.json` | [passkeydeveloper/passkey-authenticator-aaguids](https://github.com/passkeydeveloper/passkey-authenticator-aaguids) at `774b3cf`, via circus-health | Factual name mappings | Names only; icons dropped |
+| `src/server/auth/passkey-provider-names.json` | [passkeydeveloper/passkey-authenticator-aaguids](https://github.com/passkeydeveloper/passkey-authenticator-aaguids) at `774b3cf`, via circus-health | Factual name mappings | Names only; icons dropped |
 | `docs/reference/icons/person-icon-catalog.json` | [lucide-icons/lucide](https://github.com/lucide-icons/lucide) icon metadata at `a79b2d1`, via circus-health | ISC (Lucide, which also keeps MIT notices for icons derived from Feather) | Tags and categories only |
 
 Code from [mxbaylee/circus-health](https://github.com/mxbaylee/circus-health) isn't listed:
 Baylee Schmeisser, Spinel's owner, wrote it.
 
-When SPN-002 (passkeys) or SPN-036 (icons) moves these into `src/`, update the paths here.
+When SPN-036 moves the icon metadata into `src/`, update its path here.
 
 When adding an entry:
 

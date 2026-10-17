@@ -61,3 +61,47 @@ p {
     padding: 24px;
   }
 }
+header,
+nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+header {
+  justify-content: space-between;
+}
+a {
+  color: #76456b;
+}
+a.brand {
+  text-decoration: none;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid #b9a7b5;
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #51334b;
+  background: #fff;
+}
+button.primary {
+  color: #fff;
+  background: #76456b;
+  border-color: #76456b;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+:focus-visible {
+  outline: 3px solid #76456b;
+  outline-offset: 4px;
+}
+[role='alert'] {
+  color: #9c2634;
+}
+li {
+  padding: 8px 0;
+}
