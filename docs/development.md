@@ -9,7 +9,7 @@ npm run dev
 ```
 
 The Node server opens `http://localhost:3000` in your browser, serves passkey sign-in and a protected
-React dashboard with private folders and empty document views through Vite, and creates `data/spinel.sqlite` on first startup.
+React dashboard with private folders and a spreadsheet editor through Vite, and creates `data/spinel.sqlite` on first startup.
 Vite updates the frontend as you edit; Node watch restarts the server on changes.
 Use `npm run dev -- --no-open` to suppress the browser opening, and Ctrl+C to stop.
 No database service or environment file is needed. An empty database has no accounts;
@@ -99,7 +99,8 @@ see [the process](todo/process.md#pull-requests-and-main).
   Univer Workspace is reference material only, never forked or deployed.
   Copied code must preserve license headers, note modifications and appear in
   `THIRD-PARTY-NOTICES.md`. No Univer code is copied by the scaffold. Owner,
-  chat 2026-10-17. Editors and SDK dependencies arrive in SPN-007.
+  chat 2026-10-17. The first [spreadsheet editor](spreadsheets.md) pins the
+  open-source preset and core packages at 1.1.0.
 
 These choices favour a small setup for the Operator, dependable storage and
 rendering for the Owner, a consistent origin for the Collaborator, and an

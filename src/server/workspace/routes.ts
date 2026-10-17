@@ -3,10 +3,12 @@ import type { Request, Response, NextFunction } from 'express';
 import { AuthError, AuthStore } from '../auth/store.ts';
 import { cookieToken } from '../auth/routes.ts';
 import { WorkspaceStore } from './store.ts';
+import { SheetStore } from './sheets.ts';
 
 export function workspaceRoutes(auth: AuthStore, origin: string) {
   const router = express.Router();
   const store = new WorkspaceStore(auth);
+  const sheets = new SheetStore(store);
   const owner = (request: Request) => {
     const id = auth.session(cookieToken(request))?.user_id;
     if (!id) throw new AuthError(401, 'Sign in to continue.');
@@ -22,6 +24,18 @@ export function workspaceRoutes(auth: AuthStore, origin: string) {
     )
       throw new AuthError(403, 'Open Spinel at its configured address and try again.');
     next();
+  });
+  router.get('/:id/sheet', (request, response) =>
+    response.json(sheets.load(owner(request), String(request.params.id))),
+  );
+  router.put('/:id/sheet', express.json({ limit: '10mb', strict: true }), (request, response) => {
+    response.json(
+      sheets.save(
+        owner(request),
+        String(request.params.id),
+        payload(request, ['snapshot', 'revision', 'writeId']),
+      ),
+    );
   });
   router.use(express.json({ limit: '8kb', strict: true }));
   function payload(request: Request, allowed: string[]) {
@@ -54,9 +68,19 @@ export function workspaceRoutes(auth: AuthStore, origin: string) {
     }),
   );
   router.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
-    const status = error instanceof AuthError ? error.status : 400;
+    const status =
+      error instanceof AuthError
+        ? error.status
+        : (error as { status?: number })?.status === 413
+          ? 413
+          : 400;
     response.status(status).json({
-      error: error instanceof AuthError ? error.message : 'Could not save this change. Try again.',
+      error:
+        error instanceof AuthError
+          ? error.message
+          : status === 413
+            ? 'This spreadsheet is too large to save. Changes have not been saved.'
+            : 'Could not save this change. Try again.',
     });
   });
   return router;

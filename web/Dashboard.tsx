@@ -1,6 +1,11 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { ITEM_KINDS, kindLabel } from '../src/shared/workspace.ts';
 import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
+
+import type { NavigationGuard } from './navigation.ts';
+const SheetEditor = lazy(() =>
+  import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
+);
 
 type Action = { mode: 'new' | 'rename' | 'move'; item?: WorkspaceItem };
 async function itemsRequest<T>(path = '', method = 'GET', body?: unknown): Promise<T> {
@@ -18,10 +23,12 @@ async function itemsRequest<T>(path = '', method = 'GET', body?: unknown): Promi
 }
 const selectedId = () => new URLSearchParams(location.search).get('item');
 
-export function Dashboard() {
+export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   const [items, setItems] = useState<WorkspaceItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(selectedId);
+  const currentRef = useRef(currentId);
+  currentRef.current = currentId;
   const [action, setAction] = useState<Action | null>(null);
   const [name, setName] = useState('');
   const [kind, setKind] = useState<ItemKind>('folder');
@@ -36,6 +43,14 @@ export function Dashboard() {
       })
       .catch((failure) => setError(failure.message));
     const back = () => {
+      if (!navigation.allow()) {
+        history.pushState(
+          null,
+          '',
+          currentRef.current ? `/?item=${encodeURIComponent(currentRef.current)}` : '/',
+        );
+        return;
+      }
       setCurrentId(selectedId());
       setAction(null);
       setError('');
@@ -74,6 +89,7 @@ export function Dashboard() {
       stack.push({ item: child, path: [...entry.path, child] });
   }
   function navigate(id: string | null) {
+    if (id !== currentId && !navigation.allow()) return;
     history.pushState(null, '', id ? `/?item=${encodeURIComponent(id)}` : '/');
     setCurrentId(id);
     setAction(null);
@@ -213,6 +229,15 @@ export function Dashboard() {
                     <p>This folder is empty. Choose New to add a folder or document.</p>
                   )}
                 </>
+              ) : current.kind === 'sheet' ? (
+                <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
+                  <SheetEditor
+                    key={current.id}
+                    id={current.id}
+                    name={current.name}
+                    onDirty={navigation.dirty}
+                  />
+                </Suspense>
               ) : (
                 <section
                   className="empty-document"

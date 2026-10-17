@@ -21,7 +21,7 @@ body {
   font-size: 24px;
   font-weight: 700;
 }
-main {
+.workspace > main {
   padding-top: 72px;
 }
 .eyebrow {
@@ -54,21 +54,22 @@ p {
   .workspace {
     padding: 24px;
   }
-  main {
+  .workspace > main {
     padding-top: 48px;
   }
   .welcome {
     padding: 24px;
   }
 }
-header,
-nav {
+.workspace > header,
+.workspace > header nav,
+.files > nav {
   display: flex;
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
 }
-header {
+.workspace > header {
   justify-content: space-between;
 }
 a {
@@ -77,7 +78,7 @@ a {
 a.brand {
   text-decoration: none;
 }
-button {
+.workspace button:not(.univer-container *) {
   font: inherit;
   cursor: pointer;
   border: 1px solid #b9a7b5;
@@ -91,7 +92,7 @@ button.primary {
   background: #76456b;
   border-color: #76456b;
 }
-button:disabled {
+.workspace button:not(.univer-container *):disabled {
   opacity: 0.6;
   cursor: wait;
 }
@@ -102,15 +103,15 @@ button:disabled {
 [role='alert'] {
   color: #9c2634;
 }
-li {
+.workspace li:not(.univer-container *) {
   padding: 8px 0;
 }
-label {
+.workspace label:not(.univer-container *) {
   display: block;
   margin: 16px 0;
 }
-input,
-select {
+.workspace input:not(.univer-container *),
+.workspace select:not(.univer-container *) {
   display: block;
   width: 100%;
   max-width: 600px;
@@ -146,10 +147,10 @@ select {
 .files {
   min-width: 0;
 }
-.files nav {
+.files > nav {
   gap: 8px;
 }
-.files nav button {
+.files > nav button {
   padding: 6px;
 }
 .folder-heading {
@@ -200,8 +201,32 @@ select {
   .dashboard {
     grid-template-columns: minmax(0, 1fr);
   }
-  .dashboard aside {
+  .dashboard > aside {
     border-bottom: 1px solid #e3dfe8;
     padding-bottom: 16px;
   }
+}
+
+.sheet-editor {
+  margin-top: 20px;
+}
+.save-status {
+  min-height: 44px;
+  padding: 10px 0;
+  font-size: 14px;
+}
+.save-status button {
+  margin-left: 12px;
+}
+.univer-container {
+  height: 640px;
+  min-height: 400px;
+  border: 1px solid #e3dfe8;
+  position: relative;
+}
+.dashboard:has(.sheet-editor) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.dashboard:has(.sheet-editor) > aside {
+  display: none;
 }
