@@ -5,7 +5,9 @@ startup on the owner's droplet passed on 2026-10-17. Do not mark SPN-029 complet
 owner’s fresh-host run, external port scan, measured memory and update/reconnect
 evidence are recorded. The editor-enabled image was deployed successfully;
 live editor recovery across a subsequent restart and a two-editor memory sample
-also passed. Public firewall closure and external scans remain pending.
+also passed. The owner reports the public firewall is attached; private access still
+works. External IPv4 scan evidence remains pending. The owner waived the external
+IPv6 check on 2026-10-17; it is not a completion requirement for SPN-029.
 
 ## Topology
 
@@ -98,10 +100,15 @@ to invite a separate everyday account. Check passkey sign-in, the certificate, a
 that a TLS 1.2 client fails while TLS 1.3 succeeds. `ss -lntup` should show the app on
 loopback and Caddy only on the Tailscale IP; investigate all other listeners.
 
-From a machine outside the tailnet, scan the public IPv4 and IPv6 addresses:
-`nmap -Pn -sT -p- IPV4` and `nmap -6 -Pn -sT -p- IPV6`. Also test public UDP 443 and the Tailscale UDP listener
+From a machine outside the tailnet, scan the public IPv4 address:
+`nmap -Pn -sT -p- IPV4`. Also test public UDP 443 and the Tailscale UDP listener
 as applicable; no public service should answer. Record date, vantage point,
 commands and results. A local scan or firewall screenshot is insufficient.
+The owner explicitly removed external IPv6 scanning from SPN-029 acceptance on
+2026-10-17 ([decision #17](https://github.com/mxbaylee/spinel/issues/17)): the
+current Mac connection has no global IPv6 address or route and no alternate
+vantage point is available. IPv6 firewall closure remains required; an unperformed
+scan is not a passing result. No replacement IPv6-check ticket is required.
 
 Before update, note the current image ID and take a verified backup using the
 SPN-030 process once available. Build/pull the new reviewed image, update only
@@ -117,14 +124,15 @@ measured target-host results, including total OS/Tailscale overhead.
 
 ## Remaining acceptance evidence
 
-- Confirm the owner's ongoing private-access workflow; Mac HTTPS and SSH pass
-  with Tailscale connected and Proton disconnected. Simultaneous VPN use has failed.
-- Certificate renewal; initial startup, TLS and the complete reboot/unlock
-  recovery check passed.
-- Public firewall closure with a tested Recovery Console, and external IPv4/IPv6 scans.
-- Reassess the combined update and editor-restart evidence against acceptance: the
-  version update preserved accounts; the later same-image restart preserved sheets
-  and open-editor saving. No cross-version test with open editors is claimed.
+- Complete the external IPv4 TCP scan and applicable UDP checks. The first full
+  TCP attempt timed out and provides no complete scan result.
+- The external IPv6 check was removed by the owner; it is not a pending task.
+
+Private Mac HTTPS/SSH, reboot/unlock recovery, two-editor memory and editor
+recovery passed. The independent reviewer accepted the combined version-update
+and later editor-restart evidence. Automatic certificate renewal is configured;
+forced renewal and simultaneous Proton/Tailscale use are not additional SPN-029
+acceptance requirements.
 
 Local preparation on 2026-10-17 passed Docker build, Caddy configuration validation,
 container access checks and SQLite persistence across container restart. An idle
@@ -231,3 +239,26 @@ The actual version update preceded creation of these sheets. This later check
 used the same immutable image on both sides of the restart; it verifies document
 persistence and open-editor recovery through the deployment restart mechanism,
 not an additional cross-version editing test.
+
+### Firewall closure and scan scope, 2026-10-17
+
+The owner confirmed a working DigitalOcean Recovery Console shell, then reported
+attaching `spinel-private` with no inbound rules and the default outbound TCP,
+UDP and ICMP rules for IPv4 and IPv6. The agent did not independently inspect the
+provider firewall configuration. Private SSH to `100.95.139.63` and verified
+HTTPS to the tailnet hostname succeeded afterward; the owner also confirmed SSH
+worked after an initial timeout.
+
+A full TCP scan of `147.182.177.128` from the Mac's public Wi-Fi route ran with
+`nmap -Pn -sT -p- --reason -T4 --max-retries 2 --min-rate 200 --max-rate 500 --host-timeout 15m`.
+It stopped at the host timeout after 900.58 seconds, so it is incomplete and does
+not establish that all public TCP ports are filtered. A UDP scan could not start
+without local elevated privileges. Neither is recorded as a pass.
+
+The owner then requested: "Let's just skip ipv6 check for now and remove it from
+the todo." This explicitly revises the earlier dual-stack scan requirement in
+this guide and #17. The Operator can proceed without another IPv6-capable machine;
+the Owner and Collaborator keep the same private deployment and data protection;
+the Link guest's access boundaries are unchanged. The tradeoff is absent external
+IPv6 verification, accepted by the owner. IPv6 configuration and firewall rules
+are unchanged. No IPv6 scan success is claimed.
