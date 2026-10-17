@@ -30,7 +30,8 @@ sharing and content editing remain separate tickets.
 timestamps in the existing SQLite database. No editor snapshot format is chosen
 until the editor integration. Parent validation, cycle detection and writes run
 inside an immediate transaction; a failed rename/move combination rolls back.
-The owner cannot change an item's owner or kind through the API.
+SQLite connections wait up to five seconds for another local writer instead of
+immediately rejecting a valid save on a brief lock. The owner cannot change an item's owner or kind through the API.
 
 `/api/items` lists or creates items; `/api/items/:id` reads, renames or moves one.
 All operations require a current, active, non-admin owner. Requests for another

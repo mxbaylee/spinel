@@ -26,6 +26,7 @@ test('creates SQLite in a new directory and preserves data when reopened', async
   let database = openDatabase(path);
   try {
     expect(database.prepare('PRAGMA foreign_keys').get()).toMatchObject({ foreign_keys: 1 });
+    expect(database.prepare('PRAGMA busy_timeout').get()).toMatchObject({ timeout: 5000 });
     database.exec(
       "PRAGMA user_version = 7; CREATE TABLE fixture (value TEXT); INSERT INTO fixture VALUES ('kept');",
     );
