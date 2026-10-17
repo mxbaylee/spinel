@@ -41,9 +41,14 @@ export async function createApp(options: AppOptions) {
       response.status(404).json({ error: 'Not found' });
     });
 
-    const pages = ['/sign-in', '/setup', '/', '/settings', '/admin'];
+    const pages = ['/sign-in', '/setup', '/invite', '/', '/settings', '/admin'];
     app.get(pages, (request, response, next) => {
       response.set('Cache-Control', 'no-store');
+      if (request.path === '/invite') {
+        response.set('Referrer-Policy', 'no-referrer');
+        next();
+        return;
+      }
       if (request.path === '/setup') {
         response.set('Referrer-Policy', 'no-referrer');
         if (auth.userCount()) {

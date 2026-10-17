@@ -2,8 +2,8 @@
 
 Spinel signs in with discoverable passkeys from a browser, password manager or
 phone. Settings adds another passkey to the signed-in account and lists provider
-names. [First-admin setup](setup.md) creates the initial admin; invitations
-(SPN-004) will create everyday accounts. There is no public signup or password
+names. [First-admin setup](setup.md) creates the initial admin; [invitations](invitations.md)
+create everyday accounts. There is no public signup or password
 fallback. Recovery is an Operator-issued invite. Sign-in does not use PRF or encryption key wrapping.
 These are the owner’s SPN-002 rules, 2026-10-17.
 

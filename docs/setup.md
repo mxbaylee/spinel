@@ -10,7 +10,7 @@ The command prints a one-time link valid for 30minutes. Open that link, choose
 **Create admin passkey**, and complete your browser or password manager’s prompt.
 A successful claim opens the Admin panel. Admin accounts cannot open the document
 dashboard or view, edit or create documents, including through share links.
-Invite a separate everyday account for that (SPN-004). Admin is the user’s
+[Invite a separate everyday account](invitations.md) for that. Admin is the user’s
 `is_admin` flag, not a separate credential type.
 
 Only an instance with **zero users**, including disabled users, can be claimed.
