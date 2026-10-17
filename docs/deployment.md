@@ -4,7 +4,8 @@ This package targets a fresh Ubuntu droplet with 2 GB RAM and one CPU. Initial
 startup on the owner's droplet passed on 2026-10-17. Do not mark SPN-029 complete until the
 owner’s fresh-host run, external port scan, measured memory and update/reconnect
 evidence are recorded. The editor-enabled image was deployed successfully;
-live editor reconnection and two-editor load checks remain pending.
+live editor recovery across a subsequent restart and a two-editor memory sample
+also passed. Public firewall closure and external scans remain pending.
 
 ## Topology
 
@@ -120,9 +121,10 @@ measured target-host results, including total OS/Tailscale overhead.
   with Tailscale connected and Proton disconnected. Simultaneous VPN use has failed.
 - Certificate renewal; initial startup, TLS and the complete reboot/unlock
   recovery check passed.
-- Public firewall closure, external IPv4/IPv6 scans and two-editor memory on the target.
-- Verify document persistence and editor reconnection across an update; the
-  editor-enabled image is deployed and existing user/passkey counts are preserved.
+- Public firewall closure with a tested Recovery Console, and external IPv4/IPv6 scans.
+- Reassess the combined update and editor-restart evidence against acceptance: the
+  version update preserved accounts; the later same-image restart preserved sheets
+  and open-editor saving. No cross-version test with open editors is claimed.
 
 Local preparation on 2026-10-17 passed Docker build, Caddy configuration validation,
 container access checks and SQLite persistence across container restart. An idle
@@ -157,7 +159,7 @@ Idle `docker stats --no-stream`: Node 44.08 MiB, Caddy 9.684 MiB. Host `free -m`
 515 MiB used and 1452 MiB available. These are one idle sample, not the required
 two-editor load result. Public SSH remains available during bootstrap. Private
 client connectivity, cloud-firewall closure, external IPv4/IPv6 scans,
-renewal and live editor checks remain pending. The owner subsequently
+renewal and live editor checks were pending at that point. The owner subsequently
 confirmed first-admin setup, an invitation and invited-user sign-in succeeded.
 
 ### Editor image update and locked reboot, 2026-10-17
@@ -169,7 +171,8 @@ Before activation, Spinel was stopped and its complete app directory copied into
 permissions. Archive listing passed; this is not a tested restore or a substitute
 for SPN-030. Preflight/startup and certificate-verified HTTPS returned successfully.
 Counts remained two users and two passkeys, and the sheet snapshot table exists.
-No document contents were inspected. Live editor continuity is not yet verified.
+No document contents were inspected. Live editor continuity was not yet verified
+at that point; the later restart check is recorded below.
 
 With the owner's explicit readiness and passphrase available, the host rebooted.
 The boot ID changed from `5c086f12-6cc2-4716-8219-379d8781a1c1` to
@@ -183,7 +186,7 @@ restart. Certificate-verified HTTPS returned 200. SQLite `quick_check` returned
 sheet snapshots yet, so this does not establish document persistence.
 
 The post-recovery idle sample was Node 110.2 MiB, Caddy 51.47 MiB; host memory was
-439 MiB used and 1528 MiB available. Two-editor measurement remains outstanding.
+439 MiB used and 1528 MiB available. The later two-editor sample is below.
 
 For this host, after each reboot, run each command separately in the SSH terminal.
 The first prompts for the owner-held passphrase; the second mounts the unlocked
@@ -206,3 +209,25 @@ HTTPS 200. SSH to `100.95.139.63` also succeeded using the already-trusted publi
 host key (`HostKeyAlias=147.182.177.128`) and returned the new boot ID. At this
 check Tailscale was connected and Proton was disconnected. This verifies private
 management access in that configuration, not simultaneous VPN compatibility.
+
+### Two editors and restart persistence, 2026-10-17
+
+The owner opened two test spreadsheets in separate tabs, entered values and
+confirmed both were open after being asked to wait for saved status. Read-only
+metadata confirmed two snapshots at revisions `[2, 2]`, totaling 2154 bytes.
+Node used 116.4 MiB and Caddy 52.46 MiB; host memory was 458 MiB used and 1509 MiB
+available, with no swap. This is a small two-editor sample, not a large-workbook
+stress test or a co-editing test.
+
+With those tabs left open, `systemctl restart spinel` exercised stop/preflight/start.
+Certificate-verified HTTPS returned 200 afterward. The SHA-256 of sorted snapshot
+rows (IDs, native snapshots, revisions and write IDs) was identical before and
+after: `04a98583dcfdec2bc4a3eab443a64e805f4e5476395420331fb75ebd603de382`.
+SQLite `quick_check` passed. The owner was then asked to edit both existing tabs
+without reloading, wait for Saved, and reload to check the new values; they
+reported "No error". Read-only metadata subsequently showed revisions `[3, 4]`.
+
+The actual version update preceded creation of these sheets. This later check
+used the same immutable image on both sides of the restart; it verifies document
+persistence and open-editor recovery through the deployment restart mechanism,
+not an additional cross-version editing test.
