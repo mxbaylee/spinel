@@ -17,7 +17,7 @@ root) and owned folders; moving a folder also moves its existing subtree. Its ow
 folder and descendants are excluded from destinations, and the server rejects
 such a request even if sent directly. A refused move changes nothing. Browser
 Back and Forward restore navigation; copying the URL opens the same item for its
-owner after sign-in.
+owner while signed in.
 
 Names are trimmed and contain 1–120 characters, without control characters or
 slashes. Duplicate names are allowed, since IDs identify items. The move picker
