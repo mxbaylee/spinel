@@ -35,12 +35,18 @@ test('document UI preserves rich text and embedded images through reload and off
     },
   ]);
   const errors: string[] = [];
+  let releaseImage = () => {};
   page.on('pageerror', (error) => errors.push(error.message));
   try {
     await page.goto(`/?item=${item.id}`);
     const editor = page.getByRole('region', { name: 'Doc document', exact: true });
     await expect(editor.getByRole('status')).toHaveText('All changes saved.', { timeout: 20000 });
     await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeVisible();
+    await page.keyboard.type('/');
+    await expect(page.getByText('Insert Image', { exact: true })).toBeVisible();
+    await expect(page.getByText('Insert Shape', { exact: true })).not.toBeVisible();
+    await page.keyboard.press('Escape');
+    await page.keyboard.press('Backspace');
     await page.keyboard.type('My journal');
     await expect
       .poll(
@@ -76,6 +82,15 @@ test('document UI preserves rich text and embedded images through reload and off
     await page.keyboard.press('End');
     await page.keyboard.press('Enter');
     await expect(editor.getByRole('button', { name: 'Image', exact: true })).toBeEnabled();
+    let imageRequested = false;
+    const delayedImage = new Promise<void>((resolve) => {
+      releaseImage = resolve;
+    });
+    await page.route(`**/api/items/${item.id}/images/*`, async (route) => {
+      imageRequested = true;
+      await delayedImage;
+      await route.continue();
+    });
     const chooser = page.waitForEvent('filechooser', { timeout: 10000 });
     await editor.getByRole('button', { name: 'Image', exact: true }).click();
     await (
@@ -87,6 +102,14 @@ test('document UI preserves rich text and embedded images through reload and off
         .png()
         .toBuffer(),
     });
+    await expect.poll(() => imageRequested).toBe(true);
+    await expect(editor.getByRole('status')).toContainText('Inserting image');
+    const navigationWarning = page.waitForEvent('dialog');
+    page.once('dialog', (dialog) => dialog.dismiss());
+    await page.getByRole('link', { name: 'Settings', exact: true }).click();
+    await navigationWarning;
+    await expect(page).toHaveURL(new RegExp(item.id));
+    releaseImage();
     await expect
       .poll(
         async () =>
@@ -94,6 +117,7 @@ test('document UI preserves rich text and embedded images through reload and off
             .drawingsOrder.length,
       )
       .toBe(1);
+    await page.unroute(`**/api/items/${item.id}/images/*`);
 
     const surface = editor.locator('.univer-container');
     // The document is canvas-rendered; click the visible heading to restore text focus.
@@ -153,6 +177,7 @@ test('document UI preserves rich text and embedded images through reload and off
     expect((await read()).body.dataStream).toContain('Offline ');
     expect(errors).toEqual([]);
   } finally {
+    releaseImage();
     await context.setOffline(false);
     db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
     db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);

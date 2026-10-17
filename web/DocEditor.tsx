@@ -4,6 +4,11 @@ import {
   IImageIoService,
   ImageSourceType,
   ImageUploadStatusType,
+  ICommandService,
+  Inject,
+  Injector,
+  Plugin,
+  UniverInstanceType,
 } from '@univerjs/core';
 import { ImageIoService } from '@univerjs/drawing';
 import {
@@ -11,6 +16,11 @@ import {
   UniverDrawingUIPlugin,
   UniverDocsDrawingPlugin,
   UniverDocsDrawingUIPlugin,
+  DOCS_SHAPE_MENU_ID,
+  DOCS_SHAPE_BELOW_MENU_ID,
+  InsertDocImageCommand,
+  InsertDocRectangleShapeCommand,
+  InsertDocEllipseShapeCommand,
 } from '@univerjs/preset-docs-drawing';
 import { UniverDocsHyperLinkPreset } from '@univerjs/preset-docs-hyper-link';
 import linkEnUS from '@univerjs/preset-docs-hyper-link/locales/en-US';
@@ -45,18 +55,22 @@ export function DocEditor({
   useEffect(() => {
     let disposed = false;
     let uploads = 0;
+    let insertions = 0;
+    let uploaded = 0;
+    let capture = () => {};
     let disposeEditor: (() => void) | undefined;
     let save: Autosave | undefined;
     let lastState = status;
     const publish = (state: SaveState) => {
       lastState = state;
       if (disposed) return;
-      const dirty = uploads > 0 || state.dirty;
+      const busy = uploads > 0 || insertions > 0;
+      const dirty = busy || state.dirty;
       onDirty(dirty);
       setStatus({
         ...state,
         dirty,
-        message: uploads ? 'Uploading image — keep this tab open.' : state.message,
+        message: busy ? 'Inserting image — keep this tab open.' : state.message,
       });
     };
     void (async () => {
@@ -72,6 +86,8 @@ export function DocEditor({
           setUploadError('');
           publish(lastState);
           try {
+            if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type))
+              throw new Error('Choose a PNG, JPEG or WebP image.');
             const response = await fetch(`/api/items/${id}/images`, {
               method: 'POST',
               headers: { 'Content-Type': file.type },
@@ -80,6 +96,7 @@ export function DocEditor({
             });
             const image = await response.json();
             if (!response.ok) throw new Error(image.error ?? 'Image upload failed.');
+            uploaded++;
             return {
               imageId: crypto.randomUUID(),
               imageSourceType: ImageSourceType.URL,
@@ -102,6 +119,49 @@ export function DocEditor({
           }
         }
       }
+      class TrackedImageInsertion extends Plugin {
+        static override pluginName = 'SPINEL_DOC_IMAGE_INSERTION';
+        static override type = UniverInstanceType.UNIVER_DOC;
+        protected _injector: Injector;
+        constructor(_config: unknown, injector: Injector) {
+          super();
+          this._injector = injector;
+        }
+        override onRendered() {
+          const commands = this._injector.get(ICommandService);
+          commands.unregisterCommand(InsertDocImageCommand.id);
+          this.disposeWithMe(
+            commands.registerCommand({
+              ...InsertDocImageCommand,
+              handler: async (accessor, params, options) => {
+                insertions++;
+                const before = uploaded;
+                publish(lastState);
+                try {
+                  const result = await InsertDocImageCommand.handler(
+                    accessor,
+                    params as Parameters<typeof InsertDocImageCommand.handler>[1],
+                    options,
+                  );
+                  if (!result && uploaded > before && !disposed)
+                    setUploadError('The image was uploaded but could not be inserted.');
+                  return result;
+                } catch {
+                  if (!disposed) setUploadError('The image could not be inserted.');
+                  return false;
+                } finally {
+                  // Upload completion precedes dimension loading and the drawing mutation.
+                  // Capture that mutation before allowing navigation to report a clean editor.
+                  capture();
+                  insertions--;
+                  publish(lastState);
+                }
+              },
+            }),
+          );
+        }
+      }
+      Inject(Injector)(TrackedImageInsertion, undefined, 1);
       const { univer, univerAPI } = createUniver({
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS) },
@@ -116,9 +176,22 @@ export function DocEditor({
           UniverDrawingUIPlugin,
           UniverDocsDrawingPlugin,
           UniverDocsDrawingUIPlugin,
+          TrackedImageInsertion,
         ],
         presets: [
-          UniverDocsCorePreset({ container: container.current! }),
+          UniverDocsCorePreset({
+            container: container.current!,
+            menu: Object.fromEntries(
+              [
+                DOCS_SHAPE_MENU_ID,
+                DOCS_SHAPE_BELOW_MENU_ID,
+                InsertDocRectangleShapeCommand.id,
+                InsertDocEllipseShapeCommand.id,
+                `${InsertDocRectangleShapeCommand.id}.below`,
+                `${InsertDocEllipseShapeCommand.id}.below`,
+              ].map((id) => [id, { hidden: true }]),
+            ),
+          }),
           UniverDocsHyperLinkPreset(),
         ],
       });
@@ -145,7 +218,7 @@ export function DocEditor({
         publish,
       );
       controller.current = save;
-      const capture = () => {
+      capture = () => {
         if (disposed) return;
         try {
           save!.changed(document.save());

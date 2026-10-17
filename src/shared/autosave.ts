@@ -27,6 +27,7 @@ export class Autosave {
   sending = false;
   disposed = false;
   blocked = false;
+  rejected = false;
   send: (request: SaveRequest) => Promise<{ revision: number }>;
   state: (state: SaveState) => void;
   constructor(
@@ -45,6 +46,7 @@ export class Autosave {
   }
   changed(snapshot: unknown) {
     this.latest = JSON.stringify(snapshot);
+    this.acceptCorrection();
     if (this.blocked) return;
     this.state({
       dirty: this.dirty,
@@ -60,6 +62,15 @@ export class Autosave {
   retry() {
     this.blocked = false;
     void this.flush();
+  }
+  acceptCorrection() {
+    // Only explicit validation/size rejection proves the pending write never committed.
+    // A corrected snapshot may replace it; uncertain responses must replay exactly.
+    if (this.rejected && this.pending && this.latest !== this.pending.text) {
+      this.pending = undefined;
+      this.blocked = false;
+      this.rejected = false;
+    }
   }
   async flush() {
     clearTimeout(this.timer);
@@ -80,6 +91,7 @@ export class Autosave {
       this.revision = result.revision;
       this.saved = pending.text;
       this.pending = undefined;
+      this.rejected = false;
       if (!this.disposed) {
         this.state({
           dirty: this.dirty,
@@ -90,6 +102,8 @@ export class Autosave {
       }
     } catch (error) {
       this.blocked = error instanceof SaveFailure && error.status >= 400 && error.status < 500;
+      this.rejected = error instanceof SaveFailure && [400, 413].includes(error.status);
+      this.acceptCorrection();
       if (!this.disposed) {
         this.state({
           dirty: true,
