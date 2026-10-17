@@ -116,9 +116,10 @@ measured target-host results, including total OS/Tailscale overhead.
 
 ## Remaining acceptance evidence
 
-- Reliable private client/management access alongside the owner's VPN configuration.
-- Recovery after owner unlocks the rebooted volume, and certificate renewal;
-  locked-volume startup refusal, initial startup and TLS passed.
+- Confirm the owner's ongoing private-access workflow; Mac HTTPS and SSH pass
+  with Tailscale connected and Proton disconnected. Simultaneous VPN use has failed.
+- Certificate renewal; initial startup, TLS and the complete reboot/unlock
+  recovery check passed.
 - Public firewall closure, external IPv4/IPv6 scans and two-editor memory on the target.
 - Verify document persistence and editor reconnection across an update; the
   editor-enabled image is deployed and existing user/passkey counts are preserved.
@@ -174,5 +175,34 @@ With the owner's explicit readiness and passphrase available, the host rebooted.
 The boot ID changed from `5c086f12-6cc2-4716-8219-379d8781a1c1` to
 `7d84c749-aac6-4f67-a7da-32356a6f7da5`. The volume remained `crypto_LUKS`, with no
 mapper device or mounted data root. No Docker containers ran. Systemd retried,
-and preflight refused startup because the encrypted mount was absent. Recovery
-after the owner unlocks and mounts the volume is pending.
+and preflight refused startup because the encrypted mount was absent. The owner
+then unlocked the mapping interactively. After mounting it, systemd's next retry
+started both containers automatically at 23:14:36 UTC, without a manual service
+restart. Certificate-verified HTTPS returned 200. SQLite `quick_check` returned
+`ok`; both users and both passkeys remained. There were no workspace items or
+sheet snapshots yet, so this does not establish document persistence.
+
+The post-recovery idle sample was Node 110.2 MiB, Caddy 51.47 MiB; host memory was
+439 MiB used and 1528 MiB available. Two-editor measurement remains outstanding.
+
+For this host, after each reboot, run each command separately in the SSH terminal.
+The first prompts for the owner-held passphrase; the second mounts the unlocked
+filesystem. Neither formats the volume:
+
+```bash
+cryptsetup open /dev/disk/by-id/scsi-0DO_Volume_spinel-data spinel-data
+```
+
+```bash
+mount /dev/mapper/spinel-data /srv/spinel/data
+```
+
+Allow up to 30 seconds for the service's next retry, then check
+`systemctl is-active spinel`. If either command fails, inspect the error before
+continuing; never repeat the initial formatting step to fix an unlock failure.
+
+After recovery, a Mac-side request to the tailnet hostname returned verified
+HTTPS 200. SSH to `100.95.139.63` also succeeded using the already-trusted public
+host key (`HostKeyAlias=147.182.177.128`) and returned the new boot ID. At this
+check Tailscale was connected and Proton was disconnected. This verifies private
+management access in that configuration, not simultaneous VPN compatibility.
