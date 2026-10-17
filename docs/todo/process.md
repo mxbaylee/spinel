@@ -1,9 +1,16 @@
 # How the Spinel backlog works
 
 The backlog lives in this folder and is run by agents. The owner (@mxbaylee) sets
-direction, answers the questions only they can answer, and merges. Everything
-below is checked by `npm run backlog:check` and the CI pull-request job, except
-where it says otherwise.
+direction and answers the questions only they can answer. The owner may merge,
+or authorize agents to merge through the [backlog runbook](../run-backlog.md).
+`npm run backlog:check` and the CI pull-request job enforce ticket/index shape,
+IDs, PR titles and size rules. Review scores, finding disposition and merge
+readiness are agent-enforced; GitHub protections must be configured separately.
+
+To process tickets continuously, say **“Read `docs/run-backlog.md` and start working.”**
+That invokes implementation, independent review, repair/splitting, CI, squash
+merge and next-ticket selection until finished, blocked or execution-limited.
+Simply reading or editing these docs does not start that run.
 
 | File | What it is |
 | --- | --- |
@@ -116,19 +123,33 @@ once for exactly that input, and work the next ticket while waiting.
    are exempt: their changes are low effort, such as scaffolding or generated
    code, so a large diff is still easy to review. CI reads the effort from the
    base branch's copy of the ticket.
-5. **Independent review.** Before asking to merge, have a reviewer with no stake
-   in the result grade the change. Give it the ticket, the diff and the evidence,
-   not a hoped-for score. Fix blocking findings and re-check them. Put the grade
-   in the PR.
-6. **Land it.** In the same PR:
+5. **Independent review.** Have a subagent that did not implement the change
+   inspect and verify it, using the original ticket, full diff and evidence,
+   without a prior or hoped-for grade. Require **at least 95/100 and no unresolved
+   blockers**, following the [rubric and repair/split rules](../run-backlog.md#3-get-an-independent-grade).
+   Weigh scope overlap before changed-line limits: fix acceptance gaps here;
+   ticket separable work without hiding a blocker. Re-review repairs, and put
+   the score, reviewed SHA and every finding’s disposition in the PR.
+6. **Prepare to land.** In the same PR:
    - Delete the ticket file.
    - Move its Rules and their reasons into the maintained docs under `docs/`,
      where the next reader will look. Add a short "why" comment to any test
      whose expected value is a product decision.
+   - Remove its ID from dependent tickets' `depends_on`.
    - Append its ID to `grooming.completed_since` in `backlog.json`.
    - Run `npm run backlog:index`.
    - Title the PR `<ticket emoji> SPN-NNN <ticket title>`, the ticket's own
      heading.
+7. **Merge when authorized.** With independent review complete, all required
+   checks passing for the current head, an up-to-date base, and required owner
+   input/verification resolved, squash-merge the verified SHA. Confirm the merge.
+   During a [backlog run](../run-backlog.md), continue from current main to the next eligible
+   ticket without another permission prompt. Outside a run, follow the owner's
+   requested scope; do not infer a whole-backlog run from a single-ticket request.
+
+New tickets must be present on main before their implementation PR can pass the
+checker. Register follow-ups in the current ticket PR, or use a grooming PR if
+there is no current ticket to land. Never bypass the base-ticket check.
 
 ## Decisions
 
