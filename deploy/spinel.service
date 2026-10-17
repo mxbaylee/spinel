@@ -1,0 +1,19 @@
+[Unit]
+Description=Spinel private workspace
+After=docker.service tailscaled.service network-online.target
+Requires=docker.service tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/spinel
+EnvironmentFile=/etc/spinel/deploy.env
+ExecStartPre=/usr/local/bin/node scripts/deploy/check.ts
+ExecStart=/usr/bin/docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml up --abort-on-container-exit
+ExecStop=/usr/bin/docker compose --env-file /etc/spinel/deploy.env -f deploy/compose.yaml down
+Restart=always
+RestartSec=30
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target
