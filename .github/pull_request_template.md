@@ -7,10 +7,22 @@ Grooming PRs start "🧹 Groom backlog"; dependency bumps start "⬆️ Bump". C
 
 ## How it was verified
 
+Checks and evidence for the current head; required owner verification, if any.
+
 ## Independent review
 
-Grade and reviewer. Findings fixed, and any left open with the ticket that now carries them.
+Score out of 100 (minimum 95), independent subagent, reviewed commit SHA and
+rubric/deductions. No unresolved blockers. List each finding as fixed, linked to
+a follow-up ticket with the scope reason, or accepted as non-actionable with why.
+Record re-review after changes; do not replace an acceptance gap with a follow-up.
 
 ## Split out and decided
 
-New tickets for anything that did not land. Decision issues opened or closed.
+Changed-line count using backlog exclusions; scope/size reason for any split.
+New or existing tickets for separate work. Decision issues opened or closed.
+
+## Run checkpoint
+
+For an ongoing backlog run: merged tickets/PRs; branch, SHA and local path;
+unpushed work; review/check status; owner blockers and decision links; next action.
+No secrets. Update before an interruption and after merging.
