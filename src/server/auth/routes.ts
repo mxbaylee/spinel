@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from 'express';
 import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simplewebauthn/server';
 import { AuthError, AuthStore, COOKIE_NAME } from './store.ts';
 import { AuthService } from './service.ts';
+import { SetupService } from './setup.ts';
 import type { Session } from './store.ts';
 
 export function cookieToken(request: Request) {
@@ -24,6 +25,7 @@ export function setSessionCookie(response: Response, token: string, expires: num
 export function authRoutes(store: AuthStore, origin: string) {
   const router = express.Router();
   const service = new AuthService(store, origin);
+  const setup = new SetupService(store, origin);
   const requireSession = (request: Request, authenticated = false): Session => {
     const session = store.session(cookieToken(request));
     if (!session || (authenticated && !session.user_id))
@@ -48,6 +50,34 @@ export function authRoutes(store: AuthStore, origin: string) {
     const session = requireSession(request, true);
     const user = store.user(session.user_id!)!;
     response.json({ user: { id: user.id, name: user.name, isAdmin: Boolean(user.is_admin) } });
+  });
+  router.post('/setup/options', async (request, response) => {
+    const id = request.body?.setupId;
+    if (typeof id !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(id))
+      throw new AuthError(400, 'Open the setup link printed on the server.');
+    setup.active(id);
+    store.checkCapacity();
+    let session = store.session(cookieToken(request));
+    if (!session) {
+      const created = store.createSession(null);
+      session = created.session;
+      setSessionCookie(response, created.token, session.expires_at);
+    }
+    response.json(await setup.options(session, id));
+  });
+  router.post('/setup/verify', async (request, response) => {
+    const body = payload(request);
+    if (typeof request.body.setupId !== 'string' || typeof request.body.proof !== 'string')
+      throw new AuthError(400, 'Invalid setup response.');
+    const result = await setup.claim(
+      requireSession(request),
+      request.body.setupId,
+      body.challengeId,
+      body.response,
+      request.body.proof,
+    );
+    setSessionCookie(response, result.token, result.session.expires_at);
+    response.json({ redirect: '/admin' });
   });
   router.post('/authentication/options', async (request, response) => {
     store.checkCapacity();

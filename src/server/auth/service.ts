@@ -1,6 +1,10 @@
 import { isIP } from 'node:net';
 import * as webauthn from '@simplewebauthn/server';
-import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simplewebauthn/server';
+import type {
+  AuthenticationResponseJSON,
+  RegistrationResponseJSON,
+  VerifiedRegistrationResponse,
+} from '@simplewebauthn/server';
 import { AuthError, AuthStore } from './store.ts';
 import type { Session } from './store.ts';
 import { availablePasskeyName, passkeyProviderName } from './passkey-names.ts';
@@ -75,31 +79,7 @@ export class AuthService {
       });
       if (!result.verified) throw new AuthError(400, 'Could not verify this passkey. Try again.');
       this.store.assertPending(challenge);
-      const { credential, aaguid, credentialBackedUp, credentialDeviceType } =
-        result.registrationInfo;
-      if (this.store.passkey(credential.id))
-        throw new AuthError(409, 'This passkey is already registered.');
-      const provider = passkeyProviderName(aaguid);
-      const name = availablePasskeyName(
-        provider,
-        this.store.passkeys(session.user_id).map((key) => key.name),
-      );
-      this.store.database
-        .prepare('INSERT INTO auth_passkeys VALUES(?,?,?,?,?,?,?,?,?,?,?)')
-        .run(
-          credential.id,
-          session.user_id,
-          credential.publicKey,
-          credential.counter,
-          JSON.stringify(credential.transports ?? []),
-          name,
-          provider,
-          this.store.now(),
-          null,
-          Number(credentialBackedUp),
-          credentialDeviceType,
-        );
-      return { name, provider };
+      return saveRegistration(this.store, session.user_id, result.registrationInfo);
     } catch (error) {
       if (error instanceof AuthError) throw error;
       throw new AuthError(400, 'Could not verify this passkey. Try again.');
@@ -164,4 +144,34 @@ export class AuthService {
       this.store.finish(id);
     }
   }
+}
+
+export function saveRegistration(
+  store: AuthStore,
+  userId: string,
+  info: NonNullable<VerifiedRegistrationResponse['registrationInfo']>,
+) {
+  const { credential, aaguid, credentialBackedUp, credentialDeviceType } = info;
+  if (store.passkey(credential.id)) throw new AuthError(409, 'This passkey is already registered.');
+  const provider = passkeyProviderName(aaguid);
+  const name = availablePasskeyName(
+    provider,
+    store.passkeys(userId).map((key) => key.name),
+  );
+  store.database
+    .prepare('INSERT INTO auth_passkeys VALUES(?,?,?,?,?,?,?,?,?,?,?)')
+    .run(
+      credential.id,
+      userId,
+      credential.publicKey,
+      credential.counter,
+      JSON.stringify(credential.transports ?? []),
+      name,
+      provider,
+      store.now(),
+      null,
+      Number(credentialBackedUp),
+      credentialDeviceType,
+    );
+  return { name, provider };
 }
