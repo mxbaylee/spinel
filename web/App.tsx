@@ -22,6 +22,7 @@ async function api<T>(path: string, body?: unknown): Promise<T> {
           body: JSON.stringify(body),
         },
   );
+  if (response.status === 401 && location.pathname !== '/sign-in') location.assign('/sign-in');
   if (response.status === 204) return undefined as T;
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Something went wrong. Try again.');

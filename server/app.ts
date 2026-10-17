@@ -67,7 +67,26 @@ export async function createApp(options: AppOptions) {
         configFile: resolve(projectRoot, 'vite.config.ts'),
         // Node 24 can load this TypeScript config without watched temporary bundles.
         configLoader: 'native',
-        server: { middlewareMode: true, hmr: { server } },
+        server: {
+          middlewareMode: true,
+          hmr: { server },
+          // Vite otherwise discovers the repository root and exposes private SQLite
+          // files through /@fs/. Only browser source and dependencies are public.
+          fs: {
+            strict: true,
+            allow: [resolve(projectRoot, 'web'), resolve(projectRoot, 'node_modules')],
+            deny: [
+              '.env',
+              '.env.*',
+              '*.{crt,pem}',
+              '**/.git/**',
+              '**/*.sqlite',
+              '**/*.sqlite-*',
+              resolve(options.databasePath),
+              `${resolve(options.databasePath)}-*`,
+            ],
+          },
+        },
         appType: 'custom',
       });
       app.use(vite.middlewares);

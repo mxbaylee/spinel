@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { afterEach, expect, test } from 'vitest';
-import { createApp } from './app.ts';
+import { createApp, projectRoot } from './app.ts';
 import { openDatabase } from './database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 
@@ -109,4 +109,34 @@ test('fails startup when the production app has not been built', async () => {
   await expect(
     createApp({ databasePath: join(directory, 'spinel.sqlite'), staticDirectory: directory }),
   ).rejects.toThrow();
+});
+
+test('Vite cannot serve database files, sidecars or server source through its filesystem routes', async () => {
+  await mkdir(join(projectRoot, 'test-results'), { recursive: true });
+  const directory = await mkdtemp(join(projectRoot, 'test-results/auth-boundary-'));
+  cleanups.push(() => rm(directory, { recursive: true, force: true }));
+  const databasePath = join(directory, 'private.sqlite');
+  const app = await createApp({ databasePath, development: true });
+  cleanups.push(() => app.close());
+  await new Promise<void>((ready) => app.server.listen(0, '127.0.0.1', ready));
+  const url = `http://127.0.0.1:${(app.server.address() as AddressInfo).port}`;
+  const files = [
+    databasePath,
+    `${databasePath}-wal`,
+    `${databasePath}-shm`,
+    join(projectRoot, 'server/app.ts'),
+  ];
+  for (const file of files) {
+    for (const path of [
+      `/@fs/${file}`,
+      `/@fs/${file}?raw`,
+      `/@fs/${encodeURIComponent(file)}?import`,
+    ]) {
+      const response = await fetch(`${url}${path}`, { redirect: 'manual' });
+      expect(response.status, path).not.toBe(200);
+    }
+  }
+  const html = await (await fetch(`${url}/sign-in`)).text();
+  expect(html).toContain('/main.tsx');
+  expect((await fetch(`${url}/main.tsx`)).status).toBe(200);
 });

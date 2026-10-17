@@ -115,7 +115,8 @@ test('registers two devices, signs in with either, persists and revokes sessions
     expect(errors).toEqual([]);
     const current = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!;
     store.revokeSession(store.session(current.value)!.token_hash);
-    await page.reload();
+    // Expiry while Settings is already open must send the next action to sign-in.
+    await page.getByRole('button', { name: 'Add a passkey' }).click();
     await expect(page).toHaveURL(/\/sign-in$/);
     await cdp.send('WebAuthn.setAutomaticPresenceSimulation', {
       authenticatorId: first,
