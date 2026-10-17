@@ -4,6 +4,7 @@ import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simp
 import { AuthError, AuthStore, COOKIE_NAME } from './store.ts';
 import { AuthService } from './service.ts';
 import { SetupService } from './setup.ts';
+import { InvitationService } from './invitations.ts';
 import type { Session } from './store.ts';
 
 export function cookieToken(request: Request) {
@@ -26,6 +27,7 @@ export function authRoutes(store: AuthStore, origin: string) {
   const router = express.Router();
   const service = new AuthService(store, origin);
   const setup = new SetupService(store, origin);
+  const invites = new InvitationService(store, origin);
   const requireSession = (request: Request, authenticated = false): Session => {
     const session = store.session(cookieToken(request));
     if (!session || (authenticated && !session.user_id))
@@ -50,6 +52,67 @@ export function authRoutes(store: AuthStore, origin: string) {
     const session = requireSession(request, true);
     const user = store.user(session.user_id!)!;
     response.json({ user: { id: user.id, name: user.name, isAdmin: Boolean(user.is_admin) } });
+  });
+  const requireAdmin = (request: Request) => {
+    const session = requireSession(request, true);
+    if (!store.user(session.user_id!)?.is_admin)
+      throw new AuthError(403, 'Only an admin can manage invites.');
+    return session;
+  };
+  router.get('/invites', (request, response) => {
+    requireAdmin(request);
+    response.json({ invites: invites.list() });
+  });
+  router.get('/invites/recipients', (request, response) => {
+    requireAdmin(request);
+    response.json({
+      users: store.database
+        .prepare(
+          'SELECT id,name,is_admin AS isAdmin FROM auth_users WHERE disabled=0 ORDER BY name,id',
+        )
+        .all(),
+    });
+  });
+  router.post('/invites', (request, response) => {
+    const admin = requireAdmin(request);
+    const { hours = 168, recoveryUserId } = request.body ?? {};
+    if (
+      typeof hours !== 'number' ||
+      (recoveryUserId !== undefined && typeof recoveryUserId !== 'string')
+    )
+      throw new AuthError(400, 'Invalid invite settings.');
+    response.status(201).json(invites.create(admin.user_id!, hours, recoveryUserId));
+  });
+  router.post('/invites/:id/revoke', (request, response) => {
+    requireAdmin(request);
+    invites.revoke(String(request.params.id));
+    response.sendStatus(204);
+  });
+  router.post('/invite/details', (request, response) => {
+    response.json(invites.details(request.body?.token));
+  });
+  router.post('/invite/options', async (request, response) => {
+    const token = request.body?.token;
+    invites.active(token);
+    store.checkCapacity();
+    let session = store.session(cookieToken(request));
+    if (!session) {
+      const created = store.createSession(null);
+      session = created.session;
+      setSessionCookie(response, created.token, session.expires_at);
+    }
+    response.json(await invites.options(session, token, request.body?.name));
+  });
+  router.post('/invite/verify', async (request, response) => {
+    const body = payload(request);
+    const result = await invites.accept(
+      requireSession(request),
+      request.body.token,
+      body.challengeId,
+      body.response,
+    );
+    setSessionCookie(response, result.token, result.session.expires_at);
+    response.json({ redirect: result.user.is_admin ? '/admin' : '/' });
   });
   router.post('/setup/options', async (request, response) => {
     const id = request.body?.setupId;
