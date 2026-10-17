@@ -125,3 +125,83 @@ select {
 .invites {
   margin-top: 32px;
 }
+.dashboard {
+  display: grid;
+  grid-template-columns: minmax(150px, 230px) minmax(0, 1fr);
+  gap: 28px;
+}
+.folder-tree,
+.file-list {
+  list-style: none;
+  padding: 0;
+}
+.folder-tree button {
+  width: 100%;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.folder-tree [aria-current='page'] {
+  background: #eee3ec;
+}
+.files {
+  min-width: 0;
+}
+.files nav {
+  gap: 8px;
+}
+.files nav button {
+  padding: 6px;
+}
+.folder-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 24px 0;
+}
+.folder-heading h2 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.file-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #e3dfe8;
+  flex-wrap: wrap;
+}
+.item-open {
+  text-align: left;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.item-kind {
+  color: #68616f;
+  font-size: 12px;
+  margin-left: 8px;
+}
+.item-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.item-form,
+.empty-document {
+  margin-top: 24px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e3dfe8;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .dashboard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dashboard aside {
+    border-bottom: 1px solid #e3dfe8;
+    padding-bottom: 16px;
+  }
+}

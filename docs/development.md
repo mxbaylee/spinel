@@ -8,8 +8,8 @@ npm ci
 npm run dev
 ```
 
-The Node server opens `http://localhost:3000` in your browser, serves passkey sign-in and a protected placeholder
-React dashboard through Vite, and creates `data/spinel.sqlite` on first startup.
+The Node server opens `http://localhost:3000` in your browser, serves passkey sign-in and a protected
+React dashboard with private folders and empty document views through Vite, and creates `data/spinel.sqlite` on first startup.
 Vite updates the frontend as you edit; Node watch restarts the server on changes.
 Use `npm run dev -- --no-open` to suppress the browser opening, and Ctrl+C to stop.
 No database service or environment file is needed. An empty database has no accounts;
@@ -103,6 +103,5 @@ see [the process](todo/process.md#pull-requests-and-main).
 
 These choices favour a small setup for the Operator, dependable storage and
 rendering for the Owner, a consistent origin for the Collaborator, and an
-explicit future access boundary for the Link guest. The placeholder contains no
-private data. Operator accounts must not access documents, and Link guests must
-not access the dashboard once those personas have working access paths.
+explicit future access boundary for the Link guest. The [folder API](folders.md) enforces ownership for every item. Operator accounts
+cannot access documents, and Link guests cannot access the dashboard.
