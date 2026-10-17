@@ -17,5 +17,5 @@
     "allowUmdGlobalAccess": true,
     "skipLibCheck": true
   },
-  "include": ["scripts/**/*.ts", "docs/**/*.ts", "docs/**/*.tsx", "server/**/*.ts", "web/**/*.ts", "web/**/*.tsx", "e2e/**/*.ts", "*.config.ts"]
+  "include": ["src/**/*.ts", "scripts/**/*.ts", "docs/**/*.ts", "docs/**/*.tsx", "server/**/*.ts", "web/**/*.ts", "web/**/*.tsx", "e2e/**/*.ts", "*.config.ts"]
 }

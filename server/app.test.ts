@@ -6,6 +6,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { afterEach, expect, test } from 'vitest';
 import { createApp } from './app.ts';
 import { openDatabase } from './database.ts';
+import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 
 const cleanups: (() => Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -40,7 +41,7 @@ test('creates SQLite in a new directory and preserves data when reopened', async
   }
 });
 
-test('serves only built assets and health, and creates a valid database at first startup', async () => {
+test('protects pages and APIs while keeping database files private', async () => {
   const directory = await temporaryDirectory();
   const databasePath = join(directory, 'private', 'spinel.sqlite');
   const staticDirectory = join(directory, 'public');
@@ -59,13 +60,48 @@ test('serves only built assets and health, and creates a valid database at first
   } finally {
     database.close();
   }
-  expect(await (await fetch(url)).text()).toContain('Dashboard fixture');
-  expect(await (await fetch(`${url}/api/health`)).json()).toEqual({ status: 'ok' });
-  expect((await fetch(`${url}/api/missing`)).status).toBe(404);
-  expect((await fetch(`${url}/missing.js`)).status).toBe(404);
-  expect((await fetch(`${url}/.env`)).status).toBe(404);
-  expect((await fetch(`${url}/private/spinel.sqlite`)).status).toBe(404);
-  expect((await fetch(`${url}/%2e%2e%2fprivate/spinel.sqlite`)).status).toBe(404);
+  expect((await fetch(url, { redirect: 'manual' })).headers.get('location')).toBe('/sign-in');
+  expect(await (await fetch(`${url}/sign-in`)).text()).toContain('Dashboard fixture');
+  expect((await fetch(`${url}/api/health`)).status).toBe(401);
+  expect((await fetch(`${url}/api/missing`)).status).toBe(401);
+  const writable = openDatabase(databasePath);
+  const store = new AuthStore(writable);
+  const user = store.createUser('Test');
+  const { token } = store.createSession(user.id);
+  const headers = { Cookie: `${COOKIE_NAME}=${token}` };
+  expect(await (await fetch(`${url}/api/health`, { headers })).json()).toEqual({ status: 'ok' });
+  for (const path of [
+    '/api/missing',
+    '/missing.js',
+    '/.env',
+    '/private/spinel.sqlite',
+    '/%2e%2e%2fprivate/spinel.sqlite',
+  ]) {
+    expect((await fetch(`${url}${path}`, { headers })).status).toBe(404);
+  }
+  expect(
+    (
+      await fetch(`${url}/api/auth/registration/options`, {
+        method: 'POST',
+        headers: { ...headers, Origin: 'https://evil.example', 'Content-Type': 'application/json' },
+        body: '{}',
+      })
+    ).status,
+  ).toBe(403);
+  expect((await fetch(`${url}/api/auth/passkeys`)).status).toBe(401);
+  const options = await fetch(`${url}/api/auth/authentication/options`, {
+    method: 'POST',
+    headers: { Origin: 'http://localhost:3000', 'Content-Type': 'application/json' },
+    body: '{}',
+  });
+  expect(options.status).toBe(200);
+  expect(options.headers.get('set-cookie')).toMatch(
+    /__Host-spinel-session=.+; Path=\/; Expires=.+; HttpOnly; Secure; SameSite=Strict/,
+  );
+  expect(options.headers.get('cache-control')).toBe('no-store');
+  store.revokeSession(store.session(token)!.token_hash);
+  expect((await fetch(`${url}/api/health`, { headers })).status).toBe(401);
+  writable.close();
 });
 
 test('fails startup when the production app has not been built', async () => {

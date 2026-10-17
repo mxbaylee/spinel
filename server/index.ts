@@ -11,6 +11,7 @@ if (!Number.isInteger(port) || port < 0 || port > 65535) {
 const host = process.env.HOST ?? '127.0.0.1';
 const app = await createApp({
   development,
+  origin: process.env.APP_ORIGIN ?? `http://localhost:${port}`,
   databasePath: resolve(process.env.DATABASE_PATH ?? resolve(projectRoot, 'data/spinel.sqlite')),
 });
 
@@ -28,8 +29,7 @@ try {
 }
 
 const address = app.server.address() as AddressInfo;
-const browserHost = address.family === 'IPv6' ? `[${address.address}]` : address.address;
-const url = `http://${browserHost}:${address.port}`;
+const url = process.env.APP_ORIGIN ?? `http://localhost:${address.port}`;
 console.log(`Spinel is running at ${url}`);
 
 if (development && !process.argv.includes('--no-open')) {

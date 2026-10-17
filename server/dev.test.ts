@@ -52,7 +52,7 @@ test('development watch mode stays running without a config-bundle restart loop'
     await delay(2500);
     expect(output.match(/Spinel is running at/g)).toHaveLength(1);
     expect(output).not.toContain('Restarting');
-    expect(await (await fetch(`${url}/api/health`)).json()).toEqual({ status: 'ok' });
+    expect((await fetch(`${url}/api/health`)).status).toBe(401);
   } finally {
     child.kill('SIGTERM');
     const forceStop = setTimeout(() => child.kill('SIGKILL'), 3000);
