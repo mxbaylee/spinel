@@ -1,14 +1,12 @@
-# Private droplet deployment (SPN-029, acceptance pending)
+# Private droplet deployment
 
-This package targets a fresh Ubuntu droplet with 2 GB RAM and one CPU. Initial
-startup on the owner's droplet passed on 2026-10-17. Do not mark SPN-029 complete until the
-owner’s fresh-host run, external port scan, measured memory and update/reconnect
-evidence are recorded. The editor-enabled image was deployed successfully;
-live editor recovery across a subsequent restart and a two-editor memory sample
-also passed. The owner reports the public firewall is attached; private access still
-works. A leftover public SSH rule was detected and removed; targeted public IPv4 checks
-now receive no response. The complete TCP scan remains pending. The owner waived the external
-IPv6 check on 2026-10-17; it is not a completion requirement for SPN-029.
+This package targets a fresh Ubuntu droplet with 2 GB RAM and one CPU. The owner's
+fresh-host run on 2026-10-17 verified private HTTPS/SSH, locked-boot recovery,
+account and document persistence, editor reconnection and measured memory use.
+After removing a leftover inbound SSH rule, all 65,535 public IPv4 TCP ports were
+filtered in an external scan. UDP 443/41641 did not answer probes; the ambiguity
+of that result is recorded below. The owner waived external IPv6 scanning in #17;
+IPv6 firewall closure remains configured. No external IPv6 scan pass is claimed.
 
 ## Topology
 
@@ -123,25 +121,22 @@ and with two active editors. Current caps are 512 MiB for Node and 128 MiB for C
 these are caps, not measured usage or proof of headroom. Acceptance requires
 measured target-host results, including total OS/Tailscale overhead.
 
-## Remaining acceptance evidence
+## Acceptance record
 
-- Complete the full external IPv4 TCP scan after the owner removed the leftover
-  inbound SSH rule. Targeted TCP and UDP probes received no responses, as detailed
-  below. The first full TCP attempt timed out and is not a complete result.
-- The external IPv6 check was removed by the owner; it is not a pending task.
-
-Private Mac HTTPS/SSH, reboot/unlock recovery, two-editor memory and editor
-recovery passed. The independent reviewer accepted the combined version-update
-and later editor-restart evidence. Automatic certificate renewal is configured;
-forced renewal and simultaneous Proton/Tailscale use are not additional SPN-029
-acceptance requirements.
+The required fresh-host evidence is recorded below and in
+[owner check #17](https://github.com/mxbaylee/spinel/issues/17). The original
+external scan requirement was revised by the owner to exclude IPv6. Private Mac
+HTTPS/SSH, reboot/unlock recovery, two-editor memory and editor recovery passed.
+The independent reviewer accepted the combined version-update and later
+editor-restart evidence. Automatic certificate renewal is configured; forced
+renewal and simultaneous Proton/Tailscale use are not additional SPN-029 criteria.
 
 Local preparation on 2026-10-17 passed Docker build, Caddy configuration validation,
 container access checks and SQLite persistence across container restart. An idle
 app-only Docker Desktop sample was 148.3 MiB; this does not establish memory use
 on the target. [Decision #16](https://github.com/mxbaylee/spinel/issues/16) records
 the proposed startup gate. [Owner check #17](https://github.com/mxbaylee/spinel/issues/17)
-tracks the outstanding live evidence.
+records the owner input and live evidence.
 
 ### Initial target-host run, 2026-10-17
 
@@ -288,3 +283,27 @@ above with `--max-retries 2`. Ports 22, 80, 443 and 3000 were all `filtered`
 200. The full TCP retry started before the correction was interrupted; the post-correction connect scan also stalled and was interrupted. The owner
 has been given a privileged SYN scan command to complete the full IPv4 check.
 No full-port result is claimed yet.
+
+### Completed full IPv4 scan, 2026-10-17
+
+The owner ran the following privileged SYN scan from the Mac's external public
+connection after removing the inbound SSH rule:
+
+```bash
+sudo nmap -Pn -sS -p- --reason --max-retries 1 --min-rate 1000 --max-rate 2000 --host-timeout 5m 147.182.177.128
+```
+
+Nmap 7.992 started at 16:55 PDT and completed in 132.66 seconds. It reported all
+65,535 TCP ports as `filtered` with `no-response`, with none open. This is the
+completed full scan; earlier timed-out/interrupted connect scans are not treated
+as passes. Together with private SSH/HTTPS after firewall correction, the owner
+firewall confirmation and the limited UDP result above, this completes the
+external IPv4 evidence. Results describe this tested configuration and time.
+
+The deployment retains the remaining SPN-029 rules: immutable images, systemd
+supervision through private-network/LUKS preflight, loopback app and tailnet-only
+TLS 1.3 proxy, environment-supplied secrets, measured headroom on the 2 GB host,
+and TypeScript-only deployment/maintenance scripts. The original PostgreSQL
+storage plan was replaced with encrypted SQLite by owner decision on 2026-10-17.
+Backups and diagnostics remain SPN-030 and SPN-032. Public-domain deployment is
+SPN-038 and does not change this tested private configuration.
