@@ -1,0 +1,54 @@
+name: ❓ Decision
+description: One product or technical question, tied to a ticket. See docs/todo/process.md#decisions.
+title: "❓ SPN-NNN <question>"
+labels: [decision]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: One sentence. One question per issue.
+    validations:
+      required: true
+  - type: input
+    id: ticket
+    attributes:
+      label: Ticket
+      description: The ticket that needs the answer, e.g. SPN-012. Name any other affected tickets in Context.
+    validations:
+      required: true
+  - type: textarea
+    id: personas
+    attributes:
+      label: Personas
+      description: Every persona the answer affects, and what each would choose. See docs/product/personas.md.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Two to four sentences. What is true now and why the question came up.
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options
+      description: "A — …, B — …, with the main cost of each."
+    validations:
+      required: true
+  - type: textarea
+    id: recommended
+    attributes:
+      label: Recommended
+      description: Which option and why. For a decision the agent made itself, this is the decision.
+    validations:
+      required: true
+  - type: textarea
+    id: meanwhile
+    attributes:
+      label: Meanwhile
+      description: What work continues while this is open, or "Decided" if the agent closed it.
+    validations:
+      required: true

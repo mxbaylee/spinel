@@ -1,0 +1,55 @@
+name: 💎 CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, edited, synchronize, reopened, ready_for_review, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backlog:
+    name: Backlog
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Checker tests
+        run: npm test
+      - name: Tickets and index
+        run: npm run backlog:check
+
+  pull-request:
+    name: Pull request
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      # Title, labels and branch go through env, never into the script text.
+      - name: Title, ticket, IDs and size
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: node scripts/backlog/cli.mjs pr --base "origin/$BASE_REF" --title "$PR_TITLE" --labels "$PR_LABELS"

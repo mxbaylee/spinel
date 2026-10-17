@@ -1,0 +1,16 @@
+{
+  "name": "spinel",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test scripts/backlog/tests/*.test.mjs",
+    "backlog:check": "node scripts/backlog/cli.mjs check",
+    "backlog:index": "node scripts/backlog/cli.mjs index",
+    "backlog:new": "node scripts/backlog/cli.mjs new",
+    "backlog:pr": "node scripts/backlog/cli.mjs pr"
+  }
+}
