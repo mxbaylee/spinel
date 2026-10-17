@@ -55,17 +55,24 @@ export function Dashboard() {
     }
     return path;
   }
-  const folders = items
-    .filter((item) => item.kind === 'folder')
-    .map((item) => ({ item, path: ancestors(item) }))
-    .sort(
-      (a, b) =>
-        a.path
-          .map((item) => item.name)
-          .join('/')
-          .localeCompare(b.path.map((item) => item.name).join('/')) ||
-        a.item.id.localeCompare(b.item.id),
-    );
+  // Sort siblings, then traverse by parent ID so similar or duplicate names
+  // cannot interleave unrelated subtrees.
+  const children = new Map<string | null, WorkspaceItem[]>();
+  for (const item of items.filter((item) => item.kind === 'folder')) {
+    const siblings = children.get(item.parentId) ?? [];
+    siblings.push(item);
+    children.set(item.parentId, siblings);
+  }
+  for (const siblings of children.values())
+    siblings.sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
+  const folders: { item: WorkspaceItem; path: WorkspaceItem[] }[] = [];
+  const stack = (children.get(null) ?? []).map((item) => ({ item, path: [item] })).reverse();
+  while (stack.length) {
+    const entry = stack.pop()!;
+    folders.push(entry);
+    for (const child of [...(children.get(entry.item.id) ?? [])].reverse())
+      stack.push({ item: child, path: [...entry.path, child] });
+  }
   function navigate(id: string | null) {
     history.pushState(null, '', id ? `/?item=${encodeURIComponent(id)}` : '/');
     setCurrentId(id);

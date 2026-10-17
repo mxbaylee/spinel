@@ -107,6 +107,40 @@ test('builds and renames a nested tree, opens all document types, moves safely a
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
+    await tree.getByRole('button', { name: 'All my files', exact: true }).click();
+    await create('Personal projects');
+    await expect(tree.locator('li button')).toHaveText([
+      'Personal',
+      'Finance',
+      '2027',
+      'Personal projects',
+    ]);
+    // Duplicate names cannot sort one parent's children into another subtree.
+    async function fixtureFolder(name: string, parentId: string | null = null) {
+      const response = await context.request.post('/api/items', {
+        headers: { Origin: baseURL! },
+        data: { name, parentId, kind: 'folder' },
+      });
+      expect(response.status()).toBe(201);
+      return (await response.json()).item as { id: string; name: string };
+    }
+    const twinA = await fixtureFolder('Twin');
+    const twinB = await fixtureFolder('Twin');
+    await fixtureFolder('Alpha child', twinA.id);
+    await fixtureFolder('Beta child', twinB.id);
+    await page.reload();
+    const firstChild = twinA.id.localeCompare(twinB.id) < 0 ? 'Alpha child' : 'Beta child';
+    const secondChild = firstChild === 'Alpha child' ? 'Beta child' : 'Alpha child';
+    await expect(tree.locator('li button')).toHaveText([
+      'Personal',
+      'Finance',
+      '2027',
+      'Personal projects',
+      'Twin',
+      firstChild,
+      'Twin',
+      secondChild,
+    ]);
     expect(errors).toEqual([]);
   } finally {
     // Remove only this fixture's leaves, then parents, to respect the no-delete schema.
