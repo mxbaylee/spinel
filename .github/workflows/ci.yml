@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-    types: [opened, edited, synchronize, reopened, ready_for_review, labeled, unlabeled]
+    types: [opened, edited, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -46,10 +46,9 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      # Title, labels and branch go through env, never into the script text.
+      # Title and branch go through env, never into the script text.
       - name: Title, ticket, IDs and size
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
-        run: node scripts/backlog/cli.mjs pr --base "origin/$BASE_REF" --title "$PR_TITLE" --labels "$PR_LABELS"
+        run: node scripts/backlog/cli.mjs pr --base "origin/$BASE_REF" --title "$PR_TITLE"

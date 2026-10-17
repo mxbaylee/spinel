@@ -9,10 +9,13 @@ not a persona of its own.
 
 ## Operator
 
-The person who runs the instance: @mxbaylee, wearing the admin hat.
+The person who runs the instance, through an admin account. @mxbaylee has one
+admin account for running Spinel and a separate everyday account as the Owner.
+Admin accounts can't view, edit or create documents.
 
 - Sets up the server, keeps it patched, backed up and private.
-- Invites people, revokes access, and sees who has which devices.
+- Invites people, revokes access, and sees who has which devices, without
+  ever seeing anyone's documents.
 - Notices problems (disk, memory, a stuck connection) before they lose work.
 - Wants: few moving parts on a 2 GB droplet, nothing exposed beyond Tailscale,
   and recovery that has been tried, not just written down.

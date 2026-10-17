@@ -42,7 +42,7 @@ function config(over = {}) {
     next_id: 10,
     personas: 'docs/product/personas.md',
     grooming: { every: 7, last: '2026-10-17', completed_since: [] },
-    size: { soft: 100, hard: 1000, override_label: 'size-override', exclude: ['package-lock.json', '**/dist/**'] },
+    size: { soft: 100, hard: 1000, exclude: ['package-lock.json', '**/dist/**'] },
     pr_title_exceptions: ['🧹 Groom backlog', '⬆️ Bump'],
     ...over,
   };
@@ -174,9 +174,9 @@ test('changed lines skip excluded files, binaries and follow renames', () => {
   assert.deepEqual(counted.map(([p]) => p), ['src/a.ts', 'img.png', 'src/new/b.ts']);
 });
 
-function pr(title, { base = [ticket('SPN-001')], head = [], baseCfg = config(), headCfg, numstat = '', labels = [] } = {}) {
+function pr(title, { base = [ticket('SPN-001')], head = [], baseCfg = config(), headCfg, numstat = '' } = {}) {
   headCfg ??= config({ grooming: { every: 7, last: '2026-10-17', completed_since: ['SPN-001'] } });
-  return checkPullRequest({ title, labels, base: backlog(base, baseCfg), head: backlog(head, headCfg), numstat, today: '2026-10-17' });
+  return checkPullRequest({ title, base: backlog(base, baseCfg), head: backlog(head, headCfg), numstat, today: '2026-10-17' });
 }
 
 test('a ticket PR lands its ticket and advances the grooming count', () => {
@@ -218,13 +218,19 @@ test('IDs are never reused', () => {
   assert.match(down.errors.join(), /next_id went down/);
 });
 
-test('PR size: soft limit warns, hard limit fails unless labelled', () => {
+test('PR size: soft limit warns, hard limit fails', () => {
   const groom = { head: [ticket('SPN-001')], headCfg: config() };
   assert.match(pr('🧹 Groom backlog', { ...groom, numstat: '150\t0\ta.ts\n' }).warnings.join(), /soft limit/);
   assert.match(pr('🧹 Groom backlog', { ...groom, numstat: '1500\t0\ta.ts\n' }).errors.join(), /hard limit/);
-  const ok = pr('🧹 Groom backlog', { ...groom, numstat: '1500\t0\ta.ts\n', labels: ['size-override'] });
-  assert.deepEqual(ok.errors, []);
   assert.deepEqual(pr('🧹 Groom backlog', { ...groom, numstat: '5000\t0\tpackage-lock.json\n' }).warnings, []);
+});
+
+test('PR size: effort-S tickets are exempt, judged by the base ticket', () => {
+  const headCfg = config({ grooming: { every: 7, last: '2026-10-17', completed_since: ['SPN-001'] } });
+  const land = (effort) => pr('🪞 SPN-001 Do the thing', { base: [ticket('SPN-001', { effort })], headCfg, numstat: '5000\t0\ta.ts\n' });
+  assert.deepEqual(land('S').errors, []);
+  assert.match(land('S').warnings.join(), /effort-S tickets have no size limit/);
+  assert.match(land('M').errors.join(), /hard limit/);
 });
 
 test('a PR cannot loosen its own limits', () => {

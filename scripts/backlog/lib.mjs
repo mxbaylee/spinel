@@ -459,7 +459,7 @@ function daysBetween(a, b) {
 
 // base and head are loaded backlogs. Returns errors and warnings for the PR.
 // `today` is YYYY-MM-DD, used to check a grooming PR's date.
-export function checkPullRequest({ title, labels = [], base, head, numstat, today = new Date().toISOString().slice(0, 10) }) {
+export function checkPullRequest({ title, base, head, numstat, today = new Date().toISOString().slice(0, 10) }) {
   const errors = [];
   const warnings = [];
   const rules = base.config;
@@ -467,6 +467,9 @@ export function checkPullRequest({ title, labels = [], base, head, numstat, toda
   const baseTickets = new Map(base.tickets.map((t) => [t.id, t]));
   const headTickets = new Map(head.tickets.map((t) => [t.id, t]));
   const removed = [...baseTickets.keys()].filter((id) => !headTickets.has(id));
+  // Effort-S tickets are low-effort work such as scaffolding, which can be
+  // large without being hard to review, so the size limits don't apply.
+  let sizeExempt = false;
   const baseDone = rules.grooming?.completed_since ?? [];
   const headDone = head.config.grooming.completed_since;
 
@@ -503,6 +506,7 @@ export function checkPullRequest({ title, labels = [], base, head, numstat, toda
       const ticket = baseTickets.get(id);
       if (!ticket) errors.push(`${id} is not an open ticket on the base branch`);
       else {
+        sizeExempt = ticket.effort === 'S';
         const heading = `${ticket.emoji} ${id} `;
         const ticketTitle = ticket.heading?.startsWith(heading) ? ticket.heading.slice(heading.length).trim() : '';
         if (ticket.emoji !== emoji) errors.push(`${id}'s emoji is ${ticket.emoji}, not ${emoji}`);
@@ -526,12 +530,11 @@ export function checkPullRequest({ title, labels = [], base, head, numstat, toda
       errors.push(`${id} reuses an ID below the base next_id (${rules.next_id}); new tickets take next_id`);
 
   if (numstat !== undefined) {
-    const { soft, hard, override_label: override, exclude } = rules.size;
+    const { soft, hard, exclude } = rules.size;
     const { total } = changedLines(numstat, exclude);
-    if (total > hard) {
-      if (labels.includes(override)) warnings.push(`${total} changed lines is past the ${hard} hard limit; allowed by the "${override}" label`);
-      else errors.push(`${total} changed lines is past the ${hard} hard limit; land the coherent part and split the rest into new tickets`);
-    } else if (total > soft) warnings.push(`${total} changed lines is past the ${soft} soft limit; consider splitting`);
+    if (total > soft && sizeExempt) warnings.push(`${total} changed lines; effort-S tickets have no size limit`);
+    else if (total > hard) errors.push(`${total} changed lines is past the ${hard} hard limit; land the coherent part and split the rest into new tickets`);
+    else if (total > soft) warnings.push(`${total} changed lines is past the ${soft} soft limit; consider splitting`);
   }
   return { errors, warnings };
 }

@@ -75,7 +75,8 @@ reserved.
 
 ## Sizing and scoring
 
-- **Effort:** 🌱 **S** one focused change with its tests · 🌿 **M** several
+- **Effort:** 🌱 **S** one focused change with its tests, or low-effort
+  work such as scaffolding however many lines it is · 🌿 **M** several
   coordinated changes, or one design choice inside a known shape · 🌳 **L**
   design plus a multi-part build or migration.
 - **Impact**, judged by the personas: 🤍 **S** polish, internal quality or an
@@ -111,9 +112,10 @@ once for exactly that input, and work the next ticket while waiting.
 4. **Split when it grows.** Past ~10k changed lines, or ~3 days in progress, look
    for a split. 100k is the hard limit and CI fails past it. Lockfiles and
    generated files don't count; the list is in `backlog.json`. Land the coherent
-   part and file the rest as new tickets that name this one. Early scaffolding
-   can need more than 100k; the owner allows that with the `size-override`
-   label.
+   part and file the rest as new tickets that name this one. Effort-S tickets
+   are exempt: their changes are low effort, such as scaffolding or generated
+   code, so a large diff is still easy to review. CI reads the effort from the
+   base branch's copy of the ticket.
 5. **Independent review.** Before asking to merge, have a reviewer with no stake
    in the result grade the change. Give it the ticket, the diff and the evidence,
    not a hoped-for score. Fix blocking findings and re-check them. Put the grade
@@ -195,7 +197,7 @@ Owner setup, once, in the repository settings:
    status checks **Backlog** and **Pull request**, require branches to be up to
    date before merging, block force pushes and deletions. Up to date matters:
    the checks compare against `main` as it was when they ran.
-3. Issues → Labels: create `decision`, `needs-owner` and `size-override`.
+3. Issues → Labels: create `decision` and `needs-owner`.
 
 ## Commands
 

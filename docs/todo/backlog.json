@@ -1,7 +1,7 @@
 {
   "name": "Spinel",
   "prefix": "SPN",
-  "next_id": 35,
+  "next_id": 36,
   "personas": "docs/product/personas.md",
   "grooming": {
     "every": 7,
@@ -11,7 +11,6 @@
   "size": {
     "soft": 10000,
     "hard": 100000,
-    "override_label": "size-override",
     "exclude": [
       "package-lock.json",
       "pnpm-lock.yaml",

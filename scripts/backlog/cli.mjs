@@ -4,7 +4,7 @@
 //   node scripts/backlog/cli.mjs check                 validate tickets and the index
 //   node scripts/backlog/cli.mjs index                 regenerate docs/todo/readme.md
 //   node scripts/backlog/cli.mjs new <emoji> <title>   create the next ticket from the template
-//   node scripts/backlog/cli.mjs pr --base <ref> --title <title> [--labels a,b]
+//   node scripts/backlog/cli.mjs pr --base <ref> --title <title>
 //                                                      check a PR against its base branch
 
 import { execFileSync } from 'node:child_process';
@@ -122,7 +122,7 @@ Then <result>.
 } else if (command === 'pr') {
   const opts = args(rest);
   if (!opts.base || opts.title === undefined) {
-    console.error('usage: cli.mjs pr --base <ref> --title <title> [--labels a,b]');
+    console.error('usage: cli.mjs pr --base <ref> --title <title>');
     process.exit(2);
   }
   const head = loadBacklog(root);
@@ -134,11 +134,10 @@ Then <result>.
     : { config: { ...head.config, next_id: 1, grooming: { ...head.config.grooming, last: undefined, completed_since: [] } }, tickets: [] };
   const mergeBase = execFileSync('git', ['merge-base', opts.base, 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
   const numstat = execFileSync('git', ['diff', '--numstat', mergeBase, 'HEAD'], { cwd: root, encoding: 'utf8' });
-  const labels = (opts.labels ?? '').split(',').map((l) => l.trim()).filter(Boolean);
   // A broken head backlog is reported as-is; comparing it to the base would only crash.
-  const result = headResult.errors.length ? headResult : checkPullRequest({ title: opts.title, labels, base, head, numstat });
+  const result = headResult.errors.length ? headResult : checkPullRequest({ title: opts.title, base, head, numstat });
   if (report(result)) console.log('pull request ok');
 } else {
-  console.error('usage: cli.mjs check | index | new <emoji> <title> | pr --base <ref> --title <title> [--labels a,b]');
+  console.error('usage: cli.mjs check | index | new <emoji> <title> | pr --base <ref> --title <title>');
   process.exit(2);
 }
