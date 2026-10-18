@@ -146,6 +146,17 @@ export function workspaceRoutes(
       throw new AuthError(400, 'Invalid item changes.');
     return body;
   }
+  router.get('/pins', (request, response) => response.json({ items: store.pins(owner(request)) }));
+  for (const method of ['post', 'delete'] as const)
+    router[method]('/pins', (request, response) =>
+      response.json({
+        items: store.pin(owner(request), payload(request, ['id']).id, method === 'delete'),
+      }),
+    );
+  router.put('/pins', (request, response) => {
+    const body = payload(request, ['id', 'beforeId']);
+    response.json({ items: store.movePin(owner(request), body.id, body.beforeId) });
+  });
   router.get('/tags', (request, response) =>
     response.json({ tags: store.tagSuggestions(owner(request)) }),
   );

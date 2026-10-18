@@ -6,6 +6,7 @@ import { Sharing } from './Sharing.tsx';
 import { Trash } from './Trash.tsx';
 import { DocumentTags, TagLabels } from './DocumentTags.tsx';
 import { itemsRequest } from './itemsApi.ts';
+import { PinButton, usePins } from './Pins.tsx';
 import type { NavigationGuard } from './navigation.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
@@ -23,6 +24,7 @@ const viewUrl = (id: string | null) =>
 const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
 
 export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
+  const pins = usePins();
   const [items, setItems] = useState<WorkspaceItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [viewed, setViewed] = useState<WorkspaceItem[]>([]);
@@ -97,6 +99,9 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
       disposed = true;
     };
   }, [currentId, refresh]);
+  useEffect(() => {
+    void pins.refresh();
+  }, [items, viewed]);
   const byId = new Map([...items, ...viewed].map((item) => [item.id, item]));
   const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
   const visibleItems = currentId ? viewed : items;
@@ -198,11 +203,13 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
       return (
         <span className="item-actions">
           <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>
+          <PinButton item={item} />
           {tagButton}
         </span>
       );
     return (
       <span className="item-actions">
+        <PinButton item={item} />
         {tagButton}
         <button disabled={busy} onClick={() => setSharing(item)} aria-label={`Share ${item.name}`}>
           Share
