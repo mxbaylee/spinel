@@ -12,6 +12,7 @@ import type {
 
 import { signSetupProof } from './setup.ts';
 import { api } from './api.ts';
+import { BackupStatus } from './BackupStatus.tsx';
 import { AdminInvites } from './AdminInvites.tsx';
 import { Dashboard } from './Dashboard.tsx';
 
@@ -322,6 +323,7 @@ export function App() {
                 for documents.
               </p>
               <AdminInvites />
+              <BackupStatus />
             </section>
           </>
         ) : (

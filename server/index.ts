@@ -11,6 +11,8 @@ if (!Number.isInteger(port) || port < 0 || port > 65535) {
 const host = process.env.HOST ?? '127.0.0.1';
 const app = await createApp({
   development,
+  backupConfigPath: process.env.BACKUP_CONFIG_PATH,
+  image: process.env.SPINEL_IMAGE,
   origin: process.env.APP_ORIGIN ?? `http://localhost:${port}`,
   databasePath: resolve(process.env.DATABASE_PATH ?? resolve(projectRoot, 'data/spinel.sqlite')),
 });

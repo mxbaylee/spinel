@@ -2,6 +2,7 @@ import express from 'express';
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { resolve } from 'node:path';
+import { BackupService } from '../src/server/backup/service.ts';
 import { openDatabase } from './database.ts';
 import { AuthStore } from '../src/server/auth/store.ts';
 import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
@@ -16,6 +17,8 @@ export interface AppOptions {
   origin?: string;
   development?: boolean;
   staticDirectory?: string;
+  backupConfigPath?: string;
+  image?: string;
 }
 
 export async function createApp(options: AppOptions) {
@@ -25,6 +28,7 @@ export async function createApp(options: AppOptions) {
   const server = createServer(app);
   let vite: import('vite').ViteDevServer | undefined;
   let stopCleanup = () => {};
+  let backups: BackupService | undefined;
 
   try {
     const auth = new AuthStore(database);
@@ -43,6 +47,20 @@ export async function createApp(options: AppOptions) {
       workspaceRoutes(auth, options.origin ?? 'http://localhost:3000', workspace),
     );
     stopCleanup = startTrashCleanup(new TrashStore(workspace));
+    backups = new BackupService(database, {
+      databasePath: options.databasePath,
+      origin: options.origin ?? 'http://localhost:3000',
+      configPath: options.backupConfigPath,
+      image: options.image,
+    });
+    app.get('/api/admin/backups', (request, response) => {
+      const session = auth.session(cookieToken(request));
+      if (!session?.user_id || !auth.user(session.user_id)?.is_admin) {
+        response.status(404).json({ error: 'Not found' });
+        return;
+      }
+      response.json(backups!.status());
+    });
     app.get('/api/health', (_request, response) => {
       database.prepare('SELECT 1').get();
       response.json({ status: 'ok' });
@@ -145,8 +163,10 @@ export async function createApp(options: AppOptions) {
       }
       response.status(404).type('text').send('Not found');
     });
+    backups.start();
   } catch (error) {
     stopCleanup();
+    await backups?.close();
     await vite?.close();
     database.close();
     throw error;
@@ -163,6 +183,7 @@ export async function createApp(options: AppOptions) {
           server.closeAllConnections();
         });
       }
+      await backups?.close();
       database.close();
     },
   };

@@ -76,7 +76,7 @@ Sources: [Docker host networking](https://docs.docker.com/engine/network/drivers
 5. On that mounted volume, create `app/` owned by UID/GID 1000 and `caddy/` owned by
    UID/GID 10001, mode 0700. SQLite, WAL and shared-memory sidecars live in `app/`;
    Caddy state lives in `caddy/`. Do not move a live SQLite main file without its
-   consistent backup/sidecar handling (backup work is SPN-030).
+   consistent backup/sidecar handling (see [offsite backups](backups.md)).
 
 ## Configure and start
 
@@ -131,7 +131,7 @@ vantage point is available. IPv6 firewall closure remains required; an unperform
 scan is not a passing result. No replacement IPv6-check ticket is required.
 
 Before update, note the current image ID and take a verified backup using the
-SPN-030 process once available. Build/pull the new reviewed image, update only
+[offsite backup procedure](backups.md). Build/pull the new reviewed image, update only
 `SPINEL_IMAGE`, and `systemctl restart spinel`. Confirm the same data and passkeys
 remain. With editors present, keep two editors open and verify reconnection and
 preserved edits. Do not roll back across an incompatible schema migration without
@@ -326,5 +326,5 @@ supervision through private-network/LUKS preflight, loopback app and tailnet-onl
 TLS 1.3 proxy, environment-supplied secrets, measured headroom on the 2 GB host,
 and TypeScript-only deployment/maintenance scripts. The original PostgreSQL
 storage plan was replaced with encrypted SQLite by owner decision on 2026-10-17.
-Backups and diagnostics remain SPN-030 and SPN-032. Public-domain deployment is
+The [offsite backup procedure](backups.md) covers SPN-030; diagnostics remain SPN-032. Public-domain deployment is
 SPN-038 and does not change this tested private configuration.
