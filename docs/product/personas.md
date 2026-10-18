@@ -17,8 +17,11 @@ Admin accounts can't view, edit or create documents.
 - Invites people, revokes access, and sees who has which devices, without
   ever seeing anyone's documents.
 - Notices problems (disk, memory, a stuck connection) before they lose work.
-- Wants: few moving parts on a 2 GB droplet, nothing exposed beyond Tailscale,
-  and recovery that has been tried, not just written down.
+- Wants: few moving parts on a 2 GB droplet, private database and management
+  access, and recovery that has been tried, not just written down.
+- The accepted test deployment was tailnet-only and has been retired. The Owner
+  chose public app HTTPS with private management for the later SPN-038 redeployment;
+  its timing and internet-facing acceptance remain pending (decision #40).
 
 ## Owner
 

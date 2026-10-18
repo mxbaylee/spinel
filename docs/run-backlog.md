@@ -25,10 +25,13 @@ uncommitted work and inspect existing branches/PRs before creating duplicates.
 Resume a relevant unfinished PR first, rechecking its evidence against its head.
 Otherwise branch from current `main`, using `codex/<ticket-and-topic>`.
 
-Take the highest-ranked eligible ticket. After each merge, fetch main and pick
-again; do not preselect a fixed queue. An explicit owner-requested ticket takes
-priority for that run. If seven tickets have landed since grooming, do the
-required grooming PR first, with the same review and CI gates.
+Take the highest-ranked eligible ticket, honoring explicit owner sequencing in its
+Rules: SPN-035 is post-production and SPN-009 is last, even when a score tie would
+place it earlier. These are scope/timing constraints, not new product dependencies.
+After each merge, fetch main and pick again; do not preselect a fixed queue. An
+explicit owner-requested ticket takes priority for that run. If seven tickets
+have landed since grooming, do the required grooming PR first, with the same
+review and CI gates.
 
 When a ticket needs owner input or verification, prepare everything independent
 of that input, ask once with the decision issue or exact verification steps, and
