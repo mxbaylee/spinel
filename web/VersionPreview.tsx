@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { InterceptorEffectEnum } from '@univerjs/core';
+import { InterceptorEffectEnum, IPermissionService } from '@univerjs/core';
+import { UnitAction } from '@univerjs/protocol';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
-import { SheetInterceptorService, SheetSkeletonService, INTERCEPTOR_POINT } from '@univerjs/sheets';
+import {
+  SheetInterceptorService,
+  SheetSkeletonService,
+  INTERCEPTOR_POINT,
+  getAllWorkbookPermissionPoint,
+} from '@univerjs/sheets';
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
@@ -70,6 +76,19 @@ export function VersionPreview() {
           .setReadOnly();
       await editorReady(univerAPI);
       if (disposed) return;
+      if (sheet) {
+        // setEditable controls cell entry; the full permission set also fences
+        // formatting, worksheet structure and other toolbar commands.
+        const permissions = univer.__getInjector().get(IPermissionService);
+        for (const Point of getAllWorkbookPermissionPoint()) {
+          const point = new Point(loaded.snapshot.id);
+          if (!permissions.getPermissionPoint(point.id)) permissions.addPermissionPoint(point);
+          permissions.updatePermissionPoint(
+            point.id,
+            [UnitAction.View, UnitAction.Copy, UnitAction.Print].includes(point.subType),
+          );
+        }
+      }
       const interceptor = sheet
         ? univer
             .__getInjector()
