@@ -130,7 +130,8 @@ test('guest HTTP and socket identities are scoped; link transitions evict pendin
     expect(
       (await send(`${base}/snapshot/2/unit/${other.id}/rev/0`, cookie)).status,
     ).toBeGreaterThanOrEqual(400);
-    expect((await send(`${base}/snapshot/2/unit/${item.id}/rev/0`, cookie)).ok).toBe(true);
+    const snapshot = await send(`${base}/snapshot/2/unit/${item.id}/rev/0`, cookie);
+    expect(snapshot.status, await snapshot.text()).toBe(200);
     const account = await open('/universer-api', ownerCookie),
       guest = await open(base, cookie);
     expect(JSON.stringify(guest.messages)).not.toContain(owner.name);
@@ -183,7 +184,13 @@ test('guest HTTP and socket identities are scoped; link transitions evict pendin
       },
     });
     expect(rejected.status).toBe(401);
-    expect(staleGuestTicket).toBeTruthy();
+    const revokedSocket = new WebSocket(
+      `${root.replace('http:', 'ws:')}${base}/comb/connect?sessionTicket=${encodeURIComponent(staleGuestTicket)}&unitID=${item.id}`,
+      { headers: { Cookie: cookie, Origin: origin } },
+    );
+    sockets.push(revokedSocket);
+    revokedSocket.on('error', () => {});
+    await expect.poll(() => revokedSocket.readyState).toBe(WebSocket.CLOSED);
     expect(await (await send(`/api/items/${item.id}/sheet`, ownerCookie)).text()).not.toContain(
       'Rejected guest write',
     );

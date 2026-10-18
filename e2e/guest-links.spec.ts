@@ -68,7 +68,9 @@ for (const kind of ['sheet', 'doc'] as const) {
         .getByLabel('Guest link address', { exact: true })
         .inputValue();
       await first.goto(viewLink);
-      await saved(first);
+      await expect(region(first).getByRole('status', { name: 'Save status' })).toHaveText(
+        'View only — reload after your access changes.',
+      );
       await expect(first.getByText('View-only link.', { exact: true })).toBeVisible();
       await expect(first.getByText('Your workspace', { exact: true })).toHaveCount(0);
       await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
