@@ -96,6 +96,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     page.locator('.univer-container canvas').evaluateAll((canvases, colour) => {
       let count = 0;
       for (const canvas of canvases as HTMLCanvasElement[]) {
+        if (!canvas.width || !canvas.height) continue;
         const pixels = canvas
           .getContext('2d')
           ?.getImageData(0, 0, canvas.width, canvas.height).data;

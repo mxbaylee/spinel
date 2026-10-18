@@ -1,5 +1,5 @@
 import { VersionNames } from './VersionNames.tsx';
-import { editorTheme, bindEditorTheme } from '../src/ui/editorTheme.ts';
+import { editorTheme, bindEditorTheme, canvasColorOverride } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
 import { setDocumentPermissionValue } from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
@@ -188,7 +188,7 @@ export function DocEditor({
           [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, ClientEnglish, UIEnglish),
         },
         collaboration: true,
-        override: [[IImageIoService, { useClass: StoredImages }]],
+        override: [[IImageIoService, { useClass: StoredImages }], canvasColorOverride()],
         plugins: [
           [
             UniverDrawingPlugin,

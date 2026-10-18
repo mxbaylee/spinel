@@ -3,11 +3,12 @@ import { IPermissionService, InterceptorEffectEnum } from '@univerjs/core';
 import {
   getAllWorkbookPermissionPoint,
   SheetInterceptorService,
+  SheetSkeletonService,
   INTERCEPTOR_POINT,
   BEFORE_CELL_EDIT,
   SetRangeValuesCommand,
 } from '@univerjs/sheets';
-import { editorTheme, bindEditorTheme } from '../src/ui/editorTheme.ts';
+import { editorTheme, bindEditorTheme, canvasColorOverride } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
 import { presetStyle, displayPresetCell, presetCellForEditing } from '../src/ui/presetStyles.ts';
 import { FillPresets } from '../src/ui/FillPresets.tsx';
@@ -72,6 +73,7 @@ export function SheetEditor({
       if (disposed) return;
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
+        override: [canvasColorOverride()],
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish) },
@@ -118,9 +120,15 @@ export function SheetEditor({
             return presetCellForEditing(cell, context.origin, style);
           },
         });
-      const stopTheme = bindEditorTheme(univer, () =>
-        univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas(),
-      );
+      const stopTheme = bindEditorTheme(univer, () => {
+        // Invalidate cached display styles on inactive tabs as well.
+        for (const skeleton of univer
+          .__getInjector()
+          .get(SheetSkeletonService)
+          .getSkeletonsByUnitId(id))
+          skeleton.makeDirty(true);
+        univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
+      });
       disposeEditor = () => {
         stopTheme();
         interceptor.dispose();

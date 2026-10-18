@@ -15,7 +15,11 @@ keyboard focus. All artwork is original; no character art or external fonts are
 loaded. The reference files and preview script have been retired.
 
 Sheets and Docs update the public Univer ThemeService in place. A theme switch
-must not recreate an editor or submit a document revision. The eventual Slides
+must not recreate an editor or submit a document revision. A public canvas-colour
+service override resolves theme tokens while preserving literal document colours;
+this prevents the SDK from inverting our mapped presets a second time. Paper
+remains light while editor chrome follows the selected theme. Sheet display
+caches, including inactive tabs, are invalidated on a theme change. The eventual Slides
 editor must use this same integration and supply light/dark screenshots; that
 requirement remains in SPN-009. Admin access remains separate from documents.
 

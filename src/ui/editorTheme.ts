@@ -1,5 +1,6 @@
 import { ThemeService } from '@univerjs/core';
-import type { Univer } from '@univerjs/core';
+import type { Univer, DependencyOverride } from '@univerjs/core';
+import { ICanvasColorService } from '@univerjs/engine-render';
 import { defaultTheme } from '@univerjs/presets';
 import { getTheme, watchTheme } from './theme.ts';
 import { palettes, editorNeutrals } from './palette.ts';
@@ -32,4 +33,19 @@ export function bindEditorTheme(univer: Univer, redraw?: () => void) {
   };
   update();
   return watchTheme(update);
+}
+
+// Document literals must stay exact: preset pairs are already mapped by our
+// display interceptor. SDK theme tokens still follow the editor chrome.
+export function canvasColorOverride(): DependencyOverride[number] {
+  return [
+    ICanvasColorService,
+    {
+      useFactory: (theme: ThemeService) => ({
+        getRenderColor: (color: string) =>
+          theme.isValidThemeColor(color) ? theme.getColorFromTheme<string>(color) : color,
+      }),
+      deps: [ThemeService],
+    },
+  ];
 }
