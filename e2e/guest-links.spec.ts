@@ -96,6 +96,11 @@ for (const kind of ['sheet', 'doc'] as const) {
       await saved(first);
       await edit(second, 'Guest two 159', 'B1');
       await saved(second);
+      await expect(
+        first
+          .getByRole('group', { name: 'People in this document' })
+          .getByRole('button', { name: 'Go to Guest', exact: true }),
+      ).toBeVisible();
       const live = async () =>
         (await (await context.request.get(`/api/items/${item.id}/${kind}`)).json()).snapshot;
       await expect.poll(async () => JSON.stringify(await live())).toContain('Guest one 314');

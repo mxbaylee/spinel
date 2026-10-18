@@ -152,10 +152,58 @@ test('guest HTTP and socket identities are scoped; link transitions evict pendin
     sockets.push(staleSocket);
     staleSocket.on('error', () => {});
     await expect.poll(() => staleSocket.readyState).toBe(WebSocket.CLOSED);
-    const staleGuestTicket = await ticket(base, cookie);
+    // View-only links must reject a forged owner ID through the actual protocol boundary.
+    const viewerLink = await (
+      await send(`/api/items/${item.id}/link`, ownerCookie, { role: 'viewer' }, 'PUT')
+    ).json();
+    const viewerSession = await send(`/api/guest/${item.id}/session`, '', {
+      token: new URL(viewerLink.url).hash.slice(1),
+    });
+    expect(viewerSession.status).toBe(204);
+    const viewerCookie = viewerSession.headers.get('set-cookie')!.split(';')[0];
+    const viewer = await open(base, viewerCookie);
+    const before = await (await send(`/api/items/${item.id}/sheet`, ownerCookie)).json();
+    const submit = await send(`${base}/comb/2/unit/${item.id}/new_changes`, viewerCookie, {
+      unitID: item.id,
+      type: UniverType.UNIVER_SHEET,
+      memberID: viewer.memberID,
+      changeset: {
+        unitID: item.id,
+        type: UniverType.UNIVER_SHEET,
+        userID: owner.id,
+        memberID: viewer.memberID,
+        sid: 'forged-viewer',
+        reqId: 1,
+        baseRev: 1,
+        revision: 0,
+        mutations: [
+          {
+            id: SetRangeValuesMutation.id,
+            data: JSON.stringify({
+              unitId: item.id,
+              subUnitId: before.snapshot.sheetOrder[0],
+              cellValue: { 0: { 0: { v: 'Forged owner write' } } },
+            }),
+          },
+        ],
+      },
+    });
+    expect(submit.status).toBe(200); // Receipt is acknowledged; rejection arrives on the socket.
+    await expect.poll(() => JSON.stringify(viewer.messages)).toContain('permission_rej');
+    expect(await (await send(`/api/items/${item.id}/sheet`, ownerCookie)).json()).toEqual(before);
+    for (const suffix of ['rev/0', 'block/foreign', 'fetchmissing?from=1&to=1']) {
+      const deniedRead = await send(`${base}/snapshot/2/unit/${other.id}/${suffix}`, viewerCookie);
+      expect(await deniedRead.text()).not.toContain('Never shared');
+      expect(deniedRead.status).toBeGreaterThanOrEqual(400);
+    }
+    expect(
+      (await send(`${base}/snapshot/2/unit/${item.id}/fetchmissing?from=1&to=1`, viewerCookie)).ok,
+    ).toBe(true);
+    const staleGuestTicket = await ticket(base, viewerCookie);
     const disabled = await send(`/api/items/${item.id}/link`, ownerCookie, { role: null }, 'PUT');
     expect(disabled.status).toBe(200);
     await expect.poll(() => guest.socket.readyState).toBe(WebSocket.CLOSED);
+    await expect.poll(() => viewer.socket.readyState).toBe(WebSocket.CLOSED);
     expect((await send(`/api/guest/${item.id}`, cookie)).status).toBe(404);
     expect((await send(`${base}/snapshot/2/unit/${item.id}/rev/0`, cookie)).status).toBe(401);
     const rejected = await send(`${base}/comb/2/unit/${item.id}/new_changes`, cookie, {
@@ -186,7 +234,7 @@ test('guest HTTP and socket identities are scoped; link transitions evict pendin
     expect(rejected.status).toBe(401);
     const revokedSocket = new WebSocket(
       `${root.replace('http:', 'ws:')}${base}/comb/connect?sessionTicket=${encodeURIComponent(staleGuestTicket)}&unitID=${item.id}`,
-      { headers: { Cookie: cookie, Origin: origin } },
+      { headers: { Cookie: viewerCookie, Origin: origin } },
     );
     sockets.push(revokedSocket);
     revokedSocket.on('error', () => {});
