@@ -1,4 +1,8 @@
 import { VersionNames } from './VersionNames.tsx';
+import { FileExports } from './FileExports.tsx';
+import { SheetPrintOpenOperation, UniverSheetsPrintPlugin } from '@univerjs-pro/sheets-print';
+import printEnglish from '@univerjs-pro/sheets-print/locale/en-US';
+import '@univerjs-pro/sheets-print/lib/index.css';
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { IPermissionService, InterceptorEffectEnum } from '@univerjs/core';
 import {
@@ -34,12 +38,14 @@ import { editorReady } from './editorReady.ts';
 
 export function SheetEditor({
   id,
+  name,
   onDirty,
 }: {
   id: string;
   name: string;
   onDirty: (dirty: boolean) => void;
 }) {
+  const print = useRef<(() => Promise<void>) | null>(null);
   const applyFill = useRef<((id: string) => Promise<void>) | null>(null);
   const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
@@ -76,11 +82,14 @@ export function SheetEditor({
         theme: editorTheme(),
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
-        locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish) },
+        locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish, printEnglish) },
         collaboration: true,
-        plugins: collaborationPlugins(data.unitId),
+        plugins: [...collaborationPlugins(data.unitId), UniverSheetsPrintPlugin],
         presets: [UniverSheetsCorePreset({ container: container.current! })],
       });
+      print.current = async () => {
+        await univerAPI.executeCommand(SheetPrintOpenOperation.id);
+      };
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => univer.dispose();
@@ -226,6 +235,15 @@ export function SheetEditor({
       <VersionNames
         id={id}
         saved={!status.dirty && !status.failed && Boolean(controller.current)}
+      />
+      <FileExports
+        id={id}
+        name={name}
+        saved={!status.dirty && !status.failed && Boolean(controller.current)}
+        print={async () => {
+          if (!print.current) throw new Error('Wait for the spreadsheet to load.');
+          await print.current();
+        }}
       />
       <div className="univer-container" ref={container} />
     </section>

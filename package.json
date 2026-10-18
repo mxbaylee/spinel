@@ -25,6 +25,7 @@
     "postinstall": "node scripts/dependencies/patch-univer-core.ts"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "1.0.11",
     "@playwright/test": "1.64.1",
     "@types/express": "5.0.6",
     "@types/node": "24.19.2",
@@ -33,6 +34,7 @@
     "@types/ws": "8.18.2",
     "@vitejs/plugin-react": "6.1.2",
     "oxlint": "1.88.0",
+    "pdfjs-dist": "6.4.299",
     "prettier": "3.9.10",
     "typescript": "7.0.2",
     "vite": "8.3.4",
@@ -50,7 +52,9 @@
     "@univerjs-pro/collaboration-endpoint": "1.1.0",
     "@univerjs-pro/collaboration-service": "1.1.0",
     "@univerjs-pro/collaboration-transport-node": "1.1.0",
+    "@univerjs-pro/docs-print": "1.1.0",
     "@univerjs-pro/license": "1.1.0",
+    "@univerjs-pro/sheets-print": "1.1.0",
     "@univerjs/core": "1.1.0",
     "@univerjs/drawing": "1.1.0",
     "@univerjs/engine-formula": "1.1.0",

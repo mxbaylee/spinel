@@ -94,16 +94,24 @@ export class AuthStore {
     return Number(this.database.prepare('SELECT COUNT(*) AS total FROM auth_users').get()!.total);
   }
   transaction<T>(action: () => T): T {
-    this.database.exec('BEGIN IMMEDIATE');
+    const nested = this.transactionDepth > 0;
+    const savepoint = `spinel_${this.transactionDepth}`;
+    this.database.exec(nested ? `SAVEPOINT ${savepoint}` : 'BEGIN IMMEDIATE');
+    this.transactionDepth++;
     try {
       const result = action();
-      this.database.exec('COMMIT');
+      this.database.exec(nested ? `RELEASE SAVEPOINT ${savepoint}` : 'COMMIT');
       return result;
     } catch (error) {
-      this.database.exec('ROLLBACK');
+      this.database.exec(
+        nested ? `ROLLBACK TO SAVEPOINT ${savepoint}; RELEASE SAVEPOINT ${savepoint}` : 'ROLLBACK',
+      );
       throw error;
+    } finally {
+      this.transactionDepth--;
     }
   }
+  private transactionDepth = 0;
   // Internal seam for first-admin/invite tickets and isolated test fixtures, never an HTTP signup.
   createUser(name: string, admin = false): User {
     const id = randomUUID();

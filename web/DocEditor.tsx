@@ -1,4 +1,9 @@
 import { VersionNames } from './VersionNames.tsx';
+import { FileExports } from './FileExports.tsx';
+import { printDocument } from './documentPrint.ts';
+import { UniverDocsPrintPlugin } from '@univerjs-pro/docs-print';
+import printEnglish from '@univerjs-pro/docs-print/locale/en-US';
+import '@univerjs-pro/docs-print/lib/index.css';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
 import { setDocumentPermissionValue } from '@univerjs/docs';
@@ -52,12 +57,14 @@ import { documentReady } from './documentReady.ts';
 
 export function DocEditor({
   id,
+  name,
   onDirty,
 }: {
   id: string;
   name: string;
   onDirty: (dirty: boolean) => void;
 }) {
+  const print = useRef<(() => Promise<void>) | null>(null);
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
@@ -186,7 +193,14 @@ export function DocEditor({
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
-          [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, ClientEnglish, UIEnglish),
+          [LocaleType.EN_US]: mergeLocales(
+            enUS,
+            drawingEnUS,
+            linkEnUS,
+            ClientEnglish,
+            UIEnglish,
+            printEnglish,
+          ),
         },
         collaboration: true,
         override: [[IImageIoService, { useClass: StoredImages }]],
@@ -202,6 +216,7 @@ export function DocEditor({
           UniverDocsDrawingPlugin,
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
+          UniverDocsPrintPlugin,
           ...collaborationPlugins(data.unitId, [[IImageIoService, { useClass: StoredImages }]]),
         ],
         presets: [
@@ -224,6 +239,9 @@ export function DocEditor({
           UniverDocsHyperLinkPreset(),
         ],
       });
+      print.current = async () => {
+        await printDocument(univerAPI);
+      };
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
         stopTheme();
@@ -297,6 +315,15 @@ export function DocEditor({
       <VersionNames
         id={id}
         saved={!status.dirty && !status.failed && Boolean(controller.current)}
+      />
+      <FileExports
+        id={id}
+        name={name}
+        saved={!status.dirty && !status.failed && Boolean(controller.current)}
+        print={async () => {
+          if (!print.current) throw new Error('Wait for the document to load.');
+          await print.current();
+        }}
       />
       {editable && <p className="editor-help">Click the page to write. Type / for commands.</p>}
       <div className="univer-container" ref={container} />
