@@ -14,7 +14,8 @@ test('shared drawer files by drag and keyboard, removes only personal placement,
     auth = new AuthStore(db),
     store = new WorkspaceStore(auth);
   const owner = auth.createUser('Filing owner'),
-    viewer = auth.createUser('Filing collaborator');
+    // The test database survives retries; account-access labels must stay unique.
+    viewer = auth.createUser(`Filing collaborator ${owner.id}`);
   const sourceFolder = store.create(owner.id, {
     name: 'Private parent',
     kind: 'folder',
