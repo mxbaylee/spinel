@@ -11,6 +11,7 @@ and autosave, [sharing](docs/sharing.md) for account access, guest links and per
 filing, and [files](docs/files.md) for native import/export and PDF printing.
 Slides remain on the [backlog](docs/todo/readme.md).
 See [authentication](docs/authentication.md) for the isolated passkey check.
+See [mobile use](docs/mobile.md) for phone installation, Sheet touch controls and offline behavior.
 
 Use Node from `.nvmrc`, then run:
 

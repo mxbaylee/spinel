@@ -3,13 +3,15 @@ import type { IWorkbookData, ICellData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { interruptibleNetwork } from './live-network.ts';
 
 test('configured HTTPS installs, supports sheet touch editing and opens only a generic offline page', async ({
   page,
   context,
   baseURL,
 }, info) => {
-  test.setTimeout(150_000);
+  test.setTimeout(180_000);
+  const network = await interruptibleNetwork(context);
   const db = openDatabase('test-results/mobile-https/app.sqlite'),
     auth = new AuthStore(db),
     workspace = new WorkspaceStore(auth);
@@ -72,7 +74,7 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await saved();
     await expect(sheet).toHaveAttribute('data-mobile', 'true');
     const canvas = sheet.locator('.univer-container canvas').first();
-    async function edit(value: string) {
+    async function startEdit(value: string) {
       await canvas.scrollIntoViewIfNeeded();
       const box = (await canvas.boundingBox())!;
       // Touch the first visible data cell twice to open the SDK's mobile editor.
@@ -84,6 +86,10 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
       const confirm = bar.getByRole('button', { name: 'OK', exact: true });
       const button = (await confirm.boundingBox())!;
       expect(button.height).toBeGreaterThanOrEqual(44);
+      return confirm;
+    }
+    async function edit(value: string) {
+      const confirm = await startEdit(value);
       await confirm.tap();
       await saved();
     }
@@ -143,9 +149,33 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     expect(
       cells(await read()).filter((cell) => [17, 29].includes(Number(cell.value))),
     ).toHaveLength(2);
+    // Isolate input tracking while online: disconnecting alone reports unsaved.
+    const confirm = await startEdit('offline-phone');
+    const status = sheet.getByRole('status', { name: 'Save status' });
+    await expect(status).toHaveText('Editing cell — changes not saved yet.');
+    // An already-open editor must retain that edit after both HTTP and its
+    // established live socket disconnect, without allowing silent navigation.
+    await network.setOffline(true);
+    await expect(status).toContainText('not saved');
+    await confirm.tap();
+    await expect(status).toContainText('not saved');
+    const navigationWarning = page.waitForEvent('dialog');
+    page.once('dialog', (dialog) => dialog.dismiss());
+    await page.getByRole('link', { name: 'Settings', exact: true }).tap();
+    await navigationWarning;
+    await expect(page).toHaveURL(new RegExp(item.id));
+    await expect(status).toContainText('not saved');
+    await network.setOffline(false);
+    await saved();
+    const retainedInput = async () =>
+      cells(await read()).some((cell) => String(cell.value).endsWith('offline-phone'));
+    await expect.poll(retainedInput).toBe(true);
+    await page.reload();
+    await saved();
+    expect(await retainedInput()).toBe(true);
     expect(await page.evaluate(() => caches.keys())).toEqual([]);
     expect(errors).toEqual([]);
-    await context.setOffline(true);
+    await network.setOffline(true);
     await page.reload();
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
     await expect(page.getByText('Private phone budget')).toHaveCount(0);
@@ -156,12 +186,12 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     expect(await page.evaluate(() => caches.keys())).toEqual([]);
     await page.goto('/');
     await context.clearCookies();
-    await context.setOffline(false);
+    await network.setOffline(false);
     await page.getByRole('button', { name: 'Try again', exact: true }).tap();
     await expect(page).toHaveURL(/\/sign-in$/);
     await expect(page.getByText('Private phone budget')).toHaveCount(0);
   } finally {
-    await context.setOffline(false);
+    await network.setOffline(false);
     db.close();
   }
 });
