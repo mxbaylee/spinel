@@ -222,6 +222,9 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await expect(
       page.getByText('Click the page to write. Type / for commands.', { exact: true }),
     ).toBeVisible();
+    const docEditor = page.getByRole('region', { name: 'Doc document', exact: true });
+    await expect(docEditor.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
+    await docEditor.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await page.keyboard.type('Paper stays readable');
     await expect
       .poll(async () => {
