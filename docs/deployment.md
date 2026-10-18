@@ -6,7 +6,28 @@ account and document persistence, editor reconnection and measured memory use.
 After removing a leftover inbound SSH rule, all 65,535 public IPv4 TCP ports were
 filtered in an external scan. UDP 443/41641 did not answer probes; the ambiguity
 of that result is recorded below. The owner waived external IPv6 scanning in #17;
-IPv6 firewall closure remains configured. No external IPv6 scan pass is claimed.
+IPv6 firewall closure was configured for that run. No external IPv6 scan pass is claimed.
+
+## Test host retired, 2026-10-17
+
+After acceptance, the owner requested complete teardown of the disposable test
+instance and redeployment later with the public HTTPS work in SPN-038. The
+DigitalOcean UI confirmed deletion of droplet `spinel` (610086510), the 10 GiB
+`spinel-data` volume and unused `spinel-private` firewall. The volume remained
+detached after the droplet deletion, so it was explicitly deleted separately.
+The account showed no remaining Droplets, volumes, reserved IPs, Droplet backups,
+Droplet snapshots or volume snapshots. The Spinel Tailscale device was removed;
+the owner's Mac devices remain registered.
+
+The deleted volume contained test accounts, documents and its local archive;
+these were deliberately discarded, not backed up for restoration. The evidence
+below is historical acceptance evidence, not a running-production claim. Keep
+this package for a fresh deployment, allocate new resources, re-enroll accounts
+and update DNS to newly assigned addresses. Never assume the old public IPs or
+tailnet identity still belong to Spinel. After the owner signed in, both old
+`spinel` A/AAAA records were removed from Namecheap; its filtered host table
+showed no records and authoritative DNS returned NXDOMAIN. Other domain and
+mail records were left intact. Cached DNS answers may persist until expiry.
 
 ## Topology
 
