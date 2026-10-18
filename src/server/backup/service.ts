@@ -66,7 +66,7 @@ export class BackupService {
       due.setUTCHours(2, 0, 0, 0);
       if (due.getTime() > now) due.setUTCDate(due.getUTCDate() - 1);
       if (
-        (!state.last_good || state.last_good < due.getTime()) &&
+        (!!state.error || !!state.owner || !state.last_good || state.last_good < due.getTime()) &&
         (!state.last_attempt || now - state.last_attempt >= HOUR)
       )
         void this.run().catch(() =>

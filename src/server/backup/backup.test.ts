@@ -331,3 +331,34 @@ test('private keys reject permissive permissions and invalid length', async () =
   await writeFile(path, 'short');
   await expect(readKey(path)).rejects.toThrow('32');
 });
+
+test('retention failure retries hourly even after a verified upload sets lastGood', async () => {
+  let fail = true,
+    puts = 0,
+    lists = 0;
+  const f = await serviceFixture({
+    async put() {
+      puts++;
+    },
+    async list() {
+      lists++;
+      if (fail) throw new Error('retention unavailable');
+      return [];
+    },
+    async remove() {},
+  });
+  expect(await f.service.run()).toBe(false);
+  const good = f.service.status().lastGood;
+  expect(good).not.toBeNull();
+  expect(f.service.status().error).toContain('failed');
+  vi.useFakeTimers();
+  f.service.start();
+  expect(puts).toBe(1);
+  f.advance(3600_000);
+  fail = false;
+  await vi.advanceTimersByTimeAsync(60_000);
+  await f.service.active;
+  expect({ puts, lists }).toEqual({ puts: 2, lists: 2 });
+  expect(f.service.status().error).toBeNull();
+  await f.service.close();
+});
