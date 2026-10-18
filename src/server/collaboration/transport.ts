@@ -5,7 +5,7 @@ import { UniverCollabEndpoint } from '@univerjs-pro/collaboration-endpoint';
 import type { EndpointSession } from '@univerjs-pro/collaboration-endpoint';
 import { createNodeTransport } from '@univerjs-pro/collaboration-transport-node';
 import type { NodeTransportConnection } from '@univerjs-pro/collaboration-transport-node';
-import { documentIdentity, validateIdentity } from './identity.ts';
+import { documentIdentity, protocolGuestItem, validateIdentity } from './identity.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import type { ItemAccess } from '../../shared/workspace.ts';
 import type { CollaborationStore } from './service.ts';
@@ -81,7 +81,11 @@ export function attachCollaboration(
     response.setHeader('Cache-Control', 'no-store');
     let identity: ReturnType<typeof documentIdentity>;
     try {
-      identity = documentIdentity(workspace, request.headers, context.params.guestItem);
+      identity = documentIdentity(
+        workspace,
+        request.headers,
+        protocolGuestItem(request.url, origin),
+      );
     } catch {
       response.writeHead(401).end('This document is not available.');
       return;
@@ -124,7 +128,7 @@ export function attachCollaboration(
       const identity = documentIdentity(
         workspace,
         context.incomingMessage.headers,
-        context.params.guestItem,
+        protocolGuestItem(context.incomingMessage.url, origin),
       );
       const unitID = documentScope(identity.userId, context.incomingMessage.url);
       const id = collab.itemForUnit(unitID),

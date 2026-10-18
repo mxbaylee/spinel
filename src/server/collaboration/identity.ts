@@ -34,3 +34,12 @@ export function validateIdentity(
     workspace.owner(userId);
   }
 }
+
+/** Transport middleware runs before route params are populated. Select credentials from the URL. */
+export function protocolGuestItem(url: string | undefined, origin: string) {
+  const path = new URL(url ?? '/', origin).pathname;
+  if (!path.startsWith('/guest-api/')) return undefined;
+  const match = /^\/guest-api\/([a-f\d-]{36})\/universer-api(?:\/|$)/.exec(path);
+  if (!match) throw new AuthError(401, 'This document is not available.');
+  return match[1];
+}
