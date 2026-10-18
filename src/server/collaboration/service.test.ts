@@ -9,6 +9,7 @@ import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { UniverType } from '@univerjs/protocol';
 import type { IChangeset } from '@univerjs/protocol';
 import { SetRangeValuesMutation } from '@univerjs/sheets';
+import { RevertRevisionMutation } from '@univerjs-pro/collaboration';
 import { openDatabase } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
@@ -117,6 +118,36 @@ async function fixture() {
     edit,
   };
 }
+
+test('history restore publishes an earlier sheet revision as a new live revision', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  await f.collab.service.submitChangeset(
+    { changeset: f.edit() },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  const changeset = {
+    ...f.edit(),
+    baseRev: 2,
+    reqId: 2,
+    mutations: [
+      {
+        id: RevertRevisionMutation.id,
+        data: JSON.stringify({ unitId: f.sheet.id, revision: 1 }),
+      },
+    ],
+  };
+  const result = await f.collab.service.submitChangeset(
+    { changeset },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  expect(result).toMatchObject({ status: 'committed' });
+  const restored = await f.collab.load(f.owner.id, f.sheet.id);
+  expect(restored.revision).toBe(3);
+  expect((restored.snapshot as IWorkbookData).sheets.first.cellData).toEqual(
+    f.snapshot.sheets.first.cellData,
+  );
+});
 
 test('permanent purge waits for in-flight migration before acknowledging deletion', async () => {
   const f = await fixture();
