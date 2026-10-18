@@ -13,8 +13,9 @@ corruption. This preserves one consistent backup without that risk; see
 [decision #68](https://github.com/mxbaylee/spinel/issues/68).
 
 This preserves accounts, passkeys, sessions, invitations, folders, grants, trash,
-native Sheets/Docs snapshots and uploaded image bytes: all currently live in
-SQLite. Every table is included, including future history tables. Before adding
+native Sheets/Docs snapshots, collaboration generations, retained checkpoints,
+restore receipts and uploaded image bytes: all currently live in SQLite. Every
+table is included. Before adding
 an external database or filesystem blob store, extend this inventory and the
 consistent backup/restore procedure; a SQLite-only backup cannot protect those.
 

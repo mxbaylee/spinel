@@ -1,9 +1,16 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createRequire } from 'node:module';
 import Sqlite from 'libsql';
 import { expect, test } from 'vitest';
 import { openDatabase, DatabaseSync, backup } from './database.ts';
+
+test('application and SDK adapter resolve the same native SQLite package', () => {
+  const require = createRequire(import.meta.url);
+  const sdk = createRequire(require.resolve('@univerjs-pro/collaboration-database-sqlite'));
+  expect(sdk.resolve('libsql')).toBe(require.resolve('libsql'));
+});
 
 test('app and SDK-runtime connections preserve integrity through paired writes, closes and repeated reopen', async () => {
   const directory = mkdtempSync(join(tmpdir(), 'spinel-database-reopen-'));
