@@ -1,4 +1,6 @@
 import { VersionNames } from './VersionNames.tsx';
+import { editorTheme, bindEditorTheme } from '../src/ui/editorTheme.ts';
+import { getTheme } from '../src/ui/theme.ts';
 import { setDocumentPermissionValue } from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
 import { Collaborators, watchPresence } from './Collaborators.tsx';
@@ -179,6 +181,8 @@ export function DocEditor({
       }
       Inject(Injector)(TrackedImageInsertion, undefined, 1);
       const { univer, univerAPI } = createUniver({
+        theme: editorTheme(),
+        darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
           [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, ClientEnglish, UIEnglish),
@@ -216,7 +220,11 @@ export function DocEditor({
           UniverDocsHyperLinkPreset(),
         ],
       });
-      disposeEditor = () => univer.dispose();
+      const stopTheme = bindEditorTheme(univer);
+      disposeEditor = () => {
+        stopTheme();
+        univer.dispose();
+      };
       identifyCollaborator(univer, data.user);
       const document = await univerAPI.getCollaboration().loadDocAsync(id);
       if (!document) throw new Error('Could not load this document.');

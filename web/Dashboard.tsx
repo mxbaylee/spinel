@@ -7,6 +7,7 @@ import { Trash } from './Trash.tsx';
 import { DocumentTags, TagLabels } from './DocumentTags.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import { PinButton, usePins } from './Pins.tsx';
+import { GemLogo } from '../src/ui/GemLogo.tsx';
 import type { NavigationGuard } from './navigation.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
@@ -337,7 +338,8 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                       ))}
                   </ul>
                   {!visibleItems.some((item) => item.parentId === currentId) && (
-                    <p>
+                    <p className="empty-state">
+                      <GemLogo size={52} />
                       This folder is empty.
                       {(!current || current.access === 'owner') &&
                         ' Choose New to add a folder or document.'}

@@ -226,6 +226,7 @@ export async function createApp(options: AppOptions) {
             allow: [
               resolve(projectRoot, 'web'),
               resolve(projectRoot, 'src/shared'),
+              resolve(projectRoot, 'src/ui'),
               resolve(projectRoot, 'node_modules'),
             ],
             deny: [
