@@ -174,6 +174,7 @@ test('registration and discoverable sign-in require user verification and fixed 
   expect(f.store.passkey('credential')?.counter).toBe(1);
   expect(f.store.session(f.anonymous.token)).toBeUndefined();
   expect(f.store.session(result.token)?.user_id).toBe(f.user.id);
+  expect(f.store.session(result.token)?.passkey_id).toBe('credential');
 });
 
 test('duplicate registration and wrong user handles fail without a session', async () => {

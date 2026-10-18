@@ -31,6 +31,26 @@ export class WorkspaceStore {
         name TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_items_owner_parent ON workspace_items(owner_id,parent_id);
+      CREATE TABLE IF NOT EXISTS workspace_pins (
+        user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
+        position INTEGER NOT NULL,
+        PRIMARY KEY(user_id,item_id)
+      ) STRICT;
+      CREATE INDEX IF NOT EXISTS workspace_pins_item ON workspace_pins(item_id);
+      CREATE TABLE IF NOT EXISTS workspace_tags (
+        user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        PRIMARY KEY(user_id,name)
+      ) STRICT;
+      CREATE TABLE IF NOT EXISTS workspace_tag_assignments (
+        user_id TEXT NOT NULL,
+        item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        PRIMARY KEY(user_id,item_id,name),
+        FOREIGN KEY(user_id,name) REFERENCES workspace_tags(user_id,name) ON DELETE CASCADE
+      ) STRICT;
+      CREATE INDEX IF NOT EXISTS workspace_tag_assignments_item ON workspace_tag_assignments(item_id);
       CREATE TABLE IF NOT EXISTS workspace_grants (
         item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
         user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
@@ -48,6 +68,128 @@ export class WorkspaceStore {
       'CREATE INDEX IF NOT EXISTS workspace_items_trash ON workspace_items(trashed_at)',
     );
   }
+  cleanPins() {
+    // Access can change through a parent grant, a move, or a trash batch.
+    // Remove references at that transition, so a later regrant cannot revive them.
+    const rows = this.auth.database.prepare('SELECT user_id,item_id FROM workspace_pins').all() as {
+      user_id: string;
+      item_id: string;
+    }[];
+    const remove = this.auth.database.prepare(
+      'DELETE FROM workspace_pins WHERE user_id=? AND item_id=?',
+    );
+    for (const row of rows)
+      if (!this.role(row.user_id, row.item_id)) remove.run(row.user_id, row.item_id);
+  }
+  private readPins(userId: string): WorkspaceItem[] {
+    this.cleanPins();
+    const rows = this.auth.database
+      .prepare('SELECT item_id FROM workspace_pins WHERE user_id=? ORDER BY position,item_id')
+      .all(userId) as { item_id: string }[];
+    return rows.map((row) => this.get(userId, row.item_id));
+  }
+  pins(userId: string): WorkspaceItem[] {
+    this.owner(userId);
+    return this.auth.transaction(() => this.readPins(userId));
+  }
+  pin(userId: string, id: unknown, remove = false): WorkspaceItem[] {
+    this.owner(userId);
+    if (typeof id !== 'string' || !id) throw new AuthError(400, 'Choose an item to pin.');
+    return this.auth.transaction(() => {
+      if (remove)
+        this.auth.database
+          .prepare('DELETE FROM workspace_pins WHERE user_id=? AND item_id=?')
+          .run(userId, id);
+      else {
+        this.get(userId, id);
+        this.auth.database
+          .prepare(
+            `INSERT OR IGNORE INTO workspace_pins(user_id,item_id,position)
+          SELECT ?,?,coalesce(max(position),-1)+1 FROM workspace_pins WHERE user_id=?`,
+          )
+          .run(userId, id, userId);
+      }
+      return this.readPins(userId);
+    });
+  }
+  movePin(userId: string, id: unknown, beforeId: unknown): WorkspaceItem[] {
+    this.owner(userId);
+    if (
+      typeof id !== 'string' ||
+      !id ||
+      (beforeId !== null && (typeof beforeId !== 'string' || !beforeId)) ||
+      beforeId === id
+    )
+      throw new AuthError(400, 'Choose a pin and a different destination.');
+    return this.auth.transaction(() => {
+      const ids = this.readPins(userId).map((item) => item.id);
+      const from = ids.indexOf(id);
+      // Move one reference inside the current list. The bounded request preserves
+      // additions from another tab and never needs to upload the whole pin list.
+      if (from < 0 || (beforeId !== null && !ids.includes(beforeId)))
+        throw new AuthError(409, 'Your pins changed. Refresh them and try again.');
+      ids.splice(from, 1);
+      ids.splice(beforeId === null ? ids.length : ids.indexOf(beforeId), 0, id);
+      const update = this.auth.database.prepare(
+        'UPDATE workspace_pins SET position=? WHERE user_id=? AND item_id=?',
+      );
+      ids.forEach((itemId, position) => update.run(position, userId, itemId));
+      return this.readPins(userId);
+    });
+  }
+  ownTags(userId: string, id: string): string[] {
+    // Item/trash callers establish document access first; only this person's
+    // labels are returned. Suggestions may retain names after access is revoked.
+    this.owner(userId);
+    return (
+      this.auth.database
+        .prepare(
+          'SELECT name FROM workspace_tag_assignments WHERE user_id=? AND item_id=? ORDER BY name',
+        )
+        .all(userId, id) as { name: string }[]
+    ).map((row) => row.name);
+  }
+  tagSuggestions(userId: string): string[] {
+    this.owner(userId);
+    return (
+      this.auth.database
+        .prepare('SELECT name FROM workspace_tags WHERE user_id=? ORDER BY name')
+        .all(userId) as { name: string }[]
+    ).map((row) => row.name);
+  }
+  changeTag(userId: string, id: string, value: unknown, remove = false): WorkspaceItem {
+    return this.auth.transaction(() => {
+      const item = this.get(userId, id);
+      if (item.kind === 'folder') throw new AuthError(400, 'Choose a document to tag.');
+      if (typeof value !== 'string' || /[\p{Cc}\p{Cs}]/u.test(value))
+        throw new AuthError(400, 'Use a tag of 1–64 characters without control characters.');
+      const name = value
+        .trim()
+        .replace(/^#/, '')
+        .trim()
+        .normalize('NFC')
+        .toLowerCase()
+        .normalize('NFC');
+      if (name.startsWith('#')) throw new AuthError(400, 'Use at most one leading # in a tag.');
+      if (!name || name.length > 64)
+        throw new AuthError(400, 'Use a tag of 1–64 characters without control characters.');
+      if (remove)
+        this.auth.database
+          .prepare('DELETE FROM workspace_tag_assignments WHERE user_id=? AND item_id=? AND name=?')
+          .run(userId, id, name);
+      else {
+        this.auth.database
+          .prepare('INSERT OR IGNORE INTO workspace_tags(user_id,name) VALUES(?,?)')
+          .run(userId, name);
+        this.auth.database
+          .prepare(
+            'INSERT OR IGNORE INTO workspace_tag_assignments(user_id,item_id,name) VALUES(?,?,?)',
+          )
+          .run(userId, id, name);
+      }
+      return this.get(userId, id);
+    });
+  }
   owner(ownerId: string) {
     const user = this.auth.user(ownerId);
     if (!user) throw new AuthError(401, 'Sign in to continue.');
@@ -55,11 +197,12 @@ export class WorkspaceStore {
   }
   list(ownerId: string): WorkspaceItem[] {
     this.owner(ownerId);
-    return this.auth.database
+    const items = this.auth.database
       .prepare(
         `SELECT ${columns}, 'owner' AS access FROM workspace_items WHERE owner_id=? AND trashed_at IS NULL ORDER BY name COLLATE NOCASE,id`,
       )
       .all(ownerId) as unknown as WorkspaceItem[];
+    return items.map((item) => ({ ...item, tags: this.ownTags(ownerId, item.id) }));
   }
   // All callers use this resolver, including content, metadata and image access.
   // UNION makes malformed ancestor cycles finite; inherited grants cannot cross owners.
@@ -105,6 +248,7 @@ export class WorkspaceStore {
     return {
       ...item,
       access,
+      tags: this.ownTags(userId, id),
       parentId: item.parentId && this.role(userId, item.parentId) ? item.parentId : null,
     };
   }
@@ -173,6 +317,7 @@ export class WorkspaceStore {
           )
           .run(id, recipient, role as string);
       }
+      this.cleanPins();
       return this.sharing(userId, id);
     });
   }
@@ -239,6 +384,7 @@ export class WorkspaceStore {
           'UPDATE workspace_items SET name=?,parent_id=?,updated_at=? WHERE id=? AND owner_id=?',
         )
         .run(name, parentId, this.auth.now(), id, ownerId);
+      this.cleanPins();
       return this.get(ownerId, id);
     });
   }

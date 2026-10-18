@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
@@ -161,6 +162,39 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
   expect((await call('PATCH', `/${foreign.id}`, { name: 'Stolen' })).status).toBe(404);
   expect((await call('PATCH', `/${item.id}`, { owner_id: other.id })).status).toBe(400);
   expect((await call('PATCH', `/${item.id}`, { kind: 'slides' })).status).toBe(400);
+  expect((await call('POST', `/${item.id}/tags`, { tag: 'budget', userId: other.id })).status).toBe(
+    400,
+  );
+  expect((await call('POST', `/${foreign.id}/tags`, { tag: 'budget' })).status).toBe(404);
+  expect(
+    (
+      await call(
+        'POST',
+        `/${item.id}/tags`,
+        { tag: 'budget' },
+        { ...headers, Origin: 'https://evil.example' },
+      )
+    ).status,
+  ).toBe(403);
+  expect((await call('POST', `/${item.id}/tags`, { tag: '#BUDGET' })).status).toBe(200);
+  expect((await (await call('GET', `/${item.id}`)).json()).item.tags).toEqual(['budget']);
+  expect((await (await call('GET', '/tags')).json()).tags).toEqual(['budget']);
+  expect((await call('DELETE', `/${item.id}/tags`, { tag: 'budget' })).status).toBe(200);
+  expect((await (await call('GET', `/${item.id}`)).json()).item.tags).toEqual([]);
+  expect((await call('POST', '/pins', { id: item.id, userId: other.id })).status).toBe(400);
+  expect((await call('POST', '/pins', { id: foreign.id })).status).toBe(404);
+  expect(
+    (await call('POST', '/pins', { id: item.id }, { ...headers, Origin: 'https://evil.example' }))
+      .status,
+  ).toBe(403);
+  expect((await call('POST', '/pins', { id: item.id })).status).toBe(200);
+  expect(
+    (await (await call('GET', '/pins')).json()).items.map((entry: { id: string }) => entry.id),
+  ).toEqual([item.id]);
+  expect((await call('PUT', '/pins', { id: foreign.id, beforeId: null })).status).toBe(409);
+  expect((await call('PUT', '/pins', { id: item.id, beforeId: null })).status).toBe(200);
+  expect((await call('DELETE', '/pins', { id: item.id })).status).toBe(200);
+  expect((await (await call('GET', '/pins')).json()).items).toEqual([]);
   expect(
     (
       await call(
@@ -182,11 +216,43 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
       ['GET', `/${item.id}`, undefined],
       ['POST', '', { name: 'x', kind: 'doc', parentId: null }],
       ['PATCH', `/${item.id}`, { name: 'x' }],
+      ['GET', '/pins', undefined],
+      ['POST', '/pins', { id: item.id }],
+      ['PUT', '/pins', { id: item.id, beforeId: null }],
+      ['DELETE', '/pins', { id: item.id }],
+      ['GET', '/tags', undefined],
+      ['POST', `/${item.id}/tags`, { tag: 'denied' }],
     ] as const)
       expect((await call(method, suffix, body, supplied)).status).toBe(
         !denied || !auth.session(denied)?.user_id ? 401 : 403,
       );
   }
+  // A whole-list reorder crossed the 8 KiB request parser at 210 UUID pins.
+  // Moving one reference stays bounded and preserves every other reference.
+  const many: string[] = [];
+  // Bulk fixture setup avoids 210 fsyncs and quadratic list enumeration; the
+  // final addition and reorder still cross the real HTTP/session/parser boundary.
+  auth.transaction(() => {
+    const insertItem = db.prepare(`INSERT INTO workspace_items
+      (id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,NULL,'folder',?,?,?)`);
+    const insertPin = db.prepare(
+      'INSERT INTO workspace_pins(user_id,item_id,position) VALUES(?,?,?)',
+    );
+    for (let n = 0; n < 210; n++) {
+      const id = randomUUID();
+      insertItem.run(id, user.id, `Pin ${n}`, auth.now(), auth.now());
+      if (n < 209) insertPin.run(user.id, id, n);
+      many.push(id);
+    }
+  });
+  expect((await call('POST', '/pins', { id: many[209] })).status).toBe(200);
+  expect(JSON.stringify({ ids: many }).length).toBeGreaterThan(8192);
+  const moved = await call('PUT', '/pins', { id: many[209], beforeId: many[0] });
+  expect(moved.status).toBe(200);
+  expect((await moved.json()).items.map((entry: { id: string }) => entry.id)).toEqual([
+    many[209],
+    ...many.slice(0, 209),
+  ]);
   auth.database.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(user.id);
   expect((await call('GET')).status).toBe(401);
   expect((await call('PATCH', `/${item.id}`, { name: 'x' })).status).toBe(401);

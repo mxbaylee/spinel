@@ -25,6 +25,7 @@ export interface Session {
   token_hash: string;
   user_id: string | null;
   expires_at: number;
+  passkey_id: string | null;
 }
 export interface Challenge {
   id: string;
@@ -78,6 +79,16 @@ export class AuthStore {
       ) STRICT;
       CREATE INDEX IF NOT EXISTS auth_challenges_session ON auth_challenges(session_hash);
     `);
+    // Existing sessions remain unattributed; revoking a key also ends these legacy sessions.
+    if (
+      !database
+        .prepare('PRAGMA table_info(auth_sessions)')
+        .all()
+        .some((column) => column.name === 'passkey_id')
+    )
+      database.exec(
+        'ALTER TABLE auth_sessions ADD COLUMN passkey_id TEXT REFERENCES auth_passkeys(id) ON DELETE CASCADE',
+      );
   }
   userCount() {
     return Number(this.database.prepare('SELECT COUNT(*) AS total FROM auth_users').get()!.total);
@@ -106,17 +117,29 @@ export class AuthStore {
       .prepare('SELECT * FROM auth_users WHERE id=? AND disabled=0')
       .get(id) as unknown as User | undefined;
   }
-  createSession(userId: string | null, lifetime = userId ? SESSION_MS : CHALLENGE_MS) {
+  createSession(
+    userId: string | null,
+    lifetime = userId ? SESSION_MS : CHALLENGE_MS,
+    passkeyId: string | null = null,
+  ) {
+    if (
+      passkeyId !== null &&
+      (!userId || this.passkey(passkeyId)?.user_id !== userId || !this.user(userId))
+    )
+      throw new AuthError(401, 'This passkey is no longer available.');
     this.prune();
     const token = randomToken();
     const session: Session = {
       token_hash: hashToken(token),
       user_id: userId,
       expires_at: this.now() + lifetime,
+      passkey_id: passkeyId,
     };
     this.database
-      .prepare('INSERT INTO auth_sessions VALUES(?,?,?)')
-      .run(session.token_hash, userId, session.expires_at);
+      .prepare(
+        'INSERT INTO auth_sessions(token_hash,user_id,expires_at,passkey_id) VALUES(?,?,?,?)',
+      )
+      .run(session.token_hash, userId, session.expires_at, passkeyId);
     return { token, session };
   }
   session(token: string | undefined): Session | undefined {

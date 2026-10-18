@@ -17,6 +17,7 @@ export interface WorkspaceItem {
   name: string;
   createdAt: number;
   updatedAt: number;
+  tags: string[];
 }
 export const kindLabel: Record<ItemKind, string> = {
   folder: 'Folder',

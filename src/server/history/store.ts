@@ -15,7 +15,7 @@ type Progress = { revision: number; edited_at: number; captured_at: number };
 type Source = 'native' | 'collaboration';
 type HistoryCheckpoint = Checkpoint & { source: Source };
 
-/** Application-owned recovery checkpoints; no network route grants access to this store. */
+/** Application-owned recovery checkpoints guarded by current document access. */
 export class HistoryStore {
   private readonly workspace: WorkspaceStore;
   private readonly collaboration: CollaborationStore;
@@ -179,6 +179,55 @@ export class HistoryStore {
         "SELECT id,captured_at AS capturedAt,revision,name,source FROM history_checkpoints WHERE item_id=? ORDER BY captured_at DESC,(source='collaboration') DESC,revision DESC",
       )
       .all(id) as HistoryCheckpoint[];
+  }
+
+  private versionName(value: unknown): string {
+    if (typeof value !== 'string' || !value.trim() || value.trim().length > 120)
+      throw new AuthError(400, 'Enter a version name between 1 and 120 characters.');
+    return value.trim();
+  }
+
+  rename(user: string, id: string, checkpoint: string, value: unknown) {
+    this.workspace.get(user, id, 'edit');
+    const name = value === null ? null : this.versionName(value);
+    const result = this.workspace.auth.database
+      .prepare('UPDATE history_checkpoints SET name=? WHERE item_id=? AND id=?')
+      .run(name, id, checkpoint);
+    if (!result.changes) throw new AuthError(404, 'Version not found.');
+  }
+
+  /** Name exactly the confirmed state observed by this request, never an older coalesced capture. */
+  async nameCurrent(user: string, id: string, value: unknown, checkSession = () => {}) {
+    const name = this.versionName(value);
+    this.workspace.get(user, id, 'edit');
+    const db = this.workspace.auth.database;
+    const state = () =>
+      db.prepare('SELECT state FROM workspace_collaboration WHERE item_id=?').get(id)?.state;
+    const before = state();
+    if (before === 'preparing')
+      throw new AuthError(409, 'The document is still opening. Try again.');
+    const source: Source = before === 'ready' ? 'collaboration' : 'native';
+    const data =
+      source === 'collaboration' ? await this.collaboration.load(user, id) : this.native(user, id);
+    if (!data) throw new AuthError(409, 'Save the document before naming this version.');
+    const observedAt = this.workspace.auth.now();
+    const bytes = Buffer.from(JSON.stringify(data.snapshot));
+    if (bytes.length > 10 * 1024 * 1024)
+      throw new AuthError(413, 'This document is too large to save.');
+    const packed = await compress(bytes);
+    return this.workspace.auth.transaction(() => {
+      checkSession();
+      this.workspace.get(user, id, 'edit');
+      if (state() !== before) throw new AuthError(409, 'The document finished opening. Try again.');
+      const checkpoint = randomUUID();
+      db.prepare(
+        `INSERT INTO history_checkpoints VALUES(?,?,?,?,?,?,?)
+        ON CONFLICT(item_id,source,revision) DO UPDATE SET name=excluded.name`,
+      ).run(checkpoint, id, source, data.revision, observedAt, name, packed);
+      return this.list(user, id).find(
+        (point) => point.source === source && point.revision === data.revision,
+      )!;
+    });
   }
 
   async load(user: string, id: string, checkpoint: string): Promise<NativeSnapshot> {

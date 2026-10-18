@@ -97,6 +97,9 @@ test('claim atomically creates an admin and passkey, rotates session and closes 
   expect(f.store.passkeys(next.session.user_id!)).toHaveLength(1);
   expect(f.store.session(c.token)).toBeUndefined();
   expect(f.store.session(next.token)?.user_id).toBe(next.session.user_id);
+  expect(f.store.session(next.token)?.passkey_id).toBe(
+    f.store.passkeys(next.session.user_id!)[0].id,
+  );
   expect(() => f.service.issue()).toThrow('already claimed');
   await expect(c.claim()).rejects.toThrow();
   expect(f.verifier).toHaveBeenCalledWith(

@@ -21,7 +21,7 @@ body {
   font-size: 24px;
   font-weight: 700;
 }
-.workspace > main {
+.workspace-body > main {
   padding-top: 72px;
 }
 .eyebrow {
@@ -54,7 +54,7 @@ p {
   .workspace {
     padding: 24px;
   }
-  .workspace > main {
+  .workspace-body > main {
     padding-top: 48px;
   }
   .welcome {
@@ -277,4 +277,148 @@ button.primary {
 .collaborator-badge:focus-visible {
   outline: 2px solid #26202e;
   outline-offset: 2px;
+}
+
+.version-names {
+  margin: 0.5rem 0;
+}
+.version-names section {
+  padding: 1rem;
+  border: 1px solid #e3dfe8;
+  border-radius: 0.5rem;
+}
+.version-names button {
+  margin: 0.25rem;
+}
+.version-names ul {
+  max-height: 18rem;
+  overflow: auto;
+  padding-left: 1.5rem;
+}
+.version-names li {
+  padding: 0.25rem 0;
+  overflow-wrap: anywhere;
+}
+.version-names time {
+  color: #625c6a;
+  font-size: 0.85rem;
+}
+
+.admin-users {
+  list-style: none;
+  padding: 0;
+}
+.admin-users > li {
+  border-top: 1px solid #e3dfe8;
+  padding: 0.75rem 0;
+}
+.admin-users h4 {
+  margin: 0.25rem 0;
+}
+.admin-users p {
+  margin: 0.5rem 0;
+}
+.admin-confirmation {
+  max-width: min(32rem, calc(100vw - 2rem));
+  border: 1px solid #e3dfe8;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.admin-confirmation::backdrop {
+  background: rgb(20 15 30 / 40%);
+}
+.admin-confirmation button {
+  margin: 0.25rem;
+}
+
+.tag-labels {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+.tag-labels > span {
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+}
+.document-tags {
+  width: min(30rem, calc(100vw - 3rem));
+  max-height: calc(100vh - 3rem);
+  overflow: auto;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.document-tags::backdrop {
+  background: #0006;
+}
+.document-tags form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.5rem;
+  margin-block: 1rem;
+}
+.document-tags li {
+  overflow-wrap: anywhere;
+  margin-block: 0.5rem;
+}
+
+.workspace-body:has(.pinned-sidebar) {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 28px;
+}
+.workspace:has(.pinned-sidebar) {
+  max-width: 1480px;
+}
+.pinned-sidebar {
+  padding-top: 72px;
+  min-width: 0;
+}
+.pinned-sidebar ol {
+  list-style: none;
+  padding: 0;
+}
+.pinned-sidebar li {
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+.pinned-sidebar small {
+  color: #68616f;
+}
+.pinned-sidebar .pin-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+.workspace .pinned-sidebar button {
+  padding: 5px 8px;
+}
+.pin-drag {
+  cursor: grab;
+  margin-right: 6px;
+}
+.shared-badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: #51334b;
+  margin-left: 6px;
+}
+@media (max-width: 900px) {
+  .workspace-body:has(.pinned-sidebar) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .pinned-sidebar {
+    padding-top: 32px;
+  }
+  .pinned-sidebar ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
 }

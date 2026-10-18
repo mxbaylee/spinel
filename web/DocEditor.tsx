@@ -1,3 +1,4 @@
+import { VersionNames } from './VersionNames.tsx';
 import { setDocumentPermissionValue } from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
 import { Collaborators, watchPresence } from './Collaborators.tsx';
@@ -275,6 +276,10 @@ export function DocEditor({
         )}
       </div>
       {uploadError && <p role="alert">{uploadError} Try inserting the file again.</p>}
+      <VersionNames
+        id={id}
+        saved={!status.dirty && !status.failed && Boolean(controller.current)}
+      />
       <div className="univer-container" ref={container} />
     </section>
   );

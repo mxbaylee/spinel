@@ -25,6 +25,7 @@ export class TrashStore {
     return {
       items: rows.map(({ batch: _batch, ...item }) => ({
         ...item,
+        tags: this.workspace.ownTags(owner, item.id),
         expiresAt: item.trashedAt + TRASH_RETENTION_MS,
       })),
       // Bind confirmation to the exact set, including deletion generations, not just its count.
@@ -50,6 +51,7 @@ export class TrashStore {
       `,
         )
         .run(id, owner, owner, auth.now(), randomUUID());
+      this.workspace.cleanPins();
       return { count: Number(result.changes) };
     });
   }

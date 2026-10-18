@@ -13,8 +13,9 @@ import type {
 import { signSetupProof } from './setup.ts';
 import { api } from './api.ts';
 import { BackupStatus } from './BackupStatus.tsx';
-import { AdminInvites } from './AdminInvites.tsx';
+import { AdminUsers } from './AdminUsers.tsx';
 import { Dashboard } from './Dashboard.tsx';
+import { PinsProvider, PinnedSidebar } from './Pins.tsx';
 
 type User = { id: string; name: string; isAdmin: boolean };
 type Passkey = { id: string; name: string; provider: string };
@@ -190,154 +191,160 @@ export function App() {
     }
   }
   return (
-    <div className="workspace">
-      <header
-        onClick={(event) => {
-          if (
-            (event.target as Element).closest('a') &&
-            !event.metaKey &&
-            !event.ctrlKey &&
-            !navigation.allow()
-          )
-            event.preventDefault();
-        }}
-      >
-        <a className="brand" href="/">
-          Spinel
-        </a>
-        {user && (
-          <nav aria-label="Workspace">
-            <a href={user.isAdmin ? '/admin' : '/'}>{user.isAdmin ? 'Admin' : 'Dashboard'}</a>
-            <a href="/settings">Settings</a>
-            <button onClick={() => void signOut()}>Sign out</button>
-          </nav>
-        )}
-      </header>
-      <main>
-        {!loaded ? (
-          <p role="status">Loading…</p>
-        ) : setup ? (
-          <>
-            <p className="eyebrow">A new workspace</p>
-            <h1>Set up Spinel</h1>
-            <section className="welcome">
-              <h2>Create your admin passkey</h2>
-              <p>
-                Your admin account manages the workspace. It cannot open documents; you will invite
-                a separate everyday account for that.
-              </p>
-              {setupId && setupSecret ? (
-                <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                  Create admin passkey
-                </button>
-              ) : (
-                <p role="alert">
-                  Open the one-time setup link printed on the server. If it expired, run the setup
-                  command again.
-                </p>
-              )}
-            </section>
-          </>
-        ) : invitation ? (
-          <>
-            <p className="eyebrow">Your private workspace</p>
-            <h1>{inviteDetails?.recovery ? 'Recover your account' : 'Join Spinel'}</h1>
-            {inviteDetails && (
-              <section className="welcome">
-                {inviteDetails.recovery ? (
-                  <>
-                    <h2>{inviteDetails.name}</h2>
-                    <p>
-                      Adding your new passkey will replace all old passkeys and sign out your other
-                      devices. Your account and documents stay yours.
+    <PinsProvider enabled={Boolean(user && !user.isAdmin)}>
+      <div className="workspace">
+        <header
+          onClick={(event) => {
+            if (
+              (event.target as Element).closest('a') &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !navigation.allow()
+            )
+              event.preventDefault();
+          }}
+        >
+          <a className="brand" href="/">
+            Spinel
+          </a>
+          {user && (
+            <nav aria-label="Workspace">
+              <a href={user.isAdmin ? '/admin' : '/'}>{user.isAdmin ? 'Admin' : 'Dashboard'}</a>
+              <a href="/settings">Settings</a>
+              <button onClick={() => void signOut()}>Sign out</button>
+            </nav>
+          )}
+        </header>
+        <div className="workspace-body">
+          {user && !user.isAdmin && <PinnedSidebar navigation={navigation} />}
+          <main>
+            {!loaded ? (
+              <p role="status">Loading…</p>
+            ) : setup ? (
+              <>
+                <p className="eyebrow">A new workspace</p>
+                <h1>Set up Spinel</h1>
+                <section className="welcome">
+                  <h2>Create your admin passkey</h2>
+                  <p>
+                    Your admin account manages the workspace. It cannot open documents; you will
+                    invite a separate everyday account for that.
+                  </p>
+                  {setupId && setupSecret ? (
+                    <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
+                      Create admin passkey
+                    </button>
+                  ) : (
+                    <p role="alert">
+                      Open the one-time setup link printed on the server. If it expired, run the
+                      setup command again.
                     </p>
-                  </>
-                ) : (
-                  <label>
-                    Your name
-                    <input
-                      value={inviteName}
-                      maxLength={80}
-                      onChange={(event) => setInviteName(event.target.value)}
-                      autoComplete="name"
-                    />
-                  </label>
+                  )}
+                </section>
+              </>
+            ) : invitation ? (
+              <>
+                <p className="eyebrow">Your private workspace</p>
+                <h1>{inviteDetails?.recovery ? 'Recover your account' : 'Join Spinel'}</h1>
+                {inviteDetails && (
+                  <section className="welcome">
+                    {inviteDetails.recovery ? (
+                      <>
+                        <h2>{inviteDetails.name}</h2>
+                        <p>
+                          Adding your new passkey will replace all old passkeys and sign out your
+                          other devices. Your account and documents stay yours.
+                        </p>
+                      </>
+                    ) : (
+                      <label>
+                        Your name
+                        <input
+                          value={inviteName}
+                          maxLength={80}
+                          onChange={(event) => setInviteName(event.target.value)}
+                          autoComplete="name"
+                        />
+                      </label>
+                    )}
+                    <button
+                      className="primary"
+                      disabled={busy || !inviteName.trim()}
+                      onClick={() => void ceremony(true)}
+                    >
+                      {inviteDetails.recovery ? 'Recover with a passkey' : 'Join with a passkey'}
+                    </button>
+                  </section>
                 )}
-                <button
-                  className="primary"
-                  disabled={busy || !inviteName.trim()}
-                  onClick={() => void ceremony(true)}
-                >
-                  {inviteDetails.recovery ? 'Recover with a passkey' : 'Join with a passkey'}
-                </button>
-              </section>
+              </>
+            ) : !user ? (
+              <>
+                <p className="eyebrow">Your private workspace</p>
+                <h1>Sign in</h1>
+                <section className="welcome">
+                  <h2>Welcome back</h2>
+                  <p>Use a passkey from your browser, password manager or phone.</p>
+                  <button className="primary" disabled={busy} onClick={() => void ceremony(false)}>
+                    Sign in with a passkey
+                  </button>
+                  <p className="placeholder">
+                    Need access or a new passkey? Contact your workspace operator.
+                  </p>
+                </section>
+              </>
+            ) : settings ? (
+              <>
+                <p className="eyebrow">{user.name}</p>
+                <h1>Settings</h1>
+                <section className="welcome">
+                  <h2>Your passkeys</h2>
+                  <p>
+                    Add a passkey from another device or password manager so you can sign in there
+                    too.
+                  </p>
+                  {keys.length ? (
+                    <ul>
+                      {keys.map((key) => (
+                        <li key={key.id}>
+                          <strong>{key.name}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No passkeys added yet.</p>
+                  )}
+                  <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
+                    Add a passkey
+                  </button>
+                </section>
+              </>
+            ) : user.isAdmin ? (
+              <>
+                <h1>Admin</h1>
+                <section className="welcome">
+                  <h2>Workspace administration</h2>
+                  <p>
+                    Invite people or help them recover their passkeys. Use a separate everyday
+                    account for documents.
+                  </p>
+                  <AdminUsers currentId={user.id} />
+                  <BackupStatus />
+                </section>
+              </>
+            ) : (
+              <Dashboard navigation={navigation} />
             )}
-          </>
-        ) : !user ? (
-          <>
-            <p className="eyebrow">Your private workspace</p>
-            <h1>Sign in</h1>
-            <section className="welcome">
-              <h2>Welcome back</h2>
-              <p>Use a passkey from your browser, password manager or phone.</p>
-              <button className="primary" disabled={busy} onClick={() => void ceremony(false)}>
-                Sign in with a passkey
-              </button>
-              <p className="placeholder">
-                Need access or a new passkey? Contact your workspace operator.
+            {busy && (
+              <p role="status">
+                Follow the instructions from your passkey manager.{' '}
+                <button onClick={cancel}>Cancel</button>
               </p>
-            </section>
-          </>
-        ) : settings ? (
-          <>
-            <p className="eyebrow">{user.name}</p>
-            <h1>Settings</h1>
-            <section className="welcome">
-              <h2>Your passkeys</h2>
-              <p>
-                Add a passkey from another device or password manager so you can sign in there too.
-              </p>
-              {keys.length ? (
-                <ul>
-                  {keys.map((key) => (
-                    <li key={key.id}>
-                      <strong>{key.name}</strong>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No passkeys added yet.</p>
-              )}
-              <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                Add a passkey
-              </button>
-            </section>
-          </>
-        ) : user.isAdmin ? (
-          <>
-            <h1>Admin</h1>
-            <section className="welcome">
-              <h2>Workspace administration</h2>
-              <p>
-                Invite people or help them recover their passkeys. Use a separate everyday account
-                for documents.
-              </p>
-              <AdminInvites />
-              <BackupStatus />
-            </section>
-          </>
-        ) : (
-          <Dashboard navigation={navigation} />
-        )}
-        {busy && (
-          <p role="status">
-            Follow the instructions from your passkey manager.{' '}
-            <button onClick={cancel}>Cancel</button>
-          </p>
-        )}
-        {error && <p role="alert">{error}</p>}
-        {notice && <p role="status">{notice}</p>}
-      </main>
-    </div>
+            )}
+            {error && <p role="alert">{error}</p>}
+            {notice && <p role="status">{notice}</p>}
+          </main>
+        </div>
+      </div>
+    </PinsProvider>
   );
 }

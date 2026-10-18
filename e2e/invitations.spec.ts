@@ -63,8 +63,8 @@ test('admin invites a second browser, rejects reuse and revocation, and recovers
     await expect(second.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
     const user = store.database.prepare("SELECT id FROM auth_users WHERE name='Teammate'").get()!;
     const oldCookie = (await invitee.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!;
-    expect((await invitee.request.get(`${origin}/api/auth/invites`)).status()).toBe(403);
-    expect((await guest.request.get(`${origin}/api/auth/invites`)).status()).toBe(401);
+    expect((await invitee.request.get(`${origin}/api/auth/invites`)).status()).toBe(404);
+    expect((await guest.request.get(`${origin}/api/auth/invites`)).status()).toBe(404);
     await third.goto(link);
     await expect(third.getByRole('alert')).toHaveText(
       'This invite is unavailable or expired. Ask the operator for a new link.',

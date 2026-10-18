@@ -133,6 +133,14 @@ export class InvitationService {
         'This invite was already used, revoked or removed. Refresh the list.',
       );
   }
+  revokeForUser(id: string) {
+    this.store.database
+      .prepare(
+        `UPDATE auth_invites SET revoked_at=?
+      WHERE (recovery_user_id=? OR created_by=?) AND used_at IS NULL AND revoked_at IS NULL`,
+      )
+      .run(this.store.now(), id, id);
+  }
   async options(session: Session, token: string, suppliedName: unknown) {
     const invite = this.active(token);
     const user = invite.recovery_user_id ? this.store.user(invite.recovery_user_id) : undefined;
@@ -205,7 +213,11 @@ export class InvitationService {
         this.store.database
           .prepare('UPDATE auth_invites SET used_at=?,used_by=? WHERE id=?')
           .run(this.store.now(), invite.for_user_id, invite.id);
-        const next = this.store.createSession(invite.for_user_id);
+        const next = this.store.createSession(
+          invite.for_user_id,
+          undefined,
+          result.registrationInfo!.credential.id,
+        );
         this.store.revokeSession(session.token_hash);
         return { ...next, user: this.store.user(invite.for_user_id)! };
       });

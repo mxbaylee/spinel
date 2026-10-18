@@ -3,6 +3,7 @@ import { kindLabel } from '../src/shared/workspace.ts';
 import type { TrashListing } from '../src/shared/workspace.ts';
 
 import { itemsRequest } from './itemsApi.ts';
+import { TagLabels } from './DocumentTags.tsx';
 
 export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
   const [listing, setListing] = useState<TrashListing | null>(null);
@@ -70,6 +71,7 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
               <li key={item.id}>
                 <div>
                   {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
+                  <TagLabels tags={item.tags} />
                   <br />
                   <small>
                     Deleted {new Date(item.trashedAt).toLocaleString()} · Recover until{' '}
