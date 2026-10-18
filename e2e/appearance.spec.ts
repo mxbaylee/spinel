@@ -94,7 +94,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await box.press('Enter');
   };
   const colouredPixels = async (rgb: number[]) =>
-    page.locator('.univer-container canvas').evaluateAll((canvases, colour) => {
+    page.locator('#univer-sheet-main-canvas').evaluateAll((canvases, colour) => {
       let count = 0;
       for (const canvas of canvases as HTMLCanvasElement[]) {
         if (!canvas.width || !canvas.height) continue;
@@ -175,12 +175,12 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await select('C3');
     await expect.poll(() => colouredPixels([242, 169, 59])).toBeGreaterThan(100);
     await capture('sheet-light');
-    const container = await page.locator('.univer-container canvas').first().elementHandle();
+    const container = await page.locator('#univer-sheet-main-canvas').elementHandle();
     await page.emulateMedia({ colorScheme: 'dark' });
     await mode('dark');
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
     expect(await container!.evaluate((node) => node.isConnected)).toBe(true);
-    await expect(page.locator('.univer-container canvas').first()).toHaveCSS(
+    await expect(page.locator('#univer-sheet-main-canvas')).toHaveCSS(
       'background-color',
       'rgb(255, 255, 255)',
     );
