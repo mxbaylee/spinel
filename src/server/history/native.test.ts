@@ -229,3 +229,79 @@ test('a busy week of 64 KiB native documents stays below the documented history 
   // This is a representative history-overhead budget, not a limit on SDK operational data or images.
   expect((await stat(join(dirname(f.path), 'app.sqlite'))).size).toBeLessThan(8 * 1024 * 1024);
 }, 30_000);
+
+test('naming captures the current confirmed state, renaming pins history, and unname returns to pruning', async () => {
+  const f = await fixture();
+  f.save('original');
+  const original = f.history.list(f.owner.id, f.item.id)[0];
+  f.history.rename(f.owner.id, f.item.id, original.id, 'Original');
+  f.save('before pending background capture');
+  const background = f.history.capture(f.owner.id, f.item.id, 'native');
+  f.save('named current state');
+  const named = await f.history.nameCurrent(f.owner.id, f.item.id, '  Q3 Final Lock  ');
+  await background;
+  expect(named.name).toBe('Q3 Final Lock');
+  expect(named.revision).toBe(3);
+  expect(
+    ((await f.history.load(f.viewer.id, f.item.id, named.id)) as IDocumentData).body?.dataStream,
+  ).toBe('named current state\r\n');
+  const renamed = await f.history.nameCurrent(f.owner.id, f.item.id, 'Final');
+  expect(renamed.id).toBe(named.id);
+  f.advance(10 * MINUTE);
+  f.save('later');
+  const newest = await f.history.nameCurrent(f.owner.id, f.item.id, 'Later');
+  f.history.rename(f.owner.id, f.item.id, newest.id, null);
+  f.advance(2 * DAY);
+  f.history.prune();
+  // Named entries never occupy the unnamed daily retention slot (decision #56).
+  expect(f.history.list(f.owner.id, f.item.id).map((p) => p.id)).toEqual([
+    newest.id,
+    named.id,
+    original.id,
+  ]);
+  f.history.rename(f.owner.id, f.item.id, named.id, null);
+  f.history.rename(f.owner.id, f.item.id, original.id, null);
+  f.history.prune();
+  expect(f.history.list(f.owner.id, f.item.id).map((p) => p.id)).toEqual([newest.id]);
+});
+
+test('version names enforce edit permission, bounded names and current access after compression', async () => {
+  const f = await fixture();
+  f.save('protected');
+  const point = f.history.list(f.owner.id, f.item.id)[0];
+  for (const invalid of ['', '   ', 'x'.repeat(121), 4, undefined]) {
+    await expect(f.history.nameCurrent(f.owner.id, f.item.id, invalid)).rejects.toThrow(
+      'version name',
+    );
+    expect(() => f.history.rename(f.owner.id, f.item.id, point.id, invalid)).toThrow(
+      'version name',
+    );
+  }
+  await expect(f.history.nameCurrent(f.viewer.id, f.item.id, 'Denied')).rejects.toThrow();
+  expect(() => f.history.rename(f.viewer.id, f.item.id, point.id, 'Denied')).toThrow();
+  expect(() => f.history.rename(f.owner.id, f.item.id, 'missing', 'Denied')).toThrow(
+    'Version not found',
+  );
+  f.workspace.share(f.owner.id, f.item.id, f.viewer.id, 'editor');
+  const pending = f.history.nameCurrent(f.viewer.id, f.item.id, 'Revoked');
+  f.workspace.share(f.owner.id, f.item.id, f.viewer.id, 'viewer');
+  await expect(pending).rejects.toThrow();
+  await expect(
+    f.history.nameCurrent(f.owner.id, f.item.id, 'Expired', () => {
+      throw new Error('Expired session');
+    }),
+  ).rejects.toThrow('Expired session');
+  expect(f.history.list(f.owner.id, f.item.id)[0].name).toBeNull();
+});
+
+test('naming retries a migration race instead of pinning an obsolete native copy', async () => {
+  const f = await fixture();
+  f.save('native');
+  const pending = f.history.nameCurrent(f.owner.id, f.item.id, 'Racing');
+  f.db.prepare("INSERT INTO workspace_collaboration VALUES(?,'preparing')").run(f.item.id);
+  await expect(pending).rejects.toThrow('finished opening');
+  await expect(f.history.nameCurrent(f.owner.id, f.item.id, 'Still preparing')).rejects.toThrow(
+    'still opening',
+  );
+  expect(f.history.list(f.owner.id, f.item.id)[0].name).toBeNull();
+});

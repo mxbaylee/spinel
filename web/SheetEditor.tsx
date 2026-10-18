@@ -1,3 +1,4 @@
+import { VersionNames } from './VersionNames.tsx';
 import { IPermissionService } from '@univerjs/core';
 import { getAllWorkbookPermissionPoint } from '@univerjs/sheets';
 import { UnitAction } from '@univerjs/protocol';
@@ -126,6 +127,10 @@ export function SheetEditor({
           <button onClick={() => controller.current?.retry()}>Retry saving</button>
         )}
       </div>
+      <VersionNames
+        id={id}
+        saved={!status.dirty && !status.failed && Boolean(controller.current)}
+      />
       <div className="univer-container" ref={container} />
     </section>
   );

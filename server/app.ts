@@ -60,7 +60,7 @@ export async function createApp(options: AppOptions) {
       });
       next();
     });
-    app.use('/api/items', workspaceRoutes(auth, origin, workspace, collaboration));
+    app.use('/api/items', workspaceRoutes(auth, origin, workspace, collaboration, history));
     app.post(
       '/universer-api/authz/-/object/-/batch_allowed',
       express.json({ limit: '64kb' }),
