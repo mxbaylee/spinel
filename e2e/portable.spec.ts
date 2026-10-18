@@ -134,11 +134,14 @@ for (const kind of ['sheet', 'doc'] as const) {
       await region.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
       await expect(region.getByRole('alert')).toHaveCount(0);
       if (kind === 'sheet') await page.getByRole('button', { name: /^next$/i }).click();
-      await expect.poll(() => printHtml, { timeout: 20_000 }).toContain('<img');
-      expect(printHtml).not.toContain('Your workspace');
+      await expect.poll(() => printHtml.includes('<img'), { timeout: 20_000 }).toBe(true);
       const printed = await context.newPage();
       try {
+        await printed.emulateMedia({ media: 'print' });
         await printed.setContent(printHtml, { waitUntil: 'networkidle' });
+        // Native printing retains the app DOM and hides it with @media print.
+        // Assert printed visibility, not absence from the serialized HTML.
+        await expect(printed.getByText('Your workspace', { exact: true })).toBeHidden();
         await printed.evaluate(() =>
           Promise.all([...document.images].map((image) => image.decode().catch(() => {}))),
         );
@@ -154,6 +157,10 @@ for (const kind of ['sheet', 'doc'] as const) {
           expect(reopened.numPages).toBeGreaterThan(0);
           const first = await reopened.getPage(1),
             viewport = first.getViewport({ scale: 1 });
+          const text = (await first.getTextContent()).items
+            .map((item) => ('str' in item ? item.str : ''))
+            .join(' ');
+          expect(text).not.toContain('Your workspace');
           const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
           await first.render({
             canvas: canvas as unknown as HTMLCanvasElement,
