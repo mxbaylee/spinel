@@ -1,3 +1,4 @@
+import { auditDeniedEdit } from './audit.ts';
 import { realpathSync } from 'node:fs';
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
@@ -95,10 +96,20 @@ export class CollaborationStore {
       this.service.use(
         action,
         async (context: SubmitChangesetMiddlewareContext, next: MiddlewareNext) => {
-          this.access(context.userID, context.request.changeset.unitID, true);
-          this.session(context.userID, context.customData);
-          validateTargets(context.request.changeset);
-          await next();
+          try {
+            this.access(context.userID, context.request.changeset.unitID, true);
+            this.session(context.userID, context.customData);
+            validateTargets(context.request.changeset);
+            await next();
+          } catch (error) {
+            if (
+              action === 'submitChangeset' &&
+              error instanceof CollabError &&
+              error.code === 'PERMISSION_DENIED'
+            )
+              auditDeniedEdit(context.userID, context.request.changeset.unitID, action);
+            throw error;
+          }
         },
       );
     }

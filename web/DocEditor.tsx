@@ -196,7 +196,7 @@ export function DocEditor({
           UniverDocsDrawingPlugin,
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
-          ...collaborationPlugins([[IImageIoService, { useClass: StoredImages }]]),
+          ...collaborationPlugins(id, [[IImageIoService, { useClass: StoredImages }]]),
         ],
         presets: [
           UniverDocsCorePreset({

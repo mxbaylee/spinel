@@ -37,6 +37,18 @@ export function attachCollaboration(
       throw denied();
     workspace.owner(session.userID);
   }
+  function documentScope(userID: string, url: string | undefined) {
+    const unitID = new URL(url ?? '/', origin).searchParams.get('unitID');
+    if (!unitID) throw denied();
+    const item = workspace.get(userID, unitID);
+    if (item.kind !== 'sheet' && item.kind !== 'doc') throw denied();
+    return unitID;
+  }
+  function scoped(session: EndpointSession, unitID: string) {
+    current(session);
+    if (session.customData.unitID !== unitID) throw denied();
+    return workspace.get(session.userID, unitID);
+  }
   let validation = Promise.resolve();
   function revalidate() {
     validation = validation.then(scan, scan);
@@ -79,6 +91,14 @@ export function attachCollaboration(
     }
     context.userID = session.user_id;
     context.customData.sessionHash = session.token_hash;
+    if (new URL(request.url ?? '/', origin).pathname === '/universer-api/user/session-ticket') {
+      try {
+        context.customData.unitID = documentScope(session.user_id, request.url);
+      } catch {
+        response.writeHead(403).end('This document is not available.');
+        return;
+      }
+    }
     await revalidate();
     await next();
   });
@@ -92,12 +112,21 @@ export function attachCollaboration(
       context.reject(403, 'Sign in at the configured Spinel address.');
       return;
     }
+    try {
+      context.customData.unitID = documentScope(session.user_id, context.incomingMessage.url);
+    } catch {
+      context.reject(403, 'This document is not available.');
+      return;
+    }
     context.customData.sessionHash = session.token_hash;
     await next();
   });
   endpoint.use('connect', async (context, next) => {
     current(context.session);
-    if (context.connection.customData.sessionHash !== context.session.customData.sessionHash)
+    if (
+      context.connection.customData.sessionHash !== context.session.customData.sessionHash ||
+      context.connection.customData.unitID !== context.session.customData.unitID
+    )
       throw denied();
     if (live.size >= 64) throw new CollabError('PERMISSION_DENIED', 'Too many open editors.');
     context.member.name = auth.user(context.session.userID)!.name;
@@ -111,11 +140,9 @@ export function attachCollaboration(
     await next();
   });
   endpoint.use('joinUnit', async (context, next) => {
-    current(context.session);
-    const access = workspace.get(context.session.userID, context.unitID).access;
+    const access = scoped(context.session, context.unitID).access;
     await collab.prepare(context.session.userID, context.unitID);
-    current(context.session);
-    workspace.get(context.session.userID, context.unitID);
+    scoped(context.session, context.unitID);
     live.get(context.session.memberID)?.units.set(context.unitID, access);
     await next();
   });
@@ -129,15 +156,13 @@ export function attachCollaboration(
   });
   endpoint.use('receivePresence', async (context, next) => {
     await revalidate();
-    current(context.session);
-    workspace.get(context.session.userID, context.unitID);
+    scoped(context.session, context.unitID);
     await next();
   });
   endpoint.use('sendPresence', async (context, next) => {
     const target = live.get(context.targetMemberID);
     if (!target) throw denied();
-    current(target.session);
-    workspace.get(target.session.userID, context.unitID);
+    scoped(target.session, context.unitID);
     await next();
   });
   // Evict revoked recipients before SDK commit events can broadcast document changes.

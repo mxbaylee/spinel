@@ -61,7 +61,7 @@ export function SheetEditor({
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish) },
         collaboration: true,
-        plugins: collaborationPlugins(),
+        plugins: collaborationPlugins(id),
         presets: [UniverSheetsCorePreset({ container: container.current! })],
       });
       disposeEditor = () => univer.dispose();

@@ -35,9 +35,26 @@ public snapshot materializer/converters so confirmed changesets are included.
 The transport authenticates every protocol HTTP request and WebSocket upgrade
 against the current Spinel session. Mutation requests and upgrades require the
 configured Origin. Tickets expire after 30 seconds, are single-use and are bound
-to the same session cookie at upgrade. Operators cannot enter document rooms.
+to the same session cookie and one document. Ticket issuance and upgrade require
+current read access to that Sheet or Doc; absent scope, missing/revoked grants,
+Operator accounts and invalid sessions are refused before the HTTP 101 upgrade.
+The browser supplies scope through the public socket URL extension point.
+The SDK's connect hook compares ticket and upgrade cookie/scope after upgrade
+but before HELLO or JOIN; a mismatch closes with no messages or document data.
+Thus an account authorized for both scopes can receive HTTP 101 for a mismatched
+ticket, but cannot enter either room with it. JOIN and presence recheck both scope and current access; no client-supplied user ID
+can replace the authenticated session. Public link credentials are still SPN-016;
+there is currently no anonymous or query-token authentication fallback.
 HTTP payloads are capped at 10 MiB and socket frames at 64 KiB. At most 64 live
 connections are tracked; connections without a room expire after 30 seconds.
+
+[Decision #49](https://github.com/mxbaylee/spinel/issues/49) records the scoped
+connection and audit policy. Permission-denied edits emit a structured stderr
+`collaboration.edit_denied` event with a timestamp, stage and UUID-shaped account
+and document identifiers. Requests, mutation contents, names, cookie values,
+session hashes and tickets are never included in this audit. Treat the event as
+access-denial evidence, not as a copy of the rejected change. Transport-level
+unauthenticated requests are refused before they can reach the edit service.
 
 Service middleware checks current sessions and workspace grants on reads,
 submissions, application and final commit. Viewers cannot submit; Operators and
@@ -184,8 +201,15 @@ increment, so an idempotent cell value cannot conceal duplicate application.
 SPN-010's separate limits experiment remains required evidence about unlicensed
 capacity; this integration does not establish an unlimited editor count or a
 more-than-a-day soak. SPN-013 remains optional with inconclusive limit evidence.
-SPN-017 extends adversarial connection testing and logging; baseline access
-control is already enforced here (decision #23). Public link access, profile
+SPN-017's raw socket tests cover missing cookies, missing/foreign document scope,
+stale sessions, hostile origins, single-use tickets, a second-document JOIN,
+viewer edits with a forged owner ID, and downgrade/removal after JOIN. A positive
+raw edit control commits the same mutation when authorized; denied writes leave
+both the revision and native document unchanged. Mid-application revocation is
+also tested before durable commit. Browser tests verify that the affected editor
+becomes read-only and revoked sockets receive no later document changes. The SDK
+submits durable changes over authenticated HTTP associated with the socket's
+member ID; that ID is not an authorization credential. Public link access, profile
 customization and history remain their own tickets. The one-second browser
 acceptance checks do not replace fresh-host capacity/deployment verification.
 
