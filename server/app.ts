@@ -191,7 +191,7 @@ export async function createApp(options: AppOptions) {
       }
       const session = auth.session(cookieToken(request));
       const user = session?.user_id ? auth.user(session.user_id) : undefined;
-      if (request.path === '/admin' && !user?.is_admin) {
+      if (/^\/admin\/?$/i.test(request.path) && !user?.is_admin) {
         response.status(404).type('text').send('Not found');
         return;
       }

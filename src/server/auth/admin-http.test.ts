@@ -55,6 +55,8 @@ test('admin pages and APIs conceal users from non-admins and revoke only request
     for (const token of ['', first.token])
       for (const path of [
         '/admin',
+        '/admin/',
+        '/ADMIN',
         '/api/auth/admin/users',
         '/api/auth/invites',
         '/api/auth/invites/recipients',
