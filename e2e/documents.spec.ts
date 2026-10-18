@@ -185,6 +185,12 @@ test('document UI preserves rich text and embedded images through reload and off
     await network.setOffline(true);
     await page.keyboard.type('Offline ');
     await expect(editor.getByRole('status', { name: 'Save status' })).toContainText('not saved');
+    // Search must preserve the mounted editor and its unsaved offline edits.
+    await page.getByRole('searchbox', { name: 'Search files', exact: true }).fill('Journal');
+    await expect(editor).toBeHidden();
+    await page.getByRole('button', { name: 'Clear search and filters', exact: true }).click();
+    await expect(editor).toBeVisible();
+    await expect(editor.getByRole('status', { name: 'Save status' })).toContainText('not saved');
     page.once('dialog', (dialog) => dialog.dismiss());
     await page.getByRole('link', { name: 'Settings', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(item.id));
