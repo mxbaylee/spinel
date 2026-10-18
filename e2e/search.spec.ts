@@ -62,6 +62,23 @@ test('dashboard search combines filters across folders without private paths and
     await page.goto('/');
     await query.fill('budget');
     await count(3);
+    // Searching keeps the folder mounted, but must not import into that hidden folder.
+    const transfer = await page.evaluateHandle(() => {
+      const data = new DataTransfer();
+      data.items.add(new File(['%PDF-'], 'not-a-univer.pdf'));
+      return data;
+    });
+    try {
+      await page.getByRole('region', { name: 'Your files', exact: true }).dispatchEvent('drop', {
+        dataTransfer: transfer,
+      });
+    } finally {
+      await transfer.dispose();
+    }
+    await clear.click();
+    await expect(page.getByRole('alert')).toHaveCount(0);
+    await query.fill('budget');
+    await count(3);
     await modified.selectOption('day');
     await count(2);
     await type.selectOption('sheet');

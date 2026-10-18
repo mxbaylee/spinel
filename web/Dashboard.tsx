@@ -30,7 +30,7 @@ const viewUrl = (id: string | null) =>
 const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
 
 export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
-  const dropTarget = useRef<HTMLDivElement>(null);
+  const dropTarget = useRef<HTMLElement>(null);
   const [query, setQuery] = useState<SearchQuery>({ ...emptySearch });
   const searchActive = hasSearch(query);
   const pins = usePins();
@@ -357,7 +357,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
             ))}
           </ul>
         </aside>
-        <section className="files" aria-label="Your files">
+        <section ref={dropTarget} className="files" aria-label="Your files">
           <SearchPanel
             query={query}
             onChange={setQuery}
@@ -406,7 +406,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
             </section>
           )}
           {/* Keep editors mounted while searching so unsaved work is preserved. */}
-          <div ref={dropTarget} className="file-view" hidden={searchActive}>
+          <div className="file-view" hidden={searchActive}>
             <nav aria-label="Breadcrumb">
               <button disabled={busy} onClick={() => navigate(null)}>
                 My files
@@ -460,6 +460,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                         key={currentId ?? 'root'}
                         parentId={currentId}
                         dropTarget={dropTarget}
+                        enabled={!searchActive}
                         onImported={(item) => {
                           setItems((previous) => [...previous, item]);
                           setViewed((previous) => [...previous, item]);
