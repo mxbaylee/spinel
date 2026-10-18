@@ -58,8 +58,16 @@ or its combined resident memory exceeds 2 GiB. On macOS,
 `sysctl -n kern.memorystatus_vm_pressure_level` must report `1` (normal). Never
 terminate the owner's apps or count a resource-aborted check as passing. Save a
 checkpoint before long work, and record any aborted verification and the next
-safe step. These controls do not waive the pre-push checks above. Owner, chat
+safe step. Owner, chat
 2026-10-18, after a memory-induced forced pause stalled the backlog run.
+
+When the watchdog prevents safe local tests, the owner permits a draft push after
+local typecheck, lint and backlog checks pass. Run the full unit and browser suites
+in GitHub CI instead; keep the PR draft until verified. Record the resource abort
+and deferred checks in the PR. All six required CI gates, independent review of
+at least 95 with no blockers, and the other merge gates still apply. This changes
+verification order only; it does not waive tests or authorize paid test hosts.
+Owner approval, chat 2026-10-18, [decision #52](https://github.com/mxbaylee/spinel/issues/52).
 
 Prepare the landing changes in the same PR: preserve Rules in maintained docs,
 delete only this completed ticket, remove its ID from dependents' `depends_on`,

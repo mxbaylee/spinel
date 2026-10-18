@@ -30,3 +30,8 @@ says what is next.
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 - Run `npm run typecheck`, `npm test` and `npm run backlog:check` before pushing.
+  Exception: when the memory watchdog prevents safe local testing, run local
+  typecheck, lint and backlog checks, then push a draft PR for full unit/browser
+  validation in CI. Keep it draft while unverified; all six CI gates and independent
+  review >=95 with no blockers remain required before merge. Owner, chat
+  2026-10-18; [decision #52](https://github.com/mxbaylee/spinel/issues/52).
