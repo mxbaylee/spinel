@@ -1,3 +1,4 @@
+import { ShareLink } from './ShareLink.tsx';
 import { useEffect, useState } from 'react';
 import type { GrantRole, SharePerson, WorkspaceItem } from '../src/shared/workspace.ts';
 
@@ -112,6 +113,7 @@ export function Sharing({ item, onClose }: { item: WorkspaceItem; onClose: () =>
         Direct and folder access combine; the most generous grant wins. Only you can change sharing
         or organize this item.
       </p>
+      {['sheet', 'doc'].includes(item.kind) && <ShareLink id={item.id} />}
       {message && <p role="status">{message}</p>}
       {error && <p role="alert">{error}</p>}
       <button disabled={busy} onClick={onClose}>

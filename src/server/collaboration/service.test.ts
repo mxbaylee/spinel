@@ -548,6 +548,84 @@ test('access revoked during mutation application is checked again before durable
   ).toBe(42);
 }, 20_000);
 
+test('guest viewer mutations are denied while the same editor mutation commits', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  for (const role of ['viewer', 'editor'] as const) {
+    const link = f.workspace.links.begin(f.sheet.id, role);
+    f.workspace.links.finish(f.sheet.id, link.epoch, true);
+    const guest = f.workspace.links.exchange(f.sheet.id, link.token);
+    const credential = f.workspace.links.access(guest.userId)!;
+    const result = await f.collab.service.submitChangeset(
+      { changeset: f.edit(guest.userId) },
+      {
+        userID: guest.userId,
+        memberID: 'test-member',
+        customData: {
+          guestHash: credential.tokenHash,
+          guestItem: f.sheet.id,
+        },
+      },
+    );
+    if (role === 'viewer')
+      expect(result).toMatchObject({ status: 'rejected', error: { code: 'PERMISSION_DENIED' } });
+    expect((await f.load()).targetRevision).toBe(role === 'viewer' ? 1 : 2);
+    expect(
+      ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
+        .cellData?.[0]?.[0]?.v,
+    ).toBe(role === 'viewer' ? 42 : 99);
+  }
+});
+
+test('revoking a guest link during mutation application prevents the durable commit', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  const link = f.workspace.links.begin(f.sheet.id, 'editor');
+  f.workspace.links.finish(f.sheet.id, link.epoch, true);
+  const guest = f.workspace.links.exchange(f.sheet.id, link.token);
+  const credential = f.workspace.links.access(guest.userId)!;
+  let entered!: () => void, release!: () => void;
+  const applying = new Promise<void>((resolve) => {
+    entered = resolve;
+  });
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const blocker = f.collab.service.use('applyChangeset', async (_context, next) => {
+    entered();
+    await gate;
+    await next();
+  });
+  cleanup.push(() => {
+    release();
+    blocker.dispose();
+  });
+  const submitted = f.collab.service.submitChangeset(
+    { changeset: f.edit(guest.userId) },
+    {
+      userID: guest.userId,
+      memberID: 'test-member',
+      customData: {
+        guestHash: credential.tokenHash,
+        guestItem: f.sheet.id,
+      },
+    },
+  );
+  await applying;
+  const revoked = f.workspace.links.begin(f.sheet.id, null);
+  release();
+  await expect(submitted).resolves.toMatchObject({
+    status: 'rejected',
+    error: { code: 'PERMISSION_DENIED' },
+  });
+  f.workspace.links.finish(f.sheet.id, revoked.epoch, false);
+  expect((await f.load()).targetRevision).toBe(1);
+  expect(
+    ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
+      .cellData?.[0]?.[0]?.v,
+  ).toBe(42);
+});
+
 test('retained native restore drains accepted edits, fences old IDs and keeps exact recoverable pre-state', async () => {
   const f = await fixture();
   const { HistoryStore } = await import('../history/store.ts');

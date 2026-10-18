@@ -150,6 +150,15 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await page.getByText('Cell fill presets', { exact: true }).click();
     await page.getByRole('button', { name: 'Apply Warning, strong fill', exact: true }).click();
     await saved();
+    // Saved may still describe the preceding command. Confirm this fill before
+    // moving the selection and applying a different preset.
+    await expect
+      .poll(async () => {
+        const { snapshot } = await read();
+        const style = snapshot.sheets.first.cellData?.[0]?.[0]?.s;
+        return (typeof style === 'string' ? snapshot.styles[style] : style)?.bg?.rgb;
+      })
+      .toBe('#f2a93b');
     await select('A3');
     await page.getByRole('button', { name: 'Apply Primary, soft fill', exact: true }).click();
     await saved();

@@ -1,3 +1,4 @@
+import { LinkAccess, linkGone } from './links.ts';
 import { randomUUID } from 'node:crypto';
 import { AuthError, AuthStore } from '../auth/store.ts';
 import { ITEM_KINDS } from '../../shared/workspace.ts';
@@ -8,6 +9,7 @@ const columns =
   'id,parent_id AS parentId,kind,name,created_at AS createdAt,updated_at AS updatedAt';
 export class WorkspaceStore {
   auth: AuthStore;
+  readonly links: LinkAccess;
   private readonly snapshotListeners = new Set<(event: SnapshotSaved) => void>();
   onSnapshotSaved(listener: (event: SnapshotSaved) => void) {
     this.snapshotListeners.add(listener);
@@ -67,6 +69,7 @@ export class WorkspaceStore {
     auth.database.exec(
       'CREATE INDEX IF NOT EXISTS workspace_items_trash ON workspace_items(trashed_at)',
     );
+    this.links = new LinkAccess(auth);
   }
   cleanPins() {
     // Access can change through a parent grant, a move, or a trash batch.
@@ -231,6 +234,17 @@ export class WorkspaceStore {
           : null;
   }
   get(userId: string, id: string, needed: 'read' | 'edit' | 'owner' = 'read'): WorkspaceItem {
+    if (userId.startsWith('guest:')) {
+      const guest = this.links.access(userId, id);
+      if (!guest) throw linkGone();
+      if (needed === 'owner' || (needed === 'edit' && guest.role !== 'editor'))
+        throw new AuthError(403, 'This link allows viewing only.');
+      const item = this.auth.database
+        .prepare(`SELECT ${columns} FROM workspace_items WHERE id=?`)
+        .get(id) as unknown as WorkspaceItem;
+      if (!item || !['sheet', 'doc'].includes(item.kind)) throw linkGone();
+      return { ...item, parentId: null, tags: [], access: guest.role };
+    }
     this.owner(userId);
     const access = this.role(userId, id);
     if (!access) throw new AuthError(404, 'This item is not available.');
