@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { itemsRequest } from './itemsApi.ts';
 
-type Version = { id: string; capturedAt: number; name: string | null };
+type Version = {
+  id: string;
+  capturedAt: number;
+  name: string | null;
+  beforeRestore?: boolean | number;
+};
 
-/** Minimal version picker; timeline navigation and restore have their own tickets. */
+/** Version naming and preview entry point; timeline navigation has its own ticket. */
 export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
   const [open, setOpen] = useState(false);
   const [versions, setVersions] = useState<Version[]>([]);
@@ -103,7 +108,15 @@ export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
             {versions.map((version) => (
               <li key={version.id}>
                 {version.name && <span aria-label="Pinned version">📌 </span>}
-                <span>{version.name ?? 'Unnamed version'}</span>{' '}
+                <span>{version.name ?? 'Unnamed version'}</span>
+                {Boolean(version.beforeRestore) && <strong> — Before restore</strong>}
+                <a
+                  href={`/preview?item=${encodeURIComponent(id)}&version=${encodeURIComponent(version.id)}`}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Preview version
+                </a>{' '}
                 <time dateTime={new Date(version.capturedAt).toISOString()}>
                   {new Date(version.capturedAt).toLocaleString()}
                 </time>

@@ -1,5 +1,5 @@
 import { createPrivateKey, sign } from 'node:crypto';
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync } from '../../../server/database.ts';
 import { afterEach, expect, test, vi } from 'vitest';
 import type {
   RegistrationResponseJSON,

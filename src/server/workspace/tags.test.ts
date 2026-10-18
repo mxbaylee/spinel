@@ -1,4 +1,4 @@
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync } from '../../../server/database.ts';
 import { afterEach, expect, test } from 'vitest';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';

@@ -209,3 +209,43 @@ test('migration preserves native history and starts a separate collaboration rev
     sheets.save(f.owner.id, item.id, { snapshot, revision: 2, writeId: randomUUID() }),
   ).toThrow('live collaboration');
 }, 30_000);
+
+test('a generation switch during metadata scan cannot mix an old SDK head with the new offset', async () => {
+  const f = await fixture();
+  await f.edit('Before restoration');
+  const baseline = f.history.list(f.owner.id, f.item.id).at(-1)!;
+  const adapter = f.collaboration.service.dbAdapter;
+  const original = adapter.getUnit.bind(adapter);
+  let entered!: () => void, release!: () => void;
+  const reading = new Promise<void>((resolve) => {
+    entered = resolve;
+  });
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let once = true;
+  vi.spyOn(adapter, 'getUnit').mockImplementation(async (...args) => {
+    const result = await original(...args);
+    if (once && args[1] === f.item.id) {
+      once = false;
+      entered();
+      await gate;
+    }
+    return result;
+  });
+  const scan = f.history.tick();
+  await reading;
+  await f.history.restore(f.owner.id, f.item.id, baseline.id, f.item.id, randomUUID());
+  release();
+  await scan;
+  const row = f.db
+    .prepare("SELECT revision FROM history_progress WHERE item_id=? AND source='collaboration'")
+    .get(f.item.id);
+  expect(row?.revision).toBe(2); // The interrupted scan must not invent old head 2 + new offset 2 = 4.
+  await f.history.tick();
+  expect(
+    f.db
+      .prepare("SELECT revision FROM history_progress WHERE item_id=? AND source='collaboration'")
+      .get(f.item.id)?.revision,
+  ).toBe(3);
+});

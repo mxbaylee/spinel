@@ -202,7 +202,7 @@ export function DocEditor({
           UniverDocsDrawingPlugin,
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
-          ...collaborationPlugins(id, [[IImageIoService, { useClass: StoredImages }]]),
+          ...collaborationPlugins(data.unitId, [[IImageIoService, { useClass: StoredImages }]]),
         ],
         presets: [
           UniverDocsCorePreset({
@@ -231,34 +231,34 @@ export function DocEditor({
       };
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
-      const document = await univerAPI.getCollaboration().loadDocAsync(id);
+      const document = await univerAPI.getCollaboration().loadDocAsync(data.unitId);
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
       // A document-type plugin can initialize after the global Rendered stage.
       // Do not advertise readiness until our drawing commands are installed too.
       await drawingsRendered;
       if (disposed) return;
-      await documentReady(univer, id, loading.signal);
+      await documentReady(univer, data.unitId, loading.signal);
       if (disposed) return;
       const readonly = async () => {
         setEditable(false);
         // Local UI state only: changing the shared document's permission rules
         // would also make still-authorized collaborators read-only.
         const permissions = univer.__getInjector().get(IPermissionService);
-        setDocumentPermissionValue(permissions, id, id, UnitAction.Edit, false);
-        setDocumentPermissionValue(permissions, id, id, UnitAction.Copy, true);
+        setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Edit, false);
+        setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Copy, true);
       };
       if (data.access === 'viewer') await readonly();
       else {
         setEditable(true);
         document.setSelection(0, 0);
       }
-      stopPresence = await watchPresence(univer, univerAPI, id, setPeople);
+      stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) {
         stopPresence();
         return;
       }
-      save = watchCollaboration(univer, univerAPI, id, data.access, publish, readonly);
+      save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readonly);
       controller.current = save;
     })().catch((error) => {
       if (!disposed)

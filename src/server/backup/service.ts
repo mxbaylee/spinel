@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { dirname } from 'node:path';
-import type { DatabaseSync } from 'node:sqlite';
+import type { DatabaseSync } from '../../../server/database.ts';
 import { makeArchive, privateFile, readKey } from './archive.ts';
 import type { Recovery } from './archive.ts';
 import { expiredBackups, loadConfig, SpacesStore } from './spaces.ts';

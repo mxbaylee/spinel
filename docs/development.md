@@ -83,9 +83,12 @@ see [the process](todo/process.md#pull-requests-and-main).
   HTML/CSS and generated build assets are normal outputs. Owner, chat 2026-10-17.
 - SQLite fits one process and one file on the 2 GB droplet. Owner, chat 2026-10-17.
   Express serves Vite middleware in development and built assets in production.
-  `node:sqlite` avoids a native addon install; its API is a release candidate in Node 24.19.0
-  and isolated in `server/database.ts`. WAL mode and foreign keys are enabled without resetting migration metadata. Decided
-  2026-10-17 in [#2](https://github.com/mxbaylee/spinel/issues/2).
+  Application connections use the same pinned `libsql` runtime as the public SDK
+  adapter, behind `server/database.ts`. Mixing it with `node:sqlite` in one process
+  failed repeated reopen tests and risks independent SQLite lock registries.
+  WAL mode and foreign keys remain enabled without resetting migration metadata.
+  [Decision #68](https://github.com/mxbaylee/spinel/issues/68), 2026-10-18,
+  supersedes the original driver choice in [#2](https://github.com/mxbaylee/spinel/issues/2).
 - React and React DOM are pinned to 18.3.1. On 2026-10-17, published
   `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support
   React 16–19; [Univer's UI package](https://github.com/dream-num/univer/blob/dev/packages/ui/package.json)

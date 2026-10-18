@@ -7,6 +7,7 @@ export type Checkpoint = {
   capturedAt: number;
   revision: number;
   name: string | null;
+  beforeRestore?: boolean | number;
   source?: 'native' | 'collaboration';
 };
 
@@ -22,7 +23,7 @@ export function expiredCheckpoints(checkpoints: readonly Checkpoint[], now: numb
   const buckets = new Set<string>();
   const expired: string[] = [];
   for (const [index, point] of ordered.entries()) {
-    if (point.name !== null) continue; // Named versions never consume an unnamed retention slot.
+    if (point.name !== null || point.beforeRestore) continue; // Named versions never consume an unnamed retention slot.
     const age = now - point.capturedAt;
     if (age < HOUR) continue;
     const interval = age < 6 * HOUR ? 30 * MINUTE : age < DAY ? HOUR : DAY;

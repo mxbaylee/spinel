@@ -2,7 +2,7 @@ import { randomBytes, randomUUID } from 'node:crypto';
 import { chmod, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync } from '../../../server/database.ts';
 import { afterEach, expect, test, vi } from 'vitest';
 import sharp from 'sharp';
 import { openDatabase } from '../../../server/database.ts';

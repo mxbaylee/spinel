@@ -40,14 +40,14 @@ export function attachCollaboration(
   function documentScope(userID: string, url: string | undefined) {
     const unitID = new URL(url ?? '/', origin).searchParams.get('unitID');
     if (!unitID) throw denied();
-    const item = workspace.get(userID, unitID);
+    const item = collab.access(userID, unitID);
     if (item.kind !== 'sheet' && item.kind !== 'doc') throw denied();
     return unitID;
   }
   function scoped(session: EndpointSession, unitID: string) {
     current(session);
     if (session.customData.unitID !== unitID) throw denied();
-    return workspace.get(session.userID, unitID);
+    return collab.access(session.userID, unitID);
   }
   let validation = Promise.resolve();
   function revalidate() {
@@ -60,7 +60,7 @@ export function attachCollaboration(
         current(entry.session);
         if (!entry.units.size && Date.now() > entry.joinDeadline) throw denied();
         for (const [id, access] of entry.units) {
-          if (workspace.get(entry.session.userID, id).access !== access) throw denied();
+          if (collab.access(entry.session.userID, id).access !== access) throw denied();
         }
       } catch {
         // SDK eviction is scoped by user, not auth session. Other tabs may reconnect;
@@ -141,7 +141,7 @@ export function attachCollaboration(
   });
   endpoint.use('joinUnit', async (context, next) => {
     const access = scoped(context.session, context.unitID).access;
-    await collab.prepare(context.session.userID, context.unitID);
+    await collab.prepare(context.session.userID, collab.itemForUnit(context.unitID));
     scoped(context.session, context.unitID);
     live.get(context.session.memberID)?.units.set(context.unitID, access);
     await next();
@@ -170,7 +170,7 @@ export function attachCollaboration(
     await revalidate();
     if (auth.sessionByHash(String(context.customData.sessionHash))?.user_id !== context.userID)
       throw denied();
-    workspace.get(context.userID, context.changeset.unitID, 'edit');
+    collab.access(context.userID, context.changeset.unitID, true);
     await next();
   });
   transport.register(endpoint);
