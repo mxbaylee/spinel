@@ -32,10 +32,15 @@ import { editorReady } from './editorReady.ts';
 type Preview = { snapshot: IDocumentData | IWorkbookData; item: WorkspaceItem; unitId: string };
 
 /** Isolated native viewer: no collaboration client, autosave or live mutation transport. */
-export function VersionPreview() {
-  const query = new URLSearchParams(location.search);
-  const id = query.get('item') ?? '',
-    checkpoint = query.get('version') ?? '';
+export function VersionPreview({
+  id,
+  checkpoint,
+  onBusyChange,
+}: {
+  id: string;
+  checkpoint: string;
+  onBusyChange: (busy: boolean) => void;
+}) {
   const container = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<Preview | null>(null);
   const [ready, setReady] = useState(false);
@@ -145,6 +150,7 @@ export function VersionPreview() {
     )
       return;
     setBusy(true);
+    onBusyChange(true);
     setError('');
     try {
       await itemsRequest(`/${id}/history/${checkpoint}/restore`, 'POST', {
@@ -155,11 +161,12 @@ export function VersionPreview() {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not restore this version.');
       setBusy(false);
+      onBusyChange(false);
     }
   };
   return (
     <section aria-label="Version preview">
-      <h1>Preview — {data?.item.name ?? 'Saved version'}</h1>
+      <h2>Preview — {data?.item.name ?? 'Saved version'}</h2>
       <p>Read only. The live document is unchanged.</p>
       <a href={`/?item=${encodeURIComponent(id)}`}>Back to live document</a>
       {data && data.item.access !== 'viewer' && (

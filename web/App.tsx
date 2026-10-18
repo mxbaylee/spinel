@@ -19,8 +19,8 @@ import { PinsProvider, PinnedSidebar } from './Pins.tsx';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 
-const VersionPreview = lazy(() =>
-  import('./VersionPreview.tsx').then((m) => ({ default: m.VersionPreview })),
+const HistoryBrowser = lazy(() =>
+  import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
 );
 
 type User = { id: string; name: string; isAdmin: boolean };
@@ -352,7 +352,7 @@ export function App() {
               </>
             ) : location.pathname === '/preview' ? (
               <Suspense fallback={<p>Loading preview…</p>}>
-                <VersionPreview />
+                <HistoryBrowser />
               </Suspense>
             ) : (
               <Dashboard navigation={navigation} />
