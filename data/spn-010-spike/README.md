@@ -41,3 +41,9 @@ stops; elapsed calendar time alone is never success. Stop with Ctrl-C in its ter
 Public API references: https://docs.univer.ai/server/collaboration/quick-start,
 https://docs.univer.ai/server/collaboration/database-adapters,
 https://docs.univer.ai/server/collaboration/identity-and-authorization.
+
+For an independent SQLite restart check, run `node restart-check.ts before`, stop
+and restart only this local server without changing its database, then run
+`node restart-check.ts after`. It compares read-only normalized Sheet content
+and the full Doc body, and saves before/after screenshots. This is separate
+from the uninterrupted soak; do not restart the server during that run.
