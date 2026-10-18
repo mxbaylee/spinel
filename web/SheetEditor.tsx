@@ -4,11 +4,12 @@ import {
   getAllWorkbookPermissionPoint,
   SheetInterceptorService,
   INTERCEPTOR_POINT,
+  BEFORE_CELL_EDIT,
   SetRangeValuesCommand,
 } from '@univerjs/sheets';
 import { editorTheme, bindEditorTheme } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
-import { presetStyle, displayPresetStyle } from '../src/ui/presetStyles.ts';
+import { presetStyle, displayPresetCell, presetCellForEditing } from '../src/ui/presetStyles.ts';
 import { FillPresets } from '../src/ui/FillPresets.tsx';
 import { UnitAction } from '@univerjs/protocol';
 import { Collaborators, watchPresence } from './Collaborators.tsx';
@@ -91,10 +92,22 @@ export function SheetEditor({
               context.col,
               cell,
             );
-            const display = displayPresetStyle(style, getTheme());
-            return display === style
-              ? cell
-              : { ...cell, interceptorStyle: { ...cell.interceptorStyle, ...display } };
+            return displayPresetCell(cell, style, getTheme());
+          },
+        });
+      const stopEditingTheme = univer
+        .__getInjector()
+        .get(SheetInterceptorService)
+        .writeCellInterceptor.intercept(BEFORE_CELL_EDIT, {
+          handler(value, context, next) {
+            const cell = next(value);
+            if (!cell) return cell;
+            const style = context.worksheet.getComposedCellStyleByCellData(
+              context.row,
+              context.col,
+              context.origin,
+            );
+            return presetCellForEditing(cell, context.origin, style);
           },
         });
       const stopTheme = bindEditorTheme(univer, () =>
@@ -103,6 +116,7 @@ export function SheetEditor({
       disposeEditor = () => {
         stopTheme();
         interceptor.dispose();
+        stopEditingTheme();
         univer.dispose();
       };
       identifyCollaborator(univer, data.user);

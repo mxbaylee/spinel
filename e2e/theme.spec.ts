@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { randomUUID } from 'node:crypto';
+import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { mkdir } from 'node:fs/promises';
 import type { IWorkbookData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
@@ -19,6 +21,40 @@ test('themes persist, follow the system, and recolour sheet presets without edit
   const user = auth.createUser(`Theme ${info.testId}`);
   const sheet = store.create(user.id, { name: 'Theme budget', kind: 'sheet', parentId: null });
   const doc = store.create(user.id, { name: 'Theme journal', kind: 'doc', parentId: null });
+  const richCell = {
+    p: {
+      id: 'rich-text',
+      documentStyle: {},
+      body: {
+        dataStream: 'Rich text\r\n',
+        textRuns: [
+          { st: 0, ed: 4, ts: { bl: 1 } },
+          { st: 5, ed: 9, ts: { it: 1 } },
+        ],
+      },
+    },
+  };
+  new SheetStore(store).save(user.id, sheet.id, {
+    revision: 0,
+    writeId: randomUUID(),
+    snapshot: {
+      id: sheet.id,
+      name: 'Theme budget',
+      appVersion: '1.1.0',
+      locale: 'enUS',
+      styles: {},
+      sheetOrder: ['first'],
+      sheets: {
+        first: {
+          id: 'first',
+          name: 'Sheet1',
+          rowCount: 100,
+          columnCount: 26,
+          cellData: { 2: { 0: richCell } },
+        },
+      },
+    },
+  });
   await context.addCookies([
     {
       name: COOKIE_NAME,
@@ -76,6 +112,8 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     }, rgb);
   try {
     await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Theme budget/ })).toBeVisible();
     await mode('light');
     await capture('dashboard-light');
     await page.emulateMedia({ colorScheme: 'dark' });
@@ -108,6 +146,9 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await page.getByText('Cell fill presets', { exact: true }).click();
     await page.getByRole('button', { name: 'Apply Warning, strong fill', exact: true }).click();
     await saved();
+    await select('A3');
+    await page.getByRole('button', { name: 'Apply Primary, soft fill', exact: true }).click();
+    await saved();
     const before = await read();
     const cells = before.snapshot.sheets[before.snapshot.sheetOrder[0]].cellData![0]!;
     expect(cells[0]?.v).toBe(12);
@@ -126,12 +167,37 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await mode('dark');
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
     expect(await container!.evaluate((node) => node.isConnected)).toBe(true);
+    await expect.poll(() => colouredPixels([255, 156, 198])).toBeGreaterThan(5);
+    const badge = page
+      .getByRole('group', { name: 'People in this document' })
+      .getByRole('button')
+      .first();
+    await expect(badge).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await badge.focus();
+    await expect(badge.locator('.collaborator-name')).toHaveCSS('color', 'rgb(26, 18, 37)');
     await capture('sheet-dark');
     expect((await read()).revision).toBe(before.revision);
     await page.reload();
     await saved();
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
     expect((await read()).revision).toBe(before.revision);
+    await select('A3');
+    await page.keyboard.press('F2');
+    await page.keyboard.press('End');
+    await page.keyboard.type('!');
+    await page.keyboard.press('Enter');
+    await saved();
+    const edited = await read();
+    const rich = edited.snapshot.sheets[edited.snapshot.sheetOrder[0]].cellData![2]![0]!;
+    expect(rich.p?.body?.dataStream).toContain('Rich text!');
+    expect(rich.p?.body?.textRuns?.some((run) => run.ts?.bl === 1)).toBe(true);
+    expect(rich.p?.body?.textRuns?.some((run) => run.ts?.it === 1)).toBe(true);
+    for (const run of rich.p?.body?.textRuns ?? [])
+      if (run.ts?.cl) expect(run.ts.cl.rgb).toBe('#8a1d3f');
+    await page.emulateMedia({ colorScheme: 'light' });
+    await expect.poll(() => colouredPixels([138, 29, 63])).toBeGreaterThan(5);
+    expect((await read()).revision).toBe(edited.revision);
+    await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto(`/?item=${doc.id}`);
     await saved();
     await capture('doc-dark');

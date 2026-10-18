@@ -238,7 +238,7 @@ button.primary {
   align-items: center;
   padding: 0.25rem 0;
 }
-.collaborator-badge {
+.workspace button.collaborator-badge {
   position: relative;
   width: 1.8rem;
   height: 1.8rem;
@@ -262,7 +262,7 @@ button.primary {
   bottom: calc(100% + 0.35rem);
   left: 0;
   background: var(--sp-text);
-  color: white;
+  color: var(--sp-bg);
   border-radius: 0.35rem;
   padding: 0.3rem 0.5rem;
   white-space: nowrap;
@@ -454,7 +454,7 @@ button.primary {
   flex-direction: column;
   gap: 12px;
 }
-.workspace .rail-button {
+.workspace > header .rail-button {
   width: 44px;
   min-height: 44px;
   padding: 0;

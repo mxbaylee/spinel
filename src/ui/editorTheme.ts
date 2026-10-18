@@ -2,11 +2,12 @@ import { ThemeService } from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
 import { defaultTheme } from '@univerjs/presets';
 import { getTheme, watchTheme } from './theme.ts';
-import { palettes } from './palette.ts';
+import { palettes, editorNeutrals } from './palette.ts';
 export function editorTheme() {
   const colors = palettes[getTheme()];
   return {
     ...defaultTheme,
+    gray: editorNeutrals,
     primary: {
       ...defaultTheme.primary,
       50: colors['sp-tint-1'],

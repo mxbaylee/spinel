@@ -26,7 +26,9 @@ success, warning, error, info, neutral and highlight. Applying a preset writes
 its canonical light background/text pair through the normal collaborative
 command path. A style-only display interceptor maps that exact pair to the
 current browser's palette, without modifying saved data, formulas or unrelated
-formatting. Viewers see the result but cannot apply presets.
+formatting. Rich-text runs adapt on a cloned display model; the public before-edit
+interceptor restores canonical colours before typing so display colours cannot
+leak into stored edits. Viewers see the result but cannot apply presets.
 
 Changing either colour to a different pair makes it fixed custom formatting.
 An imported or manually chosen pair identical to a preset has the same preset

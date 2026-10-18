@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { fillPresets, palettes } from './palette.ts';
-import { displayPresetStyle, presetStyle } from './presetStyles.ts';
+import { fillPresets, palettes, editorNeutrals } from './palette.ts';
+import {
+  displayPresetStyle,
+  presetStyle,
+  displayPresetCell,
+  presetCellForEditing,
+} from './presetStyles.ts';
 
 function luminance(hex: string) {
   const c = hex
@@ -11,11 +16,26 @@ function luminance(hex: string) {
   return c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
 }
 describe('Spinel theme', () => {
+  it('editor neutral text pairs meet AA in both modes', () => {
+    for (const [fg, bg] of [
+      [500, 0],
+      [600, 100],
+      [700, 50],
+      [200, 900],
+      [300, 900],
+    ] as const) {
+      const [low, high] = [luminance(editorNeutrals[fg]), luminance(editorNeutrals[bg])].sort(
+        (a, b) => a - b,
+      );
+      expect((high + 0.05) / (low + 0.05), `${fg} on ${bg}`).toBeGreaterThanOrEqual(4.5);
+    }
+  });
   for (const mode of ['light', 'dark'] as const) {
     it(`${mode} text and all sixteen fill presets meet AA`, () => {
       expect(fillPresets).toHaveLength(16);
       const pairs = [
         ['sp-text', 'sp-bg'],
+        ['sp-bg', 'sp-text'],
         ['sp-muted', 'sp-bg'],
         ['sp-text', 'sp-panel'],
         ['sp-muted', 'sp-panel'],
@@ -49,4 +69,32 @@ describe('Spinel theme', () => {
       expect(() => presetStyle('missing', mode)).toThrow('Unknown fill preset');
     });
   }
+});
+
+it('rich text maps only for display and restores canonical editing without mutating runs', () => {
+  const style = presetStyle('primary-soft', 'light');
+  const cell = {
+    s: style,
+    p: {
+      id: 'rich',
+      documentStyle: {},
+      body: {
+        dataStream: 'Test text\r\n',
+        textRuns: [
+          { st: 0, ed: 4, ts: { bl: 1, cl: style.cl } },
+          { st: 5, ed: 9, ts: { it: 1, cl: { rgb: '#123456' } } },
+        ],
+      },
+    },
+  };
+  const before = structuredClone(cell);
+  const display = displayPresetCell(cell, style, 'dark');
+  expect(display.p!.body!.textRuns![0].ts).toEqual({
+    bl: 1,
+    cl: presetStyle('primary-soft', 'dark').cl,
+  });
+  expect(display.p!.body!.textRuns![1]).toEqual(cell.p.body.textRuns[1]);
+  expect(presetCellForEditing(display, cell, style).p).toEqual(cell.p);
+  expect(presetCellForEditing(display, cell, style).p).not.toBe(cell.p);
+  expect(cell).toEqual(before);
 });

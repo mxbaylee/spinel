@@ -128,3 +128,19 @@ export const fillPresets = (['strong', 'soft'] as const).flatMap((shade) =>
     label: role[0].toUpperCase() + role.slice(1) + ', ' + shade,
   })),
 );
+
+// Univer uses ascending neutral tones for light chrome and reverses them in dark.
+export const editorNeutrals = {
+  0: '#ffffff',
+  50: '#fff5f2',
+  100: '#ffeaf0',
+  200: '#f0c2cf',
+  300: '#d9a4ba',
+  400: '#ad7c91',
+  500: '#7e4d61',
+  600: '#674052',
+  700: '#4a1e33',
+  800: '#33213f',
+  900: '#221832',
+  1000: '#1a1225',
+};
