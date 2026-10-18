@@ -50,7 +50,17 @@ test('viewers can organize personal tags without editing content or seeing anoth
 });
 test('validates names and document kinds before creating vocabulary or assignments', () => {
   const f = fixture();
-  for (const tag of ['', '  # ', 'a\nb', 'x'.repeat(65), null, 123, ['budget']]) {
+  for (const tag of [
+    '',
+    '  # ',
+    '##budget',
+    '# #budget',
+    'a\nb',
+    'x'.repeat(65),
+    null,
+    123,
+    ['budget'],
+  ]) {
     expect(() => f.store.changeTag(f.owner.id, f.item.id, tag)).toThrow('tag');
   }
   f.store.changeTag(f.owner.id, f.item.id, 'x'.repeat(64));

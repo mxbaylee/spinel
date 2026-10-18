@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 
@@ -23,11 +23,18 @@ export function DocumentTags({
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const input = useRef<HTMLInputElement>(null);
+  const active = useRef(false);
   const suggestionsId = useId();
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [tag, setTag] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  useLayoutEffect(() => {
+    active.current = true;
+    return () => {
+      active.current = false;
+    };
+  }, []);
   useEffect(() => {
     const modal = dialog.current;
     modal?.showModal();
@@ -46,6 +53,7 @@ export function DocumentTags({
     };
   }, []);
   function finish() {
+    active.current = false;
     dialog.current?.close();
     onClose();
   }
@@ -58,14 +66,22 @@ export function DocumentTags({
         remove ? 'DELETE' : 'POST',
         { tag: value },
       );
+      // Browser Back can dismiss this dialog while its request is in flight.
+      // The completed server mutation persists, but cannot reopen stale UI.
+      if (!active.current) return;
       onChanged(result.item);
       setSuggestions((previous) => [...new Set([...previous, ...result.item.tags])].sort());
       if (!remove) setTag('');
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not update tags. Try again.');
+      if (active.current)
+        setError(cause instanceof Error ? cause.message : 'Could not update tags. Try again.');
     } finally {
-      setBusy(false);
-      requestAnimationFrame(() => input.current?.focus());
+      if (active.current) {
+        setBusy(false);
+        requestAnimationFrame(() => {
+          if (active.current) input.current?.focus();
+        });
+      }
     }
   }
   return (

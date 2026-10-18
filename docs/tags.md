@@ -6,9 +6,10 @@ one of the document's labels. Tags also appear in folder listings and trash.
 They are personal: a collaborator sees only their own labels and suggestions,
 including when they have view-only access to the document.
 
-Names are trimmed, an optional leading `#` is removed, and Unicode is normalized
+Names are trimmed, one optional leading `#` is removed, and Unicode is normalized
 to NFC and lower-case. Names must contain 1–64 UTF-16 code units after normalization
-and cannot contain control characters or unpaired surrogates. The display adds
+and cannot contain control characters, unpaired surrogates or another leading `#`.
+This keeps saved names stable when reused or removed. The display adds
 `#`; it is not required when typing. Duplicate additions and repeated removals
 are harmless. Folders are not tagged. Filtering by tag remains SPN-022.
 

@@ -88,6 +88,48 @@ test('personal tags work in the dashboard and editor, suggest earlier names and 
     await expect(otherPage.getByText('#reading', { exact: true })).toBeVisible();
     expect(store.get(owner.id, item.id).tags).toEqual(['budget', 'recipes']);
     expect(store.get(viewer.id, item.id).tags).toEqual(['reading']);
+    await page.getByRole('button', { name: 'Tagged budget Sheet', exact: true }).click();
+    await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+      { timeout: 30000 },
+    );
+    await page.getByRole('button', { name: 'Tags Tagged budget', exact: true }).click();
+    let release = () => {};
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let received = false;
+    const endpoint = `**/api/items/${item.id}/tags`;
+    await page.route(endpoint, async (route) => {
+      const response = await route.fetch();
+      received = true;
+      await held;
+      await route.fulfill({ response });
+    });
+    try {
+      await add('late-tag');
+      await expect.poll(() => received).toBe(true);
+      await page.goBack();
+      await expect(page).toHaveURL(`${baseURL}/`);
+      await expect(dialog).toHaveCount(0);
+      const completed = page.waitForResponse((response) =>
+        response.url().endsWith(`/${item.id}/tags`),
+      );
+      release();
+      await (await completed).finished();
+      await page.evaluate(
+        () =>
+          new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          ),
+      );
+      await expect(dialog).toHaveCount(0);
+      await page.reload();
+      await expect(page.getByText('#late-tag', { exact: true })).toBeVisible();
+    } finally {
+      release();
+      await page.unroute(endpoint);
+    }
   } finally {
     await other.close();
     db.close();

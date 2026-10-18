@@ -94,6 +94,7 @@ export class WorkspaceStore {
         .normalize('NFC')
         .toLowerCase()
         .normalize('NFC');
+      if (name.startsWith('#')) throw new AuthError(400, 'Use at most one leading # in a tag.');
       if (!name || name.length > 64)
         throw new AuthError(400, 'Use a tag of 1–64 characters without control characters.');
       if (remove)
