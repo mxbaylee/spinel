@@ -24,3 +24,12 @@ export const kindLabel: Record<ItemKind, string> = {
   doc: 'Doc',
   slides: 'Slides',
 };
+
+export interface TrashedItem extends WorkspaceItem {
+  trashedAt: number;
+  expiresAt: number;
+}
+export interface TrashListing {
+  items: TrashedItem[];
+  version: string;
+}

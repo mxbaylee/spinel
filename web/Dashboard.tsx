@@ -3,26 +3,21 @@ import { ITEM_KINDS, kindLabel } from '../src/shared/workspace.ts';
 import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
 
 import { Sharing } from './Sharing.tsx';
+import { Trash } from './Trash.tsx';
+import { itemsRequest } from './itemsApi.ts';
 import type { NavigationGuard } from './navigation.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
 
 type Action = { mode: 'new' | 'rename' | 'move'; item?: WorkspaceItem };
-async function itemsRequest<T>(path = '', method = 'GET', body?: unknown): Promise<T> {
-  const response = await fetch(`/api/items${path}`, {
-    method,
-    credentials: 'same-origin',
-    ...(body === undefined
-      ? {}
-      : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
-  });
-  if (response.status === 401) location.assign('/sign-in');
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error ?? 'Could not load your items. Try again.');
-  return result;
-}
-const selectedId = () => new URLSearchParams(location.search).get('item');
+const TRASH_VIEW = 'trash';
+const selectedId = () => {
+  const query = new URLSearchParams(location.search);
+  return query.has('trash') ? TRASH_VIEW : query.get('item');
+};
+const viewUrl = (id: string | null) =>
+  id === TRASH_VIEW ? '/?trash=1' : id ? `/?item=${encodeURIComponent(id)}` : '/';
 
 const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
 
@@ -53,11 +48,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
       .catch((failure) => setError(failure.message));
     const back = () => {
       if (!navigation.allow()) {
-        history.pushState(
-          null,
-          '',
-          currentRef.current ? `/?item=${encodeURIComponent(currentRef.current)}` : '/',
-        );
+        history.pushState(null, '', viewUrl(currentRef.current));
         return;
       }
       setCurrentId(selectedId());
@@ -72,7 +63,8 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     setViewed([]);
     setViewMissing(false);
     setViewId(null);
-    if (!currentId) {
+    if (!currentId || currentId === TRASH_VIEW) {
+      setViewId(currentId);
       setViewLoading(false);
       return;
     }
@@ -104,7 +96,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   }, [currentId, refresh]);
   const byId = new Map([...items, ...viewed].map((item) => [item.id, item]));
   const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
-  const visibleItems = currentId ? [...byId.values()] : items;
+  const visibleItems = currentId ? viewed : items;
   function ancestors(item?: WorkspaceItem) {
     const path: WorkspaceItem[] = [];
     const seen = new Set<string>();
@@ -133,9 +125,9 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     for (const child of [...(children.get(entry.item.id) ?? [])].reverse())
       stack.push({ item: child, path: [...entry.path, child] });
   }
-  function navigate(id: string | null) {
-    if (id !== currentId && !navigation.allow()) return;
-    history.pushState(null, '', id ? `/?item=${encodeURIComponent(id)}` : '/');
+  function navigate(id: string | null, check = true) {
+    if (check && id !== currentId && !navigation.allow()) return;
+    history.pushState(null, '', viewUrl(id));
     setCurrentId(id);
     setAction(null);
     setError('');
@@ -162,11 +154,32 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
             : { parentId: destination || null },
       );
       setItems((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
-      setViewed((previous) => previous.filter((entry) => entry.id !== item.id));
+      setViewed((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
       setAction(null);
       if (action.mode === 'new' && item.kind !== 'folder') navigate(item.id);
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'Could not save. Try again.');
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function reloadItems() {
+    const result = await itemsRequest<{ items: WorkspaceItem[] }>();
+    setItems(result.items);
+  }
+  async function trashItem(item: WorkspaceItem) {
+    if (!navigation.allow()) return;
+    setBusy(true);
+    setError('');
+    try {
+      await itemsRequest(`/${item.id}/trash`, 'POST', {});
+      setSharing(null);
+      setViewed([]);
+      navigate(item.parentId, false);
+      setRefresh((value) => value + 1);
+      await reloadItems();
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : 'Could not move to trash. Try again.');
     } finally {
       setBusy(false);
     }
@@ -189,6 +202,13 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
         <button disabled={busy} onClick={() => edit('move', item)} aria-label={`Move ${item.name}`}>
           Move
         </button>
+        <button
+          disabled={busy}
+          onClick={() => void trashItem(item)}
+          aria-label={`Move ${item.name} to trash`}
+        >
+          Trash
+        </button>
       </span>
     );
   }
@@ -200,6 +220,13 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
         <aside aria-label="Folders">
           <button disabled={busy} onClick={() => navigate(null)}>
             All my files
+          </button>
+          <button
+            disabled={busy}
+            aria-current={currentId === TRASH_VIEW ? 'page' : undefined}
+            onClick={() => navigate(TRASH_VIEW)}
+          >
+            Trash
           </button>
           <ul className="folder-tree">
             {folders.map(({ item, path }) => (
@@ -241,6 +268,8 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                 ? 'Your files could not be loaded. Reload to try again.'
                 : 'Loading your files…'}
             </p>
+          ) : currentId === TRASH_VIEW ? (
+            <Trash onChanged={reloadItems} />
           ) : currentId && !current ? (
             <p role="alert">This item is not available. Choose My files to continue.</p>
           ) : (

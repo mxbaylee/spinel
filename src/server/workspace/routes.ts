@@ -5,10 +5,11 @@ import { cookieToken } from '../auth/routes.ts';
 import { WorkspaceStore } from './store.ts';
 import { SheetStore } from './sheets.ts';
 import { DocumentStore } from './documents.ts';
+import { TrashStore } from './trash.ts';
 
-export function workspaceRoutes(auth: AuthStore, origin: string) {
+export function workspaceRoutes(auth: AuthStore, origin: string, store = new WorkspaceStore(auth)) {
   const router = express.Router();
-  const store = new WorkspaceStore(auth);
+  const trash = new TrashStore(store);
   const sheets = new SheetStore(store);
   const documents = new DocumentStore(store);
   const owner = (request: Request) => {
@@ -97,6 +98,16 @@ export function workspaceRoutes(auth: AuthStore, origin: string) {
     return body;
   }
   router.get('/', (request, response) => response.json({ items: store.list(owner(request)) }));
+  router.get('/trash', (request, response) => response.json(trash.list(owner(request))));
+  router.post('/trash/empty', (request, response) => {
+    response.json(trash.empty(owner(request), payload(request, ['version']).version));
+  });
+  router.post('/:id/trash', (request, response) =>
+    response.json(trash.trash(owner(request), String(request.params.id))),
+  );
+  router.post('/:id/restore', (request, response) =>
+    response.json({ item: trash.restore(owner(request), String(request.params.id)) }),
+  );
   router.get('/:id', (request, response) => {
     const user = owner(request),
       id = String(request.params.id);

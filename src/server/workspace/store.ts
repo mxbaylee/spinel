@@ -25,6 +25,15 @@ export class WorkspaceStore {
         PRIMARY KEY(item_id,user_id)
       ) STRICT;
     `);
+    const fields = auth.database.prepare('PRAGMA table_info(workspace_items)').all();
+    // Additive migration preserves existing native snapshots and image foreign keys.
+    if (!fields.some((field) => field.name === 'trashed_at'))
+      auth.database.exec('ALTER TABLE workspace_items ADD COLUMN trashed_at INTEGER');
+    if (!fields.some((field) => field.name === 'trash_batch'))
+      auth.database.exec('ALTER TABLE workspace_items ADD COLUMN trash_batch TEXT');
+    auth.database.exec(
+      'CREATE INDEX IF NOT EXISTS workspace_items_trash ON workspace_items(trashed_at)',
+    );
   }
   owner(ownerId: string) {
     const user = this.auth.user(ownerId);
@@ -35,7 +44,7 @@ export class WorkspaceStore {
     this.owner(ownerId);
     return this.auth.database
       .prepare(
-        `SELECT ${columns}, 'owner' AS access FROM workspace_items WHERE owner_id=? ORDER BY name COLLATE NOCASE,id`,
+        `SELECT ${columns}, 'owner' AS access FROM workspace_items WHERE owner_id=? AND trashed_at IS NULL ORDER BY name COLLATE NOCASE,id`,
       )
       .all(ownerId) as unknown as WorkspaceItem[];
   }
@@ -45,14 +54,14 @@ export class WorkspaceStore {
     const row = this.auth.database
       .prepare(
         `
-      WITH RECURSIVE ancestors(id,parent_id,owner_id) AS (
-        SELECT id,parent_id,owner_id FROM workspace_items WHERE id=?
+      WITH RECURSIVE ancestors(id,parent_id,owner_id,trashed_at) AS (
+        SELECT id,parent_id,owner_id,trashed_at FROM workspace_items WHERE id=?
         UNION
-        SELECT p.id,p.parent_id,p.owner_id FROM workspace_items p
+        SELECT p.id,p.parent_id,p.owner_id,p.trashed_at FROM workspace_items p
         JOIN ancestors a ON p.id=a.parent_id AND p.owner_id=a.owner_id
       )
-      SELECT max(CASE WHEN a.owner_id=? THEN 3 WHEN g.role='editor' THEN 2
-        WHEN g.role='viewer' THEN 1 ELSE 0 END) AS strength
+      SELECT CASE WHEN count(a.trashed_at)>0 THEN 0 ELSE max(CASE WHEN a.owner_id=? THEN 3 WHEN g.role='editor' THEN 2
+        WHEN g.role='viewer' THEN 1 ELSE 0 END) END AS strength
       FROM ancestors a LEFT JOIN workspace_grants g ON g.item_id=a.id AND g.user_id=?
     `,
       )
@@ -91,7 +100,9 @@ export class WorkspaceStore {
     if (parent.kind !== 'folder') return [];
     return (
       this.auth.database
-        .prepare('SELECT id FROM workspace_items WHERE parent_id=? ORDER BY name COLLATE NOCASE,id')
+        .prepare(
+          'SELECT id FROM workspace_items WHERE parent_id=? AND trashed_at IS NULL ORDER BY name COLLATE NOCASE,id',
+        )
         .all(id) as { id: string }[]
     ).map((row) => this.get(userId, row.id));
   }
@@ -193,7 +204,9 @@ export class WorkspaceStore {
       const id = randomUUID();
       const now = this.auth.now();
       this.auth.database
-        .prepare('INSERT INTO workspace_items VALUES(?,?,?,?,?,?,?)')
+        .prepare(
+          'INSERT INTO workspace_items(id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,?,?,?,?,?)',
+        )
         .run(id, ownerId, parentId, input.kind as string, name, now, now);
       return this.get(ownerId, id);
     });

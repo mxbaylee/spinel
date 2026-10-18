@@ -22,8 +22,8 @@ owner or an authorized recipient while signed in.
 
 Names are trimmed and contain 1–120 characters, without control characters or
 slashes. Duplicate names are allowed, since IDs identify items. The move picker
-shows full paths to distinguish locations. Deleting, trash, tags, pins, search,
-and the remaining content editors remain separate tickets.
+shows full paths to distinguish locations. Owners can [trash and restore](trash.md)
+items for 30 days. Tags, pins, search and remaining content editors are separate tickets.
 
 ## Storage and access
 
