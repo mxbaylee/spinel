@@ -137,6 +137,27 @@ test('guest HTTP and socket identities are scoped; link transitions evict pendin
     expect(JSON.stringify(guest.messages)).not.toContain(owner.name);
     expect(JSON.stringify(guest.messages)).not.toContain('Private Person');
     await expect.poll(() => JSON.stringify(account.messages)).toContain('Guest');
+    const cursor = (selection: string) =>
+      guest.socket.send(
+        JSON.stringify({
+          cmd: 4,
+          routeKey: item.id,
+          collaMsg: {
+            eventID: 'update_cursor',
+            updateCursorEvent: {
+              unitID: item.id,
+              memberID: guest.memberID,
+              selection,
+            },
+          },
+        }),
+      );
+    cursor('first!B2');
+    await expect.poll(() => JSON.stringify(account.messages)).toContain('first!B2');
+    cursor('secret@example.com');
+    cursor('first!D4');
+    await expect.poll(() => JSON.stringify(account.messages)).toContain('first!D4');
+    expect(JSON.stringify(account.messages)).not.toContain('secret@example.com');
     const permission = await send(`${base}/authz/-/object/-/batch_allowed`, cookie, {
       requests: [
         { unitID: item.id, objectID: item.id, actions: [0, 1] },

@@ -2,13 +2,8 @@ const record = (value: unknown): value is Record<string, unknown> =>
   Boolean(value && typeof value === 'object' && !Array.isArray(value));
 /** Link rooms carry cursor positions, never profile/custom-event payloads (#72). */
 export function safeGuestRoomPresence(payload: unknown, unitId: string, memberId: string) {
-  if (!record(payload) || payload.eventID !== 'update_cursor') return false;
-  const field = Object.hasOwn(payload, 'data') ? 'data' : 'updateCursorEvent';
-  if (Object.keys(payload).some((key) => !['eventID', field, 'unitID', 'memberID'].includes(key)))
-    return false;
-  if (payload.unitID !== undefined && payload.unitID !== unitId) return false;
-  if (payload.memberID !== undefined && payload.memberID !== memberId) return false;
-  const data = payload[field];
+  // The public endpoint hook supplies the decoded cursor, without the wire event envelope.
+  const data = payload;
   if (
     !record(data) ||
     Object.keys(data).some((key) => !['unitID', 'memberID', 'selection'].includes(key)) ||

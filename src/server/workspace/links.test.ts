@@ -145,19 +145,17 @@ test('guest images use the same document grant and recheck after asynchronous de
 
 test('link-room presence accepts only bounded native cursor messages with trusted identity', () => {
   const data = { unitID: 'unit', memberID: 'member', selection: 'sheet123!A1:B2' };
-  expect(safeGuestRoomPresence({ eventID: 'update_cursor', data }, 'unit', 'member')).toBe(true);
-  expect(
-    safeGuestRoomPresence(
-      { eventID: 'update_cursor', updateCursorEvent: { ...data, selection: '0:1:0:TEXT::-1' } },
-      'unit',
-      'member',
-    ),
-  ).toBe(true);
+  expect(safeGuestRoomPresence(data, 'unit', 'member')).toBe(true);
+  expect(safeGuestRoomPresence({ ...data, selection: '0:1:0:TEXT::-1' }, 'unit', 'member')).toBe(
+    true,
+  );
   for (const payload of [
-    { eventID: 'update_cursor', data: { ...data, name: 'Private owner' } },
-    { eventID: 'update_cursor', data: { ...data, memberID: 'someoneelse' } },
-    { eventID: 'update_cursor', data: { ...data, selection: 'secret@example.com' } },
-    { eventID: 'update_cursor', data, avatar: 'https://private.example' },
+    { ...data, name: 'Private owner' },
+    { ...data, memberID: 'someoneelse' },
+    { ...data, unitID: 'another-document' },
+    { ...data, selection: 'secret@example.com' },
+    { ...data, avatar: 'https://private.example' },
+    { eventID: 'update_cursor', data },
     { eventID: 'users_enter', joinEvent: { name: 'Owner', avatar: 'secret' } },
     { eventID: 'update_collaborator', data: { name: 'Owner' } },
   ])
