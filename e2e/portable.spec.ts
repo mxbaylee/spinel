@@ -46,6 +46,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     // rendering, page selection and watermarks intact; never inspect Pro internals.
     await context.addInitScript(() => {
       window.print = () => {
+        window.dispatchEvent(new Event('beforeprint'));
         const clone = document.documentElement.cloneNode(true) as HTMLElement;
         const original = [...document.querySelectorAll('canvas')];
         clone.querySelectorAll('canvas').forEach((canvas, index) => {
@@ -63,6 +64,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         void (
           window as unknown as { captureNativePrint: (html: string) => Promise<void> }
         ).captureNativePrint(clone.outerHTML);
+        window.dispatchEvent(new Event('afterprint'));
       };
     });
     try {
@@ -167,7 +169,18 @@ for (const kind of ['sheet', 'doc'] as const) {
             canvasContext: canvas.getContext('2d') as unknown as CanvasRenderingContext2D,
             viewport,
           }).promise;
+          const pixels = canvas
+            .getContext('2d')
+            .getImageData(0, 0, canvas.width, canvas.height).data;
+          let ink = 0;
+          for (let index = 0; index < pixels.length; index += 4)
+            if (
+              pixels[index + 3] &&
+              Math.min(pixels[index], pixels[index + 1], pixels[index + 2]) < 240
+            )
+              ink++;
           await writeFile(info.outputPath(`${kind}-export-opened.png`), await canvas.encode('png'));
+          expect(ink, 'The reopened PDF must contain visible printed content').toBeGreaterThan(50);
           // An empty page would have no image painting operations for Univer's canvas output.
           expect(
             (await first.getOperatorList()).fnArray.some((operation) =>
@@ -231,6 +244,11 @@ for (const kind of ['sheet', 'doc'] as const) {
       expect(errors).toEqual([]);
     } finally {
       await page.goto('/sign-in').catch(() => {});
+      // Folder parents use RESTRICT; remove this fixture's children first.
+      db.prepare('DELETE FROM workspace_items WHERE owner_id=? AND parent_id=?').run(
+        user.id,
+        folder.id,
+      );
       db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
       db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
       db.close();
