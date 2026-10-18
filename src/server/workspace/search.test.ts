@@ -1,9 +1,11 @@
+import { randomUUID } from 'node:crypto';
 import { afterEach, expect, test } from 'vitest';
 import { DatabaseSync } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
 import { WorkspaceSearch } from './search.ts';
 import { TrashStore } from './trash.ts';
+import { DocumentStore } from './documents.ts';
 const databases: DatabaseSync[] = [];
 afterEach(() => databases.splice(0).forEach((db) => db.close()));
 function fixture() {
@@ -122,4 +124,20 @@ test('modified filters use item timestamps and exclude trashed ancestor anomalie
   f.db.prepare('UPDATE workspace_items SET trashed_at=? WHERE id=?').run(f.auth.now(), f.secret.id);
   expect(f.search.find(f.owner.id, { q: 'budget' })).toEqual([]);
   expect(f.search.find(f.viewer.id, { q: 'budget' })).toEqual([]);
+});
+
+test('search never matches document body text, even for a current reader', () => {
+  const f = fixture();
+  const doc = f.store.create(f.owner.id, { name: 'Journal', kind: 'doc', parentId: null });
+  new DocumentStore(f.store).save(f.owner.id, doc.id, {
+    snapshot: { id: doc.id, body: { dataStream: 'Private medical phrase\r\n' } },
+    revision: 0,
+    writeId: randomUUID(),
+  });
+  f.store.share(f.owner.id, doc.id, f.viewer.id, 'viewer');
+  // SPN-022 limits discovery to titles, visible paths and personal tags.
+  for (const reader of [f.owner.id, f.viewer.id]) {
+    expect(f.search.find(reader, { q: 'Private medical phrase' })).toEqual([]);
+    expect(f.search.find(reader, { q: 'Journal' }).map((item) => item.id)).toEqual([doc.id]);
+  }
 });

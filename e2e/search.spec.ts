@@ -134,6 +134,9 @@ test('dashboard search combines filters across folders without private paths and
     await expect(
       results.getByRole('button', { name: 'Open result My budget', exact: true }),
     ).toBeVisible();
+    await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
+    await expect(results).toBeHidden();
+    await expect(page.getByRole('region', { name: 'Shared with me', exact: true })).toBeVisible();
   } finally {
     db.close();
   }

@@ -323,7 +323,15 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
           <button {...folderDrop(null)} disabled={busy} onClick={() => navigate(null)}>
             All my files
           </button>
-          <button aria-expanded={sharedOpen} onClick={() => setSharedOpen((value) => !value)}>
+          <button
+            aria-expanded={sharedOpen && !searchActive}
+            onClick={() => {
+              if (searchActive) {
+                setQuery({ ...emptySearch });
+                setSharedOpen(true);
+              } else setSharedOpen((value) => !value);
+            }}
+          >
             Shared with me
           </button>
           <button
