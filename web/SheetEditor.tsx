@@ -62,12 +62,12 @@ export function SheetEditor({
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish) },
         collaboration: true,
-        plugins: collaborationPlugins(id),
+        plugins: collaborationPlugins(data.unitId),
         presets: [UniverSheetsCorePreset({ container: container.current! })],
       });
       disposeEditor = () => univer.dispose();
       identifyCollaborator(univer, data.user);
-      const workbook = await univerAPI.getCollaboration().loadSheetAsync(id);
+      const workbook = await univerAPI.getCollaboration().loadSheetAsync(data.unitId);
       if (!workbook) throw new Error('Could not load this spreadsheet.');
       await editorReady(univerAPI);
       if (disposed) return;
@@ -75,7 +75,7 @@ export function SheetEditor({
         // This tab's presentation follows its grant; never change shared permissions.
         const permissions = univer.__getInjector().get(IPermissionService);
         for (const Point of getAllWorkbookPermissionPoint()) {
-          const point = new Point(id);
+          const point = new Point(data.unitId);
           if (!permissions.getPermissionPoint(point.id)) permissions.addPermissionPoint(point);
           permissions.updatePermissionPoint(
             point.id,
@@ -84,9 +84,9 @@ export function SheetEditor({
         }
       };
       if (data.access === 'viewer') await readOnly();
-      save = watchCollaboration(univer, univerAPI, id, data.access, publish, readOnly);
+      save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readOnly);
       controller.current = save;
-      stopPresence = await watchPresence(univer, univerAPI, id, setPeople);
+      stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) stopPresence();
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
         editing = true;

@@ -525,3 +525,141 @@ test('access revoked during mutation application is checked again before durable
       .cellData?.[0]?.[0]?.v,
   ).toBe(42);
 }, 20_000);
+
+test('retained native restore drains accepted edits, fences old IDs and keeps exact recoverable pre-state', async () => {
+  const f = await fixture();
+  const { HistoryStore } = await import('../history/store.ts');
+  const history = new HistoryStore(f.workspace, f.collab);
+  cleanup.push(() => history.close());
+  const target = await history.nameCurrent(f.owner.id, f.sheet.id, 'Original native budget');
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  let entered!: () => void, release!: () => void;
+  const committing = new Promise<void>((resolve) => {
+    entered = resolve;
+  });
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const blocker = f.collab.service.use('commitChangeset', async (_context, next) => {
+    entered();
+    await gate;
+    await next();
+  });
+  const accepted = f.collab.service.submitChangeset(
+    { changeset: f.edit() },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  await committing;
+  const requestId = randomUUID();
+  const restored = history.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, requestId);
+  await vi.waitFor(() => expect(f.collab.generations.restoring(f.sheet.id)).toBe(true));
+  await expect(
+    f.collab.service.submitChangeset(
+      { changeset: { ...f.edit(), reqId: 2 } },
+      { userID: f.owner.id, memberID: 'test-member' },
+    ),
+  ).rejects.toThrow('Restoring');
+  release();
+  await accepted;
+  const receipt = await restored;
+  blocker.dispose();
+  expect(receipt.revision).toBe(3);
+  const current = await f.collab.load(f.owner.id, f.sheet.id);
+  expect(current.revision).toBe(3);
+  expect(current.snapshot.id).toBe(f.sheet.id);
+  expect((current.snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]?.v).toBe(42);
+  const before = history.list(f.owner.id, f.sheet.id).find((point) => point.beforeRestore)!;
+  expect(before.revision).toBe(2);
+  expect(
+    ((await history.load(f.owner.id, f.sheet.id, before.id)) as IWorkbookData).sheets.first
+      .cellData?.[0]?.[0]?.v,
+  ).toBe(99);
+  await expect(f.load()).rejects.toThrow('not available');
+  await expect(
+    f.collab.service.submitChangeset(
+      { changeset: { ...f.edit(), reqId: 3 } },
+      { userID: f.owner.id, memberID: 'test-member' },
+    ),
+  ).rejects.toThrow();
+  const edit = f.edit();
+  edit.unitID = receipt.nextUnit;
+  edit.mutations[0].data = JSON.stringify({
+    unitId: receipt.nextUnit,
+    subUnitId: 'first',
+    cellValue: { 0: { 0: { v: 123 } } },
+  });
+  await f.collab.service.submitChangeset(
+    { changeset: edit },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  expect((await f.collab.load(f.owner.id, f.sheet.id)).revision).toBe(4);
+  expect(await history.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, requestId)).toEqual(
+    receipt,
+  );
+  expect(
+    ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
+      .cellData?.[0]?.[0]?.v,
+  ).toBe(123);
+  const undo = await history.restore(
+    f.owner.id,
+    f.sheet.id,
+    before.id,
+    receipt.nextUnit,
+    randomUUID(),
+  );
+  expect(undo.revision).toBe(5);
+  expect(
+    ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
+      .cellData?.[0]?.[0]?.v,
+  ).toBe(99);
+  history.prune(f.auth.now() + 365 * 24 * 60 * 60 * 1000);
+  expect(history.list(f.owner.id, f.sheet.id).some((point) => point.id === before.id)).toBe(true);
+  await f.collab.purgeDeleted();
+  expect((await f.collab.load(f.owner.id, f.sheet.id)).revision).toBe(5);
+});
+
+test('document restore validates retained image references and rolls back session revocation during staging', async () => {
+  const f = await fixture();
+  const { HistoryStore } = await import('../history/store.ts');
+  const history = new HistoryStore(f.workspace, f.collab);
+  cleanup.push(() => history.close());
+  const target = await history.nameCurrent(f.owner.id, f.doc.id, 'Native notes');
+  await f.collab.prepare(f.owner.id, f.doc.id);
+  const live = await f.collab.load(f.owner.id, f.doc.id);
+  const result = await history.restore(f.owner.id, f.doc.id, target.id, f.doc.id, randomUUID());
+  expect(result.revision).toBe(2);
+  expect((await f.collab.load(f.owner.id, f.doc.id)).snapshot).toMatchObject({
+    id: f.doc.id,
+    body: (live.snapshot as IDocumentData).body,
+  });
+  const state = await f.collab.load(f.owner.id, f.doc.id);
+  const bad = structuredClone(state.snapshot) as IDocumentData;
+  bad.drawings = {
+    bad: { source: '/api/items/foreign/images/' + 'a'.repeat(64) },
+  } as unknown as IDocumentData['drawings'];
+  await expect(
+    f.collab.restore(
+      f.owner.id,
+      f.doc.id,
+      result.nextUnit,
+      randomUUID(),
+      target.id,
+      bad,
+      async () => () => {},
+      () => {},
+    ),
+  ).rejects.toThrow('Insert images');
+  expect((await f.collab.load(f.owner.id, f.doc.id)).revision).toBe(2);
+  let checks = 0;
+  await expect(
+    history.restore(f.owner.id, f.doc.id, target.id, result.nextUnit, randomUUID(), () => {
+      if (++checks === 3) throw new Error('expired session');
+    }),
+  ).rejects.toThrow('expired session');
+  expect((await f.collab.load(f.owner.id, f.doc.id)).revision).toBe(2);
+  expect(f.collab.generations.restoring(f.doc.id)).toBe(false);
+  expect(history.list(f.owner.id, f.doc.id).filter((point) => point.beforeRestore)).toHaveLength(1);
+  await expect(
+    history.restore(f.viewer.id, f.doc.id, target.id, result.nextUnit, randomUUID()),
+  ).rejects.toThrow();
+});
