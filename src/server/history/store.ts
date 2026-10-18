@@ -15,7 +15,7 @@ type Progress = { revision: number; edited_at: number; captured_at: number };
 type Source = 'native' | 'collaboration';
 type HistoryCheckpoint = Checkpoint & { source: Source };
 
-/** Application-owned recovery checkpoints; no network route grants access to this store. */
+/** Application-owned recovery checkpoints guarded by current document access. */
 export class HistoryStore {
   private readonly workspace: WorkspaceStore;
   private readonly collaboration: CollaborationStore;
