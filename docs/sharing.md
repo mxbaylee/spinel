@@ -22,8 +22,8 @@ until their editor ticket lands.
 
 Shared items open at their authenticated direct address. Shared folders show their
 children and have a Refresh folder button to retrieve new additions. My files
-still lists owned items only. The Shared with me drawer and personal placements
-are SPN-018; guest links are described below.
+lists owned items and shared items personally filed there. The Shared with me drawer adds account-only discovery
+and personal filing, described below alongside guest links.
 
 ## Permission changes and unsaved work
 
@@ -112,3 +112,41 @@ Decisions [#23](https://github.com/mxbaylee/spinel/issues/23),
 scope, image authorization after decoding, personal metadata filtering, pending
 connections, multiple guest tabs, transient polling failures and open-editor
 revocation in both development and production builds.
+
+## Finding and filing account shares
+
+The **Shared with me** drawer contains currently accessible documents and folders,
+including inherited folder contents. It shows their owner's display name and a
+shared badge. Those labels also appear in folder listings, the opened item and
+pins; dashboard search should reuse the same item metadata and badge component.
+Link guests have no account drawer and receive none of this account metadata.
+
+Drag an item onto one of your folders (or All my files), or use **File into folder**.
+Each person has at most one personal placement per shared item. Filing again moves
+that reference. **Remove from my folder** deletes only the reference: the original,
+your access, the drawer entry and your pins remain. Shared folders are shortcuts
+to their original accessible contents. Placement never changes owner, canonical
+parent or grants. These preserve SPN-018's rules from decisions #23 and #30 and
+the owner's 2026-10-17 direction that filing is on by default.
+
+The drawer sorts by latest applicable grant time, then ID. For children created
+after an inherited grant, creation time bounds that timestamp. Content edits,
+role changes and moves do not reset an existing grant's time; revoke/regrant does.
+Legacy grants migrate with an unknown timestamp and display **Older share**, after
+dated shares, rather than using document modification time as a fabricated share
+date. This resolves the migration requirement recorded in grooming #60.
+
+Access loss permanently removes personal placements, including source trash or a
+move out of inherited access. A later regrant does not revive them. Trashing a
+personal destination removes its references without touching shared originals;
+restoring that folder permits filing again. Deleting it cascades only the references.
+Requests check current source access and an owned destination within a transaction.
+The drawer and personal placements refresh on focus and every five seconds while
+visible; an inaccessible document is rejected immediately at the server boundary.
+Refreshing this catalog does not recreate an open editor or discard pending edits.
+
+Decision [#74](https://github.com/mxbaylee/spinel/issues/74), 2026-10-18, weighs simple
+storage for the Operator, an unchanged owner tree, predictable personal filing for
+the Collaborator, and unchanged account isolation for the Link guest. Tests cover
+legacy migration, ordering, destination isolation, inherited grants, revoke/regrant,
+trash, and browser filing/removal/revocation. Search remains SPN-022.

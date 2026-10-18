@@ -18,6 +18,9 @@ export interface WorkspaceItem {
   createdAt: number;
   updatedAt: number;
   tags: string[];
+  ownerName?: string;
+  sharedAt?: number;
+  placementParentId?: string | null;
 }
 export const kindLabel: Record<ItemKind, string> = {
   folder: 'Folder',

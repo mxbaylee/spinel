@@ -5,6 +5,7 @@ import { kindLabel } from '../src/shared/workspace.ts';
 import type { NavigationGuard } from './navigation.ts';
 import { itemsRequest } from './itemsApi.ts';
 import { TagLabels } from './DocumentTags.tsx';
+import { SharedBadge } from './SharedItems.tsx';
 
 type PinsState = {
   items: WorkspaceItem[];
@@ -178,7 +179,7 @@ export function PinnedSidebar({ navigation }: { navigation: NavigationGuard }) {
             >
               {item.name} <small>{kindLabel[item.kind]}</small>
             </a>
-            {item.access !== 'owner' && <span className="shared-badge">Shared</span>}
+            <SharedBadge item={item} />
             <TagLabels tags={item.tags} />
             <div className="pin-actions">
               <button
