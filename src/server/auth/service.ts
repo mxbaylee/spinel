@@ -134,7 +134,7 @@ export class AuthService {
         );
       if (update.changes !== 1)
         throw new AuthError(409, 'This passkey changed or was removed. Try again.');
-      const next = this.store.createSession(user.id);
+      const next = this.store.createSession(user.id, undefined, key.id);
       this.store.revokeSession(session.token_hash);
       return { ...next, user };
     } catch (error) {

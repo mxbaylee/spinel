@@ -40,7 +40,12 @@ export async function createApp(options: AppOptions) {
 
   try {
     const auth = new AuthStore(database);
-    app.use('/api/auth', authRoutes(auth, options.origin ?? 'http://localhost:3000'));
+    app.use(
+      '/api/auth',
+      authRoutes(auth, options.origin ?? 'http://localhost:3000', async () => {
+        await realtime?.revalidate();
+      }),
+    );
     app.use('/api', (request, response, next) => {
       response.set('Cache-Control', 'no-store');
       if (!auth.session(cookieToken(request))?.user_id) {
@@ -186,6 +191,10 @@ export async function createApp(options: AppOptions) {
       }
       const session = auth.session(cookieToken(request));
       const user = session?.user_id ? auth.user(session.user_id) : undefined;
+      if (/^\/admin\/?$/i.test(request.path) && !user?.is_admin) {
+        response.status(404).type('text').send('Not found');
+        return;
+      }
       if (!user && request.path !== '/sign-in') {
         response.redirect('/sign-in');
         return;

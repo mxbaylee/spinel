@@ -13,7 +13,7 @@ import type {
 import { signSetupProof } from './setup.ts';
 import { api } from './api.ts';
 import { BackupStatus } from './BackupStatus.tsx';
-import { AdminInvites } from './AdminInvites.tsx';
+import { AdminUsers } from './AdminUsers.tsx';
 import { Dashboard } from './Dashboard.tsx';
 
 type User = { id: string; name: string; isAdmin: boolean };
@@ -322,7 +322,7 @@ export function App() {
                 Invite people or help them recover their passkeys. Use a separate everyday account
                 for documents.
               </p>
-              <AdminInvites />
+              <AdminUsers currentId={user.id} />
               <BackupStatus />
             </section>
           </>

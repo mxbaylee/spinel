@@ -19,15 +19,18 @@ sessions for five minutes. Cookies are `__Host-spinel-session`, HttpOnly, Secure
 SameSite=Strict and Path=/; only SHA-256 hashes of random 256-bit tokens are
 stored. Sign-in rotates the session. Sign-out deletes its row and challenges;
 expiry, disabling a user or deleting their sessions takes effect on the next
-request. Session lifetime is fixed, not extended on every read.
+request. Session lifetime is fixed, not extended on every read. New authenticated
+sessions bind to the verified passkey; [admin revocation](admin.md) also signs out
+unattributed legacy sessions and disconnects affected editors.
 
-Pages redirect signed-out users to `/sign-in`. APIs return 401 with sign-in
+Ordinary pages redirect signed-out users to `/sign-in`. APIs return 401 with sign-in
 guidance, and never document data; the frontend navigates to sign-in on an
 expired session. Authentication POSTs require the configured Origin and JSON.
 Authentication and protected API responses are not cached. Static frontend assets
 are public and contain no document data. Invite/share access will be added only
 through their tickets, with separate access checks. Admin accounts are sent to
-`/admin`, a placeholder for admin tools, rather than the document dashboard.
+`/admin` for user, passkey, invitation and backup administration. The admin page
+and user/invitation administration APIs return 404 to non-admins.
 
 The initial schema is in `src/server/auth/store.ts`: users, credentials, hashed
 sessions and session-bound challenges. `createUser` is an internal seam for
