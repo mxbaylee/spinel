@@ -25,11 +25,11 @@ function fixture() {
 test('switch, pre-state, receipt and purge are atomic; retries cannot restore twice', () => {
   const f = fixture(),
     request = randomUUID();
-  const job = f.generations.begin(f.owner.id, f.item.id, f.item.id, request);
+  const job = f.generations.begin(f.owner.id, f.item.id, f.item.id, request, 'checkpoint');
   expect(f.generations.restoring(f.item.id)).toBe(true);
-  expect(() => f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID())).toThrow(
-    'in progress',
-  );
+  expect(() =>
+    f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID(), 'checkpoint'),
+  ).toThrow('in progress');
   expect(f.generations.resolve(job.nextUnit)).toBeUndefined();
   const saved = f.generations.finish(
     job.id,
@@ -52,7 +52,9 @@ test('switch, pre-state, receipt and purge are atomic; retries cannot restore tw
     { item_id: f.item.id },
   ]);
   // A lost HTTP response must not cause another replacement, even with an old expected ID.
-  expect(f.generations.begin(f.owner.id, f.item.id, f.item.id, request)).toEqual(saved);
+  expect(f.generations.begin(f.owner.id, f.item.id, f.item.id, request, 'checkpoint')).toEqual(
+    saved,
+  );
   expect(
     f.generations.finish(
       job.id,
@@ -63,15 +65,18 @@ test('switch, pre-state, receipt and purge are atomic; retries cannot restore tw
       () => {},
     ),
   ).toEqual(saved);
+  expect(() =>
+    f.generations.begin(f.owner.id, f.item.id, f.item.id, request, 'different-checkpoint'),
+  ).toThrow('already been used');
   expect(f.db.prepare('SELECT revision FROM before_state').all()).toEqual([{ revision: 7 }]);
-  expect(() => f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID())).toThrow(
-    'changed',
-  );
+  expect(() =>
+    f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID(), 'checkpoint'),
+  ).toThrow('changed');
 });
 
 test('a failed atomic switch keeps the old generation and rolls back partial pre-state writes', () => {
   const f = fixture();
-  const job = f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID());
+  const job = f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID(), 'checkpoint');
   expect(() =>
     f.generations.finish(
       job.id,
@@ -98,10 +103,16 @@ test('current editor/session authority is required before switching and cancelle
   const f = fixture();
   f.workspace.share(f.owner.id, f.item.id, f.collaborator.id, 'viewer');
   expect(() =>
-    f.generations.begin(f.collaborator.id, f.item.id, f.item.id, randomUUID()),
+    f.generations.begin(f.collaborator.id, f.item.id, f.item.id, randomUUID(), 'checkpoint'),
   ).toThrow();
   f.workspace.share(f.owner.id, f.item.id, f.collaborator.id, 'editor');
-  const job = f.generations.begin(f.collaborator.id, f.item.id, f.item.id, randomUUID());
+  const job = f.generations.begin(
+    f.collaborator.id,
+    f.item.id,
+    f.item.id,
+    randomUUID(),
+    'checkpoint',
+  );
   expect(() =>
     f.generations.finish(
       job.id,
@@ -136,14 +147,20 @@ test('current editor/session authority is required before switching and cancelle
 
 test('restart cancels only pre-switch stages; deletion enqueues active and staged SDK units', () => {
   const f = fixture();
-  const first = f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID());
+  const first = f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID(), 'checkpoint');
   f.generations.finish(
     first.id,
     4,
     () => {},
     () => {},
   );
-  const pending = f.generations.begin(f.owner.id, f.item.id, first.nextUnit, randomUUID());
+  const pending = f.generations.begin(
+    f.owner.id,
+    f.item.id,
+    first.nextUnit,
+    randomUUID(),
+    'checkpoint',
+  );
   const reopened = new CollaborationGenerations(f.workspace);
   reopened.recoverBeforeServing();
   expect(reopened.active(f.item.id).unitId).toBe(first.nextUnit);
@@ -155,7 +172,7 @@ test('restart cancels only pre-switch stages; deletion enqueues active and stage
       .map((r) => r.item_id)
       .sort(),
   ).toEqual([f.item.id, pending.nextUnit].sort());
-  const next = reopened.begin(f.owner.id, f.item.id, first.nextUnit, randomUUID());
+  const next = reopened.begin(f.owner.id, f.item.id, first.nextUnit, randomUUID(), 'checkpoint');
   f.db.prepare('DELETE FROM workspace_items WHERE id=?').run(f.item.id);
   expect(
     f.db
@@ -165,4 +182,32 @@ test('restart cancels only pre-switch stages; deletion enqueues active and stage
       .sort(),
   ).toEqual([f.item.id, pending.nextUnit, first.nextUnit, next.nextUnit].sort());
   expect(reopened.resolve(first.nextUnit)).toBeUndefined();
+});
+
+test('successive restores retain increasing logical revisions across SDK generations', () => {
+  const f = fixture();
+  const first = f.generations.begin(f.owner.id, f.item.id, f.item.id, randomUUID(), 'first');
+  f.generations.finish(
+    first.id,
+    7,
+    () => {},
+    () => {},
+  );
+  const active = f.generations.active(f.item.id);
+  const second = f.generations.begin(f.owner.id, f.item.id, active.unitId, randomUUID(), 'second');
+  // Two edits after the first restore advance its SDK head from 1 to 3; app head is 10.
+  const logicalHead = 3 + active.offset;
+  const restored = f.generations.finish(
+    second.id,
+    logicalHead,
+    () => {
+      f.db.prepare('INSERT INTO before_state VALUES(?)').run(logicalHead);
+    },
+    () => {},
+  );
+  expect(restored.revision).toBe(11);
+  expect(f.generations.active(f.item.id).offset).toBe(10);
+  expect(f.generations.resolve(first.nextUnit)).toBeUndefined();
+  expect(f.generations.resolve(second.nextUnit)?.itemId).toBe(f.item.id);
+  expect(f.db.prepare('SELECT revision FROM before_state').all()).toEqual([{ revision: 10 }]);
 });

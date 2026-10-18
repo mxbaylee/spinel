@@ -7,12 +7,13 @@ export type RestoreJob = {
   id: string;
   itemId: string;
   userId: string;
+  checkpointId: string;
   previousUnit: string;
   nextUnit: string;
   status: 'staging' | 'complete' | 'cancelled';
   revision: number | null;
 };
-const fields = `id,item_id AS itemId,user_id AS userId,previous_unit AS previousUnit,
+const fields = `id,item_id AS itemId,user_id AS userId,checkpoint_id AS checkpointId,previous_unit AS previousUnit,
   next_unit AS nextUnit,status,revision`;
 
 /** Application-owned restore receipts and active SDK IDs. No SDK storage is modified. */
@@ -27,7 +28,7 @@ export class CollaborationGenerations {
       ) STRICT;
       CREATE TABLE IF NOT EXISTS collaboration_restores (
         id TEXT PRIMARY KEY, item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
-        user_id TEXT NOT NULL, previous_unit TEXT NOT NULL, next_unit TEXT NOT NULL UNIQUE,
+        user_id TEXT NOT NULL, checkpoint_id TEXT NOT NULL, previous_unit TEXT NOT NULL, next_unit TEXT NOT NULL UNIQUE,
         status TEXT NOT NULL CHECK(status IN ('staging','complete','cancelled')),
         revision INTEGER
       ) STRICT;
@@ -84,7 +85,13 @@ export class CollaborationGenerations {
       .get(id) as RestoreJob | undefined;
   }
 
-  begin(userId: string, itemId: string, expectedUnit: string, requestId: string): RestoreJob {
+  begin(
+    userId: string,
+    itemId: string,
+    expectedUnit: string,
+    requestId: string,
+    checkpointId: string,
+  ): RestoreJob {
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId))
       throw new AuthError(400, 'Invalid restore request.');
     return this.workspace.auth.transaction(() => {
@@ -92,7 +99,11 @@ export class CollaborationGenerations {
       if (item.kind !== 'sheet' && item.kind !== 'doc') throw new AuthError(404, 'Not a document.');
       const previous = this.job(requestId);
       if (previous) {
-        if (previous.itemId !== itemId || previous.userId !== userId)
+        if (
+          previous.itemId !== itemId ||
+          previous.userId !== userId ||
+          previous.checkpointId !== checkpointId
+        )
           throw new AuthError(409, 'This restore request has already been used.');
         return previous; // Lost-response retries must not overwrite subsequent edits.
       }
@@ -103,14 +114,18 @@ export class CollaborationGenerations {
       this.workspace.auth.database
         .prepare(
           `INSERT INTO collaboration_restores
-        VALUES(?,?,?,?,?,'staging',NULL)`,
+        VALUES(?,?,?,?,?,?,'staging',NULL)`,
         )
-        .run(requestId, itemId, userId, expectedUnit, nextUnit);
+        .run(requestId, itemId, userId, checkpointId, expectedUnit, nextUnit);
       return this.job(requestId)!;
     });
   }
 
-  /** Caller must finish admitted writes and create/validate the staged SDK unit first. */
+  /**
+   * Caller must finish admitted writes and create/validate the staged SDK unit first.
+   * drainedRevision is the logical revision: SDK head + the current generation offset.
+   * preserveBefore must write synchronously inside this application transaction.
+   */
   finish(
     id: string,
     drainedRevision: number,
