@@ -27,9 +27,18 @@ import type { ItemAccess } from '../src/shared/workspace.ts';
 
 export { ClientEnglish, UIEnglish };
 export function collaborationPlugins(
+  unitID: string,
   override?: DependencyOverride,
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
   const base = location.origin + '/universer-api';
+  // Public URL extension point: scope is checked before the server accepts a socket.
+  class DocumentSocketService extends BrowserCollaborationSocketService {
+    protected override _createSocketURL(url: string, ticket: string) {
+      const scoped = new URL(super._createSocketURL(url, ticket));
+      scoped.searchParams.set('unitID', unitID);
+      return scoped.toString();
+    }
+  }
   return [
     UniverLicensePlugin,
     UniverCollaborationPlugin,
@@ -40,7 +49,7 @@ export function collaborationPlugins(
           ...(override ?? []),
           [CollaborationSessionService, { useClass: CollaborationSessions }],
         ],
-        socketService: BrowserCollaborationSocketService,
+        socketService: DocumentSocketService,
         enableOfflineEditing: true,
         retryConnectingInterval: 1000,
         sendChangesetTimeout: 100,
@@ -48,7 +57,7 @@ export function collaborationPlugins(
         snapshotServerUrl: base + '/snapshot',
         collabSubmitChangesetUrl: base + '/comb',
         collabWebSocketUrl: base.replace(/^http/, 'ws') + '/comb/connect',
-        wsSessionTicketUrl: base + '/user/session-ticket',
+        wsSessionTicketUrl: base + '/user/session-ticket?unitID=' + encodeURIComponent(unitID),
       },
     ],
     [UniverCollaborationClientUIPlugin, { enableUrlUnitLoader: false }],

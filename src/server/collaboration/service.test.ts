@@ -420,6 +420,7 @@ test('a different SQLite file is rejected before collaboration schema can be cre
 
 test('access revoked during mutation application is checked again before durable commit', async () => {
   const f = await fixture();
+  const audit = vi.spyOn(console, 'warn').mockImplementation(() => {});
   f.workspace.share(f.owner.id, f.sheet.id, f.viewer.id, 'editor');
   await f.collab.prepare(f.owner.id, f.sheet.id);
   f.collab.service.use('applyChangeset', async (_context, next) => {
@@ -435,6 +436,9 @@ test('access revoked during mutation application is checked again before durable
   expect(result.status).toBe('rejected');
   expect(f.workspace.get(f.owner.id, f.sheet.id).updatedAt).toBe(before);
   if (result.status === 'rejected') expect(result.error.code).toBe('PERMISSION_DENIED');
+  expect(audit.mock.calls.map((call) => String(call[0])).join('\n')).toContain(
+    'collaboration.edit_denied',
+  );
   expect((await f.load()).targetRevision).toBe(1);
   expect(
     ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
