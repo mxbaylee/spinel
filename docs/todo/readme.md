@@ -9,7 +9,7 @@ How this backlog works: [process.md](process.md). Next ID: **SPN-039**. Grooming
 | # | Ticket | Score | Tie-break | Owner input |
 | --- | --- | --- | --- | --- |
 | 1 | 🧪 [SPN-010](SPN-010.md) Find Univer collaboration's limits by editing through the UI | 8 | Unblocks SPN-013, SPN-014 | None |
-| 2 | 💾 [SPN-030](SPN-030.md) Back up offsite and prove a restore works | 8 | — | Choose the offsite storage and create its key |
+| 2 | 💾 [SPN-030](SPN-030.md) Back up offsite and prove a restore works | 8 | — | Complete the DigitalOcean Spaces restore drill |
 | 3 | 🤝 [SPN-012](SPN-012.md) Edit a document together in real time | 7 | Lower ID | None |
 | 4 | 🕰️ [SPN-023](SPN-023.md) Keep a decaying history of every document | 7 | Higher impact | Confirm the 1–24 hour checkpoint spacing |
 | 5 | 👥 [SPN-005](SPN-005.md) See and manage users and their passkeys | 7 | — | None |

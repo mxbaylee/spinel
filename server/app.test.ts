@@ -141,3 +141,32 @@ test('Vite cannot serve database files, sidecars or server source through its fi
   expect(html).toContain('/main.tsx');
   expect((await fetch(`${url}/main.tsx`)).status).toBe(200);
 });
+
+test('backup health is admin-only, noncacheable and retains last success after failure', async () => {
+  const directory = await temporaryDirectory(),
+    databasePath = join(directory, 'spinel.sqlite');
+  await writeFile(join(directory, 'index.html'), '<h1>fixture</h1>');
+  const app = await createApp({ databasePath, staticDirectory: directory });
+  cleanups.push(() => app.close());
+  await new Promise<void>((ready) => app.server.listen(0, '127.0.0.1', ready));
+  const url = `http://127.0.0.1:${(app.server.address() as AddressInfo).port}/api/admin/backups`;
+  const db = openDatabase(databasePath);
+  cleanups.push(async () => db.close());
+  const auth = new AuthStore(db),
+    owner = auth.createUser('Owner'),
+    admin = auth.createUser('Operator', true);
+  const cookie = (id: string) => ({ Cookie: `${COOKIE_NAME}=${auth.createSession(id).token}` });
+  expect((await fetch(url)).status).toBe(401);
+  expect((await fetch(url, { headers: cookie(owner.id) })).status).toBe(404);
+  db.prepare('UPDATE backup_state SET last_good=?, error=?').run(1234, 'Backup failed.');
+  const headers = cookie(admin.id),
+    response = await fetch(url, { headers });
+  expect(response.headers.get('cache-control')).toBe('no-store');
+  expect(await response.json()).toMatchObject({
+    lastGood: 1234,
+    error: 'Backup failed.',
+    configured: false,
+  });
+  db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(admin.id);
+  expect((await fetch(url, { headers })).status).toBe(401);
+});

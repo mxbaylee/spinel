@@ -9,6 +9,7 @@ services:
     security_opt: [no-new-privileges:true]
     environment:
       NODE_ENV: production
+      SPINEL_IMAGE: ${SPINEL_IMAGE}
       HOST: 127.0.0.1
       PORT: "3000"
       DATABASE_PATH: /data/spinel.sqlite
