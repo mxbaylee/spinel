@@ -8,6 +8,41 @@ import { DocumentStore } from './documents.ts';
 import { TrashStore } from './trash.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { HistoryStore } from '../history/store.ts';
+import { PortableFiles, PORTABLE_LIMIT } from './portable.ts';
+
+let transferActive = false;
+const transfers = new WeakMap<Response, { start: () => void; finish: () => void }>();
+function admitTransfer(_request: Request, response: Response, next: NextFunction) {
+  if (transferActive)
+    throw new AuthError(429, 'Another file transfer is running. Try again shortly.');
+  transferActive = true;
+  let running = false;
+  let released = false;
+  const release = () => {
+    if (released) return;
+    released = true;
+    transferActive = false;
+    transfers.delete(response);
+  };
+  const finish = () => {
+    running = false;
+    if (response.writableFinished || response.destroyed) release();
+  };
+  transfers.set(response, {
+    start: () => {
+      running = true;
+    },
+    finish,
+  });
+  // A disconnected client must not release admission while image decoding is active.
+  response.once('close', () => {
+    if (!running) release();
+  });
+  response.once('finish', () => {
+    if (!running) release();
+  });
+  next();
+}
 
 export function workspaceRoutes(
   auth: AuthStore,
@@ -20,6 +55,7 @@ export function workspaceRoutes(
   const trash = new TrashStore(store);
   const sheets = new SheetStore(store);
   const documents = new DocumentStore(store);
+  const files = new PortableFiles(store, collaboration);
   const owner = (request: Request) => {
     const id = auth.session(cookieToken(request))?.user_id;
     if (!id) throw new AuthError(401, 'Sign in to continue.');
@@ -99,6 +135,47 @@ export function workspaceRoutes(
       .set('X-Content-Type-Options', 'nosniff')
       .type(image.mime)
       .send(Buffer.from(image.data));
+  });
+  router.post(
+    '/import',
+    admitTransfer,
+    express.json({ limit: PORTABLE_LIMIT + 4096, strict: true }),
+    async (request, response) => {
+      const transfer = transfers.get(response)!;
+      transfer.start();
+      try {
+        const user = owner(request);
+        const item = await files.import(
+          user,
+          payload(request, ['filename', 'parentId', 'snapshot']),
+          () => {
+            if (owner(request) !== user || response.destroyed)
+              throw new AuthError(401, 'Sign in to continue.');
+          },
+        );
+        response.status(201).json({ item });
+      } finally {
+        transfer.finish();
+      }
+    },
+  );
+  router.get('/:id/export', admitTransfer, async (request, response) => {
+    const transfer = transfers.get(response)!;
+    transfer.start();
+    try {
+      const user = owner(request);
+      const file = await files.export(user, String(request.params.id), () => {
+        if (owner(request) !== user || response.destroyed)
+          throw new AuthError(401, 'Sign in to continue.');
+      });
+      response
+        .attachment(file.filename)
+        .type('application/json')
+        .set('X-Content-Type-Options', 'nosniff')
+        .send(file.text);
+    } finally {
+      transfer.finish();
+    }
   });
   router.use(express.json({ limit: '8kb', strict: true }));
   router.get('/:id/history', (request, response) => {
@@ -226,9 +303,11 @@ export function workspaceRoutes(
         error instanceof AuthError
           ? error.message
           : status === 413
-            ? request.path.endsWith('/images')
-              ? 'Choose an image no larger than 5 MiB.'
-              : 'This document is too large to save. Changes have not been saved.'
+            ? request.path === '/import'
+              ? 'Univer files must be at most 20 MiB.'
+              : request.path.endsWith('/images')
+                ? 'Choose an image no larger than 5 MiB.'
+                : 'This document is too large to save. Changes have not been saved.'
             : 'Could not save this change. Try again.',
     });
   });

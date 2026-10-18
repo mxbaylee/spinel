@@ -8,6 +8,7 @@ import { DocumentTags, TagLabels } from './DocumentTags.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import { PinButton, usePins } from './Pins.tsx';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
+import { ImportFile } from './ImportFile.tsx';
 import type { NavigationGuard } from './navigation.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
@@ -313,6 +314,17 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                     <button disabled={busy} onClick={() => setRefresh((value) => value + 1)}>
                       Refresh folder
                     </button>
+                  )}
+                  {(!current || current.access === 'owner') && (
+                    <ImportFile
+                      key={currentId ?? 'root'}
+                      parentId={currentId}
+                      onImported={(item) => {
+                        setItems((previous) => [...previous, item]);
+                        setViewed((previous) => [...previous, item]);
+                        setRefresh((value) => value + 1);
+                      }}
+                    />
                   )}
                   <ul className="file-list">
                     {visibleItems
