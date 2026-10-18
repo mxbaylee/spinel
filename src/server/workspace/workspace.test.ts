@@ -161,6 +161,25 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
   expect((await call('PATCH', `/${foreign.id}`, { name: 'Stolen' })).status).toBe(404);
   expect((await call('PATCH', `/${item.id}`, { owner_id: other.id })).status).toBe(400);
   expect((await call('PATCH', `/${item.id}`, { kind: 'slides' })).status).toBe(400);
+  expect((await call('POST', `/${item.id}/tags`, { tag: 'budget', userId: other.id })).status).toBe(
+    400,
+  );
+  expect((await call('POST', `/${foreign.id}/tags`, { tag: 'budget' })).status).toBe(404);
+  expect(
+    (
+      await call(
+        'POST',
+        `/${item.id}/tags`,
+        { tag: 'budget' },
+        { ...headers, Origin: 'https://evil.example' },
+      )
+    ).status,
+  ).toBe(403);
+  expect((await call('POST', `/${item.id}/tags`, { tag: '#BUDGET' })).status).toBe(200);
+  expect((await (await call('GET', `/${item.id}`)).json()).item.tags).toEqual(['budget']);
+  expect((await (await call('GET', '/tags')).json()).tags).toEqual(['budget']);
+  expect((await call('DELETE', `/${item.id}/tags`, { tag: 'budget' })).status).toBe(200);
+  expect((await (await call('GET', `/${item.id}`)).json()).item.tags).toEqual([]);
   expect(
     (
       await call(
@@ -182,6 +201,8 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
       ['GET', `/${item.id}`, undefined],
       ['POST', '', { name: 'x', kind: 'doc', parentId: null }],
       ['PATCH', `/${item.id}`, { name: 'x' }],
+      ['GET', '/tags', undefined],
+      ['POST', `/${item.id}/tags`, { tag: 'denied' }],
     ] as const)
       expect((await call(method, suffix, body, supplied)).status).toBe(
         !denied || !auth.session(denied)?.user_id ? 401 : 403,

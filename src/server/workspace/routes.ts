@@ -146,6 +146,20 @@ export function workspaceRoutes(
       throw new AuthError(400, 'Invalid item changes.');
     return body;
   }
+  router.get('/tags', (request, response) =>
+    response.json({ tags: store.tagSuggestions(owner(request)) }),
+  );
+  for (const method of ['post', 'delete'] as const)
+    router[method]('/:id/tags', (request, response) =>
+      response.json({
+        item: store.changeTag(
+          owner(request),
+          String(request.params.id),
+          payload(request, ['tag']).tag,
+          method === 'delete',
+        ),
+      }),
+    );
   router.get('/', (request, response) => response.json({ items: store.list(owner(request)) }));
   router.get('/trash', (request, response) => response.json(trash.list(owner(request))));
   router.post('/trash/empty', (request, response) => {
