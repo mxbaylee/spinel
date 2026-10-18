@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SPN-010 collaboration experiment</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        font-family: sans-serif;
+      }
+      #status {
+        height: 28px;
+        padding-left: 12px;
+      }
+      #editor {
+        height: calc(100% - 28px);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="status" role="status">Loading experiment…</div>
+    <div id="editor"></div>
+    <script type="module" src="/web.ts"></script>
+  </body>
+</html>
