@@ -39,9 +39,9 @@ item or ancestor, covering direct and inherited shares as well as image access.
 
 Restore changes the selected root's location and clears only matching-batch
 metadata in one transaction. Permanent cleanup deletes leaves before parents,
-then SQLite cascades remove native snapshots, images and grants. Future history
-storage must reference the item with the same permanent-deletion behavior;
-SPN-023 remains responsible for implementing history. A malformed hierarchy that
+then SQLite cascades remove native snapshots, images, grants, history checkpoints
+and history progress markers. Soft deletion preserves [history](history.md);
+permanent deletion removes it. A malformed hierarchy that
 cannot safely be deleted rolls the cleanup back and logs an error rather than
 removing live descendants. The daily job is stopped when the server closes;
 startup catches up after downtime. Failed runs log an error and retry on the

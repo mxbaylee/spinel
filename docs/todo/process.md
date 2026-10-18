@@ -224,6 +224,11 @@ Owner setup, once, in the repository settings:
 
 ## Commands
 
+If the memory watchdog prevents safe local testing, follow the owner-approved
+[CI-first exception](../run-backlog.md#2-implement-one-ticket): local typecheck,
+lint and backlog checks before a draft push; full unit/browser CI and the same
+independent review and merge gates afterward. Decision #52, owner, chat 2026-10-18.
+
 ```bash
 npm run typecheck                          # type-check every .ts and .tsx file
 npm test                                   # backlog and application unit tests

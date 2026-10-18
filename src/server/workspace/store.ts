@@ -2,11 +2,24 @@ import { randomUUID } from 'node:crypto';
 import { AuthError, AuthStore } from '../auth/store.ts';
 import { ITEM_KINDS } from '../../shared/workspace.ts';
 import type { ItemKind, WorkspaceItem, ItemAccess, SharePerson } from '../../shared/workspace.ts';
+import type { SnapshotSaved } from './snapshots.ts';
 
 const columns =
   'id,parent_id AS parentId,kind,name,created_at AS createdAt,updated_at AS updatedAt';
 export class WorkspaceStore {
   auth: AuthStore;
+  private readonly snapshotListeners = new Set<(event: SnapshotSaved) => void>();
+  onSnapshotSaved(listener: (event: SnapshotSaved) => void) {
+    this.snapshotListeners.add(listener);
+    return {
+      dispose: () => {
+        this.snapshotListeners.delete(listener);
+      },
+    };
+  }
+  snapshotSaved(event: SnapshotSaved) {
+    for (const listener of this.snapshotListeners) listener(event);
+  }
   constructor(auth: AuthStore) {
     this.auth = auth;
     auth.database.exec(`

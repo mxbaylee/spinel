@@ -9,6 +9,7 @@ import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
 import { workspaceRoutes } from '../src/server/workspace/routes.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts';
+import { HistoryStore } from '../src/server/history/store.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
 import { attachCollaboration } from '../src/server/collaboration/transport.ts';
 import { UnitAction, ErrorCode } from '@univerjs/protocol';
@@ -33,6 +34,7 @@ export async function createApp(options: AppOptions) {
   let stopCleanup = () => {};
   let backups: BackupService | undefined;
   let collaboration: CollaborationStore | undefined;
+  let history: HistoryStore | undefined;
   let realtime: ReturnType<typeof attachCollaboration> | undefined;
   let purgeTimer: ReturnType<typeof setInterval> | undefined;
 
@@ -50,6 +52,7 @@ export async function createApp(options: AppOptions) {
     const workspace = new WorkspaceStore(auth);
     const origin = options.origin ?? 'http://localhost:3000';
     collaboration = new CollaborationStore(workspace, options.databasePath);
+    history = new HistoryStore(workspace, collaboration);
     realtime = attachCollaboration(server, workspace, collaboration, origin);
     app.use('/api', (_request, response, next) => {
       response.once('finish', () => {
@@ -256,10 +259,12 @@ export async function createApp(options: AppOptions) {
       response.status(404).type('text').send('Not found');
     });
     backups.start();
+    history.start();
   } catch (error) {
     stopCleanup();
     clearInterval(purgeTimer);
     await realtime?.close();
+    await history?.close();
     await collaboration?.close();
     await backups?.close();
     await vite?.close();
@@ -281,6 +286,7 @@ export async function createApp(options: AppOptions) {
         });
       }
       await backups?.close();
+      await history?.close();
       await collaboration?.purgeDeleted();
       await collaboration?.close();
       database.close();

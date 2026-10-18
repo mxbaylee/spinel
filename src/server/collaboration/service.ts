@@ -56,6 +56,7 @@ export class CollaborationStore {
   private readonly validator = new UnitSnapshotMaterializer(runtimeLimits);
   private readonly lifecycle = Symbol('trusted permanent deletion');
   private purging: Promise<void> | undefined;
+  private readonly prepareListeners = new Set<(user: string, id: string) => Promise<void>>();
 
   constructor(workspace: WorkspaceStore, filename: string) {
     const main = workspace.auth.database
@@ -209,7 +210,22 @@ export class CollaborationStore {
     }
   }
 
+  onPrepared(listener: (user: string, id: string) => Promise<void>) {
+    this.prepareListeners.add(listener);
+    return {
+      dispose: () => {
+        this.prepareListeners.delete(listener);
+      },
+    };
+  }
+
   async prepare(user: string, id: string) {
+    await this.prepareCore(user, id);
+    for (const listener of this.prepareListeners) await listener(user, id);
+    this.access(user, id);
+  }
+
+  private async prepareCore(user: string, id: string) {
     this.access(user, id);
     const existing = this.preparing.get(id);
     if (existing) {
