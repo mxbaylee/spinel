@@ -1,6 +1,7 @@
 import type { IWorkbookData } from '@univerjs/core';
 import { AuthError } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
+import { commitSnapshot } from './snapshots.ts';
 
 interface SheetRow {
   snapshot: string;
@@ -75,26 +76,6 @@ export class SheetStore {
         413,
         'This spreadsheet is too large to save. Changes have not been saved.',
       );
-    return this.workspace.auth.transaction(() => {
-      const current = this.row(id);
-      // A lost HTTP acknowledgement must not make a retried save duplicate or conflict.
-      if (current?.write_id === writeId && current.snapshot === text)
-        return { revision: current.revision };
-      if ((current?.revision ?? 0) !== revision || current?.write_id === writeId)
-        throw new AuthError(
-          409,
-          'Another tab or device saved a newer version. Your changes are not saved. Keep this tab open and copy your changes before reloading.',
-        );
-      const next = (revision as number) + 1;
-      this.workspace.auth.database
-        .prepare(
-          'INSERT INTO sheet_snapshots VALUES(?,?,?,?) ON CONFLICT(item_id) DO UPDATE SET snapshot=excluded.snapshot,revision=excluded.revision,write_id=excluded.write_id',
-        )
-        .run(id, text, next, writeId);
-      this.workspace.auth.database
-        .prepare('UPDATE workspace_items SET updated_at=? WHERE id=?')
-        .run(this.workspace.auth.now(), id);
-      return { revision: next };
-    });
+    return commitSnapshot(this.workspace, 'sheet_snapshots', id, text, revision as number, writeId);
   }
 }

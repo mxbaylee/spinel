@@ -4,11 +4,13 @@ import { AuthError, AuthStore } from '../auth/store.ts';
 import { cookieToken } from '../auth/routes.ts';
 import { WorkspaceStore } from './store.ts';
 import { SheetStore } from './sheets.ts';
+import { DocumentStore } from './documents.ts';
 
 export function workspaceRoutes(auth: AuthStore, origin: string) {
   const router = express.Router();
   const store = new WorkspaceStore(auth);
   const sheets = new SheetStore(store);
+  const documents = new DocumentStore(store);
   const owner = (request: Request) => {
     const id = auth.session(cookieToken(request))?.user_id;
     if (!id) throw new AuthError(401, 'Sign in to continue.');
@@ -20,7 +22,13 @@ export function workspaceRoutes(auth: AuthStore, origin: string) {
     owner(request);
     if (
       request.method !== 'GET' &&
-      (request.headers.origin !== origin || !request.is('application/json'))
+      (request.headers.origin !== origin ||
+        (!request.is('application/json') &&
+          !(
+            request.method === 'POST' &&
+            /^\/[^/]+\/images$/.test(request.path) &&
+            request.is(['image/png', 'image/jpeg', 'image/webp'])
+          )))
     )
       throw new AuthError(403, 'Open Spinel at its configured address and try again.');
     next();
@@ -36,6 +44,45 @@ export function workspaceRoutes(auth: AuthStore, origin: string) {
         payload(request, ['snapshot', 'revision', 'writeId']),
       ),
     );
+  });
+  router.get('/:id/doc', (request, response) =>
+    response.json(documents.load(owner(request), String(request.params.id))),
+  );
+  router.put('/:id/doc', express.json({ limit: '10mb', strict: true }), (request, response) => {
+    response.json(
+      documents.save(
+        owner(request),
+        String(request.params.id),
+        payload(request, ['snapshot', 'revision', 'writeId']),
+      ),
+    );
+  });
+  router.post(
+    '/:id/images',
+    express.raw({ type: ['image/png', 'image/jpeg', 'image/webp'], limit: '5mb' }),
+    async (request, response) => {
+      response
+        .status(201)
+        .json(
+          await documents.upload(
+            owner(request),
+            String(request.params.id),
+            request.body,
+            String(request.headers['content-type'] ?? '').split(';')[0],
+          ),
+        );
+    },
+  );
+  router.get('/:id/images/:imageId', (request, response) => {
+    const image = documents.image(
+      owner(request),
+      String(request.params.id),
+      String(request.params.imageId),
+    );
+    response
+      .set('X-Content-Type-Options', 'nosniff')
+      .type(image.mime)
+      .send(Buffer.from(image.data));
   });
   router.use(express.json({ limit: '8kb', strict: true }));
   function payload(request: Request, allowed: string[]) {
@@ -67,7 +114,7 @@ export function workspaceRoutes(auth: AuthStore, origin: string) {
       ),
     }),
   );
-  router.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
+  router.use((error: unknown, request: Request, response: Response, _next: NextFunction) => {
     const status =
       error instanceof AuthError
         ? error.status
@@ -79,7 +126,9 @@ export function workspaceRoutes(auth: AuthStore, origin: string) {
         error instanceof AuthError
           ? error.message
           : status === 413
-            ? 'This spreadsheet is too large to save. Changes have not been saved.'
+            ? request.path.endsWith('/images')
+              ? 'Choose an image no larger than 5 MiB.'
+              : 'This document is too large to save. Changes have not been saved.'
             : 'Could not save this change. Try again.',
     });
   });

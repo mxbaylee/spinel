@@ -23,6 +23,8 @@ async function itemsRequest<T>(path = '', method = 'GET', body?: unknown): Promi
 }
 const selectedId = () => new URLSearchParams(location.search).get('item');
 
+const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
+
 export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   const [items, setItems] = useState<WorkspaceItem[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -232,6 +234,15 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
               ) : current.kind === 'sheet' ? (
                 <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
                   <SheetEditor
+                    key={current.id}
+                    id={current.id}
+                    name={current.name}
+                    onDirty={navigation.dirty}
+                  />
+                </Suspense>
+              ) : current.kind === 'doc' ? (
+                <Suspense fallback={<p role="status">Loading document…</p>}>
+                  <DocEditor
                     key={current.id}
                     id={current.id}
                     name={current.name}
