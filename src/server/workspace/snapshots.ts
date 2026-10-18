@@ -1,6 +1,12 @@
 import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from './store.ts';
 
+export type SnapshotSaved = {
+  id: string;
+  before: { snapshot: string; revision: number } | undefined;
+  after: { snapshot: string; revision: number };
+};
+
 export function commitSnapshot(
   workspace: WorkspaceStore,
   table: 'sheet_snapshots' | 'doc_snapshots',
@@ -43,6 +49,8 @@ export function commitSnapshot(
     workspace.auth.database
       .prepare('UPDATE workspace_items SET updated_at=? WHERE id=?')
       .run(workspace.auth.now(), id);
+    // Observers run inside this transaction: a failed baseline cannot acknowledge a save.
+    workspace.snapshotSaved({ id, before: current, after: { snapshot: text, revision: next } });
     return { revision: next };
   });
 }

@@ -49,6 +49,18 @@ Also run lint and the verification required by the ticket, including browser tes
 for changed user flows. Use the pinned Node version. Fix failures; never weaken
 checks to obtain a pass. Do not repeat unaffected checks without a reason.
 
+Protect the owner's computer while doing this work. On the 8 GiB development
+Mac, run only one local test, build, browser, or soak workload at a time across
+all agents. Stop unused task-owned preview servers first. Check system memory
+pressure before launching and monitor the workload's process tree while it runs;
+defer if pressure is elevated, and terminate only that workload if pressure rises
+or its combined resident memory exceeds 2 GiB. On macOS,
+`sysctl -n kern.memorystatus_vm_pressure_level` must report `1` (normal). Never
+terminate the owner's apps or count a resource-aborted check as passing. Save a
+checkpoint before long work, and record any aborted verification and the next
+safe step. These controls do not waive the pre-push checks above. Owner, chat
+2026-10-18, after a memory-induced forced pause stalled the backlog run.
+
 Prepare the landing changes in the same PR: preserve Rules in maintained docs,
 delete only this completed ticket, remove its ID from dependents' `depends_on`,
 append its ID to `grooming.completed_since`, and run `npm run backlog:index`.

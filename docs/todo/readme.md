@@ -9,7 +9,7 @@ How this backlog works: [process.md](process.md). Next ID: **SPN-039**. Grooming
 | # | Ticket | Score | Tie-break | Owner input |
 | --- | --- | --- | --- | --- |
 | 1 | 🧪 [SPN-010](SPN-010.md) Find Univer collaboration's limits by editing through the UI | 8 | — | None |
-| 2 | 🕰️ [SPN-023](SPN-023.md) Keep a decaying history of every document | 7 | Higher impact | None |
+| 2 | 🕰️ [SPN-023](SPN-023.md) Keep a decaying history of every document | 7 | Higher impact | Approve CI-first validation when local memory is constrained (#52) |
 | 3 | 👥 [SPN-005](SPN-005.md) See and manage users and their passkeys | 7 | — | None |
 | 4 | 🏷️ [SPN-019](SPN-019.md) Tag documents | 5 | Unblocks SPN-022 | None |
 | 5 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 5 | Higher impact | Choose redeployment timing for public HTTPS |
