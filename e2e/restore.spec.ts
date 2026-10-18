@@ -23,6 +23,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     const second = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
     const offline = await interruptibleNetwork(second);
     const other = await second.newPage();
+    other.setDefaultTimeout(15_000);
     const cookie = (user: string) => ({
       name: COOKIE_NAME,
       value: auth.createSession(user).token,
@@ -69,6 +70,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       const popup = page.waitForEvent('popup');
       await original.getByRole('link', { name: 'Preview version' }).click();
       preview = await popup;
+      preview.setDefaultTimeout(15_000);
       await expect(
         preview.getByRole('heading', { name: 'Preview — Restore example' }),
       ).toBeVisible();
@@ -83,6 +85,14 @@ for (const kind of ['sheet', 'doc'] as const) {
       const untouched = await read();
       await preview.locator('.univer-container').click({ position: { x: 130, y: 200 } });
       await preview.keyboard.type('must not edit');
+      if (kind === 'sheet') {
+        await expect(
+          preview.getByText('The range is protected, and you do not have edit permission.', {
+            exact: false,
+          }),
+        ).toBeVisible();
+        await preview.getByRole('button', { name: 'ok', exact: true }).click();
+      }
       expect((await read()).revision).toBe(untouched.revision);
       await other.goto(`${baseURL}/?item=${item.id}`);
       await saved(other);
@@ -128,6 +138,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       const undoPopup = other.waitForEvent('popup');
       await before.getByRole('link', { name: 'Preview version' }).click();
       const undo = await undoPopup;
+      undo.setDefaultTimeout(15_000);
       await expect(undo.getByRole('button', { name: 'Restore this version' })).toBeEnabled({
         timeout: 30_000,
       });
