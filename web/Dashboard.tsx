@@ -4,6 +4,7 @@ import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
 
 import { Sharing } from './Sharing.tsx';
 import { Trash } from './Trash.tsx';
+import { DocumentTags, TagLabels } from './DocumentTags.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import type { NavigationGuard } from './navigation.ts';
 const SheetEditor = lazy(() =>
@@ -30,6 +31,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   const [viewMissing, setViewMissing] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<WorkspaceItem | null>(null);
+  const [tagging, setTagging] = useState<WorkspaceItem | null>(null);
   const [currentId, setCurrentId] = useState<string | null>(selectedId);
   const currentRef = useRef(currentId);
   currentRef.current = currentId;
@@ -52,6 +54,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
         return;
       }
       setCurrentId(selectedId());
+      setTagging(null);
       setAction(null);
       setError('');
     };
@@ -129,6 +132,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     if (check && id !== currentId && !navigation.allow()) return;
     history.pushState(null, '', viewUrl(id));
     setCurrentId(id);
+    setTagging(null);
     setAction(null);
     setError('');
   }
@@ -185,10 +189,21 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     }
   }
   function actions(item: WorkspaceItem) {
+    const tagButton = item.kind !== 'folder' && (
+      <button disabled={busy} onClick={() => setTagging(item)} aria-label={`Tags ${item.name}`}>
+        Tags
+      </button>
+    );
     if (item.access !== 'owner')
-      return <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>;
+      return (
+        <span className="item-actions">
+          <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>
+          {tagButton}
+        </span>
+      );
     return (
       <span className="item-actions">
+        {tagButton}
         <button disabled={busy} onClick={() => setSharing(item)} aria-label={`Share ${item.name}`}>
           Share
         </button>
@@ -277,6 +292,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
               <div className="folder-heading">
                 <h2>{current?.name ?? 'My files'}</h2>
                 {current && actions(current)}
+                {current && <TagLabels tags={current.tags} />}
               </div>
               {!current || current.kind === 'folder' ? (
                 <>
@@ -309,6 +325,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                             {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
                           </button>
                           {actions(item)}
+                          <TagLabels tags={item.tags} />
                         </li>
                       ))}
                   </ul>
@@ -429,6 +446,22 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                 </button>
               </div>
             </form>
+          )}
+          {tagging && (
+            <DocumentTags
+              key={tagging.id}
+              item={tagging}
+              onClose={() => setTagging(null)}
+              onChanged={(item) => {
+                setItems((previous) =>
+                  previous.map((entry) => (entry.id === item.id ? item : entry)),
+                );
+                setViewed((previous) =>
+                  previous.map((entry) => (entry.id === item.id ? item : entry)),
+                );
+                setTagging(item);
+              }}
+            />
           )}
           {sharing && <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />}
           {error && <p role="alert">{error}</p>}

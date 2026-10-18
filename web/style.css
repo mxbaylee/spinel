@@ -330,3 +330,39 @@ button.primary {
 .admin-confirmation button {
   margin: 0.25rem;
 }
+
+.tag-labels {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.25rem 0;
+  max-width: 100%;
+}
+.tag-labels > span {
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+}
+.document-tags {
+  width: min(30rem, calc(100vw - 3rem));
+  max-height: calc(100vh - 3rem);
+  overflow: auto;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.document-tags::backdrop {
+  background: #0006;
+}
+.document-tags form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.5rem;
+  margin-block: 1rem;
+}
+.document-tags li {
+  overflow-wrap: anywhere;
+  margin-block: 0.5rem;
+}
