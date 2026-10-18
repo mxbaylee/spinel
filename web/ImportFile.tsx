@@ -93,6 +93,15 @@ export function ImportFile({
       <p>
         {busy ? 'Importing…' : 'Drop a Univer JSON file anywhere in this folder, up to 20 MiB.'}
       </p>
+      <details>
+        <summary>Import limits</summary>
+        <p>
+          Up to 100 sheets, each with 100,000 rows and 1,024 columns; totals of 250,000 rows, 4,096
+          columns and 100,000 populated cells. Documents can contain up to one million characters.
+          Document images must be embedded PNG, JPEG or WebP, up to 5 MiB each. Spreadsheet images
+          are not supported yet.
+        </p>
+      </details>
       {error && <p role="alert">{error}</p>}
     </section>
   );

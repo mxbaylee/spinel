@@ -1,9 +1,8 @@
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
-import { UniverSheetsPrintPlugin } from '@univerjs-pro/sheets-print';
+import { SheetPrintOpenOperation, UniverSheetsPrintPlugin } from '@univerjs-pro/sheets-print';
 import printEnglish from '@univerjs-pro/sheets-print/locale/en-US';
 import '@univerjs-pro/sheets-print/lib/index.css';
-import '@univerjs-pro/sheets-print/facade';
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { IPermissionService, InterceptorEffectEnum } from '@univerjs/core';
 import {
@@ -89,7 +88,7 @@ export function SheetEditor({
         presets: [UniverSheetsCorePreset({ container: container.current! })],
       });
       print.current = async () => {
-        univerAPI.getActiveWorkbook()?.openPrintDialog();
+        await univerAPI.executeCommand(SheetPrintOpenOperation.id);
       };
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.

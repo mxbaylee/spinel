@@ -1,7 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import { createCanvas } from '@napi-rs/canvas';
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import sharp from 'sharp';
+import { getDocument, OPS } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -13,6 +14,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     baseURL,
   }, info) => {
     test.setTimeout(120_000);
+    page.setDefaultTimeout(10_000);
     await page.setViewportSize({ width: 1440, height: 1100 });
     const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
     const auth = new AuthStore(db),
@@ -91,6 +93,26 @@ for (const kind of ['sheet', 'doc'] as const) {
         .poll(async () => JSON.stringify((await live()).snapshot))
         .toContain('Portable proof 314');
       await saved();
+      if (kind === 'doc') {
+        await page.keyboard.press('End');
+        await page.keyboard.press('Enter');
+        await region.getByRole('tab', { name: 'Insert', exact: true }).click();
+        const chooser = page.waitForEvent('filechooser');
+        await region.getByRole('button', { name: 'Image', exact: true }).click();
+        await (
+          await chooser
+        ).setFiles({
+          name: 'portable-orange.png',
+          mimeType: 'image/png',
+          buffer: await sharp({
+            create: { width: 40, height: 20, channels: 3, background: '#ff9900' },
+          })
+            .png()
+            .toBuffer(),
+        });
+        await expect.poll(async () => (await live()).snapshot.drawingsOrder?.length).toBe(1);
+        await saved();
+      }
       await region.locator('.file-exports summary').click();
       const downloadPromise = page.waitForEvent('download');
       await region.getByRole('button', { name: 'Download Univer file', exact: true }).click();
@@ -99,6 +121,10 @@ for (const kind of ['sheet', 'doc'] as const) {
       const bytes = await readFile((await download.path())!);
       expect(bytes.toString()).toContain('Portable proof 314');
       const snapshot = JSON.parse(bytes.toString());
+      if (kind === 'doc')
+        expect(snapshot.drawings[snapshot.drawingsOrder[0]].source).toMatch(
+          /^data:image\/png;base64,/,
+        );
       expect(
         kind === 'sheet'
           ? snapshot.sheets[snapshot.sheetOrder[0]].cellData[0][0].v
@@ -106,8 +132,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       ).toContain('Portable proof 314');
       // Exercise the actual app export control and plugin print UI.
       await region.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
-      if (kind === 'sheet')
-        await page.getByRole('button', { name: 'Print', exact: true }).last().click();
+      await expect(region.getByRole('alert')).toHaveCount(0);
+      if (kind === 'sheet') await page.getByRole('button', { name: /^next$/i }).click();
       await expect.poll(() => printHtml, { timeout: 20_000 }).toContain('<img');
       expect(printHtml).not.toContain('Your workspace');
       const printed = await context.newPage();
@@ -136,7 +162,15 @@ for (const kind of ['sheet', 'doc'] as const) {
           }).promise;
           await writeFile(info.outputPath(`${kind}-export-opened.png`), await canvas.encode('png'));
           // An empty page would have no image painting operations for Univer's canvas output.
-          expect((await first.getOperatorList()).fnArray.length).toBeGreaterThan(10);
+          expect(
+            (await first.getOperatorList()).fnArray.some((operation) =>
+              [
+                OPS.paintImageXObject,
+                OPS.paintInlineImageXObject,
+                OPS.paintImageMaskXObject,
+              ].includes(operation),
+            ),
+          ).toBe(true);
         } finally {
           await loading.destroy();
         }
@@ -177,9 +211,18 @@ for (const kind of ['sheet', 'doc'] as const) {
       await saved();
       const copy = await (await context.request.get(`/api/items/${copies[0].id}/${kind}`)).json();
       expect(JSON.stringify(copy.snapshot)).toContain('Portable proof 314');
+      if (kind === 'doc') {
+        const source = copy.snapshot.drawings[copy.snapshot.drawingsOrder[0]].source;
+        expect(source).toContain(`/api/items/${copies[0].id}/images/`);
+        const image = await context.request.get(source);
+        expect(image.ok()).toBe(true);
+        expect((await image.body()).toString('base64')).toBe(
+          snapshot.drawings[snapshot.drawingsOrder[0]].source.split(',')[1],
+        );
+      }
       expect(errors).toEqual([]);
     } finally {
-      await page.goto('/sign-in');
+      await page.goto('/sign-in').catch(() => {});
       db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
       db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
       db.close();

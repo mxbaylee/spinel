@@ -265,7 +265,7 @@ test('tiny malformed snapshots cannot expand into unbounded sheet caches or publ
   ]) {
     const snapshot = { ...f.sheet, sheets: { tab: { ...f.sheet.sheets.tab, ...patch } } };
     await expect(
-      f.files.import(f.owner.id, { filename: 'a.json', snapshot }, () => {}),
+      f.files.import(f.owner.id, { filename: 'a.json', parentId: null, snapshot }, () => {}),
     ).rejects.toThrow('Univer layout');
   }
   const large = structuredClone(f.sheet);
@@ -274,11 +274,28 @@ test('tiny malformed snapshots cannot expand into unbounded sheet caches or publ
     large.sheetOrder.map((id) => [id, { ...f.sheet.sheets.tab, id, rowCount: 100_000 }]),
   ) as typeof large.sheets;
   await expect(
-    f.files.import(f.owner.id, { filename: 'a.json', snapshot: large }, () => {}),
+    f.files.import(f.owner.id, { filename: 'a.json', parentId: null, snapshot: large }, () => {}),
   ).rejects.toThrow('Univer layout');
   expect(f.workspace.list(f.owner.id)).toEqual([]);
   expect(f.db.prepare('SELECT count(*) AS n FROM sheet_snapshots').get()!.n).toBe(0);
   await expect(
-    f.files.import(f.owner.id, { filename: 'a.json', snapshot: f.sheet }, () => {}),
+    f.files.import(f.owner.id, { filename: 'a.json', parentId: null, snapshot: f.sheet }, () => {}),
   ).resolves.toMatchObject({ name: 'Budget' });
+});
+
+test('export refuses native content that exceeds reimport budgets instead of issuing an unusable backup', async () => {
+  const f = fixture();
+  const item = await f.files.import(
+    f.owner.id,
+    { filename: 'a.json', parentId: null, snapshot: f.sheet },
+    () => {},
+  );
+  const snapshot = {
+    ...f.sheet,
+    id: item.id,
+    sheets: { tab: { ...f.sheet.sheets.tab, rowCount: 100_001 } },
+  };
+  f.files.sheets.save(f.owner.id, item.id, { snapshot, revision: 1, writeId: randomUUID() });
+  await expect(f.files.export(f.owner.id, item.id, () => {})).rejects.toThrow('Univer layout');
+  expect(f.files.sheets.load(f.owner.id, item.id).snapshot!.sheets.tab.rowCount).toBe(100_001);
 });

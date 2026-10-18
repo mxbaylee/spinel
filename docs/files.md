@@ -26,7 +26,8 @@ A document body is limited to one million characters and its layout indexes must
 fit the text. These are import budgets for the small instance, not measured Univer
 capacity limits. JSON is limited to 64 nesting levels and 200,000 values.
 Oversized or invalid files are refused without creating a partial item. Export
-never truncates an oversized file. Decisions [#69](https://github.com/mxbaylee/spinel/issues/69)
+uses the same layout budgets so a successful native download remains importable;
+it never truncates an oversized file. Decisions [#69](https://github.com/mxbaylee/spinel/issues/69)
 and [#23](https://github.com/mxbaylee/spinel/issues/23), 2026-10-17/18.
 
 For a read-only copy choose **Print / save PDF**, adjust Univer's print options

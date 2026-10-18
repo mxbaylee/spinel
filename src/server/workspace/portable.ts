@@ -189,6 +189,8 @@ export class PortableFiles {
     if (!data.snapshot) throw new AuthError(409, 'Open this document once before exporting it.');
     const snapshot = structuredClone(data.snapshot);
     bounded(snapshot);
+    // A successful native download must remain importable under the same budgets.
+    validatePortableLayout(snapshot as unknown as ObjectValue, item.kind);
     imageSources(snapshot, (source) => {
       const prefix = `/api/items/${id}/images/`;
       if (!source.startsWith(prefix) || !/^[a-f0-9]{64}$/.test(source.slice(prefix.length)))

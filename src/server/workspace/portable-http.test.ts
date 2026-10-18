@@ -55,8 +55,12 @@ test('file routes enforce sessions, CSRF, access, parser limits and admission th
     expect((await upload({ ...headers, Origin: 'https://evil.example' })).status).toBe(403);
     expect((await upload(headers, '{bad')).status).toBe(400);
     expect(
-      (await upload(headers, JSON.stringify({ ...payload, huge: 'x'.repeat(20 * 1024 * 1024) })))
-        .status,
+      (
+        await upload(
+          headers,
+          JSON.stringify({ ...payload, huge: 'x'.repeat(20 * 1024 * 1024 + 8192) }),
+        )
+      ).status,
     ).toBe(413);
     const imported = await upload();
     expect(imported.status).toBe(201);
