@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync } from '../../../server/database.ts';
 import sharp from 'sharp';
 import { afterEach, expect, test } from 'vitest';
 import { AuthStore } from '../auth/store.ts';

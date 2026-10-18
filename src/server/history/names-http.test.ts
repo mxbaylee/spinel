@@ -4,6 +4,7 @@ import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from 'vitest';
+import { UnitAction } from '@univerjs/protocol';
 import { createApp } from '../../../server/app.ts';
 import { openDatabase } from '../../../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
@@ -112,7 +113,18 @@ test('history naming routes enforce current access, sessions, origin and documen
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            requests: [{ unitID, objectID: unitID, actions: [0, 1, 2, 34] }],
+            requests: [
+              {
+                unitID,
+                objectID: unitID,
+                actions: [
+                  UnitAction.View,
+                  UnitAction.Edit,
+                  UnitAction.ManageCollaborator,
+                  UnitAction.RecoverHistory,
+                ],
+              },
+            ],
           }),
         },
       );

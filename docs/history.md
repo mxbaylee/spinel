@@ -158,6 +158,9 @@ startup cancels any staged, unpublished replacement and keeps the old live versi
 A committed replacement remains live, and the old SDK unit is deleted through the
 public API using the durable cleanup queue. These application tables are included in
 the same encrypted SQLite backup as checkpoints, images and SDK data.
+Application and SDK connections share one pinned SQLite runtime to avoid competing
+lock registries during restart; repeated reopen/integrity and encrypted recovery
+tests cover this boundary. [Decision #68](https://github.com/mxbaylee/spinel/issues/68).
 
 `GET /api/items/:id/history/:checkpoint` returns an authorized native preview.
 `POST /api/items/:id/history/:checkpoint/restore` accepts `{requestId,unitId}`, with

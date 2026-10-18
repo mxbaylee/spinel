@@ -3,7 +3,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync } from '../../../server/database.ts';
 import { afterEach, expect, test } from 'vitest';
 import { createApp } from '../../../server/app.ts';
 import { openDatabase } from '../../../server/database.ts';

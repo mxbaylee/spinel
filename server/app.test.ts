@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync } from './database.ts';
 import { afterEach, expect, test } from 'vitest';
 import { createApp, projectRoot } from './app.ts';
 import { openDatabase } from './database.ts';
@@ -53,7 +53,7 @@ test('protects pages and APIs while keeping database files private', async () =>
   await new Promise<void>((resolveListen) => app.server.listen(0, '127.0.0.1', resolveListen));
   const url = `http://127.0.0.1:${(app.server.address() as AddressInfo).port}`;
   expect((await readFile(databasePath)).subarray(0, 16).toString()).toBe('SQLite format 3\0');
-  const database = new DatabaseSync(databasePath, { readOnly: true });
+  const database = new DatabaseSync(databasePath);
   try {
     expect(database.prepare('PRAGMA integrity_check').get()).toMatchObject({
       integrity_check: 'ok',
