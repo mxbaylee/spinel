@@ -10,8 +10,8 @@ New pins append; pinning an already-pinned item leaves its order unchanged.
 Drag a handle onto another pinned row to move it to that position, or use the
 Up/Down buttons with keyboard or touch. Order persists in SQLite per user.
 The Shared badge identifies references owned by another person. Personal tags
-appear on pinned documents too. Shared-with-me filing and owner attribution
-remain in SPN-018.
+appear on pinned documents too. Shared pins also show the owner name; personal
+filing is described in [sharing](sharing.md).
 
 Unpinning removes only your reference. Trashing an item/subtree or losing its
 last effective grant removes affected pins in the same transaction. Inherited

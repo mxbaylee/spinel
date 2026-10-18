@@ -5,7 +5,7 @@ import { itemsRequest } from './itemsApi.ts';
 export function SharedBadge({ item }: { item: WorkspaceItem }) {
   return item.access !== 'owner' ? (
     <>
-      <span className="shared-badge">Shared</span>
+      <span className="shared-badge">Shared</span>{' '}
       <span className="shared-owner">{item.ownerName ?? 'Owner'}</span>
     </>
   ) : null;
