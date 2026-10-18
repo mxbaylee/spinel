@@ -86,6 +86,9 @@ export class CollaborationStore {
       item_id TEXT PRIMARY KEY REFERENCES workspace_items(id) ON DELETE CASCADE,
       state TEXT NOT NULL CHECK(state IN ('preparing','ready'))
     ) STRICT;
+    CREATE TABLE IF NOT EXISTS spinel_generation_resources (
+      unit_id TEXT PRIMARY KEY, item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE, resources TEXT NOT NULL
+    ) STRICT;
     CREATE TABLE IF NOT EXISTS collaboration_purge (item_id TEXT PRIMARY KEY) STRICT;
     CREATE TRIGGER IF NOT EXISTS collaboration_deleted BEFORE DELETE ON workspace_items
     WHEN EXISTS(SELECT 1 FROM workspace_collaboration WHERE item_id=OLD.id)
@@ -169,10 +172,11 @@ export class CollaborationStore {
         changesets: [...data.changesets, context.changeset],
         targetRevision: context.expectedHeadRevision + 1,
       });
-      const native =
+      const rendered =
         context.changeset.type === UniverType.UNIVER_DOC
           ? transformSnapshotToDocumentData(materialized.snapshot)
           : await transformSnapshotToWorkbookData(materialized.snapshot, materialized.sheetBlocks);
+      const native = this.preservedResources(id, rendered);
       if (Buffer.byteLength(JSON.stringify(native)) > 10 * 1024 * 1024)
         throw new CollabError('PERMISSION_DENIED', 'This document is too large to save.');
       if (context.changeset.type === UniverType.UNIVER_DOC) {
@@ -247,12 +251,44 @@ export class CollaborationStore {
         // A crash can leave a preparing fence before the SDK has created any unit.
         if (await this.database.getUnit({ ...context, request: {} }, row.item_id))
           await this.service.deleteUnits({ unitIDs: [row.item_id], hardDelete: true }, context);
+        db.prepare('DELETE FROM spinel_generation_resources WHERE unit_id=?').run(row.item_id);
         db.prepare('DELETE FROM collaboration_purge WHERE item_id=?').run(row.item_id);
       }
     })().finally(() => {
       this.purging = undefined;
     });
     return this.purging;
+  }
+
+  /** Native plugins omit unknown resources when serializing. Preserve only those names,
+   * never a stale copy of resources managed by the live SDK. */
+  private rememberResources(
+    unitId: string,
+    itemId: string,
+    source: IWorkbookData | IDocumentData | null,
+    rendered: IWorkbookData | IDocumentData,
+  ) {
+    const known = new Set((rendered.resources ?? []).map((resource) => resource.name));
+    const opaque = (source?.resources ?? []).filter((resource) => !known.has(resource.name));
+    this.workspace.auth.database
+      .prepare('INSERT OR IGNORE INTO spinel_generation_resources VALUES(?,?,?)')
+      .run(unitId, itemId, JSON.stringify(opaque));
+  }
+
+  private preservedResources<T extends IWorkbookData | IDocumentData>(
+    unitId: string,
+    snapshot: T,
+  ): T {
+    const row = this.workspace.auth.database
+      .prepare('SELECT resources FROM spinel_generation_resources WHERE unit_id=?')
+      .get(unitId);
+    if (!row) return snapshot;
+    const stored = JSON.parse(String(row.resources)) as NonNullable<T['resources']>;
+    const known = new Set((snapshot.resources ?? []).map((resource) => resource.name));
+    const missing = stored.filter((resource) => !known.has(resource.name));
+    return missing.length
+      ? { ...snapshot, resources: [...(snapshot.resources ?? []), ...missing] }
+      : snapshot;
   }
 
   itemForUnit(unitId: string) {
@@ -388,8 +424,13 @@ export class CollaborationStore {
       { unitID: unitId, type, revision: 0 },
       { userID: user },
     );
-    await this.validator.materializeSnapshot(current);
+    const prepared = await this.validator.materializeSnapshot(current);
+    const native =
+      item.kind === 'sheet'
+        ? await transformSnapshotToWorkbookData(prepared.snapshot, prepared.sheetBlocks)
+        : transformSnapshotToDocumentData(prepared.snapshot);
     this.workspaceAccess(user, id);
+    this.rememberResources(unitId, id, snapshot, native);
     auth.database
       .prepare("UPDATE workspace_collaboration SET state='ready' WHERE item_id=?")
       .run(id);
@@ -413,7 +454,7 @@ export class CollaborationStore {
     if (generation.unitId !== unitId)
       throw new AuthError(409, 'This document was restored. Reload to continue.');
     return {
-      snapshot: snapshotIdentity(snapshot, id),
+      snapshot: snapshotIdentity(this.preservedResources(unitId, snapshot), id),
       revision: data.targetRevision + generation.offset,
       access: current.access,
     };
@@ -461,7 +502,13 @@ export class CollaborationStore {
           { unitID: job.nextUnit, type, revision: 0 },
           context,
         );
-        await this.validator.materializeSnapshot(staged);
+        const checked = await this.validator.materializeSnapshot(staged);
+        const native =
+          type === UniverType.UNIVER_SHEET
+            ? await transformSnapshotToWorkbookData(checked.snapshot, checked.sheetBlocks)
+            : transformSnapshotToDocumentData(checked.snapshot);
+        this.workspaceAccess(user, id, 'edit');
+        this.rememberResources(job.nextUnit, id, replacement, native);
         return this.generations.finish(job.id, before.revision, preserve, checkSession);
       } catch (error) {
         // All awaited creation work has settled; cancellation cannot race a late create.

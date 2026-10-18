@@ -2,8 +2,8 @@
 
 Spinel keeps compressed native Sheet and Doc checkpoints in the same SQLite file
 as the documents, images and collaboration data. Sheet and Doc editors have a
-Versions panel for naming the current state or a past checkpoint. Timeline/calendar
-browsing and preview/restore remain SPN-026 and SPN-025. Future editors must join
+Versions panel for naming the current state or a past checkpoint, opening a read-only
+preview, and restoring a selected version. Timeline/calendar browsing remains SPN-026. Future editors must join
 this capture path before they accept document saves.
 
 Opening a live document preserves its baseline before editing is enabled. Raw
@@ -38,6 +38,8 @@ The owner approved this schedule in
 - Older: retain the final available checkpoint of each UTC day.
 - Named versions never expire or displace an unnamed retention slot. The newest
   available version is always retained, even for an inactive document.
+- Before restore checkpoints are retained until permanent document deletion, even
+  if their optional user-assigned name is removed.
 
 Age ranges are half-open: exactly one hour enters the half-hour tier, six hours
 enters the hourly tier, and 24 hours enters the daily tier. Buckets can thin only
@@ -63,7 +65,7 @@ will receive its own checkpoint normally. Naming never restores or alters conten
 Names are trimmed, contain 1–120 characters and need not be unique. Naming the
 same source/revision updates that checkpoint's name. The list marks named versions
 with a pin; editors can name a past checkpoint, rename it, or remove its name.
-Removing the name returns it to normal pruning. Named versions persist until
+Removing the name returns it to normal pruning unless it also has a Before restore label. Named versions persist until
 unnamed or their document is permanently deleted. This includes backup/restore.
 
 `GET /api/items/:id/history` lists metadata under current read access.
@@ -113,3 +115,59 @@ policy. Spinel therefore materializes native snapshots through public SDK APIs
 and owns only its checkpoint tables. No Pro implementation is inspected or
 patched. [Decision #51](https://github.com/mxbaylee/spinel/issues/51) records the
 tradeoff for the Owner, Collaborator, Operator and Link guest.
+
+
+## Preview and restore
+
+Choose **Versions → Preview version** to open an isolated, read-only native viewer
+in another tab. It has no live collaboration client or autosave. The live editor
+stays open so unsaved work can be copied. Current readers can preview; only current
+editors see and may use **Restore this version**. Confirming restores for everyone,
+then opens the live document with the same application URL and access grants.
+
+Restore freezes admission of new server edits and finishes already accepted
+submissions. It saves the exact drained content with a permanent **Before restore**
+label, without changing any user-assigned checkpoint name. The live document then
+becomes the selected retained snapshot at a new increasing logical revision. The
+label, active version switch, completion receipt and cleanup record commit in one
+application transaction. The Owner or Collaborator can restore that Before restore
+checkpoint to undo the operation. Retained image references are validated against
+the same document before a replacement can become live.
+
+Other open editors become read-only and ask the user to copy unsaved changes and
+reload. Offline clients may continue showing local edits until connectivity returns;
+those old edits cannot silently overwrite the replacement. Spinel preserves the SDK's
+old per-unit recovery cache, but does not automatically merge it into a restored version.
+
+The application item ID is stable. Each restore stages a new internal SDK unit through
+its public creation API, so it supports both old native checkpoints and collaboration
+checkpoints without confusing their revision counters. Logical revision equals the
+SDK revision plus the generation's offset. Known native self references are rebased;
+worksheet IDs, user text, opaque resources and document image URLs are preserved.
+Resource names omitted by the public SDK materializer are retained in an
+application-owned table and added back to native snapshots. Runtime-managed
+resources keep their current SDK content; preserved metadata never replaces it.
+No SDK-owned storage is modified. Client-submitted SDK revert mutations are rejected;
+restoration must pass the application preservation and authorization workflow.
+
+A request ID is bound to the item, caller and selected checkpoint. A lost-response
+retry returns its original completion instead of replacing newer work a second time.
+A mismatched ID, concurrent restore or stale expected generation is rejected. Session
+and edit access are rechecked immediately before the atomic switch. After interruption,
+startup cancels any staged, unpublished replacement and keeps the old live version.
+A committed replacement remains live, and the old SDK unit is deleted through the
+public API using the durable cleanup queue. These application tables are included in
+the same encrypted SQLite backup as checkpoints, images and SDK data.
+
+`GET /api/items/:id/history/:checkpoint` returns an authorized native preview.
+`POST /api/items/:id/history/:checkpoint/restore` accepts `{requestId,unitId}`, with
+the active unit ID supplied by the authenticated editor/preview response. Both routes
+recheck current access, and the mutation also requires the configured origin and
+current session. No anonymous or administrative document access is introduced.
+
+The owner chose freeze, drain, preserve and refresh in
+[decision #55](https://github.com/mxbaylee/spinel/issues/55), 2026-10-18. This retains
+all accepted work for the Owner and Collaborator, gives the Operator deterministic
+crash recovery using one database, and preserves Link guest access boundaries.
+Atomic pre-state preservation, retained images and stale-write fencing carry forward
+[decision #23](https://github.com/mxbaylee/spinel/issues/23), 2026-10-17.

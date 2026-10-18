@@ -62,6 +62,9 @@ test('protects pages and APIs while keeping database files private', async () =>
     database.close();
   }
   expect((await fetch(url, { redirect: 'manual' })).headers.get('location')).toBe('/sign-in');
+  expect((await fetch(`${url}/preview`, { redirect: 'manual' })).headers.get('location')).toBe(
+    '/sign-in',
+  );
   expect(await (await fetch(`${url}/sign-in`)).text()).toContain('Dashboard fixture');
   expect((await fetch(`${url}/api/health`)).status).toBe(401);
   expect((await fetch(`${url}/api/missing`)).status).toBe(401);
@@ -70,6 +73,10 @@ test('protects pages and APIs while keeping database files private', async () =>
   const user = store.createUser('Test');
   const { token } = store.createSession(user.id);
   const headers = { Cookie: `${COOKIE_NAME}=${token}` };
+  const preview = await fetch(`${url}/preview?item=example&version=example`, { headers });
+  expect(preview.status).toBe(200);
+  expect(preview.headers.get('cache-control')).toBe('no-store');
+  expect(await preview.text()).toContain('Dashboard fixture');
   expect(await (await fetch(`${url}/api/health`, { headers })).json()).toEqual({ status: 'ok' });
   for (const path of [
     '/api/missing',

@@ -75,6 +75,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect(preview.getByRole('button', { name: 'Restore this version' })).toBeEnabled({
         timeout: 30_000,
       });
+      await expect(preview.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
       const untouched = await read();
       await preview.locator('.univer-container').click({ position: { x: 130, y: 200 } });
       await preview.keyboard.type('must not edit');

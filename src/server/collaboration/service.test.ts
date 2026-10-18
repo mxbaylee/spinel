@@ -32,7 +32,9 @@ async function fixture() {
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
   const path = join(directory, 'spinel.sqlite');
   const db = openDatabase(path);
-  cleanup.push(() => db.close());
+  cleanup.push(() => {
+    if (db.isOpen) db.close();
+  });
   const auth = new AuthStore(db);
   const owner = auth.createUser('Owner'),
     viewer = auth.createUser('Viewer');
@@ -68,7 +70,14 @@ async function fixture() {
   });
   workspace.share(owner.id, sheet.id, viewer.id, 'viewer');
   const collab = new CollaborationStore(workspace, path);
-  cleanup.push(() => collab.close());
+  let stopped = false;
+  const stop = async () => {
+    if (!stopped) {
+      stopped = true;
+      await collab.close();
+    }
+  };
+  cleanup.push(stop);
   const load = (id = sheet.id, userID = owner.id) =>
     collab.service.getUnitLoadDataWithBlocks(
       {
@@ -114,6 +123,7 @@ async function fixture() {
     doc,
     snapshot,
     collab,
+    stop,
     load,
     edit,
   };
@@ -704,6 +714,7 @@ test('SDK generation restore retains multi-tab formulas, styles, resources and s
     { changeset: f.edit() },
     { userID: f.owner.id, memberID: 'test-member' },
   );
+  const namedPrestate = await history.nameCurrent(f.owner.id, f.sheet.id, 'Keep my existing label');
   const sheetRestore = await history.restore(
     f.owner.id,
     f.sheet.id,
@@ -711,6 +722,9 @@ test('SDK generation restore retains multi-tab formulas, styles, resources and s
     f.sheet.id,
     randomUUID(),
   );
+  expect(
+    history.list(f.owner.id, f.sheet.id).find((point) => point.id === namedPrestate.id),
+  ).toMatchObject({ name: 'Keep my existing label', beforeRestore: 1 });
   const restored = (await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData;
   expect(restored.sheetOrder).toEqual(rich.sheetOrder);
   expect(restored.styles.bold).toEqual(rich.styles.bold);
@@ -794,4 +808,101 @@ test('SDK generation restore retains multi-tab formulas, styles, resources and s
   expect(after.body?.dataStream).toBe('Image still here\r\n');
   expect(after.drawings?.photo).toMatchObject(drawing);
   expect(Buffer.from(f.docs.image(f.owner.id, f.doc.id, image.id).data)).toEqual(bytes);
+});
+
+test('file-backed restart cancels a staged SDK replacement and preserves a completed restore and receipt', async () => {
+  const f = await fixture();
+  const { HistoryStore } = await import('../history/store.ts');
+  const history = new HistoryStore(f.workspace, f.collab);
+  let historyClosed = false;
+  cleanup.push(async () => {
+    if (!historyClosed) await history.close();
+  });
+  const target = await history.nameCurrent(f.owner.id, f.sheet.id, 'Original');
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  await f.collab.service.submitChangeset(
+    { changeset: f.edit() },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  // Fault injection models termination after the SDK stage is durable but before
+  // the application switch; process death cannot run the normal catch cleanup.
+  vi.spyOn(f.collab.generations, 'finish').mockImplementation(() => {
+    throw new Error('power lost before switch');
+  });
+  vi.spyOn(f.collab.generations, 'cancel').mockImplementation(() => {});
+  await expect(
+    history.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, randomUUID()),
+  ).rejects.toThrow('power lost');
+  const staged = f.db
+    .prepare("SELECT next_unit FROM spinel_restore_jobs WHERE status='staging'")
+    .get()!;
+  expect(
+    await f.collab.service.dbAdapter.getUnit(
+      { userID: f.owner.id, customData: {}, request: {} },
+      String(staged.next_unit),
+    ),
+  ).not.toBeNull();
+  await history.close();
+  historyClosed = true;
+  await f.stop();
+  f.db.close();
+  const db = openDatabase(f.path);
+  cleanup.push(() => {
+    if (db.isOpen) db.close();
+  });
+  const workspace = new WorkspaceStore(new AuthStore(db));
+  const collab = new CollaborationStore(workspace, f.path);
+  let stopped = false;
+  cleanup.push(async () => {
+    if (!stopped) await collab.close();
+  });
+  const reopened = new HistoryStore(workspace, collab);
+  let reopenedClosed = false;
+  cleanup.push(async () => {
+    if (!reopenedClosed) await reopened.close();
+  });
+  expect(collab.generations.restoring(f.sheet.id)).toBe(false);
+  expect(
+    ((await collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
+      .cellData?.[0]?.[0]?.v,
+  ).toBe(99);
+  expect(
+    db.prepare('SELECT status FROM spinel_restore_jobs WHERE next_unit=?').get(staged.next_unit)
+      ?.status,
+  ).toBe('cancelled');
+  await collab.purgeDeleted();
+  expect(
+    await collab.service.dbAdapter.getUnit(
+      { userID: f.owner.id, customData: {}, request: {} },
+      String(staged.next_unit),
+    ),
+  ).toBeNull();
+  const request = randomUUID();
+  const completed = await reopened.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, request);
+  await reopened.close();
+  reopenedClosed = true;
+  await collab.close();
+  stopped = true;
+  db.close();
+  const lastDb = openDatabase(f.path);
+  cleanup.push(() => lastDb.close());
+  const lastWorkspace = new WorkspaceStore(new AuthStore(lastDb));
+  const last = new CollaborationStore(lastWorkspace, f.path);
+  cleanup.push(() => last.close());
+  const lastHistory = new HistoryStore(lastWorkspace, last);
+  cleanup.push(() => lastHistory.close());
+  await last.prepare(f.owner.id, f.sheet.id);
+  expect(last.generations.active(f.sheet.id)).toMatchObject({
+    unitId: completed.nextUnit,
+    offset: 2,
+  });
+  const saved = await last.load(f.owner.id, f.sheet.id);
+  expect(saved.revision).toBe(3);
+  expect((saved.snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]?.v).toBe(42);
+  expect(await lastHistory.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, request)).toEqual(
+    completed,
+  );
+  await last.purgeDeleted();
+  expect((await last.load(f.owner.id, f.sheet.id)).revision).toBe(3);
+  expect(lastHistory.list(f.owner.id, f.sheet.id).some((point) => point.beforeRestore)).toBe(true);
 });

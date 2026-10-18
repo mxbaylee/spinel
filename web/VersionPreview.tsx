@@ -102,8 +102,15 @@ export function VersionPreview() {
         </button>
       )}
       {error && <p role="alert">{error}</p>}
+      {error === 'Restore was interrupted. Start a new restore.' && (
+        <button onClick={() => location.reload()}>Reload preview for a new attempt</button>
+      )}
       {!ready && !error && <p role="status">Loading preview…</p>}
-      <div className="univer-container" ref={container} />
+      <div
+        className="univer-container"
+        ref={container}
+        style={{ visibility: ready ? 'visible' : 'hidden' }}
+      />
     </section>
   );
 }
