@@ -1,9 +1,10 @@
 # Document history
 
 Spinel keeps compressed native Sheet and Doc checkpoints in the same SQLite file
-as the documents, images and collaboration data. History has no HTTP endpoint or
-UI yet; naming, browsing and restoring versions belong to SPN-024–026. Future
-editors must join this capture path before they accept document saves.
+as the documents, images and collaboration data. Sheet and Doc editors have a
+Versions panel for naming the current state or a past checkpoint. Timeline/calendar
+browsing and preview/restore remain SPN-026 and SPN-025. Future editors must join
+this capture path before they accept document saves.
 
 Opening a live document preserves its baseline before editing is enabled. Raw
 collaboration submissions also pass that baseline guard. The older native save
@@ -51,6 +52,32 @@ payload and less than 8 MiB for that fixture's checkpointed SQLite file. These a
 test budgets for representative history overhead, not guarantees for arbitrary
 10 MiB documents, images, named versions or SDK operational changesets. SDK data
 is not pruned through undocumented tables or APIs.
+
+## Named versions
+
+Editors can use **Versions → Name this version** after local edits finish saving.
+The server captures the confirmed revision it observes for that request, separately
+from any older background capture. An edit committed afterward remains live and
+will receive its own checkpoint normally. Naming never restores or alters content.
+
+Names are trimmed, contain 1–120 characters and need not be unique. Naming the
+same source/revision updates that checkpoint's name. The list marks named versions
+with a pin; editors can name a past checkpoint, rename it, or remove its name.
+Removing the name returns it to normal pruning. Named versions persist until
+unnamed or their document is permanently deleted. This includes backup/restore.
+
+`GET /api/items/:id/history` lists metadata under current read access.
+`POST /api/items/:id/history` with `{name}` captures and names current content;
+`PATCH /api/items/:id/history/:checkpoint` with `{name}` renames, and `{name:null}`
+unpins it. Mutations require the configured origin, a current session and edit
+access. Current-state capture rechecks the session and edit access after async
+work, before committing. A concurrent native migration returns a retryable UI
+error rather than pinning an obsolete native copy. Viewers can read the list but
+cannot name or unname. No anonymous history route is added.
+
+These bounds and semantics were chosen in [decision #56](https://github.com/mxbaylee/spinel/issues/56)
+to preserve the Owner's recovery points, allow authorized Collaborators to label
+shared work, keep Operator storage simple and maintain Link guest access boundaries.
 
 ## Images, access and recovery
 

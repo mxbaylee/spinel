@@ -7,12 +7,14 @@ import { SheetStore } from './sheets.ts';
 import { DocumentStore } from './documents.ts';
 import { TrashStore } from './trash.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
+import type { HistoryStore } from '../history/store.ts';
 
 export function workspaceRoutes(
   auth: AuthStore,
   origin: string,
   store = new WorkspaceStore(auth),
   collaboration?: CollaborationStore,
+  history?: HistoryStore,
 ) {
   const router = express.Router();
   const trash = new TrashStore(store);
@@ -99,6 +101,32 @@ export function workspaceRoutes(
       .send(Buffer.from(image.data));
   });
   router.use(express.json({ limit: '8kb', strict: true }));
+  router.get('/:id/history', (request, response) => {
+    if (!history) throw new AuthError(503, 'History is not available.');
+    const user = owner(request),
+      id = String(request.params.id);
+    const item = store.get(user, id);
+    response.json({ versions: history.list(user, id), canName: item.access !== 'viewer' });
+  });
+  router.post('/:id/history', async (request, response) => {
+    if (!history) throw new AuthError(503, 'History is not available.');
+    const user = owner(request),
+      id = String(request.params.id);
+    const version = await history.nameCurrent(user, id, payload(request, ['name']).name, () => {
+      if (owner(request) !== user) throw new AuthError(401, 'Sign in to continue.');
+    });
+    response.status(201).json({ version });
+  });
+  router.patch('/:id/history/:checkpoint', (request, response) => {
+    if (!history) throw new AuthError(503, 'History is not available.');
+    history.rename(
+      owner(request),
+      String(request.params.id),
+      String(request.params.checkpoint),
+      payload(request, ['name']).name,
+    );
+    response.json({ ok: true });
+  });
   router.post('/:id/collaboration', async (request, response) => {
     if (!collaboration) throw new AuthError(503, 'Collaboration is not available.');
     const user = owner(request),
