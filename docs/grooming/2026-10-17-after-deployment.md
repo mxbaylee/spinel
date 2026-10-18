@@ -6,7 +6,7 @@ existing effort, impact and must-ship estimates remain appropriate. No IDs were
 removed or reused. [Decision #23](https://github.com/mxbaylee/spinel/issues/23)
 records the integration and sequencing choices.
 
-The Operator has working private deployment and authentication, but still needs
+The Operator has verified private deployment tooling and authentication, but still needs
 account management, offsite recovery and diagnostics. The Owner has folders and
 sheets; trash, history and portable exports remain essential data-preservation
 work. The Collaborator still needs shared access before live editing. The Link
@@ -50,3 +50,9 @@ Pending owner choices remain backup destination/key (SPN-030), history checkpoin
 spacing (SPN-023), whether to build custom sync (SPN-014 after the spike), and
 whether MCP is wanted (SPN-034). Slides licensing may also require a decision.
 No new owner approval is needed for these routine grooming clarifications.
+
+During grooming, the owner chose to destroy the disposable test host and data,
+then redeploy for SPN-038 when ready for public HTTPS. Deployment evidence stays
+historical; docs/deployment.md records teardown and any remaining DNS cleanup.
+SPN-038 now carries the explicit redeployment-timing input. No new infrastructure
+is authorized merely by reaching that ticket. Owner, chat 2026-10-17.
