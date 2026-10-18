@@ -22,7 +22,7 @@ until their editor ticket lands.
 
 Shared items open at their authenticated direct address. Shared folders show their
 children and have a Refresh folder button to retrieve new additions. My files
-still lists owned items only. The Shared with me drawer adds account-only discovery
+lists owned items and shared items personally filed there. The Shared with me drawer adds account-only discovery
 and personal filing, described below alongside guest links.
 
 ## Permission changes and unsaved work
