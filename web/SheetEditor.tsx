@@ -172,14 +172,17 @@ export function SheetEditor({
       applyFill.current = async (preset) => {
         const book = univerAPI.getActiveWorkbook();
         if (!book) throw new Error('Open a spreadsheet first.');
-        await book.endEditingAsync(true);
         const sheet = book.getActiveSheet(),
           range = sheet?.getActiveRange();
         if (!sheet || !range) throw new Error('Select cells to fill.');
+        // Keep the cells chosen at the click, even if selection changes while
+        // the SDK finishes an in-progress edit asynchronously.
+        const target = { ...range.getRange() };
+        await book.endEditingAsync(true);
         const result = await univerAPI.executeCommand(SetRangeValuesCommand.id, {
           unitId: data.unitId,
           subUnitId: sheet.getSheetId(),
-          range: range.getRange(),
+          range: target,
           value: { s: presetStyle(preset, 'light') },
         });
         if (!result) throw new Error('Could not apply this fill. Check your access and try again.');
