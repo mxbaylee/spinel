@@ -36,8 +36,9 @@ ordinary hyperlinks, separate from image sources.
 
 Removing an image from the live document keeps its stored bytes so undo and
 pending snapshot retries can still restore it. Deleting the document record
-cascades to its images and snapshot. A future history/pruning feature must check
-all retained versions before deleting image bytes. This limit therefore includes
+cascades to its images, live snapshot and [history](history.md). Retained versions
+continue to reference the stored images. Any future image garbage collector must
+check retained versions and pending uploads before deleting bytes. This limit includes
 images removed from the visible document, and its error states that the document
 has reached its image allowance.
 
