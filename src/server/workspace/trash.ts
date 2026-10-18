@@ -51,6 +51,7 @@ export class TrashStore {
       `,
         )
         .run(id, owner, owner, auth.now(), randomUUID());
+      this.workspace.cleanPins();
       return { count: Number(result.changes) };
     });
   }

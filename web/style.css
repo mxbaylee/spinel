@@ -21,7 +21,7 @@ body {
   font-size: 24px;
   font-weight: 700;
 }
-.workspace > main {
+.workspace-body > main {
   padding-top: 72px;
 }
 .eyebrow {
@@ -54,7 +54,7 @@ p {
   .workspace {
     padding: 24px;
   }
-  .workspace > main {
+  .workspace-body > main {
     padding-top: 48px;
   }
   .welcome {
@@ -365,4 +365,60 @@ button.primary {
 .document-tags li {
   overflow-wrap: anywhere;
   margin-block: 0.5rem;
+}
+
+.workspace-body:has(.pinned-sidebar) {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 28px;
+}
+.workspace:has(.pinned-sidebar) {
+  max-width: 1480px;
+}
+.pinned-sidebar {
+  padding-top: 72px;
+  min-width: 0;
+}
+.pinned-sidebar ol {
+  list-style: none;
+  padding: 0;
+}
+.pinned-sidebar li {
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+.pinned-sidebar small {
+  color: #68616f;
+}
+.pinned-sidebar .pin-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+.workspace .pinned-sidebar button {
+  padding: 5px 8px;
+}
+.pin-drag {
+  cursor: grab;
+  margin-right: 6px;
+}
+.shared-badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: #51334b;
+  margin-left: 6px;
+}
+@media (max-width: 900px) {
+  .workspace-body:has(.pinned-sidebar) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .pinned-sidebar {
+    padding-top: 32px;
+  }
+  .pinned-sidebar ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
 }
