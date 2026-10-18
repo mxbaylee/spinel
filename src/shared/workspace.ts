@@ -1,6 +1,16 @@
 export const ITEM_KINDS = ['folder', 'sheet', 'doc', 'slides'] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
+export type GrantRole = 'viewer' | 'editor';
+export type ItemAccess = GrantRole | 'owner';
+export interface SharePerson {
+  id: string;
+  name: string;
+  disabled: number;
+  directRole: GrantRole | null;
+  effectiveRole: GrantRole | null;
+}
 export interface WorkspaceItem {
+  access: ItemAccess;
   id: string;
   parentId: string | null;
   kind: ItemKind;

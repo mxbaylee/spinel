@@ -1,0 +1,212 @@
+import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { openDatabase } from '../server/database.ts';
+import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+
+test('owner shares future folder contents, collaborator edits, and open editors honor downgrade and revocation', async ({
+  page,
+  context,
+  browser,
+  baseURL,
+}, testInfo) => {
+  test.setTimeout(90_000);
+  page.setDefaultTimeout(10000);
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  const db = openDatabase(
+    testInfo.project.name === 'development'
+      ? 'test-results/dev.sqlite'
+      : 'test-results/production.sqlite',
+  );
+  const auth = new AuthStore(db),
+    owner = auth.createUser('Sharing owner ' + testInfo.testId),
+    collaborator = auth.createUser('Sharing person ' + testInfo.testId);
+  const cookie = (id: string) => ({
+    name: COOKIE_NAME,
+    value: auth.createSession(id).token,
+    url: baseURL!.replace('http:', 'https:'),
+    secure: true,
+    httpOnly: true,
+    sameSite: 'Strict' as const,
+  });
+  await context.addCookies([cookie(owner.id)]);
+  const second = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1100 } });
+  await second.addCookies([cookie(collaborator.id)]);
+  const other = await second.newPage();
+  other.setDefaultTimeout(10000);
+  const errors: string[] = [];
+  for (const tab of [page, other]) tab.on('pageerror', (e) => errors.push(e.message));
+  async function create(name: string, type: string) {
+    await page.getByRole('button', { name: 'New', exact: true }).click();
+    const form = page.getByRole('form', { name: 'New item' });
+    await form.getByRole('combobox', { name: 'Type', exact: true }).selectOption({ label: type });
+    await form.getByLabel('Name', { exact: true }).fill(name);
+    await form.getByRole('button', { name: 'Create', exact: true }).click();
+    await expect(form).toBeHidden();
+  }
+  async function typeCell(tab: Page, value: string) {
+    const nameBox = tab
+      .getByRole('region', { name: 'Sheet document', exact: true })
+      .getByRole('textbox')
+      .nth(2);
+    await nameBox.fill('A1');
+    await nameBox.press('Enter');
+    await tab.keyboard.type(value);
+    await tab.keyboard.press('Enter');
+  }
+  const shareRegion = page.getByRole('region', { name: 'Share Shared plans', exact: true });
+  async function grant(role: string) {
+    await shareRegion
+      .getByRole('combobox', { name: `Access for ${collaborator.name}`, exact: true })
+      .selectOption(role);
+    await shareRegion
+      .getByRole('button', { name: `Apply access for ${collaborator.name}`, exact: true })
+      .click();
+    await expect(shareRegion.getByRole('status')).toHaveText(
+      `Access updated for ${collaborator.name}.`,
+    );
+  }
+  try {
+    await page.goto('/');
+    await create('Shared plans', 'Folder');
+    await page.getByRole('button', { name: 'Share Shared plans', exact: true }).click();
+    await grant('editor');
+    const address = await shareRegion.getByLabel('Share address').inputValue();
+    await other.goto(address);
+    await expect(other.getByRole('heading', { name: 'Shared plans', exact: true })).toBeVisible();
+    await expect(other.getByRole('button', { name: 'New', exact: true })).toBeHidden();
+    await expect(
+      other.getByRole('button', { name: 'Share Shared plans', exact: true }),
+    ).toBeHidden();
+    await shareRegion.getByRole('button', { name: 'Close sharing' }).click();
+    await page
+      .getByRole('complementary', { name: 'Folders' })
+      .getByRole('button', { name: 'Shared plans', exact: true })
+      .click();
+    // Create both documents after the grant to prove inheritance applies to future children.
+    await create('Nested', 'Folder');
+    await page.getByRole('button', { name: 'Nested Folder', exact: true }).click();
+    await create('Shared budget', 'Sheet');
+    await expect(
+      page.getByRole('region', { name: 'Sheet document', exact: true }).getByRole('status'),
+    ).toHaveText('All changes saved.', { timeout: 20000 });
+    const sheetId = new URL(page.url()).searchParams.get('item')!;
+    await page
+      .getByRole('navigation', { name: 'Breadcrumb' })
+      .getByRole('button', { name: 'Nested', exact: true })
+      .click();
+    await create('Shared journal', 'Doc');
+    await expect(
+      page.getByRole('region', { name: 'Doc document', exact: true }).getByRole('status'),
+    ).toHaveText('All changes saved.', { timeout: 20000 });
+    const docId = new URL(page.url()).searchParams.get('item')!;
+    await page
+      .getByRole('navigation', { name: 'Breadcrumb' })
+      .getByRole('button', { name: 'Shared plans', exact: true })
+      .click();
+    await page.getByRole('button', { name: 'Share Shared plans', exact: true }).click();
+    await other.getByRole('button', { name: 'Refresh folder' }).click();
+    await other.getByRole('button', { name: 'Nested Folder', exact: true }).click();
+    await expect(
+      other.getByRole('button', { name: 'Shared budget Sheet', exact: true }),
+    ).toBeVisible();
+    await other.getByRole('button', { name: 'Shared journal Doc', exact: true }).click();
+    const docStatus = other
+      .getByRole('region', { name: 'Doc document', exact: true })
+      .getByRole('status');
+    await expect(docStatus).toHaveText('All changes saved.', { timeout: 20000 });
+    await expect(other.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText(
+      'My files / Shared plans / Nested / Shared journal',
+    );
+    await other.keyboard.type('Written by collaborator');
+    const readDoc = async () => await (await context.request.get(`/api/items/${docId}/doc`)).json();
+    await expect
+      .poll(async () => (await readDoc()).snapshot.body.dataStream)
+      .toContain('Written by collaborator');
+    await expect(docStatus).toHaveText('All changes saved.');
+    await other
+      .getByRole('navigation', { name: 'Breadcrumb' })
+      .getByRole('button', { name: 'Shared plans', exact: true })
+      .click();
+    await other.getByRole('button', { name: 'Nested Folder', exact: true }).click();
+    await other.getByRole('button', { name: 'Shared budget Sheet', exact: true }).click();
+    const sheetStatus = other
+      .getByRole('region', { name: 'Sheet document', exact: true })
+      .getByRole('status');
+    await expect(sheetStatus).toHaveText('All changes saved.', { timeout: 20000 });
+    await typeCell(other, '42');
+    const readSheet = async () =>
+      await (await context.request.get(`/api/items/${sheetId}/sheet`)).json();
+    await expect
+      .poll(async () => {
+        const { snapshot } = await readSheet();
+        return snapshot.sheets[snapshot.sheetOrder[0]].cellData?.[0]?.[0]?.v;
+      })
+      .toBe(42);
+    await expect(sheetStatus).toHaveText('All changes saved.');
+    const savedSheet = await readSheet();
+    const openDoc = await second.newPage();
+    openDoc.on('pageerror', (e) => errors.push(e.message));
+    await openDoc.goto(`${baseURL}/?item=${docId}`);
+    const openDocStatus = openDoc
+      .getByRole('region', { name: 'Doc document', exact: true })
+      .getByRole('status');
+    await expect(openDocStatus).toHaveText('All changes saved.', { timeout: 20000 });
+    const beforeDowngradeDoc = await readDoc();
+    await grant('viewer');
+    await openDoc.keyboard.type('Rejected edit');
+    await expect(openDocStatus).toContainText('cannot edit', { timeout: 10000 });
+    await expect(openDocStatus).toContainText('not saved');
+    expect(await readDoc()).toEqual(beforeDowngradeDoc);
+    await expect(openDoc.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    await openDoc.close();
+    await typeCell(other, '99');
+    await expect(sheetStatus).toContainText('cannot edit', { timeout: 10000 });
+    await expect(sheetStatus).toContainText('not saved');
+    expect(await readSheet()).toEqual(savedSheet);
+    other.once('dialog', (dialog) => dialog.dismiss());
+    await other.getByRole('link', { name: 'Settings', exact: true }).click();
+    await expect(other).toHaveURL(new RegExp(sheetId));
+    // A fresh viewer uses the SDK's read-only mode and cannot mutate either format.
+    other.once('dialog', (dialog) => dialog.accept());
+    await other.reload();
+    await expect(sheetStatus).toContainText('View only', { timeout: 20000 });
+    await expect(other.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    await typeCell(other, '81');
+    expect(await readSheet()).toEqual(savedSheet);
+    await other.goto(`${baseURL}/?item=${docId}`);
+    await expect(docStatus).toContainText('View only', { timeout: 20000 });
+    await expect(other.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    const savedDoc = await readDoc();
+    await other.keyboard.type('Forbidden');
+    expect(await readDoc()).toEqual(savedDoc);
+    await grant('');
+    await other.reload();
+    await expect(
+      other.getByText('This item is not available. Choose My files to continue.', { exact: true }),
+    ).toBeVisible();
+    expect((await second.request.get(`/api/items/${docId}/doc`)).status()).toBe(404);
+    expect((await (await second.request.get('/api/items')).json()).items).toEqual([]);
+    // A direct child grant must not expose the now-private shared ancestor names.
+    const direct = await context.request.put(`/api/items/${docId}/sharing`, {
+      headers: { Origin: baseURL! },
+      data: { userId: collaborator.id, role: 'viewer' },
+    });
+    expect(direct.ok()).toBe(true);
+    await other.reload();
+    await expect(docStatus).toContainText('View only', { timeout: 20000 });
+    await expect(other.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText(
+      'My files / Shared journal',
+    );
+    expect(errors).toEqual([]);
+  } finally {
+    await second.close();
+    while (db.prepare('SELECT id FROM workspace_items WHERE owner_id=?').get(owner.id)) {
+      db.prepare(
+        'DELETE FROM workspace_items WHERE owner_id=? AND id NOT IN (SELECT parent_id FROM workspace_items WHERE parent_id IS NOT NULL)',
+      ).run(owner.id);
+    }
+    for (const id of [owner.id, collaborator.id])
+      db.prepare('DELETE FROM auth_users WHERE id=?').run(id);
+    db.close();
+  }
+});

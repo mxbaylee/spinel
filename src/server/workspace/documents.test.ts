@@ -36,6 +36,7 @@ test('native document snapshots preserve their complete data and the shared revi
   expect(f.docs.save(f.owner.id, f.item.id, payload)).toEqual({ revision: 1 });
   expect(f.docs.save(f.owner.id, f.item.id, payload)).toEqual({ revision: 1 });
   expect(new DocumentStore(f.workspace).load(f.owner.id, f.item.id)).toEqual({
+    access: 'owner',
     snapshot: f.snapshot,
     revision: 1,
   });

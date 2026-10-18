@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { AuthError, AuthStore } from '../auth/store.ts';
 import { ITEM_KINDS } from '../../shared/workspace.ts';
-import type { ItemKind, WorkspaceItem } from '../../shared/workspace.ts';
+import type { ItemKind, WorkspaceItem, ItemAccess, SharePerson } from '../../shared/workspace.ts';
 
 const columns =
   'id,parent_id AS parentId,kind,name,created_at AS createdAt,updated_at AS updatedAt';
@@ -18,6 +18,12 @@ export class WorkspaceStore {
         name TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_items_owner_parent ON workspace_items(owner_id,parent_id);
+      CREATE TABLE IF NOT EXISTS workspace_grants (
+        item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
+        user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        role TEXT NOT NULL CHECK(role IN ('viewer','editor')),
+        PRIMARY KEY(item_id,user_id)
+      ) STRICT;
     `);
   }
   owner(ownerId: string) {
@@ -29,17 +35,122 @@ export class WorkspaceStore {
     this.owner(ownerId);
     return this.auth.database
       .prepare(
-        `SELECT ${columns} FROM workspace_items WHERE owner_id=? ORDER BY name COLLATE NOCASE,id`,
+        `SELECT ${columns}, 'owner' AS access FROM workspace_items WHERE owner_id=? ORDER BY name COLLATE NOCASE,id`,
       )
       .all(ownerId) as unknown as WorkspaceItem[];
   }
-  get(ownerId: string, id: string): WorkspaceItem {
-    this.owner(ownerId);
+  // All callers use this resolver, including content, metadata and image access.
+  // UNION makes malformed ancestor cycles finite; inherited grants cannot cross owners.
+  private role(userId: string, id: string): ItemAccess | null {
+    const row = this.auth.database
+      .prepare(
+        `
+      WITH RECURSIVE ancestors(id,parent_id,owner_id) AS (
+        SELECT id,parent_id,owner_id FROM workspace_items WHERE id=?
+        UNION
+        SELECT p.id,p.parent_id,p.owner_id FROM workspace_items p
+        JOIN ancestors a ON p.id=a.parent_id AND p.owner_id=a.owner_id
+      )
+      SELECT max(CASE WHEN a.owner_id=? THEN 3 WHEN g.role='editor' THEN 2
+        WHEN g.role='viewer' THEN 1 ELSE 0 END) AS strength
+      FROM ancestors a LEFT JOIN workspace_grants g ON g.item_id=a.id AND g.user_id=?
+    `,
+      )
+      .get(id, userId, userId) as { strength: number | null };
+    return row.strength === 3
+      ? 'owner'
+      : row.strength === 2
+        ? 'editor'
+        : row.strength === 1
+          ? 'viewer'
+          : null;
+  }
+  get(userId: string, id: string, needed: 'read' | 'edit' | 'owner' = 'read'): WorkspaceItem {
+    this.owner(userId);
+    const access = this.role(userId, id);
+    if (!access) throw new AuthError(404, 'This item is not available.');
+    if ((needed === 'owner' && access !== 'owner') || (needed === 'edit' && access === 'viewer'))
+      throw new AuthError(
+        403,
+        needed === 'owner'
+          ? 'Only the owner can change this item or its sharing.'
+          : 'You can view this document, but cannot edit it.',
+      );
     const item = this.auth.database
-      .prepare(`SELECT ${columns} FROM workspace_items WHERE owner_id=? AND id=?`)
-      .get(ownerId, id) as unknown as WorkspaceItem | undefined;
-    if (!item) throw new AuthError(404, 'This item is not available.');
-    return item;
+      .prepare(`SELECT ${columns} FROM workspace_items WHERE id=?`)
+      .get(id) as unknown as WorkspaceItem;
+    // A direct share must not disclose the owner's private parent chain.
+    return {
+      ...item,
+      access,
+      parentId: item.parentId && this.role(userId, item.parentId) ? item.parentId : null,
+    };
+  }
+  children(userId: string, id: string): WorkspaceItem[] {
+    const parent = this.get(userId, id);
+    if (parent.kind !== 'folder') return [];
+    return (
+      this.auth.database
+        .prepare('SELECT id FROM workspace_items WHERE parent_id=? ORDER BY name COLLATE NOCASE,id')
+        .all(id) as { id: string }[]
+    ).map((row) => this.get(userId, row.id));
+  }
+  ancestors(userId: string, id: string): WorkspaceItem[] {
+    let item = this.get(userId, id);
+    const result: WorkspaceItem[] = [];
+    const seen = new Set([id]);
+    // get() stops at the first inaccessible parent, so breadcrumbs cannot reveal
+    // private folder names or bridge a gap in the recipient's access.
+    while (item.parentId && !seen.has(item.parentId)) {
+      seen.add(item.parentId);
+      item = this.get(userId, item.parentId);
+      result.unshift(item);
+    }
+    return result;
+  }
+  sharing(userId: string, id: string): SharePerson[] {
+    this.get(userId, id, 'owner');
+    return (
+      this.auth.database
+        .prepare(
+          `SELECT u.id,u.name,u.disabled,g.role AS directRole
+      FROM auth_users u LEFT JOIN workspace_grants g ON g.user_id=u.id AND g.item_id=?
+      WHERE u.is_admin=0 AND u.id<>? AND (u.disabled=0 OR g.role IS NOT NULL)
+      ORDER BY u.name COLLATE NOCASE,u.id`,
+        )
+        .all(id, userId) as unknown as Omit<SharePerson, 'effectiveRole'>[]
+    ).map((person) => ({
+      ...person,
+      effectiveRole: person.disabled
+        ? null
+        : (this.role(person.id, id) as SharePerson['effectiveRole']),
+    }));
+  }
+  share(userId: string, id: string, recipient: unknown, role: unknown) {
+    return this.auth.transaction(() => {
+      this.get(userId, id, 'owner');
+      if (
+        typeof recipient !== 'string' ||
+        recipient === userId ||
+        !['viewer', 'editor', null].includes(role as string | null)
+      )
+        throw new AuthError(400, 'Choose a person and Viewer, Editor or No direct access.');
+      if (role === null)
+        this.auth.database
+          .prepare('DELETE FROM workspace_grants WHERE item_id=? AND user_id=?')
+          .run(id, recipient);
+      else {
+        const user = this.auth.user(recipient);
+        if (!user || user.is_admin) throw new AuthError(400, 'Choose an active everyday account.');
+        this.auth.database
+          .prepare(
+            `INSERT INTO workspace_grants VALUES(?,?,?)
+          ON CONFLICT(item_id,user_id) DO UPDATE SET role=excluded.role`,
+          )
+          .run(id, recipient, role as string);
+      }
+      return this.sharing(userId, id);
+    });
   }
   name(value: unknown): string {
     if (
@@ -63,7 +174,7 @@ export class WorkspaceStore {
       if (cursor === movingId || seen.has(cursor))
         throw new AuthError(409, 'A folder cannot be moved into itself or one of its subfolders.');
       seen.add(cursor);
-      const folder = this.get(ownerId, cursor);
+      const folder = this.get(ownerId, cursor, 'owner');
       if (folder.kind !== 'folder') throw new AuthError(400, 'The destination must be a folder.');
       cursor = folder.parentId;
     }
@@ -93,7 +204,7 @@ export class WorkspaceStore {
     input: { name?: unknown; parentId?: unknown },
   ): WorkspaceItem {
     return this.auth.transaction(() => {
-      const item = this.get(ownerId, id);
+      const item = this.get(ownerId, id, 'owner');
       const name = input.name === undefined ? item.name : this.name(input.name);
       const parentId =
         input.parentId === undefined ? item.parentId : this.parent(ownerId, input.parentId, id);

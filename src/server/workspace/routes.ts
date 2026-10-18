@@ -97,9 +97,24 @@ export function workspaceRoutes(auth: AuthStore, origin: string) {
     return body;
   }
   router.get('/', (request, response) => response.json({ items: store.list(owner(request)) }));
-  router.get('/:id', (request, response) =>
-    response.json({ item: store.get(owner(request), String(request.params.id)) }),
+  router.get('/:id', (request, response) => {
+    const user = owner(request),
+      id = String(request.params.id);
+    response.json({
+      item: store.get(user, id),
+      children: store.children(user, id),
+      ancestors: store.ancestors(user, id),
+    });
+  });
+  router.get('/:id/sharing', (request, response) =>
+    response.json({ people: store.sharing(owner(request), String(request.params.id)) }),
   );
+  router.put('/:id/sharing', (request, response) => {
+    const body = payload(request, ['userId', 'role']);
+    response.json({
+      people: store.share(owner(request), String(request.params.id), body.userId, body.role),
+    });
+  });
   router.post('/', (request, response) =>
     response
       .status(201)

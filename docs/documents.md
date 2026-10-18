@@ -28,8 +28,8 @@ retry. The editor remains dirty through upload, image dimension loading and the
 final drawing insertion, so navigation cannot silently discard an uploaded image.
 
 Images live as SQLite blobs scoped to their document, alongside its snapshot.
-Image reads and writes require an active non-admin owner session; writes also
-require the configured Origin. Image responses are private, uncached and marked
+Image reads require an active non-admin session with read access; uploads require
+owner/editor access and the configured Origin. See [sharing](sharing.md). Image responses are private, uncached and marked
 `nosniff`. Snapshots may reference only that document's existing image URLs;
 external and base64 drawing sources are rejected. Link destinations remain
 ordinary hyperlinks, separate from image sources.
@@ -45,7 +45,7 @@ These choices were recorded in [decision #21](https://github.com/mxbaylee/spinel
 on 2026-10-17. The Operator gets bounded decoding and one encrypted SQLite storage
 location; the Owner keeps images with the document; the Collaborator gets the
 same visible save/conflict behavior as sheets; the Link guest gains no access
-through an unprotected image URL. Sharing permissions are a separate ticket.
+through an unprotected image URL. Current sharing permissions are described in [sharing](sharing.md).
 
 ## Verification
 

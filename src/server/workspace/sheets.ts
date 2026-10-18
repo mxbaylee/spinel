@@ -17,8 +17,8 @@ export class SheetStore {
       snapshot TEXT NOT NULL, revision INTEGER NOT NULL, write_id TEXT NOT NULL
     ) STRICT;`);
   }
-  sheet(owner: string, id: string) {
-    const item = this.workspace.get(owner, id);
+  sheet(owner: string, id: string, edit = false) {
+    const item = this.workspace.get(owner, id, edit ? 'edit' : 'read');
     if (item.kind !== 'sheet') throw new AuthError(400, 'This item is not a spreadsheet.');
     return item;
   }
@@ -28,9 +28,10 @@ export class SheetStore {
       .get(id) as unknown as SheetRow | undefined;
   }
   load(owner: string, id: string) {
-    this.sheet(owner, id);
+    const item = this.sheet(owner, id);
     const row = this.row(id);
     return {
+      access: item.access,
       snapshot: row ? (JSON.parse(row.snapshot) as IWorkbookData) : null,
       revision: row?.revision ?? 0,
     };
@@ -40,7 +41,7 @@ export class SheetStore {
     id: string,
     input: { snapshot?: unknown; revision?: unknown; writeId?: unknown },
   ) {
-    this.sheet(owner, id);
+    this.sheet(owner, id, true);
     const { snapshot, revision, writeId } = input;
     if (
       !Number.isSafeInteger(revision) ||
