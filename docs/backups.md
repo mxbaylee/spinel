@@ -17,6 +17,11 @@ TLS certificates and disk-unlock material are recreated on the fresh host; they
 are not application data. Keep the reviewed image in a durable registry or
 independent archive: a local Docker image ID alone does not preserve the image.
 
+Offsite recovery is required before daily use: the droplet is a single point
+of failure for the Owner's documents (grooming, 2026-10-17;
+[decision #23](https://github.com/mxbaylee/spinel/issues/23)). Backup tooling is
+TypeScript, as required by the owner on 2026-10-17.
+
 The owner selected Spaces and authorized a temporary cloud restore drill in
 [decision #34](https://github.com/mxbaylee/spinel/issues/34). The format, schedule
 and recovery choices are recorded in
@@ -167,5 +172,73 @@ retention boundaries, upload failure without pruning, persistent status,
 scheduler catch-up and shared leases. HTTP/browser tests cover admin-only status
 and its failure/last-success presentation.
 
-The fresh-host DigitalOcean Spaces drill is pending. Do not claim SPN-030 complete
-until that evidence and an independent review are recorded.
+### Fresh-host Spaces drill, 2026-10-17 Pacific (2026-10-18 UTC)
+
+The owner explicitly delegated temporary resource creation, backup/restore and
+teardown to the agent. This was an agent-run drill using synthetic data, not a
+claim that the owner manually repeated every command. Source code was reviewed
+commit `c27c667c0b1d14b8921a80ae47e7d5ef3ab860ce`, Node 24.19.0. The source ran on
+the FileVault-enabled Mac; the destination was a newly created Ubuntu 24.04.5
+DigitalOcean droplet with one Intel vCPU and 1967 MiB RAM. An initially empty
+4 GiB loopback file was formatted as LUKS2/ext4 and mounted at `/srv/spinel/data`.
+The random disk key remained on the Mac and was supplied through SSH stdin,
+not stored on the unencrypted host root. This proves restore into encrypted
+storage; it does not repeat SPN-029's separate attached-volume reboot/TLS checks.
+
+A private SFO3 Space used restricted listing, no CDN/versioning, and a limited
+read/write/delete key scoped to that test bucket. Anonymous listing returned
+HTTP 403. The first actual upload/readback/download/local restore passed. Large
+image transfer from the Mac was too slow, so the destination built the reviewed
+Git archive directly; its SHA-256 was
+`bca1b9c312d0a55059ab6dbe923e27170319aab4b38366a98504c2ae1f28bc2b`.
+The source backup then recorded this exact available recovery image:
+`sha256:173026b19d5b101163633029fa74c8b3c043fb22b070097eb88b795a0293d5eb` (amd64).
+The abandoned large-image transfers are not backup success evidence.
+
+The destination independently downloaded
+`drill/2026-10-18T02-37-38.730Z-6f9c5499-66b2-42a4-9217-57dd5d908fab.spinel`
+from Spaces and ran the documented restore command into a new directory on LUKS.
+It received no copy of the source database. All 13 application tables matched
+the source's logical SHA-256:
+`5a28790d72cada3494a24093b2b113244f10e440ad03cbac4e223265a7fdaf95`.
+The comparison excluded only backup operational state and recovery metadata.
+Counts included three users/passkeys/sessions, five workspace items (including
+trash), one native Sheet snapshot, one Doc snapshot, one PNG blob, one sharing
+grant and a synthetic historical-checkpoint table. History UI has not shipped;
+this last table verifies preservation of additional database tables, not a
+claim that a history feature exists. Canonical origin and runtime environment
+matched the encrypted recovery manifest.
+
+The restored app ran as UID 1000 with a read-only container root and 512 MiB
+memory cap, binding only host loopback. SSH was source-IP restricted. An SSH
+tunnel preserved the original synthetic `http://localhost:3118` relying-party
+origin; no public app or DNS records were created. Browser checks used the three
+original cryptographic WebAuthn credentials, supplied by virtual authenticators,
+to sign in again as Operator, Owner and Collaborator. Existing credentials were
+not replaced. Owner/Collaborator read the expected native snapshots and exact
+image bytes; the viewer's edit returned 403, an unrelated document returned 404,
+the Operator's document request returned 403, and an unauthenticated guest got
+401. Every check passed again after replacing the running app container.
+
+The restored host then produced and verified a new offsite backup at
+`2026-10-18T02:39:18.706Z`, with no admin error. Its object was
+`drill/2026-10-18T02-39-18.481Z-5d1be4f2-05cd-4e17-bdab-9e1df3623ab8.spinel`.
+Listing showed only this newest daily recovery point after retention. Admin
+reported configured backups and that last-good timestamp. After the second
+backup, Node used 52.82 MiB; the host had 1441 MiB available. These are small-fixture
+samples, not large-database capacity guarantees.
+
+An independent reviewer then compared the seven durable data tables directly
+against source hashes and all three original credential/public-key records
+(excluding expected sign-in counters/timestamps). SQLite integrity passed with
+no foreign-key violations; image, origin, environment and backup status matched.
+Spaces HEAD/ACL checks confirmed the 13,414-byte recovery object and no public
+access grants.
+
+After that review, the temporary bucket-scoped key was revoked and the test
+droplet was deleted. DigitalOcean confirmed the Space was scheduled for deletion
+on 2026-10-31 and was no longer being billed from the deletion request on
+2026-10-18 UTC. No separate volumes, snapshots, reserved IPs, DNS records or
+Tailscale nodes were created for this drill. Temporary local synthetic data and
+keys were removed after recording the evidence. PR #35 records the final
+reviewed SHA, grade and required CI results.
