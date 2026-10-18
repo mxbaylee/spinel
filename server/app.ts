@@ -115,7 +115,7 @@ export async function createApp(options: AppOptions) {
           objectActions: requests.map((item) => {
             let access: string | undefined;
             try {
-              access = workspace.get(session.user_id!, item.unitID).access;
+              access = collaboration!.access(session.user_id!, item.unitID).access;
             } catch {
               /* Do not reveal other documents. */
             }

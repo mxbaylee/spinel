@@ -90,7 +90,43 @@ test('history naming routes enforce current access, sessions, origin and documen
     expect(
       (await request(`/${item.id}/history`, 0, 'POST', { name: ' ', unexpected: true })).status,
     ).toBe(400);
+    const restorePath = `/${item.id}/history/${point.id}/restore`;
+    const restoreBody = { unitId: item.id, requestId: randomUUID() };
+    for (const who of [-1, 2, 3, 4])
+      expect((await request(restorePath, who, 'POST', restoreBody)).ok).toBe(false);
+    expect(
+      (await request(restorePath, 1, 'POST', restoreBody, 'https://evil.example')).status,
+    ).toBe(403);
+    const restored = await request(restorePath, 1, 'POST', restoreBody);
+    expect(restored.status).toBe(200);
+    const active = (await restored.json()).unitId as string;
+    expect(active).not.toBe(item.id);
+    const permissions = async (who: number, unitID: string) => {
+      const response = await fetch(
+        root.replace('/api/items', '/universer-api/authz/-/object/-/batch_allowed'),
+        {
+          method: 'POST',
+          headers: {
+            Cookie: `${COOKIE_NAME}=${sessions[who].token}`,
+            Origin: 'http://localhost:3000',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            requests: [{ unitID, objectID: unitID, actions: [0, 1, 2, 34] }],
+          }),
+        },
+      );
+      return (await response.json()).objectActions[0].actions.map(
+        (entry: { allowed: boolean }) => entry.allowed,
+      );
+    };
+    // SDK authorization receives generation IDs; only the active generation grants access.
+    expect(await permissions(1, active)).toEqual([true, true, false, false]);
+    expect(await permissions(2, active)).toEqual([true, false, false, false]);
+    expect(await permissions(3, active)).toEqual([false, false, false, false]);
+    expect(await permissions(1, item.id)).toEqual([false, false, false, false]);
     workspace.share(owner.id, item.id, editor.id, null);
+    expect(await permissions(1, active)).toEqual([false, false, false, false]);
     expect((await request(`/${item.id}/history`, 1)).status).toBe(404);
     expect(
       (await request(`/${item.id}/history/${point.id}`, 0, 'PATCH', { name: 'Renamed' })).ok,

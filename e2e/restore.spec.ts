@@ -76,6 +76,10 @@ for (const kind of ['sheet', 'doc'] as const) {
         timeout: 30_000,
       });
       await expect(preview.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+      await preview.screenshot({
+        path: info.outputPath(`${kind}-restore-preview.png`),
+        animations: 'disabled',
+      });
       const untouched = await read();
       await preview.locator('.univer-container').click({ position: { x: 130, y: 200 } });
       await preview.keyboard.type('must not edit');
@@ -100,6 +104,11 @@ for (const kind of ['sheet', 'doc'] as const) {
       expect(restored.revision).toBe(latest.revision + 1);
       expect(JSON.stringify(restored.snapshot)).toContain('Original');
       expect(JSON.stringify(restored.snapshot)).not.toContain('Latest collaborative change');
+      await edit(preview, 'Editing after restore', 'C3');
+      await expect
+        .poll(async () => JSON.stringify((await read()).snapshot))
+        .toContain('Editing after restore');
+      await saved(preview);
       if (kind === 'sheet') await offline.setOffline(false);
       await expect(other.getByRole('status', { name: 'Save status' })).toContainText(
         'has been restored',
