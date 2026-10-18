@@ -1,0 +1,16 @@
+{
+	admin off
+	auto_https disable_redirects
+	servers {
+		protocols h1 h2
+	}
+}
+
+https://{$SPINEL_HOSTNAME} {
+	bind {$SPINEL_TAILSCALE_IP}
+	tls {
+		protocols tls1.3 tls1.3
+		get_certificate tailscale
+	}
+	reverse_proxy 127.0.0.1:3000
+}

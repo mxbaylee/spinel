@@ -7,7 +7,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "test": "node --test scripts/backlog/tests/*.test.ts && vitest run",
+    "test": "node --test scripts/backlog/tests/*.test.ts scripts/deploy/*.test.ts && vitest run",
     "typecheck": "tsc -p .",
     "design": "node scripts/design-preview.ts",
     "backlog:check": "node scripts/backlog/cli.ts check",
@@ -18,8 +18,8 @@
     "build": "vite build",
     "start": "node server/index.ts",
     "lint": "oxlint --deny-warnings . && npm run format:check",
-    "format": "prettier --write web server src e2e scripts/passkey-check.ts *.config.ts",
-    "format:check": "prettier --check web server src e2e scripts/passkey-check.ts *.config.ts",
+    "format": "prettier --write web server src e2e scripts/passkey-check.ts scripts/deploy *.config.ts",
+    "format:check": "prettier --check web server src e2e scripts/passkey-check.ts scripts/deploy *.config.ts",
     "setup": "node server/setup.ts",
     "passkey:check": "npm run build && node scripts/passkey-check.ts",
     "e2e": "npm run build && playwright test"
