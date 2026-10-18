@@ -1,3 +1,4 @@
+import { guestItemId, documentPath } from './documentAccess.ts';
 import { CollaborationSessions } from './CollaborationSessions.ts';
 import { UserManagerService } from '@univerjs/core';
 import type { Univer, DependencyOverride } from '@univerjs/core';
@@ -30,7 +31,8 @@ export function collaborationPlugins(
   unitID: string,
   override?: DependencyOverride,
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
-  const base = location.origin + '/universer-api';
+  const guest = guestItemId();
+  const base = location.origin + (guest ? `/guest-api/${guest}` : '') + '/universer-api';
   // Public URL extension point: scope is checked before the server accepts a socket.
   class DocumentSocketService extends BrowserCollaborationSocketService {
     protected override _createSocketURL(url: string, ticket: string) {
@@ -50,7 +52,7 @@ export function collaborationPlugins(
           [CollaborationSessionService, { useClass: CollaborationSessions }],
         ],
         socketService: DocumentSocketService,
-        enableOfflineEditing: true,
+        enableOfflineEditing: !guest,
         retryConnectingInterval: 1000,
         sendChangesetTimeout: 100,
         authzUrl: base + '/authz',
@@ -64,7 +66,7 @@ export function collaborationPlugins(
   ];
 }
 export async function prepareCollaboration(id: string) {
-  const response = await fetch(`/api/items/${id}/collaboration`, {
+  const response = await fetch(`${documentPath(id)}/collaboration`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{}',
@@ -100,7 +102,7 @@ export function watchCollaboration(
     if (checking || disposed || denied) return;
     checking = true;
     try {
-      const response = await fetch(`/api/items/${itemId}`, { signal: abort.signal });
+      const response = await fetch(documentPath(itemId), { signal: abort.signal });
       const data = response.ok ? await response.json() : undefined;
       const restored =
         data?.live?.unitId !== undefined && (data.live.unitId !== id || data.live.restoring);

@@ -219,6 +219,13 @@ export class CollaborationStore {
   }
 
   private session(user: string, custom: Record<string, unknown>) {
+    if (user.startsWith('guest:') && Object.hasOwn(custom, 'guestHash')) {
+      try {
+        this.workspace.links.session(user, custom.guestHash);
+      } catch {
+        throw new CollabError('PERMISSION_DENIED', 'This link no longer works.');
+      }
+    }
     // Internal jobs use trusted user identities; network calls additionally bind the live session.
     if (
       Object.hasOwn(custom, 'sessionHash') &&

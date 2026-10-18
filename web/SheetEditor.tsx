@@ -1,3 +1,4 @@
+import { guestItemId } from './documentAccess.ts';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
 import { SheetPrintOpenOperation, UniverSheetsPrintPlugin } from '@univerjs-pro/sheets-print';
@@ -232,19 +233,23 @@ export function SheetEditor({
           <button onClick={() => controller.current?.retry()}>Retry saving</button>
         )}
       </div>
-      <VersionNames
-        id={id}
-        saved={!status.dirty && !status.failed && Boolean(controller.current)}
-      />
-      <FileExports
-        id={id}
-        name={name}
-        saved={!status.dirty && !status.failed && Boolean(controller.current)}
-        print={async () => {
-          if (!print.current) throw new Error('Wait for the spreadsheet to load.');
-          await print.current();
-        }}
-      />
+      {!guestItemId() && (
+        <>
+          <VersionNames
+            id={id}
+            saved={!status.dirty && !status.failed && Boolean(controller.current)}
+          />
+          <FileExports
+            id={id}
+            name={name}
+            saved={!status.dirty && !status.failed && Boolean(controller.current)}
+            print={async () => {
+              if (!print.current) throw new Error('Wait for the spreadsheet to load.');
+              await print.current();
+            }}
+          />
+        </>
+      )}
       <div className="univer-container" ref={container} />
     </section>
   );

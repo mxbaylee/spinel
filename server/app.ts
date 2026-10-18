@@ -1,4 +1,6 @@
 import express from 'express';
+import { guestRoutes } from '../src/server/workspace/guestRoutes.ts';
+import { documentIdentity } from '../src/server/collaboration/identity.ts';
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { resolve } from 'node:path';
@@ -46,6 +48,13 @@ export async function createApp(options: AppOptions) {
         await realtime?.revalidate();
       }),
     );
+    const workspace = new WorkspaceStore(auth);
+    const origin = options.origin ?? 'http://localhost:3000';
+    collaboration = new CollaborationStore(workspace, options.databasePath);
+    history = new HistoryStore(workspace, collaboration);
+    realtime = attachCollaboration(server, workspace, collaboration, origin);
+    workspace.links.recover();
+    app.use(guestRoutes(workspace, collaboration, origin, (id) => realtime!.privacyChanged(id)));
     app.use('/api', (request, response, next) => {
       response.set('Cache-Control', 'no-store');
       if (!auth.session(cookieToken(request))?.user_id) {
@@ -54,11 +63,7 @@ export async function createApp(options: AppOptions) {
       }
       next();
     });
-    const workspace = new WorkspaceStore(auth);
-    const origin = options.origin ?? 'http://localhost:3000';
-    collaboration = new CollaborationStore(workspace, options.databasePath);
-    history = new HistoryStore(workspace, collaboration);
-    realtime = attachCollaboration(server, workspace, collaboration, origin);
+
     app.use('/api', (_request, response, next) => {
       response.once('finish', () => {
         void realtime?.revalidate().catch(() => {});
@@ -67,17 +72,23 @@ export async function createApp(options: AppOptions) {
     });
     app.use('/api/items', workspaceRoutes(auth, origin, workspace, collaboration, history));
     app.post(
-      '/universer-api/authz/-/object/-/batch_allowed',
+      [
+        '/universer-api/authz/-/object/-/batch_allowed',
+        '/guest-api/:guestItem/universer-api/authz/-/object/-/batch_allowed',
+      ],
       express.json({ limit: '64kb' }),
       (request, response) => {
         response.set('Cache-Control', 'no-store');
-        const session = auth.session(cookieToken(request));
-        if (
-          request.headers.origin !== origin ||
-          !session?.user_id ||
-          auth.user(session.user_id)?.is_admin
-        ) {
-          response.status(403).json({ error: 'Sign in at the configured address.' });
+        let identity: ReturnType<typeof documentIdentity>;
+        try {
+          if (request.headers.origin !== origin) throw new Error('Origin');
+          identity = documentIdentity(
+            workspace,
+            request.headers,
+            typeof request.params.guestItem === 'string' ? request.params.guestItem : undefined,
+          );
+        } catch {
+          response.status(403).json({ error: 'This document is not available.' });
           return;
         }
         const requests: unknown = request.body?.requests;
@@ -115,7 +126,7 @@ export async function createApp(options: AppOptions) {
           objectActions: requests.map((item) => {
             let access: string | undefined;
             try {
-              access = collaboration!.access(session.user_id!, item.unitID).access;
+              access = collaboration!.access(identity.userId, item.unitID).access;
             } catch {
               /* Do not reveal other documents. */
             }
@@ -169,10 +180,19 @@ export async function createApp(options: AppOptions) {
       response.status(404).json({ error: 'Not found' });
     });
 
-    const pages = ['/sign-in', '/setup', '/invite', '/', '/settings', '/admin', '/preview'];
+    const pages = [
+      '/sign-in',
+      '/setup',
+      '/invite',
+      '/',
+      '/settings',
+      '/admin',
+      '/preview',
+      '/share/:id',
+    ];
     app.get(pages, (request, response, next) => {
       response.set('Cache-Control', 'no-store');
-      if (request.path === '/invite') {
+      if (request.path === '/invite' || request.path.startsWith('/share/')) {
         response.set('Referrer-Policy', 'no-referrer');
         next();
         return;

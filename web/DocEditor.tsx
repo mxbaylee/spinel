@@ -1,3 +1,4 @@
+import { guestItemId, documentPath } from './documentAccess.ts';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
 import { printDocument } from './documentPrint.ts';
@@ -114,7 +115,7 @@ export function DocEditor({
           try {
             if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type))
               throw new Error('Choose a PNG, JPEG or WebP image.');
-            const response = await fetch(`/api/items/${id}/images`, {
+            const response = await fetch(`${documentPath(id)}/images`, {
               method: 'POST',
               headers: { 'Content-Type': file.type },
               body: file,
@@ -312,19 +313,23 @@ export function DocEditor({
         )}
       </div>
       {uploadError && <p role="alert">{uploadError} Try inserting the file again.</p>}
-      <VersionNames
-        id={id}
-        saved={!status.dirty && !status.failed && Boolean(controller.current)}
-      />
-      <FileExports
-        id={id}
-        name={name}
-        saved={!status.dirty && !status.failed && Boolean(controller.current)}
-        print={async () => {
-          if (!print.current) throw new Error('Wait for the document to load.');
-          await print.current();
-        }}
-      />
+      {!guestItemId() && (
+        <>
+          <VersionNames
+            id={id}
+            saved={!status.dirty && !status.failed && Boolean(controller.current)}
+          />
+          <FileExports
+            id={id}
+            name={name}
+            saved={!status.dirty && !status.failed && Boolean(controller.current)}
+            print={async () => {
+              if (!print.current) throw new Error('Wait for the document to load.');
+              await print.current();
+            }}
+          />
+        </>
+      )}
       {editable && <p className="editor-help">Click the page to write. Type / for commands.</p>}
       <div className="univer-container" ref={container} />
     </section>
