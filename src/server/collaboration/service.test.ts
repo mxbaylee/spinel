@@ -149,6 +149,55 @@ test('history restore publishes an earlier sheet revision as a new live revision
   );
 });
 
+test('history restore publishes an earlier document revision as a new live revision', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.doc.id);
+  const original = (await f.collab.load(f.owner.id, f.doc.id)).snapshot as IDocumentData;
+  const changedBody = { dataStream: 'Changed notes\r\n' };
+  const changeset: IChangeset = {
+    ...f.edit(),
+    unitID: f.doc.id,
+    type: UniverType.UNIVER_DOC,
+    mutations: [
+      {
+        id: RichTextEditingMutation.id,
+        data: JSON.stringify({
+          unitId: f.doc.id,
+          actions: new JSONX().replaceOp(['body'], original.body, changedBody),
+          textRanges: [],
+        }),
+      },
+    ],
+  };
+  const context = { userID: f.owner.id, memberID: 'test-member' };
+  expect(await f.collab.service.submitChangeset({ changeset }, context)).toMatchObject({
+    status: 'committed',
+  });
+  expect(
+    ((await f.collab.load(f.owner.id, f.doc.id)).snapshot as IDocumentData).body?.dataStream,
+  ).toBe(changedBody.dataStream);
+  const restored = await f.collab.service.submitChangeset(
+    {
+      changeset: {
+        ...changeset,
+        baseRev: 2,
+        reqId: 2,
+        mutations: [
+          {
+            id: RevertRevisionMutation.id,
+            data: JSON.stringify({ unitId: f.doc.id, revision: 1 }),
+          },
+        ],
+      },
+    },
+    context,
+  );
+  expect(restored).toMatchObject({ status: 'committed' });
+  const current = await f.collab.load(f.owner.id, f.doc.id);
+  expect(current.revision).toBe(3);
+  expect((current.snapshot as IDocumentData).body).toEqual(original.body);
+});
+
 test('permanent purge waits for in-flight migration before acknowledging deletion', async () => {
   const f = await fixture();
   let enter!: () => void, release!: () => void;
