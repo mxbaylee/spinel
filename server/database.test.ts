@@ -12,6 +12,22 @@ test('application and SDK adapter resolve the same native SQLite package', () =>
   expect(sdk.resolve('libsql')).toBe(require.resolve('libsql'));
 });
 
+test('single-row reads expose only SQL columns, consistently with multi-row reads', () => {
+  const database = new DatabaseSync(':memory:');
+  try {
+    database.exec('CREATE TABLE records(id INTEGER, name TEXT, content BLOB)');
+    database.prepare('INSERT INTO records VALUES(?,?,?)').run(1, 'Document', Buffer.from('data'));
+    const statement = database.prepare('SELECT id, name AS title, content FROM records WHERE id=?');
+    const result = statement.get(1);
+    expect(Object.keys(result!).sort()).toEqual(['content', 'id', 'title']);
+    expect(result).toEqual(statement.all(1)[0]);
+    expect(statement.get(1)).toEqual(result);
+    expect(statement.get(2)).toBeUndefined();
+  } finally {
+    database.close();
+  }
+});
+
 test('app and SDK-runtime connections preserve integrity through paired writes, closes and repeated reopen', async () => {
   const directory = mkdtempSync(join(tmpdir(), 'spinel-database-reopen-'));
   try {

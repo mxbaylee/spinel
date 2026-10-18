@@ -24,9 +24,21 @@ export class DatabaseSync {
   }
   prepare(sql: string) {
     const statement = this.database.prepare(sql);
+    // libsql get() includes driver timing metadata on some platforms. Only SQL
+    // columns belong in application records or serialized API responses.
+    const row = (value: unknown): Row | undefined =>
+      value === undefined
+        ? undefined
+        : Object.fromEntries(
+            statement.columns().map(({ name }) => {
+              const column = (value as Record<string, Value | ArrayBuffer>)[name];
+              // libsql get() returns Buffer while all() returns ArrayBuffer.
+              return [name, column instanceof ArrayBuffer ? Buffer.from(column) : column];
+            }),
+          );
     return {
-      get: (...values: Value[]) => statement.get(...values) as Row | undefined,
-      all: (...values: Value[]) => statement.all(...values) as Row[],
+      get: (...values: Value[]) => row(statement.get(...values)),
+      all: (...values: Value[]) => statement.all(...values).map((value) => row(value)!),
       run: (...values: Value[]) => statement.run(...values),
     };
   }
