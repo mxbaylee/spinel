@@ -1,8 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const project = process.env.SPINEL_E2E_PROJECT;
-if (project && !['development', 'production'].includes(project))
-  throw new Error('SPINEL_E2E_PROJECT must be development or production.');
+if (project && !['development', 'production', 'mobile-https'].includes(project))
+  throw new Error('SPINEL_E2E_PROJECT must be development, production or mobile-https.');
 
 export default defineConfig({
   testDir: './e2e',
@@ -24,9 +24,24 @@ export default defineConfig({
   projects: [
     {
       name: 'development',
+      testIgnore: '**/pwa.spec.ts',
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
     },
-    { name: 'production', use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' } },
+    {
+      name: 'production',
+      testIgnore: '**/pwa.spec.ts',
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' },
+    },
+    {
+      name: 'mobile-https',
+      testMatch: '**/pwa.spec.ts',
+      use: {
+        ...devices['Pixel 7'],
+        baseURL: 'https://localhost:3103',
+        ignoreHTTPSErrors: true,
+        launchOptions: { args: ['--ignore-certificate-errors'] },
+      },
+    },
   ],
   webServer: [
     {
@@ -47,7 +62,17 @@ export default defineConfig({
       env: { PORT: '3101', HOST: '127.0.0.1', DATABASE_PATH: 'test-results/production/app.sqlite' },
       reuseExistingServer: false,
     },
+    {
+      command: 'node scripts/e2e-https.ts',
+      url: 'https://localhost:3103/sign-in',
+      ignoreHTTPSErrors: true,
+      reuseExistingServer: false,
+    },
   ].filter(
-    (server) => !project || server.url.includes(project === 'development' ? ':3100/' : ':3101/'),
+    (server) =>
+      !project ||
+      server.url.includes(
+        project === 'development' ? ':3100/' : project === 'production' ? ':3101/' : ':3103/',
+      ),
   ),
 });

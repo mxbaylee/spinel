@@ -1,7 +1,12 @@
 import { guestItemId } from './documentAccess.ts';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
-import { SheetPrintOpenOperation, UniverSheetsPrintPlugin } from '@univerjs-pro/sheets-print';
+import { sheetPreset, useMobileSheetControls } from './sheetPreset.ts';
+import {
+  SheetPrintOpenOperation,
+  UniverSheetsPrintPlugin,
+  UniverSheetsPrintMobileUIPlugin,
+} from '@univerjs-pro/sheets-print';
 import printEnglish from '@univerjs-pro/sheets-print/locale/en-US';
 import '@univerjs-pro/sheets-print/lib/index.css';
 import { IRenderManagerService } from '@univerjs/engine-render';
@@ -23,7 +28,6 @@ import { Collaborators, watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
-import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
 import enUS from '@univerjs/preset-sheets-core/locales/en-US';
 import '@univerjs/preset-sheets-core/lib/index.css';
 import {
@@ -46,6 +50,7 @@ export function SheetEditor({
   name: string;
   onDirty: (dirty: boolean) => void;
 }) {
+  const mobile = useRef(useMobileSheetControls()).current;
   const print = useRef<(() => Promise<void>) | null>(null);
   const applyFill = useRef<((id: string) => Promise<void>) | null>(null);
   const [editable, setEditable] = useState(false);
@@ -85,8 +90,11 @@ export function SheetEditor({
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish, printEnglish) },
         collaboration: true,
-        plugins: [...collaborationPlugins(data.unitId), UniverSheetsPrintPlugin],
-        presets: [UniverSheetsCorePreset({ container: container.current! })],
+        plugins: [
+          ...collaborationPlugins(data.unitId),
+          mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
+        ],
+        presets: [sheetPreset(container.current!, mobile)],
       });
       print.current = async () => {
         await univerAPI.executeCommand(SheetPrintOpenOperation.id);
@@ -221,7 +229,7 @@ export function SheetEditor({
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
   }, [id]);
   return (
-    <section className="sheet-editor" aria-label="Sheet document">
+    <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
       <Collaborators people={people} />
       <FillPresets
         disabled={!editable || status.failed}

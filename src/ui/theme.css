@@ -630,3 +630,17 @@ dialog {
   padding: clamp(16px, 3vw, 32px);
   min-width: 0;
 }
+
+@media (pointer: coarse) and (max-width: 900px) {
+  .workspace button:not(.univer-container *),
+  .workspace select:not(.univer-container *),
+  .workspace input:not(.univer-container *) {
+    min-height: 44px;
+  }
+  .sheet-editor[data-mobile='true'] .univer-container {
+    height: max(420px, 70dvh);
+    min-width: 0;
+    touch-action: none;
+    overscroll-behavior: contain;
+  }
+}
