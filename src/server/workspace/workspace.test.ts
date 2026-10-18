@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
@@ -229,11 +230,22 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
   // A whole-list reorder crossed the 8 KiB request parser at 210 UUID pins.
   // Moving one reference stays bounded and preserves every other reference.
   const many: string[] = [];
-  for (let n = 0; n < 210; n++) {
-    const pinned = store.create(user.id, { name: `Pin ${n}`, kind: 'folder', parentId: null });
-    store.pin(user.id, pinned.id);
-    many.push(pinned.id);
-  }
+  // Bulk fixture setup avoids 210 fsyncs and quadratic list enumeration; the
+  // final addition and reorder still cross the real HTTP/session/parser boundary.
+  auth.transaction(() => {
+    const insertItem = db.prepare(`INSERT INTO workspace_items
+      (id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,NULL,'folder',?,?,?)`);
+    const insertPin = db.prepare(
+      'INSERT INTO workspace_pins(user_id,item_id,position) VALUES(?,?,?)',
+    );
+    for (let n = 0; n < 210; n++) {
+      const id = randomUUID();
+      insertItem.run(id, user.id, `Pin ${n}`, auth.now(), auth.now());
+      if (n < 209) insertPin.run(user.id, id, n);
+      many.push(id);
+    }
+  });
+  expect((await call('POST', '/pins', { id: many[209] })).status).toBe(200);
   expect(JSON.stringify({ ids: many }).length).toBeGreaterThan(8192);
   const moved = await call('PUT', '/pins', { id: many[209], beforeId: many[0] });
   expect(moved.status).toBe(200);
