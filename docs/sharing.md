@@ -15,7 +15,7 @@ Moving an item out of a shared folder removes that inheritance immediately.
 
 Viewers can open folders, read document content and load its images. Editors can
 also save document content and upload Doc images. Only owners change sharing,
-rename or move items, or create children in their folders. Sharing never changes
+rename, move or [trash](trash.md) items, or create children in their folders. Sharing never changes
 ownership or the owner's folder structure. Sheets and Docs use their native
 read-only mode for viewers. Slides retain their existing empty-document placeholder
 until their editor ticket lands.

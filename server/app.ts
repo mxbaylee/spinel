@@ -6,6 +6,8 @@ import { openDatabase } from './database.ts';
 import { AuthStore } from '../src/server/auth/store.ts';
 import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
 import { workspaceRoutes } from '../src/server/workspace/routes.ts';
+import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
 
@@ -22,6 +24,7 @@ export async function createApp(options: AppOptions) {
   app.disable('x-powered-by');
   const server = createServer(app);
   let vite: import('vite').ViteDevServer | undefined;
+  let stopCleanup = () => {};
 
   try {
     const auth = new AuthStore(database);
@@ -34,7 +37,12 @@ export async function createApp(options: AppOptions) {
       }
       next();
     });
-    app.use('/api/items', workspaceRoutes(auth, options.origin ?? 'http://localhost:3000'));
+    const workspace = new WorkspaceStore(auth);
+    app.use(
+      '/api/items',
+      workspaceRoutes(auth, options.origin ?? 'http://localhost:3000', workspace),
+    );
+    stopCleanup = startTrashCleanup(new TrashStore(workspace));
     app.get('/api/health', (_request, response) => {
       database.prepare('SELECT 1').get();
       response.json({ status: 'ok' });
@@ -138,6 +146,7 @@ export async function createApp(options: AppOptions) {
       response.status(404).type('text').send('Not found');
     });
   } catch (error) {
+    stopCleanup();
     await vite?.close();
     database.close();
     throw error;
@@ -146,6 +155,7 @@ export async function createApp(options: AppOptions) {
   return {
     server,
     async close() {
+      stopCleanup();
       await vite?.close();
       if (server.listening) {
         await new Promise<void>((resolveClose, reject) => {
