@@ -257,7 +257,15 @@ export class HistoryStore {
     requestId: string,
     checkSession = () => {},
   ) {
-    this.workspace.get(user, id, 'edit');
+    checkSession();
+    const completed = this.collaboration.generations.completed(user, id, requestId, checkpoint);
+    if (completed) return completed; // The selected unnamed checkpoint may have since been pruned.
+    if (
+      this.workspace.auth.database
+        .prepare('SELECT state FROM workspace_collaboration WHERE item_id=?')
+        .get(id)?.state !== 'ready'
+    )
+      await this.collaboration.prepare(user, id);
     const snapshot = await this.load(user, id, checkpoint);
     return this.collaboration.restore(
       user,
@@ -349,19 +357,21 @@ export class HistoryStore {
         if (!user) continue;
         const source: Source = state === 'ready' ? 'collaboration' : 'native';
         // Public adapter metadata repairs a missed commit event after an interrupted process.
-        const generation = this.collaboration.generations.active(id);
+        const generation =
+          source === 'collaboration' ? this.collaboration.generations.active(id) : undefined;
         const unit =
           source === 'collaboration'
             ? await this.collaboration.service.dbAdapter.getUnit(
                 { userID: user, customData: {}, request: {} },
-                generation.unitId,
+                generation!.unitId,
               )
             : undefined;
-        if (this.collaboration.generations.active(id).unitId !== generation.unitId) continue;
+        if (generation && this.collaboration.generations.active(id).unitId !== generation.unitId)
+          continue;
         const revision =
           source === 'collaboration'
             ? unit
-              ? unit.headRevision + generation.offset
+              ? unit.headRevision + generation!.offset
               : undefined
             : this.native(user, id)?.revision;
         if (revision === undefined) continue;

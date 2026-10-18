@@ -271,13 +271,21 @@ export class CollaborationStore {
       custom.stagedUnit === unitId &&
       typeof custom.itemId === 'string'
     )
-      return this.workspace.get(user, custom.itemId, 'edit');
+      return this.workspaceAccess(user, custom.itemId, 'edit');
     return this.access(user, unitId);
   }
 
   access(user: string, id: string, edit = false) {
     try {
-      const item = this.workspace.get(user, this.itemForUnit(id), edit ? 'edit' : 'read');
+      return this.workspaceAccess(user, this.itemForUnit(id), edit ? 'edit' : 'read');
+    } catch {
+      throw new CollabError('PERMISSION_DENIED', 'This document is not available.');
+    }
+  }
+
+  private workspaceAccess(user: string, id: string, mode: 'read' | 'edit' = 'read') {
+    try {
+      const item = this.workspace.get(user, id, mode);
       if (item.kind !== 'sheet' && item.kind !== 'doc') throw new AuthError(404, 'Not a document.');
       return item;
     } catch {
@@ -297,17 +305,17 @@ export class CollaborationStore {
   async prepare(user: string, id: string) {
     await this.prepareCore(user, id);
     for (const listener of this.prepareListeners) await listener(user, id);
-    this.workspace.get(user, id);
+    this.workspaceAccess(user, id);
   }
 
   private async prepareCore(user: string, id: string) {
-    this.workspace.get(user, id);
+    this.workspaceAccess(user, id);
     if (this.generations.restoring(id))
       throw new AuthError(409, 'A version is being restored. Try again shortly.');
     const existing = this.preparing.get(id);
     if (existing) {
       await existing;
-      this.workspace.get(user, id);
+      this.workspaceAccess(user, id);
       return;
     }
     const pending = this.prepareUnit(user, id);
@@ -320,7 +328,7 @@ export class CollaborationStore {
   }
 
   private async prepareUnit(user: string, id: string) {
-    const item = this.workspace.get(user, id);
+    const item = this.workspaceAccess(user, id);
     const unitId = this.generations.active(id).unitId;
     const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
     const auth = this.workspace.auth;
@@ -381,14 +389,14 @@ export class CollaborationStore {
       { userID: user },
     );
     await this.validator.materializeSnapshot(current);
-    this.workspace.get(user, id);
+    this.workspaceAccess(user, id);
     auth.database
       .prepare("UPDATE workspace_collaboration SET state='ready' WHERE item_id=?")
       .run(id);
   }
 
   async load(user: string, id: string) {
-    const item = this.workspace.get(user, id);
+    const item = this.workspaceAccess(user, id);
     const unitId = this.generations.active(id).unitId;
     const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
     const data = await this.service.getUnitLoadDataWithBlocks(
@@ -400,7 +408,7 @@ export class CollaborationStore {
       item.kind === 'sheet'
         ? await transformSnapshotToWorkbookData(materialized.snapshot, materialized.sheetBlocks)
         : transformSnapshotToDocumentData(materialized.snapshot);
-    const current = this.workspace.get(user, id);
+    const current = this.workspaceAccess(user, id);
     const generation = this.generations.active(id);
     if (generation.unitId !== unitId)
       throw new AuthError(409, 'This document was restored. Reload to continue.');
@@ -432,7 +440,7 @@ export class CollaborationStore {
       try {
         await Promise.all(this.admitted.get(job.previousUnit) ?? []);
         checkSession();
-        const item = this.workspace.get(user, id, 'edit');
+        const item = this.workspaceAccess(user, id, 'edit');
         const before = await this.load(user, id);
         const preserve = await prepareBefore(before);
         if (item.kind === 'doc')

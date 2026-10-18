@@ -85,6 +85,14 @@ export class CollaborationGenerations {
       .get(id) as RestoreJob | undefined;
   }
 
+  completed(user: string, itemId: string, requestId: string, checkpointId: string) {
+    this.workspace.get(user, itemId, 'edit');
+    const job = this.job(requestId);
+    if (job && (job.userId !== user || job.itemId !== itemId || job.checkpointId !== checkpointId))
+      throw new AuthError(409, 'This restore request has already been used.');
+    return job?.status === 'complete' ? job : undefined;
+  }
+
   begin(
     userId: string,
     itemId: string,
