@@ -79,6 +79,14 @@ export function SheetEditor({
         plugins: collaborationPlugins(id),
         presets: [UniverSheetsCorePreset({ container: container.current! })],
       });
+      // Sheet services are registered lazily when the first sheet is created.
+      // Own disposal before awaiting load, then attach display hooks after readiness.
+      disposeEditor = () => univer.dispose();
+      identifyCollaborator(univer, data.user);
+      const workbook = await univerAPI.getCollaboration().loadSheetAsync(id);
+      if (!workbook) throw new Error('Could not load this spreadsheet.');
+      await editorReady(univerAPI);
+      if (disposed) return;
       const interceptor = univer
         .__getInjector()
         .get(SheetInterceptorService)
@@ -119,11 +127,6 @@ export function SheetEditor({
         stopEditingTheme();
         univer.dispose();
       };
-      identifyCollaborator(univer, data.user);
-      const workbook = await univerAPI.getCollaboration().loadSheetAsync(id);
-      if (!workbook) throw new Error('Could not load this spreadsheet.');
-      await editorReady(univerAPI);
-      if (disposed) return;
       const readOnly = async () => {
         setEditable(false);
         // This tab's presentation follows its grant; never change shared permissions.
