@@ -159,6 +159,12 @@ The focused integration tests use the actual pinned service and SQLite adapter:
 
 These tests do not establish the two-browser acceptance criteria below.
 
+The Sheet browser regression also loses both the HTTP submission response and
+the corresponding socket acknowledgement after a real server commit. The client
+stays offline and reports unsaved work until explicitly reconnected. Recovery
+and a subsequent reload preserve the edit with exactly one durable revision
+increment, so an idempotent cell value cannot conceal duplicate application.
+
 ## Work remaining before review and merge
 
 1. Finish real two-context Sheet and Doc typing, within-a-second remote updates,

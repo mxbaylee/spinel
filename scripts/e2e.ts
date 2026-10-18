@@ -15,7 +15,7 @@ if (args.some((arg) => arg === '--project' || arg.startsWith('--project='))) {
 for (const project of ['development', 'production']) {
   const result = spawnSync(
     process.execPath,
-    [resolve('node_modules/@playwright/test/cli.js'), 'test', '--project', project, ...args],
+    [resolve('node_modules/@playwright/test/cli.js'), 'test', `--project=${project}`, ...args],
     { stdio: 'inherit', env: { ...process.env, SPINEL_E2E_PROJECT: project } },
   );
   if (result.error) console.error(result.error.message);

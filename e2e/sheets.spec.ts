@@ -134,12 +134,22 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
     await network.setOffline(false);
     await saved();
     await expect.poll(async () => cell((await read()).snapshot, 1)?.v).toBe(42);
-    // Lose an acknowledgement after the server has committed, then retry exactly.
+    // Lose both acknowledgement paths after a real commit. A repeated cell value
+    // alone could hide a duplicate, so also require exactly one durable revision.
+    const priorRevision = (await read()).revision;
     network.loseAcknowledgement();
     await type(page, 'A2', 'retry safely');
     await expect.poll(() => network.acknowledgementLost()).toBe(true);
+    await expect(sheet.getByRole('status', { name: 'Save status' })).toContainText('not saved');
+    expect((await read()).revision).toBe(priorRevision + 1);
+    await network.setOffline(false);
     await saved();
-    expect(cell((await read()).snapshot, 0, 1)?.v).toBe('retry safely');
+    const recoveredCommit = await read();
+    expect(cell(recoveredCommit.snapshot, 0, 1)?.v).toBe('retry safely');
+    expect(recoveredCommit.revision).toBe(priorRevision + 1);
+    await page.reload();
+    await saved();
+    expect((await read()).revision).toBe(priorRevision + 1);
     // A second editor merges its UI edit instead of replacing the newer snapshot.
     await type(other, 'C1', 'concurrent edit');
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
