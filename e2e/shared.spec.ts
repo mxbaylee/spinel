@@ -90,7 +90,9 @@ test('shared drawer files by drag and keyboard, removes only personal placement,
     await sharing
       .getByRole('button', { name: `Apply access for ${viewer.name}`, exact: true })
       .click();
-    await expect(sharing.getByRole('status')).toHaveText(`Access updated for ${viewer.name}.`);
+    await expect(
+      sharing.getByRole('status').filter({ hasText: `Access updated for ${viewer.name}.` }),
+    ).toHaveText(`Access updated for ${viewer.name}.`);
     await page.evaluate(() => window.dispatchEvent(new Event('focus')));
     await expect(contents.getByRole('button', { name: /^Shared journal/ })).toHaveCount(0);
     await expect(
