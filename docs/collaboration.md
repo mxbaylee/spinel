@@ -1,8 +1,10 @@
-# Live collaboration implementation checkpoint
+# Live collaboration
 
-SPN-012 is in progress. The service, HTTP/WebSocket transport and browser editors are
-now integrated. Browser regressions and full acceptance verification are still
-in progress; do not deploy this branch as a completed collaboration feature.
+Sheets and Docs use Univer collaboration in the application server with SQLite
+storage, authenticated access, presence and offline recovery. The integration
+uses public SDK interfaces behind a TypeScript boundary so SPN-014 can replace
+it if measured limits make that necessary. The owner chose this approach on
+2026-10-17; SPN-010 is independent evidence, not a prerequisite (decision #31).
 
 ## Storage boundary
 
@@ -127,7 +129,10 @@ the guard merely to make installation pass.
 ## Verification completed
 
 `npm run e2e` builds once and runs development and production sequentially, with
-only the matching app server alive and one browser worker. Each build retains
+only the matching app server alive and one browser worker. Development retains
+Vite modules and HMR but omits Node’s server-file watcher: fixed-source tests do
+not exercise autorestart, and watching adds import-tracking IPC, including worker
+imports. The normal `npm run dev` command still watches server files. Each build retains
 its own traces and disposable database. Tests that need a fresh setup/admin
 instance launch and close a real server child rather than retaining a second
 SDK/Vite module graph inside Playwright. These controls bound test resources;
@@ -157,7 +162,16 @@ The focused integration tests use the actual pinned service and SQLite adapter:
   SPN-030's archive, restored into a fresh database, reopened through the SDK and
   materialized as the same value. Native Doc data and grants survive as well.
 
-These tests do not establish the two-browser acceptance criteria below.
+Browser tests separately verify simultaneous Sheet and Doc edits through two
+authenticated contexts, strictly within one second from committed input to both
+peer views. They also verify name/colour/selection navigation, a full minute of
+socket and HTTP disconnection, queued-edit merging in both open views, and
+read-only/revocation behavior. The broader suite covers rich text and images,
+formulas/formatting/tabs, reload persistence, sharing, trash and authentication.
+Both development and production must pass; CI fails flaky-only successes.
+Earlier local runs under additional instrumentation/resource pressure exceeded
+the latency limit; retain those failures and the subsequent clean-run evidence
+in the PR rather than treating the limit as a universal hardware guarantee.
 
 The Sheet browser regression also loses both the HTTP submission response and
 the corresponding socket acknowledgement after a real server commit. The client
@@ -165,18 +179,15 @@ stays offline and reports unsaved work until explicitly reconnected. Recovery
 and a subsequent reload preserve the edit with exactly one durable revision
 increment, so an idempotent cell value cannot conceal duplicate application.
 
-## Work remaining before review and merge
+## Related work and limits
 
-1. Finish real two-context Sheet and Doc typing, within-a-second remote updates,
-   minute-long socket loss, reconnect and live-revocation assertions.
-2. Complete rich-text/image, formatting/formula/tab and sharing regressions; run
-   full unit, type, lint, backlog and development/production browser checks.
-3. Independently review the original ticket, repair in-scope findings, reach at
-   least 95/100 with no blockers, retire SPN-012/update dependents/index, and wait
-   for all six checks on that SHA before squash merge.
-
-SPN-010's separately running limits experiment is not a dependency. SPN-017 adds
-adversarial hardening; it does not excuse missing baseline authorization here.
+SPN-010's separate limits experiment remains required evidence about unlicensed
+capacity; this integration does not establish an unlimited editor count or a
+more-than-a-day soak. SPN-013 remains optional with inconclusive limit evidence.
+SPN-017 extends adversarial connection testing and logging; baseline access
+control is already enforced here (decision #23). Public link access, profile
+customization and history remain their own tickets. The one-second browser
+acceptance checks do not replace fresh-host capacity/deployment verification.
 
 Public references:
 [storage](https://docs.univer.ai/server/collaboration/database-adapters),

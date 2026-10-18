@@ -222,7 +222,9 @@ test('two document editors merge text and navigate to a collaborator selection',
     await focus(page);
     await page.keyboard.type('Shared anchor');
     await saved(page);
-    await expect.poll(read).toBe('Shared anchor\r\n');
+    // This separate API reconstructs a native snapshot on its first read. Its
+    // cold materializer is not the peer-to-peer UI latency measured below.
+    await expect.poll(read, { timeout: 30_000 }).toBe('Shared anchor\r\n');
     await other.goto(`${baseURL}/?item=${item.id}`);
     await saved(other);
     await focus(page);

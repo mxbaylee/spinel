@@ -28,7 +28,9 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'npm run dev -- --no-open',
+      // Vite still serves development modules. A second Node file watcher is
+      // unnecessary for fixed-source tests and adds work to cold SDK imports.
+      command: 'node server/index.ts --dev --no-open',
       url: 'http://localhost:3100/sign-in',
       env: {
         PORT: '3100',
