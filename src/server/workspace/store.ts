@@ -59,7 +59,25 @@ export class WorkspaceStore {
         role TEXT NOT NULL CHECK(role IN ('viewer','editor')),
         PRIMARY KEY(item_id,user_id)
       ) STRICT;
+      CREATE TABLE IF NOT EXISTS workspace_placements (
+        user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
+        parent_id TEXT REFERENCES workspace_items(id) ON DELETE CASCADE,
+        PRIMARY KEY(user_id,item_id)
+      ) STRICT;
+      CREATE INDEX IF NOT EXISTS workspace_placements_parent ON workspace_placements(parent_id);
     `);
+    // Zero records an unknown legacy share date rather than inventing one from
+    // document modification time. Role changes preserve it; a new grant records now.
+    if (
+      !auth.database
+        .prepare('PRAGMA table_info(workspace_grants)')
+        .all()
+        .some((field) => field.name === 'shared_at')
+    )
+      auth.database.exec(
+        'ALTER TABLE workspace_grants ADD COLUMN shared_at INTEGER NOT NULL DEFAULT 0',
+      );
     const fields = auth.database.prepare('PRAGMA table_info(workspace_items)').all();
     // Additive migration preserves existing native snapshots and image foreign keys.
     if (!fields.some((field) => field.name === 'trashed_at'))
@@ -72,6 +90,7 @@ export class WorkspaceStore {
     this.links = new LinkAccess(auth);
   }
   cleanPins() {
+    this.cleanPlacements();
     // Access can change through a parent grant, a move, or a trash batch.
     // Remove references at that transition, so a later regrant cannot revive them.
     const rows = this.auth.database.prepare('SELECT user_id,item_id FROM workspace_pins').all() as {
@@ -207,6 +226,89 @@ export class WorkspaceStore {
       .all(ownerId) as unknown as WorkspaceItem[];
     return items.map((item) => ({ ...item, tags: this.ownTags(ownerId, item.id) }));
   }
+  shared(userId: string): WorkspaceItem[] {
+    this.owner(userId);
+    return this.auth.transaction(() => {
+      this.cleanPlacements();
+      const rows = this.auth.database
+        .prepare(
+          `
+        WITH RECURSIVE accessible(id,owner_id,shared_at) AS (
+          SELECT i.id,i.owner_id,g.shared_at FROM workspace_items i
+          JOIN workspace_grants g ON g.item_id=i.id
+          WHERE g.user_id=? AND i.owner_id<>? AND i.trashed_at IS NULL
+          UNION
+          SELECT c.id,c.owner_id,CASE WHEN a.shared_at=0 THEN 0 ELSE max(a.shared_at,c.created_at) END
+          FROM workspace_items c JOIN accessible a ON c.parent_id=a.id AND c.owner_id=a.owner_id
+          WHERE c.trashed_at IS NULL
+        ) SELECT id,max(shared_at) AS sharedAt FROM accessible GROUP BY id
+          ORDER BY sharedAt DESC,id
+      `,
+        )
+        .all(userId, userId) as { id: string; sharedAt: number }[];
+      return rows.flatMap((row) => {
+        // A direct grant below a trashed ancestor is not visible; use the same
+        // resolver as document reads rather than trusting discovery alone.
+        if (!this.role(userId, row.id)) return [];
+        const placement = this.auth.database
+          .prepare(
+            'SELECT parent_id AS parentId FROM workspace_placements WHERE user_id=? AND item_id=?',
+          )
+          .get(userId, row.id) as { parentId: string | null } | undefined;
+        return [
+          {
+            ...this.get(userId, row.id),
+            sharedAt: row.sharedAt,
+            ...(placement ? { placementParentId: placement.parentId } : {}),
+          },
+        ];
+      });
+    });
+  }
+  place(userId: string, id: string, destination: unknown, remove = false): WorkspaceItem[] {
+    this.owner(userId);
+    return this.auth.transaction(() => {
+      this.cleanPlacements();
+      if (remove) {
+        this.auth.database
+          .prepare('DELETE FROM workspace_placements WHERE user_id=? AND item_id=?')
+          .run(userId, id);
+      } else {
+        const item = this.get(userId, id);
+        if (item.access === 'owner')
+          throw new AuthError(400, 'File a shared item; use Move for your own items.');
+        const parentId = this.parent(userId, destination);
+        this.auth.database
+          .prepare(
+            `INSERT INTO workspace_placements(user_id,item_id,parent_id) VALUES(?,?,?)
+          ON CONFLICT(user_id,item_id) DO UPDATE SET parent_id=excluded.parent_id`,
+          )
+          .run(userId, id, parentId);
+      }
+      return this.shared(userId);
+    });
+  }
+  private cleanPlacements() {
+    const rows = this.auth.database
+      .prepare('SELECT user_id,item_id,parent_id FROM workspace_placements')
+      .all() as {
+      user_id: string;
+      item_id: string;
+      parent_id: string | null;
+    }[];
+    const remove = this.auth.database.prepare(
+      'DELETE FROM workspace_placements WHERE user_id=? AND item_id=?',
+    );
+    for (const row of rows) {
+      const access = this.role(row.user_id, row.item_id);
+      if (
+        !access ||
+        access === 'owner' ||
+        (row.parent_id !== null && this.role(row.user_id, row.parent_id) !== 'owner')
+      )
+        remove.run(row.user_id, row.item_id);
+    }
+  }
   // All callers use this resolver, including content, metadata and image access.
   // UNION makes malformed ancestor cycles finite; inherited grants cannot cross owners.
   private role(userId: string, id: string): ItemAccess | null {
@@ -262,6 +364,17 @@ export class WorkspaceStore {
     return {
       ...item,
       access,
+      ...(access !== 'owner'
+        ? {
+            ownerName: (
+              this.auth.database
+                .prepare(
+                  'SELECT u.name FROM auth_users u JOIN workspace_items i ON i.owner_id=u.id WHERE i.id=?',
+                )
+                .get(id) as { name: string }
+            ).name,
+          }
+        : {}),
       tags: this.ownTags(userId, id),
       parentId: item.parentId && this.role(userId, item.parentId) ? item.parentId : null,
     };
@@ -326,10 +439,10 @@ export class WorkspaceStore {
         if (!user || user.is_admin) throw new AuthError(400, 'Choose an active everyday account.');
         this.auth.database
           .prepare(
-            `INSERT INTO workspace_grants VALUES(?,?,?)
+            `INSERT INTO workspace_grants(item_id,user_id,role,shared_at) VALUES(?,?,?,?)
           ON CONFLICT(item_id,user_id) DO UPDATE SET role=excluded.role`,
           )
-          .run(id, recipient, role as string);
+          .run(id, recipient, role as string, this.auth.now());
       }
       this.cleanPins();
       return this.sharing(userId, id);

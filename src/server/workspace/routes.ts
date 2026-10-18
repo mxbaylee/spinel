@@ -258,6 +258,23 @@ export function workspaceRoutes(
       throw new AuthError(400, 'Invalid item changes.');
     return body;
   }
+  router.get('/shared', (request, response) =>
+    response.json({ items: store.shared(owner(request)) }),
+  );
+  router.put('/:id/placement', (request, response) =>
+    response.json({
+      items: store.place(
+        owner(request),
+        String(request.params.id),
+        payload(request, ['parentId']).parentId,
+      ),
+    }),
+  );
+  router.delete('/:id/placement', (request, response) =>
+    response.json({
+      items: store.place(owner(request), String(request.params.id), null, true),
+    }),
+  );
   router.get('/pins', (request, response) => response.json({ items: store.pins(owner(request)) }));
   for (const method of ['post', 'delete'] as const)
     router[method]('/pins', (request, response) =>

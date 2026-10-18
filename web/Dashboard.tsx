@@ -9,12 +9,13 @@ import { itemsRequest } from './itemsApi.ts';
 import { PinButton, usePins } from './Pins.tsx';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { ImportFile } from './ImportFile.tsx';
+import { SharedBadge, useSharedItems } from './SharedItems.tsx';
 import type { NavigationGuard } from './navigation.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
 
-type Action = { mode: 'new' | 'rename' | 'move'; item?: WorkspaceItem };
+type Action = { mode: 'new' | 'rename' | 'move' | 'file'; item?: WorkspaceItem };
 const TRASH_VIEW = 'trash';
 const selectedId = () => {
   const query = new URLSearchParams(location.search);
@@ -28,6 +29,9 @@ const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m
 export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   const dropTarget = useRef<HTMLElement>(null);
   const pins = usePins();
+  const shared = useSharedItems();
+  const [sharedOpen, setSharedOpen] = useState(false);
+  const draggingShared = useRef<string | null>(null);
   const [items, setItems] = useState<WorkspaceItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [viewed, setViewed] = useState<WorkspaceItem[]>([]);
@@ -105,9 +109,17 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   useEffect(() => {
     void pins.refresh();
   }, [items, viewed]);
-  const byId = new Map([...items, ...viewed].map((item) => [item.id, item]));
+  const byId = new Map([...items, ...shared.items, ...viewed].map((item) => [item.id, item]));
   const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
-  const visibleItems = currentId ? viewed : items;
+  const personalFolder = !currentId || (current?.kind === 'folder' && current.access === 'owner');
+  const visibleItems = personalFolder
+    ? [
+        ...(currentId ? viewed : items).filter(
+          (item) => item.access === 'owner' && item.parentId === currentId,
+        ),
+        ...shared.items.filter((item) => item.placementParentId === currentId),
+      ]
+    : viewed.filter((item) => item.parentId === currentId);
   function ancestors(item?: WorkspaceItem) {
     const path: WorkspaceItem[] = [];
     const seen = new Set<string>();
@@ -148,7 +160,11 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     setAction({ mode, item });
     setName(item?.name ?? '');
     setKind('folder');
-    setDestination(item?.parentId ?? '');
+    setDestination(
+      mode === 'file'
+        ? (shared.items.find((entry) => entry.id === item?.id)?.placementParentId ?? '')
+        : (item?.parentId ?? ''),
+    );
     setError('');
   }
   async function submit() {
@@ -156,6 +172,10 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     setBusy(true);
     setError('');
     try {
+      if (action.mode === 'file') {
+        if (await shared.place(action.item!.id, destination || null)) setAction(null);
+        return;
+      }
       const { item } = await itemsRequest<{ item: WorkspaceItem }>(
         action.mode === 'new' ? '' : `/${action.item!.id}`,
         action.mode === 'new' ? 'POST' : 'PATCH',
@@ -178,6 +198,38 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   async function reloadItems() {
     const result = await itemsRequest<{ items: WorkspaceItem[] }>();
     setItems(result.items);
+  }
+  function folderDrop(parentId: string | null) {
+    return {
+      onDragOver: (event: React.DragEvent) => {
+        if (draggingShared.current && !shared.busy) event.preventDefault();
+      },
+      onDrop: (event: React.DragEvent) => {
+        event.preventDefault();
+        const id = draggingShared.current;
+        draggingShared.current = null;
+        if (id && !shared.busy) void shared.place(id, parentId);
+      },
+    };
+  }
+  function dragShared(item: WorkspaceItem) {
+    return (
+      <button
+        draggable={!shared.busy}
+        disabled={shared.busy}
+        aria-label={`Drag ${item.name} into a folder`}
+        onDragStart={(event) => {
+          draggingShared.current = item.id;
+          event.dataTransfer.effectAllowed = 'copy';
+          event.dataTransfer.setData('application/x-spinel-shared-id', item.id);
+        }}
+        onDragEnd={() => {
+          draggingShared.current = null;
+        }}
+      >
+        ↗
+      </button>
+    );
   }
   async function trashItem(item: WorkspaceItem) {
     if (!navigation.allow()) return;
@@ -208,6 +260,24 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
           <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>
           <PinButton item={item} />
           {tagButton}
+          <button
+            disabled={busy || shared.busy}
+            aria-label={`File ${item.name}`}
+            onClick={() => edit('file', item)}
+          >
+            File into folder
+          </button>
+          {shared.items.some(
+            (entry) => entry.id === item.id && entry.placementParentId !== undefined,
+          ) && (
+            <button
+              disabled={shared.busy}
+              aria-label={`Remove ${item.name} from my folder`}
+              onClick={() => void shared.place(item.id, null, true)}
+            >
+              Remove from my folder
+            </button>
+          )}
         </span>
       );
     return (
@@ -243,8 +313,11 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
       <h1>Dashboard</h1>
       <div className="dashboard">
         <aside aria-label="Folders">
-          <button disabled={busy} onClick={() => navigate(null)}>
+          <button {...folderDrop(null)} disabled={busy} onClick={() => navigate(null)}>
             All my files
+          </button>
+          <button aria-expanded={sharedOpen} onClick={() => setSharedOpen((value) => !value)}>
+            Shared with me
           </button>
           <button
             disabled={busy}
@@ -257,6 +330,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
             {folders.map(({ item, path }) => (
               <li key={item.id} style={{ paddingLeft: Math.min(path.length - 1, 8) * 12 }}>
                 <button
+                  {...folderDrop(item.id)}
                   disabled={busy}
                   aria-current={currentId === item.id ? 'page' : undefined}
                   onClick={() => navigate(item.id)}
@@ -269,6 +343,43 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
           </ul>
         </aside>
         <section ref={dropTarget} className="files" aria-label="Your files">
+          {shared.error && (
+            <p role="alert">
+              {shared.error}{' '}
+              <button onClick={() => void shared.refresh()}>Refresh shared items</button>
+            </p>
+          )}
+          {sharedOpen && (
+            <section className="shared-drawer" aria-label="Shared with me">
+              <h2>Shared with me</h2>
+              <p>File a reference in your folders. The owner's copy stays where it is.</p>
+              {!shared.loaded ? (
+                <p role="status">Loading shared items…</p>
+              ) : (
+                !shared.items.length && <p>Nothing has been shared with you yet.</p>
+              )}
+              <ul className="file-list">
+                {shared.items.map((item) => (
+                  <li key={item.id}>
+                    {dragShared(item)}
+                    <button
+                      className="item-open"
+                      aria-label={`Open ${item.name}`}
+                      onClick={() => navigate(item.id)}
+                    >
+                      {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
+                    </button>
+                    <SharedBadge item={item} />
+                    <small>
+                      {item.sharedAt ? new Date(item.sharedAt).toLocaleDateString() : 'Older share'}
+                    </small>
+                    {actions(item)}
+                    <TagLabels tags={item.tags} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           <nav aria-label="Breadcrumb">
             <button disabled={busy} onClick={() => navigate(null)}>
               My files
@@ -301,6 +412,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
             <>
               <div className="folder-heading">
                 <h2>{current?.name ?? 'My files'}</h2>
+                {current && <SharedBadge item={current} />}
                 {current && actions(current)}
                 {current && <TagLabels tags={current.tags} />}
               </div>
@@ -328,9 +440,8 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                       }}
                     />
                   )}
-                  <ul className="file-list">
+                  <ul className="file-list" aria-label="Folder contents">
                     {visibleItems
-                      .filter((item) => item.parentId === currentId)
                       .sort(
                         (a, b) =>
                           Number(b.kind === 'folder') - Number(a.kind === 'folder') ||
@@ -339,6 +450,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                       )
                       .map((item) => (
                         <li key={item.id}>
+                          {item.access !== 'owner' && dragShared(item)}
                           <button
                             className="item-open"
                             disabled={busy}
@@ -346,12 +458,13 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                           >
                             {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
                           </button>
+                          <SharedBadge item={item} />
                           {actions(item)}
                           <TagLabels tags={item.tags} />
                         </li>
                       ))}
                   </ul>
-                  {!visibleItems.some((item) => item.parentId === currentId) && (
+                  {!visibleItems.length && (
                     <p className="empty-state">
                       <GemLogo size={52} />
                       This folder is empty.
@@ -392,7 +505,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
           {action && (
             <form
               className="item-form"
-              aria-label={`${action.mode === 'new' ? 'New item' : action.mode === 'move' ? 'Move item' : 'Rename item'}`}
+              aria-label={`${action.mode === 'new' ? 'New item' : action.mode === 'file' ? 'File shared item' : action.mode === 'move' ? 'Move item' : 'Rename item'}`}
               onSubmit={(event) => {
                 event.preventDefault();
                 void submit();
@@ -401,7 +514,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
               <h3>
                 {action.mode === 'new'
                   ? 'New item'
-                  : `${action.mode === 'rename' ? 'Rename' : 'Move'} ${action.item!.name}`}
+                  : `${action.mode === 'rename' ? 'Rename' : action.mode === 'file' ? 'File' : 'Move'} ${action.item!.name}`}
               </h3>
               {action.mode === 'new' && (
                 <label>
@@ -419,7 +532,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                   </select>
                 </label>
               )}
-              {action.mode !== 'move' ? (
+              {action.mode !== 'move' && action.mode !== 'file' ? (
                 <label>
                   Name
                   <input
@@ -453,7 +566,9 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
               <div className="item-actions">
                 <button
                   className="primary"
-                  disabled={busy || (action.mode !== 'move' && !name.trim())}
+                  disabled={
+                    busy || (action.mode !== 'move' && action.mode !== 'file' && !name.trim())
+                  }
                 >
                   {action.mode === 'new' ? 'Create' : 'Save'}
                 </button>

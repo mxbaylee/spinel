@@ -408,6 +408,19 @@ button.primary {
   color: var(--sp-text);
   margin-left: 6px;
 }
+.shared-owner {
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+.shared-drawer {
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  max-height: 32rem;
+  overflow: auto;
+  background: var(--sp-tint-1);
+}
 @media (max-width: 900px) {
   .workspace-body:has(.pinned-sidebar) {
     grid-template-columns: minmax(0, 1fr);
