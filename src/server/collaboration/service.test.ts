@@ -812,6 +812,18 @@ test('SDK generation restore retains multi-tab formulas, styles, resources and s
 
 test('file-backed restart cancels a staged SDK replacement and preserves a completed restore and receipt', async () => {
   const f = await fixture();
+  const step = async <T>(name: string, action: () => Promise<T>) => {
+    try {
+      return await action();
+    } catch (cause) {
+      throw new Error(`Restore restart stage: ${name}`, { cause });
+    }
+  };
+  const integrity = (database: typeof f.db, stage: string) => {
+    expect(database.prepare('PRAGMA integrity_check').all(), stage).toEqual([
+      { integrity_check: 'ok' },
+    ]);
+  };
   const { HistoryStore } = await import('../history/store.ts');
   const history = new HistoryStore(f.workspace, f.collab);
   let historyClosed = false;
@@ -844,9 +856,12 @@ test('file-backed restart cancels a staged SDK replacement and preserves a compl
   ).not.toBeNull();
   await history.close();
   historyClosed = true;
+  integrity(f.db, 'before closing staged fixture');
   await f.stop();
+  integrity(f.db, 'after closing staged SDK');
   f.db.close();
   const db = openDatabase(f.path);
+  integrity(db, 'reopened staged database');
   cleanup.push(() => {
     if (db.isOpen) db.close();
   });
@@ -863,14 +878,17 @@ test('file-backed restart cancels a staged SDK replacement and preserves a compl
   });
   expect(collab.generations.restoring(f.sheet.id)).toBe(false);
   expect(
-    ((await collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
-      .cellData?.[0]?.[0]?.v,
+    (
+      (await step('load old live after staged restart', () => collab.load(f.owner.id, f.sheet.id)))
+        .snapshot as IWorkbookData
+    ).sheets.first.cellData?.[0]?.[0]?.v,
   ).toBe(99);
   expect(
     db.prepare('SELECT status FROM spinel_restore_jobs WHERE next_unit=?').get(staged.next_unit)
       ?.status,
   ).toBe('cancelled');
-  await collab.purgeDeleted();
+  await step('purge abandoned stage', () => collab.purgeDeleted());
+  integrity(db, 'after purging abandoned stage');
   expect(
     await collab.service.dbAdapter.getUnit(
       { userID: f.owner.id, customData: {}, request: {} },
@@ -878,25 +896,34 @@ test('file-backed restart cancels a staged SDK replacement and preserves a compl
     ),
   ).toBeNull();
   const request = randomUUID();
-  const completed = await reopened.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, request);
+  const completed = await step('complete restore after first restart', () =>
+    reopened.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, request),
+  );
   await reopened.close();
   reopenedClosed = true;
+  integrity(db, 'before closing completed SDK');
   await collab.close();
+  integrity(db, 'after closing completed SDK');
   stopped = true;
   db.close();
   const lastDb = openDatabase(f.path);
+  integrity(lastDb, 'reopened completed database');
   cleanup.push(() => lastDb.close());
   const lastWorkspace = new WorkspaceStore(new AuthStore(lastDb));
   const last = new CollaborationStore(lastWorkspace, f.path);
   cleanup.push(() => last.close());
   const lastHistory = new HistoryStore(lastWorkspace, last);
   cleanup.push(() => lastHistory.close());
-  await last.prepare(f.owner.id, f.sheet.id);
+  await step('prepare completed generation after restart', () =>
+    last.prepare(f.owner.id, f.sheet.id),
+  );
   expect(last.generations.active(f.sheet.id)).toMatchObject({
     unitId: completed.nextUnit,
     offset: 2,
   });
-  const saved = await last.load(f.owner.id, f.sheet.id);
+  const saved = await step('load completed generation after restart', () =>
+    last.load(f.owner.id, f.sheet.id),
+  );
   expect(saved.revision).toBe(3);
   expect((saved.snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]?.v).toBe(42);
   expect(await lastHistory.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, request)).toEqual(
