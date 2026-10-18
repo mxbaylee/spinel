@@ -69,13 +69,10 @@ export function VersionPreview() {
       cleanup = () => univer.dispose();
       installCanvasColors(univer);
       if (sheet) univerAPI.createWorkbook(loaded.snapshot as IWorkbookData).setEditable(false);
-      else
-        await univerAPI
-          .createDocument(loaded.snapshot as IDocumentData)
-          .getPermission()
-          .setReadOnly();
+      else univerAPI.createDocument(loaded.snapshot as IDocumentData);
       await editorReady(univerAPI);
       if (disposed) return;
+      if (!sheet) await univerAPI.getActiveDocument()!.getPermission().setReadOnly();
       if (sheet) {
         // setEditable controls cell entry; the full permission set also fences
         // formatting, worksheet structure and other toolbar commands.

@@ -78,6 +78,11 @@ for (const kind of ['sheet', 'doc'] as const) {
         timeout: 30_000,
       });
       await expect(preview.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+      await expect(
+        preview.getByText('This content is protected. This action is not allowed.', {
+          exact: true,
+        }),
+      ).not.toBeVisible();
       await preview.screenshot({
         path: info.outputPath(`${kind}-restore-preview.png`),
         animations: 'disabled',
