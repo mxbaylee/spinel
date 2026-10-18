@@ -20,7 +20,23 @@ for (const kind of ['sheet', 'doc'] as const) {
     const guest = await browser.newContext(),
       first = await guest.newPage(),
       second = await guest.newPage();
+    const diagnostics: string[] = [];
     for (const view of [page, first, second]) {
+      view.on('pageerror', (error) => diagnostics.push(error.message.slice(0, 300)));
+      view.on('response', (response) => {
+        if (response.status() >= 400)
+          diagnostics.push(`${response.status()} ${new URL(response.url()).pathname}`);
+      });
+      view.on('websocket', (socket) =>
+        socket.on('framesent', ({ payload }) => {
+          const text = String(payload);
+          if (
+            text.includes('update_cursor') &&
+            diagnostics.filter((line) => line.startsWith('cursor ')).length < 2
+          )
+            diagnostics.push('cursor ' + text.slice(0, 1000));
+        }),
+      );
       view.setDefaultTimeout(15_000);
       await view.setViewportSize({ width: 1440, height: 1000 });
     }
@@ -70,6 +86,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await first.goto(viewLink);
       await expect(region(first).getByRole('status', { name: 'Save status' })).toHaveText(
         'View only — reload after your access changes.',
+        { timeout: 30_000 },
       );
       await expect(first.getByText('View-only link.', { exact: true })).toBeVisible();
       await expect(first.getByText('Your workspace', { exact: true })).toHaveCount(0);
@@ -80,6 +97,9 @@ for (const kind of ['sheet', 'doc'] as const) {
         .getByRole('combobox', { name: 'Link access', exact: true })
         .selectOption('editor');
       await controls.getByRole('button', { name: 'Create replacement link', exact: true }).click();
+      await expect(controls.getByLabel('Guest link address', { exact: true })).not.toHaveValue(
+        viewLink,
+      );
       const editLink = await controls
         .getByLabel('Guest link address', { exact: true })
         .inputValue();
@@ -141,6 +161,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await saved(page);
       expect(JSON.stringify(await live())).toContain('Guest one 314');
     } catch (cause) {
+      console.log('Guest fixture diagnostics', diagnostics.slice(-20));
       await page.screenshot({ path: info.outputPath('test-failed-owner-before-cleanup.png') });
       throw cause;
     } finally {

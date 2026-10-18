@@ -610,3 +610,10 @@ dialog {
     animation: none !important;
   }
 }
+
+/* Guest links have document content, without the account navigation rail. */
+.workspace.guest-workspace {
+  display: block;
+  padding: clamp(16px, 3vw, 32px);
+  min-width: 0;
+}

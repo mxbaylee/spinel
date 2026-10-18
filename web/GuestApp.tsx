@@ -20,6 +20,17 @@ const requireResponse = (response: Response) => {
 };
 type Item = { id: string; kind: 'sheet' | 'doc'; name: string; access: 'viewer' | 'editor' };
 export function GuestApp() {
+  const [entry, setEntry] = useState(() => location.href);
+  useEffect(() => {
+    const changed = () => setEntry(location.href);
+    window.addEventListener('hashchange', changed);
+    return () => window.removeEventListener('hashchange', changed);
+  }, []);
+  // Replacement links can navigate within this document without reloading the page.
+  // replaceState after exchange emits no hashchange, and reopening the same token keeps the editor.
+  return <GuestDocument key={entry} />;
+}
+function GuestDocument() {
   const id = guestItemId()!;
   const [token] = useState(() => location.hash.slice(1));
   const exchange = useRef<Promise<void> | null>(null);
