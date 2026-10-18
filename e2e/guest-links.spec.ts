@@ -76,7 +76,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
       expect(await first.locator('body').innerText()).not.toContain(owner.name);
       expect((await guest.request.get(baseURL + '/api/items')).status()).toBe(401);
-      await controls.getByLabel('Link access', { exact: true }).selectOption('editor');
+      await controls
+        .getByRole('combobox', { name: 'Link access', exact: true })
+        .selectOption('editor');
       await controls.getByRole('button', { name: 'Create replacement link', exact: true }).click();
       const editLink = await controls
         .getByLabel('Guest link address', { exact: true })
@@ -138,6 +140,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       await page.goto(`/?item=${item.id}`);
       await saved(page);
       expect(JSON.stringify(await live())).toContain('Guest one 314');
+    } catch (cause) {
+      await page.screenshot({ path: info.outputPath('test-failed-owner-before-cleanup.png') });
+      throw cause;
     } finally {
       await guest.close();
       await page.goto('/sign-in').catch(() => {});
