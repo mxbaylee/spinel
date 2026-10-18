@@ -30,7 +30,9 @@ prints `flower, flower-2`.
   accepts a single emoji. Spinel has no old values and no emoji: store `lucide:<name>`, and
   accept it only if the name is in the catalog.
 - The picker component. It depends on Radix and circus-health's styles. The
-  [gem rail mockup](../../design/gem-rail-mockup.html) has a picker in Spinel's style.
+  landed [theme styles](../../../src/ui/theme.css) and
+  [palette](../../../src/ui/palette.ts) define Spinel's current styling; the retired
+  gem rail mockup is no longer the implementation reference.
 
 ## Behaviour to keep
 
