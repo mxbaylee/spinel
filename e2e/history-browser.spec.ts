@@ -112,6 +112,8 @@ test('touch history timeline and calendar preview retained choices without chang
       page.getByRole('button', { name: `${yesterday}, named versions`, exact: true }),
     ).toBeEnabled();
     await ready();
+    if (earlier.slice(0, 7) !== yesterday.slice(0, 7))
+      await page.getByRole('button', { name: 'Previous month', exact: true }).tap();
     const calendarResponse = page.waitForResponse(
       (response) =>
         response.url().endsWith(`/history/${checkpoints[0]}`) &&
@@ -122,6 +124,8 @@ test('touch history timeline and calendar preview retained choices without chang
       'Checkpoint 1',
     );
     await ready();
+    if (earlier.slice(0, 7) !== yesterday.slice(0, 7))
+      await page.getByRole('button', { name: 'Next month', exact: true }).tap();
     await page.getByRole('button', { name: `${yesterday}, named versions`, exact: true }).tap();
     await ready();
     const versions = page.getByRole('combobox', { name: `Version on ${yesterday}`, exact: true });

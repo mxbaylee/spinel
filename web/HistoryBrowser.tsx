@@ -30,7 +30,7 @@ export function HistoryBrowser() {
   useEffect(() => {
     const timer = window.setInterval(() => {
       const nextDay = historyDay(Date.now());
-      if (busy || nextDay === today) return;
+      if (busy || loading || nextDay === today) return;
       setToday(nextDay);
       if (mode === 'today') {
         setDay(nextDay);
@@ -38,7 +38,7 @@ export function HistoryBrowser() {
       }
     }, 60000);
     return () => window.clearInterval(timer);
-  }, [today, mode, versions, busy]);
+  }, [today, mode, versions, busy, loading]);
   useEffect(() => {
     let disposed = false;
     setLoading(true);
@@ -48,6 +48,8 @@ export function HistoryBrowser() {
         if (disposed) return;
         setVersions(data.versions);
         setLoaded(true);
+        const clockDay = historyDay(Date.now());
+        setToday(clockDay);
         // A requested checkpoint must never silently become a different restore target.
         const choice = selected
           ? data.versions.find((version) => version.id === selected)
@@ -64,7 +66,7 @@ export function HistoryBrowser() {
           setSelected(choice.id);
           setDay(choiceDay);
           setMonth(choiceDay.slice(0, 7));
-          setMode(choiceDay === historyDay(Date.now()) ? 'today' : 'calendar');
+          setMode(choiceDay === clockDay ? 'today' : 'calendar');
         }
       })
       .catch((cause) => {

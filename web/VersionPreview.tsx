@@ -78,6 +78,7 @@ export function VersionPreview({
       await editorReady(univerAPI);
       if (disposed) return;
       if (!sheet) await univerAPI.getActiveDocument()!.getPermission().setReadOnly();
+      if (disposed) return;
       if (sheet) {
         // setEditable controls cell entry; the full permission set also fences
         // formatting, worksheet structure and other toolbar commands.
