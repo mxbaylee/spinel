@@ -8,9 +8,9 @@ How this backlog works: [process.md](process.md). Next ID: **SPN-039**. Grooming
 
 | # | Ticket | Score | Tie-break | Owner input |
 | --- | --- | --- | --- | --- |
-| 1 | 🧪 [SPN-010](SPN-010.md) Find Univer collaboration's limits by editing through the UI | 8 | Lower ID | None |
-| 2 | ⏪ [SPN-025](SPN-025.md) Preview and restore an earlier version | 8 | Unblocks SPN-026 | None |
-| 3 | 🔖 [SPN-024](SPN-024.md) Name a version so it is kept forever | 8 | — | None |
+| 1 | 🧪 [SPN-010](SPN-010.md) Find Univer collaboration's limits by editing through the UI | 8 | Unblocks SPN-013, SPN-014 | None |
+| 2 | 🔖 [SPN-024](SPN-024.md) Name a version so it is kept forever | 8 | — | None |
+| 3 | ⏪ [SPN-025](SPN-025.md) Preview and restore an earlier version | 7 | Higher impact | Choose supported arbitrary-snapshot restore path (#55) |
 | 4 | 👥 [SPN-005](SPN-005.md) See and manage users and their passkeys | 7 | — | None |
 | 5 | 🏷️ [SPN-019](SPN-019.md) Tag documents | 5 | Unblocks SPN-022 | None |
 
@@ -29,7 +29,7 @@ How this backlog works: [process.md](process.md). Next ID: **SPN-039**. Grooming
 | 📌 [SPN-020](SPN-020.md) Pin daily documents to the sidebar | 🌱 S | 💜 M | 5 | — |
 | 🔍 [SPN-022](SPN-022.md) Search and filter the dashboard | 🌿 M | 💜 M | 4 | [SPN-019](SPN-019.md) |
 | 🔖 [SPN-024](SPN-024.md) Name a version so it is kept forever | 🌱 S | 💜 M | 💎 8 | — |
-| ⏪ [SPN-025](SPN-025.md) Preview and restore an earlier version | 🌿 M | 🩷 L | 💎 8 | — |
+| ⏪ [SPN-025](SPN-025.md) Preview and restore an earlier version | 🌳 L | 🩷 L | 💎 7 | — |
 | 🎚️ [SPN-026](SPN-026.md) Browse today's history on a timeline and older days on a calendar | 🌿 M | 💜 M | 4 | [SPN-025](SPN-025.md) |
 | 🎨 [SPN-027](SPN-027.md) Make it look and feel like Spinel | 🌿 M | 💜 M | 4 | — |
 | 📱 [SPN-028](SPN-028.md) Use Spinel as an installed app on a phone | 🌿 M | 💜 M | 4 | — |
