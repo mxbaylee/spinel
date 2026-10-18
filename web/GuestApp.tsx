@@ -20,17 +20,13 @@ const requireResponse = (response: Response) => {
 };
 type Item = { id: string; kind: 'sheet' | 'doc'; name: string; access: 'viewer' | 'editor' };
 export function GuestApp() {
-  const [entry, setEntry] = useState(() => location.href);
   useEffect(() => {
-    const changed = () => setEntry(location.href);
+    // Hash navigation alone does not run beforeunload. A real reload does, so
+    // reopening/replacing a link cannot silently discard an unfinished edit.
+    const changed = () => location.reload();
     window.addEventListener('hashchange', changed);
     return () => window.removeEventListener('hashchange', changed);
   }, []);
-  // Replacement links can navigate within this document without reloading the page.
-  // replaceState after exchange emits no hashchange, and reopening the same token keeps the editor.
-  return <GuestDocument key={entry} />;
-}
-function GuestDocument() {
   const id = guestItemId()!;
   const [token] = useState(() => location.hash.slice(1));
   const exchange = useRef<Promise<void> | null>(null);
@@ -64,7 +60,9 @@ function GuestDocument() {
               });
               requireResponse(response);
             });
-            history.replaceState(null, '', location.pathname);
+            // A slow earlier exchange must not erase a newer link's fragment.
+            if (location.pathname === `/share/${id}` && location.hash.slice(1) === token)
+              history.replaceState(null, '', location.pathname);
           })().catch((error) => {
             exchange.current = null;
             throw error;

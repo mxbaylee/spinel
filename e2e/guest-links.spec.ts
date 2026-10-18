@@ -147,6 +147,19 @@ for (const kind of ['sheet', 'doc'] as const) {
         await expect(region(first).getByRole('status', { name: 'Save status' })).toContainText(
           'Editing cell',
         );
+      if (kind === 'sheet') {
+        // Reopening a valid link after a clean-URL reload must still protect an unfinished cell.
+        const warning = first.waitForEvent('dialog');
+        await first.evaluate((url) => {
+          location.hash = new URL(url).hash;
+        }, editLink);
+        const dialog = await warning;
+        expect(dialog.type()).toBe('beforeunload');
+        await dialog.dismiss();
+        await expect(region(first).getByRole('status', { name: 'Save status' })).toContainText(
+          'Editing cell',
+        );
+      }
       await first.unroute(`**/api/guest/${item.id}`);
       if (kind === 'sheet') await first.keyboard.press('Enter');
       await saved(first);
