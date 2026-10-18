@@ -1,6 +1,10 @@
+import { setDocumentPermissionValue } from '@univerjs/docs';
+import { UnitAction } from '@univerjs/protocol';
+import { Collaborators, watchPresence } from './Collaborators.tsx';
+import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
 import {
-  CommandType,
+  IPermissionService,
   IImageIoService,
   ImageSourceType,
   ImageUploadStatusType,
@@ -27,19 +31,24 @@ import linkEnUS from '@univerjs/preset-docs-hyper-link/locales/en-US';
 import '@univerjs/preset-docs-hyper-link/lib/index.css';
 import drawingEnUS from '@univerjs/preset-docs-drawing/locales/en-US';
 import '@univerjs/preset-docs-drawing/lib/index.css';
-import type { IDocumentData } from '@univerjs/core';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import { UniverDocsCorePreset } from '@univerjs/preset-docs-core';
 import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
-import { Autosave, SaveFailure } from '../src/shared/autosave.ts';
-import type { ItemAccess } from '../src/shared/workspace.ts';
+import {
+  collaborationPlugins,
+  prepareCollaboration,
+  identifyCollaborator,
+  watchCollaboration,
+  ClientEnglish,
+  UIEnglish,
+} from './collaboration.ts';
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
+import { documentReady } from './documentReady.ts';
 
 export function DocEditor({
   id,
-  name,
   onDirty,
 }: {
   id: string;
@@ -47,8 +56,9 @@ export function DocEditor({
   onDirty: (dirty: boolean) => void;
 }) {
   const [uploadError, setUploadError] = useState('');
+  const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
-  const controller = useRef<Autosave | null>(null);
+  const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [status, setStatus] = useState<SaveState>({
     dirty: false,
     message: 'Loading document…',
@@ -56,12 +66,14 @@ export function DocEditor({
   });
   useEffect(() => {
     let disposed = false;
+    const loading = new AbortController();
+    let stopPresence: (() => void) | undefined;
+    setPeople([]);
     let uploads = 0;
     let insertions = 0;
     let uploaded = 0;
-    let capture = () => {};
     let disposeEditor: (() => void) | undefined;
-    let save: Autosave | undefined;
+    let save: ReturnType<typeof watchCollaboration> | undefined;
     let lastState = status;
     const publish = (state: SaveState) => {
       lastState = state;
@@ -76,15 +88,12 @@ export function DocEditor({
       });
     };
     void (async () => {
-      const response = await fetch(`/api/items/${id}/doc`);
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error ?? 'Could not load this document.');
+      const data = await prepareCollaboration(id);
       if (disposed) return;
-      const data = result as {
-        snapshot: IDocumentData | null;
-        revision: number;
-        access: ItemAccess;
-      };
+      let drawingReady!: () => void;
+      const drawingsRendered = new Promise<void>((resolve) => {
+        drawingReady = resolve;
+      });
       class StoredImages extends ImageIoService {
         override async saveImage(file: File) {
           uploads++;
@@ -158,24 +167,28 @@ export function DocEditor({
                 } finally {
                   // Upload completion precedes dimension loading and the drawing mutation.
                   // Capture that mutation before allowing navigation to report a clean editor.
-                  capture();
                   insertions--;
                   publish(lastState);
                 }
               },
             }),
           );
+          drawingReady();
         }
       }
       Inject(Injector)(TrackedImageInsertion, undefined, 1);
       const { univer, univerAPI } = createUniver({
         locale: LocaleType.EN_US,
-        locales: { [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS) },
+        locales: {
+          [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, ClientEnglish, UIEnglish),
+        },
+        collaboration: true,
+        override: [[IImageIoService, { useClass: StoredImages }]],
         plugins: [
           [
             UniverDrawingPlugin,
             {
-              override: [[IImageIoService, { useClass: StoredImages }]],
+              override: [[IImageIoService, null]],
               allowImageSize: 5 * 1024 * 1024,
             },
           ],
@@ -183,6 +196,7 @@ export function DocEditor({
           UniverDocsDrawingPlugin,
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
+          ...collaborationPlugins([[IImageIoService, { useClass: StoredImages }]]),
         ],
         presets: [
           UniverDocsCorePreset({
@@ -202,58 +216,32 @@ export function DocEditor({
         ],
       });
       disposeEditor = () => univer.dispose();
-      const document = univerAPI.createDocument(data.snapshot ?? { id, title: name });
+      identifyCollaborator(univer, data.user);
+      const document = await univerAPI.getCollaboration().loadDocAsync(id);
+      if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
+      // A document-type plugin can initialize after the global Rendered stage.
+      // Do not advertise readiness until our drawing commands are installed too.
+      await drawingsRendered;
       if (disposed) return;
-      if (data.access === 'viewer') {
-        await document.getPermission().setReadOnly();
-        publish({
-          dirty: false,
-          failed: false,
-          message: 'View only — reload after your access changes.',
-        });
+      await documentReady(univer, id, loading.signal);
+      if (disposed) return;
+      const readonly = async () => {
+        // Local UI state only: changing the shared document's permission rules
+        // would also make still-authorized collaborators read-only.
+        const permissions = univer.__getInjector().get(IPermissionService);
+        setDocumentPermissionValue(permissions, id, id, UnitAction.Edit, false);
+        setDocumentPermissionValue(permissions, id, id, UnitAction.Copy, true);
+      };
+      if (data.access === 'viewer') await readonly();
+      else document.setSelection(0, 0);
+      stopPresence = await watchPresence(univer, univerAPI, id, setPeople);
+      if (disposed) {
+        stopPresence();
         return;
       }
-      save = new Autosave(
-        data.revision,
-        data.snapshot,
-        async (payload) => {
-          const response = await fetch(`/api/items/${id}/doc`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(10_000),
-          });
-          const result = await response.json();
-          if (!response.ok) {
-            if ([403, 404].includes(response.status)) await document.getPermission().setReadOnly();
-            throw new SaveFailure(
-              response.status,
-              result.error ?? 'Changes have not been saved. Try again.',
-            );
-          }
-          return result as { revision: number };
-        },
-        publish,
-      );
+      save = watchCollaboration(univer, univerAPI, id, data.access, publish, readonly);
       controller.current = save;
-      capture = () => {
-        if (disposed) return;
-        try {
-          save!.changed(document.save());
-        } catch {
-          publish({
-            dirty: true,
-            message:
-              'Could not prepare your changes for saving. Keep this tab open and copy your changes.',
-            failed: true,
-          });
-        }
-      };
-      univerAPI.addEvent(univerAPI.Event.CommandExecuted, ({ type }) => {
-        if (type === CommandType.MUTATION) queueMicrotask(capture);
-      });
-      capture();
     })().catch((error) => {
       if (!disposed)
         publish({
@@ -265,11 +253,10 @@ export function DocEditor({
           failed: true,
         });
     });
-    const online = () => save?.retry();
-    window.addEventListener('online', online);
     return () => {
       disposed = true;
-      window.removeEventListener('online', online);
+      loading.abort();
+      stopPresence?.();
       save?.dispose();
       // Univer owns a separate React root; unmount it after our cleanup commit.
       if (disposeEditor) queueMicrotask(disposeEditor);
@@ -280,7 +267,8 @@ export function DocEditor({
   }, [id]);
   return (
     <section className="sheet-editor" aria-label="Doc document">
-      <div className="save-status" role="status" aria-live="polite">
+      <Collaborators people={people} />
+      <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
         {status.message}
         {status.failed && status.dirty && (
           <button onClick={() => controller.current?.retry()}>Retry saving</button>

@@ -230,3 +230,51 @@ button.primary {
 .dashboard:has(.sheet-editor) > aside {
   display: none;
 }
+
+.collaborators {
+  display: flex;
+  gap: 0.5rem;
+  min-height: 2.25rem;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+.collaborator-badge {
+  position: relative;
+  width: 1.8rem;
+  height: 1.8rem;
+  padding: 0;
+  border: 2px solid white;
+  border-radius: 50%;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.collaborator-badge:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.collaborator-name {
+  position: absolute;
+  bottom: calc(100% + 0.35rem);
+  left: 0;
+  background: #25202c;
+  color: white;
+  border-radius: 0.35rem;
+  padding: 0.3rem 0.5rem;
+  white-space: nowrap;
+  z-index: 50;
+  visibility: hidden;
+  pointer-events: none;
+}
+.collaborator-badge:hover .collaborator-name,
+.collaborator-badge:focus-visible .collaborator-name {
+  visibility: visible;
+}
+.collaborator-badge:focus-visible {
+  outline: 2px solid #26202e;
+  outline-offset: 2px;
+}

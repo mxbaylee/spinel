@@ -9,6 +9,9 @@ import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
 import { workspaceRoutes } from '../src/server/workspace/routes.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts';
+import { CollaborationStore } from '../src/server/collaboration/service.ts';
+import { attachCollaboration } from '../src/server/collaboration/transport.ts';
+import { UnitAction, ErrorCode } from '@univerjs/protocol';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
 
@@ -29,6 +32,9 @@ export async function createApp(options: AppOptions) {
   let vite: import('vite').ViteDevServer | undefined;
   let stopCleanup = () => {};
   let backups: BackupService | undefined;
+  let collaboration: CollaborationStore | undefined;
+  let realtime: ReturnType<typeof attachCollaboration> | undefined;
+  let purgeTimer: ReturnType<typeof setInterval> | undefined;
 
   try {
     const auth = new AuthStore(database);
@@ -42,11 +48,97 @@ export async function createApp(options: AppOptions) {
       next();
     });
     const workspace = new WorkspaceStore(auth);
-    app.use(
-      '/api/items',
-      workspaceRoutes(auth, options.origin ?? 'http://localhost:3000', workspace),
+    const origin = options.origin ?? 'http://localhost:3000';
+    collaboration = new CollaborationStore(workspace, options.databasePath);
+    realtime = attachCollaboration(server, workspace, collaboration, origin);
+    app.use('/api', (_request, response, next) => {
+      response.once('finish', () => {
+        void realtime?.revalidate().catch(() => {});
+      });
+      next();
+    });
+    app.use('/api/items', workspaceRoutes(auth, origin, workspace, collaboration));
+    app.post(
+      '/universer-api/authz/-/object/-/batch_allowed',
+      express.json({ limit: '64kb' }),
+      (request, response) => {
+        response.set('Cache-Control', 'no-store');
+        const session = auth.session(cookieToken(request));
+        if (
+          request.headers.origin !== origin ||
+          !session?.user_id ||
+          auth.user(session.user_id)?.is_admin
+        ) {
+          response.status(403).json({ error: 'Sign in at the configured address.' });
+          return;
+        }
+        const requests: unknown = request.body?.requests;
+        if (
+          !Array.isArray(requests) ||
+          requests.length > 200 ||
+          requests.some(
+            (item) =>
+              !item ||
+              typeof item !== 'object' ||
+              typeof item.unitID !== 'string' ||
+              typeof item.objectID !== 'string' ||
+              !Array.isArray(item.actions),
+          )
+        ) {
+          response.status(400).end();
+          return;
+        }
+        const readActions: number[] = [
+          UnitAction.View,
+          UnitAction.Copy,
+          UnitAction.Print,
+          UnitAction.SelectProtectedCells,
+          UnitAction.SelectUnProtectedCells,
+        ];
+        const hostActions: number[] = [
+          UnitAction.ManageCollaborator,
+          UnitAction.Share,
+          UnitAction.Delete,
+          UnitAction.RecoverHistory,
+          UnitAction.CreatePermissionObject,
+        ];
+        response.json({
+          error: { code: ErrorCode.OK, message: '' },
+          objectActions: requests.map((item) => {
+            let access: string | undefined;
+            try {
+              access = workspace.get(session.user_id!, item.unitID).access;
+            } catch {
+              /* Do not reveal other documents. */
+            }
+            return {
+              unitID: item.unitID,
+              objectID: item.objectID,
+              actions: (Array.isArray(item.actions) ? item.actions : [])
+                .slice(0, 100)
+                .map((action: number) => ({
+                  action,
+                  allowed:
+                    Boolean(access) &&
+                    Number.isInteger(action) &&
+                    action >= 0 &&
+                    action <= 45 &&
+                    !hostActions.includes(action) &&
+                    (access !== 'viewer' || readActions.includes(action)),
+                })),
+            };
+          }),
+        });
+      },
     );
     stopCleanup = startTrashCleanup(new TrashStore(workspace));
+    await collaboration.purgeDeleted();
+    purgeTimer = setInterval(() => {
+      void collaboration!
+        .purgeDeleted()
+        .catch((error) => console.error('Collaboration purge will retry.', error));
+    }, 60_000);
+    purgeTimer.unref();
     backups = new BackupService(database, {
       databasePath: options.databasePath,
       origin: options.origin ?? 'http://localhost:3000',
@@ -166,6 +258,9 @@ export async function createApp(options: AppOptions) {
     backups.start();
   } catch (error) {
     stopCleanup();
+    clearInterval(purgeTimer);
+    await realtime?.close();
+    await collaboration?.close();
     await backups?.close();
     await vite?.close();
     database.close();
@@ -176,6 +271,8 @@ export async function createApp(options: AppOptions) {
     server,
     async close() {
       stopCleanup();
+      clearInterval(purgeTimer);
+      await realtime?.close();
       await vite?.close();
       if (server.listening) {
         await new Promise<void>((resolveClose, reject) => {
@@ -184,6 +281,8 @@ export async function createApp(options: AppOptions) {
         });
       }
       await backups?.close();
+      await collaboration?.purgeDeleted();
+      await collaboration?.close();
       database.close();
     },
   };

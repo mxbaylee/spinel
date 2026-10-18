@@ -2,7 +2,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
-import { createApp } from '../server/app.ts';
+import { startApp } from './app-process.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 
@@ -14,12 +14,11 @@ test('operator sees missing configuration, backup failure and the last good back
   const databasePath = join(directory, 'spinel.sqlite');
   const port = testInfo.project.name === 'development' ? 3194 : 3195;
   const origin = `http://localhost:${port}`;
-  const app = await createApp({
+  const app = await startApp({
     databasePath,
     origin,
     development: testInfo.project.name === 'development',
   });
-  await new Promise<void>((ready) => app.server.listen(port, '127.0.0.1', ready));
   const db = openDatabase(databasePath),
     auth = new AuthStore(db);
   const admin = auth.createUser('Operator', true),

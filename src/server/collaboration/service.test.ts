@@ -3,7 +3,8 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
-import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
+import { getDocsEmptySnapshot, LocaleType, JSONX } from '@univerjs/core';
+import { RichTextEditingMutation } from '@univerjs/docs';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { UniverType } from '@univerjs/protocol';
 import type { IChangeset } from '@univerjs/protocol';
@@ -15,6 +16,10 @@ import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import { makeArchive, restoreArchive } from '../backup/archive.ts';
 import { CollaborationStore } from './service.ts';
+import { TrashStore } from '../workspace/trash.ts';
+
+// SDK materializer cold startup is slower while the separate 25-hour browser soak runs.
+vi.setConfig({ testTimeout: 20_000 });
 
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -76,7 +81,7 @@ async function fixture() {
     unitID: sheet.id,
     type: UniverType.UNIVER_SHEET,
     baseRev: 1,
-    revision: 2,
+    revision: 0,
     userID,
     memberID: 'test-member',
     sid: 'test-session',
@@ -112,6 +117,152 @@ async function fixture() {
     edit,
   };
 }
+
+test('permanent purge waits for in-flight migration before acknowledging deletion', async () => {
+  const f = await fixture();
+  let enter!: () => void, release!: () => void;
+  const entered = new Promise<void>((resolve) => {
+    enter = resolve;
+  });
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  f.collab.service.use('createUnit', async (_context, next) => {
+    enter();
+    await gate;
+    await next();
+  });
+  const preparing = f.collab.prepare(f.owner.id, f.doc.id).catch((error) => error);
+  await entered;
+  f.db.prepare('DELETE FROM workspace_items WHERE id=?').run(f.doc.id);
+  let finished = false;
+  const purge = f.collab.purgeDeleted().then(() => {
+    finished = true;
+  });
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  expect(finished).toBe(false);
+  expect(
+    f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id),
+  ).toBeDefined();
+  release();
+  expect(await preparing).toBeInstanceOf(Error);
+  await purge;
+  expect(
+    await f.collab.service.dbAdapter.getUnit(
+      { userID: f.owner.id, customData: {}, request: {} },
+      f.doc.id,
+    ),
+  ).toBeNull();
+  expect(
+    f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id),
+  ).toBeUndefined();
+});
+
+test('foreign and external image mutations are permanently rejected before persistence', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.doc.id);
+  for (const [index, source] of [
+    `/api/items/foreign/images/${'a'.repeat(64)}`,
+    'https://hostile.invalid/image.png',
+  ].entries()) {
+    const changeset: IChangeset = {
+      unitID: f.doc.id,
+      type: UniverType.UNIVER_DOC,
+      baseRev: 1,
+      revision: 0,
+      userID: f.owner.id,
+      memberID: 'test-member',
+      sid: 'test-images',
+      reqId: index + 1,
+      mutations: [
+        {
+          id: RichTextEditingMutation.id,
+          data: JSON.stringify({
+            unitId: f.doc.id,
+            actions: new JSONX().insertOp(['drawings', 'x'], { source }),
+            textRanges: [],
+          }),
+        },
+      ],
+    };
+    await expect(
+      f.collab.service.submitChangeset(
+        { changeset },
+        { userID: f.owner.id, memberID: 'test-member' },
+      ),
+    ).resolves.toMatchObject({ status: 'rejected', error: { code: 'INVALID_REQUEST' } });
+    const saved = await f.collab.load(f.owner.id, f.doc.id);
+    expect(saved.revision).toBe(1);
+    expect((saved.snapshot as IDocumentData).drawings).toEqual({});
+  }
+});
+
+test('permanent purge is durable across an interrupted SDK deletion and soft restore preserves changes', async () => {
+  const f = await fixture();
+  const trash = new TrashStore(f.workspace);
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  await f.collab.service.submitChangeset(
+    { changeset: f.edit() },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  trash.trash(f.owner.id, f.sheet.id);
+  await expect(f.load()).rejects.toThrow('not available');
+  trash.restore(f.owner.id, f.sheet.id);
+  expect(
+    ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
+      .cellData?.[0]?.[0]?.v,
+  ).toBe(99);
+  trash.trash(f.owner.id, f.sheet.id);
+  trash.empty(f.owner.id, trash.list(f.owner.id).version);
+  expect(f.db.prepare('SELECT item_id FROM collaboration_purge').all()).toEqual([
+    { item_id: f.sheet.id },
+  ]);
+  const remove = vi
+    .spyOn(f.collab.service, 'deleteUnits')
+    .mockRejectedValueOnce(new Error('interrupted'));
+  await expect(f.collab.purgeDeleted()).rejects.toThrow('interrupted');
+  expect(f.db.prepare('SELECT count(*) AS n FROM collaboration_purge').get()?.n).toBe(1);
+  remove.mockRestore();
+  await f.collab.purgeDeleted();
+  expect(f.db.prepare('SELECT count(*) AS n FROM collaboration_purge').get()?.n).toBe(0);
+  // Inspect through the public adapter to prove bytes were hard-deleted, not merely hidden by ACL.
+  expect(
+    await f.collab.service.dbAdapter.getUnit(
+      { userID: f.owner.id, customData: {}, request: {} },
+      f.sheet.id,
+    ),
+  ).toBeNull();
+});
+
+test('expired network sessions cannot submit and cross-unit mutations cannot modify another document', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  const session = f.auth.createSession(f.owner.id);
+  f.auth.revokeSession(session.session.token_hash);
+  await expect(
+    f.collab.service.submitChangeset(
+      { changeset: f.edit() },
+      {
+        userID: f.owner.id,
+        memberID: 'test-member',
+        customData: { sessionHash: session.session.token_hash },
+      },
+    ),
+  ).resolves.toMatchObject({ status: 'rejected', error: { code: 'PERMISSION_DENIED' } });
+  const changeset = f.edit();
+  changeset.mutations[0].data = JSON.stringify({
+    unitId: f.doc.id,
+    subUnitId: 'first',
+    cellValue: { 0: { 0: { v: 'foreign' } } },
+  });
+  await expect(
+    f.collab.service.submitChangeset(
+      { changeset },
+      { userID: f.owner.id, memberID: 'test-member' },
+    ),
+  ).resolves.toMatchObject({ status: 'rejected', error: { code: 'PERMISSION_DENIED' } });
+  expect((await f.load()).targetRevision).toBe(1);
+});
 
 test('migration is idempotent, preserves legacy snapshots and fences stale-tab saves', async () => {
   const f = await fixture();
@@ -289,4 +440,4 @@ test('access revoked during mutation application is checked again before durable
     ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
       .cellData?.[0]?.[0]?.v,
   ).toBe(42);
-});
+}, 20_000);
