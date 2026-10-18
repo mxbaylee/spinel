@@ -153,11 +153,10 @@ export function workspaceRoutes(
         items: store.pin(owner(request), payload(request, ['id']).id, method === 'delete'),
       }),
     );
-  router.put('/pins', (request, response) =>
-    response.json({
-      items: store.orderPins(owner(request), payload(request, ['ids']).ids),
-    }),
-  );
+  router.put('/pins', (request, response) => {
+    const body = payload(request, ['id', 'beforeId']);
+    response.json({ items: store.movePin(owner(request), body.id, body.beforeId) });
+  });
   router.get('/tags', (request, response) =>
     response.json({ tags: store.tagSuggestions(owner(request)) }),
   );

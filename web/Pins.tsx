@@ -13,7 +13,7 @@ type PinsState = {
   error: string;
   refresh: () => Promise<void>;
   change: (id: string, remove: boolean) => Promise<void>;
-  reorder: (ids: string[]) => Promise<void>;
+  reorder: (id: string, beforeId: string | null) => Promise<void>;
 };
 const PinsContext = createContext<PinsState | null>(null);
 export function usePins() {
@@ -94,7 +94,7 @@ export function PinsProvider({ children, enabled }: { children: ReactNode; enabl
         error,
         refresh,
         change: (id, remove) => mutate('/pins', remove ? 'DELETE' : 'POST', { id }),
-        reorder: (ids) => mutate('/pins', 'PUT', { ids }),
+        reorder: (id, beforeId) => mutate('/pins', 'PUT', { id, beforeId }),
       }}
     >
       {children}
@@ -123,7 +123,7 @@ export function PinnedSidebar({ navigation }: { navigation: NavigationGuard }) {
     if (pins.busy || from < 0 || target < 0 || target >= ids.length || from === target) return;
     ids.splice(from, 1);
     ids.splice(target, 0, id);
-    void pins.reorder(ids);
+    void pins.reorder(id, ids[target + 1] ?? null);
   }
   return (
     <aside className="pinned-sidebar" aria-label="Pinned items">

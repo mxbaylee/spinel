@@ -112,24 +112,28 @@ export class WorkspaceStore {
       return this.readPins(userId);
     });
   }
-  orderPins(userId: string, ids: unknown): WorkspaceItem[] {
+  movePin(userId: string, id: unknown, beforeId: unknown): WorkspaceItem[] {
     this.owner(userId);
     if (
-      !Array.isArray(ids) ||
-      ids.some((id) => typeof id !== 'string') ||
-      new Set(ids).size !== ids.length
+      typeof id !== 'string' ||
+      !id ||
+      (beforeId !== null && (typeof beforeId !== 'string' || !beforeId)) ||
+      beforeId === id
     )
-      throw new AuthError(400, 'Choose each pinned item once.');
+      throw new AuthError(400, 'Choose a pin and a different destination.');
     return this.auth.transaction(() => {
-      const current = this.readPins(userId);
-      const set = new Set(current.map((item) => item.id));
-      // A stale tab must not drop a pin added elsewhere or add a foreign reference.
-      if (ids.length !== set.size || ids.some((id) => !set.has(id)))
+      const ids = this.readPins(userId).map((item) => item.id);
+      const from = ids.indexOf(id);
+      // Move one reference inside the current list. The bounded request preserves
+      // additions from another tab and never needs to upload the whole pin list.
+      if (from < 0 || (beforeId !== null && !ids.includes(beforeId)))
         throw new AuthError(409, 'Your pins changed. Refresh them and try again.');
+      ids.splice(from, 1);
+      ids.splice(beforeId === null ? ids.length : ids.indexOf(beforeId), 0, id);
       const update = this.auth.database.prepare(
         'UPDATE workspace_pins SET position=? WHERE user_id=? AND item_id=?',
       );
-      ids.forEach((id, position) => update.run(position, userId, id));
+      ids.forEach((itemId, position) => update.run(position, userId, itemId));
       return this.readPins(userId);
     });
   }

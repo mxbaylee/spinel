@@ -23,9 +23,11 @@ immediately. Navigating a pin still uses the document's current access check and
 the existing unsaved-work guard.
 
 `GET /api/items/pins` returns `{ items }` in personal order. `POST` and `DELETE`
-on that path take `{ id }` to add/remove a reference. `PUT` takes `{ ids }`, an
-exact permutation of the currently accessible pins. Duplicate/malformed IDs are
-400; a stale set is 409 so another tab's added pin cannot be lost. Mutations
+on that path take `{ id }` to add/remove a reference. `PUT` takes
+`{ id, beforeId }` to move a pin before another, or to the end with `beforeId: null`.
+The server moves it within the current list, preserving pins added by other tabs.
+Malformed/self destinations are 400; a source or destination no longer pinned is
+409 with refresh/retry. The request size stays independent of pin count. Mutations
 return the authoritative ordered list and use the existing session, JSON and
 Origin protections. The UI serializes mutations and ignores older list responses.
 Failures show a refresh/retry path rather than silently claiming a new order.

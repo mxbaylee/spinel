@@ -190,8 +190,8 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
   expect(
     (await (await call('GET', '/pins')).json()).items.map((entry: { id: string }) => entry.id),
   ).toEqual([item.id]);
-  expect((await call('PUT', '/pins', { ids: [foreign.id] })).status).toBe(409);
-  expect((await call('PUT', '/pins', { ids: [item.id] })).status).toBe(200);
+  expect((await call('PUT', '/pins', { id: foreign.id, beforeId: null })).status).toBe(409);
+  expect((await call('PUT', '/pins', { id: item.id, beforeId: null })).status).toBe(200);
   expect((await call('DELETE', '/pins', { id: item.id })).status).toBe(200);
   expect((await (await call('GET', '/pins')).json()).items).toEqual([]);
   expect(
@@ -217,7 +217,7 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
       ['PATCH', `/${item.id}`, { name: 'x' }],
       ['GET', '/pins', undefined],
       ['POST', '/pins', { id: item.id }],
-      ['PUT', '/pins', { ids: [] }],
+      ['PUT', '/pins', { id: item.id, beforeId: null }],
       ['DELETE', '/pins', { id: item.id }],
       ['GET', '/tags', undefined],
       ['POST', `/${item.id}/tags`, { tag: 'denied' }],
@@ -226,6 +226,21 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
         !denied || !auth.session(denied)?.user_id ? 401 : 403,
       );
   }
+  // A whole-list reorder crossed the 8 KiB request parser at 210 UUID pins.
+  // Moving one reference stays bounded and preserves every other reference.
+  const many: string[] = [];
+  for (let n = 0; n < 210; n++) {
+    const pinned = store.create(user.id, { name: `Pin ${n}`, kind: 'folder', parentId: null });
+    store.pin(user.id, pinned.id);
+    many.push(pinned.id);
+  }
+  expect(JSON.stringify({ ids: many }).length).toBeGreaterThan(8192);
+  const moved = await call('PUT', '/pins', { id: many[209], beforeId: many[0] });
+  expect(moved.status).toBe(200);
+  expect((await moved.json()).items.map((entry: { id: string }) => entry.id)).toEqual([
+    many[209],
+    ...many.slice(0, 209),
+  ]);
   auth.database.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(user.id);
   expect((await call('GET')).status).toBe(401);
   expect((await call('PATCH', `/${item.id}`, { name: 'x' })).status).toBe(401);

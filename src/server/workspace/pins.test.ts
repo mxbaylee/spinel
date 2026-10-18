@@ -26,12 +26,40 @@ test('pins append once, reorder and unpin without changing the shared document',
   for (const item of [f.folder, f.sheet, f.doc, f.folder]) f.store.pin(user, item.id);
   expect(ids(f.store.pins(user))).toEqual([f.folder.id, f.sheet.id, f.doc.id]);
   const order = [f.doc.id, f.folder.id, f.sheet.id];
-  expect(ids(f.store.orderPins(user, order))).toEqual(order);
+  expect(ids(f.store.movePin(user, f.doc.id, f.folder.id))).toEqual(order);
   expect(ids(new WorkspaceStore(f.auth).pins(user))).toEqual(order);
   expect(f.store.get(user, f.sheet.id)).toEqual(f.sheet);
   expect(ids(f.store.pin(user, f.folder.id, true))).toEqual([f.doc.id, f.sheet.id]);
   f.store.pin(user, f.folder.id, true);
   expect(ids(f.store.pin(user, f.folder.id))).toEqual([f.doc.id, f.sheet.id, f.folder.id]);
+});
+test('moves both directions and to the end while preserving pins added by another tab', () => {
+  const f = fixture(),
+    user = f.owner.id;
+  f.store.pin(user, f.folder.id);
+  f.store.pin(user, f.sheet.id);
+  // An older view knows only these two; adding the doc must survive its move.
+  f.store.pin(user, f.doc.id);
+  expect(ids(f.store.movePin(user, f.sheet.id, f.folder.id))).toEqual([
+    f.sheet.id,
+    f.folder.id,
+    f.doc.id,
+  ]);
+  expect(ids(f.store.movePin(user, f.sheet.id, f.doc.id))).toEqual([
+    f.folder.id,
+    f.sheet.id,
+    f.doc.id,
+  ]);
+  expect(ids(f.store.movePin(user, f.folder.id, null))).toEqual([
+    f.sheet.id,
+    f.doc.id,
+    f.folder.id,
+  ]);
+  expect(ids(f.store.movePin(user, f.folder.id, null))).toEqual([
+    f.sheet.id,
+    f.doc.id,
+    f.folder.id,
+  ]);
 });
 test('a viewer organizes their own shared pins without content or grant changes', () => {
   const f = fixture();
@@ -39,33 +67,38 @@ test('a viewer organizes their own shared pins without content or grant changes'
   f.store.pin(f.owner.id, f.sheet.id);
   f.store.pin(f.viewer.id, f.folder.id);
   f.store.pin(f.viewer.id, f.sheet.id);
-  f.store.orderPins(f.viewer.id, [f.sheet.id, f.folder.id]);
+  f.store.movePin(f.viewer.id, f.sheet.id, f.folder.id);
   expect(ids(f.store.pins(f.owner.id))).toEqual([f.sheet.id]);
   expect(f.store.pins(f.viewer.id).map((item) => item.access)).toEqual(['viewer', 'viewer']);
   f.store.pin(f.viewer.id, f.sheet.id, true);
   expect(ids(f.store.pins(f.owner.id))).toEqual([f.sheet.id]);
   expect(() => f.store.get(f.viewer.id, f.sheet.id, 'edit')).toThrow('cannot edit');
 });
-test('stale, duplicate, foreign and malformed reorders are rejected atomically', () => {
+test('stale, foreign and malformed moves are rejected atomically', () => {
   const f = fixture();
   f.store.pin(f.owner.id, f.sheet.id);
   f.store.pin(f.owner.id, f.doc.id);
-  for (const order of [
-    [],
-    [f.sheet.id],
-    [f.sheet.id, f.folder.id],
-    [f.sheet.id, f.doc.id, 'foreign'],
+  for (const [id, beforeId] of [
+    ['missing', f.sheet.id],
+    [f.sheet.id, 'missing'],
+    [f.folder.id, null],
   ])
-    expect(() => f.store.orderPins(f.owner.id, order)).toThrow('pins changed');
-  for (const order of [null, 'x', [1], [f.sheet.id, f.sheet.id]])
-    expect(() => f.store.orderPins(f.owner.id, order)).toThrow('once');
+    expect(() => f.store.movePin(f.owner.id, id, beforeId)).toThrow('pins changed');
+  for (const [id, beforeId] of [
+    [null, null],
+    [1, null],
+    [[], null],
+    [f.sheet.id, undefined],
+    [f.sheet.id, f.sheet.id],
+  ])
+    expect(() => f.store.movePin(f.owner.id, id, beforeId)).toThrow('destination');
   expect(ids(f.store.pins(f.owner.id))).toEqual([f.sheet.id, f.doc.id]);
   expect(() => f.store.pin(f.viewer.id, f.doc.id)).toThrow('not available');
   expect(() => f.store.pin(f.owner.id, null)).toThrow('Choose');
   for (const id of [f.admin.id, 'missing']) {
     expect(() => f.store.pins(id)).toThrow();
     expect(() => f.store.pin(id, f.sheet.id)).toThrow();
-    expect(() => f.store.orderPins(id, [])).toThrow();
+    expect(() => f.store.movePin(id, f.sheet.id, null)).toThrow();
   }
   f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
   expect(() => f.store.pins(f.owner.id)).toThrow('Sign in');
