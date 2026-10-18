@@ -26,7 +26,7 @@ placements are introduced. SPN-021 enforces owner-only trash and blocks ordinary
 access to trashed content; it does not need a second placement implementation.
 
 The Operator benefits from bounded storage cleanup and unchanged access controls;
-no completed spike is not implied by unblocking production work. The Owner gets
+a completed spike is not implied by unblocking production work. The Owner gets
 trash before collaboration under the existing scores, with data-preservation
 requirements intact. The Collaborator gets authenticated co-editing sooner than
 waiting for the experiment, while viewer/revocation checks remain merge gates.
