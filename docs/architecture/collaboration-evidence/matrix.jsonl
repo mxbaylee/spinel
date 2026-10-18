@@ -1,0 +1,166 @@
+{"time":"2026-10-18T00:30:07.747Z","event":"start","detail":{"version":"156.0.8078.4","editPath":"keyboard and name-box UI","license":"none"}}
+{"time":"2026-10-18T00:30:07.748Z","event":"scenario-start","detail":{"label":"2editors-2units","units":["sheet-1","doc-1"]}}
+{"time":"2026-10-18T00:30:12.937Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"sheet-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-0-0"}}
+{"time":"2026-10-18T00:30:13.742Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"sheet-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-0-1"}}
+{"time":"2026-10-18T00:30:14.714Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"doc-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-0-0"}}
+{"time":"2026-10-18T00:30:15.628Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"doc-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-0-1"}}
+{"time":"2026-10-18T00:30:16.398Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"sheet-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-1-0"}}
+{"time":"2026-10-18T00:30:17.071Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"sheet-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-1-1"}}
+{"time":"2026-10-18T00:30:17.992Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"doc-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-1-0"}}
+{"time":"2026-10-18T00:30:18.899Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"doc-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-1-1"}}
+{"time":"2026-10-18T00:30:19.586Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"sheet-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-2-0"}}
+{"time":"2026-10-18T00:30:20.228Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"sheet-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-2-1"}}
+{"time":"2026-10-18T00:30:21.146Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"doc-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-2-0"}}
+{"time":"2026-10-18T00:30:22.052Z","event":"edit-converged","detail":{"label":"2editors-2units","unit":"doc-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-2units-2-1"}}
+{"time":"2026-10-18T00:30:22.884Z","event":"burst-converged","detail":{"label":"2editors-2units","unit":"sheet-1","tokens":["burst-2026-10-18T00-30-07.212Z-2editors-2units-0","burst-2026-10-18T00-30-07.212Z-2editors-2units-1"]}}
+{"time":"2026-10-18T00:30:22.976Z","event":"ui","detail":{"label":"2editors-2units","unit":"sheet-1","text":"Ready: sheet-1 / user-1\nStart\nFormulas\nView\nPaste\nGeneral\ncli@univer.ai\nSheet 1\nDelete\nCopy\nRename\nChange color\nHide\nUnhide\nProtect Worksheet\nUnprotect Worksheet\nChange Worksheet Permissions\nView All Protection Ranges"}}
+{"time":"2026-10-18T00:30:24.349Z","event":"burst-converged","detail":{"label":"2editors-2units","unit":"doc-1","tokens":["burst-2026-10-18T00-30-07.212Z-2editors-2units-0","burst-2026-10-18T00-30-07.212Z-2editors-2units-1"]}}
+{"time":"2026-10-18T00:30:24.421Z","event":"ui","detail":{"label":"2editors-2units","unit":"doc-1","text":"Ready: doc-1 / user-1\nStart\nInsert\nView\nPaste\nNormal\ncli@univer.ai\n531 words"}}
+{"time":"2026-10-18T00:30:24.752Z","event":"scenario-pass","detail":{"label":"2editors-2units"}}
+{"time":"2026-10-18T00:30:24.785Z","event":"scenario-start","detail":{"label":"3editors-2units","units":["sheet-1","doc-1"]}}
+{"time":"2026-10-18T00:30:33.115Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"sheet-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-0-0"}}
+{"time":"2026-10-18T00:30:34.645Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"sheet-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-0-1"}}
+{"time":"2026-10-18T00:30:35.944Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"sheet-1","editor":3,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-0-2"}}
+{"time":"2026-10-18T00:30:36.978Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"doc-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-0-0"}}
+{"time":"2026-10-18T00:30:37.918Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"doc-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-0-1"}}
+{"time":"2026-10-18T00:30:38.822Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"doc-1","editor":3,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-0-2"}}
+{"time":"2026-10-18T00:30:39.590Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"sheet-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-1-0"}}
+{"time":"2026-10-18T00:30:40.393Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"sheet-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-1-1"}}
+{"time":"2026-10-18T00:30:41.205Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"sheet-1","editor":3,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-1-2"}}
+{"time":"2026-10-18T00:30:42.155Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"doc-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-1-0"}}
+{"time":"2026-10-18T00:30:43.065Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"doc-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-1-1"}}
+{"time":"2026-10-18T00:30:43.971Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"doc-1","editor":3,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-1-2"}}
+{"time":"2026-10-18T00:30:44.711Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"sheet-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-2-0"}}
+{"time":"2026-10-18T00:30:45.501Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"sheet-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-2-1"}}
+{"time":"2026-10-18T00:30:46.230Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"sheet-1","editor":3,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-2-2"}}
+{"time":"2026-10-18T00:30:47.155Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"doc-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-2-0"}}
+{"time":"2026-10-18T00:30:48.056Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"doc-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-2-1"}}
+{"time":"2026-10-18T00:30:48.953Z","event":"edit-converged","detail":{"label":"3editors-2units","unit":"doc-1","editor":3,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-3editors-2units-2-2"}}
+{"time":"2026-10-18T00:30:50.190Z","event":"burst-converged","detail":{"label":"3editors-2units","unit":"sheet-1","tokens":["burst-2026-10-18T00-30-07.212Z-3editors-2units-0","burst-2026-10-18T00-30-07.212Z-3editors-2units-1","burst-2026-10-18T00-30-07.212Z-3editors-2units-2"]}}
+{"time":"2026-10-18T00:30:50.285Z","event":"ui","detail":{"label":"3editors-2units","unit":"sheet-1","text":"Ready: sheet-1 / user-1\nStart\nFormulas\nView\nPaste\nGeneral\ncli@univer.ai\nSheet 1\nDelete\nCopy\nRename\nChange color\nHide\nUnhide\nProtect Worksheet\nUnprotect Worksheet\nChange Worksheet Permissions\nView All Protection Ranges"}}
+{"time":"2026-10-18T00:30:52.727Z","event":"burst-converged","detail":{"label":"3editors-2units","unit":"doc-1","tokens":["burst-2026-10-18T00-30-07.212Z-3editors-2units-0","burst-2026-10-18T00-30-07.212Z-3editors-2units-1","burst-2026-10-18T00-30-07.212Z-3editors-2units-2"]}}
+{"time":"2026-10-18T00:30:52.883Z","event":"ui","detail":{"label":"3editors-2units","unit":"doc-1","text":"Ready: doc-1 / user-1\nStart\nInsert\nView\nPaste\nNormal\ncli@univer.ai\n639 words"}}
+{"time":"2026-10-18T00:30:53.535Z","event":"scenario-pass","detail":{"label":"3editors-2units"}}
+{"time":"2026-10-18T00:30:53.634Z","event":"scenario-start","detail":{"label":"4editors-2units","units":["sheet-1","doc-1"]}}
+{"time":"2026-10-18T00:31:04.757Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-0-0"}}
+{"time":"2026-10-18T00:31:05.663Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-0-1"}}
+{"time":"2026-10-18T00:31:06.399Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":3,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-0-2"}}
+{"time":"2026-10-18T00:31:07.143Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":4,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-0-3"}}
+{"time":"2026-10-18T00:31:08.107Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-0-0"}}
+{"time":"2026-10-18T00:31:09.029Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-0-1"}}
+{"time":"2026-10-18T00:31:09.953Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":3,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-0-2"}}
+{"time":"2026-10-18T00:31:10.895Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":4,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-0-3"}}
+{"time":"2026-10-18T00:31:11.929Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-1-0"}}
+{"time":"2026-10-18T00:31:13.409Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-1-1"}}
+{"time":"2026-10-18T00:31:15.140Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":3,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-1-2"}}
+{"time":"2026-10-18T00:31:16.765Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":4,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-1-3"}}
+{"time":"2026-10-18T00:31:17.566Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-1-0"}}
+{"time":"2026-10-18T00:31:18.556Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-1-1"}}
+{"time":"2026-10-18T00:31:19.668Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":3,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-1-2"}}
+{"time":"2026-10-18T00:31:20.748Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":4,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-1-3"}}
+{"time":"2026-10-18T00:31:23.366Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-2-0"}}
+{"time":"2026-10-18T00:31:25.288Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-2-1"}}
+{"time":"2026-10-18T00:31:26.900Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":3,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-2-2"}}
+{"time":"2026-10-18T00:31:28.327Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"sheet-1","editor":4,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-2-3"}}
+{"time":"2026-10-18T00:31:29.415Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-2-0"}}
+{"time":"2026-10-18T00:31:30.489Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-2-1"}}
+{"time":"2026-10-18T00:31:31.473Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":3,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-2-2"}}
+{"time":"2026-10-18T00:31:32.445Z","event":"edit-converged","detail":{"label":"4editors-2units","unit":"doc-1","editor":4,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-4editors-2units-2-3"}}
+{"time":"2026-10-18T00:31:34.873Z","event":"burst-converged","detail":{"label":"4editors-2units","unit":"sheet-1","tokens":["burst-2026-10-18T00-30-07.212Z-4editors-2units-0","burst-2026-10-18T00-30-07.212Z-4editors-2units-1","burst-2026-10-18T00-30-07.212Z-4editors-2units-2","burst-2026-10-18T00-30-07.212Z-4editors-2units-3"]}}
+{"time":"2026-10-18T00:31:35.079Z","event":"ui","detail":{"label":"4editors-2units","unit":"sheet-1","text":"Ready: sheet-1 / user-1\nStart\nFormulas\nView\nPaste\nGeneral\ncli@univer.ai\nSheet 1\nDelete\nCopy\nRename\nChange color\nHide\nUnhide\nProtect Worksheet\nUnprotect Worksheet\nChange Worksheet Permissions\nView All Protection Ranges"}}
+{"time":"2026-10-18T00:31:38.051Z","event":"burst-converged","detail":{"label":"4editors-2units","unit":"doc-1","tokens":["burst-2026-10-18T00-30-07.212Z-4editors-2units-0","burst-2026-10-18T00-30-07.212Z-4editors-2units-1","burst-2026-10-18T00-30-07.212Z-4editors-2units-2","burst-2026-10-18T00-30-07.212Z-4editors-2units-3"]}}
+{"time":"2026-10-18T00:31:38.237Z","event":"ui","detail":{"label":"4editors-2units","unit":"doc-1","text":"Ready: doc-1 / user-1\nStart\nInsert\nView\nPaste\nNormal\ncli@univer.ai\n783 words"}}
+{"time":"2026-10-18T00:31:39.221Z","event":"scenario-pass","detail":{"label":"4editors-2units"}}
+{"time":"2026-10-18T00:31:39.401Z","event":"scenario-start","detail":{"label":"6editors-2units","units":["sheet-1","doc-1"]}}
+{"time":"2026-10-18T00:32:11.436Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-0"}}
+{"time":"2026-10-18T00:32:17.310Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-1"}}
+{"time":"2026-10-18T00:32:21.281Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":3,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-2"}}
+{"time":"2026-10-18T00:32:26.032Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":4,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-3"}}
+{"time":"2026-10-18T00:32:30.981Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":5,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-4"}}
+{"time":"2026-10-18T00:32:35.369Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":6,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-5"}}
+{"time":"2026-10-18T00:32:37.149Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-0"}}
+{"time":"2026-10-18T00:32:38.423Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-1"}}
+{"time":"2026-10-18T00:32:39.514Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":3,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-2"}}
+{"time":"2026-10-18T00:32:40.829Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":4,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-3"}}
+{"time":"2026-10-18T00:32:41.977Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":5,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-4"}}
+{"time":"2026-10-18T00:32:43.211Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":6,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-0-5"}}
+{"time":"2026-10-18T00:32:45.825Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-0"}}
+{"time":"2026-10-18T00:32:47.974Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-1"}}
+{"time":"2026-10-18T00:32:50.053Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":3,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-2"}}
+{"time":"2026-10-18T00:32:52.608Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":4,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-3"}}
+{"time":"2026-10-18T00:32:54.813Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":5,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-4"}}
+{"time":"2026-10-18T00:33:01.733Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":6,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-5"}}
+{"time":"2026-10-18T00:33:04.133Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-0"}}
+{"time":"2026-10-18T00:33:05.485Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-1"}}
+{"time":"2026-10-18T00:33:06.940Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":3,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-2"}}
+{"time":"2026-10-18T00:33:08.117Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":4,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-3"}}
+{"time":"2026-10-18T00:33:09.140Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":5,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-4"}}
+{"time":"2026-10-18T00:33:10.305Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":6,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-1-5"}}
+{"time":"2026-10-18T00:33:12.410Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-0"}}
+{"time":"2026-10-18T00:33:14.265Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-1"}}
+{"time":"2026-10-18T00:33:16.019Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":3,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-2"}}
+{"time":"2026-10-18T00:33:18.457Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":4,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-3"}}
+{"time":"2026-10-18T00:33:20.571Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":5,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-4"}}
+{"time":"2026-10-18T00:33:22.986Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"sheet-1","editor":6,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-5"}}
+{"time":"2026-10-18T00:33:24.311Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-0"}}
+{"time":"2026-10-18T00:33:25.379Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-1"}}
+{"time":"2026-10-18T00:33:26.499Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":3,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-2"}}
+{"time":"2026-10-18T00:33:27.538Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":4,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-3"}}
+{"time":"2026-10-18T00:33:28.580Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":5,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-4"}}
+{"time":"2026-10-18T00:33:29.738Z","event":"edit-converged","detail":{"label":"6editors-2units","unit":"doc-1","editor":6,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-6editors-2units-2-5"}}
+{"time":"2026-10-18T00:33:44.148Z","event":"burst-converged","detail":{"label":"6editors-2units","unit":"sheet-1","tokens":["burst-2026-10-18T00-30-07.212Z-6editors-2units-0","burst-2026-10-18T00-30-07.212Z-6editors-2units-1","burst-2026-10-18T00-30-07.212Z-6editors-2units-2","burst-2026-10-18T00-30-07.212Z-6editors-2units-3","burst-2026-10-18T00-30-07.212Z-6editors-2units-4","burst-2026-10-18T00-30-07.212Z-6editors-2units-5"]}}
+{"time":"2026-10-18T00:33:44.465Z","event":"ui","detail":{"label":"6editors-2units","unit":"sheet-1","text":"Ready: sheet-1 / user-1\nStart\nFormulas\nView\nPaste\nGeneral\ncli@univer.ai\nSheet 1\nDelete\nCopy\nRename\nChange color\nHide\nUnhide\nProtect Worksheet\nUnprotect Worksheet\nChange Worksheet Permissions\nView All Protection Ranges"}}
+{"time":"2026-10-18T00:33:53.331Z","event":"burst-converged","detail":{"label":"6editors-2units","unit":"doc-1","tokens":["burst-2026-10-18T00-30-07.212Z-6editors-2units-0","burst-2026-10-18T00-30-07.212Z-6editors-2units-1","burst-2026-10-18T00-30-07.212Z-6editors-2units-2","burst-2026-10-18T00-30-07.212Z-6editors-2units-3","burst-2026-10-18T00-30-07.212Z-6editors-2units-4","burst-2026-10-18T00-30-07.212Z-6editors-2units-5"]}}
+{"time":"2026-10-18T00:33:53.667Z","event":"ui","detail":{"label":"6editors-2units","unit":"doc-1","text":"Ready: doc-1 / user-1\nStart\nInsert\nView\nPaste\nNormal\ncli@univer.ai\n999 words"}}
+{"time":"2026-10-18T00:33:55.780Z","event":"scenario-pass","detail":{"label":"6editors-2units"}}
+{"time":"2026-10-18T00:33:56.114Z","event":"scenario-start","detail":{"label":"2editors-6units","units":["sheet-1","doc-1","sheet-2","doc-2","sheet-3","doc-3"]}}
+{"time":"2026-10-18T00:34:35.293Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-0"}}
+{"time":"2026-10-18T00:34:36.802Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-1"}}
+{"time":"2026-10-18T00:34:37.551Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-1","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-0"}}
+{"time":"2026-10-18T00:34:38.542Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-1","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-1"}}
+{"time":"2026-10-18T00:34:41.106Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-2","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-0"}}
+{"time":"2026-10-18T00:34:42.584Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-2","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-1"}}
+{"time":"2026-10-18T00:34:44.677Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-2","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-0"}}
+{"time":"2026-10-18T00:34:45.698Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-2","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-1"}}
+{"time":"2026-10-18T00:34:48.161Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-3","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-0"}}
+{"time":"2026-10-18T00:34:50.011Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-3","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-1"}}
+{"time":"2026-10-18T00:34:52.158Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-3","editor":1,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-0"}}
+{"time":"2026-10-18T00:34:53.287Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-3","editor":2,"cycle":0,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-0-1"}}
+{"time":"2026-10-18T00:34:54.994Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-0"}}
+{"time":"2026-10-18T00:34:58.132Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-1"}}
+{"time":"2026-10-18T00:34:58.894Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-1","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-0"}}
+{"time":"2026-10-18T00:34:59.915Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-1","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-1"}}
+{"time":"2026-10-18T00:35:01.379Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-2","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-0"}}
+{"time":"2026-10-18T00:35:02.683Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-2","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-1"}}
+{"time":"2026-10-18T00:35:03.775Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-2","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-0"}}
+{"time":"2026-10-18T00:35:04.679Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-2","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-1"}}
+{"time":"2026-10-18T00:35:05.901Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-3","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-0"}}
+{"time":"2026-10-18T00:35:07.537Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-3","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-1"}}
+{"time":"2026-10-18T00:35:08.504Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-3","editor":1,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-0"}}
+{"time":"2026-10-18T00:35:09.419Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-3","editor":2,"cycle":1,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-1-1"}}
+{"time":"2026-10-18T00:35:10.977Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-0"}}
+{"time":"2026-10-18T00:35:12.665Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-1"}}
+{"time":"2026-10-18T00:35:13.760Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-1","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-0"}}
+{"time":"2026-10-18T00:35:14.879Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-1","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-1"}}
+{"time":"2026-10-18T00:35:16.724Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-2","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-0"}}
+{"time":"2026-10-18T00:35:18.231Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-2","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-1"}}
+{"time":"2026-10-18T00:35:19.297Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-2","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-0"}}
+{"time":"2026-10-18T00:35:20.232Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-2","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-1"}}
+{"time":"2026-10-18T00:35:21.498Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-3","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-0"}}
+{"time":"2026-10-18T00:35:23.103Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"sheet-3","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-1"}}
+{"time":"2026-10-18T00:35:24.092Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-3","editor":1,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-0"}}
+{"time":"2026-10-18T00:35:25.100Z","event":"edit-converged","detail":{"label":"2editors-6units","unit":"doc-3","editor":2,"cycle":2,"value":"s2026-10-18T00-30-07.212Z-2editors-6units-2-1"}}
+{"time":"2026-10-18T00:35:26.682Z","event":"burst-converged","detail":{"label":"2editors-6units","unit":"sheet-1","tokens":["burst-2026-10-18T00-30-07.212Z-2editors-6units-0","burst-2026-10-18T00-30-07.212Z-2editors-6units-1"]}}
+{"time":"2026-10-18T00:35:26.954Z","event":"ui","detail":{"label":"2editors-6units","unit":"sheet-1","text":"Ready: sheet-1 / user-1\nStart\nFormulas\nView\nPaste\nGeneral\ncli@univer.ai\nSheet 1\nDelete\nCopy\nRename\nChange color\nHide\nUnhide\nProtect Worksheet\nUnprotect Worksheet\nChange Worksheet Permissions\nView All Protection Ranges"}}
+{"time":"2026-10-18T00:35:29.886Z","event":"burst-converged","detail":{"label":"2editors-6units","unit":"doc-1","tokens":["burst-2026-10-18T00-30-07.212Z-2editors-6units-0","burst-2026-10-18T00-30-07.212Z-2editors-6units-1"]}}
+{"time":"2026-10-18T00:35:30.125Z","event":"ui","detail":{"label":"2editors-6units","unit":"doc-1","text":"Ready: doc-1 / user-1\nStart\nInsert\nView\nPaste\nNormal\ncli@univer.ai\n1,071 words"}}
+{"time":"2026-10-18T00:35:33.551Z","event":"burst-converged","detail":{"label":"2editors-6units","unit":"sheet-2","tokens":["burst-2026-10-18T00-30-07.212Z-2editors-6units-0","burst-2026-10-18T00-30-07.212Z-2editors-6units-1"]}}
+{"time":"2026-10-18T00:35:33.743Z","event":"ui","detail":{"label":"2editors-6units","unit":"sheet-2","text":"Ready: sheet-2 / user-1\nStart\nFormulas\nView\nPaste\nGeneral\ncli@univer.ai\nSheet 1\nDelete\nCopy\nRename\nChange color\nHide\nUnhide\nProtect Worksheet\nUnprotect Worksheet\nChange Worksheet Permissions\nView All Protection Ranges"}}
+{"time":"2026-10-18T00:35:36.262Z","event":"burst-converged","detail":{"label":"2editors-6units","unit":"doc-2","tokens":["burst-2026-10-18T00-30-07.212Z-2editors-6units-0","burst-2026-10-18T00-30-07.212Z-2editors-6units-1"]}}
+{"time":"2026-10-18T00:35:36.378Z","event":"ui","detail":{"label":"2editors-6units","unit":"doc-2","text":"Ready: doc-2 / user-1\nStart\nInsert\nView\nPaste\nNormal\ncli@univer.ai\n126 words"}}
+{"time":"2026-10-18T00:35:39.298Z","event":"burst-converged","detail":{"label":"2editors-6units","unit":"sheet-3","tokens":["burst-2026-10-18T00-30-07.212Z-2editors-6units-0","burst-2026-10-18T00-30-07.212Z-2editors-6units-1"]}}
+{"time":"2026-10-18T00:35:39.419Z","event":"ui","detail":{"label":"2editors-6units","unit":"sheet-3","text":"Ready: sheet-3 / user-1\nStart\nFormulas\nView\nPaste\nGeneral\ncli@univer.ai\nSheet 1\nDelete\nCopy\nRename\nChange color\nHide\nUnhide\nProtect Worksheet\nUnprotect Worksheet\nChange Worksheet Permissions\nView All Protection Ranges"}}
+{"time":"2026-10-18T00:35:42.076Z","event":"burst-converged","detail":{"label":"2editors-6units","unit":"doc-3","tokens":["burst-2026-10-18T00-30-07.212Z-2editors-6units-0","burst-2026-10-18T00-30-07.212Z-2editors-6units-1"]}}
+{"time":"2026-10-18T00:35:42.249Z","event":"ui","detail":{"label":"2editors-6units","unit":"doc-3","text":"Ready: doc-3 / user-1\nStart\nInsert\nView\nPaste\nNormal\ncli@univer.ai\n126 words"}}
+{"time":"2026-10-18T00:35:43.159Z","event":"scenario-pass","detail":{"label":"2editors-6units"}}
+{"time":"2026-10-18T00:35:43.291Z","event":"complete","detail":{"failedScenarios":0}}

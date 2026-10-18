@@ -1,0 +1,17 @@
+{"time": "2026-10-18T00:36:21.577Z", "event": "start", "detail": {"version": "156.0.8078.4", "editPath": "keyboard and name-box UI", "license": "none"}}
+{"time": "2026-10-18T00:36:29.977Z", "event": "soak-start", "detail": {"targetMinutes": 1, "pid": 76768, "acceptanceEligible": false}}
+{"time": "2026-10-18T00:36:31.610Z", "event": "edit-converged", "detail": {"unit": "sheet-12", "user": 1, "tick": 0, "value": "soak-2026-10-18T00-36-20.988Z-0-0"}}
+{"time": "2026-10-18T00:36:31.678Z", "event": "edit-converged", "detail": {"unit": "sheet-12", "user": 2, "tick": 0, "value": "soak-2026-10-18T00-36-20.988Z-0-1"}}
+{"time": "2026-10-18T00:36:34.535Z", "event": "edit-converged", "detail": {"unit": "doc-12", "user": 1, "tick": 0, "value": "soak-2026-10-18T00-36-20.988Z-0-0"}}
+{"time": "2026-10-18T00:36:34.556Z", "event": "edit-converged", "detail": {"unit": "doc-12", "user": 2, "tick": 0, "value": "soak-2026-10-18T00-36-20.988Z-0-1"}}
+{"time": "2026-10-18T00:36:35.528Z", "event": "ui", "detail": {"unit": "sheet-12", "tick": 0, "text": "Ready: sheet-12 / user-1\nStart\nView\nPaste\nSheet 1\nDelete\nCopy\nRename\nChange color\nHide\nUnhide\nProtect Worksheet\nUnprotect Worksheet\nChange Worksheet Permissions\nView All Protection Ranges"}}
+{"time": "2026-10-18T00:36:36.354Z", "event": "ui", "detail": {"unit": "doc-12", "tick": 0, "text": "Ready: doc-12 / user-1\nStart"}}
+{"time": "2026-10-18T00:36:36.355Z", "event": "heartbeat", "detail": {"tick": 0, "elapsedMs": 6379, "monotonicMs": 6379.281166000001}}
+{"time": "2026-10-18T00:37:37.409Z", "event": "edit-converged", "detail": {"unit": "sheet-12", "user": 1, "tick": 1, "value": "soak-2026-10-18T00-36-20.988Z-1-0"}}
+{"time": "2026-10-18T00:37:37.415Z", "event": "edit-converged", "detail": {"unit": "sheet-12", "user": 2, "tick": 1, "value": "soak-2026-10-18T00-36-20.988Z-1-1"}}
+{"time": "2026-10-18T00:37:38.394Z", "event": "edit-converged", "detail": {"unit": "doc-12", "user": 1, "tick": 1, "value": "soak-2026-10-18T00-36-20.988Z-1-0"}}
+{"time": "2026-10-18T00:37:38.409Z", "event": "edit-converged", "detail": {"unit": "doc-12", "user": 2, "tick": 1, "value": "soak-2026-10-18T00-36-20.988Z-1-1"}}
+{"time": "2026-10-18T00:37:38.968Z", "event": "ui", "detail": {"unit": "sheet-12", "tick": 1, "text": "Ready: sheet-12 / user-1\nStart\nView\nPaste\nSheet 1\nDelete\nCopy\nRename\nChange color\nHide\nUnhide\nProtect Worksheet\nUnprotect Worksheet\nChange Worksheet Permissions\nView All Protection Ranges"}}
+{"time": "2026-10-18T00:37:39.365Z", "event": "ui", "detail": {"unit": "doc-12", "tick": 1, "text": "Ready: doc-12 / user-1\nStart"}}
+{"time": "2026-10-18T00:37:39.365Z", "event": "heartbeat", "detail": {"tick": 1, "elapsedMs": 69389, "monotonicMs": 69388.402541}}
+{"time": "2026-10-18T00:37:39.365Z", "event": "pilot-complete", "detail": {"elapsedMs": 69389, "monotonicMs": 69388.529916, "ticks": 2}}
