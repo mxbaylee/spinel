@@ -103,7 +103,10 @@ The one-minute pilot passed at `2026-10-18T00:37:39.365Z` after two bursts,
 The full soak and final independent ticket grade remain to be completed/reviewed. The corrected matrix and restart results above are bounded
 short-run evidence, not ticket completion. Preserve
 raw logs and screenshots with the final observations and exact run timestamps.
-Do not retire SPN-013 or conclude that two-person daily use is unrestricted yet.
+The owner chose to retain SPN-013 as optional, low impact and high effort while
+capacity evidence is inconclusive ([decision #27](https://github.com/mxbaylee/spinel/issues/27),
+2026-10-17). Build it only when a reproducible reachable capacity limit justifies
+it. Do not conclude that two-person daily use is unrestricted.
 If the final limits make collaboration unusable, flag SPN-014 to the owner.
 Any retirement of SPN-013 must be a subsequent grooming PR.
 

@@ -22,7 +22,7 @@ How this backlog works: [process.md](process.md). Next ID: **SPN-039**. Grooming
 | 🎞️ [SPN-009](SPN-009.md) Create and edit a slide deck | 🌳 L | 🤍 S | 2 | — |
 | 🧪 [SPN-010](SPN-010.md) Find Univer collaboration's limits by editing through the UI | 🌿 M | 🩷 L | 💎 8 | — |
 | 🤝 [SPN-012](SPN-012.md) Edit a document together in real time | 🌳 L | 🩷 L | 💎 7 | [SPN-010](SPN-010.md), [SPN-015](SPN-015.md) |
-| 🚦 [SPN-013](SPN-013.md) Queue editors when collaboration is full | 🌿 M | 💜 M | 💎 7 | [SPN-010](SPN-010.md), [SPN-012](SPN-012.md) |
+| 🚦 [SPN-013](SPN-013.md) Queue editors when collaboration is full | 🌳 L | 🤍 S | 2 | [SPN-010](SPN-010.md), [SPN-012](SPN-012.md) |
 | 🛠️ [SPN-014](SPN-014.md) Replace Univer collaboration with our own sync | 🌳 L | 💜 M | 3 | [SPN-010](SPN-010.md) |
 | 🔒 [SPN-015](SPN-015.md) Share a document or folder with specific people | 🌿 M | 🩷 L | 💎 8 | — |
 | 🔗 [SPN-016](SPN-016.md) Share a document by link | 🌿 M | 💜 M | 4 | [SPN-015](SPN-015.md) |
