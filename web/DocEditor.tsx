@@ -1,4 +1,6 @@
 import { VersionNames } from './VersionNames.tsx';
+import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
+import { getTheme } from '../src/ui/theme.ts';
 import { setDocumentPermissionValue } from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
 import { Collaborators, watchPresence } from './Collaborators.tsx';
@@ -33,7 +35,7 @@ import '@univerjs/preset-docs-hyper-link/lib/index.css';
 import drawingEnUS from '@univerjs/preset-docs-drawing/locales/en-US';
 import '@univerjs/preset-docs-drawing/lib/index.css';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
-import { UniverDocsCorePreset } from '@univerjs/preset-docs-core';
+import { UniverDocsCorePreset, UniverDocsUIPlugin } from '@univerjs/preset-docs-core';
 import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
 import {
@@ -57,6 +59,7 @@ export function DocEditor({
   onDirty: (dirty: boolean) => void;
 }) {
   const [uploadError, setUploadError] = useState('');
+  const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
@@ -179,6 +182,8 @@ export function DocEditor({
       }
       Inject(Injector)(TrackedImageInsertion, undefined, 1);
       const { univer, univerAPI } = createUniver({
+        theme: editorTheme(),
+        darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
           [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, ClientEnglish, UIEnglish),
@@ -213,10 +218,18 @@ export function DocEditor({
               ].map((id) => [id, { hidden: true }]),
             ),
           }),
+          // SDK canvas hints are painted at 50% opacity, below AA on white paper.
+          // Keep the instruction in accessible shell text instead.
+          { plugins: [[UniverDocsUIPlugin, { placeholder: false }]] },
           UniverDocsHyperLinkPreset(),
         ],
       });
-      disposeEditor = () => univer.dispose();
+      const stopTheme = bindEditorTheme(univer);
+      disposeEditor = () => {
+        stopTheme();
+        univer.dispose();
+      };
+      installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const document = await univerAPI.getCollaboration().loadDocAsync(data.unitId);
       if (!document) throw new Error('Could not load this document.');
@@ -228,6 +241,7 @@ export function DocEditor({
       await documentReady(univer, data.unitId, loading.signal);
       if (disposed) return;
       const readonly = async () => {
+        setEditable(false);
         // Local UI state only: changing the shared document's permission rules
         // would also make still-authorized collaborators read-only.
         const permissions = univer.__getInjector().get(IPermissionService);
@@ -235,7 +249,10 @@ export function DocEditor({
         setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Copy, true);
       };
       if (data.access === 'viewer') await readonly();
-      else document.setSelection(0, 0);
+      else {
+        setEditable(true);
+        document.setSelection(0, 0);
+      }
       stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) {
         stopPresence();
@@ -262,6 +279,7 @@ export function DocEditor({
       // Univer owns a separate React root; unmount it after our cleanup commit.
       if (disposeEditor) queueMicrotask(disposeEditor);
       controller.current = null;
+      setEditable(false);
       onDirty(false);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
@@ -280,6 +298,7 @@ export function DocEditor({
         id={id}
         saved={!status.dirty && !status.failed && Boolean(controller.current)}
       />
+      {editable && <p className="editor-help">Click the page to write. Type / for commands.</p>}
       <div className="univer-container" ref={container} />
     </section>
   );

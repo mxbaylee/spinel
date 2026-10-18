@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
+import { InterceptorEffectEnum } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
+import { SheetInterceptorService, SheetSkeletonService, INTERCEPTOR_POINT } from '@univerjs/sheets';
+import { IRenderManagerService } from '@univerjs/engine-render';
+import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
+import { getTheme } from '../src/ui/theme.ts';
+import { displayPresetCell } from '../src/ui/presetStyles.ts';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
-import { UniverDocsCorePreset } from '@univerjs/preset-docs-core';
+import { UniverDocsCorePreset, UniverDocsUIPlugin } from '@univerjs/preset-docs-core';
 import { UniverDocsDrawingPreset } from '@univerjs/preset-docs-drawing';
 import { UniverDocsHyperLinkPreset } from '@univerjs/preset-docs-hyper-link';
 import sheetsEnglish from '@univerjs/preset-sheets-core/locales/en-US';
@@ -39,6 +45,8 @@ export function VersionPreview() {
       setData(loaded);
       const sheet = loaded.item.kind === 'sheet';
       const { univer, univerAPI } = createUniver({
+        theme: editorTheme(),
+        darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
           [LocaleType.EN_US]: mergeLocales(sheetsEnglish, docsEnglish, drawingEnglish, linkEnglish),
@@ -47,11 +55,13 @@ export function VersionPreview() {
           ? [UniverSheetsCorePreset({ container: container.current! })]
           : [
               UniverDocsCorePreset({ container: container.current! }),
+              { plugins: [[UniverDocsUIPlugin, { placeholder: false }]] },
               UniverDocsDrawingPreset(),
               UniverDocsHyperLinkPreset(),
             ],
       });
       cleanup = () => univer.dispose();
+      installCanvasColors(univer);
       if (sheet) univerAPI.createWorkbook(loaded.snapshot as IWorkbookData).setEditable(false);
       else
         await univerAPI
@@ -59,6 +69,46 @@ export function VersionPreview() {
           .getPermission()
           .setReadOnly();
       await editorReady(univerAPI);
+      if (disposed) return;
+      const interceptor = sheet
+        ? univer
+            .__getInjector()
+            .get(SheetInterceptorService)
+            .intercept(INTERCEPTOR_POINT.CELL_CONTENT, {
+              effect: InterceptorEffectEnum.Style,
+              handler(value, context, next) {
+                const cell = next(value);
+                if (!cell) return cell;
+                const style = context.worksheet.getComposedCellStyleByCellData(
+                  context.row,
+                  context.col,
+                  cell,
+                );
+                return displayPresetCell(cell, style, getTheme());
+              },
+            })
+        : undefined;
+      const unitId = loaded.snapshot.id;
+      const render = univer.__getInjector().get(IRenderManagerService).getRenderUnitById(unitId);
+      if (sheet && render) render.engine.getCanvasElement().style.backgroundColor = '#ffffff';
+      const stopTheme = bindEditorTheme(
+        univer,
+        sheet
+          ? () => {
+              for (const skeleton of univer
+                .__getInjector()
+                .get(SheetSkeletonService)
+                .getSkeletonsByUnitId(unitId))
+                skeleton.makeDirty(true);
+              univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
+            }
+          : undefined,
+      );
+      cleanup = () => {
+        stopTheme();
+        interceptor?.dispose();
+        univer.dispose();
+      };
       if (!disposed) setReady(true);
     })().catch((cause) => {
       if (!disposed)

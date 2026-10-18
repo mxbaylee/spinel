@@ -16,6 +16,8 @@ import { BackupStatus } from './BackupStatus.tsx';
 import { AdminUsers } from './AdminUsers.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { PinsProvider, PinnedSidebar } from './Pins.tsx';
+import { GemLogo } from '../src/ui/GemLogo.tsx';
+import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 
 const VersionPreview = lazy(() =>
   import('./VersionPreview.tsx').then((m) => ({ default: m.VersionPreview })),
@@ -208,14 +210,26 @@ export function App() {
               event.preventDefault();
           }}
         >
-          <a className="brand" href="/">
-            Spinel
+          <a className="brand rail-button" href="/">
+            <span className="wiggle">
+              <GemLogo />
+            </span>
+            <span className="rail-label">Your docs</span>
           </a>
           {user && (
             <nav aria-label="Workspace">
-              <a href={user.isAdmin ? '/admin' : '/'}>{user.isAdmin ? 'Admin' : 'Dashboard'}</a>
-              <a href="/settings">Settings</a>
-              <button onClick={() => void signOut()}>Sign out</button>
+              <a className="rail-button" href={user.isAdmin ? '/admin' : '/'}>
+                <span aria-hidden="true">▦</span>
+                <span className="rail-label">{user.isAdmin ? 'Admin' : 'Dashboard'}</span>
+              </a>
+              <a className="rail-button" href="/settings">
+                <span aria-hidden="true">⚙</span>
+                <span className="rail-label">Settings</span>
+              </a>
+              <button className="rail-button" onClick={() => void signOut()}>
+                <span aria-hidden="true">↪</span>
+                <span className="rail-label">Sign out</span>
+              </button>
             </nav>
           )}
         </header>
@@ -300,6 +314,7 @@ export function App() {
               <>
                 <p className="eyebrow">{user.name}</p>
                 <h1>Settings</h1>
+                <ThemeSettings />
                 <section className="welcome">
                   <h2>Your passkeys</h2>
                   <p>

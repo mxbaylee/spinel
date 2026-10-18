@@ -1,6 +1,18 @@
 import { VersionNames } from './VersionNames.tsx';
-import { IPermissionService } from '@univerjs/core';
-import { getAllWorkbookPermissionPoint } from '@univerjs/sheets';
+import { IRenderManagerService } from '@univerjs/engine-render';
+import { IPermissionService, InterceptorEffectEnum } from '@univerjs/core';
+import {
+  getAllWorkbookPermissionPoint,
+  SheetInterceptorService,
+  SheetSkeletonService,
+  INTERCEPTOR_POINT,
+  BEFORE_CELL_EDIT,
+  SetRangeValuesCommand,
+} from '@univerjs/sheets';
+import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
+import { getTheme } from '../src/ui/theme.ts';
+import { presetStyle, displayPresetCell, presetCellForEditing } from '../src/ui/presetStyles.ts';
+import { FillPresets } from '../src/ui/FillPresets.tsx';
 import { UnitAction } from '@univerjs/protocol';
 import { Collaborators, watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
@@ -28,6 +40,8 @@ export function SheetEditor({
   name: string;
   onDirty: (dirty: boolean) => void;
 }) {
+  const applyFill = useRef<((id: string) => Promise<void>) | null>(null);
+  const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
@@ -59,19 +73,77 @@ export function SheetEditor({
       const data = await prepareCollaboration(id);
       if (disposed) return;
       const { univer, univerAPI } = createUniver({
+        theme: editorTheme(),
+        darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish) },
         collaboration: true,
         plugins: collaborationPlugins(data.unitId),
         presets: [UniverSheetsCorePreset({ container: container.current! })],
       });
+      // Sheet services are registered lazily when the first sheet is created.
+      // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => univer.dispose();
+      installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const workbook = await univerAPI.getCollaboration().loadSheetAsync(data.unitId);
       if (!workbook) throw new Error('Could not load this spreadsheet.');
       await editorReady(univerAPI);
       if (disposed) return;
+      const interceptor = univer
+        .__getInjector()
+        .get(SheetInterceptorService)
+        .intercept(INTERCEPTOR_POINT.CELL_CONTENT, {
+          effect: InterceptorEffectEnum.Style,
+          handler(value, context, next) {
+            const cell = next(value);
+            if (!cell) return cell;
+            const style = context.worksheet.getComposedCellStyleByCellData(
+              context.row,
+              context.col,
+              cell,
+            );
+            return displayPresetCell(cell, style, getTheme());
+          },
+        });
+      const stopEditingTheme = univer
+        .__getInjector()
+        .get(SheetInterceptorService)
+        .writeCellInterceptor.intercept(BEFORE_CELL_EDIT, {
+          handler(value, context, next) {
+            const cell = next(value);
+            if (!cell) return cell;
+            const style = context.worksheet.getComposedCellStyleByCellData(
+              context.row,
+              context.col,
+              context.origin,
+            );
+            return presetCellForEditing(cell, context.origin, style);
+          },
+        });
+      // Literal document colours render against light paper even with dark chrome.
+      const render = univer
+        .__getInjector()
+        .get(IRenderManagerService)
+        .getRenderUnitById(data.unitId);
+      if (render) render.engine.getCanvasElement().style.backgroundColor = '#ffffff';
+      const stopTheme = bindEditorTheme(univer, () => {
+        // Invalidate cached display styles on inactive tabs as well.
+        for (const skeleton of univer
+          .__getInjector()
+          .get(SheetSkeletonService)
+          .getSkeletonsByUnitId(data.unitId))
+          skeleton.makeDirty(true);
+        univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
+      });
+      disposeEditor = () => {
+        stopTheme();
+        interceptor.dispose();
+        stopEditingTheme();
+        univer.dispose();
+      };
       const readOnly = async () => {
+        setEditable(false);
         // This tab's presentation follows its grant; never change shared permissions.
         const permissions = univer.__getInjector().get(IPermissionService);
         for (const Point of getAllWorkbookPermissionPoint()) {
@@ -86,6 +158,22 @@ export function SheetEditor({
       if (data.access === 'viewer') await readOnly();
       save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readOnly);
       controller.current = save;
+      setEditable(data.access !== 'viewer');
+      applyFill.current = async (preset) => {
+        const book = univerAPI.getActiveWorkbook();
+        if (!book) throw new Error('Open a spreadsheet first.');
+        await book.endEditingAsync(true);
+        const sheet = book.getActiveSheet(),
+          range = sheet?.getActiveRange();
+        if (!sheet || !range) throw new Error('Select cells to fill.');
+        const result = await univerAPI.executeCommand(SetRangeValuesCommand.id, {
+          unitId: data.unitId,
+          subUnitId: sheet.getSheetId(),
+          range: range.getRange(),
+          value: { s: presetStyle(preset, 'light') },
+        });
+        if (!result) throw new Error('Could not apply this fill. Check your access and try again.');
+      };
       stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) stopPresence();
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
@@ -114,6 +202,7 @@ export function SheetEditor({
       // Univer owns a separate React root; unmount it after our cleanup commit.
       if (disposeEditor) queueMicrotask(disposeEditor);
       controller.current = null;
+      applyFill.current = null;
       onDirty(false);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
@@ -121,6 +210,13 @@ export function SheetEditor({
   return (
     <section className="sheet-editor" aria-label="Sheet document">
       <Collaborators people={people} />
+      <FillPresets
+        disabled={!editable || status.failed}
+        apply={async (preset) => {
+          if (!applyFill.current) throw new Error('Wait for the spreadsheet to load.');
+          await applyFill.current(preset);
+        }}
+      />
       <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
         {status.message}
         {status.failed && status.dirty && (

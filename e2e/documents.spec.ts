@@ -77,12 +77,16 @@ test('document UI preserves rich text and embedded images through reload and off
     await page.keyboard.press('Enter');
     await page.keyboard.press('Enter');
     await page.keyboard.type('Reference link');
-    await page.keyboard.press('Shift+Home');
-    await editor.getByRole('tab', { name: 'Insert', exact: true }).click();
+    // Finish the text edit before selecting a different toolbar. A pending editor
+    // update can otherwise restore Start after the test has already clicked Insert.
+    await expect.poll(async () => (await read()).body.dataStream).toContain('Reference link');
     await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
       'All changes saved.',
     );
-
+    await page.keyboard.press('Shift+Home');
+    const insertTab = editor.getByRole('tab', { name: 'Insert', exact: true });
+    await insertTab.click();
+    await expect(insertTab).toHaveAttribute('aria-selected', 'true');
     await editor.getByRole('button', { name: 'Add link', exact: true }).click();
     const linkInput = page.getByRole('textbox', { name: '', exact: true });
     await linkInput.fill('https://example.com/journal');
