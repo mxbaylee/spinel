@@ -9,8 +9,8 @@ test('builds and renames a nested tree, opens all document types, moves safely a
 }, testInfo) => {
   const database = openDatabase(
     testInfo.project.name === 'development'
-      ? 'test-results/dev.sqlite'
-      : 'test-results/production.sqlite',
+      ? 'test-results/development/app.sqlite'
+      : 'test-results/production/app.sqlite',
   );
   const auth = new AuthStore(database);
   const owner = auth.createUser(`Folders ${testInfo.testId}`);

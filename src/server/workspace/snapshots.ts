@@ -10,6 +10,19 @@ export function commitSnapshot(
   writeId: string,
 ) {
   return workspace.auth.transaction(() => {
+    const db = workspace.auth.database;
+    if (
+      db
+        .prepare(
+          "SELECT 1 FROM sqlite_master WHERE type='table' AND name='workspace_collaboration'",
+        )
+        .get() &&
+      db.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id)
+    )
+      throw new AuthError(
+        409,
+        'This document now uses live collaboration. Keep this tab open and copy unsaved changes before reloading.',
+      );
     const current = workspace.auth.database
       .prepare(`SELECT snapshot, revision, write_id FROM ${table} WHERE item_id=?`)
       .get(id) as { snapshot: string; revision: number; write_id: string } | undefined;

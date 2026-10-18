@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
+import type { IWorkbookData, ICellData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 
@@ -14,8 +15,8 @@ test('owner shares future folder contents, collaborator edits, and open editors 
   await page.setViewportSize({ width: 1440, height: 1100 });
   const db = openDatabase(
     testInfo.project.name === 'development'
-      ? 'test-results/dev.sqlite'
-      : 'test-results/production.sqlite',
+      ? 'test-results/development/app.sqlite'
+      : 'test-results/production/app.sqlite',
   );
   const auth = new AuthStore(db),
     owner = auth.createUser('Sharing owner ' + testInfo.testId),
@@ -34,6 +35,14 @@ test('owner shares future folder contents, collaborator edits, and open editors 
   const other = await second.newPage();
   other.setDefaultTimeout(10000);
   const errors: string[] = [];
+  const permissionWrites: string[] = [];
+  second.on('request', (request) => {
+    if (request.url().includes('/authz/') && ['PUT', 'DELETE', 'PATCH'].includes(request.method()))
+      permissionWrites.push(request.url());
+  });
+  await second.grantPermissions(['clipboard-read', 'clipboard-write']);
+  let releasePending = () => {};
+  let heldChanges = 0;
   for (const tab of [page, other]) tab.on('pageerror', (e) => errors.push(e.message));
   async function create(name: string, type: string) {
     await page.getByRole('button', { name: 'New', exact: true }).click();
@@ -87,7 +96,9 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await page.getByRole('button', { name: 'Nested Folder', exact: true }).click();
     await create('Shared budget', 'Sheet');
     await expect(
-      page.getByRole('region', { name: 'Sheet document', exact: true }).getByRole('status'),
+      page
+        .getByRole('region', { name: 'Sheet document', exact: true })
+        .getByRole('status', { name: 'Save status' }),
     ).toHaveText('All changes saved.', { timeout: 20000 });
     const sheetId = new URL(page.url()).searchParams.get('item')!;
     await page
@@ -96,7 +107,9 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       .click();
     await create('Shared journal', 'Doc');
     await expect(
-      page.getByRole('region', { name: 'Doc document', exact: true }).getByRole('status'),
+      page
+        .getByRole('region', { name: 'Doc document', exact: true })
+        .getByRole('status', { name: 'Save status' }),
     ).toHaveText('All changes saved.', { timeout: 20000 });
     const docId = new URL(page.url()).searchParams.get('item')!;
     await page
@@ -112,11 +125,12 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await other.getByRole('button', { name: 'Shared journal Doc', exact: true }).click();
     const docStatus = other
       .getByRole('region', { name: 'Doc document', exact: true })
-      .getByRole('status');
+      .getByRole('status', { name: 'Save status' });
     await expect(docStatus).toHaveText('All changes saved.', { timeout: 20000 });
     await expect(other.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText(
       'My files / Shared plans / Nested / Shared journal',
     );
+    await other.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await other.keyboard.type('Written by collaborator');
     const readDoc = async () => await (await context.request.get(`/api/items/${docId}/doc`)).json();
     await expect
@@ -131,11 +145,20 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await other.getByRole('button', { name: 'Shared budget Sheet', exact: true }).click();
     const sheetStatus = other
       .getByRole('region', { name: 'Sheet document', exact: true })
-      .getByRole('status');
+      .getByRole('status', { name: 'Save status' });
     await expect(sheetStatus).toHaveText('All changes saved.', { timeout: 20000 });
     await typeCell(other, '42');
-    const readSheet = async () =>
-      await (await context.request.get(`/api/items/${sheetId}/sheet`)).json();
+    const readSheet = async () => {
+      const saved = await (await context.request.get(`/api/items/${sheetId}/sheet`)).json();
+      const snapshot = saved.snapshot as IWorkbookData;
+      // Compare effective formatting; public materialization can re-key style IDs.
+      for (const sheet of Object.values(snapshot.sheets))
+        for (const row of Object.values(sheet.cellData ?? {}))
+          for (const value of Object.values(row ?? {}) as (ICellData | null)[])
+            if (value && typeof value.s === 'string') value.s = snapshot.styles[value.s];
+      snapshot.styles = {};
+      return saved;
+    };
     await expect
       .poll(async () => {
         const { snapshot } = await readSheet();
@@ -149,20 +172,47 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await openDoc.goto(`${baseURL}/?item=${docId}`);
     const openDocStatus = openDoc
       .getByRole('region', { name: 'Doc document', exact: true })
-      .getByRole('status');
+      .getByRole('status', { name: 'Save status' });
     await expect(openDocStatus).toHaveText('All changes saved.', { timeout: 20000 });
     const beforeDowngradeDoc = await readDoc();
-    await grant('viewer');
+    const pending = new Promise<void>((resolve) => {
+      releasePending = resolve;
+    });
+    await second.route('**/universer-api/comb/**/new_changes', async (route) => {
+      heldChanges++;
+      await pending;
+      await route.continue();
+    });
+    await openDoc.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await openDoc.keyboard.type('Rejected edit');
-    await expect(openDocStatus).toContainText('cannot edit', { timeout: 10000 });
-    await expect(openDocStatus).toContainText('not saved');
+    await typeCell(other, '99');
+    await expect.poll(() => heldChanges).toBeGreaterThanOrEqual(2);
+    await grant('viewer');
+    releasePending();
+    await expect(openDocStatus).toContainText('Access changed', { timeout: 10000 });
+    await expect(openDocStatus).toContainText('Copy unsaved changes');
     expect(await readDoc()).toEqual(beforeDowngradeDoc);
     await expect(openDoc.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    await openDoc.bringToFront();
+    await openDoc.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+    await openDoc.keyboard.press('Control+a');
+    await openDoc.keyboard.press('Control+c');
+    await expect
+      .poll(() => openDoc.evaluate(() => navigator.clipboard.readText()))
+      .toContain('Rejected edit');
     await openDoc.close();
-    await typeCell(other, '99');
-    await expect(sheetStatus).toContainText('cannot edit', { timeout: 10000 });
-    await expect(sheetStatus).toContainText('not saved');
+    await expect(sheetStatus).toContainText('Access changed', { timeout: 10000 });
+    await expect(sheetStatus).toContainText('Copy unsaved changes');
     expect(await readSheet()).toEqual(savedSheet);
+    await other.bringToFront();
+    const rescueCell = other
+      .getByRole('region', { name: 'Sheet document', exact: true })
+      .getByRole('textbox')
+      .nth(2);
+    await rescueCell.fill('A1');
+    await rescueCell.press('Enter');
+    await other.keyboard.press('Control+c');
+    await expect.poll(() => other.evaluate(() => navigator.clipboard.readText())).toContain('99');
     other.once('dialog', (dialog) => dialog.dismiss());
     await other.getByRole('link', { name: 'Settings', exact: true }).click();
     await expect(other).toHaveURL(new RegExp(sheetId));
@@ -197,8 +247,10 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await expect(other.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText(
       'My files / Shared journal',
     );
+    expect(permissionWrites).toEqual([]);
     expect(errors).toEqual([]);
   } finally {
+    releasePending();
     await second.close();
     while (db.prepare('SELECT id FROM workspace_items WHERE owner_id=?').get(owner.id)) {
       db.prepare(

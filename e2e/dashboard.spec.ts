@@ -31,8 +31,8 @@ test('registers two devices, signs in with either, persists and revokes sessions
   page.on('pageerror', (error) => errors.push(error.message));
   const database = openDatabase(
     testInfo.project.name === 'development'
-      ? 'test-results/dev.sqlite'
-      : 'test-results/production.sqlite',
+      ? 'test-results/development/app.sqlite'
+      : 'test-results/production/app.sqlite',
   );
   const store = new AuthStore(database);
   const user = store.createUser(`Owner ${testInfo.testId}`);

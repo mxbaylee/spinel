@@ -6,8 +6,14 @@ import { WorkspaceStore } from './store.ts';
 import { SheetStore } from './sheets.ts';
 import { DocumentStore } from './documents.ts';
 import { TrashStore } from './trash.ts';
+import type { CollaborationStore } from '../collaboration/service.ts';
 
-export function workspaceRoutes(auth: AuthStore, origin: string, store = new WorkspaceStore(auth)) {
+export function workspaceRoutes(
+  auth: AuthStore,
+  origin: string,
+  store = new WorkspaceStore(auth),
+  collaboration?: CollaborationStore,
+) {
   const router = express.Router();
   const trash = new TrashStore(store);
   const sheets = new SheetStore(store);
@@ -34,9 +40,18 @@ export function workspaceRoutes(auth: AuthStore, origin: string, store = new Wor
       throw new AuthError(403, 'Open Spinel at its configured address and try again.');
     next();
   });
-  router.get('/:id/sheet', (request, response) =>
-    response.json(sheets.load(owner(request), String(request.params.id))),
-  );
+  const native = async (request: Request, response: Response, kind: 'sheet' | 'doc') => {
+    const user = owner(request),
+      id = String(request.params.id);
+    const original = kind === 'sheet' ? sheets.load(user, id) : documents.load(user, id);
+    response.json(
+      collaboration &&
+        auth.database.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id)
+        ? await collaboration.load(user, id)
+        : original,
+    );
+  };
+  router.get('/:id/sheet', (request, response) => native(request, response, 'sheet'));
   router.put('/:id/sheet', express.json({ limit: '10mb', strict: true }), (request, response) => {
     response.json(
       sheets.save(
@@ -46,9 +61,7 @@ export function workspaceRoutes(auth: AuthStore, origin: string, store = new Wor
       ),
     );
   });
-  router.get('/:id/doc', (request, response) =>
-    response.json(documents.load(owner(request), String(request.params.id))),
-  );
+  router.get('/:id/doc', (request, response) => native(request, response, 'doc'));
   router.put('/:id/doc', express.json({ limit: '10mb', strict: true }), (request, response) => {
     response.json(
       documents.save(
@@ -86,6 +99,14 @@ export function workspaceRoutes(auth: AuthStore, origin: string, store = new Wor
       .send(Buffer.from(image.data));
   });
   router.use(express.json({ limit: '8kb', strict: true }));
+  router.post('/:id/collaboration', async (request, response) => {
+    if (!collaboration) throw new AuthError(503, 'Collaboration is not available.');
+    const user = owner(request),
+      id = String(request.params.id);
+    await collaboration.prepare(user, id);
+    const item = store.get(owner(request), id);
+    response.json({ access: item.access, user: { id: user, name: auth.user(user)!.name } });
+  });
   function payload(request: Request, allowed: string[]) {
     const body = request.body;
     if (

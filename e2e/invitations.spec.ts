@@ -2,7 +2,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
-import { createApp } from '../server/app.ts';
+import { startApp } from './app-process.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 
@@ -15,12 +15,11 @@ test('admin invites a second browser, rejects reuse and revocation, and recovers
   const databasePath = join(directory, 'instance.sqlite');
   const port = testInfo.project.name === 'development' ? 3192 : 3193;
   const origin = `http://localhost:${port}`;
-  const app = await createApp({
+  const app = await startApp({
     databasePath,
     origin,
     development: testInfo.project.name === 'development',
   });
-  await new Promise<void>((ready) => app.server.listen(port, '127.0.0.1', ready));
   const database = openDatabase(databasePath);
   const store = new AuthStore(database);
   const admin = store.createUser('Operator', true);

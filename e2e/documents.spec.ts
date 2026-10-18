@@ -1,5 +1,6 @@
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
+import { interruptibleNetwork } from './live-network.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -10,12 +11,13 @@ test('document UI preserves rich text and embedded images through reload and off
   baseURL,
 }, testInfo) => {
   test.setTimeout(90_000);
+  const network = await interruptibleNetwork(context);
   page.setDefaultTimeout(10000);
   await page.setViewportSize({ width: 1440, height: 1100 });
   const db = openDatabase(
     testInfo.project.name === 'development'
-      ? 'test-results/dev.sqlite'
-      : 'test-results/production.sqlite',
+      ? 'test-results/development/app.sqlite'
+      : 'test-results/production/app.sqlite',
   );
   const auth = new AuthStore(db);
   const user = auth.createUser('Docs ' + testInfo.testId);
@@ -37,11 +39,17 @@ test('document UI preserves rich text and embedded images through reload and off
   const errors: string[] = [];
   let releaseImage = () => {};
   page.on('pageerror', (error) => errors.push(error.message));
+  const read = async () =>
+    (await (await context.request.get(`/api/items/${item.id}/doc`)).json()).snapshot;
   try {
     await page.goto(`/?item=${item.id}`);
     const editor = page.getByRole('region', { name: 'Doc document', exact: true });
-    await expect(editor.getByRole('status')).toHaveText('All changes saved.', { timeout: 20000 });
-    await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeVisible();
+    await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+      { timeout: 20000 },
+    );
+    await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
+    await editor.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await page.keyboard.type('/');
     await expect(page.getByText('Insert Image', { exact: true })).toBeVisible();
     await expect(page.getByText('Insert Shape', { exact: true })).not.toBeVisible();
@@ -71,7 +79,9 @@ test('document UI preserves rich text and embedded images through reload and off
     await page.keyboard.type('Reference link');
     await page.keyboard.press('Shift+Home');
     await editor.getByRole('tab', { name: 'Insert', exact: true }).click();
-    await expect(editor.getByRole('status')).toHaveText('All changes saved.');
+    await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+    );
 
     await editor.getByRole('button', { name: 'Add link', exact: true }).click();
     const linkInput = page.getByRole('textbox', { name: '', exact: true });
@@ -103,7 +113,9 @@ test('document UI preserves rich text and embedded images through reload and off
         .toBuffer(),
     });
     await expect.poll(() => imageRequested).toBe(true);
-    await expect(editor.getByRole('status')).toContainText('Inserting image');
+    await expect(editor.getByRole('status', { name: 'Save status' })).toContainText(
+      'Inserting image',
+    );
     const navigationWarning = page.waitForEvent('dialog');
     page.once('dialog', (dialog) => dialog.dismiss());
     await page.getByRole('link', { name: 'Settings', exact: true }).click();
@@ -133,12 +145,12 @@ test('document UI preserves rich text and embedded images through reload and off
     await expect(tableDialog).not.toBeVisible();
     await surface.click({ position: { x: 115, y: 350 } });
     await page.keyboard.type('Table cell');
-    await expect(editor.getByRole('status')).toHaveText('All changes saved.');
+    await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+    );
     await page.keyboard.press('Control+End');
     await page.keyboard.press('ArrowDown');
 
-    const read = async () =>
-      (await (await context.request.get(`/api/items/${item.id}/doc`)).json()).snapshot;
     await expect.poll(async () => (await read()).body.dataStream).toContain('Table cell');
     const before = await read();
     expect(before.body.paragraphs[0].paragraphStyle.namedStyleType).toBe(4);
@@ -154,7 +166,10 @@ test('document UI preserves rich text and embedded images through reload and off
     expect(imageResponse.ok()).toBe(true);
     expect((await sharp(await imageResponse.body()).metadata()).width).toBe(20);
     await page.reload();
-    await expect(editor.getByRole('status')).toHaveText('All changes saved.', { timeout: 20000 });
+    await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+      { timeout: 20000 },
+    );
     await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeVisible();
     await editor.getByRole('tab', { name: 'Insert', exact: true }).click();
     const after = await read();
@@ -163,22 +178,28 @@ test('document UI preserves rich text and embedded images through reload and off
     await page.screenshot({ path: testInfo.outputPath('document-reloaded.png') });
     await surface.click({ position: { x: 130, y: 200 } });
     await page.keyboard.press('Home');
-    await context.setOffline(true);
+    await network.setOffline(true);
     await page.keyboard.type('Offline ');
-    await expect(editor.getByRole('status')).toContainText('not saved');
+    await expect(editor.getByRole('status', { name: 'Save status' })).toContainText('not saved');
     page.once('dialog', (dialog) => dialog.dismiss());
     await page.getByRole('link', { name: 'Settings', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(item.id));
-    await context.setOffline(false);
-    await expect(editor.getByRole('status')).toHaveText('All changes saved.', { timeout: 20000 });
+    await network.setOffline(false);
+    await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+      { timeout: 20000 },
+    );
     await expect.poll(async () => (await read()).body.dataStream).toContain('Offline ');
     await page.reload();
-    await expect(editor.getByRole('status')).toHaveText('All changes saved.', { timeout: 20000 });
+    await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+      { timeout: 20000 },
+    );
     expect((await read()).body.dataStream).toContain('Offline ');
     expect(errors).toEqual([]);
   } finally {
     releaseImage();
-    await context.setOffline(false);
+    await network.setOffline(false);
     db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
     db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
     db.close();

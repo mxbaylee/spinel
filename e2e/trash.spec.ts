@@ -9,10 +9,12 @@ test('trash restores nested native documents, preserves prior deletions and conf
   context,
   baseURL,
 }, testInfo) => {
+  // This flow opens four collaboration editors as well as exercising trash.
+  test.setTimeout(90_000);
   const db = openDatabase(
     testInfo.project.name === 'development'
-      ? 'test-results/dev.sqlite'
-      : 'test-results/production.sqlite',
+      ? 'test-results/development/app.sqlite'
+      : 'test-results/production/app.sqlite',
   );
   const auth = new AuthStore(db),
     workspace = new WorkspaceStore(auth),

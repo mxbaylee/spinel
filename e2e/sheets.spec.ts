@@ -1,22 +1,24 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import type { IWorkbookData } from '@univerjs/core';
+import { interruptibleNetwork } from './live-network.ts';
+import type { IWorkbookData, ICellData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 
-test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offline and rejects stale writers', async ({
+test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offline and merges simultaneous writers', async ({
   page,
   context,
   browser,
   baseURL,
 }, testInfo) => {
   test.setTimeout(90_000);
+  const network = await interruptibleNetwork(context);
   await page.setViewportSize({ width: 1440, height: 1100 });
   const db = openDatabase(
     testInfo.project.name === 'development'
-      ? 'test-results/dev.sqlite'
-      : 'test-results/production.sqlite',
+      ? 'test-results/development/app.sqlite'
+      : 'test-results/production/app.sqlite',
   );
   const auth = new AuthStore(db);
   const user = auth.createUser('Sheets ' + testInfo.testId);
@@ -41,7 +43,9 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
   page.on('pageerror', (e) => errors.push(e.message));
   const sheet = page.getByRole('region', { name: 'Sheet document', exact: true });
   const saved = () =>
-    expect(sheet.getByRole('status')).toHaveText('All changes saved.', { timeout: 20000 });
+    expect(sheet.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
+      timeout: 20000,
+    });
   const read = async () =>
     (await (await context.request.get(`/api/items/${item.id}/sheet`)).json()) as {
       snapshot: IWorkbookData;
@@ -95,51 +99,67 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
     );
     const after = (await read()).snapshot;
     expect(after.sheetOrder).toEqual(before.sheetOrder);
-    expect(after.sheets).toEqual(before.sheets);
-    expect(after.styles).toEqual(before.styles);
+    // Materialization allocates style IDs; compare every resolved style and cell,
+    // not those incidental IDs, to prove formatting survives reconstruction.
+    const resolvedSheets = (snapshot: IWorkbookData) => {
+      const sheets = structuredClone(snapshot.sheets);
+      for (const tab of Object.values(sheets))
+        for (const row of Object.values(tab.cellData ?? {}))
+          for (const value of Object.values(row ?? {}) as (ICellData | null)[])
+            if (value && typeof value.s === 'string') value.s = snapshot.styles[value.s];
+      return sheets;
+    };
+    expect(resolvedSheets(after)).toEqual(resolvedSheets(before));
     const other = await second.newPage();
     await other.goto(`${baseURL}/?item=${item.id}`);
-    await expect(other.getByRole('status')).toHaveText('All changes saved.', { timeout: 20000 });
+    await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+      { timeout: 20000 },
+    );
     await other.getByRole('tab', { name: 'Sheet1', exact: true }).click();
     await select(other, 'A1');
     await expect(other.getByRole('button', { name: 'Bold', exact: true })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-    await context.setOffline(true);
+    await network.setOffline(true);
     await select(page, 'A1');
     await page.keyboard.type('21');
-    await expect(sheet.getByRole('status')).toContainText('not saved');
+    await expect(sheet.getByRole('status', { name: 'Save status' })).toContainText('not saved');
     await page.keyboard.press('Enter');
     page.once('dialog', (dialog) => dialog.dismiss());
     await page.getByRole('link', { name: 'Settings', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(item.id));
-    await expect(sheet.getByRole('status')).toContainText('not saved');
-    await context.setOffline(false);
+    await expect(sheet.getByRole('status', { name: 'Save status' })).toContainText('not saved');
+    await network.setOffline(false);
     await saved();
     await expect.poll(async () => cell((await read()).snapshot, 1)?.v).toBe(42);
-    // Lose an acknowledgement after the server has committed, then retry exactly.
-    let dropped = false;
-    await page.route(`**/api/items/${item.id}/sheet`, async (route) => {
-      if (route.request().method() === 'PUT' && !dropped) {
-        dropped = true;
-        await route.fetch();
-        await route.abort('failed');
-      } else await route.continue();
-    });
+    // Lose both acknowledgement paths after a real commit. A repeated cell value
+    // alone could hide a duplicate, so also require exactly one durable revision.
+    const priorRevision = (await read()).revision;
+    network.loseAcknowledgement();
     await type(page, 'A2', 'retry safely');
-    await expect.poll(() => dropped).toBe(true);
+    await expect.poll(() => network.acknowledgementLost()).toBe(true);
+    await expect(sheet.getByRole('status', { name: 'Save status' })).toContainText('not saved');
+    expect((await read()).revision).toBe(priorRevision + 1);
+    await network.setOffline(false);
     await saved();
-    await page.unroute(`**/api/items/${item.id}/sheet`);
-    expect(cell((await read()).snapshot, 0, 1)?.v).toBe('retry safely');
-    // The other browser loaded an old revision. Its real UI edit must not replace newer data.
-    await type(other, 'C1', 'stale edit');
-    await expect(other.getByRole('status')).toContainText('newer version', { timeout: 10000 });
-    expect(cell((await read()).snapshot, 2)).toBeUndefined();
+    const recoveredCommit = await read();
+    expect(cell(recoveredCommit.snapshot, 0, 1)?.v).toBe('retry safely');
+    expect(recoveredCommit.revision).toBe(priorRevision + 1);
+    await page.reload();
+    await saved();
+    expect((await read()).revision).toBe(priorRevision + 1);
+    // A second editor merges its UI edit instead of replacing the newer snapshot.
+    await type(other, 'C1', 'concurrent edit');
+    await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+    );
+    expect(cell((await read()).snapshot, 2)?.v).toBe('concurrent edit');
     expect(cell((await read()).snapshot, 0)?.v).toBe(21);
     expect(errors).toEqual([]);
   } finally {
-    await context.setOffline(false);
+    await network.setOffline(false);
     await second.close();
     db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
     db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);

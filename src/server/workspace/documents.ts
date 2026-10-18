@@ -68,6 +68,10 @@ export class DocumentStore {
     const text = JSON.stringify(data);
     if (Buffer.byteLength(text) > 10 * 1024 * 1024)
       throw new AuthError(413, 'This document is too large to save. Changes have not been saved.');
+    this.validateImages(id, data);
+    return commitSnapshot(this.workspace, 'doc_snapshots', id, text, revision as number, writeId);
+  }
+  validateImages(id: string, data: IDocumentData) {
     const checkImages = (value: unknown, depth = 0) => {
       if (depth > 64) throw new AuthError(400, 'Document data is nested too deeply.');
       if (!value || typeof value !== 'object') return;
@@ -106,7 +110,6 @@ export class DocumentStore {
         }
       }
     }
-    return commitSnapshot(this.workspace, 'doc_snapshots', id, text, revision as number, writeId);
   }
   async upload(owner: string, id: string, input: unknown, mime: string) {
     this.document(owner, id, true);

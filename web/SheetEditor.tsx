@@ -1,26 +1,35 @@
+import { IPermissionService } from '@univerjs/core';
+import { getAllWorkbookPermissionPoint } from '@univerjs/sheets';
+import { UnitAction } from '@univerjs/protocol';
+import { Collaborators, watchPresence } from './Collaborators.tsx';
+import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
-import { CommandType } from '@univerjs/core';
-import type { IWorkbookData } from '@univerjs/core';
-import { createUniver, LocaleType } from '@univerjs/presets';
+import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
 import enUS from '@univerjs/preset-sheets-core/locales/en-US';
 import '@univerjs/preset-sheets-core/lib/index.css';
-import { Autosave, SaveFailure } from '../src/shared/autosave.ts';
-import type { ItemAccess } from '../src/shared/workspace.ts';
+import {
+  collaborationPlugins,
+  prepareCollaboration,
+  identifyCollaborator,
+  watchCollaboration,
+  ClientEnglish,
+  UIEnglish,
+} from './collaboration.ts';
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
 
 export function SheetEditor({
   id,
-  name,
   onDirty,
 }: {
   id: string;
   name: string;
   onDirty: (dirty: boolean) => void;
 }) {
+  const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
-  const controller = useRef<Autosave | null>(null);
+  const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [status, setStatus] = useState<SaveState>({
     dirty: false,
     message: 'Loading spreadsheet…',
@@ -28,9 +37,11 @@ export function SheetEditor({
   });
   useEffect(() => {
     let disposed = false;
+    let stopPresence: (() => void) | undefined;
+    setPeople([]);
     let editing = false;
     let disposeEditor: (() => void) | undefined;
-    let save: Autosave | undefined;
+    let save: ReturnType<typeof watchCollaboration> | undefined;
     let lastState = status;
     const publish = (state: SaveState) => {
       lastState = state;
@@ -44,90 +55,46 @@ export function SheetEditor({
       });
     };
     void (async () => {
-      const response = await fetch(`/api/items/${id}/sheet`);
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error ?? 'Could not load this spreadsheet.');
+      const data = await prepareCollaboration(id);
       if (disposed) return;
-      const data = result as {
-        snapshot: IWorkbookData | null;
-        revision: number;
-        access: ItemAccess;
-      };
       const { univer, univerAPI } = createUniver({
         locale: LocaleType.EN_US,
-        locales: { [LocaleType.EN_US]: enUS },
+        locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish) },
+        collaboration: true,
+        plugins: collaborationPlugins(),
         presets: [UniverSheetsCorePreset({ container: container.current! })],
       });
       disposeEditor = () => univer.dispose();
-      const workbook = univerAPI.createWorkbook(
-        data.snapshot ?? { id, name, locale: LocaleType.EN_US },
-      );
+      identifyCollaborator(univer, data.user);
+      const workbook = await univerAPI.getCollaboration().loadSheetAsync(id);
+      if (!workbook) throw new Error('Could not load this spreadsheet.');
       await editorReady(univerAPI);
       if (disposed) return;
       const readOnly = async () => {
-        await workbook.getWorkbookPermission().setMode('viewer');
-        // Keep copy available so rejected local edits can be rescued.
-        await workbook
-          .getWorkbookPermission()
-          .setPoint(univerAPI.Enum.WorkbookPermissionPoint.CopyContent, true);
-      };
-      if (data.access === 'viewer') {
-        await readOnly();
-        publish({
-          dirty: false,
-          failed: false,
-          message: 'View only — reload after your access changes.',
-        });
-        return;
-      }
-      save = new Autosave(
-        data.revision,
-        data.snapshot,
-        async (payload) => {
-          const response = await fetch(`/api/items/${id}/sheet`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(10_000),
-          });
-          const result = await response.json();
-          if (!response.ok) {
-            if ([403, 404].includes(response.status)) await readOnly();
-            throw new SaveFailure(
-              response.status,
-              result.error ?? 'Changes have not been saved. Try again.',
-            );
-          }
-          return result as { revision: number };
-        },
-        publish,
-      );
-      controller.current = save;
-      const capture = () => {
-        if (disposed) return;
-        try {
-          save!.changed(workbook.save());
-        } catch {
-          publish({
-            dirty: true,
-            message:
-              'Could not prepare your changes for saving. Keep this tab open and copy your changes.',
-            failed: true,
-          });
+        // This tab's presentation follows its grant; never change shared permissions.
+        const permissions = univer.__getInjector().get(IPermissionService);
+        for (const Point of getAllWorkbookPermissionPoint()) {
+          const point = new Point(id);
+          if (!permissions.getPermissionPoint(point.id)) permissions.addPermissionPoint(point);
+          permissions.updatePermissionPoint(
+            point.id,
+            [UnitAction.View, UnitAction.Copy, UnitAction.Print].includes(point.subType),
+          );
         }
       };
-      workbook.onCommandExecuted((command) => {
-        if (command.type === CommandType.MUTATION) queueMicrotask(capture);
-      });
+      if (data.access === 'viewer') await readOnly();
+      save = watchCollaboration(univer, univerAPI, id, data.access, publish, readOnly);
+      controller.current = save;
+      stopPresence = await watchPresence(univer, univerAPI, id, setPeople);
+      if (disposed) stopPresence();
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
         editing = true;
         publish(lastState);
       });
       univerAPI.addEvent(univerAPI.Event.SheetEditEnded, () => {
         editing = false;
-        queueMicrotask(capture);
+        publish(lastState);
       });
-      capture();
     })().catch((error) => {
       if (!disposed)
         publish({
@@ -139,11 +106,9 @@ export function SheetEditor({
           failed: true,
         });
     });
-    const online = () => save?.retry();
-    window.addEventListener('online', online);
     return () => {
       disposed = true;
-      window.removeEventListener('online', online);
+      stopPresence?.();
       save?.dispose();
       // Univer owns a separate React root; unmount it after our cleanup commit.
       if (disposeEditor) queueMicrotask(disposeEditor);
@@ -154,7 +119,8 @@ export function SheetEditor({
   }, [id]);
   return (
     <section className="sheet-editor" aria-label="Sheet document">
-      <div className="save-status" role="status" aria-live="polite">
+      <Collaborators people={people} />
+      <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
         {status.message}
         {status.failed && status.dirty && (
           <button onClick={() => controller.current?.retry()}>Retry saving</button>

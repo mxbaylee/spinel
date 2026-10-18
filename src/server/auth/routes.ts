@@ -7,7 +7,7 @@ import { SetupService } from './setup.ts';
 import { InvitationService } from './invitations.ts';
 import type { Session } from './store.ts';
 
-export function cookieToken(request: Request) {
+export function cookieToken(request: Pick<Request, 'headers'>) {
   const tokens = (request.headers.cookie ?? '')
     .split(';')
     .map((value) => value.trim())
