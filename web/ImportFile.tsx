@@ -83,6 +83,7 @@ export function ImportFile({
       </button>
       <input
         hidden
+        style={{ display: 'none' }}
         ref={input}
         aria-label="Univer file"
         type="file"

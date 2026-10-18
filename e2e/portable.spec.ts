@@ -181,6 +181,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect(
         page.getByRole('button', { name: 'Import Univer file', exact: true }),
       ).toBeVisible();
+      await expect(page.getByLabel('Univer file', { exact: true })).toBeHidden();
       const drop = async (target: string, filename: string, text: string) => {
         const transfer = await page.evaluateHandle(
           ({ filename, text }) => {
