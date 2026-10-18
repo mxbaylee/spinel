@@ -102,7 +102,7 @@ test('listing follows every continuation page and fails closed on incomplete/err
       : { Contents: [{ Key: 'test/first' }], IsTruncated: true, NextContinuationToken: 'next' };
   });
   expect(await f.remote.list(AbortSignal.timeout(1000))).toEqual(['test/first', 'test/second']);
-  send.mockResolvedValue({ IsTruncated: true });
+  send.mockImplementation(async () => ({ IsTruncated: true }));
   await expect(f.remote.list(AbortSignal.timeout(1000))).rejects.toThrow('Incomplete');
   send.mockRejectedValue(new Error('network failure'));
   await expect(f.remote.list(AbortSignal.timeout(1000))).rejects.toThrow('network');
