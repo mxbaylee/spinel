@@ -51,7 +51,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
           name: 'Sheet1',
           rowCount: 100,
           columnCount: 26,
-          cellData: { 2: { 0: richCell } },
+          cellData: { 2: { 0: richCell }, 4: { 0: { v: 'Plain text' } } },
         },
       },
     },
@@ -80,6 +80,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
   const capture = async (name: string) => {
     await mkdir('test-results/theme-screenshots', { recursive: true });
     await page.screenshot({
+      animations: 'disabled',
       path: `test-results/theme-screenshots/${info.project.name}-${name}.png`,
     });
   };
@@ -151,6 +152,16 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await select('A3');
     await page.getByRole('button', { name: 'Apply Primary, soft fill', exact: true }).click();
     await saved();
+    // The previous Saved label can remain briefly while a new command is queued.
+    // Establish the baseline only after the last fill is durable on the server.
+    await expect
+      .poll(async () => {
+        const { snapshot } = await read();
+        const style = snapshot.sheets.first.cellData?.[2]?.[0]?.s;
+        return (typeof style === 'string' ? snapshot.styles[style] : style)?.bg?.rgb;
+      })
+      .toBe('#ffdde6');
+    await saved();
     const before = await read();
     const cells = before.snapshot.sheets[before.snapshot.sheetOrder[0]].cellData![0]!;
     expect(cells[0]?.v).toBe(12);
@@ -169,6 +180,12 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await mode('dark');
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
     expect(await container!.evaluate((node) => node.isConnected)).toBe(true);
+    await expect(page.locator('.univer-container canvas').first()).toHaveCSS(
+      'background-color',
+      'rgb(255, 255, 255)',
+    );
+    expect((await read()).snapshot.sheets.first.cellData?.[4]?.[0]?.v).toBe('Plain text');
+    await expect.poll(() => colouredPixels([0, 0, 0])).toBeGreaterThan(5);
     await expect.poll(() => colouredPixels([255, 156, 198])).toBeGreaterThan(5);
     const badge = page
       .getByRole('group', { name: 'People in this document' })
@@ -202,9 +219,22 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto(`/?item=${doc.id}`);
     await saved();
+    await expect(
+      page.getByText('Click the page to write. Type / for commands.', { exact: true }),
+    ).toBeVisible();
+    await page.keyboard.type('Paper stays readable');
+    await expect
+      .poll(async () => {
+        const data = await (await context.request.get(`/api/items/${doc.id}/doc`)).json();
+        return data.snapshot?.body?.dataStream;
+      })
+      .toContain('Paper stays readable');
+    await saved();
+    await expect(page.locator('.editor-help')).toHaveCSS('color', 'rgb(236, 226, 247)');
     await capture('doc-dark');
     await page.emulateMedia({ colorScheme: 'light' });
     await mode('light');
+    await expect(page.locator('.editor-help')).toHaveCSS('color', 'rgb(74, 30, 51)');
     await capture('doc-light');
     expect(errors).toEqual([]);
   } finally {

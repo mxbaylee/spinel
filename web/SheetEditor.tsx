@@ -1,4 +1,5 @@
 import { VersionNames } from './VersionNames.tsx';
+import { IRenderManagerService } from '@univerjs/engine-render';
 import { IPermissionService, InterceptorEffectEnum } from '@univerjs/core';
 import {
   getAllWorkbookPermissionPoint,
@@ -120,6 +121,9 @@ export function SheetEditor({
             return presetCellForEditing(cell, context.origin, style);
           },
         });
+      // Literal document colours render against light paper even with dark chrome.
+      const render = univer.__getInjector().get(IRenderManagerService).getRenderUnitById(id);
+      if (render) render.engine.getCanvasElement().style.backgroundColor = '#ffffff';
       const stopTheme = bindEditorTheme(univer, () => {
         // Invalidate cached display styles on inactive tabs as well.
         for (const skeleton of univer

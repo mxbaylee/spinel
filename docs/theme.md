@@ -22,6 +22,8 @@ remains light while editor chrome follows the selected theme. Sheet display
 caches, including inactive tabs, are invalidated on a theme change. The eventual Slides
 editor must use this same integration and supply light/dark screenshots; that
 requirement remains in SPN-009. Admin access remains separate from documents.
+Docs disables the SDK's 50%-opacity canvas placeholder through its public config
+and shows the typing instruction as normal, contrast-checked shell text.
 
 ## Sheet fills
 
