@@ -107,7 +107,8 @@ jobs:
   playwright:
     name: Playwright smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Native file and PDF round trips add two browser scenarios per server mode.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -131,6 +132,8 @@ jobs:
             test-results/theme-screenshots/*.png
             test-results/**/test-failed-*.png
             test-results/**/*-restore-preview.png
+            test-results/**/*-export.pdf
+            test-results/**/*-export-opened.png
             test-results/**/error-context.md
           retention-days: 7
           if-no-files-found: warn

@@ -26,6 +26,7 @@ const viewUrl = (id: string | null) =>
 const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
 
 export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
+  const dropTarget = useRef<HTMLElement>(null);
   const pins = usePins();
   const [items, setItems] = useState<WorkspaceItem[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -267,7 +268,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
             ))}
           </ul>
         </aside>
-        <section className="files" aria-label="Your files">
+        <section ref={dropTarget} className="files" aria-label="Your files">
           <nav aria-label="Breadcrumb">
             <button disabled={busy} onClick={() => navigate(null)}>
               My files
@@ -319,6 +320,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                     <ImportFile
                       key={currentId ?? 'root'}
                       parentId={currentId}
+                      dropTarget={dropTarget}
                       onImported={(item) => {
                         setItems((previous) => [...previous, item]);
                         setViewed((previous) => [...previous, item]);

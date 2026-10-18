@@ -246,3 +246,39 @@ test('nested transactions retain outer atomicity and can roll back an inner save
   f.db.exec('ROLLBACK');
   expect(f.auth.transaction(() => 'ok')).toBe('ok');
 });
+
+test('tiny malformed snapshots cannot expand into unbounded sheet caches or publish unusable items', async () => {
+  const f = fixture();
+  for (const patch of [
+    { rowCount: 1e12 },
+    { rowCount: -1 },
+    { rowCount: 1.5 },
+    { columnCount: 1e12 },
+    { rowCount: 0 },
+    { columnCount: '26' },
+    { cellData: { 100: { 0: { v: 'outside' } } } },
+    { cellData: { 0: { 26: { v: 'outside' } } } },
+    { cellData: [] },
+    { cellData: { 0: { 0: { f: {} } } } },
+    { rowData: { 999: {} } },
+    { mergeData: [{ startRow: 0, endRow: 999999, startColumn: 0, endColumn: 1 }] },
+  ]) {
+    const snapshot = { ...f.sheet, sheets: { tab: { ...f.sheet.sheets.tab, ...patch } } };
+    await expect(
+      f.files.import(f.owner.id, { filename: 'a.json', snapshot }, () => {}),
+    ).rejects.toThrow('Univer layout');
+  }
+  const large = structuredClone(f.sheet);
+  large.sheetOrder = ['a', 'b', 'c'];
+  large.sheets = Object.fromEntries(
+    large.sheetOrder.map((id) => [id, { ...f.sheet.sheets.tab, id, rowCount: 100_000 }]),
+  ) as typeof large.sheets;
+  await expect(
+    f.files.import(f.owner.id, { filename: 'a.json', snapshot: large }, () => {}),
+  ).rejects.toThrow('Univer layout');
+  expect(f.workspace.list(f.owner.id)).toEqual([]);
+  expect(f.db.prepare('SELECT count(*) AS n FROM sheet_snapshots').get()!.n).toBe(0);
+  await expect(
+    f.files.import(f.owner.id, { filename: 'a.json', snapshot: f.sheet }, () => {}),
+  ).resolves.toMatchObject({ name: 'Budget' });
+});

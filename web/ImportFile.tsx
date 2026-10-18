@@ -1,13 +1,16 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import { PORTABLE_LIMIT } from '../src/shared/portable.ts';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 
 export function ImportFile({
   parentId,
+  dropTarget,
   onImported,
 }: {
   parentId: string | null;
+  dropTarget: RefObject<HTMLElement>;
   onImported: (item: WorkspaceItem) => void;
 }) {
   const input = useRef<HTMLInputElement>(null);
@@ -55,18 +58,26 @@ export function ImportFile({
       if (input.current) input.current.value = '';
     }
   };
+  useEffect(() => {
+    const target = dropTarget.current;
+    if (!target) return;
+    const drag = (event: DragEvent) => {
+      if (event.dataTransfer?.types.includes('Files')) event.preventDefault();
+    };
+    const drop = (event: DragEvent) => {
+      if (!event.dataTransfer?.types.includes('Files')) return;
+      event.preventDefault();
+      void upload(event.dataTransfer.files);
+    };
+    target.addEventListener('dragover', drag);
+    target.addEventListener('drop', drop);
+    return () => {
+      target.removeEventListener('dragover', drag);
+      target.removeEventListener('drop', drop);
+    };
+  });
   return (
-    <section
-      className="import-file"
-      aria-label="Import a Univer file"
-      onDragOver={(event) => {
-        if (event.dataTransfer.types.includes('Files')) event.preventDefault();
-      }}
-      onDrop={(event) => {
-        event.preventDefault();
-        void upload(event.dataTransfer.files);
-      }}
-    >
+    <section className="import-file" aria-label="Import a Univer file">
       <button disabled={busy} onClick={() => input.current?.click()}>
         Import Univer file
       </button>
@@ -79,7 +90,9 @@ export function ImportFile({
         disabled={busy}
         onChange={(event) => void upload(event.currentTarget.files)}
       />
-      <p>{busy ? 'Importing…' : 'Drop a Univer JSON file here, up to 20 MiB.'}</p>
+      <p>
+        {busy ? 'Importing…' : 'Drop a Univer JSON file anywhere in this folder, up to 20 MiB.'}
+      </p>
       {error && <p role="alert">{error}</p>}
     </section>
   );

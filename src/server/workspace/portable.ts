@@ -7,6 +7,7 @@ import { snapshotIdentity } from '../collaboration/snapshotIdentity.ts';
 import type { WorkspaceStore } from './store.ts';
 import { DocumentStore, IMAGE_LIMIT, DOCUMENT_IMAGE_LIMIT } from './documents.ts';
 import { SheetStore } from './sheets.ts';
+import { validatePortableLayout } from './portableValidation.ts';
 
 import { PORTABLE_LIMIT } from '../../shared/portable.ts';
 export { PORTABLE_LIMIT };
@@ -124,6 +125,7 @@ export class PortableFiles {
           ? 'doc'
           : null;
     if (!kind) throw invalid();
+    validatePortableLayout(input.snapshot, kind);
     const resources = input.snapshot.resources;
     if (
       resources !== undefined &&
