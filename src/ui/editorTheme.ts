@@ -1,5 +1,5 @@
 import { ThemeService } from '@univerjs/core';
-import type { Univer, DependencyOverride } from '@univerjs/core';
+import type { Univer } from '@univerjs/core';
 import { ICanvasColorService } from '@univerjs/engine-render';
 import { defaultTheme } from '@univerjs/presets';
 import { getTheme, watchTheme } from './theme.ts';
@@ -35,17 +35,18 @@ export function bindEditorTheme(univer: Univer, redraw?: () => void) {
   return watchTheme(update);
 }
 
-// Document literals must stay exact: preset pairs are already mapped by our
-// display interceptor. SDK theme tokens still follow the editor chrome.
-export function canvasColorOverride(): DependencyOverride[number] {
-  return [
+// Install after plugins register and before loading a unit/canvas. The top-level
+// createUniver override only handles core services, not render-plugin services.
+export function installCanvasColors(univer: Univer) {
+  univer.__getInjector().replace([
     ICanvasColorService,
     {
       useFactory: (theme: ThemeService) => ({
+        // Presets are already mapped; never invert literal document colours again.
         getRenderColor: (color: string) =>
           theme.isValidThemeColor(color) ? theme.getColorFromTheme<string>(color) : color,
       }),
       deps: [ThemeService],
     },
-  ];
+  ]);
 }

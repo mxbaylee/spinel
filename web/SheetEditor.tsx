@@ -8,7 +8,7 @@ import {
   BEFORE_CELL_EDIT,
   SetRangeValuesCommand,
 } from '@univerjs/sheets';
-import { editorTheme, bindEditorTheme, canvasColorOverride } from '../src/ui/editorTheme.ts';
+import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
 import { presetStyle, displayPresetCell, presetCellForEditing } from '../src/ui/presetStyles.ts';
 import { FillPresets } from '../src/ui/FillPresets.tsx';
@@ -73,7 +73,6 @@ export function SheetEditor({
       if (disposed) return;
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
-        override: [canvasColorOverride()],
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish) },
@@ -84,6 +83,7 @@ export function SheetEditor({
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => univer.dispose();
+      installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const workbook = await univerAPI.getCollaboration().loadSheetAsync(id);
       if (!workbook) throw new Error('Could not load this spreadsheet.');

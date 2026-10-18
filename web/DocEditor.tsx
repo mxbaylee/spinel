@@ -1,5 +1,5 @@
 import { VersionNames } from './VersionNames.tsx';
-import { editorTheme, bindEditorTheme, canvasColorOverride } from '../src/ui/editorTheme.ts';
+import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
 import { setDocumentPermissionValue } from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
@@ -188,7 +188,7 @@ export function DocEditor({
           [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, ClientEnglish, UIEnglish),
         },
         collaboration: true,
-        override: [[IImageIoService, { useClass: StoredImages }], canvasColorOverride()],
+        override: [[IImageIoService, { useClass: StoredImages }]],
         plugins: [
           [
             UniverDrawingPlugin,
@@ -225,6 +225,7 @@ export function DocEditor({
         stopTheme();
         univer.dispose();
       };
+      installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const document = await univerAPI.getCollaboration().loadDocAsync(id);
       if (!document) throw new Error('Could not load this document.');
