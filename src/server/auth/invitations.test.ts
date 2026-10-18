@@ -87,6 +87,7 @@ test('acceptance creates an everyday account exactly once and records its identi
   expect(result.user).toMatchObject({ name: 'Teammate', is_admin: 0 });
   expect(f.service.list()[0]).toMatchObject({ status: 'Used', usedBy: 'Teammate' });
   expect(f.store.passkeys(result.user.id)).toHaveLength(1);
+  expect(f.store.session(result.token)?.passkey_id).toBe(f.store.passkeys(result.user.id)[0].id);
   expect(() => f.service.active(invite.token)).toThrow('unavailable');
   await expect(c.accept()).rejects.toThrow();
   expect(f.store.userCount()).toBe(2);

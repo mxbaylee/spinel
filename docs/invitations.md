@@ -27,14 +27,14 @@ existing access is unchanged. Both screens explain these consequences.
 Recovery never reactivates a disabled account, creates a duplicate account or
 promotes an everyday user to admin. Admin recovery preserves its existing role;
 it still requires an authorized admin to issue the link. There is no password or
-public recovery bypass. Full user management belongs to SPN-005.
+public recovery bypass. User and passkey management is described in [admin.md](admin.md).
 
 ## Integrity and access
 
 Tokens have 256 random bits; SQLite stores only their SHA-256 hashes, satisfying
 the original minimum of 128 bits. List responses contain metadata, never token
 hashes or plaintext links. All management routes require a current admin session;
-everyday users receive 403 and signed-out callers receive 401.
+everyday users and signed-out callers receive 404.
 
 The entry page uses no-store and no-referrer and removes the query from its
 address before later requests. The original query necessarily reaches the HTTP

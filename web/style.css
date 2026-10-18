@@ -303,3 +303,30 @@ button.primary {
   color: #625c6a;
   font-size: 0.85rem;
 }
+
+.admin-users {
+  list-style: none;
+  padding: 0;
+}
+.admin-users > li {
+  border-top: 1px solid #e3dfe8;
+  padding: 0.75rem 0;
+}
+.admin-users h4 {
+  margin: 0.25rem 0;
+}
+.admin-users p {
+  margin: 0.5rem 0;
+}
+.admin-confirmation {
+  max-width: min(32rem, calc(100vw - 2rem));
+  border: 1px solid #e3dfe8;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.admin-confirmation::backdrop {
+  background: rgb(20 15 30 / 40%);
+}
+.admin-confirmation button {
+  margin: 0.25rem;
+}

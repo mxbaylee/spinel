@@ -114,7 +114,11 @@ export class SetupService {
           .run(setup.user_id, 'Operator');
         saveRegistration(this.store, setup.user_id, result.registrationInfo);
         this.store.database.exec('DELETE FROM auth_setup');
-        const next = this.store.createSession(setup.user_id);
+        const next = this.store.createSession(
+          setup.user_id,
+          undefined,
+          result.registrationInfo!.credential.id,
+        );
         this.store.revokeSession(session.token_hash);
         return next;
       });

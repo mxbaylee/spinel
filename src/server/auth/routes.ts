@@ -6,6 +6,7 @@ import { AuthService } from './service.ts';
 import { SetupService } from './setup.ts';
 import { InvitationService } from './invitations.ts';
 import type { Session } from './store.ts';
+import { AdminStore } from './admin.ts';
 
 export function cookieToken(request: Pick<Request, 'headers'>) {
   const tokens = (request.headers.cookie ?? '')
@@ -23,11 +24,16 @@ export function setSessionCookie(response: Response, token: string, expires: num
     expires: new Date(expires),
   });
 }
-export function authRoutes(store: AuthStore, origin: string) {
+export function authRoutes(
+  store: AuthStore,
+  origin: string,
+  accessChanged: () => Promise<void> = async () => {},
+) {
   const router = express.Router();
   const service = new AuthService(store, origin);
   const setup = new SetupService(store, origin);
   const invites = new InvitationService(store, origin);
+  const admin = new AdminStore(store, invites);
   const requireSession = (request: Request, authenticated = false): Session => {
     const session = store.session(cookieToken(request));
     if (!session || (authenticated && !session.user_id))
@@ -54,11 +60,28 @@ export function authRoutes(store: AuthStore, origin: string) {
     response.json({ user: { id: user.id, name: user.name, isAdmin: Boolean(user.is_admin) } });
   });
   const requireAdmin = (request: Request) => {
-    const session = requireSession(request, true);
-    if (!store.user(session.user_id!)?.is_admin)
-      throw new AuthError(403, 'Only an admin can manage invites.');
+    const session = store.session(cookieToken(request));
+    if (!session?.user_id || !store.user(session.user_id)?.is_admin)
+      throw new AuthError(404, 'Not found.');
     return session;
   };
+  router.get('/admin/users', (request, response) => {
+    response.json({ users: admin.list(requireAdmin(request).user_id!) });
+  });
+  router.post('/admin/users/:id/disable', async (request, response) => {
+    admin.disable(requireAdmin(request).user_id!, String(request.params.id));
+    await accessChanged();
+    response.sendStatus(204);
+  });
+  router.post('/admin/users/:id/passkeys/:key/remove', async (request, response) => {
+    admin.removePasskey(
+      requireAdmin(request).user_id!,
+      String(request.params.id),
+      String(request.params.key),
+    );
+    await accessChanged();
+    response.sendStatus(204);
+  });
   router.get('/invites', (request, response) => {
     requireAdmin(request);
     response.json({ invites: invites.list() });
