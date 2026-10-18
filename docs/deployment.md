@@ -24,8 +24,10 @@ these were deliberately discarded, not backed up for restoration. The evidence
 below is historical acceptance evidence, not a running-production claim. Keep
 this package for a fresh deployment, allocate new resources, re-enroll accounts
 and update DNS to newly assigned addresses. Never assume the old public IPs or
-tailnet identity still belong to Spinel. Public DNS cleanup is pending owner
-sign-in to Namecheap; remove only the old `spinel` A/AAAA records.
+tailnet identity still belong to Spinel. After the owner signed in, both old
+`spinel` A/AAAA records were removed from Namecheap; its filtered host table
+showed no records and authoritative DNS returned NXDOMAIN. Other domain and
+mail records were left intact. Cached DNS answers may persist until expiry.
 
 ## Topology
 
