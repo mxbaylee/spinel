@@ -30,8 +30,9 @@ match the parent workspace item. The public collaboration server's
 compatibility against its chosen server before SPN-012 adds co-editing. No
 SPN-010 findings exist yet. There is no custom cell-only conversion to migrate.
 
-GET and PUT `/api/items/:id/sheet` require the active, non-admin owner. Link guests
-and other accounts cannot read or save the workbook. Mutations also require the
+GET `/api/items/:id/sheet` requires an active, non-admin account with read access;
+PUT requires owner/editor access. [Sharing](sharing.md) defines direct and inherited
+grants. Viewers use the native read-only editor; link guests have no access. Mutations also require the
 configured origin and JSON. Each request is capped at 10 MiB; an oversized save
 fails visibly and leaves the previous saved workbook intact.
 

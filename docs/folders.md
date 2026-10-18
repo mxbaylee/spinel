@@ -2,14 +2,14 @@
 
 The dashboard is the landing page for an everyday account after sign-in. Admin
 accounts land in Admin and cannot list, open, create, rename or move documents.
-Each everyday account has its own private tree. Sharing is SPN-015; a link guest
-has no access to this tree.
+Each everyday account has its own private tree. [Sharing](sharing.md) grants
+chosen signed-in people access to specific items; a link guest has no access.
 
 Choose **New**, a type (Folder, Sheet, Doc or Slides), and a name. Folders are
 created inside the current folder. Documents are created there and immediately
 open an empty document view. Their identity, type, name and location are saved;
-Sheets open the [spreadsheet editor](spreadsheets.md); Docs and Slides editors
-arrive in SPN-008 and SPN-009. Reloading or returning to
+Sheets open the [spreadsheet editor](spreadsheets.md), Docs open the
+[document editor](documents.md), and Slides editing arrives in SPN-009. Reloading or returning to
 the view does not create another document.
 
 Use the folder list or breadcrumb to navigate. **Rename** updates an item's name
@@ -18,12 +18,12 @@ root) and owned folders; moving a folder also moves its existing subtree. Its ow
 folder and descendants are excluded from destinations, and the server rejects
 such a request even if sent directly. A refused move changes nothing. Browser
 Back and Forward restore navigation; copying the URL opens the same item for its
-owner while signed in.
+owner or an authorized recipient while signed in.
 
 Names are trimmed and contain 1–120 characters, without control characters or
 slashes. Duplicate names are allowed, since IDs identify items. The move picker
 shows full paths to distinguish locations. Deleting, trash, tags, pins, search,
-sharing and the remaining content editors remain separate tickets.
+and the remaining content editors remain separate tickets.
 
 ## Storage and access
 
@@ -35,8 +35,10 @@ SQLite connections wait up to five seconds for another local writer instead of
 immediately rejecting a valid save on a brief lock. The owner cannot change an item's owner or kind through the API.
 
 `/api/items` lists or creates items; `/api/items/:id` reads, renames or moves one.
-All operations require a current, active, non-admin owner. Requests for another
-account's ID return the same 404 as a missing ID. Mutations require the configured
+All operations require a current, active, non-admin account. Listing returns owned
+items; reading an item, its children and its accessible ancestor chain uses the
+[sharing resolver](sharing.md). Organization and sharing changes require ownership.
+Inaccessible IDs return the same 404 as missing IDs. Mutations require the configured
 origin and JSON. No public sharing endpoint exists. SQLite schema creation is
 additive and keeps existing users, credentials and other data.
 

@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { ITEM_KINDS, kindLabel } from '../src/shared/workspace.ts';
 import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
 
+import { Sharing } from './Sharing.tsx';
 import type { NavigationGuard } from './navigation.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
@@ -28,6 +29,12 @@ const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m
 export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   const [items, setItems] = useState<WorkspaceItem[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [viewed, setViewed] = useState<WorkspaceItem[]>([]);
+  const [viewLoading, setViewLoading] = useState(false);
+  const [viewId, setViewId] = useState<string | null>(null);
+  const [viewMissing, setViewMissing] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  const [sharing, setSharing] = useState<WorkspaceItem | null>(null);
   const [currentId, setCurrentId] = useState<string | null>(selectedId);
   const currentRef = useRef(currentId);
   currentRef.current = currentId;
@@ -60,8 +67,44 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     window.addEventListener('popstate', back);
     return () => window.removeEventListener('popstate', back);
   }, []);
-  const byId = new Map(items.map((item) => [item.id, item]));
-  const current = currentId ? byId.get(currentId) : undefined;
+  useEffect(() => {
+    setSharing(null);
+    setViewed([]);
+    setViewMissing(false);
+    setViewId(null);
+    if (!currentId) {
+      setViewLoading(false);
+      return;
+    }
+    let disposed = false;
+    setViewLoading(true);
+    void itemsRequest<{
+      item: WorkspaceItem;
+      children: WorkspaceItem[];
+      ancestors: WorkspaceItem[];
+    }>(`/${currentId}`)
+      .then((result) => {
+        if (!disposed) setViewed([...result.ancestors, result.item, ...result.children]);
+      })
+      .catch((failure) => {
+        if (!disposed) {
+          setError(failure.message);
+          setViewMissing(true);
+        }
+      })
+      .finally(() => {
+        if (!disposed) {
+          setViewId(currentId);
+          setViewLoading(false);
+        }
+      });
+    return () => {
+      disposed = true;
+    };
+  }, [currentId, refresh]);
+  const byId = new Map([...items, ...viewed].map((item) => [item.id, item]));
+  const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
+  const visibleItems = currentId ? [...byId.values()] : items;
   function ancestors(item?: WorkspaceItem) {
     const path: WorkspaceItem[] = [];
     const seen = new Set<string>();
@@ -119,6 +162,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
             : { parentId: destination || null },
       );
       setItems((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
+      setViewed((previous) => previous.filter((entry) => entry.id !== item.id));
       setAction(null);
       if (action.mode === 'new' && item.kind !== 'folder') navigate(item.id);
     } catch (failure) {
@@ -128,8 +172,13 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     }
   }
   function actions(item: WorkspaceItem) {
+    if (item.access !== 'owner')
+      return <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>;
     return (
       <span className="item-actions">
+        <button disabled={busy} onClick={() => setSharing(item)} aria-label={`Share ${item.name}`}>
+          Share
+        </button>
         <button
           disabled={busy}
           onClick={() => edit('rename', item)}
@@ -186,7 +235,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
               </span>
             ))}
           </nav>
-          {!loaded ? (
+          {!loaded || viewLoading || currentId !== viewId ? (
             <p role="status">
               {error
                 ? 'Your files could not be loaded. Reload to try again.'
@@ -202,11 +251,18 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
               </div>
               {!current || current.kind === 'folder' ? (
                 <>
-                  <button className="primary" disabled={busy} onClick={() => edit('new')}>
-                    New
-                  </button>
+                  {(!current || current.access === 'owner') && (
+                    <button className="primary" disabled={busy} onClick={() => edit('new')}>
+                      New
+                    </button>
+                  )}
+                  {current && (
+                    <button disabled={busy} onClick={() => setRefresh((value) => value + 1)}>
+                      Refresh folder
+                    </button>
+                  )}
                   <ul className="file-list">
-                    {items
+                    {visibleItems
                       .filter((item) => item.parentId === currentId)
                       .sort(
                         (a, b) =>
@@ -227,8 +283,12 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                         </li>
                       ))}
                   </ul>
-                  {!items.some((item) => item.parentId === currentId) && (
-                    <p>This folder is empty. Choose New to add a folder or document.</p>
+                  {!visibleItems.some((item) => item.parentId === currentId) && (
+                    <p>
+                      This folder is empty.
+                      {(!current || current.access === 'owner') &&
+                        ' Choose New to add a folder or document.'}
+                    </p>
                   )}
                 </>
               ) : current.kind === 'sheet' ? (
@@ -341,6 +401,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
               </div>
             </form>
           )}
+          {sharing && <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />}
           {error && <p role="alert">{error}</p>}
         </section>
       </div>

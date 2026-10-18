@@ -38,13 +38,18 @@ function fixture() {
 }
 test('full native snapshot round trip preserves formulas, formatting, tab order and plugin resources', () => {
   const f = fixture();
-  expect(f.sheets.load(f.owner.id, f.item.id)).toEqual({ snapshot: null, revision: 0 });
+  expect(f.sheets.load(f.owner.id, f.item.id)).toEqual({
+    access: 'owner',
+    snapshot: null,
+    revision: 0,
+  });
   f.sheets.save(f.owner.id, f.item.id, {
     snapshot: f.snapshot,
     revision: 0,
     writeId: randomUUID(),
   });
   expect(new SheetStore(f.workspace).load(f.owner.id, f.item.id)).toEqual({
+    access: 'owner',
     snapshot: f.snapshot,
     revision: 1,
   });
@@ -59,7 +64,11 @@ test('stale device saves and write ID reuse cannot overwrite confirmed edits; ex
     { ...payload, revision: 1, snapshot: { ...f.snapshot, name: 'changed' } },
   ])
     expect(() => f.sheets.save(f.owner.id, f.item.id, request)).toThrow('newer version');
-  expect(f.sheets.load(f.owner.id, f.item.id)).toEqual({ snapshot: f.snapshot, revision: 1 });
+  expect(f.sheets.load(f.owner.id, f.item.id)).toEqual({
+    access: 'owner',
+    snapshot: f.snapshot,
+    revision: 1,
+  });
 });
 test('failed database writes roll back both content and revision and remain retryable', () => {
   const f = fixture();

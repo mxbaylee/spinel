@@ -25,17 +25,18 @@ export class DocumentStore {
       ) STRICT;
     `);
   }
-  document(owner: string, id: string) {
-    const item = this.workspace.get(owner, id);
+  document(owner: string, id: string, edit = false) {
+    const item = this.workspace.get(owner, id, edit ? 'edit' : 'read');
     if (item.kind !== 'doc') throw new AuthError(400, 'This item is not a document.');
     return item;
   }
   load(owner: string, id: string) {
-    this.document(owner, id);
+    const item = this.document(owner, id);
     const row = this.workspace.auth.database
       .prepare('SELECT snapshot,revision FROM doc_snapshots WHERE item_id=?')
       .get(id) as { snapshot: string; revision: number } | undefined;
     return {
+      access: item.access,
       snapshot: row ? (JSON.parse(row.snapshot) as IDocumentData) : null,
       revision: row?.revision ?? 0,
     };
@@ -45,7 +46,7 @@ export class DocumentStore {
     id: string,
     input: { snapshot?: unknown; revision?: unknown; writeId?: unknown },
   ) {
-    this.document(owner, id);
+    this.document(owner, id, true);
     const { snapshot, revision, writeId } = input;
     const data = snapshot as IDocumentData | null;
     if (
@@ -108,7 +109,7 @@ export class DocumentStore {
     return commitSnapshot(this.workspace, 'doc_snapshots', id, text, revision as number, writeId);
   }
   async upload(owner: string, id: string, input: unknown, mime: string) {
-    this.document(owner, id);
+    this.document(owner, id, true);
     if (!Buffer.isBuffer(input) || !input.length || input.length > IMAGE_LIMIT)
       throw new AuthError(413, 'Choose an image no larger than 5 MiB.');
     const formats: Record<string, string> = {
@@ -140,7 +141,7 @@ export class DocumentStore {
     const imageId = createHash('sha256').update(bytes).digest('hex');
     return this.workspace.auth.transaction(() => {
       // Recheck access after asynchronous decoding, including disabled/deleted accounts.
-      this.document(owner, id);
+      this.document(owner, id, true);
       const db = this.workspace.auth.database;
       if (!db.prepare('SELECT 1 FROM doc_images WHERE item_id=? AND id=?').get(id, imageId)) {
         const used = db

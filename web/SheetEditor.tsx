@@ -6,7 +6,9 @@ import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
 import enUS from '@univerjs/preset-sheets-core/locales/en-US';
 import '@univerjs/preset-sheets-core/lib/index.css';
 import { Autosave, SaveFailure } from '../src/shared/autosave.ts';
+import type { ItemAccess } from '../src/shared/workspace.ts';
 import type { SaveState } from '../src/shared/autosave.ts';
+import { editorReady } from './editorReady.ts';
 
 export function SheetEditor({
   id,
@@ -46,7 +48,11 @@ export function SheetEditor({
       const result = await response.json();
       if (!response.ok) throw new Error(result.error ?? 'Could not load this spreadsheet.');
       if (disposed) return;
-      const data = result as { snapshot: IWorkbookData | null; revision: number };
+      const data = result as {
+        snapshot: IWorkbookData | null;
+        revision: number;
+        access: ItemAccess;
+      };
       const { univer, univerAPI } = createUniver({
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: enUS },
@@ -56,6 +62,24 @@ export function SheetEditor({
       const workbook = univerAPI.createWorkbook(
         data.snapshot ?? { id, name, locale: LocaleType.EN_US },
       );
+      await editorReady(univerAPI);
+      if (disposed) return;
+      const readOnly = async () => {
+        await workbook.getWorkbookPermission().setMode('viewer');
+        // Keep copy available so rejected local edits can be rescued.
+        await workbook
+          .getWorkbookPermission()
+          .setPoint(univerAPI.Enum.WorkbookPermissionPoint.CopyContent, true);
+      };
+      if (data.access === 'viewer') {
+        await readOnly();
+        publish({
+          dirty: false,
+          failed: false,
+          message: 'View only — reload after your access changes.',
+        });
+        return;
+      }
       save = new Autosave(
         data.revision,
         data.snapshot,
@@ -67,11 +91,13 @@ export function SheetEditor({
             signal: AbortSignal.timeout(10_000),
           });
           const result = await response.json();
-          if (!response.ok)
+          if (!response.ok) {
+            if ([403, 404].includes(response.status)) await readOnly();
             throw new SaveFailure(
               response.status,
               result.error ?? 'Changes have not been saved. Try again.',
             );
+          }
           return result as { revision: number };
         },
         publish,
