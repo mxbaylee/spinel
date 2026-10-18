@@ -40,7 +40,7 @@ avoid undocumented metadata or patching Univer internals; decision
 
 `src/ui/presetStyles.test.ts` checks WCAG AA text contrast (at least 4.5:1) for
 shell text pairs and all sixteen fills in both modes, and verifies that display
-mapping preserves source styles. `e2e/theme.spec.ts` checks preferences, real
+mapping preserves source styles. `e2e/appearance.spec.ts` checks preferences, real
 rendered fill pixels, values/formulas/formatting, unchanged revisions and editor
 identity across theme changes. CI captures dashboard, Sheets and Docs in both
 themes under the `theme-screenshots` artifact for visual review. Screenshots

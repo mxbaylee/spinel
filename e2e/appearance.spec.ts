@@ -13,6 +13,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
   baseURL,
 }, info) => {
   test.setTimeout(90_000);
+  page.setDefaultTimeout(10_000);
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
@@ -120,13 +121,13 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await mode('dark');
     await capture('dashboard-dark');
     await page.getByRole('link', { name: 'Settings', exact: true }).click();
-    await page.getByLabel('Theme', { exact: true }).selectOption('light');
+    await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('light');
     await page.reload();
     await mode('light');
     await page.emulateMedia({ colorScheme: 'light' });
     await page.emulateMedia({ colorScheme: 'dark' });
     await mode('light');
-    await page.getByLabel('Theme', { exact: true }).selectOption('system');
+    await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('system');
     await mode('dark');
     await page.emulateMedia({ colorScheme: 'light' });
     await page.goto(`/?item=${sheet.id}`);
