@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   startAuthentication,
   startRegistration,
@@ -16,6 +16,10 @@ import { BackupStatus } from './BackupStatus.tsx';
 import { AdminUsers } from './AdminUsers.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { PinsProvider, PinnedSidebar } from './Pins.tsx';
+
+const VersionPreview = lazy(() =>
+  import('./VersionPreview.tsx').then((m) => ({ default: m.VersionPreview })),
+);
 
 type User = { id: string; name: string; isAdmin: boolean };
 type Passkey = { id: string; name: string; provider: string };
@@ -331,6 +335,10 @@ export function App() {
                   <BackupStatus />
                 </section>
               </>
+            ) : location.pathname === '/preview' ? (
+              <Suspense fallback={<p>Loading preview…</p>}>
+                <VersionPreview />
+              </Suspense>
             ) : (
               <Dashboard navigation={navigation} />
             )}

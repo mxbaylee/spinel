@@ -133,7 +133,11 @@ export function workspaceRoutes(
       id = String(request.params.id);
     const snapshot = await history.load(user, id, String(request.params.checkpoint));
     if (owner(request) !== user) throw new AuthError(401, 'Sign in to continue.');
-    response.json({ snapshot, item: store.get(user, id) });
+    response.json({
+      snapshot,
+      item: store.get(user, id),
+      unitId: collaboration?.generations.active(id).unitId,
+    });
   });
   router.post('/:id/history/:checkpoint/restore', async (request, response) => {
     if (!history || !collaboration) throw new AuthError(503, 'Restore is not available.');

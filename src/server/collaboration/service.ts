@@ -17,6 +17,7 @@ import type {
   SubmitChangesetMiddlewareContext,
 } from '@univerjs-pro/collaboration-service';
 import {
+  RevertRevisionMutation,
   transformSnapshotToDocumentData,
   transformSnapshotToWorkbookData,
 } from '@univerjs-pro/collaboration';
@@ -38,6 +39,11 @@ function validateTargets(changeset: Readonly<IChangeset>) {
     }
   };
   for (const mutation of changeset.mutations) {
+    if (mutation.id === RevertRevisionMutation.id)
+      throw new CollabError(
+        'PERMISSION_DENIED',
+        'Restore versions through Spinel so the current state is kept.',
+      );
     let data: unknown;
     try {
       data = JSON.parse(mutation.data);
@@ -233,7 +239,7 @@ export class CollaborationStore {
         if (
           this.generations.resolve(row.item_id)?.unitId === row.item_id &&
           this.workspace.auth.database
-            .prepare('SELECT 1 FROM collaboration_units WHERE unit_id=?')
+            .prepare('SELECT 1 FROM spinel_live_units WHERE unit_id=?')
             .get(row.item_id)
         )
           throw new Error('Refusing to purge an active generation.');

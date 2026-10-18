@@ -349,17 +349,19 @@ export class HistoryStore {
         if (!user) continue;
         const source: Source = state === 'ready' ? 'collaboration' : 'native';
         // Public adapter metadata repairs a missed commit event after an interrupted process.
+        const generation = this.collaboration.generations.active(id);
         const unit =
           source === 'collaboration'
             ? await this.collaboration.service.dbAdapter.getUnit(
                 { userID: user, customData: {}, request: {} },
-                this.collaboration.generations.active(id).unitId,
+                generation.unitId,
               )
             : undefined;
+        if (this.collaboration.generations.active(id).unitId !== generation.unitId) continue;
         const revision =
           source === 'collaboration'
             ? unit
-              ? unit.headRevision + this.collaboration.generations.active(id).offset
+              ? unit.headRevision + generation.offset
               : undefined
             : this.native(user, id)?.revision;
         if (revision === undefined) continue;

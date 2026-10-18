@@ -70,7 +70,10 @@ export function snapshotIdentity<T extends IDocumentData | IWorkbookData>(
         for (const rule of Object.values(data.rangeThemeStyleRuleMap))
           if (object(rule)) unit(rule.rangeInfo);
     } else if (resource.name === 'SHEET_DEFINED_NAME_PLUGIN') {
-      for (const name of Object.values(data)) formula(name, 'formulaOrRefString');
+      for (const name of Object.values(data)) {
+        formula(name, 'formulaOrRefString');
+        formula(name, 'formulaOrRefStringWithPrefix');
+      }
     } else if (Object.hasOwn(data, previous)) {
       const rules = data[previous];
       delete data[previous];

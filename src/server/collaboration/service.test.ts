@@ -119,7 +119,7 @@ async function fixture() {
   };
 }
 
-test('history restore publishes an earlier sheet revision as a new live revision', async () => {
+test('raw sheet revision revert cannot bypass the application restore transaction', async () => {
   const f = await fixture();
   await f.collab.prepare(f.owner.id, f.sheet.id);
   await f.collab.service.submitChangeset(
@@ -137,19 +137,18 @@ test('history restore publishes an earlier sheet revision as a new live revision
       },
     ],
   };
-  const result = await f.collab.service.submitChangeset(
-    { changeset },
-    { userID: f.owner.id, memberID: 'test-member' },
-  );
-  expect(result).toMatchObject({ status: 'committed' });
-  const restored = await f.collab.load(f.owner.id, f.sheet.id);
-  expect(restored.revision).toBe(3);
-  expect((restored.snapshot as IWorkbookData).sheets.first.cellData).toEqual(
-    f.snapshot.sheets.first.cellData,
-  );
+  await expect(
+    f.collab.service.submitChangeset(
+      { changeset },
+      { userID: f.owner.id, memberID: 'test-member' },
+    ),
+  ).rejects.toThrow('Restore versions through Spinel');
+  const current = await f.collab.load(f.owner.id, f.sheet.id);
+  expect(current.revision).toBe(2);
+  expect((current.snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]?.v).toBe(99);
 });
 
-test('history restore publishes an earlier document revision as a new live revision', async () => {
+test('raw document revision revert cannot bypass the application restore transaction', async () => {
   const f = await fixture();
   await f.collab.prepare(f.owner.id, f.doc.id);
   const original = (await f.collab.load(f.owner.id, f.doc.id)).snapshot as IDocumentData;
@@ -176,26 +175,27 @@ test('history restore publishes an earlier document revision as a new live revis
   expect(
     ((await f.collab.load(f.owner.id, f.doc.id)).snapshot as IDocumentData).body?.dataStream,
   ).toBe(changedBody.dataStream);
-  const restored = await f.collab.service.submitChangeset(
-    {
-      changeset: {
-        ...changeset,
-        baseRev: 2,
-        reqId: 2,
-        mutations: [
-          {
-            id: RevertRevisionMutation.id,
-            data: JSON.stringify({ unitId: f.doc.id, revision: 1 }),
-          },
-        ],
+  await expect(
+    f.collab.service.submitChangeset(
+      {
+        changeset: {
+          ...changeset,
+          baseRev: 2,
+          reqId: 2,
+          mutations: [
+            {
+              id: RevertRevisionMutation.id,
+              data: JSON.stringify({ unitId: f.doc.id, revision: 1 }),
+            },
+          ],
+        },
       },
-    },
-    context,
-  );
-  expect(restored).toMatchObject({ status: 'committed' });
+      context,
+    ),
+  ).rejects.toThrow('Restore versions through Spinel');
   const current = await f.collab.load(f.owner.id, f.doc.id);
-  expect(current.revision).toBe(3);
-  expect((current.snapshot as IDocumentData).body).toEqual(original.body);
+  expect(current.revision).toBe(2);
+  expect((current.snapshot as IDocumentData).body).toEqual(changedBody);
 });
 
 test('permanent purge waits for in-flight migration before acknowledging deletion', async () => {
