@@ -15,6 +15,16 @@ export default defineConfig({
   build: {
     outDir: '../dist',
     emptyOutDir: true,
-    rolldownOptions: { output: { codeSplitting: rendererChunks } },
+    rolldownOptions: {
+      input: {
+        main: fileURLToPath(new URL('./web/index.html', import.meta.url)),
+        'service-worker': fileURLToPath(new URL('./web/service-worker.ts', import.meta.url)),
+      },
+      output: {
+        codeSplitting: rendererChunks,
+        entryFileNames: (chunk) =>
+          chunk.name === 'service-worker' ? 'service-worker.js' : 'assets/[name]-[hash].js',
+      },
+    },
   },
 });
