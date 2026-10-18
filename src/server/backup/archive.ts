@@ -12,7 +12,7 @@ import {
   writeFile,
 } from 'node:fs/promises';
 import { join } from 'node:path';
-import { backup, DatabaseSync } from 'node:sqlite';
+import { backup, DatabaseSync } from '../../../server/database.ts';
 import { pipeline } from 'node:stream/promises';
 import { createGzip, createGunzip } from 'node:zlib';
 

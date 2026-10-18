@@ -1,13 +1,21 @@
 # Offsite backups and recovery
 
-Spinel backs up to a **private DigitalOcean Space**. It uses SQLite's online backup
-API, compresses the consistent copy and encrypts it with AES-256-GCM before any
+Spinel backs up to a **private DigitalOcean Space**. It uses SQLite's `VACUUM INTO`
+to make a consistent copy, compresses it and encrypts it with AES-256-GCM before any
 network transfer. The 32-byte random recovery key must be kept separately from
 Spaces and from the droplet. Losing that key makes every backup using it unreadable.
 
+The copy runs synchronously on the same SQLite runtime as the application and
+collaboration adapter, briefly queuing other application requests. It does not
+copy live database/WAL files directly. The SDK's libsql package has no implemented
+JavaScript backup method; using a second SQLite library in the process risks
+corruption. This preserves one consistent backup without that risk; see
+[decision #68](https://github.com/mxbaylee/spinel/issues/68).
+
 This preserves accounts, passkeys, sessions, invitations, folders, grants, trash,
-native Sheets/Docs snapshots and uploaded image bytes: all currently live in
-SQLite. Every table is included, including future history tables. Before adding
+native Sheets/Docs snapshots, collaboration generations, retained checkpoints,
+restore receipts and uploaded image bytes: all currently live in SQLite. Every
+table is included. Before adding
 an external database or filesystem blob store, extend this inventory and the
 consistent backup/restore procedure; a SQLite-only backup cannot protect those.
 
@@ -121,7 +129,7 @@ image, Spaces credentials/network access and bucket policy, then retry. Status
 is persisted in SQLite and available only to active admins. It is not an external
 alert service and cannot report while the whole instance is down.
 
-Sources: [Node SQLite online backup](https://nodejs.org/download/release/v24.19.0/docs/api/sqlite.html#sqlitebackupsource-db-path-options),
+Sources: [SQLite VACUUM INTO](https://www.sqlite.org/lang_vacuum.html#vacuuminto),
 [DigitalOcean AWS SDK configuration](https://docs.digitalocean.com/products/spaces/reference/aws-sdks/).
 
 ## Restore onto a fresh host

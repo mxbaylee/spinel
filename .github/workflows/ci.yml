@@ -130,6 +130,7 @@ jobs:
           path: |
             test-results/theme-screenshots/*.png
             test-results/**/test-failed-*.png
+            test-results/**/*-restore-preview.png
             test-results/**/error-context.md
           retention-days: 7
           if-no-files-found: warn

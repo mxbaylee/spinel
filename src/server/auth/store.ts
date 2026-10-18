@@ -1,5 +1,5 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import type { DatabaseSync } from 'node:sqlite';
+import type { DatabaseSync } from '../../../server/database.ts';
 import type { AuthenticatorTransport } from '@simplewebauthn/server';
 
 export const CHALLENGE_MS = 5 * 60_000;

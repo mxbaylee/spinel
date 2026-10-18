@@ -36,6 +36,9 @@ export class HistoryStore {
         revision INTEGER NOT NULL, captured_at INTEGER NOT NULL, name TEXT,
         snapshot BLOB NOT NULL, UNIQUE(item_id,source,revision)
       ) STRICT;
+      CREATE TABLE IF NOT EXISTS history_restore_labels (
+        checkpoint_id TEXT PRIMARY KEY REFERENCES history_checkpoints(id) ON DELETE CASCADE
+      ) STRICT;
       CREATE INDEX IF NOT EXISTS history_checkpoints_item_time ON history_checkpoints(item_id,captured_at);
       CREATE TABLE IF NOT EXISTS history_progress (
         item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
@@ -81,19 +84,24 @@ export class HistoryStore {
     // Raw clients may skip the application preparation route; preserve their baseline too.
     this.subscriptions.push(
       collaboration.service.use('submitChangeset', async (context, next) => {
-        await this.ensureInitial(context.userID, context.request.changeset.unitID);
+        await this.ensureInitial(
+          context.userID,
+          collaboration.itemForUnit(context.request.changeset.unitID),
+        );
         await next();
       }),
     );
     this.subscriptions.push(
       collaboration.service.on('changesetCommitted', ({ changeset }) => {
+        const generation = collaboration.generations.resolve(changeset.unitID);
+        if (!generation) return;
         const now = workspace.auth.now();
         try {
           db.prepare(
             `INSERT INTO history_progress VALUES(?,'collaboration',?,?,0)
           ON CONFLICT(item_id,source) DO UPDATE SET revision=max(revision,excluded.revision),
           edited_at=max(edited_at,excluded.edited_at)`,
-          ).run(changeset.unitID, changeset.revision, now);
+          ).run(generation.itemId, changeset.revision + generation.offset, now);
         } catch {
           // The edit is already durable. Reconcile this derived marker on the next scan.
           console.error('History change marker could not be saved; it will retry.');
@@ -176,7 +184,7 @@ export class HistoryStore {
     this.workspace.get(user, id);
     return this.workspace.auth.database
       .prepare(
-        "SELECT id,captured_at AS capturedAt,revision,name,source FROM history_checkpoints WHERE item_id=? ORDER BY captured_at DESC,(source='collaboration') DESC,revision DESC",
+        "SELECT id,captured_at AS capturedAt,revision,name,source,EXISTS(SELECT 1 FROM history_restore_labels WHERE checkpoint_id=history_checkpoints.id) AS beforeRestore FROM history_checkpoints WHERE item_id=? ORDER BY captured_at DESC,(source='collaboration') DESC,revision DESC",
       )
       .all(id) as HistoryCheckpoint[];
   }
@@ -241,6 +249,59 @@ export class HistoryStore {
     return JSON.parse(bytes.toString()) as NativeSnapshot;
   }
 
+  async restore(
+    user: string,
+    id: string,
+    checkpoint: string,
+    expectedUnit: string,
+    requestId: string,
+    checkSession = () => {},
+  ) {
+    checkSession();
+    const completed = this.collaboration.generations.completed(user, id, requestId, checkpoint);
+    if (completed) return completed; // The selected unnamed checkpoint may have since been pruned.
+    if (
+      this.workspace.auth.database
+        .prepare('SELECT state FROM workspace_collaboration WHERE item_id=?')
+        .get(id)?.state !== 'ready'
+    )
+      await this.collaboration.prepare(user, id);
+    const snapshot = await this.load(user, id, checkpoint);
+    return this.collaboration.restore(
+      user,
+      id,
+      expectedUnit,
+      requestId,
+      checkpoint,
+      snapshot,
+      async (before) => {
+        const text = JSON.stringify(before.snapshot);
+        if (Buffer.byteLength(text) > 10 * 1024 * 1024)
+          throw new AuthError(413, 'This document is too large to restore.');
+        const packed = await compress(text);
+        return () => {
+          const db = this.workspace.auth.database;
+          const now = this.workspace.auth.now();
+          db.prepare(
+            `INSERT INTO history_checkpoints VALUES(?,?,'collaboration',?,?,NULL,?)
+          ON CONFLICT(item_id,source,revision) DO UPDATE SET snapshot=excluded.snapshot`,
+          ).run(randomUUID(), id, before.revision, now, packed);
+          const row = db
+            .prepare(
+              "SELECT id FROM history_checkpoints WHERE item_id=? AND source='collaboration' AND revision=?",
+            )
+            .get(id, before.revision)!;
+          db.prepare('INSERT OR IGNORE INTO history_restore_labels VALUES(?)').run(row.id);
+          db.prepare('UPDATE workspace_items SET updated_at=max(updated_at,?) WHERE id=?').run(
+            now,
+            id,
+          );
+        };
+      },
+      checkSession,
+    );
+  }
+
   prune(now = this.workspace.auth.now()) {
     const db = this.workspace.auth.database;
     this.workspace.auth.transaction(() => {
@@ -249,7 +310,7 @@ export class HistoryStore {
         .all()) {
         const records = db
           .prepare(
-            'SELECT id,captured_at AS capturedAt,revision,name,source FROM history_checkpoints WHERE item_id=?',
+            'SELECT id,captured_at AS capturedAt,revision,name,source,EXISTS(SELECT 1 FROM history_restore_labels WHERE checkpoint_id=history_checkpoints.id) AS beforeRestore FROM history_checkpoints WHERE item_id=?',
           )
           .all(item_id) as Checkpoint[];
         for (const id of expiredCheckpoints(records, now))
@@ -296,15 +357,23 @@ export class HistoryStore {
         if (!user) continue;
         const source: Source = state === 'ready' ? 'collaboration' : 'native';
         // Public adapter metadata repairs a missed commit event after an interrupted process.
+        const generation =
+          source === 'collaboration' ? this.collaboration.generations.active(id) : undefined;
         const unit =
           source === 'collaboration'
             ? await this.collaboration.service.dbAdapter.getUnit(
                 { userID: user, customData: {}, request: {} },
-                id,
+                generation!.unitId,
               )
             : undefined;
+        if (generation && this.collaboration.generations.active(id).unitId !== generation.unitId)
+          continue;
         const revision =
-          source === 'collaboration' ? unit?.headRevision : this.native(user, id)?.revision;
+          source === 'collaboration'
+            ? unit
+              ? unit.headRevision + generation!.offset
+              : undefined
+            : this.native(user, id)?.revision;
         if (revision === undefined) continue;
         const now = this.workspace.auth.now();
         let progress = db

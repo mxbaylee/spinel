@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync } from '../../server/database.ts';
 import { readKey, restoreArchive } from '../../src/server/backup/archive.ts';
 import { loadConfig, SpacesStore } from '../../src/server/backup/spaces.ts';
 import { BackupService } from '../../src/server/backup/service.ts';

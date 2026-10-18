@@ -85,7 +85,7 @@ export function SheetEditor({
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish, printEnglish) },
         collaboration: true,
-        plugins: [...collaborationPlugins(id), UniverSheetsPrintPlugin],
+        plugins: [...collaborationPlugins(data.unitId), UniverSheetsPrintPlugin],
         presets: [UniverSheetsCorePreset({ container: container.current! })],
       });
       print.current = async () => {
@@ -96,7 +96,7 @@ export function SheetEditor({
       disposeEditor = () => univer.dispose();
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
-      const workbook = await univerAPI.getCollaboration().loadSheetAsync(id);
+      const workbook = await univerAPI.getCollaboration().loadSheetAsync(data.unitId);
       if (!workbook) throw new Error('Could not load this spreadsheet.');
       await editorReady(univerAPI);
       if (disposed) return;
@@ -132,14 +132,17 @@ export function SheetEditor({
           },
         });
       // Literal document colours render against light paper even with dark chrome.
-      const render = univer.__getInjector().get(IRenderManagerService).getRenderUnitById(id);
+      const render = univer
+        .__getInjector()
+        .get(IRenderManagerService)
+        .getRenderUnitById(data.unitId);
       if (render) render.engine.getCanvasElement().style.backgroundColor = '#ffffff';
       const stopTheme = bindEditorTheme(univer, () => {
         // Invalidate cached display styles on inactive tabs as well.
         for (const skeleton of univer
           .__getInjector()
           .get(SheetSkeletonService)
-          .getSkeletonsByUnitId(id))
+          .getSkeletonsByUnitId(data.unitId))
           skeleton.makeDirty(true);
         univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
       });
@@ -154,7 +157,7 @@ export function SheetEditor({
         // This tab's presentation follows its grant; never change shared permissions.
         const permissions = univer.__getInjector().get(IPermissionService);
         for (const Point of getAllWorkbookPermissionPoint()) {
-          const point = new Point(id);
+          const point = new Point(data.unitId);
           if (!permissions.getPermissionPoint(point.id)) permissions.addPermissionPoint(point);
           permissions.updatePermissionPoint(
             point.id,
@@ -163,7 +166,7 @@ export function SheetEditor({
         }
       };
       if (data.access === 'viewer') await readOnly();
-      save = watchCollaboration(univer, univerAPI, id, data.access, publish, readOnly);
+      save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readOnly);
       controller.current = save;
       setEditable(data.access !== 'viewer');
       applyFill.current = async (preset) => {
@@ -174,14 +177,14 @@ export function SheetEditor({
           range = sheet?.getActiveRange();
         if (!sheet || !range) throw new Error('Select cells to fill.');
         const result = await univerAPI.executeCommand(SetRangeValuesCommand.id, {
-          unitId: id,
+          unitId: data.unitId,
           subUnitId: sheet.getSheetId(),
           range: range.getRange(),
           value: { s: presetStyle(preset, 'light') },
         });
         if (!result) throw new Error('Could not apply this fill. Check your access and try again.');
       };
-      stopPresence = await watchPresence(univer, univerAPI, id, setPeople);
+      stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) stopPresence();
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
         editing = true;

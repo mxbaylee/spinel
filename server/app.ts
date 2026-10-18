@@ -115,7 +115,7 @@ export async function createApp(options: AppOptions) {
           objectActions: requests.map((item) => {
             let access: string | undefined;
             try {
-              access = workspace.get(session.user_id!, item.unitID).access;
+              access = collaboration!.access(session.user_id!, item.unitID).access;
             } catch {
               /* Do not reveal other documents. */
             }
@@ -169,7 +169,7 @@ export async function createApp(options: AppOptions) {
       response.status(404).json({ error: 'Not found' });
     });
 
-    const pages = ['/sign-in', '/setup', '/invite', '/', '/settings', '/admin'];
+    const pages = ['/sign-in', '/setup', '/invite', '/', '/settings', '/admin', '/preview'];
     app.get(pages, (request, response, next) => {
       response.set('Cache-Control', 'no-store');
       if (request.path === '/invite') {

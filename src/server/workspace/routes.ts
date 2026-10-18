@@ -204,13 +204,48 @@ export function workspaceRoutes(
     );
     response.json({ ok: true });
   });
+  router.get('/:id/history/:checkpoint', async (request, response) => {
+    if (!history) throw new AuthError(503, 'History is not available.');
+    const user = owner(request),
+      id = String(request.params.id);
+    const snapshot = await history.load(user, id, String(request.params.checkpoint));
+    if (owner(request) !== user) throw new AuthError(401, 'Sign in to continue.');
+    response.json({
+      snapshot,
+      item: store.get(user, id),
+      unitId: collaboration?.generations.active(id).unitId,
+    });
+  });
+  router.post('/:id/history/:checkpoint/restore', async (request, response) => {
+    if (!history || !collaboration) throw new AuthError(503, 'Restore is not available.');
+    const user = owner(request),
+      id = String(request.params.id);
+    const body = payload(request, ['requestId', 'unitId']);
+    if (typeof body.requestId !== 'string' || typeof body.unitId !== 'string')
+      throw new AuthError(400, 'Invalid restore request.');
+    const result = await history.restore(
+      user,
+      id,
+      String(request.params.checkpoint),
+      body.unitId,
+      body.requestId,
+      () => {
+        if (owner(request) !== user) throw new AuthError(401, 'Sign in to continue.');
+      },
+    );
+    response.json({ revision: result.revision, unitId: result.nextUnit });
+  });
   router.post('/:id/collaboration', async (request, response) => {
     if (!collaboration) throw new AuthError(503, 'Collaboration is not available.');
     const user = owner(request),
       id = String(request.params.id);
     await collaboration.prepare(user, id);
     const item = store.get(owner(request), id);
-    response.json({ access: item.access, user: { id: user, name: auth.user(user)!.name } });
+    response.json({
+      unitId: collaboration.generations.active(id).unitId,
+      access: item.access,
+      user: { id: user, name: auth.user(user)!.name },
+    });
   });
   function payload(request: Request, allowed: string[]) {
     const body = request.body;
@@ -264,6 +299,12 @@ export function workspaceRoutes(
       id = String(request.params.id);
     response.json({
       item: store.get(user, id),
+      live: collaboration
+        ? {
+            unitId: collaboration.generations.active(id).unitId,
+            restoring: collaboration.generations.restoring(id),
+          }
+        : undefined,
       children: store.children(user, id),
       ancestors: store.ancestors(user, id),
     });

@@ -71,7 +71,7 @@ export async function prepareCollaboration(id: string) {
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Could not open live editing.');
-  return data as { access: ItemAccess; user: { id: string; name: string } };
+  return data as { unitId: string; access: ItemAccess; user: { id: string; name: string } };
 }
 export function identifyCollaborator(univer: Univer, user: { id: string; name: string }) {
   univer
@@ -83,6 +83,7 @@ export function watchCollaboration(
   univer: Univer,
   api: FUniver,
   id: string,
+  itemId: string,
   access: ItemAccess,
   publish: (state: SaveState) => void,
   readonly: () => Promise<void>,
@@ -91,7 +92,6 @@ export function watchCollaboration(
   let denied = false;
   let lastDirty = false;
   let disposed = false;
-  let lastStatus = collaboration.getCollaborationStatus(id);
   let checking = false;
   let statusGeneration = 0;
   const cache = univer.__getInjector().get(ILocalCacheService);
@@ -100,16 +100,22 @@ export function watchCollaboration(
     if (checking || disposed || denied) return;
     checking = true;
     try {
-      const response = await fetch(`/api/items/${id}`, { signal: abort.signal });
+      const response = await fetch(`/api/items/${itemId}`, { signal: abort.signal });
+      const data = response.ok ? await response.json() : undefined;
+      const restored =
+        data?.live?.unitId !== undefined && (data.live.unitId !== id || data.live.restoring);
       const changed =
         [401, 403, 404].includes(response.status) ||
-        (response.ok && (await response.json()).item.access !== access);
+        (data && data.item.access !== access) ||
+        restored;
       if (!changed || disposed) return;
       denied = true;
       publish({
         dirty: lastDirty,
         failed: true,
-        message: 'Access changed. Copy unsaved changes before reloading.',
+        message: restored
+          ? 'A version is being restored or has been restored. Copy unsaved changes, then reload to continue.'
+          : 'Access changed. Copy unsaved changes before reloading.',
       });
       await readonly();
     } catch {
@@ -121,7 +127,6 @@ export function watchCollaboration(
   const update = (status = collaboration.getCollaborationStatus(id)) => {
     if (denied || disposed) return;
     const generation = ++statusGeneration;
-    lastStatus = status;
     const dirty = status !== CollaborationStatus.SYNCED;
     // Acknowledgement precedes the SDK's delayed recovery-cache write. A reload
     // in that gap can replay an already committed insert as a new operation.
@@ -195,7 +200,7 @@ export function watchCollaboration(
   };
   window.addEventListener('online', reconnect);
   const accessTimer = window.setInterval(() => {
-    if (lastStatus === CollaborationStatus.OFFLINE) void checkAccess();
+    void checkAccess();
   }, 1000);
   update();
   return {
