@@ -1,3 +1,4 @@
+import { observeOfflineRecovery } from './offlineProbe.ts';
 import { guestItemId, documentPath } from './documentAccess.ts';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
@@ -81,6 +82,7 @@ export function DocEditor({
     let disposed = false;
     const loading = new AbortController();
     let stopPresence: (() => void) | undefined;
+    let stopProbe: (() => void) | undefined;
     setPeople([]);
     setPresenceUnavailable(false);
     let uploads = 0;
@@ -252,6 +254,11 @@ export function DocEditor({
       };
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
+      stopProbe = await observeOfflineRecovery(univer, data.unitId, data.user.id);
+      if (disposed) {
+        stopProbe();
+        return;
+      }
       const document = await univerAPI.getCollaboration().loadDocAsync(data.unitId);
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
@@ -293,6 +300,7 @@ export function DocEditor({
     return () => {
       disposed = true;
       loading.abort();
+      stopProbe?.();
       stopPresence?.();
       save?.dispose();
       // Univer owns a separate React root; unmount it after our cleanup commit.

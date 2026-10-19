@@ -24,6 +24,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     test.setTimeout(180_000);
     expect(info.project.name).toBe('mobile-https');
     expect(baseURL).toBe('https://localhost:3103');
+    const itemQuerySuffix = '&offline-probe=1';
     const directory = await mkdtemp(join(tmpdir(), 'spinel-offline-sdk-'));
     const db = openDatabase('test-results/mobile-https/app.sqlite');
     const auth = new AuthStore(db);
@@ -118,7 +119,7 @@ for (const kind of ['sheet', 'doc'] as const) {
             '/app-icon-192.png',
             '/app-icon-512.png',
           ].includes(url.pathname) ||
-          (url.pathname === '/' && url.search === `?item=${item.id}`);
+          (url.pathname === '/' && url.search === `?item=${item.id}${itemQuerySuffix}`);
         const metadata = [
           '/api/auth/session',
           '/api/items',
@@ -205,6 +206,16 @@ for (const kind of ['sheet', 'doc'] as const) {
         });
       });
       page.setDefaultTimeout(15_000);
+    }
+    async function recordRecovery(label: string) {
+      const record = await page.evaluate(async () => {
+        const probe = window.__spinelRecoveryProbe;
+        if (!probe) return { unavailable: true };
+        return { beforeLoad: probe.beforeLoad, current: await probe.read() };
+      });
+      // This flag is compiled only for CI and requires the loopback probe URL.
+      // Contents belong to this freshly created synthetic fixture account.
+      console.log(JSON.stringify({ probe: kind, recoveryStage: label, recovery: record }));
     }
     async function close() {
       stopping = true;
@@ -358,7 +369,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await launch();
       await context!.addCookies([cookie]);
       stage = 'prepare online revision and responses';
-      await page.goto(`${baseURL}/?item=${item.id}`);
+      await page.goto(`${baseURL}/?item=${item.id}${itemQuerySuffix}`);
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await enter('Baseline');
       // Saved can still describe the state before async input was dispatched.
@@ -397,12 +408,15 @@ for (const kind of ['sheet', 'doc'] as const) {
       // This probe observes the existing SDK's recovery behavior after a bounded
       // settling period. It does not claim the product has a local-save signal.
       await new Promise((resolve) => setTimeout(resolve, 5000));
+      await recordRecovery('first offline edit settled');
       for (let attempt = 1; attempt <= 2; attempt++) {
         stage = `cold offline browser launch ${attempt}`;
         await close();
         await launch();
-        await page.goto(`${baseURL}/?item=${item.id}`);
+        await page.goto(`${baseURL}/?item=${item.id}${itemQuerySuffix}`);
         expect(await page.evaluate(() => navigator.onLine)).toBe(false);
+        await ready();
+        await recordRecovery(`cold launch ${attempt} before content assertion`);
         await expect
           .poll(copyContent, { timeout: 30_000 })
           .toBe(attempt === 1 ? firstOffline : finalOffline);
@@ -412,6 +426,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           await enter('Cold-second', 'A2');
           await expect.poll(copyContent).toBe(finalOffline);
           await new Promise((resolve) => setTimeout(resolve, 5000));
+          await recordRecovery('second offline edit settled');
         }
       }
       stage = 'reconnect and persist';

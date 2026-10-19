@@ -100,3 +100,20 @@ HTTP responses alone cannot pass this check. Final server checks preserve the ra
 marker), the inserted prefix, shifted custom-block links, and the original
 drawing ID, source and dimensions. This is not a full rich-body equality claim. Sheet image support, concurrent peers and the remaining
 contract are still outstanding; these new assertions have not yet run in CI.
+
+Run 39201195300 (84dc808) established the Doc baseline and reached its second
+cold restart, where fresh copying and the screenshot both showed duplicated
+text: `Cold-secondOffline-retainedOffline-retainedBaseline`, instead of
+`Cold-secondOffline-retainedBaseline`. The first restart and immediate second
+edit checks had passed; the divergence appeared during the next persistence/
+replay cycle. There were no misses, blocked requests or diagnostics. Sheet passed
+end to end again, and all 56 development/production cases passed without retries.
+This is an unresolved Doc recovery defect; reconnect did not run for Docs.
+
+Temporary CI-only instrumentation reads the public `ILocalCacheService` before
+loading and at the probe's settling/restart checkpoints. It requires the compiled
+`SPINEL_RECOVERY_PROBE=1` flag, exact loopback HTTPS origin and explicit probe query.
+It records only the newly created synthetic fixture's public recovery payload.
+It does not modify SDK instances, flush tasks, edit cache data or inspect Pro
+implementation/storage internals. Remove this diagnostic bridge before landing;
+normal builds compile it disabled. Exact content assertions remain required.

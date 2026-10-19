@@ -1,3 +1,4 @@
+import { observeOfflineRecovery } from './offlineProbe.ts';
 import { guestItemId } from './documentAccess.ts';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
@@ -66,6 +67,7 @@ export function SheetEditor({
   useEffect(() => {
     let disposed = false;
     let stopPresence: (() => void) | undefined;
+    let stopProbe: (() => void) | undefined;
     setPeople([]);
     setPresenceUnavailable(false);
     let editing = false;
@@ -106,6 +108,11 @@ export function SheetEditor({
       disposeEditor = () => univer.dispose();
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
+      stopProbe = await observeOfflineRecovery(univer, data.unitId, data.user.id);
+      if (disposed) {
+        stopProbe();
+        return;
+      }
       const workbook = await univerAPI.getCollaboration().loadSheetAsync(data.unitId);
       if (!workbook) throw new Error('Could not load this spreadsheet.');
       await editorReady(univerAPI);
@@ -225,6 +232,7 @@ export function SheetEditor({
     });
     return () => {
       disposed = true;
+      stopProbe?.();
       stopPresence?.();
       save?.dispose();
       // Univer owns a separate React root; unmount it after our cleanup commit.

@@ -11,6 +11,11 @@ const rendererChunks = {
 export default defineConfig({
   root: fileURLToPath(new URL('./web', import.meta.url)),
   plugins: [react()],
+  define: {
+    'import.meta.env.SPINEL_RECOVERY_PROBE': JSON.stringify(
+      process.env.SPINEL_RECOVERY_PROBE === '1',
+    ),
+  },
   optimizeDeps: { rolldownOptions: { output: { codeSplitting: rendererChunks } } },
   build: {
     outDir: '../dist',
