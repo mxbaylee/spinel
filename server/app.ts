@@ -266,12 +266,14 @@ export async function createApp(options: AppOptions) {
         },
         appType: 'custom',
       });
-      app.use(vite.middlewares);
+      // Pages go before Vite, which treats extensionless URLs as modules and would
+      // serve web/setup.ts as source for /setup.
       app.get(pages, async (request, response) => {
         const template = await readFile(resolve(projectRoot, 'web/index.html'), 'utf8');
         const html = await vite!.transformIndexHtml(request.originalUrl, template);
         response.type('html').send(html);
       });
+      app.use(vite.middlewares);
     } else {
       const directory = options.staticDirectory ?? resolve(projectRoot, 'dist');
       // Fail at startup with a useful error instead of serving a broken dashboard.
