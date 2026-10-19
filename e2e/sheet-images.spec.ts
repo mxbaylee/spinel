@@ -186,7 +186,8 @@ for (const mobile of [false, true]) {
         page.getByRole('button', { name: 'Restore this version', exact: true }),
       ).toBeEnabled({ timeout: 30_000 });
       await allImagesVisible();
-      await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+      if (!mobile)
+        await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
       const floatingBounds = async () => {
         const { data, info: meta } = await sharp(
           await page.locator('.univer-container').screenshot(),
@@ -218,17 +219,14 @@ for (const mobile of [false, true]) {
       };
       await page.mouse.click(center.x, center.y);
       await page.keyboard.press('Delete');
+      // Drawing invalidation briefly clears the canvas before its next render.
+      // Require the same rendered image after each attempted readonly mutation.
+      await expect.poll(floatingBounds).toEqual(before);
       await page.mouse.move(center.x, center.y);
       await page.mouse.down();
-      await page.mouse.move(center.x + 40, center.y + 30, { steps: 6 });
+      await page.mouse.move(center.x + (mobile ? -30 : 40), center.y + 30, { steps: 6 });
       await page.mouse.up();
-      await page.evaluate(
-        () =>
-          new Promise<void>((resolve) =>
-            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-          ),
-      );
-      expect(await floatingBounds()).toEqual(before);
+      await expect.poll(floatingBounds).toEqual(before);
       await allImagesVisible();
       expect(errors).toEqual([]);
     } finally {

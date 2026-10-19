@@ -146,3 +146,23 @@ An instrumentation error cannot interrupt a command and is a test failure. A
 before-command event proves only attempted execution; correlate it with state
 emissions, persisted records and exact rendered/server content. Logging and extra
 reads can affect timing, so any eventual fix still needs an uninstrumented run.
+
+Run 39204554726 (eae44d5) reproduced the Doc duplicate with the asserted host
+cache installed. Its public update call already contains two `Offline-retained`
+mutations immediately after the first cold load, before the second user edit;
+the next restart similarly appends another copy of `Cold-second`. Thus the
+adapter receives duplicated input; changing its serialization did not repair it.
+The exact content assertion still fails at the second cold launch. Sheet's
+bounded text probe passed again; Doc reconnect and final image checks did not run.
+The new public event diagnostic above is the next experiment, not a fix.
+
+That run also found replay image validation consuming Sheet block bytes; validation
+now receives deep copies and the regression asserts provider-input immutability.
+Two new unit assertions incorrectly expected thrown submission errors instead of
+the SDK's structured rejected result and are corrected. These repairs need CI.
+The imported Sheet-image browser cases rendered all three images on live/reload/
+preview paths, but did not pass: desktop's immediate post-interaction canvas
+sample was flaky (the failure screenshot still shows the unchanged image), and
+mobile expected a desktop-only Bold toolbar button. The test now waits for the
+exact original bounds after each Delete/drag attempt and keeps those image checks
+on mobile. Those revised tests also need CI; no new image acceptance pass is claimed.
