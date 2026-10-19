@@ -47,6 +47,22 @@ for (const kind of ['sheet', 'doc'] as const) {
     let unitId: string | undefined;
     const cache = new Map<string, CachedResponse>();
     const misses = new Set<string>();
+    const blocked = new Set<string>();
+    const diagnostics = new Set<string>();
+    const safeMessage = (message: string) =>
+      message
+        .replaceAll(cookie.value, '[session]')
+        .replace(/(?:https?|wss?):\/\/[^\s)]+/g, '[URL]')
+        .replace(/[A-Za-z0-9_-]{32,}(?:\.[A-Za-z0-9_-]+)*/g, '[opaque]')
+        .slice(0, 240);
+    // Diagnostics contain paths/status only, never cookie values or URL queries.
+    const safePath = (value: string) => {
+      try {
+        return new URL(value).pathname;
+      } catch {
+        return '[invalid URL]';
+      }
+    };
     let offline = false;
     let stopping = false;
     let context: BrowserContext | undefined;
@@ -64,7 +80,21 @@ for (const kind of ['sheet', 'doc'] as const) {
         ignoreHTTPSErrors: true,
         serviceWorkers: 'block',
         args: ['--ignore-certificate-errors'],
-        permissions: ['clipboard-read', 'clipboard-write'],
+      });
+      // Fulfilled fixture HTML otherwise triggers Chromium's local-network
+      // access check for the real loopback socket. Scope this test permission
+      // to the fixture; HTTP/WebSocket offline blocking remains explicit below.
+      await context.grantPermissions(
+        ['clipboard-read', 'clipboard-write', 'local-network-access'],
+        { origin: baseURL },
+      );
+      context.on('response', (response) => {
+        if (response.status() >= 400)
+          diagnostics.add(`HTTP ${response.status()} ${safePath(response.url())}`);
+      });
+      context.on('requestfailed', (request) => {
+        if (!offline && !stopping)
+          diagnostics.add(`Failed ${request.method()} ${safePath(request.url())}`);
       });
       network = await interruptibleNetwork(context);
       await context.route('**/*', async (route) => {
@@ -117,9 +147,13 @@ for (const kind of ['sheet', 'doc'] as const) {
         if (offline) {
           const hit = cacheable ? cache.get(key) : undefined;
           if (hit) return route.fulfill(hit);
-          if (cacheable) misses.add(`${request.method()} ${url.pathname}${url.search}`);
+          if (cacheable) misses.add(`${request.method()} ${url.pathname}`);
+          else blocked.add(`${request.method()} ${url.pathname}`);
           return route.abort('internetdisconnected');
         }
+        // Tickets and writes retain the browser's normal request path. Only
+        // fixture reads need the API-response recorder, even while online.
+        if (!cacheable) return route.fallback();
         try {
           const response = await route.fetch();
           try {
@@ -152,6 +186,14 @@ for (const kind of ['sheet', 'doc'] as const) {
       });
       if (offline) await network.setOffline(true);
       page = context.pages()[0] ?? (await context.newPage());
+      page.on('pageerror', (error) => {
+        diagnostics.add(safeMessage(error.message));
+      });
+      page.on('websocket', (socket) => {
+        socket.on('socketerror', (error) => {
+          if (!offline && !stopping) diagnostics.add(`WebSocket ${safeMessage(error)}`);
+        });
+      });
       page.setDefaultTimeout(15_000);
     }
     async function close() {
@@ -273,6 +315,8 @@ for (const kind of ['sheet', 'doc'] as const) {
           probe: kind,
           stage,
           cacheMisses: [...misses],
+          blockedRequests: [...blocked],
+          diagnostics: [...diagnostics],
           recordedResponses: cache.size,
         }),
       );

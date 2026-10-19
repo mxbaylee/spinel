@@ -39,3 +39,21 @@ not grounds to close the ticket. The initial text-only probe must be extended to
 existing images, concurrent peers, lost acknowledgements and the remaining
 storage/access lifecycle. Actual Android and iPhone installed-app evidence is
 still required. No device/offline result has yet been recorded.
+
+## Initial fixture diagnosis
+
+CI 39196316063 on `25366cd` passed 228 unit tests and the 54 desktop browser
+tests, but the Sheet probe failed before its first online saved state. It recorded
+19 fixture responses and no cache misses; the Doc probe and PWA case were stopped
+by the configured first-failure limit. This is not cold-start evidence.
+
+A separate guarded HTTPS/WebSocket echo fixture reproduced Chromium's
+`ERR_BLOCKED_BY_LOCAL_NETWORK_ACCESS_CHECKS` when its HTML was fulfilled by
+Playwright. Granting `local-network-access` only to that loopback origin made the
+same test connect, with its original cookie and Origin present. The SDK probe now
+grants that test-only permission on every browser launch. It also lets online
+non-fixture requests use the normal browser path and records sanitized connection
+errors. Application authentication and explicit offline blocking are unchanged.
+The revised SDK probe must still run; the echo result alone proves no SDK behavior.
+The permission API is documented in
+[Playwright's browser context reference](https://playwright.dev/docs/api/class-browsercontext#browser-context-grant-permissions).
