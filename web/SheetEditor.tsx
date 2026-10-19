@@ -1,4 +1,5 @@
 import { observeOfflineRecovery } from './offlineProbe.ts';
+import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages, sheetImageOverride } from './sheetImages.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { guestItemId } from './documentAccess.ts';
@@ -195,6 +196,7 @@ export function SheetEditor({
             [UnitAction.View, UnitAction.Copy, UnitAction.Print].includes(point.subType),
           );
         }
+        readOnlySheetDrawings(univer, data.unitId);
       };
       if (data.access === 'viewer') await readOnly();
       save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readOnly);

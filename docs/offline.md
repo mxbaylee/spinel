@@ -196,3 +196,37 @@ integration without a new service, and Link guests remain excluded. The caller
 still must acquire and verify image/assets, scope storage to the account, retain
 permission and pending-operation state, and satisfy every lifecycle and device
 requirement above before showing availability or local durability.
+
+## Bounded recovery probe result
+
+On pinned Univer 1.1.0, [CI run 39208226532](https://github.com/mxbaylee/spinel/actions/runs/39208226532)
+at `0bb61c8` passed both isolated cold-start probes and the existing HTTPS PWA
+check. The fixture recorded selected synthetic reads, terminated/reopened a real
+persistent Chromium browser twice offline, and verified exact contents after
+reconnect through an independent server client. The Doc included an existing
+image and a subsequent lost-acknowledgement restart: its original awaiting
+operation survived, a matching real server confirmation preceded cache clearing,
+and content/revision remained unchanged after another reload. This run's Sheet
+probe covered text; expanded Sheet-image and third-idle-restart cases are pending.
+The full browser suite did not pass: an independent Sheet read-only image drag
+check exposed visual movement and remains a required repair.
+
+The unadapted Doc loader replayed a cached mutation without an execution flag,
+causing the public Doc state stream to recapture it as new local input. The probe
+uses a host `ILocalCacheService` and the public root `CommandService` override:
+exact returned parameter objects receive execution-only `fromChangeset` metadata.
+No mutation bytes or request identities are rewritten. Identity matching is an
+observed property of this pinned SDK, not a vendor guarantee. The flag bypasses
+Doc permission checks as well as changing state emission; this synthetic owner
+fixture is not a production authorization boundary.
+
+Production integration still needs immutable account/item/generation scopes,
+validated replay accounting with preserved original pending records, complete
+local snapshot/authz/image adapters, and a revalidation barrier before any remote
+read or synchronization. Unmatched or rejected recovery must preserve pending
+work and stop opening/syncing. No content-based deduplication is permitted. These
+requirements supplement, rather than replace, the full contract above.
+[Decision #90](https://github.com/mxbaylee/spinel/issues/90) selects this host
+coordinator/public-adapter path, with the same access and durability requirements
+for the Owner and Collaborator, bounded operations for the Operator, and no
+private offline capability for Link guests.

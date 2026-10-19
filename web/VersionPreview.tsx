@@ -1,4 +1,5 @@
 import { sheetImages } from './sheetImages.ts';
+import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { useEffect, useRef, useState } from 'react';
 import { InterceptorEffectEnum, IPermissionService } from '@univerjs/core';
@@ -118,6 +119,7 @@ export function VersionPreview({
             [UnitAction.View, UnitAction.Copy, UnitAction.Print].includes(point.subType),
           );
         }
+        readOnlySheetDrawings(univer, loaded.snapshot.id);
       }
       const interceptor = sheet
         ? univer

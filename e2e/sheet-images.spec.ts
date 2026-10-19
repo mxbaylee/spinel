@@ -36,6 +36,7 @@ for (const mobile of [false, true]) {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     const snapshot = await sheetImageFixture();
+    let releaseImages = () => {};
     try {
       const imported = await context.request.post('/api/items/import', {
         headers: { Origin: baseURL! },
@@ -87,10 +88,23 @@ for (const mobile of [false, true]) {
       });
       expect(named.ok(), await named.text()).toBe(true);
       const checkpoint = await named.json();
+      let heldImages = 0;
+      const delayedImages = new Promise<void>((resolve) => {
+        releaseImages = resolve;
+      });
+      await page.route('**/images/*', async (route) => {
+        heldImages++;
+        await delayedImages;
+        await route.continue();
+      });
       await page.goto(`/preview?item=${item.id}&version=${checkpoint.version.id}`);
       await expect(
         page.getByRole('button', { name: 'Restore this version', exact: true }),
       ).toBeEnabled({ timeout: 30_000 });
+      // Complete image rendering AFTER the readonly permission setup. The
+      // generic drawing renderer must not reattach drag handles at this point.
+      await expect.poll(() => heldImages).toBeGreaterThan(0);
+      releaseImages();
       await allImagesVisible();
       if (!mobile)
         await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
@@ -117,36 +131,71 @@ for (const mobile of [false, true]) {
           }
         return { left, right, top, bottom };
       };
-      const before = await floatingBounds();
-      const canvas = (await page.locator('.univer-container').boundingBox())!;
-      const center = {
-        x: canvas.x + (before.left + before.right) / 2,
-        y: canvas.y + (before.top + before.bottom) / 2,
+      const assertReadOnlyImages = async () => {
+        const before = await floatingBounds();
+        const canvas = (await page.locator('.univer-container').boundingBox())!;
+        const center = {
+          x: canvas.x + (before.left + before.right) / 2,
+          y: canvas.y + (before.top + before.bottom) / 2,
+        };
+        await page.mouse.click(center.x, center.y);
+        await page.keyboard.press('Delete');
+        const refusal = page.getByText(
+          'The range is protected, and you do not have edit permission. To edit, please contact the creator.',
+          { exact: true },
+        );
+        if (await refusal.isVisible()) {
+          await page.getByRole('button', { name: 'ok', exact: true }).click();
+          await expect(refusal).toBeHidden();
+        }
+        // A locked image need not be selectable. If the underlying cell refuses
+        // Delete, dismiss its backdrop before measuring the unchanged image.
+        await expect.poll(floatingBounds).toEqual(before);
+        await page.mouse.move(center.x, center.y);
+        await page.mouse.down();
+        await page.mouse.move(center.x + (mobile ? -30 : 40), center.y + 30, { steps: 6 });
+        await page.mouse.up();
+        if (await refusal.isVisible()) {
+          await page.getByRole('button', { name: 'ok', exact: true }).click();
+          await expect(refusal).toBeHidden();
+        }
+        await expect.poll(floatingBounds).toEqual(before);
+        await allImagesVisible();
       };
-      await page.mouse.click(center.x, center.y);
-      await page.keyboard.press('Delete');
-      const refusal = page.getByText(
-        'The range is protected, and you do not have edit permission. To edit, please contact the creator.',
-        { exact: true },
+      await assertReadOnlyImages();
+      const current = async () => {
+        const response = await context.request.get(`/api/items/${item.id}/sheet`);
+        expect(response.ok()).toBe(true);
+        return (await response.json()).snapshot;
+      };
+      const beforeViewer = await current();
+      const viewer = auth.createUser(`Sheet image viewer ${info.testId}`);
+      const shared = await context.request.put(`/api/items/${item.id}/sharing`, {
+        headers: { Origin: baseURL! },
+        data: { userId: viewer.id, role: 'viewer' },
+      });
+      expect(shared.ok(), await shared.text()).toBe(true);
+      await context.addCookies([
+        {
+          name: COOKIE_NAME,
+          value: auth.createSession(viewer.id).token,
+          url: baseURL!.replace('http:', 'https:'),
+          secure: true,
+          httpOnly: true,
+          sameSite: 'Strict',
+        },
+      ]);
+      await page.goto(`/?item=${item.id}`);
+      await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
+        'View only — reload after your access changes.',
+        { timeout: 30_000 },
       );
-      await expect(refusal).toBeVisible();
-      await page.getByRole('button', { name: 'ok', exact: true }).click();
-      await expect(refusal).toBeHidden();
-      // The refusal backdrop dims canvas colors. Assert it before dismissing,
-      // then verify the exact original image geometry rather than dimmed pixels.
-      await expect.poll(floatingBounds).toEqual(before);
-      await page.mouse.move(center.x, center.y);
-      await page.mouse.down();
-      await page.mouse.move(center.x + (mobile ? -30 : 40), center.y + 30, { steps: 6 });
-      await page.mouse.up();
-      if (await refusal.isVisible()) {
-        await page.getByRole('button', { name: 'ok', exact: true }).click();
-        await expect(refusal).toBeHidden();
-      }
-      await expect.poll(floatingBounds).toEqual(before);
       await allImagesVisible();
+      await assertReadOnlyImages();
+      expect(await current()).toEqual(beforeViewer);
       expect(errors).toEqual([]);
     } finally {
+      releaseImages();
       await context.close();
       db.close();
     }
