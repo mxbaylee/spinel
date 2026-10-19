@@ -11,6 +11,7 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
   baseURL,
 }, info) => {
   test.setTimeout(180_000);
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
   const network = await interruptibleNetwork(context);
   const db = openDatabase('test-results/mobile-https/app.sqlite'),
     auth = new AuthStore(db),
@@ -141,9 +142,18 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     expect(await page.evaluate(() => window.visualViewport?.scale)).toBe(1);
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
     await page.screenshot({
-      path: `test-results/theme-screenshots/mobile-sheet-${info.project.name}.png`,
+      path: `test-results/theme-screenshots/mobile-sheet-light-${info.project.name}.png`,
       fullPage: true,
     });
+    const activeCanvas = await canvas.elementHandle();
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    expect(await activeCanvas!.evaluate((node) => node.isConnected)).toBe(true);
+    await page.screenshot({
+      path: `test-results/theme-screenshots/mobile-sheet-dark-${info.project.name}.png`,
+      fullPage: true,
+    });
+    await page.emulateMedia({ colorScheme: 'light' });
     await page.reload();
     await saved();
     expect(
