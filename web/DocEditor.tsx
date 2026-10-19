@@ -254,7 +254,7 @@ export function DocEditor({
       };
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
-      stopProbe = await observeOfflineRecovery(univer, data.unitId, data.user.id);
+      stopProbe = await observeOfflineRecovery(univer, data.unitId, data.user.id, true);
       if (disposed) {
         stopProbe();
         return;

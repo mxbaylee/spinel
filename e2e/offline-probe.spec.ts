@@ -199,6 +199,12 @@ for (const kind of ['sheet', 'doc'] as const) {
       if (offline) await network.setOffline(true);
       page = context.pages()[0] ?? (await context.newPage());
       page.on('console', (message) => {
+        if (message.type() === 'log' && message.text().startsWith('{"recoveryDocEvent":')) {
+          const docEvent = JSON.parse(message.text());
+          if (docEvent.recoveryDocEvent === 'trace failure')
+            cacheFailures.push(String(docEvent.value));
+          console.log(JSON.stringify({ probe: kind, stage, docEvent }));
+        }
         if (message.type() === 'log' && message.text().startsWith('{"recoveryCacheCall":')) {
           const call = JSON.parse(message.text());
           cacheCalls.push(call.recoveryCacheCall);

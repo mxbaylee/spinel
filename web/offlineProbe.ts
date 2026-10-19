@@ -1,4 +1,5 @@
 import { ProbeLocalCache } from './ProbeLocalCache.ts';
+import { ICommandService } from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
 import { ILocalCacheService } from '@univerjs-pro/collaboration-client';
 import type { IUnitCacheData } from '@univerjs-pro/collaboration-client';
@@ -14,19 +15,112 @@ declare global {
   }
 }
 
-/** Temporary fixture instrumentation through the public cache read API only. */
-export async function observeOfflineRecovery(univer: Univer, unitId: string, userId: string) {
+/** Temporary fixture instrumentation through public cache reads and event streams only. */
+export async function observeOfflineRecovery(
+  univer: Univer,
+  unitId: string,
+  userId: string,
+  document = false,
+) {
   if (
     !import.meta.env.SPINEL_RECOVERY_PROBE ||
     location.origin !== 'https://localhost:3103' ||
     new URLSearchParams(location.search).get('offline-probe') !== '1'
   )
     return () => {};
-  const cache = univer.__getInjector().get(ILocalCacheService);
-  const read = async () => structuredClone((await cache.loadOfflineData(unitId, userId)) ?? null);
-  const probe = { hostCache: cache instanceof ProbeLocalCache, beforeLoad: await read(), read };
-  window.__spinelRecoveryProbe = probe;
-  return () => {
-    if (window.__spinelRecoveryProbe === probe) delete window.__spinelRecoveryProbe;
+  const stops: (() => void)[] = [];
+  const observerId = crypto.randomUUID();
+  let sequence = 0;
+  const trace = (event: string, project: () => unknown) => {
+    const current = ++sequence;
+    try {
+      console.log(
+        JSON.stringify({
+          recoveryDocEvent: event,
+          observerId,
+          sequence: current,
+          value: structuredClone(project()),
+        }),
+      );
+    } catch (error) {
+      // An observer must not interrupt the mutation it is measuring.
+      console.log(
+        JSON.stringify({
+          recoveryDocEvent: 'trace failure',
+          observerId,
+          sequence: current,
+          value: String(error),
+        }),
+      );
+    }
   };
+  try {
+    if (document) {
+      const { DocStateEmitService, DocStateChangeManagerService, RichTextEditingMutation } =
+        await import('@univerjs/docs');
+      const injector = univer.__getInjector();
+      // Passive public observers. Before-command means attempted execution only;
+      // correlate with state/cache events and exact browser/server content checks.
+      const commands = injector.get(ICommandService).beforeCommandExecuted((command, options) => {
+        const params = command.params as Record<string, unknown> | undefined;
+        if (command.id === RichTextEditingMutation.id && params?.unitId === unitId)
+          trace('before text mutation', () => ({
+            unitId: params.unitId,
+            actions: params.actions,
+            trigger: params.trigger,
+            segmentId: params.segmentId,
+            debounce: params.debounce,
+            noHistory: params.noHistory,
+            isSync: params.isSync,
+            syncer: params.syncer,
+            options: {
+              fromCollab: options?.fromCollab,
+              fromChangeset: options?.fromChangeset,
+              onlyLocal: options?.onlyLocal,
+              syncOnly: options?.syncOnly,
+            },
+          }));
+      });
+      stops.push(() => commands.dispose());
+      const raw = injector.get(DocStateEmitService).docStateChangeParams$.subscribe((value) => {
+        if (value?.unitId === unitId)
+          trace('raw state', () => ({
+            unitId: value.unitId,
+            trigger: value.trigger,
+            segmentId: value.segmentId,
+            actions: value.redoState.actions,
+            debounce: value.debounce,
+            noHistory: value.noHistory,
+            isSync: value.isSync,
+            syncer: value.syncer,
+          }));
+      });
+      stops.push(() => raw.unsubscribe());
+      const grouped = injector
+        .get(DocStateChangeManagerService)
+        .docStateChange$.subscribe((value) => {
+          if (value?.unitId === unitId)
+            trace('grouped state', () => ({
+              unitId: value.unitId,
+              trigger: value.trigger,
+              segmentId: value.segmentId,
+              actions: value.redoState.actions,
+              debounce: value.debounce,
+              noHistory: value.noHistory,
+            }));
+        });
+      stops.push(() => grouped.unsubscribe());
+    }
+    const cache = univer.__getInjector().get(ILocalCacheService);
+    const read = async () => structuredClone((await cache.loadOfflineData(unitId, userId)) ?? null);
+    const probe = { hostCache: cache instanceof ProbeLocalCache, beforeLoad: await read(), read };
+    window.__spinelRecoveryProbe = probe;
+    return () => {
+      stops.forEach((stop) => stop());
+      if (window.__spinelRecoveryProbe === probe) delete window.__spinelRecoveryProbe;
+    };
+  } catch (error) {
+    stops.forEach((stop) => stop());
+    throw error;
+  }
 }

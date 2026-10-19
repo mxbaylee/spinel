@@ -136,3 +136,13 @@ restricted to the same CI flag and loopback origin plus `host-cache=1`, and stor
 only synthetic pending records, not complete downloads. The original native-cache
 failure remains evidence. Remove diagnostic code before landing, and repeat any
 passing fix without extra cache reads before calling it verified.
+
+The Doc diagnostic also observes public rich-text command attempts and the OSS
+`DocStateEmitService` / `DocStateChangeManagerService` event streams. It projects
+only actions, unit/segment, trigger and synchronization flags, excluding transient
+layout objects. Each observer has its own ID and monotonic sequence; the CI log
+adds launch-stage context. Observers never alter parameters, state or cache data.
+An instrumentation error cannot interrupt a command and is a test failure. A
+before-command event proves only attempted execution; correlate it with state
+emissions, persisted records and exact rendered/server content. Logging and extra
+reads can affect timing, so any eventual fix still needs an uninstrumented run.
