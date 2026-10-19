@@ -500,6 +500,7 @@ export class CollaborationStore {
       new AuthError(409, 'Access or the document version changed. Retry the download.');
     const unavailable = () => new AuthError(404, 'This document is not available.');
     // Link guests use their link while it lasts; an offline copy would outlive it.
+    if (user.startsWith('guest:')) throw unavailable();
     const initialUnit = this.generations.active(id).unitId;
     try {
       await this.prepare(user, id);

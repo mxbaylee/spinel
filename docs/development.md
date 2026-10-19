@@ -62,7 +62,12 @@ npm run backlog:check
 `npm run e2e` builds the frontend, then Playwright starts isolated development and
 production servers on ports 3100 and 3101, then a disposable mobile HTTPS server
 on port 3103, with databases in `test-results/`. Projects run sequentially to
-avoid keeping several SDK server processes in memory. The HTTPS fixture uses a
+avoid keeping several SDK server processes in memory. CI instead runs each
+project on its own runner, splitting development and production in two with
+`--shard`, and the **Playwright smoke** check passes only when every run does.
+To repeat one run locally, build first, then use
+`SPINEL_E2E_PROJECT=production npx playwright test --project=production --shard=1/2`.
+The HTTPS fixture uses a
 temporary test certificate accepted only by its isolated browser; see
 [mobile verification](mobile.md#verification-and-deployment).
 It checks access boundaries, mobile width, real WebAuthn verification with two
