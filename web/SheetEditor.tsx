@@ -37,6 +37,7 @@ import enUS from '@univerjs/preset-sheets-core/locales/en-US';
 import '@univerjs/preset-sheets-core/lib/index.css';
 import {
   collaborationPlugins,
+  preparedNetworkPreset,
   prepareCollaboration,
   identifyCollaborator,
   watchCollaboration,
@@ -111,7 +112,11 @@ export function SheetEditor({
           ...collaborationPlugins(data.unitId, [[...sheetImageOverride]], data.boundary),
           mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
         ],
-        presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
+        presets: [
+          sheetPreset(container.current!, mobile),
+          sheetImages(mobile),
+          preparedNetworkPreset(data.boundary),
+        ],
       });
       print.current = async () => {
         await univerAPI.executeCommand(SheetPrintOpenOperation.id);

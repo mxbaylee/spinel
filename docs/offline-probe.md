@@ -185,3 +185,12 @@ Pure contract tests cover an SDK hook bypass, overlapping attempts and a delayed
 ticket that ignores cancellation across a new access epoch; real SDK engagement
 is separately required from the browser probe. Server account binding supplements
 ordinary cookie, document and generation authorization and is never a credential.
+
+Run [39213868958](https://github.com/mxbaylee/spinel/actions/runs/39213868958)
+(6194b77) passed 335 unit tests, all 60 development/production browser cases,
+both expanded cold-restart probes and the HTTPS PWA scenario. The Doc redo fix
+passed, including the later lost-acknowledgement replay and unchanged final server
+state. The new Sheet transport probe stopped before loading because network was
+registered both by the core preset and the explicit plugin list; the Doc transport
+probe did not run. Configure the existing network registration with a final public
+preset instead. This repair still needs a fresh real-SDK browser pass.

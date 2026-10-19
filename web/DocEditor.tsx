@@ -48,6 +48,7 @@ import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
 import {
   collaborationPlugins,
+  preparedNetworkPreset,
   probeCommandOverride,
   prepareCollaboration,
   identifyCollaborator,
@@ -251,6 +252,7 @@ export function DocEditor({
           // Keep the instruction in accessible shell text instead.
           { plugins: [[UniverDocsUIPlugin, { placeholder: false }]] },
           UniverDocsHyperLinkPreset(),
+          preparedNetworkPreset(data.boundary),
         ],
       });
       print.current = async () => {

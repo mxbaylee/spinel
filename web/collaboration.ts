@@ -12,7 +12,7 @@ import { UserManagerService } from '@univerjs/core';
 import { ICommandService, Injector, ILogService, IConfigService } from '@univerjs/core';
 import type { Univer, DependencyOverride } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
-import type { createUniver } from '@univerjs/presets';
+import type { createUniver, IPreset } from '@univerjs/presets';
 import { UniverLicensePlugin } from '@univerjs-pro/license';
 import { UniverCollaborationPlugin } from '@univerjs-pro/collaboration';
 import {
@@ -64,23 +64,10 @@ export function probeCommandOverride(unitId: string, access: ItemAccess): Depend
       ]
     : [];
 }
-export function collaborationPlugins(
-  unitID: string,
-  override?: DependencyOverride,
-  boundary?: OfflineAccess,
-): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
-  const guest = guestItemId();
-  const base = location.origin + (guest ? `/guest-api/${guest}` : '') + '/universer-api';
-  // Public URL extension point: scope is checked before the server accepts a socket.
-  class DocumentSocketService extends BrowserCollaborationSocketService {
-    protected override _createSocketURL(url: string, ticket: string) {
-      const scoped = new URL(super._createSocketURL(url, ticket));
-      scoped.searchParams.set('unitID', unitID);
-      return scoped.toString();
-    }
-  }
-  return [
-    ...(boundary
+/** Last preset configures the network plugin already supplied by core presets. */
+export function preparedNetworkPreset(boundary?: OfflineAccess): IPreset {
+  return {
+    plugins: boundary
       ? [
           [
             UniverNetworkPlugin,
@@ -97,9 +84,27 @@ export function collaborationPlugins(
                 ],
               ],
             },
-          ] as NonNullable<Parameters<typeof createUniver>[0]['plugins']>[number],
+          ],
         ]
-      : []),
+      : [],
+  };
+}
+export function collaborationPlugins(
+  unitID: string,
+  override?: DependencyOverride,
+  boundary?: OfflineAccess,
+): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
+  const guest = guestItemId();
+  const base = location.origin + (guest ? `/guest-api/${guest}` : '') + '/universer-api';
+  // Public URL extension point: scope is checked before the server accepts a socket.
+  class DocumentSocketService extends BrowserCollaborationSocketService {
+    protected override _createSocketURL(url: string, ticket: string) {
+      const scoped = new URL(super._createSocketURL(url, ticket));
+      scoped.searchParams.set('unitID', unitID);
+      return scoped.toString();
+    }
+  }
+  return [
     UniverLicensePlugin,
     UniverCollaborationPlugin,
     [

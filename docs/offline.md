@@ -231,6 +231,13 @@ coordinator/public-adapter path, with the same access and durability requirement
 for the Owner and Collaborator, bounded operations for the Operator, and no
 private offline capability for Link guests.
 
+The later [6194b77 run](https://github.com/mxbaylee/spinel/actions/runs/39213868958)
+passed the expanded Sheet/Doc three-restart probes, existing images, Doc local
+undo/redo and lost-acknowledgement reconciliation, plus all 60 development/production
+browser cases including the read-only image repair. These remain synthetic probe
+results. The new prepared-transport fixture failed during plugin registration;
+complete production integration and the full acceptance contract remain open.
+
 The in-progress `RecoveryLedger` accounts for entries in one retained,
 account-scoped pending-record version. Repeated cache reads register fresh
 parameter objects against those original entries; identical adjacent edits remain
