@@ -6,7 +6,7 @@ import sharp from 'sharp';
 import { ErrorCode } from '@univerjs/protocol';
 import type { IChangeset, ICollaMsg } from '@univerjs/protocol';
 import { parseChangesetToProtocol } from '@univerjs-pro/collaboration';
-import type { IDocumentData } from '@univerjs/core';
+import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { BrowserContext, Page } from '@playwright/test';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -15,6 +15,7 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { interruptibleNetwork } from './live-network.ts';
+import { sheetImageFixture } from './sheet-image-fixture.ts';
 
 test.describe.configure({ retries: 0 });
 
@@ -31,11 +32,6 @@ for (const kind of ['sheet', 'doc'] as const) {
     const db = openDatabase('test-results/mobile-https/app.sqlite');
     const auth = new AuthStore(db);
     const user = auth.createUser(`Offline probe ${kind}`);
-    const item = new WorkspaceStore(auth).create(user.id, {
-      name: `Offline probe ${kind}`,
-      kind,
-      parentId: null,
-    });
     const cookie = {
       name: COOKIE_NAME,
       value: auth.createSession(user.id).token,
@@ -50,9 +46,29 @@ for (const kind of ['sheet', 'doc'] as const) {
       ignoreHTTPSErrors: true,
       extraHTTPHeaders: { Cookie: `${COOKIE_NAME}=${cookie.value}` },
     });
+    const item =
+      kind === 'doc'
+        ? new WorkspaceStore(auth).create(user.id, {
+            name: 'Offline probe doc',
+            kind,
+            parentId: null,
+          })
+        : await (async () => {
+            const response = await server.post('/api/items/import', {
+              headers: { Origin: baseURL! },
+              data: {
+                filename: 'Offline probe sheet.univer.json',
+                parentId: null,
+                snapshot: await sheetImageFixture(3),
+              },
+            });
+            expect(response.status(), await response.text()).toBe(201);
+            return (await response.json()).item as ReturnType<WorkspaceStore['create']>;
+          })();
     let unitId: string | undefined;
     let imageSource: string | undefined;
     let imageBaseline: IDocumentData | undefined;
+    let sheetImageBaseline: IWorkbookData | undefined;
     let baselineServerContent = 'Baseline';
     const cache = new Map<string, CachedResponse>();
     const misses = new Set<string>();
@@ -390,7 +406,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       return (await response.json()).snapshot;
     }
     async function imageVisible() {
-      if (!imageSource) return;
+      if (kind === 'doc' && !imageSource) return;
       await editor()
         .locator('.univer-container')
         .click({ position: { x: 130, y: 200 } });
@@ -407,24 +423,30 @@ for (const kind of ['sheet', 'doc'] as const) {
               .removeAlpha()
               .raw()
               .toBuffer({ resolveWithObject: true });
-            let orange = 0;
+            const counts = [0, 0, 0];
+            const colors = [
+              [255, 153, 0],
+              [34, 85, 238],
+              [34, 187, 102],
+            ];
             for (let offset = 0; offset < data.length; offset += info.channels) {
-              if (
-                data[offset] > 245 &&
-                data[offset + 1] > 145 &&
-                data[offset + 1] < 165 &&
-                data[offset + 2] < 10
-              )
-                orange++;
+              colors.forEach((color, index) => {
+                if (color.every((value, channel) => Math.abs(data[offset + channel] - value) < 12))
+                  counts[index]++;
+              });
             }
-            return orange;
+            return (kind === 'doc' ? counts.slice(0, 1) : counts).every((count) => count > 1000);
           },
           { timeout: 15_000 },
         )
-        .toBeGreaterThan(1000);
+        .toBe(true);
     }
     async function prepareImage() {
-      if (kind !== 'doc') return;
+      if (kind === 'sheet') {
+        sheetImageBaseline = (await nativeSnapshot()) as IWorkbookData;
+        await imageVisible();
+        return;
+      }
       await ready();
       await editor()
         .locator('.univer-container')
@@ -541,6 +563,20 @@ for (const kind of ['sheet', 'doc'] as const) {
       // This independent HTTP client bypasses browser routes and local SDK data.
       await expect.poll(serverContent, { timeout: 30_000 }).toBe(finalServerContent());
       await imageVisible();
+      if (sheetImageBaseline) {
+        const final = (await nativeSnapshot()) as IWorkbookData;
+        expect(final.sheets.tab.backgroundImage).toEqual(
+          sheetImageBaseline.sheets.tab.backgroundImage,
+        );
+        expect(final.sheets.tab.cellData?.[3]?.[0]?.p).toEqual(
+          sheetImageBaseline.sheets.tab.cellData?.[3]?.[0]?.p,
+        );
+        const drawings = (snapshot: IWorkbookData) =>
+          JSON.parse(
+            snapshot.resources!.find((resource) => resource.name === 'SHEET_DRAWING_PLUGIN')!.data,
+          );
+        expect(drawings(final)).toEqual(drawings(sheetImageBaseline));
+      }
       if (imageSource && imageBaseline) {
         const final = (await nativeSnapshot()) as IDocumentData;
         const prefix = 'Cold-secondOffline-retained';
