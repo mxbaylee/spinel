@@ -1,6 +1,7 @@
+import { imageSources } from './imageSources.ts';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
-import type { IDocumentData } from '@univerjs/core';
+import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from './store.ts';
 import { commitSnapshot } from './snapshots.ts';
@@ -71,45 +72,19 @@ export class DocumentStore {
     this.validateImages(id, data);
     return commitSnapshot(this.workspace, 'doc_snapshots', id, text, revision as number, writeId);
   }
-  validateImages(id: string, data: IDocumentData) {
-    const checkImages = (value: unknown, depth = 0) => {
-      if (depth > 64) throw new AuthError(400, 'Document data is nested too deeply.');
-      if (!value || typeof value !== 'object') return;
-      const drawing = value as Record<string, unknown>;
-      if (Object.hasOwn(drawing, 'source')) {
-        const prefix = `/api/items/${id}/images/`;
-        const source = drawing.source;
-        if (
-          typeof source !== 'string' ||
-          !source.startsWith(prefix) ||
-          !/^[a-f0-9]{64}$/.test(source.slice(prefix.length)) ||
-          !this.workspace.auth.database
-            .prepare('SELECT 1 FROM doc_images WHERE item_id=? AND id=?')
-            .get(id, source.slice(prefix.length))
-        )
-          throw new AuthError(
-            400,
-            'Insert images from a file so they are saved with this document.',
-          );
-      }
-      for (const child of Object.values(value)) checkImages(child, depth + 1);
-    };
-    checkImages(data.drawings);
-    checkImages(data.headers);
-    checkImages(data.footers);
-    checkImages(data.footnotes);
-    checkImages(data.endnotes);
-    checkImages((data as IDocumentData & { notes?: unknown }).notes);
-    for (const resource of data.resources ?? []) {
-      if (resource.name === 'DOC_DRAWING_PLUGIN') {
-        try {
-          checkImages(JSON.parse(resource.data));
-        } catch (error) {
-          if (error instanceof AuthError) throw error;
-          throw new AuthError(400, 'Invalid document images.');
-        }
-      }
-    }
+  validateImages(id: string, data: IDocumentData | IWorkbookData) {
+    imageSources(data, (source) => {
+      const prefix = `/api/items/${id}/images/`;
+      if (
+        !source.startsWith(prefix) ||
+        !/^[a-f0-9]{64}$/.test(source.slice(prefix.length)) ||
+        !this.workspace.auth.database
+          .prepare('SELECT 1 FROM doc_images WHERE item_id=? AND id=?')
+          .get(id, source.slice(prefix.length))
+      )
+        throw new AuthError(400, 'Insert images from a file so they are saved with this document.');
+      return source;
+    });
   }
   async upload(owner: string, id: string, input: unknown, mime: string) {
     this.document(owner, id, true);
@@ -158,7 +133,9 @@ export class DocumentStore {
     });
   }
   image(owner: string, id: string, imageId: string) {
-    this.document(owner, id);
+    const item = this.workspace.get(owner, id);
+    if (!['doc', 'sheet'].includes(item.kind))
+      throw new AuthError(400, 'This item cannot contain images.');
     const image = this.workspace.auth.database
       .prepare('SELECT mime,data FROM doc_images WHERE item_id=? AND id=?')
       .get(id, imageId) as { mime: string; data: Uint8Array } | undefined;

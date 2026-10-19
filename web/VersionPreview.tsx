@@ -1,3 +1,5 @@
+import { sheetImages } from './sheetImages.ts';
+import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { useEffect, useRef, useState } from 'react';
 import { InterceptorEffectEnum, IPermissionService } from '@univerjs/core';
 import { UnitAction } from '@univerjs/protocol';
@@ -63,10 +65,16 @@ export function VersionPreview({
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
-          [LocaleType.EN_US]: mergeLocales(sheetsEnglish, docsEnglish, drawingEnglish, linkEnglish),
+          [LocaleType.EN_US]: mergeLocales(
+            sheetsEnglish,
+            docsEnglish,
+            drawingEnglish,
+            linkEnglish,
+            sheetDrawingEnglish,
+          ),
         },
         presets: sheet
-          ? [UniverSheetsCorePreset({ container: container.current! })]
+          ? [UniverSheetsCorePreset({ container: container.current! }), sheetImages(false, false)]
           : [
               UniverDocsCorePreset({ container: container.current! }),
               { plugins: [[UniverDocsUIPlugin, { placeholder: false }]] },

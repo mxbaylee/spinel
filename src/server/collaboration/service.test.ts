@@ -1097,3 +1097,171 @@ test('offline replay never returns a generation replaced while acquisition was i
   resume.resolve();
   await rejected;
 });
+
+test('Sheet image validation fences live mutations, historical replay bases and preserved resources', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  const source = 'https://outside.invalid/pixel.png';
+  const cellDoc = {
+    ...getDocsEmptySnapshot('cell-doc'),
+    drawings: {
+      picture: { unitId: 'cell-doc', subUnitId: 'cell-doc', source },
+    },
+  };
+  const change = f.edit();
+  change.mutations[0].data = JSON.stringify({
+    unitId: f.sheet.id,
+    subUnitId: 'first',
+    cellValue: { 1: { 0: { p: cellDoc } } },
+  });
+  await expect(
+    f.collab.service.submitChangeset(
+      { changeset: change },
+      { userID: f.owner.id, memberID: 'test-member' },
+    ),
+  ).rejects.toThrow('Insert images');
+  expect((await f.collab.load(f.owner.id, f.sheet.id)).revision).toBe(1);
+  const original = await f.load();
+  // A pre-integration legacy snapshot may be unsafe even when current head is clean.
+  const legacy = structuredClone(original);
+  legacy.snapshot.workbook!.resources.push({
+    name: 'SHEET_DRAWING_PLUGIN',
+    data: JSON.stringify({ first: { data: { picture: { source } } } }),
+  });
+  vi.spyOn(f.collab.service, 'getUnitLoadDataWithBlocks').mockResolvedValueOnce(legacy);
+  await expect(f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, 1)).rejects.toThrow(
+    'Insert images',
+  );
+  const tail = structuredClone(original);
+  tail.targetRevision = 3;
+  tail.changesets = [
+    {
+      ...f.edit(),
+      baseRev: 1,
+      revision: 2,
+      mutations: [
+        {
+          id: SetRangeValuesMutation.id,
+          data: JSON.stringify({
+            unitId: f.sheet.id,
+            subUnitId: 'first',
+            cellValue: { 1: { 0: { p: cellDoc } } },
+          }),
+        },
+      ],
+    },
+    {
+      ...f.edit(),
+      baseRev: 2,
+      revision: 3,
+      reqId: 2,
+      mutations: [
+        {
+          id: SetRangeValuesMutation.id,
+          data: JSON.stringify({
+            unitId: f.sheet.id,
+            subUnitId: 'first',
+            cellValue: { 1: { 0: null } },
+          }),
+        },
+      ],
+    },
+  ];
+  vi.spyOn(f.collab.service, 'getUnitLoadDataWithBlocks').mockResolvedValueOnce(tail);
+  await expect(f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, 3)).rejects.toThrow(
+    'Insert images',
+  );
+  const unsafeResource = {
+    name: 'SHEET_DRAWING_PLUGIN',
+    data: JSON.stringify({ first: { data: { picture: { source } } } }),
+  };
+  f.db
+    .prepare('INSERT OR REPLACE INTO spinel_generation_resources VALUES(?,?,?)')
+    .run(f.sheet.id, f.sheet.id, JSON.stringify([unsafeResource]));
+  await expect(f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, 1)).rejects.toThrow(
+    'Insert images',
+  );
+});
+
+test('moving an existing Sheet cell image preserves its embedded Doc identity without allowing foreign mutation targets', async () => {
+  const f = await fixture();
+  const sharp = (await import('sharp')).default;
+  const bytes = await sharp({ create: { width: 3, height: 2, channels: 3, background: '#ff9900' } })
+    .png()
+    .toBuffer();
+  const { PortableFiles } = await import('../workspace/portable.ts');
+  const cell = {
+    ...getDocsEmptySnapshot('cell-doc'),
+    drawings: {
+      picture: {
+        unitId: 'cell-doc',
+        subUnitId: 'cell-doc',
+        drawingId: 'picture',
+        drawingType: 0,
+        imageSourceType: 'BASE64',
+        source: `data:image/png;base64,${bytes.toString('base64')}`,
+      },
+    },
+  };
+  const imported = await new PortableFiles(f.workspace).import(
+    f.owner.id,
+    {
+      filename: 'cell.json',
+      parentId: null,
+      snapshot: {
+        ...f.snapshot,
+        sheets: { first: { ...f.snapshot.sheets.first, cellData: { 0: { 0: { p: cell } } } } },
+      },
+    },
+    () => {},
+  );
+  await f.collab.prepare(f.owner.id, imported.id);
+  const before = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
+  const preserved = before.sheets.first.cellData![0]![0];
+  const change = { ...f.edit(), unitID: imported.id };
+  change.mutations[0].data = JSON.stringify({
+    unitId: imported.id,
+    subUnitId: 'first',
+    cellValue: { 0: { 0: null }, 1: { 0: preserved } },
+  });
+  expect(
+    (
+      await f.collab.service.submitChangeset(
+        { changeset: change },
+        { userID: f.owner.id, memberID: 'test-member' },
+      )
+    ).status,
+  ).toBe('committed');
+  const moved = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
+  expect(moved.sheets.first.cellData![1]![0]!.p?.drawings?.picture).toMatchObject({
+    unitId: 'cell-doc',
+    subUnitId: 'cell-doc',
+  });
+  for (const data of [
+    { unitId: f.sheet.id, subUnitId: 'first', cellValue: { 1: { 0: preserved } } },
+    {
+      unitId: imported.id,
+      subUnitId: 'first',
+      cellValue: {
+        1: {
+          0: {
+            p: { ...cell, drawings: { picture: { ...cell.drawings.picture, unitId: f.sheet.id } } },
+          },
+        },
+      },
+    },
+  ]) {
+    const bad = {
+      ...change,
+      baseRev: 2,
+      reqId: 2,
+      mutations: [{ id: SetRangeValuesMutation.id, data: JSON.stringify(data) }],
+    };
+    await expect(
+      f.collab.service.submitChangeset(
+        { changeset: bad },
+        { userID: f.owner.id, memberID: 'test-member' },
+      ),
+    ).rejects.toThrow('Cross-document');
+  }
+});
