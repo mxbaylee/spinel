@@ -11,7 +11,8 @@ offline screen. Configured test HTTPS is sufficient for development; public
 deployment and Slides are separate work.
 
 Implementation is split into reviewable dependencies: SPN-040 owns existing
-Sheet-image support and SPN-041 owns the authorized download bundle.
+Sheet-image support and SPN-041 supplied the authorized download bundle described
+below.
 [Decision #91](https://github.com/mxbaylee/spinel/issues/91) preserves SPN-039 and
 every acceptance requirement below. A completed dependency does not mean offline
 launch, downloads or durable local editing are available.
@@ -42,13 +43,13 @@ sequence and #90's recovery-coordinator choice.
 
 After an initial online setup in the app context they will use:
 
-| Layer | Local contents and behavior |
-| --- | --- |
-| Application | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency. |
-| Catalog | Last-synchronized authorized folder/file metadata, personal tags/pins and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace. |
-| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open. |
-| Changes | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while the app is running and connected. If the live document changed meanwhile, they become a conflicted copy rather than a merge. Local-save failure remains visible. |
-| Entry points | Stable item links support direct launch; in-app pins, offline downloads and home-screen shortcuts remain distinct actions. |
+| Layer          | Local contents and behavior                                                                                                                                                                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                  |
+| Catalog        | Last-synchronized authorized folder/file metadata, personal tags/pins and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                            |
+| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                         |
+| Changes        | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while the app is running and connected. If the live document changed meanwhile, they become a conflicted copy rather than a merge. Local-save failure remains visible. |
+| Entry points   | Stable item links support direct launch; in-app pins, offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                       |
 
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
 personal filing and source permissions: never copy inaccessible owner ancestors,
@@ -57,6 +58,44 @@ can download permitted items; viewer downloads remain read-only. Metadata and
 selected documents refresh when connected without discarding pending local edits.
 Content search, offline new-item/image creation, folder/sharing administration and
 Slides are outside this first outcome. Existing embedded images are required.
+
+## Download bundle
+
+`GET /api/items/:id/offline-bundle` returns one `OfflineBundle`
+(`src/shared/offlineBundle.ts`) for a Sheet or Doc. It contains the live snapshot,
+its revision, generation (`unitId`, `revisionOffset`), the account and access it
+was issued for, `readOnly`, the pinned `@univerjs/core` version, and an image
+manifest. The manifest lists each image once by same-item source, SHA-256, MIME
+type and byte length. The device fetches those bytes from the existing image route.
+SPN-041, 2026-10-19.
+
+- The snapshot and revision come from one `CollaborationStore.load` read. The
+  device never replays server changesets, so draft #86's exact-revision replay
+  endpoint and changeset codec are not used. Owner, chat 2026-10-19; this
+  supersedes #88's replay-base scope.
+- Image sources pass the same validation as every load. Stored bytes are
+  rehashed, so a damaged image fails the bundle instead of reaching a device as
+  verified. Cross-item and remote images are never fetched. Grooming, 2026-10-19.
+- After the read, the session, access level and generation (including an
+  in-flight restore) are checked again. Any change fails the whole request with
+  nothing partial: 401, 404 or 409. The route shares export's one-transfer
+  admission (429 while another transfer runs) and `no-store` caching. Only
+  signed-in, non-admin accounts with access can reach it; link guests and
+  operators are refused. #91, 2026-10-19.
+- A viewer's bundle has `readOnly: true`, and the device must open it read-only.
+  A bundle alone does not mean downloaded, durable or synced; SPN-039 owns those
+  states. Grooming, 2026-10-19.
+
+Verified by `src/server/collaboration/offline-bundle.test.ts`:
+
+- Multi-sheet and Doc content, with floating, cell and background images.
+- A preserved opaque resource.
+- Restored generations.
+- Owner, editor and viewer success, with each image's bytes reproduced through
+  the route.
+- Rejection of anonymous, guest, operator, unrelated-account and folder requests.
+- Session, access, downgrade and restore races during the read.
+- Damaged stored bytes and foreign sources.
 
 ## How offline editing works
 

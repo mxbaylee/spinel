@@ -1,4 +1,7 @@
 import { snapshotIdentity } from './snapshotIdentity.ts';
+import type { OfflineBundle, OfflineBundleImage } from '../../shared/offlineBundle.ts';
+import packageInfo from '../../../package.json' with { type: 'json' };
+import { createHash } from 'node:crypto';
 import type { RestoreJob } from './generations.ts';
 import { CollaborationGenerations } from './generations.ts';
 import { auditDeniedEdit } from './audit.ts';
@@ -26,6 +29,7 @@ import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
+import { imageSources } from '../workspace/imageSources.ts';
 import type { IChangeset } from '@univerjs/protocol';
 const runtimeLimits = { maxLoadedUnits: 8, idleTimeoutMs: 60_000 };
 
@@ -496,6 +500,70 @@ export class CollaborationStore {
       revision: data.targetRevision + generation.offset,
       access: current.access,
     };
+  }
+
+  /**
+   * One authorized read of the live generation for a device to keep offline
+   * (docs/offline.md). Nothing partial is returned: a change of session, access
+   * or generation while the read is in flight fails the whole bundle.
+   */
+  async offlineBundle(user: string, id: string, verify: () => void): Promise<OfflineBundle> {
+    const changed = () =>
+      new AuthError(409, 'Access or the document version changed. Retry the download.');
+    try {
+      const item = this.workspaceAccess(user, id);
+      const generation = this.generations.active(id);
+      if (this.generations.restoring(id)) throw changed();
+      const data = await this.load(user, id);
+      verify();
+      const current = this.workspaceAccess(user, id);
+      const after = this.generations.active(id);
+      if (
+        after.unitId !== generation.unitId ||
+        after.offset !== generation.offset ||
+        this.generations.restoring(id) ||
+        current.access !== item.access ||
+        data.access !== item.access
+      )
+        throw changed();
+      const documents = new DocumentStore(this.workspace);
+      const images = new Map<string, OfflineBundleImage>();
+      const prefix = `/api/items/${id}/images/`;
+      imageSources(data.snapshot, (source) => {
+        if (images.has(source)) return source;
+        const sha256 = source.slice(prefix.length);
+        if (!source.startsWith(prefix) || !/^[a-f0-9]{64}$/.test(sha256))
+          throw new AuthError(
+            400,
+            'Insert images from a file so they are saved with this document.',
+          );
+        const image = documents.image(user, id, sha256);
+        // Stored IDs are content hashes; a mismatch must never reach a device as verified.
+        if (createHash('sha256').update(image.data).digest('hex') !== sha256)
+          throw new AuthError(500, 'A stored image is damaged. Nothing was downloaded.');
+        images.set(source, { source, sha256, mime: image.mime, byteLength: image.data.byteLength });
+        return source;
+      });
+      return {
+        version: 1,
+        accountId: user,
+        itemId: id,
+        kind: item.kind as OfflineBundle['kind'],
+        name: current.name,
+        unitId: generation.unitId,
+        revision: data.revision,
+        revisionOffset: generation.offset,
+        access: current.access,
+        readOnly: current.access === 'viewer',
+        sdkVersion: packageInfo.dependencies['@univerjs/core'],
+        snapshot: data.snapshot,
+        images: [...images.values()].sort((a, b) => a.source.localeCompare(b.source)),
+      };
+    } catch (error) {
+      if (error instanceof CollabError && error.code === 'PERMISSION_DENIED')
+        throw new AuthError(404, 'This document is not available.');
+      throw error;
+    }
   }
 
   restore(
