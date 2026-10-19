@@ -74,29 +74,25 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await page.goto(`/?item=${item.id}`);
     await saved();
     await expect(sheet).toHaveAttribute('data-mobile', 'true');
-    const canvas = sheet.locator('.univer-container canvas').first();
+    // The mobile SDK also renders an invisible embedded text-editor canvas.
+    const canvas = sheet.getByLabel('Spreadsheet grid', { exact: true });
     async function startEdit(value: string) {
       await canvas.scrollIntoViewIfNeeded();
       const box = (await canvas.boundingBox())!;
       // Touch the first visible data cell twice to open the SDK's mobile editor.
-      const touchState = () =>
-        page.evaluate(
-          ({ x, y }) => ({
-            scrollY,
-            target: document.elementFromPoint(x + 80, y + 40)?.outerHTML.slice(0, 300),
-            active: document.activeElement?.outerHTML.slice(0, 300),
-            canvases: [...document.querySelectorAll('.univer-container canvas')].map((node) => ({
-              box: node.getBoundingClientRect().toJSON(),
-              html: node.outerHTML.slice(0, 200),
-            })),
-          }),
-          box,
-        );
-      console.log('Mobile touch before', await touchState());
+      expect(
+        await canvas.evaluate(
+          (node, point) => document.elementFromPoint(point.x, point.y) === node,
+          {
+            x: box.x + 80,
+            y: box.y + 40,
+          },
+        ),
+      ).toBe(true);
+      const scrollBefore = await page.evaluate(() => scrollY);
       await page.touchscreen.tap(box.x + 80, box.y + 40);
-      console.log('Mobile touch first', await touchState());
+      expect(await page.evaluate(() => scrollY)).toBe(scrollBefore);
       await page.touchscreen.tap(box.x + 80, box.y + 40);
-      console.log('Mobile touch second', await touchState());
       const bar = sheet.locator('[data-u-comp="mobile-formula-bar"]');
       await expect(bar).toBeVisible();
       await page.keyboard.type(value);

@@ -144,7 +144,11 @@ export function SheetEditor({
         .__getInjector()
         .get(IRenderManagerService)
         .getRenderUnitById(data.unitId);
-      if (render) render.engine.getCanvasElement().style.backgroundColor = '#ffffff';
+      if (render) {
+        const canvas = render.engine.getCanvasElement();
+        canvas.style.backgroundColor = '#ffffff';
+        canvas.setAttribute('aria-label', 'Spreadsheet grid');
+      }
       const stopTheme = bindEditorTheme(univer, () => {
         // Invalidate cached display styles on inactive tabs as well.
         for (const skeleton of univer
