@@ -13,6 +13,7 @@ export type OfflineReplay = {
   revisionOffset: number;
   data: UnitLoadDataWithBlocks;
   preservedResources: { name: string; data: string }[];
+  images: { source: string; sha256: string; mime: string; byteLength: number }[];
 };
 type WireWorkbook = Omit<IWorkbookMeta, 'originalMeta' | 'sheets'> & {
   originalMeta: string;

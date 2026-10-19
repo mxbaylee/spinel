@@ -1220,20 +1220,23 @@ test('moving an existing Sheet cell image preserves its embedded Doc identity wi
   await f.collab.prepare(f.owner.id, imported.id);
   const before = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
   const preserved = before.sheets.first.cellData![0]![0];
+  const originalReplay = await f.collab.offlineReplay(f.owner.id, imported.id, imported.id, 1);
+  const source = (preserved!.p!.drawings!.picture as unknown as { source: string }).source;
+  expect(originalReplay.images).toEqual([
+    { source, sha256: source.split('/').at(-1), mime: 'image/png', byteLength: bytes.length },
+  ]);
   const change = { ...f.edit(), unitID: imported.id };
   change.mutations[0].data = JSON.stringify({
     unitId: imported.id,
     subUnitId: 'first',
     cellValue: { 0: { 0: null }, 1: { 0: preserved } },
   });
-  expect(
-    (
-      await f.collab.service.submitChangeset(
-        { changeset: change },
-        { userID: f.owner.id, memberID: 'test-member' },
-      )
-    ).status,
-  ).toBe('committed');
+  const committed = await f.collab.service.submitChangeset(
+    { changeset: change },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  expect(committed.status).toBe('committed');
+  if (committed.status !== 'committed') throw new Error('Expected a committed image move.');
   const moved = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
   expect(moved.sheets.first.cellData![1]![0]!.p?.drawings?.picture).toMatchObject({
     unitId: 'cell-doc',
@@ -1266,4 +1269,40 @@ test('moving an existing Sheet cell image preserves its embedded Doc identity wi
       ),
     ).rejects.toThrow('Cross-document');
   }
+  const removal = await f.collab.service.submitChangeset(
+    {
+      changeset: {
+        ...change,
+        baseRev: 2,
+        reqId: 3,
+        mutations: [
+          {
+            id: SetRangeValuesMutation.id,
+            data: JSON.stringify({
+              unitId: imported.id,
+              subUnitId: 'first',
+              cellValue: { 1: { 0: null } },
+            }),
+          },
+        ],
+      },
+    },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  expect(removal.status).toBe('committed');
+  if (removal.status !== 'committed') throw new Error('Expected a committed image removal.');
+  // The renderer needs the old image while replaying this exact base and tail,
+  // even though the final server state no longer contains it.
+  vi.spyOn(f.collab.service, 'getUnitLoadDataWithBlocks').mockResolvedValueOnce({
+    ...originalReplay.data,
+    changesets: [committed.changeset, removal.changeset],
+    targetRevision: removal.changeset.revision,
+  });
+  const replay = await f.collab.offlineReplay(
+    f.owner.id,
+    imported.id,
+    imported.id,
+    removal.changeset.revision,
+  );
+  expect(replay.images).toEqual(originalReplay.images);
 });

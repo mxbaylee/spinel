@@ -27,6 +27,7 @@ import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
+import { imageSources } from '../workspace/imageSources.ts';
 import type { IChangeset } from '@univerjs/protocol';
 const runtimeLimits = { maxLoadedUnits: 8, idleTimeoutMs: 60_000 };
 
@@ -491,6 +492,7 @@ export class CollaborationStore {
       ? JSON.parse(String(row.resources))
       : [];
     const images = new DocumentStore(this.workspace);
+    const requiredImages = new Set<string>();
     const validateReplayImages = async (state: {
       snapshot: typeof data.snapshot;
       sheetBlocks: typeof data.sheetBlocks;
@@ -499,9 +501,14 @@ export class CollaborationStore {
         item.kind === 'sheet'
           ? await transformSnapshotToWorkbookData(state.snapshot, [...state.sheetBlocks])
           : transformSnapshotToDocumentData(state.snapshot);
-      images.validateImages(id, {
+      const complete = {
         ...native,
         resources: [...(native.resources ?? []), ...preservedResources],
+      };
+      images.validateImages(id, complete);
+      imageSources(complete, (source) => {
+        requiredImages.add(source);
+        return source;
       });
     };
     // A loader can render its base before applying the tail. Validate each state,
@@ -535,6 +542,11 @@ export class CollaborationStore {
       revisionOffset: generation.offset,
       data: structuredClone(data),
       preservedResources,
+      images: [...requiredImages].sort().map((source) => {
+        const sha256 = source.slice(`/api/items/${id}/images/`.length);
+        const image = images.image(user, id, sha256);
+        return { source, sha256, mime: image.mime, byteLength: image.data.byteLength };
+      }),
     };
   }
 

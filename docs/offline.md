@@ -184,6 +184,10 @@ unit ID and revision (`0` selects latest, with an explicit target revision in th
 result). It retains the closest snapshot, required changesets, all Sheet blocks,
 generation offset and application-preserved opaque resources. Declared binary
 fields use lossless base64 JSON transport; metadata strings remain literal.
+The response also names the item-scoped images required by the base and every tail
+state, with SHA-256, MIME and byte length for separate authenticated acquisition.
+An image removed by a later mutation remains in this manifest if earlier replay
+needs it. No image bytes or successful-download claim are implicit in the list.
 Access, live generation and the authenticated session are checked after the read.
 
 This endpoint is groundwork, not an available offline download. The Owner and

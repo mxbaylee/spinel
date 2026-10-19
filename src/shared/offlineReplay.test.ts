@@ -16,6 +16,14 @@ function fixture(): OfflineReplay {
     access: 'viewer',
     revisionOffset: 34,
     preservedResources: [resource],
+    images: [
+      {
+        source: '/api/items/stable-item/images/' + 'a'.repeat(64),
+        sha256: 'a'.repeat(64),
+        mime: 'image/png',
+        byteLength: 4096,
+      },
+    ],
     data: {
       targetRevision: 3,
       changesets: [
