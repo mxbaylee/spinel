@@ -123,6 +123,15 @@ export const SharedDrawer: Story = {
     );
   },
 };
+/** The drawer opened before the shared items have arrived. */
+export const SharedDrawerLoading: Story = {
+  parameters: { api: { ...populated, 'GET /api/items/shared': pending() } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
+    await canvas.findByText('Loading shared items…');
+  },
+};
 /** A folder two levels down, with its breadcrumb. */
 export const InsideFolder: Story = {
   parameters: { api: populated },

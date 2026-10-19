@@ -75,6 +75,22 @@ that same scaffold; existing backlog and reference/design files keep their
 formatting. All TypeScript, including existing scripts/reference code, extends
 the root `tsconfig.json` and is checked by `npm run typecheck`.
 
+## Component catalogue
+
+```sh
+npm run storybook        # http://localhost:6006
+npm run build-storybook  # static build in storybook-static/ (gitignored)
+```
+
+Storybook renders the shell components from `src/ui/` and `web/` with mocked
+API responses, in both themes and at Phone, Tablet and Desktop widths. Stories
+are `*.stories.tsx` beside their component and are typechecked and linted with
+everything else. The **Storybook** workflow builds it on every pull request and
+publishes `main` to <https://mxbaylee.github.io/spinel/> (Owner, chat
+2026-10-19). It isn't a required check; SPN-047 adds screenshot and axe checks
+over the stories. What a story must
+cover is in the [design playbook](design/README.md#storybook).
+
 CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
 and **Playwright smoke**. These are required by the active default-branch ruleset;
 see [the process](todo/process.md#pull-requests-and-main).

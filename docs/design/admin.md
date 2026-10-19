@@ -9,16 +9,18 @@ name or content.
 Google Workspace, Microsoft 365 and Zoho admin consoles all use a users table
 with one row per person, status as text, and a per-row More menu holding
 Suspend/Block, Reset sign-in and Delete. Signing a person out everywhere lives
-on the person's detail page. Health dashboards are read-only cards with a
-status word, a timestamp and a link to the guide. Apple has no comparable
-console for Numbers.
+on the person's detail page. Health dashboards are read-only cards with a status
+word, a timestamp and a link to the guide. Apple has no comparable console for
+Numbers.
 
 ## Spinel today
 
-`/admin` stacks Invites, Users and passkeys, and Backups on one page. Each user
-is a list item with its passkeys nested underneath, a Disable/Enable button and
-a Remove button per passkey. Confirmations are inline panels with the
-consequence spelled out.
+`/admin` shows Users and passkeys, then Invites (rendered inside `AdminUsers`),
+then Backups. Each user is a list item with its passkeys nested underneath (each
+with its last use), a Disable button and a Remove button per passkey. Disabling
+and removing confirm in a modal `<dialog>` with the consequence spelled out;
+revoking an invite doesn't confirm. Accounts can't be re-enabled here
+(docs/admin.md).
 
 ## Adopted pattern
 
@@ -26,28 +28,31 @@ consequence spelled out.
   **Server health** (SPN-032). Each section is a card with its heading and, at
   most, one primary action (Invites: **Create invite**).
 - **Users:** a row per account: name, role badge (Admin/Member), status badge
-  (Active/Disabled), last sign-in in the muted column, and a More menu with
-  Disable/Enable. Passkeys show under the row as a compact list, each with
-  its own More menu → Remove. The rules that block an action ("This is your
-  admin account. It cannot disable itself.") show as the menu item's disabled
-  reason, not as a hidden item.
-- **Confirmations** keep today's full sentences; they are the right length for
-  something that ends sessions.
+  (Active/Disabled), and a More menu with Disable. There is no Enable: this
+  interface doesn't reactivate accounts (docs/admin.md), so a disabled row's
+  menu is empty and the button is hidden. Passkeys show under the row as a
+  compact list, each with its last use in the muted column and its own More menu
+  → Remove. The rules that block an action ("This is your admin account. It
+  cannot disable itself.") show as the menu item's disabled reason, not as a
+  hidden item.
+- **Confirmations** stay modal dialogs with today's full sentences; they are the
+  right length for something that ends sessions. Revoking an invite stays
+  unconfirmed: it is cheap to redo.
 - **Invites:** a row per open invite with its expiry and kind (New account /
   Recovery), More → Revoke. Copy invite link is visible only right after
   creation, with the manual-copy fallback.
 - **Backups and health:** read-only cards. Each states one status word with an
-  icon (OK, Overdue, Running, Not configured), the last success time, and a
-  link to the guide in docs/. Counts and sizes only.
+  icon (OK, Overdue, Running, Not configured), the last success time, and a link
+  to the guide in docs/. Counts and sizes only.
 
 ### Always visible / behind a menu
 
-| Always visible | Behind a menu |
-|---|---|
-| Section headings, Create invite | User More → Disable / Enable |
-| User name, role, status, last sign-in | Passkey More → Remove |
-| Invite expiry and kind; Copy link right after creation | Invite More → Revoke |
-| Backup and health status, last success, guide link | |
+| Always visible                                         | Behind a menu         |
+| ------------------------------------------------------ | --------------------- |
+| Section headings, Create invite                        | User More → Disable   |
+| User name, role, status; passkey last use              | Passkey More → Remove |
+| Invite expiry and kind; Copy link right after creation | Invite More → Revoke  |
+| Backup and health status, last success, guide link     |                       |
 
 ## Gaps
 

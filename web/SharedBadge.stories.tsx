@@ -28,10 +28,5 @@ export const SharedWithMe: Story = {
     item: { ...base, access: 'viewer', ownerName: 'Alex Kim', sharedAt: Date.UTC(2026, 9, 10) },
   },
 };
-export const SharedEditor: Story = {
-  args: {
-    item: { ...base, access: 'editor', ownerName: 'Alex Kim', sharedAt: Date.UTC(2026, 9, 10) },
-  },
-};
 /** Falls back to the word "Owner" when the owner's name is unknown. */
 export const UnknownOwner: Story = { args: { item: { ...base, access: 'viewer' } } };

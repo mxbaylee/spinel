@@ -25,6 +25,20 @@ export const Alone: Story = { args: { people: [person('u-sam', 'Sam Rivera')] } 
 export const TwoPeople: Story = {
   args: { people: [person('u-sam', 'Sam Rivera'), person('u-alex', 'Alex Kim', () => {})] },
 };
+/**
+ * In a room with an active guest link the server names guests "Guest" and
+ * signed-in members "Collaborator", with an empty avatar. Colours still come
+ * from each user ID, so two guests can share a name but not usually a colour.
+ */
+export const GuestLabels: Story = {
+  args: {
+    people: [
+      { id: 'm-1', name: 'Collaborator', color: collaboratorColor('u-sam') },
+      { id: 'm-2', name: 'Guest', color: collaboratorColor('guest:3f2a'), jump: () => {} },
+      { id: 'm-3', name: 'Guest', color: collaboratorColor('guest:9c1d') },
+    ],
+  },
+};
 export const Many: Story = {
   args: {
     people: [
