@@ -11,9 +11,10 @@ export function SharedBadge({ item }: { item: WorkspaceItem }) {
   ) : null;
 }
 
-export function useSharedItems() {
-  const [items, setItems] = useState<WorkspaceItem[]>([]),
-    [loaded, setLoaded] = useState(false),
+/** Items shared with this account. `offline` is local mode's saved list: read only, no requests. */
+export function useSharedItems(offline?: WorkspaceItem[]) {
+  const [items, setItems] = useState<WorkspaceItem[]>(offline ?? []),
+    [loaded, setLoaded] = useState(Boolean(offline)),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
   const mounted = useRef(false),
@@ -37,6 +38,7 @@ export function useSharedItems() {
     }
   }
   useEffect(() => {
+    if (offline) return;
     mounted.current = true;
     void refresh();
     const visible = () => {
@@ -54,7 +56,7 @@ export function useSharedItems() {
     };
   }, []);
   async function place(id: string, parentId: string | null, remove = false): Promise<boolean> {
-    if (mutating.current) return false;
+    if (mutating.current || offline) return false;
     mutating.current = true;
     generation.current++;
     setBusy(true);

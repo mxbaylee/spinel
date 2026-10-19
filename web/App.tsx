@@ -18,6 +18,9 @@ import { Dashboard } from './Dashboard.tsx';
 import { PinsProvider, PinnedSidebar } from './Pins.tsx';
 import { Rail } from './Rail.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
+import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
+import type { LocalStart } from './offline/localStart.ts';
+import { setPreparedAccount, setSignOutPending, signOutPending } from './offline/offlineStore.ts';
 
 const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
@@ -53,6 +56,10 @@ export function App() {
     return () => window.removeEventListener('beforeunload', warn);
   }, []);
   const [user, setUser] = useState<User | null>(null);
+  // Local mode (docs/offline.md): the server is unreachable and this device was
+  // prepared for an account. `unreachable` is the same outage on an unprepared device.
+  const [local, setLocal] = useState<LocalStart | null>(null);
+  const [unreachable, setUnreachable] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [keys, setKeys] = useState<Passkey[]>([]);
   const [error, setError] = useState('');
@@ -90,15 +97,40 @@ export function App() {
       setLoaded(true);
       return;
     }
-    void api<{ user: User }>('session')
-      .then(async ({ user }) => {
+    void (async () => {
+      try {
+        if (signOutPending()) {
+          // A sign-out made offline: revoke the session before anything else.
+          // Any server answer settles it, including a session that already ended.
+          await api('sign-out', {}).catch((failure) => {
+            if (isNetworkFailure(failure)) throw failure;
+          });
+          setSignOutPending(false);
+          if (location.pathname !== '/sign-in') location.assign('/sign-in');
+          return;
+        }
+        const { user } = await api<{ user: User }>('session');
         setUser(user);
+        await claimDevice(user).catch(() => {});
         if (settings) await refreshKeys();
-      })
-      .catch(() => {
-        if (location.pathname !== '/sign-in') location.assign('/sign-in');
-      })
-      .finally(() => setLoaded(true));
+      } catch (failure) {
+        // Only an unreachable server opens local data; a 401 still signs in.
+        if (!isNetworkFailure(failure)) {
+          if (location.pathname !== '/sign-in') location.assign('/sign-in');
+          return;
+        }
+        const start = await openLocalStart().catch(() => null);
+        if (!start) {
+          setUnreachable(true);
+          return;
+        }
+        if (location.pathname === '/sign-in') history.replaceState(null, '', '/');
+        setLocal(start);
+        setUser({ ...start.user, isAdmin: false });
+      } finally {
+        setLoaded(true);
+      }
+    })();
   }, [settings, setup, invitation, inviteToken]);
 
   function cancel() {
@@ -188,6 +220,15 @@ export function App() {
     const hadUnsavedChanges = unsaved.current;
     if (!navigation.allow()) return;
     cancel();
+    // Lock this device's offline data at once; it opens again only for the
+    // account that next signs in online.
+    setPreparedAccount(null);
+    if (local) {
+      // Offline, the server session can't be revoked yet: do it on the next start.
+      setSignOutPending(true);
+      location.assign('/sign-in');
+      return;
+    }
     try {
       await api('sign-out', {});
       location.assign('/sign-in');
@@ -197,7 +238,7 @@ export function App() {
     }
   }
   return (
-    <PinsProvider enabled={Boolean(user && !user.isAdmin)}>
+    <PinsProvider enabled={Boolean(user && !user.isAdmin && !local)} offline={local?.catalog.pins}>
       <div className="workspace">
         <Rail user={user} navigation={navigation} onSignOut={() => void signOut()} />
         <div className="workspace-body">
@@ -205,6 +246,14 @@ export function App() {
           <main>
             {!loaded ? (
               <p role="status">Loading…</p>
+            ) : unreachable ? (
+              <section className="welcome">
+                <h1>You're offline</h1>
+                <p>Connect to the internet, then try again to open Spinel.</p>
+                <button className="primary" onClick={() => location.reload()}>
+                  Try again
+                </button>
+              </section>
             ) : setup ? (
               <>
                 <p className="eyebrow">A new workspace</p>
@@ -277,6 +326,15 @@ export function App() {
                   </p>
                 </section>
               </>
+            ) : local && settings ? (
+              <>
+                <p className="eyebrow">{user.name}</p>
+                <h1>Settings</h1>
+                <ThemeSettings />
+                <p>Passkeys need a connection.</p>
+              </>
+            ) : local && location.pathname === '/preview' ? (
+              <p role="status">Version history needs a connection.</p>
             ) : settings ? (
               <>
                 <p className="eyebrow">{user.name}</p>
@@ -322,7 +380,7 @@ export function App() {
                 <HistoryBrowser />
               </Suspense>
             ) : (
-              <Dashboard navigation={navigation} />
+              <Dashboard navigation={navigation} user={user} local={local} />
             )}
             {busy && (
               <p role="status">

@@ -27,7 +27,7 @@ including images that finish loading after permissions are applied; revoking
 access prevents subsequent image reads.
 Decisions [#89](https://github.com/mxbaylee/spinel/issues/89) and
 [#91](https://github.com/mxbaylee/spinel/issues/91), 2026-10-18/19, supply the
-existing-image prerequisite for SPN-039; this is not offline support.
+existing-image prerequisite for offline documents ([docs/offline.md](offline.md)).
 Unknown plugin resources are preserved without interpreting them.
 
 Import also bounds editor expansion: at most 100 sheets, each with 100,000 rows

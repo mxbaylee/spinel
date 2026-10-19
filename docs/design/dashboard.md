@@ -81,7 +81,7 @@ Share, Rename, Move or Trash: only the owner can (docs/sharing.md). "Remove from
 my folder" removes the person's filed reference, not the item, so it isn't
 grouped with the destructive items.
 
-## Offline (SPN-039, SPN-051, SPN-052)
+## Offline (SPN-039, SPN-053, SPN-054, SPN-051, SPN-052)
 
 The words come from [docs/offline.md](../offline.md); this page only places
 them. The row menu's **Available offline on this device** is the toggle; Google
@@ -100,8 +100,17 @@ attention" and its menu offers **Choose another folder…** (SPN-051). An offlin
 copy, `<title> (offline copy, <local date and time>)`, lands in the person's own
 files and its row links to the original. See [states.md](states.md#offline).
 
+**Today (SPN-039).** Row actions are still inline buttons until the row menu
+lands, so **Available offline on this device** and **Remove from device** sit
+with them. Badges are `OfflineBadge`. SPN-042's connection indicator doesn't
+exist yet, so local mode shows the [banner](README.md#banner) (`OfflineBanner`):
+"Offline. Files as of 14:05. Downloaded documents open read-only until you
+reconnect." When SPN-042 lands, its popover takes over the "Files as of" line and
+the banner goes. Pending-edit states arrive with SPN-053 and SPN-054.
+
 ## Stories
 
 `Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/PinnedSidebar`,
 `Dashboard/PinButton`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
-`Dashboard/DocumentTags`, `Dashboard/Trash`, `Dashboard/ImportFile`.
+`Dashboard/DocumentTags`, `Dashboard/Trash`, `Dashboard/ImportFile`,
+`Dashboard/OfflineBadge`.

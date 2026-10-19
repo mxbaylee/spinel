@@ -24,7 +24,8 @@ export default defineConfig({
   projects: [
     {
       name: 'development',
-      testIgnore: '**/pwa.spec.ts',
+      // Offline downloads need the production build's app-shell manifest.
+      testIgnore: ['**/pwa.spec.ts', '**/offline.spec.ts'],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
     },
     {

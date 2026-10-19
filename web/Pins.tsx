@@ -22,16 +22,26 @@ export function usePins() {
   if (!pins) throw new Error('Pins need a workspace provider.');
   return pins;
 }
-export function PinsProvider({ children, enabled }: { children: ReactNode; enabled: boolean }) {
-  const [items, setItems] = useState<WorkspaceItem[]>([]);
-  const [loaded, setLoaded] = useState(false);
-  const [busy, setBusy] = useState(false);
+/** `offline` is local mode's saved pin list: shown read-only, with no requests. */
+export function PinsProvider({
+  children,
+  enabled,
+  offline,
+}: {
+  children: ReactNode;
+  enabled: boolean;
+  offline?: WorkspaceItem[];
+}) {
+  const [items, setItems] = useState<WorkspaceItem[]>(offline ?? []);
+  const [loaded, setLoaded] = useState(Boolean(offline));
+  // Busy disables every pin control, so local mode can't attempt a change.
+  const [busy, setBusy] = useState(Boolean(offline));
   const [error, setError] = useState('');
   const mounted = useRef(false),
     generation = useRef(0),
     mutating = useRef(false);
   async function refresh() {
-    if (mutating.current) return;
+    if (mutating.current || offline) return;
     const request = ++generation.current;
     try {
       const result = await itemsRequest<{ items: WorkspaceItem[] }>('/pins');
@@ -67,7 +77,7 @@ export function PinsProvider({ children, enabled }: { children: ReactNode; enabl
     };
   }, [enabled]);
   async function mutate(path: string, method: string, body: unknown) {
-    if (mutating.current) return;
+    if (mutating.current || offline) return;
     mutating.current = true;
     generation.current++;
     setBusy(true);

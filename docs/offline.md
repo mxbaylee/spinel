@@ -1,21 +1,29 @@
-# Offline-first documents — planned contract
+# Offline-first documents
 
-[SPN-039](todo/SPN-039.md) owns this required offline experience; this document is
-its acceptance contract, not a claim that the feature is implemented. The Owner
-supplied this proposal in chat on 2026-10-18; [decision #83](https://github.com/mxbaylee/spinel/issues/83)
+This is the acceptance contract for Spinel's offline experience. The Owner
+supplied it in chat on 2026-10-18; [decision #83](https://github.com/mxbaylee/spinel/issues/83)
 records its scope. It is not marked must-ship for production. The [mobile installation slice](mobile.md) (SPN-028) supplies installation and
 touch support. Its network-only fallback and [decision #82](https://github.com/mxbaylee/spinel/issues/82)
-describe the initial slice; SPN-039 supersedes the earlier PRD/grooming ban for this
-explicit signed-in feature when implemented. Guests and unprepared devices retain a generic
-offline screen. Configured test HTTPS is sufficient for development; public
-deployment and Slides are separate work.
+describe the initial slice; this explicit signed-in feature supersedes the earlier
+PRD/grooming ban. Guests and unprepared devices keep a generic offline screen.
+Configured test HTTPS is enough for development; public deployment and Slides are
+separate work.
 
-Implementation is split into reviewable dependencies: SPN-040 added
-Sheet-image support and SPN-041 supplied the authorized download bundle described
-below.
-[Decision #91](https://github.com/mxbaylee/spinel/issues/91) preserves SPN-039 and
-every acceptance requirement below. A completed dependency does not mean offline
-launch, downloads or durable local editing are available.
+**What is implemented.** SPN-040 added Sheet-image support, SPN-041 the
+authorized [download bundle](#download-bundle), and SPN-039 offline launch,
+browsing and read-only viewing of downloaded documents ([below](#offline-launch-and-read-only-viewing)).
+The rest of this contract is open, split by the Owner in chat on 2026-10-19 so
+every unmet requirement stays on a ticket:
+
+- [SPN-053](todo/SPN-053.md): offline editing, the outbox, **Saved on this
+  device**, restart, replay with `flush()` and **Synced**.
+- [SPN-054](todo/SPN-054.md): the conflicted copy, **Needs attention** and the
+  export fallback.
+- [SPN-055](todo/SPN-055.md): the storage lifecycle, home-screen links and the
+  real-device runs.
+
+[Decision #91](https://github.com/mxbaylee/spinel/issues/91) keeps every
+acceptance requirement below.
 
 **Design, Owner, chat 2026-10-19.** Spinel owns offline durability itself: a
 downloaded snapshot plus an app-owned outbox of edits, the pattern used by
@@ -97,8 +105,9 @@ SPN-041, 2026-10-19.
   refuses link-guest identities with 404, because a guest's access ends with the
   link and an offline copy would outlive it. #91, 2026-10-19.
 - A viewer's bundle has `readOnly: true`, and the device must open it read-only.
-  A bundle alone does not mean downloaded, durable or synced; SPN-039 owns those
-  states. Grooming, 2026-10-19.
+  A bundle alone does not mean downloaded, durable or synced; see
+  [what a device does with it](#offline-launch-and-read-only-viewing). Grooming,
+  2026-10-19.
 
 Verified by `src/server/collaboration/offline-bundle.test.ts`:
 
@@ -119,21 +128,91 @@ Verified by `src/server/collaboration/offline-bundle.test.ts`:
 - Damaged stored bytes, with the logged IDs, and foreign sources rejected by
   load validation.
 
+## Offline launch and read-only viewing
+
+SPN-039, 2026-10-19. This is what a device does today.
+
+**Download.** Signed-in, non-admin accounts see **Available offline on this
+device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
+
+1. Prepares the app shell (below).
+2. Fetches the [download bundle](#download-bundle) with `no-store` and checks it
+   is version 1, for this account and item, from the pinned SDK version, and
+   read-only for a viewer. Its image list must name only this item's own image
+   routes, within the 5 MB per-image and 50 MB per-document budgets, before any
+   image is fetched.
+3. Fetches every listed image and checks each one's size and SHA-256.
+4. Writes the bundle and image bytes in one IndexedDB transaction.
+
+Until that transaction commits nothing counts as downloaded. A failed refresh
+keeps the last complete copy. Transfers run one at a time, because the server
+admits one transfer at a time (429). **Remove from device** deletes the local copy
+only. A full device shows "This device is out of space for offline documents."
+
+**Local data.** Each account has its own IndexedDB database,
+`spinel-offline-<account id>` (`web/offline/offlineStore.ts`), holding the user's
+ID and name, the last-synced catalog (folders, shared items, pins and each folder
+view opened online), downloaded bundles and image bytes. No credential, session,
+setup/invite token or guest token is stored. `localStorage['spinel.offline.account']`
+names the one account this device is prepared for. It is set by the first
+download and kept only after an online sign-in to that same non-admin account
+with downloads (`claimDevice`). Signing out clears it, so another account never
+opens this data. While prepared and online, the dashboard saves the catalog after
+each load and refreshes every download in the background. A document the account
+can no longer open (404) is removed: SPN-039's copies hold no edits.
+
+**App shell.** Nothing is cached until the first download (`web/service-worker.ts`).
+The production build writes a manifest of every built `/assets/` file, without
+source maps, into the service worker with a content version (`vite.config.ts`).
+Preparing caches those files (19 files, about 21 MB at SPN-039) and then the page
+HTML under `/`, fetched from the public `/sign-in` page without credentials. The
+page is written last, so its presence marks a complete shell. A new service worker
+on a prepared device prepares its own shell, and activation deletes older ones. No
+`/api` response is ever cached. Development builds have no manifest, so a download
+there says "Offline downloads need a production build of Spinel."
+
+**Launch.** Navigations are network-first. When the network fails, the service
+worker serves the cached shell, except for pages that need the server (`/share/`,
+`/setup`, `/invite`), which get the generic offline page. An unprepared device
+also gets the generic page. In the app (`web/App.tsx`), only a network failure
+(`TypeError`) on the session check enters local mode; a 401 still goes to sign-in.
+Local mode reads the prepared account's catalog and downloads, never a cached
+session as fresh authorization.
+
+**Local mode.** A banner says **Offline** and when the files were last synced.
+SPN-042's connection indicator should take that line over. Folders opened online
+are browsable, rows show **Available offline** or **Needs a connection**, and
+anything that would reach the server (New, Import, Search, Trash, sharing, tags,
+pins changes, settings for passkeys, version history) is hidden or says it needs a
+connection. A downloaded Sheet or Doc opens in an open-source Univer viewer with no
+collaboration client, autosave or remote image fallback, behind the same
+permission fences as version previews (`web/snapshotViewer.ts`). Images come only
+from the verified local bytes, as object URLs: `PreparedImages` rewrites every
+verified source in the snapshot in memory, including inside resource JSON, and
+replaces the drawing plugin's `IURLImageService`. Signing out offline ends the
+local session at once and revokes the server session the next time Spinel opens
+online.
+Another tab signing out locks any open copy.
+
+**Not yet.** `OfflineAccess` was ported from #86 without its remote gate.
+`ScopedHTTP` and `scopedSocket`, which scope requests and the collaboration
+socket to an account and epoch, move to SPN-053, which first needs them.
+
+Verified by:
+
+- `e2e/offline.spec.ts` (production build): download a Sheet with floating,
+  in-cell and background images and a Doc, check CacheStorage holds only the
+  shell, go offline and reload, then check the catalog, the badges, read-only
+  Sheet and Doc views with every image from local bytes and no `/api/items`
+  request, a not-downloaded item, and the generic page for `/share/`.
+- `e2e/pwa.spec.ts`: an unprepared device keeps CacheStorage empty.
+- `src/ui/preparedImages.test.ts`, `src/ui/offlineAccess.test.ts` and
+  `src/shared/offlineShell.test.ts`.
+
 ## How offline editing works
 
-**Download.** **Available offline on this device** fetches the SPN-041 bundle:
-the current snapshot, the revision and generation it represents, the account and
-access it was issued for, the pinned SDK version and an image manifest. It then
-fetches every listed image. Everything goes in an IndexedDB store scoped to the
-instance, account and device. The item counts as downloaded only once every write
-has succeeded and every image hash matches. A viewer's download opens read-only.
-
-**Launch.** The service worker serves an allowlisted, versioned app shell. A
-prepared device that cannot reach the server enters local mode, without treating
-cached identity as fresh server authorization. Authentication errors stay
-distinct from network outages. Today `web/App.tsx` checks the server session, and
-both editors await `prepareCollaboration()` before loading, so local mode needs
-its own start path. It reuses the local theme and stable `/?item=<uuid>` links.
+Download and launch work as [described above](#offline-launch-and-read-only-viewing).
+The rest of this section is SPN-053 and SPN-054's design.
 
 **Edit offline.** A downloaded item opens in an open-source Univer editor created
 from the stored snapshot, with no collaboration plugins. Images come from the
@@ -186,10 +265,10 @@ are not downloaded keep today's online behavior and make no on-device durability
 claim.
 
 **Public APIs only.** The design needs no Pro internals, license workaround,
-paid service or engine replacement. Reusable work from draft #86 includes the
-account- and epoch-scoped HTTP and socket adapters (`web/offline/OfflineAccess`,
-`ScopedHTTP`, `scopedSocket`), the verified local image adapter
-(`PreparedImages`) and the Sheet-image work that landed in SPN-040. Retire the
+paid service or engine replacement. Reusable work from draft #86: SPN-039 ported
+`web/offline/OfflineAccess` and the verified local image adapter
+(`PreparedImages`), SPN-040 landed the Sheet-image work, and SPN-053 ports the
+account- and epoch-scoped `ScopedHTTP` and `scopedSocket` adapters. Retire the
 recovery probe, `ProbeLocalCache`, the recovery ledger, the compression observer
 and the replay-snapshot server adapter.
 
@@ -239,10 +318,11 @@ and [collaboration](collaboration.md) contracts.
 
 The current HTTP `no-store` rules in authentication, sharing and image routes do
 not authorize a catch-all response cache. Explicitly downloaded private application
-data is a separate policy. When implemented, update docs/mobile.md, authentication,
-sharing, spreadsheets and documents to describe verified behavior. Replace the
-SPN-028's blanket empty-CacheStorage assertion with allowlisted-public-asset,
-account-isolation and guest/token-exclusion checks; preserve authorization tests.
+data is a separate policy. SPN-039 caches only the public shell on a prepared
+device; an unprepared one keeps SPN-028's empty CacheStorage. As editing lands,
+update docs/mobile.md, authentication, sharing, spreadsheets and documents to
+describe verified behavior, and keep account-isolation and guest/token-exclusion
+checks beside the authorization tests.
 
 ## Home-screen links and completion checks
 

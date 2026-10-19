@@ -58,7 +58,7 @@ section places them.
 
 - **Connection** (SPN-042): the connection slot shows Online, Offline or
   Reconnecting with an icon. It never says Online from `navigator.onLine` alone.
-- **Local save** (SPN-039): the same slot extends to Saving on this device,
+- **Local save** (SPN-053): the same slot extends to Saving on this device,
   Saved on this device — waiting to sync, Synced and Needs attention. Needs
   attention stays until resolved and its popover holds the action (open both
   documents, Export as Univer file, discard).
