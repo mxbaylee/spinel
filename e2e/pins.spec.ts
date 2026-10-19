@@ -49,6 +49,9 @@ test('personal pins reorder, survive reload, appear across pages and lose revoke
       'Daily budget Sheet',
       'Daily journal Doc',
     ]);
+    // Pinning below the fold can leave only the source visible. Scroll before
+    // mouse-down so dragTo's target scroll cannot start a drag on another pin.
+    await sidebar.getByRole('listitem').first().scrollIntoViewIfNeeded();
     await sidebar
       .getByRole('button', { name: 'Drag Daily journal to reorder', exact: true })
       .dragTo(sidebar.getByRole('listitem').first());

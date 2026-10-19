@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { AuthError, AuthStore } from '../auth/store.ts';
 import { cookieToken } from '../auth/routes.ts';
 import { WorkspaceStore } from './store.ts';
+import { WorkspaceSearch } from './search.ts';
 import { SheetStore } from './sheets.ts';
 import { DocumentStore } from './documents.ts';
 import { TrashStore } from './trash.ts';
@@ -53,6 +54,7 @@ export function workspaceRoutes(
 ) {
   const router = express.Router();
   const trash = new TrashStore(store);
+  const search = new WorkspaceSearch(store);
   const sheets = new SheetStore(store);
   const documents = new DocumentStore(store);
   const files = new PortableFiles(store, collaboration);
@@ -89,6 +91,9 @@ export function workspaceRoutes(
         : original,
     );
   };
+  router.get('/search', (request, response) => {
+    response.json({ items: search.find(owner(request), request.query) });
+  });
   router.get('/:id/sheet', (request, response) => native(request, response, 'sheet'));
   router.put('/:id/sheet', express.json({ limit: '10mb', strict: true }), (request, response) => {
     response.json(

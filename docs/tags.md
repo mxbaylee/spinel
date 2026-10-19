@@ -11,7 +11,8 @@ to NFC and lower-case. Names must contain 1–64 UTF-16 code units after normali
 and cannot contain control characters, unpaired surrogates or another leading `#`.
 This keeps saved names stable when reused or removed. The display adds
 `#`; it is not required when typing. Duplicate additions and repeated removals
-are harmless. Folders are not tagged. Filtering by tag remains SPN-022.
+are harmless. Folders are not tagged. The dashboard [search](search.md) combines your tag filter
+with title, path, type, ownership and modification filters.
 
 A person's vocabulary retains names they previously used even when no current
 document has that tag. Removing an assignment does not delete that suggestion.

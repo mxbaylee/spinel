@@ -63,7 +63,7 @@ p {
 }
 .workspace > header,
 .workspace > header nav,
-.files > nav {
+.file-view > nav {
   display: flex;
   align-items: center;
   gap: 20px;
@@ -147,10 +147,10 @@ button.primary {
 .files {
   min-width: 0;
 }
-.files > nav {
+.file-view > nav {
   gap: 8px;
 }
-.files > nav button {
+.file-view > nav button {
   padding: 6px;
 }
 .folder-heading {
@@ -666,4 +666,30 @@ dialog {
 }
 .history-browser select {
   max-width: 100%;
+}
+.dashboard-search {
+  margin-block-end: 1.5rem;
+}
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+}
+.search-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.search-filters input,
+.search-filters select {
+  max-width: 100%;
+}
+.search-filters input[type='search'] {
+  width: min(24rem, 100%);
+}
+.search-paths {
+  flex-basis: 100%;
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
 }

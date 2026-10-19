@@ -118,7 +118,7 @@ revocation in both development and production builds.
 The **Shared with me** drawer contains currently accessible documents and folders,
 including inherited folder contents. It shows their owner's display name and a
 shared badge. Those labels also appear in folder listings, the opened item and
-pins; dashboard search should reuse the same item metadata and badge component.
+pins and [dashboard search](search.md), using the same item metadata and badge.
 Link guests have no account drawer and receive none of this account metadata.
 
 Drag an item onto one of your folders (or All my files), or use **File into folder**.
@@ -149,4 +149,4 @@ Decision [#74](https://github.com/mxbaylee/spinel/issues/74), 2026-10-18, weighs
 storage for the Operator, an unchanged owner tree, predictable personal filing for
 the Collaborator, and unchanged account isolation for the Link guest. Tests cover
 legacy migration, ordering, destination isolation, inherited grants, revoke/regrant,
-trash, and browser filing/removal/revocation. Search remains SPN-022.
+trash, and browser filing/removal/revocation. [Search](search.md) includes these shares and personal filing paths.
