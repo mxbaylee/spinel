@@ -3,16 +3,25 @@ import type { IExecutionOptions, Injector, ILogService, IConfigService } from '@
 import type { RecoveryLedger } from './RecoveryLedger.ts';
 
 /** Public command boundary. The coordinator supplies one ledger per editor. */
+export type RecoveryDispatchObserver = (
+  mode: 'async' | 'sync',
+  id: string,
+  params?: object,
+  options?: IExecutionOptions,
+) => void;
 export class RecoveryCommands extends CommandService {
+  private observe?: RecoveryDispatchObserver;
   private ledger: () => RecoveryLedger | undefined;
   constructor(
     injector: Injector,
     log: ILogService,
     config: IConfigService,
     ledger: () => RecoveryLedger | undefined,
+    observe?: RecoveryDispatchObserver,
   ) {
     super(injector, log, config);
     this.ledger = ledger;
+    this.observe = observe;
   }
   override async executeCommand<P extends object = object, R = boolean>(
     id: string,
@@ -20,6 +29,7 @@ export class RecoveryCommands extends CommandService {
     options?: IExecutionOptions,
   ): Promise<R> {
     const ledger = this.ledger();
+    this.observe?.('async', id, params, options);
     const claim = ledger?.claim(id, params, options);
     try {
       const result = await super.executeCommand<P, R>(id, params, claim?.options ?? options);
@@ -36,6 +46,7 @@ export class RecoveryCommands extends CommandService {
     options?: IExecutionOptions,
   ): R {
     const ledger = this.ledger();
+    this.observe?.('sync', id, params, options);
     const claim = ledger?.claim(id, params, options);
     try {
       const result = super.syncExecuteCommand<P, R>(id, params, claim?.options ?? options);

@@ -1,3 +1,4 @@
+import { CompressMutationService } from '@univerjs-pro/collaboration';
 import { ProbeLocalCache } from './ProbeLocalCache.ts';
 import { ICommandService } from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
@@ -126,7 +127,30 @@ export async function observeOfflineRecovery(
       stops.push(() => grouped.unsubscribe());
     }
     const cache = univer.__getInjector().get(ILocalCacheService);
-    if (cache instanceof ProbeLocalCache) await cache.prepareRecovery();
+    if (cache instanceof ProbeLocalCache) {
+      await cache.prepareRecovery();
+      if (cache.recovery) {
+        const compression = univer.__getInjector().get(CompressMutationService);
+        // OSS interceptors form a sequential pipeline: separate observers are
+        // required to see both ends. They return the exact input untouched.
+        for (const [stage, priority] of [
+          ['input', Number.MAX_SAFE_INTEGER],
+          ['output', -Number.MAX_SAFE_INTEGER],
+        ] as const) {
+          const observer = compression.interceptor.intercept(
+            compression.interceptor.getInterceptPoints().COMPRESS_MUTATION_APPLY,
+            {
+              priority,
+              handler(value, _context, next) {
+                cache.recovery!.observeApply(stage, value);
+                return next(value);
+              },
+            },
+          );
+          stops.push(observer);
+        }
+      }
+    }
     const read = async () =>
       structuredClone(
         (await (cache instanceof ProbeLocalCache && cache.recovery

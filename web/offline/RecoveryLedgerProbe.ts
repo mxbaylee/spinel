@@ -1,3 +1,4 @@
+import type { IExecutionOptions, IMutationInfo } from '@univerjs/core';
 import type { IUnitCacheData } from '@univerjs-pro/collaboration-client';
 import { OfflineAccess } from './OfflineAccess.ts';
 import type { OfflineScope } from './OfflineAccess.ts';
@@ -13,6 +14,53 @@ export class RecoveryLedgerProbe {
   writes = 0;
   facadeLoaded = false;
   collaborationReady = false;
+  private objects = new WeakMap<object, number>();
+  private nextObject = 0;
+  private traceCount = 0;
+  private applySequence = 0;
+  private applyStack: number[] = [];
+  private describe(id: string, params?: object) {
+    if (params && !this.objects.has(params)) this.objects.set(params, ++this.nextObject);
+    return {
+      id,
+      object: params && this.objects.get(params),
+      identity: this.ledger?.inspectIdentity(params),
+      params,
+    };
+  }
+  private trace(event: string, value: unknown) {
+    if (!this.ledger || this.traceCount++ >= 150) return;
+    try {
+      console.log(JSON.stringify({ recoveryBoundary: event, value }));
+    } catch {
+      console.log(JSON.stringify({ recoveryBoundary: 'diagnostic serialization failed' }));
+    }
+  }
+  observeDispatch(
+    mode: 'async' | 'sync',
+    id: string,
+    params?: object,
+    options?: IExecutionOptions,
+  ) {
+    this.trace('dispatch', {
+      mode,
+      ...this.describe(id, params),
+      options: {
+        fromChangeset: options?.fromChangeset,
+        fromCollab: options?.fromCollab,
+        onlyLocal: options?.onlyLocal,
+        syncOnly: options?.syncOnly,
+      },
+    });
+  }
+  observeApply(stage: 'input' | 'output', mutations: IMutationInfo[] | null | undefined | void) {
+    const call = stage === 'input' ? ++this.applySequence : this.applyStack.pop();
+    if (stage === 'input') this.applyStack.push(call!);
+    this.trace(`apply ${stage}`, {
+      call,
+      mutations: mutations?.map((mutation) => this.describe(mutation.id, mutation.params)),
+    });
+  }
   private holdMode?: 'read' | 'write';
   private held?: 'read' | 'write';
   private deferred?: ReturnType<typeof Promise.withResolvers<void>>;

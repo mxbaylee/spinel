@@ -50,7 +50,13 @@ export function probeCommandOverride(
         ICommandService,
         {
           useFactory: (injector: Injector, log: ILogService, config: IConfigService) =>
-            new RecoveryCommands(injector, log, config, () => recovery.ledger),
+            new RecoveryCommands(
+              injector,
+              log,
+              config,
+              () => recovery.ledger,
+              (mode, id, params, options) => recovery.observeDispatch(mode, id, params, options),
+            ),
           deps: [Injector, ILogService, IConfigService],
         },
       ],

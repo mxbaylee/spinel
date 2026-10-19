@@ -256,6 +256,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       if (offline) await network.setOffline(true);
       page = context.pages()[0] ?? (await context.newPage());
       page.on('console', (message) => {
+        if (message.type() === 'log' && message.text().startsWith('{"recoveryBoundary":'))
+          console.log(JSON.stringify({ probe: kind, stage, boundary: JSON.parse(message.text()) }));
         if (message.type() === 'log' && message.text().startsWith('{"recoveryDocEvent":')) {
           const docEvent = JSON.parse(message.text());
           if (docEvent.recoveryDocEvent === 'before text mutation')

@@ -160,6 +160,17 @@ export class RecoveryLedger {
     });
     return copy;
   }
+  /** Passive fixture diagnostics; never registers or authorizes an execution. */
+  inspectIdentity(params: object | undefined) {
+    const entry = params && this.markers.get(params);
+    return (
+      entry && {
+        entry: entry.id,
+        state: entry.state,
+        unchanged: sameRecoveryValue(params, entry.mutation.params),
+      }
+    );
+  }
   claim(
     id: string,
     params: object | undefined,
