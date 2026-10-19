@@ -62,8 +62,9 @@ test('touch history timeline and calendar preview retained choices without chang
       checkpoints.push((await named.json()).version.id);
     }
     // One shared UTC date avoids a midnight race and always crosses a month boundary.
+    // Let Date advance normally while the real editor initializes and is replaced.
     const fixtureTime = new Date('2026-10-02T15:00:00Z');
-    await page.clock.setFixedTime(fixtureTime);
+    await page.clock.setSystemTime(fixtureTime);
     const midnight = new Date(fixtureTime);
     midnight.setUTCHours(0, 0, 0, 0);
     const start = midnight.getTime(),
@@ -84,10 +85,15 @@ test('touch history timeline and calendar preview retained choices without chang
     );
     const live = await (await context.request.get(`/api/items/${item.id}/doc`)).json();
     await page.goto(`/preview?item=${item.id}&version=${checkpoints[3]}`);
-    const ready = () =>
-      expect(page.getByRole('button', { name: 'Restore this version', exact: true })).toBeEnabled({
+    const ready = async () => {
+      await expect(
+        page.getByRole('button', { name: 'Restore this version', exact: true }),
+      ).toBeEnabled({
         timeout: 30_000,
       });
+      // Every replacement must be read-only, including the initial preview.
+      await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    };
     await ready();
     const slider = page.getByRole('slider', { name: 'Snapshot timeline', exact: true });
     await slider.scrollIntoViewIfNeeded();
