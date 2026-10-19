@@ -2,6 +2,7 @@ import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { gzipSync } from 'node:zlib';
 import { afterEach, expect, test, vi } from 'vitest';
 import { getDocsEmptySnapshot, LocaleType, JSONX } from '@univerjs/core';
 import { RichTextEditingMutation } from '@univerjs/docs';
@@ -741,6 +742,12 @@ test('document restore validates retained image references and rolls back sessio
   bad.drawings = {
     bad: { source: '/api/items/foreign/images/' + 'a'.repeat(64) },
   } as unknown as IDocumentData['drawings'];
+  // A stored checkpoint is checked again when it is previewed.
+  const planted = await history.nameCurrent(f.owner.id, f.doc.id, 'Planted');
+  f.db
+    .prepare('UPDATE history_checkpoints SET snapshot=? WHERE id=?')
+    .run(gzipSync(JSON.stringify(bad)), planted.id);
+  await expect(history.load(f.owner.id, f.doc.id, planted.id)).rejects.toThrow('Insert images');
   await expect(
     f.collab.restore(
       f.owner.id,
@@ -1046,6 +1053,7 @@ test('Sheet image validation fences live mutations and preserved resources', asy
     .prepare('INSERT OR REPLACE INTO spinel_generation_resources VALUES(?,?,?)')
     .run(f.sheet.id, f.sheet.id, JSON.stringify([unsafeResource]));
   await expect(f.collab.load(f.owner.id, f.sheet.id)).rejects.toThrow('Insert images');
+  await expect(f.collab.prepare(f.owner.id, f.sheet.id)).rejects.toThrow('Insert images');
 });
 
 // A workbook whose first cell holds an image, imported the way a person would.
@@ -1247,6 +1255,23 @@ test('cell images and plain cell rich text travel through every cell-data mutati
         toRange: range(4),
         from: { subUnitId: 'first', value: { 2: { 0: null } } },
         to: { subUnitId: 'first', value: { 4: { 0: { p } } } },
+      }),
+    ).resolves.toMatchObject({
+      status: 'rejected',
+      error: { code: 'PERMISSION_DENIED', message: 'Cross-document changes are not allowed.' },
+    });
+  // Only cell rich text (`<row>.<column>.p`) may name its own Doc. An `id` anywhere
+  // else, or a `p` without a row and column above it, can't retarget the unit.
+  for (const extra of [
+    { sheet: { id: f.sheet.id, unitId: f.sheet.id } },
+    { extra: { p: { id: f.sheet.id, unitId: f.sheet.id } } },
+  ])
+    await expect(
+      submit('sheet.mutation.set-range-values', {
+        unitId: imported.id,
+        subUnitId: 'first',
+        cellValue: { 5: { 0: { v: 1 } } },
+        ...extra,
       }),
     ).resolves.toMatchObject({
       status: 'rejected',

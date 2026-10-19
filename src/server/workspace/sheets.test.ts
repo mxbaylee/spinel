@@ -4,6 +4,7 @@ import { afterEach, expect, test } from 'vitest';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
 import { SheetStore } from './sheets.ts';
+import { DocumentStore } from './documents.ts';
 const databases: DatabaseSync[] = [];
 afterEach(() => databases.splice(0).forEach((db) => db.close()));
 function fixture() {
@@ -119,10 +120,18 @@ test('invalid IDs, missing sheets, duplicate tabs and oversize data cannot corru
 
 test('Sheet image sources cannot bypass item-scoped validation through save or legacy stored data', () => {
   const f = fixture();
+  // A stored image belongs to one item: its hash names it only under that item.
+  const other = f.workspace.create(f.owner.id, { name: 'Other', kind: 'sheet', parentId: null });
+  new DocumentStore(f.workspace);
+  const store = f.db.prepare('INSERT INTO doc_images VALUES(?,?,?,?)');
+  store.run(f.item.id, 'c'.repeat(64), 'image/png', Buffer.from('own'));
+  store.run(other.id, 'b'.repeat(64), 'image/png', Buffer.from('other'));
   for (const source of [
     'https://outside.invalid/pixel.png',
     `/api/items/other/images/${'a'.repeat(64)}`,
     `/api/items/${f.item.id}/images/${'a'.repeat(64)}`,
+    `/api/items/${f.item.id}/images/${'b'.repeat(64)}`,
+    `/api/items/${other.id}/images/${'c'.repeat(64)}`,
   ]) {
     for (const snapshot of [
       {
