@@ -1132,41 +1132,43 @@ test('Sheet image validation fences live mutations, historical replay bases and 
   await expect(f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, 1)).rejects.toThrow(
     'Insert images',
   );
-  const tail = structuredClone(original);
-  tail.targetRevision = 3;
-  tail.changesets = [
-    {
-      ...f.edit(),
-      baseRev: 1,
-      revision: 2,
-      mutations: [
-        {
-          id: SetRangeValuesMutation.id,
-          data: JSON.stringify({
-            unitId: f.sheet.id,
-            subUnitId: 'first',
-            cellValue: { 1: { 0: { p: cellDoc } } },
-          }),
-        },
-      ],
-    },
-    {
-      ...f.edit(),
-      baseRev: 2,
-      revision: 3,
-      reqId: 2,
-      mutations: [
-        {
-          id: SetRangeValuesMutation.id,
-          data: JSON.stringify({
-            unitId: f.sheet.id,
-            subUnitId: 'first',
-            cellValue: { 1: { 0: null } },
-          }),
-        },
-      ],
-    },
-  ];
+  const tail = {
+    ...structuredClone(original),
+    targetRevision: 3,
+    changesets: [
+      {
+        ...f.edit(),
+        baseRev: 1,
+        revision: 2,
+        mutations: [
+          {
+            id: SetRangeValuesMutation.id,
+            data: JSON.stringify({
+              unitId: f.sheet.id,
+              subUnitId: 'first',
+              cellValue: { 1: { 0: { p: cellDoc } } },
+            }),
+          },
+        ],
+      },
+      {
+        ...f.edit(),
+        baseRev: 2,
+        revision: 3,
+        reqId: 2,
+        mutations: [
+          {
+            id: SetRangeValuesMutation.id,
+            data: JSON.stringify({
+              unitId: f.sheet.id,
+              subUnitId: 'first',
+              cellValue: { 1: { 0: null } },
+            }),
+          },
+        ],
+      },
+    ],
+  };
   vi.spyOn(f.collab.service, 'getUnitLoadDataWithBlocks').mockResolvedValueOnce(tail);
   await expect(f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, 3)).rejects.toThrow(
     'Insert images',
