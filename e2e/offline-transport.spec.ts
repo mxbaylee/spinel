@@ -132,7 +132,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect
         .poll(() => page.evaluate(() => window.__spinelTransportProbe!.connect()))
         .toBe(true);
-      expect(sockets).toBeGreaterThan(before);
+      // The SDK returns its wrapper before Playwright reports the native
+      // handshake. Wait for that observable event, then require received data.
+      await expect.poll(() => sockets).toBeGreaterThan(before);
       await expect.poll(() => liveSockets.size).toBeGreaterThan(0);
       await expect.poll(() => established.size).toBeGreaterThan(0);
       await page.evaluate(() => window.__spinelTransportProbe!.lock());

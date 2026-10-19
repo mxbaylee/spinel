@@ -220,3 +220,11 @@ exists. Deferred-execution/write and complete local-adapter/transport-barrier
 experiments still have to establish that boundary before product integration.
 No protected collaboration-state fields, timer-based completion assumptions,
 content deduplication or synthetic acknowledgements are used.
+
+At `6a523b4`, CI run 39215762281 passed 368 unit tests, all 60 regular browser
+cases and the existing Sheet/Doc cold probes plus PWA check. The prepared Sheet
+transport fixture loaded, sent a bound edit, saved it on the server and rejected
+the held stale ticket. Its next assertion failed because the fresh SDK socket
+wrapper returned before Playwright delivered the native socket event. The test
+now waits for that event before checking received frames and lock-time closure;
+that final path and the Doc transport case still need a passing run.
