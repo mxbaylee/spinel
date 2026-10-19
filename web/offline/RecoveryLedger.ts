@@ -206,7 +206,7 @@ export class RecoveryLedger {
     }
   }
   /** Begin a bounded singleton transformation at an observed public boundary.
-   * This is not wired until real input/output/dispatch lineage is established.
+   * The isolated fixture wires this after observing input/output/dispatch lineage.
    * No positional inference is permitted for multi-entry output batches.
    */
   beginTransform(input: readonly IMutationInfo[]): ReplayTransform | undefined {

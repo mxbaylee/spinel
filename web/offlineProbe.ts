@@ -139,10 +139,14 @@ export async function observeOfflineRecovery(
       if (cache.recovery) {
         const compression = univer.__getInjector().get(CompressMutationService);
         stops.push(
-          observeCompression(compression, {
-            apply: (stage, value) => cache.recovery!.observeApply(stage, value),
-            failed: () => cache.recovery!.observeApplyFailure(),
-          }),
+          observeCompression(
+            compression,
+            {
+              apply: (stage, value) => cache.recovery!.observeApply(stage, value),
+              failed: () => cache.recovery!.observeApplyFailure(),
+            },
+            cache.recovery.ledger,
+          ),
         );
       }
     }

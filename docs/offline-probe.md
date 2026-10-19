@@ -282,3 +282,24 @@ coordinator must remove the editor on attention. It is not wired in yet. Real-im
 rendering, unknown-source/access-loss cases with zero native network requests, and
 coordinator teardown are unresolved integration requirements. The 19 focused image
 tests prove byte/scope/failure behavior, not decoding or browser-wide traffic fencing.
+
+
+Run [39222674007](https://github.com/mxbaylee/spinel/actions/runs/39222674007)
+(`4de1e00`) passed 463 unit tests and all 60 regular browser cases. Its first
+Sheet cold launch again failed closed with the original queue retained, but the
+complete public trace established the missing transformation lineage: registered
+pending parameters object 9 entered APPLY call 3; its returned parameters object
+11 was exactly the object passed to command dispatch. The mutation wrapper was
+also replaced (8 to 10). All diagnostic input/output calls matched without
+truncation or projection failure. This is observed singleton behavior on 1.1.0,
+not a general vendor guarantee for arbitrary batches.
+
+The next fixture enables a ledger guard around that exact public composed call.
+It accepts only one unchanged registered input and one same-ID/same-unit output,
+retains original pending bytes separately, and records the exact returned object
+with a snapshot for integrity validation at dispatch. Multiple or mixed inputs,
+expanded outputs, clones, changed outputs, duplicate use and access/lifecycle
+loss reject recovery. The facade preserves caller filtering and invokes the SDK
+pipeline once; cleanup/disposal/replacement invalidates retained guarded calls.
+No array-position or equal-content matching is introduced. Focused ledger tests
+pass; the guarded actual-SDK path and remaining contract still await CI.
