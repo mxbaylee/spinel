@@ -10,7 +10,7 @@ explicit signed-in feature when implemented. Guests and unprepared devices retai
 offline screen. Configured test HTTPS is sufficient for development; public
 deployment and Slides are separate work.
 
-Implementation is split into reviewable dependencies: SPN-040 owns existing
+Implementation is split into reviewable dependencies: SPN-040 added
 Sheet-image support and SPN-041 supplied the authorized download bundle described
 below.
 [Decision #91](https://github.com/mxbaylee/spinel/issues/91) preserves SPN-039 and
@@ -189,7 +189,7 @@ claim.
 paid service or engine replacement. Reusable work from draft #86 includes the
 account- and epoch-scoped HTTP and socket adapters (`web/offline/OfflineAccess`,
 `ScopedHTTP`, `scopedSocket`), the verified local image adapter
-(`PreparedImages`) and the Sheet-image work landing in SPN-040. Retire the
+(`PreparedImages`) and the Sheet-image work that landed in SPN-040. Retire the
 recovery probe, `ProbeLocalCache`, the recovery ledger, the compression observer
 and the replay-snapshot server adapter.
 

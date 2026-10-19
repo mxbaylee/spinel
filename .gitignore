@@ -7,3 +7,4 @@ data/
 *.sqlite-*
 playwright-report/
 test-results/
+storybook-static/
