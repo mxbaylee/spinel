@@ -230,3 +230,15 @@ requirements supplement, rather than replace, the full contract above.
 coordinator/public-adapter path, with the same access and durability requirements
 for the Owner and Collaborator, bounded operations for the Operator, and no
 private offline capability for Link guests.
+
+The in-progress `RecoveryLedger` accounts for entries in one retained,
+account-scoped pending-record version. Repeated cache reads register fresh
+parameter objects against those original entries; identical adjacent edits remain
+distinct, and a consumed entry cannot replay again through another read copy.
+Only exact registered Doc text parameters receive execution-only replay flags.
+Malformed records, changed parameters, rejected execution and access changes stop
+recovery without changing the caller's original record. This component is not yet
+wired into the SDK cache or command service. Its completion assertion does not
+unlock access: the coordinator still must prove loader/queue completion and an
+atomic, durable staged-store commit. Document-only cache buckets require a
+separately scoped adapter path; they must never be normalized into another account.
