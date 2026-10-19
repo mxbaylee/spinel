@@ -435,14 +435,19 @@ test('Sheet images survive browser export/import and restore, with scoped revoca
       'The range is protected, and you do not have edit permission. To edit, please contact the creator.',
       { exact: true },
     );
-    if (await refusal.isVisible())
-      await visitor.getByRole('button', { name: 'ok', exact: true }).click();
+    // The refusal dialog fades out after dismissal; wait until it is gone so a
+    // closing dialog is not mistaken for a second refusal.
+    const dismissRefusal = async () => {
+      if (await refusal.isVisible())
+        await visitor.getByRole('button', { name: 'ok', exact: true }).click();
+      await expect(refusal).toBeHidden();
+    };
+    await dismissRefusal();
     await visitor.mouse.move(gx, gy);
     await visitor.mouse.down();
     await visitor.mouse.move(gx + 30, gy + 30, { steps: 6 });
     await visitor.mouse.up();
-    if (await refusal.isVisible())
-      await visitor.getByRole('button', { name: 'ok', exact: true }).click();
+    await dismissRefusal();
     await visible(visitor);
     await expect
       .poll(async () => {

@@ -298,15 +298,28 @@ export class CollaborationStore {
       .run(unitId, itemId, JSON.stringify(opaque));
   }
 
+  private storedResources(unitId: string): NonNullable<IWorkbookData['resources']> {
+    const row = this.workspace.auth.database
+      .prepare('SELECT resources FROM spinel_generation_resources WHERE unit_id=?')
+      .get(unitId);
+    return row ? JSON.parse(String(row.resources)) : [];
+  }
+
+  // A stored row that shares a name with a rendered resource is never served,
+  // but an unsafe image anywhere in the generation's rows still fails closed.
+  private validateImages(itemId: string, unitId: string, snapshot: IWorkbookData | IDocumentData) {
+    new DocumentStore(this.workspace).validateImages(itemId, {
+      ...snapshot,
+      resources: [...(snapshot.resources ?? []), ...this.storedResources(unitId)],
+    });
+  }
+
   private preservedResources<T extends IWorkbookData | IDocumentData>(
     unitId: string,
     snapshot: T,
   ): T {
-    const row = this.workspace.auth.database
-      .prepare('SELECT resources FROM spinel_generation_resources WHERE unit_id=?')
-      .get(unitId);
-    if (!row) return snapshot;
-    const stored = JSON.parse(String(row.resources)) as NonNullable<T['resources']>;
+    const stored = this.storedResources(unitId) as NonNullable<T['resources']>;
+    if (!stored.length) return snapshot;
     const known = new Set((snapshot.resources ?? []).map((resource) => resource.name));
     const missing = stored.filter((resource) => !known.has(resource.name));
     return missing.length
@@ -453,7 +466,7 @@ export class CollaborationStore {
         ? await transformSnapshotToWorkbookData(prepared.snapshot, prepared.sheetBlocks)
         : transformSnapshotToDocumentData(prepared.snapshot);
     this.workspaceAccess(user, id);
-    new DocumentStore(this.workspace).validateImages(id, this.preservedResources(unitId, native));
+    this.validateImages(id, unitId, native);
     this.rememberResources(unitId, id, snapshot, native);
     auth.database
       .prepare("UPDATE workspace_collaboration SET state='ready' WHERE item_id=?")
@@ -473,7 +486,7 @@ export class CollaborationStore {
       item.kind === 'sheet'
         ? await transformSnapshotToWorkbookData(materialized.snapshot, materialized.sheetBlocks)
         : transformSnapshotToDocumentData(materialized.snapshot);
-    new DocumentStore(this.workspace).validateImages(id, this.preservedResources(unitId, snapshot));
+    this.validateImages(id, unitId, snapshot);
     const current = this.workspaceAccess(user, id);
     const generation = this.generations.active(id);
     if (generation.unitId !== unitId)
