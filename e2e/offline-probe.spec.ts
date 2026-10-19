@@ -28,7 +28,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     test.setTimeout(180_000);
     expect(info.project.name).toBe('mobile-https');
     expect(baseURL).toBe('https://localhost:3103');
-    const itemQuerySuffix = '&offline-probe=1&host-cache=1&replay-identity=1';
+    const itemQuerySuffix = '&offline-probe=1&host-cache=1&replay-identity=1&recovery-ledger=1';
     const directory = await mkdtemp(join(tmpdir(), 'spinel-offline-sdk-'));
     const db = openDatabase('test-results/mobile-https/app.sqlite');
     const auth = new AuthStore(db);
@@ -261,7 +261,9 @@ for (const kind of ['sheet', 'doc'] as const) {
           if (docEvent.recoveryDocEvent === 'before text mutation')
             docCommands.push({
               stage,
-              recovered: docEvent.value.options?.recoveredIdentity === true,
+              recovered:
+                docEvent.value.options?.fromChangeset === true ||
+                docEvent.value.options?.fromCollab === true,
             });
           if (docEvent.recoveryDocEvent === 'trace failure')
             cacheFailures.push(String(docEvent.value));
@@ -274,6 +276,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           if (
             uncertainProof &&
             checkUncertainClears &&
+            !call.staged &&
             (call.serverConfirmation?.sid !== uncertainProof.sid ||
               call.serverConfirmation?.reqId !== uncertainProof.reqId) &&
             (call.recoveryCacheCall === 'clear' ||
@@ -303,25 +306,29 @@ for (const kind of ['sheet', 'doc'] as const) {
         if (!probe) return { unavailable: true };
         return {
           hostCache: probe.hostCache,
+          ledger: probe.ledger(),
           beforeLoad: probe.beforeLoad,
           current: await probe.read(),
         };
       });
       expect(record).toMatchObject({ hostCache: true });
+      expect(record.ledger).toBeDefined();
+      expect(record.ledger!.status).not.toBe('failed');
       expect(cacheFailures).toEqual([]);
-      // Two loads belong to this observer; at least one belongs to the SDK loader.
-      expect(cacheCalls.filter((call) => call === 'load').length).toBeGreaterThanOrEqual(3);
+      // Diagnostic reads bypass SDK cache loading; these loads belong to the SDK.
+      expect(cacheCalls.filter((call) => call === 'load').length).toBeGreaterThanOrEqual(1);
       if (label.includes('edit settled')) expect(cacheCalls).toContain('update');
-      if (kind === 'doc' && label.startsWith('cold launch')) {
+      if (label.startsWith('cold launch')) {
         const before = record.beforeLoad;
         const expected =
           (before?.mutations.length ?? 0) + (before?.awaitingChangeset?.mutations.length ?? 0);
         expect(expected).toBeGreaterThan(0);
-        await expect
-          .poll(
-            () => docCommands.filter((event) => event.stage === stage && event.recovered).length,
-          )
-          .toBe(expected);
+        expect(record.ledger).toMatchObject({
+          status: 'verified',
+          accounting: { expected, applied: expected, phase: 'complete' },
+        });
+        expect(record.ledger!.reads).toBeGreaterThan(0);
+        expect(record.ledger!.writes).toBeGreaterThan(0);
       }
       if (kind === 'doc' && label.includes('edit settled')) {
         const edits = docCommands.filter((event) => event.stage === stage);
@@ -340,6 +347,15 @@ for (const kind of ['sheet', 'doc'] as const) {
         mutations: record.mutations,
       };
     async function close() {
+      if (context && page && !page.isClosed()) {
+        try {
+          const evidence = await page.evaluate(() => window.__spinelRecoveryProbe?.ledger());
+          if (!evidence || evidence.status === 'failed')
+            cacheFailures.push('Ledger failed before browser close.');
+        } catch {
+          cacheFailures.push('Could not inspect final ledger evidence before browser close.');
+        }
+      }
       stopping = true;
       await context?.close();
       context = undefined;

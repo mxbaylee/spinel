@@ -6,6 +6,14 @@ import type { IUnitCacheData } from '@univerjs-pro/collaboration-client';
 
 type RecoveryProbe = {
   hostCache: boolean;
+  ledger: () =>
+    | {
+        status: string;
+        reads: number;
+        writes: number;
+        accounting?: { expected: number; applied: number; phase: string };
+      }
+    | undefined;
   serverConfirmation?: { sid: string; reqId: number };
   beforeLoad: IUnitCacheData | null | undefined;
   read: () => Promise<IUnitCacheData | null | undefined>;
@@ -114,8 +122,19 @@ export async function observeOfflineRecovery(
       stops.push(() => grouped.unsubscribe());
     }
     const cache = univer.__getInjector().get(ILocalCacheService);
-    const read = async () => structuredClone((await cache.loadOfflineData(unitId, userId)) ?? null);
-    const probe = { hostCache: cache instanceof ProbeLocalCache, beforeLoad: await read(), read };
+    if (cache instanceof ProbeLocalCache) await cache.prepareRecovery();
+    const read = async () =>
+      structuredClone(
+        (await (cache instanceof ProbeLocalCache && cache.recovery
+          ? cache.inspectOfflineData(unitId, userId)
+          : cache.loadOfflineData(unitId, userId))) ?? null,
+      );
+    const probe = {
+      hostCache: cache instanceof ProbeLocalCache,
+      beforeLoad: await read(),
+      read,
+      ledger: () => (cache instanceof ProbeLocalCache ? cache.recovery?.evidence() : undefined),
+    };
     window.__spinelRecoveryProbe = probe;
     return () => {
       stops.forEach((stop) => stop());

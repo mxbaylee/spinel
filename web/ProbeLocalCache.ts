@@ -2,6 +2,7 @@ import type { IMutationInfo, Nullable, UniverInstanceType } from '@univerjs/core
 import type { IChangeset } from '@univerjs-pro/collaboration';
 import type { ILocalCacheService, IUnitCacheData } from '@univerjs-pro/collaboration-client';
 import { markRecoveredParams } from './ProbeReplayCommands.ts';
+import type { RecoveryLedgerProbe } from './offline/RecoveryLedgerProbe.ts';
 
 /** Synthetic CI probe only: a host implementation of the public cache contract.
  * This stores pending records, not complete offline downloads or user-visible save guarantees.
@@ -16,10 +17,18 @@ export class ProbeLocalCache implements ILocalCacheService {
   private unit: string;
   private currentUser: () => string | null;
   private currentRevision: () => number;
-  constructor(unit: string, currentUser: () => string | null, currentRevision: () => number) {
+  readonly recovery?: RecoveryLedgerProbe;
+  private stageId = crypto.randomUUID();
+  constructor(
+    unit: string,
+    currentUser: () => string | null,
+    currentRevision: () => number,
+    recovery?: RecoveryLedgerProbe,
+  ) {
     this.unit = unit;
     this.currentUser = currentUser;
     this.currentRevision = currentRevision;
+    this.recovery = recovery;
     this.database = new Promise((resolve, reject) => {
       const request = indexedDB.open('spinel-synthetic-recovery-probe-v1', 1);
       request.onupgradeneeded = () => request.result.createObjectStore('pending');
@@ -27,6 +36,54 @@ export class ProbeLocalCache implements ILocalCacheService {
       request.onerror = () => reject(request.error);
       request.onblocked = () => reject(new Error('Probe database upgrade is blocked.'));
     });
+  }
+  async prepareRecovery() {
+    if (!this.recovery) return;
+    const record = await this.inspectOfflineData(this.unit, this.recovery.access.scope.accountId);
+    this.recovery.begin(record ?? undefined, this.currentUser);
+  }
+  async inspectOfflineData(unit: string, user?: string | null) {
+    const key = this.key(unit, user);
+    await this.exhaustSavingTask();
+    return this.transaction(
+      'readonly',
+      (store) => store.get(key) as IDBRequest<IUnitCacheData | undefined>,
+    );
+  }
+  async finishRecovery() {
+    if (!this.recovery?.recovering) return;
+    const key = this.key(this.unit, this.recovery.access.scope.accountId);
+    let staged: IUnitCacheData | null | undefined;
+    let sequence: number;
+    do {
+      await this.exhaustSavingTask();
+      sequence = this.sequence;
+      staged = await this.transaction(
+        'readonly',
+        (store) =>
+          store.get(`stage:${this.stageId}:${key}`) as IDBRequest<
+            IUnitCacheData | null | undefined
+          >,
+      );
+      // A write can arrive during the IndexedDB read. Drain its transaction and
+      // repeat the read rather than validating an earlier staged version.
+      await this.exhaustSavingTask();
+    } while (sequence !== this.sequence);
+    this.trace('ledger ready', { ...this.recovery.evidence(), staged });
+    this.recovery.verify(staged);
+    // The verified staged record equals the retained original; no activation
+    // write is needed for this experiment. Production still needs a journal.
+  }
+  private persist(key: string, record: IUnitCacheData | null) {
+    const stage = this.recovery?.recovering;
+    const target = stage ? `stage:${this.stageId}:${key}` : key;
+    if (stage && key === this.key(this.unit, this.recovery!.access.scope.accountId))
+      this.recovery!.writes++;
+    return this.enqueue(key, () =>
+      record || stage
+        ? this.transaction('readwrite', (store) => store.put(record, target))
+        : this.transaction('readwrite', (store) => store.delete(target)),
+    );
   }
   private key(unit: string, user?: string | null) {
     if (unit !== this.unit) throw new Error('Probe cache received a different unit.');
@@ -37,6 +94,7 @@ export class ProbeLocalCache implements ILocalCacheService {
       JSON.stringify({
         recoveryCacheCall: method,
         sequence: this.sequence,
+        staged: this.recovery?.recovering ?? false,
         serverConfirmation: window.__spinelRecoveryProbe?.serverConfirmation,
         data: structuredClone(data),
       }),
@@ -75,12 +133,24 @@ export class ProbeLocalCache implements ILocalCacheService {
   async loadOfflineData(unit: string, user?: string | null) {
     const key = this.key(unit, user);
     await this.exhaustSavingTask();
+    if (
+      this.recovery?.recovering &&
+      key === this.key(this.unit, this.recovery.access.scope.accountId)
+    ) {
+      const copy = this.recovery.read();
+      this.trace('load', copy);
+      return copy;
+    }
     const data = await this.transaction(
       'readonly',
       (store) => store.get(key) as IDBRequest<IUnitCacheData | undefined>,
     );
     const copy = data ? structuredClone(data) : null;
-    if (copy && new URLSearchParams(location.search).get('replay-identity') === '1') {
+    if (
+      copy &&
+      !this.recovery &&
+      new URLSearchParams(location.search).get('replay-identity') === '1'
+    ) {
       const userId = this.currentUser();
       if (!userId || copy.userId !== userId || copy.unitID !== this.unit)
         throw new Error('Recovered record is outside the synthetic probe scope.');
@@ -98,7 +168,7 @@ export class ProbeLocalCache implements ILocalCacheService {
     });
     this.trace('save', { enabled: this.enabled, record: copy });
     if (!this.enabled) return false;
-    await this.enqueue(key, () => this.transaction('readwrite', (store) => store.put(copy, key)));
+    await this.persist(key, copy);
     return true;
   }
   updateOfflineData(
@@ -120,14 +190,12 @@ export class ProbeLocalCache implements ILocalCacheService {
     this.trace('update', { enabled: this.enabled, record });
     if (!this.enabled) return;
     // Snapshot arguments synchronously; never retain SDK-owned arrays between tasks.
-    void this.enqueue(key, () =>
-      this.transaction('readwrite', (store) => store.put(record, key)),
-    ).catch(() => {});
+    void this.persist(key, record).catch(() => {});
   }
   async clearOfflineData(unit: string, user?: string | null) {
     const key = this.key(unit, user);
     this.trace('clear', key);
-    await this.enqueue(key, () => this.transaction('readwrite', (store) => store.delete(key)));
+    await this.persist(key, null);
   }
   async backupOfflineData(unit: string, reason: string, user?: string | null) {
     const key = this.key(unit, user);

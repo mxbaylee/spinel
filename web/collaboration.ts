@@ -1,3 +1,6 @@
+import { RecoveryCommands } from './offline/RecoveryCommands.ts';
+import { prepareRecoveryLedgerProbe } from './offline/RecoveryLedgerProbe.ts';
+import type { RecoveryLedgerProbe } from './offline/RecoveryLedgerProbe.ts';
 import { ProbeLocalCache } from './ProbeLocalCache.ts';
 import { prepareTransportProbe } from './offline/transportProbe.ts';
 import type { OfflineAccess } from './offline/OfflineAccess.ts';
@@ -36,7 +39,22 @@ import type { SaveState } from '../src/shared/autosave.ts';
 import type { ItemAccess } from '../src/shared/workspace.ts';
 
 export { ClientEnglish, UIEnglish };
-export function probeCommandOverride(unitId: string, access: ItemAccess): DependencyOverride {
+export function probeCommandOverride(
+  unitId: string,
+  access: ItemAccess,
+  recovery?: RecoveryLedgerProbe,
+): DependencyOverride {
+  if (recovery)
+    return [
+      [
+        ICommandService,
+        {
+          useFactory: (injector: Injector, log: ILogService, config: IConfigService) =>
+            new RecoveryCommands(injector, log, config, () => recovery.ledger),
+          deps: [Injector, ILogService, IConfigService],
+        },
+      ],
+    ];
   return import.meta.env.SPINEL_RECOVERY_PROBE &&
     location.origin === 'https://localhost:3103' &&
     access === 'owner' &&
@@ -93,6 +111,7 @@ export function collaborationPlugins(
   unitID: string,
   override?: DependencyOverride,
   boundary?: OfflineAccess,
+  recovery?: RecoveryLedgerProbe,
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
   const guest = guestItemId();
   const base = location.origin + (guest ? `/guest-api/${guest}` : '') + '/universer-api';
@@ -142,6 +161,7 @@ export function collaborationPlugins(
                         unitID,
                         () => users.getCurrentUser()?.userID ?? null,
                         () => revisions.getCurrentRevOfUnit(unitID),
+                        recovery,
                       ),
                     deps: [RevisionService, UserManagerService],
                   },
@@ -163,6 +183,7 @@ export async function prepareCollaboration(id: string) {
   return {
     ...(data as { unitId: string; access: ItemAccess; user: { id: string; name: string } }),
     boundary: await prepareTransportProbe(id),
+    recovery: await prepareRecoveryLedgerProbe(id),
   };
 }
 export function identifyCollaborator(univer: Univer, user: { id: string; name: string }) {
@@ -307,4 +328,12 @@ export function watchCollaboration(
       window.removeEventListener('online', reconnect);
     },
   };
+}
+
+/** Probe only: correlate two public SDK promises with accounted/staged recovery. */
+export async function finishRecoveryProbe(univer: Univer, unitId: string) {
+  const cache = univer.__getInjector().get(ILocalCacheService);
+  if (!(cache instanceof ProbeLocalCache) || !cache.recovery) return;
+  await univer.__getInjector().get(CollaborationController).readyForCollab(unitId);
+  await cache.finishRecovery();
 }

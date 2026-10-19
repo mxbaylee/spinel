@@ -194,3 +194,29 @@ state. The new Sheet transport probe stopped before loading because network was
 registered both by the core preset and the explicit plugin list; the Doc transport
 probe did not run. Configure the existing network registration with a final public
 preset instead. This repair still needs a fresh real-SDK browser pass.
+
+## Recovery completion experiment
+
+The next bounded fixture enables `recovery-ledger=1` alongside the existing
+loopback-only, build-time recovery flag. It uses `RecoveryCommands` to account
+for exact original entries for both document types. Diagnostic reads bypass the
+SDK loader; repeated SDK reads receive separate registered parameter objects.
+The editor container stays inert while the facade loader and public
+`CollaborationController.readyForCollab(unitId)` promise resolve.
+
+During that interval, public cache saves, updates and clears write separate
+IndexedDB staging keys. The original pending record remains unchanged. The probe
+drains observed transactions, reads the final staged record and repeats when a
+new cache invocation arrived during that read. It requires successful execution
+of every original entry and an actual complete cache callback equal to the
+original queue, including revision and awaiting identity. Absent, cleared or
+changed final queues fail the experiment. A late duplicate or access failure
+invalidates its evidence and quarantines subsequent writes. No staged result
+opens `OfflineAccess` remote approval.
+
+This is an experiment awaiting CI, not the production store or a documented SDK
+completion guarantee. A stable observed sequence cannot prove no future callback
+exists. Deferred-execution/write and complete local-adapter/transport-barrier
+experiments still have to establish that boundary before product integration.
+No protected collaboration-state fields, timer-based completion assumptions,
+content deduplication or synthetic acknowledgements are used.

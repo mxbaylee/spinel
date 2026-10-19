@@ -8,12 +8,16 @@ const textMutation = 'doc.mutation.rich-text-editing';
 
 // Integrity comparison only, never provenance matching. Reject unsupported
 // object types rather than silently normalizing mutation bytes through JSON.
-function unchanged(a: unknown, b: unknown, seen = new WeakMap<object, object>()): boolean {
+export function sameRecoveryValue(
+  a: unknown,
+  b: unknown,
+  seen = new WeakMap<object, object>(),
+): boolean {
   if (Object.is(a, b)) return true;
   if (!a || !b || typeof a !== 'object' || typeof b !== 'object') return false;
   if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) return false;
   if (a instanceof ArrayBuffer && b instanceof ArrayBuffer)
-    return unchanged(new Uint8Array(a), new Uint8Array(b), seen);
+    return sameRecoveryValue(new Uint8Array(a), new Uint8Array(b), seen);
   if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {
     const first = new Uint8Array(a.buffer, a.byteOffset, a.byteLength);
     const second = new Uint8Array(b.buffer, b.byteOffset, b.byteLength);
@@ -31,7 +35,11 @@ function unchanged(a: unknown, b: unknown, seen = new WeakMap<object, object>())
     keys.every(
       (key) =>
         Object.hasOwn(b, key) &&
-        unchanged((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key], seen),
+        sameRecoveryValue(
+          (a as Record<string, unknown>)[key],
+          (b as Record<string, unknown>)[key],
+          seen,
+        ),
     )
   );
 }
@@ -174,7 +182,7 @@ export class RecoveryLedger {
     }
     if (this.phase !== 'recovering' || entry.state !== 'waiting')
       return this.fail('An original pending entry was replayed more than once or too late.');
-    if (id !== entry.mutation.id || !unchanged(params, entry.mutation.params))
+    if (id !== entry.mutation.id || !sameRecoveryValue(params, entry.mutation.params))
       return this.fail('Registered replay parameters changed before execution.');
     entry.state = 'executing';
     const execution = id === textMutation ? { ...options, fromChangeset: true } : { ...options };
@@ -197,5 +205,12 @@ export class RecoveryLedger {
     if (this.phase !== 'recovering' || this.entries.some((entry) => entry.state !== 'done'))
       this.fail('Pending replay is incomplete; do not open editing or synchronization.');
     this.phase = 'complete';
+  }
+  accounting() {
+    return {
+      expected: this.entries.length,
+      applied: this.entries.filter((entry) => entry.state === 'done').length,
+      phase: this.phase,
+    };
   }
 }

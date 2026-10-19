@@ -49,6 +49,7 @@ import '@univerjs/preset-docs-core/lib/index.css';
 import {
   collaborationPlugins,
   preparedNetworkPreset,
+  finishRecoveryProbe,
   probeCommandOverride,
   prepareCollaboration,
   identifyCollaborator,
@@ -86,6 +87,7 @@ export function DocEditor({
     const loading = new AbortController();
     let stopPresence: (() => void) | undefined;
     let stopProbe: (() => void) | undefined;
+    let stopRecovery: (() => void) | undefined;
     setPeople([]);
     setPresenceUnavailable(false);
     let uploads = 0;
@@ -108,7 +110,14 @@ export function DocEditor({
     };
     void (async () => {
       const data = await prepareCollaboration(id);
-      if (disposed) return;
+      if (disposed) {
+        data.recovery?.access.dispose();
+        data.boundary?.dispose();
+        return;
+      }
+      stopRecovery = () => data.recovery?.access.dispose();
+      const recoveryContainer = container.current;
+      if (recoveryContainer) recoveryContainer.inert = Boolean(data.recovery);
       let drawingReady!: () => void;
       const drawingsRendered = new Promise<void>((resolve) => {
         drawingReady = resolve;
@@ -213,7 +222,7 @@ export function DocEditor({
         collaboration: true,
         override: [
           [IImageIoService, { useClass: StoredImages }],
-          ...probeCommandOverride(data.unitId, data.access),
+          ...probeCommandOverride(data.unitId, data.access, data.recovery),
         ],
         plugins: [
           [
@@ -232,6 +241,7 @@ export function DocEditor({
             data.unitId,
             [[IImageIoService, { useClass: StoredImages }]],
             data.boundary,
+            data.recovery,
           ),
         ],
         presets: [
@@ -274,6 +284,10 @@ export function DocEditor({
       }
       const document = await univerAPI.getCollaboration().loadDocAsync(data.unitId);
       if (!document) throw new Error('Could not load this document.');
+      if (disposed) return;
+      await finishRecoveryProbe(univer, data.unitId);
+      if (disposed) return;
+      if (data.recovery && recoveryContainer) recoveryContainer.inert = false;
       await editorReady(univerAPI);
       // A document-type plugin can initialize after the global Rendered stage.
       // Do not advertise readiness until our drawing commands are installed too.
@@ -312,6 +326,7 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
+      stopRecovery?.();
       loading.abort();
       stopProbe?.();
       stopPresence?.();

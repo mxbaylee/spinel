@@ -37,7 +37,9 @@ import enUS from '@univerjs/preset-sheets-core/locales/en-US';
 import '@univerjs/preset-sheets-core/lib/index.css';
 import {
   collaborationPlugins,
+  probeCommandOverride,
   preparedNetworkPreset,
+  finishRecoveryProbe,
   prepareCollaboration,
   identifyCollaborator,
   watchCollaboration,
@@ -73,6 +75,7 @@ export function SheetEditor({
     let disposed = false;
     let stopPresence: (() => void) | undefined;
     let stopProbe: (() => void) | undefined;
+    let stopRecovery: (() => void) | undefined;
     let stopTransportProbe: (() => void) | undefined;
     setPeople([]);
     setPresenceUnavailable(false);
@@ -93,7 +96,14 @@ export function SheetEditor({
     };
     void (async () => {
       const data = await prepareCollaboration(id);
-      if (disposed) return;
+      if (disposed) {
+        data.recovery?.access.dispose();
+        data.boundary?.dispose();
+        return;
+      }
+      stopRecovery = () => data.recovery?.access.dispose();
+      const recoveryContainer = container.current;
+      if (recoveryContainer) recoveryContainer.inert = Boolean(data.recovery);
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
         darkMode: getTheme() === 'dark',
@@ -108,8 +118,16 @@ export function SheetEditor({
           ),
         },
         collaboration: true,
+        override: data.recovery
+          ? probeCommandOverride(data.unitId, data.access, data.recovery)
+          : [],
         plugins: [
-          ...collaborationPlugins(data.unitId, [[...sheetImageOverride]], data.boundary),
+          ...collaborationPlugins(
+            data.unitId,
+            [[...sheetImageOverride]],
+            data.boundary,
+            data.recovery,
+          ),
           mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
         ],
         presets: [
@@ -137,6 +155,10 @@ export function SheetEditor({
       }
       const workbook = await univerAPI.getCollaboration().loadSheetAsync(data.unitId);
       if (!workbook) throw new Error('Could not load this spreadsheet.');
+      if (disposed) return;
+      await finishRecoveryProbe(univer, data.unitId);
+      if (disposed) return;
+      if (data.recovery && recoveryContainer) recoveryContainer.inert = false;
       await editorReady(univerAPI);
       if (disposed) return;
       const interceptor = univer
@@ -190,6 +212,7 @@ export function SheetEditor({
         univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
       });
       disposeEditor = () => {
+        stopTransportProbe?.();
         stopTheme();
         interceptor.dispose();
         stopEditingTheme();
@@ -255,6 +278,7 @@ export function SheetEditor({
     });
     return () => {
       disposed = true;
+      stopRecovery?.();
       stopProbe?.();
       stopPresence?.();
       save?.dispose();
