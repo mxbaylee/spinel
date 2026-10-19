@@ -22,6 +22,12 @@ generic offline page with a Try again button. It contains no document title,
 content, account information or share token. Retry reloads the original address
 after the connection returns; the server checks access again.
 
+The requested SPN-039 follow-up will add explicitly selected offline documents
+for signed-in accounts. It has its own durability and device acceptance contract;
+this installation slice does not implement or claim that behavior. The earlier
+global no-offline-feature policy is superseded for that follow-up when implemented,
+while guests retain the generic fallback ([decision #83](https://github.com/mxbaylee/spinel/issues/83)).
+
 An editor already open when connectivity drops retains its existing unsaved-edit
 warning. Keep that tab open until changes are saved. Installing Spinel does not
 make pending edits durable on the phone or make it safe to close an unsaved tab.
