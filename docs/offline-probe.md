@@ -38,7 +38,7 @@ saves a screenshot. There are no retries. A failed stage is integration evidence
 not grounds to close the ticket. The initial text-only probe must be extended to
 existing images, concurrent peers, lost acknowledgements and the remaining
 storage/access lifecycle. Actual Android and iPhone installed-app evidence is
-still required. No device/offline result has yet been recorded.
+still required. No actual-device acceptance result has yet been recorded.
 
 ## Initial fixture diagnosis
 
@@ -79,3 +79,16 @@ to the foreground, and records stage/stack/focus diagnostics without weakening
 the fresh clipboard or exact content assertions. The shared-items read is now
 part of the same single-account fixture allowlist. This evidence demonstrates
 rendered retained values, not completion of the offline contract.
+
+Run 39199924068 (6a1c809) completed the Sheet probe: both offline browser
+restarts, the second edit, reconnect, reload and independent server agreement
+passed. Its diagnostics, cache misses and blocked requests were empty. This is
+a text-only fixture result, not the full offline feature or device acceptance.
+The Doc probe stopped before going offline: after its initial reload the page
+was blank with zero words, and copying did not replace the sentinel. Its saved
+status could still describe the pre-input state when the reload began. The
+probe now waits for editor readiness before input and for exact independent
+server content before the baseline and reconnect reloads. It still requires
+fresh exact copies after every restart; no assertion has been removed. The
+54 development/production cases passed without retries; the later PWA case
+did not run because of the first-failure limit.

@@ -205,7 +205,19 @@ for (const kind of ['sheet', 'doc'] as const) {
       await context?.close();
       context = undefined;
     }
+    async function ready() {
+      await page.bringToFront();
+      if (kind === 'sheet') {
+        // Spinel adds this label only after the async loader finishes replay.
+        await expect(editor().getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
+      } else {
+        await expect(
+          editor().getByText('Click the page to write. Type / for commands.'),
+        ).toBeVisible();
+      }
+    }
     async function enter(value: string, cell = 'A1') {
+      await ready();
       if (kind === 'sheet') {
         const address = editor().getByRole('textbox').nth(2);
         await address.fill(cell);
@@ -221,16 +233,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       }
     }
     async function copyContent() {
-      await page.bringToFront();
-      if (kind === 'sheet') {
-        // The grid exists before the async loader finishes replaying its cache.
-        // Spinel adds this public accessibility label only after editorReady.
-        await expect(editor().getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
-      } else {
-        await expect(
-          editor().getByText('Click the page to write. Type / for commands.'),
-        ).toBeVisible();
-      }
+      await ready();
       const sentinel = `clipboard-not-copied-${crypto.randomUUID()}`;
       await page.evaluate((value) => navigator.clipboard.writeText(value), sentinel);
       if (kind === 'sheet') {
@@ -280,6 +283,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       await page.goto(`${baseURL}/?item=${item.id}`);
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await enter('Baseline');
+      // Saved can still describe the state before async input was dispatched.
+      // Establish actual server content before destroying this first editor.
+      await expect.poll(serverContent, { timeout: 30_000 }).toBe('Baseline');
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await page.reload();
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
@@ -330,6 +336,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       stage = 'reconnect and persist';
       offline = false;
       await network.setOffline(false);
+      await expect.poll(serverContent, { timeout: 30_000 }).toBe(finalOffline);
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await page.reload();
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
