@@ -65,9 +65,19 @@ test('two authenticated editors receive each other’s sheet edits without reloa
     };
     const copySelected = async (target: typeof page) => {
       // A fresh sentinel prevents an asynchronous copy from returning old text.
-      await target.evaluate(() => navigator.clipboard.writeText('not-copied'));
+      await target.bringToFront();
+      const sentinel = `not-copied-${crypto.randomUUID()}`;
+      await target.evaluate((value) => navigator.clipboard.writeText(value), sentinel);
       // Desktop Chrome fixture advertises Windows, even on a macOS test host.
       await target.keyboard.press('Control+c');
+      // Copy writes asynchronously; do not overwrite its in-flight result by
+      // starting another outer poll. This wait remains inside the latency timer.
+      await expect
+        .poll(() => target.evaluate(() => navigator.clipboard.readText()), {
+          timeout: 5000,
+          intervals: [10],
+        })
+        .not.toBe(sentinel);
       return (await target.evaluate(() => navigator.clipboard.readText())).trim();
     };
     const copyCell = async (target: typeof page, cell: string) => {
