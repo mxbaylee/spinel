@@ -47,6 +47,10 @@ test('development watch mode stays running without a config-bundle restart loop'
       });
     });
     expect((await fetch(url)).status).toBe(200);
+    // Pages are served before Vite, which would otherwise resolve /setup to web/setup.ts.
+    const setup = await fetch(`${url}/setup`);
+    expect(setup.headers.get('content-type')).toMatch(/^text\/html/);
+    expect(await setup.text()).toContain('<div id="root">');
     // Vite's default bundled config is deleted after import, which made Node's
     // watcher restart repeatedly. Observe beyond several former restart cycles.
     await delay(2500);
