@@ -66,3 +66,16 @@ probe now checks the exported success value and the returned snapshot unit ID.
 This was a harness assertion defect, not evidence of an offline SDK failure.
 No cold restart result was obtained from that run. Development and production
 passed all 54 existing browser cases; the remaining HTTPS cases did not run.
+
+Run 39198764871 (2d520b9) reached the second cold offline browser launch. The
+first cold recovery and second offline edit passed exact copy checks. The
+second-launch screenshot shows both expected cell values, but copying left the
+fresh clipboard sentinel unchanged, so reconnect/server agreement did not run.
+An injector error was recorded without a stage; it cannot yet be attributed to
+copying, loading or teardown. There were no missing cached reads, although the
+fixture had omitted the shared-items catalog read. The next probe explicitly
+waits for Spinel's post-loader accessibility/readiness markers, brings the page
+to the foreground, and records stage/stack/focus diagnostics without weakening
+the fresh clipboard or exact content assertions. The shared-items read is now
+part of the same single-account fixture allowlist. This evidence demonstrates
+rendered retained values, not completion of the offline contract.

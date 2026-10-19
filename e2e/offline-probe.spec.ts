@@ -118,6 +118,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           '/api/auth/session',
           '/api/items',
           '/api/items/pins',
+          '/api/items/shared',
           `/api/items/${item.id}`,
           `/api/items/${item.id}/history`,
         ].includes(url.pathname);
@@ -188,7 +189,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       if (offline) await network.setOffline(true);
       page = context.pages()[0] ?? (await context.newPage());
       page.on('pageerror', (error) => {
-        diagnostics.add(safeMessage(error.message));
+        diagnostics.add(
+          `${stage}${stopping ? ' (closing)' : ''}: ${safeMessage(error.message)}\n${(error.stack ?? '').split('\n').slice(1, 6).map(safeMessage).join('\n')}`,
+        );
       });
       page.on('websocket', (socket) => {
         socket.on('socketerror', (error) => {
@@ -218,6 +221,16 @@ for (const kind of ['sheet', 'doc'] as const) {
       }
     }
     async function copyContent() {
+      await page.bringToFront();
+      if (kind === 'sheet') {
+        // The grid exists before the async loader finishes replaying its cache.
+        // Spinel adds this public accessibility label only after editorReady.
+        await expect(editor().getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
+      } else {
+        await expect(
+          editor().getByText('Click the page to write. Type / for commands.'),
+        ).toBeVisible();
+      }
       const sentinel = `clipboard-not-copied-${crypto.randomUUID()}`;
       await page.evaluate((value) => navigator.clipboard.writeText(value), sentinel);
       if (kind === 'sheet') {
@@ -231,9 +244,20 @@ for (const kind of ['sheet', 'doc'] as const) {
         await page.keyboard.press('Control+a');
       }
       await page.keyboard.press('Control+c');
-      await expect
-        .poll(() => page.evaluate(() => navigator.clipboard.readText()))
-        .not.toBe(sentinel);
+      try {
+        await expect
+          .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+          .not.toBe(sentinel);
+      } catch (error) {
+        const focus = await page.evaluate(() => ({
+          documentFocused: document.hasFocus(),
+          tag: document.activeElement?.tagName,
+          role: document.activeElement?.getAttribute('role'),
+          editable: document.activeElement?.getAttribute('contenteditable'),
+        }));
+        diagnostics.add(`${stage}: copy did not replace sentinel; focus=${JSON.stringify(focus)}`);
+        throw error;
+      }
       return (await page.evaluate(() => navigator.clipboard.readText()))
         .replace(/\r\n/g, '\n')
         .trimEnd();
