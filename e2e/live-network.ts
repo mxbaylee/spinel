@@ -2,7 +2,11 @@ import type { BrowserContext, WebSocketRoute } from '@playwright/test';
 
 // Chromium's HTTP offline switch alone can leave an established WebSocket alive.
 // Drop both sides explicitly so reconnect tests exercise real offline edits.
-export async function interruptibleNetwork(context: BrowserContext) {
+export async function interruptibleNetwork(
+  context: BrowserContext,
+  onAcknowledgementLost?: () => void,
+  onServerMessage?: (message: string | Buffer) => void | Promise<void>,
+) {
   const sockets = new Set<{ client: WebSocketRoute; server: WebSocketRoute }>();
   let offline = false;
   let loseNextCommit = false;
@@ -30,6 +34,7 @@ export async function interruptibleNetwork(context: BrowserContext) {
       suppressCommittedFrames = false;
       return route.fulfill({ response });
     }
+    onAcknowledgementLost?.();
     await setOffline(true);
     await route.abort('failed');
     await response.dispose();
@@ -43,13 +48,16 @@ export async function interruptibleNetwork(context: BrowserContext) {
     const server = client.connectToServer();
     const socket = { client, server };
     sockets.add(socket);
-    server.onMessage((message) => {
+    server.onMessage(async (message) => {
       // Drop the committed response/broadcast before the client sees it.
       if (suppressCommittedFrames && String(message).includes('changeset')) {
         void client.close();
         void server.close();
         sockets.delete(socket);
-      } else client.send(message);
+      } else {
+        if (onServerMessage) await onServerMessage(message);
+        client.send(message);
+      }
     });
     client.onClose((code, reason) => {
       sockets.delete(socket);

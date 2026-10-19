@@ -6,6 +6,7 @@ import type { IUnitCacheData } from '@univerjs-pro/collaboration-client';
 
 type RecoveryProbe = {
   hostCache: boolean;
+  serverConfirmation?: { sid: string; reqId: number };
   beforeLoad: IUnitCacheData | null | undefined;
   read: () => Promise<IUnitCacheData | null | undefined>;
 };

@@ -4,6 +4,8 @@
 import { chromium, devices, expect, request as apiRequest, test } from '@playwright/test';
 import sharp from 'sharp';
 import { ErrorCode } from '@univerjs/protocol';
+import type { IChangeset, ICollaMsg } from '@univerjs/protocol';
+import { parseChangesetToProtocol } from '@univerjs-pro/collaboration';
 import type { IDocumentData } from '@univerjs/core';
 import type { BrowserContext, Page } from '@playwright/test';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -78,6 +80,10 @@ for (const kind of ['sheet', 'doc'] as const) {
     let network!: Awaited<ReturnType<typeof interruptibleNetwork>>;
     let page!: Page;
     let stage = 'initializing';
+    let uncertainProof: IChangeset | undefined;
+    let confirmation: IChangeset | undefined;
+    const resumedRequests: IChangeset[] = [];
+    const prematureClears: string[] = [];
     const editorName = kind === 'sheet' ? 'Sheet document' : 'Doc document';
     const editor = () => page.getByRole('region', { name: editorName, exact: true });
     const status = () => editor().getByRole('status', { name: 'Save status' });
@@ -106,7 +112,37 @@ for (const kind of ['sheet', 'doc'] as const) {
         if (!offline && !stopping)
           diagnostics.add(`Failed ${request.method()} ${safePath(request.url())}`);
       });
-      network = await interruptibleNetwork(context);
+      context.on('request', (request) => {
+        if (uncertainProof && request.url().endsWith('/new_changes'))
+          resumedRequests.push(request.postDataJSON().changeset as IChangeset);
+      });
+      network = await interruptibleNetwork(
+        context,
+        () => {
+          offline = true;
+        },
+        async (message) => {
+          if (!uncertainProof) return;
+          const frame = JSON.parse(String(message)) as { collaMsg?: ICollaMsg };
+          const cs = frame.collaMsg?.csAckEvent?.cs ?? frame.collaMsg?.newCsEvent?.cs;
+          if (
+            cs?.unitID === uncertainProof.unitID &&
+            cs.sid === uncertainProof.sid &&
+            cs.reqId === uncertainProof.reqId
+          ) {
+            // Stamp in the browser before forwarding this real server frame;
+            // console delivery order cannot establish cache-call ordering.
+            await page.evaluate(
+              ({ sid, reqId }) => {
+                if (!window.__spinelRecoveryProbe) throw new Error('Recovery probe unavailable.');
+                window.__spinelRecoveryProbe.serverConfirmation = { sid, reqId };
+              },
+              { sid: uncertainProof.sid!, reqId: uncertainProof.reqId! },
+            );
+            confirmation = cs;
+          }
+        },
+      );
       await context.route('**/*', async (route) => {
         const request = route.request();
         const url = new URL(request.url());
@@ -209,6 +245,16 @@ for (const kind of ['sheet', 'doc'] as const) {
           const call = JSON.parse(message.text());
           cacheCalls.push(call.recoveryCacheCall);
           if (call.recoveryCacheCall === 'storage failure') cacheFailures.push(String(call.data));
+          if (
+            uncertainProof &&
+            (call.serverConfirmation?.sid !== uncertainProof.sid ||
+              call.serverConfirmation?.reqId !== uncertainProof.reqId) &&
+            (call.recoveryCacheCall === 'clear' ||
+              (['update', 'save'].includes(call.recoveryCacheCall) &&
+                !call.data.record.awaitingChangeset &&
+                call.data.record.mutations.length === 0))
+          )
+            prematureClears.push(call.recoveryCacheCall);
           console.log(JSON.stringify({ probe: kind, cacheCall: call }));
         }
       });
@@ -259,7 +305,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         ).toBeVisible();
       }
     }
-    async function enter(value: string, cell = 'A1') {
+    async function enter(value: string, cell = 'A1', singleInput = false) {
       await ready();
       if (kind === 'sheet') {
         const address = editor().getByRole('textbox').nth(2);
@@ -272,7 +318,8 @@ for (const kind of ['sheet', 'doc'] as const) {
           .locator('.univer-container')
           .click({ position: { x: 130, y: 200 } });
         await page.keyboard.press('Control+Home');
-        await page.keyboard.type(value);
+        if (singleInput) await page.keyboard.insertText(value);
+        else await page.keyboard.type(value);
       }
     }
     async function copyContent() {
@@ -391,22 +438,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       const cells = snapshot.sheets[snapshot.sheetOrder[0]].cellData;
       return [cells?.[0]?.[0]?.v ?? '', cells?.[1]?.[0]?.v ?? ''].join('\n').trimEnd();
     }
-    try {
-      await launch();
-      await context!.addCookies([cookie]);
-      stage = 'prepare online revision and responses';
-      await page.goto(`${baseURL}/?item=${item.id}${itemQuerySuffix}`);
-      await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
-      await enter('Baseline');
-      // Saved can still describe the state before async input was dispatched.
-      // Establish actual server content before destroying this first editor.
-      await expect.poll(serverContent, { timeout: 30_000 }).toBe('Baseline');
-      await prepareImage();
-      await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
-      await page.reload();
-      await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
-      await expect.poll(copyContent).toBe('Baseline');
-      await imageVisible();
+    async function prepareExactBaseline() {
       // The public loader reopens pending work at its cached revision, rather
       // than always requesting latest (rev/0). Prepare that exact baseline too.
       const baselineResponse = await server.get(`/api/items/${item.id}/${kind}`);
@@ -426,6 +458,25 @@ for (const kind of ['sheet', 'doc'] as const) {
       // The public protocol represents success as ErrorCode.OK (1), not zero.
       expect(preparedBaseline.code ?? ErrorCode.OK).toBe(ErrorCode.OK);
       expect(preparedBaseline.unitId).toBe(unitId);
+      return baseline.revision as number;
+    }
+    try {
+      await launch();
+      await context!.addCookies([cookie]);
+      stage = 'prepare online revision and responses';
+      await page.goto(`${baseURL}/?item=${item.id}${itemQuerySuffix}`);
+      await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
+      await enter('Baseline');
+      // Saved can still describe the state before async input was dispatched.
+      // Establish actual server content before destroying this first editor.
+      await expect.poll(serverContent, { timeout: 30_000 }).toBe('Baseline');
+      await prepareImage();
+      await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
+      await page.reload();
+      await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
+      await expect.poll(copyContent).toBe('Baseline');
+      await imageVisible();
+      await prepareExactBaseline();
       stage = 'commit an edit without HTTP or WebSocket';
       offline = true;
       await network.setOffline(true);
@@ -483,6 +534,89 @@ for (const kind of ['sheet', 'doc'] as const) {
           source: imageSource,
           docTransform: { size: imageBaseline.drawings![drawingId].docTransform.size },
         });
+      }
+      if (kind === 'doc') {
+        stage = 'lose acknowledgement after the server commits';
+        const baseRevision = await prepareExactBaseline();
+        network.loseAcknowledgement();
+        await enter('Lost-ack', 'A1', true);
+        await expect.poll(() => network.acknowledgementLost()).toBe(true);
+        expect(offline).toBe(true);
+        const expectedCopy = `Lost-ack${finalOffline}`;
+        const expectedServer = `Lost-ack${finalServerContent()}`;
+        await expect.poll(serverContent).toBe(expectedServer);
+        const committedResponse = await server.get(`/api/items/${item.id}/${kind}`);
+        expect(committedResponse.ok()).toBe(true);
+        const committedRevision = (await committedResponse.json()).revision;
+        expect(committedRevision).toBeGreaterThan(baseRevision);
+        const pending = () => page.evaluate(async () => window.__spinelRecoveryProbe?.read());
+        await expect.poll(async () => (await pending())?.awaitingChangeset != null).toBe(true);
+        const uncertain = (await pending())!;
+        expect(uncertain.rev).toBe(baseRevision);
+        expect(uncertain.awaitingChangeset?.sid).toBeTruthy();
+        expect(Number.isSafeInteger(uncertain.awaitingChangeset?.reqId)).toBe(true);
+        expect(uncertain.mutations).toEqual([]);
+        uncertainProof = parseChangesetToProtocol(uncertain.awaitingChangeset!);
+        await recordRecovery('lost acknowledgement persisted');
+        stage = 'cold restart with an uncertain committed edit';
+        await close();
+        await launch();
+        await page.goto(`${baseURL}/?item=${item.id}${itemQuerySuffix}`);
+        expect(await page.evaluate(() => navigator.onLine)).toBe(false);
+        await ready();
+        const before = await page.evaluate(() => window.__spinelRecoveryProbe?.beforeLoad);
+        expect(before?.awaitingChangeset).toEqual(uncertain.awaitingChangeset);
+        await expect.poll(copyContent).toBe(expectedCopy);
+        await imageVisible();
+        stage = 'reconnect the original uncertain operation';
+        expect((await pending())?.awaitingChangeset).toEqual(uncertain.awaitingChangeset);
+        offline = false;
+        await network.setOffline(false);
+        // A matching real server frame must arrive before pending state clears.
+        // Correct server content alone would also pass if the client lost its retry.
+        await expect.poll(() => confirmation, { timeout: 30_000 }).toBeTruthy();
+        expect(confirmation).toMatchObject({
+          unitID: uncertainProof.unitID,
+          sid: uncertainProof.sid,
+          reqId: uncertainProof.reqId,
+          baseRev: uncertainProof.baseRev,
+          revision: committedRevision,
+        });
+        const verifyResumedRequests = () => {
+          const original = uncertainProof!;
+          for (const request of resumedRequests) {
+            expect(request).toMatchObject({
+              unitID: original.unitID,
+              sid: original.sid,
+              reqId: original.reqId,
+              baseRev: original.baseRev,
+            });
+            expect(request.mutations).toEqual(original.mutations);
+          }
+        };
+        verifyResumedRequests();
+        await expect
+          .poll(async () => {
+            const record = await pending();
+            return record == null || (!record.awaitingChangeset && record.mutations.length === 0);
+          })
+          .toBe(true);
+        expect(prematureClears).toEqual([]);
+        await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
+        await expect.poll(serverContent).toBe(expectedServer);
+        const confirmedResponse = await server.get(`/api/items/${item.id}/${kind}`);
+        expect(confirmedResponse.ok()).toBe(true);
+        expect((await confirmedResponse.json()).revision).toBe(committedRevision);
+        await page.reload();
+        await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
+        await expect.poll(copyContent).toBe(expectedCopy);
+        await imageVisible();
+        expect(await serverContent()).toBe(expectedServer);
+        const reloadedResponse = await server.get(`/api/items/${item.id}/${kind}`);
+        expect(reloadedResponse.ok()).toBe(true);
+        expect((await reloadedResponse.json()).revision).toBe(committedRevision);
+        verifyResumedRequests();
+        expect(prematureClears).toEqual([]);
       }
       stage = 'completed isolated probe; full SPN-039 acceptance still outstanding';
     } finally {

@@ -36,6 +36,7 @@ export class ProbeLocalCache implements ILocalCacheService {
       JSON.stringify({
         recoveryCacheCall: method,
         sequence: this.sequence,
+        serverConfirmation: window.__spinelRecoveryProbe?.serverConfirmation,
         data: structuredClone(data),
       }),
     );
