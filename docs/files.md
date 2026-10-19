@@ -20,7 +20,9 @@ cell and background images use the same item-scoped stored bytes as Doc images.
 Existing images render in live Sheets and isolated history previews; new Sheet
 image upload/paste insertion remains unavailable. Imports, saves and restores
 validate same-item image sources. Embedded cell Doc identities remain separate
-from workbook IDs. Viewers and link guests retain read-only drawing controls,
+from workbook IDs. The server accepts an image cell in each mutation that carries
+cell data (set values, move range, insert sheet); the browser flows for cut/paste
+and duplicating a sheet have no end-to-end test yet. Viewers and link guests retain read-only drawing controls,
 including images that finish loading after permissions are applied; revoking
 access prevents subsequent image reads.
 Decisions [#89](https://github.com/mxbaylee/spinel/issues/89) and

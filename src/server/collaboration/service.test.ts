@@ -1048,8 +1048,8 @@ test('Sheet image validation fences live mutations and preserved resources', asy
   await expect(f.collab.load(f.owner.id, f.sheet.id)).rejects.toThrow('Insert images');
 });
 
-test('moving and restoring an existing Sheet cell image preserves its identity and access without allowing foreign targets', async () => {
-  const f = await fixture();
+// A workbook whose first cell holds an image, imported the way a person would.
+async function cellImageWorkbook(f: Awaited<ReturnType<typeof fixture>>) {
   const sharp = (await import('sharp')).default;
   const bytes = await sharp({ create: { width: 3, height: 2, channels: 3, background: '#ff9900' } })
     .png()
@@ -1084,6 +1084,12 @@ test('moving and restoring an existing Sheet cell image preserves its identity a
   const before = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
   const preserved = before.sheets.first.cellData![0]![0];
   const source = (preserved!.p!.drawings!.picture as unknown as { source: string }).source;
+  return { bytes, cell, imported, preserved: preserved!, source };
+}
+
+test('moving and restoring an existing Sheet cell image preserves its identity and access without allowing foreign targets', async () => {
+  const f = await fixture();
+  const { bytes, cell, imported, preserved, source } = await cellImageWorkbook(f);
   const { HistoryStore } = await import('../history/store.ts');
   const history = new HistoryStore(f.workspace, f.collab);
   cleanup.push(() => history.close());
@@ -1172,4 +1178,78 @@ test('moving and restoring an existing Sheet cell image preserves its identity a
   ).toEqual(bytes);
   f.workspace.share(f.owner.id, imported.id, f.viewer.id, null);
   expect(() => f.docs.image(f.viewer.id, imported.id, source.split('/').at(-1)!)).toThrow();
+});
+
+test('cell images and plain cell rich text travel through every cell-data mutation', async () => {
+  const f = await fixture();
+  const { cell, imported, preserved } = await cellImageWorkbook(f);
+  const original = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
+  let revision = 1;
+  const submit = (id: string, data: unknown) =>
+    f.collab.service.submitChangeset(
+      {
+        changeset: {
+          ...f.edit(),
+          unitID: imported.id,
+          baseRev: revision,
+          reqId: revision,
+          mutations: [{ id, data: JSON.stringify(data) }],
+        },
+      },
+      { userID: f.owner.id, memberID: 'test-member' },
+    );
+  const commits = async (id: string, data: unknown) => {
+    await expect(submit(id, data)).resolves.toMatchObject({ status: 'committed' });
+    revision++;
+  };
+  const range = (row: number) => ({ startRow: row, endRow: row, startColumn: 0, endColumn: 0 });
+  // Cut/paste and drag-moving cells.
+  await commits('sheet.mutation.move-range', {
+    unitId: imported.id,
+    fromRange: range(0),
+    toRange: range(2),
+    from: { subUnitId: 'first', value: { 0: { 0: null } } },
+    to: { subUnitId: 'first', value: { 2: { 0: preserved } } },
+  });
+  // Duplicating a sheet, and undoing a sheet deletion.
+  await commits('sheet.mutation.insert-sheet', {
+    unitId: imported.id,
+    index: 1,
+    sheet: {
+      ...original.sheets.first,
+      id: 'copy',
+      name: 'Copy',
+      cellData: { 2: { 0: preserved } },
+    },
+  });
+  // Rich text without its own ID or drawings stays an ordinary cell edit.
+  const plain = { body: { dataStream: 'Plain\r\n' } };
+  await commits('sheet.mutation.set-range-values', {
+    unitId: imported.id,
+    subUnitId: 'first',
+    cellValue: { 3: { 0: { p: plain } } },
+  });
+  const loaded = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
+  for (const sheet of ['first', 'copy'])
+    expect(loaded.sheets[sheet].cellData![2]![0]!.p?.drawings?.picture).toMatchObject({
+      unitId: 'cell-doc',
+    });
+  expect(loaded.sheets.first.cellData![3]![0]!.p?.body?.dataStream).toBe('Plain\r\n');
+  const foreign = { ...cell.drawings.picture, unitId: f.sheet.id };
+  for (const p of [
+    { ...preserved.p, drawings: { picture: foreign } },
+    { ...plain, drawings: { picture: { ...foreign, unitId: 'cell-doc' } } },
+  ])
+    await expect(
+      submit('sheet.mutation.move-range', {
+        unitId: imported.id,
+        fromRange: range(2),
+        toRange: range(4),
+        from: { subUnitId: 'first', value: { 2: { 0: null } } },
+        to: { subUnitId: 'first', value: { 4: { 0: { p } } } },
+      }),
+    ).resolves.toMatchObject({
+      status: 'rejected',
+      error: { code: 'PERMISSION_DENIED', message: 'Cross-document changes are not allowed.' },
+    });
 });

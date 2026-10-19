@@ -4,7 +4,6 @@ import { CollaborationGenerations } from './generations.ts';
 import { auditDeniedEdit } from './audit.ts';
 import { realpathSync } from 'node:fs';
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
-import { SetRangeValuesMutation } from '@univerjs/sheets';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { UniverType } from '@univerjs/protocol';
 import { SQLiteDatabaseAdapter } from '@univerjs-pro/collaboration-database-sqlite';
@@ -30,33 +29,22 @@ import type { IChangeset } from '@univerjs/protocol';
 const runtimeLimits = { maxLoadedUnits: 8, idleTimeoutMs: 60_000 };
 
 function validateTargets(changeset: Readonly<IChangeset>) {
-  const walk = (
-    value: unknown,
-    path: string[],
-    mutation: string,
-    allowedUnit = changeset.unitID,
-  ) => {
+  const isIndex = (key: string) => /^\d+$/.test(key);
+  const walk = (value: unknown, path: string[], allowedUnit = changeset.unitID) => {
     if (path.length > 64) throw new CollabError('INVALID_REQUEST', 'Change is nested too deeply.');
     if (!value || typeof value !== 'object') return;
-    // Cell rich text is an embedded Doc payload, not a mutation target. Its own
-    // drawing IDs must remain local to that Doc; all outer targets stay fenced.
-    if (
-      mutation === SetRangeValuesMutation.id &&
-      path.length === 4 &&
-      path[0] === 'cellValue' &&
-      /^\d+$/.test(path[1]) &&
-      /^\d+$/.test(path[2]) &&
-      path[3] === 'p'
-    ) {
+    // Cell rich text (`<row>.<column>.p`) is an embedded Doc payload, not a mutation
+    // target, wherever cell data travels: set values, move ranges, insert or duplicate
+    // sheets, and their undo. Its drawing IDs must name that Doc and nothing else;
+    // a payload without its own ID, and all outer targets, stay fenced to this unit.
+    if (path.length >= 3 && path.at(-1) === 'p' && path.slice(-3, -1).every(isIndex)) {
       const id = (value as { id?: unknown }).id;
-      if (typeof id !== 'string' || !id)
-        throw new CollabError('INVALID_REQUEST', 'Invalid cell document.');
-      allowedUnit = id;
+      if (typeof id === 'string' && id) allowedUnit = id;
     }
     for (const [key, child] of Object.entries(value)) {
       if ((key === 'unitId' || key === 'unitID') && child !== allowedUnit)
         throw new CollabError('PERMISSION_DENIED', 'Cross-document changes are not allowed.');
-      walk(child, [...path, key], mutation, allowedUnit);
+      walk(child, [...path, key], allowedUnit);
     }
   };
   for (const mutation of changeset.mutations) {
@@ -71,7 +59,7 @@ function validateTargets(changeset: Readonly<IChangeset>) {
     } catch {
       throw new CollabError('INVALID_REQUEST', 'Invalid mutation data.');
     }
-    walk(data, [], mutation.id);
+    walk(data, []);
   }
 }
 
