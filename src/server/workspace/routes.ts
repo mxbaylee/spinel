@@ -182,6 +182,26 @@ export function workspaceRoutes(
       transfer.finish();
     }
   });
+  router.get('/:id/offline-bundle', admitTransfer, async (request, response) => {
+    const transfer = transfers.get(response)!;
+    transfer.start();
+    try {
+      if (!collaboration) throw new AuthError(503, 'Offline downloads are not available.');
+      const user = owner(request),
+        id = String(request.params.id);
+      const verify = () => {
+        if (owner(request) !== user || response.destroyed)
+          throw new AuthError(401, 'Sign in to continue.');
+      };
+      if (!['sheet', 'doc'].includes(store.get(user, id).kind))
+        throw new AuthError(400, 'Only Sheets and Docs can be downloaded.');
+      const bundle = await collaboration.offlineBundle(user, id, verify);
+      verify();
+      response.json(bundle);
+    } finally {
+      transfer.finish();
+    }
+  });
   router.use(express.json({ limit: '8kb', strict: true }));
   router.get('/:id/history', (request, response) => {
     if (!history) throw new AuthError(503, 'History is not available.');

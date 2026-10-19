@@ -11,7 +11,8 @@ offline screen. Configured test HTTPS is sufficient for development; public
 deployment and Slides are separate work.
 
 Implementation is split into reviewable dependencies: SPN-040 added
-Sheet-image support and SPN-041 owns the authorized download bundle.
+Sheet-image support and SPN-041 supplied the authorized download bundle described
+below.
 [Decision #91](https://github.com/mxbaylee/spinel/issues/91) preserves SPN-039 and
 every acceptance requirement below. A completed dependency does not mean offline
 launch, downloads or durable local editing are available.
@@ -57,6 +58,66 @@ can download permitted items; viewer downloads remain read-only. Metadata and
 selected documents refresh when connected without discarding pending local edits.
 Content search, offline new-item/image creation, folder/sharing administration and
 Slides are outside this first outcome. Existing embedded images are required.
+
+## Download bundle
+
+`GET /api/items/:id/offline-bundle` returns one `OfflineBundle`
+(`src/shared/offlineBundle.ts`) for a Sheet or Doc. It contains the live snapshot,
+its revision, generation (`unitId`, `revisionOffset`), the account and access it
+was issued for, `readOnly`, the pinned `@univerjs/core` version, and an image
+manifest. The manifest lists each image once by same-item source, SHA-256, MIME
+type and byte length. The device fetches those bytes from the existing image route.
+SPN-041, 2026-10-19.
+
+- The snapshot and revision come from one `CollaborationStore.load` read. The
+  device never replays server changesets, so draft #86's exact-revision replay
+  endpoint and changeset codec are not used. Owner, chat 2026-10-19; this
+  supersedes #88's replay-base scope.
+- Image sources pass the same validation as every load: a source that is not a
+  stored image of this item fails with 400, so cross-item and remote images are
+  never fetched. The bundle also checks each source's same-item prefix itself;
+  that guard is defence in depth, unreachable while load validation holds, and
+  not tested on its own. Stored bytes are rehashed, so a damaged image fails the
+  bundle with 500 instead of reaching a device as verified, and the server logs
+  only the item ID and image ID. Grooming, 2026-10-19.
+- The bundle prepares the document, checks the session, then reads. A restore
+  that is staging when the bundle starts, or still staging when the read
+  finishes, fails it with 409. After the read the session, access level and
+  generation are checked again. Any change fails the whole request with nothing
+  partial: 401 for a sign-out; 404 when access is gone, including a revoke while
+  the document is being prepared; 409 when access remains but its level or the
+  live generation changed, including when the collaboration service refuses a
+  read because a restore replaced the unit. A revoked account learns no more
+  than one that never had access, and a 409 tells a device that still has
+  access to retry. #91, 2026-10-19.
+- The route shares export's one-transfer admission (429 while another transfer
+  runs) and `no-store` caching, and returns 400 for anything but a Sheet or Doc.
+  Only signed-in, non-admin accounts with access can reach it: no account
+  session is 401 (link guests included) and an operator is 403. The store itself
+  refuses link-guest identities with 404, because a guest's access ends with the
+  link and an offline copy would outlive it. #91, 2026-10-19.
+- A viewer's bundle has `readOnly: true`, and the device must open it read-only.
+  A bundle alone does not mean downloaded, durable or synced; SPN-039 owns those
+  states. Grooming, 2026-10-19.
+
+Verified by `src/server/collaboration/offline-bundle.test.ts`:
+
+- Multi-sheet and Doc content. Every image location has its own bytes and is
+  checked by location: a Sheet's floating image (`SHEET_DRAWING_PLUGIN`), sheet
+  background, cell rich-text drawing and an image in a preserved resource; a
+  Doc's body, header and footer drawings.
+- A preserved opaque resource.
+- Restored generations.
+- Owner, editor and viewer success, with each image's bytes reproduced through
+  the route.
+- Rejection of anonymous, guest, operator, unrelated-account and folder requests,
+  and of link-guest identities in the store.
+- Sign-out, revoke, downgrade and restore during the read, both in the store and
+  over HTTP; a revoke while the document is being prepared; a restore still
+  staging when the read finishes; and a collaboration-service refusal after a
+  restore versus after a revoke.
+- Damaged stored bytes, with the logged IDs, and foreign sources rejected by
+  load validation.
 
 ## How offline editing works
 
