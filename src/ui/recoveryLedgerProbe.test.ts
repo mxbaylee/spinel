@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import { RecoveryLedgerProbe } from '../../web/offline/RecoveryLedgerProbe.ts';
 import type { IUnitCacheData } from '@univerjs-pro/collaboration-client';
 
@@ -43,6 +43,7 @@ test('successful accounting and identical observed cache payload prove only the 
   probe.writes++;
   probe.verify(structuredClone(record));
   expect(probe.evidence()).toEqual({
+    diagnostics: { failed: false, truncated: false, unmatchedInputs: 0, unmatchedOutputs: 0 },
     status: 'verified',
     held: undefined,
     facadeLoaded: false,
@@ -120,3 +121,31 @@ test.each(['read', 'write'] as const)(
     expect(probe.evidence().held).toBeUndefined();
   },
 );
+
+test('diagnostic projection failures stay passive and are explicitly invalid evidence', () => {
+  const { probe } = fixture();
+  const params = Object.defineProperty({}, 'unitId', {
+    enumerable: true,
+    get() {
+      throw new Error('projection');
+    },
+  });
+  expect(() => probe.observeDispatch('async', 'fixture', params)).not.toThrow();
+  expect(probe.evidence().diagnostics.failed).toBe(true);
+  expect(probe.status).toBe('recovering');
+});
+test('bounded and unmatched pipeline observations cannot masquerade as complete diagnostics', () => {
+  const { probe } = fixture();
+  const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+  try {
+    probe.observeApply('output', []);
+    probe.observeApply('input', []);
+    expect(probe.evidence().diagnostics).toMatchObject({ unmatchedInputs: 1, unmatchedOutputs: 1 });
+    for (let i = 0; i < 151; i++) probe.observeDispatch('sync', 'fixture');
+    expect(probe.evidence().diagnostics.truncated).toBe(true);
+    expect(log.mock.calls.length).toBeLessThanOrEqual(150);
+    expect(probe.status).toBe('recovering');
+  } finally {
+    log.mockRestore();
+  }
+});

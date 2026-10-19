@@ -17,6 +17,9 @@ export class RecoveryLedgerProbe {
   private objects = new WeakMap<object, number>();
   private nextObject = 0;
   private traceCount = 0;
+  private diagnosticFailed = false;
+  private diagnosticTruncated = false;
+  private unmatchedOutputs = 0;
   private applySequence = 0;
   private applyStack: number[] = [];
   private describe(id: string, params?: object) {
@@ -28,12 +31,17 @@ export class RecoveryLedgerProbe {
       params,
     };
   }
-  private trace(event: string, value: unknown) {
-    if (!this.ledger || this.traceCount++ >= 150) return;
+  private trace(event: string, project: () => unknown) {
+    if (!this.ledger) return;
+    if (this.traceCount++ >= 150) {
+      this.diagnosticTruncated = true;
+      return;
+    }
     try {
-      console.log(JSON.stringify({ recoveryBoundary: event, value }));
+      console.log(JSON.stringify({ recoveryBoundary: event, value: project() }));
     } catch {
-      console.log(JSON.stringify({ recoveryBoundary: 'diagnostic serialization failed' }));
+      // Evidence failure must not alter the SDK operation being observed.
+      this.diagnosticFailed = true;
     }
   }
   observeDispatch(
@@ -42,7 +50,7 @@ export class RecoveryLedgerProbe {
     params?: object,
     options?: IExecutionOptions,
   ) {
-    this.trace('dispatch', {
+    this.trace('dispatch', () => ({
       mode,
       ...this.describe(id, params),
       options: {
@@ -51,14 +59,17 @@ export class RecoveryLedgerProbe {
         onlyLocal: options?.onlyLocal,
         syncOnly: options?.syncOnly,
       },
-    });
+    }));
   }
   observeApply(stage: 'input' | 'output', mutations: IMutationInfo[] | null | undefined | void) {
-    const call = stage === 'input' ? ++this.applySequence : this.applyStack.pop();
-    if (stage === 'input') this.applyStack.push(call!);
-    this.trace(`apply ${stage}`, {
-      call,
-      mutations: mutations?.map((mutation) => this.describe(mutation.id, mutation.params)),
+    this.trace(`apply ${stage}`, () => {
+      const call = stage === 'input' ? ++this.applySequence : this.applyStack.pop();
+      if (stage === 'input') this.applyStack.push(call!);
+      else if (call === undefined) this.unmatchedOutputs++;
+      return {
+        call,
+        mutations: mutations?.map((mutation) => this.describe(mutation.id, mutation.params)),
+      };
     });
   }
   private holdMode?: 'read' | 'write';
@@ -126,6 +137,12 @@ export class RecoveryLedgerProbe {
   }
   evidence() {
     return {
+      diagnostics: {
+        failed: this.diagnosticFailed,
+        truncated: this.diagnosticTruncated,
+        unmatchedInputs: this.applyStack.length,
+        unmatchedOutputs: this.unmatchedOutputs,
+      },
       status: this.status,
       reads: this.reads,
       writes: this.writes,

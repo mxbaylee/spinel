@@ -315,6 +315,12 @@ for (const kind of ['sheet', 'doc'] as const) {
       });
       expect(record).toMatchObject({ hostCache: true });
       expect(record.ledger).toBeDefined();
+      expect(record.ledger!.diagnostics).toEqual({
+        failed: false,
+        truncated: false,
+        unmatchedInputs: 0,
+        unmatchedOutputs: 0,
+      });
       expect(record.ledger!.status).not.toBe('failed');
       expect(cacheFailures).toEqual([]);
       // Diagnostic reads bypass SDK cache loading; these loads belong to the SDK.

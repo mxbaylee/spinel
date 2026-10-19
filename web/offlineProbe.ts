@@ -9,6 +9,12 @@ type RecoveryProbe = {
   hostCache: boolean;
   ledger: () =>
     | {
+        diagnostics: {
+          failed: boolean;
+          truncated: boolean;
+          unmatchedInputs: number;
+          unmatchedOutputs: number;
+        };
         status: string;
         reads: number;
         writes: number;
