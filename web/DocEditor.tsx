@@ -1,4 +1,5 @@
 import { observeOfflineRecovery } from './offlineProbe.ts';
+import { observeTransportProbe } from './offline/transportProbe.ts';
 import { guestItemId, documentPath } from './documentAccess.ts';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
@@ -226,7 +227,11 @@ export function DocEditor({
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
           UniverDocsPrintPlugin,
-          ...collaborationPlugins(data.unitId, [[IImageIoService, { useClass: StoredImages }]]),
+          ...collaborationPlugins(
+            data.unitId,
+            [[IImageIoService, { useClass: StoredImages }]],
+            data.boundary,
+          ),
         ],
         presets: [
           UniverDocsCorePreset({
@@ -252,7 +257,9 @@ export function DocEditor({
         await printDocument(univerAPI);
       };
       const stopTheme = bindEditorTheme(univer);
+      const stopTransportProbe = observeTransportProbe(univer, data.boundary);
       disposeEditor = () => {
+        stopTransportProbe();
         stopTheme();
         univer.dispose();
       };

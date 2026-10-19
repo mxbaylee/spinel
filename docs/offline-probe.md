@@ -166,3 +166,22 @@ sample was flaky (the failure screenshot still shows the unchanged image), and
 mobile expected a desktop-only Bold toolbar button. The test now waits for the
 exact original bounds after each Delete/drag attempt and keeps those image checks
 on mobile. Those revised tests also need CI; no new image acceptance pass is claimed.
+
+Run [39211791687](https://github.com/mxbaylee/spinel/actions/runs/39211791687)
+(09ac401) passed all 291 unit tests, all 30 development and 30 production browser
+cases without retries, and the expanded Sheet probe with three offline launches
+and existing images. The Doc probe failed at the newly added redo step: its
+Windows-style browser fixture used Ctrl+Shift+Z, while the public OSS UI binds
+redo to Ctrl+Y on that platform. The fixture now uses that binding. The expanded
+Doc run and subsequent PWA case still require fresh passing evidence.
+
+The next bounded transport probe uses `transport-probe=1`, the same compile flag
+and HTTPS loopback restriction. It installs the prepared access gate at the
+public HTTP implementation and collaboration socket-service extension points.
+It requires a real saved Sheet/Doc edit, account-bound requests, stale ticket
+rejection, connection closure and no further frames/requests after locking.
+These adapters do not yet provide downloads, local persistence or app startup.
+Pure contract tests cover an SDK hook bypass, overlapping attempts and a delayed
+ticket that ignores cancellation across a new access epoch; real SDK engagement
+is separately required from the browser probe. Server account binding supplements
+ordinary cookie, document and generation authorization and is never a credential.

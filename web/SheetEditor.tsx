@@ -1,4 +1,5 @@
 import { observeOfflineRecovery } from './offlineProbe.ts';
+import { observeTransportProbe } from './offline/transportProbe.ts';
 import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages, sheetImageOverride } from './sheetImages.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
@@ -71,6 +72,7 @@ export function SheetEditor({
     let disposed = false;
     let stopPresence: (() => void) | undefined;
     let stopProbe: (() => void) | undefined;
+    let stopTransportProbe: (() => void) | undefined;
     setPeople([]);
     setPresenceUnavailable(false);
     let editing = false;
@@ -106,7 +108,7 @@ export function SheetEditor({
         },
         collaboration: true,
         plugins: [
-          ...collaborationPlugins(data.unitId, [[...sheetImageOverride]]),
+          ...collaborationPlugins(data.unitId, [[...sheetImageOverride]], data.boundary),
           mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
         ],
         presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
@@ -116,7 +118,11 @@ export function SheetEditor({
       };
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
-      disposeEditor = () => univer.dispose();
+      disposeEditor = () => {
+        stopTransportProbe?.();
+        univer.dispose();
+      };
+      stopTransportProbe = observeTransportProbe(univer, data.boundary);
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       stopProbe = await observeOfflineRecovery(univer, data.unitId, data.user.id);

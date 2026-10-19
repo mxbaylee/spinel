@@ -565,7 +565,9 @@ for (const kind of ['sheet', 'doc'] as const) {
             // marked as replay. Net-zero undo/redo alone does not prove sync.
             await page.keyboard.press('Control+z');
             await expect.poll(copyContent).toBe(firstOffline);
-            await page.keyboard.press('Control+Shift+z');
+            // Desktop Chrome uses the SDK's Windows/Linux Ctrl+Y binding;
+            // Ctrl+Shift+Z is the separate macOS binding.
+            await page.keyboard.press('Control+y');
             await expect.poll(copyContent).toBe(finalOffline);
           }
           await new Promise((resolve) => setTimeout(resolve, 5000));

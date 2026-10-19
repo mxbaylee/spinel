@@ -122,6 +122,32 @@ test('protocol ingress authenticates independently, binds one-time tickets, and 
     }
     const snapshot = `${root}/universer-api/snapshot/2/unit/${item.id}/rev/0`;
     expect((await fetch(snapshot, { headers: { Cookie: cookie } })).ok).toBe(true);
+    expect(
+      (await fetch(snapshot, { headers: { Cookie: cookie, 'X-Spinel-Account': owner.id } })).ok,
+    ).toBe(true);
+    const switched = await fetch(snapshot, {
+      headers: {
+        Cookie: `${COOKIE_NAME}=${auth.createSession(viewer.id).token}`,
+        'X-Spinel-Account': owner.id,
+      },
+    });
+    expect(switched.ok).toBe(false);
+    expect(await switched.text()).not.toContain('Budget');
+    const editor = auth.createUser('Editor');
+    workspace.share(owner.id, item.id, editor.id, 'editor');
+    const editorCookie = `${COOKIE_NAME}=${auth.createSession(editor.id).token}`;
+    expect((await fetch(snapshot, { headers: { Cookie: editorCookie } })).ok).toBe(true);
+    expect(
+      (await fetch(snapshot, { headers: { Cookie: editorCookie, 'X-Spinel-Account': owner.id } }))
+        .status,
+    ).toBe(401);
+    expect(
+      (
+        await fetch(snapshot, {
+          headers: { Cookie: cookie, 'X-Spinel-Account': `${owner.id}, ${owner.id}` },
+        })
+      ).status,
+    ).toBe(401);
     const foreign = `${COOKIE_NAME}=${auth.createSession(unrelated.id).token}`;
     const denied = await fetch(snapshot, { headers: { Cookie: foreign } });
     expect(await denied.text()).not.toContain('Budget');
@@ -134,10 +160,11 @@ test('protocol ingress authenticates independently, binds one-time tickets, and 
       suppliedOrigin = origin,
       credential = cookie,
       unitID = item.id,
+      expectedAccount?: string,
     ) =>
       new Promise<number>((resolve, reject) => {
         const req = request(
-          `${root}/universer-api/comb/connect?sessionTicket=${encodeURIComponent(value)}&unitID=${encodeURIComponent(unitID)}`,
+          `${root}/universer-api/comb/connect?sessionTicket=${encodeURIComponent(value)}&unitID=${encodeURIComponent(unitID)}${expectedAccount === undefined ? '' : `&spinelAccount=${encodeURIComponent(expectedAccount)}`}`,
           {
             headers: {
               Cookie: credential,
@@ -165,6 +192,7 @@ test('protocol ingress authenticates independently, binds one-time tickets, and 
     expect(await upgrade(opaque, origin, '')).toBe(403);
     expect(await upgrade(opaque, origin, foreign)).toBe(403);
     expect(await upgrade(opaque, origin, cookie, '')).toBe(403);
+    expect(await upgrade(opaque, origin, cookie, item.id, viewer.id)).toBe(403);
     const outsiderItem = workspace.create(unrelated.id, {
       kind: 'doc',
       name: 'Secret',

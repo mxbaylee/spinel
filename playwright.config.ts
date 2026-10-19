@@ -24,17 +24,17 @@ export default defineConfig({
   projects: [
     {
       name: 'development',
-      testIgnore: ['**/pwa.spec.ts', '**/offline-probe.spec.ts'],
+      testIgnore: ['**/pwa.spec.ts', '**/offline-probe.spec.ts', '**/offline-transport.spec.ts'],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
     },
     {
       name: 'production',
-      testIgnore: ['**/pwa.spec.ts', '**/offline-probe.spec.ts'],
+      testIgnore: ['**/pwa.spec.ts', '**/offline-probe.spec.ts', '**/offline-transport.spec.ts'],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' },
     },
     {
       name: 'mobile-https',
-      testMatch: ['**/pwa.spec.ts', '**/offline-probe.spec.ts'],
+      testMatch: ['**/pwa.spec.ts', '**/offline-probe.spec.ts', '**/offline-transport.spec.ts'],
       use: {
         ...devices['Pixel 7'],
         baseURL: 'https://localhost:3103',

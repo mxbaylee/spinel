@@ -1,5 +1,5 @@
 import { safeGuestRoomPresence } from './guestPresence.ts';
-import type { Server } from 'node:http';
+import type { IncomingMessage, Server } from 'node:http';
 import { CollabError } from '@univerjs-pro/collaboration-service';
 import { UniverCollabEndpoint } from '@univerjs-pro/collaboration-endpoint';
 import type { EndpointSession } from '@univerjs-pro/collaboration-endpoint';
@@ -32,6 +32,19 @@ export function attachCollaboration(
   const endpoint = new UniverCollabEndpoint(collab.service, { sessionTicketTtlMs: 30_000 });
   const live = new Map<string, LiveSession>();
   const denied = () => new CollabError('PERMISSION_DENIED', 'This document is not available.');
+  function boundAccount(request: IncomingMessage, userId: string) {
+    // A prepared offline editor cannot inherit another account's cookie, even
+    // when that account can edit the same item. This is a restriction, never a
+    // credential: normal session, document and generation checks still apply.
+    const header = request.headers['x-spinel-account'];
+    const query = new URL(request.url ?? '/', origin).searchParams.getAll('spinelAccount');
+    if (
+      query.length > 1 ||
+      (header !== undefined && header !== userId) ||
+      query.some((value) => value !== userId)
+    )
+      throw denied();
+  }
   function current(session: EndpointSession) {
     try {
       validateIdentity(workspace, session.userID, session.customData);
@@ -86,6 +99,7 @@ export function attachCollaboration(
         request.headers,
         protocolGuestItem(request.url, origin),
       );
+      boundAccount(request, identity.userId);
     } catch {
       response.writeHead(401).end('This document is not available.');
       return;
@@ -130,6 +144,7 @@ export function attachCollaboration(
         context.incomingMessage.headers,
         protocolGuestItem(context.incomingMessage.url, origin),
       );
+      boundAccount(context.incomingMessage, identity.userId);
       const unitID = documentScope(identity.userId, context.incomingMessage.url);
       const id = collab.itemForUnit(unitID),
         epoch = workspace.links.epoch(id);

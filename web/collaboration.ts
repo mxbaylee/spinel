@@ -1,4 +1,9 @@
 import { ProbeLocalCache } from './ProbeLocalCache.ts';
+import { prepareTransportProbe } from './offline/transportProbe.ts';
+import type { OfflineAccess } from './offline/OfflineAccess.ts';
+import { ScopedHTTP } from './offline/ScopedHTTP.ts';
+import { scopedSocketService } from './offline/ScopedSocketService.ts';
+import { UniverNetworkPlugin, IHTTPImplementation, XHRHTTPImplementation } from '@univerjs/network';
 import { ProbeReplayCommands } from './ProbeReplayCommands.ts';
 import { RevisionService } from '@univerjs-pro/collaboration';
 import { guestItemId, documentPath } from './documentAccess.ts';
@@ -62,6 +67,7 @@ export function probeCommandOverride(unitId: string, access: ItemAccess): Depend
 export function collaborationPlugins(
   unitID: string,
   override?: DependencyOverride,
+  boundary?: OfflineAccess,
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
   const guest = guestItemId();
   const base = location.origin + (guest ? `/guest-api/${guest}` : '') + '/universer-api';
@@ -74,6 +80,26 @@ export function collaborationPlugins(
     }
   }
   return [
+    ...(boundary
+      ? [
+          [
+            UniverNetworkPlugin,
+            {
+              forceUseNewInstance: true,
+              override: [
+                [
+                  IHTTPImplementation,
+                  {
+                    useFactory: (log: ILogService) =>
+                      new ScopedHTTP(boundary, new XHRHTTPImplementation(log)),
+                    deps: [ILogService],
+                  },
+                ],
+              ],
+            },
+          ] as NonNullable<Parameters<typeof createUniver>[0]['plugins']>[number],
+        ]
+      : []),
     UniverLicensePlugin,
     UniverCollaborationPlugin,
     [
@@ -83,7 +109,7 @@ export function collaborationPlugins(
           ...(override ?? []),
           [CollaborationSessionService, { useClass: CollaborationSessions }],
         ],
-        socketService: DocumentSocketService,
+        socketService: boundary ? scopedSocketService(boundary) : DocumentSocketService,
         enableOfflineEditing: !guest,
         retryConnectingInterval: 1000,
         sendChangesetTimeout: 100,
@@ -129,7 +155,10 @@ export async function prepareCollaboration(id: string) {
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Could not open live editing.');
-  return data as { unitId: string; access: ItemAccess; user: { id: string; name: string } };
+  return {
+    ...(data as { unitId: string; access: ItemAccess; user: { id: string; name: string } }),
+    boundary: await prepareTransportProbe(id),
+  };
 }
 export function identifyCollaborator(univer: Univer, user: { id: string; name: string }) {
   univer
