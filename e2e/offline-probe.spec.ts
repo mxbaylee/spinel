@@ -5,6 +5,7 @@ import { chromium, devices, expect, request as apiRequest, test } from '@playwri
 import sharp from 'sharp';
 import { ErrorCode } from '@univerjs/protocol';
 import type { IChangeset, ICollaMsg } from '@univerjs/protocol';
+import type { IUnitCacheData } from '@univerjs-pro/collaboration-client';
 import { parseChangesetToProtocol } from '@univerjs-pro/collaboration';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { BrowserContext, Page } from '@playwright/test';
@@ -328,7 +329,14 @@ for (const kind of ['sheet', 'doc'] as const) {
       // This flag is compiled only for CI and requires the loopback probe URL.
       // Contents belong to this freshly created synthetic fixture account.
       console.log(JSON.stringify({ probe: kind, recoveryStage: label, recovery: record }));
+      return record;
     }
+    const operations = (record: IUnitCacheData | null | undefined) =>
+      record && {
+        rev: record.rev,
+        awaitingChangeset: record.awaitingChangeset,
+        mutations: record.mutations,
+      };
     async function close() {
       stopping = true;
       await context?.close();
@@ -532,14 +540,16 @@ for (const kind of ['sheet', 'doc'] as const) {
       // settling period. It does not claim the product has a local-save signal.
       await new Promise((resolve) => setTimeout(resolve, 5000));
       await recordRecovery('first offline edit settled');
-      for (let attempt = 1; attempt <= 2; attempt++) {
+      let unchangedQueue: ReturnType<typeof operations>;
+      for (let attempt = 1; attempt <= 3; attempt++) {
         stage = `cold offline browser launch ${attempt}`;
         await close();
         await launch();
         await page.goto(`${baseURL}/?item=${item.id}${itemQuerySuffix}`);
         expect(await page.evaluate(() => navigator.onLine)).toBe(false);
         await ready();
-        await recordRecovery(`cold launch ${attempt} before content assertion`);
+        const recovered = await recordRecovery(`cold launch ${attempt} before content assertion`);
+        if (attempt === 3) expect(operations(recovered.beforeLoad)).toEqual(unchangedQueue);
         await expect
           .poll(copyContent, { timeout: 30_000 })
           .toBe(attempt === 1 ? firstOffline : finalOffline);
@@ -548,10 +558,28 @@ for (const kind of ['sheet', 'doc'] as const) {
           stage = 'create another edit during cold offline launch';
           await enter('Cold-second', 'A2');
           await expect.poll(copyContent).toBe(finalOffline);
+          if (kind === 'doc') {
+            // Check local history for new input after recovered commands were
+            // marked as replay. Net-zero undo/redo alone does not prove sync.
+            await page.keyboard.press('Control+z');
+            await expect.poll(copyContent).toBe(firstOffline);
+            await page.keyboard.press('Control+Shift+z');
+            await expect.poll(copyContent).toBe(finalOffline);
+          }
           await new Promise((resolve) => setTimeout(resolve, 5000));
           await recordRecovery('second offline edit settled');
         }
+        if (attempt >= 2) {
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          const settled = operations(
+            await page.evaluate(() => window.__spinelRecoveryProbe?.read()),
+          );
+          expect(settled).toBeTruthy();
+          if (attempt === 2) unchangedQueue = settled;
+          else expect(settled).toEqual(unchangedQueue);
+        }
       }
+      // The third launch has no intervening edit: replay must not grow the queue.
       stage = 'reconnect and persist';
       offline = false;
       await network.setOffline(false);
