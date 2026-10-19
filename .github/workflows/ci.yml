@@ -104,12 +104,22 @@ jobs:
       - name: Unit tests
         run: npm test
 
-  playwright:
-    name: Playwright smoke
+  playwright-run:
+    name: Playwright smoke (${{ matrix.project }}${{ matrix.shard && format(' {0}', matrix.shard) || '' }})
     runs-on: ubuntu-latest
-    # Native/PDF round trips plus image render, touch, restore and guest checks
-    # run for both builds; retain every assertion while allowing their runtime.
-    timeout-minutes: 25
+    # Each runner keeps one browser worker and only its own app server, as
+    # `npm run e2e` does; the builds and their shards run side by side instead
+    # of one after another.
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { project: development, shard: 1/2 }
+          - { project: development, shard: 2/2 }
+          - { project: production, shard: 1/2 }
+          - { project: production, shard: 2/2 }
+          - { project: mobile-https, shard: '' }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -122,13 +132,25 @@ jobs:
         run: npm ci
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+      - name: Build
+        run: npm run build
       - name: Playwright smoke
-        run: npm run e2e
+        env:
+          SPINEL_E2E_PROJECT: ${{ matrix.project }}
+          SHARD: ${{ matrix.shard }}
+        run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
+      - name: Artifact name
+        if: always()
+        id: artifact
+        env:
+          PROJECT: ${{ matrix.project }}
+          SHARD: ${{ matrix.shard }}
+        run: echo "name=theme-screenshots-$PROJECT${SHARD:+-${SHARD%/*}}" >> "$GITHUB_OUTPUT"
       - name: Theme screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: theme-screenshots
+          name: ${{ steps.artifact.outputs.name }}
           path: |
             test-results/theme-screenshots/*.png
             test-results/**/test-failed-*.png
@@ -138,3 +160,19 @@ jobs:
             test-results/**/error-context.md
           retention-days: 7
           if-no-files-found: warn
+
+  # The ruleset requires a check named "Playwright smoke", so this job carries
+  # the name and passes only when every run above passed.
+  playwright:
+    name: Playwright smoke
+    needs: playwright-run
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Every build passed
+        env:
+          RESULT: ${{ needs.playwright-run.result }}
+        run: |
+          echo "Playwright runs: $RESULT"
+          test "$RESULT" = success

@@ -51,5 +51,5 @@ render service preserves literals and resolves updated theme tokens in both mode
 `e2e/appearance.spec.ts` checks preferences, real
 rendered fill pixels, values/formulas/formatting, unchanged revisions and editor
 identity across theme changes. CI captures dashboard, Sheets and Docs in both
-themes under the `theme-screenshots` artifact for visual review. Screenshots
+themes under the `theme-screenshots-*` artifacts, one per Playwright run, for visual review. Screenshots
 contain synthetic fixture data only and expire after seven days.
