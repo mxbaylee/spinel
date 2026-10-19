@@ -36,6 +36,10 @@ grants. Viewers use the native read-only editor; link guests have no access. Mut
 configured origin and JSON. Each request is capped at 10 MiB; an oversized save
 fails visibly and leaves the previous saved workbook intact.
 
+Floating, cell and background images in existing Sheets render from item-scoped
+stored bytes under the same access checks as Doc images; see [Files](files.md).
+Inserting new Sheet images is not available yet.
+
 Autosave debounces committed changes for 500 ms and serializes requests. Each
 save carries its expected revision and a unique write ID. SQLite updates the
 snapshot, revision and item's modification time in one transaction. A retry of

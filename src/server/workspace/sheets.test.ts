@@ -4,6 +4,7 @@ import { afterEach, expect, test } from 'vitest';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
 import { SheetStore } from './sheets.ts';
+import { DocumentStore } from './documents.ts';
 const databases: DatabaseSync[] = [];
 afterEach(() => databases.splice(0).forEach((db) => db.close()));
 function fixture() {
@@ -115,4 +116,58 @@ test('invalid IDs, missing sheets, duplicate tabs and oversize data cannot corru
     }),
   ).toThrow('too large');
   expect(f.sheets.load(f.owner.id, f.item.id).snapshot).toBeNull();
+});
+
+test('Sheet image sources cannot bypass item-scoped validation through save or legacy stored data', () => {
+  const f = fixture();
+  // A stored image belongs to one item: its hash names it only under that item.
+  const other = f.workspace.create(f.owner.id, { name: 'Other', kind: 'sheet', parentId: null });
+  new DocumentStore(f.workspace);
+  const store = f.db.prepare('INSERT INTO doc_images VALUES(?,?,?,?)');
+  store.run(f.item.id, 'c'.repeat(64), 'image/png', Buffer.from('own'));
+  store.run(other.id, 'b'.repeat(64), 'image/png', Buffer.from('other'));
+  for (const source of [
+    'https://outside.invalid/pixel.png',
+    `/api/items/other/images/${'a'.repeat(64)}`,
+    `/api/items/${f.item.id}/images/${'a'.repeat(64)}`,
+    `/api/items/${f.item.id}/images/${'b'.repeat(64)}`,
+    `/api/items/${other.id}/images/${'c'.repeat(64)}`,
+  ]) {
+    for (const snapshot of [
+      {
+        ...f.snapshot,
+        resources: [
+          {
+            name: 'SHEET_DRAWING_PLUGIN',
+            data: JSON.stringify({ first: { data: { image: { source } } } }),
+          },
+        ],
+      },
+      {
+        ...f.snapshot,
+        sheets: {
+          ...f.snapshot.sheets,
+          first: { ...f.snapshot.sheets.first, backgroundImage: { source } },
+        },
+      },
+      {
+        ...f.snapshot,
+        sheets: {
+          ...f.snapshot.sheets,
+          first: {
+            ...f.snapshot.sheets.first,
+            cellData: { 0: { 0: { p: { drawings: { image: { source } } } } } },
+          },
+        },
+      },
+    ]) {
+      expect(() =>
+        f.sheets.save(f.owner.id, f.item.id, { snapshot, revision: 0, writeId: randomUUID() }),
+      ).toThrow('Insert images from a file');
+      f.db
+        .prepare('INSERT OR REPLACE INTO sheet_snapshots VALUES(?,?,?,?)')
+        .run(f.item.id, JSON.stringify(snapshot), 1, randomUUID());
+      expect(() => f.sheets.load(f.owner.id, f.item.id)).toThrow('Insert images from a file');
+    }
+  }
 });

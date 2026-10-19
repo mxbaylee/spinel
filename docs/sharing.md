@@ -28,7 +28,7 @@ and personal filing, described below alongside guest links.
 ## Permission changes and unsaved work
 
 One server resolver checks current access for metadata, folder children, snapshot
-reads/writes and Doc image reads/uploads. Uploads check again after asynchronous
+reads/writes, Sheet and Doc image reads, and Doc image uploads. Uploads check again after asynchronous
 image decoding. An inaccessible parent is omitted from shared metadata. Disabled
 accounts and admins cannot use retained grants. The resolver traverses only the
 item owner's ancestors and does not cache access decisions.
@@ -43,8 +43,8 @@ check the current grant.
 
 Revision checks remain in force for every writer. Sheets and Docs use the
 shared collaboration service for simultaneous edits; stale offline generations
-cannot overwrite a restored version. Doc images remain document-scoped, private and uncached; an image URL grants
-no additional access. Sheet image uploading is not implemented in this slice.
+cannot overwrite a restored version. Sheet and Doc images remain item-scoped, private and uncached; an image URL grants
+no additional access. Sheet image uploading is not implemented yet.
 
 ## Decisions and verification
 

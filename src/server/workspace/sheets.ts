@@ -1,3 +1,4 @@
+import { DocumentStore } from './documents.ts';
 import type { IWorkbookData } from '@univerjs/core';
 import { AuthError } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
@@ -32,9 +33,13 @@ export class SheetStore {
     const row = this.row(id);
     return {
       access: item.access,
-      snapshot: row ? (JSON.parse(row.snapshot) as IWorkbookData) : null,
+      snapshot: row ? this.validated(id, JSON.parse(row.snapshot) as IWorkbookData) : null,
       revision: row?.revision ?? 0,
     };
+  }
+  private validated(id: string, snapshot: IWorkbookData) {
+    new DocumentStore(this.workspace).validateImages(id, snapshot);
+    return snapshot;
   }
   save(
     owner: string,
@@ -71,6 +76,7 @@ export class SheetStore {
       )
     )
       throw new AuthError(400, 'Invalid spreadsheet data. Changes have not been saved.');
+    new DocumentStore(this.workspace).validateImages(id, data);
     const text = JSON.stringify(snapshot);
     if (Buffer.byteLength(text) > 10 * 1024 * 1024)
       throw new AuthError(
