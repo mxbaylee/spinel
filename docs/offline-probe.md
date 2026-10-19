@@ -92,3 +92,11 @@ server content before the baseline and reconnect reloads. It still requires
 fresh exact copies after every restart; no assertion has been removed. The
 54 development/production cases passed without retries; the later PWA case
 did not run because of the first-failure limit.
+
+The next probe adds an existing Doc image through the normal upload/insert UI.
+Only that fixture item's image GETs join the allowlist. Every reload and cold
+launch must render the solid-color fixture image on the editor canvas; successful
+HTTP responses alone cannot pass this check. Final server checks preserve the raw baseline text stream (including its image
+marker), the inserted prefix, shifted custom-block links, and the original
+drawing ID, source and dimensions. This is not a full rich-body equality claim. Sheet image support, concurrent peers and the remaining
+contract are still outstanding; these new assertions have not yet run in CI.

@@ -2,7 +2,9 @@
 // Its fixture response store stands in for a future scoped local snapshot adapter;
 // only the SDK's own pending-edit store survives the real browser restarts below.
 import { chromium, devices, expect, request as apiRequest, test } from '@playwright/test';
+import sharp from 'sharp';
 import { ErrorCode } from '@univerjs/protocol';
+import type { IDocumentData } from '@univerjs/core';
 import type { BrowserContext, Page } from '@playwright/test';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -46,6 +48,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       extraHTTPHeaders: { Cookie: `${COOKIE_NAME}=${cookie.value}` },
     });
     let unitId: string | undefined;
+    let imageSource: string | undefined;
+    let imageBaseline: IDocumentData | undefined;
+    let baselineServerContent = 'Baseline';
     const cache = new Map<string, CachedResponse>();
     const misses = new Set<string>();
     const blocked = new Set<string>();
@@ -124,6 +129,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         ].includes(url.pathname);
         const preparation =
           request.method() === 'POST' && url.pathname === `/api/items/${item.id}/collaboration`;
+        const image = url.pathname.startsWith(`/api/items/${item.id}/images/`);
         const snapshot = Boolean(
           unitId &&
           url.pathname.startsWith(
@@ -143,7 +149,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           );
         }
         const cacheable =
-          (request.method() === 'GET' && (publicAsset || metadata || snapshot)) ||
+          (request.method() === 'GET' && (publicAsset || metadata || snapshot || image)) ||
           preparation ||
           permission;
         if (offline) {
@@ -268,6 +274,78 @@ for (const kind of ['sheet', 'doc'] as const) {
     const firstOffline = kind === 'sheet' ? 'Offline-retained' : 'Offline-retainedBaseline';
     const finalOffline =
       kind === 'sheet' ? 'Offline-retained\nCold-second' : 'Cold-secondOffline-retainedBaseline';
+    const finalServerContent = () =>
+      kind === 'sheet' ? finalOffline : `Cold-secondOffline-retained${baselineServerContent}`;
+    async function nativeSnapshot() {
+      const response = await server.get(`/api/items/${item.id}/${kind}`);
+      expect(response.ok()).toBe(true);
+      return (await response.json()).snapshot;
+    }
+    async function imageVisible() {
+      if (!imageSource) return;
+      await editor()
+        .locator('.univer-container')
+        .click({ position: { x: 130, y: 200 } });
+      await page.keyboard.press('Control+Home');
+      await page.keyboard.press('ArrowLeft');
+      // The editor renders images on canvas. Count the fixture's solid orange
+      // pixels rather than accepting a successful request or an empty placeholder.
+      await expect
+        .poll(
+          async () => {
+            const { data, info } = await sharp(
+              await editor().locator('.univer-container').screenshot(),
+            )
+              .removeAlpha()
+              .raw()
+              .toBuffer({ resolveWithObject: true });
+            let orange = 0;
+            for (let offset = 0; offset < data.length; offset += info.channels) {
+              if (
+                data[offset] > 245 &&
+                data[offset + 1] > 145 &&
+                data[offset + 1] < 165 &&
+                data[offset + 2] < 10
+              )
+                orange++;
+            }
+            return orange;
+          },
+          { timeout: 15_000 },
+        )
+        .toBeGreaterThan(1000);
+    }
+    async function prepareImage() {
+      if (kind !== 'doc') return;
+      await ready();
+      await editor()
+        .locator('.univer-container')
+        .click({ position: { x: 130, y: 200 } });
+      await page.keyboard.press('Control+End');
+      await editor().getByRole('tab', { name: 'Insert', exact: true }).click();
+      const chooser = page.waitForEvent('filechooser');
+      await editor().getByRole('button', { name: 'Image', exact: true }).click();
+      await (
+        await chooser
+      ).setFiles({
+        name: 'offline-orange.png',
+        mimeType: 'image/png',
+        buffer: await sharp({
+          create: { width: 80, height: 60, channels: 4, background: '#ff9900' },
+        })
+          .png()
+          .toBuffer(),
+      });
+      await expect.poll(async () => (await nativeSnapshot()).drawingsOrder?.length).toBe(1);
+      const snapshot = await nativeSnapshot();
+      imageBaseline = snapshot;
+      imageSource = snapshot.drawings[snapshot.drawingsOrder[0]].source;
+      expect(imageSource).toMatch(new RegExp(`^/api/items/${item.id}/images/[a-f0-9]{64}$`));
+      baselineServerContent = await serverContent();
+      expect(baselineServerContent).toContain('Baseline');
+      await imageVisible();
+      expect(cache.has(`GET ${imageSource} `)).toBe(true);
+    }
     async function serverContent() {
       const response = await server.get(`/api/items/${item.id}/${kind}`);
       expect(response.ok()).toBe(true);
@@ -286,10 +364,12 @@ for (const kind of ['sheet', 'doc'] as const) {
       // Saved can still describe the state before async input was dispatched.
       // Establish actual server content before destroying this first editor.
       await expect.poll(serverContent, { timeout: 30_000 }).toBe('Baseline');
+      await prepareImage();
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await page.reload();
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await expect.poll(copyContent).toBe('Baseline');
+      await imageVisible();
       // The public loader reopens pending work at its cached revision, rather
       // than always requesting latest (rev/0). Prepare that exact baseline too.
       const baselineResponse = await server.get(`/api/items/${item.id}/${kind}`);
@@ -326,6 +406,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         await expect
           .poll(copyContent, { timeout: 30_000 })
           .toBe(attempt === 1 ? firstOffline : finalOffline);
+        await imageVisible();
         if (attempt === 1) {
           stage = 'create another edit during cold offline launch';
           await enter('Cold-second', 'A2');
@@ -336,13 +417,32 @@ for (const kind of ['sheet', 'doc'] as const) {
       stage = 'reconnect and persist';
       offline = false;
       await network.setOffline(false);
-      await expect.poll(serverContent, { timeout: 30_000 }).toBe(finalOffline);
+      await expect.poll(serverContent, { timeout: 30_000 }).toBe(finalServerContent());
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await page.reload();
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await expect.poll(copyContent).toBe(finalOffline);
       // This independent HTTP client bypasses browser routes and local SDK data.
-      await expect.poll(serverContent, { timeout: 30_000 }).toBe(finalOffline);
+      await expect.poll(serverContent, { timeout: 30_000 }).toBe(finalServerContent());
+      await imageVisible();
+      if (imageSource && imageBaseline) {
+        const final = (await nativeSnapshot()) as IDocumentData;
+        const prefix = 'Cold-secondOffline-retained';
+        expect(final.body?.dataStream).toBe(prefix + imageBaseline.body!.dataStream);
+        expect(final.body?.customBlocks ?? []).toEqual(
+          (imageBaseline.body?.customBlocks ?? []).map((block) => ({
+            ...block,
+            startIndex: block.startIndex + prefix.length,
+          })),
+        );
+        expect(final.drawingsOrder).toEqual(imageBaseline.drawingsOrder);
+        const drawingId = imageBaseline.drawingsOrder![0];
+        expect(final.drawings![drawingId]).toMatchObject({
+          drawingId,
+          source: imageSource,
+          docTransform: { size: imageBaseline.drawings![drawingId].docTransform.size },
+        });
+      }
       stage = 'completed isolated probe; full SPN-039 acceptance still outstanding';
     } finally {
       console.log(
