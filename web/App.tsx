@@ -16,7 +16,7 @@ import { BackupStatus } from './BackupStatus.tsx';
 import { AdminUsers } from './AdminUsers.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { PinsProvider, PinnedSidebar } from './Pins.tsx';
-import { GemLogo } from '../src/ui/GemLogo.tsx';
+import { Rail } from './Rail.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 
 const HistoryBrowser = lazy(() =>
@@ -199,40 +199,7 @@ export function App() {
   return (
     <PinsProvider enabled={Boolean(user && !user.isAdmin)}>
       <div className="workspace">
-        <header
-          onClick={(event) => {
-            if (
-              (event.target as Element).closest('a') &&
-              !event.metaKey &&
-              !event.ctrlKey &&
-              !navigation.allow()
-            )
-              event.preventDefault();
-          }}
-        >
-          <a className="brand rail-button" href="/">
-            <span className="wiggle">
-              <GemLogo />
-            </span>
-            <span className="rail-label">Your docs</span>
-          </a>
-          {user && (
-            <nav aria-label="Workspace">
-              <a className="rail-button" href={user.isAdmin ? '/admin' : '/'}>
-                <span aria-hidden="true">▦</span>
-                <span className="rail-label">{user.isAdmin ? 'Admin' : 'Dashboard'}</span>
-              </a>
-              <a className="rail-button" href="/settings">
-                <span aria-hidden="true">⚙</span>
-                <span className="rail-label">Settings</span>
-              </a>
-              <button className="rail-button" onClick={() => void signOut()}>
-                <span aria-hidden="true">↪</span>
-                <span className="rail-label">Sign out</span>
-              </button>
-            </nav>
-          )}
-        </header>
+        <Rail user={user} navigation={navigation} onSignOut={() => void signOut()} />
         <div className="workspace-body">
           {user && !user.isAdmin && <PinnedSidebar navigation={navigation} />}
           <main>

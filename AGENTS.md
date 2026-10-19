@@ -22,6 +22,10 @@ says what is next.
 - **TypeScript only.** Server, frontend, tests, scripts and config are `.ts` or
   `.tsx`, never `.js`, `.mjs` or `.cjs`. Node runs scripts directly, so use only
   syntax it can strip (no enums or namespaces). Owner, chat 2026-10-17.
+- **UI changes follow [docs/design/](docs/design/README.md).** A ticket that
+  needs a pattern the playbook doesn't cover adds it there in its own PR first,
+  and every new component or state gets a Storybook story. Owner, chat
+  2026-10-19 (SPN-046).
 - **Univer Pro packages** (`@univerjs-pro/*`) are closed source under Univer's
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or
