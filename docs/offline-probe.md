@@ -238,3 +238,20 @@ The read case additionally requires the facade still to be unresolved. These
 are deliberate pending operations, not elapsed-time guesses. Access disposal
 rejects both an already held operation and one first attempted after disposal.
 This variant is still awaiting runtime evidence.
+
+Run [39217753072](https://github.com/mxbaylee/spinel/actions/runs/39217753072)
+(`ae51bf9`) passed 382 unit tests and all 60 regular browser cases. Its first Sheet
+cold launch failed closed: two registered cache reads were followed by an
+unrecognized same-unit/same-mutation command, with zero accounted executions and
+zero staged writes. The original pending record was retained. The remaining four
+HTTPS cases did not run. This establishes a recovery integration gap, not a pass.
+
+The next fixture observes both ends of the public `CompressMutationService`
+apply interceptor and dispatch attempts before ledger admission. Its declaration
+documents decompression between local-cache reads and execution, but the trace
+must establish whether that explains this failure. Observers retain object and
+original-entry identities, return their input unchanged, and are bounded to 150
+fixture events. No equal-content match or blanket option exemption grants replay
+provenance. The read-only local snapshot adapter separately validates complete
+prepared metadata, tail, blocks and resources; its focused tests do not yet prove
+SDK loader engagement or offline application readiness.
