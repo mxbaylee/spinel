@@ -6,6 +6,8 @@ import type { OfflineAccess } from './OfflineAccess.ts';
 const IMAGE_LIMIT = 5 * 1024 * 1024;
 const DOCUMENT_LIMIT = 50 * 1024 * 1024;
 const MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+// Draws nothing and makes no request.
+const EMPTY_IMAGE = 'data:image/png;base64,';
 
 export async function sha256(bytes: Uint8Array) {
   return [...new Uint8Array(await crypto.subtle.digest('SHA-256', new Uint8Array(bytes)))]
@@ -150,16 +152,19 @@ export class PreparedImages implements IURLImageService {
    * its local object URL. Univer's document renderer loads drawing sources
    * directly rather than through this service, so this covers Doc and cell images.
    * Resource data (such as sheet drawings) is JSON inside a string; it is parsed,
-   * rewritten and serialized again.
+   * rewritten and serialized again. Any other image `source` that could make a
+   * request becomes an empty local image, so nothing falls back to the network.
    */
   localize<T>(snapshot: T): T {
+    this.assertAllowed();
     const visit = (value: unknown, key?: string): unknown => {
       if (key === 'resources' && Array.isArray(value)) return value.map(resource);
       if (typeof value === 'string') {
         const source = value.startsWith(this.access.scope.origin + '/')
           ? value.slice(this.access.scope.origin.length)
           : value;
-        return this.blobs.has(source) ? this.local(source).url : value;
+        if (this.blobs.has(source)) return this.local(source).url;
+        return key === 'source' && !value.startsWith('data:') ? EMPTY_IMAGE : value;
       }
       if (Array.isArray(value)) return value.map((entry) => visit(entry));
       if (value && typeof value === 'object')
@@ -189,7 +194,7 @@ export class PreparedImages implements IURLImageService {
       this.clear();
       // Rejecting would let the public drawing caller fall back to the original
       // URL. An empty local image cannot make a network request.
-      return 'data:image/png;base64,';
+      return EMPTY_IMAGE;
     }
   }
   async downloadImage(url: string) {

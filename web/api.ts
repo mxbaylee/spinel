@@ -13,6 +13,9 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
     location.assign('/sign-in');
   if (response.status === 204) return undefined as T;
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error ?? 'Something went wrong. Try again.');
+  if (!response.ok)
+    throw Object.assign(new Error(data.error ?? 'Something went wrong. Try again.'), {
+      status: response.status,
+    });
   return data;
 }

@@ -146,7 +146,11 @@ export async function openSnapshotViewer({
           })
       : undefined;
     const render = univer.__getInjector().get(IRenderManagerService).getRenderUnitById(unitId);
-    if (sheet && render) render.engine.getCanvasElement().style.backgroundColor = '#ffffff';
+    if (sheet && render) {
+      const canvas = render.engine.getCanvasElement();
+      canvas.style.backgroundColor = '#ffffff';
+      canvas.setAttribute('aria-label', 'Spreadsheet grid');
+    }
     const stopTheme = bindEditorTheme(
       univer,
       sheet

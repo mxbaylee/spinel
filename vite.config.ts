@@ -21,7 +21,9 @@ function offlineShell(): Plugin {
       const files = shellFiles(Object.keys(bundle));
       const version = createHash('sha256').update(files.join('\n')).digest('hex').slice(0, 16);
       const worker = bundle['service-worker.js'];
-      if (worker?.type !== 'chunk') return this.error('The service worker was not built.');
+      // Storybook builds with this config but without the service-worker entry.
+      if (!worker) return;
+      if (worker.type !== 'chunk') return this.error('The service worker was not built.');
       const token = new RegExp(`(["'\`])${SHELL_PLACEHOLDER}\\1`, 'g');
       const found = worker.code.match(token)?.length ?? 0;
       if (found !== 1) return this.error(`Expected one shell manifest token, found ${found}.`);

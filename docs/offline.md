@@ -156,12 +156,14 @@ view opened online), downloaded bundles and image bytes. No credential, session,
 setup/invite token or guest token is stored. `localStorage['spinel.offline.account']`
 names the one account this device is prepared for. It is set by the first
 download and kept only after an online sign-in to that same non-admin account
-with downloads (`claimDevice`). Signing out clears it, so another account never
-opens this data. While prepared and online, the dashboard saves the catalog after
+with downloads (`claimDevice`). Signing out, a 401 from the server (the session
+ended or was revoked) and removing the last download clear it, so another account
+never opens this data and a revoked session doesn't open it offline. While prepared and online, the dashboard saves the catalog after
 each load and refreshes every download in the background. A document the account
 can no longer open (404) is removed: SPN-039's copies hold no edits.
 
-**App shell.** Nothing is cached until the first download (`web/service-worker.ts`).
+**App shell.** Nothing is cached until the first download has fetched and
+verified its bundle and images (`web/service-worker.ts`).
 The production build writes a manifest of every built `/assets/` file, without
 source maps, into the service worker with a content version (`vite.config.ts`).
 Preparing caches those files (19 files, about 21 MB at SPN-039) and then the page
@@ -189,10 +191,12 @@ collaboration client, autosave or remote image fallback, behind the same
 permission fences as version previews (`web/snapshotViewer.ts`). Images come only
 from the verified local bytes, as object URLs: `PreparedImages` rewrites every
 verified source in the snapshot in memory, including inside resource JSON, and
-replaces the drawing plugin's `IURLImageService`. Signing out offline ends the
+replaces the drawing plugin's `IURLImageService`. Any other image source becomes
+an empty image rather than a request. Signing out offline ends the
 local session at once and revokes the server session the next time Spinel opens
 online.
-Another tab signing out locks any open copy.
+Another tab signing out or switching account closes local mode and locks any
+open copy.
 
 **Not yet.** `OfflineAccess` was ported from #86 without its remote gate.
 `ScopedHTTP` and `scopedSocket`, which scope requests and the collaboration
@@ -202,12 +206,14 @@ Verified by:
 
 - `e2e/offline.spec.ts` (production build): download a Sheet with floating,
   in-cell and background images and a Doc, check CacheStorage holds only the
-  shell, go offline and reload, then check the catalog, the badges, read-only
+  shell, keep both copies through a failed refresh, go offline and reload, then
+  check the catalog, saved pins, the badges, read-only
   Sheet and Doc views with every image from local bytes and no `/api/items`
-  request, a not-downloaded item, and the generic page for `/share/`.
+  request, a not-downloaded item, the generic page for `/share/`, and that a
+  401 stops the next offline launch from opening local data.
 - `e2e/pwa.spec.ts`: an unprepared device keeps CacheStorage empty.
-- `src/ui/preparedImages.test.ts`, `src/ui/offlineAccess.test.ts` and
-  `src/shared/offlineShell.test.ts`.
+- `src/ui/preparedImages.test.ts`, `src/ui/offlineAccess.test.ts`,
+  `src/ui/offlineDownload.test.ts` and `src/shared/offlineShell.test.ts`.
 
 ## How offline editing works
 

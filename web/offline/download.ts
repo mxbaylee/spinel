@@ -52,13 +52,12 @@ export function checkBundle(bundle: OfflineBundle, accountId: string, itemId: st
 }
 
 /**
- * Downloads one Sheet or Doc for offline use (docs/offline.md): keep the app
- * shell, fetch the bundle and every image, verify each image's hash, then store
- * it all in one IndexedDB transaction. Until that commits nothing counts as
+ * Downloads one Sheet or Doc for offline use (docs/offline.md): fetch the
+ * bundle and every image, verify each image's hash, keep the app shell, then
+ * store it all in one IndexedDB transaction. Until that commits nothing counts as
  * downloaded, and a failed refresh leaves the previous complete copy.
  */
 export async function downloadForOffline(store: OfflineStore, itemId: string) {
-  await prepareShell();
   const response = await get(`/api/items/${encodeURIComponent(itemId)}/offline-bundle`);
   const bundle = (await response.json().catch(() => ({}))) as OfflineBundle & { error?: string };
   if (!response.ok)
@@ -71,6 +70,8 @@ export async function downloadForOffline(store: OfflineStore, itemId: string) {
     bytes.set(image.source, new Uint8Array(await file.arrayBuffer()));
   }
   await verifyImages(itemId, bundle.images, bytes);
+  // Only a download known to be good prepares the device (fills CacheStorage).
+  await prepareShell();
   try {
     return await store.saveDownload(bundle, bytes);
   } catch (error) {

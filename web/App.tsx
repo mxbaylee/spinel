@@ -20,7 +20,12 @@ import { Rail } from './Rail.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
 import type { LocalStart } from './offline/localStart.ts';
-import { setPreparedAccount, setSignOutPending, signOutPending } from './offline/offlineStore.ts';
+import {
+  preparedAccount,
+  setPreparedAccount,
+  setSignOutPending,
+  signOutPending,
+} from './offline/offlineStore.ts';
 
 const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
@@ -116,6 +121,9 @@ export function App() {
       } catch (failure) {
         // Only an unreachable server opens local data; a 401 still signs in.
         if (!isNetworkFailure(failure)) {
+          // The server ended this session (sign-out, revocation): stop offline
+          // access too. claimDevice restores it after the next sign-in.
+          if ((failure as { status?: number }).status === 401) setPreparedAccount(null);
           if (location.pathname !== '/sign-in') location.assign('/sign-in');
           return;
         }
@@ -132,6 +140,18 @@ export function App() {
       }
     })();
   }, [settings, setup, invitation, inviteToken]);
+  useEffect(() => {
+    if (!local) return;
+    // Another tab signed out or another account signed in: close local data.
+    const watch = () => {
+      if (preparedAccount() === local.user.id) return;
+      setLocal(null);
+      setUser(null);
+      setUnreachable(true);
+    };
+    window.addEventListener('storage', watch);
+    return () => window.removeEventListener('storage', watch);
+  }, [local]);
 
   function cancel() {
     const current = attempt.current;
@@ -238,7 +258,12 @@ export function App() {
     }
   }
   return (
-    <PinsProvider enabled={Boolean(user && !user.isAdmin && !local)} offline={local?.catalog.pins}>
+    // Remount on entering local mode: the provider reads its offline pins once.
+    <PinsProvider
+      key={local ? 'local' : 'online'}
+      enabled={Boolean(user && !user.isAdmin && !local)}
+      offline={local?.catalog.pins}
+    >
       <div className="workspace">
         <Rail user={user} navigation={navigation} onSignOut={() => void signOut()} />
         <div className="workspace-body">

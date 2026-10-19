@@ -24,6 +24,9 @@ export function useOfflineDownloads(
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<OfflineMessage | null>(null);
   const mounted = useRef(false);
+  // A download can take minutes; read the catalog as it is when it finishes.
+  const latestCatalog = useRef(catalog);
+  latestCatalog.current = catalog;
   // The server admits one transfer at a time; run refreshes and toggles in turn.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   function serially<T>(work: (store: OfflineStore) => Promise<T>) {
@@ -93,23 +96,30 @@ export function useOfflineDownloads(
 
   async function toggle(item: WorkspaceItem) {
     if (local || busy) return;
+    const downloaded = downloads.has(item.id);
+    // Offline launch needs the file list as well as the document; the device
+    // counts as prepared only once both are stored.
+    if (!downloaded && !latestCatalog.current()) {
+      setMessage({ text: 'Wait for your files to load, then try again.', failed: true });
+      return;
+    }
     setBusy(item.id);
     setMessage(null);
-    const downloaded = downloads.has(item.id);
     try {
       await serially(async (store) => {
         if (downloaded) {
           await store.remove(item.id);
           unset(item.id);
+          // With nothing left to open, the device is no longer prepared.
+          if (!(await store.downloads()).length) setPreparedAccount(null);
           return;
         }
-        set(await downloadForOffline(store, item.id));
-        // Offline launch needs the file list as well as the document. The
-        // device counts as prepared only once both are stored.
-        const current = catalog();
-        if (!current) throw new DownloadError('Wait for your files to load, then try again.');
-        await store.saveCatalog({ id: user.id, name: user.name }, current);
+        const download = await downloadForOffline(store, item.id);
+        // The catalog was there at the click; keep the newest one.
+        const current = latestCatalog.current();
+        if (current) await store.saveCatalog({ id: user.id, name: user.name }, current);
         setPreparedAccount(user.id);
+        set(download);
       });
       setMessage({
         text: downloaded

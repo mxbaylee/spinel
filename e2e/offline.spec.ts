@@ -42,6 +42,8 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     });
     expect(imported.status(), await imported.text()).toBe(201);
     const sheet = (await imported.json()).item as { id: string; name: string };
+    // The saved pin list is part of the catalog that opens offline.
+    workspace.pin(user.id, doc.id);
 
     await page.goto('/');
     await expect
@@ -75,6 +77,19 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
       await page.evaluate(async () => (await indexedDB.databases()).map((entry) => entry.name)),
     ).toContain(`spinel-offline-${user.id}`);
 
+    // A failed background refresh keeps the last complete copy.
+    let refused = 0;
+    await page.route('**/api/items/*/images/*', (route) => {
+      refused++;
+      return route.abort();
+    });
+    await page.reload();
+    await expect.poll(() => refused, { timeout: 60_000 }).toBeGreaterThan(0);
+    await expect(
+      page.getByRole('button', { name: `Remove ${sheet.name} from this device` }),
+    ).toBeVisible();
+    await page.unrouteAll({ behavior: 'wait' });
+
     const api: string[] = [];
     page.on('request', (request) => {
       if (new URL(request.url()).pathname.startsWith('/api/items')) api.push(request.url());
@@ -94,6 +109,7 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     await expect(row(sheet.name)).toContainText('Available offline');
     await expect(row(doc.name)).toContainText('Available offline');
     await expect(row('Online only')).toContainText('Needs a connection');
+    await expect(page.getByRole('complementary', { name: 'Pinned items' })).toContainText(doc.name);
     // Local mode offers nothing that would reach the server.
     await expect(
       page.getByRole('button', { name: /available offline on this device/ }),
@@ -141,6 +157,20 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     // Pages that need the server get the generic offline page, never the shell.
     await page.goto('/share/offline-link');
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
+
+    // A session the server ended (a 401) stops offline access on this device,
+    // so the next offline launch opens no local data.
+    await context.setOffline(false);
+    await context.clearCookies();
+    await page.goto('/');
+    await expect(page).toHaveURL(/\/sign-in/);
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem('spinel.offline.account')))
+      .toBeNull();
+    await context.setOffline(true);
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
+    await expect(page.getByText(sheet.name)).toHaveCount(0);
     expect(errors).toEqual([]);
   } finally {
     await context.close();

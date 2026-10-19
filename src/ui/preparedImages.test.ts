@@ -62,7 +62,13 @@ test('localize rewrites only verified sources and leaves the stored snapshot unc
   const service = await f.prepare();
   try {
     const snapshot = {
-      drawings: { a: { source: f.source }, b: { source: f.access.scope.origin + f.source } },
+      drawings: {
+        a: { source: f.source },
+        b: { source: f.access.scope.origin + f.source },
+        c: { source: 'https://elsewhere.example/tracker.png' },
+        d: { source: '/api/items/other/images/abc' },
+        e: { source: 'data:image/png;base64,AAAA' },
+      },
       text: 'Not an image',
       other: '/api/items/other/images/abc',
       list: [f.source, 3, null],
@@ -75,7 +81,13 @@ test('localize rewrites only verified sources and leaves the stored snapshot unc
     const local = service.localize(snapshot);
     const url = await service.getImage(f.source);
     expect(local).toEqual({
-      drawings: { a: { source: url }, b: { source: url } },
+      drawings: {
+        a: { source: url },
+        b: { source: url },
+        c: { source: 'data:image/png;base64,' },
+        d: { source: 'data:image/png;base64,' },
+        e: { source: 'data:image/png;base64,AAAA' },
+      },
       text: 'Not an image',
       other: '/api/items/other/images/abc',
       list: [url, 3, null],
