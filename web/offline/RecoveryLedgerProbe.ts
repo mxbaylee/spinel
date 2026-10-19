@@ -22,11 +22,14 @@ export class RecoveryLedgerProbe {
   private unmatchedOutputs = 0;
   private applySequence = 0;
   private applyStack: number[] = [];
+  private objectId(value: object | undefined) {
+    if (value && !this.objects.has(value)) this.objects.set(value, ++this.nextObject);
+    return value && this.objects.get(value);
+  }
   private describe(id: string, params?: object) {
-    if (params && !this.objects.has(params)) this.objects.set(params, ++this.nextObject);
     return {
       id,
-      object: params && this.objects.get(params),
+      object: this.objectId(params),
       identity: this.ledger?.inspectIdentity(params),
       params,
     };
@@ -68,9 +71,17 @@ export class RecoveryLedgerProbe {
       else if (call === undefined) this.unmatchedOutputs++;
       return {
         call,
-        mutations: mutations?.map((mutation) => this.describe(mutation.id, mutation.params)),
+        mutations: mutations?.map((mutation) => ({
+          mutationObject: this.objectId(mutation),
+          ...this.describe(mutation.id, mutation.params),
+        })),
       };
     });
+  }
+  observeApplyFailure() {
+    this.diagnosticFailed = true;
+    this.applyStack.pop();
+    this.trace('apply failed', () => ({ failed: true }));
   }
   private holdMode?: 'read' | 'write';
   private held?: 'read' | 'write';
@@ -117,7 +128,14 @@ export class RecoveryLedgerProbe {
   }
   read() {
     this.reads++;
-    return this.ledger!.readForSDK();
+    const copy = this.ledger!.readForSDK();
+    this.trace('cache read identities', () =>
+      [...copy.mutations, ...(copy.awaitingChangeset?.mutations ?? [])].map((mutation) => ({
+        mutationObject: this.objectId(mutation),
+        ...this.describe(mutation.id, mutation.params),
+      })),
+    );
+    return copy;
   }
   verify(staged: IUnitCacheData | null | undefined) {
     if (!this.recovering) return;

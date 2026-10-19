@@ -255,3 +255,30 @@ fixture events. No equal-content match or blanket option exemption grants replay
 provenance. The read-only local snapshot adapter separately validates complete
 prepared metadata, tail, blocks and resources; its focused tests do not yet prove
 SDK loader engagement or offline application readiness.
+
+Run [39220105196](https://github.com/mxbaylee/spinel/actions/runs/39220105196)
+(`945220c`) passed 436 unit tests and all 60 regular browser cases. The controlled
+read delay held the facade unresolved and editor inert while native IndexedDB
+still contained the original record. After release, an exact registered pending
+Sheet parameter object entered public decompression, but dispatch received a
+new object with expanded style data. Recovery correctly refused that unregistered
+object. The low-priority observer was never called: the public OSS interceptor
+pipeline stops when a handler returns without calling `next`.
+
+The revised diagnostic facade forwards the exact public manager point/filter and
+wraps its returned composed function. It observes terminal-handler outputs without
+rerunning handlers, changing arguments/results/errors, or losing caller filtering.
+Previously cached functions can bypass a replaced manager, so actual input/output/
+dispatch identity is still required; ledger admission remains unchanged. Cleanup
+restores the original manager and is idempotent across reinstallation.
+
+The prepared network-condition adapter has focused tests and is installed in the
+separate transport fixture; browser engagement still awaits verification. The
+local image-service adapter verifies the complete manifest and image bytes. Both
+the default image service and its OSS drawing caller fall back to the original
+URL after rejection. Its `getImage` failure path therefore latches recovery
+attention, clears/revokes URLs and resolves an invalid local data URL; the future
+coordinator must remove the editor on attention. It is not wired in yet. Real-image
+rendering, unknown-source/access-loss cases with zero native network requests, and
+coordinator teardown are unresolved integration requirements. The 19 focused image
+tests prove byte/scope/failure behavior, not decoding or browser-wide traffic fencing.
