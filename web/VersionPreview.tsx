@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { InterceptorEffectEnum, IPermissionService } from '@univerjs/core';
 import { UnitAction } from '@univerjs/protocol';
+import { setDocumentPermissionValue } from '@univerjs/docs';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import {
   SheetInterceptorService,
@@ -28,6 +29,7 @@ import '@univerjs/preset-docs-hyper-link/lib/index.css';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 import { editorReady } from './editorReady.ts';
+import { documentReady } from './documentReady.ts';
 
 type Preview = { snapshot: IDocumentData | IWorkbookData; item: WorkspaceItem; unitId: string };
 
@@ -49,6 +51,7 @@ export function VersionPreview({
   const requestId = useRef(crypto.randomUUID());
   useEffect(() => {
     let disposed = false;
+    const loading = new AbortController();
     let cleanup: (() => void) | undefined;
     void (async () => {
       const loaded = await itemsRequest<Preview>(`/${id}/history/${checkpoint}`);
@@ -77,7 +80,23 @@ export function VersionPreview({
       else univerAPI.createDocument(loaded.snapshot as IDocumentData);
       await editorReady(univerAPI);
       if (disposed) return;
-      if (!sheet) await univerAPI.getActiveDocument()!.getPermission().setReadOnly();
+      if (!sheet) {
+        await documentReady(univer, loaded.snapshot.id, loading.signal);
+        if (disposed) return;
+        // A preview needs a local UI fence, not an owner-only document policy.
+        // The policy command can still permit its owner and changes the snapshot.
+        // Use the same public local permission boundary as the live viewer.
+        const permissions = univer.__getInjector().get(IPermissionService);
+        setDocumentPermissionValue(
+          permissions,
+          loaded.snapshot.id,
+          loaded.snapshot.id,
+          UnitAction.Edit,
+          false,
+        );
+        if (univerAPI.getActiveDocument()!.getPermission().canEdit())
+          throw new Error('The preview could not be made read-only. Reload to try again.');
+      }
       if (disposed) return;
       if (sheet) {
         // setEditable controls cell entry; the full permission set also fences
@@ -138,6 +157,7 @@ export function VersionPreview({
     });
     return () => {
       disposed = true;
+      loading.abort();
       if (cleanup) queueMicrotask(cleanup);
     };
   }, [id, checkpoint]);
