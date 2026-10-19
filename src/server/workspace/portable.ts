@@ -1,3 +1,4 @@
+import { imageSources } from './imageSources.ts';
 import { createHash, randomUUID } from 'node:crypto';
 import sharp from 'sharp';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
@@ -24,42 +25,6 @@ function bounded(value: unknown, depth = 0, count = { nodes: 0 }) {
       if (key === '__proto__' || key === 'constructor' || key === 'prototype') throw invalid();
       bounded(child, depth + 1, count);
     }
-}
-
-/** Only supported native drawing locations are interpreted; ordinary text stays literal. */
-function imageSources(snapshot: Snapshot, map: (source: string) => string) {
-  const walk = (value: unknown) => {
-    if (!value || typeof value !== 'object') return;
-    if (object(value) && Object.hasOwn(value, 'source')) {
-      if (typeof value.source !== 'string') throw invalid();
-      value.source = map(value.source);
-      value.imageSourceType = 'URL';
-    }
-    for (const child of Object.values(value)) walk(child);
-  };
-  const doc = snapshot as IDocumentData & { notes?: unknown };
-  for (const value of [
-    doc.drawings,
-    doc.headers,
-    doc.footers,
-    doc.footnotes,
-    doc.endnotes,
-    doc.notes,
-  ])
-    walk(value);
-  for (const resource of snapshot.resources ?? []) {
-    if (['DOC_DRAWING_PLUGIN', 'SHEET_DRAWING_PLUGIN'].includes(resource.name)) {
-      let data: unknown;
-      try {
-        data = JSON.parse(resource.data);
-      } catch {
-        throw invalid();
-      }
-      bounded(data);
-      walk(data);
-      resource.data = JSON.stringify(data);
-    }
-  }
 }
 
 async function embeddedImage(source: string) {
@@ -149,9 +114,6 @@ export class PortableFiles {
       sources.add(source);
       return source;
     });
-    // Sheet images are not enabled in Spinel yet; never silently lose their data.
-    if (kind === 'sheet' && sources.size)
-      throw new AuthError(400, 'Spreadsheet image import is not supported yet.');
     const images = new Map<string, Awaited<ReturnType<typeof embeddedImage>>>();
     let total = 0;
     for (const source of sources) {

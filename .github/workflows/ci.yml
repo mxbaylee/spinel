@@ -107,8 +107,9 @@ jobs:
   playwright:
     name: Playwright smoke
     runs-on: ubuntu-latest
-    # Native file and PDF round trips add two browser scenarios per server mode.
-    timeout-minutes: 15
+    # Native/PDF round trips plus image render, touch, restore and guest checks
+    # run for both builds; retain every assertion while allowing their runtime.
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

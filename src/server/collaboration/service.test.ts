@@ -1011,3 +1011,165 @@ test('file-backed restart cancels a staged SDK replacement and preserves a compl
   expect((await last.load(f.owner.id, f.sheet.id)).revision).toBe(3);
   expect(lastHistory.list(f.owner.id, f.sheet.id).some((point) => point.beforeRestore)).toBe(true);
 });
+
+test('Sheet image validation fences live mutations and preserved resources', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  const source = 'https://outside.invalid/pixel.png';
+  const cellDoc = {
+    ...getDocsEmptySnapshot('cell-doc'),
+    drawings: {
+      picture: { unitId: 'cell-doc', subUnitId: 'cell-doc', source },
+    },
+  };
+  const change = f.edit();
+  change.mutations[0].data = JSON.stringify({
+    unitId: f.sheet.id,
+    subUnitId: 'first',
+    cellValue: { 1: { 0: { p: cellDoc } } },
+  });
+  await expect(
+    f.collab.service.submitChangeset(
+      { changeset: change },
+      { userID: f.owner.id, memberID: 'test-member' },
+    ),
+  ).resolves.toMatchObject({
+    status: 'rejected',
+    error: { code: 'INVALID_REQUEST', message: expect.stringContaining('Insert images') },
+  });
+  expect((await f.collab.load(f.owner.id, f.sheet.id)).revision).toBe(1);
+  const unsafeResource = {
+    name: 'SHEET_DRAWING_PLUGIN',
+    data: JSON.stringify({ first: { data: { picture: { source } } } }),
+  };
+  f.db
+    .prepare('INSERT OR REPLACE INTO spinel_generation_resources VALUES(?,?,?)')
+    .run(f.sheet.id, f.sheet.id, JSON.stringify([unsafeResource]));
+  await expect(f.collab.load(f.owner.id, f.sheet.id)).rejects.toThrow('Insert images');
+});
+
+test('moving and restoring an existing Sheet cell image preserves its identity and access without allowing foreign targets', async () => {
+  const f = await fixture();
+  const sharp = (await import('sharp')).default;
+  const bytes = await sharp({ create: { width: 3, height: 2, channels: 3, background: '#ff9900' } })
+    .png()
+    .toBuffer();
+  const { PortableFiles } = await import('../workspace/portable.ts');
+  const cell = {
+    ...getDocsEmptySnapshot('cell-doc'),
+    drawings: {
+      picture: {
+        unitId: 'cell-doc',
+        subUnitId: 'cell-doc',
+        drawingId: 'picture',
+        drawingType: 0,
+        imageSourceType: 'BASE64',
+        source: `data:image/png;base64,${bytes.toString('base64')}`,
+      },
+    },
+  };
+  const imported = await new PortableFiles(f.workspace).import(
+    f.owner.id,
+    {
+      filename: 'cell.json',
+      parentId: null,
+      snapshot: {
+        ...f.snapshot,
+        sheets: { first: { ...f.snapshot.sheets.first, cellData: { 0: { 0: { p: cell } } } } },
+      },
+    },
+    () => {},
+  );
+  await f.collab.prepare(f.owner.id, imported.id);
+  const before = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
+  const preserved = before.sheets.first.cellData![0]![0];
+  const source = (preserved!.p!.drawings!.picture as unknown as { source: string }).source;
+  const { HistoryStore } = await import('../history/store.ts');
+  const history = new HistoryStore(f.workspace, f.collab);
+  cleanup.push(() => history.close());
+  const checkpoint = await history.nameCurrent(f.owner.id, imported.id, 'Original image');
+  const change = { ...f.edit(), unitID: imported.id };
+  change.mutations[0].data = JSON.stringify({
+    unitId: imported.id,
+    subUnitId: 'first',
+    cellValue: { 0: { 0: null }, 1: { 0: preserved } },
+  });
+  const committed = await f.collab.service.submitChangeset(
+    { changeset: change },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  expect(committed.status).toBe('committed');
+  if (committed.status !== 'committed') throw new Error('Expected a committed image move.');
+  const moved = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
+  expect(moved.sheets.first.cellData![1]![0]!.p?.drawings?.picture).toMatchObject({
+    unitId: 'cell-doc',
+    subUnitId: 'cell-doc',
+  });
+  for (const data of [
+    { unitId: f.sheet.id, subUnitId: 'first', cellValue: { 1: { 0: preserved } } },
+    {
+      unitId: imported.id,
+      subUnitId: 'first',
+      cellValue: {
+        1: {
+          0: {
+            p: { ...cell, drawings: { picture: { ...cell.drawings.picture, unitId: f.sheet.id } } },
+          },
+        },
+      },
+    },
+  ]) {
+    const bad = {
+      ...change,
+      baseRev: 2,
+      reqId: 2,
+      mutations: [{ id: SetRangeValuesMutation.id, data: JSON.stringify(data) }],
+    };
+    await expect(
+      f.collab.service.submitChangeset(
+        { changeset: bad },
+        { userID: f.owner.id, memberID: 'test-member' },
+      ),
+    ).resolves.toMatchObject({
+      status: 'rejected',
+      error: { code: 'PERMISSION_DENIED', message: 'Cross-document changes are not allowed.' },
+    });
+  }
+  const removal = await f.collab.service.submitChangeset(
+    {
+      changeset: {
+        ...change,
+        baseRev: 2,
+        reqId: 3,
+        mutations: [
+          {
+            id: SetRangeValuesMutation.id,
+            data: JSON.stringify({
+              unitId: imported.id,
+              subUnitId: 'first',
+              cellValue: { 1: { 0: null } },
+            }),
+          },
+        ],
+      },
+    },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  expect(removal.status).toBe('committed');
+  if (removal.status !== 'committed') throw new Error('Expected a committed image removal.');
+  await history.restore(f.owner.id, imported.id, checkpoint.id, imported.id, randomUUID());
+  const generation = f.collab.generations.active(imported.id);
+  expect(generation.unitId).not.toBe(imported.id);
+  const restored = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
+  expect(restored.sheets.first.cellData![0]![0]!.p?.drawings?.picture).toMatchObject({
+    unitId: 'cell-doc',
+    subUnitId: 'cell-doc',
+    source,
+  });
+  f.workspace.share(f.owner.id, imported.id, f.viewer.id, 'viewer');
+  expect(
+    Buffer.from(f.docs.image(f.viewer.id, imported.id, source.split('/').at(-1)!).data),
+  ).toEqual(bytes);
+  f.workspace.share(f.owner.id, imported.id, f.viewer.id, null);
+  expect(() => f.docs.image(f.viewer.id, imported.id, source.split('/').at(-1)!)).toThrow();
+});
