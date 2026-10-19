@@ -99,7 +99,7 @@ launch must render the solid-color fixture image on the editor canvas; successfu
 HTTP responses alone cannot pass this check. Final server checks preserve the raw baseline text stream (including its image
 marker), the inserted prefix, shifted custom-block links, and the original
 drawing ID, source and dimensions. This is not a full rich-body equality claim. Sheet image support, concurrent peers and the remaining
-contract are still outstanding; these new assertions have not yet run in CI.
+contract are still outstanding. CI 39202913905 exercised the image through the first cold launch; the second-launch text failure prevented its later image/server assertions.
 
 Run 39201195300 (84dc808) established the Doc baseline and reached its second
 cold restart, where fresh copying and the screenshot both showed duplicated
@@ -117,3 +117,22 @@ It records only the newly created synthetic fixture's public recovery payload.
 It does not modify SDK instances, flush tasks, edit cache data or inspect Pro
 implementation/storage internals. Remove this diagnostic bridge before landing;
 normal builds compile it disabled. Exact content assertions remain required.
+
+Run 39202913905 (9ef1b98) reproduced the exact Doc duplicate with the retained
+image. All 242 unit and 56 desktop browser cases passed; Sheet passed its full
+bounded probe again. Public cache records isolate the divergence: revision 3,
+no awaiting changeset, one `Offline-retained` mutation before and just after the
+first cold load; after entering `Cold-second`, the stored mutations are
+`[Offline-retained, Offline-retained, Cold-second]`. The second cold load reads
+that already duplicated queue. This does not yet distinguish cache aliasing/
+write ordering from duplicate arguments supplied by the collaboration entity.
+
+The next diagnostic uses a host implementation of the public `ILocalCacheService`
+through the UI plugin's supported dependency override. It clones input arguments
+immediately, returns fresh clones, serializes IndexedDB record replacements and
+traces public method calls. It preserves every operation and awaiting identity;
+it never deduplicates text, drops mutations or creates acknowledgements. This is
+restricted to the same CI flag and loopback origin plus `host-cache=1`, and stores
+only synthetic pending records, not complete downloads. The original native-cache
+failure remains evidence. Remove diagnostic code before landing, and repeat any
+passing fix without extra cache reads before calling it verified.

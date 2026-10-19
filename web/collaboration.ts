@@ -1,3 +1,5 @@
+import { ProbeLocalCache } from './ProbeLocalCache.ts';
+import { RevisionService } from '@univerjs-pro/collaboration';
 import { guestItemId, documentPath } from './documentAccess.ts';
 import { CollaborationSessions } from './CollaborationSessions.ts';
 import { UserManagerService } from '@univerjs/core';
@@ -62,7 +64,31 @@ export function collaborationPlugins(
         wsSessionTicketUrl: base + '/user/session-ticket?unitID=' + encodeURIComponent(unitID),
       },
     ],
-    [UniverCollaborationClientUIPlugin, { enableUrlUnitLoader: false }],
+    [
+      UniverCollaborationClientUIPlugin,
+      {
+        enableUrlUnitLoader: false,
+        override:
+          import.meta.env.SPINEL_RECOVERY_PROBE &&
+          location.origin === 'https://localhost:3103' &&
+          new URLSearchParams(location.search).get('host-cache') === '1'
+            ? [
+                [
+                  ILocalCacheService,
+                  {
+                    useFactory: (revisions: RevisionService, users: UserManagerService) =>
+                      new ProbeLocalCache(
+                        unitID,
+                        () => users.getCurrentUser()?.userID ?? null,
+                        () => revisions.getCurrentRevOfUnit(unitID),
+                      ),
+                    deps: [RevisionService, UserManagerService],
+                  },
+                ],
+              ]
+            : undefined,
+      },
+    ],
   ];
 }
 export async function prepareCollaboration(id: string) {

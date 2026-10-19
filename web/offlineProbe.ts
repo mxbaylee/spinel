@@ -1,8 +1,10 @@
+import { ProbeLocalCache } from './ProbeLocalCache.ts';
 import type { Univer } from '@univerjs/core';
 import { ILocalCacheService } from '@univerjs-pro/collaboration-client';
 import type { IUnitCacheData } from '@univerjs-pro/collaboration-client';
 
 type RecoveryProbe = {
+  hostCache: boolean;
   beforeLoad: IUnitCacheData | null | undefined;
   read: () => Promise<IUnitCacheData | null | undefined>;
 };
@@ -22,7 +24,7 @@ export async function observeOfflineRecovery(univer: Univer, unitId: string, use
     return () => {};
   const cache = univer.__getInjector().get(ILocalCacheService);
   const read = async () => structuredClone((await cache.loadOfflineData(unitId, userId)) ?? null);
-  const probe = { beforeLoad: await read(), read };
+  const probe = { hostCache: cache instanceof ProbeLocalCache, beforeLoad: await read(), read };
   window.__spinelRecoveryProbe = probe;
   return () => {
     if (window.__spinelRecoveryProbe === probe) delete window.__spinelRecoveryProbe;

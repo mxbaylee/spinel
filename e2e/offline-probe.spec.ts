@@ -24,7 +24,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     test.setTimeout(180_000);
     expect(info.project.name).toBe('mobile-https');
     expect(baseURL).toBe('https://localhost:3103');
-    const itemQuerySuffix = '&offline-probe=1';
+    const itemQuerySuffix = '&offline-probe=1&host-cache=1';
     const directory = await mkdtemp(join(tmpdir(), 'spinel-offline-sdk-'));
     const db = openDatabase('test-results/mobile-https/app.sqlite');
     const auth = new AuthStore(db);
@@ -195,6 +195,10 @@ for (const kind of ['sheet', 'doc'] as const) {
       });
       if (offline) await network.setOffline(true);
       page = context.pages()[0] ?? (await context.newPage());
+      page.on('console', (message) => {
+        if (message.type() === 'log' && message.text().startsWith('{"recoveryCacheCall":'))
+          console.log(JSON.stringify({ probe: kind, cacheCall: JSON.parse(message.text()) }));
+      });
       page.on('pageerror', (error) => {
         diagnostics.add(
           `${stage}${stopping ? ' (closing)' : ''}: ${safeMessage(error.message)}\n${(error.stack ?? '').split('\n').slice(1, 6).map(safeMessage).join('\n')}`,
@@ -211,8 +215,13 @@ for (const kind of ['sheet', 'doc'] as const) {
       const record = await page.evaluate(async () => {
         const probe = window.__spinelRecoveryProbe;
         if (!probe) return { unavailable: true };
-        return { beforeLoad: probe.beforeLoad, current: await probe.read() };
+        return {
+          hostCache: probe.hostCache,
+          beforeLoad: probe.beforeLoad,
+          current: await probe.read(),
+        };
       });
+      expect(record).toMatchObject({ hostCache: true });
       // This flag is compiled only for CI and requires the loopback probe URL.
       // Contents belong to this freshly created synthetic fixture account.
       console.log(JSON.stringify({ probe: kind, recoveryStage: label, recovery: record }));
