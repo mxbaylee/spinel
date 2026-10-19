@@ -47,6 +47,35 @@ test('protocol ingress authenticates independently, binds one-time tickets, and 
       body: '{}',
     });
     expect(prepare.ok).toBe(true);
+    const accessMetadata = (credential: string) =>
+      fetch(`${root}/api/items/${item.id}`, {
+        headers: { Cookie: credential },
+      });
+    const currentAccess = await accessMetadata(cookie);
+    expect(currentAccess.headers.get('cache-control')).toBe('no-store');
+    expect(await currentAccess.json()).toMatchObject({
+      accountId: owner.id,
+      item: { id: item.id, access: 'owner' },
+      live: { unitId: item.id, restoring: false, revisionOffset: 0, sdkVersion: '1.1.0' },
+    });
+    // Both accounts can read the item, but a pending owner edit must never be
+    // rebound to the viewer by combining a stale session read with new metadata.
+    const viewerAccess = await accessMetadata(
+      `${COOKIE_NAME}=${auth.createSession(viewer.id).token}`,
+    );
+    expect(await viewerAccess.json()).toMatchObject({
+      accountId: viewer.id,
+      item: { id: item.id, access: 'viewer' },
+    });
+    for (const credential of [
+      '',
+      `${COOKIE_NAME}=${auth.createSession(admin.id).token}`,
+      `${COOKIE_NAME}=${auth.createSession(unrelated.id).token}`,
+    ]) {
+      const deniedAccess = await accessMetadata(credential);
+      expect(deniedAccess.ok).toBe(false);
+      expect(await deniedAccess.text()).not.toContain('revisionOffset');
+    }
     const replay = (credential = cookie, suppliedOrigin = origin, revision = 0) =>
       fetch(`${root}/api/items/${item.id}/offline-replay`, {
         method: 'POST',

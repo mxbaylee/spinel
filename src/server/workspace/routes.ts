@@ -1,4 +1,5 @@
 import { encodeOfflineReplay } from '../../shared/offlineReplay.ts';
+import packageInfo from '../../../package.json' with { type: 'json' };
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { AuthError, AuthStore } from '../auth/store.ts';
@@ -344,10 +345,15 @@ export function workspaceRoutes(
     const user = owner(request),
       id = String(request.params.id);
     response.json({
+      // Return account and generation together: separate session/item reads can
+      // straddle an account switch when both accounts can open the same item.
+      accountId: user,
       item: store.get(user, id),
       live: collaboration
         ? {
             unitId: collaboration.generations.active(id).unitId,
+            revisionOffset: collaboration.generations.active(id).offset,
+            sdkVersion: packageInfo.dependencies['@univerjs/core'],
             restoring: collaboration.generations.restoring(id),
           }
         : undefined,

@@ -191,9 +191,11 @@ for (const kind of ['sheet', 'doc'] as const) {
         const image = url.pathname.startsWith(`/api/items/${item.id}/images/`);
         const snapshot = Boolean(
           unitId &&
-          url.pathname.startsWith(
+          (url.pathname.startsWith(
             `/universer-api/snapshot/${kind === 'sheet' ? 2 : 1}/unit/${unitId}/`,
-          ),
+          ) ||
+            (kind === 'sheet' &&
+              url.pathname.startsWith(`/universer-api/snapshot/block/2/unit/${unitId}/block/`))),
         );
         let permission = false;
         if (
