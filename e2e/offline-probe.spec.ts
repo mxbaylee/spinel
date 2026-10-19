@@ -354,16 +354,27 @@ for (const kind of ['sheet', 'doc'] as const) {
         awaitingChangeset: record.awaitingChangeset,
         mutations: record.mutations,
       };
-    async function close() {
+    async function retainFinalEvidence() {
       if (context && page && !page.isClosed()) {
         try {
           const evidence = await page.evaluate(() => window.__spinelRecoveryProbe?.ledger());
           if (!evidence || evidence.status === 'failed')
-            cacheFailures.push('Ledger failed before browser close.');
+            cacheFailures.push('Ledger failed before page replacement.');
+          if (
+            !evidence?.diagnostics ||
+            evidence.diagnostics.failed ||
+            evidence.diagnostics.truncated ||
+            evidence.diagnostics.unmatchedInputs ||
+            evidence.diagnostics.unmatchedOutputs
+          )
+            cacheFailures.push('Incomplete boundary diagnostics before page replacement.');
         } catch {
-          cacheFailures.push('Could not inspect final ledger evidence before browser close.');
+          cacheFailures.push('Could not inspect final ledger evidence before page replacement.');
         }
       }
+    }
+    async function close() {
+      await retainFinalEvidence();
       stopping = true;
       await context?.close();
       context = undefined;
@@ -552,6 +563,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect.poll(serverContent, { timeout: 30_000 }).toBe('Baseline');
       await prepareImage();
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
+      await retainFinalEvidence();
       await page.reload();
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await expect.poll(copyContent).toBe('Baseline');
@@ -652,6 +664,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await network.setOffline(false);
       await expect.poll(serverContent, { timeout: 30_000 }).toBe(finalServerContent());
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
+      await retainFinalEvidence();
       await page.reload();
       await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
       await expect.poll(copyContent).toBe(finalOffline);
@@ -764,6 +777,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         const confirmedResponse = await server.get(`/api/items/${item.id}/${kind}`);
         expect(confirmedResponse.ok()).toBe(true);
         expect((await confirmedResponse.json()).revision).toBe(committedRevision);
+        await retainFinalEvidence();
         await page.reload();
         await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
         await expect.poll(copyContent).toBe(expectedCopy);
