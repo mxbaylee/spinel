@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { InterceptorEffectEnum, IPermissionService } from '@univerjs/core';
 import { UnitAction } from '@univerjs/protocol';
+import { setDocumentPermissionValue } from '@univerjs/docs';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import {
   SheetInterceptorService,
@@ -28,14 +29,20 @@ import '@univerjs/preset-docs-hyper-link/lib/index.css';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 import { editorReady } from './editorReady.ts';
+import { documentReady } from './documentReady.ts';
 
 type Preview = { snapshot: IDocumentData | IWorkbookData; item: WorkspaceItem; unitId: string };
 
 /** Isolated native viewer: no collaboration client, autosave or live mutation transport. */
-export function VersionPreview() {
-  const query = new URLSearchParams(location.search);
-  const id = query.get('item') ?? '',
-    checkpoint = query.get('version') ?? '';
+export function VersionPreview({
+  id,
+  checkpoint,
+  onBusyChange,
+}: {
+  id: string;
+  checkpoint: string;
+  onBusyChange: (busy: boolean) => void;
+}) {
   const container = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<Preview | null>(null);
   const [ready, setReady] = useState(false);
@@ -44,6 +51,7 @@ export function VersionPreview() {
   const requestId = useRef(crypto.randomUUID());
   useEffect(() => {
     let disposed = false;
+    const loading = new AbortController();
     let cleanup: (() => void) | undefined;
     void (async () => {
       const loaded = await itemsRequest<Preview>(`/${id}/history/${checkpoint}`);
@@ -72,7 +80,24 @@ export function VersionPreview() {
       else univerAPI.createDocument(loaded.snapshot as IDocumentData);
       await editorReady(univerAPI);
       if (disposed) return;
-      if (!sheet) await univerAPI.getActiveDocument()!.getPermission().setReadOnly();
+      if (!sheet) {
+        await documentReady(univer, loaded.snapshot.id, loading.signal);
+        if (disposed) return;
+        // A preview needs a local UI fence, not an owner-only document policy.
+        // The policy command can still permit its owner and changes the snapshot.
+        // Use the same public local permission boundary as the live viewer.
+        const permissions = univer.__getInjector().get(IPermissionService);
+        setDocumentPermissionValue(
+          permissions,
+          loaded.snapshot.id,
+          loaded.snapshot.id,
+          UnitAction.Edit,
+          false,
+        );
+        if (univerAPI.getActiveDocument()!.getPermission().canEdit())
+          throw new Error('The preview could not be made read-only. Reload to try again.');
+      }
+      if (disposed) return;
       if (sheet) {
         // setEditable controls cell entry; the full permission set also fences
         // formatting, worksheet structure and other toolbar commands.
@@ -132,6 +157,7 @@ export function VersionPreview() {
     });
     return () => {
       disposed = true;
+      loading.abort();
       if (cleanup) queueMicrotask(cleanup);
     };
   }, [id, checkpoint]);
@@ -145,6 +171,7 @@ export function VersionPreview() {
     )
       return;
     setBusy(true);
+    onBusyChange(true);
     setError('');
     try {
       await itemsRequest(`/${id}/history/${checkpoint}/restore`, 'POST', {
@@ -155,11 +182,12 @@ export function VersionPreview() {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not restore this version.');
       setBusy(false);
+      onBusyChange(false);
     }
   };
   return (
     <section aria-label="Version preview">
-      <h1>Preview — {data?.item.name ?? 'Saved version'}</h1>
+      <h2>Preview — {data?.item.name ?? 'Saved version'}</h2>
       <p>Read only. The live document is unchanged.</p>
       <a href={`/?item=${encodeURIComponent(id)}`}>Back to live document</a>
       {data && data.item.access !== 'viewer' && (

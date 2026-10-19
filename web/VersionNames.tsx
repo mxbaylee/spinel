@@ -1,14 +1,9 @@
 import { useState } from 'react';
 import { itemsRequest } from './itemsApi.ts';
 
-type Version = {
-  id: string;
-  capturedAt: number;
-  name: string | null;
-  beforeRestore?: boolean | number;
-};
+import type { HistoryVersion as Version } from '../src/shared/historyNavigation.ts';
 
-/** Version naming and preview entry point; timeline navigation has its own ticket. */
+/** Version naming and entry points to the isolated history browser. */
 export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
   const [open, setOpen] = useState(false);
   const [versions, setVersions] = useState<Version[]>([]);
@@ -49,6 +44,9 @@ export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
       {open && (
         <section aria-label="Version names">
           <h3>Versions</h3>
+          <a href={`/preview?item=${encodeURIComponent(id)}`} target="_blank" rel="noopener">
+            Browse history
+          </a>
           {error && <p role="alert">{error}</p>}
           <button disabled={busy} onClick={() => void run(refresh)}>
             Refresh versions
