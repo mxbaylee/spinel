@@ -79,6 +79,7 @@ export async function observeOfflineRecovery(
               fromChangeset: options?.fromChangeset,
               onlyLocal: options?.onlyLocal,
               syncOnly: options?.syncOnly,
+              recoveredIdentity: options?.spinelRecoveredIdentity,
             },
           }));
       });

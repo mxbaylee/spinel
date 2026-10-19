@@ -1,8 +1,10 @@
 import { ProbeLocalCache } from './ProbeLocalCache.ts';
+import { ProbeReplayCommands } from './ProbeReplayCommands.ts';
 import { RevisionService } from '@univerjs-pro/collaboration';
 import { guestItemId, documentPath } from './documentAccess.ts';
 import { CollaborationSessions } from './CollaborationSessions.ts';
 import { UserManagerService } from '@univerjs/core';
+import { ICommandService, Injector, ILogService, IConfigService } from '@univerjs/core';
 import type { Univer, DependencyOverride } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import type { createUniver } from '@univerjs/presets';
@@ -29,6 +31,34 @@ import type { SaveState } from '../src/shared/autosave.ts';
 import type { ItemAccess } from '../src/shared/workspace.ts';
 
 export { ClientEnglish, UIEnglish };
+export function probeCommandOverride(unitId: string, access: ItemAccess): DependencyOverride {
+  return import.meta.env.SPINEL_RECOVERY_PROBE &&
+    location.origin === 'https://localhost:3103' &&
+    access === 'owner' &&
+    new URLSearchParams(location.search).get('replay-identity') === '1'
+    ? [
+        [
+          ICommandService,
+          {
+            useFactory: (
+              injector: Injector,
+              log: ILogService,
+              config: IConfigService,
+              users: UserManagerService,
+            ) =>
+              new ProbeReplayCommands(
+                injector,
+                log,
+                config,
+                unitId,
+                () => users.getCurrentUser()?.userID ?? null,
+              ),
+            deps: [Injector, ILogService, IConfigService, UserManagerService],
+          },
+        ],
+      ]
+    : [];
+}
 export function collaborationPlugins(
   unitID: string,
   override?: DependencyOverride,

@@ -26,7 +26,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     test.setTimeout(180_000);
     expect(info.project.name).toBe('mobile-https');
     expect(baseURL).toBe('https://localhost:3103');
-    const itemQuerySuffix = '&offline-probe=1&host-cache=1';
+    const itemQuerySuffix = '&offline-probe=1&host-cache=1&replay-identity=1';
     const directory = await mkdtemp(join(tmpdir(), 'spinel-offline-sdk-'));
     const db = openDatabase('test-results/mobile-https/app.sqlite');
     const auth = new AuthStore(db);
@@ -82,8 +82,10 @@ for (const kind of ['sheet', 'doc'] as const) {
     let stage = 'initializing';
     let uncertainProof: IChangeset | undefined;
     let confirmation: IChangeset | undefined;
+    let checkUncertainClears = false;
     const resumedRequests: IChangeset[] = [];
     const prematureClears: string[] = [];
+    const docCommands: { stage: string; recovered: boolean }[] = [];
     const editorName = kind === 'sheet' ? 'Sheet document' : 'Doc document';
     const editor = () => page.getByRole('region', { name: editorName, exact: true });
     const status = () => editor().getByRole('status', { name: 'Save status' });
@@ -237,6 +239,11 @@ for (const kind of ['sheet', 'doc'] as const) {
       page.on('console', (message) => {
         if (message.type() === 'log' && message.text().startsWith('{"recoveryDocEvent":')) {
           const docEvent = JSON.parse(message.text());
+          if (docEvent.recoveryDocEvent === 'before text mutation')
+            docCommands.push({
+              stage,
+              recovered: docEvent.value.options?.recoveredIdentity === true,
+            });
           if (docEvent.recoveryDocEvent === 'trace failure')
             cacheFailures.push(String(docEvent.value));
           console.log(JSON.stringify({ probe: kind, stage, docEvent }));
@@ -247,6 +254,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           if (call.recoveryCacheCall === 'storage failure') cacheFailures.push(String(call.data));
           if (
             uncertainProof &&
+            checkUncertainClears &&
             (call.serverConfirmation?.sid !== uncertainProof.sid ||
               call.serverConfirmation?.reqId !== uncertainProof.reqId) &&
             (call.recoveryCacheCall === 'clear' ||
@@ -285,6 +293,22 @@ for (const kind of ['sheet', 'doc'] as const) {
       // Two loads belong to this observer; at least one belongs to the SDK loader.
       expect(cacheCalls.filter((call) => call === 'load').length).toBeGreaterThanOrEqual(3);
       if (label.includes('edit settled')) expect(cacheCalls).toContain('update');
+      if (kind === 'doc' && label.startsWith('cold launch')) {
+        const before = record.beforeLoad;
+        const expected =
+          (before?.mutations.length ?? 0) + (before?.awaitingChangeset?.mutations.length ?? 0);
+        expect(expected).toBeGreaterThan(0);
+        await expect
+          .poll(
+            () => docCommands.filter((event) => event.stage === stage && event.recovered).length,
+          )
+          .toBe(expected);
+      }
+      if (kind === 'doc' && label.includes('edit settled')) {
+        const edits = docCommands.filter((event) => event.stage === stage);
+        expect(edits.length).toBeGreaterThan(0);
+        expect(edits.every((event) => !event.recovered)).toBe(true);
+      }
       // This flag is compiled only for CI and requires the loopback probe URL.
       // Contents belong to this freshly created synthetic fixture account.
       console.log(JSON.stringify({ probe: kind, recoveryStage: label, recovery: record }));
@@ -557,6 +581,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         expect(Number.isSafeInteger(uncertain.awaitingChangeset?.reqId)).toBe(true);
         expect(uncertain.mutations).toEqual([]);
         uncertainProof = parseChangesetToProtocol(uncertain.awaitingChangeset!);
+        checkUncertainClears = true;
         await recordRecovery('lost acknowledgement persisted');
         stage = 'cold restart with an uncertain committed edit';
         await close();
@@ -602,6 +627,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           })
           .toBe(true);
         expect(prematureClears).toEqual([]);
+        checkUncertainClears = false;
         await expect(status()).toHaveText('All changes saved.', { timeout: 30_000 });
         await expect.poll(serverContent).toBe(expectedServer);
         const confirmedResponse = await server.get(`/api/items/${item.id}/${kind}`);

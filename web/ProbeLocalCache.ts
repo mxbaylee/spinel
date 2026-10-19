@@ -1,6 +1,7 @@
 import type { IMutationInfo, Nullable, UniverInstanceType } from '@univerjs/core';
 import type { IChangeset } from '@univerjs-pro/collaboration';
 import type { ILocalCacheService, IUnitCacheData } from '@univerjs-pro/collaboration-client';
+import { markRecoveredParams } from './ProbeReplayCommands.ts';
 
 /** Synthetic CI probe only: a host implementation of the public cache contract.
  * This stores pending records, not complete offline downloads or user-visible save guarantees.
@@ -79,6 +80,13 @@ export class ProbeLocalCache implements ILocalCacheService {
       (store) => store.get(key) as IDBRequest<IUnitCacheData | undefined>,
     );
     const copy = data ? structuredClone(data) : null;
+    if (copy && new URLSearchParams(location.search).get('replay-identity') === '1') {
+      const userId = this.currentUser();
+      if (!userId || copy.userId !== userId || copy.unitID !== this.unit)
+        throw new Error('Recovered record is outside the synthetic probe scope.');
+      for (const mutation of [...copy.mutations, ...(copy.awaitingChangeset?.mutations ?? [])])
+        markRecoveredParams(mutation.id, mutation.params, this.unit, userId);
+    }
     this.trace('load', copy);
     return copy;
   }

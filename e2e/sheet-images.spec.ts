@@ -219,13 +219,24 @@ for (const mobile of [false, true]) {
       };
       await page.mouse.click(center.x, center.y);
       await page.keyboard.press('Delete');
-      // Drawing invalidation briefly clears the canvas before its next render.
-      // Require the same rendered image after each attempted readonly mutation.
+      const refusal = page.getByText(
+        'The range is protected, and you do not have edit permission. To edit, please contact the creator.',
+        { exact: true },
+      );
+      await expect(refusal).toBeVisible();
+      await page.getByRole('button', { name: 'ok', exact: true }).click();
+      await expect(refusal).toBeHidden();
+      // The refusal backdrop dims canvas colors. Assert it before dismissing,
+      // then verify the exact original image geometry rather than dimmed pixels.
       await expect.poll(floatingBounds).toEqual(before);
       await page.mouse.move(center.x, center.y);
       await page.mouse.down();
       await page.mouse.move(center.x + (mobile ? -30 : 40), center.y + 30, { steps: 6 });
       await page.mouse.up();
+      if (await refusal.isVisible()) {
+        await page.getByRole('button', { name: 'ok', exact: true }).click();
+        await expect(refusal).toBeHidden();
+      }
       await expect.poll(floatingBounds).toEqual(before);
       await allImagesVisible();
       expect(errors).toEqual([]);

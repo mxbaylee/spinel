@@ -47,6 +47,7 @@ import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
 import {
   collaborationPlugins,
+  probeCommandOverride,
   prepareCollaboration,
   identifyCollaborator,
   watchCollaboration,
@@ -208,7 +209,10 @@ export function DocEditor({
           ),
         },
         collaboration: true,
-        override: [[IImageIoService, { useClass: StoredImages }]],
+        override: [
+          [IImageIoService, { useClass: StoredImages }],
+          ...probeCommandOverride(data.unitId, data.access),
+        ],
         plugins: [
           [
             UniverDrawingPlugin,
