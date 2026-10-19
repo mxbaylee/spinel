@@ -3,6 +3,9 @@ import { ITEM_KINDS, kindLabel } from '../src/shared/workspace.ts';
 import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
 
 import { Sharing } from './Sharing.tsx';
+import { SearchPanel } from './SearchPanel.tsx';
+import { emptySearch, hasSearch } from '../src/shared/search.ts';
+import type { SearchQuery } from '../src/shared/search.ts';
 import { Trash } from './Trash.tsx';
 import { DocumentTags, TagLabels } from './DocumentTags.tsx';
 import { itemsRequest } from './itemsApi.ts';
@@ -28,6 +31,8 @@ const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m
 
 export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   const dropTarget = useRef<HTMLElement>(null);
+  const [query, setQuery] = useState<SearchQuery>({ ...emptySearch });
+  const searchActive = hasSearch(query);
   const pins = usePins();
   const shared = useSharedItems();
   const [sharedOpen, setSharedOpen] = useState(false);
@@ -62,6 +67,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
         history.pushState(null, '', viewUrl(currentRef.current));
         return;
       }
+      setQuery({ ...emptySearch });
       setCurrentId(selectedId());
       setTagging(null);
       setAction(null);
@@ -150,6 +156,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   }
   function navigate(id: string | null, check = true) {
     if (check && id !== currentId && !navigation.allow()) return;
+    setQuery({ ...emptySearch });
     history.pushState(null, '', viewUrl(id));
     setCurrentId(id);
     setTagging(null);
@@ -316,7 +323,15 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
           <button {...folderDrop(null)} disabled={busy} onClick={() => navigate(null)}>
             All my files
           </button>
-          <button aria-expanded={sharedOpen} onClick={() => setSharedOpen((value) => !value)}>
+          <button
+            aria-expanded={sharedOpen && !searchActive}
+            onClick={() => {
+              if (searchActive) {
+                setQuery({ ...emptySearch });
+                setSharedOpen(true);
+              } else setSharedOpen((value) => !value);
+            }}
+          >
             Shared with me
           </button>
           <button
@@ -343,13 +358,23 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
           </ul>
         </aside>
         <section ref={dropTarget} className="files" aria-label="Your files">
+          <SearchPanel
+            query={query}
+            onChange={setQuery}
+            loadedItems={[
+              ...items,
+              ...viewed.filter((item) => item.access === 'owner'),
+              ...shared.items,
+            ]}
+            onOpen={navigate}
+          />
           {shared.error && (
             <p role="alert">
               {shared.error}{' '}
               <button onClick={() => void shared.refresh()}>Refresh shared items</button>
             </p>
           )}
-          {sharedOpen && (
+          {sharedOpen && !searchActive && (
             <section className="shared-drawer" aria-label="Shared with me">
               <h2>Shared with me</h2>
               <p>File a reference in your folders. The owner's copy stays where it is.</p>
@@ -380,229 +405,235 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
               </ul>
             </section>
           )}
-          <nav aria-label="Breadcrumb">
-            <button disabled={busy} onClick={() => navigate(null)}>
-              My files
-            </button>
-            {ancestors(current).map((item) => (
-              <span key={item.id}>
-                {' '}
-                /{' '}
-                <button
-                  disabled={busy}
-                  aria-current={item.id === currentId ? 'page' : undefined}
-                  onClick={() => navigate(item.id)}
-                >
-                  {item.name}
-                </button>
-              </span>
-            ))}
-          </nav>
-          {!loaded || viewLoading || currentId !== viewId ? (
-            <p role="status">
-              {error
-                ? 'Your files could not be loaded. Reload to try again.'
-                : 'Loading your files…'}
-            </p>
-          ) : currentId === TRASH_VIEW ? (
-            <Trash onChanged={reloadItems} />
-          ) : currentId && !current ? (
-            <p role="alert">This item is not available. Choose My files to continue.</p>
-          ) : (
-            <>
-              <div className="folder-heading">
-                <h2>{current?.name ?? 'My files'}</h2>
-                {current && <SharedBadge item={current} />}
-                {current && actions(current)}
-                {current && <TagLabels tags={current.tags} />}
-              </div>
-              {!current || current.kind === 'folder' ? (
-                <>
-                  {(!current || current.access === 'owner') && (
-                    <button className="primary" disabled={busy} onClick={() => edit('new')}>
-                      New
-                    </button>
-                  )}
-                  {current && (
-                    <button disabled={busy} onClick={() => setRefresh((value) => value + 1)}>
-                      Refresh folder
-                    </button>
-                  )}
-                  {(!current || current.access === 'owner') && (
-                    <ImportFile
-                      key={currentId ?? 'root'}
-                      parentId={currentId}
-                      dropTarget={dropTarget}
-                      onImported={(item) => {
-                        setItems((previous) => [...previous, item]);
-                        setViewed((previous) => [...previous, item]);
-                        setRefresh((value) => value + 1);
-                      }}
+          {/* Keep editors mounted while searching so unsaved work is preserved. */}
+          <div className="file-view" hidden={searchActive}>
+            <nav aria-label="Breadcrumb">
+              <button disabled={busy} onClick={() => navigate(null)}>
+                My files
+              </button>
+              {ancestors(current).map((item) => (
+                <span key={item.id}>
+                  {' '}
+                  /{' '}
+                  <button
+                    disabled={busy}
+                    aria-current={item.id === currentId ? 'page' : undefined}
+                    onClick={() => navigate(item.id)}
+                  >
+                    {item.name}
+                  </button>
+                </span>
+              ))}
+            </nav>
+            {!loaded || viewLoading || currentId !== viewId ? (
+              <p role="status">
+                {error
+                  ? 'Your files could not be loaded. Reload to try again.'
+                  : 'Loading your files…'}
+              </p>
+            ) : currentId === TRASH_VIEW ? (
+              <Trash onChanged={reloadItems} />
+            ) : currentId && !current ? (
+              <p role="alert">This item is not available. Choose My files to continue.</p>
+            ) : (
+              <>
+                <div className="folder-heading">
+                  <h2>{current?.name ?? 'My files'}</h2>
+                  {current && <SharedBadge item={current} />}
+                  {current && actions(current)}
+                  {current && <TagLabels tags={current.tags} />}
+                </div>
+                {!current || current.kind === 'folder' ? (
+                  <>
+                    {(!current || current.access === 'owner') && (
+                      <button className="primary" disabled={busy} onClick={() => edit('new')}>
+                        New
+                      </button>
+                    )}
+                    {current && (
+                      <button disabled={busy} onClick={() => setRefresh((value) => value + 1)}>
+                        Refresh folder
+                      </button>
+                    )}
+                    {(!current || current.access === 'owner') && (
+                      <ImportFile
+                        key={currentId ?? 'root'}
+                        parentId={currentId}
+                        dropTarget={dropTarget}
+                        enabled={!searchActive}
+                        onImported={(item) => {
+                          setItems((previous) => [...previous, item]);
+                          setViewed((previous) => [...previous, item]);
+                          setRefresh((value) => value + 1);
+                        }}
+                      />
+                    )}
+                    <ul className="file-list" aria-label="Folder contents">
+                      {visibleItems
+                        .sort(
+                          (a, b) =>
+                            Number(b.kind === 'folder') - Number(a.kind === 'folder') ||
+                            a.name.localeCompare(b.name) ||
+                            a.id.localeCompare(b.id),
+                        )
+                        .map((item) => (
+                          <li key={item.id}>
+                            {item.access !== 'owner' && dragShared(item)}
+                            <button
+                              className="item-open"
+                              disabled={busy}
+                              onClick={() => navigate(item.id)}
+                            >
+                              {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
+                            </button>
+                            <SharedBadge item={item} />
+                            {actions(item)}
+                            <TagLabels tags={item.tags} />
+                          </li>
+                        ))}
+                    </ul>
+                    {!visibleItems.length && (
+                      <p className="empty-state">
+                        <GemLogo size={52} />
+                        This folder is empty.
+                        {(!current || current.access === 'owner') &&
+                          ' Choose New to add a folder or document.'}
+                      </p>
+                    )}
+                  </>
+                ) : current.kind === 'sheet' ? (
+                  <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
+                    <SheetEditor
+                      key={current.id}
+                      id={current.id}
+                      name={current.name}
+                      onDirty={navigation.dirty}
                     />
-                  )}
-                  <ul className="file-list" aria-label="Folder contents">
-                    {visibleItems
-                      .sort(
-                        (a, b) =>
-                          Number(b.kind === 'folder') - Number(a.kind === 'folder') ||
-                          a.name.localeCompare(b.name) ||
-                          a.id.localeCompare(b.id),
-                      )
-                      .map((item) => (
-                        <li key={item.id}>
-                          {item.access !== 'owner' && dragShared(item)}
-                          <button
-                            className="item-open"
-                            disabled={busy}
-                            onClick={() => navigate(item.id)}
-                          >
-                            {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
-                          </button>
-                          <SharedBadge item={item} />
-                          {actions(item)}
-                          <TagLabels tags={item.tags} />
-                        </li>
-                      ))}
-                  </ul>
-                  {!visibleItems.length && (
-                    <p className="empty-state">
-                      <GemLogo size={52} />
-                      This folder is empty.
-                      {(!current || current.access === 'owner') &&
-                        ' Choose New to add a folder or document.'}
-                    </p>
-                  )}
-                </>
-              ) : current.kind === 'sheet' ? (
-                <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
-                  <SheetEditor
-                    key={current.id}
-                    id={current.id}
-                    name={current.name}
-                    onDirty={navigation.dirty}
-                  />
-                </Suspense>
-              ) : current.kind === 'doc' ? (
-                <Suspense fallback={<p role="status">Loading document…</p>}>
-                  <DocEditor
-                    key={current.id}
-                    id={current.id}
-                    name={current.name}
-                    onDirty={navigation.dirty}
-                  />
-                </Suspense>
-              ) : (
-                <section
-                  className="empty-document"
-                  aria-label={`${kindLabel[current.kind]} document`}
-                >
-                  <p>{kindLabel[current.kind]} · Empty document</p>
-                  <p>This document is saved here. Editing is coming in a later update.</p>
-                </section>
-              )}
-            </>
-          )}
-          {action && (
-            <form
-              className="item-form"
-              aria-label={`${action.mode === 'new' ? 'New item' : action.mode === 'file' ? 'File shared item' : action.mode === 'move' ? 'Move item' : 'Rename item'}`}
-              onSubmit={(event) => {
-                event.preventDefault();
-                void submit();
-              }}
-            >
-              <h3>
-                {action.mode === 'new'
-                  ? 'New item'
-                  : `${action.mode === 'rename' ? 'Rename' : action.mode === 'file' ? 'File' : 'Move'} ${action.item!.name}`}
-              </h3>
-              {action.mode === 'new' && (
-                <label>
-                  Type
-                  <select
-                    value={kind}
-                    disabled={busy}
-                    onChange={(event) => setKind(event.target.value as ItemKind)}
+                  </Suspense>
+                ) : current.kind === 'doc' ? (
+                  <Suspense fallback={<p role="status">Loading document…</p>}>
+                    <DocEditor
+                      key={current.id}
+                      id={current.id}
+                      name={current.name}
+                      onDirty={navigation.dirty}
+                    />
+                  </Suspense>
+                ) : (
+                  <section
+                    className="empty-document"
+                    aria-label={`${kindLabel[current.kind]} document`}
                   >
-                    {ITEM_KINDS.map((kind) => (
-                      <option key={kind} value={kind}>
-                        {kindLabel[kind]}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              )}
-              {action.mode !== 'move' && action.mode !== 'file' ? (
-                <label>
-                  Name
-                  <input
-                    autoFocus
-                    value={name}
-                    disabled={busy}
-                    maxLength={120}
-                    required
-                    onChange={(event) => setName(event.target.value)}
-                  />
-                </label>
-              ) : (
-                <label>
-                  Destination
-                  <select
-                    value={destination}
-                    disabled={busy}
-                    onChange={(event) => setDestination(event.target.value)}
-                  >
-                    <option value="">My files</option>
-                    {folders
-                      .filter(({ path }) => !path.some((item) => item.id === action.item!.id))
-                      .map(({ item, path }) => (
-                        <option key={item.id} value={item.id}>
-                          {path.map((entry) => entry.name).join(' / ')}
+                    <p>{kindLabel[current.kind]} · Empty document</p>
+                    <p>This document is saved here. Editing is coming in a later update.</p>
+                  </section>
+                )}
+              </>
+            )}
+            {action && (
+              <form
+                className="item-form"
+                aria-label={`${action.mode === 'new' ? 'New item' : action.mode === 'file' ? 'File shared item' : action.mode === 'move' ? 'Move item' : 'Rename item'}`}
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void submit();
+                }}
+              >
+                <h3>
+                  {action.mode === 'new'
+                    ? 'New item'
+                    : `${action.mode === 'rename' ? 'Rename' : action.mode === 'file' ? 'File' : 'Move'} ${action.item!.name}`}
+                </h3>
+                {action.mode === 'new' && (
+                  <label>
+                    Type
+                    <select
+                      value={kind}
+                      disabled={busy}
+                      onChange={(event) => setKind(event.target.value as ItemKind)}
+                    >
+                      {ITEM_KINDS.map((kind) => (
+                        <option key={kind} value={kind}>
+                          {kindLabel[kind]}
                         </option>
                       ))}
-                  </select>
-                </label>
-              )}
-              <div className="item-actions">
-                <button
-                  className="primary"
-                  disabled={
-                    busy || (action.mode !== 'move' && action.mode !== 'file' && !name.trim())
-                  }
-                >
-                  {action.mode === 'new' ? 'Create' : 'Save'}
-                </button>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => {
-                    setAction(null);
-                    setError('');
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          )}
-          {tagging && (
-            <DocumentTags
-              key={tagging.id}
-              item={tagging}
-              onClose={() => setTagging(null)}
-              onChanged={(item) => {
-                setItems((previous) =>
-                  previous.map((entry) => (entry.id === item.id ? item : entry)),
-                );
-                setViewed((previous) =>
-                  previous.map((entry) => (entry.id === item.id ? item : entry)),
-                );
-                setTagging(item);
-              }}
-            />
-          )}
-          {sharing && <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />}
-          {error && <p role="alert">{error}</p>}
+                    </select>
+                  </label>
+                )}
+                {action.mode !== 'move' && action.mode !== 'file' ? (
+                  <label>
+                    Name
+                    <input
+                      autoFocus
+                      value={name}
+                      disabled={busy}
+                      maxLength={120}
+                      required
+                      onChange={(event) => setName(event.target.value)}
+                    />
+                  </label>
+                ) : (
+                  <label>
+                    Destination
+                    <select
+                      value={destination}
+                      disabled={busy}
+                      onChange={(event) => setDestination(event.target.value)}
+                    >
+                      <option value="">My files</option>
+                      {folders
+                        .filter(({ path }) => !path.some((item) => item.id === action.item!.id))
+                        .map(({ item, path }) => (
+                          <option key={item.id} value={item.id}>
+                            {path.map((entry) => entry.name).join(' / ')}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                )}
+                <div className="item-actions">
+                  <button
+                    className="primary"
+                    disabled={
+                      busy || (action.mode !== 'move' && action.mode !== 'file' && !name.trim())
+                    }
+                  >
+                    {action.mode === 'new' ? 'Create' : 'Save'}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => {
+                      setAction(null);
+                      setError('');
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+            {tagging && (
+              <DocumentTags
+                key={tagging.id}
+                item={tagging}
+                onClose={() => setTagging(null)}
+                onChanged={(item) => {
+                  setItems((previous) =>
+                    previous.map((entry) => (entry.id === item.id ? item : entry)),
+                  );
+                  setViewed((previous) =>
+                    previous.map((entry) => (entry.id === item.id ? item : entry)),
+                  );
+                  setTagging(item);
+                }}
+              />
+            )}
+            {sharing && (
+              <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />
+            )}
+            {error && <p role="alert">{error}</p>}
+          </div>
         </section>
       </div>
     </>

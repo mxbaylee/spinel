@@ -7,10 +7,12 @@ import { itemsRequest } from './itemsApi.ts';
 export function ImportFile({
   parentId,
   dropTarget,
+  enabled,
   onImported,
 }: {
   parentId: string | null;
   dropTarget: RefObject<HTMLElement>;
+  enabled: boolean;
   onImported: (item: WorkspaceItem) => void;
 }) {
   const input = useRef<HTMLInputElement>(null);
@@ -60,7 +62,7 @@ export function ImportFile({
   };
   useEffect(() => {
     const target = dropTarget.current;
-    if (!target) return;
+    if (!target || !enabled) return;
     const drag = (event: DragEvent) => {
       if (event.dataTransfer?.types.includes('Files')) event.preventDefault();
     };
