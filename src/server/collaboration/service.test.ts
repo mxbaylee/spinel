@@ -1,3 +1,4 @@
+import { encodeOfflineReplay, decodeOfflineReplay } from '../../shared/offlineReplay.ts';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -1010,4 +1011,89 @@ test('file-backed restart cancels a staged SDK replacement and preserves a compl
   await last.purgeDeleted();
   expect((await last.load(f.owner.id, f.sheet.id)).revision).toBe(3);
   expect(lastHistory.list(f.owner.id, f.sheet.id).some((point) => point.beforeRestore)).toBe(true);
+});
+
+test('offline replay preserves complete binary blocks, exact revision and generation identity across JSON', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  const original = await f.collab.offlineReplay(f.viewer.id, f.sheet.id, f.sheet.id, 1);
+  expect(original.access).toBe('viewer');
+  expect(original.accountId).toBe(f.viewer.id);
+  expect(original.data.targetRevision).toBe(1);
+  expect(original.data.sheetBlocks.length).toBeGreaterThan(0);
+  const roundtrip = decodeOfflineReplay(JSON.parse(JSON.stringify(encodeOfflineReplay(original))));
+  expect(roundtrip).toEqual(original);
+  expect(roundtrip.data.sheetBlocks[0].data).toBeInstanceOf(Uint8Array);
+  await f.collab.service.submitChangeset(
+    { changeset: f.edit() },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
+  const pinned = await f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, 1);
+  expect(pinned.data).toEqual(original.data);
+  const latest = await f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, 0);
+  expect(latest.data.targetRevision).toBeGreaterThan(1);
+  const { HistoryStore } = await import('../history/store.ts');
+  const history = new HistoryStore(f.workspace, f.collab);
+  cleanup.push(() => history.close());
+  const checkpoint = await history.nameCurrent(f.owner.id, f.sheet.id, 'Replay generation');
+  const restored = await history.restore(
+    f.owner.id,
+    f.sheet.id,
+    checkpoint.id,
+    f.sheet.id,
+    randomUUID(),
+  );
+  const next = await f.collab.offlineReplay(f.owner.id, f.sheet.id, restored.nextUnit, 0);
+  expect(next.unitId).toBe(restored.nextUnit);
+  expect(next.data.snapshot.unitID).toBe(restored.nextUnit);
+  expect(next.revisionOffset).toBeGreaterThan(0);
+  expect(next.data.targetRevision + next.revisionOffset).toBe(restored.revision);
+  await expect(f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, 1)).rejects.toThrow(
+    'changed versions',
+  );
+  await f.collab.prepare(f.owner.id, f.doc.id);
+  const doc = await f.collab.offlineReplay(f.owner.id, f.doc.id, f.doc.id, 0);
+  expect(decodeOfflineReplay(JSON.parse(JSON.stringify(encodeOfflineReplay(doc))))).toEqual(doc);
+});
+
+test('offline replay refuses unrelated/admin access and a grant changed while reading', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  for (const user of [f.other.id, f.admin.id, 'guest:untrusted'])
+    await expect(f.collab.offlineReplay(user, f.sheet.id, f.sheet.id, 0)).rejects.toThrow();
+  await expect(f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, -1)).rejects.toThrow(
+    'valid SDK revision',
+  );
+  const data = await f.load();
+  vi.spyOn(f.collab.service, 'getUnitLoadDataWithBlocks').mockImplementationOnce(async () => {
+    f.workspace.share(f.owner.id, f.sheet.id, f.viewer.id, 'editor');
+    return data;
+  });
+  await expect(f.collab.offlineReplay(f.viewer.id, f.sheet.id, f.sheet.id, 0)).rejects.toThrow(
+    'Access or the document version changed',
+  );
+});
+
+test('offline replay never returns a generation replaced while acquisition was in flight', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  const { HistoryStore } = await import('../history/store.ts');
+  const history = new HistoryStore(f.workspace, f.collab);
+  cleanup.push(() => history.close());
+  const checkpoint = await history.nameCurrent(f.owner.id, f.sheet.id, 'Before download race');
+  const original = await f.load();
+  const entered = Promise.withResolvers<void>();
+  const resume = Promise.withResolvers<void>();
+  cleanup.push(() => resume.resolve());
+  vi.spyOn(f.collab.service, 'getUnitLoadDataWithBlocks').mockImplementationOnce(async () => {
+    entered.resolve();
+    await resume.promise;
+    return original;
+  });
+  const reading = f.collab.offlineReplay(f.owner.id, f.sheet.id, f.sheet.id, 0);
+  const rejected = expect(reading).rejects.toThrow('Access or the document version changed');
+  await entered.promise;
+  await history.restore(f.owner.id, f.sheet.id, checkpoint.id, f.sheet.id, randomUUID());
+  resume.resolve();
+  await rejected;
 });

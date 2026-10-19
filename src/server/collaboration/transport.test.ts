@@ -1,3 +1,4 @@
+import { CollaborationStore } from './service.ts';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { request } from 'node:http';
 import { randomBytes } from 'node:crypto';
@@ -46,6 +47,50 @@ test('protocol ingress authenticates independently, binds one-time tickets, and 
       body: '{}',
     });
     expect(prepare.ok).toBe(true);
+    const replay = (credential = cookie, suppliedOrigin = origin, revision = 0) =>
+      fetch(`${root}/api/items/${item.id}/offline-replay`, {
+        method: 'POST',
+        headers: { Cookie: credential, Origin: suppliedOrigin, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ unitId: item.id, revision }),
+      });
+    expect((await replay('')).status).toBe(401);
+    expect((await replay(cookie, 'https://hostile.example')).status).toBe(403);
+    expect((await replay(cookie, origin, -1)).status).toBe(400);
+    const downloaded = await replay();
+    expect(downloaded.ok).toBe(true);
+    expect(downloaded.headers.get('cache-control')).toBe('no-store');
+    const bundle = await downloaded.json();
+    expect(bundle.accountId).toBe(owner.id);
+    expect(bundle.unitId).toBe(item.id);
+    expect(typeof bundle.data.snapshot.workbook.originalMeta).toBe('string');
+    expect((await replay(`${COOKIE_NAME}=${auth.createSession(unrelated.id).token}`)).ok).toBe(
+      false,
+    );
+    expect((await replay(`${COOKIE_NAME}=${auth.createSession(admin.id).token}`)).ok).toBe(false);
+    const expiring = auth.createSession(owner.id);
+    const acquired = Promise.withResolvers<void>();
+    const release = Promise.withResolvers<void>();
+    const originalReplay = CollaborationStore.prototype.offlineReplay;
+    const delayedReplay = vi
+      .spyOn(CollaborationStore.prototype, 'offlineReplay')
+      .mockImplementationOnce(async function (this: CollaborationStore, ...args) {
+        const result = await originalReplay.apply(this, args);
+        acquired.resolve();
+        await release.promise;
+        return result;
+      });
+    try {
+      const inFlight = replay(`${COOKIE_NAME}=${expiring.token}`);
+      await acquired.promise;
+      auth.revokeSession(expiring.session.token_hash);
+      release.resolve();
+      const expired = await inFlight;
+      expect(expired.status).toBe(401);
+      expect(await expired.text()).not.toContain('preservedResources');
+    } finally {
+      release.resolve();
+      delayedReplay.mockRestore();
+    }
     const snapshot = `${root}/universer-api/snapshot/2/unit/${item.id}/rev/0`;
     expect((await fetch(snapshot, { headers: { Cookie: cookie } })).ok).toBe(true);
     const foreign = `${COOKIE_NAME}=${auth.createSession(unrelated.id).token}`;

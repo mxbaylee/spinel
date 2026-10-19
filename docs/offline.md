@@ -174,3 +174,21 @@ work, repeated replay and interrupted application/storage updates.
 - [Firefox Android home-screen links](https://support.mozilla.org/en-US/kb/add-website-shortcut-your-home-screen-android)
   and [Safari iPhone web apps](https://support.apple.com/guide/iphone/open-as-web-app-iphea86e5236/ios).
 - [WebKit installed-app storage separation](https://webkit.org/blog/14787/webkit-features-in-safari-17-2/#web-apps).
+
+## Replay-base integration in progress
+
+[Decision #88](https://github.com/mxbaylee/spinel/issues/88) selects the public
+server `getUnitLoadDataWithBlocks` boundary for complete replay-base acquisition.
+The account-only `POST /api/items/:id/offline-replay` accepts the expected SDK
+unit ID and revision (`0` selects latest, with an explicit target revision in the
+result). It retains the closest snapshot, required changesets, all Sheet blocks,
+generation offset and application-preserved opaque resources. Declared binary
+fields use lossless base64 JSON transport; metadata strings remain literal.
+Access, live generation and the authenticated session are checked after the read.
+
+This endpoint is groundwork, not an available offline download. The Owner and
+Collaborator need a complete base for pending edits, the Operator needs a public
+integration without a new service, and Link guests remain excluded. The caller
+still must acquire and verify image/assets, scope storage to the account, retain
+permission and pending-operation state, and satisfy every lifecycle and device
+requirement above before showing availability or local durability.

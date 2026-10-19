@@ -1,3 +1,4 @@
+import { encodeOfflineReplay } from '../../shared/offlineReplay.ts';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { AuthError, AuthStore } from '../auth/store.ts';
@@ -240,6 +241,29 @@ export function workspaceRoutes(
     );
     response.json({ revision: result.revision, unitId: result.nextUnit });
   });
+  router.post(
+    '/:id/offline-replay',
+    express.json({ limit: '2kb', strict: true }),
+    async (request, response) => {
+      if (!collaboration) throw new AuthError(503, 'Collaboration is not available.');
+      const body = payload(request, ['unitId', 'revision']);
+      if (
+        typeof body.unitId !== 'string' ||
+        !Number.isSafeInteger(body.revision) ||
+        body.revision < 0
+      )
+        throw new AuthError(400, 'Choose a document generation and SDK revision.');
+      const user = owner(request);
+      const bundle = await collaboration.offlineReplay(
+        user,
+        String(request.params.id),
+        body.unitId,
+        body.revision,
+      );
+      if (owner(request) !== user) throw new AuthError(401, 'Sign in to continue.');
+      response.json(encodeOfflineReplay(bundle));
+    },
+  );
   router.post('/:id/collaboration', async (request, response) => {
     if (!collaboration) throw new AuthError(503, 'Collaboration is not available.');
     const user = owner(request),

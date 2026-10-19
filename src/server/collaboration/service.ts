@@ -1,3 +1,4 @@
+import type { OfflineReplay } from '../../shared/offlineReplay.ts';
 import { snapshotIdentity } from './snapshotIdentity.ts';
 import type { RestoreJob } from './generations.ts';
 import { CollaborationGenerations } from './generations.ts';
@@ -441,6 +442,54 @@ export class CollaborationStore {
     auth.database
       .prepare("UPDATE workspace_collaboration SET state='ready' WHERE item_id=?")
       .run(id);
+  }
+
+  async offlineReplay(
+    user: string,
+    id: string,
+    expectedUnit: string,
+    revision: number,
+  ): Promise<OfflineReplay> {
+    if (!Number.isSafeInteger(revision) || revision < 0)
+      throw new AuthError(400, 'Choose a valid SDK revision.');
+    this.workspace.owner(user);
+    const item = this.workspaceAccess(user, id);
+    const generation = this.generations.active(id);
+    if (generation.unitId !== expectedUnit || this.generations.restoring(id))
+      throw new AuthError(409, 'This document changed versions. Reload before downloading.');
+    const data = await this.service.getUnitLoadDataWithBlocks(
+      {
+        unitID: expectedUnit,
+        type: item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC,
+        revision,
+      },
+      { userID: user },
+    );
+    if (revision !== 0 && data.targetRevision !== revision)
+      throw new AuthError(409, 'That exact revision is not available for offline replay.');
+    // Acquisition can yield while access is revoked or a history restore changes
+    // generation. Never publish the old read under new permissions or identity.
+    const current = this.workspaceAccess(user, id);
+    if (
+      this.generations.active(id).unitId !== expectedUnit ||
+      this.generations.restoring(id) ||
+      current.access !== item.access
+    )
+      throw new AuthError(409, 'Access or the document version changed. Retry the download.');
+    const row = this.workspace.auth.database
+      .prepare('SELECT resources FROM spinel_generation_resources WHERE unit_id=?')
+      .get(expectedUnit);
+    return {
+      version: 1,
+      sdkVersion: '1.1.0',
+      accountId: user,
+      itemId: id,
+      unitId: expectedUnit,
+      access: current.access,
+      revisionOffset: generation.offset,
+      data: structuredClone(data),
+      preservedResources: row ? JSON.parse(String(row.resources)) : [],
+    };
   }
 
   async load(user: string, id: string) {
