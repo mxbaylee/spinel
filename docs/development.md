@@ -60,7 +60,11 @@ npm run backlog:check
 
 `npm test` runs the existing Node backlog tests and Vitest server tests.
 `npm run e2e` builds the frontend, then Playwright starts isolated development and
-production servers on ports 3100 and 3101 with databases in `test-results/`.
+production servers on ports 3100 and 3101, then a disposable mobile HTTPS server
+on port 3103, with databases in `test-results/`. Projects run sequentially to
+avoid keeping several SDK server processes in memory. The HTTPS fixture uses a
+temporary test certificate accepted only by its isolated browser; see
+[mobile verification](mobile.md#verification-and-deployment).
 It checks access boundaries, mobile width, real WebAuthn verification with two
 virtual authenticators, session persistence, cancellation and revocation in Chromium. It never reuses a running server or the everyday database.
 On Linux, use `npx playwright install --with-deps chromium` for system libraries.

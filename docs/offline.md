@@ -3,8 +3,8 @@
 [SPN-039](todo/SPN-039.md) owns this required offline experience; this document is
 its acceptance contract, not a claim that the feature is implemented. The Owner
 supplied this proposal in chat on 2026-10-18; [decision #83](https://github.com/mxbaylee/spinel/issues/83)
-records its scope. It is not marked must-ship for production. [SPN-028](todo/SPN-028.md) remains the installation and
-touch prerequisite. Its network-only fallback and [decision #82](https://github.com/mxbaylee/spinel/issues/82)
+records its scope. It is not marked must-ship for production. The [mobile installation slice](mobile.md) (SPN-028) supplies installation and
+touch support. Its network-only fallback and [decision #82](https://github.com/mxbaylee/spinel/issues/82)
 describe the initial slice; SPN-039 supersedes the earlier PRD/grooming ban for this
 explicit signed-in feature when implemented. Guests and unprepared devices retain a generic
 offline screen. Configured test HTTPS is sufficient for development; public

@@ -50,38 +50,54 @@ test('two authenticated editors receive each other’s sheet edits without reloa
         'All changes saved.',
         { timeout: 30_000 },
       );
-    const edit = async (target: typeof page, cell: string, text: string, commit = true) => {
+    const selectCell = async (target: typeof page, cell: string) => {
       const box = target
         .getByRole('region', { name: 'Sheet document', exact: true })
         .getByRole('textbox')
         .nth(2);
       await box.fill(cell);
       await box.press('Enter');
+    };
+    const edit = async (target: typeof page, cell: string, text: string, commit = true) => {
+      await selectCell(target, cell);
       await target.keyboard.type(text);
       if (commit) await target.keyboard.press('Enter');
+    };
+    const copySelected = async (target: typeof page) => {
+      // A fresh sentinel prevents an asynchronous copy from returning old text.
+      await target.bringToFront();
+      const sentinel = `not-copied-${crypto.randomUUID()}`;
+      await target.evaluate((value) => navigator.clipboard.writeText(value), sentinel);
+      // Desktop Chrome fixture advertises Windows, even on a macOS test host.
+      await target.keyboard.press('Control+c');
+      // Copy writes asynchronously; do not overwrite its in-flight result by
+      // starting another outer poll. This wait remains inside the latency timer.
+      await expect
+        .poll(() => target.evaluate(() => navigator.clipboard.readText()), {
+          timeout: 5000,
+          intervals: [10],
+        })
+        .not.toBe(sentinel);
+      return (await target.evaluate(() => navigator.clipboard.readText())).trim();
+    };
+    const copyCell = async (target: typeof page, cell: string) => {
+      await selectCell(target, cell);
+      return copySelected(target);
     };
     // Cursor navigation and typing into the local cell editor precede the
     // committed Sheet edit. Keep the first submission cold, but time from Enter.
     await Promise.all([edit(page, 'A1', '41', false), edit(other, 'B1', '73', false)]);
     const sentAt = Date.now();
     await Promise.all([page.keyboard.press('Enter'), other.keyboard.press('Enter')]);
-    const copyCell = async (target: typeof page, cell: string) => {
-      const box = target
-        .getByRole('region', { name: 'Sheet document', exact: true })
-        .getByRole('textbox')
-        .nth(2);
-      await box.fill(cell);
-      await box.press('Enter');
-      // Desktop Chrome fixture advertises Windows, even on a macOS test host.
-      await target.keyboard.press('Control+c');
-      return (await target.evaluate(() => navigator.clipboard.readText())).trim();
-    };
-    // Copy reads each peer's currently rendered model, not the server snapshot.
-    // Let a slow request finish for diagnosis; the separate elapsed assertion
-    // still enforces the strict one-second requirement in both builds.
-    await expect.poll(() => copyCell(page, 'B1'), { timeout: 5000, intervals: [50] }).toBe('73');
-    await expect.poll(() => copyCell(other, 'A1'), { timeout: 5000, intervals: [50] }).toBe('41');
-    expect(Date.now() - sentAt).toBeLessThan(1000);
+    // Independent peer selection can run together. Clipboard copies must stay
+    // sequential because the two contexts can share the system clipboard.
+    // Both UI observations and all post-commit navigation remain inside the
+    // strict one-second budget; no warm-up, server read or retry resets the clock.
+    await Promise.all([selectCell(page, 'B1'), selectCell(other, 'A1')]);
+    await expect.poll(() => copySelected(page), { timeout: 5000, intervals: [50] }).toBe('73');
+    const firstObserved = Date.now() - sentAt;
+    await expect.poll(() => copySelected(other), { timeout: 5000, intervals: [50] }).toBe('41');
+    expect(Date.now() - sentAt, `First peer observed after ${firstObserved} ms`).toBeLessThan(1000);
     // Give the collaborator a clear remote destination for the presence controls.
     const otherName = other
       .getByRole('region', { name: 'Sheet document', exact: true })
