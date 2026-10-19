@@ -510,7 +510,13 @@ export class CollaborationStore {
   async offlineBundle(user: string, id: string, verify: () => void): Promise<OfflineBundle> {
     const changed = () =>
       new AuthError(409, 'Access or the document version changed. Retry the download.');
+    const unavailable = () => new AuthError(404, 'This document is not available.');
+    // Link guests use their link while it lasts; an offline copy would outlive it.
+    if (user.startsWith('guest:')) throw unavailable();
+    const initialUnit = this.generations.active(id).unitId;
     try {
+      await this.prepare(user, id);
+      verify();
       const item = this.workspaceAccess(user, id);
       const generation = this.generations.active(id);
       if (this.generations.restoring(id)) throw changed();
@@ -532,6 +538,8 @@ export class CollaborationStore {
       imageSources(data.snapshot, (source) => {
         if (images.has(source)) return source;
         const sha256 = source.slice(prefix.length);
+        // Defence in depth: load()'s validateImages already rejects every source
+        // that is not a stored image of this item, so no test can reach this guard.
         if (!source.startsWith(prefix) || !/^[a-f0-9]{64}$/.test(sha256))
           throw new AuthError(
             400,
@@ -539,16 +547,25 @@ export class CollaborationStore {
           );
         const image = documents.image(user, id, sha256);
         // Stored IDs are content hashes; a mismatch must never reach a device as verified.
-        if (createHash('sha256').update(image.data).digest('hex') !== sha256)
+        if (createHash('sha256').update(image.data).digest('hex') !== sha256) {
+          // IDs only: never the image bytes or the document's name.
+          console.error(
+            JSON.stringify({
+              event: 'offline_bundle.image_damaged',
+              at: new Date().toISOString(),
+              itemId: id,
+              imageId: sha256,
+            }),
+          );
           throw new AuthError(500, 'A stored image is damaged. Nothing was downloaded.');
+        }
         images.set(source, { source, sha256, mime: image.mime, byteLength: image.data.byteLength });
         return source;
       });
-      return {
-        version: 1,
+      const fields = {
+        version: 1 as const,
         accountId: user,
         itemId: id,
-        kind: item.kind as OfflineBundle['kind'],
         name: current.name,
         unitId: generation.unitId,
         revision: data.revision,
@@ -556,13 +573,28 @@ export class CollaborationStore {
         access: current.access,
         readOnly: current.access === 'viewer',
         sdkVersion: packageInfo.dependencies['@univerjs/core'],
-        snapshot: data.snapshot,
         images: [...images.values()].sort((a, b) => a.source.localeCompare(b.source)),
       };
+      return item.kind === 'sheet'
+        ? { ...fields, kind: 'sheet', snapshot: data.snapshot as IWorkbookData }
+        : { ...fields, kind: 'doc', snapshot: data.snapshot as IDocumentData };
     } catch (error) {
-      if (error instanceof CollabError && error.code === 'PERMISSION_DENIED')
-        throw new AuthError(404, 'This document is not available.');
-      throw error;
+      if (!(error instanceof CollabError) || error.code !== 'PERMISSION_DENIED') throw error;
+      // The SDK also refuses a read of a unit that a restore replaced or is
+      // replacing. With access intact that is a version change the device can
+      // retry; any other denial stays indistinguishable from no access.
+      let readable = true;
+      try {
+        this.workspaceAccess(user, id);
+      } catch {
+        readable = false;
+      }
+      if (
+        readable &&
+        (this.generations.restoring(id) || this.generations.active(id).unitId !== initialUnit)
+      )
+        throw changed();
+      throw unavailable();
     }
   }
 

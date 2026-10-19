@@ -9,16 +9,10 @@ export type OfflineBundleImage = {
   byteLength: number;
 };
 
-/**
- * Everything a device needs to keep one document offline (docs/offline.md).
- * The snapshot and revision come from the same read of one generation. A bundle
- * alone does not mean downloaded, durable or synced.
- */
-export type OfflineBundle = {
+type OfflineBundleFields = {
   version: 1;
   accountId: string;
   itemId: string;
-  kind: 'sheet' | 'doc';
   name: string;
   unitId: string;
   revision: number;
@@ -26,6 +20,15 @@ export type OfflineBundle = {
   access: ItemAccess;
   readOnly: boolean;
   sdkVersion: string;
-  snapshot: IWorkbookData | IDocumentData;
   images: OfflineBundleImage[];
 };
+
+/**
+ * Everything a device needs to keep one document offline (docs/offline.md).
+ * The snapshot and revision come from the same read of one generation. A bundle
+ * alone does not mean downloaded, durable or synced. `kind` says which snapshot
+ * shape follows.
+ */
+export type OfflineBundle =
+  | (OfflineBundleFields & { kind: 'sheet'; snapshot: IWorkbookData })
+  | (OfflineBundleFields & { kind: 'doc'; snapshot: IDocumentData });

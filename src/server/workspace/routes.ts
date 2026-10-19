@@ -195,8 +195,6 @@ export function workspaceRoutes(
       };
       if (!['sheet', 'doc'].includes(store.get(user, id).kind))
         throw new AuthError(400, 'Only Sheets and Docs can be downloaded.');
-      await collaboration.prepare(user, id);
-      verify();
       const bundle = await collaboration.offlineBundle(user, id, verify);
       verify();
       response.json(bundle);

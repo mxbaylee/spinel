@@ -43,13 +43,13 @@ sequence and #90's recovery-coordinator choice.
 
 After an initial online setup in the app context they will use:
 
-| Layer          | Local contents and behavior                                                                                                                                                                                                                                      |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                  |
-| Catalog        | Last-synchronized authorized folder/file metadata, personal tags/pins and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                            |
-| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                         |
-| Changes        | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while the app is running and connected. If the live document changed meanwhile, they become a conflicted copy rather than a merge. Local-save failure remains visible. |
-| Entry points   | Stable item links support direct launch; in-app pins, offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                       |
+| Layer | Local contents and behavior |
+| --- | --- |
+| Application | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency. |
+| Catalog | Last-synchronized authorized folder/file metadata, personal tags/pins and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace. |
+| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open. |
+| Changes | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while the app is running and connected. If the live document changed meanwhile, they become a conflicted copy rather than a merge. Local-save failure remains visible. |
+| Entry points | Stable item links support direct launch; in-app pins, offline downloads and home-screen shortcuts remain distinct actions. |
 
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
 personal filing and source permissions: never copy inaccessible owner ancestors,
@@ -73,29 +73,51 @@ SPN-041, 2026-10-19.
   device never replays server changesets, so draft #86's exact-revision replay
   endpoint and changeset codec are not used. Owner, chat 2026-10-19; this
   supersedes #88's replay-base scope.
-- Image sources pass the same validation as every load. Stored bytes are
-  rehashed, so a damaged image fails the bundle instead of reaching a device as
-  verified. Cross-item and remote images are never fetched. Grooming, 2026-10-19.
-- After the read, the session, access level and generation (including an
-  in-flight restore) are checked again. Any change fails the whole request with
-  nothing partial: 401, 404 or 409. The route shares export's one-transfer
-  admission (429 while another transfer runs) and `no-store` caching. Only
-  signed-in, non-admin accounts with access can reach it; link guests and
-  operators are refused. #91, 2026-10-19.
+- Image sources pass the same validation as every load: a source that is not a
+  stored image of this item fails with 400, so cross-item and remote images are
+  never fetched. The bundle also checks each source's same-item prefix itself;
+  that guard is defence in depth, unreachable while load validation holds, and
+  not tested on its own. Stored bytes are rehashed, so a damaged image fails the
+  bundle with 500 instead of reaching a device as verified, and the server logs
+  only the item ID and image ID. Grooming, 2026-10-19.
+- The bundle prepares the document, checks the session, then reads. A restore
+  that is staging when the bundle starts, or still staging when the read
+  finishes, fails it with 409. After the read the session, access level and
+  generation are checked again. Any change fails the whole request with nothing
+  partial: 401 for a sign-out; 404 when access is gone, including a revoke while
+  the document is being prepared; 409 when access remains but its level or the
+  live generation changed, including when the collaboration service refuses a
+  read because a restore replaced the unit. A revoked account learns no more
+  than one that never had access, and a 409 tells a device that still has
+  access to retry. #91, 2026-10-19.
+- The route shares export's one-transfer admission (429 while another transfer
+  runs) and `no-store` caching, and returns 400 for anything but a Sheet or Doc.
+  Only signed-in, non-admin accounts with access can reach it: no account
+  session is 401 (link guests included) and an operator is 403. The store itself
+  refuses link-guest identities with 404, because a guest's access ends with the
+  link and an offline copy would outlive it. #91, 2026-10-19.
 - A viewer's bundle has `readOnly: true`, and the device must open it read-only.
   A bundle alone does not mean downloaded, durable or synced; SPN-039 owns those
   states. Grooming, 2026-10-19.
 
 Verified by `src/server/collaboration/offline-bundle.test.ts`:
 
-- Multi-sheet and Doc content, with floating, cell and background images.
+- Multi-sheet and Doc content. Every image location has its own bytes and is
+  checked by location: a Sheet's floating image (`SHEET_DRAWING_PLUGIN`), sheet
+  background, cell rich-text drawing and an image in a preserved resource; a
+  Doc's body, header and footer drawings.
 - A preserved opaque resource.
 - Restored generations.
 - Owner, editor and viewer success, with each image's bytes reproduced through
   the route.
-- Rejection of anonymous, guest, operator, unrelated-account and folder requests.
-- Session, access, downgrade and restore races during the read.
-- Damaged stored bytes and foreign sources.
+- Rejection of anonymous, guest, operator, unrelated-account and folder requests,
+  and of link-guest identities in the store.
+- Sign-out, revoke, downgrade and restore during the read, both in the store and
+  over HTTP; a revoke while the document is being prepared; a restore still
+  staging when the read finishes; and a collaboration-service refusal after a
+  restore versus after a revoke.
+- Damaged stored bytes, with the logged IDs, and foreign sources rejected by
+  load validation.
 
 ## How offline editing works
 
