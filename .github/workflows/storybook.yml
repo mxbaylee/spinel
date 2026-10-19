@@ -34,8 +34,19 @@ jobs:
           package-manager-cache: false
       - name: Install
         run: npm ci
+      # A preset that fails to load is only a warning, but without the React
+      # preset no story renders, so fail on it, and on a missing manager page.
       - name: Build
-        run: npm run build-storybook
+        shell: bash
+        run: |
+          npm run build-storybook 2>&1 | tee storybook-build.log
+          if grep -q 'Failed to load preset' storybook-build.log; then
+            echo '::error::A Storybook preset failed to load; see the log above.'
+            exit 1
+          fi
+          for file in index.html index.json iframe.html; do
+            test -s "storybook-static/$file" || { echo "::error::storybook-static/$file is missing"; exit 1; }
+          done
       - name: Upload for Pages
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

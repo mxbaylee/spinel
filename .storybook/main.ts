@@ -10,11 +10,9 @@ const config: StorybookConfig = {
     // The app's Vite config roots at web/ and builds the service worker as a
     // second entry. Storybook supplies its own root and entry points.
     delete config.root;
+    // Storybook has already set outDir and emptyOutDir: false, which keeps the
+    // manager it built first; resetting them lets Vite empty the output folder.
     if (config.build?.rolldownOptions) delete config.build.rolldownOptions.input;
-    if (config.build) {
-      delete config.build.outDir;
-      delete config.build.emptyOutDir;
-    }
     config.resolve = { ...config.resolve, dedupe: ['react', 'react-dom'] };
     return config;
   },
