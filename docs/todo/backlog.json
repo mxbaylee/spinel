@@ -6,7 +6,9 @@
   "grooming": {
     "every": 7,
     "last": "2026-10-19",
-    "completed_since": []
+    "completed_since": [
+      "SPN-040"
+    ]
   },
   "size": {
     "soft": 10000,

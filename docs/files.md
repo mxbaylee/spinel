@@ -18,7 +18,11 @@ Metadata is stripped when necessary; already sanitized image bytes are preserved
 Only embedded images are imported: Spinel does not fetch remote URLs. Sheet floating,
 cell and background images use the same item-scoped stored bytes as Doc images.
 Existing images render in live Sheets and isolated history previews; new Sheet
-image upload/paste insertion remains unavailable. Imports, saves and restores validate same-item image sources. Embedded cell Doc identities remain separate from workbook IDs.
+image upload/paste insertion remains unavailable. Imports, saves and restores
+validate same-item image sources. Embedded cell Doc identities remain separate
+from workbook IDs. Viewers and link guests retain read-only drawing controls,
+including images that finish loading after permissions are applied; revoking
+access prevents subsequent image reads.
 Decisions [#89](https://github.com/mxbaylee/spinel/issues/89) and
 [#91](https://github.com/mxbaylee/spinel/issues/91), 2026-10-18/19, supply the
 existing-image prerequisite for SPN-039; this is not offline support.
