@@ -1016,7 +1016,12 @@ test('file-backed restart cancels a staged SDK replacement and preserves a compl
 test('offline replay preserves complete binary blocks, exact revision and generation identity across JSON', async () => {
   const f = await fixture();
   await f.collab.prepare(f.owner.id, f.sheet.id);
+  const supplied = await f.load();
+  const retained = structuredClone(supplied);
+  vi.spyOn(f.collab.service, 'getUnitLoadDataWithBlocks').mockResolvedValueOnce(supplied);
   const original = await f.collab.offlineReplay(f.viewer.id, f.sheet.id, f.sheet.id, 1);
+  expect(supplied).toEqual(retained);
+  expect(original.data).toEqual(retained);
   expect(original.access).toBe('viewer');
   expect(original.accountId).toBe(f.viewer.id);
   expect(original.data.targetRevision).toBe(1);
@@ -1119,7 +1124,10 @@ test('Sheet image validation fences live mutations, historical replay bases and 
       { changeset: change },
       { userID: f.owner.id, memberID: 'test-member' },
     ),
-  ).rejects.toThrow('Insert images');
+  ).resolves.toMatchObject({
+    status: 'rejected',
+    error: { code: 'INVALID_REQUEST', message: expect.stringContaining('Insert images') },
+  });
   expect((await f.collab.load(f.owner.id, f.sheet.id)).revision).toBe(1);
   const original = await f.load();
   // A pre-integration legacy snapshot may be unsafe even when current head is clean.
@@ -1267,7 +1275,10 @@ test('moving an existing Sheet cell image preserves its embedded Doc identity wi
         { changeset: bad },
         { userID: f.owner.id, memberID: 'test-member' },
       ),
-    ).rejects.toThrow('Cross-document');
+    ).resolves.toMatchObject({
+      status: 'rejected',
+      error: { code: 'PERMISSION_DENIED', message: 'Cross-document changes are not allowed.' },
+    });
   }
   const removal = await f.collab.service.submitChangeset(
     {

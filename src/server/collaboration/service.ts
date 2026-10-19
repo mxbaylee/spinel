@@ -499,7 +499,10 @@ export class CollaborationStore {
     }) => {
       const native =
         item.kind === 'sheet'
-          ? await transformSnapshotToWorkbookData(state.snapshot, [...state.sheetBlocks])
+          ? await transformSnapshotToWorkbookData(
+              structuredClone(state.snapshot),
+              structuredClone([...state.sheetBlocks]),
+            )
           : transformSnapshotToDocumentData(state.snapshot);
       const complete = {
         ...native,
@@ -513,12 +516,12 @@ export class CollaborationStore {
     };
     // A loader can render its base before applying the tail. Validate each state,
     // including an old image subsequently removed, without altering replay data.
-    let checked = { snapshot: data.snapshot, sheetBlocks: [...data.sheetBlocks] };
+    let checked = structuredClone({ snapshot: data.snapshot, sheetBlocks: data.sheetBlocks });
     await validateReplayImages(checked);
     for (const changeset of data.changesets) {
       checked = await this.materializer.materializeSnapshot({
         ...checked,
-        changesets: [changeset],
+        changesets: [structuredClone(changeset)],
         targetRevision: changeset.revision,
       });
       await validateReplayImages(checked);
