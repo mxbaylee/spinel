@@ -29,7 +29,7 @@ export class ProbeLocalCache implements ILocalCacheService {
   }
   private key(unit: string, user?: string | null) {
     if (unit !== this.unit) throw new Error('Probe cache received a different unit.');
-    return JSON.stringify([unit, user === undefined ? this.currentUser() : user]);
+    return JSON.stringify([unit, (user === undefined ? this.currentUser() : user) || null]);
   }
   private trace(method: string, data: unknown) {
     console.log(
@@ -59,9 +59,9 @@ export class ProbeLocalCache implements ILocalCacheService {
     const queued = this.tail.then(async () => {
       try {
         await action();
-        this.failure = undefined;
       } catch (error) {
-        this.failure = error;
+        this.failure ??= error;
+        this.trace('storage failure', String(error));
         throw error;
       } finally {
         if (this.saveTaskMap.get(key) === sequence) this.saveTaskMap.delete(key);
@@ -83,7 +83,10 @@ export class ProbeLocalCache implements ILocalCacheService {
   }
   async saveOfflineData(unit: string, data: IUnitCacheData, user?: string | null) {
     const key = this.key(unit, user);
-    const copy = structuredClone(data);
+    const copy = structuredClone({
+      ...data,
+      userId: (user === undefined ? this.currentUser() : user) || null,
+    });
     this.trace('save', { enabled: this.enabled, record: copy });
     if (!this.enabled) return false;
     await this.enqueue(key, () => this.transaction('readwrite', (store) => store.put(copy, key)));
@@ -99,7 +102,7 @@ export class ProbeLocalCache implements ILocalCacheService {
     const key = this.key(unit, user);
     const record: IUnitCacheData = structuredClone({
       unitID: unit,
-      userId: user === undefined ? this.currentUser() : user,
+      userId: (user === undefined ? this.currentUser() : user) || null,
       type,
       rev: this.currentRevision(),
       awaitingChangeset,
@@ -110,7 +113,7 @@ export class ProbeLocalCache implements ILocalCacheService {
     // Snapshot arguments synchronously; never retain SDK-owned arrays between tasks.
     void this.enqueue(key, () =>
       this.transaction('readwrite', (store) => store.put(record, key)),
-    ).catch((error) => this.trace('storage failure', String(error)));
+    ).catch(() => {});
   }
   async clearOfflineData(unit: string, user?: string | null) {
     const key = this.key(unit, user);

@@ -70,6 +70,8 @@ for (const kind of ['sheet', 'doc'] as const) {
         return '[invalid URL]';
       }
     };
+    let cacheCalls: string[] = [];
+    const cacheFailures: string[] = [];
     let offline = false;
     let stopping = false;
     let context: BrowserContext | undefined;
@@ -80,6 +82,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     const editor = () => page.getByRole('region', { name: editorName, exact: true });
     const status = () => editor().getByRole('status', { name: 'Save status' });
     async function launch() {
+      cacheCalls = [];
       stopping = false;
       context = await chromium.launchPersistentContext(directory, {
         ...devices['Desktop Chrome'],
@@ -196,8 +199,12 @@ for (const kind of ['sheet', 'doc'] as const) {
       if (offline) await network.setOffline(true);
       page = context.pages()[0] ?? (await context.newPage());
       page.on('console', (message) => {
-        if (message.type() === 'log' && message.text().startsWith('{"recoveryCacheCall":'))
-          console.log(JSON.stringify({ probe: kind, cacheCall: JSON.parse(message.text()) }));
+        if (message.type() === 'log' && message.text().startsWith('{"recoveryCacheCall":')) {
+          const call = JSON.parse(message.text());
+          cacheCalls.push(call.recoveryCacheCall);
+          if (call.recoveryCacheCall === 'storage failure') cacheFailures.push(String(call.data));
+          console.log(JSON.stringify({ probe: kind, cacheCall: call }));
+        }
       });
       page.on('pageerror', (error) => {
         diagnostics.add(
@@ -222,6 +229,10 @@ for (const kind of ['sheet', 'doc'] as const) {
         };
       });
       expect(record).toMatchObject({ hostCache: true });
+      expect(cacheFailures).toEqual([]);
+      // Two loads belong to this observer; at least one belongs to the SDK loader.
+      expect(cacheCalls.filter((call) => call === 'load').length).toBeGreaterThanOrEqual(3);
+      if (label.includes('edit settled')) expect(cacheCalls).toContain('update');
       // This flag is compiled only for CI and requires the loopback probe URL.
       // Contents belong to this freshly created synthetic fixture account.
       console.log(JSON.stringify({ probe: kind, recoveryStage: label, recovery: record }));
@@ -491,5 +502,6 @@ for (const kind of ['sheet', 'doc'] as const) {
       db.close();
       await rm(directory, { recursive: true, force: true });
     }
+    expect(cacheFailures).toEqual([]);
   });
 }
