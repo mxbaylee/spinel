@@ -69,6 +69,22 @@ test('HTTP sharing enforces current grants on metadata, content and images witho
         .sort(),
     ).toEqual([doc.id, sheet.id].sort());
     expect((await (await request('', sharedCookie)).json()).items).toEqual([]);
+    const found = await request(
+      '/search?q=Future&type=sheet&owner=shared&modified=day',
+      sharedCookie,
+    );
+    expect(found.status).toBe(200);
+    expect(found.headers.get('cache-control')).toBe('no-store');
+    expect((await found.json()).items.map((item: { id: string }) => item.id)).toEqual([sheet.id]);
+    expect(
+      (await (await request('/search?q=Future&type=sheet&owner=mine')).json()).items.map(
+        (item: { id: string }) => item.id,
+      ),
+    ).toEqual([sheet.id]);
+    expect((await request('/search', adminCookie)).status).toBe(403);
+    expect((await request('/search', '')).status).toBe(401);
+    expect((await request('/search?q=Future&q=Hidden', sharedCookie)).status).toBe(400);
+    expect((await request('/search?owner=other', sharedCookie)).status).toBe(400);
     for (const suffix of [`/${folder.id}/sharing`, `/${doc.id}/sharing`]) {
       expect((await request(suffix, sharedCookie)).status).toBe(403);
       expect(

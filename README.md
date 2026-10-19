@@ -8,7 +8,7 @@ Passkey sign-in protects private folders and Sheet and Doc editors, backed by SQ
 [Claim the first admin](docs/setup.md) with `npm run setup`; then [invite your everyday account](docs/invitations.md) from Admin.
 See [spreadsheets](docs/spreadsheets.md) and [documents](docs/documents.md) for editing
 and autosave, [sharing](docs/sharing.md) for account access, guest links and personal
-filing, and [files](docs/files.md) for native import/export and PDF printing.
+filing, [search](docs/search.md) for metadata discovery and filters, and [files](docs/files.md) for native import/export and PDF printing.
 Slides remain on the [backlog](docs/todo/readme.md).
 See [authentication](docs/authentication.md) for the isolated passkey check.
 
