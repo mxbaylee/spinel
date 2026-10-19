@@ -43,8 +43,9 @@ The SDK's connect hook compares ticket and upgrade cookie/scope after upgrade
 but before HELLO or JOIN; a mismatch closes with no messages or document data.
 Thus an account authorized for both scopes can receive HTTP 101 for a mismatched
 ticket, but cannot enter either room with it. JOIN and presence recheck both scope and current access; no client-supplied user ID
-can replace the authenticated session. Public link credentials are still SPN-016;
-there is currently no anonymous or query-token authentication fallback.
+can replace the authenticated session. Public links use the document-scoped guest identity described in [sharing](sharing.md);
+they grant no account session or unrelated document access. Credentials do not
+become a query-token authentication fallback.
 HTTP payloads are capped at 10 MiB and socket frames at 64 KiB. At most 64 live
 connections are tracked; connections without a room expire after 30 seconds.
 
@@ -209,8 +210,8 @@ both the revision and native document unchanged. Mid-application revocation is
 also tested before durable commit. Browser tests verify that the affected editor
 becomes read-only and revoked sockets receive no later document changes. The SDK
 submits durable changes over authenticated HTTP associated with the socket's
-member ID; that ID is not an authorization credential. Public link access, profile
-customization and history remain their own tickets. The one-second browser
+member ID; that ID is not an authorization credential. Public link access and history are implemented under [sharing](sharing.md) and
+[history](history.md); profile customization remains SPN-036. The one-second browser
 acceptance checks do not replace fresh-host capacity/deployment verification.
 
 Public references:

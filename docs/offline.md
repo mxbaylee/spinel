@@ -10,6 +10,12 @@ explicit signed-in feature when implemented. Guests and unprepared devices retai
 offline screen. Configured test HTTPS is sufficient for development; public
 deployment and Slides are separate work.
 
+Implementation is being split into reviewable dependencies: SPN-040 owns existing
+Sheet-image support and SPN-041 owns authorized revision-specific replay bundles.
+[Decision #91](https://github.com/mxbaylee/spinel/issues/91) preserves SPN-039 and
+every acceptance requirement below. A completed dependency or synthetic SDK probe
+does not mean offline launch, downloads or durable local editing are available.
+
 ## Persona requirements
 
 - **Owner:** find previously synchronized files, choose complete downloads, and
