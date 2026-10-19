@@ -1,0 +1,64 @@
+# Sharing
+
+## How others do it
+
+| | Google | Microsoft | Apple Numbers | Zoho |
+|---|---|---|---|---|
+| Invite | Field for people at the top, role next to it | "Add people" field plus permission | Collaborate: invite plus permission | Email field plus role |
+| People list | Each person with a role dropdown; Remove access is in that dropdown | Per-person permission dropdown, "Stop sharing" | Per-person options | Per-person role menu |
+| Link | "General access" section below people, then Copy link | "Anyone with the link" settings, Copy link | "Anyone with the link" option | Link sharing section |
+
+The shared pattern: one dialog, people first, link second; a role dropdown per
+person with removal inside it; one Copy link action.
+
+## Spinel today
+
+`Sharing` shows the item's share address, then every other everyday account
+with a role select (No direct access / Viewer / Editor), its effective access
+and its own "Apply access for <name>" button, then two paragraphs of rules.
+`ShareLink` follows under "Share without an account" with a role select and
+create/replace/turn-off buttons. The guest address is only readable right after
+it is created (docs/sharing.md). "Close sharing" ends the panel.
+
+## Adopted pattern
+
+Spinel has about two people, so there is no invite field: every other account is
+already listed. A [dialog](README.md#dialog) titled "Share <name>":
+
+1. **Header:** the title and **Copy link** (the account-only share address).
+2. **People:** each account with a select: No access, Can view, Can edit. A
+   change applies at once and confirms in a status line; there is no per-person
+   Apply button. Access inherited from a folder shows as a muted line, "Can edit
+   through Budgets". Disabled accounts say "(disabled)" and can't be granted.
+3. **Anyone with the link** (Sheets and Docs only): a status line ("Off", "Guests
+   can view", "Guests can edit"), the role select, and **Create link** when off.
+   Right after creating, the address shows with **Copy link**; later visits say
+   "Replace the link to copy a new address." Replace link… and Turn off sit in
+   the section's More menu. Replace confirms: "Replace the link? The old link
+   stops working and open guest editors reconnect."
+4. One muted sentence keeps the rule that matters: "Collaborator names are hidden
+   while link sharing is on." The rest of the rules live in
+   docs/sharing.md.
+5. **Done** closes. There is no Save.
+
+Select options say "Can view" / "Can edit"; badges elsewhere say "View only" /
+"Can edit". People who aren't the owner never see Share; they see their access
+badge.
+
+### Always visible / behind a menu
+
+| Always visible | Behind a menu |
+|---|---|
+| Copy link, each person's access select | Link section More → Replace link…, Turn off |
+| Link status, role, Create link or Copy link | |
+| Done | |
+
+## Embedded ranges (SPN-033)
+
+Sharing a document never shares the sheets it embeds. An embed the reader can't
+open says "You don't have access to this range" in place; the share dialog
+doesn't warn or offer to share the source.
+
+## Stories
+
+`Sharing/Sharing`, `Sharing/ShareLink`.
