@@ -57,3 +57,12 @@ errors. Application authentication and explicit offline blocking are unchanged.
 The revised SDK probe must still run; the echo result alone proves no SDK behavior.
 The permission API is documented in
 [Playwright's browser context reference](https://playwright.dev/docs/api/class-browsercontext#browser-context-grant-permissions).
+
+The corrected transport run (39197669664, bf20705) completed the online Sheet
+connection, edit and reload with exact content verification. It then stopped
+before disconnection because the probe incorrectly treated any truthy protocol
+error code as failure; the public protocol defines `ErrorCode.OK` as `1`. The
+probe now checks the exported success value and the returned snapshot unit ID.
+This was a harness assertion defect, not evidence of an offline SDK failure.
+No cold restart result was obtained from that run. Development and production
+passed all 54 existing browser cases; the remaining HTTPS cases did not run.

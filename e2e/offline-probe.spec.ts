@@ -2,6 +2,7 @@
 // Its fixture response store stands in for a future scoped local snapshot adapter;
 // only the SDK's own pending-edit store survives the real browser restarts below.
 import { chromium, devices, expect, request as apiRequest, test } from '@playwright/test';
+import { ErrorCode } from '@univerjs/protocol';
 import type { BrowserContext, Page } from '@playwright/test';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -266,15 +267,18 @@ for (const kind of ['sheet', 'doc'] as const) {
       const baseline = await baselineResponse.json();
       expect(Number.isInteger(baseline.revision)).toBe(true);
       expect(unitId).toBeTruthy();
-      await page.evaluate(
+      const preparedBaseline = await page.evaluate(
         async (path) => {
           const response = await fetch(path);
           if (!response.ok) throw new Error('Could not prepare exact offline baseline.');
           const data = await response.json();
-          if (data.error?.code) throw new Error('Snapshot protocol rejected offline baseline.');
+          return { code: data.error?.code, unitId: data.snapshot?.unitID };
         },
         `/universer-api/snapshot/${kind === 'sheet' ? 2 : 1}/unit/${unitId}/rev/${baseline.revision}`,
       );
+      // The public protocol represents success as ErrorCode.OK (1), not zero.
+      expect(preparedBaseline.code ?? ErrorCode.OK).toBe(ErrorCode.OK);
+      expect(preparedBaseline.unitId).toBe(unitId);
       stage = 'commit an edit without HTTP or WebSocket';
       offline = true;
       await network.setOffline(true);
