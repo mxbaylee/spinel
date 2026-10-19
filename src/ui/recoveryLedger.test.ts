@@ -244,3 +244,194 @@ test.each([false, 0, ''])('malformed awaiting value %s is not treated as absent'
   expect(f.access.state.phase).toBe('attention');
   f.access.dispose();
 });
+
+test('a singleton public transformation transfers provenance without replacing retained pending bytes', () => {
+  const f = fixture(),
+    original = structuredClone(f.record),
+    ledger = f.ledger();
+  const read = ledger.readForSDK();
+  for (const mutation of mutations(read)) {
+    const token = ledger.beginTransform([mutation])!;
+    const output = { ...mutation, params: { ...mutation.params, expanded: { style: 'resolved' } } };
+    ledger.finishTransform(token, [output]);
+    const claim = ledger.claim(output.id, output.params)!;
+    ledger.succeed(claim, true);
+  }
+  expect(ledger.readForSDK()).toEqual(original);
+  ledger.assertComplete();
+  expect(f.record).toEqual(original);
+  expect(f.access.state.recovered).toBe(false);
+});
+test.each([
+  'mixed input',
+  'multiple originals',
+  'output expansion',
+  'output missing',
+  'wrong output id',
+  'wrong output unit',
+  'other original alias',
+  'cloned dispatch',
+  'changed dispatch',
+  'original dispatch',
+  'duplicate finish',
+  'duplicate begin',
+  'lock',
+  'pipeline failure',
+])('%s cannot establish transformed replay provenance', (mode) => {
+  const f = fixture(),
+    original = structuredClone(f.record),
+    ledger = f.ledger();
+  const read = ledger.readForSDK(),
+    mutation = read.mutations[0];
+  expect(() => {
+    if (mode === 'mixed input') return ledger.beginTransform([mutation, structuredClone(mutation)]);
+    if (mode === 'multiple originals') return ledger.beginTransform(read.mutations);
+    const token = ledger.beginTransform([mutation])!;
+    if (mode === 'duplicate begin') return ledger.beginTransform([mutation]);
+    if (mode === 'pipeline failure') return ledger.rejectTransform();
+    if (mode === 'lock') f.access.lock('Changed during decompression');
+    const output = {
+      ...mutation,
+      params: { unitId: mode === 'wrong output unit' ? 'other' : 'unit', expanded: true },
+    };
+    if (mode === 'wrong output id') output.id = 'different';
+    if (mode === 'other original alias') return ledger.finishTransform(token, [read.mutations[1]]);
+    ledger.finishTransform(
+      token,
+      mode === 'output expansion' ? [output, output] : mode === 'output missing' ? [] : [output],
+    );
+    if (mode === 'duplicate finish') return ledger.finishTransform(token, [output]);
+    if (mode === 'cloned dispatch') return ledger.claim(output.id, structuredClone(output.params));
+    if (mode === 'original dispatch') return ledger.claim(mutation.id, mutation.params);
+    if (mode === 'changed dispatch') output.params.expanded = false;
+    return ledger.claim(output.id, output.params);
+  }).toThrow();
+  expect(f.record).toEqual(original);
+  expect(f.access.mayReadLocal).toBe(false);
+});
+test('unregistered base transformation cannot grant provenance and prepared originals still block completion', () => {
+  const f = fixture(),
+    ledger = f.ledger(),
+    read = ledger.readForSDK();
+  expect(ledger.beginTransform([structuredClone(read.mutations[0])])).toBeUndefined();
+  const token = ledger.beginTransform([read.mutations[0]])!;
+  ledger.finishTransform(token, [structuredClone(read.mutations[0])]);
+  expect(() => ledger.assertComplete()).toThrow();
+});
+
+test.each([
+  'null input',
+  'arraylike input',
+  'sparse input',
+  'throwing input',
+  'null output',
+  'arraylike output',
+  'sparse output',
+  'throwing output',
+  'changing unit',
+  'lock during clone',
+])('%s latches transformation failure without publishing malformed provenance', (mode) => {
+  const f = fixture(),
+    ledger = f.ledger(),
+    mutation = ledger.readForSDK().mutations[0];
+  expect(() => {
+    if (mode === 'null input') return ledger.beginTransform(null as never);
+    if (mode === 'arraylike input')
+      return ledger.beginTransform({ 0: mutation, length: 1 } as never);
+    if (mode === 'sparse input') return ledger.beginTransform(Array(1));
+    if (mode === 'throwing input')
+      return ledger.beginTransform([
+        {
+          get id() {
+            throw new Error('input getter');
+          },
+        },
+      ] as never);
+    const token = ledger.beginTransform([mutation])!;
+    if (mode === 'null output') return ledger.finishTransform(token, null as never);
+    if (mode === 'arraylike output')
+      return ledger.finishTransform(token, { 0: mutation, length: 1 } as never);
+    if (mode === 'sparse output') return ledger.finishTransform(token, Array(1));
+    let reads = 0;
+    const params = {
+      get unitId() {
+        if (mode === 'throwing output') throw new Error('getter');
+        if (mode === 'lock during clone' && ++reads > 1) f.access.lock('Changed during clone');
+        return mode === 'changing unit' && ++reads > 1 ? 'other' : 'unit';
+      },
+    };
+    return ledger.finishTransform(token, [{ ...mutation, params }]);
+  }).toThrow();
+  expect(f.access.mayReadLocal).toBe(false);
+  expect(ledger.accounting().phase).toBe('failed');
+});
+
+test('a transformed parameter accessor failing later cannot escape the recovery failure latch', () => {
+  const f = fixture(),
+    ledger = f.ledger(),
+    mutation = ledger.readForSDK().mutations[0];
+  const token = ledger.beginTransform([mutation])!;
+  let fail = false;
+  const params = {
+    unitId: 'unit',
+    get expanded() {
+      if (fail) throw new Error('later getter');
+      return true;
+    },
+  };
+  ledger.finishTransform(token, [{ ...mutation, params }]);
+  fail = true;
+  expect(() => ledger.claim(mutation.id, params)).toThrow();
+  expect(f.access.mayReadLocal).toBe(false);
+  expect(ledger.accounting().phase).toBe('failed');
+});
+
+test.each(['begin', 'finish', 'claim', 'options'])(
+  '%s cannot authorize replay when validation callbacks lock access',
+  (mode) => {
+    const f = fixture(),
+      ledger = f.ledger(),
+      mutation = ledger.readForSDK().mutations[0];
+    if (mode === 'begin') {
+      const value = (mutation.params as { unitId: string }).unitId;
+      Object.defineProperty(mutation.params, 'unitId', {
+        enumerable: true,
+        get() {
+          f.access.lock('Revoked during comparison');
+          return value;
+        },
+      });
+      expect(() => ledger.beginTransform([mutation])).toThrow();
+    } else {
+      const token = ledger.beginTransform([mutation])!;
+      let armed = false,
+        reads = 0;
+      const params = {
+        unitId: 'unit',
+        get expanded() {
+          if (armed || (mode === 'finish' && ++reads === 2))
+            f.access.lock('Revoked during comparison');
+          return true;
+        },
+      };
+      if (mode === 'finish') {
+        expect(() => ledger.finishTransform(token, [{ ...mutation, params }])).toThrow();
+      } else {
+        ledger.finishTransform(token, [{ ...mutation, params }]);
+        armed = mode === 'claim';
+        const options =
+          mode === 'options'
+            ? {
+                get fromCollab() {
+                  f.access.lock('Revoked while preparing execution options');
+                  return false;
+                },
+              }
+            : undefined;
+        expect(() => ledger.claim(mutation.id, params, options)).toThrow();
+      }
+    }
+    expect(f.access.mayReadLocal).toBe(false);
+    expect(ledger.accounting()).toMatchObject({ phase: 'failed', applied: 0 });
+  },
+);

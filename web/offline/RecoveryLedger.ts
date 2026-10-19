@@ -2,13 +2,19 @@ import type { IUnitCacheData } from '@univerjs-pro/collaboration-client';
 import type { IExecutionOptions, IMutationInfo } from '@univerjs/core';
 import type { OfflineAccess } from './OfflineAccess.ts';
 
-type Entry = { id: string; mutation: IMutationInfo; state: 'waiting' | 'executing' | 'done' };
+type Entry = {
+  id: string;
+  mutation: IMutationInfo;
+  state: 'waiting' | 'transforming' | 'prepared' | 'executing' | 'done';
+};
+type Marker = { entry: Entry; expected: object; transformed: boolean };
+export type ReplayTransform = Readonly<{ entry: string }>;
 export type ReplayClaim = Readonly<{ entry: string; options: IExecutionOptions }>;
 const textMutation = 'doc.mutation.rich-text-editing';
 
 // Integrity comparison only, never provenance matching. Reject unsupported
 // object types rather than silently normalizing mutation bytes through JSON.
-export function sameRecoveryValue(
+function compareRecoveryValue(
   a: unknown,
   b: unknown,
   seen = new WeakMap<object, object>(),
@@ -44,6 +50,18 @@ export function sameRecoveryValue(
   );
 }
 
+export function sameRecoveryValue(
+  a: unknown,
+  b: unknown,
+  seen = new WeakMap<object, object>(),
+): boolean {
+  try {
+    return compareRecoveryValue(a, b, seen);
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Accounts for original entries, not how many times the SDK reads its cache.
  * Completion here proves only local execution. The coordinator must separately
@@ -52,7 +70,8 @@ export function sameRecoveryValue(
 export class RecoveryLedger {
   private original: IUnitCacheData;
   private entries: Entry[];
-  private markers = new WeakMap<object, Entry>();
+  private markers = new WeakMap<object, Marker>();
+  private transforms = new WeakMap<ReplayTransform, Entry>();
   private claims = new WeakMap<ReplayClaim, Entry>();
   private phase: 'recovering' | 'complete' | 'failed' = 'recovering';
   private access: OfflineAccess;
@@ -156,18 +175,119 @@ export class RecoveryLedger {
     mutations.forEach((mutation, index) => {
       const params = mutation.params as object;
       if (this.markers.has(params)) this.fail('Ambiguous parameter alias in pending work.');
-      this.markers.set(params, this.entries[index]);
+      this.markers.set(params, {
+        entry: this.entries[index],
+        expected: this.entries[index].mutation.params!,
+        transformed: false,
+      });
     });
     return copy;
   }
+  private guardTransform<T>(operation: () => T): T {
+    try {
+      return operation();
+    } catch {
+      return this.fail('Replay transformation failed validation; preserve original work.');
+    }
+  }
+  private assertMutationArray(value: readonly IMutationInfo[]) {
+    if (!Array.isArray(value)) this.fail('Replay transformation requires a mutation array.');
+    for (let index = 0; index < value.length; index++) {
+      const mutation = value[index];
+      if (
+        !Object.hasOwn(value, index) ||
+        !mutation ||
+        typeof mutation !== 'object' ||
+        Array.isArray(mutation) ||
+        typeof mutation.id !== 'string' ||
+        !mutation.id
+      )
+        this.fail('Replay transformation requires complete mutation entries.');
+    }
+  }
+  /** Begin a bounded singleton transformation at an observed public boundary.
+   * This is not wired until real input/output/dispatch lineage is established.
+   * No positional inference is permitted for multi-entry output batches.
+   */
+  beginTransform(input: readonly IMutationInfo[]): ReplayTransform | undefined {
+    return this.guardTransform(() => {
+      this.assertScope();
+      this.assertMutationArray(input);
+      const registered = input.filter(
+        (mutation) => mutation?.params && this.markers.has(mutation.params),
+      );
+      if (!registered.length) return undefined;
+      if (input.length !== 1 || registered.length !== 1)
+        return this.fail('Ambiguous replay transformation batch; preserve original work.');
+      const mutation = registered[0],
+        marker = this.markers.get(mutation.params!)!,
+        entry = marker.entry;
+      if (
+        this.phase !== 'recovering' ||
+        entry.state !== 'waiting' ||
+        marker.transformed ||
+        mutation.id !== entry.mutation.id ||
+        !sameRecoveryValue(mutation.params, marker.expected)
+      )
+        return this.fail('Replay transformation did not begin with one unchanged original entry.');
+      this.assertScope();
+      const token = Object.freeze({ entry: entry.id });
+      this.transforms.set(token, entry);
+      entry.state = 'transforming';
+      return token;
+    });
+  }
+  finishTransform(token: ReplayTransform, output: readonly IMutationInfo[]) {
+    return this.guardTransform(() => {
+      this.assertScope();
+      this.assertMutationArray(output);
+      const entry = this.transforms.get(token),
+        mutation = output[0],
+        params = mutation?.params;
+      if (
+        this.phase !== 'recovering' ||
+        !entry ||
+        entry.state !== 'transforming' ||
+        output.length !== 1 ||
+        !mutation ||
+        mutation.id !== entry.mutation.id ||
+        !params ||
+        typeof params !== 'object' ||
+        Array.isArray(params) ||
+        (params as { unitId?: string }).unitId !== this.access.scope.unitId
+      )
+        return this.fail('Replay transformation output has ambiguous provenance.');
+      const prior = this.markers.get(params);
+      if (prior && prior.entry !== entry)
+        return this.fail('Replay output aliases a different original entry.');
+      let expected: object;
+      try {
+        expected = structuredClone(params);
+      } catch {
+        return this.fail('Transformed replay parameters cannot be retained safely.');
+      }
+      this.assertScope();
+      if (
+        (expected as { unitId?: string }).unitId !== this.access.scope.unitId ||
+        !sameRecoveryValue(params, expected)
+      )
+        return this.fail('Transformed replay output changed while being captured.');
+      this.assertScope();
+      this.markers.set(params, { entry, expected, transformed: true });
+      entry.state = 'prepared';
+    });
+  }
+  rejectTransform(): never {
+    return this.fail('Replay transformation failed; preserve original pending work.');
+  }
   /** Passive fixture diagnostics; never registers or authorizes an execution. */
   inspectIdentity(params: object | undefined) {
-    const entry = params && this.markers.get(params);
+    const marker = params && this.markers.get(params);
     return (
-      entry && {
-        entry: entry.id,
-        state: entry.state,
-        unchanged: sameRecoveryValue(params, entry.mutation.params),
+      marker && {
+        entry: marker.entry.id,
+        state: marker.entry.state,
+        unchanged: sameRecoveryValue(params, marker.expected),
       }
     );
   }
@@ -179,7 +299,8 @@ export class RecoveryLedger {
     this.assertScope();
     // A notification-only command is not evidence that an edit was applied.
     if (options?.syncOnly) return undefined;
-    const entry = params && this.markers.get(params);
+    const marker = params && this.markers.get(params);
+    const entry = marker?.entry;
     if (!entry) {
       if (
         this.phase === 'recovering' &&
@@ -191,12 +312,16 @@ export class RecoveryLedger {
         this.fail('Unrecognized replay parameters; preserve the original pending record.');
       return undefined;
     }
-    if (this.phase !== 'recovering' || entry.state !== 'waiting')
+    if (
+      this.phase !== 'recovering' ||
+      !(entry.state === 'waiting' || (entry.state === 'prepared' && marker?.transformed))
+    )
       return this.fail('An original pending entry was replayed more than once or too late.');
-    if (id !== entry.mutation.id || !sameRecoveryValue(params, entry.mutation.params))
+    if (id !== entry.mutation.id || !sameRecoveryValue(params, marker!.expected))
       return this.fail('Registered replay parameters changed before execution.');
-    entry.state = 'executing';
     const execution = id === textMutation ? { ...options, fromChangeset: true } : { ...options };
+    this.assertScope();
+    entry.state = 'executing';
     const claim = Object.freeze({ entry: entry.id, options: execution });
     this.claims.set(claim, entry);
     return claim;
