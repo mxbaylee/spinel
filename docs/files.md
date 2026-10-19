@@ -2,7 +2,7 @@
 
 In a Sheet or Doc, open **Export → Download Univer file** after changes are saved.
 This downloads the current collaboration content as native Univer JSON. It includes
-document images as embedded PNG, JPEG or WebP data URLs, so a copy does not depend
+Sheet and Doc images as embedded PNG, JPEG or WebP data URLs, so a copy does not depend
 on private URLs on this instance. Named versions, sharing and ownership are not
 part of an individual file; use the operator backup for the whole workspace.
 
@@ -15,8 +15,19 @@ Files are capped at 20 MiB, including embedded images. Native content after imag
 extraction must fit the existing 10 MiB save limit. Images must be static PNG,
 JPEG or WebP, at most 5 MiB and 16 megapixels each, with a 50 MiB total per document.
 Metadata is stripped when necessary; already sanitized image bytes are preserved.
-Only embedded images are imported: Spinel does not fetch remote URLs. Sheet images
-are not enabled in the current editor and such imports are explicitly refused.
+Only embedded images are imported: Spinel does not fetch remote URLs. Sheet floating,
+cell and background images use the same item-scoped stored bytes as Doc images.
+Existing images render in live Sheets and isolated history previews; new Sheet
+image upload/paste insertion remains unavailable. Imports, saves and restores
+validate same-item image sources. Embedded cell Doc identities remain separate
+from workbook IDs. The server accepts an image cell in each mutation that carries
+cell data (set values, move range, insert sheet); the browser flows for cut/paste
+and duplicating a sheet have no end-to-end test yet. Viewers and link guests retain read-only drawing controls,
+including images that finish loading after permissions are applied; revoking
+access prevents subsequent image reads.
+Decisions [#89](https://github.com/mxbaylee/spinel/issues/89) and
+[#91](https://github.com/mxbaylee/spinel/issues/91), 2026-10-18/19, supply the
+existing-image prerequisite for SPN-039; this is not offline support.
 Unknown plugin resources are preserved without interpreting them.
 
 Import also bounds editor expansion: at most 100 sheets, each with 100,000 rows

@@ -1,3 +1,4 @@
+import { DocumentStore } from '../workspace/documents.ts';
 import { randomUUID } from 'node:crypto';
 import { gzip, gzipSync, gunzip } from 'node:zlib';
 import { promisify } from 'node:util';
@@ -246,7 +247,9 @@ export class HistoryStore {
     if (!row) throw new AuthError(404, 'Version not found.');
     const bytes = await decompress(row.snapshot, { maxOutputLength: 10 * 1024 * 1024 });
     this.workspace.get(user, id);
-    return JSON.parse(bytes.toString()) as NativeSnapshot;
+    const snapshot = JSON.parse(bytes.toString()) as NativeSnapshot;
+    new DocumentStore(this.workspace).validateImages(id, snapshot);
+    return snapshot;
   }
 
   async restore(

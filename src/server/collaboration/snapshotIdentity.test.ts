@@ -71,6 +71,18 @@ test('generation rebasing preserves sheets, styles, text and opaque resources wh
             1: { f: '=[old-unit]Sheet1!A1' },
             2: { f: '=INDIRECT("[old-unit]Sheet1!A1")' },
             3: { f: '="old-unit"' },
+            4: {
+              p: {
+                ...getDocsEmptySnapshot('cell-doc'),
+                drawings: {
+                  image: {
+                    unitId: 'cell-doc',
+                    subUnitId: 'cell-doc',
+                    source: '/api/items/stable/images/hash',
+                  },
+                },
+              } as unknown as ReturnType<typeof getDocsEmptySnapshot>,
+            },
           },
         },
       },
@@ -92,6 +104,8 @@ test('generation rebasing preserves sheets, styles, text and opaque resources wh
   expect(changed.sheets.first.cellData?.[0]?.[1]?.f).toBe('=[new-unit]Sheet1!A1');
   expect(changed.sheets.first.cellData?.[0]?.[2]?.f).toBe('=INDIRECT("[new-unit]Sheet1!A1")');
   expect(changed.sheets.first.cellData?.[0]?.[3]?.f).toBe('="old-unit"');
+  // Embedded cell images belong to their own Doc unit, not the enclosing workbook.
+  expect(changed.sheets.first.cellData?.[0]?.[4]).toEqual(snapshot.sheets.first.cellData?.[0]?.[4]);
   expect(changed.sheets.second).toEqual(snapshot.sheets.second);
   const data = (name: string) => JSON.parse(changed.resources!.find((r) => r.name === name)!.data);
   expect(data('SHEET_DRAWING_PLUGIN').first.data.drawing).toMatchObject({

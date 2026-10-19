@@ -29,13 +29,22 @@ import type { IChangeset } from '@univerjs/protocol';
 const runtimeLimits = { maxLoadedUnits: 8, idleTimeoutMs: 60_000 };
 
 function validateTargets(changeset: Readonly<IChangeset>) {
-  const walk = (value: unknown, depth = 0) => {
-    if (depth > 64) throw new CollabError('INVALID_REQUEST', 'Change is nested too deeply.');
+  const isIndex = (key: string) => /^\d+$/.test(key);
+  const walk = (value: unknown, path: string[], allowedUnit = changeset.unitID) => {
+    if (path.length > 64) throw new CollabError('INVALID_REQUEST', 'Change is nested too deeply.');
     if (!value || typeof value !== 'object') return;
+    // Cell rich text (`<row>.<column>.p`) is an embedded Doc payload, not a mutation
+    // target, wherever cell data travels: set values, move ranges, insert or duplicate
+    // sheets, and their undo. Its drawing IDs must name that Doc and nothing else;
+    // a payload without its own ID, and all outer targets, stay fenced to this unit.
+    if (path.length >= 3 && path.at(-1) === 'p' && path.slice(-3, -1).every(isIndex)) {
+      const id = (value as { id?: unknown }).id;
+      if (typeof id === 'string' && id) allowedUnit = id;
+    }
     for (const [key, child] of Object.entries(value)) {
-      if ((key === 'unitId' || key === 'unitID') && child !== changeset.unitID)
+      if ((key === 'unitId' || key === 'unitID') && child !== allowedUnit)
         throw new CollabError('PERMISSION_DENIED', 'Cross-document changes are not allowed.');
-      walk(child, depth + 1);
+      walk(child, [...path, key], allowedUnit);
     }
   };
   for (const mutation of changeset.mutations) {
@@ -50,7 +59,7 @@ function validateTargets(changeset: Readonly<IChangeset>) {
     } catch {
       throw new CollabError('INVALID_REQUEST', 'Invalid mutation data.');
     }
-    walk(data);
+    walk(data, []);
   }
 }
 
@@ -179,16 +188,11 @@ export class CollaborationStore {
       const native = this.preservedResources(id, rendered);
       if (Buffer.byteLength(JSON.stringify(native)) > 10 * 1024 * 1024)
         throw new CollabError('PERMISSION_DENIED', 'This document is too large to save.');
-      if (context.changeset.type === UniverType.UNIVER_DOC) {
-        try {
-          new DocumentStore(workspace).validateImages(
-            this.itemForUnit(id),
-            native as IDocumentData,
-          );
-        } catch (error) {
-          if (error instanceof AuthError) throw new CollabError('INVALID_REQUEST', error.message);
-          throw error;
-        }
+      try {
+        new DocumentStore(workspace).validateImages(this.itemForUnit(id), native);
+      } catch (error) {
+        if (error instanceof AuthError) throw new CollabError('INVALID_REQUEST', error.message);
+        throw error;
       }
       this.session(context.userID, context.customData);
       this.access(context.userID, id, true);
@@ -282,15 +286,28 @@ export class CollaborationStore {
       .run(unitId, itemId, JSON.stringify(opaque));
   }
 
+  private storedResources(unitId: string): NonNullable<IWorkbookData['resources']> {
+    const row = this.workspace.auth.database
+      .prepare('SELECT resources FROM spinel_generation_resources WHERE unit_id=?')
+      .get(unitId);
+    return row ? JSON.parse(String(row.resources)) : [];
+  }
+
+  // A stored row that shares a name with a rendered resource is never served,
+  // but an unsafe image anywhere in the generation's rows still fails closed.
+  private validateImages(itemId: string, unitId: string, snapshot: IWorkbookData | IDocumentData) {
+    new DocumentStore(this.workspace).validateImages(itemId, {
+      ...snapshot,
+      resources: [...(snapshot.resources ?? []), ...this.storedResources(unitId)],
+    });
+  }
+
   private preservedResources<T extends IWorkbookData | IDocumentData>(
     unitId: string,
     snapshot: T,
   ): T {
-    const row = this.workspace.auth.database
-      .prepare('SELECT resources FROM spinel_generation_resources WHERE unit_id=?')
-      .get(unitId);
-    if (!row) return snapshot;
-    const stored = JSON.parse(String(row.resources)) as NonNullable<T['resources']>;
+    const stored = this.storedResources(unitId) as NonNullable<T['resources']>;
+    if (!stored.length) return snapshot;
     const known = new Set((snapshot.resources ?? []).map((resource) => resource.name));
     const missing = stored.filter((resource) => !known.has(resource.name));
     return missing.length
@@ -437,6 +454,7 @@ export class CollaborationStore {
         ? await transformSnapshotToWorkbookData(prepared.snapshot, prepared.sheetBlocks)
         : transformSnapshotToDocumentData(prepared.snapshot);
     this.workspaceAccess(user, id);
+    this.validateImages(id, unitId, native);
     this.rememberResources(unitId, id, snapshot, native);
     auth.database
       .prepare("UPDATE workspace_collaboration SET state='ready' WHERE item_id=?")
@@ -456,6 +474,7 @@ export class CollaborationStore {
       item.kind === 'sheet'
         ? await transformSnapshotToWorkbookData(materialized.snapshot, materialized.sheetBlocks)
         : transformSnapshotToDocumentData(materialized.snapshot);
+    this.validateImages(id, unitId, snapshot);
     const current = this.workspaceAccess(user, id);
     const generation = this.generations.active(id);
     if (generation.unitId !== unitId)
@@ -491,8 +510,7 @@ export class CollaborationStore {
         const item = this.workspaceAccess(user, id, 'edit');
         const before = await this.load(user, id);
         const preserve = await prepareBefore(before);
-        if (item.kind === 'doc')
-          new DocumentStore(this.workspace).validateImages(id, snapshot as IDocumentData);
+        new DocumentStore(this.workspace).validateImages(id, snapshot);
         const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
         const context = {
           userID: user,

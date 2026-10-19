@@ -299,3 +299,175 @@ test('export refuses native content that exceeds reimport budgets instead of iss
   await expect(f.files.export(f.owner.id, item.id, () => {})).rejects.toThrow('Univer layout');
   expect(f.files.sheets.load(f.owner.id, item.id).snapshot!.sheets.tab.rowCount).toBe(100_001);
 });
+
+test('Sheet floating, cell and background images import/export with item-scoped bytes and access checks', async () => {
+  const f = fixture();
+  const bytes = await sharp({
+    create: { width: 80, height: 60, channels: 4, background: '#ff9900' },
+  })
+    .png()
+    .toBuffer();
+  const source = `data:image/png;base64,${bytes.toString('base64')}`;
+  const drawing = {
+    source,
+    imageSourceType: 'BASE64',
+    drawingType: 0,
+    unitId: 'source',
+    subUnitId: 'tab',
+    drawingId: 'picture',
+  };
+  const snapshot = {
+    ...f.sheet,
+    sheetOrder: ['tab', 'second'],
+    sheets: {
+      second: { ...f.sheet.sheets.tab, id: 'second', name: 'Second', backgroundImage: { source } },
+      tab: {
+        ...f.sheet.sheets.tab,
+        backgroundImage: { source },
+        cellData: {
+          0: {
+            0: {
+              p: {
+                id: 'rich-cell',
+                body: { dataStream: '\b\r\n' },
+                drawings: { picture: { ...drawing, unitId: 'rich-cell', subUnitId: 'rich-cell' } },
+              },
+            },
+          },
+        },
+      },
+    },
+    resources: [
+      {
+        name: 'SHEET_DRAWING_PLUGIN',
+        data: JSON.stringify({
+          tab: { order: ['picture'], data: { picture: drawing } },
+          second: { order: ['picture'], data: { picture: { ...drawing, subUnitId: 'second' } } },
+        }),
+      },
+    ],
+  };
+  const first = await f.files.import(
+    f.owner.id,
+    { filename: 'images.json', parentId: null, snapshot },
+    () => {},
+  );
+  const native = f.files.sheets.load(f.owner.id, first.id).snapshot!;
+  const canonical = native.sheets.tab.backgroundImage!.source;
+  expect(canonical).toContain(`/api/items/${first.id}/images/`);
+  const hash = canonical.split('/').at(-1)!;
+  expect(Buffer.from(f.files.docs.image(f.owner.id, first.id, hash).data)).toEqual(bytes);
+  expect(() => f.files.docs.image(f.other.id, first.id, hash)).toThrow();
+  f.workspace.share(f.owner.id, first.id, f.other.id, 'viewer');
+  expect(Buffer.from(f.files.docs.image(f.other.id, first.id, hash).data)).toEqual(bytes);
+  f.workspace.share(f.owner.id, first.id, f.other.id, null);
+  expect(() => f.files.docs.image(f.other.id, first.id, hash)).toThrow();
+  const exported = JSON.parse((await f.files.export(f.owner.id, first.id, () => {})).text);
+  expect(exported.sheets.tab.backgroundImage).toMatchObject({ source, imageSourceType: 'BASE64' });
+  expect(exported.sheets.tab.cellData[0][0].p.drawings.picture).toMatchObject({
+    unitId: 'rich-cell',
+    subUnitId: 'rich-cell',
+    imageSourceType: 'BASE64',
+  });
+  expect(JSON.parse(exported.resources[0].data).tab.data.picture.unitId).toBe(first.id);
+  expect(exported.sheets.tab.cellData[0][0].p.drawings.picture.source).toBe(source);
+  expect(exported.sheetOrder).toEqual(['tab', 'second']);
+  expect(exported.sheets.second.backgroundImage.source).toBe(source);
+  expect(JSON.parse(exported.resources[0].data).second.data.picture).toMatchObject({
+    unitId: first.id,
+    subUnitId: 'second',
+    source,
+  });
+  expect(JSON.parse(exported.resources[0].data).tab.data.picture.source).toBe(source);
+  const second = await f.files.import(
+    f.owner.id,
+    { filename: 'copy.json', parentId: null, snapshot: exported },
+    () => {},
+  );
+  expect(
+    f.files.sheets.load(f.owner.id, second.id).snapshot!.sheets.tab.backgroundImage!.source,
+  ).toContain(`/api/items/${second.id}/images/`);
+  const secondNative = f.files.sheets.load(f.owner.id, second.id).snapshot!;
+  expect(secondNative.sheetOrder).toEqual(['tab', 'second']);
+  expect(JSON.parse(secondNative.resources![0].data).second.data.picture).toMatchObject({
+    unitId: second.id,
+    subUnitId: 'second',
+  });
+});
+
+test('remote Sheet image sources in each renderable location are rejected before import creates an item', async () => {
+  const f = fixture();
+  const source = 'https://outside.invalid/pixel.png';
+  const variants = [
+    {
+      ...f.sheet,
+      resources: [
+        {
+          name: 'SHEET_DRAWING_PLUGIN',
+          data: JSON.stringify({ tab: { data: { image: { source } } } }),
+        },
+      ],
+    },
+    { ...f.sheet, sheets: { tab: { ...f.sheet.sheets.tab, backgroundImage: { source } } } },
+    {
+      ...f.sheet,
+      sheets: {
+        tab: {
+          ...f.sheet.sheets.tab,
+          cellData: { 0: { 0: { p: { drawings: { image: { source } } } } } },
+        },
+      },
+    },
+  ];
+  for (const snapshot of variants)
+    await expect(
+      f.files.import(f.owner.id, { filename: 'unsafe.json', parentId: null, snapshot }, () => {}),
+    ).rejects.toThrow('remote images are not fetched');
+  expect(f.db.prepare('SELECT count(*) AS n FROM workspace_items').get()!.n).toBe(0);
+});
+
+test.each(['malformed resource', 'invalid source', 'foreign image'])(
+  'Sheet %s rejects the complete import without publishing partial images or items',
+  async (mode) => {
+    const f = fixture();
+    const bytes = await sharp({
+      create: { width: 3, height: 2, channels: 3, background: '#ff9900' },
+    })
+      .png()
+      .toBuffer();
+    const snapshot = {
+      ...f.sheet,
+      sheets: {
+        tab: {
+          ...f.sheet.sheets.tab,
+          backgroundImage: { source: `data:image/png;base64,${bytes.toString('base64')}` },
+        },
+      },
+      resources: [
+        {
+          name: 'SHEET_DRAWING_PLUGIN',
+          data:
+            mode === 'malformed resource'
+              ? '{'
+              : JSON.stringify({
+                  tab: {
+                    data: {
+                      picture: {
+                        source:
+                          mode === 'invalid source'
+                            ? 42
+                            : `/api/items/another-item/images/${'a'.repeat(64)}`,
+                      },
+                    },
+                  },
+                }),
+        },
+      ],
+    };
+    await expect(
+      f.files.import(f.owner.id, { filename: 'bad.json', parentId: null, snapshot }, () => {}),
+    ).rejects.toThrow();
+    expect(f.db.prepare('SELECT count(*) AS n FROM workspace_items').get()!.n).toBe(0);
+    expect(f.db.prepare('SELECT count(*) AS n FROM doc_images').get()!.n).toBe(0);
+  },
+);

@@ -1,3 +1,6 @@
+import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
+import { sheetImages, sheetImageOverride } from './sheetImages.ts';
+import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { guestItemId } from './documentAccess.ts';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
@@ -88,13 +91,21 @@ export function SheetEditor({
         theme: editorTheme(),
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
-        locales: { [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish, printEnglish) },
+        locales: {
+          [LocaleType.EN_US]: mergeLocales(
+            enUS,
+            ClientEnglish,
+            UIEnglish,
+            printEnglish,
+            sheetDrawingEnglish,
+          ),
+        },
         collaboration: true,
         plugins: [
-          ...collaborationPlugins(data.unitId),
+          ...collaborationPlugins(data.unitId, [[...sheetImageOverride]]),
           mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
         ],
-        presets: [sheetPreset(container.current!, mobile)],
+        presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
       });
       print.current = async () => {
         await univerAPI.executeCommand(SheetPrintOpenOperation.id);
@@ -176,6 +187,7 @@ export function SheetEditor({
             [UnitAction.View, UnitAction.Copy, UnitAction.Print].includes(point.subType),
           );
         }
+        readOnlySheetDrawings(univer, data.unitId);
       };
       if (data.access === 'viewer') await readOnly();
       save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readOnly);

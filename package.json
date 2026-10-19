@@ -67,6 +67,7 @@
     "@univerjs/preset-docs-drawing": "1.1.0",
     "@univerjs/preset-docs-hyper-link": "1.1.0",
     "@univerjs/preset-sheets-core": "1.1.0",
+    "@univerjs/preset-sheets-drawing": "1.1.0",
     "@univerjs/presets": "1.1.0",
     "@univerjs/protocol": "1.1.0",
     "@univerjs/sheets": "1.1.0",
