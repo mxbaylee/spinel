@@ -1,4 +1,5 @@
 import express from 'express';
+import { pwaRoutes } from '../src/server/pwa.ts';
 import { guestRoutes } from '../src/server/workspace/guestRoutes.ts';
 import { documentIdentity } from '../src/server/collaboration/identity.ts';
 import { readFile } from 'node:fs/promises';
@@ -180,6 +181,8 @@ export async function createApp(options: AppOptions) {
       response.status(404).json({ error: 'Not found' });
     });
 
+    app.use(pwaRoutes());
+
     const pages = [
       '/sign-in',
       '/setup',
@@ -275,6 +278,9 @@ export async function createApp(options: AppOptions) {
       await readFile(resolve(directory, 'index.html'));
       app.get(pages, (_request, response) => {
         response.sendFile(resolve(directory, 'index.html'));
+      });
+      app.get('/service-worker.js', (_request, response) => {
+        response.set('Cache-Control', 'no-store').sendFile(resolve(directory, 'service-worker.js'));
       });
       app.use(
         '/assets',

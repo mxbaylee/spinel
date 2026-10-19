@@ -61,7 +61,10 @@ test('touch history timeline and calendar preview retained choices without chang
       expect(named.ok()).toBe(true);
       checkpoints.push((await named.json()).version.id);
     }
-    const midnight = new Date();
+    // One shared UTC date avoids a midnight race and always crosses a month boundary.
+    const fixtureTime = new Date('2026-10-02T15:00:00Z');
+    await page.clock.setFixedTime(fixtureTime);
+    const midnight = new Date(fixtureTime);
     midnight.setUTCHours(0, 0, 0, 0);
     const start = midnight.getTime(),
       yesterday = new Date(start - 86400000).toISOString().slice(0, 10),
@@ -112,8 +115,7 @@ test('touch history timeline and calendar preview retained choices without chang
       page.getByRole('button', { name: `${yesterday}, named versions`, exact: true }),
     ).toBeEnabled();
     await ready();
-    if (earlier.slice(0, 7) !== yesterday.slice(0, 7))
-      await page.getByRole('button', { name: 'Previous month', exact: true }).tap();
+    await page.getByRole('button', { name: 'Previous month', exact: true }).tap();
     const calendarResponse = page.waitForResponse(
       (response) =>
         response.url().endsWith(`/history/${checkpoints[0]}`) &&
@@ -124,8 +126,7 @@ test('touch history timeline and calendar preview retained choices without chang
       'Checkpoint 1',
     );
     await ready();
-    if (earlier.slice(0, 7) !== yesterday.slice(0, 7))
-      await page.getByRole('button', { name: 'Next month', exact: true }).tap();
+    await page.getByRole('button', { name: 'Next month', exact: true }).tap();
     await page.getByRole('button', { name: `${yesterday}, named versions`, exact: true }).tap();
     await ready();
     const versions = page.getByRole('combobox', { name: `Version on ${yesterday}`, exact: true });
