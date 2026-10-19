@@ -334,6 +334,8 @@ export function watchCollaboration(
 export async function finishRecoveryProbe(univer: Univer, unitId: string) {
   const cache = univer.__getInjector().get(ILocalCacheService);
   if (!(cache instanceof ProbeLocalCache) || !cache.recovery) return;
+  cache.recovery.facadeLoaded = true;
   await univer.__getInjector().get(CollaborationController).readyForCollab(unitId);
+  cache.recovery.collaborationReady = true;
   await cache.finishRecovery();
 }

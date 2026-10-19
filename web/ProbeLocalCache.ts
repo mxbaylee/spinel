@@ -79,11 +79,12 @@ export class ProbeLocalCache implements ILocalCacheService {
     const target = stage ? `stage:${this.stageId}:${key}` : key;
     if (stage && key === this.key(this.unit, this.recovery!.access.scope.accountId))
       this.recovery!.writes++;
-    return this.enqueue(key, () =>
-      record || stage
+    return this.enqueue(key, async () => {
+      if (stage) await this.recovery!.hold('write');
+      return record || stage
         ? this.transaction('readwrite', (store) => store.put(record, target))
-        : this.transaction('readwrite', (store) => store.delete(target)),
-    );
+        : this.transaction('readwrite', (store) => store.delete(target));
+    });
   }
   private key(unit: string, user?: string | null) {
     if (unit !== this.unit) throw new Error('Probe cache received a different unit.');
@@ -137,6 +138,7 @@ export class ProbeLocalCache implements ILocalCacheService {
       this.recovery?.recovering &&
       key === this.key(this.unit, this.recovery.access.scope.accountId)
     ) {
+      await this.recovery.hold('read');
       const copy = this.recovery.read();
       this.trace('load', copy);
       return copy;

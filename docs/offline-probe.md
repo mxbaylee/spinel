@@ -228,3 +228,13 @@ the held stale ticket. Its next assertion failed because the fresh SDK socket
 wrapper returned before Playwright delivered the native socket event. The test
 now waits for that event before checking received frames and lock-time closure;
 that final path and the Doc transport case still need a passing run.
+
+The controlled-delay variant holds the first account-cache read on cold launch
+one and the first staged write on cold launch two. Before explicitly releasing
+each operation, it requires an inert editor, non-complete recovery evidence and
+an independent native IndexedDB read equal to the retained original. It records
+whether facade loading and collaboration readiness have resolved at that point.
+The read case additionally requires the facade still to be unresolved. These
+are deliberate pending operations, not elapsed-time guesses. Access disposal
+rejects both an already held operation and one first attempted after disposal.
+This variant is still awaiting runtime evidence.

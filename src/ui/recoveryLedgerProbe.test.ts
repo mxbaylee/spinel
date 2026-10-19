@@ -2,18 +2,21 @@ import { expect, test } from 'vitest';
 import { RecoveryLedgerProbe } from '../../web/offline/RecoveryLedgerProbe.ts';
 import type { IUnitCacheData } from '@univerjs-pro/collaboration-client';
 
-function fixture() {
-  const probe = new RecoveryLedgerProbe({
-    origin: 'https://localhost:3103',
-    accountId: 'owner',
-    itemId: 'item',
-    unitId: 'unit',
-    kind: 'doc',
-    access: 'owner',
-    sdkVersion: '1.1.0',
-    schema: 1,
-    revisionOffset: 0,
-  });
+function fixture(hold?: 'read' | 'write') {
+  const probe = new RecoveryLedgerProbe(
+    {
+      origin: 'https://localhost:3103',
+      accountId: 'owner',
+      itemId: 'item',
+      unitId: 'unit',
+      kind: 'doc',
+      access: 'owner',
+      sdkVersion: '1.1.0',
+      schema: 1,
+      revisionOffset: 0,
+    },
+    hold,
+  );
   const record: IUnitCacheData = {
     unitID: 'unit',
     userId: 'owner',
@@ -41,6 +44,9 @@ test('successful accounting and identical observed cache payload prove only the 
   probe.verify(structuredClone(record));
   expect(probe.evidence()).toEqual({
     status: 'verified',
+    held: undefined,
+    facadeLoaded: false,
+    collaborationReady: false,
     reads: 1,
     writes: 1,
     accounting: { expected: 1, applied: 1, phase: 'complete' },
@@ -77,3 +83,40 @@ test('a late duplicate invalidates prior evidence and quarantines subsequent cac
   expect(probe.recovering).toBe(true);
   expect(probe.original).toEqual(record);
 });
+
+test.each(['read', 'write'] as const)(
+  'a held %s remains pending until explicitly released',
+  async (mode) => {
+    const { probe } = fixture(mode);
+    let completed = false;
+    const pending = probe.hold(mode).then(() => {
+      completed = true;
+    });
+    await Promise.resolve();
+    expect(completed).toBe(false);
+    expect(probe.evidence().held).toBe(mode);
+    probe.release();
+    await pending;
+    expect(completed).toBe(true);
+    expect(probe.evidence().held).toBeUndefined();
+    await probe.hold(mode);
+  },
+);
+test('disposal rejects an outstanding held operation instead of hanging cleanup', async () => {
+  const { probe } = fixture('read');
+  const pending = probe.hold('read');
+  const rejected = expect(pending).rejects.toThrow(/Recovery ended/);
+  probe.access.dispose();
+  await rejected;
+  expect(probe.status).toBe('failed');
+});
+
+test.each(['read', 'write'] as const)(
+  'disposal before the first %s hold cannot create an orphan promise',
+  async (mode) => {
+    const { probe } = fixture(mode);
+    probe.access.dispose();
+    await expect(probe.hold(mode)).rejects.toThrow(/Recovery ended before/);
+    expect(probe.evidence().held).toBeUndefined();
+  },
+);

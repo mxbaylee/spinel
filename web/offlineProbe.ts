@@ -11,9 +11,13 @@ type RecoveryProbe = {
         status: string;
         reads: number;
         writes: number;
+        held?: 'read' | 'write';
+        facadeLoaded: boolean;
+        collaborationReady: boolean;
         accounting?: { expected: number; applied: number; phase: string };
       }
     | undefined;
+  release: () => void;
   serverConfirmation?: { sid: string; reqId: number };
   beforeLoad: IUnitCacheData | null | undefined;
   read: () => Promise<IUnitCacheData | null | undefined>;
@@ -134,6 +138,11 @@ export async function observeOfflineRecovery(
       beforeLoad: await read(),
       read,
       ledger: () => (cache instanceof ProbeLocalCache ? cache.recovery?.evidence() : undefined),
+      release: () => {
+        if (!(cache instanceof ProbeLocalCache) || !cache.recovery)
+          throw new Error('Ledger probe unavailable.');
+        cache.recovery.release();
+      },
     };
     window.__spinelRecoveryProbe = probe;
     return () => {

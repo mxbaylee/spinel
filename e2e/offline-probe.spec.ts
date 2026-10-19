@@ -561,10 +561,49 @@ for (const kind of ['sheet', 'doc'] as const) {
       let unchangedQueue: ReturnType<typeof operations>;
       for (let attempt = 1; attempt <= 3; attempt++) {
         stage = `cold offline browser launch ${attempt}`;
+        const hold = attempt === 1 ? 'read' : attempt === 2 ? 'write' : undefined;
+        if (hold)
+          await page.evaluate(
+            (mode) => localStorage.setItem('spinel-synthetic-recovery-hold', mode),
+            hold,
+          );
         await close();
         await launch();
         await page.goto(`${baseURL}/?item=${item.id}${itemQuerySuffix}`);
         expect(await page.evaluate(() => navigator.onLine)).toBe(false);
+        if (hold) {
+          await expect
+            .poll(() => page.evaluate(() => window.__spinelRecoveryProbe?.ledger()?.held))
+            .toBe(hold);
+          const evidence = await page.evaluate(() => window.__spinelRecoveryProbe!.ledger()!);
+          expect(evidence.status).toBe('recovering');
+          if (hold === 'read') expect(evidence.facadeLoaded).toBe(false);
+          await expect(editor().locator('.univer-container')).toHaveJSProperty('inert', true);
+          const retained = await page.evaluate(async () => {
+            const original = window.__spinelRecoveryProbe!.beforeLoad!;
+            const db = await new Promise<IDBDatabase>((resolve, reject) => {
+              const request = indexedDB.open('spinel-synthetic-recovery-probe-v1', 1);
+              request.onsuccess = () => resolve(request.result);
+              request.onerror = () => reject(request.error);
+            });
+            try {
+              const record = await new Promise((resolve, reject) => {
+                const tx = db.transaction('pending', 'readonly');
+                const request = tx
+                  .objectStore('pending')
+                  .get(JSON.stringify([original.unitID, original.userId]));
+                tx.oncomplete = () => resolve(request.result);
+                tx.onabort = () => reject(tx.error);
+              });
+              return { original, record };
+            } finally {
+              db.close();
+            }
+          });
+          expect(retained.record).toEqual(retained.original);
+          console.log(JSON.stringify({ probe: kind, heldRecoveryOperation: hold, evidence }));
+          await page.evaluate(() => window.__spinelRecoveryProbe!.release());
+        }
         await ready();
         const recovered = await recordRecovery(`cold launch ${attempt} before content assertion`);
         if (attempt === 3) expect(operations(recovered.beforeLoad)).toEqual(unchangedQueue);
