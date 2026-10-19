@@ -3,7 +3,8 @@
 Spinel keeps compressed native Sheet and Doc checkpoints in the same SQLite file
 as the documents, images and collaboration data. Sheet and Doc editors have a
 Versions panel for naming the current state or a past checkpoint, opening a read-only
-preview, and restoring a selected version. Timeline/calendar browsing remains SPN-026. Future editors must join
+preview, and restoring a selected version. **Browse history** opens today’s timeline
+and the older-day calendar in the isolated preview tab. Future editors must join
 this capture path before they accept document saves.
 
 Opening a live document preserves its baseline before editing is enabled. Raw
@@ -116,6 +117,36 @@ and owns only its checkpoint tables. No Pro implementation is inspected or
 patched. [Decision #51](https://github.com/mxbaylee/spinel/issues/51) records the
 tradeoff for the Owner, Collaborator, Operator and Link guest.
 
+
+## Browsing snapshots
+
+**Versions → Browse history** opens a separate preview tab. Today shows every
+retained snapshot on a slider; drag it with touch or use arrow keys to preview
+another snapshot. Older days shows a month calendar, highlighting only dates with
+actual retained checkpoints and marking named versions with a pin. Choose a day,
+then use its version selector to reach every saved checkpoint, including multiple
+named and **Before restore** checkpoints on the same day. Inactive days are disabled;
+no placeholder snapshots are created.
+
+The calendar and displayed times use **UTC**, explicitly labelled to match existing
+UTC retention buckets. Stored timestamps and pruning rules are unchanged. A named
+version is never hidden just because an unnamed daily checkpoint exists. The UTC
+day updates across midnight; Refresh history reloads the permitted checkpoint list.
+
+Selection only changes an isolated read-only native viewer, never the live editor.
+Rapid slider changes are debounced and the previous viewer is disposed. The previous
+preview is hidden while a different selection is loading, so its restore button
+cannot be confused with the newly selected timestamp. While a confirmed restore
+is running, history selection and refresh controls are disabled. An unavailable
+requested checkpoint produces an error instead of silently choosing another restore
+target. Current viewers can browse; only editors may restore through the existing
+confirmation and generation guard. No history route is added for Link guests.
+
+[Decision #81](https://github.com/mxbaylee/spinel/issues/81), 2026-10-18, aligns recovery
+dates for the Owner and Collaborator, keeps the Operator’s retention/storage model,
+and preserves the Link guest boundary. This carries SPN-026’s two-view and touch
+requirements (PRD §5), using SPN-025’s isolated preview and restore fencing from
+decisions #39/#55/#68 and grooming 2026-10-18.
 
 ## Preview and restore
 
