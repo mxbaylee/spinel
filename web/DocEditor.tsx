@@ -69,6 +69,7 @@ export function DocEditor({
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
+  const [presenceUnavailable, setPresenceUnavailable] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [status, setStatus] = useState<SaveState>({
@@ -81,6 +82,7 @@ export function DocEditor({
     const loading = new AbortController();
     let stopPresence: (() => void) | undefined;
     setPeople([]);
+    setPresenceUnavailable(false);
     let uploads = 0;
     let insertions = 0;
     let uploaded = 0;
@@ -272,13 +274,11 @@ export function DocEditor({
         setEditable(true);
         document.setSelection(0, 0);
       }
-      stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
-      if (disposed) {
-        stopPresence();
-        return;
-      }
       save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readonly);
       controller.current = save;
+      stopPresence = watchPresence(univer, univerAPI, data.unitId, setPeople, () =>
+        setPresenceUnavailable(true),
+      );
     })().catch((error) => {
       if (!disposed)
         publish({
@@ -306,6 +306,7 @@ export function DocEditor({
   return (
     <section className="sheet-editor" aria-label="Doc document">
       <Collaborators people={people} />
+      {presenceUnavailable && <p role="status">Could not load who is here.</p>}
       <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
         {status.message}
         {status.failed && status.dirty && (

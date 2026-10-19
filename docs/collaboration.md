@@ -104,6 +104,14 @@ initial selection and readiness. The global plugin Rendered stage is earlier
 than that work; an unresolved selection can intentionally blur the input. The
 wait is cancelled on navigation and fails visibly after 30 seconds.
 
+Save-status subscriptions and active-cell input guards attach before optional
+presence initialization. Waiting for a people list must not delay those guards;
+a failed presence connection has its own notice and cannot report edits as saved
+or reset their navigation warning. Pending presence setup is cancelled safely on
+editor disposal. This implements SPN-039's input-protection requirement from
+[decision #83](https://github.com/mxbaylee/spinel/issues/83); it does not establish
+durable offline storage or a completed cold-start feature.
+
 The SDK supplies remote cursors and selected ranges. Spinel adds stable default
 profile colours and initial-letter circles in the header and at remote Sheet
 cells. Hover/focus reveals the name in an overlay without shifting the layout.

@@ -55,6 +55,7 @@ export function SheetEditor({
   const applyFill = useRef<((id: string) => Promise<void>) | null>(null);
   const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
+  const [presenceUnavailable, setPresenceUnavailable] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [status, setStatus] = useState<SaveState>({
@@ -66,6 +67,7 @@ export function SheetEditor({
     let disposed = false;
     let stopPresence: (() => void) | undefined;
     setPeople([]);
+    setPresenceUnavailable(false);
     let editing = false;
     let disposeEditor: (() => void) | undefined;
     let save: ReturnType<typeof watchCollaboration> | undefined;
@@ -199,8 +201,6 @@ export function SheetEditor({
         });
         if (!result) throw new Error('Could not apply this fill. Check your access and try again.');
       };
-      stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
-      if (disposed) stopPresence();
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
         editing = true;
         publish(lastState);
@@ -209,6 +209,9 @@ export function SheetEditor({
         editing = false;
         publish(lastState);
       });
+      stopPresence = watchPresence(univer, univerAPI, data.unitId, setPeople, () =>
+        setPresenceUnavailable(true),
+      );
     })().catch((error) => {
       if (!disposed)
         publish({
@@ -235,6 +238,7 @@ export function SheetEditor({
   return (
     <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
       <Collaborators people={people} />
+      {presenceUnavailable && <p role="status">Could not load who is here.</p>}
       <FillPresets
         disabled={!editable || status.failed}
         apply={async (preset) => {
