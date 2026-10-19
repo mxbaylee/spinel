@@ -1,3 +1,4 @@
+import { PreparedNetworkCondition } from './offline/PreparedNetworkCondition.ts';
 import { RecoveryCommands } from './offline/RecoveryCommands.ts';
 import { prepareRecoveryLedgerProbe } from './offline/RecoveryLedgerProbe.ts';
 import type { RecoveryLedgerProbe } from './offline/RecoveryLedgerProbe.ts';
@@ -26,6 +27,7 @@ import {
   CollaborationUIEventId,
   UniverCollaborationClientPlugin,
   ILocalCacheService,
+  INetworkConditionService,
 } from '@univerjs-pro/collaboration-client';
 import {
   BrowserCollaborationSocketService,
@@ -154,8 +156,13 @@ export function collaborationPlugins(
       UniverCollaborationClientUIPlugin,
       {
         enableUrlUnitLoader: false,
-        override:
-          import.meta.env.SPINEL_RECOVERY_PROBE &&
+        override: [
+          ...(boundary
+            ? ([
+                [INetworkConditionService, { useValue: new PreparedNetworkCondition(boundary) }],
+              ] as DependencyOverride)
+            : []),
+          ...(import.meta.env.SPINEL_RECOVERY_PROBE &&
           location.origin === 'https://localhost:3103' &&
           new URLSearchParams(location.search).get('host-cache') === '1'
             ? [
@@ -173,7 +180,8 @@ export function collaborationPlugins(
                   },
                 ],
               ]
-            : undefined,
+            : []),
+        ],
       },
     ],
   ];

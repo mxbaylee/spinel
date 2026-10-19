@@ -78,6 +78,10 @@ for (const kind of ['sheet', 'doc'] as const) {
         region.getByRole('status', { name: 'Save status' }),
         errors.join('\n'),
       ).toHaveText('All changes saved.', { timeout: 30_000 });
+      expect(await page.evaluate(() => window.__spinelTransportProbe!.network())).toEqual({
+        prepared: true,
+        online: true,
+      });
       expect(protocolRequests).toBeGreaterThan(0);
       expect(sockets).toBeGreaterThan(0);
       expect(unbound).toEqual([]);
@@ -125,6 +129,10 @@ for (const kind of ['sheet', 'doc'] as const) {
       await ticketReceived.promise;
       expect(await page.evaluate(() => window.__spinelTransportProbe!.connect())).toBe(false);
       await page.evaluate(() => window.__spinelTransportProbe!.outage());
+      expect(await page.evaluate(() => window.__spinelTransportProbe!.network())).toEqual({
+        prepared: true,
+        online: false,
+      });
       releaseTicket.resolve();
       expect(await pending).toBe(false);
       expect(sockets).toBe(before);
@@ -139,6 +147,10 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect.poll(() => established.size).toBeGreaterThan(0);
       await page.evaluate(() => window.__spinelTransportProbe!.lock());
       const locked = { sockets, protocolRequests, frames };
+      expect(await page.evaluate(() => window.__spinelTransportProbe!.network())).toEqual({
+        prepared: true,
+        online: false,
+      });
       await expect.poll(() => liveSockets.size).toBe(0);
       expect(await page.evaluate(() => window.__spinelTransportProbe!.connect())).toBe(false);
       // Covers the SDK's one-second automatic reconnect timer while locked.

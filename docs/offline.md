@@ -244,8 +244,11 @@ parameter objects against those original entries; identical adjacent edits remai
 distinct, and a consumed entry cannot replay again through another read copy.
 Only exact registered Doc text parameters receive execution-only replay flags.
 Malformed records, changed parameters, rejected execution and access changes stop
-recovery without changing the caller's original record. This component is not yet
-wired into the SDK cache or command service. Its completion assertion does not
+recovery without changing the caller's original record. The component is wired
+into the bounded fixture cache and command service, but its first Sheet cold-start
+integration failed on unrecognized replay provenance (run 39217753072). Public
+decompression diagnostics investigate that failure; it is not ready for product
+use. Its completion assertion does not
 unlock access: the coordinator still must prove loader/queue completion and an
 atomic, durable staged-store commit. Document-only cache buckets require a
 separately scoped adapter path; they must never be normalized into another account.

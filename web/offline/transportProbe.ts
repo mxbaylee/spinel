@@ -1,5 +1,9 @@
+import { PreparedNetworkCondition } from './PreparedNetworkCondition.ts';
 import type { Univer } from '@univerjs/core';
-import { ICollaborationSocketService } from '@univerjs-pro/collaboration-client';
+import {
+  ICollaborationSocketService,
+  INetworkConditionService,
+} from '@univerjs-pro/collaboration-client';
 import type { OfflineScope } from './OfflineAccess.ts';
 import { OfflineAccess } from './OfflineAccess.ts';
 import { verifyOfflineAccess } from './verifyOfflineAccess.ts';
@@ -12,6 +16,7 @@ declare global {
       validate(): Promise<boolean>;
       connect(): Promise<boolean>;
       state(): string;
+      network(): { prepared: boolean; online: boolean };
     };
   }
 }
@@ -45,11 +50,16 @@ export async function prepareTransportProbe(itemId: string) {
 export function observeTransportProbe(univer: Univer, access?: OfflineAccess) {
   if (!access) return () => {};
   const service = univer.__getInjector().get(ICollaborationSocketService);
+  const condition = univer.__getInjector().get(INetworkConditionService);
   const probe = {
     lock: () => access.lock('Fixture account lock.'),
     outage: () => access.networkLost(),
     validate: () => access.validate(),
     state: () => access.state.phase,
+    network: () => ({
+      prepared: condition instanceof PreparedNetworkCondition,
+      online: condition.online,
+    }),
     async connect() {
       try {
         const socket = await service.createSocket(
