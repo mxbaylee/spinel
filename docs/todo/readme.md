@@ -30,7 +30,7 @@ How this backlog works: [process.md](process.md). Next ID: **SPN-053**. Grooming
 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🌿 M | 🩷 L | 5 | — |
 | 📴 [SPN-039](SPN-039.md) Use selected documents offline and sync safely | 🌳 L | 🩷 L | 4 | [SPN-040](SPN-040.md), [SPN-041](SPN-041.md), [SPN-046](SPN-046.md) |
 | 🖼️ [SPN-040](SPN-040.md) Keep existing images in imported spreadsheets | 🌿 M | 💜 M | 4 | — |
-| 🧱 [SPN-041](SPN-041.md) Acquire complete authorized offline replay bases | 🌿 M | 🩷 L | 5 | [SPN-040](SPN-040.md) |
+| 🧱 [SPN-041](SPN-041.md) Download a complete, authorized copy of a document | 🌱 S | 🩷 L | 6 | [SPN-040](SPN-040.md) |
 | 📶 [SPN-042](SPN-042.md) Show whether Spinel is online, offline or reconnecting | 🌱 S | 💜 M | 5 | [SPN-046](SPN-046.md) |
 | 🫧 [SPN-043](SPN-043.md) Stop editors jumping when the save status changes | 🌱 S | 💜 M | 5 | [SPN-046](SPN-046.md) |
 | 🪪 [SPN-044](SPN-044.md) Give Spinel a favicon and page metadata | 🌱 S | 🤍 S | 4 | — |
