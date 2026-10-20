@@ -34,7 +34,6 @@ const work = entry(2, 'Work', 'folder');
 const mealPlan = entry(3, 'Meal plan', 'doc', { parentId: household.id });
 const budget = entry(4, 'Quarterly budget', 'sheet', { tags: ['budget', 'q4'] });
 const trip = entry(5, 'Trip plan', 'doc', { tags: ['travel'] });
-const deck = entry(6, 'Offsite deck', 'slides');
 const roadmap = entry(7, 'Team roadmap', 'doc', {
   access: 'viewer',
   ownerName: 'Alex Kim',
@@ -44,7 +43,7 @@ const roadmap = entry(7, 'Team roadmap', 'doc', {
 
 // Each story sets `parameters.api` in full: Storybook deep-merges parameters.
 const workspace = {
-  'GET /api/items': { items: [household, work, mealPlan, budget, trip, deck] },
+  'GET /api/items': { items: [household, work, mealPlan, budget, trip] },
   'GET /api/items/shared': { items: [roadmap] },
   'GET /api/items/pins': { items: [budget, trip] },
   [`GET /api/items/${household.id}`]: { item: household, children: [mealPlan], ancestors: [] },

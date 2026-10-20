@@ -21,7 +21,7 @@ export function parseSearch(input: Record<string, unknown>): SearchQuery {
     Object.assign(query, { [key]: value.trim() });
   }
   if (
-    !['', 'folder', 'sheet', 'doc', 'slides'].includes(query.type) ||
+    !['', 'folder', 'sheet', 'doc'].includes(query.type) ||
     !['', 'mine', 'shared'].includes(query.owner) ||
     !['', 'day', 'week', 'month'].includes(query.modified)
   )

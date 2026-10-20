@@ -188,8 +188,7 @@ button.primary {
   gap: 8px;
   flex-wrap: wrap;
 }
-.item-form,
-.empty-document {
+.item-form {
   margin-top: 24px;
   padding: 20px;
   background: var(--sp-panel);

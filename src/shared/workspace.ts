@@ -1,4 +1,4 @@
-export const ITEM_KINDS = ['folder', 'sheet', 'doc', 'slides'] as const;
+export const ITEM_KINDS = ['folder', 'sheet', 'doc'] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
 export type GrantRole = 'viewer' | 'editor';
 export type ItemAccess = GrantRole | 'owner';
@@ -26,7 +26,6 @@ export const kindLabel: Record<ItemKind, string> = {
   folder: 'Folder',
   sheet: 'Sheet',
   doc: 'Doc',
-  slides: 'Slides',
 };
 
 export interface TrashedItem extends WorkspaceItem {
