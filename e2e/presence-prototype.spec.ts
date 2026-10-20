@@ -3,6 +3,7 @@ import { mkdir } from 'node:fs/promises';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { palettes } from '../src/ui/palette.ts';
 
 for (const kind of ['sheet', 'doc'] as const) {
   test(`profile presence prototype: real ${kind} peers, icons and colours`, async ({
@@ -94,6 +95,23 @@ for (const kind of ['sheet', 'doc'] as const) {
       const label = page.locator('[data-presence-prototype="label"]').filter({ hasText: 'Iris' });
       await expect(label).toBeVisible({ timeout: 15_000 });
       await expect(label.locator('[data-profile-icon="flower"]')).toBeVisible();
+      const colouredCanvasPixels = async (color: string) =>
+        page.locator('.univer-container canvas').evaluateAll((canvases, hex) => {
+          const rgb = [1, 3, 5].map((index) => Number.parseInt(hex.slice(index, index + 2), 16));
+          let count = 0;
+          for (const canvas of canvases as HTMLCanvasElement[]) {
+            const ctx = canvas.getContext('2d');
+            if (!ctx || !canvas.width || !canvas.height) continue;
+            const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            for (let i = 0; i < data.length; i += 4)
+              if (
+                data[i + 3] > 200 &&
+                rgb.every((channel, j) => Math.abs(data[i + j] - channel) < 5)
+              )
+                count++;
+          }
+          return count;
+        }, color);
       // Inspect the screenshots for canvas colour, placement and duplicate
       // native cursors; DOM visibility alone cannot prove canvas rendering.
       await mkdir('test-results/theme-screenshots', { recursive: true });
@@ -105,6 +123,14 @@ for (const kind of ['sheet', 'doc'] as const) {
           );
         }, theme);
         await expect(label).toBeVisible();
+        await expect(label).toHaveCSS(
+          'background-color',
+          theme === 'light' ? 'rgb(63, 108, 201)' : 'rgb(118, 160, 255)',
+        );
+        if (kind === 'sheet')
+          await expect
+            .poll(() => colouredCanvasPixels(palettes[theme]['fill-info-strong-bg']))
+            .toBeGreaterThan(5);
         await page.screenshot({
           path: `test-results/theme-screenshots/presence-${kind}-${theme}-${info.project.name}.png`,
           fullPage: true,
@@ -124,6 +150,9 @@ for (const kind of ['sheet', 'doc'] as const) {
             .getByRole('button', { name: 'Go to Iris', exact: true }),
         ).toHaveAttribute('data-selection', '28:28:1:TEXT::-1');
         await expect(label).toBeVisible();
+        await expect
+          .poll(() => colouredCanvasPixels(palettes.dark['fill-info-strong-bg']))
+          .toBeGreaterThan(5);
         await page.screenshot({
           path: `test-results/theme-screenshots/presence-doc-caret-${info.project.name}.png`,
           fullPage: true,
