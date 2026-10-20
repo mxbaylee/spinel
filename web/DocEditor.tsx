@@ -1,3 +1,18 @@
+import {
+  installDocFormulas,
+  type DocFormula,
+  type DocFormulaController,
+  type DocFormulaSelection,
+  type FormulaDefinition,
+  type FormulaResult,
+  type FormulaState,
+} from '@spinel/doc-formulas';
+import {
+  FormulaDialog,
+  FormulaResultView,
+  formulaRequest,
+  formulaPaperColors,
+} from './DocFormulas.tsx';
 import { guestItemId, documentPath } from './documentAccess.ts';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
@@ -65,6 +80,14 @@ export function DocEditor({
   name: string;
   onDirty: (dirty: boolean) => void;
 }) {
+  const formulas = useRef<DocFormulaController | null>(null);
+  const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
+  const [formulaError, setFormulaError] = useState('');
+  const [formulaEdit, setFormulaEdit] = useState<{
+    formula?: DocFormula;
+    selection?: DocFormulaSelection;
+  } | null>(null);
+  const canEditFormulas = useRef(false);
   const print = useRef<(() => Promise<void>) | null>(null);
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
@@ -80,6 +103,11 @@ export function DocEditor({
     let disposed = false;
     const loading = new AbortController();
     let stopPresence: (() => void) | undefined;
+    let formulaInterval: ReturnType<typeof setInterval> | undefined;
+    let stopFormulaVisibility: (() => void) | undefined;
+    setFormulaStates([]);
+    setFormulaEdit(null);
+    setFormulaError('');
     setPeople([]);
     let uploads = 0;
     let insertions = 0;
@@ -259,7 +287,38 @@ export function DocEditor({
       if (disposed) return;
       await documentReady(univer, data.unitId, loading.signal);
       if (disposed) return;
+      const installedFormulas = await installDocFormulas({
+        univer,
+        unitId: data.unitId,
+        colors: formulaPaperColors,
+        evaluate: (definition, signal) =>
+          formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal),
+        onActivate: (formula) => {
+          if (canEditFormulas.current) setFormulaEdit({ formula });
+        },
+        onChange: (states) => {
+          if (!disposed) setFormulaStates([...states]);
+        },
+      });
+      if (disposed) {
+        installedFormulas.dispose();
+        return;
+      }
+      formulas.current = installedFormulas;
+      const refreshVisible = () => {
+        if (globalThis.document.visibilityState === 'hidden') formulas.current?.clear();
+        else void formulas.current?.refresh();
+      };
+      globalThis.document.addEventListener('visibilitychange', refreshVisible);
+      stopFormulaVisibility = () =>
+        globalThis.document.removeEventListener('visibilitychange', refreshVisible);
+      formulaInterval = setInterval(() => {
+        if (globalThis.document.visibilityState === 'visible') void formulas.current?.refresh();
+      }, 5000);
       const readonly = async () => {
+        canEditFormulas.current = false;
+        setFormulaEdit(null);
+        formulas.current?.clear();
         setEditable(false);
         // Local UI state only: changing the shared document's permission rules
         // would also make still-authorized collaborators read-only.
@@ -269,6 +328,7 @@ export function DocEditor({
       };
       if (data.access === 'viewer') await readonly();
       else {
+        canEditFormulas.current = true;
         setEditable(true);
         document.setSelection(0, 0);
       }
@@ -292,6 +352,11 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
+      canEditFormulas.current = false;
+      clearInterval(formulaInterval);
+      stopFormulaVisibility?.();
+      formulas.current?.dispose();
+      formulas.current = null;
       loading.abort();
       stopPresence?.();
       save?.dispose();
@@ -329,6 +394,74 @@ export function DocEditor({
             }}
           />
         </>
+      )}
+      {Boolean(controller.current) && (
+        <details className="doc-formulas">
+          <summary>Formulas{formulaStates.length ? ` (${formulaStates.length})` : ''}</summary>
+          {editable && (
+            <button
+              onClick={() => {
+                try {
+                  if (!formulas.current) throw new Error('Wait for the document to load.');
+                  setFormulaError('');
+                  setFormulaEdit({ selection: formulas.current.selection() });
+                } catch (cause) {
+                  setFormulaError(
+                    cause instanceof Error
+                      ? cause.message
+                      : 'Place the cursor in the document first.',
+                  );
+                }
+              }}
+            >
+              Insert formula
+            </button>
+          )}
+          {formulaError && <p role="alert">{formulaError}</p>}
+          {!formulaStates.length && (
+            <p>Use a spreadsheet cell, range, or calculation in this Doc.</p>
+          )}
+          <ul>
+            {formulaStates.map(({ formula, result }) => (
+              <li key={formula.id}>
+                {editable ? (
+                  <button onClick={() => setFormulaEdit({ formula })}>
+                    {formula.definition.expression}
+                  </button>
+                ) : (
+                  <code>{formula.definition.expression}</code>
+                )}
+                <FormulaResultView result={result} definition={formula.definition} />
+              </li>
+            ))}
+          </ul>
+          {formulaStates.length > 0 && (
+            <button onClick={() => void formulas.current?.resume()}>Refresh formulas</button>
+          )}
+        </details>
+      )}
+      {formulaEdit && editable && (
+        <FormulaDialog
+          id={id}
+          initial={formulaEdit.formula}
+          onClose={() => {
+            setFormulaEdit(null);
+            // Wait for dialog cleanup before returning keyboard input to the native document.
+            requestAnimationFrame(() => formulas.current?.focus());
+          }}
+          onSave={async (definition: FormulaDefinition) => {
+            if (!formulas.current || !canEditFormulas.current)
+              throw new Error('This document is read-only.');
+            if (
+              !(await formulas.current.insert(
+                definition,
+                formulaEdit.selection,
+                formulaEdit.formula?.id,
+              ))
+            )
+              throw new Error('The formula could not be inserted.');
+          }}
+        />
       )}
       {editable && <p className="editor-help">Click the page to write. Type / for commands.</p>}
       <div className="univer-container" ref={container} />

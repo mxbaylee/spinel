@@ -5,7 +5,7 @@ import { socialCardExamples } from './socialCards.ts';
 // components in src/ui/ and web/; see docs/design/README.md.
 const config: StorybookConfig = {
   framework: '@storybook/react-vite',
-  stories: ['../src/ui/**/*.stories.tsx', '../web/**/*.stories.tsx'],
+  stories: ['../src/ui/**/*.stories.tsx', '../web/**/*.stories.tsx', '../lib/**/*.stories.tsx'],
   core: { disableTelemetry: true },
   async viteFinal(config) {
     // The app's Vite config roots at web/ and builds the service worker as a

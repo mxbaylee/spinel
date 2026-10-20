@@ -9,6 +9,7 @@ import type { WorkspaceStore } from './store.ts';
 import { DocumentStore, IMAGE_LIMIT, DOCUMENT_IMAGE_LIMIT } from './documents.ts';
 import { SheetStore } from './sheets.ts';
 import { validatePortableLayout } from './portableValidation.ts';
+import { removeImportedSourceBindings } from '../formulas/import.ts';
 
 import { PORTABLE_LIMIT } from '../../shared/portable.ts';
 export { PORTABLE_LIMIT };
@@ -109,6 +110,7 @@ export class PortableFiles {
         input.filename.replace(/\.(?:univer\.)?json$|\.univer$/i, ''),
     );
     const snapshot = structuredClone(input.snapshot) as unknown as Snapshot;
+    if (kind === 'doc') removeImportedSourceBindings(snapshot);
     const sources = new Set<string>();
     imageSources(snapshot, (source) => {
       sources.add(source);

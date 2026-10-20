@@ -10,6 +10,7 @@ import { TrashStore } from './trash.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { HistoryStore } from '../history/store.ts';
 import { PortableFiles, PORTABLE_LIMIT } from './portable.ts';
+import { formulaRoutes } from '../formulas/routes.ts';
 
 let transferActive = false;
 const transfers = new WeakMap<Response, { start: () => void; finish: () => void }>();
@@ -80,6 +81,7 @@ export function workspaceRoutes(
       throw new AuthError(403, 'Open Spinel at its configured address and try again.');
     next();
   });
+  if (collaboration) router.use('/:id/formulas', formulaRoutes(store, collaboration, owner));
   const native = async (request: Request, response: Response, kind: 'sheet' | 'doc') => {
     const user = owner(request),
       id = String(request.params.id);

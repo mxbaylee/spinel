@@ -134,3 +134,10 @@ and follows the live-write constraints from
 Primary references: [MCP Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)
 , [MCP authorization](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization)
 and the [official TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk).
+
+## Formula objects in Docs
+
+[Live Doc formulas](formulas.md) are source text plus native custom-range
+metadata. Read results contain no calculated source values. Plain-text edits
+cannot split an object; replacing or deleting the whole expression removes
+its annotation using native document operations.

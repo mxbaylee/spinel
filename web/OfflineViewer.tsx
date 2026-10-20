@@ -1,3 +1,5 @@
+import type { FormulaState } from '@spinel/doc-formulas';
+import { FormulaReadout } from './DocFormulas.tsx';
 import { useEffect, useRef, useState } from 'react';
 import { OfflineAccess, offlineScope } from './offline/OfflineAccess.ts';
 import { PreparedImages } from './offline/PreparedImages.ts';
@@ -13,6 +15,7 @@ import { openSnapshotViewer } from './snapshotViewer.ts';
 export function OfflineViewer({ accountId, itemId }: { accountId: string; itemId: string }) {
   const container = useRef<HTMLDivElement>(null);
   const mobile = useMobileSheetControls();
+  const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
   const [ready, setReady] = useState(false);
   const [problem, setProblem] = useState('');
   useEffect(() => {
@@ -56,6 +59,9 @@ export function OfflineViewer({ accountId, itemId }: { accountId: string; itemId
         signal: loading.signal,
         images,
         mobile: bundle.kind === 'sheet' && mobile,
+        onFormulaChange: (states) => {
+          if (!loading.signal.aborted) setFormulaStates([...states]);
+        },
       });
       // Closed or locked while it opened: nothing else will take it down.
       if (loading.signal.aborted || !access.mayReadLocal) return shown();
@@ -81,6 +87,7 @@ export function OfflineViewer({ accountId, itemId }: { accountId: string; itemId
       ) : (
         <p role="status">Opening offline copy…</p>
       )}
+      {ready && !problem && <FormulaReadout states={formulaStates} />}
       <div
         className="univer-container"
         ref={container}

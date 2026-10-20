@@ -1,3 +1,11 @@
+import { formulaPaperColors } from './DocFormulas.tsx';
+import {
+  installDocFormulas,
+  type DocFormulaController,
+  type FormulaDefinition,
+  type FormulaResult,
+  type FormulaState,
+} from '@spinel/doc-formulas';
 import { sheetImages } from './sheetImages.ts';
 import { sheetPreset } from './sheetPreset.ts';
 import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
@@ -65,6 +73,8 @@ export async function openSnapshotViewer({
   signal,
   images,
   mobile = false,
+  evaluateFormula,
+  onFormulaChange,
 }: {
   container: HTMLElement;
   kind: 'sheet' | 'doc';
@@ -72,6 +82,8 @@ export async function openSnapshotViewer({
   signal: AbortSignal;
   images?: URLImages;
   mobile?: boolean;
+  evaluateFormula?: (definition: FormulaDefinition, signal: AbortSignal) => Promise<FormulaResult>;
+  onFormulaChange?: (states: FormulaState[]) => void;
 }) {
   const sheet = kind === 'sheet';
   const drawings = (preset: IPreset) => (images ? withImages(preset, images) : preset);
@@ -106,7 +118,18 @@ export async function openSnapshotViewer({
           UniverDocsHyperLinkPreset(),
         ],
   });
-  let cleanup = () => univer.dispose();
+  let formulas: DocFormulaController | undefined;
+  let interval: ReturnType<typeof setInterval> | undefined;
+  let stopVisibility: (() => void) | undefined;
+  const closeFormulas = () => {
+    clearInterval(interval);
+    stopVisibility?.();
+    formulas?.dispose();
+  };
+  let cleanup = () => {
+    closeFormulas();
+    univer.dispose();
+  };
   try {
     installCanvasColors(univer);
     if (sheet) univerAPI.createWorkbook(snapshot as IWorkbookData).setEditable(false);
@@ -117,6 +140,24 @@ export async function openSnapshotViewer({
     const permissions = univer.__getInjector().get(IPermissionService);
     if (!sheet) {
       await documentReady(univer, unitId, signal);
+      if (signal.aborted) throw aborted();
+      formulas = await installDocFormulas({
+        univer,
+        unitId,
+        colors: formulaPaperColors,
+        evaluate: evaluateFormula ?? (async () => ({ ok: false, reason: 'unavailable' })),
+        onChange: onFormulaChange,
+      });
+      const refresh = () => {
+        if (globalThis.document.visibilityState === 'hidden') formulas?.clear();
+        else void formulas?.refresh();
+      };
+      globalThis.document.addEventListener('visibilitychange', refresh);
+      stopVisibility = () => globalThis.document.removeEventListener('visibilitychange', refresh);
+      if (evaluateFormula)
+        interval = setInterval(() => {
+          if (globalThis.document.visibilityState === 'visible') void formulas?.refresh();
+        }, 5000);
       if (signal.aborted) throw aborted();
       // A viewer needs a local UI fence, not an owner-only document policy.
       // The policy command can still permit its owner and changes the snapshot.
@@ -175,6 +216,7 @@ export async function openSnapshotViewer({
         : undefined,
     );
     cleanup = () => {
+      closeFormulas();
       stopTheme();
       interceptor?.dispose();
       univer.dispose();

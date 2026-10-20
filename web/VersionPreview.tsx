@@ -1,3 +1,5 @@
+import type { FormulaResult, FormulaState } from '@spinel/doc-formulas';
+import { FormulaReadout, formulaRequest } from './DocFormulas.tsx';
 import { useEffect, useRef, useState } from 'react';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
@@ -17,6 +19,7 @@ export function VersionPreview({
   onBusyChange: (busy: boolean) => void;
 }) {
   const container = useRef<HTMLDivElement>(null);
+  const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
   const [data, setData] = useState<Preview | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
@@ -35,6 +38,11 @@ export function VersionPreview({
         kind: loaded.item.kind === 'sheet' ? 'sheet' : 'doc',
         snapshot: loaded.snapshot,
         signal: loading.signal,
+        evaluateFormula: (definition, signal) =>
+          formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal),
+        onFormulaChange: (states) => {
+          if (!disposed) setFormulaStates([...states]);
+        },
       });
       if (disposed) return queueMicrotask(dispose);
       cleanup = dispose;
@@ -88,6 +96,7 @@ export function VersionPreview({
         <button onClick={() => location.reload()}>Reload preview for a new attempt</button>
       )}
       {!ready && !error && <p role="status">Loading preview…</p>}
+      {ready && <FormulaReadout states={formulaStates} />}
       <div
         className="univer-container"
         ref={container}

@@ -374,3 +374,10 @@ replay and interrupted application/storage updates.
 - [Firefox Android home-screen links](https://support.mozilla.org/en-US/kb/add-website-shortcut-your-home-screen-android)
   and [Safari iPhone web apps](https://support.apple.com/guide/iphone/open-as-web-app-iphea86e5236/ios).
 - [WebKit installed-app storage separation](https://webkit.org/blog/14787/webkit-features-in-safari-17-2/#web-apps).
+
+## Live Doc formulas
+
+Offline copies retain [Formula definitions](formulas.md), never calculated
+source values. They show unavailable results and make no formula requests.
+Reconnect must verify source access before rendering results; queued offline
+edits and recovery copies must preserve definitions without baking in values.

@@ -279,13 +279,26 @@ export class McpDocuments {
         }),
       };
       validate = (snapshot) => {
-        const content = (snapshot as IDocumentData).body?.dataStream;
+        const body = (snapshot as IDocumentData).body;
+        const content = body?.dataStream;
         if (
           !content ||
           offset + deleteCount > content.length - 2 ||
           structuralMarkers.test(content.slice(offset, offset + deleteCount))
         )
           throw invalid();
+        // Formula objects are atomic source expressions. A plain-text tool can
+        // replace a whole object, but cannot leave a partially edited annotation.
+        for (const range of body?.customRanges ?? []) {
+          if (!range.properties || !Object.hasOwn(range.properties, 'spinelFormula')) continue;
+          const start = range.startIndex;
+          const end = range.endIndex + 1;
+          if (
+            (offset > start && offset < end) ||
+            (offset + deleteCount > start && offset + deleteCount < end)
+          )
+            throw new AuthError(400, 'Replace the entire formula, or edit it in Spinel.');
+        }
         // UTF-16 offsets cannot split an existing surrogate pair.
         for (const at of [offset, offset + deleteCount])
           if (
