@@ -8,8 +8,8 @@ people at a time. The product has no AI features.
 
 Read [docs/todo/process.md](docs/todo/process.md). It covers how tickets are
 written, picked, split, reviewed and landed, how decisions are recorded, and
-when grooming happens. The Top 5 in [docs/todo/readme.md](docs/todo/readme.md)
-says what is next.
+when grooming happens. The first ticket in [docs/todo/readme.md](docs/todo/readme.md)
+that isn't waiting on another is next.
 
 ## Rules that are easy to miss
 

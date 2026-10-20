@@ -516,12 +516,14 @@ export function withScore(text: string, value: number): string {
   return lines.join('\n') + text.slice(end);
 }
 
-// Ready tickets in pick order, each with the tie-break that put it ahead of
-// the next one. A ticket waiting on an open dependency is not ready.
+// Every open ticket in pick order, each with the tie-break that put it ahead of
+// the next one and the open tickets it waits on. A prerequisite always scores
+// above what depends on it, so the first ticket is never waiting.
 export interface Ranked {
   ticket: Ticket;
   score: number;
   tieBreak: string;
+  waiting: string[];
 }
 
 export function rank(tickets: Ticket[], prefix: string): Ranked[] {
@@ -537,18 +539,16 @@ export function rank(tickets: Ticket[], prefix: string): Ranked[] {
     num: idNumber(t.id, prefix) ?? 0,
   });
   type Entry = { t: Ticket; k: ReturnType<typeof keys> };
-  const ready: Entry[] = tickets
-    .filter((t) => !t.depends_on.some((d) => ids.has(d)))
-    .map((t) => ({ t, k: keys(t) }));
+  const all: Entry[] = tickets.map((t) => ({ t, k: keys(t) }));
   const compare = (a: Entry, b: Entry) =>
     b.k.score - a.k.score ||
     Number(b.k.unblocks.length > 0) - Number(a.k.unblocks.length > 0) ||
     b.k.impact - a.k.impact ||
     b.k.effort - a.k.effort ||
     a.k.num - b.k.num;
-  ready.sort(compare);
-  return ready.map(({ t, k }, i) => {
-    const next = ready[i + 1];
+  all.sort(compare);
+  return all.map(({ t, k }, i) => {
+    const next = all[i + 1];
     let tieBreak = '—';
     if (next && next.k.score === k.score) {
       if (k.unblocks.length && !next.k.unblocks.length)
@@ -557,7 +557,7 @@ export function rank(tickets: Ticket[], prefix: string): Ranked[] {
       else if (k.effort !== next.k.effort) tieBreak = 'Lower effort';
       else tieBreak = 'Lower ID';
     }
-    return { ticket: t, score: k.score, tieBreak };
+    return { ticket: t, score: k.score, tieBreak, waiting: t.depends_on.filter((d) => ids.has(d)) };
   });
 }
 
@@ -568,14 +568,9 @@ export function renderIndex(backlog: Backlog): string {
   const prefix = config.prefix;
   const g = config.grooming;
   const link = (t: Ticket) => `${t.emoji} [${t.id}](${t.file}) ${t.title}`;
-  const ids = new Set(tickets.map((t) => t.id));
   const ranked = rank(tickets, prefix);
-  const scored = scores(tickets);
-  const shown = (t: Ticket) => {
-    const s = scored.get(t.id) ?? 0;
-    return s > baseScore(t) ? `${s} (own ${baseScore(t)})` : `${s}`;
-  };
-  const top = ranked.slice(0, 5);
+  const shown = ({ ticket, score }: Ranked) =>
+    score > baseScore(ticket) ? `${score} (own ${baseScore(ticket)})` : `${score}`;
   const done = g.completed_since.length ? `: ${g.completed_since.join(', ')}` : '';
   const out = [
     `# ${config.name} backlog`,
@@ -585,35 +580,25 @@ export function renderIndex(backlog: Backlog): string {
     `How this backlog works: [process.md](process.md). Next ID: **${formatId(prefix, config.next_id)}**. ` +
       `Grooming: **${g.completed_since.length} of ${g.every}** tickets completed since ${g.last}${done}.`,
     '',
-    '## 🏆 Top 5',
+    `## Open tickets (${tickets.length})`,
     '',
   ];
-  if (!top.length) out.push('No ticket is ready to start.');
-  else {
-    out.push('| # | Ticket | Score | Tie-break | Owner input |', '| --- | --- | --- | --- | --- |');
-    top.forEach(({ ticket, tieBreak }, i) =>
-      out.push(
-        `| ${i + 1} | ${link(ticket)} | ${shown(ticket)} | ${tieBreak} | ${ticket.owner_input || 'None'} |`,
-      ),
-    );
-  }
-  out.push('', `## All open tickets (${tickets.length})`, '');
   if (!tickets.length) out.push('The backlog is empty.');
   else {
     out.push(
-      '| Ticket | Effort | Impact | Score | Waiting on |',
-      '| --- | --- | --- | --- | --- |',
+      "Highest score first. Take the first ticket that isn't waiting on another.",
+      '',
+      '| # | Ticket | Effort | Impact | Score | Tie-break | Waiting on | Owner input |',
+      '| --- | --- | --- | --- | --- | --- | --- | --- |',
     );
-    for (const t of [...tickets].sort(
-      (a, b) => (idNumber(a.id, prefix) ?? 0) - (idNumber(b.id, prefix) ?? 0),
-    )) {
-      const waiting = t.depends_on.filter((d) => ids.has(d));
+    ranked.forEach((r, i) => {
+      const t = r.ticket;
+      const waiting = r.waiting.length ? r.waiting.map((d) => `[${d}](${d}.md)`).join(', ') : '—';
       out.push(
-        `| ${link(t)} | ${EFFORT_EMOJI[t.effort]} ${t.effort} | ${IMPACT_EMOJI[t.impact]} ${t.impact} | ${shown(t)} | ${
-          waiting.length ? waiting.map((d) => `[${d}](${d}.md)`).join(', ') : '—'
-        } |`,
+        `| ${i + 1} | ${link(t)} | ${EFFORT_EMOJI[t.effort]} ${t.effort} | ${IMPACT_EMOJI[t.impact]} ${t.impact} | ` +
+          `${shown(r)} | ${r.tieBreak} | ${waiting} | ${t.owner_input || '—'} |`,
       );
-    }
+    });
   }
   out.push('');
   return out.join('\n');

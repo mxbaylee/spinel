@@ -222,28 +222,33 @@ test('a written score that differs is stale, and withScore rewrites or adds it',
   assert.match(staleScores([missing]).errors.join(), /score is missing, should be 4/);
 });
 
-test('ranking skips blocked tickets and applies tie-breaks in order', () => {
+test('ranking orders every open ticket by score and applies tie-breaks in order', () => {
   const b = backlog([
     ticket('SPN-001', { impact_owner: 'S', effort: 'L' }), // 2, raised to 4 by 004
     ticket('SPN-002', { impact_owner: 'L', effort: 'L', emoji: '🧭' }), // 4, higher impact than 005
     ticket('SPN-003', { impact_owner: 'S', effort: 'S', emoji: '🧪' }), // 4, last: lowest impact
-    ticket('SPN-004', { impact_owner: 'S', effort: 'M', depends_on: '[SPN-001]', emoji: '🪴' }), // 3, blocked
+    ticket('SPN-004', { impact_owner: 'S', effort: 'M', depends_on: '[SPN-001]', emoji: '🪴' }), // 3, waiting
     ticket('SPN-005', { emoji: '🔭' }), // 4, beats 006 on ID
     ticket('SPN-006', { emoji: '🪁' }), // 4, higher impact than 003
     ticket('SPN-007', { impact_owner: 'L', effort: 'S', emoji: '🎒' }), // 6
   ]);
-  const order = rank(b.tickets, 'SPN').map((r) => [r.ticket.id, r.tieBreak]);
-  assert.deepEqual(order, [
-    ['SPN-007', '—'],
-    ['SPN-001', 'Unblocks SPN-004'],
-    ['SPN-002', 'Higher impact'],
-    ['SPN-005', 'Lower ID'],
-    ['SPN-006', 'Higher impact'],
-    ['SPN-003', '—'],
-  ]);
+  const ranked = rank(b.tickets, 'SPN');
+  assert.deepEqual(
+    ranked.map((r) => [r.ticket.id, r.tieBreak]),
+    [
+      ['SPN-007', '—'],
+      ['SPN-001', 'Unblocks SPN-004'],
+      ['SPN-002', 'Higher impact'],
+      ['SPN-005', 'Lower ID'],
+      ['SPN-006', 'Higher impact'],
+      ['SPN-003', '—'],
+      ['SPN-004', '—'],
+    ],
+  );
+  assert.deepEqual(ranked.at(-1)?.waiting, ['SPN-001']);
 });
 
-test('the index lists the top five and every open ticket', () => {
+test('the index lists every open ticket in pick order', () => {
   const b = backlog([
     ticket('SPN-001', { owner_input: '"Tap the passkey prompt"' }),
     ticket('SPN-002', { depends_on: '[SPN-001]', emoji: '🧭' }),
@@ -252,14 +257,14 @@ test('the index lists the top five and every open ticket', () => {
   const index = renderIndex(b);
   assert.match(
     index,
-    /\| 1 \| 🪞 \[SPN-001\]\(SPN-001.md\) Do the thing \| 5 \(own 4\) \| — \| Tap the passkey prompt \|/,
+    /\| 1 \| 🪞 \[SPN-001\]\(SPN-001.md\) Do the thing \| 🌿 M \| 💜 M \| 5 \(own 4\) \| — \| — \| Tap the passkey prompt \|/,
   );
   assert.match(
     index,
-    /\| 🧭 \[SPN-002\]\(SPN-002.md\) Do the thing \| 🌿 M \| 💜 M \| 4 \| \[SPN-001\]\(SPN-001.md\) \|/,
+    /\| 2 \| 🧭 \[SPN-002\]\(SPN-002.md\) Do the thing \| 🌿 M \| 💜 M \| 4 \| — \| \[SPN-001\]\(SPN-001.md\) \| — \|/,
   );
   assert.match(index, /Next ID: \*\*SPN-010\*\*/);
-  assert.doesNotMatch(index.split('## All')[0], /SPN-002\]/);
+  assert.doesNotMatch(index, /Top 5/);
 });
 
 test('globs match lockfiles anywhere and directory patterns by path', () => {
