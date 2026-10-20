@@ -95,7 +95,11 @@ Ask for a score out of 100 using this rubric:
 - **25:** correctness, data integrity and access boundaries.
 - **20:** meaningful regression protection and verification evidence.
 - **10:** CI and operational usability appropriate to the ticket.
-- **10:** maintainability, documentation and backlog/process consistency.
+- **10:** maintainability, documentation, backlog/process consistency and
+  **over-complexity**: unnecessary abstractions, dependencies or speculative
+  flexibility. Prefer the smallest complete implementation that meets the ticket;
+  deduct for avoidable complexity with an actionable simplification, not for
+  necessary safeguards. Owner, chat 2026-10-20.
 
 Apply the rubric proportionally: for documentation work, verify instructions and
 scenarios rather than inventing runtime features. Require concrete deductions,

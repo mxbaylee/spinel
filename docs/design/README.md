@@ -15,12 +15,15 @@ controls are always visible and which sit behind a menu.
 | Sharing                         | [sharing.md](sharing.md)     | SPN-033, SPN-066, SPN-071                                                       |
 | Settings and sign-in            | [account.md](account.md)     | SPN-045, SPN-036, SPN-070                                                       |
 | Admin                           | [admin.md](admin.md)         | SPN-032, SPN-061, SPN-064                                                       |
-| Guest view                      | [guest.md](guest.md)         | SPN-042, SPN-073                                                                |
+| Guest view                      | [guest.md](guest.md)         | SPN-042, SPN-075                                                                |
 | Empty, error and offline states | [states.md](states.md)       | SPN-053, SPN-054, SPN-042, SPN-051, SPN-052                                     |
 
 SPN-047 redesigns these screens from a review of Storybook and competing
 products, because the owner finds the current UI cluttered (chat 2026-10-19). It
-updates these pages before the UI tickets above build on them.
+updates these pages before the UI tickets above build on them. SPN-074 is the
+explicit exception: removing unsupported Slides may land before the redesign,
+using the existing dashboard patterns and the usual stories, light/dark/phone
+screenshots and owner approval. Owner, chat 2026-10-20.
 
 The starting point is the approved gem-rail mockup
 (`git show 30a4a61^:docs/design/gem-rail-mockup.tsx`) and the landed SPN-027

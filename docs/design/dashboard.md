@@ -81,6 +81,25 @@ Share, Rename, Move or Trash: only the owner can (docs/sharing.md). "Remove from
 my folder" removes the person's filed reference, not the item, so it isn't
 grouped with the destructive items.
 
+## Legacy Slides placeholder (SPN-074)
+
+Removing unsupported Slides may land before SPN-047 (owner, chat 2026-10-20).
+SPN-074 makes the existing New type selector and search type filter offer only
+Folder, Sheet and Doc; this does not require SPN-048's new menu layout first. Legacy Slides
+still appear in lists and unfiltered name searches with their kind label.
+
+An opened legacy deck uses the existing plain document placeholder, with no
+editor or new action button. For its owner, say: "Slides aren't supported. This
+item is empty, so you can move it to Trash." For a shared viewer or editor, say:
+"Slides aren't supported. This item is empty." The shared variant omits Trash
+advice because only the owner can trash the item. Existing role-appropriate
+rename, move, share and Trash controls stay where they are until SPN-048.
+Never delete or convert a legacy item automatically.
+
+Keep stories for both owner and shared-reader placeholders, plus the existing
+New and search states. Capture the changed screens in light, dark and phone
+width for the owner's approval before the implementation PR merges.
+
 ## Offline (SPN-039, SPN-053, SPN-054, SPN-051, SPN-052)
 
 The words come from [docs/offline.md](../offline.md); this page only places

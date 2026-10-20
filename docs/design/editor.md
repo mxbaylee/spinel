@@ -47,7 +47,8 @@ status line grows when a message or Retry appears, which moves the sheet
   popover), then **Share** (primary, owners only) or a **View only** badge, then
   the More menu.
 - **More menu:** Name this version… and Versions (SPN-024, SPN-026), Export
-  (Univer file, PDF; SPN-031, later Office files SPN-035), Print, Theatre mode,
+  (Download Univer file, Export as PDF; SPN-031/SPN-075, later Office files
+  SPN-035), Theatre mode,
   then for owners Move… and Trash. `VersionNames` and `FileExports` move from
   inline sections into this menu's dialogs.
 - **Tools** are Univer's toolbar, untouched. Spinel never adds a second toolbar
@@ -62,11 +63,16 @@ status line grows when a message or Retry appears, which moves the sheet
   appears. The same slot holds the Doc help line ("Click the page to write. Type
   / for commands."), which the error replaces while shown.
 
+**Export as PDF** (SPN-075) downloads a PDF directly for anyone with current
+read access, including account viewers and guests. There is no separate Print
+action or browser print dialog in this planned flow. Guests use the control
+in [their header](guest.md#adopted-pattern). Owner, chat 2026-10-20.
+
 ### Always visible / behind a menu
 
 | Always visible                                | Behind a menu                                             |
 | --------------------------------------------- | --------------------------------------------------------- |
-| Breadcrumb, document name (rename for owners) | More → versions, export, print, theatre mode, move, trash |
+| Breadcrumb, document name (rename for owners) | More → versions, export, theatre mode, move, trash |
 | Save slot, connection slot                    | Status popover → message detail, Retry saving             |
 | Collaborator avatars (max 3 + n)              | Avatar popover → names                                    |
 | Share (owner) or View only                    | Share dialog ([sharing.md](sharing.md))                   |
