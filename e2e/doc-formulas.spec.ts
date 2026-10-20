@@ -569,8 +569,11 @@ test('rich clipboard creates independent native Formula objects and plain text k
   ]);
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.setViewportSize({ width: 1440, height: 1100 });
+  let clipboardHtml = '';
+  const readSnapshot = async () =>
+    (await (await context.request.get(`/api/items/${host.id}/doc`)).json()).snapshot;
   const readRanges = async () => {
-    const saved = (await (await context.request.get(`/api/items/${host.id}/doc`)).json()).snapshot;
+    const saved = await readSnapshot();
     return (saved.body.customRanges ?? []).filter(
       (range: { properties?: { spinelFormula?: unknown } }) => range.properties?.spinelFormula,
     ) as { rangeId: string }[];
@@ -594,8 +597,23 @@ test('rich clipboard creates independent native Formula objects and plain text k
     await expect
       .poll(() => page.evaluate(() => navigator.clipboard.readText()))
       .toContain(expression);
+    clipboardHtml = await page.evaluate(async () => {
+      const items = await navigator.clipboard.read();
+      const html = items.find((item) => item.types.includes('text/html'));
+      return html ? (await html.getType('text/html')).text() : '';
+    });
+    await info.attach('formula-clipboard.html', { body: clipboardHtml, contentType: 'text/html' });
+    const fragment = /<!--univer-doc-fragment:([A-Za-z0-9+/=]+)-->/u.exec(clipboardHtml);
+    expect(fragment, 'Native rich copy keeps the source document fragment').not.toBeNull();
+    const copied = JSON.parse(Buffer.from(fragment![1], 'base64').toString('utf8'));
+    expect(copied.doc.body.customRanges).toHaveLength(1);
+    expect(copied.doc.body.customRanges[0].properties.spinelFormula.expression).toBe(expression);
     await page.keyboard.press('Control+End');
     await page.keyboard.press('Enter');
+    // Enter updates native selection asynchronously. Wait for its persisted mutation
+    // before paste, which deliberately cancels when the selection changes mid-read.
+    await expect.poll(async () => (await readSnapshot()).body.paragraphs.length).toBe(2);
+    await expect(input).toBeFocused();
     await page.keyboard.press('Control+v');
     await expect.poll(async () => (await readRanges()).length).toBe(2);
     const ranges = await readRanges();
@@ -604,6 +622,26 @@ test('rich clipboard creates independent native Formula objects and plain text k
     await expect.poll(async () => (await readRanges()).length).toBe(1);
     await page.getByRole('button', { name: 'Redo', exact: true }).click();
     await expect.poll(async () => (await readRanges()).length).toBe(2);
+  } catch (error) {
+    const failedSnapshot = await readSnapshot();
+    // CI retains the job log even when Playwright's arbitrary attachments are omitted.
+    console.error(
+      'Formula clipboard failure',
+      JSON.stringify({
+        html: clipboardHtml.slice(0, 12000),
+        body: failedSnapshot.body,
+        focused: await page.evaluate(() => document.activeElement?.outerHTML.slice(0, 500)),
+      }),
+    );
+    await info.attach('formula-clipboard-snapshot.json', {
+      body: JSON.stringify(failedSnapshot, null, 2),
+      contentType: 'application/json',
+    });
+    await page.screenshot({
+      path: info.outputPath('formula-clipboard-failure.png'),
+      fullPage: true,
+    });
+    throw error;
   } finally {
     await page.goto('/sign-in').catch(() => {});
     db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
