@@ -53,3 +53,25 @@ single-purpose pages with one heading, one explanation and one primary button.
 `Settings/ThemeSettings`, `Shell/GemLogo` (the sign-in card's mark). The rail
 gets `Shell/Rail` when SPN-045 extracts it; profile fields get stories with
 SPN-036.
+
+## Assistant access (SPN-034)
+
+Online everyday-account settings add **Connected assistants** after passkeys. The
+existing card/list pattern shows the MCP endpoint, supplied client label, callback
+origin, created/last-used times and **Disconnect**. **Advanced: personal access
+tokens** keeps custom labels, last use and **Revoke** in a disclosure. Its once-only
+secret reveal and copy fallback reuse the invite-link pattern. Admin and offline
+settings do not offer connection approval or token creation.
+
+`/connect` reuses the single-purpose account card and existing **Allow / Cancel**
+actions. Show the signed-in account, unverified client-supplied name, callback
+origin, requested read/edit capabilities and a reminder to approve only a request
+the person started. Existing passkey sign-in resumes the opaque pending request.
+Expired, unavailable-session and admin states explain how to start again; no
+trusted-client badges or arbitrary return URLs. This applies existing patterns,
+without changing the planned profile redesign.
+
+Stories: `Settings/AssistantConnections`, `Settings/ConnectAssistant`, and
+`Settings/AccessTokens` cover loading, empty, busy, failure, consent, expiration,
+reveal and revoked states. See [MCP](../mcp.md), decision
+[#111](https://github.com/mxbaylee/spinel/issues/111), owner correction 2026-10-20.

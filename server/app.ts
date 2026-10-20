@@ -2,6 +2,9 @@ import express from 'express';
 import { socialPreviewRoutes } from '../src/server/socialPreview.ts';
 import { escapeMarkup } from '../src/shared/markup.ts';
 import type { Request } from 'express';
+import { mcpRoutes } from '../src/server/mcp/routes.ts';
+import { assistantOAuthRoutes } from '../src/server/auth/oauthRoutes.ts';
+import { AssistantOAuth } from '../src/server/auth/oauth.ts';
 import { pwaRoutes } from '../src/server/pwa.ts';
 import { guestRoutes } from '../src/server/workspace/guestRoutes.ts';
 import { documentIdentity } from '../src/server/collaboration/identity.ts';
@@ -54,8 +57,11 @@ export async function createApp(options: AppOptions) {
     );
     const workspace = new WorkspaceStore(auth);
     const origin = options.origin ?? 'http://localhost:3000';
+    const oauth = new AssistantOAuth(auth, origin);
+    app.use(assistantOAuthRoutes(oauth));
     collaboration = new CollaborationStore(workspace, options.databasePath);
     history = new HistoryStore(workspace, collaboration);
+    app.use('/mcp', mcpRoutes(workspace, collaboration, origin));
     realtime = attachCollaboration(server, workspace, collaboration, origin);
     workspace.links.recover();
     app.use(guestRoutes(workspace, collaboration, origin, (id) => realtime!.privacyChanged(id)));
@@ -213,6 +219,7 @@ export async function createApp(options: AppOptions) {
 
     const pages = [
       '/sign-in',
+      '/connect',
       '/setup',
       '/invite',
       '/',
@@ -223,6 +230,18 @@ export async function createApp(options: AppOptions) {
     ];
     app.get(pages, (request, response, next) => {
       response.set('Cache-Control', 'no-store');
+      if (request.path === '/connect' || request.path === '/sign-in') {
+        response.set('Content-Security-Policy', "frame-ancestors 'none'");
+        response.set('X-Frame-Options', 'DENY');
+      }
+      if (
+        request.path === '/connect' ||
+        (request.path === '/sign-in' && request.query.connect !== undefined)
+      ) {
+        response.set('Referrer-Policy', 'no-referrer');
+        next();
+        return;
+      }
       if (request.path === '/invite' || request.path.startsWith('/share/')) {
         response.set('Referrer-Policy', 'no-referrer');
         next();

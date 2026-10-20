@@ -65,3 +65,12 @@ user list is a bare heading. The next ticket that touches either adds a
 
 `Admin/AdminUsers`, `Admin/AdminInvites`, `Admin/BackupStatus`. SPN-032 adds
 `Admin/ServerHealth`.
+
+## Assistant connection metadata (SPN-034)
+
+**Connected assistants** and **Assistant access tokens** sections before Backups
+reuse the read-only list pattern. Show client/token and account names, callback
+origins for connections, creation, last use and revoked status; never secrets or
+document details. No token creation or document access for the Operator.
+`Settings/AssistantConnections` and `Admin/AccessTokens` cover loading, empty, metadata and failure states. See
+[MCP](../mcp.md), decision [#111](https://github.com/mxbaylee/spinel/issues/111).

@@ -25,6 +25,8 @@ import {
   transformSnapshotToWorkbookData,
 } from '@univerjs-pro/collaboration';
 import { AuthError } from '../auth/store.ts';
+import { AccessTokens } from '../auth/tokens.ts';
+import { currentMcpIdentity } from '../auth/mcpIdentity.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
@@ -91,6 +93,7 @@ export class CollaborationStore {
     if (!main?.file || realpathSync(String(main.file)) !== realpathSync(filename))
       throw new Error('Collaboration must use the application database file.');
     this.workspace = workspace;
+    new AccessTokens(workspace.auth);
     this.generations = new CollaborationGenerations(workspace);
     this.generations.recoverBeforeServing();
     new SheetStore(workspace);
@@ -149,7 +152,7 @@ export class CollaborationStore {
               this.admitted.set(unitId, active);
             }
             this.access(context.userID, context.request.changeset.unitID, true);
-            this.session(context.userID, context.customData);
+            this.session(context.userID, context.customData, true);
             validateTargets(context.request.changeset);
             await next();
           } catch (error) {
@@ -171,6 +174,14 @@ export class CollaborationStore {
       );
     }
     this.service.use('commitChangeset', async (context, next) => {
+      if (
+        Object.hasOwn(context.customData, 'mcpTokenHash') &&
+        context.expectedHeadRevision !== context.request.changeset.baseRev
+      )
+        throw new CollabError(
+          'REVISION_MISMATCH',
+          'The document changed. Read it again before editing.',
+        );
       const id = context.changeset.unitID;
       validateTargets(context.changeset);
       if (context.requiredUnitPermissions.some((permission) => permission.unitID !== id))
@@ -198,7 +209,7 @@ export class CollaborationStore {
         if (error instanceof AuthError) throw new CollabError('INVALID_REQUEST', error.message);
         throw error;
       }
-      this.session(context.userID, context.customData);
+      this.session(context.userID, context.customData, true);
       this.access(context.userID, id, true);
       await next();
     });
@@ -226,7 +237,16 @@ export class CollaborationStore {
     });
   }
 
-  private session(user: string, custom: Record<string, unknown>) {
+  private session(user: string, custom: Record<string, unknown>, edit = false) {
+    if (Object.hasOwn(custom, 'mcpTokenHash')) {
+      try {
+        if (currentMcpIdentity(this.workspace.auth, custom, edit).userId !== user)
+          throw new Error('Token scope');
+      } catch {
+        throw new CollabError('PERMISSION_DENIED', 'This access token is no longer available.');
+      }
+    }
+
     if (user.startsWith('guest:') && Object.hasOwn(custom, 'guestHash')) {
       try {
         this.workspace.links.session(user, custom.guestHash);

@@ -7,6 +7,8 @@ import { SetupService } from './setup.ts';
 import { InvitationService } from './invitations.ts';
 import type { Session } from './store.ts';
 import { AdminStore } from './admin.ts';
+import { AccessTokens } from './tokens.ts';
+import { AssistantOAuth } from './oauth.ts';
 
 export function cookieToken(request: Pick<Request, 'headers'>) {
   const tokens = (request.headers.cookie ?? '')
@@ -34,6 +36,8 @@ export function authRoutes(
   const setup = new SetupService(store, origin);
   const invites = new InvitationService(store, origin);
   const admin = new AdminStore(store, invites);
+  const tokens = new AccessTokens(store);
+  const oauth = new AssistantOAuth(store, origin);
   const requireSession = (request: Request, authenticated = false): Session => {
     const session = store.session(cookieToken(request));
     if (!session || (authenticated && !session.user_id))
@@ -65,6 +69,39 @@ export function authRoutes(
       throw new AuthError(404, 'Not found.');
     return session;
   };
+  router.get('/tokens', (request, response) => {
+    response.json({ tokens: tokens.list(requireSession(request, true).user_id!) });
+  });
+  router.get('/connections', (request, response) => {
+    response.json({ connections: oauth.list(requireSession(request, true).user_id!) });
+  });
+  router.post('/connections/:id/revoke', (request, response) => {
+    oauth.disconnect(requireSession(request, true).user_id!, String(request.params.id));
+    response.sendStatus(204);
+  });
+  router.get('/admin/connections', (request, response) => {
+    response.json({ connections: oauth.list(requireAdmin(request).user_id!, true) });
+  });
+  router.get('/oauth/pending/:id', (request, response) => {
+    response.json(oauth.details(String(request.params.id), requireSession(request, true)));
+  });
+  router.post('/oauth/pending/:id', (request, response) => {
+    response.json(
+      oauth.consent(String(request.params.id), requireSession(request, true), request.body?.allow),
+    );
+  });
+  router.post('/tokens', (request, response) => {
+    response
+      .status(201)
+      .json(tokens.create(requireSession(request, true).user_id!, request.body?.name));
+  });
+  router.post('/tokens/:id/revoke', (request, response) => {
+    tokens.revoke(requireSession(request, true).user_id!, String(request.params.id));
+    response.sendStatus(204);
+  });
+  router.get('/admin/tokens', (request, response) => {
+    response.json({ tokens: tokens.adminList(requireAdmin(request).user_id!) });
+  });
   router.get('/admin/users', (request, response) => {
     response.json({ users: admin.list(requireAdmin(request).user_id!) });
   });
