@@ -87,16 +87,26 @@ test('admins and disabled owners cannot use document storage', () => {
 });
 test('only folders can contain items, all document kinds remain distinct, names are validated', () => {
   const f = fixture();
-  for (const kind of ['sheet', 'doc', 'slides']) {
+  for (const kind of ['sheet', 'doc']) {
     const doc = f.store.create(f.owner.id, { name: '  Untitled  ', kind, parentId: null });
     expect(doc).toMatchObject({ name: 'Untitled', kind });
     expect(() => f.folder('Bad', doc.id)).toThrow('folder');
   }
   for (const name of ['', '  ', 'x'.repeat(121), 'a/b', 'a\\b', 'a\n'])
     expect(() => f.folder(name)).toThrow('name');
-  expect(() => f.store.create(f.owner.id, { name: 'x', kind: 'unknown', parentId: null })).toThrow(
-    'Choose',
-  );
+  // SPN-074 removes Slides entirely: it was never a production document type.
+  for (const kind of ['unknown', 'slides'])
+    expect(() => f.store.create(f.owner.id, { name: 'x', kind, parentId: null })).toThrow(
+      'Choose Folder, Sheet or Doc.',
+    );
+  expect(() =>
+    f.db
+      .prepare(
+        `INSERT INTO workspace_items(id,owner_id,kind,name,created_at,updated_at)
+         VALUES(?,?,'slides','Unsupported',0,0)`,
+      )
+      .run(randomUUID(), f.owner.id),
+  ).toThrow('CHECK constraint failed');
   expect(() => f.store.create(f.owner.id, { name: 'x', kind: 'doc' })).toThrow('destination');
   // Duplicate names are allowed by decision #14; identity and destinations use IDs.
   expect(f.folder('Same').id).not.toBe(f.folder('Same').id);
@@ -154,6 +164,9 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
     });
   const created = await call('POST', '', { name: 'Budget', kind: 'sheet', parentId: null });
   expect(created.status).toBe(201);
+  const slides = await call('POST', '', { name: 'Deck', kind: 'slides', parentId: null });
+  expect(slides.status).toBe(400);
+  expect(await slides.json()).toEqual({ error: 'Choose Folder, Sheet or Doc.' });
   const { item } = await created.json();
   const foreign = store.create(other.id, { name: 'Secret', kind: 'doc', parentId: null });
   expect((await (await call('GET')).json()).items).toHaveLength(1);

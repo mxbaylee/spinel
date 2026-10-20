@@ -29,7 +29,7 @@ export class WorkspaceStore {
         id TEXT PRIMARY KEY,
         owner_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
         parent_id TEXT REFERENCES workspace_items(id) ON DELETE RESTRICT,
-        kind TEXT NOT NULL CHECK(kind IN ('folder','sheet','doc','slides')),
+        kind TEXT NOT NULL CHECK(kind IN ('folder','sheet','doc')),
         name TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_items_owner_parent ON workspace_items(owner_id,parent_id);
@@ -483,7 +483,7 @@ export class WorkspaceStore {
     this.owner(ownerId);
     const name = this.name(input.name);
     if (!ITEM_KINDS.includes(input.kind as ItemKind))
-      throw new AuthError(400, 'Choose Folder, Sheet, Doc or Slides.');
+      throw new AuthError(400, 'Choose Folder, Sheet or Doc.');
     return this.auth.transaction(() => {
       const parentId = this.parent(ownerId, input.parentId);
       const id = randomUUID();

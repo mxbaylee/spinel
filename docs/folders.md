@@ -5,12 +5,20 @@ accounts land in Admin and cannot list, open, create, rename or move documents.
 Each everyday account has its own private tree. [Sharing](sharing.md) grants
 chosen signed-in people access to specific items; a link guest has no access.
 
-Choose **New**, a type (Folder, Sheet, Doc or Slides; SPN-074 removes Slides), and a name. Folders are
+Choose **New**, a type (Folder, Sheet or Doc), and a name. Folders are
 created inside the current folder. Documents are created there and immediately
 open an empty document view. Their identity, type, name and location are saved;
 Sheets open the [spreadsheet editor](spreadsheets.md), Docs open the
-[document editor](documents.md), and Slides open an empty placeholder; Spinel dropped Slides (owner, chat 2026-10-19). Reloading or returning to
+[document editor](documents.md). Reloading or returning to
 the view does not create another document.
+
+Slides are unsupported: neither creation nor the search type filter offers them,
+and the API refuses new `slides` items with "Choose Folder, Sheet or Doc."
+Spinel was never in production, so there is no legacy Slides type, placeholder or
+migration to maintain. Spinel dropped Slides because Univer's Slides package is
+closed Pro software and Spinel is moving off Pro without watermarks (owner, chat
+2026-10-19). The owner requested complete removal before the redesign in
+[decision #104](https://github.com/mxbaylee/spinel/issues/104), 2026-10-20.
 
 Use the folder list or breadcrumb to navigate. **Rename** updates an item's name
 in the list, tree and breadcrumb without reloading. **Move** offers My files (the
@@ -58,3 +66,8 @@ Playwright builds a three-level tree, renames a folder, creates and opens each
 document type, moves a document, rejects a direct cycle request, follows browser
 history, reloads the saved location, and checks mobile width in development and
 production.
+
+Tests also verify that creation and search reject Slides, and existing browser
+flows check the supported creation and search choices. Dashboard, shell and search
+stories use only supported types. The owner approved this removal and waived
+screenshots for it in chat on 2026-10-20; the general UI review rule still applies.

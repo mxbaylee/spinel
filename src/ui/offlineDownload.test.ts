@@ -39,7 +39,7 @@ test.each([
   ['another account', { accountId: 'someone-else' }],
   ['another item', { itemId: 'other' }],
   ['another version', { version: 2 }],
-  ['a Slides deck', { kind: 'slides' }],
+  ['an unsupported item kind', { kind: 'unsupported' }],
   ['no snapshot', { snapshot: null }],
   ['a fractional revision', { revision: 1.5 }],
   // A viewer's copy must open read-only (docs/offline.md).

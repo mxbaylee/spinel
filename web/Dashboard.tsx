@@ -621,7 +621,7 @@ export function Dashboard({
                       onDirty={navigation.dirty}
                     />
                   </Suspense>
-                ) : current.kind === 'doc' ? (
+                ) : (
                   <Suspense fallback={<p role="status">Loading document…</p>}>
                     <DocEditor
                       key={current.id}
@@ -630,14 +630,6 @@ export function Dashboard({
                       onDirty={navigation.dirty}
                     />
                   </Suspense>
-                ) : (
-                  <section
-                    className="empty-document"
-                    aria-label={`${kindLabel[current.kind]} document`}
-                  >
-                    <p>{kindLabel[current.kind]} · Empty document</p>
-                    <p>This document is saved here. Editing is coming in a later update.</p>
-                  </section>
                 )}
               </>
             )}

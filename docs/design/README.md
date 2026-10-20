@@ -10,7 +10,7 @@ controls are always visible and which sit behind a menu.
 
 | Screen                          | Page                         | Builds on it                                                                    |
 | ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------- |
-| File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-053, SPN-054, SPN-051, SPN-065, SPN-067, SPN-069, SPN-074          |
+| File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-053, SPN-054, SPN-051, SPN-065, SPN-067, SPN-069          |
 | Editor chrome                   | [editor.md](editor.md)       | SPN-049, SPN-043, SPN-042, SPN-050, SPN-033, SPN-035, SPN-068, SPN-072, SPN-075 |
 | Sharing                         | [sharing.md](sharing.md)     | SPN-033, SPN-066, SPN-071                                                       |
 | Settings and sign-in            | [account.md](account.md)     | SPN-045, SPN-036, SPN-070                                                       |

@@ -38,7 +38,7 @@ const results = [
     sharedAt: now - 90 * hour,
     placementParentId: null,
   }),
-  entry(4, 'Budget kickoff', 'slides', 200, {
+  entry(4, 'Budget kickoff', 'doc', 200, {
     access: 'editor',
     ownerName: 'Alex Kim',
     sharedAt: now - 300 * hour,

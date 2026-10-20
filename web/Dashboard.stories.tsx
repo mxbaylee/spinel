@@ -34,9 +34,8 @@ const finance = entry(3, 'Finance', 'folder', { parentId: household.id });
 const mealPlan = entry(4, 'Meal plan', 'doc', { parentId: household.id });
 const budget = entry(5, 'Quarterly budget', 'sheet', { tags: ['budget', 'q4'] });
 const trip = entry(6, 'Trip plan', 'doc', { tags: ['travel'] });
-const deck = entry(7, 'Offsite deck', 'slides');
 const receipts = entry(10, 'Receipts 2026', 'sheet', { parentId: finance.id, tags: ['tax'] });
-const items = [household, work, finance, mealPlan, receipts, budget, trip, deck];
+const items = [household, work, finance, mealPlan, receipts, budget, trip];
 
 const roadmap = entry(8, 'Team roadmap', 'doc', {
   access: 'viewer',
@@ -119,10 +118,16 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Folders, sheets, docs and slides, plus two items shared by Alex Kim, one filed
+ * Folders, sheets and docs, plus two items shared by Alex Kim, one filed
  * into My files. Opening a sheet or doc would load the Univer editor, so don't.
  */
 export const Populated: Story = { parameters: { api: populated } };
+export const NewItem: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(await within(canvasElement).findByRole('button', { name: 'New' }));
+  },
+};
 export const EmptyWorkspace: Story = { parameters: { api: empty } };
 /** The "Shared with me" drawer lists every share, filed or not, with its access level. */
 export const SharedDrawer: Story = {
