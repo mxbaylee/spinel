@@ -732,3 +732,22 @@ dialog {
 .banner [aria-hidden='true'] {
   color: var(--sp-accent);
 }
+
+.entity-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.item-open > .entity-icon,
+.pinned-sidebar a > .entity-icon {
+  margin-right: 8px;
+}
+.entity-type-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.entity-type-control select {
+  flex: 1;
+  min-width: 0;
+}

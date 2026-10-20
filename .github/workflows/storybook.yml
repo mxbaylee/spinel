@@ -75,6 +75,18 @@ jobs:
           for file in index.html index.json iframe.html; do
             test -s "storybook-static/$file" || { echo "::error::storybook-static/$file is missing"; exit 1; }
           done
+      - name: Capture icon and integration stories
+        if: needs.changes.outputs.docs_only != 'true'
+        run: |
+          npx playwright install --with-deps chromium
+          node scripts/ci/icon-screenshots.ts
+      - name: Upload visual review
+        if: always() && needs.changes.outputs.docs_only != 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: entity-icon-screenshots
+          path: test-results/entity-icons
+          if-no-files-found: error
       - name: Upload for Pages
         if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

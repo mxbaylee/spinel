@@ -9,6 +9,7 @@ export async function socialCardExamples() {
   for (const [key, kind, name] of [
     ['doc', 'doc', 'Autumn recipes'],
     ['sheet', 'sheet', 'Our next adventure'],
+    ['space', 'space', 'Our household'],
     ['emoji', 'doc', '🥕 Autumn recipes 🍂'],
     [
       'longTitle',

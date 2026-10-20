@@ -1,3 +1,4 @@
+import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
@@ -187,6 +188,7 @@ export function PinnedSidebar({ navigation }: { navigation: NavigationGuard }) {
                   event.preventDefault();
               }}
             >
+              {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
               {item.name} <small>{kindLabel[item.kind]}</small>
             </a>
             <SharedBadge item={item} />

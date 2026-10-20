@@ -94,7 +94,7 @@ SPN-077's icon assets/current-surface integration can land first.
 ## Entity artwork
 
 Docs, Sheets and planned Spaces use the [entity iconography pattern](entity-icons.md).
-SPN-077 implements the blue/green/purple facet family before the wider redesign;
+SPN-077 implemented the blue/green/purple facet family before the wider redesign;
 Space examples remain in Storybook until the feature exists.
 
 ## Shell layout

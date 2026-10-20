@@ -38,6 +38,8 @@ describe('Spinel theme', () => {
         ['sp-bg', 'sp-text'],
         ['sp-muted', 'sp-bg'],
         ['sp-text', 'sp-panel'],
+        // Entity monochrome glyph on its solid silhouette (SPN-077).
+        ['sp-panel', 'sp-text'],
         ['sp-muted', 'sp-panel'],
         ['sp-on-accent', 'sp-accent'],
         ['sp-rail-ink', 'sp-rail'],

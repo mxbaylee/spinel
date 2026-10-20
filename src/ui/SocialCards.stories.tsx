@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 // Vite substitutes build-time image data; no server imports reach this module.
 declare const __SPINEL_SOCIAL_CARDS__: Record<string, string>;
-type Example = 'generic' | 'doc' | 'sheet' | 'emoji' | 'longTitle' | 'longWord';
+type Example = 'generic' | 'space' | 'doc' | 'sheet' | 'emoji' | 'longTitle' | 'longWord';
 function SocialCard({ example }: { example: Example }) {
   return (
     <img
@@ -20,7 +20,7 @@ const meta = {
   argTypes: {
     example: {
       control: 'select',
-      options: ['generic', 'doc', 'sheet', 'emoji', 'longTitle', 'longWord'],
+      options: ['generic', 'doc', 'sheet', 'space', 'emoji', 'longTitle', 'longWord'],
     },
   },
 } satisfies Meta<typeof SocialCard>;
@@ -32,3 +32,6 @@ export const Spreadsheet: Story = { args: { example: 'sheet' } };
 export const Emoji: Story = { args: { example: 'emoji' } };
 export const LongTitle: Story = { args: { example: 'longTitle' } };
 export const LongWord: Story = { args: { example: 'longWord' } };
+
+/** Static artwork fixture; no Space sharing route exists yet. */
+export const SpacePreview: Story = { args: { example: 'space' } };

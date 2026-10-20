@@ -122,3 +122,17 @@ test('emoji titles contain colored glyphs instead of missing-character boxes', a
   // A carrot needs orange pixels; plain text or a missing-glyph box has none.
   expect(orangePixels).toBeGreaterThan(100);
 });
+
+test('shared cards display the matching entity artwork without changing title bounds', async () => {
+  const artwork: Buffer[] = [];
+  for (const kind of ['doc', 'sheet', 'space'] as const) {
+    const png = await renderSharedCard({ name: 'The same title', kind });
+    artwork.push(
+      await sharp(png).extract({ left: 860, top: 140, width: 320, height: 320 }).raw().toBuffer(),
+    );
+    expect(await sharp(png).metadata()).toMatchObject({ width: 1280, height: 640 });
+  }
+  expect(artwork[0].equals(artwork[1])).toBe(false);
+  expect(artwork[1].equals(artwork[2])).toBe(false);
+  expect(artwork[0].equals(artwork[2])).toBe(false);
+});
