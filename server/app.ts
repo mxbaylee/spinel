@@ -1,4 +1,7 @@
 import express from 'express';
+import { socialPreviewRoutes } from '../src/server/socialPreview.ts';
+import { escapeMarkup } from '../src/shared/markup.ts';
+import type { Request } from 'express';
 import { pwaRoutes } from '../src/server/pwa.ts';
 import { guestRoutes } from '../src/server/workspace/guestRoutes.ts';
 import { documentIdentity } from '../src/server/collaboration/identity.ts';
@@ -182,11 +185,31 @@ export async function createApp(options: AppOptions) {
     });
 
     app.use(pwaRoutes());
-    // Only configured deployment origin, never request hosts, tokens or item metadata.
-    const metadataOrigin = new URL(origin).origin
-      .replaceAll('&', '&amp;')
-      .replaceAll('"', '&quot;');
-    const pageMetadata = (html: string) => html.replaceAll('__SPINEL_ORIGIN__', metadataOrigin);
+    app.use(socialPreviewRoutes(workspace.links));
+    // Only configured origin and authorized preview metadata, never request hosts.
+    const pageMetadata = (html: string, request: Request) => {
+      const preview = request.path.startsWith('/share/')
+        ? workspace.links.preview(request.params.id, request.query.preview)
+        : undefined;
+      const title = preview ? `${preview.name} — Spinel` : 'Spinel';
+      const image = preview
+        ? `/share/${encodeURIComponent(String(request.params.id))}/preview.png?preview=${encodeURIComponent(String(request.query.preview))}`
+        : '/social-preview.png';
+      const values: Record<string, string> = {
+        TITLE: title,
+        IMAGE: new URL(image, origin).href,
+        DESCRIPTION: preview
+          ? `A ${preview.kind === 'sheet' ? 'spreadsheet' : 'document'} shared with you on Spinel.`
+          : 'Your private workspace for documents and spreadsheets.',
+        IMAGE_ALT: preview
+          ? `${preview.kind === 'sheet' ? 'Spreadsheet' : 'Document'}: ${preview.name}. Shared on Spinel.`
+          : "Spinel's faceted pink heart. A little space for your big ideas. Documents and spreadsheets, together.",
+      };
+      return html.replace(
+        /__SPINEL_(TITLE|IMAGE|DESCRIPTION|IMAGE_ALT)__/g,
+        (_placeholder, key: string) => escapeMarkup(values[key]),
+      );
+    };
 
     const pages = [
       '/sign-in',
@@ -276,15 +299,15 @@ export async function createApp(options: AppOptions) {
       app.get(pages, async (request, response) => {
         const template = await readFile(resolve(projectRoot, 'web/index.html'), 'utf8');
         const html = await vite!.transformIndexHtml(request.originalUrl, template);
-        response.type('html').send(pageMetadata(html));
+        response.type('html').send(pageMetadata(html, request));
       });
       app.use(vite.middlewares);
     } else {
       const directory = options.staticDirectory ?? resolve(projectRoot, 'dist');
       // Fail at startup with a useful error instead of serving a broken dashboard.
-      const html = pageMetadata(await readFile(resolve(directory, 'index.html'), 'utf8'));
-      app.get(pages, (_request, response) => {
-        response.type('html').send(html);
+      const html = await readFile(resolve(directory, 'index.html'), 'utf8');
+      app.get(pages, (request, response) => {
+        response.type('html').send(pageMetadata(html, request));
       });
       app.get('/service-worker.js', (_request, response) => {
         response.set('Cache-Control', 'no-store').sendFile(resolve(directory, 'service-worker.js'));

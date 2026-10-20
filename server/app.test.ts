@@ -215,7 +215,7 @@ for (const development of [false, true]) {
         'href="/favicon.ico"',
       ])
         expect(html).toContain(text);
-      expect(html).not.toMatch(/Private sentinel|secret-token|attacker\.example|__SPINEL_ORIGIN__/);
+      expect(html).not.toMatch(/Private sentinel|secret-token|attacker\.example|__SPINEL_/);
     };
     await inspect('/setup');
     const db = openDatabase(databasePath);
@@ -238,5 +238,23 @@ for (const development of [false, true]) {
     await inspect(`/?item=${item.id}`, {
       Cookie: `${COOKIE_NAME}=${auth.createSession(owner.id).token}`,
     });
+    db.prepare('UPDATE workspace_items SET name=? WHERE id=?').run('Shared & <recipe>', item.id);
+    const link = workspace.links.begin(item.id, 'viewer');
+    workspace.links.finish(item.id, link.epoch, true);
+    const address = `${url}/share/${item.id}?preview=${link.previewToken}`;
+    const shared = await fetch(address);
+    expect(shared.headers.get('cache-control')).toBe('no-store');
+    expect(shared.headers.get('referrer-policy')).toBe('no-referrer');
+    const html = await shared.text();
+    expect(html).toContain('<title>Shared &amp; &lt;recipe&gt; — Spinel</title>');
+    expect(html).toContain('A document shared with you on Spinel.');
+    expect(html).toContain(
+      `https://spinel.example/share/${item.id}/preview.png?preview=${link.previewToken}`,
+    );
+    expect(html).not.toContain(link.token!);
+    expect(html).not.toContain(owner.name);
+    const off = workspace.links.begin(item.id, null);
+    workspace.links.finish(item.id, off.epoch, false);
+    expect(await (await fetch(address)).text()).not.toContain('Shared &amp;');
   });
 }

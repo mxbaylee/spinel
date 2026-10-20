@@ -42,7 +42,7 @@ export function ShareLink({ id }: { id: string }) {
       <p>
         Anyone with this link can open this document. Guest sessions last 24 hours. Personal
         collaborator names are hidden while link sharing is on. Changing the link reconnects open
-        editors.
+        editors. Shared links show the document title and type in social previews.
       </p>
       <label>
         Link access{' '}

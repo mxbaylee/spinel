@@ -4,7 +4,8 @@ import { ShareLink } from './ShareLink.tsx';
 
 const id = '00000000-0000-4000-8000-000000000071';
 const link = `GET /api/items/${id}/link`;
-const url = 'https://spinel.example.com/share/00000000-0000-4000-8000-000000000071#k3Yq9mZpV2xT';
+const url =
+  'https://spinel.example.com/share/00000000-0000-4000-8000-000000000071?preview=public-title-preview#k3Yq9mZpV2xT';
 
 // Each story sets `parameters.api` in full: Storybook deep-merges parameters, which
 // would fold a failure() or pending() reply into the plain body set on the meta.

@@ -36,6 +36,26 @@ export class LinkAccess {
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_guest_item ON workspace_guest_sessions(item_id);
     `);
+    if (
+      !auth.database
+        .prepare('PRAGMA table_info(workspace_links)')
+        .all()
+        .some((column) => column.name === 'preview_hash')
+    )
+      auth.database.exec('ALTER TABLE workspace_links ADD COLUMN preview_hash TEXT');
+  }
+  /** This separate capability reveals only the shared title/kind, never content. */
+  preview(id: unknown, secret: unknown) {
+    if (typeof id !== 'string' || typeof secret !== 'string' || !/^[\w-]{43}$/.test(secret))
+      return undefined;
+    return this.auth.database
+      .prepare(
+        `SELECT i.name,i.kind FROM workspace_links l
+      JOIN workspace_items i ON i.id=l.item_id JOIN auth_users u ON u.id=i.owner_id
+      WHERE l.item_id=? AND l.preview_hash=? AND l.state='active'
+      AND i.trashed_at IS NULL AND u.disabled=0 AND i.kind IN ('sheet','doc')`,
+      )
+      .get(id, hash(secret)) as { name: string; kind: 'sheet' | 'doc' } | undefined;
   }
   state(id: string) {
     return this.auth.database
@@ -56,27 +76,35 @@ export class LinkAccess {
         throw new AuthError(409, 'Sharing is changing. Try again shortly.');
       const epoch = this.epoch(id) + 1;
       const token = role ? randomBytes(32).toString('base64url') : null;
+      const previewToken = role ? randomBytes(32).toString('base64url') : null;
       this.auth.database
         .prepare(
-          `INSERT INTO workspace_links VALUES(?,?,?,?,?)
-        ON CONFLICT(item_id) DO UPDATE SET epoch=excluded.epoch,state=excluded.state,role=excluded.role,token_hash=excluded.token_hash`,
+          `INSERT INTO workspace_links (item_id,epoch,state,role,token_hash,preview_hash) VALUES(?,?,?,?,?,?)
+        ON CONFLICT(item_id) DO UPDATE SET epoch=excluded.epoch,state=excluded.state,role=excluded.role,token_hash=excluded.token_hash,preview_hash=excluded.preview_hash`,
         )
-        .run(id, epoch, 'pending', role ?? 'viewer', token ? hash(token) : null);
+        .run(
+          id,
+          epoch,
+          'pending',
+          role ?? 'viewer',
+          token ? hash(token) : null,
+          previewToken ? hash(previewToken) : null,
+        );
       this.auth.database.prepare('DELETE FROM workspace_guest_sessions WHERE item_id=?').run(id);
-      return { epoch, token };
+      return { epoch, token, previewToken };
     });
   }
   finish(id: string, epoch: number, enabled: boolean) {
     this.auth.database
       .prepare(
-        "UPDATE workspace_links SET state=?,token_hash=CASE WHEN ? THEN token_hash ELSE NULL END WHERE item_id=? AND epoch=? AND state='pending'",
+        "UPDATE workspace_links SET state=?,token_hash=CASE WHEN ? THEN token_hash ELSE NULL END,preview_hash=CASE WHEN ? THEN preview_hash ELSE NULL END WHERE item_id=? AND epoch=? AND state='pending'",
       )
-      .run(enabled ? 'active' : 'off', Number(enabled), id, epoch);
+      .run(enabled ? 'active' : 'off', Number(enabled), Number(enabled), id, epoch);
   }
   recover() {
     // A crash during eviction must never publish a partially activated capability.
     this.auth.database.exec(
-      "UPDATE workspace_links SET state='off',token_hash=NULL WHERE state='pending'",
+      "UPDATE workspace_links SET state='off',token_hash=NULL,preview_hash=NULL WHERE state='pending'",
     );
   }
   exchange(id: string, secret: unknown, currentToken?: string) {

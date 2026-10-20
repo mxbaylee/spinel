@@ -33,7 +33,9 @@ export function pwaRoutes() {
   router.get('/social-preview.png', (_request, response) => {
     response
       .set('Cache-Control', 'public, max-age=86400')
-      .sendFile(fileURLToPath(new URL('../ui/social-preview.png', import.meta.url)));
+      .sendFile(fileURLToPath(new URL('../ui/social-preview.png', import.meta.url)), {
+        dotfiles: 'allow',
+      });
   });
   // These fixed public buffers are the only retained data. No per-user icon or URL input.
   const icons = new Map<number, Promise<Buffer>>();

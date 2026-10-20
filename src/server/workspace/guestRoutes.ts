@@ -142,7 +142,9 @@ export function guestRoutes(
       response.json({
         enabled: Boolean(role),
         role: role ?? 'viewer',
-        url: change.token ? `${origin}/share/${item.id}#${change.token}` : null,
+        url: change.token
+          ? `${origin}/share/${item.id}?preview=${change.previewToken}#${change.token}`
+          : null,
       });
     } catch (error) {
       links.finish(item.id, change.epoch, false);

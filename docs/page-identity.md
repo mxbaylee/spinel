@@ -2,40 +2,63 @@
 
 Spinel uses the existing faceted-heart app icon for its SVG favicon, 32px PNG and
 ICO fallback. The filled background keeps it legible on light and dark browser
-chrome. The existing installation icons and manifest retain their original roles.
-The service worker serves the same SVG while offline without creating a cache.
+chrome. The service worker serves the same SVG while offline without creating a
+cache. Installation icons and the manifest retain their original roles.
 
-Every server-sent page has the generic title **Spinel**, the description **Your
-private workspace for documents and spreadsheets.**, Open Graph metadata and a
-large-image social card hint. The social card is a fixed 1280×640 PNG using the
-existing gem, light palette and system typography. `node scripts/social-preview.ts`
-regenerates `src/ui/social-preview.png`; commit the result after visual review.
-Production serves the committed image, so it needs no fonts or rendering service.
-The generator uses the machine's Arial/Helvetica/sans-serif fallback; inspect its
-output if regenerating on another platform.
+## Private pages and shared links
 
-The public image URL comes from the configured `APP_ORIGIN`, never the incoming
-Host header or document metadata. The image is public and credential-free.
-Previews never contain document names, owners, contents, account information or
-share tokens, even for a valid guest link. No canonical or Open Graph URL replaces
-the supplied guest address, whose fragment carries its capability. Chat apps choose
-whether and how to unfurl a link; Spinel supplies standard metadata, not an embed
-of the document. Guest links themselves are described in [Sharing](sharing.md).
+Private pages carry the generic title **Spinel**, description **Your private
+workspace for documents and spreadsheets.**, and a branded 1280×640 social card.
+Signed-in document tabs become **<name> — Spinel** only after authorized client
+loading, and reset on navigation/unmount. All app HTML includes `noindex`; access
+control still protects documents. The fallback page is **Spinel — Offline**.
 
-All app HTML includes `noindex`; access control still protects the documents.
-Signed-in document tabs become **<name> — Spinel** only after client-side loading;
-folder/dashboard tabs and unmounted document views reset to **Spinel**. Guest and
-server HTML titles remain generic. The offline fallback is **Spinel — Offline**
-and uses the same favicon.
+Creating a guest link automatically enables a branded social card with the
+**document title and Document/Spreadsheet type**, for both view and edit links.
+There is no separate opt-in. Server metadata and the image expose no owner,
+contents, collaborators or other documents. Private item URLs stay generic.
+Owner, chat 2026-10-20, superseding SPN-044's earlier generic-only preview rule;
+[decision #109](https://github.com/mxbaylee/spinel/issues/109).
 
-These rules preserve the Operator's small deployment, the Owner's recognizable
-workspace, the Collaborator's private information and the Link guest's scoped
-access. Owner, chat 2026-10-20; [decision #109](https://github.com/mxbaylee/spinel/issues/109).
-The layout uses the existing [design tokens and gem](design/README.md), with no new
-interactive component or product screen. Review fixtures show the actual public
-assets in light, dark and phone-width surroundings.
+A new share address has two independent random capabilities: `?preview=…` allows
+only title/type preview, while `#…` grants the existing document access. Only
+hashes are stored. The document capability is still absent from HTTP request
+URLs/referrers. Preview tokens cannot create guest sessions, read contents or
+edit. The query is removed with the fragment after the guest browser exchanges
+the link; copy the original address from Share when sending it to others.
 
-The [Open Graph specification](https://ogp.me/) defines the image metadata and alt
-text. [GitHub's social preview guidance](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview)
-provides the 1280×640 image size reference. Sources consulted 2026-10-20; the artwork
-is Spinel's, not copied from GitHub.
+Both metadata and image requests check the current link, owner and trash state.
+Rotation, link-off, trash and disabled owners stop serving the old preview; image
+rendering rechecks after its asynchronous work. Personalized responses are
+`no-store`, share pages are `no-referrer`, and there is no image cache. A receiving
+chat service may nevertheless retain a preview it already fetched; Spinel cannot
+recall external copies. Older fragment-only links still open their documents and
+show the generic card until the owner creates a replacement link.
+
+Public image URLs use configured `APP_ORIGIN`, never an incoming Host header or
+request-supplied title. No canonical/Open Graph URL replaces the supplied address.
+Chat apps decide whether/how to unfurl; this is a preview, not a document embed.
+See [Sharing](sharing.md) for the document permission boundary.
+
+## Artwork and verification
+
+`node scripts/social-preview.ts` regenerates the generic image from the existing
+gem/palette. Commit the PNG after visual review; its generator uses the machine's
+Arial/Helvetica/sans-serif fallback. Personalized cards reuse that artwork and
+render a bounded title/type with existing Sharp and a bundled OFL-licensed
+[Atkinson Hyperlegible font](../src/ui/fonts/README.md). No browser font changes,
+external rendering service or new npm package is required. Native image rendering
+is capped at two concurrent requests, with no unbounded queue or per-link cache.
+
+The Operator gets a bounded deployment, the Owner gets automatic recognizable
+shares, the Collaborator retains content/identity privacy, and the Link guest
+keeps scoped document access. Tests cover metadata in development/production,
+preview/content-token separation, rotation/revocation, async revocation, trash,
+disabled owners, title escaping, image loading offline, and client tab names.
+Browser review fixtures show the actual generic, Doc and Sheet assets in light,
+dark and phone surroundings; they are not new product screens.
+
+[Open Graph](https://ogp.me/) defines the metadata and image alt text.
+[GitHub's preview guidance](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview)
+provides the 1280×640 reference. [Sharp's text API](https://sharp.pixelplumbing.com/api-constructor/)
+provides bounded text rendering. Sources consulted 2026-10-20; artwork is Spinel's.

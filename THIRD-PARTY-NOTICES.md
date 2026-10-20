@@ -10,6 +10,11 @@ ship with them.
 | `src/server/auth/passkey-provider-names.json` | [passkeydeveloper/passkey-authenticator-aaguids](https://github.com/passkeydeveloper/passkey-authenticator-aaguids) at `774b3cf`, via circus-health | Factual name mappings | Names only; icons dropped |
 | `docs/reference/icons/person-icon-catalog.json` | [lucide-icons/lucide](https://github.com/lucide-icons/lucide) icon metadata at `a79b2d1`, via circus-health | ISC (Lucide, which also keeps MIT notices for icons derived from Feather) | Tags and categories only |
 
+The unmodified `src/ui/fonts/AtkinsonHyperlegible-Bold.ttf` comes from
+[Google Fonts at 95f4904](https://github.com/google/fonts/tree/95f4904fc8bcf26d3420fe315560c96417c6dec7/ofl/atkinsonhyperlegible).
+Its SIL Open Font License 1.1 and copyright are retained in `src/ui/fonts/OFL.txt`.
+It supplies server-rendered shared-card text only.
+
 Code from [mxbaylee/circus-health](https://github.com/mxbaylee/circus-health) isn't listed:
 Baylee Schmeisser, Spinel's owner, wrote it.
 

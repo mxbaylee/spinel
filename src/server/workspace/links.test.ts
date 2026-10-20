@@ -3,7 +3,7 @@ import { openDatabase } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
 import { DocumentStore } from './documents.ts';
-import { guestCookieName, GUEST_TTL } from './links.ts';
+import { guestCookieName, GUEST_TTL, LinkAccess } from './links.ts';
 import { safeGuestRoomPresence } from '../collaboration/guestPresence.ts';
 import sharp from 'sharp';
 
@@ -160,4 +160,56 @@ test('link-room presence accepts only bounded native cursor messages with truste
     { eventID: 'update_collaborator', data: { name: 'Owner' } },
   ])
     expect(safeGuestRoomPresence(payload, 'unit', 'member')).toBe(false);
+});
+
+test('preview capabilities disclose only current title/kind and never authorize document access', () => {
+  const f = fixture();
+  try {
+    const change = f.links.begin(f.item.id, 'viewer');
+    expect(f.links.preview(f.item.id, change.previewToken)).toBeUndefined();
+    f.links.finish(f.item.id, change.epoch, true);
+    expect(f.links.preview(f.item.id, change.previewToken)).toEqual({
+      name: 'Shared recipe',
+      kind: 'doc',
+    });
+    expect(f.links.preview(f.other.id, change.previewToken)).toBeUndefined();
+    expect(f.links.preview(f.item.id, change.token)).toBeUndefined();
+    expect(() => f.links.exchange(f.item.id, change.previewToken)).toThrow();
+    expect(JSON.stringify(f.db.prepare('SELECT * FROM workspace_links').all())).not.toContain(
+      change.previewToken,
+    );
+    f.db.prepare('UPDATE workspace_items SET trashed_at=1 WHERE id=?').run(f.item.id);
+    expect(f.links.preview(f.item.id, change.previewToken)).toBeUndefined();
+    f.db.prepare('UPDATE workspace_items SET trashed_at=NULL WHERE id=?').run(f.item.id);
+    f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
+    expect(f.links.preview(f.item.id, change.previewToken)).toBeUndefined();
+    f.db.prepare('UPDATE auth_users SET disabled=0 WHERE id=?').run(f.owner.id);
+    const replacement = f.links.begin(f.item.id, 'editor');
+    expect(f.links.preview(f.item.id, change.previewToken)).toBeUndefined();
+    f.links.finish(f.item.id, replacement.epoch, true);
+    expect(f.links.preview(f.item.id, change.previewToken)).toBeUndefined();
+    expect(f.links.preview(f.item.id, replacement.previewToken)?.kind).toBe('doc');
+    f.links.begin(f.item.id, null);
+    f.links.recover();
+    expect(f.links.preview(f.item.id, replacement.previewToken)).toBeUndefined();
+    expect(f.db.prepare('SELECT preview_hash FROM workspace_links').get()?.preview_hash).toBeNull();
+  } finally {
+    f.db.close();
+  }
+});
+
+test('upgrading a link table keeps existing fragment links working without publishing new metadata', () => {
+  const f = fixture();
+  try {
+    const secret = f.enable();
+    const previous = f.links.state(f.item.id);
+    f.db.exec('ALTER TABLE workspace_links DROP COLUMN preview_hash');
+    const upgraded = new LinkAccess(f.auth);
+    expect(upgraded.state(f.item.id)).toEqual(previous);
+    expect(upgraded.exchange(f.item.id, secret).userId).toMatch(/^guest:/);
+    expect(upgraded.preview(f.item.id, secret)).toBeUndefined();
+    expect(f.db.prepare('SELECT preview_hash FROM workspace_links').get()?.preview_hash).toBeNull();
+  } finally {
+    f.db.close();
+  }
 });

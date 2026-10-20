@@ -79,6 +79,25 @@ for (const kind of ['sheet', 'doc'] as const) {
       await page.goto('/');
       await page.getByRole('button', { name: `Share Guest ${kind}`, exact: true }).click();
       const controls = page.getByRole('region', { name: 'Guest link', exact: true });
+      if (kind === 'doc') {
+        await expect(controls).toContainText('Shared links show the document title and type');
+        for (const [mode, width] of [
+          ['light', 1440],
+          ['dark', 1440],
+          ['phone', 390],
+        ] as const) {
+          await page.setViewportSize({ width, height: 1000 });
+          await page.emulateMedia({ colorScheme: mode === 'dark' ? 'dark' : 'light' });
+          await expect(page.locator('html')).toHaveAttribute(
+            'data-theme',
+            mode === 'dark' ? 'dark' : 'light',
+          );
+          await page.getByRole('region', { name: 'Share Guest doc', exact: true }).screenshot({
+            path: `test-results/theme-screenshots/share-preview-${mode}-${info.project.name}.png`,
+          });
+        }
+        await page.setViewportSize({ width: 1440, height: 1000 });
+      }
       await controls.getByRole('button', { name: 'Create guest link', exact: true }).click();
       const viewLink = await controls
         .getByLabel('Guest link address', { exact: true })
