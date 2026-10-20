@@ -1,7 +1,7 @@
 # Entity iconography
 
-Docs, Sheets and planned Spaces use a shared gem silhouette with distinct interior marks derived from Spinel's
-original faceted-heart visual language. The app logo and favicon keep their
+Docs, Sheets and planned Spaces use a shared gem silhouette with distinct
+interior marks derived from Spinel's original faceted-heart visual language. The app logo and favicon keep their
 existing identity. Owner direction, chat 2026-10-20; implemented in SPN-077,
 authorized before the broader SPN-047 redesign and before Spaces exist.
 
@@ -24,12 +24,13 @@ without scripts, external references or raster payloads; a new optimizer package
 is not required if the authored paths are already compact.
 
 Use the existing palette/token system for light and dark facet tones, preserving
-blue/green/purple. The `entity-<doc|sheet|space>-0` through `-4` tokens define edges and facets;
+blue/green/purple. The `entity-<doc|sheet|space>-0` through `-4` tokens define
+edges and facets;
 `entity-mark` defines their white interior glyph. Both themes preserve the approved
 art colours. Decorative shading is not a text contrast pair: visible type labels
 use existing accessible text tokens. Monochrome uses `sp-text` for the silhouette
-and `sp-panel` for its mark, covered by the contrast checks. Do not borrow status colours or hard-code a separate theme in each
-consumer. Server-rendered SVG resolves palette values explicitly because a PNG
+and `sp-panel` for its mark, covered by the contrast checks. Do not borrow
+status colours or hard-code a separate theme in each consumer. Server-rendered SVG resolves palette values explicitly because a PNG
 renderer cannot inherit browser CSS variables. Share geometry and colour mapping
 between browser and server rather than maintaining two drawings.
 

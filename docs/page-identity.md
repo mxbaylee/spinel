@@ -44,8 +44,10 @@ See [Sharing](sharing.md) for the document permission boundary.
 
 `node scripts/social-preview.ts` regenerates the generic image from the existing
 gem/palette. Commit the PNG after visual review; its generator uses the machine's
-Arial/Helvetica/sans-serif fallback. Personalized cards reuse that artwork and
-render a bounded title/type with existing Sharp and a bundled OFL-licensed
+Arial/Helvetica/sans-serif fallback. Generic and personalized cards share the
+background geometry in `src/ui/socialCardBackground.ts`; authorized Doc/Sheet
+cards display their approved entity facet in place of the heart. They render
+a bounded title/type with existing Sharp and bundled OFL-licensed
 [Atkinson Hyperlegible and Noto Color Emoji fonts](../src/ui/fonts/README.md).
 Titles wrap within a fixed area and shorten to 64 grapheme clusters with an
 ellipsis, preserving whole emoji sequences. Full HTML titles are unchanged.
@@ -67,7 +69,7 @@ provides the 1280×640 reference. [Sharp's text API](https://sharp.pixelplumbing
 provides bounded text rendering. Sources consulted 2026-10-20; artwork is Spinel's.
 
 Storybook's **Identity / Social cards** gallery includes generic, Doc, Sheet,
-emoji, long-title and unbroken-word examples. Its Vite build invokes the actual
+static Space artwork (no public Space route), emoji, long-title and unbroken-word examples. Its Vite build invokes the actual
 server renderer once per example and embeds PNG data in the static stories.
 The published catalogue has no server routes or rendering runtime. Restart
 Storybook after changing the renderer to regenerate its examples.

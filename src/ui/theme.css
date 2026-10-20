@@ -739,6 +739,7 @@ dialog {
   vertical-align: middle;
 }
 .item-open > .entity-icon,
+.file-list li > div > .entity-icon,
 .pinned-sidebar a > .entity-icon {
   margin-right: 8px;
 }
