@@ -195,6 +195,7 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await page.reload();
     await saved();
     expect(await retainedInput()).toBe(true);
+    // Nothing is cached until a download prepares this device (offline.spec.ts).
     expect(await page.evaluate(() => caches.keys())).toEqual([]);
     expect(errors).toEqual([]);
     await network.setOffline(true);

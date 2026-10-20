@@ -17,16 +17,19 @@ mobile UI as experimental.
 
 ## Connection loss
 
-There is no offline document mode. Opening Spinel without a connection shows a
-generic offline page with a Try again button. It contains no document title,
+On a device not prepared for offline use, opening Spinel without a connection
+shows a generic offline page with a Try again button. It contains no document title,
 content, account information or share token. Retry reloads the original address
 after the connection returns; the server checks access again.
 
-The requested SPN-039 follow-up will add explicitly selected offline documents
-for signed-in accounts. It has its own durability and device acceptance contract;
-this installation slice does not implement or claim that behavior. The earlier
-global no-offline-feature policy is superseded for that follow-up when implemented,
-while guests retain the generic fallback ([decision #83](https://github.com/mxbaylee/spinel/issues/83)).
+Signed-in accounts can keep selected documents on a device
+([docs/offline.md](offline.md#offline-launch-and-read-only-viewing), SPN-039).
+On a prepared device the service worker also caches the public app shell, so
+Spinel opens offline with the last-synced file list and downloaded documents open
+read-only. Pages that need the server, guest links and unprepared devices still
+get the generic offline page above. Offline editing and real-device runs are
+SPN-053 and SPN-055. The earlier global no-offline-feature policy is superseded
+for this feature, while guests keep the generic fallback ([decision #83](https://github.com/mxbaylee/spinel/issues/83)).
 
 An editor already open when connectivity drops retains its existing unsaved-edit
 warning. Keep that tab open until changes are saved. Installing Spinel does not

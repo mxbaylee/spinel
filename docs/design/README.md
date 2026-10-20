@@ -10,13 +10,13 @@ controls are always visible and which sit behind a menu.
 
 | Screen                          | Page                         | Builds on it                                                           |
 | ------------------------------- | ---------------------------- | ---------------------------------------------------------------------- |
-| File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-039, SPN-051                                     |
+| File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-053, SPN-054, SPN-051                            |
 | Editor chrome                   | [editor.md](editor.md)       | SPN-049, SPN-043, SPN-042, SPN-050, SPN-033, SPN-035, SPN-009, SPN-013 |
 | Sharing                         | [sharing.md](sharing.md)     | SPN-033                                                                |
 | Settings and sign-in            | [account.md](account.md)     | SPN-045, SPN-036                                                       |
 | Admin                           | [admin.md](admin.md)         | SPN-032                                                                |
 | Guest view                      | [guest.md](guest.md)         | SPN-042                                                                |
-| Empty, error and offline states | [states.md](states.md)       | SPN-039, SPN-042, SPN-051, SPN-052                                     |
+| Empty, error and offline states | [states.md](states.md)       | SPN-053, SPN-054, SPN-042, SPN-051, SPN-052                            |
 
 The starting point is the approved gem-rail mockup
 (`git show 30a4a61^:docs/design/gem-rail-mockup.tsx`) and the landed SPN-027
@@ -156,7 +156,7 @@ layouts use `dvh` with a `vh` fallback so phone toolbars don't hide content.
 
 ### Status changes never move the layout
 
-Save state, connection state, local-save state (SPN-039) and queue position
+Save state, connection state, local-save state (SPN-053) and queue position
 (SPN-013) all live in fixed-size slots in the view header.
 
 - The slot reserves the width of its longest label. An icon plus a short label
@@ -165,7 +165,7 @@ Save state, connection state, local-save state (SPN-039) and queue position
 - The settled state stays visible ("Saved"); it does not flash and disappear.
 - `role="status"` and `aria-live="polite"`. Errors that need action also put a
   Retry button in the popover and keep the icon in its error state.
-- One indicator per concern. SPN-039 adds local-save states to SPN-042's
+- One indicator per concern. SPN-053 adds local-save states to SPN-042's
   connection indicator rather than building a second one.
 
 No component has this shape yet: today's `.save-status` grows in normal flow

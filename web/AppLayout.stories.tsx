@@ -78,7 +78,7 @@ function AppLayout() {
           <div className="workspace-body">
             <PinnedSidebar navigation={navigation} />
             <main>
-              <Dashboard navigation={navigation} />
+              <Dashboard navigation={navigation} user={{ id: 'story-user', name: 'Ada' }} />
             </main>
           </div>
         </div>

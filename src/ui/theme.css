@@ -708,3 +708,25 @@ dialog {
   overflow-wrap: anywhere;
   font-size: 0.85rem;
 }
+/* Offline (SPN-039): badges are text with an icon, never interactive. */
+.offline-badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--sp-muted);
+  margin-left: 6px;
+}
+.offline-badge[data-state='available'] {
+  color: var(--sp-text);
+}
+/* Banner (docs/design/README.md#banner): full width, reserves no space when absent. */
+.banner {
+  background: var(--sp-panel);
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.banner strong,
+.banner [aria-hidden='true'] {
+  color: var(--sp-accent);
+}

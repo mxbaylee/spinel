@@ -11,13 +11,18 @@ import {
 } from '@univerjs/preset-sheets-core';
 import type { PluginCtor } from '@univerjs/core';
 import type { IPreset } from '@univerjs/presets';
+import type { IUniverSheetsCorePresetConfig } from '@univerjs/preset-sheets-core';
 
 export function useMobileSheetControls() {
   return window.matchMedia('(pointer: coarse) and (max-width: 900px)').matches;
 }
 
-export function sheetPreset(container: HTMLElement, mobile: boolean): IPreset {
-  const preset = UniverSheetsCorePreset({ container });
+export function sheetPreset(
+  container: HTMLElement,
+  mobile: boolean,
+  formula?: IUniverSheetsCorePresetConfig['formula'],
+): IPreset {
+  const preset = UniverSheetsCorePreset({ container, formula });
   if (!mobile) return preset;
   // Select mobile UI before creating the instance. Retain the public preset's
   // model/engine configuration, including Docs UI for the sheet's text editor.

@@ -14,6 +14,10 @@ import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { ImportFile } from './ImportFile.tsx';
 import { SharedBadge, useSharedItems } from './SharedItems.tsx';
 import type { NavigationGuard } from './navigation.ts';
+import { OfflineBadge, OfflineBanner } from './OfflineStatus.tsx';
+import type { LocalStart } from './offline/localStart.ts';
+import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
+import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
@@ -28,13 +32,30 @@ const viewUrl = (id: string | null) =>
   id === TRASH_VIEW ? '/?trash=1' : id ? `/?item=${encodeURIComponent(id)}` : '/';
 
 const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
+const OfflineViewer = lazy(() =>
+  import('./OfflineViewer.tsx').then((m) => ({ default: m.OfflineViewer })),
+);
+const offlineKinds = new Set<ItemKind>(['sheet', 'doc']);
 
-export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
+/**
+ * The file list and the open item. With `local` set, Spinel started without a
+ * network: everything comes from the last-synced catalog on this device, only
+ * downloaded documents open (read-only), and nothing reaches the server.
+ */
+export function Dashboard({
+  navigation,
+  user,
+  local,
+}: {
+  navigation: NavigationGuard;
+  user: OfflineUser;
+  local?: LocalStart | null;
+}) {
   const dropTarget = useRef<HTMLElement>(null);
   const [query, setQuery] = useState<SearchQuery>({ ...emptySearch });
   const searchActive = hasSearch(query);
   const pins = usePins();
-  const shared = useSharedItems();
+  const shared = useSharedItems(local?.catalog.shared);
   const [sharedOpen, setSharedOpen] = useState(false);
   const draggingShared = useRef<string | null>(null);
   const [items, setItems] = useState<WorkspaceItem[]>([]);
@@ -55,13 +76,26 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
   const [destination, setDestination] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [syncedAt, setSyncedAt] = useState(local?.catalog.syncedAt ?? 0);
+  // The last-loaded view for each opened folder or item, kept for offline launch.
+  const views = useRef<Record<string, WorkspaceItem[]>>({ ...local?.catalog.views });
+  const catalog = (): OfflineCatalog | null =>
+    loaded && shared.loaded && pins.loaded && !pins.error
+      ? { syncedAt, items, shared: shared.items, pins: pins.items, views: views.current }
+      : null;
+  const offline = useOfflineDownloads(user, local, catalog);
   useEffect(() => {
-    void itemsRequest<{ items: WorkspaceItem[] }>()
-      .then((result) => {
-        setItems(result.items);
-        setLoaded(true);
-      })
-      .catch((failure) => setError(failure.message));
+    if (local) {
+      setItems(local.catalog.items);
+      setLoaded(true);
+    } else
+      void itemsRequest<{ items: WorkspaceItem[] }>()
+        .then((result) => {
+          setItems(result.items);
+          setSyncedAt(Date.now());
+          setLoaded(true);
+        })
+        .catch((failure) => setError(failure.message));
     const back = () => {
       if (!navigation.allow()) {
         history.pushState(null, '', viewUrl(currentRef.current));
@@ -81,7 +115,8 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     setViewed([]);
     setViewMissing(false);
     setViewId(null);
-    if (!currentId || currentId === TRASH_VIEW) {
+    if (!currentId || currentId === TRASH_VIEW || local) {
+      if (local && currentId) setViewed(views.current[currentId] ?? []);
       setViewId(currentId);
       setViewLoading(false);
       return;
@@ -94,7 +129,10 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
       ancestors: WorkspaceItem[];
     }>(`/${currentId}`)
       .then((result) => {
-        if (!disposed) setViewed([...result.ancestors, result.item, ...result.children]);
+        if (disposed) return;
+        const view = [...result.ancestors, result.item, ...result.children];
+        views.current = { ...views.current, [currentId]: view };
+        setViewed(view);
       })
       .catch((failure) => {
         if (!disposed) {
@@ -113,9 +151,17 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     };
   }, [currentId, refresh]);
   useEffect(() => {
-    void pins.refresh();
+    if (!local) void pins.refresh();
   }, [items, viewed]);
-  const byId = new Map([...items, ...shared.items, ...viewed].map((item) => [item.id, item]));
+  useEffect(() => {
+    const current = catalog();
+    if (current && !local) void offline.saveCatalog(current).catch(() => {});
+  }, [items, shared.items, pins.items, viewed, offline.downloads]);
+  // Offline, any item from a saved view can be opened by its stable link.
+  const known = local ? Object.values(views.current).flat() : [];
+  const byId = new Map(
+    [...known, ...items, ...shared.items, ...viewed].map((item) => [item.id, item]),
+  );
   const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
   const personalFolder = !currentId || (current?.kind === 'folder' && current.access === 'owner');
   const visibleItems = personalFolder
@@ -255,7 +301,41 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
       setBusy(false);
     }
   }
+  function offlineState(item: WorkspaceItem) {
+    if (offline.downloads.has(item.id)) return 'available';
+    return local && offlineKinds.has(item.kind) ? 'needs-connection' : null;
+  }
+  function offlineToggle(item: WorkspaceItem) {
+    if (!offlineKinds.has(item.kind)) return null;
+    const downloaded = offline.downloads.has(item.id);
+    return (
+      <button
+        disabled={offline.busy !== null}
+        aria-label={
+          downloaded
+            ? `Remove ${item.name} from this device`
+            : `Make ${item.name} available offline on this device`
+        }
+        onClick={() => void offline.toggle(item)}
+      >
+        {offline.busy === item.id
+          ? downloaded
+            ? 'Removing…'
+            : 'Downloading…'
+          : downloaded
+            ? 'Remove from device'
+            : 'Available offline on this device'}
+      </button>
+    );
+  }
   function actions(item: WorkspaceItem) {
+    // Local mode is read-only: nothing here may reach the server.
+    if (local)
+      return item.access === 'owner' ? null : (
+        <span className="item-actions">
+          <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>
+        </span>
+      );
     const tagButton = item.kind !== 'folder' && (
       <button disabled={busy} onClick={() => setTagging(item)} aria-label={`Tags ${item.name}`}>
         Tags
@@ -267,6 +347,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
           <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>
           <PinButton item={item} />
           {tagButton}
+          {offlineToggle(item)}
           <button
             disabled={busy || shared.busy}
             aria-label={`File ${item.name}`}
@@ -304,6 +385,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
         <button disabled={busy} onClick={() => edit('move', item)} aria-label={`Move ${item.name}`}>
           Move
         </button>
+        {offlineToggle(item)}
         <button
           disabled={busy}
           onClick={() => void trashItem(item)}
@@ -318,6 +400,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
     <>
       <p className="eyebrow">Your workspace</p>
       <h1>Dashboard</h1>
+      {local && <OfflineBanner syncedAt={syncedAt} />}
       <div className="dashboard">
         <aside aria-label="Folders">
           <button {...folderDrop(null)} disabled={busy} onClick={() => navigate(null)}>
@@ -334,13 +417,15 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
           >
             Shared with me
           </button>
-          <button
-            disabled={busy}
-            aria-current={currentId === TRASH_VIEW ? 'page' : undefined}
-            onClick={() => navigate(TRASH_VIEW)}
-          >
-            Trash
-          </button>
+          {!local && (
+            <button
+              disabled={busy}
+              aria-current={currentId === TRASH_VIEW ? 'page' : undefined}
+              onClick={() => navigate(TRASH_VIEW)}
+            >
+              Trash
+            </button>
+          )}
           <ul className="folder-tree">
             {folders.map(({ item, path }) => (
               <li key={item.id} style={{ paddingLeft: Math.min(path.length - 1, 8) * 12 }}>
@@ -358,16 +443,21 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
           </ul>
         </aside>
         <section ref={dropTarget} className="files" aria-label="Your files">
-          <SearchPanel
-            query={query}
-            onChange={setQuery}
-            loadedItems={[
-              ...items,
-              ...viewed.filter((item) => item.access === 'owner'),
-              ...shared.items,
-            ]}
-            onOpen={navigate}
-          />
+          {!local && (
+            <SearchPanel
+              query={query}
+              onChange={setQuery}
+              loadedItems={[
+                ...items,
+                ...viewed.filter((item) => item.access === 'owner'),
+                ...shared.items,
+              ]}
+              onOpen={navigate}
+            />
+          )}
+          {offline.message && (
+            <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+          )}
           {shared.error && (
             <p role="alert">
               {shared.error}{' '}
@@ -395,6 +485,7 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                       {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
                     </button>
                     <SharedBadge item={item} />
+                    <OfflineBadge state={offlineState(item)} />
                     <small>
                       {item.sharedAt ? new Date(item.sharedAt).toLocaleDateString() : 'Older share'}
                     </small>
@@ -440,22 +531,23 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                 <div className="folder-heading">
                   <h2>{current?.name ?? 'My files'}</h2>
                   {current && <SharedBadge item={current} />}
+                  {current && <OfflineBadge state={offlineState(current)} />}
                   {current && actions(current)}
                   {current && <TagLabels tags={current.tags} />}
                 </div>
                 {!current || current.kind === 'folder' ? (
                   <>
-                    {(!current || current.access === 'owner') && (
+                    {!local && (!current || current.access === 'owner') && (
                       <button className="primary" disabled={busy} onClick={() => edit('new')}>
                         New
                       </button>
                     )}
-                    {current && (
+                    {!local && current && (
                       <button disabled={busy} onClick={() => setRefresh((value) => value + 1)}>
                         Refresh folder
                       </button>
                     )}
-                    {(!current || current.access === 'owner') && (
+                    {!local && (!current || current.access === 'owner') && (
                       <ImportFile
                         key={currentId ?? 'root'}
                         parentId={currentId}
@@ -487,20 +579,39 @@ export function Dashboard({ navigation }: { navigation: NavigationGuard }) {
                               {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
                             </button>
                             <SharedBadge item={item} />
+                            <OfflineBadge state={offlineState(item)} />
                             {actions(item)}
                             <TagLabels tags={item.tags} />
                           </li>
                         ))}
                     </ul>
-                    {!visibleItems.length && (
-                      <p className="empty-state">
-                        <GemLogo size={52} />
-                        This folder is empty.
-                        {(!current || current.access === 'owner') &&
-                          ' Choose New to add a folder or document.'}
+                    {local && current && !views.current[current.id] && !personalFolder ? (
+                      <p role="status">
+                        This folder wasn’t opened online on this device, so its contents aren’t
+                        here. Connect to open it.
                       </p>
+                    ) : (
+                      !visibleItems.length && (
+                        <p className="empty-state">
+                          <GemLogo size={52} />
+                          This folder is empty.
+                          {!local &&
+                            (!current || current.access === 'owner') &&
+                            ' Choose New to add a folder or document.'}
+                        </p>
+                      )
                     )}
                   </>
+                ) : local && offlineKinds.has(current.kind) ? (
+                  offline.downloads.has(current.id) ? (
+                    <Suspense fallback={<p role="status">Loading offline copy…</p>}>
+                      <OfflineViewer key={current.id} accountId={user.id} itemId={current.id} />
+                    </Suspense>
+                  ) : (
+                    <p role="status">
+                      {current.name} needs a connection. It isn’t downloaded on this device.
+                    </p>
+                  )
                 ) : current.kind === 'sheet' ? (
                   <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
                     <SheetEditor

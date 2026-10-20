@@ -5,6 +5,7 @@ import { userEvent, within } from 'storybook/test';
 import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { Dashboard } from './Dashboard.tsx';
+import type { LocalStart } from './offline/localStart.ts';
 import { PinsProvider } from './Pins.tsx';
 
 const day = 86_400_000;
@@ -51,6 +52,12 @@ const forecast = entry(9, 'Shared forecast', 'sheet', {
   sharedAt: now - 9 * day,
 });
 const shared = [roadmap, forecast];
+// Shared, never opened online on this device: local mode has no saved view.
+const photos = entry(11, 'Family photos', 'folder', {
+  access: 'editor',
+  ownerName: 'Alex Kim',
+  sharedAt: now - 5 * day,
+});
 
 const empty = {
   'GET /api/items': { items: [] },
@@ -102,7 +109,10 @@ const inWorkspace: Decorator = (Story) => (
 const meta = {
   title: 'Dashboard/Dashboard',
   component: Dashboard,
-  args: { navigation: { allow: () => true, dirty() {} } },
+  args: {
+    navigation: { allow: () => true, dirty() {} },
+    user: { id: 'story-owner', name: 'Sam Lee' },
+  },
   decorators: [inWorkspace],
 } satisfies Meta<typeof Dashboard>;
 export default meta;
@@ -144,5 +154,59 @@ export const Loading: Story = { parameters: { api: { ...empty, 'GET /api/items':
 export const LoadFailed: Story = {
   parameters: {
     api: { ...empty, 'GET /api/items': failure('Could not load your items. Try again.', 500) },
+  },
+};
+
+// A fixed time, so the banner reads the same on any day.
+const synced = Date.UTC(2026, 9, 19, 14, 5);
+const local: LocalStart = {
+  user: { id: 'story-owner', name: 'Sam Lee' },
+  catalog: {
+    syncedAt: synced,
+    items,
+    shared: [...shared, photos],
+    pins: [budget],
+    views: { [household.id]: [household, finance, mealPlan] },
+  },
+  downloads: [budget, roadmap].map((item) => ({
+    itemId: item.id,
+    name: item.name,
+    kind: item.kind as 'sheet' | 'doc',
+    readOnly: item.access === 'viewer',
+    revision: 1,
+    downloadedAt: synced,
+  })),
+};
+/**
+ * Offline on a prepared device: the last-synced list, read-only. Downloaded
+ * items say Available offline; other Sheets and Docs say Needs a connection.
+ */
+// Local mode reads the saved pins, not the API.
+const localPins: Decorator = (Story) => (
+  <PinsProvider enabled={false} offline={local.catalog.pins}>
+    <Story />
+  </PinsProvider>
+);
+export const LocalMode: Story = {
+  args: { local },
+  parameters: { api: empty },
+  decorators: [localPins],
+};
+/** Offline, a Doc that wasn't downloaded stays listed but can't open. */
+export const LocalNeedsConnection: Story = {
+  ...LocalMode,
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: new RegExp(`^${trip.name}`) }),
+    );
+  },
+};
+/** Offline, a folder this device never listed online has nothing saved to show. */
+export const LocalFolderNotOpened: Story = {
+  ...LocalMode,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
+    await userEvent.click(await canvas.findByRole('button', { name: `Open ${photos.name}` }));
   },
 };

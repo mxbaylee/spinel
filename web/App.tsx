@@ -16,8 +16,18 @@ import { BackupStatus } from './BackupStatus.tsx';
 import { AdminUsers } from './AdminUsers.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { PinsProvider, PinnedSidebar } from './Pins.tsx';
+import { OfflineUnreachable } from './OfflineStatus.tsx';
 import { Rail } from './Rail.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
+import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
+import { within } from './offline/shell.ts';
+import type { LocalStart } from './offline/localStart.ts';
+import {
+  preparedAccount,
+  setPreparedAccount,
+  setSignOutPending,
+  signOutPending,
+} from './offline/offlineStore.ts';
 
 const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
@@ -53,6 +63,10 @@ export function App() {
     return () => window.removeEventListener('beforeunload', warn);
   }, []);
   const [user, setUser] = useState<User | null>(null);
+  // Local mode (docs/offline.md): the server is unreachable and this device was
+  // prepared for an account. `unreachable` is the same outage on an unprepared device.
+  const [local, setLocal] = useState<LocalStart | null>(null);
+  const [unreachable, setUnreachable] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [keys, setKeys] = useState<Passkey[]>([]);
   const [error, setError] = useState('');
@@ -90,16 +104,58 @@ export function App() {
       setLoaded(true);
       return;
     }
-    void api<{ user: User }>('session')
-      .then(async ({ user }) => {
+    void (async () => {
+      try {
+        if (signOutPending()) {
+          // A sign-out made offline: revoke the session before anything else.
+          // Any server answer settles it, including a session that already ended.
+          await api('sign-out', {}).catch((failure) => {
+            if (isNetworkFailure(failure)) throw failure;
+          });
+          setSignOutPending(false);
+          if (location.pathname !== '/sign-in') location.assign('/sign-in');
+          return;
+        }
+        const { user } = await api<{ user: User }>('session');
+        // Claim the device first: the dashboard reads the pointer when it mounts.
+        // IndexedDB can fail to answer at all; never hold sign-in on it.
+        await within(claimDevice(user), 3000, 'Offline data did not answer.').catch(() => {});
         setUser(user);
         if (settings) await refreshKeys();
-      })
-      .catch(() => {
-        if (location.pathname !== '/sign-in') location.assign('/sign-in');
-      })
-      .finally(() => setLoaded(true));
+      } catch (failure) {
+        // Only an unreachable server opens local data; a 401 still signs in.
+        if (!isNetworkFailure(failure)) {
+          // The server ended this session (sign-out, revocation): stop offline
+          // access too. claimDevice restores it after the next sign-in.
+          if ((failure as { status?: number }).status === 401) setPreparedAccount(null);
+          if (location.pathname !== '/sign-in') location.assign('/sign-in');
+          return;
+        }
+        const start = await openLocalStart().catch(() => null);
+        if (!start) {
+          setUnreachable(true);
+          return;
+        }
+        if (location.pathname === '/sign-in') history.replaceState(null, '', '/');
+        setLocal(start);
+        setUser({ ...start.user, isAdmin: false });
+      } finally {
+        setLoaded(true);
+      }
+    })();
   }, [settings, setup, invitation, inviteToken]);
+  useEffect(() => {
+    if (!local) return;
+    // Another tab signed out or another account signed in: close local data.
+    const watch = () => {
+      if (preparedAccount() === local.user.id) return;
+      setLocal(null);
+      setUser(null);
+      setUnreachable(true);
+    };
+    window.addEventListener('storage', watch);
+    return () => window.removeEventListener('storage', watch);
+  }, [local]);
 
   function cancel() {
     const current = attempt.current;
@@ -188,6 +244,15 @@ export function App() {
     const hadUnsavedChanges = unsaved.current;
     if (!navigation.allow()) return;
     cancel();
+    // Lock this device's offline data at once; it opens again only for the
+    // account that next signs in online.
+    setPreparedAccount(null);
+    if (local) {
+      // Offline, the server session can't be revoked yet: do it on the next start.
+      setSignOutPending(true);
+      location.assign('/sign-in');
+      return;
+    }
     try {
       await api('sign-out', {});
       location.assign('/sign-in');
@@ -197,7 +262,12 @@ export function App() {
     }
   }
   return (
-    <PinsProvider enabled={Boolean(user && !user.isAdmin)}>
+    // Remount on entering local mode: the provider reads its offline pins once.
+    <PinsProvider
+      key={local ? 'local' : 'online'}
+      enabled={Boolean(user && !user.isAdmin && !local)}
+      offline={local?.catalog.pins}
+    >
       <div className="workspace">
         <Rail user={user} navigation={navigation} onSignOut={() => void signOut()} />
         <div className="workspace-body">
@@ -205,6 +275,8 @@ export function App() {
           <main>
             {!loaded ? (
               <p role="status">Loading…</p>
+            ) : unreachable ? (
+              <OfflineUnreachable />
             ) : setup ? (
               <>
                 <p className="eyebrow">A new workspace</p>
@@ -277,6 +349,15 @@ export function App() {
                   </p>
                 </section>
               </>
+            ) : local && settings ? (
+              <>
+                <p className="eyebrow">{user.name}</p>
+                <h1>Settings</h1>
+                <ThemeSettings />
+                <p>Passkeys need a connection.</p>
+              </>
+            ) : local && location.pathname === '/preview' ? (
+              <p role="status">Version history needs a connection.</p>
             ) : settings ? (
               <>
                 <p className="eyebrow">{user.name}</p>
@@ -322,7 +403,7 @@ export function App() {
                 <HistoryBrowser />
               </Suspense>
             ) : (
-              <Dashboard navigation={navigation} />
+              <Dashboard navigation={navigation} user={user} local={local} />
             )}
             {busy && (
               <p role="status">
