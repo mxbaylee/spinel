@@ -2,6 +2,10 @@ import {
   BooleanNumber,
   DocumentFlavor,
   ICommandService,
+  IContextService,
+  FOCUSING_DOC,
+  FOCUSING_COMMON_DRAWINGS,
+  FOCUSING_UNIVER_EDITOR,
   IUniverInstanceService,
   UniverInstanceType,
   type DocumentDataModel,
@@ -349,7 +353,48 @@ export function installDocFormulas(options: DocFormulaOptions) {
         requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
       );
     });
+  // TEMPORARY SPN-033 CI diagnostics: remove after the loaded-formula clipboard
+  // failure is understood. Never include document text, source IDs or results.
+  let diagnosticEvents = 0;
+  const diagnosticCommands = new Set([
+    'doc.command.select-all',
+    'doc.operation.move-cursor',
+    'doc.command.enter',
+    'doc.command.break-line',
+    'doc.command.inner-paste',
+  ]);
+  const diagnostic = (phase: string, id: string) => {
+    if (diagnosticEvents++ >= 60 || disposed) return;
+    const context = injector.get(IContextService);
+    const range = selections.getActiveTextRange();
+    console.debug(
+      '[Formula clipboard diagnostic]',
+      JSON.stringify({
+        phase,
+        id,
+        focusingDoc: context.getContextValue(FOCUSING_DOC),
+        focusingDrawings: context.getContextValue(FOCUSING_COMMON_DRAWINGS),
+        focusingEditor: context.getContextValue(FOCUSING_UNIVER_EDITOR),
+        range: range
+          ? {
+              start: range.startOffset,
+              end: range.endOffset,
+              collapsed: range.collapsed,
+              segment: range.segmentId,
+            }
+          : null,
+      }),
+    );
+  };
+  const diagnosticBefore = commands.beforeCommandExecuted?.((command) => {
+    if (diagnosticCommands.has(command.id)) diagnostic('before', command.id);
+  });
+  const diagnosticKey = (event: KeyboardEvent) => {
+    if (event.key === 'End' || event.key === 'Enter') diagnostic('keydown', event.key);
+  };
+  globalThis.addEventListener('keydown', diagnosticKey, true);
   const changes = commands.onCommandExecuted((command) => {
+    if (diagnosticCommands.has(command.id)) diagnostic('after', command.id);
     if (
       command.id === RichTextEditingMutation.id &&
       (command.params as { unitId?: string } | undefined)?.unitId === unitId
@@ -436,6 +481,8 @@ export function installDocFormulas(options: DocFormulaOptions) {
       disposed = true;
       abort.abort();
       changes.dispose();
+      diagnosticBefore?.dispose();
+      globalThis.removeEventListener('keydown', diagnosticKey, true);
       clicks.unsubscribe();
       stopPrint();
       globalThis.removeEventListener('beforeprint', beforePrint);

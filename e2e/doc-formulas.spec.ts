@@ -3,13 +3,11 @@ import { createCanvas } from '@napi-rs/canvas';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
-import { formulaBody } from '@spinel/doc-formulas';
+import { LocaleType } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
-import { DocumentStore } from '../src/server/workspace/documents.ts';
 
 type FormulaCanvasPaint = { text: string; width: number; height: number };
 
@@ -543,20 +541,6 @@ test('rich clipboard creates independent native Formula objects and plain text k
     parentId: null,
   });
   const expression = '={1,2;3,4}';
-  const body = formulaBody('original-formula', { version: 1, expression, references: [] });
-  const snapshot = getDocsEmptySnapshot(host.id);
-  snapshot.body = {
-    ...snapshot.body,
-    ...body,
-    dataStream: expression + '\r\n',
-    paragraphs: [{ startIndex: expression.length, paragraphId: 'formula-paragraph' }],
-    sectionBreaks: [{ startIndex: expression.length + 1, sectionId: 'clipboard-section' }],
-  };
-  new DocumentStore(workspace).save(owner.id, host.id, {
-    snapshot,
-    revision: 0,
-    writeId: crypto.randomUUID(),
-  });
   await context.addCookies([
     {
       name: COOKIE_NAME,
@@ -570,13 +554,25 @@ test('rich clipboard creates independent native Formula objects and plain text k
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.setViewportSize({ width: 1440, height: 1100 });
   let clipboardHtml = '';
+  const browserErrors: string[] = [];
+  page.on('pageerror', (error) => {
+    if (browserErrors.length < 20) browserErrors.push(`pageerror: ${error.message.slice(0, 2000)}`);
+  });
+  page.on('console', (message) => {
+    if (
+      (['warning', 'error'].includes(message.type()) ||
+        message.text().startsWith('[Formula clipboard diagnostic]')) &&
+      browserErrors.length < 80
+    )
+      browserErrors.push(`${message.type()}: ${message.text().slice(0, 2000)}`);
+  });
   const readSnapshot = async () =>
     (await (await context.request.get(`/api/items/${host.id}/doc`)).json()).snapshot;
   const readRanges = async () => {
     const saved = await readSnapshot();
     return (saved.body.customRanges ?? []).filter(
       (range: { properties?: { spinelFormula?: unknown } }) => range.properties?.spinelFormula,
-    ) as { rangeId: string }[];
+    ) as { rangeId: string; startIndex: number; properties: { spinelFormula: unknown } }[];
   };
   try {
     await page.goto(`/?item=${host.id}`);
@@ -585,13 +581,36 @@ test('rich clipboard creates independent native Formula objects and plain text k
       { timeout: 30_000 },
     );
     await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
-    // If activation opens the edit dialog, dismiss it before native text selection.
-    const dialog = page.getByRole('dialog', { name: 'Edit formula' });
-    if (await dialog.isVisible())
-      await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
     const input = page.locator('[contenteditable="true"][data-u-comp="editor"]');
     await input.focus();
     await expect(input).toBeFocused();
+    // Create through the real UI, but retain the start-of-document boundary that
+    // a hand-built fixture exercised. Reload then verifies activation of saved objects.
+    await page.keyboard.press('Control+Home');
+    const panel = page.locator('details.doc-formulas');
+    await panel.locator('summary').click();
+    await panel.getByRole('button', { name: 'Insert formula', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Insert formula', exact: true });
+    await dialog.getByLabel('Formula', { exact: true }).fill(expression);
+    await dialog.getByRole('button', { name: 'Insert formula', exact: true }).click();
+    await expect(dialog).not.toBeVisible({ timeout: 20_000 });
+    await expect(input).toBeFocused();
+    await expect.poll(async () => (await readRanges()).length).toBe(1);
+    expect((await readRanges())[0].startIndex).toBe(0);
+    expect((await readSnapshot()).body.dataStream).toBe(expression + '\r\n');
+    await page.reload();
+    await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+      { timeout: 30_000 },
+    );
+    await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+    const editDialog = page.getByRole('dialog', { name: 'Edit formula' });
+    if (await editDialog.isVisible())
+      await editDialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await input.focus();
+    await expect(input).toBeFocused();
+    const originalFormula = (await readRanges())[0];
+    const paragraphsBeforePaste = (await readSnapshot()).body.paragraphs.length;
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control+c');
     await expect
@@ -613,12 +632,17 @@ test('rich clipboard creates independent native Formula objects and plain text k
     await page.keyboard.press('Enter');
     // Enter updates native selection asynchronously. Wait for its persisted mutation
     // before paste, which deliberately cancels when the selection changes mid-read.
-    await expect.poll(async () => (await readSnapshot()).body.paragraphs.length).toBe(2);
+    await expect
+      .poll(async () => (await readSnapshot()).body.paragraphs.length)
+      .toBe(paragraphsBeforePaste + 1);
     await expect(input).toBeFocused();
     await page.keyboard.press('Control+v');
     await expect.poll(async () => (await readRanges()).length).toBe(2);
     const ranges = await readRanges();
     expect(new Set(ranges.map((range) => range.rangeId)).size).toBe(2);
+    expect(ranges.some((range) => range.rangeId === originalFormula.rangeId)).toBe(true);
+    for (const range of ranges)
+      expect(range.properties.spinelFormula).toEqual(originalFormula.properties.spinelFormula);
     await page.getByRole('button', { name: 'Undo', exact: true }).click();
     await expect.poll(async () => (await readRanges()).length).toBe(1);
     await page.getByRole('button', { name: 'Redo', exact: true }).click();
@@ -629,6 +653,7 @@ test('rich clipboard creates independent native Formula objects and plain text k
     console.error(
       'Formula clipboard failure',
       JSON.stringify({
+        browserErrors,
         html: clipboardHtml.slice(0, 12000),
         body: failedSnapshot.body,
         focused: await page.evaluate(() => document.activeElement?.outerHTML.slice(0, 500)),
