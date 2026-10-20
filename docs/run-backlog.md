@@ -99,7 +99,8 @@ Ask for a score out of 100 using this rubric:
   **over-complexity**: unnecessary abstractions, dependencies or speculative
   flexibility. Prefer the smallest complete implementation that meets the ticket;
   deduct for avoidable complexity with an actionable simplification, not for
-  necessary safeguards. Owner, chat 2026-10-20.
+  necessary safeguards. Owner, chat 2026-10-20, decision
+  [#105](https://github.com/mxbaylee/spinel/issues/105).
 
 Apply the rubric proportionally: for documentation work, verify instructions and
 scenarios rather than inventing runtime features. Require concrete deductions,

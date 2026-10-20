@@ -83,7 +83,8 @@ grouped with the destructive items.
 
 ## Legacy Slides placeholder (SPN-074)
 
-Removing unsupported Slides may land before SPN-047 (owner, chat 2026-10-20).
+Removing unsupported Slides may land before SPN-047 (owner, chat 2026-10-20;
+decision [#104](https://github.com/mxbaylee/spinel/issues/104), including role-aware copy below).
 SPN-074 makes the existing New type selector and search type filter offer only
 Folder, Sheet and Doc; this does not require SPN-048's new menu layout first. Legacy Slides
 still appear in lists and unfiltered name searches with their kind label.

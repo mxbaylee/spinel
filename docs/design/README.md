@@ -23,7 +23,7 @@ products, because the owner finds the current UI cluttered (chat 2026-10-19). It
 updates these pages before the UI tickets above build on them. SPN-074 is the
 explicit exception: removing unsupported Slides may land before the redesign,
 using the existing dashboard patterns and the usual stories, light/dark/phone
-screenshots and owner approval. Owner, chat 2026-10-20.
+screenshots and owner approval. Owner, chat 2026-10-20, decision [#104](https://github.com/mxbaylee/spinel/issues/104).
 
 The starting point is the approved gem-rail mockup
 (`git show 30a4a61^:docs/design/gem-rail-mockup.tsx`) and the landed SPN-027

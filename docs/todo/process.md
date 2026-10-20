@@ -143,7 +143,8 @@ next eligible ticket. Owner, chat 2026-10-19.
    blockers**, following the [rubric and repair/split rules](../run-backlog.md#3-get-an-independent-grade).
    Explicitly assess over-complexity within the rubric's 10 maintainability points,
    with actionable deductions for unnecessary abstractions, dependencies or
-   speculative flexibility (owner, chat 2026-10-20).
+   speculative flexibility (owner, chat 2026-10-20,
+   [#105](https://github.com/mxbaylee/spinel/issues/105)).
    Weigh scope overlap before changed-line limits: fix acceptance gaps here;
    ticket separable work without hiding a blocker. Re-review repairs, and put
    the score, reviewed SHA and every finding’s disposition in the PR.

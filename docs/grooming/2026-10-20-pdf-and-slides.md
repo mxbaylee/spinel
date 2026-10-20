@@ -15,13 +15,15 @@ changed here.
   the owner's approval still apply. The exception is recorded in SPN-047 and the
   design playbook. The legacy placeholder has owner and shared-reader variants:
   only the owner receives Trash advice, preserving current permissions. Owner,
-  chat 2026-10-20; routine role-aware copy recorded during grooming.
+  chat 2026-10-20; routine role-aware copy recorded in decision
+  [#104](https://github.com/mxbaylee/spinel/issues/104).
 - SPN-073 is retired into SPN-075, not completed. SPN-075 becomes **Export Sheets
   and Docs as PDF without Univer Pro**, retaining L effort, its persona impacts
   and SPN-047 dependency. One direct PDF download replaces all app Print actions
   and browser print dialogs, with current read access as the only document-role
   requirement. This includes account viewers and view-only or editing guests.
-  Guest privacy and revocation acceptance move with it. Owner, chat 2026-10-20.
+  Guest privacy and revocation acceptance move with it. Owner, chat 2026-10-20,
+  decision [#103](https://github.com/mxbaylee/spinel/issues/103).
 - `FileExports`, `SheetEditor` and `DocEditor` still use Pro print and hide the
   account export panel from guests. `docs/files.md` preserves those current
   limitations and labels the replacement as planned. The editor/guest design
@@ -32,7 +34,8 @@ changed here.
   Sheets shrink to page width and paginate vertically, and Docs preserve stored
   page setup. These agent-chosen defaults remain subject to implementation review;
   no PDF library or extra service is selected. Saved content and rechecked access
-  prevent exporting stale edits or newly forbidden content.
+  prevent exporting stale edits or newly forbidden content. Agent decision
+  [#106](https://github.com/mxbaylee/spinel/issues/106) records these defaults.
 - SPN-035 Office conversion and SPN-067 bulk native backup remain separate. They
   preserve editable data and archive ownership, unlike a readable PDF. SPN-067's
   account-only restriction now explicitly refers to its native archive.
@@ -40,7 +43,8 @@ changed here.
   10 maintainability points: unnecessary abstractions, dependencies and speculative
   flexibility need actionable deductions. The smallest complete implementation
   remains the target; necessary access and integrity safeguards are not complexity
-  defects. The threshold stays 95/100 with no blockers. Owner, chat 2026-10-20.
+  defects. The threshold stays 95/100 with no blockers. Owner, chat 2026-10-20,
+  decision [#105](https://github.com/mxbaylee/spinel/issues/105).
 
 ## Remaining backlog recheck
 

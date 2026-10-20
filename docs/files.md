@@ -56,7 +56,9 @@ view-only or editing link guests. There will be no Spinel Print action or
 browser print dialog. Guest output must not add owner/account identity; revoked
 access must prevent a new export. PDF is the exception to account-only native
 and Office exports, not permission to download those formats. This consolidates
-retired SPN-073; owner, chat 2026-10-20. Until SPN-075 lands, the limitations and
+retired SPN-073; owner, chat 2026-10-20, decision [#103](https://github.com/mxbaylee/spinel/issues/103).
+Pagination defaults are recorded in decision [#106](https://github.com/mxbaylee/spinel/issues/106).
+Until SPN-075 lands, the limitations and
 account-only UI described above still apply.
 
 Native downloads require current read access. Import requires an everyday
