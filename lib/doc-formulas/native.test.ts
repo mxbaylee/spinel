@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ICommandService, IUniverInstanceService, type Univer } from '@univerjs/core';
+import {
+  ICommandService,
+  IUniverInstanceService,
+  type Univer,
+  type IDocumentBody,
+} from '@univerjs/core';
 import {
   DocInterceptorService,
   DocSelectionManagerService,
@@ -10,6 +15,8 @@ import { IRenderManagerService } from '@univerjs/engine-render';
 import { installDocFormulas, type FormulaState } from './native.ts';
 import { formulaBody } from './model.ts';
 import type { FormulaDefinition, FormulaResult } from './definition.ts';
+
+const hooks = vi.hoisted(() => ({ presentation: vi.fn(() => ({ dispose: vi.fn() })) }));
 
 vi.mock('@univerjs/docs', () => ({
   DOC_INTERCEPTOR_POINT: { CUSTOM_RANGE: Symbol('range') },
@@ -26,13 +33,14 @@ vi.mock('@univerjs/docs-ui', () => ({
 vi.mock('@univerjs/engine-render', () => ({
   IRenderManagerService: Symbol('render'),
   registerDocCustomGlyphRenderer: () => ({ dispose() {} }),
-  registerDocumentLayoutPresentation: () => ({ dispose() {} }),
+  registerDocumentLayoutPresentation: hooks.presentation,
 }));
 const definition: FormulaDefinition = { version: 1, expression: '=1', references: [] };
 const cleanups: (() => void)[] = [];
 afterEach(() => {
   for (const cleanup of cleanups.splice(0)) cleanup();
   vi.unstubAllGlobals();
+  vi.clearAllMocks();
 });
 function deferred() {
   let resolve!: (value: FormulaResult) => void;
@@ -43,8 +51,11 @@ function deferred() {
 }
 function fixture(
   evaluate: (definition: FormulaDefinition, signal: AbortSignal) => Promise<FormulaResult>,
+  empty = false,
 ) {
-  const body = formulaBody('formula', definition);
+  let body: IDocumentBody = empty
+    ? { dataStream: 'A plain document\r\n' }
+    : formulaBody('formula', definition);
   let revision = 0;
   const states: FormulaState[][] = [];
   let mutation!: (command: { id: string; params: { unitId: string } }) => void;
@@ -58,7 +69,7 @@ function fixture(
   const skeleton = {
     getViewModel: () => ({ reset() {} }),
     getSkeleton: () => ({ makeDirty() {}, findNodeByCharIndex: () => undefined }),
-    recalculate() {},
+    recalculate: vi.fn(),
   };
   const render = {
     mainComponent: { makeDirty() {} },
@@ -121,7 +132,9 @@ function fixture(
     controller,
     states,
     executeCommand,
-    edit: () => {
+    repaints: skeleton.recalculate,
+    edit: (replacement?: IDocumentBody) => {
+      if (replacement) body = replacement;
       revision++;
       mutation({ id: 'rich', params: { unitId: 'doc' } });
     },
@@ -132,6 +145,46 @@ function fixture(
   };
 }
 describe('native formula lifecycle', () => {
+  it('leaves plain documents on their original layout path without polling repaints', async () => {
+    const evaluate = vi.fn(async (): Promise<FormulaResult> => ({
+      ok: true,
+      kind: 'scalar',
+      value: 1,
+    }));
+    const { controller, repaints, edit } = fixture(evaluate, true);
+    await controller.refresh();
+    await controller.refresh();
+    controller.clear();
+    edit();
+    await controller.refresh();
+    expect(evaluate).not.toHaveBeenCalled();
+    expect(repaints).not.toHaveBeenCalled();
+    expect(hooks.presentation).not.toHaveBeenCalled();
+  });
+  it('restores the normal layout after removal and reinstalls formulas on undo without late values', async () => {
+    const removed = deferred();
+    const evaluate = vi
+      .fn()
+      .mockReturnValueOnce(removed.promise)
+      .mockResolvedValue({ ok: true, kind: 'scalar', value: 7 });
+    const { controller, states, edit } = fixture(evaluate, true);
+    edit(formulaBody('formula', definition));
+    const pending = controller.refresh();
+    expect(hooks.presentation).toHaveBeenCalledTimes(1);
+    const firstPresentation = hooks.presentation.mock.results[0]!.value;
+    edit({ dataStream: 'A plain document\r\n' });
+    await controller.refresh();
+    expect(firstPresentation.dispose).toHaveBeenCalledOnce();
+    expect(states.at(-1)).toEqual([]);
+    removed.resolve({ ok: true, kind: 'scalar', value: 999 });
+    await pending;
+    expect(states.at(-1)).toEqual([]);
+    edit(formulaBody('formula', definition));
+    await controller.refresh();
+    expect(hooks.presentation).toHaveBeenCalledTimes(2);
+    expect(states.at(-1)?.[0]?.result).toEqual({ ok: true, kind: 'scalar', value: 7 });
+    expect(JSON.stringify(states)).not.toContain('999');
+  });
   it('coalesces refreshes so an in-flight calculation is not continually aborted', async () => {
     const pending = deferred(),
       evaluate = vi.fn(() => pending.promise);

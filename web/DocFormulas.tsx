@@ -19,6 +19,7 @@ import {
 import { documentPath } from './documentAccess.ts';
 import './docFormulas.css';
 import { palettes } from '../src/ui/palette.ts';
+import { requestFormula } from '../src/shared/formulaRequest.ts';
 
 // Univer's document is paper even when the surrounding application uses dark mode.
 export const formulaPaperColors = {
@@ -34,7 +35,7 @@ export async function formulaRequest<T>(
   body?: unknown,
   signal?: AbortSignal,
 ): Promise<T> {
-  const response = await fetch(`${documentPath(id)}/formulas/${path}`, {
+  return requestFormula<T>(`${documentPath(id)}/formulas/${path}`, {
     method: body === undefined ? 'GET' : 'POST',
     credentials: 'same-origin',
     signal,
@@ -42,9 +43,6 @@ export async function formulaRequest<T>(
       ? {}
       : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
   });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error ?? 'The formula could not be loaded. Try again.');
-  return result as T;
 }
 
 export function FormulaResultView({
@@ -113,6 +111,7 @@ export function FormulaDialog({
   } | null>(null);
   const active = useRef(true);
   const attempt = useRef(0);
+  const operation = useRef<AbortController | null>(null);
   const [bindings, setBindings] = useState<FormulaReference[]>([]);
   const [cursor, setCursor] = useState(expression.length);
   const [suggestion, setSuggestion] = useState(0);
@@ -134,6 +133,7 @@ export function FormulaDialog({
     const hide = () => {
       if (document.visibilityState === 'hidden') {
         attempt.current++;
+        operation.current?.abort();
         setPreview(null);
       }
     };
@@ -158,6 +158,7 @@ export function FormulaDialog({
       });
     return () => {
       active.current = false;
+      operation.current?.abort();
       abort.abort();
       modal?.close();
     };
@@ -227,38 +228,55 @@ export function FormulaDialog({
       /* An unfinished reference has no binding yet. */
     }
   }
-  async function resolve() {
+  async function resolve(signal: AbortSignal) {
+    // Formatting an existing object never changes its source identities. Its evaluator
+    // still checks current access; losing a source must not prevent fixing presentation.
+    if (initial && expression === initial.definition.expression && !bindings.length && !chosen)
+      return { ...initial.definition, format };
     const pending = chosenBinding();
     const explicit = pending
       ? [...bindings.filter((item) => item.start !== pending.start), pending]
       : bindings;
     return (
-      await formulaRequest<{ definition: FormulaDefinition }>(id, 'resolve', {
-        expression,
-        format,
-        previous: initial?.definition,
-        bindings: explicit,
-      })
+      await formulaRequest<{ definition: FormulaDefinition }>(
+        id,
+        'resolve',
+        {
+          expression,
+          format,
+          previous: initial?.definition,
+          bindings: explicit,
+        },
+        signal,
+      )
     ).definition;
   }
   async function run(save: boolean) {
     const current = ++attempt.current;
+    operation.current?.abort();
+    const controller = new AbortController();
+    operation.current = controller;
     setPreview(null);
     setBusy(true);
     setError('');
     try {
-      const definition = await resolve();
+      const definition = await resolve(controller.signal);
       if (!active.current || current !== attempt.current) return;
       if (save) {
         await onSave(definition);
         if (active.current) onClose();
       } else {
         setPreview({ definition, result: { ok: false, reason: 'loading' } });
-        const result = await formulaRequest<FormulaDisplay>(id, 'evaluate', { definition });
+        const result = await formulaRequest<FormulaDisplay>(
+          id,
+          'evaluate',
+          { definition },
+          controller.signal,
+        );
         if (active.current && current === attempt.current) setPreview({ definition, result });
       }
     } catch (cause) {
-      if (active.current)
+      if (active.current && current === attempt.current)
         setError(cause instanceof Error ? cause.message : 'Could not update the formula.');
     } finally {
       if (active.current) setBusy(false);

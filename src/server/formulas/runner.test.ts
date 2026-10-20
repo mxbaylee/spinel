@@ -101,10 +101,17 @@ test('worker deadlines terminate execution and release admission for the next re
   });
 });
 
-test('native error values remain readable while a formula with no parsed result fails', async () => {
-  expect(await runFormula(definition('=$@'), [])).toEqual({
+test('malformed definitions fail while native engine errors and literal error strings remain readable', async () => {
+  expect(await runFormula({ version: 1, expression: '=', references: [] }, [])).toEqual({
     ok: false,
     reason: 'invalid-formula',
+  });
+  // Univer parses this expression into #NAME?. Native spreadsheet error values
+  // remain readable; they are distinct from an invalid stored definition.
+  expect(await runFormula(definition('=$@'), [])).toEqual({
+    ok: true,
+    kind: 'scalar',
+    value: '#NAME?',
   });
   expect(await runFormula(definition('=NOFUNCTION(1)'), [])).toEqual({
     ok: true,

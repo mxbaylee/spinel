@@ -4,7 +4,15 @@ import { getDocsEmptySnapshot, type ICustomRange } from '@univerjs/core';
 import { formulaBody, type FormulaDefinition, type FormulaState } from '@spinel/doc-formulas';
 import { FormulaReadout } from './DocFormulas.tsx';
 
-function NativeFormulaDocument({ unavailable = false }: { unavailable?: boolean }) {
+function NativeFormulaDocument({
+  unavailable = false,
+  thirtyRows = false,
+  styledScalar = false,
+}: {
+  unavailable?: boolean;
+  thirtyRows?: boolean;
+  styledScalar?: boolean;
+}) {
   const container = useRef<HTMLDivElement>(null);
   const [error, setError] = useState('');
   const [states, setStates] = useState<FormulaState[]>([]);
@@ -17,7 +25,21 @@ function NativeFormulaDocument({ unavailable = false }: { unavailable?: boolean 
       references: [],
       format: 'currency',
     };
-    const table: FormulaDefinition = { version: 1, expression: '={1,2;3,4}', references: [] };
+    const table: FormulaDefinition = thirtyRows
+      ? {
+          version: 1,
+          expression: '=Budget.Summary.A1:C30',
+          references: [
+            { start: 1, end: 22, itemId: 'storybook-budget', sheetId: 'summary', range: 'A1:C30' },
+          ],
+        }
+      : { version: 1, expression: '={1,2;3,4}', references: [] };
+    const rows = thirtyRows
+      ? Array.from({ length: 30 }, (_, row) => [`Item ${row + 1}`, row + 101, row + 201])
+      : [
+          [1, 2],
+          [3, 4],
+        ];
     const ranges: ICustomRange[] = [];
     let text = 'The current total is ';
     for (const [id, definition, suffix] of [
@@ -36,6 +58,17 @@ function NativeFormulaDocument({ unavailable = false }: { unavailable?: boolean 
     snapshot.body = {
       dataStream: text,
       customRanges: ranges,
+      ...(styledScalar
+        ? {
+            textRuns: [
+              {
+                st: ranges[0]!.startIndex,
+                ed: ranges[0]!.endIndex + 1,
+                ts: { bl: 1, it: 1, fs: 18 },
+              },
+            ],
+          }
+        : {}),
       paragraphs: Array.from(text.matchAll(/\r/g), (match) => ({
         startIndex: match.index!,
         paragraphId: `paragraph-${match.index}`,
@@ -57,10 +90,7 @@ function NativeFormulaDocument({ unavailable = false }: { unavailable?: boolean 
                 : {
                     ok: true,
                     kind: 'table',
-                    rows: [
-                      [1, 2],
-                      [3, 4],
-                    ],
+                    rows,
                   },
           onFormulaChange: (values) => {
             if (!abort.signal.aborted) setStates([...values]);
@@ -78,7 +108,7 @@ function NativeFormulaDocument({ unavailable = false }: { unavailable?: boolean 
       abort.abort();
       queueMicrotask(() => close?.());
     };
-  }, [unavailable]);
+  }, [unavailable, thirtyRows, styledScalar]);
   return (
     <section aria-label="Native formula document">
       <p>
@@ -99,3 +129,6 @@ export const InlineAndTable: Story = {};
 export const Private: Story = { args: { unavailable: true } };
 export const Dark: Story = { globals: { theme: 'dark' } };
 export const Phone: Story = { globals: { viewport: { value: 'phone', isRotated: false } } };
+
+export const ThirtyRows: Story = { args: { thirtyRows: true } };
+export const StyledScalar: Story = { args: { styledScalar: true } };

@@ -141,23 +141,24 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       .getByRole('listitem')
       .filter({ has: page.getByRole('button', { name: expression, exact: true }) });
   };
-  const screenshots = async (name: string) => {
+  const screenshots = async (name: string, target: Page = page) => {
+    await target.bringToFront();
     await mkdir('test-results/theme-screenshots', { recursive: true });
     for (const [theme, width] of [
       ['light', 1440],
       ['dark', 1440],
       ['light', 390],
     ] as const) {
-      await page.emulateMedia({ colorScheme: theme });
-      await page.setViewportSize({ width, height: 1100 });
-      await page.screenshot({
+      await target.emulateMedia({ colorScheme: theme });
+      await target.setViewportSize({ width, height: 1100 });
+      await target.screenshot({
         path: `test-results/theme-screenshots/formulas-${info.project.name}-${name}-${theme}-${width}.png`,
         fullPage: true,
         animations: 'disabled',
       });
     }
-    await page.emulateMedia({ colorScheme: 'light' });
-    await page.setViewportSize({ width: 1440, height: 1100 });
+    await target.emulateMedia({ colorScheme: 'light' });
+    await target.setViewportSize({ width: 1440, height: 1100 });
   };
   try {
     await page.goto(`/?item=${host.id}`);
@@ -272,6 +273,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect(otherPanel).toContainText('access', { timeout: 20_000 });
     await expect(otherPanel).not.toContainText('314159');
     await expect(otherPanel).not.toContainText('314166');
+    await screenshots('private-source', other);
     await otherPanel.getByRole('button', { name: '={5,6;7,8}', exact: true }).click();
     const collaboratorEdit = other.getByRole('dialog', { name: 'Edit formula', exact: true });
     await collaboratorEdit.getByLabel('Formula', { exact: true }).fill('={9,10;11,12}');

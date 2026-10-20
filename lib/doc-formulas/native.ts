@@ -125,22 +125,27 @@ export function installDocFormulas(options: DocFormulaOptions) {
     },
   });
   mounts++;
-  const presentation = registerDocumentLayoutPresentation(document, {
-    getSnapshot: (snapshot) => ({
-      ...snapshot,
-      documentStyle: {
-        ...snapshot.documentStyle,
-        renderConfig: {
-          ...snapshot.documentStyle.renderConfig,
-          useCustomGlyphRenderer: BooleanNumber.TRUE,
-        },
-      },
-      body: snapshot.body ? formulaPresentationBody(snapshot.body, scope) : undefined,
-    }),
-    captureState: () => null,
-    applyActions: () => {},
-    restoreState: () => {},
-  });
+  let presentation: IDisposable | undefined;
+  const createPresentation = () =>
+    registerDocumentLayoutPresentation(document, {
+      getSnapshot: (snapshot) =>
+        !docFormulas(snapshot.body).length
+          ? snapshot
+          : {
+              ...snapshot,
+              documentStyle: {
+                ...snapshot.documentStyle,
+                renderConfig: {
+                  ...snapshot.documentStyle.renderConfig,
+                  useCustomGlyphRenderer: BooleanNumber.TRUE,
+                },
+              },
+              body: snapshot.body ? formulaPresentationBody(snapshot.body, scope) : undefined,
+            },
+      captureState: () => null,
+      applyActions: () => {},
+      restoreState: () => {},
+    });
   const interceptor = render
     .with(DocInterceptorService)
     .intercept(DOC_INTERCEPTOR_POINT.CUSTOM_RANGE, {
@@ -175,10 +180,17 @@ export function installDocFormulas(options: DocFormulaOptions) {
   };
   const evaluateAll = async () => {
     if (disposed) return;
+    const formulas = docFormulas(document.getBody());
+    if (!formulas.length && !states.length) return;
+    if (formulas.length) presentation ??= createPresentation();
+    else {
+      presentation?.dispose();
+      presentation = undefined;
+    }
     abort.abort();
     abort = new AbortController();
     const signal = abort.signal;
-    states = docFormulas(document.getBody()).map((formula) => ({
+    states = formulas.map((formula) => ({
       formula,
       result: { ok: false, reason: 'loading' },
     }));
@@ -211,6 +223,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
   const clear = () => {
     abort.abort();
     refreshing = undefined;
+    if (!states.length) return;
     states = states.map((state) => ({ ...state, result: { ok: false, reason: 'unavailable' } }));
     installPainters();
     repaint();
@@ -327,7 +340,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
       globalThis.removeEventListener('beforeprint', beforePrint);
       globalThis.removeEventListener('afterprint', afterPrint);
       interceptor.dispose();
-      presentation.dispose();
+      presentation?.dispose();
       for (const key of painters.keys()) if (key.startsWith(`${scope}:`)) painters.delete(key);
       if (--mounts === 0) {
         renderer?.dispose();
