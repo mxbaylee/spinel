@@ -312,6 +312,23 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect(formulaPanel(page)).toContainText('314159', { timeout: 20_000 });
     expect(JSON.stringify(await read())).not.toContain('314159');
     expect(errors).toEqual([]);
+  } catch (error) {
+    await mkdir('test-results/theme-screenshots', { recursive: true });
+    await page
+      .screenshot({
+        path: `test-results/theme-screenshots/formulas-${info.project.name}-failure.png`,
+        fullPage: true,
+      })
+      .catch(() => {});
+    console.log(
+      'Formula canvas diagnostics:',
+      await page
+        .evaluate(() =>
+          (window as unknown as { formulaPaintedText?: string[] }).formulaPaintedText?.slice(-100),
+        )
+        .catch(() => []),
+    );
+    throw error;
   } finally {
     await second.close();
     await page.goto('/sign-in').catch(() => {});

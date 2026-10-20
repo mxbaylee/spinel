@@ -15,8 +15,16 @@ import { IRenderManagerService } from '@univerjs/engine-render';
 import { installDocFormulas, type FormulaState } from './native.ts';
 import { formulaBody } from './model.ts';
 import type { FormulaDefinition, FormulaResult } from './definition.ts';
+import type { IDocumentLayoutSnapshot } from '@univerjs/engine-render';
 
-const hooks = vi.hoisted(() => ({ presentation: vi.fn(() => ({ dispose: vi.fn() })) }));
+const hooks = vi.hoisted(() => ({
+  presentation: vi.fn(
+    (
+      _model: unknown,
+      _projection: { getSnapshot: (snapshot: IDocumentLayoutSnapshot) => IDocumentLayoutSnapshot },
+    ) => ({ dispose: vi.fn() }),
+  ),
+}));
 
 vi.mock('@univerjs/docs', () => ({
   DOC_INTERCEPTOR_POINT: { CUSTOM_RANGE: Symbol('range') },
@@ -67,7 +75,10 @@ function fixture(
     getDocumentStyle: () => ({ pageSize: { width: 700, height: 1000 }, textStyle: { fs: 12 } }),
   };
   const skeleton = {
-    getViewModel: () => ({ reset() {} }),
+    getViewModel: () => ({
+      reset() {},
+      getChildren: () => [{ endIndex: body.dataStream.length - 1 }],
+    }),
     getSkeleton: () => ({ makeDirty() {}, findNodeByCharIndex: () => undefined }),
     recalculate: vi.fn(),
   };
@@ -184,6 +195,34 @@ describe('native formula lifecycle', () => {
     expect(hooks.presentation).toHaveBeenCalledTimes(2);
     expect(states.at(-1)?.[0]?.result).toEqual({ ok: true, kind: 'scalar', value: 7 });
     expect(JSON.stringify(states)).not.toContain('999');
+  });
+  it('projects section paint options for modern layout without saving them to the document', async () => {
+    const { controller } = fixture(async () => ({ ok: true, kind: 'scalar', value: 42 }));
+    await controller.refresh();
+    const source: IDocumentLayoutSnapshot = {
+      id: 'doc',
+      documentStyle: { documentFlavor: 2, renderConfig: { background: { rgb: '#fff' } } },
+      body: {
+        ...formulaBody('formula', definition),
+        sectionBreaks: [{ startIndex: 1, sectionId: 'original', renderConfig: { vertexAngle: 0 } }],
+      },
+    };
+    const before = structuredClone(source);
+    const projected = hooks.presentation.mock.calls[0]![1].getSnapshot(source);
+    expect(projected.body?.sectionBreaks?.[0]).toMatchObject({
+      sectionId: 'original',
+      renderConfig: { useCustomGlyphRenderer: 1, vertexAngle: 0, background: { rgb: '#fff' } },
+    });
+    expect(source).toEqual(before);
+    // Imported snapshots may omit section metadata; existing layout nodes supply it transiently.
+    delete source.body!.sectionBreaks;
+    expect(
+      hooks.presentation.mock.calls[0]![1].getSnapshot(source).body?.sectionBreaks?.[0],
+    ).toMatchObject({
+      startIndex: 1,
+      renderConfig: { useCustomGlyphRenderer: 1 },
+    });
+    expect(source.body!.sectionBreaks).toBeUndefined();
   });
   it('coalesces refreshes so an in-flight calculation is not continually aborted', async () => {
     const pending = deferred(),

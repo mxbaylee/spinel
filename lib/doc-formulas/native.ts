@@ -140,7 +140,32 @@ export function installDocFormulas(options: DocFormulaOptions) {
                   useCustomGlyphRenderer: BooleanNumber.TRUE,
                 },
               },
-              body: snapshot.body ? formulaPresentationBody(snapshot.body, scope) : undefined,
+              body: snapshot.body
+                ? {
+                    ...formulaPresentationBody(snapshot.body, scope),
+                    // Modern Docs replace document-level render options during layout.
+                    // Section options survive that normalization and reach the canvas.
+                    sectionBreaks: skeleton
+                      .getViewModel()
+                      .getChildren()
+                      .map((node) => {
+                        const section = snapshot.body?.sectionBreaks?.find(
+                          (entry) => entry.startIndex === node.endIndex,
+                        );
+                        return {
+                          ...(section ?? {
+                            startIndex: node.endIndex,
+                            sectionId: `formula-section-${node.endIndex}`,
+                          }),
+                          renderConfig: {
+                            ...snapshot.documentStyle.renderConfig,
+                            ...section?.renderConfig,
+                            useCustomGlyphRenderer: BooleanNumber.TRUE,
+                          },
+                        };
+                      }),
+                  }
+                : undefined,
             },
       captureState: () => null,
       applyActions: () => {},
