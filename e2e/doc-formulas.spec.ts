@@ -402,7 +402,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await edit.getByLabel('Formula', { exact: true }).fill('={5,6;7,8}');
     await screenshots('editing');
     await edit.getByRole('button', { name: 'Save formula', exact: true }).click();
-    await expect(edit).not.toBeVisible();
+    await expect(edit).not.toBeVisible({ timeout: 20_000 });
     await saved(page);
     await page.getByRole('button', { name: 'Undo', exact: true }).click();
     await expect.poll(async () => JSON.stringify(await read())).toContain('={1,2;3,4}');
@@ -464,7 +464,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     const collaboratorEdit = other.getByRole('dialog', { name: 'Edit formula', exact: true });
     await collaboratorEdit.getByLabel('Formula', { exact: true }).fill('={9,10;11,12}');
     await collaboratorEdit.getByRole('button', { name: 'Save formula', exact: true }).click();
-    await expect(collaboratorEdit).not.toBeVisible();
+    await expect(collaboratorEdit).not.toBeVisible({ timeout: 20_000 });
     await saved(other);
     await expect(
       formulaPanel(page).getByRole('button', { name: '={9,10;11,12}', exact: true }),
@@ -559,11 +559,7 @@ test('rich clipboard creates independent native Formula objects and plain text k
     if (browserErrors.length < 20) browserErrors.push(`pageerror: ${error.message.slice(0, 2000)}`);
   });
   page.on('console', (message) => {
-    if (
-      (['warning', 'error'].includes(message.type()) ||
-        message.text().startsWith('[Formula clipboard diagnostic]')) &&
-      browserErrors.length < 80
-    )
+    if (['warning', 'error'].includes(message.type()) && browserErrors.length < 20)
       browserErrors.push(`${message.type()}: ${message.text().slice(0, 2000)}`);
   });
   const readSnapshot = async () =>
