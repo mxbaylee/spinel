@@ -17,6 +17,7 @@ import { WorkspaceStore } from '../workspace/store.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import { CollaborationStore } from '../collaboration/service.ts';
+import { attachCollaboration } from '../collaboration/transport.ts';
 import { mcpRoutes } from './routes.ts';
 import { McpDocuments } from './documents.ts';
 
@@ -40,8 +41,8 @@ async function fixture() {
     viewer = auth.createUser('Viewer'),
     stranger = auth.createUser('Stranger'),
     admin = auth.createUser('Operator', true);
-  const sheet = workspace.create(owner.id, { name: 'Budget', kind: 'sheet' }),
-    doc = workspace.create(owner.id, { name: 'Notes', kind: 'doc' });
+  const sheet = workspace.create(owner.id, { name: 'Budget', kind: 'sheet', parentId: null }),
+    doc = workspace.create(owner.id, { name: 'Notes', kind: 'doc', parentId: null });
   new SheetStore(workspace).save(owner.id, sheet.id, {
     snapshot: {
       id: sheet.id,
@@ -56,7 +57,10 @@ async function fixture() {
           name: 'Sheet1',
           rowCount: 100,
           columnCount: 26,
-          cellData: { 0: { 0: { v: 42, s: 'red' }, 1: { v: 84, f: '=A1*2' } } },
+          cellData: {
+            0: { 0: { v: 42, s: 'red' }, 1: { v: 84, f: '=A1*2', si: 'shared' } },
+            1: { 1: { v: 0, si: 'shared', s: 'red' } },
+          },
         },
       },
     } as IWorkbookData,
@@ -185,6 +189,51 @@ test('cell writes commit through the live service, preserve styles and retry exa
   expect(snapshot.sheets.first.cellData?.[0]?.[1]?.f).toBe('=A1*2');
 });
 
+test('literal replacement detaches a shared-formula follower and preserves its style and source', async () => {
+  const f = await fixture();
+  await f.documents.edit(f.identity, 'sheet', {
+    ...(await f.sheetEdit()),
+    cells: [{ row: 1, column: 1, value: 'Literal' }],
+  });
+  const snapshot = (await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData;
+  const follower = snapshot.sheets.first.cellData?.[1]?.[1];
+  expect(follower).toMatchObject({ v: 'Literal', s: 'red' });
+  for (const key of ['f', 'si', 'ft', 'fd', 'ref', 'xf'] as const)
+    expect(follower?.[key] ?? null).toBeNull();
+  expect(snapshot.sheets.first.cellData?.[0]?.[1]).toMatchObject({
+    f: '=A1*2',
+    si: 'shared',
+  });
+});
+
+test.each(['token', 'account', 'grant'] as const)(
+  'production commit rejects %s revocation during asynchronous recipient revalidation',
+  async (revoked) => {
+    const f = await fixture();
+    const identity = f.credentials(f.editor.id),
+      edit = await f.sheetEdit(identity);
+    f.collab.service.use('commitChangeset', async (_context, next) => {
+      // Start the real transport middleware, then revoke while its recipient scan is awaited.
+      const pending = next();
+      if (revoked === 'token') f.tokens.revoke(f.editor.id, identity.id);
+      else if (revoked === 'account')
+        f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.editor.id);
+      else f.workspace.share(f.owner.id, f.sheet.id, f.editor.id, null);
+      await pending;
+    });
+    const transport = attachCollaboration(
+      createServer(),
+      f.workspace,
+      f.collab,
+      'http://localhost',
+    );
+    cleanup.push(() => transport.close());
+    await expect(f.documents.edit(identity, 'sheet', edit)).rejects.toThrow();
+    const snapshot = (await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData;
+    expect(snapshot.sheets.first.cellData?.[0]?.[0]?.v).toBe(42);
+  },
+);
+
 test('text mutation preserves surrounding rich text and supports paragraphs, pagination and retries', async () => {
   const f = await fixture();
   const read = await f.documents.readDoc(f.identity, { id: f.doc.id, limit: 5 });
@@ -306,6 +355,8 @@ test('official HTTP MCP client reads and edits both types; token UI APIs enforce
         server.closeAllConnections();
       }),
   );
+  const transport = attachCollaboration(server, f.workspace, f.collab, origin);
+  cleanup.push(() => transport.close());
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('No server');
   const base = `http://127.0.0.1:${address.port}`;

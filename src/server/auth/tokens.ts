@@ -13,6 +13,18 @@ export interface AccessToken {
 const fields =
   'id,user_id AS userId,name,created_at AS createdAt,last_used_at AS lastUsedAt,revoked';
 
+/** Recheck at asynchronous and durable boundaries without updating usage metadata. */
+export function accessTokenIdentity(auth: AuthStore, hash: string) {
+  const row = auth.database
+    .prepare(
+      `SELECT t.id,t.user_id AS userId FROM auth_access_tokens t
+      JOIN auth_users u ON u.id=t.user_id WHERE t.token_hash=? AND t.revoked=0 AND u.disabled=0 AND u.is_admin=0`,
+    )
+    .get(hash) as { id: string; userId: string } | undefined;
+  if (!row) throw new AuthError(401, 'This access token is no longer available.');
+  return row;
+}
+
 /** Only hashes persist. Token authentication never grants a browser session. */
 export class AccessTokens {
   private readonly auth: AuthStore;
@@ -88,13 +100,6 @@ export class AccessTokens {
     return { ...identity, hash };
   }
   byHash(hash: string) {
-    const row = this.auth.database
-      .prepare(
-        `SELECT t.id,t.user_id AS userId FROM auth_access_tokens t
-      JOIN auth_users u ON u.id=t.user_id WHERE t.token_hash=? AND t.revoked=0 AND u.disabled=0 AND u.is_admin=0`,
-      )
-      .get(hash) as { id: string; userId: string } | undefined;
-    if (!row) throw new AuthError(401, 'This access token is no longer available.');
-    return row;
+    return accessTokenIdentity(this.auth, hash);
   }
 }

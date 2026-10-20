@@ -207,6 +207,11 @@ export class McpDocuments {
         row[cell.column] = {
           v: cell.value,
           f: null,
+          si: null,
+          ft: null,
+          fd: null,
+          ref: null,
+          xf: null,
           p: null,
           t:
             typeof cell.value === 'string'
