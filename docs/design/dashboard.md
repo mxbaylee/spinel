@@ -108,9 +108,15 @@ exist yet, so local mode shows the [banner](README.md#banner) (`OfflineBanner`):
 reconnect." When SPN-042 lands, its popover takes over the "Files as of" line and
 the banner goes. Pending-edit states arrive with SPN-053 and SPN-054.
 
+`OfflineViewer` has no story: like the editors and version previews, it hosts
+Univer. Its states are plain text ("Opening offline copy…", "Read only on this
+device. Reconnect to edit." or the problem) and `e2e/offline.spec.ts` covers them.
+
 ## Stories
 
 `Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/PinnedSidebar`,
 `Dashboard/PinButton`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
 `Dashboard/DocumentTags`, `Dashboard/Trash`, `Dashboard/ImportFile`,
-`Dashboard/OfflineBadge`.
+`Dashboard/OfflineBadge` (also the banner and the "You're offline" page). Local
+mode: `Dashboard/Dashboard` `LocalMode`, `LocalNeedsConnection` and
+`LocalFolderNotOpened`.

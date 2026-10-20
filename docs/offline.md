@@ -51,13 +51,13 @@ sequence and #90's recovery-coordinator choice.
 
 After an initial online setup in the app context they will use:
 
-| Layer | Local contents and behavior |
-| --- | --- |
-| Application | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency. |
-| Catalog | Last-synchronized authorized folder/file metadata, personal tags/pins and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace. |
-| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open. |
-| Changes | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while the app is running and connected. If the live document changed meanwhile, they become a conflicted copy rather than a merge. Local-save failure remains visible. |
-| Entry points | Stable item links support direct launch; in-app pins, offline downloads and home-screen shortcuts remain distinct actions. |
+| Layer          | Local contents and behavior                                                                                                                                                                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                  |
+| Catalog        | Last-synchronized authorized folder/file metadata, personal tags/pins and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                            |
+| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                         |
+| Changes        | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while the app is running and connected. If the live document changed meanwhile, they become a conflicted copy rather than a merge. Local-save failure remains visible. |
+| Entry points   | Stable item links support direct launch; in-app pins, offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                       |
 
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
 personal filing and source permissions: never copy inaccessible owner ancestors,
@@ -135,13 +135,13 @@ SPN-039, 2026-10-19. This is what a device does today.
 **Download.** Signed-in, non-admin accounts see **Available offline on this
 device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
 
-1. Prepares the app shell (below).
-2. Fetches the [download bundle](#download-bundle) with `no-store` and checks it
+1. Fetches the [download bundle](#download-bundle) with `no-store` and checks it
    is version 1, for this account and item, from the pinned SDK version, and
    read-only for a viewer. Its image list must name only this item's own image
    routes, within the 5 MB per-image and 50 MB per-document budgets, before any
    image is fetched.
-3. Fetches every listed image and checks each one's size and SHA-256.
+2. Fetches every listed image and checks each one's size and SHA-256.
+3. Prepares the app shell (below).
 4. Writes the bundle and image bytes in one IndexedDB transaction.
 
 Until that transaction commits nothing counts as downloaded. A failed refresh
@@ -192,7 +192,9 @@ permission fences as version previews (`web/snapshotViewer.ts`). Images come onl
 from the verified local bytes, as object URLs: `PreparedImages` rewrites every
 verified source in the snapshot in memory, including inside resource JSON, and
 replaces the drawing plugin's `IURLImageService`. Any other image source becomes
-an empty image rather than a request. Signing out offline ends the
+an empty image rather than a request. Sheet formulas aren't recalculated
+offline, so cells show their stored values: computing `IMAGE()` would load its URL
+directly, outside the local image service. Signing out offline ends the
 local session at once and revokes the server session the next time Spinel opens
 online.
 Another tab signing out or switching account closes local mode and locks any
@@ -208,9 +210,12 @@ Verified by:
   in-cell and background images and a Doc, check CacheStorage holds only the
   shell, keep both copies through a failed refresh, go offline and reload, then
   check the catalog, saved pins, the badges, read-only
-  Sheet and Doc views with every image from local bytes and no `/api/items`
-  request, a not-downloaded item, the generic page for `/share/`, and that a
-  401 stops the next offline launch from opening local data.
+  Sheet and Doc views with every image from local bytes, no `/api/items`
+  request and no request for an `IMAGE()` URL, a not-downloaded item, the generic
+  page for `/share/`, another tab releasing the device, the next online sign-in
+  claiming it back, and that a 401 stops the next offline launch from opening
+  local data. The failed refresh leaves the stored copy's revision and download
+  time unchanged.
 - `e2e/pwa.spec.ts`: an unprepared device keeps CacheStorage empty.
 - `src/ui/preparedImages.test.ts`, `src/ui/offlineAccess.test.ts`,
   `src/ui/offlineDownload.test.ts` and `src/shared/offlineShell.test.ts`.

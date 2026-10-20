@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { OfflineBadge, OfflineBanner } from './OfflineStatus.tsx';
+import { OfflineBadge, OfflineBanner, OfflineUnreachable } from './OfflineStatus.tsx';
 
 const meta = {
   title: 'Dashboard/OfflineBadge',
@@ -19,4 +19,9 @@ export const None: Story = { args: { state: null } };
 export const Banner: StoryObj<typeof OfflineBanner> = {
   render: (args) => <OfflineBanner {...args} />,
   args: { syncedAt: Date.UTC(2026, 9, 19, 14, 5) },
+};
+
+/** Offline with no local data for this account: a signed-out or unprepared device. */
+export const Unreachable: StoryObj<typeof OfflineUnreachable> = {
+  render: () => <OfflineUnreachable />,
 };

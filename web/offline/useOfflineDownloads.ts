@@ -77,6 +77,7 @@ export function useOfflineDownloads(
           if (error instanceof DownloadError && error.status === 404) {
             await store.remove(download.itemId);
             unset(download.itemId);
+            if (!(await store.downloads()).length) setPreparedAccount(null);
           }
         }
       }
@@ -99,7 +100,8 @@ export function useOfflineDownloads(
     const downloaded = downloads.has(item.id);
     // Offline launch needs the file list as well as the document; the device
     // counts as prepared only once both are stored.
-    if (!downloaded && !latestCatalog.current()) {
+    const atClick = downloaded ? null : latestCatalog.current();
+    if (!downloaded && !atClick) {
       setMessage({ text: 'Wait for your files to load, then try again.', failed: true });
       return;
     }
@@ -115,9 +117,10 @@ export function useOfflineDownloads(
           return;
         }
         const download = await downloadForOffline(store, item.id);
-        // The catalog was there at the click; keep the newest one.
-        const current = latestCatalog.current();
-        if (current) await store.saveCatalog({ id: user.id, name: user.name }, current);
+        // Keep the newest catalog; a refresh that failed meanwhile falls back
+        // to the one there at the click, so a prepared device always has one.
+        const current = latestCatalog.current() ?? atClick!;
+        await store.saveCatalog({ id: user.id, name: user.name }, current);
         setPreparedAccount(user.id);
         set(download);
       });

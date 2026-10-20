@@ -14,6 +14,7 @@ import {
   getAllWorkbookPermissionPoint,
 } from '@univerjs/sheets';
 import { IRenderManagerService } from '@univerjs/engine-render';
+import { CalculationMode } from '@univerjs/preset-sheets-core';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
 import { displayPresetCell } from '../src/ui/presetStyles.ts';
@@ -88,7 +89,16 @@ export async function openSnapshotViewer({
       ),
     },
     presets: sheet
-      ? [sheetPreset(container, mobile), drawings(sheetImages(mobile, false))]
+      ? [
+          // Offline (local images), show stored values only: computing IMAGE()
+          // would load its URL with new Image(), outside the local image service.
+          sheetPreset(
+            container,
+            mobile,
+            images ? { initialFormulaComputing: CalculationMode.NO_CALCULATION } : undefined,
+          ),
+          drawings(sheetImages(mobile, false)),
+        ]
       : [
           UniverDocsCorePreset({ container }),
           { plugins: [[UniverDocsUIPlugin, { placeholder: false }]] },

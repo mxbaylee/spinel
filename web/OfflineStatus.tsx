@@ -25,3 +25,16 @@ export function OfflineBanner({ syncedAt }: { syncedAt: number }) {
     </div>
   );
 }
+
+/** No connection and no local data for this device's account: nothing to show. */
+export function OfflineUnreachable() {
+  return (
+    <section className="welcome">
+      <h1>You're offline</h1>
+      <p>Connect to the internet, then try again to open Spinel.</p>
+      <button className="primary" onClick={() => location.reload()}>
+        Try again
+      </button>
+    </section>
+  );
+}

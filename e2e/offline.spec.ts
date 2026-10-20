@@ -31,14 +31,19 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
   ]);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  // IMAGE() loads its URL directly; offline copies show stored values only.
+  const tracked: string[] = [];
+  context.on('request', (request) => {
+    if (new URL(request.url()).hostname === 'tracker.invalid') tracked.push(request.url());
+  });
   try {
+    const snapshot = await sheetImageFixture();
+    (snapshot.sheets.tab.cellData as Record<number, unknown>)[4] = {
+      0: { f: '=IMAGE("https://tracker.invalid/pixel.png")', v: 'Tracked' },
+    };
     const imported = await context.request.post('/api/items/import', {
       headers: { Origin: baseURL! },
-      data: {
-        filename: 'Sheet images.univer.json',
-        parentId: null,
-        snapshot: await sheetImageFixture(),
-      },
+      data: { filename: 'Sheet images.univer.json', parentId: null, snapshot },
     });
     expect(imported.status(), await imported.text()).toBe(201);
     const sheet = (await imported.json()).item as { id: string; name: string };
@@ -78,6 +83,28 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     ).toContain(`spinel-offline-${user.id}`);
 
     // A failed background refresh keeps the last complete copy.
+    const stored = () =>
+      page.evaluate(
+        ({ name, itemId }) =>
+          new Promise<{ revision: number; downloadedAt: number }>((resolve, reject) => {
+            const open = indexedDB.open(name);
+            open.onerror = () => reject(open.error);
+            open.onsuccess = () => {
+              const request = open.result
+                .transaction('items', 'readonly')
+                .objectStore('items')
+                .get(itemId);
+              request.onerror = () => reject(request.error);
+              request.onsuccess = () => {
+                open.result.close();
+                const { revision, downloadedAt } = request.result;
+                resolve({ revision, downloadedAt });
+              };
+            };
+          }),
+        { name: `spinel-offline-${user.id}`, itemId: sheet.id },
+      );
+    const before = await stored();
     let refused = 0;
     await page.route('**/api/items/*/images/*', (route) => {
       refused++;
@@ -89,6 +116,7 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
       page.getByRole('button', { name: `Remove ${sheet.name} from this device` }),
     ).toBeVisible();
     await page.unrouteAll({ behavior: 'wait' });
+    expect(await stored()).toEqual(before);
 
     const api: string[] = [];
     page.on('request', (request) => {
@@ -153,14 +181,33 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     await row('Online only').locator('.item-open').click();
     await expect(page.getByText('Online only needs a connection.')).toBeVisible();
     expect(api).toEqual([]);
+    expect(tracked).toEqual([]);
 
     // Pages that need the server get the generic offline page, never the shell.
     await page.goto('/share/offline-link');
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
 
+    // Another tab releasing the device closes local data here too.
+    await page.goto('/');
+    await expect(page.getByRole('status').filter({ hasText: 'Files as of' })).toBeVisible({
+      timeout: 30_000,
+    });
+    const other = await context.newPage();
+    await other.goto('/');
+    await other.evaluate(() => localStorage.removeItem('spinel.offline.account'));
+    await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
+    await expect(page.getByText(sheet.name)).toHaveCount(0);
+    await other.close();
+
+    // Signing in online again claims the device back for its downloads.
+    await context.setOffline(false);
+    await page.goto('/');
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem('spinel.offline.account')))
+      .toBe(user.id);
+
     // A session the server ended (a 401) stops offline access on this device,
     // so the next offline launch opens no local data.
-    await context.setOffline(false);
     await context.clearCookies();
     await page.goto('/');
     await expect(page).toHaveURL(/\/sign-in/);

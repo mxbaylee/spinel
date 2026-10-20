@@ -16,6 +16,7 @@ import { BackupStatus } from './BackupStatus.tsx';
 import { AdminUsers } from './AdminUsers.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { PinsProvider, PinnedSidebar } from './Pins.tsx';
+import { OfflineUnreachable } from './OfflineStatus.tsx';
 import { Rail } from './Rail.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
@@ -115,8 +116,9 @@ export function App() {
           return;
         }
         const { user } = await api<{ user: User }>('session');
-        setUser(user);
+        // Claim the device first: the dashboard reads the pointer when it mounts.
         await claimDevice(user).catch(() => {});
+        setUser(user);
         if (settings) await refreshKeys();
       } catch (failure) {
         // Only an unreachable server opens local data; a 401 still signs in.
@@ -272,13 +274,7 @@ export function App() {
             {!loaded ? (
               <p role="status">Loading…</p>
             ) : unreachable ? (
-              <section className="welcome">
-                <h1>You're offline</h1>
-                <p>Connect to the internet, then try again to open Spinel.</p>
-                <button className="primary" onClick={() => location.reload()}>
-                  Try again
-                </button>
-              </section>
+              <OfflineUnreachable />
             ) : setup ? (
               <>
                 <p className="eyebrow">A new workspace</p>

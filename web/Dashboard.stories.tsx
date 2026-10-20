@@ -175,4 +175,31 @@ const local: LocalStart = {
  * Offline on a prepared device: the last-synced list, read-only. Downloaded
  * items say Available offline; other Sheets and Docs say Needs a connection.
  */
-export const LocalMode: Story = { args: { local }, parameters: { api: empty } };
+// Local mode reads the saved pins, not the API.
+const localPins: Decorator = (Story) => (
+  <PinsProvider enabled={false} offline={local.catalog.pins}>
+    <Story />
+  </PinsProvider>
+);
+export const LocalMode: Story = {
+  args: { local },
+  parameters: { api: empty },
+  decorators: [localPins],
+};
+/** Offline, a Doc that wasn't downloaded stays listed but can't open. */
+export const LocalNeedsConnection: Story = {
+  ...LocalMode,
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: new RegExp(`^${trip.name}`) }),
+    );
+  },
+};
+/** Offline, a folder this device never listed online has nothing saved to show. */
+export const LocalFolderNotOpened: Story = {
+  ...LocalMode,
+  play: async ({ canvasElement }) => {
+    const sidebar = await within(canvasElement).findByRole('complementary', { name: 'Folders' });
+    await userEvent.click(await within(sidebar).findByRole('button', { name: work.name }));
+  },
+};
