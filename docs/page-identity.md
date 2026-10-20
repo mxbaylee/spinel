@@ -65,3 +65,9 @@ dark and phone surroundings; they are not new product screens.
 [GitHub's preview guidance](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview)
 provides the 1280×640 reference. [Sharp's text API](https://sharp.pixelplumbing.com/api-constructor/)
 provides bounded text rendering. Sources consulted 2026-10-20; artwork is Spinel's.
+
+Storybook's **Identity / Social cards** gallery includes generic, Doc, Sheet,
+emoji, long-title and unbroken-word examples. Its Vite build invokes the actual
+server renderer once per example and embeds PNG data in the static stories.
+The published catalogue has no server routes or rendering runtime. Restart
+Storybook after changing the renderer to regenerate its examples.

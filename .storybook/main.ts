@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import { socialCardExamples } from './socialCards.ts';
 
 // The component catalogue for docs/design/. Stories live beside their
 // components in src/ui/ and web/; see docs/design/README.md.
@@ -14,6 +15,10 @@ const config: StorybookConfig = {
     // manager it built first; resetting them lets Vite empty the output folder.
     if (config.build?.rolldownOptions) delete config.build.rolldownOptions.input;
     config.resolve = { ...config.resolve, dedupe: ['react', 'react-dom'] };
+    config.define = {
+      ...config.define,
+      __SPINEL_SOCIAL_CARDS__: JSON.stringify(await socialCardExamples()),
+    };
     return config;
   },
 };
