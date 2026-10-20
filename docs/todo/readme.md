@@ -39,12 +39,12 @@ Highest score first. Take the first ticket that isn't waiting on another.
 | 27 | 📂 [SPN-069](SPN-069.md) Create items in a folder shared with me as an editor | 🌿 M | 💜 M | 4 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
 | 28 | 📵 [SPN-070](SPN-070.md) Remove a lost device's passkey and sign it out | 🌿 M | 💜 M | 4 | Lower ID | [SPN-045](SPN-045.md), [SPN-047](SPN-047.md) | Approve the PR's screenshots |
 | 29 | 🧷 [SPN-076](SPN-076.md) Share a Doc with its formula sources | 🌿 M | 💜 M | 4 | — | [SPN-047](SPN-047.md) | Approve the sharing flow and PR screenshots |
-| 30 | 📦 [SPN-035](SPN-035.md) Import and export Office files | 🌳 L | 💜 M | 3 | Lower ID | [SPN-047](SPN-047.md) | Approve the import/export screenshots |
-| 31 | ✨ [SPN-051](SPN-051.md) Create new documents while offline | 🌳 L | 💜 M | 3 | Lower ID | [SPN-053](SPN-053.md) | — |
-| 32 | 📱 [SPN-072](SPN-072.md) Edit Docs comfortably on a phone | 🌳 L | 💜 M | 3 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
-| 33 | 🧾 [SPN-075](SPN-075.md) Export Sheets and Docs as PDF without Univer Pro | 🌳 L | 💜 M | 3 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
-| 34 | 🛂 [SPN-079](SPN-079.md) Delegate administration of shared files without server access | 🌳 L | 💜 M | 3 | Higher impact | [SPN-047](SPN-047.md), [SPN-078](SPN-078.md) | Approve the file-role controls and PR screenshots |
-| 35 | 📐 [SPN-060](SPN-060.md) Check design consistency automatically in CI | 🌿 M | 🤍 S | 3 | Lower ID | [SPN-047](SPN-047.md) | — |
-| 36 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 3 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
-| 37 | 🧺 [SPN-071](SPN-071.md) Leave shares and see where my access comes from | 🌿 M | 🤍 S | 3 | — | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
+| 30 | ✨ [SPN-051](SPN-051.md) Create new documents while offline | 🌳 L | 💜 M | 3 | Lower ID | [SPN-053](SPN-053.md) | — |
+| 31 | 📱 [SPN-072](SPN-072.md) Edit Docs comfortably on a phone | 🌳 L | 💜 M | 3 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
+| 32 | 🧾 [SPN-075](SPN-075.md) Export Sheets and Docs as PDF without Univer Pro | 🌳 L | 💜 M | 3 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
+| 33 | 🛂 [SPN-079](SPN-079.md) Delegate administration of shared files without server access | 🌳 L | 💜 M | 3 | Higher impact | [SPN-047](SPN-047.md), [SPN-078](SPN-078.md) | Approve the file-role controls and PR screenshots |
+| 34 | 📐 [SPN-060](SPN-060.md) Check design consistency automatically in CI | 🌿 M | 🤍 S | 3 | Lower ID | [SPN-047](SPN-047.md) | — |
+| 35 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 3 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
+| 36 | 🧺 [SPN-071](SPN-071.md) Leave shares and see where my access comes from | 🌿 M | 🤍 S | 3 | — | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
+| 37 | 📦 [SPN-035](SPN-035.md) Import and export Office files | 🌳 L | 🤍 S | 2 | Lower ID | [SPN-047](SPN-047.md) | Approve the import/export screenshots |
 | 38 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🌳 L | 🤍 S | 2 | — | [SPN-061](SPN-061.md), [SPN-062](SPN-062.md) | Choose redeployment timing for public HTTPS |
