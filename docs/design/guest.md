@@ -21,7 +21,13 @@ links and connection loss are plain paragraphs above it.
 - The [editor header](editor.md#adopted-layout) without account parts: the gem
   (not a link), the document name as plain text, the status cluster, then a
   **View only** or **Guest editor** badge where Share would be. No rail, no
-  breadcrumb and no More menu: versions and exports are account features.
+  breadcrumb and no More menu: versions and native/Office exports are account
+  features. **Export as PDF** (SPN-075) is the exception: a plain button beside
+  the badge downloads the same PDF as for accounts, with current read access.
+  It adds no owner/account identity to the content or PDF metadata. Revocation
+  removes the action and shows the revoked-link state; no printer dialog.
+  This is planned behavior, authorized by the owner in chat on 2026-10-20,
+  decision [#103](https://github.com/mxbaylee/spinel/issues/103).
 - No identity. Collaborators show as generic Guest/Collaborator labels with
   empty avatars and default colours (SPN-016). The connection slot (SPN-042)
   works as for everyone else.
@@ -39,7 +45,7 @@ links and connection loss are plain paragraphs above it.
 
 | Always visible                                       | Behind a menu |
 | ---------------------------------------------------- | ------------- |
-| Name, status cluster, View only / Guest editor badge | Nothing       |
+| Name, status cluster, View only / Guest editor badge, Export as PDF (SPN-075) | Nothing       |
 
 ## Stories
 

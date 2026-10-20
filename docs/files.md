@@ -41,16 +41,28 @@ uses the same layout budgets so a successful native download remains importable;
 it never truncates an oversized file. Decisions [#69](https://github.com/mxbaylee/spinel/issues/69)
 and [#23](https://github.com/mxbaylee/spinel/issues/23), 2026-10-17/18.
 
-For a read-only copy choose **Print / save PDF**, adjust Univer's print options
-if shown, and choose **Save as PDF** in the browser print dialog. Spinel uses the
+Today, for an account read-only copy choose **Print / save PDF**, adjust Univer's
+print options if shown, and choose **Save as PDF** in the browser print dialog. Spinel uses the
 public Univer Pro print plugins as supplied. Printed page limits and watermarks
 depend on the installed license; the export panel explains this before printing.
 Check the output before sharing. A PDF is not an editable backup, and it may not
 include every page under the current license. Decision
 [#70](https://github.com/mxbaylee/spinel/issues/70), 2026-10-18.
 
-Downloads require current read access. Import requires an everyday account and
-an owned destination folder. Operators and signed-out visitors cannot use these
+**Planned in SPN-075:** replace that flow with **Export as PDF**, a direct
+PDF download with complete pages and no watermark. It will be available to
+anyone with current read access: owners, collaborators, account viewers and
+view-only or editing link guests. There will be no Spinel Print action or
+browser print dialog. Guest output must not add owner/account identity; revoked
+access must prevent a new export. PDF is the exception to account-only native
+and Office exports, not permission to download those formats. This consolidates
+retired SPN-073; owner, chat 2026-10-20, decision [#103](https://github.com/mxbaylee/spinel/issues/103).
+Pagination defaults are recorded in decision [#106](https://github.com/mxbaylee/spinel/issues/106).
+Until SPN-075 lands, the limitations and
+account-only UI described above still apply.
+
+Native downloads require current read access. Import requires an everyday
+account and an owned destination folder. Operators and signed-out visitors cannot use these
 routes; a link does not grant dashboard access. Session/access is checked again
 after asynchronous work. Transfers are serialized, including parsing, image
 decoding and response delivery, to bound memory on the 2 GB server. A disconnected

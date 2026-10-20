@@ -81,6 +81,16 @@ Share, Rename, Move or Trash: only the owner can (docs/sharing.md). "Remove from
 my folder" removes the person's filed reference, not the item, so it isn't
 grouped with the destructive items.
 
+## Slides removal before the redesign (SPN-074)
+
+SPN-074 removes Slides entirely before SPN-047. The existing New type selector
+and search type filter will offer only Folder, Sheet and Doc; SPN-048's new menu
+layout is not a prerequisite. Spinel has never been in production, so there is
+no legacy Slides placeholder or compatibility requirement. Capture the changed
+New and search screens in light, dark and phone width for owner approval.
+Owner correction, chat 2026-10-20, decision
+[#104](https://github.com/mxbaylee/spinel/issues/104).
+
 ## Offline (SPN-039, SPN-053, SPN-054, SPN-051, SPN-052)
 
 The words come from [docs/offline.md](../offline.md); this page only places
