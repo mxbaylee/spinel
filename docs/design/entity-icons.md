@@ -38,10 +38,18 @@ name or remove a text type label where it is needed. Decorative SVGs beside a
 sufficient label are hidden from assistive technology; a standalone meaningful
 icon has an accessible type name. A button's name describes its action.
 
-The current New control uses a native type selector: retain that selector and
-place the selected type's facet beside it, updating it when the selection changes.
-Do not attempt SVG inside native `<option>` rows or replace the selector with a
-custom dropdown. Storybook may show a labeled gallery of all three choices.
+The current New control uses a native type selector. A replacement visual type
+picker with facet-and-label choices is allowed; its component-library adoption
+belongs to SPN-047, where the owner selected Base UI (decision #120, chat
+2026-10-20). SPN-077 remains independent and next: integrate artwork into the
+current creation surface and Storybook without waiting for or independently
+rolling out that library. A selected-type facet beside today's selector is a
+valid interim placement, not a permanent restriction on replacing it.
+
+The redesigned picker covers its label, selected/disabled state, keyboard
+navigation, focus return, screen-reader semantics and phone/touch interaction.
+Base UI supplies behavior; the redesign chooses the visual styling with existing
+theme tokens. No Tailwind adoption or wholesale UI migration is implied.
 
 Preserve existing target sizes, focus indicators, control layout and sharing
 behavior. The artwork fits inside the existing control; it does not introduce
