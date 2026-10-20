@@ -114,7 +114,8 @@ same PR.
 ties going to the ticket that unblocks another, then higher impact, then lower
 effort, then lower ID. Each row shows the tie-break that put it ahead of the
 next. Take the first ticket that isn't waiting on an open `depends_on`. Because
-a prerequisite always scores higher, the first row is never waiting.
+a prerequisite always scores higher, the first row is never waiting. Owner
+sequencing in a ticket's Rules still applies: SPN-038 goes last.
 
 Tickets that need owner input still rank normally. Do all the preparation, ask
 once for exactly that input, and work the next ticket while waiting.

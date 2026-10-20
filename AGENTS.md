@@ -32,13 +32,16 @@ that isn't waiting on another is next.
 - **Univer Pro packages** (`@univerjs-pro/*`) are closed source under Univer's
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or
-  watermarks.
+  watermarks. Spinel is moving off Pro so nothing is watermarked: add no new
+  `@univerjs-pro` packages; SPN-059 and SPN-075 remove the rest. Owner, chat
+  2026-10-19.
 - **Code that replaces a Univer package lives in `lib/<name>/`**, so it could be
   published on its own later without extracting it: its own `package.json`
   (private until published), README and tests, one public `index.ts`, and no
   imports from Spinel's `src/`, `web/` or `server/`. Spinel imports it by package
   name. The first ticket to add one sets up the `lib/*` npm workspace and adds
-  `lib` to typecheck, lint, format and test runs. Owner, chat 2026-10-19.
+  `lib` to typecheck, lint, format and test runs, and to both Dockerfile stages
+  (`lib/*/package.json` before `npm ci`). Owner, chat 2026-10-19.
 - **Code copied from Univer Workspace** or any other Apache-2.0 project keeps its
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

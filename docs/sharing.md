@@ -18,7 +18,7 @@ also save document content and upload Doc images. Only owners change sharing,
 rename, move or [trash](trash.md) items, or create children in their folders. Sharing never changes
 ownership or the owner's folder structure. Sheets and Docs use their native
 read-only mode for viewers. Slides keep their empty-document placeholder;
-Spinel dropped Slides (SPN-074).
+Spinel dropped Slides, and SPN-074 stops offering them.
 
 Shared items open at their authenticated direct address. Shared folders show their
 children and have a Refresh folder button to retrieve new additions. My files

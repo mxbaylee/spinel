@@ -40,7 +40,7 @@ Highest score first. Take the first ticket that isn't waiting on another.
 | 28 | 🪪 [SPN-044](SPN-044.md) Give Spinel a favicon and page metadata | 🌱 S | 🤍 S | 4 | Lower ID | — | — |
 | 29 | 🖨️ [SPN-073](SPN-073.md) Print or save a shared document as a PDF as a guest | 🌱 S | 🤍 S | 4 | Lower ID | [SPN-047](SPN-047.md), [SPN-075](SPN-075.md) | Approve the PR's screenshots |
 | 30 | ✂️ [SPN-074](SPN-074.md) Stop offering Slides | 🌱 S | 🤍 S | 4 | — | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
-| 31 | 🧩 [SPN-033](SPN-033.md) Embed a live spreadsheet range in a document or deck | 🌳 L | 💜 M | 3 | Lower ID | — | — |
+| 31 | 🧩 [SPN-033](SPN-033.md) Embed a live spreadsheet range in a Doc | 🌳 L | 💜 M | 3 | Lower ID | — | — |
 | 32 | 📦 [SPN-035](SPN-035.md) Import and export Office files | 🌳 L | 💜 M | 3 | Lower ID | — | — |
 | 33 | ✨ [SPN-051](SPN-051.md) Create new documents while offline | 🌳 L | 💜 M | 3 | Lower ID | [SPN-053](SPN-053.md) | — |
 | 34 | 📱 [SPN-072](SPN-072.md) Edit Docs comfortably on a phone | 🌳 L | 💜 M | 3 | Higher impact | [SPN-047](SPN-047.md) | Approve the PR's screenshots |

@@ -248,6 +248,25 @@ test('ranking orders every open ticket by score and applies tie-breaks in order'
   assert.deepEqual(ranked.at(-1)?.waiting, ['SPN-001']);
 });
 
+test('a prerequisite outranks a higher-scoring dependent, so the first row is ready', () => {
+  const b = backlog([
+    ticket('SPN-001', { impact_owner: 'S', effort: 'L' }), // own 2
+    ticket('SPN-002', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-001]', emoji: '🧭' }), // own 6
+  ]);
+  const ranked = rank(b.tickets, 'SPN');
+  assert.deepEqual(
+    ranked.map((r) => [r.ticket.id, r.score, r.waiting]),
+    [
+      ['SPN-001', 7, []],
+      ['SPN-002', 6, ['SPN-001']],
+    ],
+  );
+});
+
+test('an empty backlog says so', () => {
+  assert.match(renderIndex(backlog([])), /## Open tickets \(0\)\n\nThe backlog is empty\./);
+});
+
 test('the index lists every open ticket in pick order', () => {
   const b = backlog([
     ticket('SPN-001', { owner_input: '"Tap the passkey prompt"' }),
