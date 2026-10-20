@@ -2,6 +2,7 @@ import express from 'express';
 import { socialPreviewRoutes } from '../src/server/socialPreview.ts';
 import { escapeMarkup } from '../src/shared/markup.ts';
 import type { Request } from 'express';
+import { mcpRoutes } from '../src/server/mcp/routes.ts';
 import { pwaRoutes } from '../src/server/pwa.ts';
 import { guestRoutes } from '../src/server/workspace/guestRoutes.ts';
 import { documentIdentity } from '../src/server/collaboration/identity.ts';
@@ -56,6 +57,7 @@ export async function createApp(options: AppOptions) {
     const origin = options.origin ?? 'http://localhost:3000';
     collaboration = new CollaborationStore(workspace, options.databasePath);
     history = new HistoryStore(workspace, collaboration);
+    app.use('/mcp', mcpRoutes(workspace, collaboration, origin));
     realtime = attachCollaboration(server, workspace, collaboration, origin);
     workspace.links.recover();
     app.use(guestRoutes(workspace, collaboration, origin, (id) => realtime!.privacyChanged(id)));

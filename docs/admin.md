@@ -59,3 +59,12 @@ of document ownership on disable. [Decision #58](https://github.com/mxbaylee/spi
 records credential attribution, legacy-session handling and operator lockout
 protection: safe revocation for the Operator, retained private documents for the
 Owner, independent access for Collaborators and no new privilege for Link guests.
+
+## Assistant access tokens
+
+The admin panel lists personal assistant-token metadata (account and token names,
+creation, last use and revoked status). Secrets and document contents are never
+shown. Each everyday account creates and revokes its own tokens from Settings;
+disabling the account also blocks its tokens. Admin accounts cannot create a
+document token. See [the MCP guide](mcp.md), decision
+[#111](https://github.com/mxbaylee/spinel/issues/111).

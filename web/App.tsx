@@ -14,6 +14,7 @@ import { signSetupProof } from './setup.ts';
 import { api } from './api.ts';
 import { BackupStatus } from './BackupStatus.tsx';
 import { AdminUsers } from './AdminUsers.tsx';
+import { AccessTokens } from './AccessTokens.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { PinsProvider, PinnedSidebar } from './Pins.tsx';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
@@ -384,6 +385,7 @@ export function App() {
                     Add a passkey
                   </button>
                 </section>
+                {!user.isAdmin && <AccessTokens />}
               </>
             ) : user.isAdmin ? (
               <>
@@ -395,6 +397,7 @@ export function App() {
                     account for documents.
                   </p>
                   <AdminUsers currentId={user.id} />
+                  <AccessTokens admin />
                   <BackupStatus />
                 </section>
               </>

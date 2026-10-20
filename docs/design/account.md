@@ -53,3 +53,14 @@ single-purpose pages with one heading, one explanation and one primary button.
 `Settings/ThemeSettings`, `Shell/GemLogo` (the sign-in card's mark). The rail
 gets `Shell/Rail` when SPN-045 extracts it; profile fields get stories with
 SPN-036.
+
+## Assistant access (SPN-034)
+
+Online everyday-account settings add an **Assistant access tokens** card after passkeys.
+It uses the existing labelled field/button/list pattern: name, **Create token**,
+and token rows with created/last-used status and **Revoke**. The once-only secret
+reveal and **Copy token** with manual-copy fallback reuse the invite-link pattern.
+Show the endpoint and what access the token grants in plain text. Loading, empty,
+busy, error, revealed and revoked states have `Settings/AccessTokens` stories.
+Admins and offline settings do not offer token creation. See [MCP](../mcp.md),
+decision [#111](https://github.com/mxbaylee/spinel/issues/111).
