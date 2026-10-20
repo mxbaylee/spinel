@@ -6,6 +6,12 @@ export function parseBodySelection(selection: string) {
   return Number.isSafeInteger(startOffset) &&
     Number.isSafeInteger(endOffset) &&
     startOffset <= endOffset
-    ? { startOffset, endOffset, segmentId: '', segmentPage: -1 }
+    ? {
+        startOffset,
+        endOffset,
+        collapsed: startOffset === endOffset,
+        segmentId: '',
+        segmentPage: -1,
+      }
     : null;
 }

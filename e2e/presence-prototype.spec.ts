@@ -94,7 +94,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       const label = page.locator('[data-presence-prototype="label"]').filter({ hasText: 'Iris' });
       await expect(label).toBeVisible({ timeout: 15_000 });
       await expect(label.locator('[data-profile-icon="flower"]')).toBeVisible();
-      // Native remote labels must be off: this test uses only the replacement.
+      // Inspect the screenshots for canvas colour, placement and duplicate
+      // native cursors; DOM visibility alone cannot prove canvas rendering.
       await mkdir('test-results/theme-screenshots', { recursive: true });
       for (const theme of ['light', 'dark'] as const) {
         await page.evaluate((value) => {
@@ -114,6 +115,26 @@ for (const kind of ['sheet', 'doc'] as const) {
         path: `test-results/theme-screenshots/presence-${kind}-phone-${info.project.name}.png`,
         fullPage: true,
       });
+      await page.setViewportSize({ width: 1440, height: 1100 });
+      if (kind === 'doc') {
+        await other.keyboard.press('ArrowRight');
+        await expect(
+          page
+            .getByRole('group', { name: 'People in this document' })
+            .getByRole('button', { name: 'Go to Iris', exact: true }),
+        ).toHaveAttribute('data-selection', '28:28:1:TEXT::-1');
+        await expect(label).toBeVisible();
+        await page.screenshot({
+          path: `test-results/theme-screenshots/presence-doc-caret-${info.project.name}.png`,
+          fullPage: true,
+        });
+        await page.locator('.univer-container').hover();
+        await page.mouse.wheel(0, 100);
+        await page.screenshot({
+          path: `test-results/theme-screenshots/presence-doc-scroll-${info.project.name}.png`,
+          fullPage: true,
+        });
+      }
       // Both peers can still edit after replacing the cursor UI.
       if (kind === 'sheet') {
         await select(page, 'D4');

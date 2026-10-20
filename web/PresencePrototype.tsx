@@ -74,12 +74,17 @@ export async function startPresencePrototype(univer: Univer, api: FUniver, id: s
       if (member.name === 'Guest' || member.name === 'Collaborator') continue;
       const alternate = member.name.includes('Moss');
       const color = palettes[getTheme()][`fill-${alternate ? 'success' : 'info'}-strong-bg`];
-      drawings.set(
-        member.memberID,
-        drawPresence(univer, api, id, selection, color, () => (
-          <PrototypeLabel name={member.name} alternate={alternate} />
-        )),
-      );
+      try {
+        drawings.set(
+          member.memberID,
+          drawPresence(univer, api, id, selection, color, () => (
+            <PrototypeLabel name={member.name} alternate={alternate} />
+          )),
+        );
+      } catch (error) {
+        // A stale remote range must not interrupt the local editor or other peers.
+        console.warn('Presence prototype could not draw a remote range', error);
+      }
     }
   };
   const membership = api.getCollaboration().subscribeCollaborators(id, (value) => {
@@ -87,8 +92,16 @@ export async function startPresencePrototype(univer: Univer, api: FUniver, id: s
     render();
   });
   const events = session.event$.subscribe((event) => {
-    if (event.eventID !== CollaborationEvent.UPDATE_CURSOR || event.data.unitID !== id) return;
-    selections.set(event.data.memberID, event.data.selection);
+    if (event.eventID !== CollaborationEvent.UPDATE_CURSOR || !('data' in event)) return;
+    const data = event.data as { unitID?: unknown; memberID?: unknown; selection?: unknown };
+    if (
+      data.unitID !== id ||
+      typeof data.memberID !== 'string' ||
+      typeof data.selection !== 'string' ||
+      data.selection.length > 4096
+    )
+      return;
+    selections.set(data.memberID, data.selection);
     render();
   });
   const theme = watchTheme(render);
