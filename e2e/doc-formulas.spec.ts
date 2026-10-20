@@ -26,8 +26,8 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   const auth = new AuthStore(db),
     workspace = new WorkspaceStore(auth),
     sheets = new SheetStore(workspace);
-  const owner = auth.createUser(`Formula owner ${info.testId}`);
-  const friend = auth.createUser(`Formula friend ${info.testId}`);
+  const owner = auth.createUser('Formula owner');
+  const friend = auth.createUser('Formula friend');
   const host = workspace.create(owner.id, { name: 'Live report', kind: 'doc', parentId: null });
   const budget = workspace.create(owner.id, { name: 'Budget', kind: 'sheet', parentId: null });
   const forecast = workspace.create(owner.id, { name: 'Forecast', kind: 'sheet', parentId: null });
@@ -105,8 +105,8 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       return original.call(this, text, ...args);
     };
     window.print = () => {
-      // Capture the already-prepared print surface before browser print events.
-      // Native controller tests verify access clearing; this is actual visual evidence.
+      // Match the browser event order used by the existing portable-export check.
+      window.dispatchEvent(new Event('beforeprint'));
       const clone = document.documentElement.cloneNode(true) as HTMLElement;
       const originalCanvases = [...document.querySelectorAll('canvas')];
       clone.querySelectorAll('canvas').forEach((canvas, index) => {
@@ -124,7 +124,6 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       void (
         window as unknown as { captureFormulaPrint: (html: string) => Promise<void> }
       ).captureFormulaPrint(clone.outerHTML);
-      window.dispatchEvent(new Event('beforeprint'));
       window.dispatchEvent(new Event('afterprint'));
     };
   });
@@ -323,6 +322,27 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       await printed.setContent(printHtml, { waitUntil: 'networkidle' });
       await printed.evaluate(() =>
         Promise.all([...document.images].map((image) => image.decode().catch(() => {}))),
+      );
+      console.log(
+        'Formula print surface:',
+        await printed.evaluate(() =>
+          [...document.images].map((image) => ({
+            width: image.naturalWidth,
+            height: image.naturalHeight,
+            bounds: image.getBoundingClientRect().toJSON(),
+            display: getComputedStyle(image).display,
+            ancestors: [image.parentElement, image.parentElement?.parentElement].map((node) =>
+              node
+                ? {
+                    tag: node.tagName,
+                    className: node.className,
+                    display: getComputedStyle(node).display,
+                    visibility: getComputedStyle(node).visibility,
+                  }
+                : null,
+            ),
+          })),
+        ),
       );
       const pdf = await printed.pdf({
         path: info.outputPath('formulas-export.pdf'),

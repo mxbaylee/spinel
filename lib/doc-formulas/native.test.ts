@@ -347,14 +347,24 @@ describe('native formula lifecycle', () => {
       kind: 'scalar',
       value: 42,
     }));
-    const { controller, states, print } = fixture(evaluate);
+    const { controller, states, print, metrics } = fixture(evaluate);
     await controller.refresh();
+    const source: IDocumentLayoutSnapshot = {
+      id: 'doc',
+      documentStyle: {},
+      body: formulaBody('formula', definition),
+    };
+    const project = hooks.presentation.mock.calls[0]![1].getSnapshot;
+    expect(project(source)).not.toBe(source);
     await print();
+    expect(project(source)).toBe(source);
+    expect(metrics()).toEqual([undefined, undefined, undefined]);
     await controller.refresh();
     expect(evaluate).toHaveBeenCalledTimes(1);
     expect(states.at(-1)?.[0]?.result).toEqual({ ok: false, reason: 'unavailable' });
     await controller.resume();
     expect(evaluate).toHaveBeenCalledTimes(2);
+    expect(project(source)).not.toBe(source);
   });
   it('does not restore an aborted private result during print preparation', async () => {
     const pending = deferred();

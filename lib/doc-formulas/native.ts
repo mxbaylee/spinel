@@ -186,7 +186,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
   const createPresentation = () =>
     registerDocumentLayoutPresentation(document, {
       getSnapshot: (snapshot) =>
-        !docFormulas(snapshot.body).length
+        printPaused || !docFormulas(snapshot.body).length
           ? snapshot
           : {
               ...snapshot,
@@ -236,7 +236,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
     .intercept(DOC_INTERCEPTOR_POINT.CUSTOM_RANGE, {
       priority: 100,
       handler: (range, context, next) => {
-        if (!range || !formulaFromRange(range, context.body)) return next(range);
+        if (printPaused || !range || !formulaFromRange(range, context.body)) return next(range);
         const dimensions = geometry(range.rangeId);
         return next({
           ...range,
@@ -330,6 +330,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
     return refresh();
   };
   const beforePrint = () => {
+    // The print renderer gets ordinary source text, independent of viewer-only glyph keys.
     printPaused = true;
     clear();
   };
