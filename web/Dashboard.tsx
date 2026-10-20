@@ -595,7 +595,8 @@ export function Dashboard({
                         <p className="empty-state">
                           <GemLogo size={52} />
                           This folder is empty.
-                          {(!current || current.access === 'owner') &&
+                          {!local &&
+                            (!current || current.access === 'owner') &&
                             ' Choose New to add a folder or document.'}
                         </p>
                       )

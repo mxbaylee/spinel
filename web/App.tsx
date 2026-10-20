@@ -20,6 +20,7 @@ import { OfflineUnreachable } from './OfflineStatus.tsx';
 import { Rail } from './Rail.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
+import { within } from './offline/shell.ts';
 import type { LocalStart } from './offline/localStart.ts';
 import {
   preparedAccount,
@@ -117,7 +118,8 @@ export function App() {
         }
         const { user } = await api<{ user: User }>('session');
         // Claim the device first: the dashboard reads the pointer when it mounts.
-        await claimDevice(user).catch(() => {});
+        // IndexedDB can fail to answer at all; never hold sign-in on it.
+        await within(claimDevice(user), 3000, 'Offline data did not answer.').catch(() => {});
         setUser(user);
         if (settings) await refreshKeys();
       } catch (failure) {

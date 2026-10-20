@@ -1,7 +1,7 @@
 import { PREPARE_SHELL } from '../../src/shared/offlineShell.ts';
 import type { PrepareShellReply } from '../../src/shared/offlineShell.ts';
 
-function within<T>(promise: Promise<T>, ms: number, message: string) {
+export function within<T>(promise: Promise<T>, ms: number, message: string) {
   let timer: ReturnType<typeof setTimeout> | undefined;
   return Promise.race([
     promise,

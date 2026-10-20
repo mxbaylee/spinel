@@ -39,7 +39,8 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
   try {
     const snapshot = await sheetImageFixture();
     (snapshot.sheets.tab.cellData as Record<number, unknown>)[4] = {
-      0: { f: '=IMAGE("https://tracker.invalid/pixel.png")', v: 'Tracked' },
+      // No stored value: the default mode would compute it on open.
+      0: { f: '=IMAGE("https://tracker.invalid/pixel.png")' },
     };
     const imported = await context.request.post('/api/items/import', {
       headers: { Origin: baseURL! },
@@ -205,6 +206,8 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     await expect
       .poll(() => page.evaluate(() => localStorage.getItem('spinel.offline.account')))
       .toBe(user.id);
+    // Let the background refresh finish before the session ends under it.
+    await page.waitForLoadState('networkidle');
 
     // A session the server ended (a 401) stops offline access on this device,
     // so the next offline launch opens no local data.

@@ -120,7 +120,13 @@ export function useOfflineDownloads(
         // Keep the newest catalog; a refresh that failed meanwhile falls back
         // to the one there at the click, so a prepared device always has one.
         const current = latestCatalog.current() ?? atClick!;
-        await store.saveCatalog({ id: user.id, name: user.name }, current);
+        try {
+          await store.saveCatalog({ id: user.id, name: user.name }, current);
+        } catch (error) {
+          // A copy with no file list can't open offline; don't keep it.
+          await store.remove(item.id).catch(() => {});
+          throw error;
+        }
         setPreparedAccount(user.id);
         set(download);
       });

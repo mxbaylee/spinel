@@ -52,6 +52,12 @@ const forecast = entry(9, 'Shared forecast', 'sheet', {
   sharedAt: now - 9 * day,
 });
 const shared = [roadmap, forecast];
+// Shared, never opened online on this device: local mode has no saved view.
+const photos = entry(11, 'Family photos', 'folder', {
+  access: 'editor',
+  ownerName: 'Alex Kim',
+  sharedAt: now - 5 * day,
+});
 
 const empty = {
   'GET /api/items': { items: [] },
@@ -158,7 +164,7 @@ const local: LocalStart = {
   catalog: {
     syncedAt: synced,
     items,
-    shared,
+    shared: [...shared, photos],
     pins: [budget],
     views: { [household.id]: [household, finance, mealPlan] },
   },
@@ -199,7 +205,8 @@ export const LocalNeedsConnection: Story = {
 export const LocalFolderNotOpened: Story = {
   ...LocalMode,
   play: async ({ canvasElement }) => {
-    const sidebar = await within(canvasElement).findByRole('complementary', { name: 'Folders' });
-    await userEvent.click(await within(sidebar).findByRole('button', { name: work.name }));
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
+    await userEvent.click(await canvas.findByRole('button', { name: `Open ${photos.name}` }));
   },
 };
