@@ -143,6 +143,15 @@ for (const kind of ['sheet', 'doc'] as const) {
         });
       }
       await page.setViewportSize({ width: 390, height: 844 });
+      await expect
+        .poll(async () => {
+          const marker = await label.boundingBox();
+          const editor = await page.locator('.univer-container').boundingBox();
+          return (
+            !!marker && !!editor && marker.y >= editor.y && marker.y < editor.y + editor.height
+          );
+        })
+        .toBe(true);
       await page.screenshot({
         path: `test-results/theme-screenshots/presence-${kind}-phone-${info.project.name}.png`,
         fullPage: true,

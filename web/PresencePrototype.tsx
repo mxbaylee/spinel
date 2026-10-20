@@ -105,6 +105,12 @@ export async function startPresencePrototype(univer: Univer, api: FUniver, id: s
     render();
   });
   const theme = watchTheme(render);
+  let resizeFrame = 0;
+  const resize = () => {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(render);
+  };
+  window.addEventListener('resize', resize);
   // The disabled SDK UI normally publishes these. Reuse its public wire event,
   // without adding profile data to the guest-sensitive presence payload.
   let previous = '';
@@ -140,6 +146,8 @@ export async function startPresencePrototype(univer: Univer, api: FUniver, id: s
     events.unsubscribe();
     membership.dispose();
     theme();
+    window.removeEventListener('resize', resize);
+    cancelAnimationFrame(resizeFrame);
     clear();
   };
 }
