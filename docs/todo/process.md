@@ -231,6 +231,19 @@ Grooming isn't a ticket and doesn't count toward the seven.
   **Playwright smoke** CI jobs are required. Playwright smoke builds the app and
   checks development and production servers (SPN-001).
 
+Documentation-only CI keeps Backlog, Pull request and Lint validation, while
+Typecheck, Unit tests, Playwright smoke and Build Storybook report explicitly
+that application validation is not applicable. Storybook still builds and deploys
+on main pushes/manual runs so a docs push cannot displace a queued code deploy. The allowlist is Markdown under
+`docs/`, root `README.md`, `AGENTS.md`, `THIRD-PARTY-NOTICES.md`, and exactly
+`docs/todo/backlog.json` (which still gets backlog validation). Other JSON,
+executable mockups, code, tests, dependencies, workflows and unknown paths run
+the full suite. Classification uses the complete PR/push diff with both sides
+of renames; uncertain ranges and manual runs use full validation. A failed or
+cancelled classification never passes the browser gate. This is an applicability
+check, not a waiver for failures. Owner, chat 2026-10-20,
+[decision #121](https://github.com/mxbaylee/spinel/issues/121).
+
 Owner setup, once, in the repository settings:
 
 1. General → Pull Requests: allow only squash merging; default commit message
