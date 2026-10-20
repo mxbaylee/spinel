@@ -8,6 +8,7 @@ import { escapeMarkup } from '../shared/markup.ts';
 const palette = palettes.light;
 const base = fileURLToPath(new URL('../ui/social-preview.png', import.meta.url));
 const font = fileURLToPath(new URL('../ui/fonts/AtkinsonHyperlegible-Bold.ttf', import.meta.url));
+const emojiFont = fileURLToPath(new URL('../ui/fonts/NotoColorEmoji.ttf', import.meta.url));
 
 export async function renderSharedCard(item: { name: string; kind: 'doc' | 'sheet' }) {
   // A bounded title area; the full title remains in HTML metadata.
@@ -17,25 +18,26 @@ export async function renderSharedCard(item: { name: string; kind: 'doc' | 'shee
   }).join('');
   const characters = Array.from(new Intl.Segmenter().segment(text), (part) => part.segment);
   const name = characters.length > 64 ? characters.slice(0, 63).join('') + '…' : text;
-  const title = await sharp({
-    text: {
-      text: `<span foreground="${palette['sp-text']}">${escapeMarkup(name)}</span>`,
-      font: 'Atkinson Hyperlegible Bold 72',
-      fontfile: font,
-      width: 680,
-      height: 180,
-      rgba: true,
-      wrap: 'word-char',
-    },
-  })
-    .png()
-    .toBuffer();
   const kind = await sharp({
     text: {
       text: `<span foreground="${palette['sp-muted']}">${item.kind === 'sheet' ? 'Spreadsheet' : 'Document'} · Shared on Spinel</span>`,
       font: 'Atkinson Hyperlegible Bold 28',
       fontfile: font,
       rgba: true,
+    },
+  })
+    .png()
+    .toBuffer();
+  // Register both bundled fonts before title layout, including emoji fallback.
+  const title = await sharp({
+    text: {
+      text: `<span foreground="${palette['sp-text']}">${escapeMarkup(name)}</span>`,
+      font: 'Atkinson Hyperlegible,Noto Color Emoji Bold 72',
+      fontfile: emojiFont,
+      width: 680,
+      height: 180,
+      rgba: true,
+      wrap: 'word-char',
     },
   })
     .png()

@@ -27,9 +27,11 @@ test('public identity assets load and preview clearly in light, dark and phone l
     },
   ];
   try {
-    for (const [kind, name] of [
-      ['doc', 'Autumn recipes'],
-      ['sheet', 'Our next adventure'],
+    for (const [kind, label, name] of [
+      ['doc', 'doc', 'Autumn recipes'],
+      ['sheet', 'sheet', 'Our next adventure'],
+      ['doc', 'emoji', '🥕 Autumn recipes 🍂'],
+      ['sheet', 'long-word', 'Supercalifragilisticexpialidocious'.repeat(5)],
     ] as const) {
       const item = workspace.create(owner.id, { kind, name, parentId: null });
       const link = workspace.links.begin(item.id, 'viewer');
@@ -38,7 +40,7 @@ test('public identity assets load and preview clearly in light, dark and phone l
       await expect(page).toHaveTitle(`${name} — Spinel`);
       const description = await page.locator('meta[name="description"]').getAttribute('content');
       cards.push({
-        label: kind,
+        label,
         image: (await page.locator('meta[property="og:image"]').getAttribute('content'))!,
         title: name,
         description: description!,

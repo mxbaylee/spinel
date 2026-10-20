@@ -106,3 +106,19 @@ test('the renderer refuses excess concurrent work and releases slots after failu
   expect((await second).status).toBe(500);
   expect((await fetch(url)).status).toBe(200);
 });
+
+test('emoji titles contain colored glyphs instead of missing-character boxes', async () => {
+  const png = await renderSharedCard({ name: '🥕', kind: 'doc' });
+  const { data, info } = await sharp(png)
+    .extract({ left: 80, top: 210, width: 680, height: 180 })
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  let orangePixels = 0;
+  for (let offset = 0; offset < data.length; offset += info.channels) {
+    const [red, green, blue] = data.subarray(offset, offset + 3);
+    if (red > 160 && green > 50 && green < 180 && blue < 80) orangePixels++;
+  }
+  // A carrot needs orange pixels; plain text or a missing-glyph box has none.
+  expect(orangePixels).toBeGreaterThan(100);
+});

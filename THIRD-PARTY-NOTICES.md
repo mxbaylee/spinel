@@ -13,7 +13,11 @@ ship with them.
 The unmodified `src/ui/fonts/AtkinsonHyperlegible-Bold.ttf` comes from
 [Google Fonts at 95f4904](https://github.com/google/fonts/tree/95f4904fc8bcf26d3420fe315560c96417c6dec7/ofl/atkinsonhyperlegible).
 Its SIL Open Font License 1.1 and copyright are retained in `src/ui/fonts/OFL.txt`.
-It supplies server-rendered shared-card text only.
+It supplies server-rendered shared-card text only. The unmodified
+`src/ui/fonts/NotoColorEmoji.ttf` comes from
+[Google Noto Emoji v2.051](https://github.com/googlefonts/noto-emoji/tree/6202fe7c20dd5e1727a4c3c01604edc176c576da/fonts),
+with its SIL Open Font License 1.1 and copyright in `src/ui/fonts/NotoEmoji-OFL.txt`.
+It supplies server-rendered title emoji on hosts without system fonts.
 
 Code from [mxbaylee/circus-health](https://github.com/mxbaylee/circus-health) isn't listed:
 Baylee Schmeisser, Spinel's owner, wrote it.

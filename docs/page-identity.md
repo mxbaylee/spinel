@@ -46,7 +46,10 @@ See [Sharing](sharing.md) for the document permission boundary.
 gem/palette. Commit the PNG after visual review; its generator uses the machine's
 Arial/Helvetica/sans-serif fallback. Personalized cards reuse that artwork and
 render a bounded title/type with existing Sharp and a bundled OFL-licensed
-[Atkinson Hyperlegible font](../src/ui/fonts/README.md). No browser font changes,
+[Atkinson Hyperlegible and Noto Color Emoji fonts](../src/ui/fonts/README.md).
+Titles wrap within a fixed area and shorten to 64 grapheme clusters with an
+ellipsis, preserving whole emoji sequences. Full HTML titles are unchanged.
+No browser font changes,
 external rendering service or new npm package is required. Native image rendering
 is capped at two concurrent requests, with no unbounded queue or per-link cache.
 
