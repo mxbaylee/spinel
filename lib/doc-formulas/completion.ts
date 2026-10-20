@@ -68,7 +68,7 @@ export function completeFormula(
     }
     if (!quoted && '=,+-*/(){};'.includes(before[at]!)) start = at + 1;
   }
-  if (string) return { options: [] };
+  if (string || (!quoted && /[)}]\s*$/.test(before))) return { options: [] };
   while (before[start] === ' ') start++;
   const token = before.slice(start),
     parts: string[] = [];

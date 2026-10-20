@@ -59,7 +59,8 @@ than 100,000 rows or 1,024 columns. Results are limited to 30 rows, 12 columns,
 
 A disposable worker has a five-second deadline and a 256 MiB old-generation
 heap limit. One calculation/materialization request is admitted at a time;
-there is no result cache or unbounded queue. A timeout terminates the worker,
+there is no result cache or unbounded queue. Clients briefly retry busy admission
+with a bounded, cancellable wait; authorization failures are not retried. A timeout terminates the worker,
 including synchronous calculation. Access and source generations are checked
 again after asynchronous work.
 

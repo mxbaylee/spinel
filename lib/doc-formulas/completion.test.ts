@@ -29,6 +29,17 @@ describe('readable reference completion', () => {
       completeFormula('=Budget.Summary.A1', 18, sources, sheets, 'budget-one').options,
     ).toEqual([]);
   });
+  it('does not offer another source after a completed function or array', () => {
+    for (const expression of [
+      '=SUM(Budget.Summary.A1,Forecast.Summary.A1)',
+      '={1,2;3,4}',
+      '=SUM(1,2) ',
+    ]) {
+      expect(completeFormula(expression, expression.length, sources, sheets).options).toEqual([]);
+    }
+    const continued = '=SUM(1,2)+';
+    expect(completeFormula(continued, continued.length, sources, sheets).options).not.toEqual([]);
+  });
   it('moves explicit IDs through unrelated text edits and drops bindings when their text is edited', () => {
     const binding = { start: 1, end: 18, itemId: 'budget-two', sheetId: 'summary', range: 'A1' };
     expect(moveFormulaBindings('=Budget.Summary.A1', '=SUM(Budget.Summary.A1', [binding])).toEqual([

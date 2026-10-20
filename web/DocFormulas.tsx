@@ -358,70 +358,74 @@ export function FormulaDialog({
           void run(true);
         }}
       >
-        <label>
-          Formula
-          <input
-            ref={input}
-            autoFocus
-            autoComplete="off"
-            role="combobox"
-            aria-autocomplete="list"
-            aria-expanded={showSuggestions}
-            aria-controls={suggestionId}
-            aria-activedescendant={showSuggestions ? `${suggestionId}-${suggestion}` : undefined}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            onSelect={(event) => setCursor(event.currentTarget.selectionStart ?? expression.length)}
-            onKeyDown={(event) => {
-              if (!showSuggestions) return;
-              if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                event.preventDefault();
-                setSuggestion(
-                  (value) =>
-                    (value + (event.key === 'ArrowDown' ? 1 : completion.options.length - 1)) %
-                    completion.options.length,
-                );
-              } else if (event.key === 'Enter') {
-                event.preventDefault();
-                choose(completion.options[Math.min(suggestion, completion.options.length - 1)]!);
-              } else if (event.key === 'Escape') {
-                event.preventDefault();
-                event.stopPropagation();
-                setFocused(false);
+        <div className="formula-input">
+          <label>
+            Formula
+            <input
+              ref={input}
+              autoFocus
+              autoComplete="off"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded={showSuggestions}
+              aria-controls={suggestionId}
+              aria-activedescendant={showSuggestions ? `${suggestionId}-${suggestion}` : undefined}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              onSelect={(event) =>
+                setCursor(event.currentTarget.selectionStart ?? expression.length)
               }
-            }}
-            spellCheck={false}
-            required
-            maxLength={FORMULA_LIMITS.expression}
-            value={expression}
-            onChange={(event) => update(event.target.value)}
-            disabled={busy}
-            aria-describedby="formula-syntax"
-          />
-        </label>
-        <ul
-          id={suggestionId}
-          role="listbox"
-          aria-label="Formula suggestions"
-          className="formula-suggestions"
-          hidden={!showSuggestions}
-        >
-          {completion.options.map((option, index) => (
-            <li key={`${option.source.itemId}-${option.label}`} role="presentation">
-              <button
-                type="button"
-                role="option"
-                id={`${suggestionId}-${index}`}
-                aria-selected={index === suggestion}
-                tabIndex={-1}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => choose(option)}
-              >
-                {option.label}
-              </button>
-            </li>
-          ))}
-        </ul>
+              onKeyDown={(event) => {
+                if (!showSuggestions) return;
+                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                  event.preventDefault();
+                  setSuggestion(
+                    (value) =>
+                      (value + (event.key === 'ArrowDown' ? 1 : completion.options.length - 1)) %
+                      completion.options.length,
+                  );
+                } else if (event.key === 'Enter') {
+                  event.preventDefault();
+                  choose(completion.options[Math.min(suggestion, completion.options.length - 1)]!);
+                } else if (event.key === 'Escape') {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setFocused(false);
+                }
+              }}
+              spellCheck={false}
+              required
+              maxLength={FORMULA_LIMITS.expression}
+              value={expression}
+              onChange={(event) => update(event.target.value)}
+              disabled={busy}
+              aria-describedby="formula-syntax"
+            />
+          </label>
+          <ul
+            id={suggestionId}
+            role="listbox"
+            aria-label="Formula suggestions"
+            className="formula-suggestions"
+            hidden={!showSuggestions}
+          >
+            {completion.options.map((option, index) => (
+              <li key={`${option.source.itemId}-${option.label}`} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  id={`${suggestionId}-${index}`}
+                  aria-selected={index === suggestion}
+                  tabIndex={-1}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => choose(option)}
+                >
+                  {option.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
         <p id="formula-syntax" className="formula-hint">
           Start with =. Try <code>=Budget.Summary.A1</code>,{' '}
           <code>=SUM(Budget.Summary.A1, Forecast.Summary.A2)</code>, or <code>={'{1,2;3,4}'}</code>.
