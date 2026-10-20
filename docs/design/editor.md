@@ -1,7 +1,7 @@
 # Editor chrome
 
 SPN-049 builds this default layout and theatre mode. It applies to Sheets and
-Docs, and to Slides when SPN-009 lands.
+Docs.
 
 ## How others do it
 
@@ -42,8 +42,7 @@ status line grows when a message or Retry appears, which moves the sheet
 - **Status cluster,** right after the title: the save slot (SPN-043) and the
   connection slot (SPN-042), each following
   [status changes never move the layout](README.md#status-changes-never-move-the-layout).
-  SPN-053 adds local-save states to the connection slot; SPN-013 adds a queue
-  position there too.
+  SPN-053 adds local-save states to the connection slot.
 - **Right:** collaborators (up to three avatars, then "+n", with names in a
   popover), then **Share** (primary, owners only) or a **View only** badge, then
   the More menu.
@@ -62,9 +61,6 @@ status line grows when a message or Retry appears, which moves the sheet
   and the canvas that reserves one line, so the page doesn't move when it
   appears. The same slot holds the Doc help line ("Click the page to write. Type
   / for commands."), which the error replaces while shown.
-- **Slides** (SPN-009) adds **Present** as a plain button left of Share. It is
-  the deck's most frequent action, so it isn't in More. Presenting fills the
-  screen; Esc exits, as in theatre mode; arrows and taps move between slides.
 
 ### Always visible / behind a menu
 
@@ -75,7 +71,6 @@ status line grows when a message or Retry appears, which moves the sheet
 | Collaborator avatars (max 3 + n)              | Avatar popover → names                                    |
 | Share (owner) or View only                    | Share dialog ([sharing.md](sharing.md))                   |
 | Univer's toolbar                              | Fill presets (until SPN-050)                              |
-| Present (Slides only)                         |                                                           |
 | Help line or inline error slot (Docs)         |                                                           |
 
 ## Theatre mode (SPN-049)
@@ -99,4 +94,4 @@ collaborators and Share move into More. No other phone-specific chrome.
 
 `Editor/Collaborators`, `Editor/FillPresets`, `Editor/VersionNames`,
 `Editor/FileExports`. `SheetEditor` and `DocEditor` boot Univer, so their layout
-is checked by Playwright screenshots (SPN-047), not stories.
+is checked by Playwright screenshots (SPN-060), not stories.

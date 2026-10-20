@@ -63,7 +63,7 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
 - **Folder actions** (Rename, Move, Share, Refresh folder, Trash) are the More
   menu next to the breadcrumb title, the same items as the folder's row menu.
 - **Grid view:** not adopted. With about two people's documents, a list is
-  enough; revisit only if Slides thumbnails land (SPN-009).
+  enough.
 
 ### Always visible / behind a menu
 

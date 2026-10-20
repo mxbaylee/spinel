@@ -26,8 +26,7 @@ Resume a relevant unfinished PR first, rechecking its evidence against its head.
 Otherwise branch from current `main`, using `codex/<ticket-and-topic>`.
 
 Take the highest-ranked eligible ticket, honoring explicit owner sequencing in its
-Rules: SPN-035 is post-production and SPN-009 is last, even when a score tie would
-place it earlier. These are scope/timing constraints, not new product dependencies.
+Rules: SPN-038 comes last, even when a score tie would place it earlier. These are scope/timing constraints, not new product dependencies.
 After each merge, fetch main and pick again; do not preselect a fixed queue. An
 explicit owner-requested ticket takes priority for that run. If seven tickets
 have landed since grooming, do the required grooming PR first, with the same
@@ -36,6 +35,9 @@ review and CI gates.
 When a ticket needs owner input or verification, prepare everything independent
 of that input, ask once with the decision issue or exact verification steps, and
 save a draft PR/checkpoint. Continue with the next eligible ticket while waiting.
+A UI PR waits on the owner's approval of its light, dark and phone-width
+screenshots ([process](todo/process.md#picking-the-next-ticket)); treat it the
+same way.
 Keep a run-local list of blocked tickets and reasons so picking does not repeatedly
 select the same blocked item. Do not change product dependencies merely to hide
 an external blocker. Reconsider it when new input or evidence arrives.

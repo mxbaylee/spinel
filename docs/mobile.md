@@ -12,7 +12,7 @@ cell to edit, then use OK to commit. Pan and pinch use Univer's renderer. The
 control mode stays fixed while that editor is open, so rotating the screen does
 not recreate an editor containing unsaved changes. Desktop controls remain on
 other devices. This is Sheet touch support; it does not promise a separate phone
-interface for every Doc or future Slide feature. Univer currently describes its
+interface for Docs (SPN-072). Univer currently describes its
 mobile UI as experimental.
 
 ## Connection loss

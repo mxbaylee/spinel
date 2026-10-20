@@ -8,15 +8,19 @@ web, Apple Numbers or Zoho Sheet, and quieter than all four. Each screen page
 compares those products, states the pattern Spinel adopts, and lists which
 controls are always visible and which sit behind a menu.
 
-| Screen                          | Page                         | Builds on it                                                           |
-| ------------------------------- | ---------------------------- | ---------------------------------------------------------------------- |
-| File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-053, SPN-054, SPN-051                            |
-| Editor chrome                   | [editor.md](editor.md)       | SPN-049, SPN-043, SPN-042, SPN-050, SPN-033, SPN-035, SPN-009, SPN-013 |
-| Sharing                         | [sharing.md](sharing.md)     | SPN-033                                                                |
-| Settings and sign-in            | [account.md](account.md)     | SPN-045, SPN-036                                                       |
-| Admin                           | [admin.md](admin.md)         | SPN-032                                                                |
-| Guest view                      | [guest.md](guest.md)         | SPN-042                                                                |
-| Empty, error and offline states | [states.md](states.md)       | SPN-053, SPN-054, SPN-042, SPN-051, SPN-052                            |
+| Screen                          | Page                         | Builds on it                                                                    |
+| ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------- |
+| File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-053, SPN-054, SPN-051, SPN-065, SPN-067, SPN-069, SPN-074          |
+| Editor chrome                   | [editor.md](editor.md)       | SPN-049, SPN-043, SPN-042, SPN-050, SPN-033, SPN-035, SPN-068, SPN-072, SPN-075 |
+| Sharing                         | [sharing.md](sharing.md)     | SPN-033, SPN-066, SPN-071                                                       |
+| Settings and sign-in            | [account.md](account.md)     | SPN-045, SPN-036, SPN-070                                                       |
+| Admin                           | [admin.md](admin.md)         | SPN-032, SPN-061, SPN-064                                                       |
+| Guest view                      | [guest.md](guest.md)         | SPN-042, SPN-073                                                                |
+| Empty, error and offline states | [states.md](states.md)       | SPN-053, SPN-054, SPN-042, SPN-051, SPN-052                                     |
+
+SPN-047 redesigns these screens from a review of Storybook and competing
+products, because the owner finds the current UI cluttered (chat 2026-10-19). It
+updates these pages before the UI tickets above build on them.
 
 The starting point is the approved gem-rail mockup
 (`git show 30a4a61^:docs/design/gem-rail-mockup.tsx`) and the landed SPN-027
@@ -47,7 +51,7 @@ third-party product was signed in to, and patterns are described, not copied.
 The only colour tokens are the theme's. `src/ui/palette.ts` is the source:
 `src/ui/theme.ts` sets each entry as a `--<name>` CSS custom property on the
 root, per mode. [docs/theme.md](../theme.md) explains the modes and fills. There
-is no parallel token set; SPN-047's colour lint enforces that.
+is no parallel token set; SPN-060's colour lint enforces that.
 
 | Token                                   | Use                                                                                                                          |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -143,7 +147,7 @@ In use: 4, 6, 8, 12, 16, 20, 24, 28 and 32 px, plus rem equivalents in newer
 components. Adopted scale: **4, 8, 12, 16, 24, 32 px**, with 20 and 28 kept only
 where theme.css already uses them (body padding at phone width, dashboard gaps).
 New CSS uses px for spacing and borders and rem for type and dialog widths.
-These aren't CSS tokens yet, so SPN-047's lint covers colour tokens and treats
+These aren't CSS tokens yet, so SPN-060's lint covers colour tokens and treats
 this list as its spacing allowlist rather than inventing `--space-*` properties.
 
 ### Touch
@@ -156,8 +160,8 @@ layouts use `dvh` with a `vh` fallback so phone toolbars don't hide content.
 
 ### Status changes never move the layout
 
-Save state, connection state, local-save state (SPN-053) and queue position
-(SPN-013) all live in fixed-size slots in the view header.
+Save state, connection state and local-save state (SPN-053) all live in
+fixed-size slots in the view header.
 
 - The slot reserves the width of its longest label. An icon plus a short label
   ("Saved", "Saving…", "Offline", "Not saved"). The detail and any action sit in
@@ -238,13 +242,13 @@ redirect to sign-in.
 - Components that read `location` (`GuestApp`) get a per-story decorator that
   sets the path with `history.replaceState` and restores it on unmount.
 - Some fixtures compute dates from `Date.now()` so they never look expired.
-  SPN-047's screenshot comparisons must freeze the clock first.
+  SPN-060's screenshot comparisons must freeze the clock first.
 
 Every reusable component has a story for each state it really has: empty,
 loading, error and disabled. A PR that adds a component or a state adds the
 story. Editors that boot Univer (`SheetEditor`, `DocEditor`, `VersionPreview`,
 `HistoryBrowser`), `App.tsx`'s routing, and the sign-in, setup, invite and
-recovery cards that are still inline in `App.tsx` are out of scope; SPN-047
+recovery cards that are still inline in `App.tsx` are out of scope; SPN-060
 covers them with Playwright screenshots instead. A ticket that extracts one of
 those cards adds its story.
 

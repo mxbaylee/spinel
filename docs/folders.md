@@ -5,11 +5,11 @@ accounts land in Admin and cannot list, open, create, rename or move documents.
 Each everyday account has its own private tree. [Sharing](sharing.md) grants
 chosen signed-in people access to specific items; a link guest has no access.
 
-Choose **New**, a type (Folder, Sheet, Doc or Slides), and a name. Folders are
+Choose **New**, a type (Folder, Sheet, Doc or Slides; SPN-074 removes Slides), and a name. Folders are
 created inside the current folder. Documents are created there and immediately
 open an empty document view. Their identity, type, name and location are saved;
 Sheets open the [spreadsheet editor](spreadsheets.md), Docs open the
-[document editor](documents.md), and Slides editing arrives in SPN-009. Reloading or returning to
+[document editor](documents.md), and Slides open an empty placeholder; Spinel dropped Slides (owner, chat 2026-10-19). Reloading or returning to
 the view does not create another document.
 
 Use the folder list or breadcrumb to navigate. **Rename** updates an item's name

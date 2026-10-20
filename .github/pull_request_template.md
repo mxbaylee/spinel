@@ -9,6 +9,12 @@ Grooming PRs start "🧹 Groom backlog"; dependency bumps start "⬆️ Bump". C
 
 Checks and evidence for the current head; required owner verification, if any.
 
+## Screenshots
+
+For a PR that changes the UI: light, dark and phone-width screenshots of each
+changed screen. It merges only after the owner approves them. Otherwise "No UI
+change".
+
 ## Independent review
 
 Score out of 100 (minimum 95), independent subagent, reviewed commit SHA and
