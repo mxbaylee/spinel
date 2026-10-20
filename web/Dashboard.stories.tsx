@@ -128,6 +128,22 @@ export const NewItem: Story = {
     await userEvent.click(await within(canvasElement).findByRole('button', { name: 'New' }));
   },
 };
+export const NewDoc: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'New' }));
+    await userEvent.selectOptions(canvas.getByLabelText('Type'), 'doc');
+  },
+};
+export const NewSheet: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'New' }));
+    await userEvent.selectOptions(canvas.getByLabelText('Type'), 'sheet');
+  },
+};
 export const EmptyWorkspace: Story = { parameters: { api: empty } };
 /** The "Shared with me" drawer lists every share, filed or not, with its access level. */
 export const SharedDrawer: Story = {

@@ -1,7 +1,27 @@
 // Palette moved from the owner's gem-rail reference for SPN-027.
 export type ThemeMode = 'light' | 'dark';
+// Entity artwork keeps its approved hues in both themes; labels carry type meaning.
+const entityArt = {
+  'entity-doc-0': '#254c8b',
+  'entity-doc-1': '#3267bc',
+  'entity-doc-2': '#5287dc',
+  'entity-doc-3': '#82acf0',
+  'entity-doc-4': '#b5d1fc',
+  'entity-sheet-0': '#185c43',
+  'entity-sheet-1': '#247c56',
+  'entity-sheet-2': '#3b9f70',
+  'entity-sheet-3': '#72c59a',
+  'entity-sheet-4': '#ade3c4',
+  'entity-space-0': '#56318a',
+  'entity-space-1': '#7849ae',
+  'entity-space-2': '#9b70cf',
+  'entity-space-3': '#bd9be6',
+  'entity-space-4': '#dcc7f6',
+  'entity-mark': '#ffffff',
+};
 export const palettes: Record<ThemeMode, Record<string, string>> = {
   light: {
+    ...entityArt,
     'sp-bg': '#fff5f2',
     'sp-panel': '#ffffff',
     'sp-rail': '#c42c58',
@@ -57,6 +77,7 @@ export const palettes: Record<ThemeMode, Record<string, string>> = {
     'gem-edge': '#5e0b29',
   },
   dark: {
+    ...entityArt,
     'sp-bg': '#1a1225',
     'sp-panel': '#221832',
     'sp-rail': '#120d1a',

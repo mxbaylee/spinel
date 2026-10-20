@@ -1,3 +1,4 @@
+import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { ITEM_KINDS, kindLabel } from '../src/shared/workspace.ts';
 import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
@@ -492,6 +493,7 @@ export function Dashboard({
                       aria-label={`Open ${item.name}`}
                       onClick={() => navigate(item.id)}
                     >
+                      {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
                       {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
                     </button>
                     <SharedBadge item={item} />
@@ -586,6 +588,7 @@ export function Dashboard({
                               disabled={busy}
                               onClick={() => navigate(item.id)}
                             >
+                              {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
                               {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
                             </button>
                             <SharedBadge item={item} />
@@ -660,17 +663,20 @@ export function Dashboard({
                 {action.mode === 'new' && (
                   <label>
                     Type
-                    <select
-                      value={kind}
-                      disabled={busy}
-                      onChange={(event) => setKind(event.target.value as ItemKind)}
-                    >
-                      {ITEM_KINDS.map((kind) => (
-                        <option key={kind} value={kind}>
-                          {kindLabel[kind]}
-                        </option>
-                      ))}
-                    </select>
+                    <span className="entity-type-control">
+                      {kind !== 'folder' && <EntityIcon kind={kind} />}
+                      <select
+                        value={kind}
+                        disabled={busy}
+                        onChange={(event) => setKind(event.target.value as ItemKind)}
+                      >
+                        {ITEM_KINDS.map((kind) => (
+                          <option key={kind} value={kind}>
+                            {kindLabel[kind]}
+                          </option>
+                        ))}
+                      </select>
+                    </span>
                   </label>
                 )}
                 {action.mode !== 'move' && action.mode !== 'file' ? (

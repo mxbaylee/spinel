@@ -1,3 +1,4 @@
+import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { useEffect, useState } from 'react';
 import { kindLabel } from '../src/shared/workspace.ts';
 import type { TrashListing } from '../src/shared/workspace.ts';
@@ -70,6 +71,7 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
             {listing.items.map((item) => (
               <li key={item.id}>
                 <div>
+                  {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
                   {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
                   <TagLabels tags={item.tags} />
                   <br />

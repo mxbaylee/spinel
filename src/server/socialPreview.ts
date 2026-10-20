@@ -3,14 +3,15 @@ import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 import type { LinkAccess } from './workspace/links.ts';
 import { palettes } from '../ui/palette.ts';
+import { socialCardBackground } from '../ui/socialCardBackground.ts';
+import type { EntityKind } from '../ui/entityIconGeometry.ts';
 import { escapeMarkup } from '../shared/markup.ts';
 
 const palette = palettes.light;
-const base = fileURLToPath(new URL('../ui/social-preview.png', import.meta.url));
 const font = fileURLToPath(new URL('../ui/fonts/AtkinsonHyperlegible-Bold.ttf', import.meta.url));
 const emojiFont = fileURLToPath(new URL('../ui/fonts/NotoColorEmoji.ttf', import.meta.url));
 
-export async function renderSharedCard(item: { name: string; kind: 'doc' | 'sheet' }) {
+export async function renderSharedCard(item: { name: string; kind: EntityKind }) {
   // A bounded title area; the full title remains in HTML metadata.
   const text = Array.from(item.name, (character) => {
     const code = character.codePointAt(0)!;
@@ -20,7 +21,7 @@ export async function renderSharedCard(item: { name: string; kind: 'doc' | 'shee
   const name = characters.length > 64 ? characters.slice(0, 63).join('') + '…' : text;
   const kind = await sharp({
     text: {
-      text: `<span foreground="${palette['sp-muted']}">${item.kind === 'sheet' ? 'Spreadsheet' : 'Document'} · Shared on Spinel</span>`,
+      text: `<span foreground="${palette['sp-muted']}">${{ doc: 'Document', sheet: 'Spreadsheet', space: 'Space' }[item.kind]} · Shared on Spinel</span>`,
       font: 'Atkinson Hyperlegible Bold 28',
       fontfile: font,
       rgba: true,
@@ -42,15 +43,8 @@ export async function renderSharedCard(item: { name: string; kind: 'doc' | 'shee
   })
     .png()
     .toBuffer();
-  return sharp(base)
+  return sharp(Buffer.from(socialCardBackground(item.kind)))
     .composite([
-      {
-        input: Buffer.from(
-          `<svg width="680" height="310"><rect width="680" height="310" fill="${palette['sp-bg']}"/></svg>`,
-        ),
-        left: 60,
-        top: 180,
-      },
       { input: title, left: 80, top: 210 },
       { input: kind, left: 80, top: 426 },
     ])

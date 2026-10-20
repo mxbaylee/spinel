@@ -1,3 +1,4 @@
+import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { useEffect, useState } from 'react';
 import { emptySearch, hasSearch, searchCatalog, searchItems } from '../src/shared/search.ts';
 import type { SearchItem, SearchQuery } from '../src/shared/search.ts';
@@ -169,6 +170,7 @@ export function SearchPanel({
                       aria-label={`Open result ${item.name}`}
                       onClick={() => onOpen(item.id)}
                     >
+                      {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
                       {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
                     </button>
                     <SharedBadge item={item} />
