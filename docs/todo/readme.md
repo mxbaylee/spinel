@@ -26,7 +26,7 @@ Highest score first. Take the first ticket that isn't waiting on another.
 | 14 | 🪐 [SPN-078](SPN-078.md) Keep related Docs and Sheets in one shared Space | 🌳 L | 💜 M | 4 (own 3) | Unblocks SPN-079 | [SPN-047](SPN-047.md) | Approve the Space navigation/sharing design and PR screenshots |
 | 15 | 🤝 [SPN-064](SPN-064.md) Reactivate accounts and hand over a departed person's documents | 🌳 L | 🩷 L | 4 | Higher impact | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
 | 16 | 📈 [SPN-032](SPN-032.md) Show server health to the operator | 🌿 M | 💜 M | 4 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
-| 17 | 🎭 [SPN-036](SPN-036.md) Choose your name, colour and icon | 🌿 M | 💜 M | 4 | Lower ID | [SPN-045](SPN-045.md), [SPN-047](SPN-047.md) | Approve the PR's screenshots |
+| 17 | 🎭 [SPN-036](SPN-036.md) Choose your name, colour and icon | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
 | 18 | 🪴 [SPN-048](SPN-048.md) Declutter the dashboard | 🌿 M | 💜 M | 4 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
 | 19 | 🎬 [SPN-049](SPN-049.md) Give the editor a theatre mode | 🌿 M | 💜 M | 4 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |
 | 20 | 🖌️ [SPN-050](SPN-050.md) Move fill presets into the native fill picker or drop them | 🌿 M | 💜 M | 4 | Lower ID | [SPN-047](SPN-047.md) | Approve the PR's screenshots |

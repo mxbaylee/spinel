@@ -1,4 +1,5 @@
 import { guestItemId, documentPath } from './documentAccess.ts';
+import { presencePrototypeEnabled } from './PresencePrototype.tsx';
 import { CollaborationSessions } from './CollaborationSessions.ts';
 import { UserManagerService } from '@univerjs/core';
 import type { Univer, DependencyOverride } from '@univerjs/core';
@@ -62,7 +63,10 @@ export function collaborationPlugins(
         wsSessionTicketUrl: base + '/user/session-ticket?unitID=' + encodeURIComponent(unitID),
       },
     ],
-    [UniverCollaborationClientUIPlugin, { enableUrlUnitLoader: false }],
+    [
+      UniverCollaborationClientUIPlugin,
+      { enableUrlUnitLoader: false, enableDocumentCollaborationUI: !presencePrototypeEnabled() },
+    ],
   ];
 }
 export async function prepareCollaboration(id: string) {

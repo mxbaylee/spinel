@@ -4,6 +4,7 @@ import type { IMember } from '@univerjs/protocol';
 import { CollaborationSessionService } from '@univerjs-pro/collaboration-client';
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { DocSelectionRenderService } from '@univerjs/docs-ui';
+import { presencePrototypeEnabled, startPresencePrototype } from './PresencePrototype.tsx';
 
 export interface Collaborator {
   id: string;
@@ -52,6 +53,8 @@ export async function watchPresence(
   publish: (people: Collaborator[]) => void,
 ) {
   const session = await univer.__getInjector().get(CollaborationSessionService).requireSession(id);
+  const prototype = presencePrototypeEnabled();
+  const stopPrototype = prototype ? await startPresencePrototype(univer, api, id) : () => {};
   let members: IMember[] = [];
   const selections = new Map<string, string>();
   const popups = new Map<string, IDisposable>();
@@ -105,12 +108,14 @@ export async function watchPresence(
               sheet.scrollToCell(range.getRow(), range.getColumn());
               sheet.setActiveRange(range);
             };
-            const popup = range.attachPopup({
-              componentKey: () => <Badge person={person} />,
-              direction: 'top-left',
-              showOnSelectionMoving: true,
-              hideOnInvisible: true,
-            });
+            const popup =
+              !prototype &&
+              range.attachPopup({
+                componentKey: () => <Badge person={person} />,
+                direction: 'top-left',
+                showOnSelectionMoving: true,
+                hideOnInvisible: true,
+              });
             if (popup) popups.set(member.memberID, popup);
           } catch {
             /* Malformed or removed remote ranges never break the local editor. */
@@ -141,6 +146,7 @@ export async function watchPresence(
     }
   });
   return () => {
+    stopPrototype();
     membership.dispose();
     cursor.unsubscribe();
     for (const popup of popups.values()) popup.dispose();
