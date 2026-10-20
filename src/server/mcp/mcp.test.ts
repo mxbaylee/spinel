@@ -466,7 +466,7 @@ test('SDK OAuth discovery, browser consent, PKCE, refresh and disconnect reach t
   );
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('No server');
-  const origin = `http://127.0.0.1:${address.port}`,
+  const origin = `http://localhost:${address.port}`,
     oauth = new AssistantOAuth(f.auth, origin);
   app.use(assistantOAuthRoutes(oauth));
   app.use('/api/auth', authRoutes(f.auth, origin));
