@@ -40,6 +40,8 @@ try {
         `http://127.0.0.1:6006/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`,
       );
       if (text) await expect(page.getByText(text, { exact: false }).first()).toBeVisible();
+      if (id === 'dashboard-searchpanel--results')
+        await expect(page.getByText('Household / Finance', { exact: true })).toBeVisible();
       if (id.endsWith('--new-doc'))
         await expect(page.getByRole('combobox', { name: 'Type', exact: true })).toHaveValue('doc');
       if (id.endsWith('--new-sheet'))
