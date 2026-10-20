@@ -120,7 +120,7 @@ export async function startPresencePrototype(univer: Univer, api: FUniver, id: s
     } else {
       const range = injector
         .get(DocSelectionManagerService)
-        .getTextRanges({ unitId: id, subUnitId: '' })?.[0];
+        .getTextRanges({ unitId: id, subUnitId: id })?.[0];
       if (range && !range.segmentId)
         selection = `${range.startOffset}:${range.endOffset}:1:TEXT::-1`;
     }

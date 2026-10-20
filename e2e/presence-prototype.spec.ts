@@ -92,6 +92,12 @@ for (const kind of ['sheet', 'doc'] as const) {
       }
       await saved(page);
       await saved(other);
+      if (kind === 'doc')
+        await expect(
+          page
+            .getByRole('group', { name: 'People in this document' })
+            .getByRole('button', { name: 'Go to Iris', exact: true }),
+        ).toHaveAttribute('data-selection', '0:28:1:TEXT::-1');
       const label = page.locator('[data-presence-prototype="label"]').filter({ hasText: 'Iris' });
       await expect(label).toBeVisible({ timeout: 15_000 });
       await expect(label.locator('[data-profile-icon="flower"]')).toBeVisible();
