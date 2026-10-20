@@ -65,6 +65,10 @@ open downgraded editor, open read-only viewers and revoke access.
 
 ## Guest links
 
+New guest links automatically show a [branded social card](page-identity.md) with
+the document title and type. Previews never show the owner or contents. Private
+pages and older fragment-only links use the generic Spinel card.
+
 For a Sheet or Doc, the owner can use **Share → Share without an account** to
 create a view-only or editable guest link. Anyone holding that address gets only
 that document. Folder links are unsupported. A replacement immediately invalidates

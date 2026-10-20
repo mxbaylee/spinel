@@ -177,3 +177,84 @@ test('backup health is admin-only, noncacheable and retains last success after f
   db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(admin.id);
   expect((await fetch(url, { headers })).status).toBe(401);
 });
+
+for (const development of [false, true]) {
+  test(`page metadata stays generic with configured-origin assets (${development ? 'development' : 'production'})`, async () => {
+    const directory = await temporaryDirectory();
+    const databasePath = join(directory, 'spinel.sqlite');
+    await writeFile(
+      join(directory, 'index.html'),
+      await readFile(join(projectRoot, 'web/index.html')),
+    );
+    const app = await createApp({
+      databasePath,
+      staticDirectory: directory,
+      development,
+      origin: 'https://spinel.example',
+    });
+    cleanups.push(() => app.close());
+    await new Promise<void>((ready) => app.server.listen(0, '127.0.0.1', ready));
+    const url = `http://127.0.0.1:${(app.server.address() as AddressInfo).port}`;
+    const inspect = async (path: string, headers: Record<string, string> = {}) => {
+      const response = await fetch(`${url}${path}`, {
+        headers: { ...headers, 'X-Forwarded-Host': 'attacker.example' },
+      });
+      expect(response.status).toBe(200);
+      expect(response.headers.get('cache-control')).toBe('no-store');
+      const html = await response.text();
+      for (const text of [
+        '<title>Spinel</title>',
+        'name="description"',
+        'name="robots" content="noindex"',
+        'property="og:title" content="Spinel"',
+        'property="og:description"',
+        'content="https://spinel.example/social-preview.png"',
+        'name="twitter:card" content="summary_large_image"',
+        'href="/favicon.svg"',
+        'href="/favicon-32.png"',
+        'href="/favicon.ico"',
+      ])
+        expect(html).toContain(text);
+      expect(html).not.toMatch(/Private sentinel|secret-token|attacker\.example|__SPINEL_/);
+    };
+    await inspect('/setup');
+    const db = openDatabase(databasePath);
+    cleanups.push(async () => db.close());
+    const auth = new AuthStore(db);
+    const owner = auth.createUser('Private sentinel owner');
+    const { WorkspaceStore } = await import('../src/server/workspace/store.ts');
+    const workspace = new WorkspaceStore(auth);
+    const item = workspace.create(owner.id, {
+      name: 'Private sentinel document',
+      kind: 'doc',
+      parentId: null,
+    });
+    for (const path of [
+      '/sign-in',
+      '/invite?token=secret-token',
+      `/share/${item.id}?token=secret-token`,
+    ])
+      await inspect(path);
+    await inspect(`/?item=${item.id}`, {
+      Cookie: `${COOKIE_NAME}=${auth.createSession(owner.id).token}`,
+    });
+    db.prepare('UPDATE workspace_items SET name=? WHERE id=?').run('Shared & <recipe>', item.id);
+    const link = workspace.links.begin(item.id, 'viewer');
+    workspace.links.finish(item.id, link.epoch, true);
+    const address = `${url}/share/${item.id}?preview=${link.previewToken}`;
+    const shared = await fetch(address);
+    expect(shared.headers.get('cache-control')).toBe('no-store');
+    expect(shared.headers.get('referrer-policy')).toBe('no-referrer');
+    const html = await shared.text();
+    expect(html).toContain('<title>Shared &amp; &lt;recipe&gt; — Spinel</title>');
+    expect(html).toContain('A document shared with you on Spinel.');
+    expect(html).toContain(
+      `https://spinel.example/share/${item.id}/preview.png?preview=${link.previewToken}`,
+    );
+    expect(html).not.toContain(link.token!);
+    expect(html).not.toContain(owner.name);
+    const off = workspace.links.begin(item.id, null);
+    workspace.links.finish(item.id, off.epoch, false);
+    expect(await (await fetch(address)).text()).not.toContain('Shared &amp;');
+  });
+}

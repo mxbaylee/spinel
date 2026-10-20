@@ -68,7 +68,9 @@ test('builds and renames a nested tree, opens all document types, moves safely a
       ).toContainText('All changes saved.', {
         timeout: 20000,
       });
+      await expect(page).toHaveTitle(`${type} example — Spinel`);
       await breadcrumb.getByRole('button', { name: '2027', exact: true }).click();
+      await expect(page).toHaveTitle('Spinel');
     }
     await files.getByRole('button', { name: 'Move Sheet example', exact: true }).click();
     const move = page.getByRole('form', { name: 'Move item' });
