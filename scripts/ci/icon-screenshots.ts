@@ -41,9 +41,11 @@ try {
       );
       if (text) await expect(page.getByText(text, { exact: false }).first()).toBeVisible();
       if (id.endsWith('--new-doc'))
-        await expect(page.getByLabel('Type', { exact: true })).toHaveValue('doc');
+        await expect(page.getByRole('combobox', { name: 'Type', exact: true })).toHaveValue('doc');
       if (id.endsWith('--new-sheet'))
-        await expect(page.getByLabel('Type', { exact: true })).toHaveValue('sheet');
+        await expect(page.getByRole('combobox', { name: 'Type', exact: true })).toHaveValue(
+          'sheet',
+        );
       if (id.includes('social-cards')) {
         await expect(page.getByRole('img')).toBeVisible();
         await page.getByRole('img').evaluate(async (image) => {
