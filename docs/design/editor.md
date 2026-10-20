@@ -54,8 +54,8 @@ status line grows when a message or Retry appears, which moves the sheet
 - **Tools** are Univer's toolbar, untouched. Spinel never adds a second toolbar
   row. Fill presets belong in Univer's fill picker (SPN-050); until then they
   stay a collapsed `<details>` in the header's More menu.
-- **Embedded ranges** (SPN-033) render inside the canvas. The header doesn't
-  change.
+- **Formulas** (SPN-033) render inline values or tables inside the canvas;
+  insertion and editing follow [formulas.md](formulas.md).
 - **Inline errors** that belong to the canvas, such as the Doc image-upload
   failure ("… Try inserting the file again."), show as an
   [inline error](states.md#inline-errors) in a fixed slot between the toolbar
