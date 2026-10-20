@@ -143,6 +143,10 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   };
   const screenshots = async (name: string, target: Page = page) => {
     await target.bringToFront();
+    const panel = formulaPanel(target);
+    const closePanel =
+      name !== 'editing' && (await panel.evaluate((node) => (node as HTMLDetailsElement).open));
+    if (closePanel) await panel.locator('summary').click();
     await mkdir('test-results/theme-screenshots', { recursive: true });
     for (const [theme, width] of [
       ['light', 1440],
@@ -159,6 +163,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     }
     await target.emulateMedia({ colorScheme: 'light' });
     await target.setViewportSize({ width: 1440, height: 1100 });
+    if (closePanel) await panel.locator('summary').click();
   };
   try {
     await page.goto(`/?item=${host.id}`);

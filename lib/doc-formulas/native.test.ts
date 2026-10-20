@@ -224,6 +224,32 @@ describe('native formula lifecycle', () => {
     });
     expect(source.body!.sectionBreaks).toBeUndefined();
   });
+  it('does not invent traditional sections that change inherited first-page header behavior', async () => {
+    const { controller } = fixture(async () => ({ ok: true, kind: 'scalar', value: 42 }));
+    await controller.refresh();
+    const source: IDocumentLayoutSnapshot = {
+      id: 'doc',
+      documentStyle: { documentFlavor: 1, useFirstPageHeaderFooter: 1, firstPageHeaderId: 'cover' },
+      body: formulaBody('formula', definition),
+    };
+    const project = hooks.presentation.mock.calls[0]![1].getSnapshot;
+    const projected = project(source);
+    expect(projected.body?.sectionBreaks).toBeUndefined();
+    expect(projected.documentStyle).toMatchObject({
+      useFirstPageHeaderFooter: 1,
+      firstPageHeaderId: 'cover',
+      renderConfig: { useCustomGlyphRenderer: 1 },
+    });
+    source.body!.sectionBreaks = [
+      { startIndex: 1, sectionId: 'explicit', useFirstPageHeaderFooter: 1 },
+    ];
+    expect(project(source).body?.sectionBreaks?.[0]).toMatchObject({
+      sectionId: 'explicit',
+      useFirstPageHeaderFooter: 1,
+      renderConfig: { useCustomGlyphRenderer: 1 },
+    });
+    expect(source.body!.sectionBreaks[0]!.renderConfig).toBeUndefined();
+  });
   it('coalesces refreshes so an in-flight calculation is not continually aborted', async () => {
     const pending = deferred(),
       evaluate = vi.fn(() => pending.promise);
