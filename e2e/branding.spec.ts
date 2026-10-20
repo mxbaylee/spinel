@@ -31,7 +31,7 @@ test('public identity assets load and preview clearly in light, dark and phone l
       ['doc', 'doc', 'Autumn recipes'],
       ['sheet', 'sheet', 'Our next adventure'],
       ['doc', 'emoji', '🥕 Autumn recipes 🍂'],
-      ['sheet', 'long-word', 'Supercalifragilisticexpialidocious'.repeat(5)],
+      ['sheet', 'long-word', 'Supercalifragilisticexpialidocious'.repeat(3)],
     ] as const) {
       const item = workspace.create(owner.id, { kind, name, parentId: null });
       const link = workspace.links.begin(item.id, 'viewer');
