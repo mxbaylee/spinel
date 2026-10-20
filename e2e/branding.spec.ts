@@ -59,7 +59,7 @@ test('public identity assets load and preview clearly in light, dark and phone l
         <img src="/favicon-32.png" width="32" height="32" alt="Spinel favicon at 32px">
         <figure style="margin:24px 0 0;border:1px solid ${ink}33;border-radius:16px;overflow:hidden">
         <img src="${card.image}" alt="${card.title} social card" style="display:block;width:100%">
-        <figcaption style="padding:16px"><b>${card.title}</b><p style="margin:6px 0 0">${card.description}</p></figcaption></figure>
+        <figcaption style="padding:16px;overflow-wrap:anywhere"><b>${card.title}</b><p style="margin:6px 0 0">${card.description}</p></figcaption></figure>
         </body></html>`);
         await page
           .locator('img')
