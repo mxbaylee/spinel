@@ -58,11 +58,15 @@ badge.
 | Link status, role, Create link or Copy link |                                             |
 | Done                                        |                                             |
 
-## Embedded ranges (SPN-033)
+## Formula sources (SPN-033 / SPN-076)
 
-Sharing a document never shares the sheets it embeds. An embed the reader can't
-open says "You don't have access to this range" in place; the share dialog
-doesn't warn or offer to share the source.
+Sharing a document never shares its formula sources. A formula with any
+inaccessible input shows an access placeholder, never a cached value or partial
+aggregate. See [formulas.md](formulas.md). SPN-076 separately adds dependency
+awareness and an unchecked option to share the exact listed source Sheets with
+view access, subject to the sharer’s authority. It must not silently publish
+sources when making a public host link. That dialog pattern requires its own
+design PR before implementation.
 
 ## Stories
 

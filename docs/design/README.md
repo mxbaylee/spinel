@@ -12,7 +12,8 @@ controls are always visible and which sit behind a menu.
 | ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------- |
 | File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-053, SPN-054, SPN-051, SPN-065, SPN-067, SPN-069          |
 | Editor chrome                   | [editor.md](editor.md)       | SPN-049, SPN-043, SPN-042, SPN-050, SPN-033, SPN-035, SPN-068, SPN-072, SPN-075 |
-| Sharing                         | [sharing.md](sharing.md)     | SPN-033, SPN-066, SPN-071                                                       |
+| Doc formulas                    | [formulas.md](formulas.md) | SPN-033 |
+| Sharing                         | [sharing.md](sharing.md)     | SPN-033, SPN-066, SPN-071, SPN-076                                                       |
 | Settings and sign-in            | [account.md](account.md)     | SPN-045, SPN-036, SPN-070                                                       |
 | Admin                           | [admin.md](admin.md)         | SPN-032, SPN-061, SPN-064                                                       |
 | Guest view                      | [guest.md](guest.md)         | SPN-042, SPN-075                                                                |
@@ -21,9 +22,13 @@ controls are always visible and which sit behind a menu.
 SPN-047 redesigns these screens from a review of Storybook and competing
 products, because the owner finds the current UI cluttered (chat 2026-10-19). It
 updates these pages before the UI tickets above build on them. SPN-074 is the
-explicit exception: removing unsupported Slides may land before the redesign,
+first explicit exception: removing unsupported Slides could land before the redesign,
 using the existing dashboard patterns and the usual stories, light/dark/phone
 screenshots and owner approval. Owner, chat 2026-10-20, decision [#104](https://github.com/mxbaylee/spinel/issues/104).
+
+The owner also authorized SPN-044 and SPN-034 (now landed) and SPN-033 before
+the redesign (chat 2026-10-20; #113). Formula insertion follows
+[formulas.md](formulas.md), with the same story and screenshot gates.
 
 The starting point is the approved gem-rail mockup
 (`git show 30a4a61^:docs/design/gem-rail-mockup.tsx`) and the landed SPN-027
