@@ -153,3 +153,10 @@ storage for the Operator, an unchanged owner tree, predictable personal filing f
 the Collaborator, and unchanged account isolation for the Link guest. Tests cover
 legacy migration, ordering, destination isolation, inherited grants, revoke/regrant,
 trash, and browser filing/removal/revocation. [Search](search.md) includes these shares and personal filing paths.
+
+## Doc formula sources
+
+A Doc grant never grants access to its [Formula sources](formulas.md). Every
+input must be readable by the viewer; otherwise the whole formula is unavailable,
+including aggregates. Host guest links grant no source access. SPN-076 tracks
+explicit dependency sharing; no source is shared automatically.

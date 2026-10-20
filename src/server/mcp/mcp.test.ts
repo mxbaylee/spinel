@@ -27,6 +27,7 @@ import { CollaborationStore } from '../collaboration/service.ts';
 import { attachCollaboration } from '../collaboration/transport.ts';
 import { mcpRoutes } from './routes.ts';
 import { McpDocuments } from './documents.ts';
+import { docFormulas, formulaBody } from '@spinel/doc-formulas';
 
 vi.setConfig({ testTimeout: 30000 });
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
@@ -272,6 +273,52 @@ test('text mutation preserves surrounding rich text and supports paragraphs, pag
       text: '',
     }),
   ).rejects.toThrow('Invalid');
+});
+
+test('MCP text edits preserve formula atomicity and remove its annotation on whole replacement', async () => {
+  const f = await fixture();
+  const expression = '={1,2;3,4}';
+  const body = formulaBody('formula', { version: 1, expression, references: [] });
+  body.dataStream = `Lead ${expression} tail\r\n`;
+  body.customRanges = body.customRanges!.map((range) => ({
+    ...range,
+    startIndex: range.startIndex + 5,
+    endIndex: range.endIndex + 5,
+  }));
+  new DocumentStore(f.workspace).save(f.owner.id, f.doc.id, {
+    snapshot: { ...getDocsEmptySnapshot(f.doc.id), body },
+    revision: 1,
+    writeId: randomUUID(),
+  });
+  const read = await f.documents.readDoc(f.identity, { id: f.doc.id });
+  expect(read.text).toBe(`Lead ${expression} tail`);
+  const edit = {
+    id: f.doc.id,
+    unitId: read.unitId,
+    revision: read.revision,
+    requestId: randomUUID(),
+    offset: 6,
+    deleteCount: 1,
+    text: 'X',
+  };
+  await expect(f.documents.edit(f.identity, 'doc', edit)).rejects.toThrow('entire formula');
+  await expect(
+    f.documents.edit(f.identity, 'doc', {
+      ...edit,
+      offset: 7,
+      deleteCount: 0,
+    }),
+  ).rejects.toThrow('entire formula');
+  await f.documents.edit(f.identity, 'doc', {
+    ...edit,
+    offset: 5,
+    deleteCount: expression.length,
+    text: 'Replacement',
+  });
+  const snapshot = (await f.collab.load(f.owner.id, f.doc.id)).snapshot as IDocumentData;
+  expect(snapshot.body?.dataStream).toBe('Lead Replacement tail\r\n');
+  expect(docFormulas(snapshot.body)).toEqual([]);
+  expect(snapshot.body?.customRanges ?? []).toEqual([]);
 });
 
 for (const revoke of ['token', 'account', 'grant'] as const)

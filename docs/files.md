@@ -76,3 +76,11 @@ and browser downloads/imports of live edits. Browser tests capture the native
 print output at the browser print call, generate a PDF, reopen and render it, and
 retain PDF/PNG evidence in CI. They do not override license checks or print pages
 the plugin did not produce.
+
+## Doc formulas in files
+
+[Live formulas](formulas.md) store expressions and bindings, never calculated
+results. Native imports detach source-bound formulas into ordinary expression
+text; source-free formulas remain active. Current printing uses unavailable
+formula output. SPN-075 will render freshly authorized values/tables in PDFs;
+SPN-035 handles Office conversion, and SPN-067 handles archive reference remapping.

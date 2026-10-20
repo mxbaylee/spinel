@@ -1,0 +1,114 @@
+.formula-dialog {
+  width: min(38rem, calc(100vw - 3rem));
+  max-height: calc(100dvh - 3rem);
+  overflow: auto;
+  border: 1px solid var(--sp-border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.formula-dialog::backdrop {
+  background: rgb(20 10 35 / 45%);
+}
+.formula-dialog form,
+.formula-source-picker {
+  display: grid;
+  gap: 12px;
+}
+.formula-dialog label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.formula-dialog input,
+.formula-dialog select {
+  box-sizing: border-box;
+  width: 100%;
+}
+.formula-dialog code {
+  overflow-wrap: anywhere;
+}
+.formula-hint {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.formula-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.formula-source-picker {
+  border: 1px solid var(--sp-border);
+  padding: 12px;
+  border-radius: 8px;
+}
+.formula-source-picker summary {
+  cursor: pointer;
+}
+.formula-table-scroll {
+  overflow: auto;
+  max-height: 24rem;
+  max-width: 100%;
+}
+.formula-table {
+  border-collapse: collapse;
+  width: auto;
+}
+.formula-table caption {
+  text-align: left;
+  padding: 8px 0;
+}
+.formula-table td {
+  border: 1px solid var(--sp-border);
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+.formula-value {
+  display: inline-block;
+  background: var(--sp-panel);
+  border-bottom: 2px solid var(--sp-accent);
+  padding: 2px 6px;
+}
+.doc-formulas {
+  margin: 8px 0;
+}
+.doc-formulas summary {
+  cursor: pointer;
+}
+.doc-formulas ul {
+  padding-left: 1.2rem;
+}
+.doc-formulas li {
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .formula-dialog {
+    padding: 16px;
+    width: calc(100vw - 2rem);
+  }
+}
+.formula-suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  max-height: 12rem;
+  overflow: auto;
+}
+.formula-suggestions[hidden] {
+  display: none;
+}
+.formula-suggestions button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+}
+.formula-suggestions button[aria-selected='true'] {
+  background: var(--sp-header);
+}
