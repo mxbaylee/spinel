@@ -5,6 +5,13 @@ import { join } from 'node:path';
 import express from 'express';
 import { createServer } from 'node:http';
 import { afterEach, expect, test, vi } from 'vitest';
+import type { OAuthClientProvider } from '@modelcontextprotocol/sdk/client/auth.js';
+import type {
+  OAuthClientInformationMixed,
+  OAuthTokens,
+} from '@modelcontextprotocol/sdk/shared/auth.js';
+import { assistantOAuthRoutes } from '../auth/oauthRoutes.ts';
+import { AssistantOAuth, MCP_SCOPES } from '../auth/oauth.ts';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
@@ -443,4 +450,185 @@ test('official HTTP MCP client reads and edits both types; token UI APIs enforce
     ).status,
   ).toBe(204);
   await expect(client.listTools()).rejects.toThrow();
+});
+
+test('SDK OAuth discovery, browser consent, PKCE, refresh and disconnect reach the production commit boundary', async () => {
+  const f = await fixture(),
+    app = express(),
+    server = createServer(app);
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  cleanup.push(
+    () =>
+      new Promise<void>((resolve, reject) => {
+        server.close((error) => (error ? reject(error) : resolve()));
+        server.closeAllConnections();
+      }),
+  );
+  const address = server.address();
+  if (!address || typeof address === 'string') throw new Error('No server');
+  const origin = `http://127.0.0.1:${address.port}`,
+    oauth = new AssistantOAuth(f.auth, origin);
+  app.use(assistantOAuthRoutes(oauth));
+  app.use('/api/auth', authRoutes(f.auth, origin));
+  app.use('/mcp', mcpRoutes(f.workspace, f.collab, origin));
+  let disconnectDuringCommit = false,
+    revoked = false;
+  f.collab.service.use('commitChangeset', async (_context, next) => {
+    const pending = next();
+    if (disconnectDuringCommit) {
+      revoked = true;
+      oauth.disconnect(f.owner.id, String(oauth.list(f.owner.id)[0].id));
+    }
+    await pending;
+  });
+  const live = attachCollaboration(server, f.workspace, f.collab, origin);
+  cleanup.push(() => live.close());
+  const metadata = await (await fetch(`${origin}/.well-known/oauth-authorization-server`)).json();
+  expect(metadata.token_endpoint_auth_methods_supported).toEqual(['none']);
+  expect(metadata.revocation_endpoint_auth_methods_supported).toEqual(['none']);
+  expect(metadata.authorization_response_iss_parameter_supported).toBeUndefined();
+  let registration: OAuthClientInformationMixed | undefined, tokens: OAuthTokens | undefined;
+  let authorization: URL | undefined,
+    verifier = '';
+  const provider: OAuthClientProvider = {
+    redirectUrl: 'https://assistant.example/callback',
+    clientMetadata: {
+      client_name: 'Test assistant',
+      redirect_uris: ['https://assistant.example/callback'],
+      token_endpoint_auth_method: 'none',
+      grant_types: ['authorization_code', 'refresh_token'],
+      response_types: ['code'],
+    },
+    state: () => 'unguessable-client-state',
+    clientInformation: () => registration,
+    saveClientInformation: (value) => {
+      registration = value;
+    },
+    tokens: () => tokens,
+    saveTokens: (value) => {
+      tokens = value;
+    },
+    redirectToAuthorization: (url) => {
+      authorization = url;
+    },
+    saveCodeVerifier: (value) => {
+      verifier = value;
+    },
+    codeVerifier: () => verifier,
+  };
+  const client = new Client({ name: 'oauth-integration', version: '1.0.0' });
+  const transport = new StreamableHTTPClientTransport(new URL(oauth.resource), {
+    authProvider: provider,
+  });
+  cleanup.push(() => client.close());
+  await expect(client.connect(transport)).rejects.toThrow();
+  expect(authorization?.pathname).toBe('/authorize');
+  expect(authorization?.searchParams.get('resource')).toBe(oauth.resource);
+  const start = await fetch(authorization!, { redirect: 'manual' });
+  expect(start.status).toBe(302);
+  expect(start.headers.get('content-security-policy')).toBe("frame-ancestors 'none'");
+  expect(start.headers.get('x-frame-options')).toBe('DENY');
+  const pending = new URL(start.headers.get('location')!, origin).searchParams.get('request')!;
+  const session = f.auth.createSession(f.owner.id),
+    cookie = `${COOKIE_NAME}=${session.token}`;
+  const consentUrl = `${origin}/api/auth/oauth/pending/${pending}`;
+  expect((await fetch(consentUrl)).status).toBe(401);
+  const details = await (await fetch(consentUrl, { headers: { cookie } })).json();
+  expect(details).toMatchObject({
+    name: 'Test assistant',
+    redirectOrigin: 'https://assistant.example',
+    scopes: MCP_SCOPES,
+  });
+  expect(
+    (
+      await fetch(consentUrl, {
+        method: 'POST',
+        headers: { cookie, 'content-type': 'application/json' },
+        body: JSON.stringify({ allow: true }),
+      })
+    ).status,
+  ).toBe(403);
+  const consent = await fetch(consentUrl, {
+    method: 'POST',
+    headers: { cookie, origin, 'content-type': 'application/json' },
+    body: JSON.stringify({ allow: true }),
+  });
+  expect(consent.status).toBe(200);
+  const callback = new URL((await consent.json()).redirect),
+    code = callback.searchParams.get('code')!;
+  expect(callback.origin).toBe('https://assistant.example');
+  expect(callback.searchParams.get('state')).toBe('unguessable-client-state');
+  const exchange = (values: Record<string, string>) =>
+    fetch(`${origin}/token`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(values),
+    });
+  const codeArgs = {
+    grant_type: 'authorization_code',
+    client_id: registration!.client_id,
+    code,
+    redirect_uri: String(provider.redirectUrl),
+    resource: oauth.resource,
+  };
+  expect((await exchange({ ...codeArgs, code_verifier: 'wrong-verifier' })).status).toBe(400);
+  await transport.finishAuth(code);
+  expect(tokens?.access_token).toMatch(/^spinel_oauth_/);
+  expect((await exchange({ ...codeArgs, code_verifier: verifier })).status).toBe(400);
+  await client.connect(
+    new StreamableHTTPClientTransport(new URL(oauth.resource), { authProvider: provider }),
+  );
+  const call = async (name: string, args: Record<string, unknown>) => {
+    const result = await client.callTool({ name, arguments: args });
+    expect(result.isError).not.toBe(true);
+    return JSON.parse((result.content as { text: string }[])[0].text);
+  };
+  const read = await call('read_sheet', { id: f.sheet.id });
+  const edit = {
+    id: f.sheet.id,
+    unitId: read.unitId,
+    revision: read.revision,
+    requestId: randomUUID(),
+    sheetId: 'first',
+    cells: [{ row: 0, column: 0, value: 73 }],
+  };
+  expect(await call('edit_sheet', edit)).toMatchObject({ revision: 2 });
+  const connection = oauth.list(f.owner.id)[0];
+  expect(connection.lastUsedAt).not.toBeNull();
+  const oldAccess = tokens!.access_token;
+  const refreshed = await exchange({
+    grant_type: 'refresh_token',
+    client_id: registration!.client_id,
+    refresh_token: tokens!.refresh_token!,
+    resource: oauth.resource,
+  });
+  expect(refreshed.status).toBe(200);
+  tokens = await refreshed.json();
+  expect(tokens!.access_token).not.toBe(oldAccess);
+  // Retrying a lost edit response after refresh must preserve the connection's durable identity.
+  expect(await call('edit_sheet', edit)).toMatchObject({ revision: 2 });
+  expect((await f.collab.load(f.owner.id, f.sheet.id)).revision).toBe(2);
+  const doc = await call('read_doc', { id: f.doc.id });
+  expect(
+    await call('edit_doc', {
+      id: f.doc.id,
+      unitId: doc.unitId,
+      revision: doc.revision,
+      requestId: randomUUID(),
+      offset: 6,
+      deleteCount: 5,
+      text: 'OAuth',
+    }),
+  ).toMatchObject({ revision: 2 });
+  // The transport's final async recipient scan must still see a connection revoked after admission.
+  const nextEdit = await f.sheetEdit(oauth.authenticate(tokens!.access_token));
+  disconnectDuringCommit = true;
+  const rejected = await client.callTool({ name: 'edit_sheet', arguments: nextEdit });
+  expect(rejected.isError).toBe(true);
+  expect(revoked).toBe(true);
+  expect((await f.collab.load(f.owner.id, f.sheet.id)).revision).toBe(2);
+  expect(
+    (await fetch(oauth.resource, { headers: { authorization: `Bearer ${tokens!.access_token}` } }))
+      .status,
+  ).toBe(401);
 });

@@ -1,7 +1,7 @@
 import type { IncomingHttpHeaders } from 'node:http';
 import { cookieToken } from '../auth/routes.ts';
 import { AuthError } from '../auth/store.ts';
-import { accessTokenIdentity } from '../auth/tokens.ts';
+import { currentMcpIdentity } from '../auth/mcpIdentity.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 
 export function documentIdentity(
@@ -22,16 +22,14 @@ export function validateIdentity(
   workspace: WorkspaceStore,
   userId: string,
   custom: Record<string, unknown>,
+  edit = false,
 ) {
   if (userId.startsWith('guest:')) {
     const guest = workspace.links.session(userId, custom.guestHash);
     if (guest.itemId !== custom.guestItem) throw new AuthError(403, 'This link no longer works.');
   } else {
     if (Object.hasOwn(custom, 'mcpTokenHash')) {
-      if (
-        typeof custom.mcpTokenHash !== 'string' ||
-        accessTokenIdentity(workspace.auth, custom.mcpTokenHash).userId !== userId
-      )
+      if (currentMcpIdentity(workspace.auth, custom, edit).userId !== userId)
         throw new AuthError(401, 'This access token is no longer available.');
     } else if (
       typeof custom.sessionHash !== 'string' ||

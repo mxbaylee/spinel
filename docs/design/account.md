@@ -56,11 +56,22 @@ SPN-036.
 
 ## Assistant access (SPN-034)
 
-Online everyday-account settings add an **Assistant access tokens** card after passkeys.
-It uses the existing labelled field/button/list pattern: name, **Create token**,
-and token rows with created/last-used status and **Revoke**. The once-only secret
-reveal and **Copy token** with manual-copy fallback reuse the invite-link pattern.
-Show the endpoint and what access the token grants in plain text. Loading, empty,
-busy, error, revealed and revoked states have `Settings/AccessTokens` stories.
-Admins and offline settings do not offer token creation. See [MCP](../mcp.md),
-decision [#111](https://github.com/mxbaylee/spinel/issues/111).
+Online everyday-account settings add **Connected assistants** after passkeys. The
+existing card/list pattern shows the MCP endpoint, supplied client label, callback
+origin, created/last-used times and **Disconnect**. **Advanced: personal access
+tokens** keeps custom labels, last use and **Revoke** in a disclosure. Its once-only
+secret reveal and copy fallback reuse the invite-link pattern. Admin and offline
+settings do not offer connection approval or token creation.
+
+`/connect` reuses the single-purpose account card and existing **Allow / Cancel**
+actions. Show the signed-in account, unverified client-supplied name, callback
+origin, requested read/edit capabilities and a reminder to approve only a request
+the person started. Existing passkey sign-in resumes the opaque pending request.
+Expired, unavailable-session and admin states explain how to start again; no
+trusted-client badges or arbitrary return URLs. This applies existing patterns,
+without changing the planned profile redesign.
+
+Stories: `Settings/AssistantConnections`, `Settings/ConnectAssistant`, and
+`Settings/AccessTokens` cover loading, empty, busy, failure, consent, expiration,
+reveal and revoked states. See [MCP](../mcp.md), decision
+[#111](https://github.com/mxbaylee/spinel/issues/111), owner correction 2026-10-20.

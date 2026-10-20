@@ -26,6 +26,7 @@ import {
 } from '@univerjs-pro/collaboration';
 import { AuthError } from '../auth/store.ts';
 import { AccessTokens } from '../auth/tokens.ts';
+import { currentMcpIdentity } from '../auth/mcpIdentity.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
@@ -76,7 +77,6 @@ export class CollaborationStore {
   private readonly restores = new Map<string, Promise<RestoreJob>>();
   private readonly database: SQLiteDatabaseAdapter;
   private readonly workspace: WorkspaceStore;
-  private readonly tokens: AccessTokens;
   private readonly migration = Symbol('trusted snapshot migration');
   private readonly preparing = new Map<string, Promise<void>>();
   private readonly materializer: UnitSnapshotMaterializer;
@@ -93,7 +93,7 @@ export class CollaborationStore {
     if (!main?.file || realpathSync(String(main.file)) !== realpathSync(filename))
       throw new Error('Collaboration must use the application database file.');
     this.workspace = workspace;
-    this.tokens = new AccessTokens(workspace.auth);
+    new AccessTokens(workspace.auth);
     this.generations = new CollaborationGenerations(workspace);
     this.generations.recoverBeforeServing();
     new SheetStore(workspace);
@@ -152,7 +152,7 @@ export class CollaborationStore {
               this.admitted.set(unitId, active);
             }
             this.access(context.userID, context.request.changeset.unitID, true);
-            this.session(context.userID, context.customData);
+            this.session(context.userID, context.customData, true);
             validateTargets(context.request.changeset);
             await next();
           } catch (error) {
@@ -209,7 +209,7 @@ export class CollaborationStore {
         if (error instanceof AuthError) throw new CollabError('INVALID_REQUEST', error.message);
         throw error;
       }
-      this.session(context.userID, context.customData);
+      this.session(context.userID, context.customData, true);
       this.access(context.userID, id, true);
       await next();
     });
@@ -237,13 +237,10 @@ export class CollaborationStore {
     });
   }
 
-  private session(user: string, custom: Record<string, unknown>) {
+  private session(user: string, custom: Record<string, unknown>, edit = false) {
     if (Object.hasOwn(custom, 'mcpTokenHash')) {
       try {
-        if (
-          typeof custom.mcpTokenHash !== 'string' ||
-          this.tokens.byHash(custom.mcpTokenHash).userId !== user
-        )
+        if (currentMcpIdentity(this.workspace.auth, custom, edit).userId !== user)
           throw new Error('Token scope');
       } catch {
         throw new CollabError('PERMISSION_DENIED', 'This access token is no longer available.');

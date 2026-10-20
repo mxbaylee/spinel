@@ -80,7 +80,7 @@ export function AccessTokens({ admin = false }: { admin?: boolean }) {
           current?.map((token) => (token.id === id ? { ...token, revoked: true } : token)) ?? null,
       );
       if (secret?.id === id) setSecret(null);
-      setNotice('Token revoked. The assistant can no longer use it.');
+      setNotice('Token revoked. It can no longer access your documents.');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not revoke the token. Try again.');
     } finally {
@@ -99,8 +99,8 @@ export function AccessTokens({ admin = false }: { admin?: boolean }) {
   }
 
   return (
-    <section className={admin ? undefined : 'welcome'} aria-label="Assistant access tokens">
-      <Heading>Assistant access tokens</Heading>
+    <section className={admin ? undefined : 'welcome'} aria-label="Personal access tokens">
+      <Heading>Personal access tokens</Heading>
       {admin ? (
         <p>
           Account token names and activity only. Token secrets and document contents are never
@@ -109,11 +109,12 @@ export function AccessTokens({ admin = false }: { admin?: boolean }) {
       ) : (
         <>
           <p>
-            Connect an assistant you choose to list, read and edit the documents your account
-            allows. Keep each token secret and revoke it when you are done. Tokens do not expire.
+            Advanced programmatic access for scripts or clients that require a token. Each token can
+            list, read and edit the documents your account allows. Keep it secret and revoke it when
+            you are done. Tokens do not expire.
           </p>
           <label>
-            MCP server address
+            Token server address
             <input
               readOnly
               value={`${location.origin}/mcp`}
@@ -134,7 +135,7 @@ export function AccessTokens({ admin = false }: { admin?: boolean }) {
                 maxLength={80}
                 disabled={busy || loading || !tokens || limitReached}
                 onChange={(event) => setName(event.target.value)}
-                placeholder="For example, my desktop assistant"
+                placeholder="For example, my local script"
               />
             </label>
             <button disabled={busy || loading || !tokens || limitReached || !name.trim()}>
@@ -145,7 +146,7 @@ export function AccessTokens({ admin = false }: { admin?: boolean }) {
           {secret && (
             <div>
               <p>
-                Copy this token now into your assistant’s connection settings. It will not be shown
+                Copy this token now into your client’s connection settings. It will not be shown
                 again after you leave this page.
               </p>
               <label>

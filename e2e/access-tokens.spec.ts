@@ -44,9 +44,10 @@ test('a member creates and revokes a once-only token while an operator sees only
   await adminContext.addCookies([cookie(auth.createSession(operator.id).token)]);
   try {
     await page.goto('/settings');
-    const settings = page.getByRole('region', { name: 'Assistant access tokens' });
+    await page.getByText('Advanced: personal access tokens', { exact: true }).click();
+    const settings = page.getByRole('region', { name: 'Personal access tokens' });
     await expect(settings.getByText('No access tokens yet.')).toBeVisible();
-    await expect(settings.getByRole('textbox', { name: 'MCP server address' })).toHaveValue(
+    await expect(settings.getByRole('textbox', { name: 'Token server address' })).toHaveValue(
       `${baseURL}/mcp`,
     );
     await settings.getByRole('textbox', { name: 'Token name' }).fill('Chosen desktop assistant');
@@ -74,7 +75,7 @@ test('a member creates and revokes a once-only token while an operator sees only
 
     const admin = await adminContext.newPage();
     await admin.goto(`${baseURL}/admin`);
-    const metadata = admin.getByRole('region', { name: 'Assistant access tokens' });
+    const metadata = admin.getByRole('region', { name: 'Personal access tokens' });
     await expect(
       metadata.getByRole('listitem').filter({ hasText: 'Chosen desktop assistant' }),
     ).toContainText('Assistant owner · Active');
@@ -85,6 +86,7 @@ test('a member creates and revokes a once-only token while an operator sees only
 
     // The raw token is only returned at creation, never in subsequent settings loads.
     await page.reload();
+    await page.getByText('Advanced: personal access tokens', { exact: true }).click();
     await expect(settings.getByRole('listitem')).toContainText('Chosen desktop assistant');
     await expect(reveal).toHaveCount(0);
     expect(await (await context.request.get('/api/auth/tokens')).text()).not.toContain(token);
@@ -100,7 +102,7 @@ test('a member creates and revokes a once-only token while an operator sees only
     ).toContainText('Assistant owner · Revoked');
 
     await admin.goto(`${baseURL}/settings`);
-    await expect(admin.getByRole('region', { name: 'Assistant access tokens' })).toHaveCount(0);
+    await expect(admin.getByRole('region', { name: 'Personal access tokens' })).toHaveCount(0);
   } finally {
     await adminContext.close();
     db.close();

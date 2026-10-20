@@ -11,10 +11,12 @@ import type {
 } from '@simplewebauthn/browser';
 
 import { signSetupProof } from './setup.ts';
-import { api } from './api.ts';
+import { api, connectionRequest, signInPath } from './api.ts';
 import { BackupStatus } from './BackupStatus.tsx';
 import { AdminUsers } from './AdminUsers.tsx';
 import { AccessTokens } from './AccessTokens.tsx';
+import { AssistantConnections } from './AssistantConnections.tsx';
+import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { PinsProvider, PinnedSidebar } from './Pins.tsx';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
@@ -75,6 +77,8 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
   const settings = location.pathname === '/settings';
+  const connecting = location.pathname === '/connect';
+  const [connectRequest] = useState(connectionRequest);
   const setup = location.pathname === '/setup';
   const invitation = location.pathname === '/invite';
   const [inviteToken] = useState(() =>
@@ -114,7 +118,7 @@ export function App() {
             if (isNetworkFailure(failure)) throw failure;
           });
           setSignOutPending(false);
-          if (location.pathname !== '/sign-in') location.assign('/sign-in');
+          if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
         }
         const { user } = await api<{ user: User }>('session');
@@ -122,6 +126,8 @@ export function App() {
         // IndexedDB can fail to answer at all; never hold sign-in on it.
         await within(claimDevice(user), 3000, 'Offline data did not answer.').catch(() => {});
         setUser(user);
+        if (connectRequest && location.pathname === '/sign-in')
+          location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
         if (settings) await refreshKeys();
       } catch (failure) {
         // Only an unreachable server opens local data; a 401 still signs in.
@@ -129,7 +135,12 @@ export function App() {
           // The server ended this session (sign-out, revocation): stop offline
           // access too. claimDevice restores it after the next sign-in.
           if ((failure as { status?: number }).status === 401) setPreparedAccount(null);
-          if (location.pathname !== '/sign-in') location.assign('/sign-in');
+          if (location.pathname !== '/sign-in') location.assign(signInPath());
+          return;
+        }
+        // Authorizing an assistant always needs a live, verified session.
+        if (connecting || connectRequest) {
+          setUnreachable(true);
           return;
         }
         const start = await openLocalStart().catch(() => null);
@@ -144,7 +155,7 @@ export function App() {
         setLoaded(true);
       }
     })();
-  }, [settings, setup, invitation, inviteToken]);
+  }, [settings, setup, invitation, inviteToken, connecting, connectRequest]);
   useEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
@@ -218,7 +229,12 @@ export function App() {
       if (register && !setup && !invitation) {
         await refreshKeys();
         setNotice(`${result.name} added. You can use it to sign in.`);
-      } else location.assign(result.redirect ?? '/');
+      } else
+        location.assign(
+          connectRequest && !setup && !invitation
+            ? `/connect?request=${encodeURIComponent(connectRequest)}`
+            : (result.redirect ?? '/'),
+        );
     } catch (failure) {
       if (!current.cancelled) {
         // Browser exception names vary across providers; keep the retry action clear.
@@ -266,13 +282,13 @@ export function App() {
     // Remount on entering local mode: the provider reads its offline pins once.
     <PinsProvider
       key={local ? 'local' : 'online'}
-      enabled={Boolean(user && !user.isAdmin && !local)}
+      enabled={Boolean(user && !user.isAdmin && !local && !connecting)}
       offline={local?.catalog.pins}
     >
       <div className="workspace">
         <Rail user={user} navigation={navigation} onSignOut={() => void signOut()} />
         <div className="workspace-body">
-          {user && !user.isAdmin && <PinnedSidebar navigation={navigation} />}
+          {user && !user.isAdmin && !connecting && <PinnedSidebar navigation={navigation} />}
           <main>
             {!loaded ? (
               <p role="status">Loading…</p>
@@ -350,6 +366,8 @@ export function App() {
                   </p>
                 </section>
               </>
+            ) : connecting ? (
+              <ConnectAssistant request={connectRequest} user={user} />
             ) : local && settings ? (
               <>
                 <p className="eyebrow">{user.name}</p>
@@ -385,7 +403,15 @@ export function App() {
                     Add a passkey
                   </button>
                 </section>
-                {!user.isAdmin && <AccessTokens />}
+                {!user.isAdmin && (
+                  <>
+                    <AssistantConnections />
+                    <details>
+                      <summary>Advanced: personal access tokens</summary>
+                      <AccessTokens />
+                    </details>
+                  </>
+                )}
               </>
             ) : user.isAdmin ? (
               <>
@@ -397,6 +423,7 @@ export function App() {
                     account for documents.
                   </p>
                   <AdminUsers currentId={user.id} />
+                  <AssistantConnections admin />
                   <AccessTokens admin />
                   <BackupStatus />
                 </section>

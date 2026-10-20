@@ -226,7 +226,7 @@ export function attachCollaboration(
   collab.service.use('commitChangeset', async (context, next) => {
     await revalidate();
     try {
-      validateIdentity(workspace, context.userID, context.customData);
+      validateIdentity(workspace, context.userID, context.customData, true);
     } catch {
       throw denied();
     }

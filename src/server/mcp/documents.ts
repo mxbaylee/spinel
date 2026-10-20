@@ -7,11 +7,24 @@ import { UniverType } from '@univerjs/protocol';
 import type { IChangeset } from '@univerjs/protocol';
 import { AuthError } from '../auth/store.ts';
 import { AccessTokens } from '../auth/tokens.ts';
+import { currentMcpIdentity } from '../auth/mcpIdentity.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import { WorkspaceSearch } from '../workspace/search.ts';
 
-export type TokenIdentity = { id: string; userId: string; hash: string };
+export type TokenIdentity = {
+  id: string;
+  userId: string;
+  hash: string;
+  connectionId?: string;
+  resource?: string;
+};
+const credentialData = (identity: TokenIdentity) => ({
+  mcpTokenHash: identity.hash,
+  ...(identity.connectionId
+    ? { mcpConnectionId: identity.connectionId, mcpResource: identity.resource }
+    : {}),
+});
 type Input = Record<string, unknown>;
 // Document control characters identify structural objects; only paragraph breaks are editable.
 // eslint-disable-next-line no-control-regex
@@ -42,19 +55,21 @@ function integer(value: unknown, min: number, max: number, fallback?: number) {
 export class McpDocuments {
   private readonly workspace: WorkspaceStore;
   private readonly collaboration: CollaborationStore;
-  private readonly tokens: AccessTokens;
   constructor(workspace: WorkspaceStore, collaboration: CollaborationStore) {
     this.workspace = workspace;
     this.collaboration = collaboration;
-    this.tokens = new AccessTokens(workspace.auth);
+    new AccessTokens(workspace.auth);
     workspace.auth.database.exec(`CREATE TABLE IF NOT EXISTS mcp_writes (
-      token_id TEXT NOT NULL REFERENCES auth_access_tokens(id) ON DELETE CASCADE,
+      actor_id TEXT NOT NULL,
       request_id TEXT NOT NULL, payload_hash TEXT NOT NULL, created_at INTEGER NOT NULL,
-      PRIMARY KEY(token_id,request_id)
+      PRIMARY KEY(actor_id,request_id)
     ) STRICT;`);
   }
-  verify(identity: TokenIdentity) {
-    if (this.tokens.byHash(identity.hash).userId !== identity.userId)
+  verify(identity: TokenIdentity, edit = false) {
+    if (
+      currentMcpIdentity(this.workspace.auth, credentialData(identity), edit).userId !==
+      identity.userId
+    )
       throw new AuthError(401, 'This access token is no longer available.');
   }
   list(identity: TokenIdentity, input: unknown) {
@@ -283,7 +298,8 @@ export class McpDocuments {
     }
     if (Buffer.byteLength(mutation.data) > 64 * 1024)
       throw new AuthError(413, 'Use a smaller edit.');
-    this.verify(identity);
+    this.verify(identity, true);
+    const actor = identity.connectionId ? `oauth:${identity.connectionId}` : `token:${identity.id}`;
     const item = this.workspace.get(identity.userId, id, 'edit');
     const generation = this.collaboration.generations.active(id);
     if (
@@ -297,15 +313,15 @@ export class McpDocuments {
       .digest('hex');
     const db = this.workspace.auth.database;
     const prior = db
-      .prepare('SELECT payload_hash FROM mcp_writes WHERE token_id=? AND request_id=?')
-      .get(identity.id, requestId);
+      .prepare('SELECT payload_hash FROM mcp_writes WHERE actor_id=? AND request_id=?')
+      .get(actor, requestId);
     if (prior && prior.payload_hash !== fingerprint)
       throw new AuthError(409, 'This request ID was used for a different edit.');
     if (!prior) {
       const current = await this.load(identity, id);
       if (current.unitId !== unitId || current.revision !== revision) throw changed();
       validate(current.snapshot);
-      this.verify(identity);
+      this.verify(identity, true);
       this.workspace.get(identity.userId, id, 'edit');
       this.workspace.auth.transaction(() => {
         // Retain fingerprints for 30 days. An older retry still cannot reapply at its stale revision.
@@ -315,15 +331,15 @@ export class McpDocuments {
         if (Number(db.prepare('SELECT count(*) AS n FROM mcp_writes').get()!.n) >= 100000)
           throw new AuthError(429, 'Too many recent assistant edits. Try again later.');
         db.prepare('INSERT OR IGNORE INTO mcp_writes VALUES(?,?,?,?)').run(
-          identity.id,
+          actor,
           requestId,
           fingerprint,
           this.workspace.auth.now(),
         );
         if (
           db
-            .prepare('SELECT payload_hash FROM mcp_writes WHERE token_id=? AND request_id=?')
-            .get(identity.id, requestId)!.payload_hash !== fingerprint
+            .prepare('SELECT payload_hash FROM mcp_writes WHERE actor_id=? AND request_id=?')
+            .get(actor, requestId)!.payload_hash !== fingerprint
         )
           throw new AuthError(409, 'This request ID was used for a different edit.');
       });
@@ -334,8 +350,8 @@ export class McpDocuments {
       baseRev: revision - generation.offset,
       revision: 0,
       userID: identity.userId,
-      memberID: `mcp:${identity.id}`,
-      sid: `mcp:${identity.id}:${requestId}`,
+      memberID: `mcp:${actor}`,
+      sid: `mcp:${actor}:${requestId}`,
       reqId: 1,
       mutations: [mutation],
     };
@@ -344,10 +360,10 @@ export class McpDocuments {
       {
         userID: identity.userId,
         memberID: changeset.memberID,
-        customData: { mcpTokenHash: identity.hash },
+        customData: credentialData(identity),
       },
     );
-    this.verify(identity);
+    this.verify(identity, true);
     this.workspace.get(identity.userId, id, 'edit');
     if (result.status === 'rejected' || result.status === 'retry')
       throw new AuthError(409, result.error.message);

@@ -65,7 +65,12 @@ test('protects pages and APIs while keeping database files private', async () =>
   expect((await fetch(`${url}/preview`, { redirect: 'manual' })).headers.get('location')).toBe(
     '/sign-in',
   );
-  expect(await (await fetch(`${url}/sign-in`)).text()).toContain('Dashboard fixture');
+  for (const path of ['/sign-in', '/sign-in?connect=opaque', '/connect?request=opaque']) {
+    const page = await fetch(`${url}${path}`);
+    expect(page.headers.get('content-security-policy')).toBe("frame-ancestors 'none'");
+    expect(page.headers.get('x-frame-options')).toBe('DENY');
+    expect(await page.text()).toContain('Dashboard fixture');
+  }
   expect((await fetch(`${url}/api/health`)).status).toBe(401);
   expect((await fetch(`${url}/api/missing`)).status).toBe(401);
   const writable = openDatabase(databasePath);

@@ -6,6 +6,7 @@ import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprot
 import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import { AuthError } from '../auth/store.ts';
 import { AccessTokens } from '../auth/tokens.ts';
+import { AssistantOAuth } from '../auth/oauth.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import { McpDocuments } from './documents.ts';
@@ -112,6 +113,7 @@ export function mcpRoutes(
 ) {
   const router = express.Router();
   const tokens = new AccessTokens(workspace.auth),
+    oauth = new AssistantOAuth(workspace.auth, origin),
     documents = new McpDocuments(workspace, collaboration);
   const identities = new WeakMap<Request, TokenIdentity>();
   let active = 0;
@@ -119,8 +121,15 @@ export function mcpRoutes(
     response.set('Cache-Control', 'no-store');
     if (request.headers.origin && request.headers.origin !== origin)
       throw new AuthError(403, 'This origin is not allowed.');
-    const bearer = request.headers.authorization?.match(/^Bearer (spinel_[A-Za-z0-9_-]{43})$/);
-    identities.set(request, tokens.authenticate(bearer?.[1]));
+    const bearer = request.headers.authorization?.match(
+      /^Bearer (spinel_(?:oauth_)?[A-Za-z0-9_-]{43})$/,
+    )?.[1];
+    identities.set(
+      request,
+      bearer?.startsWith('spinel_oauth_')
+        ? oauth.authenticate(bearer)
+        : tokens.authenticate(bearer),
+    );
     next();
   });
   router.post(
@@ -240,7 +249,11 @@ export function mcpRoutes(
         : typeof error === 'object' && error !== null && 'status' in error && error.status === 413
           ? 413
           : 400;
-    if (status === 401) response.set('WWW-Authenticate', 'Bearer realm="Spinel MCP"');
+    if (status === 401)
+      response.set(
+        'WWW-Authenticate',
+        `Bearer resource_metadata="${oauth.origin}/.well-known/oauth-protected-resource/mcp", scope="documents:read documents:write"`,
+      );
     response
       .status(status)
       .json({ error: error instanceof AuthError ? error.message : 'Invalid request.' });
