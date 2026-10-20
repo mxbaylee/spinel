@@ -92,6 +92,7 @@ for (const kind of ['doc', 'sheet'] as const) {
       }
       await saved(page);
       await saved(other);
+      expect(errors).toEqual([]);
       if (kind === 'doc')
         await expect(
           page
