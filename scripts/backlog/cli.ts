@@ -1,7 +1,7 @@
 // Backlog checker. See docs/todo/process.md for the rules it enforces.
 //
 //   node scripts/backlog/cli.ts check                 validate tickets and the index
-//   node scripts/backlog/cli.ts index                 regenerate docs/todo/readme.md
+//   node scripts/backlog/cli.ts index                 rewrite each ticket's score and docs/todo/readme.md
 //   node scripts/backlog/cli.ts new <emoji> <title>   create the next ticket from the template
 //   node scripts/backlog/cli.ts pr --base <ref> --title <title>
 //                                                     check a PR against its base branch
@@ -18,7 +18,10 @@ import {
   formatId,
   loadBacklog,
   renderIndex,
+  scores,
+  staleScores,
   validateBacklog,
+  withScore,
 } from './lib.ts';
 
 const root = process.cwd();
@@ -42,7 +45,8 @@ function args(list: string[]): Record<string, string> {
 }
 
 function gitIO(ref: string): BacklogIO {
-  const git = (...a: string[]) => execFileSync('git', a, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+  const git = (...a: string[]) =>
+    execFileSync('git', a, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
   const tryGit = (...a: string[]) => {
     try {
       return git(...a);
@@ -53,7 +57,8 @@ function gitIO(ref: string): BacklogIO {
   return {
     read: (p) => git('show', `${ref}:${p}`),
     exists: (p) => tryGit('cat-file', '-e', `${ref}:${p}`) !== null,
-    list: (d) => (tryGit('ls-tree', '--name-only', `${ref}:${d}`) ?? '').split('\n').filter(Boolean),
+    list: (d) =>
+      (tryGit('ls-tree', '--name-only', `${ref}:${d}`) ?? '').split('\n').filter(Boolean),
   };
 }
 
@@ -62,6 +67,7 @@ const [command, ...rest] = process.argv.slice(2);
 if (command === 'check') {
   const backlog = loadBacklog(root);
   const result = validateBacklog(backlog);
+  if (!result.errors.length) result.errors.push(...staleScores(backlog.tickets).errors);
   if (!result.errors.length && backlog.index !== renderIndex(backlog))
     result.errors.push(`${INDEX} is stale; run \`npm run backlog:index\` and commit the result`);
   if (report(result)) console.log(`backlog ok: ${backlog.tickets.length} open tickets`);
@@ -69,7 +75,17 @@ if (command === 'check') {
   const backlog = loadBacklog(root);
   const result = validateBacklog(backlog);
   if (report(result)) {
-    writeFileSync(join(root, INDEX), renderIndex(backlog));
+    const expected = scores(backlog.tickets);
+    for (const t of backlog.tickets) {
+      if (t.score === expected.get(t.id)) continue;
+      const file = join(root, 'docs/todo', t.file);
+      writeFileSync(file, withScore(readFileSync(file, 'utf8'), expected.get(t.id) ?? 0));
+      console.log(`${t.id}: score ${t.score} → ${expected.get(t.id)}`);
+    }
+    // Reload so the index shows the scores just written; validating fills in titles.
+    const updated = loadBacklog(root);
+    validateBacklog(updated);
+    writeFileSync(join(root, INDEX), renderIndex(updated));
     console.log(`wrote ${INDEX}`);
   }
 } else if (command === 'new') {
@@ -88,9 +104,9 @@ if (command === 'check') {
     `---
 id: ${id}
 emoji: ${emoji}
-effort: M        # S | M | L
-impact: M        # S | M | L
-must_ship: false
+effort: M                # S | M | L
+impact_owner: M          # S | M | L for each persona it touches; leave the rest out
+score: 4                 # written by npm run backlog:index
 depends_on: []
 decisions: []
 ---
@@ -134,17 +150,31 @@ Then <result>.
   const base: Backlog = baseIO.exists(CONFIG_PATH)
     ? loadBacklog(root, baseIO)
     : {
-        config: { ...head.config, next_id: 1, grooming: { ...head.config.grooming, last: undefined, completed_since: [] } },
+        config: {
+          ...head.config,
+          next_id: 1,
+          grooming: { ...head.config.grooming, last: undefined, completed_since: [] },
+        },
         tickets: [],
         strays: [],
         personasText: null,
       };
-  const mergeBase = execFileSync('git', ['merge-base', opts.base, 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
-  const numstat = execFileSync('git', ['diff', '--numstat', mergeBase, 'HEAD'], { cwd: root, encoding: 'utf8' });
+  const mergeBase = execFileSync('git', ['merge-base', opts.base, 'HEAD'], {
+    cwd: root,
+    encoding: 'utf8',
+  }).trim();
+  const numstat = execFileSync('git', ['diff', '--numstat', mergeBase, 'HEAD'], {
+    cwd: root,
+    encoding: 'utf8',
+  });
   // A broken head backlog is reported as-is; comparing it to the base would only crash.
-  const result = headResult.errors.length ? headResult : checkPullRequest({ title: opts.title, base, head, numstat });
+  const result = headResult.errors.length
+    ? headResult
+    : checkPullRequest({ title: opts.title, base, head, numstat });
   if (report(result)) console.log('pull request ok');
 } else {
-  console.error('usage: cli.ts check | index | new <emoji> <title> | pr --base <ref> --title <title>');
+  console.error(
+    'usage: cli.ts check | index | new <emoji> <title> | pr --base <ref> --title <title>',
+  );
   process.exit(2);
 }

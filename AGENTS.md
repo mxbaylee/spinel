@@ -26,6 +26,9 @@ says what is next.
   needs a pattern the playbook doesn't cover adds it there in its own PR first,
   and every new component or state gets a Storybook story. Owner, chat
   2026-10-19 (SPN-046).
+- **UI PRs carry screenshots** in light, dark and phone width, and merge only
+  after the owner approves them. Work the next ticket while waiting. Owner, chat
+  2026-10-19.
 - **Univer Pro packages** (`@univerjs-pro/*`) are closed source under Univer's
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or

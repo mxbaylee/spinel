@@ -42,8 +42,7 @@ status line grows when a message or Retry appears, which moves the sheet
 - **Status cluster,** right after the title: the save slot (SPN-043) and the
   connection slot (SPN-042), each following
   [status changes never move the layout](README.md#status-changes-never-move-the-layout).
-  SPN-053 adds local-save states to the connection slot; SPN-013 adds a queue
-  position there too.
+  SPN-053 adds local-save states to the connection slot.
 - **Right:** collaborators (up to three avatars, then "+n", with names in a
   popover), then **Share** (primary, owners only) or a **View only** badge, then
   the More menu.
@@ -99,4 +98,4 @@ collaborators and Share move into More. No other phone-specific chrome.
 
 `Editor/Collaborators`, `Editor/FillPresets`, `Editor/VersionNames`,
 `Editor/FileExports`. `SheetEditor` and `DocEditor` boot Univer, so their layout
-is checked by Playwright screenshots (SPN-047), not stories.
+is checked by Playwright screenshots (SPN-060), not stories.

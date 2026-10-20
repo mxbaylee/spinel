@@ -92,7 +92,7 @@ API responses, in both themes and at Phone, Tablet and Desktop widths. Stories
 are `*.stories.tsx` beside their component and are typechecked and linted with
 everything else. The **Storybook** workflow builds it on every pull request and
 publishes `main` to <https://mxbaylee.github.io/spinel/> (Owner, chat
-2026-10-19). It isn't a required check; SPN-047 adds screenshot and axe checks
+2026-10-19). It isn't a required check; SPN-060 adds screenshot and axe checks
 over the stories. What a story must
 cover is in the [design playbook](design/README.md#storybook).
 

@@ -26,9 +26,9 @@ No Pro package or collaboration service is used here.
 `sheet_snapshots` stores the complete native `IWorkbookData` JSON produced by
 `FWorkbook.save()`, including styles, worksheet order and plugin resources. IDs
 match the parent workspace item. The public collaboration server's
-`createUnitFromData` accepts this workbook format; SPN-010 must recheck version
-compatibility against its chosen server before SPN-012 adds co-editing. No
-SPN-010 findings exist yet. There is no custom cell-only conversion to migrate.
+`createUnitFromData` accepts this workbook format. Spinel's own sync (SPN-056 to
+SPN-059) must load and store the same format. There is no custom cell-only
+conversion to migrate.
 
 GET `/api/items/:id/sheet` requires an active, non-admin account with read access;
 PUT requires owner/editor access. [Sharing](sharing.md) defines direct and inherited

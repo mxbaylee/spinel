@@ -2,7 +2,7 @@
 
 This is the acceptance contract for Spinel's offline experience. The Owner
 supplied it in chat on 2026-10-18; [decision #83](https://github.com/mxbaylee/spinel/issues/83)
-records its scope. It is not marked must-ship for production. The [mobile installation slice](mobile.md) (SPN-028) supplies installation and
+records its scope. It starts after Spinel's own sync replaces Univer collaboration (SPN-059; owner, chat 2026-10-19). The [mobile installation slice](mobile.md) (SPN-028) supplies installation and
 touch support. Its network-only fallback and [decision #82](https://github.com/mxbaylee/spinel/issues/82)
 describe the initial slice; this explicit signed-in feature supersedes the earlier
 PRD/grooming ban. Guests and unprepared devices keep a generic offline screen.
@@ -223,7 +223,10 @@ Verified by:
 ## How offline editing works
 
 Download and launch work as [described above](#offline-launch-and-read-only-viewing).
-The rest of this section is SPN-053 and SPN-054's design.
+The rest of this section is SPN-053 and SPN-054's design. It was written against
+Univer's collaboration client; SPN-053 rewrites the replay mechanics for
+Spinel's own sync client (SPN-058) once SPN-059 removes Univer collaboration.
+Owner, chat 2026-10-19.
 
 **Edit offline.** A downloaded item opens in an open-source Univer editor created
 from the stored snapshot, with no collaboration plugins. Images come from the

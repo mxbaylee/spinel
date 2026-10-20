@@ -2,9 +2,12 @@
 
 Sheets and Docs use Univer collaboration in the application server with SQLite
 storage, authenticated access, presence and offline recovery. The integration
-uses public SDK interfaces behind a TypeScript boundary so SPN-014 can replace
-it if measured limits make that necessary. The owner chose this approach on
-2026-10-17; SPN-010 is independent evidence, not a prerequisite (decision #31).
+uses public SDK interfaces behind a TypeScript boundary. The owner chose this
+approach on 2026-10-17 (decision #31), then on 2026-10-19 chose to replace it
+with Spinel's own sync: SPN-056 (merging concurrent edits), SPN-057 (the sync
+server), SPN-058 (the client) and SPN-059 (moving every document over and
+removing Univer collaboration). That grooming retired the SPN-010 limits
+experiment and the SPN-013 queue.
 
 ## Storage boundary
 
@@ -199,9 +202,9 @@ increment, so an idempotent cell value cannot conceal duplicate application.
 
 ## Related work and limits
 
-SPN-010's separate limits experiment remains required evidence about unlicensed
-capacity; this integration does not establish an unlimited editor count or a
-more-than-a-day soak. SPN-013 remains optional with inconclusive limit evidence.
+This integration does not establish an unlimited editor count or a
+more-than-a-day soak. Rather than measure Univer's limits (the retired SPN-010)
+or queue editors past them (the retired SPN-013), SPN-056 to SPN-059 replace it.
 SPN-017's raw socket tests cover missing cookies, missing/foreign document scope,
 stale sessions, hostile origins, single-use tickets, a second-document JOIN,
 viewer edits with a forged owner ID, and downgrade/removal after JOIN. A positive
