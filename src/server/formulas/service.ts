@@ -142,23 +142,27 @@ export class DocFormulas {
     reading = true;
     try {
       const catalog = parsed.length ? new WorkspaceSearch(this.workspace).find(user, {}) : [];
-      const prior = parsed.map((reference) => {
+      const previousParsed = previous ? parseFormula(previous.expression) : [];
+      const sameQualifier = (first: (typeof parsed)[number], second: (typeof parsed)[number]) =>
+        first.documentName === second.documentName && first.sheetName === second.sheetName;
+      const sameQualifierOrder =
+        parsed.length === previousParsed.length &&
+        parsed.every((reference, index) => sameQualifier(reference, previousParsed[index]));
+      const prior = parsed.map((reference, index) => {
         const picked = selected.find((candidate) => candidate.start === reference.start);
         if (picked) return picked;
-        if (previous && previous.expression === body.expression) {
-          const exact = previous.references.find(
-            (candidate) => candidate.start === reference.start,
-          );
-          if (exact) return exact;
-        }
-        const text = (body.expression as string).slice(reference.start, reference.end);
-        const matches = previous?.references.filter(
-          (candidate) => previous!.expression.slice(candidate.start, candidate.end) === text,
+        // Editing a cell address must not rebind a renamed source to its namesake.
+        // With unchanged qualifier order, even duplicate names retain each slot's identity.
+        if (previous && sameQualifierOrder) return previous.references[index];
+        const matches = previous?.references.filter((_, previousIndex) =>
+          sameQualifier(reference, previousParsed[previousIndex]),
         );
-        return matches?.length &&
-          new Set(matches.map((candidate) => `${candidate.itemId}/${candidate.sheetId}`)).size === 1
-          ? matches[0]
-          : undefined;
+        if (!matches?.length) return undefined;
+        if (
+          new Set(matches.map((candidate) => `${candidate.itemId}/${candidate.sheetId}`)).size > 1
+        )
+          throw new AuthError(400, 'Choose the intended spreadsheet again for this reference.');
+        return matches[0];
       });
       const items = parsed.map((reference, index) => {
         if (prior[index]) return this.workspace.get(user, prior[index]!.itemId);

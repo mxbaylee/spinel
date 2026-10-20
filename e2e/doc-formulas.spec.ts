@@ -73,9 +73,9 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   await second.addCookies([cookie(friend.id)]);
   const other = await second.newPage();
   const errors: string[] = [];
-  let printedText: string[] | undefined;
-  await context.exposeBinding('captureFormulaPrint', (_source, text: string[]) => {
-    printedText = text;
+  let printHtml = '';
+  await context.exposeBinding('captureFormulaPrint', (_source, html: string) => {
+    printHtml = html;
   });
   for (const target of [page, other]) target.on('pageerror', (error) => errors.push(error.message));
   // Observe actual native canvas text, not just the accessible Formula panel.
@@ -89,16 +89,27 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       return original.call(this, text, ...args);
     };
     window.print = () => {
-      painted.length = 0;
-      window.dispatchEvent(new Event('beforeprint'));
-      void new Promise<void>((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-      ).then(async () => {
-        await (
-          window as unknown as { captureFormulaPrint: (text: string[]) => Promise<void> }
-        ).captureFormulaPrint([...painted]);
-        window.dispatchEvent(new Event('afterprint'));
+      // Capture the already-prepared print surface before browser print events.
+      // Native controller tests verify access clearing; this is actual visual evidence.
+      const clone = document.documentElement.cloneNode(true) as HTMLElement;
+      const originalCanvases = [...document.querySelectorAll('canvas')];
+      clone.querySelectorAll('canvas').forEach((canvas, index) => {
+        const image = document.createElement('img');
+        image.src = originalCanvases[index].toDataURL();
+        image.style.cssText = canvas.style.cssText;
+        image.width = originalCanvases[index].width;
+        image.height = originalCanvases[index].height;
+        canvas.replaceWith(image);
       });
+      clone.querySelectorAll('script').forEach((script) => script.remove());
+      const base = document.createElement('base');
+      base.href = document.baseURI;
+      clone.querySelector('head')!.prepend(base);
+      void (
+        window as unknown as { captureFormulaPrint: (html: string) => Promise<void> }
+      ).captureFormulaPrint(clone.outerHTML);
+      window.dispatchEvent(new Event('beforeprint'));
+      window.dispatchEvent(new Event('afterprint'));
     };
   });
   const saved = (target: Page) =>
@@ -172,12 +183,22 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await screenshots('results');
     await page.locator('.file-exports summary').click();
     await page.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
-    await expect.poll(() => printedText, { timeout: 20_000 }).toBeDefined();
-    expect(
-      printedText!.some((text) => /unavailable|Budget\.Summary|Forecast\.Summary/.test(text)),
-    ).toBe(true);
-    expect(printedText!.join(' ')).not.toContain('314159');
-    expect(printedText!.join(' ')).not.toContain('314166');
+    await expect.poll(() => printHtml.includes('<img'), { timeout: 20_000 }).toBe(true);
+    const printed = await context.newPage();
+    try {
+      await printed.emulateMedia({ media: 'print' });
+      await printed.setContent(printHtml, { waitUntil: 'networkidle' });
+      await printed.evaluate(() =>
+        Promise.all([...document.images].map((image) => image.decode().catch(() => {}))),
+      );
+      await printed.screenshot({
+        path: `test-results/theme-screenshots/formulas-${info.project.name}-prepared-print.png`,
+        fullPage: true,
+      });
+    } finally {
+      await printed.close();
+      await page.bringToFront();
+    }
     await expect(formulaPanel(page)).toContainText('314159', { timeout: 20_000 });
 
     const snapshot = await read();

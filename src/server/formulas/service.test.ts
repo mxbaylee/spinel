@@ -302,3 +302,106 @@ test('picker bindings disambiguate duplicate names and cannot bypass source perm
     ),
   ).rejects.toMatchObject({ status: 400 });
 });
+
+test('editing addresses preserves renamed source identities rather than binding a new namesake', async () => {
+  const f = fixture();
+  const previous = await f.resolve();
+  f.workspace.update(f.owner.id, f.source.id, { name: 'Renamed budget' });
+  f.snapshots.get(f.source.id)!.sheets.summary.name = 'Renamed summary';
+  f.workspace.update(f.owner.id, f.second.id, { name: 'Budget' });
+  const edited = await f.formulas.resolve(
+    f.owner.id,
+    f.host.id,
+    {
+      expression: '=Budget.Summary.A2:C30',
+      previous,
+    },
+    f.verify,
+  );
+  expect(edited.references[0]).toMatchObject({
+    itemId: f.source.id,
+    sheetId: 'summary',
+    range: 'A2:C30',
+  });
+  f.snapshots.get(f.second.id)!.sheets.other = { id: 'other', name: 'Other', cellData: {} };
+  f.snapshots.get(f.second.id)!.sheetOrder.push('other');
+  const changedSource = await f.formulas.resolve(
+    f.owner.id,
+    f.host.id,
+    {
+      expression: '=Budget.Other.A2',
+      previous,
+    },
+    f.verify,
+  );
+  expect(changedSource.references[0]).toMatchObject({
+    itemId: f.second.id,
+    sheetId: 'other',
+    range: 'A2',
+  });
+});
+
+test('duplicate-name address edits preserve slots and ambiguous reference removal requires an explicit choice', async () => {
+  const f = fixture();
+  f.workspace.update(f.owner.id, f.second.id, { name: 'Budget' });
+  const expression = '=SUM(Budget.Summary.A1,Budget.Summary.A1)';
+  const bindings = parseFormula(expression).map((reference, index) => ({
+    start: reference.start,
+    end: reference.end,
+    range: reference.range,
+    itemId: index === 0 ? f.source.id : f.second.id,
+    sheetId: 'summary',
+  }));
+  const previous = await f.formulas.resolve(
+    f.owner.id,
+    f.host.id,
+    { expression, bindings },
+    f.verify,
+  );
+  f.workspace.update(f.owner.id, f.source.id, { name: 'Renamed budget' });
+  const edited = await f.formulas.resolve(
+    f.owner.id,
+    f.host.id,
+    {
+      expression: '=SUM(Budget.Summary.A2,Budget.Summary.A3)',
+      previous,
+    },
+    f.verify,
+  );
+  expect(edited.references.map((reference) => reference.itemId)).toEqual([
+    f.source.id,
+    f.second.id,
+  ]);
+  const shortened = '=Budget.Summary.A2';
+  await expect(
+    f.formulas.resolve(
+      f.owner.id,
+      f.host.id,
+      {
+        expression: shortened,
+        previous,
+      },
+      f.verify,
+    ),
+  ).rejects.toThrow('intended spreadsheet');
+  const parsed = parseFormula(shortened)[0];
+  const selected = await f.formulas.resolve(
+    f.owner.id,
+    f.host.id,
+    {
+      expression: shortened,
+      previous,
+      bindings: [
+        {
+          start: parsed.start,
+          end: parsed.end,
+          range: parsed.range,
+          itemId: f.source.id,
+          sheetId: 'summary',
+        },
+      ],
+    },
+    f.verify,
+  );
+  expect(selected.references[0].itemId).toBe(f.source.id);
+});
