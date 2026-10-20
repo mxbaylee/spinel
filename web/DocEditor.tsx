@@ -246,7 +246,11 @@ export function DocEditor({
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
           UniverDocsPrintPlugin,
-          ...collaborationPlugins(data.unitId, [[IImageIoService, { useClass: StoredImages }]]),
+          ...collaborationPlugins(
+            data.unitId,
+            [[IImageIoService, { useClass: StoredImages }]],
+            true,
+          ),
         ],
         presets: [
           UniverDocsCorePreset({

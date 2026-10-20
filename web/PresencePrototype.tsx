@@ -3,7 +3,6 @@ import { Flower, Cat } from 'lucide';
 import type { Univer, IDisposable } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import type { IMember } from '@univerjs/protocol';
-import { DocSelectionManagerService } from '@univerjs/docs';
 import { CollaborationSessionService } from '@univerjs-pro/collaboration-client';
 import { CollaborationEvent } from '@univerjs-pro/collaboration';
 import { drawPresence } from '@spinel/presence-ui';
@@ -114,16 +113,6 @@ export async function startPresencePrototype(univer: Univer, api: FUniver, id: s
   // The disabled SDK UI normally publishes these. Reuse its public wire event,
   // without adding profile data to the guest-sensitive presence payload.
   let previous = '';
-  let docSelection = '';
-  const documentSelections =
-    api.getActiveDocument?.()?.getId() === id
-      ? injector.get(DocSelectionManagerService).textSelection$.subscribe((event) => {
-          if (event.unitId !== id) return;
-          const range = event.textRanges[0];
-          docSelection =
-            range && !event.segmentId ? `${range.startOffset}:${range.endOffset}:1:TEXT::-1` : '';
-        })
-      : null;
   const timer = window.setInterval(() => {
     const memberID = session.getMemberID();
     if (!memberID) return;
@@ -133,9 +122,7 @@ export async function startPresencePrototype(univer: Univer, api: FUniver, id: s
       const sheet = book.getActiveSheet(),
         range = sheet.getActiveRange();
       if (range) selection = `${sheet.getSheetId()}!${range.getA1Notation()}`;
-    } else {
-      selection = docSelection;
-    }
+    } else return; // Docs retains native cursor publishing: its UI cannot be safely disabled.
     if (selection === previous) return;
     previous = selection;
     void session
@@ -149,7 +136,6 @@ export async function startPresencePrototype(univer: Univer, api: FUniver, id: s
   }, 150);
   return () => {
     clearInterval(timer);
-    documentSelections?.unsubscribe();
     events.unsubscribe();
     membership.dispose();
     theme();
