@@ -8,15 +8,16 @@ changed here.
 
 ## Decisions and ticket disposition
 
-- SPN-074 can remove unsupported Slides before SPN-047. The dashboard and search
+- SPN-074 removes Slides entirely before SPN-047. The dashboard and search
   still use `ITEM_KINDS`, and the store still accepts `slides`; the ticket remains
-  S effort with S impact for Owner and Collaborator. Keep legacy rows and ordinary
-  item management. Existing patterns, stories, light/dark/phone screenshots and
-  the owner's approval still apply. The exception is recorded in SPN-047 and the
-  design playbook. The legacy placeholder has owner and shared-reader variants:
-  only the owner receives Trash advice, preserving current permissions. Owner,
-  chat 2026-10-20; routine role-aware copy recorded in decision
-  [#104](https://github.com/mxbaylee/spinel/issues/104).
+  S effort with S impact for Owner and Collaborator. The owner clarified that
+  Spinel has never been in production: remove the kind, schema support, read paths,
+  placeholders and fixtures, with no legacy rows, compatibility or migration work.
+  This supersedes the earlier preservation scenario and role-aware placeholder
+  proposal. Existing design patterns, stories for changed New/search states,
+  light/dark/phone screenshots and owner approval still apply. The sequencing
+  exception remains in SPN-047 and the design playbook. Owner correction, chat
+  2026-10-20, decision [#104](https://github.com/mxbaylee/spinel/issues/104).
 - SPN-073 is retired into SPN-075, not completed. SPN-075 becomes **Export Sheets
   and Docs as PDF without Univer Pro**, retaining L effort, its persona impacts
   and SPN-047 dependency. One direct PDF download replaces all app Print actions
@@ -86,7 +87,8 @@ their own scopes. The Link guest gets only the shared document, no injected acco
 identity, and loses new-export access on revocation. Keeping separate role-specific
 PDF tickets would add handoff and permission drift for no different user outcome.
 Keeping the Slides dependency would delay removing an unusable choice without
-helping the redesign. Removing review safeguards would save effort at the expense
+helping the redesign. Maintaining compatibility for a never-production document
+type would add unnecessary work for the Operator without serving any persona. Removing review safeguards would save effort at the expense
 of every persona, so those remain unchanged.
 
 No new persona gap requiring a ticket was identified in this review. No IDs are
