@@ -1,4 +1,6 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { createCanvas } from '@napi-rs/canvas';
+import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
@@ -8,6 +10,8 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { DocumentStore } from '../src/server/workspace/documents.ts';
+
+type FormulaCanvasPaint = { text: string; width: number; height: number };
 
 test('native Doc formulas render live cells, tables and cross-document totals without sharing source access', async ({
   page,
@@ -81,10 +85,22 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   // Observe actual native canvas text, not just the accessible Formula panel.
   await context.addInitScript(() => {
     const original = CanvasRenderingContext2D.prototype.fillText;
+    const originalRect = CanvasRenderingContext2D.prototype.fillRect;
+    const lastRect = new WeakMap<CanvasRenderingContext2D, { width: number; height: number }>();
+    const geometry: FormulaCanvasPaint[] = [];
     const painted: string[] = [];
-    Object.assign(window, { formulaPaintedText: painted });
+    Object.assign(window, { formulaPaintedText: painted, formulaPaintedGeometry: geometry });
+    CanvasRenderingContext2D.prototype.fillRect = function (x, y, width, height) {
+      lastRect.set(this, { width, height });
+      return originalRect.call(this, x, y, width, height);
+    };
     CanvasRenderingContext2D.prototype.fillText = function (text, ...args) {
       painted.push(text);
+      const rect = lastRect.get(this);
+      if (rect && (text === '314159' || text === '…')) {
+        geometry.push({ text, ...rect });
+        if (geometry.length > 1000) geometry.splice(0, 500);
+      }
       if (painted.length > 20000) painted.splice(0, 10000);
       return original.call(this, text, ...args);
     };
@@ -125,16 +141,25 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       await panel.locator('summary').click();
     return panel;
   };
+  const nativeInput = () => page.locator('[contenteditable="true"][data-u-comp="editor"]');
   const insert = async (expression: string) => {
-    await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+    const paragraphsBefore = (await read()).body.dataStream.split('\r').length;
+    if (!(await read()).body.customRanges?.length)
+      await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+    await nativeInput().focus();
+    await expect(nativeInput()).toBeFocused();
     await page.keyboard.press('Control+End');
     await page.keyboard.press('Enter');
+    await expect
+      .poll(async () => (await read()).body.dataStream.split('\r').length)
+      .toBe(paragraphsBefore + 1);
     const panel = await openPanel(page);
     await panel.getByRole('button', { name: 'Insert formula', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Insert formula', exact: true });
     await dialog.getByLabel('Formula', { exact: true }).fill(expression);
     await dialog.getByRole('button', { name: 'Insert formula', exact: true }).click();
     await expect(dialog).not.toBeVisible({ timeout: 20_000 });
+    await expect(nativeInput()).toBeFocused();
     await saved(page);
     await expect.poll(async () => JSON.stringify(await read())).toContain(expression);
     return panel
@@ -155,11 +180,52 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     ] as const) {
       await target.emulateMedia({ colorScheme: theme });
       await target.setViewportSize({ width, height: 1100 });
+      if (name !== 'editing') {
+        await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
+        await target.keyboard.press('Control+Home');
+        await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
+          timeout: 20_000,
+        });
+      }
       await target.screenshot({
         path: `test-results/theme-screenshots/formulas-${info.project.name}-${name}-${theme}-${width}.png`,
         fullPage: true,
         animations: 'disabled',
       });
+      if (name === 'results') {
+        await target.keyboard.press('Control+End');
+        await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
+          timeout: 20_000,
+        });
+        await target.screenshot({
+          path: `test-results/theme-screenshots/formulas-${info.project.name}-${name}-end-${theme}-${width}.png`,
+          fullPage: true,
+          animations: 'disabled',
+        });
+      }
+      if (width === 390)
+        console.log(
+          'Formula phone overflow:',
+          await target.evaluate(() => ({
+            viewport: innerWidth,
+            document: document.documentElement.scrollWidth,
+            overflow: [...document.querySelectorAll('body *')]
+              .filter((element) => {
+                const box = element.getBoundingClientRect();
+                return (
+                  box.width > 0 &&
+                  box.right > innerWidth + 1 &&
+                  getComputedStyle(element).position !== 'fixed'
+                );
+              })
+              .slice(0, 12)
+              .map((element) => ({
+                tag: element.tagName,
+                classes: element.className,
+                right: element.getBoundingClientRect().right,
+              })),
+          })),
+        );
     }
     await target.emulateMedia({ colorScheme: 'light' });
     await target.setViewportSize({ width: 1440, height: 1100 });
@@ -186,6 +252,67 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect(array).toContainText('4', { timeout: 20_000 });
     const table = await insert('=Budget.Summary.A1:C30');
     await expect(table).toContainText('230', { timeout: 20_000 });
+    // Hold fresh evaluations while inspecting the real native glyph's loading footprint.
+    await expect
+      .poll(() =>
+        page.evaluate(() =>
+          (
+            window as unknown as { formulaPaintedGeometry: FormulaCanvasPaint[] }
+          ).formulaPaintedGeometry.some((paint) => paint.text === '314159' && paint.height > 300),
+        ),
+      )
+      .toBe(true);
+    const tableFootprint = await page.evaluate(() =>
+      (
+        window as unknown as { formulaPaintedGeometry: FormulaCanvasPaint[] }
+      ).formulaPaintedGeometry.findLast((paint) => paint.text === '314159' && paint.height > 300)!,
+    );
+    let releaseEvaluation!: () => void;
+    const evaluationGate = new Promise<void>((resolve) => {
+      releaseEvaluation = resolve;
+    });
+    const evaluationPath = `**/api/items/${host.id}/formulas/evaluate`;
+    let evaluationHeld = false;
+    await page.route(evaluationPath, async (route) => {
+      const response = await route.fetch();
+      evaluationHeld = true;
+      await evaluationGate;
+      await route.fulfill({ response });
+    });
+    try {
+      await page.evaluate(() => {
+        (
+          window as unknown as { formulaPaintedGeometry: FormulaCanvasPaint[] }
+        ).formulaPaintedGeometry.length = 0;
+      });
+      await formulaPanel(page)
+        .getByRole('button', { name: 'Refresh formulas', exact: true })
+        .click();
+      await expect.poll(() => evaluationHeld, { timeout: 15_000 }).toBe(true);
+      await expect(table).toContainText('Calculating');
+      await expect(table).not.toContainText('314159');
+      await expect(table).not.toContainText('230');
+      await expect
+        .poll(() =>
+          page.evaluate(
+            (expected) =>
+              (
+                window as unknown as { formulaPaintedGeometry: FormulaCanvasPaint[] }
+              ).formulaPaintedGeometry.some(
+                (paint) =>
+                  paint.text === '…' &&
+                  Math.abs(paint.width - expected.width) < 0.01 &&
+                  Math.abs(paint.height - expected.height) < 0.01,
+              ),
+            tableFootprint,
+          ),
+        )
+        .toBe(true);
+    } finally {
+      releaseEvaluation();
+      await page.unrouteAll({ behavior: 'wait' });
+    }
+    await expect(table).toContainText('230', { timeout: 20_000 });
     await screenshots('results');
     await page.locator('.file-exports summary').click();
     await page.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
@@ -197,10 +324,46 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       await printed.evaluate(() =>
         Promise.all([...document.images].map((image) => image.decode().catch(() => {}))),
       );
-      await printed.screenshot({
-        path: `test-results/theme-screenshots/formulas-${info.project.name}-prepared-print.png`,
-        fullPage: true,
+      const pdf = await printed.pdf({
+        path: info.outputPath('formulas-export.pdf'),
+        printBackground: true,
+        preferCSSPageSize: true,
       });
+      const loading = getDocument({ data: new Uint8Array(pdf), useSystemFonts: true });
+      const reopened = await loading.promise;
+      try {
+        expect(reopened.numPages).toBeGreaterThan(0);
+        let ink = 0;
+        for (let number = 1; number <= reopened.numPages; number++) {
+          const sheet = await reopened.getPage(number);
+          const viewport = sheet.getViewport({ scale: 1 });
+          const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
+          await sheet.render({
+            canvas: canvas as unknown as HTMLCanvasElement,
+            canvasContext: canvas.getContext('2d') as unknown as CanvasRenderingContext2D,
+            viewport,
+          }).promise;
+          const pixels = canvas
+            .getContext('2d')
+            .getImageData(0, 0, canvas.width, canvas.height).data;
+          for (let index = 0; index < pixels.length; index += 4)
+            if (
+              pixels[index + 3] &&
+              Math.min(pixels[index], pixels[index + 1], pixels[index + 2]) < 240
+            )
+              ink++;
+          await writeFile(
+            info.outputPath(`formulas-page-${number}-export-opened.png`),
+            await canvas.encode('png'),
+          );
+        }
+        expect(
+          ink,
+          'The prepared PDF must have visible content for privacy review',
+        ).toBeGreaterThan(50);
+      } finally {
+        await loading.destroy();
+      }
     } finally {
       await printed.close();
       await page.bringToFront();
@@ -367,6 +530,7 @@ test('rich clipboard creates independent native Formula objects and plain text k
     ...body,
     dataStream: expression + '\r\n',
     paragraphs: [{ startIndex: expression.length, paragraphId: 'formula-paragraph' }],
+    sectionBreaks: [{ startIndex: expression.length + 1, sectionId: 'clipboard-section' }],
   };
   new DocumentStore(workspace).save(owner.id, host.id, {
     snapshot,
@@ -402,6 +566,9 @@ test('rich clipboard creates independent native Formula objects and plain text k
     const dialog = page.getByRole('dialog', { name: 'Edit formula' });
     if (await dialog.isVisible())
       await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    const input = page.locator('[contenteditable="true"][data-u-comp="editor"]');
+    await input.focus();
+    await expect(input).toBeFocused();
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control+c');
     await expect

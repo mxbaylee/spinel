@@ -17,7 +17,11 @@ import {
   InsertTextCommand,
   RichTextEditingMutation,
 } from '@univerjs/docs';
-import { DocEventManagerService, DocPrintInterceptorService } from '@univerjs/docs-ui';
+import {
+  DocEventManagerService,
+  DocPrintInterceptorService,
+  DocSelectionRenderService,
+} from '@univerjs/docs-ui';
 import {
   IRenderManagerService,
   registerDocCustomGlyphRenderer,
@@ -77,6 +81,11 @@ export function installDocFormulas(options: DocFormulaOptions) {
   let states: FormulaState[] = [];
   let refreshing: Promise<void> | undefined;
   let printPaused = false;
+  // Retain only dimensions, never displayed rows or calculated source values.
+  const footprints = new Map<
+    string,
+    { key: string; width: number; ascent: number; descent: number }
+  >();
   const canvas = globalThis.document.createElement('canvas');
   const measureContext = canvas.getContext('2d');
   const measure = (text: string, at: number) => {
@@ -109,9 +118,56 @@ export function installDocFormulas(options: DocFormulaOptions) {
       ? { ok: false, reason: 'too-large' }
       : result;
   };
+  const footprintKey = (formula: DocFormula) => {
+    const glyph = skeleton.getSkeleton().findNodeByCharIndex(formula.start);
+    const line = glyph?.parent?.parent;
+    const column = line?.parent;
+    const page = column?.parent?.parent;
+    const style = document.getDocumentStyle();
+    const text = document
+      .getBody()
+      ?.textRuns?.find((run) => run.st <= formula.start && run.ed > formula.start)?.ts;
+    return JSON.stringify([
+      formula.definition,
+      glyph?.fontStyle?.originFontSize,
+      glyph?.ts?.bl,
+      glyph?.ts?.it,
+      text?.fs,
+      text?.bl,
+      text?.it,
+      style.textStyle,
+      style.pageSize,
+      style.marginTop,
+      style.marginBottom,
+      style.marginLeft,
+      style.marginRight,
+      column?.width,
+      line?.paragraphPaddingLeft,
+      line?.paragraphPaddingRight,
+      page?.pageHeight,
+      page?.marginTop,
+      page?.marginBottom,
+      page?.footnoteHeight,
+    ]);
+  };
   const geometry = (id: string) => {
     const state = states.find((entry) => entry.formula.id === id);
     if (!state) return null;
+    const footprint = footprints.get(id);
+    if (
+      !state.result.ok &&
+      state.result.reason === 'loading' &&
+      footprint?.key === footprintKey(state.formula)
+    )
+      return {
+        // A short neutral marker fits even the narrowest previous scalar footprint.
+        rows: [['…']],
+        columns: [footprint.width],
+        table: false,
+        width: footprint.width,
+        ascent: footprint.ascent,
+        descent: footprint.descent,
+      };
     return formulaGeometry(state.result, state.formula.definition, (text) =>
       measure(text, state.formula.start),
     );
@@ -211,6 +267,8 @@ export function installDocFormulas(options: DocFormulaOptions) {
     if (disposed) return;
     const formulas = docFormulas(document.getBody());
     if (!formulas.length && !states.length) return;
+    for (const id of footprints.keys())
+      if (!formulas.some((formula) => formula.id === id)) footprints.delete(id);
     if (formulas.length) presentation ??= createPresentation();
     else {
       presentation?.dispose();
@@ -236,6 +294,15 @@ export function installDocFormulas(options: DocFormulaOptions) {
       if (signal.aborted || disposed) return;
       state.result = fit(result, state.formula.definition, state.formula.start);
       repaint();
+      if (state.result.ok) {
+        const dimensions = geometry(state.formula.id)!;
+        footprints.set(state.formula.id, {
+          key: footprintKey(state.formula),
+          width: dimensions.width,
+          ascent: dimensions.ascent,
+          descent: dimensions.descent,
+        });
+      } else footprints.delete(state.formula.id);
     }
   };
   const refresh = (force = false): Promise<void> => {
@@ -250,6 +317,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
     return task;
   };
   const clear = () => {
+    footprints.clear();
     abort.abort();
     refreshing = undefined;
     if (!states.length) return;
@@ -359,6 +427,9 @@ export function installDocFormulas(options: DocFormulaOptions) {
     selection,
     clear,
     resume,
+    focus: () => {
+      if (!disposed) render.with(DocSelectionRenderService).focus();
+    },
     dispose: () => {
       if (disposed) return;
       disposed = true;
@@ -376,6 +447,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
         renderer = undefined;
       }
       states = [];
+      footprints.clear();
     },
   };
 }

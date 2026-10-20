@@ -73,6 +73,9 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
         endIndex: range.endIndex + offset,
       })),
     ],
+    sectionBreaks: [
+      { startIndex: offset + literal.dataStream.length + 1, sectionId: 'formula-access-section' },
+    ],
     paragraphs: [
       { startIndex: expression.length, paragraphId: 'source-paragraph' },
       { startIndex: offset + literal.dataStream.length, paragraphId: 'literal-paragraph' },

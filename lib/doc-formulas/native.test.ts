@@ -4,6 +4,7 @@ import {
   IUniverInstanceService,
   type Univer,
   type IDocumentBody,
+  type ICustomRange,
 } from '@univerjs/core';
 import {
   DocInterceptorService,
@@ -37,6 +38,7 @@ vi.mock('@univerjs/docs', () => ({
 vi.mock('@univerjs/docs-ui', () => ({
   DocEventManagerService: Symbol('events'),
   DocPrintInterceptorService: Symbol('print'),
+  DocSelectionRenderService: Symbol('selection-render'),
 }));
 vi.mock('@univerjs/engine-render', () => ({
   IRenderManagerService: Symbol('render'),
@@ -65,6 +67,17 @@ function fixture(
     ? { dataStream: 'A plain document\r\n' }
     : formulaBody('formula', definition);
   let revision = 0;
+  let pageWidth = 700;
+  type MeasuredRange = ICustomRange & {
+    glyphWidthEm?: number;
+    glyphAscentEm?: number;
+    glyphDescentEm?: number;
+  };
+  let intercept!: (
+    range: ICustomRange,
+    context: { body: IDocumentBody },
+    next: (range: MeasuredRange) => MeasuredRange,
+  ) => MeasuredRange;
   const states: FormulaState[][] = [];
   let mutation!: (command: { id: string; params: { unitId: string } }) => void;
   let print!: (context: { unitId: string; dpr: number }) => Promise<void>;
@@ -72,7 +85,10 @@ function fixture(
   const model = {
     getBody: () => body,
     getMutationRevision: () => revision,
-    getDocumentStyle: () => ({ pageSize: { width: 700, height: 1000 }, textStyle: { fs: 12 } }),
+    getDocumentStyle: () => ({
+      pageSize: { width: pageWidth, height: 1000 },
+      textStyle: { fs: 12 },
+    }),
   };
   const skeleton = {
     getViewModel: () => ({
@@ -86,7 +102,13 @@ function fixture(
     mainComponent: { makeDirty() {} },
     with: (token: unknown) => {
       if (token === DocSkeletonManagerService) return skeleton;
-      if (token === DocInterceptorService) return { intercept: () => ({ dispose() {} }) };
+      if (token === DocInterceptorService)
+        return {
+          intercept: (_point: unknown, options: { handler: typeof intercept }) => {
+            intercept = options.handler;
+            return { dispose() {} };
+          },
+        };
       if (token === DocEventManagerService)
         return { clickCustomRanges$: { subscribe: () => ({ unsubscribe() {} }) } };
       throw new Error('Unexpected render service');
@@ -144,6 +166,13 @@ function fixture(
     states,
     executeCommand,
     repaints: skeleton.recalculate,
+    metrics: () => {
+      const range = intercept(body.customRanges![0]!, { body }, (value) => value);
+      return [range.glyphWidthEm, range.glyphAscentEm, range.glyphDescentEm];
+    },
+    resize: (width: number) => {
+      pageWidth = width;
+    },
     edit: (replacement?: IDocumentBody) => {
       if (replacement) body = replacement;
       revision++;
@@ -249,6 +278,40 @@ describe('native formula lifecycle', () => {
       renderConfig: { useCustomGlyphRenderer: 1 },
     });
     expect(source.body!.sectionBreaks[0]!.renderConfig).toBeUndefined();
+  });
+  it('keeps only the prior footprint while refreshing and invalidates it when layout changes', async () => {
+    const pending = deferred(),
+      afterResize = deferred();
+    const evaluate = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        kind: 'table',
+        rows: [
+          [123456789, 2],
+          [3, 4],
+        ],
+      })
+      .mockReturnValueOnce(pending.promise)
+      .mockReturnValueOnce(afterResize.promise);
+    const { controller, states, metrics, resize } = fixture(evaluate);
+    await controller.refresh();
+    const table = metrics();
+    const refreshing = controller.refresh();
+    expect(states.at(-1)?.[0]?.result).toEqual({ ok: false, reason: 'loading' });
+    expect(JSON.stringify(states.at(-1))).not.toContain('123456789');
+    expect(metrics()).toEqual(table);
+    pending.resolve({ ok: true, kind: 'scalar', value: 7 });
+    await refreshing;
+    const scalar = metrics();
+    expect(scalar).not.toEqual(table);
+    resize(500);
+    const changedLayout = controller.refresh();
+    expect(metrics()).not.toEqual(scalar);
+    afterResize.resolve({ ok: false, reason: 'private-source' });
+    await changedLayout;
+    expect(states.at(-1)?.[0]?.result).toEqual({ ok: false, reason: 'private-source' });
+    expect(metrics()).not.toEqual(table);
   });
   it('coalesces refreshes so an in-flight calculation is not continually aborted', async () => {
     const pending = deferred(),

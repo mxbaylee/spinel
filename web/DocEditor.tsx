@@ -444,7 +444,11 @@ export function DocEditor({
         <FormulaDialog
           id={id}
           initial={formulaEdit.formula}
-          onClose={() => setFormulaEdit(null)}
+          onClose={() => {
+            setFormulaEdit(null);
+            // Wait for dialog cleanup before returning keyboard input to the native document.
+            requestAnimationFrame(() => formulas.current?.focus());
+          }}
           onSave={async (definition: FormulaDefinition) => {
             if (!formulas.current || !canEditFormulas.current)
               throw new Error('This document is read-only.');

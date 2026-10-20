@@ -60,15 +60,17 @@ than 100,000 rows or 1,024 columns. Results are limited to 30 rows, 12 columns,
 A disposable worker has a five-second deadline and a 256 MiB old-generation
 heap limit. One calculation/materialization request is admitted at a time;
 there is no result cache or unbounded queue. Clients briefly retry busy admission
-with a bounded, cancellable wait; authorization failures are not retried. A timeout terminates the worker,
-including synchronous calculation. Access and source generations are checked
-again after asynchronous work.
+with a bounded, cancellable wait; authorization failures are not retried. A timeout
+terminates the worker, including synchronous calculation. Access and source
+generations are checked again after asynchronous work.
 
 Scalar results participate in normal paragraph flow. A table is a measured
 atomic object: it can move to another page but does not split across pages.
 The standard page supports the 30-row example. If the current font, column or page
 dimensions cannot fit a result, insertion or refresh reports a size error.
-Normal selection, undo/redo and collaboration carry the source definition.
+While recalculating, an unchanged formula keeps its measured space and shows a
+neutral loading marker; its previous values are cleared immediately. Normal
+selection, undo/redo and collaboration carry the source definition.
 
 ## Implementation and decisions
 
