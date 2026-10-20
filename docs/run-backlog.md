@@ -171,6 +171,11 @@ Wait for all required checks on the current head to finish successfully. The
 current set is **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
 and **Playwright smoke**, plus any added repository-required checks. Missing,
 pending, cancelled, skipped or failed required checks do not count as a pass.
+For an allowlisted documentation-only change, successful required jobs may
+explicitly report application tests as not applicable; Backlog, Pull request
+and Lint still validate the change. See the narrow path policy in
+[process.md](todo/process.md#pull-requests-and-main) and decision #121. Changes
+to CI itself always require full validation.
 Inspect failures, fix their causes, run the affected checks and the pre-push checks,
 and push again. Retry a transient infrastructure failure only with evidence.
 

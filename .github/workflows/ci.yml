@@ -15,6 +15,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Classify changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      docs_only: ${{ steps.changes.outputs.docs_only }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - id: changes
+        run: node scripts/ci/changes.ts
+
   backlog:
     name: Backlog
     runs-on: ubuntu-latest
@@ -27,8 +45,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      - name: Install
-        run: npm ci
       - name: Tickets and index
         run: npm run backlog:check
 
@@ -72,39 +88,57 @@ jobs:
 
   typecheck:
     name: Typecheck
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - if: needs.changes.outputs.docs_only != 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - if: needs.changes.outputs.docs_only != 'true'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
+        if: needs.changes.outputs.docs_only != 'true'
         run: npm ci
       - name: Typecheck
+        if: needs.changes.outputs.docs_only != 'true'
         run: npm run typecheck
+      - name: Documentation-only change
+        if: needs.changes.outputs.docs_only == 'true'
+        run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
 
   unit-tests:
     name: Unit tests
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - if: needs.changes.outputs.docs_only != 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - if: needs.changes.outputs.docs_only != 'true'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
+        if: needs.changes.outputs.docs_only != 'true'
         run: npm ci
       - name: Unit tests
+        if: needs.changes.outputs.docs_only != 'true'
         run: npm test
+      - name: Documentation-only change
+        if: needs.changes.outputs.docs_only == 'true'
+        run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
 
   playwright-run:
+    needs: changes
+    if: needs.changes.outputs.docs_only != 'true'
     name: Playwright smoke (${{ matrix.project }}${{ matrix.shard && format(' {0}', matrix.shard) || '' }})
     runs-on: ubuntu-latest
     # Each runner keeps one browser worker and only its own app server, as
@@ -162,17 +196,24 @@ jobs:
           if-no-files-found: warn
 
   # The ruleset requires a check named "Playwright smoke", so this job carries
-  # the name and passes only when every run above passed.
+  # the name. Only classified docs-only changes may omit the browser matrix.
   playwright:
     name: Playwright smoke
-    needs: playwright-run
+    needs: [changes, playwright-run]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Every build passed
+      - name: Required browser validation
         env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
           RESULT: ${{ needs.playwright-run.result }}
         run: |
-          echo "Playwright runs: $RESULT"
-          test "$RESULT" = success
+          test "$CLASSIFICATION" = success
+          if [ "$DOCS_ONLY" = true ] && [ "$RESULT" = skipped ]; then
+            echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
+          else
+            echo "Playwright runs: $RESULT"
+            test "$RESULT" = success
+          fi
