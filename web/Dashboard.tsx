@@ -163,6 +163,16 @@ export function Dashboard({
     [...known, ...items, ...shared.items, ...viewed].map((item) => [item.id, item]),
   );
   const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
+  const title =
+    current && current.kind !== 'folder' && viewId === currentId
+      ? `${current.name} — Spinel`
+      : 'Spinel';
+  useEffect(() => {
+    document.title = title;
+    return () => {
+      document.title = 'Spinel';
+    };
+  }, [title]);
   const personalFolder = !currentId || (current?.kind === 'folder' && current.access === 'owner');
   const visibleItems = personalFolder
     ? [

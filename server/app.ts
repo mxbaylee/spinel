@@ -182,6 +182,11 @@ export async function createApp(options: AppOptions) {
     });
 
     app.use(pwaRoutes());
+    // Only configured deployment origin, never request hosts, tokens or item metadata.
+    const metadataOrigin = new URL(origin).origin
+      .replaceAll('&', '&amp;')
+      .replaceAll('"', '&quot;');
+    const pageMetadata = (html: string) => html.replaceAll('__SPINEL_ORIGIN__', metadataOrigin);
 
     const pages = [
       '/sign-in',
@@ -271,15 +276,15 @@ export async function createApp(options: AppOptions) {
       app.get(pages, async (request, response) => {
         const template = await readFile(resolve(projectRoot, 'web/index.html'), 'utf8');
         const html = await vite!.transformIndexHtml(request.originalUrl, template);
-        response.type('html').send(html);
+        response.type('html').send(pageMetadata(html));
       });
       app.use(vite.middlewares);
     } else {
       const directory = options.staticDirectory ?? resolve(projectRoot, 'dist');
       // Fail at startup with a useful error instead of serving a broken dashboard.
-      await readFile(resolve(directory, 'index.html'));
+      const html = pageMetadata(await readFile(resolve(directory, 'index.html'), 'utf8'));
       app.get(pages, (_request, response) => {
-        response.sendFile(resolve(directory, 'index.html'));
+        response.type('html').send(html);
       });
       app.get('/service-worker.js', (_request, response) => {
         response.set('Cache-Control', 'no-store').sendFile(resolve(directory, 'service-worker.js'));

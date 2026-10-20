@@ -202,6 +202,7 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await page.reload();
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
     await expect(page.getByText('Private phone budget')).toHaveCount(0);
+    expect(await page.evaluate(async () => (await fetch('/favicon.svg')).status)).toBe(200);
     const guestPath = `/share/${item.id}#private-link-token`;
     await page.goto(guestPath);
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();

@@ -1,6 +1,7 @@
 import sharp from 'sharp';
 import { Router } from 'express';
-import { HEART, GEM_FACETS } from '../ui/gemGeometry.ts';
+import { iconSvg } from '../ui/appIcon.ts';
+import { fileURLToPath } from 'node:url';
 import { palettes } from '../ui/palette.ts';
 
 export const manifest = {
@@ -21,32 +22,51 @@ export const manifest = {
   })),
 };
 
-export function iconSvg() {
-  const palette = palettes.light;
-  // Keep the existing heart within the maskable icon's central safe circle.
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="${palette['sp-bg']}"/><defs><clipPath id="heart"><path d="${HEART}"/></clipPath></defs><g transform="translate(20 20) scale(.6)"><g clip-path="url(#heart)" stroke-width=".6" stroke-linejoin="round">${GEM_FACETS.map((facet) => `<path d="${facet.d}" fill="${palette[`gem-${facet.tone}`]}" stroke="${palette[`gem-${facet.tone}`]}"/>`).join('')}</g><path d="${HEART}" fill="none" stroke="${palette['gem-edge']}" stroke-width="3.2" stroke-linejoin="round"/></g></svg>`;
-}
-
 export function pwaRoutes() {
   const router = Router();
   router.get('/manifest.webmanifest', (_request, response) => {
     response.set('Cache-Control', 'no-cache').type('application/manifest+json').send(manifest);
   });
-  // These three public buffers are the only retained data. No per-user icon or URL input.
+  router.get('/favicon.svg', (_request, response) => {
+    response.set('Cache-Control', 'public, max-age=86400').type('image/svg+xml').send(iconSvg());
+  });
+  router.get('/social-preview.png', (_request, response) => {
+    response
+      .set('Cache-Control', 'public, max-age=86400')
+      .sendFile(fileURLToPath(new URL('../ui/social-preview.png', import.meta.url)));
+  });
+  // These fixed public buffers are the only retained data. No per-user icon or URL input.
   const icons = new Map<number, Promise<Buffer>>();
-  for (const size of [180, 192, 512]) {
-    router.get(`/app-icon-${size}.png`, async (_request, response) => {
-      let icon = icons.get(size);
-      if (!icon) {
-        icon = sharp(Buffer.from(iconSvg())).resize(size, size).png().toBuffer();
-        icons.set(size, icon);
-        void icon.catch(() => icons.delete(size));
-      }
-      response
-        .set('Cache-Control', 'public, max-age=86400')
-        .type('png')
-        .send(await icon);
-    });
+  for (const size of [32, 180, 192, 512]) {
+    router.get(
+      size === 32 ? ['/favicon-32.png', '/favicon.ico'] : `/app-icon-${size}.png`,
+      async (request, response) => {
+        let icon = icons.get(size);
+        if (!icon) {
+          icon = sharp(Buffer.from(iconSvg())).resize(size, size).png().toBuffer();
+          icons.set(size, icon);
+          void icon.catch(() => icons.delete(size));
+        }
+        const png = await icon;
+        if (request.path === '/favicon.ico') {
+          // One 32px PNG entry in the standard ICO container; no extra encoder dependency.
+          const header = Buffer.alloc(22);
+          header.writeUInt16LE(1, 2);
+          header.writeUInt16LE(1, 4);
+          header[6] = header[7] = 32;
+          header.writeUInt16LE(1, 10);
+          header.writeUInt16LE(32, 12);
+          header.writeUInt32LE(png.length, 14);
+          header.writeUInt32LE(22, 18);
+          response
+            .set('Cache-Control', 'public, max-age=86400')
+            .type('image/vnd.microsoft.icon')
+            .send(Buffer.concat([header, png]));
+          return;
+        }
+        response.set('Cache-Control', 'public, max-age=86400').type('png').send(png);
+      },
+    );
   }
   return router;
 }

@@ -65,6 +65,9 @@ open downgraded editor, open read-only viewers and revoke access.
 
 ## Guest links
 
+Pasted links can show a [generic Spinel social card](page-identity.md). Previews
+never reveal the document name, owner or contents.
+
 For a Sheet or Doc, the owner can use **Share → Share without an account** to
 create a view-only or editable guest link. Anyone holding that address gets only
 that document. Folder links are unsupported. A replacement immediately invalidates

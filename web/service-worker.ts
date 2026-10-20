@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+import { iconSvg } from '../src/ui/appIcon.ts';
 import {
   needsServer,
   parseShellManifest,
@@ -16,7 +17,7 @@ const cacheName = shell ? SHELL_CACHE_PREFIX + shell.version : null;
 const shellFiles = new Set(shell?.files);
 
 // Public static copy only: never interpolate a URL, token or document into this page.
-const offline = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#c42c58"><title>Spinel — Offline</title><style>body{font:1.1rem system-ui,sans-serif;margin:0;padding:3rem 1.5rem;background:#fff5f2;color:#4a1e33}main{max-width:32rem;margin:auto}button{font:inherit;min-height:44px;padding:.75rem 1rem;border:0;border-radius:.5rem;background:#c42c58;color:white}</style></head><body><main><h1>You're offline</h1><p>Connect to the internet, then try again to open this page.</p><button id="retry">Try again</button></main><script>document.getElementById('retry').addEventListener('click',()=>location.reload());</script></body></html>`;
+const offline = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#c42c58"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="robots" content="noindex"><title>Spinel — Offline</title><style>body{font:1.1rem system-ui,sans-serif;margin:0;padding:3rem 1.5rem;background:#fff5f2;color:#4a1e33}main{max-width:32rem;margin:auto}button{font:inherit;min-height:44px;padding:.75rem 1rem;border:0;border-radius:.5rem;background:#c42c58;color:white}</style></head><body><main><h1>You're offline</h1><p>Connect to the internet, then try again to open this page.</p><button id="retry">Try again</button></main><script>document.getElementById('retry').addEventListener('click',()=>location.reload());</script></body></html>`;
 const offlinePage = () =>
   new Response(offline, {
     status: 503,
@@ -25,7 +26,7 @@ const offlinePage = () =>
       'Cache-Control': 'no-store',
       'Referrer-Policy': 'no-referrer',
       'Content-Security-Policy':
-        "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+        "default-src 'none'; img-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
     },
   });
 
@@ -114,7 +115,9 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   // APIs, images and other private requests go straight to the network.
   if (url.origin !== self.location.origin || event.request.method !== 'GET') return;
-  if (event.request.mode === 'navigate') event.respondWith(navigate(event.request, url));
+  if (url.pathname === '/favicon.svg')
+    event.respondWith(new Response(iconSvg(), { headers: { 'Content-Type': 'image/svg+xml' } }));
+  else if (event.request.mode === 'navigate') event.respondWith(navigate(event.request, url));
   else if (shellFiles.has(url.pathname) && !url.search)
     // Shell files are content-hashed, so a cached copy is always the right one.
     event.respondWith(cachedShell(url.pathname).then((cached) => cached ?? fetch(event.request)));
