@@ -36,6 +36,7 @@ export function drawPresence(
         componentKey: label,
         direction: 'top-left',
         hideOnInvisible: true,
+        constrainToCanvas: true,
       });
       if (popup) owned.push(popup);
     } else {
@@ -79,6 +80,7 @@ export function drawPresence(
             componentKey: key,
             direction: 'top-left',
             hideOnInvisible: true,
+            constrainToCanvas: true,
             requiresStableLayout: false,
           },
           unitId,

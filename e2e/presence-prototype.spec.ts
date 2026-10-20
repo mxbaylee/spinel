@@ -5,7 +5,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { palettes } from '../src/ui/palette.ts';
 
-for (const kind of ['sheet', 'doc'] as const) {
+for (const kind of ['doc', 'sheet'] as const) {
   test(`profile presence prototype: real ${kind} peers, icons and colours`, async ({
     page,
     context,
@@ -143,6 +143,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         });
       }
       await page.setViewportSize({ width: 390, height: 844 });
+      await page.locator('.univer-container').scrollIntoViewIfNeeded();
       await expect
         .poll(async () => {
           const marker = await label.boundingBox();
@@ -154,7 +155,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         .toBe(true);
       await page.screenshot({
         path: `test-results/theme-screenshots/presence-${kind}-phone-${info.project.name}.png`,
-        fullPage: true,
+        fullPage: false,
       });
       await page.setViewportSize({ width: 1440, height: 1100 });
       if (kind === 'doc') {
