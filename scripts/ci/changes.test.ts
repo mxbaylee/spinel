@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
 import { changedPaths, documentationOnly } from './changes.ts';
 
 test('only known documentation paths qualify, including the exact backlog JSON', () => {
@@ -62,9 +63,24 @@ test('Git ranges include earlier commits, both rename paths, deletions and unusu
     assert.equal(documentationOnly(paths), false);
     // Base branch changes after divergence must not make a code PR look docs-only.
     git('checkout', '-qb', 'base-side', base);
+    mkdirSync(join(cwd, 'docs'), { recursive: true });
     writeFileSync(join(cwd, 'docs/base.md'), '# Base\n');
     git('add', '.');
     git('commit', '-qm', 'base change');
+    const docsHead = git('rev-parse', 'HEAD');
+    const eventPath = join(cwd, 'event.json');
+    const outputPath = join(cwd, 'output');
+    writeFileSync(eventPath, JSON.stringify({ before: base, after: docsHead }));
+    execFileSync(process.execPath, [fileURLToPath(new URL('./changes.ts', import.meta.url))], {
+      cwd,
+      env: {
+        ...process.env,
+        GITHUB_EVENT_NAME: 'push',
+        GITHUB_EVENT_PATH: eventPath,
+        GITHUB_OUTPUT: outputPath,
+      },
+    });
+    assert.equal(readFileSync(outputPath, 'utf8'), 'docs_only=true\n');
     assert.deepEqual(
       changedPaths(
         'pull_request',
