@@ -125,7 +125,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         await expect(label).toBeVisible();
         await expect(label).toHaveCSS(
           'background-color',
-          theme === 'light' ? 'rgb(63, 108, 201)' : 'rgb(118, 160, 255)',
+          theme === 'light' ? 'rgb(63, 108, 201)' : 'rgb(110, 168, 255)',
         );
         if (kind === 'sheet')
           await expect
