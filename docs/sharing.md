@@ -47,7 +47,11 @@ no additional access. Sheet image uploading is not implemented yet.
 
 ## Decisions and verification
 
-Folder sharing replaces Team Spaces (owner, chat 2026-10-17). The most generous
+Folder sharing replaced the earlier Team Spaces proposal (owner, chat 2026-10-17).
+On 2026-10-20 the owner requested a different Space model: a single file inside
+existing folders, with its own internal Doc/Sheet tree and one sharing boundary
+([decision #116](https://github.com/mxbaylee/spinel/issues/116)). This is planned
+in SPN-078, not implemented; the current behavior below remains in force. The most generous
 grant wins (grooming 2026-10-17). The common resolver, admin exclusion and revision
 protection were required in [decision #23](https://github.com/mxbaylee/spinel/issues/23).
 Ownership-only organization, authenticated direct addresses and honest revocation
@@ -160,3 +164,20 @@ A Doc grant never grants access to its [Formula sources](formulas.md). Every
 input must be readable by the viewer; otherwise the whole formula is unavailable,
 including aggregates. Host guest links grant no source access. SPN-076 tracks
 explicit dependency sharing; no source is shared automatically.
+
+## Planned Space files and delegated administration
+
+SPN-078 adds a Space as one file in the existing folder view. Its effective
+View/Edit role applies to all internal pages and sheets, including future
+additions; children have no separate shares. Space-wide guest links include
+same-Space formula sources, while sources outside the Space still need separate
+access ([decision #117](https://github.com/mxbaylee/spinel/issues/117)).
+SPN-076 remains for deliberately sharing external sources, with the whole source
+Space disclosed when that is the actual permission boundary.
+
+SPN-079 adds delegated file Admin as a follow-up. Exactly one Owner inherits all
+Admin permissions; multiple non-owner Admin grants are possible. This does not
+change the content-blind server Operator role or create a second owner
+([decision #118](https://github.com/mxbaylee/spinel/issues/118), owner chat
+2026-10-20). Until these tickets land, file sharing uses Viewer/Editor and
+owner-only administration as described above.

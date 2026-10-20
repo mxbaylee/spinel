@@ -3,7 +3,7 @@
 The dashboard is the landing page for an everyday account after sign-in. Admin
 accounts land in Admin and cannot list, open, create, rename or move documents.
 Each everyday account has its own private tree. [Sharing](sharing.md) grants
-chosen signed-in people access to specific items; a link guest has no access.
+chosen signed-in people access to specific items; a guest link grants only its explicitly shared file, never folder discovery.
 
 Choose **New**, a type (Folder, Sheet or Doc), and a name. Folders are
 created inside the current folder. Documents are created there and immediately
@@ -31,7 +31,7 @@ owner or an authorized recipient while signed in.
 Names are trimmed and contain 1–120 characters, without control characters or
 slashes. Duplicate names are allowed, since IDs identify items. The move picker
 shows full paths to distinguish locations. Owners can [trash and restore](trash.md)
-items for 30 days. Tags, pins, search and remaining content editors are separate tickets.
+items for 30 days. Tags, pins, search and both content editors are available; see [search](search.md).
 
 ## Storage and access
 
@@ -47,7 +47,7 @@ All operations require a current, active, non-admin account. Listing returns own
 items; reading an item, its children and its accessible ancestor chain uses the
 [sharing resolver](sharing.md). Organization and sharing changes require ownership.
 Inaccessible IDs return the same 404 as missing IDs. Mutations require the configured
-origin and JSON. No public sharing endpoint exists. SQLite schema creation is
+origin and JSON. Ordinary item routes require accounts; separate [guest-link routes](sharing.md#guest-links) authorize only the shared document. SQLite schema creation is
 additive and keeps existing users, credentials and other data.
 
 These rules retain SPN-006's private ownership and dashboard requirements

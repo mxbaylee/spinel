@@ -79,6 +79,12 @@ is no parallel token set; SPN-060's colour lint enforces that.
 Contrast is tested in `src/ui/presetStyles.test.ts` (WCAG AA, both modes). A new
 foreground/background pair joins that test in the same PR.
 
+## Entity artwork
+
+Docs, Sheets and planned Spaces use the [entity iconography pattern](entity-icons.md).
+SPN-077 implements the blue/green/purple facet family before the wider redesign;
+Space examples remain in Storybook until the feature exists.
+
 ## Shell layout
 
 ```
