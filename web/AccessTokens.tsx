@@ -94,7 +94,7 @@ export function AccessTokens({ admin = false }: { admin?: boolean }) {
       await navigator.clipboard.writeText(secret.token);
       setNotice('Access token copied.');
     } catch {
-      setNotice('Select the token below and copy it manually.');
+      setNotice('Select the token and copy it manually.');
     }
   }
 

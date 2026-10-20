@@ -320,19 +320,21 @@ test('competing edits are rejected at commit rather than silently transformed ov
   vi.spyOn(f.collab.service, 'submitChangeset').mockImplementation(async (input, context) => {
     if (!intercepted) {
       intercepted = true;
-      await original(
+      const competing = await original(
         {
           changeset: {
             ...input.changeset,
             sid: 'other-client',
-            mutations: input.changeset.mutations.map((m) => ({
-              ...m,
-              data: m.data.replace('99', '44'),
-            })),
+            mutations: input.changeset.mutations.map((m) => {
+              const data = JSON.parse(m.data);
+              data.cellValue[0][0].v = 44;
+              return { ...m, data: JSON.stringify(data) };
+            }),
           },
         },
         context,
       );
+      expect(competing.status).toBe('committed');
     }
     return original(input, context);
   });

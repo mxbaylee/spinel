@@ -30,6 +30,7 @@ test('a member creates and revokes a once-only token while an operator sees only
       await target.setViewportSize({ width: variant === 'phone' ? 390 : 1280, height: 900 });
       await target.emulateMedia({ colorScheme: theme });
       await expect(target.locator('html')).toHaveAttribute('data-theme', theme);
+      await target.evaluate(() => window.scrollTo(0, 0));
       await target.screenshot({
         path: `test-results/theme-screenshots/mcp-${info.project.name}-${name}-${variant}.png`,
         fullPage: true,
@@ -67,9 +68,7 @@ test('a member creates and revokes a once-only token while an operator sees only
       });
     });
     await settings.getByRole('button', { name: 'Copy access token' }).click();
-    await expect(settings.getByRole('status')).toHaveText(
-      'Select the token below and copy it manually.',
-    );
+    await expect(settings.getByRole('status')).toHaveText('Select the token and copy it manually.');
     await expect(reveal).toHaveValue(token);
     await screenshots(page, 'token-revealed', [reveal]);
 
