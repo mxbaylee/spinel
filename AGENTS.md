@@ -1,6 +1,6 @@
 # Spinel — instructions for agents
 
-Spinel is a private, invite-only workspace for Sheets, Docs and Slides, built on
+Spinel is a private, invite-only workspace for Sheets and Docs, built on
 the open-source [Univer](https://github.com/dream-num/univer) SDK, for about two
 people at a time. The product has no AI features.
 
@@ -33,6 +33,12 @@ that isn't waiting on another is next.
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or
   watermarks.
+- **Code that replaces a Univer package lives in `lib/<name>/`**, so it could be
+  published on its own later without extracting it: its own `package.json`
+  (private until published), README and tests, one public `index.ts`, and no
+  imports from Spinel's `src/`, `web/` or `server/`. Spinel imports it by package
+  name. The first ticket to add one sets up the `lib/*` npm workspace and adds
+  `lib` to typecheck, lint, format and test runs. Owner, chat 2026-10-19.
 - **Code copied from Univer Workspace** or any other Apache-2.0 project keeps its
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

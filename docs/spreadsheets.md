@@ -20,7 +20,7 @@ a retry action.
 The open-source sheets core preset, presets and core packages are pinned together
 at Univer 1.1.0. The editor loads only when a Sheet opens. Its current production
 chunk is approximately 6.5 MB before compression, so Vite reports a size warning.
-Docs, Slides, history, imports/exports and co-editing remain separate tickets.
+Docs, history, imports/exports and co-editing remain separate tickets.
 No Pro package or collaboration service is used here.
 
 `sheet_snapshots` stores the complete native `IWorkbookData` JSON produced by

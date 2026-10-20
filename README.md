@@ -1,6 +1,6 @@
 # 💎 Spinel
 
-A private, invite-only workspace for spreadsheets, documents and slides, built on
+A private, invite-only workspace for spreadsheets and documents, built on
 the open-source [Univer](https://github.com/dream-num/univer) SDK. Spinel is
 meant for a handful of people on one small self-hosted server.
 
@@ -9,7 +9,6 @@ Passkey sign-in protects private folders and Sheet and Doc editors, backed by SQ
 See [spreadsheets](docs/spreadsheets.md) and [documents](docs/documents.md) for editing
 and autosave, [sharing](docs/sharing.md) for account access, guest links and personal
 filing, [search](docs/search.md) for metadata discovery and filters, and [files](docs/files.md) for native import/export and PDF printing.
-Slides remain on the [backlog](docs/todo/readme.md).
 See [authentication](docs/authentication.md) for the isolated passkey check.
 See [mobile use](docs/mobile.md) for phone installation, Sheet touch controls and offline behavior.
 

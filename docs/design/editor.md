@@ -1,7 +1,7 @@
 # Editor chrome
 
 SPN-049 builds this default layout and theatre mode. It applies to Sheets and
-Docs, and to Slides when SPN-009 lands.
+Docs.
 
 ## How others do it
 
@@ -61,9 +61,6 @@ status line grows when a message or Retry appears, which moves the sheet
   and the canvas that reserves one line, so the page doesn't move when it
   appears. The same slot holds the Doc help line ("Click the page to write. Type
   / for commands."), which the error replaces while shown.
-- **Slides** (SPN-009) adds **Present** as a plain button left of Share. It is
-  the deck's most frequent action, so it isn't in More. Presenting fills the
-  screen; Esc exits, as in theatre mode; arrows and taps move between slides.
 
 ### Always visible / behind a menu
 
@@ -74,7 +71,6 @@ status line grows when a message or Retry appears, which moves the sheet
 | Collaborator avatars (max 3 + n)              | Avatar popover → names                                    |
 | Share (owner) or View only                    | Share dialog ([sharing.md](sharing.md))                   |
 | Univer's toolbar                              | Fill presets (until SPN-050)                              |
-| Present (Slides only)                         |                                                           |
 | Help line or inline error slot (Docs)         |                                                           |
 
 ## Theatre mode (SPN-049)

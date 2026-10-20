@@ -26,8 +26,7 @@ Resume a relevant unfinished PR first, rechecking its evidence against its head.
 Otherwise branch from current `main`, using `codex/<ticket-and-topic>`.
 
 Take the highest-ranked eligible ticket, honoring explicit owner sequencing in its
-Rules: SPN-009 and SPN-038 come last, even when a score tie would place them
-earlier. These are scope/timing constraints, not new product dependencies.
+Rules: SPN-038 comes last, even when a score tie would place it earlier. These are scope/timing constraints, not new product dependencies.
 After each merge, fetch main and pick again; do not preselect a fixed queue. An
 explicit owner-requested ticket takes priority for that run. If seven tickets
 have landed since grooming, do the required grooming PR first, with the same

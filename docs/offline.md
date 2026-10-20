@@ -6,7 +6,7 @@ records its scope. It starts after Spinel's own sync replaces Univer collaborati
 touch support. Its network-only fallback and [decision #82](https://github.com/mxbaylee/spinel/issues/82)
 describe the initial slice; this explicit signed-in feature supersedes the earlier
 PRD/grooming ban. Guests and unprepared devices keep a generic offline screen.
-Configured test HTTPS is enough for development; public deployment and Slides are
+Configured test HTTPS is enough for development; public deployment is
 separate work.
 
 **What is implemented.** SPN-040 added Sheet-image support, SPN-041 the
@@ -64,8 +64,8 @@ personal filing and source permissions: never copy inaccessible owner ancestors,
 another person's tags, or unrelated documents. Owners and signed-in Collaborators
 can download permitted items; viewer downloads remain read-only. Metadata and
 selected documents refresh when connected without discarding pending local edits.
-Content search, offline new-item/image creation, folder/sharing administration and
-Slides are outside this first outcome. Existing embedded images are required.
+Content search, offline new-item/image creation, and folder/sharing
+administration are outside this first outcome. Existing embedded images are required.
 
 ## Download bundle
 
