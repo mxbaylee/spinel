@@ -132,7 +132,7 @@ export function SheetEditor({
               context.col,
               cell,
             );
-            return displayPresetCell(cell, style, getTheme());
+            return displayPresetCell(cell, style);
           },
         });
       const stopEditingTheme = univer
@@ -150,14 +150,12 @@ export function SheetEditor({
             return presetCellForEditing(cell, context.origin, style);
           },
         });
-      // Literal document colours render against light paper even with dark chrome.
       const render = univer
         .__getInjector()
         .get(IRenderManagerService)
         .getRenderUnitById(data.unitId);
       if (render) {
         const canvas = render.engine.getCanvasElement();
-        canvas.style.backgroundColor = '#ffffff';
         canvas.setAttribute('aria-label', 'Spreadsheet grid');
       }
       const stopTheme = bindEditorTheme(univer, () => {

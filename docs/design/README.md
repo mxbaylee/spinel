@@ -1,5 +1,17 @@
 # Spinel design playbook
 
+## SPN-047 review status
+
+The owner approved the [composed redesign](redesign.md) and authorized PR #125
+to merge as-is on 2026-10-21, recorded in decision #126. Its screen inventory, public-source comparisons,
+Base UI controls and before/after screenshot gallery define the next UI work.
+Start with the [connected walkthrough guide](walkthrough.md) to review full journeys.
+The [component, section and journey audit](component-review.md) tracks coverage and
+remaining gaps; earlier sampled-view grades are not whole-product acceptance.
+The existing gem palette and entity artwork are retained. Screen pages identify
+proposed placement changes; production is migrated by each implementation ticket.
+[Spaces and file roles](spaces.md) covers SPN-078/079 explicitly.
+
 Every UI change follows this playbook. A ticket that needs a pattern it doesn't
 cover adds the pattern here in its own PR first (AGENTS.md).
 
@@ -12,10 +24,10 @@ controls are always visible and which sit behind a menu.
 | ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------- |
 | File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-053, SPN-054, SPN-051, SPN-065, SPN-067, SPN-069          |
 | Editor chrome                   | [editor.md](editor.md)       | SPN-049, SPN-043, SPN-042, SPN-050, SPN-033, SPN-035, SPN-068, SPN-072, SPN-075 |
-| Doc formulas                    | [formulas.md](formulas.md) | SPN-033 |
-| Sharing                         | [sharing.md](sharing.md)     | SPN-033, SPN-066, SPN-071, SPN-076                                                       |
+| Doc formulas                    | [formulas.md](formulas.md)   | SPN-033                                                                         |
+| Sharing                         | [sharing.md](sharing.md)     | SPN-066, SPN-071, SPN-081                                                       |
 | Settings and sign-in            | [account.md](account.md)     | SPN-045, SPN-036, SPN-070                                                       |
-| Admin                           | [admin.md](admin.md)         | SPN-032, SPN-061, SPN-064                                                       |
+| Admin                           | [admin.md](admin.md)         | SPN-032, SPN-061, SPN-064, SPN-082                                              |
 | Guest view                      | [guest.md](guest.md)         | SPN-042, SPN-075                                                                |
 | Empty, error and offline states | [states.md](states.md)       | SPN-053, SPN-054, SPN-042, SPN-051, SPN-052                                     |
 
@@ -32,8 +44,10 @@ the redesign (chat 2026-10-20; #113). Formula insertion follows
 
 The starting point is the approved gem-rail mockup
 (`git show 30a4a61^:docs/design/gem-rail-mockup.tsx`) and the landed SPN-027
-theme in `src/ui/`. The audit used public help pages and product blogs only; no
-third-party product was signed in to, and patterns are described, not copied.
+theme in `src/ui/`. Initial research used public help pages and product blogs.
+The owner also authorized live third-party UI research in Firefox on 2026-10-20
+(decision #126). Describe interaction patterns; do not copy private content or
+third-party assets into the proposal.
 
 ## Principles
 
@@ -48,7 +62,7 @@ third-party product was signed in to, and patterns are described, not copied.
    [the pattern](#status-changes-never-move-the-layout).
 5. **Say what happened and what to do.** Messages are one sentence with the next
    step: "Could not save. Try again." Never a code, never blame.
-6. **Never colour alone.** Every state has an icon or text as well as a colour.
+6. **Never color alone.** Every state has an icon or text as well as a color.
 7. **Familiar words.** Use the words the four products share: New, Share,
    Rename, Move, Trash, Shared with me, View only, Can edit, Copy link.
 8. **Guests see no identity.** Guest views show generic labels (SPN-016); design
@@ -56,37 +70,37 @@ third-party product was signed in to, and patterns are described, not copied.
 
 ## Tokens
 
-The only colour tokens are the theme's. `src/ui/palette.ts` is the source:
+The only color tokens are the theme's. `src/ui/palette.ts` is the source:
 `src/ui/theme.ts` sets each entry as a `--<name>` CSS custom property on the
 root, per mode. [docs/theme.md](../theme.md) explains the modes and fills. There
-is no parallel token set; SPN-060's colour lint enforces that.
+is no parallel token set; SPN-060's color lint enforces that.
 
-| Token                                   | Use                                                                                                                          |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `--sp-bg`                               | Page background                                                                                                              |
-| `--sp-panel`                            | Raised surfaces: dialogs, menus, cards, fields                                                                               |
-| `--sp-header`                           | Header and table-header bands                                                                                                |
-| `--sp-text` / `--sp-muted`              | Body text / secondary text, timestamps                                                                                       |
-| `--sp-border`                           | Dividers, field borders                                                                                                      |
-| `--sp-accent` / `--sp-on-accent`        | The one primary button, focus, current item                                                                                  |
-| `--sp-accent-2`                         | Secondary accent; never a second primary button                                                                              |
-| `--sp-tint-1` / `--sp-tint-2`           | Selected row, active chip / a quieter highlight                                                                              |
-| `--sp-select`                           | Translucent selection wash                                                                                                   |
-| `--sp-rail` / `--sp-rail-ink`           | The rail only                                                                                                                |
-| `--gem-1` … `--gem-6`, `--gem-edge`     | The gem artwork only                                                                                                         |
-| `--fill-<role>-<soft\|strong>-<bg\|fg>` | The 16 fill presets: Sheet fills and profile colours (SPN-036); `--fill-error-soft-fg` is also alert text. Not other chrome. |
+| Token                                   | Use                                                                                                                         |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `--sp-bg`                               | Page background                                                                                                             |
+| `--sp-panel`                            | Raised surfaces: dialogs, menus, cards, fields                                                                              |
+| `--sp-header`                           | Header and table-header bands                                                                                               |
+| `--sp-text` / `--sp-muted`              | Body text / secondary text, timestamps                                                                                      |
+| `--sp-border`                           | Dividers, field borders                                                                                                     |
+| `--sp-accent` / `--sp-on-accent`        | The one primary button, focus, current item                                                                                 |
+| `--sp-accent-2`                         | Secondary accent; never a second primary button                                                                             |
+| `--sp-tint-1` / `--sp-tint-2`           | Selected row, active chip / a quieter highlight                                                                             |
+| `--sp-select`                           | Translucent selection wash                                                                                                  |
+| `--sp-rail` / `--sp-rail-ink`           | The rail only                                                                                                               |
+| `--gem-1` … `--gem-6`, `--gem-edge`     | The gem artwork only                                                                                                        |
+| `--fill-<role>-<soft\|strong>-<bg\|fg>` | The 16 fill presets: Sheet fills and profile colors (SPN-036); `--fill-error-soft-fg` is also alert text. Not other chrome. |
 
 Contrast is tested in `src/ui/presetStyles.test.ts` (WCAG AA, both modes). A new
 foreground/background pair joins that test in the same PR.
 
-## Planned component foundation
+## Component foundation
 
-SPN-047 adopts [Base UI](https://base-ui.com/react/overview/about) alongside its
+SPN-047 installs [Base UI](https://base-ui.com/react/overview/about) alongside its
 competitor review, using the existing React/Vite and plain CSS theme setup.
 Base UI supplies unstyled interaction/accessibility primitives; the redesign
 chooses visual styling, including any Material-like treatment. Shared components
 used by the mockups get stories and keyboard, focus, touch and theme verification.
-Consumer screen migrations remain in their implementation tickets. Tailwind is
+The shared controls and composed stories live in `src/ui/redesign/`. Consumer screen migrations remain in their implementation tickets. Use `npm run screenshots -- <story ids>` after building Storybook; see [review evidence](redesign.md#review-and-screenshots). Tailwind is
 not currently installed and is not required for this adoption. Owner, chat
 2026-10-20; [decision #120](https://github.com/mxbaylee/spinel/issues/120).
 SPN-077's icon assets/current-surface integration can land first.
@@ -97,75 +111,63 @@ Docs, Sheets and planned Spaces use the [entity iconography pattern](entity-icon
 SPN-077 implemented the blue/green/purple facet family before the wider redesign;
 Space examples remain in Storybook until the feature exists.
 
-## Shell layout
+## Shell layout (SPN-047 proposal)
 
-```
-┌──────┬─────────────┬───────────────────────────────────────────┐
-│ rail │ sidebar     │ view header (fixed height)                │
-│ gem  │ (dashboard  ├───────────────────────────────────────────┤
-│ docs │  only)      │ view body                                 │
-│ admin│             │                                           │
-│  ··· │             │                                           │
-│ theme│ connection  │                                           │
-│ you  │ indicator   │                                           │
-└──────┴─────────────┴───────────────────────────────────────────┘
-```
+The approved design uses one optional navigation column to replace the old permanent
+rail-plus-sidebar composition. File views use a 224 px sidebar containing gem,
+places and account utilities. Collapse leaves a 64 px rail with an
+icon-only right chevron, named **Expand navigation** for assistive technology
+and its tooltip. The left chevron collapses it; reopening restores the tree.
+Never show both side by side.
+Ordinary editors and Operator screens use compact horizontal utility navigation.
+Spaces retain a full-width compact utility header above their internal tree and
+editor. The tree has its own collapse chevron. When hidden, a local **Pages** control
+below the site header reopens it. The top header reuses the tall navigation's
+icons horizontally with fewer destinations: My files has no visible text, and
+the website navigation has no expansion chevron.
+Guests have only the linked Space's internal navigation, with no account exit.
 
-- **Rail:** gem (links to Your docs), Your docs, Admin (admins only), a spacer,
-  then the theme button and the avatar (SPN-045). Icon-only with accessible
-  names; labels show on hover and focus. It lives in `web/Rail.tsx`
-  (`Shell/Rail`); SPN-045 changes its contents.
-- **Sidebar:** dashboard only. See
-  [Layout and responsive](#layout-and-responsive) for how it stacks at narrower
-  widths.
-- **View header:** one row, fixed height, holding the view's title, its status
-  and its actions. Nothing below it moves when status changes.
+The view header holds identity, status and actions. On phones, document identity
+gets a complete first row; status and actions occupy the second row so a long
+name cannot be squeezed out. Status retains its slot when text changes.
 
-Story: `Shell/AppLayout` renders the whole shell (rail, pinned sidebar,
-dashboard) at Desktop, Tablet and Phone.
+`Shell/AppLayout` shows the existing production shell. `Redesign/Screens`
+shows the proposed compositions, including DashboardCollapsed and
+PlannedSpaceCollapsed. Screen implementation tickets perform the migration.
 
 ## Layout and responsive
 
-Values from `src/ui/theme.css` today. Storybook's viewport toolbar has the same
-three widths (Phone 390, Tablet 768, Desktop 1280); check a layout change at all
-three.
+Storybook review widths: Phone 390, Tablet 768 and Desktop 1280. Existing
+production rules remain until their screen migrates; the proposed rules below
+supersede the earlier stacking layout.
 
 ### Breakpoints
 
-| Width    | Today in theme.css                                                                                                                                                                                                      |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ≤ 900 px | The pinned sidebar stacks above the content (its list wraps into a row). With a coarse pointer, buttons, selects and inputs are at least 44 px tall and the Sheet uses Univer's mobile controls at `max(420px, 70dvh)`. |
-| ≤ 640 px | The rail becomes a sticky top bar (labels drop below the buttons); body padding 32 → 20 px; the fill palette goes 8 → 4 columns.                                                                                        |
-| ≤ 600 px | The dashboard's folder sidebar stacks above the file list with a divider.                                                                                                                                               |
-
-Adopted: **two breakpoints, 640 px (phone) and 900 px (tablet / touch)**. The
-600 px rules move to 640 px when the next ticket touches them, so a phone never
-sits between "rail on top" and "sidebar beside the list". Don't add a third. For
-SPN-048, at ≤ 640 px the folder sidebar collapses behind a **Folders** button in
-the view header instead of stacking; at ≤ 900 px pinned items stay a wrapped row
-above the content, as today.
+- **900 px and below:** file/Space navigation is a drawer by default, opened
+  by the same chevron controls with accessible names and tooltips. Link guests use a scoped Pages control.
+- **640 px and below:** compact top utilities replace a vertical rail; document
+  headers use two rows, profile sections scroll with labels, Operator sections
+  wrap so health is always discoverable. No 600 px intermediate behavior.
+- **Coarse pointers and phones:** interactive targets are at least 44 × 44 px;
+  compact visible artwork can sit inside that target, including appearance segments.
+  The actual Sheet retains Univer's mobile behavior during migration.
 
 ### Shell sizes
 
-- **Rail:** 64 px column, 44 px square buttons, full height (`100dvh`, sticky).
-- **Body:** fills the rest; padding 32 px, 20 px at ≤ 640 px. No max width on
-  the shell; the rail layout overrides the old 1080/1480 px caps.
-- **Dashboard grid:** folder sidebar `minmax(150px, 230px)`, gap 28 px. With
-  pins: pinned column 220 px, gap 28 px.
-- **Guest page:** no rail; padding `clamp(16px, 3vw, 32px)`.
-- **Dialogs:** `min(32rem, 100vw - 2rem)` (confirmations) or
-  `min(30rem, 100vw - 3rem)` (tags), height capped at `100vh - 3rem` with
-  scrolling. New dialogs use the first.
-- **Fields:** full width up to 600 px.
-- **Sheet canvas:** 640 px tall, at least 400 px (mobile rule above).
+- Expanded navigation: 224 px. Collapsed rail: 64 px; controls: 44 px.
+- Main content fills remaining width. Dashboard gutters: 40 px desktop, 16 px
+  phone. Editor content/Sheet may pan; page chrome must fit the viewport.
+- Guest: no account rail. Space Pages navigation stays scoped to the link.
+- Dialog: `min(480px, 100vw - 32px)`, capped at `100dvh - 32px` with scrolling.
+- Fields are full width within their content section. Sheet dimensions and
+  toolbar behavior stay with Univer, not the schematic mockup grid.
 
 ### Type
 
-`ui-rounded, system-ui, sans-serif`; no web fonts. Page title (h1)
-`clamp(32px, 6vw, 44px)` with −0.04em tracking; section heading (h2) 22 px; body
-16 px at line height 1.6; secondary text 14 px; small labels and badges 0.85rem
-/ 12 px. `clamp()` is for page titles and page padding only; body text doesn't
-scale with the viewport.
+Use system UI fonts with no web font dependency. Proposed headings/section/body/
+secondary sizes are 28/18/14/12 px. Compact metadata uses 10–11 px sparingly.
+The serif sample document title is authored content, not application typography.
+Existing production typography is not changed until its screen migration.
 
 ### Spacing
 
@@ -173,7 +175,7 @@ In use: 4, 6, 8, 12, 16, 20, 24, 28 and 32 px, plus rem equivalents in newer
 components. Adopted scale: **4, 8, 12, 16, 24, 32 px**, with 20 and 28 kept only
 where theme.css already uses them (body padding at phone width, dashboard gaps).
 New CSS uses px for spacing and borders and rem for type and dialog widths.
-These aren't CSS tokens yet, so SPN-060's lint covers colour tokens and treats
+These aren't CSS tokens yet, so SPN-060's lint covers color tokens and treats
 this list as its spacing allowlist rather than inventing `--space-*` properties.
 
 ### Touch
@@ -206,7 +208,7 @@ states to the same component.
 ### Row
 
 A list row is: kind icon, name (the open target, the whole row width), badges
-(shared, view only, pinned), up to two tags then "+n", a muted secondary column
+(shared, view only), up to two tags then "+n", a muted secondary column
 (edited or shared date), and a **More** button. Rows are at least 44 px tall.
 
 ### More menu
@@ -234,7 +236,7 @@ For a condition that affects the whole view and isn't tied to one control ("A
 successful offsite backup is overdue.", SPN-032's "Something is wrong"): a
 full-width band at the top of the view body, under the header. An icon and a
 status word, one sentence, and at most one link or action (usually to the
-guide). Panel background with a `--sp-border` edge, and the alert colour on the
+guide). Panel background with a `--sp-border` edge, and the alert color on the
 icon and word only. `role="status"`, or `role="alert"` when action is needed.
 One banner per view; it reserves no space when absent, so it is for conditions
 present on load, not for status that changes while the view is open (that goes
@@ -244,7 +246,9 @@ in the header's status slots).
 
 A short `role="status"` line in the region that will fill ("Loading your
 files…"). No spinners over the whole page, no skeletons that resize when the
-content arrives.
+content arrives. The [loading pattern](states.md#loading) also defines the
+proposed theme-aware runner in compact and page contexts; it is not yet a
+production-wide replacement.
 
 ## Storybook
 
@@ -278,6 +282,22 @@ recovery cards that are still inline in `App.tsx` are out of scope; SPN-060
 covers them with Playwright screenshots instead. A ticket that extracts one of
 those cards adds its story.
 
+## Review by subtraction
+
+For each page, ask whether a control or repeated label earns its space for the
+current task. Remove redundant destinations, actions and status explanations
+rather than merely placing them behind another menu. Compare the whole screen
+and its transitions, including phone widths, before accepting an individually
+polished component. Required access, save, recovery and destructive-action
+information must remain discoverable. Owner, chat 2026-10-21.
+
+The owner removed personal pinning and all pinned-item UI from this branch
+([decision #128](https://github.com/mxbaylee/spinel/issues/128), 2026-10-21).
+Do not preserve or reintroduce them as favorites, shortcuts or disabled controls.
+Compact site headers use an icon-only My files destination with an accessible
+name and tooltip. Space page headers have no redundant Back button: the local
+Pages tree handles page navigation and My files exits the Space.
+
 ## Why it is shaped this way
 
 - Start from the approved gem-rail mockup and the landed SPN-027 theme, so the
@@ -295,9 +315,10 @@ those cards adds its story.
   layout is half applied. Proposed in SPN-046, subject to the owner's review
   below.
 - The tokens are the theme's (`src/ui/palette.ts`), not a parallel set, so there
-  is one source of colour and one contrast test.
-- Public material only, patterns described not copied, so nothing here depends
-  on a third-party account or someone else's assets. Grooming, 2026-10-19.
+  is one source of color and one contrast test.
+- Public references and owner-authorized live UI research inform the patterns,
+  without copying private content or third-party assets. Owner, chat 2026-10-20,
+  decision #126; expands the original public-material research scope.
 - The owner reviews this playbook before the UI tickets it unblocks start
   (SPN-046 owner input).
 
@@ -308,3 +329,48 @@ support.apple.com (Numbers for iCloud), help.zoho.com (Sheet, WorkDrive),
 learn.microsoft.com and the Microsoft 365 Insider blog (Excel for the web,
 OneDrive). Read 2026-10-19. Products change; when a comparison here goes stale,
 update the comparison rather than the adopted pattern unless the owner agrees.
+
+Current owner direction (chat, 2026-10-21): folders are rows in **My files**.
+Personal pinning and pinned navigation are removed; folders, tags and search
+provide retrieval without another shortcut list. The expanded sidebar uses the original saturated `--sp-rail` pink and
+matching `--sp-rail-ink` foreground (owner correction, 2026-10-20). A centered appearance picker sits above a profile row showing the user's display name; long names truncate with the full name in its title. Trash is a permanent
+folder entry in My files with no rename/move/delete controls; it is not another
+sidebar destination. A network icon beside the gem shows connection state,
+with an accessible label and hover/focus/tap tooltip, dismissed outside or with Escape
+without a Close button. Document save warnings
+remain explicit; network state never substitutes for save confirmation.
+
+Owner refinement (chat, 2026-10-20): offer **List and Grid** views over the same
+files, filters and actions. Default to List; remember the preference during the
+screen migration. Folders and permanent Trash appear in both. Desktop collapse
+keeps My files and Shared with me directly accessible, with full accessible
+names and hover/focus labels; phone/tablet navigation stays in the drawer.
+Space trees reopen from the local **Pages** control below the website header;
+their nested folders and pages remain in the tree rather than becoming rail icons.
+
+Use a deterministic normalized-filename hash to choose a default botanical emoji
+for Doc/Sheet/Space identity. The same title has the same cue on every surface;
+a rename may change the default, and collisions are expected. It is decorative,
+never an identifier or substitute for a type/access label. Folders and Trash keep
+their functional icons. Defer the persistent emoji/icon picker to **SPN-086**;
+no picker ships in this proposal. Owner/Collaborator gain recognition and view
+choice; Guests retain scoped identity and access clarity; Operators gain no
+personal file navigation or service dependency. Decision #126.
+
+Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
+icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
+RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
+visible focus, 24 px visible segments and at least 44 px touch targets.
+The control stays directly visible: centered horizontally above the profile row in expanded navigation
+and in compact/phone headers, vertical in collapsed desktop rails. This device
+reuses it and explains that appearance is local to this browser, defaults to System,
+and is separate from saved profile identity. This supersedes the earlier explicit-menu proposal, retains
+one theme store and follows OS changes while System is selected. The picker
+must report a storage failure without undoing the in-session theme choice.
+
+Owner follow-ups accepted with as-is approval, 2026-10-21, decision #126:
+folder colors and the identity-picker mockup belong to SPN-086; Space Trash uses
+a deleted-item collection (SPN-078); all product modals get consistent title icons
+(SPN-089); native editor dark-canvas behavior and an eight-color theme-aware picker
+are investigated in SPN-088. These are implementation handoffs, not claims that
+the approved sample-data proposal implements them.

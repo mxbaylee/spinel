@@ -105,7 +105,6 @@ export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
           <ul>
             {versions.map((version) => (
               <li key={version.id}>
-                {version.name && <span aria-label="Pinned version">📌 </span>}
                 <span>{version.name ?? 'Unnamed version'}</span>
                 {Boolean(version.beforeRestore) && <strong> — Before restore</strong>}
                 <a

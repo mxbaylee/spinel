@@ -2,10 +2,28 @@ import { expect, test } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { mkdir } from 'node:fs/promises';
-import type { IWorkbookData } from '@univerjs/core';
+import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { ColorKit, invertColorByMatrix } from '@univerjs/core';
+import type { ICellData, IWorkbookData } from '@univerjs/core';
+import { editorNeutrals } from '../src/ui/palette.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+
+// Collaboration materialization allocates fresh style IDs on every read.
+// Resolve each cell's complete style before comparing all workbook content;
+// incidental dictionary keys are not formatting changes (see sheets.spec.ts).
+function resolvedWorkbook(snapshot: IWorkbookData) {
+  const { styles, ...workbook } = structuredClone(snapshot);
+  for (const sheet of Object.values(workbook.sheets))
+    for (const row of Object.values(sheet.cellData ?? {}))
+      for (const cell of Object.values(row ?? {}) as (ICellData | null)[])
+        if (cell && typeof cell.s === 'string') {
+          expect(styles[cell.s], `Style ${cell.s} must resolve`).toBeDefined();
+          cell.s = styles[cell.s];
+        }
+  return workbook;
+}
 
 test('themes persist, follow the system, and recolour sheet presets without editing documents', async ({
   page,
@@ -94,8 +112,8 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await box.press('Enter');
   };
   const sheetCanvas = page.locator(`#univer-sheet-main-canvas_${sheet.id}`);
-  const colouredPixels = async (rgb: number[]) =>
-    sheetCanvas.evaluateAll((canvases, colour) => {
+  const colouredPixels = async (rgb: number[], target = sheetCanvas) =>
+    target.evaluateAll((canvases, colour) => {
       let count = 0;
       for (const canvas of canvases as HTMLCanvasElement[]) {
         if (!canvas.width || !canvas.height) continue;
@@ -114,6 +132,25 @@ test('themes persist, follow the system, and recolour sheet presets without edit
       }
       return count;
     }, rgb);
+  const surfaceFraction = async (scheme: 'light' | 'dark', target = sheetCanvas) => {
+    // Empty Sheet cells are transparent over the SDK's dark CSS surface.
+    // Inspect the composited canvas region, not an assumed opaque black fill.
+    const image = await loadImage(await target.screenshot());
+    const canvas = createCanvas(image.width, image.height);
+    const drawing = canvas.getContext('2d');
+    drawing.drawImage(image, 0, 0);
+    const { data } = drawing.getImageData(0, 0, image.width, image.height);
+    let matching = 0;
+    for (let i = 0; i < data.length; i += 4)
+      if (
+        data[i + 3] === 255 &&
+        (scheme === 'dark'
+          ? Math.max(data[i], data[i + 1], data[i + 2]) < 96
+          : Math.min(data[i], data[i + 1], data[i + 2]) > 192)
+      )
+        matching++;
+    return matching / (image.width * image.height);
+  };
   try {
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
@@ -191,9 +228,11 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await mode('dark');
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
     expect(await container!.evaluate((node) => node.isConnected)).toBe(true);
-    await expect(sheetCanvas).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    // The native renderer changes the paper itself, not only surrounding chrome.
+    await expect(sheetCanvas).not.toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect.poll(() => surfaceFraction('dark')).toBeGreaterThan(0.8);
     expect((await read()).snapshot.sheets.first.cellData?.[4]?.[0]?.v).toBe('Plain text');
-    await expect.poll(() => colouredPixels([0, 0, 0])).toBeGreaterThan(5);
+    await expect.poll(() => colouredPixels([255, 255, 255])).toBeGreaterThan(5);
     await expect.poll(() => colouredPixels([255, 156, 198])).toBeGreaterThan(5);
     const badge = page
       .getByRole('group', { name: 'People in this document' })
@@ -205,6 +244,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await expect(badge.locator('.collaborator-name')).toHaveCSS('color', 'rgb(26, 18, 37)');
     await capture('sheet-dark');
     expect((await read()).revision).toBe(before.revision);
+    expect(resolvedWorkbook((await read()).snapshot)).toEqual(resolvedWorkbook(before.snapshot));
     await page.reload();
     await saved();
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
@@ -243,10 +283,28 @@ test('themes persist, follow the system, and recolour sheet presets without edit
       .toContain('Paper stays readable');
     await saved();
     await expect(page.locator('.editor-help')).toHaveCSS('color', 'rgb(236, 226, 247)');
+    const docCanvases = docEditor.locator('canvas');
+    await expect.poll(() => surfaceFraction('dark', docCanvases.first())).toBeGreaterThan(0.8);
+    // Native Docs types with gray.900, not literal black. Its dark-mode foreground
+    // is the public renderer's transformed neutral (currently RGB 217,207,233).
+    const { r, g, b } = new ColorKit(editorNeutrals[900]).toRgb();
+    const docText: [number, number, number] = [r, g, b];
+    await expect
+      .poll(() => colouredPixels(invertColorByMatrix(docText), docCanvases))
+      .toBeGreaterThan(5);
+    const readDoc = async () => (await context.request.get(`/api/items/${doc.id}/doc`)).json();
+    const docBeforeTheme = await readDoc();
+    const docCanvas = await docCanvases.first().elementHandle();
     await capture('doc-dark');
     await page.emulateMedia({ colorScheme: 'light' });
     await mode('light');
     await expect(page.locator('.editor-help')).toHaveCSS('color', 'rgb(74, 30, 51)');
+    await expect.poll(() => surfaceFraction('light', docCanvases.first())).toBeGreaterThan(0.8);
+    await expect.poll(() => colouredPixels(docText, docCanvases)).toBeGreaterThan(5);
+    expect(await docCanvas!.evaluate((node) => node.isConnected)).toBe(true);
+    const docAfterTheme = await readDoc();
+    expect(docAfterTheme.revision).toBe(docBeforeTheme.revision);
+    expect(docAfterTheme.snapshot).toEqual(docBeforeTheme.snapshot);
     await capture('doc-light');
     expect(errors).toEqual([]);
   } finally {

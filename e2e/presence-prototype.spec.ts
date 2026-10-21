@@ -149,10 +149,36 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
     await expect(badge.locator('[data-profile-icon="lucide:flower"]')).toBeVisible();
     await select(page, 'D5');
     const own = await address(page).inputValue();
-    const before = await label.boundingBox();
+    // Selection changes rebuild the popup before its canvas position settles.
+    // Compare real, stable geometry rather than a detached/offscreen placeholder.
+    let before: Awaited<ReturnType<typeof label.boundingBox>> = null;
+    let stableSamples = 0;
+    await expect
+      .poll(async () => {
+        const box = await label.boundingBox();
+        const viewport = page.viewportSize()!;
+        if (
+          !box ||
+          !(await label.isVisible()) ||
+          box.width <= 0 ||
+          box.height <= 0 ||
+          box.x < 0 ||
+          box.y < 0 ||
+          box.x + box.width > viewport.width ||
+          box.y + box.height > viewport.height
+        ) {
+          before = null;
+          stableSamples = 0;
+          return false;
+        }
+        stableSamples = JSON.stringify(box) === JSON.stringify(before) ? stableSamples + 1 : 0;
+        before = box;
+        return stableSamples >= 2;
+      })
+      .toBe(true);
     await badge.click();
+    await expect.poll(() => label.boundingBox()).toEqual(before);
     await expect(address(page)).toHaveValue(own);
-    expect(await label.boundingBox()).toEqual(before);
     await select(other, 'Z100');
     await expect(badge).toHaveAttribute('data-selection', /!Z100$/);
     await badge.click();

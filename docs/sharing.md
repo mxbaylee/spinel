@@ -125,13 +125,13 @@ revocation in both development and production builds.
 The **Shared with me** drawer contains currently accessible documents and folders,
 including inherited folder contents. It shows their owner's display name and a
 shared badge. Those labels also appear in folder listings, the opened item and
-pins and [dashboard search](search.md), using the same item metadata and badge.
+[dashboard search](search.md), using the same item metadata and badge.
 Link guests have no account drawer and receive none of this account metadata.
 
 Drag an item onto one of your folders (or All my files), or use **File into folder**.
 Each person has at most one personal placement per shared item. Filing again moves
 that reference. **Remove from my folder** deletes only the reference: the original,
-your access, the drawer entry and your pins remain. Shared folders are shortcuts
+your access and the drawer entry remain. Shared folders are shortcuts
 to their original accessible contents. Placement never changes owner, canonical
 parent or grants. These preserve SPN-018's rules from decisions #23 and #30 and
 the owner's 2026-10-17 direction that filing is on by default.

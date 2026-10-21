@@ -14,7 +14,8 @@ const base: WorkspaceItem = {
 };
 
 const meta = {
-  title: 'Dashboard/SharedBadge',
+  id: 'dashboard-sharedbadge',
+  title: 'Current production/Dashboard/SharedBadge',
   component: SharedBadge,
 } satisfies Meta<typeof SharedBadge>;
 export default meta;

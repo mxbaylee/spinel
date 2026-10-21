@@ -1,9 +1,12 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
 import '../src/ui/theme.css';
-import { setPreference } from '../src/ui/theme.ts';
+import { initializeTheme, setPreference } from '../src/ui/theme.ts';
 import type { ThemeMode } from '../src/ui/palette.ts';
 import { mockFetch } from './api.ts';
 import type { ApiMock } from './api.ts';
+
+// Match the app's OS-theme listener so the System segment remains live.
+if (typeof window !== 'undefined') initializeTheme();
 
 // Every story renders in the real theme tokens. Switch Vintage (light) and
 // Modern (dark) from the toolbar; the shell wrapper matches the app's <main>.
@@ -43,6 +46,7 @@ const preview: Preview = {
   initialGlobals: { theme: 'light', viewport: { value: undefined, isRotated: false } },
   parameters: {
     layout: 'fullscreen',
+    options: { storySort: { order: ['Redesign', 'Identity', 'Current production', '*'] } },
     controls: { expanded: true },
     // theme.css switches the rail to a top bar at 640px and stacks the dashboard at 600px.
     viewport: {

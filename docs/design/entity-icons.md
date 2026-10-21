@@ -1,18 +1,33 @@
 # Entity iconography
 
+## SPN-047 composed redesign proposal
+
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Dashboard, Doc, Sheet, PlannedSpace.
+
+| Current friction                                                             | Public reference pattern                                                                             | Adopted proposal                                                                                            |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Type cues need to remain legible in a denser list and compact editor header. | Dropbox/Notion distinguish file/page types within consistent rows; no competitor artwork is adopted. | Reuse SPN-077 facets at 24 px in headers and 32 px in file rows, always accompanied by a name/type context. |
+
+No replacement artwork or palette. Space facets stay planned-only until SPN-078. Keep all current geometry, monochrome/emoji fallbacks, social-card privacy and contrast coverage.
+
+The approved proposal above governs placement during implementation. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
 Docs, Sheets and planned Spaces use a shared gem silhouette with distinct
 interior marks derived from Spinel's original faceted-heart visual language. The app logo and favicon keep their
 existing identity. Owner direction, chat 2026-10-20; implemented in SPN-077,
 authorized before the broader SPN-047 redesign and before Spaces exist.
 
-## Shape and colour
+## Shape and color
 
 - **Doc:** blue, three text strokes, with the approved bolder 1.25-unit lines (B2a).
 - **Sheet:** green, a header-and-rows mark (S1).
 - **Space:** purple, three collection diamonds contained within the front face (B2c).
 
 The owner selected the common B2 beveled outline and equal visual bounds for all
-three. Interior marks and adjacent labels distinguish type without colour alone;
+three. Interior marks and adjacent labels distinguish type without color alone;
 this supersedes the draft requirement for distinct outer silhouettes. Owner,
 chat 2026-10-20, [decision #122](https://github.com/mxbaylee/spinel/issues/122).
 Review at 16, 24 and 32px, in monochrome, in both themes and at social-card size.
@@ -27,11 +42,11 @@ Use the existing palette/token system for light and dark facet tones, preserving
 blue/green/purple. The `entity-<doc|sheet|space>-0` through `-4` tokens define
 edges and facets;
 `entity-mark` defines their white interior glyph. Both themes preserve the approved
-art colours. Decorative shading is not a text contrast pair: visible type labels
+art colors. Decorative shading is not a text contrast pair: visible type labels
 use existing accessible text tokens. Monochrome uses `sp-text` for the silhouette
 and `sp-panel` for its mark, covered by the contrast checks. Do not borrow
-status colours or hard-code a separate theme in each consumer. Server-rendered SVG resolves palette values explicitly because a PNG
-renderer cannot inherit browser CSS variables. Share geometry and colour mapping
+status colors or hard-code a separate theme in each consumer. Server-rendered SVG resolves palette values explicitly because a PNG
+renderer cannot inherit browser CSS variables. Share geometry and color mapping
 between browser and server rather than maintaining two drawings.
 
 ## Placement and accessibility
@@ -88,8 +103,8 @@ that merely repeat path data.
 
 `src/ui/entityIconGeometry.ts` is the shared geometry and raw SVG exporter;
 `EntityIcon.tsx` renders those same paths with theme variables. The Storybook
-lineup offers downloadable standalone SVGs with resolved colours. Creation,
-owned/shared files, pins, search and trash use decorative icons beside labels.
+lineup offers downloadable standalone SVGs with resolved colors. Creation,
+owned/shared files, search and trash use decorative icons beside labels.
 `Identity/Entity icons` covers sizes, monochrome, accessible standalone images
 and future Space placement; `Identity/Social cards` uses the real PNG renderer
 at build time, including the static Space sample. No new dependency or rendering
@@ -98,3 +113,32 @@ service is needed. The app's heart logo and favicon remain unchanged.
 Storybook CI captures these stories and the actual dashboard integration stories
 in light, dark and phone layouts as the `entity-icon-screenshots` artifact. The
 same ticket implements both artwork and current-surface integration (#122).
+
+## Optional file identity (SPN-047 owner refinement)
+
+The proposal now uses deterministic filename-derived botanical emoji beside
+names, while a visible Doc/Sheet/Space label preserves type recognition. Existing
+facets remain the type artwork and fallback; this is not a replacement of the
+approved assets. Folders/Trash retain functional icons. The future persistent
+picker is SPN-086. Owner, chat 2026-10-20; decision #126.
+
+Folder and permanent Trash glyphs use the same 32 px artwork bounds as filename
+emoji in list and grid views (owner, chat 2026-10-20). The container alone must
+not be 32 px while leaving an 18 px glyph inside it.
+
+### Folder color control
+
+The current folder's icon sits beside its display name and opens a compact
+color dialog with the existing strong palette swatches and Reset to default.
+The icon button has an explicit accessible name, hover/focus treatment and a
+44 px target. Color is decorative: the folder glyph and name remain visible,
+and the chosen swatch also has a selected state rather than relying on color
+alone. The same local choice appears in the folder header and its file row.
+Only the owning account can change it; offline preview controls explain that
+reconnection is required.
+
+SPN-047 supplies the working local UI now (owner, chat 2026-10-21). Selecting a
+swatch or resetting updates the preview and returns to the folder; cancel keeps
+the current choice. Reloading resets it. Persistent folder metadata and the
+shared file-identity integration remain implementation work; the local picker
+does not claim to save a server setting or change access.

@@ -21,7 +21,8 @@ const item = (tags: string[]): WorkspaceItem => ({
 const suggestions = { 'GET /api/items/tags': { tags: ['budget', 'finance', 'q4', 'travel'] } };
 
 const meta = {
-  title: 'Dashboard/DocumentTags',
+  id: 'dashboard-documenttags',
+  title: 'Current production/Dashboard/DocumentTags',
   component: DocumentTags,
   args: { item: item([]), onChanged: () => {}, onClose: () => {} },
   // The dialog keeps the item in the dashboard; hold it here so adding a tag shows up.

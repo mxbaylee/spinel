@@ -1,3 +1,4 @@
+import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
@@ -20,6 +21,25 @@ for (const kind of ['sheet', 'doc'] as const) {
     const guest = await browser.newContext(),
       first = await guest.newPage(),
       second = await guest.newPage();
+    const captureGuest = async (role: string) => {
+      await mkdir('test-results/theme-screenshots', { recursive: true });
+      for (const [theme, width, variant] of [
+        ['light', 1280, 'light'],
+        ['dark', 1280, 'dark'],
+        ['light', 390, 'phone'],
+      ] as const) {
+        await first.setViewportSize({ width, height: 900 });
+        await first.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+        await expect(first.locator('html')).toHaveAttribute('data-theme', theme);
+        await first.screenshot({
+          path: `test-results/theme-screenshots/before-guest-${kind}-${role}-${variant}-${info.project.name}.png`,
+          fullPage: true,
+          animations: 'disabled',
+        });
+      }
+      await first.setViewportSize({ width: 1440, height: 1000 });
+      await first.emulateMedia({ colorScheme: 'light' });
+    };
     const diagnostics: string[] = [];
     for (const view of [page, first, second]) {
       view.on('pageerror', (error) => diagnostics.push(error.message.slice(0, 300)));
@@ -108,6 +128,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         { timeout: 30_000 },
       );
       await expect(first.getByText('View-only link.', { exact: true })).toBeVisible();
+      await captureGuest('viewer');
       await expect(first.getByText('Your workspace', { exact: true })).toHaveCount(0);
       await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
       expect(await first.locator('body').innerText()).not.toContain(owner.name);
@@ -128,6 +149,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await Promise.all([first.goto(editLink), second.goto(editLink)]);
       await saved(first);
       await saved(second);
+      await captureGuest('editor');
       expect(
         db
           .prepare('SELECT count(*) AS n FROM workspace_guest_sessions WHERE item_id=?')

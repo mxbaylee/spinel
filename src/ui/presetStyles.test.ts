@@ -38,12 +38,16 @@ describe('Spinel theme', () => {
         ['sp-bg', 'sp-text'],
         ['sp-muted', 'sp-bg'],
         ['sp-text', 'sp-panel'],
+        // SPN-047 selected navigation retains readable text in both themes.
+        ['sp-text', 'sp-tint-1'],
         // Entity monochrome glyph on its solid silhouette (SPN-077).
         ['sp-panel', 'sp-text'],
         ['sp-muted', 'sp-panel'],
         ['sp-on-accent', 'sp-accent'],
         ['sp-rail-ink', 'sp-rail'],
         ['sp-accent', 'sp-bg'],
+        // The appearance segment has a contrasting selected ring.
+        ['sp-accent', 'sp-panel'],
         ['sp-accent-2', 'sp-bg'],
         ...fillPresets.map(({ id }) => [`fill-${id}-fg`, `fill-${id}-bg`]),
       ];
@@ -90,10 +94,10 @@ it('rich text maps only for display and restores canonical editing without mutat
     },
   };
   const before = structuredClone(cell);
-  const display = displayPresetCell(cell, style, 'dark');
+  const display = displayPresetCell(cell, style);
   expect(display.p!.body!.textRuns![0].ts).toEqual({
     bl: 1,
-    cl: presetStyle('primary-soft', 'dark').cl,
+    cl: { rgb: 'spinel-primary-soft.1' },
   });
   expect(display.p!.body!.textRuns![1]).toEqual(cell.p.body.textRuns[1]);
   expect(presetCellForEditing(display, cell, style).p).toEqual(cell.p);

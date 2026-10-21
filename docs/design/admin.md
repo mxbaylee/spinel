@@ -1,5 +1,21 @@
 # Admin
 
+## SPN-047 composed redesign proposal
+
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Admin, AdminLoading, AdminError.
+
+| Current friction | Public reference pattern | Adopted proposal |
+| --- | --- | --- |
+| Nested passkeys, invites, connections and backups create a long page with repeated destructive controls. | The applicable pattern is grouped navigation and contextual actions from Dropbox/Notion; consumer editors offer no evidence for Spinel’s content-blind Operator permissions. | Administration section navigation: People, Invites, Connections, Backups & health. |
+
+This proposal supersedes the earlier stack of equal cards. People rows disclose passkeys and destructive actions; confirmations retain their consequences. Backups/health show text status, timestamps, last good verification and recovery guidance. Loading never masquerades as an empty list. Server Operator remains content-blind and distinct from delegated file Admin.
+
+The approved proposal above governs placement during implementation. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+
 The Operator's screens: users and passkeys, invites, backups, and server health
 (SPN-032). Admins can't see documents (SPN-003), so nothing here shows a title,
 name or content.
@@ -74,3 +90,12 @@ origins for connections, creation, last use and revoked status; never secrets or
 document details. No token creation or document access for the Operator.
 `Settings/AssistantConnections` and `Admin/AccessTokens` cover loading, empty, metadata and failure states. See
 [MCP](../mcp.md), decision [#111](https://github.com/mxbaylee/spinel/issues/111).
+
+## Operator walkthrough refinements
+
+Wrap phone section navigation so Backups & health is always discoverable.
+Create invite belongs in Invites, followed by a once-only address, Copy and
+manual-copy fallback. Account actions name the target in confirmation; the
+Operator's protected account is visibly restricted. Passkey details and overdue
+backup examples are composed states, not just success notices. The compact
+utility header avoids a second permanent navigation column.

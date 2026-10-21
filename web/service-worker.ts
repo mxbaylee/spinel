@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import { iconSvg } from '../src/ui/appIcon.ts';
+import { faviconSvg } from '../src/ui/favicon.ts';
 import {
   needsServer,
   parseShellManifest,
@@ -116,7 +116,7 @@ self.addEventListener('fetch', (event) => {
   // APIs, images and other private requests go straight to the network.
   if (url.origin !== self.location.origin || event.request.method !== 'GET') return;
   if (url.pathname === '/favicon.svg')
-    event.respondWith(new Response(iconSvg(), { headers: { 'Content-Type': 'image/svg+xml' } }));
+    event.respondWith(new Response(faviconSvg(), { headers: { 'Content-Type': 'image/svg+xml' } }));
   else if (event.request.mode === 'navigate') event.respondWith(navigate(event.request, url));
   else if (shellFiles.has(url.pathname) && !url.search)
     // Shell files are content-hashed, so a cached copy is always the right one.

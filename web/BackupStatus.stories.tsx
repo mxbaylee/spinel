@@ -28,7 +28,8 @@ const reply = (overrides: Partial<Status>) => ({
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
 const meta = {
-  title: 'Admin/BackupStatus',
+  id: 'admin-backupstatus',
+  title: 'Current production/Admin/BackupStatus',
   component: BackupStatus,
 } satisfies Meta<typeof BackupStatus>;
 export default meta;

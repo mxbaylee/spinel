@@ -1,6 +1,7 @@
 import sharp from 'sharp';
 import { Router } from 'express';
 import { iconSvg } from '../ui/appIcon.ts';
+import { faviconSvg } from '../ui/favicon.ts';
 import { fileURLToPath } from 'node:url';
 import { palettes } from '../ui/palette.ts';
 
@@ -28,7 +29,7 @@ export function pwaRoutes() {
     response.set('Cache-Control', 'no-cache').type('application/manifest+json').send(manifest);
   });
   router.get('/favicon.svg', (_request, response) => {
-    response.set('Cache-Control', 'public, max-age=86400').type('image/svg+xml').send(iconSvg());
+    response.set('Cache-Control', 'public, max-age=86400').type('image/svg+xml').send(faviconSvg());
   });
   router.get('/social-preview.png', (_request, response) => {
     response
@@ -45,7 +46,10 @@ export function pwaRoutes() {
       async (request, response) => {
         let icon = icons.get(size);
         if (!icon) {
-          icon = sharp(Buffer.from(iconSvg())).resize(size, size).png().toBuffer();
+          icon = sharp(Buffer.from(size === 32 ? faviconSvg('light') : iconSvg()))
+            .resize(size, size)
+            .png()
+            .toBuffer();
           icons.set(size, icon);
           void icon.catch(() => icons.delete(size));
         }

@@ -1,14 +1,33 @@
 import { ThemeService } from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
-import { ICanvasColorService } from '@univerjs/engine-render';
+import { CanvasColorService, ICanvasColorService } from '@univerjs/engine-render';
 import { defaultTheme } from '@univerjs/presets';
 import { getTheme, watchTheme } from './theme.ts';
-import { palettes, editorNeutrals } from './palette.ts';
-export function editorTheme() {
-  const colors = palettes[getTheme()];
+import { palettes, editorNeutrals, fillPresets, presenceFallbackColors } from './palette.ts';
+import type { ThemeMode } from './palette.ts';
+export function editorTheme(mode: ThemeMode = getTheme()) {
+  const colors = palettes[mode];
   return {
     ...defaultTheme,
     gray: editorNeutrals,
+    // These tokens exist only on render models and presence controls, never saved styles.
+    ...Object.fromEntries(
+      fillPresets.map(({ id }) => [
+        `spinel-${id}`,
+        {
+          0: colors[`fill-${id}-bg`],
+          1: colors[`fill-${id}-fg`],
+          2: colors[`fill-${id}-bg`] + '28',
+          3: colors[`fill-${id}-bg`] + '18',
+        },
+      ]),
+    ),
+    ...Object.fromEntries(
+      presenceFallbackColors.map((color, index) => [
+        `spinel-presence-${index}`,
+        { 0: color, 2: color + '28', 3: color + '18' },
+      ]),
+    ),
     primary: {
       ...defaultTheme.primary,
       50: colors['sp-tint-1'],
@@ -23,6 +42,23 @@ export function editorTheme() {
       900: '#4a1e33',
     },
   };
+}
+
+class SpinelCanvasColorService extends CanvasColorService {
+  private readonly theme: ThemeService;
+  constructor(theme: ThemeService) {
+    super(theme);
+    this.theme = theme;
+  }
+
+  override getRenderColor(color: string): string {
+    // Preset pairs already provide their own accessible light/dark mapping.
+    // All ordinary document colors and SDK tokens use native dark rendering.
+    const preset = color.startsWith('spinel-')
+      ? this.theme.getColorFromTheme<unknown>(color)
+      : undefined;
+    return typeof preset === 'string' ? preset : super.getRenderColor(color);
+  }
 }
 export function bindEditorTheme(univer: Univer, redraw?: () => void) {
   const service = univer.__getInjector().get(ThemeService);
@@ -41,11 +77,7 @@ export function installCanvasColors(univer: Univer) {
   univer.__getInjector().replace([
     ICanvasColorService,
     {
-      useFactory: (theme: ThemeService) => ({
-        // Presets are already mapped; never invert literal document colours again.
-        getRenderColor: (color: string) =>
-          theme.isValidThemeColor(color) ? theme.getColorFromTheme<string>(color) : color,
-      }),
+      useFactory: (theme: ThemeService) => new SpinelCanvasColorService(theme),
       deps: [ThemeService],
     },
   ]);

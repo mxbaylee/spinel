@@ -6,7 +6,6 @@ import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { Dashboard } from './Dashboard.tsx';
 import type { LocalStart } from './offline/localStart.ts';
-import { PinsProvider } from './Pins.tsx';
 
 const day = 86_400_000;
 const now = Date.now();
@@ -61,12 +60,10 @@ const photos = entry(11, 'Family photos', 'folder', {
 const empty = {
   'GET /api/items': { items: [] },
   'GET /api/items/shared': { items: [] },
-  'GET /api/items/pins': { items: [] },
 };
 const populated = {
   'GET /api/items': { items },
   'GET /api/items/shared': { items: shared },
-  'GET /api/items/pins': { items: [budget] },
   // Opening a folder lists what it holds, with its parents.
   [`GET /api/items/${household.id}`]: {
     item: household,
@@ -96,9 +93,7 @@ function StillHistory({ children }: { children: ReactNode }) {
 }
 const inWorkspace: Decorator = (Story) => (
   <StillHistory>
-    <PinsProvider enabled>
-      <Story />
-    </PinsProvider>
+    <Story />
   </StillHistory>
 );
 
@@ -106,7 +101,8 @@ const inWorkspace: Decorator = (Story) => (
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
 const meta = {
-  title: 'Dashboard/Dashboard',
+  id: 'dashboard-dashboard',
+  title: 'Current production/Dashboard/Dashboard',
   component: Dashboard,
   args: {
     navigation: { allow: () => true, dirty() {} },
@@ -186,7 +182,6 @@ const local: LocalStart = {
     syncedAt: synced,
     items,
     shared: [...shared, photos],
-    pins: [budget],
     views: { [household.id]: [household, finance, mealPlan] },
   },
   downloads: [budget, roadmap].map((item) => ({
@@ -202,16 +197,9 @@ const local: LocalStart = {
  * Offline on a prepared device: the last-synced list, read-only. Downloaded
  * items say Available offline; other Sheets and Docs say Needs a connection.
  */
-// Local mode reads the saved pins, not the API.
-const localPins: Decorator = (Story) => (
-  <PinsProvider enabled={false} offline={local.catalog.pins}>
-    <Story />
-  </PinsProvider>
-);
 export const LocalMode: Story = {
   args: { local },
   parameters: { api: empty },
-  decorators: [localPins],
 };
 /** Offline, a Doc that wasn't downloaded stays listed but can't open. */
 export const LocalNeedsConnection: Story = {

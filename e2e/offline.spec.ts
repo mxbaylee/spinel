@@ -48,8 +48,6 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     });
     expect(imported.status(), await imported.text()).toBe(201);
     const sheet = (await imported.json()).item as { id: string; name: string };
-    // The saved pin list is part of the catalog that opens offline.
-    workspace.pin(user.id, doc.id);
 
     await page.goto('/');
     await expect
@@ -124,6 +122,31 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
       if (new URL(request.url()).pathname.startsWith('/api/items')) api.push(request.url());
     });
     await context.setOffline(true);
+    // A catalog saved by an older app may still contain pins. Opening it must
+    // preserve the downloaded files without restoring the removed feature.
+    await page.evaluate(
+      ({ accountId, legacyPin }) =>
+        new Promise<void>((resolve, reject) => {
+          const opening = indexedDB.open(`spinel-offline-${accountId}`);
+          opening.onerror = () => reject(opening.error);
+          opening.onsuccess = () => {
+            const database = opening.result;
+            const transaction = database.transaction('meta', 'readwrite');
+            const meta = transaction.objectStore('meta');
+            const catalog = meta.get('catalog');
+            catalog.onsuccess = () => meta.put({ ...catalog.result, pins: [legacyPin] }, 'catalog');
+            transaction.oncomplete = () => {
+              database.close();
+              resolve();
+            };
+            transaction.onabort = () => {
+              database.close();
+              reject(transaction.error);
+            };
+          };
+        }),
+      { accountId: user.id, legacyPin: doc },
+    );
     await page.reload();
     await expect(page.getByRole('status').filter({ hasText: 'Files as of' })).toBeVisible({
       timeout: 30_000,
@@ -138,7 +161,8 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     await expect(row(sheet.name)).toContainText('Available offline');
     await expect(row(doc.name)).toContainText('Available offline');
     await expect(row('Online only')).toContainText('Needs a connection');
-    await expect(page.getByRole('complementary', { name: 'Pinned items' })).toContainText(doc.name);
+    await expect(page.getByRole('complementary', { name: 'Pinned items' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^(Pin|Unpin) / })).toHaveCount(0);
     // Local mode offers nothing that would reach the server.
     await expect(
       page.getByRole('button', { name: /available offline on this device/ }),

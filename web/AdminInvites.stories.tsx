@@ -47,7 +47,8 @@ const loaded = {
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
 const meta = {
-  title: 'Admin/AdminInvites',
+  id: 'admin-admininvites',
+  title: 'Current production/Admin/AdminInvites',
   component: AdminInvites,
 } satisfies Meta<typeof AdminInvites>;
 export default meta;

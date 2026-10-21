@@ -19,7 +19,6 @@ import { AccessTokens } from './AccessTokens.tsx';
 import { AssistantConnections } from './AssistantConnections.tsx';
 import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
-import { PinsProvider, PinnedSidebar } from './Pins.tsx';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
 import { Rail } from './Rail.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
@@ -280,174 +279,166 @@ export function App() {
     }
   }
   return (
-    // Remount on entering local mode: the provider reads its offline pins once.
-    <PinsProvider
-      key={local ? 'local' : 'online'}
-      enabled={Boolean(user && !user.isAdmin && !local && !connecting)}
-      offline={local?.catalog.pins}
-    >
-      <div className="workspace">
-        <Rail user={user} navigation={navigation} onSignOut={() => void signOut()} />
-        <div className="workspace-body">
-          {user && !user.isAdmin && !connecting && <PinnedSidebar navigation={navigation} />}
-          <main>
-            {!loaded ? (
-              <p role="status">Loading…</p>
-            ) : unreachable ? (
-              <OfflineUnreachable />
-            ) : setup ? (
-              <>
-                <p className="eyebrow">A new workspace</p>
-                <h1>Set up Spinel</h1>
-                <section className="welcome">
-                  <h2>Create your admin passkey</h2>
-                  <p>
-                    Your admin account manages the workspace. It cannot open documents; you will
-                    invite a separate everyday account for that.
-                  </p>
-                  {setupId && setupSecret ? (
-                    <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                      Create admin passkey
-                    </button>
-                  ) : (
-                    <p role="alert">
-                      Open the one-time setup link printed on the server. If it expired, run the
-                      setup command again.
-                    </p>
-                  )}
-                </section>
-              </>
-            ) : invitation ? (
-              <>
-                <p className="eyebrow">Your private workspace</p>
-                <h1>{inviteDetails?.recovery ? 'Recover your account' : 'Join Spinel'}</h1>
-                {inviteDetails && (
-                  <section className="welcome">
-                    {inviteDetails.recovery ? (
-                      <>
-                        <h2>{inviteDetails.name}</h2>
-                        <p>
-                          Adding your new passkey will replace all old passkeys and sign out your
-                          other devices. Your account and documents stay yours.
-                        </p>
-                      </>
-                    ) : (
-                      <label>
-                        Your name
-                        <input
-                          value={inviteName}
-                          maxLength={80}
-                          onChange={(event) => setInviteName(event.target.value)}
-                          autoComplete="name"
-                        />
-                      </label>
-                    )}
-                    <button
-                      className="primary"
-                      disabled={busy || !inviteName.trim()}
-                      onClick={() => void ceremony(true)}
-                    >
-                      {inviteDetails.recovery ? 'Recover with a passkey' : 'Join with a passkey'}
-                    </button>
-                  </section>
-                )}
-              </>
-            ) : !user ? (
-              <>
-                <p className="eyebrow">Your private workspace</p>
-                <h1>Sign in</h1>
-                <section className="welcome">
-                  <h2>Welcome back</h2>
-                  <p>Use a passkey from your browser, password manager or phone.</p>
-                  <button className="primary" disabled={busy} onClick={() => void ceremony(false)}>
-                    Sign in with a passkey
-                  </button>
-                  <p className="placeholder">
-                    Need access or a new passkey? Contact your workspace operator.
-                  </p>
-                </section>
-              </>
-            ) : connecting ? (
-              <ConnectAssistant request={connectRequest} user={user} />
-            ) : local && settings ? (
-              <>
-                <p className="eyebrow">{user.name}</p>
-                <h1>Settings</h1>
-                <ThemeSettings />
-                <p>Passkeys need a connection.</p>
-              </>
-            ) : local && location.pathname === '/preview' ? (
-              <p role="status">Version history needs a connection.</p>
-            ) : settings ? (
-              <>
-                <p className="eyebrow">{user.name}</p>
-                <h1>Settings</h1>
-                <ThemeSettings />
-                <ProfileSettings onSaved={(profile) => setUser({ ...user, ...profile })} />
-                <section className="welcome">
-                  <h2>Your passkeys</h2>
-                  <p>
-                    Add a passkey from another device or password manager so you can sign in there
-                    too.
-                  </p>
-                  {keys.length ? (
-                    <ul>
-                      {keys.map((key) => (
-                        <li key={key.id}>
-                          <strong>{key.name}</strong>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No passkeys added yet.</p>
-                  )}
+    <div className="workspace">
+      <Rail user={user} navigation={navigation} onSignOut={() => void signOut()} />
+      <div className="workspace-body">
+        <main>
+          {!loaded ? (
+            <p role="status">Loading…</p>
+          ) : unreachable ? (
+            <OfflineUnreachable />
+          ) : setup ? (
+            <>
+              <p className="eyebrow">A new workspace</p>
+              <h1>Set up Spinel</h1>
+              <section className="welcome">
+                <h2>Create your admin passkey</h2>
+                <p>
+                  Your admin account manages the workspace. It cannot open documents; you will
+                  invite a separate everyday account for that.
+                </p>
+                {setupId && setupSecret ? (
                   <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                    Add a passkey
+                    Create admin passkey
+                  </button>
+                ) : (
+                  <p role="alert">
+                    Open the one-time setup link printed on the server. If it expired, run the setup
+                    command again.
+                  </p>
+                )}
+              </section>
+            </>
+          ) : invitation ? (
+            <>
+              <p className="eyebrow">Your private workspace</p>
+              <h1>{inviteDetails?.recovery ? 'Recover your account' : 'Join Spinel'}</h1>
+              {inviteDetails && (
+                <section className="welcome">
+                  {inviteDetails.recovery ? (
+                    <>
+                      <h2>{inviteDetails.name}</h2>
+                      <p>
+                        Adding your new passkey will replace all old passkeys and sign out your
+                        other devices. Your account and documents stay yours.
+                      </p>
+                    </>
+                  ) : (
+                    <label>
+                      Your name
+                      <input
+                        value={inviteName}
+                        maxLength={80}
+                        onChange={(event) => setInviteName(event.target.value)}
+                        autoComplete="name"
+                      />
+                    </label>
+                  )}
+                  <button
+                    className="primary"
+                    disabled={busy || !inviteName.trim()}
+                    onClick={() => void ceremony(true)}
+                  >
+                    {inviteDetails.recovery ? 'Recover with a passkey' : 'Join with a passkey'}
                   </button>
                 </section>
-                {!user.isAdmin && (
-                  <>
-                    <AssistantConnections />
-                    <details>
-                      <summary>Advanced: personal access tokens</summary>
-                      <AccessTokens />
-                    </details>
-                  </>
+              )}
+            </>
+          ) : !user ? (
+            <>
+              <p className="eyebrow">Your private workspace</p>
+              <h1>Sign in</h1>
+              <section className="welcome">
+                <h2>Welcome back</h2>
+                <p>Use a passkey from your browser, password manager or phone.</p>
+                <button className="primary" disabled={busy} onClick={() => void ceremony(false)}>
+                  Sign in with a passkey
+                </button>
+                <p className="placeholder">
+                  Need access or a new passkey? Contact your workspace operator.
+                </p>
+              </section>
+            </>
+          ) : connecting ? (
+            <ConnectAssistant request={connectRequest} user={user} />
+          ) : local && settings ? (
+            <>
+              <p className="eyebrow">{user.name}</p>
+              <h1>Settings</h1>
+              <ThemeSettings />
+              <p>Passkeys need a connection.</p>
+            </>
+          ) : local && location.pathname === '/preview' ? (
+            <p role="status">Version history needs a connection.</p>
+          ) : settings ? (
+            <>
+              <p className="eyebrow">{user.name}</p>
+              <h1>Settings</h1>
+              <ThemeSettings />
+              <ProfileSettings onSaved={(profile) => setUser({ ...user, ...profile })} />
+              <section className="welcome">
+                <h2>Your passkeys</h2>
+                <p>
+                  Add a passkey from another device or password manager so you can sign in there
+                  too.
+                </p>
+                {keys.length ? (
+                  <ul>
+                    {keys.map((key) => (
+                      <li key={key.id}>
+                        <strong>{key.name}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No passkeys added yet.</p>
                 )}
-              </>
-            ) : user.isAdmin ? (
-              <>
-                <h1>Admin</h1>
-                <section className="welcome">
-                  <h2>Workspace administration</h2>
-                  <p>
-                    Invite people or help them recover their passkeys. Use a separate everyday
-                    account for documents.
-                  </p>
-                  <AdminUsers currentId={user.id} />
-                  <AssistantConnections admin />
-                  <AccessTokens admin />
-                  <BackupStatus />
-                </section>
-              </>
-            ) : location.pathname === '/preview' ? (
-              <Suspense fallback={<p>Loading preview…</p>}>
-                <HistoryBrowser />
-              </Suspense>
-            ) : (
-              <Dashboard navigation={navigation} user={user} local={local} />
-            )}
-            {busy && (
-              <p role="status">
-                Follow the instructions from your passkey manager.{' '}
-                <button onClick={cancel}>Cancel</button>
-              </p>
-            )}
-            {error && <p role="alert">{error}</p>}
-            {notice && <p role="status">{notice}</p>}
-          </main>
-        </div>
+                <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
+                  Add a passkey
+                </button>
+              </section>
+              {!user.isAdmin && (
+                <>
+                  <AssistantConnections />
+                  <details>
+                    <summary>Advanced: personal access tokens</summary>
+                    <AccessTokens />
+                  </details>
+                </>
+              )}
+            </>
+          ) : user.isAdmin ? (
+            <>
+              <h1>Admin</h1>
+              <section className="welcome">
+                <h2>Workspace administration</h2>
+                <p>
+                  Invite people or help them recover their passkeys. Use a separate everyday account
+                  for documents.
+                </p>
+                <AdminUsers currentId={user.id} />
+                <AssistantConnections admin />
+                <AccessTokens admin />
+                <BackupStatus />
+              </section>
+            </>
+          ) : location.pathname === '/preview' ? (
+            <Suspense fallback={<p>Loading preview…</p>}>
+              <HistoryBrowser />
+            </Suspense>
+          ) : (
+            <Dashboard navigation={navigation} user={user} local={local} />
+          )}
+          {busy && (
+            <p role="status">
+              Follow the instructions from your passkey manager.{' '}
+              <button onClick={cancel}>Cancel</button>
+            </p>
+          )}
+          {error && <p role="alert">{error}</p>}
+          {notice && <p role="status">{notice}</p>}
+        </main>
       </div>
-    </PinsProvider>
+    </div>
   );
 }

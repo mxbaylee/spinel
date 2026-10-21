@@ -49,7 +49,8 @@ const people: SharePerson[] = [
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
 const meta = {
-  title: 'Sharing/Sharing',
+  id: 'sharing-sharing',
+  title: 'Current production/Sharing/Sharing',
   component: Sharing,
   args: { item: doc, onClose: () => {} },
 } satisfies Meta<typeof Sharing>;

@@ -369,41 +369,6 @@ button.primary {
   margin-block: 0.5rem;
 }
 
-.workspace-body:has(.pinned-sidebar) {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 28px;
-}
-.workspace:has(.pinned-sidebar) {
-  max-width: 1480px;
-}
-.pinned-sidebar {
-  padding-top: 72px;
-  min-width: 0;
-}
-.pinned-sidebar ol {
-  list-style: none;
-  padding: 0;
-}
-.pinned-sidebar li {
-  margin-bottom: 16px;
-  overflow-wrap: anywhere;
-}
-.pinned-sidebar small {
-  color: var(--sp-muted);
-}
-.pinned-sidebar .pin-actions {
-  display: flex;
-  gap: 4px;
-  margin-top: 6px;
-}
-.workspace .pinned-sidebar button {
-  padding: 5px 8px;
-}
-.pin-drag {
-  cursor: grab;
-  margin-right: 6px;
-}
 .shared-badge {
   display: inline-block;
   font-size: 0.8rem;
@@ -423,27 +388,11 @@ button.primary {
   overflow: auto;
   background: var(--sp-tint-1);
 }
-@media (max-width: 900px) {
-  .workspace-body:has(.pinned-sidebar) {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-  .pinned-sidebar {
-    padding-top: 32px;
-  }
-  .pinned-sidebar ol {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-}
-
 /* Gem rail, adapted from the owner's approved reference. */
 :root {
   font-family: ui-rounded, system-ui, sans-serif;
 }
-.workspace,
-.workspace:has(.pinned-sidebar) {
+.workspace {
   display: flex;
   max-width: none;
   min-height: 100vh;
@@ -538,9 +487,6 @@ button.primary {
 }
 .workspace-body > main {
   min-width: 0;
-  padding-top: 0;
-}
-.pinned-sidebar {
   padding-top: 0;
 }
 :root[data-theme='dark'] .workspace button:not(.univer-container *) {
@@ -739,8 +685,7 @@ dialog {
   vertical-align: middle;
 }
 .item-open > .entity-icon,
-.file-list li > div > .entity-icon,
-.pinned-sidebar a > .entity-icon {
+.file-list li > div > .entity-icon {
   margin-right: 8px;
 }
 .entity-type-control {
@@ -753,6 +698,14 @@ dialog {
   min-width: 0;
 }
 
+.profile-icon-dialog > h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.profile-icon-dialog > h2 > svg {
+  flex: 0 0 20px;
+}
 .profile-icon-dialog {
   width: min(30rem, calc(100vw - 2rem));
   max-height: calc(100dvh - 2rem);

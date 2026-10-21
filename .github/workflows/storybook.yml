@@ -8,6 +8,12 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      story_ids:
+        description: 'Optional space-separated story IDs for a focused manual review (empty captures all)'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -45,7 +51,7 @@ jobs:
     name: Build Storybook
     needs: changes
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       STORYBOOK_DISABLE_TELEMETRY: 1
     steps:
@@ -75,6 +81,43 @@ jobs:
           for file in index.html index.json iframe.html; do
             test -s "storybook-static/$file" || { echo "::error::storybook-static/$file is missing"; exit 1; }
           done
+      - name: Upload interactive review build
+        if: needs.changes.outputs.docs_only != 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: storybook-review
+          path: storybook-static
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload for Pages
+        if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: storybook-static
+      - name: Documentation-only change
+        if: needs.changes.outputs.docs_only == 'true'
+        run: echo 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'
+
+  review:
+    name: Review Storybook states and interactions
+    needs: [changes, build]
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    # Full component/state parity adds more captures; keep every variant and assertion.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - run: npm ci
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: storybook-review
+          path: storybook-static
       - name: Capture icon and integration stories
         if: needs.changes.outputs.docs_only != 'true'
         run: |
@@ -87,24 +130,35 @@ jobs:
           name: entity-icon-screenshots
           path: test-results/entity-icons
           if-no-files-found: error
-      - name: Upload for Pages
-        if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+      - name: Capture redesign review and verify shared controls
+        if: needs.changes.outputs.docs_only != 'true'
+        env:
+          # PR validation always covers the full catalog; only manual runs can narrow it.
+          STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
+        run: |
+          read -r -a stories <<< "$STORY_IDS"
+          npm run screenshots -- "${stories[@]}"
+      - name: Upload redesign review
+        if: always() && needs.changes.outputs.docs_only != 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          path: storybook-static
-      - name: Documentation-only change
-        if: needs.changes.outputs.docs_only == 'true'
-        run: echo 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'
+          name: design-review
+          path: test-results/design-review
+          if-no-files-found: error
+          retention-days: 14
 
   deploy:
     name: Deploy to GitHub Pages
-    needs: [changes, build]
-    if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: [changes, build, review]
+    if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     permissions:
       pages: write
       id-token: write
+    concurrency:
+      group: github-pages-deploy
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}

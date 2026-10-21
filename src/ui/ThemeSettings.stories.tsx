@@ -68,7 +68,8 @@ const followSystem: Decorator = (Story, context) => (
 );
 
 const meta = {
-  title: 'Settings/ThemeSettings',
+  id: 'settings-themesettings',
+  title: 'Current production/Settings/ThemeSettings',
   component: ThemeSettings,
 } satisfies Meta<typeof ThemeSettings>;
 export default meta;

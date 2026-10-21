@@ -1,5 +1,14 @@
 // Palette moved from the owner's gem-rail reference for SPN-027.
 export type ThemeMode = 'light' | 'dark';
+// Stable identity-free colors for anonymous and legacy collaborator avatars.
+export const presenceFallbackColors = [
+  '#7046a5',
+  '#23736a',
+  '#a24457',
+  '#3868a1',
+  '#826126',
+  '#8c4c8b',
+];
 // Entity artwork keeps its approved hues in both themes; labels carry type meaning.
 const entityArt = {
   'entity-doc-0': '#254c8b',

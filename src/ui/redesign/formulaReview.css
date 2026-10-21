@@ -1,0 +1,86 @@
+.rd-formula-review,
+.rd-formula-picker,
+.rd-formula-feedback {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.rd-formula-review code {
+  overflow-wrap: anywhere;
+}
+.rd-formula-input {
+  position: relative;
+  min-width: 0;
+}
+.rd-formula-source {
+  border: 1px solid var(--sp-border);
+  padding: 12px;
+  border-radius: 8px;
+}
+.rd-formula-source summary {
+  cursor: pointer;
+  min-height: 44px;
+  align-content: center;
+}
+.rd-formula-picker {
+  margin-top: 12px;
+}
+.rd-formula-suggestions {
+  position: absolute;
+  z-index: 2;
+  top: calc(100% + 4px);
+  inset-inline: 0;
+  max-height: 180px;
+  overflow: auto;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  list-style: none;
+  padding: 4px;
+  margin: 0;
+}
+.rd-formula-suggestions button {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.rd-formula-suggestions button[aria-selected='true'],
+.rd-formula-suggestions button:hover {
+  background: var(--sp-tint-1);
+}
+.rd-formula-result {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+}
+.rd-formula-result h3 {
+  font-size: 0.875rem;
+}
+.rd-formula-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.75rem;
+}
+.rd-formula-feedback > .sp-control {
+  justify-self: start;
+}
+.rd-formula-stage {
+  max-width: 560px;
+  padding: 24px;
+  margin-inline: auto;
+}
+.rd-formula-stage > h1 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}

@@ -1,5 +1,21 @@
 # Guest view
 
+## SPN-047 composed redesign proposal
+
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — GuestViewer, GuestEditor, RevokedLink, OfflineLaunch, PlannedSpaceGuest.
+
+| Current friction | Public reference pattern | Adopted proposal |
+| --- | --- | --- |
+| Large stacked title/status text pushes content down; generic connection errors compete with editor status. | Google makes read-only state visible; Numbers groups collaboration status near content. Spinel deliberately has no guest request-access workflow. | A minimal document header with access badge, status and PDF export; no account rail or identity. |
+
+Revocation removes content, title, actions and any source values, showing only the generic unavailable link message. An offline guest gets a generic connection state, not cached private content. A Space guest has only its internal page navigation and uniform View/Edit role; no outer folders, account controls, history, native export or file Admin.
+
+The approved proposal above governs placement during implementation. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+
 What a Link guest sees at `/share/<id>`: one document, no account, no workspace.
 
 ## How others do it
@@ -29,7 +45,7 @@ links and connection loss are plain paragraphs above it.
   This is planned behavior, authorized by the owner in chat on 2026-10-20,
   decision [#103](https://github.com/mxbaylee/spinel/issues/103).
 - No identity. Collaborators show as generic Guest/Collaborator labels with
-  empty avatars and default colours (SPN-016). The connection slot (SPN-042)
+  empty avatars and default colors (SPN-016). The connection slot (SPN-042)
   works as for everyone else.
 - **No request-access button.** A guest has no account to grant access to, and
   the owner gives access by sharing a new link. The others' Request access
@@ -51,3 +67,11 @@ links and connection loss are plain paragraphs above it.
 
 `Guest/GuestApp` (loading and link-revoked states; the editor itself boots
 Univer and is covered by Playwright).
+
+## Guest walkthrough refinements
+
+Phone headers reserve a full row for document/Space identity, then show access,
+connection/save state and a visibly labelled PDF action. Viewers see Connected
+rather than Saved. Space navigation can collapse; a guest editor's Trash
+confirmation explains that an account editor can recover the page, because
+guests cannot open account-only Space trash.

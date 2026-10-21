@@ -12,7 +12,6 @@ export type OfflineCatalog = {
   syncedAt: number;
   items: WorkspaceItem[];
   shared: WorkspaceItem[];
-  pins: WorkspaceItem[];
   /** The last-loaded ancestors, item and children for each opened folder or item. */
   views: Record<string, WorkspaceItem[]>;
 };

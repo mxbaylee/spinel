@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
@@ -44,6 +44,21 @@ test('console link claims a fresh instance once and keeps the setup secret off t
     });
     await page.goto(link);
     await expect(page).toHaveURL(`${origin}/setup`);
+    await mkdir('test-results/theme-screenshots', { recursive: true });
+    for (const [theme, width, label] of [
+      ['light', 1280, 'light'],
+      ['dark', 1280, 'dark'],
+      ['light', 390, 'phone'],
+    ] as const) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+      await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+      await page.screenshot({
+        path: `test-results/theme-screenshots/before-setup-${label}-${testInfo.project.name}.png`,
+        fullPage: true,
+      });
+    }
+    await page.setViewportSize({ width: 1280, height: 900 });
     await page.getByRole('button', { name: 'Create admin passkey' }).click();
     await expect(page.getByRole('heading', { name: 'Admin', exact: true })).toBeVisible();
     await page.goto(`${origin}/`);
