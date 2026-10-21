@@ -33,7 +33,10 @@ export function IconPicker({
       onCancel={close}
       aria-labelledby="icon-picker-title"
     >
-      <h2 id="icon-picker-title">Choose your icon</h2>
+      <h2 id="icon-picker-title">
+        <ProfileIcon icon="lucide:shapes" size={20} />
+        <span>Choose your icon</span>
+      </h2>
       <label>
         Search icons
         <input

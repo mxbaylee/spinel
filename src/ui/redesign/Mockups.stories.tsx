@@ -449,7 +449,7 @@ export const PlannedSpaceTrashFromEditor: Story = {
     await expect(canvas.getByRole('heading', { name: 'Export' })).toBeVisible();
     if (window.innerWidth <= 900)
       await userEvent.click(canvas.getByRole('button', { name: 'Open Space contents' }));
-    await userEvent.click(page.getByRole('button', { name: 'Trash' }));
+    await userEvent.click(page.getByRole('button', { name: 'Space trash' }));
     await expect(canvas.getByRole('heading', { name: 'Space trash' })).toBeVisible();
     await expect(canvas.queryByRole('heading', { name: 'Export' })).not.toBeInTheDocument();
     await expect(canvas.queryByRole('button', { name: 'Univer file' })).not.toBeInTheDocument();

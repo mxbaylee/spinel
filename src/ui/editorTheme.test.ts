@@ -6,8 +6,9 @@ import {
   UniverRenderEnginePlugin,
 } from '@univerjs/engine-render';
 import { editorTheme, installCanvasColors } from './editorTheme.ts';
-import { fillPresets } from './palette.ts';
+import { fillPresets, presenceFallbackColors } from './palette.ts';
 import { displayPresetCell, presetCellForEditing, presetStyle } from './presetStyles.ts';
+import { presenceRenderColors } from '../../web/presenceColors.ts';
 
 test('native dark rendering changes paper, text and custom colors without changing saved styles', () => {
   const univer = new Univer({ theme: editorTheme('light') });
@@ -38,10 +39,26 @@ test('native dark rendering changes paper, text and custom colors without changi
           const expected = presetStyle(id, mode);
           expect(service.getRenderColor(display.interceptorStyle!.bg!.rgb!)).toBe(expected.bg!.rgb);
           expect(service.getRenderColor(display.interceptorStyle!.cl!.rgb!)).toBe(expected.cl!.rgb);
+          for (const selection of ['local', 'remote'] as const) {
+            const presence = presenceRenderColors(id, selection)!;
+            expect(service.getRenderColor(presence.stroke)).toBe(expected.bg!.rgb);
+            expect(service.getRenderColor(presence.fill)).toBe(
+              expected.bg!.rgb + (selection === 'local' ? '18' : '28'),
+            );
+          }
           expect(presetCellForEditing(display, stored, style).interceptorStyle).toEqual(style);
           // Serialization/export and the canonical editing model never receive render tokens.
           expect(JSON.stringify(stored)).toBe(serialized);
           expect(display.s).toBe(style);
+        }
+        for (const color of presenceFallbackColors) {
+          for (const selection of ['local', 'remote'] as const) {
+            const presence = presenceRenderColors(color, selection)!;
+            expect(service.getRenderColor(presence.stroke)).toBe(color);
+            expect(service.getRenderColor(presence.fill)).toBe(
+              color + (selection === 'local' ? '18' : '28'),
+            );
+          }
         }
       }
       theme.setTheme({
@@ -54,5 +71,12 @@ test('native dark rendering changes paper, text and custom colors without changi
     }
   } finally {
     univer.dispose();
+  }
+});
+
+test('unknown custom colors retain the generic literal-color fallback', () => {
+  for (const color of [undefined, '', '#123456', 'unknown-preset']) {
+    expect(presenceRenderColors(color, 'local')).toBeUndefined();
+    expect(presenceRenderColors(color, 'remote')).toBeUndefined();
   }
 });

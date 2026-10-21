@@ -3,6 +3,7 @@ import { parseSheetSelection } from './selection.ts';
 import type { IDisposable, Univer } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import type { ComponentType } from 'react';
+import type { PresenceRenderColors } from './renderColors.ts';
 import '@univerjs/sheets-ui/facade';
 
 /** Draw an ephemeral remote selection. Never writes formatting into the document. */
@@ -13,6 +14,7 @@ export function drawPresence(
   selection: string,
   color: string,
   label: ComponentType,
+  renderColors?: PresenceRenderColors,
 ): IDisposable {
   const owned: IDisposable[] = [];
   const dispose = () => {
@@ -28,7 +30,7 @@ export function drawPresence(
       if (!sheet || book.getActiveSheet().getSheetId() !== parsed.sheetId) return { dispose };
       const address = parsed.address;
       const range = sheet.getRange(address);
-      owned.push(range.highlight({ stroke: color, fill: color + '28' }));
+      owned.push(range.highlight(renderColors ?? { stroke: color, fill: color + '28' }));
       const popup = range.attachPopup({
         componentKey: label,
         direction: 'top-left',
@@ -45,5 +47,6 @@ export function drawPresence(
 }
 
 export { setLocalSelectionColor } from './localSelection.ts';
+export type { PresenceRenderColors } from './renderColors.ts';
 
 export { boundedSheetRange } from './selection.ts';

@@ -23,7 +23,9 @@ service delegates ordinary document colors and SDK tokens to Univer's public
 `CanvasColorService`, so paper, text, formula input and chrome follow dark mode.
 Our preset tokens resolve directly to their accessible palette, avoiding a
 second inversion. These tokens exist only on cloned rendering models; the
-saved document remains canonical. Sheet display
+saved document remains canonical. Ephemeral presence outlines and translucent fills
+use the same token boundary so profile badges and canvas cursors keep matching
+colors, including identity-free guest fallbacks. Sheet display
 caches, including inactive tabs, are invalidated on a theme change. Admin access remains separate from documents.
 Docs disables the SDK's 50%-opacity canvas placeholder through its public config
 and shows the typing instruction as normal, contrast-checked shell text.

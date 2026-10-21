@@ -141,3 +141,6 @@ icon beside its textual title through the shared proposal Modal heading. SPN-089
 consistent size/alignment, hide decorative icons from assistive technology, and
 preserve the title as the accessible name. Tooltips are not modals. Do not patch
 SDK-owned dialogs through unsupported hooks. The proposal uses a 20 px decorative semantic icon, a wrapping title and a separate close target; accessible text and dismissal behavior are unchanged.
+
+The reused profile icon picker also has a decorative title icon; its native dialog
+keeps the existing accessible title and keyboard behavior.

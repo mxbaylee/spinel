@@ -10,9 +10,10 @@ import { RANGE_TYPE } from '@univerjs/core';
 import { SheetsScrollRenderController } from '@univerjs/sheets-ui';
 import { avatarProfile } from '../src/profile/profile.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
-import { palettes } from '../src/ui/palette.ts';
+import { palettes, presenceFallbackColors } from '../src/ui/palette.ts';
 import { getTheme, watchTheme } from '../src/ui/theme.ts';
 import { PresenceLabel } from './PresenceLabel.tsx';
+import { presenceRenderColors } from './presenceColors.ts';
 
 export interface Collaborator {
   id: string;
@@ -54,10 +55,9 @@ export function Collaborators({ people }: { people: Collaborator[] }) {
 
 // Stable, identity-free defaults for rooms with guest links.
 export function collaboratorColor(id: string) {
-  const colors = ['#7046a5', '#23736a', '#a24457', '#3868a1', '#826126', '#8c4c8b'];
   let hash = 0;
   for (const character of id) hash = (hash * 31 + character.charCodeAt(0)) >>> 0;
-  return colors[hash % colors.length];
+  return presenceFallbackColors[hash % presenceFallbackColors.length];
 }
 
 export async function watchPresence(
@@ -87,7 +87,12 @@ export async function watchPresence(
         icon: profile?.icon ?? 'lucide:user-round',
       };
       if (member.memberID === session.getMemberID() && api.getActiveWorkbook?.()?.getId() === id)
-        setLocalSelectionColor(univer, id, person.color);
+        setLocalSelectionColor(
+          univer,
+          id,
+          person.color,
+          presenceRenderColors(profile?.color ?? person.color, 'local'),
+        );
       const selection = selections.get(member.memberID);
       person.selection = selection;
       const book = api.getActiveWorkbook?.();
@@ -142,9 +147,15 @@ export async function watchPresence(
         try {
           popups.set(
             member.memberID,
-            drawPresence(univer, api, id, selection, person.color, () => (
-              <PresenceLabel {...person} />
-            )),
+            drawPresence(
+              univer,
+              api,
+              id,
+              selection,
+              person.color,
+              () => <PresenceLabel {...person} />,
+              presenceRenderColors(profile?.color ?? person.color, 'remote'),
+            ),
           );
         } catch {
           /* Stale or unsupported remote ranges must not interrupt editing. */
@@ -203,6 +214,7 @@ export async function watchPresence(
         univer,
         id,
         profile ? palettes[getTheme()][`fill-${profile.color}-bg`] : collaboratorColor(me.userID),
+        presenceRenderColors(profile?.color ?? collaboratorColor(me.userID), 'local'),
       );
     }
     const selection = range

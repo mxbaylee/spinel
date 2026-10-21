@@ -3,18 +3,29 @@ import type { Univer } from '@univerjs/core';
 import { CanvasColorService, ICanvasColorService } from '@univerjs/engine-render';
 import { defaultTheme } from '@univerjs/presets';
 import { getTheme, watchTheme } from './theme.ts';
-import { palettes, editorNeutrals, fillPresets } from './palette.ts';
+import { palettes, editorNeutrals, fillPresets, presenceFallbackColors } from './palette.ts';
 import type { ThemeMode } from './palette.ts';
 export function editorTheme(mode: ThemeMode = getTheme()) {
   const colors = palettes[mode];
   return {
     ...defaultTheme,
     gray: editorNeutrals,
-    // These tokens exist only on cloned rendering models, never saved styles.
+    // These tokens exist only on render models and presence controls, never saved styles.
     ...Object.fromEntries(
       fillPresets.map(({ id }) => [
         `spinel-${id}`,
-        { 0: colors[`fill-${id}-bg`], 1: colors[`fill-${id}-fg`] },
+        {
+          0: colors[`fill-${id}-bg`],
+          1: colors[`fill-${id}-fg`],
+          2: colors[`fill-${id}-bg`] + '28',
+          3: colors[`fill-${id}-bg`] + '18',
+        },
+      ]),
+    ),
+    ...Object.fromEntries(
+      presenceFallbackColors.map((color, index) => [
+        `spinel-presence-${index}`,
+        { 0: color, 2: color + '28', 3: color + '18' },
       ]),
     ),
     primary: {

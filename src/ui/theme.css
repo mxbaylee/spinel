@@ -698,6 +698,14 @@ dialog {
   min-width: 0;
 }
 
+.profile-icon-dialog > h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.profile-icon-dialog > h2 > svg {
+  flex: 0 0 20px;
+}
 .profile-icon-dialog {
   width: min(30rem, calc(100vw - 2rem));
   max-height: calc(100dvh - 2rem);
