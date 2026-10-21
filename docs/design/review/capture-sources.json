@@ -1,6 +1,6 @@
 {
-  "proposalSourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
-  "proposalWorkflow": 39535098206,
+  "proposalSourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+  "proposalWorkflow": 39567403971,
   "proposalWorkflowConclusion": "success",
   "captureStatus": "Rendered PNGs; workflow/journey success must be checked independently.",
   "baselineNote": "Older production-route or existing-component evidence; original per-capture provenance preserved.",
@@ -15,8 +15,8 @@
     {
       "file": "dashboard-light.png",
       "source": "redesign-screens--dashboard-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -29,8 +29,8 @@
     {
       "file": "dashboard-dark.png",
       "source": "redesign-screens--dashboard-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -43,29 +43,29 @@
     {
       "file": "dashboard-phone.png",
       "source": "redesign-screens--dashboard-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "history-calendar-light.png",
       "source": "redesign-screens--history-calendar-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "history-calendar-dark.png",
       "source": "redesign-screens--history-calendar-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "history-calendar-phone.png",
       "source": "redesign-screens--history-calendar-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -78,8 +78,8 @@
     {
       "file": "guest-sheet-light.png",
       "source": "redesign-screens--guest-sheet-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -92,8 +92,8 @@
     {
       "file": "guest-sheet-dark.png",
       "source": "redesign-screens--guest-sheet-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -106,8 +106,8 @@
     {
       "file": "guest-sheet-phone.png",
       "source": "redesign-screens--guest-sheet-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -119,9 +119,9 @@
     },
     {
       "file": "doc-light.png",
-      "source": "redesign-screens--doc-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "source": "redesign-walkthrough--doc-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -133,9 +133,9 @@
     },
     {
       "file": "doc-dark.png",
-      "source": "redesign-screens--doc-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "source": "redesign-walkthrough--doc-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -147,9 +147,9 @@
     },
     {
       "file": "doc-phone.png",
-      "source": "redesign-screens--doc-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "source": "redesign-walkthrough--doc-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -162,8 +162,8 @@
     {
       "file": "sheet-light.png",
       "source": "redesign-walkthrough--sheet-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -176,8 +176,8 @@
     {
       "file": "sheet-dark.png",
       "source": "redesign-walkthrough--sheet-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -190,8 +190,8 @@
     {
       "file": "sheet-phone.png",
       "source": "redesign-walkthrough--sheet-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -204,8 +204,8 @@
     {
       "file": "sharing-light.png",
       "source": "redesign-screens--sharing-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -218,8 +218,8 @@
     {
       "file": "sharing-dark.png",
       "source": "redesign-screens--sharing-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -232,8 +232,8 @@
     {
       "file": "sharing-phone.png",
       "source": "redesign-screens--sharing-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -246,8 +246,8 @@
     {
       "file": "profile-light.png",
       "source": "redesign-walkthrough--settings-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -260,8 +260,8 @@
     {
       "file": "profile-dark.png",
       "source": "redesign-walkthrough--settings-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -274,8 +274,8 @@
     {
       "file": "profile-phone.png",
       "source": "redesign-walkthrough--settings-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -288,8 +288,8 @@
     {
       "file": "profile-icon-picker-light.png",
       "source": "redesign-screens--profile-icon-picker-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -302,8 +302,8 @@
     {
       "file": "profile-icon-picker-dark.png",
       "source": "redesign-screens--profile-icon-picker-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -316,8 +316,8 @@
     {
       "file": "profile-icon-picker-phone.png",
       "source": "redesign-screens--profile-icon-picker-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -330,8 +330,8 @@
     {
       "file": "profile-color-picker-light.png",
       "source": "redesign-screens--profile-color-picker-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -344,8 +344,8 @@
     {
       "file": "profile-color-picker-dark.png",
       "source": "redesign-screens--profile-color-picker-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -358,8 +358,8 @@
     {
       "file": "profile-color-picker-phone.png",
       "source": "redesign-screens--profile-color-picker-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -372,8 +372,8 @@
     {
       "file": "connections-light.png",
       "source": "redesign-screens--connections-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -386,8 +386,8 @@
     {
       "file": "connections-dark.png",
       "source": "redesign-screens--connections-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -400,8 +400,8 @@
     {
       "file": "connections-phone.png",
       "source": "redesign-screens--connections-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -414,8 +414,8 @@
     {
       "file": "consent-light.png",
       "source": "redesign-screens--consent-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -428,8 +428,8 @@
     {
       "file": "consent-dark.png",
       "source": "redesign-screens--consent-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -442,8 +442,8 @@
     {
       "file": "consent-phone.png",
       "source": "redesign-screens--consent-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -456,8 +456,8 @@
     {
       "file": "admin-light.png",
       "source": "redesign-walkthrough--administration-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -470,8 +470,8 @@
     {
       "file": "admin-dark.png",
       "source": "redesign-walkthrough--administration-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -484,8 +484,8 @@
     {
       "file": "admin-phone.png",
       "source": "redesign-walkthrough--administration-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -498,8 +498,8 @@
     {
       "file": "admin-invites-light.png",
       "source": "redesign-screens--admin-invites-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -512,8 +512,8 @@
     {
       "file": "admin-invites-dark.png",
       "source": "redesign-screens--admin-invites-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -526,8 +526,8 @@
     {
       "file": "admin-invites-phone.png",
       "source": "redesign-screens--admin-invites-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -540,8 +540,8 @@
     {
       "file": "admin-health-warning-light.png",
       "source": "redesign-screens--admin-health-warning-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -554,8 +554,8 @@
     {
       "file": "admin-health-warning-dark.png",
       "source": "redesign-screens--admin-health-warning-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -568,8 +568,8 @@
     {
       "file": "admin-health-warning-phone.png",
       "source": "redesign-screens--admin-health-warning-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -582,8 +582,8 @@
     {
       "file": "history-light.png",
       "source": "redesign-screens--history-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -596,8 +596,8 @@
     {
       "file": "history-dark.png",
       "source": "redesign-screens--history-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -610,8 +610,8 @@
     {
       "file": "history-phone.png",
       "source": "redesign-screens--history-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -624,8 +624,8 @@
     {
       "file": "formula-in-context-light.png",
       "source": "redesign-screens--formula-in-context-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -638,8 +638,8 @@
     {
       "file": "formula-in-context-dark.png",
       "source": "redesign-screens--formula-in-context-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -652,8 +652,8 @@
     {
       "file": "formula-in-context-phone.png",
       "source": "redesign-screens--formula-in-context-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -666,8 +666,8 @@
     {
       "file": "sign-in-light.png",
       "source": "redesign-walkthrough--sign-in-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -680,8 +680,8 @@
     {
       "file": "sign-in-dark.png",
       "source": "redesign-walkthrough--sign-in-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -694,8 +694,8 @@
     {
       "file": "sign-in-phone.png",
       "source": "redesign-walkthrough--sign-in-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -708,8 +708,8 @@
     {
       "file": "setup-light.png",
       "source": "redesign-walkthrough--operator-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -722,8 +722,8 @@
     {
       "file": "setup-dark.png",
       "source": "redesign-walkthrough--operator-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -736,8 +736,8 @@
     {
       "file": "setup-phone.png",
       "source": "redesign-walkthrough--operator-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -750,8 +750,8 @@
     {
       "file": "invite-light.png",
       "source": "redesign-walkthrough--invitation-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -764,8 +764,8 @@
     {
       "file": "invite-dark.png",
       "source": "redesign-walkthrough--invitation-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -778,8 +778,8 @@
     {
       "file": "invite-phone.png",
       "source": "redesign-walkthrough--invitation-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -792,8 +792,8 @@
     {
       "file": "recovery-light.png",
       "source": "redesign-walkthrough--recovery-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -806,8 +806,8 @@
     {
       "file": "recovery-dark.png",
       "source": "redesign-walkthrough--recovery-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -820,8 +820,8 @@
     {
       "file": "recovery-phone.png",
       "source": "redesign-walkthrough--recovery-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -834,8 +834,8 @@
     {
       "file": "guest-viewer-light.png",
       "source": "redesign-walkthrough--link-guest-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -848,8 +848,8 @@
     {
       "file": "guest-viewer-dark.png",
       "source": "redesign-walkthrough--link-guest-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -862,8 +862,8 @@
     {
       "file": "guest-viewer-phone.png",
       "source": "redesign-walkthrough--link-guest-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -876,8 +876,8 @@
     {
       "file": "guest-editor-light.png",
       "source": "redesign-screens--guest-editor-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -890,8 +890,8 @@
     {
       "file": "guest-editor-dark.png",
       "source": "redesign-screens--guest-editor-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -904,8 +904,8 @@
     {
       "file": "guest-editor-phone.png",
       "source": "redesign-screens--guest-editor-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -918,8 +918,8 @@
     {
       "file": "revoked-link-light.png",
       "source": "redesign-screens--revoked-link-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -932,8 +932,8 @@
     {
       "file": "revoked-link-dark.png",
       "source": "redesign-screens--revoked-link-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
@@ -946,337 +946,946 @@
     {
       "file": "revoked-link-phone.png",
       "source": "redesign-screens--revoked-link-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-collapsed-light.png",
       "source": "redesign-screens--dashboard-collapsed-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-collapsed-dark.png",
       "source": "redesign-screens--dashboard-collapsed-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-collapsed-phone.png",
       "source": "redesign-screens--dashboard-collapsed-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-grid-light.png",
       "source": "redesign-screens--dashboard-grid-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-grid-dark.png",
       "source": "redesign-screens--dashboard-grid-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-grid-phone.png",
       "source": "redesign-screens--dashboard-grid-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-new-menu-light.png",
       "source": "redesign-screens--dashboard-new-menu-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-new-menu-dark.png",
       "source": "redesign-screens--dashboard-new-menu-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-new-menu-phone.png",
       "source": "redesign-screens--dashboard-new-menu-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-grid-collapsed-light.png",
       "source": "redesign-screens--dashboard-grid-collapsed-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-grid-collapsed-dark.png",
       "source": "redesign-screens--dashboard-grid-collapsed-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "dashboard-grid-collapsed-phone.png",
       "source": "redesign-screens--dashboard-grid-collapsed-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "planned-space-light.png",
       "source": "redesign-screens--planned-space-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "planned-space-dark.png",
       "source": "redesign-screens--planned-space-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "planned-space-phone.png",
       "source": "redesign-screens--planned-space-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "planned-space-guest-light.png",
       "source": "redesign-screens--planned-space-guest-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "planned-space-guest-dark.png",
       "source": "redesign-screens--planned-space-guest-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "planned-space-guest-phone.png",
       "source": "redesign-screens--planned-space-guest-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "planned-file-admin-light.png",
       "source": "redesign-screens--planned-file-admin-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "planned-file-admin-dark.png",
       "source": "redesign-screens--planned-file-admin-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "planned-file-admin-phone.png",
       "source": "redesign-screens--planned-file-admin-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "controls-light.png",
       "source": "redesign-controls--default-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "controls-dark.png",
       "source": "redesign-controls--default-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "controls-phone.png",
       "source": "redesign-controls--default-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "journey-owner-doc-1280.png",
       "source": "journey-owner-doc-1280.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-owner-doc-390.png",
       "source": "journey-owner-doc-390.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-device-settings-1280.png",
       "source": "journey-device-settings-1280.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-device-settings-390.png",
       "source": "journey-device-settings-390.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-save-failed-1280.png",
       "source": "journey-save-failed-1280.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-save-failed-390.png",
       "source": "journey-save-failed-390.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-operator-first-run-1280.png",
       "source": "journey-operator-first-run-1280.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-operator-first-run-390.png",
       "source": "journey-operator-first-run-390.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-operator-invite-form-1280.png",
       "source": "journey-operator-invite-form-1280.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-operator-invite-form-390.png",
       "source": "journey-operator-invite-form-390.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-guest-disconnected-1280.png",
       "source": "journey-guest-disconnected-1280.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-guest-disconnected-390.png",
       "source": "journey-guest-disconnected-390.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-guest-revoked-1280.png",
       "source": "journey-guest-revoked-1280.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "journey-guest-revoked-390.png",
       "source": "journey-guest-revoked-390.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "connected-storybook-journey"
     },
     {
       "file": "homepage-light.png",
       "source": "redesign-walkthrough--homepage-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "homepage-dark.png",
       "source": "redesign-walkthrough--homepage-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "homepage-phone.png",
       "source": "redesign-walkthrough--homepage-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "operator-help-light.png",
       "source": "redesign-walkthrough--operator-help-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "operator-help-dark.png",
       "source": "redesign-walkthrough--operator-help-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "operator-help-phone.png",
       "source": "redesign-walkthrough--operator-help-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "invalid-setup-light.png",
       "source": "redesign-walkthrough--invalid-setup-light.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "invalid-setup-dark.png",
       "source": "redesign-walkthrough--invalid-setup-dark.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     },
     {
       "file": "invalid-setup-phone.png",
       "source": "redesign-walkthrough--invalid-setup-phone.png",
-      "sourceWorkflow": 39535098206,
-      "sourceCommit": "a630be0537e2def96f5210050ad6db90764eacb4",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "loading-themes-light.png",
+      "source": "redesign-loading--both-themes-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "loading-themes-dark.png",
+      "source": "redesign-loading--both-themes-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "loading-themes-phone.png",
+      "source": "redesign-loading--both-themes-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "loading-files-light.png",
+      "source": "redesign-screens--loading-files-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "loading-files-dark.png",
+      "source": "redesign-screens--loading-files-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "loading-files-phone.png",
+      "source": "redesign-screens--loading-files-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "operator-protected-key-light.png",
+      "source": "redesign-operator-actions--remove-one-operator-passkey-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "operator-protected-key-dark.png",
+      "source": "redesign-operator-actions--remove-one-operator-passkey-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "operator-protected-key-phone.png",
+      "source": "redesign-operator-actions--remove-one-operator-passkey-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "icon-picker-expanded-light.png",
+      "source": "redesign-profile-icon-picker--show-more-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "icon-picker-expanded-dark.png",
+      "source": "redesign-profile-icon-picker--show-more-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "icon-picker-expanded-phone.png",
+      "source": "redesign-profile-icon-picker--show-more-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "folder-recovery-light.png",
+      "source": "redesign-file-recovery--restore-folder-deletion-batch-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "folder-recovery-dark.png",
+      "source": "redesign-file-recovery--restore-folder-deletion-batch-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "folder-recovery-phone.png",
+      "source": "redesign-file-recovery--restore-folder-deletion-batch-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "doc-reopen-light.png",
+      "source": "redesign-walkthrough--doc-return-to-files-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "doc-reopen-dark.png",
+      "source": "redesign-walkthrough--doc-return-to-files-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "doc-reopen-phone.png",
+      "source": "redesign-walkthrough--doc-return-to-files-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "version-names-light.png",
+      "source": "redesign-version-names--ready-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "version-names-dark.png",
+      "source": "redesign-version-names--ready-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "version-names-phone.png",
+      "source": "redesign-version-names--ready-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "version-rename-light.png",
+      "source": "redesign-version-names--rename-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "version-rename-dark.png",
+      "source": "redesign-version-names--rename-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "version-rename-phone.png",
+      "source": "redesign-version-names--rename-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "version-retry-light.png",
+      "source": "redesign-version-names--save-error-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "version-retry-dark.png",
+      "source": "redesign-version-names--save-error-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "version-retry-phone.png",
+      "source": "redesign-version-names--save-error-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "sharing-access-light.png",
+      "source": "redesign-sharing-access--with-people-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "sharing-access-dark.png",
+      "source": "redesign-sharing-access--with-people-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "sharing-access-phone.png",
+      "source": "redesign-sharing-access--with-people-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "presence-people-light.png",
+      "source": "redesign-presence--many-open-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "presence-people-dark.png",
+      "source": "redesign-presence--many-open-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "presence-people-phone.png",
+      "source": "redesign-presence--many-open-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "formula-authoring-light.png",
+      "source": "redesign-formula-authoring--source-picker-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "formula-authoring-dark.png",
+      "source": "redesign-formula-authoring--source-picker-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "formula-authoring-phone.png",
+      "source": "redesign-formula-authoring--source-picker-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "connection-recovery-light.png",
+      "source": "redesign-connections--disconnect-failed-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "connection-recovery-dark.png",
+      "source": "redesign-connections--disconnect-failed-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "connection-recovery-phone.png",
+      "source": "redesign-connections--disconnect-failed-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "file-recovery-light.png",
+      "source": "redesign-file-recovery--restore-failed-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "file-recovery-dark.png",
+      "source": "redesign-file-recovery--restore-failed-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "file-recovery-phone.png",
+      "source": "redesign-file-recovery--restore-failed-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "file-rename-failed-light.png",
+      "source": "redesign-file-mutations--rename-failed-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "file-rename-failed-dark.png",
+      "source": "redesign-file-mutations--rename-failed-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "file-rename-failed-phone.png",
+      "source": "redesign-file-mutations--rename-failed-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "personal-tags-light.png",
+      "source": "redesign-personal-tags--several-tags-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "personal-tags-dark.png",
+      "source": "redesign-personal-tags--several-tags-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "personal-tags-phone.png",
+      "source": "redesign-personal-tags--several-tags-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "passkey-removal-light.png",
+      "source": "redesign-operator-actions--remove-passkey-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "passkey-removal-dark.png",
+      "source": "redesign-operator-actions--remove-passkey-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "passkey-removal-phone.png",
+      "source": "redesign-operator-actions--remove-passkey-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "doc-full-editor-light.png",
+      "source": "redesign-walkthrough--doc-full-editor-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "doc-full-editor-dark.png",
+      "source": "redesign-walkthrough--doc-full-editor-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "doc-full-editor-phone.png",
+      "source": "redesign-walkthrough--doc-full-editor-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "sheet-full-editor-light.png",
+      "source": "redesign-walkthrough--sheet-full-editor-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "sheet-full-editor-dark.png",
+      "source": "redesign-walkthrough--sheet-full-editor-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "sheet-full-editor-phone.png",
+      "source": "redesign-walkthrough--sheet-full-editor-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "space-deep-tree-light.png",
+      "source": "redesign-screens--planned-space-deep-tree-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "space-deep-tree-dark.png",
+      "source": "redesign-screens--planned-space-deep-tree-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "space-deep-tree-phone.png",
+      "source": "redesign-screens--planned-space-deep-tree-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "native-sheet-dark-formula-light.png",
+      "source": "redesign-native-editors--sheet-formula-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "native-sheet-dark-formula-dark.png",
+      "source": "redesign-native-editors--sheet-formula-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "native-sheet-dark-formula-phone.png",
+      "source": "redesign-native-editors--sheet-formula-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "token-create-light.png",
+      "source": "redesign-access-tokens--creating-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "token-create-dark.png",
+      "source": "redesign-access-tokens--creating-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "token-create-phone.png",
+      "source": "redesign-access-tokens--creating-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "import-review-light.png",
+      "source": "redesign-import-file--default-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "import-review-dark.png",
+      "source": "redesign-import-file--default-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "import-review-phone.png",
+      "source": "redesign-import-file--default-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "profile-save-error-light.png",
+      "source": "redesign-review-states--profile-save-error-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "profile-save-error-dark.png",
+      "source": "redesign-review-states--profile-save-error-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "profile-save-error-phone.png",
+      "source": "redesign-review-states--profile-save-error-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "backup-failed-light.png",
+      "source": "redesign-review-states--backup-failed-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "backup-failed-dark.png",
+      "source": "redesign-review-states--backup-failed-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "backup-failed-phone.png",
+      "source": "redesign-review-states--backup-failed-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "consent-error-light.png",
+      "source": "redesign-review-states--consent-error-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "consent-error-dark.png",
+      "source": "redesign-review-states--consent-error-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "consent-error-phone.png",
+      "source": "redesign-review-states--consent-error-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "delete-confirmation-light.png",
+      "source": "redesign-file-dialogs--delete-permanently-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "delete-confirmation-dark.png",
+      "source": "redesign-file-dialogs--delete-permanently-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "delete-confirmation-phone.png",
+      "source": "redesign-file-dialogs--delete-permanently-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "empty-trash-light.png",
+      "source": "redesign-file-dialogs--empty-trash-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "empty-trash-dark.png",
+      "source": "redesign-file-dialogs--empty-trash-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "empty-trash-phone.png",
+      "source": "redesign-file-dialogs--empty-trash-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "offline-save-failed-light.png",
+      "source": "redesign-editor-recovery--offline-save-failed-light.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "offline-save-failed-dark.png",
+      "source": "redesign-editor-recovery--offline-save-failed-dark.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
+      "kind": "rendered-storybook-proposal"
+    },
+    {
+      "file": "offline-save-failed-phone.png",
+      "source": "redesign-editor-recovery--offline-save-failed-phone.png",
+      "sourceWorkflow": 39567403971,
+      "sourceCommit": "dc9170fa68243fa10ad34d700e0e8f9cf4471c40",
       "kind": "rendered-storybook-proposal"
     }
   ]
