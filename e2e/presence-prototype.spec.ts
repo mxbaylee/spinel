@@ -217,6 +217,9 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
       await saved(phone);
       await theme(phone, 'dark');
       await phone.locator('.univer-container').scrollIntoViewIfNeeded();
+      await expect(
+        phone.getByRole('button', { name: 'Go to Iris Garden', exact: true }),
+      ).toHaveAttribute('data-selection', 'first!B2:C4');
       const marker = phone.locator('[data-presence-label]').filter({ hasText: 'Iris Garden' });
       await expect(marker).toBeVisible();
       await expect

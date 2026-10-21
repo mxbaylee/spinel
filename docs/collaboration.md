@@ -231,8 +231,9 @@ validated icons and palette choices. Active guest-link rooms still receive empty
 avatars and generic names. The Sheet renderer uses public range highlights and
 canvas-contained labels, and applies the same colour to normal local selection
 controls. It only draws remote markers on their actual active tab; row/column
-selections are sent as explicit bounded cell ranges. A membership change or new
-session reannounces the local cursor so idle users appear to newly joined peers.
+selections are sent as explicit bounded cell ranges. Changed selections publish within 150 ms; idle cursors refresh every two seconds
+so peers that finish mounting after the join event still receive them. This uses
+the existing cursor-only message without server retention or new payload fields.
 
 Following a Sheet collaborator uses the public reveal-range controller without
 changing the local active range. Already-visible cells stay in place. Profile

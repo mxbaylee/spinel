@@ -52,7 +52,7 @@ export function Collaborators({ people }: { people: Collaborator[] }) {
   );
 }
 
-// Stable defaults until SPN-036 adds user-chosen profile colours and icons.
+// Stable, identity-free defaults for rooms with guest links.
 export function collaboratorColor(id: string) {
   const colors = ['#7046a5', '#23736a', '#a24457', '#3868a1', '#826126', '#8c4c8b'];
   let hash = 0;
@@ -69,8 +69,8 @@ export async function watchPresence(
   const session = await univer.__getInjector().get(CollaborationSessionService).requireSession(id);
   let members: IMember[] = [];
   let previous = '',
-    memberSet = '',
     activeSheet = '';
+  let sentAt = 0;
   const selections = new Map<string, string>();
   const popups = new Map<string, IDisposable>();
   const update = () => {
@@ -156,14 +156,6 @@ export async function watchPresence(
   };
   const membership = api.getCollaboration().subscribeCollaborators(id, (value) => {
     members = value;
-    const signature = value
-      .map((member) => member.memberID)
-      .sort()
-      .join(',');
-    if (signature !== memberSet) {
-      memberSet = signature;
-      previous = '';
-    }
     const present = new Set(members.map((member) => member.memberID));
     for (const member of selections.keys()) if (!present.has(member)) selections.delete(member);
     update();
@@ -175,7 +167,8 @@ export async function watchPresence(
       data.unitID === id &&
       typeof data.memberID === 'string' &&
       typeof data.selection === 'string' &&
-      data.selection.length < 4096
+      data.selection.length < 4096 &&
+      selections.get(data.memberID) !== data.selection
     ) {
       selections.set(data.memberID, data.selection);
       update();
@@ -220,8 +213,12 @@ export async function watchPresence(
       return;
     }
     const fingerprint = memberID + ':' + selection;
-    if (fingerprint === previous) return;
+    // A new peer can finish mounting after the membership event. Refresh idle
+    // cursors too, without extending the transport or retaining them server-side.
+    const now = Date.now();
+    if (fingerprint === previous && now - sentAt < 2000) return;
     previous = fingerprint;
+    sentAt = now;
     void session
       .send({ eventID: 'update_cursor', data: { unitID: id, memberID, selection } }, id)
       .catch(() => {
