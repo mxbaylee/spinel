@@ -1107,7 +1107,7 @@
   .rd-filter-bar {
     padding-bottom: 8px;
   }
-  .rd-count-only {
+  .rd-count-only > span {
     display: none;
   }
   .rd-list-caption:not(.rd-count-only) span {
