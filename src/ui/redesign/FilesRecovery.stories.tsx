@@ -52,13 +52,13 @@ export const LocalNavigationKeepsPinActionsDisabled: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
+    await expect(
+      canvas.getByRole('button', { name: 'Offline — not connected to Spinel' }),
+    ).toBeVisible();
     // On phone this opens the navigation dialog; desktop expands the same sidebar.
     await userEvent.click(canvas.getByRole('button', { name: 'Expand navigation' }));
     const navigation = page.queryByRole('dialog', { name: 'Browse files' });
     const scope = navigation ? within(navigation) : page;
-    await expect(
-      scope.getByRole('button', { name: 'Offline — not connected to Spinel' }),
-    ).toBeVisible();
     const pins = within(scope.getByRole('region', { name: 'Pinned items' }));
     await userEvent.click(pins.getByRole('button', { name: 'Pin actions for Quarterly budget' }));
     await expect(page.getByRole('menuitem', { name: 'Move down' })).toHaveAttribute(
