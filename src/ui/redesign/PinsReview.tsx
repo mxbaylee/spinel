@@ -225,7 +225,19 @@ export function PinnedReview({
                 onClick={() => onSelect(item.id)}
               >
                 {item.kind === 'folder' ? (
-                  <span aria-hidden="true">▱</span>
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 6h7l2 3h9v11H3z" />
+                  </svg>
                 ) : (
                   <EntityIcon kind={item.kind} size={18} />
                 )}
