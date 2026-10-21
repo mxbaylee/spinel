@@ -115,6 +115,10 @@ was copied; the installed MIT license remains with the package.
 
 ## Review and screenshots
 
+The [durable visual gallery](review/README.md) contains before/after light, dark
+and phone samples for the main families, including grid/collapsed alternatives.
+`review/capture-sources.json` records the CI sources. Final approval is pending.
+
 Build Storybook, then run `npm run screenshots -- <story ids>`. With no IDs it
 captures all Redesign stories and the listed current-screen stories. Unknown
 IDs fail. The runner uses one Chromium page at a time, fixed fixture time,

@@ -38,6 +38,8 @@ describe('Spinel theme', () => {
         ['sp-bg', 'sp-text'],
         ['sp-muted', 'sp-bg'],
         ['sp-text', 'sp-panel'],
+        // SPN-047 selected navigation retains readable text in both themes.
+        ['sp-text', 'sp-tint-1'],
         // Entity monochrome glyph on its solid silhouette (SPN-077).
         ['sp-panel', 'sp-text'],
         ['sp-muted', 'sp-panel'],

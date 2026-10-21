@@ -174,7 +174,9 @@ try {
         const pinned = page
           .getByRole('navigation', { name: 'File shortcuts' })
           .getByRole('button', { name: 'Quarterly budget', exact: true });
-        await pinned.focus();
+        // Use actual keyboard navigation so the browser enters :focus-visible mode.
+        for (let step = 0; step < 3; step += 1) await page.keyboard.press('Tab');
+        await expect(pinned).toBeFocused();
         await expect(pinned.locator('.rd-nav-tooltip')).toBeVisible();
         await page
           .getByRole('navigation', { name: 'File shortcuts' })

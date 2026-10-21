@@ -1294,11 +1294,11 @@
   display: block;
 }
 
-.rd-sidebar button:focus-visible,
-.rd-rail button:focus-visible {
+.rd-sidebar :focus-visible,
+.rd-rail :focus-visible {
   outline: 2px solid var(--sp-rail-ink);
   outline-offset: 3px;
 }
-.sp-modal .rd-sidebar button:focus-visible {
+.sp-modal .rd-sidebar :focus-visible {
   outline-color: var(--sp-accent);
 }
