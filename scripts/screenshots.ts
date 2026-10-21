@@ -108,7 +108,7 @@ try {
       if (id.startsWith('redesign-') && width <= 768) {
         const smallTargets = await page
           .locator(
-            '.sp-ui button, .sp-ui input:not([type=radio]), .sp-ui summary, .sp-ui [role=radio]',
+            '.sp-ui button, .sp-ui input:not([type=radio]), .sp-ui summary, .sp-ui [role=radio], .sp-ui .sp-segment',
           )
           .evaluateAll((nodes) =>
             nodes.flatMap((node) => {
@@ -127,6 +127,19 @@ try {
             }),
           );
         expect(smallTargets, `Touch targets: ${id} ${variant}`).toEqual([]);
+        // A negative left edge can clip rail controls without increasing scrollWidth.
+        const clippedControls = await page
+          .locator('.rd-rail .sp-segment, .rd-rail button')
+          .evaluateAll((nodes) =>
+            nodes.flatMap((node) => {
+              const box = node.getBoundingClientRect();
+              if (!box.width || !box.height || node.closest('[aria-hidden="true"]')) return [];
+              return box.left < -1 || box.right > window.innerWidth + 1
+                ? [node.getAttribute('aria-label') || node.textContent?.trim()]
+                : [];
+            }),
+          );
+        expect(clippedControls, `Clipped utilities: ${id} ${variant}`).toEqual([]);
       }
       expect(errors, `Runtime errors in ${id}`).toEqual([]);
       const filename = `${id}-${variant}.png`;
@@ -337,7 +350,9 @@ try {
       await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       await expect(
         page
-          .getByText('Selected: Just now · Ready to share', { exact: true })
+          .getByText('Preview · October 20, 2026 · Just now · Ready to share · UTC', {
+            exact: true,
+          })
           .filter({ visible: true }),
       ).toBeVisible();
       await expect(
@@ -390,6 +405,23 @@ try {
       await expect(
         page.locator('.rd-file-open').filter({ hasText: 'Weekend notes' }),
       ).toBeVisible();
+      // Named checkpoints belong to the file when navigating between documents.
+      await page.locator('.rd-file-open').filter({ hasText: 'A few good recipes' }).click();
+      await page
+        .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
+        .click();
+      await page.locator('.rd-file-open').filter({ hasText: 'Weekend notes' }).click();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
+      await expect(
+        page.getByText('Preview · October 20, 2026 · Just now · Ready to share · UTC', {
+          exact: true,
+        }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Return to document', exact: true }).click();
+      await page
+        .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
+        .click();
       await page.locator('.rd-file-open').filter({ hasText: 'Trips' }).click();
       await page.getByRole('button', { name: 'New file', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Sheet', exact: true }).click();

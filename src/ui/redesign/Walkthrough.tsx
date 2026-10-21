@@ -50,7 +50,7 @@ export function Walkthrough({
   );
   const [firstRun, setFirstRun] = useState(start === 'setup');
   const [returnTo, setReturnTo] = useState<Screen>(persona === 'operator' ? 'admin' : 'files');
-  const [namedVersion, setNamedVersion] = useState('');
+  const [namedVersions, setNamedVersions] = useState<Record<string, string>>({});
   const [save, setSave] = useState<'saved' | 'saving' | 'failed'>('saved');
   const [offline, setOffline] = useState(false);
   const [leaveTo, setLeaveTo] = useState<Screen>();
@@ -79,7 +79,6 @@ export function Walkthrough({
   const openFile = (next: File) => {
     fileFocus.current = document.activeElement as HTMLElement;
     fileScroll.current = window.scrollY;
-    if (next.name !== file.name) setNamedVersion('');
     setFile(next);
     setSave('saved');
     setScreen('editor');
@@ -113,6 +112,7 @@ export function Walkthrough({
     setSignedIn(
       ['files', 'editor', 'profile', 'admin', 'history'].includes(start) && persona !== 'guest',
     );
+    setNamedVersions({});
     setFirstRun(start === 'setup');
     setGeneration(generation + 1);
     setEvent('');
@@ -238,7 +238,9 @@ export function Walkthrough({
                   collaborator={file.access === 'editor'}
                   offline={offline}
                   saveState={save}
-                  onNameVersion={setNamedVersion}
+                  onNameVersion={(name) =>
+                    setNamedVersions((current) => ({ ...current, [file.name]: name }))
+                  }
                   onRetrySave={() => {
                     setSave('saved');
                     setOffline(false);
@@ -282,7 +284,7 @@ export function Walkthrough({
           {screen === 'history' && (
             <HistoryMockup
               title={file.name}
-              namedVersion={namedVersion}
+              namedVersion={namedVersions[file.name] ?? ''}
               sheet={file.kind === 'sheet'}
               viewOnly={file.access === 'viewer'}
               onBack={() => navigate('editor')}
