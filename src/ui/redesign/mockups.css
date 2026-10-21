@@ -1350,3 +1350,37 @@
     overflow: auto;
   }
 }
+
+/* Reuse SPN-036's picker behavior; only its review-frame presentation changes. */
+.sp-ui .profile-icon-dialog > h2,
+.sp-ui .profile-icon-dialog > p {
+  margin-bottom: 12px;
+}
+.sp-ui .profile-icon-dialog > label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.sp-ui .profile-icon-dialog button,
+.sp-ui .profile-icon-dialog select {
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  padding: 8px;
+  color: var(--sp-text);
+  background: var(--sp-panel);
+  font: inherit;
+}
+.sp-ui .profile-icon-dialog button:hover {
+  background: var(--sp-header);
+}
+.sp-ui .profile-icon-dialog > button {
+  margin-top: 16px;
+  margin-right: 8px;
+}
+.sp-ui .profile-icon-dialog::backdrop {
+  background: color-mix(in srgb, var(--sp-text) 24%, transparent);
+}
+.rd-profile-colours .sp-control[aria-pressed='true'] {
+  outline: 2px solid var(--sp-text);
+  outline-offset: 3px;
+}
