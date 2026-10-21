@@ -1,12 +1,13 @@
 import { ThemeService, type Univer } from '@univerjs/core';
 import { IRenderManagerService } from '@univerjs/engine-render';
-import { SheetSelectionRenderService } from '@univerjs/sheets-ui';
+import { ISheetSelectionRenderService, BaseSelectionRenderService } from '@univerjs/sheets-ui';
 /** Only the normal local selection changes; formulas and copied ranges retain SDK styling. */
 export function setLocalSelectionColor(univer: Univer, unitId: string, color: string) {
   const injector = univer.__getInjector();
   const render = injector.get(IRenderManagerService).getRenderUnitById(unitId);
   if (!render) return;
-  const selections = render.with(SheetSelectionRenderService);
+  const selections = render.with(ISheetSelectionRenderService);
+  if (!(selections instanceof BaseSelectionRenderService)) return;
   if (selections.isSelectionDisabled() || selections.inRefSelectionMode()) return;
   const controls = selections.getSelectionControls();
   if (controls.every((control) => control.currentStyle.stroke === color)) return;

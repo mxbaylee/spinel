@@ -1,3 +1,4 @@
+import { userEvent, within } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProfileSettings } from './ProfileSettings.tsx';
 import { pending, failure } from '../.storybook/api.ts';
@@ -15,6 +16,11 @@ export const LoadError: Story = {
   parameters: { api: { 'GET /api/auth/profile': failure('Could not load profile.') } },
 };
 export const SaveError: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Save profile' }),
+    );
+  },
   parameters: {
     api: {
       'GET /api/auth/profile': profile,
@@ -23,5 +29,10 @@ export const SaveError: Story = {
   },
 };
 export const Saving: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Save profile' }),
+    );
+  },
   parameters: { api: { 'GET /api/auth/profile': profile, 'POST /api/auth/profile': pending() } },
 };

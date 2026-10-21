@@ -25,7 +25,7 @@ export function drawPresence(
       const parsed = parseSheetSelection(selection);
       if (!parsed) return { dispose };
       const sheet = book.getSheetBySheetId(parsed.sheetId);
-      if (!sheet) return { dispose };
+      if (!sheet || book.getActiveSheet().getSheetId() !== parsed.sheetId) return { dispose };
       const address = parsed.address;
       const range = sheet.getRange(address);
       owned.push(range.highlight({ stroke: color, fill: color + '28' }));

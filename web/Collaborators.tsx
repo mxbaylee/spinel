@@ -5,6 +5,8 @@ import { CollaborationSessionService } from '@univerjs-pro/collaboration-client'
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { DocSelectionRenderService } from '@univerjs/docs-ui';
 import { drawPresence, setLocalSelectionColor } from '@spinel/presence-ui';
+import { serializeRange } from '@univerjs/engine-formula';
+import { RANGE_TYPE } from '@univerjs/core';
 import { SheetsScrollRenderController } from '@univerjs/sheets-ui';
 import { avatarProfile } from '../src/profile/profile.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
@@ -66,6 +68,9 @@ export async function watchPresence(
 ) {
   const session = await univer.__getInjector().get(CollaborationSessionService).requireSession(id);
   let members: IMember[] = [];
+  let previous = '',
+    memberSet = '',
+    activeSheet = '';
   const selections = new Map<string, string>();
   const popups = new Map<string, IDisposable>();
   const update = () => {
@@ -151,6 +156,14 @@ export async function watchPresence(
   };
   const membership = api.getCollaboration().subscribeCollaborators(id, (value) => {
     members = value;
+    const signature = value
+      .map((member) => member.memberID)
+      .sort()
+      .join(',');
+    if (signature !== memberSet) {
+      memberSet = signature;
+      previous = '';
+    }
     const present = new Set(members.map((member) => member.memberID));
     for (const member of selections.keys()) if (!present.has(member)) selections.delete(member);
     update();
@@ -176,13 +189,16 @@ export async function watchPresence(
   };
   window.addEventListener('resize', resize);
   // Keep the established cursor-only payload, including in anonymous rooms.
-  let previous = '';
   const timer = window.setInterval(() => {
     const memberID = session.getMemberID();
     if (!memberID || api.getActiveWorkbook?.()?.getId() !== id) return;
     const book = api.getActiveWorkbook?.();
     const sheet = book?.getId() === id ? book.getActiveSheet() : undefined;
     const range = sheet?.getActiveRange();
+    if (sheet?.getSheetId() !== activeSheet) {
+      activeSheet = sheet?.getSheetId() ?? '';
+      update();
+    }
     const me = members.find((member) => member.memberID === memberID);
     if (me) {
       const profile = avatarProfile(me.avatar);
@@ -192,9 +208,12 @@ export async function watchPresence(
         profile ? palettes[getTheme()][`fill-${profile.color}-bg`] : collaboratorColor(me.userID),
       );
     }
-    const selection = range ? `${sheet!.getSheetId()}!${range.getA1Notation()}` : '';
-    if (selection === previous) return;
-    previous = selection;
+    const selection = range
+      ? `${sheet!.getSheetId()}!${serializeRange({ startRow: range.getRow(), startColumn: range.getColumn(), endRow: range.getLastRow(), endColumn: range.getLastColumn(), rangeType: RANGE_TYPE.NORMAL })}`
+      : '';
+    const fingerprint = memberID + ':' + selection;
+    if (fingerprint === previous) return;
+    previous = fingerprint;
     void session
       .send({ eventID: 'update_cursor', data: { unitID: id, memberID, selection } }, id)
       .catch(() => {

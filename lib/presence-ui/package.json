@@ -6,12 +6,9 @@
   "exports": "./index.ts",
   "peerDependencies": {
     "@univerjs/core": "1.1.0",
-    "@univerjs/docs": "1.1.0",
-    "@univerjs/docs-ui": "1.1.0",
     "@univerjs/engine-render": "1.1.0",
     "@univerjs/sheets": "1.1.0",
     "@univerjs/sheets-ui": "1.1.0",
-    "@univerjs/ui": "1.1.0",
     "react": "^18.3.1"
   }
 }

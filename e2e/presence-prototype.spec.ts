@@ -1,3 +1,4 @@
+import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { expect, test } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { openDatabase } from '../server/database.ts';
@@ -24,6 +25,24 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
     name: 'Profile presence',
     kind: 'sheet',
     parentId: null,
+  });
+  new SheetStore(workspace).save(owner.id, item.id, {
+    revision: 0,
+    writeId: crypto.randomUUID(),
+    snapshot: {
+      id: item.id,
+      name: 'Profile presence',
+      appVersion: '1.1.0',
+      locale: 'enUS',
+      styles: {},
+      sheetOrder: ['first', 'second'],
+      sheets: Object.fromEntries(
+        ['first', 'second'].map((id, index) => [
+          id,
+          { id, name: `Sheet${index + 1}`, rowCount: 200, columnCount: 30, cellData: {} },
+        ]),
+      ),
+    },
   });
   workspace.share(owner.id, item.id, editor.id, 'editor');
   const second = await browser.newContext({ viewport: { width: 1440, height: 1100 } }),
@@ -143,6 +162,21 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
     await expect(badge).toHaveAttribute('data-selection', /!B2:C4$/);
     await badge.click();
     await expect(label).toBeVisible();
+    // Another tab's coordinates must not paint the same cells on this tab.
+    await other.locator('.univer-container').getByText('Sheet2', { exact: true }).click();
+    await select(other, 'F7');
+    await expect(badge).toHaveAttribute('data-selection', 'second!F7');
+    await expect(label).not.toBeVisible();
+    await expect(address(page)).toHaveValue(own);
+    await badge.click();
+    await expect(label).toBeVisible();
+    await expect(address(page)).not.toHaveValue('F7');
+    await page.locator('.univer-container').getByText('Sheet1', { exact: true }).click();
+    await other.locator('.univer-container').getByText('Sheet1', { exact: true }).click();
+    await select(other, '2:2');
+    await expect(badge).toHaveAttribute('data-selection', 'first!A2:AD2');
+    await select(other, 'B2:C4');
+    await expect(label).toBeVisible();
     const pixels = (color: string) =>
       page.locator('.univer-container canvas').evaluateAll((canvases, hex) => {
         const rgb = [1, 3, 5].map((index) => parseInt(hex.slice(index, index + 2), 16));
@@ -170,19 +204,37 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
         fullPage: true,
       });
     }
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.locator('.univer-container').scrollIntoViewIfNeeded();
-    await expect(label).toBeVisible();
-    await expect
-      .poll(async () => {
-        const marker = await label.boundingBox(),
-          editor = await page.locator('.univer-container').boundingBox();
-        return !!marker && !!editor && marker.y >= editor.y && marker.y < editor.y + editor.height;
-      })
-      .toBe(true);
-    await page.screenshot({
-      path: `test-results/theme-screenshots/presence-sheet-phone-${info.project.name}.png`,
+    // A newly joined touch client must receive an idle peer's unchanged cursor.
+    const touch = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      hasTouch: true,
     });
+    try {
+      await touch.addCookies([cookie(owner.id)]);
+      const phone = await touch.newPage();
+      phone.on('pageerror', (error) => errors.push(error.message));
+      await phone.goto(`${baseURL}/?item=${item.id}`);
+      await saved(phone);
+      await theme(phone, 'dark');
+      await phone.locator('.univer-container').scrollIntoViewIfNeeded();
+      const marker = phone.locator('[data-presence-label]').filter({ hasText: 'Iris Garden' });
+      await expect(marker).toBeVisible();
+      await expect
+        .poll(async () => {
+          const label = await marker.boundingBox(),
+            editor = await phone.locator('.univer-container').boundingBox();
+          return !!label && !!editor && label.y >= editor.y && label.y < editor.y + editor.height;
+        })
+        .toBe(true);
+      await phone.screenshot({
+        path: `test-results/theme-screenshots/presence-sheet-phone-${info.project.name}.png`,
+      });
+    } finally {
+      await touch.close();
+    }
+    await page.reload();
+    await saved(page);
+    await expect(label).toBeVisible();
     await select(page, 'D4');
     await page.keyboard.type('Still editing');
     await page.keyboard.press('Enter');
