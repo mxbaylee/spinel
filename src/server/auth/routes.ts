@@ -1,4 +1,5 @@
 import express from 'express';
+import { Profiles } from './profile.ts';
 import type { Request, Response, NextFunction } from 'express';
 import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simplewebauthn/server';
 import { AuthError, AuthStore, COOKIE_NAME } from './store.ts';
@@ -33,6 +34,7 @@ export function authRoutes(
 ) {
   const router = express.Router();
   const service = new AuthService(store, origin);
+  const profiles = new Profiles(store);
   const setup = new SetupService(store, origin);
   const invites = new InvitationService(store, origin);
   const admin = new AdminStore(store, invites);
@@ -58,10 +60,18 @@ export function authRoutes(
     next();
   });
   router.use(express.json({ limit: '64kb', strict: true }));
+  router.get('/profile', (request, response) =>
+    response.json(profiles.get(requireSession(request, true).user_id!)),
+  );
+  router.post('/profile', (request, response) =>
+    response.json(profiles.save(requireSession(request, true).user_id!, request.body)),
+  );
   router.get('/session', (request, response) => {
     const session = requireSession(request, true);
     const user = store.user(session.user_id!)!;
-    response.json({ user: { id: user.id, name: user.name, isAdmin: Boolean(user.is_admin) } });
+    response.json({
+      user: { id: user.id, ...profiles.get(user.id), isAdmin: Boolean(user.is_admin) },
+    });
   });
   const requireAdmin = (request: Request) => {
     const session = store.session(cookieToken(request));

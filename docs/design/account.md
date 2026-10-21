@@ -30,7 +30,7 @@ the profile and sign-out live; passkeys are one sign-in option among several.
 ## Spinel today
 
 The rail has Settings and Sign out links. `/settings` shows Appearance
-(`ThemeSettings`) and Your passkeys. Sign-in, setup, invite and recovery are
+(`ThemeSettings`), Your profile (display name, colour and icon), and Your passkeys. The Settings link uses the saved profile icon; SPN-045 will move it to the planned rail position. Sign-in, setup, invite and recovery are
 single-purpose pages with one heading, one explanation and one primary button.
 
 ## Adopted pattern
@@ -64,9 +64,7 @@ single-purpose pages with one heading, one explanation and one primary button.
 
 ## Stories
 
-`Settings/ThemeSettings`, `Shell/GemLogo` (the sign-in card's mark). The rail
-gets `Shell/Rail` when SPN-045 extracts it; profile fields get stories with
-SPN-036.
+`Settings/ThemeSettings`, `Shell/GemLogo` (the sign-in card's mark). The rail has `Shell/Rail`. `Account/Profile` covers loading, editing, saving and errors; `Account/Icon picker` covers the searchable grid; `Editor/Profile cursor label` and `Editor/Collaborators` show presence appearances.
 
 ## Assistant access (SPN-034)
 
@@ -98,3 +96,11 @@ on its own row above Profile. Collapsed/phone utilities open it in a popover;
 Profile reuses it. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
 must report a storage failure without undoing the in-session theme choice.
+
+## Saved profile behaviour (SPN-036)
+
+- Profiles contain a display name, one of the 16 fill presets, a Lucide catalog icon, and the existing passkey list. Icon strokes use the preset text colour. New users start with `user-round` and a name-derived colour (owner, 2026-10-17).
+- The icon dialog searches names, Lucide tags, local synonyms and typos (`flowre` finds Flower). Category and search combine; blank search shows all non-alias icons, 60 at a time, with Show more. Arrow Down enters the grid; arrows/Home/End navigate; Enter picks; Escape cancels and restores focus. It uses the existing dialog and palette patterns, before the redesign (owner, 2026-10-20).
+- Store `lucide:<name>` and validate against the pinned catalog. Search/reference code now lives in `src/profile/`; no emojis or photos. Names are 1–80 characters with no control characters. Saving updates the rail immediately; reopen editors to refresh their membership appearance.
+- Account-only room badges and Sheet canvas labels use saved icons/colours. Guest-linked rooms keep generic names, empty personal avatars and default ID-derived colours (#72); generic user-round glyphs reveal no profile identity. Settings explains this distinction.
+- Sheet labels have rounded corners and include icon plus name. Following reveals an offscreen range without overwriting the local selection or scrolling an already-visible range. Doc canvas colours remain with SPN-058; native Docs services stay enabled. Owner approval, 2026-10-20, [decision #127](https://github.com/mxbaylee/spinel/issues/127).

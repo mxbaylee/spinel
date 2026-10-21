@@ -752,3 +752,34 @@ dialog {
   flex: 1;
   min-width: 0;
 }
+
+.profile-icon-dialog {
+  width: min(30rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.profile-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 8px;
+}
+.profile-icon-grid button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+}
+.profile-icon-grid button[aria-pressed='true'],
+.fill-palette button[aria-pressed='true'] {
+  outline: 2px solid var(--sp-text);
+  outline-offset: 2px;
+}
+.profile-rail-avatar {
+  display: inline-flex;
+  padding: 8px;
+  border-radius: 8px;
+}

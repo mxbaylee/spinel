@@ -129,16 +129,20 @@ test('two authenticated editors receive each other’s sheet edits without reloa
     await jump.focus();
     await expect(jump.locator('.collaborator-name')).toBeVisible();
     expect(await jump.boundingBox()).toEqual(before);
+    const address = page
+      .getByRole('region', { name: 'Sheet document', exact: true })
+      .getByRole('textbox')
+      .nth(2);
+    const ownSelection = await address.inputValue();
     await jump.click();
-    await expect(
-      page.getByRole('region', { name: 'Sheet document', exact: true }).getByRole('textbox').nth(2),
-    ).toHaveValue('B2');
-    // Canvas popups are rendered in the SDK's body portal, outside its container.
-    const markers = page.getByRole('button', { name: 'Go to Collaboration editor', exact: true });
-    await expect(markers).toHaveCount(2);
-    await expect(markers.last()).toBeVisible();
-    expect(await markers.first().evaluate((node) => getComputedStyle(node).backgroundColor)).toBe(
-      await markers.last().evaluate((node) => getComputedStyle(node).backgroundColor),
+    // Following reveals the collaborator without overwriting our selection.
+    await expect(address).toHaveValue(ownSelection);
+    const marker = page
+      .locator('[data-presence-label]')
+      .filter({ hasText: 'Collaboration editor' });
+    await expect(marker).toBeVisible();
+    expect(await jump.evaluate((node) => getComputedStyle(node).backgroundColor)).toBe(
+      await marker.evaluate((node) => getComputedStyle(node).backgroundColor),
     );
 
     await network.setOffline(true);

@@ -54,6 +54,7 @@
     "@simplewebauthn/browser": "14.0.0",
     "@simplewebauthn/server": "14.0.3",
     "@spinel/doc-formulas": "*",
+    "@spinel/presence-ui": "^0.0.0",
     "@univerjs-pro/collaboration": "1.1.0",
     "@univerjs-pro/collaboration-client": "1.1.0",
     "@univerjs-pro/collaboration-client-ui": "1.1.0",
@@ -78,6 +79,7 @@
     "@univerjs/sheets": "1.1.0",
     "express": "5.3.0",
     "libsql": "0.5.29",
+    "lucide": "1.44.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "sharp": "0.35.5"

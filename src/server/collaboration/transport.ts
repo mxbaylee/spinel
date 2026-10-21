@@ -1,3 +1,5 @@
+import { Profiles } from '../auth/profile.ts';
+import { profileAvatar } from '../../profile/profile.ts';
 import { safeGuestRoomPresence } from './guestPresence.ts';
 import type { Server } from 'node:http';
 import { CollabError } from '@univerjs-pro/collaboration-service';
@@ -180,7 +182,10 @@ export function attachCollaboration(
       : linked
         ? 'Collaborator'
         : auth.user(context.session.userID)!.name;
-    context.member.avatar = '';
+    context.member.avatar =
+      linked || context.session.userID.startsWith('guest:')
+        ? ''
+        : profileAvatar(new Profiles(auth).get(context.session.userID));
     live.set(context.session.memberID, {
       session: context.session,
       connection: context.connection,

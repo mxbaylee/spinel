@@ -1,3 +1,4 @@
+import { profileAvatarRoutes } from '../src/server/profileAvatar.ts';
 import express from 'express';
 import { socialPreviewRoutes } from '../src/server/socialPreview.ts';
 import { escapeMarkup } from '../src/shared/markup.ts';
@@ -38,6 +39,7 @@ export async function createApp(options: AppOptions) {
   const database = openDatabase(options.databasePath);
   const app = express();
   app.disable('x-powered-by');
+  app.use(profileAvatarRoutes());
   const server = createServer(app);
   let vite: import('vite').ViteDevServer | undefined;
   let stopCleanup = () => {};
