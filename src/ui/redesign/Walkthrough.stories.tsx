@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { userEvent, within } from 'storybook/test';
 import { Walkthrough } from './Walkthrough.tsx';
 const meta = {
   title: 'Redesign/Walkthrough',
@@ -34,3 +35,13 @@ export const InvalidSetup: Story = {
 export const Settings: Story = { args: { start: 'profile' } };
 export const Administration: Story = { args: { persona: 'operator', start: 'admin' } };
 export const Sheet: Story = { args: { start: 'editor' } };
+
+export const OperatorHelp: Story = {
+  args: { persona: 'operator', start: 'setup' },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Need help?' }));
+    await userEvent.click(
+      within(canvasElement.ownerDocument.body).getByText('Operator help and commands'),
+    );
+  },
+};

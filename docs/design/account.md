@@ -110,3 +110,11 @@ its real `IconPicker`, `ProfileIcon`, catalog and sixteen fill presets. Save in
 the prototype updates only the local preview/avatar; production profile persistence
 and guest-identity behavior remain SPN-036's existing implementation. The deferred
 SPN-086 document emoji/icon picker is separate from this already-shipped user picker.
+
+Owner refinement (chat, 2026-10-20): Need help keeps member access guidance first
+and provides an expandable Operator section. Show verified `npm run setup` and
+its documented Docker equivalent, explain zero-user/30-minute/replacement limits,
+and keep setup links private. `npm run passkey:check` is explicitly a disposable
+development diagnostic, not account recovery. Existing-account recovery uses
+an authorized Operator invitation. Backup help shows the documented configured
+Docker command. This page displays commands and never executes them.

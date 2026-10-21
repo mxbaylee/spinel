@@ -1805,10 +1805,19 @@ export function FormulaMockup({
 function HistoryContent({
   selected,
   setSelected,
+  namedVersion,
 }: {
   selected: string;
   setSelected: (value: string) => void;
+  namedVersion?: string;
 }) {
+  const today = [
+    '09:00 · Unnamed version',
+    '10:15 · Ready for the trip',
+    '11:45 · Before restore',
+    '12:30 · Latest',
+    ...(namedVersion ? [`Just now · ${namedVersion}`] : []),
+  ];
   const older = selected.startsWith('October');
   const day = selected.match(/^October (\d+)/)?.[1] ?? '19';
   const checkpoints = older
@@ -1817,12 +1826,7 @@ function HistoryContent({
         `October ${day} · 11:45 · Before restore`,
         `October ${day} · 10:15 · Ready for the trip`,
       ]
-    : [
-        '12:30 · Latest',
-        '11:45 · Before restore',
-        '10:15 · Ready for the trip',
-        '09:00 · Unnamed version',
-      ];
+    : [...today].reverse();
   return (
     <div className="rd-form">
       <p className="sp-muted">Previewing leaves your live document unchanged.</p>
@@ -1874,26 +1878,9 @@ function HistoryContent({
           <input
             type="range"
             min="0"
-            max="3"
-            value={Math.max(
-              0,
-              [
-                '09:00 · Unnamed version',
-                '10:15 · Ready for the trip',
-                '11:45 · Before restore',
-                '12:30 · Latest',
-              ].indexOf(selected),
-            )}
-            onChange={(e) =>
-              setSelected(
-                [
-                  '09:00 · Unnamed version',
-                  '10:15 · Ready for the trip',
-                  '11:45 · Before restore',
-                  '12:30 · Latest',
-                ][Number(e.target.value)],
-              )
-            }
+            max={today.length - 1}
+            value={Math.max(0, today.indexOf(selected))}
+            onChange={(event) => setSelected(today[Number(event.target.value)])}
           />
         </label>
       )}
@@ -1965,11 +1952,19 @@ export function HistoryMockup({
       <div className="rd-history">
         <aside className="rd-inspector">
           <div className="rd-history-desktop">
-            <HistoryContent selected={selected} setSelected={setSelected} />
+            <HistoryContent
+              selected={selected}
+              setSelected={setSelected}
+              namedVersion={namedVersion}
+            />
           </div>
           <details className="rd-history-disclosure" open={calendar}>
             <summary>Choose version · {selected}</summary>
-            <HistoryContent selected={selected} setSelected={setSelected} />
+            <HistoryContent
+              selected={selected}
+              setSelected={setSelected}
+              namedVersion={namedVersion}
+            />
           </details>
         </aside>
         <DocumentSurface sheet={sheet} readOnly />
@@ -2613,7 +2608,11 @@ export function AdminMockup({
             Remove…
           </Button>
         </div>
-        <p className="sp-muted">The Operator’s last passkey cannot be removed here.</p>
+        <p className="sp-muted">
+          {passkeys.startsWith('Operator')
+            ? 'The Operator’s last passkey cannot be removed here.'
+            : 'If their last passkey is removed, issue a recovery invitation so they can sign in again.'}
+        </p>
       </Modal>
       <Modal
         title={`Disable ${confirm || 'this account'}?`}

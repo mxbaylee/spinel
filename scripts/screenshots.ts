@@ -83,6 +83,10 @@ try {
       await expect(page.locator('#storybook-root')).toBeVisible();
       await page.evaluate(() => document.fonts.ready);
       await expect(page.locator('.sb-errordisplay')).toBeHidden();
+      if (id === 'redesign-walkthrough--operator-help')
+        await expect(
+          page.getByRole('dialog', { name: 'Access to this workspace', exact: true }),
+        ).toBeVisible();
       if (id === 'redesign-screens--profile-icon-picker')
         await expect(
           page.getByRole('dialog', { name: 'Choose your icon', exact: true }),
@@ -414,7 +418,12 @@ try {
       await expect(page.getByRole('menuitem', { name: 'Insert formula', exact: true })).toHaveCount(
         0,
       );
+      await expect(
+        page.getByRole('menuitem', { name: 'About your access', exact: true }),
+      ).toBeVisible();
+      await page.getByRole('menuitem', { name: 'About your access', exact: true }).focus();
       await page.keyboard.press('Escape');
+      await expect(page.getByRole('menu', { name: 'Document actions', exact: true })).toBeHidden();
       await page.getByRole('button', { name: 'Your profile', exact: true }).click();
       await expect(page.getByRole('textbox', { name: 'Display name', exact: true })).toHaveValue(
         'Sam Rivera',

@@ -1406,3 +1406,14 @@
     flex-direction: row;
   }
 }
+
+@media (max-width: 640px) {
+  .rd-profile-identity {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+  .rd-profile-identity > button {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

@@ -167,3 +167,30 @@
   align-items: center;
   gap: 8px;
 }
+
+.ej-operator-help {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.ej-operator-help summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+.ej-operator-help h3,
+.ej-operator-help p,
+.ej-operator-help details {
+  margin-top: 12px;
+}
+.ej-operator-help pre {
+  padding: 12px;
+  background: var(--sp-bg);
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+}
