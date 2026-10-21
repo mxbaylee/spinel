@@ -90,9 +90,10 @@
   overflow: auto;
 }
 
-/* The mobile SDK keeps its previous pixel height after a same-width shrink of
-   80px or more (keyboard protection). Bound that viewport to our editor host so
-   a shorter window cannot scroll the toolbar away or hide the sheet footer. */
+/* The mobile SDK caches a pixel height across same-width shrinks and changes
+   to surrounding chrome. This preview owns a bounded editor viewport: follow
+   its host when the window shrinks or the review banner is dismissed. */
 .rd-native-host > div:has(> [data-u-comp='app-layout']) {
+  min-height: 100%;
   max-height: 100%;
 }

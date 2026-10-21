@@ -35,3 +35,18 @@ export const ExportPdfRetry: Story = {
 export const OfflineSaveFailed: Story = {
   render: () => <EditorMockup offline saveState="failed" />,
 };
+export const OfflineReconnect: Story = {
+  ...OfflineSaveFailed,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole('button', { name: 'Could not save' }));
+    await expect(await page.findByRole('button', { name: 'Retry saving' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Reconnect' })).toBeEnabled();
+    await userEvent.click(page.getByRole('button', { name: 'Reconnect' }));
+    await expect(canvas.getByText('Reconnecting…')).toBeVisible();
+    // Requesting reconnection does not falsely mark unsaved content as saved.
+    await expect(canvas.getByRole('button', { name: 'Could not save' })).toBeVisible();
+    await expect(await page.findByRole('button', { name: 'Retry saving' })).toBeDisabled();
+  },
+};

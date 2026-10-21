@@ -2190,7 +2190,7 @@ export function EditorMockup({
                   Retry saving
                 </Button>
               )}
-              {offline && <Button onClick={() => setNotice('Reconnecting…')}>Try again</Button>}
+              {offline && <Button onClick={() => setNotice('Reconnecting…')}>Reconnect</Button>}
             </DetailsPopover>
           </div>
         )}

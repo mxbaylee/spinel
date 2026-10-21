@@ -14,7 +14,7 @@ async function openFileAction(canvasElement: HTMLElement, file: string, action: 
     within(canvasElement).getByRole('button', { name: `More actions for ${file}` }),
   );
   await userEvent.click(
-    within(canvasElement.ownerDocument.body).getByRole('menuitem', { name: action }),
+    await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: action }),
   );
   await expect(
     await within(canvasElement.ownerDocument.body).findByRole('dialog', {
@@ -27,8 +27,11 @@ export const CreateDoc: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'New file' }));
     await userEvent.click(
-      within(canvasElement.ownerDocument.body).getByRole('menuitem', { name: 'Doc' }),
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Doc' }),
     );
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'New Doc' }),
+    ).toBeVisible();
   },
 };
 export const Rename: Story = {
@@ -116,7 +119,7 @@ export const DeletePermanently: Story = {
       await userEvent.click(
         canvas.getByRole('button', { name: 'More actions for Old Autumn plans' }),
       );
-      await userEvent.click(portal.getByRole('menuitem', { name: 'Delete permanently…' }));
+      await userEvent.click(await portal.findByRole('menuitem', { name: 'Delete permanently…' }));
       await expect(
         await portal.findByRole('dialog', { name: 'Delete “Old Autumn plans” permanently?' }),
       ).toBeVisible();

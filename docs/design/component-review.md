@@ -170,7 +170,7 @@ States inventoried: Desktop, Tablet, Phone.
 
 ## Current production/Settings/AssistantConnections
 
-**Repair implemented; unverified.** New ConnectionsReview reuses all13 baseline contracts in16 stories. Failure preserves active access; duplicate clients differentiated by origin. Integrated into Settings/Admin; CI/review pending.
+**Repair implemented; unverified.** New ConnectionsReview reuses all 13 baseline contracts in16 stories. Failure preserves active access; duplicate clients differentiated by origin. Integrated into Settings/Admin; CI/review pending.
 
 Source: [web/AssistantConnections.stories.tsx](../../web/AssistantConnections.stories.tsx). Baseline family: yes.
 
@@ -400,9 +400,9 @@ These new families contain source specimens; none is accepted solely from its ex
 
 ## Evidence and review provenance
 
-- Source audits: independent reviewer compared all35 existing families; UI reviewer audited editor/shared controls; UX reviewer audited six product sections and all four personas.
-- App CI for f9cdff3 passed all six required gates. Storybook run39549253667 produced 1,935 captures and104 explicit verifications but failed nine responsive Sheet toolbar checks. The compact mobile toolbar exists; its selector has been corrected in the working tree. This failed run does not validate the new component repairs.
-- Deployed Doc was manually scrolled at855px and390×600: native toolbar stays visible; title/save header remains. Native mobile Doc still needs horizontal pan/zoom.
+- Source audits: independent reviewer compared all 35 existing families; UI reviewer audited editor/shared controls; UX reviewer audited six product sections and all four personas.
+- App CI for f9cdff3 passed all six required gates. Storybook run 39549253667 produced 1,935 captures and 104 explicit verifications but failed nine responsive Sheet toolbar checks. The compact mobile toolbar exists; its selector has been corrected in the working tree. This failed run does not validate the new component repairs.
+- Deployed Doc was manually scrolled at855px and 390×600: native toolbar stays visible; title/save header remains. Native mobile Doc still needs horizontal pan/zoom.
 - Existing checked-in gallery is historical until refreshed. No owner approval, whole-product score or merge readiness is claimed.
 
 ## Independent source findings during repair
@@ -419,13 +419,13 @@ The independent reviewer found no further source blockers in the inspected compo
 - Version names (`dff41bc` deployed): renamed an older checkpoint through its menu; list updated and focus returned to that checkpoint's action menu. This is one manually verified interaction, not all-state acceptance.
 - Short-phone dark History showed the page title squeezed beside two actions. The `5655c2c` repair gives the title its own row and lets actions wrap beneath it; subsequent source repair removes the extra inherited action margin. Fresh phone rendering remains pending.
 - File retrieval toolbar repair is in `5655c2c`: Search, Filters and view switch share one responsive toolbar; Type moves inside Filters. Active constraints remain visible and clearable. No query parser was added.
-- Retained identity pass inspected all20 assigned states in five variants (100 captures from `f9cdff3`): EntityIcon, Favicon and GemLogo retained; social artwork retained with a minor trailing-emoji cosmetic note. Actual IconPicker footer gap was repaired only in redesign context; ten new context stories cover search/category/pagination/keyboard/selection/focus return and await CI.
+- Retained identity pass inspected all 20 assigned states in five variants (100 captures from `f9cdff3`): EntityIcon, Favicon and GemLogo retained; social artwork retained with a minor trailing-emoji cosmetic note. Actual IconPicker footer gap was repaired only in redesign context; ten new context stories cover search/category/pagination/keyboard/selection/focus return and await CI.
 
-The retained-surface reviewer also inspected all43 assigned f9c states in light, dark and phone: 19 AccessToken variants, eight Import variants, five Profile states, eight Backup health states and three Controls states. No clipping was found. Two pending-dialog inconsistencies were repaired in the next source batch: Token creation had an enabled-but-inert close button, and Import allowed dismissal despite its keep-open instruction. A shared dismiss-disabled state now covers pending dialogs consistently, with explicit assertions; new rendered evidence remains required. The new Move example supersedes the old Controls dialog.
+The retained-surface reviewer also inspected all 43 assigned f9c states in light, dark and phone: 19 AccessToken variants, eight Import variants, five Profile states, eight Backup health states and three Controls states. No clipping was found. Two pending-dialog inconsistencies were repaired in the next source batch: Token creation had an enabled-but-inert close button, and Import allowed dismissal despite its keep-open instruction. A shared dismiss-disabled state now covers pending dialogs consistently, with explicit assertions; new rendered evidence remains required. The new Move example supersedes the old Controls dialog.
 
 ## Component visual findings from the partial light capture
 
-Reviewers inspected all219 assigned light states from the canceled `1048e8b` capture: 97 editor/history/sharing/formula/presence states and122 file/tag/pin/administration/connection states. Contact-sheet screening was followed by original-size inspection of dense, long-name and failure states. This is partial light evidence; it has no completed manifest and cannot establish interaction success or dark/phone acceptance.
+Reviewers inspected all 219 assigned light states from the canceled `1048e8b` capture: 97 editor/history/sharing/formula/presence states and 122 file/tag/pin/administration/connection states. Contact-sheet screening was followed by original-size inspection of dense, long-name and failure states. This is partial light evidence; it has no completed manifest and cannot establish interaction success or dark/phone acceptance.
 
 Repairs implemented after the partial review; fresh rendering remains required:
 
@@ -445,14 +445,14 @@ does not establish rendered acceptance or owner approval.
 
 The new Files toolbar and pending-dialog dismissal changes in `5655c2c` supersede the corresponding partial captures and require fresh evidence. No reviewer supplied an aggregate grade for this incomplete evidence set.
 
-A third reviewer inspected40 further light states:13 entry outcomes, two guest entry states, two theme states,13 consent states and10 actual icon-picker states. This found a theme-storage warning colliding with its tooltip and missing consent recovery actions. The warning now uses a dismissible status panel outside the compact control. Consent limit opens Connections in Settings, with a return to the request; Operator consent offers Sign out and the everyday-account journey. Four consent recovery stories and one warning-dismissal story cover these repairs. Current source inventory is61 families and646 exported story specimens.
+A third reviewer inspected 40 further light states:13 entry outcomes, two guest entry states, two theme states,13 consent states and 10 actual icon-picker states. This found a theme-storage warning colliding with its tooltip and missing consent recovery actions. The warning now uses a dismissible status panel outside the compact control. Consent limit opens Connections in Settings, with a return to the request; Operator consent offers Sign out and the everyday-account journey. Four consent recovery stories and one warning-dismissal story cover these repairs. Current source inventory is 61 families and 646 exported story specimens.
 
-App CI run39553769932 passed all required gates for `5655c2c`. Storybook run39553769714 completed with 3,199 successful captures, six failed native Sheet captures and107 explicit verifications across641 states in five variants. It failed the short-phone resize/toolbar checks; subsequent repairs require their own CI run. No score is carried forward from a previous commit.
+App CI run 39553769932 passed all required gates for `5655c2c`. Storybook run 39553769714 completed with 3,199 successful captures, six failed native Sheet captures and 107 explicit verifications across 641 states in five variants. It failed the short-phone resize/toolbar checks; subsequent repairs require their own CI run. No score is carried forward from a previous commit.
 
 ## Full-catalog visual follow-up
 
-Reviewers inspected388 editor/history/sharing/formula/presence captures (97 states)
-and488 file/tag/pin/administration/connection captures (122 states) from `5655c2c`,
+Reviewers inspected 388 editor/history/sharing/formula/presence captures (97 states)
+and 488 file/tag/pin/administration/connection captures (122 states) from `5655c2c`,
 covering dark, phone, phone-dark and tablet in addition to the earlier light pass.
 Dense, error and long-text states were also inspected at original size.
 
@@ -462,7 +462,7 @@ Dense, error and long-text states were also inspected at original size.
 - **P3, source fixed:** Disabled-account sharing guidance was squeezed beside its
   action on phones. The action now stacks below the guidance.
 - **P2, source fixed; CI pending:** The OSS Univer mobile viewport retains a stale
-  inline height after a same-width shrink of80px or more. The preview bounds that
+  inline height after a same-width shrink of 80px or more. The preview bounds that
   viewport to its host; CI asserts containment before pointer interaction and
   retains the toolbar-position check after scrolling. No SDK code is patched.
 - **Validation gap, source fixed:** Checking only Storybook's finished status
@@ -481,8 +481,8 @@ capture the full catalog. Whole-product acceptance remains withheld.
 
 ## Section and journey repair pass
 
-The supplementary entry/account pass inspected160 captures across40 states in
-dark, phone, phone-dark and tablet. The section pass inspected275 captures across
+The supplementary entry/account pass inspected 160 captures across 40 states in
+dark, phone, phone-dark and tablet. The section pass inspected 275 captures across
 55 Files, Space, Settings, Administration and entry/walkthrough states in all
 five variants. These inspections found the following additional repairs:
 
@@ -504,11 +504,28 @@ component screenshots alone did not reveal them. New interaction specimens cover
 Doc return/reopen and folder trash, restore, shared references and permanent
 removal. Production APIs remain unchanged; these are coherent local proposals.
 
-Focused CI run39557852478 at `6a64b0d` passed50 captures and32 explicit checks,
+Focused CI run 39557852478 at `6a64b0d` passed 50 captures and 32 explicit checks,
 including native Doc/Sheet short-phone toolbar behavior, expired recovery,
 disabled-account sharing, theme-warning dismissal and unsaved version drafts.
 All six application gates also passed for that commit. Inspection showed that
-restoring the viewport to900px could capture the SDK canvas before its deferred
+restoring the viewport to 900px could capture the SDK canvas before its deferred
 resize; capture now waits for its original CSS and backing-store dimensions.
 This stronger guard and the new section repairs require fresh CI. Earlier
 full-height images affected by that intermediate resize are not final evidence.
+
+Fresh focused run39559009724 at `22d60b8` passed98 of100 captures. All new
+folder, picker, entry, Space and Doc-return interactions passed in five variants;
+reviewers inspected35 folder/Space/settings and45 entry/picker/Doc images with no
+new visual findings. The two failures concern native Sheet full-editor height:
+the initial canvas still had the height from before the review banner closed.
+The SDK mobile viewport must follow host growth as well as shrinkage. The next
+repair constrains both min/max height and requires workbench-to-host agreement,
+skeleton dismissal and canvas-to-container agreement before capturing.
+
+A further visual sweep inspected320 editor/guest/recovery composition images
+and260 shared-dialog/control/import/token/profile/backup images. It found
+ambiguous retry wording (now Reconnect), two native captures still showing an
+SDK skeleton, and21 older file-dialog captures stopped at their prerequisite
+menus. The latter are evidence gaps, not accepted final states: menu queries
+now await the portal, and Create Doc asserts that its final dialog opened.
+The complete run must reject swallowed play errors and recapture these states.

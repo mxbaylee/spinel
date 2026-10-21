@@ -1207,7 +1207,35 @@ async function waitForNativeEditor(page: Page) {
     try {
       await expect(editor).toBeVisible();
       await expect(editor).toHaveAttribute('data-native-ready', 'true', { timeout: 35_000 });
-      await expect(editor.locator('canvas[aria-label]')).toBeVisible();
+      const layout = editor.locator('[data-u-comp="app-layout"], [data-u-comp="workbench-layout"]');
+      await expect(layout).toHaveCount(1);
+      await expect
+        .poll(
+          async () => {
+            const bounds = await layout.boundingBox();
+            const host = await editor.locator('.rd-native-host').boundingBox();
+            return bounds && host ? Math.abs(bounds.height - host.height) : Infinity;
+          },
+          { message: 'Native workbench fills its host after surrounding chrome changes' },
+        )
+        .toBeLessThanOrEqual(1);
+      const canvas = editor.locator('canvas[aria-label]');
+      await expect(canvas).toBeVisible();
+      await expect(editor.locator('[data-u-comp="workbench-skeleton-toolbar"]')).toBeHidden();
+      // Ready can precede the SDK's two-frame skeleton dismissal and idle resize.
+      // Match its public DOM mount dimensions before taking a baseline or capture.
+      await expect
+        .poll(() =>
+          canvas.evaluate((node) => {
+            const parent = getComputedStyle(node.parentElement!);
+            const box = node.getBoundingClientRect();
+            return (
+              Math.abs(box.width - parseFloat(parent.width)) <= 1 &&
+              Math.abs(box.height - parseFloat(parent.height)) <= 1
+            );
+          }),
+        )
+        .toBe(true);
     } catch (error) {
       const id = new URL(page.url()).searchParams.get('id') ?? 'unknown';
       await page.screenshot({ path: resolve(directory, `failed-native-${id}.png`) });
