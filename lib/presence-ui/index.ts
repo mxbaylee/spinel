@@ -45,3 +45,5 @@ export function drawPresence(
 }
 
 export { setLocalSelectionColor } from './localSelection.ts';
+
+export { boundedSheetRange } from './selection.ts';

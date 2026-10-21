@@ -9,3 +9,19 @@ export function parseSheetSelection(value: string) {
     return;
   return { sheetId, address };
 }
+
+/** Header selections use NaN for their unbounded axis in Univer's public range. */
+export function boundedSheetRange(
+  range: { startRow: number; endRow: number; startColumn: number; endColumn: number },
+  rows: number,
+  columns: number,
+) {
+  return {
+    startRow: Number.isFinite(range.startRow) ? Math.max(0, range.startRow) : 0,
+    endRow: Number.isFinite(range.endRow) ? Math.min(rows - 1, range.endRow) : rows - 1,
+    startColumn: Number.isFinite(range.startColumn) ? Math.max(0, range.startColumn) : 0,
+    endColumn: Number.isFinite(range.endColumn)
+      ? Math.min(columns - 1, range.endColumn)
+      : columns - 1,
+  };
+}

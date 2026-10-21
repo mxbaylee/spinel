@@ -22,8 +22,6 @@ It supplies server-rendered title emoji on hosts without system fonts.
 Code from [mxbaylee/circus-health](https://github.com/mxbaylee/circus-health) isn't listed:
 Baylee Schmeisser, Spinel's owner, wrote it.
 
-When SPN-036 moves the icon metadata into `src/`, update its path here.
-
 When adding an entry:
 
 - Keep the original copyright and license header in each copied file.

@@ -1,10 +1,10 @@
 import type { Univer, IDisposable } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import type { IMember } from '@univerjs/protocol';
-import { CollaborationSessionService } from '@univerjs-pro/collaboration-client';
+import { CollaborationSessionService, SessionStatus } from '@univerjs-pro/collaboration-client';
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { DocSelectionRenderService } from '@univerjs/docs-ui';
-import { drawPresence, setLocalSelectionColor } from '@spinel/presence-ui';
+import { drawPresence, setLocalSelectionColor, boundedSheetRange } from '@spinel/presence-ui';
 import { serializeRange } from '@univerjs/engine-formula';
 import { RANGE_TYPE } from '@univerjs/core';
 import { SheetsScrollRenderController } from '@univerjs/sheets-ui';
@@ -188,6 +188,10 @@ export async function watchPresence(
     frame = requestAnimationFrame(update);
   };
   window.addEventListener('resize', resize);
+  // Offscreen popup attachment can be empty; retry when its cell enters view.
+  const scrolling = api.addEvent(api.Event.Scroll, ({ workbook }) => {
+    if (workbook.getId() === id) resize();
+  });
   // Keep the established cursor-only payload, including in anonymous rooms.
   const timer = window.setInterval(() => {
     const memberID = session.getMemberID();
@@ -209,8 +213,12 @@ export async function watchPresence(
       );
     }
     const selection = range
-      ? `${sheet!.getSheetId()}!${serializeRange({ startRow: range.getRow(), startColumn: range.getColumn(), endRow: range.getLastRow(), endColumn: range.getLastColumn(), rangeType: RANGE_TYPE.NORMAL })}`
+      ? `${sheet!.getSheetId()}!${serializeRange({ ...boundedSheetRange(range.getRange(), sheet!.getMaxRows(), sheet!.getMaxColumns()), rangeType: RANGE_TYPE.NORMAL })}`
       : '';
+    if (session.sessionStatus !== SessionStatus.ONLINE) {
+      previous = '';
+      return;
+    }
     const fingerprint = memberID + ':' + selection;
     if (fingerprint === previous) return;
     previous = fingerprint;
@@ -223,6 +231,7 @@ export async function watchPresence(
   return () => {
     clearInterval(timer);
     stopTheme();
+    scrolling.dispose();
     window.removeEventListener('resize', resize);
     cancelAnimationFrame(frame);
     membership.dispose();
