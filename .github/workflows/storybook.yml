@@ -8,6 +8,12 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      story_ids:
+        description: 'Optional space-separated story IDs for a focused manual review (empty captures all)'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -85,7 +91,7 @@ jobs:
           retention-days: 7
       # Temporary owner-authorized PR #125 review. Remove this exception before merge.
       - name: Upload for Pages
-        if: needs.changes.outputs.docs_only != 'true' && ((github.event_name != 'pull_request' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'))
+        if: needs.changes.outputs.docs_only != 'true' && ((github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')) || (github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'))
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: storybook-static
@@ -127,7 +133,12 @@ jobs:
           if-no-files-found: error
       - name: Capture redesign review and verify shared controls
         if: needs.changes.outputs.docs_only != 'true'
-        run: npm run screenshots
+        env:
+          # PR validation always covers the full catalog; only manual runs can narrow it.
+          STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
+        run: |
+          read -r -a stories <<< "$STORY_IDS"
+          npm run screenshots -- "${stories[@]}"
       - name: Upload redesign review
         if: always() && needs.changes.outputs.docs_only != 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -140,7 +151,7 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: [changes, build, review]
-    if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:

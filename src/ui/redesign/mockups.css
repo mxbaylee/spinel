@@ -802,6 +802,16 @@
   .rd-file-date {
     display: none;
   }
+  .rd-file-list:not(.rd-file-grid) .rd-file-recovery {
+    display: block;
+    grid-column: 1;
+    grid-row: 2;
+    padding-left: 48px;
+  }
+  .rd-file-list:not(.rd-file-grid) .rd-file:has(.rd-file-recovery) > .sp-control {
+    grid-column: 2;
+    grid-row: 1;
+  }
   .rd-column-head,
   .rd-file {
     grid-template-columns: minmax(0, 1fr) 40px;

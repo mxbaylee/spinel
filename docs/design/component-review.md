@@ -447,4 +447,34 @@ The new Files toolbar and pending-dialog dismissal changes in `5655c2c` supersed
 
 A third reviewer inspected40 further light states:13 entry outcomes, two guest entry states, two theme states,13 consent states and10 actual icon-picker states. This found a theme-storage warning colliding with its tooltip and missing consent recovery actions. The warning now uses a dismissible status panel outside the compact control. Consent limit opens Connections in Settings, with a return to the request; Operator consent offers Sign out and the everyday-account journey. Four consent recovery stories and one warning-dismissal story cover these repairs. Current source inventory is61 families and646 exported story specimens.
 
-App CI run39553769932 passed all required gates for `5655c2c`. Storybook run39553769714 is still capturing the full catalog; the subsequent visual fixes require their own CI run. No score is carried forward from a previous commit.
+App CI run39553769932 passed all required gates for `5655c2c`. Storybook run39553769714 completed with 3,199 successful captures, six failed native Sheet captures and107 explicit verifications across641 states in five variants. It failed the short-phone resize/toolbar checks; subsequent repairs require their own CI run. No score is carried forward from a previous commit.
+
+## Full-catalog visual follow-up
+
+Reviewers inspected388 editor/history/sharing/formula/presence captures (97 states)
+and488 file/tag/pin/administration/connection captures (122 states) from `5655c2c`,
+covering dark, phone, phone-dark and tablet in addition to the earlier light pass.
+Dense, error and long-text states were also inspected at original size.
+
+- **P2, source fixed:** Trash recovery deadlines and expired status were hidden by
+  the ordinary file-date rule on phone/tablet. Recovery now has its own visible
+  second row, while routine timestamps retain the compact layout.
+- **P3, source fixed:** Disabled-account sharing guidance was squeezed beside its
+  action on phones. The action now stacks below the guidance.
+- **P2, source fixed; CI pending:** The OSS Univer mobile viewport retains a stale
+  inline height after a same-width shrink of80px or more. The preview bounds that
+  viewport to its host; CI asserts containment before pointer interaction and
+  retains the toolbar-position check after scrolling. No SDK code is patched.
+- **Validation gap, source fixed:** Checking only Storybook's finished status
+  can miss swallowed play exceptions. Capture validation now also rejects
+  recorded play exceptions and unhandled errors. Earlier capture counts do not
+  establish that every interaction assertion succeeded.
+
+Manual deployed checks also exercised dark phone formula-result pagination,
+long participant names and native Escape dismissal/focus return in the actual
+icon picker. These supplement rather than replace the complete capture run.
+
+Current app CI passed all six gates at `bc7249d`. New source repairs and all
+previously unverified rendered changes still require fresh evidence. Focused
+manual screenshot runs are available for repair verification; PR runs always
+capture the full catalog. Whole-product acceptance remains withheld.

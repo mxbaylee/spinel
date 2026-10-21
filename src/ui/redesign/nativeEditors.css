@@ -89,3 +89,10 @@
   max-height: 45dvh;
   overflow: auto;
 }
+
+/* The mobile SDK keeps its previous pixel height after a same-width shrink of
+   80px or more (keyboard protection). Bound that viewport to our editor host so
+   a shorter window cannot scroll the toolbar away or hide the sheet footer. */
+.rd-native-host > div:has(> [data-u-comp='app-layout']) {
+  max-height: 100%;
+}

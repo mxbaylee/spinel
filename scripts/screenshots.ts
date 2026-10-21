@@ -190,6 +190,21 @@ try {
         });
         expect(storyResult?.storyId).toBe(id);
         expect(storyResult?.status, `${id}: Storybook play must succeed`).toBe('success');
+        // Some Storybook versions report finished after swallowing a play error.
+        // Each story loads a fresh document, so recorded play exceptions belong here.
+        const playErrors = await page.evaluate(() => {
+          const channel = (
+            window as Window & {
+              __STORYBOOK_PREVIEW__?: {
+                channel?: { last: (event: string) => unknown[] | undefined };
+              };
+            }
+          ).__STORYBOOK_PREVIEW__?.channel;
+          return ['playFunctionThrewException', 'unhandledErrorsWhilePlaying'].flatMap(
+            (event) => channel?.last(event) ?? [],
+          );
+        });
+        expect(playErrors, `${id}: no swallowed play exceptions`).toEqual([]);
         await page.evaluate(() => document.fonts.ready);
         await expect(page.locator('.sb-errordisplay')).toBeHidden();
         if (id.startsWith('docs-native-formulas--')) {
@@ -307,6 +322,22 @@ try {
             frame!.y + frame!.height,
             'Native editor fits below site chrome',
           ).toBeLessThanOrEqual(testHeight + 1);
+          const layout = editor.locator(
+            '[data-u-comp="app-layout"], [data-u-comp="workbench-layout"]',
+          );
+          await expect(layout).toHaveCount(1);
+          await expect
+            .poll(
+              async () => {
+                const bounds = await layout.boundingBox();
+                const host = await editor.boundingBox();
+                return bounds && host
+                  ? bounds.y + bounds.height - (host.y + host.height)
+                  : Infinity;
+              },
+              { message: 'Native workbench stays inside its resized host before pointer input' },
+            )
+            .toBeLessThanOrEqual(1);
           await editor.locator('canvas[aria-label]').hover();
           await page.mouse.wheel(0, 600);
           await page.evaluate(

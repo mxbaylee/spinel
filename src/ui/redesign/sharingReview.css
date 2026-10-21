@@ -30,3 +30,9 @@
 .rd-sharing-review > .rd-feedback {
   margin-top: 0 !important;
 }
+@media (max-width: 640px) {
+  .rd-sharing-review > section[aria-label='People with access'] > .rd-setting-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -1421,7 +1421,7 @@ function DashboardContent({
                     </small>
                   </span>
                 </button>
-                <span className="rd-file-date">
+                <span className={`rd-file-date${view === 'Trash' ? ' rd-file-recovery' : ''}`}>
                   {view === 'Trash'
                     ? recoveryExpired(file.id)
                       ? 'Recovery expired'
