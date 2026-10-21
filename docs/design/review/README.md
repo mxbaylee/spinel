@@ -2,7 +2,7 @@
 
 Start with the [connected walkthrough guide](../walkthrough.md). These are rendered Storybook proposals awaiting owner approval in [PR #125](https://github.com/mxbaylee/spinel/pull/125), not production screens or approved regression baselines.
 
-Proposal captures: commit `66bfbfe62344079798416f08080d8474727ecb24`, [Storybook CI run 39533378606](https://github.com/mxbaylee/spinel/actions/runs/39533378606). Workflow conclusion at packaging: **success**. PNGs were rendered; their existence does not establish that every journey assertion or CI gate passed.
+Proposal captures: commit `a630be0537e2def96f5210050ad6db90764eacb4`, [Storybook CI run 39535098206](https://github.com/mxbaylee/spinel/actions/runs/39535098206). Workflow conclusion at packaging: **success**. PNGs were rendered; their existence does not establish that every journey assertion or CI gate passed.
 
 The gallery preserves unchanged PNGs from CI. Entry and settings/admin pages come from the connected walkthrough where available; other captures show composed screen specimens. Editor content/toolbars are schematic and local fixtures do not persist documents. Preview-event controls belong to the review harness, not the proposed product.
 
