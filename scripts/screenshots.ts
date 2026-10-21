@@ -660,6 +660,13 @@ try {
       await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
       await expect(page.locator('.rd-inspector h2')).toBeFocused();
       await expect(page.locator('.rd-inspector h2')).toBeInViewport();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Export', exact: true }).focus();
+      await page.keyboard.press('Escape');
+      await expect(
+        page.getByRole('button', { name: 'Document actions', exact: true }),
+      ).toBeFocused();
+
       await page.getByRole('button', { name: 'Close panel', exact: true }).click();
       await expect(
         page.getByRole('button', { name: 'Document actions', exact: true }),

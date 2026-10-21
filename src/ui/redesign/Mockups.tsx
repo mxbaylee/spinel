@@ -1553,6 +1553,7 @@ export function EditorMockup({
   const [exportStatus, setExportStatus] = useState(exportState);
   const panelTitleRef = useRef<HTMLHeadingElement>(null);
   const documentMenuRef = useRef<HTMLButtonElement>(null);
+  const focusOpenedPanel = useRef(false);
   const closePanel = () => {
     setPanel('');
     documentMenuRef.current?.focus();
@@ -1712,7 +1713,11 @@ export function EditorMockup({
               <ActionMenu
                 label="Document actions"
                 triggerRef={documentMenuRef}
-                finalFocus={() => panelTitleRef.current ?? true}
+                finalFocus={() => {
+                  const target = focusOpenedPanel.current ? panelTitleRef.current : null;
+                  focusOpenedPanel.current = false;
+                  return target ?? true;
+                }}
                 actions={[
                   ...(!viewOnly && !collaborator
                     ? [{ label: 'Share…', onClick: () => setShare(true) }]
@@ -1720,8 +1725,13 @@ export function EditorMockup({
                   ...['Versions', 'Export', ...(!viewOnly && !sheet ? ['Insert formula'] : [])].map(
                     (label) => ({
                       label,
-                      onClick: () =>
-                        label === 'Versions' && onHistory ? onHistory() : setPanel(label),
+                      onClick: () => {
+                        if (label === 'Versions' && onHistory) onHistory();
+                        else {
+                          focusOpenedPanel.current = true;
+                          setPanel(label);
+                        }
+                      },
                     }),
                   ),
                 ]}
