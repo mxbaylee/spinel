@@ -200,6 +200,33 @@ stays offline and reports unsaved work until explicitly reconnected. Recovery
 and a subsequent reload preserve the edit with exactly one durable revision
 increment, so an idempotent cell value cannot conceal duplicate application.
 
+## Merging concurrent edits
+
+[`lib/sync-transform/`](../lib/sync-transform/README.md) (SPN-056) merges two
+people's concurrent Sheet and Doc edits so both screens end with the same
+document. It is the first of the four tickets replacing Univer collaboration,
+because the owner chose to rewrite it rather than keep the closed-source
+transforms (owner, chat 2026-10-19). It is written from the open-source
+mutation definitions only; `@univerjs-pro/collaboration` was never read.
+
+- **Its own package** with Univer as peer dependencies and no server or DOM
+  imports, so the sync server (SPN-057) and the client (SPN-058) share it
+  (AGENTS.md).
+- **Unsupported mutations are rejected, never guessed at.** A wrong guess makes
+  two screens drift silently; a rejection is visible and SPN-059 hides the menus
+  that produce one. The package README lists them.
+- **Conflicts go to the side the server accepted first**, per cell, index or
+  key, so the other person's unrelated changes to the same cell survive.
+- **Senders inline styles, keep doc paragraph ids and send a removed sheet's
+  index**, because the transforms are stateless and these facts differ per
+  client or are missing from Univer's mutation.
+- **The server checks whole-workbook invariants.** Two edits that each keep at
+  least one sheet, or one visible sheet, can together remove them all; no
+  transform of the pair can see that.
+- **Verified against Univer itself.** Each transform pair, and a seeded
+  100,000-edit run of two clients and a server, are checked with the real
+  open-source handlers running headless.
+
 ## Related work and limits
 
 This integration does not establish an unlimited editor count or a

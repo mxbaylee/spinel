@@ -1,6 +1,9 @@
 FROM node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
+# Workspace manifests (lib/<name>/) must be in place before npm ci links them.
+# One line per package: COPY of a glob flattens the directories.
+COPY lib/sync-transform/package.json ./lib/sync-transform/
 COPY scripts/dependencies ./scripts/dependencies
 RUN npm ci
 COPY . .
@@ -11,6 +14,7 @@ ENV NODE_ENV=production HOST=127.0.0.1 PORT=3000 DATABASE_PATH=/data/spinel.sqli
 WORKDIR /app
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/lib ./lib
 COPY --from=build /app/server ./server
 COPY --from=build /app/src ./src
 COPY --from=build /app/scripts/deploy ./scripts/deploy

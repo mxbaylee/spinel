@@ -1,0 +1,26 @@
+{
+  "name": "@spinel/sync-transform",
+  "version": "0.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "description": "Operational transforms for concurrent Univer Sheet and Doc mutations.",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "peerDependencies": {
+    "@univerjs/core": "1.1.0",
+    "@univerjs/docs": "1.1.0",
+    "@univerjs/drawing": "1.1.0",
+    "@univerjs/sheets": "1.1.0"
+  },
+  "devDependencies": {
+    "@univerjs/core": "1.1.0",
+    "@univerjs/docs": "1.1.0",
+    "@univerjs/docs-hyper-link": "1.1.0",
+    "@univerjs/drawing": "1.1.0",
+    "@univerjs/engine-render": "1.1.0",
+    "@univerjs/sheets": "1.1.0",
+    "@univerjs/sheets-drawing": "1.1.0"
+  }
+}
