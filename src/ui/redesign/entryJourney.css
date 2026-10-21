@@ -195,13 +195,10 @@
   font-size: 0.75rem;
 }
 
-/* Reuse the original Spinel gem gesture on arrival and sign-in screens. */
-.ej-brand:hover .wiggle,
-.ej-brand:focus-visible .wiggle {
-  animation: gem-wiggle 0.6s ease-in-out;
-}
-@media (prefers-reduced-motion: reduce) {
-  .ej-brand .wiggle {
-    animation: none;
+/* Reuse the original Spinel gem gesture without overriding dark-theme rotation. */
+@media (prefers-reduced-motion: no-preference) {
+  .ej-brand:hover .wiggle,
+  .ej-brand:focus-visible .wiggle {
+    animation: gem-wiggle 0.6s ease-in-out;
   }
 }

@@ -308,6 +308,15 @@ try {
         });
       };
       await open('owner');
+      const brand = page.getByRole('button', { name: 'Spinel home', exact: true });
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await brand.hover();
+      await expect(brand.locator('.wiggle')).toHaveCSS('animation-name', 'none');
+      await brand.focus();
+      await expect(brand.locator('.wiggle')).toHaveCSS('animation-name', 'none');
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await expect(brand.locator('.wiggle')).toHaveCSS('animation-name', 'gem-wiggle');
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.getByRole('button', { name: 'Sign in', exact: true }).click();
       await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
       await expect(
