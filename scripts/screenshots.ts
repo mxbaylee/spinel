@@ -284,6 +284,16 @@ try {
           filename,
           title: `${index.entries[id].title} / ${index.entries[id].name}`,
         });
+        if (id === 'redesign-screens--empty-folder') {
+          await page.getByRole('button', { name: 'New file', exact: true }).click();
+          await page.getByRole('menuitem', { name: 'Doc', exact: true }).click();
+          await page.getByRole('textbox', { name: 'Name', exact: true }).fill('First note');
+          await page.getByRole('button', { name: 'Create Doc', exact: true }).click();
+          await expect(
+            page.locator('.rd-file-open').filter({ hasText: 'First note' }),
+          ).toBeVisible();
+          verifications.push(`${variant}: creating a document replaces the empty file state`);
+        }
         if (id === 'redesign-editor-recovery--offline-save-failed') {
           const saveStatus = page.getByRole('status', {
             name: 'Document save status',

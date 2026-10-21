@@ -859,7 +859,7 @@ export function DashboardMockup({
     }
     return false;
   };
-  const empty = state === 'empty' || rows.length === 0;
+  const empty = rows.length === 0;
   const targetName = items.find((item) => item.id === target)?.name ?? 'this file';
   const creating = ['Doc', 'Sheet', 'Space', 'Folder'].includes(dialog);
   const actionLabel = creating
