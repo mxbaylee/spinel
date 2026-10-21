@@ -108,13 +108,13 @@ initial selection and readiness. The global plugin Rendered stage is earlier
 than that work; an unresolved selection can intentionally blur the input. The
 wait is cancelled on navigation and fails visibly after 30 seconds.
 
-The SDK supplies remote cursors and selected ranges. Spinel adds stable default
-profile colours and initial-letter circles in the header and at remote Sheet
-cells. Hover/focus reveals the name in an overlay without shifting the layout.
-Header and cell buttons select and scroll to a remote Sheet range. Body-text Doc
-selections can also be selected from the header; unsupported cursor encodings
-remain presence without an invented jump. SPN-036 adds profile customization.
-These presence rules came from the owner in chat on 2026-10-17.
+Spinel renders Sheet presence with matching profile colours and icon/name labels;
+header badges reveal the person's name on hover/focus without shifting layout.
+Following a Sheet range reveals it without replacing the local selection. Docs
+retain native canvas presence; supported body-text selections can still be selected
+from the header, while unsupported encodings remain presence without a jump.
+See [profile behaviour](design/account.md#saved-profile-behaviour-spn-036) and
+[decision #127](https://github.com/mxbaylee/spinel/issues/127).
 
 Each service/materializer runtime is capped at eight loaded units and evicts
 idle units after a minute. This is a cache bound, not a measured capacity claim
@@ -214,7 +214,7 @@ also tested before durable commit. Browser tests verify that the affected editor
 becomes read-only and revoked sockets receive no later document changes. The SDK
 submits durable changes over authenticated HTTP associated with the socket's
 member ID; that ID is not an authorization credential. Public link access and history are implemented under [sharing](sharing.md) and
-[history](history.md); profile customization remains SPN-036. The one-second browser
+[history](history.md); profile customization is available in Settings. The one-second browser
 acceptance checks do not replace fresh-host capacity/deployment verification.
 
 Public references:
@@ -222,3 +222,21 @@ Public references:
 [identity](https://docs.univer.ai/server/collaboration/identity-and-authorization),
 [middleware](https://docs.univer.ai/server/collaboration/middleware-and-events),
 [presence](https://docs.univer.ai/server/collaboration/presence).
+
+
+### Profile appearance and following
+
+SPN-036 uses server-issued catalog avatar URLs in account-only membership to carry
+validated icons and palette choices. Active guest-link rooms still receive empty
+avatars and generic names. The Sheet renderer uses public range highlights and
+canvas-contained labels, and applies the same colour to normal local selection
+controls. It only draws remote markers on their actual active tab; row/column
+selections are sent as explicit bounded cell ranges. Changed selections publish within 150 ms; idle cursors refresh every two seconds
+so peers that finish mounting after the join event still receive them. This uses
+the existing cursor-only message without server retention or new payload fields.
+
+Following a Sheet collaborator uses the public reveal-range controller without
+changing the local active range. Already-visible cells stay in place. Profile
+saves take effect in editor membership on reopening the editor. Docs retain native
+canvas presence until SPN-058; disabling the entire collaboration UI caused missing
+Docs dependencies in the prototype. Owner scope decision [#127](https://github.com/mxbaylee/spinel/issues/127).

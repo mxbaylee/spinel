@@ -1,3 +1,4 @@
+import { Profiles } from '../auth/profile.ts';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -132,9 +133,15 @@ test('guest HTTP and socket identities are scoped; link transitions evict pendin
     ).toBeGreaterThanOrEqual(400);
     const snapshot = await send(`${base}/snapshot/2/unit/${item.id}/rev/0`, cookie);
     expect(snapshot.status, await snapshot.text()).toBe(200);
+    new Profiles(auth).save(owner.id, {
+      name: owner.name,
+      icon: 'lucide:flower',
+      color: 'info-strong',
+    });
     const account = await open('/universer-api', ownerCookie),
       guest = await open(base, cookie);
     expect(JSON.stringify(guest.messages)).not.toContain(owner.name);
+    expect(JSON.stringify(guest.messages)).not.toContain('/profile-avatar/');
     expect(JSON.stringify(guest.messages)).not.toContain('Private Person');
     await expect.poll(() => JSON.stringify(account.messages)).toContain('Guest');
     const cursor = (selection: string) =>

@@ -1,3 +1,4 @@
+import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
 import type { NavigationGuard } from './navigation.ts';
 
@@ -12,7 +13,7 @@ export function Rail({
   onSignOut,
 }: {
   /** Signed-out visitors see only the brand link. */
-  user: { isAdmin: boolean } | null;
+  user: { isAdmin: boolean; name?: string; icon?: string; color?: string } | null;
   navigation: Pick<NavigationGuard, 'allow'>;
   onSignOut: () => void;
 }) {
@@ -41,7 +42,15 @@ export function Rail({
             <span className="rail-label">{user.isAdmin ? 'Admin' : 'Dashboard'}</span>
           </a>
           <a className="rail-button" href="/settings">
-            <span aria-hidden="true">⚙</span>
+            <span
+              className="profile-rail-avatar"
+              style={{
+                background: `var(--fill-${user.color ?? 'primary-strong'}-bg)`,
+                color: `var(--fill-${user.color ?? 'primary-strong'}-fg)`,
+              }}
+            >
+              <ProfileIcon icon={user.icon ?? 'lucide:user-round'} />
+            </span>
             <span className="rail-label">Settings</span>
           </a>
           <button className="rail-button" onClick={onSignOut}>

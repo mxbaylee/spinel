@@ -1,3 +1,4 @@
+import { ProfileSettings } from './ProfileSettings.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   startAuthentication,
@@ -36,7 +37,7 @@ const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
 );
 
-type User = { id: string; name: string; isAdmin: boolean };
+type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?: string };
 type Passkey = { id: string; name: string; provider: string };
 
 export function App() {
@@ -382,6 +383,7 @@ export function App() {
                 <p className="eyebrow">{user.name}</p>
                 <h1>Settings</h1>
                 <ThemeSettings />
+                <ProfileSettings onSaved={(profile) => setUser({ ...user, ...profile })} />
                 <section className="welcome">
                   <h2>Your passkeys</h2>
                   <p>

@@ -30,6 +30,7 @@ export { ClientEnglish, UIEnglish };
 export function collaborationPlugins(
   unitID: string,
   override?: DependencyOverride,
+  keepDocumentUI = false,
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
   const guest = guestItemId();
   const base = location.origin + (guest ? `/guest-api/${guest}` : '') + '/universer-api';
@@ -62,7 +63,13 @@ export function collaborationPlugins(
         wsSessionTicketUrl: base + '/user/session-ticket?unitID=' + encodeURIComponent(unitID),
       },
     ],
-    [UniverCollaborationClientUIPlugin, { enableUrlUnitLoader: false }],
+    [
+      UniverCollaborationClientUIPlugin,
+      {
+        enableUrlUnitLoader: false,
+        enableDocumentCollaborationUI: keepDocumentUI,
+      },
+    ],
   ];
 }
 export async function prepareCollaboration(id: string) {
