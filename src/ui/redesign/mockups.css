@@ -47,7 +47,8 @@
   cursor: pointer;
 }
 .rd-rail-button:hover {
-  background: color-mix(in srgb, var(--sp-rail-ink) 12%, transparent);
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
 }
 .rd-rail-bottom {
   margin-top: auto;
@@ -1153,8 +1154,8 @@
 }
 .rd-sidebar .rd-nav-item[aria-current='page'],
 .rd-sidebar .rd-nav-item:hover {
-  background: color-mix(in srgb, var(--sp-rail-ink) 12%, transparent);
-  color: inherit;
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
 }
 .rd-sidebar .sp-control {
   background: transparent;
@@ -1228,7 +1229,8 @@
   gap: 8px;
 }
 .rd-collapsed-destinations .rd-rail-button[aria-current='page'] {
-  background: color-mix(in srgb, var(--sp-rail-ink) 12%, transparent);
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
 }
 .rd-file-grid {
   display: grid;
@@ -1290,4 +1292,13 @@
 .rd-rail-button:hover .rd-nav-tooltip,
 .rd-rail-button:focus-visible .rd-nav-tooltip {
   display: block;
+}
+
+.rd-sidebar button:focus-visible,
+.rd-rail button:focus-visible {
+  outline: 2px solid var(--sp-rail-ink);
+  outline-offset: 3px;
+}
+.sp-modal .rd-sidebar button:focus-visible {
+  outline-color: var(--sp-accent);
 }
