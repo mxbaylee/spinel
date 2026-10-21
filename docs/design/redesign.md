@@ -58,7 +58,7 @@ recovery and offline contracts remain authoritative.
 
 ## Composed layout contract
 
-- File navigation: one 224 px column with gem, places, pins, folders and account
+- File navigation: one 224 px column with gem, places, pins and account
   utilities. Collapse reduces it to a 64 px rail; a labelled Files/Pages control
   reopens it. Never show the rail beside an expanded tree. At tablet/phone
   widths (900 px and below), navigation is a drawer by default.
@@ -199,3 +199,11 @@ of the proposal, still subject to screenshot approval:
 Mockup actions demonstrate placement and local feedback; they do not implement
 networking, actual passkey operations or document persistence. Production tickets
 must preserve the existing security/behavior contracts during migration.
+
+Owner refinement (chat, 2026-10-20): folders are rows in **My files**, while
+pins remain navigation shortcuts. The expanded sidebar uses the neutral page
+surface. Profile and Appearance occupy separate rows. Trash is a permanent
+folder entry in My files with no rename/move/delete controls; it is not another
+sidebar destination. A network icon beside the gem shows connection state,
+with an accessible label and hover/tap explanation. Document save warnings
+remain explicit; network state never substitutes for save confirmation.

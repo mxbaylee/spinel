@@ -127,3 +127,8 @@ second row for status/actions. Editable collaborators show Can edit and an
 access explanation; only owners see Share. Editable collaborators retain version naming and restore. Back to files preserves
 retrieval context. History highlights the selected checkpoint and names its
 date/time in preview and restore confirmation; Return to document stays visible.
+
+At phone/tablet widths History keeps the selected-version summary above the
+preview; its chooser expands on request. Older days show an aligned weekday
+calendar and checkpoints for the selected date, including named/before-restore
+entries, rather than reusing today's list.

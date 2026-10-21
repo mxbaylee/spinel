@@ -111,7 +111,7 @@ Space examples remain in Storybook until the feature exists.
 
 After owner approval, one optional navigation column replaces the old permanent
 rail-plus-sidebar composition. File views use a 224 px sidebar containing gem,
-places, pins, folders and account utilities. Collapse leaves a 64 px rail with
+places, pins and account utilities. Collapse leaves a 64 px rail with
 labelled Files/Pages; reopening restores the tree. Never show both side by side.
 Ordinary editors and Operator screens use compact horizontal utility navigation.
 Space trees replace outer file navigation. Guests have no account navigation.
@@ -298,3 +298,11 @@ support.apple.com (Numbers for iCloud), help.zoho.com (Sheet, WorkDrive),
 learn.microsoft.com and the Microsoft 365 Insider blog (Excel for the web,
 OneDrive). Read 2026-10-19. Products change; when a comparison here goes stale,
 update the comparison rather than the adopted pattern unless the owner agrees.
+
+Owner refinement (chat, 2026-10-20): folders are rows in **My files**, while
+pins remain navigation shortcuts. The expanded sidebar uses the neutral page
+surface. Profile and Appearance occupy separate rows. Trash is a permanent
+folder entry in My files with no rename/move/delete controls; it is not another
+sidebar destination. A network icon beside the gem shows connection state,
+with an accessible label and hover/tap explanation. Document save warnings
+remain explicit; network state never substitutes for save confirmation.

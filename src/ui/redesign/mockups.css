@@ -1114,3 +1114,68 @@
     display: inline;
   }
 }
+
+.rd-setting-row > .sp-control {
+  flex-shrink: 0;
+}
+.rd-history-disclosure {
+  display: none;
+}
+.rd-weekday {
+  font-size: 0.625rem;
+  text-align: center;
+  color: var(--sp-muted);
+}
+@media (max-width: 900px) {
+  .rd-history-desktop {
+    display: none;
+  }
+  .rd-history-disclosure {
+    display: block;
+  }
+  .rd-history-disclosure summary {
+    padding: 12px 0;
+    cursor: pointer;
+  }
+  .rd-history-disclosure[open] summary {
+    margin-bottom: 16px;
+  }
+}
+
+/* Owner direction: neutral expanded surface, distinct account rows, network by gem. */
+.rd-sidebar {
+  background: var(--sp-panel);
+}
+.rd-sidebar-brand > .sp-control {
+  margin-left: 0;
+}
+.rd-sidebar-brand > .sp-control:last-child {
+  margin-left: auto;
+}
+.rd-sidebar-utilities {
+  display: grid;
+  gap: 8px;
+}
+.rd-sidebar-utilities > .sp-control {
+  width: 100%;
+  justify-content: flex-start;
+}
+.rd-rail > .sp-control {
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 8px;
+}
+.rd-compact-shell > .rd-rail,
+.rd-rail {
+  gap: 12px;
+}
+
+.rd-file-icon {
+  width: 32px;
+  height: 32px;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: var(--sp-muted);
+}

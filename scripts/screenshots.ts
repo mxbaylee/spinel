@@ -134,6 +134,24 @@ try {
       await page.goto(
         'http://127.0.0.1:6007/iframe.html?id=redesign-screens--dashboard&viewMode=story&globals=theme:light',
       );
+      const network = page.getByRole('button', {
+        name: 'Online — connected to Spinel',
+        exact: true,
+      });
+      if (width > 900) await network.hover();
+      else await network.click();
+      await expect(
+        page.getByText('Connected to Spinel. Open save status for details about this document.', {
+          exact: true,
+        }),
+      ).toBeVisible();
+      await page.screenshot({ path: resolve(directory, `network-explanation-${width}.png`) });
+      await page.keyboard.press('Escape');
+      await expect(
+        page.getByText('Connected to Spinel. Open save status for details about this document.', {
+          exact: true,
+        }),
+      ).toBeHidden();
       if (width > 900) {
         await page.getByRole('button', { name: 'Collapse navigation', exact: true }).click();
         await expect(page.getByRole('button', { name: 'Browse files', exact: true })).toBeFocused();
@@ -147,10 +165,12 @@ try {
         await page.screenshot({ path: resolve(directory, `navigation-open-${width}.png`) });
         await page
           .getByRole('dialog')
-          .getByRole('button', { name: 'Household', exact: true })
+          .getByRole('button', { name: 'Shared with me', exact: true })
           .click();
         await expect(page.getByRole('dialog')).toBeHidden();
-        await expect(page.getByRole('heading', { name: 'Household', exact: true })).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: 'Shared with me', exact: true }),
+        ).toBeVisible();
       }
       await page.close();
       verifications.push(`${width}px: navigation collapse/drawer selection and focus`);
@@ -231,7 +251,7 @@ const { readdir } = await import('node:fs/promises');
 const assets = await readdir('storybook-static/assets');
 const bundles = [];
 for (const filename of assets.filter(
-  (name) => /Controls|Mockups/.test(name) && name.endsWith('.js'),
+  (name) => /Controls|Mockups/i.test(name) && name.endsWith('.js'),
 )) {
   const bytes = await readFile(resolve('storybook-static/assets', filename));
   bundles.push({ filename, bytes: bytes.length, gzipBytes: gzipSync(bytes).length });

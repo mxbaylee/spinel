@@ -19,7 +19,9 @@ type GlyphName =
   | 'sun'
   | 'check'
   | 'shield'
-  | 'download';
+  | 'download'
+  | 'network'
+  | 'network-off';
 const paths: Record<GlyphName, string> = {
   files: 'M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z',
   search: 'M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14 M15 15l6 6',
@@ -33,6 +35,8 @@ const paths: Record<GlyphName, string> = {
   sun: 'M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10 M12 1v2 M12 21v2 M1 12h2 M21 12h2 M4 4l2 2 M18 18l2 2 M4 20l2-2 M18 6l2-2',
   check: 'M5 12l4 4L19 6',
   shield: 'M12 2l8 4v6c0 5-8 10-8 10S4 17 4 12V6z',
+  network: 'M2 8q10-8 20 0 M5 12q7-6 14 0 M8 16q4-4 8 0 M12 20h.01',
+  'network-off': 'M2 8q10-8 20 0 M5 12q7-6 14 0 M8 16q4-4 8 0 M12 20h.01 M3 3l18 18',
   download: 'M12 3v12 M7 10l5 5 5-5 M4 16v5h16v-5',
 };
 function Glyph({ name }: { name: GlyphName }) {
@@ -55,7 +59,7 @@ function Glyph({ name }: { name: GlyphName }) {
 function Avatar({ children = 'AB' }: { children?: ReactNode }) {
   return <span className="rd-avatar">{children}</span>;
 }
-function ThemeMenu() {
+function ThemeMenu({ labelled = false }: { labelled?: boolean }) {
   const preference = useSyncExternalStore(watchTheme, getPreference);
   const [error, setError] = useState('');
   return (
@@ -73,9 +77,30 @@ function ThemeMenu() {
         }))}
       >
         <Glyph name="sun" />
+        {labelled && (
+          <span>
+            Appearance ·{' '}
+            {preference === 'system' ? 'System' : preference === 'light' ? 'Light' : 'Dark'}
+          </span>
+        )}
       </ActionMenu>
       {error && <span role="alert">{error}</span>}
     </>
+  );
+}
+function NetworkStatus({ offline = false }: { offline?: boolean }) {
+  return (
+    <DetailsPopover
+      label={offline ? 'Offline — not connected to Spinel' : 'Online — connected to Spinel'}
+      hover
+      trigger={<Glyph name={offline ? 'network-off' : 'network'} />}
+    >
+      <p>
+        {offline
+          ? 'You are offline. Open files may have changes waiting to sync. Check their save status before closing.'
+          : 'Connected to Spinel. Open save status for details about this document.'}
+      </p>
+    </DetailsPopover>
   );
 }
 function Sidebar({
@@ -85,7 +110,9 @@ function Sidebar({
   guest = false,
   canEdit = true,
   onCollapse,
+  offline = false,
 }: {
+  offline?: boolean;
   onCollapse?: () => void;
   canEdit?: boolean;
   space?: boolean;
@@ -128,14 +155,6 @@ function Sidebar({
             ['Autumn plans', 'pin'],
           ],
         },
-        {
-          title: 'FOLDERS',
-          items: [
-            ['Household', 'folder'],
-            ['Work', 'folder'],
-            ['Trips', 'folder'],
-          ],
-        },
       ];
   return (
     <nav className="rd-sidebar" aria-label={space ? 'Space contents' : 'Files'}>
@@ -144,7 +163,7 @@ function Sidebar({
           <div className="rd-brand">
             <GemLogo />
           </div>
-          <strong>spinel</strong>
+          <NetworkStatus offline={offline} />
           <Button aria-label="Collapse navigation" onClick={onCollapse}>
             <Glyph name="back" />
           </Button>
@@ -266,21 +285,18 @@ function Sidebar({
         <div className="rd-sidebar-bottom">
           {onCollapse && !guest && (
             <div className="rd-sidebar-utilities">
-              <ThemeMenu />
+              <ThemeMenu labelled />
               <Button onClick={() => onSelect('Your profile')}>
                 <Avatar /> Your profile
               </Button>
             </div>
           )}
-          {(!space || canEdit) && (
+          {space && canEdit && (
             <button className="rd-nav-item" onClick={() => onSelect('Trash')}>
               <Glyph name="trash" />
               {space ? 'Space trash' : 'Trash'}
             </button>
           )}
-          <span className="rd-online">
-            <Glyph name="check" /> Online
-          </span>
         </div>
       )}
     </nav>
@@ -297,7 +313,9 @@ function Shell({
   onSelect = () => {},
   collapsed = false,
   compact = false,
+  offline = false,
 }: {
+  offline?: boolean;
   children: ReactNode;
   collapsed?: boolean;
   compact?: boolean;
@@ -332,6 +350,7 @@ function Shell({
           <div className="rd-brand">
             <GemLogo />
           </div>
+          <NetworkStatus offline={offline} />
           <button
             className="rd-rail-button"
             aria-label={
@@ -371,6 +390,7 @@ function Shell({
             <div className="rd-desktop-nav">
               <Sidebar
                 onCollapse={() => setNavigation(false)}
+                offline={offline}
                 space={space}
                 selected={selected}
                 onSelect={onSelect}
@@ -416,6 +436,14 @@ function Shell({
   );
 }
 const files = [
+  ...['Household', 'Work', 'Trips'].map((name) => ({
+    name,
+    kind: 'folder' as const,
+    detail: 'Folder',
+    access: 'owner' as const,
+    date: 'Yesterday',
+    tags: '',
+  })),
   {
     name: 'Quarterly budget',
     kind: 'sheet' as const,
@@ -506,8 +534,12 @@ export function DashboardMockup({
       (modified === 'any' || file.date.includes('ago')) &&
       !removed.includes(file.name) &&
       (view !== 'Shared with me' || file.access !== 'owner') &&
-      (view !== 'Trash' || file.access === 'owner') &&
-      (view !== 'Household' || file.tags === 'household'),
+      (view !== 'Trash' || (file.access === 'owner' && file.kind !== 'folder')) &&
+      (!['Household', 'Work', 'Trips'].includes(view) ||
+        file.tags ===
+          ({ Household: 'household', Work: 'work', Trips: 'travel' } as Record<string, string>)[
+            view
+          ]),
   );
   const empty = state === 'empty' || rows.length === 0;
   return (
@@ -548,6 +580,7 @@ export function DashboardMockup({
             onChange={setKind}
             options={[
               { value: 'all', label: 'All types' },
+              { value: 'folder', label: 'Folders' },
               { value: 'doc', label: 'Docs' },
               { value: 'sheet', label: 'Sheets' },
               { value: 'space', label: 'Spaces' },
@@ -661,8 +694,19 @@ export function DashboardMockup({
             </div>
             {rows.map((file) => (
               <div className="rd-file" role="listitem" key={file.name}>
-                <button className="rd-file-open" onClick={() => setNotice(`Opening ${file.name}…`)}>
-                  <EntityIcon kind={file.kind} size={32} />
+                <button
+                  className="rd-file-open"
+                  onClick={() =>
+                    file.kind === 'folder' ? setView(file.name) : setNotice(`Opening ${file.name}…`)
+                  }
+                >
+                  <span className="rd-file-icon">
+                    {file.kind === 'folder' ? (
+                      <Glyph name="folder" />
+                    ) : (
+                      <EntityIcon kind={file.kind} size={32} />
+                    )}
+                  </span>
                   <span>
                     <strong>{file.name}</strong>
                     <small>
@@ -691,7 +735,13 @@ export function DashboardMockup({
                           },
                         ]
                       : [
-                          { label: 'Open', onClick: () => setNotice(`Opening ${file.name}…`) },
+                          {
+                            label: 'Open',
+                            onClick: () =>
+                              file.kind === 'folder'
+                                ? setView(file.name)
+                                : setNotice(`Opening ${file.name}…`),
+                          },
                           { label: 'Pin', onClick: () => setNotice(`${file.name} pinned.`) },
                           { label: 'Tags…', onClick: () => setDialog('Tags') },
                           ...(file.access !== 'owner'
@@ -731,6 +781,23 @@ export function DashboardMockup({
             ))}
           </div>
         )}
+        <div role="list" aria-label="Trash folder">
+          {' '}
+          {view === 'My files' && !search && (kind === 'all' || kind === 'folder') && !tag && (
+            <div className="rd-file" role="listitem">
+              <button className="rd-file-open" onClick={() => setView('Trash')}>
+                <span className="rd-file-icon">
+                  <Glyph name="trash" />
+                </span>
+                <span>
+                  <strong>Trash</strong>
+                  <small>Permanent folder · Restore deleted files</small>
+                </span>
+              </button>
+              <span className="rd-file-date">3 items</span>
+            </div>
+          )}
+        </div>
         <p className="rd-feedback" role="status">
           {notice}
         </p>
@@ -767,7 +834,9 @@ export function DocumentSurface({
   sheet = false,
   unavailable = false,
   table = false,
+  readOnly = false,
 }: {
+  readOnly?: boolean;
   sheet?: boolean;
   unavailable?: boolean;
   table?: boolean;
@@ -811,7 +880,7 @@ export function DocumentSurface({
         <div className="rd-sheet-tabs">
           <span>October</span>
           <span>November</span>
-          <span>＋</span>
+          {!readOnly && <span>＋</span>}
         </div>
       </div>
     );
@@ -911,6 +980,7 @@ export function EditorMockup({
     <Shell
       sidebar={space}
       collapsed={collapsed}
+      offline={offline}
       compact={!space}
       space={space}
       guest={guest}
@@ -1039,6 +1109,7 @@ export function EditorMockup({
           <DocumentSurface
             sheet={sheet || selected === 'Budget'}
             unavailable={guest || offline}
+            readOnly={viewOnly}
             table={table}
           />
         )}
@@ -1351,23 +1422,44 @@ export function FormulaMockup({
   );
 }
 function HistoryContent({
-  calendar = false,
   selected,
   setSelected,
 }: {
-  calendar?: boolean;
   selected: string;
   setSelected: (value: string) => void;
 }) {
-  const [older, setOlder] = useState(calendar);
+  const older = selected.startsWith('October');
+  const day = selected.match(/^October (\d+)/)?.[1] ?? '19';
+  const checkpoints = older
+    ? [
+        `October ${day} · Final checkpoint`,
+        `October ${day} · 11:45 · Before restore`,
+        `October ${day} · 10:15 · Ready for the trip`,
+      ]
+    : [
+        '12:30 · Latest',
+        '11:45 · Before restore',
+        '10:15 · Ready for the trip',
+        '09:00 · Unnamed version',
+      ];
   return (
     <div className="rd-form">
       <p className="sp-muted">Previewing leaves your live document unchanged.</p>
       <div className="rd-history-tabs">
-        <Button onClick={() => setOlder(false)} aria-pressed={!older}>
+        <Button
+          onClick={() => {
+            setSelected('10:15 · Ready for the trip');
+          }}
+          aria-pressed={!older}
+        >
           Today
         </Button>
-        <Button onClick={() => setOlder(true)} aria-pressed={older}>
+        <Button
+          onClick={() => {
+            setSelected('October 19 · Final checkpoint');
+          }}
+          aria-pressed={older}
+        >
           Older days
         </Button>
       </div>
@@ -1375,9 +1467,18 @@ function HistoryContent({
         <>
           <h3>October 2026 · UTC</h3>
           <div className="rd-calendar">
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((x) => (
+              <span key={x} className="rd-weekday">
+                {x}
+              </span>
+            ))}
+            {Array.from({ length: 4 }, (_, i) => (
+              <span key={`offset-${i}`} aria-hidden="true" />
+            ))}
             {Array.from({ length: 31 }, (_, i) => (
               <Button
                 key={i}
+                aria-pressed={Number(day) === i + 1}
                 disabled={![2, 7, 12, 17, 18, 19].includes(i + 1)}
                 onClick={() => setSelected(`October ${i + 1} · Final checkpoint`)}
               >
@@ -1415,12 +1516,7 @@ function HistoryContent({
           />
         </label>
       )}
-      {[
-        '12:30 · Latest',
-        '11:45 · Before restore',
-        '10:15 · Ready for the trip',
-        '09:00 · Unnamed version',
-      ].map((x) => (
+      {checkpoints.map((x) => (
         <Button key={x} onClick={() => setSelected(x)} aria-pressed={selected === x}>
           {x}
         </Button>
@@ -1437,7 +1533,9 @@ export function HistoryMockup({
   confirmation?: boolean;
 }) {
   const [restore, setRestore] = useState(confirmation);
-  const [selected, setSelected] = useState('10:15 · Ready for the trip');
+  const [selected, setSelected] = useState(
+    calendar ? 'October 19 · Final checkpoint' : '10:15 · Ready for the trip',
+  );
   const [notice, setNotice] = useState('');
   return (
     <Shell>
@@ -1461,7 +1559,13 @@ export function HistoryMockup({
       </p>
       <div className="rd-history">
         <aside className="rd-inspector">
-          <HistoryContent calendar={calendar} selected={selected} setSelected={setSelected} />
+          <div className="rd-history-desktop">
+            <HistoryContent selected={selected} setSelected={setSelected} />
+          </div>
+          <details className="rd-history-disclosure" open={calendar}>
+            <summary>Choose version · {selected}</summary>
+            <HistoryContent selected={selected} setSelected={setSelected} />
+          </details>
         </aside>
         <DocumentSurface />
       </div>

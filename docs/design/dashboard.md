@@ -149,9 +149,17 @@ mode: `Dashboard/Dashboard` `LocalMode`, `LocalNeedsConnection` and
 
 ## Navigation after the persona walkthrough
 
-Use one collapsible 224 px column for gem, places, pins, folders and account
+Use one collapsible 224 px column for gem, places, pins and account
 utilities. Do not retain a separate rail beside it. Tablets/phones start with
 a drawer; Files remains visibly labelled. Remove the repeated workspace eyebrow
 and decorative list caption on phones. Search explicitly names its current
 scope and offers Search all files from a folder/shared view. Returning from
 a document restores folder, filters and scroll position (SPN-048/049).
+
+Owner refinement (chat, 2026-10-20): folders are rows in **My files**, while
+pins remain navigation shortcuts. The expanded sidebar uses the neutral page
+surface. Profile and Appearance occupy separate rows. Trash is a permanent
+folder entry in My files with no rename/move/delete controls; it is not another
+sidebar destination. A network icon beside the gem shows connection state,
+with an accessible label and hover/tap explanation. Document save warnings
+remain explicit; network state never substitutes for save confirmation.

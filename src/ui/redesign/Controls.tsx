@@ -139,10 +139,22 @@ export function Modal({
     </Dialog.Root>
   );
 }
-export function DetailsPopover({ label, children }: { label: string; children: ReactNode }) {
+export function DetailsPopover({
+  label,
+  children,
+  trigger,
+  hover = false,
+}: {
+  label: string;
+  children: ReactNode;
+  trigger?: ReactNode;
+  hover?: boolean;
+}) {
   return (
     <Popover.Root>
-      <Popover.Trigger className="sp-control sp-quiet">{label}</Popover.Trigger>
+      <Popover.Trigger className="sp-control sp-quiet" aria-label={label} openOnHover={hover}>
+        {trigger ?? label}
+      </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner className="sp-positioner" sideOffset={8}>
           <Popover.Popup className="sp-popup sp-ui">
