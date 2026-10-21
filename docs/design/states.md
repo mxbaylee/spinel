@@ -101,7 +101,12 @@ The words and their meaning come from [docs/offline.md](../offline.md); this
 section places them.
 
 - **Connection** (SPN-042): the connection slot shows Online, Offline or
-  Reconnecting with an icon. It never says Online from `navigator.onLine` alone.
+  Reconnecting with an icon beside the gem/navigation. The shared production
+  `ConnectionStatus` is a fixed 44 px target with an accessible state name,
+  a polite live announcement and hover/focus/tap detail. It never says Online
+  from `navigator.onLine` alone: account screens verify the server and editors
+  wait for their room subscription. See [the maintained behavior](../connection.md)
+  and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
 - **Local save** (SPN-053): SPN-043's shared save slot extends to Saving on this device,
   Saved on this device — waiting to sync, Synced and Needs attention. Needs
   attention stays until resolved and its popover holds the action (open both
@@ -125,7 +130,11 @@ section places them.
   folder was deleted or access was lost meanwhile, the row says "Needs
   attention" and offers **Choose another folder…**; nothing is written where the
   person lacks access.
-- Guests always get the generic offline page; nothing about the document.
+- A guest launching without a connection gets the generic offline page, with no
+  cached private document. A transient interruption after opening a live guest
+  editor preserves that mounted editor and unfinished input while the connection
+  control reports Offline/Reconnecting. Confirmed revocation clears the content
+  and title; a network failure is not revocation.
 
 ## Stories
 

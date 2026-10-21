@@ -32,7 +32,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         await first.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
         await expect(first.locator('html')).toHaveAttribute('data-theme', theme);
         await first.screenshot({
-          path: `test-results/theme-screenshots/before-guest-${kind}-${role}-${variant}-${info.project.name}.png`,
+          path: `test-results/theme-screenshots/spn-042-guest-${kind}-${role}-${variant}-${info.project.name}.png`,
           fullPage: true,
           animations: 'disabled',
         });
@@ -180,9 +180,23 @@ for (const kind of ['sheet', 'doc'] as const) {
       } else {
         await edit(first, 'Kept during retry');
       }
-      await expect(
-        first.getByText('Connection interrupted. Keep this tab open; retrying…', { exact: true }),
-      ).toBeVisible();
+      const connection = first.getByRole('status', { name: 'Connection status', exact: true });
+      await expect(connection).toHaveText(/^(Offline|Reconnecting)$/);
+      const network = first.getByRole('button', { name: /^(Offline|Reconnecting) — / });
+      await expect(network).toHaveCount(1);
+      await network.hover();
+      const explanation = first.getByRole('tooltip');
+      await expect(explanation).toContainText(/offline|connect/i);
+      expect(await explanation.innerText()).not.toContain(owner.name);
+      expect(await first.locator('body').innerText()).not.toContain(owner.name);
+      await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
+      await first.screenshot({
+        path: `test-results/theme-screenshots/spn-042-guest-${kind}-interrupted-light-${info.project.name}.png`,
+        fullPage: true,
+        animations: 'disabled',
+      });
+      // Do not send Escape to an unfinished cell while checking its network tooltip.
+      await first.mouse.move(0, 0);
       await expect(region(first)).toBeVisible();
       if (kind === 'sheet')
         await expect(region(first).getByRole('status', { name: 'Save status' })).toContainText(

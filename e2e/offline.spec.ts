@@ -148,9 +148,16 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
       { accountId: user.id, legacyPin: doc },
     );
     await page.reload();
-    await expect(page.getByRole('status').filter({ hasText: 'Files as of' })).toBeVisible({
-      timeout: 30_000,
+    const connection = page.getByRole('button', {
+      name: 'Offline — not connected to Spinel',
+      exact: true,
     });
+    await expect(connection).toBeVisible({ timeout: 30_000 });
+    await connection.hover();
+    await expect(page.getByRole('tooltip')).toContainText('Files as of');
+    await expect(page.locator('.banner').filter({ hasText: 'Files as of' })).toHaveCount(0);
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
     const row = (name: string) =>
       page
         .getByRole('list', { name: 'Folder contents' })
@@ -214,9 +221,10 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
 
     // Another tab releasing the device closes local data here too.
     await page.goto('/');
-    await expect(page.getByRole('status').filter({ hasText: 'Files as of' })).toBeVisible({
-      timeout: 30_000,
-    });
+    await expect(connection).toBeVisible({ timeout: 30_000 });
+    await connection.hover();
+    await expect(page.getByRole('tooltip')).toContainText('Files as of');
+    await page.keyboard.press('Escape');
     const other = await context.newPage();
     await other.goto('/');
     await other.evaluate(() => localStorage.removeItem('spinel.offline.account'));

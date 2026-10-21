@@ -205,11 +205,12 @@ SPN-043 owns save-slot geometry and Retry, and SPN-049 composes the editor heade
   states to the shared save presentation. A network connection alone never means
   an edit is durably saved. Do not create another status row for the same concern.
 
-The approved proposal shows the placement, but the application `.save-status`
-can still grow in normal flow when Retry appears. SPN-043 adopts a shared save
-component with a state story and verifies unchanged editor bounds. SPN-042 wires
-the real connection lifecycle rather than treating the proposal's `offline`
-fixture flag as an implemented network state machine.
+SPN-042 implements the shared fixed-size connection control and real room/server
+lifecycle, and reserves Retry space through ordinary connection transitions in
+the existing save row. See [connection behavior](../connection.md). SPN-043 still
+adopts the title-adjacent shared save component and full error/Retry popover;
+SPN-049 composes the wider header. The proposal's boolean `offline` fixture is
+not the production state machine.
 
 ### Row
 

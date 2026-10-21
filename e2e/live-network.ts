@@ -1,9 +1,13 @@
 import type { BrowserContext, WebSocketRoute } from '@playwright/test';
+import { CmdRspCode, CombCmd } from '@univerjs/protocol';
 
 // Chromium's HTTP offline switch alone can leave an established WebSocket alive.
 // Drop both sides explicitly so reconnect tests exercise real offline edits.
 export async function interruptibleNetwork(context: BrowserContext) {
-  const sockets = new Set<{ client: WebSocketRoute; server: WebSocketRoute }>();
+  type Socket = { client: WebSocketRoute; server: WebSocketRoute };
+  const sockets = new Set<Socket>();
+  const heldJoins = new Map<Socket, Parameters<WebSocketRoute['send']>[0][]>();
+  let holdJoins = false;
   let offline = false;
   let loseNextCommit = false;
   let suppressCommittedFrames = false;
@@ -16,6 +20,7 @@ export async function interruptibleNetwork(context: BrowserContext) {
         [...sockets].flatMap(({ client, server }) => [client.close(), server.close()]),
       );
       sockets.clear();
+      heldJoins.clear();
     } else suppressCommittedFrames = false;
   };
   await context.route('**/universer-api/comb/*/unit/*/new_changes', async (route) => {
@@ -44,6 +49,21 @@ export async function interruptibleNetwork(context: BrowserContext) {
     const socket = { client, server };
     sockets.add(socket);
     server.onMessage((message) => {
+      if (holdJoins) {
+        // Hold the real room response, after the socket and HELLO have succeeded.
+        // Its public wire command/code distinguish JOIN from HTTP reachability.
+        try {
+          const frame = JSON.parse(String(message));
+          if (frame.cmd === CombCmd.JOIN && frame.code === CmdRspCode.OK) {
+            const pending = heldJoins.get(socket) ?? [];
+            pending.push(message);
+            heldJoins.set(socket, pending);
+            return;
+          }
+        } catch {
+          // Non-JSON frames retain the existing transparent forwarding behavior.
+        }
+      }
       // Drop the committed response/broadcast before the client sees it.
       if (suppressCommittedFrames && String(message).includes('changeset')) {
         void client.close();
@@ -53,14 +73,28 @@ export async function interruptibleNetwork(context: BrowserContext) {
     });
     client.onClose((code, reason) => {
       sockets.delete(socket);
+      heldJoins.delete(socket);
       void server.close({ code, reason });
     });
     server.onClose((code, reason) => {
       sockets.delete(socket);
+      heldJoins.delete(socket);
       void client.close({ code, reason });
     });
   });
   return {
+    holdJoinAcknowledgements() {
+      holdJoins = true;
+    },
+    joinAcknowledgementHeld() {
+      return heldJoins.size > 0;
+    },
+    releaseJoinAcknowledgements() {
+      holdJoins = false;
+      for (const [socket, messages] of heldJoins)
+        if (sockets.has(socket)) for (const message of messages) socket.client.send(message);
+      heldJoins.clear();
+    },
     loseAcknowledgement() {
       loseNextCommit = true;
       lost = false;

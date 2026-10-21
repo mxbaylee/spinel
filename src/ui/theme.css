@@ -213,12 +213,22 @@ button.primary {
   margin-top: 20px;
 }
 .save-status {
-  min-height: 44px;
+  /* Reserve Retry's height and width through ordinary connection transitions.
+     SPN-043 still owns the title-adjacent save slot and full error popover. */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
   padding: 10px 0;
   font-size: 14px;
 }
-.save-status button {
-  margin-left: 12px;
+.save-message {
+  flex: 1;
+  min-width: 0;
+}
+.save-retry {
+  flex: 0 0 8rem;
+  min-height: 44px;
 }
 .univer-container {
   height: 640px;
@@ -418,6 +428,62 @@ button.primary {
   flex-direction: column;
   gap: 12px;
 }
+.rail-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.connection-status {
+  display: inline-flex;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  vertical-align: middle;
+}
+.workspace button.connection-trigger:not(.univer-container *),
+.connection-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.workspace button.connection-trigger:not(.univer-container *):hover,
+.connection-trigger:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.connection-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.connection-positioner {
+  z-index: 1500;
+}
+.connection-detail {
+  max-width: min(288px, calc(100vw - 32px));
+  padding: 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  color: var(--sp-text);
+  background: var(--sp-panel);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.connection-detail p {
+  margin: 8px 0 0;
+}
 .workspace > header .rail-button {
   width: 44px;
   min-height: 44px;
@@ -551,6 +617,9 @@ dialog {
   .workspace > header nav {
     flex-direction: row;
   }
+  .rail-brand {
+    flex-direction: row;
+  }
   .workspace-body {
     padding: 20px;
   }
@@ -577,6 +646,12 @@ dialog {
   display: block;
   padding: clamp(16px, 3vw, 32px);
   min-width: 0;
+}
+.guest-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
 }
 
 .history-browser > [role='group'],
