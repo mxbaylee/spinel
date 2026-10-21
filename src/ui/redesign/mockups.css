@@ -1152,7 +1152,7 @@
   }
 }
 
-/* Owner direction: restore the original saturated rail colour to expanded navigation. */
+/* Owner direction: restore the original saturated rail color to expanded navigation. */
 .rd-sidebar {
   background: var(--sp-rail);
   color: var(--sp-rail-ink);
@@ -1332,12 +1332,12 @@
 .rd-profile-identity {
   flex-wrap: wrap;
 }
-.rd-profile-colours {
+.rd-profile-colors {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
-.rd-profile-colours .sp-control {
+.rd-profile-colors .sp-control {
   min-width: 44px;
   min-height: 44px;
 }
@@ -1389,7 +1389,7 @@
 .sp-ui .profile-icon-dialog::backdrop {
   background: color-mix(in srgb, var(--sp-text) 24%, transparent);
 }
-.rd-profile-colours .sp-control[aria-pressed='true'] {
+.rd-profile-colors .sp-control[aria-pressed='true'] {
   outline: 2px solid var(--sp-text);
   outline-offset: 3px;
 }

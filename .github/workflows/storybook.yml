@@ -75,6 +75,14 @@ jobs:
           for file in index.html index.json iframe.html; do
             test -s "storybook-static/$file" || { echo "::error::storybook-static/$file is missing"; exit 1; }
           done
+      - name: Upload interactive review build
+        if: needs.changes.outputs.docs_only != 'true' && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: storybook-review
+          path: storybook-static
+          if-no-files-found: error
+          retention-days: 7
       - name: Capture icon and integration stories
         if: needs.changes.outputs.docs_only != 'true'
         run: |

@@ -10,7 +10,7 @@ Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup,
 | --- | --- | --- |
 | Appearance, passkeys and connections become a growing sequence of equal cards. Entry pages use oversized headings and heavy framing. | Notion exposes explicit appearance preferences; Dropbox separates account controls from file navigation. | A compact account area with section navigation; a quiet, single-task entry card. |
 
-Proposed profile sections: Profile & appearance, Passkeys, Connected assistants, This device, and the planned owner-only Guest links inventory (SPN-066). Reuse the landed SPN-036 profile fields, Lucide picker and color presets, pending OAuth return navigation, disconnect and advanced token flows. Theme uses the owner-selected System/Light/Dark segmented control and the same preference as Profile. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
+Proposed profile sections: Profile, Passkeys, This device, Connected assistants, and the planned owner-only Guest links inventory (SPN-066). Reuse the landed SPN-036 profile fields, Lucide picker and color presets, pending OAuth return navigation, disconnect and advanced token flows. Appearance is browser-local, defaults to System and lives in This device, separately from saved profile identity. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
@@ -30,7 +30,7 @@ the profile and sign-out live; passkeys are one sign-in option among several.
 ## Spinel today
 
 The rail has Settings and Sign out links. `/settings` shows Appearance
-(`ThemeSettings`), Your profile (display name, colour and icon), and Your passkeys. The Settings link uses the saved profile icon; SPN-045 will move it to the planned rail position. Sign-in, setup, invite and recovery are
+(`ThemeSettings`), Your profile (display name, color and icon), and Your passkeys. The Settings link uses the saved profile icon; SPN-045 will move it to the planned rail position. Sign-in, setup, invite and recovery are
 single-purpose pages with one heading, one explanation and one primary button.
 
 ## Adopted pattern
@@ -40,11 +40,11 @@ single-purpose pages with one heading, one explanation and one primary button.
   storage-failure explanation. Both controls use one preference store. Owner
   approval replaces the earlier cycling proposal before SPN-045 implements it.
 - **Your profile** replaces Settings (SPN-045). The rail avatar opens it;
-  `/settings` redirects there. Sections, in order: Name, colour and icon
+  `/settings` redirects there. Sections, in order: Name, color and icon
   (SPN-036), Appearance, Your passkeys. **Sign out** is the page's header
   action, top right.
-- **Profile colour** (SPN-036) uses the 16 `fillPresets` laid out like the cell
-  palette; the icon is drawn in the preset's text colour. Icon search is a field
+- **Profile color** (SPN-036) uses the 16 `fillPresets` laid out like the cell
+  palette; the icon is drawn in the preset's text color. Icon search is a field
   with a grid of results, not a dropdown.
 - **Sign-in:** a passkey is the only way in, so unlike the four products it is
   the primary button, not "other ways". The page is the gem, "Sign in", one
@@ -59,7 +59,7 @@ single-purpose pages with one heading, one explanation and one primary button.
 | Always visible                                              | Behind a menu                                                       |
 | ----------------------------------------------------------- | ------------------------------------------------------------------- |
 | Rail: theme button, avatar                                  | Future, not built: passkey row More → Remove (needs its own ticket) |
-| Profile: name, colour, icon, appearance, passkeys, Sign out |                                                                     |
+| Profile: name, color, icon, appearance, passkeys, Sign out |                                                                     |
 | Sign-in: one primary button                                 |                                                                     |
 
 ## Stories
@@ -93,17 +93,17 @@ icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
 visible focus and at least 44 px targets on touch devices. Expanded navigation shows the control
 on its own row above Profile. Collapsed/phone utilities open it in a popover;
-Profile reuses it. This supersedes the earlier explicit-menu proposal, retains
+This device reuses it. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
 must report a storage failure without undoing the in-session theme choice.
 
 ## Saved profile behaviour (SPN-036)
 
-- Profiles contain a display name, one of the 16 fill presets, a Lucide catalog icon, and the existing passkey list. Icon strokes use the preset text colour. New users start with `user-round` and a name-derived colour (owner, 2026-10-17).
+- Profiles contain a display name, one of the 16 fill presets, a Lucide catalog icon, and the existing passkey list. Icon strokes use the preset text color. New users start with `user-round` and a name-derived color (owner, 2026-10-17).
 - The icon dialog searches names, Lucide tags, local synonyms and typos (`flowre` finds Flower). Category and search combine; blank search shows all non-alias icons, 60 at a time, with Show more. Arrow Down enters the grid; arrows/Home/End navigate; Enter picks; Escape cancels and restores focus. It uses the existing dialog and palette patterns, before the redesign (owner, 2026-10-20).
 - Store `lucide:<name>` and validate against the pinned catalog. Search/reference code now lives in `src/profile/`; no emojis or photos. Names are 1–80 characters with no control characters. Saving updates the rail immediately; reopen editors to refresh their membership appearance.
-- Account-only room badges and Sheet canvas labels use saved icons/colours. Guest-linked rooms keep generic names, empty personal avatars and default ID-derived colours (#72); generic user-round glyphs reveal no profile identity. Settings explains this distinction.
-- Sheet labels have rounded corners and include icon plus name. Following reveals an offscreen range without overwriting the local selection or scrolling an already-visible range. Doc canvas colours remain with SPN-058; native Docs services stay enabled. Owner approval, 2026-10-20, [decision #127](https://github.com/mxbaylee/spinel/issues/127).
+- Account-only room badges and Sheet canvas labels use saved icons/colors. Guest-linked rooms keep generic names, empty personal avatars and default ID-derived colors (#72); generic user-round glyphs reveal no profile identity. Settings explains this distinction.
+- Sheet labels have rounded corners and include icon plus name. Following reveals an offscreen range without overwriting the local selection or scrolling an already-visible range. Doc canvas colors remain with SPN-058; native Docs services stay enabled. Owner approval, 2026-10-20, [decision #127](https://github.com/mxbaylee/spinel/issues/127).
 
 SPN-036 merged at `6c09bd4` and is included in this branch. Profile fixtures reuse
 its real `IconPicker`, `ProfileIcon`, catalog and sixteen fill presets. Save in

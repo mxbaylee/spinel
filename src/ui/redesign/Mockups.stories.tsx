@@ -124,4 +124,4 @@ export const DashboardNewMenu: Story = {
 };
 
 export const ProfileIconPicker: Story = { render: () => <ProfileMockup initialPicker="icon" /> };
-export const ProfileColourPicker: Story = { render: () => <ProfileMockup initialPicker="color" /> };
+export const ProfileColorPicker: Story = { render: () => <ProfileMockup initialPicker="color" /> };

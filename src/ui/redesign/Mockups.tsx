@@ -1,10 +1,11 @@
 /** SPN-047 review prototypes. No production routes, network calls or document writes. */
-import { useRef, useState, useSyncExternalStore } from 'react';
+import { createContext, useContext, useRef, useState, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 import { GemLogo } from '../GemLogo.tsx';
 import { EntityIcon } from '../EntityIcon.tsx';
 import { ProfileIcon } from '../../profile/ProfileIcon.tsx';
 import { defaultProfile } from '../../profile/profile.ts';
+import type { Profile } from '../../profile/profile.ts';
 import { IconPicker } from '../../../web/ProfileSettings.tsx';
 import { fillPresets } from '../palette.ts';
 import { getPreference, setPreference, watchTheme } from '../theme.ts';
@@ -93,19 +94,19 @@ function FileIdentity({
   );
 }
 const sampleProfile = defaultProfile('Alex Baylee');
-function Avatar({
-  children,
-  color = sampleProfile.color,
-}: {
-  children?: ReactNode;
-  color?: string;
-}) {
+export const ReviewProfileContext = createContext<{
+  profile: Profile;
+  save: (profile: Profile) => void;
+}>({ profile: sampleProfile, save: () => {} });
+function Avatar({ children, color }: { children?: ReactNode; color?: string }) {
+  const { profile } = useContext(ReviewProfileContext);
+  const fill = color ?? profile.color;
   return (
     <span
       className="rd-avatar"
-      style={{ background: `var(--fill-${color}-bg)`, color: `var(--fill-${color}-fg)` }}
+      style={{ background: `var(--fill-${fill}-bg)`, color: `var(--fill-${fill}-fg)` }}
     >
-      {children ?? <ProfileIcon icon={sampleProfile.icon} />}
+      {children ?? <ProfileIcon icon={profile.icon} />}
     </span>
   );
 }
@@ -132,7 +133,7 @@ export function AppearanceChoice({
     />
   );
 }
-function ThemeMenu({ labelled = false }: { labelled?: boolean }) {
+export function ThemeMenu({ labelled = false }: { labelled?: boolean }) {
   const preference = useSyncExternalStore(watchTheme, getPreference);
   const [error, setError] = useState('');
   const control = (
@@ -609,7 +610,15 @@ export function DashboardMockup({
   state = 'populated',
   collapsed = false,
   initialLayout = 'list',
+  onOpen,
+  onProfile,
 }: {
+  onOpen?: (file: {
+    name: string;
+    kind: 'doc' | 'sheet' | 'space';
+    access: 'owner' | 'editor' | 'viewer';
+  }) => void;
+  onProfile?: () => void;
   initialLayout?: 'list' | 'grid';
   collapsed?: boolean;
   state?:
@@ -624,6 +633,18 @@ export function DashboardMockup({
     | 'shared'
     | 'folder';
 }) {
+  const [items, setItems] = useState<
+    {
+      name: string;
+      kind: 'doc' | 'sheet' | 'space' | 'folder';
+      access: 'owner' | 'editor' | 'viewer';
+      detail: string;
+      date: string;
+      tags: string;
+    }[]
+  >(files);
+  const [target, setTarget] = useState('');
+  const [destination, setDestination] = useState('Household');
   const [view, setView] = useState(
     state === 'trash'
       ? 'Trash'
@@ -646,8 +667,16 @@ export function DashboardMockup({
   const [modified, setModified] = useState('any');
   const [removed, setRemoved] = useState<string[]>([]);
   const [layout, setLayout] = useState(initialLayout);
-  if (view === 'Your profile') return <ProfileMockup />;
-  const rows = files.filter(
+  const selectView = (next: string) => {
+    if (next === 'Your profile' && onProfile) onProfile();
+    else {
+      const file = items.find((item) => item.name === next);
+      if (file && file.kind !== 'folder' && onOpen) onOpen({ ...file, kind: file.kind });
+      else setView(next);
+    }
+  };
+  if (view === 'Your profile') return <ProfileMockup onBack={() => setView('My files')} />;
+  const rows = items.filter(
     (file) =>
       file.name.toLowerCase().includes(search.toLowerCase()) &&
       (kind === 'all' || file.kind === kind) &&
@@ -656,7 +685,7 @@ export function DashboardMockup({
         (scope === 'shared' ? file.access !== 'owner' : file.access === 'owner')) &&
       (modified === 'any' || file.date.includes('ago')) &&
       !removed.includes(file.name) &&
-      (!files.some((item) => item.name === view && item.kind !== 'folder') || file.name === view) &&
+      (!items.some((item) => item.name === view && item.kind !== 'folder') || file.name === view) &&
       (view !== 'Shared with me' || file.access !== 'owner') &&
       (view !== 'Trash' || (file.access === 'owner' && file.kind !== 'folder')) &&
       (!['Household', 'Work', 'Trips'].includes(view) ||
@@ -667,7 +696,7 @@ export function DashboardMockup({
   );
   const empty = state === 'empty' || rows.length === 0;
   return (
-    <Shell sidebar collapsed={collapsed} selected={view} onSelect={setView}>
+    <Shell sidebar collapsed={collapsed} selected={view} onSelect={selectView}>
       <header className="rd-page-header">
         <div>
           <h1>{view}</h1>
@@ -678,7 +707,11 @@ export function DashboardMockup({
             primary
             actions={['Doc', 'Sheet', 'Space', 'Folder', 'Import file…'].map((label) => ({
               label,
-              onClick: () => setDialog(label),
+              onClick: () => {
+                setName('');
+                setTarget('');
+                setDialog(label);
+              },
             }))}
           >
             ＋ New <span aria-hidden="true">⌄</span>
@@ -841,7 +874,11 @@ export function DashboardMockup({
                 <button
                   className="rd-file-open"
                   onClick={() =>
-                    file.kind === 'folder' ? setView(file.name) : setNotice(`Opening ${file.name}…`)
+                    file.kind === 'folder'
+                      ? setView(file.name)
+                      : onOpen
+                        ? onOpen({ ...file, kind: file.kind })
+                        : setNotice(`Opening ${file.name}…`)
                   }
                 >
                   <span className="rd-file-icon">
@@ -897,7 +934,9 @@ export function DashboardMockup({
                             onClick: () =>
                               file.kind === 'folder'
                                 ? setView(file.name)
-                                : setNotice(`Opening ${file.name}…`),
+                                : onOpen
+                                  ? onOpen({ ...file, kind: file.kind })
+                                  : setNotice(`Opening ${file.name}…`),
                           },
                           { label: 'Pin', onClick: () => setNotice(`${file.name} pinned.`) },
                           { label: 'Tags…', onClick: () => setDialog('Tags') },
@@ -905,12 +944,19 @@ export function DashboardMockup({
                             ? [
                                 {
                                   label: 'File into folder…',
-                                  onClick: () => setDialog('File into folder'),
+                                  onClick: () => {
+                                    setTarget(file.name);
+                                    setDialog('File into folder');
+                                  },
                                 },
                               ]
                             : ['Share…', 'Rename…', 'Move…'].map((label) => ({
                                 label,
-                                onClick: () => setDialog(label),
+                                onClick: () => {
+                                  setTarget(file.name);
+                                  setName(file.name);
+                                  setDialog(label);
+                                },
                               }))),
                           {
                             label: 'Available offline on this device',
@@ -971,15 +1017,64 @@ export function DashboardMockup({
           if (!open) setDialog('');
         }}
       >
-        <label>
-          Name
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Untitled" />
-        </label>
+        {dialog === 'Share…' ? (
+          <SharingContent />
+        ) : dialog === 'File into folder' || dialog === 'Move…' ? (
+          <>
+            <Choice
+              label="Destination folder"
+              value={destination}
+              onChange={setDestination}
+              options={['Household', 'Work', 'Trips'].map((label) => ({ value: label, label }))}
+            />
+            <p>
+              {dialog === 'File into folder'
+                ? 'This files a reference in your own folder. The original file and its access stay unchanged.'
+                : 'Move this file to another folder.'}
+            </p>
+          </>
+        ) : dialog === 'Delete permanently' ? (
+          <p>This cannot be undone.</p>
+        ) : (
+          <label>
+            {dialog === 'Tags' ? 'Tags' : 'Name'}
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Untitled" />
+          </label>
+        )}
         <div className="sp-actions">
           <Button onClick={() => setDialog('')}>Cancel</Button>
           <Button
             primary
             onClick={() => {
+              if (['Doc', 'Sheet', 'Space'].includes(dialog)) {
+                const next = {
+                  name: name || 'Untitled',
+                  kind: dialog.toLowerCase() as 'doc' | 'sheet' | 'space',
+                  access: 'owner' as const,
+                };
+                setItems([
+                  ...items,
+                  {
+                    ...next,
+                    detail: 'Private',
+                    date: 'Just now',
+                    tags: ['Household', 'Work', 'Trips'].includes(view) ? view.toLowerCase() : '',
+                  },
+                ]);
+                onOpen?.(next);
+              }
+              if (dialog === 'Rename…')
+                setItems(
+                  items.map((file) =>
+                    file.name === target ? { ...file, name: name || file.name } : file,
+                  ),
+                );
+              if (dialog === 'File into folder' || dialog === 'Move…')
+                setItems(
+                  items.map((file) =>
+                    file.name === target ? { ...file, tags: destination.toLowerCase() } : file,
+                  ),
+                );
               setNotice(`${dialog}: ${name || 'Untitled'}`);
               setDialog('');
             }}
@@ -1118,7 +1213,17 @@ export function EditorMockup({
   collapsed = false,
   title,
   initialPage = 'Overview',
+  onBack,
+  onProfile,
+  onHistory,
+  saveState = 'saved',
+  onRetrySave,
 }: {
+  onBack?: () => void;
+  onProfile?: () => void;
+  onHistory?: () => void;
+  saveState?: 'saved' | 'saving' | 'failed';
+  onRetrySave?: () => void;
   sheet?: boolean;
   guest?: boolean;
   viewOnly?: boolean;
@@ -1134,6 +1239,8 @@ export function EditorMockup({
   const [share, setShare] = useState(false);
   const [selected, setSelected] = useState(initialPage);
   const [checkpoint, setCheckpoint] = useState('10:15 · Ready for the trip');
+  const [versionName, setVersionName] = useState('');
+  const [naming, setNaming] = useState(false);
   const [panel, setPanel] = useState(formula ? 'Formula' : '');
   const [notice, setNotice] = useState('');
   const name = title ?? (sheet ? 'Quarterly budget' : space ? selected : 'Autumn plans');
@@ -1147,7 +1254,11 @@ export function EditorMockup({
       guest={guest}
       canEdit={!viewOnly}
       selected={selected}
-      onSelect={setSelected}
+      onSelect={(next) => {
+        if (next === 'My files' && onBack) onBack();
+        else if (next === 'Your profile' && onProfile) onProfile();
+        else setSelected(next);
+      }}
     >
       <header className="rd-editor-header">
         <div className="rd-editor-title">
@@ -1160,7 +1271,9 @@ export function EditorMockup({
               className="sp-quiet"
               aria-label="Back to files"
               onClick={() =>
-                setNotice('Return to your previous folder, search and scroll position.')
+                onBack
+                  ? onBack()
+                  : setNotice('Return to your previous folder, search and scroll position.')
               }
             >
               <Glyph name="back" />
@@ -1184,15 +1297,34 @@ export function EditorMockup({
         </div>
         <div className="rd-status-slot">
           <DetailsPopover
-            label={offline ? '↻ Waiting to sync' : viewOnly ? 'Connected' : '✓ Saved'}
+            label={
+              offline
+                ? guest
+                  ? 'Reconnecting'
+                  : '↻ Waiting to sync'
+                : viewOnly
+                  ? 'Connected'
+                  : saveState === 'failed'
+                    ? 'Could not save'
+                    : saveState === 'saving'
+                      ? 'Saving…'
+                      : '✓ Saved'
+            }
           >
             <p>
               {offline
-                ? 'Saved on this device. Your changes will sync when you reconnect.'
+                ? guest
+                  ? 'Connection lost. Keep this page open while we reconnect; unsent changes may be lost if you close it.'
+                  : 'Saved on this device. Your changes will sync when you reconnect.'
                 : viewOnly
                   ? 'You can view this document. You’re connected.'
-                  : 'All changes are saved. You’re connected.'}
+                  : saveState === 'failed'
+                    ? 'Your latest changes have not been saved. Keep this page open and try again.'
+                    : saveState === 'saving'
+                      ? 'Saving your latest changes. Keep this page open.'
+                      : 'All changes are saved. You’re connected.'}
             </p>
+            {saveState === 'failed' && <Button onClick={onRetrySave}>Retry saving</Button>}
             {offline && <Button onClick={() => setNotice('Reconnecting…')}>Try again</Button>}
           </DetailsPopover>
         </div>
@@ -1212,9 +1344,12 @@ export function EditorMockup({
             </Button>
           )}
           {guest ? (
-            <Button aria-label="Export as PDF" onClick={() => setNotice('Preparing PDF…')}>
-              <Glyph name="download" /> PDF
-            </Button>
+            <>
+              <ThemeMenu />
+              <Button aria-label="Export as PDF" onClick={() => setNotice('Preparing PDF…')}>
+                <Glyph name="download" /> PDF
+              </Button>
+            </>
           ) : (
             <ActionMenu
               label="Document actions"
@@ -1233,12 +1368,24 @@ export function EditorMockup({
                       },
                     ]
                   : []),
+                ...(!viewOnly
+                  ? [
+                      {
+                        label: 'Name this version…',
+                        disabled: saveState !== 'saved' || offline,
+                        onClick: () => setNaming(true),
+                      },
+                    ]
+                  : []),
                 ...[
                   'Versions',
                   'Export',
-                  'Theatre mode',
-                  ...(!viewOnly ? ['Insert formula', 'Fill presets'] : []),
-                ].map((label) => ({ label, onClick: () => setPanel(label) })),
+                  ...(!viewOnly ? [sheet ? 'Fill presets' : 'Insert formula'] : []),
+                ].map((label) => ({
+                  label,
+                  onClick: () =>
+                    label === 'Versions' && onHistory ? onHistory() : setPanel(label),
+                })),
               ]}
             />
           )}
@@ -1260,6 +1407,17 @@ export function EditorMockup({
           <em>I</em>
           <u>U</u>
           <span>≡</span>
+        </div>
+      )}
+      {saveState === 'failed' && !viewOnly && (
+        <div className="rd-banner" role="alert">
+          Your latest changes have not been saved. Keep this page open.{' '}
+          <Button onClick={onRetrySave}>Retry saving</Button>
+        </div>
+      )}
+      {offline && guest && (
+        <div className="rd-banner" role="alert">
+          Connection lost. Keep this page open to protect unsent changes.
         </div>
       )}
       <div className="rd-editor-body">
@@ -1292,15 +1450,39 @@ export function EditorMockup({
             </div>
             {panel.includes('formula') || panel === 'Formula' ? (
               <FormulaForm />
+            ) : panel === 'Fill presets' ? (
+              <div className="rd-profile-colors">
+                {fillPresets.map((preset) => (
+                  <Button
+                    key={preset.id}
+                    aria-label={preset.id}
+                    style={{
+                      background: `var(--fill-${preset.id}-bg)`,
+                      color: `var(--fill-${preset.id}-fg)`,
+                    }}
+                    onClick={() => setNotice(`${preset.id} selected for the cell in this preview.`)}
+                  >
+                    Aa
+                  </Button>
+                ))}
+              </div>
             ) : panel === 'Versions' ? (
               <HistoryContent selected={checkpoint} setSelected={setCheckpoint} />
             ) : (
               <>
                 <p className="sp-muted">
-                  {panel === 'Export' ? 'Choose a format for this document.' : 'Document options'}
+                  {saveState !== 'saved'
+                    ? 'Wait until your latest changes are saved before exporting.'
+                    : panel === 'Export'
+                      ? 'Choose a format for this document.'
+                      : 'Document options'}
                 </p>
                 {['Univer file', 'PDF'].map((label) => (
-                  <Button key={label} onClick={() => setNotice(`Preparing ${label}…`)}>
+                  <Button
+                    key={label}
+                    disabled={saveState !== 'saved' || offline}
+                    onClick={() => setNotice(`Preparing ${label}…`)}
+                  >
                     {label}
                   </Button>
                 ))}
@@ -1313,6 +1495,31 @@ export function EditorMockup({
         {notice ||
           (viewOnly ? 'You can view this document.' : 'All times shown in your local time.')}
       </div>
+      <Modal
+        title="Name this version"
+        description="Keep a named checkpoint so you can find this moment again."
+        open={naming}
+        onOpenChange={setNaming}
+      >
+        <label>
+          Version name
+          <input value={versionName} onChange={(event) => setVersionName(event.target.value)} />
+        </label>
+        <div className="sp-actions">
+          <Button onClick={() => setNaming(false)}>Cancel</Button>
+          <Button
+            primary
+            disabled={!versionName.trim()}
+            onClick={() => {
+              setCheckpoint(`Just now · ${versionName}`);
+              setNotice(`Version named ${versionName}.`);
+              setNaming(false);
+            }}
+          >
+            Save version name
+          </Button>
+        </div>
+      </Modal>
       <Modal
         title={`Share ${name}`}
         description="Choose who can open this file."
@@ -1697,7 +1904,19 @@ function HistoryContent({
 export function HistoryMockup({
   calendar = false,
   confirmation = false,
+  viewOnly = false,
+  sheet = false,
+  title = 'Autumn plans',
+  onBack,
+  onFiles,
+  onProfile,
 }: {
+  viewOnly?: boolean;
+  sheet?: boolean;
+  title?: string;
+  onBack?: () => void;
+  onFiles?: () => void;
+  onProfile?: () => void;
   calendar?: boolean;
   confirmation?: boolean;
 }) {
@@ -1707,19 +1926,25 @@ export function HistoryMockup({
   );
   const [notice, setNotice] = useState('');
   return (
-    <Shell>
+    <Shell compact onSelect={(next) => (next === 'Your profile' ? onProfile?.() : onFiles?.())}>
       <header className="rd-page-header">
         <div>
-          <p className="rd-eyebrow">AUTUMN PLANS</p>
+          <p className="rd-eyebrow">{title}</p>
           <h1>Version history</h1>
         </div>
         <div className="sp-actions">
-          <Button onClick={() => setNotice('Return to the live document without restoring.')}>
+          <Button
+            onClick={() =>
+              onBack ? onBack() : setNotice('Return to the live document without restoring.')
+            }
+          >
             Return to document
           </Button>
-          <Button primary onClick={() => setRestore(true)}>
-            Restore this version…
-          </Button>
+          {!viewOnly && (
+            <Button primary onClick={() => setRestore(true)}>
+              Restore this version…
+            </Button>
+          )}
         </div>
       </header>
       <p className="rd-history-selection">
@@ -1736,13 +1961,13 @@ export function HistoryMockup({
             <HistoryContent selected={selected} setSelected={setSelected} />
           </details>
         </aside>
-        <DocumentSurface />
+        <DocumentSurface sheet={sheet} readOnly />
       </div>
       <p role="status">{notice}</p>
       <Modal
         title={`Restore ${selected.startsWith('October') ? selected : `October 20, 2026 · ${selected}`} for everyone?`}
         description="The current document will be kept as a Before restore checkpoint. Other open editors will need to reload."
-        open={restore}
+        open={restore && !viewOnly}
         onOpenChange={setRestore}
       >
         <div className="sp-actions">
@@ -1764,15 +1989,30 @@ export function HistoryMockup({
 export function ProfileMockup({
   section = 'profile',
   initialPicker,
+  onBack,
+  onSignOut,
+  operator = false,
+  returnLabel = 'Back to files',
+  credential = 'idle',
+  onCredential,
 }: {
+  onBack?: () => void;
+  onSignOut?: () => void;
+  operator?: boolean;
+  returnLabel?: string;
+  credential?: 'idle' | 'pending' | 'success' | 'error';
+  onCredential?: (next: 'idle' | 'pending' | 'success' | 'error') => void;
   initialPicker?: 'icon' | 'color';
   section?: 'profile' | 'security' | 'connections' | 'device' | 'links';
 }) {
   const [tab, setTab] = useState<string>(section);
   const theme = useSyncExternalStore(watchTheme, getPreference);
   const [notice, setNotice] = useState('');
-  const [draft, setDraft] = useState(sampleProfile);
-  const [saved, setSaved] = useState(sampleProfile);
+  const identity = useContext(ReviewProfileContext);
+  const [draft, setDraft] = useState(identity.profile);
+  const [saved, setSaved] = useState(identity.profile);
+  const [connected, setConnected] = useState(true);
+  const [downloaded, setDownloaded] = useState(true);
   const [picker, setPicker] = useState(initialPicker);
   const iconTrigger = useRef<HTMLButtonElement>(null);
   const closeIcon = () => {
@@ -1781,6 +2021,11 @@ export function ProfileMockup({
   };
   return (
     <Shell
+      operator={operator}
+      compact
+      onSelect={(next) => {
+        if (next === 'My files') onBack?.();
+      }}
       accountAvatar={
         <Avatar color={saved.color}>
           <ProfileIcon icon={saved.icon} />
@@ -1790,18 +2035,25 @@ export function ProfileMockup({
       <header className="rd-page-header">
         <div>
           <p className="rd-eyebrow">YOUR ACCOUNT</p>
-          <h1>Your profile</h1>
+          <h1>Settings</h1>
         </div>
-        <Button>Sign out</Button>
+        <div className="sp-actions">
+          {onBack && <Button onClick={onBack}>{returnLabel}</Button>}
+          <Button onClick={onSignOut}>Sign out</Button>
+        </div>
       </header>
       <div className="rd-profile">
         <nav aria-label="Profile sections">
           {[
-            ['profile', 'Profile & appearance'],
+            ['profile', 'Profile'],
             ['security', 'Passkeys'],
-            ['connections', 'Connected assistants'],
             ['device', 'This device'],
-            ['links', 'Guest links'],
+            ...(!operator
+              ? [
+                  ['connections', 'Connected assistants'],
+                  ['links', 'Guest links'],
+                ]
+              : []),
           ].map(([id, label]) => (
             <button
               className="rd-nav-item"
@@ -1824,12 +2076,14 @@ export function ProfileMockup({
                 </Avatar>
                 <div>
                   <strong>{draft.name}</strong>
-                  <p className="sp-muted">Your everyday account</p>
+                  <p className="sp-muted">
+                    {operator ? 'Operator account · No document access' : 'Your everyday account'}
+                  </p>
                 </div>
                 <button className="sp-control" ref={iconTrigger} onClick={() => setPicker('icon')}>
                   Choose icon
                 </button>
-                <Button onClick={() => setPicker('color')}>Choose colour</Button>
+                <Button onClick={() => setPicker('color')}>Choose color</Button>
               </div>
               <label>
                 Display name
@@ -1845,6 +2099,7 @@ export function ProfileMockup({
                   disabled={!draft.name.trim()}
                   onClick={() => {
                     setSaved(draft);
+                    identity.save(draft);
                     setNotice(
                       'Profile saved in this preview. Reopen your editors to update your presence.',
                     );
@@ -1857,20 +2112,6 @@ export function ProfileMockup({
                 Your name and icon appear in account-only documents. Documents with guest links keep
                 generic identities.
               </p>
-              <section className="rd-section">
-                <h2>Appearance</h2>
-                <p className="sp-muted">A familiar workspace, in your preferred light.</p>
-                <AppearanceChoice
-                  value={theme}
-                  onChange={(v) => {
-                    setNotice(
-                      setPreference(v as 'system' | 'light' | 'dark')
-                        ? ''
-                        : 'Theme changed for this visit, but this browser could not save your preference.',
-                    );
-                  }}
-                />
-              </section>
             </>
           ) : tab === 'security' ? (
             <>
@@ -1883,10 +2124,29 @@ export function ProfileMockup({
                 </span>
                 <ActionMenu
                   label="Passkey actions"
-                  actions={[{ label: 'Rename…' }, { label: 'Remove…', destructive: true }]}
+                  actions={[
+                    { label: 'Rename (planned)', disabled: true },
+                    { label: 'Remove (planned)', disabled: true },
+                  ]}
                 />
               </div>
-              <Button primary>Add a passkey</Button>
+              {credential === 'success' && (
+                <div className="rd-setting-row">
+                  <span>
+                    New passkey<small>Added just now</small>
+                  </span>
+                </div>
+              )}
+              <Button
+                primary
+                onClick={() =>
+                  onCredential
+                    ? onCredential('pending')
+                    : setNotice('Passkey creation is available in the connected walkthrough.')
+                }
+              >
+                Add a passkey
+              </Button>
             </>
           ) : tab === 'links' ? (
             <>
@@ -1923,32 +2183,81 @@ export function ProfileMockup({
             <>
               <h2>Connected assistants</h2>
               <p className="sp-muted">Manage applications you have allowed to access your files.</p>
+              <label>
+                MCP server address
+                <input readOnly value="https://spinel.example/mcp" />
+              </label>
+              <p className="sp-muted">
+                Add this address in your application, then sign in to approve its access.
+              </p>
               <div className="rd-setting-row">
                 <span>
                   <strong>Notebook client</strong>
-                  <small>client.example · Last used today</small>
+                  <small>
+                    {connected
+                      ? 'client.example · Last used today'
+                      : 'Disconnected · No longer has access'}
+                  </small>
                 </span>
-                <Button onClick={() => setNotice('Connection disconnected.')}>Disconnect</Button>
+                <Button
+                  disabled={!connected}
+                  onClick={() => {
+                    setConnected(false);
+                    setNotice('Connection disconnected.');
+                  }}
+                >
+                  Disconnect
+                </Button>
               </div>
               <details className="rd-section">
                 <summary>Advanced: personal access tokens</summary>
                 <p className="sp-muted">For applications you configure yourself.</p>
-                <Button>Create token</Button>
+                <Button disabled title="Token creation is not simulated in this walkthrough">
+                  Create token
+                </Button>
               </details>
             </>
           ) : (
             <>
-              <h2>This device</h2>
-              <p className="sp-muted">Downloaded files are available without a connection.</p>
-              <div className="rd-banner">
-                This browser may clear offline files when space runs low.
-              </div>
-              <div className="rd-setting-row">
-                <span>
-                  Quarterly budget <small>Available offline · 84 KB</small>
-                </span>
-                <Button>Remove from device</Button>
-              </div>
+              <section className="rd-section">
+                <h2>Appearance on this device</h2>
+                <p className="sp-muted">
+                  Saved in this browser. Applies to members and guests; signing in does not change
+                  it.
+                </p>
+                <AppearanceChoice
+                  value={theme}
+                  onChange={(v) => {
+                    setNotice(
+                      setPreference(v as 'system' | 'light' | 'dark')
+                        ? ''
+                        : 'Theme changed for this visit, but this browser could not save your preference.',
+                    );
+                  }}
+                />
+              </section>
+              {!operator && (
+                <>
+                  <h2>Offline files</h2>
+                  <p className="sp-muted">Downloaded files are available without a connection.</p>
+                  <div className="rd-banner">
+                    This browser may clear offline files when space runs low.
+                  </div>
+                  <div className="rd-setting-row">
+                    <span>
+                      Quarterly budget{' '}
+                      <small>
+                        {downloaded
+                          ? 'Available offline · 84 KB'
+                          : 'Online only · Removed from this device'}
+                      </small>
+                    </span>
+                    <Button disabled={!downloaded} onClick={() => setDownloaded(false)}>
+                      Remove from device
+                    </Button>
+                  </div>
+                </>
+              )}
             </>
           )}
           <p className="rd-feedback" role="status">
@@ -1956,6 +2265,24 @@ export function ProfileMockup({
           </p>
         </div>
       </div>
+      {(credential === 'pending' || credential === 'error') && (
+        <section className="rd-section">
+          <h2>Add a passkey</h2>
+          <p role={credential === 'error' ? 'alert' : 'status'}>
+            {credential === 'error'
+              ? 'The passkey was not added. Your existing passkeys still work.'
+              : 'Continue in your browser or device’s passkey prompt.'}
+          </p>
+          <div className="sp-actions">
+            <Button onClick={() => onCredential?.('idle')}>Cancel</Button>
+            {credential === 'error' && (
+              <Button primary onClick={() => onCredential?.('pending')}>
+                Try again
+              </Button>
+            )}
+          </div>
+        </section>
+      )}
       {picker === 'icon' && (
         <IconPicker
           value={draft.icon}
@@ -1967,14 +2294,14 @@ export function ProfileMockup({
         />
       )}
       <Modal
-        title="Choose your profile colour"
+        title="Choose your profile color"
         description="Use the same sixteen profile presets available in Spinel."
         open={picker === 'color'}
         onOpenChange={(open) => {
           if (!open) setPicker(undefined);
         }}
       >
-        <div className="rd-profile-colours">
+        <div className="rd-profile-colors">
           {fillPresets.map((preset) => (
             <Button
               key={preset.id}
@@ -2001,7 +2328,11 @@ export function ProfileMockup({
 export function AdminMockup({
   state = 'ready',
   section = 'People',
+  firstRun = false,
+  onProfile,
 }: {
+  firstRun?: boolean;
+  onProfile?: () => void;
   state?:
     'ready' | 'loading' | 'error' | 'invite-created' | 'health-warning' | 'disable' | 'passkeys';
   section?: string;
@@ -2010,16 +2341,28 @@ export function AdminMockup({
   const [confirm, setConfirm] = useState(state === 'disable' ? 'Alex Kim' : '');
   const [passkeys, setPasskeys] = useState(state === 'passkeys' ? 'Alex Kim' : '');
   const [created, setCreated] = useState(state === 'invite-created');
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [purpose, setPurpose] = useState('new');
+  const [expiry, setExpiry] = useState('168');
+  const [issued, setIssued] = useState({ purpose: 'new', expiry: '168' });
+  const [revoked, setRevoked] = useState(false);
+  const [disabled, setDisabled] = useState<string[]>([]);
   const [notice, setNotice] = useState('');
   return (
-    <Shell operator compact>
+    <Shell
+      operator
+      compact
+      onSelect={(next) => {
+        if (next === 'Your profile') onProfile?.();
+      }}
+    >
       <header className="rd-page-header">
         <div>
           <p className="rd-eyebrow">SERVER OPERATOR</p>
           <h1>Administration</h1>
         </div>
         {tab === 'Invites' && (
-          <Button primary={!created} onClick={() => setCreated(true)}>
+          <Button primary={!created} onClick={() => setInviteOpen(true)}>
             Create invite
           </Button>
         )}
@@ -2040,38 +2383,61 @@ export function AdminMockup({
         <div className="rd-profile-content">
           <h2>{tab}</h2>
           <p className="sp-muted">Manage the instance. Document content stays private.</p>
+          {firstRun && tab === 'People' && (
+            <section className="rd-section">
+              <h3>Your workspace is ready</h3>
+              <p>
+                Invite a separate everyday account to create and open documents. This Operator
+                account manages access and backups.
+              </p>
+              <Button onClick={() => setTab('Invites')}>Invite your everyday account</Button>
+            </section>
+          )}
           {state === 'loading' ? (
             <p role="status">Loading accounts…</p>
           ) : state === 'error' ? (
             <p role="alert">Could not load accounts. Try again.</p>
           ) : tab === 'People' ? (
-            ['Operator (you)', 'Alex Baylee', 'Alex Kim'].map((person) => (
-              <div className="rd-setting-row" key={person}>
-                <span>
-                  <strong>{person}</strong>
-                  <small>
-                    {person.startsWith('Operator')
-                      ? 'Operator · Protected account'
-                      : 'Member · Active · 1 passkey'}
-                  </small>
-                </span>
-                <ActionMenu
-                  label={`Actions for ${person}`}
-                  actions={[
-                    {
-                      label: 'Manage passkeys',
-                      onClick: () => setPasskeys(person),
-                    },
-                    {
-                      label: 'Disable account…',
-                      destructive: true,
-                      disabled: person.startsWith('Operator'),
-                      onClick: () => setConfirm(person),
-                    },
-                  ]}
-                />
-              </div>
-            ))
+            (firstRun ? ['Operator (you)'] : ['Operator (you)', 'Alex Baylee', 'Alex Kim']).map(
+              (person) => (
+                <div className="rd-setting-row" key={person}>
+                  <span>
+                    <strong>{person}</strong>
+                    <small>
+                      {person.startsWith('Operator')
+                        ? 'Operator · Protected account'
+                        : disabled.includes(person)
+                          ? 'Member · Disabled'
+                          : 'Member · Active · 1 passkey'}
+                    </small>
+                  </span>
+                  <ActionMenu
+                    label={`Actions for ${person}`}
+                    actions={[
+                      {
+                        label: 'Manage passkeys',
+                        onClick: () => setPasskeys(person),
+                      },
+                      {
+                        label: 'Create recovery invite…',
+                        disabled: disabled.includes(person),
+                        onClick: () => {
+                          setPurpose(person);
+                          setInviteOpen(true);
+                          setTab('Invites');
+                        },
+                      },
+                      {
+                        label: 'Disable account…',
+                        destructive: true,
+                        disabled: person.startsWith('Operator') || disabled.includes(person),
+                        onClick: () => setConfirm(person),
+                      },
+                    ]}
+                  />
+                </div>
+              ),
+            )
           ) : tab === 'Invites' ? (
             <>
               {created && (
@@ -2097,12 +2463,31 @@ export function AdminMockup({
                   </p>
                 </section>
               )}
-              <div className="rd-setting-row">
-                <span>
-                  New account invite<small>Expires tomorrow</small>
-                </span>
-                <Button onClick={() => setNotice('Invite revoked.')}>Revoke</Button>
-              </div>
+              {firstRun && !created && !revoked ? (
+                <p>No invites yet. Create one for your everyday account.</p>
+              ) : (
+                <div className="rd-setting-row">
+                  <span>
+                    {issued.purpose === 'new' ? 'New account invite' : `Recover ${issued.purpose}`}
+                    <small>
+                      {revoked
+                        ? 'Revoked'
+                        : `Available · Expires in ${{ '1': '1 hour', '24': '1 day', '168': '7 days', '720': '30 days' }[issued.expiry]}`}
+                    </small>
+                  </span>
+                  {!revoked && (
+                    <Button
+                      onClick={() => {
+                        setRevoked(true);
+                        setCreated(false);
+                        setNotice('Invite revoked.');
+                      }}
+                    >
+                      Revoke
+                    </Button>
+                  )}
+                </div>
+              )}
             </>
           ) : tab === 'Connections' ? (
             <div className="rd-setting-row">
@@ -2116,20 +2501,26 @@ export function AdminMockup({
               <div className="rd-setting-row">
                 <span>
                   <strong>
-                    {state === 'health-warning' ? 'Backup overdue' : '✓ Backups are current'}
+                    {firstRun
+                      ? 'No backups yet'
+                      : state === 'health-warning'
+                        ? 'Backup overdue'
+                        : '✓ Backups are current'}
                   </strong>
                   <small>
-                    {state === 'health-warning'
-                      ? 'Last successful backup: Oct 18 at 03:00 · Checked today at 12:30'
-                      : 'Last successful backup: today at 03:00'}
+                    {firstRun
+                      ? 'Configure backups before adding your work.'
+                      : state === 'health-warning'
+                        ? 'Last successful backup: Oct 18 at 03:00 · Checked today at 12:30'
+                        : 'Last successful backup: today at 03:00'}
                   </small>
                 </span>
                 <Button>Backup guide</Button>
               </div>
               <div className="rd-setting-row">
                 <span>
-                  <strong>✓ Server healthy</strong>
-                  <small>Disk 18% · Memory 42% · Updated just now</small>
+                  <strong>Server telemetry</strong>
+                  <small>Planned · Disk, memory and connection health</small>
                 </span>
               </div>
             </>
@@ -2139,6 +2530,57 @@ export function AdminMockup({
           </p>
         </div>
       </div>
+      <Modal
+        title="Create an invitation"
+        description="Give someone access, or help an existing account recover its passkeys."
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
+      >
+        <div className="rd-form">
+          <Choice
+            label="Invite for"
+            value={purpose}
+            onChange={setPurpose}
+            options={[
+              { value: 'new', label: 'A new everyday account' },
+              ...['Operator (you)', ...(!firstRun ? ['Alex Baylee', 'Alex Kim'] : [])]
+                .filter((person) => !disabled.includes(person))
+                .map((person) => ({ value: person, label: `Recover ${person}` })),
+            ]}
+          />
+          <Choice
+            label="Expires in"
+            value={expiry}
+            onChange={setExpiry}
+            options={[
+              { value: '1', label: '1 hour' },
+              { value: '24', label: '1 day' },
+              { value: '168', label: '7 days' },
+              { value: '720', label: '30 days' },
+            ]}
+          />
+          {purpose !== 'new' && (
+            <p>
+              Once accepted, recovery replaces this account’s old passkeys and signs out its other
+              devices. Creating the invitation does not end access.
+            </p>
+          )}
+          <div className="sp-actions">
+            <Button onClick={() => setInviteOpen(false)}>Cancel</Button>
+            <Button
+              primary
+              onClick={() => {
+                setIssued({ purpose, expiry });
+                setCreated(true);
+                setRevoked(false);
+                setInviteOpen(false);
+              }}
+            >
+              Create invite
+            </Button>
+          </div>
+        </div>
+      </Modal>
       <Modal
         title={`Passkeys for ${passkeys || 'account'}`}
         description="Account credentials only; documents remain private."
@@ -2175,6 +2617,7 @@ export function AdminMockup({
           <Button
             primary
             onClick={() => {
+              setDisabled([...disabled, confirm]);
               setNotice(`${confirm} disabled in this preview.`);
               setConfirm('');
             }}

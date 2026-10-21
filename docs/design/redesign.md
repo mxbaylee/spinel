@@ -155,7 +155,7 @@ Do not run another agent's local workload concurrently.
 | Formula creation/results | Editor/DocFormulas; native formula screenshots | Formula, FormulaInContext, FormulaTableInContext | SPN-049, SPN-076 |
 | History preview/restore | Editor/VersionNames; history-calendar screenshot | History | SPN-085 |
 | Sharing and guest links | Sharing/Sharing; Sharing/ShareLink | Sharing, SharingCreatedLink, SharingExistingLink, SharingReplaceLink, SharingError | SPN-081 |
-| Profile and appearance | Settings/ProfileSettings; landed SPN-036 | Profile, ProfileIconPicker, ProfileColourPicker | SPN-045 |
+| Profile and appearance | Settings/ProfileSettings; landed SPN-036 | Profile, ProfileIconPicker, ProfileColorPicker | SPN-045 |
 | Passkeys | current settings Playwright capture | Profile (Passkeys section) | SPN-045, SPN-070 |
 | Connections / tokens | Settings/AssistantConnections; Settings/AccessTokens | Connections | SPN-045 |
 | Consent and expiry | Settings/ConnectAssistant | Consent, ConsentReadOnly, ConsentExpired | SPN-083 |
@@ -233,7 +233,7 @@ icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
 visible focus and at least 44 px targets on touch devices. Expanded navigation shows the control
 on its own row above Profile. Collapsed/phone utilities open it in a popover;
-Profile reuses it. This supersedes the earlier explicit-menu proposal, retains
+This device reuses it. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
 must report a storage failure without undoing the in-session theme choice.
 
@@ -252,3 +252,32 @@ desktops; retain 44 px targets on touch. File metadata pairs each Doc/Sheet/Spac
 label with its existing 16 px entity icon, alongside the separate decorative
 filename emoji. Owner and Collaborator gain faster recognition without enlarging
 the row; guest identity and Operator access remain unchanged. Decision #126.
+
+
+### Connected walkthrough
+
+`Redesign/Walkthrough` connects the Owner, Collaborator, Operator and Link guest
+jobs with local fixture state. Sign-in outcomes and connection/save events live
+in a separate review toolbar, not the product interface. No credentials, accounts
+or documents are changed. The homepage is a new arrival proposal; production
+currently redirects signed-out arrivals to sign-in. Setup remains reachable only
+from a server-issued link, with a separate everyday account invited afterward.
+
+Open files, create Doc/Sheet, return with search/folder/layout context, visit
+settings and return to the document, browse history with the current permission,
+and sign out through product controls. Operator setup reaches first-run Admin,
+then a purpose/expiry invitation form and once-only link. Guest revocation removes
+the document surface; a transient disconnect preserves it with an unsent-work
+warning. The representative journeys are verified sequentially at desktop and
+phone widths in the CI screenshot run.
+
+Owner direction (chat, 2026-10-20, decision #126): appearance is local to the
+browser and defaults to System. No account preference overrides it on sign-in.
+Members, Operators and guests can change it; the profile form only saves personal
+identity. This device labels it explicitly, while compact controls remain in
+navigation and guest/arrival headers. Use US English “color” in UI and prose.
+
+Interactive CI builds are uploaded as `storybook-review` for seven days. They
+can be served locally without rebuilding Storybook. This does not publish a PR
+to GitHub Pages or authorize a production migration. Main already has a Pages
+deploy workflow; any separate hosted-review change can be ticketed when needed.

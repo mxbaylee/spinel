@@ -87,9 +87,9 @@ try {
         await expect(
           page.getByRole('dialog', { name: 'Choose your icon', exact: true }),
         ).toBeVisible();
-      if (id === 'redesign-screens--profile-colour-picker')
+      if (id === 'redesign-screens--profile-color-picker')
         await expect(
-          page.getByRole('dialog', { name: 'Choose your profile colour', exact: true }),
+          page.getByRole('dialog', { name: 'Choose your profile color', exact: true }),
         ).toBeVisible();
       if (id === 'redesign-screens--dashboard-new-menu') {
         await expect(page.getByRole('menu', { name: 'New file', exact: true })).toBeVisible();
@@ -260,6 +260,142 @@ try {
       await verifyControls(page, variant, directory);
       verifications.push(
         `${variant}: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal`,
+      );
+      await page.close();
+    }
+  }
+  if (requested.includes('redesign-walkthrough--owner')) {
+    for (const width of [1280, 390]) {
+      const page = await browser.newPage({
+        viewport: { width, height: 900 },
+        hasTouch: width === 390,
+      });
+      const open = async (story: string) => {
+        await page.goto(
+          `http://127.0.0.1:6007/iframe.html?id=redesign-walkthrough--${story}&viewMode=story&globals=theme:light`,
+        );
+        await expect(page.locator('.rd-walkthrough')).toBeVisible();
+      };
+      const event = async (label: string) => {
+        const tools = page.locator('.rd-review-tools');
+        if (!(await tools.getAttribute('open'))) await tools.locator('summary').click();
+        await page.getByRole('combobox', { name: 'Preview event', exact: true }).click();
+        await page.getByRole('option', { name: label, exact: true }).click();
+        await tools.locator('summary').click();
+      };
+      const shot = async (name: string) => {
+        expect(
+          await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+          `Walkthrough overflow: ${name} ${width}`,
+        ).toBe(true);
+        await page.screenshot({
+          path: resolve(directory, `journey-${name}-${width}.png`),
+          fullPage: true,
+        });
+      };
+      await open('owner');
+      await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+      await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
+      await expect(
+        page.getByText('Continue in your browser or device’s passkey prompt.', { exact: true }),
+      ).toBeVisible();
+      await event('Passkey cancelled');
+      await page.getByRole('button', { name: 'Try again with a passkey', exact: true }).click();
+      await event('Passkey succeeded');
+      await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+      const search = page.getByRole('textbox', { name: 'Search files', exact: true });
+      await search.fill('recipes');
+      await page.locator('.rd-file-open').filter({ hasText: 'A few good recipes' }).click();
+      await expect(
+        page.getByRole('heading', { name: 'A few good recipes', exact: true }),
+      ).toBeVisible();
+      await shot('owner-doc');
+      await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      await expect(search).toHaveValue('recipes');
+      await expect(
+        page.locator('.rd-file-open').filter({ hasText: 'A few good recipes' }),
+      ).toBeFocused();
+      await search.fill('');
+      await page.getByRole('button', { name: 'New file', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Doc', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Weekend notes');
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await expect(page.getByRole('heading', { name: 'Weekend notes', exact: true })).toBeVisible();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await expect(page.getByRole('menuitem', { name: 'Fill presets', exact: true })).toHaveCount(
+        0,
+      );
+      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Restore this version…', exact: true }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Return to document', exact: true }).click();
+      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Display name', exact: true }).fill('Alex Updated');
+      await page.getByRole('button', { name: 'Save profile', exact: true }).click();
+      await page.getByRole('button', { name: 'This device', exact: true }).click();
+      await expect(
+        page.getByRole('heading', { name: 'Appearance on this device', exact: true }),
+      ).toBeVisible();
+      await shot('device-settings');
+      await page.getByRole('button', { name: 'Back to document', exact: true }).click();
+      await event('Save failed');
+      await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      await expect(
+        page.getByRole('dialog', { name: 'Leave with unsaved changes?', exact: true }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Keep editing', exact: true }).click();
+      await shot('save-failed');
+      await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
+      await expect(page.getByRole('button', { name: '✓ Saved', exact: true })).toBeVisible();
+      await open('operator');
+      await page.getByRole('button', { name: 'Create Operator passkey', exact: true }).click();
+      await event('Passkey succeeded');
+      await expect(
+        page.getByRole('heading', { name: 'Administration', exact: true }),
+      ).toBeVisible();
+      await shot('operator-first-run');
+      await page.getByRole('button', { name: 'Invite your everyday account', exact: true }).click();
+      await page.getByRole('button', { name: 'Create invite', exact: true }).click();
+      await expect(page.getByRole('combobox', { name: 'Expires in', exact: true })).toContainText(
+        '7 days',
+      );
+      await shot('operator-invite-form');
+      await page
+        .getByRole('dialog')
+        .getByRole('button', { name: 'Create invite', exact: true })
+        .click();
+      await expect(
+        page.getByRole('textbox', { name: 'Invitation address', exact: true }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Revoke', exact: true }).click();
+      await expect(
+        page.getByRole('textbox', { name: 'Invitation address', exact: true }),
+      ).toHaveCount(0);
+      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Connected assistants', exact: true }),
+      ).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'My files', exact: true })).toHaveCount(0);
+      await open('link-guest');
+      await expect(page.getByRole('button', { name: 'Your profile', exact: true })).toHaveCount(0);
+      await event('Editor access');
+      await event('Connection lost');
+      await expect(
+        page.getByText('Connection lost. Keep this page open to protect unsent changes.', {
+          exact: true,
+        }),
+      ).toBeVisible();
+      await shot('guest-disconnected');
+      await event('Owner turns off link');
+      await expect(
+        page.getByRole('heading', { name: 'This link no longer works.', exact: true }),
+      ).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Autumn plans', exact: true })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Export as PDF', exact: true })).toHaveCount(0);
+      await shot('guest-revoked');
+      verifications.push(
+        `Connected Owner/Operator/Guest journeys, preserved retrieval state, permissions and save guard: ${width}px`,
       );
       await page.close();
     }
