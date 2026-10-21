@@ -64,14 +64,18 @@ status line grows when a message or Retry appears, which moves the sheet
   connection slot (SPN-042), each following
   [status changes never move the layout](README.md#status-changes-never-move-the-layout).
   SPN-053 adds local-save states to the connection slot.
-- **Right:** collaborators (up to three avatars, then "+n", with names in a
-  popover), then a compact access badge and the More menu. Share remains owner-only
-  and lives in the More menu.
+- **Right:** a compact people/count control opens a dialog listing collaborators
+  and their available shared cursor positions, followed by the access badge and
+  More menu. It remains available on phones. Guest-linked rooms use generic
+  identities. Share remains owner-only and lives in the More menu.
 - **More menu:** Share (owners), Versions (SPN-024, SPN-026), Export
   (Download Univer file, Export as PDF; SPN-031/SPN-075, later Office files
   SPN-035), and Insert formula for editable Docs. Version naming lives inside
-  Versions, with a Back button immediately left of its title; it is disabled
-  until current edits are saved and the connection is available. SPN-049 adds
+  Versions, with a Back button immediately left of its title. Naming the current
+  version waits until current edits are saved; older saved checkpoints can still
+  be named, renamed or have their names removed while current edits are unsaved.
+  All name changes require a connection and edit access. Restore also waits for
+  current edits to save. SPN-049 adds
   theatre mode and the applicable owner Move…/Trash actions during migration.
   `VersionNames` and `FileExports` move out of permanent inline sections.
 - **Tools** are Univer's toolbar, untouched. Spinel never adds a second toolbar
@@ -98,7 +102,7 @@ in [their header](guest.md#adopted-pattern). Owner, chat 2026-10-20, decision
 | --------------------------------------------- | ----------------------------------------------------------- |
 | Breadcrumb, document name (rename for owners) | More → versions, export, theatre mode, move, trash          |
 | Save slot, connection slot                    | Status popover → message detail, Retry saving               |
-| Collaborator avatars (max 3 + n)              | Avatar popover → names                                      |
+| People/count control                          | People dialog → names and available shared cursor positions |
 | Compact access badge                          | More → Share dialog, owners only ([sharing.md](sharing.md)) |
 | Univer's toolbar                              | Versions → Name this version                                |
 | Help line or inline error slot (Docs)         |                                                             |
@@ -118,7 +122,8 @@ shortcut is checked against Univer's before it ships.
 
 Under 900 px with a coarse pointer, Sheets use Univer's mobile controls
 (docs/mobile.md). On phones, the title has a full first row and status/More use
-the second row. Presence avatars are hidden; owner-only Share remains in More.
+the second row. The compact people/count control stays available and opens the
+same collaborator dialog; owner-only Share remains in More.
 
 ## Stories
 

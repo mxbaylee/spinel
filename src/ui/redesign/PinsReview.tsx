@@ -172,19 +172,34 @@ export function PinnedReview({
   return (
     <section className={`rd-pins ${compact ? 'rd-pins-compact' : ''}`} aria-label="Pinned items">
       {!compact && <h2>Pinned</h2>}
-      {pins.state === 'loading' && <p role="status">Loading pins…</p>}
-      {pins.state === 'pending' && <p role="status">Updating pins…</p>}
+      {pins.state === 'loading' && (
+        <p role="status" aria-label="Loading pins…">
+          {compact ? 'Loading' : 'Loading pins…'}
+        </p>
+      )}
+      {pins.state === 'pending' && (
+        <p role="status" aria-label="Updating pins…">
+          {compact ? 'Updating' : 'Updating pins…'}
+        </p>
+      )}
       {failed && (
         <div role="alert">
-          <p>
-            {compact
-              ? pins.state === 'load-failed'
-                ? 'Pins unavailable.'
-                : 'Update failed.'
-              : pins.state === 'load-failed'
+          {compact ? (
+            <p>
+              <span aria-hidden="true">Failed</span>
+              <span className="rd-pins-sr-only">
+                {pins.state === 'load-failed'
+                  ? 'Could not load pins.'
+                  : 'Could not update pins. Your previous pins are unchanged.'}
+              </span>
+            </p>
+          ) : (
+            <p>
+              {pins.state === 'load-failed'
                 ? 'Could not load pins.'
                 : 'Could not update pins. Your previous pins are unchanged.'}
-          </p>
+            </p>
+          )}
           <Button
             disabled={disabled}
             onClick={pins.retry}
@@ -196,7 +211,7 @@ export function PinnedReview({
         </div>
       )}
       {pins.state === 'ready' && !pins.items.length && (
-        <p>No pins yet.{!compact && ' Pin a file or folder from its menu.'}</p>
+        <p>{compact ? 'No pins' : 'No pins yet. Pin a file or folder from its menu.'}</p>
       )}
       {pins.state !== 'loading' && pins.state !== 'load-failed' && (
         <ol aria-label="Pin order">

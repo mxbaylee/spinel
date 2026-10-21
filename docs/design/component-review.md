@@ -2,7 +2,7 @@
 
 Status: **in progress; no whole-product grade**. The earlier 96 scores applied to sampled composed views and must not be used as catalog-wide completion or acceptance. Owner requested this stricter review in chat, 2026-10-20.
 
-Inventory baseline: commit `f9cdff3af5d3e99455255aaf7274e15053e4ccef` contains **35 existing story families and 45 total families** (nine Redesign families plus the new Favicon family). One family means one story file/meta title. Earlier “44 families” reporting was inaccurate. Subsequent new families are listed separately until a fresh build regenerates the inventory.
+Inventory baseline: commit `f9cdff3af5d3e99455255aaf7274e15053e4ccef` contains **35 existing story families and 45 total families** (nine Redesign families plus the new Favicon family). One family means one story file/meta title. Earlier “44 families” reporting was inaccurate. At `5655c2c`, the source catalog contains **61 families and 641 exported story specimens** (a source count, not a completed render count). The 16 families added during this audit are listed below.
 
 A baseline screenshot is a comparison, not a redesigned equivalent. A changed label or catalog group does not count as UI work. “State coverage present” means source specimens exist, not that visual/interaction review is complete. Production migration remains separate; the proposal must still specify every in-scope behavior.
 
@@ -384,7 +384,7 @@ These new families contain source specimens; none is accepted solely from its ex
 - **Redesign/History actions**: [source](../../src/ui/redesign/HistoryActions.stories.tsx); 4 stories: RenameCheckpoint, RenamedCheckpoint, RemoveCheckpointName, OlderNamesWhileUnsaved.
 - **Redesign/Entry states**: [source](../../src/ui/redesign/EntryStates.stories.tsx); 13 stories: InvitePending, InviteCancelled, InviteError, InviteInvalid, RecoveryPending, RecoveryCancelled, RecoveryError, RecoveryInvalid, SetupPending, SetupCancelled, SetupError, SetupInvalid, InviteCancelAndRetry.
 - **Redesign/Guest entry**: [source](../../src/ui/redesign/GuestEntryReview.stories.tsx); 2 stories: AuthLoading, UnsupportedBrowser.
-- **Redesign/Theme control**: [source](../../src/ui/redesign/ThemeMenu.stories.tsx); 2 stories: Default, StorageBlocked.
+- **Redesign/Theme control**: [source](../../src/ui/redesign/ThemeMenu.stories.tsx); 3 stories: Default, StorageBlocked, DismissStorageWarning.
 - **Redesign/File recovery**: [source](../../src/ui/redesign/FilesRecovery.stories.tsx); 27 stories: SharedLoading, SharedError, SharedUnknownOwner, SearchPending, SearchError, LocalMode, LocalNoData, LocalNavigationKeepsPinActionsDisabled, LocalFolderNotOpened, TrashLoading, TrashError, TrashExpired, EmptyTrashConfirmation, EmptyTrashPending, EmptyTrashFailed, RestorePending, RestoreFailed, DeletePending, DeleteFailed, RetrySearch, RetryShared, RetryTrash, RetryRestore, RetryDelete, RetryEmptyTrash, CancelEmptyTrash, ExpiredRestoreUnavailable.
 - **Redesign/File mutations**: [source](../../src/ui/redesign/FileMutation.stories.tsx); 15 stories: CreatePending, CreateFailed, RenamePending, RenameFailed, MovePending, MoveFailed, FileIntoFolderPending, FileIntoFolderFailed, RetryCreate, RetryRename, RetryMove, RetryFileIntoFolder, CancelFailedRename, FailedMoveKeepsOriginalFolder, FailedFilingKeepsOriginalPlacement.
 - **Redesign/Profile icon picker**: [source](../../src/ui/redesign/IconPickerReview.stories.tsx); 10 stories: Browse, Search, NoResults, Category, ShowMore, KeyboardNavigation, SelectedIcon, KeyboardSelectAndReturn, CancelAndReturn, NativeCancelAndReturn.
@@ -417,8 +417,34 @@ The independent reviewer found no further source blockers in the inspected compo
 ## Live visual pass after the component repairs
 
 - Version names (`dff41bc` deployed): renamed an older checkpoint through its menu; list updated and focus returned to that checkpoint's action menu. This is one manually verified interaction, not all-state acceptance.
-- Short-phone dark History showed the page title squeezed beside two actions. A queued repair gives the title its own row and lets actions wrap beneath it.
-- File retrieval toolbar repair is queued: Search, Filters and view switch share one responsive toolbar; Type moves inside Filters. Active constraints remain visible and clearable. No query parser was added.
+- Short-phone dark History showed the page title squeezed beside two actions. The `5655c2c` repair gives the title its own row and lets actions wrap beneath it; subsequent source repair removes the extra inherited action margin. Fresh phone rendering remains pending.
+- File retrieval toolbar repair is in `5655c2c`: Search, Filters and view switch share one responsive toolbar; Type moves inside Filters. Active constraints remain visible and clearable. No query parser was added.
 - Retained identity pass inspected all20 assigned states in five variants (100 captures from `f9cdff3`): EntityIcon, Favicon and GemLogo retained; social artwork retained with a minor trailing-emoji cosmetic note. Actual IconPicker footer gap was repaired only in redesign context; ten new context stories cover search/category/pagination/keyboard/selection/focus return and await CI.
 
 The retained-surface reviewer also inspected all43 assigned f9c states in light, dark and phone: 19 AccessToken variants, eight Import variants, five Profile states, eight Backup health states and three Controls states. No clipping was found. Two pending-dialog inconsistencies were repaired in the next source batch: Token creation had an enabled-but-inert close button, and Import allowed dismissal despite its keep-open instruction. A shared dismiss-disabled state now covers pending dialogs consistently, with explicit assertions; new rendered evidence remains required. The new Move example supersedes the old Controls dialog.
+
+## Component visual findings from the partial light capture
+
+Reviewers inspected all219 assigned light states from the canceled `1048e8b` capture: 97 editor/history/sharing/formula/presence states and122 file/tag/pin/administration/connection states. Contact-sheet screening was followed by original-size inspection of dense, long-name and failure states. This is partial light evidence; it has no completed manifest and cannot establish interaction success or dark/phone acceptance.
+
+Repairs implemented after the partial review; fresh rendering remains required:
+
+- Pins dashboard specimen inherited the production shell, displacing navigation and restyling controls. Opt out of that shell.
+- Compact pin status used10px text and split words; replace it with readable compact status.
+- Passkey recovery consequences appeared after destructive controls; move guidance before the decision.
+- Connection footer spacing, singular file counts and empty Trash artwork need consistency repairs.
+- **Source fixed; rendering pending:** Sharing now uses an intrinsic-width Owner badge, compact action spacing and no empty feedback spacer.
+- **Source fixed; rendering pending:** History removes repeated visible preview labels and duplicate selected-version metadata; the main preview caption announces selection changes. Phone header actions no longer add an inherited top margin.
+- **Source fixed; rendering pending:** Version-name errors yield to waiting/reconnect explanations until retry is possible, with retained-draft assertions in UnsavedDraft.
+
+Section guides now match these current proposals: older checkpoint names remain editable
+while current changes are unsaved, direct sharing uses staged Apply and retained drafts,
+the people/count dialog remains available on phones, and theme segments use 24 px
+visual circles in a 30 px pill with 44 px touch targets. This documentation alignment
+does not establish rendered acceptance or owner approval.
+
+The new Files toolbar and pending-dialog dismissal changes in `5655c2c` supersede the corresponding partial captures and require fresh evidence. No reviewer supplied an aggregate grade for this incomplete evidence set.
+
+A third reviewer inspected40 further light states:13 entry outcomes, two guest entry states, two theme states,13 consent states and10 actual icon-picker states. This found a theme-storage warning colliding with its tooltip and missing consent recovery actions. The warning now uses a dismissible status panel outside the compact control. Consent limit opens Connections in Settings, with a return to the request; Operator consent offers Sign out and the everyday-account journey. Four consent recovery stories and one warning-dismissal story cover these repairs. Current source inventory is61 families and646 exported story specimens.
+
+App CI run39553769932 passed all required gates for `5655c2c`. Storybook run39553769714 is still capturing the full catalog; the subsequent visual fixes require their own CI run. No score is carried forward from a previous commit.

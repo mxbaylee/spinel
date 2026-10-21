@@ -77,6 +77,8 @@ export function VersionNamesReview({
   const [notice, setNotice] = useState('');
   const saving = state === 'saving';
   const deleting = state === 'removing';
+  const waitingForSave = editing === 'current' && !saved;
+  const showSaveError = saveError && !waitingForSave && !offline;
   const selected = items.find((item) => item.id === editing);
   const removingItem = items.find((item) => item.id === removing);
   const beginName = (id: string) => {
@@ -136,11 +138,12 @@ export function VersionNamesReview({
                 {onSelect ? (
                   <button
                     className="rd-version-preview"
+                    aria-label={`${item.name ?? 'Unnamed version'} Preview version`}
+                    title="Preview version"
                     aria-pressed={selectedId === item.id}
                     onClick={() => onSelect(item.id)}
                   >
                     <strong>{item.name ?? 'Unnamed version'}</strong>
-                    <span className="sp-muted">Preview version</span>
                   </button>
                 ) : (
                   <strong>{item.name ?? 'Unnamed version'}</strong>
@@ -235,11 +238,11 @@ export function VersionNamesReview({
               onChange={(event) => setDraft(event.target.value)}
             />
           </label>
-          {editing === 'current' && !saved && (
+          {waitingForSave && !offline && (
             <p role="status">Wait for changes to save. Your name stays here.</p>
           )}
           {offline && <p role="status">Reconnect to save this name. Your draft stays here.</p>}
-          {saveError && (
+          {showSaveError && (
             <p role="alert">Could not save this name. Your draft is still here. Try again.</p>
           )}
           <div className="sp-actions">
@@ -251,7 +254,7 @@ export function VersionNamesReview({
               type="submit"
               disabled={saving || offline || !draft.trim() || (editing === 'current' && !saved)}
             >
-              {saving ? 'Saving…' : saveError ? 'Try again' : 'Save name'}
+              {saving ? 'Saving…' : showSaveError ? 'Try again' : 'Save name'}
             </Button>
           </div>
         </form>

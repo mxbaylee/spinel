@@ -82,3 +82,20 @@ export const StorageBlocked: Story = {
     await expect(localStorage.getItem('spinel-theme')).toBe(saved);
   },
 };
+
+export const DismissStorageWarning: Story = {
+  ...StorageBlocked,
+  play: async (context) => {
+    await StorageBlocked.play?.(context);
+    const canvas = within(context.canvasElement);
+    const preference = getPreference();
+    await userEvent.click(canvas.getByRole('button', { name: 'Dismiss theme warning' }));
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+    await expect(getPreference()).toBe(preference);
+    await expect(
+      canvas.getByRole('radio', {
+        name: preference === 'system' ? 'Follow system' : preference === 'light' ? 'Light' : 'Dark',
+      }),
+    ).toHaveFocus();
+  },
+};

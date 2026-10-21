@@ -69,7 +69,7 @@ export function ConnectionsReview({
     setNotice(`${connection.name} disconnected in this preview. No real account access changed.`);
   }
   return (
-    <section aria-label="Connected assistants">
+    <section className="rd-connections-review" aria-label="Connected assistants">
       <Heading>Connected assistants</Heading>
       <p className="sp-muted">
         {admin

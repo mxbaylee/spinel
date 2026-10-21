@@ -163,8 +163,9 @@ export function AppearanceChoice({
 export function ThemeMenu() {
   const preference = useSyncExternalStore(watchTheme, getPreference);
   const [error, setError] = useState('');
+  const controlRef = useRef<HTMLDivElement>(null);
   return (
-    <>
+    <div ref={controlRef} className="rd-theme-control">
       <AppearanceChoice
         value={preference}
         onChange={(value) =>
@@ -175,8 +176,23 @@ export function ThemeMenu() {
           )
         }
       />
-      {error && <span role="alert">{error}</span>}
-    </>
+      {error && (
+        <div className="sp-ui rd-theme-warning" role="alert">
+          <p>{error}</p>
+          <Button
+            aria-label="Dismiss theme warning"
+            onClick={() => {
+              setError('');
+              controlRef.current
+                ?.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]')
+                ?.focus();
+            }}
+          >
+            Dismiss
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
 function NetworkStatus({ offline = false }: { offline?: boolean }) {
@@ -1259,7 +1275,7 @@ function DashboardContent({
                 ? 'Restore files for 30 days after deletion. Daily cleanup then removes them permanently.'
                 : search
                   ? `Results for “${search}”`
-                  : `${rows.length} items`}
+                  : `${rows.length} ${rows.length === 1 ? 'item' : 'items'}`}
           </span>
           {view !== 'My files' && view !== 'Trash' && (
             <Button onClick={() => setView('My files')}>Search all files</Button>
@@ -1298,7 +1314,13 @@ function DashboardContent({
           </div>
         ) : empty ? (
           <div className="rd-empty">
-            <EntityIcon kind="doc" size={48} />
+            {view === 'Trash' && !hasFilters ? (
+              <span className="rd-empty-trash">
+                <Glyph name="trash" />
+              </span>
+            ) : (
+              <EntityIcon kind="doc" size={48} />
+            )}
             <h2>
               {hasFilters
                 ? 'No matching files'
@@ -2530,7 +2552,6 @@ function HistoryContent({
           },
         )}
       />
-      <p role="status">Selected: {historyLabel(selected, names)}</p>
     </div>
   );
 }
@@ -2648,7 +2669,7 @@ export function HistoryMockup({
       )}
       {historyState === 'ready' ? (
         <>
-          <p className="rd-history-selection">
+          <p className="rd-history-selection" role="status">
             Preview ·{' '}
             {selected.startsWith('October') ? selectedLabel : `October 20, 2026 · ${selectedLabel}`}{' '}
             · UTC
@@ -3516,6 +3537,13 @@ export function AdminMockup({
           }
         }}
       >
+        <p className="sp-muted">
+          {passkeys.startsWith('Operator')
+            ? state === 'operator-multiple-passkeys' && !removedPasskeys.includes(passkeys)
+              ? 'You can remove MacBook while the security key remains. The Operator must keep at least one passkey.'
+              : 'The Operator’s last passkey cannot be removed here.'
+            : 'If their last passkey is removed, issue a recovery invitation so they can sign in again.'}
+        </p>
         {removePasskey ? (
           <>
             <p>
@@ -3602,14 +3630,9 @@ export function AdminMockup({
             )}
           </>
         )}
-        <p className="sp-muted">
-          {passkeys.startsWith('Operator')
-            ? state === 'operator-multiple-passkeys' && !removedPasskeys.includes(passkeys)
-              ? 'You can remove MacBook while the security key remains. The Operator must keep at least one passkey.'
-              : 'The Operator’s last passkey cannot be removed here.'
-            : 'If their last passkey is removed, issue a recovery invitation so they can sign in again.'}
+        <p className="sp-muted rd-passkey-preview-note">
+          Design preview. No real credentials or sessions are changed.
         </p>
-        <p className="sp-muted">Design preview. No real credentials or sessions are changed.</p>
       </Modal>
       <Modal
         title={`Disable ${confirm || 'this account'}?`}
@@ -3657,7 +3680,11 @@ export function EntryMockup({
   readOnly = false,
   consentState = 'ready',
   expireOnAllow = false,
+  onManageConnections,
+  onSignOut,
 }: {
+  onManageConnections?: () => void;
+  onSignOut?: () => void;
   readOnly?: boolean;
   expireOnAllow?: boolean;
   consentState?:
@@ -3765,10 +3792,22 @@ export function EntryMockup({
           <p role="alert">Could not finish this connection request. Try again.</p>
         )}
         {consent && requestState === 'limit' && (
-          <p role="alert">
-            You have 10 connected assistants. Disconnect an old assistant in Settings, then start
-            again from your application.
-          </p>
+          <>
+            <p role="alert">
+              You have 10 connected assistants. Disconnect an old assistant in Settings, then start
+              again from your application.
+            </p>
+            {onManageConnections && (
+              <Button primary onClick={onManageConnections}>
+                Manage connected assistants
+              </Button>
+            )}
+          </>
+        )}
+        {consent && requestState === 'operator' && onSignOut && (
+          <Button primary onClick={onSignOut}>
+            Sign out
+          </Button>
         )}
         {action && (!consent || !blocked) && (
           <div className="sp-actions">

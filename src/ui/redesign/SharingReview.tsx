@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ActionMenu, Button, Choice, Modal } from './Controls.tsx';
+import './sharingReview.css';
 
 export type SharingState =
   | 'off'
@@ -115,7 +116,7 @@ export function SharingReview({
         : 'Could not turn off the link. People with the existing link still have access.';
 
   return (
-    <>
+    <div className="rd-sharing-review">
       <div className="rd-person">
         <strong>You</strong>
         <span className="rd-badge">Owner</span>
@@ -309,14 +310,16 @@ export function SharingReview({
           )}
         </section>
       )}
-      <p role="status" className="rd-feedback">
-        {notice}
-      </p>
+      {notice && (
+        <p role="status" className="rd-feedback">
+          {notice}
+        </p>
+      )}
       <div className="sp-actions">
         <Button onClick={() => setNotice('Account link copied in this preview.')}>
           Copy account link
         </Button>
       </div>
-    </>
+    </div>
   );
 }

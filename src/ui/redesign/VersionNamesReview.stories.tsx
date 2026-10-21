@@ -42,7 +42,20 @@ export const RemoveError: Story = { args: { state: 'remove-error' } };
 export const Saving: Story = { args: { state: 'saving' } };
 export const SaveError: Story = { args: { state: 'save-error' } };
 export const Unsaved: Story = { args: { saved: false } };
-export const UnsavedDraft: Story = { args: { saved: false, state: 'save-error' } };
+export const UnsavedDraft: Story = {
+  args: { saved: false, state: 'save-error' },
+  play: async ({ canvasElement }) => {
+    const dialog = within(within(canvasElement.ownerDocument.body).getByRole('dialog'));
+    await expect(dialog.getByRole('textbox', { name: 'Version name' })).toHaveValue(
+      'Ready for the trip',
+    );
+    await expect(dialog.getByRole('status')).toHaveTextContent(
+      'Wait for changes to save. Your name stays here.',
+    );
+    await expect(dialog.queryByRole('alert')).toBeNull();
+    await expect(dialog.getByRole('button', { name: 'Save name' })).toBeDisabled();
+  },
+};
 export const Offline: Story = { args: { offline: true } };
 function EmbeddedNames() {
   const [versions, setVersions] = useState([

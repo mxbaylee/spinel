@@ -140,6 +140,7 @@ export const RetryUpdate: Story = {
 
 const openPinnedFile = fn();
 export const DashboardNavigation: Story = {
+  parameters: { shell: 'none' },
   render: () => <DashboardMockup collapsed onOpen={openPinnedFile} />,
   play: async ({ canvasElement }) => {
     openPinnedFile.mockClear();

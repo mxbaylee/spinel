@@ -23,7 +23,15 @@ const NativeEditor = lazy(() =>
 
 type Persona = 'owner' | 'collaborator' | 'operator' | 'guest';
 type Screen =
-  EntryScreen | 'files' | 'editor' | 'profile' | 'admin' | 'history' | 'revoked' | 'offline';
+  | EntryScreen
+  | 'files'
+  | 'editor'
+  | 'profile'
+  | 'admin'
+  | 'history'
+  | 'revoked'
+  | 'offline'
+  | 'consent';
 type File = {
   id: string;
   name: string;
@@ -39,16 +47,20 @@ const firstFile: File = {
 };
 
 export function Walkthrough({
-  persona = 'owner',
+  persona: initialPersona = 'owner',
   start = 'home',
   initialOutcome = 'ready',
   initialKind = 'sheet',
+  initialConsentState = 'ready',
 }: {
   persona?: Persona;
   start?: Screen;
   initialOutcome?: EntryOutcome;
   initialKind?: 'doc' | 'sheet';
+  initialConsentState?: 'ready' | 'limit' | 'operator';
 }) {
+  const [persona, setPersona] = useState(initialPersona);
+  const [profileSection, setProfileSection] = useState<'profile' | 'connections'>('profile');
   const [profile, setProfile] = useState(
     defaultProfile(
       persona === 'operator' ? 'Operator' : persona === 'collaborator' ? 'Alex Kim' : 'Alex Baylee',
@@ -64,7 +76,8 @@ export function Walkthrough({
         : firstFile,
   );
   const [signedIn, setSignedIn] = useState(
-    ['files', 'editor', 'profile', 'admin', 'history'].includes(start) && persona !== 'guest',
+    ['files', 'editor', 'profile', 'admin', 'history', 'consent'].includes(start) &&
+      persona !== 'guest',
   );
   const [firstRun, setFirstRun] = useState(start === 'setup');
   const [returnTo, setReturnTo] = useState<Screen>(persona === 'operator' ? 'admin' : 'files');
@@ -125,19 +138,31 @@ export function Walkthrough({
     setScreen(persona === 'operator' ? 'admin' : persona === 'collaborator' ? 'editor' : 'files');
   };
   const reset = () => {
+    setPersona(initialPersona);
+    setProfileSection('profile');
+    setProfile(
+      defaultProfile(
+        initialPersona === 'operator'
+          ? 'Operator'
+          : initialPersona === 'collaborator'
+            ? 'Alex Kim'
+            : 'Alex Baylee',
+      ),
+    );
     setScreen(start);
     setOutcome(initialOutcome);
     setSave('saved');
     setOffline(false);
     setFile(
-      persona === 'guest'
+      initialPersona === 'guest'
         ? { id: 'guest-doc', name: 'Autumn plans', kind: 'doc', access: 'viewer' }
         : initialKind === 'doc'
           ? { id: 'fixture-Autumn plans', name: 'Autumn plans', kind: 'doc', access: 'owner' }
           : firstFile,
     );
     setSignedIn(
-      ['files', 'editor', 'profile', 'admin', 'history'].includes(start) && persona !== 'guest',
+      ['files', 'editor', 'profile', 'admin', 'history', 'consent'].includes(start) &&
+        initialPersona !== 'guest',
     );
     setNamedVersions({});
     setCheckpointNames({});
@@ -251,6 +276,24 @@ export function Walkthrough({
       <ReviewProfileContext.Provider value={{ profile, save: setProfile }}>
         <PinsReviewProvider key={generation}>
           <div ref={pageRef} className="rd-walkthrough-page" key={generation}>
+            {screen === 'consent' && (
+              <EntryMockup
+                consentState={initialConsentState}
+                onManageConnections={() => {
+                  setProfileSection('connections');
+                  navigate('profile');
+                }}
+                onSignOut={() => {
+                  setSignedIn(false);
+                  setPersona('owner');
+                  setProfile(defaultProfile('Alex Baylee'));
+                  setReturnTo('files');
+                  setOutcome('ready');
+                  setEvent('');
+                  setScreen('home');
+                }}
+              />
+            )}
             {entry && (
               <EntryJourney
                 screen={screen as EntryScreen}
@@ -320,6 +363,8 @@ export function Walkthrough({
             {signedIn && (
               <div hidden={screen !== 'profile'}>
                 <ProfileMockup
+                  key={profileSection}
+                  section={profileSection}
                   credential={credential}
                   onCredential={(next) => {
                     setCredential(next);
@@ -328,11 +373,13 @@ export function Walkthrough({
                   operator={persona === 'operator'}
                   onBack={() => navigate(returnTo)}
                   returnLabel={
-                    returnTo === 'editor'
-                      ? 'Back to document'
-                      : persona === 'operator'
-                        ? 'Back to Administration'
-                        : 'Back to files'
+                    returnTo === 'consent'
+                      ? 'Back to connection request'
+                      : returnTo === 'editor'
+                        ? 'Back to document'
+                        : persona === 'operator'
+                          ? 'Back to Administration'
+                          : 'Back to files'
                   }
                   onSignOut={() => {
                     setSignedIn(false);

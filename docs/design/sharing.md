@@ -6,15 +6,14 @@ Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Sharing, PlannedFileAdmin.
 
-| Current friction | Public reference pattern | Adopted proposal |
-| --- | --- | --- |
+| Current friction                                                                                                | Public reference pattern                                                                                    | Adopted proposal                                                                         |
+| --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | Per-person Apply buttons and multiple guest-link actions compete with the people and permissions being changed. | Google separates people from general access; Numbers illustrates collaboration options grouped in one menu. | One dialog: people first, guest links second; access choices beside the relevant person. |
 
-Retain No direct access and inherited-access explanation. Changes apply with in-place confirmation/error and rollback on failure. Guest links retain role selection, creation, once-only copy, replacement confirmation and turn-off; the SharingCreatedLink, SharingExistingLink, SharingReplaceLink and SharingError stories make those states reviewable. Do not reveal an inaccessible parent name. Future File admin choices are isolated in PlannedFileAdmin and never offered to guests.
+Retain No direct access and inherited-access explanation. Direct-access choices are staged until Apply access; pending and failed changes preserve confirmed access and the selected draft. Success confirms in place, and failure offers retry. Guest links retain role selection, creation, once-only copy, replacement confirmation and turn-off; the SharingCreatedLink, SharingExistingLink, SharingReplaceLink and SharingError stories make those states reviewable. Do not reveal an inaccessible parent name. Future File admin choices are isolated in PlannedFileAdmin and never offered to guests.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
-
 
 ## How others do it
 
@@ -44,8 +43,10 @@ already listed. A [dialog](README.md#dialog) titled "Share <name>":
 1. **Header:** the title and **Copy link** (the account-only share address).
 2. **People:** each account with a select: No direct access, Can view, Can edit.
    "No direct access", as in docs/sharing.md, because access inherited from a
-   folder survives it. A change applies at once and confirms in a status line;
-   there is no per-person Apply button. Access inherited from a folder shows as
+   folder survives it. Selecting a role keeps a draft until **Apply access**.
+   While applying, the role control is disabled and confirmed access stays
+   visible. Failure preserves both the previous access and the selected draft,
+   with **Retry access update**; success confirms in a status line. Inherited access shows as
    a muted line, "Can edit through a folder". Naming the folder ("through
    Budgets") needs the sharing API to return it; `SharePerson` carries only the
    roles today. Disabled accounts say "(disabled)" and can't be granted.
@@ -68,11 +69,11 @@ badge.
 
 ### Always visible / behind a menu
 
-| Always visible                              | Behind a menu                               |
-| ------------------------------------------- | ------------------------------------------- |
-| Copy link, each person's access select      | Link section More → Replace link…, Turn off |
-| Link status, role, Create link or Copy link |                                             |
-| Done                                        |                                             |
+| Always visible                                          | Behind a menu                               |
+| ------------------------------------------------------- | ------------------------------------------- |
+| Copy link, each person's access select and Apply access | Link section More → Replace link…, Turn off |
+| Link status, role, Create link or Copy link             |                                             |
+| Done                                                    |                                             |
 
 ## Formula sources (SPN-033 / SPN-076)
 

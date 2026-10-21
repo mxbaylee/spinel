@@ -40,10 +40,21 @@
   align-items: center;
 }
 .rd-pins-compact p {
-  max-width: 52px;
-  overflow-wrap: anywhere;
-  font-size: 10px;
+  max-width: 60px;
+  overflow-wrap: normal;
+  font-size: 12px;
+  text-align: center;
   margin-inline: 0;
+}
+.rd-pins-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .rd-pins-compact li {
   justify-content: center;

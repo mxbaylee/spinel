@@ -6,15 +6,14 @@ Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup, Invite, Recovery, Consent, ConsentExpired.
 
-| Current friction | Public reference pattern | Adopted proposal |
-| --- | --- | --- |
+| Current friction                                                                                                                     | Public reference pattern                                                                                 | Adopted proposal                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Appearance, passkeys and connections become a growing sequence of equal cards. Entry pages use oversized headings and heavy framing. | Notion exposes explicit appearance preferences; Dropbox separates account controls from file navigation. | A compact account area with section navigation; a quiet, single-task entry card. |
 
 Proposed profile sections: Profile, Passkeys, This device, Connected assistants, and the planned owner-only Guest links inventory (SPN-066). Reuse the landed SPN-036 profile fields, Lucide picker and color presets, pending OAuth return navigation, disconnect and advanced token flows. Appearance is browser-local, defaults to System and lives in This device, separately from saved profile identity. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
-
 
 ## How others do it
 
@@ -37,7 +36,9 @@ single-purpose pages with one heading, one explanation and one primary button.
 
 - **Appearance** uses directly visible System / Light / Dark icon segments,
   with one browser-local preference store and System as the default. Segments are
-  32 px on pointer desktops and at least 44 px on touch. Expanded navigation and
+  24 px on pointer desktops, inside a 30 px pill. Devices with any coarse pointer
+  use 44 × 44 px targets around the same 24 px visible circles; the pill remains
+  30 px high (or wide in a vertical rail). Expanded navigation and
   compact/phone headers use a horizontal group; collapsed desktop rails stack it
   vertically. This device explains the scope and storage-failure behavior.
 - **Your profile** opens from the account control. Name, color and icon are saved
@@ -63,11 +64,11 @@ single-purpose pages with one heading, one explanation and one primary button.
 
 ### Always visible / behind a menu
 
-| Always visible                                              | Behind a menu                                                       |
-| ----------------------------------------------------------- | ------------------------------------------------------------------- |
-| Navigation: appearance segments, account control                                  | Future, not built: passkey row More → Remove (needs its own ticket) |
+| Always visible                                                   | Behind a menu                                                       |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Navigation: appearance segments, account control                 | Future, not built: passkey row More → Remove (needs its own ticket) |
 | Settings: identity, Passkeys, This device, Connections, Sign out |                                                                     |
-| Sign-in: one primary button                                 |                                                                     |
+| Sign-in: one primary button                                      |                                                                     |
 
 ## Stories
 
@@ -98,7 +99,9 @@ reveal and revoked states. See [MCP](../mcp.md), decision
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
-visible focus, 32 px pointer-desktop segments and at least 44 px touch targets. Expanded navigation shows the control
+visible focus, 24 px pointer-desktop segments inside a 30 px pill, and 44 × 44 px
+targets on devices with any coarse pointer. Touch retains the same 24 px visible
+circles and 30 px pill thickness. Expanded navigation shows the control
 on its own row above Profile. Collapsed desktop navigation stacks its segments vertically; compact/phone headers show it horizontally;
 This device reuses it. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
