@@ -97,7 +97,8 @@ try {
         await expect(page.getByRole('menu', { name: 'New file', exact: true })).toBeVisible();
       }
       if (id.startsWith('redesign-')) {
-        await expect(page.locator('.sp-ui').first()).toBeVisible();
+        await expect(page.locator('.sp-ui, .rd-native-editor').first()).toBeVisible();
+        await waitForNativeEditor(page);
         expect(
           await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
           `Page overflow: ${id} ${variant}`,
@@ -110,7 +111,8 @@ try {
           )
           .evaluateAll((nodes) =>
             nodes.flatMap((node) => {
-              if (node.closest('[aria-hidden="true"]')) return [];
+              // Univer owns its toolbar targets; these assertions cover Spinel chrome.
+              if (node.closest('[aria-hidden="true"], .rd-native-editor')) return [];
               const box = node.getBoundingClientRect();
               if (!box.width || !box.height) return [];
               return box.height < 43.5 || box.width < 43.5
@@ -156,10 +158,15 @@ try {
     await page.close();
   }
   if (requested.includes('redesign-screens--dashboard')) {
-    for (const width of [1280, 768, 390]) {
+    for (const [width, hasTouch] of [
+      [1280, false],
+      [768, true],
+      [613, false],
+      [390, true],
+    ] as const) {
       const page = await browser.newPage({
         viewport: { width, height: 900 },
-        hasTouch: width <= 768,
+        hasTouch,
       });
       await page.goto(
         'http://127.0.0.1:6007/iframe.html?id=redesign-screens--dashboard&viewMode=story&globals=theme:light',
@@ -205,7 +212,12 @@ try {
           .getByRole('navigation', { name: 'File shortcuts' })
           .getByRole('button', { name: 'Quarterly budget', exact: true });
         // Use actual keyboard navigation so the browser enters :focus-visible mode.
-        for (let step = 0; step < 3; step += 1) await page.keyboard.press('Tab');
+        for (
+          let step = 0;
+          step < 8 && !(await pinned.evaluate((node) => node === document.activeElement));
+          step += 1
+        )
+          await page.keyboard.press('Tab');
         await expect(pinned).toBeFocused();
         await expect(pinned.locator('.rd-nav-tooltip')).toBeVisible();
         await page
@@ -244,6 +256,14 @@ try {
         ).toBeVisible();
       }
       const appearance = page.getByRole('radiogroup', { name: 'Appearance', exact: true });
+      for (const radio of await appearance.getByRole('radio').all()) {
+        const box = await radio.boundingBox();
+        expect(box, `Visible appearance control at ${width}px`).not.toBeNull();
+        expect(Math.round(box!.width), `${width}px ${hasTouch ? 'coarse' : 'fine'} pointer`).toBe(
+          hasTouch ? 44 : 32,
+        );
+        expect(Math.round(box!.height)).toBe(hasTouch ? 44 : 32);
+      }
       await appearance.getByRole('radio', { name: 'Dark', exact: true }).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
       await appearance.getByRole('radio', { name: 'Follow system', exact: true }).click();
@@ -259,6 +279,71 @@ try {
       verifications.push(
         `${width}px: navigation/focus, list/grid parity and segmented appearance/system response`,
       );
+    }
+  }
+  for (const kind of ['sheet', 'doc'] as const) {
+    for (const readOnly of [false, true]) {
+      const id = `redesign-native-editors--${kind}${readOnly ? '-viewer' : ''}`;
+      if (!requested.includes(id)) continue;
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      await page.goto(
+        `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:light`,
+      );
+      await expect(page.locator('.rd-native-editor')).toBeVisible();
+      await waitForNativeEditor(page);
+      await page.getByText('Native editor review controls', { exact: true }).click();
+      const observation = page.locator('output[data-native-snapshot]');
+      await expect(observation).not.toBeEmpty();
+      const read = async () => {
+        await page.getByRole('button', { name: 'Read current snapshot', exact: true }).click();
+        return JSON.parse((await observation.textContent())!) as {
+          canEdit: boolean;
+          snapshot: {
+            body?: { dataStream: string };
+            sheets?: Record<string, { cellData?: Record<number, Record<number, { v?: unknown }>> }>;
+          };
+        };
+      };
+      const beforeEdit = await read();
+      expect(beforeEdit.canEdit, `${kind} native permission`).toBe(!readOnly);
+      const editor = page.locator('.rd-native-editor');
+      if (readOnly) {
+        // Attempt normal canvas input, then inspect saved content via the public facade.
+        await editor
+          .locator(
+            `canvas[aria-label="${kind === 'sheet' ? 'Spreadsheet grid' : 'Document canvas'}"]`,
+          )
+          .click({ position: { x: 130, y: 160 } });
+      } else {
+        await page
+          .getByRole('button', {
+            name: kind === 'sheet' ? 'Select cell A16' : 'Select document start',
+            exact: true,
+          })
+          .click();
+        await editor.locator('[contenteditable="true"][data-u-comp="editor"]').first().focus();
+      }
+      const marker = 'Native keyboard proof';
+      await page.keyboard.type(marker);
+      if (kind === 'sheet') await page.keyboard.press('Enter');
+      if (readOnly) expect((await read()).snapshot).toEqual(beforeEdit.snapshot);
+      else
+        await expect
+          .poll(async () => {
+            const current = await read();
+            return kind === 'sheet'
+              ? current.snapshot.sheets?.october.cellData?.[15]?.[0]?.v
+              : current.snapshot.body?.dataStream;
+          })
+          .toContain(marker);
+      await page.locator('.rd-native-review-tools summary').click();
+      await page.screenshot({
+        path: resolve(directory, `native-${kind}-${readOnly ? 'viewer' : 'edited'}.png`),
+      });
+      verifications.push(
+        `${kind}: native ${readOnly ? 'viewer rejects keyboard edits' : 'keyboard edit saved in local snapshot'}`,
+      );
+      await page.close();
     }
   }
   if (requested.includes('redesign-controls--default')) {
@@ -298,6 +383,7 @@ try {
         await tools.locator('summary').click();
       };
       const shot = async (name: string) => {
+        await waitForNativeEditor(page);
         expect(
           await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
           `Walkthrough overflow: ${name} ${width}`,
@@ -332,6 +418,12 @@ try {
       await page.getByRole('button', { name: 'Try again with a passkey', exact: true }).click();
       await event('Passkey succeeded');
       await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+      const appBrand = page.getByRole('button', { name: 'Spinel home', exact: true });
+      await appBrand.hover();
+      await expect(appBrand.locator('.rd-gem-wiggle')).toHaveCSS('animation-name', 'none');
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await expect(appBrand.locator('.rd-gem-wiggle')).toHaveCSS('animation-name', 'gem-wiggle');
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       const search = page.getByRole('textbox', { name: 'Search files', exact: true });
       await search.fill('recipes');
       await page.locator('.rd-file-open').filter({ hasText: 'A few good recipes' }).click();
@@ -407,14 +499,10 @@ try {
         .getByRole('button', { name: 'More actions for Weekend notes', exact: true })
         .click();
       await page.getByRole('menuitem', { name: 'Restore', exact: true }).click();
-      if (width > 900) await page.getByRole('button', { name: 'My files', exact: true }).click();
-      else {
-        await page.getByRole('button', { name: 'Browse files', exact: true }).click();
-        await page
-          .getByRole('dialog')
-          .getByRole('button', { name: 'My files', exact: true })
-          .click();
-      }
+      await page
+        .getByRole('navigation', { name: 'Breadcrumb', exact: true })
+        .getByRole('button', { name: 'My files', exact: true })
+        .click();
       await expect(
         page.locator('.rd-file-open').filter({ hasText: 'Weekend notes' }),
       ).toBeVisible();
@@ -451,6 +539,26 @@ try {
         .click();
       await expect(page.getByRole('heading', { name: 'Trips', exact: true })).toBeVisible();
       await expect(page.locator('.rd-file-open').filter({ hasText: 'Trip costs' })).toBeVisible();
+      await page
+        .getByRole('navigation', { name: 'Breadcrumb', exact: true })
+        .getByRole('button', { name: 'My files', exact: true })
+        .click();
+      await page.getByRole('button', { name: 'Grid view', exact: true }).click();
+      await page.locator('.rd-file-open').filter({ hasText: 'Autumn plans' }).click();
+      await expect(page.getByRole('heading', { name: 'Autumn plans', exact: true })).toBeVisible();
+      if (width > 900) await page.locator('.rd-space-exit').click();
+      else {
+        await page.getByRole('button', { name: 'Browse pages', exact: true }).click();
+        await page
+          .getByRole('dialog', { name: 'Space contents', exact: true })
+          .getByRole('button', { name: 'My files', exact: true })
+          .click();
+      }
+      await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Grid view', exact: true })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
       await open('invitation');
       await page.getByRole('textbox', { name: 'Your name', exact: true }).fill('Sam Rivera');
       await page.getByRole('button', { name: 'Join with a passkey', exact: true }).click();
@@ -619,6 +727,16 @@ await writeFile(resolve(directory, 'bundle-size.json'), JSON.stringify(bundles, 
 console.log(
   `Captured ${captures.length} screenshots in ${directory}; ${verifications.length} interaction passes.`,
 );
+
+async function waitForNativeEditor(page: Page) {
+  const editor = page.locator('.rd-native-editor:visible');
+  // The connected editor loads lazily; its visible slot precedes the native host.
+  if ((await page.locator('.rd-live-editor:visible').count()) || (await editor.count())) {
+    await expect(editor).toBeVisible();
+    await expect(editor).toHaveAttribute('data-native-ready', 'true', { timeout: 30_000 });
+    await expect(editor.locator('canvas').first()).toBeVisible();
+  }
+}
 
 async function verifyControls(page: Page, variant: string, output: string) {
   const menu = page.getByRole('button', { name: 'File actions', exact: true });

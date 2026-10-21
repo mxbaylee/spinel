@@ -52,7 +52,7 @@
 }
 .sp-control:focus-visible,
 .sp-option:focus-visible,
-.sp-ui input:focus-visible,
+.sp-ui input:not(.rd-native-editor *):focus-visible,
 .sp-ui a:focus-visible {
   outline: 2px solid var(--sp-accent);
   outline-offset: 3px;
@@ -173,8 +173,9 @@
 .sp-popup p {
   padding: 8px;
 }
-.sp-ui input:not([type='range']):not([type='checkbox']):not([type='radio']),
-.sp-ui textarea {
+.sp-ui
+  input:not(.rd-native-editor *):not([type='range']):not([type='checkbox']):not([type='radio']),
+.sp-ui textarea:not(.rd-native-editor *) {
   width: 100%;
   min-height: 40px;
   padding: 8px 12px;
@@ -184,10 +185,10 @@
   border-radius: 8px;
   font: inherit;
 }
-.sp-ui input::placeholder {
+.sp-ui input:not(.rd-native-editor *)::placeholder {
   color: var(--sp-muted);
 }
-.sp-ui label {
+.sp-ui label:not(.rd-native-editor *) {
   display: grid;
   gap: 8px;
 }
@@ -243,7 +244,7 @@
   width: 18px;
   height: 18px;
 }
-@media (any-pointer: coarse), (max-width: 900px) {
+@media (any-pointer: coarse) {
   .sp-segment {
     width: 44px;
     height: 44px;

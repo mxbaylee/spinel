@@ -232,14 +232,33 @@ function Sidebar({
     <nav className="rd-sidebar" aria-label={space ? 'Space contents' : 'Files'}>
       {onCollapse && (
         <div className="rd-sidebar-brand">
-          <div className="rd-brand">
-            <GemLogo />
-          </div>
+          {guest ? (
+            <span className="rd-brand">
+              <span className="rd-gem-wiggle">
+                <GemLogo />
+              </span>
+            </span>
+          ) : (
+            <button
+              className="rd-brand rd-brand-button"
+              aria-label="Spinel home"
+              onClick={() => onSelect('My files')}
+            >
+              <span className="rd-gem-wiggle">
+                <GemLogo />
+              </span>
+            </button>
+          )}
           <NetworkStatus offline={offline} />
           <Button aria-label="Collapse navigation" onClick={onCollapse}>
             <Glyph name="back" />
           </Button>
         </div>
+      )}
+      {space && !guest && (
+        <button className="rd-nav-item rd-space-exit" onClick={() => onSelect('My files')}>
+          <Glyph name="back" /> My files
+        </button>
       )}
       {groups.map((group) => (
         <section key={group.title}>
@@ -429,9 +448,15 @@ function Shell({
     >
       {!guest && (
         <aside className="rd-rail" aria-label="Global navigation">
-          <div className="rd-brand">
-            <GemLogo />
-          </div>
+          <button
+            className="rd-brand rd-brand-button"
+            aria-label={operator ? 'Spinel administration' : 'Spinel home'}
+            onClick={() => onSelect('My files')}
+          >
+            <span className="rd-gem-wiggle">
+              <GemLogo />
+            </span>
+          </button>
           <NetworkStatus offline={offline} />
           <button
             className="rd-rail-button"
@@ -454,6 +479,16 @@ function Shell({
             <Glyph name={sidebar ? 'menu' : operator ? 'shield' : 'files'} />
             {sidebar && <small>{space ? 'Pages' : 'Files'}</small>}
           </button>
+          {sidebar && space && (
+            <button
+              className="rd-rail-button rd-space-rail-exit"
+              aria-label="My files"
+              onClick={() => onSelect('My files')}
+            >
+              <Glyph name="files" />
+              <small>My files</small>
+            </button>
+          )}
           {sidebar && !space && (
             <nav className="rd-collapsed-destinations" aria-label="File shortcuts">
               {(
@@ -601,7 +636,10 @@ const files = [
     date: 'Oct 18',
     tags: 'work',
   },
-].map((file) => ({ ...file, id: `fixture-${file.name}` }));
+].map((file) => {
+  const folder = Object.entries(folderTags).find(([, tag]) => file.tags === tag)?.[0];
+  return { ...file, id: `fixture-${file.name}`, parentId: folder ? `fixture-${folder}` : null };
+});
 export function DashboardMockup({
   state = 'populated',
   collapsed = false,
@@ -636,6 +674,7 @@ export function DashboardMockup({
   const [items, setItems] = useState<
     {
       id: string;
+      parentId: string | null;
       name: string;
       kind: 'doc' | 'sheet' | 'space' | 'folder';
       access: 'owner' | 'editor' | 'viewer';
@@ -646,14 +685,14 @@ export function DashboardMockup({
   >([...files, ...deletedFixtures]);
   const nextFileId = useRef(0);
   const [target, setTarget] = useState('');
-  const [destination, setDestination] = useState('Household');
+  const [destination, setDestination] = useState('fixture-Household');
   const [view, setView] = useState(
     state === 'trash'
       ? 'Trash'
       : state === 'shared'
         ? 'Shared with me'
         : state === 'folder'
-          ? 'Household'
+          ? 'fixture-Household'
           : 'My files',
   );
   const [search, setSearch] = useState(
@@ -669,12 +708,13 @@ export function DashboardMockup({
   const [modified, setModified] = useState('any');
   const [trashed, setTrashed] = useState<string[]>(deletedFixtures.map((file) => file.id));
   const [layout, setLayout] = useState(initialLayout);
+  const currentFolder = items.find((item) => item.kind === 'folder' && item.id === view);
   const selectView = (next: string) => {
     if (next === 'Your profile' && onProfile) onProfile();
     else {
       const file = items.find((item) => item.name === next);
       if (file && file.kind !== 'folder' && onOpen) onOpen({ ...file, kind: file.kind });
-      else setView(next);
+      else setView(file?.kind === 'folder' ? file.id : next);
     }
   };
   if (view === 'Your profile') return <ProfileMockup onBack={() => setView('My files')} />;
@@ -689,15 +729,38 @@ export function DashboardMockup({
       (view === 'Trash' ? trashed.includes(file.id) : !trashed.includes(file.id)) &&
       (!items.some((item) => item.name === view && item.kind !== 'folder') || file.name === view) &&
       (view !== 'Shared with me' || file.access !== 'owner') &&
-      (view !== 'Trash' || (file.access === 'owner' && file.kind !== 'folder')) &&
-      (!['Household', 'Work', 'Trips'].includes(view) || file.tags === folderTags[view]),
+      (view !== 'Trash' || file.access === 'owner') &&
+      (!currentFolder || file.parentId === currentFolder.id),
   );
+  // A folder may never be moved into itself or any of its descendants.
+  const isWithinTarget = (id: string): boolean => {
+    const visited = new Set<string>();
+    let current: string | null = id;
+    while (current && !visited.has(current)) {
+      if (current === target) return true;
+      visited.add(current);
+      current = items.find((item) => item.id === current)?.parentId ?? null;
+    }
+    return false;
+  };
   const empty = state === 'empty' || rows.length === 0;
   return (
-    <Shell sidebar collapsed={collapsed} selected={view} onSelect={selectView}>
+    <Shell
+      sidebar
+      collapsed={collapsed}
+      selected={currentFolder?.name ?? view}
+      onSelect={selectView}
+    >
       <header className="rd-page-header">
         <div>
-          <h1>{view}</h1>
+          {view !== 'My files' && (
+            <nav className="rd-file-breadcrumb" aria-label="Breadcrumb">
+              <button onClick={() => setView('My files')}>My files</button>
+              <span aria-hidden="true">/</span>
+              <span aria-current="page">{currentFolder?.name ?? view}</span>
+            </nav>
+          )}
+          <h1>{currentFolder?.name ?? view}</h1>
         </div>
         <div className="rd-header-actions">
           <ActionMenu
@@ -873,7 +936,7 @@ export function DashboardMockup({
                   className="rd-file-open"
                   onClick={() =>
                     file.kind === 'folder'
-                      ? setView(file.name)
+                      ? setView(file.id)
                       : onOpen
                         ? onOpen({ ...file, kind: file.kind })
                         : setNotice(`Opening ${file.name}…`)
@@ -934,19 +997,27 @@ export function DashboardMockup({
                             label: 'Open',
                             onClick: () =>
                               file.kind === 'folder'
-                                ? setView(file.name)
+                                ? setView(file.id)
                                 : onOpen
                                   ? onOpen({ ...file, kind: file.kind })
                                   : setNotice(`Opening ${file.name}…`),
                           },
-                          { label: 'Pin', onClick: () => setNotice(`${file.name} pinned.`) },
-                          { label: 'Tags…', onClick: () => setDialog('Tags') },
+                          { label: 'Pin (preview only)', disabled: true },
+                          {
+                            label: 'Tags…',
+                            onClick: () => {
+                              setTarget(file.id);
+                              setName(file.tags);
+                              setDialog('Tags');
+                            },
+                          },
                           ...(file.access !== 'owner'
                             ? [
                                 {
                                   label: 'File into folder…',
                                   onClick: () => {
                                     setTarget(file.id);
+                                    setDestination(file.parentId ?? '');
                                     setDialog('File into folder');
                                   },
                                 },
@@ -956,6 +1027,7 @@ export function DashboardMockup({
                                 onClick: () => {
                                   setTarget(file.id);
                                   setName(file.name);
+                                  if (label === 'Move…') setDestination(file.parentId ?? '');
                                   setDialog(label);
                                 },
                               }))),
@@ -1026,7 +1098,17 @@ export function DashboardMockup({
               label="Destination folder"
               value={destination}
               onChange={setDestination}
-              options={['Household', 'Work', 'Trips'].map((label) => ({ value: label, label }))}
+              options={[
+                { value: '', label: 'My files' },
+                ...items
+                  .filter(
+                    (item) =>
+                      item.kind === 'folder' &&
+                      !isWithinTarget(item.id) &&
+                      !trashed.includes(item.id),
+                  )
+                  .map((folder) => ({ value: folder.id, label: folder.name })),
+              ]}
             />
             <p>
               {dialog === 'File into folder'
@@ -1047,23 +1129,24 @@ export function DashboardMockup({
           <Button
             primary
             onClick={() => {
-              if (['Doc', 'Sheet', 'Space'].includes(dialog)) {
+              if (['Doc', 'Sheet', 'Space', 'Folder'].includes(dialog)) {
                 const next = {
                   id: `created-${nextFileId.current++}`,
                   name: name || 'Untitled',
-                  kind: dialog.toLowerCase() as 'doc' | 'sheet' | 'space',
+                  kind: dialog.toLowerCase() as 'doc' | 'sheet' | 'space' | 'folder',
                   access: 'owner' as const,
                 };
                 setItems([
                   ...items,
                   {
                     ...next,
-                    detail: 'Private',
+                    detail: next.kind === 'folder' ? 'Folder' : 'Private',
                     date: 'Just now',
-                    tags: ['Household', 'Work', 'Trips'].includes(view) ? folderTags[view] : '',
+                    tags: '',
+                    parentId: currentFolder?.id ?? null,
                   },
                 ]);
-                onOpen?.(next);
+                if (next.kind !== 'folder') onOpen?.({ ...next, kind: next.kind });
               }
               if (dialog === 'Delete permanently') {
                 setItems(items.filter((file) => file.id !== target));
@@ -1075,10 +1158,14 @@ export function DashboardMockup({
                     file.id === target ? { ...file, name: name || file.name } : file,
                   ),
                 );
+              if (dialog === 'Tags')
+                setItems(
+                  items.map((file) => (file.id === target ? { ...file, tags: name.trim() } : file)),
+                );
               if (dialog === 'File into folder' || dialog === 'Move…')
                 setItems(
                   items.map((file) =>
-                    file.id === target ? { ...file, tags: folderTags[destination] } : file,
+                    file.id === target ? { ...file, parentId: destination || null } : file,
                   ),
                 );
               setNotice(`${dialog}: ${name || 'Untitled'}`);
@@ -1225,7 +1312,9 @@ export function EditorMockup({
   saveState = 'saved',
   onRetrySave,
   onNameVersion,
+  editorContent,
 }: {
+  editorContent?: ReactNode;
   onNameVersion?: (name: string) => void;
   onBack?: () => void;
   onProfile?: () => void;
@@ -1272,7 +1361,9 @@ export function EditorMockup({
         <div className="rd-editor-title">
           {guest ? (
             <div className="rd-guest-gem">
-              <GemLogo />
+              <span className="rd-gem-wiggle">
+                <GemLogo />
+              </span>
             </div>
           ) : (
             <Button
@@ -1355,7 +1446,18 @@ export function EditorMockup({
           {guest ? (
             <>
               <ThemeMenu />
-              <Button aria-label="Export as PDF" onClick={() => setNotice('Preparing PDF…')}>
+              <Button
+                aria-label="Export as PDF"
+                disabled={offline || saveState !== 'saved'}
+                title={
+                  offline
+                    ? 'Reconnect before exporting.'
+                    : saveState !== 'saved'
+                      ? 'Wait until changes are saved before exporting.'
+                      : undefined
+                }
+                onClick={() => setNotice('Preparing PDF…')}
+              >
                 <Glyph name="download" /> PDF
               </Button>
             </>
@@ -1400,7 +1502,7 @@ export function EditorMockup({
           )}
         </div>
       </header>
-      {!viewOnly && (
+      {!viewOnly && editorContent === undefined && (
         <div className="rd-toolbar" aria-label="Editor toolbar representation">
           <span>File</span>
           <span>Edit</span>
@@ -1441,6 +1543,8 @@ export function EditorMockup({
               </Button>
             </div>
           </div>
+        ) : editorContent !== undefined ? (
+          <div className="rd-live-editor">{editorContent}</div>
         ) : (
           <DocumentSurface
             sheet={sheet || selected === 'Budget'}
@@ -2604,19 +2708,15 @@ export function AdminMockup({
           <span>
             MacBook<small>Last used today · Added October 18</small>
           </span>
-          <Button
-            disabled={passkeys.startsWith('Operator')}
-            onClick={() =>
-              setNotice('Passkey removal requires confirmation in the implementation.')
-            }
-          >
-            Remove…
-          </Button>
+          <Button disabled>Remove…</Button>
         </div>
         <p className="sp-muted">
           {passkeys.startsWith('Operator')
             ? 'The Operator’s last passkey cannot be removed here.'
             : 'If their last passkey is removed, issue a recovery invitation so they can sign in again.'}
+        </p>
+        <p className="sp-muted">
+          Passkey removal is not interactive in this design preview. No credentials are changed.
         </p>
       </Modal>
       <Modal

@@ -35,6 +35,7 @@ export const InvalidSetup: Story = {
 export const Settings: Story = { args: { start: 'profile' } };
 export const Administration: Story = { args: { persona: 'operator', start: 'admin' } };
 export const Sheet: Story = { args: { start: 'editor' } };
+export const Doc: Story = { args: { start: 'editor', initialKind: 'doc' } };
 
 export const OperatorHelp: Story = {
   args: { persona: 'operator', start: 'setup' },

@@ -29,6 +29,31 @@
   width: 36px;
   height: 36px;
 }
+.rd-brand-button {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.rd-gem-wiggle {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rd-brand-button:hover .rd-gem-wiggle,
+  .rd-brand-button:focus-visible .rd-gem-wiggle,
+  .rd-guest-gem:hover .rd-gem-wiggle {
+    animation: gem-wiggle 0.6s ease-in-out;
+  }
+}
 .rd-brand svg,
 .rd-entry-brand svg,
 .rd-guest-gem svg {
@@ -301,6 +326,26 @@
   font-size: 0.6875rem;
   color: var(--sp-muted);
 }
+.rd-file-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--sp-muted);
+}
+.rd-file-breadcrumb button {
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--sp-text);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
 .rd-status-slot {
   width: 144px;
   flex-shrink: 0;
@@ -345,6 +390,11 @@
 .rd-editor-body {
   display: flex;
   min-height: calc(100dvh - 164px);
+}
+.rd-live-editor {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
 }
 .rd-paper-wrap {
   flex: 1;
@@ -647,6 +697,9 @@
 @media (max-width: 900px) {
   .rd-shell.rd-with-sidebar {
     grid-template-columns: 64px 176px minmax(0, 1fr);
+  }
+  .rd-space-rail-exit {
+    display: none;
   }
   .rd-page-header {
     padding: 32px 24px 24px;
@@ -972,12 +1025,12 @@
 }
 
 @media (pointer: coarse), (max-width: 640px) {
-  .sp-ui button,
-  .sp-ui input,
-  .sp-ui summary {
+  .sp-ui button:not(.rd-native-editor *):not(.sp-segment),
+  .sp-ui input:not(.rd-native-editor *),
+  .sp-ui summary:not(.rd-native-editor *) {
     min-height: 44px;
   }
-  .sp-ui button {
+  .sp-ui button:not(.rd-native-editor *):not(.sp-segment) {
     min-width: 44px;
   }
 }
@@ -1033,7 +1086,8 @@
   color: var(--sp-text);
 }
 @media (pointer: coarse), (max-width: 640px) {
-  .sp-ui input:not([type='range']):not([type='checkbox']):not([type='radio']) {
+  .sp-ui
+    input:not(.rd-native-editor *):not([type='range']):not([type='checkbox']):not([type='radio']) {
     min-height: 44px;
   }
 }

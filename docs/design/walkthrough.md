@@ -2,7 +2,16 @@
 
 This is the connected SPN-047 design proposal in [PR #125](https://github.com/mxbaylee/spinel/pull/125).
 It uses rendered Storybook screens and local fixture state. It does not sign in,
-change a real account, or save a document. Production migration remains separate.
+change a real account, or save a document to the server. Production migration remains separate.
+
+Connected Sheet and Doc screens embed actual open-source Univer editors with
+sample content. Their toolbar, selection, formulas, editing, tabs and scrolling
+are real. Only the active editor is mounted; local snapshots preserve edits when
+you visit settings or return to My files. Reload, sign-out or Restart clears them.
+Viewer examples apply the application's local read-only permission fence.
+Passkeys, connectivity, save status, history and sharing remain simulated.
+Standalone structural screen stories (including planned Spaces/formulas/history)
+retain schematic content; use **Walkthrough → Sheet / Doc** to judge native editing.
 
 The [visual gallery](review/README.md) records the captured commit, workflow result
 and unchanged PNG sources. Its **Before** images are explicitly labeled as either
@@ -68,6 +77,11 @@ System / Light / Dark stays directly visible as a three-segment control. It is
 desktop rails stack it vertically, while headers and expanded navigation use a
 horizontal group. It defaults to System and affects this browser only. **This
 device** explains that scope; saving profile identity does not change appearance.
+
+Trash and folders have a My files breadcrumb. Pages opens a Space's internal
+tree, with a separate My files exit. The gem wiggles on hover or keyboard focus
+unless reduced motion is preferred. Folder creation, tags and moving files update
+local fixtures; unavailable pin/passkey removal actions are explicitly disabled.
 
 Approve the composed direction and its screenshots in the PR when ready, or
 identify the screen and task that still feels awkward. The gallery is review

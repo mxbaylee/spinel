@@ -72,8 +72,10 @@ recovery and offline contracts remain authoritative.
   edited date. Dates move out at narrow widths before names lose space.
 - Editors: no file-search panel, dashboard title or pinned sidebar. One compact
   header holds identity, a fixed status slot and permission-appropriate actions.
-  The actual Univer toolbar remains the only editing toolbar. Mockups draw a
-  schematic toolbar; they do not replace or promise new Univer commands.
+  The actual Univer toolbar remains the only editing toolbar. Connected Sheet/Doc
+  walkthroughs embed native open-source Univer with local samples. Standalone
+  structural stories retain schematic content for planned states; they do not
+  replace or promise new Univer commands.
 - Profile and Operator pages: section navigation replaces a long stack of
   equally weighted cards. Profile section navigation scrolls horizontally, with
   labels retained; Operator sections wrap so Backups & health stays discoverable. Operator and file Admin are different concepts.

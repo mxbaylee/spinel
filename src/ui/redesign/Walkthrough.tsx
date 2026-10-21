@@ -1,5 +1,6 @@
 /** Connected review fixtures only. Never mounts the application or calls its APIs. */
-import { useLayoutEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useLayoutEffect, useRef, useState } from 'react';
+import type { NativeSnapshot } from './NativeEditors.tsx';
 import { Button, Choice, Modal } from './Controls.tsx';
 import {
   AdminMockup,
@@ -14,6 +15,10 @@ import { EntryJourney } from './EntryJourney.tsx';
 import type { EntryScreen, EntryOutcome } from './EntryJourney.tsx';
 import './walkthrough.css';
 import { defaultProfile } from '../../profile/profile.ts';
+
+const NativeEditor = lazy(() =>
+  import('./NativeEditors.tsx').then((module) => ({ default: module.NativeEditor })),
+);
 
 type Persona = 'owner' | 'collaborator' | 'operator' | 'guest';
 type Screen =
@@ -36,10 +41,12 @@ export function Walkthrough({
   persona = 'owner',
   start = 'home',
   initialOutcome = 'ready',
+  initialKind = 'sheet',
 }: {
   persona?: Persona;
   start?: Screen;
   initialOutcome?: EntryOutcome;
+  initialKind?: 'doc' | 'sheet';
 }) {
   const [profile, setProfile] = useState(
     defaultProfile(
@@ -51,7 +58,9 @@ export function Walkthrough({
   const [file, setFile] = useState<File>(
     persona === 'guest'
       ? { id: 'guest-doc', name: 'Autumn plans', kind: 'doc', access: 'viewer' }
-      : firstFile,
+      : initialKind === 'doc'
+        ? { id: 'fixture-Autumn plans', name: 'Autumn plans', kind: 'doc', access: 'owner' }
+        : firstFile,
   );
   const [signedIn, setSignedIn] = useState(
     ['files', 'editor', 'profile', 'admin', 'history'].includes(start) && persona !== 'guest',
@@ -59,6 +68,7 @@ export function Walkthrough({
   const [firstRun, setFirstRun] = useState(start === 'setup');
   const [returnTo, setReturnTo] = useState<Screen>(persona === 'operator' ? 'admin' : 'files');
   const [namedVersions, setNamedVersions] = useState<Record<string, string>>({});
+  const [snapshots, setSnapshots] = useState(() => new Map<string, NativeSnapshot>());
   const [save, setSave] = useState<'saved' | 'saving' | 'failed'>('saved');
   const [offline, setOffline] = useState(false);
   const [leaveTo, setLeaveTo] = useState<Screen>();
@@ -117,12 +127,15 @@ export function Walkthrough({
     setFile(
       persona === 'guest'
         ? { id: 'guest-doc', name: 'Autumn plans', kind: 'doc', access: 'viewer' }
-        : firstFile,
+        : initialKind === 'doc'
+          ? { id: 'fixture-Autumn plans', name: 'Autumn plans', kind: 'doc', access: 'owner' }
+          : firstFile,
     );
     setSignedIn(
       ['files', 'editor', 'profile', 'admin', 'history'].includes(start) && persona !== 'guest',
     );
     setNamedVersions({});
+    setSnapshots(new Map());
     setFirstRun(start === 'setup');
     setGeneration(generation + 1);
     setEvent('');
@@ -166,8 +179,9 @@ export function Walkthrough({
         </summary>
         <div className="rd-review-controls">
           <p>
-            No accounts or documents are changed. Browser passkey prompts and save results are
-            simulated here.
+            No production accounts or documents are changed. Univer editing is real; sample content
+            stays in memory until you reload or restart. Passkeys, save status, history and sharing
+            are simulated.
           </p>
           <Choice
             label="Preview event"
@@ -249,6 +263,21 @@ export function Walkthrough({
                   collaborator={file.access === 'editor'}
                   offline={offline}
                   saveState={save}
+                  editorContent={
+                    file.kind === 'space' ? undefined : screen === 'editor' ? (
+                      <Suspense fallback={<p role="status">Opening editor…</p>}>
+                        <NativeEditor
+                          key={`${file.id}:${file.access}`}
+                          kind={file.kind}
+                          title={file.name}
+                          readOnly={file.access === 'viewer'}
+                          initialSnapshot={snapshots.get(file.id)}
+                          getSnapshot={() => snapshots.get(file.id)}
+                          onSnapshot={(snapshot) => snapshots.set(file.id, snapshot)}
+                        />
+                      </Suspense>
+                    ) : null
+                  }
                   onNameVersion={(name) =>
                     setNamedVersions((current) => ({ ...current, [file.id]: name }))
                   }
@@ -281,6 +310,7 @@ export function Walkthrough({
                 }
                 onSignOut={() => {
                   setSignedIn(false);
+                  setSnapshots(new Map());
                   setScreen('home');
                   setGeneration(generation + 1);
                 }}
