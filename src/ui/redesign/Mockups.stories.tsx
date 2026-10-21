@@ -54,6 +54,16 @@ export const OfflineEditor: Story = { render: () => <EditorMockup offline /> };
 export const FormulaInContext: Story = { render: () => <EditorMockup formula /> };
 export const Formula: Story = { render: () => <FormulaMockup /> };
 export const History: Story = { render: () => <HistoryMockup /> };
+export const HistoryViewer: Story = { render: () => <HistoryMockup viewOnly /> };
+export const HistoryUnsaved: Story = { render: () => <HistoryMockup saveState="failed" /> };
+export const HistoryNaming: Story = {
+  render: () => <HistoryMockup />,
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Name this version…' }),
+    );
+  },
+};
 export const Sharing: Story = { render: () => <SharingMockup /> };
 export const PlannedFileAdmin: Story = { render: () => <SharingMockup delegated /> };
 export const Profile: Story = { render: () => <ProfileMockup /> };

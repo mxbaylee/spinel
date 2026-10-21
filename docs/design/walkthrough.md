@@ -92,3 +92,23 @@ and authored cell colors retain their content colors.
 Approve the composed direction and its screenshots in the PR when ready, or
 identify the screen and task that still feels awkward. The gallery is review
 evidence, not owner approval or proof that every CI gate passed.
+
+### Owner refinements, October 20
+
+The expanded file sidebar centers the device theme picker without a visible
+Appearance label. Profile uses the display name, truncates long names, exposes
+the full name on hover, and has a visible whole-row hover/focus state. Collapsed
+navigation uses matching expand/collapse chevrons without a visible Expand label.
+Connection details remain a tooltip with the normal cursor.
+
+The document ellipsis contains Share for owners, Versions and Export; Doc
+formula insertion remains available to editors. Version naming belongs inside
+Versions, with Back immediately left of its title. Remove the routine editable
+access explanation and About your access entry; keep meaningful view-only and
+unsaved/offline feedback. Remove the extra Fill presets entry: the native Sheet
+owns its fill controls. These placement changes simplify the Owner and
+Collaborator's editor while preserving Guest restrictions and Operator isolation.
+
+Spaces use a top site header and a dedicated left content tree. Both folders and
+pages with children are represented; a page title opens content independently of
+its expansion chevron. See [Spaces](spaces.md) for the proposed hierarchy.

@@ -326,6 +326,11 @@ export function Walkthrough({
             <HistoryMockup
               title={file.name}
               namedVersion={namedVersions[file.id] ?? ''}
+              saveState={save}
+              offline={offline}
+              onNameVersion={(name) =>
+                setNamedVersions((current) => ({ ...current, [file.id]: name }))
+              }
               sheet={file.kind === 'sheet'}
               viewOnly={file.access === 'viewer'}
               onBack={() => navigate('editor')}

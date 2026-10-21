@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { DOCS_NORMAL_EDITOR_UNIT_ID_KEY } from '@univerjs/core';
 import { NativeEditor } from './NativeEditors.tsx';
 import type { NativeEditorHandle, NativeEditorProps } from './NativeEditors.tsx';
 import { Button } from './Controls.tsx';
@@ -7,6 +8,12 @@ import { Button } from './Controls.tsx';
 /** Observation belongs to the isolated story, never a production global. */
 function NativeEditorStory(props: NativeEditorProps) {
   const editor = useRef<NativeEditorHandle>();
+  const events = useRef<Record<string, unknown>[]>([]);
+  const stopEvents = useRef<(() => void)[]>([]);
+  const record = (event: Record<string, unknown>) => {
+    events.current = [...events.current.slice(-23), event];
+  };
+  useEffect(() => () => stopEvents.current.forEach((stop) => stop()), []);
   const [observation, setObservation] = useState('');
   const observe = () => {
     if (editor.current)
@@ -17,12 +24,29 @@ function NativeEditorStory(props: NativeEditorProps) {
             props.kind === 'sheet'
               ? editor.current.api.getActiveWorkbook()?.getActiveRange()?.getA1Notation()
               : undefined,
+          inputDocument:
+            props.kind === 'sheet'
+              ? editor.current.api.getDocument(DOCS_NORMAL_EDITOR_UNIT_ID_KEY)?.save().body
+              : undefined,
+          events: events.current,
           snapshot: editor.current.getSnapshot(),
         }),
       );
   };
   return (
-    <div className="sp-ui">
+    <div
+      className="sp-ui"
+      onInput={(event) => {
+        const input = event.nativeEvent as InputEvent;
+        record({
+          event: 'input',
+          target: (event.target as HTMLElement).id,
+          data: input.data,
+          inputType: input.inputType,
+          defaultPrevented: input.defaultPrevented,
+        });
+      }}
+    >
       <details className="rd-native-review-tools">
         <summary>Native editor review controls</summary>
         <p>
@@ -50,6 +74,15 @@ function NativeEditorStory(props: NativeEditorProps) {
         {...props}
         onReady={(handle) => {
           editor.current = handle;
+          stopEvents.current.forEach((stop) => stop());
+          stopEvents.current = [
+            handle.api.addEvent(handle.api.Event.BeforeCommandExecute, (event) => {
+              record({ event: 'before-command', id: event.id, unitId: event.params?.unitId });
+            }),
+            handle.api.addEvent(handle.api.Event.CommandExecuted, (event) => {
+              record({ event: 'command', id: event.id, unitId: event.params?.unitId });
+            }),
+          ].map((subscription) => () => subscription.dispose());
           observe();
         }}
         onChange={observe}

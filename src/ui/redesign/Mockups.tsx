@@ -20,6 +20,7 @@ type GlyphName =
   | 'shared'
   | 'trash'
   | 'pin'
+  | 'forward'
   | 'back'
   | 'menu'
   | 'sun'
@@ -44,6 +45,7 @@ const paths: Record<GlyphName, string> = {
   trash: 'M4 6h16 M9 6V3h6v3 M6 6l1 15h10l1-15 M10 10v7 M14 10v7',
   pin: 'M8 3h8l-1 7 4 4H5l4-4z M12 14v8',
   back: 'M15 5l-7 7 7 7',
+  forward: 'M9 5l7 7-7 7',
   menu: 'M4 6h16 M4 12h16 M4 18h16',
   sun: 'M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10 M12 1v2 M12 21v2 M1 12h2 M21 12h2 M4 4l2 2 M18 18l2 2 M4 20l2-2 M18 6l2-2',
   check: 'M5 12l4 4L19 6',
@@ -182,6 +184,87 @@ function NetworkStatus({ offline = false }: { offline?: boolean }) {
     </Tooltip.Root>
   );
 }
+type SpaceEntry = { name: string; kind: 'doc' | 'sheet' | 'folder'; children?: SpaceEntry[] };
+const spacePages: SpaceEntry[] = [
+  { name: 'Overview', kind: 'doc' },
+  { name: 'Budget', kind: 'sheet' },
+  { name: 'Places to stay', kind: 'doc' },
+  {
+    name: 'Weekend trip',
+    kind: 'doc',
+    children: [
+      { name: 'Trip costs', kind: 'sheet' },
+      { name: 'Packing list', kind: 'doc' },
+    ],
+  },
+  { name: 'Reference', kind: 'folder', children: [{ name: 'Reservations', kind: 'doc' }] },
+];
+function SpaceBranch({
+  entry,
+  selected,
+  onSelect,
+  onAction,
+}: {
+  entry: SpaceEntry;
+  selected: string;
+  onSelect: (name: string) => void;
+  onAction?: (action: string) => void;
+}) {
+  const [open, setOpen] = useState(true);
+  return (
+    <li>
+      <div className="rd-space-node">
+        {entry.children ? (
+          <button
+            className="rd-space-toggle"
+            aria-label={`${open ? 'Collapse' : 'Expand'} ${entry.name}`}
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+          >
+            <span aria-hidden="true">{open ? '⌄' : '›'}</span>
+          </button>
+        ) : (
+          <span className="rd-space-toggle-placeholder" />
+        )}
+        <button
+          className="rd-nav-item"
+          aria-current={entry.kind !== 'folder' && selected === entry.name ? 'page' : undefined}
+          onClick={() => (entry.kind === 'folder' ? setOpen(!open) : onSelect(entry.name))}
+        >
+          {entry.kind === 'folder' ? (
+            <Glyph name="folder" />
+          ) : (
+            <EntityIcon kind={entry.kind} size={18} />
+          )}
+          <span>{entry.name}</span>
+        </button>
+        {onAction && (
+          <ActionMenu
+            label={`${entry.kind === 'folder' ? 'Folder' : 'Page'} actions for ${entry.name}`}
+            actions={['Rename', 'Move or reorder', 'Trash'].map((label) => ({
+              label,
+              destructive: label === 'Trash',
+              onClick: () => onAction(`${label}: ${entry.name}`),
+            }))}
+          />
+        )}
+      </div>
+      {entry.children && open && (
+        <ul>
+          {entry.children.map((child) => (
+            <SpaceBranch
+              key={child.name}
+              entry={child}
+              selected={selected}
+              onSelect={onSelect}
+              onAction={onAction}
+            />
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+}
 function Sidebar({
   space = false,
   selected,
@@ -202,43 +285,25 @@ function Sidebar({
   const { profile } = useContext(ReviewProfileContext);
   const [action, setAction] = useState('');
   const [destination, setDestination] = useState('root');
-  const groups: { title: string; items: [string, GlyphName][] }[] = space
-    ? [
-        {
-          title: 'AUTUMN PLANS',
-          items: [
-            ['Overview', 'files'],
-            ['Budget', 'files'],
-            ['Places to stay', 'files'],
-          ],
-        },
-        {
-          title: 'WEEKEND TRIP',
-          items: [
-            ['Packing list', 'files'],
-            ['Reservations', 'files'],
-          ],
-        },
-      ]
-    : [
-        {
-          title: 'WORKSPACE',
-          items: [
-            ['My files', 'files'],
-            ['Shared with me', 'shared'],
-          ],
-        },
-        {
-          title: 'PINNED',
-          items: [
-            ['Quarterly budget', 'pin'],
-            ['Autumn plans', 'pin'],
-          ],
-        },
-      ];
+  const groups: { title: string; items: [string, GlyphName][] }[] = [
+    {
+      title: 'WORKSPACE',
+      items: [
+        ['My files', 'files'],
+        ['Shared with me', 'shared'],
+      ],
+    },
+    {
+      title: 'PINNED',
+      items: [
+        ['Quarterly budget', 'pin'],
+        ['Autumn plans', 'pin'],
+      ],
+    },
+  ];
   return (
     <nav className="rd-sidebar" aria-label={space ? 'Space contents' : 'Files'}>
-      {onCollapse && (
+      {onCollapse && !space && (
         <div className="rd-sidebar-brand">
           {guest ? (
             <span className="rd-brand">
@@ -263,78 +328,60 @@ function Sidebar({
           </Button>
         </div>
       )}
-      {space && !guest && (
-        <button className="rd-nav-item rd-space-exit" onClick={() => onSelect('My files')}>
-          <Glyph name="back" /> My files
-        </button>
-      )}
-      {groups.map((group) => (
-        <section key={group.title}>
-          {space && group.title === 'WEEKEND TRIP' ? (
-            <details open>
-              <summary>Weekend trip</summary>
-              <div className="rd-tree-nested">
-                {group.items.map(([label, glyph]) => (
-                  <div className="rd-tree-row" key={label}>
-                    <button
-                      className="rd-nav-item"
-                      aria-current={selected === label ? 'page' : undefined}
-                      onClick={() => onSelect(label)}
-                    >
-                      <Glyph name={glyph} />
-                      {label}
-                    </button>
-                    {canEdit && (
-                      <ActionMenu
-                        label={`Page actions for ${label}`}
-                        actions={['Rename', 'Move or reorder', 'Trash'].map((x) => ({
-                          label: x,
-                          onClick: () => setAction(`${x}: ${label}`),
-                        }))}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </details>
-          ) : (
-            <>
-              <h2>{group.title}</h2>
-              {group.items.map(([label, glyph]) => (
-                <div className="rd-tree-row" key={label}>
-                  <button
-                    className="rd-nav-item"
-                    aria-current={selected === label ? 'page' : undefined}
-                    onClick={() => onSelect(label)}
-                  >
-                    {!space && glyph === 'pin' ? (
-                      <span aria-hidden="true">{filenameEmoji(label)}</span>
-                    ) : (
-                      <Glyph name={glyph} />
-                    )}
-                    {label}
-                  </button>
-                  {space && canEdit && (
-                    <ActionMenu
-                      label={`Page actions for ${label}`}
-                      actions={['Rename', 'Move or reorder', 'Trash'].map((x) => ({
-                        label: x,
-                        destructive: x === 'Trash',
-                        onClick: () => setAction(`${x}: ${label}`),
-                      }))}
-                    />
-                  )}
-                </div>
-              ))}
-            </>
-          )}
+      {space ? (
+        <section className="rd-space-pages">
+          <div className="rd-space-nav-heading">
+            <h2>Autumn plans</h2>
+            {onCollapse && (
+              <Button aria-label="Collapse navigation" onClick={onCollapse}>
+                <Glyph name="back" />
+              </Button>
+            )}
+          </div>
+          <ul>
+            {spacePages.map((entry) => (
+              <SpaceBranch
+                key={entry.name}
+                entry={entry}
+                selected={selected}
+                onSelect={onSelect}
+                onAction={canEdit ? setAction : undefined}
+              />
+            ))}
+          </ul>
         </section>
-      ))}
+      ) : (
+        groups.map((group) => (
+          <section key={group.title}>
+            <h2>{group.title}</h2>
+            {group.items.map(([label, glyph]) => (
+              <button
+                key={label}
+                className="rd-nav-item"
+                aria-current={selected === label ? 'page' : undefined}
+                onClick={() => onSelect(label)}
+              >
+                {glyph === 'pin' ? (
+                  <span aria-hidden="true">{filenameEmoji(label)}</span>
+                ) : (
+                  <Glyph name={glyph} />
+                )}
+                {label}
+              </button>
+            ))}
+          </section>
+        ))
+      )}
       {space && canEdit && (
         <ActionMenu
           label="Add page"
-          actions={['Doc', 'Sheet'].map((x) => ({
-            icon: <EntityIcon kind={x === 'Doc' ? 'doc' : 'sheet'} size={16} />,
+          actions={['Doc', 'Sheet', 'Folder'].map((x) => ({
+            icon:
+              x === 'Folder' ? (
+                <Glyph name="folder" />
+              ) : (
+                <EntityIcon kind={x === 'Doc' ? 'doc' : 'sheet'} size={16} />
+              ),
             label: x,
             onClick: () => setAction(`New ${x}`),
           }))}
@@ -387,7 +434,7 @@ function Sidebar({
       </Modal>
       {!guest && (
         <div className="rd-sidebar-bottom">
-          {onCollapse && !guest && (
+          {onCollapse && !guest && !space && (
             <div className="rd-sidebar-utilities">
               <div className="rd-appearance-row">
                 <ThemeMenu />
@@ -461,7 +508,7 @@ function Shell({
   return (
     <div
       ref={shellRef}
-      className={`sp-ui rd-shell ${sidebar && expanded ? 'rd-with-sidebar' : ''} ${guest ? 'rd-guest' : ''} ${compact ? 'rd-compact-shell' : ''} ${sidebar ? 'rd-has-navigation' : ''}`}
+      className={`sp-ui rd-shell ${sidebar && expanded ? 'rd-with-sidebar' : ''} ${guest ? 'rd-guest' : ''} ${compact || space ? 'rd-compact-shell' : ''} ${space ? 'rd-space-shell' : ''} ${sidebar ? 'rd-has-navigation' : ''}`}
     >
       {!guest && (
         <aside className="rd-rail" aria-label="Global navigation">
@@ -487,7 +534,7 @@ function Shell({
                   : 'My files'
             }
             title={sidebar ? (space ? 'Expand pages navigation' : 'Expand navigation') : undefined}
-            aria-expanded={sidebar ? nav : undefined}
+            aria-expanded={sidebar ? nav || expanded : undefined}
             onClick={() => {
               if (sidebar) {
                 if (window.matchMedia('(max-width: 900px)').matches) setNav(true);
@@ -495,8 +542,7 @@ function Shell({
               } else onSelect('My files');
             }}
           >
-            <Glyph name={sidebar ? 'menu' : operator ? 'shield' : 'files'} />
-            {sidebar && <small>{space ? 'Pages' : 'Expand'}</small>}
+            <Glyph name={sidebar ? 'forward' : operator ? 'shield' : 'files'} />
           </button>
           {sidebar && space && (
             <button
@@ -1321,6 +1367,45 @@ export function DocumentSurface({
     </div>
   );
 }
+function NameVersionDialog({
+  open,
+  onOpenChange,
+  onSave,
+  disabled = false,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSave: (name: string) => void;
+  disabled?: boolean;
+}) {
+  const [name, setName] = useState('');
+  return (
+    <Modal
+      title="Name this version"
+      description="Name the current saved document so you can find this moment again."
+      open={open}
+      onOpenChange={onOpenChange}
+    >
+      <label>
+        Version name
+        <input value={name} maxLength={120} onChange={(event) => setName(event.target.value)} />
+      </label>
+      <div className="sp-actions">
+        <Button onClick={() => onOpenChange(false)}>Cancel</Button>
+        <Button
+          primary
+          disabled={disabled || !name.trim()}
+          onClick={() => {
+            onSave(name.trim());
+            onOpenChange(false);
+          }}
+        >
+          Save version name
+        </Button>
+      </div>
+    </Modal>
+  );
+}
 export function EditorMockup({
   sheet = false,
   guest = false,
@@ -1495,35 +1580,13 @@ export function EditorMockup({
                 ...(!viewOnly && !collaborator
                   ? [{ label: 'Share…', onClick: () => setShare(true) }]
                   : []),
-                ...(collaborator
-                  ? [
-                      {
-                        label: 'About your access',
-                        onClick: () =>
-                          setNotice(
-                            'You can edit this file. Its owner manages sharing. You can name and restore versions. Folder access may still apply.',
-                          ),
-                      },
-                    ]
-                  : []),
-                ...(!viewOnly
-                  ? [
-                      {
-                        label: 'Name this version…',
-                        disabled: saveState !== 'saved' || offline,
-                        onClick: () => setNaming(true),
-                      },
-                    ]
-                  : []),
-                ...[
-                  'Versions',
-                  'Export',
-                  ...(!viewOnly ? [sheet ? 'Fill presets' : 'Insert formula'] : []),
-                ].map((label) => ({
-                  label,
-                  onClick: () =>
-                    label === 'Versions' && onHistory ? onHistory() : setPanel(label),
-                })),
+                ...['Versions', 'Export', ...(!viewOnly && !sheet ? ['Insert formula'] : [])].map(
+                  (label) => ({
+                    label,
+                    onClick: () =>
+                      label === 'Versions' && onHistory ? onHistory() : setPanel(label),
+                  }),
+                ),
               ]}
             />
           )}
@@ -1574,7 +1637,7 @@ export function EditorMockup({
           <div className="rd-live-editor">{editorContent}</div>
         ) : (
           <DocumentSurface
-            sheet={sheet || selected === 'Budget'}
+            sheet={sheet || selected === 'Budget' || selected === 'Trip costs'}
             unavailable={guest || offline}
             readOnly={viewOnly}
             table={table}
@@ -1582,32 +1645,44 @@ export function EditorMockup({
         )}
         {panel && (
           <aside className="rd-inspector">
-            <div className="rd-modal-title">
+            <div className={panel === 'Versions' ? 'rd-history-heading' : 'rd-modal-title'}>
+              {panel === 'Versions' && (
+                <Button aria-label="Return to document" onClick={() => setPanel('')}>
+                  <Glyph name="back" />
+                </Button>
+              )}
               <h2>{panel}</h2>
-              <Button aria-label="Close panel" onClick={() => setPanel('')}>
-                ×
-              </Button>
+              {panel !== 'Versions' && (
+                <Button aria-label="Close panel" onClick={() => setPanel('')}>
+                  ×
+                </Button>
+              )}
             </div>
             {panel.includes('formula') || panel === 'Formula' ? (
               <FormulaForm />
-            ) : panel === 'Fill presets' ? (
-              <div className="rd-profile-colors">
-                {fillPresets.map((preset) => (
-                  <Button
-                    key={preset.id}
-                    aria-label={preset.id}
-                    style={{
-                      background: `var(--fill-${preset.id}-bg)`,
-                      color: `var(--fill-${preset.id}-fg)`,
-                    }}
-                    onClick={() => setNotice(`${preset.id} selected for the cell in this preview.`)}
-                  >
-                    Aa
-                  </Button>
-                ))}
-              </div>
             ) : panel === 'Versions' ? (
-              <HistoryContent selected={checkpoint} setSelected={setCheckpoint} />
+              <>
+                {!viewOnly && (
+                  <Button
+                    disabled={saveState !== 'saved' || offline}
+                    title={
+                      offline
+                        ? 'Reconnect before naming a version.'
+                        : saveState !== 'saved'
+                          ? 'Wait until changes are saved before naming a version.'
+                          : undefined
+                    }
+                    onClick={() => setNaming(true)}
+                  >
+                    Name this version…
+                  </Button>
+                )}
+                <HistoryContent
+                  selected={checkpoint}
+                  setSelected={setCheckpoint}
+                  namedVersion={versionName}
+                />
+              </>
             ) : (
               <>
                 <p className="sp-muted">
@@ -1631,36 +1706,22 @@ export function EditorMockup({
           </aside>
         )}
       </div>
-      <div className="rd-editor-foot" role="status">
-        {notice ||
-          (viewOnly ? 'You can view this document.' : 'All times shown in your local time.')}
-      </div>
-      <Modal
-        title="Name this version"
-        description="Keep a named checkpoint so you can find this moment again."
+      {(notice || viewOnly) && (
+        <div className="rd-editor-foot" role="status">
+          {notice || 'You can view this document.'}
+        </div>
+      )}
+      <NameVersionDialog
         open={naming}
         onOpenChange={setNaming}
-      >
-        <label>
-          Version name
-          <input value={versionName} onChange={(event) => setVersionName(event.target.value)} />
-        </label>
-        <div className="sp-actions">
-          <Button onClick={() => setNaming(false)}>Cancel</Button>
-          <Button
-            primary
-            disabled={!versionName.trim()}
-            onClick={() => {
-              setCheckpoint(`Just now · ${versionName}`);
-              onNameVersion?.(versionName);
-              setNotice(`Version named ${versionName}.`);
-              setNaming(false);
-            }}
-          >
-            Save version name
-          </Button>
-        </div>
-      </Modal>
+        disabled={saveState !== 'saved' || offline}
+        onSave={(version) => {
+          setVersionName(version);
+          setCheckpoint(`Just now · ${version}`);
+          onNameVersion?.(version);
+          setNotice(`Version named ${version}.`);
+        }}
+      />
       <Modal
         title={`Share ${name}`}
         description="Choose who can open this file."
@@ -2039,6 +2100,9 @@ export function HistoryMockup({
   onBack,
   onFiles,
   onProfile,
+  onNameVersion,
+  saveState = 'saved',
+  offline = false,
 }: {
   viewOnly?: boolean;
   sheet?: boolean;
@@ -2047,6 +2111,9 @@ export function HistoryMockup({
   onBack?: () => void;
   onFiles?: () => void;
   onProfile?: () => void;
+  onNameVersion?: (name: string) => void;
+  saveState?: 'saved' | 'saving' | 'failed';
+  offline?: boolean;
   calendar?: boolean;
   confirmation?: boolean;
 }) {
@@ -2059,25 +2126,49 @@ export function HistoryMockup({
         : '10:15 · Ready for the trip',
   );
   const [notice, setNotice] = useState('');
+  const [naming, setNaming] = useState(false);
+  const [currentName, setCurrentName] = useState(namedVersion);
   return (
-    <Shell compact onSelect={(next) => (next === 'Your profile' ? onProfile?.() : onFiles?.())}>
+    <Shell
+      compact
+      offline={offline}
+      onSelect={(next) => (next === 'Your profile' ? onProfile?.() : onFiles?.())}
+    >
       <header className="rd-page-header">
-        <div>
-          <p className="rd-eyebrow">{title}</p>
-          <h1>Version history</h1>
-        </div>
-        <div className="sp-actions">
+        <div className="rd-history-heading">
           <Button
+            aria-label="Return to document"
             onClick={() =>
               onBack ? onBack() : setNotice('Return to the live document without restoring.')
             }
           >
-            Return to document
+            <Glyph name="back" />
           </Button>
+          <div>
+            <p className="rd-eyebrow">{title}</p>
+            <h1>Version history</h1>
+          </div>
+        </div>
+        <div className="sp-actions">
           {!viewOnly && (
-            <Button primary onClick={() => setRestore(true)}>
-              Restore this version…
-            </Button>
+            <>
+              <Button
+                disabled={saveState !== 'saved' || offline}
+                title={
+                  offline
+                    ? 'Reconnect before naming a version.'
+                    : saveState !== 'saved'
+                      ? 'Wait until changes are saved before naming a version.'
+                      : undefined
+                }
+                onClick={() => setNaming(true)}
+              >
+                Name this version…
+              </Button>
+              <Button primary onClick={() => setRestore(true)}>
+                Restore this version…
+              </Button>
+            </>
           )}
         </div>
       </header>
@@ -2091,7 +2182,7 @@ export function HistoryMockup({
             <HistoryContent
               selected={selected}
               setSelected={setSelected}
-              namedVersion={namedVersion}
+              namedVersion={currentName}
             />
           </div>
           <details className="rd-history-disclosure" open={calendar}>
@@ -2099,13 +2190,24 @@ export function HistoryMockup({
             <HistoryContent
               selected={selected}
               setSelected={setSelected}
-              namedVersion={namedVersion}
+              namedVersion={currentName}
             />
           </details>
         </aside>
         <DocumentSurface sheet={sheet} readOnly />
       </div>
       <p role="status">{notice}</p>
+      <NameVersionDialog
+        open={naming && !viewOnly}
+        onOpenChange={setNaming}
+        disabled={saveState !== 'saved' || offline}
+        onSave={(version) => {
+          setCurrentName(version);
+          setSelected(`Just now · ${version}`);
+          onNameVersion?.(version);
+          setNotice(`Version named ${version}.`);
+        }}
+      />
       <Modal
         title={`Restore ${selected.startsWith('October') ? selected : `October 20, 2026 · ${selected}`} for everyone?`}
         description="The current document will be kept as a Before restore checkpoint. Other open editors will need to reload."

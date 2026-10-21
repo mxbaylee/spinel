@@ -99,7 +99,7 @@ try {
       } else if (kind === 'sheet') {
         // Use the production Sheet test's visible name-box path, not an auxiliary
         // contenteditable (the formula input is not the active cell editor).
-        const nameBox = editor.getByRole('textbox').nth(2);
+        const nameBox = editor.locator('[data-u-comp="defined-name"] input');
         await nameBox.fill('A16');
         await nameBox.press('Enter');
       } else {
@@ -109,16 +109,27 @@ try {
       const marker = 'Native keyboard proof';
       await page.keyboard.type(marker);
       if (kind === 'sheet') await page.keyboard.press('Enter');
-      if (readOnly) expect((await read()).snapshot).toEqual(beforeEdit.snapshot);
-      else
-        await expect
-          .poll(async () => {
-            const current = await read();
-            return kind === 'sheet'
-              ? current.snapshot.sheets?.october.cellData?.[15]?.[0]?.v
-              : current.snapshot.body?.dataStream;
-          })
-          .toContain(marker);
+      try {
+        if (readOnly) expect((await read()).snapshot).toEqual(beforeEdit.snapshot);
+        else
+          await expect
+            .poll(async () => {
+              const current = await read();
+              return kind === 'sheet'
+                ? current.snapshot.sheets?.october.cellData?.[15]?.[0]?.v
+                : current.snapshot.body?.dataStream;
+            })
+            .toContain(marker);
+      } catch (error) {
+        await read();
+        await writeFile(
+          resolve(directory, `native-${kind}-input-failure.json`),
+          (await observation.textContent()) ?? '',
+        );
+        await page.screenshot({ path: resolve(directory, `native-${kind}-input-failure.png`) });
+        throw error;
+      }
+
       await page.locator('.rd-native-review-tools summary').click();
       await page.screenshot({
         path: resolve(directory, `native-${kind}-${readOnly ? 'viewer' : 'edited'}.png`),
@@ -152,6 +163,10 @@ try {
       await expect(page.locator('.sb-errordisplay')).toBeHidden();
       if (id === 'redesign-walkthrough--operator-help')
         await expect(page.getByText('npm run setup', { exact: true })).toBeVisible();
+      if (id === 'redesign-screens--history-naming')
+        await expect(
+          page.getByRole('dialog', { name: 'Name this version', exact: true }),
+        ).toBeVisible();
       if (id === 'redesign-screens--profile-icon-picker')
         await expect(
           page.getByRole('dialog', { name: 'Choose your icon', exact: true }),
@@ -452,11 +467,10 @@ try {
       await expect(page.getByRole('menuitem', { name: 'Fill presets', exact: true })).toHaveCount(
         0,
       );
-      await page.getByRole('menuitem', { name: 'Name this version…', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
+      await page.getByRole('button', { name: 'Name this version…', exact: true }).click();
       await page.getByRole('textbox', { name: 'Version name', exact: true }).fill('Ready to share');
       await page.getByRole('button', { name: 'Save version name', exact: true }).click();
-      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
-      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       await expect(
         page
           .getByText('Preview · October 20, 2026 · Just now · Ready to share · UTC', {
@@ -550,14 +564,7 @@ try {
       await page.getByRole('button', { name: 'Grid view', exact: true }).click();
       await page.locator('.rd-file-open').filter({ hasText: 'Autumn plans' }).click();
       await expect(page.getByRole('heading', { name: 'Autumn plans', exact: true })).toBeVisible();
-      if (width > 900) await page.locator('.rd-space-exit').click();
-      else {
-        await page.getByRole('button', { name: 'Expand pages navigation', exact: true }).click();
-        await page
-          .getByRole('dialog', { name: 'Space contents', exact: true })
-          .getByRole('button', { name: 'My files', exact: true })
-          .click();
-      }
+      await page.getByRole('button', { name: 'My files', exact: true }).click();
       await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Grid view', exact: true })).toHaveAttribute(
         'aria-pressed',

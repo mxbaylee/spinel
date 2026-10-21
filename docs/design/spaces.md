@@ -19,8 +19,11 @@ Mockups: PlannedSpace, PlannedSpaceGuest, PlannedFileAdmin.
 ## Navigation and recovery
 
 A Space opens at its remembered/deep-linked page. Its title identifies the Space;
-the current page title is subordinate. The internal sidebar supports nested
-pages/sheets, explicit expand controls and selection. Add page offers Doc or Sheet.
+the current page title is subordinate. The internal sidebar supports nested Docs, Sheets and folders. A Doc or Sheet can
+also contain children: opening its title shows its content, while a separate
+chevron expands its children. A folder only groups children. For example, a
+Weekend trip Doc can contain a Trip costs Sheet; Reference can be a plain folder.
+Add page offers Doc, Sheet or Folder.
 A page's always-visible More menu exposes Rename, Move/reorder and Trash.
 Move has destination and position controls so drag-and-drop is never required.
 Back/Forward restores selection. Outer file rename/move/trash remain owner-only
@@ -55,3 +58,12 @@ The Operator's account recovery role never implies permission to browse content.
 The optional tree occupies one 224 px column with a visible collapse/reopen
 control. It defaults to a drawer at tablet/phone widths. It never appears beside
 a second permanent rail. Owner feedback and persona walkthrough, 2026-10-20.
+
+Owner refinement (chat, 2026-10-20): site navigation, connection, device theme and
+profile stay in the horizontal top header. The left column belongs exclusively
+to the Space tree. My files returns to the prior file view. Collapsing the tree
+leaves an icon-only chevron in the top header; it reopens as a drawer on phones.
+This favors Owner/Collaborator orientation without consuming a second navigation
+column; link guests retain scoped navigation without account destinations, and
+Operator workflows remain separate. Folder/page hierarchy remains a proposal
+for SPN-078, not implemented persistence.

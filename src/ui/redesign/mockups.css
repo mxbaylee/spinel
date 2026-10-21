@@ -100,7 +100,7 @@
   border-radius: 8px;
   background: transparent;
   color: inherit;
-  cursor: help;
+  cursor: default;
 }
 .rd-network-trigger:hover {
   background: var(--sp-tint-1);
@@ -1565,5 +1565,101 @@
   .rd-profile-identity > button {
     grid-column: 2;
     justify-self: start;
+  }
+}
+
+/* A Space keeps site utilities above its own content tree. */
+.rd-shell.rd-space-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+}
+.rd-shell.rd-space-shell.rd-with-sidebar {
+  grid-template-columns: 224px minmax(0, 1fr);
+}
+.rd-space-shell > .rd-rail {
+  display: flex;
+  grid-column: 1 / -1;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+.rd-space-shell .rd-desktop-nav > .rd-sidebar {
+  top: 68px;
+  height: calc(100dvh - 68px);
+}
+.rd-space-nav-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rd-space-nav-heading h2 {
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+.rd-space-pages ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.rd-space-pages ul ul {
+  padding-left: 16px;
+}
+.rd-space-node {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.rd-space-node .rd-nav-item {
+  min-width: 0;
+  flex: 1;
+  padding: 8px 4px;
+  gap: 8px;
+}
+.rd-space-node .rd-nav-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rd-space-node .rd-nav-item svg {
+  flex-shrink: 0;
+}
+.rd-space-toggle,
+.rd-space-toggle-placeholder {
+  width: 24px;
+  flex-shrink: 0;
+}
+.rd-space-toggle {
+  height: 32px;
+  border: 0;
+  border-radius: 4px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.rd-space-toggle:hover {
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
+}
+@media (max-width: 900px) {
+  .rd-shell.rd-space-shell.rd-with-sidebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.rd-history-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .rd-space-shell > .rd-rail {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  .rd-space-shell .rd-rail-bottom {
+    gap: 4px;
   }
 }
