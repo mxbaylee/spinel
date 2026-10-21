@@ -666,6 +666,16 @@
 .rd-person + .rd-section {
   border-top: 0;
 }
+.rd-token-manager {
+  display: grid;
+  gap: 12px;
+}
+.rd-token-manager > .sp-control {
+  justify-self: start;
+}
+.rd-token-manager > .rd-section {
+  margin-top: 12px;
+}
 .rd-profile {
   display: grid;
   grid-template-columns: 216px minmax(0, 640px);
@@ -809,6 +819,9 @@
   }
   .rd-editor-body {
     flex-direction: column;
+  }
+  .rd-editor-body > .rd-inspector {
+    order: -1;
   }
   .rd-inspector {
     width: 100%;

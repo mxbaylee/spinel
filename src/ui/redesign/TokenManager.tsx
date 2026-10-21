@@ -80,7 +80,7 @@ export function TokenManager({
   const limitReached = tokens.filter((token) => !token.revoked).length >= 10;
   const busy = creating || Boolean(revoking);
   return (
-    <section aria-label="Personal access tokens">
+    <section className="rd-token-manager" aria-label="Personal access tokens">
       <h3>Personal access tokens</h3>
       <p className="sp-muted">
         {admin

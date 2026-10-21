@@ -12,6 +12,9 @@ Viewer examples apply the application's local read-only permission fence.
 Passkeys, connectivity, save status, history and sharing remain simulated.
 Standalone structural screen stories (including planned Spaces/formulas/history)
 retain schematic content; use **Walkthrough → Sheet / Doc** to judge native editing.
+Native Doc at phone width currently needs horizontal panning or zoom. The
+schematic page reflows and must not be treated as evidence of native mobile
+reflow; SPN-049/072 own that migration constraint.
 
 The [visual gallery](review/README.md) records the captured commit, workflow result
 and unchanged PNG sources. Its **Before** images are explicitly labeled as either
@@ -22,7 +25,13 @@ retains its existing sign-in presentation until migration.
 
 ## Open and navigate
 
-Download **storybook-review** from the proposal workflow linked in the gallery,
+The owner-authorized temporary [interactive preview](https://mxbaylee.github.io/spinel/?path=/story/redesign-walkthrough--owner)
+opens the Owner journey. The catalog groups the proposal under **Redesign** and
+older baseline specimens under **Current production**, keeping their deep links.
+The preview may publish before validation finishes; check the PR for its status.
+This PR-only deployment exception is removed before merge.
+
+Alternatively, download **storybook-review** from the proposal workflow linked in the gallery,
 extract it, and serve the extracted static files locally without rebuilding.
 Open **Redesign → Walkthrough** in Storybook. Start with Owner, Collaborator,
 Operator or LinkGuest. The **design-review** artifact contains all rendered states

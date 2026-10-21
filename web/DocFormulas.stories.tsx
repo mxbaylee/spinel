@@ -1,47 +1,103 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { FormulaDialog, FormulaResultView } from './DocFormulas.tsx';
 import type { FormulaDefinition } from '@spinel/doc-formulas';
 
 const id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const sources = `/api/items/${id}/formulas/sources`;
+// Keep each source response at story level. Storybook's recursive parameter
+// merge would strip the Symbol marker from pending/failure helpers when merging
+// them with an inherited successful response, accidentally returning its sources.
+const availableSources = {
+  [`GET ${sources}`]: {
+    sources: [
+      { itemId: 'budget', name: 'Budget' },
+      { itemId: 'forecast', name: 'Forecast' },
+    ],
+  },
+};
+async function sourcesReady(canvasElement: HTMLElement) {
+  await waitFor(() =>
+    expect(within(canvasElement).getByLabelText('Spreadsheet')).toHaveTextContent('Budget'),
+  );
+}
 const definition: FormulaDefinition = {
   version: 1,
   expression: '=Budget.Summary.A1',
   references: [{ start: 1, end: 18, itemId: 'budget', sheetId: 'summary', range: 'A1' }],
   format: 'currency',
 };
+const formulaApi = {
+  [`GET ${sources}/budget`]: { sheets: [{ sheetId: 'summary', name: 'Summary' }] },
+  [`POST /api/items/${id}/formulas/resolve`]: { definition },
+  [`POST /api/items/${id}/formulas/evaluate`]: { ok: true, kind: 'scalar', value: 1234.56 },
+};
 const meta = {
   id: 'docs-formulas',
   title: 'Current production/Docs/Formulas',
   component: FormulaDialog,
   args: { id, onSave: fn(), onClose: fn() },
-  parameters: {
-    api: {
-      [`GET ${sources}`]: {
-        sources: [
-          { itemId: 'budget', name: 'Budget' },
-          { itemId: 'forecast', name: 'Forecast' },
-        ],
-      },
-      [`GET ${sources}/budget`]: { sheets: [{ sheetId: 'summary', name: 'Summary' }] },
-      [`POST /api/items/${id}/formulas/resolve`]: { definition },
-      [`POST /api/items/${id}/formulas/evaluate`]: { ok: true, kind: 'scalar', value: 1234.56 },
-    },
-  },
 } satisfies Meta<typeof FormulaDialog>;
 export default meta;
 type Story = StoryObj<typeof meta>;
-export const Insert: Story = {};
-export const Edit: Story = { args: { initial: { id: 'formula', start: 0, end: 18, definition } } };
-export const LoadingSources: Story = { parameters: { api: { [`GET ${sources}`]: pending() } } };
-export const NoSources: Story = { parameters: { api: { [`GET ${sources}`]: { sources: [] } } } };
-export const SourceError: Story = {
-  parameters: { api: { [`GET ${sources}`]: failure('Unavailable', 503) } },
+export const Insert: Story = {
+  parameters: { api: { ...formulaApi, ...availableSources } },
+  play: ({ canvasElement }) => sourcesReady(canvasElement),
 };
-export const Dark: Story = { globals: { theme: 'dark' } };
-export const Phone: Story = { globals: { viewport: { value: 'phone', isRotated: false } } };
+export const Edit: Story = {
+  args: { initial: { id: 'formula', start: 0, end: 18, definition } },
+  parameters: { api: { ...formulaApi, ...availableSources } },
+  play: ({ canvasElement }) => sourcesReady(canvasElement),
+};
+export const LoadingSources: Story = {
+  parameters: { api: { ...formulaApi, [`GET ${sources}`]: pending() } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByText('Find a cell or range', { exact: true }));
+    await expect(await canvas.findByText('Loading spreadsheets…', { exact: true })).toBeVisible();
+    await expect(canvas.queryByLabelText('Spreadsheet')).not.toBeInTheDocument();
+  },
+};
+export const NoSources: Story = {
+  parameters: { api: { ...formulaApi, [`GET ${sources}`]: { sources: [] } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByText('Find a cell or range', { exact: true }));
+    await expect(
+      await canvas.findByText(
+        'No spreadsheets available. You can use numbers and arrays directly.',
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await expect(within(canvas.getByLabelText('Spreadsheet')).getAllByRole('option')).toHaveLength(
+      1,
+    );
+  },
+};
+export const SourceError: Story = {
+  parameters: { api: { ...formulaApi, [`GET ${sources}`]: failure('Unavailable', 503) } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'Could not load source suggestions. You can still type a formula.',
+    );
+    await userEvent.click(canvas.getByText('Find a cell or range', { exact: true }));
+    await expect(within(canvas.getByLabelText('Spreadsheet')).getAllByRole('option')).toHaveLength(
+      1,
+    );
+  },
+};
+export const Dark: Story = {
+  globals: { theme: 'dark' },
+  parameters: { api: { ...formulaApi, ...availableSources } },
+  play: ({ canvasElement }) => sourcesReady(canvasElement),
+};
+export const Phone: Story = {
+  globals: { viewport: { value: 'phone', isRotated: false } },
+  parameters: { api: { ...formulaApi, ...availableSources } },
+  play: ({ canvasElement }) => sourcesReady(canvasElement),
+};
 export const Scalar: Story = {
   render: () => (
     <p>

@@ -15,6 +15,7 @@ function NativeFormulaDocument({
 }) {
   const container = useRef<HTMLDivElement>(null);
   const [error, setError] = useState('');
+  const [ready, setReady] = useState(false);
   const [states, setStates] = useState<FormulaState[]>([]);
   useEffect(() => {
     const abort = new AbortController();
@@ -99,7 +100,10 @@ function NativeFormulaDocument({
       })
       .then((dispose) => {
         if (abort.signal.aborted) dispose();
-        else close = dispose;
+        else {
+          close = dispose;
+          setReady(true);
+        }
       })
       .catch((cause) => {
         if (!abort.signal.aborted) setError(String(cause));
@@ -110,7 +114,7 @@ function NativeFormulaDocument({
     };
   }, [unavailable, thirtyRows, styledScalar]);
   return (
-    <section aria-label="Native formula document">
+    <section aria-label="Native formula document" aria-busy={!ready && !error}>
       <p>
         Read-only example using the same native renderer as the editor. Values are local fixtures.
       </p>

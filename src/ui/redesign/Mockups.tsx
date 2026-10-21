@@ -1551,6 +1551,12 @@ export function EditorMockup({
   const [naming, setNaming] = useState(false);
   const [panel, setPanel] = useState(exportState !== 'ready' ? 'Export' : formula ? 'Formula' : '');
   const [exportStatus, setExportStatus] = useState(exportState);
+  const panelTitleRef = useRef<HTMLHeadingElement>(null);
+  const documentMenuRef = useRef<HTMLButtonElement>(null);
+  const closePanel = () => {
+    setPanel('');
+    documentMenuRef.current?.focus();
+  };
   const [notice, setNotice] = useState('');
   const isSpaceTrash = space && selected === 'Trash';
   const name = space ? selected : (title ?? (sheet ? 'Quarterly budget' : 'Autumn plans'));
@@ -1705,6 +1711,8 @@ export function EditorMockup({
             ) : (
               <ActionMenu
                 label="Document actions"
+                triggerRef={documentMenuRef}
+                finalFocus={() => panelTitleRef.current ?? true}
                 actions={[
                   ...(!viewOnly && !collaborator
                     ? [{ label: 'Share…', onClick: () => setShare(true) }]
@@ -1775,13 +1783,15 @@ export function EditorMockup({
           <aside className="rd-inspector">
             <div className={panel === 'Versions' ? 'rd-history-heading' : 'rd-modal-title'}>
               {panel === 'Versions' && (
-                <Button aria-label="Return to document" onClick={() => setPanel('')}>
+                <Button aria-label="Return to document" onClick={closePanel}>
                   <Glyph name="back" />
                 </Button>
               )}
-              <h2>{panel}</h2>
+              <h2 ref={panelTitleRef} tabIndex={-1}>
+                {panel}
+              </h2>
               {panel !== 'Versions' && (
-                <Button aria-label="Close panel" onClick={() => setPanel('')}>
+                <Button aria-label="Close panel" onClick={closePanel}>
                   ×
                 </Button>
               )}

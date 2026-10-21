@@ -360,3 +360,14 @@ recommendations for new screens.
 This audit distinguishes reusable patterns from backend integrations. Screen
 migration tickets must retain their existing contract tests and apply the approved
 state patterns, rather than shipping a successful-state mockup alone.
+
+## Change boundary reassessment
+
+The whole-product proposal exceeds the process's approximate 10k-line split
+prompt. The boundary was reassessed: shared controls, composed examples, persona
+journeys, the design playbook and their review evidence form one proposal for
+owner approval. Production screen migrations remain in the existing screen
+tickets; no backend, storage or authorization redesign is included here. The
+favicon is the owner's explicit small production exception. Token/import/recovery
+examples fill the catalog audit gaps rather than shipping those workflows.
+The temporary Pages exception is limited to this PR and removed before merge.

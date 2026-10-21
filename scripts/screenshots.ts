@@ -166,6 +166,19 @@ try {
         });
         await page.evaluate(() => document.fonts.ready);
         await expect(page.locator('.sb-errordisplay')).toBeHidden();
+        if (id.startsWith('docs-native-formulas--')) {
+          // The component's dynamic viewer can still be booting after Storybook
+          // finishes its synchronous render. Capture the native result, not its skeleton.
+          const document = page.getByRole('region', {
+            name: 'Native formula document',
+            exact: true,
+          });
+          await expect(document).toHaveAttribute('aria-busy', 'false', { timeout: 30_000 });
+          await expect(document.getByRole('alert')).toHaveCount(0);
+          await expect(document.getByText('Formula results (2)', { exact: true })).toBeVisible();
+          await expect(document.locator('canvas').first()).toBeVisible();
+          verifications.push(`${variant}: ${id} native formula viewer settled before capture`);
+        }
         if (id === 'redesign-walkthrough--operator-help')
           await expect(page.getByText('npm run setup', { exact: true })).toBeVisible();
         if (id === 'redesign-screens--file-icon-hint')
@@ -642,6 +655,16 @@ try {
         page.getByRole('heading', { name: 'A few good recipes', exact: true }),
       ).toBeVisible();
       await shot('owner-doc');
+      await waitForNativeEditor(page);
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
+      await expect(page.locator('.rd-inspector h2')).toBeFocused();
+      await expect(page.locator('.rd-inspector h2')).toBeInViewport();
+      await page.getByRole('button', { name: 'Close panel', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Document actions', exact: true }),
+      ).toBeFocused();
+
       await page
         .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
         .click();

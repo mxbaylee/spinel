@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode, RefObject } from 'react';
 import { Button as BaseButton } from '@base-ui/react/button';
 import { Menu } from '@base-ui/react/menu';
 import { Select } from '@base-ui/react/select';
@@ -116,20 +116,28 @@ export function ActionMenu({
   children,
   actions,
   primary = false,
+  triggerRef,
+  finalFocus,
 }: {
   label: string;
   children?: ReactNode;
   actions: Action[];
   primary?: boolean;
+  triggerRef?: RefObject<HTMLButtonElement>;
+  finalFocus?: () => HTMLElement | boolean | null;
 }) {
   return (
     <Menu.Root>
-      <Menu.Trigger aria-label={label} className={`sp-control ${primary ? 'sp-primary' : ''}`}>
+      <Menu.Trigger
+        ref={triggerRef}
+        aria-label={label}
+        className={`sp-control ${primary ? 'sp-primary' : ''}`}
+      >
         {children ?? '···'}
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Positioner className="sp-positioner" sideOffset={8} align="end">
-          <Menu.Popup className="sp-popup" aria-label={label}>
+          <Menu.Popup className="sp-popup" aria-label={label} finalFocus={finalFocus}>
             {actions.map((action) => (
               <Menu.Item
                 key={action.label}
