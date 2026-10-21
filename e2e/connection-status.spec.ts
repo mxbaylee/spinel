@@ -32,14 +32,18 @@ async function detail(page: Page, state: ConnectionState, touch = false) {
     expect(before!.height).toBeGreaterThanOrEqual(44);
     await trigger.tap();
   } else await trigger.hover();
-  await expect(page.getByRole('tooltip')).toBeVisible();
-  await expect(page.getByRole('tooltip')).toContainText(/connect|offline/i);
+  await expect(page.getByRole('dialog', { name: 'Connection details', exact: true })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Connection details', exact: true })).toContainText(
+    /connect|offline/i,
+  );
   expect(await trigger.boundingBox()).toEqual(before);
 }
 
 async function closeDetail(page: Page) {
   await page.keyboard.press('Escape');
-  await expect(page.getByRole('tooltip')).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: 'Connection details', exact: true })).toHaveCount(
+    0,
+  );
   await page.mouse.move(0, 0);
 }
 
@@ -107,8 +111,13 @@ test('dashboard verifies the server before reporting Online and explains a stale
       await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await detail(page, state);
-      if (state === 'Offline') await expect(page.getByRole('tooltip')).toContainText('Files as of');
-      await expect(page.getByRole('tooltip')).not.toContainText('Saved on this device');
+      if (state === 'Offline')
+        await expect(
+          page.getByRole('dialog', { name: 'Connection details', exact: true }),
+        ).toContainText('Files as of');
+      await expect(
+        page.getByRole('dialog', { name: 'Connection details', exact: true }),
+      ).not.toContainText('Saved on this device');
       await capture(page, info, `dashboard-${state.toLowerCase()}`, variant);
       await closeDetail(page);
     }
@@ -147,7 +156,11 @@ test('dashboard verifies the server before reporting Online and explains a stale
 
     await indicator(page).evaluate((element) => (element as HTMLElement).blur());
     await indicator(page).focus();
-    await expect(page.getByRole('tooltip')).toBeVisible();
+    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press('Tab');
+    await expect(
+      page.getByRole('dialog', { name: 'Connection details', exact: true }),
+    ).toBeVisible();
     await closeDetail(page);
   } finally {
     holdHealth = false;
@@ -254,6 +267,10 @@ for (const width of [1280, 390]) {
           await expect.poll(() => writeHeld).toBe(true);
           await expect(save).toContainText(/not saved|Saving|keep this tab open/i);
           // An in-flight edit is a save concern, not a lost connection.
+          await connection(page, 'Online');
+          // Retrying an unconfirmed save on a healthy connection must not strand
+          // the network indicator waiting for a room event that will never come.
+          await save.getByRole('button', { name: 'Retry saving', exact: true }).click();
           await connection(page, 'Online');
           await capture(page, info, `${kind}-online-unsaved`, width === 390 ? 'phone' : 'light');
           holdWrite = false;

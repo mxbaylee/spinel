@@ -185,7 +185,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       const network = first.getByRole('button', { name: /^(Offline|Reconnecting) — / });
       await expect(network).toHaveCount(1);
       await network.hover();
-      const explanation = first.getByRole('tooltip');
+      const explanation = first.getByRole('dialog', { name: 'Connection details', exact: true });
       await expect(explanation).toContainText(/offline|connect/i);
       expect(await explanation.innerText()).not.toContain(owner.name);
       expect(await first.locator('body').innerText()).not.toContain(owner.name);
@@ -195,7 +195,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         fullPage: true,
         animations: 'disabled',
       });
-      // Do not send Escape to an unfinished cell while checking its network tooltip.
+      // Do not send Escape to an unfinished cell while checking its network popover.
       await first.mouse.move(0, 0);
       await expect(region(first)).toBeVisible();
       if (kind === 'sheet')
@@ -218,6 +218,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       await first.unroute(`**/api/guest/${item.id}`);
       if (kind === 'sheet') await first.keyboard.press('Enter');
       await saved(first);
+      // HTTP-only interruption must recover even if the room socket stayed up.
+      await expect(connection).toHaveText('Online', { timeout: 15_000 });
       await expect.poll(async () => JSON.stringify(await live())).toContain('Kept during retry');
       await controls.getByRole('button', { name: 'Turn link off', exact: true }).click();
       await expect(first.getByRole('alert')).toHaveText('This link no longer works.');

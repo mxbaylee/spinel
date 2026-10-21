@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tooltip } from '@base-ui/react/tooltip';
+import { Popover } from '@base-ui/react/popover';
 import type { ConnectionState } from './connectionState.ts';
 
 export type CatalogConnectionDetails = { syncedAt: number; local: boolean; stale: boolean };
@@ -51,14 +51,16 @@ export function ConnectionStatus({
       >
         {labels[state]}
       </span>
-      <Tooltip.Root open={open} onOpenChange={setOpen}>
-        <Tooltip.Trigger
+      <Popover.Root open={open} onOpenChange={setOpen}>
+        <Popover.Trigger
           className="connection-trigger"
           aria-label={names[state]}
+          openOnHover
           delay={200}
-          closeOnClick={false}
-          onPointerDown={(event) => {
-            if (event.pointerType === 'touch') setOpen(true);
+          onFocus={(event) => {
+            // Keyboard focus exposes the same accessible detail as hover/tap.
+            // Pointer focus leaves click/touch toggling to the public primitive.
+            if (event.currentTarget.matches(':focus-visible')) setOpen(true);
           }}
         >
           <svg
@@ -81,10 +83,15 @@ export function ConnectionStatus({
               />
             )}
           </svg>
-        </Tooltip.Trigger>
-        <Tooltip.Portal>
-          <Tooltip.Positioner className="connection-positioner" side="right" sideOffset={8}>
-            <Tooltip.Popup className="connection-detail">
+        </Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Positioner className="connection-positioner" side="right" sideOffset={8}>
+            <Popover.Popup
+              className="connection-detail"
+              aria-label="Connection details"
+              initialFocus={false}
+              finalFocus={false}
+            >
               <strong>{labels[state]}</strong>
               <p>{detail}</p>
               {documentOpen && (
@@ -104,10 +111,10 @@ export function ConnectionStatus({
                   to edit.
                 </p>
               )}
-            </Tooltip.Popup>
-          </Tooltip.Positioner>
-        </Tooltip.Portal>
-      </Tooltip.Root>
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
+      </Popover.Root>
     </span>
   );
 }

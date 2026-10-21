@@ -45,6 +45,14 @@ communicate the state without relying on colour. A separate polite live region
 announces transitions. The detail opens outside document flow, so it cannot
 move the editor, and Escape/outside touch dismiss it.
 
+The detail uses Base UI `Popover` with hover opening and keyboard-focus support,
+not its visual-only Tooltip. The named **Connection details** dialog and native
+trigger relationship expose the timestamp/read-only explanation to assistive
+technology as well as touch users. Opening detail does not steal focus from an
+unfinished editor input. This follows the library's
+[infotip guidance](https://base-ui.com/react/components/tooltip#infotips) and
+[public Popover API](https://base-ui.com/react/components/popover).
+
 When a catalog is local, offline or a refresh failed, the detail includes
 **Files as of**. SPN-042 removes `OfflineBanner`; it does not add another status
 row. A local session remains read-only after verified connectivity returns,

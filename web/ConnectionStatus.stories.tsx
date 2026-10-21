@@ -38,7 +38,11 @@ const showDetail: NonNullable<Story['play']> = async ({ canvasElement }) => {
   await userEvent.hover(
     within(canvasElement).getByRole('button', { name: /^(Online|Offline|Reconnecting) —/ }),
   );
-  await expect(await within(canvasElement.ownerDocument.body).findByRole('tooltip')).toBeVisible();
+  await expect(
+    await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Connection details',
+    }),
+  ).toBeVisible();
 };
 // The screenshot runner fixes its clock to this date; assertions do not depend on locale.
 const syncedAt = Date.UTC(2026, 9, 20, 14, 5);
@@ -112,9 +116,11 @@ export const KeyboardDetails: Story = {
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.tab();
     await expect(trigger).toHaveFocus();
-    await expect(await page.findByRole('tooltip')).toBeVisible();
+    await expect(await page.findByRole('dialog', { name: 'Connection details' })).toBeVisible();
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(page.queryByRole('tooltip')).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(page.queryByRole('dialog', { name: 'Connection details' })).not.toBeInTheDocument(),
+    );
     await expect(trigger).toHaveFocus();
   },
 };
@@ -128,14 +134,16 @@ export const TouchDetails: Story = {
     const trigger = canvas.getByRole('button', { name: 'Offline — not connected to Spinel' });
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.pointer({ keys: '[TouchA]', target: trigger });
-    await expect(await page.findByRole('tooltip')).toBeVisible();
+    await expect(await page.findByRole('dialog', { name: 'Connection details' })).toBeVisible();
     await userEvent.pointer({
       keys: '[TouchA]',
       target: canvas.getByRole('img', { name: 'Spinel' }),
     });
-    await waitFor(() => expect(page.queryByRole('tooltip')).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(page.queryByRole('dialog', { name: 'Connection details' })).not.toBeInTheDocument(),
+    );
     // Leave the detail visible for the screenshot after exercising dismissal.
     await userEvent.pointer({ keys: '[TouchA]', target: trigger });
-    await expect(await page.findByRole('tooltip')).toBeVisible();
+    await expect(await page.findByRole('dialog', { name: 'Connection details' })).toBeVisible();
   },
 };
