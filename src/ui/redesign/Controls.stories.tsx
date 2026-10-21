@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal } from './Controls.tsx';
 import './mockups.css';
@@ -124,7 +124,8 @@ export const LongModalTitle: Story = {
     const dialog = await page.findByRole('dialog', { name: title });
     await expect(within(dialog).getByRole('heading', { name: title })).toBeVisible();
     await userEvent.keyboard('{Escape}');
-    await expect(trigger).toHaveFocus();
+    // Base UI returns focus after its closing transition has completed.
+    await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.click(trigger);
   },
 };
