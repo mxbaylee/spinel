@@ -122,3 +122,6 @@ and keep setup links private. `npm run passkey:check` is explicitly a disposable
 development diagnostic, not account recovery. Existing-account recovery uses
 an authorized Operator invitation. Backup help shows the documented configured
 Docker command. This page displays commands and never executes them.
+
+The arrival-screen gem reuses the existing brief `gem-wiggle` on hover or keyboard
+focus. Respect reduced motion; the wordmark stays still. Owner, chat 2026-10-20.

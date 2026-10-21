@@ -69,7 +69,9 @@ export function EntryJourney({
     <div className={`sp-ui ej-page${home ? ' ej-home' : ''}`}>
       <header className="ej-header">
         <button className="ej-brand" aria-label="Spinel home" onClick={() => onNavigate('home')}>
-          <GemLogo />
+          <span className="wiggle">
+            <GemLogo />
+          </span>
           <span>spinel</span>
         </button>
         <div className="ej-header-actions">
