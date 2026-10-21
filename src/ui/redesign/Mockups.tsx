@@ -409,7 +409,6 @@ function Sidebar({
       ) : (
         groups.map((group) => (
           <section key={group.title}>
-            <h2>{group.title}</h2>
             {group.items.map(([label, glyph]) => (
               <button
                 key={label}
@@ -484,7 +483,7 @@ function Sidebar({
           </Button>
         </div>
       </Modal>
-      {!guest && (
+      {!guest && ((onCollapse && !space) || (space && canEdit)) && (
         <div className="rd-sidebar-bottom">
           {onCollapse && !guest && !space && (
             <div className="rd-sidebar-utilities">
@@ -669,12 +668,7 @@ function Shell({
               </Button>
             </div>
           )}
-          <Modal
-            title={space ? 'Space contents' : 'Browse files'}
-            description="Choose where to go."
-            open={nav}
-            onOpenChange={setNav}
-          >
+          <Modal title={space ? 'Space contents' : 'Browse files'} open={nav} onOpenChange={setNav}>
             <Sidebar
               space={space}
               offline={offline}
@@ -1598,7 +1592,7 @@ export function DashboardMockup({
               : creating
                 ? `Choose a name for your new ${dialog.toLowerCase()}.`
                 : dialog === 'Tags'
-                  ? 'Your tags help you find this file and are visible only to you.'
+                  ? undefined
                   : dialog === 'Share…'
                     ? 'Manage who can open this file.'
                     : dialog === 'Rename…'

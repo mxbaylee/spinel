@@ -169,7 +169,7 @@ export function Modal({
   dismissDisabled = false,
 }: {
   title: string;
-  description: string;
+  description?: string;
   trigger?: string;
   children: ReactNode;
   open?: boolean;
@@ -202,7 +202,9 @@ export function Modal({
               ×
             </Dialog.Close>
           </div>
-          <Dialog.Description className="sp-muted">{description}</Dialog.Description>
+          {description && (
+            <Dialog.Description className="sp-muted">{description}</Dialog.Description>
+          )}
           {children}
         </Dialog.Popup>
       </Dialog.Portal>
