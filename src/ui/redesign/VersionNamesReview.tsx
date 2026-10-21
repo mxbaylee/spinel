@@ -190,6 +190,7 @@ export function VersionNamesReview({
       )}
       {notice && <p role="status">{notice}</p>}
       <Modal
+        dismissDisabled={saving}
         title={title}
         description={
           editing === 'current'
@@ -256,6 +257,7 @@ export function VersionNamesReview({
         </form>
       </Modal>
       <Modal
+        dismissDisabled={deleting}
         title="Remove this version’s name?"
         description="The version becomes unnamed and follows regular history retention. Its content is unchanged."
         open={Boolean(removing) && !readOnly}

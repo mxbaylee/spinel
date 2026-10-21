@@ -1174,20 +1174,7 @@ function DashboardContent({
               onChange={(e) => setSearch(e.target.value)}
             />
           </label>
-          <Choice
-            label="File type"
-            value={kind}
-            onChange={setKind}
-            options={[
-              { value: 'all', label: 'All types' },
-              { value: 'folder', label: 'Folders' },
-              { value: 'doc', label: 'Docs' },
-              { value: 'sheet', label: 'Sheets' },
-              { value: 'space', label: 'Spaces' },
-            ]}
-          />
-        </div>
-        <div className="rd-filter-bar">
+
           <Button aria-expanded={filtersOpen} onClick={() => setFiltersOpen(!filtersOpen)}>
             Filters {filtersOpen ? '⌃' : '⌄'}
           </Button>
@@ -1207,6 +1194,8 @@ function DashboardContent({
               <Glyph name="files" /> Grid
             </Button>
           </div>
+        </div>
+        <div className="rd-filter-bar">
           {(tag || scope !== 'all' || modified !== 'any' || kind !== 'all') && (
             <>
               <span className="sp-muted">
@@ -1225,6 +1214,18 @@ function DashboardContent({
         </div>
         {filtersOpen && (
           <div className="rd-advanced-filters">
+            <Choice
+              label="File type"
+              value={kind}
+              onChange={setKind}
+              options={[
+                { value: 'all', label: 'All types' },
+                { value: 'folder', label: 'Folders' },
+                { value: 'doc', label: 'Docs' },
+                { value: 'sheet', label: 'Sheets' },
+                { value: 'space', label: 'Spaces' },
+              ]}
+            />
             <Choice
               label="Ownership"
               value={scope}
@@ -1567,6 +1568,7 @@ function DashboardContent({
                       : 'Choose the destination folder.'
         }
         open={Boolean(dialog) && dialog !== 'Import file…'}
+        dismissDisabled={dialogBusy}
         onOpenChange={(open) => {
           if (!open && !dialogBusy) {
             setFileMutationFailed(false);
@@ -2595,7 +2597,7 @@ export function HistoryMockup({
       offline={offline}
       onSelect={(next) => (next === 'Your profile' ? onProfile?.() : onFiles?.())}
     >
-      <header className="rd-page-header">
+      <header className="rd-page-header rd-history-header">
         <div className="rd-history-heading">
           <Button
             aria-label="Return to document"
@@ -3428,6 +3430,7 @@ export function AdminMockup({
         title="Create an invitation"
         description="Give someone access, or help an existing account recover its passkeys."
         open={inviteOpen}
+        dismissDisabled={pending}
         onOpenChange={(open) => {
           if (!pending) setInviteOpen(open);
         }}
@@ -3505,6 +3508,7 @@ export function AdminMockup({
         }
         description="Account credentials only; documents remain private."
         open={Boolean(passkeys)}
+        dismissDisabled={pending}
         onOpenChange={(open) => {
           if (!open && !pending) {
             setPasskeys('');
@@ -3611,6 +3615,7 @@ export function AdminMockup({
         title={`Disable ${confirm || 'this account'}?`}
         description="Their sessions end now. Their documents and shares are kept."
         open={Boolean(confirm)}
+        dismissDisabled={pending}
         onOpenChange={(open) => {
           if (!open && !pending) setConfirm('');
         }}

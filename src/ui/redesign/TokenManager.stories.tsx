@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { TokenManager } from './TokenManager.tsx';
 import './mockups.css';
 
@@ -30,7 +31,19 @@ export const Loaded: Story = {};
 export const Empty: Story = { args: { state: 'empty' } };
 export const Loading: Story = { args: { state: 'loading' } };
 export const LoadFailed: Story = { args: { state: 'load-failed' } };
-export const Creating: Story = { args: { state: 'creating' } };
+export const Creating: Story = {
+  args: { state: 'creating' },
+  play: async ({ canvasElement }) => {
+    const dialog = within(canvasElement.ownerDocument.body).getByRole('dialog', {
+      name: 'Create an access token',
+    });
+    await expect(within(dialog).getByRole('button', { name: 'Close dialog' })).toBeDisabled();
+    await expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await userEvent.keyboard('{Escape}');
+    await expect(dialog).toBeVisible();
+    await expect(within(dialog).getByRole('status')).toHaveTextContent('Creating access token…');
+  },
+};
 export const Created: Story = { args: { state: 'created' } };
 export const CreateFailed: Story = { args: { state: 'create-failed' } };
 export const Revoking: Story = { args: { state: 'revoking' } };

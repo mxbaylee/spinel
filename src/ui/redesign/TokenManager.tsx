@@ -184,6 +184,7 @@ export function TokenManager({
           title="Create an access token"
           description="Give this token a name you can recognize later. Keep it secret and revoke it when you are done."
           open={createOpen}
+          dismissDisabled={creating}
           onOpenChange={(open) => {
             if (!creating) setCreateOpen(open);
           }}

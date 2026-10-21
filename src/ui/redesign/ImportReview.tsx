@@ -25,9 +25,11 @@ const errors: Partial<Record<ImportReviewState, string>> = {
 export function ImportReview({
   state = 'ready',
   destination = 'My files',
+  onBusyChange,
 }: {
   state?: ImportReviewState;
   destination?: string;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const running = useRef(false);
@@ -65,6 +67,7 @@ export function ImportReview({
     }
     running.current = true;
     setBusy(true);
+    onBusyChange?.(true);
     try {
       try {
         JSON.parse(await file.text());
@@ -77,6 +80,7 @@ export function ImportReview({
     } finally {
       running.current = false;
       setBusy(false);
+      onBusyChange?.(false);
       if (input.current) input.current.value = '';
     }
   };
@@ -145,16 +149,22 @@ export function ImportDialog({
   destination?: string;
   state?: ImportReviewState;
 }) {
+  const [busy, setBusy] = useState(state === 'importing');
   return (
     <Modal
       title="Import a Univer file"
       description="Add a Sheet or Doc from a Univer JSON file."
       open={open}
-      onOpenChange={onOpenChange}
+      dismissDisabled={busy}
+      onOpenChange={(next) => {
+        if (!busy) onOpenChange(next);
+      }}
     >
-      <ImportReview state={state} destination={destination} />
+      <ImportReview state={state} destination={destination} onBusyChange={setBusy} />
       <div className="sp-actions">
-        <Button onClick={() => onOpenChange(false)}>Close</Button>
+        <Button disabled={busy} onClick={() => onOpenChange(false)}>
+          Close
+        </Button>
       </div>
     </Modal>
   );

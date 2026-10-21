@@ -10,7 +10,7 @@ Stories: `Redesign/Screens` — Dashboard, Search, SharedFiles, Trash, EmptyFold
 | --- | --- | --- |
 | Separate pins, folders and shared panels; a wall of row actions; a large heading above search. | Dropbox separates file navigation from actions; Notion combines favorites and hierarchy in a sidebar. | One file sidebar; search above rows; one New menu and one always-visible row menu. Access labels remain visible. |
 
-The redesigned header places search in its own tools row below the title, rather than squeezing it beside the breadcrumb. File type remains a compact selector; extra filters are disclosed with active values shown. At phone width Browse files opens a modal navigation drawer. The selected folder becomes the page title, with ancestors as a compact breadcrumb. No second pinned column.
+The redesigned header keeps the current folder title with its ancestor breadcrumb. Search, Filters and List/Grid share one responsive toolbar directly below it; Type, Ownership, Tag and Last modified sit inside Filters. Active constraints remain visible and clearable. On phones search gets a full row, with Filters and view controls immediately beneath it. At phone width Browse files opens a modal navigation drawer. The selected folder becomes the page title, with ancestors as a compact breadcrumb. No second pinned column.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.

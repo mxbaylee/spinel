@@ -410,6 +410,15 @@ These new families contain source specimens; none is accepted solely from its ex
 - **P2, fixed:** pending pin updates/retries could overwrite a rename or reintroduce a trashed item. Timer commits now reconcile against the latest catalog; three regression stories cover rename, trash and failed-update retry.
 - **P2, fixed:** the phone navigation dialog omitted offline state, enabling pin mutations. Sidebar receives offline state; FilesRecovery checks disabled pin actions in phone/desktop navigation.
 - **Specimen gap, filled:** Operator with multiple passkeys can remove one while retaining a protected credential. Added a fixture and interaction story.
-- **Remaining visual question:** search/type and Filters/view switches currently occupy separate rows. The UX review recommends one responsive search/Filters/view toolbar, with Type inside Filters. Query tokens and a search-help builder remain SPN-048. This layout recommendation is not yet accepted or implemented.
+- **Visual repair awaiting evidence:** Search/Filters/view controls now share one responsive toolbar, with Type inside Filters, following the section review. Query tokens and a search-help builder remain SPN-048. Fresh screenshots and owner review remain required.
 
 The independent reviewer found no further source blockers in the inspected component repairs. This is not a whole-product grade: all new story plays, keyboard restoration, touch geometry and screenshots require CI/rendered review.
+
+## Live visual pass after the component repairs
+
+- Version names (`dff41bc` deployed): renamed an older checkpoint through its menu; list updated and focus returned to that checkpoint's action menu. This is one manually verified interaction, not all-state acceptance.
+- Short-phone dark History showed the page title squeezed beside two actions. A queued repair gives the title its own row and lets actions wrap beneath it.
+- File retrieval toolbar repair is queued: Search, Filters and view switch share one responsive toolbar; Type moves inside Filters. Active constraints remain visible and clearable. No query parser was added.
+- Retained identity pass inspected all20 assigned states in five variants (100 captures from `f9cdff3`): EntityIcon, Favicon and GemLogo retained; social artwork retained with a minor trailing-emoji cosmetic note. Actual IconPicker footer gap was repaired only in redesign context; ten new context stories cover search/category/pagination/keyboard/selection/focus return and await CI.
+
+The retained-surface reviewer also inspected all43 assigned f9c states in light, dark and phone: 19 AccessToken variants, eight Import variants, five Profile states, eight Backup health states and three Controls states. No clipping was found. Two pending-dialog inconsistencies were repaired in the next source batch: Token creation had an enabled-but-inert close button, and Import allowed dismissal despite its keep-open instruction. A shared dismiss-disabled state now covers pending dialogs consistently, with explicit assertions; new rendered evidence remains required. The new Move example supersedes the old Controls dialog.

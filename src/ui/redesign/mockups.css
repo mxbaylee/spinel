@@ -1031,7 +1031,7 @@
 }
 .rd-advanced-filters {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   padding: 16px;
   background: var(--sp-bg);
@@ -1751,8 +1751,10 @@
   accent-color: var(--sp-accent);
 }
 
-.rd-filter-bar > .rd-view-switch {
-  margin-left: auto;
+@media (min-width: 641px) and (max-width: 900px) {
+  .rd-advanced-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 @media (max-width: 640px) {
   .rd-list-caption.rd-count-only {
@@ -1791,4 +1793,40 @@
 }
 .rd-shell .profile-icon-dialog > button + button {
   margin-inline-start: 8px;
+}
+
+/* Retrieval controls form one toolbar; less-frequent constraints share a disclosure. */
+.rd-dashboard-content .rd-list-tools {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.rd-dashboard-content .rd-list-tools .rd-search {
+  min-width: min(100%, 240px);
+}
+.rd-dashboard-content .rd-filter-bar:empty {
+  display: none;
+}
+@media (max-width: 640px) {
+  .rd-dashboard-content .rd-list-tools .rd-search {
+    flex-basis: 100%;
+  }
+  .rd-dashboard-content .rd-list-tools .rd-view-switch {
+    margin-left: auto;
+  }
+  .rd-history-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .rd-history-header .rd-history-heading {
+    width: 100%;
+  }
+  .rd-history-header .rd-history-heading > div {
+    min-width: 0;
+  }
+  .rd-history-header .rd-eyebrow {
+    overflow-wrap: anywhere;
+  }
+  .rd-history-header > .sp-actions {
+    justify-content: flex-start;
+  }
 }

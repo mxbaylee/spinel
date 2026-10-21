@@ -166,6 +166,7 @@ export function Modal({
   children,
   open,
   onOpenChange,
+  dismissDisabled = false,
 }: {
   title: string;
   description: string;
@@ -173,16 +174,31 @@ export function Modal({
   children: ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  dismissDisabled?: boolean;
 }) {
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root
+      open={open}
+      disablePointerDismissal={dismissDisabled}
+      onOpenChange={(next, details) => {
+        if (!next && dismissDisabled) {
+          details.cancel();
+          return;
+        }
+        onOpenChange?.(next);
+      }}
+    >
       {trigger && <Dialog.Trigger className="sp-control">{trigger}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Backdrop className="sp-backdrop" />
         <Dialog.Popup className="sp-modal sp-ui">
           <div className="sp-modal-heading">
             <Dialog.Title>{title}</Dialog.Title>
-            <Dialog.Close className="sp-control" aria-label="Close dialog">
+            <Dialog.Close
+              className="sp-control"
+              aria-label="Close dialog"
+              disabled={dismissDisabled}
+            >
               ×
             </Dialog.Close>
           </div>
