@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent, within } from 'storybook/test';
+import { defaultProfile } from '../../profile/profile.ts';
 import {
   AdminMockup,
   DashboardMockup,
@@ -8,6 +9,7 @@ import {
   FormulaMockup,
   HistoryMockup,
   ProfileMockup,
+  ReviewProfileContext,
   SharingMockup,
 } from './Mockups.tsx';
 
@@ -27,6 +29,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Dashboard: Story = { render: () => <DashboardMockup /> };
+export const SidebarLongDisplayName: Story = {
+  render: () => (
+    <ReviewProfileContext.Provider
+      value={{
+        profile: defaultProfile('Alexandra Baylee Fernández de la Cruz'),
+        save: () => {},
+      }}
+    >
+      <DashboardMockup />
+    </ReviewProfileContext.Provider>
+  ),
+};
 export const EmptyFolder: Story = { render: () => <DashboardMockup state="empty" /> };
 export const LoadingFiles: Story = { render: () => <DashboardMockup state="loading" /> };
 export const FileError: Story = { render: () => <DashboardMockup state="error" /> };

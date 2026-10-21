@@ -13,6 +13,10 @@ function NativeEditorStory(props: NativeEditorProps) {
       setObservation(
         JSON.stringify({
           canEdit: editor.current.canEdit(),
+          activeRange:
+            props.kind === 'sheet'
+              ? editor.current.api.getActiveWorkbook()?.getActiveRange()?.getA1Notation()
+              : undefined,
           snapshot: editor.current.getSnapshot(),
         }),
       );
@@ -31,7 +35,6 @@ function NativeEditorStory(props: NativeEditorProps) {
               const workbook = api?.getActiveWorkbook();
               const sheet = workbook?.getActiveSheet();
               if (sheet) sheet.setActiveRange(sheet.getRange('A16'));
-              workbook?.startEditing();
             } else api?.getActiveDocument()?.setSelection(0, 0);
             observe();
           }}

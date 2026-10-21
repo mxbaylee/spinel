@@ -63,6 +63,72 @@ const variants = [
   ['light', 768, 'tablet'],
 ] as const;
 try {
+  for (const kind of ['sheet', 'doc'] as const) {
+    for (const readOnly of [false, true]) {
+      const id = `redesign-native-editors--${kind}${readOnly ? '-viewer' : ''}`;
+      if (!requested.includes(id)) continue;
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      await page.goto(
+        `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:light`,
+      );
+      await expect(page.locator('.rd-native-editor')).toBeVisible();
+      await waitForNativeEditor(page);
+      await page.getByText('Native editor review controls', { exact: true }).click();
+      const observation = page.locator('output[data-native-snapshot]');
+      await expect(observation).not.toBeEmpty();
+      const read = async () => {
+        await page.getByRole('button', { name: 'Read current snapshot', exact: true }).click();
+        return JSON.parse((await observation.textContent())!) as {
+          canEdit: boolean;
+          snapshot: {
+            body?: { dataStream: string };
+            sheets?: Record<string, { cellData?: Record<number, Record<number, { v?: unknown }>> }>;
+          };
+        };
+      };
+      const beforeEdit = await read();
+      expect(beforeEdit.canEdit, `${kind} native permission`).toBe(!readOnly);
+      const editor = page.locator('.rd-native-editor');
+      if (readOnly) {
+        // Attempt normal canvas input, then inspect saved content via the public facade.
+        await editor
+          .locator(
+            `canvas[aria-label="${kind === 'sheet' ? 'Spreadsheet grid' : 'Document canvas'}"]`,
+          )
+          .click({ position: { x: 130, y: 160 } });
+      } else if (kind === 'sheet') {
+        // Use the production Sheet test's visible name-box path, not an auxiliary
+        // contenteditable (the formula input is not the active cell editor).
+        const nameBox = editor.getByRole('textbox').nth(2);
+        await nameBox.fill('A16');
+        await nameBox.press('Enter');
+      } else {
+        await page.getByRole('button', { name: 'Select document start', exact: true }).click();
+        await editor.locator('[contenteditable="true"][data-u-comp="editor"]').first().focus();
+      }
+      const marker = 'Native keyboard proof';
+      await page.keyboard.type(marker);
+      if (kind === 'sheet') await page.keyboard.press('Enter');
+      if (readOnly) expect((await read()).snapshot).toEqual(beforeEdit.snapshot);
+      else
+        await expect
+          .poll(async () => {
+            const current = await read();
+            return kind === 'sheet'
+              ? current.snapshot.sheets?.october.cellData?.[15]?.[0]?.v
+              : current.snapshot.body?.dataStream;
+          })
+          .toContain(marker);
+      await page.locator('.rd-native-review-tools summary').click();
+      await page.screenshot({
+        path: resolve(directory, `native-${kind}-${readOnly ? 'viewer' : 'edited'}.png`),
+      });
+      verifications.push(
+        `${kind}: native ${readOnly ? 'viewer rejects keyboard edits' : 'keyboard edit saved in local snapshot'}`,
+      );
+      await page.close();
+    }
+  }
   for (const [theme, width, variant] of variants) {
     const page = await browser.newPage({
       viewport: { width, height: 900 },
@@ -282,71 +348,6 @@ try {
       verifications.push(
         `${width}px: navigation/focus, list/grid parity and segmented appearance/system response`,
       );
-    }
-  }
-  for (const kind of ['sheet', 'doc'] as const) {
-    for (const readOnly of [false, true]) {
-      const id = `redesign-native-editors--${kind}${readOnly ? '-viewer' : ''}`;
-      if (!requested.includes(id)) continue;
-      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-      await page.goto(
-        `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:light`,
-      );
-      await expect(page.locator('.rd-native-editor')).toBeVisible();
-      await waitForNativeEditor(page);
-      await page.getByText('Native editor review controls', { exact: true }).click();
-      const observation = page.locator('output[data-native-snapshot]');
-      await expect(observation).not.toBeEmpty();
-      const read = async () => {
-        await page.getByRole('button', { name: 'Read current snapshot', exact: true }).click();
-        return JSON.parse((await observation.textContent())!) as {
-          canEdit: boolean;
-          snapshot: {
-            body?: { dataStream: string };
-            sheets?: Record<string, { cellData?: Record<number, Record<number, { v?: unknown }>> }>;
-          };
-        };
-      };
-      const beforeEdit = await read();
-      expect(beforeEdit.canEdit, `${kind} native permission`).toBe(!readOnly);
-      const editor = page.locator('.rd-native-editor');
-      if (readOnly) {
-        // Attempt normal canvas input, then inspect saved content via the public facade.
-        await editor
-          .locator(
-            `canvas[aria-label="${kind === 'sheet' ? 'Spreadsheet grid' : 'Document canvas'}"]`,
-          )
-          .click({ position: { x: 130, y: 160 } });
-      } else {
-        await page
-          .getByRole('button', {
-            name: kind === 'sheet' ? 'Select cell A16' : 'Select document start',
-            exact: true,
-          })
-          .click();
-        await editor.locator('[contenteditable="true"][data-u-comp="editor"]').first().focus();
-      }
-      const marker = 'Native keyboard proof';
-      await page.keyboard.type(marker);
-      if (kind === 'sheet') await page.keyboard.press('Enter');
-      if (readOnly) expect((await read()).snapshot).toEqual(beforeEdit.snapshot);
-      else
-        await expect
-          .poll(async () => {
-            const current = await read();
-            return kind === 'sheet'
-              ? current.snapshot.sheets?.october.cellData?.[15]?.[0]?.v
-              : current.snapshot.body?.dataStream;
-          })
-          .toContain(marker);
-      await page.locator('.rd-native-review-tools summary').click();
-      await page.screenshot({
-        path: resolve(directory, `native-${kind}-${readOnly ? 'viewer' : 'edited'}.png`),
-      });
-      verifications.push(
-        `${kind}: native ${readOnly ? 'viewer rejects keyboard edits' : 'keyboard edit saved in local snapshot'}`,
-      );
-      await page.close();
     }
   }
   if (requested.includes('redesign-controls--default')) {

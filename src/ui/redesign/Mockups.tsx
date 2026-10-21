@@ -136,10 +136,10 @@ export function AppearanceChoice({
     />
   );
 }
-export function ThemeMenu({ labelled = false }: { labelled?: boolean }) {
+export function ThemeMenu() {
   const preference = useSyncExternalStore(watchTheme, getPreference);
   const [error, setError] = useState('');
-  const control = (
+  return (
     <>
       <AppearanceChoice
         value={preference}
@@ -153,14 +153,6 @@ export function ThemeMenu({ labelled = false }: { labelled?: boolean }) {
       />
       {error && <span role="alert">{error}</span>}
     </>
-  );
-  return labelled ? (
-    <div className="rd-appearance-row">
-      <span>Appearance</span>
-      {control}
-    </div>
-  ) : (
-    control
   );
 }
 function NetworkStatus({ offline = false }: { offline?: boolean }) {
@@ -207,6 +199,7 @@ function Sidebar({
   onSelect: (view: string) => void;
   guest?: boolean;
 }) {
+  const { profile } = useContext(ReviewProfileContext);
   const [action, setAction] = useState('');
   const [destination, setDestination] = useState('root');
   const groups: { title: string; items: [string, GlyphName][] }[] = space
@@ -396,9 +389,17 @@ function Sidebar({
         <div className="rd-sidebar-bottom">
           {onCollapse && !guest && (
             <div className="rd-sidebar-utilities">
-              <ThemeMenu labelled />
-              <Button className="rd-profile-control" onClick={() => onSelect('Your profile')}>
-                <Avatar /> Your profile
+              <div className="rd-appearance-row">
+                <ThemeMenu />
+              </div>
+              <Button
+                className="rd-profile-control"
+                aria-label="Your profile"
+                title={`${profile.name} — Profile settings`}
+                onClick={() => onSelect('Your profile')}
+              >
+                <Avatar />
+                <span className="rd-profile-name">{profile.name}</span>
               </Button>
             </div>
           )}

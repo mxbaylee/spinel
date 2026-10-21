@@ -1305,10 +1305,33 @@
 .rd-sidebar-utilities {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
 .rd-sidebar-utilities > .sp-control {
   width: 100%;
   justify-content: flex-start;
+}
+.rd-sidebar-utilities > .rd-profile-control {
+  min-width: 0;
+  height: 44px;
+  padding: 5px 8px;
+  box-sizing: border-box;
+  text-align: left;
+}
+.rd-sidebar-utilities > .rd-profile-control:hover,
+.rd-sidebar-utilities > .rd-profile-control:focus-visible {
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
+}
+.rd-sidebar-utilities > .rd-profile-control:focus-visible {
+  outline: 2px solid var(--sp-rail-ink);
+  outline-offset: 2px;
+}
+.rd-profile-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .rd-rail > .sp-control {
   color: inherit;
@@ -1442,7 +1465,8 @@
   display: grid;
   gap: 8px;
   padding: 0 8px;
-  justify-items: start;
+  justify-items: center;
+  min-width: 0;
   font-size: 0.75rem;
 }
 /* The segmented control has a light/dark panel of its own, even on the pink rail. */
