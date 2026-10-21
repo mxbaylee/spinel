@@ -369,15 +369,19 @@ export function NativeEditor({
       className="rd-native-editor"
       aria-label={kind === 'sheet' ? 'Spreadsheet editor' : 'Document editor'}
       data-native-ready={state === 'ready'}
+      aria-busy={state === 'loading'}
     >
       <div
         ref={host}
         className="rd-native-host"
-        aria-hidden={state !== 'ready'}
+        aria-hidden={(readOnly && state !== 'ready') || state === 'error'}
         {...(readOnly && state !== 'ready' ? { inert: '' } : {})}
       />
       {state !== 'ready' && (
-        <div className="rd-native-message" role={state === 'error' ? 'alert' : 'status'}>
+        <div
+          className={`rd-native-message ${!readOnly && state === 'loading' ? 'rd-native-loading-editable' : ''}`}
+          role={state === 'error' ? 'alert' : 'status'}
+        >
           {state === 'error'
             ? message
             : `Opening ${kind === 'sheet' ? 'spreadsheet' : 'document'}…`}

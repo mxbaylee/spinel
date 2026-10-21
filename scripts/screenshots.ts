@@ -41,7 +41,12 @@ const before = [
 const args = process.argv.slice(2);
 const requested = args.length
   ? args
-  : [...Object.keys(index.entries).filter((id) => id.startsWith('redesign-')), ...before];
+  : [
+      ...Object.keys(index.entries).filter(
+        (id) => id.startsWith('redesign-') || id.startsWith('identity-favicon--'),
+      ),
+      ...before,
+    ];
 for (const id of requested)
   if (index.entries[id]?.type !== 'story') throw new Error(`Unknown story: ${id}`);
 const directory = resolve(process.env.SPINEL_SCREENSHOT_DIR ?? 'test-results/design-review');
@@ -128,7 +133,9 @@ try {
           (await observation.textContent()) ?? '',
         );
         await page.screenshot({ path: resolve(directory, `native-${kind}-input-failure.png`) });
-        throw error;
+        nativeFailures.push(error);
+        await page.close();
+        continue;
       }
 
       await page.locator('.rd-native-review-tools summary').click();
@@ -164,6 +171,13 @@ try {
       await expect(page.locator('.sb-errordisplay')).toBeHidden();
       if (id === 'redesign-walkthrough--operator-help')
         await expect(page.getByText('npm run setup', { exact: true })).toBeVisible();
+      if (id === 'redesign-screens--file-icon-hint')
+        await expect(
+          page.getByText(
+            'Custom file icons are planned. This default icon comes from the file name.',
+            { exact: true },
+          ),
+        ).toBeVisible();
       if (id === 'redesign-screens--history-naming')
         await expect(
           page.getByRole('dialog', { name: 'Name this version', exact: true }),
@@ -564,7 +578,8 @@ try {
         .click();
       await page.getByRole('button', { name: 'Grid view', exact: true }).click();
       await page.locator('.rd-file-open').filter({ hasText: 'Autumn plans' }).click();
-      await expect(page.getByRole('heading', { name: 'Autumn plans', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
+      await expect(page.getByText('Space · Autumn plans /', { exact: true })).toBeVisible();
       await page.getByRole('button', { name: 'My files', exact: true }).click();
       await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Grid view', exact: true })).toHaveAttribute(

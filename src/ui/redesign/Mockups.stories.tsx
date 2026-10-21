@@ -48,6 +48,14 @@ export const Search: Story = { render: () => <DashboardMockup state="search" /> 
 export const SharedFiles: Story = { render: () => <DashboardMockup state="shared" /> };
 export const Trash: Story = { render: () => <DashboardMockup state="trash" /> };
 export const Doc: Story = { render: () => <EditorMockup /> };
+export const FileIconHint: Story = {
+  render: () => <EditorMockup space />,
+  play: async ({ canvasElement }) => {
+    await userEvent.hover(
+      within(canvasElement).getByRole('button', { name: 'File icon — customization planned' }),
+    );
+  },
+};
 export const Sheet: Story = { render: () => <EditorMockup sheet /> };
 export const ViewOnly: Story = { render: () => <EditorMockup viewOnly /> };
 export const OfflineEditor: Story = { render: () => <EditorMockup offline /> };

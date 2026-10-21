@@ -303,7 +303,10 @@ function Sidebar({
     },
   ];
   return (
-    <nav className="rd-sidebar" aria-label={space ? 'Space contents' : 'Files'}>
+    <nav
+      className={`rd-sidebar ${space ? 'rd-space-sidebar' : ''}`}
+      aria-label={space ? 'Space contents' : 'Files'}
+    >
       {onCollapse && !space && (
         <div className="rd-sidebar-brand">
           {guest ? (
@@ -1460,6 +1463,7 @@ export function EditorMockup({
   title?: string;
   initialPage?: string;
 }) {
+  const [iconHint, setIconHint] = useState(false);
   const [share, setShare] = useState(false);
   const [selected, setSelected] = useState(initialPage);
   const [checkpoint, setCheckpoint] = useState('10:15 · Ready for the trip');
@@ -1505,11 +1509,30 @@ export function EditorMockup({
               <Glyph name="back" />
             </Button>
           )}
-          <FileIdentity
-            kind={space ? 'space' : sheet ? 'sheet' : 'doc'}
-            emoji={filenameEmoji(space ? 'Autumn plans' : name)}
-            size={24}
-          />
+          <Tooltip.Root open={iconHint} onOpenChange={setIconHint}>
+            <Tooltip.Trigger
+              className="rd-file-identity-trigger"
+              closeOnClick={false}
+              onPointerDown={(event) => {
+                if (event.pointerType === 'touch') setIconHint(true);
+              }}
+              aria-label="File icon — customization planned"
+              aria-disabled="true"
+            >
+              <FileIdentity
+                kind={space ? 'space' : sheet ? 'sheet' : 'doc'}
+                emoji={filenameEmoji(space ? 'Autumn plans' : name)}
+                size={24}
+              />
+            </Tooltip.Trigger>
+            <Tooltip.Portal>
+              <Tooltip.Positioner sideOffset={8} className="rd-tooltip-positioner">
+                <Tooltip.Popup className="sp-ui rd-network-tooltip">
+                  Custom file icons are planned. This default icon comes from the file name.
+                </Tooltip.Popup>
+              </Tooltip.Positioner>
+            </Tooltip.Portal>
+          </Tooltip.Root>
           <div>
             <span className="rd-breadcrumb">
               {space

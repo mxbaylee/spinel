@@ -67,3 +67,7 @@ This favors Owner/Collaborator orientation without consuming a second navigation
 column; link guests retain scoped navigation without account destinations, and
 Operator workflows remain separate. Folder/page hierarchy remains a proposal
 for SPN-078, not implemented persistence.
+
+The Space tree uses the quieter `--sp-bg` / `--sp-text` surface, distinct from
+the saturated pink site header in both themes (owner, chat 2026-10-20). The same
+surface applies in its phone drawer.

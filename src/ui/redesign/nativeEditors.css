@@ -47,3 +47,13 @@
     height: max(480px, calc(100dvh - 240px));
   }
 }
+
+.rd-native-message.rd-native-loading-editable {
+  inset: auto 12px 12px auto;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  padding: 8px 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  pointer-events: none;
+}
