@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { AdminMockup, EntryMockup, ProfileMockup } from './Mockups.tsx';
 
 const meta = {
@@ -48,3 +49,12 @@ export const ConsentUnavailable: Story = {
   render: () => <EntryMockup consentState="unavailable" />,
 };
 export const ConsentLimit: Story = { render: () => <EntryMockup consentState="limit" /> };
+export const ConsentExpiredBeforeAllow: Story = {
+  render: () => <EntryMockup expireOnAllow />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Allow connection' }));
+    await expect(canvas.getByRole('alert')).toHaveTextContent('expired before access was granted');
+    await expect(canvas.queryByRole('button', { name: 'Allow connection' })).toBeNull();
+  },
+};

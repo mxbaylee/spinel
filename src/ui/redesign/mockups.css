@@ -1786,3 +1786,9 @@
   white-space: nowrap;
   border: 0;
 }
+.rd-shell .profile-icon-dialog .profile-icon-grid {
+  margin-bottom: 16px;
+}
+.rd-shell .profile-icon-dialog > button + button {
+  margin-inline-start: 8px;
+}

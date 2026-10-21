@@ -15,6 +15,7 @@ import { EntryJourney } from './EntryJourney.tsx';
 import type { EntryScreen, EntryOutcome } from './EntryJourney.tsx';
 import './walkthrough.css';
 import { defaultProfile } from '../../profile/profile.ts';
+import { PinsReviewProvider } from './PinsReview.tsx';
 
 const NativeEditor = lazy(() =>
   import('./NativeEditors.tsx').then((module) => ({ default: module.NativeEditor })),
@@ -68,6 +69,9 @@ export function Walkthrough({
   const [firstRun, setFirstRun] = useState(start === 'setup');
   const [returnTo, setReturnTo] = useState<Screen>(persona === 'operator' ? 'admin' : 'files');
   const [namedVersions, setNamedVersions] = useState<Record<string, string>>({});
+  const [checkpointNames, setCheckpointNames] = useState<
+    Record<string, Record<string, string | null>>
+  >({});
   const [snapshots, setSnapshots] = useState(() => new Map<string, NativeSnapshot>());
   const [save, setSave] = useState<'saved' | 'saving' | 'failed'>('saved');
   const [offline, setOffline] = useState(false);
@@ -136,6 +140,7 @@ export function Walkthrough({
       ['files', 'editor', 'profile', 'admin', 'history'].includes(start) && persona !== 'guest',
     );
     setNamedVersions({});
+    setCheckpointNames({});
     setSnapshots(new Map());
     setFirstRun(start === 'setup');
     setGeneration(generation + 1);
@@ -244,123 +249,134 @@ export function Walkthrough({
         </div>
       )}
       <ReviewProfileContext.Provider value={{ profile, save: setProfile }}>
-        <div ref={pageRef} className="rd-walkthrough-page" key={generation}>
-          {entry && (
-            <EntryJourney
-              screen={screen as EntryScreen}
-              accountName={profile.name}
-              outcome={outcome}
-              onNavigate={(next) => {
-                setScreen(next);
-                setOutcome('ready');
-              }}
-              onPasskey={(name) => {
-                if (name) setProfile({ ...profile, name });
-                setOutcome('pending');
-                setEvent('');
-              }}
-            />
-          )}
-          {signedIn && persona !== 'operator' && (
-            <div hidden={screen !== 'files'}>
-              <DashboardMockup
-                state={persona === 'collaborator' ? 'shared' : 'populated'}
-                onOpen={openFile}
-                onProfile={() => navigate('profile')}
+        <PinsReviewProvider key={generation}>
+          <div ref={pageRef} className="rd-walkthrough-page" key={generation}>
+            {entry && (
+              <EntryJourney
+                screen={screen as EntryScreen}
+                accountName={profile.name}
+                outcome={outcome}
+                onNavigate={(next) => {
+                  setScreen(next);
+                  setOutcome('ready');
+                }}
+                onPasskey={(name) => {
+                  if (name) setProfile({ ...profile, name });
+                  setOutcome('pending');
+                  setEvent('');
+                }}
               />
-            </div>
-          )}
-          {(signedIn || persona === 'guest') &&
-            !['revoked', 'offline'].includes(screen) &&
-            persona !== 'operator' && (
-              <div className="rd-walkthrough-editor-screen" hidden={screen !== 'editor'}>
-                <EditorMockup
-                  key={`${file.id}:${file.access}`}
-                  title={file.name}
-                  sheet={file.kind === 'sheet'}
-                  space={file.kind === 'space'}
-                  guest={persona === 'guest'}
-                  viewOnly={file.access === 'viewer'}
-                  collaborator={file.access === 'editor'}
-                  offline={offline}
-                  saveState={save}
-                  editorContent={
-                    file.kind === 'space' ? undefined : screen === 'editor' ? (
-                      <Suspense fallback={<p role="status">Opening editor…</p>}>
-                        <NativeEditor
-                          key={`${file.id}:${file.access}`}
-                          kind={file.kind}
-                          title={file.name}
-                          readOnly={file.access === 'viewer'}
-                          getSnapshot={() => snapshots.get(file.id)}
-                          onSnapshot={(snapshot) => snapshots.set(file.id, snapshot)}
-                        />
-                      </Suspense>
-                    ) : null
-                  }
-                  onNameVersion={(name) =>
-                    setNamedVersions((current) => ({ ...current, [file.id]: name }))
-                  }
-                  onRetrySave={() => {
-                    setSave('saved');
-                    setOffline(false);
-                  }}
-                  onBack={() => navigate('files')}
+            )}
+            {signedIn && persona !== 'operator' && (
+              <div hidden={screen !== 'files'}>
+                <DashboardMockup
+                  state={persona === 'collaborator' ? 'shared' : 'populated'}
+                  onOpen={openFile}
                   onProfile={() => navigate('profile')}
-                  onHistory={() => navigate('history')}
                 />
               </div>
             )}
-          {signedIn && (
-            <div hidden={screen !== 'profile'}>
-              <ProfileMockup
-                credential={credential}
-                onCredential={(next) => {
-                  setCredential(next);
-                  setEvent('');
-                }}
-                operator={persona === 'operator'}
-                onBack={() => navigate(returnTo)}
-                returnLabel={
-                  returnTo === 'editor'
-                    ? 'Back to document'
-                    : persona === 'operator'
-                      ? 'Back to Administration'
-                      : 'Back to files'
+            {(signedIn || persona === 'guest') &&
+              !['revoked', 'offline'].includes(screen) &&
+              persona !== 'operator' && (
+                <div className="rd-walkthrough-editor-screen" hidden={screen !== 'editor'}>
+                  <EditorMockup
+                    key={`${file.id}:${file.access}`}
+                    title={file.name}
+                    sheet={file.kind === 'sheet'}
+                    space={file.kind === 'space'}
+                    guest={persona === 'guest'}
+                    viewOnly={file.access === 'viewer'}
+                    collaborator={file.access === 'editor'}
+                    offline={offline}
+                    saveState={save}
+                    editorContent={
+                      file.kind === 'space' ? undefined : screen === 'editor' ? (
+                        <Suspense fallback={<p role="status">Opening editor…</p>}>
+                          <NativeEditor
+                            key={`${file.id}:${file.access}`}
+                            kind={file.kind}
+                            title={file.name}
+                            readOnly={file.access === 'viewer'}
+                            getSnapshot={() => snapshots.get(file.id)}
+                            onSnapshot={(snapshot) => snapshots.set(file.id, snapshot)}
+                          />
+                        </Suspense>
+                      ) : null
+                    }
+                    onNameVersion={(name) =>
+                      setNamedVersions((current) => ({ ...current, [file.id]: name }))
+                    }
+                    onRetrySave={() => {
+                      setSave('saved');
+                      setOffline(false);
+                    }}
+                    onBack={() => navigate('files')}
+                    onProfile={() => navigate('profile')}
+                    onHistory={() => navigate('history')}
+                  />
+                </div>
+              )}
+            {signedIn && (
+              <div hidden={screen !== 'profile'}>
+                <ProfileMockup
+                  credential={credential}
+                  onCredential={(next) => {
+                    setCredential(next);
+                    setEvent('');
+                  }}
+                  operator={persona === 'operator'}
+                  onBack={() => navigate(returnTo)}
+                  returnLabel={
+                    returnTo === 'editor'
+                      ? 'Back to document'
+                      : persona === 'operator'
+                        ? 'Back to Administration'
+                        : 'Back to files'
+                  }
+                  onSignOut={() => {
+                    setSignedIn(false);
+                    setNamedVersions({});
+                    setCheckpointNames({});
+                    setSnapshots(new Map());
+                    setScreen('home');
+                    setGeneration(generation + 1);
+                  }}
+                />
+              </div>
+            )}
+            {signedIn && persona === 'operator' && (
+              <div hidden={screen !== 'admin'}>
+                <AdminMockup firstRun={firstRun} onProfile={() => navigate('profile')} />
+              </div>
+            )}
+            {screen === 'history' && (
+              <HistoryMockup
+                title={file.name}
+                namedVersion={namedVersions[file.id] ?? ''}
+                checkpointNames={checkpointNames[file.id]}
+                onCheckpointName={(id, name) =>
+                  setCheckpointNames((current) => ({
+                    ...current,
+                    [file.id]: { ...current[file.id], [id]: name },
+                  }))
                 }
-                onSignOut={() => {
-                  setSignedIn(false);
-                  setSnapshots(new Map());
-                  setScreen('home');
-                  setGeneration(generation + 1);
-                }}
+                saveState={save}
+                offline={offline}
+                onNameVersion={(name) =>
+                  setNamedVersions((current) => ({ ...current, [file.id]: name }))
+                }
+                sheet={file.kind === 'sheet'}
+                viewOnly={file.access === 'viewer'}
+                onBack={() => navigate('editor')}
+                onFiles={() => navigate('files')}
+                onProfile={() => navigate('profile')}
               />
-            </div>
-          )}
-          {signedIn && persona === 'operator' && (
-            <div hidden={screen !== 'admin'}>
-              <AdminMockup firstRun={firstRun} onProfile={() => navigate('profile')} />
-            </div>
-          )}
-          {screen === 'history' && (
-            <HistoryMockup
-              title={file.name}
-              namedVersion={namedVersions[file.id] ?? ''}
-              saveState={save}
-              offline={offline}
-              onNameVersion={(name) =>
-                setNamedVersions((current) => ({ ...current, [file.id]: name }))
-              }
-              sheet={file.kind === 'sheet'}
-              viewOnly={file.access === 'viewer'}
-              onBack={() => navigate('editor')}
-              onFiles={() => navigate('files')}
-              onProfile={() => navigate('profile')}
-            />
-          )}
-          {screen === 'revoked' && <EntryMockup kind="revoked" />}
-          {screen === 'offline' && <EntryMockup kind="offline" />}
-        </div>
+            )}
+            {screen === 'revoked' && <EntryMockup kind="revoked" />}
+            {screen === 'offline' && <EntryMockup kind="offline" />}
+          </div>
+        </PinsReviewProvider>
       </ReviewProfileContext.Provider>
       <Modal
         title="Leave with unsaved changes?"

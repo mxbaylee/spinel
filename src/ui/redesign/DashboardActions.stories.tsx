@@ -48,9 +48,63 @@ export const Tags: Story = {
   render: () => <DashboardMockup />,
   play: ({ canvasElement }) => openFileAction(canvasElement, 'Autumn plans', 'Tags…'),
 };
+export const PersonalTagsAndExactFilter: Story = {
+  render: () => <DashboardMockup />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const portal = within(canvasElement.ownerDocument.body);
+    await openFileAction(canvasElement, 'Autumn plans', 'Tags…');
+    let dialog = within(portal.getByRole('dialog', { name: 'Tags · Autumn plans' }));
+    await userEvent.type(dialog.getByRole('textbox', { name: 'Tag' }), 'home, work');
+    await userEvent.click(dialog.getByRole('button', { name: 'Add tag' }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Done' }));
+    await openFileAction(canvasElement, 'Autumn plans', 'Tags…');
+    dialog = within(portal.getByRole('dialog', { name: 'Tags · Autumn plans' }));
+    // A comma is valid tag content; reopening must preserve one complete tag.
+    await expect(dialog.getByRole('button', { name: 'Remove #home, work' })).toBeVisible();
+    await userEvent.click(dialog.getByRole('button', { name: 'Done' }));
+    await userEvent.click(canvas.getByRole('button', { name: /^Filters / }));
+    const filter = canvas.getByRole('textbox', { name: 'Tag' });
+    await userEvent.type(filter, 'home');
+    await expect(canvas.getByRole('heading', { name: 'No matching files' })).toBeVisible();
+    await userEvent.clear(filter);
+    await userEvent.type(filter, '#HOME, WORK');
+    await expect(
+      canvas.getByRole('button', { name: 'More actions for Autumn plans' }),
+    ).toBeVisible();
+  },
+};
+export const FolderHasNoTagsAction: Story = {
+  render: () => <DashboardMockup />,
+  play: async ({ canvasElement }) => {
+    const portal = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'More actions for Household' }),
+    );
+    await expect(portal.queryByRole('menuitem', { name: 'Tags…' })).toBeNull();
+  },
+};
 export const Share: Story = {
   render: () => <DashboardMockup />,
   play: ({ canvasElement }) => openFileAction(canvasElement, 'Autumn plans', 'Share…'),
+};
+export const FolderSharing: Story = {
+  render: () => <DashboardMockup />,
+  play: async ({ canvasElement }) => {
+    await openFileAction(canvasElement, 'Household', 'Share…');
+    const dialog = within(canvasElement.ownerDocument.body).getByRole('dialog', {
+      name: 'Share · Household',
+    });
+    await expect(
+      within(dialog).getByRole('combobox', { name: 'Alex’s direct access' }),
+    ).toBeVisible();
+    // Folder access is account-only; a folder never offers a public guest link.
+    await expect(
+      within(dialog).queryByRole('heading', { name: 'Anyone with the link' }),
+    ).toBeNull();
+    await expect(within(dialog).queryByRole('button', { name: 'Create link' })).toBeNull();
+    await expect(within(dialog).getByText(/Folders cannot have guest links/)).toBeVisible();
+  },
 };
 
 export const DeletePermanently: Story = {

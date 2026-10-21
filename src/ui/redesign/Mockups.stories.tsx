@@ -74,7 +74,7 @@ export const HistoryNaming: Story = {
   render: () => <HistoryMockup />,
   play: async ({ canvasElement }) => {
     await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Name this version…' }),
+      within(canvasElement).getByRole('button', { name: 'Name current version…' }),
     );
   },
 };

@@ -12,6 +12,7 @@ export type EntryJourneyProps = {
   onNavigate: (screen: EntryScreen) => void;
   onPasskey: (name?: string) => void;
   accountName?: string;
+  initialName?: string;
 };
 
 /** Local review journey; successful passkey outcomes and destinations belong to its host. */
@@ -21,10 +22,11 @@ export function EntryJourney({
   onNavigate,
   onPasskey,
   accountName = 'Alex Kim',
+  initialName = '',
 }: EntryJourneyProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [help, setHelp] = useState(false);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(initialName);
   const [cancelled, setCancelled] = useState(false);
   const nameId = useId();
   const hintId = useId();
@@ -60,11 +62,17 @@ export function EntryJourney({
     setup: ['Set up Spinel.', 'Create the first Operator account.', 'Create Operator passkey'],
   }[entry];
   const invalidTitle =
-    screen === 'setup' ? 'This setup link isn’t available.' : 'This invitation isn’t available.';
+    screen === 'setup'
+      ? 'This setup link isn’t available.'
+      : screen === 'recovery'
+        ? 'This recovery link isn’t available.'
+        : 'This invitation isn’t available.';
   const invalidDetail =
     screen === 'setup'
       ? 'Open the latest one-time setup link from the server. If it has expired or been replaced, run the setup command again. An instance that has already been set up cannot be claimed again.'
-      : 'It may have expired, been used or been revoked. Ask the workspace Operator for a new invitation.';
+      : screen === 'recovery'
+        ? 'It may have expired, been used or been revoked. Ask the workspace Operator for a new recovery link.'
+        : 'It may have expired, been used or been revoked. Ask the workspace Operator for a new invitation.';
 
   return (
     <div className={`sp-ui ej-page${home ? ' ej-home' : ''}`}>

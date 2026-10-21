@@ -1,0 +1,63 @@
+.rd-pins {
+  min-width: 0;
+}
+.rd-pins ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.rd-pins li {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 2px;
+}
+.rd-pins li > .rd-nav-item {
+  flex: 1;
+  min-width: 0;
+}
+.rd-pins li > .sp-control {
+  flex: 0 0 44px;
+  min-width: 44px;
+  min-height: 44px;
+}
+.rd-pins .rd-pin-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rd-pins p {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 8px 12px;
+}
+.rd-pins .rd-pins-notice:empty {
+  display: none;
+}
+.rd-pins-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.rd-pins-compact p {
+  max-width: 52px;
+  overflow-wrap: anywhere;
+  font-size: 10px;
+  margin-inline: 0;
+}
+.rd-pins-compact li {
+  justify-content: center;
+}
+.rd-pins-compact .sp-control {
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+}
+.rd-pins-example {
+  width: 280px;
+  max-width: 100%;
+  padding: 16px;
+}
+.rd-pins-example > p {
+  font-size: 13px;
+}

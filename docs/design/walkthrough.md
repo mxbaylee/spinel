@@ -41,7 +41,9 @@ assertion fails; check the workflow result independently.
 Use the product's buttons, file rows and navigation to move between screens.
 Expand **Design walkthrough · … · local preview** only to choose a **Preview
 event**, such as a passkey succeeding or a connection failing. These event
-controls are review tools, not proposed product controls. **Restart walkthrough**
+controls are review tools, not proposed product controls. Use **×** to hide them
+for the full editor; reload restores them. The editor fills the available screen
+height so its toolbar stays visible while document content scrolls. **Restart walkthrough**
 resets the fixture. Edits and uploads do not persist outside the preview.
 
 ## Four journeys to try
@@ -88,7 +90,7 @@ horizontal group. It defaults to System and affects this browser only. **This
 device** explains that scope; saving profile identity does not change appearance.
 
 Trash and folders have a My files breadcrumb. Pages opens a Space's internal
-tree, with a separate My files exit. The gem wiggles on hover or keyboard focus
+tree, with a separate My files exit. The gem wiggles on hover, keyboard focus or every tap
 unless reduced motion is preferred. Folder creation, tags and moving files update
 local fixtures; unavailable pin/passkey removal actions are explicitly disabled.
 

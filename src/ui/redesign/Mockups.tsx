@@ -1,5 +1,12 @@
 /** SPN-047 review prototypes. No production routes, network calls or document writes. */
-import { createContext, useContext, useRef, useState, useSyncExternalStore } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import type { ReactNode } from 'react';
 import { Tooltip } from '@base-ui/react/tooltip';
 import { GemLogo, replayGemWiggle } from '../GemLogo.tsx';
@@ -13,7 +20,16 @@ import { getPreference, setPreference, watchTheme } from '../theme.ts';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal, SegmentedChoice } from './Controls.tsx';
 import './mockups.css';
 import { TokenManager } from './TokenManager.tsx';
+import { ConnectionsReview } from './ConnectionsReview.tsx';
+import { TagsReview, TagLabelsReview } from './TagsReview.tsx';
 import { ImportDialog } from './ImportReview.tsx';
+import { PinnedReview, PinsReviewProvider, useReviewPins } from './PinsReview.tsx';
+import { VersionNamesReview } from './VersionNamesReview.tsx';
+import { PresenceReview } from './PresenceReview.tsx';
+import { FormulaReview, type FormulaReviewState } from './FormulaReview.tsx';
+import { SharingReview as SharingContent } from './SharingReview.tsx';
+import type { SharingState } from './SharingReview.tsx';
+import type { Collaborator } from '../../../web/Collaborators.tsx';
 
 type GlyphName =
   | 'files'
@@ -333,13 +349,6 @@ function Sidebar({
         ['Shared with me', 'shared'],
       ],
     },
-    {
-      title: 'PINNED',
-      items: [
-        ['Quarterly budget', 'pin'],
-        ['Autumn plans', 'pin'],
-      ],
-    },
   ];
   return (
     <nav
@@ -411,6 +420,9 @@ function Sidebar({
             ))}
           </section>
         ))
+      )}
+      {!space && !guest && (
+        <PinnedReview selected={selected} onSelect={onSelect} disabled={offline} />
       )}
       {space && canEdit && (
         <ActionMenu
@@ -501,7 +513,14 @@ function Sidebar({
     </nav>
   );
 }
-function Shell({
+function Shell(props: Parameters<typeof ShellContent>[0]) {
+  return (
+    <PinsReviewProvider>
+      <ShellContent {...props} />
+    </PinsReviewProvider>
+  );
+}
+function ShellContent({
   children,
   sidebar = false,
   space = false,
@@ -599,8 +618,6 @@ function Shell({
                 [
                   ['My files', 'files'],
                   ['Shared with me', 'shared'],
-                  ['Quarterly budget', 'pin'],
-                  ['Autumn plans', 'pin'],
                 ] as [string, GlyphName][]
               ).map(([label, glyph]) => (
                 <button
@@ -621,6 +638,7 @@ function Shell({
                   </span>
                 </button>
               ))}
+              <PinnedReview compact selected={selected} onSelect={onSelect} disabled={offline} />
             </nav>
           )}
           <div className="rd-rail-bottom">
@@ -671,6 +689,7 @@ function Shell({
           >
             <Sidebar
               space={space}
+              offline={offline}
               canEdit={canEdit}
               selected={selected}
               guest={guest}
@@ -759,10 +778,23 @@ const files = [
   },
 ].map((file) => {
   const folder = Object.entries(folderTags).find(([, tag]) => file.tags === tag)?.[0];
-  return { ...file, id: `fixture-${file.name}`, parentId: folder ? `fixture-${folder}` : null };
+  return {
+    ...file,
+    id: `fixture-${file.name}`,
+    parentId: folder ? `fixture-${folder}` : null,
+    ownerName: file.access === 'owner' ? undefined : 'Alex Kim',
+  };
 });
-export function DashboardMockup({
+export function DashboardMockup(props: Parameters<typeof DashboardContent>[0]) {
+  return (
+    <PinsReviewProvider>
+      <DashboardContent {...props} />
+    </PinsReviewProvider>
+  );
+}
+function DashboardContent({
   state = 'populated',
+  fileMutation = 'ready',
   collapsed = false,
   initialLayout = 'list',
   onOpen,
@@ -777,6 +809,16 @@ export function DashboardMockup({
   onProfile?: () => void;
   initialLayout?: 'list' | 'grid';
   collapsed?: boolean;
+  fileMutation?:
+    | 'ready'
+    | 'create-pending'
+    | 'create-error'
+    | 'rename-pending'
+    | 'rename-error'
+    | 'move-pending'
+    | 'move-error'
+    | 'file-pending'
+    | 'file-error';
   state?:
     | 'populated'
     | 'empty'
@@ -789,8 +831,27 @@ export function DashboardMockup({
     | 'no-results'
     | 'trash'
     | 'shared'
-    | 'folder';
+    | 'folder'
+    | 'shared-loading'
+    | 'shared-error'
+    | 'shared-unknown-owner'
+    | 'search-pending'
+    | 'search-error'
+    | 'local'
+    | 'local-no-data'
+    | 'local-folder'
+    | 'trash-loading'
+    | 'trash-error'
+    | 'trash-empty-confirm'
+    | 'trash-empty-pending'
+    | 'trash-empty-error'
+    | 'trash-restore-pending'
+    | 'trash-restore-error'
+    | 'trash-delete-pending'
+    | 'trash-delete-error'
+    | 'trash-expired';
 }) {
+  const pins = useReviewPins();
   const deletedFixtures = files
     .filter((file) => file.access === 'owner' && file.kind !== 'folder')
     .map((file) => ({ ...file, id: `deleted-${file.id}`, name: `Old ${file.name}` }));
@@ -804,36 +865,74 @@ export function DashboardMockup({
       detail: string;
       date: string;
       tags: string;
+      ownerName?: string;
     }[]
   >(
-    state === 'empty'
+    state === 'empty' || state === 'local-no-data'
       ? []
       : [...files, ...(state === 'empty-trash' ? [] : deletedFixtures)].filter(
           (file) => state !== 'empty-shared' || file.access === 'owner',
         ),
   );
   const nextFileId = useRef(0);
-  const [target, setTarget] = useState('');
-  const [destination, setDestination] = useState('fixture-Household');
+  const [target, setTarget] = useState(
+    state.startsWith('trash-')
+      ? (deletedFixtures[0]?.id ?? '')
+      : fileMutation.startsWith('file-')
+        ? 'fixture-Quarterly budget'
+        : fileMutation.startsWith('rename-') || fileMutation.startsWith('move-')
+          ? 'fixture-Autumn plans'
+          : '',
+  );
+  const [destination, setDestination] = useState(
+    fileMutation === 'ready' ? 'fixture-Household' : 'fixture-Work',
+  );
   const [view, setView] = useState(
-    state === 'trash' || state === 'empty-trash'
+    state.startsWith('trash') || state === 'empty-trash'
       ? 'Trash'
-      : state === 'shared' || state === 'empty-shared'
+      : state.startsWith('shared') || state === 'empty-shared'
         ? 'Shared with me'
-        : state === 'folder'
-          ? 'fixture-Household'
-          : 'My files',
+        : state === 'local-folder'
+          ? 'fixture-Work'
+          : state === 'folder'
+            ? 'fixture-Household'
+            : 'My files',
   );
   const [search, setSearch] = useState(
-    state === 'search' ? 'budget' : state === 'no-results' ? 'winter' : '',
+    state.startsWith('search') ? 'budget' : state === 'no-results' ? 'winter' : '',
   );
   const [notice, setNotice] = useState('');
-  const [dialog, setDialog] = useState('');
-  const [name, setName] = useState('');
+  const [dialog, setDialog] = useState(
+    state.startsWith('trash-empty-')
+      ? 'Empty trash'
+      : state.startsWith('trash-delete-')
+        ? 'Delete permanently'
+        : fileMutation.startsWith('create-')
+          ? 'Doc'
+          : fileMutation.startsWith('rename-')
+            ? 'Rename…'
+            : fileMutation.startsWith('move-')
+              ? 'Move…'
+              : fileMutation.startsWith('file-')
+                ? 'File into folder'
+                : '',
+  );
+  const [name, setName] = useState(
+    fileMutation.startsWith('create-')
+      ? 'Weekend notes'
+      : fileMutation.startsWith('rename-')
+        ? 'Autumn plans revised'
+        : '',
+  );
+  const fileMutationPending = fileMutation.endsWith('-pending');
+  const [fileMutationFailed, setFileMutationFailed] = useState(fileMutation.endsWith('-error'));
   const [kind, setKind] = useState('all');
   const [filtersOpen, setFiltersOpen] = useState(state === 'filtered');
   const [scope, setScope] = useState('all');
   const [tag, setTag] = useState(state === 'filtered' ? 'household' : '');
+  const [personalTags, setPersonalTags] = useState<Record<string, string[]>>({});
+  const tagsFor = (file: { id: string; tags: string }) =>
+    personalTags[file.id] ?? (file.tags ? [file.tags] : []);
   const [modified, setModified] = useState('any');
   const hasFilters = Boolean(
     search || tag || scope !== 'all' || modified !== 'any' || kind !== 'all',
@@ -849,7 +948,49 @@ export function DashboardMockup({
   const [trashed, setTrashed] = useState<string[]>(
     state === 'empty' || state === 'empty-trash' ? [] : deletedFixtures.map((file) => file.id),
   );
+  useEffect(() => {
+    pins.reconcile(items.filter((item) => !trashed.includes(item.id)));
+  }, [items, trashed, pins.reconcile]);
   const [retried, setRetried] = useState(false);
+  const localMode = state.startsWith('local');
+  const trashPending = state.startsWith('trash-') && state.endsWith('-pending');
+  const [trashError, setTrashError] = useState(
+    state.startsWith('trash-') && state.endsWith('-error') && state !== 'trash-error' ? state : '',
+  );
+  const downloaded = (id: string) =>
+    ['fixture-Quarterly budget', 'fixture-Reading list'].includes(id);
+  const recoveryExpired = (id: string) =>
+    state === 'trash-expired' && id === deletedFixtures.at(-1)?.id;
+  const openFile = (file: (typeof items)[number]) => {
+    if (file.kind === 'folder') setView(file.id);
+    else if (!localMode || downloaded(file.id)) {
+      if (onOpen) onOpen({ ...file, kind: file.kind, access: localMode ? 'viewer' : file.access });
+      else
+        setNotice(
+          localMode
+            ? `Read-only sample of ${file.name}. No device storage was read.`
+            : `Opening ${file.name}…`,
+        );
+    } else setNotice(`${file.name} needs a connection. It is not downloaded in this sample.`);
+  };
+  const changeTrash = (action: 'restore' | 'delete' | 'empty', id = target) => {
+    if (trashPending || localMode || (action === 'restore' && recoveryExpired(id))) return;
+    const title = items.find((file) => file.id === id)?.name ?? 'File';
+    if (action === 'empty') {
+      setItems((current) => current.filter((file) => !trashed.includes(file.id)));
+      setTrashed([]);
+    } else {
+      setTrashed((current) => current.filter((value) => value !== id));
+      if (action === 'delete') setItems((current) => current.filter((file) => file.id !== id));
+    }
+    setTrashError('');
+    setDialog('');
+    setNotice(
+      action === 'empty'
+        ? 'Trash emptied in this preview.'
+        : `${title} ${action === 'restore' ? 'restored' : 'deleted permanently'} in this preview.`,
+    );
+  };
   const [layout, setLayout] = useState(initialLayout);
   const currentFolder = items.find((item) => item.kind === 'folder' && item.id === view);
   const folderAncestors: { id: string; name: string }[] = [];
@@ -865,17 +1006,43 @@ export function DashboardMockup({
   const selectView = (next: string) => {
     if (next === 'Your profile' && onProfile) onProfile();
     else {
-      const file = items.find((item) => item.name === next);
-      if (file && file.kind !== 'folder' && onOpen) onOpen({ ...file, kind: file.kind });
-      else setView(file?.kind === 'folder' ? file.id : next);
+      const file = items.find((item) => item.id === next || item.name === next);
+      if (file && file.kind !== 'folder') openFile(file);
+      else setView(file ? (file.kind === 'folder' ? file.id : file.name) : next);
     }
   };
   if (view === 'Your profile') return <ProfileMockup onBack={() => setView('My files')} />;
+  if (state === 'local-no-data')
+    return (
+      <Shell compact offline onSelect={selectView}>
+        <div className="rd-empty">
+          <h1>You are offline</h1>
+          <h2>No saved files on this device</h2>
+          <p>
+            Connect to load your files. No saved list is available; this does not mean your
+            workspace is empty.
+          </p>
+          <Button
+            onClick={() =>
+              setNotice('Still offline in this preview. No connection request was made.')
+            }
+          >
+            Try again
+          </Button>
+          <p role="status">{notice}</p>
+        </div>
+      </Shell>
+    );
   const rows = items.filter(
     (file) =>
       file.name.toLowerCase().includes(search.toLowerCase()) &&
       (kind === 'all' || file.kind === kind) &&
-      (!tag || file.tags.includes(tag)) &&
+      (!tag ||
+        tagsFor(file).some(
+          (value) =>
+            value.normalize('NFKC').toLowerCase() ===
+            tag.trim().replace(/^#/, '').normalize('NFKC').toLowerCase(),
+        )) &&
       (scope === 'all' ||
         (scope === 'shared' ? file.access !== 'owner' : file.access === 'owner')) &&
       (modified === 'any' || file.date.includes('ago')) &&
@@ -897,8 +1064,22 @@ export function DashboardMockup({
     return false;
   };
   const empty = rows.length === 0;
-  const targetName = items.find((item) => item.id === target)?.name ?? 'this file';
+  const listLabel =
+    view === 'Trash' ? 'trash' : view === 'Shared with me' ? 'shared files' : 'your files';
+  const listingLoading =
+    state === 'loading' ||
+    (state === 'shared-loading' && view === 'Shared with me') ||
+    (state === 'trash-loading' && view === 'Trash');
+  const listingFailed =
+    !retried &&
+    (state === 'error' ||
+      (state === 'shared-error' && view === 'Shared with me') ||
+      (state === 'trash-error' && view === 'Trash'));
+  const searchFailed = state === 'search-error' && hasFilters && !retried;
+  const targetFile = items.find((item) => item.id === target);
+  const targetName = targetFile?.name ?? 'this file';
   const creating = ['Doc', 'Sheet', 'Space', 'Folder'].includes(dialog);
+  const dialogBusy = trashPending || fileMutationPending;
   const actionLabel = creating
     ? `Create ${dialog}`
     : dialog === 'Rename…'
@@ -907,14 +1088,15 @@ export function DashboardMockup({
         ? 'Move'
         : dialog === 'File into folder'
           ? 'File into folder'
-          : dialog === 'Tags'
-            ? 'Save tags'
+          : dialog === 'Empty trash'
+            ? `Permanently delete ${trashed.length} files`
             : dialog === 'Delete permanently'
               ? 'Delete permanently'
               : 'Done';
   return (
     <Shell
       sidebar
+      offline={localMode}
       collapsed={collapsed}
       selected={currentFolder?.name ?? view}
       onSelect={selectView}
@@ -934,7 +1116,7 @@ export function DashboardMockup({
           )}
           <h1>{currentFolder?.name ?? view}</h1>
         </div>
-        {view !== 'Trash' && (
+        {view !== 'Trash' && !localMode && (
           <div className="rd-header-actions">
             <ActionMenu
               label="New file"
@@ -960,8 +1142,26 @@ export function DashboardMockup({
             </ActionMenu>
           </div>
         )}
+        {view === 'Trash' && !localMode && (
+          <Button
+            disabled={trashPending || !trashed.length || listingLoading || listingFailed}
+            onClick={() => {
+              setTrashError('');
+              setDialog('Empty trash');
+            }}
+          >
+            Empty trash
+          </Button>
+        )}
       </header>
       <div className="rd-content rd-dashboard-content">
+        {localMode && (
+          <p className="rd-banner" role="status">
+            Offline · Files as of October 19, 2026 at 14:05 UTC. Downloaded documents open read-only
+            until you reconnect. This is a sample saved list; the preview does not read device
+            storage.
+          </p>
+        )}
         <div className="rd-list-tools">
           <label className="rd-search">
             <Glyph name="search" />
@@ -1052,25 +1252,48 @@ export function DashboardMockup({
         )}
         <div className={`rd-list-caption ${!search && view === 'My files' ? 'rd-count-only' : ''}`}>
           <span>
-            {view === 'Trash'
-              ? 'Recover a file, or remove it permanently.'
-              : search
-                ? `Results for “${search}”`
-                : `${rows.length} items`}
+            {listingLoading || listingFailed
+              ? `Your ${view === 'Trash' ? 'trash' : 'file list'}`
+              : view === 'Trash'
+                ? 'Restore files for 30 days after deletion. Daily cleanup then removes them permanently.'
+                : search
+                  ? `Results for “${search}”`
+                  : `${rows.length} items`}
           </span>
           {view !== 'My files' && view !== 'Trash' && (
             <Button onClick={() => setView('My files')}>Search all files</Button>
           )}
         </div>
-        {state === 'loading' ? (
-          <div className="rd-empty" role="status">
-            Loading your files…
+        {state === 'search-pending' && hasFilters && (
+          <p role="status">Searching… Matches from the loaded sample list remain available.</p>
+        )}
+        {trashPending && !dialog && <p role="status">Restoring the file…</p>}
+        {trashError === 'trash-restore-error' && (
+          <div role="alert">
+            <p>Could not restore {targetName}. It is still in Trash. Try again.</p>
+            <Button onClick={() => changeTrash('restore')}>Retry restore</Button>
           </div>
-        ) : state === 'error' && !retried ? (
+        )}
+        {localMode && (currentFolder?.id === 'fixture-Work' || view === 'Trash') ? (
+          <div className="rd-empty" role="status">
+            <h2>Needs a connection</h2>
+            <p>
+              {view === 'Trash'
+                ? 'Trash is unavailable offline. Reconnect to load deleted files.'
+                : 'This folder was not opened online on this device, so its contents are not here. Connect to open it.'}
+            </p>
+          </div>
+        ) : listingLoading ? (
+          <div className="rd-empty" role="status">
+            Loading {listLabel}…
+          </div>
+        ) : listingFailed || searchFailed ? (
           <div className="rd-empty">
-            <h2>Could not load your files.</h2>
+            <h2>{searchFailed ? 'Could not search.' : `Could not load ${listLabel}.`}</h2>
             <p role="alert">Check your connection and try again.</p>
-            <Button onClick={() => setRetried(true)}>Try again</Button>
+            <Button onClick={() => setRetried(true)}>
+              {searchFailed ? 'Retry search' : 'Try again'}
+            </Button>
           </div>
         ) : empty ? (
           <div className="rd-empty">
@@ -1103,20 +1326,25 @@ export function DashboardMockup({
           >
             <div className="rd-column-head" aria-hidden="true">
               <span>Name</span>
-              <span>Last edited</span>
+              <span>{view === 'Trash' ? 'Recovery' : 'Last edited'}</span>
               <span />
             </div>
             {rows.map((file) => (
               <div className="rd-file" role="listitem" key={file.id}>
                 <button
                   className="rd-file-open"
-                  onClick={() =>
-                    file.kind === 'folder'
-                      ? setView(file.id)
-                      : onOpen
-                        ? onOpen({ ...file, kind: file.kind })
-                        : setNotice(`Opening ${file.name}…`)
+                  disabled={
+                    view === 'Trash' ||
+                    (localMode && file.kind !== 'folder' && !downloaded(file.id))
                   }
+                  title={
+                    view === 'Trash'
+                      ? 'Restore this file before opening it.'
+                      : localMode && file.kind !== 'folder' && !downloaded(file.id)
+                        ? 'Needs a connection. This file is not downloaded in the sample.'
+                        : undefined
+                  }
+                  onClick={() => openFile(file)}
                 >
                   <span className="rd-file-icon">
                     {file.kind === 'folder' ? (
@@ -1142,93 +1370,134 @@ export function DashboardMockup({
                         </>
                       )}
                       {file.detail}
-                      {file.tags && ` · ${file.tags}`}
+                      {file.access !== 'owner' && (
+                        <span>
+                          {' '}
+                          ·{' '}
+                          {state === 'shared-unknown-owner'
+                            ? 'Owner unavailable'
+                            : `Owner: ${file.ownerName ?? 'Owner unavailable'}`}
+                        </span>
+                      )}
+                      {localMode && file.kind !== 'folder' && (
+                        <span>
+                          {' '}
+                          ·{' '}
+                          {downloaded(file.id)
+                            ? '⤓ Available offline · Read only'
+                            : '⌁ Needs a connection'}
+                        </span>
+                      )}
+                      {view === 'Trash' && (
+                        <span>
+                          {' '}
+                          · Deleted {recoveryExpired(file.id) ? 'September' : 'October'} 18, 2026
+                        </span>
+                      )}
+                      <TagLabelsReview tags={tagsFor(file)} />
                     </small>
                   </span>
                 </button>
-                <span className="rd-file-date">{file.date}</span>
-                <ActionMenu
-                  label={`More actions for ${file.name}`}
-                  actions={
-                    view === 'Trash'
-                      ? [
-                          {
-                            label: 'Restore',
-                            onClick: () => {
-                              setTrashed(trashed.filter((id) => id !== file.id));
-                              setNotice(`${file.name} restored.`);
+                <span className="rd-file-date">
+                  {view === 'Trash'
+                    ? recoveryExpired(file.id)
+                      ? 'Recovery expired'
+                      : 'Restore until Nov 17'
+                    : file.date}
+                </span>
+                {!localMode && (
+                  <ActionMenu
+                    label={`More actions for ${file.name}`}
+                    actions={
+                      view === 'Trash'
+                        ? [
+                            {
+                              label: 'Restore',
+                              disabled: trashPending || recoveryExpired(file.id),
+                              onClick: () => changeTrash('restore', file.id),
                             },
-                          },
-                          {
-                            label: 'Delete permanently…',
-                            destructive: true,
-                            onClick: () => {
-                              setTarget(file.id);
-                              setDialog('Delete permanently');
+                            {
+                              label: 'Delete permanently…',
+                              disabled: trashPending,
+                              destructive: true,
+                              onClick: () => {
+                                setTarget(file.id);
+                                setTrashError('');
+                                setDialog('Delete permanently');
+                              },
                             },
-                          },
-                        ]
-                      : [
-                          {
-                            label: 'Open',
-                            onClick: () =>
-                              file.kind === 'folder'
-                                ? setView(file.id)
-                                : onOpen
-                                  ? onOpen({ ...file, kind: file.kind })
-                                  : setNotice(`Opening ${file.name}…`),
-                          },
-                          { label: 'Pin (preview only)', disabled: true },
-                          {
-                            label: 'Tags…',
-                            onClick: () => {
-                              setTarget(file.id);
-                              setName(file.tags);
-                              setDialog('Tags');
+                          ]
+                        : [
+                            {
+                              label: 'Open',
+                              onClick: () =>
+                                file.kind === 'folder'
+                                  ? setView(file.id)
+                                  : onOpen
+                                    ? onOpen({ ...file, kind: file.kind })
+                                    : setNotice(`Opening ${file.name}…`),
                             },
-                          },
-                          ...(file.access !== 'owner'
-                            ? [
-                                {
-                                  label: 'File into folder…',
+                            {
+                              label: pins.items.some((item) => item.id === file.id)
+                                ? 'Unpin'
+                                : 'Pin',
+                              disabled: pins.state !== 'ready',
+                              onClick: () => pins.toggle(file),
+                            },
+                            ...(file.kind !== 'folder'
+                              ? [
+                                  {
+                                    label: 'Tags…',
+                                    onClick: () => {
+                                      setTarget(file.id);
+                                      setDialog('Tags');
+                                    },
+                                  },
+                                ]
+                              : []),
+                            ...(file.access !== 'owner'
+                              ? [
+                                  {
+                                    label: 'File into folder…',
+                                    onClick: () => {
+                                      setTarget(file.id);
+                                      setDestination(file.parentId ?? '');
+                                      setDialog('File into folder');
+                                    },
+                                  },
+                                ]
+                              : ['Share…', 'Rename…', 'Move…'].map((label) => ({
+                                  label,
                                   onClick: () => {
                                     setTarget(file.id);
-                                    setDestination(file.parentId ?? '');
-                                    setDialog('File into folder');
+                                    setName(file.name);
+                                    if (label === 'Move…') setDestination(file.parentId ?? '');
+                                    setDialog(label);
                                   },
-                                },
-                              ]
-                            : ['Share…', 'Rename…', 'Move…'].map((label) => ({
-                                label,
-                                onClick: () => {
-                                  setTarget(file.id);
-                                  setName(file.name);
-                                  if (label === 'Move…') setDestination(file.parentId ?? '');
-                                  setDialog(label);
-                                },
-                              }))),
-                          {
-                            label: 'Available offline on this device',
-                            onClick: () =>
-                              setNotice(
-                                'Downloaded. This browser may clear offline files when space runs low.',
-                              ),
-                          },
-                          ...(file.access === 'owner'
-                            ? [
-                                {
-                                  label: 'Trash',
-                                  destructive: true,
-                                  onClick: () => {
-                                    setTrashed([...trashed, file.id]);
-                                    setNotice(`${file.name} moved to Trash.`);
+                                }))),
+                            {
+                              label: 'Available offline on this device',
+                              onClick: () =>
+                                setNotice(
+                                  'Downloaded. This browser may clear offline files when space runs low.',
+                                ),
+                            },
+                            ...(file.access === 'owner'
+                              ? [
+                                  {
+                                    label: 'Trash',
+                                    destructive: true,
+                                    onClick: () => {
+                                      setTrashed([...trashed, file.id]);
+                                      setNotice(`${file.name} moved to Trash.`);
+                                    },
                                   },
-                                },
-                              ]
-                            : []),
-                        ]
-                  }
-                />
+                                ]
+                              : []),
+                          ]
+                    }
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -1239,20 +1508,25 @@ export function DashboardMockup({
           aria-label="Trash folder"
         >
           {' '}
-          {view === 'My files' && !search && (kind === 'all' || kind === 'folder') && !tag && (
-            <div className="rd-file" role="listitem">
-              <button className="rd-file-open" onClick={() => setView('Trash')}>
-                <span className="rd-file-icon">
-                  <Glyph name="trash" />
-                </span>
-                <span>
-                  <strong>Trash</strong>
-                  <small>Permanent folder · {trashed.length} deleted files</small>
-                </span>
-              </button>
-              <span className="rd-file-date" />
-            </div>
-          )}
+          {view === 'My files' &&
+            !listingLoading &&
+            !listingFailed &&
+            !search &&
+            (kind === 'all' || kind === 'folder') &&
+            !tag && (
+              <div className="rd-file" role="listitem">
+                <button className="rd-file-open" onClick={() => setView('Trash')}>
+                  <span className="rd-file-icon">
+                    <Glyph name="trash" />
+                  </span>
+                  <span>
+                    <strong>Trash</strong>
+                    <small>Permanent folder · {trashed.length} deleted files</small>
+                  </span>
+                </button>
+                <span className="rd-file-date" />
+              </div>
+            )}
         </div>
         <p className="rd-feedback" role="status">
           {notice}
@@ -1269,36 +1543,59 @@ export function DashboardMockup({
       )}
       <Modal
         title={
-          dialog === 'Delete permanently'
-            ? `Delete “${targetName}” permanently?`
-            : creating
-              ? `New ${dialog}`
-              : `${dialog.replace('…', '')} · ${targetName}`
+          dialog === 'Empty trash'
+            ? 'Empty Trash permanently?'
+            : dialog === 'Delete permanently'
+              ? `Delete “${targetName}” permanently?`
+              : creating
+                ? `New ${dialog}`
+                : `${dialog.replace('…', '')} · ${targetName}`
         }
         description={
-          dialog === 'Delete permanently'
-            ? `This permanently removes “${targetName}”. You cannot undo this or restore it from Trash.`
-            : creating
-              ? `Choose a name for your new ${dialog.toLowerCase()}.`
-              : dialog === 'Tags'
-                ? 'Your tags help you find this file and are visible only to you.'
-                : dialog === 'Share…'
-                  ? 'Manage who can open this file.'
-                  : dialog === 'Rename…'
-                    ? 'Choose a new name for this file.'
-                    : 'Choose the destination folder.'
+          dialog === 'Empty trash'
+            ? `Permanently delete all ${trashed.length} files listed below. You cannot undo this or restore them later.`
+            : dialog === 'Delete permanently'
+              ? `This permanently removes “${targetName}”. You cannot undo this or restore it from Trash.`
+              : creating
+                ? `Choose a name for your new ${dialog.toLowerCase()}.`
+                : dialog === 'Tags'
+                  ? 'Your tags help you find this file and are visible only to you.'
+                  : dialog === 'Share…'
+                    ? 'Manage who can open this file.'
+                    : dialog === 'Rename…'
+                      ? 'Choose a new name for this file.'
+                      : 'Choose the destination folder.'
         }
         open={Boolean(dialog) && dialog !== 'Import file…'}
         onOpenChange={(open) => {
-          if (!open) setDialog('');
+          if (!open && !dialogBusy) {
+            setFileMutationFailed(false);
+            setDialog('');
+          }
         }}
       >
         {dialog === 'Share…' ? (
-          <SharingContent />
+          <SharingContent kind={items.find((item) => item.id === target)?.kind ?? 'folder'} />
+        ) : dialog === 'Tags' ? (
+          <TagsReview
+            key={target}
+            initialTags={targetFile ? tagsFor(targetFile) : []}
+            suggestions={items.flatMap(tagsFor)}
+            onChange={(tags) => {
+              setPersonalTags((current) => ({ ...current, [target]: tags }));
+              setItems((current) =>
+                current.map((file) =>
+                  file.id === target ? { ...file, tags: tags.join(', ') } : file,
+                ),
+              );
+            }}
+            onClose={() => setDialog('')}
+          />
         ) : dialog === 'File into folder' || dialog === 'Move…' ? (
           <>
             <Choice
               label="Destination folder"
+              disabled={dialogBusy}
               value={destination}
               onChange={setDestination}
               options={[
@@ -1319,68 +1616,134 @@ export function DashboardMockup({
                 : 'Move this file to another folder.'}
             </p>
           </>
+        ) : dialog === 'Empty trash' ? (
+          <ul aria-label="Files to delete permanently">
+            {items
+              .filter((file) => trashed.includes(file.id))
+              .map((file) => (
+                <li key={file.id}>{file.name}</li>
+              ))}
+          </ul>
         ) : dialog === 'Delete permanently' ? null : (
           <label>
-            {dialog === 'Tags' ? 'Tags' : 'Name'}
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Untitled" />
+            Name
+            <input
+              disabled={dialogBusy}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Untitled"
+            />
           </label>
         )}
-        <div className="sp-actions">
-          {dialog !== 'Share…' && <Button onClick={() => setDialog('')}>Cancel</Button>}
-          <Button
-            primary
-            onClick={() => {
-              if (['Doc', 'Sheet', 'Space', 'Folder'].includes(dialog)) {
-                const next = {
-                  id: `created-${nextFileId.current++}`,
-                  name: name || 'Untitled',
-                  kind: dialog.toLowerCase() as 'doc' | 'sheet' | 'space' | 'folder',
-                  access: 'owner' as const,
-                };
-                setItems([
-                  ...items,
-                  {
-                    ...next,
-                    detail: next.kind === 'folder' ? 'Folder' : 'Private',
-                    date: 'Just now',
-                    tags: '',
-                    parentId: currentFolder?.id ?? null,
-                  },
-                ]);
-                if (next.kind !== 'folder') onOpen?.({ ...next, kind: next.kind });
-              }
-              if (dialog === 'Delete permanently') {
-                setItems(items.filter((file) => file.id !== target));
-                setTrashed(trashed.filter((name) => name !== target));
-              }
-              if (dialog === 'Rename…')
-                setItems(
-                  items.map((file) =>
-                    file.id === target ? { ...file, name: name || file.name } : file,
-                  ),
-                );
-              if (dialog === 'Tags')
-                setItems(
-                  items.map((file) => (file.id === target ? { ...file, tags: name.trim() } : file)),
-                );
-              if (dialog === 'File into folder' || dialog === 'Move…')
-                setItems(
-                  items.map((file) =>
-                    file.id === target ? { ...file, parentId: destination || null } : file,
-                  ),
-                );
-              if (dialog !== 'Share…')
-                setNotice(
-                  dialog === 'Delete permanently'
-                    ? `${targetName} was deleted permanently.`
-                    : `${actionLabel}: ${name || targetName}`,
-                );
-              setDialog('');
-            }}
-          >
-            {actionLabel}
-          </Button>
-        </div>
+        {fileMutationFailed && dialog && (
+          <p role="alert">
+            {creating
+              ? 'Could not create the file. Your name is kept; no file was created.'
+              : dialog === 'Rename…'
+                ? `Could not rename ${targetName}. Its original name is unchanged; your new name is kept.`
+                : `Could not ${dialog === 'File into folder' ? 'file' : 'move'} ${targetName}. Its location is unchanged; your destination is kept.`}{' '}
+            Try again. This is a local preview.
+          </p>
+        )}
+        {fileMutationPending && dialog && (
+          <p role="status">
+            {creating
+              ? 'Creating file…'
+              : dialog === 'Rename…'
+                ? 'Renaming file…'
+                : dialog === 'File into folder'
+                  ? 'Filing reference…'
+                  : 'Moving file…'}{' '}
+            Pending state preview; no server request is running.
+          </p>
+        )}
+        {trashError && dialog && (
+          <p role="alert">
+            {dialog === 'Empty trash'
+              ? 'Could not empty Trash. All listed files are still in Trash.'
+              : `Could not delete ${targetName}. It is still in Trash.`}{' '}
+            Try again.
+          </p>
+        )}
+        {trashPending && dialog && (
+          <p role="status">
+            {dialog === 'Empty trash' ? 'Emptying Trash…' : `Deleting ${targetName}…`}
+          </p>
+        )}
+        {dialog !== 'Tags' && (
+          <div className="sp-actions">
+            {dialog !== 'Share…' && (
+              <Button
+                disabled={dialogBusy}
+                onClick={() => {
+                  setFileMutationFailed(false);
+                  setDialog('');
+                }}
+              >
+                Cancel
+              </Button>
+            )}
+            <Button
+              primary
+              disabled={dialogBusy}
+              onClick={() => {
+                if (dialog === 'Empty trash') {
+                  changeTrash('empty');
+                  return;
+                }
+                if (dialog === 'Delete permanently') {
+                  changeTrash('delete');
+                  return;
+                }
+                if (['Doc', 'Sheet', 'Space', 'Folder'].includes(dialog)) {
+                  const next = {
+                    id: `created-${nextFileId.current++}`,
+                    name: name || 'Untitled',
+                    kind: dialog.toLowerCase() as 'doc' | 'sheet' | 'space' | 'folder',
+                    access: 'owner' as const,
+                  };
+                  setItems([
+                    ...items,
+                    {
+                      ...next,
+                      detail: next.kind === 'folder' ? 'Folder' : 'Private',
+                      date: 'Just now',
+                      tags: '',
+                      parentId: currentFolder?.id ?? null,
+                    },
+                  ]);
+                  if (next.kind !== 'folder') onOpen?.({ ...next, kind: next.kind });
+                }
+                if (dialog === 'Rename…')
+                  setItems(
+                    items.map((file) =>
+                      file.id === target ? { ...file, name: name || file.name } : file,
+                    ),
+                  );
+                if (dialog === 'File into folder' || dialog === 'Move…')
+                  setItems(
+                    items.map((file) =>
+                      file.id === target ? { ...file, parentId: destination || null } : file,
+                    ),
+                  );
+                if (dialog !== 'Share…')
+                  setNotice(
+                    dialog === 'Delete permanently'
+                      ? `${targetName} was deleted permanently.`
+                      : `${actionLabel}: ${name || targetName} in this preview.`,
+                  );
+                setFileMutationFailed(false);
+                setDialog('');
+              }}
+            >
+              {dialogBusy
+                ? 'Please wait…'
+                : trashError || fileMutationFailed
+                  ? 'Try again'
+                  : actionLabel}
+            </Button>
+          </div>
+        )}
       </Modal>
     </Shell>
   );
@@ -1559,8 +1922,10 @@ export function EditorMockup({
   onNameVersion,
   exportState = 'ready',
   editorContent,
+  presence,
 }: {
-  exportState?: 'ready' | 'loading' | 'error';
+  presence?: Collaborator[];
+  exportState?: 'ready' | 'open' | 'loading' | 'error' | 'print-error';
   editorContent?: ReactNode;
   onNameVersion?: (name: string) => void;
   onBack?: () => void;
@@ -1583,6 +1948,7 @@ export function EditorMockup({
   const [iconHint, setIconHint] = useState(false);
   const [share, setShare] = useState(false);
   const [selected, setSelected] = useState(initialPage);
+  const [checkpointNames, setCheckpointNames] = useState<Record<string, string | null>>({});
   const [checkpoint, setCheckpoint] = useState('10:15 · Ready for the trip');
   const [versionName, setVersionName] = useState('');
   const [naming, setNaming] = useState(false);
@@ -1597,6 +1963,26 @@ export function EditorMockup({
   };
   const [notice, setNotice] = useState('');
   const isSpaceTrash = space && selected === 'Trash';
+  const { profile: currentProfile } = useContext(ReviewProfileContext);
+  const presentPeople = presence ?? [
+    {
+      id: 'self',
+      name: guest ? 'Guest' : currentProfile.name,
+      icon: guest ? 'lucide:user-round' : currentProfile.icon,
+      color: guest ? 'var(--fill-info-strong-bg)' : `var(--fill-${currentProfile.color}-bg)`,
+      foreground: guest ? 'var(--fill-info-strong-fg)' : `var(--fill-${currentProfile.color}-fg)`,
+    },
+    {
+      id: 'peer',
+      name: guest ? 'Collaborator' : 'Alex Kim',
+      icon: 'lucide:user-round',
+      color: 'var(--fill-success-strong-bg)',
+      foreground: 'var(--fill-success-strong-fg)',
+      jump: offline
+        ? undefined
+        : () => setNotice(`Simulated jump to ${guest ? 'Collaborator' : 'Alex Kim'}’s position.`),
+    },
+  ];
   const name = space ? selected : (title ?? (sheet ? 'Quarterly budget' : 'Autumn plans'));
   return (
     <Shell
@@ -1718,11 +2104,7 @@ export function EditorMockup({
         )}
         {!isSpaceTrash && (
           <div className="rd-editor-actions">
-            {!guest && !viewOnly && (
-              <span className="rd-presence">
-                <Avatar>AK</Avatar>
-              </span>
-            )}
+            <PresenceReview people={presentPeople} selfId={presence ? undefined : 'self'} />
             {guest ? null : viewOnly || collaborator ? (
               <span className="rd-badge">
                 {viewOnly ? 'View only' : guest ? 'Guest editor' : 'Can edit'}
@@ -1861,7 +2243,15 @@ export function EditorMockup({
               )}
             </div>
             {panel.includes('formula') || panel === 'Formula' ? (
-              <FormulaForm />
+              <FormulaForm
+                onCancel={closePanel}
+                onApply={() => {
+                  closePanel();
+                  setNotice(
+                    'Formula inserted in this design preview only. Native document unchanged.',
+                  );
+                }}
+              />
             ) : panel === 'Versions' ? (
               <>
                 {!viewOnly && (
@@ -1876,13 +2266,19 @@ export function EditorMockup({
                     }
                     onClick={() => setNaming(true)}
                   >
-                    Name this version…
+                    Name current version…
                   </Button>
                 )}
                 <HistoryContent
                   selected={checkpoint}
                   setSelected={setCheckpoint}
                   namedVersion={versionName}
+                  names={checkpointNames}
+                  onName={(id, name) =>
+                    setCheckpointNames((current) => ({ ...current, [id]: name }))
+                  }
+                  readOnly={viewOnly}
+                  offline={offline}
                 />
               </>
             ) : (
@@ -1900,7 +2296,17 @@ export function EditorMockup({
                     try again.
                   </p>
                 )}
+                {exportStatus === 'print-error' && (
+                  <p role="alert">
+                    Could not open the PDF print dialog. Your document is unchanged. Try PDF again.
+                  </p>
+                )}
                 {exportStatus === 'loading' && <p role="status">Preparing your download…</p>}
+                {offline && <p role="status">Reconnect before exporting this file.</p>}
+                <p className="sp-muted">
+                  Univer files keep editable content and images, up to 20 MiB. For PDF, choose Save
+                  as PDF in the print dialog.
+                </p>
                 {['Univer file', 'PDF'].map((label) => (
                   <Button
                     key={label}
@@ -1940,166 +2346,9 @@ export function EditorMockup({
         open={share}
         onOpenChange={setShare}
       >
-        <SharingContent />
+        <SharingContent kind={space ? 'space' : sheet ? 'sheet' : 'doc'} />
       </Modal>
     </Shell>
-  );
-}
-type SharingState = 'off' | 'created' | 'existing' | 'replace' | 'error';
-function SharingContent({
-  delegated = false,
-  state = 'off',
-}: {
-  delegated?: boolean;
-  state?: SharingState;
-}) {
-  const [role, setRole] = useState('edit');
-  const [link, setLink] = useState(
-    state === 'created' || state === 'existing' || state === 'replace',
-  );
-  const [revealed, setRevealed] = useState(state === 'created');
-  const [linkRole, setLinkRole] = useState(state === 'created' ? 'edit' : 'view');
-  const [activeRole, setActiveRole] = useState(linkRole);
-  const [replace, setReplace] = useState(state === 'replace');
-  const [notice, setNotice] = useState(
-    state === 'error'
-      ? 'Access could not be updated. Alex still has Can edit access. Try again.'
-      : '',
-  );
-  return (
-    <>
-      <div className="rd-person">
-        <Avatar />
-        <span>
-          <strong>You</strong>
-        </span>
-        <span className="rd-badge">Owner</span>
-      </div>
-      <div className="rd-person">
-        <Avatar>AK</Avatar>
-        <span>
-          <strong>Alex Kim</strong>
-          <small>Can edit through a folder</small>
-        </span>
-        <Choice
-          label="Alex’s direct access"
-          value={role}
-          onChange={(v) => {
-            if (state === 'error') {
-              setNotice('Access could not be updated. Alex still has Can edit access. Try again.');
-            } else {
-              setRole(v);
-              setNotice('Access updated. Inherited folder access still applies.');
-            }
-          }}
-          options={[
-            { value: 'none', label: 'No direct access' },
-            { value: 'view', label: 'Can view' },
-            { value: 'edit', label: 'Can edit' },
-            ...(delegated ? [{ value: 'admin', label: 'File admin' }] : []),
-          ]}
-        />
-      </div>
-      <section className="rd-section">
-        <h3>Anyone with the link</h3>
-        <p className="sp-muted">
-          {link ? `Guests can ${activeRole}.` : 'Off. Only people with access can open this file.'}
-        </p>
-        <Choice
-          label="Guest link access"
-          value={linkRole}
-          onChange={setLinkRole}
-          options={[
-            { value: 'view', label: 'Can view' },
-            { value: 'edit', label: 'Can edit' },
-          ]}
-        />
-        {link && revealed && (
-          <label>
-            Guest address
-            <input readOnly value="https://spinel.example/share/preview#sample" />
-          </label>
-        )}
-        {link && (
-          <p className="sp-muted">
-            {revealed
-              ? 'Copy this address now. It is shown only once.'
-              : 'Replace the link to copy a new address.'}
-          </p>
-        )}
-        {link && activeRole !== linkRole && (
-          <p>The current link stays unchanged until you replace it.</p>
-        )}
-        <div className="sp-actions">
-          {link ? (
-            <>
-              {revealed && (
-                <Button primary onClick={() => setNotice('Guest address copied in this preview.')}>
-                  Copy guest link
-                </Button>
-              )}
-              <ActionMenu
-                label="Guest link actions"
-                actions={[
-                  { label: 'Replace link…', onClick: () => setReplace(true) },
-                  {
-                    label: 'Turn off link',
-                    destructive: true,
-                    onClick: () => {
-                      setLink(false);
-                      setRevealed(false);
-                      setNotice('Guest link turned off.');
-                    },
-                  },
-                ]}
-              />
-            </>
-          ) : (
-            <Button
-              onClick={() => {
-                setLink(true);
-                setRevealed(true);
-                setActiveRole(linkRole);
-                setNotice('Guest link created for this preview.');
-              }}
-            >
-              Create link
-            </Button>
-          )}
-        </div>
-        <Modal
-          title="Replace the link?"
-          description="The old link stops working at once, and anyone using it loses access."
-          open={replace}
-          onOpenChange={setReplace}
-        >
-          <p>The replacement lets guests {linkRole} this file.</p>
-          <div className="sp-actions">
-            <Button onClick={() => setReplace(false)}>Cancel</Button>
-            <Button
-              primary
-              onClick={() => {
-                setActiveRole(linkRole);
-                setRevealed(true);
-                setReplace(false);
-                setNotice('Replacement created in this preview. The old link no longer works.');
-              }}
-            >
-              Replace link
-            </Button>
-          </div>
-        </Modal>
-        <p className="sp-muted">Collaborator names are hidden while link sharing is on.</p>
-      </section>
-      <p role={state === 'error' ? 'alert' : 'status'} className="rd-feedback">
-        {notice}
-      </p>
-      <div className="sp-actions">
-        <Button onClick={() => setNotice('Account link copied in this preview.')}>
-          Copy account link
-        </Button>
-      </div>
-    </>
   );
 }
 export function SharingMockup({
@@ -2118,83 +2367,30 @@ export function SharingMockup({
             ? 'File admins manage this file. They have no server access.'
             : 'Choose who can open this file.'}
         </p>
-        <SharingContent delegated={delegated} state={state} />
+        <SharingContent delegated={delegated} state={state} kind="doc" />
       </section>
     </div>
   );
 }
 function FormulaForm({
   state = 'value',
+  onApply,
+  onCancel,
 }: {
   state?: 'value' | 'private' | 'offline' | 'invalid' | 'loading' | 'empty' | 'table';
+  onApply?: () => void;
+  onCancel?: () => void;
 }) {
-  const [format, setFormat] = useState('currency');
-  const [notice, setNotice] = useState('');
-  return (
-    <div className="rd-form">
-      <p className="sp-muted">Keep a value or table connected to your Sheets.</p>
-      <label>
-        Expression
-        <input defaultValue="=SUM('Quarterly budget'.October.D2:D6)" />
-      </label>
-      <p className="sp-muted">
-        {state === 'private' ? 'Source unavailable' : 'Source: Quarterly budget / October'}
-      </p>
-      <Choice
-        label="Format"
-        value={format}
-        onChange={setFormat}
-        options={['General', 'Number', 'Currency', 'Percent', 'Date'].map((x) => ({
-          value: x.toLowerCase(),
-          label: x,
-        }))}
-      />
-      <div className="rd-preview-value" role="status">
-        {state === 'value' ? (
-          '$258.50'
-        ) : state === 'private' ? (
-          'You need access to this formula’s sources.'
-        ) : state === 'offline' ? (
-          'Formula unavailable offline.'
-        ) : state === 'invalid' ? (
-          'Check this formula.'
-        ) : state === 'loading' ? (
-          'Loading result…'
-        ) : state === 'empty' ? (
-          'Empty value'
-        ) : (
-          <table>
-            <tbody>
-              <tr>
-                <td>Groceries</td>
-                <td>$412.50</td>
-              </tr>
-              <tr>
-                <td>Transport</td>
-                <td>$84.00</td>
-              </tr>
-            </tbody>
-          </table>
-        )}
-      </div>
-      <p className="sp-muted">
-        {['private', 'offline', 'loading'].includes(state)
-          ? 'Previous values stay hidden until access is confirmed.'
-          : 'The document shows the result. Its expression stays editable.'}
-      </p>
-      <div className="sp-actions">
-        <Button onClick={() => setNotice('Cancelled.')}>Cancel</Button>
-        <Button
-          primary
-          disabled={['invalid', 'loading'].includes(state)}
-          onClick={() => setNotice('Formula inserted in the preview.')}
-        >
-          Insert formula
-        </Button>
-      </div>
-      <p role="status">{notice}</p>
-    </div>
-  );
+  const states: Record<NonNullable<typeof state>, FormulaReviewState> = {
+    value: 'scalar',
+    private: 'private-source',
+    offline: 'offline',
+    invalid: 'invalid-formula',
+    loading: 'calculating',
+    empty: 'empty',
+    table: 'table',
+  };
+  return <FormulaReview state={states[state]} onApply={onApply} onCancel={onCancel} />;
 }
 export function FormulaMockup({
   state,
@@ -2214,10 +2410,18 @@ function HistoryContent({
   selected,
   setSelected,
   namedVersion,
+  names,
+  onName,
+  readOnly,
+  offline,
 }: {
   selected: string;
   setSelected: (value: string) => void;
   namedVersion?: string;
+  names: Record<string, string | null>;
+  onName: (id: string, name: string | null) => void;
+  readOnly: boolean;
+  offline: boolean;
 }) {
   const today = [
     '09:00 · Unnamed version',
@@ -2292,14 +2496,46 @@ function HistoryContent({
           />
         </label>
       )}
-      {(!checkpoints.includes(selected) ? [selected, ...checkpoints] : checkpoints).map((x) => (
-        <Button key={x} onClick={() => setSelected(x)} aria-pressed={selected === x}>
-          {x}
-        </Button>
-      ))}
-      <p role="status">Selected: {selected}</p>
+      <VersionNamesReview
+        compact
+        showCurrentAction={false}
+        readOnly={readOnly}
+        offline={offline}
+        selectedId={selected}
+        onSelect={setSelected}
+        onName={onName}
+        versions={(!checkpoints.includes(selected) ? [selected, ...checkpoints] : checkpoints).map(
+          (id) => {
+            const [hour, minute] = (id.match(/\d{2}:\d{2}/)?.[0] ?? '23:59').split(':').map(Number);
+            return {
+              id,
+              capturedAt: Date.UTC(
+                2026,
+                9,
+                id.startsWith('October') ? Number(day) : 20,
+                hour,
+                minute,
+              ),
+              name: Object.hasOwn(names, id)
+                ? names[id]
+                : id.includes('Ready for the trip')
+                  ? 'Ready for the trip'
+                  : id.startsWith('Just now')
+                    ? (namedVersion ?? null)
+                    : null,
+              beforeRestore: id.includes('Before restore'),
+            };
+          },
+        )}
+      />
+      <p role="status">Selected: {historyLabel(selected, names)}</p>
     </div>
   );
+}
+function historyLabel(id: string, names: Record<string, string | null>) {
+  return Object.hasOwn(names, id)
+    ? `${id.slice(0, id.lastIndexOf(' · '))} · ${names[id] ?? 'Unnamed version'}`
+    : id;
 }
 export function HistoryMockup({
   state = 'ready',
@@ -2315,6 +2551,8 @@ export function HistoryMockup({
   onNameVersion,
   saveState = 'saved',
   offline = false,
+  checkpointNames,
+  onCheckpointName,
 }: {
   state?: 'ready' | 'loading' | 'empty' | 'error';
   viewOnly?: boolean;
@@ -2325,6 +2563,8 @@ export function HistoryMockup({
   onFiles?: () => void;
   onProfile?: () => void;
   onNameVersion?: (name: string) => void;
+  checkpointNames?: Record<string, string | null>;
+  onCheckpointName?: (id: string, name: string | null) => void;
   saveState?: 'saved' | 'saving' | 'failed';
   offline?: boolean;
   calendar?: boolean;
@@ -2342,6 +2582,13 @@ export function HistoryMockup({
   const [notice, setNotice] = useState('');
   const [naming, setNaming] = useState(false);
   const [currentName, setCurrentName] = useState(namedVersion);
+  const [localVersionNames, setVersionNames] = useState<Record<string, string | null>>({});
+  const versionNames = checkpointNames ?? localVersionNames;
+  const nameCheckpoint = (id: string, name: string | null) => {
+    setVersionNames((current) => ({ ...current, [id]: name }));
+    onCheckpointName?.(id, name);
+  };
+  const selectedLabel = historyLabel(selected, versionNames);
   return (
     <Shell
       compact
@@ -2377,7 +2624,7 @@ export function HistoryMockup({
                 }
                 onClick={() => setNaming(true)}
               >
-                Name this version…
+                Name current version…
               </Button>
               <Button
                 primary
@@ -2394,13 +2641,14 @@ export function HistoryMockup({
         <p className="rd-history-selection" role="status">
           {offline
             ? 'Reconnect before naming or restoring a version.'
-            : 'Save your latest changes before naming or restoring a version.'}
+            : 'Save your latest changes before naming the current version or restoring. Older version names can still be changed.'}
         </p>
       )}
       {historyState === 'ready' ? (
         <>
           <p className="rd-history-selection">
-            Preview · {selected.startsWith('October') ? selected : `October 20, 2026 · ${selected}`}{' '}
+            Preview ·{' '}
+            {selected.startsWith('October') ? selectedLabel : `October 20, 2026 · ${selectedLabel}`}{' '}
             · UTC
           </p>
           <div className="rd-history">
@@ -2410,14 +2658,22 @@ export function HistoryMockup({
                   selected={selected}
                   setSelected={setSelected}
                   namedVersion={currentName}
+                  names={versionNames}
+                  onName={nameCheckpoint}
+                  readOnly={viewOnly}
+                  offline={offline}
                 />
               </div>
               <details className="rd-history-disclosure" open={calendar}>
-                <summary>Choose version · {selected}</summary>
+                <summary>Choose version · {selectedLabel}</summary>
                 <HistoryContent
                   selected={selected}
                   setSelected={setSelected}
                   namedVersion={currentName}
+                  names={versionNames}
+                  onName={nameCheckpoint}
+                  readOnly={viewOnly}
+                  offline={offline}
                 />
               </details>
             </aside>
@@ -2458,7 +2714,7 @@ export function HistoryMockup({
         }}
       />
       <Modal
-        title={`Restore ${selected.startsWith('October') ? selected : `October 20, 2026 · ${selected}`} for everyone?`}
+        title={`Restore ${selected.startsWith('October') ? selectedLabel : `October 20, 2026 · ${selectedLabel}`} for everyone?`}
         description="The current document will be kept as a Before restore checkpoint. Other open editors will need to reload."
         open={restore && !viewOnly}
         onOpenChange={setRestore}
@@ -2508,7 +2764,6 @@ export function ProfileMockup({
   const identity = useContext(ReviewProfileContext);
   const [draft, setDraft] = useState(identity.profile);
   const [saved, setSaved] = useState(identity.profile);
-  const [connected, setConnected] = useState(true);
   const [downloaded, setDownloaded] = useState(true);
   const [picker, setPicker] = useState(initialPicker);
   const iconTrigger = useRef<HTMLButtonElement>(null);
@@ -2700,34 +2955,7 @@ export function ProfileMockup({
             </>
           ) : tab === 'connections' ? (
             <>
-              <h2>Connected assistants</h2>
-              <p className="sp-muted">Manage applications you have allowed to access your files.</p>
-              <label>
-                MCP server address
-                <input readOnly value="https://spinel.example/mcp" />
-              </label>
-              <p className="sp-muted">
-                Add this address in your application, then sign in to approve its access.
-              </p>
-              <div className="rd-setting-row">
-                <span>
-                  <strong>Notebook client</strong>
-                  <small>
-                    {connected
-                      ? 'client.example · Last used today'
-                      : 'Disconnected · No longer has access'}
-                  </small>
-                </span>
-                <Button
-                  disabled={!connected}
-                  onClick={() => {
-                    setConnected(false);
-                    setNotice('Connection disconnected.');
-                  }}
-                >
-                  Disconnect
-                </Button>
-              </div>
+              <ConnectionsReview />
               <details className="rd-section">
                 <summary>Advanced: personal access tokens</summary>
                 <TokenManager />
@@ -2862,23 +3090,62 @@ export function AdminMockup({
     | 'health-loading'
     | 'health-never-run'
     | 'disable'
-    | 'passkeys';
+    | 'disable-pending'
+    | 'disable-error'
+    | 'passkeys'
+    | 'operator-passkey'
+    | 'operator-multiple-passkeys'
+    | 'passkey-confirm'
+    | 'passkey-pending'
+    | 'passkey-error'
+    | 'invite-pending'
+    | 'invite-error'
+    | 'invite-statuses'
+    | 'revoke-pending'
+    | 'revoke-error'
+    | 'accounts-varied';
   section?: string;
 }) {
   const [tab, setTab] = useState(section);
   const [accountsRetried, setAccountsRetried] = useState(false);
   const [healthRetried, setHealthRetried] = useState(false);
   const health = healthRetried ? 'ready' : state;
-  const [confirm, setConfirm] = useState(state === 'disable' ? 'Alex Kim' : '');
-  const [passkeys, setPasskeys] = useState(state === 'passkeys' ? 'Alex Kim' : '');
+  const [confirm, setConfirm] = useState(state.startsWith('disable') ? 'Alex Kim' : '');
+  const [passkeys, setPasskeys] = useState(
+    state.startsWith('operator-')
+      ? 'Operator (you)'
+      : state.startsWith('passkey')
+        ? 'Alex Kim'
+        : '',
+  );
+  const [removePasskey, setRemovePasskey] = useState(
+    ['passkey-confirm', 'passkey-pending', 'passkey-error'].includes(state),
+  );
+  const [removedPasskeys, setRemovedPasskeys] = useState<string[]>(
+    state === 'accounts-varied' ? ['Alex Kim'] : [],
+  );
   const [created, setCreated] = useState(state === 'invite-created');
-  const [inviteOpen, setInviteOpen] = useState(false);
-  const [purpose, setPurpose] = useState('new');
-  const [expiry, setExpiry] = useState('168');
+  const [inviteOpen, setInviteOpen] = useState(['invite-pending', 'invite-error'].includes(state));
+  const [purpose, setPurpose] = useState(state === 'invite-error' ? 'Alex Kim' : 'new');
+  const [expiry, setExpiry] = useState(state === 'invite-error' ? '24' : '168');
   const [issued, setIssued] = useState({ purpose: 'new', expiry: '168' });
   const [revoked, setRevoked] = useState(false);
-  const [disabled, setDisabled] = useState<string[]>([]);
+  const [disabled, setDisabled] = useState<string[]>(
+    state === 'accounts-varied' ? ['Sam Rivera'] : [],
+  );
   const [notice, setNotice] = useState('');
+  const [actionError, setActionError] = useState(
+    ['invite-error', 'disable-error', 'passkey-error', 'revoke-error'].includes(state) ? state : '',
+  );
+  const pending = state.endsWith('-pending');
+  const sectionLabel =
+    tab === 'People'
+      ? 'accounts'
+      : tab === 'Invites'
+        ? 'invites'
+        : tab === 'Connections'
+          ? 'connections'
+          : 'backup status';
   return (
     <Shell
       operator
@@ -2893,7 +3160,14 @@ export function AdminMockup({
           <h1>Administration</h1>
         </div>
         {tab === 'Invites' && (
-          <Button primary={!created} onClick={() => setInviteOpen(true)}>
+          <Button
+            primary={!created}
+            disabled={pending || state === 'loading' || (state === 'error' && !accountsRetried)}
+            onClick={() => {
+              setActionError('');
+              setInviteOpen(true);
+            }}
+          >
             Create invite
           </Button>
         )}
@@ -2925,53 +3199,72 @@ export function AdminMockup({
             </section>
           )}
           {state === 'loading' ? (
-            <p role="status">Loading accounts…</p>
+            <p role="status">Loading {sectionLabel}…</p>
           ) : state === 'error' && !accountsRetried ? (
             <div role="alert">
-              <p>Could not load accounts. Try again.</p>
+              <p>Could not load {sectionLabel}. Try again.</p>
               <Button onClick={() => setAccountsRetried(true)}>Try again</Button>
             </div>
           ) : tab === 'People' ? (
-            (firstRun ? ['Operator (you)'] : ['Operator (you)', 'Alex Baylee', 'Alex Kim']).map(
-              (person) => (
-                <div className="rd-setting-row" key={person}>
-                  <span>
-                    <strong>{person}</strong>
-                    <small>
-                      {person.startsWith('Operator')
-                        ? 'Operator · Protected account'
-                        : disabled.includes(person)
-                          ? 'Member · Disabled'
-                          : 'Member · Active · 1 passkey'}
-                    </small>
-                  </span>
-                  <ActionMenu
-                    label={`Actions for ${person}`}
-                    actions={[
-                      {
-                        label: 'Manage passkeys',
-                        onClick: () => setPasskeys(person),
+            (firstRun
+              ? ['Operator (you)']
+              : [
+                  'Operator (you)',
+                  'Alex Baylee',
+                  'Alex Kim',
+                  ...(state === 'accounts-varied' ? ['Sam Rivera'] : []),
+                ]
+            ).map((person) => (
+              <div
+                className="rd-setting-row"
+                role="group"
+                aria-label={`${person} account`}
+                key={person}
+              >
+                <span>
+                  <strong>{person}</strong>
+                  <small>
+                    {person.startsWith('Operator')
+                      ? 'Operator · Protected account'
+                      : disabled.includes(person)
+                        ? 'Member · Disabled'
+                        : `Member · Active · ${removedPasskeys.includes(person) ? 'No passkeys' : '1 passkey'}`}
+                  </small>
+                </span>
+                <ActionMenu
+                  label={`Actions for ${person}`}
+                  actions={[
+                    {
+                      label: 'Manage passkeys',
+                      onClick: () => {
+                        setActionError('');
+                        setRemovePasskey(false);
+                        setPasskeys(person);
                       },
-                      {
-                        label: 'Create recovery invite…',
-                        disabled: disabled.includes(person),
-                        onClick: () => {
-                          setPurpose(person);
-                          setInviteOpen(true);
-                          setTab('Invites');
-                        },
+                    },
+                    {
+                      label: 'Create recovery invite…',
+                      disabled: disabled.includes(person),
+                      onClick: () => {
+                        setActionError('');
+                        setPurpose(person);
+                        setInviteOpen(true);
+                        setTab('Invites');
                       },
-                      {
-                        label: 'Disable account…',
-                        destructive: true,
-                        disabled: person.startsWith('Operator') || disabled.includes(person),
-                        onClick: () => setConfirm(person),
+                    },
+                    {
+                      label: 'Disable account…',
+                      destructive: true,
+                      disabled: person.startsWith('Operator') || disabled.includes(person),
+                      onClick: () => {
+                        setActionError('');
+                        setConfirm(person);
                       },
-                    ]}
-                  />
-                </div>
-              ),
-            )
+                    },
+                  ]}
+                />
+              </div>
+            ))
           ) : tab === 'Invites' ? (
             <>
               {created && (
@@ -3011,26 +3304,49 @@ export function AdminMockup({
                   </span>
                   {!revoked && (
                     <Button
+                      disabled={pending}
                       onClick={() => {
                         setRevoked(true);
                         setCreated(false);
-                        setNotice('Invite revoked.');
+                        setActionError('');
+                        setNotice('Invite revoked in this preview.');
                       }}
                     >
-                      Revoke
+                      {state === 'revoke-pending'
+                        ? 'Revoking…'
+                        : actionError === 'revoke-error'
+                          ? 'Try again'
+                          : 'Revoke'}
                     </Button>
                   )}
+                </div>
+              )}
+              {state === 'revoke-pending' && <p role="status">Revoking the invitation…</p>}
+              {actionError === 'revoke-error' && (
+                <p role="alert">
+                  Could not revoke the invitation. It is still available. Try again.
+                </p>
+              )}
+              {state === 'invite-statuses' && (
+                <div role="list" aria-label="Past invitations">
+                  {[
+                    ['New account invite', 'Used by Alex Kim · Expired October 19, 2026'],
+                    ['Recover Alex Baylee', 'Expired October 18, 2026 · Not used'],
+                    ['New account invite', 'Revoked · Expires October 25, 2026'],
+                  ].map(([title, status]) => (
+                    <div className="rd-setting-row" role="listitem" key={status}>
+                      <span>
+                        <strong>{title}</strong>
+                        <small>{status}</small>
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
             </>
           ) : tab === 'Connections' ? (
             <>
-              <div className="rd-setting-row">
-                <span>
-                  Notebook client<small>Alex Baylee · client.example · Last used today</small>
-                </span>
-                <span className="rd-badge">Active</span>
-              </div>
+              <ConnectionsReview admin />
               <details className="rd-section">
                 <summary>Personal access token activity</summary>
                 <TokenManager admin />
@@ -3112,11 +3428,14 @@ export function AdminMockup({
         title="Create an invitation"
         description="Give someone access, or help an existing account recover its passkeys."
         open={inviteOpen}
-        onOpenChange={setInviteOpen}
+        onOpenChange={(open) => {
+          if (!pending) setInviteOpen(open);
+        }}
       >
         <div className="rd-form">
           <Choice
             label="Invite for"
+            disabled={pending}
             value={purpose}
             onChange={setPurpose}
             options={[
@@ -3128,6 +3447,7 @@ export function AdminMockup({
           />
           <Choice
             label="Expires in"
+            disabled={pending}
             value={expiry}
             onChange={setExpiry}
             options={[
@@ -3143,64 +3463,184 @@ export function AdminMockup({
               devices. Creating the invitation does not end access.
             </p>
           )}
+          {actionError === 'invite-error' && (
+            <p role="alert">
+              Could not create the invitation. Your account and expiry choices are still here. Try
+              again.
+            </p>
+          )}
+          {state === 'invite-pending' && <p role="status">Creating the invitation…</p>}
           <div className="sp-actions">
-            <Button onClick={() => setInviteOpen(false)}>Cancel</Button>
+            <Button disabled={pending} onClick={() => setInviteOpen(false)}>
+              Cancel
+            </Button>
             <Button
               primary
+              disabled={pending}
               onClick={() => {
+                setActionError('');
                 setIssued({ purpose, expiry });
                 setCreated(true);
                 setRevoked(false);
                 setInviteOpen(false);
+                setNotice(
+                  'Invitation created in this preview. No real account invitation was issued.',
+                );
               }}
             >
-              Create invite
+              {state === 'invite-pending'
+                ? 'Creating…'
+                : actionError === 'invite-error'
+                  ? 'Try again'
+                  : 'Create invite'}
             </Button>
           </div>
         </div>
       </Modal>
       <Modal
-        title={`Passkeys for ${passkeys || 'account'}`}
+        title={
+          removePasskey
+            ? `Remove MacBook from ${passkeys}?`
+            : `Passkeys for ${passkeys || 'account'}`
+        }
         description="Account credentials only; documents remain private."
         open={Boolean(passkeys)}
         onOpenChange={(open) => {
-          if (!open) setPasskeys('');
+          if (!open && !pending) {
+            setPasskeys('');
+            setRemovePasskey(false);
+          }
         }}
       >
-        <div className="rd-setting-row">
-          <span>
-            MacBook<small>Last used today · Added October 18</small>
-          </span>
-          <Button disabled>Remove…</Button>
-        </div>
+        {removePasskey ? (
+          <>
+            <p>
+              This passkey will stop working, and sessions signed in with it will end. A synced
+              passkey may be used on several devices. Older sessions that cannot be linked to a
+              passkey will also be signed out.
+            </p>
+            {actionError === 'passkey-error' && (
+              <p role="alert">
+                Could not remove MacBook. The passkey and its sessions are unchanged. Try again.
+              </p>
+            )}
+            {state === 'passkey-pending' && <p role="status">Removing MacBook…</p>}
+            <div className="sp-actions">
+              <Button
+                disabled={pending}
+                onClick={() => {
+                  setRemovePasskey(false);
+                  setActionError('');
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                primary
+                disabled={
+                  pending ||
+                  (passkeys.startsWith('Operator') && state !== 'operator-multiple-passkeys')
+                }
+                onClick={() => {
+                  setRemovedPasskeys((current) => [...current, passkeys]);
+                  setRemovePasskey(false);
+                  setActionError('');
+                  setNotice(
+                    `MacBook removed from ${passkeys} in this preview. No real credentials or sessions changed.`,
+                  );
+                  setPasskeys('');
+                }}
+              >
+                {state === 'passkey-pending'
+                  ? 'Removing…'
+                  : actionError === 'passkey-error'
+                    ? 'Try again'
+                    : 'Remove passkey'}
+              </Button>
+            </div>
+          </>
+        ) : removedPasskeys.includes(passkeys) &&
+          !(passkeys.startsWith('Operator') && state === 'operator-multiple-passkeys') ? (
+          <p role="status">
+            No passkeys remain. Create a recovery invitation for this active account.
+          </p>
+        ) : (
+          <>
+            {!removedPasskeys.includes(passkeys) && (
+              <div className="rd-setting-row">
+                <span>
+                  MacBook<small>iCloud Keychain · Last used today · Added October 18</small>
+                </span>
+                <Button
+                  disabled={
+                    passkeys.startsWith('Operator') && state !== 'operator-multiple-passkeys'
+                  }
+                  onClick={() => {
+                    setActionError('');
+                    setRemovePasskey(true);
+                  }}
+                >
+                  Remove…
+                </Button>
+              </div>
+            )}
+            {passkeys.startsWith('Operator') && state === 'operator-multiple-passkeys' && (
+              <div className="rd-setting-row">
+                <span>
+                  Security key<small>USB security key · Added October 17</small>
+                </span>
+                <span className="rd-badge">
+                  {removedPasskeys.includes(passkeys)
+                    ? 'Last passkey · Protected'
+                    : 'Kept for sign-in'}
+                </span>
+              </div>
+            )}
+          </>
+        )}
         <p className="sp-muted">
           {passkeys.startsWith('Operator')
-            ? 'The Operator’s last passkey cannot be removed here.'
+            ? state === 'operator-multiple-passkeys' && !removedPasskeys.includes(passkeys)
+              ? 'You can remove MacBook while the security key remains. The Operator must keep at least one passkey.'
+              : 'The Operator’s last passkey cannot be removed here.'
             : 'If their last passkey is removed, issue a recovery invitation so they can sign in again.'}
         </p>
-        <p className="sp-muted">
-          Passkey removal is not interactive in this design preview. No credentials are changed.
-        </p>
+        <p className="sp-muted">Design preview. No real credentials or sessions are changed.</p>
       </Modal>
       <Modal
         title={`Disable ${confirm || 'this account'}?`}
         description="Their sessions end now. Their documents and shares are kept."
         open={Boolean(confirm)}
         onOpenChange={(open) => {
-          if (!open) setConfirm('');
+          if (!open && !pending) setConfirm('');
         }}
       >
+        {actionError === 'disable-error' && (
+          <p role="alert">
+            Could not disable {confirm}. The account is still active and its sessions are unchanged.
+            Try again.
+          </p>
+        )}
+        {state === 'disable-pending' && <p role="status">Disabling {confirm}…</p>}
         <div className="sp-actions">
-          <Button onClick={() => setConfirm('')}>Cancel</Button>
+          <Button disabled={pending} onClick={() => setConfirm('')}>
+            Cancel
+          </Button>
           <Button
             primary
+            disabled={pending || confirm.startsWith('Operator')}
             onClick={() => {
               setDisabled([...disabled, confirm]);
-              setNotice(`${confirm} disabled in this preview.`);
+              setActionError('');
+              setNotice(`${confirm} disabled in this preview. No real account access changed.`);
               setConfirm('');
             }}
           >
-            Disable account
+            {state === 'disable-pending'
+              ? 'Disabling…'
+              : actionError === 'disable-error'
+                ? 'Try again'
+                : 'Disable account'}
           </Button>
         </div>
       </Modal>
@@ -3211,8 +3651,10 @@ export function EntryMockup({
   kind = 'consent',
   readOnly = false,
   consentState = 'ready',
+  expireOnAllow = false,
 }: {
   readOnly?: boolean;
+  expireOnAllow?: boolean;
   consentState?:
     | 'ready'
     | 'loading'
@@ -3237,6 +3679,7 @@ export function EntryMockup({
     'cancelled',
     'loading',
     'load-error',
+    'expired',
   ].includes(requestState);
   const entries = {
     revoked: ['This link no longer works.', 'Ask the person who shared it for a new link.', ''],
@@ -3266,6 +3709,8 @@ export function EntryMockup({
     unavailable:
       'This connection request is not available in this session. Start again from your application.',
     cancelled: 'Connection cancelled in this preview. Return to your application.',
+    expired:
+      'This request expired before access was granted. Return to your application and start connecting again.',
   };
   return (
     <div className="sp-ui rd-entry">
@@ -3326,7 +3771,9 @@ export function EntryMockup({
               primary
               disabled={consent && (busy || requestState === 'limit')}
               onClick={() =>
-                consent ? setRequestState('pending') : setNotice('Continue in the application.')
+                consent
+                  ? setRequestState(expireOnAllow ? 'expired' : 'pending')
+                  : setNotice('Continue in the application.')
               }
             >
               {action}

@@ -7,6 +7,8 @@ function Controls({ disabled = false, error = false }: { disabled?: boolean; err
   const [value, setValue] = useState('system');
   const [kind, setKind] = useState('doc');
   const [message, setMessage] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [folder, setFolder] = useState('household');
   return (
     <div className="sp-ui rd-dialog-stage">
       <section className="rd-dialog-example">
@@ -44,20 +46,32 @@ function Controls({ disabled = false, error = false }: { disabled?: boolean; err
           </ActionMenu>
           <Modal
             trigger="Open confirmation"
-            title="Move this file to Trash?"
-            description="You can restore it later."
+            title="Move this file?"
+            description="Choose the folder where this file belongs."
+            open={confirmOpen}
+            onOpenChange={setConfirmOpen}
           >
             <Choice
-              label="Example nested selector"
-              value={value}
-              onChange={setValue}
+              label="Destination folder"
+              value={folder}
+              onChange={setFolder}
               options={[
-                { value: 'system', label: 'Follow system' },
-                { value: 'light', label: 'Light' },
-                { value: 'dark', label: 'Dark' },
+                { value: 'household', label: 'Household' },
+                { value: 'work', label: 'Work' },
               ]}
             />
-            <p>Focus stays in this dialog. Escape closes it.</p>
+            <div className="sp-actions">
+              <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
+              <Button
+                primary
+                onClick={() => {
+                  setMessage(`Moved to ${folder === 'household' ? 'Household' : 'Work'}.`);
+                  setConfirmOpen(false);
+                }}
+              >
+                Move file
+              </Button>
+            </div>
           </Modal>
           <DetailsPopover label={error ? 'Not saved' : disabled ? 'Loading…' : '✓ Saved'}>
             <p>

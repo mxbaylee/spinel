@@ -252,13 +252,13 @@ try {
             page.getByRole('button', { name: 'Restore this version…', exact: true }),
           ).toBeDisabled();
           await expect(
-            page.getByRole('button', { name: 'Name this version…', exact: true }),
+            page.getByRole('button', { name: 'Name current version…', exact: true }),
           ).toBeDisabled();
           await expect(
             page.getByRole('status').filter({
               hasText: id.endsWith('-offline')
                 ? 'Reconnect before naming or restoring a version.'
-                : 'Save your latest changes before naming or restoring a version.',
+                : 'Save your latest changes before naming the current version or restoring. Older version names can still be changed.',
             }),
           ).toBeVisible();
           verifications.push(`${variant}: ${id} explains why naming and restore are disabled`);
@@ -286,7 +286,18 @@ try {
           const testHeight = width === 390 ? 600 : 900;
           await page.setViewportSize({ width, height: testHeight });
           const editor = page.locator('.rd-native-editor');
-          const toolbar = editor.getByRole('toolbar', { name: 'Start', exact: true });
+          // Responsive Sheets replaces the ribbon with a compact row of buttons
+          // (no toolbar role). Its Paint format button anchors that same row.
+          const compactSheet = id.includes('--sheet') && width <= 768;
+          const toolbar = compactSheet
+            ? editor.getByRole('button', { name: 'Paint format', exact: true })
+            : editor.getByRole('toolbar', { name: 'Start', exact: true });
+          if (compactSheet) {
+            await expect(
+              editor.getByRole('button', { name: 'Clear All', exact: true }),
+            ).toBeVisible();
+            await expect(editor.getByRole('button', { name: 'More', exact: true })).toBeVisible();
+          }
           await expect(toolbar).toBeVisible();
           const before = await toolbar.boundingBox();
           expect(before).not.toBeNull();
@@ -546,9 +557,10 @@ try {
         await page.getByRole('button', { name: /^Filters/ }).click();
         await page.getByRole('combobox', { name: 'Ownership', exact: true }).click();
         await page.getByRole('option', { name: 'Mine', exact: true }).click();
-        await expect(page.getByRole('listitem').filter({ hasText: 'Household' })).toBeVisible();
+        const files = page.getByRole('list', { name: 'Files', exact: true });
+        await expect(files.getByRole('listitem').filter({ hasText: 'Household' })).toBeVisible();
         await expect(
-          page.getByRole('listitem').filter({ hasText: 'Quarterly budget' }),
+          files.getByRole('listitem').filter({ hasText: 'Quarterly budget' }),
         ).toHaveCount(0);
       } else {
         await page.getByRole('button', { name: 'Expand navigation', exact: true }).click();
@@ -760,7 +772,7 @@ try {
         0,
       );
       await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
-      await page.getByRole('button', { name: 'Name this version…', exact: true }).click();
+      await page.getByRole('button', { name: 'Name current version…', exact: true }).click();
       await page.getByRole('textbox', { name: 'Version name', exact: true }).fill('Ready to share');
       await page.getByRole('button', { name: 'Save version name', exact: true }).click();
       await expect(
@@ -1180,9 +1192,9 @@ async function verifyControls(page: Page, variant: string, output: string) {
   await page.screenshot({ path: resolve(output, `appearance-choice-${variant}.png`) });
   const trigger = page.getByRole('button', { name: 'Open confirmation' });
   await trigger.click();
-  const dialog = page.getByRole('dialog', { name: 'Move this file to Trash?' });
+  const dialog = page.getByRole('dialog', { name: 'Move this file?' });
   await expect(dialog).toBeVisible();
-  await page.getByRole('combobox', { name: 'Example nested selector' }).click();
+  await page.getByRole('combobox', { name: 'Destination folder' }).click();
   await expect(page.getByRole('listbox')).toBeVisible();
   await expect(page.getByRole('listbox')).toHaveCSS(
     'color',
@@ -1191,7 +1203,7 @@ async function verifyControls(page: Page, variant: string, output: string) {
   await page.screenshot({ path: resolve(output, `dialog-select-open-${variant}.png`) });
   await page.keyboard.press('Escape');
   await expect(dialog).toBeVisible();
-  await expect(page.getByRole('combobox', { name: 'Example nested selector' })).toBeFocused();
+  await expect(page.getByRole('combobox', { name: 'Destination folder' })).toBeFocused();
   for (const key of ['Tab', 'Tab', 'Shift+Tab', 'Shift+Tab']) {
     await page.keyboard.press(key);
     await expect

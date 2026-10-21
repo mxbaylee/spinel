@@ -6,6 +6,8 @@ The [composed redesign](redesign.md) is proposed in PR #125 and awaits owner
 approval in decision #126. Its screen inventory, public-source comparisons,
 Base UI controls and before/after screenshot gallery define the next UI work.
 Start with the [connected walkthrough guide](walkthrough.md) to review full journeys.
+The [component, section and journey audit](component-review.md) tracks coverage and
+remaining gaps; earlier sampled-view grades are not whole-product acceptance.
 The existing gem palette and entity artwork are retained. Screen pages identify
 proposed placement changes; production is migrated by each implementation ticket.
 [Spaces and file roles](spaces.md) covers SPN-078/079 explicitly.
