@@ -726,6 +726,9 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.rd-setting-row > .rd-badge {
+  flex-shrink: 0;
+}
 .rd-banner {
   padding: 16px;
   border-radius: 8px;
