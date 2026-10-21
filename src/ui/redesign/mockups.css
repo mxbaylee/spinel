@@ -1721,3 +1721,17 @@
     display: none;
   }
 }
+
+/* All account destinations stay discoverable on phones without sideways scrolling. */
+@media (max-width: 640px) {
+  .rd-profile nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+  .rd-profile nav .rd-nav-item {
+    width: 100%;
+    white-space: normal;
+    text-align: left;
+  }
+}

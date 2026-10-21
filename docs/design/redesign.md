@@ -21,8 +21,10 @@ navigation. Phone layouts are part of each journey, not a separate persona.
 
 ## Evidence and comparisons
 
-Reviewed public documentation and its illustrated examples on 2026-10-20. No
-competitor was signed into; no assets or implementation were copied. These are
+Reviewed public documentation and its illustrated examples on 2026-10-20, then
+inspected the owner-authorized signed-in navigation and search surfaces in
+Google Drive, Proton Drive and Coda/Superhuman Docs. No private document content,
+assets or implementation were copied. These are
 pattern observations, not claims about every plan, device or current screen.
 
 - [Google Docs/Sheets view controls](https://support.google.com/docs/answer/99753):
@@ -60,7 +62,7 @@ recovery and offline contracts remain authoritative.
 ## Composed layout contract
 
 - File navigation: one 224 px column with gem, places, pins and account
-  utilities. Collapse reduces it to a 64 px rail; a explicit Expand/Pages control
+  utilities. Collapse reduces it to a 64 px rail; an icon-only chevron or local Pages control
   reopens it. Never show the rail beside an expanded tree. At tablet/phone
   widths (900 px and below), navigation is a drawer by default.
 - Ordinary editors and Operator screens use a compact horizontal utility header,
@@ -77,7 +79,7 @@ recovery and offline contracts remain authoritative.
   structural stories retain schematic content for planned states; they do not
   replace or promise new Univer commands.
 - Profile and Operator pages: section navigation replaces a long stack of
-  equally weighted cards. Profile section navigation scrolls horizontally, with
+  equally weighted cards. Profile section navigation wraps into two columns on phones, with
   labels retained; Operator sections wrap so Backups & health stays discoverable. Operator and file Admin are different concepts.
 - Dialogs: one title and description, explicit close control, one task, actions
   together. Menus contain actions; selectors contain choices. Hidden detail
@@ -147,31 +149,31 @@ Do not run another agent's local workload concurrently.
 
 ## Screen and journey inventory
 
-| Surface / journey | Current evidence | Proposed story suffix under `Redesign/Screens` | Implementation |
-| --- | --- | --- | --- |
-| Find files, folders, pins | Shell/AppLayout; Dashboard/Dashboard | Dashboard, EmptyFolder, LoadingFiles, FileError | SPN-048 |
-| Search and narrow results | Dashboard/SearchPanel | Search, AdvancedSearch, NoMatches | SPN-048 |
-| Shared references | Dashboard/Dashboard SharedDrawer | SharedFiles | SPN-048 |
-| Trash and restore | Dashboard/Trash | Trash | SPN-048, SPN-064 |
-| Doc and Sheet work | production appearance screenshots | Doc, Sheet, ViewOnly | SPN-049 |
-| Save and connectivity | Editor/OfflineStatus; production offline fixtures | OfflineEditor | SPN-042, SPN-043, SPN-053 |
-| Formula creation/results | Editor/DocFormulas; native formula screenshots | Formula, FormulaInContext, FormulaTableInContext | SPN-049, SPN-076 |
-| History preview/restore | Editor/VersionNames; history-calendar screenshot | History | SPN-085 |
-| Sharing and guest links | Sharing/Sharing; Sharing/ShareLink | Sharing, SharingCreatedLink, SharingExistingLink, SharingReplaceLink, SharingError | SPN-081 |
-| Profile and appearance | Settings/ProfileSettings; landed SPN-036 | Profile, ProfileIconPicker, ProfileColorPicker | SPN-045 |
-| Passkeys | current settings Playwright capture | Profile (Passkeys section) | SPN-045, SPN-070 |
-| Connections / tokens | Settings/AssistantConnections; Settings/AccessTokens | Connections | SPN-045 |
-| Consent and expiry | Settings/ConnectAssistant | Consent, ConsentReadOnly, ConsentExpired | SPN-083 |
-| Offline files on device | existing offline fixtures; planned storage management | ThisDevice | SPN-055 |
-| Administration | Admin/AdminUsers, AdminInvites, BackupStatus, AccessTokens | Admin, AdminLoading, AdminError | SPN-082, SPN-032 |
-| Sign-in/setup/invite/recovery | actual App routes in design-inventory fixture | SignIn, Setup, Invite, Recovery | SPN-083 |
-| Guest view/edit | Guest/GuestApp; guest-link browser fixtures | GuestViewer, GuestEditor | SPN-084, SPN-075 |
-| Revoked link / unavailable | Guest/GuestApp LinkRevoked | RevokedLink, MissingFile | SPN-084 |
-| Offline launch | Guest/GuestApp ConnectionInterrupted | OfflineLaunch | SPN-042 |
-| Space navigation and internal trash | planned; SPN-077 facets | PlannedSpace, PlannedSpaceGuest, PlannedSpaceGuestEditor, PlannedSpaceTrash | SPN-078 |
-| Guest-link inventory | planned metadata list | PlannedGuestLinks | SPN-066 |
-| Delegated file roles | planned | PlannedFileAdmin | SPN-079 |
-| Shared controls | current native controls in each screen | Redesign/Controls Default, Disabled, Error | shared now; consumers later |
+| Surface / journey                   | Current evidence                                           | Proposed story suffix under `Redesign/Screens`                                     | Implementation              |
+| ----------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------- |
+| Find files, folders, pins           | Shell/AppLayout; Dashboard/Dashboard                       | Dashboard, EmptyFolder, LoadingFiles, FileError                                    | SPN-048                     |
+| Search and narrow results           | Dashboard/SearchPanel                                      | Search, AdvancedSearch, NoMatches                                                  | SPN-048                     |
+| Shared references                   | Dashboard/Dashboard SharedDrawer                           | SharedFiles                                                                        | SPN-048                     |
+| Trash and restore                   | Dashboard/Trash                                            | Trash                                                                              | SPN-048, SPN-064            |
+| Doc and Sheet work                  | production appearance screenshots                          | Doc, Sheet, ViewOnly                                                               | SPN-049                     |
+| Save and connectivity               | Editor/OfflineStatus; production offline fixtures          | OfflineEditor                                                                      | SPN-042, SPN-043, SPN-053   |
+| Formula creation/results            | Editor/DocFormulas; native formula screenshots             | Formula, FormulaInContext, FormulaTableInContext                                   | SPN-049, SPN-076            |
+| History preview/restore             | Editor/VersionNames; history-calendar screenshot           | History                                                                            | SPN-085                     |
+| Sharing and guest links             | Sharing/Sharing; Sharing/ShareLink                         | Sharing, SharingCreatedLink, SharingExistingLink, SharingReplaceLink, SharingError | SPN-081                     |
+| Profile and appearance              | Settings/ProfileSettings; landed SPN-036                   | Profile, ProfileIconPicker, ProfileColorPicker                                     | SPN-045                     |
+| Passkeys                            | current settings Playwright capture                        | Profile (Passkeys section)                                                         | SPN-045, SPN-070            |
+| Connections / tokens                | Settings/AssistantConnections; Settings/AccessTokens       | Connections                                                                        | SPN-045                     |
+| Consent and expiry                  | Settings/ConnectAssistant                                  | Consent, ConsentReadOnly, ConsentExpired                                           | SPN-083                     |
+| Offline files on device             | existing offline fixtures; planned storage management      | ThisDevice                                                                         | SPN-055                     |
+| Administration                      | Admin/AdminUsers, AdminInvites, BackupStatus, AccessTokens | Admin, AdminLoading, AdminError                                                    | SPN-082, SPN-032            |
+| Sign-in/setup/invite/recovery       | actual App routes in design-inventory fixture              | SignIn, Setup, Invite, Recovery                                                    | SPN-083                     |
+| Guest view/edit                     | Guest/GuestApp; guest-link browser fixtures                | GuestViewer, GuestEditor                                                           | SPN-084, SPN-075            |
+| Revoked link / unavailable          | Guest/GuestApp LinkRevoked                                 | RevokedLink, MissingFile                                                           | SPN-084                     |
+| Offline launch                      | Guest/GuestApp ConnectionInterrupted                       | OfflineLaunch                                                                      | SPN-042                     |
+| Space navigation and internal trash | planned; SPN-077 facets                                    | PlannedSpace, PlannedSpaceGuest, PlannedSpaceGuestEditor, PlannedSpaceTrash        | SPN-078                     |
+| Guest-link inventory                | planned metadata list                                      | PlannedGuestLinks                                                                  | SPN-066                     |
+| Delegated file roles                | planned                                                    | PlannedFileAdmin                                                                   | SPN-079                     |
+| Shared controls                     | current native controls in each screen                     | Redesign/Controls Default, Disabled, Error                                         | shared now; consumers later |
 
 ## Owner review
 
@@ -240,7 +242,6 @@ This device reuses it. This supersedes the earlier explicit-menu proposal, retai
 one theme store and follows OS changes while System is selected. The picker
 must report a storage failure without undoing the in-session theme choice.
 
-
 ## Whole-product review follow-up
 
 Owner feedback (chat, 2026-10-20): the presentation overemphasized signed-in
@@ -255,7 +256,6 @@ desktops; retain 44 px targets on touch. File metadata pairs each Doc/Sheet/Spac
 label with its existing 16 px entity icon, alongside the separate decorative
 filename emoji. Owner and Collaborator gain faster recognition without enlarging
 the row; guest identity and Operator access remain unchanged. Decision #126.
-
 
 ### Connected walkthrough
 
@@ -290,3 +290,23 @@ Owner refinement (chat, 2026-10-20): keep the three appearance segments directly
 visible everywhere. Smaller sizing did not mean a popup. A collapsed desktop
 rail stacks the segments vertically; header, phone and expanded-sidebar placements
 keep the horizontal group. This supersedes earlier popup treatments.
+
+## Live reference follow-up
+
+Owner-authorized UI review, 2026-10-20: Drive's advanced-search form keeps
+detailed criteria behind one search control; Proton groups icon-led creation
+commands in its New menu; Coda's document list puts identity and muted location
+metadata ahead of actions. These observations reinforce the single search/query
+direction in SPN-048, icon-led New menu and quiet file rows. Only UI patterns
+were recorded; PR evidence uses Spinel sample data.
+
+## Temporary interactive review
+
+The owner authorized PR #125 to publish its sample-data Storybook temporarily
+at the existing GitHub Pages catalog URL. The exception is limited to this
+same-repository PR and branch; the environment allows exactly
+`refs/pull/125/merge` in addition to `main`. Preview deployment follows a successful
+build while screenshot/interaction validation continues separately. Normal main
+deployment still waits for that validation. A public preview is not merge approval.
+Before merge, remove the workflow exception and environment rule ID 63792144;
+main publishing restores the normal catalog.

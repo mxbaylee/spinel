@@ -36,6 +36,7 @@ const browser = await chromium.launch();
 const captures: { id: string; variant: string; filename: string; title: string }[] = [];
 const verifications: string[] = [];
 const nativeFailures: unknown[] = [];
+const captureFailures: { id: string; variant: string; message: string; filename?: string }[] = [];
 const variants = [
   ['light', 1280, 'light'],
   ['dark', 1280, 'dark'],
@@ -49,78 +50,85 @@ try {
       const id = `redesign-native-editors--${kind}${readOnly ? '-viewer' : ''}`;
       if (!requested.includes(id)) continue;
       const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-      await page.goto(
-        `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:light`,
-      );
-      await expect(page.locator('.rd-native-editor')).toBeVisible();
-      await waitForNativeEditor(page);
-      await page.getByText('Native editor review controls', { exact: true }).click();
-      const observation = page.locator('output[data-native-snapshot]');
-      await expect(observation).not.toBeEmpty();
-      const read = async () => {
-        await page.getByRole('button', { name: 'Read current snapshot', exact: true }).click();
-        return JSON.parse((await observation.textContent())!) as {
-          canEdit: boolean;
-          snapshot: {
-            body?: { dataStream: string };
-            sheets?: Record<string, { cellData?: Record<number, Record<number, { v?: unknown }>> }>;
+      try {
+        await page.goto(
+          `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:light`,
+        );
+        await expect(page.locator('.rd-native-editor')).toBeVisible();
+        await waitForNativeEditor(page);
+        await page.getByText('Native editor review controls', { exact: true }).click();
+        const observation = page.locator('output[data-native-snapshot]');
+        await expect(observation).not.toBeEmpty();
+        const read = async () => {
+          await page.getByRole('button', { name: 'Read current snapshot', exact: true }).click();
+          return JSON.parse((await observation.textContent())!) as {
+            canEdit: boolean;
+            snapshot: {
+              body?: { dataStream: string };
+              sheets?: Record<
+                string,
+                { cellData?: Record<number, Record<number, { v?: unknown }>> }
+              >;
+            };
           };
         };
-      };
-      const beforeEdit = await read();
-      expect(beforeEdit.canEdit, `${kind} native permission`).toBe(!readOnly);
-      const editor = page.locator('.rd-native-editor');
-      if (readOnly) {
-        // Attempt normal canvas input, then inspect saved content via the public facade.
-        await editor
-          .locator(
-            `canvas[aria-label="${kind === 'sheet' ? 'Spreadsheet grid' : 'Document canvas'}"]`,
-          )
-          .click({ position: { x: 130, y: 160 } });
-      } else if (kind === 'sheet') {
-        // Use the production Sheet test's visible name-box path, not an auxiliary
-        // contenteditable (the formula input is not the active cell editor).
-        const nameBox = editor.locator('[data-u-comp="defined-name"] input');
-        await nameBox.fill('A16');
-        await nameBox.press('Enter');
-      } else {
-        await page.getByRole('button', { name: 'Select document start', exact: true }).click();
-        await editor.locator('[contenteditable="true"][data-u-comp="editor"]').first().focus();
-      }
-      const marker = 'Native keyboard proof';
-      await page.keyboard.type(marker);
-      if (kind === 'sheet') await page.keyboard.press('Enter');
-      try {
-        if (readOnly) expect((await read()).snapshot).toEqual(beforeEdit.snapshot);
-        else
-          await expect
-            .poll(async () => {
-              const current = await read();
-              return kind === 'sheet'
-                ? current.snapshot.sheets?.october.cellData?.[15]?.[0]?.v
-                : current.snapshot.body?.dataStream;
-            })
-            .toContain(marker);
-      } catch (error) {
-        await read();
-        await writeFile(
-          resolve(directory, `native-${kind}-input-failure.json`),
-          (await observation.textContent()) ?? '',
-        );
-        await page.screenshot({ path: resolve(directory, `native-${kind}-input-failure.png`) });
-        nativeFailures.push(error);
-        await page.close();
-        continue;
-      }
+        const beforeEdit = await read();
+        expect(beforeEdit.canEdit, `${kind} native permission`).toBe(!readOnly);
+        const editor = page.locator('.rd-native-editor');
+        if (readOnly) {
+          // Attempt normal canvas input, then inspect saved content via the public facade.
+          await editor
+            .locator(
+              `canvas[aria-label="${kind === 'sheet' ? 'Spreadsheet grid' : 'Document canvas'}"]`,
+            )
+            .click({ position: { x: 130, y: 160 } });
+        } else if (kind === 'sheet') {
+          // Use the production Sheet test's visible name-box path, not an auxiliary
+          // contenteditable (the formula input is not the active cell editor).
+          const nameBox = editor.locator('[data-u-comp="defined-name"] input');
+          await nameBox.fill('A16');
+          await nameBox.press('Enter');
+        } else {
+          await page.getByRole('button', { name: 'Select document start', exact: true }).click();
+          await editor.locator('[contenteditable="true"][data-u-comp="editor"]').first().focus();
+        }
+        const marker = 'Native keyboard proof';
+        await page.keyboard.type(marker);
+        if (kind === 'sheet') await page.keyboard.press('Enter');
+        try {
+          if (readOnly) expect((await read()).snapshot).toEqual(beforeEdit.snapshot);
+          else
+            await expect
+              .poll(async () => {
+                const current = await read();
+                return kind === 'sheet'
+                  ? current.snapshot.sheets?.october.cellData?.[15]?.[0]?.v
+                  : current.snapshot.body?.dataStream;
+              })
+              .toContain(marker);
+        } catch (error) {
+          await read();
+          await writeFile(
+            resolve(directory, `native-${kind}-input-failure.json`),
+            (await observation.textContent()) ?? '',
+          );
+          await page.screenshot({ path: resolve(directory, `native-${kind}-input-failure.png`) });
+          nativeFailures.push(error);
+          continue;
+        }
 
-      await page.locator('.rd-native-review-tools summary').click();
-      await page.screenshot({
-        path: resolve(directory, `native-${kind}-${readOnly ? 'viewer' : 'edited'}.png`),
-      });
-      verifications.push(
-        `${kind}: native ${readOnly ? 'viewer rejects keyboard edits' : 'keyboard edit saved in local snapshot'}`,
-      );
-      await page.close();
+        await page.locator('.rd-native-review-tools summary').click();
+        await page.screenshot({
+          path: resolve(directory, `native-${kind}-${readOnly ? 'viewer' : 'edited'}.png`),
+        });
+        verifications.push(
+          `${kind}: native ${readOnly ? 'viewer rejects keyboard edits' : 'keyboard edit saved in local snapshot'}`,
+        );
+      } catch (error) {
+        await recordCaptureFailure(page, id, 'native-input', error);
+      } finally {
+        await page.close();
+      }
     }
   }
   for (const [theme, width, variant] of variants) {
@@ -136,185 +144,193 @@ try {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     for (const id of requested) {
-      errors.length = 0;
-      await page.goto(
-        `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`,
-      );
-      await expect(page.locator('#storybook-root')).not.toBeEmpty();
-      await expect(page.locator('#storybook-root')).toBeVisible();
-      // Many catalogue states are established by a play function (open dialogs,
-      // rejected requests, pending mutations). Storybook marks the render finished
-      // after those interactions, rather than when the first component appears.
-      await page.waitForFunction(() => {
-        const preview = (
-          window as Window & {
-            __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } };
-          }
-        ).__STORYBOOK_PREVIEW__;
-        return preview?.currentRender?.phase === 'finished';
-      });
-      await page.evaluate(() => document.fonts.ready);
-      await expect(page.locator('.sb-errordisplay')).toBeHidden();
-      if (id === 'redesign-walkthrough--operator-help')
-        await expect(page.getByText('npm run setup', { exact: true })).toBeVisible();
-      if (id === 'redesign-screens--file-icon-hint')
-        await expect(
-          page.getByText(
-            'Custom file icons are planned. This default icon comes from the file name.',
-            { exact: true },
-          ),
-        ).toBeVisible();
-      if (id === 'redesign-screens--history-naming')
-        await expect(
-          page.getByRole('dialog', { name: 'Name this version', exact: true }),
-        ).toBeVisible();
-      if (id === 'redesign-screens--profile-icon-picker')
-        await expect(
-          page.getByRole('dialog', { name: 'Choose your icon', exact: true }),
-        ).toBeVisible();
-      if (id === 'redesign-screens--profile-color-picker')
-        await expect(
-          page.getByRole('dialog', { name: 'Choose your profile color', exact: true }),
-        ).toBeVisible();
-      if (id === 'redesign-screens--dashboard-new-menu') {
-        await expect(page.getByRole('menu', { name: 'New file', exact: true })).toBeVisible();
-      }
-      if (id === 'redesign-screens--filtered-no-matches') {
-        await expect(
-          page.getByRole('combobox', { name: 'Last modified', exact: true }),
-        ).toContainText('Today');
-        await expect(page.getByRole('textbox', { name: 'Search files', exact: true })).toHaveValue(
-          '',
+      console.log(`Capture ${variant}: ${id}`);
+      try {
+        errors.length = 0;
+        await page.goto(
+          `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`,
         );
-        await expect(
-          page.getByRole('heading', { name: 'No matching files', exact: true }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('heading', { name: 'Room for your next idea', exact: true }),
-        ).toHaveCount(0);
-      }
-      if (
-        ['history-unsaved', 'history-saving', 'history-offline'].some(
-          (state) => id === `redesign-screens--${state}`,
-        )
-      ) {
-        await expect(
-          page.getByRole('button', { name: 'Restore this version…', exact: true }),
-        ).toBeDisabled();
-        await expect(
-          page.getByRole('button', { name: 'Name this version…', exact: true }),
-        ).toBeDisabled();
-        await expect(
-          page.getByRole('status').filter({
-            hasText: id.endsWith('-offline')
-              ? 'Reconnect before naming or restoring a version.'
-              : 'Save your latest changes before naming or restoring a version.',
-          }),
-        ).toBeVisible();
-        verifications.push(`${variant}: ${id} explains why naming and restore are disabled`);
-      }
-      if (id.startsWith('redesign-')) {
-        await expect(page.locator('.sp-ui, .rd-native-editor').first()).toBeVisible();
-        await waitForNativeEditor(page);
-        expect(
-          await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
-          `Page overflow: ${id} ${variant}`,
-        ).toBe(true);
-      }
-      if (id.startsWith('redesign-') && width <= 768) {
-        const smallTargets = await page
-          .locator(
-            '.sp-ui button, .sp-ui input:not([type=radio]), .sp-ui summary, .sp-ui [role=radio], .sp-ui .sp-segment',
-          )
-          .evaluateAll((nodes) =>
-            nodes.flatMap((node) => {
-              // Univer owns its toolbar targets; these assertions cover Spinel chrome.
-              if (node.closest('[aria-hidden="true"], .rd-native-editor')) return [];
-              const box = node.getBoundingClientRect();
-              if (!box.width || !box.height) return [];
-              return box.height < 43.5 || box.width < 43.5
-                ? [
-                    {
-                      label: node.getAttribute('aria-label') || node.textContent?.trim(),
-                      width: box.width,
-                      height: box.height,
-                    },
-                  ]
-                : [];
-            }),
-          );
-        expect(smallTargets, `Touch targets: ${id} ${variant}`).toEqual([]);
-        // A negative left edge can clip rail controls without increasing scrollWidth.
-        const clippedControls = await page
-          .locator('.rd-rail .sp-segment, .rd-rail button')
-          .evaluateAll((nodes) =>
-            nodes.flatMap((node) => {
-              const box = node.getBoundingClientRect();
-              if (!box.width || !box.height || node.closest('[aria-hidden="true"]')) return [];
-              return box.left < -1 || box.right > window.innerWidth + 1
-                ? [node.getAttribute('aria-label') || node.textContent?.trim()]
-                : [];
-            }),
-          );
-        expect(clippedControls, `Clipped utilities: ${id} ${variant}`).toEqual([]);
-      }
-      expect(errors, `Runtime errors in ${id}`).toEqual([]);
-      const filename = `${id}-${variant}.png`;
-      await page.screenshot({
-        path: resolve(directory, filename),
-        fullPage: true,
-        animations: 'disabled',
-      });
-      captures.push({
-        id,
-        variant,
-        filename,
-        title: `${index.entries[id].title} / ${index.entries[id].name}`,
-      });
-      if (id === 'redesign-screens--filtered-no-matches') {
-        // Exercise both Clear controls with every filter set, including a query.
-        for (const clearSelector of ['.rd-empty', '.rd-filter-bar']) {
-          await page.getByRole('textbox', { name: 'Search files', exact: true }).fill('winter');
-          await page
-            .locator(clearSelector)
-            .getByRole('button', { name: 'Clear filters', exact: true })
-            .click();
+        // Images and intentionally empty components are valid stories. Require
+        // the root to exist, then use Storybook's lifecycle rather than text content.
+        await expect(page.locator('#storybook-root')).toBeAttached();
+        // Many catalogue states are established by a play function (open dialogs,
+        // rejected requests, pending mutations). Storybook marks the render finished
+        // after those interactions, rather than when the first component appears.
+        await page.waitForFunction(() => {
+          const preview = (
+            window as Window & {
+              __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } };
+            }
+          ).__STORYBOOK_PREVIEW__;
+          return preview?.currentRender?.phase === 'finished';
+        });
+        await page.evaluate(() => document.fonts.ready);
+        await expect(page.locator('.sb-errordisplay')).toBeHidden();
+        if (id === 'redesign-walkthrough--operator-help')
+          await expect(page.getByText('npm run setup', { exact: true })).toBeVisible();
+        if (id === 'redesign-screens--file-icon-hint')
+          await expect(
+            page.getByText(
+              'Custom file icons are planned. This default icon comes from the file name.',
+              { exact: true },
+            ),
+          ).toBeVisible();
+        if (id === 'redesign-screens--history-naming')
+          await expect(
+            page.getByRole('dialog', { name: 'Name this version', exact: true }),
+          ).toBeVisible();
+        if (id === 'redesign-screens--profile-icon-picker')
+          await expect(
+            page.getByRole('dialog', { name: 'Choose your icon', exact: true }),
+          ).toBeVisible();
+        if (id === 'redesign-screens--profile-color-picker')
+          await expect(
+            page.getByRole('dialog', { name: 'Choose your profile color', exact: true }),
+          ).toBeVisible();
+        if (id === 'redesign-screens--dashboard-new-menu') {
+          await expect(page.getByRole('menu', { name: 'New file', exact: true })).toBeVisible();
+        }
+        if (id === 'redesign-screens--filtered-no-matches') {
+          await expect(
+            page.getByRole('combobox', { name: 'Last modified', exact: true }),
+          ).toContainText('Today');
           await expect(
             page.getByRole('textbox', { name: 'Search files', exact: true }),
           ).toHaveValue('');
-          await expect(page.getByRole('textbox', { name: 'Tag', exact: true })).toHaveValue('');
-          for (const [label, value] of [
-            ['File type', 'All types'],
-            ['Ownership', 'Mine and shared'],
-            ['Last modified', 'Any time'],
-          ])
-            await expect(page.getByRole('combobox', { name: label, exact: true })).toContainText(
-              value,
-            );
           await expect(
             page.getByRole('heading', { name: 'No matching files', exact: true }),
+          ).toBeVisible();
+          await expect(
+            page.getByRole('heading', { name: 'Room for your next idea', exact: true }),
           ).toHaveCount(0);
+        }
+        if (
+          ['history-unsaved', 'history-saving', 'history-offline'].some(
+            (state) => id === `redesign-screens--${state}`,
+          )
+        ) {
           await expect(
-            page.locator('.rd-file-open').filter({ hasText: 'Household' }),
-          ).toBeVisible();
+            page.getByRole('button', { name: 'Restore this version…', exact: true }),
+          ).toBeDisabled();
           await expect(
-            page.locator('.rd-file-open').filter({ hasText: 'Quarterly budget' }),
+            page.getByRole('button', { name: 'Name this version…', exact: true }),
+          ).toBeDisabled();
+          await expect(
+            page.getByRole('status').filter({
+              hasText: id.endsWith('-offline')
+                ? 'Reconnect before naming or restoring a version.'
+                : 'Save your latest changes before naming or restoring a version.',
+            }),
           ).toBeVisible();
-          if (clearSelector === '.rd-empty') {
-            await page.getByRole('textbox', { name: 'Tag', exact: true }).fill('household');
+          verifications.push(`${variant}: ${id} explains why naming and restore are disabled`);
+        }
+        if (id.startsWith('redesign-')) {
+          await expect(page.locator('.sp-ui, .rd-native-editor').first()).toBeVisible();
+          await waitForNativeEditor(page);
+          expect(
+            await page.evaluate(
+              () => document.documentElement.scrollWidth <= window.innerWidth + 1,
+            ),
+            `Page overflow: ${id} ${variant}`,
+          ).toBe(true);
+        }
+        if (id.startsWith('redesign-') && width <= 768) {
+          const smallTargets = await page
+            .locator(
+              '.sp-ui button, .sp-ui input:not([type=radio]), .sp-ui summary, .sp-ui [role=radio], .sp-ui .sp-segment',
+            )
+            .evaluateAll((nodes) =>
+              nodes.flatMap((node) => {
+                // Univer owns its toolbar targets; these assertions cover Spinel chrome.
+                if (node.closest('[aria-hidden="true"], .rd-native-editor')) return [];
+                const box = node.getBoundingClientRect();
+                if (!box.width || !box.height) return [];
+                return box.height < 43.5 || box.width < 43.5
+                  ? [
+                      {
+                        label: node.getAttribute('aria-label') || node.textContent?.trim(),
+                        width: box.width,
+                        height: box.height,
+                      },
+                    ]
+                  : [];
+              }),
+            );
+          expect(smallTargets, `Touch targets: ${id} ${variant}`).toEqual([]);
+          // A negative left edge can clip rail controls without increasing scrollWidth.
+          const clippedControls = await page
+            .locator('.rd-rail .sp-segment, .rd-rail button')
+            .evaluateAll((nodes) =>
+              nodes.flatMap((node) => {
+                const box = node.getBoundingClientRect();
+                if (!box.width || !box.height || node.closest('[aria-hidden="true"]')) return [];
+                return box.left < -1 || box.right > window.innerWidth + 1
+                  ? [node.getAttribute('aria-label') || node.textContent?.trim()]
+                  : [];
+              }),
+            );
+          expect(clippedControls, `Clipped utilities: ${id} ${variant}`).toEqual([]);
+        }
+        expect(errors, `Runtime errors in ${id}`).toEqual([]);
+        const filename = `${id}-${variant}.png`;
+        await page.screenshot({
+          path: resolve(directory, filename),
+          fullPage: true,
+          animations: 'disabled',
+        });
+        captures.push({
+          id,
+          variant,
+          filename,
+          title: `${index.entries[id].title} / ${index.entries[id].name}`,
+        });
+        if (id === 'redesign-screens--filtered-no-matches') {
+          // Exercise both Clear controls with every filter set, including a query.
+          for (const clearSelector of ['.rd-empty', '.rd-filter-bar']) {
+            await page.getByRole('textbox', { name: 'Search files', exact: true }).fill('winter');
+            await page
+              .locator(clearSelector)
+              .getByRole('button', { name: 'Clear filters', exact: true })
+              .click();
+            await expect(
+              page.getByRole('textbox', { name: 'Search files', exact: true }),
+            ).toHaveValue('');
+            await expect(page.getByRole('textbox', { name: 'Tag', exact: true })).toHaveValue('');
             for (const [label, value] of [
-              ['File type', 'Sheets'],
-              ['Ownership', 'Shared with me'],
-              ['Last modified', 'Today'],
-            ]) {
-              await page.getByRole('combobox', { name: label, exact: true }).click();
-              await page.getByRole('option', { name: value, exact: true }).click();
+              ['File type', 'All types'],
+              ['Ownership', 'Mine and shared'],
+              ['Last modified', 'Any time'],
+            ])
+              await expect(page.getByRole('combobox', { name: label, exact: true })).toContainText(
+                value,
+              );
+            await expect(
+              page.getByRole('heading', { name: 'No matching files', exact: true }),
+            ).toHaveCount(0);
+            await expect(
+              page.locator('.rd-file-open').filter({ hasText: 'Household' }),
+            ).toBeVisible();
+            await expect(
+              page.locator('.rd-file-open').filter({ hasText: 'Quarterly budget' }),
+            ).toBeVisible();
+            if (clearSelector === '.rd-empty') {
+              await page.getByRole('textbox', { name: 'Tag', exact: true }).fill('household');
+              for (const [label, value] of [
+                ['File type', 'Sheets'],
+                ['Ownership', 'Shared with me'],
+                ['Last modified', 'Today'],
+              ]) {
+                await page.getByRole('combobox', { name: label, exact: true }).click();
+                await page.getByRole('option', { name: value, exact: true }).click();
+              }
             }
           }
+          verifications.push(
+            `${variant}: filter-only empty state and both Clear controls reset query, type, tag, ownership and date`,
+          );
         }
-        verifications.push(
-          `${variant}: filter-only empty state and both Clear controls reset query, type, tag, ownership and date`,
-        );
+      } catch (error) {
+        await recordCaptureFailure(page, id, variant, error);
       }
     }
     await page.close();
@@ -805,6 +821,13 @@ try {
       await page.close();
     }
   }
+} catch (error) {
+  captureFailures.push({
+    id: 'interaction-verification',
+    variant: 'journey',
+    message: String(error).slice(0, 6000),
+  });
+  console.error(error);
 } finally {
   await browser.close();
   await new Promise<void>((done, reject) =>
@@ -818,7 +841,11 @@ const escape = (value: string) =>
   );
 await writeFile(
   resolve(directory, 'manifest.json'),
-  JSON.stringify({ capturedAt: '2026-10-20T16:00:00Z', captures, verifications }, null, 2),
+  JSON.stringify(
+    { capturedAt: '2026-10-20T16:00:00Z', captures, verifications, failures: captureFailures },
+    null,
+    2,
+  ),
 );
 const pairs = [
   ['dashboard-dashboard--populated', 'dashboard'],
@@ -870,11 +897,65 @@ for (const filename of assets.filter(
 }
 await writeFile(resolve(directory, 'bundle-size.json'), JSON.stringify(bundles, null, 2));
 // Preserve visual evidence while still failing validation for any native input defect.
-if (nativeFailures.length)
-  throw new AggregateError(nativeFailures, 'Native editor input checks failed');
+if (nativeFailures.length || captureFailures.length)
+  throw new AggregateError(
+    [
+      ...nativeFailures,
+      ...captureFailures.map(
+        (failure) => new Error(`${failure.id} (${failure.variant}): ${failure.message}`),
+      ),
+    ],
+    'Design review validation failed; see manifest.json and failed-* evidence',
+  );
 console.log(
   `Captured ${captures.length} screenshots in ${directory}; ${verifications.length} interaction passes.`,
 );
+
+async function recordCaptureFailure(page: Page, id: string, variant: string, error: unknown) {
+  const message = (error instanceof Error ? (error.stack ?? error.message) : String(error)).slice(
+    0,
+    6000,
+  );
+  const filename = `failed-${id}-${variant}.png`;
+  console.error(`Capture failed ${variant}: ${id}\n${message}`);
+  const evidence = await Promise.allSettled([
+    page.screenshot({
+      path: resolve(directory, filename),
+      fullPage: true,
+      animations: 'disabled',
+      timeout: 5000,
+    }),
+    page.locator('body').ariaSnapshot({ timeout: 5000 }),
+  ]);
+  const failure = {
+    id,
+    variant,
+    message,
+    ...(evidence[0].status === 'fulfilled' ? { filename } : {}),
+  };
+  captureFailures.push(failure);
+  if (failure.filename)
+    captures.push({
+      id,
+      variant: `${variant} — FAILED`,
+      filename,
+      title: `Failed capture: ${index.entries[id]?.title ?? id}`,
+    });
+  await writeFile(
+    resolve(directory, `failed-${id}-${variant}.json`),
+    JSON.stringify(
+      {
+        ...failure,
+        accessibility:
+          evidence[1].status === 'fulfilled'
+            ? evidence[1].value.slice(0, 16000)
+            : String(evidence[1].reason).slice(0, 1000),
+      },
+      null,
+      2,
+    ),
+  );
+}
 
 async function waitForNativeEditor(page: Page) {
   const editor = page.locator('.rd-native-editor:visible');

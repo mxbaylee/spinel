@@ -23,9 +23,11 @@ const previewSecret = 'spinel_preview_not_a_real_access_token';
 export function TokenManager({
   state = 'loaded',
   admin = false,
+  initialTokenName = 'Local script',
 }: {
   state?: TokenManagerState;
   admin?: boolean;
+  initialTokenName?: string;
 }) {
   const nameId = useId();
   const [tokens, setTokens] = useState<ReviewToken[]>(() =>
@@ -41,7 +43,7 @@ export function TokenManager({
         : [
             {
               id: 'local-script',
-              name: 'Local script',
+              name: initialTokenName,
               used: state === 'previously-used' ? 'October 20, 2026 at 09:15' : 'Never',
               revoked: state === 'revoked',
             },
@@ -129,9 +131,9 @@ export function TokenManager({
       ) : loadFailed ? (
         <p role="alert">Could not load access tokens. Try again.</p>
       ) : tokens.length ? (
-        <div aria-label="Access tokens">
+        <div role="list" aria-label="Access tokens">
           {tokens.map((token) => (
-            <div className="rd-setting-row" key={token.id}>
+            <div className="rd-setting-row" role="listitem" key={token.id}>
               <span>
                 <strong>{token.name}</strong>
                 <small>

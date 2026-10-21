@@ -44,3 +44,10 @@ export const OperatorMetadata: Story = { args: { admin: true } };
 export const OperatorEmpty: Story = { args: { admin: true, state: 'empty' } };
 export const OperatorLoading: Story = { args: { admin: true, state: 'loading' } };
 export const OperatorLoadFailed: Story = { args: { admin: true, state: 'load-failed' } };
+
+export const LongName: Story = {
+  args: {
+    initialTokenName:
+      'Monthly budget archive and household planning script for all recurring workflows',
+  },
+};

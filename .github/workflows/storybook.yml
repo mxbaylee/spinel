@@ -15,7 +15,7 @@ permissions:
 concurrency:
   group: storybook-${{ github.event.pull_request.number || github.ref }}
   # A half-finished Pages deploy is worse than a late one.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && !(github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign') }}
 
 jobs:
   changes:
@@ -76,13 +76,42 @@ jobs:
             test -s "storybook-static/$file" || { echo "::error::storybook-static/$file is missing"; exit 1; }
           done
       - name: Upload interactive review build
-        if: needs.changes.outputs.docs_only != 'true' && github.event_name == 'pull_request'
+        if: needs.changes.outputs.docs_only != 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: storybook-review
           path: storybook-static
           if-no-files-found: error
           retention-days: 7
+      # Temporary owner-authorized PR #125 review. Remove this exception before merge.
+      - name: Upload for Pages
+        if: needs.changes.outputs.docs_only != 'true' && ((github.event_name != 'pull_request' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'))
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: storybook-static
+      - name: Documentation-only change
+        if: needs.changes.outputs.docs_only == 'true'
+        run: echo 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'
+
+  review:
+    name: Review Storybook states and interactions
+    needs: [changes, build]
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - run: npm ci
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: storybook-review
+          path: storybook-static
       - name: Capture icon and integration stories
         if: needs.changes.outputs.docs_only != 'true'
         run: |
@@ -106,20 +135,32 @@ jobs:
           path: test-results/design-review
           if-no-files-found: error
           retention-days: 14
-      # Temporary owner-authorized PR #125 review. Remove this exception before merge.
-      - name: Upload for Pages
-        if: needs.changes.outputs.docs_only != 'true' && ((github.event_name != 'pull_request' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'))
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
-        with:
-          path: storybook-static
-      - name: Documentation-only change
-        if: needs.changes.outputs.docs_only == 'true'
-        run: echo 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'
 
   deploy:
     name: Deploy to GitHub Pages
+    needs: [changes, build, review]
+    if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages-deploy
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  # Temporary sample-data preview; validation remains independent and required for merge.
+
+  deploy-preview:
+    name: Deploy temporary PR125 preview
     needs: [changes, build]
-    if: needs.changes.outputs.docs_only != 'true' && ((github.event_name != 'pull_request' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'))
+    if: needs.changes.outputs.docs_only != 'true' && github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:

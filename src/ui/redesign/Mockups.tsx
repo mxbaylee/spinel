@@ -13,6 +13,7 @@ import { getPreference, setPreference, watchTheme } from '../theme.ts';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal, SegmentedChoice } from './Controls.tsx';
 import './mockups.css';
 import { TokenManager } from './TokenManager.tsx';
+import { ImportDialog } from './ImportReview.tsx';
 
 type GlyphName =
   | 'files'
@@ -1182,10 +1183,19 @@ export function DashboardMockup({
           {notice}
         </p>
       </div>
+      {dialog === 'Import file…' && (
+        <ImportDialog
+          open
+          destination={currentFolder?.name ?? 'My files'}
+          onOpenChange={(open) => {
+            if (!open) setDialog('');
+          }}
+        />
+      )}
       <Modal
         title={dialog || 'New file'}
         description="Changes in this review stay in the preview."
-        open={Boolean(dialog)}
+        open={Boolean(dialog) && dialog !== 'Import file…'}
         onOpenChange={(open) => {
           if (!open) setDialog('');
         }}
@@ -1451,8 +1461,10 @@ export function EditorMockup({
   saveState = 'saved',
   onRetrySave,
   onNameVersion,
+  exportState = 'ready',
   editorContent,
 }: {
+  exportState?: 'ready' | 'loading' | 'error';
   editorContent?: ReactNode;
   onNameVersion?: (name: string) => void;
   onBack?: () => void;
@@ -1478,7 +1490,8 @@ export function EditorMockup({
   const [checkpoint, setCheckpoint] = useState('10:15 · Ready for the trip');
   const [versionName, setVersionName] = useState('');
   const [naming, setNaming] = useState(false);
-  const [panel, setPanel] = useState(formula ? 'Formula' : '');
+  const [panel, setPanel] = useState(exportState !== 'ready' ? 'Export' : formula ? 'Formula' : '');
+  const [exportStatus, setExportStatus] = useState(exportState);
   const [notice, setNotice] = useState('');
   const isSpaceTrash = space && selected === 'Trash';
   const name = space ? selected : (title ?? (sheet ? 'Quarterly budget' : 'Autumn plans'));
@@ -1740,11 +1753,21 @@ export function EditorMockup({
                       ? 'Choose a format for this document.'
                       : 'Document options'}
                 </p>
+                {exportStatus === 'error' && (
+                  <p role="alert">
+                    Could not download the export. Your document is unchanged. Choose a format to
+                    try again.
+                  </p>
+                )}
+                {exportStatus === 'loading' && <p role="status">Preparing your download…</p>}
                 {['Univer file', 'PDF'].map((label) => (
                   <Button
                     key={label}
-                    disabled={saveState !== 'saved' || offline}
-                    onClick={() => setNotice(`Preparing ${label}…`)}
+                    disabled={saveState !== 'saved' || offline || exportStatus === 'loading'}
+                    onClick={() => {
+                      setExportStatus('ready');
+                      setNotice(`${label} export requested in this preview.`);
+                    }}
                   >
                     {label}
                   </Button>
@@ -1808,7 +1831,6 @@ function SharingContent({
         <Avatar />
         <span>
           <strong>You</strong>
-          <small>Owner</small>
         </span>
         <span className="rd-badge">Owner</span>
       </div>
@@ -2139,6 +2161,7 @@ function HistoryContent({
   );
 }
 export function HistoryMockup({
+  state = 'ready',
   calendar = false,
   confirmation = false,
   viewOnly = false,
@@ -2152,6 +2175,7 @@ export function HistoryMockup({
   saveState = 'saved',
   offline = false,
 }: {
+  state?: 'ready' | 'loading' | 'empty' | 'error';
   viewOnly?: boolean;
   sheet?: boolean;
   title?: string;
@@ -2165,6 +2189,7 @@ export function HistoryMockup({
   calendar?: boolean;
   confirmation?: boolean;
 }) {
+  const [historyState, setHistoryState] = useState(state);
   const [restore, setRestore] = useState(confirmation);
   const [selected, setSelected] = useState(
     namedVersion
@@ -2201,7 +2226,7 @@ export function HistoryMockup({
           {!viewOnly && (
             <>
               <Button
-                disabled={saveState !== 'saved' || offline}
+                disabled={saveState !== 'saved' || offline || historyState !== 'ready'}
                 title={
                   offline
                     ? 'Reconnect before naming a version.'
@@ -2215,7 +2240,7 @@ export function HistoryMockup({
               </Button>
               <Button
                 primary
-                disabled={offline || saveState !== 'saved'}
+                disabled={offline || saveState !== 'saved' || historyState !== 'ready'}
                 onClick={() => setRestore(true)}
               >
                 Restore this version…
@@ -2231,35 +2256,59 @@ export function HistoryMockup({
             : 'Save your latest changes before naming or restoring a version.'}
         </p>
       )}
-      <p className="rd-history-selection">
-        Preview · {selected.startsWith('October') ? selected : `October 20, 2026 · ${selected}`} ·
-        UTC
-      </p>
-      <div className="rd-history">
-        <aside className="rd-inspector">
-          <div className="rd-history-desktop">
-            <HistoryContent
-              selected={selected}
-              setSelected={setSelected}
-              namedVersion={currentName}
-            />
+      {historyState === 'ready' ? (
+        <>
+          <p className="rd-history-selection">
+            Preview · {selected.startsWith('October') ? selected : `October 20, 2026 · ${selected}`}{' '}
+            · UTC
+          </p>
+          <div className="rd-history">
+            <aside className="rd-inspector">
+              <div className="rd-history-desktop">
+                <HistoryContent
+                  selected={selected}
+                  setSelected={setSelected}
+                  namedVersion={currentName}
+                />
+              </div>
+              <details className="rd-history-disclosure" open={calendar}>
+                <summary>Choose version · {selected}</summary>
+                <HistoryContent
+                  selected={selected}
+                  setSelected={setSelected}
+                  namedVersion={currentName}
+                />
+              </details>
+            </aside>
+            <DocumentSurface sheet={sheet} readOnly />
           </div>
-          <details className="rd-history-disclosure" open={calendar}>
-            <summary>Choose version · {selected}</summary>
-            <HistoryContent
-              selected={selected}
-              setSelected={setSelected}
-              namedVersion={currentName}
-            />
-          </details>
-        </aside>
-        <DocumentSurface sheet={sheet} readOnly />
-      </div>
+        </>
+      ) : (
+        <div className="rd-empty" role={historyState === 'error' ? 'alert' : 'status'}>
+          <h2>
+            {historyState === 'loading'
+              ? 'Loading versions…'
+              : historyState === 'empty'
+                ? 'No versions yet'
+                : 'Could not load versions'}
+          </h2>
+          <p>
+            {historyState === 'empty'
+              ? 'Saved checkpoints will appear here. Return to your document to keep working.'
+              : historyState === 'error'
+                ? 'Your live document is unchanged. Try loading its versions again.'
+                : 'Your live document remains available.'}
+          </p>
+          {historyState === 'error' && (
+            <Button onClick={() => setHistoryState('ready')}>Try again</Button>
+          )}
+        </div>
+      )}
       <p role="status">{notice}</p>
       <NameVersionDialog
         open={naming && !viewOnly}
         onOpenChange={setNaming}
-        disabled={saveState !== 'saved' || offline}
+        disabled={saveState !== 'saved' || offline || historyState !== 'ready'}
         onSave={(version) => {
           setCurrentName(version);
           setSelected(`Just now · ${version}`);
@@ -2277,7 +2326,7 @@ export function HistoryMockup({
           <Button onClick={() => setRestore(false)}>Cancel</Button>
           <Button
             primary
-            disabled={offline || saveState !== 'saved'}
+            disabled={offline || saveState !== 'saved' || historyState !== 'ready'}
             onClick={() => {
               setRestore(false);
               setNotice('Version restored in the preview.');
@@ -2292,6 +2341,7 @@ export function HistoryMockup({
 }
 export function ProfileMockup({
   section = 'profile',
+  state = 'ready',
   initialPicker,
   onBack,
   onSignOut,
@@ -2300,6 +2350,7 @@ export function ProfileMockup({
   credential = 'idle',
   onCredential,
 }: {
+  state?: 'ready' | 'loading' | 'load-error' | 'saving' | 'save-error';
   onBack?: () => void;
   onSignOut?: () => void;
   operator?: boolean;
@@ -2310,6 +2361,7 @@ export function ProfileMockup({
   section?: 'profile' | 'security' | 'connections' | 'device' | 'links';
 }) {
   const [tab, setTab] = useState<string>(section);
+  const [profileState, setProfileState] = useState(state);
   const theme = useSyncExternalStore(watchTheme, getPreference);
   const [notice, setNotice] = useState('');
   const identity = useContext(ReviewProfileContext);
@@ -2370,7 +2422,14 @@ export function ProfileMockup({
           ))}
         </nav>
         <div className="rd-profile-content">
-          {tab === 'profile' ? (
+          {tab === 'profile' && profileState === 'loading' ? (
+            <p role="status">Loading your profile…</p>
+          ) : tab === 'profile' && profileState === 'load-error' ? (
+            <div>
+              <p role="alert">Could not load your profile. Try again.</p>
+              <Button onClick={() => setProfileState('ready')}>Try again</Button>
+            </div>
+          ) : tab === 'profile' ? (
             <>
               <h2>Make yourself at home</h2>
               <p className="sp-muted">Your name and icon help collaborators recognize you.</p>
@@ -2384,24 +2443,39 @@ export function ProfileMockup({
                     {operator ? 'Operator account · No document access' : 'Your everyday account'}
                   </p>
                 </div>
-                <button className="sp-control" ref={iconTrigger} onClick={() => setPicker('icon')}>
+                <button
+                  disabled={profileState === 'saving'}
+                  className="sp-control"
+                  ref={iconTrigger}
+                  onClick={() => setPicker('icon')}
+                >
                   Choose icon
                 </button>
-                <Button onClick={() => setPicker('color')}>Choose color</Button>
+                <Button disabled={profileState === 'saving'} onClick={() => setPicker('color')}>
+                  Choose color
+                </Button>
               </div>
               <label>
                 Display name
                 <input
+                  disabled={profileState === 'saving'}
                   maxLength={80}
                   value={draft.name}
                   onChange={(event) => setDraft({ ...draft, name: event.target.value })}
                 />
               </label>
+              {profileState === 'save-error' && (
+                <p role="alert">
+                  Could not save your profile. Your changes are still here. Try again.
+                </p>
+              )}
+              {profileState === 'saving' && <p role="status">Saving your profile…</p>}
               <div className="sp-actions">
                 <Button
                   primary
-                  disabled={!draft.name.trim()}
+                  disabled={!draft.name.trim() || profileState === 'saving'}
                   onClick={() => {
+                    setProfileState('ready');
                     setSaved(draft);
                     identity.save(draft);
                     setNotice(
@@ -2409,7 +2483,7 @@ export function ProfileMockup({
                     );
                   }}
                 >
-                  Save profile
+                  {profileState === 'saving' ? 'Saving…' : 'Save profile'}
                 </Button>
               </div>
               <p className="sp-muted">
@@ -2635,10 +2709,24 @@ export function AdminMockup({
   firstRun?: boolean;
   onProfile?: () => void;
   state?:
-    'ready' | 'loading' | 'error' | 'invite-created' | 'health-warning' | 'disable' | 'passkeys';
+    | 'ready'
+    | 'loading'
+    | 'error'
+    | 'invite-created'
+    | 'health-warning'
+    | 'health-running'
+    | 'health-failed'
+    | 'health-unconfigured'
+    | 'health-load-error'
+    | 'health-loading'
+    | 'health-never-run'
+    | 'disable'
+    | 'passkeys';
   section?: string;
 }) {
   const [tab, setTab] = useState(section);
+  const [healthRetried, setHealthRetried] = useState(false);
+  const health = healthRetried ? 'ready' : state;
   const [confirm, setConfirm] = useState(state === 'disable' ? 'Alex Kim' : '');
   const [passkeys, setPasskeys] = useState(state === 'passkeys' ? 'Alex Kim' : '');
   const [created, setCreated] = useState(state === 'invite-created');
@@ -2791,33 +2879,77 @@ export function AdminMockup({
               )}
             </>
           ) : tab === 'Connections' ? (
-            <div className="rd-setting-row">
-              <span>
-                Notebook client<small>Alex Baylee · client.example · Last used today</small>
-              </span>
-              <span className="rd-badge">Active</span>
-            </div>
-          ) : (
             <>
               <div className="rd-setting-row">
                 <span>
-                  <strong>
-                    {firstRun
-                      ? 'No backups yet'
-                      : state === 'health-warning'
-                        ? 'Backup overdue'
-                        : '✓ Backups are current'}
-                  </strong>
-                  <small>
-                    {firstRun
-                      ? 'Configure backups before adding your work.'
-                      : state === 'health-warning'
-                        ? 'Last successful backup: Oct 18 at 03:00 · Checked today at 12:30'
-                        : 'Last successful backup: today at 03:00'}
-                  </small>
+                  Notebook client<small>Alex Baylee · client.example · Last used today</small>
                 </span>
-                <Button>Backup guide</Button>
+                <span className="rd-badge">Active</span>
               </div>
+              <details className="rd-section">
+                <summary>Personal access token activity</summary>
+                <TokenManager admin />
+              </details>
+            </>
+          ) : (
+            <>
+              {health === 'health-loading' ? (
+                <p role="status">Loading backup status…</p>
+              ) : health === 'health-load-error' ? (
+                <div>
+                  <p role="alert">Could not load backup status. Try again.</p>
+                  <Button onClick={() => setHealthRetried(true)}>Try again</Button>
+                </div>
+              ) : (
+                <div className="rd-setting-row">
+                  <span>
+                    <strong>
+                      {firstRun || health === 'health-never-run'
+                        ? 'No backups yet'
+                        : health === 'health-warning'
+                          ? 'Backup overdue'
+                          : health === 'health-running'
+                            ? 'Backup in progress…'
+                            : health === 'health-failed'
+                              ? 'Last backup failed'
+                              : health === 'health-unconfigured'
+                                ? 'Offsite backups are not configured'
+                                : '✓ Backups are current'}
+                    </strong>
+                    <small>
+                      {firstRun || health === 'health-never-run' || health === 'health-unconfigured'
+                        ? 'Last successful backup: none yet'
+                        : health === 'health-warning' || health === 'health-failed'
+                          ? 'Last successful backup: Oct 18 at 03:00 · Checked today at 12:30'
+                          : 'Last successful backup: today at 03:00'}
+                    </small>
+                    {health === 'health-running' && (
+                      <small role="status">
+                        The previous successful backup remains available while this one runs.
+                      </small>
+                    )}
+                    {health === 'health-failed' && (
+                      <small role="alert">
+                        Last attempt: today at 03:00. Check the backup job on the server and retry
+                        there.
+                      </small>
+                    )}
+                    {(health === 'health-unconfigured' || firstRun) && (
+                      <small role="alert">
+                        Follow the backup setup guide on the server before adding your work.
+                      </small>
+                    )}
+                  </span>
+                  <a
+                    className="sp-control"
+                    href="https://github.com/mxbaylee/spinel/blob/main/docs/backups.md"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Backup guide
+                  </a>
+                </div>
+              )}
               <div className="rd-setting-row">
                 <span>
                   <strong>Server telemetry</strong>
@@ -2933,11 +3065,34 @@ export function AdminMockup({
 export function EntryMockup({
   kind = 'consent',
   readOnly = false,
+  consentState = 'ready',
 }: {
   readOnly?: boolean;
+  consentState?:
+    | 'ready'
+    | 'loading'
+    | 'load-error'
+    | 'pending'
+    | 'cancelling'
+    | 'error'
+    | 'operator'
+    | 'malformed'
+    | 'unavailable'
+    | 'limit';
   kind?: 'revoked' | 'offline' | 'missing' | 'consent' | 'consent-expired';
 }) {
   const [notice, setNotice] = useState('');
+  const [requestState, setRequestState] = useState<string>(consentState);
+  const consent = kind === 'consent';
+  const busy = requestState === 'pending' || requestState === 'cancelling';
+  const blocked = [
+    'operator',
+    'malformed',
+    'unavailable',
+    'cancelled',
+    'loading',
+    'load-error',
+  ].includes(requestState);
   const entries = {
     revoked: ['This link no longer works.', 'Ask the person who shared it for a new link.', ''],
     offline: ['You’re offline.', 'Connect to the internet to open this page.', 'Try again'],
@@ -2958,6 +3113,15 @@ export function EntryMockup({
     ],
   };
   const [title, detail, action] = entries[kind];
+  const unavailableDetail: Record<string, string> = {
+    operator:
+      'Operator accounts cannot connect assistants. Sign out and use your everyday account.',
+    malformed:
+      'This connection request has expired or is no longer available. Start again from your application.',
+    unavailable:
+      'This connection request is not available in this session. Start again from your application.',
+    cancelled: 'Connection cancelled in this preview. Return to your application.',
+  };
   return (
     <div className="sp-ui rd-entry">
       <div className="rd-entry-brand">
@@ -2965,41 +3129,71 @@ export function EntryMockup({
         <strong>spinel</strong>
       </div>
       <section className="rd-entry-card">
-        <h1>{title}</h1>
-        <p className="sp-muted">{detail}</p>
-        {kind === 'consent' && (
+        <h1>{consent && blocked ? 'Connect an application' : title}</h1>
+        {consent && blocked ? (
+          requestState === 'loading' ? (
+            <p role="status">Loading connection request…</p>
+          ) : requestState === 'load-error' ? (
+            <>
+              <p role="alert">Could not load this connection request. Try again.</p>
+              <Button onClick={() => setRequestState('ready')}>Try again</Button>
+            </>
+          ) : (
+            <p role={requestState === 'cancelled' ? 'status' : 'alert'}>
+              {unavailableDetail[requestState]}
+            </p>
+          )
+        ) : (
+          <p className="sp-muted">{detail}</p>
+        )}
+        {consent && !blocked && (
           <div className="rd-consent">
             <p>
               <strong>Notebook client</strong>
               <small>Client-supplied name · not verified</small>
             </p>
             <p>
-              Callback: <strong>client.example</strong>
+              Return address: <strong>client.example</strong>
             </p>
             <p>
               {readOnly
                 ? 'Can read files you can access. Cannot edit files.'
                 : 'Can read files you can access and edit only files you have permission to edit.'}
             </p>
-            <p>You can disconnect this application in Profile → Connections at any time.</p>
+            <p>
+              You can disconnect this application in Settings → Connected assistants at any time.
+            </p>
             <p>Signed in as Alex Baylee</p>
           </div>
         )}
-        {action && (
-          <Button
-            primary
-            onClick={() =>
-              setNotice(
-                kind === 'consent'
-                  ? 'Connection allowed in this preview.'
-                  : 'Continue in the application.',
-              )
-            }
-          >
-            {action}
-          </Button>
+        {consent && requestState === 'error' && (
+          <p role="alert">Could not finish this connection request. Try again.</p>
         )}
-        {kind === 'consent' && <Button>Cancel</Button>}
+        {consent && requestState === 'limit' && (
+          <p role="alert">
+            You have 10 connected assistants. Disconnect an old assistant in Settings, then start
+            again from your application.
+          </p>
+        )}
+        {action && (!consent || !blocked) && (
+          <div className="sp-actions">
+            <Button
+              primary
+              disabled={consent && (busy || requestState === 'limit')}
+              onClick={() =>
+                consent ? setRequestState('pending') : setNotice('Continue in the application.')
+              }
+            >
+              {action}
+            </Button>
+            {consent && (
+              <Button disabled={busy} onClick={() => setRequestState('cancelled')}>
+                Cancel
+              </Button>
+            )}
+          </div>
+        )}
+        {consent && busy && <p role="status">Finishing connection request…</p>}
         <p className="rd-feedback" role="status">
           {notice}
         </p>
