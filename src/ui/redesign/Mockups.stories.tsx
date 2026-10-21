@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 import { defaultProfile } from '../../profile/profile.ts';
 import { EntryPreview } from './EntryJourney.tsx';
 import {
@@ -12,7 +13,9 @@ import {
   ProfileMockup,
   ReviewProfileContext,
   SharingMockup,
+  SpaceTree,
 } from './Mockups.tsx';
+import type { SpaceEntry } from './Mockups.tsx';
 
 const meta = {
   title: 'Redesign/Screens',
@@ -159,6 +162,78 @@ export const AdminPasskeys: Story = { render: () => <AdminMockup state="passkeys
 export const HistoryRestore: Story = { render: () => <HistoryMockup confirmation /> };
 
 export const PlannedSpaceViewer: Story = { render: () => <EditorMockup space viewOnly /> };
+
+const deepPageName = 'Museum reservations and accessible routes for our Saturday afternoon in Rome';
+const deepParents = ['Travel', 'Autumn', 'Europe', 'Italy', 'Rome', 'Weekend', 'Saturday'];
+const deepPages: SpaceEntry[] = [
+  { name: 'Welcome', kind: 'doc' },
+  ...deepParents.reduceRight<SpaceEntry[]>(
+    (children, name, level) => [
+      {
+        name,
+        kind: level % 2 ? 'folder' : 'doc',
+        children: [{ name: `${name} overview`, kind: 'doc' }, ...children],
+      },
+    ],
+    [{ name: deepPageName, kind: 'sheet' }],
+  ),
+];
+function DeepSpaceTree() {
+  const [selected, setSelected] = useState(deepPageName);
+  return (
+    <nav
+      className="sp-ui rd-sidebar rd-space-sidebar rd-space-tree-example"
+      aria-label="Space contents"
+    >
+      <div className="rd-space-nav-heading">
+        <h2>Autumn plans</h2>
+      </div>
+      <SpaceTree
+        entries={deepPages}
+        selected={selected}
+        onSelect={setSelected}
+        onAction={() => {}}
+      />
+    </nav>
+  );
+}
+export const PlannedSpaceDeepTree: Story = {
+  render: () => <DeepSpaceTree />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const icon = (name: string) =>
+      canvas.getByRole('button', { name }).querySelector('svg')!.getBoundingClientRect();
+    // Every level uses the same indent whether its node is a parent or a leaf.
+    await expect(icon('Welcome').x).toBeCloseTo(icon('Travel').x, 1);
+    for (let level = 0; level < deepParents.length; level++) {
+      const parent = deepParents[level];
+      const child = deepParents[level + 1] ?? deepPageName;
+      await expect(icon(child).x - icon(parent).x).toBeCloseTo(16, 1);
+      await expect(icon(`${parent} overview`).x).toBeCloseTo(icon(child).x, 1);
+    }
+    const touch = canvasElement.ownerDocument.defaultView!.matchMedia(
+      '(pointer: coarse), (max-width: 640px)',
+    ).matches;
+    for (const gutter of canvasElement.querySelectorAll<HTMLElement>(
+      '.rd-space-toggle, .rd-space-toggle-placeholder',
+    )) {
+      await expect(gutter.getBoundingClientRect().width).toBe(touch ? 44 : 24);
+      if (touch && gutter.tagName === 'BUTTON')
+        await expect(gutter.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
+    }
+    const leaf = canvas.getByRole('button', { name: deepPageName });
+    await expect(leaf).toHaveAttribute('title', deepPageName);
+    const label = leaf.querySelector('span')!;
+    await expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+    await userEvent.click(canvas.getByRole('button', { name: 'Collapse Travel' }));
+    await expect(canvas.queryByRole('button', { name: deepPageName })).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole('button', { name: 'Expand Travel' }));
+    await expect(canvas.getByRole('button', { name: deepPageName })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+  },
+};
 
 export const DashboardGrid: Story = { render: () => <DashboardMockup initialLayout="grid" /> };
 export const DashboardGridCollapsed: Story = {

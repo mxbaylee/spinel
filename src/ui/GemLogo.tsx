@@ -1,6 +1,19 @@
 import { useId } from 'react';
 import { HEART, GEM_FACETS } from './gemGeometry.ts';
 
+/** Restart on every activation, including taps that leave hover or focus in place. */
+export function replayGemWiggle(button: HTMLElement) {
+  const wrapper = button.querySelector('.gem')?.parentElement;
+  if (!wrapper) return;
+  // Animate the wrapper: the SVG owns its independent dark-theme inversion.
+  wrapper.getAnimations().forEach((animation) => animation.cancel());
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  wrapper.animate(
+    [0, -12, 9, -6, 3, 0].map((angle) => ({ transform: `rotate(${angle}deg)` })),
+    { duration: 600, easing: 'ease-in-out' },
+  );
+}
+
 export function GemLogo({ size = 36 }: { size?: number }) {
   const clip = useId();
   return (

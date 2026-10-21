@@ -22,7 +22,7 @@ function NativeEditorStory(props: NativeEditorProps) {
       );
   };
   return (
-    <div className="sp-ui">
+    <div className="rd-native-story-content">
       <details className="rd-native-review-tools">
         <summary>Native editor review controls</summary>
         <p>
@@ -62,6 +62,13 @@ const meta = {
   title: 'Redesign/Native editors',
   component: NativeEditor,
   render: (args) => <NativeEditorStory {...args} />,
+  decorators: [
+    (Story) => (
+      <div className="sp-ui rd-native-story">
+        <Story />
+      </div>
+    ),
+  ],
   parameters: {
     shell: 'none',
     layout: 'fullscreen',

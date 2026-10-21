@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
-import { GemLogo } from '../GemLogo.tsx';
+import { GemLogo, replayGemWiggle } from '../GemLogo.tsx';
 import { Button, Modal } from './Controls.tsx';
 import './entryJourney.css';
 import { ThemeMenu } from './Mockups.tsx';
@@ -69,7 +69,14 @@ export function EntryJourney({
   return (
     <div className={`sp-ui ej-page${home ? ' ej-home' : ''}`}>
       <header className="ej-header">
-        <button className="ej-brand" aria-label="Spinel home" onClick={() => onNavigate('home')}>
+        <button
+          className="ej-brand"
+          aria-label="Spinel home"
+          onClick={(event) => {
+            replayGemWiggle(event.currentTarget);
+            onNavigate('home');
+          }}
+        >
           <span className="wiggle">
             <GemLogo />
           </span>

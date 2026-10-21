@@ -75,6 +75,7 @@ export function Walkthrough({
   const [generation, setGeneration] = useState(0);
   const [credential, setCredential] = useState<'idle' | 'pending' | 'success' | 'error'>('idle');
   const [event, setEvent] = useState('');
+  const [reviewVisible, setReviewVisible] = useState(true);
   const pageRef = useRef<HTMLDivElement>(null);
   const fileFocus = useRef<HTMLElement | null>(null);
   const fileScroll = useRef(0);
@@ -172,56 +173,76 @@ export function Walkthrough({
     else if (value === 'invalid-link') setOutcome('invalid');
   };
   return (
-    <div className="sp-ui rd-walkthrough">
-      <details className="rd-review-tools">
-        <summary>
-          Design walkthrough · {persona === 'guest' ? 'Link guest' : persona} · local preview
-        </summary>
-        <div className="rd-review-controls">
-          <p>
-            No production accounts or documents are changed. Univer editing is real; sample content
-            stays in memory until you reload or restart. Passkeys, save status, history and sharing
-            are simulated.
-          </p>
-          <Choice
-            label="Preview event"
-            value={event}
-            onChange={simulate}
-            options={[
-              { value: '', label: 'Choose an event…' },
-              ...(entry || screen === 'profile'
-                ? [
-                    { value: 'passkey-success', label: 'Passkey succeeded' },
-                    { value: 'passkey-cancel', label: 'Passkey cancelled' },
-                    { value: 'passkey-error', label: 'Passkey failed' },
-                    ...(['setup', 'invite', 'recovery'].includes(screen)
-                      ? [{ value: 'invalid-link', label: 'Link invalid or expired' }]
-                      : []),
-                  ]
-                : []),
-              ...(screen === 'editor'
-                ? [
-                    { value: 'saving', label: 'Edit is saving' },
-                    { value: 'save-error', label: 'Save failed' },
-                    { value: 'saved', label: 'Save succeeded / reconnected' },
-                    { value: 'offline', label: 'Connection lost' },
-                  ]
-                : []),
-              ...(persona === 'guest'
-                ? [
-                    { value: 'guest-doc', label: 'Open shared Doc' },
-                    { value: 'guest-sheet', label: 'Open shared Sheet' },
-                    { value: 'guest-viewer', label: 'Viewer access' },
-                    { value: 'guest-editor', label: 'Editor access' },
-                    { value: 'revoked', label: 'Owner turns off link' },
-                    { value: 'cold-offline', label: 'Open link while offline' },
-                  ]
-                : []),
-            ]}
-          />
-          <Button onClick={reset}>Restart walkthrough</Button>
+    <div className={`sp-ui rd-walkthrough ${screen === 'editor' ? 'rd-walkthrough-editor' : ''}`}>
+      {reviewVisible && (
+        <div className="rd-review-banner">
+          <details className="rd-review-tools">
+            <summary>
+              Design walkthrough · {persona === 'guest' ? 'Link guest' : persona} · local preview
+            </summary>
+            <div className="rd-review-controls">
+              <p>
+                No production accounts or documents are changed. Univer editing is real; sample
+                content stays in memory until you reload or restart. Passkeys, save status, history
+                and sharing are simulated. Hide these controls for the full editor. Reload to bring
+                them back.
+              </p>
+              <Choice
+                label="Preview event"
+                value={event}
+                onChange={simulate}
+                options={[
+                  { value: '', label: 'Choose an event…' },
+                  ...(entry || screen === 'profile'
+                    ? [
+                        { value: 'passkey-success', label: 'Passkey succeeded' },
+                        { value: 'passkey-cancel', label: 'Passkey cancelled' },
+                        { value: 'passkey-error', label: 'Passkey failed' },
+                        ...(['setup', 'invite', 'recovery'].includes(screen)
+                          ? [{ value: 'invalid-link', label: 'Link invalid or expired' }]
+                          : []),
+                      ]
+                    : []),
+                  ...(screen === 'editor'
+                    ? [
+                        { value: 'saving', label: 'Edit is saving' },
+                        { value: 'save-error', label: 'Save failed' },
+                        { value: 'saved', label: 'Save succeeded / reconnected' },
+                        { value: 'offline', label: 'Connection lost' },
+                      ]
+                    : []),
+                  ...(persona === 'guest'
+                    ? [
+                        { value: 'guest-doc', label: 'Open shared Doc' },
+                        { value: 'guest-sheet', label: 'Open shared Sheet' },
+                        { value: 'guest-viewer', label: 'Viewer access' },
+                        { value: 'guest-editor', label: 'Editor access' },
+                        { value: 'revoked', label: 'Owner turns off link' },
+                        { value: 'cold-offline', label: 'Open link while offline' },
+                      ]
+                    : []),
+                ]}
+              />
+              <Button onClick={reset}>Restart walkthrough</Button>
+            </div>
+          </details>
+          <Button
+            className="rd-review-dismiss sp-quiet"
+            aria-label="Hide review controls"
+            title="Hide review controls. Reload to bring them back."
+            onClick={() => {
+              setReviewVisible(false);
+              const heading = Array.from(
+                pageRef.current?.querySelectorAll<HTMLElement>('h1') ?? [],
+              ).find((node) => node.getClientRects().length > 0);
+              heading?.setAttribute('tabindex', '-1');
+              heading?.focus({ preventScroll: true });
+            }}
+          >
+            <span aria-hidden="true">×</span>
+          </Button>
         </div>
-      </details>
+      )}
       <ReviewProfileContext.Provider value={{ profile, save: setProfile }}>
         <div ref={pageRef} className="rd-walkthrough-page" key={generation}>
           {entry && (
@@ -252,7 +273,7 @@ export function Walkthrough({
           {(signedIn || persona === 'guest') &&
             !['revoked', 'offline'].includes(screen) &&
             persona !== 'operator' && (
-              <div hidden={screen !== 'editor'}>
+              <div className="rd-walkthrough-editor-screen" hidden={screen !== 'editor'}>
                 <EditorMockup
                   key={`${file.id}:${file.access}`}
                   title={file.name}

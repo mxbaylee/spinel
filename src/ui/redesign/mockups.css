@@ -1594,18 +1594,28 @@
   padding: 0;
   flex: 1;
 }
-.rd-space-pages ul {
+.rd-space-pages {
+  min-width: 0;
+}
+.rd-space-tree-scroll {
+  --rd-space-gutter: 24px;
+  min-width: 0;
+  overflow-x: auto;
+}
+.rd-space-tree,
+.rd-space-tree ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-.rd-space-pages ul ul {
-  padding-left: 16px;
+.rd-space-tree ul {
+  padding-inline-start: 16px;
 }
 .rd-space-node {
   display: flex;
   align-items: center;
-  min-width: 0;
+  /* Keep labels and actions usable at any depth; the tree owns overflow. */
+  min-width: 176px;
 }
 .rd-space-node .rd-nav-item {
   min-width: 0;
@@ -1614,17 +1624,21 @@
   gap: 8px;
 }
 .rd-space-node .rd-nav-item span {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .rd-space-node .rd-nav-item svg {
   flex-shrink: 0;
+  width: 18px;
+  height: 18px;
 }
 .rd-space-toggle,
 .rd-space-toggle-placeholder {
-  width: 24px;
-  flex-shrink: 0;
+  width: var(--rd-space-gutter);
+  min-width: var(--rd-space-gutter);
+  flex: 0 0 var(--rd-space-gutter);
 }
 .rd-space-toggle {
   height: 32px;
@@ -1637,6 +1651,17 @@
 .rd-space-toggle:hover {
   background: var(--sp-tint-1);
   color: var(--sp-text);
+}
+@media (pointer: coarse), (max-width: 640px) {
+  .rd-space-tree-scroll {
+    /* Match the actual disclosure hit target, including on leaf rows. */
+    --rd-space-gutter: 44px;
+  }
+}
+.rd-space-tree-example {
+  width: 280px;
+  max-width: 100%;
+  min-height: 0;
 }
 @media (max-width: 900px) {
   .rd-shell.rd-space-shell.rd-with-sidebar {

@@ -2,7 +2,7 @@
 import { createContext, useContext, useRef, useState, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 import { Tooltip } from '@base-ui/react/tooltip';
-import { GemLogo } from '../GemLogo.tsx';
+import { GemLogo, replayGemWiggle } from '../GemLogo.tsx';
 import { EntityIcon } from '../EntityIcon.tsx';
 import { ProfileIcon } from '../../profile/ProfileIcon.tsx';
 import { defaultProfile } from '../../profile/profile.ts';
@@ -30,6 +30,8 @@ type GlyphName =
   | 'shield'
   | 'download'
   | 'upload'
+  | 'history'
+  | 'formula'
   | 'network'
   | 'network-off'
   | 'list'
@@ -56,6 +58,8 @@ const paths: Record<GlyphName, string> = {
   'network-off': 'M2 8q10-8 20 0 M5 12q7-6 14 0 M8 16q4-4 8 0 M12 20h.01 M3 3l18 18',
   download: 'M12 3v12 M7 10l5 5 5-5 M4 16v5h16v-5',
   upload: 'M12 16V3 M7 8l5-5 5 5 M4 16v5h16v-5',
+  history: 'M3 11a9 9 0 1 1 2 7 M3 4v7h7 M12 7v5l4 2',
+  formula: 'M15 4h-3l-4 16H5 M6 10h9 M16 14l5 6 M21 14l-5 6',
 };
 function Glyph({ name }: { name: GlyphName }) {
   return (
@@ -186,7 +190,11 @@ function NetworkStatus({ offline = false }: { offline?: boolean }) {
     </Tooltip.Root>
   );
 }
-type SpaceEntry = { name: string; kind: 'doc' | 'sheet' | 'folder'; children?: SpaceEntry[] };
+export type SpaceEntry = {
+  name: string;
+  kind: 'doc' | 'sheet' | 'folder';
+  children?: SpaceEntry[];
+};
 const spacePages: SpaceEntry[] = [
   { name: 'Overview', kind: 'doc' },
   { name: 'Budget', kind: 'sheet' },
@@ -201,6 +209,33 @@ const spacePages: SpaceEntry[] = [
   },
   { name: 'Reference', kind: 'folder', children: [{ name: 'Reservations', kind: 'doc' }] },
 ];
+export function SpaceTree({
+  entries = spacePages,
+  selected,
+  onSelect,
+  onAction,
+}: {
+  entries?: SpaceEntry[];
+  selected: string;
+  onSelect: (name: string) => void;
+  onAction?: (action: string) => void;
+}) {
+  return (
+    <div className="rd-space-tree-scroll" role="region" aria-label="Space pages" tabIndex={0}>
+      <ul className="rd-space-tree">
+        {entries.map((entry) => (
+          <SpaceBranch
+            key={entry.name}
+            entry={entry}
+            selected={selected}
+            onSelect={onSelect}
+            onAction={onAction}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+}
 function SpaceBranch({
   entry,
   selected,
@@ -226,10 +261,12 @@ function SpaceBranch({
             <span aria-hidden="true">{open ? '⌄' : '›'}</span>
           </button>
         ) : (
-          <span className="rd-space-toggle-placeholder" />
+          <span className="rd-space-toggle-placeholder" aria-hidden="true" />
         )}
         <button
           className="rd-nav-item"
+          aria-label={entry.name}
+          title={entry.name}
           aria-current={entry.kind !== 'folder' && selected === entry.name ? 'page' : undefined}
           aria-expanded={entry.kind === 'folder' ? open : undefined}
           onClick={() => (entry.kind === 'folder' ? setOpen(!open) : onSelect(entry.name))}
@@ -321,7 +358,10 @@ function Sidebar({
             <button
               className="rd-brand rd-brand-button"
               aria-label="Spinel home"
-              onClick={() => onSelect('My files')}
+              onClick={(event) => {
+                replayGemWiggle(event.currentTarget);
+                onSelect('My files');
+              }}
             >
               <span className="rd-gem-wiggle">
                 <GemLogo />
@@ -344,17 +384,11 @@ function Sidebar({
               </Button>
             )}
           </div>
-          <ul>
-            {spacePages.map((entry) => (
-              <SpaceBranch
-                key={entry.name}
-                entry={entry}
-                selected={selected}
-                onSelect={onSelect}
-                onAction={canEdit ? setAction : undefined}
-              />
-            ))}
-          </ul>
+          <SpaceTree
+            selected={selected}
+            onSelect={onSelect}
+            onAction={canEdit ? setAction : undefined}
+          />
         </section>
       ) : (
         groups.map((group) => (
@@ -523,7 +557,10 @@ function Shell({
           <button
             className="rd-brand rd-brand-button"
             aria-label={operator ? 'Spinel administration' : 'Spinel home'}
-            onClick={() => onSelect('My files')}
+            onClick={(event) => {
+              replayGemWiggle(event.currentTarget);
+              onSelect('My files');
+            }}
           >
             <span className="rd-gem-wiggle">
               <GemLogo />
@@ -1720,11 +1757,28 @@ export function EditorMockup({
                 }}
                 actions={[
                   ...(!viewOnly && !collaborator
-                    ? [{ label: 'Share…', onClick: () => setShare(true) }]
+                    ? [
+                        {
+                          label: 'Share',
+                          icon: <Glyph name="shared" />,
+                          onClick: () => setShare(true),
+                        },
+                      ]
                     : []),
                   ...['Versions', 'Export', ...(!viewOnly && !sheet ? ['Insert formula'] : [])].map(
                     (label) => ({
                       label,
+                      icon: (
+                        <Glyph
+                          name={
+                            label === 'Versions'
+                              ? 'history'
+                              : label === 'Export'
+                                ? 'download'
+                                : 'formula'
+                          }
+                        />
+                      ),
                       onClick: () => {
                         if (label === 'Versions' && onHistory) onHistory();
                         else {

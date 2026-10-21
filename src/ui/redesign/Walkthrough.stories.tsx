@@ -36,6 +36,22 @@ export const Settings: Story = { args: { start: 'profile' } };
 export const Administration: Story = { args: { persona: 'operator', start: 'admin' } };
 export const Sheet: Story = { args: { start: 'editor' } };
 export const Doc: Story = { args: { start: 'editor', initialKind: 'doc' } };
+export const SheetFullEditor: Story = {
+  args: { start: 'editor' },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Hide review controls' }),
+    );
+  },
+};
+export const DocFullEditor: Story = {
+  args: { start: 'editor', initialKind: 'doc' },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Hide review controls' }),
+    );
+  },
+};
 
 export const OperatorHelp: Story = {
   args: { persona: 'operator', start: 'setup' },

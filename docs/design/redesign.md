@@ -371,3 +371,23 @@ tickets; no backend, storage or authorization redesign is included here. The
 favicon is the owner's explicit small production exception. Token/import/recovery
 examples fill the catalog audit gaps rather than shipping those workflows.
 The temporary Pages exception is limited to this PR and removed before merge.
+
+Owner refinement, chat 2026-10-20: the dark browser favicon rotates the heart
+180 degrees to match the dark UI logo; the light favicon remains upright.
+The automatic SVG follows the browser color scheme. Both retain tight framing.
+
+Owner refinements, chat 2026-10-20: document actions use **Share** with a matching
+icon; Versions, Export and Insert formula use the same icon alignment. Preview
+controls can be dismissed for an unobstructed editor. Native editors fill the
+remaining viewport so their toolbars stay visible while content scrolls inside.
+Phone layouts retain a compact file identity and save state. Every tap on an
+interactive logo restarts its wiggle; reduced-motion preferences disable it.
+
+Space tree disclosure controls and leaf placeholders share a gutter, including
+44 px touch targets, so each child icon is indented from its parent. Deep trees
+scroll within their navigation region and keep full accessible names. The
+recursive proposal has no arbitrary depth cap; an eight-level story checks the
+layout. Coda also documents unlimited nesting in its
+[page organization guidance](https://help.coda.io/hc/en-us/articles/39555791682061-Organize-pages-and-subpages).
+These refinements favor Owner/Collaborator navigation and mobile editing, retain
+Guest document-only scope, and add no Operator service or data-access burden.

@@ -164,6 +164,32 @@ try {
           ).__STORYBOOK_PREVIEW__;
           return preview?.currentRender?.phase === 'finished';
         });
+        // A failed play function also reaches "finished". Its result must match
+        // this story and succeed before a screenshot can count as state evidence.
+        await page.waitForFunction((storyId) => {
+          const preview = (
+            window as Window & {
+              __STORYBOOK_PREVIEW__?: {
+                channel?: { last: (event: string) => { storyId: string }[] | undefined };
+              };
+            }
+          ).__STORYBOOK_PREVIEW__;
+          return preview?.channel?.last('storyFinished')?.[0]?.storyId === storyId;
+        }, id);
+        const storyResult = await page.evaluate(() => {
+          const preview = (
+            window as Window & {
+              __STORYBOOK_PREVIEW__?: {
+                channel?: {
+                  last: (event: string) => { storyId: string; status: string }[] | undefined;
+                };
+              };
+            }
+          ).__STORYBOOK_PREVIEW__;
+          return preview?.channel?.last('storyFinished')?.[0];
+        });
+        expect(storyResult?.storyId).toBe(id);
+        expect(storyResult?.status, `${id}: Storybook play must succeed`).toBe('success');
         await page.evaluate(() => document.fonts.ready);
         await expect(page.locator('.sb-errordisplay')).toBeHidden();
         if (id.startsWith('docs-native-formulas--')) {
@@ -246,6 +272,50 @@ try {
             ),
             `Page overflow: ${id} ${variant}`,
           ).toBe(true);
+        }
+        if (
+          [
+            'redesign-walkthrough--sheet',
+            'redesign-walkthrough--doc',
+            'redesign-walkthrough--sheet-full-editor',
+            'redesign-walkthrough--doc-full-editor',
+            'redesign-native-editors--sheet',
+            'redesign-native-editors--doc',
+          ].includes(id)
+        ) {
+          const testHeight = width === 390 ? 600 : 900;
+          await page.setViewportSize({ width, height: testHeight });
+          const editor = page.locator('.rd-native-editor');
+          const toolbar = editor.getByRole('toolbar', { name: 'Start', exact: true });
+          await expect(toolbar).toBeVisible();
+          const before = await toolbar.boundingBox();
+          expect(before).not.toBeNull();
+          const frame = await editor.boundingBox();
+          expect(frame).not.toBeNull();
+          expect(
+            frame!.y + frame!.height,
+            'Native editor fits below site chrome',
+          ).toBeLessThanOrEqual(testHeight + 1);
+          await editor.locator('canvas[aria-label]').hover();
+          await page.mouse.wheel(0, 600);
+          await page.evaluate(
+            () =>
+              new Promise<void>((resolve) =>
+                requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+              ),
+          );
+          await expect.poll(async () => (await toolbar.boundingBox())?.y).toBe(before!.y);
+          expect(await page.evaluate(() => window.scrollY), 'Only editor content scrolls').toBe(0);
+          await expect(toolbar).toBeInViewport();
+          if (width === 390) {
+            await page.screenshot({
+              path: resolve(directory, `${id}-${variant}-short-scrolled.png`),
+            });
+          }
+          await page.setViewportSize({ width, height: 900 });
+          verifications.push(
+            `${variant}: ${id} native toolbar remains visible after content scroll`,
+          );
         }
         if (id.startsWith('redesign-') && width <= 768) {
           const smallTargets = await page
@@ -366,7 +436,7 @@ try {
               page.getByRole('heading', { name: 'No matching files', exact: true }),
             ).toHaveCount(0);
             await expect(
-              page.locator('.rd-file-open').filter({ hasText: 'Household' }),
+              page.getByRole('button', { name: 'Household Folder', exact: true }),
             ).toBeVisible();
             await expect(
               page.locator('.rd-file-open').filter({ hasText: 'Quarterly budget' }),
@@ -822,7 +892,7 @@ try {
         page.getByRole('heading', { name: 'Quarterly budget', exact: true }),
       ).toBeVisible();
       await page.getByRole('button', { name: 'Document actions', exact: true }).click();
-      await expect(page.getByRole('menuitem', { name: 'Share…', exact: true })).toHaveCount(0);
+      await expect(page.getByRole('menuitem', { name: 'Share', exact: true })).toHaveCount(0);
       await expect(page.getByRole('menuitem', { name: 'Insert formula', exact: true })).toHaveCount(
         0,
       );

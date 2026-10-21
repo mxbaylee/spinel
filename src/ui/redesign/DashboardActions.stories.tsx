@@ -16,6 +16,11 @@ async function openFileAction(canvasElement: HTMLElement, file: string, action: 
   await userEvent.click(
     within(canvasElement.ownerDocument.body).getByRole('menuitem', { name: action }),
   );
+  await expect(
+    await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: `${action.replace('…', '')} · ${file}`,
+    }),
+  ).toBeVisible();
 }
 export const CreateDoc: Story = {
   render: () => <DashboardMockup />,
@@ -58,6 +63,9 @@ export const DeletePermanently: Story = {
         canvas.getByRole('button', { name: 'More actions for Old Autumn plans' }),
       );
       await userEvent.click(portal.getByRole('menuitem', { name: 'Delete permanently…' }));
+      await expect(
+        await portal.findByRole('dialog', { name: 'Delete “Old Autumn plans” permanently?' }),
+      ).toBeVisible();
     };
     await open();
     const confirmation = await portal.findByRole('dialog', {
