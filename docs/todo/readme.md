@@ -43,7 +43,7 @@ Highest score first. Take the first ticket that isn't waiting on another.
 | 31 | 🕰️ [SPN-085](SPN-085.md) Apply the approved history browser design | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the implementation screenshots |
 | 32 | 🎨 [SPN-086](SPN-086.md) Choose document icons and folder colors | 🌿 M | 💜 M | 4 | Lower ID | [SPN-048](SPN-048.md), [SPN-049](SPN-049.md) | Approve the PR's screenshots |
 | 33 | 🌗 [SPN-088](SPN-088.md) Use a theme-aware palette in native editors | 🌿 M | 💜 M | 4 | Higher impact | [SPN-050](SPN-050.md) | Approve the implementation screenshots |
-| 34 | 💬 [SPN-089](SPN-089.md) Give modal dialogs consistent title icons | 🌱 S | 🤍 S | 4 | — | — | Approve the implementation screenshots |
+| 34 | 💬 [SPN-089](SPN-089.md) Apply modal title icons to production dialogs | 🌱 S | 🤍 S | 4 | — | — | Approve the implementation screenshots |
 | 35 | ✨ [SPN-051](SPN-051.md) Create new documents while offline | 🌳 L | 💜 M | 3 | Lower ID | [SPN-053](SPN-053.md) | — |
 | 36 | 📱 [SPN-072](SPN-072.md) Edit Docs comfortably on a phone | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
 | 37 | 🧾 [SPN-075](SPN-075.md) Export Sheets and Docs as PDF without Univer Pro | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |

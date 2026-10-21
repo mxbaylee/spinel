@@ -94,10 +94,10 @@ it('rich text maps only for display and restores canonical editing without mutat
     },
   };
   const before = structuredClone(cell);
-  const display = displayPresetCell(cell, style, 'dark');
+  const display = displayPresetCell(cell, style);
   expect(display.p!.body!.textRuns![0].ts).toEqual({
     bl: 1,
-    cl: presetStyle('primary-soft', 'dark').cl,
+    cl: { rgb: 'spinel-primary-soft.1' },
   });
   expect(display.p!.body!.textRuns![1]).toEqual(cell.p.body.textRuns[1]);
   expect(presetCellForEditing(display, cell, style).p).toEqual(cell.p);

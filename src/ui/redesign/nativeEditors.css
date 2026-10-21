@@ -13,12 +13,6 @@
   height: 100%;
   min-width: 0;
 }
-/* Univer paints formula-bar text with literal gray.900 on a transparent canvas.
-   Keep that input on paper when literal cell colors are preserved in dark mode.
-   Override only the SDK's inline transparent backdrop, never document content. */
-.rd-native-editor [data-u-comp='formula-bar'] canvas {
-  background-color: #ffffff !important;
-}
 .rd-native-message {
   position: absolute;
   inset: 0;

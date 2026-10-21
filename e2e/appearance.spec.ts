@@ -94,8 +94,8 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await box.press('Enter');
   };
   const sheetCanvas = page.locator(`#univer-sheet-main-canvas_${sheet.id}`);
-  const colouredPixels = async (rgb: number[]) =>
-    sheetCanvas.evaluateAll((canvases, colour) => {
+  const colouredPixels = async (rgb: number[], target = sheetCanvas) =>
+    target.evaluateAll((canvases, colour) => {
       let count = 0;
       for (const canvas of canvases as HTMLCanvasElement[]) {
         if (!canvas.width || !canvas.height) continue;
@@ -191,9 +191,11 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await mode('dark');
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
     expect(await container!.evaluate((node) => node.isConnected)).toBe(true);
-    await expect(sheetCanvas).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    // The native renderer changes the paper itself, not only surrounding chrome.
+    await expect(sheetCanvas).not.toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect.poll(() => colouredPixels([0, 0, 0])).toBeGreaterThan(10_000);
     expect((await read()).snapshot.sheets.first.cellData?.[4]?.[0]?.v).toBe('Plain text');
-    await expect.poll(() => colouredPixels([0, 0, 0])).toBeGreaterThan(5);
+    await expect.poll(() => colouredPixels([255, 255, 255])).toBeGreaterThan(5);
     await expect.poll(() => colouredPixels([255, 156, 198])).toBeGreaterThan(5);
     const badge = page
       .getByRole('group', { name: 'People in this document' })
@@ -205,6 +207,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await expect(badge.locator('.collaborator-name')).toHaveCSS('color', 'rgb(26, 18, 37)');
     await capture('sheet-dark');
     expect((await read()).revision).toBe(before.revision);
+    expect((await read()).snapshot).toEqual(before.snapshot);
     await page.reload();
     await saved();
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
@@ -243,10 +246,21 @@ test('themes persist, follow the system, and recolour sheet presets without edit
       .toContain('Paper stays readable');
     await saved();
     await expect(page.locator('.editor-help')).toHaveCSS('color', 'rgb(236, 226, 247)');
+    const docCanvases = docEditor.locator('canvas');
+    await expect.poll(() => colouredPixels([0, 0, 0], docCanvases)).toBeGreaterThan(10_000);
+    await expect.poll(() => colouredPixels([255, 255, 255], docCanvases)).toBeGreaterThan(5);
+    const readDoc = async () => (await context.request.get(`/api/items/${doc.id}/doc`)).json();
+    const docBeforeTheme = await readDoc();
+    const docCanvas = await docCanvases.first().elementHandle();
     await capture('doc-dark');
     await page.emulateMedia({ colorScheme: 'light' });
     await mode('light');
     await expect(page.locator('.editor-help')).toHaveCSS('color', 'rgb(74, 30, 51)');
+    await expect.poll(() => colouredPixels([255, 255, 255], docCanvases)).toBeGreaterThan(10_000);
+    expect(await docCanvas!.evaluate((node) => node.isConnected)).toBe(true);
+    const docAfterTheme = await readDoc();
+    expect(docAfterTheme.revision).toBe(docBeforeTheme.revision);
+    expect(docAfterTheme.snapshot).toEqual(docBeforeTheme.snapshot);
     await capture('doc-light');
     expect(errors).toEqual([]);
   } finally {

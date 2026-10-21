@@ -432,6 +432,7 @@ export function Walkthrough({
         </div>
       </ReviewProfileContext.Provider>
       <Modal
+        icon="warning"
         title="Leave with unsaved changes?"
         description="Your latest changes have not been saved. Stay here to retry saving before leaving."
         open={Boolean(leaveTo)}

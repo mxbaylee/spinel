@@ -137,7 +137,7 @@ SPN-042 indicator.
 ### Modal title icons
 
 Owner follow-up, 2026-10-21, decision #126: every product modal gets an appropriate
-icon beside its textual title through a shared heading pattern (SPN-089). Use
+icon beside its textual title through the shared proposal Modal heading. SPN-089 carries the same pattern into production. Use
 consistent size/alignment, hide decorative icons from assistive technology, and
 preserve the title as the accessible name. Tooltips are not modals. Do not patch
-SDK-owned dialogs through unsupported hooks. This is an implementation handoff.
+SDK-owned dialogs through unsupported hooks. The proposal uses a 20 px decorative semantic icon, a wrapping title and a separate close target; accessible text and dismissal behavior are unchanged.

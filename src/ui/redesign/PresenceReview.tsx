@@ -34,6 +34,7 @@ export function PresenceReview({ people, selfId }: { people: Collaborator[]; sel
         <span aria-hidden="true">{people.length}</span>
       </Button>
       <Modal
+        icon="person"
         title="People in this document"
         description="Go to a person’s shared cursor position when one is available."
         open={open}

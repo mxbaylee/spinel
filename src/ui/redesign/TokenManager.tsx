@@ -181,6 +181,7 @@ export function TokenManager({
       <p className="sp-muted">Design preview. Tokens shown here do not grant access.</p>
       {!admin && (
         <Modal
+          icon="key"
           title="Create an access token"
           description="Give this token a name you can recognize later. Keep it secret and revoke it when you are done."
           open={createOpen}

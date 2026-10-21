@@ -77,5 +77,14 @@ Owner follow-up, 2026-10-21, decision #126: internal Trash should look like the
 My files Trash collection, with deleted page/sheet/folder icons, names, readable
 original locations and permitted restore/delete controls. Use recovery metadata
 and preserve subtree boundaries; never reveal an inaccessible parent location.
-SPN-078 owns the composed mockup and implementation; the current fixture remains
-an approved schematic until then.
+The SPN-047 mockup now contains a local deleted-item collection for Docs, Sheets
+and folders. Restore removes an item from Trash and places it back in the
+visible Space tree; a missing original parent restores to the Space root with
+an explanation. Folder contents recover together. Permanent deletion names the
+item and folder descendants in a confirmation; cancel preserves them. Account
+editors can restore, only the Owner gets permanent deletion in this fixture,
+and offline actions are disabled. Link guests receive no recovery collection.
+The collection labels its local-only behavior and resets on reload; SPN-078
+still owns persistence, stable identifiers and real authorization. The owner
+requested the composed UI now, rather than deferring it with that integration
+(chat, 2026-10-21).

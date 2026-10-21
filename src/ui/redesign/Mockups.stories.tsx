@@ -282,8 +282,177 @@ export const PlannedSpaceRestore: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getAllByRole('heading', { level: 1 })).toHaveLength(1);
-    await userEvent.click(canvas.getByRole('button', { name: 'Restore (planned)' }));
-    await expect(canvas.getByText(/Restoring pages is planned/)).toBeVisible();
-    await expect(canvas.getByText('Old itinerary', { exact: true })).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Restore Old itinerary' }));
+    await expect(canvas.queryByRole('listitem', { name: 'Old itinerary' })).not.toBeInTheDocument();
+    await expect(
+      canvas.getByText('Old itinerary restored to Weekend trip in this preview.'),
+    ).toBeVisible();
+    if (window.innerWidth <= 900)
+      await userEvent.click(canvas.getByRole('button', { name: 'Open Space contents' }));
+    const portal = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await portal.findByRole('button', { name: 'Old itinerary' }));
+    await expect(canvas.getByRole('heading', { level: 1, name: 'Old itinerary' })).toBeVisible();
+  },
+};
+
+export const FolderColorPicker: Story = {
+  render: () => <DashboardMockup state="folder" />,
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Change color for Household' }),
+    );
+    const dialog = within(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+        name: 'Folder color · Household',
+      }),
+    );
+    await expect(dialog.getByRole('button', { name: 'Reset to default' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Success, strong' })).toBeVisible();
+  },
+};
+export const FolderColorChanged: Story = {
+  render: () => <DashboardMockup state="folder" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const portal = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole('button', { name: 'Change color for Household' }));
+    const dialog = within(await portal.findByRole('dialog', { name: 'Folder color · Household' }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Success, strong' }));
+    await expect(canvas.getByText('Color changed for Household in this preview.')).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Change color for Household' }));
+    await expect(
+      within(await portal.findByRole('dialog')).getByRole('button', { name: 'Success, strong' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  },
+};
+export const FolderColorReset: Story = {
+  ...FolderColorChanged,
+  play: async (context) => {
+    await FolderColorChanged.play!(context);
+    const portal = within(context.canvasElement.ownerDocument.body);
+    await userEvent.click(
+      within(await portal.findByRole('dialog')).getByRole('button', { name: 'Reset to default' }),
+    );
+    await expect(
+      within(context.canvasElement).getByText(
+        'Default color restored for Household in this preview.',
+      ),
+    ).toBeVisible();
+    await userEvent.click(
+      within(context.canvasElement).getByRole('button', { name: 'Change color for Household' }),
+    );
+    const dialog = within(await portal.findByRole('dialog'));
+    await expect(dialog.getByRole('button', { name: 'Reset to default' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Success, strong' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+  },
+};
+export const PlannedSpaceRestoreFolder: Story = {
+  render: () => <EditorMockup space initialPage="Trash" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Restore Archived plans' }));
+    await expect(
+      canvas.queryByRole('listitem', { name: 'Archived plans' }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.getByText(
+        'Archived plans restored to Autumn plans in this preview, with its contents.',
+      ),
+    ).toBeVisible();
+    if (window.innerWidth <= 900)
+      await userEvent.click(canvas.getByRole('button', { name: 'Open Space contents' }));
+    const portal = within(canvasElement.ownerDocument.body);
+    await expect(await portal.findByRole('button', { name: 'Archived plans' })).toBeVisible();
+    await expect(portal.getByRole('button', { name: 'Earlier notes' })).toBeVisible();
+    await expect(portal.getByRole('button', { name: 'Earlier costs' })).toBeVisible();
+  },
+};
+export const PlannedSpaceRestoreMissingParent: Story = {
+  render: () => <EditorMockup space initialPage="Trash" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Restore Packing checklist' }));
+    await expect(
+      canvas.getByText('Packing checklist restored to Autumn plans in this preview.'),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('listitem', { name: 'Packing checklist' }),
+    ).not.toBeInTheDocument();
+  },
+};
+export const PlannedSpaceDeleteFolder: Story = {
+  render: () => <EditorMockup space initialPage="Trash" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const portal = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Actions for deleted Archived plans' }),
+    );
+    await userEvent.click(await portal.findByRole('menuitem', { name: 'Delete permanently' }));
+    const dialog = within(
+      await portal.findByRole('dialog', { name: 'Delete Archived plans permanently?' }),
+    );
+    await expect(dialog.getByText('Earlier notes')).toBeVisible();
+    await expect(dialog.getByText('Earlier costs')).toBeVisible();
+    await userEvent.click(dialog.getByRole('button', { name: 'Cancel' }));
+    await expect(canvas.getByRole('listitem', { name: 'Archived plans' })).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Actions for deleted Archived plans' }),
+    );
+    await userEvent.click(await portal.findByRole('menuitem', { name: 'Delete permanently' }));
+    await userEvent.click(
+      within(await portal.findByRole('dialog')).getByRole('button', { name: 'Delete permanently' }),
+    );
+    await expect(
+      canvas.queryByRole('listitem', { name: 'Archived plans' }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.getByText('Archived plans and its contents permanently deleted from this preview.'),
+    ).toBeVisible();
+    await expect(canvas.getByRole('listitem', { name: 'Old itinerary' })).toBeVisible();
+  },
+};
+export const PlannedSpaceTrashOffline: Story = {
+  render: () => <EditorMockup space offline initialPage="Trash" />,
+  play: async ({ canvasElement }) => {
+    for (const button of within(canvasElement).getAllByRole('button', { name: /^Restore / }))
+      await expect(button).toBeDisabled();
+  },
+};
+export const PlannedSpaceTrashCollaborator: Story = {
+  render: () => <EditorMockup space collaborator initialPage="Trash" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button', { name: 'Restore Old itinerary' })).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: /^Actions for deleted/ }),
+    ).not.toBeInTheDocument();
+  },
+};
+export const PlannedSpaceTrashViewer: Story = {
+  render: () => <EditorMockup space viewOnly initialPage="Trash" />,
+  play: async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).queryByRole('button', { name: /^Restore / }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const PlannedSpaceTrashFromEditor: Story = {
+  render: () => <EditorMockup space exportState="open" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await expect(canvas.getByRole('heading', { name: 'Export' })).toBeVisible();
+    if (window.innerWidth <= 900)
+      await userEvent.click(canvas.getByRole('button', { name: 'Open Space contents' }));
+    await userEvent.click(page.getByRole('button', { name: 'Trash' }));
+    await expect(canvas.getByRole('heading', { name: 'Space trash' })).toBeVisible();
+    await expect(canvas.queryByRole('heading', { name: 'Export' })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: 'Univer file' })).not.toBeInTheDocument();
+    await expect(canvas.getByRole('list', { name: 'Deleted pages and folders' })).toBeVisible();
   },
 };

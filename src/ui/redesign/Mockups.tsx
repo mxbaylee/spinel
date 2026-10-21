@@ -330,6 +330,7 @@ function SpaceBranch({
 }
 function Sidebar({
   space = false,
+  spaceEntries,
   selected,
   onSelect,
   guest = false,
@@ -337,6 +338,7 @@ function Sidebar({
   onCollapse,
   offline = false,
 }: {
+  spaceEntries?: SpaceEntry[];
   offline?: boolean;
   onCollapse?: () => void;
   canEdit?: boolean;
@@ -401,6 +403,7 @@ function Sidebar({
             )}
           </div>
           <SpaceTree
+            entries={spaceEntries}
             selected={selected}
             onSelect={onSelect}
             onAction={canEdit ? setAction : undefined}
@@ -441,6 +444,7 @@ function Sidebar({
         </ActionMenu>
       )}
       <Modal
+        icon={action.startsWith('Trash') ? 'trash' : 'folder'}
         title={action || 'Page actions'}
         description="This change stays within the current Space."
         open={Boolean(action)}
@@ -516,6 +520,7 @@ function Shell({
   children,
   sidebar = false,
   space = false,
+  spaceEntries,
   guest = false,
   operator = false,
   canEdit = true,
@@ -526,6 +531,7 @@ function Shell({
   offline = false,
   accountAvatar,
 }: {
+  spaceEntries?: SpaceEntry[];
   accountAvatar?: ReactNode;
   offline?: boolean;
   children: ReactNode;
@@ -645,6 +651,7 @@ function Shell({
           {expanded && (
             <div className="rd-desktop-nav">
               <Sidebar
+                spaceEntries={spaceEntries}
                 onCollapse={() => setNavigation(false)}
                 offline={offline}
                 space={space}
@@ -668,8 +675,14 @@ function Shell({
               </Button>
             </div>
           )}
-          <Modal title={space ? 'Space contents' : 'Browse files'} open={nav} onOpenChange={setNav}>
+          <Modal
+            icon="folder"
+            title={space ? 'Space contents' : 'Browse files'}
+            open={nav}
+            onOpenChange={setNav}
+          >
             <Sidebar
+              spaceEntries={spaceEntries}
               space={space}
               offline={offline}
               canEdit={canEdit}
@@ -877,6 +890,8 @@ export function DashboardMockup({
     state.startsWith('search') ? 'budget' : state === 'no-results' ? 'winter' : '',
   );
   const [notice, setNotice] = useState('');
+  const [folderColors, setFolderColors] = useState<Record<string, string>>({});
+  const [folderColorOpen, setFolderColorOpen] = useState(false);
   const [dialog, setDialog] = useState(
     state.startsWith('trash-empty-')
       ? 'Empty trash'
@@ -1155,7 +1170,25 @@ export function DashboardMockup({
               ))}
             </nav>
           )}
-          <h1>{currentFolder?.name ?? view}</h1>
+          <div className="rd-folder-heading">
+            {currentFolder && (
+              <Button
+                className="sp-quiet rd-folder-color-trigger"
+                aria-label={`Change color for ${currentFolder.name}`}
+                title={localMode ? 'Reconnect to change the folder color.' : 'Change folder color'}
+                disabled={localMode || currentFolder.access !== 'owner'}
+                style={{
+                  color: folderColors[currentFolder.id]
+                    ? `var(--fill-${folderColors[currentFolder.id]}-bg)`
+                    : undefined,
+                }}
+                onClick={() => setFolderColorOpen(true)}
+              >
+                <Glyph name="folder" />
+              </Button>
+            )}
+            <h1>{currentFolder?.name ?? view}</h1>
+          </div>
         </div>
         {view !== 'Trash' && !localMode && (
           <div className="rd-header-actions">
@@ -1394,7 +1427,15 @@ export function DashboardMockup({
                   }
                   onClick={() => openFile(file)}
                 >
-                  <span className="rd-file-icon">
+                  <span
+                    className="rd-file-icon"
+                    style={{
+                      color:
+                        file.kind === 'folder' && folderColors[file.id]
+                          ? `var(--fill-${folderColors[file.id]}-bg)`
+                          : undefined,
+                    }}
+                  >
                     {file.kind === 'folder' ? (
                       <Glyph name="folder" />
                     ) : (
@@ -1575,6 +1616,67 @@ export function DashboardMockup({
         />
       )}
       <Modal
+        icon="palette"
+        title={`Folder color · ${currentFolder?.name ?? 'Folder'}`}
+        description="Choose a color for this folder. This preview keeps the choice until you reload."
+        open={folderColorOpen && Boolean(currentFolder)}
+        onOpenChange={setFolderColorOpen}
+      >
+        <div className="rd-profile-colors rd-folder-colors" aria-label="Folder colors">
+          {fillPresets
+            .filter((preset) => preset.id.endsWith('-strong'))
+            .map((preset) => (
+              <Button
+                key={preset.id}
+                aria-label={preset.label}
+                title={preset.label}
+                aria-pressed={Boolean(
+                  currentFolder && folderColors[currentFolder.id] === preset.id,
+                )}
+                style={{
+                  background: `var(--fill-${preset.id}-bg)`,
+                  color: `var(--fill-${preset.id}-fg)`,
+                }}
+                onClick={() => {
+                  if (!currentFolder) return;
+                  setFolderColors((colors) => ({ ...colors, [currentFolder.id]: preset.id }));
+                  setFolderColorOpen(false);
+                  setNotice(`Color changed for ${currentFolder.name} in this preview.`);
+                }}
+              >
+                <Glyph name="folder" />
+              </Button>
+            ))}
+        </div>
+        <div className="sp-actions">
+          <Button onClick={() => setFolderColorOpen(false)}>Cancel</Button>
+          <Button
+            disabled={!currentFolder || !folderColors[currentFolder.id]}
+            onClick={() => {
+              if (!currentFolder) return;
+              setFolderColors((colors) => {
+                const next = { ...colors };
+                delete next[currentFolder.id];
+                return next;
+              });
+              setFolderColorOpen(false);
+              setNotice(`Default color restored for ${currentFolder.name} in this preview.`);
+            }}
+          >
+            Reset to default
+          </Button>
+        </div>
+      </Modal>
+      <Modal
+        icon={
+          dialog === 'Empty trash' || dialog === 'Delete permanently'
+            ? 'trash'
+            : dialog === 'Share…'
+              ? 'share'
+              : dialog === 'Tags'
+                ? 'info'
+                : 'folder'
+        }
         title={
           dialog === 'Empty trash'
             ? 'Empty Trash permanently?'
@@ -1916,6 +2018,7 @@ function NameVersionDialog({
   const [name, setName] = useState('');
   return (
     <Modal
+      icon="history"
       title="Name this version"
       description="Name the current saved document so you can find this moment again."
       open={open}
@@ -1939,6 +2042,215 @@ function NameVersionDialog({
         </Button>
       </div>
     </Modal>
+  );
+}
+type DeletedSpaceEntry = {
+  id: string;
+  entry: SpaceEntry;
+  originalParent: string | null;
+  originalLocation: string;
+  deleted: string;
+};
+const deletedSpaceEntries: DeletedSpaceEntry[] = [
+  {
+    id: 'old-itinerary',
+    entry: { name: 'Old itinerary', kind: 'doc' },
+    originalParent: 'Weekend trip',
+    originalLocation: 'Autumn plans / Weekend trip',
+    deleted: 'October 20, 2026',
+  },
+  {
+    id: 'old-expenses',
+    entry: { name: 'Old expenses', kind: 'sheet' },
+    originalParent: null,
+    originalLocation: 'Autumn plans',
+    deleted: 'October 19, 2026',
+  },
+  {
+    id: 'archived-plans',
+    entry: {
+      name: 'Archived plans',
+      kind: 'folder',
+      children: [
+        { name: 'Earlier notes', kind: 'doc' },
+        { name: 'Earlier costs', kind: 'sheet' },
+      ],
+    },
+    originalParent: null,
+    originalLocation: 'Autumn plans',
+    deleted: 'October 18, 2026',
+  },
+  {
+    id: 'lost-checklist',
+    entry: { name: 'Packing checklist', kind: 'doc' },
+    originalParent: 'missing-parent',
+    originalLocation: 'Original location unavailable',
+    deleted: 'October 17, 2026',
+  },
+];
+function findSpaceEntry(entries: SpaceEntry[], name: string): SpaceEntry | undefined {
+  for (const entry of entries) {
+    if (entry.name === name) return entry;
+    const child = findSpaceEntry(entry.children ?? [], name);
+    if (child) return child;
+  }
+}
+function restoreSpaceEntry(entries: SpaceEntry[], item: DeletedSpaceEntry): SpaceEntry[] {
+  if (!item.originalParent || !findSpaceEntry(entries, item.originalParent))
+    return [...entries, item.entry];
+  return restoreSpaceChild(entries, item);
+}
+function restoreSpaceChild(entries: SpaceEntry[], item: DeletedSpaceEntry): SpaceEntry[] {
+  return entries.map((entry) =>
+    entry.name === item.originalParent
+      ? { ...entry, children: [...(entry.children ?? []), item.entry] }
+      : {
+          ...entry,
+          ...(entry.children ? { children: restoreSpaceChild(entry.children, item) } : {}),
+        },
+  );
+}
+function SpaceTrashCollection({
+  items,
+  entries,
+  canRestore,
+  canDelete,
+  offline,
+  onRestore,
+  onDelete,
+}: {
+  items: DeletedSpaceEntry[];
+  entries: SpaceEntry[];
+  canRestore: boolean;
+  canDelete: boolean;
+  offline: boolean;
+  onRestore: (item: DeletedSpaceEntry) => void;
+  onDelete: (item: DeletedSpaceEntry) => void;
+}) {
+  const [deleting, setDeleting] = useState<DeletedSpaceEntry>();
+  return (
+    <section className="rd-content rd-space-trash" aria-label="Deleted Space contents">
+      <p className="sp-muted">
+        Restore pages, sheets and folders to their original location. Folder contents stay together.
+      </p>
+      <p className="rd-preview-note">
+        Local preview · These actions update this example only; reloading resets it.
+      </p>
+      {offline && <p role="status">Reconnect to restore or permanently delete Space contents.</p>}
+      {items.length ? (
+        <div role="list" aria-label="Deleted pages and folders">
+          {items.map((item) => {
+            const missingParent = Boolean(
+              item.originalParent && !findSpaceEntry(entries, item.originalParent),
+            );
+            return (
+              <div
+                key={item.id}
+                className="rd-space-trash-row"
+                role="listitem"
+                aria-label={item.entry.name}
+              >
+                <span className="rd-file-icon">
+                  {item.entry.kind === 'folder' ? (
+                    <Glyph name="folder" />
+                  ) : (
+                    <EntityIcon kind={item.entry.kind} size={32} />
+                  )}
+                </span>
+                <div className="rd-space-trash-detail">
+                  <strong>{item.entry.name}</strong>
+                  <span>
+                    {item.entry.kind === 'doc'
+                      ? 'Doc'
+                      : item.entry.kind === 'sheet'
+                        ? 'Sheet'
+                        : `Folder · ${item.entry.children?.length ?? 0} items`}
+                  </span>
+                  <span>From {item.originalLocation}</span>
+                  <span>Deleted {item.deleted}</span>
+                  {missingParent && (
+                    <span>
+                      Restores to Autumn plans because its original location is unavailable.
+                    </span>
+                  )}
+                  {item.entry.children && (
+                    <span>
+                      Includes {item.entry.children.map((child) => child.name).join(' and ')}.
+                    </span>
+                  )}
+                </div>
+                {(canRestore || canDelete) && (
+                  <div className="rd-space-trash-actions">
+                    {canRestore && (
+                      <Button
+                        disabled={offline}
+                        aria-label={`Restore ${item.entry.name}`}
+                        onClick={() => onRestore(item)}
+                      >
+                        Restore
+                      </Button>
+                    )}
+                    {canDelete && (
+                      <ActionMenu
+                        label={`Actions for deleted ${item.entry.name}`}
+                        actions={[
+                          {
+                            label: 'Delete permanently',
+                            icon: <Glyph name="trash" />,
+                            destructive: true,
+                            disabled: offline,
+                            onClick: () => setDeleting(item),
+                          },
+                        ]}
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="rd-empty">
+          <Glyph name="trash" />
+          <h2>Space trash is empty</h2>
+          <p>Deleted pages, sheets and folders appear here.</p>
+        </div>
+      )}
+      <Modal
+        icon="trash"
+        title={`Delete ${deleting?.entry.name ?? 'item'} permanently?`}
+        description={
+          deleting?.entry.children
+            ? 'This deletes the folder and all of its contents from this local preview. They cannot be restored here afterward.'
+            : 'This deletes the item from this local preview. It cannot be restored here afterward.'
+        }
+        open={Boolean(deleting)}
+        onOpenChange={(open) => {
+          if (!open) setDeleting(undefined);
+        }}
+      >
+        {deleting?.entry.children && (
+          <ul>
+            {deleting.entry.children.map((child) => (
+              <li key={child.name}>{child.name}</li>
+            ))}
+          </ul>
+        )}
+        <div className="sp-actions">
+          <Button onClick={() => setDeleting(undefined)}>Cancel</Button>
+          <Button
+            primary
+            onClick={() => {
+              if (deleting) onDelete(deleting);
+              setDeleting(undefined);
+            }}
+          >
+            Delete permanently
+          </Button>
+        </div>
+      </Modal>
+    </section>
   );
 }
 export function EditorMockup({
@@ -1989,6 +2301,9 @@ export function EditorMockup({
   const [iconHint, setIconHint] = useState(false);
   const [share, setShare] = useState(false);
   const [selected, setSelected] = useState(initialPage);
+  const [spaceEntries, setSpaceEntries] = useState(spacePages);
+  const [spaceTrash, setSpaceTrash] = useState(deletedSpaceEntries);
+  const [spaceTrashNotice, setSpaceTrashNotice] = useState('');
   const [checkpointNames, setCheckpointNames] = useState<Record<string, string | null>>({});
   const [checkpoint, setCheckpoint] = useState('10:15 · Ready for the trip');
   const [versionName, setVersionName] = useState('');
@@ -2032,13 +2347,22 @@ export function EditorMockup({
       offline={offline}
       compact={!space}
       space={space}
+      spaceEntries={spaceEntries}
       guest={guest}
       canEdit={!viewOnly}
       selected={selected}
       onSelect={(next) => {
         if (next === 'My files' && onBack) onBack();
         else if (next === 'Your profile' && onProfile) onProfile();
-        else setSelected(next);
+        else {
+          setSelected(next);
+          if (next === 'Trash') {
+            setPanel('');
+            setNotice('');
+            setShare(false);
+            setNaming(false);
+          }
+        }
       }}
     >
       <header className="rd-editor-header">
@@ -2062,30 +2386,36 @@ export function EditorMockup({
               <Glyph name="back" />
             </Button>
           ) : null}
-          <Tooltip.Root open={iconHint} onOpenChange={setIconHint}>
-            <Tooltip.Trigger
-              className="rd-file-identity-trigger"
-              closeOnClick={false}
-              onPointerDown={(event) => {
-                if (event.pointerType === 'touch') setIconHint(true);
-              }}
-              aria-label="File icon — customization planned"
-              aria-disabled="true"
-            >
-              <FileIdentity
-                kind={space ? 'space' : sheet ? 'sheet' : 'doc'}
-                emoji={filenameEmoji(space ? 'Autumn plans' : name)}
-                size={24}
-              />
-            </Tooltip.Trigger>
-            <Tooltip.Portal>
-              <Tooltip.Positioner sideOffset={8} className="rd-tooltip-positioner">
-                <Tooltip.Popup className="sp-ui rd-network-tooltip">
-                  Custom file icons are planned. This default icon comes from the file name.
-                </Tooltip.Popup>
-              </Tooltip.Positioner>
-            </Tooltip.Portal>
-          </Tooltip.Root>
+          {isSpaceTrash ? (
+            <span className="rd-file-icon" aria-hidden="true">
+              <Glyph name="trash" />
+            </span>
+          ) : (
+            <Tooltip.Root open={iconHint} onOpenChange={setIconHint}>
+              <Tooltip.Trigger
+                className="rd-file-identity-trigger"
+                closeOnClick={false}
+                onPointerDown={(event) => {
+                  if (event.pointerType === 'touch') setIconHint(true);
+                }}
+                aria-label="File icon — customization planned"
+                aria-disabled="true"
+              >
+                <FileIdentity
+                  kind={space ? 'space' : sheet ? 'sheet' : 'doc'}
+                  emoji={filenameEmoji(space ? 'Autumn plans' : name)}
+                  size={24}
+                />
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Positioner sideOffset={8} className="rd-tooltip-positioner">
+                  <Tooltip.Popup className="sp-ui rd-network-tooltip">
+                    Custom file icons are planned. This default icon comes from the file name.
+                  </Tooltip.Popup>
+                </Tooltip.Positioner>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          )}
           <div>
             <span className="rd-breadcrumb">
               {space
@@ -2246,32 +2576,54 @@ export function EditorMockup({
       </span>
       <div className="rd-editor-body">
         {selected === 'Trash' && space ? (
-          <div className="rd-content">
-            <p>These pages stay recoverable until permanently deleted.</p>
-            <div className="rd-setting-row">
-              <span>Old itinerary</span>
-              <Button
-                onClick={() =>
-                  setNotice(
-                    'Restoring pages is planned. Old itinerary stays in this preview’s Space trash.',
-                  )
-                }
-              >
-                Restore (planned)
-              </Button>
+          guest ? (
+            <div className="rd-content">
+              <p>Space recovery is available to account editors.</p>
             </div>
-          </div>
+          ) : (
+            <div className="rd-space-trash-region">
+              {spaceTrashNotice && (
+                <p className="rd-space-trash-status" role="status">
+                  {spaceTrashNotice}
+                </p>
+              )}
+              <SpaceTrashCollection
+                items={spaceTrash}
+                entries={spaceEntries}
+                canRestore={!viewOnly}
+                canDelete={!viewOnly && !collaborator}
+                offline={offline}
+                onRestore={(item) => {
+                  const destination =
+                    item.originalParent && findSpaceEntry(spaceEntries, item.originalParent)
+                      ? item.originalParent
+                      : 'Autumn plans';
+                  setSpaceEntries((entries) => restoreSpaceEntry(entries, item));
+                  setSpaceTrash((items) => items.filter((entry) => entry.id !== item.id));
+                  setSpaceTrashNotice(
+                    `${item.entry.name} restored to ${destination} in this preview${item.entry.children ? ', with its contents' : ''}.`,
+                  );
+                }}
+                onDelete={(item) => {
+                  setSpaceTrash((items) => items.filter((entry) => entry.id !== item.id));
+                  setSpaceTrashNotice(
+                    `${item.entry.name}${item.entry.children ? ' and its contents' : ''} permanently deleted from this preview.`,
+                  );
+                }}
+              />
+            </div>
+          )
         ) : editorContent !== undefined ? (
           <div className="rd-live-editor">{editorContent}</div>
         ) : (
           <DocumentSurface
-            sheet={sheet || selected === 'Budget' || selected === 'Trip costs'}
+            sheet={sheet || findSpaceEntry(spaceEntries, selected)?.kind === 'sheet'}
             unavailable={guest || offline}
             readOnly={viewOnly}
             table={table}
           />
         )}
-        {panel && (
+        {!isSpaceTrash && panel && (
           <aside className="rd-inspector">
             <div className={panel === 'Versions' ? 'rd-history-heading' : 'rd-modal-title'}>
               {panel === 'Versions' && (
@@ -2372,7 +2724,7 @@ export function EditorMockup({
           </aside>
         )}
       </div>
-      {(notice || viewOnly) && (
+      {!isSpaceTrash && (notice || viewOnly) && (
         <div className="rd-editor-foot" role="status">
           {notice || 'You can view this document.'}
         </div>
@@ -2389,6 +2741,7 @@ export function EditorMockup({
         }}
       />
       <Modal
+        icon="share"
         title={`Share ${name}`}
         description="Choose who can open this file."
         open={share}
@@ -2757,6 +3110,7 @@ export function HistoryMockup({
         }}
       />
       <Modal
+        icon="history"
         title={`Restore ${selected.startsWith('October') ? selectedLabel : `October 20, 2026 · ${selectedLabel}`} for everyone?`}
         description="The current document will be kept as a Before restore checkpoint. Other open editors will need to reload."
         open={restore && !viewOnly}
@@ -3074,6 +3428,7 @@ export function ProfileMockup({
         />
       )}
       <Modal
+        icon="palette"
         title="Choose your profile color"
         description="Use the same sixteen profile presets available in Spinel."
         open={picker === 'color'}
@@ -3461,6 +3816,7 @@ export function AdminMockup({
         </div>
       </div>
       <Modal
+        icon="person"
         title="Create an invitation"
         description="Give someone access, or help an existing account recover its passkeys."
         open={inviteOpen}
@@ -3535,6 +3891,7 @@ export function AdminMockup({
         </div>
       </Modal>
       <Modal
+        icon="key"
         title={
           removePasskey
             ? `Remove MacBook from ${passkeys}?`
@@ -3648,6 +4005,7 @@ export function AdminMockup({
         </p>
       </Modal>
       <Modal
+        icon="warning"
         title={`Disable ${confirm || 'this account'}?`}
         description="Their sessions end now. Their documents and shares are kept."
         open={Boolean(confirm)}

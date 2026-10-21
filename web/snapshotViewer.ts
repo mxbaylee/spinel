@@ -192,14 +192,13 @@ export async function openSnapshotViewer({
                 context.col,
                 cell,
               );
-              return displayPresetCell(cell, style, getTheme());
+              return displayPresetCell(cell, style);
             },
           })
       : undefined;
     const render = univer.__getInjector().get(IRenderManagerService).getRenderUnitById(unitId);
     if (sheet && render) {
       const canvas = render.engine.getCanvasElement();
-      canvas.style.backgroundColor = '#ffffff';
       canvas.setAttribute('aria-label', 'Spreadsheet grid');
     }
     const stopTheme = bindEditorTheme(

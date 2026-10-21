@@ -1,5 +1,7 @@
 # SPN-047 visual review
 
+
+Owner update, 2026-10-21: no gallery refresh is required for the final native-dark-mode, folder-color, Space Trash and modal-icon refinements. These images preserve their historical capture provenance; use the merged GitHub Pages catalog to inspect the latest design. Screenshot embeds were removed from PR #125 at the owner's request.
 Start with the [connected walkthrough guide](../walkthrough.md). These are rendered Storybook proposals approved by the owner on 2026-10-21 in [PR #125](https://github.com/mxbaylee/spinel/pull/125), not production screens or approved regression baselines.
 
 Proposal captures: commit `dc9170fa68243fa10ad34d700e0e8f9cf4471c40`, [Storybook CI run 39567403971](https://github.com/mxbaylee/spinel/actions/runs/39567403971). Workflow conclusion at packaging: **success**. PNGs were rendered; their existence does not establish that every journey assertion or CI gate passed.

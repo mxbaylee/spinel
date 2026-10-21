@@ -7,6 +7,7 @@ import { Dialog } from '@base-ui/react/dialog';
 import { Popover } from '@base-ui/react/popover';
 import { RadioGroup } from '@base-ui/react/radio-group';
 import { Radio } from '@base-ui/react/radio';
+import { ProfileIcon } from '../../profile/ProfileIcon.tsx';
 import './controls.css';
 
 export function Button({
@@ -159,8 +160,22 @@ export function ActionMenu({
     </Menu.Root>
   );
 }
+const modalIcons = {
+  folder: 'folder',
+  trash: 'trash-2',
+  share: 'share-2',
+  history: 'history',
+  palette: 'palette',
+  key: 'key-round',
+  person: 'user-round',
+  warning: 'triangle-alert',
+  upload: 'upload',
+  info: 'info',
+} as const;
+
 export function Modal({
   title,
+  icon = 'info',
   description,
   trigger,
   children,
@@ -169,6 +184,7 @@ export function Modal({
   dismissDisabled = false,
 }: {
   title: string;
+  icon?: keyof typeof modalIcons;
   description?: string;
   trigger?: string;
   children: ReactNode;
@@ -193,7 +209,12 @@ export function Modal({
         <Dialog.Backdrop className="sp-backdrop" />
         <Dialog.Popup className="sp-modal sp-ui">
           <div className="sp-modal-heading">
-            <Dialog.Title>{title}</Dialog.Title>
+            <Dialog.Title className="sp-modal-title">
+              <span className="sp-modal-title-icon" aria-hidden="true">
+                <ProfileIcon icon={`lucide:${modalIcons[icon]}`} size={20} />
+              </span>
+              <span>{title}</span>
+            </Dialog.Title>
             <Dialog.Close
               className="sp-control"
               aria-label="Close dialog"

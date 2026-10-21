@@ -207,6 +207,7 @@ export function EntryJourney({
           : 'Your passkey stays with your browser, password manager or device.'}
       </footer>
       <Modal
+        icon="key"
         title="Access to this workspace"
         description="Spinel is private and invitation-only."
         open={help}

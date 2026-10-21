@@ -284,6 +284,7 @@ export function SharingReview({
                 </>
               )}
               <Modal
+                icon="share"
                 dismissDisabled={!!busy}
                 title="Replace the link?"
                 description="The old link stops working at once, and anyone using it loses access."

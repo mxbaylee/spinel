@@ -152,6 +152,7 @@ export function ImportDialog({
   const [busy, setBusy] = useState(state === 'importing');
   return (
     <Modal
+      icon="upload"
       title="Import a Univer file"
       description="Add a Sheet or Doc from a Univer JSON file."
       open={open}

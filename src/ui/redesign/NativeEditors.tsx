@@ -14,7 +14,7 @@ import { IRenderManagerService } from '@univerjs/engine-render';
 import { createUniver, mergeLocales } from '@univerjs/presets';
 import { UniverDocsCorePreset } from '@univerjs/preset-docs-core';
 import { setDocumentPermissionValue } from '@univerjs/docs';
-import { getAllWorkbookPermissionPoint } from '@univerjs/sheets';
+import { getAllWorkbookPermissionPoint, SheetSkeletonService } from '@univerjs/sheets';
 import { UnitAction } from '@univerjs/protocol';
 import docsEnglish from '@univerjs/preset-docs-core/locales/en-US';
 import sheetsEnglish from '@univerjs/preset-sheets-core/locales/en-US';
@@ -299,8 +299,6 @@ export function NativeEditor({
           'aria-label',
           kind === 'sheet' ? 'Spreadsheet grid' : 'Document canvas',
         );
-        // Preserve literal document colors against light paper, as production does.
-        if (workbook) canvas.style.backgroundColor = '#ffffff';
       }
       if (document) {
         container.dataset.nativeStage = 'document-layout';
@@ -334,6 +332,12 @@ export function NativeEditor({
         watchTheme(() => {
           api.setTheme(editorTheme());
           api.toggleDarkMode(getTheme() === 'dark');
+          if (workbook)
+            for (const skeleton of univer!
+              .__getInjector()
+              .get(SheetSkeletonService)
+              .getSkeletonsByUnitId(id))
+              skeleton.makeDirty(true);
           workbook?.getActiveSheet()?.refreshCanvas();
         }),
       );

@@ -175,6 +175,22 @@
 .sp-modal-heading h2 {
   font-size: 1.25rem;
 }
+.sp-modal-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.sp-modal-title-icon {
+  display: inline-flex;
+  flex: 0 0 20px;
+  margin-top: 3px;
+  color: var(--sp-muted);
+}
+.sp-modal-heading > button {
+  flex-shrink: 0;
+}
 .sp-modal > p {
   margin-bottom: 24px;
 }

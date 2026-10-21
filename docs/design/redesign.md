@@ -398,21 +398,23 @@ Guest document-only scope, and add no Operator service or data-access burden.
 
 ## Approval and final implementation handoffs
 
-The owner approved the designs and explicitly authorized this PR to merge as-is
-on 2026-10-21. The final screenshot source is `dc9170f`; later merge cleanup
-changes documentation/backlog and removes temporary preview permissions only.
-This approval does not implement production screen migrations or approve unseen
-implementation screenshots in their future PRs.
+The owner approved the designs and authorized merge on 2026-10-21, then clarified
+that the final requested refinements should be included: usable native dark
+rendering, an interactive folder-color mockup, Space Trash as a deleted-item
+collection, and consistent modal title icons. The owner explicitly waived a
+refreshed screenshot gallery and requested removal of screenshots from the PR
+description; the merged interactive catalog will publish through normal main CI.
+Historical captures retain their original provenance and do not certify these
+final refinements. Current-head checks and independent review remain required.
 
-- SPN-086: folder color selection beside the display name, with a matching
-  accessible identity popup and Reset; retain recognizable folder artwork.
-- SPN-078: Space Trash is a list/grid of deleted pages, sheets and folders, with
-  original locations and permitted recovery actions; it is not an editor canvas.
-- SPN-089: a consistent semantic icon beside every product modal title.
-- SPN-088: usable native dark canvases and investigate eight semantic color
-  choices through public APIs; keep a native fallback if picker replacement is
-  unsupported. Preserve stored formatting, legacy presets and exports.
+- SPN-086 carries document icons and folder-color persistence into production.
+- SPN-078 carries the deleted-item Space Trash pattern into the real Space model.
+- SPN-089 applies the shared proposal modal title-icon pattern to production.
+- SPN-088 investigates eight semantic color choices through public APIs; retain
+  native pickers if replacement is unsupported. Preserve stored formatting,
+  legacy presets and exports.
 
-These follow-ups preserve the approved proposal for merging rather than adding
-unreviewed runtime changes. The Operator gains no document access; all other
-personas keep existing permissions, recovery and device-local theme semantics.
+Production screen migrations remain separate. The Operator gains no document
+access; other personas keep existing permissions, recovery and device-local
+theme semantics. The updated proposal lets the Owner inspect folder identity
+and recovery while keeping Collaborator and Guest actions within their roles.

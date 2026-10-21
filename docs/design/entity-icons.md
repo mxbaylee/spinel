@@ -125,3 +125,20 @@ picker is SPN-086. Owner, chat 2026-10-20; decision #126.
 Folder and permanent Trash glyphs use the same 32 px artwork bounds as filename
 emoji in list and grid views (owner, chat 2026-10-20). The container alone must
 not be 32 px while leaving an 18 px glyph inside it.
+
+### Folder color control
+
+The current folder's icon sits beside its display name and opens a compact
+color dialog with the existing strong palette swatches and Reset to default.
+The icon button has an explicit accessible name, hover/focus treatment and a
+44 px target. Color is decorative: the folder glyph and name remain visible,
+and the chosen swatch also has a selected state rather than relying on color
+alone. The same local choice appears in the folder header and its file row.
+Only the owning account can change it; offline preview controls explain that
+reconnection is required.
+
+SPN-047 supplies the working local UI now (owner, chat 2026-10-21). Selecting a
+swatch or resetting updates the preview and returns to the folder; cancel keeps
+the current choice. Reloading resets it. Persistent folder metadata and the
+shared file-identity integration remain implementation work; the local picker
+does not claim to save a server setting or change access.

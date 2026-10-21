@@ -19,9 +19,11 @@ loaded. The reference files and preview script have been retired.
 
 Sheets and Docs update the public Univer ThemeService in place. A theme switch
 must not recreate an editor or submit a document revision. A public canvas-color
-service override resolves theme tokens while preserving literal document colors;
-this prevents the SDK from inverting our mapped presets a second time. Paper
-remains light while editor chrome follows the selected theme. Sheet display
+service delegates ordinary document colors and SDK tokens to Univer's public
+`CanvasColorService`, so paper, text, formula input and chrome follow dark mode.
+Our preset tokens resolve directly to their accessible palette, avoiding a
+second inversion. These tokens exist only on cloned rendering models; the
+saved document remains canonical. Sheet display
 caches, including inactive tabs, are invalidated on a theme change. Admin access remains separate from documents.
 Docs disables the SDK's 50%-opacity canvas placeholder through its public config
 and shows the typing instruction as normal, contrast-checked shell text.
@@ -37,9 +39,13 @@ formatting. Rich-text runs adapt on a cloned display model; the public before-ed
 interceptor restores canonical colors before typing so display colors cannot
 leak into stored edits. Viewers see the result but cannot apply presets.
 
-Changing either color to a different pair makes it fixed custom formatting.
+Changing either color to a different pair makes it custom formatting. Its stored
+color stays fixed; like ordinary paper and text, its on-screen rendering follows
+Univer's native dark-mode conversion.
 An imported or manually chosen pair identical to a preset has the same preset
-semantics. Exports see the stored canonical colors. These explicit semantics
+semantics. Snapshot-based exports see the stored canonical colors. Native print
+and raster output use their own rendering paths; identical print colors across
+themes have not been verified, so this is not a print-fidelity guarantee. These explicit semantics
 avoid undocumented metadata or patching Univer internals; decision
 [#66](https://github.com/mxbaylee/spinel/issues/66), 2026-10-18.
 
@@ -48,18 +54,20 @@ avoid undocumented metadata or patching Univer internals; decision
 `src/ui/presetStyles.test.ts` checks WCAG AA text contrast (at least 4.5:1) for
 shell text pairs and all sixteen fills in both modes, and verifies that display
 mapping preserves source styles. `src/ui/editorTheme.test.ts` verifies the installed
-render service preserves literals and resolves updated theme tokens in both modes.
+render service uses native dark conversion, resolves updated tokens, preserves
+all sixteen preset display pairs, and leaves serialized styles/formulas intact.
 `e2e/appearance.spec.ts` checks preferences, real
 rendered fill pixels, values/formulas/formatting, unchanged revisions and editor
-identity across theme changes. CI captures dashboard, Sheets and Docs in both
+identity across theme changes, including dark paper and light text in actual
+Sheet and Doc canvases. CI captures dashboard, Sheets and Docs in both
 themes under the `theme-screenshots-*` artifacts, one per Playwright run, for visual review. Screenshots
 contain synthetic fixture data only and expire after seven days.
 
 ## Approved follow-up
 
-Owner, 2026-10-21, decision #126: SPN-088 investigates eight logical colors with
-light/dark display pairs in native pickers and a usable native dark canvas. The
-current literal-color override and light paper described above remain unchanged
-in SPN-047. Public picker replacement is not yet established; use supported APIs
+Owner, 2026-10-21, decision #126, corrected in chat: usable native dark canvas
+ships in SPN-047, including the production editors, snapshot viewers and native
+review examples. SPN-088 investigates eight logical colors with light/dark
+display pairs in native pickers. Public picker replacement is not yet established; use supported APIs
 and retain the native picker if necessary. Preserve stored styles, existing
 preset/profile colors and exports, rather than treating a theme switch as an edit.

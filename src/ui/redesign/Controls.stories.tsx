@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal } from './Controls.tsx';
 import './mockups.css';
@@ -45,6 +46,7 @@ function Controls({ disabled = false, error = false }: { disabled?: boolean; err
             File actions ⌄
           </ActionMenu>
           <Modal
+            icon="folder"
             trigger="Open confirmation"
             title="Move this file?"
             description="Choose the folder where this file belongs."
@@ -100,3 +102,29 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 export const Disabled: Story = { args: { disabled: true } };
 export const Error: Story = { args: { error: true } };
+
+export const LongModalTitle: Story = {
+  render: () => (
+    <div className="sp-ui rd-dialog-stage">
+      <Modal
+        icon="trash"
+        trigger="Open removal dialog"
+        title="Delete the household planning folder and all its contents permanently?"
+        description="This is a layout example. Nothing will be deleted."
+      >
+        <p>Long titles wrap beside the icon while the close button stays available.</p>
+      </Modal>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = page.getByRole('button', { name: 'Open removal dialog' });
+    await userEvent.click(trigger);
+    const title = 'Delete the household planning folder and all its contents permanently?';
+    const dialog = await page.findByRole('dialog', { name: title });
+    await expect(within(dialog).getByRole('heading', { name: title })).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect(trigger).toHaveFocus();
+    await userEvent.click(trigger);
+  },
+};

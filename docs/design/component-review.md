@@ -679,10 +679,14 @@ remain prerequisites before merge. No merge is authorized by this review.
 
 ## Authorized merge preparation
 
-Owner approved the designs and explicitly authorized merge as-is on 2026-10-21.
-The PR-specific Pages deployment job/upload exception and exact environment rule
-63792144 were removed; main publishing remains review-gated. Application/UI source
-and the approved screenshots are unchanged. SPN-086/078/088/089 record the final
-folder, Space Trash, native palette/dark-canvas and modal-icon follow-ups.
-Earlier pending-approval language in the review chronology is historical. Final
-merge still requires independent review and all checks on the cleanup commit.
+Owner approved the designs and authorized merge on 2026-10-21. The PR-specific
+Pages job/upload exception and environment rule 63792144 were removed; main
+publishing remains review-gated. The owner clarified that native dark rendering,
+folder-color mockups, Space Trash and modal icons must be finished in this PR.
+These refinements supersede the earlier proposal-only handoff interpretation.
+
+The owner waived refreshing screenshots and requested deleting their embeds from
+the PR description. Historical gallery provenance stays intact. Earlier scores
+and images do not certify the new refinements; the final source needs current-head
+checks and independent review. SPN-086/078/089 retain production integration work;
+SPN-088 remains the eight-color native-picker feasibility follow-up.
