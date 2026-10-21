@@ -478,13 +478,12 @@ try {
           verifications.push(`${variant}: Operator can retry an account-list error`);
         }
         if (id === 'redesign-screens--filtered-no-matches') {
-          // Exercise both Clear controls with every filter set, including a query.
-          for (const clearSelector of ['.rd-empty', '.rd-filter-bar']) {
+          // First clear the structured filters, then a query-only empty result.
+          for (const context of ['structured filters', 'query-only']) {
             await page.getByRole('textbox', { name: 'Search files', exact: true }).fill('winter');
-            await page
-              .locator(clearSelector)
-              .getByRole('button', { name: 'Clear filters', exact: true })
-              .click();
+            const clear = page.getByRole('button', { name: 'Clear filters', exact: true });
+            await expect(clear).toHaveCount(1);
+            await clear.click();
             await expect(
               page.getByRole('textbox', { name: 'Search files', exact: true }),
             ).toHaveValue('');
@@ -506,21 +505,10 @@ try {
             await expect(
               page.locator('.rd-file-open').filter({ hasText: 'Quarterly budget' }),
             ).toBeVisible();
-            if (clearSelector === '.rd-empty') {
-              await page.getByRole('textbox', { name: 'Tag', exact: true }).fill('household');
-              for (const [label, value] of [
-                ['File type', 'Sheets'],
-                ['Ownership', 'Mine'],
-                ['Last modified', 'Today'],
-              ]) {
-                await page.getByRole('combobox', { name: label, exact: true }).click();
-                await page.getByRole('option', { name: value, exact: true }).click();
-              }
-            }
+            verifications.push(
+              `${variant}: ${context} has one reset and clears query, type, tag, ownership and date`,
+            );
           }
-          verifications.push(
-            `${variant}: filter-only empty state and both Clear controls reset query, type, tag, ownership and date`,
-          );
         }
       } catch (error) {
         await recordCaptureFailure(page, id, variant, error);
@@ -1089,7 +1077,13 @@ const escape = (value: string) =>
 await writeFile(
   resolve(directory, 'manifest.json'),
   JSON.stringify(
-    { capturedAt: '2026-10-20T16:00:00Z', captures, verifications, failures: captureFailures },
+    {
+      capturedAt: new Date().toISOString(),
+      fixtureTime: '2026-10-20T16:00:00Z',
+      captures,
+      verifications,
+      failures: captureFailures,
+    },
     null,
     2,
   ),

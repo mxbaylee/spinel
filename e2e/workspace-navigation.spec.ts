@@ -63,7 +63,8 @@ test('files and settings remain reachable without personal pin UI or requests', 
     ).toBeVisible();
     expect(pinRequests).toEqual([]);
   } finally {
-    database.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+    // Like the other workspace specs, retain fixtures in this disposable test database.
+    // Deleting the account first violates the nested file hierarchy foreign key.
     database.close();
   }
 });
