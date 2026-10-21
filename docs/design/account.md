@@ -35,14 +35,15 @@ single-purpose pages with one heading, one explanation and one primary button.
 
 ## Adopted pattern
 
-- **Theme** is a three-choice rail menu (Follow system, Vintage · Light,
-  Modern · Dark), proposed in #126. Profile keeps the same named choices and
-  storage-failure explanation. Both controls use one preference store. Owner
-  approval replaces the earlier cycling proposal before SPN-045 implements it.
-- **Your profile** replaces Settings (SPN-045). The rail avatar opens it;
-  `/settings` redirects there. Sections, in order: Name, color and icon
-  (SPN-036), Appearance, Your passkeys. **Sign out** is the page's header
-  action, top right.
+- **Appearance** uses directly visible System / Light / Dark icon segments,
+  with one browser-local preference store and System as the default. Segments are
+  32 px on pointer desktops and at least 44 px on touch. Expanded navigation and
+  compact/phone headers use a horizontal group; collapsed desktop rails stack it
+  vertically. This device explains the scope and storage-failure behavior.
+- **Your profile** opens from the account control. Name, color and icon are saved
+  account identity; Passkeys, This device and Connections are separate sections.
+  Appearance is not part of the saved identity form. Preserve Sign out and return
+  navigation to the prior file or administration context.
 - **Profile color** (SPN-036) uses the 16 `fillPresets` laid out like the cell
   palette; the icon is drawn in the preset's text color. Icon search is a field
   with a grid of results, not a dropdown.
@@ -51,15 +52,18 @@ single-purpose pages with one heading, one explanation and one primary button.
   sentence ("Use a passkey from your browser, password manager or phone."), and
   the button. Errors replace the sentence's line in place, so the button doesn't
   move.
-- **Setup, invite, recovery** share that one-card layout; only the heading,
-  sentence and button label change.
+- **Setup, invite, recovery** share the quiet entry layout but retain their
+  distinct requirements. Invite requires a name; recovery names the existing
+  account and explains replacement of old passkeys and sessions. Setup explains
+  the Operator/everyday-account separation. See the [walkthrough](walkthrough.md)
+  for pending, cancellation, invalid-link and help states.
 
 ### Always visible / behind a menu
 
 | Always visible                                              | Behind a menu                                                       |
 | ----------------------------------------------------------- | ------------------------------------------------------------------- |
-| Rail: theme button, avatar                                  | Future, not built: passkey row More → Remove (needs its own ticket) |
-| Profile: name, color, icon, appearance, passkeys, Sign out |                                                                     |
+| Navigation: appearance segments, account control                                  | Future, not built: passkey row More → Remove (needs its own ticket) |
+| Settings: identity, Passkeys, This device, Connections, Sign out |                                                                     |
 | Sign-in: one primary button                                 |                                                                     |
 
 ## Stories
@@ -91,7 +95,7 @@ reveal and revoked states. See [MCP](../mcp.md), decision
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
-visible focus and at least 44 px targets on touch devices. Expanded navigation shows the control
+visible focus, 32 px pointer-desktop segments and at least 44 px touch targets. Expanded navigation shows the control
 on its own row above Profile. Collapsed desktop navigation stacks its segments vertically; compact/phone headers show it horizontally;
 This device reuses it. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker

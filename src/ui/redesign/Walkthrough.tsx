@@ -240,7 +240,7 @@ export function Walkthrough({
             persona !== 'operator' && (
               <div hidden={screen !== 'editor'}>
                 <EditorMockup
-                  key={`${file.kind}:${file.name}:${file.access}`}
+                  key={`${file.id}:${file.access}`}
                   title={file.name}
                   sheet={file.kind === 'sheet'}
                   space={file.kind === 'space'}

@@ -7,7 +7,7 @@ production screen migrations land in their individual tickets after approval.
 
 ## Direction
 
-Keep the gem rail, Vintage/Modern palettes and Doc/Sheet/Space facets. Reduce
+Keep the gem identity, Vintage/Modern palettes and Doc/Sheet/Space facets. Reduce
 competing controls and separate navigation from the document being edited.
 Use one primary action per view, clear labels, quiet surfaces and purposeful
 spacing. The content, rather than surrounding cards, carries the personality.
@@ -44,7 +44,8 @@ pattern observations, not claims about every plan, device or current screen.
   two-person, touch-capable product.
 - [Notion preferences](https://www.notion.com/en-gb/help/account-settings): appearance
   has explicit light/dark/system choices. Propose those choices in a compact
-  rail menu plus the full profile setting; one shared preference, not two states.
+  direct three-segment control plus the This device setting. The preference is
+  browser-local, defaults to System and is separate from saved profile identity.
 - [Dropbox navigation](https://help.dropbox.com/installs/homepage): file search,
   shared files, folders and creation have distinct places. Consolidate Spinel's
   pins/folders/shared navigation; keep one New action and one menu per file.
@@ -172,9 +173,9 @@ Do not run another agent's local workload concurrently.
 
 ## Owner review
 
-The first useful feedback is whether the dashboard/editor hierarchy feels calm,
-whether the retained color identity is right, and whether the explicit theme
-menu is preferable to cycling. The final approval covers every composed screen
+Use the [connected walkthrough guide](walkthrough.md) to judge each persona’s
+full task, including return navigation, recovery and phone layouts. The owner has
+selected the directly visible System / Light / Dark segments and retained color identity. The final approval covers every composed screen
 and light/dark/phone screenshots. Approval must be recorded in the PR before
 merge, as required by `docs/todo/process.md`; a passing build is not design approval.
 
@@ -231,7 +232,7 @@ personal file navigation or service dependency. Decision #126.
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
-visible focus and at least 44 px targets on touch devices. Expanded navigation shows the control
+visible focus, 32 px pointer-desktop segments and at least 44 px touch targets. Expanded navigation shows the control
 on its own row above Profile. Collapsed desktop navigation stacks its segments vertically; compact/phone headers show it horizontally;
 This device reuses it. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
@@ -268,8 +269,9 @@ settings and return to the document, browse history with the current permission,
 and sign out through product controls. Operator setup reaches first-run Admin,
 then a purpose/expiry invitation form and once-only link. Guest revocation removes
 the document surface; a transient disconnect preserves it with an unsent-work
-warning. The representative journeys are verified sequentially at desktop and
-phone widths in the CI screenshot run.
+warning. The CI screenshot runner exercises representative journeys sequentially at
+desktop and phone widths. Read the captured workflow’s result separately; rendered
+screenshots alone do not prove every journey assertion passed.
 
 Owner direction (chat, 2026-10-20, decision #126): appearance is local to the
 browser and defaults to System. No account preference overrides it on sign-in.

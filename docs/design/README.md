@@ -5,6 +5,7 @@
 The [composed redesign](redesign.md) is proposed in PR #125 and awaits owner
 approval in decision #126. Its screen inventory, public-source comparisons,
 Base UI controls and before/after screenshot gallery define the next UI work.
+Start with the [connected walkthrough guide](walkthrough.md) to review full journeys.
 The existing gem palette and entity artwork are retained. Screen pages identify
 proposed placement changes; production is migrated by each implementation ticket.
 [Spaces and file roles](spaces.md) covers SPN-078/079 explicitly.
@@ -58,7 +59,7 @@ third-party product was signed in to, and patterns are described, not copied.
    [the pattern](#status-changes-never-move-the-layout).
 5. **Say what happened and what to do.** Messages are one sentence with the next
    step: "Could not save. Try again." Never a code, never blame.
-6. **Never colour alone.** Every state has an icon or text as well as a colour.
+6. **Never color alone.** Every state has an icon or text as well as a color.
 7. **Familiar words.** Use the words the four products share: New, Share,
    Rename, Move, Trash, Shared with me, View only, Can edit, Copy link.
 8. **Guests see no identity.** Guest views show generic labels (SPN-016); design
@@ -66,10 +67,10 @@ third-party product was signed in to, and patterns are described, not copied.
 
 ## Tokens
 
-The only colour tokens are the theme's. `src/ui/palette.ts` is the source:
+The only color tokens are the theme's. `src/ui/palette.ts` is the source:
 `src/ui/theme.ts` sets each entry as a `--<name>` CSS custom property on the
 root, per mode. [docs/theme.md](../theme.md) explains the modes and fills. There
-is no parallel token set; SPN-060's colour lint enforces that.
+is no parallel token set; SPN-060's color lint enforces that.
 
 | Token                                   | Use                                                                                                                          |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -84,7 +85,7 @@ is no parallel token set; SPN-060's colour lint enforces that.
 | `--sp-select`                           | Translucent selection wash                                                                                                   |
 | `--sp-rail` / `--sp-rail-ink`           | The rail only                                                                                                                |
 | `--gem-1` … `--gem-6`, `--gem-edge`     | The gem artwork only                                                                                                         |
-| `--fill-<role>-<soft\|strong>-<bg\|fg>` | The 16 fill presets: Sheet fills and profile colours (SPN-036); `--fill-error-soft-fg` is also alert text. Not other chrome. |
+| `--fill-<role>-<soft\|strong>-<bg\|fg>` | The 16 fill presets: Sheet fills and profile colors (SPN-036); `--fill-error-soft-fg` is also alert text. Not other chrome. |
 
 Contrast is tested in `src/ui/presetStyles.test.ts` (WCAG AA, both modes). A new
 foreground/background pair joins that test in the same PR.
@@ -163,7 +164,7 @@ In use: 4, 6, 8, 12, 16, 20, 24, 28 and 32 px, plus rem equivalents in newer
 components. Adopted scale: **4, 8, 12, 16, 24, 32 px**, with 20 and 28 kept only
 where theme.css already uses them (body padding at phone width, dashboard gaps).
 New CSS uses px for spacing and borders and rem for type and dialog widths.
-These aren't CSS tokens yet, so SPN-060's lint covers colour tokens and treats
+These aren't CSS tokens yet, so SPN-060's lint covers color tokens and treats
 this list as its spacing allowlist rather than inventing `--space-*` properties.
 
 ### Touch
@@ -224,7 +225,7 @@ For a condition that affects the whole view and isn't tied to one control ("A
 successful offsite backup is overdue.", SPN-032's "Something is wrong"): a
 full-width band at the top of the view body, under the header. An icon and a
 status word, one sentence, and at most one link or action (usually to the
-guide). Panel background with a `--sp-border` edge, and the alert colour on the
+guide). Panel background with a `--sp-border` edge, and the alert color on the
 icon and word only. `role="status"`, or `role="alert"` when action is needed.
 One banner per view; it reserves no space when absent, so it is for conditions
 present on load, not for status that changes while the view is open (that goes
@@ -285,7 +286,7 @@ those cards adds its story.
   layout is half applied. Proposed in SPN-046, subject to the owner's review
   below.
 - The tokens are the theme's (`src/ui/palette.ts`), not a parallel set, so there
-  is one source of colour and one contrast test.
+  is one source of color and one contrast test.
 - Public material only, patterns described not copied, so nothing here depends
   on a third-party account or someone else's assets. Grooming, 2026-10-19.
 - The owner reviews this playbook before the UI tickets it unblocks start
@@ -326,8 +327,10 @@ personal file navigation or service dependency. Decision #126.
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
-visible focus and at least 44 px targets. Expanded navigation shows the control
-on its own row above Profile. Collapsed/phone utilities open it in a popover;
-Profile reuses it. This supersedes the earlier explicit-menu proposal, retains
+visible focus, 32 px pointer-desktop segments and at least 44 px touch targets.
+The control stays directly visible: horizontal above Profile in expanded navigation
+and in compact/phone headers, vertical in collapsed desktop rails. This device
+reuses it and explains that appearance is local to this browser, defaults to System,
+and is separate from saved profile identity. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
 must report a storage failure without undoing the in-session theme choice.

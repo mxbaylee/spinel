@@ -45,7 +45,7 @@ links and connection loss are plain paragraphs above it.
   This is planned behavior, authorized by the owner in chat on 2026-10-20,
   decision [#103](https://github.com/mxbaylee/spinel/issues/103).
 - No identity. Collaborators show as generic Guest/Collaborator labels with
-  empty avatars and default colours (SPN-016). The connection slot (SPN-042)
+  empty avatars and default colors (SPN-016). The connection slot (SPN-042)
   works as for everyone else.
 - **No request-access button.** A guest has no account to grant access to, and
   the owner gives access by sharing a new link. The others' Request access

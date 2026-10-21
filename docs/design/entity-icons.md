@@ -21,14 +21,14 @@ interior marks derived from Spinel's original faceted-heart visual language. The
 existing identity. Owner direction, chat 2026-10-20; implemented in SPN-077,
 authorized before the broader SPN-047 redesign and before Spaces exist.
 
-## Shape and colour
+## Shape and color
 
 - **Doc:** blue, three text strokes, with the approved bolder 1.25-unit lines (B2a).
 - **Sheet:** green, a header-and-rows mark (S1).
 - **Space:** purple, three collection diamonds contained within the front face (B2c).
 
 The owner selected the common B2 beveled outline and equal visual bounds for all
-three. Interior marks and adjacent labels distinguish type without colour alone;
+three. Interior marks and adjacent labels distinguish type without color alone;
 this supersedes the draft requirement for distinct outer silhouettes. Owner,
 chat 2026-10-20, [decision #122](https://github.com/mxbaylee/spinel/issues/122).
 Review at 16, 24 and 32px, in monochrome, in both themes and at social-card size.
@@ -43,11 +43,11 @@ Use the existing palette/token system for light and dark facet tones, preserving
 blue/green/purple. The `entity-<doc|sheet|space>-0` through `-4` tokens define
 edges and facets;
 `entity-mark` defines their white interior glyph. Both themes preserve the approved
-art colours. Decorative shading is not a text contrast pair: visible type labels
+art colors. Decorative shading is not a text contrast pair: visible type labels
 use existing accessible text tokens. Monochrome uses `sp-text` for the silhouette
 and `sp-panel` for its mark, covered by the contrast checks. Do not borrow
-status colours or hard-code a separate theme in each consumer. Server-rendered SVG resolves palette values explicitly because a PNG
-renderer cannot inherit browser CSS variables. Share geometry and colour mapping
+status colors or hard-code a separate theme in each consumer. Server-rendered SVG resolves palette values explicitly because a PNG
+renderer cannot inherit browser CSS variables. Share geometry and color mapping
 between browser and server rather than maintaining two drawings.
 
 ## Placement and accessibility
@@ -104,7 +104,7 @@ that merely repeat path data.
 
 `src/ui/entityIconGeometry.ts` is the shared geometry and raw SVG exporter;
 `EntityIcon.tsx` renders those same paths with theme variables. The Storybook
-lineup offers downloadable standalone SVGs with resolved colours. Creation,
+lineup offers downloadable standalone SVGs with resolved colors. Creation,
 owned/shared files, pins, search and trash use decorative icons beside labels.
 `Identity/Entity icons` covers sizes, monochrome, accessible standalone images
 and future Space placement; `Identity/Social cards` uses the real PNG renderer
