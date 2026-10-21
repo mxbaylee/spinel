@@ -1336,3 +1336,17 @@
 .sp-ui .profile-icon-dialog select {
   min-height: 44px;
 }
+
+@media (min-width: 901px) {
+  .rd-desktop-nav {
+    background: var(--sp-rail);
+  }
+  .rd-desktop-nav > .rd-sidebar {
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    height: 100dvh;
+    min-height: 0;
+    overflow: auto;
+  }
+}

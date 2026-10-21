@@ -25,6 +25,8 @@ const before = [
   'dashboard-searchpanel--results',
   'dashboard-trash--with-items',
   'settings-themesettings--default',
+  'account-profile--ready',
+  'account-icon-picker--browse',
   'settings-assistantconnections--loaded',
   'settings-connectassistant--consent',
   'settings-accesstokens--loaded',
