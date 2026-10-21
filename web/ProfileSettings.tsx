@@ -143,7 +143,8 @@ export function ProfileSettings({ onSaved }: { onSaved?: (profile: Profile) => v
   }, []);
   const close = () => {
     setPicking(false);
-    pickerButton.current?.focus();
+    // The modal must leave the top layer before its trigger can receive focus.
+    requestAnimationFrame(() => pickerButton.current?.focus());
   };
   return (
     <section className="welcome" aria-labelledby="profile-heading">
