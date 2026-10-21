@@ -299,8 +299,22 @@ try {
           ].includes(id)
         ) {
           const testHeight = width === 390 ? 600 : 900;
-          await page.setViewportSize({ width, height: testHeight });
           const editor = page.locator('.rd-native-editor');
+          const canvas = editor.locator('canvas[aria-label]');
+          const canvasSize = () =>
+            canvas.evaluate((node) => ({
+              width: node.getBoundingClientRect().width,
+              height: node.getBoundingClientRect().height,
+              pixelsWide: (node as HTMLCanvasElement).width,
+              pixelsHigh: (node as HTMLCanvasElement).height,
+            }));
+          const initialCanvasSize = await canvasSize();
+          await page.setViewportSize({ width, height: testHeight });
+          if (width === 390) {
+            await expect
+              .poll(async () => (await canvasSize()).height)
+              .toBeLessThan(initialCanvasSize.height);
+          }
           // Responsive Sheets replaces the ribbon with a compact row of buttons
           // (no toolbar role). Its Paint format button anchors that same row.
           const compactSheet = id.includes('--sheet') && width <= 768;
@@ -355,6 +369,15 @@ try {
             });
           }
           await page.setViewportSize({ width, height: 900 });
+          // The OSS renderer resizes in requestIdleCallback; layout alone can settle
+          // before its canvas does. Capture only after both return to their full size.
+          await expect.poll(canvasSize).toEqual(initialCanvasSize);
+          await page.evaluate(
+            () =>
+              new Promise<void>((resolve) =>
+                requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+              ),
+          );
           verifications.push(
             `${variant}: ${id} native toolbar remains visible after content scroll`,
           );

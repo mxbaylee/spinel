@@ -743,7 +743,7 @@ const folderTags: Record<string, string> = {
   Work: 'work',
   Trips: 'travel',
 };
-const files = [
+export const files = [
   ...['Household', 'Work', 'Trips'].map((name) => ({
     name,
     kind: 'folder' as const,
@@ -821,6 +821,7 @@ function DashboardContent({
     name: string;
     kind: 'doc' | 'sheet' | 'space';
     access: 'owner' | 'editor' | 'viewer';
+    locationLabel?: string;
   }) => void;
   onProfile?: () => void;
   initialLayout?: 'list' | 'grid';
@@ -964,6 +965,35 @@ function DashboardContent({
   const [trashed, setTrashed] = useState<string[]>(
     state === 'empty' || state === 'empty-trash' ? [] : deletedFixtures.map((file) => file.id),
   );
+  const trashBatches = useRef(new Map(deletedFixtures.map((file) => [file.id, file.id])));
+  const nextTrashBatch = useRef(0);
+  // Match owned hierarchy and deletion batches; a shared file's parent is only personal filing.
+  const ownedSubtree = (id: string, include: (file: (typeof items)[number]) => boolean) => {
+    const found = new Set<string>();
+    const pending = [id];
+    while (pending.length) {
+      const next = pending.pop()!;
+      const file = items.find((item) => item.id === next);
+      if (!file || found.has(next) || file.access !== 'owner' || !include(file)) continue;
+      found.add(next);
+      pending.push(...items.filter((item) => item.parentId === next).map((item) => item.id));
+    }
+    return found;
+  };
+  const trashFile = (file: (typeof items)[number]) => {
+    const subtree = ownedSubtree(file.id, (item) => !trashed.includes(item.id));
+    const batch = `preview-trash-${nextTrashBatch.current++}`;
+    for (const id of subtree) trashBatches.current.set(id, batch);
+    setTrashed((current) => [...current, ...subtree]);
+    setItems((current) =>
+      current.map((item) =>
+        item.access !== 'owner' && item.parentId && subtree.has(item.parentId)
+          ? { ...item, parentId: null }
+          : item,
+      ),
+    );
+    setNotice(`${file.name}${subtree.size > 1 ? ' and its owned contents' : ''} moved to Trash.`);
+  };
   useEffect(() => {
     pins.reconcile(items.filter((item) => !trashed.includes(item.id)));
   }, [items, trashed, pins.reconcile]);
@@ -978,9 +1008,22 @@ function DashboardContent({
   const recoveryExpired = (id: string) =>
     state === 'trash-expired' && id === deletedFixtures.at(-1)?.id;
   const openFile = (file: (typeof items)[number]) => {
+    if (trashed.includes(file.id)) return;
     if (file.kind === 'folder') setView(file.id);
     else if (!localMode || downloaded(file.id)) {
-      if (onOpen) onOpen({ ...file, kind: file.kind, access: localMode ? 'viewer' : file.access });
+      if (onOpen)
+        onOpen({
+          ...file,
+          kind: file.kind,
+          access: localMode ? 'viewer' : file.access,
+          locationLabel:
+            items.find(
+              (parent) =>
+                parent.id === file.parentId &&
+                parent.kind === 'folder' &&
+                !trashed.includes(parent.id),
+            )?.name ?? 'My files',
+        });
       else
         setNotice(
           localMode
@@ -995,9 +1038,35 @@ function DashboardContent({
     if (action === 'empty') {
       setItems((current) => current.filter((file) => !trashed.includes(file.id)));
       setTrashed([]);
+      trashBatches.current.clear();
     } else {
-      setTrashed((current) => current.filter((value) => value !== id));
-      if (action === 'delete') setItems((current) => current.filter((file) => file.id !== id));
+      const batch = trashBatches.current.get(id);
+      const subtree = ownedSubtree(
+        id,
+        (file) =>
+          trashed.includes(file.id) &&
+          (action === 'delete' || trashBatches.current.get(file.id) === batch),
+      );
+      setTrashed((current) => current.filter((value) => !subtree.has(value)));
+      if (action === 'delete') {
+        setItems((current) => current.filter((file) => !subtree.has(file.id)));
+      } else {
+        setItems((current) =>
+          current.map((file) =>
+            file.id === id &&
+            !current.some(
+              (parent) =>
+                parent.id === file.parentId &&
+                parent.kind === 'folder' &&
+                parent.access === 'owner' &&
+                !trashed.includes(parent.id),
+            )
+              ? { ...file, parentId: null }
+              : file,
+          ),
+        );
+      }
+      for (const value of subtree) trashBatches.current.delete(value);
     }
     setTrashError('');
     setDialog('');
@@ -1453,12 +1522,7 @@ function DashboardContent({
                         : [
                             {
                               label: 'Open',
-                              onClick: () =>
-                                file.kind === 'folder'
-                                  ? setView(file.id)
-                                  : onOpen
-                                    ? onOpen({ ...file, kind: file.kind })
-                                    : setNotice(`Opening ${file.name}…`),
+                              onClick: () => openFile(file),
                             },
                             {
                               label: pins.items.some((item) => item.id === file.id)
@@ -1510,10 +1574,7 @@ function DashboardContent({
                                   {
                                     label: 'Trash',
                                     destructive: true,
-                                    onClick: () => {
-                                      setTrashed([...trashed, file.id]);
-                                      setNotice(`${file.name} moved to Trash.`);
-                                    },
+                                    onClick: () => trashFile(file),
                                   },
                                 ]
                               : []),
@@ -1578,7 +1639,7 @@ function DashboardContent({
           dialog === 'Empty trash'
             ? `Permanently delete all ${trashed.length} files listed below. You cannot undo this or restore them later.`
             : dialog === 'Delete permanently'
-              ? `This permanently removes “${targetName}”. You cannot undo this or restore it from Trash.`
+              ? `This permanently removes “${targetName}”${targetFile?.kind === 'folder' ? ' and its deleted contents' : ''}. You cannot undo this or restore it from Trash.`
               : creating
                 ? `Choose a name for your new ${dialog.toLowerCase()}.`
                 : dialog === 'Tags'
@@ -1736,7 +1797,12 @@ function DashboardContent({
                       parentId: currentFolder?.id ?? null,
                     },
                   ]);
-                  if (next.kind !== 'folder') onOpen?.({ ...next, kind: next.kind });
+                  if (next.kind !== 'folder')
+                    onOpen?.({
+                      ...next,
+                      kind: next.kind,
+                      locationLabel: currentFolder?.name ?? 'My files',
+                    });
                 }
                 if (dialog === 'Rename…')
                   setItems(
@@ -1937,6 +2003,7 @@ export function EditorMockup({
   collaborator = false,
   collapsed = false,
   title,
+  locationLabel = 'Household',
   initialPage = 'Overview',
   onBack,
   onProfile,
@@ -1967,6 +2034,7 @@ export function EditorMockup({
   collaborator?: boolean;
   collapsed?: boolean;
   title?: string;
+  locationLabel?: string;
   initialPage?: string;
 }) {
   const [iconHint, setIconHint] = useState(false);
@@ -2075,9 +2143,9 @@ export function EditorMockup({
                 ? 'Space · Autumn plans /'
                 : guest
                   ? `${sheet ? 'Sheet' : 'Doc'} · Shared document`
-                  : `${sheet ? 'Sheet' : 'Doc'} · Household /`}
+                  : `${sheet ? 'Sheet' : 'Doc'} · ${locationLabel} /`}
             </span>
-            <h1>{name}</h1>
+            <h1>{isSpaceTrash ? 'Space trash' : name}</h1>
             {guest && <span className="rd-badge">{viewOnly ? 'View only' : 'Guest editor'}</span>}
           </div>
         </div>
@@ -2230,12 +2298,17 @@ export function EditorMockup({
       <div className="rd-editor-body">
         {selected === 'Trash' && space ? (
           <div className="rd-content">
-            <h1>Space trash</h1>
             <p>These pages stay recoverable until permanently deleted.</p>
             <div className="rd-setting-row">
               <span>Old itinerary</span>
-              <Button onClick={() => setNotice('Old itinerary restored to this Space.')}>
-                Restore
+              <Button
+                onClick={() =>
+                  setNotice(
+                    'Restoring pages is planned. Old itinerary stays in this preview’s Space trash.',
+                  )
+                }
+              >
+                Restore (planned)
               </Button>
             </div>
           </div>
@@ -2986,7 +3059,7 @@ export function ProfileMockup({
             </>
           ) : (
             <>
-              <section className="rd-section">
+              <section className="rd-section rd-device-appearance">
                 <h2>Appearance on this device</h2>
                 <p className="sp-muted">
                   Saved in this browser. Applies to members and guests; signing in does not change
@@ -3746,10 +3819,13 @@ export function EntryMockup({
   };
   return (
     <div className="sp-ui rd-entry">
-      <div className="rd-entry-brand">
-        <GemLogo />
-        <strong>spinel</strong>
-      </div>
+      <header className="rd-entry-header">
+        <div className="rd-entry-brand">
+          <GemLogo />
+          <strong>spinel</strong>
+        </div>
+        <ThemeMenu />
+      </header>
       <section className="rd-entry-card">
         <h1>{consent && blocked ? 'Connect an application' : title}</h1>
         {consent && blocked ? (

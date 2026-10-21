@@ -26,7 +26,10 @@ export function GuestEntryReview({
           {state === 'loading' ? (
             <p role="status">Opening shared document…</p>
           ) : (
-            <p role="alert">Open this link in a current browser that supports Web Locks.</p>
+            <p role="alert">
+              This browser is missing a feature Spinel needs. Update your browser or open this link
+              in another current browser.
+            </p>
           )}
         </section>
       </main>

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { DashboardMockup } from './Mockups.tsx';
 
 const meta = {
@@ -194,5 +194,121 @@ export const ExpiredRestoreUnavailable: Story = {
       'aria-disabled',
       'true',
     );
+  },
+};
+
+async function fileAction(canvasElement: HTMLElement, name: string, action: string) {
+  const canvas = within(canvasElement);
+  const page = within(canvasElement.ownerDocument.body);
+  await userEvent.click(canvas.getByRole('button', { name: `More actions for ${name}` }));
+  await userEvent.click(await page.findByRole('menuitem', { name: action }));
+}
+async function openTrash(canvasElement: HTMLElement) {
+  await userEvent.click(
+    within(canvasElement).getByRole('button', { name: /^Trash Permanent folder/ }),
+  );
+}
+async function backToFiles(canvasElement: HTMLElement) {
+  await userEvent.click(
+    within(within(canvasElement).getByRole('navigation', { name: 'Breadcrumb' })).getByRole(
+      'button',
+      { name: 'My files' },
+    ),
+  );
+}
+export const FolderTrashOwnedContents: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await fileAction(canvasElement, 'Trips', 'Trash');
+    await expect(canvas.queryByRole('button', { name: 'More actions for Trips' })).toBeNull();
+    await expect(
+      canvas.queryByRole('button', { name: 'More actions for Autumn plans' }),
+    ).toBeNull();
+    await openTrash(canvasElement);
+    await expect(canvas.getByRole('button', { name: /^Trips Folder/ })).toBeDisabled();
+    await expect(canvas.getByRole('button', { name: /^Autumn plans / })).toBeDisabled();
+    await expect(
+      within(canvas.getByRole('list', { name: 'Files' })).getAllByRole('listitem'),
+    ).toHaveLength(5);
+  },
+};
+export const RestoreFolderDeletionBatch: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await fileAction(canvasElement, 'Trips', 'Trash');
+    await openTrash(canvasElement);
+    await fileAction(canvasElement, 'Trips', 'Restore');
+    // The separately deleted Old Autumn plans is not resurrected with its parent.
+    await expect(
+      canvas.getByRole('button', { name: 'More actions for Old Autumn plans' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'More actions for Autumn plans' }),
+    ).toBeNull();
+    await backToFiles(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: /^Trips Folder/ }));
+    await expect(canvas.getByRole('button', { name: /^Autumn plans / })).toBeEnabled();
+    await userEvent.click(canvas.getByRole('button', { name: 'More actions for Autumn plans' }));
+    await expect(await page.findByRole('menuitem', { name: 'Pin' })).toBeEnabled();
+    await expect(page.queryByRole('menuitem', { name: 'Unpin' })).toBeNull();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+export const RestoreChildWithoutParent: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await fileAction(canvasElement, 'Trips', 'Trash');
+    await openTrash(canvasElement);
+    await fileAction(canvasElement, 'Autumn plans', 'Restore');
+    await expect(canvas.getByRole('button', { name: 'More actions for Trips' })).toBeVisible();
+    await fileAction(canvasElement, 'Trips', 'Restore');
+    await backToFiles(canvasElement);
+    await expect(
+      canvas.getByRole('button', { name: 'More actions for Autumn plans' }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: /^Trips Folder/ }));
+    await expect(canvas.getByRole('heading', { name: 'Room for your next idea' })).toBeVisible();
+  },
+};
+export const FolderTrashKeepsSharedFile: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await fileAction(canvasElement, 'Household', 'Trash');
+    await expect(canvas.getByRole('button', { name: /^Quarterly budget / })).toBeEnabled();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'More actions for Quarterly budget' }),
+    );
+    await expect(await page.findByRole('menuitem', { name: 'Unpin' })).toBeEnabled();
+    await userEvent.keyboard('{Escape}');
+    await openTrash(canvasElement);
+    await expect(
+      canvas.queryByRole('button', { name: 'More actions for Quarterly budget' }),
+    ).toBeNull();
+    await fileAction(canvasElement, 'Household', 'Restore');
+    await backToFiles(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: /^Household Folder/ }));
+    await expect(canvas.getByRole('heading', { name: 'Room for your next idea' })).toBeVisible();
+  },
+};
+export const DeleteFolderContentsPermanently: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await fileAction(canvasElement, 'Trips', 'Trash');
+    await openTrash(canvasElement);
+    await fileAction(canvasElement, 'Trips', 'Delete permanently…');
+    const dialog = within(await page.findByRole('dialog', { name: 'Delete “Trips” permanently?' }));
+    await expect(dialog.getByText(/and its deleted contents/)).toBeVisible();
+    await userEvent.click(dialog.getByRole('button', { name: 'Delete permanently' }));
+    await waitFor(() => expect(page.queryByRole('dialog')).toBeNull());
+    // Both deletion generations below Trips are removed; unrelated deleted files remain.
+    await expect(
+      within(canvas.getByRole('list', { name: 'Files' })).getAllByRole('listitem'),
+    ).toHaveLength(2);
+    await expect(
+      canvas.queryByRole('button', { name: 'More actions for Old Autumn plans' }),
+    ).toBeNull();
   },
 };

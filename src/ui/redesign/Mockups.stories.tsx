@@ -32,6 +32,13 @@ const meta = {
 } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
+const entryTheme: NonNullable<Story['play']> = async ({ canvasElement }) => {
+  const header = within(within(canvasElement).getByRole('banner'));
+  const choice = within(header.getByRole('radiogroup', { name: 'Appearance' }));
+  for (const name of ['Follow system', 'Light', 'Dark']) {
+    await expect(choice.getByRole('radio', { name })).toBeVisible();
+  }
+};
 export const Dashboard: Story = { render: () => <DashboardMockup /> };
 export const SidebarLongDisplayName: Story = {
   render: () => (
@@ -90,13 +97,25 @@ export const SignIn: Story = { render: () => <EntryPreview screen="sign-in" /> }
 export const Setup: Story = { render: () => <EntryPreview screen="setup" /> };
 export const Invite: Story = { render: () => <EntryPreview screen="invite" /> };
 export const Recovery: Story = { render: () => <EntryPreview screen="recovery" /> };
-export const Consent: Story = { render: () => <EntryMockup kind="consent" /> };
-export const ConsentExpired: Story = { render: () => <EntryMockup kind="consent-expired" /> };
+export const Consent: Story = { render: () => <EntryMockup kind="consent" />, play: entryTheme };
+export const ConsentExpired: Story = {
+  render: () => <EntryMockup kind="consent-expired" />,
+  play: entryTheme,
+};
 export const GuestViewer: Story = { render: () => <EditorMockup guest viewOnly /> };
 export const GuestEditor: Story = { render: () => <EditorMockup guest /> };
-export const RevokedLink: Story = { render: () => <EntryMockup kind="revoked" /> };
-export const OfflineLaunch: Story = { render: () => <EntryMockup kind="offline" /> };
-export const MissingFile: Story = { render: () => <EntryMockup kind="missing" /> };
+export const RevokedLink: Story = {
+  render: () => <EntryMockup kind="revoked" />,
+  play: entryTheme,
+};
+export const OfflineLaunch: Story = {
+  render: () => <EntryMockup kind="offline" />,
+  play: entryTheme,
+};
+export const MissingFile: Story = {
+  render: () => <EntryMockup kind="missing" />,
+  play: entryTheme,
+};
 export const PlannedSpace: Story = { render: () => <EditorMockup space /> };
 export const PlannedSpaceGuest: Story = { render: () => <EditorMockup space guest viewOnly /> };
 export const Passkeys: Story = { render: () => <ProfileMockup section="security" /> };
@@ -249,3 +268,14 @@ export const DashboardNewMenu: Story = {
 
 export const ProfileIconPicker: Story = { render: () => <ProfileMockup initialPicker="icon" /> };
 export const ProfileColorPicker: Story = { render: () => <ProfileMockup initialPicker="color" /> };
+
+export const PlannedSpaceRestore: Story = {
+  render: () => <EditorMockup space initialPage="Trash" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+    await userEvent.click(canvas.getByRole('button', { name: 'Restore (planned)' }));
+    await expect(canvas.getByText(/Restoring pages is planned/)).toBeVisible();
+    await expect(canvas.getByText('Old itinerary', { exact: true })).toBeVisible();
+  },
+};

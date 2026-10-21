@@ -56,8 +56,30 @@ export const ShowMore: Story = {
     const dialog = picker(canvasElement);
     const grid = dialog.getByLabelText('Icons');
     await expect(within(grid).getAllByRole('button')).toHaveLength(60);
+    const initialGridHeight = grid.getBoundingClientRect().height;
     await userEvent.click(dialog.getByRole('button', { name: 'Show more' }));
     await expect(within(grid).getAllByRole('button')).toHaveLength(120);
+    // Loading more icons must not push the only touch dismissal out of view.
+    const cancel = dialog.getByRole('button', { name: 'Cancel' });
+    const viewport = canvasElement.ownerDocument.defaultView!;
+    await expect(grid.getBoundingClientRect().height).toBeLessThanOrEqual(initialGridHeight + 1);
+    await expect(grid.scrollHeight).toBeGreaterThan(grid.clientHeight);
+    await expect(cancel.getBoundingClientRect().bottom).toBeLessThanOrEqual(viewport.innerHeight);
+    await expect(cancel.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      grid.getBoundingClientRect().bottom,
+    );
+    await expect(
+      dialog.getByRole('textbox', { name: 'Search icons' }).getBoundingClientRect().top,
+    ).toBeGreaterThanOrEqual(0);
+  },
+};
+export const ShowMoreCancelAndReturn: Story = {
+  play: async (context) => {
+    await ShowMore.play?.(context);
+    const canvas = within(context.canvasElement);
+    await userEvent.click(picker(context.canvasElement).getByRole('button', { name: 'Cancel' }));
+    await expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+    await waitFor(() => expect(canvas.getByRole('button', { name: 'Choose icon' })).toHaveFocus());
   },
 };
 export const KeyboardNavigation: Story = {

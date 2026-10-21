@@ -10,7 +10,7 @@ const meta = {
     await expect(canvas.getByRole('heading', { name: 'Shared document' })).toBeVisible();
     if (args.state === 'unsupported-browser') {
       await expect(canvas.getByRole('alert')).toHaveTextContent(
-        'Open this link in a current browser that supports Web Locks.',
+        'This browser is missing a feature Spinel needs. Update your browser or open this link in another current browser.',
       );
       await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
     } else {

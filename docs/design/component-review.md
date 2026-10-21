@@ -478,3 +478,37 @@ Current app CI passed all six gates at `bc7249d`. New source repairs and all
 previously unverified rendered changes still require fresh evidence. Focused
 manual screenshot runs are available for repair verification; PR runs always
 capture the full catalog. Whole-product acceptance remains withheld.
+
+## Section and journey repair pass
+
+The supplementary entry/account pass inspected160 captures across40 states in
+dark, phone, phone-dark and tablet. The section pass inspected275 captures across
+55 Files, Space, Settings, Administration and entry/walkthrough states in all
+five variants. These inspections found the following additional repairs:
+
+- The icon picker now scrolls its results independently so Cancel stays reachable
+  after Show more. Search, category and actions retain their shared layout.
+- Unsupported-browser recovery uses plain language, and all direct entry screens
+  retain the shared device theme control.
+- This device loses its redundant leading divider; Space trash has one title and
+  explicitly describes its restore action as planned instead of claiming success.
+- The Doc walkthrough now opens the same catalog record as My files. Returning
+  and reopening preserves its type, and editor location labels reflect the actual
+  parent rather than always saying Household.
+- Folder Trash follows owned subtrees and deletion batches. Shared documents
+  survive personal-folder deletion; their filing is cleared. Restoring a folder
+  does not resurrect separately deleted children or silently restore pins.
+
+Independent source review found these cross-screen identity and recovery gaps;
+component screenshots alone did not reveal them. New interaction specimens cover
+Doc return/reopen and folder trash, restore, shared references and permanent
+removal. Production APIs remain unchanged; these are coherent local proposals.
+
+Focused CI run39557852478 at `6a64b0d` passed50 captures and32 explicit checks,
+including native Doc/Sheet short-phone toolbar behavior, expired recovery,
+disabled-account sharing, theme-warning dismissal and unsaved version drafts.
+All six application gates also passed for that commit. Inspection showed that
+restoring the viewport to900px could capture the SDK canvas before its deferred
+resize; capture now waits for its original CSS and backing-store dimensions.
+This stronger guard and the new section repairs require fresh CI. Earlier
+full-height images affected by that intermediate resize are not final evidence.

@@ -666,6 +666,12 @@
 .rd-person + .rd-section {
   border-top: 0;
 }
+.rd-device-appearance {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+  margin-bottom: 24px;
+}
 .rd-token-manager {
   display: grid;
   gap: 12px;
@@ -745,6 +751,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
+}
+.rd-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(100%, 960px);
 }
 .rd-entry-brand svg {
   width: 32px;
@@ -1512,6 +1525,23 @@
 }
 
 /* Reuse SPN-036's picker behavior; only its review-frame presentation changes. */
+.sp-ui .profile-icon-dialog[open] {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+}
+.sp-ui .profile-icon-dialog > :not(button) {
+  grid-column: 1 / -1;
+}
+.sp-ui .profile-icon-dialog .profile-icon-grid {
+  max-height: min(360px, max(52px, calc(100dvh - 440px)));
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+}
+.sp-ui .profile-icon-dialog > button {
+  justify-self: start;
+}
 .sp-ui .profile-icon-dialog > h2,
 .sp-ui .profile-icon-dialog > p {
   margin-bottom: 12px;

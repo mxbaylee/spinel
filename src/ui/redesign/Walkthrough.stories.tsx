@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { Walkthrough } from './Walkthrough.tsx';
 const meta = {
   title: 'Redesign/Walkthrough',
@@ -60,5 +60,21 @@ export const OperatorHelp: Story = {
     await userEvent.click(
       within(canvasElement.ownerDocument.body).getByText('Operator help and commands'),
     );
+  },
+};
+
+// A document keeps its identity when returning through the file catalog.
+export const DocReturnToFiles: Story = {
+  args: { start: 'editor', initialKind: 'doc' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('heading', { name: 'A few good recipes' })).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: /^My files$/ }));
+    await userEvent.click(canvas.getByRole('button', { name: /^A few good recipes/ }));
+    await expect(canvas.getByRole('heading', { name: 'A few good recipes' })).toBeVisible();
+    await expect(await canvas.findByRole('region', { name: 'Document editor' })).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Open Space contents' }),
+    ).not.toBeInTheDocument();
   },
 };

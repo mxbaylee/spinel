@@ -10,6 +10,7 @@ import {
   HistoryMockup,
   ProfileMockup,
   ReviewProfileContext,
+  files as reviewFiles,
 } from './Mockups.tsx';
 import { EntryJourney } from './EntryJourney.tsx';
 import type { EntryScreen, EntryOutcome } from './EntryJourney.tsx';
@@ -37,14 +38,20 @@ type File = {
   name: string;
   kind: 'doc' | 'sheet' | 'space';
   access: 'owner' | 'editor' | 'viewer';
+  locationLabel?: string;
 };
 const entryScreens = ['home', 'sign-in', 'invite', 'recovery', 'setup'];
-const firstFile: File = {
-  id: 'fixture-Quarterly budget',
-  name: 'Quarterly budget',
-  kind: 'sheet',
-  access: 'editor',
-};
+// Open the same catalog records that My files and pins use.
+function firstCatalogFile(kind: 'sheet' | 'doc'): File {
+  const file = reviewFiles.find((item) => item.kind === kind)!;
+  return {
+    ...file,
+    kind,
+    locationLabel: reviewFiles.find((item) => item.id === file.parentId)?.name ?? 'My files',
+  };
+}
+const firstFile = firstCatalogFile('sheet');
+const firstDoc = firstCatalogFile('doc');
 
 export function Walkthrough({
   persona: initialPersona = 'owner',
@@ -72,7 +79,7 @@ export function Walkthrough({
     persona === 'guest'
       ? { id: 'guest-doc', name: 'Autumn plans', kind: 'doc', access: 'viewer' }
       : initialKind === 'doc'
-        ? { id: 'fixture-Autumn plans', name: 'Autumn plans', kind: 'doc', access: 'owner' }
+        ? firstDoc
         : firstFile,
   );
   const [signedIn, setSignedIn] = useState(
@@ -157,7 +164,7 @@ export function Walkthrough({
       initialPersona === 'guest'
         ? { id: 'guest-doc', name: 'Autumn plans', kind: 'doc', access: 'viewer' }
         : initialKind === 'doc'
-          ? { id: 'fixture-Autumn plans', name: 'Autumn plans', kind: 'doc', access: 'owner' }
+          ? firstDoc
           : firstFile,
     );
     setSignedIn(
@@ -326,6 +333,7 @@ export function Walkthrough({
                   <EditorMockup
                     key={`${file.id}:${file.access}`}
                     title={file.name}
+                    locationLabel={file.locationLabel}
                     sheet={file.kind === 'sheet'}
                     space={file.kind === 'space'}
                     guest={persona === 'guest'}
