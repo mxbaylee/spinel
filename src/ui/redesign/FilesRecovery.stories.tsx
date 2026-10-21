@@ -61,11 +61,11 @@ export const LocalNavigationKeepsPinActionsDisabled: Story = {
     const scope = navigation ? within(navigation) : page;
     const pins = within(scope.getByRole('region', { name: 'Pinned items' }));
     await userEvent.click(pins.getByRole('button', { name: 'Pin actions for Quarterly budget' }));
-    await expect(page.getByRole('menuitem', { name: 'Move down' })).toHaveAttribute(
+    await expect(await page.findByRole('menuitem', { name: 'Move down' })).toHaveAttribute(
       'aria-disabled',
       'true',
     );
-    await expect(page.getByRole('menuitem', { name: 'Unpin' })).toHaveAttribute(
+    await expect(await page.findByRole('menuitem', { name: 'Unpin' })).toHaveAttribute(
       'aria-disabled',
       'true',
     );

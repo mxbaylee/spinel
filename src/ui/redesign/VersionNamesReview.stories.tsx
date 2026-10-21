@@ -88,13 +88,14 @@ export const EmbeddedRename: Story = {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Actions for Ready for the trip' }),
     );
-    await userEvent.click(page.getByRole('menuitem', { name: 'Rename version' }));
-    const input = page.getByRole('textbox', { name: 'Version name' });
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Rename version' }));
+    const dialog = within(await page.findByRole('dialog', { name: 'Rename version' }));
+    const input = dialog.getByRole('textbox', { name: 'Version name' });
     await userEvent.clear(input);
     await userEvent.type(input, 'Trip checked');
-    await userEvent.click(page.getByRole('button', { name: 'Save name' }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Save name' }));
     await expect(
-      within(canvasElement).getByRole('button', { name: 'Trip checked Preview version' }),
+      await within(canvasElement).findByRole('button', { name: 'Trip checked Preview version' }),
     ).toHaveAttribute('aria-pressed', 'true');
   },
 };

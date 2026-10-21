@@ -84,6 +84,7 @@ export const FolderHasNoTagsAction: Story = {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'More actions for Household' }),
     );
+    await expect(await portal.findByRole('menuitem', { name: 'Open' })).toBeVisible();
     await expect(portal.queryByRole('menuitem', { name: 'Tags…' })).toBeNull();
   },
 };

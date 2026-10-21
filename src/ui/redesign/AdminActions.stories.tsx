@@ -141,7 +141,7 @@ export const RemoveOneOperatorPasskey: Story = {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Actions for Operator (you)' }),
     );
-    await userEvent.click(portal.getByRole('menuitem', { name: 'Manage passkeys' }));
+    await userEvent.click(await portal.findByRole('menuitem', { name: 'Manage passkeys' }));
     dialog = within(await portal.findByRole('dialog', { name: 'Passkeys for Operator (you)' }));
     await expect(dialog.getByText('Security key', { exact: true })).toBeVisible();
     await expect(dialog.getByText('Last passkey · Protected')).toBeVisible();

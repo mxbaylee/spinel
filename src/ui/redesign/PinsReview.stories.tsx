@@ -97,7 +97,7 @@ export const ReorderAndRemoveFolder: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Household' }));
     await expect(canvas.getByText('Opened item: fixture-Household')).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'Pin actions for Household' }));
-    await userEvent.click(popup.getByRole('menuitem', { name: 'Move up' }));
+    await userEvent.click(await popup.findByRole('menuitem', { name: 'Move up' }));
     await waitFor(() =>
       expect(ids()).toEqual([
         'fixture-Quarterly budget',
@@ -106,7 +106,7 @@ export const ReorderAndRemoveFolder: Story = {
       ]),
     );
     await userEvent.click(canvas.getByRole('button', { name: 'Pin actions for Household' }));
-    await userEvent.click(popup.getByRole('menuitem', { name: 'Unpin' }));
+    await userEvent.click(await popup.findByRole('menuitem', { name: 'Unpin' }));
     await waitFor(() => expect(ids()).toEqual(initialReviewPins.map((item) => item.id)));
   },
 };
@@ -149,7 +149,7 @@ export const DashboardNavigation: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: 'More actions for Notes for next week' }),
     );
-    await userEvent.click(page.getByRole('menuitem', { name: /^Pin$/ }));
+    await userEvent.click(await page.findByRole('menuitem', { name: /^Pin$/ }));
     await waitFor(() =>
       expect(
         canvasElement.querySelector('[data-pin-id="fixture-Notes for next week"]'),

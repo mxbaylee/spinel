@@ -23,7 +23,7 @@ export const RenameCheckpoint: Story = {
   play: async ({ canvasElement }) => {
     const portal = within(canvasElement.ownerDocument.body);
     await openCheckpointActions(canvasElement);
-    await userEvent.click(portal.getByRole('menuitem', { name: 'Rename version' }));
+    await userEvent.click(await portal.findByRole('menuitem', { name: 'Rename version' }));
     const dialog = await portal.findByRole('dialog', { name: 'Rename version' });
     await expect(within(dialog).getByRole('textbox', { name: 'Version name' })).toHaveValue(
       'Ready for the trip',
@@ -35,14 +35,16 @@ export const RenamedCheckpoint: Story = {
   play: async ({ canvasElement }) => {
     const portal = within(canvasElement.ownerDocument.body);
     await openCheckpointActions(canvasElement);
-    await userEvent.click(portal.getByRole('menuitem', { name: 'Rename version' }));
+    await userEvent.click(await portal.findByRole('menuitem', { name: 'Rename version' }));
     const dialog = await portal.findByRole('dialog', { name: 'Rename version' });
     const input = within(dialog).getByRole('textbox', { name: 'Version name' });
     await userEvent.clear(input);
     await userEvent.type(input, 'Booked and confirmed');
     await userEvent.click(within(dialog).getByRole('button', { name: 'Save name' }));
     await expect(
-      within(canvasElement).getByRole('button', { name: 'Booked and confirmed Preview version' }),
+      await within(canvasElement).findByRole('button', {
+        name: 'Booked and confirmed Preview version',
+      }),
     ).toHaveAttribute('aria-pressed', 'true');
     await expect(canvasElement.querySelector('.rd-history-selection')).toHaveTextContent(
       'Booked and confirmed',
@@ -54,7 +56,7 @@ export const RemoveCheckpointName: Story = {
   play: async ({ canvasElement }) => {
     const portal = within(canvasElement.ownerDocument.body);
     await openCheckpointActions(canvasElement);
-    await userEvent.click(portal.getByRole('menuitem', { name: 'Remove name' }));
+    await userEvent.click(await portal.findByRole('menuitem', { name: 'Remove name' }));
     const dialog = await portal.findByRole('dialog', { name: 'Remove this version’s name?' });
     await expect(
       within(dialog).getByText(
@@ -72,7 +74,7 @@ export const OlderNamesWhileUnsaved: Story = {
     ).toBeDisabled();
     await openCheckpointActions(canvasElement);
     const portal = within(canvasElement.ownerDocument.body);
-    await userEvent.click(portal.getByRole('menuitem', { name: 'Rename version' }));
+    await userEvent.click(await portal.findByRole('menuitem', { name: 'Rename version' }));
     const dialog = await portal.findByRole('dialog', { name: 'Rename version' });
     await expect(within(dialog).getByRole('button', { name: 'Save name' })).toBeEnabled();
   },
