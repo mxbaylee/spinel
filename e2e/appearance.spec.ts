@@ -3,10 +3,25 @@ import { randomUUID } from 'node:crypto';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { mkdir } from 'node:fs/promises';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
-import type { IWorkbookData } from '@univerjs/core';
+import type { ICellData, IWorkbookData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+
+// Collaboration materialization allocates fresh style IDs on every read.
+// Resolve each cell's complete style before comparing all workbook content;
+// incidental dictionary keys are not formatting changes (see sheets.spec.ts).
+function resolvedWorkbook(snapshot: IWorkbookData) {
+  const { styles, ...workbook } = structuredClone(snapshot);
+  for (const sheet of Object.values(workbook.sheets))
+    for (const row of Object.values(sheet.cellData ?? {}))
+      for (const cell of Object.values(row ?? {}) as (ICellData | null)[])
+        if (cell && typeof cell.s === 'string') {
+          expect(styles[cell.s], `Style ${cell.s} must resolve`).toBeDefined();
+          cell.s = styles[cell.s];
+        }
+  return workbook;
+}
 
 test('themes persist, follow the system, and recolour sheet presets without editing documents', async ({
   page,
@@ -221,7 +236,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await expect(badge.locator('.collaborator-name')).toHaveCSS('color', 'rgb(26, 18, 37)');
     await capture('sheet-dark');
     expect((await read()).revision).toBe(before.revision);
-    expect((await read()).snapshot).toEqual(before.snapshot);
+    expect(resolvedWorkbook((await read()).snapshot)).toEqual(resolvedWorkbook(before.snapshot));
     await page.reload();
     await saved();
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
