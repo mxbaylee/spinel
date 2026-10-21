@@ -2,7 +2,7 @@
 
 Proposed review captures; awaiting owner approval in [PR #125](https://github.com/mxbaylee/spinel/pull/125). They are not regression baselines.
 
-Before images are current Storybook components or production Playwright routes. Proposed editors use schematic content/toolbar placement; they do not replace Univer. Fixture content differs, so compare hierarchy, controls and space rather than document text. Planned features have no production before.
+Before images record pre-redesign Storybook components or production Playwright routes. All captures come from successful workflows at the same source commit, including the landed SPN-036 profile fields. Each capture records its source workflow. Proposed editors use schematic content/toolbar placement; they do not replace Univer. Fixture content differs, so compare hierarchy, controls and space rather than document text. Planned features have no production before.
 
 The CI **design-review** artifact contains every state plus dark-phone/tablet views, shared-control popups, navigation and connectivity explanations. The paired HTML index is inside the downloaded artifact. These durable samples cover the main screen families.
 
@@ -257,6 +257,82 @@ Before:
 Proposed:
 
 ![Proposed Profile and appearance, phone](profile-phone.png)
+
+</details>
+
+## Profile icon picker
+
+<details><summary>Light</summary>
+
+Before:
+
+![Before Profile icon picker, light](before-profile-icon-picker-light.png)
+
+Proposed:
+
+![Proposed Profile icon picker, light](profile-icon-picker-light.png)
+
+</details>
+
+<details><summary>Dark</summary>
+
+Before:
+
+![Before Profile icon picker, dark](before-profile-icon-picker-dark.png)
+
+Proposed:
+
+![Proposed Profile icon picker, dark](profile-icon-picker-dark.png)
+
+</details>
+
+<details><summary>Phone Width</summary>
+
+Before:
+
+![Before Profile icon picker, phone](before-profile-icon-picker-phone.png)
+
+Proposed:
+
+![Proposed Profile icon picker, phone](profile-icon-picker-phone.png)
+
+</details>
+
+## Profile colour picker
+
+<details><summary>Light</summary>
+
+Before:
+
+![Before Profile colour picker, light](before-profile-colour-picker-light.png)
+
+Proposed:
+
+![Proposed Profile colour picker, light](profile-colour-picker-light.png)
+
+</details>
+
+<details><summary>Dark</summary>
+
+Before:
+
+![Before Profile colour picker, dark](before-profile-colour-picker-dark.png)
+
+Proposed:
+
+![Proposed Profile colour picker, dark](profile-colour-picker-dark.png)
+
+</details>
+
+<details><summary>Phone Width</summary>
+
+Before:
+
+![Before Profile colour picker, phone](before-profile-colour-picker-phone.png)
+
+Proposed:
+
+![Proposed Profile colour picker, phone](profile-colour-picker-phone.png)
 
 </details>
 
@@ -841,6 +917,32 @@ Proposed:
 Proposed:
 
 ![Proposed Grid view, phone](dashboard-grid-phone.png)
+
+</details>
+
+## New file menu
+
+<details><summary>Light</summary>
+
+Proposed:
+
+![Proposed New file menu, light](dashboard-new-menu-light.png)
+
+</details>
+
+<details><summary>Dark</summary>
+
+Proposed:
+
+![Proposed New file menu, dark](dashboard-new-menu-dark.png)
+
+</details>
+
+<details><summary>Phone Width</summary>
+
+Proposed:
+
+![Proposed New file menu, phone](dashboard-new-menu-phone.png)
 
 </details>
 

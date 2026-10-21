@@ -1,585 +1,805 @@
 {
-  "proposalSourceCommit": "90a1c71",
-  "proposalWorkflow": 39523761874,
-  "currentRoutesWorkflow": 39519976921,
-  "guestRoutesWorkflow": 39523010788,
-  "setupRoutesWorkflow": 39520843793,
+  "proposalSourceCommit": "12a8cfcdce84b122908316eb9926aead5d1f477a",
+  "proposalWorkflow": 39526043906,
+  "currentRoutesWorkflow": 39526043934,
+  "guestRoutesWorkflow": 39526043934,
+  "setupRoutesWorkflow": 39526043934,
+  "mobileRoutesWorkflow": 39526043934,
   "captures": [
     {
       "file": "before-dashboard-light.png",
-      "source": "dashboard-dashboard--populated-light.png"
+      "source": "dashboard-dashboard--populated-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-light.png",
-      "source": "redesign-screens--dashboard-light.png"
+      "source": "redesign-screens--dashboard-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-dashboard-dark.png",
-      "source": "dashboard-dashboard--populated-dark.png"
+      "source": "dashboard-dashboard--populated-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-dark.png",
-      "source": "redesign-screens--dashboard-dark.png"
+      "source": "redesign-screens--dashboard-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-dashboard-phone.png",
-      "source": "dashboard-dashboard--populated-phone.png"
+      "source": "dashboard-dashboard--populated-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-phone.png",
-      "source": "redesign-screens--dashboard-phone.png"
+      "source": "redesign-screens--dashboard-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "history-calendar-light.png",
-      "source": "redesign-screens--history-calendar-light.png"
+      "source": "redesign-screens--history-calendar-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "history-calendar-dark.png",
-      "source": "redesign-screens--history-calendar-dark.png"
+      "source": "redesign-screens--history-calendar-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "history-calendar-phone.png",
-      "source": "redesign-screens--history-calendar-phone.png"
+      "source": "redesign-screens--history-calendar-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-guest-sheet-light.png",
-      "source": "before-guest-sheet-viewer-light-production.png"
+      "source": "before-guest-sheet-viewer-light-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "guest-sheet-light.png",
-      "source": "redesign-screens--guest-sheet-light.png"
+      "source": "redesign-screens--guest-sheet-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-guest-sheet-dark.png",
-      "source": "before-guest-sheet-viewer-dark-production.png"
+      "source": "before-guest-sheet-viewer-dark-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "guest-sheet-dark.png",
-      "source": "redesign-screens--guest-sheet-dark.png"
+      "source": "redesign-screens--guest-sheet-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-guest-sheet-phone.png",
-      "source": "before-guest-sheet-viewer-phone-production.png"
+      "source": "before-guest-sheet-viewer-phone-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "guest-sheet-phone.png",
-      "source": "redesign-screens--guest-sheet-phone.png"
+      "source": "redesign-screens--guest-sheet-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-doc-light.png",
-      "source": "production-doc-light.png"
+      "source": "production-doc-light.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "doc-light.png",
-      "source": "redesign-screens--doc-light.png"
+      "source": "redesign-screens--doc-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-doc-dark.png",
-      "source": "production-doc-dark.png"
+      "source": "production-doc-dark.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "doc-dark.png",
-      "source": "redesign-screens--doc-dark.png"
+      "source": "redesign-screens--doc-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-doc-phone.png",
-      "source": "formulas-production-editing-light-390.png"
+      "source": "formulas-production-editing-light-390.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "doc-phone.png",
-      "source": "redesign-screens--doc-phone.png"
+      "source": "redesign-screens--doc-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-sheet-light.png",
-      "source": "production-sheet-light.png"
+      "source": "production-sheet-light.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "sheet-light.png",
-      "source": "redesign-screens--sheet-light.png"
+      "source": "redesign-screens--sheet-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-sheet-dark.png",
-      "source": "production-sheet-dark.png"
+      "source": "production-sheet-dark.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "sheet-dark.png",
-      "source": "redesign-screens--sheet-dark.png"
+      "source": "redesign-screens--sheet-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-sheet-phone.png",
-      "source": "mobile-sheet-light-mobile-https.png"
+      "source": "mobile-sheet-light-mobile-https.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "sheet-phone.png",
-      "source": "redesign-screens--sheet-phone.png"
+      "source": "redesign-screens--sheet-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-sharing-light.png",
-      "source": "sharing-sharing--with-people-light.png"
+      "source": "sharing-sharing--with-people-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "sharing-light.png",
-      "source": "redesign-screens--sharing-light.png"
+      "source": "redesign-screens--sharing-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-sharing-dark.png",
-      "source": "sharing-sharing--with-people-dark.png"
+      "source": "sharing-sharing--with-people-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "sharing-dark.png",
-      "source": "redesign-screens--sharing-dark.png"
+      "source": "redesign-screens--sharing-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-sharing-phone.png",
-      "source": "sharing-sharing--with-people-phone.png"
+      "source": "sharing-sharing--with-people-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "sharing-phone.png",
-      "source": "redesign-screens--sharing-phone.png"
+      "source": "redesign-screens--sharing-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-profile-light.png",
-      "source": "before-settings-light-production.png"
+      "source": "before-settings-light-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "profile-light.png",
-      "source": "redesign-screens--profile-light.png"
+      "source": "redesign-screens--profile-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-profile-dark.png",
-      "source": "before-settings-dark-production.png"
+      "source": "before-settings-dark-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "profile-dark.png",
-      "source": "redesign-screens--profile-dark.png"
+      "source": "redesign-screens--profile-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-profile-phone.png",
-      "source": "before-settings-phone-production.png"
+      "source": "before-settings-phone-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "profile-phone.png",
-      "source": "redesign-screens--profile-phone.png"
+      "source": "redesign-screens--profile-phone.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "before-profile-icon-picker-light.png",
+      "source": "account-icon-picker--browse-light.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "profile-icon-picker-light.png",
+      "source": "redesign-screens--profile-icon-picker-light.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "before-profile-icon-picker-dark.png",
+      "source": "account-icon-picker--browse-dark.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "profile-icon-picker-dark.png",
+      "source": "redesign-screens--profile-icon-picker-dark.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "before-profile-icon-picker-phone.png",
+      "source": "account-icon-picker--browse-phone.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "profile-icon-picker-phone.png",
+      "source": "redesign-screens--profile-icon-picker-phone.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "before-profile-colour-picker-light.png",
+      "source": "account-profile--ready-light.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "profile-colour-picker-light.png",
+      "source": "redesign-screens--profile-colour-picker-light.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "before-profile-colour-picker-dark.png",
+      "source": "account-profile--ready-dark.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "profile-colour-picker-dark.png",
+      "source": "redesign-screens--profile-colour-picker-dark.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "before-profile-colour-picker-phone.png",
+      "source": "account-profile--ready-phone.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "profile-colour-picker-phone.png",
+      "source": "redesign-screens--profile-colour-picker-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-connections-light.png",
-      "source": "mcp-production-connections-light.png"
+      "source": "mcp-production-connections-light.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "connections-light.png",
-      "source": "redesign-screens--connections-light.png"
+      "source": "redesign-screens--connections-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-connections-dark.png",
-      "source": "mcp-production-connections-dark.png"
+      "source": "mcp-production-connections-dark.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "connections-dark.png",
-      "source": "redesign-screens--connections-dark.png"
+      "source": "redesign-screens--connections-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-connections-phone.png",
-      "source": "mcp-production-connections-phone.png"
+      "source": "mcp-production-connections-phone.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "connections-phone.png",
-      "source": "redesign-screens--connections-phone.png"
+      "source": "redesign-screens--connections-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-consent-light.png",
-      "source": "mcp-production-consent-light.png"
+      "source": "mcp-production-consent-light.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "consent-light.png",
-      "source": "redesign-screens--consent-light.png"
+      "source": "redesign-screens--consent-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-consent-dark.png",
-      "source": "mcp-production-consent-dark.png"
+      "source": "mcp-production-consent-dark.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "consent-dark.png",
-      "source": "redesign-screens--consent-dark.png"
+      "source": "redesign-screens--consent-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-consent-phone.png",
-      "source": "mcp-production-consent-phone.png"
+      "source": "mcp-production-consent-phone.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "consent-phone.png",
-      "source": "redesign-screens--consent-phone.png"
+      "source": "redesign-screens--consent-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-admin-light.png",
-      "source": "admin-adminusers--loaded-light.png"
+      "source": "admin-adminusers--loaded-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "admin-light.png",
-      "source": "redesign-screens--admin-light.png"
+      "source": "redesign-screens--admin-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-admin-dark.png",
-      "source": "admin-adminusers--loaded-dark.png"
+      "source": "admin-adminusers--loaded-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "admin-dark.png",
-      "source": "redesign-screens--admin-dark.png"
+      "source": "redesign-screens--admin-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-admin-phone.png",
-      "source": "admin-adminusers--loaded-phone.png"
+      "source": "admin-adminusers--loaded-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "admin-phone.png",
-      "source": "redesign-screens--admin-phone.png"
+      "source": "redesign-screens--admin-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-admin-invites-light.png",
-      "source": "admin-admininvites--loaded-light.png"
+      "source": "admin-admininvites--loaded-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "admin-invites-light.png",
-      "source": "redesign-screens--admin-invites-light.png"
+      "source": "redesign-screens--admin-invites-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-admin-invites-dark.png",
-      "source": "admin-admininvites--loaded-dark.png"
+      "source": "admin-admininvites--loaded-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "admin-invites-dark.png",
-      "source": "redesign-screens--admin-invites-dark.png"
+      "source": "redesign-screens--admin-invites-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-admin-invites-phone.png",
-      "source": "admin-admininvites--loaded-phone.png"
+      "source": "admin-admininvites--loaded-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "admin-invites-phone.png",
-      "source": "redesign-screens--admin-invites-phone.png"
+      "source": "redesign-screens--admin-invites-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-admin-health-warning-light.png",
-      "source": "admin-backupstatus--healthy-light.png"
+      "source": "admin-backupstatus--healthy-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "admin-health-warning-light.png",
-      "source": "redesign-screens--admin-health-warning-light.png"
+      "source": "redesign-screens--admin-health-warning-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-admin-health-warning-dark.png",
-      "source": "admin-backupstatus--healthy-dark.png"
+      "source": "admin-backupstatus--healthy-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "admin-health-warning-dark.png",
-      "source": "redesign-screens--admin-health-warning-dark.png"
+      "source": "redesign-screens--admin-health-warning-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-admin-health-warning-phone.png",
-      "source": "admin-backupstatus--healthy-phone.png"
+      "source": "admin-backupstatus--healthy-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "admin-health-warning-phone.png",
-      "source": "redesign-screens--admin-health-warning-phone.png"
+      "source": "redesign-screens--admin-health-warning-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-history-light.png",
-      "source": "editor-versionnames--open-light.png"
+      "source": "editor-versionnames--open-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "history-light.png",
-      "source": "redesign-screens--history-light.png"
+      "source": "redesign-screens--history-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-history-dark.png",
-      "source": "editor-versionnames--open-dark.png"
+      "source": "editor-versionnames--open-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "history-dark.png",
-      "source": "redesign-screens--history-dark.png"
+      "source": "redesign-screens--history-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-history-phone.png",
-      "source": "editor-versionnames--open-phone.png"
+      "source": "editor-versionnames--open-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "history-phone.png",
-      "source": "redesign-screens--history-phone.png"
+      "source": "redesign-screens--history-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-formula-in-context-light.png",
-      "source": "formulas-production-editing-light-1440.png"
+      "source": "formulas-production-editing-light-1440.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "formula-in-context-light.png",
-      "source": "redesign-screens--formula-in-context-light.png"
+      "source": "redesign-screens--formula-in-context-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-formula-in-context-dark.png",
-      "source": "formulas-production-editing-dark-1440.png"
+      "source": "formulas-production-editing-dark-1440.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "formula-in-context-dark.png",
-      "source": "redesign-screens--formula-in-context-dark.png"
+      "source": "redesign-screens--formula-in-context-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-formula-in-context-phone.png",
-      "source": "formulas-production-editing-light-390.png"
+      "source": "formulas-production-editing-light-390.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "formula-in-context-phone.png",
-      "source": "redesign-screens--formula-in-context-phone.png"
+      "source": "redesign-screens--formula-in-context-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-sign-in-light.png",
-      "source": "before-sign-in-light-production.png"
+      "source": "before-sign-in-light-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "sign-in-light.png",
-      "source": "redesign-screens--sign-in-light.png"
+      "source": "redesign-screens--sign-in-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-sign-in-dark.png",
-      "source": "before-sign-in-dark-production.png"
+      "source": "before-sign-in-dark-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "sign-in-dark.png",
-      "source": "redesign-screens--sign-in-dark.png"
+      "source": "redesign-screens--sign-in-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-sign-in-phone.png",
-      "source": "before-sign-in-phone-production.png"
+      "source": "before-sign-in-phone-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "sign-in-phone.png",
-      "source": "redesign-screens--sign-in-phone.png"
+      "source": "redesign-screens--sign-in-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-setup-light.png",
-      "source": "before-setup-light-production.png"
+      "source": "before-setup-light-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "setup-light.png",
-      "source": "redesign-screens--setup-light.png"
+      "source": "redesign-screens--setup-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-setup-dark.png",
-      "source": "before-setup-dark-production.png"
+      "source": "before-setup-dark-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "setup-dark.png",
-      "source": "redesign-screens--setup-dark.png"
+      "source": "redesign-screens--setup-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-setup-phone.png",
-      "source": "before-setup-phone-production.png"
+      "source": "before-setup-phone-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "setup-phone.png",
-      "source": "redesign-screens--setup-phone.png"
+      "source": "redesign-screens--setup-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-invite-light.png",
-      "source": "before-invite-light-production.png"
+      "source": "before-invite-light-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "invite-light.png",
-      "source": "redesign-screens--invite-light.png"
+      "source": "redesign-screens--invite-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-invite-dark.png",
-      "source": "before-invite-dark-production.png"
+      "source": "before-invite-dark-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "invite-dark.png",
-      "source": "redesign-screens--invite-dark.png"
+      "source": "redesign-screens--invite-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-invite-phone.png",
-      "source": "before-invite-phone-production.png"
+      "source": "before-invite-phone-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "invite-phone.png",
-      "source": "redesign-screens--invite-phone.png"
+      "source": "redesign-screens--invite-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-recovery-light.png",
-      "source": "before-recovery-light-production.png"
+      "source": "before-recovery-light-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "recovery-light.png",
-      "source": "redesign-screens--recovery-light.png"
+      "source": "redesign-screens--recovery-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-recovery-dark.png",
-      "source": "before-recovery-dark-production.png"
+      "source": "before-recovery-dark-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "recovery-dark.png",
-      "source": "redesign-screens--recovery-dark.png"
+      "source": "redesign-screens--recovery-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-recovery-phone.png",
-      "source": "before-recovery-phone-production.png"
+      "source": "before-recovery-phone-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "recovery-phone.png",
-      "source": "redesign-screens--recovery-phone.png"
+      "source": "redesign-screens--recovery-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-guest-viewer-light.png",
-      "source": "before-guest-doc-viewer-light-production.png"
+      "source": "before-guest-doc-viewer-light-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "guest-viewer-light.png",
-      "source": "redesign-screens--guest-viewer-light.png"
+      "source": "redesign-screens--guest-viewer-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-guest-viewer-dark.png",
-      "source": "before-guest-doc-viewer-dark-production.png"
+      "source": "before-guest-doc-viewer-dark-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "guest-viewer-dark.png",
-      "source": "redesign-screens--guest-viewer-dark.png"
+      "source": "redesign-screens--guest-viewer-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-guest-viewer-phone.png",
-      "source": "before-guest-doc-viewer-phone-production.png"
+      "source": "before-guest-doc-viewer-phone-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "guest-viewer-phone.png",
-      "source": "redesign-screens--guest-viewer-phone.png"
+      "source": "redesign-screens--guest-viewer-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-guest-editor-light.png",
-      "source": "before-guest-doc-editor-light-production.png"
+      "source": "before-guest-doc-editor-light-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "guest-editor-light.png",
-      "source": "redesign-screens--guest-editor-light.png"
+      "source": "redesign-screens--guest-editor-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-guest-editor-dark.png",
-      "source": "before-guest-doc-editor-dark-production.png"
+      "source": "before-guest-doc-editor-dark-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "guest-editor-dark.png",
-      "source": "redesign-screens--guest-editor-dark.png"
+      "source": "redesign-screens--guest-editor-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-guest-editor-phone.png",
-      "source": "before-guest-doc-editor-phone-production.png"
+      "source": "before-guest-doc-editor-phone-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "guest-editor-phone.png",
-      "source": "redesign-screens--guest-editor-phone.png"
+      "source": "redesign-screens--guest-editor-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-revoked-link-light.png",
-      "source": "before-revoked-light-production.png"
+      "source": "before-revoked-light-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "revoked-link-light.png",
-      "source": "redesign-screens--revoked-link-light.png"
+      "source": "redesign-screens--revoked-link-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-revoked-link-dark.png",
-      "source": "before-revoked-dark-production.png"
+      "source": "before-revoked-dark-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "revoked-link-dark.png",
-      "source": "redesign-screens--revoked-link-dark.png"
+      "source": "redesign-screens--revoked-link-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "before-revoked-link-phone.png",
-      "source": "before-revoked-phone-production.png"
+      "source": "before-revoked-phone-production.png",
+      "sourceWorkflow": 39526043934
     },
     {
       "file": "revoked-link-phone.png",
-      "source": "redesign-screens--revoked-link-phone.png"
+      "source": "redesign-screens--revoked-link-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-collapsed-light.png",
-      "source": "redesign-screens--dashboard-collapsed-light.png"
+      "source": "redesign-screens--dashboard-collapsed-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-collapsed-dark.png",
-      "source": "redesign-screens--dashboard-collapsed-dark.png"
+      "source": "redesign-screens--dashboard-collapsed-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-collapsed-phone.png",
-      "source": "redesign-screens--dashboard-collapsed-phone.png"
+      "source": "redesign-screens--dashboard-collapsed-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-grid-light.png",
-      "source": "redesign-screens--dashboard-grid-light.png"
+      "source": "redesign-screens--dashboard-grid-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-grid-dark.png",
-      "source": "redesign-screens--dashboard-grid-dark.png"
+      "source": "redesign-screens--dashboard-grid-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-grid-phone.png",
-      "source": "redesign-screens--dashboard-grid-phone.png"
+      "source": "redesign-screens--dashboard-grid-phone.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "dashboard-new-menu-light.png",
+      "source": "redesign-screens--dashboard-new-menu-light.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "dashboard-new-menu-dark.png",
+      "source": "redesign-screens--dashboard-new-menu-dark.png",
+      "sourceWorkflow": 39526043906
+    },
+    {
+      "file": "dashboard-new-menu-phone.png",
+      "source": "redesign-screens--dashboard-new-menu-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-grid-collapsed-light.png",
-      "source": "redesign-screens--dashboard-grid-collapsed-light.png"
+      "source": "redesign-screens--dashboard-grid-collapsed-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-grid-collapsed-dark.png",
-      "source": "redesign-screens--dashboard-grid-collapsed-dark.png"
+      "source": "redesign-screens--dashboard-grid-collapsed-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "dashboard-grid-collapsed-phone.png",
-      "source": "redesign-screens--dashboard-grid-collapsed-phone.png"
+      "source": "redesign-screens--dashboard-grid-collapsed-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "planned-space-light.png",
-      "source": "redesign-screens--planned-space-light.png"
+      "source": "redesign-screens--planned-space-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "planned-space-dark.png",
-      "source": "redesign-screens--planned-space-dark.png"
+      "source": "redesign-screens--planned-space-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "planned-space-phone.png",
-      "source": "redesign-screens--planned-space-phone.png"
+      "source": "redesign-screens--planned-space-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "planned-space-guest-light.png",
-      "source": "redesign-screens--planned-space-guest-light.png"
+      "source": "redesign-screens--planned-space-guest-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "planned-space-guest-dark.png",
-      "source": "redesign-screens--planned-space-guest-dark.png"
+      "source": "redesign-screens--planned-space-guest-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "planned-space-guest-phone.png",
-      "source": "redesign-screens--planned-space-guest-phone.png"
+      "source": "redesign-screens--planned-space-guest-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "planned-file-admin-light.png",
-      "source": "redesign-screens--planned-file-admin-light.png"
+      "source": "redesign-screens--planned-file-admin-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "planned-file-admin-dark.png",
-      "source": "redesign-screens--planned-file-admin-dark.png"
+      "source": "redesign-screens--planned-file-admin-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "planned-file-admin-phone.png",
-      "source": "redesign-screens--planned-file-admin-phone.png"
+      "source": "redesign-screens--planned-file-admin-phone.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "controls-light.png",
-      "source": "redesign-controls--default-light.png"
+      "source": "redesign-controls--default-light.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "controls-dark.png",
-      "source": "redesign-controls--default-dark.png"
+      "source": "redesign-controls--default-dark.png",
+      "sourceWorkflow": 39526043906
     },
     {
       "file": "controls-phone.png",
-      "source": "redesign-controls--default-phone.png"
+      "source": "redesign-controls--default-phone.png",
+      "sourceWorkflow": 39526043906
     }
   ]
 }
