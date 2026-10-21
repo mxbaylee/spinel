@@ -86,3 +86,24 @@ export const SharingError: Story = { render: () => <SharingMockup state="error" 
 export const ConsentReadOnly: Story = { render: () => <EntryMockup kind="consent" readOnly /> };
 
 export const PlannedGuestLinks: Story = { render: () => <ProfileMockup section="links" /> };
+
+export const DashboardCollapsed: Story = { render: () => <DashboardMockup collapsed /> };
+export const Folder: Story = { render: () => <DashboardMockup state="folder" /> };
+export const CollaboratorSheet: Story = { render: () => <EditorMockup sheet collaborator /> };
+export const PlannedSpaceCollapsed: Story = { render: () => <EditorMockup space collapsed /> };
+export const GuestSheet: Story = { render: () => <EditorMockup guest sheet viewOnly /> };
+export const GuestLongTitle: Story = {
+  render: () => (
+    <EditorMockup guest viewOnly title="A longer shared document title for our autumn trip" />
+  ),
+};
+export const AdminInviteCreated: Story = {
+  render: () => <AdminMockup section="Invites" state="invite-created" />,
+};
+export const AdminHealthWarning: Story = {
+  render: () => <AdminMockup section="Backups & health" state="health-warning" />,
+};
+export const AdminDisable: Story = { render: () => <AdminMockup state="disable" /> };
+export const AdminPasskeys: Story = { render: () => <AdminMockup state="passkeys" /> };
+
+export const HistoryRestore: Story = { render: () => <HistoryMockup confirmation /> };

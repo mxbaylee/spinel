@@ -90,3 +90,12 @@ origins for connections, creation, last use and revoked status; never secrets or
 document details. No token creation or document access for the Operator.
 `Settings/AssistantConnections` and `Admin/AccessTokens` cover loading, empty, metadata and failure states. See
 [MCP](../mcp.md), decision [#111](https://github.com/mxbaylee/spinel/issues/111).
+
+## Operator walkthrough refinements
+
+Wrap phone section navigation so Backups & health is always discoverable.
+Create invite belongs in Invites, followed by a once-only address, Copy and
+manual-copy fallback. Account actions name the target in confirmation; the
+Operator's protected account is visibly restricted. Passkey details and overdue
+backup examples are composed states, not just success notices. The compact
+utility header avoids a second permanent navigation column.

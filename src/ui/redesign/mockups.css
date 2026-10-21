@@ -971,3 +971,124 @@
     min-width: 44px;
   }
 }
+
+/* Persona walkthrough: one optional navigation column, never a rail beside a tree. */
+.rd-shell.rd-with-sidebar,
+.rd-shell.rd-guest.rd-with-sidebar {
+  grid-template-columns: 224px minmax(0, 1fr);
+}
+.rd-with-sidebar > .rd-rail {
+  display: none;
+}
+.rd-sidebar-brand,
+.rd-sidebar-utilities {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rd-sidebar-brand > .sp-control {
+  margin-left: auto;
+}
+.rd-sidebar {
+  padding-top: 16px;
+  gap: 24px;
+}
+.rd-rail-button small {
+  font-size: 10px;
+}
+.rd-guest:not(.rd-with-sidebar) > .rd-mobile-nav {
+  display: block;
+  padding: 12px 24px;
+}
+.rd-compact-shell {
+  display: block;
+}
+.rd-compact-shell > .rd-rail {
+  position: relative;
+  height: 56px;
+  flex-direction: row;
+  padding: 6px 24px;
+}
+.rd-compact-shell .rd-rail-bottom {
+  margin: 0 0 0 auto;
+  display: flex;
+}
+.rd-history-selection {
+  padding: 0 24px 16px;
+  color: var(--sp-muted);
+}
+.sp-control[aria-pressed='true'] {
+  background: var(--sp-tint-1);
+  border-color: var(--sp-accent);
+  color: var(--sp-text);
+}
+@media (pointer: coarse), (max-width: 640px) {
+  .sp-ui input:not([type='range']):not([type='checkbox']) {
+    min-height: 44px;
+  }
+}
+@media (max-width: 900px) {
+  .rd-shell.rd-with-sidebar {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+  .rd-shell.rd-guest.rd-with-sidebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rd-with-sidebar > .rd-rail {
+    display: flex;
+  }
+  .rd-desktop-nav {
+    display: none;
+  }
+  .rd-guest > .rd-mobile-nav {
+    display: block;
+    padding: 12px 24px 0;
+  }
+}
+@media (max-width: 640px) {
+  .rd-shell.rd-with-sidebar {
+    display: block;
+  }
+  .rd-rail {
+    gap: 8px;
+  }
+  .rd-page-header {
+    padding-top: 16px;
+  }
+  .rd-list-caption {
+    margin: 8px 0;
+  }
+  .rd-editor-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+  .rd-editor-title {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+  .rd-editor-title h1 {
+    max-width: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .rd-editor-actions {
+    grid-row: 2;
+    grid-column: 2;
+    margin: 0;
+  }
+  .rd-status-slot {
+    grid-row: 2;
+    grid-column: 1;
+    order: 0;
+    width: auto;
+  }
+  nav[aria-label='Administration sections'] {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: visible;
+  }
+  nav[aria-label='Administration sections'] .rd-nav-item {
+    width: 100%;
+  }
+}

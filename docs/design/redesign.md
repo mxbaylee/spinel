@@ -58,23 +58,24 @@ recovery and offline contracts remain authoritative.
 
 ## Composed layout contract
 
-- Global rail: 64 px, brand/home at top, appearance and profile at bottom.
-  On phones it becomes a 64 px top bar. Theme opens three named choices;
-  this replaces the provisional cycling proposal only after owner approval.
-- File sidebar: one 208 px column, 176 px at tablet width, containing places,
-  pins and folders. On phones a labelled Browse files button opens a modal
-  drawer. It does not stack a long navigation list above the files.
+- File navigation: one 224 px column with gem, places, pins, folders and account
+  utilities. Collapse reduces it to a 64 px rail; a labelled Files/Pages control
+  reopens it. Never show the rail beside an expanded tree. At tablet/phone
+  widths (900 px and below), navigation is a drawer by default.
+- Ordinary editors and Operator screens use a compact horizontal utility header,
+  avoiding a permanent second navigation column. Spaces keep the optional
+  internal Pages tree. Guests retain no account utilities.
 - File views: 28 px title, one New action, search and file-type selector, then
   rows. Extra search filters belong in a disclosure; active filters remain
   visible and clearable. File rows show name, type, access, limited tags and
   edited date. Dates move out at narrow widths before names lose space.
-- Editors: no file-search panel, dashboard title or pinned sidebar. One 80 px
+- Editors: no file-search panel, dashboard title or pinned sidebar. One compact
   header holds identity, a fixed status slot and permission-appropriate actions.
   The actual Univer toolbar remains the only editing toolbar. Mockups draw a
   schematic toolbar; they do not replace or promise new Univer commands.
 - Profile and Operator pages: section navigation replaces a long stack of
-  equally weighted cards. Phone section navigation scrolls horizontally, with
-  labels retained. Operator and file Admin are different concepts.
+  equally weighted cards. Profile section navigation scrolls horizontally, with
+  labels retained; Operator sections wrap so Backups & health stays discoverable. Operator and file Admin are different concepts.
 - Dialogs: one title and description, explicit close control, one task, actions
   together. Menus contain actions; selectors contain choices. Hidden detail
   never hides an access warning, failed save or required recovery action.
@@ -118,7 +119,7 @@ Build Storybook, then run `npm run screenshots -- <story ids>`. With no IDs it
 captures all Redesign stories and the listed current-screen stories. Unknown
 IDs fail. The runner uses one Chromium page at a time, fixed fixture time,
 reduced motion, light/dark desktop, light/dark phone and light tablet. It checks
-runtime failures and horizontal page overflow for proposed screens.
+runtime failures, horizontal page overflow and visible 44 px touch targets for proposed screens. Base UI’s aria-hidden form inputs are excluded from target checks.
 
 Output: `test-results/design-review/index.html`, PNGs, `manifest.json`, control
 semantics and bundle sizes. Storybook CI uploads this as **design-review**.
@@ -172,3 +173,29 @@ whether the retained color identity is right, and whether the explicit theme
 menu is preferable to cycling. The final approval covers every composed screen
 and light/dark/phone screenshots. Approval must be recorded in the PR before
 merge, as required by `docs/todo/process.md`; a passing build is not design approval.
+
+## Persona walkthrough repairs
+
+Owner feedback (chat, 2026-10-20) found the first permanent rail/sidebar pair
+redundant. Separate Owner/Collaborator and Operator/Link-guest reviews checked
+jobs rather than isolated component styling. Their resulting changes are part
+of the proposal, still subject to screenshot approval:
+
+- Retrieval: one collapsible navigation column; tablet drawer; remove the phone
+  Browse strip and repeated workspace eyebrow. Search names its current scope,
+  with Search all files available from a folder/shared view. Returning from a
+  document must restore folder, filters and scroll position in SPN-048/049.
+- Collaboration: an editable collaborator gets Can edit and an access explanation,
+  without owner-only Share/restore actions. Trash fixtures contain owned files only.
+- Recovery: selection is visibly highlighted, slider and label agree, preview and
+  confirmation identify the checkpoint, and Return to document remains available.
+- Guests: two-row phone headers keep long names readable; viewer status says
+  Connected, PDF has a visible label, and guest page deletion explains that an
+  account editor can restore it. No account history/navigation is exposed.
+- Operator: all phone sections stay visible; Create invite belongs to Invites;
+  created-invite/manual-copy, account passkeys, named disable confirmation, protected
+  Operator and overdue backup states are separate review specimens.
+
+Mockup actions demonstrate placement and local feedback; they do not implement
+networking, actual passkey operations or document persistence. Production tickets
+must preserve the existing security/behavior contracts during migration.

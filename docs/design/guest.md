@@ -67,3 +67,11 @@ links and connection loss are plain paragraphs above it.
 
 `Guest/GuestApp` (loading and link-revoked states; the editor itself boots
 Univer and is covered by Playwright).
+
+## Guest walkthrough refinements
+
+Phone headers reserve a full row for document/Space identity, then show access,
+connection/save state and a visibly labelled PDF action. Viewers see Connected
+rather than Saved. Space navigation can collapse; a guest editor's Trash
+confirmation explains that an account editor can recover the page, because
+guests cannot open account-only Space trash.

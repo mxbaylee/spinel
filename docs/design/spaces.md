@@ -51,3 +51,7 @@ Links are View/Edit only, never Admin. Every Space child inherits the same role,
 including future additions; no per-child override or child guest link exists.
 Sources outside a Space still require independent access, including formulas.
 The Operator's account recovery role never implies permission to browse content.
+
+The optional tree occupies one 224 px column with a visible collapse/reopen
+control. It defaults to a drawer at tablet/phone widths. It never appears beside
+a second permanent rail. Owner feedback and persona walkthrough, 2026-10-20.

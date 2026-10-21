@@ -93,6 +93,7 @@ try {
           .locator('.sp-ui button, .sp-ui input, .sp-ui summary')
           .evaluateAll((nodes) =>
             nodes.flatMap((node) => {
+              if (node.closest('[aria-hidden="true"]')) return [];
               const box = node.getBoundingClientRect();
               if (!box.width || !box.height) return [];
               return box.height < 43.5 || box.width < 43.5

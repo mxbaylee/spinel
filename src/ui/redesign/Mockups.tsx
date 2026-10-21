@@ -84,7 +84,9 @@ function Sidebar({
   onSelect,
   guest = false,
   canEdit = true,
+  onCollapse,
 }: {
+  onCollapse?: () => void;
   canEdit?: boolean;
   space?: boolean;
   selected: string;
@@ -137,6 +139,17 @@ function Sidebar({
       ];
   return (
     <nav className="rd-sidebar" aria-label={space ? 'Space contents' : 'Files'}>
+      {onCollapse && (
+        <div className="rd-sidebar-brand">
+          <div className="rd-brand">
+            <GemLogo />
+          </div>
+          <strong>spinel</strong>
+          <Button aria-label="Collapse navigation" onClick={onCollapse}>
+            <Glyph name="back" />
+          </Button>
+        </div>
+      )}
       {groups.map((group) => (
         <section key={group.title}>
           {space && group.title === 'WEEKEND TRIP' ? (
@@ -231,7 +244,11 @@ function Sidebar({
             </label>
           </>
         ) : action.startsWith('Trash') ? (
-          <p>The page can be recovered from Space trash.</p>
+          <p>
+            {guest
+              ? 'An account editor can restore this page from Space trash.'
+              : 'The page can be recovered from Space trash.'}
+          </p>
         ) : (
           <label>
             Page name
@@ -247,6 +264,14 @@ function Sidebar({
       </Modal>
       {!guest && (!space || canEdit) && (
         <div className="rd-sidebar-bottom">
+          {onCollapse && !guest && (
+            <div className="rd-sidebar-utilities">
+              <ThemeMenu />
+              <Button onClick={() => onSelect('Your profile')}>
+                <Avatar /> Your profile
+              </Button>
+            </div>
+          )}
           <button className="rd-nav-item" onClick={() => onSelect('Trash')}>
             <Glyph name="trash" />
             {space ? 'Space trash' : 'Trash'}
@@ -268,8 +293,12 @@ function Shell({
   canEdit = true,
   selected = 'My files',
   onSelect = () => {},
+  collapsed = false,
+  compact = false,
 }: {
   children: ReactNode;
+  collapsed?: boolean;
+  compact?: boolean;
   sidebar?: boolean;
   space?: boolean;
   guest?: boolean;
@@ -279,9 +308,10 @@ function Shell({
   onSelect?: (view: string) => void;
 }) {
   const [nav, setNav] = useState(false);
+  const [expanded, setExpanded] = useState(!collapsed);
   return (
     <div
-      className={`sp-ui rd-shell ${sidebar ? 'rd-with-sidebar' : ''} ${guest ? 'rd-guest' : ''}`}
+      className={`sp-ui rd-shell ${sidebar && expanded ? 'rd-with-sidebar' : ''} ${guest ? 'rd-guest' : ''} ${compact ? 'rd-compact-shell' : ''} ${sidebar ? 'rd-has-navigation' : ''}`}
     >
       {!guest && (
         <aside className="rd-rail" aria-label="Global navigation">
@@ -290,10 +320,24 @@ function Shell({
           </div>
           <button
             className="rd-rail-button"
-            aria-label={operator ? 'Administration' : 'My files'}
-            onClick={() => onSelect('My files')}
+            aria-label={
+              sidebar
+                ? space
+                  ? 'Browse pages'
+                  : 'Browse files'
+                : operator
+                  ? 'Administration'
+                  : 'My files'
+            }
+            onClick={() => {
+              if (sidebar) {
+                if (window.matchMedia('(max-width: 900px)').matches) setNav(true);
+                else setExpanded(!expanded);
+              } else onSelect('My files');
+            }}
           >
-            <Glyph name={operator ? 'shield' : 'files'} />
+            <Glyph name={sidebar ? 'menu' : operator ? 'shield' : 'files'} />
+            {sidebar && <small>{space ? 'Pages' : 'Files'}</small>}
           </button>
           <div className="rd-rail-bottom">
             <ThemeMenu />
@@ -309,21 +353,26 @@ function Shell({
       )}
       {sidebar && (
         <>
-          <div className="rd-desktop-nav">
-            <Sidebar
-              space={space}
-              selected={selected}
-              onSelect={onSelect}
-              guest={guest}
-              canEdit={canEdit}
-            />
-          </div>
-          <div className="rd-mobile-nav">
-            <Button onClick={() => setNav(true)}>
-              <Glyph name="menu" />
-              {space ? 'Pages' : 'Browse files'}
-            </Button>
-          </div>
+          {expanded && (
+            <div className="rd-desktop-nav">
+              <Sidebar
+                onCollapse={() => setExpanded(false)}
+                space={space}
+                selected={selected}
+                onSelect={onSelect}
+                guest={guest}
+                canEdit={canEdit}
+              />
+            </div>
+          )}
+          {guest && (
+            <div className="rd-mobile-nav">
+              <Button onClick={() => setNav(true)}>
+                <Glyph name="menu" />
+                {space ? 'Pages' : 'Browse files'}
+              </Button>
+            </div>
+          )}
           <Modal
             title={space ? 'Space contents' : 'Browse files'}
             description="Choose where to go."
@@ -391,7 +440,9 @@ const files = [
 ];
 export function DashboardMockup({
   state = 'populated',
+  collapsed = false,
 }: {
+  collapsed?: boolean;
   state?:
     | 'populated'
     | 'empty'
@@ -401,10 +452,17 @@ export function DashboardMockup({
     | 'filtered'
     | 'no-results'
     | 'trash'
-    | 'shared';
+    | 'shared'
+    | 'folder';
 }) {
   const [view, setView] = useState(
-    state === 'trash' ? 'Trash' : state === 'shared' ? 'Shared with me' : 'My files',
+    state === 'trash'
+      ? 'Trash'
+      : state === 'shared'
+        ? 'Shared with me'
+        : state === 'folder'
+          ? 'Household'
+          : 'My files',
   );
   const [search, setSearch] = useState(
     state === 'search' ? 'budget' : state === 'no-results' ? 'winter' : '',
@@ -428,14 +486,15 @@ export function DashboardMockup({
         (scope === 'shared' ? file.detail.includes('Shared') : file.detail === 'Private')) &&
       (modified === 'any' || file.date.includes('ago')) &&
       !removed.includes(file.name) &&
-      (view !== 'Shared with me' || file.access !== 'owner'),
+      (view !== 'Shared with me' || file.access !== 'owner') &&
+      (view !== 'Trash' || file.access === 'owner') &&
+      (view !== 'Household' || file.tags === 'household'),
   );
   const empty = state === 'empty' || rows.length === 0;
   return (
-    <Shell sidebar selected={view} onSelect={setView}>
+    <Shell sidebar collapsed={collapsed} selected={view} onSelect={setView}>
       <header className="rd-page-header">
         <div>
-          <p className="rd-eyebrow">YOUR WORKSPACE</p>
           <h1>{view}</h1>
         </div>
         <div className="rd-header-actions">
@@ -457,7 +516,9 @@ export function DashboardMockup({
             <Glyph name="search" />
             <input
               aria-label="Search files"
-              placeholder="Search your files"
+              placeholder={
+                view === 'My files' ? 'Search all files' : `Search ${view.toLowerCase()}`
+              }
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -536,9 +597,11 @@ export function DashboardMockup({
               ? 'Recover a file, or remove it permanently.'
               : search
                 ? `Results for “${search}”`
-                : 'A little room for everything you’re working on.'}
+                : `${rows.length} files`}
           </span>
-          <span>{!empty && state === 'populated' ? `${rows.length} files` : ''}</span>
+          {view !== 'My files' && view !== 'Trash' && (
+            <Button onClick={() => setView('My files')}>Search all files</Button>
+          )}
         </div>
         {state === 'loading' ? (
           <div className="rd-empty" role="status">
@@ -802,6 +865,9 @@ export function EditorMockup({
   space = false,
   formula = false,
   table = false,
+  collaborator = false,
+  collapsed = false,
+  title,
   initialPage = 'Overview',
 }: {
   sheet?: boolean;
@@ -811,16 +877,22 @@ export function EditorMockup({
   space?: boolean;
   formula?: boolean;
   table?: boolean;
+  collaborator?: boolean;
+  collapsed?: boolean;
+  title?: string;
   initialPage?: string;
 }) {
   const [share, setShare] = useState(false);
   const [selected, setSelected] = useState(initialPage);
+  const [checkpoint, setCheckpoint] = useState('10:15 · Ready for the trip');
   const [panel, setPanel] = useState(formula ? 'Formula' : '');
   const [notice, setNotice] = useState('');
-  const name = sheet ? 'Quarterly budget' : space ? selected : 'Autumn plans';
+  const name = title ?? (sheet ? 'Quarterly budget' : space ? selected : 'Autumn plans');
   return (
     <Shell
       sidebar={space}
+      collapsed={collapsed}
+      compact={!space}
       space={space}
       guest={guest}
       canEdit={!viewOnly}
@@ -837,7 +909,9 @@ export function EditorMockup({
             <Button
               className="sp-quiet"
               aria-label="Back to files"
-              onClick={() => setNotice('Back to My files')}
+              onClick={() =>
+                setNotice('Return to your previous folder, search and scroll position.')
+              }
             >
               <Glyph name="back" />
             </Button>
@@ -851,11 +925,15 @@ export function EditorMockup({
           </div>
         </div>
         <div className="rd-status-slot">
-          <DetailsPopover label={offline ? '↻ Waiting to sync' : '✓ Saved'}>
+          <DetailsPopover
+            label={offline ? '↻ Waiting to sync' : viewOnly ? 'Connected' : '✓ Saved'}
+          >
             <p>
               {offline
                 ? 'Saved on this device. Your changes will sync when you reconnect.'
-                : 'All changes are saved. You’re connected.'}
+                : viewOnly
+                  ? 'You can view this document. You’re connected.'
+                  : 'All changes are saved. You’re connected.'}
             </p>
             {offline && <Button onClick={() => setNotice('Reconnecting…')}>Try again</Button>}
           </DetailsPopover>
@@ -866,8 +944,10 @@ export function EditorMockup({
               <Avatar>AK</Avatar>
             </span>
           )}
-          {guest || viewOnly ? (
-            <span className="rd-badge">{viewOnly ? 'View only' : 'Guest editor'}</span>
+          {guest || viewOnly || collaborator ? (
+            <span className="rd-badge">
+              {viewOnly ? 'View only' : guest ? 'Guest editor' : 'Can edit'}
+            </span>
           ) : (
             <Button primary className="rd-desktop-share" onClick={() => setShare(true)}>
               Share
@@ -875,15 +955,28 @@ export function EditorMockup({
           )}
           {guest ? (
             <Button aria-label="Export as PDF" onClick={() => setNotice('Preparing PDF…')}>
-              <Glyph name="download" />
+              <Glyph name="download" /> PDF
             </Button>
           ) : (
             <ActionMenu
               label="Document actions"
               actions={[
-                ...(!viewOnly ? [{ label: 'Share…', onClick: () => setShare(true) }] : []),
+                ...(!viewOnly && !collaborator
+                  ? [{ label: 'Share…', onClick: () => setShare(true) }]
+                  : []),
+                ...(collaborator
+                  ? [
+                      {
+                        label: 'About your access',
+                        onClick: () =>
+                          setNotice(
+                            'You can edit this file. Its owner manages sharing and restores versions. Folder access may still apply.',
+                          ),
+                      },
+                    ]
+                  : []),
                 ...[
-                  'Versions',
+                  ...(!collaborator ? ['Versions'] : []),
                   'Export',
                   'Theatre mode',
                   ...(!viewOnly ? ['Insert formula', 'Fill presets'] : []),
@@ -941,7 +1034,7 @@ export function EditorMockup({
             {panel.includes('formula') || panel === 'Formula' ? (
               <FormulaForm />
             ) : panel === 'Versions' ? (
-              <HistoryContent />
+              <HistoryContent selected={checkpoint} setSelected={setCheckpoint} />
             ) : (
               <>
                 <p className="sp-muted">
@@ -1238,9 +1331,16 @@ export function FormulaMockup({
     </div>
   );
 }
-function HistoryContent({ calendar = false }: { calendar?: boolean }) {
+function HistoryContent({
+  calendar = false,
+  selected,
+  setSelected,
+}: {
+  calendar?: boolean;
+  selected: string;
+  setSelected: (value: string) => void;
+}) {
   const [older, setOlder] = useState(calendar);
-  const [selected, setSelected] = useState('10:15 · Ready for the trip');
   return (
     <div className="rd-form">
       <p className="sp-muted">Previewing leaves your live document unchanged.</p>
@@ -1274,7 +1374,15 @@ function HistoryContent({ calendar = false }: { calendar?: boolean }) {
             type="range"
             min="0"
             max="3"
-            defaultValue="2"
+            value={Math.max(
+              0,
+              [
+                '09:00 · Unnamed version',
+                '10:15 · Ready for the trip',
+                '11:45 · Before restore',
+                '12:30 · Latest',
+              ].indexOf(selected),
+            )}
             onChange={(e) =>
               setSelected(
                 [
@@ -1302,8 +1410,15 @@ function HistoryContent({ calendar = false }: { calendar?: boolean }) {
     </div>
   );
 }
-export function HistoryMockup({ calendar = false }: { calendar?: boolean }) {
-  const [restore, setRestore] = useState(false);
+export function HistoryMockup({
+  calendar = false,
+  confirmation = false,
+}: {
+  calendar?: boolean;
+  confirmation?: boolean;
+}) {
+  const [restore, setRestore] = useState(confirmation);
+  const [selected, setSelected] = useState('10:15 · Ready for the trip');
   const [notice, setNotice] = useState('');
   return (
     <Shell>
@@ -1312,19 +1427,28 @@ export function HistoryMockup({ calendar = false }: { calendar?: boolean }) {
           <p className="rd-eyebrow">AUTUMN PLANS</p>
           <h1>Version history</h1>
         </div>
-        <Button primary onClick={() => setRestore(true)}>
-          Restore this version…
-        </Button>
+        <div className="sp-actions">
+          <Button onClick={() => setNotice('Return to the live document without restoring.')}>
+            Return to document
+          </Button>
+          <Button primary onClick={() => setRestore(true)}>
+            Restore this version…
+          </Button>
+        </div>
       </header>
+      <p className="rd-history-selection">
+        Preview · {selected.startsWith('October') ? selected : `October 20, 2026 · ${selected}`} ·
+        UTC
+      </p>
       <div className="rd-history">
         <aside className="rd-inspector">
-          <HistoryContent calendar={calendar} />
+          <HistoryContent calendar={calendar} selected={selected} setSelected={setSelected} />
         </aside>
         <DocumentSurface />
       </div>
       <p role="status">{notice}</p>
       <Modal
-        title="Restore this version for everyone?"
+        title={`Restore ${selected.startsWith('October') ? selected : `October 20, 2026 · ${selected}`} for everyone?`}
         description="The current document will be kept as a Before restore checkpoint. Other open editors will need to reload."
         open={restore}
         onOpenChange={setRestore}
@@ -1519,25 +1643,27 @@ export function AdminMockup({
   state = 'ready',
   section = 'People',
 }: {
-  state?: 'ready' | 'loading' | 'error';
+  state?:
+    'ready' | 'loading' | 'error' | 'invite-created' | 'health-warning' | 'disable' | 'passkeys';
   section?: string;
 }) {
   const [tab, setTab] = useState(section);
-  const [confirm, setConfirm] = useState(false);
+  const [confirm, setConfirm] = useState(state === 'disable' ? 'Alex Kim' : '');
+  const [passkeys, setPasskeys] = useState(state === 'passkeys' ? 'Alex Kim' : '');
+  const [created, setCreated] = useState(state === 'invite-created');
   const [notice, setNotice] = useState('');
   return (
-    <Shell operator>
+    <Shell operator compact>
       <header className="rd-page-header">
         <div>
           <p className="rd-eyebrow">SERVER OPERATOR</p>
           <h1>Administration</h1>
         </div>
-        <Button
-          primary
-          onClick={() => setNotice('Invite ready. Copy its address before leaving this page.')}
-        >
-          Create invite
-        </Button>
+        {tab === 'Invites' && (
+          <Button primary onClick={() => setCreated(true)}>
+            Create invite
+          </Button>
+        )}
       </header>
       <div className="rd-profile">
         <nav aria-label="Administration sections">
@@ -1560,35 +1686,65 @@ export function AdminMockup({
           ) : state === 'error' ? (
             <p role="alert">Could not load accounts. Try again.</p>
           ) : tab === 'People' ? (
-            ['Alex Baylee', 'Alex Kim'].map((person) => (
+            ['Operator (you)', 'Alex Baylee', 'Alex Kim'].map((person) => (
               <div className="rd-setting-row" key={person}>
                 <span>
                   <strong>{person}</strong>
-                  <small>Member · Active · 1 passkey</small>
+                  <small>
+                    {person.startsWith('Operator')
+                      ? 'Operator · Protected account'
+                      : 'Member · Active · 1 passkey'}
+                  </small>
                 </span>
                 <ActionMenu
                   label={`Actions for ${person}`}
                   actions={[
                     {
                       label: 'Manage passkeys',
-                      onClick: () => setNotice('MacBook · Last used today'),
+                      onClick: () => setPasskeys(person),
                     },
                     {
                       label: 'Disable account…',
                       destructive: true,
-                      onClick: () => setConfirm(true),
+                      disabled: person.startsWith('Operator'),
+                      onClick: () => setConfirm(person),
                     },
                   ]}
                 />
               </div>
             ))
           ) : tab === 'Invites' ? (
-            <div className="rd-setting-row">
-              <span>
-                New account invite<small>Expires tomorrow</small>
-              </span>
-              <Button onClick={() => setNotice('Invite revoked.')}>Revoke</Button>
-            </div>
+            <>
+              {created && (
+                <section className="rd-section">
+                  <h3>Invite ready</h3>
+                  <p>Copy this address now. It is shown only once.</p>
+                  <label>
+                    Invitation address
+                    <input readOnly value="https://spinel.example/invite#preview" />
+                  </label>
+                  <Button
+                    primary
+                    onClick={() =>
+                      setNotice(
+                        'Copied in this preview. If copying fails, select and copy the address above.',
+                      )
+                    }
+                  >
+                    Copy invite
+                  </Button>
+                  <p className="sp-muted">
+                    If copying is unavailable, select the address and copy it manually.
+                  </p>
+                </section>
+              )}
+              <div className="rd-setting-row">
+                <span>
+                  New account invite<small>Expires tomorrow</small>
+                </span>
+                <Button onClick={() => setNotice('Invite revoked.')}>Revoke</Button>
+              </div>
+            </>
           ) : tab === 'Connections' ? (
             <div className="rd-setting-row">
               <span>
@@ -1600,8 +1756,14 @@ export function AdminMockup({
             <>
               <div className="rd-setting-row">
                 <span>
-                  <strong>✓ Backups are current</strong>
-                  <small>Last successful backup: today at 03:00</small>
+                  <strong>
+                    {state === 'health-warning' ? 'Backup overdue' : '✓ Backups are current'}
+                  </strong>
+                  <small>
+                    {state === 'health-warning'
+                      ? 'Last successful backup: Oct 18 at 03:00 · Checked today at 12:30'
+                      : 'Last successful backup: today at 03:00'}
+                  </small>
                 </span>
                 <Button>Backup guide</Button>
               </div>
@@ -1619,18 +1781,43 @@ export function AdminMockup({
         </div>
       </div>
       <Modal
-        title="Disable this account?"
+        title={`Passkeys for ${passkeys || 'account'}`}
+        description="Account credentials only; documents remain private."
+        open={Boolean(passkeys)}
+        onOpenChange={(open) => {
+          if (!open) setPasskeys('');
+        }}
+      >
+        <div className="rd-setting-row">
+          <span>
+            MacBook<small>Last used today · Added October 18</small>
+          </span>
+          <Button
+            disabled={passkeys.startsWith('Operator')}
+            onClick={() =>
+              setNotice('Passkey removal requires confirmation in the implementation.')
+            }
+          >
+            Remove…
+          </Button>
+        </div>
+        <p className="sp-muted">The Operator’s last passkey cannot be removed here.</p>
+      </Modal>
+      <Modal
+        title={`Disable ${confirm || 'this account'}?`}
         description="Their sessions end now. Their documents and shares are kept."
-        open={confirm}
-        onOpenChange={setConfirm}
+        open={Boolean(confirm)}
+        onOpenChange={(open) => {
+          if (!open) setConfirm('');
+        }}
       >
         <div className="sp-actions">
-          <Button onClick={() => setConfirm(false)}>Cancel</Button>
+          <Button onClick={() => setConfirm('')}>Cancel</Button>
           <Button
             primary
             onClick={() => {
-              setNotice('Account disabled.');
-              setConfirm(false);
+              setNotice(`${confirm} disabled in this preview.`);
+              setConfirm('');
             }}
           >
             Disable account

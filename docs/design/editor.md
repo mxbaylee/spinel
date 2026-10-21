@@ -118,3 +118,12 @@ collaborators and Share move into More. No other phone-specific chrome.
 `Editor/Collaborators`, `Editor/FillPresets`, `Editor/VersionNames`,
 `Editor/FileExports`. `SheetEditor` and `DocEditor` boot Univer, so their layout
 is checked by Playwright screenshots (SPN-060), not stories.
+
+## Persona walkthrough refinements
+
+Ordinary editors have a compact horizontal utility header, not a permanent
+file-navigation column. The phone document header has a full title row and a
+second row for status/actions. Editable collaborators show Can edit and an
+access explanation; only owners see Share and restore. Back to files preserves
+retrieval context. History highlights the selected checkpoint and names its
+date/time in preview and restore confirmation; Return to document stays visible.

@@ -146,3 +146,12 @@ device. Reconnect to edit." or the problem) and `e2e/offline.spec.ts` covers the
 `Dashboard/OfflineBadge` (also the banner and the "You're offline" page). Local
 mode: `Dashboard/Dashboard` `LocalMode`, `LocalNeedsConnection` and
 `LocalFolderNotOpened`.
+
+## Navigation after the persona walkthrough
+
+Use one collapsible 224 px column for gem, places, pins, folders and account
+utilities. Do not retain a separate rail beside it. Tablets/phones start with
+a drawer; Files remains visibly labelled. Remove the repeated workspace eyebrow
+and decorative list caption on phones. Search explicitly names its current
+scope and offers Search all files from a folder/shared view. Returning from
+a document restores folder, filters and scroll position (SPN-048/049).
