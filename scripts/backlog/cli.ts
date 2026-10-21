@@ -104,7 +104,8 @@ if (command === 'check') {
     `---
 id: ${id}
 emoji: ${emoji}
-effort: M                # S | M | L
+effort: M                # S | M | L | XL
+# phase: pre_launch      # optional; pre_launch (default) | launch | post_launch
 impact_owner: M          # S | M | L for each persona it touches; leave the rest out
 score: 4                 # written by npm run backlog:index
 depends_on: []

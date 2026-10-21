@@ -60,17 +60,18 @@ status line grows when a message or Retry appears, which moves the sheet
 - **Left:** the breadcrumb back to the folder, then the document name. The name
   is the rename control for owners (a button that turns into a field; Enter
   saves, Escape cancels). For everyone else it is plain text.
-- **Status cluster,** right after the title: the save slot (SPN-043) and the
-  connection slot (SPN-042), each following
+- **Status:** the save slot (SPN-043) stays by the title; the connection icon
+  (SPN-042) stays by the gem/navigation, each following
   [status changes never move the layout](README.md#status-changes-never-move-the-layout).
-  SPN-053 adds local-save states to the connection slot.
+  SPN-053 adds local-save states to the save slot, keeping connection and durable
+  save meanings distinct.
 - **Right:** a compact people/count control opens a dialog listing collaborators
   and their available shared cursor positions, followed by the access badge and
   More menu. It remains available on phones. Guest-linked rooms use generic
   identities. Share remains owner-only and lives in the More menu.
 - **More menu:** Share (owners), Versions (SPN-024, SPN-026), Export
-  (Download Univer file, Export as PDF; SPN-031/SPN-075, later Office files
-  SPN-035), and Insert formula for editable Docs. Version naming lives inside
+  (Download Univer file and Export as PDF; SPN-031/SPN-075, with optional
+  conversion plugins in post-launch SPN-094), and Insert formula for editable Docs. Version naming lives inside
   Versions, with a Back button immediately left of its title. Naming the current
   version waits until current edits are saved; older saved checkpoints can still
   be named, renamed or have their names removed while current edits are unsaved.
@@ -129,8 +130,9 @@ same collaborator dialog; owner-only Share remains in More.
 
 Existing production stories include `Editor/Collaborators`, `Editor/FillPresets`,
 `Editor/VersionNames` and `Editor/FileExports`. The redesign's native editor stories
-and connected walkthrough boot Univer against local fixtures; Playwright also
-checks the production editors (SPN-060).
+and connected walkthrough boot Univer against local fixtures; the existing
+Playwright suite checks application editor flows. Use the
+[design review runbook](review-runbook.md) for changed layouts and interactions.
 
 ## Persona walkthrough refinements
 

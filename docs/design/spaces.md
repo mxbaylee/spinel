@@ -1,8 +1,34 @@
 # Spaces and file roles
 
-Proposed in SPN-047, awaiting [decision #126](https://github.com/mxbaylee/spinel/issues/126).
-Spaces are planned files (SPN-078), not new top-level workspaces. Delegated file
-Admin follows separately in SPN-079. Neither is a live route in this redesign.
+Designed in SPN-047; [decision #126](https://github.com/mxbaylee/spinel/issues/126)
+records the owner's review and refinements. Spaces are planned files, not new
+top-level workspaces. SPN-078, SPN-091 and SPN-092 implement the model, account
+experience and guest/integration acceptance respectively. Delegated file Admin
+follows in SPN-079. These mockups do not themselves enable live routes.
+
+## Delivery slices
+
+The 2026-10-21 grooming split preserves the original SPN-078 acceptance.
+SPN-092 also waits for SPN-064 so ownership-transfer integration is verified
+against its implementation rather than an assumed existing feature:
+
+| Ticket | Owns | Completion boundary |
+| ------ | ---- | ------------------- |
+| [SPN-078](../todo/SPN-078.md) | Durable Space/child model, sole ownership, uniform inherited roles, stable IDs/order/bindings and subtree recovery metadata | Supported server boundaries authorize every child; cycles, child grants and unsupported conversions fail safely. No unfinished product routes are exposed. |
+| [SPN-091](../todo/SPN-091.md) | Authenticated creation, editor/navigation, accessible rename/reorder/nesting, remembered/deep-linked selection and persistent internal Trash | Owner/editor/viewer behavior and recovery are reviewable before ordinary access is enabled; approved light/dark/phone UI follows this design. |
+| [SPN-092](../todo/SPN-092.md) | Space-wide View/Edit guests, privacy/social cards, existing formulas/images/collaboration/MCP/export and backup/owner-transfer acceptance | Guest and integration surfaces keep Space scope through asynchronous operations, rotation/revocation, downgrade, trash and disabled owners before being enabled. |
+| [SPN-079](../todo/SPN-079.md) | Delegated account-only file Admin after SPN-092 | One Owner remains; guests never become Admin and the Operator never gains document access. |
+
+Ordinary Space creation/navigation stays disabled until SPN-092 proves the
+remaining integration and recovery behavior, including backups and owner transfer.
+Unsupported Space/child capabilities refuse access. Reuse existing services;
+a split never permits an unchecked HTTP/socket/MCP/export path or a cached
+Formula-value fallback.
+Same-Space sources follow the Space role; external sources remain independently
+authorized. Whole-Space moves/trash/restore, backups and ownership handover retain
+child identity, contents, order and formula bindings. No slice adds child grants,
+standalone-file conversion/extraction, bulk offline downloads, new formula syntax
+or a new export format. Artwork remains SPN-077.
 
 ## Comparison and adopted layout
 
@@ -32,7 +58,7 @@ until SPN-079; editing internal structure is an Edit capability.
 Space trash is internal, recoverable and reachable by account editors. Restore
 returns content without altering its stable IDs/formula bindings. Viewers cannot
 mutate the tree. Guest editors may edit/manage the current Space's contents under
-SPN-078; guests never see outer folders or account-only recovery/history controls.
+SPN-092; guests never see outer folders or account-only recovery/history controls.
 Guests navigating a revoked link lose the whole Space, including titles and values.
 
 ## Capability matrix
@@ -67,7 +93,7 @@ site header reopens the hidden tree, as a drawer on phones.
 This favors Owner/Collaborator orientation without consuming a second navigation
 column; link guests retain scoped navigation without account destinations, and
 Operator workflows remain separate. Folder/page hierarchy remains a proposal
-for SPN-078, not implemented persistence.
+for SPN-078's durable model and SPN-091's account UI, not implemented persistence.
 
 The Space tree uses the quieter `--sp-bg` / `--sp-text` surface, distinct from
 the saturated pink site header in both themes (owner, chat 2026-10-20). The same
@@ -85,6 +111,8 @@ item and folder descendants in a confirmation; cancel preserves them. Account
 editors can restore, only the Owner gets permanent deletion in this fixture,
 and offline actions are disabled. Link guests receive no recovery collection.
 The collection labels its local-only behavior and resets on reload; SPN-078
-still owns persistence, stable identifiers and real authorization. The owner
-requested the composed UI now, rather than deferring it with that integration
+owns durable identifiers, recovery data and authorization, while SPN-091 connects
+this collection to persistent account recovery. SPN-092 verifies guest exclusion
+and cross-feature behavior. The owner requested the composed UI now, rather than
+deferring it with that integration
 (chat, 2026-10-21).

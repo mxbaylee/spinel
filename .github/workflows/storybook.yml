@@ -98,13 +98,13 @@ jobs:
         if: needs.changes.outputs.docs_only == 'true'
         run: echo 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'
 
-  review:
-    name: Review Storybook states and interactions
+  review_desktop:
+    name: Review Storybook desktop
     needs: [changes, build]
     if: needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
-    # Full component/state parity adds more captures; keep every variant and assertion.
-    timeout-minutes: 30
+    # Each viewport downloads the same build and keeps its complete review coverage.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -119,33 +119,129 @@ jobs:
           name: storybook-review
           path: storybook-static
       - name: Capture icon and integration stories
-        if: needs.changes.outputs.docs_only != 'true'
+        # This separate icon suite still runs once, including its phone captures.
         run: |
           npx playwright install --with-deps chromium
           node scripts/ci/icon-screenshots.ts
       - name: Upload visual review
-        if: always() && needs.changes.outputs.docs_only != 'true'
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: entity-icon-screenshots
           path: test-results/entity-icons
           if-no-files-found: error
       - name: Capture redesign review and verify shared controls
-        if: needs.changes.outputs.docs_only != 'true'
         env:
           # PR validation always covers the full catalog; only manual runs can narrow it.
           STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
         run: |
           read -r -a stories <<< "$STORY_IDS"
-          npm run screenshots -- "${stories[@]}"
+          npm run screenshots -- --viewport desktop "${stories[@]}"
       - name: Upload redesign review
-        if: always() && needs.changes.outputs.docs_only != 'true'
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: design-review
+          name: design-review-desktop
           path: test-results/design-review
           if-no-files-found: error
           retention-days: 14
+
+  review_tablet:
+    name: Review Storybook tablet
+    needs: [changes, build]
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - run: npm ci
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: storybook-review
+          path: storybook-static
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Capture redesign review and verify shared controls
+        env:
+          STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
+        run: |
+          read -r -a stories <<< "$STORY_IDS"
+          npm run screenshots -- --viewport tablet "${stories[@]}"
+      - name: Upload redesign review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: design-review-tablet
+          path: test-results/design-review
+          if-no-files-found: error
+          retention-days: 14
+
+  review_mobile:
+    name: Review Storybook mobile
+    needs: [changes, build]
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - run: npm ci
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: storybook-review
+          path: storybook-static
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Capture redesign review and verify shared controls
+        env:
+          STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
+        run: |
+          read -r -a stories <<< "$STORY_IDS"
+          npm run screenshots -- --viewport mobile "${stories[@]}"
+      - name: Upload redesign review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: design-review-mobile
+          path: test-results/design-review
+          if-no-files-found: error
+          retention-days: 14
+
+  review:
+    # Keep the stable check name while making every viewport result explicit.
+    name: Review Storybook states and interactions
+    needs: [changes, build, review_desktop, review_tablet, review_mobile]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Require every viewport review
+        env:
+          CLASSIFICATION_RESULT: ${{ needs.changes.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
+          DESKTOP_RESULT: ${{ needs.review_desktop.result }}
+          TABLET_RESULT: ${{ needs.review_tablet.result }}
+          MOBILE_RESULT: ${{ needs.review_mobile.result }}
+        run: node scripts/ci/storybook-review-gate.ts
 
   deploy:
     name: Deploy to GitHub Pages

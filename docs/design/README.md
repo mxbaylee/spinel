@@ -10,7 +10,7 @@ The [component, section and journey audit](component-review.md) tracks coverage 
 remaining gaps; earlier sampled-view grades are not whole-product acceptance.
 The existing gem palette and entity artwork are retained. Screen pages identify
 proposed placement changes; production is migrated by each implementation ticket.
-[Spaces and file roles](spaces.md) covers SPN-078/079 explicitly.
+[Spaces and file roles](spaces.md) covers SPN-078/091/092 and SPN-079 explicitly.
 
 Every UI change follows this playbook. A ticket that needs a pattern it doesn't
 cover adds the pattern here in its own PR first (AGENTS.md).
@@ -23,7 +23,7 @@ controls are always visible and which sit behind a menu.
 | Screen                          | Page                         | Builds on it                                                                    |
 | ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------- |
 | File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-053, SPN-054, SPN-051, SPN-065, SPN-067, SPN-069          |
-| Editor chrome                   | [editor.md](editor.md)       | SPN-049, SPN-043, SPN-042, SPN-050, SPN-033, SPN-035, SPN-068, SPN-072, SPN-075 |
+| Editor chrome                   | [editor.md](editor.md)       | SPN-049, SPN-043, SPN-042, SPN-050, SPN-033, SPN-068, SPN-072, SPN-075, SPN-094 |
 | Doc formulas                    | [formulas.md](formulas.md)   | SPN-033                                                                         |
 | Sharing                         | [sharing.md](sharing.md)     | SPN-066, SPN-071, SPN-081                                                       |
 | Settings and sign-in            | [account.md](account.md)     | SPN-045, SPN-036, SPN-070                                                       |
@@ -73,7 +73,9 @@ third-party assets into the proposal.
 The only color tokens are the theme's. `src/ui/palette.ts` is the source:
 `src/ui/theme.ts` sets each entry as a `--<name>` CSS custom property on the
 root, per mode. [docs/theme.md](../theme.md) explains the modes and fills. There
-is no parallel token set; SPN-060's color lint enforces that.
+is no parallel token set. Check changed styles against these tokens during the
+[design review runbook](review-runbook.md); general token lint is not currently
+implemented or required by a follow-up ticket.
 
 | Token                                   | Use                                                                                                                         |
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -175,8 +177,8 @@ In use: 4, 6, 8, 12, 16, 20, 24, 28 and 32 px, plus rem equivalents in newer
 components. Adopted scale: **4, 8, 12, 16, 24, 32 px**, with 20 and 28 kept only
 where theme.css already uses them (body padding at phone width, dashboard gaps).
 New CSS uses px for spacing and borders and rem for type and dialog widths.
-These aren't CSS tokens yet, so SPN-060's lint covers color tokens and treats
-this list as its spacing allowlist rather than inventing `--space-*` properties.
+These aren't CSS tokens yet. Review changed styles against this scale without
+inventing `--space-*` properties or a broad spacing-lint migration.
 
 ### Touch
 
@@ -188,8 +190,10 @@ layouts use `dvh` with a `vh` fallback so phone toolbars don't hide content.
 
 ### Status changes never move the layout
 
-Save state, connection state and local-save state (SPN-053) all live in
-fixed-size slots in the view header.
+Save state and connection state have distinct, fixed-size slots. The approved
+network icon sits by the gem/navigation; the save slot stays by the document
+title, including compact theatre mode. SPN-042 owns truthful connectivity,
+SPN-043 owns save-slot geometry and Retry, and SPN-049 composes the editor header.
 
 - The slot reserves the width of its longest label. An icon plus a short label
   ("Saved", "Saving…", "Offline", "Not saved"). The detail and any action sit in
@@ -197,13 +201,15 @@ fixed-size slots in the view header.
 - The settled state stays visible ("Saved"); it does not flash and disappear.
 - `role="status"` and `aria-live="polite"`. Errors that need action also put a
   Retry button in the popover and keep the icon in its error state.
-- One indicator per concern. SPN-053 adds local-save states to SPN-042's
-  connection indicator rather than building a second one.
+- One indicator per concern. SPN-053 adds local/pending/server-acknowledged save
+  states to the shared save presentation. A network connection alone never means
+  an edit is durably saved. Do not create another status row for the same concern.
 
-No component has this shape yet: today's `.save-status` grows in normal flow
-(SPN-043). SPN-043 extracts it as `web/SaveStatus.tsx` with an
-`Editor/SaveStatus` story covering every state, and SPN-042 adds its connection
-states to the same component.
+The approved proposal shows the placement, but the application `.save-status`
+can still grow in normal flow when Retry appears. SPN-043 adopts a shared save
+component with a state story and verifies unchanged editor bounds. SPN-042 wires
+the real connection lifecycle rather than treating the proposal's `offline`
+fixture flag as an implemented network state machine.
 
 ### Row
 
@@ -223,7 +229,9 @@ the button.
 Sharing, tags, rename, move and confirmation all use a panel with a title, the
 form, and actions bottom right: the primary action, then Cancel. Escape cancels.
 A confirmation names the thing and the consequence: "Disable Sam Rivera? Their
-documents and shares are kept."
+documents and shares are kept." Use the shared semantic title icon without
+duplicating the accessible name. Each screen migration applies it to the dialogs
+it touches; SPN-089 audits and fixes remaining omissions afterward.
 
 ### Chips and badges
 
@@ -272,15 +280,16 @@ redirect to sign-in.
 - Components that read `location` (`GuestApp`) get a per-story decorator that
   sets the path with `history.replaceState` and restores it on unmount.
 - Some fixtures compute dates from `Date.now()` so they never look expired.
-  SPN-060's screenshot comparisons must freeze the clock first.
+  The screenshot runner fixes fixture time; retain that when capturing evidence.
 
 Every reusable component has a story for each state it really has: empty,
 loading, error and disabled. A PR that adds a component or a state adds the
-story. Editors that boot Univer (`SheetEditor`, `DocEditor`, `VersionPreview`,
-`HistoryBrowser`), `App.tsx`'s routing, and the sign-in, setup, invite and
-recovery cards that are still inline in `App.tsx` are out of scope; SPN-060
-covers them with Playwright screenshots instead. A ticket that extracts one of
-those cards adds its story.
+story. Native-editor fixtures and connected journeys already run in Storybook.
+Use the existing Playwright application flows for real editor, routing, sign-in,
+setup, invite and recovery behavior as appropriate; a proposal fixture cannot
+prove the corresponding runtime route is implemented. A ticket that extracts
+an inline card adds its story. Review changed screens with the
+[manual runbook](review-runbook.md), alongside the existing deterministic checks.
 
 ## Review by subtraction
 
@@ -370,7 +379,7 @@ must report a storage failure without undoing the in-session theme choice.
 
 Owner follow-ups accepted with as-is approval, 2026-10-21, decision #126:
 folder colors and the identity-picker mockup belong to SPN-086; Space Trash uses
-a deleted-item collection (SPN-078); all product modals get consistent title icons
+a deleted-item collection (SPN-078 model, SPN-091 UI); all product modals get consistent title icons
 (SPN-089); native editor dark-canvas behavior and an eight-color theme-aware picker
 are investigated in SPN-088. These are implementation handoffs, not claims that
 the approved sample-data proposal implements them.

@@ -1,4 +1,4 @@
-/** npm run screenshots -- <story ids>. Build Storybook first; one browser, one page at a time. */
+/** npm run screenshots -- [--viewport desktop|tablet|mobile] <story ids>. Build Storybook first. */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -6,6 +6,7 @@ import { gzipSync } from 'node:zlib';
 import { preview } from 'vite';
 import { chromium, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
+import { selectStorybookReview } from './ci/storybook-review.ts';
 
 if (
   process.platform === 'darwin' &&
@@ -18,12 +19,8 @@ if (
 const index = JSON.parse(await readFile('storybook-static/index.json', 'utf8')) as {
   entries: Record<string, { type: string; title: string; name: string }>;
 };
-const args = process.argv.slice(2);
-const requested = args.length
-  ? args
-  : Object.keys(index.entries).filter((id) => index.entries[id].type === 'story');
-for (const id of requested)
-  if (index.entries[id]?.type !== 'story') throw new Error(`Unknown story: ${id}`);
+const review = selectStorybookReview(process.argv.slice(2), index.entries);
+const { requested, variants } = review;
 const directory = resolve(process.env.SPINEL_SCREENSHOT_DIR ?? 'test-results/design-review');
 await mkdir(directory, { recursive: true });
 const server = await preview({
@@ -37,15 +34,8 @@ const captures: { id: string; variant: string; filename: string; title: string }
 const verifications: string[] = [];
 const nativeFailures: unknown[] = [];
 const captureFailures: { id: string; variant: string; message: string; filename?: string }[] = [];
-const variants = [
-  ['light', 1280, 'light'],
-  ['dark', 1280, 'dark'],
-  ['light', 390, 'phone'],
-  ['dark', 390, 'phone-dark'],
-  ['light', 768, 'tablet'],
-] as const;
 try {
-  for (const kind of ['sheet', 'doc'] as const) {
+  for (const kind of review.nativeEditorKinds) {
     for (const readOnly of [false, true]) {
       const id = `redesign-native-editors--${kind}${readOnly ? '-viewer' : ''}`;
       if (!requested.includes(id)) continue;
@@ -517,12 +507,7 @@ try {
     await page.close();
   }
   if (requested.includes('redesign-screens--dashboard')) {
-    for (const [width, hasTouch] of [
-      [1280, false],
-      [768, true],
-      [613, false],
-      [390, true],
-    ] as const) {
+    for (const [width, hasTouch] of review.dashboardViewports) {
       const page = await browser.newPage({
         viewport: { width, height: 900 },
         hasTouch,
@@ -644,7 +629,7 @@ try {
     }
   }
   if (requested.includes('redesign-screens--planned-space')) {
-    for (const width of [1280, 768, 390]) {
+    for (const width of review.spaceWidths) {
       const page = await browser.newPage({
         viewport: { width, height: 900 },
         hasTouch: width <= 768,
@@ -712,7 +697,7 @@ try {
     }
   }
   if (requested.includes('redesign-walkthrough--owner')) {
-    for (const width of [1280, 390]) {
+    for (const width of review.journeyWidths) {
       const page = await browser.newPage({
         viewport: { width, height: 900 },
         hasTouch: width === 390,
@@ -1080,6 +1065,9 @@ await writeFile(
     {
       capturedAt: new Date().toISOString(),
       fixtureTime: '2026-10-20T16:00:00Z',
+      viewport: review.viewport,
+      variants: variants.map(([, , variant]) => variant),
+      requested,
       captures,
       verifications,
       failures: captureFailures,
