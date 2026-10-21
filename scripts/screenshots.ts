@@ -81,6 +81,9 @@ try {
       await expect(page.locator('#storybook-root')).toBeVisible();
       await page.evaluate(() => document.fonts.ready);
       await expect(page.locator('.sb-errordisplay')).toBeHidden();
+      if (id === 'redesign-screens--dashboard-new-menu') {
+        await expect(page.getByRole('menu', { name: 'New file', exact: true })).toBeVisible();
+      }
       if (id.startsWith('redesign-')) {
         await expect(page.locator('.sp-ui').first()).toBeVisible();
         expect(

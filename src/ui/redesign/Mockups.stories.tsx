@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { userEvent, within } from 'storybook/test';
 import {
   AdminMockup,
   DashboardMockup,
@@ -113,4 +114,13 @@ export const PlannedSpaceViewer: Story = { render: () => <EditorMockup space vie
 export const DashboardGrid: Story = { render: () => <DashboardMockup initialLayout="grid" /> };
 export const DashboardGridCollapsed: Story = {
   render: () => <DashboardMockup initialLayout="grid" collapsed />,
+};
+
+export const DashboardNewMenu: Story = {
+  render: () => <DashboardMockup />,
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'New file', exact: true }),
+    );
+  },
 };
