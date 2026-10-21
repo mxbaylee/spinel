@@ -1,5 +1,21 @@
 # Settings and sign-in
 
+## SPN-047 composed redesign proposal
+
+Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup, Invite, Recovery, Consent, ConsentExpired.
+
+| Current friction | Public reference pattern | Adopted proposal |
+| --- | --- | --- |
+| Appearance, passkeys and connections become a growing sequence of equal cards. Entry pages use oversized headings and heavy framing. | Notion exposes explicit appearance preferences; Dropbox separates account controls from file navigation. | A compact account area with section navigation; a quiet, single-task entry card. |
+
+Proposed profile sections: Profile & appearance, Passkeys, Connected assistants, This device. Preserve name/color/icon work in PR #124, pending OAuth return navigation, disconnect and advanced token flows. Theme is a three-choice rail menu using the same preference as Profile; this replaces SPN-045’s provisional cycling form only after owner approval. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
+
+The proposal above governs placement after approval. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+
 ## How others do it
 
 |          | Google                                                            | Microsoft                            | Apple                   | Zoho            |

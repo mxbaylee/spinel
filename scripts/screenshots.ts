@@ -104,14 +104,25 @@ try {
         filename,
         title: `${index.entries[id].title} / ${index.entries[id].name}`,
       });
-      if (id === 'redesign-controls--default') {
-        await verifyControls(page, variant, directory);
-        verifications.push(
-          `${variant}: menu keyboard navigation, Escape/focus return, selector keyboard selection, nested dialog portal, dialog focus containment, named semantics`,
-        );
-      }
     }
     await page.close();
+  }
+  if (requested.includes('redesign-controls--default')) {
+    for (const [theme, width, variant] of variants) {
+      const page = await browser.newPage({
+        viewport: { width, height: 900 },
+        hasTouch: width <= 768,
+        reducedMotion: 'reduce',
+      });
+      await page.goto(
+        `http://127.0.0.1:6007/iframe.html?id=redesign-controls--default&viewMode=story&globals=theme:${theme}`,
+      );
+      await verifyControls(page, variant, directory);
+      verifications.push(
+        `${variant}: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal`,
+      );
+      await page.close();
+    }
   }
 } finally {
   await browser.close();
@@ -172,7 +183,9 @@ async function verifyControls(page: Page, variant: string, output: string) {
   await select.focus();
   await page.keyboard.press('Space');
   await expect(page.getByRole('listbox')).toBeVisible();
+  await expect(page.getByRole('option', { name: 'Follow system', exact: true })).toBeFocused();
   await page.keyboard.press('End');
+  await expect(page.getByRole('option', { name: 'Modern · Dark', exact: true })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(select).toContainText('Modern');
   const trigger = page.getByRole('button', { name: 'Open confirmation' });

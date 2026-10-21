@@ -60,3 +60,14 @@ export const OfflineLaunch: Story = { render: () => <EntryMockup kind="offline" 
 export const MissingFile: Story = { render: () => <EntryMockup kind="missing" /> };
 export const PlannedSpace: Story = { render: () => <EditorMockup space /> };
 export const PlannedSpaceGuest: Story = { render: () => <EditorMockup space guest viewOnly /> };
+export const Passkeys: Story = { render: () => <ProfileMockup section="security" /> };
+export const AdminInvites: Story = { render: () => <AdminMockup section="Invites" /> };
+export const AdminConnections: Story = { render: () => <AdminMockup section="Connections" /> };
+export const AdminHealth: Story = { render: () => <AdminMockup section="Backups & health" /> };
+export const FormulaPrivate: Story = { render: () => <FormulaMockup state="private" /> };
+export const FormulaOffline: Story = { render: () => <FormulaMockup state="offline" /> };
+export const FormulaInvalid: Story = { render: () => <FormulaMockup state="invalid" /> };
+export const FormulaLoading: Story = { render: () => <FormulaMockup state="loading" /> };
+export const FormulaEmpty: Story = { render: () => <FormulaMockup state="empty" /> };
+export const FormulaTable: Story = { render: () => <FormulaMockup state="table" /> };
+export const HistoryCalendar: Story = { render: () => <HistoryMockup calendar /> };

@@ -847,3 +847,42 @@
     font-size: 1.75rem;
   }
 }
+.rd-history-tabs {
+  display: flex;
+  gap: 8px;
+}
+.rd-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.rd-calendar .sp-control {
+  padding: 4px;
+  min-height: 28px;
+  font-size: 0.6875rem;
+}
+@media (max-width: 640px) {
+  .rd-calendar .sp-control {
+    min-height: 44px;
+  }
+}
+.rd-tree-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.rd-tree-row .rd-nav-item {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.rd-tree-row > .sp-control {
+  padding: 4px;
+  min-width: 28px;
+  border: none;
+  background: transparent;
+}
+@media (max-width: 640px) {
+  .rd-tree-row > .sp-control {
+    min-width: 44px;
+  }
+}

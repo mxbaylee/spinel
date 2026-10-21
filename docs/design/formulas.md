@@ -1,5 +1,21 @@
 # Formulas in Docs
 
+## SPN-047 composed redesign proposal
+
+Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Formula, FormulaInContext.
+
+| Current friction | Public reference pattern | Adopted proposal |
+| --- | --- | --- |
+| The inline collapsed Formula controls are separated from document actions; large source/results controls can dominate a small canvas. | Numbers contextual inspectors motivate task-focused detail; Google/Excel retain content in the main editing area. Native Formula syntax and permissions remain Spinel-specific. | A focused insert/edit task with expression, authorized source suggestions, format and result preview. |
+
+Keep SPN-033 expression syntax and stable bindings. Scalar output stays inline and tables remain full native content. Missing/private/offline states hide stale values and do not expose private sources. The mockup illustrates hierarchy; the complete existing expression, formatting and range behavior remains mandatory when migrated.
+
+The proposal above governs placement after approval. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+
 SPN-033 adds one native Formula object in a Doc's main body. It follows the
 owner's approved direction from 2026-10-20 and [decision #113](https://github.com/mxbaylee/spinel/issues/113).
 The result determines its presentation: a single value fits into a sentence;

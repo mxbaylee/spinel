@@ -1,5 +1,21 @@
 # Sharing
 
+## SPN-047 composed redesign proposal
+
+Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Sharing, PlannedFileAdmin.
+
+| Current friction | Public reference pattern | Adopted proposal |
+| --- | --- | --- |
+| Per-person Apply buttons and multiple guest-link actions compete with the people and permissions being changed. | Google separates people from general access; Numbers illustrates collaboration options grouped in one menu. | One dialog: people first, guest links second; access choices beside the relevant person. |
+
+Retain No direct access and inherited-access explanation. Changes apply with in-place confirmation/error and rollback on failure. Guest links retain role selection, creation, once-only copy, replacement confirmation and turn-off; preview simplification does not remove those states from implementation. Do not reveal an inaccessible parent name. Future File admin choices are isolated in PlannedFileAdmin and never offered to guests.
+
+The proposal above governs placement after approval. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+
 ## How others do it
 
 |             | Google                                                              | Microsoft                                      | Apple Numbers                       | Zoho                  |

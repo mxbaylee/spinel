@@ -1,5 +1,21 @@
 # Admin
 
+## SPN-047 composed redesign proposal
+
+Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Admin, AdminLoading, AdminError.
+
+| Current friction | Public reference pattern | Adopted proposal |
+| --- | --- | --- |
+| Nested passkeys, invites, connections and backups create a long page with repeated destructive controls. | The applicable pattern is grouped navigation and contextual actions from Dropbox/Notion; consumer editors offer no evidence for Spinel’s content-blind Operator permissions. | Administration section navigation: People, Invites, Connections, Backups & health. |
+
+This proposal supersedes the earlier stack of equal cards. People rows disclose passkeys and destructive actions; confirmations retain their consequences. Backups/health show text status, timestamps, last good verification and recovery guidance. Loading never masquerades as an empty list. Server Operator remains content-blind and distinct from delegated file Admin.
+
+The proposal above governs placement after approval. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+
 The Operator's screens: users and passkeys, invites, backups, and server health
 (SPN-032). Admins can't see documents (SPN-003), so nothing here shows a title,
 name or content.

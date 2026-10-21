@@ -1,5 +1,21 @@
 # Empty, error and offline states
 
+## SPN-047 composed redesign proposal
+
+Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — EmptyFolder, LoadingFiles, FileError, OfflineEditor, OfflineLaunch, MissingFile, RevokedLink.
+
+| Current friction | Public reference pattern | Adopted proposal |
+| --- | --- | --- |
+| States use paragraphs and card stacks with inconsistent placement, moving nearby controls or hiding the next step. | Google separates unavailable access from inline editing; Dropbox keeps file organization predictable; Numbers emphasizes recoverable document choices. | One local message and relevant next step; fixed status geometry in the editor; a full-page state only when the whole view is blocked. |
+
+Preserve all offline meanings in docs/offline.md. Do not report Online from browser connectivity alone, hide an unconfirmed write, or claim a browser download is permanent. No matches, an empty folder, a request still loading and an access failure are different states. Guest errors contain no document identity.
+
+The proposal above governs placement after approval. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+
 ## How others do it
 
 All four show an empty folder as an illustration, one sentence and the create

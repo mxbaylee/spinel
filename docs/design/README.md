@@ -1,5 +1,15 @@
 # Spinel design playbook
 
+## SPN-047 review status
+
+The [composed redesign](redesign.md) is proposed in PR #125 and awaits owner
+approval in decision #126. Its screen inventory, public-source comparisons,
+Base UI controls and before/after screenshot gallery define the next UI work.
+The existing gem palette and entity artwork are retained. Screen pages identify
+proposed placement changes; production is migrated by each implementation ticket.
+[Spaces and file roles](spaces.md) covers SPN-078/079 explicitly.
+
+
 Every UI change follows this playbook. A ticket that needs a pattern it doesn't
 cover adds the pattern here in its own PR first (AGENTS.md).
 
@@ -79,14 +89,14 @@ is no parallel token set; SPN-060's colour lint enforces that.
 Contrast is tested in `src/ui/presetStyles.test.ts` (WCAG AA, both modes). A new
 foreground/background pair joins that test in the same PR.
 
-## Planned component foundation
+## Component foundation
 
-SPN-047 adopts [Base UI](https://base-ui.com/react/overview/about) alongside its
+SPN-047 installs [Base UI](https://base-ui.com/react/overview/about) alongside its
 competitor review, using the existing React/Vite and plain CSS theme setup.
 Base UI supplies unstyled interaction/accessibility primitives; the redesign
 chooses visual styling, including any Material-like treatment. Shared components
 used by the mockups get stories and keyboard, focus, touch and theme verification.
-Consumer screen migrations remain in their implementation tickets. Tailwind is
+The shared controls and composed stories live in `src/ui/redesign/`. Consumer screen migrations remain in their implementation tickets. Use `npm run screenshots -- <story ids>` after building Storybook; see [review evidence](redesign.md#review-and-screenshots). Tailwind is
 not currently installed and is not required for this adoption. Owner, chat
 2026-10-20; [decision #120](https://github.com/mxbaylee/spinel/issues/120).
 SPN-077's icon assets/current-surface integration can land first.

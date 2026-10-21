@@ -1,5 +1,21 @@
 # Editor chrome
 
+## SPN-047 composed redesign proposal
+
+Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Doc, Sheet, ViewOnly, OfflineEditor, FormulaInContext, History.
+
+| Current friction | Public reference pattern | Adopted proposal |
+| --- | --- | --- |
+| The Dashboard title and search remain above the document; file actions, versions and export consume most of the first viewport. | Google and Excel group file identity/actions above content; Numbers discloses contextual details in an inspector. | A compact document header plus the existing Univer toolbar. Document content begins immediately below. |
+
+The proposed mockup is schematic chrome, not a replacement editor. Production keeps the real Univer toolbar and literal document colors, including white paper where authored. More holds versions, export, fill presets and theatre mode; formula insertion opens its task UI. Named versions, Before restore checkpoints, UTC dates and restore confirmation retain docs/history.md semantics. No dashboard search or pinned column persists in standalone editor views.
+
+The proposal above governs placement after approval. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+
 SPN-049 builds this default layout and theatre mode. It applies to Sheets and
 Docs.
 

@@ -83,12 +83,16 @@ function Sidebar({
   selected,
   onSelect,
   guest = false,
+  canEdit = true,
 }: {
+  canEdit?: boolean;
   space?: boolean;
   selected: string;
   onSelect: (view: string) => void;
   guest?: boolean;
 }) {
+  const [action, setAction] = useState('');
+  const [destination, setDestination] = useState('root');
   const groups: { title: string; items: [string, GlyphName][] }[] = space
     ? [
         {
@@ -137,19 +141,80 @@ function Sidebar({
         <section key={group.title}>
           <h2>{group.title}</h2>
           {group.items.map(([label, glyph]) => (
-            <button
-              key={label}
-              className="rd-nav-item"
-              aria-current={selected === label ? 'page' : undefined}
-              onClick={() => onSelect(label)}
-            >
-              <Glyph name={glyph} />
-              {label}
-            </button>
+            <div className="rd-tree-row" key={label}>
+              <button
+                className="rd-nav-item"
+                aria-current={selected === label ? 'page' : undefined}
+                onClick={() => onSelect(label)}
+              >
+                <Glyph name={glyph} />
+                {label}
+              </button>
+              {space && canEdit && (
+                <ActionMenu
+                  label={`Page actions for ${label}`}
+                  actions={['Rename', 'Move or reorder', 'Trash'].map((x) => ({
+                    label: x,
+                    destructive: x === 'Trash',
+                    onClick: () => setAction(`${x}: ${label}`),
+                  }))}
+                />
+              )}
+            </div>
           ))}
         </section>
       ))}
-      {!guest && (
+      {space && canEdit && (
+        <ActionMenu
+          label="Add page"
+          actions={['Doc', 'Sheet'].map((x) => ({
+            label: x,
+            onClick: () => setAction(`New ${x}`),
+          }))}
+        >
+          ＋ Add page
+        </ActionMenu>
+      )}
+      <Modal
+        title={action || 'Page actions'}
+        description="This change stays within the current Space."
+        open={Boolean(action)}
+        onOpenChange={(open) => {
+          if (!open) setAction('');
+        }}
+      >
+        {action.startsWith('Move') ? (
+          <>
+            <Choice
+              label="Parent page"
+              value={destination}
+              onChange={setDestination}
+              options={[
+                { value: 'root', label: 'Space root' },
+                { value: 'weekend', label: 'Weekend trip' },
+              ]}
+            />
+            <label>
+              Position
+              <input type="number" min="1" defaultValue="1" />
+            </label>
+          </>
+        ) : action.startsWith('Trash') ? (
+          <p>The page can be recovered from Space trash.</p>
+        ) : (
+          <label>
+            Page name
+            <input defaultValue={selected} />
+          </label>
+        )}
+        <div className="sp-actions">
+          <Button onClick={() => setAction('')}>Cancel</Button>
+          <Button primary onClick={() => setAction('')}>
+            Confirm
+          </Button>
+        </div>
+      </Modal>
+      {!guest && (!space || canEdit) && (
         <div className="rd-sidebar-bottom">
           <button className="rd-nav-item" onClick={() => onSelect('Trash')}>
             <Glyph name="trash" />
@@ -169,6 +234,7 @@ function Shell({
   space = false,
   guest = false,
   operator = false,
+  canEdit = true,
   selected = 'My files',
   onSelect = () => {},
 }: {
@@ -177,6 +243,7 @@ function Shell({
   space?: boolean;
   guest?: boolean;
   operator?: boolean;
+  canEdit?: boolean;
   selected?: string;
   onSelect?: (view: string) => void;
 }) {
@@ -212,7 +279,13 @@ function Shell({
       {sidebar && (
         <>
           <div className="rd-desktop-nav">
-            <Sidebar space={space} selected={selected} onSelect={onSelect} guest={guest} />
+            <Sidebar
+              space={space}
+              selected={selected}
+              onSelect={onSelect}
+              guest={guest}
+              canEdit={canEdit}
+            />
           </div>
           <div className="rd-mobile-nav">
             <Button onClick={() => setNav(true)}>
@@ -228,6 +301,7 @@ function Shell({
           >
             <Sidebar
               space={space}
+              canEdit={canEdit}
               selected={selected}
               guest={guest}
               onSelect={(view) => {
@@ -495,7 +569,13 @@ export function DashboardMockup({
     </Shell>
   );
 }
-export function DocumentSurface({ sheet = false }: { sheet?: boolean }) {
+export function DocumentSurface({
+  sheet = false,
+  unavailable = false,
+}: {
+  sheet?: boolean;
+  unavailable?: boolean;
+}) {
   if (sheet)
     return (
       <div className="rd-sheet-scroll">
@@ -561,8 +641,12 @@ export function DocumentSurface({ sheet = false }: { sheet?: boolean }) {
         </ul>
         <aside className="rd-doc-note">
           <span className="rd-eyebrow">FROM OUR BUDGET</span>
-          <strong>$258.50 left for the month</strong>
-          <span className="sp-muted">A comfortable amount for a small adventure.</span>
+          <strong>{unavailable ? 'Source unavailable' : '$258.50 left for the month'}</strong>
+          <span className="sp-muted">
+            {unavailable
+              ? 'This source needs separate access.'
+              : 'A comfortable amount for a small adventure.'}
+          </span>
         </aside>
         <h2>Before we leave</h2>
         <p>
@@ -594,7 +678,14 @@ export function EditorMockup({
   const [notice, setNotice] = useState('');
   const name = sheet ? 'Quarterly budget' : space ? selected : 'Autumn plans';
   return (
-    <Shell sidebar={space} space={space} guest={guest} selected={selected} onSelect={setSelected}>
+    <Shell
+      sidebar={space}
+      space={space}
+      guest={guest}
+      canEdit={!viewOnly}
+      selected={selected}
+      onSelect={setSelected}
+    >
       <header className="rd-editor-header">
         <div className="rd-editor-title">
           {guest ? (
@@ -692,7 +783,7 @@ export function EditorMockup({
             </div>
           </div>
         ) : (
-          <DocumentSurface sheet={sheet || selected === 'Budget'} />
+          <DocumentSurface sheet={sheet || selected === 'Budget'} unavailable={guest || offline} />
         )}
         {panel && (
           <aside className="rd-inspector">
@@ -822,76 +913,158 @@ export function SharingMockup({ delegated = false }: { delegated?: boolean }) {
     </div>
   );
 }
-function FormulaForm() {
-  const [source, setSource] = useState('budget');
+function FormulaForm({
+  state = 'value',
+}: {
+  state?: 'value' | 'private' | 'offline' | 'invalid' | 'loading' | 'empty' | 'table';
+}) {
+  const [format, setFormat] = useState('currency');
   const [notice, setNotice] = useState('');
   return (
     <div className="rd-form">
-      <p className="sp-muted">Keep a number or table connected to your Sheet.</p>
-      <Choice
-        label="Source sheet"
-        value={source}
-        onChange={setSource}
-        options={[
-          { value: 'budget', label: 'Quarterly budget' },
-          { value: 'unavailable', label: 'Source unavailable' },
-        ]}
-      />
+      <p className="sp-muted">Keep a value or table connected to your Sheets.</p>
       <label>
-        Formula
-        <input defaultValue="=SUM(D2:D6)" />
+        Expression
+        <input defaultValue="=SUM('Quarterly budget'.October.D2:D6)" />
       </label>
-      <div className="rd-preview-value">
-        {source === 'unavailable' ? 'Source unavailable' : '$258.50'}
+      <p className="sp-muted">Source: Quarterly budget / October</p>
+      <Choice
+        label="Format"
+        value={format}
+        onChange={setFormat}
+        options={['General', 'Number', 'Currency', 'Percent', 'Date'].map((x) => ({
+          value: x.toLowerCase(),
+          label: x,
+        }))}
+      />
+      <div className="rd-preview-value" role="status">
+        {state === 'value' ? (
+          '$258.50'
+        ) : state === 'private' ? (
+          'You need access to this formula’s sources.'
+        ) : state === 'offline' ? (
+          'Formula unavailable offline.'
+        ) : state === 'invalid' ? (
+          'Check this formula.'
+        ) : state === 'loading' ? (
+          'Loading result…'
+        ) : state === 'empty' ? (
+          'Empty value'
+        ) : (
+          <table>
+            <tbody>
+              <tr>
+                <td>Groceries</td>
+                <td>$412.50</td>
+              </tr>
+              <tr>
+                <td>Transport</td>
+                <td>$84.00</td>
+              </tr>
+            </tbody>
+          </table>
+        )}
       </div>
       <p className="sp-muted">
-        {source === 'unavailable'
-          ? 'You need access to every source. Previous values stay hidden.'
-          : 'This value updates when the source changes.'}
+        {['private', 'offline', 'loading'].includes(state)
+          ? 'Previous values stay hidden until access is confirmed.'
+          : 'The document shows the result. Its expression stays editable.'}
       </p>
-      <Button
-        primary
-        disabled={source === 'unavailable'}
-        onClick={() => setNotice('Formula inserted in the preview.')}
-      >
-        Insert formula
-      </Button>
+      <div className="sp-actions">
+        <Button onClick={() => setNotice('Cancelled.')}>Cancel</Button>
+        <Button
+          primary
+          disabled={['invalid', 'loading'].includes(state)}
+          onClick={() => setNotice('Formula inserted in the preview.')}
+        >
+          Insert formula
+        </Button>
+      </div>
       <p role="status">{notice}</p>
     </div>
   );
 }
-export function FormulaMockup() {
+export function FormulaMockup({
+  state,
+}: {
+  state?: 'value' | 'private' | 'offline' | 'invalid' | 'loading' | 'empty' | 'table';
+}) {
   return (
     <div className="sp-ui rd-dialog-stage">
       <section className="rd-dialog-example">
         <h1>Insert formula</h1>
-        <FormulaForm />
+        <FormulaForm state={state} />
       </section>
     </div>
   );
 }
-function HistoryContent() {
+function HistoryContent({ calendar = false }: { calendar?: boolean }) {
+  const [older, setOlder] = useState(calendar);
+  const [selected, setSelected] = useState('10:15 · Ready for the trip');
   return (
     <div className="rd-form">
       <p className="sp-muted">Previewing leaves your live document unchanged.</p>
-      <label>
-        October 20 · UTC
-        <input type="range" min="0" max="4" defaultValue="3" />
-      </label>
-      <h3>Today</h3>
+      <div className="rd-history-tabs">
+        <Button onClick={() => setOlder(false)} aria-pressed={!older}>
+          Today
+        </Button>
+        <Button onClick={() => setOlder(true)} aria-pressed={older}>
+          Older days
+        </Button>
+      </div>
+      {older ? (
+        <>
+          <h3>October 2026 · UTC</h3>
+          <div className="rd-calendar">
+            {Array.from({ length: 31 }, (_, i) => (
+              <Button
+                key={i}
+                disabled={![2, 7, 12, 17, 18, 19].includes(i + 1)}
+                onClick={() => setSelected(`October ${i + 1} · Final checkpoint`)}
+              >
+                {i + 1}
+              </Button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <label>
+          Today · UTC
+          <input
+            type="range"
+            min="0"
+            max="3"
+            defaultValue="2"
+            onChange={(e) =>
+              setSelected(
+                [
+                  '09:00 · Unnamed version',
+                  '10:15 · Ready for the trip',
+                  '11:45 · Before restore',
+                  '12:30 · Latest',
+                ][Number(e.target.value)],
+              )
+            }
+          />
+        </label>
+      )}
       {[
         '12:30 · Latest',
         '11:45 · Before restore',
         '10:15 · Ready for the trip',
         '09:00 · Unnamed version',
       ].map((x) => (
-        <Button key={x}>{x}</Button>
+        <Button key={x} onClick={() => setSelected(x)} aria-pressed={selected === x}>
+          {x}
+        </Button>
       ))}
-      <Button>Older days</Button>
+      <p role="status">Selected: {selected}</p>
     </div>
   );
 }
-export function HistoryMockup() {
+export function HistoryMockup({ calendar = false }: { calendar?: boolean }) {
+  const [restore, setRestore] = useState(false);
+  const [notice, setNotice] = useState('');
   return (
     <Shell>
       <header className="rd-page-header">
@@ -899,21 +1072,43 @@ export function HistoryMockup() {
           <p className="rd-eyebrow">AUTUMN PLANS</p>
           <h1>Version history</h1>
         </div>
-        <Button primary>Restore this version…</Button>
+        <Button primary onClick={() => setRestore(true)}>
+          Restore this version…
+        </Button>
       </header>
       <div className="rd-history">
         <aside className="rd-inspector">
-          <HistoryContent />
+          <HistoryContent calendar={calendar} />
         </aside>
         <DocumentSurface />
       </div>
+      <p role="status">{notice}</p>
+      <Modal
+        title="Restore this version for everyone?"
+        description="The current document will be kept as a Before restore checkpoint. Other open editors will need to reload."
+        open={restore}
+        onOpenChange={setRestore}
+      >
+        <div className="sp-actions">
+          <Button onClick={() => setRestore(false)}>Cancel</Button>
+          <Button
+            primary
+            onClick={() => {
+              setRestore(false);
+              setNotice('Version restored in the preview.');
+            }}
+          >
+            Restore version
+          </Button>
+        </div>
+      </Modal>
     </Shell>
   );
 }
 export function ProfileMockup({
   section = 'profile',
 }: {
-  section?: 'profile' | 'connections' | 'device';
+  section?: 'profile' | 'security' | 'connections' | 'device';
 }) {
   const [tab, setTab] = useState<string>(section);
   const [theme, setTheme] = useState('system');
@@ -1045,8 +1240,14 @@ export function ProfileMockup({
     </Shell>
   );
 }
-export function AdminMockup({ state = 'ready' }: { state?: 'ready' | 'loading' | 'error' }) {
-  const [tab, setTab] = useState('People');
+export function AdminMockup({
+  state = 'ready',
+  section = 'People',
+}: {
+  state?: 'ready' | 'loading' | 'error';
+  section?: string;
+}) {
+  const [tab, setTab] = useState(section);
   const [confirm, setConfirm] = useState(false);
   const [notice, setNotice] = useState('');
   return (
