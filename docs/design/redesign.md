@@ -232,7 +232,7 @@ Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
 visible focus and at least 44 px targets on touch devices. Expanded navigation shows the control
-on its own row above Profile. Collapsed/phone utilities open it in a popover;
+on its own row above Profile. Collapsed desktop navigation stacks its segments vertically; compact/phone headers show it horizontally;
 This device reuses it. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
 must report a storage failure without undoing the in-session theme choice.
@@ -281,3 +281,8 @@ Interactive CI builds are uploaded as `storybook-review` for seven days. They
 can be served locally without rebuilding Storybook. This does not publish a PR
 to GitHub Pages or authorize a production migration. Main already has a Pages
 deploy workflow; any separate hosted-review change can be ticketed when needed.
+
+Owner refinement (chat, 2026-10-20): keep the three appearance segments directly
+visible everywhere. Smaller sizing did not mean a popup. A collapsed desktop
+rail stacks the segments vertically; header, phone and expanded-sidebar placements
+keep the horizontal group. This supersedes earlier popup treatments.

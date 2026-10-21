@@ -228,7 +228,6 @@ try {
           page.getByRole('heading', { name: 'Shared with me', exact: true }),
         ).toBeVisible();
       }
-      if (width <= 900) await page.getByRole('button', { name: /^Appearance:/ }).click();
       const appearance = page.getByRole('radiogroup', { name: 'Appearance', exact: true });
       await appearance.getByRole('radio', { name: 'Dark', exact: true }).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -310,7 +309,9 @@ try {
         page.getByRole('heading', { name: 'A few good recipes', exact: true }),
       ).toBeVisible();
       await shot('owner-doc');
-      await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      await page
+        .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
+        .click();
       await expect(search).toHaveValue('recipes');
       await expect(
         page.locator('.rd-file-open').filter({ hasText: 'A few good recipes' }),
@@ -325,7 +326,16 @@ try {
       await expect(page.getByRole('menuitem', { name: 'Fill presets', exact: true })).toHaveCount(
         0,
       );
+      await page.getByRole('menuitem', { name: 'Name this version…', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Version name', exact: true }).fill('Ready to share');
+      await page.getByRole('button', { name: 'Save version name', exact: true }).click();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
+      await expect(
+        page
+          .getByText('Selected: Just now · Ready to share', { exact: true })
+          .filter({ visible: true }),
+      ).toBeVisible();
       await expect(
         page.getByRole('button', { name: 'Restore this version…', exact: true }),
       ).toBeVisible();
@@ -340,7 +350,9 @@ try {
       await shot('device-settings');
       await page.getByRole('button', { name: 'Back to document', exact: true }).click();
       await event('Save failed');
-      await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      await page
+        .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
+        .click();
       await expect(
         page.getByRole('dialog', { name: 'Leave with unsaved changes?', exact: true }),
       ).toBeVisible();
@@ -348,6 +360,86 @@ try {
       await shot('save-failed');
       await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
       await expect(page.getByRole('button', { name: '✓ Saved', exact: true })).toBeVisible();
+      await page
+        .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
+        .click();
+      await expect(
+        page.locator('.rd-file-open').filter({ hasText: 'Weekend notes' }),
+      ).toBeVisible();
+      await page
+        .getByRole('button', { name: 'More actions for Weekend notes', exact: true })
+        .click();
+      await page.getByRole('menuitem', { name: 'Trash', exact: true }).click();
+      await page.locator('.rd-file-open').filter({ hasText: 'Permanent folder' }).click();
+      await page
+        .getByRole('button', { name: 'More actions for Weekend notes', exact: true })
+        .click();
+      await page.getByRole('menuitem', { name: 'Restore', exact: true }).click();
+      if (width > 900) await page.getByRole('button', { name: 'My files', exact: true }).click();
+      else {
+        await page.getByRole('button', { name: 'Browse files', exact: true }).click();
+        await page
+          .getByRole('dialog')
+          .getByRole('button', { name: 'My files', exact: true })
+          .click();
+      }
+      await expect(
+        page.locator('.rd-file-open').filter({ hasText: 'Weekend notes' }),
+      ).toBeVisible();
+      await page.locator('.rd-file-open').filter({ hasText: 'Trips' }).click();
+      await page.getByRole('button', { name: 'New file', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Sheet', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Trip costs');
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page
+        .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
+        .click();
+      await expect(page.getByRole('heading', { name: 'Trips', exact: true })).toBeVisible();
+      await expect(page.locator('.rd-file-open').filter({ hasText: 'Trip costs' })).toBeVisible();
+      await open('invitation');
+      await page.getByRole('textbox', { name: 'Your name', exact: true }).fill('Sam Rivera');
+      await page.getByRole('button', { name: 'Join with a passkey', exact: true }).click();
+      await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeFocused();
+      await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Try again with a passkey', exact: true }),
+      ).toBeFocused();
+      await page.getByRole('button', { name: 'Try again with a passkey', exact: true }).click();
+      await event('Passkey succeeded');
+      await expect(
+        page.getByRole('heading', { name: 'Quarterly budget', exact: true }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await expect(page.getByRole('menuitem', { name: 'Share…', exact: true })).toHaveCount(0);
+      await expect(page.getByRole('menuitem', { name: 'Insert formula', exact: true })).toHaveCount(
+        0,
+      );
+      await page.keyboard.press('Escape');
+      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await expect(page.getByRole('textbox', { name: 'Display name', exact: true })).toHaveValue(
+        'Sam Rivera',
+      );
+      await page.getByRole('button', { name: 'Back to document', exact: true }).click();
+      await event('Save failed');
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
+      await page.getByRole('button', { name: 'Return to document', exact: true }).click();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await page.getByRole('button', { name: 'Leave without saving', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Back to document', exact: true }),
+      ).toBeVisible();
+      await open('recovery');
+      await expect(
+        page.getByText('Create a new passkey for Alex Baylee.', { exact: true }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Recover with a passkey', exact: true }).click();
+      await event('Passkey succeeded');
+      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await expect(page.getByRole('textbox', { name: 'Display name', exact: true })).toHaveValue(
+        'Alex Baylee',
+      );
       await open('operator');
       await page.getByRole('button', { name: 'Create Operator passkey', exact: true }).click();
       await event('Passkey succeeded');

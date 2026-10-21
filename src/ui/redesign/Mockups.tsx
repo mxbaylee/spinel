@@ -157,16 +157,7 @@ export function ThemeMenu({ labelled = false }: { labelled?: boolean }) {
       {control}
     </div>
   ) : (
-    <DetailsPopover
-      label={`Appearance: ${preference}`}
-      trigger={
-        <Glyph
-          name={preference === 'system' ? 'monitor' : preference === 'dark' ? 'moon' : 'sun'}
-        />
-      }
-    >
-      {control}
-    </DetailsPopover>
+    control
   );
 }
 function NetworkStatus({ offline = false }: { offline?: boolean }) {
@@ -556,6 +547,11 @@ function Shell({
     </div>
   );
 }
+const folderTags: Record<string, string> = {
+  Household: 'household',
+  Work: 'work',
+  Trips: 'travel',
+};
 const files = [
   ...['Household', 'Work', 'Trips'].map((name) => ({
     name,
@@ -633,6 +629,9 @@ export function DashboardMockup({
     | 'shared'
     | 'folder';
 }) {
+  const deletedFixtures = files
+    .filter((file) => file.access === 'owner' && file.kind !== 'folder')
+    .map((file) => ({ ...file, name: `Old ${file.name}` }));
   const [items, setItems] = useState<
     {
       name: string;
@@ -642,7 +641,7 @@ export function DashboardMockup({
       date: string;
       tags: string;
     }[]
-  >(files);
+  >([...files, ...deletedFixtures]);
   const [target, setTarget] = useState('');
   const [destination, setDestination] = useState('Household');
   const [view, setView] = useState(
@@ -665,7 +664,7 @@ export function DashboardMockup({
   const [scope, setScope] = useState('all');
   const [tag, setTag] = useState(state === 'filtered' ? 'household' : '');
   const [modified, setModified] = useState('any');
-  const [removed, setRemoved] = useState<string[]>([]);
+  const [trashed, setTrashed] = useState<string[]>(deletedFixtures.map((file) => file.name));
   const [layout, setLayout] = useState(initialLayout);
   const selectView = (next: string) => {
     if (next === 'Your profile' && onProfile) onProfile();
@@ -684,15 +683,11 @@ export function DashboardMockup({
       (scope === 'all' ||
         (scope === 'shared' ? file.access !== 'owner' : file.access === 'owner')) &&
       (modified === 'any' || file.date.includes('ago')) &&
-      !removed.includes(file.name) &&
+      (view === 'Trash' ? trashed.includes(file.name) : !trashed.includes(file.name)) &&
       (!items.some((item) => item.name === view && item.kind !== 'folder') || file.name === view) &&
       (view !== 'Shared with me' || file.access !== 'owner') &&
       (view !== 'Trash' || (file.access === 'owner' && file.kind !== 'folder')) &&
-      (!['Household', 'Work', 'Trips'].includes(view) ||
-        file.tags ===
-          ({ Household: 'household', Work: 'work', Trips: 'travel' } as Record<string, string>)[
-            view
-          ]),
+      (!['Household', 'Work', 'Trips'].includes(view) || file.tags === folderTags[view]),
   );
   const empty = state === 'empty' || rows.length === 0;
   return (
@@ -918,14 +913,17 @@ export function DashboardMockup({
                           {
                             label: 'Restore',
                             onClick: () => {
-                              setRemoved([...removed, file.name]);
+                              setTrashed(trashed.filter((name) => name !== file.name));
                               setNotice(`${file.name} restored.`);
                             },
                           },
                           {
                             label: 'Delete permanently…',
                             destructive: true,
-                            onClick: () => setDialog('Delete permanently'),
+                            onClick: () => {
+                              setTarget(file.name);
+                              setDialog('Delete permanently');
+                            },
                           },
                         ]
                       : [
@@ -971,7 +969,7 @@ export function DashboardMockup({
                                   label: 'Trash',
                                   destructive: true,
                                   onClick: () => {
-                                    setRemoved([...removed, file.name]);
+                                    setTrashed([...trashed, file.name]);
                                     setNotice(`${file.name} moved to Trash.`);
                                   },
                                 },
@@ -998,7 +996,7 @@ export function DashboardMockup({
                 </span>
                 <span>
                   <strong>Trash</strong>
-                  <small>Permanent folder · 3 deleted files</small>
+                  <small>Permanent folder · {trashed.length} deleted files</small>
                 </span>
               </button>
               <span className="rd-file-date" />
@@ -1058,10 +1056,14 @@ export function DashboardMockup({
                     ...next,
                     detail: 'Private',
                     date: 'Just now',
-                    tags: ['Household', 'Work', 'Trips'].includes(view) ? view.toLowerCase() : '',
+                    tags: ['Household', 'Work', 'Trips'].includes(view) ? folderTags[view] : '',
                   },
                 ]);
                 onOpen?.(next);
+              }
+              if (dialog === 'Delete permanently') {
+                setItems(items.filter((file) => file.name !== target));
+                setTrashed(trashed.filter((name) => name !== target));
               }
               if (dialog === 'Rename…')
                 setItems(
@@ -1072,7 +1074,7 @@ export function DashboardMockup({
               if (dialog === 'File into folder' || dialog === 'Move…')
                 setItems(
                   items.map((file) =>
-                    file.name === target ? { ...file, tags: destination.toLowerCase() } : file,
+                    file.name === target ? { ...file, tags: folderTags[destination] } : file,
                   ),
                 );
               setNotice(`${dialog}: ${name || 'Untitled'}`);
@@ -1218,7 +1220,9 @@ export function EditorMockup({
   onHistory,
   saveState = 'saved',
   onRetrySave,
+  onNameVersion,
 }: {
+  onNameVersion?: (name: string) => void;
   onBack?: () => void;
   onProfile?: () => void;
   onHistory?: () => void;
@@ -1512,6 +1516,7 @@ export function EditorMockup({
             disabled={!versionName.trim()}
             onClick={() => {
               setCheckpoint(`Just now · ${versionName}`);
+              onNameVersion?.(versionName);
               setNotice(`Version named ${versionName}.`);
               setNaming(false);
             }}
@@ -1892,7 +1897,7 @@ function HistoryContent({
           />
         </label>
       )}
-      {checkpoints.map((x) => (
+      {(!checkpoints.includes(selected) ? [selected, ...checkpoints] : checkpoints).map((x) => (
         <Button key={x} onClick={() => setSelected(x)} aria-pressed={selected === x}>
           {x}
         </Button>
@@ -1907,6 +1912,7 @@ export function HistoryMockup({
   viewOnly = false,
   sheet = false,
   title = 'Autumn plans',
+  namedVersion,
   onBack,
   onFiles,
   onProfile,
@@ -1914,6 +1920,7 @@ export function HistoryMockup({
   viewOnly?: boolean;
   sheet?: boolean;
   title?: string;
+  namedVersion?: string;
   onBack?: () => void;
   onFiles?: () => void;
   onProfile?: () => void;
@@ -1922,7 +1929,11 @@ export function HistoryMockup({
 }) {
   const [restore, setRestore] = useState(confirmation);
   const [selected, setSelected] = useState(
-    calendar ? 'October 19 · Final checkpoint' : '10:15 · Ready for the trip',
+    namedVersion
+      ? `Just now · ${namedVersion}`
+      : calendar
+        ? 'October 19 · Final checkpoint'
+        : '10:15 · Ready for the trip',
   );
   const [notice, setNotice] = useState('');
   return (

@@ -1393,3 +1393,16 @@
   outline: 2px solid var(--sp-text);
   outline-offset: 3px;
 }
+
+/* Keep all three appearance choices visible, including in the narrow desktop rail. */
+.rd-rail .sp-segments {
+  flex-direction: column;
+}
+.rd-compact-shell .rd-rail .sp-segments {
+  flex-direction: row;
+}
+@media (max-width: 900px) {
+  .rd-rail .sp-segments {
+    flex-direction: row;
+  }
+}
