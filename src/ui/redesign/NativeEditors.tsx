@@ -230,7 +230,10 @@ export function NativeEditor({
         });
       }
     };
-    container.inert = true;
+    // Editable engines establish the browser caret while mounting. An inert
+    // ancestor suppresses that selection even after focus is restored later.
+    // Viewers stay fenced until their read-only permissions are installed.
+    container.inert = readOnly;
     container.dataset.nativeStage = 'initializing';
     setState('loading');
     setMessage('');
@@ -371,7 +374,7 @@ export function NativeEditor({
         ref={host}
         className="rd-native-host"
         aria-hidden={state !== 'ready'}
-        {...(state !== 'ready' ? { inert: '' } : {})}
+        {...(readOnly && state !== 'ready' ? { inert: '' } : {})}
       />
       {state !== 'ready' && (
         <div className="rd-native-message" role={state === 'error' ? 'alert' : 'status'}>

@@ -60,16 +60,16 @@ status line grows when a message or Retry appears, which moves the sheet
   [status changes never move the layout](README.md#status-changes-never-move-the-layout).
   SPN-053 adds local-save states to the connection slot.
 - **Right:** collaborators (up to three avatars, then "+n", with names in a
-  popover), then **Share** (primary, owners only) or a **View only** badge, then
-  the More menu.
-- **More menu:** Name this version… and Versions (SPN-024, SPN-026), Export
+  popover), then a compact access badge and the More menu. Share remains owner-only
+  and lives in the More menu.
+- **More menu:** Share (owners), Versions (SPN-024, SPN-026), Export
   (Download Univer file, Export as PDF; SPN-031/SPN-075, later Office files
   SPN-035), Theatre mode,
   then for owners Move… and Trash. `VersionNames` and `FileExports` move from
   inline sections into this menu's dialogs.
 - **Tools** are Univer's toolbar, untouched. Spinel never adds a second toolbar
-  row. Fill presets belong in Univer's fill picker (SPN-050); until then they
-  stay a collapsed `<details>` in the header's More menu.
+  row. Remove the extra Fill presets entry; Univer owns its fill controls.
+  Any later preset integration must use a supported public API.
 - **Formulas** (SPN-033) render inline values or tables inside the canvas;
   insertion and editing follow [formulas.md](formulas.md).
 - **Inline errors** that belong to the canvas, such as the Doc image-upload
@@ -92,8 +92,8 @@ in [their header](guest.md#adopted-pattern). Owner, chat 2026-10-20, decision
 | Breadcrumb, document name (rename for owners) | More → versions, export, theatre mode, move, trash |
 | Save slot, connection slot                    | Status popover → message detail, Retry saving             |
 | Collaborator avatars (max 3 + n)              | Avatar popover → names                                    |
-| Share (owner) or View only                    | Share dialog ([sharing.md](sharing.md))                   |
-| Univer's toolbar                              | Fill presets (until SPN-050)                              |
+| Compact access badge                    | More → Share dialog, owners only ([sharing.md](sharing.md)) |
+| Univer's toolbar                              | Versions → Name this version                              |
 | Help line or inline error slot (Docs)         |                                                           |
 
 ## Theatre mode (SPN-049)
@@ -132,3 +132,7 @@ At phone/tablet widths History keeps the selected-version summary above the
 preview; its chooser expands on request. Older days show an aligned weekday
 calendar and checkpoints for the selected date, including named/before-restore
 entries, rather than reusing today's list.
+
+Version naming belongs inside Versions, with a Back button immediately left of
+its title. A routine editable-access sentence is redundant with the badge; keep
+view-only and actionable error/recovery feedback instead. Owner, chat 2026-10-20.

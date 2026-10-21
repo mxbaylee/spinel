@@ -229,6 +229,7 @@ function SpaceBranch({
         <button
           className="rd-nav-item"
           aria-current={entry.kind !== 'folder' && selected === entry.name ? 'page' : undefined}
+          aria-expanded={entry.kind === 'folder' ? open : undefined}
           onClick={() => (entry.kind === 'folder' ? setOpen(!open) : onSelect(entry.name))}
         >
           {entry.kind === 'folder' ? (
@@ -534,7 +535,7 @@ function Shell({
                   : 'My files'
             }
             title={sidebar ? (space ? 'Expand pages navigation' : 'Expand navigation') : undefined}
-            aria-expanded={sidebar ? nav || expanded : undefined}
+            aria-expanded={sidebar ? nav : undefined}
             onClick={() => {
               if (sidebar) {
                 if (window.matchMedia('(max-width: 900px)').matches) setNav(true);
@@ -774,6 +775,16 @@ export function DashboardMockup({
   const [trashed, setTrashed] = useState<string[]>(deletedFixtures.map((file) => file.id));
   const [layout, setLayout] = useState(initialLayout);
   const currentFolder = items.find((item) => item.kind === 'folder' && item.id === view);
+  const folderAncestors: { id: string; name: string }[] = [];
+  const visitedAncestors = new Set<string>(currentFolder ? [currentFolder.id] : []);
+  let ancestorId = currentFolder?.parentId;
+  while (ancestorId && !visitedAncestors.has(ancestorId)) {
+    visitedAncestors.add(ancestorId);
+    const ancestor = items.find((item) => item.kind === 'folder' && item.id === ancestorId);
+    if (!ancestor) break;
+    folderAncestors.unshift({ id: ancestor.id, name: ancestor.name });
+    ancestorId = ancestor.parentId;
+  }
   const selectView = (next: string) => {
     if (next === 'Your profile' && onProfile) onProfile();
     else {
@@ -816,13 +827,17 @@ export function DashboardMockup({
       selected={currentFolder?.name ?? view}
       onSelect={selectView}
     >
-      <header className="rd-page-header">
+      <header className="rd-page-header rd-dashboard-header">
         <div>
           {view !== 'My files' && (
             <nav className="rd-file-breadcrumb" aria-label="Breadcrumb">
               <button onClick={() => setView('My files')}>My files</button>
-              <span aria-hidden="true">/</span>
-              <span aria-current="page">{currentFolder?.name ?? view}</span>
+              {folderAncestors.map((ancestor) => (
+                <span key={ancestor.id} className="rd-breadcrumb-step">
+                  <span aria-hidden="true">/</span>
+                  <button onClick={() => setView(ancestor.id)}>{ancestor.name}</button>
+                </span>
+              ))}
             </nav>
           )}
           <h1>{currentFolder?.name ?? view}</h1>
@@ -852,14 +867,14 @@ export function DashboardMockup({
           </ActionMenu>
         </div>
       </header>
-      <div className="rd-content">
+      <div className="rd-content rd-dashboard-content">
         <div className="rd-list-tools">
           <label className="rd-search">
             <Glyph name="search" />
             <input
               aria-label="Search files"
               placeholder={
-                view === 'My files' ? 'Search all files' : `Search ${view.toLowerCase()}`
+                view === 'My files' ? 'Search all files' : `Search ${currentFolder?.name ?? view}`
               }
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -1452,7 +1467,7 @@ export function EditorMockup({
   const [naming, setNaming] = useState(false);
   const [panel, setPanel] = useState(formula ? 'Formula' : '');
   const [notice, setNotice] = useState('');
-  const name = title ?? (sheet ? 'Quarterly budget' : space ? selected : 'Autumn plans');
+  const name = space ? selected : (title ?? (sheet ? 'Quarterly budget' : 'Autumn plans'));
   return (
     <Shell
       sidebar={space}
@@ -1550,11 +1565,7 @@ export function EditorMockup({
             <span className="rd-badge">
               {viewOnly ? 'View only' : guest ? 'Guest editor' : 'Can edit'}
             </span>
-          ) : (
-            <Button primary className="rd-desktop-share" onClick={() => setShare(true)}>
-              Share
-            </Button>
-          )}
+          ) : null}
           {guest ? (
             <>
               <ThemeMenu />

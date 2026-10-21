@@ -178,3 +178,15 @@ their functional icons. Defer the persistent emoji/icon picker to **SPN-086**;
 no picker ships in this proposal. Owner/Collaborator gain recognition and view
 choice; Guests retain scoped identity and access clarity; Operators gain no
 personal file navigation or service dependency. Decision #126.
+
+### Unified search follow-up
+
+Owner feedback and persona review (2026-10-20, decision #126) move the query
+builder into SPN-048: one search field may show labelled, removable colored
+conditions such as `type:sheet` and `tag:travel`; Search options opens an
+accessible form that builds the same query. Text entry and the form must agree,
+and plain-text fallback, keyboard editing, paste, touch and errors stay usable.
+This reuses existing supported filters and access scope. It does not add a new
+search engine or expose inaccessible folders. The current proposal meanwhile
+keeps folder titles beside their content, shows accessible ancestor breadcrumbs,
+and uses readable names in search hints.

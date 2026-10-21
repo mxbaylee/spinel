@@ -55,6 +55,7 @@ const server = await preview({
 const browser = await chromium.launch();
 const captures: { id: string; variant: string; filename: string; title: string }[] = [];
 const verifications: string[] = [];
+const nativeFailures: unknown[] = [];
 const variants = [
   ['light', 1280, 'light'],
   ['dark', 1280, 'dark'],
@@ -590,8 +591,8 @@ try {
       );
       await expect(
         page.getByRole('menuitem', { name: 'About your access', exact: true }),
-      ).toBeVisible();
-      await page.getByRole('menuitem', { name: 'About your access', exact: true }).focus();
+      ).toHaveCount(0);
+      await page.getByRole('menuitem', { name: 'Versions', exact: true }).focus();
       await page.keyboard.press('Escape');
       await expect(page.getByRole('menu', { name: 'Document actions', exact: true })).toBeHidden();
       await page.getByRole('button', { name: /^(Your profile|.+ — Profile settings)$/ }).click();
@@ -737,6 +738,9 @@ for (const filename of assets.filter(
   bundles.push({ filename, bytes: bytes.length, gzipBytes: gzipSync(bytes).length });
 }
 await writeFile(resolve(directory, 'bundle-size.json'), JSON.stringify(bundles, null, 2));
+// Preserve visual evidence while still failing validation for any native input defect.
+if (nativeFailures.length)
+  throw new AggregateError(nativeFailures, 'Native editor input checks failed');
 console.log(
   `Captured ${captures.length} screenshots in ${directory}; ${verifications.length} interaction passes.`,
 );

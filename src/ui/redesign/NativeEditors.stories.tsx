@@ -5,13 +5,44 @@ import { NativeEditor } from './NativeEditors.tsx';
 import type { NativeEditorHandle, NativeEditorProps } from './NativeEditors.tsx';
 import { Button } from './Controls.tsx';
 
+function browserSelection() {
+  const selection = window.getSelection();
+  const describe = (node: Node | null) => {
+    const element = node instanceof Element ? node : node?.parentElement;
+    return element
+      ? { tag: element.tagName, id: element.id, editable: element.getAttribute('contenteditable') }
+      : null;
+  };
+  return selection
+    ? {
+        rangeCount: selection.rangeCount,
+        collapsed: selection.isCollapsed,
+        anchor: describe(selection.anchorNode),
+        anchorOffset: selection.anchorOffset,
+        focus: describe(selection.focusNode),
+        focusOffset: selection.focusOffset,
+      }
+    : null;
+}
+
 /** Observation belongs to the isolated story, never a production global. */
 function NativeEditorStory(props: NativeEditorProps) {
   const editor = useRef<NativeEditorHandle>();
   const events = useRef<Record<string, unknown>[]>([]);
+  const inputEvents = useRef<Record<string, unknown>[]>([]);
+  const textCommands = useRef<Record<string, unknown>[]>([]);
+  const keyEvents = useRef<Record<string, unknown>[]>([]);
   const stopEvents = useRef<(() => void)[]>([]);
   const record = (event: Record<string, unknown>) => {
-    events.current = [...events.current.slice(-23), event];
+    const log =
+      event.event === 'input' || event.event === 'input-capture'
+        ? inputEvents
+        : event.event === 'keydown'
+          ? keyEvents
+          : event.id === 'doc.command.insert-text' || event.id === 'doc.command.replace-selection'
+            ? textCommands
+            : events;
+    log.current = [...log.current.slice(log === inputEvents ? -63 : -23), event];
   };
   useEffect(() => () => stopEvents.current.forEach((stop) => stop()), []);
   const [observation, setObservation] = useState('');
@@ -29,6 +60,10 @@ function NativeEditorStory(props: NativeEditorProps) {
               ? editor.current.api.getDocument(DOCS_NORMAL_EDITOR_UNIT_ID_KEY)?.save().body
               : undefined,
           events: events.current,
+          inputEvents: inputEvents.current,
+          textCommands: textCommands.current,
+          keyEvents: keyEvents.current,
+          browserSelection: browserSelection(),
           snapshot: editor.current.getSnapshot(),
         }),
       );
@@ -36,6 +71,40 @@ function NativeEditorStory(props: NativeEditorProps) {
   return (
     <div
       className="sp-ui"
+      onKeyDownCapture={(event) => {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.rd-native-editor')) return;
+        record({
+          event: 'keydown',
+          phase: 'capture',
+          target: target.id,
+          key: event.key,
+          selection: browserSelection(),
+        });
+      }}
+      onInputCapture={(event) => {
+        const input = event.nativeEvent as InputEvent;
+        record({
+          event: 'input-capture',
+          target: (event.target as HTMLElement).id,
+          data: input.data,
+          inputType: input.inputType,
+          defaultPrevented: input.defaultPrevented,
+          text: (event.target as HTMLElement).textContent?.slice(0, 120),
+        });
+      }}
+      onKeyDown={(event) => {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.rd-native-editor')) return;
+        record({
+          event: 'keydown',
+          phase: 'bubble',
+          target: target.id,
+          key: event.key,
+          defaultPrevented: event.defaultPrevented,
+          editable: target.isContentEditable,
+        });
+      }}
       onInput={(event) => {
         const input = event.nativeEvent as InputEvent;
         record({
