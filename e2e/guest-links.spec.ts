@@ -31,6 +31,16 @@ for (const kind of ['sheet', 'doc'] as const) {
         await first.setViewportSize({ width, height: 900 });
         await first.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
         await expect(first.locator('html')).toHaveAttribute('data-theme', theme);
+        await expect(
+          first.getByRole('status', { name: 'Connection status', exact: true }),
+        ).toHaveText('Online');
+        // The SDK's initial viewer-protection notice can cover the phone header.
+        // Wait for its real dismissal; screenshot CSS must not hide live UI.
+        await expect(
+          first.getByText('This content is protected. This action is not allowed.', {
+            exact: true,
+          }),
+        ).not.toBeVisible();
         await first.screenshot({
           path: `test-results/theme-screenshots/spn-042-guest-${kind}-${role}-${variant}-${info.project.name}.png`,
           fullPage: true,

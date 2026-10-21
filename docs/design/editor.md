@@ -49,6 +49,11 @@ remain SPN-043; the wider header migration remains SPN-049. Univer's own toolbar
 sits inside the canvas container. Connection behavior is maintained in
 [connection.md](../connection.md).
 
+While an editor is open, background shared-file refresh failures keep their
+alert and Retry action after the editor. They must not insert a new row above
+the active document when the polling request fails (SPN-042). The dashboard's
+file-list view keeps that message in its existing context above the list.
+
 ## Adopted layout
 
 ```

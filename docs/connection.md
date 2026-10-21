@@ -67,7 +67,10 @@ and keeps its timestamp and read-only explanation until reopened online.
 The dashboard never claims **Saved on this device**. See [offline behavior](offline.md).
 
 The existing save row reserves Retry space through ordinary connection changes,
-while keeping explicit pending-edit warnings. SPN-043 still owns the shared
+while keeping explicit pending-edit warnings. A background shared-file-list
+refresh error remains an announced alert with its Retry action, after the open
+editor so the delayed polling failure cannot push the document down. In the
+file list it retains its existing placement above the list. SPN-043 still owns the shared
 title-adjacent save slot, full error detail and Retry popover; SPN-049 composes
 that slot and this connection control into its wider header migration.
 SPN-053 later adds local/pending-sync durability states, without treating an
@@ -83,7 +86,7 @@ open connection as persistence evidence.
   actual sockets and separately exercises the browser offline switch alone. It
   withholds a real successful JOIN response while HTTP health is
   already good, then releases it. It compares the complete editor bounds through
-  Offline, Reconnecting and Online.
+  Offline, Reconnecting and Online, including the delayed shared-list poll failure.
 - Existing guest and offline end-to-end tests preserve revocation/privacy,
   unfinished guest input, local read-only copies and the catalog timestamp.
 - `Current production/Shell/ConnectionStatus` stories cover all three states,

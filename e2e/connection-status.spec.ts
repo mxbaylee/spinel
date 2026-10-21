@@ -298,8 +298,23 @@ for (const width of [1280, 390]) {
           await connection(page, 'Online');
           await saved();
 
+          // Keep this one catalog request unavailable through connection recovery
+          // so its stale timestamp cannot disappear merely because the room joins.
+          await page.route('**/api/items/shared', (route) =>
+            route.fulfill({
+              status: 503,
+              json: { error: 'Shared files are temporarily unavailable.' },
+            }),
+          );
           await network.setOffline(true);
           await connection(page, 'Offline');
+          // Wait for the actual five-second shared-list poll to fail as well.
+          // Its background alert must remain available without moving the editor.
+          const refreshShared = page.getByRole('button', {
+            name: 'Refresh shared items',
+            exact: true,
+          });
+          await expect(refreshShared).toBeVisible({ timeout: 10_000 });
           await expect.poll(() => canvas.boundingBox()).toEqual(bounds);
           await captureEditor('Offline');
           await expect.poll(() => canvas.boundingBox()).toEqual(bounds);
@@ -320,6 +335,14 @@ for (const width of [1280, 390]) {
           await closeDetail(page);
           await connection(page, 'Online');
           await saved();
+          await expect(refreshShared).toBeVisible();
+          await detail(page, 'Online', width === 390);
+          await expect(
+            page.getByRole('dialog', { name: 'Connection details', exact: true }),
+          ).toContainText('Files as of');
+          await closeDetail(page);
+          await page.unroute('**/api/items/shared');
+          await expect(refreshShared).toHaveCount(0, { timeout: 10_000 });
           await expect.poll(() => canvas.boundingBox()).toEqual(bounds);
         } finally {
           holdWrite = false;

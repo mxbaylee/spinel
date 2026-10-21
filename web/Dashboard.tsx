@@ -83,8 +83,8 @@ export function Dashboard({
   const [busy, setBusy] = useState(false);
   const [syncedAt, setSyncedAt] = useState(local?.catalog.syncedAt ?? 0);
   useEffect(() => {
-    onCatalogStatus?.({ syncedAt, local: Boolean(local), stale: Boolean(error) });
-  }, [syncedAt, local, error, onCatalogStatus]);
+    onCatalogStatus?.({ syncedAt, local: Boolean(local), stale: Boolean(error || shared.error) });
+  }, [syncedAt, local, error, shared.error, onCatalogStatus]);
   useEffect(() => () => onCatalogStatus?.(null), [onCatalogStatus]);
   // The last-loaded view for each opened folder or item, kept for offline launch.
   const views = useRef<Record<string, WorkspaceItem[]>>({ ...local?.catalog.views });
@@ -415,6 +415,11 @@ export function Dashboard({
       </span>
     );
   }
+  const sharedFailure = shared.error && (
+    <p role="alert">
+      {shared.error} <button onClick={() => void shared.refresh()}>Refresh shared items</button>
+    </p>
+  );
   return (
     <>
       <p className="eyebrow">Your workspace</p>
@@ -476,12 +481,7 @@ export function Dashboard({
           {offline.message && (
             <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
           )}
-          {shared.error && (
-            <p role="alert">
-              {shared.error}{' '}
-              <button onClick={() => void shared.refresh()}>Refresh shared items</button>
-            </p>
-          )}
+          {!liveEditor && sharedFailure}
           {sharedOpen && !searchActive && (
             <section className="shared-drawer" aria-label="Shared with me">
               <h2>Shared with me</h2>
@@ -762,6 +762,9 @@ export function Dashboard({
             )}
             {error && <p role="alert">{error}</p>}
           </div>
+          {/* A background file-list failure must not move the active document.
+              Keep its alert and retry available after the editor instead. */}
+          {liveEditor && sharedFailure}
         </section>
       </div>
     </>
