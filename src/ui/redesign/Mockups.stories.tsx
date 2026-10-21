@@ -109,3 +109,8 @@ export const AdminPasskeys: Story = { render: () => <AdminMockup state="passkeys
 export const HistoryRestore: Story = { render: () => <HistoryMockup confirmation /> };
 
 export const PlannedSpaceViewer: Story = { render: () => <EditorMockup space viewOnly /> };
+
+export const DashboardGrid: Story = { render: () => <DashboardMockup initialLayout="grid" /> };
+export const DashboardGridCollapsed: Story = {
+  render: () => <DashboardMockup initialLayout="grid" collapsed />,
+};

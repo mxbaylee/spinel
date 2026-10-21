@@ -152,9 +152,41 @@ try {
           exact: true,
         }),
       ).toBeHidden();
+      const namesBefore = await page
+        .getByRole('list', { name: 'Files', exact: true })
+        .getByRole('listitem')
+        .allTextContents();
+      await page.getByRole('button', { name: 'Grid view', exact: true }).click();
+      await expect(page.getByRole('button', { name: 'Grid view', exact: true })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
+      expect(
+        await page
+          .getByRole('list', { name: 'Files', exact: true })
+          .getByRole('listitem')
+          .allTextContents(),
+      ).toEqual(namesBefore);
+      await page.getByRole('button', { name: 'List view', exact: true }).click();
       if (width > 900) {
         await page.getByRole('button', { name: 'Collapse navigation', exact: true }).click();
         await expect(page.getByRole('button', { name: 'Browse files', exact: true })).toBeFocused();
+        const pinned = page
+          .getByRole('navigation', { name: 'File shortcuts' })
+          .getByRole('button', { name: 'Quarterly budget', exact: true });
+        await pinned.focus();
+        await expect(pinned.locator('.rd-nav-tooltip')).toBeVisible();
+        await page
+          .getByRole('navigation', { name: 'File shortcuts' })
+          .getByRole('button', { name: 'Shared with me', exact: true })
+          .click();
+        await expect(
+          page.getByRole('heading', { name: 'Shared with me', exact: true }),
+        ).toBeVisible();
+        await page
+          .getByRole('navigation', { name: 'File shortcuts' })
+          .getByRole('button', { name: 'My files', exact: true })
+          .click();
         await page.getByRole('button', { name: 'Browse files', exact: true }).click();
         await expect(
           page.getByRole('button', { name: 'Collapse navigation', exact: true }),

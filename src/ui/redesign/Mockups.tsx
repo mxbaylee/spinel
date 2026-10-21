@@ -21,8 +21,10 @@ type GlyphName =
   | 'shield'
   | 'download'
   | 'network'
-  | 'network-off';
+  | 'network-off'
+  | 'list';
 const paths: Record<GlyphName, string> = {
+  list: 'M8 6h13 M8 12h13 M8 18h13 M3 6h.01 M3 12h.01 M3 18h.01',
   files: 'M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z',
   search: 'M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14 M15 15l6 6',
   folder: 'M3 6h7l2 3h9v11H3z',
@@ -54,6 +56,32 @@ function Glyph({ name }: { name: GlyphName }) {
     >
       <path d={paths[name]} />
     </svg>
+  );
+}
+// Predictable identity without stored metadata; identical names intentionally share a cue.
+// A rename may change this default. SPN-086 adds an explicit, persistent choice later.
+function filenameEmoji(name: string): string {
+  const choices = ['🌿', '🌻', '🍂', '🍋', '🪻', '🌷', '🪴', '🍄', '🌵', '🍀', '🌺', '🪷'];
+  let hash = 0;
+  for (const character of name.normalize('NFC'))
+    hash = (Math.imul(hash, 31) + character.codePointAt(0)!) >>> 0;
+  return choices[hash % choices.length]!;
+}
+function FileIdentity({
+  kind,
+  emoji,
+  size = 32,
+}: {
+  kind: 'doc' | 'sheet' | 'space';
+  emoji?: string;
+  size?: number;
+}) {
+  return emoji ? (
+    <span className="rd-file-emoji" style={{ fontSize: size }} aria-hidden="true">
+      {emoji}
+    </span>
+  ) : (
+    <EntityIcon kind={kind} size={size} />
   );
 }
 function Avatar({ children = 'AB' }: { children?: ReactNode }) {
@@ -208,7 +236,11 @@ function Sidebar({
                     aria-current={selected === label ? 'page' : undefined}
                     onClick={() => onSelect(label)}
                   >
-                    <Glyph name={glyph} />
+                    {!space && glyph === 'pin' ? (
+                      <span aria-hidden="true">{filenameEmoji(label)}</span>
+                    ) : (
+                      <Glyph name={glyph} />
+                    )}
                     {label}
                   </button>
                   {space && canEdit && (
@@ -376,6 +408,36 @@ function Shell({
             <Glyph name={sidebar ? 'menu' : operator ? 'shield' : 'files'} />
             {sidebar && <small>{space ? 'Pages' : 'Files'}</small>}
           </button>
+          {sidebar && !space && (
+            <nav className="rd-collapsed-destinations" aria-label="File shortcuts">
+              {(
+                [
+                  ['My files', 'files'],
+                  ['Shared with me', 'shared'],
+                  ['Quarterly budget', 'pin'],
+                  ['Autumn plans', 'pin'],
+                ] as [string, GlyphName][]
+              ).map(([label, glyph]) => (
+                <button
+                  key={label}
+                  className="rd-rail-button"
+                  title={label}
+                  aria-label={label}
+                  aria-current={selected === label ? 'page' : undefined}
+                  onClick={() => onSelect(label)}
+                >
+                  {glyph === 'pin' ? (
+                    <span aria-hidden="true">{filenameEmoji(label)}</span>
+                  ) : (
+                    <Glyph name={glyph} />
+                  )}
+                  <span className="rd-nav-tooltip" aria-hidden="true">
+                    {label}
+                  </span>
+                </button>
+              ))}
+            </nav>
+          )}
           <div className="rd-rail-bottom">
             <ThemeMenu />
             <button
@@ -492,7 +554,9 @@ const files = [
 export function DashboardMockup({
   state = 'populated',
   collapsed = false,
+  initialLayout = 'list',
 }: {
+  initialLayout?: 'list' | 'grid';
   collapsed?: boolean;
   state?:
     | 'populated'
@@ -527,6 +591,7 @@ export function DashboardMockup({
   const [tag, setTag] = useState(state === 'filtered' ? 'household' : '');
   const [modified, setModified] = useState('any');
   const [removed, setRemoved] = useState<string[]>([]);
+  const [layout, setLayout] = useState(initialLayout);
   if (view === 'Your profile') return <ProfileMockup />;
   const rows = files.filter(
     (file) =>
@@ -537,6 +602,7 @@ export function DashboardMockup({
         (scope === 'shared' ? file.access !== 'owner' : file.access === 'owner')) &&
       (modified === 'any' || file.date.includes('ago')) &&
       !removed.includes(file.name) &&
+      (!files.some((item) => item.name === view && item.kind !== 'folder') || file.name === view) &&
       (view !== 'Shared with me' || file.access !== 'owner') &&
       (view !== 'Trash' || (file.access === 'owner' && file.kind !== 'folder')) &&
       (!['Household', 'Work', 'Trips'].includes(view) ||
@@ -655,6 +721,22 @@ export function DashboardMockup({
                 ? `Results for “${search}”`
                 : `${rows.length} items`}
           </span>
+          <div className="rd-view-switch" role="group" aria-label="File layout">
+            <Button
+              aria-label="List view"
+              aria-pressed={layout === 'list'}
+              onClick={() => setLayout('list')}
+            >
+              <Glyph name="list" /> List
+            </Button>
+            <Button
+              aria-label="Grid view"
+              aria-pressed={layout === 'grid'}
+              onClick={() => setLayout('grid')}
+            >
+              <Glyph name="files" /> Grid
+            </Button>
+          </div>
           {view !== 'My files' && view !== 'Trash' && (
             <Button onClick={() => setView('My files')}>Search all files</Button>
           )}
@@ -690,7 +772,11 @@ export function DashboardMockup({
             )}
           </div>
         ) : (
-          <div className="rd-file-list" role="list" aria-label="Files">
+          <div
+            className={`rd-file-list ${layout === 'grid' ? 'rd-file-grid' : ''}`}
+            role="list"
+            aria-label="Files"
+          >
             <div className="rd-column-head" aria-hidden="true">
               <span>Name</span>
               <span>Last edited</span>
@@ -708,12 +794,14 @@ export function DashboardMockup({
                     {file.kind === 'folder' ? (
                       <Glyph name="folder" />
                     ) : (
-                      <EntityIcon kind={file.kind} size={32} />
+                      <FileIdentity kind={file.kind} emoji={filenameEmoji(file.name)} size={32} />
                     )}
                   </span>
                   <span>
                     <strong>{file.name}</strong>
                     <small>
+                      {file.kind !== 'folder' &&
+                        `${file.kind === 'doc' ? 'Doc' : file.kind === 'sheet' ? 'Sheet' : 'Space'} · `}
                       {file.detail}
                       {file.tags && ` · ${file.tags}`}
                     </small>
@@ -785,7 +873,11 @@ export function DashboardMockup({
             ))}
           </div>
         )}
-        <div role="list" aria-label="Trash folder">
+        <div
+          className={layout === 'grid' ? 'rd-file-grid rd-trash-grid' : ''}
+          role="list"
+          aria-label="Trash folder"
+        >
           {' '}
           {view === 'My files' && !search && (kind === 'all' || kind === 'folder') && !tag && (
             <div className="rd-file" role="listitem">
@@ -1009,10 +1101,18 @@ export function EditorMockup({
               <Glyph name="back" />
             </Button>
           )}
-          <EntityIcon kind={space ? 'space' : sheet ? 'sheet' : 'doc'} size={24} />
+          <FileIdentity
+            kind={space ? 'space' : sheet ? 'sheet' : 'doc'}
+            emoji={filenameEmoji(space ? 'Autumn plans' : name)}
+            size={24}
+          />
           <div>
             <span className="rd-breadcrumb">
-              {space ? 'Autumn plans /' : guest ? 'Shared document' : 'Household /'}
+              {space
+                ? 'Space · Autumn plans /'
+                : guest
+                  ? `${sheet ? 'Sheet' : 'Doc'} · Shared document`
+                  : `${sheet ? 'Sheet' : 'Doc'} · Household /`}
             </span>
             <h1>{name}</h1>
           </div>

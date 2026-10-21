@@ -114,3 +114,11 @@ service is needed. The app's heart logo and favicon remain unchanged.
 Storybook CI captures these stories and the actual dashboard integration stories
 in light, dark and phone layouts as the `entity-icon-screenshots` artifact. The
 same ticket implements both artwork and current-surface integration (#122).
+
+## Optional file identity (SPN-047 owner refinement)
+
+The proposal now uses deterministic filename-derived botanical emoji beside
+names, while a visible Doc/Sheet/Space label preserves type recognition. Existing
+facets remain the type artwork and fallback; this is not a replacement of the
+approved assets. Folders/Trash retain functional icons. The future persistent
+picker is SPN-086. Owner, chat 2026-10-20; decision #126.

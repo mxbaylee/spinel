@@ -1142,9 +1142,28 @@
   }
 }
 
-/* Owner direction: neutral expanded surface, distinct account rows, network by gem. */
+/* Owner direction: restore the original saturated rail colour to expanded navigation. */
 .rd-sidebar {
+  background: var(--sp-rail);
+  color: var(--sp-rail-ink);
+}
+.rd-sidebar h2,
+.rd-sidebar .rd-nav-item {
+  color: inherit;
+}
+.rd-sidebar .rd-nav-item[aria-current='page'],
+.rd-sidebar .rd-nav-item:hover {
+  background: color-mix(in srgb, var(--sp-rail-ink) 12%, transparent);
+  color: inherit;
+}
+.rd-sidebar .sp-control {
+  background: transparent;
+  color: inherit;
+  border-color: transparent;
+}
+.sp-modal .rd-sidebar {
   background: var(--sp-panel);
+  color: var(--sp-text);
 }
 .rd-sidebar-brand > .sp-control {
   margin-left: 0;
@@ -1186,4 +1205,89 @@
 .rd-history .sp-control {
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+/* Both layouts keep names, access and More actions visible. No content previews leak. */
+.rd-view-switch {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.rd-list-caption {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.rd-file-emoji {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.rd-collapsed-destinations {
+  display: grid;
+  gap: 8px;
+}
+.rd-collapsed-destinations .rd-rail-button[aria-current='page'] {
+  background: color-mix(in srgb, var(--sp-rail-ink) 12%, transparent);
+}
+.rd-file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 16px;
+}
+.rd-file-grid .rd-column-head {
+  display: none;
+}
+.rd-file-grid .rd-file {
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
+  align-items: start;
+}
+.rd-file-grid .rd-file-open {
+  grid-column: 1 / -1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  min-height: 112px;
+}
+.rd-file-grid .rd-file-date {
+  display: block;
+  align-self: center;
+}
+.rd-file-grid .rd-file > .sp-control {
+  grid-column: 2;
+}
+.rd-trash-grid {
+  margin-top: 16px;
+}
+@media (max-width: 900px) {
+  .rd-collapsed-destinations {
+    display: none;
+  }
+}
+
+.rd-collapsed-destinations .rd-rail-button {
+  position: relative;
+}
+.rd-nav-tooltip {
+  display: none;
+  position: absolute;
+  left: calc(100% + 12px);
+  z-index: 20;
+  padding: 8px 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  box-shadow: 0 4px 16px #0002;
+  pointer-events: none;
+}
+.rd-rail-button:hover .rd-nav-tooltip,
+.rd-rail-button:focus-visible .rd-nav-tooltip {
+  display: block;
 }

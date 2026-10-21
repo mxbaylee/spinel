@@ -201,9 +201,25 @@ networking, actual passkey operations or document persistence. Production ticket
 must preserve the existing security/behavior contracts during migration.
 
 Owner refinement (chat, 2026-10-20): folders are rows in **My files**, while
-pins remain navigation shortcuts. The expanded sidebar uses the neutral page
-surface. Profile and Appearance occupy separate rows. Trash is a permanent
+pins remain navigation shortcuts. The expanded sidebar uses the original saturated `--sp-rail` pink and
+matching `--sp-rail-ink` foreground (owner correction, 2026-10-20). Profile and Appearance occupy separate rows. Trash is a permanent
 folder entry in My files with no rename/move/delete controls; it is not another
 sidebar destination. A network icon beside the gem shows connection state,
 with an accessible label and hover/tap explanation. Document save warnings
 remain explicit; network state never substitutes for save confirmation.
+
+Owner refinement (chat, 2026-10-20): offer **List and Grid** views over the same
+files, filters and actions. Default to List; remember the preference during the
+screen migration. Folders and permanent Trash appear in both. Desktop collapse
+keeps My files, Shared with me and pins directly accessible, with full accessible
+names and hover/focus labels; phone/tablet navigation stays in the drawer.
+Space trees reopen from Pages rather than flattening a hierarchy into icons.
+
+Use a deterministic normalized-filename hash to choose a default botanical emoji
+for Doc/Sheet/Space identity. The same title has the same cue on every surface;
+a rename may change the default, and collisions are expected. It is decorative,
+never an identifier or substitute for a type/access label. Folders and Trash keep
+their functional icons. Defer the persistent emoji/icon picker to **SPN-086**;
+no picker ships in this proposal. Owner/Collaborator gain recognition and view
+choice; Guests retain scoped identity and access clarity; Operators gain no
+personal file navigation or service dependency. Decision #126.
