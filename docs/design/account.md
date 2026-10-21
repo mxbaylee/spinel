@@ -47,11 +47,14 @@ single-purpose pages with one heading, one explanation and one primary button.
 - **Profile color** (SPN-036) uses the 16 `fillPresets` laid out like the cell
   palette; the icon is drawn in the preset's text color. Icon search is a field
   with a grid of results, not a dropdown.
-- **Sign-in:** a passkey is the only way in, so unlike the four products it is
-  the primary button, not "other ways". The page is the gem, "Sign in", one
-  sentence ("Use a passkey from your browser, password manager or phone."), and
-  the button. Errors replace the sentence's line in place, so the button doesn't
-  move.
+- **Homepage / sign-in:** one arrival screen with the gem, “Your workspace.”,
+  a short description, and **Sign in with a passkey** with a small decorative key
+  icon. Existing sign-in links render the same screen. There is no intermediate
+  Sign in step. Pending, cancellation and retry stay on this page.
+- **Need help?** appears once below the entry form on arrival, invitation,
+  recovery and setup screens. It opens shared invitation/recovery guidance and
+  expandable Operator commands. “Need access?” is no longer a separate label.
+  Owner, chat 2026-10-20, decision #126.
 - **Setup, invite, recovery** share the quiet entry layout but retain their
   distinct requirements. Invite requires a name; recovery names the existing
   account and explains replacement of old passkeys and sessions. Setup explains

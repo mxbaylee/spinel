@@ -7,8 +7,9 @@ change a real account, or save a document. Production migration remains separate
 The [visual gallery](review/README.md) records the captured commit, workflow result
 and unchanged PNG sources. Its **Before** images are explicitly labeled as either
 production routes or existing Storybook components. They are comparison evidence,
-not the new walkthrough. The homepage is proposed; production currently sends
-signed-out arrivals directly to sign-in.
+not the new walkthrough. The proposed homepage is also the sign-in screen: its passkey button starts
+sign-in directly, and Need help? includes access and recovery guidance. Production
+retains its existing sign-in presentation until migration.
 
 ## Open and navigate
 
@@ -27,8 +28,8 @@ resets the fixture. Edits and uploads do not persist outside the preview.
 
 ## Four journeys to try
 
-1. **Owner:** start at the [homepage](review/homepage-light.png),
-   [sign in](review/sign-in-phone.png), and simulate Passkey succeeded. Find a
+1. **Owner:** start at the [homepage / sign-in](review/homepage-light.png),
+   choose Sign in with a passkey, and simulate Passkey succeeded. Find a
    file using search, switch List/Grid, collapse navigation, open a
    [Doc](review/journey-owner-doc-1280.png) or [Sheet](review/sheet-light.png), and return to
    the same file context. Visit [Settings](review/journey-device-settings-390.png), change

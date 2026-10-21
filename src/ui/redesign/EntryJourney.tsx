@@ -38,12 +38,13 @@ export function EntryJourney({
       formRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
   }, [state]);
   const invalid = state === 'invalid';
-  const home = screen === 'home';
+  // Existing sign-in links use the same arrival screen, without an extra step.
+  const entry = screen === 'sign-in' ? 'home' : screen;
+  const home = entry === 'home';
   const details = {
-    home: ['Your workspace.', 'Sheets and Docs, together in a private place.', 'Sign in'],
-    'sign-in': [
-      'Welcome back.',
-      'Sign in with a passkey to open your workspace.',
+    home: [
+      'Your workspace.',
+      'Sheets and Docs, together in a private place.',
       'Sign in with a passkey',
     ],
     invite: [
@@ -57,7 +58,7 @@ export function EntryJourney({
       'Recover with a passkey',
     ],
     setup: ['Set up Spinel.', 'Create the first Operator account.', 'Create Operator passkey'],
-  }[screen];
+  }[entry];
   const invalidTitle =
     screen === 'setup' ? 'This setup link isn’t available.' : 'This invitation isn’t available.';
   const invalidDetail =
@@ -76,11 +77,6 @@ export function EntryJourney({
         </button>
         <div className="ej-header-actions">
           <ThemeMenu />
-          {!home && (
-            <Button className="sp-quiet" onClick={() => setHelp(true)}>
-              Need help?
-            </Button>
-          )}
         </div>
       </header>
       <main className="ej-main">
@@ -92,15 +88,6 @@ export function EntryJourney({
           <p className="ej-intro">{invalid ? invalidDetail : details[1]}</p>
           {invalid ? (
             <Button onClick={() => onNavigate('sign-in')}>Back to sign in</Button>
-          ) : home ? (
-            <div className="ej-home-actions">
-              <Button primary onClick={() => onNavigate('sign-in')}>
-                Sign in
-              </Button>
-              <Button className="sp-quiet" onClick={() => setHelp(true)}>
-                Need access?
-              </Button>
-            </div>
           ) : (
             <form
               ref={formRef}
@@ -170,6 +157,22 @@ export function EntryJourney({
                     </p>
                   )}
                   <Button primary type="submit" disabled={screen === 'invite' && !name.trim()}>
+                    {home && (
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <circle cx="8" cy="8" r="5" />
+                        <path d="m12 12 9 9m-3-3 3-3m-6 0 3-3" />
+                      </svg>
+                    )}
                     {state === 'error' || state === 'cancelled'
                       ? 'Try again with a passkey'
                       : details[2]}
@@ -178,11 +181,9 @@ export function EntryJourney({
               )}
             </form>
           )}
-          {screen === 'sign-in' && !invalid && (
-            <p className="ej-access-help">
-              Need access or a replacement passkey? Contact your workspace Operator.
-            </p>
-          )}
+          <Button className="sp-quiet" onClick={() => setHelp(true)}>
+            Need help?
+          </Button>
         </section>
       </main>
       <footer className="ej-footer">

@@ -317,7 +317,13 @@ try {
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       await expect(brand.locator('.wiggle')).toHaveCSS('animation-name', 'gem-wiggle');
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+      // Arrival and sign-in are one screen; help has one name and destination.
+      await expect(page.getByRole('button', { name: 'Need help?', exact: true })).toHaveCount(1);
+      await page.getByRole('button', { name: 'Need help?', exact: true }).click();
+      await expect(
+        page.getByRole('dialog', { name: 'Access to this workspace', exact: true }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Got it', exact: true }).click();
       await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
       await expect(
         page.getByText('Continue in your browser or device’s passkey prompt.', { exact: true }),

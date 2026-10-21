@@ -73,11 +73,6 @@
 .ej-home .ej-intro {
   font-size: 1.125rem;
 }
-.ej-home-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
 .ej-form,
 .ej-field,
 .ej-context,
@@ -107,8 +102,7 @@
   font-size: 1rem;
 }
 .ej-field small,
-.ej-passkey-help,
-.ej-access-help {
+.ej-passkey-help {
   color: var(--sp-muted);
   font-size: 0.8125rem;
 }
