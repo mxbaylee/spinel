@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { GemLogo } from '../GemLogo.tsx';
 import { EntityIcon } from '../EntityIcon.tsx';
 import { getPreference, setPreference, watchTheme } from '../theme.ts';
-import { ActionMenu, Button, Choice, DetailsPopover, Modal } from './Controls.tsx';
+import { ActionMenu, Button, Choice, DetailsPopover, Modal, SegmentedChoice } from './Controls.tsx';
 import './mockups.css';
 
 type GlyphName =
@@ -22,8 +22,12 @@ type GlyphName =
   | 'download'
   | 'network'
   | 'network-off'
-  | 'list';
+  | 'list'
+  | 'monitor'
+  | 'moon';
 const paths: Record<GlyphName, string> = {
+  monitor: 'M3 3h18v14H3z M8 21h8 M10 17v4 M14 17v4',
+  moon: 'M20 14a8 8 0 0 1-10-10 8 8 0 1 0 10 10 M18 2v6 M15 5h6',
   list: 'M8 6h13 M8 12h13 M8 18h13 M3 6h.01 M3 12h.01 M3 18h.01',
   files: 'M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z',
   search: 'M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14 M15 15l6 6',
@@ -87,33 +91,63 @@ function FileIdentity({
 function Avatar({ children = 'AB' }: { children?: ReactNode }) {
   return <span className="rd-avatar">{children}</span>;
 }
+export function AppearanceChoice({
+  value,
+  onChange,
+  disabled = false,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <SegmentedChoice
+      label="Appearance"
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      options={[
+        { value: 'system', label: 'Follow system', icon: <Glyph name="monitor" /> },
+        { value: 'light', label: 'Light', icon: <Glyph name="sun" /> },
+        { value: 'dark', label: 'Dark', icon: <Glyph name="moon" /> },
+      ]}
+    />
+  );
+}
 function ThemeMenu({ labelled = false }: { labelled?: boolean }) {
   const preference = useSyncExternalStore(watchTheme, getPreference);
   const [error, setError] = useState('');
-  return (
+  const control = (
     <>
-      <ActionMenu
-        label={`Appearance: ${preference}`}
-        actions={['system', 'light', 'dark'].map((value) => ({
-          label: `${value === preference ? '✓ ' : ''}${value === 'system' ? 'Follow system' : value === 'light' ? 'Vintage · Light' : 'Modern · Dark'}`,
-          onClick: () =>
-            setError(
-              setPreference(value as 'system' | 'light' | 'dark')
-                ? ''
-                : 'Theme changed for this visit. Your preference could not be saved.',
-            ),
-        }))}
-      >
-        <Glyph name="sun" />
-        {labelled && (
-          <span>
-            Appearance ·{' '}
-            {preference === 'system' ? 'System' : preference === 'light' ? 'Light' : 'Dark'}
-          </span>
-        )}
-      </ActionMenu>
+      <AppearanceChoice
+        value={preference}
+        onChange={(value) =>
+          setError(
+            setPreference(value as 'system' | 'light' | 'dark')
+              ? ''
+              : 'Theme changed for this visit. Your preference could not be saved.',
+          )
+        }
+      />
       {error && <span role="alert">{error}</span>}
     </>
+  );
+  return labelled ? (
+    <div className="rd-appearance-row">
+      <span>Appearance</span>
+      {control}
+    </div>
+  ) : (
+    <DetailsPopover
+      label={`Appearance: ${preference}`}
+      trigger={
+        <Glyph
+          name={preference === 'system' ? 'monitor' : preference === 'dark' ? 'moon' : 'sun'}
+        />
+      }
+    >
+      {control}
+    </DetailsPopover>
   );
 }
 function NetworkStatus({ offline = false }: { offline?: boolean }) {
@@ -1761,8 +1795,7 @@ export function ProfileMockup({
               <section className="rd-section">
                 <h2>Appearance</h2>
                 <p className="sp-muted">A familiar workspace, in your preferred light.</p>
-                <Choice
-                  label="Theme"
+                <AppearanceChoice
                   value={theme}
                   onChange={(v) => {
                     setNotice(
@@ -1771,11 +1804,6 @@ export function ProfileMockup({
                         : 'Theme changed for this visit, but this browser could not save your preference.',
                     );
                   }}
-                  options={[
-                    { value: 'system', label: 'Follow system' },
-                    { value: 'light', label: 'Vintage · Light' },
-                    { value: 'dark', label: 'Modern · Dark' },
-                  ]}
                 />
               </section>
             </>

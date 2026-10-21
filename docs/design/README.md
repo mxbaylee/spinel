@@ -322,3 +322,12 @@ their functional icons. Defer the persistent emoji/icon picker to **SPN-086**;
 no picker ships in this proposal. Owner/Collaborator gain recognition and view
 choice; Guests retain scoped identity and access clarity; Operators gain no
 personal file navigation or service dependency. Decision #126.
+
+Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
+icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
+RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
+visible focus and at least 44 px targets. Expanded navigation shows the control
+on its own row above Profile. Collapsed/phone utilities open it in a popover;
+Profile reuses it. This supersedes the earlier explicit-menu proposal, retains
+one theme store and follows OS changes while System is selected. The picker
+must report a storage failure without undoing the in-session theme choice.

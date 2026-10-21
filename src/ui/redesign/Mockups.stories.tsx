@@ -119,8 +119,6 @@ export const DashboardGridCollapsed: Story = {
 export const DashboardNewMenu: Story = {
   render: () => <DashboardMockup />,
   play: async ({ canvasElement }) => {
-    await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'New file', exact: true }),
-    );
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'New file' }));
   },
 };

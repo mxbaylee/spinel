@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal } from './Controls.tsx';
 import './mockups.css';
+import { AppearanceChoice } from './Mockups.tsx';
 function Controls({ disabled = false, error = false }: { disabled?: boolean; error?: boolean }) {
   const [value, setValue] = useState('system');
   const [message, setMessage] = useState('');
@@ -25,6 +26,7 @@ function Controls({ disabled = false, error = false }: { disabled?: boolean; err
               { value: 'dark', label: 'Modern · Dark' },
             ]}
           />
+          <AppearanceChoice value={value} onChange={setValue} disabled={disabled} />
           <ActionMenu
             label="File actions"
             actions={[

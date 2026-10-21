@@ -93,7 +93,9 @@ try {
       }
       if (id.startsWith('redesign-') && width <= 768) {
         const smallTargets = await page
-          .locator('.sp-ui button, .sp-ui input, .sp-ui summary')
+          .locator(
+            '.sp-ui button, .sp-ui input:not([type=radio]), .sp-ui summary, .sp-ui [role=radio]',
+          )
           .evaluateAll((nodes) =>
             nodes.flatMap((node) => {
               if (node.closest('[aria-hidden="true"]')) return [];
@@ -216,8 +218,23 @@ try {
           page.getByRole('heading', { name: 'Shared with me', exact: true }),
         ).toBeVisible();
       }
+      if (width <= 900) await page.getByRole('button', { name: /^Appearance:/ }).click();
+      const appearance = page.getByRole('radiogroup', { name: 'Appearance', exact: true });
+      await appearance.getByRole('radio', { name: 'Dark', exact: true }).click();
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+      await appearance.getByRole('radio', { name: 'Follow system', exact: true }).click();
+      await page.emulateMedia({ colorScheme: 'dark' });
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+      await page.emulateMedia({ colorScheme: 'light' });
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+      await expect(
+        appearance.getByRole('radio', { name: 'Follow system', exact: true }),
+      ).toBeChecked();
+      await page.screenshot({ path: resolve(directory, `appearance-system-${width}.png`) });
       await page.close();
-      verifications.push(`${width}px: navigation collapse/drawer selection and focus`);
+      verifications.push(
+        `${width}px: navigation/focus, list/grid parity and segmented appearance/system response`,
+      );
     }
   }
   if (requested.includes('redesign-controls--default')) {
@@ -324,6 +341,13 @@ async function verifyControls(page: Page, variant: string, output: string) {
   await expect(page.getByRole('option', { name: 'Modern · Dark', exact: true })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(select).toContainText('Modern');
+  const appearance = page.getByRole('radiogroup', { name: 'Appearance', exact: true });
+  await appearance.getByRole('radio', { name: 'Follow system', exact: true }).click();
+  await page.keyboard.press('ArrowRight');
+  await expect(appearance.getByRole('radio', { name: 'Light', exact: true })).toBeChecked();
+  await page.keyboard.press('ArrowRight');
+  await expect(appearance.getByRole('radio', { name: 'Dark', exact: true })).toBeChecked();
+  await page.screenshot({ path: resolve(output, `appearance-choice-${variant}.png`) });
   const trigger = page.getByRole('button', { name: 'Open confirmation' });
   await trigger.click();
   const dialog = page.getByRole('dialog', { name: 'Move this file to Trash?' });

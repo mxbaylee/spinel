@@ -5,6 +5,8 @@ import { Menu } from '@base-ui/react/menu';
 import { Select } from '@base-ui/react/select';
 import { Dialog } from '@base-ui/react/dialog';
 import { Popover } from '@base-ui/react/popover';
+import { RadioGroup } from '@base-ui/react/radio-group';
+import { Radio } from '@base-ui/react/radio';
 import './controls.css';
 
 export function Button({
@@ -62,6 +64,44 @@ export function Choice({
         </Select.Portal>
       </Select.Root>
     </div>
+  );
+}
+export function SegmentedChoice({
+  label,
+  value,
+  options,
+  onChange,
+  disabled = false,
+}: {
+  label: string;
+  value: string;
+  options: { value: string; label: string; icon: ReactNode }[];
+  onChange: (value: string) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <RadioGroup
+      className="sp-segments"
+      aria-label={label}
+      value={value}
+      onValueChange={onChange}
+      disabled={disabled}
+    >
+      {options.map((option) => (
+        <Radio.Root
+          key={option.value}
+          value={option.value}
+          className="sp-segment"
+          aria-label={option.label}
+          title={option.label}
+        >
+          {option.icon}
+          <span className="sp-segment-hint" aria-hidden="true">
+            {option.label}
+          </span>
+        </Radio.Root>
+      ))}
+    </RadioGroup>
   );
 }
 export type Action = {

@@ -89,3 +89,12 @@ Stories: `Settings/AssistantConnections`, `Settings/ConnectAssistant`, and
 `Settings/AccessTokens` cover loading, empty, busy, failure, consent, expiration,
 reveal and revoked states. See [MCP](../mcp.md), decision
 [#111](https://github.com/mxbaylee/spinel/issues/111), owner correction 2026-10-20.
+
+Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
+icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
+RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
+visible focus and at least 44 px targets. Expanded navigation shows the control
+on its own row above Profile. Collapsed/phone utilities open it in a popover;
+Profile reuses it. This supersedes the earlier explicit-menu proposal, retains
+one theme store and follows OS changes while System is selected. The picker
+must report a storage failure without undoing the in-session theme choice.

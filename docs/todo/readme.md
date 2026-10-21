@@ -16,7 +16,7 @@ Highest score first. Take the first ticket that isn't waiting on another.
 | 4 | 🔁 [SPN-059](SPN-059.md) Move every document onto Spinel's sync and remove Univer collaboration | 🌳 L | 💜 M | 7 (own 3) | — | [SPN-058](SPN-058.md) | — |
 | 5 | ✍️ [SPN-053](SPN-053.md) Edit downloaded documents offline and sync them once | 🌳 L | 🩷 L | 6 (own 4) | — | [SPN-059](SPN-059.md) | — |
 | 6 | 🗝️ [SPN-061](SPN-061.md) Recover admin access from the server console | 🌿 M | 🩷 L | 5 | Higher impact | — | — |
-| 7 | 🎛️ [SPN-045](SPN-045.md) Restore the rail's theme and profile buttons from the mockup | 🌱 S | 💜 M | 5 | Lower ID | — | Confirm the theme switch's form, then approve the PR's screenshots |
+| 7 | 🎛️ [SPN-045](SPN-045.md) Restore the rail's theme and profile buttons from the mockup | 🌱 S | 💜 M | 5 | Lower ID | — | Approve the PR's screenshots |
 | 8 | 🩹 [SPN-062](SPN-062.md) Keep the server, its images and dependencies patched | 🌱 S | 💜 M | 5 | Lower effort | — | — |
 | 9 | 🪴 [SPN-048](SPN-048.md) Declutter the dashboard | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the PR's screenshots |
 | 10 | 🎬 [SPN-049](SPN-049.md) Give the editor a theatre mode | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the PR's screenshots |

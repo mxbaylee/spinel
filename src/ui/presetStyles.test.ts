@@ -46,6 +46,8 @@ describe('Spinel theme', () => {
         ['sp-on-accent', 'sp-accent'],
         ['sp-rail-ink', 'sp-rail'],
         ['sp-accent', 'sp-bg'],
+        // The appearance segment has a contrasting selected ring.
+        ['sp-accent', 'sp-panel'],
         ['sp-accent-2', 'sp-bg'],
         ...fillPresets.map(({ id }) => [`fill-${id}-fg`, `fill-${id}-bg`]),
       ];
