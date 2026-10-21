@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Dashboard, Doc, Sheet, PlannedSpace.
 
@@ -12,7 +12,7 @@ Stories: `Redesign/Screens` — Dashboard, Doc, Sheet, PlannedSpace.
 
 No replacement artwork or palette. Space facets stay planned-only until SPN-078. Keep all current geometry, monochrome/emoji fallbacks, social-card privacy and contrast coverage.
 
-The proposal above governs placement after approval. Existing behavioral and
+The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
 Docs, Sheets and planned Spaces use a shared gem silhouette with distinct

@@ -21,7 +21,7 @@ permissions:
 concurrency:
   group: storybook-${{ github.event.pull_request.number || github.ref }}
   # A half-finished Pages deploy is worse than a late one.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' && !(github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign') }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   changes:
@@ -89,9 +89,8 @@ jobs:
           path: storybook-static
           if-no-files-found: error
           retention-days: 7
-      # Temporary owner-authorized PR #125 review. Remove this exception before merge.
       - name: Upload for Pages
-        if: needs.changes.outputs.docs_only != 'true' && ((github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')) || (github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'))
+        if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: storybook-static
@@ -152,27 +151,6 @@ jobs:
     name: Deploy to GitHub Pages
     needs: [changes, build, review]
     if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      pages: write
-      id-token: write
-    concurrency:
-      group: github-pages-deploy
-      cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - id: deploy
-        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
-
-  # Temporary sample-data preview; validation remains independent and required for merge.
-
-  deploy-preview:
-    name: Deploy temporary PR125 preview
-    needs: [changes, build]
-    if: needs.changes.outputs.docs_only != 'true' && github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:

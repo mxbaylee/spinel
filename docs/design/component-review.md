@@ -1,6 +1,6 @@
 # Component, section and journey review
 
-Status: **rendered component and section inspections completed for the evidence sets below; full stricter interaction CI passed on reviewed source; owner approval pending**. This is not whole-product acceptance. The earlier 96 scores applied to sampled composed views and must not be used as catalog-wide completion. Owner requested this stricter review in chat, 2026-10-20.
+Status: **rendered component and section inspections completed for the evidence sets below; full stricter interaction CI passed on reviewed source; owner approved the proposal as-is on 2026-10-21**. This is not whole-product acceptance. The earlier 96 scores applied to sampled composed views and must not be used as catalog-wide completion. Owner requested this stricter review in chat, 2026-10-20.
 
 Current source inventory after pin removal and loading additions: **59 families and 632 exported story specimens**. App CI **39567404022 passed** for `dc9170fa68243fa10ad34d700e0e8f9cf4471c40`, including all required gates. Focused final-source run **39567463871 passed 25 captures / 7 explicit checks**; reset run **39566541453 passed 10 captures / 10 checks** on `6a627c2`. Full Storybook run **39567403971 passed 3,160 captures and 118 explicit checks with zero failures** on the same source. The refreshed gallery contains 269 curated images, including 66 explicitly older comparison captures; per-image provenance is preserved. Earlier failed runs and superseded grades below remain historical evidence, not current interaction passes.
 
@@ -676,3 +676,13 @@ scoped proposal-maintainability 94. No scores are averaged. The final packaging
 commit changes documentation, images and the follow-up backlog only. Owner design
 approval, its applicable head checks and removal of the temporary Pages exception
 remain prerequisites before merge. No merge is authorized by this review.
+
+## Authorized merge preparation
+
+Owner approved the designs and explicitly authorized merge as-is on 2026-10-21.
+The PR-specific Pages deployment job/upload exception and exact environment rule
+63792144 were removed; main publishing remains review-gated. Application/UI source
+and the approved screenshots are unchanged. SPN-086/078/088/089 record the final
+folder, Space Trash, native palette/dark-canvas and modal-icon follow-ups.
+Earlier pending-approval language in the review chronology is historical. Final
+merge still requires independent review and all checks on the cleanup commit.

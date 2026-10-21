@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Dashboard, Search, SharedFiles, Trash, EmptyFolder, LoadingFiles, FileError.
 
@@ -12,7 +12,7 @@ Stories: `Redesign/Screens` — Dashboard, Search, SharedFiles, Trash, EmptyFold
 
 The redesigned header keeps the current folder title with its ancestor breadcrumb. Search, Filters and List/Grid share one responsive toolbar directly below it; Type, Ownership, Tag and Last modified sit inside Filters. Active constraints remain visible and clearable. On phones search gets a full row, with Filters and view controls immediately beneath it. At phone width Browse files opens a modal navigation drawer. The selected folder becomes the page title, with ancestors as a compact breadcrumb. No pinned-item list or pin actions.
 
-The proposal above governs placement after approval. Existing behavioral and
+The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
 SPN-048 builds this page's layout. Design changes made while building go back

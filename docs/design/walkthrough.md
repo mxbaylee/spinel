@@ -25,11 +25,11 @@ retains its existing sign-in presentation until migration.
 
 ## Open and navigate
 
-The owner-authorized temporary [interactive preview](https://mxbaylee.github.io/spinel/?path=/story/redesign-walkthrough--owner)
+The [interactive Storybook catalog](https://mxbaylee.github.io/spinel/?path=/story/redesign-walkthrough--owner)
 opens the Owner journey. The catalog groups the proposal under **Redesign** and
 older baseline specimens under **Current production**, keeping their deep links.
-The preview may publish before validation finishes; check the PR for its status.
-This PR-only deployment exception is removed before merge.
+The temporary PR deployment exception was removed after owner approval.
+Main publishes only after the complete visual/interaction checks pass.
 
 Alternatively, download **storybook-review** from the proposal workflow linked in the gallery,
 extract it, and serve the extracted static files locally without rebuilding.

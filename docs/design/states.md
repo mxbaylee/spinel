@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — EmptyFolder, LoadingFiles, FileError, OfflineEditor, OfflineLaunch, MissingFile, RevokedLink.
 
@@ -12,7 +12,7 @@ Stories: `Redesign/Screens` — EmptyFolder, LoadingFiles, FileError, OfflineEdi
 
 Preserve all offline meanings in docs/offline.md. Do not report Online from browser connectivity alone, hide an unconfirmed write, or claim a browser download is permanent. No matches, an empty folder, a request still loading and an access failure are different states. Guest errors contain no document identity.
 
-The proposal above governs placement after approval. Existing behavioral and
+The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
 ## How others do it
@@ -133,3 +133,11 @@ Empty, loading and error states are stories of each component:
 `Sharing/Sharing`, `Sharing/ShareLink`, `Admin/*`,
 `Guest/GuestApp`, `Editor/FillPresets`. Offline states get stories with the
 SPN-042 indicator.
+
+### Modal title icons
+
+Owner follow-up, 2026-10-21, decision #126: every product modal gets an appropriate
+icon beside its textual title through a shared heading pattern (SPN-089). Use
+consistent size/alignment, hide decorative icons from assistive technology, and
+preserve the title as the accessible name. Tooltips are not modals. Do not patch
+SDK-owned dialogs through unsupported hooks. This is an implementation handoff.

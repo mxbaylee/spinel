@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Formula, FormulaInContext.
 
@@ -12,7 +12,7 @@ Stories: `Redesign/Screens` — Formula, FormulaInContext.
 
 Keep SPN-033 expression syntax and stable bindings. Scalar output stays inline and tables remain full native content. Missing/private/offline states hide stale values and do not expose private sources. The mockup illustrates hierarchy; the complete existing expression, formatting and range behavior remains mandatory when migrated.
 
-The proposal above governs placement after approval. Existing behavioral and
+The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
 

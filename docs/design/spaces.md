@@ -72,3 +72,10 @@ for SPN-078, not implemented persistence.
 The Space tree uses the quieter `--sp-bg` / `--sp-text` surface, distinct from
 the saturated pink site header in both themes (owner, chat 2026-10-20). The same
 surface applies in its phone drawer.
+
+Owner follow-up, 2026-10-21, decision #126: internal Trash should look like the
+My files Trash collection, with deleted page/sheet/folder icons, names, readable
+original locations and permitted restore/delete controls. Use recovery metadata
+and preserve subtree boundaries; never reveal an inaccessible parent location.
+SPN-078 owns the composed mockup and implementation; the current fixture remains
+an approved schematic until then.

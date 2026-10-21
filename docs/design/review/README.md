@@ -1,6 +1,6 @@
 # SPN-047 visual review
 
-Start with the [connected walkthrough guide](../walkthrough.md). These are rendered Storybook proposals awaiting owner approval in [PR #125](https://github.com/mxbaylee/spinel/pull/125), not production screens or approved regression baselines.
+Start with the [connected walkthrough guide](../walkthrough.md). These are rendered Storybook proposals approved by the owner on 2026-10-21 in [PR #125](https://github.com/mxbaylee/spinel/pull/125), not production screens or approved regression baselines.
 
 Proposal captures: commit `dc9170fa68243fa10ad34d700e0e8f9cf4471c40`, [Storybook CI run 39567403971](https://github.com/mxbaylee/spinel/actions/runs/39567403971). Workflow conclusion at packaging: **success**. PNGs were rendered; their existence does not establish that every journey assertion or CI gate passed.
 

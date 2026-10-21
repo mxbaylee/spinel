@@ -54,3 +54,12 @@ rendered fill pixels, values/formulas/formatting, unchanged revisions and editor
 identity across theme changes. CI captures dashboard, Sheets and Docs in both
 themes under the `theme-screenshots-*` artifacts, one per Playwright run, for visual review. Screenshots
 contain synthetic fixture data only and expire after seven days.
+
+## Approved follow-up
+
+Owner, 2026-10-21, decision #126: SPN-088 investigates eight logical colors with
+light/dark display pairs in native pickers and a usable native dark canvas. The
+current literal-color override and light paper described above remain unchanged
+in SPN-047. Public picker replacement is not yet established; use supported APIs
+and retain the native picker if necessary. Preserve stored styles, existing
+preset/profile colors and exports, rather than treating a theme switch as an edit.

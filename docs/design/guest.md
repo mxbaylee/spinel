@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — GuestViewer, GuestEditor, RevokedLink, OfflineLaunch, PlannedSpaceGuest.
 
@@ -12,7 +12,7 @@ Stories: `Redesign/Screens` — GuestViewer, GuestEditor, RevokedLink, OfflineLa
 
 Revocation removes content, title, actions and any source values, showing only the generic unavailable link message. An offline guest gets a generic connection state, not cached private content. A Space guest has only its internal page navigation and uniform View/Edit role; no outer folders, account controls, history, native export or file Admin.
 
-The proposal above governs placement after approval. Existing behavioral and
+The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
 

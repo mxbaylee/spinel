@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Admin, AdminLoading, AdminError.
 
@@ -12,7 +12,7 @@ Stories: `Redesign/Screens` — Admin, AdminLoading, AdminError.
 
 This proposal supersedes the earlier stack of equal cards. People rows disclose passkeys and destructive actions; confirmations retain their consequences. Backups/health show text status, timestamps, last good verification and recovery guidance. Loading never masquerades as an empty list. Server Operator remains content-blind and distinct from delegated file Admin.
 
-The proposal above governs placement after approval. Existing behavioral and
+The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
 

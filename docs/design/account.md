@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup, Invite, Recovery, Consent, ConsentExpired.
 
@@ -12,7 +12,7 @@ Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup,
 
 Proposed profile sections: Profile, Passkeys, This device, Connected assistants, and the planned owner-only Guest links inventory (SPN-066). Reuse the landed SPN-036 profile fields, Lucide picker and color presets, pending OAuth return navigation, disconnect and advanced token flows. Appearance is browser-local, defaults to System and lives in This device, separately from saved profile identity. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
 
-The proposal above governs placement after approval. Existing behavioral and
+The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
 ## How others do it

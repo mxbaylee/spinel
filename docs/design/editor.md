@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Doc, Sheet, ViewOnly, OfflineEditor, FormulaInContext, History.
 
@@ -18,7 +18,7 @@ task UI. Fill controls stay in Univer. Named versions, Before restore checkpoint
 UTC dates and restore confirmation retain docs/history.md semantics. No dashboard
 search or file-navigation column persists in standalone editor views.
 
-The proposal above governs placement after approval. Existing behavioral and
+The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
 SPN-049 builds this default layout and theatre mode. It applies to Sheets and

@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Sharing, PlannedFileAdmin.
 
@@ -12,7 +12,7 @@ Stories: `Redesign/Screens` — Sharing, PlannedFileAdmin.
 
 Retain No direct access and inherited-access explanation. Direct-access choices are staged until Apply access; pending and failed changes preserve confirmed access and the selected draft. Success confirms in place, and failure offers retry. Guest links retain role selection, creation, once-only copy, replacement confirmation and turn-off; the SharingCreatedLink, SharingExistingLink, SharingReplaceLink and SharingError stories make those states reviewable. Do not reveal an inaccessible parent name. Future File admin choices are isolated in PlannedFileAdmin and never offered to guests.
 
-The proposal above governs placement after approval. Existing behavioral and
+The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
 ## How others do it

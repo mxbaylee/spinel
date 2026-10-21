@@ -2,8 +2,8 @@
 
 ## SPN-047 review status
 
-The [composed redesign](redesign.md) is proposed in PR #125 and awaits owner
-approval in decision #126. Its screen inventory, public-source comparisons,
+The owner approved the [composed redesign](redesign.md) and authorized PR #125
+to merge as-is on 2026-10-21, recorded in decision #126. Its screen inventory, public-source comparisons,
 Base UI controls and before/after screenshot gallery define the next UI work.
 Start with the [connected walkthrough guide](walkthrough.md) to review full journeys.
 The [component, section and journey audit](component-review.md) tracks coverage and
@@ -113,7 +113,7 @@ Space examples remain in Storybook until the feature exists.
 
 ## Shell layout (SPN-047 proposal)
 
-After owner approval, one optional navigation column replaces the old permanent
+The approved design uses one optional navigation column to replace the old permanent
 rail-plus-sidebar composition. File views use a 224 px sidebar containing gem,
 places and account utilities. Collapse leaves a 64 px rail with an
 icon-only right chevron, named **Expand navigation** for assistive technology
@@ -139,7 +139,7 @@ PlannedSpaceCollapsed. Screen implementation tickets perform the migration.
 
 Storybook review widths: Phone 390, Tablet 768 and Desktop 1280. Existing
 production rules remain until their screen migrates; the proposed rules below
-supersede the earlier stacking layout after owner approval.
+supersede the earlier stacking layout.
 
 ### Breakpoints
 
@@ -367,3 +367,10 @@ reuses it and explains that appearance is local to this browser, defaults to Sys
 and is separate from saved profile identity. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
 must report a storage failure without undoing the in-session theme choice.
+
+Owner follow-ups accepted with as-is approval, 2026-10-21, decision #126:
+folder colors and the identity-picker mockup belong to SPN-086; Space Trash uses
+a deleted-item collection (SPN-078); all product modals get consistent title icons
+(SPN-089); native editor dark-canvas behavior and an eight-color theme-aware picker
+are investigated in SPN-088. These are implementation handoffs, not claims that
+the approved sample-data proposal implements them.

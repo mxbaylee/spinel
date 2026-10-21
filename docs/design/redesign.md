@@ -1,7 +1,7 @@
 # SPN-047 design review
 
-Status: proposed in [PR #125](https://github.com/mxbaylee/spinel/pull/125), awaiting
-owner visual approval in [decision #126](https://github.com/mxbaylee/spinel/issues/126).
+Status: owner approved as-is and merge authorized on 2026-10-21 in chat,
+recorded in [decision #126](https://github.com/mxbaylee/spinel/issues/126) and [PR #125](https://github.com/mxbaylee/spinel/pull/125).
 The owner authorized this redesign on 2026-10-20. These are review mockups;
 production screen migrations land in their individual tickets after approval.
 
@@ -123,7 +123,7 @@ was copied; the installed MIT license remains with the package.
 
 The [durable visual gallery](review/README.md) contains before/after light, dark
 and phone samples for the main families, including grid/collapsed alternatives.
-`review/capture-sources.json` records the CI sources. Final approval is pending.
+`review/capture-sources.json` records the CI sources. Owner design approval was given on 2026-10-21.
 
 Build Storybook, then run `npm run screenshots -- <story ids>`. With no IDs it
 captures all Redesign stories and the listed current-screen stories. Unknown
@@ -307,16 +307,13 @@ metadata ahead of actions. These observations reinforce the single search/query
 direction in SPN-048, icon-led New menu and quiet file rows. Only UI patterns
 were recorded; PR evidence uses Spinel sample data.
 
-## Temporary interactive review
+## Interactive review publishing
 
-The owner authorized PR #125 to publish its sample-data Storybook temporarily
-at the existing GitHub Pages catalog URL. The exception is limited to this
-same-repository PR and branch; the environment allows exactly
-`refs/pull/125/merge` in addition to `main`. Preview deployment follows a successful
-build while screenshot/interaction validation continues separately. Normal main
-deployment still waits for that validation. A public preview is not merge approval.
-Before merge, remove the workflow exception and environment rule ID 63792144;
-main publishing restores the normal catalog.
+The owner authorized a temporary sample-data preview for PR #125. Before merge,
+its workflow exception and environment rule `refs/pull/125/merge` (63792144) were
+removed. Normal main Storybook publishing remains enabled and waits for the
+complete visual/interaction review. The catalog retains the approved proposal
+alongside explicitly labeled current-production specimens.
 
 ## Catalog-wide audit scope
 
@@ -377,7 +374,7 @@ owner approval. Production screen migrations remain in the existing screen
 tickets; no backend, storage or authorization redesign is included here. The
 favicon and owner-requested pinning removal are explicit production exceptions. Token/import/recovery
 examples fill the catalog audit gaps rather than shipping those workflows.
-The temporary Pages exception is limited to this PR and removed before merge.
+The temporary PR Pages exception was removed during merge preparation.
 
 Owner refinement, chat 2026-10-20: the dark browser favicon rotates the heart
 180 degrees to match the dark UI logo; the light favicon remains upright.
@@ -398,3 +395,24 @@ layout. Coda also documents unlimited nesting in its
 [page organization guidance](https://help.coda.io/hc/en-us/articles/39555791682061-Organize-pages-and-subpages).
 These refinements favor Owner/Collaborator navigation and mobile editing, retain
 Guest document-only scope, and add no Operator service or data-access burden.
+
+## Approval and final implementation handoffs
+
+The owner approved the designs and explicitly authorized this PR to merge as-is
+on 2026-10-21. The final screenshot source is `dc9170f`; later merge cleanup
+changes documentation/backlog and removes temporary preview permissions only.
+This approval does not implement production screen migrations or approve unseen
+implementation screenshots in their future PRs.
+
+- SPN-086: folder color selection beside the display name, with a matching
+  accessible identity popup and Reset; retain recognizable folder artwork.
+- SPN-078: Space Trash is a list/grid of deleted pages, sheets and folders, with
+  original locations and permitted recovery actions; it is not an editor canvas.
+- SPN-089: a consistent semantic icon beside every product modal title.
+- SPN-088: usable native dark canvases and investigate eight semantic color
+  choices through public APIs; keep a native fallback if picker replacement is
+  unsupported. Preserve stored formatting, legacy presets and exports.
+
+These follow-ups preserve the approved proposal for merging rather than adding
+unreviewed runtime changes. The Operator gains no document access; all other
+personas keep existing permissions, recovery and device-local theme semantics.
