@@ -1179,3 +1179,11 @@
   flex-shrink: 0;
   color: var(--sp-muted);
 }
+
+.rd-history .rd-form {
+  min-width: 0;
+}
+.rd-history .sp-control {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

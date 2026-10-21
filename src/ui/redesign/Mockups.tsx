@@ -335,7 +335,11 @@ function Shell({
     requestAnimationFrame(() =>
       shellRef.current
         ?.querySelector<HTMLButtonElement>(
-          open ? '.rd-sidebar-brand button' : guest ? '.rd-mobile-nav button' : '.rd-rail-button',
+          open
+            ? 'button[aria-label="Collapse navigation"]'
+            : guest
+              ? '.rd-mobile-nav button'
+              : '.rd-rail-button',
         )
         ?.focus(),
     );
@@ -530,7 +534,7 @@ export function DashboardMockup({
       (kind === 'all' || file.kind === kind) &&
       (!tag || file.tags.includes(tag)) &&
       (scope === 'all' ||
-        (scope === 'shared' ? file.detail.includes('Shared') : file.detail === 'Private')) &&
+        (scope === 'shared' ? file.access !== 'owner' : file.access === 'owner')) &&
       (modified === 'any' || file.date.includes('ago')) &&
       !removed.includes(file.name) &&
       (view !== 'Shared with me' || file.access !== 'owner') &&
@@ -649,7 +653,7 @@ export function DashboardMockup({
               ? 'Recover a file, or remove it permanently.'
               : search
                 ? `Results for “${search}”`
-                : `${rows.length} files`}
+                : `${rows.length} items`}
           </span>
           {view !== 'My files' && view !== 'Trash' && (
             <Button onClick={() => setView('My files')}>Search all files</Button>
@@ -791,10 +795,10 @@ export function DashboardMockup({
                 </span>
                 <span>
                   <strong>Trash</strong>
-                  <small>Permanent folder · Restore deleted files</small>
+                  <small>Permanent folder · 3 deleted files</small>
                 </span>
               </button>
-              <span className="rd-file-date">3 items</span>
+              <span className="rd-file-date" />
             </div>
           )}
         </div>
@@ -1783,7 +1787,7 @@ export function AdminMockup({
           <h1>Administration</h1>
         </div>
         {tab === 'Invites' && (
-          <Button primary onClick={() => setCreated(true)}>
+          <Button primary={!created} onClick={() => setCreated(true)}>
             Create invite
           </Button>
         )}

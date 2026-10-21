@@ -159,6 +159,13 @@ try {
         await expect(
           page.getByRole('button', { name: 'Collapse navigation', exact: true }),
         ).toBeFocused();
+        await page.getByRole('button', { name: /^Filters/ }).click();
+        await page.getByRole('combobox', { name: 'Ownership', exact: true }).click();
+        await page.getByRole('option', { name: 'Mine', exact: true }).click();
+        await expect(page.getByRole('listitem').filter({ hasText: 'Household' })).toBeVisible();
+        await expect(
+          page.getByRole('listitem').filter({ hasText: 'Quarterly budget' }),
+        ).toHaveCount(0);
       } else {
         await page.getByRole('button', { name: 'Browse files', exact: true }).click();
         await expect(page.getByRole('dialog', { name: 'Browse files', exact: true })).toBeVisible();
