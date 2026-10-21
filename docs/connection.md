@@ -96,3 +96,5 @@ open connection as persistence evidence.
 These are verification contracts; the PR records the actual executed commands,
 results, resource limits, independent review and owner screenshot approval.
 The all-persona tradeoff and S-to-M effort reassessment are in decision #132.
+The [SPN-042 screenshot review index](design/review/spn-042/README.md) links the
+production browser artifacts and preserves their exact capture provenance.
