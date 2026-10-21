@@ -122,3 +122,7 @@ names, while a visible Doc/Sheet/Space label preserves type recognition. Existin
 facets remain the type artwork and fallback; this is not a replacement of the
 approved assets. Folders/Trash retain functional icons. The future persistent
 picker is SPN-086. Owner, chat 2026-10-20; decision #126.
+
+Folder and permanent Trash glyphs use the same 32 px artwork bounds as filename
+emoji in list and grid views (owner, chat 2026-10-20). The container alone must
+not be 32 px while leaving an 18 px glyph inside it.
