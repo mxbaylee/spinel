@@ -84,9 +84,7 @@ try {
       await page.evaluate(() => document.fonts.ready);
       await expect(page.locator('.sb-errordisplay')).toBeHidden();
       if (id === 'redesign-walkthrough--operator-help')
-        await expect(
-          page.getByRole('dialog', { name: 'Access to this workspace', exact: true }),
-        ).toBeVisible();
+        await expect(page.getByText('npm run setup', { exact: true })).toBeVisible();
       if (id === 'redesign-screens--profile-icon-picker')
         await expect(
           page.getByRole('dialog', { name: 'Choose your icon', exact: true }),
@@ -405,12 +403,18 @@ try {
       await expect(
         page.locator('.rd-file-open').filter({ hasText: 'Weekend notes' }),
       ).toBeVisible();
+      await page
+        .getByRole('button', { name: 'More actions for Weekend notes', exact: true })
+        .click();
+      await page.getByRole('menuitem', { name: 'Rename…', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Weekend journal');
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
       // Named checkpoints belong to the file when navigating between documents.
       await page.locator('.rd-file-open').filter({ hasText: 'A few good recipes' }).click();
       await page
         .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
         .click();
-      await page.locator('.rd-file-open').filter({ hasText: 'Weekend notes' }).click();
+      await page.locator('.rd-file-open').filter({ hasText: 'Weekend journal' }).click();
       await page.getByRole('button', { name: 'Document actions', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       await expect(

@@ -19,12 +19,18 @@ type Persona = 'owner' | 'collaborator' | 'operator' | 'guest';
 type Screen =
   EntryScreen | 'files' | 'editor' | 'profile' | 'admin' | 'history' | 'revoked' | 'offline';
 type File = {
+  id: string;
   name: string;
   kind: 'doc' | 'sheet' | 'space';
   access: 'owner' | 'editor' | 'viewer';
 };
 const entryScreens = ['home', 'sign-in', 'invite', 'recovery', 'setup'];
-const firstFile: File = { name: 'Quarterly budget', kind: 'sheet', access: 'editor' };
+const firstFile: File = {
+  id: 'fixture-Quarterly budget',
+  name: 'Quarterly budget',
+  kind: 'sheet',
+  access: 'editor',
+};
 
 export function Walkthrough({
   persona = 'owner',
@@ -43,7 +49,9 @@ export function Walkthrough({
   const [screen, setScreen] = useState<Screen>(start);
   const [outcome, setOutcome] = useState<EntryOutcome>(initialOutcome);
   const [file, setFile] = useState<File>(
-    persona === 'guest' ? { name: 'Autumn plans', kind: 'doc', access: 'viewer' } : firstFile,
+    persona === 'guest'
+      ? { id: 'guest-doc', name: 'Autumn plans', kind: 'doc', access: 'viewer' }
+      : firstFile,
   );
   const [signedIn, setSignedIn] = useState(
     ['files', 'editor', 'profile', 'admin', 'history'].includes(start) && persona !== 'guest',
@@ -107,7 +115,9 @@ export function Walkthrough({
     setSave('saved');
     setOffline(false);
     setFile(
-      persona === 'guest' ? { name: 'Autumn plans', kind: 'doc', access: 'viewer' } : firstFile,
+      persona === 'guest'
+        ? { id: 'guest-doc', name: 'Autumn plans', kind: 'doc', access: 'viewer' }
+        : firstFile,
     );
     setSignedIn(
       ['files', 'editor', 'profile', 'admin', 'history'].includes(start) && persona !== 'guest',
@@ -134,9 +144,10 @@ export function Walkthrough({
     } else if (value === 'offline') setOffline(true);
     else if (value === 'revoked') {
       setScreen('revoked');
-      setFile({ name: '', kind: 'doc', access: 'viewer' });
+      setFile({ id: 'revoked', name: '', kind: 'doc', access: 'viewer' });
     } else if (value === 'guest-doc' || value === 'guest-sheet') {
       setFile({
+        id: value,
         name: value === 'guest-sheet' ? 'Quarterly budget' : 'Autumn plans',
         kind: value === 'guest-sheet' ? 'sheet' : 'doc',
         access: file.access,
@@ -239,7 +250,7 @@ export function Walkthrough({
                   offline={offline}
                   saveState={save}
                   onNameVersion={(name) =>
-                    setNamedVersions((current) => ({ ...current, [file.name]: name }))
+                    setNamedVersions((current) => ({ ...current, [file.id]: name }))
                   }
                   onRetrySave={() => {
                     setSave('saved');
@@ -284,7 +295,7 @@ export function Walkthrough({
           {screen === 'history' && (
             <HistoryMockup
               title={file.name}
-              namedVersion={namedVersions[file.name] ?? ''}
+              namedVersion={namedVersions[file.id] ?? ''}
               sheet={file.kind === 'sheet'}
               viewOnly={file.access === 'viewer'}
               onBack={() => navigate('editor')}

@@ -601,7 +601,7 @@ const files = [
     date: 'Oct 18',
     tags: 'work',
   },
-];
+].map((file) => ({ ...file, id: `fixture-${file.name}` }));
 export function DashboardMockup({
   state = 'populated',
   collapsed = false,
@@ -610,6 +610,7 @@ export function DashboardMockup({
   onProfile,
 }: {
   onOpen?: (file: {
+    id: string;
     name: string;
     kind: 'doc' | 'sheet' | 'space';
     access: 'owner' | 'editor' | 'viewer';
@@ -631,9 +632,10 @@ export function DashboardMockup({
 }) {
   const deletedFixtures = files
     .filter((file) => file.access === 'owner' && file.kind !== 'folder')
-    .map((file) => ({ ...file, name: `Old ${file.name}` }));
+    .map((file) => ({ ...file, id: `deleted-${file.id}`, name: `Old ${file.name}` }));
   const [items, setItems] = useState<
     {
+      id: string;
       name: string;
       kind: 'doc' | 'sheet' | 'space' | 'folder';
       access: 'owner' | 'editor' | 'viewer';
@@ -642,6 +644,7 @@ export function DashboardMockup({
       tags: string;
     }[]
   >([...files, ...deletedFixtures]);
+  const nextFileId = useRef(0);
   const [target, setTarget] = useState('');
   const [destination, setDestination] = useState('Household');
   const [view, setView] = useState(
@@ -664,7 +667,7 @@ export function DashboardMockup({
   const [scope, setScope] = useState('all');
   const [tag, setTag] = useState(state === 'filtered' ? 'household' : '');
   const [modified, setModified] = useState('any');
-  const [trashed, setTrashed] = useState<string[]>(deletedFixtures.map((file) => file.name));
+  const [trashed, setTrashed] = useState<string[]>(deletedFixtures.map((file) => file.id));
   const [layout, setLayout] = useState(initialLayout);
   const selectView = (next: string) => {
     if (next === 'Your profile' && onProfile) onProfile();
@@ -683,7 +686,7 @@ export function DashboardMockup({
       (scope === 'all' ||
         (scope === 'shared' ? file.access !== 'owner' : file.access === 'owner')) &&
       (modified === 'any' || file.date.includes('ago')) &&
-      (view === 'Trash' ? trashed.includes(file.name) : !trashed.includes(file.name)) &&
+      (view === 'Trash' ? trashed.includes(file.id) : !trashed.includes(file.id)) &&
       (!items.some((item) => item.name === view && item.kind !== 'folder') || file.name === view) &&
       (view !== 'Shared with me' || file.access !== 'owner') &&
       (view !== 'Trash' || (file.access === 'owner' && file.kind !== 'folder')) &&
@@ -865,7 +868,7 @@ export function DashboardMockup({
               <span />
             </div>
             {rows.map((file) => (
-              <div className="rd-file" role="listitem" key={file.name}>
+              <div className="rd-file" role="listitem" key={file.id}>
                 <button
                   className="rd-file-open"
                   onClick={() =>
@@ -913,7 +916,7 @@ export function DashboardMockup({
                           {
                             label: 'Restore',
                             onClick: () => {
-                              setTrashed(trashed.filter((name) => name !== file.name));
+                              setTrashed(trashed.filter((id) => id !== file.id));
                               setNotice(`${file.name} restored.`);
                             },
                           },
@@ -921,7 +924,7 @@ export function DashboardMockup({
                             label: 'Delete permanently…',
                             destructive: true,
                             onClick: () => {
-                              setTarget(file.name);
+                              setTarget(file.id);
                               setDialog('Delete permanently');
                             },
                           },
@@ -943,7 +946,7 @@ export function DashboardMockup({
                                 {
                                   label: 'File into folder…',
                                   onClick: () => {
-                                    setTarget(file.name);
+                                    setTarget(file.id);
                                     setDialog('File into folder');
                                   },
                                 },
@@ -951,7 +954,7 @@ export function DashboardMockup({
                             : ['Share…', 'Rename…', 'Move…'].map((label) => ({
                                 label,
                                 onClick: () => {
-                                  setTarget(file.name);
+                                  setTarget(file.id);
                                   setName(file.name);
                                   setDialog(label);
                                 },
@@ -969,7 +972,7 @@ export function DashboardMockup({
                                   label: 'Trash',
                                   destructive: true,
                                   onClick: () => {
-                                    setTrashed([...trashed, file.name]);
+                                    setTrashed([...trashed, file.id]);
                                     setNotice(`${file.name} moved to Trash.`);
                                   },
                                 },
@@ -1046,6 +1049,7 @@ export function DashboardMockup({
             onClick={() => {
               if (['Doc', 'Sheet', 'Space'].includes(dialog)) {
                 const next = {
+                  id: `created-${nextFileId.current++}`,
                   name: name || 'Untitled',
                   kind: dialog.toLowerCase() as 'doc' | 'sheet' | 'space',
                   access: 'owner' as const,
@@ -1062,19 +1066,19 @@ export function DashboardMockup({
                 onOpen?.(next);
               }
               if (dialog === 'Delete permanently') {
-                setItems(items.filter((file) => file.name !== target));
+                setItems(items.filter((file) => file.id !== target));
                 setTrashed(trashed.filter((name) => name !== target));
               }
               if (dialog === 'Rename…')
                 setItems(
                   items.map((file) =>
-                    file.name === target ? { ...file, name: name || file.name } : file,
+                    file.id === target ? { ...file, name: name || file.name } : file,
                   ),
                 );
               if (dialog === 'File into folder' || dialog === 'Move…')
                 setItems(
                   items.map((file) =>
-                    file.name === target ? { ...file, tags: folderTags[destination] } : file,
+                    file.id === target ? { ...file, tags: folderTags[destination] } : file,
                   ),
                 );
               setNotice(`${dialog}: ${name || 'Untitled'}`);
@@ -1297,6 +1301,7 @@ export function EditorMockup({
                   : `${sheet ? 'Sheet' : 'Doc'} · Household /`}
             </span>
             <h1>{name}</h1>
+            {guest && <span className="rd-badge">{viewOnly ? 'View only' : 'Guest editor'}</span>}
           </div>
         </div>
         <div className="rd-status-slot">
@@ -1338,7 +1343,7 @@ export function EditorMockup({
               <Avatar>AK</Avatar>
             </span>
           )}
-          {guest || viewOnly || collaborator ? (
+          {guest ? null : viewOnly || collaborator ? (
             <span className="rd-badge">
               {viewOnly ? 'View only' : guest ? 'Guest editor' : 'Can edit'}
             </span>
