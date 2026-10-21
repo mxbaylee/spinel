@@ -1,6 +1,9 @@
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
 import type { NavigationGuard } from './navigation.ts';
+import { ConnectionStatus } from './ConnectionStatus.tsx';
+import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
+import type { ConnectionState } from './connectionState.ts';
 
 /**
  * The gem rail: a column beside the workspace, and a top bar on phones. It must
@@ -11,11 +14,17 @@ export function Rail({
   user,
   navigation,
   onSignOut,
+  connection,
+  catalog,
+  documentOpen,
 }: {
   /** Signed-out visitors see only the brand link. */
   user: { isAdmin: boolean; name?: string; icon?: string; color?: string } | null;
   navigation: Pick<NavigationGuard, 'allow'>;
   onSignOut: () => void;
+  connection?: ConnectionState;
+  catalog?: CatalogConnectionDetails | null;
+  documentOpen?: boolean;
 }) {
   return (
     <header
@@ -29,12 +38,17 @@ export function Rail({
           event.preventDefault();
       }}
     >
-      <a className="brand rail-button" href="/">
-        <span className="wiggle">
-          <GemLogo />
-        </span>
-        <span className="rail-label">Your docs</span>
-      </a>
+      <div className="rail-brand">
+        <a className="brand rail-button" href="/">
+          <span className="wiggle">
+            <GemLogo />
+          </span>
+          <span className="rail-label">Your docs</span>
+        </a>
+        {user && connection && (
+          <ConnectionStatus state={connection} catalog={catalog} documentOpen={documentOpen} />
+        )}
+      </div>
       {user && (
         <nav aria-label="Workspace">
           <a className="rail-button" href={user.isAdmin ? '/admin' : '/'}>

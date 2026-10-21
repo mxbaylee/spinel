@@ -70,15 +70,18 @@ import {
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
 import { documentReady } from './documentReady.ts';
+import type { ConnectionState } from './connectionState.ts';
 
 export function DocEditor({
   id,
   name,
   onDirty,
+  onConnectionState,
 }: {
   id: string;
   name: string;
   onDirty: (dirty: boolean) => void;
+  onConnectionState?: (state: ConnectionState | null) => void;
 }) {
   const formulas = useRef<DocFormulaController | null>(null);
   const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
@@ -101,6 +104,10 @@ export function DocEditor({
   });
   useEffect(() => {
     let disposed = false;
+    onConnectionState?.('reconnecting');
+    const publishConnection = (state: ConnectionState) => {
+      if (!disposed) onConnectionState?.(state);
+    };
     const loading = new AbortController();
     let stopPresence: (() => void) | undefined;
     let formulaInterval: ReturnType<typeof setInterval> | undefined;
@@ -341,9 +348,19 @@ export function DocEditor({
         stopPresence();
         return;
       }
-      save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readonly);
+      save = watchCollaboration(
+        univer,
+        univerAPI,
+        data.unitId,
+        id,
+        data.access,
+        publish,
+        readonly,
+        publishConnection,
+      );
       controller.current = save;
     })().catch((error) => {
+      publishConnection('offline');
       if (!disposed)
         publish({
           dirty: false,
@@ -369,6 +386,7 @@ export function DocEditor({
       controller.current = null;
       setEditable(false);
       onDirty(false);
+      onConnectionState?.(null);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
   }, [id]);
@@ -376,10 +394,12 @@ export function DocEditor({
     <section className="sheet-editor" aria-label="Doc document">
       <Collaborators people={people} />
       <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
-        {status.message}
-        {status.failed && status.dirty && (
-          <button onClick={() => controller.current?.retry()}>Retry saving</button>
-        )}
+        <span className="save-message">{status.message}</span>
+        <span className="save-retry">
+          {status.failed && status.dirty && (
+            <button onClick={() => controller.current?.retry()}>Retry saving</button>
+          )}
+        </span>
       </div>
       {uploadError && <p role="alert">{uploadError} Try inserting the file again.</p>}
       {!guestItemId() && (

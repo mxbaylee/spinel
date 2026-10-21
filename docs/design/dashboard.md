@@ -124,11 +124,15 @@ files and its row links to the original. See [states.md](states.md#offline).
 
 **Today (SPN-039).** Row actions are still inline buttons until the row menu
 lands, so **Available offline on this device** and **Remove from device** sit
-with them. Badges are `OfflineBadge`. SPN-042's connection indicator doesn't
-exist yet, so local mode shows the [banner](README.md#banner) (`OfflineBanner`):
-"Offline. Files as of 14:05. Downloaded documents open read-only until you
-reconnect." When SPN-042 lands, its popover takes over the "Files as of" line and
-the banner goes. Pending-edit states arrive with SPN-053 and SPN-054.
+with them. Badges are `OfflineBadge`. SPN-042 adds the shared `ConnectionStatus`
+control beside the gem, with Online, Offline and Reconnecting states. Its
+hover, focus or tap detail contains "Files as of" while the catalog is local,
+offline or a refresh failed; `OfflineBanner` is removed. Connectivity returning
+does not refresh a local catalog or promote its downloaded viewers to live
+editing: the detail continues to explain that this session is read-only.
+The indicator makes no on-device save claim. See [connection behavior](../connection.md)
+and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
+Pending-edit states arrive with SPN-053 and SPN-054.
 
 `OfflineViewer` has no story: like the editors and version previews, it hosts
 Univer. Its states are plain text ("Opening offline copy…", "Read only on this
@@ -138,7 +142,8 @@ device. Reconnect to edit." or the problem) and `e2e/offline.spec.ts` covers the
 
 `Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
 `Dashboard/DocumentTags`, `Dashboard/Trash`, `Dashboard/ImportFile`,
-`Dashboard/OfflineBadge` (also the banner and the "You're offline" page). Local
+`Dashboard/OfflineBadge` (also the "You're offline" page), and
+`Shell/ConnectionStatus` for connection and catalog details. Local
 mode: `Dashboard/Dashboard` `LocalMode`, `LocalNeedsConnection` and
 `LocalFolderNotOpened`.
 

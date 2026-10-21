@@ -1,5 +1,9 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { guestItemId, documentPath } from './documentAccess.ts';
+import { GemLogo } from '../src/ui/GemLogo.tsx';
+import { ConnectionStatus } from './ConnectionStatus.tsx';
+import type { ConnectionState } from './connectionState.ts';
+import { useBrowserOnline } from './useConnectionStatus.ts';
 const Sheet = lazy(() => import('./SheetEditor.tsx').then((m) => ({ default: m.SheetEditor })));
 const Doc = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
 
@@ -33,7 +37,12 @@ export function GuestApp() {
   const dirty = useRef(false);
   const [item, setItem] = useState<Item | null>(null);
   const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
+  const [reachability, setReachability] = useState<ConnectionState>('reconnecting');
+  const [editorConnection, setEditorConnection] = useState<ConnectionState | null>(null);
+  const browserOnline = useBrowserOnline();
+  useEffect(() => {
+    setReachability(browserOnline ? 'reconnecting' : 'offline');
+  }, [browserOnline]);
   useEffect(() => {
     let disposed = false,
       checking = false,
@@ -68,13 +77,16 @@ export function GuestApp() {
             throw error;
           });
         await exchange.current;
-        const response = await fetch(documentPath(id), { signal: AbortSignal.timeout(5000) });
+        const response = await fetch(documentPath(id), {
+          cache: 'no-store',
+          signal: AbortSignal.timeout(2500),
+        });
         requireResponse(response);
         const data = await response.json();
         if (!disposed) {
           setItem(data.item);
           setError('');
-          setNotice('');
+          setReachability('online');
         }
       } catch (cause) {
         if (!disposed) {
@@ -82,8 +94,7 @@ export function GuestApp() {
             ended = true;
             setItem(null);
             setError(cause.message);
-            setNotice('');
-          } else setNotice('Connection interrupted. Keep this tab open; retrying…');
+          } else setReachability('offline');
         }
       } finally {
         checking = false;
@@ -108,8 +119,22 @@ export function GuestApp() {
   }, [id, token]);
   return (
     <main className="workspace guest-workspace">
-      <p>Spinel · Shared document</p>
-      {notice && <p role="status">{notice}</p>}
+      <div className="guest-brand">
+        <GemLogo size={28} />
+        <span>Spinel · Shared document</span>
+        {!error && (
+          <ConnectionStatus
+            state={
+              !browserOnline || reachability === 'offline'
+                ? 'offline'
+                : item
+                  ? (editorConnection ?? 'reconnecting')
+                  : reachability
+            }
+            documentOpen={Boolean(item)}
+          />
+        )}
+      </div>
       {error ? (
         <p role="alert">{error}</p>
       ) : item ? (
@@ -121,6 +146,7 @@ export function GuestApp() {
               <Sheet
                 id={id}
                 name={item.name}
+                onConnectionState={setEditorConnection}
                 onDirty={(value) => {
                   dirty.current = value;
                 }}
@@ -129,6 +155,7 @@ export function GuestApp() {
               <Doc
                 id={id}
                 name={item.name}
+                onConnectionState={setEditorConnection}
                 onDirty={(value) => {
                   dirty.current = value;
                 }}

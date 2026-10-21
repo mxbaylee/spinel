@@ -31,8 +31,18 @@ for (const kind of ['sheet', 'doc'] as const) {
         await first.setViewportSize({ width, height: 900 });
         await first.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
         await expect(first.locator('html')).toHaveAttribute('data-theme', theme);
+        await expect(
+          first.getByRole('status', { name: 'Connection status', exact: true }),
+        ).toHaveText('Online');
+        // The SDK's initial viewer-protection notice can cover the phone header.
+        // Wait for its real dismissal; screenshot CSS must not hide live UI.
+        await expect(
+          first.getByText('This content is protected. This action is not allowed.', {
+            exact: true,
+          }),
+        ).not.toBeVisible();
         await first.screenshot({
-          path: `test-results/theme-screenshots/before-guest-${kind}-${role}-${variant}-${info.project.name}.png`,
+          path: `test-results/theme-screenshots/spn-042-guest-${kind}-${role}-${variant}-${info.project.name}.png`,
           fullPage: true,
           animations: 'disabled',
         });
@@ -180,9 +190,23 @@ for (const kind of ['sheet', 'doc'] as const) {
       } else {
         await edit(first, 'Kept during retry');
       }
-      await expect(
-        first.getByText('Connection interrupted. Keep this tab open; retrying…', { exact: true }),
-      ).toBeVisible();
+      const connection = first.getByRole('status', { name: 'Connection status', exact: true });
+      await expect(connection).toHaveText(/^(Offline|Reconnecting)$/);
+      const network = first.getByRole('button', { name: /^(Offline|Reconnecting) — / });
+      await expect(network).toHaveCount(1);
+      await network.hover();
+      const explanation = first.getByRole('dialog', { name: 'Connection details', exact: true });
+      await expect(explanation).toContainText(/offline|connect/i);
+      expect(await explanation.innerText()).not.toContain(owner.name);
+      expect(await first.locator('body').innerText()).not.toContain(owner.name);
+      await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
+      await first.screenshot({
+        path: `test-results/theme-screenshots/spn-042-guest-${kind}-interrupted-light-${info.project.name}.png`,
+        fullPage: true,
+        animations: 'disabled',
+      });
+      // Do not send Escape to an unfinished cell while checking its network popover.
+      await first.mouse.move(0, 0);
       await expect(region(first)).toBeVisible();
       if (kind === 'sheet')
         await expect(region(first).getByRole('status', { name: 'Save status' })).toContainText(
@@ -204,6 +228,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       await first.unroute(`**/api/guest/${item.id}`);
       if (kind === 'sheet') await first.keyboard.press('Enter');
       await saved(first);
+      // HTTP-only interruption must recover even if the room socket stayed up.
+      await expect(connection).toHaveText('Online', { timeout: 15_000 });
       await expect.poll(async () => JSON.stringify(await live())).toContain('Kept during retry');
       await controls.getByRole('button', { name: 'Turn link off', exact: true }).click();
       await expect(first.getByRole('alert')).toHaveText('This link no longer works.');

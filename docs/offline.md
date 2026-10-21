@@ -185,8 +185,13 @@ also gets the generic page. In the app (`web/App.tsx`), only a network failure
 Local mode reads the prepared account's catalog and downloads, never a cached
 session as fresh authorization.
 
-**Local mode.** A banner says **Offline** and when the files were last synced.
-SPN-042's connection indicator should take that line over. Folders opened online
+**Local mode.** The shared network icon beside the gem reports **Offline**,
+**Reconnecting** or verified **Online**, independently of the read-only session.
+Its hover/focus/tap detail preserves **Files as of** and explains that downloaded
+documents stay read-only in this session, even after connectivity recovers.
+Reopen Spinel while connected to edit; a health response never silently replaces
+an open local viewer. SPN-042 removes the old banner; see [connection behavior](connection.md)
+and [decision #132](https://github.com/mxbaylee/spinel/issues/132). Folders opened online
 are browsable, rows show **Available offline** or **Needs a connection**, and
 anything that would reach the server (New, Import, Search, Trash, sharing, tags,
 settings for passkeys, version history) is hidden or says it needs a

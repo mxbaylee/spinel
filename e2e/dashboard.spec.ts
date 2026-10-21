@@ -111,7 +111,9 @@ test('registers two devices, signs in with either, persists and revokes sessions
     await page.getByRole('button', { name: 'Add a passkey' }).click();
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Add a passkey' })).toBeEnabled();
-    await expect(page.getByRole('status')).toHaveText('Passkey request cancelled.');
+    await expect(
+      page.getByRole('status').filter({ hasText: 'Passkey request cancelled.' }),
+    ).toHaveText('Passkey request cancelled.');
     expect(errors).toEqual([]);
     const current = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!;
     store.revokeSession(store.session(current.value)!.token_hash);

@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
 import { Dashboard } from './Dashboard.tsx';
 import { Rail } from './Rail.tsx';
+import type { ConnectionState } from './connectionState.ts';
 
 // The signed-in member's shell as App.tsx composes the dashboard route: the
 // rail and the dashboard. Nothing here opens a sheet or doc,
@@ -66,11 +67,16 @@ function StillHistory({ children }: { children: ReactNode }) {
 const railNavigation = { allow: () => false };
 const navigation = { allow: () => true, dirty() {} };
 
-function AppLayout() {
+function AppLayout({ connection = 'online' }: { connection?: ConnectionState }) {
   return (
     <StillHistory>
       <div className="workspace">
-        <Rail user={{ isAdmin: false }} navigation={railNavigation} onSignOut={() => {}} />
+        <Rail
+          user={{ isAdmin: false }}
+          navigation={railNavigation}
+          onSignOut={() => {}}
+          connection={connection}
+        />
         <div className="workspace-body">
           <main>
             <Dashboard navigation={navigation} user={{ id: 'story-user', name: 'Ada' }} />
@@ -85,6 +91,7 @@ const meta = {
   id: 'shell-applayout',
   title: 'Current production/Shell/AppLayout',
   component: AppLayout,
+  args: { connection: 'online' },
   // This story is the shell, so the preview must not wrap it in another one.
   parameters: { shell: 'none' },
 } satisfies Meta<typeof AppLayout>;
@@ -94,6 +101,16 @@ type Story = StoryObj<typeof meta>;
 /** The rail down the left beside the dashboard’s folders and files. */
 export const Desktop: Story = {
   globals: { viewport: { value: 'desktop', isRotated: false } },
+  parameters: { api: workspace },
+};
+/** The already-loaded dashboard remains in place while the connection is unavailable. */
+export const Offline: Story = {
+  args: { connection: 'offline' },
+  parameters: { api: workspace },
+};
+/** Browser connectivity alone does not settle the dashboard's connection indicator. */
+export const Reconnecting: Story = {
+  args: { connection: 'reconnecting' },
   parameters: { api: workspace },
 };
 /** At tablet width the rail stays beside the dashboard. */

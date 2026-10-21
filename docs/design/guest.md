@@ -6,15 +6,14 @@ Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/s
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — GuestViewer, GuestEditor, RevokedLink, OfflineLaunch, PlannedSpaceGuest.
 
-| Current friction | Public reference pattern | Adopted proposal |
-| --- | --- | --- |
+| Current friction                                                                                           | Public reference pattern                                                                                                                          | Adopted proposal                                                                                 |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | Large stacked title/status text pushes content down; generic connection errors compete with editor status. | Google makes read-only state visible; Numbers groups collaboration status near content. Spinel deliberately has no guest request-access workflow. | A minimal document header with access badge, status and PDF export; no account rail or identity. |
 
 Revocation removes content, title, actions and any source values, showing only the generic unavailable link message. An offline guest gets a generic connection state, not cached private content. A Space guest has only its internal page navigation and uniform View/Edit role; no outer folders, account controls, history, native export or file Admin.
 
 The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
-
 
 What a Link guest sees at `/share/<id>`: one document, no account, no workspace.
 
@@ -28,9 +27,14 @@ opens the document with a read-only banner.
 
 ## Spinel today
 
-`GuestApp` shows "Spinel · Shared document", then the document name, a line
-("You are editing as a guest." or "View-only link."), and the editor. Revoked
-links and connection loss are plain paragraphs above it.
+`GuestApp` shows a non-link gem and the shared connection control beside
+"Spinel · Shared document", then the document name, a line ("You are editing
+as a guest." or "View-only link."), and the editor. Connection interruptions
+use the fixed control's detail, preserving the mounted editor and pending-input
+warning. An authoritative 401/403/404 removes document content and its title,
+leaving only the generic link error. Guests make no account health/session probe
+and receive no account navigation or identity. See [connection behavior](../connection.md)
+and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
 
 ## Adopted pattern
 
@@ -59,8 +63,8 @@ links and connection loss are plain paragraphs above it.
 
 ### Always visible / behind a menu
 
-| Always visible                                       | Behind a menu |
-| ---------------------------------------------------- | ------------- |
+| Always visible                                                                | Behind a menu |
+| ----------------------------------------------------------------------------- | ------------- |
 | Name, status cluster, View only / Guest editor badge, Export as PDF (SPN-075) | Nothing       |
 
 ## Stories

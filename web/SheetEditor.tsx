@@ -43,15 +43,18 @@ import {
 } from './collaboration.ts';
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
+import type { ConnectionState } from './connectionState.ts';
 
 export function SheetEditor({
   id,
   name,
   onDirty,
+  onConnectionState,
 }: {
   id: string;
   name: string;
   onDirty: (dirty: boolean) => void;
+  onConnectionState?: (state: ConnectionState | null) => void;
 }) {
   const mobile = useRef(useMobileSheetControls()).current;
   const print = useRef<(() => Promise<void>) | null>(null);
@@ -67,6 +70,10 @@ export function SheetEditor({
   });
   useEffect(() => {
     let disposed = false;
+    onConnectionState?.('reconnecting');
+    const publishConnection = (state: ConnectionState) => {
+      if (!disposed) onConnectionState?.(state);
+    };
     let stopPresence: (() => void) | undefined;
     setPeople([]);
     let editing = false;
@@ -188,7 +195,16 @@ export function SheetEditor({
         readOnlySheetDrawings(univer, data.unitId);
       };
       if (data.access === 'viewer') await readOnly();
-      save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readOnly);
+      save = watchCollaboration(
+        univer,
+        univerAPI,
+        data.unitId,
+        id,
+        data.access,
+        publish,
+        readOnly,
+        publishConnection,
+      );
       controller.current = save;
       setEditable(data.access !== 'viewer');
       applyFill.current = async (preset) => {
@@ -220,6 +236,7 @@ export function SheetEditor({
         publish(lastState);
       });
     })().catch((error) => {
+      publishConnection('offline');
       if (!disposed)
         publish({
           dirty: false,
@@ -239,6 +256,7 @@ export function SheetEditor({
       controller.current = null;
       applyFill.current = null;
       onDirty(false);
+      onConnectionState?.(null);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
   }, [id]);
@@ -253,10 +271,12 @@ export function SheetEditor({
         }}
       />
       <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
-        {status.message}
-        {status.failed && status.dirty && (
-          <button onClick={() => controller.current?.retry()}>Retry saving</button>
-        )}
+        <span className="save-message">{status.message}</span>
+        <span className="save-retry">
+          {status.failed && status.dirty && (
+            <button onClick={() => controller.current?.retry()}>Retry saving</button>
+          )}
+        </span>
       </div>
       {!guestItemId() && (
         <>

@@ -14,7 +14,9 @@ import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { ImportFile } from './ImportFile.tsx';
 import { SharedBadge, useSharedItems } from './SharedItems.tsx';
 import type { NavigationGuard } from './navigation.ts';
-import { OfflineBadge, OfflineBanner } from './OfflineStatus.tsx';
+import { OfflineBadge } from './OfflineStatus.tsx';
+import type { ConnectionState } from './connectionState.ts';
+import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import type { LocalStart } from './offline/localStart.ts';
 import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
@@ -46,10 +48,14 @@ export function Dashboard({
   navigation,
   user,
   local,
+  onConnectionState,
+  onCatalogStatus,
 }: {
   navigation: NavigationGuard;
   user: OfflineUser;
   local?: LocalStart | null;
+  onConnectionState?: (state: ConnectionState | null) => void;
+  onCatalogStatus?: (details: CatalogConnectionDetails | null) => void;
 }) {
   const dropTarget = useRef<HTMLElement>(null);
   const [query, setQuery] = useState<SearchQuery>({ ...emptySearch });
@@ -76,6 +82,10 @@ export function Dashboard({
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [syncedAt, setSyncedAt] = useState(local?.catalog.syncedAt ?? 0);
+  useEffect(() => {
+    onCatalogStatus?.({ syncedAt, local: Boolean(local), stale: Boolean(error || shared.error) });
+  }, [syncedAt, local, error, shared.error, onCatalogStatus]);
+  useEffect(() => () => onCatalogStatus?.(null), [onCatalogStatus]);
   // The last-loaded view for each opened folder or item, kept for offline launch.
   const views = useRef<Record<string, WorkspaceItem[]>>({ ...local?.catalog.views });
   const catalog = (): OfflineCatalog | null =>
@@ -159,6 +169,11 @@ export function Dashboard({
     [...known, ...items, ...shared.items, ...viewed].map((item) => [item.id, item]),
   );
   const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
+  const liveEditor =
+    !local && current && (current.kind === 'sheet' || current.kind === 'doc') ? current.id : null;
+  useEffect(() => {
+    onConnectionState?.(liveEditor ? 'reconnecting' : null);
+  }, [liveEditor, onConnectionState]);
   const title =
     current && current.kind !== 'folder' && viewId === currentId
       ? `${current.name} — Spinel`
@@ -400,11 +415,15 @@ export function Dashboard({
       </span>
     );
   }
+  const sharedFailure = shared.error && (
+    <p role="alert">
+      {shared.error} <button onClick={() => void shared.refresh()}>Refresh shared items</button>
+    </p>
+  );
   return (
     <>
       <p className="eyebrow">Your workspace</p>
       <h1>Dashboard</h1>
-      {local && <OfflineBanner syncedAt={syncedAt} />}
       <div className="dashboard">
         <aside aria-label="Folders">
           <button {...folderDrop(null)} disabled={busy} onClick={() => navigate(null)}>
@@ -462,12 +481,7 @@ export function Dashboard({
           {offline.message && (
             <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
           )}
-          {shared.error && (
-            <p role="alert">
-              {shared.error}{' '}
-              <button onClick={() => void shared.refresh()}>Refresh shared items</button>
-            </p>
-          )}
+          {!liveEditor && sharedFailure}
           {sharedOpen && !searchActive && (
             <section className="shared-drawer" aria-label="Shared with me">
               <h2>Shared with me</h2>
@@ -625,6 +639,7 @@ export function Dashboard({
                       id={current.id}
                       name={current.name}
                       onDirty={navigation.dirty}
+                      onConnectionState={onConnectionState}
                     />
                   </Suspense>
                 ) : (
@@ -634,6 +649,7 @@ export function Dashboard({
                       id={current.id}
                       name={current.name}
                       onDirty={navigation.dirty}
+                      onConnectionState={onConnectionState}
                     />
                   </Suspense>
                 )}
@@ -746,6 +762,9 @@ export function Dashboard({
             )}
             {error && <p role="alert">{error}</p>}
           </div>
+          {/* A background file-list failure must not move the active document.
+              Keep its alert and retry available after the editor instead. */}
+          {liveEditor && sharedFailure}
         </section>
       </div>
     </>

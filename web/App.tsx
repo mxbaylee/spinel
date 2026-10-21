@@ -21,6 +21,9 @@ import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
 import { Rail } from './Rail.tsx';
+import { useBrowserOnline, useServerConnection } from './useConnectionStatus.ts';
+import type { ConnectionState } from './connectionState.ts';
+import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
@@ -66,6 +69,10 @@ export function App() {
     return () => window.removeEventListener('beforeunload', warn);
   }, []);
   const [user, setUser] = useState<User | null>(null);
+  const [editorConnection, setEditorConnection] = useState<ConnectionState | null>(null);
+  const [catalogStatus, setCatalogStatus] = useState<CatalogConnectionDetails | null>(null);
+  const serverConnection = useServerConnection(Boolean(user) && editorConnection === null);
+  const browserOnline = useBrowserOnline();
   // Local mode (docs/offline.md): the server is unreachable and this device was
   // prepared for an account. `unreachable` is the same outage on an unprepared device.
   const [local, setLocal] = useState<LocalStart | null>(null);
@@ -280,7 +287,14 @@ export function App() {
   }
   return (
     <div className="workspace">
-      <Rail user={user} navigation={navigation} onSignOut={() => void signOut()} />
+      <Rail
+        user={user}
+        navigation={navigation}
+        onSignOut={() => void signOut()}
+        connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
+        catalog={catalogStatus}
+        documentOpen={editorConnection !== null}
+      />
       <div className="workspace-body">
         <main>
           {!loaded ? (
@@ -427,7 +441,13 @@ export function App() {
               <HistoryBrowser />
             </Suspense>
           ) : (
-            <Dashboard navigation={navigation} user={user} local={local} />
+            <Dashboard
+              navigation={navigation}
+              user={user}
+              local={local}
+              onConnectionState={setEditorConnection}
+              onCatalogStatus={setCatalogStatus}
+            />
           )}
           {busy && (
             <p role="status">
