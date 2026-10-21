@@ -468,7 +468,7 @@ try {
         page.getByRole('button', { name: 'Restore this version…', exact: true }),
       ).toBeVisible();
       await page.getByRole('button', { name: 'Return to document', exact: true }).click();
-      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await page.getByRole('button', { name: /^(Your profile|.+ — Profile settings)$/ }).click();
       await page.getByRole('textbox', { name: 'Display name', exact: true }).fill('Alex Updated');
       await page.getByRole('button', { name: 'Save profile', exact: true }).click();
       await page.getByRole('button', { name: 'This device', exact: true }).click();
@@ -587,7 +587,7 @@ try {
       await page.getByRole('menuitem', { name: 'About your access', exact: true }).focus();
       await page.keyboard.press('Escape');
       await expect(page.getByRole('menu', { name: 'Document actions', exact: true })).toBeHidden();
-      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await page.getByRole('button', { name: /^(Your profile|.+ — Profile settings)$/ }).click();
       await expect(page.getByRole('textbox', { name: 'Display name', exact: true })).toHaveValue(
         'Sam Rivera',
       );
@@ -597,7 +597,7 @@ try {
       await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       await page.getByRole('button', { name: 'Return to document', exact: true }).click();
       await expect(page.getByRole('dialog')).toHaveCount(0);
-      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await page.getByRole('button', { name: /^(Your profile|.+ — Profile settings)$/ }).click();
       await page.getByRole('button', { name: 'Leave without saving', exact: true }).click();
       await expect(
         page.getByRole('button', { name: 'Back to document', exact: true }),
@@ -608,7 +608,7 @@ try {
       ).toBeVisible();
       await page.getByRole('button', { name: 'Recover with a passkey', exact: true }).click();
       await event('Passkey succeeded');
-      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await page.getByRole('button', { name: /^(Your profile|.+ — Profile settings)$/ }).click();
       await expect(page.getByRole('textbox', { name: 'Display name', exact: true })).toHaveValue(
         'Alex Baylee',
       );
@@ -636,13 +636,15 @@ try {
       await expect(
         page.getByRole('textbox', { name: 'Invitation address', exact: true }),
       ).toHaveCount(0);
-      await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+      await page.getByRole('button', { name: /^(Your profile|.+ — Profile settings)$/ }).click();
       await expect(
         page.getByRole('button', { name: 'Connected assistants', exact: true }),
       ).toHaveCount(0);
       await expect(page.getByRole('button', { name: 'My files', exact: true })).toHaveCount(0);
       await open('link-guest');
-      await expect(page.getByRole('button', { name: 'Your profile', exact: true })).toHaveCount(0);
+      await expect(
+        page.getByRole('button', { name: /^(Your profile|.+ — Profile settings)$/ }),
+      ).toHaveCount(0);
       await event('Editor access');
       await event('Connection lost');
       await expect(

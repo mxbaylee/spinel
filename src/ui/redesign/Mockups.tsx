@@ -394,7 +394,7 @@ function Sidebar({
               </div>
               <Button
                 className="rd-profile-control"
-                aria-label="Your profile"
+                aria-label={`${profile.name} — Profile settings`}
                 title={`${profile.name} — Profile settings`}
                 onClick={() => onSelect('Your profile')}
               >
