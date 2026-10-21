@@ -26,6 +26,7 @@ type GlyphName =
   | 'check'
   | 'shield'
   | 'download'
+  | 'upload'
   | 'network'
   | 'network-off'
   | 'list'
@@ -50,6 +51,7 @@ const paths: Record<GlyphName, string> = {
   network: 'M2 8q10-8 20 0 M5 12q7-6 14 0 M8 16q4-4 8 0 M12 20h.01',
   'network-off': 'M2 8q10-8 20 0 M5 12q7-6 14 0 M8 16q4-4 8 0 M12 20h.01 M3 3l18 18',
   download: 'M12 3v12 M7 10l5 5 5-5 M4 16v5h16v-5',
+  upload: 'M12 16V3 M7 8l5-5 5 5 M4 16v5h16v-5',
 };
 function Glyph({ name }: { name: GlyphName }) {
   return (
@@ -339,6 +341,7 @@ function Sidebar({
         <ActionMenu
           label="Add page"
           actions={['Doc', 'Sheet'].map((x) => ({
+            icon: <EntityIcon kind={x === 'Doc' ? 'doc' : 'sheet'} size={16} />,
             label: x,
             onClick: () => setAction(`New ${x}`),
           }))}
@@ -783,6 +786,14 @@ export function DashboardMockup({
             primary
             actions={['Doc', 'Sheet', 'Space', 'Folder', 'Import file…'].map((label) => ({
               label,
+              icon:
+                label === 'Folder' ? (
+                  <Glyph name="folder" />
+                ) : label === 'Import file…' ? (
+                  <Glyph name="upload" />
+                ) : (
+                  <EntityIcon kind={label.toLowerCase() as 'doc' | 'sheet' | 'space'} size={16} />
+                ),
               onClick: () => {
                 setName('');
                 setTarget('');

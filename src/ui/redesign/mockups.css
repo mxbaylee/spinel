@@ -78,6 +78,7 @@
 .rd-rail-bottom {
   margin-top: auto;
   display: grid;
+  justify-items: center;
   gap: 12px;
 }
 .rd-rail-bottom > .sp-control {

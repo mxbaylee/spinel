@@ -120,6 +120,18 @@
   cursor: pointer;
   outline: none;
 }
+.sp-option-with-icon {
+  justify-content: flex-start;
+  gap: 12px;
+}
+.sp-option-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 .sp-option[data-highlighted] {
   background: var(--sp-header);
 }

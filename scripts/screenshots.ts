@@ -738,7 +738,7 @@ async function waitForNativeEditor(page: Page) {
     try {
       await expect(editor).toBeVisible();
       await expect(editor).toHaveAttribute('data-native-ready', 'true', { timeout: 35_000 });
-      await expect(editor.locator('canvas').first()).toBeVisible();
+      await expect(editor.locator('canvas[aria-label]')).toBeVisible();
     } catch (error) {
       const id = new URL(page.url()).searchParams.get('id') ?? 'unknown';
       await page.screenshot({ path: resolve(directory, `failed-native-${id}.png`) });

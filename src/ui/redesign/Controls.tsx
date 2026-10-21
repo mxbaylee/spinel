@@ -106,6 +106,7 @@ export function SegmentedChoice({
 }
 export type Action = {
   label: string;
+  icon?: ReactNode;
   onClick?: () => void;
   disabled?: boolean;
   destructive?: boolean;
@@ -134,8 +135,13 @@ export function ActionMenu({
                 key={action.label}
                 disabled={action.disabled}
                 onClick={action.onClick}
-                className={`sp-option ${action.destructive ? 'sp-destructive' : ''}`}
+                className={`sp-option ${action.destructive ? 'sp-destructive' : ''} ${action.icon ? 'sp-option-with-icon' : ''}`}
               >
+                {action.icon && (
+                  <span className="sp-option-icon" aria-hidden="true">
+                    {action.icon}
+                  </span>
+                )}
                 {action.label}
               </Menu.Item>
             ))}
