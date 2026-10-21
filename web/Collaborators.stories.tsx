@@ -11,7 +11,8 @@ const person = (id: string, name: string, jump?: () => void): Collaborator => ({
 });
 
 const meta = {
-  title: 'Editor/Collaborators',
+  id: 'editor-collaborators',
+  title: 'Current production/Editor/Collaborators',
   component: Collaborators,
 } satisfies Meta<typeof Collaborators>;
 export default meta;

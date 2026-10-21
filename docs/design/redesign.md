@@ -282,9 +282,9 @@ identity. This device labels it explicitly, while compact controls remain in
 navigation and guest/arrival headers. Use US English “color” in UI and prose.
 
 Interactive CI builds are uploaded as `storybook-review` for seven days. They
-can be served locally without rebuilding Storybook. This does not publish a PR
-to GitHub Pages or authorize a production migration. Main already has a Pages
-deploy workflow; any separate hosted-review change can be ticketed when needed.
+can be served locally without rebuilding Storybook. The owner subsequently
+authorized the temporary PR #125 Pages preview described below. Publishing the
+review does not authorize a production route migration.
 
 Owner refinement (chat, 2026-10-20): keep the three appearance segments directly
 visible everywhere. Smaller sizing did not mean a popup. A collapsed desktop
@@ -310,3 +310,53 @@ build while screenshot/interaction validation continues separately. Normal main
 deployment still waits for that validation. A public preview is not merge approval.
 Before merge, remove the workflow exception and environment rule ID 63792144;
 main publishing restores the normal catalog.
+
+## Catalog-wide audit scope
+
+Every story, including existing empty, loading, disabled and failure variants,
+is included in the CI capture inventory. The sidebar groups unchanged routes
+under **Current production**, preserving their story IDs and tests. **Redesign**
+contains the proposed patterns; **Identity** keeps shared artwork. Existing
+production specimens remain useful before/after evidence, not alternative
+recommendations for new screens.
+
+- AppLayout, Rail and PinnedSidebar converge on one Shell. Pins are shortcuts;
+  folders and Trash are content. GemLogo, entity icons, social cards and cursor
+  profile glyphs retain their existing identity; the favicon is enlarged.
+- Dashboard, SearchPanel, DocumentTags, TagLabels, PinButton, SharedBadge and
+  OfflineBadge are reviewed as file-row/search/navigation states. Their proposed
+  actions use one row menu, visible access metadata and a shared failure/retry
+  pattern. The query-chip/parser change remains explicitly scoped to SPN-048.
+- Trash drops New and the editing toolbar. ImportFile has dedicated picker,
+  limits, validation, progress and failure specimens under Redesign/Import file.
+- Profile, Icon picker and ThemeSettings share the proposed settings shell and
+  direct appearance segments. The existing searchable/category-based icon picker
+  is retained; this review does not claim to replace its icon corpus or browsing
+  algorithm. Loading and failed-save specimens retain the draft and recovery.
+- AssistantConnections, personal/Admin AccessTokens and ConnectAssistant use
+  Connections, token metadata and consent states. Token examples cover the
+  existing once-only secret, capacity, pending and failure contracts; Operator
+  specimens never show secrets or personal document access.
+- AdminUsers, AdminInvites and BackupStatus use the same account rows and section
+  navigation, including protected operator, invite reveal, running, failed,
+  missing configuration and unavailable health states.
+- VersionNames and FileExports use the editor menu and dedicated version page,
+  with naming, restore confirmation, unavailable history and export retry states.
+  Restore remains unavailable offline or before unsaved changes are resolved.
+- Collaborators and profile cursor labels retain the actual presence behavior;
+  proposed editor headers reduce duplicate capability text. Existing many/empty/
+  guest cursor specimens stay as implementation evidence.
+- Formulas and Native formulas retain the shipped source-selection, expression
+  and calculation behavior. Proposed composed examples determine placement and
+  quiet result/error presentation; source editing and pagination are still
+  verified against the actual native/formula stories, not a second formula engine.
+- GuestApp retains link-only scope, immediate revocation and browser-capability
+  guards. Connected guest walkthroughs cover view/edit, disconnect and revocation;
+  existing guest loading/unsupported-browser stories remain contract evidence.
+- FillPresets is intentionally removed from proposed editor actions. Native
+  Univer owns cell fill; retaining a production-baseline story does not promise
+  a replacement control or SDK override.
+
+This audit distinguishes reusable patterns from backend integrations. Screen
+migration tickets must retain their existing contract tests and apply the approved
+state patterns, rather than shipping a successful-state mockup alone.

@@ -106,7 +106,8 @@ const inWorkspace: Decorator = (Story) => (
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
 const meta = {
-  title: 'Dashboard/Dashboard',
+  id: 'dashboard-dashboard',
+  title: 'Current production/Dashboard/Dashboard',
   component: Dashboard,
   args: {
     navigation: { allow: () => true, dirty() {} },

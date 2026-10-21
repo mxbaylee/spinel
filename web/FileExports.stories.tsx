@@ -5,7 +5,8 @@ import { FileExports } from './FileExports.tsx';
 
 const id = '00000000-0000-4000-8000-000000000061';
 const meta = {
-  title: 'Editor/FileExports',
+  id: 'editor-fileexports',
+  title: 'Current production/Editor/FileExports',
   component: FileExports,
   args: { id, name: 'Quarterly budget', saved: true, print: async () => {} },
   // The menu is a closed disclosure in the editor toolbar; stories show it open.

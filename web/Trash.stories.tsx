@@ -37,7 +37,8 @@ const items = [
 const loaded = { 'GET /api/items/trash': { items, version: 'v1' } };
 
 const meta = {
-  title: 'Dashboard/Trash',
+  id: 'dashboard-trash',
+  title: 'Current production/Dashboard/Trash',
   component: Trash,
   args: { onChanged: async () => {} },
 } satisfies Meta<typeof Trash>;

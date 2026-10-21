@@ -34,7 +34,8 @@ const withPins: Decorator = (Story) => (
 );
 
 const meta = {
-  title: 'Dashboard/PinnedSidebar',
+  id: 'dashboard-pinnedsidebar',
+  title: 'Current production/Dashboard/PinnedSidebar',
   component: PinnedSidebar,
   args: { navigation: { allow: () => true, dirty() {} } },
   decorators: [withPins],

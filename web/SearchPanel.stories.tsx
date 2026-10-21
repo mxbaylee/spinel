@@ -47,7 +47,8 @@ const results = [
 const loaded: WorkspaceItem[] = results.map(({ paths: _paths, ...rest }) => rest);
 
 const meta = {
-  title: 'Dashboard/SearchPanel',
+  id: 'dashboard-searchpanel',
+  title: 'Current production/Dashboard/SearchPanel',
   component: SearchPanel,
   args: {
     query: { ...emptySearch },

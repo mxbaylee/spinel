@@ -284,6 +284,41 @@ try {
           filename,
           title: `${index.entries[id].title} / ${index.entries[id].name}`,
         });
+        if (id === 'redesign-editor-recovery--offline-save-failed') {
+          const saveStatus = page.getByRole('status', {
+            name: 'Document save status',
+            exact: true,
+          });
+          await expect(saveStatus).toContainText('Could not save');
+          await saveStatus.getByRole('button', { name: 'Could not save', exact: true }).click();
+          await expect(
+            page.getByText(
+              'Connection lost. Keep this page open; your latest changes have not been confirmed saved.',
+              { exact: true },
+            ),
+          ).toBeVisible();
+          const retryButtons = page.getByRole('button', { name: 'Retry saving', exact: true });
+          await expect(retryButtons).toHaveCount(1);
+          for (const retry of await retryButtons.all()) await expect(retry).toBeDisabled();
+          await page.screenshot({
+            path: resolve(directory, `${id}-details-${variant}.png`),
+            fullPage: true,
+          });
+          verifications.push(
+            `${variant}: offline failure stays unsaved and every save retry waits for reconnection`,
+          );
+        }
+        if (id === 'redesign-screens--admin-error') {
+          await expect(
+            page.getByText('Could not load accounts. Try again.', { exact: true }),
+          ).toBeVisible();
+          await page.getByRole('button', { name: 'Try again', exact: true }).click();
+          await expect(page.getByText('Alex Baylee', { exact: true })).toBeVisible();
+          await expect(
+            page.getByText('Could not load accounts. Try again.', { exact: true }),
+          ).toHaveCount(0);
+          verifications.push(`${variant}: Operator can retry an account-list error`);
+        }
         if (id === 'redesign-screens--filtered-no-matches') {
           // Exercise both Clear controls with every filter set, including a query.
           for (const clearSelector of ['.rd-empty', '.rd-filter-bar']) {
@@ -317,7 +352,7 @@ try {
               await page.getByRole('textbox', { name: 'Tag', exact: true }).fill('household');
               for (const [label, value] of [
                 ['File type', 'Sheets'],
-                ['Ownership', 'Shared with me'],
+                ['Ownership', 'Mine'],
                 ['Last modified', 'Today'],
               ]) {
                 await page.getByRole('combobox', { name: label, exact: true }).click();
@@ -608,7 +643,7 @@ try {
       await page.getByRole('button', { name: 'New file', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Doc', exact: true }).click();
       await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Weekend notes');
-      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByRole('button', { name: 'Create Doc', exact: true }).click();
       await expect(page.getByRole('heading', { name: 'Weekend notes', exact: true })).toBeVisible();
       await page.getByRole('button', { name: 'Document actions', exact: true }).click();
       await expect(page.getByRole('menuitem', { name: 'Fill presets', exact: true })).toHaveCount(
@@ -638,7 +673,18 @@ try {
       ).toBeVisible();
       await shot('device-settings');
       await page.getByRole('button', { name: 'Back to document', exact: true }).click();
+      const savedEditorTop = await page
+        .locator('.rd-editor-body')
+        .evaluate((node) => node.getBoundingClientRect().top);
       await event('Save failed');
+      await expect
+        .poll(() =>
+          page.locator('.rd-editor-body').evaluate((node) => node.getBoundingClientRect().top),
+        )
+        .toBe(savedEditorTop);
+      await expect(
+        page.getByRole('status', { name: 'Document save status', exact: true }),
+      ).toContainText('Could not save');
       await page
         .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
         .click();
@@ -647,8 +693,12 @@ try {
       ).toBeVisible();
       await page.getByRole('button', { name: 'Keep editing', exact: true }).click();
       await shot('save-failed');
+      await page.getByRole('button', { name: 'Could not save', exact: true }).click();
       await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
       await expect(page.getByRole('button', { name: '✓ Saved', exact: true })).toBeVisible();
+      await expect(
+        page.getByRole('status', { name: 'Document save status', exact: true }),
+      ).toContainText('Saved');
       await page
         .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
         .click();
@@ -676,7 +726,7 @@ try {
         .click();
       await page.getByRole('menuitem', { name: 'Rename…', exact: true }).click();
       await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Weekend journal');
-      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByRole('button', { name: 'Rename', exact: true }).click();
       // Named checkpoints belong to the file when navigating between documents.
       await page.locator('.rd-file-open').filter({ hasText: 'A few good recipes' }).click();
       await page
@@ -698,7 +748,7 @@ try {
       await page.getByRole('button', { name: 'New file', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Sheet', exact: true }).click();
       await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Trip costs');
-      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByRole('button', { name: 'Create Sheet', exact: true }).click();
       await page
         .getByRole('button', { name: width > 640 ? 'Back to files' : 'My files', exact: true })
         .click();
@@ -747,7 +797,15 @@ try {
         'Sam Rivera',
       );
       await page.getByRole('button', { name: 'Back to document', exact: true }).click();
+      const collaboratorEditorTop = await page
+        .locator('.rd-editor-body')
+        .evaluate((node) => node.getBoundingClientRect().top);
       await event('Save failed');
+      await expect
+        .poll(() =>
+          page.locator('.rd-editor-body').evaluate((node) => node.getBoundingClientRect().top),
+        )
+        .toBe(collaboratorEditorTop);
       await page.getByRole('button', { name: 'Document actions', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       await page.getByRole('button', { name: 'Return to document', exact: true }).click();
@@ -801,12 +859,21 @@ try {
         page.getByRole('button', { name: /^(Your profile|.+ — Profile settings)$/ }),
       ).toHaveCount(0);
       await event('Editor access');
+      const connectedEditorTop = await page
+        .locator('.rd-editor-body')
+        .evaluate((node) => node.getBoundingClientRect().top);
       await event('Connection lost');
+      await expect
+        .poll(() =>
+          page.locator('.rd-editor-body').evaluate((node) => node.getBoundingClientRect().top),
+        )
+        .toBe(connectedEditorTop);
       await expect(
-        page.getByText('Connection lost. Keep this page open to protect unsent changes.', {
-          exact: true,
-        }),
+        page.getByRole('button', { name: 'Offline · keep open', exact: true }),
       ).toBeVisible();
+      await expect(page.locator('.rd-live-alert')).toHaveText(
+        'Connection lost. Keep this page open to protect unsent changes.',
+      );
       await shot('guest-disconnected');
       await event('Owner turns off link');
       await expect(

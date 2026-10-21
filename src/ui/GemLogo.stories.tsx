@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { GemLogo } from './GemLogo.tsx';
 
 const meta = {
-  title: 'Shell/GemLogo',
+  id: 'shell-gemlogo',
+  title: 'Current production/Shell/GemLogo',
   component: GemLogo,
   args: { size: 36 },
 } satisfies Meta<typeof GemLogo>;

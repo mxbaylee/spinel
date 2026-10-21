@@ -17,7 +17,8 @@ const created = {
 };
 
 const meta = {
-  title: 'Settings/AccessTokens',
+  id: 'settings-accesstokens',
+  title: 'Current production/Settings/AccessTokens',
   component: AccessTokens,
 } satisfies Meta<typeof AccessTokens>;
 export default meta;

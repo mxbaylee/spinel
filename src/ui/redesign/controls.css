@@ -217,6 +217,11 @@
     min-width: 44px;
     min-height: 44px;
   }
+  .sp-ui
+    input:not(.rd-native-editor *):not([type='range']):not([type='checkbox']):not([type='radio']),
+  .sp-ui textarea:not(.rd-native-editor *) {
+    min-height: 44px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .sp-ui *,

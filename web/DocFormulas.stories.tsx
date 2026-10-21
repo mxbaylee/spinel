@@ -13,7 +13,8 @@ const definition: FormulaDefinition = {
   format: 'currency',
 };
 const meta = {
-  title: 'Docs/Formulas',
+  id: 'docs-formulas',
+  title: 'Current production/Docs/Formulas',
   component: FormulaDialog,
   args: { id, onSave: fn(), onClose: fn() },
   parameters: {

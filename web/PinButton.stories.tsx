@@ -22,7 +22,8 @@ const withPins: Decorator = (Story) => (
 );
 
 const meta = {
-  title: 'Dashboard/PinButton',
+  id: 'dashboard-pinbutton',
+  title: 'Current production/Dashboard/PinButton',
   component: PinButton,
   args: { item },
   decorators: [withPins],

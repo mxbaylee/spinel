@@ -11,7 +11,8 @@ const url =
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
 const meta = {
-  title: 'Sharing/ShareLink',
+  id: 'sharing-sharelink',
+  title: 'Current production/Sharing/ShareLink',
   component: ShareLink,
   args: { id },
 } satisfies Meta<typeof ShareLink>;

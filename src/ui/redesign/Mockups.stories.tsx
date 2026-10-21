@@ -117,7 +117,8 @@ export const FilteredNoMatches: Story = {
     await userEvent.click(canvas.getByRole('combobox', { name: 'File type' }));
     await userEvent.click(portal.getByRole('option', { name: 'Sheets' }));
     await userEvent.click(canvas.getByRole('combobox', { name: 'Ownership' }));
-    await userEvent.click(portal.getByRole('option', { name: 'Shared with me' }));
+    // The household Sheet belongs to a collaborator; Mine excludes it.
+    await userEvent.click(portal.getByRole('option', { name: /^Mine$/ }));
     await userEvent.click(canvas.getByRole('combobox', { name: 'Last modified' }));
     await userEvent.click(portal.getByRole('option', { name: 'Today' }));
   },

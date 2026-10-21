@@ -14,7 +14,8 @@ const connection = {
 };
 const loaded = { 'GET /api/auth/connections': { connections: [connection] } };
 const meta = {
-  title: 'Settings/AssistantConnections',
+  id: 'settings-assistantconnections',
+  title: 'Current production/Settings/AssistantConnections',
   component: AssistantConnections,
 } satisfies Meta<typeof AssistantConnections>;
 export default meta;

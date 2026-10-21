@@ -3,9 +3,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProfileSettings } from './ProfileSettings.tsx';
 import { pending, failure } from '../.storybook/api.ts';
 const profile = { name: 'Bee', icon: 'lucide:flower', color: 'info-strong' };
-const meta = { title: 'Account/Profile', component: ProfileSettings } satisfies Meta<
-  typeof ProfileSettings
->;
+const meta = {
+  id: 'account-profile',
+  title: 'Current production/Account/Profile',
+  component: ProfileSettings,
+} satisfies Meta<typeof ProfileSettings>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Ready: Story = {

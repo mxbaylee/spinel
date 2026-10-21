@@ -46,6 +46,7 @@ const preview: Preview = {
   initialGlobals: { theme: 'light', viewport: { value: undefined, isRotated: false } },
   parameters: {
     layout: 'fullscreen',
+    options: { storySort: { order: ['Redesign', 'Identity', 'Current production', '*'] } },
     controls: { expanded: true },
     // theme.css switches the rail to a top bar at 640px and stacks the dashboard at 600px.
     viewport: {

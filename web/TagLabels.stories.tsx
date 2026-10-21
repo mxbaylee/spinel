@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TagLabels } from './DocumentTags.tsx';
 
 const meta = {
-  title: 'Dashboard/TagLabels',
+  id: 'dashboard-taglabels',
+  title: 'Current production/Dashboard/TagLabels',
   component: TagLabels,
 } satisfies Meta<typeof TagLabels>;
 export default meta;

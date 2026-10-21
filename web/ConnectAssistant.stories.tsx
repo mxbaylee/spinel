@@ -13,7 +13,8 @@ const details = {
   expiresAt: Date.now() + 600_000,
 };
 const meta = {
-  title: 'Settings/ConnectAssistant',
+  id: 'settings-connectassistant',
+  title: 'Current production/Settings/ConnectAssistant',
   component: ConnectAssistant,
   args: { request, user: { name: 'Alex Kim', isAdmin: false } },
 } satisfies Meta<typeof ConnectAssistant>;

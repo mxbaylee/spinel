@@ -120,9 +120,11 @@ function NativeFormulaDocument({
     </section>
   );
 }
-const meta = { title: 'Docs/Native formulas', component: NativeFormulaDocument } satisfies Meta<
-  typeof NativeFormulaDocument
->;
+const meta = {
+  id: 'docs-native-formulas',
+  title: 'Current production/Docs/Native formulas',
+  component: NativeFormulaDocument,
+} satisfies Meta<typeof NativeFormulaDocument>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const InlineAndTable: Story = {};

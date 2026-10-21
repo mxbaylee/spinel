@@ -12,3 +12,7 @@ export const HistoryEmpty: Story = { render: () => <HistoryMockup state="empty" 
 export const HistoryError: Story = { render: () => <HistoryMockup state="error" /> };
 export const ExportPreparing: Story = { render: () => <EditorMockup exportState="loading" /> };
 export const ExportFailed: Story = { render: () => <EditorMockup exportState="error" /> };
+
+export const OfflineSaveFailed: Story = {
+  render: () => <EditorMockup offline saveState="failed" />,
+};

@@ -3,7 +3,8 @@ import { fn } from 'storybook/test';
 import { Rail } from './Rail.tsx';
 
 const meta = {
-  title: 'Shell/Rail',
+  id: 'shell-rail',
+  title: 'Current production/Shell/Rail',
   component: Rail,
   // theme.css styles the rail only as the direct <header> of .workspace, so render
   // it there instead of inside the default <main> shell.

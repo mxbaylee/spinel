@@ -3,7 +3,8 @@ import { failure, pending } from '../.storybook/api.ts';
 import { AccessTokens } from './AccessTokens.tsx';
 
 const meta = {
-  title: 'Admin/AccessTokens',
+  id: 'admin-accesstokens',
+  title: 'Current production/Admin/AccessTokens',
   component: AccessTokens,
   args: { admin: true },
 } satisfies Meta<typeof AccessTokens>;

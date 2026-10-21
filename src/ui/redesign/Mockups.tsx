@@ -743,6 +743,8 @@ export function DashboardMockup({
   state?:
     | 'populated'
     | 'empty'
+    | 'empty-trash'
+    | 'empty-shared'
     | 'loading'
     | 'error'
     | 'search'
@@ -766,14 +768,20 @@ export function DashboardMockup({
       date: string;
       tags: string;
     }[]
-  >([...files, ...deletedFixtures]);
+  >(
+    state === 'empty'
+      ? []
+      : [...files, ...(state === 'empty-trash' ? [] : deletedFixtures)].filter(
+          (file) => state !== 'empty-shared' || file.access === 'owner',
+        ),
+  );
   const nextFileId = useRef(0);
   const [target, setTarget] = useState('');
   const [destination, setDestination] = useState('fixture-Household');
   const [view, setView] = useState(
-    state === 'trash'
+    state === 'trash' || state === 'empty-trash'
       ? 'Trash'
-      : state === 'shared'
+      : state === 'shared' || state === 'empty-shared'
         ? 'Shared with me'
         : state === 'folder'
           ? 'fixture-Household'
@@ -801,7 +809,10 @@ export function DashboardMockup({
     setKind('all');
   };
 
-  const [trashed, setTrashed] = useState<string[]>(deletedFixtures.map((file) => file.id));
+  const [trashed, setTrashed] = useState<string[]>(
+    state === 'empty' || state === 'empty-trash' ? [] : deletedFixtures.map((file) => file.id),
+  );
+  const [retried, setRetried] = useState(false);
   const [layout, setLayout] = useState(initialLayout);
   const currentFolder = items.find((item) => item.kind === 'folder' && item.id === view);
   const folderAncestors: { id: string; name: string }[] = [];
@@ -849,6 +860,21 @@ export function DashboardMockup({
     return false;
   };
   const empty = state === 'empty' || rows.length === 0;
+  const targetName = items.find((item) => item.id === target)?.name ?? 'this file';
+  const creating = ['Doc', 'Sheet', 'Space', 'Folder'].includes(dialog);
+  const actionLabel = creating
+    ? `Create ${dialog}`
+    : dialog === 'Rename…'
+      ? 'Rename'
+      : dialog === 'Move…'
+        ? 'Move'
+        : dialog === 'File into folder'
+          ? 'File into folder'
+          : dialog === 'Tags'
+            ? 'Save tags'
+            : dialog === 'Delete permanently'
+              ? 'Delete permanently'
+              : 'Done';
   return (
     <Shell
       sidebar
@@ -1003,20 +1029,32 @@ export function DashboardMockup({
           <div className="rd-empty" role="status">
             Loading your files…
           </div>
-        ) : state === 'error' ? (
+        ) : state === 'error' && !retried ? (
           <div className="rd-empty">
             <h2>Could not load your files.</h2>
             <p role="alert">Check your connection and try again.</p>
-            <Button onClick={() => setNotice('Trying again…')}>Try again</Button>
+            <Button onClick={() => setRetried(true)}>Try again</Button>
           </div>
         ) : empty ? (
           <div className="rd-empty">
             <EntityIcon kind="doc" size={48} />
-            <h2>{hasFilters ? 'No matching files' : 'Room for your next idea'}</h2>
+            <h2>
+              {hasFilters
+                ? 'No matching files'
+                : view === 'Trash'
+                  ? 'Trash is empty'
+                  : view === 'Shared with me'
+                    ? 'No shared files yet'
+                    : 'Room for your next idea'}
+            </h2>
             <p>
               {hasFilters
                 ? 'Try another name or clear your filters.'
-                : 'Choose New to start a Doc, Sheet or Space.'}
+                : view === 'Trash'
+                  ? 'Files you delete will appear here so you can restore them.'
+                  : view === 'Shared with me'
+                    ? 'Files shared with your account will appear here.'
+                    : 'Choose New to start a Doc, Sheet or Space.'}
             </p>
             {hasFilters && <Button onClick={clearFilters}>Clear filters</Button>}
           </div>
@@ -1193,8 +1231,26 @@ export function DashboardMockup({
         />
       )}
       <Modal
-        title={dialog || 'New file'}
-        description="Changes in this review stay in the preview."
+        title={
+          dialog === 'Delete permanently'
+            ? `Delete “${targetName}” permanently?`
+            : creating
+              ? `New ${dialog}`
+              : `${dialog.replace('…', '')} · ${targetName}`
+        }
+        description={
+          dialog === 'Delete permanently'
+            ? `This permanently removes “${targetName}”. You cannot undo this or restore it from Trash.`
+            : creating
+              ? `Choose a name for your new ${dialog.toLowerCase()}.`
+              : dialog === 'Tags'
+                ? 'Your tags help you find this file and are visible only to you.'
+                : dialog === 'Share…'
+                  ? 'Manage who can open this file.'
+                  : dialog === 'Rename…'
+                    ? 'Choose a new name for this file.'
+                    : 'Choose the destination folder.'
+        }
         open={Boolean(dialog) && dialog !== 'Import file…'}
         onOpenChange={(open) => {
           if (!open) setDialog('');
@@ -1226,16 +1282,14 @@ export function DashboardMockup({
                 : 'Move this file to another folder.'}
             </p>
           </>
-        ) : dialog === 'Delete permanently' ? (
-          <p>This cannot be undone.</p>
-        ) : (
+        ) : dialog === 'Delete permanently' ? null : (
           <label>
             {dialog === 'Tags' ? 'Tags' : 'Name'}
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Untitled" />
           </label>
         )}
         <div className="sp-actions">
-          <Button onClick={() => setDialog('')}>Cancel</Button>
+          {dialog !== 'Share…' && <Button onClick={() => setDialog('')}>Cancel</Button>}
           <Button
             primary
             onClick={() => {
@@ -1278,11 +1332,16 @@ export function DashboardMockup({
                     file.id === target ? { ...file, parentId: destination || null } : file,
                   ),
                 );
-              setNotice(`${dialog}: ${name || 'Untitled'}`);
+              if (dialog !== 'Share…')
+                setNotice(
+                  dialog === 'Delete permanently'
+                    ? `${targetName} was deleted permanently.`
+                    : `${actionLabel}: ${name || targetName}`,
+                );
               setDialog('');
             }}
           >
-            Continue
+            {actionLabel}
           </Button>
         </div>
       </Modal>
@@ -1569,17 +1628,23 @@ export function EditorMockup({
           </div>
         </div>
         {!isSpaceTrash && (
-          <div className="rd-status-slot">
+          <div
+            className="rd-status-slot"
+            role="status"
+            aria-label="Document save status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             <DetailsPopover
               label={
-                offline
-                  ? guest
-                    ? 'Reconnecting'
-                    : '↻ Waiting to sync'
-                  : viewOnly
-                    ? 'Connected'
-                    : saveState === 'failed'
-                      ? 'Could not save'
+                saveState === 'failed' && !viewOnly
+                  ? 'Could not save'
+                  : offline
+                    ? viewOnly
+                      ? 'Offline'
+                      : 'Offline · keep open'
+                    : viewOnly
+                      ? 'Connected'
                       : saveState === 'saving'
                         ? 'Saving…'
                         : '✓ Saved'
@@ -1587,9 +1652,9 @@ export function EditorMockup({
             >
               <p>
                 {offline
-                  ? guest
-                    ? 'Connection lost. Keep this page open while we reconnect; unsent changes may be lost if you close it.'
-                    : 'Saved on this device. Your changes will sync when you reconnect.'
+                  ? viewOnly
+                    ? 'Connection lost. Showing the last loaded content while we reconnect.'
+                    : 'Connection lost. Keep this page open; your latest changes have not been confirmed saved.'
                   : viewOnly
                     ? 'You can view this document. You’re connected.'
                     : saveState === 'failed'
@@ -1598,7 +1663,11 @@ export function EditorMockup({
                         ? 'Saving your latest changes. Keep this page open.'
                         : 'All changes are saved. You’re connected.'}
               </p>
-              {saveState === 'failed' && <Button onClick={onRetrySave}>Retry saving</Button>}
+              {saveState === 'failed' && (
+                <Button disabled={offline} onClick={onRetrySave}>
+                  Retry saving
+                </Button>
+              )}
               {offline && <Button onClick={() => setNotice('Reconnecting…')}>Try again</Button>}
             </DetailsPopover>
           </div>
@@ -1671,17 +1740,15 @@ export function EditorMockup({
           <span>≡</span>
         </div>
       )}
-      {saveState === 'failed' && !viewOnly && (
-        <div className="rd-banner" role="alert">
-          Your latest changes have not been saved. Keep this page open.{' '}
-          <Button onClick={onRetrySave}>Retry saving</Button>
-        </div>
-      )}
-      {offline && guest && (
-        <div className="rd-banner" role="alert">
-          Connection lost. Keep this page open to protect unsent changes.
-        </div>
-      )}
+      <span className="rd-live-alert" role="alert">
+        {!isSpaceTrash &&
+          !viewOnly &&
+          (saveState === 'failed'
+            ? 'Your latest changes have not been saved. Keep this page open.'
+            : offline
+              ? 'Connection lost. Keep this page open to protect unsent changes.'
+              : '')}
+      </span>
       <div className="rd-editor-body">
         {selected === 'Trash' && space ? (
           <div className="rd-content">
@@ -2725,6 +2792,7 @@ export function AdminMockup({
   section?: string;
 }) {
   const [tab, setTab] = useState(section);
+  const [accountsRetried, setAccountsRetried] = useState(false);
   const [healthRetried, setHealthRetried] = useState(false);
   const health = healthRetried ? 'ready' : state;
   const [confirm, setConfirm] = useState(state === 'disable' ? 'Alex Kim' : '');
@@ -2784,8 +2852,11 @@ export function AdminMockup({
           )}
           {state === 'loading' ? (
             <p role="status">Loading accounts…</p>
-          ) : state === 'error' ? (
-            <p role="alert">Could not load accounts. Try again.</p>
+          ) : state === 'error' && !accountsRetried ? (
+            <div role="alert">
+              <p>Could not load accounts. Try again.</p>
+              <Button onClick={() => setAccountsRetried(true)}>Try again</Button>
+            </div>
           ) : tab === 'People' ? (
             (firstRun ? ['Operator (you)'] : ['Operator (you)', 'Alex Baylee', 'Alex Kim']).map(
               (person) => (

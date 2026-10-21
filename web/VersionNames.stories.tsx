@@ -18,7 +18,8 @@ const versions: HistoryVersion[] = [
 const loaded = { [history]: { versions, canName: true } };
 
 const meta = {
-  title: 'Editor/VersionNames',
+  id: 'editor-versionnames',
+  title: 'Current production/Editor/VersionNames',
   component: VersionNames,
   args: { id, saved: true },
 } satisfies Meta<typeof VersionNames>;

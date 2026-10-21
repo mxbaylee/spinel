@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { OfflineBadge, OfflineBanner, OfflineUnreachable } from './OfflineStatus.tsx';
 
 const meta = {
-  title: 'Dashboard/OfflineBadge',
+  id: 'dashboard-offlinebadge',
+  title: 'Current production/Dashboard/OfflineBadge',
   component: OfflineBadge,
 } satisfies Meta<typeof OfflineBadge>;
 export default meta;

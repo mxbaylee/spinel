@@ -87,7 +87,8 @@ function AppLayout() {
 }
 
 const meta = {
-  title: 'Shell/AppLayout',
+  id: 'shell-applayout',
+  title: 'Current production/Shell/AppLayout',
   component: AppLayout,
   // This story is the shell, so the preview must not wrap it in another one.
   parameters: { shell: 'none' },
