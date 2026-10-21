@@ -217,8 +217,8 @@
 .sp-segments {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px;
+  gap: 0;
+  padding: 2px;
   border: 1px solid var(--sp-border);
   border-radius: 32px;
   background: var(--sp-bg);
@@ -230,8 +230,8 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   box-sizing: border-box;
   border: 2px solid transparent;
   border-radius: 50%;
@@ -239,8 +239,14 @@
   outline: none;
 }
 .sp-segment svg {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
+}
+@media (any-pointer: coarse) {
+  .sp-segment {
+    width: 44px;
+    height: 44px;
+  }
 }
 .sp-segment[data-checked] {
   background: var(--sp-panel);

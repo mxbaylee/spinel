@@ -231,8 +231,24 @@ personal file navigation or service dependency. Decision #126.
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
-visible focus and at least 44 px targets. Expanded navigation shows the control
+visible focus and at least 44 px targets on touch devices. Expanded navigation shows the control
 on its own row above Profile. Collapsed/phone utilities open it in a popover;
 Profile reuses it. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
 must report a storage failure without undoing the in-session theme choice.
+
+
+## Whole-product review follow-up
+
+Owner feedback (chat, 2026-10-20): the presentation overemphasized signed-in
+My files. Individual compositions do not yet demonstrate complete journeys.
+The next review must foreground the homepage, sign-in, settings, Admin, initial
+Operator setup, Sheet and Doc screens, including transitions and recovery states.
+Existing compositions remain proposals, not approval of those flows. The homepage
+needs an explicit proposal; sign-in alone does not cover arrival.
+
+Shrink the appearance group to 32 px segments with 18 px glyphs on pointer
+desktops; retain 44 px targets on touch. File metadata pairs each Doc/Sheet/Space
+label with its existing 16 px entity icon, alongside the separate decorative
+filename emoji. Owner and Collaborator gain faster recognition without enlarging
+the row; guest identity and Operator access remain unchanged. Decision #126.

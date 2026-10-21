@@ -237,6 +237,15 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.rd-file-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  vertical-align: middle;
+}
+.rd-file-type .entity-icon {
+  flex: none;
+}
 .rd-file-date {
   color: var(--sp-muted);
   font-size: 0.75rem;

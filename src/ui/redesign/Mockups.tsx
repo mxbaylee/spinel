@@ -854,8 +854,19 @@ export function DashboardMockup({
                   <span>
                     <strong>{file.name}</strong>
                     <small>
-                      {file.kind !== 'folder' &&
-                        `${file.kind === 'doc' ? 'Doc' : file.kind === 'sheet' ? 'Sheet' : 'Space'} · `}
+                      {file.kind !== 'folder' && (
+                        <>
+                          <span className="rd-file-type">
+                            <EntityIcon kind={file.kind} size={16} />
+                            {file.kind === 'doc'
+                              ? 'Doc'
+                              : file.kind === 'sheet'
+                                ? 'Sheet'
+                                : 'Space'}
+                          </span>
+                          {' · '}
+                        </>
+                      )}
                       {file.detail}
                       {file.tags && ` · ${file.tags}`}
                     </small>
