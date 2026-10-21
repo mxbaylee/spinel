@@ -4,12 +4,20 @@ import type { IMember } from '@univerjs/protocol';
 import { CollaborationSessionService } from '@univerjs-pro/collaboration-client';
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { DocSelectionRenderService } from '@univerjs/docs-ui';
-import { presencePrototypeEnabled, startPresencePrototype } from './PresencePrototype.tsx';
+import { drawPresence, setLocalSelectionColor } from '@spinel/presence-ui';
+import { SheetsScrollRenderController } from '@univerjs/sheets-ui';
+import { avatarProfile } from '../src/profile/profile.ts';
+import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
+import { palettes } from '../src/ui/palette.ts';
+import { getTheme, watchTheme } from '../src/ui/theme.ts';
+import { PresenceLabel } from './PresenceLabel.tsx';
 
 export interface Collaborator {
   id: string;
   name: string;
   color: string;
+  foreground?: string;
+  icon?: string;
   selection?: string;
   jump?: () => void;
 }
@@ -17,13 +25,17 @@ function Badge({ person }: { person: Collaborator }) {
   return (
     <button
       className="collaborator-badge"
-      style={{ backgroundColor: person.color }}
+      style={{
+        backgroundColor: person.color,
+        color: person.foreground ?? '#ffffff',
+        borderRadius: 8,
+      }}
       aria-label={person.jump ? `Go to ${person.name}` : `${person.name} is here`}
       data-selection={person.selection}
       onClick={person.jump}
       aria-disabled={!person.jump}
     >
-      <span aria-hidden="true">{person.name.trim().slice(0, 1).toLocaleUpperCase() || '●'}</span>
+      <ProfileIcon icon={person.icon ?? 'lucide:user-round'} />
       <span className="collaborator-name">{person.name}</span>
     </button>
   );
@@ -53,8 +65,6 @@ export async function watchPresence(
   publish: (people: Collaborator[]) => void,
 ) {
   const session = await univer.__getInjector().get(CollaborationSessionService).requireSession(id);
-  const prototype = presencePrototypeEnabled();
-  const stopPrototype = prototype ? await startPresencePrototype(univer, api, id) : () => {};
   let members: IMember[] = [];
   const selections = new Map<string, string>();
   const popups = new Map<string, IDisposable>();
@@ -62,11 +72,17 @@ export async function watchPresence(
     for (const popup of popups.values()) popup.dispose();
     popups.clear();
     const people = members.map((member) => {
+      const profile = avatarProfile(member.avatar);
+      const palette = palettes[getTheme()];
       const person: Collaborator = {
         id: member.memberID,
         name: member.name,
-        color: collaboratorColor(member.userID),
+        color: profile ? palette[`fill-${profile.color}-bg`] : collaboratorColor(member.userID),
+        foreground: profile ? palette[`fill-${profile.color}-fg`] : '#ffffff',
+        icon: profile?.icon ?? 'lucide:user-round',
       };
+      if (member.memberID === session.getMemberID() && api.getActiveWorkbook?.()?.getId() === id)
+        setLocalSelectionColor(univer, id, person.color);
       const selection = selections.get(member.memberID);
       person.selection = selection;
       const book = api.getActiveWorkbook?.();
@@ -105,21 +121,28 @@ export async function watchPresence(
             const range = sheet.getRange(address);
             person.jump = () => {
               book.setActiveSheet(sheet);
-              sheet.scrollToCell(range.getRow(), range.getColumn());
-              sheet.setActiveRange(range);
+              univer
+                .__getInjector()
+                .get(IRenderManagerService)
+                .getRenderUnitById(id)
+                ?.with(SheetsScrollRenderController)
+                .scrollToRange(range.getRange());
             };
-            const popup =
-              !prototype &&
-              range.attachPopup({
-                componentKey: () => <Badge person={person} />,
-                direction: 'top-left',
-                showOnSelectionMoving: true,
-                hideOnInvisible: true,
-              });
-            if (popup) popups.set(member.memberID, popup);
           } catch {
             /* Malformed or removed remote ranges never break the local editor. */
           }
+        }
+      }
+      if (selection && book?.getId() === id && member.memberID !== session.getMemberID()) {
+        try {
+          popups.set(
+            member.memberID,
+            drawPresence(univer, api, id, selection, person.color, () => (
+              <PresenceLabel {...person} />
+            )),
+          );
+        } catch {
+          /* Stale or unsupported remote ranges must not interrupt editing. */
         }
       }
       return person;
@@ -145,8 +168,44 @@ export async function watchPresence(
       update();
     }
   });
+  const stopTheme = watchTheme(update);
+  let frame = 0;
+  const resize = () => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(update);
+  };
+  window.addEventListener('resize', resize);
+  // Keep the established cursor-only payload, including in anonymous rooms.
+  let previous = '';
+  const timer = window.setInterval(() => {
+    const memberID = session.getMemberID();
+    if (!memberID || api.getActiveWorkbook?.()?.getId() !== id) return;
+    const book = api.getActiveWorkbook?.();
+    const sheet = book?.getId() === id ? book.getActiveSheet() : undefined;
+    const range = sheet?.getActiveRange();
+    const me = members.find((member) => member.memberID === memberID);
+    if (me) {
+      const profile = avatarProfile(me.avatar);
+      setLocalSelectionColor(
+        univer,
+        id,
+        profile ? palettes[getTheme()][`fill-${profile.color}-bg`] : collaboratorColor(me.userID),
+      );
+    }
+    const selection = range ? `${sheet!.getSheetId()}!${range.getA1Notation()}` : '';
+    if (selection === previous) return;
+    previous = selection;
+    void session
+      .send({ eventID: 'update_cursor', data: { unitID: id, memberID, selection } }, id)
+      .catch(() => {
+        previous = '';
+      });
+  }, 150);
   return () => {
-    stopPrototype();
+    clearInterval(timer);
+    stopTheme();
+    window.removeEventListener('resize', resize);
+    cancelAnimationFrame(frame);
     membership.dispose();
     cursor.unsubscribe();
     for (const popup of popups.values()) popup.dispose();

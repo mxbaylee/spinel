@@ -1,5 +1,4 @@
 import { guestItemId, documentPath } from './documentAccess.ts';
-import { presencePrototypeEnabled } from './PresencePrototype.tsx';
 import { CollaborationSessions } from './CollaborationSessions.ts';
 import { UserManagerService } from '@univerjs/core';
 import type { Univer, DependencyOverride } from '@univerjs/core';
@@ -68,7 +67,7 @@ export function collaborationPlugins(
       UniverCollaborationClientUIPlugin,
       {
         enableUrlUnitLoader: false,
-        enableDocumentCollaborationUI: keepDocumentUI || !presencePrototypeEnabled(),
+        enableDocumentCollaborationUI: keepDocumentUI,
       },
     ],
   ];

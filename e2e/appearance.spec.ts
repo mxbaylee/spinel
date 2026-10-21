@@ -199,7 +199,8 @@ test('themes persist, follow the system, and recolour sheet presets without edit
       .getByRole('group', { name: 'People in this document' })
       .getByRole('button')
       .first();
-    await expect(badge).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expect(badge.locator('[data-profile-icon]')).toBeVisible();
+    await expect(badge).toHaveCSS('border-radius', '8px');
     await badge.focus();
     await expect(badge.locator('.collaborator-name')).toHaveCSS('color', 'rgb(26, 18, 37)');
     await capture('sheet-dark');

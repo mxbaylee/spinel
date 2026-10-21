@@ -1,19 +1,17 @@
-# Presence rendering prototype
+# @spinel/presence-ui
 
-SPN-036 feasibility experiment. Uses public Univer 1.1.0 APIs for temporary
-Sheet highlights and Doc text ranges, with a React icon/name label anchored to
-the selection. No document formatting is changed. The host supplies selection,
-colour and label, and owns authentication and transport.
+Private Sheet presence renderer using Univer's public APIs. Spinel supplies a
+validated cursor selection, colour and React label; this package has no account,
+network or storage dependencies. `drawPresence` returns a disposable for the
+transient range highlight and popup. `setLocalSelectionColor` styles normal local
+selections without changing document formatting or formula-reference styles.
 
-This is not ready for production: body text and single Sheet ranges only.
-The public `enableDocumentCollaborationUI: false` option caused missing-dependency
-errors in live Docs (both development and production). Docs therefore retains
-the native UI: its custom rendering is an overlay experiment, not a clean native
-cursor replacement. Sheets can run the experiment with that UI disabled.
-Remote offsets are not transformed through concurrent edits. Reflow refreshes
-geometry, but offset transformation, reconnect/expiry and multi-range/table/header
-selections need verification and implementation before adoption.
+Sheet popups use canvas containment and disappear when their cell is offscreen.
+The host owns membership cleanup, theme/resize redraw and cursor events.
 
-The app opts in with `?presencePrototype=1`. It uses two sample appearances,
-not persisted profile settings. Guest routes are excluded. Nothing is merged
-or enabled by default by this experiment.
+The SPN-036 prototype established that disabling document collaboration UI is not
+safe for Docs in Univer 1.1.0: it causes missing-dependency errors. Docs retain the
+native UI; custom Doc canvas colours belong to SPN-058 (owner, 2026-10-20).
+
+The existing cursor transport sends cell addresses, not transformed operations.
+A selection may lag while reconnecting; SPN-058 owns transport replacement.
