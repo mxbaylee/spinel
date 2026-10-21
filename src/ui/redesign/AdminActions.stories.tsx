@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { AdminMockup } from './Mockups.tsx';
 
 const meta = {
@@ -67,6 +67,7 @@ export const RetryCreateInvite: Story = {
     await expect(dialog.getByRole('combobox', { name: 'Expires in' })).toHaveTextContent('1 day');
     await expect(portal.queryByRole('textbox', { name: 'Invitation address' })).toBeNull();
     await userEvent.click(dialog.getByRole('button', { name: 'Try again' }));
+    await waitFor(() => expect(portal.queryByRole('dialog')).toBeNull());
     await expect(await portal.findByRole('heading', { name: 'Invite ready' })).toBeVisible();
     await expect(portal.getByText('Recover Alex Kim', { exact: true })).toBeVisible();
     await expect(portal.getByText('Available · Expires in 1 day')).toBeVisible();
@@ -97,7 +98,7 @@ export const RetryRemovePasskey: Story = {
     await userEvent.click(dialog.getByRole('button', { name: 'Try again' }));
     const account = within(await portal.findByRole('group', { name: 'Alex Kim account' }));
     await expect(account.getByText('Member · Active · No passkeys')).toBeVisible();
-    await expect(portal.queryByRole('dialog')).toBeNull();
+    await waitFor(() => expect(portal.queryByRole('dialog')).toBeNull());
   },
 };
 export const CancelFailedPasskeyRemoval: Story = {

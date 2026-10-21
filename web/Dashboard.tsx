@@ -10,7 +10,6 @@ import type { SearchQuery } from '../src/shared/search.ts';
 import { Trash } from './Trash.tsx';
 import { DocumentTags, TagLabels } from './DocumentTags.tsx';
 import { itemsRequest } from './itemsApi.ts';
-import { PinButton, usePins } from './Pins.tsx';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { ImportFile } from './ImportFile.tsx';
 import { SharedBadge, useSharedItems } from './SharedItems.tsx';
@@ -55,7 +54,6 @@ export function Dashboard({
   const dropTarget = useRef<HTMLElement>(null);
   const [query, setQuery] = useState<SearchQuery>({ ...emptySearch });
   const searchActive = hasSearch(query);
-  const pins = usePins();
   const shared = useSharedItems(local?.catalog.shared);
   const [sharedOpen, setSharedOpen] = useState(false);
   const draggingShared = useRef<string | null>(null);
@@ -81,8 +79,8 @@ export function Dashboard({
   // The last-loaded view for each opened folder or item, kept for offline launch.
   const views = useRef<Record<string, WorkspaceItem[]>>({ ...local?.catalog.views });
   const catalog = (): OfflineCatalog | null =>
-    loaded && shared.loaded && pins.loaded && !pins.error
-      ? { syncedAt, items, shared: shared.items, pins: pins.items, views: views.current }
+    loaded && shared.loaded
+      ? { syncedAt, items, shared: shared.items, views: views.current }
       : null;
   const offline = useOfflineDownloads(user, local, catalog);
   useEffect(() => {
@@ -152,12 +150,9 @@ export function Dashboard({
     };
   }, [currentId, refresh]);
   useEffect(() => {
-    if (!local) void pins.refresh();
-  }, [items, viewed]);
-  useEffect(() => {
     const current = catalog();
     if (current && !local) void offline.saveCatalog(current).catch(() => {});
-  }, [items, shared.items, pins.items, viewed, offline.downloads]);
+  }, [items, shared.items, viewed, offline.downloads]);
   // Offline, any item from a saved view can be opened by its stable link.
   const known = local ? Object.values(views.current).flat() : [];
   const byId = new Map(
@@ -356,7 +351,6 @@ export function Dashboard({
       return (
         <span className="item-actions">
           <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>
-          <PinButton item={item} />
           {tagButton}
           {offlineToggle(item)}
           <button
@@ -381,7 +375,6 @@ export function Dashboard({
       );
     return (
       <span className="item-actions">
-        <PinButton item={item} />
         {tagButton}
         <button disabled={busy} onClick={() => setSharing(item)} aria-label={`Share ${item.name}`}>
           Share

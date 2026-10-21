@@ -130,7 +130,14 @@ export const FormulaEmpty: Story = { render: () => <FormulaMockup state="empty" 
 export const FormulaTable: Story = { render: () => <FormulaMockup state="table" /> };
 export const HistoryCalendar: Story = { render: () => <HistoryMockup calendar /> };
 export const AdvancedSearch: Story = { render: () => <DashboardMockup state="filtered" /> };
-export const NoMatches: Story = { render: () => <DashboardMockup state="no-results" /> };
+export const NoMatches: Story = {
+  render: () => <DashboardMockup state="no-results" />,
+  play: async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getAllByRole('button', { name: 'Clear filters' }),
+    ).toHaveLength(1);
+  },
+};
 export const FilteredNoMatches: Story = {
   render: () => <DashboardMockup state="filtered" />,
   play: async ({ canvasElement }) => {
@@ -143,6 +150,7 @@ export const FilteredNoMatches: Story = {
     await userEvent.click(portal.getByRole('option', { name: /^Mine$/ }));
     await userEvent.click(canvas.getByRole('combobox', { name: 'Last modified' }));
     await userEvent.click(portal.getByRole('option', { name: 'Today' }));
+    await expect(canvas.getAllByRole('button', { name: 'Clear filters' })).toHaveLength(1);
   },
 };
 export const PlannedSpaceGuestEditor: Story = { render: () => <EditorMockup space guest /> };

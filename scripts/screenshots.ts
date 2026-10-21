@@ -581,18 +581,18 @@ try {
         await expect(
           page.getByRole('button', { name: 'Expand navigation', exact: true }),
         ).toBeFocused();
-        const pinned = page
+        const destination = page
           .getByRole('navigation', { name: 'File shortcuts' })
-          .getByRole('button', { name: 'Quarterly budget', exact: true });
+          .getByRole('button', { name: 'Shared with me', exact: true });
         // Use actual keyboard navigation so the browser enters :focus-visible mode.
         for (
           let step = 0;
-          step < 8 && !(await pinned.evaluate((node) => node === document.activeElement));
+          step < 8 && !(await destination.evaluate((node) => node === document.activeElement));
           step += 1
         )
           await page.keyboard.press('Tab');
-        await expect(pinned).toBeFocused();
-        await expect(pinned.locator('.rd-nav-tooltip')).toBeVisible();
+        await expect(destination).toBeFocused();
+        await expect(destination.locator('.rd-nav-tooltip')).toBeVisible();
         await page
           .getByRole('navigation', { name: 'File shortcuts' })
           .getByRole('button', { name: 'Shared with me', exact: true })
@@ -675,6 +675,10 @@ try {
       await expect(globalNavigation.getByRole('button', { name: /Expand|Open Space/ })).toHaveCount(
         0,
       );
+      await expect(
+        globalNavigation.getByRole('button', { name: 'My files', exact: true }),
+      ).toHaveText('');
+      await expect(page.getByRole('button', { name: 'Back to files', exact: true })).toHaveCount(0);
       if (width > 900) {
         await expect(opener).toBeHidden();
         await page.getByRole('button', { name: 'Collapse navigation', exact: true }).click();

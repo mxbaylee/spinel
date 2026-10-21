@@ -47,7 +47,7 @@ export const LocalMode: Story = {
   },
 };
 export const LocalNoData: Story = { args: { state: 'local-no-data' } };
-export const LocalNavigationKeepsPinActionsDisabled: Story = {
+export const LocalNavigation: Story = {
   args: { state: 'local', collapsed: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -55,20 +55,10 @@ export const LocalNavigationKeepsPinActionsDisabled: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Offline — not connected to Spinel' }),
     ).toBeVisible();
-    // On phone this opens the navigation dialog; desktop expands the same sidebar.
     await userEvent.click(canvas.getByRole('button', { name: 'Expand navigation' }));
-    const navigation = page.queryByRole('dialog', { name: 'Browse files' });
-    const scope = navigation ? within(navigation) : page;
-    const pins = within(scope.getByRole('region', { name: 'Pinned items' }));
-    await userEvent.click(pins.getByRole('button', { name: 'Pin actions for Quarterly budget' }));
-    await expect(await page.findByRole('menuitem', { name: 'Move down' })).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    );
-    await expect(await page.findByRole('menuitem', { name: 'Unpin' })).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    );
+    await expect(await page.findByRole('navigation', { name: /^Files$/ })).toBeVisible();
+    await expect(page.queryByRole('region', { name: 'Pinned items' })).toBeNull();
+    await expect(page.queryByRole('button', { name: /^Pin / })).toBeNull();
   },
 };
 export const LocalFolderNotOpened: Story = { args: { state: 'local-folder' } };
@@ -250,8 +240,8 @@ export const RestoreFolderDeletionBatch: Story = {
     await userEvent.click(canvas.getByRole('button', { name: /^Trips Folder/ }));
     await expect(canvas.getByRole('button', { name: /^Autumn plans / })).toBeEnabled();
     await userEvent.click(canvas.getByRole('button', { name: 'More actions for Autumn plans' }));
-    await expect(await page.findByRole('menuitem', { name: 'Pin' })).toBeEnabled();
-    await expect(page.queryByRole('menuitem', { name: 'Unpin' })).toBeNull();
+    await expect(await page.findByRole('menuitem', { name: /^Open$/ })).toBeEnabled();
+    await expect(page.queryByRole('menuitem', { name: /^(?:Pin|Unpin)$/ })).toBeNull();
     await userEvent.keyboard('{Escape}');
   },
 };
@@ -280,7 +270,7 @@ export const FolderTrashKeepsSharedFile: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: 'More actions for Quarterly budget' }),
     );
-    await expect(await page.findByRole('menuitem', { name: 'Unpin' })).toBeEnabled();
+    await expect(await page.findByRole('menuitem', { name: /^Open$/ })).toBeEnabled();
     await userEvent.keyboard('{Escape}');
     await openTrash(canvasElement);
     await expect(

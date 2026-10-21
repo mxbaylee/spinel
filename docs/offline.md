@@ -54,10 +54,10 @@ After an initial online setup in the app context they will use:
 | Layer          | Local contents and behavior                                                                                                                                                                                                                                      |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                  |
-| Catalog        | Last-synchronized authorized folder/file metadata, personal tags/pins and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                            |
+| Catalog        | Last-synchronized authorized folder/file metadata, personal tags and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                                 |
 | Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                         |
 | Changes        | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while the app is running and connected. If the live document changed meanwhile, they become a conflicted copy rather than a merge. Local-save failure remains visible. |
-| Entry points   | Stable item links support direct launch; in-app pins, offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                       |
+| Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                    |
 
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
 personal filing and source permissions: never copy inaccessible owner ancestors,
@@ -151,7 +151,7 @@ only. A full device shows "This device is out of space for offline documents."
 
 **Local data.** Each account has its own IndexedDB database,
 `spinel-offline-<account id>` (`web/offline/offlineStore.ts`), holding the user's
-ID and name, the last-synced catalog (folders, shared items, pins and each folder
+ID and name, the last-synced catalog (folders, shared items and each folder
 view opened online), downloaded bundles and image bytes. No credential, session,
 setup/invite token or guest token is stored. `localStorage['spinel.offline.account']`
 names the one account this device is prepared for. It is set by the first
@@ -185,7 +185,7 @@ session as fresh authorization.
 SPN-042's connection indicator should take that line over. Folders opened online
 are browsable, rows show **Available offline** or **Needs a connection**, and
 anything that would reach the server (New, Import, Search, Trash, sharing, tags,
-pins changes, settings for passkeys, version history) is hidden or says it needs a
+settings for passkeys, version history) is hidden or says it needs a
 connection. A downloaded Sheet or Doc opens in an open-source Univer viewer with no
 collaboration client, autosave or remote image fallback, behind the same
 permission fences as version previews (`web/snapshotViewer.ts`). Images come only
@@ -209,7 +209,7 @@ Verified by:
 - `e2e/offline.spec.ts` (production build): download a Sheet with floating,
   in-cell and background images and a Doc, check CacheStorage holds only the
   shell, keep both copies through a failed refresh, go offline and reload, then
-  check the catalog, saved pins, the badges, read-only
+  check the catalog, the badges, read-only
   Sheet and Doc views with every image from local bytes, no `/api/items`
   request and no request for an `IMAGE()` URL, a not-downloaded item, the generic
   page for `/share/`, another tab releasing the device, the next online sign-in

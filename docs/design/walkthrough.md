@@ -80,7 +80,9 @@ resets the fixture. Edits and uploads do not persist outside the preview.
 
 Can each person identify their next action, understand their access and tell
 whether work is safe? Does returning preserve useful context? Is navigation
-worth the space it occupies on desktop, and reachable on a phone? Check light,
+worth the space it occupies on desktop, and reachable on a phone? Remove
+redundant controls and repeated labels rather than only restyling them. Compact
+headers use icon-only My files; Space page headers omit a redundant Back button. Check light,
 dark and phone captures from the same proposal source before approving.
 
 System / Light / Dark stays directly visible as a three-segment control. It is
@@ -92,7 +94,9 @@ device** explains that scope; saving profile identity does not change appearance
 Trash and folders have a My files breadcrumb. Pages opens a Space's internal
 tree, with a separate My files exit. The gem wiggles on hover, keyboard focus or every tap
 unless reduced motion is preferred. Folder creation, tags and moving files update
-local fixtures; unavailable pin/passkey removal actions are explicitly disabled.
+local fixtures; unavailable passkey removal actions are explicitly disabled.
+Personal pinning and pinned-item UI are removed (owner, 2026-10-21,
+[decision #128](https://github.com/mxbaylee/spinel/issues/128)).
 
 Expand navigation reopens the collapsed sidebar; My files is the destination.
 Connection status uses a hover/focus tooltip (tap on touch), without a close

@@ -6,15 +6,14 @@ Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Dashboard, Doc, Sheet, PlannedSpace.
 
-| Current friction | Public reference pattern | Adopted proposal |
-| --- | --- | --- |
+| Current friction                                                             | Public reference pattern                                                                             | Adopted proposal                                                                                            |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | Type cues need to remain legible in a denser list and compact editor header. | Dropbox/Notion distinguish file/page types within consistent rows; no competitor artwork is adopted. | Reuse SPN-077 facets at 24 px in headers and 32 px in file rows, always accompanied by a name/type context. |
 
 No replacement artwork or palette. Space facets stay planned-only until SPN-078. Keep all current geometry, monochrome/emoji fallbacks, social-card privacy and contrast coverage.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
-
 
 Docs, Sheets and planned Spaces use a shared gem silhouette with distinct
 interior marks derived from Spinel's original faceted-heart visual language. The app logo and favicon keep their
@@ -105,7 +104,7 @@ that merely repeat path data.
 `src/ui/entityIconGeometry.ts` is the shared geometry and raw SVG exporter;
 `EntityIcon.tsx` renders those same paths with theme variables. The Storybook
 lineup offers downloadable standalone SVGs with resolved colors. Creation,
-owned/shared files, pins, search and trash use decorative icons beside labels.
+owned/shared files, search and trash use decorative icons beside labels.
 `Identity/Entity icons` covers sizes, monochrome, accessible standalone images
 and future Space placement; `Identity/Social cards` uses the real PNG renderer
 at build time, including the static Space sample. No new dependency or rendering

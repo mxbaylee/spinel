@@ -1,16 +1,30 @@
 # Component, section and journey review
 
-Status: **in progress; no whole-product grade**. The earlier 96 scores applied to sampled composed views and must not be used as catalog-wide completion or acceptance. Owner requested this stricter review in chat, 2026-10-20.
+Status: **rendered component and section inspections completed for the evidence sets below; full stricter interaction CI pending; owner approval withheld**. This is not whole-product acceptance. The earlier 96 scores applied to sampled composed views and must not be used as catalog-wide completion. Owner requested this stricter review in chat, 2026-10-20.
 
-Inventory baseline: commit `f9cdff3af5d3e99455255aaf7274e15053e4ccef` contains **35 existing story families and 45 total families** (nine Redesign families plus the new Favicon family). One family means one story file/meta title. Earlier “44 families” reporting was inaccurate. At `5655c2c`, the source catalog contains **61 families and 641 exported story specimens** (a source count, not a completed render count). The 16 families added during this audit are listed below.
+Current source inventory after pin removal and loading additions: **59 families and 632 exported story specimens**. App CI passed at `c904`; focused `dd286` passed 85 captures / 34 explicit checks, and focused `c904` passed 65 captures. The full `c904` run finished with two failing modal-close assertions; it is not a passing run. The current source waits for portal dismissal before asserting the resulting state. The protected-Operator badge repair at `00cc641` passed focused run 39561831008; all ten captures were visually inspected without overflow. Older failed runs remain historical evidence, not interaction passes.
+
+The current family summaries below reconcile the recorded reviews. All five variants means light, dark, phone, phone-dark and tablet. Reviewers screened the 97 states across editor-related families, 122 retrieval/administration/connection states, 40 entry/consent/theme/picker states, retained/shared controls and composed sections; focused runs replaced specified stale or intermediate renders. Four Tags-dialog variants still lack their intended final-state captures. The historical audit from “Evidence and review provenance” onward is preserved with its original chronology.
+
+Inventory baseline: commit `f9cdff3af5d3e99455255aaf7274e15053e4ccef` contains **35 existing story families and 45 total families** (nine Redesign families plus the new Favicon family). One family means one story file/meta title. Earlier “44 families” reporting was inaccurate. At `5655c2c`, the source catalog contained **61 families and 641 exported story specimens** (a source count, not a completed render count). The families added during this audit are listed below; the retired Pins family is retained only as a historical note.
 
 A baseline screenshot is a comparison, not a redesigned equivalent. A changed label or catalog group does not count as UI work. “State coverage present” means source specimens exist, not that visual/interaction review is complete. Production migration remains separate; the proposal must still specify every in-scope behavior.
 
 For each component, acceptance needs exact current stories, light/dark/phone inspection, relevant keyboard/touch/pending/error/empty behavior, and a finding disposition. Section reviews assess composition and transitions. Persona reviews run after component gaps are reconciled. An unresolved gap cannot disappear into an average score.
 
+## Current scope change, 2026-10-21
+
+The owner explicitly removed personal pinning and all pinned-item UI from this
+branch. PinButton, PinnedSidebar and Redesign/Pins are retired feature specimens,
+not required proposal states or migration work. Earlier pin-related review
+results below are historical and cannot justify retaining the feature. Catalog
+counts exclude the three removed pin families and include the new Loading family; current capture acceptance requires a new run.
+Review by subtraction also removes redundant Space-page Back controls and uses
+icon-only My files in compact headers; see the playbook criterion.
+
 ## Identity/Entity icons
 
-**Reused.** Actual EntityIcon artwork is embedded in file rows. Review dark/phone and long-title context.
+**Reused; visually inspected.** Actual EntityIcon artwork is embedded in file rows. Retained identity inspection covered all five variants, with file-row and long-title context reviewed in the composed retrieval screens. This is reuse, not a replacement component.
 
 Source: [src/ui/EntityIcon.stories.tsx](../../src/ui/EntityIcon.stories.tsx). Baseline family: yes.
 
@@ -18,7 +32,7 @@ States inventoried: Standalone, Lineup, InContext, Monochrome, Phone.
 
 ## Identity/Favicon
 
-**Changed.** Tight framing and automatic theme variants; dark rotation rendered at 16/32/64px. Fresh CI evidence pending.
+**Changed; visually inspected.** Tight framing, automatic theme variants and dark rotation were inspected at 16/32/64px in the retained identity pass. No new favicon finding; this does not certify browser installation/cache behavior.
 
 Source: [src/ui/Favicon.stories.tsx](../../src/ui/Favicon.stories.tsx). Baseline family: no.
 
@@ -34,7 +48,7 @@ States inventoried: Default, Disabled, Applying, Failed.
 
 ## Current production/Shell/GemLogo
 
-**Reused with changed activation.** Actual artwork reused; new tap replay helper used in preview. Production callers unchanged. Repeated-tap/reduced-motion story added.
+**Reused with changed activation; visually inspected.** Actual artwork and preview tap replay are represented in the five-variant identity pass. Repeated activation/reduced-motion stories exist; catalog-wide interaction validation remains pending. Production callers remain unchanged.
 
 Source: [src/ui/GemLogo.stories.tsx](../../src/ui/GemLogo.stories.tsx). Baseline family: yes.
 
@@ -42,7 +56,7 @@ States inventoried: Rail, Large, TapReplay.
 
 ## Identity/Social cards
 
-**Retained baseline.** Existing generated cards remain; verify all seven variants before retaining without changes.
+**Retained baseline; visually inspected.** All seven variants were retained after the identity pass, with a minor trailing-emoji cosmetic note. They were not redesigned or counted as replacement components.
 
 Source: [src/ui/SocialCards.stories.tsx](../../src/ui/SocialCards.stories.tsx). Baseline family: yes.
 
@@ -50,7 +64,7 @@ States inventoried: Generic, Document, Spreadsheet, Emoji, LongTitle, LongWord, 
 
 ## Current production/Settings/ThemeSettings
 
-**Implemented proposal; rendered review pending.** ThemeMenu uses the actual preference store. New blocked-storage story verifies the live theme changes while the saved value stays unchanged, with warning and cleanup.
+**Baseline retained; proposal visually inspected.** ThemeMenu uses the actual preference store. Storage failure keeps the live theme and warns that persistence failed; the repaired dismissible warning has a dedicated story. The compact control is also verified in fresh entry compositions. Full interaction CI remains pending.
 
 Source: [src/ui/ThemeSettings.stories.tsx](../../src/ui/ThemeSettings.stories.tsx). Baseline family: yes.
 
@@ -58,7 +72,7 @@ States inventoried: Default, FollowSystem, StorageBlocked.
 
 ## Redesign/Controls
 
-**Changed; demo repaired, unverified.** Base UI controls. Replaced unrelated theme selector inside Trash dialog with coherent Move/Destination example.
+**Changed; visually inspected in all five variants.** Base UI controls use a coherent Move/Destination example. Disabled/error states and coarse-pointer controls were reviewed with no new visual blocker; full interaction CI remains pending.
 
 Source: [src/ui/redesign/Controls.stories.tsx](../../src/ui/redesign/Controls.stories.tsx). Baseline family: no.
 
@@ -66,23 +80,23 @@ States inventoried: Default, Disabled, Error.
 
 ## Redesign/File dialogs
 
-**Implemented proposal; rendered review pending.** FileMutation adds create/rename/move/file-into-folder pending/error/retry, retained drafts and original placement. FolderSharing enforces account-only folder access.
+**Proposal visually inspected; four final-state captures outstanding.** Fresh `dd286` renders cover create, rename, move, file-into-folder, share, folder sharing and permanent delete in all five variants. `c904` supplies the exact-tag-filter final state. Tags still needs four variants to replace old prerequisite-menu captures. Folder access is account-only; pending/failure behavior is covered separately by File mutations.
 
 Source: [src/ui/redesign/DashboardActions.stories.tsx](../../src/ui/redesign/DashboardActions.stories.tsx). Baseline family: no.
 
-States inventoried: CreateDoc, Rename, Move, FileIntoFolder, Tags, Share, DeletePermanently, EmptyTrash, EmptyShared.
+States inventoried: CreateDoc, Rename, Move, FileIntoFolder, Tags, PersonalTagsAndExactFilter, FolderHasNoTagsAction, Share, FolderSharing, DeletePermanently, EmptyTrash, EmptyShared.
 
 ## Redesign/Editor recovery
 
-**Partial.** History load/empty/error and export failure exist; component-specific mutation gaps are tracked above.
+**Proposal visually inspected in all five variants.** History loading/empty/error and export/PDF/unsaved/offline recovery are represented. Fresh `dd286` confirms Reconnect is distinct from disabled save retry and retains unsaved status. Export and network transitions are local fixtures; full interaction CI remains pending.
 
 Source: [src/ui/redesign/EditorStates.stories.tsx](../../src/ui/redesign/EditorStates.stories.tsx). Baseline family: no.
 
-States inventoried: HistoryLoading, HistoryEmpty, HistoryError, ExportPreparing, ExportFailed, OfflineSaveFailed.
+States inventoried: HistoryLoading, HistoryEmpty, HistoryError, ExportPreparing, ExportFailed, ExportPdfFailed, ExportUnsaved, ExportOffline, ExportPdfRetry, OfflineSaveFailed, OfflineReconnect.
 
 ## Redesign/Import file
 
-**Proposed state coverage present.** See ImportFile mapping; no independent completion claim.
+**Proposal visually inspected in all five variants.** Eight states cover limits, validation, pending, failure and completion. Pending dismissal stays disabled with destination/status visible. Real import execution is outside this fixture review; full interaction CI remains pending.
 
 Source: [src/ui/redesign/ImportReview.stories.tsx](../../src/ui/redesign/ImportReview.stories.tsx). Baseline family: no.
 
@@ -90,7 +104,7 @@ States inventoried: Default, LimitsOpen, UnsupportedFile, NotJson, TooManyFiles,
 
 ## Redesign/Screens
 
-**Partial compositions.** Composed screens do not establish embedded component parity. Follow component rows and section review.
+**Compositions visually inspected in all five variants.** Files, entry, editor, history, sharing, settings, administration and planned Spaces received section review. Fresh focused renders verify entry theme controls, This device spacing and honest planned Space restoration. Illustrative editor screens do not substitute for native editor evidence; future-feature controls remain labeled planned.
 
 Source: [src/ui/redesign/Mockups.stories.tsx](../../src/ui/redesign/Mockups.stories.tsx). Baseline family: no.
 
@@ -98,7 +112,7 @@ States inventoried: Dashboard, SidebarLongDisplayName, EmptyFolder, LoadingFiles
 
 ## Redesign/Native editors
 
-**Changed; targeted visual evidence.** Real OSS Univer; bounded viewport and viewer fences. 390×600 deployed Doc inspected after scrolling; full CI pending.
+**Real OSS Univer; fresh visual and focused interaction evidence.** `dd286` supplies all five native stories in all five variants plus short-phone scroll checks. Skeleton/resize gaps have rendered replacements; the toolbar remains below app navigation. Native Docs still require horizontal scrolling on phones, retain white page content in dark mode and keep the title/action chrome visible. Full catalog CI remains pending.
 
 Source: [src/ui/redesign/NativeEditors.stories.tsx](../../src/ui/redesign/NativeEditors.stories.tsx). Baseline family: no.
 
@@ -106,7 +120,7 @@ States inventoried: Sheet, Doc, SheetViewer, DocViewer, SheetFormula.
 
 ## Redesign/Review states
 
-**Partial aggregate.** Presence of named recovery specimens does not certify absent component states.
+**Proposal visually inspected.** Profile/backup and consent specimens were screened in all five variants. Consent recovery now connects to Settings or the everyday-account journey; simulated authentication/network effects remain explicit. A named aggregate state is not evidence of unchanged production-component migration.
 
 Source: [src/ui/redesign/ReviewStates.stories.tsx](../../src/ui/redesign/ReviewStates.stories.tsx). Baseline family: no.
 
@@ -114,7 +128,7 @@ States inventoried: ProfileLoading, ProfileLoadError, ProfileSaving, ProfileSave
 
 ## Redesign/Access tokens
 
-**Proposed state coverage present.** See personal/Admin AccessTokens mapping; CI and manual review required.
+**Proposal visually inspected in all five variants.** All 19 personal/Operator states were reviewed, including manual copy, long names and pending dismissal. Operator metadata remains read-only. Full interaction CI remains pending; production token operations are not exercised by the proposal.
 
 Source: [src/ui/redesign/TokenManager.stories.tsx](../../src/ui/redesign/TokenManager.stories.tsx). Baseline family: no.
 
@@ -122,15 +136,15 @@ States inventoried: Loaded, Empty, Loading, LoadFailed, Creating, Created, Creat
 
 ## Redesign/Walkthrough
 
-**Partial end-to-end proposal.** Main persona journeys connected; unresolved component states remain. Local fixtures simulate auth/save/sharing, not production integration.
+**Connected proposal visually inspected, with focused interaction evidence.** Four-persona journeys and editor compositions were reviewed; fresh entry/Doc-return renders and `dd286` native/full-editor captures replace stale evidence. Local fixtures simulate auth/save/sharing and generic native document content. This is not production end-to-end validation or whole-product acceptance.
 
 Source: [src/ui/redesign/Walkthrough.stories.tsx](../../src/ui/redesign/Walkthrough.stories.tsx). Baseline family: no.
 
-States inventoried: Owner, Collaborator, Operator, ReturningOperator, LinkGuest, Homepage, SignIn, PasskeyPending, SignInCancelled, SignInError, Invitation, Recovery, InvalidSetup, Settings, Administration, Sheet, Doc, SheetFullEditor, DocFullEditor, OperatorHelp.
+States inventoried: Owner, Collaborator, Operator, ReturningOperator, LinkGuest, Homepage, SignIn, PasskeyPending, SignInCancelled, SignInError, Invitation, Recovery, InvalidSetup, Settings, Administration, Sheet, Doc, SheetFullEditor, DocFullEditor, OperatorHelp, DocReturnToFiles.
 
 ## Current production/Settings/AccessTokens
 
-**Proposed state coverage present.** TokenManager maps personal and Operator baseline states. Per-state rendered review and interaction evidence still required.
+**Baseline unchanged; proposed equivalent visually inspected.** TokenManager covers the personal states in the 19-state five-variant review, including manual copy and failures. This does not mean the production component was migrated. Full interaction CI remains pending.
 
 Source: [web/AccessTokens.stories.tsx](../../web/AccessTokens.stories.tsx). Baseline family: yes.
 
@@ -138,7 +152,7 @@ States inventoried: Loaded, Empty, Loading, LoadFailed, Creating, Created, Creat
 
 ## Current production/Admin/AccessTokens
 
-**Proposed state coverage present.** TokenManager maps personal and Operator baseline states. Per-state rendered review and interaction evidence still required.
+**Baseline unchanged; proposed equivalent visually inspected.** TokenManager retains read-only Operator metadata, empty/loading/error variants and no personal token controls. Full interaction CI remains pending.
 
 Source: [web/AdminAccessTokens.stories.tsx](../../web/AdminAccessTokens.stories.tsx). Baseline family: yes.
 
@@ -146,7 +160,7 @@ States inventoried: Loaded, Empty, Loading, LoadFailed.
 
 ## Current production/Admin/AdminInvites
 
-**Implemented proposal; rendered review pending.** Explicit pending/failure/retry for create/revoke, retained choices on failure, and used/expired/revoked fixtures added in AdminActions.
+**Baseline unchanged; proposed equivalent visually inspected.** AdminActions covers create/revoke pending/failure/retry, retained choices and used/expired/revoked invitations in the 27-state five-variant review. Full interaction CI remains pending.
 
 Source: [web/AdminInvites.stories.tsx](../../web/AdminInvites.stories.tsx). Baseline family: yes.
 
@@ -154,7 +168,7 @@ States inventoried: Loaded, Empty, RecoveryInvite, InviteCreated, LoadFailed, Cr
 
 ## Current production/Admin/AdminUsers
 
-**Implemented proposal; rendered review pending.** Disable/passkey-removal pending/failure/retry, last-Operator credential protection and consequences added in AdminActions. Multi-passkey Operator removal keeps a remaining credential protected.
+**Baseline unchanged; proposed equivalent visually inspected.** Disable/passkey-removal recovery and protected-last-credential behavior were reviewed. `c904` shows successful removal with the remaining Operator credential protected. Its narrow badge overflow is fixed at `00cc641`; focused run 39561831008 passed all ten captures, independently inspected without overflow. Full interaction CI remains pending.
 
 Source: [web/AdminUsers.stories.tsx](../../web/AdminUsers.stories.tsx). Baseline family: yes.
 
@@ -162,7 +176,7 @@ States inventoried: Loaded, LastAdminPasskey, LoadFailed, ConfirmDisable, Confir
 
 ## Current production/Shell/AppLayout
 
-**Changed composition; rendered review pending.** Optional sidebar/compact site navigation and responsive focus handling now share real proposal pin state. Local-mode composition added; native editor viewport evidence must be refreshed.
+**Baseline unchanged; proposed composition visually inspected.** Responsive site navigation, local mode and composed sections were reviewed. The earlier pin-specific navigation evidence is superseded by feature removal; `dd286` replaces old native viewport gaps. Production layout migration remains separate.
 
 Source: [web/AppLayout.stories.tsx](../../web/AppLayout.stories.tsx). Baseline family: yes.
 
@@ -170,7 +184,7 @@ States inventoried: Desktop, Tablet, Phone.
 
 ## Current production/Settings/AssistantConnections
 
-**Repair implemented; unverified.** New ConnectionsReview reuses all 13 baseline contracts in16 stories. Failure preserves active access; duplicate clients differentiated by origin. Integrated into Settings/Admin; CI/review pending.
+**Baseline unchanged; proposed equivalent visually inspected in all five variants.** ConnectionsReview maps all 13 baseline contracts in 16 stories, including same-name origins and failed disconnect preserving active access. Settings/Admin compositions retain the metadata boundary. Full interaction CI remains pending.
 
 Source: [web/AssistantConnections.stories.tsx](../../web/AssistantConnections.stories.tsx). Baseline family: yes.
 
@@ -178,7 +192,7 @@ States inventoried: Loaded, Empty, Loading, LoadFailed, Disconnecting, Disconnec
 
 ## Current production/Admin/BackupStatus
 
-**Proposed state coverage present.** Eight health/loading/error variants are present. Per-state rendered review still required.
+**Baseline unchanged; proposed equivalent visually inspected.** Eight health/loading/error variants and Administration context were reviewed, including the five-variant retained/shared pass. This does not exercise a backup or establish recovery correctness.
 
 Source: [web/BackupStatus.stories.tsx](../../web/BackupStatus.stories.tsx). Baseline family: yes.
 
@@ -186,7 +200,7 @@ States inventoried: Healthy, Running, NeverRun, Overdue, Failed, NotConfigured, 
 
 ## Current production/Editor/Collaborators
 
-**Implemented proposal; rendered review pending.** PresenceReview replaces the fixed avatar with a people/count trigger, scoped member/anonymous guest lists, empty/alone/many/long-name states and explicit simulated navigation. Integrated into editor headers; phone presence is visible.
+**Baseline unchanged; proposed equivalent visually inspected in all five variants.** PresenceReview replaces the fixed avatar with a people/count trigger and member/anonymous lists, alone/many/long-name states and simulated navigation. Phone presence is visible; full interaction CI remains pending.
 
 Source: [web/Collaborators.stories.tsx](../../web/Collaborators.stories.tsx). Baseline family: yes.
 
@@ -194,7 +208,7 @@ States inventoried: Empty, Alone, TwoPeople, GuestLabels, Many.
 
 ## Current production/Settings/ConnectAssistant
 
-**Proposed states present; rendered review pending.** ConsentExpiredBeforeAllow explicitly removes grant controls when the request expires. Outgoing redirects are intentionally simulated in the design harness; copy directs the person back to their application.
+**Baseline unchanged; proposed consent states visually inspected.** Expiry removes grant controls; limit recovery reaches Connections and returns; Operator recovery reaches everyday sign-in. Fresh entry captures show consistent theme controls. Outgoing redirects/authentication are simulated; full interaction CI remains pending.
 
 Source: [web/ConnectAssistant.stories.tsx](../../web/ConnectAssistant.stories.tsx). Baseline family: yes.
 
@@ -202,7 +216,7 @@ States inventoried: Consent, ReadOnly, Loading, LoadFailed, Expired, Unavailable
 
 ## Current production/Dashboard/Dashboard
 
-**Implemented retrieval proposal; rendered review pending.** FilesRecovery adds shared loading/error, member local mode, last sync, no local data, unavailable rows and unopened offline folder. FileMutation adds create/rename/move/file-into-folder pending/failure fixtures, retained draft/destination and retry; rendered interaction review remains.
+**Baseline unchanged; retrieval proposal visually inspected in all five variants.** FilesRecovery and FileMutation cover local availability, shared/search recovery and retained mutation drafts. Fresh focused renders cover owned-folder deletion/restoration and final file dialogs. Four Tags-dialog final renders and full interaction CI remain pending.
 
 Source: [web/Dashboard.stories.tsx](../../web/Dashboard.stories.tsx). Baseline family: yes.
 
@@ -210,7 +224,7 @@ States inventoried: Populated, NewItem, NewDoc, NewSheet, EmptyWorkspace, Shared
 
 ## Current production/Docs/Formulas
 
-**Implemented authoring proposal; rendered review pending.** FormulaReview reuses completion helpers and the actual result renderer, with source selection, edit, keyboard autocomplete, pagination and all baseline failure states. Values are explicitly sample results; no duplicate formula engine or production integration.
+**Baseline unchanged; authoring proposal visually inspected in all five variants.** All 34 states cover source selection/editing/autocomplete/pagination and failures using completion helpers and the actual result renderer. Values remain sample results; no production engine/insertion integration is claimed. Full interaction CI remains pending.
 
 Source: [web/DocFormulas.stories.tsx](../../web/DocFormulas.stories.tsx). Baseline family: yes.
 
@@ -218,7 +232,7 @@ States inventoried: Insert, Edit, LoadingSources, NoSources, SourceError, Dark, 
 
 ## Current production/Docs/Native formulas
 
-**Retained renderer; evidence pending.** Real native formula renderer is exercised with readiness assertions. Does not establish authoring-form redesign.
+**Retained renderer, not redesigned authoring.** Native readiness assertions and real renderer specimens remain. Fresh `dd286` includes the native SheetFormula composition; this is not blanket acceptance of every unchanged baseline native-formula story.
 
 Source: [web/DocFormulasNative.stories.tsx](../../web/DocFormulasNative.stories.tsx). Baseline family: yes.
 
@@ -226,7 +240,7 @@ States inventoried: InlineAndTable, Private, Dark, Phone, ThirtyRows, StyledScal
 
 ## Current production/Dashboard/DocumentTags
 
-**Implemented proposal; rendered review pending.** TagsReview replaces the comma-separated field, preserves valid commas inside tags, uses the production normalized 64-character limit, and covers suggestions/pending/add/remove failures with draft retention. Folder tag actions removed to match production.
+**Baseline unchanged; proposed equivalent visually inspected in all five variants.** All 13 TagsReview states cover suggestions, pending/add/remove failures and retained drafts, with the production 64-character limit and literal commas preserved. The separate Dashboard Tags dialog still has four final renders outstanding.
 
 Source: [web/DocumentTags.stories.tsx](../../web/DocumentTags.stories.tsx). Baseline family: yes.
 
@@ -234,7 +248,7 @@ States inventoried: NoTags, SeveralTags, SuggestionsFailed, Adding, AddFailed.
 
 ## Current production/Editor/FileExports
 
-**Implemented state proposal; rendered review pending.** Added PDF-specific failure/retry, unsaved and offline specimens. Native export remains simulated; format copy explains editable Univer files and PDF print flow.
+**Baseline unchanged; proposed recovery states visually inspected in all five variants.** PDF failure/retry, unsaved and offline specimens distinguish editable Univer files from print/PDF. Native export is simulated in this proposal; full interaction CI remains pending.
 
 Source: [web/FileExports.stories.tsx](../../web/FileExports.stories.tsx). Baseline family: yes.
 
@@ -242,7 +256,7 @@ States inventoried: Saved, Unsaved, DownloadFailed, PrintFailed.
 
 ## Current production/Guest/GuestApp
 
-**Proposed states present; integration review pending.** GuestEntryReview adds authorization loading and unsupported-browser guards with actual production copy, no identity or premature editor. These are isolated specimens; connected revocation/offline/native editor flow remains separate.
+**Baseline unchanged; proposed entry/context visually inspected.** Authorization loading and unsupported-browser guards avoid premature editor/identity disclosure. Fresh `22d60` verifies plain-language browser recovery; revoked/offline and native guest compositions were reviewed separately. Live revocation and authorization are not validated by local fixtures.
 
 Source: [web/GuestApp.stories.tsx](../../web/GuestApp.stories.tsx). Baseline family: yes.
 
@@ -250,7 +264,7 @@ States inventoried: Loading, LinkRevoked, ConnectionInterrupted, UnsupportedBrow
 
 ## Current production/Account/Icon picker
 
-**Reused.** Actual IconPicker embedded in ProfileMockup. Review search/category/phone/focus return in new context.
+**Actual picker reused; fresh context repair visually verified.** Five-variant context review covers search/category/keyboard/selection/focus return. Fresh `22d60` shows bounded Show more scrolling with search and Cancel visible, and Cancel returning focus. No replacement picker behavior is claimed.
 
 Source: [web/IconPicker.stories.tsx](../../web/IconPicker.stories.tsx). Baseline family: yes.
 
@@ -258,7 +272,7 @@ States inventoried: Browse.
 
 ## Current production/Dashboard/ImportFile
 
-**Proposed state coverage present.** ImportDialog maps all baseline states plus completion. Validate each rendered state and interaction.
+**Baseline unchanged; proposed equivalent visually inspected in all five variants.** ImportDialog maps all baseline states plus completion, with pending dismissal disabled and errors visible. File processing is simulated; full interaction CI remains pending.
 
 Source: [web/ImportFile.stories.tsx](../../web/ImportFile.stories.tsx). Baseline family: yes.
 
@@ -266,7 +280,7 @@ States inventoried: Default, LimitsOpen, UnsupportedFile, NotJson, TooManyFiles,
 
 ## Current production/Dashboard/OfflineBadge
 
-**Implemented local-mode proposal; rendered review pending.** Downloaded/unavailable rows, last-sync timestamp, no local data and unopened folder are represented. Local mode hides mutating controls and opens only available files read-only; no actual device storage is read.
+**Baseline unchanged; local-mode proposal visually inspected in all five variants.** Available/unavailable rows, last sync, empty local data and unopened folders are distinct; unavailable mutations remain disabled in fresh phone/desktop navigation. No actual device storage is read.
 
 Source: [web/OfflineStatus.stories.tsx](../../web/OfflineStatus.stories.tsx). Baseline family: yes.
 
@@ -274,23 +288,15 @@ States inventoried: Available, NeedsConnection, None, Banner, Unreachable.
 
 ## Current production/Dashboard/PinButton
 
-**Implemented proposal; rendered review pending.** Local pin/unpin, pending/failure/retry now replace the disabled action. Dashboard and connected navigation share stable file IDs and pin state.
-
-Source: [web/PinButton.stories.tsx](../../web/PinButton.stories.tsx). Baseline family: yes.
-
-States inventoried: Unpinned, Pinned, Loading, LoadFailed.
+**Retired by owner direction, 2026-10-21.** Personal pinning and its UI are removed from this branch. The earlier component inspection is historical evidence only; no replacement or migration is requested.
 
 ## Current production/Dashboard/PinnedSidebar
 
-**Implemented proposal; rendered review pending.** PinsReview provides empty/loading/error/retry, accessible reorder/unpin, compact navigation and folder pins. Shared provider preserves state across the connected journey and resets with the journey.
-
-Source: [web/PinnedSidebar.stories.tsx](../../web/PinnedSidebar.stories.tsx). Baseline family: yes.
-
-States inventoried: Pinned, Empty, Loading, LoadFailed.
+**Retired by owner direction, 2026-10-21.** Personal pinning and its UI are removed from this branch. The earlier component inspection is historical evidence only; no replacement or migration is requested.
 
 ## Current production/Editor/Profile cursor label
 
-**Reused; contextual rendered review pending.** PresenceReview stories use the actual PresenceLabel with profile glyphs, long names and editor-context specimens. No replacement cursor renderer is claimed.
+**Reused; contextual visual inspection complete.** Actual PresenceLabel appears in five-variant PresenceReview specimens with profile glyphs/long names. No replacement cursor renderer or live collaboration verification is claimed.
 
 Source: [web/PresenceLabel.stories.tsx](../../web/PresenceLabel.stories.tsx). Baseline family: yes.
 
@@ -298,7 +304,7 @@ States inventoried: Flower, Cat.
 
 ## Current production/Account/Profile
 
-**Proposed state coverage present.** Ready/loading/load-error/saving/save-error with retained draft and retry. Backend migration remains separate.
+**Baseline unchanged; proposed equivalent visually inspected in all five variants.** Ready/loading/error/saving states preserve drafts and retry; actual picker reuse has fresh phone evidence. Backend persistence and production migration remain separate.
 
 Source: [web/ProfileSettings.stories.tsx](../../web/ProfileSettings.stories.tsx). Baseline family: yes.
 
@@ -306,7 +312,7 @@ States inventoried: Ready, Loading, LoadError, SaveError, Saving.
 
 ## Current production/Shell/Rail
 
-**Changed composition.** Member/Operator/signed-out and phone navigation mapped to Shell/EntryJourney. Render/context review pending.
+**Baseline unchanged; proposed composition visually inspected.** Member/Operator/signed-out and phone destinations were reviewed through Shell/EntryJourney. Fresh entry theme and offline navigation renders supplement the composition review; production callers are not migrated.
 
 Source: [web/Rail.stories.tsx](../../web/Rail.stories.tsx). Baseline family: yes.
 
@@ -314,7 +320,7 @@ States inventoried: Member, Admin, Phone, SignedOut.
 
 ## Current production/Dashboard/SearchPanel
 
-**Implemented recovery proposal; rendered review pending.** Search pending retains loaded matches; failure hides stale results and retry keeps query. Result owner/path metadata is present. Query-token parser remains explicitly deferred to SPN-048.
+**Baseline unchanged; proposed recovery visually inspected in all five variants.** Pending retains local matches; failure hides stale results and preserves query for retry. One responsive toolbar groups Search/Filters/view controls, with scope above results. Query tokens/search-help builder remain SPN-048.
 
 Source: [web/SearchPanel.stories.tsx](../../web/SearchPanel.stories.tsx). Baseline family: yes.
 
@@ -322,7 +328,7 @@ States inventoried: EmptyQuery, Results, NoResults, Loading, Failed.
 
 ## Current production/Sharing/ShareLink
 
-**Implemented proposal; rendered review pending.** SharingReview adds independent loading/load error, create/replace/revoke pending and failure states. Retry preserves prior permissions until completion; once-only address and replacement confirmation remain.
+**Baseline unchanged; proposed equivalent visually inspected in all five variants.** SharingReview covers load/create/replace/revoke pending/failure, preserved permissions and once-only link handling. Fresh phone Share captures verify stacked actions. Real permission/link mutation remains simulated; full interaction CI remains pending.
 
 Source: [web/ShareLink.stories.tsx](../../web/ShareLink.stories.tsx). Baseline family: yes.
 
@@ -330,7 +336,7 @@ States inventoried: Loading, LinkOff, LinkOnViewOnly, LinkOnCanEdit, LinkOnWitho
 
 ## Current production/Dashboard/SharedBadge
 
-**Implemented metadata proposal; rendered review pending.** Shared rows show owner identity and unknown-owner fallback in FilesRecovery specimens.
+**Baseline unchanged; metadata proposal visually inspected in all five variants.** FilesRecovery shared rows distinguish owner identity and unknown-owner fallback without adding redundant standalone controls.
 
 Source: [web/SharedBadge.stories.tsx](../../web/SharedBadge.stories.tsx). Baseline family: yes.
 
@@ -338,7 +344,7 @@ States inventoried: Owned, SharedWithMe, UnknownOwner.
 
 ## Current production/Sharing/Sharing
 
-**Implemented proposal; rendered review pending.** SharingReview covers loading/load failure, owner only, disabled account removal, staged direct-access choices, pending/failure/retry preserving confirmed access. Folder public links removed; actual folder-row flow has an assertion.
+**Baseline unchanged; proposed equivalent visually inspected in all five variants.** Loading/failure, owner-only, disabled-account and staged direct-access states retain confirmed access/drafts on failure. Fresh folder-sharing renders omit public links, and phone Share renders confirm readable stacked controls. Full interaction CI remains pending.
 
 Source: [web/Sharing.stories.tsx](../../web/Sharing.stories.tsx). Baseline family: yes.
 
@@ -346,7 +352,7 @@ States inventoried: Loading, OwnerOnly, WithPeople, Folder, Failed.
 
 ## Current production/Dashboard/TagLabels
 
-**Implemented proposal; rendered review pending.** TagLabelsReview renders two tags plus overflow count and full accessible text; empty/one/several/long specimens and Dashboard integration exist.
+**Baseline unchanged; proposed equivalent visually inspected in all five variants.** Four TagLabelsReview states cap rows at two tags plus overflow count and retain full accessible text. Touch users still open Tags to read truncated full labels; static row hints are not a touch-discovery solution.
 
 Source: [web/TagLabels.stories.tsx](../../web/TagLabels.stories.tsx). Baseline family: yes.
 
@@ -354,7 +360,7 @@ States inventoried: None, One, Several.
 
 ## Current production/Dashboard/Trash
 
-**Implemented recovery proposal; rendered review pending.** Loading/failure/retry, retention expiry, named/count-confirmed Empty Trash, restore/delete/empty pending and failure preserve rows until successful retry.
+**Baseline unchanged; proposed recovery visually inspected in all five variants.** Deadlines/expired status remain visible on narrow screens. Fresh folder fixtures verify owned-subtree consequences and coherent restored/deleted rows; pending/failure retains data. Full interaction CI remains pending.
 
 Source: [web/Trash.stories.tsx](../../web/Trash.stories.tsx). Baseline family: yes.
 
@@ -362,7 +368,7 @@ States inventoried: WithItems, Empty, Loading, LoadFailed, ConfirmEmpty.
 
 ## Current production/Editor/VersionNames
 
-**Implemented proposal; rendered review pending.** VersionNamesReview covers current/older naming, rename/remove, retention copy, viewer/empty/loading/error/pending/retry. Both History layouts use it; checkpoint names persist per file in the connected journey. Four History action stories verify current-vs-older naming and preview updates.
+**Baseline unchanged; proposed equivalent visually inspected in all five variants.** All 22 VersionNames states and four History action states cover current/older naming, rename/removal, retention and recovery. Fresh `c904` verifies final rename/remove dialogs and selected-name updates instead of prerequisite menus. Full interaction CI remains pending.
 
 Source: [web/VersionNames.stories.tsx](../../web/VersionNames.stories.tsx). Baseline family: yes.
 
@@ -370,33 +376,45 @@ States inventoried: Closed, Open, ViewerOpen, NoVersions, UnsavedChanges, Loadin
 
 ## Added during this audit
 
-These new families contain source specimens; none is accepted solely from its existence.
+These new families have recorded visual review, not just source inventory. The 97 editor states and 122 retrieval/administration/connection states were inspected in all five variants across partial light and subsequent full captures; 40 entry/consent/theme/picker states received the corresponding five-variant review. Focused runs provide the newer states and repairs described below. Older capture runs do not establish interaction success; full stricter CI remains pending.
 
-- **Redesign/Version names**: [source](../../src/ui/redesign/VersionNamesReview.stories.tsx); 22 stories: Ready, Viewer, Empty, Loading, LoadError, NameCurrent, NameOlder, Rename, Remove, Removing, RemoveError, Saving, SaveError, Unsaved, UnsavedDraft, Offline, Embedded, EmbeddedRename, LongName, RetrySave, RetryLoad, Removed.
-- **Redesign/Connections**: [source](../../src/ui/redesign/ConnectionsReview.stories.tsx); 16 stories: Loaded, Empty, Loading, LoadFailed, Disconnecting, Disconnected, DisconnectFailed, MatchingNames, PreviouslyUsed, OperatorMetadata, OperatorEmpty, OperatorLoading, OperatorLoadFailed, RetryLoad, RetryDisconnect, DisconnectMatchingClient.
-- **Redesign/Presence**: [source](../../src/ui/redesign/PresenceReview.stories.tsx); 16 stories: Empty, Alone, TwoPeople, PeopleOpen, AloneOpen, GuestLabels, Many, ManyOpen, LongName, JumpToPerson, NoSharedPosition, CursorLabelsInContext, EditorHeader, EditorPeopleOpen, GuestHeader, SimulatedEditorJump.
-- **Redesign/Personal tags**: [source](../../src/ui/redesign/TagsReview.stories.tsx); 13 stories: NoTags, SeveralTags, SuggestionsLoading, SuggestionsFailed, Adding, AddFailed, Removing, RemoveFailed, LongAndMany, RetryAdd, TypeWithoutSuggestions, RetryRemove, ValidationKeepsDraft.
-- **Redesign/Tag labels**: [source](../../src/ui/redesign/TagLabelsReview.stories.tsx); 4 stories: None, One, Several, Long.
-- **Redesign/Pins**: [source](../../src/ui/redesign/PinsReview.stories.tsx); 20 stories: Loaded, Empty, Loading, LoadFailed, Pending, UpdateFailed, Compact, CompactEmpty, CompactLoading, CompactLoadFailed, CompactPending, CompactUpdateFailed, PinAndUnpin, ReorderAndRemoveFolder, RetryLoad, RetryUpdate, DashboardNavigation, RenameDuringPendingUpdate, TrashDuringPendingUpdate, TrashBeforeRetryUpdate.
-- **Redesign/Formula authoring**: [source](../../src/ui/redesign/FormulaReview.stories.tsx); 34 stories: Insert, Edit, LoadingSources, NoSources, SourceError, SourceRetry, LoadingWorksheets, WorksheetError, WorksheetRetry, Dark, Phone, Scalar, Table, ThirtyRows, LastTablePage, Empty, Calculating, PrivateSource, MissingSource, InvalidFormula, TooLarge, Busy, TimedOut, Unavailable, PreviewRetry, Offline, Saving, SaveError, SaveRetry, Autocomplete, KeyboardCompletion, SourcePicker, EditedExpressionClearsPreview, Cancel.
-- **Redesign/Sharing access**: [source](../../src/ui/redesign/SharingReview.stories.tsx); 21 stories: WithPeople, Loading, LoadFailed, OwnerOnly, DisabledAccount, UpdatingAccess, AccessFailed, Folder, LinkLoading, LinkLoadFailed, LinkOnViewOnly, LinkOnCanEdit, CreatingLink, CreateFailed, ReplacingLink, ReplaceFailed, RevokingLink, RevokeFailed, RetryAccess, RetryRevoke, RetryReplace.
-- **Redesign/Operator actions**: [source](../../src/ui/redesign/AdminActions.stories.tsx); 27 stories: Accounts, AccountsLoading, AccountsFailed, InvitesLoading, InvitesFailed, InvitesEmpty, InvitationStatuses, InviteCreating, InviteCreateFailed, InviteRevoking, InviteRevokeFailed, DisablePending, DisableFailed, RemovePasskey, RemovePasskeyPending, RemovePasskeyFailed, ProtectedOperatorPasskey, ConnectionsLoading, ConnectionsFailed, RetryInvitesLoad, RetryCreateInvite, RetryDisable, RetryRemovePasskey, CancelFailedPasskeyRemoval, RetryRevokeInvite, OperatorWithMultiplePasskeys, RemoveOneOperatorPasskey.
-- **Redesign/History actions**: [source](../../src/ui/redesign/HistoryActions.stories.tsx); 4 stories: RenameCheckpoint, RenamedCheckpoint, RemoveCheckpointName, OlderNamesWhileUnsaved.
-- **Redesign/Entry states**: [source](../../src/ui/redesign/EntryStates.stories.tsx); 13 stories: InvitePending, InviteCancelled, InviteError, InviteInvalid, RecoveryPending, RecoveryCancelled, RecoveryError, RecoveryInvalid, SetupPending, SetupCancelled, SetupError, SetupInvalid, InviteCancelAndRetry.
-- **Redesign/Guest entry**: [source](../../src/ui/redesign/GuestEntryReview.stories.tsx); 2 stories: AuthLoading, UnsupportedBrowser.
-- **Redesign/Theme control**: [source](../../src/ui/redesign/ThemeMenu.stories.tsx); 3 stories: Default, StorageBlocked, DismissStorageWarning.
-- **Redesign/File recovery**: [source](../../src/ui/redesign/FilesRecovery.stories.tsx); 27 stories: SharedLoading, SharedError, SharedUnknownOwner, SearchPending, SearchError, LocalMode, LocalNoData, LocalNavigationKeepsPinActionsDisabled, LocalFolderNotOpened, TrashLoading, TrashError, TrashExpired, EmptyTrashConfirmation, EmptyTrashPending, EmptyTrashFailed, RestorePending, RestoreFailed, DeletePending, DeleteFailed, RetrySearch, RetryShared, RetryTrash, RetryRestore, RetryDelete, RetryEmptyTrash, CancelEmptyTrash, ExpiredRestoreUnavailable.
-- **Redesign/File mutations**: [source](../../src/ui/redesign/FileMutation.stories.tsx); 15 stories: CreatePending, CreateFailed, RenamePending, RenameFailed, MovePending, MoveFailed, FileIntoFolderPending, FileIntoFolderFailed, RetryCreate, RetryRename, RetryMove, RetryFileIntoFolder, CancelFailedRename, FailedMoveKeepsOriginalFolder, FailedFilingKeepsOriginalPlacement.
-- **Redesign/Profile icon picker**: [source](../../src/ui/redesign/IconPickerReview.stories.tsx); 10 stories: Browse, Search, NoResults, Category, ShowMore, KeyboardNavigation, SelectedIcon, KeyboardSelectAndReturn, CancelAndReturn, NativeCancelAndReturn.
+- **Redesign/Version names**: [source](../../src/ui/redesign/VersionNamesReview.stories.tsx); 22 stories: Ready, Viewer, Empty, Loading, LoadError, NameCurrent, NameOlder, Rename, Remove, Removing, RemoveError, Saving, SaveError, Unsaved, UnsavedDraft, Offline, Embedded, EmbeddedRename, LongName, RetrySave, RetryLoad, Removed. **Review:** Five-variant inspection; fresh `c904` EmbeddedRename final state verified.
+- **Redesign/Connections**: [source](../../src/ui/redesign/ConnectionsReview.stories.tsx); 16 stories: Loaded, Empty, Loading, LoadFailed, Disconnecting, Disconnected, DisconnectFailed, MatchingNames, PreviouslyUsed, OperatorMetadata, OperatorEmpty, OperatorLoading, OperatorLoadFailed, RetryLoad, RetryDisconnect, DisconnectMatchingClient. **Review:** All 16 states visually inspected in five variants; local mutation fixtures only.
+- **Redesign/Presence**: [source](../../src/ui/redesign/PresenceReview.stories.tsx); 16 stories: Empty, Alone, TwoPeople, PeopleOpen, AloneOpen, GuestLabels, Many, ManyOpen, LongName, JumpToPerson, NoSharedPosition, CursorLabelsInContext, EditorHeader, EditorPeopleOpen, GuestHeader, SimulatedEditorJump. **Review:** All 16 states visually inspected in five variants; jumps are simulated.
+- **Redesign/Personal tags**: [source](../../src/ui/redesign/TagsReview.stories.tsx); 13 stories: NoTags, SeveralTags, SuggestionsLoading, SuggestionsFailed, Adding, AddFailed, Removing, RemoveFailed, LongAndMany, RetryAdd, TypeWithoutSuggestions, RetryRemove, ValidationKeepsDraft. **Review:** All 13 states visually inspected in five variants; separate Dashboard Tags final-render gap remains.
+- **Redesign/Tag labels**: [source](../../src/ui/redesign/TagLabelsReview.stories.tsx); 4 stories: None, One, Several, Long. **Review:** All four states visually inspected in five variants; full truncated labels require Tags on touch.
+- **Redesign/Pins — retired:** the 20-state family was inspected before the owner removed personal pinning on 2026-10-21. It is no longer a current proposal family.
+- **Redesign/Formula authoring**: [source](../../src/ui/redesign/FormulaReview.stories.tsx); 34 stories: Insert, Edit, LoadingSources, NoSources, SourceError, SourceRetry, LoadingWorksheets, WorksheetError, WorksheetRetry, Dark, Phone, Scalar, Table, ThirtyRows, LastTablePage, Empty, Calculating, PrivateSource, MissingSource, InvalidFormula, TooLarge, Busy, TimedOut, Unavailable, PreviewRetry, Offline, Saving, SaveError, SaveRetry, Autocomplete, KeyboardCompletion, SourcePicker, EditedExpressionClearsPreview, Cancel. **Review:** All 34 states visually inspected in five variants; result values and insertion remain simulated.
+- **Redesign/Sharing access**: [source](../../src/ui/redesign/SharingReview.stories.tsx); 21 stories: WithPeople, Loading, LoadFailed, OwnerOnly, DisabledAccount, UpdatingAccess, AccessFailed, Folder, LinkLoading, LinkLoadFailed, LinkOnViewOnly, LinkOnCanEdit, CreatingLink, CreateFailed, ReplacingLink, ReplaceFailed, RevokingLink, RevokeFailed, RetryAccess, RetryRevoke, RetryReplace. **Review:** All 21 states visually inspected in five variants; fresh phone sharing renders verify action stacking.
+- **Redesign/Operator actions**: [source](../../src/ui/redesign/AdminActions.stories.tsx); 27 stories: Accounts, AccountsLoading, AccountsFailed, InvitesLoading, InvitesFailed, InvitesEmpty, InvitationStatuses, InviteCreating, InviteCreateFailed, InviteRevoking, InviteRevokeFailed, DisablePending, DisableFailed, RemovePasskey, RemovePasskeyPending, RemovePasskeyFailed, ProtectedOperatorPasskey, ConnectionsLoading, ConnectionsFailed, RetryInvitesLoad, RetryCreateInvite, RetryDisable, RetryRemovePasskey, CancelFailedPasskeyRemoval, RetryRevokeInvite, OperatorWithMultiplePasskeys, RemoveOneOperatorPasskey. **Review:** All 27 states visually inspected in five variants; the remaining-passkey badge repair has ten passing, visually inspected `00cc641` captures.
+- **Redesign/History actions**: [source](../../src/ui/redesign/HistoryActions.stories.tsx); 4 stories: RenameCheckpoint, RenamedCheckpoint, RemoveCheckpointName, OlderNamesWhileUnsaved. **Review:** All four states visually inspected in five variants; fresh `c904` rename/remove/renamed final states verified.
+- **Redesign/Entry states**: [source](../../src/ui/redesign/EntryStates.stories.tsx); 13 stories: InvitePending, InviteCancelled, InviteError, InviteInvalid, RecoveryPending, RecoveryCancelled, RecoveryError, RecoveryInvalid, SetupPending, SetupCancelled, SetupError, SetupInvalid, InviteCancelAndRetry. **Review:** All 13 states visually inspected in five variants; operating-system passkey prompts are simulated.
+- **Redesign/Guest entry**: [source](../../src/ui/redesign/GuestEntryReview.stories.tsx); 2 stories: AuthLoading, UnsupportedBrowser. **Review:** Both states visually inspected in five variants; fresh plain-language unsupported-browser copy verified at `22d60`.
+- **Redesign/Theme control**: [source](../../src/ui/redesign/ThemeMenu.stories.tsx); 3 stories: Default, StorageBlocked, DismissStorageWarning. **Review:** Default/storage-blocked variants visually inspected; warning-dismissal repair awaits full-run interaction validation.
+- **Redesign/File recovery**: [source](../../src/ui/redesign/FilesRecovery.stories.tsx); 32 stories: SharedLoading, SharedError, SharedUnknownOwner, SearchPending, SearchError, LocalMode, LocalNoData, LocalNavigation, LocalFolderNotOpened, TrashLoading, TrashError, TrashExpired, EmptyTrashConfirmation, EmptyTrashPending, EmptyTrashFailed, RestorePending, RestoreFailed, DeletePending, DeleteFailed, RetrySearch, RetryShared, RetryTrash, RetryRestore, RetryDelete, RetryEmptyTrash, CancelEmptyTrash, ExpiredRestoreUnavailable, FolderTrashOwnedContents, RestoreFolderDeletionBatch, RestoreChildWithoutParent, FolderTrashKeepsSharedFile, DeleteFolderContentsPermanently. **Review:** Original 27 states inspected in five variants; five new folder scenarios verified in fresh `22d60` renders, and offline navigation at `c904`.
+- **Redesign/File mutations**: [source](../../src/ui/redesign/FileMutation.stories.tsx); 15 stories: CreatePending, CreateFailed, RenamePending, RenameFailed, MovePending, MoveFailed, FileIntoFolderPending, FileIntoFolderFailed, RetryCreate, RetryRename, RetryMove, RetryFileIntoFolder, CancelFailedRename, FailedMoveKeepsOriginalFolder, FailedFilingKeepsOriginalPlacement. **Review:** All 15 states visually inspected in five variants; retained drafts/placements represented, full interaction CI pending.
+- **Redesign/Profile icon picker**: [source](../../src/ui/redesign/IconPickerReview.stories.tsx); 11 stories: Browse, Search, NoResults, Category, ShowMore, ShowMoreCancelAndReturn, KeyboardNavigation, SelectedIcon, KeyboardSelectAndReturn, CancelAndReturn, NativeCancelAndReturn. **Review:** Original ten states inspected in five variants; fresh ShowMore/ShowMoreCancelAndReturn renders verify visible Cancel and focus return.
+
+## Redesign/Loading
+
+**New proposal, source reviewed; rendered verification pending.** Shared SVG runner
+silhouette follows light/dark themes, uses the same cycle/proportions, preserves
+visible context labels and supports a still reduced-motion pose. Page and compact
+variants replace existing loading placeholders in files, settings, administration,
+consent, history, guest entry and native editor startup. No production-wide loading
+migration is claimed.
+
+Source: [LoadingReview.stories.tsx](../../src/ui/redesign/LoadingReview.stories.tsx).
+States: Page, Compact, ReducedMotion, BothThemes, LoadingContext.
 
 ## Section review gates
 
-- **Files/retrieval:** component repairs implemented — pins/tags, local availability/search/trash recovery added; rendered review remains. All new mutation specimens still require rendered interaction review.
-- **Entry/authentication:** explicit setup/invite/recovery outcomes and guest capability/loading specimens added; verify every render and transition.
-- **Editor/sharing/history:** component repairs implemented; full composed/rendered review remains. Formula insertion/export/presence jumps are explicitly simulated.
-- **Settings/connections:** component repairs implemented; rendered review remains. Passkey rename/remove remain explicitly planned in SPN-070, not claimed as implemented.
-- **Administration:** account/invite mutation proposals added; verify protected Operator and metadata-only access across all states.
-- **Guests/Spaces:** initial capability/loading guards added; planned Space action dialogs and guest-link inventory remain illustrative future-feature scope, not existing production parity.
+- **Files/retrieval:** component and composed visual review completed for the recorded variants; unified toolbar and fresh folder recovery inspected. Four Tags-dialog final captures and full interaction CI remain pending. Search tokens/help builder remain SPN-048.
+- **Entry/authentication:** setup/invite/recovery/guest outcomes visually inspected; fresh shared theme controls and plain-language browser recovery verified. Authentication/passkeys are local preview events, not production auth validation.
+- **Editor/sharing/history:** component and composed visual review completed; fresh native readiness/scroll and history rename/remove final states verified. Fixed-width mobile Docs and persistent title/action chrome remain limitations. Formula insertion/export/presence jumps are simulated.
+- **Settings/connections:** visual review completed for profile, connection, token and device states; fresh actual picker repair verified. Passkey rename/remove remain planned in SPN-070. Server disconnect/persistence is not exercised.
+- **Administration:** state and composition visual review completed; permission boundaries and mutation recovery represented. The protected-key badge repair has ten passing, visually inspected `00cc641` captures; full interaction CI remains pending.
+- **Guests/Spaces:** guest guards/revoked/offline/native context visually inspected. Spaces, guest-link inventory and their management actions remain illustrative future-feature scope; fresh planned Restore wording makes the unchanged row explicit. Deep trees retain horizontal overflow/truncated labels.
 
 ## Evidence and review provenance
 
@@ -419,7 +437,7 @@ The independent reviewer found no further source blockers in the inspected compo
 - Version names (`dff41bc` deployed): renamed an older checkpoint through its menu; list updated and focus returned to that checkpoint's action menu. This is one manually verified interaction, not all-state acceptance.
 - Short-phone dark History showed the page title squeezed beside two actions. The `5655c2c` repair gives the title its own row and lets actions wrap beneath it; subsequent source repair removes the extra inherited action margin. Fresh phone rendering remains pending.
 - File retrieval toolbar repair is in `5655c2c`: Search, Filters and view switch share one responsive toolbar; Type moves inside Filters. Active constraints remain visible and clearable. No query parser was added.
-- Retained identity pass inspected all 20 assigned states in five variants (100 captures from `f9cdff3`): EntityIcon, Favicon and GemLogo retained; social artwork retained with a minor trailing-emoji cosmetic note. Actual IconPicker footer gap was repaired only in redesign context; ten new context stories cover search/category/pagination/keyboard/selection/focus return and await CI.
+- Retained identity pass inspected the four identity families in five variants (`f9cdff3`): 18 source states / 90 identity captures. The earlier 20-state tally included picker material and is not used as identity coverage: EntityIcon, Favicon and GemLogo retained; social artwork retained with a minor trailing-emoji cosmetic note. Actual IconPicker footer gap was repaired only in redesign context; ten new context stories cover search/category/pagination/keyboard/selection/focus return and await CI.
 
 The retained-surface reviewer also inspected all 43 assigned f9c states in light, dark and phone: 19 AccessToken variants, eight Import variants, five Profile states, eight Backup health states and three Controls states. No clipping was found. Two pending-dialog inconsistencies were repaired in the next source batch: Token creation had an enabled-but-inert close button, and Import allowed dismissal despite its keep-open instruction. A shared dismiss-disabled state now covers pending dialogs consistently, with explicit assertions; new rendered evidence remains required. The new Move example supersedes the old Controls dialog.
 
@@ -445,7 +463,7 @@ does not establish rendered acceptance or owner approval.
 
 The new Files toolbar and pending-dialog dismissal changes in `5655c2c` supersede the corresponding partial captures and require fresh evidence. No reviewer supplied an aggregate grade for this incomplete evidence set.
 
-A third reviewer inspected 40 further light states:13 entry outcomes, two guest entry states, two theme states,13 consent states and 10 actual icon-picker states. This found a theme-storage warning colliding with its tooltip and missing consent recovery actions. The warning now uses a dismissible status panel outside the compact control. Consent limit opens Connections in Settings, with a return to the request; Operator consent offers Sign out and the everyday-account journey. Four consent recovery stories and one warning-dismissal story cover these repairs. Current source inventory is 61 families and 646 exported story specimens.
+A third reviewer inspected 40 further light states:13 entry outcomes, two guest entry states, two theme states,13 consent states and 10 actual icon-picker states. This found a theme-storage warning colliding with its tooltip and missing consent recovery actions. The warning now uses a dismissible status panel outside the compact control. Consent limit opens Connections in Settings, with a return to the request; Operator consent offers Sign out and the everyday-account journey. Four consent recovery stories and one warning-dismissal story cover these repairs. Source inventory at that repair was 61 families and 646 exported story specimens; the current catalog has 655 specimens.
 
 App CI run 39553769932 passed all required gates for `5655c2c`. Storybook run 39553769714 completed with 3,199 successful captures, six failed native Sheet captures and 107 explicit verifications across 641 states in five variants. It failed the short-phone resize/toolbar checks; subsequent repairs require their own CI run. No score is carried forward from a previous commit.
 
@@ -529,3 +547,63 @@ SDK skeleton, and21 older file-dialog captures stopped at their prerequisite
 menus. The latter are evidence gaps, not accepted final states: menu queries
 now await the portal, and Create Doc asserts that its final dialog opened.
 The complete run must reject swallowed play errors and recapture these states.
+
+## Stricter interaction validation and repaired captures
+
+Full run 39557835351 at `6a64b0d` recorded 3,230 capture attempts across
+646 stories and five variants. It rejected 39 captures across 17 stories because
+Storybook plays queried menu items before their Base UI portals mounted. These
+had previously appeared successful when only the finished status was checked.
+The story repairs await visible menu items and retain their behavior assertions;
+the capture runner rejects both swallowed play exceptions and unhandled errors.
+
+Focused run 39560131936 at `dd286c8` passed 85 captures and 34 explicit checks.
+It verifies native editor growth/shrink, canvas readiness and scroll containment,
+plus repaired file dialogs and offline reconnection. Reviewers inspected all
+fresh native/editor and file-dialog states. Focused run 39560538391 at `c904b47`
+passed 65 captures with the stricter play-error guard; fresh history, tags, pins,
+Operator and offline-navigation images show the intended final states.
+
+The later protected-passkey badge repair at `00cc641` changes only direct badge
+children of settings rows. Focused run 39561831008 passed both affected stories
+in all five variants (10 captures); visual reinspection confirms the badge fits
+its border and phone padding. No other badge layouts use this selector.
+
+## Scoped UI and UX assessments
+
+These assessments apply to the reviewed proposal, not deployed production or an
+independent merge gate. Neither is an average across untouched baseline stories.
+The reviewers contributed some implementation work; the independent reviewer is
+separate. Scores do not replace finding dispositions or owner approval.
+
+- **UI: 94/100.** Deducted three points for the expanded phone filter panel's
+  four rows, two for planned Space action feedback distant from its trigger,
+  and one for low scan density in one-column phone grid cards. These remain
+  explicit design tradeoffs for owner review, not hidden failed actions.
+- **UX: 92/100.** Deducted three points for native Doc horizontal pan/zoom on
+  phones, three for persistent editor chrome occupying substantial short-phone
+  height, one for opening Tags to read truncated labels on touch, and one for
+  expanded phone filter density. The title does not automatically hide on scroll.
+  SPN-049/072 retain the mobile editor work; SPN-048 owns unified query controls.
+
+Owner and Collaborator friction is concentrated in mobile editing and retrieval.
+Link guests retain restricted navigation and explicit loss-of-access states.
+Operator setup/recovery/access management remains separate from document access.
+The fixtures demonstrate these proposals; they do not validate production
+passkeys, authorization, server persistence, exports or live revocation.
+
+## Owner-directed subtraction and loading follow-up
+
+[Decision #128](https://github.com/mxbaylee/spinel/issues/128) removes personal
+pinning in this branch, including production controls, API routes, providers and
+new schema creation. Legacy SQL tables and cached fields are safely unused;
+files, grants, personal folder placement, offline downloads and named-version
+retention remain. Independent source review checked these boundaries and the
+regression coverage. Earlier pin screenshots and scores are historical.
+
+The same subtraction pass removes Space-header Back, the disabled future passkey
+menu and a duplicate empty-results reset. Compact site My files remains icon-only
+with an accessible name and tooltip. Query-only no-results retains a reset.
+New loading silhouettes share one component and motion contract. These latest
+changes require fresh CI and renders; the earlier scoped grades are not a new
+acceptance grade for this source.

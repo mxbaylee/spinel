@@ -50,10 +50,11 @@ pattern observations, not claims about every plan, device or current screen.
   browser-local, defaults to System and is separate from saved profile identity.
 - [Dropbox navigation](https://help.dropbox.com/installs/homepage): file search,
   shared files, folders and creation have distinct places. Consolidate Spinel's
-  pins/folders/shared navigation; keep one New action and one menu per file.
+  folder/shared navigation; keep one New action and one menu per file.
 - [Dropbox quick access](https://help.dropbox.com/organize/quick-access): personal
-  shortcuts do not change shared organization. Preserve Spinel's personal pins
-  and filed shared references without implying shared ownership.
+  shortcuts do not change shared organization. Preserve filed shared references
+  without implying shared ownership. Personal pinning was rejected by the owner
+  on 2026-10-21 ([decision #128](https://github.com/mxbaylee/spinel/issues/128)); competitor favorites are not a requirement.
 
 The comparisons on each screen page translate these observations into a
 specific layout. Competitor patterns inform placement; Spinel's access,
@@ -61,7 +62,7 @@ recovery and offline contracts remain authoritative.
 
 ## Composed layout contract
 
-- File navigation: one 224 px column with gem, places, pins and account
+- File navigation: one 224 px column with gem, places and account
   utilities. Collapse reduces it to a 64 px rail; an icon-only chevron or local Pages control
   reopens it. Never show the rail beside an expanded tree. At tablet/phone
   widths (900 px and below), navigation is a drawer by default.
@@ -72,7 +73,7 @@ recovery and offline contracts remain authoritative.
   rows. Extra search filters belong in a disclosure; active filters remain
   visible and clearable. File rows show name, type, access, limited tags and
   edited date. Dates move out at narrow widths before names lose space.
-- Editors: no file-search panel, dashboard title or pinned sidebar. One compact
+- Editors: no file-search panel, dashboard title or file sidebar. One compact
   header holds identity, a fixed status slot and permission-appropriate actions.
   The actual Univer toolbar remains the only editing toolbar. Connected Sheet/Doc
   walkthroughs embed native open-source Univer with local samples. Standalone
@@ -151,7 +152,7 @@ Do not run another agent's local workload concurrently.
 
 | Surface / journey                   | Current evidence                                           | Proposed story suffix under `Redesign/Screens`                                     | Implementation              |
 | ----------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------- |
-| Find files, folders, pins           | Shell/AppLayout; Dashboard/Dashboard                       | Dashboard, EmptyFolder, LoadingFiles, FileError                                    | SPN-048                     |
+| Find files and folders              | Shell/AppLayout; Dashboard/Dashboard                       | Dashboard, EmptyFolder, LoadingFiles, FileError                                    | SPN-048                     |
 | Search and narrow results           | Dashboard/SearchPanel                                      | Search, AdvancedSearch, NoMatches                                                  | SPN-048                     |
 | Shared references                   | Dashboard/Dashboard SharedDrawer                           | SharedFiles                                                                        | SPN-048                     |
 | Trash and restore                   | Dashboard/Trash                                            | Trash                                                                              | SPN-048, SPN-064            |
@@ -176,6 +177,11 @@ Do not run another agent's local workload concurrently.
 | Shared controls                     | current native controls in each screen                     | Redesign/Controls Default, Disabled, Error                                         | shared now; consumers later |
 
 ## Owner review
+
+Review by subtraction: remove controls and repeated labels that do not earn
+their space in the task. A polished redundant component still adds clutter.
+Use the [playbook criterion](README.md#review-by-subtraction), including compact
+header icon-only navigation and no redundant Space-page Back button.
 
 Use the [connected walkthrough guide](walkthrough.md) to judge each persona’s
 full task, including return navigation, recovery and phone layouts. The owner has
@@ -209,8 +215,9 @@ Mockup actions demonstrate placement and local feedback; they do not implement
 networking, actual passkey operations or document persistence. Production tickets
 must preserve the existing security/behavior contracts during migration.
 
-Owner refinement (chat, 2026-10-20): folders are rows in **My files**, while
-pins remain navigation shortcuts. The expanded sidebar uses the original saturated `--sp-rail` pink and
+Current owner direction (chat, 2026-10-21): folders are rows in **My files**.
+Personal pinning and pinned navigation are removed ([decision #128](https://github.com/mxbaylee/spinel/issues/128)); folders, tags and search
+provide retrieval without another shortcut list. The expanded sidebar uses the original saturated `--sp-rail` pink and
 matching `--sp-rail-ink` foreground (owner correction, 2026-10-20). Profile and Appearance occupy separate rows. Trash is a permanent
 folder entry in My files with no rename/move/delete controls; it is not another
 sidebar destination. A network icon beside the gem shows connection state,
@@ -220,7 +227,7 @@ remain explicit; network state never substitutes for save confirmation.
 Owner refinement (chat, 2026-10-20): offer **List and Grid** views over the same
 files, filters and actions. Default to List; remember the preference during the
 screen migration. Folders and permanent Trash appear in both. Desktop collapse
-keeps My files, Shared with me and pins directly accessible, with full accessible
+keeps My files and Shared with me directly accessible, with full accessible
 names and hover/focus labels; phone/tablet navigation stays in the drawer.
 Space trees reopen from Pages rather than flattening a hierarchy into icons.
 
@@ -320,10 +327,10 @@ contains the proposed patterns; **Identity** keeps shared artwork. Existing
 production specimens remain useful before/after evidence, not alternative
 recommendations for new screens.
 
-- AppLayout, Rail and PinnedSidebar converge on one Shell. Pins are shortcuts;
-  folders and Trash are content. GemLogo, entity icons, social cards and cursor
+- AppLayout and Rail converge on one Shell; folders and Trash are content.
+  Personal pinning and its UI are removed by owner direction, 2026-10-21. GemLogo, entity icons, social cards and cursor
   profile glyphs retain their existing identity; the favicon is enlarged.
-- Dashboard, SearchPanel, DocumentTags, TagLabels, PinButton, SharedBadge and
+- Dashboard, SearchPanel, DocumentTags, TagLabels, SharedBadge and
   OfflineBadge are reviewed as file-row/search/navigation states. Their proposed
   actions use one row menu, visible access metadata and a shared failure/retry
   pattern. The query-chip/parser change remains explicitly scoped to SPN-048.
@@ -368,7 +375,7 @@ prompt. The boundary was reassessed: shared controls, composed examples, persona
 journeys, the design playbook and their review evidence form one proposal for
 owner approval. Production screen migrations remain in the existing screen
 tickets; no backend, storage or authorization redesign is included here. The
-favicon is the owner's explicit small production exception. Token/import/recovery
+favicon and owner-requested pinning removal are explicit production exceptions. Token/import/recovery
 examples fill the catalog audit gaps rather than shipping those workflows.
 The temporary Pages exception is limited to this PR and removed before merge.
 

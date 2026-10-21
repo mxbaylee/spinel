@@ -6,15 +6,14 @@ Awaiting [owner approval](https://github.com/mxbaylee/spinel/issues/126).
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Dashboard, Search, SharedFiles, Trash, EmptyFolder, LoadingFiles, FileError.
 
-| Current friction | Public reference pattern | Adopted proposal |
-| --- | --- | --- |
+| Current friction                                                                               | Public reference pattern                                                                              | Adopted proposal                                                                                                 |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Separate pins, folders and shared panels; a wall of row actions; a large heading above search. | Dropbox separates file navigation from actions; Notion combines favorites and hierarchy in a sidebar. | One file sidebar; search above rows; one New menu and one always-visible row menu. Access labels remain visible. |
 
-The redesigned header keeps the current folder title with its ancestor breadcrumb. Search, Filters and List/Grid share one responsive toolbar directly below it; Type, Ownership, Tag and Last modified sit inside Filters. Active constraints remain visible and clearable. On phones search gets a full row, with Filters and view controls immediately beneath it. At phone width Browse files opens a modal navigation drawer. The selected folder becomes the page title, with ancestors as a compact breadcrumb. No second pinned column.
+The redesigned header keeps the current folder title with its ancestor breadcrumb. Search, Filters and List/Grid share one responsive toolbar directly below it; Type, Ownership, Tag and Last modified sit inside Filters. Active constraints remain visible and clearable. On phones search gets a full row, with Filters and view controls immediately beneath it. At phone width Browse files opens a modal navigation drawer. The selected folder becomes the page title, with ancestors as a compact breadcrumb. No pinned-item list or pin actions.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
-
 
 SPN-048 builds this page's layout. Design changes made while building go back
 into this page, not only into the PR.
@@ -34,7 +33,7 @@ The shared pattern: one New button that also holds import, a wide search with
 filter chips, "Shared with me" as a place in the nav rather than a panel, and
 one menu button per row.
 
-## Spinel today
+## Pre-redesign friction (historical, 2026-10-19)
 
 Search panel above everything; a "Shared with me" toggle that opens a drawer
 above the list; New, Refresh folder and Import as three separate buttons; and up
@@ -49,8 +48,8 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
 ┌ sidebar ─────────┬ header ───────────────────────────────────────────┐
 │ My files         │ My files / Budgets              [ Search… ] [ New ▾]│
 │ Shared with me   ├───────────────────────────────────────────────────┤
-│ Pinned  (list)   │ [All] [Sheets] [Docs] [Tagged ▾]       ← filter chips │
-│ Folders (tree)   ├───────────────────────────────────────────────────┤
+│                  │ [Search…] [Filters] [List / Grid]                    │
+│                  ├───────────────────────────────────────────────────┤
 │                  │ ▦ Q3 forecast   Shared · View only  #ops  Oct 12  ⋯ │
 │                  │ ▤ Notes                            #ops  Oct 10  ⋯ │
 │ Appearance       │                                                    │
@@ -69,8 +68,6 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
   with "Shared by" and the share date in the secondary column. Filing a shared
   reference into a folder (SPN-018) is **File into folder…** in the row menu,
   and filing into a folder from My files remains available. The `↗` handle goes.
-- **Pinned** (SPN-020) is a short list in the sidebar; a pinned row also shows a
-  pin badge.
 - **Trash** is a permanent folder in My files. The network icon by the gem
   explains connectivity on hover/tap and never claims anything is saved.
 - **Rows** follow the [row pattern](README.md#row). The secondary column is the
@@ -82,13 +79,13 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
 
 ### Always visible / behind a menu
 
-| Always visible                                                             | Behind a menu                                                                                                       |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| New (primary), search, breadcrumb                                          | New → Folder, Sheet, Doc, Import file…                                                                              |
-| Sidebar: My files, Shared with me, Pinned, appearance, profile; network by gem      | Owned row ⋯ → Open, Pin/Unpin, Tags…, Share…, Rename…, Move…, Available offline on this device, Trash               |
-| Row: icon, name, shared/view-only/pinned/offline badges, two tags, date, ⋯ | Shared row ⋯ → Open, Pin/Unpin, Tags…, File into folder… or Remove from my folder, Available offline on this device |
-|                                                                            | Folder ⋯ → the owned-row items that apply to folders, plus Refresh folder                                           |
-| Filter chips while searching or filtering                                  | Tags chip → tag list                                                                                                |
+| Always visible                                                      | Behind a menu                                                                                            |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| New (primary), search, breadcrumb                                   | New → Folder, Sheet, Doc, Import file…                                                                   |
+| Sidebar: My files, Shared with me, theme, profile; network by gem   | Owned row ⋯ → Open, Tags…, Share…, Rename…, Move…, Available offline on this device, Trash               |
+| Row: icon, name, shared/view-only/offline badges, two tags, date, ⋯ | Shared row ⋯ → Open, Tags…, File into folder… or Remove from my folder, Available offline on this device |
+|                                                                     | Folder ⋯ → the owned-row items that apply to folders, plus Refresh folder                                |
+| Filter chips while searching or filtering                           | Tags chip → tag list                                                                                     |
 
 Access ("View only", "Can edit") stays a visible badge because it decides what
 the person can do once they open the item. The shared-row menu never offers
@@ -139,8 +136,7 @@ device. Reconnect to edit." or the problem) and `e2e/offline.spec.ts` covers the
 
 ## Stories
 
-`Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/PinnedSidebar`,
-`Dashboard/PinButton`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
+`Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
 `Dashboard/DocumentTags`, `Dashboard/Trash`, `Dashboard/ImportFile`,
 `Dashboard/OfflineBadge` (also the banner and the "You're offline" page). Local
 mode: `Dashboard/Dashboard` `LocalMode`, `LocalNeedsConnection` and
@@ -148,15 +144,16 @@ mode: `Dashboard/Dashboard` `LocalMode`, `LocalNeedsConnection` and
 
 ## Navigation after the persona walkthrough
 
-Use one collapsible 224 px column for gem, places, pins and account
+Use one collapsible 224 px column for gem, places and account
 utilities. Do not retain a separate rail beside it. Tablets/phones start with
 a drawer; Files remains visibly labelled. Remove the repeated workspace eyebrow
 and decorative list caption on phones. Search explicitly names its current
 scope and offers Search all files from a folder/shared view. Returning from
 a document restores folder, filters and scroll position (SPN-048/049).
 
-Owner refinement (chat, 2026-10-20): folders are rows in **My files**, while
-pins remain navigation shortcuts. The expanded sidebar uses the original saturated `--sp-rail` pink and
+Current owner direction (chat, 2026-10-21): folders are rows in **My files**.
+Personal pinning and pinned navigation are removed ([decision #128](https://github.com/mxbaylee/spinel/issues/128)); folders, tags and search
+provide retrieval without another shortcut list. The expanded sidebar uses the original saturated `--sp-rail` pink and
 matching `--sp-rail-ink` foreground (owner correction, 2026-10-20). Profile and Appearance occupy separate rows. Trash is a permanent
 folder entry in My files with no rename/move/delete controls; it is not another
 sidebar destination. A network icon beside the gem shows connection state,
@@ -166,7 +163,7 @@ remain explicit; network state never substitutes for save confirmation.
 Owner refinement (chat, 2026-10-20): offer **List and Grid** views over the same
 files, filters and actions. Default to List; remember the preference during the
 screen migration. Folders and permanent Trash appear in both. Desktop collapse
-keeps My files, Shared with me and pins directly accessible, with full accessible
+keeps My files and Shared with me directly accessible, with full accessible
 names and hover/focus labels; phone/tablet navigation stays in the drawer.
 Space trees reopen from Pages rather than flattening a hierarchy into icons.
 

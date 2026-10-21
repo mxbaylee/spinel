@@ -115,7 +115,7 @@ Space examples remain in Storybook until the feature exists.
 
 After owner approval, one optional navigation column replaces the old permanent
 rail-plus-sidebar composition. File views use a 224 px sidebar containing gem,
-places, pins and account utilities. Collapse leaves a 64 px rail with an
+places and account utilities. Collapse leaves a 64 px rail with an
 icon-only right chevron, named **Expand navigation** for assistive technology
 and its tooltip. The left chevron collapses it; reopening restores the tree.
 Never show both side by side.
@@ -144,8 +144,7 @@ supersede the earlier stacking layout after owner approval.
 ### Breakpoints
 
 - **900 px and below:** file/Space navigation is a drawer by default, opened
-  by the same chevron controls with accessible names and tooltips. Pins stay
-  within that drawer, not a second row. Link guests use a scoped Pages control.
+  by the same chevron controls with accessible names and tooltips. Link guests use a scoped Pages control.
 - **640 px and below:** compact top utilities replace a vertical rail; document
   headers use two rows, profile sections scroll with labels, Operator sections
   wrap so health is always discoverable. No 600 px intermediate behavior.
@@ -209,7 +208,7 @@ states to the same component.
 ### Row
 
 A list row is: kind icon, name (the open target, the whole row width), badges
-(shared, view only, pinned), up to two tags then "+n", a muted secondary column
+(shared, view only), up to two tags then "+n", a muted secondary column
 (edited or shared date), and a **More** button. Rows are at least 44 px tall.
 
 ### More menu
@@ -247,7 +246,9 @@ in the header's status slots).
 
 A short `role="status"` line in the region that will fill ("Loading your
 files…"). No spinners over the whole page, no skeletons that resize when the
-content arrives.
+content arrives. The [loading pattern](states.md#loading) also defines the
+proposed theme-aware runner in compact and page contexts; it is not yet a
+production-wide replacement.
 
 ## Storybook
 
@@ -281,6 +282,22 @@ recovery cards that are still inline in `App.tsx` are out of scope; SPN-060
 covers them with Playwright screenshots instead. A ticket that extracts one of
 those cards adds its story.
 
+## Review by subtraction
+
+For each page, ask whether a control or repeated label earns its space for the
+current task. Remove redundant destinations, actions and status explanations
+rather than merely placing them behind another menu. Compare the whole screen
+and its transitions, including phone widths, before accepting an individually
+polished component. Required access, save, recovery and destructive-action
+information must remain discoverable. Owner, chat 2026-10-21.
+
+The owner removed personal pinning and all pinned-item UI from this branch
+([decision #128](https://github.com/mxbaylee/spinel/issues/128), 2026-10-21).
+Do not preserve or reintroduce them as favorites, shortcuts or disabled controls.
+Compact site headers use an icon-only My files destination with an accessible
+name and tooltip. Space page headers have no redundant Back button: the local
+Pages tree handles page navigation and My files exits the Space.
+
 ## Why it is shaped this way
 
 - Start from the approved gem-rail mockup and the landed SPN-027 theme, so the
@@ -313,8 +330,9 @@ learn.microsoft.com and the Microsoft 365 Insider blog (Excel for the web,
 OneDrive). Read 2026-10-19. Products change; when a comparison here goes stale,
 update the comparison rather than the adopted pattern unless the owner agrees.
 
-Owner refinement (chat, 2026-10-20): folders are rows in **My files**, while
-pins remain navigation shortcuts. The expanded sidebar uses the original saturated `--sp-rail` pink and
+Current owner direction (chat, 2026-10-21): folders are rows in **My files**.
+Personal pinning and pinned navigation are removed; folders, tags and search
+provide retrieval without another shortcut list. The expanded sidebar uses the original saturated `--sp-rail` pink and
 matching `--sp-rail-ink` foreground (owner correction, 2026-10-20). A centered appearance picker sits above a profile row showing the user's display name; long names truncate with the full name in its title. Trash is a permanent
 folder entry in My files with no rename/move/delete controls; it is not another
 sidebar destination. A network icon beside the gem shows connection state,
@@ -325,7 +343,7 @@ remain explicit; network state never substitutes for save confirmation.
 Owner refinement (chat, 2026-10-20): offer **List and Grid** views over the same
 files, filters and actions. Default to List; remember the preference during the
 screen migration. Folders and permanent Trash appear in both. Desktop collapse
-keeps My files, Shared with me and pins directly accessible, with full accessible
+keeps My files and Shared with me directly accessible, with full accessible
 names and hover/focus labels; phone/tablet navigation stays in the drawer.
 Space trees reopen from the local **Pages** control below the website header;
 their nested folders and pages remain in the tree rather than becoming rail icons.

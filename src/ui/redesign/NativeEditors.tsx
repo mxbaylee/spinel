@@ -1,3 +1,4 @@
+import { LoadingReview } from './LoadingReview.tsx';
 /** Isolated native review editors: no collaboration, authentication or persistence. */
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -376,11 +377,16 @@ export function NativeEditor({
       {state !== 'ready' && (
         <div
           className={`rd-native-message ${!readOnly && state === 'loading' ? 'rd-native-loading-editable' : ''}`}
-          role={state === 'error' ? 'alert' : 'status'}
+          role={state === 'error' ? 'alert' : undefined}
         >
-          {state === 'error'
-            ? message
-            : `Opening ${kind === 'sheet' ? 'spreadsheet' : 'document'}…`}
+          {state === 'error' ? (
+            message
+          ) : (
+            <LoadingReview
+              label={`Opening ${kind === 'sheet' ? 'spreadsheet' : 'document'}…`}
+              size={readOnly ? 'page' : 'compact'}
+            />
+          )}
         </div>
       )}
     </section>

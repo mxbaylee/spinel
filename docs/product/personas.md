@@ -28,7 +28,7 @@ Admin accounts can't view, edit or create documents.
 The daily driver. Owns most documents and lives in the dashboard.
 
 - Keeps budgets, journals, recipes and plans in Sheets and Docs.
-- Finds things fast through folders, tags, pins and search.
+- Finds things fast through folders, tags and search.
 - Needs nothing to be lost: trash that can be undone, history that can be
   restored, edits that never silently vanish.
 - Wants it to feel like Spinel, not a generic office suite.

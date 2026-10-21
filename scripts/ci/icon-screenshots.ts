@@ -29,7 +29,6 @@ try {
       ['dashboard-dashboard--shared-drawer', 'Shared forecast'],
       ['dashboard-dashboard--new-doc', 'New item'],
       ['dashboard-dashboard--new-sheet', 'New item'],
-      ['dashboard-pinnedsidebar--pinned', 'Quarterly budget'],
       ['dashboard-searchpanel--results', 'Budget notes'],
       ['dashboard-trash--with-items', 'Old budget'],
       ...['document', 'spreadsheet', 'space-preview', 'emoji', 'long-title', 'long-word'].map(

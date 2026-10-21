@@ -1,12 +1,5 @@
 /** SPN-047 review prototypes. No production routes, network calls or document writes. */
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from 'react';
+import { createContext, useContext, useRef, useState, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 import { Tooltip } from '@base-ui/react/tooltip';
 import { GemLogo, replayGemWiggle } from '../GemLogo.tsx';
@@ -19,11 +12,11 @@ import { fillPresets } from '../palette.ts';
 import { getPreference, setPreference, watchTheme } from '../theme.ts';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal, SegmentedChoice } from './Controls.tsx';
 import './mockups.css';
+import { LoadingReview } from './LoadingReview.tsx';
 import { TokenManager } from './TokenManager.tsx';
 import { ConnectionsReview } from './ConnectionsReview.tsx';
 import { TagsReview, TagLabelsReview } from './TagsReview.tsx';
 import { ImportDialog } from './ImportReview.tsx';
-import { PinnedReview, PinsReviewProvider, useReviewPins } from './PinsReview.tsx';
 import { VersionNamesReview } from './VersionNamesReview.tsx';
 import { PresenceReview } from './PresenceReview.tsx';
 import { FormulaReview, type FormulaReviewState } from './FormulaReview.tsx';
@@ -37,7 +30,6 @@ type GlyphName =
   | 'folder'
   | 'shared'
   | 'trash'
-  | 'pin'
   | 'forward'
   | 'back'
   | 'menu'
@@ -63,7 +55,6 @@ const paths: Record<GlyphName, string> = {
   shared:
     'M8 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6 M2 20v-3a6 6 0 0 1 12 0v3 M16 5a3 3 0 0 1 0 6 M17 14a5 5 0 0 1 5 5',
   trash: 'M4 6h16 M9 6V3h6v3 M6 6l1 15h10l1-15 M10 10v7 M14 10v7',
-  pin: 'M8 3h8l-1 7 4 4H5l4-4z M12 14v8',
   back: 'M15 5l-7 7 7 7',
   forward: 'M9 5l7 7-7 7',
   menu: 'M4 6h16 M4 12h16 M4 18h16',
@@ -426,19 +417,12 @@ function Sidebar({
                 aria-current={selected === label ? 'page' : undefined}
                 onClick={() => onSelect(label)}
               >
-                {glyph === 'pin' ? (
-                  <span aria-hidden="true">{filenameEmoji(label)}</span>
-                ) : (
-                  <Glyph name={glyph} />
-                )}
+                <Glyph name={glyph} />
                 {label}
               </button>
             ))}
           </section>
         ))
-      )}
-      {!space && !guest && (
-        <PinnedReview selected={selected} onSelect={onSelect} disabled={offline} />
       )}
       {space && canEdit && (
         <ActionMenu
@@ -529,14 +513,7 @@ function Sidebar({
     </nav>
   );
 }
-function Shell(props: Parameters<typeof ShellContent>[0]) {
-  return (
-    <PinsReviewProvider>
-      <ShellContent {...props} />
-    </PinsReviewProvider>
-  );
-}
-function ShellContent({
+function Shell({
   children,
   sidebar = false,
   space = false,
@@ -644,17 +621,12 @@ function ShellContent({
                   aria-current={selected === label ? 'page' : undefined}
                   onClick={() => onSelect(label)}
                 >
-                  {glyph === 'pin' ? (
-                    <span aria-hidden="true">{filenameEmoji(label)}</span>
-                  ) : (
-                    <Glyph name={glyph} />
-                  )}
+                  <Glyph name={glyph} />
                   <span className="rd-nav-tooltip" aria-hidden="true">
                     {label}
                   </span>
                 </button>
               ))}
-              <PinnedReview compact selected={selected} onSelect={onSelect} disabled={offline} />
             </nav>
           )}
           <div className="rd-rail-bottom">
@@ -801,14 +773,7 @@ export const files = [
     ownerName: file.access === 'owner' ? undefined : 'Alex Kim',
   };
 });
-export function DashboardMockup(props: Parameters<typeof DashboardContent>[0]) {
-  return (
-    <PinsReviewProvider>
-      <DashboardContent {...props} />
-    </PinsReviewProvider>
-  );
-}
-function DashboardContent({
+export function DashboardMockup({
   state = 'populated',
   fileMutation = 'ready',
   collapsed = false,
@@ -868,7 +833,6 @@ function DashboardContent({
     | 'trash-delete-error'
     | 'trash-expired';
 }) {
-  const pins = useReviewPins();
   const deletedFixtures = files
     .filter((file) => file.access === 'owner' && file.kind !== 'folder')
     .map((file) => ({ ...file, id: `deleted-${file.id}`, name: `Old ${file.name}` }));
@@ -951,9 +915,10 @@ function DashboardContent({
   const tagsFor = (file: { id: string; tags: string }) =>
     personalTags[file.id] ?? (file.tags ? [file.tags] : []);
   const [modified, setModified] = useState('any');
-  const hasFilters = Boolean(
-    search || tag || scope !== 'all' || modified !== 'any' || kind !== 'all',
+  const hasStructuredFilters = Boolean(
+    tag || scope !== 'all' || modified !== 'any' || kind !== 'all',
   );
+  const hasFilters = Boolean(search || hasStructuredFilters);
   const clearFilters = () => {
     setSearch('');
     setTag('');
@@ -994,9 +959,6 @@ function DashboardContent({
     );
     setNotice(`${file.name}${subtree.size > 1 ? ' and its owned contents' : ''} moved to Trash.`);
   };
-  useEffect(() => {
-    pins.reconcile(items.filter((item) => !trashed.includes(item.id)));
-  }, [items, trashed, pins.reconcile]);
   const [retried, setRetried] = useState(false);
   const localMode = state.startsWith('local');
   const trashPending = state.startsWith('trash-') && state.endsWith('-pending');
@@ -1281,7 +1243,7 @@ function DashboardContent({
           </div>
         </div>
         <div className="rd-filter-bar">
-          {(tag || scope !== 'all' || modified !== 'any' || kind !== 'all') && (
+          {hasStructuredFilters && (
             <>
               <span className="sp-muted">
                 {[
@@ -1370,9 +1332,7 @@ function DashboardContent({
             </p>
           </div>
         ) : listingLoading ? (
-          <div className="rd-empty" role="status">
-            Loading {listLabel}…
-          </div>
+          <LoadingReview label={`Loading ${listLabel}…`} />
         ) : listingFailed || searchFailed ? (
           <div className="rd-empty">
             <h2>{searchFailed ? 'Could not search.' : `Could not load ${listLabel}.`}</h2>
@@ -1408,7 +1368,9 @@ function DashboardContent({
                     ? 'Files shared with your account will appear here.'
                     : 'Choose New to start a Doc, Sheet or Space.'}
             </p>
-            {hasFilters && <Button onClick={clearFilters}>Clear filters</Button>}
+            {hasFilters && !hasStructuredFilters && (
+              <Button onClick={clearFilters}>Clear filters</Button>
+            )}
           </div>
         ) : (
           <div
@@ -1523,13 +1485,6 @@ function DashboardContent({
                             {
                               label: 'Open',
                               onClick: () => openFile(file),
-                            },
-                            {
-                              label: pins.items.some((item) => item.id === file.id)
-                                ? 'Unpin'
-                                : 'Pin',
-                              disabled: pins.state !== 'ready',
-                              onClick: () => pins.toggle(file),
                             },
                             ...(file.kind !== 'folder'
                               ? [
@@ -2100,7 +2055,7 @@ export function EditorMockup({
                 <GemLogo />
               </span>
             </div>
-          ) : (
+          ) : !space ? (
             <Button
               className="sp-quiet"
               aria-label="Back to files"
@@ -2112,7 +2067,7 @@ export function EditorMockup({
             >
               <Glyph name="back" />
             </Button>
-          )}
+          ) : null}
           <Tooltip.Root open={iconHint} onOpenChange={setIconHint}>
             <Tooltip.Trigger
               className="rd-file-identity-trigger"
@@ -2398,7 +2353,9 @@ export function EditorMockup({
                     Could not open the PDF print dialog. Your document is unchanged. Try PDF again.
                   </p>
                 )}
-                {exportStatus === 'loading' && <p role="status">Preparing your download…</p>}
+                {exportStatus === 'loading' && (
+                  <LoadingReview label="Preparing your download…" size="compact" />
+                )}
                 {offline && <p role="status">Reconnect before exporting this file.</p>}
                 <p className="sp-muted">
                   Univer files keep editable content and images, up to 20 MiB. For PDF, choose Save
@@ -2776,15 +2733,11 @@ export function HistoryMockup({
             <DocumentSurface sheet={sheet} readOnly />
           </div>
         </>
+      ) : historyState === 'loading' ? (
+        <LoadingReview label="Loading versions…" />
       ) : (
         <div className="rd-empty" role={historyState === 'error' ? 'alert' : 'status'}>
-          <h2>
-            {historyState === 'loading'
-              ? 'Loading versions…'
-              : historyState === 'empty'
-                ? 'No versions yet'
-                : 'Could not load versions'}
-          </h2>
+          <h2>{historyState === 'empty' ? 'No versions yet' : 'Could not load versions'}</h2>
           <p>
             {historyState === 'empty'
               ? 'Saved checkpoints will appear here. Return to your document to keep working.'
@@ -2915,7 +2868,7 @@ export function ProfileMockup({
         </nav>
         <div className="rd-profile-content">
           {tab === 'profile' && profileState === 'loading' ? (
-            <p role="status">Loading your profile…</p>
+            <LoadingReview label="Loading your profile…" />
           ) : tab === 'profile' && profileState === 'load-error' ? (
             <div>
               <p role="alert">Could not load your profile. Try again.</p>
@@ -2992,13 +2945,6 @@ export function ProfileMockup({
                   <strong>MacBook</strong>
                   <small>Last used today</small>
                 </span>
-                <ActionMenu
-                  label="Passkey actions"
-                  actions={[
-                    { label: 'Rename (planned)', disabled: true },
-                    { label: 'Remove (planned)', disabled: true },
-                  ]}
-                />
               </div>
               {credential === 'success' && (
                 <div className="rd-setting-row">
@@ -3295,7 +3241,7 @@ export function AdminMockup({
             </section>
           )}
           {state === 'loading' ? (
-            <p role="status">Loading {sectionLabel}…</p>
+            <LoadingReview label={`Loading ${sectionLabel}…`} />
           ) : state === 'error' && !accountsRetried ? (
             <div role="alert">
               <p>Could not load {sectionLabel}. Try again.</p>
@@ -3451,7 +3397,7 @@ export function AdminMockup({
           ) : (
             <>
               {health === 'health-loading' ? (
-                <p role="status">Loading backup status…</p>
+                <LoadingReview label="Loading backup status…" />
               ) : health === 'health-load-error' ? (
                 <div>
                   <p role="alert">Could not load backup status. Try again.</p>
@@ -3830,7 +3776,7 @@ export function EntryMockup({
         <h1>{consent && blocked ? 'Connect an application' : title}</h1>
         {consent && blocked ? (
           requestState === 'loading' ? (
-            <p role="status">Loading connection request…</p>
+            <LoadingReview label="Loading connection request…" />
           ) : requestState === 'load-error' ? (
             <>
               <p role="alert">Could not load this connection request. Try again.</p>

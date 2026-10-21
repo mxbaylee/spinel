@@ -3,11 +3,10 @@ import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
 import { Dashboard } from './Dashboard.tsx';
-import { PinnedSidebar, PinsProvider } from './Pins.tsx';
 import { Rail } from './Rail.tsx';
 
 // The signed-in member's shell as App.tsx composes the dashboard route: the
-// rail, the pinned sidebar and the dashboard. Nothing here opens a sheet or doc,
+// rail and the dashboard. Nothing here opens a sheet or doc,
 // which would load the Univer editor.
 const day = 86_400_000;
 const now = Date.now();
@@ -45,7 +44,6 @@ const roadmap = entry(7, 'Team roadmap', 'doc', {
 const workspace = {
   'GET /api/items': { items: [household, work, mealPlan, budget, trip] },
   'GET /api/items/shared': { items: [roadmap] },
-  'GET /api/items/pins': { items: [budget, trip] },
   [`GET /api/items/${household.id}`]: { item: household, children: [mealPlan], ancestors: [] },
   [`GET /api/items/${work.id}`]: { item: work, children: [], ancestors: [] },
   'GET /api/items/trash': { items: [], version: 'v0' },
@@ -71,17 +69,14 @@ const navigation = { allow: () => true, dirty() {} };
 function AppLayout() {
   return (
     <StillHistory>
-      <PinsProvider enabled>
-        <div className="workspace">
-          <Rail user={{ isAdmin: false }} navigation={railNavigation} onSignOut={() => {}} />
-          <div className="workspace-body">
-            <PinnedSidebar navigation={navigation} />
-            <main>
-              <Dashboard navigation={navigation} user={{ id: 'story-user', name: 'Ada' }} />
-            </main>
-          </div>
+      <div className="workspace">
+        <Rail user={{ isAdmin: false }} navigation={railNavigation} onSignOut={() => {}} />
+        <div className="workspace-body">
+          <main>
+            <Dashboard navigation={navigation} user={{ id: 'story-user', name: 'Ada' }} />
+          </main>
         </div>
-      </PinsProvider>
+      </div>
     </StillHistory>
   );
 }
@@ -96,19 +91,19 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The rail down the left, pins beside the dashboard's folders and files. */
+/** The rail down the left beside the dashboard’s folders and files. */
 export const Desktop: Story = {
   globals: { viewport: { value: 'desktop', isRotated: false } },
   parameters: { api: workspace },
 };
-/** Below 900px the pins move above the dashboard in a wrapping row; the rail stays at the side. */
+/** At tablet width the rail stays beside the dashboard. */
 export const Tablet: Story = {
   globals: { viewport: { value: 'tablet', isRotated: false } },
   parameters: { api: workspace },
 };
 /**
  * Below 640px the rail is a bar across the top; below 600px the folder list
- * stacks above the files, under the pins.
+ * stacks above the files.
  */
 export const Phone: Story = {
   globals: { viewport: { value: 'phone', isRotated: false } },

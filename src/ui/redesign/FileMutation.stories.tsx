@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { DashboardMockup } from './Mockups.tsx';
 
 const meta = {
@@ -63,7 +63,7 @@ export const RetryCreate: Story = {
       'Weekend notes',
     );
     await userEvent.click(dialog.getByRole('button', { name: 'Try again' }));
-    await expect(page.queryByRole('dialog')).toBeNull();
+    await waitFor(() => expect(page.queryByRole('dialog')).toBeNull());
     await expect(
       canvas.getByRole('button', { name: 'More actions for Weekend notes' }),
     ).toBeVisible();

@@ -16,7 +16,7 @@ toolbar and literal document colors, including white paper where authored.
 More holds owner-only Share, Versions and Export; Doc formula insertion opens its
 task UI. Fill controls stay in Univer. Named versions, Before restore checkpoints,
 UTC dates and restore confirmation retain docs/history.md semantics. No dashboard
-search or pinned column persists in standalone editor views.
+search or file-navigation column persists in standalone editor views.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
@@ -149,6 +149,8 @@ entries, rather than reusing today's list.
 
 Space editors keep the compact utility header across the full width, with their
 internal page/folder tree below. Its collapse/reopen chevrons are separate from
-My files, which exits the Space. Link guests retain scoped Pages navigation
+the icon-only My files destination, which exits the Space. Space page headers
+do not add another Back button; use the Pages tree for internal navigation
+(owner, chat 2026-10-21). Link guests retain scoped Pages navigation
 without account destinations. Routine editable-access/footer text is omitted;
 view-only and actionable error/recovery feedback remain. Owner, chat 2026-10-20.
