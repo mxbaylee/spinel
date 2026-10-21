@@ -18,6 +18,10 @@ The browser's `online` event invalidates the old room proof. A good HTTP respons
 or an ordinary synchronization callback cannot turn a reconnecting editor Online;
 the public per-document room stream must report its new subscription. Pending
 edits normalize to an active collaboration unit and can coexist with Online.
+Browser recovery explicitly closes the public socket before requesting reconnect,
+because a browser's offline switch can leave the old WebSocket alive. Ordinary
+save Retry does not invalidate a continuously joined room: the SDK may correctly
+leave a healthy socket alone, without emitting another joined event.
 No connection transition clears the pending-edit guard or bypasses the existing
 recovery-cache flush that precedes a completed save.
 
@@ -27,7 +31,10 @@ Probes do not overlap; old responses after browser loss, replacement or disposal
 are ignored. A confirmed 401 locks the prepared-account pointer and signs in
 again. Live editors stop this shell probe and use their own public room/sync
 streams, plus the existing document-access round trip with a bounded timeout.
-HTTP recovery requires a fresh room subscription. This is connection status for
+An HTTP-only failure temporarily vetoes Online. Recovery removes that veto;
+the existing room and synchronization states still decide readiness. It neither
+manufactures a room acknowledgement nor discards a continuously joined room.
+Actual browser/room loss still requires the new subscription. This is connection status for
 people using Spinel, not the Operator health dashboard from SPN-032.
 
 Guest views use only guest-scoped metadata and collaboration endpoints. They
@@ -73,7 +80,8 @@ open connection as persistence evidence.
   denial and disposal.
 - `e2e/connection-status.spec.ts` exercises the real dashboard, Sheets and Docs
   at desktop and touch-phone widths. It holds real writes while Online, interrupts
-  actual sockets, withholds a real successful JOIN response while HTTP health is
+  actual sockets and separately exercises the browser offline switch alone. It
+  withholds a real successful JOIN response while HTTP health is
   already good, then releases it. It compares the complete editor bounds through
   Offline, Reconnecting and Online.
 - Existing guest and offline end-to-end tests preserve revocation/privacy,

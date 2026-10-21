@@ -12,8 +12,7 @@ export interface EditorConnection {
 export type EditorConnectionEvent =
   | { type: 'browser'; online: boolean }
   | { type: 'room'; status: RoomConnectionStatus }
-  | { type: 'sync'; status: EditorSyncStatus }
-  | { type: 'reconnect' };
+  | { type: 'sync'; status: EditorSyncStatus };
 
 export function createEditorConnection(browserOnline: boolean): EditorConnection {
   return {
@@ -34,9 +33,6 @@ export function reduceEditorConnection(
     case 'browser':
       browserOnline = event.online;
       // The browser returning online cannot reuse the previous room's joined proof.
-      room = browserOnline ? 'joining' : 'offline';
-      break;
-    case 'reconnect':
       room = browserOnline ? 'joining' : 'offline';
       break;
     case 'room':

@@ -281,6 +281,23 @@ for (const width of [1280, 390]) {
           const bounds = await canvas.boundingBox();
           expect(bounds).not.toBeNull();
 
+          // Chromium can leave the socket connected when only its browser
+          // offline switch changes. The app must restart that old socket after
+          // discarding its proof, rather than wait forever for a no-op retry.
+          network.holdJoinAcknowledgements();
+          await context.setOffline(true);
+          await connection(page, 'Offline');
+          await expect.poll(() => canvas.boundingBox()).toEqual(bounds);
+          await context.setOffline(false);
+          await expect
+            .poll(() => network.joinAcknowledgementHeld(), { timeout: 15_000 })
+            .toBe(true);
+          await connection(page, 'Reconnecting');
+          await expect.poll(() => canvas.boundingBox()).toEqual(bounds);
+          network.releaseJoinAcknowledgements();
+          await connection(page, 'Online');
+          await saved();
+
           await network.setOffline(true);
           await connection(page, 'Offline');
           await expect.poll(() => canvas.boundingBox()).toEqual(bounds);

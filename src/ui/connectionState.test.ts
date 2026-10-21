@@ -57,17 +57,17 @@ test('browser recovery cannot reuse a stale joined room or a synchronization cal
   expect(connection.state).toBe('online');
 });
 
-test('explicit reconnect waits for a new room event, including while offline', () => {
-  expect(editor(active, joined, { type: 'reconnect' }, active).state).toBe('reconnecting');
-  expect(editor(active, joined, { type: 'reconnect' }, joined).state).toBe('online');
-  expect(
-    editor(active, joined, { type: 'browser', online: false }, { type: 'reconnect' }, joined).state,
-  ).toBe('offline');
+test('a disconnected room needs a new joined event, not an ordinary sync callback', () => {
+  const lost = { type: 'room', status: 'offline' } as const;
+  const joining = { type: 'room', status: 'joining' } as const;
+  expect(editor(active, joined, lost, active).state).toBe('offline');
+  expect(editor(active, joined, lost, joining, active).state).toBe('reconnecting');
+  expect(editor(active, joined, lost, joining, joined).state).toBe('online');
 });
 
 test('rejoining can progress while the previous collaboration status still says offline', () => {
   let connection = editor(active, joined, { type: 'sync', status: 'offline' });
-  connection = reduceEditorConnection(connection, { type: 'reconnect' });
+  connection = reduceEditorConnection(connection, { type: 'room', status: 'joining' });
   expect(connection.state).toBe('reconnecting');
   connection = reduceEditorConnection(connection, joined);
   expect(connection.state).toBe('offline');

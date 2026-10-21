@@ -16,6 +16,7 @@ import {
   UniverCollaborationClientPlugin,
   ILocalCacheService,
 } from '@univerjs-pro/collaboration-client';
+import type { ICollaborationSocket } from '@univerjs-pro/collaboration-client';
 import {
   BrowserCollaborationSocketService,
   UniverCollaborationClientUIPlugin,
@@ -109,6 +110,11 @@ export function watchCollaboration(
   let statusGeneration = 0;
   let accessUnreachable = false;
   let connection = createEditorConnection(navigator.onLine);
+  const sessions = univer.__getInjector().get(CollaborationSessionService);
+  let activeSocket: ICollaborationSocket | null = null;
+  const sockets = sessions.socket$.subscribe((socket) => {
+    activeSocket = socket ?? null;
+  });
   const connectionEvent = (event: Parameters<typeof reduceEditorConnection>[1]) => {
     if (disposed) return;
     connection = reduceEditorConnection(connection, event);
@@ -140,7 +146,8 @@ export function watchCollaboration(
           publishConnection('offline');
         } else if (accessUnreachable) {
           accessUnreachable = false;
-          // HTTP recovery does not prove a fresh collaboration subscription.
+          // Remove the reachability veto, retaining the public room's actual
+          // lifecycle. A metadata-only outage need not interrupt its socket.
           reconnect();
         }
         return;
@@ -267,12 +274,16 @@ export function watchCollaboration(
       }
     });
   const reconnect = () => {
-    connectionEvent({ type: 'reconnect' });
-    univer.__getInjector().get(CollaborationSessionService).reconnect();
+    // Retry can be a no-op on an already joined socket. Only actual room/browser
+    // transitions invalidate its proof; pending saves do not imply disconnection.
+    sessions.reconnect();
     update();
   };
   const online = () => {
     connectionEvent({ type: 'browser', online: true });
+    // Browser offline mode can leave a WebSocket alive. We discarded its proof,
+    // so explicitly close the public socket to guarantee a fresh room lifecycle.
+    activeSocket?.close();
     reconnect();
   };
   const offline = () => connectionEvent({ type: 'browser', online: false });
@@ -288,6 +299,7 @@ export function watchCollaboration(
       disposed = true;
       abort.abort();
       window.clearInterval(accessTimer);
+      sockets.unsubscribe();
       entities.unsubscribe();
       stopStatus();
       events.unsubscribe();
