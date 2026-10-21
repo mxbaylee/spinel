@@ -79,3 +79,16 @@ export const Sheet: Story = { args: { kind: 'sheet' } };
 export const Doc: Story = { args: { kind: 'doc' } };
 export const SheetViewer: Story = { args: { kind: 'sheet', readOnly: true } };
 export const DocViewer: Story = { args: { kind: 'doc', readOnly: true } };
+
+export const SheetFormula: Story = {
+  args: { kind: 'sheet' },
+  render: () => (
+    <NativeEditor
+      kind="sheet"
+      onReady={({ api }) => {
+        const sheet = api.getActiveWorkbook()?.getActiveSheet();
+        if (sheet) sheet.setActiveRange(sheet.getRange('D11'));
+      }}
+    />
+  ),
+};
