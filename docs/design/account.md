@@ -10,7 +10,7 @@ Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup,
 | --- | --- | --- |
 | Appearance, passkeys and connections become a growing sequence of equal cards. Entry pages use oversized headings and heavy framing. | Notion exposes explicit appearance preferences; Dropbox separates account controls from file navigation. | A compact account area with section navigation; a quiet, single-task entry card. |
 
-Proposed profile sections: Profile & appearance, Passkeys, Connected assistants, This device. Preserve name/color/icon work in PR #124, pending OAuth return navigation, disconnect and advanced token flows. Theme is a three-choice rail menu using the same preference as Profile; this replaces SPN-045’s provisional cycling form only after owner approval. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
+Proposed profile sections: Profile & appearance, Passkeys, Connected assistants, This device, and the planned owner-only Guest links inventory (SPN-066). Preserve name/color/icon work in PR #124, pending OAuth return navigation, disconnect and advanced token flows. Theme is a three-choice rail menu using the same preference as Profile; this replaces SPN-045’s provisional cycling form only after owner approval. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
@@ -35,12 +35,10 @@ single-purpose pages with one heading, one explanation and one primary button.
 
 ## Adopted pattern
 
-- **Theme** is the rail's theme button (SPN-045). Provisional: SPN-045's default
-  is one button cycling Follow system → Vintage → Modern, with its current state
-  as the accessible name, but its owner input ("confirm the theme switch's
-  form") is still open. Update this line with the confirmed form. `/settings`
-  keeps the full `ThemeSettings` radio group and its storage-failure
-  explanation, because the button alone can't explain why a choice won't stick.
+- **Theme** is a three-choice rail menu (Follow system, Vintage · Light,
+  Modern · Dark), proposed in #126. Profile keeps the same named choices and
+  storage-failure explanation. Both controls use one preference store. Owner
+  approval replaces the earlier cycling proposal before SPN-045 implements it.
 - **Your profile** replaces Settings (SPN-045). The rail avatar opens it;
   `/settings` redirects there. Sections, in order: Name, colour and icon
   (SPN-036), Appearance, Your passkeys. **Sign out** is the page's header

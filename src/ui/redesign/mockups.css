@@ -886,3 +886,88 @@
     min-width: 44px;
   }
 }
+.rd-filter-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  font-size: 0.75rem;
+}
+.rd-advanced-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 16px;
+  background: var(--sp-bg);
+  margin-bottom: 24px;
+  border-radius: 8px;
+}
+.rd-advanced-filters > label {
+  font-size: 0.75rem;
+  color: var(--sp-muted);
+}
+.rd-tree-nested {
+  margin-left: 12px;
+  padding-left: 4px;
+  border-left: 1px solid var(--sp-border);
+}
+.rd-sidebar summary {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+@media (pointer: coarse), (max-width: 640px) {
+  .rd-status-slot,
+  .rd-status-slot .sp-control {
+    min-height: 44px;
+    height: auto;
+  }
+  .rd-calendar .sp-control {
+    min-height: 44px;
+  }
+  .rd-tree-row > .sp-control {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .rd-sidebar summary {
+    min-height: 44px;
+  }
+}
+@media (max-width: 640px) {
+  .rd-advanced-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .rd-history {
+    flex-direction: column;
+  }
+}
+
+@media (pointer: coarse), (max-width: 640px) {
+  .rd-nav-item {
+    min-height: 44px;
+  }
+}
+.rd-formula-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.rd-formula-table th,
+.rd-formula-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--sp-border);
+  text-align: left;
+}
+
+@media (pointer: coarse), (max-width: 640px) {
+  .sp-ui button,
+  .sp-ui input,
+  .sp-ui summary {
+    min-height: 44px;
+  }
+  .sp-ui button {
+    min-width: 44px;
+  }
+}

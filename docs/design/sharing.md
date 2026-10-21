@@ -10,7 +10,7 @@ Stories: `Redesign/Screens` — Sharing, PlannedFileAdmin.
 | --- | --- | --- |
 | Per-person Apply buttons and multiple guest-link actions compete with the people and permissions being changed. | Google separates people from general access; Numbers illustrates collaboration options grouped in one menu. | One dialog: people first, guest links second; access choices beside the relevant person. |
 
-Retain No direct access and inherited-access explanation. Changes apply with in-place confirmation/error and rollback on failure. Guest links retain role selection, creation, once-only copy, replacement confirmation and turn-off; preview simplification does not remove those states from implementation. Do not reveal an inaccessible parent name. Future File admin choices are isolated in PlannedFileAdmin and never offered to guests.
+Retain No direct access and inherited-access explanation. Changes apply with in-place confirmation/error and rollback on failure. Guest links retain role selection, creation, once-only copy, replacement confirmation and turn-off; the SharingCreatedLink, SharingExistingLink, SharingReplaceLink and SharingError stories make those states reviewable. Do not reveal an inaccessible parent name. Future File admin choices are isolated in PlannedFileAdmin and never offered to guests.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
@@ -87,3 +87,10 @@ design PR before implementation.
 ## Stories
 
 `Sharing/Sharing`, `Sharing/ShareLink`.
+
+## Guest-link inventory (planned, SPN-066)
+
+Profile → Guest links lists the owner’s own files with type, role, enabled date
+and expiry. Each row offers Change expiry and Turn off; it never reveals the
+secret address. See `Redesign/Screens/PlannedGuestLinks`. Expiry choices are
+never, one day, seven days and 30 days; changing expiry does not rotate a link.

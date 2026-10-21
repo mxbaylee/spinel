@@ -122,13 +122,14 @@ runtime failures and horizontal page overflow for proposed screens.
 
 Output: `test-results/design-review/index.html`, PNGs, `manifest.json`, control
 semantics and bundle sizes. Storybook CI uploads this as **design-review**.
-Open the downloaded index to browse each screen across sizes. The PR links
+Open the downloaded index for paired current/proposed stories, followed by every state across sizes. The PR links
 this artifact and embeds representative before/after images. These are review
 captures, not approved regression baselines.
 
 Current editors are captured by `e2e/appearance.spec.ts`, phone editor/formula
 fixtures and the production CI artifacts. Current sign-in/setup/guest states
-are captured by the design-inventory Playwright fixture. Current screens and
+are captured by `design-inventory`, `setup` and successful viewer/editor paths in
+`guest-links` Playwright fixtures. Current screens and
 proposals are labelled separately; planned Spaces and file Admin have no
 production “before”. The inventory below maps every surface to its evidence.
 
@@ -141,25 +142,26 @@ Do not run another agent's local workload concurrently.
 | Surface / journey | Current evidence | Proposed story suffix under `Redesign/Screens` | Implementation |
 | --- | --- | --- | --- |
 | Find files, folders, pins | Shell/AppLayout; Dashboard/Dashboard | Dashboard, EmptyFolder, LoadingFiles, FileError | SPN-048 |
-| Search and narrow results | Dashboard/SearchPanel | Search | SPN-048, SPN-069 |
+| Search and narrow results | Dashboard/SearchPanel | Search, AdvancedSearch, NoMatches | SPN-048 |
 | Shared references | Dashboard/Dashboard SharedDrawer | SharedFiles | SPN-048 |
 | Trash and restore | Dashboard/Trash | Trash | SPN-048, SPN-064 |
 | Doc and Sheet work | production appearance screenshots | Doc, Sheet, ViewOnly | SPN-049 |
 | Save and connectivity | Editor/OfflineStatus; production offline fixtures | OfflineEditor | SPN-042, SPN-043, SPN-053 |
-| Formula creation/results | Editor/DocFormulas; native formula screenshots | Formula, FormulaInContext | SPN-049, SPN-076 |
+| Formula creation/results | Editor/DocFormulas; native formula screenshots | Formula, FormulaInContext, FormulaTableInContext | SPN-049, SPN-076 |
 | History preview/restore | Editor/VersionNames; history-calendar screenshot | History | SPN-085 |
-| Sharing and guest links | Sharing/Sharing; Sharing/ShareLink | Sharing | SPN-081 |
+| Sharing and guest links | Sharing/Sharing; Sharing/ShareLink | Sharing, SharingCreatedLink, SharingExistingLink, SharingReplaceLink, SharingError | SPN-081 |
 | Profile and appearance | Settings/ThemeSettings; profile PR #124 | Profile | SPN-045, SPN-036 |
 | Passkeys | current settings Playwright capture | Profile (Passkeys section) | SPN-045, SPN-070 |
 | Connections / tokens | Settings/AssistantConnections; Settings/AccessTokens | Connections | SPN-045 |
-| Consent and expiry | Settings/ConnectAssistant | Consent, ConsentExpired | SPN-083 |
-| Offline files on device | existing offline fixtures; planned storage management | ThisDevice | SPN-052 |
+| Consent and expiry | Settings/ConnectAssistant | Consent, ConsentReadOnly, ConsentExpired | SPN-083 |
+| Offline files on device | existing offline fixtures; planned storage management | ThisDevice | SPN-055 |
 | Administration | Admin/AdminUsers, AdminInvites, BackupStatus, AccessTokens | Admin, AdminLoading, AdminError | SPN-082, SPN-032 |
 | Sign-in/setup/invite/recovery | actual App routes in design-inventory fixture | SignIn, Setup, Invite, Recovery | SPN-083 |
 | Guest view/edit | Guest/GuestApp; guest-link browser fixtures | GuestViewer, GuestEditor | SPN-084, SPN-075 |
 | Revoked link / unavailable | Guest/GuestApp LinkRevoked | RevokedLink, MissingFile | SPN-084 |
 | Offline launch | Guest/GuestApp ConnectionInterrupted | OfflineLaunch | SPN-042 |
-| Space navigation and internal trash | planned; SPN-077 facets | PlannedSpace, PlannedSpaceGuest | SPN-078 |
+| Space navigation and internal trash | planned; SPN-077 facets | PlannedSpace, PlannedSpaceGuest, PlannedSpaceGuestEditor, PlannedSpaceTrash | SPN-078 |
+| Guest-link inventory | planned metadata list | PlannedGuestLinks | SPN-066 |
 | Delegated file roles | planned | PlannedFileAdmin | SPN-079 |
 | Shared controls | current native controls in each screen | Redesign/Controls Default, Disabled, Error | shared now; consumers later |
 

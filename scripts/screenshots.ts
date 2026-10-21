@@ -21,7 +21,7 @@ const index = JSON.parse(await readFile('storybook-static/index.json', 'utf8')) 
 const before = [
   'shell-applayout--desktop',
   'dashboard-dashboard--populated',
-  'dashboard-dashboard--empty',
+  'dashboard-dashboard--empty-workspace',
   'dashboard-searchpanel--results',
   'dashboard-trash--with-items',
   'settings-themesettings--default',
@@ -39,10 +39,7 @@ const before = [
 const args = process.argv.slice(2);
 const requested = args.length
   ? args
-  : [
-      ...Object.keys(index.entries).filter((id) => id.startsWith('redesign-')),
-      ...before.filter((id) => index.entries[id]),
-    ];
+  : [...Object.keys(index.entries).filter((id) => id.startsWith('redesign-')), ...before];
 for (const id of requested)
   if (index.entries[id]?.type !== 'story') throw new Error(`Unknown story: ${id}`);
 const directory = resolve(process.env.SPINEL_SCREENSHOT_DIR ?? 'test-results/design-review');
@@ -90,6 +87,26 @@ try {
           await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
           `Page overflow: ${id} ${variant}`,
         ).toBe(true);
+      }
+      if (id.startsWith('redesign-') && width <= 768) {
+        const smallTargets = await page
+          .locator('.sp-ui button, .sp-ui input, .sp-ui summary')
+          .evaluateAll((nodes) =>
+            nodes.flatMap((node) => {
+              const box = node.getBoundingClientRect();
+              if (!box.width || !box.height) return [];
+              return box.height < 43.5 || box.width < 43.5
+                ? [
+                    {
+                      label: node.getAttribute('aria-label') || node.textContent?.trim(),
+                      width: box.width,
+                      height: box.height,
+                    },
+                  ]
+                : [];
+            }),
+          );
+        expect(smallTargets, `Touch targets: ${id} ${variant}`).toEqual([]);
       }
       expect(errors, `Runtime errors in ${id}`).toEqual([]);
       const filename = `${id}-${variant}.png`;
@@ -139,9 +156,32 @@ await writeFile(
   resolve(directory, 'manifest.json'),
   JSON.stringify({ capturedAt: '2026-10-20T16:00:00Z', captures, verifications }, null, 2),
 );
+const pairs = [
+  ['dashboard-dashboard--populated', 'dashboard'],
+  ['dashboard-dashboard--empty-workspace', 'empty-folder'],
+  ['dashboard-searchpanel--results', 'search'],
+  ['dashboard-trash--with-items', 'trash'],
+  ['settings-themesettings--default', 'profile'],
+  ['settings-assistantconnections--loaded', 'connections'],
+  ['settings-connectassistant--consent', 'consent'],
+  ['editor-versionnames--open', 'history'],
+  ['sharing-sharing--with-people', 'sharing'],
+  ['sharing-sharelink--link-on-view-only', 'sharing-existing-link'],
+  ['admin-adminusers--loaded', 'admin'],
+  ['admin-admininvites--loaded', 'admin-invites'],
+  ['admin-backupstatus--healthy', 'admin-health'],
+  ['guest-guestapp--link-revoked', 'revoked-link'],
+];
+const paired = pairs
+  .map(([oldId, suffix]) => {
+    const newId = `redesign-screens--${suffix}`;
+    if (!requested.includes(oldId) || !requested.includes(newId)) return '';
+    return `<section><h2>Before / proposed · ${escape(index.entries[newId].name)}</h2>${variants.map(([, , variant]) => `<h3>${variant}</h3><div class="shots">${[oldId, newId].map((id, i) => `<figure><a href="${id}-${variant}.png"><img loading="lazy" src="${id}-${variant}.png" alt="${i ? 'Proposed' : 'Before'} ${escape(index.entries[id].name)}"></a><figcaption>${i ? 'Proposed' : 'Before'} · ${escape(index.entries[id].title)}</figcaption></figure>`).join('')}</div>`).join('')}</section>`;
+  })
+  .join('');
 await writeFile(
   resolve(directory, 'index.html'),
-  `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Spinel design review</title><style>body{font:16px system-ui;margin:32px;background:#fafafa;color:#222}nav{display:flex;gap:16px;flex-wrap:wrap}section{margin:40px 0} .shots{display:flex;gap:16px;overflow:auto;align-items:start}figure{margin:0;flex:0 0 480px}img{width:100%;border:1px solid #ddd}figcaption{padding:12px}a{color:#8a1d3f}</style><h1>Spinel · SPN-047 design review</h1><p>Proposed screens are Storybook mockups, not production routes. Current screens are labelled by their existing story title. Space and delegated file Admin are planned.</p><nav>${requested.map((id) => `<a href="#${escape(id)}">${escape(index.entries[id].name)}</a>`).join('')}</nav>${requested
+  `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Spinel design review</title><style>body{font:16px system-ui;margin:32px;background:#fafafa;color:#222}nav{display:flex;gap:16px;flex-wrap:wrap}section{margin:40px 0} .shots{display:flex;gap:16px;overflow:auto;align-items:start}figure{margin:0;flex:0 0 480px}img{width:100%;border:1px solid #ddd}figcaption{padding:12px}a{color:#8a1d3f}</style><h1>Spinel · SPN-047 design review</h1><p>Proposed screens are Storybook mockups, not production routes. Current screens are labelled by their existing story title. Space and delegated file Admin are planned.</p><h2>Paired comparisons</h2>${paired}<h2>All states and sizes</h2><nav>${requested.map((id) => `<a href="#${escape(id)}">${escape(index.entries[id].name)}</a>`).join('')}</nav>${requested
     .map(
       (id) =>
         `<section id="${escape(id)}"><h2>${escape(index.entries[id].title)} / ${escape(index.entries[id].name)}</h2><div class="shots">${captures

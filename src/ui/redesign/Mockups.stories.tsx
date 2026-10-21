@@ -71,3 +71,18 @@ export const FormulaLoading: Story = { render: () => <FormulaMockup state="loadi
 export const FormulaEmpty: Story = { render: () => <FormulaMockup state="empty" /> };
 export const FormulaTable: Story = { render: () => <FormulaMockup state="table" /> };
 export const HistoryCalendar: Story = { render: () => <HistoryMockup calendar /> };
+export const AdvancedSearch: Story = { render: () => <DashboardMockup state="filtered" /> };
+export const NoMatches: Story = { render: () => <DashboardMockup state="no-results" /> };
+export const PlannedSpaceGuestEditor: Story = { render: () => <EditorMockup space guest /> };
+export const PlannedSpaceTrash: Story = {
+  render: () => <EditorMockup space initialPage="Trash" />,
+};
+
+export const FormulaTableInContext: Story = { render: () => <EditorMockup table /> };
+export const SharingCreatedLink: Story = { render: () => <SharingMockup state="created" /> };
+export const SharingExistingLink: Story = { render: () => <SharingMockup state="existing" /> };
+export const SharingReplaceLink: Story = { render: () => <SharingMockup state="replace" /> };
+export const SharingError: Story = { render: () => <SharingMockup state="error" /> };
+export const ConsentReadOnly: Story = { render: () => <EntryMockup kind="consent" readOnly /> };
+
+export const PlannedGuestLinks: Story = { render: () => <ProfileMockup section="links" /> };

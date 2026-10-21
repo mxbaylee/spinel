@@ -139,29 +139,60 @@ function Sidebar({
     <nav className="rd-sidebar" aria-label={space ? 'Space contents' : 'Files'}>
       {groups.map((group) => (
         <section key={group.title}>
-          <h2>{group.title}</h2>
-          {group.items.map(([label, glyph]) => (
-            <div className="rd-tree-row" key={label}>
-              <button
-                className="rd-nav-item"
-                aria-current={selected === label ? 'page' : undefined}
-                onClick={() => onSelect(label)}
-              >
-                <Glyph name={glyph} />
-                {label}
-              </button>
-              {space && canEdit && (
-                <ActionMenu
-                  label={`Page actions for ${label}`}
-                  actions={['Rename', 'Move or reorder', 'Trash'].map((x) => ({
-                    label: x,
-                    destructive: x === 'Trash',
-                    onClick: () => setAction(`${x}: ${label}`),
-                  }))}
-                />
-              )}
-            </div>
-          ))}
+          {space && group.title === 'WEEKEND TRIP' ? (
+            <details open>
+              <summary>Weekend trip</summary>
+              <div className="rd-tree-nested">
+                {group.items.map(([label, glyph]) => (
+                  <div className="rd-tree-row" key={label}>
+                    <button
+                      className="rd-nav-item"
+                      aria-current={selected === label ? 'page' : undefined}
+                      onClick={() => onSelect(label)}
+                    >
+                      <Glyph name={glyph} />
+                      {label}
+                    </button>
+                    {canEdit && (
+                      <ActionMenu
+                        label={`Page actions for ${label}`}
+                        actions={['Rename', 'Move or reorder', 'Trash'].map((x) => ({
+                          label: x,
+                          onClick: () => setAction(`${x}: ${label}`),
+                        }))}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </details>
+          ) : (
+            <>
+              <h2>{group.title}</h2>
+              {group.items.map(([label, glyph]) => (
+                <div className="rd-tree-row" key={label}>
+                  <button
+                    className="rd-nav-item"
+                    aria-current={selected === label ? 'page' : undefined}
+                    onClick={() => onSelect(label)}
+                  >
+                    <Glyph name={glyph} />
+                    {label}
+                  </button>
+                  {space && canEdit && (
+                    <ActionMenu
+                      label={`Page actions for ${label}`}
+                      actions={['Rename', 'Move or reorder', 'Trash'].map((x) => ({
+                        label: x,
+                        destructive: x === 'Trash',
+                        onClick: () => setAction(`${x}: ${label}`),
+                      }))}
+                    />
+                  )}
+                </div>
+              ))}
+            </>
+          )}
         </section>
       ))}
       {space && canEdit && (
@@ -321,6 +352,7 @@ const files = [
     name: 'Quarterly budget',
     kind: 'sheet' as const,
     detail: 'Shared · Can edit',
+    access: 'editor' as const,
     date: '12 minutes ago',
     tags: 'household',
   },
@@ -328,6 +360,7 @@ const files = [
     name: 'Autumn plans',
     kind: 'space' as const,
     detail: 'Private',
+    access: 'owner' as const,
     date: '1 hour ago',
     tags: 'travel',
   },
@@ -335,6 +368,7 @@ const files = [
     name: 'A few good recipes',
     kind: 'doc' as const,
     detail: 'Private',
+    access: 'owner' as const,
     date: 'Yesterday',
     tags: '',
   },
@@ -342,6 +376,7 @@ const files = [
     name: 'Reading list',
     kind: 'sheet' as const,
     detail: 'Shared · View only',
+    access: 'viewer' as const,
     date: 'Yesterday',
     tags: '',
   },
@@ -349,6 +384,7 @@ const files = [
     name: 'Notes for next week',
     kind: 'doc' as const,
     detail: 'Private',
+    access: 'owner' as const,
     date: 'Oct 18',
     tags: 'work',
   },
@@ -356,23 +392,43 @@ const files = [
 export function DashboardMockup({
   state = 'populated',
 }: {
-  state?: 'populated' | 'empty' | 'loading' | 'error' | 'search' | 'trash' | 'shared';
+  state?:
+    | 'populated'
+    | 'empty'
+    | 'loading'
+    | 'error'
+    | 'search'
+    | 'filtered'
+    | 'no-results'
+    | 'trash'
+    | 'shared';
 }) {
   const [view, setView] = useState(
     state === 'trash' ? 'Trash' : state === 'shared' ? 'Shared with me' : 'My files',
   );
-  const [search, setSearch] = useState(state === 'search' ? 'budget' : '');
+  const [search, setSearch] = useState(
+    state === 'search' ? 'budget' : state === 'no-results' ? 'winter' : '',
+  );
   const [notice, setNotice] = useState('');
   const [dialog, setDialog] = useState('');
   const [name, setName] = useState('');
   const [kind, setKind] = useState('all');
+  const [filtersOpen, setFiltersOpen] = useState(state === 'filtered');
+  const [scope, setScope] = useState('all');
+  const [tag, setTag] = useState(state === 'filtered' ? 'household' : '');
+  const [modified, setModified] = useState('any');
   const [removed, setRemoved] = useState<string[]>([]);
   if (view === 'Your profile') return <ProfileMockup />;
   const rows = files.filter(
     (file) =>
       file.name.toLowerCase().includes(search.toLowerCase()) &&
       (kind === 'all' || file.kind === kind) &&
-      !removed.includes(file.name),
+      (!tag || file.tags.includes(tag)) &&
+      (scope === 'all' ||
+        (scope === 'shared' ? file.detail.includes('Shared') : file.detail === 'Private')) &&
+      (modified === 'any' || file.date.includes('ago')) &&
+      !removed.includes(file.name) &&
+      (view !== 'Shared with me' || file.access !== 'owner'),
   );
   const empty = state === 'empty' || rows.length === 0;
   return (
@@ -418,6 +474,62 @@ export function DashboardMockup({
             ]}
           />
         </div>
+        <div className="rd-filter-bar">
+          <Button aria-expanded={filtersOpen} onClick={() => setFiltersOpen(!filtersOpen)}>
+            Filters {filtersOpen ? '⌃' : '⌄'}
+          </Button>
+          {(tag || scope !== 'all' || modified !== 'any' || kind !== 'all') && (
+            <>
+              <span className="sp-muted">
+                {[
+                  tag && `Tag: ${tag}`,
+                  scope !== 'all' && scope,
+                  modified !== 'any' && 'Edited today',
+                  kind !== 'all' && kind,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </span>
+              <Button
+                onClick={() => {
+                  setTag('');
+                  setScope('all');
+                  setModified('any');
+                  setKind('all');
+                }}
+              >
+                Clear filters
+              </Button>
+            </>
+          )}
+        </div>
+        {filtersOpen && (
+          <div className="rd-advanced-filters">
+            <Choice
+              label="Ownership"
+              value={scope}
+              onChange={setScope}
+              options={[
+                { value: 'all', label: 'Mine and shared' },
+                { value: 'mine', label: 'Mine' },
+                { value: 'shared', label: 'Shared with me' },
+              ]}
+            />
+            <label>
+              Tag
+              <input value={tag} onChange={(e) => setTag(e.target.value)} placeholder="Any tag" />
+            </label>
+            <Choice
+              label="Last modified"
+              value={modified}
+              onChange={setModified}
+              options={[
+                { value: 'any', label: 'Any time' },
+                { value: 'today', label: 'Today' },
+              ]}
+            />
+          </div>
+        )}
         <div className="rd-list-caption">
           <span>
             {view === 'Trash'
@@ -500,7 +612,7 @@ export function DashboardMockup({
                           { label: 'Open', onClick: () => setNotice(`Opening ${file.name}…`) },
                           { label: 'Pin', onClick: () => setNotice(`${file.name} pinned.`) },
                           { label: 'Tags…', onClick: () => setDialog('Tags') },
-                          ...(file.detail.includes('View only') || view === 'Shared with me'
+                          ...(file.access !== 'owner'
                             ? [
                                 {
                                   label: 'File into folder…',
@@ -518,7 +630,7 @@ export function DashboardMockup({
                                 'Downloaded. This browser may clear offline files when space runs low.',
                               ),
                           },
-                          ...(!file.detail.includes('View only') && view !== 'Shared with me'
+                          ...(file.access === 'owner'
                             ? [
                                 {
                                   label: 'Trash',
@@ -572,9 +684,11 @@ export function DashboardMockup({
 export function DocumentSurface({
   sheet = false,
   unavailable = false,
+  table = false,
 }: {
   sheet?: boolean;
   unavailable?: boolean;
+  table?: boolean;
 }) {
   if (sheet)
     return (
@@ -639,15 +753,38 @@ export function DocumentSurface({
           <li>The little bookshop near the harbor</li>
           <li>Cooking something we haven’t made before</li>
         </ul>
-        <aside className="rd-doc-note">
-          <span className="rd-eyebrow">FROM OUR BUDGET</span>
-          <strong>{unavailable ? 'Source unavailable' : '$258.50 left for the month'}</strong>
-          <span className="sp-muted">
-            {unavailable
-              ? 'This source needs separate access.'
-              : 'A comfortable amount for a small adventure.'}
-          </span>
-        </aside>
+        <h2>A little room in the budget</h2>
+        <p>
+          We have <strong>{unavailable ? 'Source unavailable' : '$258.50'}</strong> left for the
+          month.{' '}
+          {unavailable
+            ? 'The linked figure needs separate access.'
+            : 'A comfortable amount for a small adventure.'}
+        </p>
+
+        {table && (
+          <>
+            <h2>What we spent</h2>
+            <table className="rd-formula-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Actual</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Groceries</td>
+                  <td>$412.50</td>
+                </tr>
+                <tr>
+                  <td>Transport</td>
+                  <td>$84.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </>
+        )}
         <h2>Before we leave</h2>
         <p>
           Check the forecast. Water the plants. Download the reservations so they’re with us even
@@ -664,6 +801,8 @@ export function EditorMockup({
   offline = false,
   space = false,
   formula = false,
+  table = false,
+  initialPage = 'Overview',
 }: {
   sheet?: boolean;
   guest?: boolean;
@@ -671,9 +810,11 @@ export function EditorMockup({
   offline?: boolean;
   space?: boolean;
   formula?: boolean;
+  table?: boolean;
+  initialPage?: string;
 }) {
   const [share, setShare] = useState(false);
-  const [selected, setSelected] = useState('Overview');
+  const [selected, setSelected] = useState(initialPage);
   const [panel, setPanel] = useState(formula ? 'Formula' : '');
   const [notice, setNotice] = useState('');
   const name = sheet ? 'Quarterly budget' : space ? selected : 'Autumn plans';
@@ -783,7 +924,11 @@ export function EditorMockup({
             </div>
           </div>
         ) : (
-          <DocumentSurface sheet={sheet || selected === 'Budget'} unavailable={guest || offline} />
+          <DocumentSurface
+            sheet={sheet || selected === 'Budget'}
+            unavailable={guest || offline}
+            table={table}
+          />
         )}
         {panel && (
           <aside className="rd-inspector">
@@ -827,10 +972,27 @@ export function EditorMockup({
     </Shell>
   );
 }
-function SharingContent({ delegated = false }: { delegated?: boolean }) {
+type SharingState = 'off' | 'created' | 'existing' | 'replace' | 'error';
+function SharingContent({
+  delegated = false,
+  state = 'off',
+}: {
+  delegated?: boolean;
+  state?: SharingState;
+}) {
   const [role, setRole] = useState('edit');
-  const [link, setLink] = useState(false);
-  const [notice, setNotice] = useState('');
+  const [link, setLink] = useState(
+    state === 'created' || state === 'existing' || state === 'replace',
+  );
+  const [revealed, setRevealed] = useState(state === 'created');
+  const [linkRole, setLinkRole] = useState(state === 'created' ? 'edit' : 'view');
+  const [activeRole, setActiveRole] = useState(linkRole);
+  const [replace, setReplace] = useState(state === 'replace');
+  const [notice, setNotice] = useState(
+    state === 'error'
+      ? 'Access could not be updated. Alex still has Can edit access. Try again.'
+      : '',
+  );
   return (
     <>
       <div className="rd-person">
@@ -851,8 +1013,12 @@ function SharingContent({ delegated = false }: { delegated?: boolean }) {
           label="Alex’s direct access"
           value={role}
           onChange={(v) => {
-            setRole(v);
-            setNotice('Access updated. Inherited folder access still applies.');
+            if (state === 'error') {
+              setNotice('Access could not be updated. Alex still has Can edit access. Try again.');
+            } else {
+              setRole(v);
+              setNotice('Access updated. Inherited folder access still applies.');
+            }
           }}
           options={[
             { value: 'none', label: 'No direct access' },
@@ -865,29 +1031,95 @@ function SharingContent({ delegated = false }: { delegated?: boolean }) {
       <section className="rd-section">
         <h3>Anyone with the link</h3>
         <p className="sp-muted">
-          {link
-            ? 'Guests can view. Copy this address now.'
-            : 'Off. Only people with access can open this file.'}
+          {link ? `Guests can ${activeRole}.` : 'Off. Only people with access can open this file.'}
         </p>
-        {link && (
+        <Choice
+          label="Guest link access"
+          value={linkRole}
+          onChange={setLinkRole}
+          options={[
+            { value: 'view', label: 'Can view' },
+            { value: 'edit', label: 'Can edit' },
+          ]}
+        />
+        {link && revealed && (
           <label>
             Guest address
             <input readOnly value="https://spinel.example/share/preview#sample" />
           </label>
         )}
+        {link && (
+          <p className="sp-muted">
+            {revealed
+              ? 'Copy this address now. It is shown only once.'
+              : 'Replace the link to copy a new address.'}
+          </p>
+        )}
+        {link && activeRole !== linkRole && (
+          <p>The current link stays unchanged until you replace it.</p>
+        )}
         <div className="sp-actions">
-          <Button
-            onClick={() => {
-              setLink(!link);
-              setNotice(link ? 'Guest link turned off.' : 'Guest link created for this preview.');
-            }}
-          >
-            {link ? 'Turn off link' : 'Create view-only link'}
-          </Button>
+          {link ? (
+            <>
+              {revealed && (
+                <Button primary onClick={() => setNotice('Guest address copied in this preview.')}>
+                  Copy guest link
+                </Button>
+              )}
+              <ActionMenu
+                label="Guest link actions"
+                actions={[
+                  { label: 'Replace link…', onClick: () => setReplace(true) },
+                  {
+                    label: 'Turn off link',
+                    destructive: true,
+                    onClick: () => {
+                      setLink(false);
+                      setRevealed(false);
+                      setNotice('Guest link turned off.');
+                    },
+                  },
+                ]}
+              />
+            </>
+          ) : (
+            <Button
+              onClick={() => {
+                setLink(true);
+                setRevealed(true);
+                setActiveRole(linkRole);
+                setNotice('Guest link created for this preview.');
+              }}
+            >
+              Create link
+            </Button>
+          )}
         </div>
+        <Modal
+          title="Replace the link?"
+          description="The old link stops working at once, and anyone using it loses access."
+          open={replace}
+          onOpenChange={setReplace}
+        >
+          <p>The replacement lets guests {linkRole} this file.</p>
+          <div className="sp-actions">
+            <Button onClick={() => setReplace(false)}>Cancel</Button>
+            <Button
+              primary
+              onClick={() => {
+                setActiveRole(linkRole);
+                setRevealed(true);
+                setReplace(false);
+                setNotice('Replacement created in this preview. The old link no longer works.');
+              }}
+            >
+              Replace link
+            </Button>
+          </div>
+        </Modal>
         <p className="sp-muted">Collaborator names are hidden while link sharing is on.</p>
       </section>
-      <p role="status" className="rd-feedback">
+      <p role={state === 'error' ? 'alert' : 'status'} className="rd-feedback">
         {notice}
       </p>
       <div className="sp-actions">
@@ -898,7 +1130,13 @@ function SharingContent({ delegated = false }: { delegated?: boolean }) {
     </>
   );
 }
-export function SharingMockup({ delegated = false }: { delegated?: boolean }) {
+export function SharingMockup({
+  delegated = false,
+  state,
+}: {
+  delegated?: boolean;
+  state?: SharingState;
+}) {
   return (
     <div className="sp-ui rd-dialog-stage">
       <section className="rd-dialog-example" aria-label="Sharing design">
@@ -908,7 +1146,7 @@ export function SharingMockup({ delegated = false }: { delegated?: boolean }) {
             ? 'File admins manage this file. They have no server access.'
             : 'Choose who can open this file.'}
         </p>
-        <SharingContent delegated={delegated} />
+        <SharingContent delegated={delegated} state={state} />
       </section>
     </div>
   );
@@ -927,7 +1165,9 @@ function FormulaForm({
         Expression
         <input defaultValue="=SUM('Quarterly budget'.October.D2:D6)" />
       </label>
-      <p className="sp-muted">Source: Quarterly budget / October</p>
+      <p className="sp-muted">
+        {state === 'private' ? 'Source unavailable' : 'Source: Quarterly budget / October'}
+      </p>
       <Choice
         label="Format"
         value={format}
@@ -1108,10 +1348,10 @@ export function HistoryMockup({ calendar = false }: { calendar?: boolean }) {
 export function ProfileMockup({
   section = 'profile',
 }: {
-  section?: 'profile' | 'security' | 'connections' | 'device';
+  section?: 'profile' | 'security' | 'connections' | 'device' | 'links';
 }) {
   const [tab, setTab] = useState<string>(section);
-  const [theme, setTheme] = useState('system');
+  const theme = useSyncExternalStore(watchTheme, getPreference);
   const [notice, setNotice] = useState('');
   return (
     <Shell>
@@ -1129,6 +1369,7 @@ export function ProfileMockup({
             ['security', 'Passkeys'],
             ['connections', 'Connected assistants'],
             ['device', 'This device'],
+            ['links', 'Guest links'],
           ].map(([id, label]) => (
             <button
               className="rd-nav-item"
@@ -1173,8 +1414,11 @@ export function ProfileMockup({
                   label="Theme"
                   value={theme}
                   onChange={(v) => {
-                    setTheme(v);
-                    setPreference(v as 'system' | 'light' | 'dark');
+                    setNotice(
+                      setPreference(v as 'system' | 'light' | 'dark')
+                        ? ''
+                        : 'Theme changed for this visit, but this browser could not save your preference.',
+                    );
                   }}
                   options={[
                     { value: 'system', label: 'Follow system' },
@@ -1199,6 +1443,37 @@ export function ProfileMockup({
                 />
               </div>
               <Button primary>Add a passkey</Button>
+            </>
+          ) : tab === 'links' ? (
+            <>
+              <h2>Guest links</h2>
+              <p className="sp-muted">
+                Planned · Only links on files you own appear here. Secret addresses are never
+                listed.
+              </p>
+              <div className="rd-setting-row">
+                <span>
+                  <strong>Autumn plans</strong>
+                  <small>Doc · Can view · Enabled Oct 18 · Expires Oct 25</small>
+                </span>
+                <ActionMenu
+                  label="Autumn plans guest link actions"
+                  actions={[
+                    {
+                      label: 'Change expiry…',
+                      onClick: () =>
+                        setNotice(
+                          'Expiry options: never, one day, seven days or 30 days. Changing expiry keeps the same link.',
+                        ),
+                    },
+                    {
+                      label: 'Turn off link',
+                      destructive: true,
+                      onClick: () => setNotice('Guest link turned off in this preview.'),
+                    },
+                  ]}
+                />
+              </div>
             </>
           ) : tab === 'connections' ? (
             <>
@@ -1367,7 +1642,9 @@ export function AdminMockup({
 }
 export function EntryMockup({
   kind = 'sign-in',
+  readOnly = false,
 }: {
+  readOnly?: boolean;
   kind?:
     | 'sign-in'
     | 'setup'
@@ -1434,7 +1711,12 @@ export function EntryMockup({
             <p>
               Callback: <strong>client.example</strong>
             </p>
-            <p>Can read and edit files you can access.</p>
+            <p>
+              {readOnly
+                ? 'Can read files you can access. Cannot edit files.'
+                : 'Can read files you can access and edit only files you have permission to edit.'}
+            </p>
+            <p>You can disconnect this application in Profile → Connections at any time.</p>
             <p>Signed in as Alex Baylee</p>
           </div>
         )}

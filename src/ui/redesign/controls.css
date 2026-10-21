@@ -201,6 +201,7 @@
 @media (pointer: coarse), (max-width: 640px) {
   .sp-control,
   .sp-option {
+    min-width: 44px;
     min-height: 44px;
   }
 }
