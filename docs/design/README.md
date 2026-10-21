@@ -23,9 +23,9 @@ controls are always visible and which sit behind a menu.
 | File list (dashboard)           | [dashboard.md](dashboard.md) | SPN-048, SPN-042, SPN-053, SPN-054, SPN-051, SPN-065, SPN-067, SPN-069          |
 | Editor chrome                   | [editor.md](editor.md)       | SPN-049, SPN-043, SPN-042, SPN-050, SPN-033, SPN-035, SPN-068, SPN-072, SPN-075 |
 | Doc formulas                    | [formulas.md](formulas.md) | SPN-033 |
-| Sharing                         | [sharing.md](sharing.md)     | SPN-033, SPN-066, SPN-071, SPN-076                                                       |
+| Sharing                         | [sharing.md](sharing.md)     | SPN-066, SPN-071, SPN-081                                                       |
 | Settings and sign-in            | [account.md](account.md)     | SPN-045, SPN-036, SPN-070                                                       |
-| Admin                           | [admin.md](admin.md)         | SPN-032, SPN-061, SPN-064                                                       |
+| Admin                           | [admin.md](admin.md)         | SPN-032, SPN-061, SPN-064, SPN-082                                                       |
 | Guest view                      | [guest.md](guest.md)         | SPN-042, SPN-075                                                                |
 | Empty, error and offline states | [states.md](states.md)       | SPN-053, SPN-054, SPN-042, SPN-051, SPN-052                                     |
 
@@ -107,75 +107,55 @@ Docs, Sheets and planned Spaces use the [entity iconography pattern](entity-icon
 SPN-077 implemented the blue/green/purple facet family before the wider redesign;
 Space examples remain in Storybook until the feature exists.
 
-## Shell layout
+## Shell layout (SPN-047 proposal)
 
-```
-┌──────┬─────────────┬───────────────────────────────────────────┐
-│ rail │ sidebar     │ view header (fixed height)                │
-│ gem  │ (dashboard  ├───────────────────────────────────────────┤
-│ docs │  only)      │ view body                                 │
-│ admin│             │                                           │
-│  ··· │             │                                           │
-│ theme│ connection  │                                           │
-│ you  │ indicator   │                                           │
-└──────┴─────────────┴───────────────────────────────────────────┘
-```
+After owner approval, one optional navigation column replaces the old permanent
+rail-plus-sidebar composition. File views use a 224 px sidebar containing gem,
+places, pins, folders and account utilities. Collapse leaves a 64 px rail with
+labelled Files/Pages; reopening restores the tree. Never show both side by side.
+Ordinary editors and Operator screens use compact horizontal utility navigation.
+Space trees replace outer file navigation. Guests have no account navigation.
 
-- **Rail:** gem (links to Your docs), Your docs, Admin (admins only), a spacer,
-  then the theme button and the avatar (SPN-045). Icon-only with accessible
-  names; labels show on hover and focus. It lives in `web/Rail.tsx`
-  (`Shell/Rail`); SPN-045 changes its contents.
-- **Sidebar:** dashboard only. See
-  [Layout and responsive](#layout-and-responsive) for how it stacks at narrower
-  widths.
-- **View header:** one row, fixed height, holding the view's title, its status
-  and its actions. Nothing below it moves when status changes.
+The view header holds identity, status and actions. On phones, document identity
+gets a complete first row; status and actions occupy the second row so a long
+name cannot be squeezed out. Status retains its slot when text changes.
 
-Story: `Shell/AppLayout` renders the whole shell (rail, pinned sidebar,
-dashboard) at Desktop, Tablet and Phone.
+`Shell/AppLayout` shows the existing production shell. `Redesign/Screens`
+shows the proposed compositions, including DashboardCollapsed and
+PlannedSpaceCollapsed. Screen implementation tickets perform the migration.
 
 ## Layout and responsive
 
-Values from `src/ui/theme.css` today. Storybook's viewport toolbar has the same
-three widths (Phone 390, Tablet 768, Desktop 1280); check a layout change at all
-three.
+Storybook review widths: Phone 390, Tablet 768 and Desktop 1280. Existing
+production rules remain until their screen migrates; the proposed rules below
+supersede the earlier stacking layout after owner approval.
 
 ### Breakpoints
 
-| Width    | Today in theme.css                                                                                                                                                                                                      |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ≤ 900 px | The pinned sidebar stacks above the content (its list wraps into a row). With a coarse pointer, buttons, selects and inputs are at least 44 px tall and the Sheet uses Univer's mobile controls at `max(420px, 70dvh)`. |
-| ≤ 640 px | The rail becomes a sticky top bar (labels drop below the buttons); body padding 32 → 20 px; the fill palette goes 8 → 4 columns.                                                                                        |
-| ≤ 600 px | The dashboard's folder sidebar stacks above the file list with a divider.                                                                                                                                               |
-
-Adopted: **two breakpoints, 640 px (phone) and 900 px (tablet / touch)**. The
-600 px rules move to 640 px when the next ticket touches them, so a phone never
-sits between "rail on top" and "sidebar beside the list". Don't add a third. For
-SPN-048, at ≤ 640 px the folder sidebar collapses behind a **Folders** button in
-the view header instead of stacking; at ≤ 900 px pinned items stay a wrapped row
-above the content, as today.
+- **900 px and below:** file/Space navigation is a drawer by default, opened
+  from labelled Files/Pages. Pins stay within that drawer, not a second row.
+- **640 px and below:** compact top utilities replace a vertical rail; document
+  headers use two rows, profile sections scroll with labels, Operator sections
+  wrap so health is always discoverable. No 600 px intermediate behavior.
+- **Coarse pointers and phones:** visible controls are at least 44 × 44 px.
+  The actual Sheet retains Univer's mobile behavior during migration.
 
 ### Shell sizes
 
-- **Rail:** 64 px column, 44 px square buttons, full height (`100dvh`, sticky).
-- **Body:** fills the rest; padding 32 px, 20 px at ≤ 640 px. No max width on
-  the shell; the rail layout overrides the old 1080/1480 px caps.
-- **Dashboard grid:** folder sidebar `minmax(150px, 230px)`, gap 28 px. With
-  pins: pinned column 220 px, gap 28 px.
-- **Guest page:** no rail; padding `clamp(16px, 3vw, 32px)`.
-- **Dialogs:** `min(32rem, 100vw - 2rem)` (confirmations) or
-  `min(30rem, 100vw - 3rem)` (tags), height capped at `100vh - 3rem` with
-  scrolling. New dialogs use the first.
-- **Fields:** full width up to 600 px.
-- **Sheet canvas:** 640 px tall, at least 400 px (mobile rule above).
+- Expanded navigation: 224 px. Collapsed rail: 64 px; controls: 44 px.
+- Main content fills remaining width. Dashboard gutters: 40 px desktop, 16 px
+  phone. Editor content/Sheet may pan; page chrome must fit the viewport.
+- Guest: no account rail. Space Pages navigation stays scoped to the link.
+- Dialog: `min(480px, 100vw - 32px)`, capped at `100dvh - 32px` with scrolling.
+- Fields are full width within their content section. Sheet dimensions and
+  toolbar behavior stay with Univer, not the schematic mockup grid.
 
 ### Type
 
-`ui-rounded, system-ui, sans-serif`; no web fonts. Page title (h1)
-`clamp(32px, 6vw, 44px)` with −0.04em tracking; section heading (h2) 22 px; body
-16 px at line height 1.6; secondary text 14 px; small labels and badges 0.85rem
-/ 12 px. `clamp()` is for page titles and page padding only; body text doesn't
-scale with the viewport.
+Use system UI fonts with no web font dependency. Proposed headings/section/body/
+secondary sizes are 28/18/14/12 px. Compact metadata uses 10–11 px sparingly.
+The serif sample document title is authored content, not application typography.
+Existing production typography is not changed until its screen migration.
 
 ### Spacing
 

@@ -1,5 +1,5 @@
 /** SPN-047 review prototypes. No production routes, network calls or document writes. */
-import { useState, useSyncExternalStore } from 'react';
+import { useRef, useState, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 import { GemLogo } from '../GemLogo.tsx';
 import { EntityIcon } from '../EntityIcon.tsx';
@@ -262,7 +262,7 @@ function Sidebar({
           </Button>
         </div>
       </Modal>
-      {!guest && (!space || canEdit) && (
+      {!guest && (
         <div className="rd-sidebar-bottom">
           {onCollapse && !guest && (
             <div className="rd-sidebar-utilities">
@@ -272,10 +272,12 @@ function Sidebar({
               </Button>
             </div>
           )}
-          <button className="rd-nav-item" onClick={() => onSelect('Trash')}>
-            <Glyph name="trash" />
-            {space ? 'Space trash' : 'Trash'}
-          </button>
+          {(!space || canEdit) && (
+            <button className="rd-nav-item" onClick={() => onSelect('Trash')}>
+              <Glyph name="trash" />
+              {space ? 'Space trash' : 'Trash'}
+            </button>
+          )}
           <span className="rd-online">
             <Glyph name="check" /> Online
           </span>
@@ -307,10 +309,22 @@ function Shell({
   selected?: string;
   onSelect?: (view: string) => void;
 }) {
+  const shellRef = useRef<HTMLDivElement>(null);
   const [nav, setNav] = useState(false);
   const [expanded, setExpanded] = useState(!collapsed);
+  const setNavigation = (open: boolean) => {
+    setExpanded(open);
+    requestAnimationFrame(() =>
+      shellRef.current
+        ?.querySelector<HTMLButtonElement>(
+          open ? '.rd-sidebar-brand button' : guest ? '.rd-mobile-nav button' : '.rd-rail-button',
+        )
+        ?.focus(),
+    );
+  };
   return (
     <div
+      ref={shellRef}
       className={`sp-ui rd-shell ${sidebar && expanded ? 'rd-with-sidebar' : ''} ${guest ? 'rd-guest' : ''} ${compact ? 'rd-compact-shell' : ''} ${sidebar ? 'rd-has-navigation' : ''}`}
     >
       {!guest && (
@@ -332,7 +346,7 @@ function Shell({
             onClick={() => {
               if (sidebar) {
                 if (window.matchMedia('(max-width: 900px)').matches) setNav(true);
-                else setExpanded(!expanded);
+                else setNavigation(!expanded);
               } else onSelect('My files');
             }}
           >
@@ -356,7 +370,7 @@ function Shell({
           {expanded && (
             <div className="rd-desktop-nav">
               <Sidebar
-                onCollapse={() => setExpanded(false)}
+                onCollapse={() => setNavigation(false)}
                 space={space}
                 selected={selected}
                 onSelect={onSelect}
@@ -367,7 +381,12 @@ function Shell({
           )}
           {guest && (
             <div className="rd-mobile-nav">
-              <Button onClick={() => setNav(true)}>
+              <Button
+                onClick={() => {
+                  if (window.matchMedia('(max-width:900px)').matches) setNav(true);
+                  else setNavigation(true);
+                }}
+              >
                 <Glyph name="menu" />
                 {space ? 'Pages' : 'Browse files'}
               </Button>
@@ -591,7 +610,7 @@ export function DashboardMockup({
             />
           </div>
         )}
-        <div className="rd-list-caption">
+        <div className={`rd-list-caption ${!search && view === 'My files' ? 'rd-count-only' : ''}`}>
           <span>
             {view === 'Trash'
               ? 'Recover a file, or remove it permanently.'
@@ -970,13 +989,13 @@ export function EditorMockup({
                         label: 'About your access',
                         onClick: () =>
                           setNotice(
-                            'You can edit this file. Its owner manages sharing and restores versions. Folder access may still apply.',
+                            'You can edit this file. Its owner manages sharing. You can name and restore versions. Folder access may still apply.',
                           ),
                       },
                     ]
                   : []),
                 ...[
-                  ...(!collaborator ? ['Versions'] : []),
+                  'Versions',
                   'Export',
                   'Theatre mode',
                   ...(!viewOnly ? ['Insert formula', 'Fill presets'] : []),

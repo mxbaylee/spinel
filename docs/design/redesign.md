@@ -186,7 +186,7 @@ of the proposal, still subject to screenshot approval:
   with Search all files available from a folder/shared view. Returning from a
   document must restore folder, filters and scroll position in SPN-048/049.
 - Collaboration: an editable collaborator gets Can edit and an access explanation,
-  without owner-only Share/restore actions. Trash fixtures contain owned files only.
+  without owner-only Share actions; editable collaborators retain version naming/restore. Trash fixtures contain owned files only.
 - Recovery: selection is visibly highlighted, slider and label agree, preview and
   confirmation identify the checkpoint, and Return to document remains available.
 - Guests: two-row phone headers keep long names readable; viewer status says

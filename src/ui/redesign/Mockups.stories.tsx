@@ -107,3 +107,5 @@ export const AdminDisable: Story = { render: () => <AdminMockup state="disable" 
 export const AdminPasskeys: Story = { render: () => <AdminMockup state="passkeys" /> };
 
 export const HistoryRestore: Story = { render: () => <HistoryMockup confirmation /> };
+
+export const PlannedSpaceViewer: Story = { render: () => <EditorMockup space viewOnly /> };

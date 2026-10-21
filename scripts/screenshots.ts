@@ -125,6 +125,37 @@ try {
     }
     await page.close();
   }
+  if (requested.includes('redesign-screens--dashboard')) {
+    for (const width of [1280, 768, 390]) {
+      const page = await browser.newPage({
+        viewport: { width, height: 900 },
+        hasTouch: width <= 768,
+      });
+      await page.goto(
+        'http://127.0.0.1:6007/iframe.html?id=redesign-screens--dashboard&viewMode=story&globals=theme:light',
+      );
+      if (width > 900) {
+        await page.getByRole('button', { name: 'Collapse navigation', exact: true }).click();
+        await expect(page.getByRole('button', { name: 'Browse files', exact: true })).toBeFocused();
+        await page.getByRole('button', { name: 'Browse files', exact: true }).click();
+        await expect(
+          page.getByRole('button', { name: 'Collapse navigation', exact: true }),
+        ).toBeFocused();
+      } else {
+        await page.getByRole('button', { name: 'Browse files', exact: true }).click();
+        await expect(page.getByRole('dialog', { name: 'Browse files', exact: true })).toBeVisible();
+        await page.screenshot({ path: resolve(directory, `navigation-open-${width}.png`) });
+        await page
+          .getByRole('dialog')
+          .getByRole('button', { name: 'Household', exact: true })
+          .click();
+        await expect(page.getByRole('dialog')).toBeHidden();
+        await expect(page.getByRole('heading', { name: 'Household', exact: true })).toBeVisible();
+      }
+      await page.close();
+      verifications.push(`${width}px: navigation collapse/drawer selection and focus`);
+    }
+  }
   if (requested.includes('redesign-controls--default')) {
     for (const [theme, width, variant] of variants) {
       const page = await browser.newPage({
@@ -242,8 +273,15 @@ async function verifyControls(page: Page, variant: string, output: string) {
   await page.screenshot({ path: resolve(output, `dialog-select-open-${variant}.png`) });
   await page.keyboard.press('Escape');
   await expect(dialog).toBeVisible();
-  await page.keyboard.press('Tab');
-  expect(await dialog.evaluate((node) => node.contains(document.activeElement))).toBe(true);
+  await expect(page.getByRole('combobox', { name: 'Example nested selector' })).toBeFocused();
+  for (const key of ['Tab', 'Tab', 'Shift+Tab', 'Shift+Tab']) {
+    await page.keyboard.press(key);
+    await expect
+      .poll(() => dialog.evaluate((node) => node.contains(document.activeElement)), {
+        message: 'Modal keeps keyboard focus inside after its focus guard settles',
+      })
+      .toBe(true);
+  }
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();

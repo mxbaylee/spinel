@@ -1092,3 +1092,25 @@
     width: 100%;
   }
 }
+
+.sp-modal .rd-sidebar {
+  min-height: 0;
+  border: 0;
+  padding: 16px 0;
+  background: var(--sp-panel);
+}
+
+@media (max-width: 640px) {
+  .rd-list-tools {
+    padding: 8px 0 12px;
+  }
+  .rd-filter-bar {
+    padding-bottom: 8px;
+  }
+  .rd-count-only {
+    display: none;
+  }
+  .rd-list-caption:not(.rd-count-only) span {
+    display: inline;
+  }
+}
