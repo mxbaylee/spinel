@@ -60,7 +60,7 @@ recovery and offline contracts remain authoritative.
 ## Composed layout contract
 
 - File navigation: one 224 px column with gem, places, pins and account
-  utilities. Collapse reduces it to a 64 px rail; a labelled Files/Pages control
+  utilities. Collapse reduces it to a 64 px rail; a explicit Expand/Pages control
   reopens it. Never show the rail beside an expanded tree. At tablet/phone
   widths (900 px and below), navigation is a drawer by default.
 - Ordinary editors and Operator screens use a compact horizontal utility header,
@@ -234,7 +234,7 @@ personal file navigation or service dependency. Decision #126.
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
-visible focus, 32 px pointer-desktop segments and at least 44 px touch targets. Expanded navigation shows the control
+visible focus, 24 px visible segments and at least 44 px touch targets. Expanded navigation shows the control
 on its own row above Profile. Collapsed desktop navigation stacks its segments vertically; compact/phone headers show it horizontally;
 This device reuses it. This supersedes the earlier explicit-menu proposal, retains
 one theme store and follows OS changes while System is selected. The picker
@@ -250,7 +250,7 @@ Operator setup, Sheet and Doc screens, including transitions and recovery states
 Existing compositions remain proposals, not approval of those flows. The homepage
 needs an explicit proposal; sign-in alone does not cover arrival.
 
-Shrink the appearance group to 32 px segments with 18 px glyphs on pointer
+Shrink the appearance group to 24 px segments with 15 px glyphs on pointer
 desktops; retain 44 px targets on touch. File metadata pairs each Doc/Sheet/Space
 label with its existing 16 px entity icon, alongside the separate decorative
 filename emoji. Owner and Collaborator gain faster recognition without enlarging

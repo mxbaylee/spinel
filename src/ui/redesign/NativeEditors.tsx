@@ -48,7 +48,7 @@ function budgetSnapshot(id: string, title: string): IWorkbookData {
     ['Transport', 120, 84],
     ['Home', 200, 145.5],
     ['Days out', 160, 92],
-    ['Books & hobbies', 90, 58.5],
+    ['Books & hobbies', 90, 57.5],
   ];
   const cellData: NonNullable<IWorkbookData['sheets'][string]['cellData']> = {
     0: { 0: { v: 'October budget', s: 'title' } },
@@ -231,6 +231,7 @@ export function NativeEditor({
       }
     };
     container.inert = true;
+    container.dataset.nativeStage = 'initializing';
     setState('loading');
     setMessage('');
     void (async () => {
@@ -274,6 +275,7 @@ export function NativeEditor({
             )
           : undefined;
       snapshot = () => structuredClone(workbook ? workbook.save() : document!.save());
+      container.dataset.nativeStage = 'rendering';
       const rendered = api.Enum.LifecycleStages.Rendered;
       if (api.getCurrentLifecycleStage() < rendered) {
         await new Promise<void>((resolve) => {
@@ -300,8 +302,12 @@ export function NativeEditor({
         // Preserve literal document colors against light paper, as production does.
         if (workbook) canvas.style.backgroundColor = '#ffffff';
       }
-      if (document) await documentReady(univer, id, abort.signal);
+      if (document) {
+        container.dataset.nativeStage = 'document-layout';
+        await documentReady(univer, id, abort.signal);
+      }
       if (stopped) return;
+      container.dataset.nativeStage = 'permissions';
       // Match the application's public local viewer fence. Do not write file
       // permission policies into snapshots or invoke an authorization provider.
       const permissions = univer.__getInjector().get(IPermissionService);
@@ -336,6 +342,7 @@ export function NativeEditor({
           callbacks.current.onChange?.();
       });
       cleanups.push(() => change.dispose());
+      container.dataset.nativeStage = 'ready';
       setState('ready');
       callbacks.current.onReady?.({
         api,
@@ -347,6 +354,7 @@ export function NativeEditor({
       });
     })().catch((error: unknown) => {
       if (stopped) return;
+      container.dataset.nativeStage = 'error';
       setMessage(error instanceof Error ? error.message : 'Could not open the editor.');
       setState('error');
       release();

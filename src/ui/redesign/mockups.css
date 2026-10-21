@@ -87,6 +87,48 @@
   min-width: 44px;
   min-height: 44px;
 }
+.rd-network-trigger {
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: help;
+}
+.rd-network-trigger:hover {
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
+}
+.rd-tooltip-positioner {
+  z-index: 80;
+}
+.rd-network-tooltip {
+  box-sizing: border-box;
+  max-width: min(288px, calc(100vw - 32px));
+  padding: 8px 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  box-shadow: 0 4px 16px #0002;
+  font-size: 0.8125rem;
+}
+.rd-profile-control,
+.sp-control.rd-profile-control {
+  min-height: 32px;
+  height: 32px;
+  padding: 0;
+}
+.rd-rail-button.rd-profile-control {
+  width: 32px;
+  justify-self: center;
+  align-self: center;
+}
 .rd-avatar {
   display: inline-grid;
   place-items: center;
@@ -360,6 +402,22 @@
   gap: 12px;
   margin-left: auto;
 }
+.rd-editor-header .sp-control {
+  box-sizing: border-box;
+  height: 32px;
+  min-height: 32px;
+  padding: 4px 10px;
+}
+.rd-editor-header .sp-control[aria-label='Document actions'] {
+  width: 32px;
+  min-width: 32px;
+  padding: 0;
+}
+.rd-presence {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+}
 .rd-badge {
   border: 1px solid var(--sp-border);
   border-radius: 6px;
@@ -367,6 +425,14 @@
   color: var(--sp-muted);
   font-size: 0.6875rem;
   white-space: nowrap;
+}
+.rd-editor-header .rd-badge {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 32px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
 }
 .rd-toolbar {
   display: flex;
@@ -1454,6 +1520,11 @@
 }
 .rd-compact-shell .rd-rail .sp-segments {
   flex-direction: row;
+}
+@media (any-pointer: coarse) and (min-width: 641px) {
+  .rd-shell:not(.rd-compact-shell) > .rd-rail .sp-segments::before {
+    inset: 0 7px;
+  }
 }
 @media (max-width: 640px) {
   .rd-rail .sp-segments {

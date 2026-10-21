@@ -71,7 +71,8 @@ try {
       reducedMotion: 'reduce',
       colorScheme: theme,
     });
-    await page.clock.setFixedTime(new Date('2026-10-20T16:00:00Z'));
+    // Keep a reproducible date while allowing Univer's Date.now-based debounce to progress.
+    await page.clock.setSystemTime(new Date('2026-10-20T16:00:00Z'));
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     for (const id of requested) {
@@ -175,8 +176,8 @@ try {
         name: 'Online — connected to Spinel',
         exact: true,
       });
-      if (width > 900) await network.hover();
-      else await network.click();
+      if (hasTouch) await network.tap();
+      else await network.hover();
       await expect(
         page.getByText('Connected to Spinel. Open save status for details about this document.', {
           exact: true,
@@ -207,7 +208,9 @@ try {
       await page.getByRole('button', { name: 'List view', exact: true }).click();
       if (width > 900) {
         await page.getByRole('button', { name: 'Collapse navigation', exact: true }).click();
-        await expect(page.getByRole('button', { name: 'Browse files', exact: true })).toBeFocused();
+        await expect(
+          page.getByRole('button', { name: 'Expand navigation', exact: true }),
+        ).toBeFocused();
         const pinned = page
           .getByRole('navigation', { name: 'File shortcuts' })
           .getByRole('button', { name: 'Quarterly budget', exact: true });
@@ -231,7 +234,7 @@ try {
           .getByRole('navigation', { name: 'File shortcuts' })
           .getByRole('button', { name: 'My files', exact: true })
           .click();
-        await page.getByRole('button', { name: 'Browse files', exact: true }).click();
+        await page.getByRole('button', { name: 'Expand navigation', exact: true }).click();
         await expect(
           page.getByRole('button', { name: 'Collapse navigation', exact: true }),
         ).toBeFocused();
@@ -243,7 +246,7 @@ try {
           page.getByRole('listitem').filter({ hasText: 'Quarterly budget' }),
         ).toHaveCount(0);
       } else {
-        await page.getByRole('button', { name: 'Browse files', exact: true }).click();
+        await page.getByRole('button', { name: 'Expand navigation', exact: true }).click();
         await expect(page.getByRole('dialog', { name: 'Browse files', exact: true })).toBeVisible();
         await page.screenshot({ path: resolve(directory, `navigation-open-${width}.png`) });
         await page
@@ -260,9 +263,9 @@ try {
         const box = await radio.boundingBox();
         expect(box, `Visible appearance control at ${width}px`).not.toBeNull();
         expect(Math.round(box!.width), `${width}px ${hasTouch ? 'coarse' : 'fine'} pointer`).toBe(
-          hasTouch ? 44 : 32,
+          hasTouch ? 44 : 24,
         );
-        expect(Math.round(box!.height)).toBe(hasTouch ? 44 : 32);
+        expect(Math.round(box!.height)).toBe(hasTouch ? 44 : 24);
       }
       await appearance.getByRole('radio', { name: 'Dark', exact: true }).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -548,7 +551,7 @@ try {
       await expect(page.getByRole('heading', { name: 'Autumn plans', exact: true })).toBeVisible();
       if (width > 900) await page.locator('.rd-space-exit').click();
       else {
-        await page.getByRole('button', { name: 'Browse pages', exact: true }).click();
+        await page.getByRole('button', { name: 'Expand pages navigation', exact: true }).click();
         await page
           .getByRole('dialog', { name: 'Space contents', exact: true })
           .getByRole('button', { name: 'My files', exact: true })
@@ -732,9 +735,17 @@ async function waitForNativeEditor(page: Page) {
   const editor = page.locator('.rd-native-editor:visible');
   // The connected editor loads lazily; its visible slot precedes the native host.
   if ((await page.locator('.rd-live-editor:visible').count()) || (await editor.count())) {
-    await expect(editor).toBeVisible();
-    await expect(editor).toHaveAttribute('data-native-ready', 'true', { timeout: 30_000 });
-    await expect(editor.locator('canvas').first()).toBeVisible();
+    try {
+      await expect(editor).toBeVisible();
+      await expect(editor).toHaveAttribute('data-native-ready', 'true', { timeout: 35_000 });
+      await expect(editor.locator('canvas').first()).toBeVisible();
+    } catch (error) {
+      const id = new URL(page.url()).searchParams.get('id') ?? 'unknown';
+      await page.screenshot({ path: resolve(directory, `failed-native-${id}.png`) });
+      throw new Error(`Native readiness failed for ${page.url()}: ${await editor.innerText()}`, {
+        cause: error,
+      });
+    }
   }
 }
 

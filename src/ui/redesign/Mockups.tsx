@@ -1,6 +1,7 @@
 /** SPN-047 review prototypes. No production routes, network calls or document writes. */
 import { createContext, useContext, useRef, useState, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
+import { Tooltip } from '@base-ui/react/tooltip';
 import { GemLogo } from '../GemLogo.tsx';
 import { EntityIcon } from '../EntityIcon.tsx';
 import { ProfileIcon } from '../../profile/ProfileIcon.tsx';
@@ -161,18 +162,30 @@ export function ThemeMenu({ labelled = false }: { labelled?: boolean }) {
   );
 }
 function NetworkStatus({ offline = false }: { offline?: boolean }) {
+  const [open, setOpen] = useState(false);
   return (
-    <DetailsPopover
-      label={offline ? 'Offline — not connected to Spinel' : 'Online — connected to Spinel'}
-      hover
-      trigger={<Glyph name={offline ? 'network-off' : 'network'} />}
-    >
-      <p>
-        {offline
-          ? 'You are offline. Open files may have changes waiting to sync. Check their save status before closing.'
-          : 'Connected to Spinel. Open save status for details about this document.'}
-      </p>
-    </DetailsPopover>
+    <Tooltip.Root open={open} onOpenChange={setOpen}>
+      <Tooltip.Trigger
+        className="rd-network-trigger"
+        aria-label={offline ? 'Offline — not connected to Spinel' : 'Online — connected to Spinel'}
+        delay={200}
+        closeOnClick={false}
+        onPointerDown={(event) => {
+          if (event.pointerType === 'touch') setOpen(true);
+        }}
+      >
+        <Glyph name={offline ? 'network-off' : 'network'} />
+      </Tooltip.Trigger>
+      <Tooltip.Portal>
+        <Tooltip.Positioner className="rd-tooltip-positioner" side="right" sideOffset={8}>
+          <Tooltip.Popup className="sp-ui rd-network-tooltip">
+            {offline
+              ? 'You are offline. Open files may have changes waiting to sync. Check their save status before closing.'
+              : 'Connected to Spinel. Open save status for details about this document.'}
+          </Tooltip.Popup>
+        </Tooltip.Positioner>
+      </Tooltip.Portal>
+    </Tooltip.Root>
   );
 }
 function Sidebar({
@@ -381,7 +394,7 @@ function Sidebar({
           {onCollapse && !guest && (
             <div className="rd-sidebar-utilities">
               <ThemeMenu labelled />
-              <Button onClick={() => onSelect('Your profile')}>
+              <Button className="rd-profile-control" onClick={() => onSelect('Your profile')}>
                 <Avatar /> Your profile
               </Button>
             </div>
@@ -463,12 +476,14 @@ function Shell({
             aria-label={
               sidebar
                 ? space
-                  ? 'Browse pages'
-                  : 'Browse files'
+                  ? 'Expand pages navigation'
+                  : 'Expand navigation'
                 : operator
                   ? 'Administration'
                   : 'My files'
             }
+            title={sidebar ? (space ? 'Expand pages navigation' : 'Expand navigation') : undefined}
+            aria-expanded={sidebar ? nav : undefined}
             onClick={() => {
               if (sidebar) {
                 if (window.matchMedia('(max-width: 900px)').matches) setNav(true);
@@ -477,7 +492,7 @@ function Shell({
             }}
           >
             <Glyph name={sidebar ? 'menu' : operator ? 'shield' : 'files'} />
-            {sidebar && <small>{space ? 'Pages' : 'Files'}</small>}
+            {sidebar && <small>{space ? 'Pages' : 'Expand'}</small>}
           </button>
           {sidebar && space && (
             <button
@@ -522,7 +537,7 @@ function Shell({
           <div className="rd-rail-bottom">
             <ThemeMenu />
             <button
-              className="rd-rail-button"
+              className="rd-rail-button rd-profile-control"
               aria-label="Your profile"
               onClick={() => onSelect('Your profile')}
             >

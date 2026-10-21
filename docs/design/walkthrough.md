@@ -73,7 +73,7 @@ worth the space it occupies on desktop, and reachable on a phone? Check light,
 dark and phone captures from the same proposal source before approving.
 
 System / Light / Dark stays directly visible as a three-segment control. It is
-32 px per segment on pointer desktops and at least 44 px on touch; collapsed
+24 px per segment in a 30 px pill on pointer desktops. Touch keeps 44 px hit areas around the same small visible circles; collapsed
 desktop rails stack it vertically, while headers and expanded navigation use a
 horizontal group. It defaults to System and affects this browser only. **This
 device** explains that scope; saving profile identity does not change appearance.
@@ -82,6 +82,12 @@ Trash and folders have a My files breadcrumb. Pages opens a Space's internal
 tree, with a separate My files exit. The gem wiggles on hover or keyboard focus
 unless reduced motion is preferred. Folder creation, tags and moving files update
 local fixtures; unavailable pin/passkey removal actions are explicitly disabled.
+
+Expand navigation reopens the collapsed sidebar; My files is the destination.
+Connection status uses a hover/focus tooltip (tap on touch), without a close
+button. Profile, permission badges and header menu controls share a 32 px visual
+height on desktop. Univer's toolbar and menus follow appearance; document paper
+and authored cell colors retain their content colors.
 
 Approve the composed direction and its screenshots in the PR when ready, or
 identify the screen and task that still feels awkward. The gallery is review

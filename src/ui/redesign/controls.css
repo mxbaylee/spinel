@@ -216,46 +216,76 @@
 }
 
 .sp-segments {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   gap: 0;
-  padding: 2px;
-  border: 1px solid var(--sp-border);
+  padding: 3px;
+  border: 0;
   border-radius: 32px;
-  background: var(--sp-bg);
+  background: transparent;
   color: var(--sp-text);
   width: max-content;
   max-width: 100%;
+}
+.sp-segments::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border: 1px solid var(--sp-border);
+  border-radius: inherit;
+  background: var(--sp-bg);
 }
 .sp-segment {
   position: relative;
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   box-sizing: border-box;
-  border: 2px solid transparent;
+  border: 0;
   border-radius: 50%;
+  padding: 0;
+  background: transparent;
+  color: inherit;
   cursor: pointer;
   outline: none;
 }
+.sp-segment::before {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  z-index: -1;
+}
 .sp-segment svg {
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
 }
 @media (any-pointer: coarse) {
+  .sp-segments {
+    padding: 0;
+  }
+  .sp-segments::before {
+    inset: 7px 0;
+  }
   .sp-segment {
     width: 44px;
     height: 44px;
   }
 }
-.sp-segment[data-checked] {
+.sp-segment[data-checked]::before {
   background: var(--sp-panel);
   border-color: var(--sp-accent);
   box-shadow: 0 1px 4px color-mix(in srgb, var(--sp-text) 12%, transparent);
 }
-.sp-segment:hover {
+.sp-segment:hover::before {
   background: var(--sp-header);
 }
 .sp-segment:focus-visible {

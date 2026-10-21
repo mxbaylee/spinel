@@ -113,7 +113,7 @@ Space examples remain in Storybook until the feature exists.
 After owner approval, one optional navigation column replaces the old permanent
 rail-plus-sidebar composition. File views use a 224 px sidebar containing gem,
 places, pins and account utilities. Collapse leaves a 64 px rail with
-labelled Files/Pages; reopening restores the tree. Never show both side by side.
+explicit Expand/Pages; reopening restores the tree. Never show both side by side.
 Ordinary editors and Operator screens use compact horizontal utility navigation.
 Space trees replace outer file navigation. Guests have no account navigation.
 
@@ -134,7 +134,7 @@ supersede the earlier stacking layout after owner approval.
 ### Breakpoints
 
 - **900 px and below:** file/Space navigation is a drawer by default, opened
-  from labelled Files/Pages. Pins stay within that drawer, not a second row.
+  from explicit Expand/Pages. Pins stay within that drawer, not a second row.
 - **640 px and below:** compact top utilities replace a vertical rail; document
   headers use two rows, profile sections scroll with labels, Operator sections
   wrap so health is always discoverable. No 600 px intermediate behavior.
@@ -327,7 +327,7 @@ personal file navigation or service dependency. Decision #126.
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
 RadioGroup/Radio for single selection and arrow-key behavior, accessible names,
-visible focus, 32 px pointer-desktop segments and at least 44 px touch targets.
+visible focus, 24 px visible segments and at least 44 px touch targets.
 The control stays directly visible: horizontal above Profile in expanded navigation
 and in compact/phone headers, vertical in collapsed desktop rails. This device
 reuses it and explains that appearance is local to this browser, defaults to System,
