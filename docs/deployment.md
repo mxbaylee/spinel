@@ -1,5 +1,11 @@
 # Private droplet deployment
 
+This is the current deployment implementation and a record of the retired test
+host, not a live production service. Production starts with SPN-038 at
+`spinel.baylee.dev`, after the launch prerequisites. Database and hosting choices
+can be reconsidered before then; see [deployment stage](development.md#deployment-stage).
+Owner, chat 2026-10-21.
+
 This package targets a fresh Ubuntu droplet with 2 GB RAM and one CPU. The owner's
 fresh-host run on 2026-10-17 verified private HTTPS/SSH, locked-boot recovery,
 account and document persistence, editor reconnection and measured memory use.

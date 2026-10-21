@@ -15,7 +15,7 @@ import {
   parseTicket,
   type Backlog,
   type BacklogConfig,
-  type Size,
+  type Effort,
 } from '../lib.ts';
 
 const PERSONAS = '# Personas\n\n## Owner\n\n## Link guest\n';
@@ -73,7 +73,7 @@ function check(tickets: Fixture[], cfg?: BacklogConfig) {
 
 test('frontmatter reads lists, booleans, numbers, quoted strings and strips comments', () => {
   const { data } = parseFrontmatter(
-    '---\neffort: M        # S | M | L\nflag: true\ndepends_on: [SPN-001, SPN-002]\ndecisions: [7]\nowner_input: "Pick # one"\nnote: \'Prettier # quotes\'\n---\nbody',
+    '---\neffort: M        # S | M | L | XL\nflag: true\ndepends_on: [SPN-001, SPN-002]\ndecisions: [7]\nowner_input: "Pick # one"\nnote: \'Prettier # quotes\'\n---\nbody',
   );
   assert.deepEqual(data, {
     effort: 'M',
@@ -91,8 +91,10 @@ test('a well-formed ticket passes', () => {
 
 test('ticket shape errors are reported', () => {
   const cases: [Fixture, RegExp][] = [
-    [ticket('SPN-001', { effort: 'XL' }), /effort must be S, M or L/],
+    [ticket('SPN-001', { effort: 'XXL' }), /effort must be S, M, L or XL/],
+    [ticket('SPN-001', { phase: 'future' }), /phase must be pre_launch, launch or post_launch/],
     [ticket('SPN-001', { emoji: '💎' }), /reserved/],
+    [ticket('SPN-001', { emoji: '🏔️' }), /reserved/],
     [ticket('SPN-001', { impact_owner: 'XL' }), /impact_owner must be S, M or L/],
     [ticket('SPN-001', { must_ship: 'true' }), /unknown frontmatter field "must_ship"/],
     [ticket('SPN-001', { score: 'high' }), /score must be a whole number/],
@@ -164,6 +166,30 @@ test('dependencies must be open tickets and acyclic', () => {
   assert.match(cyc.errors.join(), /cycle/);
 });
 
+test('dependencies cannot point to a later lifecycle phase, and cycles still fail', () => {
+  const fixtures = [
+    ticket('SPN-001', { depends_on: '[SPN-002]' }),
+    ticket('SPN-002', { phase: 'launch', depends_on: '[SPN-003]', emoji: '🧭' }),
+    ticket('SPN-003', { phase: 'post_launch', emoji: '🧪' }),
+  ];
+  const result = check(fixtures);
+  assert.match(
+    result.errors.join(),
+    /pre_launch work cannot depend on SPN-002 in the later launch phase/,
+  );
+  assert.match(
+    result.errors.join(),
+    /launch work cannot depend on SPN-003 in the later post_launch phase/,
+  );
+
+  const cycle = check([
+    ticket('SPN-001', { depends_on: '[SPN-002]' }),
+    ticket('SPN-002', { phase: 'launch', depends_on: '[SPN-001]', emoji: '🧭' }),
+  ]);
+  assert.match(cycle.errors.join(), /dependency cycle/);
+  assert.match(cycle.errors.join(), /later launch phase/);
+});
+
 test('grooming counter must reference landed IDs', () => {
   const cfg = config({ grooming: { every: 7, last: '2026-10-17', completed_since: ['SPN-001'] } });
   assert.match(check([ticket('SPN-001')], cfg).errors.join(), /still exists/);
@@ -192,9 +218,21 @@ test('a ticket judges at least one persona, and its impact is the highest', () =
   assert.deepEqual(mixed.impacts, { impact_owner: 'M', impact_operator: 'S', impact_guest: 'L' });
 });
 
-test('own points run from 2 to 6', () => {
+test('XL effort is accepted without expanding persona impact sizes', () => {
+  assert.deepEqual(check([ticket('SPN-001', { effort: 'XL' })]).errors, []);
+  for (const field of ['impact_owner', 'impact_operator', 'impact_collaborator', 'impact_guest']) {
+    const result = check([ticket('SPN-001', { effort: 'XL', [field]: 'XL' })]);
+    assert.ok(result.errors.some((error) => error.includes(`${field} must be S, M or L`)));
+  }
+});
+
+test('own points run from 1 to 6, with XL one point below L', () => {
+  // XL extends the existing effort scale; prerequisites inherit priority separately.
   assert.equal(baseScore({ impact: 'L', effort: 'S' }), 6);
   assert.equal(baseScore({ impact: 'S', effort: 'L' }), 2);
+  assert.equal(baseScore({ impact: 'S', effort: 'XL' }), 1);
+  assert.equal(baseScore({ impact: 'M', effort: 'XL' }), 2);
+  assert.equal(baseScore({ impact: 'L', effort: 'XL' }), 3);
 });
 
 test('a prerequisite scores one above everything that depends on it, up the chain', () => {
@@ -261,6 +299,91 @@ test('a prerequisite outranks a higher-scoring dependent, so the first row is re
       ['SPN-002', 6, ['SPN-001']],
     ],
   );
+});
+
+test('XL work keeps inherited priority while independent XL work ranks below equivalent L work', () => {
+  const b = backlog([
+    ticket('SPN-001', { impact_owner: 'S', effort: 'XL' }),
+    ticket('SPN-002', { impact_owner: 'M', effort: 'XL', depends_on: '[SPN-001]', emoji: '🧭' }),
+    ticket('SPN-003', { impact_owner: 'L', effort: 'S', depends_on: '[SPN-002]', emoji: '🧪' }),
+    ticket('SPN-004', { impact_owner: 'S', effort: 'XL', emoji: '🪴' }),
+    ticket('SPN-005', { impact_owner: 'S', effort: 'L', emoji: '🔭' }),
+  ]);
+  assert.deepEqual(validateBacklog(b).errors, []);
+  assert.deepEqual(
+    rank(b.tickets, 'SPN').map((r) => [r.ticket.id, r.score, r.waiting]),
+    [
+      ['SPN-001', 8, []],
+      ['SPN-002', 7, ['SPN-001']],
+      ['SPN-003', 6, ['SPN-002']],
+      ['SPN-005', 2, []],
+      ['SPN-004', 1, []],
+    ],
+  );
+  const index = renderIndex(b);
+  assert.match(index, /SPN-001\.md\) Do the thing \| 🏔️ XL \| 🤍 S \| 8 \(own 1\)/);
+  assert.match(index, /SPN-004\.md\) Do the thing \| 🏔️ XL \| 🤍 S \| 1 \|/);
+  assert.doesNotMatch(index, /undefined|NaN/);
+});
+
+test('lifecycle phases precede scores while preserving priority and dependency inheritance', () => {
+  // Launch stays after even the lowest-scoring launch prerequisite, per owner sequencing.
+  const b = backlog([
+    ticket('SPN-001', { impact_owner: 'S', effort: 'XL' }),
+    ticket('SPN-002', { phase: 'launch', impact_owner: 'S', effort: 'XL', emoji: '🧭' }),
+    ticket('SPN-003', {
+      phase: 'post_launch',
+      impact_owner: 'L',
+      effort: 'S',
+      depends_on: '[SPN-002]',
+      emoji: '🧪',
+    }),
+    ticket('SPN-004', { emoji: '🪴' }),
+    ticket('SPN-005', { phase: 'post_launch', impact_owner: 'S', effort: 'XL', emoji: '🔭' }),
+  ]);
+  assert.deepEqual(validateBacklog(b).errors, []);
+  assert.deepEqual(
+    rank(b.tickets, 'SPN').map((r) => [r.ticket.id, r.score, r.waiting]),
+    [
+      ['SPN-004', 4, []],
+      ['SPN-001', 1, []],
+      ['SPN-002', 7, []],
+      ['SPN-003', 6, ['SPN-002']],
+      ['SPN-005', 1, []],
+    ],
+  );
+  const index = renderIndex(b);
+  assert.match(index, /## Open tickets \(5\)/);
+  assert.deepEqual(
+    [...index.matchAll(/^### (.+)$/gm)].map((m) => m[1]),
+    ['Before launch', 'Launch', 'After launch'],
+  );
+  assert.equal(index.split('| # | Ticket |').length - 1, 3);
+  assert.match(index, /\| 3 \| 🧭 \[SPN-002\]/);
+  assert.match(index, /\| 4 \| 🧪 \[SPN-003\]/);
+});
+
+test('phase boundaries do not report misleading score tie-breaks', () => {
+  const b = backlog([ticket('SPN-002'), ticket('SPN-001', { phase: 'launch', emoji: '🧭' })]);
+  assert.deepEqual(validateBacklog(b).errors, []);
+  assert.deepEqual(
+    rank(b.tickets, 'SPN').map((r) => [r.ticket.id, r.tieBreak]),
+    [
+      ['SPN-002', '—'],
+      ['SPN-001', '—'],
+    ],
+  );
+});
+
+test('omitting phase keeps the existing pre-launch index and ranking', () => {
+  const implicit = backlog([ticket('SPN-001')]);
+  const explicit = backlog([ticket('SPN-001', { phase: 'pre_launch' })]);
+  assert.deepEqual(validateBacklog(implicit).errors, []);
+  assert.deepEqual(validateBacklog(explicit).errors, []);
+  assert.equal(implicit.tickets[0].phase, 'pre_launch');
+  assert.equal(renderIndex(implicit), renderIndex(explicit));
+  assert.match(renderIndex(implicit), /Highest score first/);
+  assert.doesNotMatch(renderIndex(implicit), /^### /m);
 });
 
 test('an empty backlog says so', () => {
@@ -414,7 +537,7 @@ test('PR size: effort-S tickets are exempt, judged by the base ticket', () => {
   const headCfg = config({
     grooming: { every: 7, last: '2026-10-17', completed_since: ['SPN-001'] },
   });
-  const land = (effort: Size) =>
+  const land = (effort: Effort) =>
     pr('🪞 SPN-001 Do the thing', {
       base: [ticket('SPN-001', { effort })],
       headCfg,
@@ -423,6 +546,17 @@ test('PR size: effort-S tickets are exempt, judged by the base ticket', () => {
   assert.deepEqual(land('S').errors, []);
   assert.match(land('S').warnings.join(), /effort-S tickets have no size limit/);
   assert.match(land('M').errors.join(), /hard limit/);
+  assert.match(land('L').errors.join(), /hard limit/);
+  assert.match(land('XL').errors.join(), /hard limit/);
+});
+
+test('XL effort retains the PR soft-limit split warning', () => {
+  const result = pr('🪞 SPN-001 Do the thing', {
+    base: [ticket('SPN-001', { effort: 'XL' })],
+    numstat: '150\t0\ta.ts\n',
+  });
+  assert.deepEqual(result.errors, []);
+  assert.match(result.warnings.join(), /soft limit; consider splitting/);
 });
 
 test('a PR cannot loosen its own limits', () => {

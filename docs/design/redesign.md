@@ -112,7 +112,10 @@ The screenshot runner checks named roles, menu arrow keys, Escape and focus
 return, selector selection, nested portal visibility/theme, and dialog focus
 containment. It emits accessibility-tree snapshots. This verifies programmatic
 screen-reader semantics; it is not a claim of manual VoiceOver/NVDA testing.
-SPN-060 adds general axe and visual-regression enforcement.
+The [manual design review runbook](review-runbook.md) covers design changes with
+focused human/AI review. General axe enforcement and stored pixel baselines are
+not implemented by this work; the former SPN-060 automation proposal was retired
+in the 2026-10-21 grooming at the owner's direction.
 
 Bundle impact is recorded from emitted Storybook chunks in `bundle-size.json`.
 Production has no imports of this directory, so Base UI is not introduced into
@@ -126,13 +129,19 @@ and phone samples for the main families, including grid/collapsed alternatives.
 `review/capture-sources.json` records the CI sources. Owner design approval was given on 2026-10-21.
 
 Build Storybook, then run `npm run screenshots -- <story ids>`. With no IDs it
-captures all Redesign stories and the listed current-screen stories. Unknown
+captures every story in the catalog. Unknown
 IDs fail. The runner uses one Chromium page at a time, fixed fixture time,
 reduced motion, light/dark desktop, light/dark phone and light tablet. It checks
 runtime failures, horizontal page overflow and visible 44 px touch targets for proposed screens. Base UI’s aria-hidden form inputs are excluded from target checks.
 
 Output: `test-results/design-review/index.html`, PNGs, `manifest.json`, control
-semantics and bundle sizes. Storybook CI uploads this as **design-review**.
+semantics and bundle sizes. Storybook CI builds once and captures in parallel:
+**design-review-desktop** (light/dark), **design-review-tablet** (light) and
+**design-review-mobile** (light/dark). Each artifact is a complete gallery for
+its selected variants. `--viewport desktop|tablet|mobile` selects the same local
+partition; omitting it retains the full review. Native editor interaction proofs
+and the icon suite run once on desktop; tablet retains the 613 px mouse checks.
+The aggregate review gate requires every partition before Pages deployment.
 Open the downloaded index for paired current/proposed stories, followed by every state across sizes. The PR links
 this artifact and embeds representative before/after images. These are review
 captures, not approved regression baselines.
@@ -171,7 +180,7 @@ Do not run another agent's local workload concurrently.
 | Guest view/edit                     | Guest/GuestApp; guest-link browser fixtures                | GuestViewer, GuestEditor                                                           | SPN-084, SPN-075            |
 | Revoked link / unavailable          | Guest/GuestApp LinkRevoked                                 | RevokedLink, MissingFile                                                           | SPN-084                     |
 | Offline launch                      | Guest/GuestApp ConnectionInterrupted                       | OfflineLaunch                                                                      | SPN-042                     |
-| Space navigation and internal trash | planned; SPN-077 facets                                    | PlannedSpace, PlannedSpaceGuest, PlannedSpaceGuestEditor, PlannedSpaceTrash        | SPN-078                     |
+| Space navigation and internal trash | planned; SPN-077 facets                                    | PlannedSpace, PlannedSpaceGuest, PlannedSpaceGuestEditor, PlannedSpaceTrash        | SPN-078, SPN-091, SPN-092   |
 | Guest-link inventory                | planned metadata list                                      | PlannedGuestLinks                                                                  | SPN-066                     |
 | Delegated file roles                | planned                                                    | PlannedFileAdmin                                                                   | SPN-079                     |
 | Shared controls                     | current native controls in each screen                     | Redesign/Controls Default, Disabled, Error                                         | shared now; consumers later |
@@ -408,7 +417,7 @@ Historical captures retain their original provenance and do not certify these
 final refinements. Current-head checks and independent review remain required.
 
 - SPN-086 carries document icons and folder-color persistence into production.
-- SPN-078 carries the deleted-item Space Trash pattern into the real Space model.
+- SPN-078 carries Space Trash metadata into the durable model, SPN-091 builds the collection/recovery UI, and SPN-092 verifies guest/integration boundaries before exposing Spaces.
 - SPN-089 applies the shared proposal modal title-icon pattern to production.
 - SPN-088 investigates eight semantic color choices through public APIs; retain
   native pickers if replacement is unsupported. Preserve stored formatting,

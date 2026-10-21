@@ -16,11 +16,15 @@ The rest of this contract is open, split by the Owner in chat on 2026-10-19 so
 every unmet requirement stays on a ticket:
 
 - [SPN-053](todo/SPN-053.md): offline editing, the outbox, **Saved on this
-  device**, restart, replay with `flush()` and **Synced**.
+  device**, restart, replay with durable server acknowledgements and **Synced**.
 - [SPN-054](todo/SPN-054.md): the conflicted copy, **Needs attention** and the
   export fallback.
-- [SPN-055](todo/SPN-055.md): the storage lifecycle, home-screen links and the
-  real-device runs.
+- [SPN-055](todo/SPN-055.md): shared device storage, pending-edit protection,
+  honest persistence limits and account/sign-out lifecycle.
+- [SPN-090](todo/SPN-090.md): actual Android/iPhone installed launches, stable
+  home-screen links and the recorded device/browser verification matrix.
+- [SPN-052](todo/SPN-052.md): desktop browser-tab compatibility using SPN-055's
+  shared lifecycle; it does not wait for SPN-090's physical-phone runs.
 
 [Decision #91](https://github.com/mxbaylee/spinel/issues/91) keeps every
 acceptance requirement below.
@@ -223,10 +227,12 @@ Verified by:
 ## How offline editing works
 
 Download and launch work as [described above](#offline-launch-and-read-only-viewing).
-The rest of this section is SPN-053 and SPN-054's design. It was written against
-Univer's collaboration client; SPN-053 rewrites the replay mechanics for
-Spinel's own sync client (SPN-058) once SPN-059 removes Univer collaboration.
-Owner, chat 2026-10-19.
+The rest of this section is SPN-053 and SPN-054's design. It follows
+Spinel's own sync server/client contracts ([SPN-057](todo/SPN-057.md) and
+[SPN-058](todo/SPN-058.md)), used after SPN-059 removes Univer collaboration.
+Durability and acknowledgement below are requirements, independent of the
+chosen server database or a particular client method name. Owner, chat
+2026-10-19; updated during grooming, 2026-10-21.
 
 **Edit offline.** A downloaded item opens in an open-source Univer editor created
 from the stored snapshot, with no collaboration plugins. Images come from the
@@ -242,13 +248,14 @@ durability mechanism. Warnings for active, uncommitted cell or text input stay.
 **Reconnect, unchanged live document.** Spinel revalidates the session and
 access, then reads the live revision and generation. If both still equal the
 outbox's base, it marks the outbox `replaying` in IndexedDB and opens the normal
-collaboration editor. It re-executes the outbox mutations as local edits, so the
-collaboration client sends them through the existing protocol. It waits for the
-Pro facade's public `flush(unitId)`, which resolves at `SYNCED`. Then it deletes
-the entries and replaces the stored snapshot with a fresh bundle. Edits that
-arrive from others during this short replay are merged by the collaboration
-protocol, as they are online. Spinel never PUTs a whole snapshot over the live
-document.
+collaboration editor. SPN-058 sends the pending mutations through SPN-057's normal
+authorized sync path, retaining stable retry identities so repeat delivery does
+not apply an edit twice. An acknowledgement must mean the server durably stored
+that edit, not just received it in memory or kept a socket connected. Only
+acknowledged entries can be cleared, with a matching snapshot/revision recorded
+in local storage so restart can reconstruct all remaining work. Edits that arrive
+from others during this short replay use the ordinary collaboration protocol,
+as they do online. Spinel never PUTs a whole snapshot over the live document.
 
 **Reconnect, live document moved on.** If the revision or generation has
 advanced, Spinel never replays. History restore, trash, deletion and revoked
@@ -263,20 +270,24 @@ and an explicit discard. Nothing is written into a forbidden, trashed or replace
 document. Automatic merging of divergent offline edits is out of scope.
 
 **Crash between replay and clearing.** On restart, an outbox still marked
-`replaying` may or may not have reached the server. Every accepted change
-advances the revision. So if the revision still equals the base, nothing landed
-and replay is safe to repeat; if it has advanced, Spinel makes a conflicted copy.
-That never duplicates an edit, though it can make an unneeded copy. Record how
-often that happens. If it is common, a follow-up can record a Spinel batch ID on
-the server at submit time.
+`replaying` may contain edits whose acknowledgements were lost or whose local
+cleanup did not commit. Retain the outbox and original retry identities until
+durable acknowledgement and the corresponding local cleanup/rebase complete.
+Repeated delivery through SPN-057 must be idempotent. SPN-053's conservative
+reconnect rule still applies: after revalidating access, retry pending replay
+only if the live revision/generation equals its base; an advanced
+base goes to SPN-054's conflicted-copy path without changing the live document.
+This can create an unneeded copy after a lost acknowledgement; record how often
+it happens. It must never lose or double-apply an edit; use the existing SPN-057/
+SPN-058 acknowledgement and retry contracts.
 
-**One queue owner.** For downloaded items Spinel sets Pro's
-`enableOfflineEditing` to false, so Pro never holds edits that Spinel's outbox
-lacks. The outbox also captures while online. Each `flush()` that reaches
-`SYNCED` clears the synced entries and re-bases on the current revision, so a
-dropped connection leaves only a short window that may produce a copy. Items that
-are not downloaded keep today's online behavior and make no on-device durability
-claim.
+**One queue owner.** SPN-058's pending queue is authoritative; SPN-053 persists it
+as the downloaded item's outbox, including while online. A mutation must commit
+locally before **Saved on this device** is claimed. Server acknowledgements
+identify the durably accepted edits; local cleanup and rebasing preserve every
+unacknowledged entry across failure or restart. Do not add a separate Pro queue
+or treat a connection/status transition as proof of durability. Items that are
+not downloaded keep the online behavior and make no on-device durability claim.
 
 **Public APIs only.** The design needs no Pro internals, license workaround,
 paid service or engine replacement. Reusable work from draft #86: SPN-039 ported
@@ -290,13 +301,15 @@ and the replay-snapshot server adapter.
 
 Distinguish **Saving on this device**, **Saved on this device — waiting to sync**,
 **Synced**, and **Needs attention**. Only successful local persistence earns a
-local-save claim. Only a `SYNCED` flush followed by cleared outbox entries earns
-**Synced**. A local-save failure stays visible until resolved.
+local-save claim. **Synced** requires durable server acknowledgements for every
+pending edit and successful local outbox cleanup/rebasing. These are SPN-057/
+SPN-058 semantics, independent of the server database; neither an open connection
+nor a UI status alone proves them. A local-save failure stays visible until resolved.
 
 Sync is attempted on startup, on returning to the foreground and when the
 connection returns, while the app is running. Pending work stays visible until it
 actually succeeds. Background Sync may be an optional enhancement. It is not a
-requirement for Firefox/Android or Safari/iOS, and not a promise that the Univer
+requirement for Firefox/Android or Safari/iOS, and not a promise that the sync
 client runs while the app is closed. Follow the existing [history](history.md)
 and [collaboration](collaboration.md) contracts.
 
@@ -324,8 +337,12 @@ and [collaboration](collaboration.md) contracts.
   Handle quota failures and browser eviction without claiming guaranteed retention;
   a missing local store cannot be shown as still available offline. Re-download
   clean content when online. Never evict unsynced work through app cache cleanup.
+  Browser/user deletion or device loss can destroy the only pending copy; server
+  backups and a server database swap cannot recover edits that never durably
+  reached that server. SPN-055 protects against app-controlled deletion and makes
+  these limits visible rather than promising survival of all eviction.
 - **Remove from device** frees local content without deleting the server document
-  or its personal pin. Pending changes require explicit recovery/deletion first.
+  or changing its filing. Pending changes require explicit recovery/deletion first.
   Use bounded storage and report per-item usage; application/storage schema updates
   must preserve pending edits and a compatible offline editor, including interrupted
   migrations. Reloading for a new service worker must respect pending input/work.
@@ -342,9 +359,9 @@ checks beside the authorization tests.
 
 Use the stable application item URL, not the internal SDK generation or a guest
 token. Rename/move must preserve the destination. The browser/user controls icon
-creation; a manifest shortcut menu is not a universal per-document pinning API.
+creation; a manifest shortcut menu is not a universal per-document icon API.
 When independent item icons are unsupported, provide the stable link and a clear
-in-app pin/offline collection fallback, recording that limitation. A shortcut
+in-app offline collection fallback, recording that limitation. A shortcut
 never implicitly claims the document has been downloaded.
 
 Test installed-context startup as well as a browser tab. On iOS, do not assume
@@ -352,7 +369,11 @@ browser storage is copied into or shared with an installed app: prepare offline
 content in the context that will launch. Verify Android Chrome, Android Firefox
 and iPhone Safari Home Screen on actual devices, recording OS/browser versions,
 supported actions and observed launch behavior. CI's mobile viewport alone cannot
-establish installation, storage-context or native home-screen behavior.
+establish installation, storage-context or native home-screen behavior. SPN-090
+owns these recorded physical-device runs, including install icons and the offline
+manifest; SPN-055 owns the shared lifecycle, and SPN-052 separately verifies
+ordinary macOS Chrome, Firefox and Safari tabs with browser versions and
+persistence results recorded here.
 
 The decisive scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,

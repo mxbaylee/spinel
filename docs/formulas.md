@@ -45,8 +45,8 @@ MCP plain-text edits cannot split a Formula object; replacing its whole range
 removes the annotation along with its text.
 
 Current printing uses unavailable/source-expression output for formulas rather
-than cached results. The replacement PDF renderer (SPN-075) and Office conversion
-(SPN-035) must authorize all sources before emitting any calculated result.
+than cached results. The replacement PDF renderer (SPN-075) and optional format
+plugins (SPN-094) must authorize all sources before emitting any calculated result.
 Social cards continue to show only the host title and document type.
 
 ## Bounds and layout

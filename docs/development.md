@@ -28,7 +28,29 @@ npm start
 The same Node entry point serves `dist/` without starting Vite. Build before
 starting; a missing build fails immediately. The server runs TypeScript directly
 with Node's type stripping, so keep the source and production dependencies when
-running it. Deployment packaging is SPN-029.
+running it. Deployment packaging was delivered by SPN-029.
+
+## Deployment stage
+
+Spinel is **pre-production** until SPN-038 launches `https://spinel.baylee.dev`.
+That is the last launch prerequisite; optional CSV import (SPN-093) and document/format
+plugins (SPN-094) come afterward. The private test host was retired. References to a production
+build, production Playwright project or current production component describe
+the application runtime, not an already-live production deployment.
+
+SQLite is today's database, not a permanent product requirement. Removing Univer
+Pro is a useful point to reconsider one coherent storage setup, including a
+managed database if it simplifies operation. Compare actual access/transaction
+semantics, recovery, resource use and ongoing cost before selecting it. There is
+no assumed live-production dataset or required zero-downtime migration at this
+stage. Preserve any data deliberately selected for retention; disposable fixtures
+can be reseeded. Do not build several backend adapters just for possible future
+choices. Owner, chat 2026-10-21.
+
+Browser offline storage remains a separate concern: changing the server database
+cannot make browser-local pending edits durable on the server before they are
+uploaded and acknowledged. See [offline storage](offline.md) and
+[recovery requirements](backups.md#recovery-requirements-and-hosting-options).
 
 ## Local settings
 
@@ -92,9 +114,26 @@ API responses, in both themes and at Phone, Tablet and Desktop widths. Stories
 are `*.stories.tsx` beside their component and are typechecked and linted with
 everything else. The **Storybook** workflow builds it on every pull request and
 publishes `main` to <https://mxbaylee.github.io/spinel/> (Owner, chat
-2026-10-19). It isn't a required check; SPN-060 adds screenshot and axe checks
-over the stories. What a story must
-cover is in the [design playbook](design/README.md#storybook).
+2026-10-19). It isn't a required branch-protection check. What a story must cover
+is in the [design playbook](design/README.md#storybook); use the
+[manual design review runbook](design/review-runbook.md) when a design changes.
+
+The workflow builds once, then runs desktop, tablet and mobile reviews in
+parallel, each with a 15-minute timeout. Desktop retains light/dark and native
+editor interaction proofs; mobile retains light/dark; tablet retains its light
+captures and the intermediate 613 px mouse interaction checks. The icon suite
+runs once on desktop. The stable **Review Storybook states and interactions**
+gate requires every viewport to pass before Pages can deploy. Explicitly
+classified documentation-only PRs skip the captures; failed or missing results
+cannot pass as documentation-only.
+
+Download `design-review-desktop`, `design-review-tablet` and
+`design-review-mobile` for self-contained galleries. `storybook-review` is the
+shared interactive build, and `entity-icon-screenshots` is the icon gallery.
+After building locally, `npm run screenshots` runs the full review;
+`npm run screenshots -- --viewport mobile <story IDs>` runs one viewport and
+optional focused stories. Only manual CI runs can narrow story IDs; PRs always
+review the full catalog.
 
 CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
 and **Playwright smoke**. These are required by the active default-branch ruleset;

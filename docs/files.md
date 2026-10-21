@@ -9,7 +9,21 @@ part of an individual file; use the operator backup for the whole workspace.
 Open an owned folder (or My files) and choose **Import Univer file**, or drop one
 file anywhere in its file pane. A `.json` or `.univer` file becomes a new item owned
 by you in that folder. Import never replaces an existing item. PDF, Office and CSV
-uploads are refused; Office/CSV conversion is tracked separately in SPN-035.
+uploads are refused. Optional CSV import is post-launch SPN-093; optional format
+and document-type plugins are post-launch SPN-094. The built-in Office import/export proposal
+SPN-035 was retired at the owner's request on 2026-10-21. An installer could add
+Office conversion through a plugin; core Office support is not promised.
+SPN-094 also covers extension points for new document kinds such as slides or
+kanban boards. It supplies a plugin foundation and reference examples, not those
+complete editors; core Sheets and Docs and native backup/import remain supported.
+
+**Planned CSV semantics (SPN-093):** preserve UTF-8 fields literally, including
+leading zeros, empty values, quoted content and the first row as data. Do not
+infer formulas, dates, numbers or headers. Future typing options require a
+separate decision; the initial importer reuses existing creation/access/cleanup
+and resource limits. This remains backlog acceptance, not current import
+support. Decided 2026-10-21 in
+[decision #130](https://github.com/mxbaylee/spinel/issues/130).
 
 Files are capped at 20 MiB, including embedded images. Native content after image
 extraction must fit the existing 10 MiB save limit. Images must be static PNG,
@@ -83,4 +97,5 @@ the plugin did not produce.
 results. Native imports detach source-bound formulas into ordinary expression
 text; source-free formulas remain active. Current printing uses unavailable
 formula output. SPN-075 will render freshly authorized values/tables in PDFs;
-SPN-035 handles Office conversion, and SPN-067 handles archive reference remapping.
+SPN-094 retains the same source-access boundary for optional format plugins,
+and SPN-067 handles archive reference remapping.

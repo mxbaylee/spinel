@@ -73,3 +73,5 @@ review examples. SPN-088 investigates eight logical colors with light/dark
 display pairs in native pickers. Public picker replacement is not yet established; use supported APIs
 and retain the native picker if necessary. Preserve stored styles, existing
 preset/profile colors and exports, rather than treating a theme switch as an edit.
+SPN-050 only removes the separate fill-preset toolbar while retaining the sixteen
+legacy fill/profile mappings; it does not repeat SPN-088's palette investigation.

@@ -10,7 +10,7 @@ Stories: `Redesign/Screens` — Dashboard, Doc, Sheet, PlannedSpace.
 | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | Type cues need to remain legible in a denser list and compact editor header. | Dropbox/Notion distinguish file/page types within consistent rows; no competitor artwork is adopted. | Reuse SPN-077 facets at 24 px in headers and 32 px in file rows, always accompanied by a name/type context. |
 
-No replacement artwork or palette. Space facets stay planned-only until SPN-078. Keep all current geometry, monochrome/emoji fallbacks, social-card privacy and contrast coverage.
+No replacement artwork or palette. Space facets stay planned-only until SPN-092 completes the [Space delivery contract](spaces.md#delivery-slices); SPN-078 supplies the guarded model first. Keep all current geometry, monochrome/emoji fallbacks, social-card privacy and contrast coverage.
 
 The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.

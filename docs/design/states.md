@@ -102,12 +102,13 @@ section places them.
 
 - **Connection** (SPN-042): the connection slot shows Online, Offline or
   Reconnecting with an icon. It never says Online from `navigator.onLine` alone.
-- **Local save** (SPN-053): the same slot extends to Saving on this device,
+- **Local save** (SPN-053): SPN-043's shared save slot extends to Saving on this device,
   Saved on this device — waiting to sync, Synced and Needs attention. Needs
   attention stays until resolved and its popover holds the action (open both
-  documents, Export as Univer file, discard).
+  documents, Export as Univer file, discard). Keep this separate from SPN-042's
+  connection indicator: connectivity alone does not confirm durable storage.
 - **Conflicts:** Spinel never asks the person to merge. It makes the offline
-  copy and says so in the slot's popover: "Your offline changes were saved as
+  copy and says so in the save slot's popover: "Your offline changes were saved as
   <title> (offline copy, <date>)." with **Open copy** and **Open original**.
   Numbers' pick-preview-Keep flow is not adopted because there is nothing to
   merge.
@@ -131,13 +132,16 @@ section places them.
 Empty, loading and error states are stories of each component:
 `Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/Trash`,
 `Sharing/Sharing`, `Sharing/ShareLink`, `Admin/*`,
-`Guest/GuestApp`, `Editor/FillPresets`. Offline states get stories with the
-SPN-042 indicator.
+`Guest/GuestApp`, `Editor/FillPresets`. Offline stories distinguish SPN-042's
+connection indicator from SPN-043's shared save slot and its SPN-053 local-save
+states, including a connected device whose changes are not yet durably saved.
 
 ### Modal title icons
 
 Owner follow-up, 2026-10-21, decision #126: every product modal gets an appropriate
-icon beside its textual title through the shared proposal Modal heading. SPN-089 carries the same pattern into production. Use
+icon beside its textual title through the shared proposal Modal heading. Screen
+migrations SPN-045/048/049/081–085 apply the pattern to their own dialogs;
+SPN-089 audits the remaining production dialogs after those migrations. Use
 consistent size/alignment, hide decorative icons from assistive technology, and
 preserve the title as the accessible name. Tooltips are not modals. Do not patch
 SDK-owned dialogs through unsupported hooks. The proposal uses a 20 px decorative semantic icon, a wrapping title and a separate close target; accessible text and dismissal behavior are unchanged.

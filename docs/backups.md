@@ -1,5 +1,36 @@
 # Offsite backups and recovery
 
+## Recovery requirements and hosting options
+
+Spinel is [pre-production](development.md#deployment-stage) until SPN-038 launches
+`spinel.baylee.dev`. The SQLite/Spaces procedure below is the current working
+implementation. It may be replaced before launch if another database and recovery
+setup is simpler; the requirement is a tested way to recover the whole workspace,
+not a permanent SQLite dependency. Owner, chat 2026-10-21.
+
+Keep an inventory of accounts and grants, document snapshots and history, images,
+and the configuration/credentials needed to restore service. Set an acceptable
+recovery point and recovery time for the selected deployment, then demonstrate
+them with an isolated restore. SPN-063 adds recurring verification and visible
+last-success/failure status for whichever recovery method is selected.
+
+DigitalOcean offers different kinds of protection, which cover different failures:
+
+| Option | What it supplies | What Spinel still needs to establish |
+| --- | --- | --- |
+| Droplet backups | Scheduled system-disk images. | Attached volumes are excluded; active database writes need an appropriate consistent backup method. |
+| Volumes | Data replicated across hosts, plus volume snapshots. | Hardware redundancy does not recover an earlier application state after a bad write or deletion. |
+| Managed PostgreSQL | Daily backups and seven-day point-in-time recovery; eligible configurations with standby nodes offer failover. | Select an applicable plan, preserve assets/configuration outside that database, and prove application recovery. |
+
+Sources checked 2026-10-21: DigitalOcean's [backup limits](https://docs.digitalocean.com/products/backups/details/limits/),
+[volume durability](https://docs.digitalocean.com/products/volumes/details/features/),
+and [PostgreSQL features](https://docs.digitalocean.com/products/databases/postgresql/details/features/).
+Recheck current plans and costs when choosing a deployment. These options do not
+change the browser storage/eviction and pending-edit requirements in SPN-055.
+No cloud resources are provisioned by this grooming decision.
+
+## Current SQLite and Spaces implementation
+
 Spinel backs up to a **private DigitalOcean Space**. It uses SQLite's `VACUUM INTO`
 to make a consistent copy, compresses it and encrypts it with AES-256-GCM before any
 network transfer. The 32-byte random recovery key must be kept separately from

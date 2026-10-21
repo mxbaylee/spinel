@@ -5,7 +5,9 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname, posix } from 'node:path';
 
-export type Size = 'S' | 'M' | 'L';
+export type Effort = 'S' | 'M' | 'L' | 'XL';
+export type Impact = 'S' | 'M' | 'L';
+export type Phase = 'pre_launch' | 'launch' | 'post_launch';
 type Scalar = string | number | boolean;
 export type Value = Scalar | Scalar[];
 
@@ -27,11 +29,12 @@ export interface Ticket {
   warnings: string[];
   id: string;
   emoji: string;
-  effort: Size;
+  effort: Effort;
+  phase: Phase;
   // Each persona's impact; a persona the ticket doesn't touch is absent.
-  impacts: Partial<Record<PersonaField, Size>>;
+  impacts: Partial<Record<PersonaField, Impact>>;
   // The highest of `impacts`.
-  impact: Size;
+  impact: Impact;
   // As written in the file. `npm run backlog:index` keeps it equal to scores().
   score: number;
   depends_on: string[];
@@ -63,11 +66,18 @@ export interface Result {
 }
 
 export const CONFIG_PATH = 'docs/todo/backlog.json';
-export const SIZES: readonly string[] = ['S', 'M', 'L'];
-export const EFFORT_POINTS: Record<Size, number> = { S: 3, M: 2, L: 1 };
-export const IMPACT_POINTS: Record<Size, number> = { S: 1, M: 2, L: 3 };
-export const EFFORT_EMOJI: Record<Size, string> = { S: '🌱', M: '🌿', L: '🌳' };
-export const IMPACT_EMOJI: Record<Size, string> = { S: '🤍', M: '💜', L: '🩷' };
+export const EFFORT_SIZES: readonly string[] = ['S', 'M', 'L', 'XL'];
+export const IMPACT_SIZES: readonly string[] = ['S', 'M', 'L'];
+export const EFFORT_POINTS: Record<Effort, number> = { S: 3, M: 2, L: 1, XL: 0 };
+export const IMPACT_POINTS: Record<Impact, number> = { S: 1, M: 2, L: 3 };
+export const EFFORT_EMOJI: Record<Effort, string> = { S: '🌱', M: '🌿', L: '🌳', XL: '🏔️' };
+export const IMPACT_EMOJI: Record<Impact, string> = { S: '🤍', M: '💜', L: '🩷' };
+export const PHASES: readonly string[] = ['pre_launch', 'launch', 'post_launch'];
+const PHASE_LABELS: Record<Phase, string> = {
+  pre_launch: 'Before launch',
+  launch: 'Launch',
+  post_launch: 'After launch',
+};
 // The persona each impact field is judged for (docs/product/personas.md).
 export const PERSONA_FIELDS = {
   impact_operator: 'Operator',
@@ -92,6 +102,7 @@ const FIELDS = [
   'id',
   'emoji',
   'effort',
+  'phase',
   ...Object.keys(PERSONA_FIELDS),
   'score',
   'depends_on',
@@ -185,14 +196,15 @@ export function parseTicket(file: string, text: string): Ticket {
   const d = fm.data;
   for (const key of Object.keys(d))
     if (!FIELDS.includes(key)) t.errors.push(`unknown frontmatter field "${key}"`);
-  const impacts: Partial<Record<PersonaField, Size>> = {};
+  const impacts: Partial<Record<PersonaField, Impact>> = {};
   for (const key of Object.keys(PERSONA_FIELDS) as PersonaField[])
-    if (key in d) impacts[key] = d[key] as Size;
-  const sizes = Object.values(impacts).filter((v) => SIZES.includes(v));
+    if (key in d) impacts[key] = d[key] as Impact;
+  const sizes = Object.values(impacts).filter((v) => IMPACT_SIZES.includes(v));
   Object.assign(t, {
     id: d.id as string,
     emoji: d.emoji as string,
-    effort: d.effort as Size,
+    effort: d.effort as Effort,
+    phase: (d.phase ?? 'pre_launch') as Phase,
     impacts,
     impact: sizes.sort((a, b) => IMPACT_POINTS[b] - IMPACT_POINTS[a])[0],
     score: d.score as number,
@@ -284,9 +296,10 @@ function validateTicket(t: Ticket, ctx: Context): void {
     t.errors.push('emoji must be exactly one emoji');
   else if (RESERVED_EMOJI.has(t.emoji))
     t.errors.push(`${t.emoji} is reserved for sizes or PR types; pick another emoji`);
-  if (!SIZES.includes(t.effort)) t.errors.push('effort must be S, M or L');
+  if (!EFFORT_SIZES.includes(t.effort)) t.errors.push('effort must be S, M, L or XL');
+  if (!PHASES.includes(t.phase)) t.errors.push('phase must be pre_launch, launch or post_launch');
   for (const [key, size] of Object.entries(t.impacts))
-    if (!SIZES.includes(size)) t.errors.push(`${key} must be S, M or L`);
+    if (!IMPACT_SIZES.includes(size)) t.errors.push(`${key} must be S, M or L`);
   if (!Object.keys(t.impacts).length)
     t.errors.push(`judge at least one persona: ${Object.keys(PERSONA_FIELDS).join(', ')}`);
   // A missing score is only stale (staleScores), so `backlog:index` can write it.
@@ -397,6 +410,15 @@ export function validateBacklog(backlog: Backlog): Result {
         errors.push(
           `${t.file}: depends on ${dep}, which is not an open ticket; remove it if it landed`,
         );
+      const prerequisite = open.get(dep);
+      if (
+        prerequisite &&
+        PHASES.includes(t.phase) &&
+        PHASES.indexOf(prerequisite.phase) > PHASES.indexOf(t.phase)
+      )
+        errors.push(
+          `${t.file}: ${t.phase} work cannot depend on ${dep} in the later ${prerequisite.phase} phase`,
+        );
     }
   }
   const cycle = findCycle(tickets.filter((t) => Array.isArray(t.depends_on)));
@@ -465,7 +487,7 @@ function findCycle(tickets: Ticket[]): string[] | null {
 
 // ---------- ranking ----------
 
-// A ticket's own points, from 2 to 6.
+// A ticket's own points, from 1 to 6.
 export function baseScore(t: Pick<Ticket, 'impact' | 'effort'>): number {
   return IMPACT_POINTS[t.impact] + EFFORT_POINTS[t.effort];
 }
@@ -516,9 +538,9 @@ export function withScore(text: string, value: number): string {
   return lines.join('\n') + text.slice(end);
 }
 
-// Every open ticket in pick order, each with the tie-break that put it ahead of
-// the next one and the open tickets it waits on. A prerequisite always scores
-// above what depends on it, so the first ticket is never waiting.
+// Every open ticket in phase then priority order. Validation prevents a
+// prerequisite from belonging to a later phase; within a phase its inherited
+// score puts it ahead of what depends on it, so the first row is never waiting.
 export interface Ranked {
   ticket: Ticket;
   score: number;
@@ -532,6 +554,7 @@ export function rank(tickets: Ticket[], prefix: string): Ranked[] {
   const unblocks = (t: Ticket) =>
     tickets.filter((o) => o.depends_on.includes(t.id)).map((o) => o.id);
   const keys = (t: Ticket) => ({
+    phase: PHASES.indexOf(t.phase),
     score: scored.get(t.id) ?? 0,
     unblocks: unblocks(t),
     impact: IMPACT_POINTS[t.impact],
@@ -541,6 +564,7 @@ export function rank(tickets: Ticket[], prefix: string): Ranked[] {
   type Entry = { t: Ticket; k: ReturnType<typeof keys> };
   const all: Entry[] = tickets.map((t) => ({ t, k: keys(t) }));
   const compare = (a: Entry, b: Entry) =>
+    a.k.phase - b.k.phase ||
     b.k.score - a.k.score ||
     Number(b.k.unblocks.length > 0) - Number(a.k.unblocks.length > 0) ||
     b.k.impact - a.k.impact ||
@@ -550,7 +574,7 @@ export function rank(tickets: Ticket[], prefix: string): Ranked[] {
   return all.map(({ t, k }, i) => {
     const next = all[i + 1];
     let tieBreak = '—';
-    if (next && next.k.score === k.score) {
+    if (next && next.k.phase === k.phase && next.k.score === k.score) {
       if (k.unblocks.length && !next.k.unblocks.length)
         tieBreak = `Unblocks ${k.unblocks.join(', ')}`;
       else if (k.impact !== next.k.impact) tieBreak = 'Higher impact';
@@ -585,14 +609,24 @@ export function renderIndex(backlog: Backlog): string {
   ];
   if (!tickets.length) out.push('The backlog is empty.');
   else {
-    out.push(
-      "Highest score first. Take the first ticket that isn't waiting on another.",
-      '',
+    const phased = tickets.some((t) => t.phase !== 'pre_launch');
+    const tableHeader = [
       '| # | Ticket | Effort | Impact | Score | Tie-break | Waiting on | Owner input |',
       '| --- | --- | --- | --- | --- | --- | --- | --- |',
+    ];
+    out.push(
+      phased
+        ? "Complete each phase before the next. Within a phase, take the highest-ranked ticket that isn't waiting on another."
+        : "Highest score first. Take the first ticket that isn't waiting on another.",
+      '',
     );
+    if (!phased) out.push(...tableHeader);
     ranked.forEach((r, i) => {
       const t = r.ticket;
+      if (phased && ranked[i - 1]?.ticket.phase !== t.phase) {
+        if (i > 0) out.push('');
+        out.push(`### ${PHASE_LABELS[t.phase]}`, '', ...tableHeader);
+      }
       const waiting = r.waiting.length ? r.waiting.map((d) => `[${d}](${d}.md)`).join(', ') : '—';
       out.push(
         `| ${i + 1} | ${link(t)} | ${EFFORT_EMOJI[t.effort]} ${t.effort} | ${IMPACT_EMOJI[t.impact]} ${t.impact} | ` +
