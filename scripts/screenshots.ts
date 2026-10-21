@@ -81,6 +81,14 @@ try {
       await expect(page.locator('#storybook-root')).toBeVisible();
       await page.evaluate(() => document.fonts.ready);
       await expect(page.locator('.sb-errordisplay')).toBeHidden();
+      if (id === 'redesign-screens--profile-icon-picker')
+        await expect(
+          page.getByRole('dialog', { name: 'Choose your icon', exact: true }),
+        ).toBeVisible();
+      if (id === 'redesign-screens--profile-colour-picker')
+        await expect(
+          page.getByRole('dialog', { name: 'Choose your profile colour', exact: true }),
+        ).toBeVisible();
       if (id === 'redesign-screens--dashboard-new-menu') {
         await expect(page.getByRole('menu', { name: 'New file', exact: true })).toBeVisible();
       }

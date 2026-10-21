@@ -1319,3 +1319,20 @@
 .rd-sidebar .sp-segment:focus-visible {
   outline-color: var(--sp-accent);
 }
+
+.rd-profile-identity {
+  flex-wrap: wrap;
+}
+.rd-profile-colours {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.rd-profile-colours .sp-control {
+  min-width: 44px;
+  min-height: 44px;
+}
+.sp-ui .profile-icon-dialog button,
+.sp-ui .profile-icon-dialog select {
+  min-height: 44px;
+}

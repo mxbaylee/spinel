@@ -3,6 +3,10 @@ import { useRef, useState, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 import { GemLogo } from '../GemLogo.tsx';
 import { EntityIcon } from '../EntityIcon.tsx';
+import { ProfileIcon } from '../../profile/ProfileIcon.tsx';
+import { defaultProfile } from '../../profile/profile.ts';
+import { IconPicker } from '../../../web/ProfileSettings.tsx';
+import { fillPresets } from '../palette.ts';
 import { getPreference, setPreference, watchTheme } from '../theme.ts';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal, SegmentedChoice } from './Controls.tsx';
 import './mockups.css';
@@ -88,8 +92,22 @@ function FileIdentity({
     <EntityIcon kind={kind} size={size} />
   );
 }
-function Avatar({ children = 'AB' }: { children?: ReactNode }) {
-  return <span className="rd-avatar">{children}</span>;
+const sampleProfile = defaultProfile('Alex Baylee');
+function Avatar({
+  children,
+  color = sampleProfile.color,
+}: {
+  children?: ReactNode;
+  color?: string;
+}) {
+  return (
+    <span
+      className="rd-avatar"
+      style={{ background: `var(--fill-${color}-bg)`, color: `var(--fill-${color}-fg)` }}
+    >
+      {children ?? <ProfileIcon icon={sampleProfile.icon} />}
+    </span>
+  );
 }
 export function AppearanceChoice({
   value,
@@ -380,7 +398,9 @@ function Shell({
   collapsed = false,
   compact = false,
   offline = false,
+  accountAvatar,
 }: {
+  accountAvatar?: ReactNode;
   offline?: boolean;
   children: ReactNode;
   collapsed?: boolean;
@@ -479,7 +499,7 @@ function Shell({
               aria-label="Your profile"
               onClick={() => onSelect('Your profile')}
             >
-              <Avatar />
+              {accountAvatar ?? <Avatar />}
             </button>
           </div>
         </aside>
@@ -1732,14 +1752,30 @@ export function HistoryMockup({
 }
 export function ProfileMockup({
   section = 'profile',
+  initialPicker,
 }: {
+  initialPicker?: 'icon' | 'color';
   section?: 'profile' | 'security' | 'connections' | 'device' | 'links';
 }) {
   const [tab, setTab] = useState<string>(section);
   const theme = useSyncExternalStore(watchTheme, getPreference);
   const [notice, setNotice] = useState('');
+  const [draft, setDraft] = useState(sampleProfile);
+  const [saved, setSaved] = useState(sampleProfile);
+  const [picker, setPicker] = useState(initialPicker);
+  const iconTrigger = useRef<HTMLButtonElement>(null);
+  const closeIcon = () => {
+    setPicker(undefined);
+    requestAnimationFrame(() => iconTrigger.current?.focus());
+  };
   return (
-    <Shell>
+    <Shell
+      accountAvatar={
+        <Avatar color={saved.color}>
+          <ProfileIcon icon={saved.icon} />
+        </Avatar>
+      }
+    >
       <header className="rd-page-header">
         <div>
           <p className="rd-eyebrow">YOUR ACCOUNT</p>
@@ -1772,26 +1808,44 @@ export function ProfileMockup({
               <h2>Make yourself at home</h2>
               <p className="sp-muted">Your name and icon help collaborators recognize you.</p>
               <div className="rd-profile-identity">
-                <Avatar />
+                <Avatar color={draft.color}>
+                  <ProfileIcon icon={draft.icon} />
+                </Avatar>
                 <div>
-                  <strong>Alex Baylee</strong>
+                  <strong>{draft.name}</strong>
                   <p className="sp-muted">Your everyday account</p>
                 </div>
-                <Button
-                  onClick={() => setNotice('Choose a profile icon in the profile implementation.')}
-                >
-                  Change icon
-                </Button>
+                <button className="sp-control" ref={iconTrigger} onClick={() => setPicker('icon')}>
+                  Choose icon
+                </button>
+                <Button onClick={() => setPicker('color')}>Choose colour</Button>
               </div>
               <label>
                 Display name
-                <input defaultValue="Alex Baylee" />
+                <input
+                  maxLength={80}
+                  value={draft.name}
+                  onChange={(event) => setDraft({ ...draft, name: event.target.value })}
+                />
               </label>
               <div className="sp-actions">
-                <Button primary onClick={() => setNotice('Profile saved.')}>
+                <Button
+                  primary
+                  disabled={!draft.name.trim()}
+                  onClick={() => {
+                    setSaved(draft);
+                    setNotice(
+                      'Profile saved in this preview. Reopen your editors to update your presence.',
+                    );
+                  }}
+                >
                   Save profile
                 </Button>
               </div>
+              <p className="sp-muted">
+                Your name and icon appear in account-only documents. Documents with guest links keep
+                generic identities.
+              </p>
               <section className="rd-section">
                 <h2>Appearance</h2>
                 <p className="sp-muted">A familiar workspace, in your preferred light.</p>
@@ -1891,6 +1945,45 @@ export function ProfileMockup({
           </p>
         </div>
       </div>
+      {picker === 'icon' && (
+        <IconPicker
+          value={draft.icon}
+          close={closeIcon}
+          choose={(icon) => {
+            setDraft({ ...draft, icon });
+            closeIcon();
+          }}
+        />
+      )}
+      <Modal
+        title="Choose your profile colour"
+        description="Use the same sixteen profile presets available in Spinel."
+        open={picker === 'color'}
+        onOpenChange={(open) => {
+          if (!open) setPicker(undefined);
+        }}
+      >
+        <div className="rd-profile-colours">
+          {fillPresets.map((preset) => (
+            <Button
+              key={preset.id}
+              aria-label={preset.label}
+              title={preset.label}
+              aria-pressed={draft.color === preset.id}
+              style={{
+                background: `var(--fill-${preset.id}-bg)`,
+                color: `var(--fill-${preset.id}-fg)`,
+              }}
+              onClick={() => {
+                setDraft({ ...draft, color: preset.id });
+                setPicker(undefined);
+              }}
+            >
+              <ProfileIcon icon={draft.icon} />
+            </Button>
+          ))}
+        </div>
+      </Modal>
     </Shell>
   );
 }

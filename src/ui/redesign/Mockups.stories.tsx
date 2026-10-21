@@ -122,3 +122,6 @@ export const DashboardNewMenu: Story = {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'New file' }));
   },
 };
+
+export const ProfileIconPicker: Story = { render: () => <ProfileMockup initialPicker="icon" /> };
+export const ProfileColourPicker: Story = { render: () => <ProfileMockup initialPicker="color" /> };

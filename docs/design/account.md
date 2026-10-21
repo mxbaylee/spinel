@@ -10,7 +10,7 @@ Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup,
 | --- | --- | --- |
 | Appearance, passkeys and connections become a growing sequence of equal cards. Entry pages use oversized headings and heavy framing. | Notion exposes explicit appearance preferences; Dropbox separates account controls from file navigation. | A compact account area with section navigation; a quiet, single-task entry card. |
 
-Proposed profile sections: Profile & appearance, Passkeys, Connected assistants, This device, and the planned owner-only Guest links inventory (SPN-066). Preserve name/color/icon work in PR #124, pending OAuth return navigation, disconnect and advanced token flows. Theme is a three-choice rail menu using the same preference as Profile; this replaces SPN-045’s provisional cycling form only after owner approval. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
+Proposed profile sections: Profile & appearance, Passkeys, Connected assistants, This device, and the planned owner-only Guest links inventory (SPN-066). Reuse the landed SPN-036 profile fields, Lucide picker and color presets, pending OAuth return navigation, disconnect and advanced token flows. Theme uses the owner-selected System/Light/Dark segmented control and the same preference as Profile. Entry/consent screens keep every security disclosure and failure state; no marketing or signup route is introduced.
 
 The proposal above governs placement after approval. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
@@ -104,3 +104,9 @@ must report a storage failure without undoing the in-session theme choice.
 - Store `lucide:<name>` and validate against the pinned catalog. Search/reference code now lives in `src/profile/`; no emojis or photos. Names are 1–80 characters with no control characters. Saving updates the rail immediately; reopen editors to refresh their membership appearance.
 - Account-only room badges and Sheet canvas labels use saved icons/colours. Guest-linked rooms keep generic names, empty personal avatars and default ID-derived colours (#72); generic user-round glyphs reveal no profile identity. Settings explains this distinction.
 - Sheet labels have rounded corners and include icon plus name. Following reveals an offscreen range without overwriting the local selection or scrolling an already-visible range. Doc canvas colours remain with SPN-058; native Docs services stay enabled. Owner approval, 2026-10-20, [decision #127](https://github.com/mxbaylee/spinel/issues/127).
+
+SPN-036 merged at `6c09bd4` and is included in this branch. Profile fixtures reuse
+its real `IconPicker`, `ProfileIcon`, catalog and sixteen fill presets. Save in
+the prototype updates only the local preview/avatar; production profile persistence
+and guest-identity behavior remain SPN-036's existing implementation. The deferred
+SPN-086 document emoji/icon picker is separate from this already-shipped user picker.

@@ -155,7 +155,7 @@ Do not run another agent's local workload concurrently.
 | Formula creation/results | Editor/DocFormulas; native formula screenshots | Formula, FormulaInContext, FormulaTableInContext | SPN-049, SPN-076 |
 | History preview/restore | Editor/VersionNames; history-calendar screenshot | History | SPN-085 |
 | Sharing and guest links | Sharing/Sharing; Sharing/ShareLink | Sharing, SharingCreatedLink, SharingExistingLink, SharingReplaceLink, SharingError | SPN-081 |
-| Profile and appearance | Settings/ThemeSettings; profile PR #124 | Profile | SPN-045, SPN-036 |
+| Profile and appearance | Settings/ProfileSettings; landed SPN-036 | Profile, ProfileIconPicker, ProfileColourPicker | SPN-045 |
 | Passkeys | current settings Playwright capture | Profile (Passkeys section) | SPN-045, SPN-070 |
 | Connections / tokens | Settings/AssistantConnections; Settings/AccessTokens | Connections | SPN-045 |
 | Consent and expiry | Settings/ConnectAssistant | Consent, ConsentReadOnly, ConsentExpired | SPN-083 |
