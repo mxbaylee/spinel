@@ -259,3 +259,20 @@ export function EntryJourney({
     </div>
   );
 }
+
+/** Standalone stories share the same entry surface as the connected walkthrough. */
+export function EntryPreview({ screen: initialScreen }: { screen: EntryScreen }) {
+  const [screen, setScreen] = useState(initialScreen);
+  const [outcome, setOutcome] = useState<EntryOutcome>('ready');
+  return (
+    <EntryJourney
+      screen={screen}
+      outcome={outcome}
+      onNavigate={(next) => {
+        setScreen(next);
+        setOutcome('ready');
+      }}
+      onPasskey={() => setOutcome('pending')}
+    />
+  );
+}

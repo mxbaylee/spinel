@@ -12,6 +12,7 @@ import { fillPresets } from '../palette.ts';
 import { getPreference, setPreference, watchTheme } from '../theme.ts';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal, SegmentedChoice } from './Controls.tsx';
 import './mockups.css';
+import { TokenManager } from './TokenManager.tsx';
 
 type GlyphName =
   | 'files'
@@ -504,7 +505,9 @@ function Shell({
             ? 'button[aria-label="Collapse navigation"]'
             : guest
               ? '.rd-mobile-nav button'
-              : '.rd-rail-button',
+              : space
+                ? '.rd-space-pages-open'
+                : '.rd-rail-button',
         )
         ?.focus(),
     );
@@ -526,36 +529,30 @@ function Shell({
             </span>
           </button>
           <NetworkStatus offline={offline} />
-          <button
-            className="rd-rail-button"
-            aria-label={
-              sidebar
-                ? space
-                  ? 'Expand pages navigation'
-                  : 'Expand navigation'
-                : operator
-                  ? 'Administration'
-                  : 'My files'
-            }
-            title={sidebar ? (space ? 'Expand pages navigation' : 'Expand navigation') : undefined}
-            aria-expanded={sidebar ? nav : undefined}
-            onClick={() => {
-              if (sidebar) {
-                if (window.matchMedia('(max-width: 900px)').matches) setNav(true);
-                else setNavigation(!expanded);
-              } else onSelect('My files');
-            }}
-          >
-            <Glyph name={sidebar ? 'forward' : operator ? 'shield' : 'files'} />
-          </button>
-          {sidebar && space && (
+          {!space && (
             <button
-              className="rd-rail-button rd-space-rail-exit"
+              className="rd-rail-button"
+              aria-label={sidebar ? 'Expand navigation' : operator ? 'Administration' : 'My files'}
+              title={sidebar ? 'Expand navigation' : operator ? 'Administration' : 'My files'}
+              aria-expanded={sidebar ? nav : undefined}
+              onClick={() => {
+                if (sidebar) {
+                  if (window.matchMedia('(max-width: 900px)').matches) setNav(true);
+                  else setNavigation(!expanded);
+                } else onSelect('My files');
+              }}
+            >
+              <Glyph name={sidebar ? 'forward' : operator ? 'shield' : 'files'} />
+            </button>
+          )}
+          {space && (
+            <button
+              className="rd-rail-button"
               aria-label="My files"
+              title="My files"
               onClick={() => onSelect('My files')}
             >
               <Glyph name="files" />
-              <small>My files</small>
             </button>
           )}
           {sidebar && !space && (
@@ -647,7 +644,24 @@ function Shell({
           </Modal>
         </>
       )}
-      <main className="rd-main">{children}</main>
+      <main className="rd-main">
+        {space && !guest && (
+          <div className="rd-space-local-navigation">
+            <Button
+              className="rd-space-pages-open sp-quiet"
+              aria-label="Open Space contents"
+              aria-expanded={nav}
+              onClick={() => {
+                if (window.matchMedia('(max-width: 900px)').matches) setNav(true);
+                else setNavigation(true);
+              }}
+            >
+              <Glyph name="menu" /> Pages
+            </Button>
+          </div>
+        )}
+        {children}
+      </main>
     </div>
   );
 }
@@ -775,6 +789,17 @@ export function DashboardMockup({
   const [scope, setScope] = useState('all');
   const [tag, setTag] = useState(state === 'filtered' ? 'household' : '');
   const [modified, setModified] = useState('any');
+  const hasFilters = Boolean(
+    search || tag || scope !== 'all' || modified !== 'any' || kind !== 'all',
+  );
+  const clearFilters = () => {
+    setSearch('');
+    setTag('');
+    setScope('all');
+    setModified('any');
+    setKind('all');
+  };
+
   const [trashed, setTrashed] = useState<string[]>(deletedFixtures.map((file) => file.id));
   const [layout, setLayout] = useState(initialLayout);
   const currentFolder = items.find((item) => item.kind === 'folder' && item.id === view);
@@ -845,30 +870,32 @@ export function DashboardMockup({
           )}
           <h1>{currentFolder?.name ?? view}</h1>
         </div>
-        <div className="rd-header-actions">
-          <ActionMenu
-            label="New file"
-            primary
-            actions={['Doc', 'Sheet', 'Space', 'Folder', 'Import file…'].map((label) => ({
-              label,
-              icon:
-                label === 'Folder' ? (
-                  <Glyph name="folder" />
-                ) : label === 'Import file…' ? (
-                  <Glyph name="upload" />
-                ) : (
-                  <EntityIcon kind={label.toLowerCase() as 'doc' | 'sheet' | 'space'} size={16} />
-                ),
-              onClick: () => {
-                setName('');
-                setTarget('');
-                setDialog(label);
-              },
-            }))}
-          >
-            ＋ New <span aria-hidden="true">⌄</span>
-          </ActionMenu>
-        </div>
+        {view !== 'Trash' && (
+          <div className="rd-header-actions">
+            <ActionMenu
+              label="New file"
+              primary
+              actions={['Doc', 'Sheet', 'Space', 'Folder', 'Import file…'].map((label) => ({
+                label,
+                icon:
+                  label === 'Folder' ? (
+                    <Glyph name="folder" />
+                  ) : label === 'Import file…' ? (
+                    <Glyph name="upload" />
+                  ) : (
+                    <EntityIcon kind={label.toLowerCase() as 'doc' | 'sheet' | 'space'} size={16} />
+                  ),
+                onClick: () => {
+                  setName('');
+                  setTarget('');
+                  setDialog(label);
+                },
+              }))}
+            >
+              ＋ New <span aria-hidden="true">⌄</span>
+            </ActionMenu>
+          </div>
+        )}
       </header>
       <div className="rd-content rd-dashboard-content">
         <div className="rd-list-tools">
@@ -900,6 +927,22 @@ export function DashboardMockup({
           <Button aria-expanded={filtersOpen} onClick={() => setFiltersOpen(!filtersOpen)}>
             Filters {filtersOpen ? '⌃' : '⌄'}
           </Button>
+          <div className="rd-view-switch" role="group" aria-label="File layout">
+            <Button
+              aria-label="List view"
+              aria-pressed={layout === 'list'}
+              onClick={() => setLayout('list')}
+            >
+              <Glyph name="list" /> List
+            </Button>
+            <Button
+              aria-label="Grid view"
+              aria-pressed={layout === 'grid'}
+              onClick={() => setLayout('grid')}
+            >
+              <Glyph name="files" /> Grid
+            </Button>
+          </div>
           {(tag || scope !== 'all' || modified !== 'any' || kind !== 'all') && (
             <>
               <span className="sp-muted">
@@ -912,16 +955,7 @@ export function DashboardMockup({
                   .filter(Boolean)
                   .join(' · ')}
               </span>
-              <Button
-                onClick={() => {
-                  setTag('');
-                  setScope('all');
-                  setModified('any');
-                  setKind('all');
-                }}
-              >
-                Clear filters
-              </Button>
+              <Button onClick={clearFilters}>Clear filters</Button>
             </>
           )}
         </div>
@@ -960,22 +994,6 @@ export function DashboardMockup({
                 ? `Results for “${search}”`
                 : `${rows.length} items`}
           </span>
-          <div className="rd-view-switch" role="group" aria-label="File layout">
-            <Button
-              aria-label="List view"
-              aria-pressed={layout === 'list'}
-              onClick={() => setLayout('list')}
-            >
-              <Glyph name="list" /> List
-            </Button>
-            <Button
-              aria-label="Grid view"
-              aria-pressed={layout === 'grid'}
-              onClick={() => setLayout('grid')}
-            >
-              <Glyph name="files" /> Grid
-            </Button>
-          </div>
           {view !== 'My files' && view !== 'Trash' && (
             <Button onClick={() => setView('My files')}>Search all files</Button>
           )}
@@ -993,22 +1011,13 @@ export function DashboardMockup({
         ) : empty ? (
           <div className="rd-empty">
             <EntityIcon kind="doc" size={48} />
-            <h2>{search ? 'No matching files' : 'Room for your next idea'}</h2>
+            <h2>{hasFilters ? 'No matching files' : 'Room for your next idea'}</h2>
             <p>
-              {search
+              {hasFilters
                 ? 'Try another name or clear your filters.'
                 : 'Choose New to start a Doc, Sheet or Space.'}
             </p>
-            {search && (
-              <Button
-                onClick={() => {
-                  setSearch('');
-                  setKind('all');
-                }}
-              >
-                Clear filters
-              </Button>
-            )}
+            {hasFilters && <Button onClick={clearFilters}>Clear filters</Button>}
           </div>
         ) : (
           <div
@@ -1471,6 +1480,7 @@ export function EditorMockup({
   const [naming, setNaming] = useState(false);
   const [panel, setPanel] = useState(formula ? 'Formula' : '');
   const [notice, setNotice] = useState('');
+  const isSpaceTrash = space && selected === 'Trash';
   const name = space ? selected : (title ?? (sheet ? 'Quarterly budget' : 'Autumn plans'));
   return (
     <Shell
@@ -1545,88 +1555,92 @@ export function EditorMockup({
             {guest && <span className="rd-badge">{viewOnly ? 'View only' : 'Guest editor'}</span>}
           </div>
         </div>
-        <div className="rd-status-slot">
-          <DetailsPopover
-            label={
-              offline
-                ? guest
-                  ? 'Reconnecting'
-                  : '↻ Waiting to sync'
-                : viewOnly
-                  ? 'Connected'
-                  : saveState === 'failed'
-                    ? 'Could not save'
-                    : saveState === 'saving'
-                      ? 'Saving…'
-                      : '✓ Saved'
-            }
-          >
-            <p>
-              {offline
-                ? guest
-                  ? 'Connection lost. Keep this page open while we reconnect; unsent changes may be lost if you close it.'
-                  : 'Saved on this device. Your changes will sync when you reconnect.'
-                : viewOnly
-                  ? 'You can view this document. You’re connected.'
-                  : saveState === 'failed'
-                    ? 'Your latest changes have not been saved. Keep this page open and try again.'
-                    : saveState === 'saving'
-                      ? 'Saving your latest changes. Keep this page open.'
-                      : 'All changes are saved. You’re connected.'}
-            </p>
-            {saveState === 'failed' && <Button onClick={onRetrySave}>Retry saving</Button>}
-            {offline && <Button onClick={() => setNotice('Reconnecting…')}>Try again</Button>}
-          </DetailsPopover>
-        </div>
-        <div className="rd-editor-actions">
-          {!guest && !viewOnly && (
-            <span className="rd-presence">
-              <Avatar>AK</Avatar>
-            </span>
-          )}
-          {guest ? null : viewOnly || collaborator ? (
-            <span className="rd-badge">
-              {viewOnly ? 'View only' : guest ? 'Guest editor' : 'Can edit'}
-            </span>
-          ) : null}
-          {guest ? (
-            <>
-              <ThemeMenu />
-              <Button
-                aria-label="Export as PDF"
-                disabled={offline || saveState !== 'saved'}
-                title={
-                  offline
-                    ? 'Reconnect before exporting.'
-                    : saveState !== 'saved'
-                      ? 'Wait until changes are saved before exporting.'
-                      : undefined
-                }
-                onClick={() => setNotice('Preparing PDF…')}
-              >
-                <Glyph name="download" /> PDF
-              </Button>
-            </>
-          ) : (
-            <ActionMenu
-              label="Document actions"
-              actions={[
-                ...(!viewOnly && !collaborator
-                  ? [{ label: 'Share…', onClick: () => setShare(true) }]
-                  : []),
-                ...['Versions', 'Export', ...(!viewOnly && !sheet ? ['Insert formula'] : [])].map(
-                  (label) => ({
-                    label,
-                    onClick: () =>
-                      label === 'Versions' && onHistory ? onHistory() : setPanel(label),
-                  }),
-                ),
-              ]}
-            />
-          )}
-        </div>
+        {!isSpaceTrash && (
+          <div className="rd-status-slot">
+            <DetailsPopover
+              label={
+                offline
+                  ? guest
+                    ? 'Reconnecting'
+                    : '↻ Waiting to sync'
+                  : viewOnly
+                    ? 'Connected'
+                    : saveState === 'failed'
+                      ? 'Could not save'
+                      : saveState === 'saving'
+                        ? 'Saving…'
+                        : '✓ Saved'
+              }
+            >
+              <p>
+                {offline
+                  ? guest
+                    ? 'Connection lost. Keep this page open while we reconnect; unsent changes may be lost if you close it.'
+                    : 'Saved on this device. Your changes will sync when you reconnect.'
+                  : viewOnly
+                    ? 'You can view this document. You’re connected.'
+                    : saveState === 'failed'
+                      ? 'Your latest changes have not been saved. Keep this page open and try again.'
+                      : saveState === 'saving'
+                        ? 'Saving your latest changes. Keep this page open.'
+                        : 'All changes are saved. You’re connected.'}
+              </p>
+              {saveState === 'failed' && <Button onClick={onRetrySave}>Retry saving</Button>}
+              {offline && <Button onClick={() => setNotice('Reconnecting…')}>Try again</Button>}
+            </DetailsPopover>
+          </div>
+        )}
+        {!isSpaceTrash && (
+          <div className="rd-editor-actions">
+            {!guest && !viewOnly && (
+              <span className="rd-presence">
+                <Avatar>AK</Avatar>
+              </span>
+            )}
+            {guest ? null : viewOnly || collaborator ? (
+              <span className="rd-badge">
+                {viewOnly ? 'View only' : guest ? 'Guest editor' : 'Can edit'}
+              </span>
+            ) : null}
+            {guest ? (
+              <>
+                <ThemeMenu />
+                <Button
+                  aria-label="Export as PDF"
+                  disabled={offline || saveState !== 'saved'}
+                  title={
+                    offline
+                      ? 'Reconnect before exporting.'
+                      : saveState !== 'saved'
+                        ? 'Wait until changes are saved before exporting.'
+                        : undefined
+                  }
+                  onClick={() => setNotice('Preparing PDF…')}
+                >
+                  <Glyph name="download" /> PDF
+                </Button>
+              </>
+            ) : (
+              <ActionMenu
+                label="Document actions"
+                actions={[
+                  ...(!viewOnly && !collaborator
+                    ? [{ label: 'Share…', onClick: () => setShare(true) }]
+                    : []),
+                  ...['Versions', 'Export', ...(!viewOnly && !sheet ? ['Insert formula'] : [])].map(
+                    (label) => ({
+                      label,
+                      onClick: () =>
+                        label === 'Versions' && onHistory ? onHistory() : setPanel(label),
+                    }),
+                  ),
+                ]}
+              />
+            )}
+          </div>
+        )}
       </header>
-      {!viewOnly && editorContent === undefined && (
+      {!isSpaceTrash && !viewOnly && editorContent === undefined && (
         <div className="rd-toolbar" aria-label="Editor toolbar representation">
           <span>File</span>
           <span>Edit</span>
@@ -2199,13 +2213,24 @@ export function HistoryMockup({
               >
                 Name this version…
               </Button>
-              <Button primary onClick={() => setRestore(true)}>
+              <Button
+                primary
+                disabled={offline || saveState !== 'saved'}
+                onClick={() => setRestore(true)}
+              >
                 Restore this version…
               </Button>
             </>
           )}
         </div>
       </header>
+      {!viewOnly && (offline || saveState !== 'saved') && (
+        <p className="rd-history-selection" role="status">
+          {offline
+            ? 'Reconnect before naming or restoring a version.'
+            : 'Save your latest changes before naming or restoring a version.'}
+        </p>
+      )}
       <p className="rd-history-selection">
         Preview · {selected.startsWith('October') ? selected : `October 20, 2026 · ${selected}`} ·
         UTC
@@ -2252,6 +2277,7 @@ export function HistoryMockup({
           <Button onClick={() => setRestore(false)}>Cancel</Button>
           <Button
             primary
+            disabled={offline || saveState !== 'saved'}
             onClick={() => {
               setRestore(false);
               setNotice('Version restored in the preview.');
@@ -2489,10 +2515,7 @@ export function ProfileMockup({
               </div>
               <details className="rd-section">
                 <summary>Advanced: personal access tokens</summary>
-                <p className="sp-muted">For applications you configure yourself.</p>
-                <Button disabled title="Token creation is not simulated in this walkthrough">
-                  Create token
-                </Button>
+                <TokenManager />
               </details>
             </>
           ) : (
@@ -2908,39 +2931,14 @@ export function AdminMockup({
   );
 }
 export function EntryMockup({
-  kind = 'sign-in',
+  kind = 'consent',
   readOnly = false,
 }: {
   readOnly?: boolean;
-  kind?:
-    | 'sign-in'
-    | 'setup'
-    | 'invite'
-    | 'recovery'
-    | 'revoked'
-    | 'offline'
-    | 'missing'
-    | 'consent'
-    | 'consent-expired';
+  kind?: 'revoked' | 'offline' | 'missing' | 'consent' | 'consent-expired';
 }) {
   const [notice, setNotice] = useState('');
   const entries = {
-    'sign-in': [
-      'Welcome back.',
-      'Your documents, right where you left them.',
-      'Sign in with a passkey',
-    ],
-    setup: [
-      'A place for your work.',
-      'Create the Operator passkey to set up your private workspace.',
-      'Create Operator passkey',
-    ],
-    invite: [
-      'You’re invited.',
-      'Create a passkey to join this private workspace.',
-      'Create your passkey',
-    ],
-    recovery: ['Welcome back.', 'Add a new passkey to recover your account.', 'Add a new passkey'],
     revoked: ['This link no longer works.', 'Ask the person who shared it for a new link.', ''],
     offline: ['You’re offline.', 'Connect to the internet to open this page.', 'Try again'],
     missing: [
@@ -3005,11 +3003,6 @@ export function EntryMockup({
         <p className="rd-feedback" role="status">
           {notice}
         </p>
-        {['sign-in', 'invite', 'recovery'].includes(kind) && (
-          <small className="sp-muted">
-            Use a passkey from your browser, password manager or phone.
-          </small>
-        )}
       </section>
       <footer>Private by invitation. Yours to make.</footer>
     </div>

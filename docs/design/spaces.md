@@ -6,12 +6,12 @@ Admin follows separately in SPN-079. Neither is a live route in this redesign.
 
 ## Comparison and adopted layout
 
-| Existing / planned friction | Reference pattern | Spinel proposal |
-| --- | --- | --- |
-| A collection could add another dashboard/sidebar layer | Notion's page hierarchy and Numbers' sheet organization | One internal content sidebar replaces outer file navigation while a Space is open |
-| Child sharing could suggest separate access | Google sharing separates people/links; Spinel has one Space boundary | One Share action on the outer Space; child pages have no permissions controls |
-| Phone trees can consume the whole screen | Dropbox's collapsible navigation | A labelled Pages button opens a modal drawer; choose a page and return to content |
-| Admin can be mistaken for server access | No consumer comparison establishes Spinel's policy | “File admin” in file sharing, “Server Operator” in administration |
+| Existing / planned friction                            | Reference pattern                                                    | Spinel proposal                                                                   |
+| ------------------------------------------------------ | -------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| A collection could add another dashboard/sidebar layer | Notion's page hierarchy and Numbers' sheet organization              | One internal content sidebar replaces outer file navigation while a Space is open |
+| Child sharing could suggest separate access            | Google sharing separates people/links; Spinel has one Space boundary | One Share action on the outer Space; child pages have no permissions controls     |
+| Phone trees can consume the whole screen               | Dropbox's collapsible navigation                                     | A labelled Pages button opens a modal drawer; choose a page and return to content |
+| Admin can be mistaken for server access                | No consumer comparison establishes Spinel's policy                   | “File admin” in file sharing, “Server Operator” in administration                 |
 
 Sources and access date: [review evidence](redesign.md#evidence-and-comparisons).
 Mockups: PlannedSpace, PlannedSpaceGuest, PlannedFileAdmin.
@@ -37,15 +37,15 @@ Guests navigating a revoked link lose the whole Space, including titles and valu
 
 ## Capability matrix
 
-| Capability | View | Edit | File admin (SPN-079) | Owner | Server Operator |
-| --- | --- | --- | --- | --- | --- |
-| Read authorized content | Yes | Yes | Yes | Yes | No |
-| Edit content / Space internal tree | No | Yes | Yes | Yes | No |
-| Grant/revoke View, Edit, Admin | No | No | Yes | Yes | No |
-| Manage guest links | No | No | Yes | Yes | No |
-| Rename/move/trash outer file | No | No | Yes, authorized destinations | Yes | No |
-| Permanent deletion / ownership handover | No | No | No | Existing owner rules | Existing recovery rules only |
-| Server accounts / backup health | No | No | No | No, everyday account | Yes |
+| Capability                              | View | Edit | File admin (SPN-079)         | Owner                | Server Operator              |
+| --------------------------------------- | ---- | ---- | ---------------------------- | -------------------- | ---------------------------- |
+| Read authorized content                 | Yes  | Yes  | Yes                          | Yes                  | No                           |
+| Edit content / Space internal tree      | No   | Yes  | Yes                          | Yes                  | No                           |
+| Grant/revoke View, Edit, Admin          | No   | No   | Yes                          | Yes                  | No                           |
+| Manage guest links                      | No   | No   | Yes                          | Yes                  | No                           |
+| Rename/move/trash outer file            | No   | No   | Yes, authorized destinations | Yes                  | No                           |
+| Permanent deletion / ownership handover | No   | No   | No                           | Existing owner rules | Existing recovery rules only |
+| Server accounts / backup health         | No   | No   | No                           | No, everyday account | Yes                          |
 
 Before SPN-079, only Owner has the file administration capabilities. There is
 exactly one Owner, inheriting all file Admin capabilities. Inherited roles use
@@ -61,8 +61,9 @@ a second permanent rail. Owner feedback and persona walkthrough, 2026-10-20.
 
 Owner refinement (chat, 2026-10-20): site navigation, connection, device theme and
 profile stay in the horizontal top header. The left column belongs exclusively
-to the Space tree. My files returns to the prior file view. Collapsing the tree
-leaves an icon-only chevron in the top header; it reopens as a drawer on phones.
+to the Space tree. My files returns to the prior file view. The site header reuses the main navigation icons horizontally, without a visible
+My files label or a tree-expansion chevron. A local **Pages** control below the
+site header reopens the hidden tree, as a drawer on phones.
 This favors Owner/Collaborator orientation without consuming a second navigation
 column; link guests retain scoped navigation without account destinations, and
 Operator workflows remain separate. Folder/page hierarchy remains a proposal

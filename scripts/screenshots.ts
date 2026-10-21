@@ -18,35 +18,10 @@ if (
 const index = JSON.parse(await readFile('storybook-static/index.json', 'utf8')) as {
   entries: Record<string, { type: string; title: string; name: string }>;
 };
-const before = [
-  'shell-applayout--desktop',
-  'dashboard-dashboard--populated',
-  'dashboard-dashboard--empty-workspace',
-  'dashboard-searchpanel--results',
-  'dashboard-trash--with-items',
-  'settings-themesettings--default',
-  'account-profile--ready',
-  'account-icon-picker--browse',
-  'settings-assistantconnections--loaded',
-  'settings-connectassistant--consent',
-  'settings-accesstokens--loaded',
-  'editor-versionnames--open',
-  'sharing-sharing--with-people',
-  'sharing-sharelink--link-on-view-only',
-  'admin-adminusers--loaded',
-  'admin-admininvites--loaded',
-  'admin-backupstatus--healthy',
-  'guest-guestapp--link-revoked',
-];
 const args = process.argv.slice(2);
 const requested = args.length
   ? args
-  : [
-      ...Object.keys(index.entries).filter(
-        (id) => id.startsWith('redesign-') || id.startsWith('identity-favicon--'),
-      ),
-      ...before,
-    ];
+  : Object.keys(index.entries).filter((id) => index.entries[id].type === 'story');
 for (const id of requested)
   if (index.entries[id]?.type !== 'story') throw new Error(`Unknown story: ${id}`);
 const directory = resolve(process.env.SPINEL_SCREENSHOT_DIR ?? 'test-results/design-review');
@@ -167,6 +142,17 @@ try {
       );
       await expect(page.locator('#storybook-root')).not.toBeEmpty();
       await expect(page.locator('#storybook-root')).toBeVisible();
+      // Many catalogue states are established by a play function (open dialogs,
+      // rejected requests, pending mutations). Storybook marks the render finished
+      // after those interactions, rather than when the first component appears.
+      await page.waitForFunction(() => {
+        const preview = (
+          window as Window & {
+            __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } };
+          }
+        ).__STORYBOOK_PREVIEW__;
+        return preview?.currentRender?.phase === 'finished';
+      });
       await page.evaluate(() => document.fonts.ready);
       await expect(page.locator('.sb-errordisplay')).toBeHidden();
       if (id === 'redesign-walkthrough--operator-help')
@@ -192,6 +178,40 @@ try {
         ).toBeVisible();
       if (id === 'redesign-screens--dashboard-new-menu') {
         await expect(page.getByRole('menu', { name: 'New file', exact: true })).toBeVisible();
+      }
+      if (id === 'redesign-screens--filtered-no-matches') {
+        await expect(
+          page.getByRole('combobox', { name: 'Last modified', exact: true }),
+        ).toContainText('Today');
+        await expect(page.getByRole('textbox', { name: 'Search files', exact: true })).toHaveValue(
+          '',
+        );
+        await expect(
+          page.getByRole('heading', { name: 'No matching files', exact: true }),
+        ).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: 'Room for your next idea', exact: true }),
+        ).toHaveCount(0);
+      }
+      if (
+        ['history-unsaved', 'history-saving', 'history-offline'].some(
+          (state) => id === `redesign-screens--${state}`,
+        )
+      ) {
+        await expect(
+          page.getByRole('button', { name: 'Restore this version…', exact: true }),
+        ).toBeDisabled();
+        await expect(
+          page.getByRole('button', { name: 'Name this version…', exact: true }),
+        ).toBeDisabled();
+        await expect(
+          page.getByRole('status').filter({
+            hasText: id.endsWith('-offline')
+              ? 'Reconnect before naming or restoring a version.'
+              : 'Save your latest changes before naming or restoring a version.',
+          }),
+        ).toBeVisible();
+        verifications.push(`${variant}: ${id} explains why naming and restore are disabled`);
       }
       if (id.startsWith('redesign-')) {
         await expect(page.locator('.sp-ui, .rd-native-editor').first()).toBeVisible();
@@ -251,6 +271,51 @@ try {
         filename,
         title: `${index.entries[id].title} / ${index.entries[id].name}`,
       });
+      if (id === 'redesign-screens--filtered-no-matches') {
+        // Exercise both Clear controls with every filter set, including a query.
+        for (const clearSelector of ['.rd-empty', '.rd-filter-bar']) {
+          await page.getByRole('textbox', { name: 'Search files', exact: true }).fill('winter');
+          await page
+            .locator(clearSelector)
+            .getByRole('button', { name: 'Clear filters', exact: true })
+            .click();
+          await expect(
+            page.getByRole('textbox', { name: 'Search files', exact: true }),
+          ).toHaveValue('');
+          await expect(page.getByRole('textbox', { name: 'Tag', exact: true })).toHaveValue('');
+          for (const [label, value] of [
+            ['File type', 'All types'],
+            ['Ownership', 'Mine and shared'],
+            ['Last modified', 'Any time'],
+          ])
+            await expect(page.getByRole('combobox', { name: label, exact: true })).toContainText(
+              value,
+            );
+          await expect(
+            page.getByRole('heading', { name: 'No matching files', exact: true }),
+          ).toHaveCount(0);
+          await expect(
+            page.locator('.rd-file-open').filter({ hasText: 'Household' }),
+          ).toBeVisible();
+          await expect(
+            page.locator('.rd-file-open').filter({ hasText: 'Quarterly budget' }),
+          ).toBeVisible();
+          if (clearSelector === '.rd-empty') {
+            await page.getByRole('textbox', { name: 'Tag', exact: true }).fill('household');
+            for (const [label, value] of [
+              ['File type', 'Sheets'],
+              ['Ownership', 'Shared with me'],
+              ['Last modified', 'Today'],
+            ]) {
+              await page.getByRole('combobox', { name: label, exact: true }).click();
+              await page.getByRole('option', { name: value, exact: true }).click();
+            }
+          }
+        }
+        verifications.push(
+          `${variant}: filter-only empty state and both Clear controls reset query, type, tag, ownership and date`,
+        );
+      }
     }
     await page.close();
   }
@@ -380,6 +445,53 @@ try {
       );
     }
   }
+  if (requested.includes('redesign-screens--planned-space')) {
+    for (const width of [1280, 768, 390]) {
+      const page = await browser.newPage({
+        viewport: { width, height: 900 },
+        hasTouch: width <= 768,
+      });
+      await page.goto(
+        'http://127.0.0.1:6007/iframe.html?id=redesign-screens--planned-space&viewMode=story&globals=theme:light',
+      );
+      const opener = page.getByRole('button', { name: 'Open Space contents', exact: true });
+      const globalNavigation = page.getByRole('complementary', {
+        name: 'Global navigation',
+        exact: true,
+      });
+      await expect(
+        globalNavigation.getByRole('button', { name: 'My files', exact: true }),
+      ).toBeVisible();
+      await expect(globalNavigation.getByRole('button', { name: /Expand|Open Space/ })).toHaveCount(
+        0,
+      );
+      if (width > 900) {
+        await expect(opener).toBeHidden();
+        await page.getByRole('button', { name: 'Collapse navigation', exact: true }).click();
+        await expect(opener).toBeFocused();
+        await opener.click();
+        await expect(opener).toBeHidden();
+        await expect(
+          page.getByRole('navigation', { name: 'Space contents', exact: true }),
+        ).toBeVisible();
+      } else {
+        await expect(opener).toBeVisible();
+        const globalBox = await globalNavigation.boundingBox();
+        const openerBox = await opener.boundingBox();
+        expect(openerBox!.y).toBeGreaterThanOrEqual(globalBox!.y + globalBox!.height - 1);
+        await opener.click();
+        const contents = page.getByRole('dialog', { name: 'Space contents', exact: true });
+        await expect(contents).toBeVisible();
+        await contents.getByRole('button', { name: 'Budget', exact: true }).click();
+        await expect(contents).toBeHidden();
+        await expect(page.getByRole('heading', { name: 'Budget', exact: true })).toBeVisible();
+      }
+      await page.close();
+      verifications.push(
+        `${width}px: Space contents is local navigation with a working collapsed/phone opener`,
+      );
+    }
+  }
   if (requested.includes('redesign-controls--default')) {
     for (const [theme, width, variant] of variants) {
       const page = await browser.newPage({
@@ -410,11 +522,15 @@ try {
         await expect(page.locator('.rd-walkthrough')).toBeVisible();
       };
       const event = async (label: string) => {
+        // Returning from profile/history remounts Univer. Wait for its focus and
+        // permissions setup before opening a menu that initialization could dismiss.
+        await waitForNativeEditor(page);
         const tools = page.locator('.rd-review-tools');
         if (!(await tools.getAttribute('open'))) await tools.locator('summary').click();
         await page.getByRole('combobox', { name: 'Preview event', exact: true }).click();
         await page.getByRole('option', { name: label, exact: true }).click();
         await tools.locator('summary').click();
+        await waitForNativeEditor(page);
       };
       const shot = async (name: string) => {
         await waitForNativeEditor(page);
@@ -788,15 +904,15 @@ async function verifyControls(page: Page, variant: string, output: string) {
   await expect(page.getByRole('menuitem', { name: 'Move', exact: true })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(menu).toBeFocused();
-  const select = page.getByRole('combobox', { name: 'Appearance', exact: true });
+  const select = page.getByRole('combobox', { name: 'File type', exact: true });
   await select.focus();
   await page.keyboard.press('Space');
   await expect(page.getByRole('listbox')).toBeVisible();
-  await expect(page.getByRole('option', { name: 'Follow system', exact: true })).toBeFocused();
+  await expect(page.getByRole('option', { name: 'Doc', exact: true })).toBeFocused();
   await page.keyboard.press('End');
-  await expect(page.getByRole('option', { name: 'Modern · Dark', exact: true })).toBeFocused();
+  await expect(page.getByRole('option', { name: 'Space', exact: true })).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(select).toContainText('Modern');
+  await expect(select).toContainText('Space');
   const appearance = page.getByRole('radiogroup', { name: 'Appearance', exact: true });
   await appearance.getByRole('radio', { name: 'Follow system', exact: true }).click();
   await page.keyboard.press('ArrowRight');

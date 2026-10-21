@@ -271,7 +271,6 @@ export function Walkthrough({
                           kind={file.kind}
                           title={file.name}
                           readOnly={file.access === 'viewer'}
-                          initialSnapshot={snapshots.get(file.id)}
                           getSnapshot={() => snapshots.get(file.id)}
                           onSnapshot={(snapshot) => snapshots.set(file.id, snapshot)}
                         />

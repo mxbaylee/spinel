@@ -31,7 +31,6 @@ export type NativeEditorProps = {
   readOnly?: boolean;
   onReady?: (editor: NativeEditorHandle) => void;
   onChange?: () => void;
-  initialSnapshot?: NativeSnapshot;
   getSnapshot?: () => NativeSnapshot | undefined;
   onSnapshot?: (snapshot: NativeSnapshot) => void;
 };
@@ -192,15 +191,12 @@ export function NativeEditor({
   readOnly = false,
   onReady,
   onChange,
-  initialSnapshot,
   getSnapshot,
   onSnapshot,
 }: NativeEditorProps) {
   const host = useRef<HTMLDivElement>(null);
   const callbacks = useRef({ onReady, onChange, onSnapshot, getSnapshot });
   callbacks.current = { onReady, onChange, onSnapshot, getSnapshot };
-  const initial = useRef(initialSnapshot);
-  initial.current = initialSnapshot;
   const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [message, setMessage] = useState('');
   useEffect(() => {
@@ -256,7 +252,7 @@ export function NativeEditor({
       installCanvasColors(univer);
       const api = created.univerAPI;
       // The old editor's cleanup may have just published a newer snapshot.
-      const stored = callbacks.current.getSnapshot?.() ?? initial.current;
+      const stored = callbacks.current.getSnapshot?.();
       const id = stored?.id ?? `review-${kind}-${crypto.randomUUID()}`;
       const name = title ?? (kind === 'sheet' ? 'Quarterly budget' : 'Autumn plans');
       const workbook =

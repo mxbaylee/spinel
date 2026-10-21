@@ -921,9 +921,6 @@
   .rd-editor-actions {
     gap: 8px;
   }
-  .rd-desktop-share {
-    display: none;
-  }
   .rd-toolbar {
     gap: 24px;
     padding: 12px 16px;
@@ -1011,26 +1008,6 @@
     min-height: 44px;
   }
 }
-.rd-tree-row {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-}
-.rd-tree-row .rd-nav-item {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-.rd-tree-row > .sp-control {
-  padding: 4px;
-  min-width: 28px;
-  border: none;
-  background: transparent;
-}
-@media (max-width: 640px) {
-  .rd-tree-row > .sp-control {
-    min-width: 44px;
-  }
-}
 .rd-filter-bar {
   display: flex;
   gap: 12px;
@@ -1052,11 +1029,6 @@
   font-size: 0.75rem;
   color: var(--sp-muted);
 }
-.rd-tree-nested {
-  margin-left: 12px;
-  padding-left: 4px;
-  border-left: 1px solid var(--sp-border);
-}
 .rd-sidebar summary {
   padding: 8px 12px;
   cursor: pointer;
@@ -1068,10 +1040,6 @@
     height: auto;
   }
   .rd-calendar .sp-control {
-    min-height: 44px;
-  }
-  .rd-tree-row > .sp-control {
-    min-width: 44px;
     min-height: 44px;
   }
   .rd-sidebar summary {
@@ -1679,11 +1647,18 @@
   }
 }
 
+/* Page-tree controls belong to the Space, never to the pink site navigation. */
+.rd-space-local-navigation {
+  padding: 8px 24px 0;
+}
 @media (min-width: 901px) {
-  .rd-space-shell.rd-with-sidebar
-    > .rd-rail
-    > .rd-rail-button:not(.rd-space-rail-exit):not(.rd-profile-control) {
+  .rd-space-shell.rd-with-sidebar .rd-space-local-navigation {
     display: none;
+  }
+}
+@media (max-width: 640px) {
+  .rd-space-local-navigation {
+    padding: 8px 16px 0;
   }
 }
 .rd-space-shell.rd-guest {
@@ -1732,4 +1707,17 @@
 }
 .rd-space-sidebar :focus-visible {
   outline-color: var(--sp-accent);
+}
+
+.rd-history input[type='range'] {
+  accent-color: var(--sp-accent);
+}
+
+.rd-filter-bar > .rd-view-switch {
+  margin-left: auto;
+}
+@media (max-width: 640px) {
+  .rd-list-caption.rd-count-only {
+    display: none;
+  }
 }

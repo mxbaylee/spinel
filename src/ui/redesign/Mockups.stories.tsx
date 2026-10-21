@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent, within } from 'storybook/test';
 import { defaultProfile } from '../../profile/profile.ts';
+import { EntryPreview } from './EntryJourney.tsx';
 import {
   AdminMockup,
   DashboardMockup,
@@ -64,6 +65,8 @@ export const Formula: Story = { render: () => <FormulaMockup /> };
 export const History: Story = { render: () => <HistoryMockup /> };
 export const HistoryViewer: Story = { render: () => <HistoryMockup viewOnly /> };
 export const HistoryUnsaved: Story = { render: () => <HistoryMockup saveState="failed" /> };
+export const HistorySaving: Story = { render: () => <HistoryMockup saveState="saving" /> };
+export const HistoryOffline: Story = { render: () => <HistoryMockup offline /> };
 export const HistoryNaming: Story = {
   render: () => <HistoryMockup />,
   play: async ({ canvasElement }) => {
@@ -80,10 +83,10 @@ export const ThisDevice: Story = { render: () => <ProfileMockup section="device"
 export const Admin: Story = { render: () => <AdminMockup /> };
 export const AdminLoading: Story = { render: () => <AdminMockup state="loading" /> };
 export const AdminError: Story = { render: () => <AdminMockup state="error" /> };
-export const SignIn: Story = { render: () => <EntryMockup /> };
-export const Setup: Story = { render: () => <EntryMockup kind="setup" /> };
-export const Invite: Story = { render: () => <EntryMockup kind="invite" /> };
-export const Recovery: Story = { render: () => <EntryMockup kind="recovery" /> };
+export const SignIn: Story = { render: () => <EntryPreview screen="sign-in" /> };
+export const Setup: Story = { render: () => <EntryPreview screen="setup" /> };
+export const Invite: Story = { render: () => <EntryPreview screen="invite" /> };
+export const Recovery: Story = { render: () => <EntryPreview screen="recovery" /> };
 export const Consent: Story = { render: () => <EntryMockup kind="consent" /> };
 export const ConsentExpired: Story = { render: () => <EntryMockup kind="consent-expired" /> };
 export const GuestViewer: Story = { render: () => <EditorMockup guest viewOnly /> };
@@ -106,6 +109,19 @@ export const FormulaTable: Story = { render: () => <FormulaMockup state="table" 
 export const HistoryCalendar: Story = { render: () => <HistoryMockup calendar /> };
 export const AdvancedSearch: Story = { render: () => <DashboardMockup state="filtered" /> };
 export const NoMatches: Story = { render: () => <DashboardMockup state="no-results" /> };
+export const FilteredNoMatches: Story = {
+  render: () => <DashboardMockup state="filtered" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const portal = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole('combobox', { name: 'File type' }));
+    await userEvent.click(portal.getByRole('option', { name: 'Sheets' }));
+    await userEvent.click(canvas.getByRole('combobox', { name: 'Ownership' }));
+    await userEvent.click(portal.getByRole('option', { name: 'Shared with me' }));
+    await userEvent.click(canvas.getByRole('combobox', { name: 'Last modified' }));
+    await userEvent.click(portal.getByRole('option', { name: 'Today' }));
+  },
+};
 export const PlannedSpaceGuestEditor: Story = { render: () => <EditorMockup space guest /> };
 export const PlannedSpaceTrash: Story = {
   render: () => <EditorMockup space initialPage="Trash" />,

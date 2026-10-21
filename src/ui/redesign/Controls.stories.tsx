@@ -5,6 +5,7 @@ import './mockups.css';
 import { AppearanceChoice } from './Mockups.tsx';
 function Controls({ disabled = false, error = false }: { disabled?: boolean; error?: boolean }) {
   const [value, setValue] = useState('system');
+  const [kind, setKind] = useState('doc');
   const [message, setMessage] = useState('');
   return (
     <div className="sp-ui rd-dialog-stage">
@@ -12,18 +13,22 @@ function Controls({ disabled = false, error = false }: { disabled?: boolean; err
         <h1>Quiet, familiar controls</h1>
         <p className="sp-muted">One emphasis. Clear labels. Room to touch.</p>
         <div className="rd-form">
-          <Button primary disabled={disabled} onClick={() => setMessage('Saved.')}>
+          <Button
+            primary
+            disabled={disabled}
+            onClick={() => setMessage(error ? 'Could not save. Try again.' : 'Saved.')}
+          >
             Save changes
           </Button>
           <Choice
-            label="Appearance"
-            value={value}
-            onChange={setValue}
+            label="File type"
+            value={kind}
+            onChange={setKind}
             disabled={disabled}
             options={[
-              { value: 'system', label: 'Follow system' },
-              { value: 'light', label: 'Vintage · Light' },
-              { value: 'dark', label: 'Modern · Dark' },
+              { value: 'doc', label: 'Doc' },
+              { value: 'sheet', label: 'Sheet' },
+              { value: 'space', label: 'Space' },
             ]}
           />
           <AppearanceChoice value={value} onChange={setValue} disabled={disabled} />
@@ -54,8 +59,14 @@ function Controls({ disabled = false, error = false }: { disabled?: boolean; err
             />
             <p>Focus stays in this dialog. Escape closes it.</p>
           </Modal>
-          <DetailsPopover label="✓ Saved">
-            <p>All changes are saved. You’re connected.</p>
+          <DetailsPopover label={error ? 'Not saved' : disabled ? 'Loading…' : '✓ Saved'}>
+            <p>
+              {error
+                ? 'Could not save. Try again.'
+                : disabled
+                  ? 'Wait for the document to finish loading.'
+                  : 'All changes are saved. You’re connected.'}
+            </p>
           </DetailsPopover>
           {disabled && <p className="sp-muted">Wait for the document to finish loading.</p>}
           {error && <p role="alert">Could not save. Try again.</p>}

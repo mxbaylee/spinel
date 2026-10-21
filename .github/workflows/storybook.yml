@@ -45,7 +45,7 @@ jobs:
     name: Build Storybook
     needs: changes
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       STORYBOOK_DISABLE_TELEMETRY: 1
     steps:
@@ -106,8 +106,9 @@ jobs:
           path: test-results/design-review
           if-no-files-found: error
           retention-days: 14
+      # Temporary owner-authorized PR #125 review. Remove this exception before merge.
       - name: Upload for Pages
-        if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        if: needs.changes.outputs.docs_only != 'true' && ((github.event_name != 'pull_request' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'))
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: storybook-static
@@ -118,12 +119,15 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: [changes, build]
-    if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: needs.changes.outputs.docs_only != 'true' && ((github.event_name != 'pull_request' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.number == 125 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-047-redesign'))
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     permissions:
       pages: write
       id-token: write
+    concurrency:
+      group: github-pages-deploy
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
