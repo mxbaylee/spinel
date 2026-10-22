@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fireEvent, userEvent, within } from 'storybook/test';
-import type { WorkspaceItem } from '../src/shared/workspace.ts';
+import type { FileItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { DocumentTags } from './DocumentTags.tsx';
 
 const id = '00000000-0000-4000-8000-000000000011';
-const item = (tags: string[]): WorkspaceItem => ({
+const item = (tags: string[]): FileItem => ({
   access: 'owner',
   id,
   parentId: null,
@@ -73,4 +73,16 @@ export const AddFailed: Story = {
     },
   },
   play: ({ canvasElement }) => addTag(canvasElement),
+};
+export const PersonalSpaceTags: Story = {
+  args: {
+    item: {
+      ...item(['research', 'travel']),
+      kind: 'space',
+      name: 'Research Space',
+      access: 'viewer',
+      ownerName: 'Alex Kim',
+    },
+  },
+  parameters: { api: suggestions },
 };

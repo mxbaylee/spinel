@@ -4,6 +4,7 @@ import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { ConnectionStatus } from './ConnectionStatus.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import { useBrowserOnline } from './useConnectionStatus.ts';
+import { Space } from './Space.tsx';
 const Sheet = lazy(() => import('./SheetEditor.tsx').then((m) => ({ default: m.SheetEditor })));
 const Doc = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
 
@@ -22,7 +23,12 @@ class LinkFailure extends Error {
 const requireResponse = (response: Response) => {
   if (!response.ok) throw new LinkFailure([401, 403, 404].includes(response.status));
 };
-type Item = { id: string; kind: 'sheet' | 'doc'; name: string; access: 'viewer' | 'editor' };
+type Item = {
+  id: string;
+  kind: 'sheet' | 'doc' | 'space';
+  name: string;
+  access: 'viewer' | 'editor';
+};
 export function GuestApp() {
   useEffect(() => {
     // Hash navigation alone does not run beforeunload. A real reload does, so
@@ -70,8 +76,8 @@ export function GuestApp() {
               requireResponse(response);
             });
             // A slow earlier exchange must not erase a newer link's fragment.
-            if (location.pathname === `/share/${id}` && location.hash.slice(1) === token)
-              history.replaceState(null, '', location.pathname);
+            if (guestItemId() === id && location.hash.slice(1) === token)
+              history.replaceState(null, '', `/share/${id}` + location.search);
           })().catch((error) => {
             exchange.current = null;
             throw error;
@@ -92,7 +98,7 @@ export function GuestApp() {
         if (!disposed) {
           if (cause instanceof LinkFailure && cause.revoked) {
             ended = true;
-            setItem(null);
+            setItem((previous) => (previous?.kind === 'space' && dirty.current ? previous : null));
             setError(cause.message);
           } else setReachability('offline');
         }
@@ -117,6 +123,64 @@ export function GuestApp() {
       window.removeEventListener('beforeunload', warn);
     };
   }, [id, token]);
+  if (item?.kind === 'space')
+    return (
+      <>
+        {error && (
+          <p role="alert">
+            {error} {dirty.current && 'Copy unsaved changes before leaving.'}
+          </p>
+        )}
+        <Space
+          guest
+          navigation={{
+            allow() {
+              if (
+                dirty.current &&
+                !window.confirm(
+                  'Your changes have not been saved. Leave and discard unsaved changes?',
+                )
+              )
+                return false;
+              dirty.current = false;
+              return true;
+            },
+            dirty(value) {
+              dirty.current = value;
+            },
+          }}
+          connection={
+            !browserOnline || reachability === 'offline'
+              ? 'offline'
+              : (editorConnection ?? reachability)
+          }
+          onExit={() => {}}
+          onSignOut={() => {}}
+          onConnectionState={setEditorConnection}
+          renderEditor={({ spaceId, item: page, onDirty, onConnectionState }) => (
+            <Suspense fallback={<p role="status">Opening page…</p>}>
+              {page.kind === 'doc' ? (
+                <Doc
+                  spaceId={spaceId}
+                  id={page.id}
+                  name={page.name}
+                  onDirty={onDirty}
+                  onConnectionState={onConnectionState}
+                />
+              ) : (
+                <Sheet
+                  spaceId={spaceId}
+                  id={page.id}
+                  name={page.name}
+                  onDirty={onDirty}
+                  onConnectionState={onConnectionState}
+                />
+              )}
+            </Suspense>
+          )}
+        />
+      </>
+    );
   return (
     <main className="workspace guest-workspace">
       <div className="guest-brand">

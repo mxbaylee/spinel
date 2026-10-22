@@ -36,7 +36,7 @@ export function SpaceShell({
   navigationButton,
   children,
 }: {
-  user: SpaceUser;
+  user?: SpaceUser;
   connection: ConnectionState;
   documentOpen: boolean;
   onExit(): void;
@@ -66,29 +66,37 @@ export function SpaceShell({
       className={`sp-ui space-shell ${navigation && expanded ? 'space-with-tree' : ''} ${documentOpen ? 'space-with-editor' : ''}`}
     >
       <header className="space-site-header">
-        <button
-          className="space-brand"
-          type="button"
-          aria-label="Spinel home"
-          onClick={(event) => {
-            replayGemWiggle(event.currentTarget);
-            onExit();
-          }}
-        >
-          <span className="wiggle">
+        {user ? (
+          <button
+            className="space-brand"
+            type="button"
+            aria-label="Spinel home"
+            onClick={(event) => {
+              replayGemWiggle(event.currentTarget);
+              onExit();
+            }}
+          >
+            <span className="wiggle">
+              <GemLogo />
+            </span>
+          </button>
+        ) : (
+          <span className="space-brand" aria-label="Spinel">
             <GemLogo />
           </span>
-        </button>
+        )}
         <ConnectionStatus state={connection} documentOpen={documentOpen} />
-        <button
-          className="space-site-button"
-          type="button"
-          aria-label="My files"
-          title="My files"
-          onClick={onExit}
-        >
-          <ProfileIcon icon="lucide:layout-grid" />
-        </button>
+        {user && (
+          <button
+            className="space-site-button"
+            type="button"
+            aria-label="My files"
+            title="My files"
+            onClick={onExit}
+          >
+            <ProfileIcon icon="lucide:layout-grid" />
+          </button>
+        )}
         <div className="space-account-controls">
           <SegmentedChoice
             label="Appearance on this device"
@@ -110,23 +118,25 @@ export function SpaceShell({
               { value: 'dark', label: 'Dark', icon: <ProfileIcon icon="lucide:moon" /> },
             ]}
           />
-          <ActionMenu
-            label={`${user.name} — Profile`}
-            actions={[
-              { label: 'Profile settings', onClick: onProfile },
-              { label: 'Sign out', onClick: onSignOut },
-            ]}
-          >
-            <span
-              className="space-avatar"
-              style={{
-                background: `var(--fill-${user.color ?? 'primary-strong'}-bg)`,
-                color: `var(--fill-${user.color ?? 'primary-strong'}-fg)`,
-              }}
+          {user && (
+            <ActionMenu
+              label={`${user.name} — Profile`}
+              actions={[
+                { label: 'Profile settings', onClick: onProfile },
+                { label: 'Sign out', onClick: onSignOut },
+              ]}
             >
-              <ProfileIcon icon={user.icon ?? 'lucide:user-round'} />
-            </span>
-          </ActionMenu>
+              <span
+                className="space-avatar"
+                style={{
+                  background: `var(--fill-${user.color ?? 'primary-strong'}-bg)`,
+                  color: `var(--fill-${user.color ?? 'primary-strong'}-fg)`,
+                }}
+              >
+                <ProfileIcon icon={user.icon ?? 'lucide:user-round'} />
+              </span>
+            </ActionMenu>
+          )}
         </div>
         {themeError && (
           <div className="space-theme-error" role="alert">

@@ -1,4 +1,5 @@
 import type { SpaceNode, SpaceTreeData } from '../src/shared/spaces.ts';
+import { guestItemId } from './documentAccess.ts';
 
 const uuid = /^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i;
 export type SpaceSelection = { kind: 'default' } | { kind: 'page'; id: string } | { kind: 'trash' };
@@ -8,8 +9,8 @@ export type SpaceLocation =
   | { kind: 'unavailable' };
 
 export function readSpaceLocation(location: Pick<Location, 'pathname' | 'search'>): SpaceLocation {
-  if (/^\/review\/spaces\/?$/.test(location.pathname)) return { kind: 'index' };
-  const match = /^\/review\/spaces\/([^/]+)\/?$/.exec(location.pathname);
+  if (/^\/(?:review\/)?spaces\/?$/.test(location.pathname)) return { kind: 'index' };
+  const match = /^\/(?:(?:review\/)?spaces|share)\/([^/]+)\/?$/.exec(location.pathname);
   if (!match || !uuid.test(match[1])) return { kind: 'unavailable' };
   const query = new URLSearchParams(location.search);
   const id = query.get('item');
@@ -17,7 +18,8 @@ export function readSpaceLocation(location: Pick<Location, 'pathname' | 'search'
     query.getAll('item').length > 1 ||
     query.getAll('trash').length > 1 ||
     (query.has('item') && (!id || !uuid.test(id))) ||
-    (query.has('trash') && (query.get('trash') !== '1' || query.has('item')))
+    (query.has('trash') &&
+      (query.get('trash') !== '1' || query.has('item') || location.pathname.startsWith('/share/')))
   )
     return { kind: 'unavailable' };
   return {
@@ -32,8 +34,12 @@ export function readSpaceLocation(location: Pick<Location, 'pathname' | 'search'
 }
 
 export function spaceHref(spaceId?: string, selection: SpaceSelection = { kind: 'default' }) {
-  if (!spaceId) return '/review/spaces';
-  const base = '/review/spaces/' + encodeURIComponent(spaceId);
+  const path = typeof location === 'undefined' ? '' : location.pathname;
+  const guest = guestItemId();
+  if (guest && spaceId && guest !== spaceId) throw new Error('This Space is not available.');
+  const prefix = path.startsWith('/review/spaces') ? '/review/spaces' : '/spaces';
+  if (!spaceId && !guest) return prefix;
+  const base = guest ? '/share/' + guest : prefix + '/' + encodeURIComponent(spaceId!);
   return selection.kind === 'page'
     ? base + '?item=' + encodeURIComponent(selection.id)
     : selection.kind === 'trash'
@@ -191,7 +197,7 @@ type NavigationPort = {
   removeEventListener(type: 'popstate', listener: () => void): void;
 };
 
-/** This controller owns only review-route entries, not the application's router. */
+/** This controller owns only Space entries, not the application's router. */
 export function createSpaceNavigation(
   port: NavigationPort,
   allow: () => boolean,

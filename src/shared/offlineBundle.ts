@@ -13,6 +13,8 @@ type OfflineBundleFields = {
   version: 1;
   accountId: string;
   itemId: string;
+  /** Present only for one account-authorized native child of this exact Space. */
+  spaceId?: string;
   name: string;
   unitId: string;
   revision: number;

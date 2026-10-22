@@ -7,6 +7,7 @@ import type { WorkspaceStore } from './store.ts';
 import type { SpaceScopeItem } from './space-scope.ts';
 import { SpaceStore } from './spaces.ts';
 import { SpaceRecoveryStore } from './space-recovery.ts';
+import { documentIdentity } from '../collaboration/identity.ts';
 
 function root(item: SpaceScopeItem): SpaceRoot {
   if (item.kind !== 'space' || item.spaceId !== null || item.position !== null)
@@ -43,16 +44,23 @@ function payload(request: Request, keys: readonly string[]) {
   return value as Record<string, unknown>;
 }
 
-/** Real account review workflows, explicitly unavailable by default (#137). */
+/** Tree actions share one uniform root role; guest routers omit account-only actions. */
 export function spaceRoutes(
   workspace: WorkspaceStore,
   origin: string,
-  options: { spaceReview?: boolean } = {},
+  options: { spaceReview?: boolean; guest?: boolean } = {},
 ) {
   const router = express.Router();
   const spaces = new SpaceStore(workspace);
   const recovery = new SpaceRecoveryStore(workspace);
   const actor = (request: Request) => {
+    if (options.guest) {
+      const match = /^\/api\/guest-spaces\/([a-f\d-]{36})(?:\/|$)/.exec(
+        new URL(request.originalUrl, origin).pathname,
+      );
+      if (!match) throw new AuthError(404, 'This Space is not available.');
+      return documentIdentity(workspace, request.headers, match[1]).userId;
+    }
     const id = workspace.auth.session(cookieToken(request))?.user_id;
     if (!id) throw new AuthError(401, 'Sign in to continue.');
     workspace.owner(id);
@@ -60,7 +68,8 @@ export function spaceRoutes(
   };
   router.use((request, response, next) => {
     response.set('Cache-Control', 'no-store');
-    if (options.spaceReview !== true) throw new AuthError(404, 'Not found.');
+    if (options.spaceReview !== true || !workspace.spacesEnabled)
+      throw new AuthError(404, 'Not found.');
     actor(request);
     if (
       request.method !== 'GET' &&
@@ -77,24 +86,26 @@ export function spaceRoutes(
       next();
     });
 
-  router.get('/', (request, response) => {
-    const user = actor(request);
-    const result = workspace.auth.transaction((): SpaceBootstrap => ({
-      spaces: spaces.roots(user).map((scope) => ({
-        space: root(scope.space),
-        access: scope.access,
-      })),
-      folders: workspace
-        .list(user)
-        .filter((item) => item.kind === 'folder')
-        .map(({ id, name, parentId }) => ({ id, name, parentId })),
-    }));
-    response.json(result);
-  });
-  router.post('/', (request, response) => {
-    const scope = spaces.createRoot(actor(request), payload(request, ['name', 'parentId']));
-    response.status(201).json({ space: root(scope.space) });
-  });
+  if (!options.guest) {
+    router.get('/', (request, response) => {
+      const user = actor(request);
+      const result = workspace.auth.transaction((): SpaceBootstrap => ({
+        spaces: spaces.roots(user).map((scope) => ({
+          space: root(scope.space),
+          access: scope.access,
+        })),
+        folders: workspace
+          .list(user)
+          .filter((item) => item.kind === 'folder')
+          .map(({ id, name, parentId }) => ({ id, name, parentId })),
+      }));
+      response.json(result);
+    });
+    router.post('/', (request, response) => {
+      const scope = spaces.createRoot(actor(request), payload(request, ['name', 'parentId']));
+      response.status(201).json({ space: root(scope.space) });
+    });
+  }
   router.get('/:spaceId', (request, response) => {
     const scope = spaces.list(actor(request), String(request.params.spaceId));
     const result: SpaceTreeData = {
@@ -125,41 +136,47 @@ export function spaceRoutes(
   });
   router.delete('/:spaceId/items/:itemId', (request, response) => {
     payload(request, []);
-    response.json(
-      recovery.trash(actor(request), String(request.params.spaceId), String(request.params.itemId)),
-    );
-  });
-  router.get('/:spaceId/trash', (request, response) => {
-    response.json(recovery.list(actor(request), String(request.params.spaceId)));
-  });
-  router.post('/:spaceId/trash/:itemId/restore', (request, response) => {
-    payload(request, []);
-    const restored = recovery.restore(
+    const result = recovery.trash(
       actor(request),
       String(request.params.spaceId),
       String(request.params.itemId),
     );
-    response.json({ ...restored, item: node(restored.item) });
+    if (options.guest) response.sendStatus(204);
+    else response.json(result);
   });
-  router.get('/:spaceId/trash/:itemId/delete-preview', (request, response) => {
-    response.json(
-      recovery.previewDelete(
+  if (!options.guest) {
+    router.get('/:spaceId/trash', (request, response) => {
+      response.json(recovery.list(actor(request), String(request.params.spaceId)));
+    });
+    router.post('/:spaceId/trash/:itemId/restore', (request, response) => {
+      payload(request, []);
+      const restored = recovery.restore(
         actor(request),
         String(request.params.spaceId),
         String(request.params.itemId),
-      ),
-    );
-  });
-  router.delete('/:spaceId/trash/:itemId', (request, response) => {
-    response.json(
-      recovery.delete(
-        actor(request),
-        String(request.params.spaceId),
-        String(request.params.itemId),
-        payload(request, ['version']).version,
-      ),
-    );
-  });
+      );
+      response.json({ ...restored, item: node(restored.item) });
+    });
+    router.get('/:spaceId/trash/:itemId/delete-preview', (request, response) => {
+      response.json(
+        recovery.previewDelete(
+          actor(request),
+          String(request.params.spaceId),
+          String(request.params.itemId),
+        ),
+      );
+    });
+    router.delete('/:spaceId/trash/:itemId', (request, response) => {
+      response.json(
+        recovery.delete(
+          actor(request),
+          String(request.params.spaceId),
+          String(request.params.itemId),
+          payload(request, ['version']).version,
+        ),
+      );
+    });
+  }
   router.use((_request, _response, _next) => {
     throw new AuthError(404, 'This Space action is not available.');
   });

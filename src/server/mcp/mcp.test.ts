@@ -21,6 +21,9 @@ import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
 import { authRoutes } from '../auth/routes.ts';
 import { AccessTokens } from '../auth/tokens.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
+import { migrateSpaceSchema } from '../workspace/space-schema.ts';
+import { SpaceStore } from '../workspace/spaces.ts';
+import { SpaceRecoveryStore } from '../workspace/space-recovery.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import { CollaborationStore } from '../collaboration/service.ts';
@@ -35,15 +38,16 @@ afterEach(async () => {
   vi.restoreAllMocks();
   for (const close of cleanup.splice(0).reverse()) await close();
 });
-async function fixture() {
+async function fixture(spacesEnabled = false) {
   const dir = await mkdtemp(join(tmpdir(), 'spinel-mcp-'));
   cleanup.push(() => rm(dir, { recursive: true, force: true }));
   const filename = join(dir, 'app.sqlite'),
     db = openDatabase(filename);
   cleanup.push(() => db.close());
   const auth = new AuthStore(db),
-    workspace = new WorkspaceStore(auth),
+    workspace = new WorkspaceStore(auth, { spacesEnabled }),
     tokens = new AccessTokens(auth);
+  if (spacesEnabled) migrateSpaceSchema(db);
   const owner = auth.createUser('Owner'),
     editor = auth.createUser('Editor'),
     viewer = auth.createUser('Viewer'),
@@ -171,6 +175,247 @@ test('list/read are permission-scoped and viewers cannot write', async () => {
     f.documents.readSheet(f.identity, { id: f.sheet.id, rows: 100, columns: 26 }),
   ).rejects.toThrow('Invalid');
 });
+
+async function spaceFixture() {
+  const f = await fixture(true),
+    spaces = new SpaceStore(f.workspace),
+    recovery = new SpaceRecoveryStore(f.workspace);
+  const root = spaces.createRoot(f.owner.id, { name: 'Assistant project', parentId: null }).space;
+  const folder = spaces.createChild(f.owner.id, root.id, {
+    name: 'Group',
+    kind: 'folder',
+    parentId: root.id,
+  }).item;
+  const sheet = spaces.createChild(f.owner.id, root.id, {
+    name: 'Project budget',
+    kind: 'sheet',
+    parentId: folder.id,
+  }).item;
+  const doc = spaces.createChild(f.owner.id, root.id, {
+    name: 'Project notes',
+    kind: 'doc',
+    parentId: sheet.id,
+  }).item;
+  const privateRoot = spaces.createRoot(f.owner.id, {
+    name: 'Private project',
+    parentId: null,
+  }).space;
+  const privateDoc = spaces.createChild(f.owner.id, privateRoot.id, {
+    name: 'Private notes',
+    kind: 'doc',
+    parentId: privateRoot.id,
+  }).item;
+  spaces.share(f.owner.id, root.id, f.editor.id, 'editor');
+  spaces.share(f.owner.id, root.id, f.viewer.id, 'viewer');
+  const custom = (id = sheet.id) => ({
+    mcpTokenHash: f.identity.hash,
+    spaceId: root.id,
+    spaceItem: id,
+  });
+  return {
+    ...f,
+    spaces,
+    recovery,
+    root,
+    folder,
+    childSheet: sheet,
+    childDoc: doc,
+    privateRoot,
+    privateDoc,
+    custom,
+  };
+}
+
+test('Space MCP discovery and real native edits retain root, child, recovery and live-generation identity', async () => {
+  const f = await spaceFixture(),
+    editor = f.credentials(f.editor.id),
+    viewer = f.credentials(f.viewer.id);
+  const discovered = f.documents.list(editor, {}).documents;
+  expect(discovered.map((item) => item.id).sort()).toEqual(
+    [f.sheet.id, f.doc.id, f.childSheet.id, f.childDoc.id].sort(),
+  );
+  expect(discovered.find((item) => item.id === f.childDoc.id)).toMatchObject({
+    spaceId: f.root.id,
+    access: 'editor',
+    kind: 'doc',
+  });
+  expect(JSON.stringify(discovered)).not.toContain(f.folder.id);
+  expect(JSON.stringify(discovered)).not.toContain(f.privateRoot.id);
+  expect(f.documents.list(f.credentials(f.stranger.id), {}).documents).toEqual([]);
+  for (const id of [f.root.id, f.folder.id, f.privateDoc.id])
+    await expect(f.documents.readDoc(editor, { id })).rejects.toThrow();
+  await expect(
+    f.documents.readDoc(editor, { id: f.childDoc.id, spaceId: f.privateRoot.id }),
+  ).rejects.toThrow('Invalid');
+  for (const malformed of [
+    { ...editor, connectionId: undefined },
+    { ...editor, resource: 'https://untrusted.example/mcp' },
+    { ...editor, connectionId: 'orphan', resource: undefined },
+  ])
+    expect(() => f.documents.list(malformed, {})).toThrow();
+
+  const first = await f.documents.readSheet(editor, { id: f.childSheet.id });
+  const original = await f.collab.load(f.owner.id, f.childSheet.id, f.custom());
+  const edit = {
+    id: f.childSheet.id,
+    unitId: first.unitId,
+    revision: first.revision,
+    requestId: randomUUID(),
+    sheetId: first.sheetId,
+    cells: [{ row: 0, column: 0, value: 73 }],
+  };
+  await expect(f.documents.edit(viewer, 'sheet', edit)).rejects.toThrow();
+  expect(await f.documents.edit(editor, 'sheet', edit)).toMatchObject({
+    status: 'committed',
+    revision: 2,
+  });
+  expect(await f.documents.edit(editor, 'sheet', edit)).toMatchObject({
+    status: 'already-committed',
+  });
+  expect((await f.documents.readSheet(viewer, { id: f.childSheet.id })).cells).toContainEqual(
+    expect.objectContaining({ row: 0, column: 0, value: 73 }),
+  );
+  const doc = await f.documents.readDoc(editor, { id: f.childDoc.id });
+  await f.documents.edit(editor, 'doc', {
+    id: f.childDoc.id,
+    unitId: doc.unitId,
+    revision: doc.revision,
+    requestId: randomUUID(),
+    offset: 0,
+    deleteCount: 0,
+    text: 'Scoped assistant notes',
+  });
+  expect(await f.documents.readDoc(viewer, { id: f.childDoc.id })).toMatchObject({
+    text: 'Scoped assistant notes',
+    access: 'viewer',
+  });
+  f.spaces.updateChild(f.editor.id, f.root.id, f.childSheet.id, {
+    name: 'Renamed budget',
+    parentId: f.root.id,
+    position: 0,
+  });
+  f.recovery.trash(f.editor.id, f.root.id, f.childSheet.id);
+  expect(
+    f.documents
+      .list(editor, {})
+      .documents.map((item) => item.id)
+      .sort(),
+  ).toEqual([f.sheet.id, f.doc.id].sort());
+  await expect(f.documents.readDoc(editor, { id: f.childDoc.id })).rejects.toThrow();
+  f.recovery.restore(f.editor.id, f.root.id, f.childSheet.id);
+  expect((await f.documents.readDoc(editor, { id: f.childDoc.id })).text).toBe(
+    'Scoped assistant notes',
+  );
+
+  const restored = await f.collab.restore(
+    f.owner.id,
+    f.childSheet.id,
+    first.unitId,
+    randomUUID(),
+    randomUUID(),
+    original.snapshot,
+    async () => () => {},
+    () => {},
+    f.custom(),
+  );
+  expect(restored.nextUnit).not.toBe(first.unitId);
+  await expect(
+    f.documents.edit(editor, 'sheet', { ...edit, requestId: randomUUID() }),
+  ).rejects.toThrow('changed');
+  const current = await f.documents.readSheet(editor, { id: f.childSheet.id });
+  expect(current.unitId).toBe(restored.nextUnit);
+  expect(current.cells).toEqual([]);
+  expect(
+    await f.documents.edit(editor, 'sheet', {
+      ...edit,
+      unitId: current.unitId,
+      revision: current.revision,
+      requestId: randomUUID(),
+    }),
+  ).toMatchObject({ status: 'committed', unitId: restored.nextUnit });
+  expect(f.db.prepare('PRAGMA foreign_key_check').all()).toEqual([]);
+}, 45_000);
+
+test('Space MCP materialization rechecks the original root role and credential after awaited reads', async () => {
+  const f = await spaceFixture(),
+    editor = f.credentials(f.editor.id),
+    read = f.collab.load.bind(f.collab);
+  const held = vi.spyOn(f.collab, 'load').mockImplementationOnce(async (...args) => {
+    const result = await read(...args);
+    f.spaces.share(f.owner.id, f.root.id, f.editor.id, null);
+    return result;
+  });
+  await expect(f.documents.readDoc(editor, { id: f.childDoc.id })).rejects.toThrow();
+  held.mockRestore();
+  f.spaces.share(f.owner.id, f.root.id, f.editor.id, 'editor');
+  const before = await f.documents.readSheet(editor, { id: f.childSheet.id });
+  vi.spyOn(f.collab, 'load').mockImplementationOnce(async (...args) => {
+    const result = await read(...args);
+    f.spaces.share(f.owner.id, f.root.id, f.editor.id, 'viewer');
+    return result;
+  });
+  await expect(
+    f.documents.edit(editor, 'sheet', {
+      id: f.childSheet.id,
+      unitId: before.unitId,
+      revision: before.revision,
+      requestId: randomUUID(),
+      sheetId: before.sheetId,
+      cells: [{ row: 0, column: 0, value: 99 }],
+    }),
+  ).rejects.toThrow();
+  expect((await f.documents.readSheet(f.identity, { id: f.childSheet.id })).cells).toEqual([]);
+  vi.spyOn(f.collab, 'load').mockImplementationOnce(async (...args) => {
+    const result = await read(...args);
+    f.tokens.revoke(f.editor.id, editor.id);
+    return result;
+  });
+  await expect(f.documents.readSheet(editor, { id: f.childSheet.id })).rejects.toThrow();
+});
+
+test('Space MCP final commit rejects root grant, token, owner, downgrade and ancestry changes', async () => {
+  const f = await spaceFixture();
+  let invalidate: (() => void) | undefined;
+  f.collab.service.use('commitChangeset', async (_context, next) => {
+    const pending = next();
+    invalidate?.();
+    await pending;
+  });
+  const transport = attachCollaboration(createServer(), f.workspace, f.collab, 'http://localhost', {
+    spaceReview: true,
+  });
+  cleanup.push(() => transport.close());
+  for (const reason of ['grant', 'token', 'owner', 'downgrade', 'ancestry'] as const) {
+    const editor = f.credentials(f.editor.id);
+    f.spaces.share(f.owner.id, f.root.id, f.editor.id, 'editor');
+    const before = await f.documents.readSheet(editor, { id: f.childSheet.id });
+    invalidate = () => {
+      if (reason === 'grant') f.spaces.share(f.owner.id, f.root.id, f.editor.id, null);
+      if (reason === 'token') f.tokens.revoke(f.editor.id, editor.id);
+      if (reason === 'owner')
+        f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
+      if (reason === 'downgrade') f.spaces.share(f.owner.id, f.root.id, f.editor.id, 'viewer');
+      if (reason === 'ancestry') f.recovery.trash(f.owner.id, f.root.id, f.folder.id);
+    };
+    await expect(
+      f.documents.edit(editor, 'sheet', {
+        id: f.childSheet.id,
+        unitId: before.unitId,
+        revision: before.revision,
+        requestId: randomUUID(),
+        sheetId: before.sheetId,
+        cells: [{ row: 0, column: 0, value: 99 }],
+      }),
+    ).rejects.toThrow();
+    invalidate = undefined;
+    if (reason === 'owner')
+      f.db.prepare('UPDATE auth_users SET disabled=0 WHERE id=?').run(f.owner.id);
+    if (reason === 'ancestry') f.recovery.restore(f.owner.id, f.root.id, f.folder.id);
+    const current = await f.documents.readSheet(f.identity, { id: f.childSheet.id });
+    expect(current.revision).toBe(before.revision);
+    expect(current.cells).toEqual([]);
+  }
+}, 45_000);
 
 test('cell writes commit through the live service, preserve styles and retry exactly once', async () => {
   const f = await fixture(),

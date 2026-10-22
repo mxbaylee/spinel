@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
+import { resolveDocument } from '../workspace/document-access.ts';
 
 export type LiveGeneration = { itemId: string; unitId: string; offset: number };
 export type RestoreJob = {
@@ -85,8 +86,14 @@ export class CollaborationGenerations {
       .get(id) as RestoreJob | undefined;
   }
 
-  completed(user: string, itemId: string, requestId: string, checkpointId: string) {
-    this.workspace.get(user, itemId, 'edit');
+  completed(
+    user: string,
+    itemId: string,
+    requestId: string,
+    checkpointId: string,
+    customData: Record<string, unknown> = {},
+  ) {
+    resolveDocument(this.workspace, user, itemId, 'edit', customData);
     const job = this.job(requestId);
     if (job && (job.userId !== user || job.itemId !== itemId || job.checkpointId !== checkpointId))
       throw new AuthError(409, 'This restore request has already been used.');
@@ -99,11 +106,12 @@ export class CollaborationGenerations {
     expectedUnit: string,
     requestId: string,
     checkpointId: string,
+    customData: Record<string, unknown> = {},
   ): RestoreJob {
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId))
       throw new AuthError(400, 'Invalid restore request.');
     return this.workspace.auth.transaction(() => {
-      const item = this.workspace.get(userId, itemId, 'edit');
+      const item = resolveDocument(this.workspace, userId, itemId, 'edit', customData);
       if (item.kind !== 'sheet' && item.kind !== 'doc') throw new AuthError(404, 'Not a document.');
       const previous = this.job(requestId);
       if (previous) {
@@ -139,6 +147,7 @@ export class CollaborationGenerations {
     drainedRevision: number,
     preserveBefore: () => void,
     checkSession: () => void,
+    customData: Record<string, unknown> = {},
   ): RestoreJob {
     if (
       !Number.isSafeInteger(drainedRevision) ||
@@ -150,7 +159,7 @@ export class CollaborationGenerations {
       const job = this.job(id);
       if (!job) throw new AuthError(404, 'Restore request not found.');
       checkSession();
-      this.workspace.get(job.userId, job.itemId, 'edit');
+      resolveDocument(this.workspace, job.userId, job.itemId, 'edit', customData);
       if (job.status === 'complete') return job;
       if (job.status !== 'staging' || this.active(job.itemId).unitId !== job.previousUnit)
         throw new AuthError(409, 'Restore was cancelled. Reload and try again.');

@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
@@ -7,6 +7,7 @@ import { JSONX } from '@univerjs/core';
 import type { IDocumentData, JSONXActions } from '@univerjs/core';
 import { ErrorCode } from '@univerjs/protocol';
 import type { IGetUnitOnRevResponse } from '@univerjs/protocol';
+import { quoteFormulaName } from '@spinel/doc-formulas';
 import { startApp } from './app-process.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
@@ -15,6 +16,7 @@ import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { SpaceRecoveryStore } from '../src/server/workspace/space-recovery.ts';
 import { SpaceLifecycleStore } from '../src/server/workspace/space-lifecycle.ts';
 import type { SpaceNode, SpaceRoot, SpaceTreeData } from '../src/shared/spaces.ts';
+import type { SpaceFile } from '../src/shared/workspace.ts';
 
 // The server/Pro SDK stays in startApp's child process. The collector uses the
 // public core JSONX operation reader only to verify persisted native Doc data.
@@ -26,11 +28,10 @@ async function fixture(browser: Browser, info: TestInfo) {
     databasePath,
     origin,
     development: info.project.name === 'development',
-    spaceReview: true,
   });
   const db = openDatabase(databasePath),
     auth = new AuthStore(db),
-    workspace = new WorkspaceStore(auth),
+    workspace = new WorkspaceStore(auth, { spacesEnabled: true }),
     spaces = new SpaceStore(workspace);
   const owner = auth.createUser('Space owner'),
     editor = auth.createUser('Space editor'),
@@ -110,6 +111,8 @@ async function fixture(browser: Browser, info: TestInfo) {
 
 const href = (spaceId: string, itemId?: string) =>
   `/review/spaces/${spaceId}${itemId ? '?item=' + itemId : ''}`;
+const normalHref = (spaceId: string, itemId?: string) =>
+  `/spaces/${spaceId}${itemId ? '?item=' + itemId : ''}`;
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const saved = (page: Page) =>
   expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
@@ -117,12 +120,19 @@ const saved = (page: Page) =>
     { timeout: 30_000 },
   );
 const pageLink = (page: Page, spaceId: string, itemId: string) =>
-  page.locator(`a.space-page-link[href="${href(spaceId, itemId)}"]`).filter({ visible: true });
+  page
+    .locator(
+      `a.space-page-link[href="${href(spaceId, itemId)}"], a.space-page-link[href="${normalHref(spaceId, itemId)}"]`,
+    )
+    .filter({ visible: true });
 
 async function pages(page: Page) {
   const navigation = page.getByRole('navigation', { name: 'Pages', exact: true });
-  if (!(await navigation.isVisible()))
-    await page.getByRole('button', { name: 'Open Space contents', exact: true }).click();
+  const opener = page.getByRole('button', { name: 'Open Space contents', exact: true });
+  // The URL can settle before the Space tree loads. Wait for the actual layout
+  // before choosing between the inline tree and the collapsed/phone control.
+  await expect(navigation.or(opener).filter({ visible: true }).first()).toBeVisible();
+  if (!(await navigation.isVisible())) await opener.click();
   await expect(navigation).toBeVisible();
   return navigation;
 }
@@ -488,12 +498,112 @@ async function deletePreview(page: Page, name: string) {
   return dialog;
 }
 
+test('ordinary My files creates and opens one Space root while preserving its previous folder view', async ({
+  browser,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, info);
+  const { page } = f;
+  // Fail an unavailable control before the overall deadline closes the browser
+  // and replaces the useful action call log with a fixture cleanup error.
+  page.setDefaultTimeout(15_000);
+  try {
+    await page.goto(`/?item=${f.folder.id}`);
+    await expect(page.getByRole('heading', { name: f.folder.name, exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'New', exact: true }).click();
+    const form = page.getByRole('form', { name: 'New item', exact: true });
+    await form.getByRole('combobox', { name: 'Type', exact: true }).selectOption('space');
+    await form.getByLabel('Name', { exact: true }).fill('Outer research');
+    const creating = page.waitForResponse(
+      (response) => response.url().endsWith('/api/items') && response.request().method() === 'POST',
+    );
+    await form.getByRole('button', { name: 'Create', exact: true }).click();
+    const created = await creating;
+    expect(created.status()).toBe(201);
+    // Creation navigates out of Dashboard, which releases Chromium's old-page
+    // response body. Verify the persisted item through its opened stable URL.
+    await expect(page).toHaveURL(new RegExp('^' + escape(f.origin) + '/spaces/[a-f\\d-]{36}$'));
+    const openedId = new URL(page.url()).pathname.split('/').at(-1)!;
+    const metadata = await f.context.request.get(`/api/items/${openedId}`);
+    expect(metadata.status()).toBe(200);
+    const { item } = (await metadata.json()) as { item: SpaceFile };
+    expect(item).toMatchObject({ kind: 'space', parentId: f.folder.id, access: 'owner' });
+    await expect(page).toHaveURL(f.origin + normalHref(item.id));
+    await expect(
+      page.getByRole('heading', { name: 'This Space is empty', exact: true }),
+    ).toBeVisible();
+    const member = await f.context.request.post(`/api/spaces/${item.id}/items`, {
+      headers: { Origin: f.origin },
+      data: { name: 'Internal research folder', kind: 'folder', parentId: item.id },
+    });
+    expect(member.status()).toBe(201);
+    const child = (await member.json()).item as SpaceNode;
+    const chooseRoot = async (name: string, rootName: string) => {
+      await page
+        .getByRole('button', { name: `Space actions for ${rootName}`, exact: true })
+        .click();
+      await page.getByRole('menuitem', { name, exact: true }).click();
+    };
+    await chooseRoot('Rename', item.name);
+    const rename = page.getByRole('dialog', { name: 'Rename Space', exact: true });
+    await rename.getByLabel('Name', { exact: true }).fill('Research collection');
+    await rename.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(rename).not.toBeVisible();
+    await chooseRoot('Move', 'Research collection');
+    const move = page.getByRole('dialog', { name: 'Move Space', exact: true });
+    await move.getByRole('combobox', { name: 'Destination', exact: true }).selectOption('');
+    await move.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(move).not.toBeVisible();
+    const moved = await f.tree(item.id);
+    expect(moved.space).toMatchObject({ id: item.id, name: 'Research collection', parentId: null });
+    expect(moved.items).toContainEqual(
+      expect.objectContaining({ id: child.id, parentId: item.id }),
+    );
+    await page.getByRole('button', { name: 'My files', exact: true }).click();
+    // Opening and moving the Space never replaced Dashboard's remembered folder.
+    await expect(page).toHaveURL(`${f.origin}/?item=${f.folder.id}`);
+    await expect(page.getByRole('heading', { name: f.folder.name, exact: true })).toBeVisible();
+    await page
+      .getByRole('navigation', { name: 'Breadcrumb', exact: true })
+      .getByRole('button', { name: 'My files', exact: true })
+      .click();
+    const files = page.getByRole('list', { name: 'Folder contents', exact: true });
+    await expect(
+      files.getByRole('button', { name: 'Research collection Space', exact: true }),
+    ).toBeVisible();
+    await expect(files.getByText(child.name, { exact: true })).toHaveCount(0);
+    const listing = await f.context.request.get('/api/items');
+    const rows = (await listing.json()).items as { id: string; kind: string }[];
+    expect(rows).toContainEqual(expect.objectContaining({ id: item.id, kind: 'space' }));
+    expect(rows.some((entry) => entry.id === child.id)).toBe(false);
+    await files.getByRole('button', { name: 'Research collection Space', exact: true }).click();
+    await expect(page).toHaveURL(f.origin + normalHref(item.id));
+    await expect((await pages(page)).getByText(child.name, { exact: true })).toBeVisible();
+    await chooseRoot('Share', 'Research collection');
+    const sharing = page.getByRole('dialog', { name: 'Share Research collection', exact: true });
+    const link = sharing.getByRole('region', { name: 'Guest link', exact: true });
+    await expect(link).toContainText('every current and future page in this Space');
+    await link.getByRole('button', { name: 'Create guest link', exact: true }).click();
+    const confirmation = page.getByRole('dialog', { name: 'Share the whole Space?', exact: true });
+    await expect(confirmation).toContainText('Child pages cannot have separate guest access.');
+    await confirmation.getByRole('button', { name: 'Create view link', exact: true }).click();
+    await expect(confirmation).not.toBeVisible();
+    await expect(link.getByLabel('Guest link address', { exact: true })).toHaveValue(
+      new RegExp(escape(`${f.origin}/share/${item.id}`) + '\\?preview=.+#.+'),
+    );
+    expect(f.errors).toEqual([]);
+  } finally {
+    await f.close();
+  }
+});
+
 test('an owner creates and edits a persistent Space tree with native Docs, Sheets and stable navigation', async ({
   browser,
 }, info) => {
   test.setTimeout(180_000);
   const f = await fixture(browser, info);
   const { page } = f;
+  page.setDefaultTimeout(15_000);
   try {
     const space = await newSpace(page);
     expect(space.parentId).toBe(f.folder.id);
@@ -587,11 +697,130 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await page.goto(href(space.id, renamed.id));
     await saved(page);
     expect(await copyDoc(page)).toBe('Native notes in a Space.');
-    for (const name of ['Print', 'Export', 'Insert formula'])
-      await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Version names', exact: true })).toHaveCount(0);
+    const prefix = `/api/spaces/${space.id}/items/${doc.id}`;
+    const formulas = page.locator('details.doc-formulas');
+    await formulas.locator('summary').click();
+    await expect(
+      formulas.getByRole('button', { name: 'Insert formula', exact: true }),
+    ).toBeEnabled();
+    const sources = await f.context.request.get(`${prefix}/formulas/sources`);
+    expect(sources.status()).toBe(200);
+    expect((await sources.json()).sources).toContainEqual({ itemId: sheet.id, name: sheet.name });
+    const worksheets = await f.context.request.get(`${prefix}/formulas/sources/${sheet.id}`);
+    expect(worksheets.status()).toBe(200);
+    const worksheet = (await worksheets.json()).sheets[0] as { sheetId: string; name: string };
+    const resolved = await f.context.request.post(`${prefix}/formulas/resolve`, {
+      headers: { Origin: f.origin },
+      data: {
+        expression: `=${quoteFormulaName(sheet.name)}.${quoteFormulaName(worksheet.name)}.A3`,
+      },
+    });
+    expect(resolved.status()).toBe(200);
+    const { definition } = await resolved.json();
+    expect(definition.references[0]).toMatchObject({
+      itemId: sheet.id,
+      sheetId: worksheet.sheetId,
+    });
+    const evaluated = await f.context.request.post(`${prefix}/formulas/evaluate`, {
+      headers: { Origin: f.origin },
+      data: { definition },
+    });
+    expect(await evaluated.json()).toMatchObject({ ok: true, kind: 'scalar', value: 42 });
+    await formulas.locator('summary').click();
+
+    // Canonical image URLs retain the exact child even outside the scoped upload route.
+    const png = await page.evaluate(() => {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 2;
+      canvas.getContext('2d')!.fillRect(0, 0, 2, 2);
+      return canvas.toDataURL('image/png').split(',')[1];
+    });
+    const upload = await f.context.request.post(`${prefix}/images`, {
+      headers: { Origin: f.origin, 'Content-Type': 'image/png' },
+      data: Buffer.from(png, 'base64'),
+    });
+    expect(upload.status()).toBe(201);
+    const image = (await upload.json()) as { id: string; url: string };
+    expect(image.url).toBe(`/api/items/${doc.id}/images/${image.id}`);
+    expect((await f.context.request.get(image.url)).status()).toBe(200);
+
+    await page.getByRole('button', { name: 'Versions', exact: true }).click();
+    const versions = page.getByRole('region', { name: 'Version names', exact: true });
+    await expect(
+      versions.getByRole('link', { name: 'Browse history', exact: true }),
+    ).toHaveAttribute('href', `/preview?item=${doc.id}&space=${space.id}`);
+    await versions.getByRole('button', { name: 'Name this version', exact: true }).click();
+    await versions.getByLabel('Version name', { exact: true }).fill('Space integration checkpoint');
+    await versions.getByRole('button', { name: 'Save version name', exact: true }).click();
+    await expect(versions.getByText('Space integration checkpoint', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Versions', exact: true }).click();
+    const exportPanel = page.locator('details.file-exports');
+    await exportPanel.locator('summary').click();
+    await expect(
+      exportPanel.getByRole('button', { name: 'Print / save PDF', exact: true }),
+    ).toBeEnabled();
+    const download = page.waitForEvent('download');
+    const exported = page.waitForResponse((response) =>
+      response.url().endsWith(`${prefix}/export`),
+    );
+    await exportPanel.getByRole('button', { name: 'Download Univer file', exact: true }).click();
+    const nativeFile = await download;
+    expect(nativeFile.suggestedFilename()).toBe('Decisions.univer.json');
+    expect((await exported).status()).toBe(200);
+    expect(await nativeFile.failure()).toBeNull();
+    // Verify the actual file delivered by the UI, as in portable.spec.ts,
+    // including its native content after the response is handed off as a blob.
+    const snapshot = JSON.parse(
+      await readFile((await nativeFile.path())!, 'utf8'),
+    ) as IDocumentData;
+    expect(snapshot.id).toBe(doc.id);
+    expect(snapshot.body?.dataStream).toContain('Native notes in a Space.');
+    // Outer document services remain closed: activation never widens ordinary lookup.
     expect((await f.context.request.get(`/api/items/${sheet.id}/sheet`)).status()).toBe(404);
     expect((await f.context.request.get(`/api/items/${doc.id}/history`)).status()).toBe(404);
+
+    // Replace the live editor with the actual scoped history viewer, keeping
+    // one native browser editor resident and proving the root survives preview.
+    const historyResponse = await f.context.request.get(`${prefix}/history`);
+    expect(historyResponse.status()).toBe(200);
+    const checkpoint = (
+      (await historyResponse.json()).versions as { id: string; name: string | null }[]
+    ).find((version) => version.name === 'Space integration checkpoint')!;
+    expect(checkpoint).toBeDefined();
+    // History uses the existing account shell, without Space appearance radios.
+    // Follow system before leaving so media changes exercise the real theme path.
+    const followSystem = page.getByRole('radio', { name: 'Follow system', exact: true });
+    await followSystem.click();
+    await expect(followSystem).toBeChecked();
+    const liveBeforePreview = nativeDocState(await nativeState(f.context, space.id, doc.id));
+    await page.goto(`/preview?item=${doc.id}&space=${space.id}&version=${checkpoint.id}`);
+    const preview = page.getByRole('region', { name: 'Version preview', exact: true });
+    await expect(
+      page.getByRole('heading', { name: 'Document history', exact: true }),
+    ).toBeVisible();
+    await expect(
+      preview.getByRole('button', { name: 'Restore this version', exact: true }),
+    ).toBeEnabled({ timeout: 30_000 });
+    await expect(
+      preview.getByRole('link', { name: 'Back to live document', exact: true }),
+    ).toHaveAttribute('href', normalHref(space.id, doc.id));
+    await preview.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+    await page.keyboard.press('Control+a');
+    expect(await copySelection(page)).toBe('Native notes in a Space.');
+    for (const [theme, width, variant] of [
+      ['light', 1440, 'light'],
+      ['dark', 1440, 'dark'],
+      ['light', 390, 'phone'],
+    ] as const) {
+      await page.setViewportSize({ width, height: 1100 });
+      await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+      await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+      await expect(preview.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+      await screenshot(page, info, 'history-preview-' + variant);
+    }
+    expect(nativeDocState(await nativeState(f.context, space.id, doc.id))).toEqual(
+      liveBeforePreview,
+    );
     expect(f.errors).toEqual([]);
   } finally {
     await f.close();
@@ -1072,7 +1301,7 @@ test('an unsigned Space deep link returns to the exact child when an account ses
     // passkey registration/authentication is covered by the existing auth suite.
     await f.context.addCookies(ownerCookies);
     await f.page.reload();
-    await expect(f.page).toHaveURL(f.origin + href(space.id, target.id));
+    await expect(f.page).toHaveURL(f.origin + normalHref(space.id, target.id));
     await saved(f.page);
     await expect(f.page.getByRole('heading', { name: target.name, exact: true })).toBeVisible();
     await expect(pageLink(f.page, space.id, target.id)).toHaveAttribute('aria-current', 'page');
@@ -1082,7 +1311,7 @@ test('an unsigned Space deep link returns to the exact child when an account ses
     await expect(f.page).toHaveURL(`${f.origin}/sign-in?space=index`);
     await f.context.addCookies(ownerCookies);
     await f.page.reload();
-    await expect(f.page).toHaveURL(f.origin + '/review/spaces');
+    await expect(f.page).toHaveURL(f.origin + '/spaces');
     await expect(f.page.getByRole('heading', { name: 'Spaces', exact: true })).toBeVisible();
     await expect(f.page.getByRole('list', { name: 'Your Spaces', exact: true })).toBeVisible();
     const operator = f.auth.createUser('Review operator', true);

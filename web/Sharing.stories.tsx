@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { SharePerson, WorkspaceItem } from '../src/shared/workspace.ts';
+import type { FileItem, SharePerson, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { Sharing } from './Sharing.tsx';
 
@@ -19,9 +19,9 @@ const folder: WorkspaceItem = {
   kind: 'folder',
   name: 'Household',
 };
-const sharing = (item: WorkspaceItem) => `GET /api/items/${item.id}/sharing`;
+const sharing = (item: FileItem) => `GET /api/items/${item.id}/sharing`;
 // Sharing also embeds the guest link control for sheets and docs.
-const link = (item: WorkspaceItem) => `GET /api/items/${item.id}/link`;
+const link = (item: FileItem) => `GET /api/items/${item.id}/link`;
 const noLink = { enabled: false, role: 'viewer' };
 
 const people: SharePerson[] = [
@@ -52,7 +52,7 @@ const meta = {
   id: 'sharing-sharing',
   title: 'Current production/Sharing/Sharing',
   component: Sharing,
-  args: { item: doc, onClose: () => {} },
+  args: { item: doc as FileItem, onClose: () => {} },
 } satisfies Meta<typeof Sharing>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -80,4 +80,9 @@ export const Failed: Story = {
       [link(doc)]: noLink,
     },
   },
+};
+const space: SpaceFile = { ...doc, kind: 'space', name: 'Research Space' };
+export const WholeSpace: Story = {
+  args: { item: space },
+  parameters: { api: { [sharing(space)]: { people }, [link(space)]: noLink } },
 };

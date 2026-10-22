@@ -12,6 +12,8 @@ separate work.
 **What is implemented.** SPN-040 added Sheet-image support, SPN-041 the
 authorized [download bundle](#download-bundle), and SPN-039 offline launch,
 browsing and read-only viewing of downloaded documents ([below](#offline-launch-and-read-only-viewing)).
+[SPN-092](implementation/SPN-092.md) extends preparation and local opening to
+one account-authorized Space child at a time, with its verified images.
 The rest of this contract is open, split by the Owner in chat on 2026-10-19 so
 every unmet requirement stays on a ticket:
 
@@ -48,8 +50,8 @@ sequence and #90's recovery-coordinator choice.
 - **Operator:** keep storage bounded and failures diagnosable without granting
   the admin access to documents or requiring a new paid service. Device recovery
   guidance must distinguish local pending work from the server's backups.
-- **Link guest:** retain document-only online access, with no private offline
-  catalog, guest-token persistence or offline download privilege.
+- **Link guest:** retain online access to the supplied document or Space, with no
+  private offline catalog, guest-token persistence or offline download privilege.
 
 ## What the person can rely on
 
@@ -80,6 +82,22 @@ was issued for, `readOnly`, the pinned `@univerjs/core` version, and an image
 manifest. The manifest lists each image once by same-item source, SHA-256, MIME
 type and byte length. The device fetches those bytes from the existing image route.
 SPN-041, 2026-10-19.
+
+For a Space child, the account route is
+`GET /api/spaces/:spaceId/items/:itemId/offline-bundle`. Its optional `spaceId`
+field binds this one native child to the exact requested root. The same root,
+current account, child, role and live generation are checked through preparation
+and materialization. Guests, MCP credentials and the private history capability
+cannot prepare an offline bundle. [Spaces are enabled by default](sharing.md#space-sharing);
+an explicitly disabled Space runtime refuses this route. Preparation is per child;
+there is no bulk Space download or native offline editing.
+
+Stored image sources remain `/api/items/:itemId/images/:hash`. A Space download
+fetches those bytes through `/api/spaces/:spaceId/items/:itemId/images/:hash`, then
+stores and verifies them under their original canonical source keys. The client
+rejects a bundle from another root or one whose native snapshot ID differs from
+its stable item ID before fetching images or replacing a local copy. The live
+generation stays separate in `unitId` and `revisionOffset`, including after restore.
 
 - The snapshot and revision come from one `CollaborationStore.load` read. The
   device never replays server changesets, so draft #86's exact-revision replay
@@ -134,7 +152,8 @@ Verified by `src/server/collaboration/offline-bundle.test.ts`:
 
 ## Offline launch and read-only viewing
 
-SPN-039, 2026-10-19. This is what a device does today.
+SPN-039, 2026-10-19, extended to Space children by SPN-092, 2026-10-22.
+This is what a device does today.
 
 **Download.** Signed-in, non-admin accounts see **Available offline on this
 device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
@@ -147,9 +166,11 @@ device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
 2. Fetches every listed image and checks each one's size and SHA-256.
 3. Prepares the app shell (below).
 4. Writes the bundle and image bytes in one IndexedDB transaction.
+5. Saves the account's catalog before marking that account prepared for local launch.
 
-Until that transaction commits nothing counts as downloaded. A failed refresh
-keeps the last complete copy. Transfers run one at a time, because the server
+Until the bundle transaction commits nothing counts as downloaded; local launch
+also requires the saved catalog. A failed refresh keeps the last complete copy.
+Transfers run one at a time, because the server
 admits one transfer at a time (429). **Remove from device** deletes the local copy
 only. A full device shows "This device is out of space for offline documents."
 
@@ -158,13 +179,28 @@ only. A full device shows "This device is out of space for offline documents."
 ID and name, the last-synced catalog (folders, shared items and each folder
 view opened online), downloaded bundles and image bytes. No credential, session,
 setup/invite token or guest token is stored. `localStorage['spinel.offline.account']`
-names the one account this device is prepared for. It is set by the first
-download and kept only after an online sign-in to that same non-admin account
-with downloads (`claimDevice`). Signing out, a 401 from the server (the session
+names the one account this device is prepared for. It is set after the first
+complete download and catalog save, and kept only after an online sign-in to that
+same non-admin account with downloads (`claimDevice`). Signing out, a 401 from the server (the session
 ended or was revoked) and removing the last download clear it, so another account
 never opens this data and a revoked session doesn't open it offline. While prepared and online, the dashboard saves the catalog after
 each load and refreshes every download in the background. A document the account
 can no longer open (404) is removed: SPN-039's copies hold no edits.
+Delayed preparation after sign-out, an account switch or an unmounted view cannot
+reclaim the prepared-account marker or clear another account's marker.
+
+Space download summaries preserve `spaceId`, so a later refresh uses the original
+scoped child route. Local opening matches the requested root and child as well as
+the prepared account. The outer catalog accepts Space root metadata but never
+turns internal pages into ordinary files. A first download from a Space can merge
+its root into the saved catalog even when Dashboard has never opened; its actual
+outer parent is preserved. Prepared-child navigation uses the separate download
+summaries, and an explicit unavailable child does not silently open another page.
+The live Space offers **Make available offline** for the selected, saved Doc or
+Sheet and **On this device** for that root's prepared children. Offline Space
+links open only matching prepared copies in a read-only viewer; a root-only link
+can choose one of its own copies. The Spaces index, full live tree and Trash need
+a connection. The offline list makes no claim that the whole Space is downloaded.
 
 **App shell.** Nothing is cached until the first download has fetched and
 verified its bundle and images (`web/service-worker.ts`).
@@ -228,6 +264,12 @@ Verified by:
 - `e2e/pwa.spec.ts`: an unprepared device keeps CacheStorage empty.
 - `src/ui/preparedImages.test.ts`, `src/ui/offlineAccess.test.ts`,
   `src/ui/offlineDownload.test.ts` and `src/shared/offlineShell.test.ts`.
+- `src/server/collaboration/space-native.test.ts` covers exact Space bundles,
+  images, restored generations and late authorization changes.
+  `src/ui/offlineSpace.test.ts`, `src/ui/offlineCatalog.test.ts` and
+  `src/ui/offlinePreparation.test.ts` cover scoped selection, root metadata and
+  delayed completion across account/sign-out changes. Final-head acceptance is
+  recorded in [SPN-092's implementation record](implementation/SPN-092.md).
 
 ## How offline editing works
 

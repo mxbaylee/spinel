@@ -265,13 +265,15 @@ test('guest host links never authorize source reads, while source-free formulas 
   const change = f.workspace.links.begin(f.host.id, 'viewer');
   f.workspace.links.finish(f.host.id, change.epoch, true);
   const session = f.workspace.links.exchange(f.host.id, change.token, undefined);
-  const user = f.workspace.links.principal(
+  const principal = f.workspace.links.principal(
     {
       cookie: `__Host-spinel-guest-${f.host.id}=${session.token}`,
     },
     f.host.id,
-  ).userId;
-  expect(await f.formulas.evaluate(user, f.host.id, definition, f.verify, true)).toEqual({
+  );
+  const user = principal.userId;
+  const context = { guestHash: principal.guestHash, guestItem: f.host.id };
+  expect(await f.formulas.evaluate(user, f.host.id, definition, f.verify, true, context)).toEqual({
     ok: false,
     reason: 'missing-source',
   });
@@ -282,15 +284,18 @@ test('guest host links never authorize source reads, while source-free formulas 
     { expression: '={1,2;3,4}' },
     f.verify,
     true,
+    context,
   );
   expect(literal.references).toEqual([]);
-  expect(await f.formulas.evaluate(user, f.host.id, literal, f.verify, true)).toMatchObject({
+  expect(
+    await f.formulas.evaluate(user, f.host.id, literal, f.verify, true, context),
+  ).toMatchObject({
     ok: true,
   });
   f.workspace.links.begin(f.host.id, null);
-  await expect(f.formulas.evaluate(user, f.host.id, literal, f.verify, true)).rejects.toMatchObject(
-    { status: 404 },
-  );
+  await expect(
+    f.formulas.evaluate(user, f.host.id, literal, f.verify, true, context),
+  ).rejects.toMatchObject({ status: 404 });
 });
 
 test('one admitted request bounds reads and calculation; a busy request is never queued', async () => {

@@ -165,22 +165,21 @@ see [the process](todo/process.md#pull-requests-and-main).
   before the collaboration SDK opens its database connection. The migration
   preserves existing item IDs, native foreign keys, indexes and cleanup triggers;
   incomplete or unrecognized schemas fail startup instead of being guessed or
-  partially upgraded. Public Space creation and child capabilities remain closed.
+  partially upgraded. Native children remain inaccessible through ordinary item lookup.
   [Decision #135](https://github.com/mxbaylee/spinel/issues/135), 2026-10-21;
   [implementation and verification](implementation/SPN-078.md).
-- SPN-091 account review is explicitly enabled with `SPINEL_SPACE_REVIEW=1`
-  (`createApp({ spaceReview: true })` in tests). The default is off. The review
-  entry is `/review/spaces`; its tree/recovery API and native protocol use the
-  same gate and current everyday-account authorization. Native access carries
-  the exact Space and stable child plus the current session through reads,
-  sockets and after-await checks; ordinary item, guest and MCP paths stay closed.
-  Images, Doc Formula and cross-file formula integration, public history,
-  exports and offline preparation remain unavailable for this slice. Native
-  within-Sheet formulas remain supported; automatic Space history capture is explicitly
-  deferred, preserving existing checkpoints. SPN-092 owns those integrations
-  and ordinary activation. This flag gives Operators no document privileges.
-  [Decision #137](https://github.com/mxbaylee/spinel/issues/137), 2026-10-22;
-  [implementation contract](implementation/SPN-091.md).
+- Spaces are enabled by default at `/spaces`; `/review/spaces` remains an alias
+  from SPN-091. The legacy `SPINEL_SPACE_REVIEW=0` option (or
+  `createApp({ spaceReview: false })`) explicitly disables every Space boundary
+  while preserving its data. Native access carries exactly one current account,
+  root guest, MCP or private history credential with the exact root and stable
+  child; asynchronous work rechecks access and live generation. Only outer-file
+  metadata/lifecycle composes roots with ordinary files. Images, Formulas, MCP,
+  existing exports, account history and selected-child offline preparation reuse
+  those scoped services. The option gives Operators no document privileges.
+  The original safe sequencing is [decision #137](https://github.com/mxbaylee/spinel/issues/137);
+  the completed boundary is [decision #143](https://github.com/mxbaylee/spinel/issues/143)
+  and the [SPN-092 implementation contract](implementation/SPN-092.md).
 - React and React DOM are pinned to 18.3.1. On 2026-10-17, published
   `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support
   React 16–19; [Univer's UI package](https://github.com/dream-num/univer/blob/dev/packages/ui/package.json)

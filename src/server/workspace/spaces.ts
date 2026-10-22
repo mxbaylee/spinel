@@ -40,6 +40,7 @@ export class SpaceStore {
   }
 
   get(actorId: string, spaceId: string, itemId = spaceId): SpaceScope {
+    this.guestEnabled(actorId);
     return resolveSpaceScope(this.workspace.auth, actorId, spaceId, itemId);
   }
 
@@ -296,6 +297,7 @@ export class SpaceStore {
   }
 
   private tree(actorId: string, spaceId: string, capability: SpaceCapability): LiveTree {
+    this.guestEnabled(actorId);
     const scope = resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, capability);
     const structure = readSpaceStructure(this.workspace.auth.database, spaceId, scope.ownerId);
     const items: LiveMember[] = structure.items
@@ -309,6 +311,10 @@ export class SpaceStore {
       children.set(item.parentId, siblings);
     }
     return { scope, totalItems: structure.items.length, items, byId, children };
+  }
+
+  private guestEnabled(actorId: string) {
+    if (actorId.startsWith('guest:') && !this.workspace.spacesEnabled) throw unavailable();
   }
 
   private outerParent(actorId: string, value: unknown): string | null {

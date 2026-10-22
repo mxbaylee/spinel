@@ -1,12 +1,13 @@
-import type { WorkspaceItem, ItemKind } from './workspace.ts';
+import { FILE_KINDS } from './workspace.ts';
+import type { WorkspaceItem, FileItem, FileKind } from './workspace.ts';
 export type SearchQuery = {
   q: string;
-  type: ItemKind | '';
+  type: FileKind | '';
   owner: '' | 'mine' | 'shared';
   tag: string;
   modified: '' | 'day' | 'week' | 'month';
 };
-export type SearchItem = WorkspaceItem & { paths: string[] };
+export type SearchItem<T extends FileItem = WorkspaceItem> = T & { paths: string[] };
 export const emptySearch: SearchQuery = { q: '', type: '', owner: '', tag: '', modified: '' };
 const fold = (value: string) => value.normalize('NFKC').toLowerCase();
 export function parseSearch(input: Record<string, unknown>): SearchQuery {
@@ -21,7 +22,7 @@ export function parseSearch(input: Record<string, unknown>): SearchQuery {
     Object.assign(query, { [key]: value.trim() });
   }
   if (
-    !['', 'folder', 'sheet', 'doc'].includes(query.type) ||
+    !['', ...FILE_KINDS].includes(query.type) ||
     !['', 'mine', 'shared'].includes(query.owner) ||
     !['', 'day', 'week', 'month'].includes(query.modified)
   )
@@ -31,7 +32,11 @@ export function parseSearch(input: Record<string, unknown>): SearchQuery {
 export function hasSearch(query: SearchQuery) {
   return Object.values(query).some((value) => value.trim().length > 0);
 }
-export function searchItems(items: SearchItem[], query: SearchQuery, now: number) {
+export function searchItems<T extends FileItem>(
+  items: SearchItem<T>[],
+  query: SearchQuery,
+  now: number,
+) {
   const words = fold(query.q).split(/\s+/).filter(Boolean);
   const days = query.modified === 'day' ? 1 : query.modified === 'week' ? 7 : 30;
   return items
@@ -53,10 +58,10 @@ export function searchItems(items: SearchItem[], query: SearchQuery, now: number
     .sort((a, b) => b.updatedAt - a.updatedAt || a.id.localeCompare(b.id));
 }
 /** Input must already be caller-authorized; hidden parent metadata is never fetched here. */
-export function searchCatalog(items: WorkspaceItem[]): SearchItem[] {
+export function searchCatalog<T extends FileItem>(items: T[]): SearchItem<T>[] {
   const byId = new Map(items.map((item) => [item.id, item]));
-  function ancestors(parentId: string | null): WorkspaceItem[] {
-    const parents: WorkspaceItem[] = [],
+  function ancestors(parentId: string | null): T[] {
+    const parents: T[] = [],
       seen = new Set<string>();
     while (parentId && !seen.has(parentId)) {
       seen.add(parentId);

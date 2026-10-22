@@ -1,9 +1,12 @@
+import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
+import type { Locator } from '@playwright/test';
 import sharp from 'sharp';
 import { sheetImageFixture } from './sheet-image-fixture.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
 
 // Offline downloads need the production build's shell manifest (docs/offline.md).
 test('downloaded Sheets and Docs open read-only offline with local images; nothing else does', async ({
@@ -259,6 +262,235 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     await page.goto('/');
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
     await expect(page.getByText(sheet.name)).toHaveCount(0);
+    expect(errors).toEqual([]);
+  } finally {
+    await context.close();
+    db.close();
+  }
+});
+
+test('a prepared Space Doc opens natively offline from its normal link and My files, without substituting an unavailable child', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(180_000);
+  // Reuse the production fixture and keep one native browser editor resident.
+  const context = await browser.newContext({
+    baseURL,
+    viewport: { width: 1440, height: 1100 },
+    permissions: ['clipboard-read', 'clipboard-write'],
+  });
+  const page = await context.newPage();
+  const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+  const auth = new AuthStore(db);
+  const user = auth.createUser(`Offline Space ${info.testId}`);
+  await context.addCookies([
+    {
+      name: COOKIE_NAME,
+      value: auth.createSession(user.id).token,
+      url: baseURL!.replace('http:', 'https:'),
+      secure: true,
+      httpOnly: true,
+      sameSite: 'Strict',
+    },
+  ]);
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  const orangePixels = async (surface: Locator) => {
+    const { data, info: image } = await sharp(await surface.screenshot())
+      .removeAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    let count = 0;
+    for (let offset = 0; offset < data.length; offset += image.channels)
+      if ([255, 153, 0].every((value, channel) => Math.abs(data[offset + channel] - value) < 12))
+        count++;
+    return count;
+  };
+  try {
+    // The everyday API is enabled by default; no review flag or special server.
+    const created = await context.request.post('/api/items', {
+      headers: { Origin: baseURL! },
+      data: { name: 'Offline field kit', kind: 'space', parentId: null },
+    });
+    expect(created.status(), await created.text()).toBe(201);
+    const root = (await created.json()).item as { id: string; name: string };
+    const child = async (name: string) => {
+      const response = await context.request.post(`/api/spaces/${root.id}/items`, {
+        headers: { Origin: baseURL! },
+        data: { name, kind: 'doc', parentId: root.id },
+      });
+      expect(response.status(), await response.text()).toBe(201);
+      return (await response.json()).item as { id: string; name: string };
+    };
+    const doc = await child('Prepared field notes');
+    const missing = await child('Unprepared field notes');
+    const rootHref = `/spaces/${root.id}`;
+    const docHref = `${rootHref}?item=${doc.id}`;
+    const childApi = `/api/spaces/${root.id}/items/${doc.id}`;
+    const text = 'Native offline field notes 314';
+
+    // Preparing a directly opened child must also retain its outer Space root,
+    // even when this browser has never visited My files to cache a catalog.
+    await page.goto(docHref);
+    await expect(page).toHaveURL(baseURL! + docHref);
+    await expect
+      .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+      .toBe(true);
+    const editor = page.getByRole('region', { name: 'Doc document', exact: true });
+    const saved = () =>
+      expect(editor.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+        'All changes saved.',
+        { timeout: 30_000 },
+      );
+    await saved();
+    await editor.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+    await page.keyboard.type(text);
+    await page.keyboard.press('Enter');
+    await saved();
+    const insert = editor.getByRole('tab', { name: 'Insert', exact: true });
+    await insert.click();
+    await expect(insert).toHaveAttribute('aria-selected', 'true');
+    const uploaded = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        new URL(response.url()).pathname === `${childApi}/images`,
+    );
+    const chooser = page.waitForEvent('filechooser');
+    await editor.getByRole('button', { name: 'Image', exact: true }).click();
+    await (
+      await chooser
+    ).setFiles({
+      name: 'field-marker.png',
+      mimeType: 'image/png',
+      buffer: await sharp({
+        create: { width: 120, height: 72, channels: 4, background: '#ff9900' },
+      })
+        .png()
+        .toBuffer(),
+    });
+    expect((await uploaded).status()).toBe(201);
+    await expect
+      .poll(() => orangePixels(editor.locator('.univer-container')), { timeout: 25_000 })
+      .toBeGreaterThan(1000);
+    await saved();
+
+    const availability = page.getByRole('region', { name: 'Offline availability', exact: true });
+    const downloaded = page.waitForResponse(
+      (response) => new URL(response.url()).pathname === `${childApi}/offline-bundle`,
+      { timeout: 120_000 },
+    );
+    await availability
+      .getByRole('button', { name: `Make ${doc.name} available offline on this device` })
+      .click();
+    const response = await downloaded;
+    expect(response.status()).toBe(200);
+    const bundle = (await response.json()) as OfflineBundle;
+    expect(bundle).toMatchObject({
+      accountId: user.id,
+      spaceId: root.id,
+      itemId: doc.id,
+      kind: 'doc',
+    });
+    if (bundle.kind !== 'doc') throw new Error('The prepared child must be a Doc.');
+    expect(bundle.snapshot.body?.dataStream).toContain(text);
+    expect(bundle.snapshot.drawingsOrder).toHaveLength(1);
+    expect(bundle.images).toHaveLength(1);
+    await expect(availability.getByRole('status')).toHaveText(
+      `${doc.name} is available offline on this device.`,
+      { timeout: 120_000 },
+    );
+
+    const assertPreparedDoc = async () => {
+      await expect(page.getByRole('heading', { name: doc.name, exact: true })).toBeVisible();
+      const copy = page.getByRole('region', { name: 'Offline copy', exact: true });
+      await expect(copy.getByRole('status')).toHaveText(
+        'Read only on this device. Reconnect to edit.',
+        { timeout: 30_000 },
+      );
+      await expect(copy.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+      const surface = copy.locator('.univer-container');
+      // Inspect the native drawing itself: a cached manifest or image URL alone
+      // would not prove that verified image bytes reach the offline renderer.
+      await expect.poll(() => orangePixels(surface), { timeout: 25_000 }).toBeGreaterThan(1000);
+      // Focus the text row above the drawing, not the image selection. Native
+      // copy of a selected drawing legitimately has no plain-text payload.
+      await surface.click({ position: { x: 220, y: 175 } });
+      await page.keyboard.press('Control+a');
+      await page.evaluate(() => navigator.clipboard.writeText('not copied'));
+      await page.keyboard.press('Control+c');
+      await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toContain(text);
+      await page.keyboard.press('ArrowRight');
+    };
+
+    await context.setOffline(true);
+    await page.reload();
+    await expect(page).toHaveURL(baseURL! + docHref);
+    await assertPreparedDoc();
+    await mkdir('test-results/theme-screenshots', { recursive: true });
+    for (const [theme, width, variant] of [
+      ['light', 1440, 'light'],
+      ['dark', 1440, 'dark'],
+      ['light', 390, 'phone'],
+    ] as const) {
+      await page.setViewportSize({ width, height: 1100 });
+      await page
+        .getByRole('radio', { name: theme === 'dark' ? 'Dark' : 'Light', exact: true })
+        .click();
+      await expect(
+        page.getByRole('region', { name: 'Offline copy', exact: true }).getByRole('status'),
+      ).toHaveText('Read only on this device. Reconnect to edit.');
+      await expect(
+        page
+          .getByRole('region', { name: 'Offline copy', exact: true })
+          .getByRole('button', { name: 'Bold', exact: true }),
+      ).toBeDisabled();
+      const screenshot = `test-results/theme-screenshots/spn-092-space-native-doc-offline-${variant}-${info.project.name}.png`;
+      await page.screenshot({ path: screenshot, fullPage: true });
+      await info.attach(`Native prepared Space Doc and image (${variant})`, {
+        path: screenshot,
+        contentType: 'image/png',
+      });
+    }
+    await page.setViewportSize({ width: 1440, height: 1100 });
+
+    const remoteReads: string[] = [];
+    page.on('request', (request) => {
+      const path = new URL(request.url()).pathname;
+      if (/^\/(?:api\/(?:spaces|items)(?:\/|$)|space-api\/)/.test(path)) remoteReads.push(path);
+    });
+    await page.getByRole('button', { name: 'My files', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
+    const rootRow = contents.getByRole('listitem').filter({
+      has: page.locator('.item-open', { hasText: root.name }),
+    });
+    await expect(rootRow).toContainText('Space');
+    await expect(contents.getByText(doc.name, { exact: true })).toHaveCount(0);
+    await expect(contents.getByText(missing.name, { exact: true })).toHaveCount(0);
+    await rootRow.locator('.item-open').click();
+    await expect(page).toHaveURL(baseURL! + rootHref);
+    await assertPreparedDoc();
+
+    const missingHref = `${rootHref}?item=${missing.id}`;
+    await page.goto(missingHref);
+    await expect(page).toHaveURL(baseURL! + missingHref);
+    await expect(
+      page.getByRole('status').filter({ hasText: 'This page needs a connection.' }),
+    ).toHaveText(
+      'This page needs a connection. It has not been prepared in this Space on this device.',
+    );
+    await expect(page.getByRole('heading', { name: root.name, exact: true })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Offline copy', exact: true })).toHaveCount(0);
+    await expect(page.locator('.univer-container')).toHaveCount(0);
+    // A prepared sibling remains a deliberate navigation choice, never a
+    // substitute for the explicit child in the address bar.
+    await expect(
+      page
+        .getByRole('navigation', { name: 'Prepared pages', exact: true })
+        .getByRole('link', { name: doc.name, exact: true }),
+    ).toHaveAttribute('href', docHref);
+    expect(remoteReads).toEqual([]);
     expect(errors).toEqual([]);
   } finally {
     await context.close();

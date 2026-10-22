@@ -1,15 +1,18 @@
 import { useState } from 'react';
+import { documentPath } from './documentAccess.ts';
 
 export function FileExports({
   id,
   name,
   saved,
   print,
+  spaceId,
 }: {
   id: string;
   name: string;
   saved: boolean;
   print: () => Promise<void>;
+  spaceId?: string;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -17,7 +20,9 @@ export function FileExports({
     setBusy(true);
     setError('');
     try {
-      const response = await fetch(`/api/items/${id}/export`, { credentials: 'same-origin' });
+      const response = await fetch(`${documentPath(id, spaceId)}/export`, {
+        credentials: 'same-origin',
+      });
       if (!response.ok)
         throw new Error((await response.json()).error ?? 'Could not export this file.');
       const url = URL.createObjectURL(await response.blob());

@@ -34,8 +34,9 @@ export async function formulaRequest<T>(
   path: string,
   body?: unknown,
   signal?: AbortSignal,
+  spaceId?: string,
 ): Promise<T> {
-  return requestFormula<T>(`${documentPath(id)}/formulas/${path}`, {
+  return requestFormula<T>(`${documentPath(id, spaceId)}/formulas/${path}`, {
     method: body === undefined ? 'GET' : 'POST',
     credentials: 'same-origin',
     signal,
@@ -83,11 +84,13 @@ type Sheet = { sheetId: string; name: string };
 
 export function FormulaDialog({
   id,
+  spaceId,
   initial,
   onSave,
   onClose,
 }: {
   id: string;
+  spaceId?: string;
   initial?: DocFormula;
   onSave: (definition: FormulaDefinition) => Promise<void>;
   onClose: () => void;
@@ -142,10 +145,17 @@ export function FormulaDialog({
   }, []);
   useEffect(() => {
     active.current = true;
+    attempt.current++;
+    setPreview(null);
+    setBusy(false);
+    setError('');
     const modal = dialog.current;
     modal?.showModal();
     const abort = new AbortController();
-    void formulaRequest<{ sources: Source[] }>(id, 'sources', undefined, abort.signal)
+    setSources([]);
+    setSource('');
+    setLoadingSources(true);
+    void formulaRequest<{ sources: Source[] }>(id, 'sources', undefined, abort.signal, spaceId)
       .then((data) => {
         if (!abort.signal.aborted) setSources(data.sources);
       })
@@ -158,11 +168,12 @@ export function FormulaDialog({
       });
     return () => {
       active.current = false;
+      attempt.current++;
       operation.current?.abort();
       abort.abort();
       modal?.close();
     };
-  }, [id]);
+  }, [id, spaceId]);
   useEffect(() => {
     setSheets([]);
     setSheet('');
@@ -174,6 +185,7 @@ export function FormulaDialog({
       `sources/${encodeURIComponent(source)}`,
       undefined,
       abort.signal,
+      spaceId,
     )
       .then((data) => {
         if (!abort.signal.aborted) setSheets(data.sheets);
@@ -186,7 +198,7 @@ export function FormulaDialog({
         if (!abort.signal.aborted) setLoadingSheets(false);
       });
     return () => abort.abort();
-  }, [id, source]);
+  }, [id, source, spaceId]);
   const update = (value: string) => {
     setBindings((current) => moveFormulaBindings(expression, value, current));
     setChosen((current) => {
@@ -248,6 +260,7 @@ export function FormulaDialog({
           bindings: explicit,
         },
         signal,
+        spaceId,
       )
     ).definition;
   }
@@ -272,6 +285,7 @@ export function FormulaDialog({
           'evaluate',
           { definition },
           controller.signal,
+          spaceId,
         );
         if (active.current && current === attempt.current) setPreview({ definition, result });
       }

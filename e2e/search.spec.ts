@@ -60,7 +60,13 @@ test('dashboard search combines filters across folders without private paths and
     expect(results.getByRole('status')).toHaveText(`${n} ${n === 1 ? 'result' : 'results'}`);
   try {
     await page.goto('/');
-    await expect(type.locator('option')).toHaveText(['All types', 'Folder', 'Sheet', 'Doc']);
+    await expect(type.locator('option')).toHaveText([
+      'All types',
+      'Folder',
+      'Sheet',
+      'Doc',
+      'Space',
+    ]);
     await query.fill('budget');
     await count(3);
     // Searching keeps the folder mounted, but must not import into that hidden folder.

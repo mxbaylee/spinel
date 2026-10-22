@@ -12,7 +12,10 @@ export async function spacesRequest<T>(
   path = '',
   options: { method?: string; body?: unknown; signal?: AbortSignal } = {},
 ): Promise<T> {
-  const response = await fetch('/api/spaces' + path, {
+  const guest = guestItemId();
+  if (guest && path !== '/' + guest && !path.startsWith('/' + guest + '/'))
+    throw new SpaceApiError(404, 'This Space is not available.');
+  const response = await fetch((guest ? '/api/guest-spaces' : '/api/spaces') + path, {
     method: options.method ?? 'GET',
     credentials: 'same-origin',
     cache: 'no-store',
@@ -48,3 +51,4 @@ export function spaceRequestMessage(error: unknown) {
 export function spaceAccessDenied(error: unknown) {
   return error instanceof SpaceApiError && [401, 403, 404].includes(error.status);
 }
+import { guestItemId } from './documentAccess.ts';

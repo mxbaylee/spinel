@@ -3,7 +3,8 @@ import { FormulaReadout, formulaRequest } from './DocFormulas.tsx';
 import { useEffect, useRef, useState } from 'react';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
-import { itemsRequest } from './itemsApi.ts';
+import { historyRequest } from './historyApi.ts';
+import { spaceHref } from './spaceNavigation.ts';
 import { openSnapshotViewer } from './snapshotViewer.ts';
 
 type Preview = { snapshot: IDocumentData | IWorkbookData; item: WorkspaceItem; unitId: string };
@@ -11,10 +12,12 @@ type Preview = { snapshot: IDocumentData | IWorkbookData; item: WorkspaceItem; u
 /** Isolated native viewer: no collaboration client, autosave or live mutation transport. */
 export function VersionPreview({
   id,
+  spaceId,
   checkpoint,
   onBusyChange,
 }: {
   id: string;
+  spaceId?: string;
   checkpoint: string;
   onBusyChange: (busy: boolean) => void;
 }) {
@@ -30,7 +33,13 @@ export function VersionPreview({
     const loading = new AbortController();
     let cleanup: (() => void) | undefined;
     void (async () => {
-      const loaded = await itemsRequest<Preview>(`/${id}/history/${checkpoint}`);
+      const loaded = await historyRequest<Preview>(
+        id,
+        `/${encodeURIComponent(checkpoint)}`,
+        'GET',
+        undefined,
+        spaceId,
+      );
       if (disposed) return;
       setData(loaded);
       const dispose = await openSnapshotViewer({
@@ -39,7 +48,7 @@ export function VersionPreview({
         snapshot: loaded.snapshot,
         signal: loading.signal,
         evaluateFormula: (definition, signal) =>
-          formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal),
+          formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal, spaceId),
         onFormulaChange: (states) => {
           if (!disposed) setFormulaStates([...states]);
         },
@@ -56,7 +65,10 @@ export function VersionPreview({
       loading.abort();
       if (cleanup) queueMicrotask(cleanup);
     };
-  }, [id, checkpoint]);
+  }, [id, spaceId, checkpoint]);
+  const liveHref = spaceId
+    ? spaceHref(spaceId, { kind: 'page', id })
+    : `/?item=${encodeURIComponent(id)}`;
   const restore = async () => {
     if (
       !data ||
@@ -70,11 +82,17 @@ export function VersionPreview({
     onBusyChange(true);
     setError('');
     try {
-      await itemsRequest(`/${id}/history/${checkpoint}/restore`, 'POST', {
-        unitId: data.unitId,
-        requestId: requestId.current,
-      });
-      location.assign(`/?item=${encodeURIComponent(id)}`);
+      await historyRequest(
+        id,
+        `/${encodeURIComponent(checkpoint)}/restore`,
+        'POST',
+        {
+          unitId: data.unitId,
+          requestId: requestId.current,
+        },
+        spaceId,
+      );
+      location.assign(liveHref);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not restore this version.');
       setBusy(false);
@@ -85,7 +103,7 @@ export function VersionPreview({
     <section aria-label="Version preview">
       <h2>Preview — {data?.item.name ?? 'Saved version'}</h2>
       <p>Read only. The live document is unchanged.</p>
-      <a href={`/?item=${encodeURIComponent(id)}`}>Back to live document</a>
+      <a href={liveHref}>Back to live document</a>
       {data && data.item.access !== 'viewer' && (
         <button disabled={!ready || busy} onClick={() => void restore()}>
           {busy ? 'Restoring…' : 'Restore this version'}

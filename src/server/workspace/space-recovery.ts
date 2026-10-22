@@ -46,6 +46,7 @@ export class SpaceRecoveryStore {
     actorId: string,
     spaceId: string,
   ): { access: 'owner' | 'editor'; items: SpaceRecoveryItem[] } {
+    this.workspace.owner(actorId);
     return this.workspace.auth.transaction(() => {
       const view = this.view(actorId, spaceId, 'edit');
       const records = [...view.structure.recovery.values()].sort(
@@ -138,6 +139,7 @@ export class SpaceRecoveryStore {
     destination: 'original' | 'space-root';
     reason?: 'original-location-unavailable';
   } {
+    this.workspace.owner(actorId);
     const { auth } = this.workspace;
     return auth.transaction(() => {
       const view = this.view(actorId, spaceId, 'edit');
@@ -214,6 +216,7 @@ export class SpaceRecoveryStore {
   }
 
   private view(actorId: string, spaceId: string, capability: 'edit' | 'owner'): RecoveryView {
+    if (actorId.startsWith('guest:') && !this.workspace.spacesEnabled) throw unavailable();
     const scope = resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, capability);
     return {
       scope,

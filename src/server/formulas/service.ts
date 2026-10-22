@@ -15,7 +15,8 @@ import type {
 import { AuthError } from '../auth/store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
-import { WorkspaceSearch } from '../workspace/search.ts';
+import { resolveDocument, sourceDocumentContext } from '../workspace/document-access.ts';
+import { documentCatalog } from '../workspace/document-catalog.ts';
 import { runFormula } from './runner.ts';
 
 // Admission covers materialization as well as calculation, across all router instances.
@@ -37,21 +38,33 @@ export class DocFormulas {
     this.collaboration = collaboration;
     this.calculate = calculate;
   }
-  private host(user: string, id: string, verify: Verify) {
+  private host(user: string, id: string, verify: Verify, customData: Record<string, unknown>) {
     verify();
-    if (this.workspace.get(user, id).kind !== 'doc')
+    if (resolveDocument(this.workspace, user, id, 'read', customData).kind !== 'doc')
       throw new AuthError(400, 'Formulas can be inserted in Docs.');
   }
-  private async load(user: string, id: string, verify: Verify) {
+  private source(user: string, hostId: string, id: string, customData: Record<string, unknown>) {
+    const context = sourceDocumentContext(this.workspace, user, hostId, id, customData);
+    const item = resolveDocument(this.workspace, user, id, 'read', context);
+    if (item.kind !== 'sheet') throw invalid();
+    return { item, context };
+  }
+  private async load(
+    user: string,
+    hostId: string,
+    id: string,
+    verify: Verify,
+    customData: Record<string, unknown>,
+  ) {
     verify();
-    if (this.workspace.get(user, id).kind !== 'sheet') throw invalid();
-    await this.collaboration.prepare(user, id);
+    const { context } = this.source(user, hostId, id, customData);
+    await this.collaboration.prepare(user, id, context);
     verify();
-    this.workspace.get(user, id);
+    this.source(user, hostId, id, customData);
     const generation = this.collaboration.generations.active(id).unitId;
-    const data = await this.collaboration.load(user, id);
+    const data = await this.collaboration.load(user, id, context);
     verify();
-    this.workspace.get(user, id);
+    this.source(user, hostId, id, customData);
     this.current(id, generation);
     // Bound the payload before structured cloning it into the worker.
     if (Buffer.byteLength(JSON.stringify(data.snapshot)) > 8 * 1024 * 1024)
@@ -65,21 +78,33 @@ export class DocFormulas {
     )
       throw new AuthError(409, 'A source was restored. Refresh the formula.');
   }
-  sources(user: string, hostId: string, verify: Verify) {
-    this.host(user, hostId, verify);
-    return new WorkspaceSearch(this.workspace)
-      .find(user, {})
+  sources(user: string, hostId: string, verify: Verify, customData: Record<string, unknown> = {}) {
+    this.host(user, hostId, verify, customData);
+    return documentCatalog(this.workspace, user, customData)
       .filter((item) => item.kind === 'sheet')
       .map((item) => ({ itemId: item.id, name: item.name }));
   }
-  async sheets(user: string, hostId: string, sourceId: string, verify: Verify) {
-    this.host(user, hostId, verify);
+  async sheets(
+    user: string,
+    hostId: string,
+    sourceId: string,
+    verify: Verify,
+    customData: Record<string, unknown> = {},
+  ) {
+    this.host(user, hostId, verify, customData);
     if (reading) throw new AuthError(429, 'Another formula is loading. Try again shortly.');
     reading = true;
     try {
-      const source = await this.load(user, sourceId, () => this.host(user, hostId, verify));
-      this.host(user, hostId, verify);
-      this.workspace.get(user, sourceId);
+      const source = await this.load(
+        user,
+        hostId,
+        sourceId,
+        () => this.host(user, hostId, verify, customData),
+        customData,
+      );
+      this.host(user, hostId, verify, customData);
+      this.source(user, hostId, sourceId, customData);
+      this.current(sourceId, source.generation);
       return source.snapshot.sheetOrder.map((id) => ({
         sheetId: id,
         name: source.snapshot.sheets[id].name,
@@ -94,8 +119,9 @@ export class DocFormulas {
     input: unknown,
     verify: Verify,
     guest = false,
+    customData: Record<string, unknown> = {},
   ): Promise<FormulaDefinition> {
-    this.host(user, hostId, verify);
+    this.host(user, hostId, verify, customData);
     if (!input || typeof input !== 'object' || Array.isArray(input)) throw invalid();
     const body = input as Record<string, unknown>;
     if (
@@ -136,12 +162,11 @@ export class DocFormulas {
     } catch {
       throw invalid();
     }
-    if (guest && parsed.length)
+    if (guest && !customData.spaceId && parsed.length)
       throw new AuthError(403, 'A guest link does not grant access to source spreadsheets.');
     if (reading) throw new AuthError(429, 'Another formula is loading. Try again shortly.');
     reading = true;
     try {
-      const catalog = parsed.length ? new WorkspaceSearch(this.workspace).find(user, {}) : [];
       const previousParsed = previous ? parseFormula(previous.expression) : [];
       const sameQualifier = (first: (typeof parsed)[number], second: (typeof parsed)[number]) =>
         first.documentName === second.documentName && first.sheetName === second.sheetName;
@@ -164,8 +189,13 @@ export class DocFormulas {
           throw new AuthError(400, 'Choose the intended spreadsheet again for this reference.');
         return matches[0];
       });
+      // Stable bindings do not need a discovery scan. A large unrelated catalog
+      // must not make an already-bound, independently authorized formula unusable.
+      const catalog = prior.some((binding) => !binding)
+        ? documentCatalog(this.workspace, user, customData)
+        : [];
       const items = parsed.map((reference, index) => {
-        if (prior[index]) return this.workspace.get(user, prior[index]!.itemId);
+        if (prior[index]) return this.source(user, hostId, prior[index]!.itemId, customData).item;
         const matches = catalog.filter(
           (item) => item.kind === 'sheet' && item.name === reference.documentName,
         );
@@ -179,14 +209,14 @@ export class DocFormulas {
       if (new Set(items.map((item) => item.id)).size > FORMULA_LIMITS.sources) throw invalid();
       const loaded = new Map<string, Awaited<ReturnType<DocFormulas['load']>>>();
       const check = () => {
-        this.host(user, hostId, verify);
-        for (const item of items) this.workspace.get(user, item.id);
+        this.host(user, hostId, verify, customData);
+        for (const item of items) this.source(user, hostId, item.id, customData);
         for (const source of loaded.values()) this.current(source.itemId, source.generation);
       };
       check();
       for (const item of items)
         if (!loaded.has(item.id)) {
-          loaded.set(item.id, await this.load(user, item.id, check));
+          loaded.set(item.id, await this.load(user, hostId, item.id, check, customData));
           check();
         }
       const references = parsed.map((reference, index) => {
@@ -221,29 +251,31 @@ export class DocFormulas {
     input: unknown,
     verify: Verify,
     guest = false,
+    customData: Record<string, unknown> = {},
   ): Promise<FormulaResult> {
-    this.host(user, hostId, verify);
+    this.host(user, hostId, verify, customData);
     let definition: FormulaDefinition;
     try {
       definition = validateFormulaDefinition(input);
     } catch {
       return { ok: false, reason: 'invalid-formula' };
     }
-    if (guest && definition.references.length) return { ok: false, reason: 'missing-source' };
+    if (guest && !customData.spaceId && definition.references.length)
+      return { ok: false, reason: 'missing-source' };
     if (reading) return { ok: false, reason: 'busy' };
     reading = true;
     try {
       const ids = [...new Set(definition.references.map((reference) => reference.itemId))];
       const sources: (FormulaSource & { generation: string })[] = [];
       const check = () => {
-        this.host(user, hostId, verify);
-        for (const id of ids) this.workspace.get(user, id);
+        this.host(user, hostId, verify, customData);
+        for (const id of ids) this.source(user, hostId, id, customData);
         for (const source of sources) this.current(source.itemId, source.generation);
       };
       try {
         check();
         for (const id of ids) {
-          sources.push(await this.load(user, id, check));
+          sources.push(await this.load(user, hostId, id, check, customData));
           check();
         }
         const bytes = sources.reduce(
@@ -256,7 +288,7 @@ export class DocFormulas {
         return result;
       } catch (error) {
         // A lost host/session is an authorization failure, not a source placeholder.
-        this.host(user, hostId, verify);
+        this.host(user, hostId, verify, customData);
         if (error instanceof AuthError) {
           if (error.status === 404 || error.status === 403) return privateSource();
           if (error.status === 413) return { ok: false, reason: 'too-large' };

@@ -48,7 +48,6 @@ import {
   UniverDrawingUIPlugin,
   UniverDocsDrawingPlugin,
   UniverDocsDrawingUIPlugin,
-  DOCS_IMAGE_MENU_ID,
   DOCS_SHAPE_MENU_ID,
   DOCS_SHAPE_BELOW_MENU_ID,
   InsertDocImageCommand,
@@ -156,7 +155,6 @@ export function DocEditor({
           setUploadError('');
           publish(lastState);
           try {
-            if (spaceId) throw new Error('Images are not available in Space review yet.');
             if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type))
               throw new Error('Choose a PNG, JPEG or WebP image.');
             const response = await fetch(`${documentPath(id, spaceId)}/images`, {
@@ -205,10 +203,6 @@ export function DocEditor({
             commands.registerCommand({
               ...InsertDocImageCommand,
               handler: async (accessor, params, options) => {
-                if (spaceId) {
-                  if (!disposed) setUploadError('Images are not available in Space review yet.');
-                  return false;
-                }
                 insertions++;
                 const before = uploaded;
                 publish(lastState);
@@ -265,7 +259,7 @@ export function DocEditor({
           UniverDocsDrawingPlugin,
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
-          ...(!spaceId ? [UniverDocsPrintPlugin] : []),
+          UniverDocsPrintPlugin,
           ...collaborationPlugins(
             data.unitId,
             [[IImageIoService, { useClass: StoredImages }]],
@@ -284,13 +278,6 @@ export function DocEditor({
                 InsertDocEllipseShapeCommand.id,
                 `${InsertDocRectangleShapeCommand.id}.below`,
                 `${InsertDocEllipseShapeCommand.id}.below`,
-                ...(spaceId
-                  ? [
-                      DOCS_IMAGE_MENU_ID,
-                      InsertDocImageCommand.id,
-                      `${InsertDocImageCommand.id}.below`,
-                    ]
-                  : []),
               ].map((id) => [id, { hidden: true }]),
             ),
           }),
@@ -300,11 +287,9 @@ export function DocEditor({
           UniverDocsHyperLinkPreset(),
         ],
       });
-      print.current = spaceId
-        ? null
-        : async () => {
-            await printDocument(univerAPI);
-          };
+      print.current = async () => {
+        await printDocument(univerAPI);
+      };
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
         stopTheme();
@@ -326,9 +311,7 @@ export function DocEditor({
         unitId: data.unitId,
         colors: formulaPaperColors,
         evaluate: (definition, signal) =>
-          spaceId
-            ? Promise.resolve({ ok: false, reason: 'unavailable' } as const)
-            : formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal),
+          formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal, spaceId),
         onActivate: (formula) => {
           if (canEditFormulas.current) setFormulaEdit({ formula });
         },
@@ -364,7 +347,7 @@ export function DocEditor({
       };
       if (data.access === 'viewer') await readonly();
       else {
-        canEditFormulas.current = !spaceId;
+        canEditFormulas.current = true;
         setEditable(true);
         document.setSelection(0, 0);
       }
@@ -435,17 +418,19 @@ export function DocEditor({
       {uploadError && (
         <p role="alert">
           {uploadError}
-          {!spaceId && ' Try inserting the file again.'}
+          {' Try inserting the file again.'}
         </p>
       )}
-      {!spaceId && !guestItemId() && (
+      {!guestItemId() && (
         <>
           <VersionNames
             id={id}
+            spaceId={spaceId}
             saved={!status.dirty && !status.failed && Boolean(controller.current)}
           />
           <FileExports
             id={id}
+            spaceId={spaceId}
             name={name}
             saved={!status.dirty && !status.failed && Boolean(controller.current)}
             print={async () => {
@@ -455,7 +440,7 @@ export function DocEditor({
           />
         </>
       )}
-      {!spaceId && Boolean(controller.current) && (
+      {Boolean(controller.current) && (
         <details className="doc-formulas">
           <summary>Formulas{formulaStates.length ? ` (${formulaStates.length})` : ''}</summary>
           {editable && (
@@ -500,9 +485,10 @@ export function DocEditor({
           )}
         </details>
       )}
-      {!spaceId && formulaEdit && editable && (
+      {formulaEdit && editable && (
         <FormulaDialog
           id={id}
+          spaceId={spaceId}
           initial={formulaEdit.formula}
           onClose={() => {
             setFormulaEdit(null);

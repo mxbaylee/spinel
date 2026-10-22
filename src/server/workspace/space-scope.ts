@@ -1,6 +1,7 @@
 import { AuthError } from '../auth/store.ts';
 import type { AuthStore } from '../auth/store.ts';
 import type { ItemAccess, ItemKind } from '../../shared/workspace.ts';
+import { currentGuestSession } from './guest-session.ts';
 
 export type SpaceCapability = 'read' | 'edit' | 'owner';
 
@@ -57,11 +58,15 @@ export function resolveSpaceScope(
   capability: SpaceCapability = 'read',
 ): SpaceScope {
   return auth.transaction(() => {
-    if (actorId.startsWith('guest:'))
-      throw new AuthError(403, 'Use your everyday account for Spaces.');
-    const actor = auth.user(actorId);
-    if (!actor) throw new AuthError(401, 'Sign in to continue.');
-    if (actor.is_admin) throw new AuthError(403, 'Use your everyday account for Spaces.');
+    const isGuest = actorId.startsWith('guest:');
+    const guest = isGuest ? currentGuestSession(auth, actorId) : undefined;
+    if (isGuest) {
+      if (!guest || guest.itemId !== spaceId) throw unavailable();
+    } else {
+      const actor = auth.user(actorId);
+      if (!actor) throw new AuthError(401, 'Sign in to continue.');
+      if (actor.is_admin) throw new AuthError(403, 'Use your everyday account for Spaces.');
+    }
     if (!['read', 'edit', 'owner'].includes(capability))
       throw new AuthError(400, 'Unsupported Space action.');
 
@@ -104,11 +109,17 @@ export function resolveSpaceScope(
         ancestor.space_position !== null
       )
         throw unavailable();
-      inherited = Math.max(inherited, strength(ancestor.id));
+      if (!isGuest) inherited = Math.max(inherited, strength(ancestor.id));
       cursor = ancestor.parent_id;
     }
 
-    const level = actorId === space.owner_id ? 3 : Math.max(strength(space.id), inherited);
+    const level = guest
+      ? guest.role === 'editor'
+        ? 2
+        : 1
+      : actorId === space.owner_id
+        ? 3
+        : Math.max(strength(space.id), inherited);
     if (level === 0) throw unavailable();
     const access: ItemAccess = level === 3 ? 'owner' : level === 2 ? 'editor' : 'viewer';
 
@@ -145,7 +156,10 @@ export function resolveSpaceScope(
     const project = (row: ScopeRow): SpaceScopeItem => ({
       id: row.id,
       // A direct Space grant does not disclose its owner's private outer folder.
-      parentId: row.id === space.id && access !== 'owner' && inherited === 0 ? null : row.parent_id,
+      parentId:
+        row.id === space.id && (isGuest || (access !== 'owner' && inherited === 0))
+          ? null
+          : row.parent_id,
       spaceId: row.space_id,
       kind: row.kind,
       position: row.space_position,

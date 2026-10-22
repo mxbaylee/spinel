@@ -11,16 +11,16 @@ function selection(query: URLSearchParams, space: string) {
   return item ? '?item=' + item.toLowerCase() : query.has('trash') ? '?trash=1' : '';
 }
 
-/** Carry only a known review route and opaque IDs through sign-in, never a URL. */
+/** Carry only a known Space route and opaque IDs through sign-in, never a URL. */
 export function spaceReviewSignInPath(location: BrowserLocation): string | null {
-  const match = /^\/review\/spaces(?:\/([^/]+))?\/?$/.exec(location.pathname);
+  const match = /^\/(?:review\/)?spaces(?:\/([^/]+))?\/?$/.exec(location.pathname);
   if (!match || (match[1] && !uuid.test(match[1]))) return null;
   const space = match[1]?.toLowerCase() ?? 'index';
   const suffix = selection(new URLSearchParams(location.search), space);
   return suffix === null ? null : '/sign-in?space=' + space + suffix.replace('?', '&');
 }
 
-/** The server still checks its review gate and current account access on arrival. */
+/** The server still checks current account access on arrival. */
 export function spaceReviewReturnPath(location: BrowserLocation): string | null {
   if (location.pathname !== '/sign-in') return null;
   const query = new URLSearchParams(location.search);
@@ -34,5 +34,5 @@ export function spaceReviewReturnPath(location: BrowserLocation): string | null 
     return null;
   const suffix = selection(query, space);
   if (suffix === null) return null;
-  return '/review/spaces' + (space === 'index' ? '' : '/' + space.toLowerCase()) + suffix;
+  return '/spaces' + (space === 'index' ? '' : '/' + space.toLowerCase()) + suffix;
 }

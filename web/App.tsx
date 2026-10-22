@@ -1,5 +1,5 @@
 import { ProfileSettings } from './ProfileSettings.tsx';
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   startAuthentication,
   startRegistration,
@@ -20,6 +20,8 @@ import { AssistantConnections } from './AssistantConnections.tsx';
 import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { Space } from './Space.tsx';
+import { OfflineSpace } from './OfflineSpace.tsx';
+import { spaceHref } from './spaceNavigation.ts';
 import { rememberedFileHref } from './fileNavigation.ts';
 import { spaceReviewReturnPath } from '../src/shared/spaceReviewRoute.ts';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
@@ -30,13 +32,7 @@ import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
-import type { LocalStart } from './offline/localStart.ts';
-import {
-  preparedAccount,
-  setPreparedAccount,
-  setSignOutPending,
-  signOutPending,
-} from './offline/offlineStore.ts';
+import { setPreparedAccount, setSignOutPending, signOutPending } from './offline/offlineStore.ts';
 
 const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
@@ -84,7 +80,7 @@ export function App() {
   const browserOnline = useBrowserOnline();
   // Local mode (docs/offline.md): the server is unreachable and this device was
   // prepared for an account. `unreachable` is the same outage on an unprepared device.
-  const [local, setLocal] = useState<LocalStart | null>(null);
+  const [local, setLocal] = useState<Awaited<ReturnType<typeof openLocalStart>>>(null);
   const [unreachable, setUnreachable] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [keys, setKeys] = useState<Passkey[]>([]);
@@ -93,7 +89,7 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
   const settings = location.pathname === '/settings';
-  const spaceReview = /^\/review\/spaces(?:\/|$)/.test(location.pathname);
+  const spaceReview = /^\/(?:review\/)?spaces(?:\/|$)/.test(location.pathname);
   const connecting = location.pathname === '/connect';
   const [connectRequest] = useState(connectionRequest);
   const [spaceReturn] = useState(() => spaceReviewReturnPath(location));
@@ -158,16 +154,16 @@ export function App() {
           return;
         }
         // Authorizing an assistant always needs a live, verified session.
-        if (connecting || connectRequest || spaceReview || spaceReturn) {
+        if (connecting || connectRequest) {
           setUnreachable(true);
           return;
         }
         const start = await openLocalStart().catch(() => null);
-        if (!start) {
+        if (!start || !start.isCurrent()) {
           setUnreachable(true);
           return;
         }
-        if (location.pathname === '/sign-in') history.replaceState(null, '', '/');
+        if (location.pathname === '/sign-in') history.replaceState(null, '', spaceReturn ?? '/');
         setLocal(start);
         setUser({ ...start.user, isAdmin: false });
       } finally {
@@ -184,16 +180,19 @@ export function App() {
     spaceReview,
     spaceReturn,
   ]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
     const watch = () => {
-      if (preparedAccount() === local.user.id) return;
+      if (local.isCurrent()) return;
       setLocal(null);
       setUser(null);
       setUnreachable(true);
     };
     window.addEventListener('storage', watch);
+    // A storage event may have arrived between the async read and publication.
+    // Recheck before paint instead of waiting for another event to clear titles.
+    watch();
     return () => window.removeEventListener('storage', watch);
   }, [local]);
 
@@ -315,7 +314,7 @@ export function App() {
           <p role="status">Loading…</p>
         </main>
       );
-    if (unreachable || local)
+    if (unreachable)
       return (
         <main className="space-bootstrap">
           <OfflineUnreachable />
@@ -326,6 +325,15 @@ export function App() {
         <main className="space-bootstrap">
           <p role="alert">This Space is not available.</p>
         </main>
+      );
+    if (local)
+      return (
+        <OfflineSpace
+          local={local}
+          user={user}
+          onExit={() => location.assign(rememberedFileHref(user.id))}
+          onSignOut={() => void signOut()}
+        />
       );
     return (
       <>
@@ -527,6 +535,9 @@ export function App() {
               local={local}
               onConnectionState={setEditorConnection}
               onCatalogStatus={setCatalogStatus}
+              onOpen={(item) => {
+                if (item.kind === 'space') location.assign(spaceHref(item.id));
+              }}
             />
           )}
           {busy && (

@@ -8,7 +8,8 @@ A Formula is a native object in the Doc's main body. Start an expression with
 `='My Budget'.'FY 2026'.A1`; double an apostrophe inside a quoted name.
 
 Insert and edit through the Formula control. The source picker shows only
-spreadsheets the current account can read. The expression identifies names for
+spreadsheets the current viewer can read, including authorized Space children.
+A Space guest's picker stays inside that Space. The expression identifies names for
 people; saved references bind to item and worksheet IDs. A rename does not
 retarget a formula, and restoring a Sheet resolves its new live unit generation.
 Deleting a source makes it unavailable rather than binding to a namesake.
@@ -26,16 +27,28 @@ error states.
 Every source must be readable by the current viewer before a result is returned.
 This includes every input to an aggregate: access to one input never permits a
 partial total from another. Sharing the Doc does not share its sources.
-An account reader without source access sees an access placeholder; a host guest
-link never grants access to another Sheet. Source-free formulas can work for guests.
+An account reader without source access sees an access placeholder. A standalone
+Doc guest link grants no source access; source-free formulas can work for guests.
+A Space View or Edit guest link permits sources in the same Space, including
+newly added Sheets. It grants no access to ordinary files or other Spaces, even
+when the browser also has a signed-in account. Account and MCP credentials may
+read external sources only through their own independent current access.
 The separate source-sharing flow is tracked in SPN-076.
+
+The host and every source retain the credential selected when the request began.
+Permissions and the live source generation are checked before materialization,
+after every asynchronous read, and after calculation. Revoked or rotated links,
+expired sessions, lost grants, trashed ancestors and disabled Space owners cannot
+return an in-flight result. A new View guest session can still read after an Edit
+link is downgraded; the old guest session is invalidated with its privacy epoch.
 
 The Doc stores only authored expression text, stable bindings and display format.
 It never stores calculated results in snapshots, history, native files, offline
 copies or MCP content. Source labels deliberately written into the expression
 are part of the host document, but denied lookups reveal no additional source
 metadata. Offline copies show unavailable formulas and make no formula requests.
-History previews evaluate against current source permissions and content.
+History previews evaluate against current source permissions and content, using
+the exact Space root and host child when the historical Doc belongs to a Space.
 
 Importing a native file keeps source-bound expressions as ordinary text and
 removes their active bindings, so foreign IDs cannot attach to unrelated local
@@ -63,6 +76,12 @@ there is no result cache or unbounded queue. Clients briefly retry busy admissio
 with a bounded, cancellable wait; authorization failures are not retried. A timeout
 terminates the worker, including synchronous calculation. Access and source
 generations are checked again after asynchronous work.
+
+Space source discovery validates each complete readable tree in one authorization
+transaction. Its shared 10,000-row work budget counts retained membership rows,
+including tombstones and recovery metadata, across all discovered roots. An
+over-budget discovery request fails without returning a partial catalog. Existing
+stable bindings are authorized directly and do not require a discovery scan.
 
 Scalar results participate in normal paragraph flow. A table is a measured
 atomic object: it can move to another page but does not split across pages.

@@ -5,12 +5,14 @@ import { ITEM_KINDS } from '../../shared/workspace.ts';
 import { classifyOrdinaryItems, isOrdinaryItem, MAX_ANCESTOR_READS } from './ordinary-scope.ts';
 import type { ItemKind, WorkspaceItem, ItemAccess, SharePerson } from '../../shared/workspace.ts';
 import type { SnapshotSaved } from './snapshots.ts';
+import { resolveSpaceScope } from './space-scope.ts';
 
 const columns =
   'id,parent_id AS parentId,kind,name,created_at AS createdAt,updated_at AS updatedAt';
 export class WorkspaceStore {
   auth: AuthStore;
   readonly links: LinkAccess;
+  readonly spacesEnabled: boolean;
   private readonly snapshotListeners = new Set<(event: SnapshotSaved) => void>();
   onSnapshotSaved(listener: (event: SnapshotSaved) => void) {
     this.snapshotListeners.add(listener);
@@ -23,8 +25,9 @@ export class WorkspaceStore {
   snapshotSaved(event: SnapshotSaved) {
     for (const listener of this.snapshotListeners) listener(event);
   }
-  constructor(auth: AuthStore) {
+  constructor(auth: AuthStore, options: { spacesEnabled?: boolean } = {}) {
     this.auth = auth;
+    this.spacesEnabled = options.spacesEnabled === true;
     auth.database.exec(`
       CREATE TABLE IF NOT EXISTS workspace_items (
         id TEXT PRIMARY KEY,
@@ -87,7 +90,7 @@ export class WorkspaceStore {
     );
     // Retired workspace_pins tables in older databases are left untouched.
     // No feature reads or writes them; existing item/user foreign keys remain safe.
-    this.links = new LinkAccess(auth);
+    this.links = new LinkAccess(auth, this.spacesEnabled);
   }
   ownTags(userId: string, id: string): string[] {
     // Item/trash callers establish document access first; only this person's
@@ -107,6 +110,19 @@ export class WorkspaceStore {
         )
         .all(userId, id) as { name: string }[]
     ).map((row) => row.name);
+  }
+  /** Root-only metadata; this does not admit a Space member to ordinary services. */
+  spaceRootTags(userId: string, id: string): string[] {
+    if (!this.spacesEnabled) throw new AuthError(404, 'This item is not available.');
+    resolveSpaceScope(this.auth, userId, id, id);
+    return this.assignedTags(userId, id);
+  }
+  changeSpaceRootTag(userId: string, id: string, value: unknown, remove = false) {
+    return this.auth.transaction(() => {
+      this.spaceRootTags(userId, id);
+      this.writeTag(userId, id, value, remove);
+      return this.spaceRootTags(userId, id);
+    });
   }
   tagSuggestions(userId: string): string[] {
     return this.auth.transaction(() => {
@@ -139,34 +155,37 @@ export class WorkspaceStore {
     return this.auth.transaction(() => {
       const item = this.get(userId, id);
       if (item.kind === 'folder') throw new AuthError(400, 'Choose a document to tag.');
-      if (typeof value !== 'string' || /[\p{Cc}\p{Cs}]/u.test(value))
-        throw new AuthError(400, 'Use a tag of 1–64 characters without control characters.');
-      const name = value
-        .trim()
-        .replace(/^#/, '')
-        .trim()
-        .normalize('NFC')
-        .toLowerCase()
-        .normalize('NFC');
-      if (name.startsWith('#')) throw new AuthError(400, 'Use at most one leading # in a tag.');
-      if (!name || name.length > 64)
-        throw new AuthError(400, 'Use a tag of 1–64 characters without control characters.');
-      if (remove)
-        this.auth.database
-          .prepare('DELETE FROM workspace_tag_assignments WHERE user_id=? AND item_id=? AND name=?')
-          .run(userId, id, name);
-      else {
-        this.auth.database
-          .prepare('INSERT OR IGNORE INTO workspace_tags(user_id,name) VALUES(?,?)')
-          .run(userId, name);
-        this.auth.database
-          .prepare(
-            'INSERT OR IGNORE INTO workspace_tag_assignments(user_id,item_id,name) VALUES(?,?,?)',
-          )
-          .run(userId, id, name);
-      }
+      this.writeTag(userId, id, value, remove);
       return this.get(userId, id);
     });
+  }
+  private writeTag(userId: string, id: string, value: unknown, remove: boolean) {
+    if (typeof value !== 'string' || /[\p{Cc}\p{Cs}]/u.test(value))
+      throw new AuthError(400, 'Use a tag of 1–64 characters without control characters.');
+    const name = value
+      .trim()
+      .replace(/^#/, '')
+      .trim()
+      .normalize('NFC')
+      .toLowerCase()
+      .normalize('NFC');
+    if (name.startsWith('#')) throw new AuthError(400, 'Use at most one leading # in a tag.');
+    if (!name || name.length > 64)
+      throw new AuthError(400, 'Use a tag of 1–64 characters without control characters.');
+    if (remove)
+      this.auth.database
+        .prepare('DELETE FROM workspace_tag_assignments WHERE user_id=? AND item_id=? AND name=?')
+        .run(userId, id, name);
+    else {
+      this.auth.database
+        .prepare('INSERT OR IGNORE INTO workspace_tags(user_id,name) VALUES(?,?)')
+        .run(userId, name);
+      this.auth.database
+        .prepare(
+          'INSERT OR IGNORE INTO workspace_tag_assignments(user_id,item_id,name) VALUES(?,?,?)',
+        )
+        .run(userId, id, name);
+    }
   }
   owner(ownerId: string) {
     const user = this.auth.user(ownerId);
@@ -213,6 +232,17 @@ export class WorkspaceStore {
     this.owner(userId);
     return this.auth.transaction(() => {
       this.cleanPlacements();
+      const fields = new Set(
+        this.auth.database
+          .prepare('PRAGMA table_info(workspace_items)')
+          .all()
+          .map((row) => row.name),
+      );
+      const membership = (alias: string) =>
+        ['space_id', 'space_position']
+          .filter((field) => fields.has(field))
+          .map((field) => ` AND ${alias}.${field} IS NULL`)
+          .join('');
       const rows = this.auth.database
         .prepare(
           `
@@ -220,10 +250,11 @@ export class WorkspaceStore {
           SELECT i.id,i.owner_id,g.shared_at FROM workspace_items i
           JOIN workspace_grants g ON g.item_id=i.id
           WHERE g.user_id=? AND i.owner_id<>? AND i.trashed_at IS NULL
+            AND i.kind IN ('folder','sheet','doc')${membership('i')}
           UNION
           SELECT c.id,c.owner_id,CASE WHEN a.shared_at=0 THEN 0 ELSE max(a.shared_at,c.created_at) END
           FROM workspace_items c JOIN accessible a ON c.parent_id=a.id AND c.owner_id=a.owner_id
-          WHERE c.trashed_at IS NULL
+          WHERE c.trashed_at IS NULL AND c.kind IN ('folder','sheet','doc')${membership('c')}
         ) SELECT id,max(shared_at) AS sharedAt FROM accessible GROUP BY id
           ORDER BY sharedAt DESC,id
       `,
@@ -286,7 +317,18 @@ export class WorkspaceStore {
     );
     const destination = this.auth.database.prepare('SELECT kind FROM workspace_items WHERE id=?');
     for (const row of rows) {
-      const access = this.role(row.user_id, row.item_id);
+      let access = this.role(row.user_id, row.item_id);
+      if (!access && destination.get(row.item_id)?.kind === 'space') {
+        try {
+          // The runtime switch hides Space services, not changes to authority
+          // or destinations. Check dormant roots internally so revoke/regrant
+          // and trash/restore cannot revive a removed personal placement.
+          // This admits only root references; public Space gates stay closed.
+          access = resolveSpaceScope(this.auth, row.user_id, row.item_id, row.item_id).access;
+        } catch (error) {
+          if (!(error instanceof AuthError) || ![401, 403, 404].includes(error.status)) throw error;
+        }
+      }
       if (
         !access ||
         access === 'owner' ||
