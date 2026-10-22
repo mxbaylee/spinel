@@ -1,10 +1,17 @@
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { AddressInfo } from 'node:net';
 import { afterEach, expect, test, vi } from 'vitest';
 import WebSocket from 'ws';
 import { CombCmd, CmdRspCode, UnitAction, UniverType } from '@univerjs/protocol';
+import type {
+  IFetchMissingChangesetsResponse,
+  IGetDeserializedSheetBlockResponse,
+  IGetUnitOnRevResponse,
+} from '@univerjs/protocol';
+import { LocaleType } from '@univerjs/core';
 import { SetRangeValuesMutation } from '@univerjs/sheets';
 import { createApp } from '../../../server/app.ts';
 import { openDatabase } from '../../../server/database.ts';
@@ -13,6 +20,8 @@ import { WorkspaceStore } from '../workspace/store.ts';
 import { SpaceStore } from '../workspace/spaces.ts';
 import { SpaceRecoveryStore } from '../workspace/space-recovery.ts';
 import { SpaceLifecycleStore } from '../workspace/space-lifecycle.ts';
+import { SheetStore } from '../workspace/sheets.ts';
+import { CollaborationStore } from './service.ts';
 
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -93,15 +102,15 @@ async function fixture(spaceReview: boolean) {
       `${base(id)}/snapshot/${id === sheet.id ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC}/unit/${id}/rev/0`,
       credential,
     );
-  const ticket = async (user = editor.id, id = sheet.id) => {
-    const response = await send(`${base(id)}/user/session-ticket?unitID=${id}`, cookie(user));
+  const ticket = async (user = editor.id, id = sheet.id, unitID = id) => {
+    const response = await send(`${base(id)}/user/session-ticket?unitID=${unitID}`, cookie(user));
     expect(response.status).toBe(200);
     return (await response.json()).ticket as string;
   };
-  const open = async (user = editor.id, id = sheet.id, existingTicket?: string) => {
-    const token = existingTicket ?? (await ticket(user, id));
+  const open = async (user = editor.id, id = sheet.id, existingTicket?: string, unitID = id) => {
+    const token = existingTicket ?? (await ticket(user, id, unitID));
     const socket = new WebSocket(
-      `${root.replace('http:', 'ws:')}${base(id)}/comb/connect?sessionTicket=${encodeURIComponent(token)}&unitID=${id}`,
+      `${root.replace('http:', 'ws:')}${base(id)}/comb/connect?sessionTicket=${encodeURIComponent(token)}&unitID=${unitID}`,
       { headers: { Cookie: cookie(user), Origin: origin } },
     );
     sockets.push(socket);
@@ -122,8 +131,8 @@ async function fixture(spaceReview: boolean) {
     });
     return { socket, messages, status };
   };
-  const connect = async (user = editor.id, id = sheet.id) => {
-    const client = await open(user, id);
+  const connect = async (user = editor.id, id = sheet.id, unitID = id) => {
+    const client = await open(user, id, undefined, unitID);
     expect(client.status).toBe(101);
     client.socket.send(JSON.stringify({ cmd: CombCmd.HELLO, routeKey: '', routeType: '' }));
     await expect
@@ -136,9 +145,9 @@ async function fixture(spaceReview: boolean) {
     client.socket.send(
       JSON.stringify({
         cmd: CombCmd.JOIN,
-        routeKey: id,
+        routeKey: unitID,
         routeType: '',
-        joinReq: { rooms: [{ roomID: id }] },
+        joinReq: { rooms: [{ roomID: unitID }] },
       }),
     );
     await expect
@@ -146,13 +155,20 @@ async function fixture(spaceReview: boolean) {
       .toBe(CmdRspCode.OK);
     return { ...client, memberID };
   };
-  const submit = (user: string, memberID: string, value: string, baseRev = 1) =>
-    send(`${base()}/comb/${UniverType.UNIVER_SHEET}/unit/${sheet.id}/new_changes`, cookie(user), {
-      unitID: sheet.id,
+  const submit = (
+    user: string,
+    memberID: string,
+    value: string,
+    baseRev = 1,
+    id = sheet.id,
+    unitID = id,
+  ) =>
+    send(`${base(id)}/comb/${UniverType.UNIVER_SHEET}/unit/${unitID}/new_changes`, cookie(user), {
+      unitID,
       type: UniverType.UNIVER_SHEET,
       memberID,
       changeset: {
-        unitID: sheet.id,
+        unitID,
         type: UniverType.UNIVER_SHEET,
         userID: user,
         memberID,
@@ -164,7 +180,7 @@ async function fixture(spaceReview: boolean) {
           {
             id: SetRangeValuesMutation.id,
             data: JSON.stringify({
-              unitId: sheet.id,
+              unitId: unitID,
               subUnitId: 'first',
               cellValue: { 0: { 0: { v: value } } },
             }),
@@ -375,3 +391,208 @@ test('Space sockets bind the exact pair, deny viewers and stale commits, and evi
   await expect.poll(() => client.socket.readyState).toBe(WebSocket.CLOSED);
   expect((await f.snapshot(f.sheet.id, f.cookie(f.editor.id))).status).toBe(401);
 }, 45_000);
+
+test('Space permission batches resolve one exact unit once and keep Print unavailable without changing ordinary permissions', async () => {
+  const f = await fixture(true);
+  const access = vi.spyOn(CollaborationStore.prototype, 'access');
+  const requests = [
+    ...Array.from({ length: 30 }, (_, index) => ({
+      unitID: f.sheet.id,
+      objectID: `permission-${index}`,
+      actions: [UnitAction.View, UnitAction.Edit, UnitAction.Print],
+    })),
+    {
+      unitID: f.doc.id,
+      objectID: 'wrong-child',
+      actions: [UnitAction.View, UnitAction.Edit, UnitAction.Print],
+    },
+  ];
+  const values = async (user: string) => {
+    access.mockClear();
+    const response = await f.send(f.base() + '/authz/-/object/-/batch_allowed', f.cookie(user), {
+      requests,
+    });
+    expect(response.status).toBe(200);
+    expect(access).toHaveBeenCalledTimes(1);
+    expect(access).toHaveBeenCalledWith(user, f.sheet.id, false, {
+      sessionHash: f.sessions.get(user)!.session.token_hash,
+      spaceId: f.space.id,
+      spaceItem: f.sheet.id,
+    });
+    return (await response.json()).objectActions.map((row: { actions: { allowed: boolean }[] }) =>
+      row.actions.map((action) => action.allowed),
+    ) as boolean[][];
+  };
+  for (const user of [f.owner, f.editor, f.viewer]) {
+    const allowed = await values(user.id);
+    expect(allowed.slice(0, 30)).toEqual(
+      Array.from({ length: 30 }, () => [true, user.id !== f.viewer.id, false]),
+    );
+    expect(allowed[30]).toEqual([false, false, false]);
+  }
+  f.spaces.share(f.owner.id, f.space.id, f.editor.id, null);
+  expect((await values(f.editor.id)).flat().every((allowed) => !allowed)).toBe(true);
+  access.mockClear();
+  const wrongOnly = await f.send(f.base() + '/authz/-/object/-/batch_allowed', f.cookie(), {
+    requests: [requests.at(-1)],
+  });
+  expect(wrongOnly.status).toBe(200);
+  expect(access).not.toHaveBeenCalled();
+  expect(
+    (await wrongOnly.json()).objectActions[0].actions.every(
+      (value: { allowed: boolean }) => !value.allowed,
+    ),
+  ).toBe(true);
+
+  const ordinary = f.workspace.create(f.owner.id, {
+    name: 'Ordinary print permissions',
+    kind: 'sheet',
+    parentId: null,
+  });
+  f.workspace.share(f.owner.id, ordinary.id, f.viewer.id, 'viewer');
+  for (const user of [f.owner, f.viewer]) {
+    const response = await f.send(
+      '/universer-api/authz/-/object/-/batch_allowed',
+      f.cookie(user.id),
+      {
+        requests: [{ unitID: ordinary.id, objectID: ordinary.id, actions: [UnitAction.Print] }],
+      },
+    );
+    expect(response.status).toBe(200);
+    expect((await response.json()).objectActions[0].actions).toEqual([
+      { action: UnitAction.Print, allowed: true },
+    ]);
+  }
+}, 20_000);
+
+test('a rotated Sheet generation supports scoped parsed snapshots, blocks and missing changes while unused revoked tickets cannot upgrade', async () => {
+  const f = await fixture(true);
+  const ordinary = f.workspace.create(f.owner.id, {
+    name: 'Rotated native sheet',
+    kind: 'sheet',
+    parentId: null,
+  });
+  new SheetStore(f.workspace).save(f.owner.id, ordinary.id, {
+    snapshot: {
+      id: ordinary.id,
+      name: ordinary.name,
+      appVersion: '1.1.0',
+      locale: LocaleType.EN_US,
+      sheetOrder: ['first'],
+      styles: {},
+      sheets: {
+        first: {
+          id: 'first',
+          name: 'Retained tab',
+          rowCount: 10,
+          columnCount: 10,
+          cellData: { 0: { 0: { v: 'Retained native cell' } } },
+        },
+      },
+    },
+    revision: 0,
+    writeId: randomUUID(),
+  });
+  expect((await f.send(`/api/items/${ordinary.id}/collaboration`, f.cookie(), {})).status).toBe(
+    200,
+  );
+  const named = await f.send(`/api/items/${ordinary.id}/history`, f.cookie(), {
+    name: 'Existing native checkpoint',
+  });
+  expect(named.status).toBe(201);
+  const checkpoint = (await named.json()).version.id as string;
+  const restored = await f.send(
+    `/api/items/${ordinary.id}/history/${checkpoint}/restore`,
+    f.cookie(),
+    {
+      unitId: ordinary.id,
+      requestId: randomUUID(),
+    },
+  );
+  expect(restored.status).toBe(200);
+  const unitID = (await restored.json()).unitId as string;
+  expect(unitID).not.toBe(ordinary.id);
+  // Deliberate storage fixture, not a new product conversion route: membership
+  // must retain a real existing rotated native generation and checkpoint.
+  f.db
+    .prepare('UPDATE workspace_items SET parent_id=?,space_id=?,space_position=1 WHERE id=?')
+    .run(f.space.id, f.space.id, ordinary.id);
+  const preparation = await f.send(f.api(ordinary.id) + '/collaboration', f.cookie(), {});
+  expect(preparation.status).toBe(200);
+  expect(await preparation.json()).toMatchObject({ unitId: unitID });
+  const prefix = f.base(ordinary.id);
+  const snapshotPath = `/snapshot/2/unit/${unitID}/rev/0`;
+  const response = await f.send(prefix + snapshotPath);
+  expect(response.status).toBe(200);
+  const content = (await response.json()) as IGetUnitOnRevResponse;
+  expect(content.snapshot).toMatchObject({
+    unitID,
+    type: UniverType.UNIVER_SHEET,
+    workbook: { name: ordinary.name },
+  });
+  const blocks = content.snapshot?.workbook?.blockMeta.first?.blocks ?? [];
+  expect(blocks.length).toBeGreaterThan(0);
+  const blockPath = `/snapshot/block/2/unit/${unitID}/block/${blocks[0]}`;
+  const blockResponse = await f.send(prefix + blockPath, f.cookie(f.viewer.id));
+  expect(blockResponse.status).toBe(200);
+  const { block } = (await blockResponse.json()) as IGetDeserializedSheetBlockResponse;
+  expect(block).toMatchObject({ id: blocks[0], data: expect.any(Object) });
+  expect(JSON.stringify(block!.data)).toContain('Retained native cell');
+  const baseRev = Math.max(
+    content.snapshot!.rev,
+    ...content.changesets.map((change) => change.revision),
+  );
+  const missingPath = `/snapshot/2/unit/${unitID}/fetchmissing?from=${baseRev}&to=0`;
+  const missing = async () => {
+    const response = await f.send(prefix + missingPath, f.cookie(f.viewer.id));
+    expect(response.status).toBe(200);
+    return (await response.json()) as IFetchMissingChangesetsResponse;
+  };
+  expect((await missing()).changesets).toEqual([]);
+  const owner = await f.connect(f.owner.id, ordinary.id, unitID);
+  expect(
+    (
+      await f.submit(
+        f.owner.id,
+        owner.memberID,
+        'Saved on the live rotated generation',
+        baseRev,
+        ordinary.id,
+        unitID,
+      )
+    ).status,
+  ).toBe(200);
+  await expect
+    .poll(async () => (await missing()).changesets.map((change) => change.revision))
+    .toEqual([baseRev + 1]);
+  const changes = (await missing()).changesets;
+  expect(changes[0]).toMatchObject({ unitID, baseRev, revision: baseRev + 1 });
+  const mutation = changes[0].mutations.find((change) => change.id === SetRangeValuesMutation.id);
+  expect(mutation).toBeDefined();
+  expect(JSON.parse(mutation!.data)).toMatchObject({
+    unitId: unitID,
+    subUnitId: 'first',
+    cellValue: { 0: { 0: { v: 'Saved on the live rotated generation' } } },
+  });
+
+  for (const path of [snapshotPath, blockPath, missingPath]) {
+    const denied = await f.send(f.base(f.doc.id) + path);
+    expect(denied.status).toBeGreaterThanOrEqual(400);
+    expect(await denied.text()).not.toContain('Retained native');
+    expect((await f.send('/universer-api' + path)).status).toBeGreaterThanOrEqual(400);
+  }
+  expect(
+    (await f.send(`${prefix}/snapshot/2/unit/${ordinary.id}/rev/0`)).status,
+  ).toBeGreaterThanOrEqual(400);
+  expect((await f.send(`${prefix}/user/session-ticket?unitID=${ordinary.id}`)).status).toBe(403);
+  // The ticket was valid when issued and has never been used. Revocation before
+  // HTTP upgrade must be refused before HELLO, independently of socket eviction.
+  const unused = await f.ticket(f.editor.id, ordinary.id, unitID);
+  f.spaces.share(f.owner.id, f.space.id, f.editor.id, null);
+  const revoked = await f.open(f.editor.id, ordinary.id, unused, unitID);
+  expect(revoked.status).toBe(403);
+  expect(revoked.messages).toEqual([]);
+  expect(
+    f.db.prepare('SELECT id FROM history_checkpoints WHERE id=?').get(checkpoint),
+  ).toMatchObject({ id: checkpoint });
+}, 30_000);

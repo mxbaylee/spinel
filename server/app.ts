@@ -2,6 +2,7 @@ import { profileAvatarRoutes } from '../src/server/profileAvatar.ts';
 import express from 'express';
 import { socialPreviewRoutes } from '../src/server/socialPreview.ts';
 import { escapeMarkup } from '../src/shared/markup.ts';
+import { spaceReviewReturnPath, spaceReviewSignInPath } from '../src/shared/spaceReviewRoute.ts';
 import type { Request } from 'express';
 import { mcpRoutes } from '../src/server/mcp/routes.ts';
 import { assistantOAuthRoutes } from '../src/server/auth/oauthRoutes.ts';
@@ -109,13 +110,15 @@ export async function createApp(options: AppOptions) {
       (request, response) => {
         response.set('Cache-Control', 'no-store');
         let identity: ReturnType<typeof documentIdentity>;
+        let spaceScope: ReturnType<typeof protocolSpaceScope>;
         try {
           if (request.headers.origin !== origin) throw new Error('Origin');
+          spaceScope = protocolSpaceScope(request.originalUrl, origin, spaceReview);
           identity = documentIdentity(
             workspace,
             request.headers,
             typeof request.params.guestItem === 'string' ? request.params.guestItem : undefined,
-            protocolSpaceScope(request.originalUrl, origin, spaceReview),
+            spaceScope,
           );
         } catch {
           response.status(403).json({ error: 'This document is not available.' });
@@ -151,19 +154,44 @@ export async function createApp(options: AppOptions) {
           UnitAction.RecoverHistory,
           UnitAction.CreatePermissionObject,
         ];
-        response.json({
-          error: { code: ErrorCode.OK, message: '' },
-          objectActions: requests.map((item) => {
-            let access: string | undefined;
+        // This namespace names one stable child and therefore one live native
+        // unit. Resolve its role once within this synchronous response, never
+        // across requests or awaited work. Repeated permission objects must not
+        // multiply a deep Space ancestry walk.
+        let spaceUnit: string | undefined;
+        let spaceAccess: string | undefined;
+        if (spaceScope) {
+          spaceUnit = collaboration!.generations.active(spaceScope.spaceItem).unitId;
+          if (requests.some((item) => item.unitID === spaceUnit)) {
             try {
-              access = collaboration!.access(
+              spaceAccess = collaboration!.access(
                 identity.userId,
-                item.unitID,
+                spaceUnit,
                 false,
                 identity.customData,
               ).access;
             } catch {
-              /* Do not reveal other documents. */
+              /* Do not reveal unavailable Space children. */
+            }
+          }
+        }
+        response.json({
+          error: { code: ErrorCode.OK, message: '' },
+          objectActions: requests.map((item) => {
+            let access: string | undefined;
+            if (spaceScope) {
+              access = item.unitID === spaceUnit ? spaceAccess : undefined;
+            } else {
+              try {
+                access = collaboration!.access(
+                  identity.userId,
+                  item.unitID,
+                  false,
+                  identity.customData,
+                ).access;
+              } catch {
+                /* Do not reveal other documents. */
+              }
             }
             return {
               unitID: item.unitID,
@@ -177,6 +205,7 @@ export async function createApp(options: AppOptions) {
                     Number.isInteger(action) &&
                     action >= 0 &&
                     action <= 45 &&
+                    !(spaceScope && action === UnitAction.Print) &&
                     !hostActions.includes(action) &&
                     (access !== 'viewer' || readActions.includes(action)),
                 })),
@@ -296,7 +325,10 @@ export async function createApp(options: AppOptions) {
         return;
       }
       if (!user && request.path !== '/sign-in') {
-        response.redirect('/sign-in');
+        response.redirect(
+          (spaceReview && spaceReviewSignInPath(new URL(request.originalUrl, origin))) ||
+            '/sign-in',
+        );
         return;
       }
       if (
@@ -305,7 +337,11 @@ export async function createApp(options: AppOptions) {
           (user.is_admin && request.path === '/') ||
           (!user.is_admin && request.path === '/admin'))
       ) {
-        response.redirect(user.is_admin ? '/admin' : '/');
+        response.redirect(
+          user.is_admin
+            ? '/admin'
+            : (spaceReview && spaceReviewReturnPath(new URL(request.originalUrl, origin))) || '/',
+        );
         return;
       }
       next();

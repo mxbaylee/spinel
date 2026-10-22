@@ -40,17 +40,27 @@ export function attachCollaboration(
   const endpoint = new UniverCollabEndpoint(collab.service, { sessionTicketTtlMs: 30_000 });
   const live = new Map<string, LiveSession>();
   const denied = () => new CollabError('PERMISSION_DENIED', 'This document is not available.');
+  function authorizedScope(userID: string, unitID: string, custom: Record<string, unknown>) {
+    const item = collab.access(userID, unitID, false, custom);
+    // access() has already checked the current account session, exact Space +
+    // stable child, live generation, grant and enabled owner. Space review has
+    // no guest-link lifecycle; the ordinary-only epoch guard must remain closed
+    // to it. No caller gets this branch merely from a Space-looking item ID.
+    if (Object.hasOwn(custom, 'spaceId')) return { item, privacyEpoch: undefined };
+    const privacyEpoch = workspace.links.epoch(item.id);
+    workspace.links.assertEpoch(item.id, privacyEpoch);
+    return { item, privacyEpoch };
+  }
   function current(session: EndpointSession) {
     try {
       validateIdentity(workspace, session.userID, session.customData);
-      const id = collab.itemForUnit(String(session.customData.unitID));
-      workspace.links.assertEpoch(id, session.customData.privacyEpoch);
-      return collab.access(
+      const { item, privacyEpoch } = authorizedScope(
         session.userID,
         String(session.customData.unitID),
-        false,
         session.customData,
       );
+      if (privacyEpoch !== session.customData.privacyEpoch) throw denied();
+      return item;
     } catch {
       throw denied();
     }
@@ -58,9 +68,9 @@ export function attachCollaboration(
   function documentScope(userID: string, url: string | undefined, custom: Record<string, unknown>) {
     const unitID = new URL(url ?? '/', origin).searchParams.get('unitID');
     if (!unitID) throw denied();
-    const item = collab.access(userID, unitID, false, custom);
-    if (item.kind !== 'sheet' && item.kind !== 'doc') throw denied();
-    return unitID;
+    const scope = authorizedScope(userID, unitID, custom);
+    if (scope.item.kind !== 'sheet' && scope.item.kind !== 'doc') throw denied();
+    return { unitID, privacyEpoch: scope.privacyEpoch };
   }
   function scoped(session: EndpointSession, unitID: string) {
     const item = current(session);
@@ -120,12 +130,10 @@ export function attachCollaboration(
       new URL(request.url ?? '/', origin).pathname.endsWith('/universer-api/user/session-ticket')
     ) {
       try {
-        const unitID = documentScope(identity.userId, request.url, identity.customData);
-        const id = collab.itemForUnit(unitID);
-        const epoch = workspace.links.epoch(id);
-        workspace.links.assertEpoch(id, epoch);
-        context.customData.unitID = unitID;
-        context.customData.privacyEpoch = epoch;
+        Object.assign(
+          context.customData,
+          documentScope(identity.userId, request.url, identity.customData),
+        );
       } catch {
         response.writeHead(403).end('This document is not available.');
         return;
@@ -146,15 +154,12 @@ export function attachCollaboration(
         protocolGuestItem(context.incomingMessage.url, origin),
         protocolSpaceScope(context.incomingMessage.url, origin, options.spaceReview),
       );
-      const unitID = documentScope(
+      const scope = documentScope(
         identity.userId,
         context.incomingMessage.url,
         identity.customData,
       );
-      const id = collab.itemForUnit(unitID),
-        epoch = workspace.links.epoch(id);
-      workspace.links.assertEpoch(id, epoch);
-      Object.assign(context.customData, identity.customData, { unitID, privacyEpoch: epoch });
+      Object.assign(context.customData, identity.customData, scope);
     } catch {
       context.reject(403, 'This document is not available.');
       return;

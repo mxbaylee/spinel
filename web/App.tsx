@@ -19,6 +19,9 @@ import { AccessTokens } from './AccessTokens.tsx';
 import { AssistantConnections } from './AssistantConnections.tsx';
 import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
+import { Space } from './Space.tsx';
+import { rememberedFileHref } from './fileNavigation.ts';
+import { spaceReviewReturnPath } from '../src/shared/spaceReviewRoute.ts';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
 import { Rail } from './Rail.tsx';
 import { useBrowserOnline, useServerConnection } from './useConnectionStatus.ts';
@@ -37,6 +40,12 @@ import {
 
 const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
+);
+const SpaceDocEditor = lazy(() =>
+  import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })),
+);
+const SpaceSheetEditor = lazy(() =>
+  import('./SheetEditor.tsx').then((m) => ({ default: m.SheetEditor })),
 );
 
 type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?: string };
@@ -84,8 +93,10 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
   const settings = location.pathname === '/settings';
+  const spaceReview = /^\/review\/spaces(?:\/|$)/.test(location.pathname);
   const connecting = location.pathname === '/connect';
   const [connectRequest] = useState(connectionRequest);
+  const [spaceReturn] = useState(() => spaceReviewReturnPath(location));
   const setup = location.pathname === '/setup';
   const invitation = location.pathname === '/invite';
   const [inviteToken] = useState(() =>
@@ -135,6 +146,7 @@ export function App() {
         setUser(user);
         if (connectRequest && location.pathname === '/sign-in')
           location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
+        else if (spaceReturn && !user.isAdmin) location.assign(spaceReturn);
         if (settings) await refreshKeys();
       } catch (failure) {
         // Only an unreachable server opens local data; a 401 still signs in.
@@ -146,7 +158,7 @@ export function App() {
           return;
         }
         // Authorizing an assistant always needs a live, verified session.
-        if (connecting || connectRequest) {
+        if (connecting || connectRequest || spaceReview || spaceReturn) {
           setUnreachable(true);
           return;
         }
@@ -162,7 +174,16 @@ export function App() {
         setLoaded(true);
       }
     })();
-  }, [settings, setup, invitation, inviteToken, connecting, connectRequest]);
+  }, [
+    settings,
+    setup,
+    invitation,
+    inviteToken,
+    connecting,
+    connectRequest,
+    spaceReview,
+    spaceReturn,
+  ]);
   useEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
@@ -240,7 +261,9 @@ export function App() {
         location.assign(
           connectRequest && !setup && !invitation
             ? `/connect?request=${encodeURIComponent(connectRequest)}`
-            : (result.redirect ?? '/'),
+            : spaceReturn && !setup && !invitation && result.redirect !== '/admin'
+              ? spaceReturn
+              : (result.redirect ?? '/'),
         );
     } catch (failure) {
       if (!current.cancelled) {
@@ -284,6 +307,63 @@ export function App() {
       unsaved.current ||= hadUnsavedChanges;
       setError('Could not sign out. Check your connection and try again.');
     }
+  }
+  if (spaceReview) {
+    if (!loaded)
+      return (
+        <main>
+          <p role="status">Loading…</p>
+        </main>
+      );
+    if (unreachable || local)
+      return (
+        <main>
+          <OfflineUnreachable />
+        </main>
+      );
+    if (!user || user.isAdmin)
+      return (
+        <main>
+          <p role="alert">This Space is not available.</p>
+        </main>
+      );
+    return (
+      <>
+        {error && <p role="alert">{error}</p>}
+        <Space
+          key={user.id}
+          user={user}
+          navigation={navigation}
+          connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
+          onSignOut={() => void signOut()}
+          onExit={() => location.assign(rememberedFileHref(user.id))}
+          onConnectionState={setEditorConnection}
+          renderEditor={({ spaceId, item, onDirty, onConnectionState }) => (
+            <Suspense fallback={<p role="status">Opening page…</p>}>
+              {item.kind === 'doc' ? (
+                <SpaceDocEditor
+                  key={spaceId + ':' + item.id}
+                  spaceId={spaceId}
+                  id={item.id}
+                  name={item.name}
+                  onDirty={onDirty}
+                  onConnectionState={onConnectionState}
+                />
+              ) : (
+                <SpaceSheetEditor
+                  key={spaceId + ':' + item.id}
+                  spaceId={spaceId}
+                  id={item.id}
+                  name={item.name}
+                  onDirty={onDirty}
+                  onConnectionState={onConnectionState}
+                />
+              )}
+            </Suspense>
+          )}
+        />
+      </>
+    );
   }
   return (
     <div className="workspace">

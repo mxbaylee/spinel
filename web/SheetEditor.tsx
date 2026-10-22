@@ -117,13 +117,15 @@ export function SheetEditor({
             false,
             spaceId ? { spaceId, itemId: id } : undefined,
           ),
-          mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
+          ...(!spaceId ? [mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin] : []),
         ],
         presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
       });
-      print.current = async () => {
-        await univerAPI.executeCommand(SheetPrintOpenOperation.id);
-      };
+      print.current = spaceId
+        ? null
+        : async () => {
+            await univerAPI.executeCommand(SheetPrintOpenOperation.id);
+          };
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => univer.dispose();
@@ -196,7 +198,9 @@ export function SheetEditor({
           if (!permissions.getPermissionPoint(point.id)) permissions.addPermissionPoint(point);
           permissions.updatePermissionPoint(
             point.id,
-            [UnitAction.View, UnitAction.Copy, UnitAction.Print].includes(point.subType),
+            [UnitAction.View, UnitAction.Copy, ...(!spaceId ? [UnitAction.Print] : [])].includes(
+              point.subType,
+            ),
           );
         }
         readOnlySheetDrawings(univer, data.unitId);

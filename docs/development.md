@@ -166,11 +166,12 @@ see [the process](todo/process.md#pull-requests-and-main).
   same gate and current everyday-account authorization. Native access carries
   the exact Space and stable child plus the current session through reads,
   sockets and after-await checks; ordinary item, guest and MCP paths stay closed.
-  Images, formulas, public history, exports and offline preparation remain
-  unavailable for this slice; automatic Space history capture is explicitly
+  Images, Doc Formula and cross-file formula integration, public history,
+  exports and offline preparation remain unavailable for this slice. Native
+  within-Sheet formulas remain supported; automatic Space history capture is explicitly
   deferred, preserving existing checkpoints. SPN-092 owns those integrations
   and ordinary activation. This flag gives Operators no document privileges.
-  [Decision #137](https://github.com/mxbaylee/spinel/issues/137), 2026-10-21;
+  [Decision #137](https://github.com/mxbaylee/spinel/issues/137), 2026-10-22;
   [implementation contract](implementation/SPN-091.md).
 - React and React DOM are pinned to 18.3.1. On 2026-10-17, published
   `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support

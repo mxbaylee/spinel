@@ -260,7 +260,7 @@ export function DocEditor({
           UniverDocsDrawingPlugin,
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
-          UniverDocsPrintPlugin,
+          ...(!spaceId ? [UniverDocsPrintPlugin] : []),
           ...collaborationPlugins(
             data.unitId,
             [[IImageIoService, { useClass: StoredImages }]],
@@ -295,9 +295,11 @@ export function DocEditor({
           UniverDocsHyperLinkPreset(),
         ],
       });
-      print.current = async () => {
-        await printDocument(univerAPI);
-      };
+      print.current = spaceId
+        ? null
+        : async () => {
+            await printDocument(univerAPI);
+          };
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
         stopTheme();
