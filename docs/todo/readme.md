@@ -31,7 +31,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 17 | 🚪 [SPN-083](SPN-083.md) Apply the approved entry and consent screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
 | 18 | 🪟 [SPN-084](SPN-084.md) Apply the approved guest and unavailable screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
 | 19 | 🕰️ [SPN-085](SPN-085.md) Apply the approved history browser design | 🌿 M | 💜 M | 5 (own 4) | — | — | Approve the implementation screenshots |
-| 20 | 🪢 [SPN-092](SPN-092.md) Share Spaces with guests and verify integrations | 🌳 L | 💜 M | 4 (own 3) | Unblocks SPN-079 | — | Approve the Space guest/sharing design and PR screenshots |
+| 20 | 🪢 [SPN-092](SPN-092.md) Share Spaces with guests and verify integrations | 🏔️ XL | 💜 M | 4 (own 2) | Unblocks SPN-079 | — | — |
 | 21 | 📈 [SPN-032](SPN-032.md) Show server health to the operator | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
 | 22 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 4 | Lower ID | [SPN-055](SPN-055.md) | — |
 | 23 | 🧯 [SPN-063](SPN-063.md) Regularly prove Spinel can recover from its backups | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
