@@ -52,7 +52,7 @@ function validateScope(scope: OfflineScope) {
       (typeof scope.spaceId !== 'string' || !scope.spaceId || scope.spaceId === scope.itemId)) ||
     typeof scope.unitId !== 'string' ||
     !scope.unitId ||
-    !['owner', 'editor', 'viewer'].includes(scope.access) ||
+    !['owner', 'admin', 'editor', 'viewer'].includes(scope.access) ||
     !['doc', 'sheet'].includes(scope.kind) ||
     scope.sdkVersion !== OFFLINE_SDK_VERSION ||
     scope.schema !== 1 ||

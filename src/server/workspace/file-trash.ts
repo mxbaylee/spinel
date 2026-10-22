@@ -180,8 +180,9 @@ export class FileTrash {
   trash(user: string, id: string) {
     return this.workspace.auth.transaction(() => {
       this.actor(user);
-      this.files.get(user, id, 'owner');
-      const graph = this.graph(user, [id]);
+      this.files.get(user, id, 'admin');
+      const owner = this.workspace.fileOwner(id);
+      const graph = this.graph(owner, [id]);
       const root = graph.rows.find((row) => row.id === id)!;
       const children = this.children(graph.rows);
       const pending = [root];
@@ -201,7 +202,7 @@ export class FileTrash {
         WHERE id=? AND owner_id=? AND trashed_at IS NULL AND space_id IS NULL AND space_position IS NULL`);
       let count = 0;
       for (const row of change) {
-        if (update.run(now, batch, now, row.id, user).changes !== 1) throw unavailable();
+        if (update.run(now, batch, now, row.id, owner).changes !== 1) throw unavailable();
         count += row.kind === 'space' ? graph.spaces.get(row.id)!.items.length + 1 : 1;
       }
       this.workspace.cleanPlacements();

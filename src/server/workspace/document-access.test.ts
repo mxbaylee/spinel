@@ -594,3 +594,48 @@ test('source scopes retain the original family and independently authorize each 
     AuthError,
   );
 });
+
+test('File admin keeps exact account/PAT/OAuth scope and immediately loses downgraded or disabled authority', async () => {
+  const f = fixture();
+  f.spaces.share(f.owner.id, f.root.id, f.editor.id, 'admin');
+  f.workspace.share(f.owner.id, f.ordinary.id, f.editor.id, 'admin');
+  const pat = f.pat(f.editor.id);
+  const readOnly = await f.connected(f.editor.id, ['documents:read']);
+  const readWrite = await f.connected(f.editor.id);
+  const contexts = [f.scoped(f.editor.id), pat.custom, readOnly.custom, readWrite.custom];
+  for (const custom of contexts) {
+    expect(read(f, f.editor.id, custom).access).toBe('admin');
+    expect(() =>
+      read(
+        f,
+        f.editor.id,
+        { ...custom, spaceId: f.other.id, spaceItem: f.otherChild.id },
+        f.otherChild.id,
+      ),
+    ).toThrow();
+  }
+  for (const custom of [f.scoped(f.editor.id), pat.custom, readWrite.custom])
+    expect(resolveDocument(f.workspace, f.editor.id, f.child.id, 'edit', custom).access).toBe(
+      'admin',
+    );
+  expect(() =>
+    resolveDocument(f.workspace, f.editor.id, f.child.id, 'edit', readOnly.custom),
+  ).toThrow();
+  expect(
+    resolveDocument(f.workspace, f.editor.id, f.ordinary.id, 'edit', f.account(f.editor.id)).access,
+  ).toBe('admin');
+  for (const role of ['editor', 'viewer', null] as const) {
+    f.spaces.share(f.owner.id, f.root.id, f.editor.id, role);
+    for (const custom of contexts) {
+      if (role) expect(read(f, f.editor.id, custom).access).toBe(role);
+      else expect(() => read(f, f.editor.id, custom)).toThrow();
+      if (role !== 'editor')
+        expect(() =>
+          resolveDocument(f.workspace, f.editor.id, f.child.id, 'edit', custom),
+        ).toThrow();
+    }
+  }
+  f.spaces.share(f.owner.id, f.root.id, f.editor.id, 'admin');
+  f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.editor.id);
+  for (const custom of contexts) expect(() => read(f, f.editor.id, custom)).toThrow();
+});

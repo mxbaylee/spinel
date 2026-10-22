@@ -28,9 +28,9 @@ async function capture(page: Page, info: TestInfo, name: string) {
       await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
       await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
     }
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
-      true,
-    );
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+      .toBe(true);
     await page.screenshot({
       path: `test-results/theme-screenshots/spn-064-${name}-${variant}-${info.project.name}.png`,
       animations: 'disabled',

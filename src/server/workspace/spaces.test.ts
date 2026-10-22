@@ -231,7 +231,7 @@ test('root grants accept only active everyday recipients and retain original sha
   const f = fixture();
   for (const recipient of [f.owner.id, f.admin.id, 'missing', 'guest:missing'])
     expect(() => f.spaces.share(f.owner.id, f.space.id, recipient, 'editor')).toThrow();
-  for (const role of ['owner', 'admin', 'unknown', undefined])
+  for (const role of ['owner', 'unknown', undefined])
     expect(() => f.spaces.share(f.owner.id, f.space.id, f.editor.id, role)).toThrow(
       'Choose a person',
     );
@@ -243,6 +243,8 @@ test('root grants accept only active everyday recipients and retain original sha
   const first = grant();
   f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'editor');
   expect(grant()).toEqual({ ...first, role: 'editor' });
+  f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'admin');
+  expect(grant()).toEqual({ ...first, role: 'admin' });
   f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.editor.id);
   expect(() => f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'viewer')).toThrow(
     'active everyday account',

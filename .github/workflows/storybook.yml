@@ -104,7 +104,9 @@ jobs:
     if: needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     # Each viewport downloads the same build and keeps its complete review coverage.
-    timeout-minutes: 15
+    # Slow runner dependency mirrors can consume 12 minutes before this viewport's
+    # extra icon suite and full catalogue start. Keep all assertions and captures.
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

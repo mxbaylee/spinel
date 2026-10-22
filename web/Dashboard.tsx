@@ -1,6 +1,6 @@
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { FILE_KINDS, fileKindLabel } from '../src/shared/workspace.ts';
+import { FILE_KINDS, fileKindLabel, canAdminister, accessLabel } from '../src/shared/workspace.ts';
 import type { FileKind, FileItem, WorkspaceItem } from '../src/shared/workspace.ts';
 
 import { Sharing } from './Sharing.tsx';
@@ -87,6 +87,31 @@ export function Dashboard({
   const [name, setName] = useState('');
   const [kind, setKind] = useState<FileKind>('folder');
   const [destination, setDestination] = useState('');
+  const [moveFolders, setMoveFolders] = useState<WorkspaceItem[]>([]);
+  const [loadingDestinations, setLoadingDestinations] = useState(false);
+  useEffect(() => {
+    if (action?.mode !== 'move' || action.item?.access !== 'admin') {
+      setLoadingDestinations(false);
+      setMoveFolders([]);
+      return;
+    }
+    let current = true;
+    setLoadingDestinations(true);
+    setMoveFolders([]);
+    void itemsRequest<{ items: WorkspaceItem[] }>(`/${action.item.id}/destinations`)
+      .then(({ items }) => {
+        if (current) setMoveFolders(items);
+      })
+      .catch((failure) => {
+        if (current) setError(failure.message);
+      })
+      .finally(() => {
+        if (current) setLoadingDestinations(false);
+      });
+    return () => {
+      current = false;
+    };
+  }, [action]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [syncedAt, setSyncedAt] = useState(local?.catalog.syncedAt ?? 0);
@@ -215,7 +240,7 @@ export function Dashboard({
   // Sort siblings, then traverse by parent ID so similar or duplicate names
   // cannot interleave unrelated subtrees.
   const children = new Map<string | null, FileItem[]>();
-  for (const item of items.filter((item) => item.kind === 'folder')) {
+  for (const item of items.filter((item) => item.kind === 'folder' && item.access === 'owner')) {
     const siblings = children.get(item.parentId) ?? [];
     siblings.push(item);
     children.set(item.parentId, siblings);
@@ -281,9 +306,13 @@ export function Dashboard({
             ? { name }
             : { parentId: destination || null },
       );
-      setItems((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
+      setItems((previous) => [
+        ...previous.filter((entry) => entry.id !== item.id),
+        ...(item.access === 'owner' ? [item] : []),
+      ]);
       setViewed((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
       setAction(null);
+      if (item.access === 'admin') await shared.refresh();
       if (action.mode === 'new' && item.kind !== 'folder') openFile(item);
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'Could not save. Try again.');
@@ -339,6 +368,7 @@ export function Dashboard({
       navigate(item.parentId, false);
       setRefresh((value) => value + 1);
       await reloadItems();
+      if (item.access === 'admin') await shared.refresh();
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'Could not move to trash. Try again.');
     } finally {
@@ -374,12 +404,37 @@ export function Dashboard({
       </button>
     );
   }
+  function personalFiling(item: FileItem) {
+    if (item.access === 'owner') return null;
+    return (
+      <>
+        <button
+          disabled={busy || shared.busy}
+          aria-label={`File ${item.name}`}
+          onClick={() => edit('file', item)}
+        >
+          File into folder
+        </button>
+        {shared.items.some(
+          (entry) => entry.id === item.id && entry.placementParentId !== undefined,
+        ) && (
+          <button
+            disabled={shared.busy}
+            aria-label={`Remove ${item.name} from my folder`}
+            onClick={() => void shared.place(item.id, null, true)}
+          >
+            Remove from my folder
+          </button>
+        )}
+      </>
+    );
+  }
   function actions(item: FileItem) {
     // Local mode is read-only: nothing here may reach the server.
     if (local)
       return item.access === 'owner' ? null : (
         <span className="item-actions">
-          <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>
+          <span>{accessLabel(item.access)}</span>
         </span>
       );
     const tagButton = item.kind !== 'folder' && (
@@ -387,35 +442,20 @@ export function Dashboard({
         Tags
       </button>
     );
-    if (item.access !== 'owner')
+    if (!canAdminister(item.access))
       return (
         <span className="item-actions">
-          <span>{item.access === 'editor' ? 'Can edit' : 'View only'}</span>
+          <span>{accessLabel(item.access)}</span>
           {tagButton}
           {offlineToggle(item)}
-          <button
-            disabled={busy || shared.busy}
-            aria-label={`File ${item.name}`}
-            onClick={() => edit('file', item)}
-          >
-            File into folder
-          </button>
-          {shared.items.some(
-            (entry) => entry.id === item.id && entry.placementParentId !== undefined,
-          ) && (
-            <button
-              disabled={shared.busy}
-              aria-label={`Remove ${item.name} from my folder`}
-              onClick={() => void shared.place(item.id, null, true)}
-            >
-              Remove from my folder
-            </button>
-          )}
+          {personalFiling(item)}
         </span>
       );
     if (item.kind === 'space')
       return (
         <span className="item-actions">
+          {item.access === 'admin' && <span>File admin</span>}
+          {personalFiling(item)}
           {tagButton}
           <SpaceRootActions
             item={item}
@@ -432,17 +472,21 @@ export function Dashboard({
                 previous.map((entry) => (entry.id === updated.id ? updated : entry)),
               );
               setRefresh((value) => value + 1);
+              if (item.access === 'admin') void shared.refresh();
             }}
             onTrashed={() => {
               setViewed((previous) => previous.filter((entry) => entry.id !== item.id));
               setRefresh((value) => value + 1);
               void reloadItems().catch((failure) => setError(failure.message));
+              if (item.access === 'admin') void shared.refresh();
             }}
           />
         </span>
       );
     return (
       <span className="item-actions">
+        {item.access === 'admin' && <span>File admin</span>}
+        {personalFiling(item)}
         {tagButton}
         <button disabled={busy} onClick={() => setSharing(item)} aria-label={`Share ${item.name}`}>
           Share
@@ -769,11 +813,25 @@ export function Dashboard({
                     Destination
                     <select
                       value={destination}
-                      disabled={busy}
+                      disabled={
+                        busy ||
+                        (action.mode === 'move' &&
+                          action.item?.access === 'admin' &&
+                          (loadingDestinations || moveFolders.length === 0))
+                      }
                       onChange={(event) => setDestination(event.target.value)}
                     >
-                      <option value="">My files</option>
-                      {folders
+                      {action.mode === 'move' && action.item?.access === 'admin' ? (
+                        <option value="" disabled>
+                          Choose a folder
+                        </option>
+                      ) : (
+                        <option value="">My files</option>
+                      )}
+                      {(action.mode === 'move' && action.item?.access === 'admin'
+                        ? moveFolders.map((item) => ({ item, path: [item] }))
+                        : folders
+                      )
                         .filter(({ path }) => !path.some((item) => item.id === action.item!.id))
                         .map(({ item, path }) => (
                           <option key={item.id} value={item.id}>
@@ -783,11 +841,26 @@ export function Dashboard({
                     </select>
                   </label>
                 )}
+                {action.mode === 'move' &&
+                  action.item?.access === 'admin' &&
+                  (loadingDestinations ? (
+                    <p role="status">Loading authorized folders…</p>
+                  ) : moveFolders.length === 0 ? (
+                    <p role="status">
+                      No authorized folders are available. Ask the Owner to grant File admin access
+                      to a destination folder.
+                    </p>
+                  ) : null)}
                 <div className="item-actions">
                   <button
                     className="primary"
                     disabled={
-                      busy || (action.mode !== 'move' && action.mode !== 'file' && !name.trim())
+                      busy ||
+                      (action.mode === 'move' &&
+                        action.item?.access === 'admin' &&
+                        loadingDestinations) ||
+                      (action.mode === 'move' && action.item?.access === 'admin' && !destination) ||
+                      (action.mode !== 'move' && action.mode !== 'file' && !name.trim())
                     }
                   >
                     {action.mode === 'new' ? 'Create' : 'Save'}

@@ -409,47 +409,72 @@ test.each(
   },
 );
 
-test('Space sources outside the host root need independent current account access', async () => {
-  const f = fixture();
-  const definition = f.definition(
-    "=SUM(Budget.Summary.A1,'Remote budget'.Summary.A1,'External budget'.Summary.A1)",
-    [f.source.id, f.remoteSource.id, f.ordinary.id],
-  );
-  expect(f.formulas.sources(f.reader.id, f.host.id, f.verify, f.readerContext)).toEqual(
-    expect.arrayContaining([
-      { itemId: f.source.id, name: 'Budget' },
-      { itemId: f.second.id, name: 'Forecast' },
-    ]),
-  );
-  expect(
-    await f.formulas.evaluate(f.reader.id, f.host.id, definition, f.verify, false, f.readerContext),
-  ).toEqual({ ok: false, reason: 'private-source' });
-  expect(f.prepare).not.toHaveBeenCalled();
-  expect(f.calculate).not.toHaveBeenCalled();
-  f.spaces.share(f.external.id, f.remote.id, f.reader.id, 'viewer');
-  f.workspace.share(f.external.id, f.ordinary.id, f.reader.id, 'viewer');
-  expect(
-    await f.formulas.evaluate(f.reader.id, f.host.id, definition, f.verify, false, f.readerContext),
-  ).toEqual({ ok: true, kind: 'scalar', value: 42 });
-  expect(f.load).toHaveBeenCalledWith(f.reader.id, f.remoteSource.id, {
-    sessionHash: f.readerContext.sessionHash,
-    spaceId: f.remote.id,
-    spaceItem: f.remoteSource.id,
-  });
-  expect(f.load).toHaveBeenCalledWith(f.reader.id, f.ordinary.id, {
-    sessionHash: f.readerContext.sessionHash,
-  });
-  f.calculate.mockImplementationOnce(async () => {
-    f.spaces.share(f.external.id, f.remote.id, f.reader.id, null);
-    return { ok: true, kind: 'scalar', value: 'PRIVATE RESULT' };
-  });
-  expect(
-    await f.formulas.evaluate(f.reader.id, f.host.id, definition, f.verify, false, f.readerContext),
-  ).toEqual({ ok: false, reason: 'private-source' });
-  expect(
-    JSON.stringify(f.formulas.sources(f.reader.id, f.host.id, f.verify, f.readerContext)),
-  ).not.toContain('Remote budget');
-});
+test.each(['editor', 'admin'] as const)(
+  'Space %s sources outside the host root need independent current account access',
+  async (role) => {
+    const f = fixture();
+    f.spaces.share(f.owner.id, f.root.id, f.reader.id, role);
+    const definition = f.definition(
+      "=SUM(Budget.Summary.A1,'Remote budget'.Summary.A1,'External budget'.Summary.A1)",
+      [f.source.id, f.remoteSource.id, f.ordinary.id],
+    );
+    expect(f.formulas.sources(f.reader.id, f.host.id, f.verify, f.readerContext)).toEqual(
+      expect.arrayContaining([
+        { itemId: f.source.id, name: 'Budget' },
+        { itemId: f.second.id, name: 'Forecast' },
+      ]),
+    );
+    expect(
+      await f.formulas.evaluate(
+        f.reader.id,
+        f.host.id,
+        definition,
+        f.verify,
+        false,
+        f.readerContext,
+      ),
+    ).toEqual({ ok: false, reason: 'private-source' });
+    expect(f.prepare).not.toHaveBeenCalled();
+    expect(f.calculate).not.toHaveBeenCalled();
+    f.spaces.share(f.external.id, f.remote.id, f.reader.id, 'viewer');
+    f.workspace.share(f.external.id, f.ordinary.id, f.reader.id, 'viewer');
+    expect(
+      await f.formulas.evaluate(
+        f.reader.id,
+        f.host.id,
+        definition,
+        f.verify,
+        false,
+        f.readerContext,
+      ),
+    ).toEqual({ ok: true, kind: 'scalar', value: 42 });
+    expect(f.load).toHaveBeenCalledWith(f.reader.id, f.remoteSource.id, {
+      sessionHash: f.readerContext.sessionHash,
+      spaceId: f.remote.id,
+      spaceItem: f.remoteSource.id,
+    });
+    expect(f.load).toHaveBeenCalledWith(f.reader.id, f.ordinary.id, {
+      sessionHash: f.readerContext.sessionHash,
+    });
+    f.calculate.mockImplementationOnce(async () => {
+      f.spaces.share(f.external.id, f.remote.id, f.reader.id, null);
+      return { ok: true, kind: 'scalar', value: 'PRIVATE RESULT' };
+    });
+    expect(
+      await f.formulas.evaluate(
+        f.reader.id,
+        f.host.id,
+        definition,
+        f.verify,
+        false,
+        f.readerContext,
+      ),
+    ).toEqual({ ok: false, reason: 'private-source' });
+    expect(
+      JSON.stringify(f.formulas.sources(f.reader.id, f.host.id, f.verify, f.readerContext)),
+    ).not.toContain('Remote budget');
+  },
+);
 
 test('ordinary hosts can use an independently authorized Space source without opening legacy Space routes', async () => {
   const f = fixture();

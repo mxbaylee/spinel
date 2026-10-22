@@ -290,6 +290,9 @@ export function workspaceRoutes(
   router.get('/:id/sharing', (request, response) =>
     response.json({ people: catalog.sharing(owner(request), String(request.params.id)) }),
   );
+  router.get('/:id/destinations', (request, response) =>
+    response.json({ items: catalog.moveDestinations(owner(request), String(request.params.id)) }),
+  );
   router.put('/:id/sharing', (request, response) => {
     const body = payload(request, ['userId', 'role']);
     response.json({

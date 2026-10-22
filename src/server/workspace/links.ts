@@ -2,7 +2,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import type { IncomingHttpHeaders } from 'node:http';
 import { AuthError } from '../auth/store.ts';
 import type { AuthStore } from '../auth/store.ts';
-import type { GrantRole } from '../../shared/workspace.ts';
+import type { GuestRole } from '../../shared/workspace.ts';
 import { isOrdinaryItem } from './ordinary-scope.ts';
 import { currentGuestSession } from './guest-session.ts';
 import { resolveSpaceScope } from './space-scope.ts';
@@ -83,7 +83,7 @@ export class LinkAccess {
     return this.auth.database
       .prepare('SELECT epoch,state,role FROM workspace_links WHERE item_id=?')
       .get(id) as
-      { epoch: number; state: 'off' | 'pending' | 'active'; role: GrantRole } | undefined;
+      { epoch: number; state: 'off' | 'pending' | 'active'; role: GuestRole } | undefined;
   }
   epoch(id: string) {
     return this.state(id)?.epoch ?? 0;
@@ -93,7 +93,7 @@ export class LinkAccess {
     const state = this.state(id);
     if (state?.state === 'pending' || (state?.epoch ?? 0) !== epoch) throw linkGone();
   }
-  begin(id: string, role: GrantRole | null) {
+  begin(id: string, role: GuestRole | null) {
     return this.auth.transaction(() => {
       if (!this.available(id)) throw linkGone();
       if (this.state(id)?.state === 'pending')

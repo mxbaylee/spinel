@@ -174,50 +174,54 @@ const png = (background = '#c733aa') =>
 const imageRows = (db: DatabaseSync) =>
   db.prepare('SELECT * FROM doc_images ORDER BY item_id,id').all();
 
-test('Space image reads and Doc uploads use the current role and leave ordinary snapshots closed', async () => {
-  const f = fixture();
-  const bytes = await png();
-  const uploaded = await f.docs.upload(
-    f.editor.id,
-    f.doc.id,
-    bytes,
-    'image/png',
-    f.context(f.editor.id),
-  );
-  expect(uploaded.url).toBe(`/api/items/${f.doc.id}/images/${uploaded.id}`);
-  expect(await f.docs.upload(f.owner.id, f.doc.id, bytes, 'image/png', f.context())).toEqual(
-    uploaded,
-  );
-  expect(
-    Buffer.from(f.docs.image(f.viewer.id, f.doc.id, uploaded.id, f.context(f.viewer.id)).data),
-  ).toEqual(bytes);
-  await expect(
-    f.docs.upload(f.viewer.id, f.doc.id, bytes, 'image/png', f.context(f.viewer.id)),
-  ).rejects.toThrow();
-  for (const user of [f.outsider, f.operator])
-    expect(() => f.docs.image(user.id, f.doc.id, uploaded.id, f.context(user.id))).toThrow();
-  expect(() => f.docs.image(f.owner.id, f.doc.id, uploaded.id)).toThrow();
-  expect(() => f.docs.load(f.owner.id, f.doc.id)).toThrow();
-  expect(() =>
-    f.docs.save(f.owner.id, f.doc.id, {
-      snapshot: f.snapshots.get(f.doc.id),
-      revision: 0,
-      writeId: randomUUID(),
-    }),
-  ).toThrow();
-  expect(() => f.workspace.get(f.owner.id, f.doc.id)).toThrow();
-  await expect(
-    f.docs.upload(f.owner.id, f.sheet.id, bytes, 'image/png', f.context(f.owner.id, f.sheet.id)),
-  ).rejects.toThrow();
-  f.db
-    .prepare('INSERT INTO doc_images SELECT ?,id,mime,data FROM doc_images WHERE item_id=?')
-    .run(f.sheet.id, f.doc.id);
-  expect(
-    Buffer.from(
-      f.docs.image(f.viewer.id, f.sheet.id, uploaded.id, f.context(f.viewer.id, f.sheet.id)).data,
-    ),
-  ).toEqual(bytes);
-});
+test.each(['editor', 'admin'] as const)(
+  'Space %s image reads and Doc uploads use the current role and leave ordinary snapshots closed',
+  async (role) => {
+    const f = fixture();
+    f.spaces.share(f.owner.id, f.space.id, f.editor.id, role);
+    const bytes = await png();
+    const uploaded = await f.docs.upload(
+      f.editor.id,
+      f.doc.id,
+      bytes,
+      'image/png',
+      f.context(f.editor.id),
+    );
+    expect(uploaded.url).toBe(`/api/items/${f.doc.id}/images/${uploaded.id}`);
+    expect(await f.docs.upload(f.owner.id, f.doc.id, bytes, 'image/png', f.context())).toEqual(
+      uploaded,
+    );
+    expect(
+      Buffer.from(f.docs.image(f.viewer.id, f.doc.id, uploaded.id, f.context(f.viewer.id)).data),
+    ).toEqual(bytes);
+    await expect(
+      f.docs.upload(f.viewer.id, f.doc.id, bytes, 'image/png', f.context(f.viewer.id)),
+    ).rejects.toThrow();
+    for (const user of [f.outsider, f.operator])
+      expect(() => f.docs.image(user.id, f.doc.id, uploaded.id, f.context(user.id))).toThrow();
+    expect(() => f.docs.image(f.owner.id, f.doc.id, uploaded.id)).toThrow();
+    expect(() => f.docs.load(f.owner.id, f.doc.id)).toThrow();
+    expect(() =>
+      f.docs.save(f.owner.id, f.doc.id, {
+        snapshot: f.snapshots.get(f.doc.id),
+        revision: 0,
+        writeId: randomUUID(),
+      }),
+    ).toThrow();
+    expect(() => f.workspace.get(f.owner.id, f.doc.id)).toThrow();
+    await expect(
+      f.docs.upload(f.owner.id, f.sheet.id, bytes, 'image/png', f.context(f.owner.id, f.sheet.id)),
+    ).rejects.toThrow();
+    f.db
+      .prepare('INSERT INTO doc_images SELECT ?,id,mime,data FROM doc_images WHERE item_id=?')
+      .run(f.sheet.id, f.doc.id);
+    expect(
+      Buffer.from(
+        f.docs.image(f.viewer.id, f.sheet.id, uploaded.id, f.context(f.viewer.id, f.sheet.id)).data,
+      ),
+    ).toEqual(bytes);
+  },
+);
 
 test('Space images require the exact root, child and credential without borrowing an accessible sibling image', async () => {
   const f = fixture();
@@ -412,36 +416,47 @@ test('an MCP token revoked during image decode cannot publish bytes', async () =
   expect(imageRows(f.db)).toEqual([]);
 });
 
-test('scoped native exports preserve current Docs, Sheets and exact-child embedded images for account View', async () => {
-  const f = fixture();
-  const bytes = await png();
-  const image = await f.docs.upload(f.owner.id, f.doc.id, bytes, 'image/png', f.context());
-  const snapshot = f.snapshots.get(f.doc.id) as IDocumentData;
-  snapshot.drawings = {
-    picture: { source: image.url, imageSourceType: 'URL' },
-  } as unknown as IDocumentData['drawings'];
-  const before = structuredClone(snapshot);
-  const custom = f.context(f.viewer.id);
-  const exported = await f.files.export(f.viewer.id, f.doc.id, () => {}, custom);
-  expect(exported.filename).toBe('Notes.univer.json');
-  expect(JSON.parse(exported.text).drawings.picture.source).toBe(
-    `data:image/png;base64,${bytes.toString('base64')}`,
-  );
-  expect(snapshot).toEqual(before);
-  expect(f.prepare).toHaveBeenCalledWith(f.viewer.id, f.doc.id, custom);
-  expect(f.load).toHaveBeenCalledWith(f.viewer.id, f.doc.id, custom);
-  expect(
-    JSON.parse(
-      (await f.files.export(f.viewer.id, f.sheet.id, () => {}, f.context(f.viewer.id, f.sheet.id)))
-        .text,
-    ),
-  ).toEqual(f.snapshots.get(f.sheet.id));
-  f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'viewer');
-  expect(
-    JSON.parse((await f.files.export(f.editor.id, f.doc.id, () => {}, f.context(f.editor.id))).text)
-      .body,
-  ).toEqual(snapshot.body);
-});
+test.each(['viewer', 'admin'] as const)(
+  'scoped native exports preserve current Docs, Sheets and exact-child embedded images for account %s',
+  async (role) => {
+    const f = fixture();
+    f.spaces.share(f.owner.id, f.space.id, f.viewer.id, role);
+    const bytes = await png();
+    const image = await f.docs.upload(f.owner.id, f.doc.id, bytes, 'image/png', f.context());
+    const snapshot = f.snapshots.get(f.doc.id) as IDocumentData;
+    snapshot.drawings = {
+      picture: { source: image.url, imageSourceType: 'URL' },
+    } as unknown as IDocumentData['drawings'];
+    const before = structuredClone(snapshot);
+    const custom = f.context(f.viewer.id);
+    const exported = await f.files.export(f.viewer.id, f.doc.id, () => {}, custom);
+    expect(exported.filename).toBe('Notes.univer.json');
+    expect(JSON.parse(exported.text).drawings.picture.source).toBe(
+      `data:image/png;base64,${bytes.toString('base64')}`,
+    );
+    expect(snapshot).toEqual(before);
+    expect(f.prepare).toHaveBeenCalledWith(f.viewer.id, f.doc.id, custom);
+    expect(f.load).toHaveBeenCalledWith(f.viewer.id, f.doc.id, custom);
+    expect(
+      JSON.parse(
+        (
+          await f.files.export(
+            f.viewer.id,
+            f.sheet.id,
+            () => {},
+            f.context(f.viewer.id, f.sheet.id),
+          )
+        ).text,
+      ),
+    ).toEqual(f.snapshots.get(f.sheet.id));
+    f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'viewer');
+    expect(
+      JSON.parse(
+        (await f.files.export(f.editor.id, f.doc.id, () => {}, f.context(f.editor.id))).text,
+      ).body,
+    ).toEqual(snapshot.body);
+  },
+);
 
 test('native export rejects guests, implicit or mismatched scope, and Space legacy fallback before materializing', async () => {
   const f = fixture();

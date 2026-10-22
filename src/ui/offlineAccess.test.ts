@@ -65,7 +65,7 @@ test.each([
   ['Space root equal to its child', { spaceId: 'item' }],
   ['malformed Space root', { spaceId: null }],
   ['unit', { unitId: '' }],
-  ['access', { access: 'admin' }],
+  ['access', { access: 'operator' }],
   ['kind', { kind: 'slide' }],
   ['sdk', { sdkVersion: '1.2.0' }],
   ['schema', { schema: 2 }],
@@ -73,6 +73,16 @@ test.each([
 ])('rejects an invalid %s', (_name, change) => {
   expect(() => new OfflineAccess({ ...scope, ...change } as OfflineScope)).toThrow(/Invalid/);
 });
+
+test.each(['owner', 'admin', 'editor', 'viewer'] as const)(
+  'retains valid %s access in an offline account scope',
+  (role) => {
+    // File Admin is an account grant; server Operator is never content access.
+    const access = new OfflineAccess({ ...scope, access: role });
+    expect(access.scope.access).toBe(role);
+    expect(access.mayReadLocal).toBe(true);
+  },
+);
 
 test('Space identity remains bound to the frozen native account, child and generation scope', () => {
   const input = { ...scope, spaceId: 'project' };

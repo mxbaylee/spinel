@@ -833,3 +833,15 @@ export const StaleDeletePreview: Story = {
     ).not.toBeInTheDocument();
   },
 };
+
+export const FileAdmin: Story = {
+  parameters: { api: treeApi(tree('admin')) },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await expect(page.getByText('File admin', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Space actions for/ })).toBeVisible();
+    await contents(canvasElement);
+    await expect(page.getByRole('button', { name: 'Add page' })).toBeVisible();
+  },
+};

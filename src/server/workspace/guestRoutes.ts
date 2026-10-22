@@ -31,7 +31,7 @@ export function guestRoutes(
   const owned = (request: Request) => {
     const user = workspace.auth.session(cookieToken(request))?.user_id;
     if (!user) throw new AuthError(401, 'Sign in to continue.');
-    const item = new WorkspaceFiles(workspace).get(user, idOf(request), 'owner');
+    const item = new WorkspaceFiles(workspace).get(user, idOf(request), 'admin');
     if (!['sheet', 'doc', 'space'].includes(item.kind))
       throw new AuthError(400, 'Share links are for Sheets, Docs and Spaces.');
     return item;
