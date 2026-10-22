@@ -222,6 +222,11 @@ for (const width of [1280, 390]) {
         let writeHeld = false;
         let failWrites = false;
         let rejectedWrites = 0;
+        let recoveryHeld = true;
+        let releaseRecovery = () => {};
+        const recoveryGate = new Promise<void>((resolve) => {
+          releaseRecovery = resolve;
+        });
         let releaseWrite = () => {};
         const writeGate = new Promise<void>((resolve) => {
           releaseWrite = resolve;
@@ -232,12 +237,18 @@ for (const width of [1280, 390]) {
             await writeGate;
           }
           if (failWrites) {
+            // Reject exactly once; repeated 503s would test a reconnect storm,
+            // rather than the save control's failure and user-triggered recovery.
+            failWrites = false;
             rejectedWrites++;
             await route.fulfill({
               status: 503,
               json: { error: 'Save unavailable for this acceptance test.' },
             });
-          } else await route.continue();
+          } else {
+            if (rejectedWrites && recoveryHeld) await recoveryGate;
+            await route.continue();
+          }
         });
         const captureEditor = async (state: ConnectionState) => {
           for (const theme of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
@@ -288,6 +299,13 @@ for (const width of [1280, 390]) {
           await expect(save).toContainText(/not saved|Saving|keep this tab open/i);
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
+          // Preserve SPN-042's healthy pending-save Retry proof before the
+          // rejection: a rejected write may legitimately interrupt the room.
+          await connection(page, 'Online');
+          await saveTrigger.click();
+          await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          await page.keyboard.press('Escape');
+          await connection(page, 'Online');
           // A real rejected save remains unconfirmed; no production state is mocked.
           const rejectedResponse = page.waitForResponse(
             (response) => response.url().includes('/new_changes') && response.status() === 503,
@@ -302,10 +320,6 @@ for (const width of [1280, 390]) {
           await expect(saveTrigger).toHaveText('Not saved');
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
-          // An in-flight edit is a save concern, not a lost connection.
-          await connection(page, 'Online');
-          // Retrying an unconfirmed save on a healthy connection must not strand
-          // the network indicator waiting for a room event that will never come.
           await page.getByRole('button', { name: 'Save details: Not saved', exact: true }).click();
           const saveDetails = page.getByRole('dialog', { name: 'Save details', exact: true });
           await expect(saveDetails).toBeVisible();
@@ -322,8 +336,9 @@ for (const width of [1280, 390]) {
               animations: 'disabled',
             });
           }
-          failWrites = false;
           await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          recoveryHeld = false;
+          releaseRecovery();
           await page.keyboard.press('Escape');
           await expect(saveTrigger).toBeFocused();
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
@@ -412,6 +427,8 @@ for (const width of [1280, 390]) {
           await expect(refreshShared).toHaveCount(0, { timeout: 10_000 });
           await expect.poll(() => canvas.boundingBox()).toEqual(bounds);
         } finally {
+          recoveryHeld = false;
+          releaseRecovery();
           failWrites = false;
           holdWrite = false;
           releaseWrite();
