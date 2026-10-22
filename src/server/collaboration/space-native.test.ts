@@ -12,6 +12,9 @@ import { UniverType } from '@univerjs/protocol';
 import type { IChangeset } from '@univerjs/protocol';
 import { openDatabase } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
+import { AdminStore } from '../auth/admin.ts';
+import { InvitationService } from '../auth/invitations.ts';
+import { OwnershipTransfer } from '../auth/ownership.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { migrateSpaceSchema } from '../workspace/space-schema.ts';
 import { SpaceStore } from '../workspace/spaces.ts';
@@ -129,6 +132,103 @@ test('native Space admission is default-off and never inferred from an accessibl
   expect(() => f.workspace.get(f.owner.id, f.sheet.id)).toThrow();
   expect(f.db.prepare('SELECT * FROM workspace_collaboration').all()).toEqual([]);
 });
+
+test('ownership transfer keeps real native Space units and ordinary history usable by the new owner', async () => {
+  const f = await fixture();
+  const ordinary = f.workspace.create(f.owner.id, {
+    name: 'Standalone history',
+    kind: 'sheet',
+    parentId: null,
+  });
+  f.workspace.share(f.owner.id, ordinary.id, f.editor.id, 'editor');
+  f.workspace.share(f.owner.id, ordinary.id, f.viewer.id, 'viewer');
+  await f.collab.prepare(f.owner.id, ordinary.id);
+  const changeset = {
+    ...f.sheetEdit(f.owner.id),
+    unitID: ordinary.id,
+    mutations: [
+      {
+        id: SetRangeValuesMutation.id,
+        data: JSON.stringify({
+          unitId: ordinary.id,
+          subUnitId: 'first',
+          cellValue: { 0: { 0: { v: 64 } } },
+        }),
+      },
+    ],
+  };
+  expect(
+    await f.collab.service.submitChangeset(
+      { changeset },
+      {
+        userID: f.owner.id,
+        memberID: changeset.memberID,
+        customData: { sessionHash: f.sessions.get(f.owner.id)!.session.token_hash },
+      },
+    ),
+  ).toMatchObject({ status: 'committed' });
+  const checkpoint = await f.history.nameCurrent(f.owner.id, ordinary.id, 'Keep this budget');
+  const checkpointSnapshot = await f.history.load(f.owner.id, ordinary.id, checkpoint.id);
+  expect((checkpointSnapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]?.v).toBe(64);
+  const historyRows = f.db
+    .prepare('SELECT * FROM history_checkpoints WHERE item_id=? ORDER BY id')
+    .all(ordinary.id);
+  const generation = f.collab.generations.active(ordinary.id);
+  await f.collab.prepare(f.owner.id, f.sheet.id, f.context());
+  expect(await f.submit(f.sheetEdit())).toMatchObject({ status: 'committed' });
+  const nativeBefore = await f.collab.load(f.editor.id, f.sheet.id, f.context(f.editor.id));
+  const spaceGeneration = f.collab.generations.active(f.sheet.id);
+  const admin = new AdminStore(f.auth, new InvitationService(f.auth, 'http://localhost:3000'));
+  const handover = new OwnershipTransfer(f.auth);
+  admin.disable(f.operator.id, f.owner.id);
+  const preview = handover.preview(f.operator.id, f.owner.id);
+  handover.transfer(f.operator.id, f.owner.id, f.editor.id, preview.confirmation);
+  expect(f.collab.generations.active(ordinary.id)).toEqual(generation);
+  expect(f.collab.generations.active(f.sheet.id)).toEqual(spaceGeneration);
+  const nativeAfter = await f.collab.load(f.editor.id, f.sheet.id, f.context(f.editor.id));
+  expect(nativeAfter.snapshot).toEqual(nativeBefore.snapshot);
+  expect(nativeAfter.access).toBe('owner');
+  expect((await f.collab.load(f.viewer.id, f.sheet.id, f.context(f.viewer.id))).access).toBe(
+    'viewer',
+  );
+  expect(
+    f.db.prepare('SELECT * FROM history_checkpoints WHERE item_id=? ORDER BY id').all(ordinary.id),
+  ).toEqual(historyRows);
+  expect(f.history.list(f.editor.id, ordinary.id)).toContainEqual(
+    expect.objectContaining({
+      id: checkpoint.id,
+      revision: checkpoint.revision,
+      name: 'Keep this budget',
+    }),
+  );
+  expect(await f.history.load(f.editor.id, ordinary.id, checkpoint.id)).toEqual(checkpointSnapshot);
+  expect(await f.history.load(f.viewer.id, ordinary.id, checkpoint.id)).toEqual(checkpointSnapshot);
+  await expect(
+    f.history.restore(f.viewer.id, ordinary.id, checkpoint.id, generation.unitId, randomUUID()),
+  ).rejects.toThrow();
+  admin.reactivate(f.operator.id, f.owner.id);
+  f.sessions.set(f.owner.id, f.auth.createSession(f.owner.id));
+  expect(() => f.history.list(f.owner.id, ordinary.id)).toThrow('not available');
+  await expect(f.history.load(f.owner.id, ordinary.id, checkpoint.id)).rejects.toThrow(
+    'not available',
+  );
+  await expect(f.collab.load(f.owner.id, f.sheet.id, f.context())).rejects.toThrow('not available');
+  // Transfer itself preserves generations. A later explicit history restore by
+  // the new owner remains the existing, independently authorized operation.
+  const restored = await f.history.restore(
+    f.editor.id,
+    ordinary.id,
+    checkpoint.id,
+    generation.unitId,
+    randomUUID(),
+  );
+  expect(restored.status).toBe('complete');
+  expect((await f.collab.load(f.editor.id, ordinary.id)).snapshot).toMatchObject({
+    sheets: { first: { cellData: { 0: { 0: { v: 64 } } } } },
+  });
+  // Public Space history remains deliberately closed until SPN-092.
+  expect(() => f.history.list(f.editor.id, f.sheet.id)).toThrow();
+}, 45_000);
 
 test('one native engine persists both Space editors and subtree recovery while automatic/public history stays closed', async () => {
   const f = await fixture();

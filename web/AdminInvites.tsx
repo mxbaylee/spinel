@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from './api.ts';
+import { adminAccountLabel } from './adminAccountLabel.ts';
 
 type Invite = {
   id: string;
@@ -16,20 +17,34 @@ export function AdminInvites() {
   const [recovery, setRecovery] = useState('');
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [fresh, setFresh] = useState(false);
   const [error, setError] = useState('');
+  const [readError, setReadError] = useState('');
   const [notice, setNotice] = useState('');
   async function refresh() {
-    const [list, recipients] = await Promise.all([
-      api<{ invites: Invite[] }>('invites'),
-      api<{ users: Recipient[] }>('invites/recipients'),
-    ]);
-    setInvites(list.invites);
-    setUsers(recipients.users);
+    setLoading(true);
+    setFresh(false);
+    try {
+      const [list, recipients] = await Promise.all([
+        api<{ invites: Invite[] }>('invites'),
+        api<{ users: Recipient[] }>('invites/recipients'),
+      ]);
+      setInvites(list.invites);
+      setUsers(recipients.users);
+      setFresh(true);
+      setReadError('');
+    } catch (cause) {
+      setReadError(cause instanceof Error ? cause.message : 'Could not refresh invites.');
+    } finally {
+      setLoading(false);
+    }
   }
   useEffect(() => {
-    void refresh().catch((error) => setError(error.message));
+    void refresh();
   }, []);
   async function create() {
+    if (busy || loading || !fresh) return;
     setBusy(true);
     setError('');
     setNotice('');
@@ -40,23 +55,36 @@ export function AdminInvites() {
         ...(recovery ? { recoveryUserId: recovery } : {}),
       });
       setUrl(invite.url);
+      setNotice('Invite created. Copy its address before leaving this page.');
       await refresh();
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Could not create the invite.');
+      setError(
+        error instanceof Error && 'status' in error
+          ? error.message
+          : 'The invitation request could not be confirmed. Refresh the list before trying again.',
+      );
+      await refresh();
     } finally {
       setBusy(false);
     }
   }
   async function revoke(id: string) {
+    if (busy || loading || !fresh) return;
     setBusy(true);
     setError('');
+    setNotice('');
     try {
       await api(`invites/${id}/revoke`, {});
       setUrl('');
-      await refresh();
       setNotice('Invite revoked.');
+      await refresh();
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Could not revoke the invite.');
+      setError(
+        error instanceof Error && 'status' in error
+          ? error.message
+          : 'The revoke request could not be confirmed. Refresh the list before trying again.',
+      );
+      await refresh();
     } finally {
       setBusy(false);
     }
@@ -74,11 +102,15 @@ export function AdminInvites() {
       <h3>Invites</h3>
       <label>
         Invite for
-        <select value={recovery} onChange={(event) => setRecovery(event.target.value)}>
+        <select
+          disabled={busy || loading || !fresh}
+          value={recovery}
+          onChange={(event) => setRecovery(event.target.value)}
+        >
           <option value="">A new account</option>
           {users.map((user) => (
             <option key={user.id} value={user.id}>
-              Recover {user.name}
+              Recover {adminAccountLabel(user, users)}
               {user.isAdmin ? ' (admin)' : ''}
             </option>
           ))}
@@ -86,7 +118,11 @@ export function AdminInvites() {
       </label>
       <label>
         Expires in
-        <select value={hours} onChange={(event) => setHours(Number(event.target.value))}>
+        <select
+          disabled={busy || loading || !fresh}
+          value={hours}
+          onChange={(event) => setHours(Number(event.target.value))}
+        >
           <option value={1}>1 hour</option>
           <option value={24}>1 day</option>
           <option value={168}>7 days</option>
@@ -99,7 +135,18 @@ export function AdminInvites() {
           devices.
         </p>
       )}
-      <button className="primary" disabled={busy} onClick={() => void create()}>
+      {fresh && recovery && !users.some((user) => user.id === recovery) && (
+        <p role="alert">
+          This account is no longer eligible for recovery. Choose an active account.
+        </p>
+      )}
+      <button
+        className="primary"
+        disabled={
+          busy || loading || !fresh || (!!recovery && !users.some((user) => user.id === recovery))
+        }
+        onClick={() => void create()}
+      >
         Create invite
       </button>
       {url && (
@@ -116,8 +163,17 @@ export function AdminInvites() {
         </div>
       )}
       {error && <p role="alert">{error}</p>}
+      {readError && (
+        <div role="alert">
+          <p>{readError} The current invitation list is unavailable.</p>
+          <button disabled={busy || loading} onClick={() => void refresh()}>
+            Refresh invites
+          </button>
+        </div>
+      )}
       {notice && <p role="status">{notice}</p>}
-      {invites.length ? (
+      {loading && <p role="status">Loading invites…</p>}
+      {fresh && invites.length ? (
         <ul aria-label="Invites">
           {invites.map((invite) => (
             <li key={invite.id}>
@@ -135,9 +191,9 @@ export function AdminInvites() {
             </li>
           ))}
         </ul>
-      ) : (
+      ) : fresh && !loading ? (
         <p>No invites yet.</p>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { SetupService } from './setup.ts';
 import { InvitationService } from './invitations.ts';
 import type { Session } from './store.ts';
 import { AdminStore } from './admin.ts';
+import { OwnershipTransfer } from './ownership.ts';
 import { AccessTokens } from './tokens.ts';
 import { AssistantOAuth } from './oauth.ts';
 
@@ -38,6 +39,7 @@ export function authRoutes(
   const setup = new SetupService(store, origin);
   const invites = new InvitationService(store, origin);
   const admin = new AdminStore(store, invites);
+  const ownership = new OwnershipTransfer(store);
   const tokens = new AccessTokens(store);
   const oauth = new AssistantOAuth(store, origin);
   const requireSession = (request: Request, authenticated = false): Session => {
@@ -118,6 +120,46 @@ export function authRoutes(
   router.post('/admin/users/:id/disable', async (request, response) => {
     admin.disable(requireAdmin(request).user_id!, String(request.params.id));
     await accessChanged();
+    response.sendStatus(204);
+  });
+  router.post('/admin/users/:id/reactivate', async (request, response) => {
+    const actor = requireAdmin(request).user_id!;
+    if (!request.body || Array.isArray(request.body) || Object.keys(request.body).length)
+      throw new AuthError(400, 'Confirm reactivation without additional account changes.');
+    admin.reactivate(actor, String(request.params.id));
+    try {
+      await accessChanged();
+    } catch {
+      throw new AuthError(
+        503,
+        'Account reactivated, but open connections could not refresh. Refresh accounts to see the result.',
+      );
+    }
+    response.sendStatus(204);
+  });
+  router.get('/admin/users/:id/transfer-preview', (request, response) => {
+    response.json(ownership.preview(requireAdmin(request).user_id!, String(request.params.id)));
+  });
+  router.post('/admin/users/:id/transfer', async (request, response) => {
+    const actor = requireAdmin(request).user_id!;
+    const body = request.body;
+    if (
+      !body ||
+      Array.isArray(body) ||
+      Object.keys(body).some((key) => !['targetId', 'confirmation'].includes(key)) ||
+      typeof body.targetId !== 'string' ||
+      typeof body.confirmation !== 'string'
+    )
+      throw new AuthError(400, 'Choose an account and confirm the current transfer details.');
+    ownership.transfer(actor, String(request.params.id), body.targetId, body.confirmation);
+    try {
+      await accessChanged();
+    } catch {
+      throw new AuthError(
+        503,
+        'Ownership transferred, but open connections could not refresh. Refresh accounts to see the result.',
+      );
+    }
     response.sendStatus(204);
   });
   router.post('/admin/users/:id/passkeys/:key/remove', async (request, response) => {
