@@ -104,7 +104,6 @@ const meta = {
   component: Space,
   parameters: {
     shell: 'none',
-    api: api('viewer'),
     docs: {
       description: {
         component:
@@ -149,7 +148,9 @@ async function guestOnly(canvasElement: HTMLElement, title = 'Welcome') {
   );
 }
 
+// Keep API mocks on each story: merging a body with failure()/pending() loses its marker.
 export const ViewOnly: Story = {
+  parameters: { api: api('viewer') },
   play: async ({ canvasElement }) => {
     await guestOnly(canvasElement);
     await expect(
@@ -181,7 +182,7 @@ export const CanEditPhone: Story = {
   globals: { viewport: { value: 'phone', isRotated: false } },
 };
 export const NestedPage: Story = {
-  parameters: { guestPath: `/share/${root}?item=${id(4)}` },
+  parameters: { guestPath: `/share/${root}?item=${id(4)}`, api: api('viewer') },
   play: ({ canvasElement }) => guestOnly(canvasElement, 'Field notes'),
 };
 export const PhoneContents: Story = {
@@ -189,17 +190,21 @@ export const PhoneContents: Story = {
   globals: { viewport: { value: 'phone', isRotated: false } },
   play: async ({ canvasElement }) => {
     await guestOnly(canvasElement);
-    await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Open Space contents' }),
-    );
-    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
-      name: 'Space contents',
-    });
-    await expect(within(dialog).getByRole('button', { name: 'Add page' })).toBeEnabled();
+    const canvas = within(canvasElement);
+    const toggle = canvas.queryByRole('button', { name: 'Open Space contents' });
+    if (toggle) await userEvent.click(toggle);
+    // The full review also renders phone stories at desktop width, where the
+    // contents are already in the permanent navigation instead of a drawer.
+    const contents = toggle
+      ? await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+          name: 'Space contents',
+        })
+      : canvas.getByRole('navigation', { name: 'Pages' });
+    await expect(within(contents).getByRole('button', { name: 'Add page' })).toBeEnabled();
     await expect(
-      within(dialog).queryByRole('link', { name: 'Space Trash' }),
+      within(contents).queryByRole('link', { name: 'Space Trash' }),
     ).not.toBeInTheDocument();
-    const links = within(dialog).getAllByRole('link');
+    const links = within(contents).getAllByRole('link');
     for (const link of links)
       await expect(link.getAttribute('href')).toMatch(new RegExp(`^/share/${root}\\?item=`));
   },

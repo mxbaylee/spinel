@@ -51,9 +51,13 @@ export const ConfirmWholeSpace: Story = {
   args: { space: true },
   parameters: { api: { [link]: { enabled: false, role: 'viewer' } } },
   play: async ({ canvasElement }) => {
-    await userEvent.click(
-      await within(canvasElement).findByRole('button', { name: 'Create guest link' }),
-    );
+    const create = await within(canvasElement).findByRole('button', { name: 'Create guest link' });
+    await waitFor(() => expect(create).toBeEnabled());
+    await userEvent.click(create);
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Share the whole Space?',
+    });
+    await expect(within(dialog).getByRole('button', { name: 'Create view link' })).toBeVisible();
   },
 };
 export const ConfirmReplacementEditLink: Story = {
@@ -61,17 +65,29 @@ export const ConfirmReplacementEditLink: Story = {
   parameters: { api: { [link]: { enabled: true, role: 'viewer', url } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.selectOptions(await canvas.findByLabelText('Link access'), 'editor');
+    const access = await canvas.findByLabelText('Link access');
+    await waitFor(() => expect(access).toBeEnabled());
+    await userEvent.selectOptions(access, 'editor');
+    await expect(access).toHaveValue('editor');
     await userEvent.click(canvas.getByRole('button', { name: 'Create replacement link' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Share the whole Space?',
+    });
+    await expect(within(dialog).getByRole('button', { name: 'Create edit link' })).toBeVisible();
   },
 };
 export const ConfirmTurnOffSpaceLink: Story = {
   args: { space: true },
   parameters: { api: { [link]: { enabled: true, role: 'editor', url } } },
   play: async ({ canvasElement }) => {
-    await userEvent.click(
-      await within(canvasElement).findByRole('button', { name: 'Turn link off' }),
-    );
+    const turnOff = await within(canvasElement).findByRole('button', { name: 'Turn link off' });
+    await waitFor(() => expect(turnOff).toBeEnabled());
+    await userEvent.click(turnOff);
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+        name: 'Turn off this Space link?',
+      }),
+    ).toBeVisible();
   },
 };
 

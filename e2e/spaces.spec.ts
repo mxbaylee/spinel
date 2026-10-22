@@ -506,7 +506,7 @@ test('ordinary My files creates and opens one Space root while preserving its pr
     await expect(page.getByRole('heading', { name: f.folder.name, exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'New', exact: true }).click();
     const form = page.getByRole('form', { name: 'New item', exact: true });
-    await form.getByLabel('Type', { exact: true }).selectOption('space');
+    await form.getByRole('combobox', { name: 'Type', exact: true }).selectOption('space');
     await form.getByLabel('Name', { exact: true }).fill('Outer research');
     const creating = page.waitForResponse(
       (response) => response.url().endsWith('/api/items') && response.request().method() === 'POST',
@@ -539,7 +539,7 @@ test('ordinary My files creates and opens one Space root while preserving its pr
     await expect(rename).not.toBeVisible();
     await chooseRoot('Move', 'Research collection');
     const move = page.getByRole('dialog', { name: 'Move Space', exact: true });
-    await move.getByLabel('Destination', { exact: true }).selectOption('');
+    await move.getByRole('combobox', { name: 'Destination', exact: true }).selectOption('');
     await move.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(move).not.toBeVisible();
     const moved = await f.tree(item.id);
