@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
@@ -128,8 +128,11 @@ const pageLink = (page: Page, spaceId: string, itemId: string) =>
 
 async function pages(page: Page) {
   const navigation = page.getByRole('navigation', { name: 'Pages', exact: true });
-  if (!(await navigation.isVisible()))
-    await page.getByRole('button', { name: 'Open Space contents', exact: true }).click();
+  const opener = page.getByRole('button', { name: 'Open Space contents', exact: true });
+  // The URL can settle before the Space tree loads. Wait for the actual layout
+  // before choosing between the inline tree and the collapsed/phone control.
+  await expect(navigation.or(opener).filter({ visible: true }).first()).toBeVisible();
+  if (!(await navigation.isVisible())) await opener.click();
   await expect(navigation).toBeVisible();
   return navigation;
 }
@@ -760,10 +763,17 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
       response.url().endsWith(`${prefix}/export`),
     );
     await exportPanel.getByRole('button', { name: 'Download Univer file', exact: true }).click();
-    expect((await download).suggestedFilename()).toBe('Decisions.univer.json');
-    const nativeFile = await exported;
-    expect(nativeFile.status()).toBe(200);
-    expect(await nativeFile.text()).toContain('Native notes in a Space.');
+    const nativeFile = await download;
+    expect(nativeFile.suggestedFilename()).toBe('Decisions.univer.json');
+    expect((await exported).status()).toBe(200);
+    expect(await nativeFile.failure()).toBeNull();
+    // Verify the actual file delivered by the UI, as in portable.spec.ts,
+    // including its native content after the response is handed off as a blob.
+    const snapshot = JSON.parse(
+      await readFile((await nativeFile.path())!, 'utf8'),
+    ) as IDocumentData;
+    expect(snapshot.id).toBe(doc.id);
+    expect(snapshot.body?.dataStream).toContain('Native notes in a Space.');
     // Outer document services remain closed: activation never widens ordinary lookup.
     expect((await f.context.request.get(`/api/items/${sheet.id}/sheet`)).status()).toBe(404);
     expect((await f.context.request.get(`/api/items/${doc.id}/history`)).status()).toBe(404);
