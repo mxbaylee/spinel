@@ -12,7 +12,9 @@ permissions:
 
 concurrency:
   group: ci-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  # A push to main runs to the end: Lib tests diffs each push against the one
+  # before it, so a cancelled run would leave that push's lib changes untested.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   backlog:
@@ -140,7 +142,9 @@ jobs:
         run: npm ci
       - name: Lib tests
         if: steps.changes.outputs.run
-        run: npx vitest run lib
+        # A path filter: it selects every test whose path holds "lib/", which
+        # today is only lib/, the same set the unit job excludes.
+        run: npx vitest run lib/
 
   playwright-run:
     name: Playwright smoke (${{ matrix.project }}${{ matrix.shard && format(' {0}', matrix.shard) || '' }})

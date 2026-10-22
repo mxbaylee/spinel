@@ -38,7 +38,7 @@ impact_guest: S #   impact_operator, impact_owner, impact_collaborator, impact_g
 score: 5 # written by npm run backlog:index; never edit by hand
 depends_on: [SPN-004]
 decisions: [7] # decision issue numbers
-owner_input: 'Approve the restore wording' # optional; shown in the index
+owner_input: "Approve the restore wording" # optional; shown in the index
 ---
 
 # 🪞 SPN-012 Restore a document from yesterday's checkpoint
@@ -225,8 +225,9 @@ Grooming isn't a ticket and doesn't count toward the seven.
   `scripts/backlog/` or `.github/` as a change to the rules.
 - The **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
   **Lib tests** and **Playwright smoke** CI jobs are required. Lib tests runs
-  `lib/` on its own and passes at once when nothing it tests changed. Playwright smoke builds the app and
-  checks development and production servers (SPN-001).
+  `lib/` on its own and passes at once when nothing it tests changed.
+  Playwright smoke builds the app and checks development and production servers
+  (SPN-001).
 
 Owner setup, once, in the repository settings:
 

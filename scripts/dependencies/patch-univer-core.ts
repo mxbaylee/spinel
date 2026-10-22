@@ -17,6 +17,9 @@
  * canonical after every update, and stop adding a custom range from emitting a
  * negative retain, in open-source @univerjs/core 1.1.0. No @univerjs-pro
  * package is read or modified.
+ * Temporary: SPN-078 removes this once upstream ships the fixes. The custom
+ * range fixes are https://github.com/dream-num/univer/pull/7938; if upstream
+ * takes another direction, follow it rather than keep this patch.
  * Source: packages/core/src/docs/data-model/text-x/{utils,action-iterator}.ts,
  * packages/core/src/docs/data-model/text-x/apply-utils/{common,update-apply}.ts and
  * packages/core/src/docs/data-model/text-x/build-utils/text-x-utils.ts, tag v1.1.0.
@@ -159,7 +162,7 @@ export async function patchInstalledCore(root: string) {
   const directory = resolve(root, 'node_modules/@univerjs/core');
   const metadata = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
   if (metadata.version !== '1.1.0')
-    throw new Error('Review the paragraph patch when upgrading @univerjs/core.');
+    throw new Error('Upgrading @univerjs/core: do SPN-078 first (docs/todo/SPN-078.md).');
   // Validate both formats before making either change.
   const updates = await Promise.all(
     Object.keys(formats).map(async (format) => {

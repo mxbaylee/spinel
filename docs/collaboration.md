@@ -140,12 +140,11 @@ rejects unfamiliar bytes. It does not read or modify Pro packages. Docker copies
 the installer before `npm ci`; the dependency's license stays with its package,
 and the patch's attribution is in `THIRD-PARTY-NOTICES.md`.
 
-When upgrading core, first test sequential versus composed replacements,
-including missing/empty paragraph arrays and stable identities, and run the rich
-Doc/reconnect browser regressions against the unmodified candidate. Remove the
-installer and postinstall hook when upstream passes. Otherwise review the new
-source and update the narrowly scoped repair and hashes explicitly; never bypass
-the guard merely to make installation pass.
+The patch is temporary: SPN-078 removes it when Spinel upgrades to a Univer
+release with the fixes. The link fixes are upstream as
+[dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938). If
+upstream fixes either one another way, Spinel follows upstream rather than
+re-patching. Never bypass the guard just to make an install pass.
 
 ## Verification completed
 
@@ -226,7 +225,7 @@ mutation definitions only; `@univerjs-pro/collaboration` was never read.
   least one sheet, or one visible sheet, can together remove them all; no
   transform of the pair can see that.
 - **Verified against Univer itself.** Each transform pair, and a seeded
-  100,000-edit run of two clients and a server, are checked with the real
+  100,000-mutation run of two clients and a server, are checked with the real
   open-source handlers running headless.
 
 ## Related work and limits
