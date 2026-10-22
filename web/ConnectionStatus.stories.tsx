@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useEffect, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { ConnectionStatus } from './ConnectionStatus.tsx';
@@ -16,25 +17,43 @@ const meta = {
       },
     },
   },
-  render: (args) => (
-    <section aria-label="Connection indicator example" style={{ padding: 24 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <GemLogo />
-        <ConnectionStatus {...args} />
-      </div>
-      {args.documentOpen && (
-        // An intentionally pending save fixture makes the two meanings visible together.
-        <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
-          Changes not saved yet — keep this tab open.
+  render: function Example(args) {
+    const [ready, setReady] = useState(false);
+    // A built preview can finish rendering before passive effects attach the
+    // popover's native hover listeners. Let the fixture finish that phase first.
+    useEffect(() => setReady(true), []);
+    return (
+      <section
+        aria-label="Connection indicator example"
+        data-interactions-ready={ready}
+        style={{ padding: 24 }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <GemLogo />
+          <ConnectionStatus {...args} />
         </div>
-      )}
-    </section>
-  ),
+        {args.documentOpen && (
+          // An intentionally pending save fixture makes the two meanings visible together.
+          <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
+            Changes not saved yet — keep this tab open.
+          </div>
+        )}
+      </section>
+    );
+  },
 } satisfies Meta<typeof ConnectionStatus>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const waitForInteractions = (canvasElement: HTMLElement) =>
+  waitFor(() =>
+    expect(
+      within(canvasElement).getByRole('region', { name: 'Connection indicator example' }),
+    ).toHaveAttribute('data-interactions-ready', 'true'),
+  );
+
 const showDetail: NonNullable<Story['play']> = async ({ canvasElement }) => {
+  await waitForInteractions(canvasElement);
   await userEvent.hover(
     within(canvasElement).getByRole('button', { name: /^(Online|Offline|Reconnecting) —/ }),
   );
@@ -110,6 +129,7 @@ export const OnlinePendingSave: Story = {
 export const KeyboardDetails: Story = {
   args: { state: 'reconnecting' },
   play: async ({ canvasElement }) => {
+    await waitForInteractions(canvasElement);
     const trigger = within(canvasElement).getByRole('button', {
       name: 'Reconnecting — connecting to Spinel',
     });
@@ -130,6 +150,7 @@ export const TouchDetails: Story = {
   args: { state: 'offline', catalog: localCatalog },
   globals: { viewport: { value: 'phone', isRotated: false } },
   play: async ({ canvasElement }) => {
+    await waitForInteractions(canvasElement);
     const canvas = within(canvasElement);
     const trigger = canvas.getByRole('button', { name: 'Offline — not connected to Spinel' });
     const page = within(canvasElement.ownerDocument.body);

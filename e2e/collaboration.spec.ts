@@ -364,11 +364,16 @@ test('revoking one login preserves another login’s queued edit and stops later
   try {
     await page.goto(`/?item=${item.id}`);
     await other.goto(`${baseURL}/?item=${item.id}`);
-    for (const target of [page, other])
+    for (const target of [page, other]) {
       await expect(target.getByRole('status', { name: 'Save status' })).toHaveText(
         'All changes saved.',
         { timeout: 30_000 },
       );
+      // Saved content does not prove that this login has joined the room.
+      await expect(
+        target.getByRole('status', { name: 'Connection status', exact: true }),
+      ).toHaveText('Online');
+    }
     await second.route('**/universer-api/comb/**/new_changes', async (route) => {
       held = true;
       await pending;
@@ -383,8 +388,9 @@ test('revoking one login preserves another login’s queued edit and stops later
     await other.keyboard.type('private-after-revoke');
     await other.keyboard.press('Enter');
     await expect.poll(() => held).toBe(true);
+    const closedBeforeRevocation = closed;
     auth.revokeSession(sessions[0].session.token_hash);
-    await expect.poll(() => closed).toBeGreaterThan(0);
+    await expect.poll(() => closed).toBeGreaterThan(closedBeforeRevocation);
     await expect(page.getByRole('status', { name: 'Save status' })).toContainText('Access changed');
     const boundary = revokedMessages.length;
     release();
