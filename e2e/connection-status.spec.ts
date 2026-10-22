@@ -274,6 +274,9 @@ for (const width of [1280, 390]) {
           await expect(saveTrigger).toHaveText('Saved');
           const savedBounds = await documentBounds(canvas);
           const slotBounds = await documentBounds(saveTrigger);
+          const savedDocumentWidth = await page.evaluate(
+            () => document.documentElement.scrollWidth,
+          );
           if (kind === 'sheet' && width === 390) {
             await expect(editor).toHaveAttribute('data-mobile', 'true');
             const grid = editor.getByLabel('Spreadsheet grid', { exact: true });
@@ -327,9 +330,29 @@ for (const width of [1280, 390]) {
           for (const theme of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
             await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
             await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+            // Native phone content already overflows in the base screenshots.
+            // This control must fit the viewport and must add no document overflow.
             await expect
-              .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
-              .toBe(true);
+              .poll(() => page.evaluate(() => document.documentElement.scrollWidth))
+              .toBeLessThanOrEqual(savedDocumentWidth);
+            for (const control of [saveTrigger, saveDetails]) {
+              await expect
+                .poll(() =>
+                  control.evaluate((element) => {
+                    const rect = element.getBoundingClientRect();
+                    return (
+                      rect.left >= 0 &&
+                      rect.right <= innerWidth &&
+                      rect.top >= 0 &&
+                      rect.bottom <= innerHeight
+                    );
+                  }),
+                )
+                .toBe(true);
+            }
+            await expect(
+              page.getByRole('button', { name: 'Retry saving', exact: true }),
+            ).toBeInViewport();
             await page.screenshot({
               path: `test-results/theme-screenshots/spn-043-${kind}-failed-${width === 390 ? 'phone' : theme}-${info.project.name}.png`,
               fullPage: true,
