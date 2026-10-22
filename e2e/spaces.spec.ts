@@ -1048,148 +1048,170 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
   }
 });
 
-test('Space viewer and editor controls follow live role changes, revocation and owner disablement', async ({
-  browser,
-}, info) => {
-  test.setTimeout(150_000);
-  const f = await fixture(browser, info);
-  let editorPage: Page | undefined;
-  let phase = 'editor and viewer controls';
-  let diagnostics: object[] = [];
-  try {
-    const { space, child } = seed(f, 'Shared review notebook');
-    const doc = child('Shared native notes', 'doc');
-    const deletedDoc = child('Recoverable notes', 'doc');
-    new SpaceRecoveryStore(f.workspace).trash(f.owner.id, space.id, deletedDoc.id);
-    f.spaces.share(f.owner.id, space.id, f.editor.id, 'editor');
-    f.spaces.share(f.owner.id, space.id, f.viewer.id, 'viewer');
+for (const role of ['editor', 'admin'] as const) {
+  test(`Space viewer and ${role} controls follow live role changes, revocation and owner disablement`, async ({
+    browser,
+  }, info) => {
+    test.setTimeout(150_000);
+    const f = await fixture(browser, info);
+    let editorPage: Page | undefined;
+    let phase = 'editor and viewer controls';
+    let diagnostics: object[] = [];
+    try {
+      const { space, child } = seed(f, 'Shared review notebook');
+      const doc = child('Shared native notes', 'doc');
+      const deletedDoc = child('Recoverable notes', 'doc');
+      new SpaceRecoveryStore(f.workspace).trash(f.owner.id, space.id, deletedDoc.id);
+      f.spaces.share(f.owner.id, space.id, f.editor.id, role);
+      f.spaces.share(f.owner.id, space.id, f.viewer.id, 'viewer');
 
-    const editor = await f.open(f.editor.id);
-    editorPage = editor.page;
-    diagnostics = nativeDiagnostics(editor.page, () => phase);
-    await editor.page.goto(href(space.id, doc.id));
-    await saved(editor.page);
-    await focusDoc(editor.page);
-    await editor.page.keyboard.type('A scoped editor can save these notes.');
-    await saved(editor.page);
-    await expect(editor.page.getByRole('button', { name: 'Add page', exact: true })).toBeVisible();
-    await expect(
-      editor.page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }),
-    ).toBeVisible();
-    await editor.page.getByRole('link', { name: 'Space Trash', exact: true }).click();
-    const editorTrash = await deleted(editor.page, deletedDoc.name);
-    await expect(
-      editorTrash.getByRole('button', { name: `Restore ${deletedDoc.name}`, exact: true }),
-    ).toBeEnabled();
-    await expect(
-      editorTrash.getByRole('button', {
-        name: `Actions for deleted ${deletedDoc.name}`,
-        exact: true,
-      }),
-    ).toHaveCount(0);
-    expect(
-      (
-        await editor.context.request.get(
-          `/api/spaces/${space.id}/trash/${deletedDoc.id}/delete-preview`,
-        )
-      ).status(),
-    ).toBe(403);
-    // Only one native editor is resident at a time; this is a role proof, not a
-    // resource-heavy collaboration stress test.
-    await editor.page.goto('about:blank');
+      const editor = await f.open(f.editor.id);
+      editorPage = editor.page;
+      diagnostics = nativeDiagnostics(editor.page, () => phase);
+      await editor.page.goto(normalHref(space.id, doc.id));
+      await saved(editor.page);
+      await focusDoc(editor.page);
+      await editor.page.keyboard.type('A scoped editor can save these notes.');
+      await saved(editor.page);
+      await expect(
+        editor.page.getByRole('button', { name: 'Add page', exact: true }),
+      ).toBeVisible();
+      if (role === 'admin') {
+        await expect(editor.page.locator('.space-access')).toHaveText('File admin');
+        await editor.page
+          .getByRole('button', { name: `More actions for ${doc.name}`, exact: true })
+          .click();
+        await expect(
+          editor.page.getByRole('menuitem', { name: 'Rename', exact: true }),
+        ).toBeVisible();
+        await expect(editor.page.getByRole('menuitem', { name: /Share/ })).toHaveCount(0);
+        await editor.page.keyboard.press('Escape');
+        await screenshot(editor.page, info, 'file-admin-child');
+      }
+      await expect(
+        editor.page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }),
+      ).toBeVisible();
+      await editor.page.getByRole('link', { name: 'Space Trash', exact: true }).click();
+      const editorTrash = await deleted(editor.page, deletedDoc.name);
+      await expect(
+        editorTrash.getByRole('button', { name: `Restore ${deletedDoc.name}`, exact: true }),
+      ).toBeEnabled();
+      await expect(
+        editorTrash.getByRole('button', {
+          name: `Actions for deleted ${deletedDoc.name}`,
+          exact: true,
+        }),
+      ).toHaveCount(0);
+      expect(
+        (
+          await editor.context.request.get(
+            `/api/spaces/${space.id}/trash/${deletedDoc.id}/delete-preview`,
+          )
+        ).status(),
+      ).toBe(403);
+      // Only one native editor is resident at a time; this is a role proof, not a
+      // resource-heavy collaboration stress test.
+      await editor.page.goto('about:blank');
 
-    const viewer = await f.open(f.viewer.id);
-    await viewer.page.goto(href(space.id, doc.id));
-    await expect(viewer.page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
-      'View only — reload after your access changes.',
-      { timeout: 30_000 },
-    );
-    expect(await copyDoc(viewer.page)).toBe('A scoped editor can save these notes.');
-    await expect(viewer.page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
-    await expect(viewer.page.getByRole('button', { name: 'Add page', exact: true })).toHaveCount(0);
-    await expect(
-      viewer.page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }),
-    ).toHaveCount(0);
-    await expect(viewer.page.getByRole('link', { name: 'Space Trash', exact: true })).toHaveCount(
-      0,
-    );
-    expect(
-      (
-        await viewer.context.request.post(`/api/spaces/${space.id}/items`, {
-          data: { name: 'Denied', kind: 'doc', parentId: space.id },
-          headers: { Origin: f.origin },
-        })
-      ).status(),
-    ).toBe(403);
-    expect((await viewer.context.request.get(`/api/spaces/${space.id}/trash`)).status()).toBe(403);
-    await screenshot(viewer.page, info, 'viewer');
-    await viewer.page.goto('about:blank');
+      const viewer = await f.open(f.viewer.id);
+      await viewer.page.goto(href(space.id, doc.id));
+      await expect(
+        viewer.page.getByRole('status', { name: 'Save status', exact: true }),
+      ).toHaveText('View only — reload after your access changes.', { timeout: 30_000 });
+      expect(await copyDoc(viewer.page)).toBe('A scoped editor can save these notes.');
+      await expect(viewer.page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+      await expect(viewer.page.getByRole('button', { name: 'Add page', exact: true })).toHaveCount(
+        0,
+      );
+      await expect(
+        viewer.page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }),
+      ).toHaveCount(0);
+      await expect(viewer.page.getByRole('link', { name: 'Space Trash', exact: true })).toHaveCount(
+        0,
+      );
+      expect(
+        (
+          await viewer.context.request.post(`/api/spaces/${space.id}/items`, {
+            data: { name: 'Denied', kind: 'doc', parentId: space.id },
+            headers: { Origin: f.origin },
+          })
+        ).status(),
+      ).toBe(403);
+      expect((await viewer.context.request.get(`/api/spaces/${space.id}/trash`)).status()).toBe(
+        403,
+      );
+      await screenshot(viewer.page, info, 'viewer');
+      await viewer.page.goto('about:blank');
 
-    phase = 'clean editor downgraded to viewer';
-    await editor.page.goto(href(space.id, doc.id));
-    await saved(editor.page);
-    f.spaces.share(f.owner.id, space.id, f.editor.id, 'viewer');
-    await expect(editor.page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled({
-      timeout: 10_000,
-    });
-    await expect(editor.page.getByRole('button', { name: 'Add page', exact: true })).toHaveCount(
-      0,
-      { timeout: 10_000 },
-    );
-    await expect(
-      editor.page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }),
-    ).toHaveCount(0);
-    await expect(
-      editor.page.getByRole('status', { name: 'Save status', exact: true }),
-    ).toContainText('Access changed');
-    // Evicting a clean connection for a role change must not create a local
-    // draft. The separate held-write scenario proves genuinely dirty retention.
-    await expect(
-      editor.page.getByRole('button', { name: 'Retry saving', exact: true }),
-    ).toHaveCount(0);
-    phase = 'clean viewer grant revoked';
-    f.spaces.share(f.owner.id, space.id, f.editor.id, null);
-    await expect(
-      editor.page.getByRole('heading', { name: 'Space unavailable', exact: true }),
-    ).toBeVisible({ timeout: 10_000 });
-    await expect(
-      editor.page.getByRole('region', { name: 'Doc document', exact: true }),
-    ).toHaveCount(0);
-    await expect(editor.page.getByRole('region', { name: 'Space pages', exact: true })).toHaveCount(
-      0,
-    );
-    expect(
-      (await editor.context.request.get(`/api/spaces/${space.id}/items/${doc.id}`)).status(),
-    ).toBe(404);
-    f.spaces.share(f.owner.id, space.id, f.editor.id, 'editor');
-    await editor.page.reload();
-    await saved(editor.page);
-    phase = 'clean editor loses the disabled owner';
-    f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
-    await expect(
-      editor.page.getByRole('heading', { name: 'Space unavailable', exact: true }),
-    ).toBeVisible({ timeout: 10_000 });
-    await expect(
-      editor.page.getByRole('region', { name: 'Doc document', exact: true }),
-    ).toHaveCount(0);
-    expect((await editor.context.request.get(`/api/spaces/${space.id}`)).status()).toBe(404);
-    expect(f.errors).toEqual([]);
-  } catch (error) {
-    console.error('Space role-change diagnostics:', JSON.stringify({ phase, events: diagnostics }));
-    await editorPage
-      ?.screenshot({
-        path: info.outputPath('test-failed-native-roles.png'),
-        fullPage: true,
-        timeout: 5000,
-      })
-      .catch(() => {
-        console.error('Could not capture the Space role-change failure before cleanup.');
+      phase = 'clean editor downgraded to viewer';
+      await editor.page.goto(normalHref(space.id, doc.id));
+      await saved(editor.page);
+      f.spaces.share(f.owner.id, space.id, f.editor.id, 'viewer');
+      await expect(editor.page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled({
+        timeout: 10_000,
       });
-    throw error;
-  } finally {
-    await f.close();
-  }
-});
+      await expect(editor.page.getByRole('button', { name: 'Add page', exact: true })).toHaveCount(
+        0,
+        { timeout: 10_000 },
+      );
+      await expect(
+        editor.page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        editor.page.getByRole('status', { name: 'Save status', exact: true }),
+      ).toContainText('Access changed');
+      // Evicting a clean connection for a role change must not create a local
+      // draft. The separate held-write scenario proves genuinely dirty retention.
+      await expect(
+        editor.page.getByRole('button', { name: 'Retry saving', exact: true }),
+      ).toHaveCount(0);
+      phase = 'clean viewer grant revoked';
+      f.spaces.share(f.owner.id, space.id, f.editor.id, null);
+      await expect(
+        editor.page.getByRole('heading', { name: 'Space unavailable', exact: true }),
+      ).toBeVisible({ timeout: 10_000 });
+      await expect(
+        editor.page.getByRole('region', { name: 'Doc document', exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        editor.page.getByRole('region', { name: 'Space pages', exact: true }),
+      ).toHaveCount(0);
+      expect(
+        (await editor.context.request.get(`/api/spaces/${space.id}/items/${doc.id}`)).status(),
+      ).toBe(404);
+      f.spaces.share(f.owner.id, space.id, f.editor.id, role);
+      await editor.page.reload();
+      await saved(editor.page);
+      phase = 'clean editor loses the disabled owner';
+      f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
+      await expect(
+        editor.page.getByRole('heading', { name: 'Space unavailable', exact: true }),
+      ).toBeVisible({ timeout: 10_000 });
+      await expect(
+        editor.page.getByRole('region', { name: 'Doc document', exact: true }),
+      ).toHaveCount(0);
+      expect((await editor.context.request.get(`/api/spaces/${space.id}`)).status()).toBe(404);
+      expect(f.errors).toEqual([]);
+    } catch (error) {
+      console.error(
+        'Space role-change diagnostics:',
+        JSON.stringify({ phase, events: diagnostics }),
+      );
+      await editorPage
+        ?.screenshot({
+          path: info.outputPath('test-failed-native-roles.png'),
+          fullPage: true,
+          timeout: 5000,
+        })
+        .catch(() => {
+          console.error('Could not capture the Space role-change failure before cleanup.');
+        });
+      throw error;
+    } finally {
+      await f.close();
+    }
+  });
+}
 
 test('Space navigation works on a touch phone and at 613px with a mouse, with real editor and Trash theme evidence', async ({
   browser,
