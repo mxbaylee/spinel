@@ -274,9 +274,21 @@ for (const width of [1280, 390]) {
           await expect(saveTrigger).toHaveText('Saved');
           const savedBounds = await documentBounds(canvas);
           const slotBounds = await documentBounds(saveTrigger);
-          const savedDocumentWidth = await page.evaluate(
-            () => document.documentElement.scrollWidth,
-          );
+          const overflowSnapshot = () =>
+            page.evaluate(() => ({
+              width: document.documentElement.scrollWidth,
+              viewport: { width: innerWidth, scrollX, scrollY },
+              elements: [
+                ...document.querySelectorAll(
+                  '.collaborator-name, .save-trigger, .save-positioner, .save-detail',
+                ),
+              ].map((element) => ({
+                className: element.className,
+                rect: element.getBoundingClientRect().toJSON(),
+                visibility: getComputedStyle(element).visibility,
+              })),
+            }));
+          const savedOverflow = await overflowSnapshot();
           if (kind === 'sheet' && width === 390) {
             await expect(editor).toHaveAttribute('data-mobile', 'true');
             const grid = editor.getByLabel('Spreadsheet grid', { exact: true });
@@ -323,6 +335,10 @@ for (const width of [1280, 390]) {
           await expect(saveTrigger).toHaveText('Not saved');
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
+          // Reconnect may change presence membership. Compare the same failed
+          // state around opening details; hidden legacy name tooltips overflow
+          // independently of the save control (tracked in SPN-049).
+          const failedOverflow = await overflowSnapshot();
           await page.getByRole('button', { name: 'Save details: Not saved', exact: true }).click();
           const saveDetails = page.getByRole('dialog', { name: 'Save details', exact: true });
           await expect(saveDetails).toBeVisible();
@@ -336,47 +352,20 @@ for (const width of [1280, 390]) {
               fullPage: true,
               animations: 'disabled',
             });
-            if (
-              (await page.evaluate(() => document.documentElement.scrollWidth)) > savedDocumentWidth
-            ) {
+            if (width === 390)
               console.info(
-                'Save overflow diagnostic',
-                await page.evaluate(() => ({
-                  viewport: { width: innerWidth, height: innerHeight, scrollX, scrollY },
-                  documentWidth: document.documentElement.scrollWidth,
-                  controls: [
-                    ...document.querySelectorAll(
-                      '.save-slot, .save-trigger, .save-positioner, .save-detail',
-                    ),
-                  ].map((element) => ({
-                    className: element.className,
-                    rect: element.getBoundingClientRect().toJSON(),
-                    position: getComputedStyle(element).position,
-                  })),
-                  overflow: [...document.body.querySelectorAll('*')]
-                    .map((element) => ({
-                      tag: element.tagName,
-                      className: element.className,
-                      text: element.textContent?.slice(0, 120),
-                      rect: element.getBoundingClientRect().toJSON(),
-                      position: getComputedStyle(element).position,
-                    }))
-                    .filter(
-                      (element) =>
-                        element.rect.width > 0 &&
-                        element.rect.height > 0 &&
-                        element.rect.right > innerWidth,
-                    )
-                    .sort((a, b) => b.rect.right - a.rect.right)
-                    .slice(0, 16),
-                })),
+                'Save overflow evidence',
+                JSON.stringify({
+                  saved: savedOverflow,
+                  failed: failedOverflow,
+                  open: await overflowSnapshot(),
+                }),
               );
-            }
-            // Native phone content already overflows in the base screenshots.
-            // This control must fit the viewport and must add no document overflow.
+            // The trigger and popover fit the viewport and opening details adds
+            // no overflow, even when unrelated native/presence content is wider.
             await expect
               .poll(() => page.evaluate(() => document.documentElement.scrollWidth))
-              .toBeLessThanOrEqual(savedDocumentWidth);
+              .toBeLessThanOrEqual(failedOverflow.width);
             for (const control of [saveTrigger, saveDetails]) {
               await expect
                 .poll(() =>
