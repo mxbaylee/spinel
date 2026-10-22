@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import type { ReactNode } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { GemLogo, replayGemWiggle } from '../src/ui/GemLogo.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
@@ -33,6 +33,7 @@ export function SpaceShell({
   onProfile,
   onSignOut,
   navigation,
+  navigationButton,
   children,
 }: {
   user: SpaceUser;
@@ -42,12 +43,14 @@ export function SpaceShell({
   onProfile(): void;
   onSignOut(): void;
   navigation?: (close: () => void) => ReactNode;
+  navigationButton?: RefObject<HTMLButtonElement>;
   children: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(true);
   const [drawer, setDrawer] = useState(false);
   const [themeError, setThemeError] = useState('');
-  const pages = useRef<HTMLButtonElement>(null);
+  const localPages = useRef<HTMLButtonElement>(null);
+  const pages = navigationButton ?? localPages;
   const preference = useSyncExternalStore(watchTheme, getPreference);
   const compact = useSyncExternalStore(watchCompact, compactSnapshot);
   const hasNavigation = Boolean(navigation);

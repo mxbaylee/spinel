@@ -92,6 +92,8 @@ export function Space({
   const [operationError, setOperationError] = useState('');
   const [notice, setNotice] = useState('');
   const [action, setAction] = useState<SpaceDialogAction | null>(null);
+  const pagesButton = useRef<HTMLButtonElement>(null);
+  const returnToPages = useRef(false);
   const [actionError, setActionError] = useState('');
   const [preview, setPreview] = useState<SpaceDeletePreview | null>(null);
   const [busy, setBusy] = useState(false);
@@ -104,6 +106,18 @@ export function Space({
   const [dirty, setDirty] = useState(false);
   const dirtyRef = useRef(false);
   const mounted = useRef(true);
+
+  useEffect(() => {
+    if (action || !returnToPages.current) return;
+    returnToPages.current = false;
+    // The originating menu was in a drawer that has now unmounted. Restore
+    // focus to its visible Pages trigger after the metadata dialog closes.
+    const frame = requestAnimationFrame(() => {
+      const target = pagesButton.current;
+      if (target?.isConnected && target.getClientRects().length) target.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [action]);
 
   // The existing guard clears its dirty bit when a departure is accepted.
   // Keep the fence until navigation actually commits (a trash request can fail).
@@ -520,6 +534,7 @@ export function Space({
     );
   }
   const addMenu = (kind: ItemKind) => {
+    returnToPages.current = window.matchMedia('(max-width: 900px)').matches;
     setActionError('');
     setAction({ mode: 'add', kind });
   };
@@ -546,6 +561,7 @@ export function Space({
               return accepted;
             }}
             onAction={(value) => {
+              returnToPages.current = window.matchMedia('(max-width: 900px)').matches;
               close();
               setActionError('');
               setAction(value);
@@ -565,7 +581,7 @@ export function Space({
                 },
               }))}
             >
-              ＋ Add page
+              <ProfileIcon icon="lucide:plus" /> Add page
             </ActionMenu>
           )}
           {canEdit && (
@@ -596,6 +612,7 @@ export function Space({
       onProfile={profile}
       onSignOut={onSignOut}
       navigation={navigationView}
+      navigationButton={pagesButton}
     >
       {route.kind === 'index' ? (
         <>
@@ -721,7 +738,13 @@ export function Space({
         trashView &&
         (canEdit ? (
           <SpaceTrash
-            listing={trash}
+            listing={
+              trash && {
+                ...trash,
+                access:
+                  currentTree.access === 'owner' && trash.access === 'owner' ? 'owner' : 'editor',
+              }
+            }
             spaceName={currentTree.space.name}
             disabled={unavailableManagement}
             busy={busy}

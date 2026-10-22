@@ -215,6 +215,11 @@ async function fixture(spaceReview: boolean) {
 
 test('default-off Space review refuses metadata, preparation and every protocol entry', async () => {
   const f = await fixture(false);
+  for (const path of ['/review/spaces', `/review/spaces/${f.space.id}?spaceReview=1`]) {
+    const response = await f.send(path);
+    expect(response.status, path).toBe(404);
+    expect(await response.text()).not.toContain('Fixture');
+  }
   for (const path of [
     f.api(),
     `${f.base()}/user/session-ticket?unitID=${f.sheet.id}`,
@@ -235,6 +240,11 @@ test('default-off Space review refuses metadata, preparation and every protocol 
 
 test('gated native HTTP admission retains ordinary/guest denial and exact child permissions', async () => {
   const f = await fixture(true);
+  for (const path of ['/review/spaces', `/review/spaces/${f.space.id}?spaceReview=1`]) {
+    const response = await f.send(path);
+    expect(response.status, path).toBe(200);
+    expect(await response.text()).toContain('Fixture');
+  }
   for (const item of [f.sheet, f.doc]) {
     expect(
       (await f.send(f.api(item.id) + '/collaboration', f.cookie(f.editor.id), {})).status,

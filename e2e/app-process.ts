@@ -32,7 +32,18 @@ export async function startApp(options: {
   child.on('error', (error) => {
     startupError = error;
   });
-  const exited = new Promise<void>((done) => child.once('close', () => done()));
+  // Playwright can retire a failed worker while fixture cleanup is in flight.
+  // Terminate only this worker's own server, including that final exit path.
+  const stopOnExit = () => {
+    child.kill('SIGKILL');
+  };
+  process.once('exit', stopOnExit);
+  const exited = new Promise<void>((done) =>
+    child.once('close', () => {
+      process.off('exit', stopOnExit);
+      done();
+    }),
+  );
   const close = async () => {
     if (child.exitCode !== null || child.signalCode !== null) return exited;
     child.kill('SIGTERM');

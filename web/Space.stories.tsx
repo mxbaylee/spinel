@@ -427,9 +427,14 @@ export const Offline: Story = {
     await contents(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(page.getByRole('button', { name: 'Add page' }));
+    // The portaled menu can commit after the click promise resolves.
+    const menu = within(await page.findByRole('menu', { name: 'Add page' }));
     for (const name of ['Doc', 'Sheet', 'Folder'])
-      await expect(page.getByRole('menuitem', { name })).toHaveAttribute('aria-disabled', 'true');
+      await expect(menu.getByRole('menuitem', { name })).toHaveAttribute('aria-disabled', 'true');
     await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(page.queryByRole('menu', { name: 'Add page' })).not.toBeInTheDocument(),
+    );
   },
 };
 
@@ -504,6 +509,32 @@ export const MoveOrReorder: Story = {
   },
 };
 
+export const MetadataDialogFocus: Story = {
+  globals: { viewport: { value: 'phone', isRotated: false } },
+  parameters: { api: treeApi() },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    for (const mode of ['Rename', 'Move or reorder']) {
+      const navigation = await contents(canvasElement);
+      await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
+      await userEvent.click(await page.findByRole('menuitem', { name: mode }));
+      const dialog = await page.findByRole('dialog', { name: mode + ' Welcome' });
+      await expect(page.getAllByRole('dialog')).toHaveLength(1);
+      await expect(page.queryByRole('dialog', { name: 'Space contents' })).not.toBeInTheDocument();
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+      await waitFor(() =>
+        expect(page.queryByRole('dialog', { name: mode + ' Welcome' })).not.toBeInTheDocument(),
+      );
+      if (window.matchMedia('(max-width: 900px)').matches)
+        await waitFor(() =>
+          expect(canvas.getByRole('button', { name: 'Open Space contents' })).toHaveFocus(),
+        );
+    }
+  },
+};
+
 export const MutationFailure: Story = {
   parameters: {
     api: {
@@ -565,6 +596,21 @@ export const TrashEditor: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByRole('button', { name: 'Restore Earlier plan' });
+    await expect(
+      canvas.queryByRole('button', { name: /^Actions for deleted/ }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+/** Sequential role reads may disagree during a downgrade; either Edit result wins. */
+export const TrashRoleChange: Story = {
+  parameters: {
+    spacePath: spaceHref(root, { kind: 'trash' }),
+    api: { ...treeApi(tree('editor')), ['GET /api/spaces/' + root + '/trash']: listing('owner') },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('button', { name: 'Restore Earlier plan' })).toBeEnabled();
     await expect(
       canvas.queryByRole('button', { name: /^Actions for deleted/ }),
     ).not.toBeInTheDocument();

@@ -66,10 +66,23 @@ async function fixture(browser: Browser, info: TestInfo) {
     return (await response.json()) as SpaceTreeData;
   };
   const close = async () => {
-    for (const context of contexts.reverse()) await context.close();
-    await app.close();
-    db.close();
-    await rm(directory, { recursive: true, force: true });
+    // A timed-out browser action must not leave this fixture's server bound for
+    // the next attempt. Start its shutdown before awaiting browser cleanup.
+    const results = await Promise.allSettled([
+      app.close(),
+      ...contexts.toReversed().map((context) => context.close()),
+    ]);
+    try {
+      db.close();
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+    const failures = results.filter((result) => result.status === 'rejected');
+    if (failures.length)
+      throw new AggregateError(
+        failures.map((result) => result.reason),
+        'Could not close the Space fixture.',
+      );
   };
   return {
     db,
@@ -225,13 +238,32 @@ async function copyDoc(page: Page) {
   await page.keyboard.press('Control+a');
   return copySelection(page);
 }
-async function cell(page: Page, address: string) {
-  const input = page
+const cellAddress = (page: Page) =>
+  page
     .getByRole('region', { name: 'Sheet document', exact: true })
-    .getByRole('textbox')
-    .nth(2);
+    .locator('[data-u-comp="defined-name"]')
+    .getByRole('textbox');
+async function cell(page: Page, address: string) {
+  const input = cellAddress(page);
+  await expect(input).toBeEnabled();
   await input.fill(address);
   await input.press('Enter');
+}
+async function commitRetainedCell(page: Page, address: string) {
+  await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+    'Editing cell — changes not saved yet.',
+  );
+  await expect(cellAddress(page)).toHaveValue(address);
+  await expect(cellAddress(page)).toBeDisabled();
+  // Cancelling a departure preserves the active native edit. Use the visible
+  // formula-bar checkmark to commit it before requesting another cell address.
+  // The public sheets-ui DOM orders these controls as cancel, confirm, formula.
+  await page
+    .getByRole('region', { name: 'Sheet document', exact: true })
+    .locator('[data-u-comp="formula-bar-actions"] > span')
+    .nth(1)
+    .click();
+  await saved(page);
 }
 async function writeCell(page: Page, address: string, text: string, commit = true) {
   await cell(page, address);
@@ -304,6 +336,9 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await saved(page);
     expect(await copyDoc(page)).toBe('Native notes in a Space.');
     await page.getByRole('radio', { name: 'Light', exact: true }).click();
+    // The earlier save proof preceded clipboard/theme interaction. Establish
+    // the current native state before taking evidence and creating another page.
+    await saved(page);
     await screenshot(page, info, 'doc-light');
     const sheet = await add(page, space.id, 'Sheet', 'Plan');
     await writeCell(page, 'A1', '41');
@@ -312,6 +347,7 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await saved(page);
     expect(await copyCell(page, 'A3')).toBe('42');
     await page.getByRole('radio', { name: 'Dark', exact: true }).click();
+    await saved(page);
     await screenshot(page, info, 'sheet-dark');
     await page.reload();
     await saved(page);
@@ -398,7 +434,8 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
     await focusDoc(page);
     await page.keyboard.type('Keep this native document through recovery.');
     await saved(page);
-    await page.goto(href(space.id, sheet.id));
+    await page.getByRole('button', { name: `Expand ${doc.name}`, exact: true }).click();
+    await pageLink(page, space.id, sheet.id).click();
     await saved(page);
     await writeCell(page, 'A1', '73');
     await saved(page);
@@ -410,11 +447,13 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
     // still see the pending edit and cancellation must retain this native page.
     await cancelDeparture(page, () => pageLink(page, space.id, doc.id).click());
     await expect(page).toHaveURL(new RegExp(escape(href(space.id, sheet.id)) + '$'));
+    await commitRetainedCell(page, 'A2');
     expect(await copyCell(page, 'A2')).toBe('pending-pointer-edit');
     await saved(page);
     await writeCell(page, 'A3', 'pending-history-edit', false);
     await cancelDeparture(page, () => page.goBack());
     await expect(page).toHaveURL(new RegExp(escape(href(space.id, sheet.id)) + '$'));
+    await commitRetainedCell(page, 'A3');
     expect(await copyCell(page, 'A3')).toBe('pending-history-edit');
     await saved(page);
 
@@ -701,6 +740,162 @@ test('Space navigation works on a touch phone and at 613px with a mouse, with re
     await expect(f.page.getByText(space.name, { exact: true })).toHaveCount(0);
     expect(f.errors).toEqual([]);
   } finally {
+    await f.close();
+  }
+});
+
+test('an unsigned Space deep link returns to the exact child when an account session resumes', async ({
+  browser,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, info);
+  try {
+    const { space, child } = seed(f, 'Sign-in destination');
+    child('First page is not the destination', 'doc');
+    const target = child('Requested stable child', 'doc');
+    const ownerCookies = await f.context.cookies();
+    await f.context.clearCookies();
+    await f.page.goto(href(space.id, target.id));
+    await expect(f.page).toHaveURL(`${f.origin}/sign-in?space=${space.id}&item=${target.id}`);
+    await expect(
+      f.page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+    ).toBeVisible();
+    // Reuse a real current account session to isolate the return-route contract;
+    // passkey registration/authentication is covered by the existing auth suite.
+    await f.context.addCookies(ownerCookies);
+    await f.page.reload();
+    await expect(f.page).toHaveURL(f.origin + href(space.id, target.id));
+    await saved(f.page);
+    await expect(f.page.getByRole('heading', { name: target.name, exact: true })).toBeVisible();
+    await expect(pageLink(f.page, space.id, target.id)).toHaveAttribute('aria-current', 'page');
+    await f.page.goto('about:blank');
+    await f.context.clearCookies();
+    await f.page.goto('/review/spaces');
+    await expect(f.page).toHaveURL(`${f.origin}/sign-in?space=index`);
+    await f.context.addCookies(ownerCookies);
+    await f.page.reload();
+    await expect(f.page).toHaveURL(f.origin + '/review/spaces');
+    await expect(f.page.getByRole('heading', { name: 'Spaces', exact: true })).toBeVisible();
+    await expect(f.page.getByRole('list', { name: 'Your Spaces', exact: true })).toBeVisible();
+    const operator = f.auth.createUser('Review operator', true);
+    await f.context.clearCookies();
+    await f.context.addCookies([
+      {
+        name: COOKIE_NAME,
+        value: f.auth.createSession(operator.id).token,
+        url: f.origin.replace('http:', 'https:'),
+        secure: true,
+        httpOnly: true,
+        sameSite: 'Strict',
+      },
+    ]);
+    await f.page.goto(`/sign-in?space=${space.id}&item=${target.id}`);
+    await expect(f.page).toHaveURL(f.origin + '/admin');
+    expect((await f.context.request.get(href(space.id, target.id))).status()).toBe(404);
+    expect(f.errors).toEqual([]);
+  } finally {
+    await f.close();
+  }
+});
+
+test('revocation clears private Space navigation while retaining unsaved native text for copying and rejecting its write', async ({
+  browser,
+}, info) => {
+  test.setTimeout(120_000);
+  const f = await fixture(browser, info);
+  let release = () => {};
+  try {
+    const { space, child } = seed(f, 'Private recovery notebook');
+    const doc = child('Private native notes', 'doc');
+    f.spaces.share(f.owner.id, space.id, f.editor.id, 'editor');
+    const editor = await f.open(f.editor.id);
+    await editor.page.goto(href(space.id, doc.id));
+    await saved(editor.page);
+    await focusDoc(editor.page);
+    await editor.page.keyboard.type('Persisted baseline.');
+    await saved(editor.page);
+    await editor.page.reload();
+    await saved(editor.page);
+    expect(await copyDoc(editor.page)).toBe('Persisted baseline.');
+    const metadata = await f.context.request.get(`/api/spaces/${space.id}/items/${doc.id}`);
+    expect(metadata.ok()).toBe(true);
+    const unitID = (await metadata.json()).live.unitId as string;
+    const read = async () => {
+      const response = await f.context.request.get(
+        `/space-api/${space.id}/items/${doc.id}/universer-api/snapshot/1/unit/${unitID}/rev/0`,
+      );
+      expect(response.ok()).toBe(true);
+      const { snapshot, changesets } = (await response.json()) as {
+        snapshot: unknown;
+        changesets: unknown[];
+      };
+      return { snapshot, changesets };
+    };
+    const before = await read();
+    const held = new Promise<void>((done) => {
+      release = done;
+    });
+    let heldChanges = 0;
+    let returnedChanges = 0;
+    await editor.context.route('**/universer-api/comb/**/new_changes', async (route) => {
+      heldChanges++;
+      await held;
+      const response = await route.fetch();
+      // The protocol may acknowledge receipt separately from commit. Compare
+      // authoritative native snapshot/revisions below, not the receipt alone.
+      returnedChanges++;
+      await route.fulfill({ response });
+    });
+    await focusDoc(editor.page);
+    await editor.page.keyboard.press('Control+End');
+    await editor.page.keyboard.type(' Unsaved words to rescue.');
+    await expect.poll(() => heldChanges).toBeGreaterThan(0);
+    const status = editor.page.getByRole('status', { name: 'Save status', exact: true });
+    await expect(status).toContainText('not saved');
+    f.spaces.share(f.owner.id, space.id, f.editor.id, null);
+    await expect(status).toContainText('Access changed', { timeout: 10_000 });
+    await expect(
+      editor.page.getByRole('heading', { name: 'Space unavailable', exact: true }),
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(
+      editor.page.getByRole('region', { name: 'Doc document', exact: true }),
+    ).toBeVisible();
+    await expect(editor.page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    await expect(editor.page.getByRole('region', { name: 'Space pages', exact: true })).toHaveCount(
+      0,
+    );
+    await expect(
+      editor.page.getByRole('region', { name: 'Deleted Space contents', exact: true }),
+    ).toHaveCount(0);
+    await expect(editor.page.getByRole('button', { name: 'Add page', exact: true })).toHaveCount(0);
+    const local = await copyDoc(editor.page);
+    expect(local).toContain('Persisted baseline.');
+    expect(local).toContain('Unsaved words to rescue.');
+    await cancelDeparture(editor.page, () =>
+      editor.page
+        .getByRole('banner')
+        .getByRole('button', { name: 'My files', exact: true })
+        .click(),
+    );
+    await expect(editor.page).toHaveURL(f.origin + href(space.id, doc.id));
+    expect(
+      (await editor.context.request.get(`/api/spaces/${space.id}/items/${doc.id}`)).status(),
+    ).toBe(404);
+    const inFlight = heldChanges;
+    release();
+    await expect.poll(() => returnedChanges).toBeGreaterThanOrEqual(inFlight);
+    expect(await read()).toEqual(before);
+    await screenshot(editor.page, info, 'revoked-unsaved-recovery');
+    editor.page.once('dialog', (dialog) => dialog.accept());
+    await editor.page.goto('about:blank');
+    // A separate account and native instance reload the persisted state after
+    // every held write reached the server; the rescued draft never committed.
+    await f.page.goto(href(space.id, doc.id));
+    await saved(f.page);
+    expect(await copyDoc(f.page)).toBe('Persisted baseline.');
+    expect(f.errors).toEqual([]);
+  } finally {
+    release();
     await f.close();
   }
 });
