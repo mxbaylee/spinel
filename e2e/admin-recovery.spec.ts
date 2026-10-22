@@ -173,13 +173,12 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     view.setDefaultTimeout(15_000);
     view.on('pageerror', (error) => errors.push(error.message));
   }
-  const saved = () =>
-    expect(memberPage.getByRole('status', { name: 'Save status' })).toHaveText(
-      'All changes saved.',
-      { timeout: 30_000 },
-    );
-  const readSheet = async () => {
-    const response = await member.request.get(`/api/items/${sheet.id}/sheet`);
+  const saved = (target = memberPage) =>
+    expect(target.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
+      timeout: 30_000,
+    });
+  const readSheet = async (client = member) => {
+    const response = await client.request.get(`/api/items/${sheet.id}/sheet`);
     expect(response.status()).toBe(200);
     return response.json();
   };
@@ -303,8 +302,23 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     await member.addCookies([cookie(auth.createSession(recipient.id).token)]);
     await memberPage.goto('/');
     await expect(memberPage.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(
+      memberPage.getByRole('button', { name: `${departed.name} Folder`, exact: true }),
+    ).toBeVisible();
+    await capture(memberPage, info, 'recipient-dashboard');
     await memberPage.getByRole('button', { name: `${departed.name} Folder`, exact: true }).click();
+    await expect(
+      memberPage.getByRole('button', { name: `${folder.name} Folder`, exact: true }),
+    ).toBeVisible();
+    await capture(memberPage, info, 'recipient-wrapper');
     await memberPage.getByRole('button', { name: `${folder.name} Folder`, exact: true }).click();
+    await expect(
+      memberPage.getByRole('button', { name: `${sheet.name} Sheet`, exact: true }),
+    ).toBeVisible();
+    await expect(
+      memberPage.getByRole('button', { name: `${doc.name} Doc`, exact: true }),
+    ).toBeVisible();
+    await capture(memberPage, info, 'recipient-retained-folder');
     await memberPage.getByRole('button', { name: `${sheet.name} Sheet`, exact: true }).click();
     await saved();
     expect(JSON.stringify((await readSheet()).snapshot)).toContain(
@@ -330,6 +344,38 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
       ),
     ).toBe(true);
     await capture(memberPage, info, 'recipient-native-sheet');
+    await memberPage.close();
+
+    const retained = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1000 } });
+    contexts.push(retained);
+    await retained.addCookies([cookie(auth.createSession(collaborator.id).token)]);
+    const retainedPage = await retained.newPage();
+    retainedPage.setDefaultTimeout(15_000);
+    retainedPage.on('pageerror', (error) => errors.push(error.message));
+    await retainedPage.goto(`/?item=${sheet.id}`);
+    await saved(retainedPage);
+    const collaboratorRead = await readSheet(retained);
+    expect(collaboratorRead.access).toBe('editor');
+    for (const text of ['Budget preserved through handover', 'Continued by the new owner'])
+      expect(JSON.stringify(collaboratorRead.snapshot)).toContain(text);
+    const retainedAddress = retainedPage
+      .getByRole('region', { name: 'Sheet document', exact: true })
+      .getByRole('textbox')
+      .nth(2);
+    await retainedAddress.fill('C1');
+    await retainedAddress.press('Enter');
+    await retainedPage.keyboard.type('Continued by the retained collaborator');
+    await retainedPage.keyboard.press('Enter');
+    await expect
+      .poll(async () => JSON.stringify((await readSheet(retained)).snapshot))
+      .toContain('Continued by the retained collaborator');
+    await saved(retainedPage);
+    const collaboratorWritten = JSON.stringify((await readSheet(retained)).snapshot);
+    for (const text of ['Budget preserved through handover', 'Continued by the new owner'])
+      expect(collaboratorWritten).toContain(text);
+    await capture(retainedPage, info, 'collaborator-native-sheet');
+    await retainedPage.close();
+
     await guestPage.goto(`/share/${sheet.id}?preview=${link.previewToken}#${link.token}`);
     await expect(guestPage.getByText('This link no longer works.', { exact: true })).toBeVisible();
     for (const name of [departed.name, recipient.name, folder.name, sheet.name])
@@ -343,7 +389,13 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     await expect(account.getByText('Member · Active', { exact: true })).toBeVisible();
     expect(auth.passkey(oldCredential)).toBeUndefined();
     expect(auth.session(oldSession.token)).toBeUndefined();
-    await page.getByLabel('Invite for', { exact: true }).selectOption(departed.id);
+    const inviteFor = page.getByRole('combobox', { name: 'Invite for', exact: true });
+    await expect(inviteFor).toBeEnabled();
+    await expect(
+      inviteFor.getByRole('option', { name: `Recover ${departed.name}`, exact: true }),
+    ).toHaveAttribute('value', departed.id);
+    await inviteFor.selectOption(departed.id);
+    await expect(inviteFor).toHaveValue(departed.id);
     await page.getByRole('button', { name: 'Create invite', exact: true }).click();
     const recoveryUrl = await page.getByLabel('New invite link', { exact: true }).inputValue();
     const countBeforeRecovery = auth.userCount();
