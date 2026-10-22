@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { itemsRequest } from './itemsApi.ts';
 import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
 type State = { enabled: boolean; role: 'viewer' | 'editor'; url?: string | null };
@@ -8,35 +8,48 @@ export function ShareLink({ id, space = false }: { id: string; space?: boolean }
   const [busy, setBusy] = useState(true),
     [error, setError] = useState('');
   const [pending, setPending] = useState<'viewer' | 'editor' | null | undefined>(undefined);
-  useEffect(() => {
-    let disposed = false;
-    void itemsRequest<State>(`/${id}/link`)
+  const generation = useRef(0);
+  const verify = (request: number) => () => {
+    if (request !== generation.current) throw new Error('This sharing view is no longer current.');
+  };
+  useLayoutEffect(() => {
+    const request = ++generation.current;
+    setState({ enabled: false, role: 'viewer' });
+    setRole('viewer');
+    setBusy(true);
+    setError('');
+    setPending(undefined);
+    void itemsRequest<State>(`/${id}/link`, 'GET', undefined, verify(request))
       .then((value) => {
-        if (!disposed) {
+        if (request === generation.current) {
           setState(value);
           setRole(value.role);
         }
       })
       .catch((cause) => {
-        if (!disposed) setError(cause.message);
+        if (request === generation.current) setError(cause.message);
       })
       .finally(() => {
-        if (!disposed) setBusy(false);
+        if (request === generation.current) setBusy(false);
       });
     return () => {
-      disposed = true;
+      generation.current++;
     };
   }, [id]);
   const change = async (role: 'viewer' | 'editor' | null) => {
+    const request = ++generation.current;
     setBusy(true);
     setError('');
     try {
-      setState(await itemsRequest<State>(`/${id}/link`, 'PUT', { role }));
+      const value = await itemsRequest<State>(`/${id}/link`, 'PUT', { role }, verify(request));
+      if (request !== generation.current) return;
+      setState(value);
       setPending(undefined);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not change the link.');
+      if (request === generation.current)
+        setError(cause instanceof Error ? cause.message : 'Could not change the link.');
     } finally {
-      setBusy(false);
+      if (request === generation.current) setBusy(false);
     }
   };
   const requestChange = (next: 'viewer' | 'editor' | null) => {
