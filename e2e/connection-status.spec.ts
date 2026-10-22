@@ -330,6 +330,48 @@ for (const width of [1280, 390]) {
           for (const theme of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
             await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
             await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+            // Capture before asserting so teardown cannot hide a failing layout.
+            await page.screenshot({
+              path: `test-results/theme-screenshots/spn-043-${kind}-failed-${width === 390 ? 'phone' : theme}-${info.project.name}.png`,
+              fullPage: true,
+              animations: 'disabled',
+            });
+            if (
+              (await page.evaluate(() => document.documentElement.scrollWidth)) > savedDocumentWidth
+            ) {
+              console.info(
+                'Save overflow diagnostic',
+                await page.evaluate(() => ({
+                  viewport: { width: innerWidth, height: innerHeight, scrollX, scrollY },
+                  documentWidth: document.documentElement.scrollWidth,
+                  controls: [
+                    ...document.querySelectorAll(
+                      '.save-slot, .save-trigger, .save-positioner, .save-detail',
+                    ),
+                  ].map((element) => ({
+                    className: element.className,
+                    rect: element.getBoundingClientRect().toJSON(),
+                    position: getComputedStyle(element).position,
+                  })),
+                  overflow: [...document.body.querySelectorAll('*')]
+                    .map((element) => ({
+                      tag: element.tagName,
+                      className: element.className,
+                      text: element.textContent?.slice(0, 120),
+                      rect: element.getBoundingClientRect().toJSON(),
+                      position: getComputedStyle(element).position,
+                    }))
+                    .filter(
+                      (element) =>
+                        element.rect.width > 0 &&
+                        element.rect.height > 0 &&
+                        element.rect.right > innerWidth,
+                    )
+                    .sort((a, b) => b.rect.right - a.rect.right)
+                    .slice(0, 16),
+                })),
+              );
+            }
             // Native phone content already overflows in the base screenshots.
             // This control must fit the viewport and must add no document overflow.
             await expect
@@ -353,11 +395,6 @@ for (const width of [1280, 390]) {
             await expect(
               page.getByRole('button', { name: 'Retry saving', exact: true }),
             ).toBeInViewport();
-            await page.screenshot({
-              path: `test-results/theme-screenshots/spn-043-${kind}-failed-${width === 390 ? 'phone' : theme}-${info.project.name}.png`,
-              fullPage: true,
-              animations: 'disabled',
-            });
           }
           await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
           recoveryHeld = false;
