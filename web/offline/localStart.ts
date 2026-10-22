@@ -1,4 +1,5 @@
 import {
+  offlineAccountRead,
   offlinePreparation,
   openOfflineStore,
   preparedAccount,
@@ -27,18 +28,21 @@ export function isNetworkFailure(error: unknown) {
 }
 
 /** Reads local mode's starting point; null when this device was not prepared. */
-export async function openLocalStart(): Promise<LocalStart | null> {
+export async function openLocalStart(): Promise<(LocalStart & { isCurrent(): boolean }) | null> {
   const accountId = preparedAccount();
   if (!accountId) return null;
+  const isCurrent = offlineAccountRead(accountId);
+  if (!isCurrent()) return null;
   const store = await openOfflineStore(accountId);
   try {
+    if (!isCurrent()) return null;
     const [user, catalog, downloads] = await Promise.all([
       store.user(),
       store.catalog(),
       store.downloads(),
     ]);
-    if (!user || user.id !== accountId || !catalog) return null;
-    return { user, catalog, downloads };
+    if (!isCurrent() || !user || user.id !== accountId || !catalog) return null;
+    return { user, catalog, downloads, isCurrent };
   } finally {
     store.close();
   }

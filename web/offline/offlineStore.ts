@@ -99,6 +99,22 @@ function storage() {
 export function preparedAccount() {
   return storage()?.getItem(ACCOUNT_KEY) ?? null;
 }
+/** Read-only startup also observes cancellation; it never prepares or claims a device. */
+export function offlineAccountRead(accountId: string) {
+  const epoch = preparationEpoch;
+  const cancellation = storage()?.getItem(CANCELLATION_KEY);
+  return () => {
+    try {
+      return (
+        epoch === preparationEpoch &&
+        cancellation === storage()?.getItem(CANCELLATION_KEY) &&
+        preparedAccount() === accountId
+      );
+    } catch {
+      return false;
+    }
+  };
+}
 export function setPreparedAccount(accountId: string | null) {
   // Clearing an already-empty pointer still cancels a first preparation that
   // was in flight when sign-out began, before its component can unmount.

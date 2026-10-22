@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
-import { claimDevice } from '../../web/offline/localStart.ts';
+import { claimDevice, openLocalStart } from '../../web/offline/localStart.ts';
 import {
   OfflineStore,
   offlinePreparation,
@@ -125,4 +125,78 @@ test('blocked offline storage does not prevent online startup or begin database 
   expect(f.open).not.toHaveBeenCalled();
   expect(f.saveCatalog).not.toHaveBeenCalled();
   expect(values.has('spinel.offline.account')).toBe(false);
+});
+
+const catalog = { items: [], shared: [], views: {}, syncedAt: 1 };
+function localFixture() {
+  const f = fixture();
+  vi.spyOn(OfflineStore.prototype, 'user').mockResolvedValue(user);
+  vi.spyOn(OfflineStore.prototype, 'catalog').mockResolvedValue(catalog);
+  return f;
+}
+
+test('local startup reads a legacy prepared catalog without writing storage', async () => {
+  values.clear();
+  values.set('spinel.offline.account', user.id);
+  const f = localFixture();
+  const write = vi.spyOn(window.localStorage, 'setItem');
+  const start = await openLocalStart();
+  expect(start).toMatchObject({ user, catalog, downloads: [download] });
+  expect(start?.isCurrent()).toBe(true);
+  expect(write).not.toHaveBeenCalled();
+  expect(f.close).toHaveBeenCalledTimes(1);
+  setPreparedAccount(null);
+  expect(start?.isCurrent()).toBe(false);
+});
+
+test.each([
+  ['database open', 'sign-out'],
+  ['database open', 'account switch'],
+  ['catalog reads', 'sign-out'],
+  ['catalog reads', 'account switch'],
+  ['catalog reads', 'sign-out and same-account return'],
+] as const)('local startup held during %s discards titles after %s', async (boundary, change) => {
+  vi.resetModules();
+  const otherTab = await import('../../web/offline/offlineStore.ts');
+  setPreparedAccount(user.id);
+  const f = localFixture();
+  const entered = deferred();
+  const held = deferred();
+  if (boundary === 'database open')
+    f.open.mockImplementationOnce(() => {
+      const request: { result: IDBDatabase; onsuccess?: () => void } = {
+        result: { close: f.close } as unknown as IDBDatabase,
+      };
+      entered.resolve();
+      void held.promise.then(() => request.onsuccess?.());
+      return request;
+    });
+  else
+    f.downloads.mockImplementationOnce(async () => {
+      entered.resolve();
+      await held.promise;
+      return [download];
+    });
+  const pending = openLocalStart();
+  await entered.promise;
+  // No storage event is delivered: the read must inspect the persisted fence.
+  otherTab.setPreparedAccount(change === 'account switch' ? 'another-account' : null);
+  if (change === 'sign-out and same-account return') otherTab.setPreparedAccount(user.id);
+  held.resolve();
+  await expect(pending).resolves.toBeNull();
+  expect(f.close).toHaveBeenCalledTimes(1);
+  if (boundary === 'database open') expect(f.downloads).not.toHaveBeenCalled();
+});
+
+test('a local catalog retains its cancellation check after the read completes', async () => {
+  vi.resetModules();
+  const otherTab = await import('../../web/offline/offlineStore.ts');
+  setPreparedAccount(user.id);
+  localFixture();
+  const start = await openLocalStart();
+  expect(start?.isCurrent()).toBe(true);
+  // App checks this again at publication and immediately after subscribing.
+  otherTab.setPreparedAccount(null);
+  otherTab.setPreparedAccount(user.id);
+  expect(start?.isCurrent()).toBe(false);
 });
