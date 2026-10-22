@@ -22,6 +22,12 @@ async function capture(page: Page, info: TestInfo, name: string) {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    const dialogs = page.getByRole('dialog').or(page.getByRole('alertdialog'));
+    if (!(await dialogs.count())) {
+      // Normalize fixed navigation without changing an open modal's scroll lock.
+      await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
+      await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+    }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
