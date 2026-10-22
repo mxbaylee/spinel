@@ -171,7 +171,7 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     expect(
       cells(await read()).filter((cell) => [17, 29].includes(Number(cell.value))),
     ).toHaveLength(2);
-    // Isolate input tracking while online: disconnecting alone reports unsaved.
+    // Start the native cell edit while online, before disconnecting.
     const confirm = await startEdit('offline-phone');
     const status = sheet.getByRole('status', { name: 'Save status' });
     await expect(status).toHaveText('Editing cell — changes not saved yet.');

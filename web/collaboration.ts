@@ -220,7 +220,7 @@ export function watchCollaboration(
           ? access === 'viewer'
             ? 'View only — reload after your access changes.'
             : 'All changes saved.'
-          : 'No unsaved changes. Reconnect to continue.',
+          : 'Connection interrupted. Reconnect to continue.',
     });
     if (synchronized && lastDirty)
       void cache.exhaustSavingTask().then(

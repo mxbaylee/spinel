@@ -90,7 +90,9 @@ export function SheetEditor({
       setStatus({
         ...state,
         dirty,
-        message: editing && !state.failed ? 'Editing cell — changes not saved yet.' : state.message,
+        message: editing
+          ? `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
+          : state.message,
       });
     };
     void (async () => {
