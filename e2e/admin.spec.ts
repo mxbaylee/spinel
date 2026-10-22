@@ -13,9 +13,10 @@ test('operator removes a passkey from an open editor, then disables the account 
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`),
     auth = new AuthStore(db),
     workspace = new WorkspaceStore(auth);
-  const operator = auth.createUser('Device operator', true),
-    user = auth.createUser('Device owner'),
-    collaborator = auth.createUser('Retained collaborator');
+  const runId = `${info.testId}-${info.retry}`;
+  const operator = auth.createUser('Device operator ' + runId, true),
+    user = auth.createUser('Device owner ' + runId),
+    collaborator = auth.createUser('Retained collaborator ' + runId);
   const item = workspace.create(user.id, {
     name: 'Preserved budget',
     kind: 'sheet',
@@ -24,7 +25,7 @@ test('operator removes a passkey from an open editor, then disables the account 
   workspace.share(user.id, item.id, collaborator.id, 'editor');
   for (const key of ['Lost browser', 'Backup passkey'])
     db.prepare('INSERT INTO auth_passkeys VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(
-      `${info.testId}-${key}`,
+      `${runId}-${key}`,
       user.id,
       Buffer.from([1]),
       0,
@@ -37,8 +38,8 @@ test('operator removes a passkey from an open editor, then disables the account 
       'singleDevice',
     );
   const adminSession = auth.createSession(operator.id),
-    device = auth.createSession(user.id, undefined, `${info.testId}-Lost browser`),
-    kept = auth.createSession(user.id, undefined, `${info.testId}-Backup passkey`);
+    device = auth.createSession(user.id, undefined, `${runId}-Lost browser`),
+    kept = auth.createSession(user.id, undefined, `${runId}-Backup passkey`);
   const editorContext = await browser.newContext({ viewport: { width: 1440, height: 1100 } }),
     editor = await editorContext.newPage();
   const cookie = (token: string) => ({
@@ -79,7 +80,7 @@ test('operator removes a passkey from an open editor, then disables the account 
       .toContain('Keep this');
     await expect(saved).toHaveText('All changes saved.');
     await page.goto('/admin');
-    const account = page.getByRole('region', { name: 'Device owner account', exact: true });
+    const account = page.getByRole('region', { name: `${user.name} account`, exact: true });
     await expect(account.getByText('Member · Active', { exact: true })).toBeVisible();
     await expect(account.getByText(/Last used Never/)).toHaveCount(2);
     await account.getByRole('button', { name: 'Remove Lost browser', exact: true }).click();
@@ -97,9 +98,12 @@ test('operator removes a passkey from an open editor, then disables the account 
       (await editorContext.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status(),
     ).toBe(401);
     expect(auth.session(kept.token)?.user_id).toBe(user.id);
+    // A revoked page can navigate to sign-in. Start the retained device at the
+    // actual item address after unloading its old session's pending work.
+    await editor.goto('about:blank');
     await editorContext.clearCookies();
     await editorContext.addCookies([cookie(kept.token)]);
-    await editor.reload();
+    await editor.goto(`${baseURL}/?item=${item.id}`);
     await expect(saved).toHaveText('All changes saved.', { timeout: 30_000 });
     await account.getByRole('button', { name: 'Disable account', exact: true }).click();
     await dialog.getByRole('button', { name: 'Confirm removal' }).click();
