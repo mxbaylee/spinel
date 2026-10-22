@@ -45,7 +45,7 @@ and standalone conversion/extraction are refused.
 The internal `SpaceStore` resolves fresh access in the same transaction
 as each read or mutation. View can read the live tree; Edit can create, rename,
 reorder and move its contents. Root sharing, rename and outer-folder moves are
-Owner-only. The most generous Space/outer-folder View/Edit grant applies to
+Owner-or-Admin capabilities. The most generous Space/outer-folder View/Edit/Admin grant applies to
 every existing and future child. Disabled callers/owners and Operators
 are refused. View/Edit guests use their current root capability and receive no
 outer location or account identity. There is no global bypass
@@ -60,7 +60,8 @@ authorized original parent, or the Space root with a generic fallback reason;
 saved location metadata never grants access or discloses an unavailable parent.
 
 `SpaceLifecycleStore` controls whole-Space trash, restore and confirmed permanent
-deletion for the active Owner. Trash changes only the root, preserving all native
+deletion. Owner or File admin can trash; restore and permanent deletion remain
+Owner-only. Trash changes only the root, preserving all native
 data, internal order and earlier deletion batches. Restore does not revive earlier
 internal tombstones. An unavailable outer folder falls back to My files root
 without disclosing its old location. Permanent deletion validates the complete

@@ -184,13 +184,13 @@ Spaces are enabled by default in the application. Account navigation uses
 This runtime switch does not change the permissions below.
 
 A Space is one outer file in folders, search, tags and personal filing. Its
-effective View/Edit role comes from the root and readable outer-folder grants
+effective View/Edit/Admin role comes from the root and readable outer-folder grants
 and applies uniformly to every current and future internal page and Sheet.
 Children have no separate grants or links and do not become ordinary catalog
-files. Only the Owner administers the root or permanently deletes its contents.
+files. Owner and File admins administer the root; only the Owner permanently deletes its contents.
 An account Editor can manage the internal tree and recover deleted subtrees.
 
-The Owner can issue a View or Edit guest link for the root. An Edit guest can
+The Owner or a File admin can issue a View or Edit guest link for the root. An Edit guest can
 create, rename, reorder, nest and trash internal content; a View guest reads it.
 Guests receive no outer folders, account identities, sharing controls, recovery
 collection, public history, native-file export or offline preparation. Existing

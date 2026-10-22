@@ -56,7 +56,13 @@ test('Owner delegates file administration on every outer type, administrators ma
     await panel
       .getByRole('combobox', { name: `Access for ${name}`, exact: true })
       .selectOption(role);
+    const response = panel
+      .page()
+      .waitForResponse(
+        (response) => response.url().endsWith('/sharing') && response.request().method() === 'PUT',
+      );
     await panel.getByRole('button', { name: `Apply access for ${name}`, exact: true }).click();
+    expect((await response).status()).toBe(200);
     await expect(panel.getByText(`Access updated for ${name}.`, { exact: true })).toBeVisible();
   }
   try {
@@ -78,6 +84,14 @@ test('Owner delegates file administration on every outer type, administrators ma
         else expect(() => files.get(peer.id, item.id)).toThrow();
       }
       if (kind !== 'folder') {
+        expect(
+          (
+            await second.request.put(`/api/items/${item.id}/link`, {
+              headers,
+              data: { role: 'admin' },
+            })
+          ).status(),
+        ).toBe(400);
         await expect(panel.getByLabel('Link access').locator('option[value="admin"]')).toHaveCount(
           0,
         );
@@ -110,7 +124,7 @@ test('Owner delegates file administration on every outer type, administrators ma
             .getByRole('complementary', { name: 'Folders' })
             .getByRole('button', { name: name + ' renamed', exact: true }),
         ).toHaveCount(0);
-        await other.getByRole('button', { name: 'File into folder', exact: true }).first().click();
+        await other.getByRole('button', { name: `File ${name} renamed`, exact: true }).click();
         const filing = other.getByRole('form', { name: 'File shared item' });
         await expect(
           filing.getByRole('option', { name: name + ' renamed', exact: true }),
@@ -132,6 +146,7 @@ test('Owner delegates file administration on every outer type, administrators ma
       ] as const) {
         await other.setViewportSize({ width, height: 1000 });
         await other.emulateMedia({ colorScheme: theme });
+        await expect(other.locator('html')).toHaveAttribute('data-theme', theme);
         await mkdir('test-results/theme-screenshots', { recursive: true });
         await other.screenshot({
           path: `test-results/theme-screenshots/spn-079-${kind}-move-${variant}-${info.project.name}.png`,
