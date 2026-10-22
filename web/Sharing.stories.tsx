@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { within, userEvent, expect } from 'storybook/test';
 import type { FileItem, SharePerson, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { Sharing } from './Sharing.tsx';
@@ -124,7 +125,6 @@ export const GrantFileAdmin: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const { within, userEvent, expect } = await import('storybook/test');
     const canvas = within(canvasElement);
     await userEvent.selectOptions(await canvas.findByLabelText('Access for Alex Kim'), 'admin');
     await userEvent.click(canvas.getByRole('button', { name: 'Apply access for Alex Kim' }));
@@ -150,7 +150,6 @@ export const AdminRevokedWhileApplying: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const { within, userEvent, expect } = await import('storybook/test');
     const canvas = within(canvasElement);
     await userEvent.selectOptions(await canvas.findByLabelText('Access for Alex Kim'), 'admin');
     await userEvent.click(canvas.getByRole('button', { name: 'Apply access for Alex Kim' }));
