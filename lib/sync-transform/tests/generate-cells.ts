@@ -1,16 +1,17 @@
 import { Tools } from '@univerjs/core';
-import type { IRange, Worksheet } from '@univerjs/core';
+import type { IRange, IWorkbookData, Worksheet } from '@univerjs/core';
 import { checkCellValueType, getMoveRangeCommandMutations } from '@univerjs/sheets';
 import type { Mutation } from '../index.ts';
 import { cellIds } from '../src/cells.ts';
-import { capture, pick, randomSheet, wire } from './generate.ts';
+import { capture, pick, randomSheet, seededWorkbook, wire } from './generate.ts';
 import type { Generate } from './generate.ts';
 import type { Replica } from './harness.ts';
 
 let written = 0;
 /**
  * `text` with a token no other write has, `w#12` for content and `c#3` for a
- * colour, so the intent checks can tell each write apart (see simulate).
+ * colour, so the intent checks can tell content copied from content moved
+ * (see simulate).
  */
 const token = (text: string, kind: 'w' | 'c' = 'w') => `${text}${kind}#${++written}`;
 
@@ -327,4 +328,64 @@ const command: Generate = (replica, next) => {
     });
   }
   return cellEdit(replica, next);
+};
+
+/** A 200×26 sheet with content in its first 30 rows and 10 columns, for `realEdit`. */
+export function realBook(): IWorkbookData {
+  const book = seededWorkbook();
+  const cellData: Record<number, Record<number, { v: string }>> = {};
+  for (let row = 0; row < 30; row++)
+    for (let col = 0; col < 10; col++) (cellData[row] ??= {})[col] = { v: `s1:${row}:${col}` };
+  const s1 = { id: 's1', name: 'One', rowCount: 200, columnCount: 26, cellData };
+  return { ...book, sheets: { s1 }, sheetOrder: ['s1'] };
+}
+
+/**
+ * Edits aimed at `realBook`'s content, as people make them: 40% values, 10%
+ * bold, 10% drags and 40% inserts and deletes with a shift. The README's
+ * realistic refusal rate is measured with it.
+ */
+export const realEdit: Generate = (replica, next) => {
+  const sheet = replica.workbook()!.getSheets()[0];
+  const target = { unitId: replica.workbook()!.getUnitId(), subUnitId: sheet.getSheetId() };
+  const [startRow, startColumn] = [next() % 32, next() % 11];
+  const range = {
+    startRow,
+    startColumn,
+    endRow: startRow + (next() % 3),
+    endColumn: startColumn + (next() % 3),
+  };
+  const one = { ...range, endRow: startRow, endColumn: startColumn };
+  const kind = next() % 10;
+  if (kind <= 3) {
+    const value = { v: pick(next, ['a', 'b', 1, 2.5]), f: null, si: null, p: null };
+    return capture(replica, commands.setRangeValues, { ...target, range: one, value });
+  }
+  if (kind === 4) {
+    const style = { type: 'bl', value: 1 };
+    return capture(replica, commands.setStyle, { ...target, range, style });
+  }
+  if (kind === 5) {
+    const [dr, dc] = [(next() % 7) - 3, (next() % 7) - 3];
+    const [row, col] = [Math.max(0, startRow + dr), Math.max(0, startColumn + dc)];
+    const toRange = {
+      startRow: row,
+      startColumn: col,
+      endRow: row + range.endRow - startRow,
+      endColumn: col + range.endColumn - startColumn,
+    };
+    const params = { ...target, fromSubUnitId: target.subUnitId, fromRange: range, toRange };
+    const sent = replica.injector.invoke((accessor) =>
+      getMoveRangeCommandMutations(accessor, params, { includeSelection: false }),
+    );
+    const redos = sent?.redos.filter(({ id }) => id.includes('.mutation.'));
+    return redos?.length ? redos.map(({ id, params }) => ({ id, params: wire(params) })) : null;
+  }
+  const shifts = [
+    commands.insertMoveDown,
+    commands.insertMoveRight,
+    commands.deleteMoveUp,
+    commands.deleteMoveLeft,
+  ];
+  return shiftCommand(replica, shifts[kind - 6], { ...target, range });
 };

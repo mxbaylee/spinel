@@ -37,24 +37,23 @@ export class UnsupportedMutationError extends Error {
   }
 }
 
+/** Why a RefusedEditError refused an edit; its doc describes each. */
+export type RefusalReason = 'moved-cells' | 'format-race' | 'growth';
+
 /**
  * Thrown when two concurrent edits cannot be merged, so the server refuses
  * the later one and its sender discards its pending edits and resyncs.
- * `'moved-cells'`: a dragged range and an edit of a cell it moves.
- * `'overlapping-moves'`: two moves of the same cells; a shift cut by a move,
- * a row or column edit or a shift on the other axis; a shift that inserts at
- * the sheet's end against a same-axis shift of only part of its band; or two
- * shifts of one band that carry a line differently. `'format-race'`: a
- * number-format change and a write to one of its cells that sets no value.
- * `'growth'`: a transform that would grow past its limit. Unlike
- * UnsupportedMutationError it is a race, not a sender bug.
+ * `'moved-cells'`: a dragged range or a shift and an edit in its area, which
+ * for a shift runs across its band from its start to the sheet's edge: an
+ * edit of a cell there, another drag or shift, a row or column edit that cuts
+ * it, or for a shift a merge there. `'format-race'`: a number-format change
+ * and a write to one of its cells that sets no value. `'growth'`: a transform
+ * that would grow past its limit. Unlike UnsupportedMutationError it is a
+ * race, not a sender bug.
  */
 export class RefusedEditError extends Error {
-  readonly reason: 'overlapping-moves' | 'moved-cells' | 'format-race' | 'growth';
-  constructor(
-    reason: 'overlapping-moves' | 'moved-cells' | 'format-race' | 'growth',
-    detail?: string,
-  ) {
+  readonly reason: RefusalReason;
+  constructor(reason: RefusalReason, detail?: string) {
     super(`Edit refused: ${reason}${detail ? ` (${detail})` : ''}.`);
     this.name = 'RefusedEditError';
     this.reason = reason;

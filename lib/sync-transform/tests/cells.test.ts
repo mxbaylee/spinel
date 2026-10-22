@@ -7,13 +7,15 @@ import {
   cellMove,
   commandEdit,
   commands,
+  realBook,
+  realEdit,
   richDoc,
   shiftCommand,
 } from './generate-cells.ts';
-import { seededWorkbook, withStructure } from './generate.ts';
+import { lineEdit, seededWorkbook, withStructure } from './generate.ts';
 import { converges, Replica } from './harness.ts';
 import { insertCols, insertRows, moveRows, removeCols, removeRows } from './edits.ts';
-import { convergesOver } from './simulate.ts';
+import { convergesOver, newStats } from './simulate.ts';
 
 const unitId = 'wb';
 const subUnitId = 's1';
@@ -227,52 +229,52 @@ describe('rich text and styles', () => {
   });
 });
 
-describe('a move past rows inserted or removed inside it', () => {
-  // Cuts A1:A3 to D10:D12; the other client edits a row inside it.
+/** Expects `x` and `y` refused as moved cells, both ways round and on either side. */
+function refusedBothWays(x: Mutation | Mutation[], y: Mutation | Mutation[]) {
+  const [a, b] = [[x].flat(), [y].flat()];
+  for (const side of ['left', 'right'] as const) {
+    for (const [p, q] of [
+      [a, b],
+      [b, a],
+    ]) {
+      expect(() => transform(p, q, side), side).toThrow(
+        expect.objectContaining({ reason: 'moved-cells' }),
+      );
+    }
+  }
+}
+
+// Decision (owner, chat 2026-10-21): a row or column edit that cuts a drag's
+// source or target is refused (see shifts.movesMeet).
+describe('a drag against a concurrent row edit', () => {
+  // Cuts A1:A3 to D10:D12.
   const cut = moveColumn(0, 2, 0, 9, 3);
-  const columnD = (edits: Mutation[], side: Side) => {
-    const data = merged(cut, edits, side);
+  const columnD = (edit: Mutation, side: Side) => {
+    const data = merged(cut, edit, side);
     return Array.from({ length: 14 }, (_, row) => data[row]?.[3]?.v);
   };
-  const sides = ['left', 'right'] as const;
 
-  test('an insert inside the source splits the move', () => {
-    for (const side of sides) {
-      const d = columnD([insertRows(1, 1)], side);
-      expect(d.slice(10, 13)).toEqual(['s1:0:0', 's1:1:0', 's1:2:0']);
+  test('one inside or over its source or target is refused, both ways and on either side', () => {
+    for (const edit of [
+      insertRows(1, 1),
+      insertRows(10, 1),
+      removeRows(1, 1),
+      removeRows(10, 1),
+      removeRows(0, 1),
+      moveRows(1, 1, 6),
+    ]) {
+      refusedBothWays(cut, edit);
     }
   });
 
-  test('an insert inside the target splits the move', () => {
-    for (const side of sides) {
-      const d = columnD([insertRows(10, 1)], side);
-      expect(d.slice(9, 13)).toEqual(['s1:0:0', undefined, 's1:1:0', 's1:2:0']);
-    }
-  });
-
-  test('a removal inside the source still lands the copy', () => {
-    for (const side of sides) {
-      const d = columnD([removeRows(1, 1)], side);
-      expect(d.slice(8, 11)).toEqual(['s1:0:0', 's1:1:0', 's1:2:0']);
-    }
-  });
-
-  test('a removal inside the target drops that copy only', () => {
-    for (const side of sides) {
-      const d = columnD([removeRows(10, 1)], side);
-      expect(d.slice(9, 11)).toEqual(['s1:0:0', 's1:2:0']);
-    }
-  });
-
-  test('a removal over the start of the source leaves valid ranges', () => {
-    const [shifted] = transformMutation(cut, removeRows(0, 1), 'left');
-    expect(shifted.params.fromRange.startRow).toBeGreaterThanOrEqual(0);
-    for (const side of sides) {
-      expect(columnD([removeRows(0, 1)], side).slice(8, 11)).toEqual([
-        's1:0:0',
-        's1:1:0',
-        's1:2:0',
-      ]);
+  test('one outside both moves each whole', () => {
+    const moved = ['s1:0:0', 's1:1:0', 's1:2:0'];
+    for (const side of ['left', 'right'] as const) {
+      // Rows inserted between the source and the target move the target only.
+      expect(columnD(insertRows(5, 2), side).slice(11, 14)).toEqual(moved);
+      // A row inserted just past the source, or above both, moves what is past it.
+      expect(columnD(insertRows(3, 1), side).slice(10, 13)).toEqual(moved);
+      expect(columnD(insertRows(0, 1), side).slice(10, 13)).toEqual(moved);
     }
   });
 });
@@ -318,8 +320,8 @@ describe('rows and columns move under cell edits', () => {
   });
 });
 
-// Decision (owner, chat 2026-10-20): a drag and a concurrent edit of a cell it
-// moves are refused, not merged (see cells.transform).
+// A drag and a concurrent edit of a cell it moves are refused, not merged
+// (see shifts.movesMeet).
 describe('a drag against a concurrent edit of its cells', () => {
   const drag = move([0, 0], [5, 5], { v: 's1:0:0' });
   const sides = ['left', 'right'] as const;
@@ -409,57 +411,133 @@ describe('a number format against a write to its cell that sets no value', () =>
   });
 });
 
-describe('a cell edit against a concurrent shift', () => {
-  // Deleting B2:B3 with a shift up moves B4 and the cells below it up two rows.
-  const shift = (command: string) =>
-    shiftCommand(new Replica({ workbook: seededWorkbook() }), command, {
-      unitId,
-      subUnitId,
-      range: range(1, 1, 2, 1),
-    })!;
-  const deleteUp = () => shift(commands.deleteMoveUp);
-  const values = (data: any) => JSON.stringify(data);
+// Decision (owner, chat 2026-10-21): a shift and a concurrent edit in its
+// area, its band from its start to the sheet's edge, are refused (see
+// shifts.movesMeet).
+describe('a shift against a concurrent edit', () => {
+  // On realBook, whose content ends at row 30 of 200: deleting B2:B3 with a
+  // shift up moves B4:B30 up two rows, and its area is column B from row 2 on.
+  const document = { workbook: realBook() };
+  const shift = (command: string, at = range(1, 1, 2, 1)) =>
+    shiftCommand(new Replica(document), command, { unitId, subUnitId, range: at })!;
+  const deleteUp = (at?: ReturnType<typeof range>) => shift(commands.deleteMoveUp, at);
+  const moveOf = (mutations: Mutation[]) => mutations.find(({ id }) => id === cellIds.moveRange)!;
+  const cells = (a: Mutation | Mutation[], b: Mutation | Mutation[], side: Side) =>
+    converges(a, b, { side, document }).workbook.sheets[subUnitId].cellData;
+
+  test('an edit in its area is refused, both ways and on either side', () => {
+    for (const edit of [
+      cell(5, 1, { v: 'x' }),
+      cell(5, 1, { s: { bl: 1 } }),
+      cell(1, 1, { v: 'x' }),
+      setNumfmt('0.00', [range(5, 1)]),
+    ]) {
+      refusedBothWays(deleteUp(), edit);
+      refusedBothWays(shift(commands.insertMoveDown), edit);
+    }
+  });
+
+  test('an edit below the cells it moves is in its area, and refused', () => {
+    // B100 is past B30, the last cell either move covers.
+    refusedBothWays(deleteUp(), cell(99, 1, { v: 'x' }));
+    refusedBothWays(shift(commands.insertMoveDown), cell(99, 1, { v: 'x' }));
+  });
 
   for (const side of ['left', 'right'] as const) {
-    test(`a write in the band lands where the shift takes its cell (${side})`, () => {
-      const data = merged(cell(5, 1, { v: 'x' }), deleteUp(), side);
-      expect([data[3]?.[1]?.v, data[5]?.[1]?.v]).toEqual(['x', cellAt(deleteUp(), 5, 1)?.v]);
+    test(`an edit outside its band, or above its start, passes unchanged (${side})`, () => {
+      const edits = [cell(5, 2, { v: 'x' }), cell(0, 1, { v: 'y' })];
+      const move = moveOf(deleteUp());
+      for (const edit of edits) {
+        expect(transformMutation(edit, move, side)).toEqual([edit]);
+        expect(transformMutation(move, edit, side)).toEqual([move]);
+      }
+      const data = cells(deleteUp(), edits, side);
+      expect([data[5][2].v, data[0][1].v, data[1][1].v]).toEqual(['x', 'y', 's1:3:1']);
     });
 
-    test(`a number format in the band lands where the shift takes its cell (${side})`, () => {
-      const data = merged(setNumfmt('0.00', [range(5, 1)]), deleteUp(), side);
-      expect(data[3]?.[1]?.s).toMatchObject({ n: { pattern: '0.00' } });
-      expect(data[5]?.[1]?.s?.n).toBeUndefined();
+    test(`a row inserted above its area moves it whole (${side})`, () => {
+      // Row 2 is the shift's start, so a row inserted there is above its area.
+      for (const at of [0, 1]) {
+        const data = cells(deleteUp(), insertRows(at, 1), side);
+        const column = [0, 1, 2, 3].map((row) => data[row]?.[1]?.v);
+        expect(column).toEqual(
+          at === 0
+            ? [undefined, 's1:0:1', 's1:3:1', 's1:4:1']
+            : ['s1:0:1', undefined, 's1:3:1', 's1:4:1'],
+        );
+      }
     });
 
-    test(`a write to a source cell the shift does not clear moves with the shift (${side})`, () => {
-      // B11 moves to B9 and nothing moves onto it. Compacting drops the
-      // shift's clear of B11 when the same message already emptied it, so
-      // only the folded write can clear it there.
-      const setup = [cell(10, 1, null)];
-      const removal = deleteUp();
-      const shift = removal.find((mutation) => mutation.id === cellIds.moveRange)!;
-      delete shift.params.from.value[10][1];
-      const data = merged(setNumfmt('0.00', [range(10, 1)]), removal, side, setup);
-      expect(data[8]?.[1]?.s).toMatchObject({ n: { pattern: '0.00' } });
-      expect(data[10]?.[1]).toBeUndefined();
+    test(`a column edit outside its band moves it whole (${side})`, () => {
+      const data = cells(deleteUp(), insertCols(0, 1), side);
+      expect([data[1][2].v, data[1][1].v]).toEqual(['s1:3:1', 's1:1:0']);
+      expect(cells(deleteUp(), removeCols(4, 1), side)[1][1].v).toBe('s1:3:1');
     });
+  }
 
-    test(`a write outside the band stays (${side})`, () => {
-      expect(merged(cell(5, 2, { v: 'x' }), deleteUp(), side)[5]?.[2]?.v).toBe('x');
+  test('a row edit inside its area is refused, both ways and on either side', () => {
+    // Row 51 is past the content the move covers, but in its area.
+    for (const edit of [
+      insertRows(2, 1),
+      insertRows(50, 1),
+      removeRows(5, 2),
+      removeRows(0, 2),
+      moveRows(40, 1, 0),
+    ]) {
+      refusedBothWays(deleteUp(), edit);
+    }
+  });
+
+  test('a column edit across its band is refused, both ways and on either side', () => {
+    // Deleting B2:C3 up: its band is columns B and C.
+    for (const edit of [insertCols(2, 1), removeCols(1, 1), removeCols(2, 2)]) {
+      refusedBothWays(deleteUp(range(1, 1, 2, 2)), edit);
+    }
+  });
+
+  test("a shift whose area meets the other shift's is refused, both ways and on either side", () => {
+    // One band; bands that partly overlap; shifts along different axes; and
+    // bands that miss, where an insert's command also inserts rows below the
+    // content (row 31 of realBook), which cuts the other's area.
+    for (const [x, y] of [
+      [shift(commands.insertMoveDown, range(2, 1)), deleteUp()],
+      [deleteUp(range(1, 1, 2, 2)), shift(commands.insertMoveDown, range(2, 2, 2, 3))],
+      [shift(commands.insertMoveDown, range(1, 1)), shift(commands.insertMoveRight, range(4, 0))],
+      [shift(commands.insertMoveDown, range(2, 1)), deleteUp(range(1, 3))],
+    ]) {
+      refusedBothWays(x, y);
+    }
+  });
+
+  for (const side of ['left', 'right'] as const) {
+    test(`shifts whose areas miss both land (${side})`, () => {
+      // Disjoint bands; and B6 down against D3 right, whose areas miss.
+      const disjoint = cells(deleteUp(), deleteUp(range(1, 3)), side);
+      expect([disjoint[1][1].v, disjoint[1][3].v]).toEqual(['s1:3:1', 's1:2:3']);
+      const down = shift(commands.insertMoveDown, range(5, 1));
+      const data = cells(down, shift(commands.insertMoveRight, range(2, 3)), side);
+      expect([data[6][1].v, data[2][4].v]).toEqual(['s1:5:1', 's1:2:3']);
     });
+  }
 
-    test(`a write to a deleted cell goes with it (${side})`, () => {
-      const data = merged(cell(1, 1, { v: 'x' }), deleteUp(), side);
-      expect(data[1]?.[1]).toEqual(cellAt(deleteUp(), 1, 1));
-      expect(values(data)).not.toContain('"x"');
-    });
+  test('a drag with a cell in its area is refused, both ways and on either side', () => {
+    // Within the cells it moves, into them, out of them, and below them.
+    for (const drag of [
+      move([5, 1], [8, 1], { v: 's1:5:1' }),
+      move([0, 0], [7, 1], { v: 's1:0:0' }),
+      move([9, 1], [1, 4], { v: 's1:9:1' }),
+      move([0, 0], [99, 1], { v: 's1:0:0' }),
+    ]) {
+      refusedBothWays(deleteUp(), drag);
+    }
+  });
 
-    test(`a write where cells are inserted moves down with its cell (${side})`, () => {
-      const insertDown = shift(commands.insertMoveDown);
-      const data = merged(cell(1, 1, { v: 'x' }), insertDown, side);
-      expect(data[3]?.[1]?.v).toBe('x');
-      expect(data[1]?.[1]?.v).toBeUndefined();
+  for (const side of ['left', 'right'] as const) {
+    test(`a drag outside its area passes unchanged (${side})`, () => {
+      const drag = move([0, 1], [0, 4], { v: 's1:0:1' });
+      expect(transformMutation(drag, moveOf(deleteUp()), side)).toEqual([drag]);
+      const data = cells(deleteUp(), drag, side);
+      expect([data[0][4].v, data[0]?.[1], data[1][1].v]).toEqual(['s1:0:1', undefined, 's1:3:1']);
     });
   }
 
@@ -474,224 +552,15 @@ describe('a cell edit against a concurrent shift', () => {
     );
     expect(() => transform(wrong, [cell(0, 0, { v: 1 })], 'left')).toThrow(TypeError);
   });
-});
 
-describe('two shifts of one band', () => {
-  // Shifts in column B of the seeded sheet, whose cells name their original row.
-  const shift = (
-    command: string,
-    start: number,
-    end = start,
-    replica = new Replica({ workbook: seededWorkbook() }),
-  ) => shiftCommand(replica, command, { unitId, subUnitId, range: range(start, 1, end, 1) })!;
-  const insertDown = (start: number, end = start) => shift(commands.insertMoveDown, start, end);
-  const deleteUp = (start: number, end = start) => shift(commands.deleteMoveUp, start, end);
-  /** Column B, row by row, as the names of the rows its cells came from. */
-  const band = (data: any, col = 1) => {
-    const last = Math.max(...Object.keys(data).map(Number));
-    return Array.from({ length: last + 1 }, (_, row) => data[row]?.[col]?.v);
-  };
-  const original = (...rows: number[]) => rows.map((row) => `s1:${row}:1`);
-  const through = (from: number, to: number, col = 1) =>
-    Array.from({ length: to - from + 1 }, (_, i) => `s1:${from + i}:${col}`);
-  const command = (name: string, at: ReturnType<typeof range>) =>
-    shiftCommand(new Replica({ workbook: seededWorkbook() }), name, {
-      unitId,
-      subUnitId,
-      range: at,
-    })!;
-
-  for (const side of ['left', 'right'] as const) {
-    test(`two inserts at the same row both land (${side})`, () => {
-      const data = merged(insertDown(2), insertDown(2, 3), side);
-      expect(band(data).slice(0, 15)).toEqual([
-        ...original(0, 1),
-        undefined,
-        undefined,
-        undefined,
-        ...through(2, 11),
-      ]);
-    });
-
-    test(`cells inserted inside a deleted range survive it (${side})`, () => {
-      const data = merged(deleteUp(1, 3), insertDown(2), side);
-      expect(band(data).slice(0, 10)).toEqual([...original(0), undefined, ...through(4, 11)]);
-    });
-
-    test(`two overlapping deletes remove each cell once (${side})`, () => {
-      const data = merged(deleteUp(1, 3), deleteUp(2, 4), side);
-      expect(band(data).slice(0, 8)).toEqual([...original(0), ...through(5, 11)]);
-    });
-
-    test(`insert-then-delete: both of one side's shifts land past the other's (${side})`, () => {
-      const replica = new Replica({ workbook: seededWorkbook() });
-      const insert = shift(commands.insertMoveDown, 2, 2, replica);
-      replica.apply(insert);
-      const then = [...insert, ...shift(commands.deleteMoveUp, 5, 6, replica)];
-      const data = merged(then, deleteUp(1), side);
-      expect(band(data).slice(0, 10)).toEqual([
-        ...original(0),
-        undefined,
-        ...original(2, 3),
-        ...through(6, 11),
-      ]);
-    });
-
-    test(`a write in cells one side shifted follows both shifts (${side})`, () => {
-      const replica = new Replica({ workbook: seededWorkbook() });
-      const removal = shift(commands.deleteMoveUp, 1, 2, replica);
-      replica.apply(removal);
-      const data = merged([...removal, cell(5, 1, { v: 'x' })], insertDown(2), side);
-      expect(band(data).slice(0, 11)).toEqual([
-        ...original(0),
-        undefined,
-        ...original(3, 4, 5, 6),
-        'x',
-        ...through(8, 11),
-      ]);
-    });
-  }
-
-  test('shifts of disjoint bands both land', () => {
-    const other = shiftCommand(new Replica({ workbook: seededWorkbook() }), commands.deleteMoveUp, {
-      unitId,
-      subUnitId,
-      range: range(1, 3),
-    })!;
-    const data = merged(insertDown(2), other);
-    expect([data[3]?.[1]?.v, data[1]?.[3]?.v]).toEqual(['s1:2:1', 's1:2:3']);
+  test('a shift mark on a move with no sources is rejected', () => {
+    const empty = deleteUp().map((mutation) =>
+      mutation.params.shift
+        ? { ...mutation, params: { ...mutation.params, from: { subUnitId, value: {} } } }
+        : mutation,
+    );
+    expect(() => transform(empty, [], 'left')).toThrow(TypeError);
   });
-
-  for (const side of ['left', 'right'] as const) {
-    test(`shifts of partly overlapping bands split, each part landing (${side})`, () => {
-      // Deleting B2:C3 up against inserting C3:D3 down: column B only deletes,
-      // column C merges the two, column D only inserts.
-      const removal = command(commands.deleteMoveUp, range(1, 1, 2, 2));
-      const insert = command(commands.insertMoveDown, range(2, 2, 2, 3));
-      const data = merged(removal, insert, side);
-      expect(band(data, 1).slice(0, 10)).toEqual(['s1:0:1', ...through(3, 11, 1)]);
-      expect(band(data, 2).slice(0, 11)).toEqual(['s1:0:2', undefined, ...through(3, 11, 2)]);
-      expect(band(data, 3).slice(0, 13)).toEqual([
-        ...through(0, 1, 3),
-        undefined,
-        ...through(2, 11, 3),
-      ]);
-    });
-
-    test(`shifts along different axes that miss each other both land (${side})`, () => {
-      // B6 down shifts column B from row 6; D3 right shifts row 3 from column D.
-      const down = command(commands.insertMoveDown, range(5, 1));
-      const right = command(commands.insertMoveRight, range(2, 3));
-      const data = merged(down, right, side);
-      expect([data[6]?.[1]?.v, data[2]?.[4]?.v]).toEqual(['s1:5:1', 's1:2:3']);
-    });
-  }
-
-  test('shifts along different axes whose cells meet are refused', () => {
-    const down = command(commands.insertMoveDown, range(1, 1));
-    const right = command(commands.insertMoveRight, range(4, 0));
-    expect(() => transform(down, right, 'left')).toThrow(RefusedEditError);
-  });
-});
-
-describe('a shift and a dragged range', () => {
-  // Inserting B3 down shifts column B from row 2 by one, on the seeded sheet.
-  const insertDown = () =>
-    shiftCommand(new Replica({ workbook: seededWorkbook() }), commands.insertMoveDown, {
-      unitId,
-      subUnitId,
-      range: range(2, 1),
-    })!;
-  const band = (data: any) => Array.from({ length: 13 }, (_, row) => data[row]?.[1]?.v);
-  const names = (...rows: (number | undefined)[]) =>
-    rows.map((row) => (row === undefined ? undefined : `s1:${row}:1`));
-
-  for (const side of ['left', 'right'] as const) {
-    test(`a drag within the shifted cells shifts with them (${side})`, () => {
-      const data = merged(insertDown(), move([5, 1], [8, 1], { v: 's1:5:1' }), side);
-      expect(band(data)).toEqual(names(0, 1, undefined, 2, 3, 4, undefined, 6, 7, 5, 9, 10, 11));
-    });
-
-    test(`a drag into the shifted cells lands where its target went (${side})`, () => {
-      const data = merged(insertDown(), move([0, 0], [7, 1], { v: 's1:0:0' }), side);
-      expect(data[0]?.[0]?.v).toBeUndefined();
-      expect(band(data)).toEqual([
-        ...names(0, 1, undefined, 2, 3, 4, 5, 6),
-        's1:0:0',
-        ...names(8, 9, 10, 11),
-      ]);
-    });
-
-    test(`a drag out of the shifted cells takes the content from where it went (${side})`, () => {
-      const data = merged(insertDown(), move([9, 1], [1, 4], { v: 's1:9:1' }), side);
-      expect(data[1][4].v).toBe('s1:9:1');
-      expect(band(data)).toEqual(names(0, 1, undefined, 2, 3, 4, 5, 6, 7, 8, undefined, 10, 11));
-    });
-
-    test(`a drag the band's edge or the shift's start cuts is refused (${side})`, () => {
-      const [a, b] = side === 'left' ? [0, 1] : [1, 0];
-      // A5:B5 to D5:E5 and B2:B4 to E2:E4.
-      const edge = moveColumn(4, 4, 0, 4, 3);
-      edge.params.fromRange.endColumn = 1;
-      edge.params.toRange.endColumn = 4;
-      edge.params.from.value[4][1] = null;
-      edge.params.to.value[4][4] = { v: 's1:4:1' };
-      const start = moveColumn(1, 3, 1, 1, 4);
-      for (const drag of [edge, start]) {
-        const pair = [insertDown(), [drag]];
-        expect(() => transform(pair[a], pair[b], side)).toThrow(RefusedEditError);
-      }
-    });
-  }
-});
-
-describe('a shift and a row or column edit', () => {
-  // Inserting B3:C3 down shifts columns B and C from row 2 by one.
-  const insertDown = () =>
-    shiftCommand(new Replica({ workbook: seededWorkbook() }), commands.insertMoveDown, {
-      unitId,
-      subUnitId,
-      range: range(2, 1, 2, 2),
-    })!;
-  const column = (data: any, col: number) =>
-    Array.from({ length: 6 }, (_, row) => data[row]?.[col]?.v);
-  const shiftedColumn = (col: number) => [
-    `s1:0:${col}`,
-    `s1:1:${col}`,
-    undefined,
-    `s1:2:${col}`,
-    `s1:3:${col}`,
-    `s1:4:${col}`,
-  ];
-
-  for (const side of ['left', 'right'] as const) {
-    const other = side === 'left' ? 'right' : 'left';
-    test(`rows inserted above the shift move it whole (${side})`, () => {
-      const data = merged(insertDown(), insertRows(0, 1), side);
-      expect(column(data, 1)).toEqual([undefined, ...shiftedColumn(1).slice(0, 5)]);
-    });
-
-    test(`rows inserted or removed at or past the shift's start are refused (${side})`, () => {
-      for (const edit of [insertRows(2, 1), insertRows(5, 1), removeRows(4, 2)]) {
-        expect(() => transform(insertDown(), [edit], side)).toThrow(RefusedEditError);
-        expect(() => transform([edit], insertDown(), other)).toThrow(RefusedEditError);
-      }
-    });
-
-    test(`a column inserted inside the band splits the shift around it (${side})`, () => {
-      const data = merged(insertDown(), [insertCols(2, 1), cell(4, 2, { v: 'x' })], side);
-      expect(column(data, 1)).toEqual(shiftedColumn(1));
-      expect(column(data, 2)).toEqual([undefined, undefined, undefined, undefined, 'x', undefined]);
-      expect(column(data, 3)).toEqual(shiftedColumn(2));
-      expect(column(data, 4)).toEqual(['s1:0:3', 's1:1:3', 's1:2:3', 's1:3:3', 's1:4:3', 's1:5:3']);
-    });
-
-    test(`a column removed from the band narrows the shift (${side})`, () => {
-      const data = merged(insertDown(), removeCols(1, 1), side);
-      expect(column(data, 1)).toEqual(shiftedColumn(2));
-      expect(column(data, 2)).toEqual(['s1:0:3', 's1:1:3', 's1:2:3', 's1:3:3', 's1:4:3', 's1:5:3']);
-    });
-  }
 });
 
 describe('concurrent moves', () => {
@@ -715,7 +584,7 @@ describe('concurrent moves', () => {
         ]) {
           expect(() => transform([a], [b], side)).toThrow(RefusedEditError);
           expect(() => transformMutation(a, b, side)).toThrow(
-            expect.objectContaining({ reason: 'overlapping-moves' }),
+            expect.objectContaining({ reason: 'moved-cells' }),
           );
         }
       }
@@ -746,9 +615,11 @@ describe('concurrent moves', () => {
   });
 });
 
+// The intent checks make this run take about 20 s on its own (measured
+// 2026-10-21), so the limit allows half as long again.
 test('cell edits converge across two clients, as the edits meant', () => {
   convergesOver(cellEdit, { seeds: 200, intent: true });
-}, 20000);
+}, 30000);
 
 // Moves alone, where concurrent moves meet most: each refused, none merged.
 test('moves alone neither copy nor lose content', () => {
@@ -793,7 +664,8 @@ function denseBook(rows = 4, cols = 3) {
 test('dense cell edits converge within budget, as the edits meant', () => {
   const document = { workbook: denseBook() };
   // Commands' range inserts and deletes move most of the sheet, so their
-  // long runs are few: 300 seeds of 300 edits take over a minute.
+  // long runs are few: 300 seeds of 300 edits take over a minute. The four
+  // runs take about a minute together; each seed's own limit is `seconds`.
   for (const [generate, seeds, edits] of [
     [cellEdit, 1000, 40],
     [cellEdit, 300, 300],
@@ -802,19 +674,23 @@ test('dense cell edits converge within budget, as the edits meant', () => {
   ] as const) {
     convergesOver(generate, { seeds, edits, document, budget: 5, seconds: 5, intent: true });
   }
-}, 60000);
+}, 90000);
 
 // The 4×3 sheet's runs were tuned on their own seeds; other sheets meet other
-// shapes, such as the repeat compacting once dropped (3×3, seed 377).
+// shapes, such as the repeat compacting once dropped (3×3, seed 377) and a
+// stored edit compacted into its shift (5×4 seed 162, 2×5 seeds 314 and 355).
+// Seeds per sheet keep the file's run near two minutes.
 test.each([
-  [3, 3],
-  [2, 3],
+  [3, 3, 400],
+  [2, 3, 250],
+  [5, 4, 200],
+  [2, 5, 400],
 ])(
   'dense command edits on a %i×%i sheet converge, as the edits meant',
-  (rows, cols) => {
+  (rows, cols, seeds) => {
     const document = { workbook: denseBook(rows, cols) };
     convergesOver(commandEdit, {
-      seeds: 400,
+      seeds,
       edits: 40,
       document,
       budget: 5,
@@ -825,26 +701,47 @@ test.each([
   60000,
 );
 
-// Once dense 2×3 seed 178: deleting A2:B4 with a shift left moves C2:C4 to
-// A2:A4. A concurrent write to B2 goes with the cell the delete removes, and
-// the move clears it there, so the delete takes it rather than a later write.
-test('a delete with a shift clears a concurrent write to a cell it deletes', () => {
-  const document = { workbook: denseBook() };
-  const removal = shiftCommand(new Replica(document), commands.deleteMoveLeft, {
-    unitId,
-    subUnitId,
-    range: range(1, 0, 3, 1),
-  })!;
-  const shift = removal.find((mutation) => mutation.id === cellIds.moveRange)!;
-  const write = cell(1, 1, { v: 'x' });
-  for (const side of ['left', 'right'] as const) {
-    const past = transformMutation(shift, write, side);
-    expect(past.map(({ id }) => id)).toEqual([cellIds.moveRange]);
-    expect(past[0].params.from.value[1][1]).toBeNull();
-    const data = converges(removal, write, { side, document }).workbook.sheets[subUnitId].cellData;
-    expect(JSON.stringify(data)).not.toContain('"x"');
-  }
-});
+// Shifts and drags meet row and column edits, which move or cut their areas.
+// Sheet edits are left out: the intent check does not follow a removed sheet.
+test.each([
+  ['realEdit on a real sheet', realEdit, () => realBook()],
+  ['commandEdit on a 6×5 sheet', commandEdit, () => denseBook(6, 5)],
+])(
+  '%s with row and column edits converges, as the edits meant',
+  (_name, generate, workbook) => {
+    const document = { workbook: workbook() };
+    convergesOver(withStructure(generate, lineEdit), {
+      seeds: 120,
+      edits: 40,
+      document,
+      intent: true,
+    });
+  },
+  30000,
+);
+
+// The README's refusal rates, 40 edits a seed: realEdit on realBook, and
+// commandEdit on the 4×3 sheet and on realBook. REFUSAL_SEEDS=300 reproduces
+// them and prints the counts (see simulate's `stats`); the default is quick.
+const refusalSeeds = Number(process.env.REFUSAL_SEEDS ?? 10);
+test(
+  'refusals on a real sheet and a dense one are counted as the README counts them',
+  () => {
+    const seeds = refusalSeeds;
+    for (const [name, generate, workbook] of [
+      ['realEdit, 200×26', realEdit, realBook()],
+      ['commandEdit, 4×3', commandEdit, denseBook()],
+      ['commandEdit, 200×26', commandEdit, realBook()],
+    ] as const) {
+      const stats = newStats();
+      convergesOver(generate, { seeds, edits: 40, document: { workbook }, intent: true, stats });
+      if (process.env.REFUSAL_SEEDS) process.stdout.write(`${name}: ${JSON.stringify(stats)}\n`);
+      expect(stats.accepted + stats.refused).toBe(stats.batches);
+      expect(stats.discarded).toBeLessThanOrEqual(stats.mutations);
+    }
+  },
+  3000 * refusalSeeds,
+);
 
 // Once fuzz seed 863 of the dense 40-edit run, shrunk, with no move: a losing
 // write to a cell whose format either side changes keeps its own write, then

@@ -1,6 +1,6 @@
 import type { IRange } from '@univerjs/core';
 import { describe, expect, test } from 'vitest';
-import { transformMutation } from '../index.ts';
+import { transform, transformMutation } from '../index.ts';
 import type { Mutation, Side } from '../index.ts';
 import { mergeIds } from '../src/merges.ts';
 import { insertCols, insertRows, moveRows, removeRows, target } from './edits.ts';
@@ -124,75 +124,46 @@ test('merges converge with structural edits', () => {
   convergesOver(withStructure(mergeEdit), { seeds: 100 });
 }, 300_000);
 
+// A merge edit in a shift's area is an edit there, so it is refused (see
+// shifts.movesMeet).
 describe('a merge and a shift', () => {
-  // Inserting B3 down shifts column B from row 2 by one, on the seeded sheet.
+  // Inserting B3 down shifts column B from row 2 by one, on the seeded sheet;
+  // its area is column B from row 2 to the sheet's edge.
   const insertDown = () =>
     shiftCommand(new Replica({ workbook: seededWorkbook() }), commands.insertMoveDown, {
       ...target,
       range: box(2, 1, 2, 1),
     })!;
-  const mergesAfter = (a: Mutation[], b: Mutation[], side: Side) =>
-    converges(a, b, { side }).workbook.sheets.s1.mergeData.map((json: string) => JSON.parse(json));
 
   for (const side of ['left', 'right'] as const) {
-    test(`a merge the shift moves whole moves with it (${side})`, () => {
-      expect(mergesAfter(insertDown(), [add(box(5, 1, 6, 1))], side)).toEqual([box(6, 1, 7, 1)]);
-    });
-
-    test(`a merge outside the shifted cells stays (${side})`, () => {
-      expect(mergesAfter(insertDown(), [add(box(0, 3, 1, 4))], side)).toEqual([box(0, 3, 1, 4)]);
-    });
-
-    test(`removing a merge the shift moves removes it where it went (${side})`, () => {
-      // B6:C6 exists; inserting B3:C3 down moves it to B7:C7, clear of where it was.
-      const setup = [add(box(5, 1, 5, 2))];
-      const replica = new Replica({ workbook: seededWorkbook() });
-      replica.apply(setup);
-      const shift = shiftCommand(replica, commands.insertMoveDown, {
-        ...target,
-        range: box(2, 1, 2, 2),
-      })!;
-      const merges = converges(shift, [remove(box(5, 1, 5, 2))], { side, setup }).workbook.sheets.s1
-        .mergeData;
-      // The removal stands where it wins; where the shift wins, its own re-add does.
-      expect(merges.map((json: string) => JSON.parse(json))).toEqual(
-        side === 'left' ? [box(6, 1, 6, 2)] : [],
-      );
-    });
-
-    test(`a merge across where two shifts' bands split is dropped on both screens (${side})`, () => {
-      // Deleting B2:C3 up and inserting C3:D3 down split at column C; B7:C7
-      // crosses the insert's band edge, so its command removes the merge.
-      const setup = [add(box(6, 1, 6, 2))];
-      const command = (name: string, range: IRange) => {
-        const replica = new Replica({ workbook: seededWorkbook() });
-        replica.apply(setup);
-        return shiftCommand(replica, name, { ...target, range })!;
-      };
-      const removal = command(commands.deleteMoveUp, box(1, 1, 2, 2));
-      const insert = command(commands.insertMoveDown, box(2, 2, 2, 3));
-      expect(converges(removal, insert, { side, setup }).workbook.sheets.s1.mergeData).toEqual([]);
-    });
-
-    test(`a merge across where a column insert splits the shift is dropped (${side})`, () => {
-      // B6:C6 exists; inserting B3:C3 down moves it to B7:C7, and a column
-      // inserted at C splits the shift there and cuts through the merge.
-      const setup = [add(box(5, 1, 5, 2))];
-      const replica = new Replica({ workbook: seededWorkbook() });
-      replica.apply(setup);
-      const shift = shiftCommand(replica, commands.insertMoveDown, {
-        ...target,
-        range: box(2, 1, 2, 2),
-      })!;
-      expect(
-        converges(shift, [insertCols(2, 1)], { side, setup }).workbook.sheets.s1.mergeData,
-      ).toEqual([]);
-    });
-
-    test(`a merge across the band's edge or the shift's start is dropped (${side})`, () => {
-      for (const merge of [box(5, 0, 5, 1), box(1, 1, 2, 1)]) {
-        expect(mergesAfter(insertDown(), [add(merge)], side)).toEqual([]);
-      }
+    test(`a merge outside the shift's area stays (${side})`, () => {
+      const mergesAfter = (merge: Mutation) =>
+        converges(insertDown(), [merge], { side }).workbook.sheets.s1.mergeData.map(
+          (json: string) => JSON.parse(json),
+        );
+      expect(mergesAfter(add(box(0, 3, 1, 4)))).toEqual([box(0, 3, 1, 4)]);
     });
   }
+
+  test("a merge edit in the shift's area is refused, both ways and on either side", () => {
+    // In the cells it moves, below them, across its start and across its band's edge.
+    for (const merge of [
+      add(box(5, 1, 6, 1)),
+      remove(box(5, 1, 6, 1)),
+      add(box(10, 1, 11, 1)),
+      add(box(1, 1, 2, 1)),
+      add(box(5, 0, 5, 1)),
+    ]) {
+      for (const side of ['left', 'right'] as const) {
+        for (const [a, b] of [
+          [insertDown(), [merge]],
+          [[merge], insertDown()],
+        ]) {
+          expect(() => transform(a, b, side)).toThrow(
+            expect.objectContaining({ reason: 'moved-cells' }),
+          );
+        }
+      }
+    }
+  });
 });

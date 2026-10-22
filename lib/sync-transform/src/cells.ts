@@ -1,9 +1,8 @@
 import type { IRange } from '@univerjs/core';
-import { removeNumfmt, setCell, setNumfmt } from './univer-merge.ts';
 import { mapIndex } from './axis.ts';
 import type { AxisEdit } from './axis.ts';
 import type { Axis, Family } from './family.ts';
-import { pastShift, remark, shiftOf } from './shifts.ts';
+import { movesMeet, refuseCut, remapMove } from './shifts.ts';
 import { RefusedEditError } from './types.ts';
 import type { Mutation, Side } from './types.ts';
 
@@ -20,12 +19,10 @@ export type Cell = { row: number; col: number };
 
 /**
  * One cell a mutation writes. `value` is the cell data (SetRangeValues and
- * MoveRange), the pattern id (SetNumfmt) or null (RemoveNumfmt). `slot` tells
- * MoveRange's two matrices apart.
+ * MoveRange), the pattern id (SetNumfmt) or null (RemoveNumfmt).
  */
 export interface Write extends Cell {
   value: any;
-  slot?: 'from' | 'to';
 }
 
 /**
@@ -40,13 +37,12 @@ interface Piece {
 
 export const cellKey = (cell: Cell) => `${cell.row}:${cell.col}`;
 
-function matrixWrites(matrix: Matrix, slot?: 'from' | 'to'): Write[] {
+function matrixWrites(matrix: Matrix): Write[] {
   return Object.entries(matrix ?? {}).flatMap(([row, columns]) =>
     Object.entries(columns ?? {}).map(([col, value]) => ({
       row: Number(row),
       col: Number(col),
       value,
-      ...(slot && { slot }),
     })),
   );
 }
@@ -82,7 +78,7 @@ function cellWrites(mutation: Mutation): Write[] {
     return Object.entries(values).flatMap(([id, { ranges }]) => rangeWrites(ranges, id));
   }
   if (mutation.id === cellIds.removeNumfmt) return rangeWrites(p.ranges, null);
-  return [...matrixWrites(p.from.value, 'from'), ...matrixWrites(p.to.value, 'to')];
+  return [...matrixWrites(p.from.value), ...matrixWrites(p.to.value)];
 }
 
 /** The cells as runs along each row. */
@@ -97,26 +93,14 @@ function rectangles(writes: Write[]): IRange[] {
   return runs;
 }
 
-/** The smallest range holding every cell. */
-export function bounds(cells: Cell[]): IRange {
-  const rows = cells.map((cell) => cell.row);
-  const cols = cells.map((cell) => cell.col);
-  return {
-    startRow: Math.min(...rows),
-    endRow: Math.max(...rows),
-    startColumn: Math.min(...cols),
-    endColumn: Math.max(...cols),
-  };
-}
-
-export function toMatrix(writes: Write[]): Matrix {
+function toMatrix(writes: Write[]): Matrix {
   const matrix: Matrix = {};
   for (const { row, col, value } of writes) (matrix[row] ??= {})[col] = value;
   return matrix;
 }
 
-/** `mutation` rewritten to make exactly `writes`, or nothing if none are left. */
-export function rebuild(mutation: Mutation, writes: Write[]): Mutation[] {
+/** `mutation`, not a move, rewritten to make exactly `writes`, or nothing if none are left. */
+function rebuild(mutation: Mutation, writes: Write[]): Mutation[] {
   if (writes.length === 0) return [];
   const p = mutation.params;
   const withParams = (params: Record<string, unknown>) => [
@@ -124,20 +108,13 @@ export function rebuild(mutation: Mutation, writes: Write[]): Mutation[] {
   ];
   if (mutation.id === cellIds.setRangeValues) return withParams({ cellValue: toMatrix(writes) });
   if (mutation.id === cellIds.removeNumfmt) return withParams({ ranges: rectangles(writes) });
-  if (mutation.id === cellIds.setNumfmt) {
-    const patternIds = [...new Set(writes.map((write) => write.value as string))];
-    const pick = (f: (id: string) => unknown) =>
-      Object.fromEntries(patternIds.map((id) => [id, f(id)]));
-    return withParams({
-      values: pick((id) => ({ ranges: rectangles(writes.filter((write) => write.value === id)) })),
-      refMap: pick((id) => p.refMap[id]),
-    });
-  }
-  // The ranges say where the move takes each cell (see `targets`), so they stay.
-  const slot = (name: 'from' | 'to') => toMatrix(writes.filter((write) => write.slot === name));
+  // SetNumfmt: each pattern id's cells as ranges.
+  const patternIds = [...new Set(writes.map((write) => write.value as string))];
+  const pick = (f: (id: string) => unknown) =>
+    Object.fromEntries(patternIds.map((id) => [id, f(id)]));
   return withParams({
-    from: { ...p.from, value: slot('from') },
-    to: { ...p.to, value: slot('to') },
+    values: pick((id) => ({ ranges: rectangles(writes.filter((write) => write.value === id)) })),
+    refMap: pick((id) => p.refMap[id]),
   });
 }
 
@@ -145,16 +122,14 @@ export function rebuild(mutation: Mutation, writes: Write[]): Mutation[] {
  * SetRangeValues merges each key it names into the cell, and each key of an
  * inline style into the cell's style; a null cell deletes it. isOverrideStyle
  * replaces the whole style. Numfmt mutations write style key `n`, valued as
- * SetRangeValues would write it. MoveRange overwrites whole cells.
+ * SetRangeValues would write it.
  */
 function piecesOf(mutation: Mutation, write: Write): Piece[] {
   if (mutation.id === cellIds.setNumfmt) {
     return [{ path: 's.n', value: { pattern: mutation.params.refMap[write.value].pattern } }];
   }
   if (mutation.id === cellIds.removeNumfmt) return [{ path: 's.n', value: null }];
-  if (mutation.id === cellIds.moveRange || write.value === null) {
-    return [{ path: '', value: write.value }];
-  }
+  if (write.value === null) return [{ path: '', value: null }];
   // A key set to undefined is absent, as JSON leaves it. An empty write still retypes the value.
   const entries = Object.entries(write.value as CellData).filter(
     ([, value]) => value !== undefined,
@@ -394,115 +369,6 @@ function coalesce(mutations: Mutation[]): Mutation[] {
   return result;
 }
 
-const cellIdSet = new Set<string>(Object.values(cellIds));
-const isCells = (mutation: Mutation) => cellIdSet.has(mutation.id);
-const sheetKey = (mutation: Mutation, write: Write) =>
-  `${mutation.params.unitId}/${mutation.params.subUnitId ?? mutation.params.from.subUnitId}/${cellKey(write)}`;
-
-/**
- * Whether Univer applying `write` twice in a row leaves what once does. It
- * types a value from the format it reads before the write, which the write
- * may change, and from a forced text type (`t` 4) the cell had, which the
- * write may set: Univer forces a long number to text and retypes it as a
- * number the next time. Either way the repeat retypes, unless the write
- * forces the type, or keeps the format, or sets text format, which types as
- * text whatever came before.
- */
-function idempotent(mutation: Mutation, write: Write): boolean {
-  if (!isValues(mutation) || write.value === null) return true;
-  const { s, v, t } = write.value as CellData;
-  if (t) return true;
-  const text = s?.n?.pattern === '@';
-  const keepsFormat =
-    s === undefined || (s !== null && !mutation.params.isOverrideStyle && !('n' in s));
-  if (!keepsFormat && !text && !(s?.n && v == null)) return false;
-  const long =
-    typeof v === 'string' &&
-    v.trim() !== '' &&
-    Number.isFinite(Number(v)) &&
-    (Number(v) > Number.MAX_SAFE_INTEGER || v.length >= 16);
-  return text || !long;
-}
-
-/**
- * Whether `write` of `mutation`, landing right after `earlier` of `before` in
- * its cell, writes nothing new: a repeat of it, or a part of it with no style,
- * which writes the same keys again and types the value the same way. Never
- * for moves: a later transform can make the earlier move carry an edit into
- * the cell, which only the later write would replace.
- */
-function rewrites(before: Mutation, earlier: Write, mutation: Mutation, write: Write): boolean {
-  if (
-    isMove(before) ||
-    before.id !== mutation.id ||
-    !before.params.isOverrideStyle !== !mutation.params.isOverrideStyle
-  ) {
-    return false;
-  }
-  // Key order differs only between writes made apart, so this misses few repeats.
-  const keys = new Set(piecesOf(before, earlier).map((piece) => JSON.stringify(piece)));
-  const pieces = piecesOf(mutation, write);
-  const part = pieces.every((piece) => keys.has(JSON.stringify(piece)));
-  const same = part && pieces.length === keys.size;
-  return (
-    part &&
-    (same || !pieces.some(isStyle)) &&
-    idempotent(before, earlier) &&
-    idempotent(mutation, write)
-  );
-}
-
-/**
- * `mutations` without the cell writes that change nothing in the end: a write
- * a later delete or move write of the cell replaces (those set it whatever it
- * held), and a cell edit repeating the last one to the cell. Transforming a
- * sequence repeats writes, as a loser replays the winner's, and without this
- * the repeats multiply as the sequence goes past more. Only runs of cell
- * mutations are compacted, as anything between them may re-address cells.
- */
-export function compact(mutations: Mutation[]): Mutation[] {
-  // One mutation can appear twice, so writes are told apart by position.
-  const dead = mutations.map(() => new Set<number>());
-  const settled = new Set<string>();
-  for (let i = mutations.length - 1; i >= 0; i--) {
-    const mutation = mutations[i];
-    if (!isCells(mutation)) settled.clear();
-    else if (isMove(mutation))
-      for (const write of writesOf(mutation)) settled.add(sheetKey(mutation, write));
-    else {
-      writesOf(mutation).forEach((write, j) => {
-        const key = sheetKey(mutation, write);
-        if (settled.has(key)) dead[i].add(j);
-        else if (isValues(mutation) && write.value === null) settled.add(key);
-      });
-    }
-  }
-  const last = new Map<string, { mutation: Mutation; write: Write }>();
-  mutations.forEach((mutation, i) => {
-    if (!isCells(mutation)) return last.clear();
-    writesOf(mutation).forEach((write, j) => {
-      if (dead[i].has(j)) return;
-      const key = sheetKey(mutation, write);
-      const before = last.get(key);
-      const repeats =
-        before !== undefined && rewrites(before.mutation, before.write, mutation, write);
-      if (repeats) dead[i].add(j);
-      else last.set(key, { mutation, write });
-    });
-  });
-  if (dead.every((writes) => writes.size === 0)) return mutations;
-  return coalesce(
-    mutations.flatMap((mutation, i) =>
-      dead[i].size === 0
-        ? [mutation]
-        : rebuild(
-            mutation,
-            writesOf(mutation).filter((_, j) => !dead[i].has(j)),
-          ),
-    ),
-  );
-}
-
 /** `a` past `b` where both write some cells; `b` wins them on the right. */
 function conflict(a: Mutation, b: Mutation, side: Side): Mutation[] {
   if (side === 'left') return [a, ...retype(a, b, side, [a])];
@@ -545,47 +411,14 @@ function conflict(a: Mutation, b: Mutation, side: Side): Mutation[] {
   return coalesce([...landed, ...retype(a, b, side, landed)]);
 }
 
-/**
- * Where `move` takes each source cell's content: the cell at the same place
- * in `toRange`, while the move still writes it.
- */
-export function targets(move: Mutation): Map<string, Cell> {
-  const { fromRange, toRange, from, to } = move.params;
-  const written = new Set(matrixWrites(to.value).map(cellKey));
-  const result = new Map<string, Cell>();
-  for (const write of matrixWrites(from.value)) {
-    const row = write.row + toRange.startRow - fromRange.startRow;
-    const col = write.col + toRange.startColumn - fromRange.startColumn;
-    if (written.has(cellKey({ row, col }))) result.set(cellKey(write), { row, col });
-  }
-  return result;
-}
-
-/** A cell's content after `edit` makes `write` to it. */
-export function edited(cell: CellData | null, edit: Mutation, write: Write): CellData | null {
-  if (edit.id === cellIds.setNumfmt)
-    return setNumfmt(cell, edit.params.refMap[write.value].pattern);
-  if (edit.id === cellIds.removeNumfmt) return removeNumfmt(cell);
-  return setCell(cell, write.value, !!edit.params.isOverrideStyle);
-}
-
 const typeOnly = (write: Write) => write.value !== null && Object.keys(write.value).join() === 't';
 /** A `t`-only write of forced text, which RemoveNumfmt makes for a cell with no value. */
 const forcesText = (write: Write) => typeOnly(write) && write.value.t === 4;
 
-/**
- * Whether `mutation` transforms alike wherever it lands. A write that forces
- * text does not, as cancelled() relies on its cell holding no value. Nor does
- * a move: whether it meets an edit, and so is refused (see `transform`) or
- * carries the edit as a shift, depends on where each lands.
- */
-export const landsAnywhere = (mutation: Mutation) =>
-  isValues(mutation) ? !writesOf(mutation).some(forcesText) : !isMove(mutation);
-
-/** Whether `mutation` writes a cell any of `others` writes. */
-export function meets(mutation: Mutation, others: Mutation[]): boolean {
-  const cells = new Set(others.flatMap((other) => writesOf(other).map(cellKey)));
-  return writesOf(mutation).some((write) => cells.has(cellKey(write)));
+/** Whether `a` writes a cell `b` writes. */
+export function meets(a: Mutation, b: Mutation): boolean {
+  const cells = new Set(writesOf(b).map(cellKey));
+  return writesOf(a).some((write) => cells.has(cellKey(write)));
 }
 
 /**
@@ -616,18 +449,12 @@ function cancelled(mutation: Mutation, other: Mutation): Mutation[] {
 }
 
 function transform(a: Mutation, b: Mutation, rank: Side): Mutation[] {
-  const shifted = pastShift(a, b, rank);
-  if (shifted) return shifted;
-  if (!meets(a, [b])) return [a];
-  // Decision (owner, chat 2026-10-20): a dragged range and a concurrent edit of
-  // any cell it moves, in its source or its target, are refused, not merged:
-  // the server refuses the later one and its sender reloads. Merging them,
-  // with the edit following the moved content and a winning write taking a
-  // target over, silently lost or duplicated content in rare races; a refusal
-  // is visible, and the person can redo the edit. Two drags of the same cells
-  // are refused too, as before. Shifts keep merging (see shifts.pastShift).
-  if (isMove(a) && isMove(b)) throw new RefusedEditError('overlapping-moves');
-  if (isMove(a) || isMove(b)) throw new RefusedEditError('moved-cells');
+  // A move and an edit in its area are refused (see shifts.movesMeet).
+  if (isMove(a) || isMove(b)) {
+    if (movesMeet(a, b)) throw new RefusedEditError('moved-cells');
+    return [a];
+  }
+  if (a.params.ghost || b.params.ghost || !meets(a, b)) return [a];
   // Decision (owner, chat 2026-10-20): a number-format change and a concurrent
   // write to one of its cells that sets no value, such as a style or a retype,
   // are refused. A write under text format '@' turns the cell's value to text,
@@ -636,93 +463,52 @@ function transform(a: Mutation, b: Mutation, rank: Side): Mutation[] {
   // refuses values that do converge, and a sender that sends the type it
   // writes (SPN-058).
   if (formatRace(a, b) || formatRace(b, a)) throw new RefusedEditError('format-race');
-  // A retype replays content both wrote, so it loses to any edit of the cell.
+  // A retype replays content already written, so it loses to any edit of the cell.
   const side = !a.params.derived === !b.params.derived ? rank : a.params.derived ? 'right' : 'left';
   const [mine] = cancelled(a, b);
   const [theirs] = cancelled(b, a);
-  if (!mine || !theirs) return mine ? [mine] : [];
-  return conflict(mine, theirs, side);
-}
-
-/** Univer's row and column handlers shift the cell matrix; cells in removed lines go. */
-function remap(mutation: Mutation, axis: Axis, edit: AxisEdit): Mutation[] {
-  const shift = (write: Write): Write | null => {
-    const index = mapIndex(edit, axis === 'row' ? write.row : write.col);
-    if (index === null) return null;
-    return axis === 'row' ? { ...write, row: index } : { ...write, col: index };
-  };
-  if (mutation.id === cellIds.moveRange) {
-    const parts = (move: Mutation) => remapMove(move, shift);
-    return shiftOf(mutation) ? remark(mutation, axis, edit, parts) : parts(mutation);
-  }
-  return rebuild(
-    mutation,
-    writesOf(mutation).flatMap((write) => shift(write) ?? []),
-  );
+  if (!mine || !theirs) return haunted(a, mine ? [mine] : []);
+  return haunted(a, conflict(mine, theirs, side));
 }
 
 /**
- * A line inserted or removed inside a move's source or target changes how far
- * some cells move, so the move splits into one per run of cells moving the
- * same way. One move clears every source before writing any target, so each
- * cell's move goes after the move out of its target. Clears whose target went
- * come first, and copies whose source went last.
+ * `a`'s transform `result`, and a ghost of the cells of `a` it no longer
+ * writes, which a concurrent write overwrote. Those writes still meet any move
+ * later in the other sequence, as a shift command's own clear of the cells it
+ * deletes comes before its move, so the move refuses them as it would refuse
+ * `a` (see shifts.movesMeet). A ghost writes nothing and meets only moves;
+ * `transform` drops it from what it returns.
  */
-export function remapMove(move: Mutation, shift: (write: Write) => Write | null): Mutation[] {
-  const moved = targets(move);
-  const writes = writesOf(move);
-  const sources = new Map(writes.filter((w) => w.slot === 'from').map((w) => [cellKey(w), w]));
-  const copied = new Map(writes.filter((w) => w.slot === 'to').map((w) => [cellKey(w), w]));
-  const pairs: [Write, Write][] = [];
-  const placed = new Set<string>();
-  const kept = new Set<Write>();
-  for (const source of sources.values()) {
-    // Follow the cells this one's target moves to, and place them first.
-    const chain: [Write, Write][] = [];
-    for (let at = source as Write | undefined; at && !placed.has(cellKey(at));) {
-      placed.add(cellKey(at));
-      const target = moved.get(cellKey(at));
-      const copy = target && copied.get(cellKey(target))!;
-      const [from, to] = [shift(at), copy && shift(copy)];
-      if (from && to) {
-        chain.push([from, to]);
-        kept.add(at).add(copy!);
-      }
-      at = target && sources.get(cellKey(target));
-    }
-    pairs.push(...chain.reverse());
+function haunted(a: Mutation, result: Mutation[]): Mutation[] {
+  const kept = new Set(result.flatMap((mutation) => writesOf(mutation).map(cellKey)));
+  const lost = writesOf(a).filter((write) => !kept.has(cellKey(write)));
+  if (lost.length === 0) return result;
+  const { unitId, subUnitId } = a.params;
+  const cellValue = toMatrix(lost.map((write) => ({ ...write, value: null })));
+  const ghost = {
+    id: cellIds.setRangeValues,
+    params: { unitId, subUnitId, cellValue, ghost: true },
+  };
+  return [...result, ghost];
+}
+
+/**
+ * Univer's row and column handlers shift the cell matrix; cells in removed
+ * lines go. A move whose area the edit cuts is refused (see shifts.refuseCut).
+ */
+function remap(mutation: Mutation, axis: Axis, edit: AxisEdit): Mutation[] {
+  if (isMove(mutation)) {
+    refuseCut(mutation, axis, edit);
+    return [remapMove(mutation, axis, edit)];
   }
-  const unpaired = (slot: 'from' | 'to') =>
-    writes.flatMap((write) => (write.slot === slot && !kept.has(write) && shift(write)) || []);
-  const offset = ([from, to]: [Write, Write]) => `${to.row - from.row}:${to.col - from.col}`;
-  const runs: [Write, Write][][] = [];
-  for (const pair of pairs) {
-    const run = runs.at(-1);
-    if (run && offset(run[0]) === offset(pair)) run.push(pair);
-    else runs.push([pair]);
-  }
-  const p = move.params;
-  const part = (from: Write[], to: Write[]): Mutation => ({
-    id: move.id,
-    params: {
-      ...p,
-      fromRange: bounds(from.length > 0 ? from : to),
-      toRange: bounds(to.length > 0 ? to : from),
-      from: { ...p.from, value: toMatrix(from) },
-      to: { ...p.to, value: toMatrix(to) },
-    },
-  });
-  const [clears, copies] = [unpaired('from'), unpaired('to')];
-  return [
-    ...(clears.length > 0 ? [part(clears, [])] : []),
-    ...runs.map((run) =>
-      part(
-        run.map(([from]) => from),
-        run.map(([, to]) => to),
-      ),
-    ),
-    ...(copies.length > 0 ? [part([], copies)] : []),
-  ];
+  return rebuild(
+    mutation,
+    writesOf(mutation).flatMap((write) => {
+      const index = mapIndex(edit, axis === 'row' ? write.row : write.col);
+      if (index === null) return [];
+      return [axis === 'row' ? { ...write, row: index } : { ...write, col: index }];
+    }),
+  );
 }
 
 export const cells: Family = { ids: Object.values(cellIds), remap, transform };

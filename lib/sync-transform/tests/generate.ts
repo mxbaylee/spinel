@@ -155,8 +155,16 @@ export const structuralEdit: Generate = (replica, next) => {
       order: next() % order.length,
     });
   }
+  return editLines(replica, next, kind);
+};
+
+/** Row and column inserts, removes and moves alone, as `structuralEdit` makes them. */
+export const lineEdit: Generate = (replica, next) => editLines(replica, next, next() % 6);
+
+/** Kinds 0 to 2 insert, remove and move rows; 3 to 5 columns. */
+function editLines(replica: Replica, next: () => number, kind: number) {
   const sheet = randomSheet(replica, next);
-  const target = { unitId, subUnitId: sheet.getSheetId() };
+  const target = { unitId: replica.workbook()!.getUnitId(), subUnitId: sheet.getSheetId() };
   const row = kind < 3;
   const length = row ? sheet.getRowCount() : sheet.getColumnCount();
   const action = kind % 3;
@@ -198,7 +206,7 @@ export const structuralEdit: Generate = (replica, next) => {
     toRange,
     range,
   });
-};
+}
 
 const commandIds = {
   insertRow: 'sheet.command.insert-row-by-range',
@@ -214,6 +222,6 @@ const commandIds = {
 
 /** `generate`, with one edit in three a structural one instead. */
 export const withStructure =
-  (generate: Generate): Generate =>
+  (generate: Generate, structure: Generate = structuralEdit): Generate =>
   (replica, next) =>
-    next() % 3 === 0 ? structuralEdit(replica, next) : generate(replica, next);
+    next() % 3 === 0 ? structure(replica, next) : generate(replica, next);

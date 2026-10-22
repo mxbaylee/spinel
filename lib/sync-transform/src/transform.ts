@@ -1,9 +1,9 @@
-import { cellIds, cells, compact, landsAnywhere, meets } from './cells.ts';
+import { cellIds, cells } from './cells.ts';
 import { docs } from './docs.ts';
 import { drawingIds, drawings } from './drawings.ts';
 import type { Family } from './family.ts';
 import { cutBy, merges } from './merges.ts';
-import { markError, pastMerge, refuseCut, shiftOf } from './shifts.ts';
+import { markError, mergeMeets, refuseCut } from './shifts.ts';
 import { properties } from './properties.ts';
 import { settings } from './settings.ts';
 import {
@@ -84,8 +84,11 @@ function sheetOf(mutation: Mutation): string | undefined {
 export function transformMutation(a: Mutation, b: Mutation, side: Side): Mutation[] {
   check(a);
   check(b);
-  return pair(a, b, side);
+  return pair(a, b, side).filter(isReal);
 }
+
+/** Whether a mutation is no ghost of an overwritten write (see cells.haunted). */
+const isReal = (mutation: Mutation) => !mutation.params.ghost;
 
 function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
   const self = familyOf(a);
@@ -110,10 +113,16 @@ function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
     const { axis, edit } = axisEdit(a)!;
     return [...cutBy(b, axis, edit), a];
   }
-  const meets = (x: Mutation, y: Mutation) => !!shiftOf(x) && familyOf(y) === merges;
-  if (meets(a, b) || meets(b, a)) return pastMerge(a, b);
-  // A row edit that cuts a shift is refused either way round (see shifts.remark).
-  if (self === 'structure' && peer === cells) refuseCut(b, axisEdit(a)!);
+  // A shift and a merge edit in its area are refused (see shifts.movesMeet).
+  const [merge, move] = self === merges ? [a, b] : [b, a];
+  if (familyOf(merge) === merges && mergeMeets(move, merge)) {
+    throw new RefusedEditError('moved-cells');
+  }
+  // A row edit that cuts a move's area is refused either way round (see cells.remap).
+  if (self === 'structure' && peer === cells) {
+    const { axis, edit } = axisEdit(a)!;
+    refuseCut(b, axis, edit);
+  }
   if (self === 'structure' || self !== peer) return [a];
   return self.transform(a, b, side);
 }
@@ -127,16 +136,18 @@ function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
 export function transform(a: Mutation[], b: Mutation[], side: Side): Mutation[] {
   // Check every mutation up front, even when the other side is empty.
   for (const mutation of [...a, ...b]) check(mutation);
-  // Without the writes that change nothing, which transforming repeats and
-  // later transforms would multiply. Only the result is compacted: the other
-  // side's transform pairs up the same mutations, which must stay as they are.
-  return compact(pastMany(a, b, side, growth * (a.length + b.length)));
+  return pastMany(a, b, side, growth * (a.length + b.length)).filter(isReal);
 }
 
 /**
  * The most mutations a sequence may hold while transforming, per mutation
  * transformed. Transforms that multiply their output would otherwise run
  * for hours on a few dozen edits; this refuses them in milliseconds.
+ *
+ * Decision (owner, chat 2026-10-21): a transform that grows past this is
+ * refused like any other race, rather than left to run for hours. Not taken:
+ * dropping the retype that makes a write grow (cells.ts), which could leave a
+ * value with the wrong type.
  */
 const growth = 50;
 
@@ -146,43 +157,16 @@ function pastMany(a: Mutation[], b: Mutation[], side: Side, limit: number): Muta
   return a;
 }
 
-/**
- * Each of `a` goes past `b` as `b` has been changed by the earlier ones.
- *
- * A cell edit that loses to the peer can end by replaying the peer, and each
- * later edit of `a` would replay it again after its own, so the output would
- * double with every edit. Instead the replay waits at the end: `peer` then
- * `m` past it does what `m` then `peer` past `m` does, so each later cell edit
- * lands as made and the peer follows it. Most cell edits transform alike in
- * any document, so this holds wherever they land; anything else lands the
- * replay first. So does an edit of other cells: the two orders agree only
- * while both write the same cells, and a later move can bring them together.
- */
-const anywhere = (mutation: Mutation) => familyOf(mutation) === cells && landsAnywhere(mutation);
-
+/** Each of `a` goes past `b` as `b` has been changed by the earlier ones. */
 function pastOne(a: Mutation[], b: Mutation, side: Side, limit: number): Mutation[] {
   const result: Mutation[] = [];
   let peer = [b];
-  let waiting = false;
   for (const mutation of a) {
-    const next = pastMany(peer, [mutation], flip(side), limit);
-    if (waiting && anywhere(mutation) && next.every(anywhere) && meets(mutation, peer)) {
-      result.push(mutation);
-      peer = next;
-      continue;
-    }
-    if (waiting) result.push(...peer);
-    const out = pastMany([mutation], peer, side, limit);
-    const kept = out.length - next.length;
-    waiting =
-      kept >= 0 &&
-      next.every((m, i) => anywhere(m) && JSON.stringify(m) === JSON.stringify(out[kept + i]));
-    result.push(...(waiting ? out.slice(0, kept) : out));
-    peer = next;
+    result.push(...pastMany([mutation], peer, side, limit));
+    peer = pastMany(peer, [mutation], flip(side), limit);
     if (result.length + peer.length > limit) {
       throw new RefusedEditError('growth', `past ${limit} mutations`);
     }
   }
-  if (waiting) result.push(...peer);
   return result;
 }
