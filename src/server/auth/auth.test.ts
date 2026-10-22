@@ -9,6 +9,8 @@ import type {
 import { AuthStore, CHALLENGE_MS, SESSION_MS, hashToken } from './store.ts';
 import { AuthService, authOrigin } from './service.ts';
 import { passkeyProviderName, availablePasskeyName } from './passkey-names.ts';
+import { AdminStore } from './admin.ts';
+import { InvitationService } from './invitations.ts';
 
 const databases: DatabaseSync[] = [];
 afterEach(() => {
@@ -228,6 +230,43 @@ test.each(['counter', 'remove', 'cancel', 'revoke'] as const)(
     await expect(
       f.service.authenticate(f.anonymous.session, challengeId, f.authResponse),
     ).rejects.toThrow();
+    expect(f.store.session(f.anonymous.token)?.user_id ?? null).toBeNull();
+  },
+);
+
+test.each(['authentication', 'registration'] as const)(
+  'disable then reactivate cannot revive an in-flight %s ceremony',
+  async (kind) => {
+    const f = fixture();
+    await f.register();
+    const operator = f.store.createUser('Operator', true);
+    const admin = new AdminStore(f.store, new InvitationService(f.store, 'http://localhost:3000'));
+    const changeAccount = () => {
+      admin.disable(operator.id, f.user.id);
+      admin.reactivate(operator.id, f.user.id);
+    };
+    if (kind === 'authentication') {
+      const { challengeId } = await f.service.authenticationOptions(f.anonymous.session);
+      f.verify.verifyAuthenticationResponse.mockImplementationOnce(async () => {
+        changeAccount();
+        return f.authentication;
+      });
+      await expect(
+        f.service.authenticate(f.anonymous.session, challengeId, f.authResponse),
+      ).rejects.toThrow();
+    } else {
+      const { challengeId } = await f.service.registrationOptions(f.signed.session);
+      f.verify.verifyRegistrationResponse.mockImplementationOnce(async () => {
+        changeAccount();
+        return f.registration;
+      });
+      await expect(
+        f.service.register(f.signed.session, challengeId, f.registerResponse),
+      ).rejects.toThrow();
+    }
+    expect(f.store.user(f.user.id)?.disabled).toBe(0);
+    expect(f.store.passkeys(f.user.id)).toEqual([]);
+    expect(f.store.session(f.signed.token)).toBeUndefined();
     expect(f.store.session(f.anonymous.token)?.user_id ?? null).toBeNull();
   },
 );

@@ -7,6 +7,10 @@ import { AuthError, AuthStore } from '../auth/store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { DocFormulas } from './service.ts';
+import { AdminStore } from '../auth/admin.ts';
+import { InvitationService } from '../auth/invitations.ts';
+import { OwnershipTransfer } from '../auth/ownership.ts';
+import { migrateSpaceSchema } from '../workspace/space-schema.ts';
 
 const close: (() => void)[] = [];
 afterEach(() => close.splice(0).forEach((finish) => finish()));
@@ -83,6 +87,62 @@ function fixture() {
     resolve,
   };
 }
+
+test('transferred Docs preserve stable bindings but grant no implicit external source access', async () => {
+  const f = fixture();
+  migrateSpaceSchema(f.db);
+  const externalOwner = f.auth.createUser('External source owner');
+  f.db
+    .prepare('UPDATE workspace_items SET owner_id=? WHERE id=?')
+    .run(externalOwner.id, f.source.id);
+  f.workspace.share(externalOwner.id, f.source.id, f.owner.id, 'viewer');
+  const definition = await f.resolve();
+  expect(await f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify)).toMatchObject({
+    ok: true,
+  });
+  const admin = new AdminStore(f.auth, new InvitationService(f.auth, 'http://localhost:3000'));
+  const handover = new OwnershipTransfer(f.auth);
+  admin.disable(f.operator.id, f.owner.id);
+  const preview = handover.preview(f.operator.id, f.owner.id);
+  handover.transfer(f.operator.id, f.owner.id, f.reader.id, preview.confirmation);
+  expect(f.workspace.get(f.reader.id, f.host.id).access).toBe('owner');
+  const before = JSON.stringify(definition);
+  f.calculate.mockClear();
+  expect(await f.formulas.evaluate(f.reader.id, f.host.id, definition, f.verify)).toEqual({
+    ok: false,
+    reason: 'private-source',
+  });
+  expect(f.calculate).not.toHaveBeenCalled();
+  expect(JSON.stringify(definition)).toBe(before);
+  f.workspace.share(externalOwner.id, f.source.id, f.reader.id, 'viewer');
+  expect(await f.formulas.evaluate(f.reader.id, f.host.id, definition, f.verify)).toMatchObject({
+    ok: true,
+    value: 42,
+  });
+});
+
+test('ownership handover during awaited Formula calculation refuses the recovered previous owner', async () => {
+  const f = fixture();
+  migrateSpaceSchema(f.db);
+  const definition = await f.resolve();
+  const admin = new AdminStore(f.auth, new InvitationService(f.auth, 'http://localhost:3000'));
+  const handover = new OwnershipTransfer(f.auth);
+  f.calculate.mockImplementationOnce(async () => {
+    admin.disable(f.operator.id, f.owner.id);
+    const preview = handover.preview(f.operator.id, f.owner.id);
+    handover.transfer(f.operator.id, f.owner.id, f.reader.id, preview.confirmation);
+    admin.reactivate(f.operator.id, f.owner.id);
+    return { ok: true, kind: 'scalar', value: 42 };
+  });
+  await expect(f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify)).rejects.toThrow(
+    'not available',
+  );
+  expect(f.auth.user(f.owner.id)?.disabled).toBe(0);
+  expect(await f.formulas.evaluate(f.reader.id, f.host.id, definition, f.verify)).toMatchObject({
+    ok: true,
+    value: 42,
+  });
+});
 
 test('resolution uses readable names but saved bindings survive renames and follow current generations', async () => {
   const f = fixture();

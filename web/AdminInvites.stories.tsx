@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
-import { failure } from '../.storybook/api.ts';
+import { useEffect, useState } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { failure, pending } from '../.storybook/api.ts';
 import { AdminInvites } from './AdminInvites.tsx';
 
 const hour = 3_600_000;
@@ -56,6 +57,17 @@ type Story = StoryObj<typeof meta>;
 
 /** One of each invite status. Only available invites can be revoked. */
 export const Loaded: Story = { parameters: { api: loaded } };
+export const Loading: Story = {
+  parameters: {
+    api: { 'GET /api/auth/invites': pending(), 'GET /api/auth/invites/recipients': pending() },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Loading invites…')).toBeVisible();
+    await expect(canvas.queryByText('No invites yet.')).toBeNull();
+    await expect(canvas.getByRole('button', { name: 'Create invite' })).toBeDisabled();
+  },
+};
 export const Empty: Story = {
   parameters: {
     api: {
@@ -83,7 +95,9 @@ export const InviteCreated: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Create invite' }));
+    const button = within(canvasElement).getByRole('button', { name: 'Create invite' });
+    await waitFor(() => expect(button).toBeEnabled());
+    await userEvent.click(button);
   },
 };
 export const LoadFailed: Story = {
@@ -99,6 +113,115 @@ export const CreateFailed: Story = {
     api: { ...loaded, 'POST /api/auth/invites': failure('Could not create the invite.', 500) },
   },
   play: async ({ canvasElement }) => {
-    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Create invite' }));
+    const button = within(canvasElement).getByRole('button', { name: 'Create invite' });
+    await waitFor(() => expect(button).toBeEnabled());
+    await userEvent.click(button);
+  },
+};
+
+function InvitationReadbackFixture({ operation }: { operation: 'create' | 'revoke' }) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const original = globalThis.fetch;
+    let mutated = false;
+    let failedReadback = false;
+    const fixtureFetch: typeof fetch = async (input, init) => {
+      const path = new URL(
+        typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
+        location.href,
+      ).pathname;
+      if (path === '/api/auth/invites' && init?.method === 'POST') {
+        mutated = true;
+        return Response.json({ url: 'https://spinel.example.com/invite#new-once-only-address' });
+      }
+      if (path === '/api/auth/invites/retained/revoke') {
+        mutated = true;
+        return new Response(null, { status: 204 });
+      }
+      if (path === '/api/auth/invites') {
+        if (mutated && !failedReadback) {
+          failedReadback = true;
+          return Response.json({ error: 'Could not refresh invitations.' }, { status: 503 });
+        }
+        return Response.json({
+          invites:
+            !mutated && operation === 'create'
+              ? []
+              : [
+                  {
+                    id: 'retained',
+                    expiresAt: now + 100 * hour,
+                    recoveryName: null,
+                    usedBy: null,
+                    status: mutated && operation === 'revoke' ? 'Revoked' : 'Available',
+                  },
+                ],
+        });
+      }
+      if (path === '/api/auth/invites/recipients') return Response.json(recipients);
+      return original(input, init);
+    };
+    globalThis.fetch = fixtureFetch;
+    setReady(true);
+    return () => {
+      if (globalThis.fetch === fixtureFetch) globalThis.fetch = original;
+    };
+  }, [operation]);
+  return ready ? <AdminInvites /> : null;
+}
+
+const failedReadback =
+  (operation: 'create' | 'revoke'): NonNullable<Story['play']> =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const action = await canvas.findByRole('button', {
+      name: operation === 'create' ? 'Create invite' : 'Revoke invite',
+    });
+    await waitFor(() => expect(action).toBeEnabled());
+    await userEvent.click(action);
+    await expect(await canvas.findByRole('button', { name: 'Refresh invites' })).toBeEnabled();
+    await expect(canvas.getByRole('button', { name: 'Create invite' })).toBeDisabled();
+    await expect(canvas.queryByText('No invites yet.')).toBeNull();
+    await expect(canvas.queryByRole('list', { name: 'Invites' })).toBeNull();
+    await expect(canvas.getByRole('status')).toHaveTextContent(
+      operation === 'create' ? 'Invite created.' : 'Invite revoked.',
+    );
+    if (operation === 'create')
+      await expect(canvas.getByRole('textbox', { name: 'New invite link' })).toHaveValue(
+        'https://spinel.example.com/invite#new-once-only-address',
+      );
+  };
+export const CreatedButReadbackFailed: Story = {
+  render: () => <InvitationReadbackFixture operation="create" />,
+  play: failedReadback('create'),
+};
+export const RevokedButReadbackFailed: Story = {
+  render: () => <InvitationReadbackFixture operation="revoke" />,
+  play: failedReadback('revoke'),
+};
+export const RefreshAfterCreated: Story = {
+  render: () => <InvitationReadbackFixture operation="create" />,
+  play: async (context) => {
+    await failedReadback('create')(context);
+    const canvas = within(context.canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Refresh invites' }));
+    await expect(await canvas.findByRole('list', { name: 'Invites' })).toHaveTextContent(
+      'Available',
+    );
+    await expect(canvas.queryByRole('alert')).toBeNull();
+    await expect(canvas.getByRole('textbox', { name: 'New invite link' })).toHaveValue(
+      'https://spinel.example.com/invite#new-once-only-address',
+    );
+  },
+};
+export const RefreshAfterRevoked: Story = {
+  render: () => <InvitationReadbackFixture operation="revoke" />,
+  play: async (context) => {
+    await failedReadback('revoke')(context);
+    const canvas = within(context.canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Refresh invites' }));
+    await expect(await canvas.findByRole('list', { name: 'Invites' })).toHaveTextContent('Revoked');
+    await expect(canvas.queryByRole('button', { name: 'Revoke invite' })).toBeNull();
+    await expect(canvas.queryByRole('alert')).toBeNull();
   },
 };
