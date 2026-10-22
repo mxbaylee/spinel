@@ -32,7 +32,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 18 | 🚪 [SPN-083](SPN-083.md) Apply the approved entry and consent screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
 | 19 | 🪟 [SPN-084](SPN-084.md) Apply the approved guest and unavailable screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
 | 20 | 🕰️ [SPN-085](SPN-085.md) Apply the approved history browser design | 🌿 M | 💜 M | 5 (own 4) | Lower effort | — | Approve the implementation screenshots |
-| 21 | 🗺️ [SPN-091](SPN-091.md) Navigate and recover a Space's pages | 🌳 L | 💜 M | 5 (own 3) | — | — | Approve the Space navigation/recovery design and PR screenshots |
+| 21 | 🗺️ [SPN-091](SPN-091.md) Navigate and recover a Space's pages | 🏔️ XL | 💜 M | 5 (own 2) | — | — | Approve the Space navigation/recovery design and PR screenshots |
 | 22 | 🪢 [SPN-092](SPN-092.md) Share Spaces with guests and verify integrations | 🌳 L | 💜 M | 4 (own 3) | Unblocks SPN-079 | [SPN-064](SPN-064.md), [SPN-091](SPN-091.md) | Approve the Space guest/sharing design and PR screenshots |
 | 23 | 📈 [SPN-032](SPN-032.md) Show server health to the operator | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
 | 24 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 4 | Lower ID | [SPN-055](SPN-055.md) | — |

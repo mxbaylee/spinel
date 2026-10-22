@@ -48,11 +48,13 @@ import type { ConnectionState } from './connectionState.ts';
 export function SheetEditor({
   id,
   name,
+  spaceId,
   onDirty,
   onConnectionState,
 }: {
   id: string;
   name: string;
+  spaceId?: string;
   onDirty: (dirty: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
@@ -92,7 +94,7 @@ export function SheetEditor({
       });
     };
     void (async () => {
-      const data = await prepareCollaboration(id);
+      const data = await prepareCollaboration(id, spaceId);
       if (disposed) return;
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
@@ -109,7 +111,12 @@ export function SheetEditor({
         },
         collaboration: true,
         plugins: [
-          ...collaborationPlugins(data.unitId, [[...sheetImageOverride]]),
+          ...collaborationPlugins(
+            data.unitId,
+            [[...sheetImageOverride]],
+            false,
+            spaceId ? { spaceId, itemId: id } : undefined,
+          ),
           mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
         ],
         presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
@@ -204,6 +211,7 @@ export function SheetEditor({
         publish,
         readOnly,
         publishConnection,
+        spaceId,
       );
       controller.current = save;
       setEditable(data.access !== 'viewer');
@@ -259,7 +267,7 @@ export function SheetEditor({
       onConnectionState?.(null);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
-  }, [id]);
+  }, [id, spaceId]);
   return (
     <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
       <Collaborators people={people} />
@@ -278,7 +286,7 @@ export function SheetEditor({
           )}
         </span>
       </div>
-      {!guestItemId() && (
+      {!spaceId && !guestItemId() && (
         <>
           <VersionNames
             id={id}

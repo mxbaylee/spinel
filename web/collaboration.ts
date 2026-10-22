@@ -1,4 +1,4 @@
-import { guestItemId, documentPath } from './documentAccess.ts';
+import { guestItemId, documentPath, documentProtocolPath } from './documentAccess.ts';
 import { CollaborationSessions } from './CollaborationSessions.ts';
 import { UserManagerService } from '@univerjs/core';
 import type { Univer, DependencyOverride } from '@univerjs/core';
@@ -35,9 +35,10 @@ export function collaborationPlugins(
   unitID: string,
   override?: DependencyOverride,
   keepDocumentUI = false,
+  space?: { spaceId: string; itemId: string },
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
   const guest = guestItemId();
-  const base = location.origin + (guest ? `/guest-api/${guest}` : '') + '/universer-api';
+  const base = location.origin + documentProtocolPath(space);
   // Public URL extension point: scope is checked before the server accepts a socket.
   class DocumentSocketService extends BrowserCollaborationSocketService {
     protected override _createSocketURL(url: string, ticket: string) {
@@ -57,7 +58,9 @@ export function collaborationPlugins(
           [CollaborationSessionService, { useClass: CollaborationSessions }],
         ],
         socketService: DocumentSocketService,
-        enableOfflineEditing: !guest,
+        // Space review does not prepare documents for offline use. Every native
+        // request still carries the exact Space/child scope when reconnecting.
+        enableOfflineEditing: !guest && !space,
         retryConnectingInterval: 1000,
         sendChangesetTimeout: 100,
         authzUrl: base + '/authz',
@@ -76,8 +79,8 @@ export function collaborationPlugins(
     ],
   ];
 }
-export async function prepareCollaboration(id: string) {
-  const response = await fetch(`${documentPath(id)}/collaboration`, {
+export async function prepareCollaboration(id: string, spaceId?: string) {
+  const response = await fetch(`${documentPath(id, spaceId)}/collaboration`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{}',
@@ -101,6 +104,7 @@ export function watchCollaboration(
   publish: (state: SaveState) => void,
   readonly: () => Promise<void>,
   publishConnection: (state: ConnectionState) => void = () => {},
+  spaceId?: string,
 ) {
   const collaboration = api.getCollaboration();
   let denied = false;
@@ -128,7 +132,7 @@ export function watchCollaboration(
     try {
       // The browser can report online while the server is unreachable. Reuse
       // this existing access round trip, with a bound even for silent outages.
-      const response = await fetch(documentPath(itemId), {
+      const response = await fetch(documentPath(itemId, spaceId), {
         cache: 'no-store',
         signal: AbortSignal.any([abort.signal, AbortSignal.timeout(2500)]),
       });
