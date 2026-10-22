@@ -21,6 +21,8 @@ import { SpaceStore } from '../workspace/spaces.ts';
 import { SpaceRecoveryStore } from '../workspace/space-recovery.ts';
 import { SpaceLifecycleStore } from '../workspace/space-lifecycle.ts';
 import { SheetStore } from '../workspace/sheets.ts';
+import { DocumentStore } from '../workspace/documents.ts';
+import sharp from 'sharp';
 import { CollaborationStore } from './service.ts';
 
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
@@ -51,7 +53,7 @@ async function fixture(spaceReview: boolean) {
   await new Promise<void>((resolve) => app.server.listen(0, '127.0.0.1', resolve));
   const root = `http://127.0.0.1:${(app.server.address() as AddressInfo).port}`;
   const auth = new AuthStore(db),
-    workspace = new WorkspaceStore(auth),
+    workspace = new WorkspaceStore(auth, { spacesEnabled: spaceReview }),
     spaces = new SpaceStore(workspace);
   const owner = auth.createUser('Owner'),
     editor = auth.createUser('Editor'),
@@ -102,16 +104,29 @@ async function fixture(spaceReview: boolean) {
       `${base(id)}/snapshot/${id === sheet.id ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC}/unit/${id}/rev/0`,
       credential,
     );
-  const ticket = async (user = editor.id, id = sheet.id, unitID = id) => {
-    const response = await send(`${base(id)}/user/session-ticket?unitID=${unitID}`, cookie(user));
+  const ticket = async (
+    user = editor.id,
+    id = sheet.id,
+    unitID = id,
+    credential = cookie(user),
+    prefix = base(id),
+  ) => {
+    const response = await send(`${prefix}/user/session-ticket?unitID=${unitID}`, credential);
     expect(response.status).toBe(200);
     return (await response.json()).ticket as string;
   };
-  const open = async (user = editor.id, id = sheet.id, existingTicket?: string, unitID = id) => {
-    const token = existingTicket ?? (await ticket(user, id, unitID));
+  const open = async (
+    user = editor.id,
+    id = sheet.id,
+    existingTicket?: string,
+    unitID = id,
+    credential = cookie(user),
+    prefix = base(id),
+  ) => {
+    const token = existingTicket ?? (await ticket(user, id, unitID, credential, prefix));
     const socket = new WebSocket(
-      `${root.replace('http:', 'ws:')}${base(id)}/comb/connect?sessionTicket=${encodeURIComponent(token)}&unitID=${unitID}`,
-      { headers: { Cookie: cookie(user), Origin: origin } },
+      `${root.replace('http:', 'ws:')}${prefix}/comb/connect?sessionTicket=${encodeURIComponent(token)}&unitID=${unitID}`,
+      { headers: { Cookie: credential, Origin: origin } },
     );
     sockets.push(socket);
     const messages: {
@@ -131,8 +146,14 @@ async function fixture(spaceReview: boolean) {
     });
     return { socket, messages, status };
   };
-  const connect = async (user = editor.id, id = sheet.id, unitID = id) => {
-    const client = await open(user, id, undefined, unitID);
+  const connect = async (
+    user = editor.id,
+    id = sheet.id,
+    unitID = id,
+    credential = cookie(user),
+    prefix = base(id),
+  ) => {
+    const client = await open(user, id, undefined, unitID, credential, prefix);
     expect(client.status).toBe(101);
     client.socket.send(JSON.stringify({ cmd: CombCmd.HELLO, routeKey: '', routeType: '' }));
     await expect
@@ -189,6 +210,8 @@ async function fixture(spaceReview: boolean) {
       },
     });
   return {
+    root,
+    origin,
     db,
     auth,
     workspace,
@@ -238,7 +261,7 @@ test('default-off Space review refuses metadata, preparation and every protocol 
   ).toBeGreaterThanOrEqual(400);
 }, 20_000);
 
-test('gated native HTTP admission retains ordinary/guest denial and exact child permissions', async () => {
+test('scoped native HTTP integrations retain ordinary-route denial and exact child permissions', async () => {
   const f = await fixture(true);
   for (const path of ['/review/spaces', `/review/spaces/${f.space.id}?spaceReview=1`]) {
     const response = await f.send(path);
@@ -269,14 +292,11 @@ test('gated native HTTP admission retains ordinary/guest denial and exact child 
       (await f.send(`/guest-api/${item.id}/universer-api/user/session-ticket?unitID=${item.id}`))
         .status,
     ).toBeGreaterThanOrEqual(400);
-    for (const suffix of [
-      '/history',
-      '/images/secret',
-      '/export',
-      '/offline-bundle',
-      '/formulas/sources',
-    ])
-      expect((await f.send(f.api(item.id) + suffix)).status, suffix).toBeGreaterThanOrEqual(400);
+    for (const suffix of ['/history', '/export', '/offline-bundle'])
+      expect((await f.send(f.api(item.id) + suffix)).status, suffix).toBe(200);
+    expect((await f.send(f.api(item.id) + '/images/secret')).status).toBeGreaterThanOrEqual(400);
+    const sources = await f.send(f.api(item.id) + '/formulas/sources');
+    expect(sources.status).toBe(item.kind === 'doc' ? 200 : 400);
   }
   expect((await f.send(f.api(), '')).status).toBe(401);
   expect((await f.send(f.api(), f.cookie(f.operator.id))).status).toBeGreaterThanOrEqual(400);
@@ -402,7 +422,7 @@ test('Space sockets bind the exact pair, deny viewers and stale commits, and evi
   expect((await f.snapshot(f.sheet.id, f.cookie(f.editor.id))).status).toBe(401);
 }, 45_000);
 
-test('Space permission batches resolve one exact unit once and keep Print unavailable without changing ordinary permissions', async () => {
+test('Space permission batches resolve one exact unit once and retain existing native Print permissions', async () => {
   const f = await fixture(true);
   const access = vi.spyOn(CollaborationStore.prototype, 'access');
   const requests = [
@@ -436,7 +456,7 @@ test('Space permission batches resolve one exact unit once and keep Print unavai
   for (const user of [f.owner, f.editor, f.viewer]) {
     const allowed = await values(user.id);
     expect(allowed.slice(0, 30)).toEqual(
-      Array.from({ length: 30 }, () => [true, user.id !== f.viewer.id, false]),
+      Array.from({ length: 30 }, () => [true, user.id !== f.viewer.id, true]),
     );
     expect(allowed[30]).toEqual([false, false, false]);
   }
@@ -606,3 +626,226 @@ test('a rotated Sheet generation supports scoped parsed snapshots, blocks and mi
     f.db.prepare('SELECT id FROM history_checkpoints WHERE id=?').get(checkpoint),
   ).toMatchObject({ id: checkpoint });
 }, 30_000);
+
+test('one Space guest capability covers its tree while link transitions fence every child room and ticket', async () => {
+  const f = await fixture(true);
+  vi.spyOn(console, 'warn').mockImplementation(() => {});
+  const guestBase = (id: string) => `/guest-space-api/${f.space.id}/items/${id}/universer-api`;
+  const guestApi = (id: string) => `/api/guest-spaces/${f.space.id}/items/${id}`;
+  const treePath = `/api/guest-spaces/${f.space.id}`;
+  const linkPath = `/api/items/${f.space.id}/link`;
+  const link = async (role: 'editor' | 'viewer' | null) => {
+    const response = await f.send(linkPath, f.cookie(), { role }, 'PUT');
+    expect(response.status).toBe(200);
+    return response.json() as Promise<{ url: string | null }>;
+  };
+  const exchange = async (url: string) => {
+    const response = await f.send(`/api/guest/${f.space.id}/session`, '', {
+      token: new URL(url).hash.slice(1),
+    });
+    expect(response.status).toBe(204);
+    expect(response.headers.get('set-cookie')).toContain('HttpOnly');
+    return response.headers.get('set-cookie')!.split(';')[0];
+  };
+  for (const item of [f.sheet, f.doc])
+    expect((await f.send(f.api(item.id) + '/collaboration', f.cookie(), {})).status).toBe(200);
+  const unrelated = f.workspace.create(f.owner.id, {
+    kind: 'sheet',
+    name: 'Unrelated',
+    parentId: null,
+  });
+  expect((await f.send(`/api/items/${unrelated.id}/collaboration`, f.cookie(), {})).status).toBe(
+    200,
+  );
+  const independent = await f.connect(
+    f.owner.id,
+    unrelated.id,
+    unrelated.id,
+    f.cookie(),
+    '/universer-api',
+  );
+  const accountSheet = await f.connect(f.owner.id);
+  const pendingAccountDoc = await f.open(f.owner.id, f.doc.id);
+  const unusedAccountTicket = await f.ticket(f.owner.id, f.doc.id);
+  const enabled = await link('editor');
+  await expect.poll(() => accountSheet.socket.readyState).toBe(WebSocket.CLOSED);
+  await expect.poll(() => pendingAccountDoc.socket.readyState).toBe(WebSocket.CLOSED);
+  expect(independent.socket.readyState).toBe(WebSocket.OPEN);
+  const credential = await exchange(enabled.url!);
+  const mixed = credential + '; ' + f.cookie(f.operator.id);
+  const metadata = await (await f.send(`/api/guest/${f.space.id}`, mixed)).json();
+  expect(metadata).toEqual({
+    item: { id: f.space.id, kind: 'space', name: f.space.name, access: 'editor' },
+  });
+  const tree = await (await f.send(treePath, mixed)).json();
+  expect(tree.space.parentId).toBeNull();
+  expect(tree.access).toBe('editor');
+  expect(tree.items.map((item: { id: string }) => item.id)).toEqual([f.sheet.id, f.doc.id]);
+  expect(JSON.stringify(tree)).not.toContain(f.space.parentId);
+  expect(JSON.stringify(tree)).not.toMatch(
+    /ownerId|ownerName|sessionHash|guestHash|profile-avatar/,
+  );
+  const future = await f.send(treePath + '/items', mixed, {
+    kind: 'doc',
+    name: 'Guest-created page',
+    parentId: f.space.id,
+  });
+  expect(future.status).toBe(201);
+  const futureId = (await future.json()).item.id as string;
+  const prepared = await f.send(guestApi(futureId) + '/collaboration', mixed, {});
+  expect(prepared.status).toBe(200);
+  expect(await prepared.json()).toMatchObject({ access: 'editor', user: { name: 'Guest' } });
+  expect((await f.send(guestApi(f.doc.id) + '/formulas/sources', mixed)).status).toBe(200);
+  for (const path of [
+    treePath + '/trash',
+    treePath + '/trash/' + f.doc.id + '/restore',
+    guestApi(f.doc.id) + '/history',
+    guestApi(f.doc.id) + '/export',
+    guestApi(f.doc.id) + '/offline-bundle',
+    guestApi(f.doc.id) + '/sharing',
+    guestApi(f.doc.id) + '/link',
+  ])
+    expect((await f.send(path, mixed)).status, path).toBeGreaterThanOrEqual(400);
+  expect((await f.send('/api/items', credential)).status).toBe(401);
+  expect((await f.send(f.api(f.doc.id), credential)).status).toBe(401);
+  expect(
+    (await f.send(`${guestBase(f.doc.id)}/snapshot/2/unit/${f.sheet.id}/rev/0`, mixed)).status,
+  ).toBeGreaterThanOrEqual(400);
+  expect(
+    (await f.send(`${guestBase(f.doc.id)}/snapshot/2/unit/${unrelated.id}/rev/0`, mixed)).status,
+  ).toBeGreaterThanOrEqual(400);
+
+  const bytes = await sharp({ create: { width: 2, height: 2, channels: 4, background: '#aa33bb' } })
+    .png()
+    .toBuffer();
+  const upload = await fetch(f.root + guestApi(f.doc.id) + '/images', {
+    method: 'POST',
+    headers: { Cookie: mixed, Origin: f.origin, 'Content-Type': 'image/png' },
+    body: bytes,
+  });
+  expect(upload.status).toBe(201);
+  const image = await upload.json();
+  expect(image.url).toBe(`/api/items/${f.doc.id}/images/${image.id}`);
+  expect(Buffer.from(await (await f.send(image.url, mixed)).arrayBuffer())).toEqual(bytes);
+  expect((await f.send(`/api/items/${futureId}/images/${image.id}`, mixed)).status).toBe(404);
+  expect(
+    new DocumentStore(f.workspace).image(f.owner.id, f.doc.id, image.id, {
+      sessionHash: f.sessions.get(f.owner.id)!.session.token_hash,
+      spaceId: f.space.id,
+      spaceItem: f.doc.id,
+    }).data.byteLength,
+  ).toBe(bytes.length);
+
+  const guestSheet = await f.connect('guest', f.sheet.id, f.sheet.id, mixed, guestBase(f.sheet.id));
+  const guestDoc = await f.connect('guest', f.doc.id, f.doc.id, mixed, guestBase(f.doc.id));
+  const anonymousAccount = await f.connect(f.owner.id, f.sheet.id);
+  expect(JSON.stringify(guestSheet.messages)).not.toMatch(/"name":"Owner"|profile-avatar/);
+  expect(JSON.stringify(anonymousAccount.messages)).toContain('Guest');
+  const staleAccount = await f.open(f.owner.id, f.doc.id, unusedAccountTicket);
+  if (staleAccount.status === 101)
+    await expect.poll(() => staleAccount.socket.readyState).toBe(WebSocket.CLOSED);
+  else expect(staleAccount.status).toBeGreaterThanOrEqual(400);
+  const unusedGuestTicket = await f.ticket('guest', futureId, futureId, mixed, guestBase(futureId));
+  const viewed = await link('viewer');
+  for (const client of [guestSheet, guestDoc, anonymousAccount])
+    await expect.poll(() => client.socket.readyState).toBe(WebSocket.CLOSED);
+  expect(independent.socket.readyState).toBe(WebSocket.OPEN);
+  // A privileged cookie cannot rescue the namespace's revoked guest credential.
+  expect(
+    (await f.send(guestApi(f.doc.id) + '/collaboration', credential + '; ' + f.cookie(), {}))
+      .status,
+  ).toBeGreaterThanOrEqual(400);
+  // Canonical image reads intentionally allow the independently authorized account.
+  expect((await f.send(image.url, credential + '; ' + f.cookie())).status).toBe(200);
+  const viewerCookie = await exchange(viewed.url!);
+  const staleGuest = await f.open(
+    'guest',
+    futureId,
+    unusedGuestTicket,
+    futureId,
+    viewerCookie,
+    guestBase(futureId),
+  );
+  if (staleGuest.status === 101)
+    await expect.poll(() => staleGuest.socket.readyState).toBe(WebSocket.CLOSED);
+  else expect(staleGuest.status).toBeGreaterThanOrEqual(400);
+  const viewer = await f.connect(
+    'guest',
+    f.sheet.id,
+    f.sheet.id,
+    viewerCookie,
+    guestBase(f.sheet.id),
+  );
+  const permissions = await f.send(
+    guestBase(f.sheet.id) + '/authz/-/object/-/batch_allowed',
+    viewerCookie,
+    {
+      requests: [
+        {
+          unitID: f.sheet.id,
+          objectID: f.sheet.id,
+          actions: [
+            UnitAction.View,
+            UnitAction.Edit,
+            UnitAction.Print,
+            UnitAction.Share,
+            UnitAction.RecoverHistory,
+          ],
+        },
+      ],
+    },
+  );
+  expect(
+    (await permissions.json()).objectActions[0].actions.map(
+      (entry: { allowed: boolean }) => entry.allowed,
+    ),
+  ).toEqual([true, false, true, false, false]);
+  expect(
+    (
+      await f.send(treePath + '/items', viewerCookie, {
+        kind: 'doc',
+        name: 'Denied',
+        parentId: f.space.id,
+      })
+    ).status,
+  ).toBe(403);
+  const before = await (await f.snapshot()).text();
+  const submit = await f.send(
+    guestBase(f.sheet.id) + `/comb/2/unit/${f.sheet.id}/new_changes`,
+    viewerCookie,
+    {
+      unitID: f.sheet.id,
+      type: UniverType.UNIVER_SHEET,
+      memberID: viewer.memberID,
+      changeset: {
+        unitID: f.sheet.id,
+        type: UniverType.UNIVER_SHEET,
+        userID: f.owner.id,
+        memberID: viewer.memberID,
+        sid: 'forged-space-viewer',
+        reqId: 1,
+        baseRev: 1,
+        revision: 0,
+        mutations: [
+          {
+            id: SetRangeValuesMutation.id,
+            data: JSON.stringify({
+              unitId: f.sheet.id,
+              subUnitId: 'first',
+              cellValue: { 0: { 0: { v: 'Denied forged owner' } } },
+            }),
+          },
+        ],
+      },
+    },
+  );
+  expect(submit.status).toBe(200);
+  await expect.poll(() => JSON.stringify(viewer.messages)).toContain('permission_rej');
+  expect(await (await f.snapshot()).text()).toBe(before);
+  await link(null);
+  await expect.poll(() => viewer.socket.readyState).toBe(WebSocket.CLOSED);
+  expect(
+    (await f.send(guestApi(f.doc.id), viewerCookie + '; ' + f.cookie())).status,
+  ).toBeGreaterThanOrEqual(400);
+  expect(independent.socket.readyState).toBe(WebSocket.OPEN);
+}, 60_000);

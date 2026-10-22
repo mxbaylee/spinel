@@ -1,10 +1,11 @@
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { useEffect, useState } from 'react';
-import { kindLabel } from '../src/shared/workspace.ts';
+import { fileKindLabel } from '../src/shared/workspace.ts';
 import type { TrashListing } from '../src/shared/workspace.ts';
 
 import { itemsRequest } from './itemsApi.ts';
 import { TagLabels } from './DocumentTags.tsx';
+import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
 
 export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
   const [listing, setListing] = useState<TrashListing | null>(null);
@@ -12,6 +13,7 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const deletionCount = confirmation?.deletion?.count ?? confirmation?.items.length ?? 0;
   async function reload() {
     setListing(await itemsRequest<TrashListing>('/trash'));
   }
@@ -39,8 +41,8 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
     <section aria-label="Trash">
       <h2>Trash</h2>
       <p>
-        Restore items for 30 days after deletion. After that, daily cleanup removes them
-        permanently.
+        Ordinary files can be restored for 30 days before daily cleanup removes them permanently.
+        Spaces and deletion groups containing a Space stay here until you explicitly delete them.
       </p>
       {listing ? (
         <>
@@ -48,40 +50,65 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
             Empty trash
           </button>
           {confirmation && (
-            <div role="dialog" aria-label="Empty trash confirmation" aria-modal="false">
+            <Modal
+              open
+              title="Empty trash confirmation"
+              icon="trash"
+              dismissDisabled={busy}
+              onOpenChange={(open) => {
+                if (!open) setConfirmation(null);
+              }}
+            >
               <p>
-                Permanently delete {confirmation.items.length}{' '}
-                {confirmation.items.length === 1 ? 'item' : 'items'}? This cannot be undone.
+                Permanently delete {deletionCount} {deletionCount === 1 ? 'item' : 'items'}? This
+                includes all pages, folders, earlier deletions, and saved history inside the listed
+                Spaces. This cannot be undone.
               </p>
-              <button
+              <ul
+                aria-label="Items to permanently delete"
+                style={{ maxHeight: '40vh', overflowY: 'auto' }}
+              >
+                {(confirmation.deletion?.items ?? confirmation.items).map((item) => (
+                  <li key={item.id}>
+                    {item.kind !== 'folder' && <EntityIcon kind={item.kind} />} {item.name}{' '}
+                    <span className="item-kind">{fileKindLabel[item.kind]}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button
                 disabled={busy}
                 onClick={() =>
                   void change('/trash/empty', { version: confirmation.version }, 'Trash emptied.')
                 }
               >
-                Permanently delete {confirmation.items.length}{' '}
-                {confirmation.items.length === 1 ? 'item' : 'items'}
-              </button>
-              <button disabled={busy} onClick={() => setConfirmation(null)}>
+                Permanently delete {deletionCount} {deletionCount === 1 ? 'item' : 'items'}
+              </Button>
+              <Button disabled={busy} onClick={() => setConfirmation(null)}>
                 Cancel
-              </button>
-            </div>
+              </Button>
+            </Modal>
           )}
           <ul className="file-list">
             {listing.items.map((item) => (
               <li key={item.id}>
                 <div>
                   {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
-                  {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
+                  {item.name} <span className="item-kind">{fileKindLabel[item.kind]}</span>
                   <TagLabels tags={item.tags} />
                   <br />
                   <small>
-                    Deleted {new Date(item.trashedAt).toLocaleString()} · Recover until{' '}
-                    {new Date(item.expiresAt).toLocaleString()}
+                    Deleted {new Date(item.trashedAt).toLocaleString()} ·{' '}
+                    {item.expiresAt === null
+                      ? 'Kept until you permanently delete it'
+                      : `Recover until ${new Date(item.expiresAt).toLocaleString()}`}
                   </small>
                 </div>
                 <button
-                  disabled={busy || !!confirmation || item.expiresAt <= Date.now()}
+                  disabled={
+                    busy ||
+                    !!confirmation ||
+                    (item.expiresAt !== null && item.expiresAt <= Date.now())
+                  }
                   aria-label={`Restore ${item.name}`}
                   onClick={() => void change(`/${item.id}/restore`, {}, `Restored ${item.name}.`)}
                 >

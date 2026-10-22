@@ -18,7 +18,7 @@ async function fixture(spaceReview = true) {
   const db = new DatabaseSync(':memory:');
   cleanup.push(() => db.close());
   const auth = new AuthStore(db);
-  const workspace = new WorkspaceStore(auth);
+  const workspace = new WorkspaceStore(auth, { spacesEnabled: spaceReview });
   migrateSpaceSchema(db);
   const spaces = new SpaceStore(workspace);
   const owner = auth.createUser('Owner');

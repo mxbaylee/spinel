@@ -6,16 +6,24 @@ import { documentIdentity } from '../collaboration/identity.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { WorkspaceStore } from './store.ts';
 import { SpaceStore } from './spaces.ts';
+import { DocumentStore } from './documents.ts';
+import { PortableFiles } from './portable.ts';
+import { formulaRoutes } from '../formulas/routes.ts';
+import { historyRoutes } from '../history/routes.ts';
+import type { HistoryStore } from '../history/store.ts';
+import { admitTransfer, transfers } from './transfers.ts';
 
-/** Review-only metadata and native admission. No image/history/export APIs are mounted. */
+/** Existing native integrations, admitted through one exact Space + child namespace. */
 export function spaceNativeRoutes(
   workspace: WorkspaceStore,
   collaboration: CollaborationStore,
   origin: string,
-  options: { spaceReview?: boolean } = {},
+  options: { spaceReview?: boolean; guest?: boolean; history?: HistoryStore } = {},
 ) {
   const router = express.Router({ mergeParams: true });
   const spaces = new SpaceStore(workspace);
+  const documents = new DocumentStore(workspace);
+  const files = new PortableFiles(workspace, collaboration);
   const scopeOf = (request: Request) => {
     const spaceId = String(request.params.spaceId),
       spaceItem = String(request.params.itemId);
@@ -24,14 +32,107 @@ export function spaceNativeRoutes(
     return { spaceId, spaceItem };
   };
   const identity = (request: Request) =>
-    documentIdentity(workspace, request.headers, undefined, scopeOf(request));
+    documentIdentity(
+      workspace,
+      request.headers,
+      options.guest ? scopeOf(request).spaceId : undefined,
+      scopeOf(request),
+    );
   router.use((request, response, next) => {
     response.set('Cache-Control', 'no-store');
-    if (!options.spaceReview) throw new AuthError(404, 'This Space is not available.');
+    if (!options.spaceReview || !workspace.spacesEnabled)
+      throw new AuthError(404, 'This Space is not available.');
     if (request.method !== 'GET' && request.headers.origin !== origin)
       throw new AuthError(403, 'Open Spinel at its configured address.');
     next();
   });
+  router.use(
+    '/formulas',
+    formulaRoutes(workspace, collaboration, identity, options.guest, 'itemId'),
+  );
+  router.post(
+    '/images',
+    express.raw({ type: ['image/png', 'image/jpeg', 'image/webp'], limit: '5mb' }),
+    async (request, response) => {
+      const actor = identity(request);
+      const image = await documents.upload(
+        actor.userId,
+        scopeOf(request).spaceItem,
+        request.body,
+        String(request.headers['content-type'] ?? '').split(';')[0],
+        actor.customData,
+      );
+      response.status(201).json(image);
+    },
+  );
+  router.get('/images/:imageId', (request, response) => {
+    const actor = identity(request);
+    const image = documents.image(
+      actor.userId,
+      scopeOf(request).spaceItem,
+      String(request.params.imageId),
+      actor.customData,
+    );
+    response
+      .set('X-Content-Type-Options', 'nosniff')
+      .type(image.mime)
+      .send(Buffer.from(image.data));
+  });
+  if (!options.guest) {
+    if (options.history)
+      router.use(
+        '/history',
+        historyRoutes(workspace, collaboration, options.history, (request) => ({
+          ...identity(request),
+          itemId: scopeOf(request).spaceItem,
+        })),
+      );
+    router.get('/export', admitTransfer, async (request, response) => {
+      const transfer = transfers.get(response)!;
+      transfer.start();
+      try {
+        const actor = identity(request);
+        const verify = () => {
+          if (response.destroyed || identity(request).userId !== actor.userId)
+            throw new AuthError(401, 'Sign in to continue.');
+        };
+        const file = await files.export(
+          actor.userId,
+          scopeOf(request).spaceItem,
+          verify,
+          actor.customData,
+        );
+        response
+          .attachment(file.filename)
+          .type('application/json')
+          .set('X-Content-Type-Options', 'nosniff')
+          .send(file.text);
+      } finally {
+        transfer.finish();
+      }
+    });
+    router.get('/offline-bundle', admitTransfer, async (request, response) => {
+      const transfer = transfers.get(response)!;
+      transfer.start();
+      try {
+        const actor = identity(request);
+        const verify = () => {
+          if (response.destroyed || identity(request).userId !== actor.userId)
+            throw new AuthError(401, 'Sign in to continue.');
+        };
+        const bundle = await collaboration.offlineBundle(
+          actor.userId,
+          scopeOf(request).spaceItem,
+          verify,
+          actor.customData,
+        );
+        verify();
+        response.json(bundle);
+      } finally {
+        transfer.finish();
+      }
+    });
+  }
   router.get('/', (request, response) => {
     const account = identity(request);
     const { spaceId, spaceItem } = scopeOf(request);
@@ -72,10 +173,17 @@ export function spaceNativeRoutes(
       response.json({
         unitId: collaboration.generations.active(id).unitId,
         access: item.access,
-        user: { id: account.userId, name: workspace.auth.user(account.userId)!.name },
+        user: {
+          id: account.userId,
+          name: options.guest ? 'Guest' : workspace.auth.user(account.userId)!.name,
+        },
       });
     },
   );
+  router.use((request, _response, next) => {
+    if (request.path === '/' && ['PATCH', 'DELETE'].includes(request.method)) return next('router');
+    throw new AuthError(404, 'This Space action is not available.');
+  });
   router.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
     const status =
       error instanceof AuthError

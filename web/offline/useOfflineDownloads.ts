@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import type { WorkspaceItem } from '../../src/shared/workspace.ts';
+import type { SpaceFile, WorkspaceItem } from '../../src/shared/workspace.ts';
 import { DownloadError, downloadForOffline } from './download.ts';
 import type { LocalStart } from './localStart.ts';
-import { openOfflineStore, preparedAccount, setPreparedAccount } from './offlineStore.ts';
+import {
+  openOfflineStore,
+  preparedAccount,
+  setPreparedAccount,
+  spaceOfflineCatalog,
+} from './offlineStore.ts';
 import type { OfflineCatalog, OfflineDownload, OfflineStore, OfflineUser } from './offlineStore.ts';
 import { prepareShell } from './shell.ts';
 
@@ -17,6 +22,7 @@ export function useOfflineDownloads(
   user: OfflineUser,
   local: LocalStart | null | undefined,
   catalog: () => OfflineCatalog | null,
+  options: { spaceRoot?: SpaceFile } = {},
 ) {
   const [downloads, setDownloads] = useState(
     () => new Map(local?.downloads.map((download) => [download.itemId, download])),
@@ -27,6 +33,8 @@ export function useOfflineDownloads(
   // A download can take minutes; read the catalog as it is when it finishes.
   const latestCatalog = useRef(catalog);
   latestCatalog.current = catalog;
+  const latestRoot = useRef(options.spaceRoot);
+  latestRoot.current = options.spaceRoot;
   // The server admits one transfer at a time; run refreshes and toggles in turn.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   function serially<T>(work: (store: OfflineStore) => Promise<T>) {
@@ -72,7 +80,7 @@ export function useOfflineDownloads(
       for (const download of known) {
         if (cancelled) return;
         try {
-          set(await downloadForOffline(store, download.itemId));
+          set(await downloadForOffline(store, download.itemId, download.spaceId));
         } catch (error) {
           if (error instanceof DownloadError && error.status === 404) {
             await store.remove(download.itemId);
@@ -95,13 +103,22 @@ export function useOfflineDownloads(
     await serially((store) => store.saveCatalog({ id: user.id, name: user.name }, value));
   }
 
-  async function toggle(item: WorkspaceItem) {
+  async function toggle(item: Pick<WorkspaceItem, 'id' | 'name' | 'kind'>, spaceId?: string) {
     if (local || busy) return;
-    const downloaded = downloads.has(item.id);
+    if (!['doc', 'sheet'].includes(item.kind)) {
+      setMessage({ text: 'Only Sheets and Docs can be downloaded.', failed: true });
+      return;
+    }
+    const downloaded = downloads.has(item.id) && downloads.get(item.id)!.spaceId === spaceId;
     // Offline launch needs the file list as well as the document; the device
     // counts as prepared only once both are stored.
     const atClick = downloaded ? null : latestCatalog.current();
-    if (!downloaded && !atClick) {
+    const rootAtClick = latestRoot.current;
+    if (spaceId !== undefined && rootAtClick?.id !== spaceId) {
+      setMessage({ text: 'Open this Space again before preparing a copy.', failed: true });
+      return;
+    }
+    if (!downloaded && !atClick && !rootAtClick) {
       setMessage({ text: 'Wait for your files to load, then try again.', failed: true });
       return;
     }
@@ -116,11 +133,15 @@ export function useOfflineDownloads(
           if (!(await store.downloads()).length) setPreparedAccount(null);
           return;
         }
-        const download = await downloadForOffline(store, item.id);
+        const download = await downloadForOffline(store, item.id, spaceId);
         // Keep the newest catalog; a refresh that failed meanwhile falls back
         // to the one there at the click, so a prepared device always has one.
-        const current = latestCatalog.current() ?? atClick!;
+        let current = latestCatalog.current() ?? atClick ?? (await store.catalog());
+        const root = latestRoot.current?.id === spaceId ? latestRoot.current : rootAtClick;
+        if (spaceId !== undefined && root?.id === spaceId)
+          current = spaceOfflineCatalog(root, current ?? undefined);
         try {
+          if (!current) throw new Error('This file list is incomplete. Try again.');
           await store.saveCatalog({ id: user.id, name: user.name }, current);
         } catch (error) {
           // A copy with no file list can't open offline; don't keep it.

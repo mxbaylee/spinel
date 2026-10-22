@@ -12,7 +12,15 @@ import { openSnapshotViewer } from './snapshotViewer.ts';
  * verified local copies only. It never reaches the server: there is no
  * collaboration client, autosave or remote image fallback.
  */
-export function OfflineViewer({ accountId, itemId }: { accountId: string; itemId: string }) {
+export function OfflineViewer({
+  accountId,
+  itemId,
+  spaceId,
+}: {
+  accountId: string;
+  itemId: string;
+  spaceId?: string;
+}) {
   const container = useRef<HTMLDivElement>(null);
   const mobile = useMobileSheetControls();
   const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
@@ -41,6 +49,8 @@ export function OfflineViewer({ accountId, itemId }: { accountId: string; itemId
       const { bundle, bytes } = stored;
       if (bundle.accountId !== accountId || preparedAccount() !== accountId)
         throw new Error('This copy belongs to another account.');
+      if (bundle.itemId !== itemId || bundle.spaceId !== spaceId)
+        throw new Error('This copy belongs to another document or Space.');
       access = new OfflineAccess(offlineScope(bundle));
       access.subscribe((state) => {
         if (state.phase === 'disposed') return;
@@ -77,7 +87,7 @@ export function OfflineViewer({ accountId, itemId }: { accountId: string; itemId
       // Univer owns a separate React root; unmount it after this commit.
       queueMicrotask(close);
     };
-  }, [accountId, itemId, mobile]);
+  }, [accountId, itemId, spaceId, mobile]);
   return (
     <section aria-label="Offline copy">
       {problem ? (

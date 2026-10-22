@@ -4,6 +4,8 @@ import { AuthError } from '../auth/store.ts';
 import type { AuthStore } from '../auth/store.ts';
 import type { GrantRole } from '../../shared/workspace.ts';
 import { isOrdinaryItem } from './ordinary-scope.ts';
+import { currentGuestSession } from './guest-session.ts';
+import { resolveSpaceScope } from './space-scope.ts';
 
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 export const GUEST_TTL = 24 * 60 * 60 * 1000;
@@ -22,8 +24,10 @@ export function guestCookie(headers: IncomingHttpHeaders, id: string) {
 /** Capabilities are independent of accounts, and never resolve to the document owner. */
 export class LinkAccess {
   readonly auth: AuthStore;
-  constructor(auth: AuthStore) {
+  private readonly spacesEnabled: boolean;
+  constructor(auth: AuthStore, spacesEnabled = false) {
     this.auth = auth;
+    this.spacesEnabled = spacesEnabled;
     auth.database.exec(`
       CREATE TABLE IF NOT EXISTS workspace_links (
         item_id TEXT PRIMARY KEY REFERENCES workspace_items(id) ON DELETE CASCADE,
@@ -45,22 +49,37 @@ export class LinkAccess {
     )
       auth.database.exec('ALTER TABLE workspace_links ADD COLUMN preview_hash TEXT');
   }
+  private available(id: string) {
+    if (isOrdinaryItem(this.auth.database, id)) return true;
+    if (!this.spacesEnabled) return false;
+    const root = this.auth.database
+      .prepare("SELECT owner_id FROM workspace_items WHERE id=? AND kind='space'")
+      .get(id) as { owner_id: string } | undefined;
+    if (!root) return false;
+    try {
+      resolveSpaceScope(this.auth, root.owner_id, id, id, 'owner');
+      return true;
+    } catch (error) {
+      if (error instanceof AuthError) return false;
+      throw error;
+    }
+  }
   /** This separate capability reveals only the shared title/kind, never content. */
   preview(id: unknown, secret: unknown) {
     if (typeof id !== 'string' || typeof secret !== 'string' || !/^[\w-]{43}$/.test(secret))
       return undefined;
-    if (!isOrdinaryItem(this.auth.database, id)) return undefined;
+    if (!this.available(id)) return undefined;
     return this.auth.database
       .prepare(
         `SELECT i.name,i.kind FROM workspace_links l
       JOIN workspace_items i ON i.id=l.item_id JOIN auth_users u ON u.id=i.owner_id
       WHERE l.item_id=? AND l.preview_hash=? AND l.state='active'
-      AND i.trashed_at IS NULL AND u.disabled=0 AND i.kind IN ('sheet','doc')`,
+      AND i.trashed_at IS NULL AND u.disabled=0 AND i.kind IN ('sheet','doc','space')`,
       )
-      .get(id, hash(secret)) as { name: string; kind: 'sheet' | 'doc' } | undefined;
+      .get(id, hash(secret)) as { name: string; kind: 'sheet' | 'doc' | 'space' } | undefined;
   }
   state(id: string) {
-    if (!isOrdinaryItem(this.auth.database, id)) return undefined;
+    if (!this.available(id)) return undefined;
     return this.auth.database
       .prepare('SELECT epoch,state,role FROM workspace_links WHERE item_id=?')
       .get(id) as
@@ -70,13 +89,13 @@ export class LinkAccess {
     return this.state(id)?.epoch ?? 0;
   }
   assertEpoch(id: string, epoch: unknown) {
-    if (!isOrdinaryItem(this.auth.database, id)) throw linkGone();
+    if (!this.available(id)) throw linkGone();
     const state = this.state(id);
     if (state?.state === 'pending' || (state?.epoch ?? 0) !== epoch) throw linkGone();
   }
   begin(id: string, role: GrantRole | null) {
     return this.auth.transaction(() => {
-      if (!isOrdinaryItem(this.auth.database, id)) throw linkGone();
+      if (!this.available(id)) throw linkGone();
       if (this.state(id)?.state === 'pending')
         throw new AuthError(409, 'Sharing is changing. Try again shortly.');
       const epoch = this.epoch(id) + 1;
@@ -100,9 +119,9 @@ export class LinkAccess {
     });
   }
   finish(id: string, epoch: number, enabled: boolean) {
-    // A pending ordinary link cannot become a Space capability while admission
-    // drains. Revocation remains allowed so failure cleanup can always close it.
-    if (enabled && !isOrdinaryItem(this.auth.database, id)) throw linkGone();
+    // Recheck the complete target after admission drains. Revocation remains
+    // allowed so failure cleanup can always close a pending capability.
+    if (enabled && !this.available(id)) throw linkGone();
     this.auth.database
       .prepare(
         "UPDATE workspace_links SET state=?,token_hash=CASE WHEN ? THEN token_hash ELSE NULL END,preview_hash=CASE WHEN ? THEN preview_hash ELSE NULL END WHERE item_id=? AND epoch=? AND state='pending'",
@@ -118,7 +137,7 @@ export class LinkAccess {
   exchange(id: string, secret: unknown, currentToken?: string) {
     if (typeof secret !== 'string' || !/^[\w-]{43}$/.test(secret)) throw linkGone();
     return this.auth.transaction(() => {
-      if (!isOrdinaryItem(this.auth.database, id)) throw linkGone();
+      if (!this.available(id)) throw linkGone();
       const link = this.auth.database
         .prepare(
           `SELECT l.epoch FROM workspace_links l
@@ -171,19 +190,8 @@ export class LinkAccess {
     return { userId, guestHash: hash(token), itemId: id };
   }
   access(userId: string, itemId?: string) {
-    if (!userId.startsWith('guest:')) return undefined;
-    const session = this.auth.database
-      .prepare(
-        `SELECT s.item_id AS itemId,l.role,s.token_hash AS tokenHash,s.expires_at AS expires
-      FROM workspace_guest_sessions s JOIN workspace_links l ON l.item_id=s.item_id AND l.epoch=s.epoch
-      JOIN workspace_items i ON i.id=s.item_id JOIN auth_users u ON u.id=i.owner_id
-      WHERE s.id=? AND s.expires_at>? AND l.state='active' AND i.trashed_at IS NULL AND u.disabled=0`,
-      )
-      .get(userId.slice(6), this.auth.now()) as
-      { itemId: string; role: GrantRole; tokenHash: string; expires: number } | undefined;
-    return session &&
-      (!itemId || session.itemId === itemId) &&
-      isOrdinaryItem(this.auth.database, session.itemId)
+    const session = currentGuestSession(this.auth, userId);
+    return session && (!itemId || session.itemId === itemId) && this.available(session.itemId)
       ? session
       : undefined;
   }

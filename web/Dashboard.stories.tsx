@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
-import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import type { ItemKind, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { Dashboard } from './Dashboard.tsx';
 import type { LocalStart } from './offline/localStart.ts';
@@ -107,6 +107,7 @@ const meta = {
   args: {
     navigation: { allow: () => true, dirty() {} },
     user: { id: 'story-owner', name: 'Sam Lee' },
+    onOpen: fn(),
   },
   decorators: [inWorkspace],
 } satisfies Meta<typeof Dashboard>;
@@ -217,5 +218,91 @@ export const LocalFolderNotOpened: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
     await userEvent.click(await canvas.findByRole('button', { name: `Open ${photos.name}` }));
+  },
+};
+
+const space: SpaceFile = {
+  ...entry(12, 'Research Space', 'folder'),
+  kind: 'space',
+  tags: ['research'],
+};
+const filedSpace: SpaceFile = {
+  ...space,
+  id: id(13),
+  name: 'Team Space',
+  access: 'editor',
+  ownerName: 'Alex Kim',
+  sharedAt: now - day,
+  placementParentId: null,
+};
+const viewerSpace: SpaceFile = {
+  ...filedSpace,
+  id: id(14),
+  name: 'Reference Space',
+  access: 'viewer',
+  placementParentId: undefined,
+};
+const withSpaces = {
+  ...populated,
+  'GET /api/items': { items: [...items, space] },
+  'GET /api/items/shared': { items: [...shared, filedSpace, viewerSpace] },
+};
+export const SpaceFiles: Story = { parameters: { api: withSpaces } };
+export const NewSpace: Story = {
+  parameters: { api: withSpaces },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'New' }));
+    await userEvent.selectOptions(canvas.getByLabelText('Type'), 'space');
+  },
+};
+export const OpenSpaceKeepsMyFiles: Story = {
+  parameters: { api: withSpaces },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: /^Research Space Space$/ }));
+    await expect(args.onOpen).toHaveBeenCalledWith(space);
+    await expect(canvas.getByRole('heading', { name: 'My files' })).toBeVisible();
+  },
+};
+export const SharedSpaces: Story = {
+  parameters: { api: withSpaces },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
+    const drawer = within(canvas.getByRole('region', { name: 'Shared with me' }));
+    await expect(await drawer.findByRole('button', { name: 'Open Team Space' })).toBeVisible();
+    await expect(
+      drawer.queryByRole('button', { name: 'Share Team Space' }),
+    ).not.toBeInTheDocument();
+    await expect(
+      drawer.queryByRole('button', { name: 'Move Reference Space' }),
+    ).not.toBeInTheDocument();
+  },
+};
+export const SpaceInsideFolder: Story = {
+  parameters: {
+    api: {
+      ...withSpaces,
+      'GET /api/items': { items: [...items, { ...space, parentId: household.id }] },
+      [`GET /api/items/${household.id}`]: {
+        item: household,
+        ancestors: [],
+        children: [finance, mealPlan, { ...space, parentId: household.id }],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const sidebar = await within(canvasElement).findByRole('complementary', { name: 'Folders' });
+    await userEvent.click(within(sidebar).getByRole('button', { name: 'Household' }));
+  },
+};
+export const LocalSpaceNeedsConnection: Story = {
+  args: { local: { ...local, catalog: { ...local.catalog, items: [...items, space] } } },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: /^Research Space Space$/ }));
+    await expect(canvas.getByRole('alert')).toHaveTextContent('Connect to open this Space');
   },
 };

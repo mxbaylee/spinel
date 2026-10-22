@@ -81,6 +81,21 @@ manifest. The manifest lists each image once by same-item source, SHA-256, MIME
 type and byte length. The device fetches those bytes from the existing image route.
 SPN-041, 2026-10-19.
 
+For an enabled Space, the account route is
+`GET /api/spaces/:spaceId/items/:itemId/offline-bundle`. Its optional `spaceId`
+field binds this one native child to the exact requested root. The same root,
+current account, child, role and live generation are checked through preparation
+and materialization. Guests, MCP credentials and the private history capability
+cannot prepare an offline bundle. SPN-092 adds no bulk Space download or native
+offline editing.
+
+Stored image sources remain `/api/items/:itemId/images/:hash`. A Space download
+fetches those bytes through `/api/spaces/:spaceId/items/:itemId/images/:hash`, then
+stores and verifies them under their original canonical source keys. The client
+rejects a bundle from another root or one whose native snapshot ID differs from
+its stable item ID before fetching images or replacing a local copy. The live
+generation stays separate in `unitId` and `revisionOffset`, including after restore.
+
 - The snapshot and revision come from one `CollaborationStore.load` read. The
   device never replays server changesets, so draft #86's exact-revision replay
   endpoint and changeset codec are not used. Owner, chat 2026-10-19; this
@@ -165,6 +180,14 @@ ended or was revoked) and removing the last download clear it, so another accoun
 never opens this data and a revoked session doesn't open it offline. While prepared and online, the dashboard saves the catalog after
 each load and refreshes every download in the background. A document the account
 can no longer open (404) is removed: SPN-039's copies hold no edits.
+
+Space download summaries preserve `spaceId`, so a later refresh uses the original
+scoped child route. Local opening matches the requested root and child as well as
+the prepared account. The outer catalog accepts Space root metadata but never
+turns internal pages into ordinary files. A first download from a Space can merge
+its root into the saved catalog even when Dashboard has never opened; its actual
+outer parent is preserved. Prepared-child navigation uses the separate download
+summaries, and an explicit unavailable child does not silently open another page.
 
 **App shell.** Nothing is cached until the first download has fetched and
 verified its bundle and images (`web/service-worker.ts`).

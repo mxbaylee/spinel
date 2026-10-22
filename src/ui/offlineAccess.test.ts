@@ -61,6 +61,9 @@ test.each([
   ['origin', { origin: 'https://spinel.example/path' }],
   ['account', { accountId: '' }],
   ['item', { itemId: '' }],
+  ['empty Space root', { spaceId: '' }],
+  ['Space root equal to its child', { spaceId: 'item' }],
+  ['malformed Space root', { spaceId: null }],
   ['unit', { unitId: '' }],
   ['access', { access: 'admin' }],
   ['kind', { kind: 'slide' }],
@@ -69,6 +72,14 @@ test.each([
   ['offset', { revisionOffset: -1 }],
 ])('rejects an invalid %s', (_name, change) => {
   expect(() => new OfflineAccess({ ...scope, ...change } as OfflineScope)).toThrow(/Invalid/);
+});
+
+test('Space identity remains bound to the frozen native account, child and generation scope', () => {
+  const input = { ...scope, spaceId: 'project' };
+  const access = new OfflineAccess(input);
+  input.spaceId = 'another-project';
+  expect(access.scope).toEqual({ ...scope, spaceId: 'project' });
+  expect(Object.isFrozen(access.scope)).toBe(true);
 });
 
 test('a bundle from another SDK version is not opened', () => {
@@ -85,7 +96,7 @@ test('a bundle from another SDK version is not opened', () => {
     sdkVersion: OFFLINE_SDK_VERSION,
     images: [],
     kind: 'doc',
-    snapshot: { id: 'generation' },
+    snapshot: { id: 'item' },
   } as unknown as OfflineBundle;
   expect(offlineScope(bundle, scope.origin)).toEqual({ ...scope, access: 'viewer' });
   expect(() => offlineScope({ ...bundle, sdkVersion: '1.0.0' }, scope.origin)).toThrow(

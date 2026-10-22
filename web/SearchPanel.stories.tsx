@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { emptySearch } from '../src/shared/search.ts';
 import type { SearchItem } from '../src/shared/search.ts';
-import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
+import type { FileItem, ItemKind } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { SearchPanel } from './SearchPanel.tsx';
 
@@ -45,7 +45,7 @@ const results = [
     sharedAt: now - 300 * hour,
   }),
 ];
-const loaded: WorkspaceItem[] = results.map(({ paths: _paths, ...rest }) => rest);
+const loaded: FileItem[] = results.map(({ paths: _paths, ...rest }) => rest);
 
 const meta = {
   id: 'dashboard-searchpanel',
@@ -111,4 +111,16 @@ export const Failed: Story = {
     await expect(canvas.queryAllByRole('button', { name: /^Open result / })).toHaveLength(0);
     await expect(canvas.getByRole('button', { name: /^Retry search$/ })).toBeVisible();
   },
+};
+const spaceResult: SearchItem<FileItem> = {
+  ...results[0],
+  id: '00000000-0000-4000-8000-000000000049',
+  kind: 'space',
+  name: 'Budget Space',
+  paths: ['Household'],
+  tags: ['budget'],
+};
+export const SpaceRootsOnly: Story = {
+  args: { query: { ...emptySearch, type: 'space' }, loadedItems: [spaceResult] },
+  parameters: { api: { 'GET /api/items/search': { items: [spaceResult] } } },
 };

@@ -7,10 +7,10 @@ import { UniverType } from '@univerjs/protocol';
 import type { IChangeset } from '@univerjs/protocol';
 import { AuthError } from '../auth/store.ts';
 import { AccessTokens } from '../auth/tokens.ts';
-import { currentMcpIdentity } from '../auth/mcpIdentity.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
-import { WorkspaceSearch } from '../workspace/search.ts';
+import { documentCatalog } from '../workspace/document-catalog.ts';
+import { resolveDocument, validateDocumentCredentials } from '../workspace/document-access.ts';
 
 export type TokenIdentity = {
   id: string;
@@ -21,9 +21,8 @@ export type TokenIdentity = {
 };
 const credentialData = (identity: TokenIdentity) => ({
   mcpTokenHash: identity.hash,
-  ...(identity.connectionId
-    ? { mcpConnectionId: identity.connectionId, mcpResource: identity.resource }
-    : {}),
+  ...(Object.hasOwn(identity, 'connectionId') ? { mcpConnectionId: identity.connectionId } : {}),
+  ...(Object.hasOwn(identity, 'resource') ? { mcpResource: identity.resource } : {}),
 });
 type Input = Record<string, unknown>;
 // Document control characters identify structural objects; only paragraph breaks are editable.
@@ -67,8 +66,12 @@ export class McpDocuments {
   }
   verify(identity: TokenIdentity, edit = false) {
     if (
-      currentMcpIdentity(this.workspace.auth, credentialData(identity), edit).userId !==
-      identity.userId
+      validateDocumentCredentials(
+        this.workspace,
+        identity.userId,
+        credentialData(identity),
+        edit,
+      ) !== 'mcp'
     )
       throw new AuthError(401, 'This access token is no longer available.');
   }
@@ -76,23 +79,41 @@ export class McpDocuments {
     this.verify(identity);
     const args = object(input, ['after']);
     const after = args.after === undefined ? '' : text(args.after);
-    const items = new WorkspaceSearch(this.workspace)
-      .find(identity.userId, {})
+    const items = documentCatalog(this.workspace, identity.userId, credentialData(identity))
       .filter((item) => item.kind === 'sheet' || item.kind === 'doc')
       .sort((a, b) => a.id.localeCompare(b.id))
       .filter((item) => item.id > after);
-    const page = items
-      .slice(0, 100)
-      .map(({ id, name, kind, access }) => ({ id, name, kind, access }));
+    const page = items.slice(0, 100).map(({ id, name, kind, access, spaceId }) => ({
+      id,
+      name,
+      kind,
+      access,
+      ...(spaceId ? { spaceId } : {}),
+    }));
     return { documents: page, next: items.length > 100 ? page.at(-1)!.id : null };
   }
-  private async load(identity: TokenIdentity, id: string) {
+  private context(identity: TokenIdentity, id: string, edit = false) {
+    const custom: Record<string, unknown> = credentialData(identity);
+    validateDocumentCredentials(this.workspace, identity.userId, custom, edit);
+    // MCP ingress owns this lookup. Native services still require the explicit
+    // initial root and child throughout their work; they never infer a fallback.
+    if (this.workspace.spacesEnabled) {
+      const row = this.workspace.auth.database
+        .prepare('SELECT space_id FROM workspace_items WHERE id=?')
+        .get(id) as { space_id: string | null } | undefined;
+      if (row?.space_id) Object.assign(custom, { spaceId: row.space_id, spaceItem: id });
+    }
+    resolveDocument(this.workspace, identity.userId, id, edit ? 'edit' : 'read', custom);
+    return Object.freeze(custom);
+  }
+  private async load(identity: TokenIdentity, id: string, custom = this.context(identity, id)) {
     this.verify(identity);
-    this.workspace.get(identity.userId, id);
-    await this.collaboration.prepare(identity.userId, id);
+    resolveDocument(this.workspace, identity.userId, id, 'read', custom);
+    await this.collaboration.prepare(identity.userId, id, custom);
     this.verify(identity);
+    resolveDocument(this.workspace, identity.userId, id, 'read', custom);
     const generation = this.collaboration.generations.active(id);
-    const loaded = await this.collaboration.load(identity.userId, id);
+    const loaded = await this.collaboration.load(identity.userId, id, custom);
     this.verify(identity);
     if (
       this.collaboration.generations.active(id).unitId !== generation.unitId ||
@@ -103,7 +124,7 @@ export class McpDocuments {
       ...loaded,
       unitId: generation.unitId,
       offset: generation.offset,
-      kind: this.workspace.get(identity.userId, id).kind,
+      kind: resolveDocument(this.workspace, identity.userId, id, 'read', custom).kind,
     };
   }
   async readSheet(identity: TokenIdentity, input: unknown) {
@@ -312,8 +333,9 @@ export class McpDocuments {
     if (Buffer.byteLength(mutation.data) > 64 * 1024)
       throw new AuthError(413, 'Use a smaller edit.');
     this.verify(identity, true);
+    const custom = this.context(identity, id, true);
     const actor = identity.connectionId ? `oauth:${identity.connectionId}` : `token:${identity.id}`;
-    const item = this.workspace.get(identity.userId, id, 'edit');
+    const item = resolveDocument(this.workspace, identity.userId, id, 'edit', custom);
     const generation = this.collaboration.generations.active(id);
     if (
       item.kind !== kind ||
@@ -331,11 +353,11 @@ export class McpDocuments {
     if (prior && prior.payload_hash !== fingerprint)
       throw new AuthError(409, 'This request ID was used for a different edit.');
     if (!prior) {
-      const current = await this.load(identity, id);
+      const current = await this.load(identity, id, custom);
       if (current.unitId !== unitId || current.revision !== revision) throw changed();
       validate(current.snapshot);
       this.verify(identity, true);
-      this.workspace.get(identity.userId, id, 'edit');
+      resolveDocument(this.workspace, identity.userId, id, 'edit', custom);
       this.workspace.auth.transaction(() => {
         // Retain fingerprints for 30 days. An older retry still cannot reapply at its stale revision.
         db.prepare('DELETE FROM mcp_writes WHERE created_at<?').run(
@@ -373,11 +395,11 @@ export class McpDocuments {
       {
         userID: identity.userId,
         memberID: changeset.memberID,
-        customData: credentialData(identity),
+        customData: custom,
       },
     );
     this.verify(identity, true);
-    this.workspace.get(identity.userId, id, 'edit');
+    resolveDocument(this.workspace, identity.userId, id, 'edit', custom);
     if (result.status === 'rejected' || result.status === 'retry')
       throw new AuthError(409, result.error.message);
     if (this.collaboration.generations.active(id).unitId !== unitId) throw changed();

@@ -3,6 +3,7 @@ import { AuthError } from '../auth/store.ts';
 import type { TrashListing, TrashedItem } from '../../shared/workspace.ts';
 import type { WorkspaceStore } from './store.ts';
 import { classifyOrdinaryItems, isOrdinaryItem } from './ordinary-scope.ts';
+import { FileTrash } from './file-trash.ts';
 
 export const DAY_MS = 24 * 60 * 60 * 1000;
 export const TRASH_RETENTION_MS = 30 * DAY_MS;
@@ -14,10 +15,13 @@ const overBudget = () =>
 
 export class TrashStore {
   workspace: WorkspaceStore;
+  private readonly files: FileTrash;
   constructor(workspace: WorkspaceStore) {
     this.workspace = workspace;
+    this.files = new FileTrash(workspace, TRASH_RETENTION_MS);
   }
   list(owner: string): TrashListing {
+    if (this.workspace.spacesEnabled) return this.files.list(owner);
     this.workspace.owner(owner);
     const database = this.workspace.auth.database;
     const found = database
@@ -56,6 +60,7 @@ export class TrashStore {
     };
   }
   trash(owner: string, id: string) {
+    if (this.workspace.spacesEnabled) return this.files.trash(owner, id);
     const { auth } = this.workspace;
     return auth.transaction(() => {
       this.workspace.get(owner, id, 'owner');
@@ -78,6 +83,7 @@ export class TrashStore {
     });
   }
   restore(owner: string, id: string) {
+    if (this.workspace.spacesEnabled) return this.files.restore(owner, id);
     const { auth } = this.workspace;
     return auth.transaction(() => {
       this.workspace.owner(owner);
@@ -118,6 +124,7 @@ export class TrashStore {
     });
   }
   empty(owner: string, version: unknown) {
+    if (this.workspace.spacesEnabled) return this.files.empty(owner, version);
     return this.workspace.auth.transaction(() => {
       const listing = this.list(owner);
       if (typeof version !== 'string' || version !== listing.version)
@@ -129,7 +136,10 @@ export class TrashStore {
     const { auth } = this.workspace;
     return auth.transaction(() => {
       const expired = auth.database
-        .prepare('SELECT id FROM workspace_items WHERE trashed_at<=? LIMIT ?')
+        .prepare(
+          `SELECT id FROM workspace_items WHERE trashed_at<=?
+          AND NOT EXISTS(SELECT 1 FROM workspace_retained_trash_batches b WHERE b.batch=workspace_items.trash_batch) LIMIT ?`,
+        )
         .all(auth.now() - TRASH_RETENTION_MS, MAX_TRASH_ITEMS + 1) as { id: string }[];
       return this.deleteRows(expired.map((item) => item.id));
     });

@@ -16,6 +16,7 @@ import {
 import type { WorkspaceStore } from '../workspace/store.ts';
 import type { ItemAccess } from '../../shared/workspace.ts';
 import type { CollaborationStore } from './service.ts';
+import { MAX_SPACE_ITEMS } from '../workspace/space-structure.ts';
 
 type LiveSession = {
   session: EndpointSession;
@@ -40,15 +41,15 @@ export function attachCollaboration(
   const endpoint = new UniverCollabEndpoint(collab.service, { sessionTicketTtlMs: 30_000 });
   const live = new Map<string, LiveSession>();
   const denied = () => new CollabError('PERMISSION_DENIED', 'This document is not available.');
+  const privacyRoot = (custom: Record<string, unknown>, itemId: string) =>
+    typeof custom.spaceId === 'string' ? custom.spaceId : itemId;
   function authorizedScope(userID: string, unitID: string, custom: Record<string, unknown>) {
     const item = collab.access(userID, unitID, false, custom);
-    // access() has already checked the current account session, exact Space +
-    // stable child, live generation, grant and enabled owner. Space review has
-    // no guest-link lifecycle; the ordinary-only epoch guard must remain closed
-    // to it. No caller gets this branch merely from a Space-looking item ID.
-    if (Object.hasOwn(custom, 'spaceId')) return { item, privacyEpoch: undefined };
-    const privacyEpoch = workspace.links.epoch(item.id);
-    workspace.links.assertEpoch(item.id, privacyEpoch);
+    // The resolver has proved the exact root + child. One root epoch fences all
+    // current and future pages, including tickets issued before a link change.
+    const root = privacyRoot(custom, item.id);
+    const privacyEpoch = workspace.links.epoch(root);
+    workspace.links.assertEpoch(root, privacyEpoch);
     return { item, privacyEpoch };
   }
   function current(session: EndpointSession) {
@@ -169,7 +170,10 @@ export function attachCollaboration(
   const admissions = new Map<string, Set<Promise<void>>>();
   async function admission(session: EndpointSession, next: () => Promise<void>) {
     current(session);
-    const id = collab.itemForUnit(String(session.customData.unitID));
+    const id = privacyRoot(
+      session.customData,
+      collab.itemForUnit(String(session.customData.unitID)),
+    );
     let release!: () => void;
     const pending = new Promise<void>((resolve) => {
       release = resolve;
@@ -200,8 +204,12 @@ export function attachCollaboration(
       throw denied();
     if (live.size >= 64) throw new CollabError('PERMISSION_DENIED', 'Too many open editors.');
     const linked =
-      workspace.links.state(collab.itemForUnit(String(context.session.customData.unitID)))
-        ?.state === 'active';
+      workspace.links.state(
+        privacyRoot(
+          context.session.customData,
+          collab.itemForUnit(String(context.session.customData.unitID)),
+        ),
+      )?.state === 'active';
     context.member.name = context.session.userID.startsWith('guest:')
       ? 'Guest'
       : linked
@@ -244,7 +252,9 @@ export function attachCollaboration(
     await revalidate();
     scoped(context.session, context.unitID);
     if (
-      workspace.links.state(collab.itemForUnit(context.unitID))?.state === 'active' &&
+      workspace.links.state(
+        privacyRoot(context.session.customData, collab.itemForUnit(context.unitID)),
+      )?.state === 'active' &&
       !safeGuestRoomPresence(context.payload, context.unitID, context.session.memberID)
     )
       throw denied();
@@ -267,30 +277,43 @@ export function attachCollaboration(
     collab.access(context.userID, context.changeset.unitID, true, context.customData);
     await next();
   });
-  // All namespaces share one room host. The review namespace is absent by default.
+  // All account and guest namespaces share one room host and the same root epoch.
   const spacePrefix = '/space-api/:spaceId/items/:spaceItem';
+  const guestSpacePrefix = '/guest-space-api/:spaceId/items/:spaceItem';
   transport.register({
     register(router) {
       endpoint.register({
         get(path, handler) {
           router.get(path, handler);
           router.get('/guest-api/:guestItem' + path, handler);
-          if (options.spaceReview) router.get(spacePrefix + path, handler);
+          if (options.spaceReview && workspace.spacesEnabled) {
+            router.get(spacePrefix + path, handler);
+            router.get(guestSpacePrefix + path, handler);
+          }
         },
         post(path, handler) {
           router.post(path, handler);
           router.post('/guest-api/:guestItem' + path, handler);
-          if (options.spaceReview) router.post(spacePrefix + path, handler);
+          if (options.spaceReview && workspace.spacesEnabled) {
+            router.post(spacePrefix + path, handler);
+            router.post(guestSpacePrefix + path, handler);
+          }
         },
         delete(path, handler) {
           router.delete(path, handler);
           router.delete('/guest-api/:guestItem' + path, handler);
-          if (options.spaceReview) router.delete(spacePrefix + path, handler);
+          if (options.spaceReview && workspace.spacesEnabled) {
+            router.delete(spacePrefix + path, handler);
+            router.delete(guestSpacePrefix + path, handler);
+          }
         },
         upgrade(path, handler) {
           router.upgrade(path, handler);
           router.upgrade('/guest-api/:guestItem' + path, handler);
-          if (options.spaceReview) router.upgrade(spacePrefix + path, handler);
+          if (options.spaceReview && workspace.spacesEnabled) {
+            router.upgrade(spacePrefix + path, handler);
+            router.upgrade(guestSpacePrefix + path, handler);
+          }
         },
       });
     },
@@ -308,13 +331,35 @@ export function attachCollaboration(
     async privacyChanged(itemId: string) {
       // begin() has already fenced admission and revoked all prior guest credentials.
       await Promise.all(admissions.get(itemId) ?? []);
-      const unitID = collab.generations.active(itemId).unitId;
+      const space =
+        workspace.spacesEnabled &&
+        auth.database
+          .prepare("SELECT 1 FROM workspace_items WHERE id=? AND kind='space'")
+          .get(itemId);
+      const rows = space
+        ? (auth.database
+            .prepare(
+              `
+        SELECT coalesce(g.unit_id,i.id) AS unitId FROM workspace_items i
+        LEFT JOIN spinel_live_units g ON g.item_id=i.id
+        WHERE i.space_id=? AND i.kind IN ('doc','sheet') LIMIT ?
+      `,
+            )
+            .all(itemId, MAX_SPACE_ITEMS + 1) as { unitId: string }[])
+        : [{ unitId: collab.generations.active(itemId).unitId }];
+      if (rows.length > MAX_SPACE_ITEMS) throw denied();
+      const units = new Set(rows.map((row) => row.unitId));
       for (const [member, entry] of live) {
-        if (entry.session.customData.unitID !== unitID) continue;
+        const root =
+          typeof entry.session.customData.spaceId === 'string'
+            ? entry.session.customData.spaceId
+            : collab.generations.resolve(String(entry.session.customData.unitID))?.itemId;
+        if (root !== itemId) continue;
+        units.add(String(entry.session.customData.unitID));
         live.delete(member);
         entry.connection.close(1008, 'Sharing changed. Reload to continue.');
       }
-      await endpoint.invalidateUnitSessions({ unitID });
+      for (const unitID of units) await endpoint.invalidateUnitSessions({ unitID });
     },
     async close() {
       clearInterval(timer);

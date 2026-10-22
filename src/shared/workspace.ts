@@ -22,17 +22,29 @@ export interface WorkspaceItem {
   sharedAt?: number;
   placementParentId?: string | null;
 }
+/** Outer file metadata only; Space members keep the narrower native item union. */
+export type SpaceFile = Omit<WorkspaceItem, 'kind'> & { kind: 'space' };
+export type FileItem = WorkspaceItem | SpaceFile;
+export const FILE_KINDS = [...ITEM_KINDS, 'space'] as const;
+export type FileKind = FileItem['kind'];
 export const kindLabel: Record<ItemKind, string> = {
   folder: 'Folder',
   sheet: 'Sheet',
   doc: 'Doc',
 };
+export const fileKindLabel: Record<FileKind, string> = { ...kindLabel, space: 'Space' };
 
-export interface TrashedItem extends WorkspaceItem {
+export type TrashedItem = FileItem & {
   trashedAt: number;
-  expiresAt: number;
-}
+  /** Space recovery groups are retained until explicitly deleted. */
+  expiresAt: number | null;
+};
 export interface TrashListing {
   items: TrashedItem[];
   version: string;
+  /** The complete exact deletion preview, including retained Space contents. */
+  deletion?: {
+    count: number;
+    items: { id: string; name: string; kind: FileKind }[];
+  };
 }

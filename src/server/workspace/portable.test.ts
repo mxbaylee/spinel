@@ -246,12 +246,16 @@ test('exports use current materialized collaboration state and recheck access af
   const collaboration = {
     prepare: vi.fn(async () => {}),
     load: vi.fn(async () => ({ snapshot: current })),
+    generations: {
+      active: (id: string) => ({ unitId: id }),
+      restoring: () => false,
+    },
   } as unknown as CollaborationStore;
   const files = new PortableFiles(f.workspace, collaboration);
   expect(JSON.parse((await files.export(f.owner.id, item.id, () => {})).text).body.dataStream).toBe(
     'Latest accepted edit\r\n',
   );
-  expect(collaboration.prepare).toHaveBeenCalledWith(f.owner.id, item.id);
+  expect(collaboration.prepare).toHaveBeenCalledWith(f.owner.id, item.id, {});
   await expect(
     files.export(f.owner.id, item.id, () => {
       throw new Error('Expired');

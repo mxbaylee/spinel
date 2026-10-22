@@ -10,7 +10,7 @@ import type {
   SpaceTrashListing,
   SpaceTreeData,
 } from '../src/shared/spaces.ts';
-import type { ItemAccess, ItemKind } from '../src/shared/workspace.ts';
+import type { ItemAccess, ItemKind, SpaceFile } from '../src/shared/workspace.ts';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ActionMenu, Button } from '../src/ui/redesign/Controls.tsx';
@@ -41,6 +41,8 @@ import {
   spaceSubtree,
 } from './spaceNavigation.ts';
 import type { SpaceLocation } from './spaceNavigation.ts';
+import { SpaceRootActions } from './SpaceRootActions.tsx';
+import { SpaceOfflineActions } from './SpaceOfflineActions.tsx';
 
 export interface SpaceEditorProps {
   spaceId: string;
@@ -51,7 +53,8 @@ export interface SpaceEditorProps {
 }
 
 export interface SpaceProps {
-  user: SpaceUser;
+  user?: SpaceUser;
+  guest?: boolean;
   navigation: NavigationGuard;
   connection: ConnectionState;
   onExit(): void;
@@ -62,9 +65,10 @@ export interface SpaceProps {
 
 type OpenPage = { spaceId: string; item: SpaceNode; access: ItemAccess };
 
-/** Real account review UI. The server, not this route, controls review availability. */
+/** One native Space shell; guest navigation stays inside its current root link. */
 export function Space({
   user,
+  guest = false,
   navigation,
   connection,
   onExit,
@@ -191,7 +195,7 @@ export function Space({
     mutation.current?.abort();
     busyRef.current = false;
     setBusy(false);
-  }, [spaceId, user.id, route.kind]);
+  }, [spaceId, user?.id, route.kind, guest]);
 
   useEffect(() => {
     let disposed = false;
@@ -218,7 +222,7 @@ export function Space({
             setPreview(null);
             setAction(null);
             if (trashView) setTrashError('Space Trash is available to account editors.');
-          } else if (trashView) {
+          } else if (trashView && !guest) {
             try {
               const listing = await spacesRequest<SpaceTrashListing>('/' + spaceId + '/trash', {
                 signal,
@@ -237,7 +241,7 @@ export function Space({
               setFresh(false);
             }
           }
-        } else {
+        } else if (!guest) {
           const result = await spacesRequest<SpaceBootstrap>('', { signal });
           if (!current()) return;
           setBootstrap(result);
@@ -286,14 +290,14 @@ export function Space({
       window.removeEventListener('online', focus);
       document.removeEventListener('visibilitychange', focus);
     };
-  }, [spaceId, trashView, route.kind, user.id]);
+  }, [spaceId, trashView, route.kind, user?.id, guest]);
 
   const selection =
     route.kind === 'space' && currentTree
       ? selectedSpacePage(
           currentTree,
           route.selection,
-          rememberedSpacePage(user.id, currentTree.space.id),
+          user && !guest ? rememberedSpacePage(user.id, currentTree.space.id) : null,
         )
       : { item: null, missing: false };
   const selectedId = selection.item?.id ?? null;
@@ -307,16 +311,16 @@ export function Space({
   const ancestorKey = ancestorIds.join('/');
   useEffect(() => {
     if (!currentTree) return;
-    rememberSpaceRoot(user.id, currentTree.space.id);
+    if (user && !guest) rememberSpaceRoot(user.id, currentTree.space.id);
     if (selection.item) {
-      rememberSpacePage(user.id, currentTree.space.id, selection.item.id);
+      if (user && !guest) rememberSpacePage(user.id, currentTree.space.id, selection.item.id);
       if (route.kind === 'space' && route.selection.kind === 'default')
         go(spaceHref(currentTree.space.id, { kind: 'page', id: selection.item.id }), {
           replace: true,
           checked: true,
         });
     }
-  }, [currentTree?.space.id, selectedId, user.id]);
+  }, [currentTree?.space.id, selectedId, user?.id, guest]);
   useEffect(() => {
     if (!ancestorIds.length) return;
     setExpanded((previous) => new Set([...previous, ...ancestorIds]));
@@ -426,6 +430,7 @@ export function Space({
   function submit(value: SpaceDialogValue) {
     if (!action) return;
     if (action.mode === 'root') {
+      if (guest || !user) return;
       void mutate(
         (signal) =>
           spacesRequest<{ space: SpaceRoot }>('', { method: 'POST', body: value, signal }),
@@ -469,8 +474,15 @@ export function Space({
           spacesRequest(prefix + '/' + action.item.id, { method: 'DELETE', body: {}, signal }),
         () => {
           setAction(null);
+          setTree((previous) => {
+            if (previous?.space.id !== currentTree.space.id) return previous;
+            const removed = spaceSubtree(previous.items, action.item.id);
+            return { ...previous, items: previous.items.filter((item) => !removed.has(item.id)) };
+          });
           if (affectsPage)
-            go(spaceHref(currentTree.space.id, { kind: 'trash' }), { checked: true });
+            go(spaceHref(currentTree.space.id, guest ? { kind: 'default' } : { kind: 'trash' }), {
+              checked: true,
+            });
           setNotice(`${action.item.name} moved to Space Trash with its contents.`);
         },
       );
@@ -490,7 +502,7 @@ export function Space({
     }
   }
   function restore(item: SpaceRecoveryItem) {
-    if (!spaceId || !canEdit) return;
+    if (!spaceId || !canEdit || guest) return;
     void mutate(
       (signal) =>
         spacesRequest<SpaceRestoreResult>('/' + spaceId + '/trash/' + item.id + '/restore', {
@@ -584,7 +596,7 @@ export function Space({
               <ProfileIcon icon="lucide:plus" /> Add page
             </ActionMenu>
           )}
-          {canEdit && (
+          {canEdit && !guest && (
             <a
               className="space-trash-link"
               href={spaceHref(currentTree.space.id, { kind: 'trash' })}
@@ -601,11 +613,20 @@ export function Space({
         </nav>
       )
     : undefined;
-  const recent = bootstrap?.spaces.find(({ space }) => space.id === rememberedSpaceRoot(user.id))
-    ?.space.id;
+  const recent =
+    user &&
+    bootstrap?.spaces.find(({ space }) => space.id === rememberedSpaceRoot(user.id))?.space.id;
+  const rootFile: SpaceFile | null = currentTree
+    ? {
+        ...currentTree.space,
+        kind: 'space',
+        access: currentTree.access,
+        tags: [],
+      }
+    : null;
   return (
     <SpaceShell
-      user={user}
+      user={guest ? undefined : user}
       connection={connection}
       documentOpen={Boolean(visiblePage)}
       onExit={exit}
@@ -614,7 +635,7 @@ export function Space({
       navigation={navigationView}
       navigationButton={pagesButton}
     >
-      {route.kind === 'index' ? (
+      {route.kind === 'index' && !guest ? (
         <>
           <div className="space-index-heading">
             <h1>Spaces</h1>
@@ -685,11 +706,41 @@ export function Space({
             </div>
             {currentTree?.access === 'viewer' && <span className="space-access">View only</span>}
             {currentTree?.access === 'editor' && <span className="space-access">Can edit</span>}
+            {guest && <span className="space-access">Guest</span>}
+            {user && !guest && rootFile?.access === 'owner' && (
+              <SpaceRootActions
+                item={rootFile}
+                beforeChange={allow}
+                onChanged={(item) => {
+                  setTree((previous) =>
+                    previous && previous.space.id === item.id
+                      ? {
+                          ...previous,
+                          space: { ...previous.space, name: item.name, parentId: item.parentId },
+                        }
+                      : previous,
+                  );
+                  void refresh.current(true);
+                }}
+                onTrashed={() => {
+                  navigationRef.current.dirty(false);
+                  onExit();
+                }}
+              />
+            )}
           </header>
-          <p className="space-limitations">
-            Images, cross-file formulas, version history and exports aren’t available in this
-            review.
-          </p>
+          {user && !guest && rootFile && !trashView && (
+            <SpaceOfflineActions
+              key={rootFile.id}
+              user={user}
+              root={rootFile}
+              item={selection.item}
+              saved={!dirty && fresh && connection === 'online'}
+              onOpen={(id) => {
+                go(spaceHref(rootFile.id, { kind: 'page', id }));
+              }}
+            />
+          )}
         </>
       )}
       {loading && !currentTree && !bootstrap && (
@@ -709,7 +760,7 @@ export function Space({
           >
             Try again
           </Button>
-          {denied && <Button onClick={exit}>My files</Button>}
+          {denied && !guest && <Button onClick={exit}>My files</Button>}
           {denied && dirty && <p>Copy unsaved changes before leaving.</p>}
         </div>
       )}
@@ -721,7 +772,7 @@ export function Space({
       {route.kind === 'unavailable' && (
         <div className="space-empty">
           <h2>This Space link is not available.</h2>
-          <Button onClick={exit}>My files</Button>
+          {!guest && <Button onClick={exit}>My files</Button>}
         </div>
       )}
       {connection === 'offline' && currentTree && !trashView && (
@@ -736,7 +787,7 @@ export function Space({
       )}
       {currentTree &&
         trashView &&
-        (canEdit ? (
+        (canEdit && !guest ? (
           <SpaceTrash
             listing={
               trash && {

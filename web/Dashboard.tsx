@@ -1,7 +1,7 @@
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { ITEM_KINDS, kindLabel } from '../src/shared/workspace.ts';
-import type { ItemKind, WorkspaceItem } from '../src/shared/workspace.ts';
+import { FILE_KINDS, fileKindLabel } from '../src/shared/workspace.ts';
+import type { FileKind, FileItem, WorkspaceItem } from '../src/shared/workspace.ts';
 
 import { Sharing } from './Sharing.tsx';
 import { SearchPanel } from './SearchPanel.tsx';
@@ -15,6 +15,8 @@ import { ImportFile } from './ImportFile.tsx';
 import { SharedBadge, useSharedItems } from './SharedItems.tsx';
 import type { NavigationGuard } from './navigation.ts';
 import { rememberFileView } from './fileNavigation.ts';
+import { spaceHref } from './spaceNavigation.ts';
+import { SpaceRootActions } from './SpaceRootActions.tsx';
 import { OfflineBadge } from './OfflineStatus.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
@@ -25,7 +27,7 @@ const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
 
-type Action = { mode: 'new' | 'rename' | 'move' | 'file'; item?: WorkspaceItem };
+type Action = { mode: 'new' | 'rename' | 'move' | 'file'; item?: FileItem };
 const TRASH_VIEW = 'trash';
 const selectedId = () => {
   const query = new URLSearchParams(location.search);
@@ -38,7 +40,7 @@ const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m
 const OfflineViewer = lazy(() =>
   import('./OfflineViewer.tsx').then((m) => ({ default: m.OfflineViewer })),
 );
-const offlineKinds = new Set<ItemKind>(['sheet', 'doc']);
+const offlineKind = (item: FileItem) => item.kind === 'sheet' || item.kind === 'doc';
 
 /**
  * The file list and the open item. With `local` set, Spinel started without a
@@ -51,12 +53,14 @@ export function Dashboard({
   local,
   onConnectionState,
   onCatalogStatus,
+  onOpen,
 }: {
   navigation: NavigationGuard;
   user: OfflineUser;
   local?: LocalStart | null;
   onConnectionState?: (state: ConnectionState | null) => void;
   onCatalogStatus?: (details: CatalogConnectionDetails | null) => void;
+  onOpen?: (item: FileItem) => void;
 }) {
   const dropTarget = useRef<HTMLElement>(null);
   const [query, setQuery] = useState<SearchQuery>({ ...emptySearch });
@@ -64,22 +68,22 @@ export function Dashboard({
   const shared = useSharedItems(local?.catalog.shared);
   const [sharedOpen, setSharedOpen] = useState(false);
   const draggingShared = useRef<string | null>(null);
-  const [items, setItems] = useState<WorkspaceItem[]>([]);
+  const [items, setItems] = useState<FileItem[]>([]);
   const [loaded, setLoaded] = useState(false);
-  const [viewed, setViewed] = useState<WorkspaceItem[]>([]);
+  const [viewed, setViewed] = useState<FileItem[]>([]);
   const [viewLoading, setViewLoading] = useState(false);
   const [viewId, setViewId] = useState<string | null>(null);
   const [viewMissing, setViewMissing] = useState(false);
   const [refresh, setRefresh] = useState(0);
-  const [sharing, setSharing] = useState<WorkspaceItem | null>(null);
-  const [tagging, setTagging] = useState<WorkspaceItem | null>(null);
+  const [sharing, setSharing] = useState<FileItem | null>(null);
+  const [tagging, setTagging] = useState<FileItem | null>(null);
   const [currentId, setCurrentId] = useState<string | null>(selectedId);
   useEffect(() => rememberFileView(user.id, currentId), [user.id, currentId]);
   const currentRef = useRef(currentId);
   currentRef.current = currentId;
   const [action, setAction] = useState<Action | null>(null);
   const [name, setName] = useState('');
-  const [kind, setKind] = useState<ItemKind>('folder');
+  const [kind, setKind] = useState<FileKind>('folder');
   const [destination, setDestination] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -89,7 +93,7 @@ export function Dashboard({
   }, [syncedAt, local, error, shared.error, onCatalogStatus]);
   useEffect(() => () => onCatalogStatus?.(null), [onCatalogStatus]);
   // The last-loaded view for each opened folder or item, kept for offline launch.
-  const views = useRef<Record<string, WorkspaceItem[]>>({ ...local?.catalog.views });
+  const views = useRef<Record<string, FileItem[]>>({ ...local?.catalog.views });
   const catalog = (): OfflineCatalog | null =>
     loaded && shared.loaded
       ? { syncedAt, items, shared: shared.items, views: views.current }
@@ -100,7 +104,7 @@ export function Dashboard({
       setItems(local.catalog.items);
       setLoaded(true);
     } else
-      void itemsRequest<{ items: WorkspaceItem[] }>()
+      void itemsRequest<{ items: FileItem[] }>()
         .then((result) => {
           setItems(result.items);
           setSyncedAt(Date.now());
@@ -135,9 +139,9 @@ export function Dashboard({
     let disposed = false;
     setViewLoading(true);
     void itemsRequest<{
-      item: WorkspaceItem;
-      children: WorkspaceItem[];
-      ancestors: WorkspaceItem[];
+      item: FileItem;
+      children: FileItem[];
+      ancestors: FileItem[];
     }>(`/${currentId}`)
       .then((result) => {
         if (disposed) return;
@@ -195,8 +199,8 @@ export function Dashboard({
         ...shared.items.filter((item) => item.placementParentId === currentId),
       ]
     : viewed.filter((item) => item.parentId === currentId);
-  function ancestors(item?: WorkspaceItem) {
-    const path: WorkspaceItem[] = [];
+  function ancestors(item?: FileItem) {
+    const path: FileItem[] = [];
     const seen = new Set<string>();
     while (item && !seen.has(item.id)) {
       seen.add(item.id);
@@ -207,7 +211,7 @@ export function Dashboard({
   }
   // Sort siblings, then traverse by parent ID so similar or duplicate names
   // cannot interleave unrelated subtrees.
-  const children = new Map<string | null, WorkspaceItem[]>();
+  const children = new Map<string | null, FileItem[]>();
   for (const item of items.filter((item) => item.kind === 'folder')) {
     const siblings = children.get(item.parentId) ?? [];
     siblings.push(item);
@@ -215,7 +219,7 @@ export function Dashboard({
   }
   for (const siblings of children.values())
     siblings.sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
-  const folders: { item: WorkspaceItem; path: WorkspaceItem[] }[] = [];
+  const folders: { item: FileItem; path: FileItem[] }[] = [];
   const stack = (children.get(null) ?? []).map((item) => ({ item, path: [item] })).reverse();
   while (stack.length) {
     const entry = stack.pop()!;
@@ -232,7 +236,19 @@ export function Dashboard({
     setAction(null);
     setError('');
   }
-  function edit(mode: Action['mode'], item?: WorkspaceItem) {
+  function openFile(item: FileItem) {
+    if (item.kind !== 'space') return navigate(item.id);
+    if (local) {
+      setError(`${item.name} needs a connection. Connect to open this Space.`);
+      return;
+    }
+    if (!navigation.allow()) return;
+    // A Space has its own navigation. Keep the last My files view intact.
+    navigation.dirty(false);
+    if (onOpen) onOpen(item);
+    else location.assign(spaceHref(item.id));
+  }
+  function edit(mode: Action['mode'], item?: FileItem) {
     setAction({ mode, item });
     setName(item?.name ?? '');
     setKind('folder');
@@ -252,7 +268,7 @@ export function Dashboard({
         if (await shared.place(action.item!.id, destination || null)) setAction(null);
         return;
       }
-      const { item } = await itemsRequest<{ item: WorkspaceItem }>(
+      const { item } = await itemsRequest<{ item: FileItem }>(
         action.mode === 'new' ? '' : `/${action.item!.id}`,
         action.mode === 'new' ? 'POST' : 'PATCH',
         action.mode === 'new'
@@ -264,7 +280,7 @@ export function Dashboard({
       setItems((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
       setViewed((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
       setAction(null);
-      if (action.mode === 'new' && item.kind !== 'folder') navigate(item.id);
+      if (action.mode === 'new' && item.kind !== 'folder') openFile(item);
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'Could not save. Try again.');
     } finally {
@@ -272,7 +288,7 @@ export function Dashboard({
     }
   }
   async function reloadItems() {
-    const result = await itemsRequest<{ items: WorkspaceItem[] }>();
+    const result = await itemsRequest<{ items: FileItem[] }>();
     setItems(result.items);
   }
   function folderDrop(parentId: string | null) {
@@ -288,7 +304,7 @@ export function Dashboard({
       },
     };
   }
-  function dragShared(item: WorkspaceItem) {
+  function dragShared(item: FileItem) {
     return (
       <button
         draggable={!shared.busy}
@@ -307,7 +323,7 @@ export function Dashboard({
       </button>
     );
   }
-  async function trashItem(item: WorkspaceItem) {
+  async function trashItem(item: FileItem) {
     if (!navigation.allow()) return;
     setBusy(true);
     setError('');
@@ -324,12 +340,12 @@ export function Dashboard({
       setBusy(false);
     }
   }
-  function offlineState(item: WorkspaceItem) {
+  function offlineState(item: FileItem) {
     if (offline.downloads.has(item.id)) return 'available';
-    return local && offlineKinds.has(item.kind) ? 'needs-connection' : null;
+    return local && (offlineKind(item) || item.kind === 'space') ? 'needs-connection' : null;
   }
-  function offlineToggle(item: WorkspaceItem) {
-    if (!offlineKinds.has(item.kind)) return null;
+  function offlineToggle(item: FileItem) {
+    if (item.kind !== 'sheet' && item.kind !== 'doc') return null;
     const downloaded = offline.downloads.has(item.id);
     return (
       <button
@@ -351,7 +367,7 @@ export function Dashboard({
       </button>
     );
   }
-  function actions(item: WorkspaceItem) {
+  function actions(item: FileItem) {
     // Local mode is read-only: nothing here may reach the server.
     if (local)
       return item.access === 'owner' ? null : (
@@ -388,6 +404,34 @@ export function Dashboard({
               Remove from my folder
             </button>
           )}
+        </span>
+      );
+    if (item.kind === 'space')
+      return (
+        <span className="item-actions">
+          {tagButton}
+          <SpaceRootActions
+            item={item}
+            folders={items.filter(
+              (entry): entry is WorkspaceItem =>
+                entry.kind === 'folder' && entry.access === 'owner',
+            )}
+            beforeChange={() => navigation.allow()}
+            onChanged={(updated) => {
+              setItems((previous) =>
+                previous.map((entry) => (entry.id === updated.id ? updated : entry)),
+              );
+              setViewed((previous) =>
+                previous.map((entry) => (entry.id === updated.id ? updated : entry)),
+              );
+              setRefresh((value) => value + 1);
+            }}
+            onTrashed={() => {
+              setViewed((previous) => previous.filter((entry) => entry.id !== item.id));
+              setRefresh((value) => value + 1);
+              void reloadItems().catch((failure) => setError(failure.message));
+            }}
+          />
         </span>
       );
     return (
@@ -477,7 +521,7 @@ export function Dashboard({
                 ...viewed.filter((item) => item.access === 'owner'),
                 ...shared.items,
               ]}
-              onOpen={navigate}
+              onOpen={openFile}
             />
           )}
           {offline.message && (
@@ -500,10 +544,10 @@ export function Dashboard({
                     <button
                       className="item-open"
                       aria-label={`Open ${item.name}`}
-                      onClick={() => navigate(item.id)}
+                      onClick={() => openFile(item)}
                     >
                       {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
-                      {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
+                      {item.name} <span className="item-kind">{fileKindLabel[item.kind]}</span>
                     </button>
                     <SharedBadge item={item} />
                     <OfflineBadge state={offlineState(item)} />
@@ -530,7 +574,7 @@ export function Dashboard({
                   <button
                     disabled={busy}
                     aria-current={item.id === currentId ? 'page' : undefined}
-                    onClick={() => navigate(item.id)}
+                    onClick={() => openFile(item)}
                   >
                     {item.name}
                   </button>
@@ -595,10 +639,11 @@ export function Dashboard({
                             <button
                               className="item-open"
                               disabled={busy}
-                              onClick={() => navigate(item.id)}
+                              onClick={() => openFile(item)}
                             >
                               {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
-                              {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
+                              {item.name}{' '}
+                              <span className="item-kind">{fileKindLabel[item.kind]}</span>
                             </button>
                             <SharedBadge item={item} />
                             <OfflineBadge state={offlineState(item)} />
@@ -619,12 +664,17 @@ export function Dashboard({
                           This folder is empty.
                           {!local &&
                             (!current || current.access === 'owner') &&
-                            ' Choose New to add a folder or document.'}
+                            ' Choose New to add a folder, document, or Space.'}
                         </p>
                       )
                     )}
                   </>
-                ) : local && offlineKinds.has(current.kind) ? (
+                ) : current.kind === 'space' ? (
+                  <p role="status">
+                    {local ? 'Connect to open this Space.' : 'This Space opens in its own view.'}{' '}
+                    {!local && <button onClick={() => openFile(current)}>Open Space</button>}
+                  </p>
+                ) : local && offlineKind(current) ? (
                   offline.downloads.has(current.id) ? (
                     <Suspense fallback={<p role="status">Loading offline copy…</p>}>
                       <OfflineViewer key={current.id} accountId={user.id} itemId={current.id} />
@@ -679,11 +729,11 @@ export function Dashboard({
                       <select
                         value={kind}
                         disabled={busy}
-                        onChange={(event) => setKind(event.target.value as ItemKind)}
+                        onChange={(event) => setKind(event.target.value as FileKind)}
                       >
-                        {ITEM_KINDS.map((kind) => (
+                        {FILE_KINDS.map((kind) => (
                           <option key={kind} value={kind}>
-                            {kindLabel[kind]}
+                            {fileKindLabel[kind]}
                           </option>
                         ))}
                       </select>

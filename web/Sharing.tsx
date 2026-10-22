@@ -1,8 +1,9 @@
 import { ShareLink } from './ShareLink.tsx';
 import { useEffect, useState } from 'react';
-import type { GrantRole, SharePerson, WorkspaceItem } from '../src/shared/workspace.ts';
+import type { FileItem, GrantRole, SharePerson } from '../src/shared/workspace.ts';
+import { spaceHref } from './spaceNavigation.ts';
 
-export function Sharing({ item, onClose }: { item: WorkspaceItem; onClose: () => void }) {
+export function Sharing({ item, onClose }: { item: FileItem; onClose: () => void }) {
   const [people, setPeople] = useState<SharePerson[]>([]);
   const [choices, setChoices] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(true);
@@ -66,13 +67,14 @@ export function Sharing({ item, onClose }: { item: WorkspaceItem; onClose: () =>
         Share address
         <input
           readOnly
-          value={`${location.origin}/?item=${encodeURIComponent(item.id)}`}
+          value={`${location.origin}${item.kind === 'space' ? spaceHref(item.id) : '/?item=' + encodeURIComponent(item.id)}`}
           onFocus={(e) => e.currentTarget.select()}
         />
       </label>
       <p>
-        This address opens the item for people you give access to. Folder access includes its
-        contents and future additions.
+        {item.kind === 'space'
+          ? 'This address opens the Space for people you give access to. Their role applies to every page and folder in the Space, including future additions.'
+          : 'This address opens the item for people you give access to. Folder access includes its contents and future additions.'}
       </p>
       {people.map((person) => (
         <div key={person.id}>
@@ -111,9 +113,9 @@ export function Sharing({ item, onClose }: { item: WorkspaceItem; onClose: () =>
       {!busy && !people.length && !error && <p>No other everyday accounts are available.</p>}
       <p>
         Direct and folder access combine; the most generous grant wins. Only you can change sharing
-        or organize this item.
+        or move {item.kind === 'space' ? 'this Space between your outer folders' : 'this item'}.
       </p>
-      {['sheet', 'doc'].includes(item.kind) && <ShareLink id={item.id} />}
+      {item.kind !== 'folder' && <ShareLink id={item.id} space={item.kind === 'space'} />}
       {message && <p role="status">{message}</p>}
       {error && <p role="alert">{error}</p>}
       <button disabled={busy} onClick={onClose}>

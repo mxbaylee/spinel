@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { userEvent, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { ShareLink } from './ShareLink.tsx';
 
@@ -36,4 +37,39 @@ export const LinkOnWithoutUrl: Story = {
 };
 export const Failed: Story = {
   parameters: { api: { [link]: failure('Only the owner can manage the guest link.', 403) } },
+};
+export const SpaceViewLink: Story = {
+  args: { space: true },
+  parameters: { api: { [link]: { enabled: true, role: 'viewer', url } } },
+};
+export const SpaceEditLink: Story = {
+  args: { space: true },
+  parameters: { api: { [link]: { enabled: true, role: 'editor', url } } },
+};
+export const ConfirmWholeSpace: Story = {
+  args: { space: true },
+  parameters: { api: { [link]: { enabled: false, role: 'viewer' } } },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Create guest link' }),
+    );
+  },
+};
+export const ConfirmReplacementEditLink: Story = {
+  args: { space: true },
+  parameters: { api: { [link]: { enabled: true, role: 'viewer', url } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.selectOptions(await canvas.findByLabelText('Link access'), 'editor');
+    await userEvent.click(canvas.getByRole('button', { name: 'Create replacement link' }));
+  },
+};
+export const ConfirmTurnOffSpaceLink: Story = {
+  args: { space: true },
+  parameters: { api: { [link]: { enabled: true, role: 'editor', url } } },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Turn link off' }),
+    );
+  },
 };

@@ -20,6 +20,8 @@ import { AssistantConnections } from './AssistantConnections.tsx';
 import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { Space } from './Space.tsx';
+import { OfflineSpace } from './OfflineSpace.tsx';
+import { spaceHref } from './spaceNavigation.ts';
 import { rememberedFileHref } from './fileNavigation.ts';
 import { spaceReviewReturnPath } from '../src/shared/spaceReviewRoute.ts';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
@@ -93,7 +95,7 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
   const settings = location.pathname === '/settings';
-  const spaceReview = /^\/review\/spaces(?:\/|$)/.test(location.pathname);
+  const spaceReview = /^\/(?:review\/)?spaces(?:\/|$)/.test(location.pathname);
   const connecting = location.pathname === '/connect';
   const [connectRequest] = useState(connectionRequest);
   const [spaceReturn] = useState(() => spaceReviewReturnPath(location));
@@ -158,7 +160,7 @@ export function App() {
           return;
         }
         // Authorizing an assistant always needs a live, verified session.
-        if (connecting || connectRequest || spaceReview || spaceReturn) {
+        if (connecting || connectRequest) {
           setUnreachable(true);
           return;
         }
@@ -167,7 +169,7 @@ export function App() {
           setUnreachable(true);
           return;
         }
-        if (location.pathname === '/sign-in') history.replaceState(null, '', '/');
+        if (location.pathname === '/sign-in') history.replaceState(null, '', spaceReturn ?? '/');
         setLocal(start);
         setUser({ ...start.user, isAdmin: false });
       } finally {
@@ -315,7 +317,7 @@ export function App() {
           <p role="status">Loading…</p>
         </main>
       );
-    if (unreachable || local)
+    if (unreachable)
       return (
         <main className="space-bootstrap">
           <OfflineUnreachable />
@@ -326,6 +328,15 @@ export function App() {
         <main className="space-bootstrap">
           <p role="alert">This Space is not available.</p>
         </main>
+      );
+    if (local)
+      return (
+        <OfflineSpace
+          local={local}
+          user={user}
+          onExit={() => location.assign(rememberedFileHref(user.id))}
+          onSignOut={() => void signOut()}
+        />
       );
     return (
       <>
@@ -527,6 +538,9 @@ export function App() {
               local={local}
               onConnectionState={setEditorConnection}
               onCatalogStatus={setCatalogStatus}
+              onOpen={(item) => {
+                if (item.kind === 'space') location.assign(spaceHref(item.id));
+              }}
             />
           )}
           {busy && (

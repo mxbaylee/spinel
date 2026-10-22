@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { FormulaDialog, FormulaResultView } from './DocFormulas.tsx';
@@ -97,6 +99,114 @@ export const Phone: Story = {
   globals: { viewport: { value: 'phone', isRotated: false } },
   parameters: { api: { ...formulaApi, ...availableSources } },
   play: ({ canvasElement }) => sourcesReady(canvasElement),
+};
+const spaceId = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+const spaceFormulas = `/api/spaces/${spaceId}/items/${id}/formulas`;
+const spaceApi = {
+  [`GET ${spaceFormulas}/sources`]: {
+    sources: [{ itemId: 'budget', name: 'Budget' }],
+  },
+  [`GET ${spaceFormulas}/sources/budget`]: { sheets: [{ sheetId: 'summary', name: 'Summary' }] },
+  [`POST ${spaceFormulas}/resolve`]: { definition },
+  [`POST ${spaceFormulas}/evaluate`]: { ok: true, kind: 'scalar', value: 1234.56 },
+};
+async function spacePreview(canvasElement: HTMLElement) {
+  const canvas = within(canvasElement);
+  await sourcesReady(canvasElement);
+  await userEvent.click(canvas.getByRole('combobox', { name: /^Formula$/ }));
+  await userEvent.keyboard('{End}');
+  await userEvent.click(canvas.getByText('Find a cell or range', { exact: true }));
+  await userEvent.selectOptions(canvas.getByLabelText('Spreadsheet'), 'budget');
+  await waitFor(() => expect(canvas.getByLabelText('Worksheet')).toHaveTextContent('Summary'));
+  await userEvent.selectOptions(canvas.getByLabelText('Worksheet'), 'summary');
+  await userEvent.click(canvas.getByRole('button', { name: 'Insert reference' }));
+  await expect(canvas.getByRole('combobox', { name: /^Formula$/ })).toHaveValue(
+    '=Budget.Summary.A1',
+  );
+  await userEvent.selectOptions(canvas.getByLabelText('Number format'), 'currency');
+  await userEvent.click(canvas.getByRole('button', { name: /^Preview$/ }));
+  await expect(await canvas.findByText('$1,234.56', { exact: true })).toBeVisible();
+}
+export const SpaceSources: Story = {
+  args: { spaceId },
+  parameters: { api: spaceApi },
+  play: ({ canvasElement }) => spacePreview(canvasElement),
+};
+export const SpaceSourcesDark: Story = {
+  ...SpaceSources,
+  globals: { theme: 'dark' },
+};
+export const SpaceSourcesPhone: Story = {
+  ...SpaceSources,
+  globals: { viewport: { value: 'phone', isRotated: false } },
+};
+export const SpaceSourceUnavailable: Story = {
+  args: { spaceId, initial: { id: 'formula', start: 0, end: 18, definition } },
+  parameters: {
+    api: {
+      ...spaceApi,
+      [`POST ${spaceFormulas}/evaluate`]: { ok: false, reason: 'private-source' },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await sourcesReady(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: /^Preview$/ }));
+    await expect(await canvas.findByRole('status')).toHaveTextContent('access');
+  },
+};
+function SpaceGuestLocation({ children }: { children: ReactNode }) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const original = { href: location.href, state: history.state };
+    history.replaceState(null, '', `/share/${spaceId}`);
+    setReady(true);
+    return () => history.replaceState(original.state, '', original.href);
+  }, []);
+  return ready ? children : null;
+}
+const guestFormulas = `/api/guest-spaces/${spaceId}/items/${id}/formulas`;
+const guestSpaceApi = {
+  [`GET ${guestFormulas}/sources`]: { sources: [{ itemId: 'budget', name: 'Budget' }] },
+  [`GET ${guestFormulas}/sources/budget`]: { sheets: [{ sheetId: 'summary', name: 'Summary' }] },
+  [`POST ${guestFormulas}/resolve`]: { definition },
+  [`POST ${guestFormulas}/evaluate`]: { ok: true, kind: 'scalar', value: 1234.56 },
+};
+export const SpaceGuestSources: Story = {
+  args: { spaceId },
+  decorators: [
+    (Story) => (
+      <SpaceGuestLocation>
+        <Story />
+      </SpaceGuestLocation>
+    ),
+  ],
+  parameters: { api: guestSpaceApi },
+  play: ({ canvasElement }) => spacePreview(canvasElement),
+};
+export const SpaceGuestSourcesDark: Story = {
+  ...SpaceGuestSources,
+  globals: { theme: 'dark' },
+};
+export const SpaceGuestSourcesPhone: Story = {
+  ...SpaceGuestSources,
+  globals: { viewport: { value: 'phone', isRotated: false } },
+};
+export const SpaceGuestExternalUnavailable: Story = {
+  ...SpaceGuestSources,
+  args: { spaceId, initial: { id: 'formula', start: 0, end: 18, definition } },
+  parameters: {
+    api: {
+      ...guestSpaceApi,
+      [`POST ${guestFormulas}/evaluate`]: { ok: false, reason: 'private-source' },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await sourcesReady(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: /^Preview$/ }));
+    await expect(await canvas.findByRole('status')).toHaveTextContent('access');
+  },
 };
 export const Scalar: Story = {
   render: () => (

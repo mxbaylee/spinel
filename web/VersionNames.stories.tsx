@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import type { HistoryVersion } from '../src/shared/historyNavigation.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { VersionNames } from './VersionNames.tsx';
@@ -69,6 +69,47 @@ export const NamingVersion: Story = {
     await open(canvasElement);
     await userEvent.click(
       await within(canvasElement).findByRole('button', { name: 'Name this version' }),
+    );
+  },
+};
+
+const spaceId = '00000000-0000-4000-8000-000000000092';
+/** The account editor keeps the Space root when opening history in its preview tab. */
+export const SpaceEditor: Story = {
+  args: { spaceId },
+  parameters: {
+    api: { [`GET /api/spaces/${spaceId}/items/${id}/history`]: { versions, canName: true } },
+  },
+  play: async ({ canvasElement }) => {
+    await open(canvasElement);
+    const canvas = within(canvasElement);
+    await canvas.findByRole('button', { name: 'Name this version' });
+    await expect(canvas.getByRole('link', { name: 'Browse history' })).toHaveAttribute(
+      'href',
+      `/preview?item=${id}&space=${spaceId}`,
+    );
+    await expect(canvas.getAllByRole('link', { name: 'Preview version' })[0]).toHaveAttribute(
+      'href',
+      `/preview?item=${id}&space=${spaceId}&version=v4`,
+    );
+  },
+};
+/** Space View grants history browsing to an account, without naming controls. */
+export const SpaceViewer: Story = {
+  args: { spaceId },
+  parameters: {
+    api: { [`GET /api/spaces/${spaceId}/items/${id}/history`]: { versions, canName: false } },
+  },
+  play: async ({ canvasElement }) => {
+    await open(canvasElement);
+    const canvas = within(canvasElement);
+    await canvas.findAllByRole('link', { name: 'Preview version' });
+    await expect(
+      canvas.queryByRole('button', { name: 'Name this version' }),
+    ).not.toBeInTheDocument();
+    await expect(canvas.getByRole('link', { name: 'Browse history' })).toHaveAttribute(
+      'href',
+      `/preview?item=${id}&space=${spaceId}`,
     );
   },
 };
