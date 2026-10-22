@@ -150,6 +150,36 @@ export const WaitingForSave: Story = {
     ).toBeVisible();
   },
 };
+export const StorageUnavailable: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const prepare = await canvas.findByRole('button', {
+      name: 'Make Project notes available offline on this device',
+    });
+    const previous = Object.getOwnPropertyDescriptor(window, 'localStorage');
+    try {
+      Object.defineProperty(window, 'localStorage', {
+        configurable: true,
+        get() {
+          throw new DOMException('Storage blocked', 'SecurityError');
+        },
+      });
+      await userEvent.click(prepare);
+      await expect(await canvas.findByRole('alert')).toHaveTextContent(
+        'Offline downloads need browser storage. Allow storage or free up space, then try again.',
+      );
+      await expect(prepare).toBeEnabled();
+    } finally {
+      if (previous) Object.defineProperty(window, 'localStorage', previous);
+      else Reflect.deleteProperty(window, 'localStorage');
+    }
+  },
+};
+export const StorageUnavailableDark: Story = { ...StorageUnavailable, globals: { theme: 'dark' } };
+export const StorageUnavailablePhone: Story = {
+  ...StorageUnavailable,
+  globals: { viewport: { value: 'phone', isRotated: false } },
+};
 export const PreparedPages: Story = {
   parameters: { prepared: true },
   play: async ({ canvasElement, args }) => {

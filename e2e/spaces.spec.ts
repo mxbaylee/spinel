@@ -501,6 +501,9 @@ test('ordinary My files creates and opens one Space root while preserving its pr
   test.setTimeout(90_000);
   const f = await fixture(browser, info);
   const { page } = f;
+  // Fail an unavailable control before the overall deadline closes the browser
+  // and replaces the useful action call log with a fixture cleanup error.
+  page.setDefaultTimeout(15_000);
   try {
     await page.goto(`/?item=${f.folder.id}`);
     await expect(page.getByRole('heading', { name: f.folder.name, exact: true })).toBeVisible();

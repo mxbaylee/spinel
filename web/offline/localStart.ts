@@ -1,5 +1,15 @@
-import { openOfflineStore, preparedAccount, setPreparedAccount } from './offlineStore.ts';
-import type { OfflineCatalog, OfflineDownload, OfflineUser } from './offlineStore.ts';
+import {
+  offlinePreparation,
+  openOfflineStore,
+  preparedAccount,
+  setPreparedAccount,
+} from './offlineStore.ts';
+import type {
+  OfflineCatalog,
+  OfflineDownload,
+  OfflinePreparation,
+  OfflineUser,
+} from './offlineStore.ts';
 
 /** What local mode starts from: the prepared account's last-synced catalog. */
 export type LocalStart = {
@@ -49,10 +59,22 @@ async function hasDatabase(accountId: string) {
  */
 export async function claimDevice(user: OfflineUser & { isAdmin: boolean }) {
   if (preparedAccount() !== user.id) setPreparedAccount(null);
-  if (user.isAdmin || !(await hasDatabase(user.id))) return;
+  if (user.isAdmin) return;
+  let scope: OfflinePreparation;
+  try {
+    // Startup may outlive its timeout or another tab's sign-out. Capture the
+    // same persisted fence as downloads before any database work can wait.
+    scope = offlinePreparation(user.id, () => true);
+  } catch {
+    // Preparing local access is best effort; blocked storage must not stop sign-in.
+    return;
+  }
+  if (!(await hasDatabase(user.id)) || !scope.isCurrent()) return;
   const store = await openOfflineStore(user.id);
   try {
-    if ((await store.downloads()).length) setPreparedAccount(user.id);
+    if (!scope.isCurrent()) return;
+    const downloads = await store.downloads();
+    if (downloads.length && scope.isCurrent()) setPreparedAccount(user.id);
   } finally {
     store.close();
   }

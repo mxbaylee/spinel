@@ -31,7 +31,10 @@ beforeEach(() => {
   );
   setPreparedAccount(null);
 });
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -51,6 +54,18 @@ function delayedCatalog(accountId = user.id) {
     saved.push(value);
   });
   return { committed, saved, store: { accountId, saveCatalog } };
+}
+
+const storageSize = (entries: Map<string, string> = values) =>
+  [...entries].reduce((size, [key, value]) => size + key.length + value.length, 0);
+
+/** Existing data remains readable; shrinking/deleting it frees quota for later writes. */
+function limitStorage(maximum: number) {
+  vi.spyOn(window.localStorage, 'setItem').mockImplementation((key, value) => {
+    const next = new Map(values).set(key, value);
+    if (storageSize(next) > maximum) throw new DOMException('Storage full', 'QuotaExceededError');
+    values.set(key, value);
+  });
 }
 
 test('preparation publishes its account only after its catalog durably completes', async () => {
@@ -189,18 +204,86 @@ test('completion refuses mismatched catalog and storage accounts before either c
   expect(preparedAccount()).toBeNull();
 });
 
-// An initially absent marker has no removeItem event; the durable nonce fences
-// completion even before the receiving tab's storage-event task is dispatched.
-test('another tab signing out before the first preparation publishes cannot revive its account', async () => {
+test('a legacy prepared account persists a cancellation token before starting a new preparation', async () => {
+  values.clear();
+  values.set('spinel.offline.account', user.id);
   const fixture = delayedCatalog();
   const scope = offlinePreparation(user.id, () => true);
+  expect(values.get('spinel.offline.cancellation')).toBeTypeOf('string');
   const completion = scope.finish(fixture.store, user, catalog);
-  expect(preparedAccount()).toBeNull();
-  values.set('spinel.offline.cancellation', crypto.randomUUID());
   fixture.committed.resolve();
-  await expect(completion).resolves.toBe(false);
-  expect(preparedAccount()).toBeNull();
+  await expect(completion).resolves.toBe(true);
+  expect(preparedAccount()).toBe(user.id);
 });
+
+test('a full legacy store with an account but no cancellation token refuses preparation before a catalog write', async () => {
+  values.clear();
+  values.set('spinel.offline.account', user.id);
+  limitStorage(storageSize());
+  const fixture = delayedCatalog();
+  const start = async () =>
+    offlinePreparation(user.id, () => true).finish(fixture.store, user, catalog);
+  await expect(start()).rejects.toThrow('Offline downloads need browser storage.');
+  expect(fixture.store.saveCatalog).not.toHaveBeenCalled();
+  expect(values.has('spinel.offline.cancellation')).toBe(false);
+  expect(preparedAccount()).toBe(user.id);
+});
+
+test('blocked browser storage reports a preparation failure before a catalog write', async () => {
+  Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    get() {
+      throw new DOMException('Storage blocked', 'SecurityError');
+    },
+  });
+  const fixture = delayedCatalog();
+  const start = async () =>
+    offlinePreparation(user.id, () => true).finish(fixture.store, user, catalog);
+  await expect(start()).rejects.toThrow('Offline downloads need browser storage.');
+  expect(fixture.store.saveCatalog).not.toHaveBeenCalled();
+});
+
+// Separate module instances have separate epochs, like independent tabs. Storage
+// events deliberately run only after finish(), so only the persisted fence can win.
+test.each(['first preparation', 'full quota', 'reduced quota after preparation'] as const)(
+  'another tab signing out with %s cannot be undone before its storage event arrives',
+  async (condition) => {
+    vi.resetModules();
+    const otherTab = await import('../../web/offline/offlineStore.ts');
+    expect(otherTab.offlinePreparation).not.toBe(offlinePreparation);
+    if (condition !== 'first preparation') setPreparedAccount(user.id);
+    const stop = watchOfflineAccount();
+    try {
+      const fixture = delayedCatalog();
+      const scope = offlinePreparation(user.id, () => true);
+      const token = values.get('spinel.offline.cancellation');
+      const completion = scope.finish(fixture.store, user, catalog);
+      expect(fixture.store.saveCatalog).toHaveBeenCalledWith(user, catalog);
+      if (condition !== 'first preparation')
+        limitStorage(storageSize() - (condition === 'reduced quota after preparation' ? 1 : 0));
+      expect(() => otherTab.setPreparedAccount(null)).not.toThrow();
+      expect(preparedAccount()).toBeNull();
+      if (condition === 'reduced quota after preparation')
+        expect(values.has('spinel.offline.cancellation')).toBe(false);
+      else {
+        expect(values.get('spinel.offline.cancellation')).toBeTypeOf('string');
+        expect(values.get('spinel.offline.cancellation')).not.toBe(token);
+      }
+      expect(scope.isMounted()).toBe(true);
+      fixture.committed.resolve();
+      await expect(completion).resolves.toBe(false);
+      expect(fixture.saved).toEqual([catalog]);
+      expect(preparedAccount()).toBeNull();
+      surface.dispatchEvent(
+        Object.assign(new Event('storage'), { key: 'spinel.offline.cancellation' }),
+      );
+      surface.dispatchEvent(Object.assign(new Event('storage'), { key: 'spinel.offline.account' }));
+      expect(preparedAccount()).toBeNull();
+    } finally {
+      stop();
+    }
+  },
+);
 
 test('every sign-out publishes a new cancellation even with no prepared account', () => {
   const before = values.get('spinel.offline.cancellation');

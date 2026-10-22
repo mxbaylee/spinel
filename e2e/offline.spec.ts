@@ -440,6 +440,11 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
       await expect(
         page.getByRole('region', { name: 'Offline copy', exact: true }).getByRole('status'),
       ).toHaveText('Read only on this device. Reconnect to edit.');
+      await expect(
+        page
+          .getByRole('region', { name: 'Offline copy', exact: true })
+          .getByRole('button', { name: 'Bold', exact: true }),
+      ).toBeDisabled();
       const screenshot = `test-results/theme-screenshots/spn-092-space-native-doc-offline-${variant}-${info.project.name}.png`;
       await page.screenshot({ path: screenshot, fullPage: true });
       await info.attach(`Native prepared Space Doc and image (${variant})`, {

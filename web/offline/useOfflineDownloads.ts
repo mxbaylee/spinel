@@ -45,14 +45,23 @@ export function useOfflineDownloads(
   const mounted = useRef<{ accountId: string } | null>(null);
   const latestAccount = useRef(user.id);
   latestAccount.current = user.id;
-  function preparation() {
+  function preparation(reportFailure = false) {
     const lifetime = mounted.current;
     if (!lifetime || lifetime.accountId !== user.id || latestAccount.current !== user.id)
       return null;
-    return offlinePreparation(
-      user.id,
-      () => mounted.current === lifetime && latestAccount.current === user.id,
-    );
+    try {
+      return offlinePreparation(
+        user.id,
+        () => mounted.current === lifetime && latestAccount.current === user.id,
+      );
+    } catch (error) {
+      if (reportFailure)
+        setMessage({
+          text: error instanceof Error ? error.message : 'Could not prepare offline storage.',
+          failed: true,
+        });
+      return null;
+    }
   }
   // A download can take minutes; read the catalog as it is when it finishes.
   const latestCatalog = useRef(catalog);
@@ -115,7 +124,8 @@ export function useOfflineDownloads(
       stopWatching();
     };
     if (local || preparedAccount() !== user.id) return close;
-    const scope = preparation()!;
+    const scope = preparation();
+    if (!scope) return close;
     void serially(scope, async (store) => {
       const known = await store.downloads();
       if (!scope.isCurrent()) return;
@@ -152,7 +162,7 @@ export function useOfflineDownloads(
   }
 
   async function toggle(item: Pick<WorkspaceItem, 'id' | 'name' | 'kind'>, spaceId?: string) {
-    const scope = preparation();
+    const scope = preparation(true);
     if (!scope?.isCurrent() || local || busy) return;
     if (!['doc', 'sheet'].includes(item.kind)) {
       setMessage({ text: 'Only Sheets and Docs can be downloaded.', failed: true });
