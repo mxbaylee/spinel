@@ -1,3 +1,4 @@
+import { canAdminister, accessLabel } from '../src/shared/workspace.ts';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type {
@@ -174,7 +175,7 @@ export function Space({
   const spaceId = route.kind === 'space' ? route.spaceId : null;
   const trashView = route.kind === 'space' && route.selection.kind === 'trash';
   const currentTree = tree?.space.id === spaceId ? tree : null;
-  const canEdit = currentTree?.access === 'owner' || currentTree?.access === 'editor';
+  const canEdit = canAdminister(currentTree?.access) || currentTree?.access === 'editor';
   const unavailableManagement = !fresh || connection === 'offline' || denied;
 
   useEffect(() => {
@@ -667,13 +668,7 @@ export function Space({
                     <EntityIcon kind="space" size={32} />
                     <strong>{space.name}</strong>
                     {space.id === recent && <span>Recent</span>}
-                    <span>
-                      {access === 'viewer'
-                        ? 'View only'
-                        : access === 'editor'
-                          ? 'Can edit'
-                          : 'Owner'}
-                    </span>
+                    <span>{accessLabel(access)}</span>
                   </a>
                 </li>
               ))}
@@ -705,9 +700,10 @@ export function Space({
               </h1>
             </div>
             {currentTree?.access === 'viewer' && <span className="space-access">View only</span>}
+            {currentTree?.access === 'admin' && <span className="space-access">File admin</span>}
             {currentTree?.access === 'editor' && <span className="space-access">Can edit</span>}
             {guest && <span className="space-access">Guest</span>}
-            {user && !guest && rootFile?.access === 'owner' && (
+            {user && !guest && canAdminister(rootFile?.access) && (
               <SpaceRootActions
                 item={rootFile}
                 beforeChange={allow}

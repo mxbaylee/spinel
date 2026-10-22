@@ -1,4 +1,4 @@
-import type { GrantRole } from '../../shared/workspace.ts';
+import type { GuestRole } from '../../shared/workspace.ts';
 import type { AuthStore } from '../auth/store.ts';
 
 /** Raw current capability. Callers must additionally validate the target structure. */
@@ -13,5 +13,5 @@ export function currentGuestSession(auth: AuthStore, userId: string) {
         AND i.trashed_at IS NULL AND i.trash_batch IS NULL AND u.disabled=0 AND u.is_admin=0`,
     )
     .get(userId.slice(6), auth.now()) as
-    { itemId: string; role: GrantRole; tokenHash: string; expires: number } | undefined;
+    { itemId: string; role: GuestRole; tokenHash: string; expires: number } | undefined;
 }

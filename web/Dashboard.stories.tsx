@@ -350,3 +350,65 @@ export const LocalPreparedSpaceOpens: Story = {
     await expect(canvas.getByRole('heading', { name: 'My files' })).toBeVisible();
   },
 };
+
+export const FileAdmins: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      'GET /api/items/shared': {
+        items: [
+          { ...roadmap, access: 'admin' },
+          { ...forecast, access: 'admin', placementParentId: null },
+        ],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('button', { name: 'Share Team roadmap' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Move Shared forecast' })).toBeVisible();
+  },
+};
+
+export const CancelAdminMoveWhileLoading: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      'GET /api/items/shared': { items: [{ ...roadmap, access: 'admin' }] },
+      [`GET /api/items/${roadmap.id}/destinations`]: pending(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Move Team roadmap' }));
+    const move = await canvas.findByRole('form', { name: 'Move item' });
+    await expect(within(move).getByRole('button', { name: 'Save' })).toBeDisabled();
+    await userEvent.click(within(move).getByRole('button', { name: 'Cancel' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Rename Team roadmap' }));
+    const rename = await canvas.findByRole('form', { name: 'Rename item' });
+    await expect(within(rename).getByRole('button', { name: 'Save' })).toBeEnabled();
+  },
+};
+
+export const FileAdminPersonalFiling: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      'GET /api/items/shared': { items: [{ ...roadmap, access: 'admin' }] },
+      [`DELETE /api/items/${roadmap.id}/placement`]: {
+        items: [{ ...roadmap, access: 'admin', placementParentId: undefined }],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Remove Team roadmap from my folder' }),
+    );
+    await expect(
+      canvas.queryByRole('button', { name: 'Remove Team roadmap from my folder' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole('button', { name: 'Shared with me' }));
+    await expect(await canvas.findByRole('button', { name: 'Share Team roadmap' })).toBeVisible();
+  },
+};

@@ -1,6 +1,7 @@
 import { ShareLink } from './ShareLink.tsx';
 import { useEffect, useState } from 'react';
 import type { FileItem, GrantRole, SharePerson } from '../src/shared/workspace.ts';
+import { accessLabel } from '../src/shared/workspace.ts';
 import { spaceHref } from './spaceNavigation.ts';
 
 export function Sharing({ item, onClose }: { item: FileItem; onClose: () => void }) {
@@ -76,6 +77,10 @@ export function Sharing({ item, onClose }: { item: FileItem; onClose: () => void
           ? 'This address opens the Space for people you give access to. Their role applies to every page and folder in the Space, including future additions.'
           : 'This address opens the item for people you give access to. Folder access includes its contents and future additions.'}
       </p>
+      <p>
+        File admins can manage sharing and file organization. They do not own the file or gain
+        server administration.
+      </p>
       {people.map((person) => (
         <div key={person.id}>
           <label>
@@ -93,10 +98,13 @@ export function Sharing({ item, onClose }: { item: FileItem; onClose: () => void
               <option value="editor" disabled={Boolean(person.disabled)}>
                 Editor
               </option>
+              <option value="admin" disabled={Boolean(person.disabled)}>
+                File admin
+              </option>
             </select>
           </label>
           <p>
-            Effective access: {person.effectiveRole ?? 'none'}
+            Effective access: {person.effectiveRole ? accessLabel(person.effectiveRole) : 'none'}
             {person.effectiveRole && person.effectiveRole !== person.directRole
               ? ' (from a folder)'
               : ''}
@@ -112,8 +120,9 @@ export function Sharing({ item, onClose }: { item: FileItem; onClose: () => void
       ))}
       {!busy && !people.length && !error && <p>No other everyday accounts are available.</p>}
       <p>
-        Direct and folder access combine; the most generous grant wins. Only you can change sharing
-        or move {item.kind === 'space' ? 'this Space between your outer folders' : 'this item'}.
+        Direct and folder access combine; the most generous grant wins. The Owner and file admins
+        can manage sharing, rename, move to authorized folders and send this item to the Owner’s
+        Trash. Ownership stays with its one Owner.
       </p>
       {item.kind !== 'folder' && <ShareLink id={item.id} space={item.kind === 'space'} />}
       {message && <p role="status">{message}</p>}

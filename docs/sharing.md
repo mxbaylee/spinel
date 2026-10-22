@@ -1,24 +1,25 @@
 # Sharing
 
-Items are private by default. The owner can choose **Share** on a document or
-folder, select Viewer or Editor for an active everyday account, and apply the
+Items are private by default. The Owner or a File admin can choose **Share** on a document, folder or
+Space, select Viewer, Editor or File admin for an active everyday account, and apply the
 change. Give that person the displayed address. They must sign in; the address
-alone does not grant access. Admin accounts cannot receive grants or access
+alone does not grant access. Server Operator accounts cannot receive grants or access
 workspace content.
 
 Folder grants apply to every descendant, including future additions. Direct and
-inherited grants combine using the most generous access: an inherited editor
-remains an editor even if the item's direct grant is viewer. The sharing panel
+inherited grants combine using the most generous access: Admin above Edit above
+View. An inherited Admin remains Admin even if the direct grant is Viewer. The sharing panel
 shows both the direct choice and effective access. **No direct access** removes
 only that item's grant; remove the ancestor grant too to revoke inherited access.
 Moving an item out of a shared folder removes that inheritance immediately.
 
 Viewers can open folders, read document content and load its images. Editors can
-also save document content and upload Doc images. Only owners change sharing or
-the outer folder structure. For ordinary files and folders, that also reserves
-rename, move, [trash](trash.md) and child creation to the owner; [Space roles](#space-sharing)
-allow Edit to manage the internal tree. Sharing never changes ownership. Sheets
-and Docs use their native read-only mode for viewers.
+also save document content and upload Doc images. File admins additionally manage
+other accounts' grants and guest links, rename, move within authorized destinations,
+and send outer files to recoverable [Trash](trash.md). Creation in ordinary folders
+still requires ownership; [Space roles](#space-sharing) allow Edit to manage the
+internal tree. Sharing never changes ownership. Sheets and Docs use their native
+read-only mode for Viewers.
 
 Shared items open at their authenticated direct address. Shared folders show their
 children and have a Refresh folder button to retrieve new additions. My files
@@ -218,12 +219,31 @@ HTTP/socket, MCP and recovery acceptance separately from final-head CI and merge
 approval. This preserves the Owner's control, the Collaborator's uniform role,
 the Link guest's exact boundary and the Operator's content isolation.
 
-## Planned delegated administration
+## Delegated file administration
 
-SPN-079 adds delegated file Admin as a follow-up. Exactly one Owner inherits all
-Admin permissions; multiple non-owner Admin grants are possible. This does not
-change the content-blind server Operator role or create a second owner
-([decision #118](https://github.com/mxbaylee/spinel/issues/118), owner chat
-2026-10-20). Until SPN-079 lands, file sharing uses Viewer/Editor and
-owner-only administration as described above. The Operator remains outside
-workspace content.
+Exactly one Owner inherits every File admin permission. Multiple account Admin
+grants are allowed, directly or inherited from a folder. Grant controls cannot
+alter the Owner, transfer ownership or grant content access to a server Operator;
+the current actor's own grant is excluded from those controls. Another File admin
+or the Owner can revoke or downgrade them. View/Edit guest links never offer Admin.
+
+Canonical moves require Admin on both source and destination, the same owner, and
+an ordinary folder outside every Space. Only the Owner can choose their My files
+root. Destination lists omit unauthorized folders; inherited-role explanations
+never disclose private ancestor names. Rename preserves an undisclosed original
+parent. Personal filing/removing a reference remains available to all non-owners
+and never changes the canonical file location.
+
+Admin can send a file to the Owner's recovery collection. Outer recovery listing,
+restore, permanent deletion and ownership handover retain their existing
+owner/operator rules. Internal Space recovery remains available to account Editors
+and Admins; permanent deletion remains owner-only. Every Space child, including
+future pages, has its root's role without overrides. Ordinary and Space sockets,
+content, images, exports, Formula sources and OAuth/MCP recheck current authority;
+a token's scopes never increase with its user's File admin grant.
+
+Decisions [#118](https://github.com/mxbaylee/spinel/issues/118) and
+[#145](https://github.com/mxbaylee/spinel/issues/145), 2026-10-20/22, retain sole
+ownership, content-blind Operators and View/Edit guests while letting trusted
+Collaborators administer shared work. The approved [capability matrix](design/spaces.md#capability-matrix)
+and [SPN-079 verification contract](implementation/SPN-079.md) document the limits.

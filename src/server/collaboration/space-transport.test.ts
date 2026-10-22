@@ -31,7 +31,7 @@ afterEach(async () => {
   for (const close of cleanup.splice(0).reverse()) await close();
 });
 
-async function fixture(spaceReview: boolean) {
+async function fixture(spaceReview: boolean, role: 'editor' | 'admin' = 'editor') {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-space-transport-'));
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
   await writeFile(join(directory, 'index.html'), 'Fixture');
@@ -75,7 +75,7 @@ async function fixture(spaceReview: boolean) {
     kind: 'doc',
     parentId: sheet.id,
   }).item;
-  spaces.share(owner.id, space.id, editor.id, 'editor');
+  spaces.share(owner.id, space.id, editor.id, role);
   spaces.share(owner.id, space.id, viewer.id, 'viewer');
   const sessions = new Map(
     [owner, editor, viewer, operator].map((user) => [user.id, auth.createSession(user.id)]),
@@ -345,82 +345,88 @@ test('scoped native HTTP integrations retain ordinary-route denial and exact chi
   ).toBe(true);
 }, 30_000);
 
-test('Space sockets bind the exact pair, deny viewers and stale commits, and evict changed grants before broadcast', async () => {
-  const f = await fixture(true);
-  vi.spyOn(console, 'warn').mockImplementation(() => {});
-  for (const item of [f.sheet, f.doc])
-    expect((await f.send(f.api(item.id) + '/collaboration', f.cookie(), {})).status).toBe(200);
-  const mismatched = await f.open(f.editor.id, f.doc.id, await f.ticket());
-  expect(mismatched.status).toBe(101);
-  await expect.poll(() => mismatched.socket.readyState).toBe(WebSocket.CLOSED);
-  expect(mismatched.messages).toEqual([]);
-  const viewer = await f.connect(f.viewer.id);
-  const before = await (await f.snapshot()).text();
-  expect((await f.submit(f.viewer.id, viewer.memberID, 'viewer cannot persist this')).status).toBe(
-    200,
-  );
-  await expect
-    .poll(() => viewer.messages.some((message) => message.collaMsg?.eventID === 'permission_rej'))
-    .toBe(true);
-  expect(await (await f.snapshot()).text()).toBe(before);
-  viewer.socket.send(
-    JSON.stringify({
-      cmd: CombCmd.JOIN,
-      routeKey: f.doc.id,
-      routeType: '',
-      joinReq: { rooms: [{ roomID: f.doc.id }] },
-    }),
-  );
-  await expect
-    .poll(() => viewer.messages.filter((message) => message.cmd === CombCmd.JOIN).length)
-    .toBe(2);
-  expect(viewer.messages.filter((message) => message.cmd === CombCmd.JOIN)[1].code).not.toBe(
-    CmdRspCode.OK,
-  );
-  viewer.socket.close();
-  const owner = await f.connect(f.owner.id),
-    editor = await f.connect();
-  f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'viewer');
-  expect((await f.submit(f.owner.id, owner.memberID, 'Authorized after downgrade')).status).toBe(
-    200,
-  );
-  await expect.poll(() => editor.socket.readyState).toBe(WebSocket.CLOSED);
-  expect(await (await f.snapshot()).text()).toContain('Authorized after downgrade');
-  expect(JSON.stringify(editor.messages)).not.toContain('Authorized after downgrade');
-  const baseline = await (await f.snapshot()).text();
-  await f.submit(f.editor.id, editor.memberID, 'Stale edit must not persist', 2);
-  expect(await (await f.snapshot()).text()).toBe(baseline);
-  const recovery = new SpaceRecoveryStore(f.workspace),
-    lifecycle = new SpaceLifecycleStore(f.workspace);
-  for (const change of [
-    'revoke',
-    'child-trash',
-    'root-trash',
-    'disabled-owner',
-    'disabled-editor',
-  ] as const) {
-    f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'editor');
-    const client = await f.connect();
-    if (change === 'revoke') f.spaces.share(f.owner.id, f.space.id, f.editor.id, null);
-    if (change === 'child-trash') recovery.trash(f.owner.id, f.space.id, f.sheet.id);
-    if (change === 'root-trash') lifecycle.trash(f.owner.id, f.space.id);
-    if (change === 'disabled-owner')
-      f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
-    if (change === 'disabled-editor')
-      f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.editor.id);
-    await expect.poll(() => client.socket.readyState).toBe(WebSocket.CLOSED);
-    expect((await f.snapshot(f.sheet.id, f.cookie(f.editor.id))).status).toBeGreaterThanOrEqual(
-      400,
+test.each(['editor', 'admin'] as const)(
+  'Space %s sockets bind the exact pair, deny viewers and stale commits, and evict changed grants before broadcast',
+  async (role) => {
+    const f = await fixture(true, role);
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    for (const item of [f.sheet, f.doc])
+      expect((await f.send(f.api(item.id) + '/collaboration', f.cookie(), {})).status).toBe(200);
+    const mismatched = await f.open(f.editor.id, f.doc.id, await f.ticket());
+    expect(mismatched.status).toBe(101);
+    await expect.poll(() => mismatched.socket.readyState).toBe(WebSocket.CLOSED);
+    expect(mismatched.messages).toEqual([]);
+    const viewer = await f.connect(f.viewer.id);
+    const before = await (await f.snapshot()).text();
+    expect(
+      (await f.submit(f.viewer.id, viewer.memberID, 'viewer cannot persist this')).status,
+    ).toBe(200);
+    await expect
+      .poll(() => viewer.messages.some((message) => message.collaMsg?.eventID === 'permission_rej'))
+      .toBe(true);
+    expect(await (await f.snapshot()).text()).toBe(before);
+    viewer.socket.send(
+      JSON.stringify({
+        cmd: CombCmd.JOIN,
+        routeKey: f.doc.id,
+        routeType: '',
+        joinReq: { rooms: [{ roomID: f.doc.id }] },
+      }),
     );
-    if (change === 'child-trash') recovery.restore(f.owner.id, f.space.id, f.sheet.id);
-    if (change === 'root-trash') lifecycle.restore(f.owner.id, f.space.id);
-    f.db.prepare('UPDATE auth_users SET disabled=0 WHERE id IN (?,?)').run(f.owner.id, f.editor.id);
-  }
-  const client = await f.connect();
-  f.auth.revokeSession(f.sessions.get(f.editor.id)!.session.token_hash);
-  await expect.poll(() => client.socket.readyState).toBe(WebSocket.CLOSED);
-  expect((await f.snapshot(f.sheet.id, f.cookie(f.editor.id))).status).toBe(401);
-}, 45_000);
+    await expect
+      .poll(() => viewer.messages.filter((message) => message.cmd === CombCmd.JOIN).length)
+      .toBe(2);
+    expect(viewer.messages.filter((message) => message.cmd === CombCmd.JOIN)[1].code).not.toBe(
+      CmdRspCode.OK,
+    );
+    viewer.socket.close();
+    const owner = await f.connect(f.owner.id),
+      editor = await f.connect();
+    f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'viewer');
+    expect((await f.submit(f.owner.id, owner.memberID, 'Authorized after downgrade')).status).toBe(
+      200,
+    );
+    await expect.poll(() => editor.socket.readyState).toBe(WebSocket.CLOSED);
+    expect(await (await f.snapshot()).text()).toContain('Authorized after downgrade');
+    expect(JSON.stringify(editor.messages)).not.toContain('Authorized after downgrade');
+    const baseline = await (await f.snapshot()).text();
+    await f.submit(f.editor.id, editor.memberID, 'Stale edit must not persist', 2);
+    expect(await (await f.snapshot()).text()).toBe(baseline);
+    const recovery = new SpaceRecoveryStore(f.workspace),
+      lifecycle = new SpaceLifecycleStore(f.workspace);
+    for (const change of [
+      'revoke',
+      'child-trash',
+      'root-trash',
+      'disabled-owner',
+      'disabled-editor',
+    ] as const) {
+      f.spaces.share(f.owner.id, f.space.id, f.editor.id, role);
+      const client = await f.connect();
+      if (change === 'revoke') f.spaces.share(f.owner.id, f.space.id, f.editor.id, null);
+      if (change === 'child-trash') recovery.trash(f.owner.id, f.space.id, f.sheet.id);
+      if (change === 'root-trash') lifecycle.trash(f.owner.id, f.space.id);
+      if (change === 'disabled-owner')
+        f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
+      if (change === 'disabled-editor')
+        f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.editor.id);
+      await expect.poll(() => client.socket.readyState).toBe(WebSocket.CLOSED);
+      expect((await f.snapshot(f.sheet.id, f.cookie(f.editor.id))).status).toBeGreaterThanOrEqual(
+        400,
+      );
+      if (change === 'child-trash') recovery.restore(f.owner.id, f.space.id, f.sheet.id);
+      if (change === 'root-trash') lifecycle.restore(f.owner.id, f.space.id);
+      f.db
+        .prepare('UPDATE auth_users SET disabled=0 WHERE id IN (?,?)')
+        .run(f.owner.id, f.editor.id);
+    }
+    const client = await f.connect();
+    f.auth.revokeSession(f.sessions.get(f.editor.id)!.session.token_hash);
+    await expect.poll(() => client.socket.readyState).toBe(WebSocket.CLOSED);
+    expect((await f.snapshot(f.sheet.id, f.cookie(f.editor.id))).status).toBe(401);
+  },
+  45_000,
+);
 
 test('Space permission batches resolve one exact unit once and retain existing native Print permissions', async () => {
   const f = await fixture(true);

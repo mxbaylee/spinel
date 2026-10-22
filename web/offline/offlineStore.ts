@@ -54,7 +54,7 @@ export function isOfflineCatalog(value: unknown): value is OfflineCatalog {
         FILE_KINDS.includes(row.kind) &&
         typeof row.name === 'string' &&
         (row.parentId === null || typeof row.parentId === 'string') &&
-        ['owner', 'editor', 'viewer'].includes(row.access) &&
+        ['owner', 'admin', 'editor', 'viewer'].includes(row.access) &&
         Number.isFinite(row.createdAt) &&
         Number.isFinite(row.updatedAt) &&
         Array.isArray(row.tags) &&

@@ -37,7 +37,7 @@ export class SpaceLifecycleStore {
   trash(actorId: string, spaceId: string): { id: string; count: number; trashedAt: number } {
     const { auth } = this.workspace;
     return auth.transaction(() => {
-      const scope = resolveSpaceScope(auth, actorId, spaceId, spaceId, 'owner');
+      const scope = resolveSpaceScope(auth, actorId, spaceId, spaceId, 'admin');
       const structure = readSpaceStructure(auth.database, spaceId, scope.ownerId);
       const now = auth.now();
       const changed = auth.database
@@ -47,7 +47,7 @@ export class SpaceLifecycleStore {
         WHERE id=? AND owner_id=? AND kind='space' AND trashed_at IS NULL AND trash_batch IS NULL
       `,
         )
-        .run(now, randomUUID(), now, spaceId, actorId);
+        .run(now, randomUUID(), now, spaceId, scope.ownerId);
       if (changed.changes !== 1) throw unavailable();
       return { id: spaceId, count: structure.items.length + 1, trashedAt: now };
     });

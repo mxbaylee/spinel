@@ -3,7 +3,7 @@ import type { AuthStore } from '../auth/store.ts';
 import type { ItemAccess, ItemKind } from '../../shared/workspace.ts';
 import { currentGuestSession } from './guest-session.ts';
 
-export type SpaceCapability = 'read' | 'edit' | 'owner';
+export type SpaceCapability = 'read' | 'edit' | 'admin' | 'owner';
 
 export interface SpaceScopeItem {
   readonly id: string;
@@ -67,7 +67,7 @@ export function resolveSpaceScope(
       if (!actor) throw new AuthError(401, 'Sign in to continue.');
       if (actor.is_admin) throw new AuthError(403, 'Use your everyday account for Spaces.');
     }
-    if (!['read', 'edit', 'owner'].includes(capability))
+    if (!['read', 'edit', 'admin', 'owner'].includes(capability))
       throw new AuthError(400, 'Unsupported Space action.');
 
     const statement = auth.database.prepare(`
@@ -93,7 +93,7 @@ export function resolveSpaceScope(
     );
     const strength = (id: string) => {
       const role = grants.get(id, actorId)?.role;
-      return role === 'editor' ? 2 : role === 'viewer' ? 1 : 0;
+      return role === 'admin' ? 3 : role === 'editor' ? 2 : role === 'viewer' ? 1 : 0;
     };
     let inherited = 0;
     let cursor = space.parent_id;
@@ -118,10 +118,11 @@ export function resolveSpaceScope(
         ? 2
         : 1
       : actorId === space.owner_id
-        ? 3
+        ? 4
         : Math.max(strength(space.id), inherited);
     if (level === 0) throw unavailable();
-    const access: ItemAccess = level === 3 ? 'owner' : level === 2 ? 'editor' : 'viewer';
+    const access: ItemAccess =
+      level === 4 ? 'owner' : level === 3 ? 'admin' : level === 2 ? 'editor' : 'viewer';
 
     let item = space;
     if (targetId !== space.id) {
@@ -147,9 +148,12 @@ export function resolveSpaceScope(
     }
     // An owner's internal rename is an edit; this capability never lends outer
     // sharing/move/trash powers to a child or to a Space editor.
-    if (capability === 'owner' && item.id !== space.id) throw unavailable();
+    if ((capability === 'owner' || capability === 'admin') && item.id !== space.id)
+      throw unavailable();
     if (capability === 'owner' && access !== 'owner')
       throw new AuthError(403, 'Only the owner can manage this Space.');
+    if (capability === 'admin' && access !== 'owner' && access !== 'admin')
+      throw new AuthError(403, 'Only the owner or a file admin can manage this Space.');
     if (capability === 'edit' && access === 'viewer')
       throw new AuthError(403, 'You can view this Space, but cannot edit its contents.');
 

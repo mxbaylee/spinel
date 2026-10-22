@@ -255,29 +255,35 @@ export class SpaceStore {
     input: { name?: unknown; parentId?: unknown },
   ): SpaceScope {
     return this.workspace.auth.transaction(() => {
-      const { scope } = this.tree(actorId, spaceId, 'owner');
+      const { scope } = this.tree(actorId, spaceId, 'admin');
       const name = input.name === undefined ? scope.space.name : this.workspace.name(input.name);
       const parentId =
         input.parentId === undefined
-          ? scope.space.parentId
-          : this.outerParent(actorId, input.parentId);
+          ? (this.workspace.auth.database
+              .prepare('SELECT parent_id FROM workspace_items WHERE id=?')
+              .get(spaceId)!.parent_id as string | null)
+          : this.workspace.moveParent(actorId, spaceId, input.parentId);
       this.workspace.auth.database
         .prepare('UPDATE workspace_items SET name=?,parent_id=?,updated_at=? WHERE id=?')
         .run(name, parentId, this.workspace.auth.now(), spaceId);
-      return resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, 'owner');
+      return resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, 'admin');
     });
   }
 
   /** Only the root accepts account grants. Children always inherit the effective role. */
   share(actorId: string, spaceId: string, recipient: unknown, role: unknown): SpaceScope {
     return this.workspace.auth.transaction(() => {
-      resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, 'owner');
+      resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, 'admin');
       if (
         typeof recipient !== 'string' ||
         recipient === actorId ||
-        !['viewer', 'editor', null].includes(role as string | null)
+        recipient === this.workspace.fileOwner(spaceId) ||
+        !['viewer', 'editor', 'admin', null].includes(role as string | null)
       )
-        throw new AuthError(400, 'Choose a person and Viewer, Editor or No direct access.');
+        throw new AuthError(
+          400,
+          'Choose a person and Viewer, Editor, File admin or No direct access.',
+        );
       if (role === null)
         this.workspace.auth.database
           .prepare('DELETE FROM workspace_grants WHERE item_id=? AND user_id=?')
@@ -292,7 +298,7 @@ export class SpaceStore {
           )
           .run(spaceId, recipient, role as string, this.workspace.auth.now());
       }
-      return resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, 'owner');
+      return resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, 'admin');
     });
   }
 

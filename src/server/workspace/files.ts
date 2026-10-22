@@ -49,7 +49,7 @@ export class WorkspaceFiles {
     };
   }
 
-  get(user: string, id: string, needed: 'read' | 'edit' | 'owner' = 'read'): FileItem {
+  get(user: string, id: string, needed: 'read' | 'edit' | 'admin' | 'owner' = 'read'): FileItem {
     this.workspace.owner(user);
     if (!this.root(id)) return this.workspace.get(user, id, needed);
     this.enabled();
@@ -164,17 +164,37 @@ export class WorkspaceFiles {
     });
   }
 
+  moveDestinations(user: string, id: string): WorkspaceItem[] {
+    this.get(user, id, 'admin');
+    const owner = this.workspace.fileOwner(id);
+    return [...this.workspace.list(user), ...this.workspace.shared(user)].filter((item) => {
+      if (
+        item.kind !== 'folder' ||
+        !['owner', 'admin'].includes(item.access) ||
+        this.workspace.fileOwner(item.id) !== owner
+      )
+        return false;
+      try {
+        this.workspace.moveParent(user, id, item.id);
+        return true;
+      } catch (error) {
+        if (error instanceof AuthError && error.status === 409) return false;
+        throw error;
+      }
+    });
+  }
+
   sharing(user: string, id: string): SharePerson[] {
     if (!this.root(id)) return this.workspace.sharing(user, id);
-    this.get(user, id, 'owner');
+    this.get(user, id, 'admin');
     const rows = this.workspace.auth.database
       .prepare(
         `SELECT u.id,u.name,u.disabled,g.role AS directRole
       FROM auth_users u LEFT JOIN workspace_grants g ON g.user_id=u.id AND g.item_id=?
-      WHERE u.is_admin=0 AND u.id<>? AND (u.disabled=0 OR g.role IS NOT NULL)
+      WHERE u.is_admin=0 AND u.id<>? AND u.id<>(SELECT owner_id FROM workspace_items WHERE id=?) AND (u.disabled=0 OR g.role IS NOT NULL)
       ORDER BY u.name COLLATE NOCASE,u.id`,
       )
-      .all(id, user) as unknown as Omit<SharePerson, 'effectiveRole'>[];
+      .all(id, user, id) as unknown as Omit<SharePerson, 'effectiveRole'>[];
     return rows.map((person) => {
       let access: ItemAccess | null = null;
       if (!person.disabled) {

@@ -295,3 +295,35 @@ export const FailedResponseAfterNavigation: Story = {
     await expect(args.onChanged).not.toHaveBeenCalled();
   },
 };
+
+export const FileAdminMove: Story = {
+  args: { item: { ...item, access: 'admin', ownerName: 'Alex Kim' } },
+  parameters: {
+    api: {
+      [`GET /api/items/${item.id}/destinations`]: { items: [{ ...folder, access: 'admin' }] },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await choose(canvasElement, 'Move');
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Move Space',
+    });
+    const destination = await within(dialog).findByLabelText('Destination');
+    await expect(
+      within(destination).queryByRole('option', { name: 'My files' }),
+    ).not.toBeInTheDocument();
+    await userEvent.selectOptions(destination, folder.id);
+    await themedTarget(destination, dialog);
+  },
+};
+export const FileAdminNoDestinations: Story = {
+  args: { item: { ...item, access: 'admin' } },
+  parameters: { api: { [`GET /api/items/${item.id}/destinations`]: { items: [] } } },
+  play: async ({ canvasElement }) => {
+    await choose(canvasElement, 'Move');
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Move Space',
+    });
+    await expect(await within(dialog).findByRole('button', { name: 'Save' })).toBeDisabled();
+  },
+};

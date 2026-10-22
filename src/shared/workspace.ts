@@ -1,7 +1,18 @@
 export const ITEM_KINDS = ['folder', 'sheet', 'doc'] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
-export type GrantRole = 'viewer' | 'editor';
+export type GuestRole = 'viewer' | 'editor';
+export type GrantRole = GuestRole | 'admin';
 export type ItemAccess = GrantRole | 'owner';
+export const canAdminister = (access: ItemAccess | undefined) =>
+  access === 'owner' || access === 'admin';
+export const accessLabel = (access: ItemAccess) =>
+  access === 'owner'
+    ? 'Owner'
+    : access === 'admin'
+      ? 'File admin'
+      : access === 'editor'
+        ? 'Can edit'
+        : 'View only';
 export interface SharePerson {
   id: string;
   name: string;

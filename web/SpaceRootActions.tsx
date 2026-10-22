@@ -1,3 +1,4 @@
+import { canAdminister } from '../src/shared/workspace.ts';
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { FileItem, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
@@ -60,14 +61,14 @@ export function SpaceRootActions({
     setError('');
     setLoading(false);
     if (next !== 'move') return;
-    if (folders) {
+    if (folders && item.access === 'owner') {
       setAvailable(folders);
       return;
     }
     setLoading(true);
     try {
       const result = await itemsRequest<{ items: FileItem[] }>(
-        '',
+        item.access === 'owner' ? '' : `/${item.id}/destinations`,
         'GET',
         undefined,
         currentCheck(request),
@@ -75,7 +76,8 @@ export function SpaceRootActions({
       if (request === generation.current)
         setAvailable(
           result.items.filter(
-            (entry): entry is WorkspaceItem => entry.kind === 'folder' && entry.access === 'owner',
+            (entry): entry is WorkspaceItem =>
+              entry.kind === 'folder' && canAdminister(entry.access),
           ),
         );
     } catch (cause) {
@@ -118,7 +120,7 @@ export function SpaceRootActions({
       if (request === generation.current) setBusy(false);
     }
   }
-  const owned = available.filter((entry) => entry.kind === 'folder' && entry.access === 'owner');
+  const owned = available.filter((entry) => entry.kind === 'folder' && canAdminister(entry.access));
   const byId = new Map(owned.map((folder) => [folder.id, folder]));
   const path = (folder: WorkspaceItem) => {
     const names: string[] = [];
@@ -131,7 +133,7 @@ export function SpaceRootActions({
     }
     return names.join(' / ');
   };
-  if (item.access !== 'owner') return null;
+  if (!canAdminister(item.access)) return null;
   return (
     <>
       <ActionMenu
@@ -207,8 +209,8 @@ export function SpaceRootActions({
                 ) : mode === 'move' ? (
                   <>
                     <p>
-                      Move the whole Space to My files or one of your folders. Its pages stay
-                      together.
+                      Move the whole Space to an authorized folder belonging to its Owner. Its pages
+                      stay together.
                     </p>
                     {loading ? (
                       <p role="status">Loading your folders…</p>
@@ -220,7 +222,13 @@ export function SpaceRootActions({
                           disabled={busy}
                           onChange={(event) => setDestination(event.target.value)}
                         >
-                          <option value="">My files</option>
+                          {item.access === 'owner' ? (
+                            <option value="">My files</option>
+                          ) : (
+                            <option value="" disabled>
+                              Choose a folder
+                            </option>
+                          )}
                           {owned
                             .map((folder) => ({ folder, name: path(folder) }))
                             .sort(
@@ -240,9 +248,9 @@ export function SpaceRootActions({
                 ) : (
                   <p>
                     {item.name} and all its pages will become unavailable to collaborators and
-                    guests. You can restore the whole Space from My files → Trash. Pages already in
-                    the Space’s Trash stay there. The Space will be kept until you explicitly delete
-                    it permanently.
+                    guests. Its Owner can restore the whole Space from My files → Trash. Pages
+                    already in the Space’s Trash stay there. The Space will be kept until its Owner
+                    explicitly deletes it permanently.
                   </p>
                 )}
                 {error && <p role="alert">{error}</p>}
@@ -250,7 +258,14 @@ export function SpaceRootActions({
                   <Button
                     type="submit"
                     primary
-                    disabled={busy || loading || (mode === 'rename' && !name.trim())}
+                    disabled={
+                      busy ||
+                      loading ||
+                      (mode === 'rename' && !name.trim()) ||
+                      (mode === 'move' &&
+                        item.access !== 'owner' &&
+                        !owned.some((folder) => folder.id === destination))
+                    }
                   >
                     {busy ? 'Saving…' : mode === 'trash' ? 'Move Space to Trash' : 'Save'}
                   </Button>

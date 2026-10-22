@@ -5,7 +5,7 @@ records the owner's review and refinements. A Space is one file inside existing
 folders. SPN-078 supplies the internal model and recovery foundation; SPN-091 and
 SPN-092 supply the account experience and guest/integration acceptance.
 Spaces open from My files at `/spaces`, with one inherited permission boundary
-for all current and future children. Delegated file Admin follows in SPN-079.
+for all current and future children. Delegated file Admin is implemented by SPN-079.
 
 ## Delivery slices
 
@@ -18,7 +18,7 @@ against its implementation:
 | [SPN-078 foundation](../implementation/SPN-078.md) | Durable Space/child model, sole ownership, uniform inherited roles, stable IDs/order/bindings and subtree recovery metadata | Supported server boundaries authorize every child; cycles, child grants and unsupported conversions fail safely. No unfinished product routes are exposed. |
 | [SPN-091](../implementation/SPN-091.md) | Authenticated creation, editor/navigation, accessible rename/reorder/nesting, remembered/deep-linked selection and persistent internal Trash | Owner/editor/viewer behavior and recovery are reviewable before ordinary access is enabled; approved light/dark/phone UI follows this design. |
 | [SPN-092](../implementation/SPN-092.md) | Space-wide View/Edit guests, privacy/social cards, existing formulas/images/collaboration/MCP/export, account history/scoped offline preparation and backup/owner-transfer acceptance | Guest and integration surfaces keep Space scope through asynchronous operations, rotation/revocation, downgrade, trash and disabled owners; ordinary creation and navigation use the same verified boundary. |
-| [SPN-079](../todo/SPN-079.md) | Delegated account-only file Admin after SPN-092 | One Owner remains; guests never become Admin and the Operator never gains document access. |
+| [SPN-079](../implementation/SPN-079.md) | Delegated account-only file Admin after SPN-092 | One Owner remains; guests never become Admin and the Operator never gains document access. |
 
 Ordinary Space creation/navigation is enabled by SPN-092, whose merge requires
 integration and recovery acceptance, including backups and owner transfer.
@@ -121,8 +121,8 @@ Trash listing or metadata. Only the Owner can permanently delete, after an exact
 current subtree preview and confirmation. A changed preview requires another
 review. Restore keeps content, IDs, order and bindings at the readable original
 parent, or the Space root with a generic explanation. Cancellation leaves the
-subtree intact. Outer sharing, rename, move and trash remain Owner-only under
-the current implementation; delegated file Admin remains SPN-079.
+subtree intact. Outer sharing, rename, move and recoverable trash permit the Owner or an account
+File admin under SPN-079; the capability matrix below remains authoritative.
 
 Native access carries one ingress-selected current credential plus the exact
 Space and stable child through reads, live-unit aliases, sockets and asynchronous
@@ -186,8 +186,7 @@ Weekend trip Doc can contain a Trip costs Sheet; Reference can be a plain folder
 Add page offers Doc, Sheet or Folder.
 A page's always-visible More menu exposes Rename, Move/reorder and Trash.
 Move has destination and position controls so drag-and-drop is never required.
-Back/Forward restores selection. Outer file rename/move/trash remain owner-only
-until SPN-079; editing internal structure is an Edit capability.
+Back/Forward restores selection. Outer file rename/move/trash require Owner or File admin; editing internal structure is an Edit capability.
 
 Space trash is internal, recoverable and reachable by account editors. Restore
 returns content without altering its stable IDs/formula bindings. Viewers cannot
@@ -207,8 +206,7 @@ Guests navigating a revoked link lose the whole Space, including titles and valu
 | Permanent deletion / ownership handover | No   | No   | No                           | Existing owner rules | Existing recovery rules only |
 | Server accounts / backup health         | No   | No   | No                           | No, everyday account | Yes                          |
 
-Before SPN-079, only Owner has the file administration capabilities. There is
-exactly one Owner, inheriting all file Admin capabilities. Inherited roles use
+SPN-079 implements account File admin. There is exactly one Owner, inheriting all file Admin capabilities. Inherited roles use
 the most generous effective grant. The UI shows provenance only when readable.
 Links are View/Edit only, never Admin. Every Space child inherits the same role,
 including future additions; no per-child override or child guest link exists.
@@ -251,3 +249,12 @@ this collection to persistent account recovery. SPN-092 verifies guest exclusion
 and cross-feature behavior. The owner requested the composed UI now, rather than
 deferring it with that integration
 (chat, 2026-10-21).
+
+SPN-079 implementation follows this existing matrix. File admin is account-only,
+includes Edit, and can manage other accounts’ View/Edit/Admin grants. Owner remains
+unique and absent from grant controls. Moves require source and destination Admin
+and the same owner; only the Owner can move to their My files root. Show only
+authorized destination folders and generic inherited-role provenance. Recoverable
+trash enters the Owner’s existing Trash; permanent deletion and ownership handover
+remain unchanged. Personal filing stays distinct from canonical Move. Decision
+[#145](https://github.com/mxbaylee/spinel/issues/145), 2026-10-22.

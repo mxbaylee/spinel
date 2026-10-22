@@ -63,7 +63,8 @@ export class TrashStore {
     if (this.workspace.spacesEnabled) return this.files.trash(owner, id);
     const { auth } = this.workspace;
     return auth.transaction(() => {
-      this.workspace.get(owner, id, 'owner');
+      this.workspace.get(owner, id, 'admin');
+      const actualOwner = this.workspace.fileOwner(id);
       this.requireOrdinarySubtree(id);
       const result = auth.database
         .prepare(
@@ -77,7 +78,7 @@ export class TrashStore {
         UPDATE workspace_items SET trashed_at=?,trash_batch=? WHERE id IN (SELECT id FROM subtree)
       `,
         )
-        .run(id, owner, owner, auth.now(), randomUUID());
+        .run(id, actualOwner, actualOwner, auth.now(), randomUUID());
       this.workspace.cleanPlacements();
       return { count: Number(result.changes) };
     });
