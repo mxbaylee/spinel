@@ -70,6 +70,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+async function noPageOverflow(document: Document) {
+  await waitFor(() =>
+    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(
+      document.documentElement.clientWidth,
+    ),
+  );
+}
+
 const details: NonNullable<Story['play']> = async ({ canvasElement }) => {
   await userEvent.click(
     await within(canvasElement).findByRole('button', { name: /^Save details:/ }),
@@ -79,6 +87,7 @@ const details: NonNullable<Story['play']> = async ({ canvasElement }) => {
       name: 'Save details',
     }),
   ).toBeVisible();
+  await noPageOverflow(canvasElement.ownerDocument);
 };
 
 export const Saved: Story = {};
@@ -167,6 +176,7 @@ export const StableGeometryAndRetry: Story = {
     await userEvent.click(trigger);
     await expect(await page.findByRole('dialog', { name: 'Save details' })).toBeVisible();
     await expect(content.getBoundingClientRect().toJSON()).toEqual(before);
+    await noPageOverflow(canvasElement.ownerDocument);
     await userEvent.click(page.getByRole('button', { name: 'Retry saving' }));
     await expect(args.onRetry).toHaveBeenCalledOnce();
     await expect(trigger).toHaveTextContent('Saved');
