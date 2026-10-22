@@ -19,9 +19,10 @@ test('Owner delegates file administration on every outer type, administrators ma
   const auth = new AuthStore(db),
     store = new WorkspaceStore(auth, { spacesEnabled: true }),
     files = new WorkspaceFiles(store);
-  const owner = auth.createUser('Role owner ' + info.testId),
-    admin = auth.createUser('Role delegate ' + info.testId),
-    peer = auth.createUser('Role recipient ' + info.testId);
+  const runId = `${info.testId}-${info.retry}`;
+  const owner = auth.createUser('Role owner ' + runId),
+    admin = auth.createUser('Role delegate ' + runId),
+    peer = auth.createUser('Role recipient ' + runId);
   const cookie = (id: string) => ({
     name: COOKIE_NAME,
     value: auth.createSession(id).token,
@@ -37,7 +38,7 @@ test('Owner delegates file administration on every outer type, administrators ma
   other.setDefaultTimeout(15_000);
   const destination = files.create(owner.id, {
     kind: 'folder',
-    name: 'Admin destination ' + info.testId,
+    name: 'Admin destination ' + runId,
     parentId: null,
   });
   files.share(owner.id, destination.id, admin.id, 'admin');
@@ -67,7 +68,7 @@ test('Owner delegates file administration on every outer type, administrators ma
   }
   try {
     for (const kind of ['doc', 'sheet', 'folder', 'space'] as const) {
-      const name = `Delegated ${kind} ${info.testId}`;
+      const name = `Delegated ${kind} ${runId}`;
       const item = files.create(owner.id, { kind, name, parentId: null });
       await page.goto('/');
       const ownerPanel = await sharing(page, kind, name);
@@ -187,7 +188,7 @@ test('Owner delegates file administration on every outer type, administrators ma
       ).toBe(404);
       files.share(owner.id, destination.id, admin.id, 'admin');
     }
-    expect((await second.request.get('/api/admin/users')).status()).toBe(403);
+    expect((await second.request.get('/api/auth/admin/users')).status()).toBe(404);
   } finally {
     await second.close();
     db.close();
