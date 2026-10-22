@@ -317,6 +317,9 @@ export class WorkspaceStore {
     );
     const destination = this.auth.database.prepare('SELECT kind FROM workspace_items WHERE id=?');
     for (const row of rows) {
+      // The runtime kill switch hides Space metadata; it does not revoke grants
+      // or discard personal filing. Revalidate dormant roots when re-enabled.
+      if (!this.spacesEnabled && destination.get(row.item_id)?.kind === 'space') continue;
       let access = this.role(row.user_id, row.item_id);
       if (!access && this.spacesEnabled) {
         try {

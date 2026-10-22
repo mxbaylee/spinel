@@ -706,7 +706,15 @@ test('an Edit Space guest manages native pages and loses every child on rotation
     });
     await expect(f.page.getByRole('region', { name: 'Doc document', exact: true })).toHaveCount(0);
     expect((await f.guest.request.get(endpoint(f.root.id, doc.id))).status()).toBe(404);
-    expect((await f.guest.request.get(image.url)).status()).toBe(404);
+    // Rotation removes the root credential; canonical account routes now require sign-in.
+    expect((await f.guest.request.get(image.url)).status()).toBe(401);
+    expect(
+      (
+        await f.guest.request.get(
+          `${endpoint(f.root.id, doc.id)}/images/${image.url.split('/').at(-1)}`,
+        )
+      ).status(),
+    ).toBe(404);
     expect(
       (
         await f.guest.request.post(`/api/guest/${f.root.id}/session`, {

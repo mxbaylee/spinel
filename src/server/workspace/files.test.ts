@@ -181,3 +181,28 @@ test('preactivation and disabled accounts never acquire an outer Space fallback'
   expect(() => live.files.get(live.other.id, live.root.id)).toThrow();
   expect(() => live.files.get(live.admin.id, live.root.id)).toThrow('everyday');
 });
+
+test('disabling Spaces preserves dormant personal filing through unrelated ordinary operations', () => {
+  const f = fixture();
+  const destination = f.workspace.create(f.other.id, {
+    kind: 'folder',
+    name: 'References',
+    parentId: null,
+  });
+  f.files.share(f.owner.id, f.root.id, f.other.id, 'viewer');
+  f.files.place(f.other.id, f.root.id, destination.id);
+  const before = f.db.prepare('SELECT * FROM workspace_placements WHERE item_id=?').all(f.root.id);
+  const disabled = new WorkspaceStore(f.auth, { spacesEnabled: false });
+  expect(disabled.shared(f.other.id)).toEqual([]);
+  disabled.update(f.other.id, destination.id, { name: 'Renamed while Spaces disabled' });
+  disabled.cleanPlacements();
+  expect(f.db.prepare('SELECT * FROM workspace_placements WHERE item_id=?').all(f.root.id)).toEqual(
+    before,
+  );
+  expect(f.files.shared(f.other.id)[0].placementParentId).toBe(destination.id);
+  // Re-enabling restores normal current-access cleanup, including a revocation.
+  f.files.share(f.owner.id, f.root.id, f.other.id, null);
+  expect(f.db.prepare('SELECT * FROM workspace_placements WHERE item_id=?').all(f.root.id)).toEqual(
+    [],
+  );
+});
