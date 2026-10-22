@@ -43,6 +43,96 @@ export class SpaceStore {
     return resolveSpaceScope(this.workspace.auth, actorId, spaceId, itemId);
   }
 
+  /** Account review discovery only; ordinary catalogs continue to exclude Spaces. */
+  roots(actorId: string): SpaceScope[] {
+    return this.workspace.auth.transaction(() => {
+      this.workspace.owner(actorId);
+      const { database } = this.workspace.auth;
+      let work = 0;
+      const spend = (count: number) => {
+        work += count;
+        if (work > MAX_SPACE_ITEMS)
+          throw new AuthError(413, 'This Space list is too large to process at once.');
+      };
+      const candidates = new Set<string>();
+      const owned = database
+        .prepare(
+          `SELECT id FROM workspace_items WHERE owner_id=? AND kind='space'
+          AND space_id IS NULL AND trashed_at IS NULL LIMIT ?`,
+        )
+        .all(actorId, MAX_SPACE_ITEMS + 1) as { id: string }[];
+      spend(owned.length);
+      for (const row of owned) candidates.add(row.id);
+      interface Candidate {
+        id: string;
+        owner_id: string;
+        kind: string;
+      }
+      // Count raw grants before filtering. Otherwise arbitrarily many stale or
+      // internal grants could trigger PK lookups without spending the budget.
+      const grants = database
+        .prepare('SELECT item_id FROM workspace_grants WHERE user_id=? LIMIT ?')
+        .all(actorId, MAX_SPACE_ITEMS - work + 1) as { item_id: string }[];
+      spend(grants.length);
+      const eligibleGrant = database.prepare(`SELECT id,owner_id,kind FROM workspace_items
+        WHERE id=? AND owner_id<>? AND space_id IS NULL AND space_position IS NULL
+          AND trashed_at IS NULL AND trash_batch IS NULL`);
+      const children = database.prepare(`SELECT id,owner_id,kind FROM workspace_items
+        WHERE owner_id=? AND parent_id=? AND space_id IS NULL AND space_position IS NULL
+          AND trashed_at IS NULL AND trash_batch IS NULL AND kind IN ('folder','space')
+        LIMIT ?`);
+      const pending = grants.flatMap(({ item_id }) => {
+        const row = eligibleGrant.get(item_id, actorId) as unknown as Candidate | undefined;
+        return row ? [row] : [];
+      });
+      const visited = new Set<string>();
+      while (pending.length) {
+        const row = pending.pop()!;
+        if (visited.has(row.id)) continue;
+        visited.add(row.id);
+        if (row.kind === 'space') candidates.add(row.id);
+        else if (row.kind === 'folder') {
+          const nested = children.all(
+            row.owner_id,
+            row.id,
+            MAX_SPACE_ITEMS - work + 1,
+          ) as unknown as Candidate[];
+          spend(nested.length);
+          pending.push(...nested);
+        }
+      }
+
+      // Count every root/ancestor pair before resolving any roots. Many roots
+      // under a deep shared folder must not cause unbounded repeated role walks.
+      // The same fixed budget includes candidate discovery; no partial catalog
+      // escapes on refusal, and an internal Space tree is never traversed here.
+      const parent = database.prepare('SELECT parent_id FROM workspace_items WHERE id=?');
+      for (const id of candidates) {
+        let cursor: string | null = id;
+        const seen = new Set<string>();
+        while (cursor !== null && !seen.has(cursor)) {
+          spend(1);
+          seen.add(cursor);
+          const row = parent.get(cursor) as { parent_id: string | null } | undefined;
+          cursor = row?.parent_id ?? null;
+        }
+      }
+      const roots: SpaceScope[] = [];
+      for (const id of candidates) {
+        try {
+          roots.push(this.get(actorId, id));
+        } catch (error) {
+          // A stale grant, malformed/trashed ancestor or disabled owner is
+          // unavailable. Authentication, capacity and database errors propagate.
+          if (!(error instanceof AuthError) || error.status !== 404) throw error;
+        }
+      }
+      return roots.sort(
+        (a, b) => a.space.name.localeCompare(b.space.name) || a.space.id.localeCompare(b.space.id),
+      );
+    });
+  }
+
   list(actorId: string, spaceId: string): SpaceTree {
     return this.workspace.auth.transaction(() => {
       const { scope, items } = this.tree(actorId, spaceId, 'read');

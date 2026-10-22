@@ -5,6 +5,11 @@ import { promisify } from 'node:util';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
+import {
+  classifyOrdinaryItems,
+  isOrdinaryItem,
+  MAX_ANCESTOR_READS,
+} from '../workspace/ordinary-scope.ts';
 import { AuthError } from '../auth/store.ts';
 import { expiredCheckpoints, MINUTE } from './policy.ts';
 import type { Checkpoint } from './policy.ts';
@@ -81,14 +86,21 @@ export class HistoryStore {
         ).run(id, after.revision, now);
       }),
     );
-    this.subscriptions.push(collaboration.onPrepared((user, id) => this.ensureInitial(user, id)));
+    this.subscriptions.push(
+      collaboration.onPrepared((user, id, custom) =>
+        // SPN-091 admits native editing only. Automatic and public Space version
+        // history remain deferred to SPN-092; existing checkpoints stay intact.
+        collaboration.isSpaceDocument(user, id, custom)
+          ? Promise.resolve()
+          : this.ensureInitial(user, id),
+      ),
+    );
     // Raw clients may skip the application preparation route; preserve their baseline too.
     this.subscriptions.push(
       collaboration.service.use('submitChangeset', async (context, next) => {
-        await this.ensureInitial(
-          context.userID,
-          collaboration.itemForUnit(context.request.changeset.unitID),
-        );
+        const id = collaboration.itemForUnit(context.request.changeset.unitID);
+        if (!collaboration.isSpaceDocument(context.userID, id, context.customData))
+          await this.ensureInitial(context.userID, id);
         await next();
       }),
     );
@@ -96,6 +108,7 @@ export class HistoryStore {
       collaboration.service.on('changesetCommitted', ({ changeset }) => {
         const generation = collaboration.generations.resolve(changeset.unitID);
         if (!generation) return;
+        if (!isOrdinaryItem(db, generation.itemId)) return;
         const now = workspace.auth.now();
         try {
           db.prepare(
@@ -305,12 +318,39 @@ export class HistoryStore {
     );
   }
 
+  private membershipFilter() {
+    const fields = new Set(
+      this.workspace.auth.database
+        .prepare('PRAGMA table_info(workspace_items)')
+        .all()
+        .map((row) => row.name),
+    );
+    // Explicit Space members cannot consume the ordinary maintenance budget.
+    // The store may predate migration; full ancestry is still classified below.
+    return ['space_id', 'space_position']
+      .filter((field) => fields.has(field))
+      .map((field) => ` AND w.${field} IS NULL`)
+      .join('');
+  }
+
   prune(now = this.workspace.auth.now()) {
     const db = this.workspace.auth.database;
     this.workspace.auth.transaction(() => {
-      for (const { item_id } of db
-        .prepare('SELECT DISTINCT item_id FROM history_checkpoints')
-        .all()) {
+      const ids = db
+        .prepare(
+          `SELECT DISTINCT h.item_id FROM history_checkpoints h
+          JOIN workspace_items w ON w.id=h.item_id
+          WHERE w.kind IN ('folder','sheet','doc')${this.membershipFilter()}
+          ORDER BY h.item_id LIMIT ?`,
+        )
+        .all(MAX_ANCESTOR_READS + 1)
+        .map(({ item_id }) => String(item_id));
+      // Classify the complete batch before deleting anything. Its shared cache
+      // walks common ancestry once; a budget refusal cannot prune a partial set.
+      // Space history/retention stays deferred, including aged unnamed versions.
+      const ordinary = classifyOrdinaryItems(db, ids);
+      if (!ordinary) throw new Error('This history maintenance batch is too large.');
+      for (const item_id of ordinary) {
         const records = db
           .prepare(
             'SELECT id,captured_at AS capturedAt,revision,name,source,EXISTS(SELECT 1 FROM history_restore_labels WHERE checkpoint_id=history_checkpoints.id) AS beforeRestore FROM history_checkpoints WHERE item_id=?',
@@ -337,9 +377,18 @@ export class HistoryStore {
     const rows = db
       .prepare(
         `SELECT w.id,w.owner_id,c.state FROM workspace_items w LEFT JOIN workspace_collaboration c ON c.item_id=w.id
-      WHERE (c.state='ready' OR c.state IS NULL) AND w.kind IN ('sheet','doc') AND w.trashed_at IS NULL ORDER BY w.id`,
+      WHERE (c.state='ready' OR c.state IS NULL) AND w.kind IN ('sheet','doc') AND w.trashed_at IS NULL${this.membershipFilter()}
+      ORDER BY w.id LIMIT ?`,
       )
-      .all() as { id: string; owner_id: string; state: string | null }[];
+      .all(MAX_ANCESTOR_READS + 1) as { id: string; owner_id: string; state: string | null }[];
+    // This is only a structural exclusion, never a cached grant. Every candidate
+    // still resolves current ordinary access below and capture rechecks after
+    // awaited work. A later structural change can only defer a skipped item.
+    const ordinary = classifyOrdinaryItems(
+      db,
+      rows.map(({ id }) => id),
+    );
+    if (!ordinary) throw new Error('This history maintenance batch is too large.');
     // Use the same resolver as requests, including inherited grants and disabled users.
     // A disabled owner must not stop history for an active collaborator. No bypass identity is created.
     const users = db
@@ -347,6 +396,8 @@ export class HistoryStore {
       .all() as { id: string }[];
     for (const { id, owner_id, state } of rows) {
       if (this.closing) break;
+      // Do not repeatedly search every account for an unsupported Space capture.
+      if (!ordinary.has(id)) continue;
       try {
         const user = [owner_id, ...users.map((u) => u.id)].find((candidate) => {
           try {

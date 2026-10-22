@@ -48,11 +48,13 @@ import type { ConnectionState } from './connectionState.ts';
 export function SheetEditor({
   id,
   name,
+  spaceId,
   onDirty,
   onConnectionState,
 }: {
   id: string;
   name: string;
+  spaceId?: string;
   onDirty: (dirty: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
@@ -88,11 +90,13 @@ export function SheetEditor({
       setStatus({
         ...state,
         dirty,
-        message: editing && !state.failed ? 'Editing cell — changes not saved yet.' : state.message,
+        message: editing
+          ? `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
+          : state.message,
       });
     };
     void (async () => {
-      const data = await prepareCollaboration(id);
+      const data = await prepareCollaboration(id, spaceId);
       if (disposed) return;
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
@@ -109,14 +113,21 @@ export function SheetEditor({
         },
         collaboration: true,
         plugins: [
-          ...collaborationPlugins(data.unitId, [[...sheetImageOverride]]),
-          mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
+          ...collaborationPlugins(
+            data.unitId,
+            [[...sheetImageOverride]],
+            false,
+            spaceId ? { spaceId, itemId: id } : undefined,
+          ),
+          ...(!spaceId ? [mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin] : []),
         ],
         presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
       });
-      print.current = async () => {
-        await univerAPI.executeCommand(SheetPrintOpenOperation.id);
-      };
+      print.current = spaceId
+        ? null
+        : async () => {
+            await univerAPI.executeCommand(SheetPrintOpenOperation.id);
+          };
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => univer.dispose();
@@ -189,7 +200,9 @@ export function SheetEditor({
           if (!permissions.getPermissionPoint(point.id)) permissions.addPermissionPoint(point);
           permissions.updatePermissionPoint(
             point.id,
-            [UnitAction.View, UnitAction.Copy, UnitAction.Print].includes(point.subType),
+            [UnitAction.View, UnitAction.Copy, ...(!spaceId ? [UnitAction.Print] : [])].includes(
+              point.subType,
+            ),
           );
         }
         readOnlySheetDrawings(univer, data.unitId);
@@ -204,6 +217,7 @@ export function SheetEditor({
         publish,
         readOnly,
         publishConnection,
+        spaceId,
       );
       controller.current = save;
       setEditable(data.access !== 'viewer');
@@ -259,7 +273,7 @@ export function SheetEditor({
       onConnectionState?.(null);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
-  }, [id]);
+  }, [id, spaceId]);
   return (
     <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
       <Collaborators people={people} />
@@ -278,7 +292,7 @@ export function SheetEditor({
           )}
         </span>
       </div>
-      {!guestItemId() && (
+      {!spaceId && !guestItemId() && (
         <>
           <VersionNames
             id={id}

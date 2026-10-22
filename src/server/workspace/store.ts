@@ -56,6 +56,7 @@ export class WorkspaceStore {
         role TEXT NOT NULL CHECK(role IN ('viewer','editor')),
         PRIMARY KEY(item_id,user_id)
       ) STRICT;
+      CREATE INDEX IF NOT EXISTS workspace_grants_user_item ON workspace_grants(user_id,item_id);
       CREATE TABLE IF NOT EXISTS workspace_placements (
         user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
         item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,

@@ -1,4 +1,6 @@
-// Only an opaque transaction ID can survive sign-in, never a client-supplied return URL.
+import { spaceReviewSignInPath } from '../src/shared/spaceReviewRoute.ts';
+
+// An assistant connection carries only its opaque transaction ID through sign-in.
 export function connectionRequest(): string | null {
   const key =
     location.pathname === '/connect'
@@ -15,7 +17,9 @@ export function connectionRequest(): string | null {
 
 export function signInPath(): string {
   const request = connectionRequest();
-  return request ? `/sign-in?connect=${encodeURIComponent(request)}` : '/sign-in';
+  return request
+    ? `/sign-in?connect=${encodeURIComponent(request)}`
+    : (spaceReviewSignInPath(location) ?? '/sign-in');
 }
 
 export async function api<T>(path: string, body?: unknown): Promise<T> {

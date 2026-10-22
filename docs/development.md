@@ -127,6 +127,14 @@ gate requires every viewport to pass before Pages can deploy. Explicitly
 classified documentation-only PRs skip the captures; failed or missing results
 cannot pass as documentation-only.
 
+The shared build keeps its ordinary `npm ci` and registry-audit invocation. The
+three viewport installs use `npm ci --no-audit` so duplicate advisory requests
+cannot consume each review budget. Locked installation, integrity verification,
+postinstall and all review coverage remain. This narrow response to repeated
+five-minute installs is recorded in [decision #138](https://github.com/mxbaylee/spinel/issues/138),
+2026-10-22; a retained audit invocation is not evidence that an unavailable
+registry completed a security audit.
+
 Download `design-review-desktop`, `design-review-tablet` and
 `design-review-mobile` for self-contained galleries. `storybook-review` is the
 shared interactive build, and `entity-icon-screenshots` is the icon gallery.
@@ -160,6 +168,19 @@ see [the process](todo/process.md#pull-requests-and-main).
   partially upgraded. Public Space creation and child capabilities remain closed.
   [Decision #135](https://github.com/mxbaylee/spinel/issues/135), 2026-10-21;
   [implementation and verification](implementation/SPN-078.md).
+- SPN-091 account review is explicitly enabled with `SPINEL_SPACE_REVIEW=1`
+  (`createApp({ spaceReview: true })` in tests). The default is off. The review
+  entry is `/review/spaces`; its tree/recovery API and native protocol use the
+  same gate and current everyday-account authorization. Native access carries
+  the exact Space and stable child plus the current session through reads,
+  sockets and after-await checks; ordinary item, guest and MCP paths stay closed.
+  Images, Doc Formula and cross-file formula integration, public history,
+  exports and offline preparation remain unavailable for this slice. Native
+  within-Sheet formulas remain supported; automatic Space history capture is explicitly
+  deferred, preserving existing checkpoints. SPN-092 owns those integrations
+  and ordinary activation. This flag gives Operators no document privileges.
+  [Decision #137](https://github.com/mxbaylee/spinel/issues/137), 2026-10-22;
+  [implementation contract](implementation/SPN-091.md).
 - React and React DOM are pinned to 18.3.1. On 2026-10-17, published
   `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support
   React 16–19; [Univer's UI package](https://github.com/dream-num/univer/blob/dev/packages/ui/package.json)

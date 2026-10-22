@@ -14,6 +14,7 @@ import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { ImportFile } from './ImportFile.tsx';
 import { SharedBadge, useSharedItems } from './SharedItems.tsx';
 import type { NavigationGuard } from './navigation.ts';
+import { rememberFileView } from './fileNavigation.ts';
 import { OfflineBadge } from './OfflineStatus.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
@@ -73,6 +74,7 @@ export function Dashboard({
   const [sharing, setSharing] = useState<WorkspaceItem | null>(null);
   const [tagging, setTagging] = useState<WorkspaceItem | null>(null);
   const [currentId, setCurrentId] = useState<string | null>(selectedId);
+  useEffect(() => rememberFileView(user.id, currentId), [user.id, currentId]);
   const currentRef = useRef(currentId);
   currentRef.current = currentId;
   const [action, setAction] = useState<Action | null>(null);

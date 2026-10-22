@@ -1,6 +1,6 @@
-import { guestItemId, documentPath } from './documentAccess.ts';
+import { guestItemId, documentPath, documentProtocolPath } from './documentAccess.ts';
 import { CollaborationSessions } from './CollaborationSessions.ts';
-import { UserManagerService } from '@univerjs/core';
+import { ICommandService, UserManagerService } from '@univerjs/core';
 import type { Univer, DependencyOverride } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import type { createUniver } from '@univerjs/presets';
@@ -29,15 +29,17 @@ import type { SaveState } from '../src/shared/autosave.ts';
 import type { ItemAccess } from '../src/shared/workspace.ts';
 import { createEditorConnection, reduceEditorConnection } from './connectionState.ts';
 import type { ConnectionState, RoomConnectionStatus } from './connectionState.ts';
+import type { DocPendingChanges } from './docPending.ts';
 
 export { ClientEnglish, UIEnglish };
 export function collaborationPlugins(
   unitID: string,
   override?: DependencyOverride,
   keepDocumentUI = false,
+  space?: { spaceId: string; itemId: string },
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
   const guest = guestItemId();
-  const base = location.origin + (guest ? `/guest-api/${guest}` : '') + '/universer-api';
+  const base = location.origin + documentProtocolPath(space);
   // Public URL extension point: scope is checked before the server accepts a socket.
   class DocumentSocketService extends BrowserCollaborationSocketService {
     protected override _createSocketURL(url: string, ticket: string) {
@@ -57,7 +59,9 @@ export function collaborationPlugins(
           [CollaborationSessionService, { useClass: CollaborationSessions }],
         ],
         socketService: DocumentSocketService,
-        enableOfflineEditing: !guest,
+        // Space review does not prepare documents for offline use. Every native
+        // request still carries the exact Space/child scope when reconnecting.
+        enableOfflineEditing: !guest && !space,
         retryConnectingInterval: 1000,
         sendChangesetTimeout: 100,
         authzUrl: base + '/authz',
@@ -76,8 +80,8 @@ export function collaborationPlugins(
     ],
   ];
 }
-export async function prepareCollaboration(id: string) {
-  const response = await fetch(`${documentPath(id)}/collaboration`, {
+export async function prepareCollaboration(id: string, spaceId?: string) {
+  const response = await fetch(`${documentPath(id, spaceId)}/collaboration`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{}',
@@ -101,10 +105,14 @@ export function watchCollaboration(
   publish: (state: SaveState) => void,
   readonly: () => Promise<void>,
   publishConnection: (state: ConnectionState) => void = () => {},
+  spaceId?: string,
+  native?: DocPendingChanges,
 ) {
   const collaboration = api.getCollaboration();
   let denied = false;
-  let lastDirty = false;
+  // Until synchronization and the recovery-cache barrier both complete, the
+  // initial state is unknown. Disconnection alone must not invent new edits.
+  let lastDirty = true;
   let disposed = false;
   let checking = false;
   let statusGeneration = 0;
@@ -128,7 +136,7 @@ export function watchCollaboration(
     try {
       // The browser can report online while the server is unreachable. Reuse
       // this existing access round trip, with a bound even for silent outages.
-      const response = await fetch(documentPath(itemId), {
+      const response = await fetch(documentPath(itemId, spaceId), {
         cache: 'no-store',
         signal: AbortSignal.any([abort.signal, AbortSignal.timeout(2500)]),
       });
@@ -185,23 +193,46 @@ export function watchCollaboration(
             ? 'not-started'
             : 'active',
     });
-    const dirty = status !== CollaborationStatus.SYNCED;
+    const nativePending = Boolean(native?.pending());
+    const synchronized = status === CollaborationStatus.SYNCED && !nativePending;
+    if (
+      nativePending ||
+      ![
+        CollaborationStatus.SYNCED,
+        CollaborationStatus.OFFLINE,
+        CollaborationStatus.NOT_COLLAB,
+      ].includes(status)
+    )
+      lastDirty = true;
     // Acknowledgement precedes the SDK's delayed recovery-cache write. A reload
     // in that gap can replay an already committed insert as a new operation.
     // Keep the navigation guard until the public cache flush finishes; never
-    // clear pending data, and never let an older flush hide a newer edit.
-    lastDirty = true;
+    // clear pending data, and never let an older flush hide a newer edit. A
+    // repeated clean status or connection-only transition preserves that proof.
     publish({
-      dirty: true,
-      failed: dirty,
-      message: dirty
-        ? 'Changes not saved yet — keep this tab open.'
-        : 'Finishing save — keep this tab open.',
+      dirty: lastDirty,
+      failed: !synchronized,
+      message: lastDirty
+        ? synchronized
+          ? 'Finishing save — keep this tab open.'
+          : 'Changes not saved yet — keep this tab open.'
+        : synchronized
+          ? access === 'viewer'
+            ? 'View only — reload after your access changes.'
+            : 'All changes saved.'
+          : 'Connection interrupted. Reconnect to continue.',
     });
-    if (!dirty)
+    if (synchronized && lastDirty)
       void cache.exhaustSavingTask().then(
         () => {
-          if (disposed || denied || generation !== statusGeneration) return;
+          if (
+            disposed ||
+            denied ||
+            generation !== statusGeneration ||
+            native?.pending() ||
+            collaboration.getCollaborationStatus(id) !== CollaborationStatus.SYNCED
+          )
+            return;
           lastDirty = false;
           publish({
             dirty: false,
@@ -223,6 +254,42 @@ export function watchCollaboration(
       );
     if (status === CollaborationStatus.OFFLINE) void checkAccess();
   };
+  // A local Doc mutation can still be in its native 300 ms batching queue while
+  // collaboration says SYNCED. Invalidate any older asynchronous clean result
+  // synchronously, including when this hook attaches to an already pending Doc.
+  const stopNative = native?.subscribe(() => update());
+  // A Sheet may receive local mutations while its status remains OFFLINE.
+  // Observe the public persistence-bound mutation stream rather than inferring
+  // pending edits from connectivity or reading protected SDK queue fields.
+  const localMutations = native
+    ? undefined
+    : univer
+        .__getInjector()
+        .get(ICommandService)
+        .onMutationExecutedForCollab((mutation, options) => {
+          const params = mutation.params as { unitId?: unknown } | undefined;
+          if (
+            disposed ||
+            denied ||
+            params?.unitId !== id ||
+            options?.onlyLocal ||
+            options?.fromCollab ||
+            options?.fromChangeset
+          )
+            return;
+          const generation = ++statusGeneration;
+          lastDirty = true;
+          publish({
+            dirty: true,
+            failed: true,
+            message: 'Changes not saved yet — keep this tab open.',
+          });
+          // Every subscriber must see this mutation before a current SYNCED
+          // status can begin its recovery-cache barrier.
+          queueMicrotask(() => {
+            if (!disposed && !denied && generation === statusGeneration) update();
+          });
+        });
   let stopStatus = () => {};
   let entityGeneration = 0;
   const roomStates: Record<SessionStatus, RoomConnectionStatus> = {
@@ -303,6 +370,8 @@ export function watchCollaboration(
       entities.unsubscribe();
       stopStatus();
       events.unsubscribe();
+      stopNative?.();
+      localMutations?.dispose();
       window.removeEventListener('online', online);
       window.removeEventListener('offline', offline);
     },

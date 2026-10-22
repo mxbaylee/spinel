@@ -7,7 +7,12 @@ import { UniverCollabEndpoint } from '@univerjs-pro/collaboration-endpoint';
 import type { EndpointSession } from '@univerjs-pro/collaboration-endpoint';
 import { createNodeTransport } from '@univerjs-pro/collaboration-transport-node';
 import type { NodeTransportConnection } from '@univerjs-pro/collaboration-transport-node';
-import { documentIdentity, protocolGuestItem, validateIdentity } from './identity.ts';
+import {
+  documentIdentity,
+  protocolGuestItem,
+  protocolSpaceScope,
+  validateIdentity,
+} from './identity.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import type { ItemAccess } from '../../shared/workspace.ts';
 import type { CollaborationStore } from './service.ts';
@@ -25,6 +30,7 @@ export function attachCollaboration(
   workspace: WorkspaceStore,
   collab: CollaborationStore,
   origin: string,
+  options: { spaceReview?: boolean } = {},
 ) {
   const auth = workspace.auth;
   const transport = createNodeTransport({
@@ -34,26 +40,42 @@ export function attachCollaboration(
   const endpoint = new UniverCollabEndpoint(collab.service, { sessionTicketTtlMs: 30_000 });
   const live = new Map<string, LiveSession>();
   const denied = () => new CollabError('PERMISSION_DENIED', 'This document is not available.');
+  function authorizedScope(userID: string, unitID: string, custom: Record<string, unknown>) {
+    const item = collab.access(userID, unitID, false, custom);
+    // access() has already checked the current account session, exact Space +
+    // stable child, live generation, grant and enabled owner. Space review has
+    // no guest-link lifecycle; the ordinary-only epoch guard must remain closed
+    // to it. No caller gets this branch merely from a Space-looking item ID.
+    if (Object.hasOwn(custom, 'spaceId')) return { item, privacyEpoch: undefined };
+    const privacyEpoch = workspace.links.epoch(item.id);
+    workspace.links.assertEpoch(item.id, privacyEpoch);
+    return { item, privacyEpoch };
+  }
   function current(session: EndpointSession) {
     try {
       validateIdentity(workspace, session.userID, session.customData);
-      const id = collab.itemForUnit(String(session.customData.unitID));
-      workspace.links.assertEpoch(id, session.customData.privacyEpoch);
+      const { item, privacyEpoch } = authorizedScope(
+        session.userID,
+        String(session.customData.unitID),
+        session.customData,
+      );
+      if (privacyEpoch !== session.customData.privacyEpoch) throw denied();
+      return item;
     } catch {
       throw denied();
     }
   }
-  function documentScope(userID: string, url: string | undefined) {
+  function documentScope(userID: string, url: string | undefined, custom: Record<string, unknown>) {
     const unitID = new URL(url ?? '/', origin).searchParams.get('unitID');
     if (!unitID) throw denied();
-    const item = collab.access(userID, unitID);
-    if (item.kind !== 'sheet' && item.kind !== 'doc') throw denied();
-    return unitID;
+    const scope = authorizedScope(userID, unitID, custom);
+    if (scope.item.kind !== 'sheet' && scope.item.kind !== 'doc') throw denied();
+    return { unitID, privacyEpoch: scope.privacyEpoch };
   }
   function scoped(session: EndpointSession, unitID: string) {
-    current(session);
+    const item = current(session);
     if (session.customData.unitID !== unitID) throw denied();
-    return collab.access(session.userID, unitID);
+    return item;
   }
   let validation = Promise.resolve();
   function revalidate() {
@@ -63,10 +85,10 @@ export function attachCollaboration(
   async function scan() {
     for (const [member, entry] of live) {
       try {
-        current(entry.session);
+        const item = current(entry.session);
         if (!entry.units.size && Date.now() > entry.joinDeadline) throw denied();
         for (const [id, access] of entry.units) {
-          if (collab.access(entry.session.userID, id).access !== access) throw denied();
+          if (id !== entry.session.customData.unitID || item.access !== access) throw denied();
         }
       } catch {
         // SDK eviction is scoped by user, not auth session. Other tabs may reconnect;
@@ -87,6 +109,7 @@ export function attachCollaboration(
         workspace,
         request.headers,
         protocolGuestItem(request.url, origin),
+        protocolSpaceScope(request.url, origin, options.spaceReview),
       );
     } catch {
       response.writeHead(401).end('This document is not available.');
@@ -107,12 +130,10 @@ export function attachCollaboration(
       new URL(request.url ?? '/', origin).pathname.endsWith('/universer-api/user/session-ticket')
     ) {
       try {
-        const unitID = documentScope(identity.userId, request.url);
-        const id = collab.itemForUnit(unitID);
-        const epoch = workspace.links.epoch(id);
-        workspace.links.assertEpoch(id, epoch);
-        context.customData.unitID = unitID;
-        context.customData.privacyEpoch = epoch;
+        Object.assign(
+          context.customData,
+          documentScope(identity.userId, request.url, identity.customData),
+        );
       } catch {
         response.writeHead(403).end('This document is not available.');
         return;
@@ -131,12 +152,14 @@ export function attachCollaboration(
         workspace,
         context.incomingMessage.headers,
         protocolGuestItem(context.incomingMessage.url, origin),
+        protocolSpaceScope(context.incomingMessage.url, origin, options.spaceReview),
       );
-      const unitID = documentScope(identity.userId, context.incomingMessage.url);
-      const id = collab.itemForUnit(unitID),
-        epoch = workspace.links.epoch(id);
-      workspace.links.assertEpoch(id, epoch);
-      Object.assign(context.customData, identity.customData, { unitID, privacyEpoch: epoch });
+      const scope = documentScope(
+        identity.userId,
+        context.incomingMessage.url,
+        identity.customData,
+      );
+      Object.assign(context.customData, identity.customData, scope);
     } catch {
       context.reject(403, 'This document is not available.');
       return;
@@ -169,6 +192,8 @@ export function attachCollaboration(
       context.connection.customData.sessionHash !== context.session.customData.sessionHash ||
       context.connection.customData.guestHash !== context.session.customData.guestHash ||
       context.connection.customData.guestItem !== context.session.customData.guestItem ||
+      context.connection.customData.spaceId !== context.session.customData.spaceId ||
+      context.connection.customData.spaceItem !== context.session.customData.spaceItem ||
       context.connection.customData.privacyEpoch !== context.session.customData.privacyEpoch ||
       context.connection.customData.unitID !== context.session.customData.unitID
     )
@@ -197,7 +222,11 @@ export function attachCollaboration(
   endpoint.use('joinUnit', async (context, next) => {
     await admission(context.session, async () => {
       const access = scoped(context.session, context.unitID).access;
-      await collab.prepare(context.session.userID, collab.itemForUnit(context.unitID));
+      await collab.prepare(
+        context.session.userID,
+        collab.itemForUnit(context.unitID),
+        context.session.customData,
+      );
       scoped(context.session, context.unitID);
       live.get(context.session.memberID)?.units.set(context.unitID, access);
       await next();
@@ -235,28 +264,33 @@ export function attachCollaboration(
     } catch {
       throw denied();
     }
-    collab.access(context.userID, context.changeset.unitID, true);
+    collab.access(context.userID, context.changeset.unitID, true, context.customData);
     await next();
   });
-  // Public router adapter: register account and guest namespaces against one room host.
+  // All namespaces share one room host. The review namespace is absent by default.
+  const spacePrefix = '/space-api/:spaceId/items/:spaceItem';
   transport.register({
     register(router) {
       endpoint.register({
         get(path, handler) {
           router.get(path, handler);
           router.get('/guest-api/:guestItem' + path, handler);
+          if (options.spaceReview) router.get(spacePrefix + path, handler);
         },
         post(path, handler) {
           router.post(path, handler);
           router.post('/guest-api/:guestItem' + path, handler);
+          if (options.spaceReview) router.post(spacePrefix + path, handler);
         },
         delete(path, handler) {
           router.delete(path, handler);
           router.delete('/guest-api/:guestItem' + path, handler);
+          if (options.spaceReview) router.delete(spacePrefix + path, handler);
         },
         upgrade(path, handler) {
           router.upgrade(path, handler);
           router.upgrade('/guest-api/:guestItem' + path, handler);
+          if (options.spaceReview) router.upgrade(spacePrefix + path, handler);
         },
       });
     },

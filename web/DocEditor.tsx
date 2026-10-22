@@ -22,7 +22,11 @@ import printEnglish from '@univerjs-pro/docs-print/locale/en-US';
 import '@univerjs-pro/docs-print/lib/index.css';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
-import { setDocumentPermissionValue } from '@univerjs/docs';
+import {
+  DocStateChangeManagerService,
+  DocStateEmitService,
+  setDocumentPermissionValue,
+} from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
 import { Collaborators, watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
@@ -44,6 +48,7 @@ import {
   UniverDrawingUIPlugin,
   UniverDocsDrawingPlugin,
   UniverDocsDrawingUIPlugin,
+  DOCS_IMAGE_MENU_ID,
   DOCS_SHAPE_MENU_ID,
   DOCS_SHAPE_BELOW_MENU_ID,
   InsertDocImageCommand,
@@ -71,15 +76,18 @@ import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
 import { documentReady } from './documentReady.ts';
 import type { ConnectionState } from './connectionState.ts';
+import { docPendingChanges } from './docPending.ts';
 
 export function DocEditor({
   id,
   name,
+  spaceId,
   onDirty,
   onConnectionState,
 }: {
   id: string;
   name: string;
+  spaceId?: string;
   onDirty: (dirty: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
@@ -135,7 +143,7 @@ export function DocEditor({
       });
     };
     void (async () => {
-      const data = await prepareCollaboration(id);
+      const data = await prepareCollaboration(id, spaceId);
       if (disposed) return;
       let drawingReady!: () => void;
       const drawingsRendered = new Promise<void>((resolve) => {
@@ -148,9 +156,10 @@ export function DocEditor({
           setUploadError('');
           publish(lastState);
           try {
+            if (spaceId) throw new Error('Images are not available in Space review yet.');
             if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type))
               throw new Error('Choose a PNG, JPEG or WebP image.');
-            const response = await fetch(`${documentPath(id)}/images`, {
+            const response = await fetch(`${documentPath(id, spaceId)}/images`, {
               method: 'POST',
               headers: { 'Content-Type': file.type },
               body: file,
@@ -196,6 +205,10 @@ export function DocEditor({
             commands.registerCommand({
               ...InsertDocImageCommand,
               handler: async (accessor, params, options) => {
+                if (spaceId) {
+                  if (!disposed) setUploadError('Images are not available in Space review yet.');
+                  return false;
+                }
                 insertions++;
                 const before = uploaded;
                 publish(lastState);
@@ -252,11 +265,12 @@ export function DocEditor({
           UniverDocsDrawingPlugin,
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
-          UniverDocsPrintPlugin,
+          ...(!spaceId ? [UniverDocsPrintPlugin] : []),
           ...collaborationPlugins(
             data.unitId,
             [[IImageIoService, { useClass: StoredImages }]],
             true,
+            spaceId ? { spaceId, itemId: id } : undefined,
           ),
         ],
         presets: [
@@ -270,6 +284,13 @@ export function DocEditor({
                 InsertDocEllipseShapeCommand.id,
                 `${InsertDocRectangleShapeCommand.id}.below`,
                 `${InsertDocEllipseShapeCommand.id}.below`,
+                ...(spaceId
+                  ? [
+                      DOCS_IMAGE_MENU_ID,
+                      InsertDocImageCommand.id,
+                      `${InsertDocImageCommand.id}.below`,
+                    ]
+                  : []),
               ].map((id) => [id, { hidden: true }]),
             ),
           }),
@@ -279,9 +300,11 @@ export function DocEditor({
           UniverDocsHyperLinkPreset(),
         ],
       });
-      print.current = async () => {
-        await printDocument(univerAPI);
-      };
+      print.current = spaceId
+        ? null
+        : async () => {
+            await printDocument(univerAPI);
+          };
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
         stopTheme();
@@ -303,7 +326,9 @@ export function DocEditor({
         unitId: data.unitId,
         colors: formulaPaperColors,
         evaluate: (definition, signal) =>
-          formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal),
+          spaceId
+            ? Promise.resolve({ ok: false, reason: 'unavailable' } as const)
+            : formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal),
         onActivate: (formula) => {
           if (canEditFormulas.current) setFormulaEdit({ formula });
         },
@@ -339,7 +364,7 @@ export function DocEditor({
       };
       if (data.access === 'viewer') await readonly();
       else {
-        canEditFormulas.current = true;
+        canEditFormulas.current = !spaceId;
         setEditable(true);
         document.setSelection(0, 0);
       }
@@ -357,6 +382,12 @@ export function DocEditor({
         publish,
         readonly,
         publishConnection,
+        spaceId,
+        docPendingChanges(
+          data.unitId,
+          univer.__getInjector().get(DocStateEmitService),
+          univer.__getInjector().get(DocStateChangeManagerService),
+        ),
       );
       controller.current = save;
     })().catch((error) => {
@@ -389,7 +420,7 @@ export function DocEditor({
       onConnectionState?.(null);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
-  }, [id]);
+  }, [id, spaceId]);
   return (
     <section className="sheet-editor" aria-label="Doc document">
       <Collaborators people={people} />
@@ -401,8 +432,13 @@ export function DocEditor({
           )}
         </span>
       </div>
-      {uploadError && <p role="alert">{uploadError} Try inserting the file again.</p>}
-      {!guestItemId() && (
+      {uploadError && (
+        <p role="alert">
+          {uploadError}
+          {!spaceId && ' Try inserting the file again.'}
+        </p>
+      )}
+      {!spaceId && !guestItemId() && (
         <>
           <VersionNames
             id={id}
@@ -419,7 +455,7 @@ export function DocEditor({
           />
         </>
       )}
-      {Boolean(controller.current) && (
+      {!spaceId && Boolean(controller.current) && (
         <details className="doc-formulas">
           <summary>Formulas{formulaStates.length ? ` (${formulaStates.length})` : ''}</summary>
           {editable && (
@@ -464,7 +500,7 @@ export function DocEditor({
           )}
         </details>
       )}
-      {formulaEdit && editable && (
+      {!spaceId && formulaEdit && editable && (
         <FormulaDialog
           id={id}
           initial={formulaEdit.formula}

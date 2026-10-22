@@ -126,6 +126,12 @@ export function migrateSpaceSchema(database: DatabaseSync): void {
       CREATE INDEX IF NOT EXISTS workspace_items_trash ON workspace_items(trashed_at);
       CREATE INDEX IF NOT EXISTS workspace_items_space_parent_position
         ON workspace_items(space_id,parent_id,space_position,id);
+      CREATE INDEX IF NOT EXISTS workspace_items_owner_kind
+        ON workspace_items(owner_id,kind,space_id,trashed_at);
+      CREATE INDEX IF NOT EXISTS workspace_space_discovery_children
+        ON workspace_items(owner_id,parent_id)
+        WHERE space_id IS NULL AND space_position IS NULL AND trashed_at IS NULL
+          AND trash_batch IS NULL AND kind IN ('folder','space');
       ${recoveryTable};
       CREATE INDEX IF NOT EXISTS workspace_space_trash_space_date
         ON workspace_space_trash(space_id,trashed_at,item_id);
