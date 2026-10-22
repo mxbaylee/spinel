@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
-import type { Page, TestInfo } from '@playwright/test';
+import type { Locator, Page, TestInfo } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -53,6 +53,14 @@ async function capture(page: Page, info: TestInfo, name: string, variant: string
     path: `test-results/theme-screenshots/spn-042-${name}-${variant}-${info.project.name}.png`,
     fullPage: true,
     animations: 'disabled',
+  });
+}
+
+// Document-relative coordinates ignore deliberate scrolling to reach native controls.
+async function documentBounds(locator: Locator) {
+  return locator.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { x: rect.x + scrollX, y: rect.y + scrollY, width: rect.width, height: rect.height };
   });
 }
 
@@ -212,6 +220,8 @@ for (const width of [1280, 390]) {
         const saved = () => expect(save).toHaveText('All changes saved.', { timeout: 30_000 });
         let holdWrite = true;
         let writeHeld = false;
+        let failWrites = false;
+        let rejectedWrites = 0;
         let releaseWrite = () => {};
         const writeGate = new Promise<void>((resolve) => {
           releaseWrite = resolve;
@@ -221,7 +231,13 @@ for (const width of [1280, 390]) {
             writeHeld = true;
             await writeGate;
           }
-          await route.continue();
+          if (failWrites) {
+            rejectedWrites++;
+            await route.fulfill({
+              status: 503,
+              json: { error: 'Save unavailable for this acceptance test.' },
+            });
+          } else await route.continue();
         });
         const captureEditor = async (state: ConnectionState) => {
           for (const theme of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
@@ -243,6 +259,10 @@ for (const width of [1280, 390]) {
           await page.goto(`/?item=${item.id}`);
           await saved();
           await connection(page, 'Online');
+          const saveTrigger = page.getByRole('button', { name: /^Save details:/ });
+          await expect(saveTrigger).toHaveText('Saved');
+          const savedBounds = await documentBounds(canvas);
+          const slotBounds = await documentBounds(saveTrigger);
           if (kind === 'sheet' && width === 390) {
             await expect(editor).toHaveAttribute('data-mobile', 'true');
             const grid = editor.getByLabel('Spreadsheet grid', { exact: true });
@@ -266,16 +286,59 @@ for (const width of [1280, 390]) {
           }
           await expect.poll(() => writeHeld).toBe(true);
           await expect(save).toContainText(/not saved|Saving|keep this tab open/i);
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
+          await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
+          // A real rejected save remains unconfirmed; no production state is mocked.
+          failWrites = true;
+          holdWrite = false;
+          releaseWrite();
+          await expect.poll(() => rejectedWrites).toBeGreaterThan(0);
+          await expect(save).toContainText(/not saved|keep this tab open/i);
+          await expect(save).toHaveAttribute('aria-live', 'polite');
+          await expect(saveTrigger).toHaveText('Not saved');
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
+          await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
           // An in-flight edit is a save concern, not a lost connection.
           await connection(page, 'Online');
           // Retrying an unconfirmed save on a healthy connection must not strand
           // the network indicator waiting for a room event that will never come.
-          await save.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          await page.getByRole('button', { name: 'Save details: Not saved', exact: true }).click();
+          const saveDetails = page.getByRole('dialog', { name: 'Save details', exact: true });
+          await expect(saveDetails).toBeVisible();
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
+          for (const theme of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
+            await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+            await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+            await expect
+              .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+              .toBe(true);
+            await page.screenshot({
+              path: `test-results/theme-screenshots/spn-043-${kind}-failed-${width === 390 ? 'phone' : theme}-${info.project.name}.png`,
+              fullPage: true,
+              animations: 'disabled',
+            });
+          }
+          failWrites = false;
+          await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          await page.keyboard.press('Escape');
+          await expect(saveTrigger).toBeFocused();
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await connection(page, 'Online');
           await capture(page, info, `${kind}-online-unsaved`, width === 390 ? 'phone' : 'light');
           holdWrite = false;
           releaseWrite();
           await saved();
+          await expect(saveTrigger).toHaveText('Saved');
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
+          await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
+          for (const theme of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
+            await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+            await page.screenshot({
+              path: `test-results/theme-screenshots/spn-043-${kind}-saved-${width === 390 ? 'phone' : theme}-${info.project.name}.png`,
+              fullPage: true,
+              animations: 'disabled',
+            });
+          }
           await page.evaluate(() => window.scrollTo(0, 0));
           await captureEditor('Online');
           const bounds = await canvas.boundingBox();
@@ -345,6 +408,7 @@ for (const width of [1280, 390]) {
           await expect(refreshShared).toHaveCount(0, { timeout: 10_000 });
           await expect.poll(() => canvas.boundingBox()).toEqual(bounds);
         } finally {
+          failWrites = false;
           holdWrite = false;
           releaseWrite();
           network.releaseJoinAcknowledgements();

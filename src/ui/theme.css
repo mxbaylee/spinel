@@ -216,24 +216,6 @@ button.primary {
 .sheet-editor {
   margin-top: 20px;
 }
-.save-status {
-  /* Reserve Retry's height and width through ordinary connection transitions.
-     SPN-043 still owns the title-adjacent save slot and full error popover. */
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 64px;
-  padding: 10px 0;
-  font-size: 14px;
-}
-.save-message {
-  flex: 1;
-  min-width: 0;
-}
-.save-retry {
-  flex: 0 0 8rem;
-  min-height: 44px;
-}
 .univer-container {
   height: 640px;
   min-height: 400px;

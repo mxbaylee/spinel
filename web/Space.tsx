@@ -47,6 +47,7 @@ import { SpaceOfflineActions } from './SpaceOfflineActions.tsx';
 
 export interface SpaceEditorProps {
   spaceId: string;
+  saveStatusTarget: HTMLElement | null;
   item: SpaceNode;
   access: ItemAccess;
   onDirty(dirty: boolean): void;
@@ -77,6 +78,7 @@ export function Space({
   onConnectionState,
   renderEditor,
 }: SpaceProps) {
+  const [saveStatusTarget, setSaveStatusTarget] = useState<HTMLSpanElement | null>(null);
   const [route, setRoute] = useState<SpaceLocation>(() => readSpaceLocation(location));
   const routeRef = useRef(route);
   routeRef.current = route;
@@ -699,6 +701,7 @@ export function Space({
                     (denied ? 'Space unavailable' : (currentTree?.space.name ?? 'Open a Space')))}
               </h1>
             </div>
+            {visiblePage && <span className="save-slot" ref={setSaveStatusTarget} />}
             {currentTree?.access === 'viewer' && <span className="space-access">View only</span>}
             {currentTree?.access === 'admin' && <span className="space-access">File admin</span>}
             {currentTree?.access === 'editor' && <span className="space-access">Can edit</span>}
@@ -820,7 +823,12 @@ export function Space({
       )}
       {visiblePage && (
         <div className="space-native-editor rd-native-editor" key={editorKey!}>
-          {renderEditor({ ...visiblePage, onDirty, onConnectionState: publishConnection })}
+          {renderEditor({
+            ...visiblePage,
+            saveStatusTarget,
+            onDirty,
+            onConnectionState: publishConnection,
+          })}
         </div>
       )}
       {currentTree && !trashView && !selection.item && !selection.missing && !loading && (

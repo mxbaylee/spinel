@@ -1385,9 +1385,11 @@ test('revocation clears private Space navigation while retaining unsaved native 
     await expect.poll(held.received).toBeGreaterThan(0);
     const status = editor.page.getByRole('status', { name: 'Save status', exact: true });
     await expect(status).toContainText('not saved');
+    await editor.page.getByRole('button', { name: 'Save details: Not saved', exact: true }).click();
     await expect(
       editor.page.getByRole('button', { name: 'Retry saving', exact: true }),
     ).toBeVisible();
+    await editor.page.keyboard.press('Escape');
     f.spaces.share(f.owner.id, space.id, f.editor.id, null);
     await expect(status).toContainText('Access changed', { timeout: 10_000 });
     await expect(

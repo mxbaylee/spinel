@@ -346,11 +346,12 @@ export function App() {
           onSignOut={() => void signOut()}
           onExit={() => location.assign(rememberedFileHref(user.id))}
           onConnectionState={setEditorConnection}
-          renderEditor={({ spaceId, item, onDirty, onConnectionState }) => (
+          renderEditor={({ spaceId, item, onDirty, onConnectionState, saveStatusTarget }) => (
             <Suspense fallback={<p role="status">Opening page…</p>}>
               {item.kind === 'doc' ? (
                 <SpaceDocEditor
                   key={spaceId + ':' + item.id}
+                  saveStatusTarget={saveStatusTarget}
                   spaceId={spaceId}
                   id={item.id}
                   name={item.name}
@@ -360,6 +361,7 @@ export function App() {
               ) : (
                 <SpaceSheetEditor
                   key={spaceId + ':' + item.id}
+                  saveStatusTarget={saveStatusTarget}
                   spaceId={spaceId}
                   id={item.id}
                   name={item.name}

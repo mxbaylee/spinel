@@ -1,3 +1,4 @@
+import { SaveStatus } from './SaveStatus.tsx';
 import {
   installDocFormulas,
   type DocFormula,
@@ -83,10 +84,12 @@ export function DocEditor({
   spaceId,
   onDirty,
   onConnectionState,
+  saveStatusTarget,
 }: {
   id: string;
   name: string;
   spaceId?: string;
+  saveStatusTarget: HTMLElement | null;
   onDirty: (dirty: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
@@ -407,14 +410,11 @@ export function DocEditor({
   return (
     <section className="sheet-editor" aria-label="Doc document">
       <Collaborators people={people} />
-      <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
-        <span className="save-message">{status.message}</span>
-        <span className="save-retry">
-          {status.failed && status.dirty && (
-            <button onClick={() => controller.current?.retry()}>Retry saving</button>
-          )}
-        </span>
-      </div>
+      <SaveStatus
+        state={status}
+        target={saveStatusTarget}
+        onRetry={() => controller.current?.retry()}
+      />
       {uploadError && (
         <p role="alert">
           {uploadError}
