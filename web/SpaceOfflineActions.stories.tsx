@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
 import type { SpaceNode } from '../src/shared/spaces.ts';
 import type { SpaceFile } from '../src/shared/workspace.ts';
@@ -9,10 +9,12 @@ import { SpaceOfflineActions } from './SpaceOfflineActions.tsx';
 import { OFFLINE_SDK_VERSION } from './offline/OfflineAccess.ts';
 import {
   openOfflineStore,
+  lockOfflineAccount,
   preparedAccount,
   setPreparedAccount,
   spaceOfflineCatalog,
 } from './offline/offlineStore.ts';
+import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import './space.css';
 
 const id = (value: number) => value.toString(16).padStart(8, '0') + '-0000-4000-8000-000000000092';
@@ -166,4 +168,128 @@ export const PreparedDark: Story = { ...PreparedPages, globals: { theme: 'dark' 
 export const PreparedPhone: Story = {
   ...PreparedPages,
   globals: { viewport: { value: 'phone', isRotated: false } },
+};
+
+function DelayedDownloadControls({
+  accountId,
+  onSettled,
+}: {
+  accountId: string;
+  onSettled(): void;
+}) {
+  const offline = useOfflineDownloads(
+    { id: accountId, name: 'Fixture account' },
+    undefined,
+    () => null,
+    { spaceRoot: root },
+  );
+  return (
+    <>
+      <button type="button" onClick={() => void offline.toggle(item, root.id).finally(onSettled)}>
+        Prepare held copy
+      </button>
+      <p>Published copies: {offline.downloads.size}</p>
+      {offline.message && <p role="alert">{offline.message.text}</p>}
+    </>
+  );
+}
+
+/** Exercise the real hook, IndexedDB opening and request lifetime with a held response. */
+function DelayedDownload({ change }: { change: 'unmount' | 'account' | 'sign-out' }) {
+  const [accountId, setAccountId] = useState(user.id);
+  const [left, setLeft] = useState(false);
+  const [pendingRequest, setPendingRequest] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const release = useRef<(() => void) | undefined>(undefined);
+  useEffect(() => {
+    const previousFetch = globalThis.fetch;
+    const previousAccount = preparedAccount();
+    const previousWorker = Object.getOwnPropertyDescriptor(navigator, 'serviceWorker');
+    // Let a wrongly admitted download reach durable publication, so this
+    // regression fails rather than passing because Storybook has no app worker.
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        ready: Promise.resolve({
+          active: {
+            postMessage(_message: unknown, ports: MessagePort[]) {
+              ports[0].postMessage({ ok: true });
+            },
+          },
+        }),
+      },
+    });
+    setPreparedAccount(null);
+    const delayed: typeof fetch = async (input, init) => {
+      if (input !== `/api/spaces/${root.id}/items/${item.id}/offline-bundle`)
+        return previousFetch(input, init);
+      setPendingRequest(true);
+      await new Promise<void>((resolve) => {
+        release.current = resolve;
+      });
+      return Response.json(bundle(item.id, item.name, root.id));
+    };
+    globalThis.fetch = delayed;
+    return () => {
+      release.current?.();
+      if (globalThis.fetch === delayed) globalThis.fetch = previousFetch;
+      if (previousWorker) Object.defineProperty(navigator, 'serviceWorker', previousWorker);
+      else Reflect.deleteProperty(navigator, 'serviceWorker');
+      setPreparedAccount(previousAccount);
+    };
+  }, []);
+  return (
+    <div className="sp-ui">
+      {!left && (
+        <DelayedDownloadControls accountId={accountId} onSettled={() => setFinished(true)} />
+      )}
+      <button
+        type="button"
+        disabled={!pendingRequest}
+        onClick={() => {
+          if (change === 'unmount') setLeft(true);
+          else if (change === 'account') setAccountId(user.id + '-other');
+          else lockOfflineAccount(); // App does this before awaiting the logout response.
+        }}
+      >
+        Change account lifecycle
+      </button>
+      <button
+        type="button"
+        disabled={!pendingRequest}
+        onClick={() => {
+          release.current?.();
+        }}
+      >
+        Complete held download
+      </button>
+      {finished && <p role="status">Held download completed</p>}
+    </div>
+  );
+}
+
+async function cancelDownload(canvasElement: HTMLElement) {
+  const canvas = within(canvasElement);
+  await userEvent.click(await canvas.findByRole('button', { name: 'Prepare held copy' }));
+  const change = await canvas.findByRole('button', { name: 'Change account lifecycle' });
+  await waitFor(() => expect(change).toBeEnabled());
+  await userEvent.click(change);
+  await userEvent.click(canvas.getByRole('button', { name: 'Complete held download' }));
+  await canvas.findByText('Held download completed');
+  await expect(preparedAccount()).toBeNull();
+  await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+  await expect(canvas.queryByText('Published copies: 1')).not.toBeInTheDocument();
+}
+
+export const UnmountDuringDownload: Story = {
+  render: () => <DelayedDownload change="unmount" />,
+  play: ({ canvasElement }) => cancelDownload(canvasElement),
+};
+export const ChangeAccountDuringDownload: Story = {
+  render: () => <DelayedDownload change="account" />,
+  play: ({ canvasElement }) => cancelDownload(canvasElement),
+};
+export const SignOutDuringDownload: Story = {
+  render: () => <DelayedDownload change="sign-out" />,
+  play: ({ canvasElement }) => cancelDownload(canvasElement),
 };

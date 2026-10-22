@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useEffect, useRef, useState } from 'react';
+import type { ComponentProps } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import type { SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
@@ -110,4 +112,99 @@ export const SaveFailure: Story = {
       await within(canvasElement.ownerDocument.body).findByRole('button', { name: 'Save' }),
     );
   },
+};
+
+/** Hold the real request across leaving the view or receiving another root. */
+function DelayedAction({
+  replace,
+  ...args
+}: ComponentProps<typeof SpaceRootActions> & { replace: boolean }) {
+  const [left, setLeft] = useState(false);
+  const [pendingRequest, setPendingRequest] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const release = useRef<(() => void) | undefined>(undefined);
+  useEffect(() => {
+    const previous = globalThis.fetch;
+    const delayed: typeof fetch = async (input, init) => {
+      if (input !== `/api/items/${item.id}` && input !== `/api/items/${item.id}/trash`)
+        return previous(input, init);
+      setPendingRequest(true);
+      await new Promise<void>((resolve) => {
+        release.current = resolve;
+      });
+      return Response.json({ item: { ...item, name: 'Updated research' } });
+    };
+    globalThis.fetch = delayed;
+    return () => {
+      release.current?.();
+      if (globalThis.fetch === delayed) globalThis.fetch = previous;
+    };
+  }, []);
+  return (
+    <div className="sp-ui">
+      {(!left || replace) && (
+        <SpaceRootActions
+          {...args}
+          item={left ? { ...item, id: nested.id, name: 'Another Space' } : item}
+        />
+      )}
+      <button type="button" onClick={() => setLeft(true)}>
+        Leave current Space
+      </button>
+      <button
+        type="button"
+        disabled={!pendingRequest}
+        onClick={() => {
+          release.current?.();
+          // Report completion after the response/json microtasks and React updates.
+          requestAnimationFrame(() => requestAnimationFrame(() => setFinished(true)));
+        }}
+      >
+        Complete delayed response
+      </button>
+      {finished && <p role="status">Delayed response completed</p>}
+    </div>
+  );
+}
+
+async function leaveDuringAction(
+  canvasElement: HTMLElement,
+  args: ComponentProps<typeof SpaceRootActions>,
+  action: 'Rename' | 'Move to Trash',
+) {
+  await choose(canvasElement, action);
+  const body = within(canvasElement.ownerDocument.body);
+  await userEvent.click(
+    await body.findByRole('button', {
+      name: action === 'Rename' ? 'Save' : 'Move Space to Trash',
+    }),
+  );
+  const canvas = within(canvasElement);
+  // Browser Back can leave even while the modal is saving. Use the fixture
+  // control directly because the modal correctly makes background UI inert.
+  canvas.getByRole('button', { name: 'Leave current Space', hidden: true }).click();
+  await userEvent.click(await canvas.findByRole('button', { name: 'Complete delayed response' }));
+  await canvas.findByText('Delayed response completed');
+  await expect(args.onChanged).not.toHaveBeenCalled();
+  await expect(args.onTrashed).not.toHaveBeenCalled();
+}
+
+export const LeaveDuringRename: Story = {
+  render: (args) => <DelayedAction {...args} replace={false} />,
+  play: ({ canvasElement, args }) => leaveDuringAction(canvasElement, args, 'Rename'),
+};
+export const ReplaceDuringRename: Story = {
+  render: (args) => <DelayedAction {...args} replace />,
+  play: async ({ canvasElement, args }) => {
+    await leaveDuringAction(canvasElement, args, 'Rename');
+    await expect(
+      within(canvasElement).getByRole('button', {
+        name: 'Space actions for Another Space',
+      }),
+    ).toBeEnabled();
+  },
+};
+export const LeaveDuringTrash: Story = {
+  render: (args) => <DelayedAction {...args} replace={false} />,
+  play: ({ canvasElement, args }) => leaveDuringAction(canvasElement, args, 'Move to Trash'),
 };

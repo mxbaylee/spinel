@@ -70,6 +70,7 @@ export function Dashboard({
   const draggingShared = useRef<string | null>(null);
   const [items, setItems] = useState<FileItem[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [spacesEnabled, setSpacesEnabled] = useState(false);
   const [viewed, setViewed] = useState<FileItem[]>([]);
   const [viewLoading, setViewLoading] = useState(false);
   const [viewId, setViewId] = useState<string | null>(null);
@@ -104,9 +105,10 @@ export function Dashboard({
       setItems(local.catalog.items);
       setLoaded(true);
     } else
-      void itemsRequest<{ items: FileItem[] }>()
+      void itemsRequest<{ items: FileItem[]; spacesEnabled?: boolean }>()
         .then((result) => {
           setItems(result.items);
+          setSpacesEnabled(result.spacesEnabled === true);
           setSyncedAt(Date.now());
           setLoaded(true);
         })
@@ -288,8 +290,9 @@ export function Dashboard({
     }
   }
   async function reloadItems() {
-    const result = await itemsRequest<{ items: FileItem[] }>();
+    const result = await itemsRequest<{ items: FileItem[]; spacesEnabled?: boolean }>();
     setItems(result.items);
+    setSpacesEnabled(result.spacesEnabled === true);
   }
   function folderDrop(parentId: string | null) {
     return {
@@ -514,6 +517,7 @@ export function Dashboard({
         <section ref={dropTarget} className="files" aria-label="Your files">
           {!local && (
             <SearchPanel
+              spacesEnabled={spacesEnabled}
               query={query}
               onChange={setQuery}
               loadedItems={[
@@ -664,7 +668,9 @@ export function Dashboard({
                           This folder is empty.
                           {!local &&
                             (!current || current.access === 'owner') &&
-                            ' Choose New to add a folder, document, or Space.'}
+                            (spacesEnabled
+                              ? ' Choose New to add a folder, document, or Space.'
+                              : ' Choose New to add a folder or document.')}
                         </p>
                       )
                     )}
@@ -731,11 +737,13 @@ export function Dashboard({
                         disabled={busy}
                         onChange={(event) => setKind(event.target.value as FileKind)}
                       >
-                        {FILE_KINDS.map((kind) => (
-                          <option key={kind} value={kind}>
-                            {fileKindLabel[kind]}
-                          </option>
-                        ))}
+                        {FILE_KINDS.filter((kind) => kind !== 'space' || spacesEnabled).map(
+                          (kind) => (
+                            <option key={kind} value={kind}>
+                              {fileKindLabel[kind]}
+                            </option>
+                          ),
+                        )}
                       </select>
                     </span>
                   </label>

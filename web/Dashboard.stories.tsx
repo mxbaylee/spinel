@@ -244,7 +244,7 @@ const viewerSpace: SpaceFile = {
 };
 const withSpaces = {
   ...populated,
-  'GET /api/items': { items: [...items, space] },
+  'GET /api/items': { items: [...items, space], spacesEnabled: true },
   'GET /api/items/shared': { items: [...shared, filedSpace, viewerSpace] },
 };
 export const SpaceFiles: Story = { parameters: { api: withSpaces } };
@@ -284,7 +284,10 @@ export const SpaceInsideFolder: Story = {
   parameters: {
     api: {
       ...withSpaces,
-      'GET /api/items': { items: [...items, { ...space, parentId: household.id }] },
+      'GET /api/items': {
+        items: [...items, { ...space, parentId: household.id }],
+        spacesEnabled: true,
+      },
       [`GET /api/items/${household.id}`]: {
         item: household,
         ancestors: [],
@@ -294,7 +297,7 @@ export const SpaceInsideFolder: Story = {
   },
   play: async ({ canvasElement }) => {
     const sidebar = await within(canvasElement).findByRole('complementary', { name: 'Folders' });
-    await userEvent.click(within(sidebar).getByRole('button', { name: 'Household' }));
+    await userEvent.click(await within(sidebar).findByRole('button', { name: 'Household' }));
   },
 };
 export const LocalSpaceNeedsConnection: Story = {

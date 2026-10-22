@@ -121,6 +121,10 @@ const spaceResult: SearchItem<FileItem> = {
   tags: ['budget'],
 };
 export const SpaceRootsOnly: Story = {
-  args: { query: { ...emptySearch, type: 'space' }, loadedItems: [spaceResult] },
+  args: {
+    query: { ...emptySearch, type: 'space' },
+    loadedItems: [spaceResult],
+    spacesEnabled: true,
+  },
   parameters: { api: { 'GET /api/items/search': { items: [spaceResult] } } },
 };

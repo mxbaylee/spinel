@@ -88,6 +88,7 @@ test('startup upgrades ordinary storage before SDK initialization and reopens hi
   const listing = await fetch(root + '/api/items', { headers });
   expect(listing.status).toBe(200);
   const listed = await listing.text();
+  expect(JSON.parse(listed).spacesEnabled).toBe(false);
   expect(listed).toContain(ordinary.id);
   for (const value of [space.id, child.id, 'Hidden']) expect(listed).not.toContain(value);
   for (const id of [space.id, child.id])
@@ -97,7 +98,8 @@ test('startup upgrades ordinary storage before SDK initialization and reopens hi
     headers: { ...headers, Origin: 'http://localhost:3000', 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: 'Not exposed', kind: 'space', parentId: null }),
   });
-  expect(creation.status).toBe(400);
+  // Space creation is a valid operation, but remains unavailable behind the gate.
+  expect(creation.status).toBe(404);
   db = openDatabase(path);
   try {
     expect(

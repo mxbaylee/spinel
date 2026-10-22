@@ -5,6 +5,8 @@ import { OFFLINE_SDK_VERSION } from '../../web/offline/OfflineAccess.ts';
 import type { OfflineBundle } from '../shared/offlineBundle.ts';
 import type { OfflineStore } from '../../web/offline/offlineStore.ts';
 import { sha256 } from '../../web/offline/PreparedImages.ts';
+import { prepareShell } from '../../web/offline/shell.ts';
+import { itemsRequest } from '../../web/itemsApi.ts';
 
 vi.mock('../../web/offline/shell.ts', () => ({ prepareShell: vi.fn(async () => {}) }));
 
@@ -136,6 +138,75 @@ test('a mismatched Space response is refused before fetching images or replacing
   expect(fetcher).toHaveBeenCalledOnce();
   expect(saveDownload).not.toHaveBeenCalled();
 });
+
+test.each(['bundle', 'shell'] as const)(
+  'leaving the account during %s preparation never writes the delayed offline copy',
+  async (stage) => {
+    vi.stubGlobal('location', { origin: 'https://spinel.example', pathname: '/spaces/project' });
+    let active = true;
+    const verifyCurrent = () => {
+      if (!active) throw new Error('Account changed');
+    };
+    const value = bundle({ spaceId: 'project', images: [] });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        if (stage === 'bundle') active = false;
+        return Response.json(value);
+      }),
+    );
+    if (stage === 'shell')
+      vi.mocked(prepareShell).mockImplementationOnce(async () => {
+        active = false;
+      });
+    const saveDownload = vi.fn();
+    await expect(
+      downloadForOffline(
+        { accountId: 'owner', saveDownload } as unknown as OfflineStore,
+        'item',
+        'project',
+        verifyCurrent,
+      ),
+    ).rejects.toThrow('Account changed');
+    expect(saveDownload).not.toHaveBeenCalled();
+  },
+);
+
+test.each(['download', 'root action'] as const)(
+  'a delayed signed-out %s response cannot redirect a newer view',
+  async (kind) => {
+    const assign = vi.fn();
+    vi.stubGlobal('location', { origin: 'https://spinel.example', assign });
+    let active = true;
+    let release!: (response: Response) => void;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        () =>
+          new Promise<Response>((resolve) => {
+            release = resolve;
+          }),
+      ),
+    );
+    const verifyCurrent = () => {
+      if (!active) throw new Error('View changed');
+    };
+    const work =
+      kind === 'download'
+        ? downloadForOffline(
+            { accountId: 'owner' } as OfflineStore,
+            'item',
+            'project',
+            verifyCurrent,
+          )
+        : itemsRequest('/project', 'PATCH', { name: 'New name' }, verifyCurrent);
+    const rejected = expect(work).rejects.toThrow('View changed');
+    active = false;
+    release(Response.json({ error: 'Sign in to continue.' }, { status: 401 }));
+    await rejected;
+    expect(assign).not.toHaveBeenCalled();
+  },
+);
 
 test('a bundle from another SDK version is refused', () => {
   vi.stubGlobal('location', { origin: 'https://spinel.example' });

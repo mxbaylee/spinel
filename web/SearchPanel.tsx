@@ -13,11 +13,13 @@ export function SearchPanel({
   onChange,
   loadedItems,
   onOpen,
+  spacesEnabled = false,
 }: {
   query: SearchQuery;
   onChange: (query: SearchQuery) => void;
   loadedItems: FileItem[];
   onOpen: (item: FileItem) => void;
+  spacesEnabled?: boolean;
 }) {
   const active = hasSearch(query),
     key = new URLSearchParams(query).toString();
@@ -94,7 +96,7 @@ export function SearchPanel({
             }
           >
             <option value="">All types</option>
-            {FILE_KINDS.map((kind) => (
+            {FILE_KINDS.filter((kind) => kind !== 'space' || spacesEnabled).map((kind) => (
               <option key={kind} value={kind}>
                 {fileKindLabel[kind]}
               </option>

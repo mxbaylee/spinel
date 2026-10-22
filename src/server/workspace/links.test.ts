@@ -118,24 +118,36 @@ test('guest images use the same document grant and recheck after asynchronous de
     const docs = new DocumentStore(f.workspace),
       secret = f.enable('editor');
     const session = f.links.exchange(f.item.id, secret);
+    const principal = f.links.principal(
+      { cookie: `${guestCookieName(f.item.id)}=${session.token}` },
+      f.item.id,
+    );
+    const custom = { guestHash: principal.guestHash, guestItem: f.item.id };
     const bytes = await sharp({
       create: { width: 2, height: 2, channels: 3, background: '#ff9900' },
     })
       .png()
       .toBuffer();
-    const saved = await docs.upload(session.userId, f.item.id, bytes, 'image/png');
-    expect(docs.image(session.userId, f.item.id, saved.id).mime).toBe('image/png');
-    expect(() => docs.image(session.userId, f.other.id, saved.id)).toThrow();
-    const inFlight = docs.upload(session.userId, f.item.id, bytes, 'image/png');
+    const saved = await docs.upload(session.userId, f.item.id, bytes, 'image/png', custom);
+    expect(docs.image(session.userId, f.item.id, saved.id, custom).mime).toBe('image/png');
+    expect(() => docs.image(session.userId, f.other.id, saved.id, custom)).toThrow();
+    const inFlight = docs.upload(session.userId, f.item.id, bytes, 'image/png', custom);
     const change = f.links.begin(f.item.id, null);
     await expect(inFlight).rejects.toThrow('no longer works');
     f.links.finish(f.item.id, change.epoch, false);
-    expect(() => docs.image(session.userId, f.item.id, saved.id)).toThrow();
+    expect(() => docs.image(session.userId, f.item.id, saved.id, custom)).toThrow();
     const next = f.enable();
     const viewer = f.links.exchange(f.item.id, next);
-    await expect(docs.upload(viewer.userId, f.item.id, bytes, 'image/png')).rejects.toThrow(
-      'viewing only',
+    const viewerPrincipal = f.links.principal(
+      { cookie: `${guestCookieName(f.item.id)}=${viewer.token}` },
+      f.item.id,
     );
+    await expect(
+      docs.upload(viewer.userId, f.item.id, bytes, 'image/png', {
+        guestHash: viewerPrincipal.guestHash,
+        guestItem: f.item.id,
+      }),
+    ).rejects.toThrow('viewing only');
     f.db.prepare('UPDATE workspace_items SET trashed_at=1 WHERE id=?').run(f.item.id);
     expect(() => f.links.exchange(f.item.id, next)).toThrow();
   } finally {

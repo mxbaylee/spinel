@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import type { SpaceFile, WorkspaceItem } from '../../src/shared/workspace.ts';
 import { DownloadError, downloadForOffline } from './download.ts';
 import type { LocalStart } from './localStart.ts';
 import {
   openOfflineStore,
+  offlineAccountGeneration,
   preparedAccount,
   setPreparedAccount,
   spaceOfflineCatalog,
@@ -29,7 +30,7 @@ export function useOfflineDownloads(
   );
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<OfflineMessage | null>(null);
-  const mounted = useRef(false);
+  const generation = useRef(0);
   // A download can take minutes; read the catalog as it is when it finishes.
   const latestCatalog = useRef(catalog);
   latestCatalog.current = catalog;
@@ -37,10 +38,21 @@ export function useOfflineDownloads(
   latestRoot.current = options.spaceRoot;
   // The server admits one transfer at a time; run refreshes and toggles in turn.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
+  function currentCheck() {
+    const request = generation.current;
+    const account = offlineAccountGeneration();
+    return () => {
+      if (request !== generation.current || account !== offlineAccountGeneration())
+        throw new Error('This offline request is no longer active.');
+    };
+  }
   function serially<T>(work: (store: OfflineStore) => Promise<T>) {
+    const verifyCurrent = currentCheck();
     const run = queue.current.then(async () => {
+      verifyCurrent();
       const store = await openOfflineStore(user.id);
       try {
+        verifyCurrent();
         return await work(store);
       } finally {
         store.close();
@@ -50,11 +62,9 @@ export function useOfflineDownloads(
     return run;
   }
   function set(download: OfflineDownload) {
-    if (mounted.current)
-      setDownloads((previous) => new Map(previous).set(download.itemId, download));
+    setDownloads((previous) => new Map(previous).set(download.itemId, download));
   }
   function unset(itemId: string) {
-    if (!mounted.current) return;
     setDownloads((previous) => {
       const next = new Map(previous);
       next.delete(itemId);
@@ -62,30 +72,44 @@ export function useOfflineDownloads(
     });
   }
 
-  useEffect(() => {
-    mounted.current = true;
+  useLayoutEffect(() => {
+    generation.current++;
+    const verifyCurrent = currentCheck();
+    setDownloads(new Map(local?.downloads.map((download) => [download.itemId, download])));
+    setBusy(null);
+    setMessage(null);
     if (local || preparedAccount() !== user.id)
       return () => {
-        mounted.current = false;
+        generation.current++;
       };
-    let cancelled = false;
     void serially(async (store) => {
       const known = await store.downloads();
-      if (cancelled) return;
+      verifyCurrent();
       setDownloads(new Map(known.map((download) => [download.itemId, download])));
       // Keep the shell current after an update or eviction, then refresh each
       // copy. A failed refresh keeps the last complete copy. A document this
       // account can no longer open is removed: SPN-039's copies hold no edits.
       await prepareShell();
       for (const download of known) {
-        if (cancelled) return;
+        verifyCurrent();
         try {
-          set(await downloadForOffline(store, download.itemId, download.spaceId));
+          const refreshed = await downloadForOffline(
+            store,
+            download.itemId,
+            download.spaceId,
+            verifyCurrent,
+          );
+          verifyCurrent();
+          set(refreshed);
         } catch (error) {
+          verifyCurrent();
           if (error instanceof DownloadError && error.status === 404) {
             await store.remove(download.itemId);
+            verifyCurrent();
             unset(download.itemId);
-            if (!(await store.downloads()).length) setPreparedAccount(null);
+            const remaining = await store.downloads();
+            verifyCurrent();
+            if (!remaining.length && preparedAccount() === user.id) setPreparedAccount(null);
           }
         }
       }
@@ -93,8 +117,7 @@ export function useOfflineDownloads(
       // Refreshing is best effort; downloads stay as they were.
     });
     return () => {
-      cancelled = true;
-      mounted.current = false;
+      generation.current++;
     };
   }, [user.id, local]);
 
@@ -124,19 +147,27 @@ export function useOfflineDownloads(
     }
     setBusy(item.id);
     setMessage(null);
+    const request = generation.current;
+    const account = offlineAccountGeneration();
+    const verifyCurrent = currentCheck();
     try {
       await serially(async (store) => {
         if (downloaded) {
           await store.remove(item.id);
+          verifyCurrent();
           unset(item.id);
           // With nothing left to open, the device is no longer prepared.
-          if (!(await store.downloads()).length) setPreparedAccount(null);
+          const remaining = await store.downloads();
+          verifyCurrent();
+          if (!remaining.length && preparedAccount() === user.id) setPreparedAccount(null);
           return;
         }
-        const download = await downloadForOffline(store, item.id, spaceId);
+        const download = await downloadForOffline(store, item.id, spaceId, verifyCurrent);
+        verifyCurrent();
         // Keep the newest catalog; a refresh that failed meanwhile falls back
         // to the one there at the click, so a prepared device always has one.
         let current = latestCatalog.current() ?? atClick ?? (await store.catalog());
+        verifyCurrent();
         const root = latestRoot.current?.id === spaceId ? latestRoot.current : rootAtClick;
         if (spaceId !== undefined && root?.id === spaceId)
           current = spaceOfflineCatalog(root, current ?? undefined);
@@ -148,9 +179,11 @@ export function useOfflineDownloads(
           await store.remove(item.id).catch(() => {});
           throw error;
         }
+        verifyCurrent();
         setPreparedAccount(user.id);
         set(download);
       });
+      verifyCurrent();
       setMessage({
         text: downloaded
           ? `${item.name} was removed from this device.`
@@ -158,15 +191,16 @@ export function useOfflineDownloads(
         failed: false,
       });
     } catch (error) {
-      setMessage({
-        text:
-          error instanceof Error && error.message
-            ? error.message
-            : 'Could not change offline availability. Try again.',
-        failed: true,
-      });
+      if (request === generation.current && account === offlineAccountGeneration())
+        setMessage({
+          text:
+            error instanceof Error && error.message
+              ? error.message
+              : 'Could not change offline availability. Try again.',
+          failed: true,
+        });
     } finally {
-      if (mounted.current) setBusy(null);
+      if (request === generation.current) setBusy(null);
     }
   }
 

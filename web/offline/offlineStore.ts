@@ -84,6 +84,13 @@ export function spaceOfflineCatalog(root: SpaceFile, existing?: OfflineCatalog):
 
 const ACCOUNT_KEY = 'spinel.offline.account';
 const SIGN_OUT_KEY = 'spinel.offline.sign-out';
+let accountGeneration = 0;
+/** Cancels already-admitted work as soon as this tab starts signing out. */
+export const offlineAccountGeneration = () => accountGeneration;
+export function lockOfflineAccount() {
+  accountGeneration++;
+  setPreparedAccount(null);
+}
 const databaseName = (accountId: string) => `spinel-offline-${accountId}`;
 
 function storage() {

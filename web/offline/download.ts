@@ -14,13 +14,14 @@ export class DownloadError extends Error {
   }
 }
 
-async function get(path: string) {
+async function get(path: string, verifyCurrent: () => void) {
   let response: Response;
   try {
     response = await fetch(path, { credentials: 'same-origin', cache: 'no-store' });
   } catch {
     throw new DownloadError('Could not download. Check your connection and try again.');
   }
+  verifyCurrent();
   if (response.status === 401) location.assign('/sign-in');
   return response;
 }
@@ -70,10 +71,17 @@ export function checkBundle(
  * store it all in one IndexedDB transaction. Until that commits nothing counts as
  * downloaded, and a failed refresh leaves the previous complete copy.
  */
-export async function downloadForOffline(store: OfflineStore, itemId: string, spaceId?: string) {
+export async function downloadForOffline(
+  store: OfflineStore,
+  itemId: string,
+  spaceId?: string,
+  verifyCurrent: () => void = () => {},
+) {
+  verifyCurrent();
   const path = documentPath(itemId, spaceId);
-  const response = await get(`${path}/offline-bundle`);
+  const response = await get(`${path}/offline-bundle`, verifyCurrent);
   const bundle = (await response.json().catch(() => ({}))) as OfflineBundle & { error?: string };
+  verifyCurrent();
   if (!response.ok)
     throw new DownloadError(bundle.error ?? 'Could not download. Try again.', response.status);
   checkBundle(bundle, store.accountId, itemId, spaceId);
@@ -81,13 +89,19 @@ export async function downloadForOffline(store: OfflineStore, itemId: string, sp
   for (const image of bundle.images) {
     // Native snapshots and local image keys remain canonical. The HTTP read
     // independently carries the requested root and child on every image.
-    const file = await get(spaceId ? `${path}/images/${image.sha256}` : image.source);
+    const file = await get(
+      spaceId ? `${path}/images/${image.sha256}` : image.source,
+      verifyCurrent,
+    );
     if (!file.ok) throw new DownloadError('An image could not be downloaded. Try again.');
     bytes.set(image.source, new Uint8Array(await file.arrayBuffer()));
+    verifyCurrent();
   }
   await verifyImages(itemId, bundle.images, bytes);
+  verifyCurrent();
   // Only a download known to be good prepares the device (fills CacheStorage).
   await prepareShell();
+  verifyCurrent();
   try {
     return await store.saveDownload(bundle, bytes);
   } catch (error) {

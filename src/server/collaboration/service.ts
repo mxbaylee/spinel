@@ -553,9 +553,10 @@ export class CollaborationStore {
     const family = validateDocumentCredentials(this.workspace, user, customData);
     if (family !== 'account' && family !== 'trusted') throw unavailable();
     const custom = Object.freeze({ ...customData });
-    this.workspaceAccess(user, id, 'read', custom);
-    const initialUnit = this.generations.active(id).unitId;
+    let initialUnit: string | undefined;
     try {
+      this.workspaceAccess(user, id, 'read', custom);
+      initialUnit = this.generations.active(id).unitId;
       await this.prepare(user, id, custom);
       verify();
       const item = this.workspaceAccess(user, id, 'read', custom);
@@ -621,6 +622,9 @@ export class CollaborationStore {
         ? { ...fields, kind: 'sheet', snapshot: data.snapshot as IWorkbookData }
         : { ...fields, kind: 'doc', snapshot: data.snapshot as IDocumentData };
     } catch (error) {
+      // Preserve the route's signed-out response even when a deeper read
+      // discovers the expired session before returning to this boundary.
+      verify();
       if (!(error instanceof CollabError) || error.code !== 'PERMISSION_DENIED') throw error;
       // The SDK also refuses a read of a unit that a restore replaced or is
       // replacing. With access intact that is a version change the device can
@@ -633,6 +637,7 @@ export class CollaborationStore {
       }
       if (
         readable &&
+        initialUnit !== undefined &&
         (this.generations.restoring(id) || this.generations.active(id).unitId !== initialUnit)
       )
         throw changed();

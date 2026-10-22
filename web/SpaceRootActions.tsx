@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import type { FileItem, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
@@ -29,14 +29,23 @@ export function SpaceRootActions({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const generation = useRef(0);
-  useEffect(
-    () => () => {
+  useLayoutEffect(() => {
+    generation.current++;
+    setMode(null);
+    setLoading(false);
+    setBusy(false);
+    setError('');
+    return () => {
       generation.current++;
-    },
-    [],
-  );
+    };
+  }, [item.id, item.access]);
   async function open(next: Mode) {
     if (beforeChange && !beforeChange()) return;
+    const request = ++generation.current;
+    const verifyCurrent = () => {
+      if (request !== generation.current) throw new Error('This Space view is no longer active.');
+    };
+    setLoading(false);
     setMode(next);
     setName(item.name);
     setDestination(item.parentId ?? '');
@@ -46,10 +55,9 @@ export function SpaceRootActions({
       setAvailable(folders);
       return;
     }
-    const request = ++generation.current;
     setLoading(true);
     try {
-      const result = await itemsRequest<{ items: FileItem[] }>();
+      const result = await itemsRequest<{ items: FileItem[] }>('', 'GET', undefined, verifyCurrent);
       if (request === generation.current)
         setAvailable(
           result.items.filter(
@@ -65,11 +73,16 @@ export function SpaceRootActions({
   }
   async function save() {
     if (mode !== 'rename' && mode !== 'move' && mode !== 'trash') return;
+    const request = ++generation.current;
+    const verifyCurrent = () => {
+      if (request !== generation.current) throw new Error('This Space view is no longer active.');
+    };
     setBusy(true);
     setError('');
     try {
       if (mode === 'trash') {
-        await itemsRequest(`/${item.id}/trash`, 'POST', {});
+        await itemsRequest(`/${item.id}/trash`, 'POST', {}, verifyCurrent);
+        if (request !== generation.current) return;
         setMode(null);
         onTrashed();
       } else {
@@ -77,16 +90,19 @@ export function SpaceRootActions({
           `/${item.id}`,
           'PATCH',
           mode === 'rename' ? { name } : { parentId: destination || null },
+          verifyCurrent,
         );
+        if (request !== generation.current) return;
         if (result.item.kind !== 'space')
           throw new Error('The Space could not be updated. Refresh and try again.');
         onChanged(result.item);
         setMode(null);
       }
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not update the Space. Try again.');
+      if (request === generation.current)
+        setError(cause instanceof Error ? cause.message : 'Could not update the Space. Try again.');
     } finally {
-      setBusy(false);
+      if (request === generation.current) setBusy(false);
     }
   }
   const owned = available.filter((entry) => entry.kind === 'folder' && entry.access === 'owner');
@@ -150,7 +166,10 @@ export function SpaceRootActions({
           icon={mode === 'trash' ? 'trash' : mode === 'share' ? 'share' : 'space'}
           dismissDisabled={busy}
           onOpenChange={(value) => {
-            if (!value) setMode(null);
+            if (!value) {
+              generation.current++;
+              setMode(null);
+            }
           }}
         >
           {mode === 'share' ? (

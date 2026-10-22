@@ -254,7 +254,12 @@ export function workspaceRoutes(
         ),
       }),
     );
-  router.get('/', (request, response) => response.json({ items: catalog.list(owner(request)) }));
+  router.get('/', (request, response) =>
+    response.json({
+      items: catalog.list(owner(request)),
+      spacesEnabled: store.spacesEnabled,
+    }),
+  );
   router.get('/trash', (request, response) => response.json(trash.list(owner(request))));
   router.post('/trash/empty', (request, response) => {
     response.json(trash.empty(owner(request), payload(request, ['version']).version));
