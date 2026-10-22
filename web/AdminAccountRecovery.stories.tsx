@@ -474,10 +474,14 @@ export const KeyboardRecipientChoice: Story = {
     combo.focus();
     await userEvent.keyboard('{Enter}');
     await expect(await portal.findByRole('listbox')).toBeVisible();
+    // Base UI focuses the selected option on an animation frame after opening.
+    await waitFor(() =>
+      expect(portal.getByRole('option', { name: 'Choose an account' })).toHaveFocus(),
+    );
     await userEvent.keyboard('{End}');
-    await expect(portal.getByRole('option', { name: targetName })).toHaveFocus();
+    await waitFor(() => expect(portal.getByRole('option', { name: targetName })).toHaveFocus());
     await userEvent.keyboard('{Enter}');
-    await expect(combo).toHaveTextContent(targetName);
-    await expect(portal.queryByRole('listbox')).toBeNull();
+    await waitFor(() => expect(combo).toHaveTextContent(targetName));
+    await waitFor(() => expect(portal.queryByRole('listbox')).toBeNull());
   },
 };
