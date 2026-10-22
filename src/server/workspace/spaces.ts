@@ -4,15 +4,12 @@ import type { ItemKind } from '../../shared/workspace.ts';
 import { AuthError } from '../auth/store.ts';
 import { resolveSpaceScope } from './space-scope.ts';
 import type { SpaceCapability, SpaceScope, SpaceScopeItem } from './space-scope.ts';
+import { MAX_SPACE_ITEMS, readSpaceStructure } from './space-structure.ts';
 import type { WorkspaceStore } from './store.ts';
 
 export interface SpaceTree extends Omit<SpaceScope, 'item'> {
   /** Live members in depth-first sibling order; the Space root is separate. */
   readonly items: SpaceScopeItem[];
-}
-
-interface MemberRow extends SpaceScopeItem {
-  ownerId: string;
 }
 
 interface LiveMember extends SpaceScopeItem {
@@ -23,15 +20,13 @@ interface LiveMember extends SpaceScopeItem {
 
 interface LiveTree {
   scope: SpaceScope;
+  totalItems: number;
   items: LiveMember[];
   byId: Map<string, LiveMember>;
   children: Map<string, LiveMember[]>;
 }
 
 const unavailable = () => new AuthError(404, 'This Space is not available.');
-// Refuse a request exceeding its work budget, rather than truncating a tree or
-// imposing the mockup's presentation depth as a product nesting limit.
-const MAX_TREE_ITEMS = 10_000;
 
 /**
  * Internal live-tree operations. Callers explicitly prepare the Space schema;
@@ -80,7 +75,7 @@ export class SpaceStore {
   ): SpaceScope {
     return this.workspace.auth.transaction(() => {
       const tree = this.tree(actorId, spaceId, 'edit');
-      if (tree.items.length >= MAX_TREE_ITEMS)
+      if (tree.totalItems >= MAX_SPACE_ITEMS)
         throw new AuthError(413, 'This Space is too large to process in one request.');
       const name = this.workspace.name(input.name);
       if (!ITEM_KINDS.includes(input.kind as ItemKind))
@@ -212,79 +207,18 @@ export class SpaceStore {
 
   private tree(actorId: string, spaceId: string, capability: SpaceCapability): LiveTree {
     const scope = resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, capability);
-    const database = this.workspace.auth.database;
-    const rows = database
-      .prepare(
-        `
-      SELECT id,owner_id AS ownerId,parent_id AS parentId,space_id AS spaceId,
-        space_position AS position,kind,name,created_at AS createdAt,updated_at AS updatedAt
-      FROM workspace_items WHERE space_id=? AND trashed_at IS NULL AND trash_batch IS NULL
-      LIMIT ?
-    `,
-      )
-      .all(spaceId, MAX_TREE_ITEMS + 1) as unknown as MemberRow[];
-    if (rows.length > MAX_TREE_ITEMS)
-      throw new AuthError(413, 'This Space is too large to process in one request.');
-    // A foreign or standalone child attached beneath this tree must not be
-    // silently omitted and then carried along by a valid-looking parent move.
-    if (
-      database
-        .prepare(
-          `
-      SELECT 1 FROM workspace_items child JOIN workspace_items parent ON child.parent_id=parent.id
-      WHERE (parent.id=? OR parent.space_id=?)
-        AND (child.space_id IS NOT ? OR child.owner_id<>?) LIMIT 1
-    `,
-        )
-        .get(spaceId, spaceId, spaceId, scope.ownerId)
-    )
-      throw unavailable();
-
-    const byId = new Map<string, LiveMember>();
+    const structure = readSpaceStructure(this.workspace.auth.database, spaceId, scope.ownerId);
+    const items: LiveMember[] = structure.items
+      .filter((item) => item.trashedAt === null)
+      .map(({ trashedAt: _trashedAt, trashBatch: _trashBatch, ...item }) => item);
+    const byId = new Map(items.map((item) => [item.id, item]));
     const children = new Map<string, LiveMember[]>();
-    for (const row of rows) {
-      if (
-        row.ownerId !== scope.ownerId ||
-        row.spaceId !== spaceId ||
-        !ITEM_KINDS.includes(row.kind as ItemKind) ||
-        row.parentId === null ||
-        typeof row.position !== 'number' ||
-        !Number.isSafeInteger(row.position) ||
-        row.position < 0
-      )
-        throw unavailable();
-      const item: LiveMember = {
-        id: row.id,
-        parentId: row.parentId,
-        spaceId: row.spaceId,
-        kind: row.kind as ItemKind,
-        position: row.position,
-        name: row.name,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      };
-      byId.set(item.id, item);
-      const siblings = children.get(row.parentId) ?? [];
+    for (const item of items) {
+      const siblings = children.get(item.parentId) ?? [];
       siblings.push(item);
-      children.set(row.parentId, siblings);
+      children.set(item.parentId, siblings);
     }
-    for (const item of byId.values())
-      if (item.parentId !== spaceId && !byId.has(item.parentId)) throw unavailable();
-    for (const siblings of children.values())
-      siblings.sort((a, b) => a.position - b.position || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-    const items: LiveMember[] = [];
-    const pending = [...(children.get(spaceId) ?? [])].reverse();
-    const visited = new Set<string>();
-    while (pending.length) {
-      const item = pending.pop()!;
-      if (visited.has(item.id)) throw unavailable();
-      visited.add(item.id);
-      items.push(item);
-      const nested = children.get(item.id) ?? [];
-      for (let index = nested.length - 1; index >= 0; index--) pending.push(nested[index]);
-    }
-    if (items.length !== rows.length) throw unavailable();
-    return { scope, items, byId, children };
+    return { scope, totalItems: structure.items.length, items, byId, children };
   }
 
   private parent(tree: LiveTree, value: unknown): string {

@@ -34,6 +34,7 @@ export class WorkspaceStore {
         name TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_items_owner_parent ON workspace_items(owner_id,parent_id);
+      CREATE INDEX IF NOT EXISTS workspace_items_parent ON workspace_items(parent_id);
       CREATE TABLE IF NOT EXISTS workspace_tags (
         user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
         name TEXT NOT NULL,

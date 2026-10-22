@@ -122,6 +122,7 @@ export function migrateSpaceSchema(database: DatabaseSync): void {
     }
     database.exec(`
       CREATE INDEX IF NOT EXISTS workspace_items_owner_parent ON workspace_items(owner_id,parent_id);
+      CREATE INDEX IF NOT EXISTS workspace_items_parent ON workspace_items(parent_id);
       CREATE INDEX IF NOT EXISTS workspace_items_trash ON workspace_items(trashed_at);
       CREATE INDEX IF NOT EXISTS workspace_items_space_parent_position
         ON workspace_items(space_id,parent_id,space_position,id);
