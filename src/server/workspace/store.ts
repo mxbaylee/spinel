@@ -48,6 +48,8 @@ export class WorkspaceStore {
         FOREIGN KEY(user_id,name) REFERENCES workspace_tags(user_id,name) ON DELETE CASCADE
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_tag_assignments_item ON workspace_tag_assignments(item_id);
+      CREATE INDEX IF NOT EXISTS workspace_tag_assignments_user_name
+        ON workspace_tag_assignments(user_id,name,item_id);
       CREATE TABLE IF NOT EXISTS workspace_grants (
         item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
         user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,

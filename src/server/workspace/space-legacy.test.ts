@@ -340,6 +340,40 @@ test('owned discovery batches a deep ancestry and tags without repeating one wal
   }
 });
 
+test('many distinct personal labels use an indexed assignment lookup for suggestions', () => {
+  const f = fixture();
+  const names = Array.from(
+    { length: 1_000 },
+    (_, index) => `label-${String(index).padStart(4, '0')}`,
+  );
+  f.auth.transaction(() => {
+    const tag = f.db.prepare('INSERT INTO workspace_tags(user_id,name) VALUES(?,?)');
+    const assignment = f.db.prepare(
+      'INSERT INTO workspace_tag_assignments(user_id,item_id,name) VALUES(?,?,?)',
+    );
+    for (const name of names) {
+      tag.run(f.owner.id, name);
+      assignment.run(f.owner.id, f.ordinary.id, name);
+    }
+  });
+  expect(f.workspace.tagSuggestions(f.owner.id)).toEqual(names);
+  // A returned-row limit alone cannot bound a repeated per-tag scan through
+  // all this user's assignments; the joined user/name pair needs an index.
+  const plan = f.db
+    .prepare(
+      `EXPLAIN QUERY PLAN
+    SELECT t.name,a.item_id AS itemId FROM workspace_tags t
+    LEFT JOIN workspace_tag_assignments a ON a.user_id=t.user_id AND a.name=t.name
+    WHERE t.user_id=? ORDER BY t.name LIMIT ?`,
+    )
+    .all(f.owner.id, 10_001);
+  expect(
+    plan.some((row) =>
+      String(row.detail).includes('workspace_tag_assignments_user_name (user_id=? AND name=?)'),
+    ),
+  ).toBe(true);
+});
+
 test('owned discovery checks live ancestry while personal suggestions survive ordinary trash', () => {
   const f = fixture();
   f.workspace.changeTag(f.owner.id, f.ordinary.id, 'keep-my-vocabulary');
