@@ -85,6 +85,7 @@ export function spaceOfflineCatalog(root: SpaceFile, existing?: OfflineCatalog):
 const ACCOUNT_KEY = 'spinel.offline.account';
 const SIGN_OUT_KEY = 'spinel.offline.sign-out';
 const databaseName = (accountId: string) => `spinel-offline-${accountId}`;
+let preparationEpoch = 0;
 
 function storage() {
   try {
@@ -98,8 +99,60 @@ export function preparedAccount() {
   return storage()?.getItem(ACCOUNT_KEY) ?? null;
 }
 export function setPreparedAccount(accountId: string | null) {
+  // Clearing an already-empty pointer still cancels a first preparation that
+  // was in flight when sign-out began, before its component can unmount.
+  const previous = preparedAccount();
+  if (accountId === null || (previous !== null && previous !== accountId)) preparationEpoch++;
   if (accountId) storage()?.setItem(ACCOUNT_KEY, accountId);
   else storage()?.removeItem(ACCOUNT_KEY);
+}
+
+/** One mounted account's asynchronous preparation, never a reusable sign-in. */
+export function offlinePreparation(accountId: string, isMounted: () => boolean) {
+  let epoch = preparationEpoch;
+  const isCurrent = () =>
+    isMounted() &&
+    epoch === preparationEpoch &&
+    (preparedAccount() === null || preparedAccount() === accountId);
+  return {
+    isMounted,
+    isCurrent,
+    async finish(
+      store: Pick<OfflineStore, 'accountId' | 'saveCatalog'>,
+      user: OfflineUser,
+      catalog: OfflineCatalog,
+    ) {
+      if (store.accountId !== accountId || user.id !== accountId)
+        throw new Error('This preparation belongs to another account.');
+      if (!isCurrent()) return false;
+      await store.saveCatalog(user, catalog);
+      if (!isCurrent()) return false;
+      setPreparedAccount(accountId);
+      return true;
+    },
+    async clearIfEmpty(store: Pick<OfflineStore, 'accountId' | 'downloads'>) {
+      if (store.accountId !== accountId)
+        throw new Error('This preparation belongs to another account.');
+      if (!isCurrent()) return;
+      const remaining = await store.downloads();
+      if (!remaining.length && isCurrent() && preparedAccount() === accountId) {
+        setPreparedAccount(null);
+        // This operation deliberately cleared its own pointer. Its final UI
+        // update may complete; other work from before the clear stays cancelled.
+        epoch = preparationEpoch;
+      }
+    },
+  };
+}
+export type OfflinePreparation = ReturnType<typeof offlinePreparation>;
+
+/** A sign-out/account change in another tab also cancels pending completions. */
+export function watchOfflineAccount() {
+  const changed = (event: StorageEvent) => {
+    if (event.key === ACCOUNT_KEY || event.key === null) preparationEpoch++;
+  };
+  window.addEventListener('storage', changed);
+  return () => window.removeEventListener('storage', changed);
 }
 /** A sign-out made offline; the server session is revoked on the next online start. */
 export function signOutPending() {

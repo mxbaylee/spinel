@@ -1,4 +1,5 @@
 import type { SpaceNode, SpaceTreeData } from '../src/shared/spaces.ts';
+import { guestItemId } from './documentAccess.ts';
 
 const uuid = /^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i;
 export type SpaceSelection = { kind: 'default' } | { kind: 'page'; id: string } | { kind: 'trash' };
@@ -34,10 +35,11 @@ export function readSpaceLocation(location: Pick<Location, 'pathname' | 'search'
 
 export function spaceHref(spaceId?: string, selection: SpaceSelection = { kind: 'default' }) {
   const path = typeof location === 'undefined' ? '' : location.pathname;
+  const guest = guestItemId();
+  if (guest && spaceId && guest !== spaceId) throw new Error('This Space is not available.');
   const prefix = path.startsWith('/review/spaces') ? '/review/spaces' : '/spaces';
-  if (!spaceId) return prefix;
-  const base =
-    path === '/share/' + spaceId ? '/share/' + spaceId : prefix + '/' + encodeURIComponent(spaceId);
+  if (!spaceId && !guest) return prefix;
+  const base = guest ? '/share/' + guest : prefix + '/' + encodeURIComponent(spaceId!);
   return selection.kind === 'page'
     ? base + '?item=' + encodeURIComponent(selection.id)
     : selection.kind === 'trash'

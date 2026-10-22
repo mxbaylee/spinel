@@ -4,11 +4,18 @@ import { DownloadError, downloadForOffline } from './download.ts';
 import type { LocalStart } from './localStart.ts';
 import {
   openOfflineStore,
+  offlinePreparation,
   preparedAccount,
-  setPreparedAccount,
   spaceOfflineCatalog,
+  watchOfflineAccount,
 } from './offlineStore.ts';
-import type { OfflineCatalog, OfflineDownload, OfflineStore, OfflineUser } from './offlineStore.ts';
+import type {
+  OfflineCatalog,
+  OfflineDownload,
+  OfflinePreparation,
+  OfflineStore,
+  OfflineUser,
+} from './offlineStore.ts';
 import { prepareShell } from './shell.ts';
 
 export type OfflineMessage = { text: string; failed: boolean };
@@ -25,11 +32,28 @@ export function useOfflineDownloads(
   options: { spaceRoot?: SpaceFile } = {},
 ) {
   const [downloads, setDownloads] = useState(
-    () => new Map(local?.downloads.map((download) => [download.itemId, download])),
+    () =>
+      new Map(
+        local?.user.id === user.id
+          ? local.downloads.map((download) => [download.itemId, download])
+          : [],
+      ),
   );
+  const [shownAccount, setShownAccount] = useState(user.id);
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<OfflineMessage | null>(null);
-  const mounted = useRef(false);
+  const mounted = useRef<{ accountId: string } | null>(null);
+  const latestAccount = useRef(user.id);
+  latestAccount.current = user.id;
+  function preparation() {
+    const lifetime = mounted.current;
+    if (!lifetime || lifetime.accountId !== user.id || latestAccount.current !== user.id)
+      return null;
+    return offlinePreparation(
+      user.id,
+      () => mounted.current === lifetime && latestAccount.current === user.id,
+    );
+  }
   // A download can take minutes; read the catalog as it is when it finishes.
   const latestCatalog = useRef(catalog);
   latestCatalog.current = catalog;
@@ -37,10 +61,12 @@ export function useOfflineDownloads(
   latestRoot.current = options.spaceRoot;
   // The server admits one transfer at a time; run refreshes and toggles in turn.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
-  function serially<T>(work: (store: OfflineStore) => Promise<T>) {
+  function serially<T>(scope: OfflinePreparation, work: (store: OfflineStore) => Promise<T>) {
     const run = queue.current.then(async () => {
+      if (!scope.isCurrent()) return;
       const store = await openOfflineStore(user.id);
       try {
+        if (!scope.isCurrent()) return;
         return await work(store);
       } finally {
         store.close();
@@ -49,13 +75,16 @@ export function useOfflineDownloads(
     queue.current = run.catch(() => {});
     return run;
   }
-  function set(download: OfflineDownload) {
-    if (mounted.current)
-      setDownloads((previous) => new Map(previous).set(download.itemId, download));
+  function set(download: OfflineDownload, scope: OfflinePreparation) {
+    if (scope.isCurrent())
+      setDownloads((previous) =>
+        scope.isCurrent() ? new Map(previous).set(download.itemId, download) : previous,
+      );
   }
-  function unset(itemId: string) {
-    if (!mounted.current) return;
+  function unset(itemId: string, scope: OfflinePreparation) {
+    if (!scope.isCurrent()) return;
     setDownloads((previous) => {
+      if (!scope.isMounted()) return previous;
       const next = new Map(previous);
       next.delete(itemId);
       return next;
@@ -63,48 +92,60 @@ export function useOfflineDownloads(
   }
 
   useEffect(() => {
-    mounted.current = true;
-    if (local || preparedAccount() !== user.id)
-      return () => {
-        mounted.current = false;
-      };
-    let cancelled = false;
-    void serially(async (store) => {
+    const lifetime = { accountId: user.id };
+    mounted.current = lifetime;
+    setShownAccount(user.id);
+    setDownloads(
+      new Map(
+        local?.user.id === user.id
+          ? local.downloads.map((download) => [download.itemId, download])
+          : [],
+      ),
+    );
+    setBusy(null);
+    setMessage(null);
+    const stopWatching = watchOfflineAccount();
+    const close = () => {
+      if (mounted.current === lifetime) mounted.current = null;
+      stopWatching();
+    };
+    if (local || preparedAccount() !== user.id) return close;
+    const scope = preparation()!;
+    void serially(scope, async (store) => {
       const known = await store.downloads();
-      if (cancelled) return;
+      if (!scope.isCurrent()) return;
       setDownloads(new Map(known.map((download) => [download.itemId, download])));
       // Keep the shell current after an update or eviction, then refresh each
       // copy. A failed refresh keeps the last complete copy. A document this
       // account can no longer open is removed: SPN-039's copies hold no edits.
       await prepareShell();
       for (const download of known) {
-        if (cancelled) return;
+        if (!scope.isCurrent()) return;
         try {
-          set(await downloadForOffline(store, download.itemId, download.spaceId));
+          set(await downloadForOffline(store, download.itemId, download.spaceId), scope);
         } catch (error) {
-          if (error instanceof DownloadError && error.status === 404) {
+          if (scope.isCurrent() && error instanceof DownloadError && error.status === 404) {
             await store.remove(download.itemId);
-            unset(download.itemId);
-            if (!(await store.downloads()).length) setPreparedAccount(null);
+            unset(download.itemId, scope);
+            await scope.clearIfEmpty(store);
           }
         }
       }
     }).catch(() => {
       // Refreshing is best effort; downloads stay as they were.
     });
-    return () => {
-      cancelled = true;
-      mounted.current = false;
-    };
+    return close;
   }, [user.id, local]);
 
   async function saveCatalog(value: OfflineCatalog) {
-    if (local || preparedAccount() !== user.id) return;
-    await serially((store) => store.saveCatalog({ id: user.id, name: user.name }, value));
+    const scope = preparation();
+    if (!scope || local || preparedAccount() !== user.id) return;
+    await serially(scope, (store) => store.saveCatalog({ id: user.id, name: user.name }, value));
   }
 
   async function toggle(item: Pick<WorkspaceItem, 'id' | 'name' | 'kind'>, spaceId?: string) {
-    if (local || busy) return;
+    const scope = preparation();
+    if (!scope?.isCurrent() || local || busy) return;
     if (!['doc', 'sheet'].includes(item.kind)) {
       setMessage({ text: 'Only Sheets and Docs can be downloaded.', failed: true });
       return;
@@ -125,50 +166,59 @@ export function useOfflineDownloads(
     setBusy(item.id);
     setMessage(null);
     try {
-      await serially(async (store) => {
+      await serially(scope, async (store) => {
         if (downloaded) {
           await store.remove(item.id);
-          unset(item.id);
+          unset(item.id, scope);
           // With nothing left to open, the device is no longer prepared.
-          if (!(await store.downloads()).length) setPreparedAccount(null);
+          await scope.clearIfEmpty(store);
           return;
         }
         const download = await downloadForOffline(store, item.id, spaceId);
+        if (!scope.isCurrent()) return;
         // Keep the newest catalog; a refresh that failed meanwhile falls back
         // to the one there at the click, so a prepared device always has one.
         let current = latestCatalog.current() ?? atClick ?? (await store.catalog());
+        if (!scope.isCurrent()) return;
         const root = latestRoot.current?.id === spaceId ? latestRoot.current : rootAtClick;
         if (spaceId !== undefined && root?.id === spaceId)
           current = spaceOfflineCatalog(root, current ?? undefined);
         try {
           if (!current) throw new Error('This file list is incomplete. Try again.');
-          await store.saveCatalog({ id: user.id, name: user.name }, current);
+          if (!(await scope.finish(store, { id: user.id, name: user.name }, current))) return;
         } catch (error) {
           // A copy with no file list can't open offline; don't keep it.
-          await store.remove(item.id).catch(() => {});
+          if (scope.isCurrent()) await store.remove(item.id).catch(() => {});
           throw error;
         }
-        setPreparedAccount(user.id);
-        set(download);
+        set(download, scope);
       });
-      setMessage({
-        text: downloaded
-          ? `${item.name} was removed from this device.`
-          : `${item.name} is available offline on this device.`,
-        failed: false,
-      });
+      if (scope.isCurrent())
+        setMessage({
+          text: downloaded
+            ? `${item.name} was removed from this device.`
+            : `${item.name} is available offline on this device.`,
+          failed: false,
+        });
     } catch (error) {
-      setMessage({
-        text:
-          error instanceof Error && error.message
-            ? error.message
-            : 'Could not change offline availability. Try again.',
-        failed: true,
-      });
+      if (scope.isCurrent())
+        setMessage({
+          text:
+            error instanceof Error && error.message
+              ? error.message
+              : 'Could not change offline availability. Try again.',
+          failed: true,
+        });
     } finally {
-      if (mounted.current) setBusy(null);
+      if (scope.isMounted()) setBusy(null);
     }
   }
 
-  return { downloads, busy, message, toggle, saveCatalog };
+  return {
+    downloads: shownAccount === user.id ? downloads : new Map<string, OfflineDownload>(),
+    busy: shownAccount === user.id ? busy : null,
+    message: shownAccount === user.id ? message : null,
+    toggle,
+    saveCatalog,
+  };
 }

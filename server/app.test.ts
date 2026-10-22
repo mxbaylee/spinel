@@ -23,7 +23,7 @@ async function temporaryDirectory() {
   return directory;
 }
 
-test('startup upgrades ordinary storage before SDK initialization and reopens hidden Space data without exposing it', async () => {
+test('startup upgrades storage before SDK initialization and preserves Space data when explicitly disabled', async () => {
   const directory = await temporaryDirectory();
   const path = join(directory, 'app.sqlite');
   await writeFile(join(directory, 'index.html'), 'Fixture');
@@ -54,7 +54,11 @@ test('startup upgrades ordinary storage before SDK initialization and reopens hi
       .map((row) => row.name),
   ).not.toContain('space_id');
   db.close();
-  const first = await createApp({ databasePath: path, staticDirectory: directory });
+  const first = await createApp({
+    databasePath: path,
+    staticDirectory: directory,
+    spaceReview: false,
+  });
   await first.close();
   db = openDatabase(path);
   auth = new AuthStore(db);
@@ -80,7 +84,11 @@ test('startup upgrades ordinary storage before SDK initialization and reopens hi
   ).toBeDefined();
   db.close();
 
-  const reopened = await createApp({ databasePath: path, staticDirectory: directory });
+  const reopened = await createApp({
+    databasePath: path,
+    staticDirectory: directory,
+    spaceReview: false,
+  });
   cleanups.push(() => reopened.close());
   await new Promise<void>((resolve) => reopened.server.listen(0, '127.0.0.1', resolve));
   const root = 'http://127.0.0.1:' + (reopened.server.address() as AddressInfo).port;
@@ -97,7 +105,8 @@ test('startup upgrades ordinary storage before SDK initialization and reopens hi
     headers: { ...headers, Origin: 'http://localhost:3000', 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: 'Not exposed', kind: 'space', parentId: null }),
   });
-  expect(creation.status).toBe(400);
+  // A disabled capability is unavailable, including through outer-file creation.
+  expect(creation.status).toBe(404);
   db = openDatabase(path);
   try {
     expect(
@@ -107,6 +116,53 @@ test('startup upgrades ordinary storage before SDK initialization and reopens hi
       db.prepare('SELECT snapshot FROM doc_snapshots WHERE item_id=?').get(child.id)?.snapshot,
     ).toBe(hidden);
     expect(db.prepare('PRAGMA foreign_key_check').all()).toEqual([]);
+  } finally {
+    db.close();
+  }
+});
+
+test('normal startup exposes Space roots while native children require their exact Space route', async () => {
+  const directory = await temporaryDirectory();
+  const path = join(directory, 'app.sqlite');
+  await writeFile(join(directory, 'index.html'), 'Fixture');
+  const app = await createApp({ databasePath: path, staticDirectory: directory });
+  cleanups.push(() => app.close());
+  await new Promise<void>((resolve) => app.server.listen(0, '127.0.0.1', resolve));
+  const root = 'http://127.0.0.1:' + (app.server.address() as AddressInfo).port;
+  const db = openDatabase(path);
+  try {
+    const auth = new AuthStore(db);
+    const owner = auth.createUser('Owner');
+    const session = auth.createSession(owner.id);
+    const headers = {
+      Cookie: COOKIE_NAME + '=' + session.token,
+      Origin: 'http://localhost:3000',
+      'Content-Type': 'application/json',
+    };
+    const created = await fetch(root + '/api/items', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ name: 'Normal Space', kind: 'space', parentId: null }),
+    });
+    expect(created.status).toBe(201);
+    const { item } = (await created.json()) as { item: { id: string; kind: string } };
+    expect(item.kind).toBe('space');
+    const createdChild = await fetch(root + '/api/spaces/' + item.id + '/items', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ name: 'Scoped page', kind: 'doc', parentId: item.id }),
+    });
+    expect(createdChild.status).toBe(201);
+    const listed = await (await fetch(root + '/api/items', { headers })).json();
+    expect(listed.items).toContainEqual(expect.objectContaining({ id: item.id, kind: 'space' }));
+    const tree = await (await fetch(root + '/api/spaces/' + item.id, { headers })).json();
+    expect(tree.space.id).toBe(item.id);
+    expect(tree.items).toHaveLength(1);
+    const child = tree.items[0].id as string;
+    expect(listed.items).not.toContainEqual(expect.objectContaining({ id: child }));
+    expect((await fetch(root + '/api/items/' + child, { headers })).status).toBe(404);
+    expect((await fetch(root + '/api/items/' + child + '/doc', { headers })).status).toBe(404);
+    expect((await fetch(root + '/spaces/' + item.id, { headers })).status).toBe(200);
   } finally {
     db.close();
   }

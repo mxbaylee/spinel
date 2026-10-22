@@ -236,7 +236,7 @@ async function fixture(spaceReview: boolean) {
   };
 }
 
-test('default-off Space review refuses metadata, preparation and every protocol entry', async () => {
+test('explicitly disabled Spaces refuse metadata, preparation and every protocol entry', async () => {
   const f = await fixture(false);
   for (const path of ['/review/spaces', `/review/spaces/${f.space.id}?spaceReview=1`]) {
     const response = await f.send(path);
@@ -625,6 +625,75 @@ test('a rotated Sheet generation supports scoped parsed snapshots, blocks and mi
   expect(
     f.db.prepare('SELECT id FROM history_checkpoints WHERE id=?').get(checkpoint),
   ).toMatchObject({ id: checkpoint });
+}, 30_000);
+
+test('a root link transition drains an admitted child join before publishing the new capability', async () => {
+  const f = await fixture(true);
+  expect((await f.send(f.api(f.doc.id) + '/collaboration', f.cookie(), {})).status).toBe(200);
+  const client = await f.open(f.owner.id, f.doc.id);
+  expect(client.status).toBe(101);
+  client.socket.send(JSON.stringify({ cmd: CombCmd.HELLO, routeKey: '', routeType: '' }));
+  await expect
+    .poll(() => client.messages.find((message) => message.cmd === CombCmd.HELLO)?.infoRsp?.memberID)
+    .toBeTypeOf('string');
+  let entered!: () => void;
+  let release!: () => void;
+  const admission = new Promise<void>((resolve) => {
+    entered = resolve;
+  });
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const original = CollaborationStore.prototype.prepare;
+  const prepare = vi
+    .spyOn(CollaborationStore.prototype, 'prepare')
+    .mockImplementation(async function (
+      this: CollaborationStore,
+      ...args: Parameters<CollaborationStore['prepare']>
+    ) {
+      if (args[1] === f.doc.id) {
+        entered();
+        await held;
+      }
+      return original.apply(this, args);
+    });
+  let update: Promise<Response> | undefined;
+  try {
+    client.socket.send(
+      JSON.stringify({
+        cmd: CombCmd.JOIN,
+        routeKey: f.doc.id,
+        routeType: '',
+        joinReq: { rooms: [{ roomID: f.doc.id }] },
+      }),
+    );
+    await admission;
+    let finished = false;
+    update = f
+      .send(`/api/items/${f.space.id}/link`, f.cookie(), { role: 'viewer' }, 'PUT')
+      .then((response) => {
+        finished = true;
+        return response;
+      });
+    await expect.poll(() => f.workspace.links.state(f.space.id)?.state).toBe('pending');
+    // The caller cannot get the capability while any child admission is still
+    // running. New tickets are fenced for every sibling at the same root epoch.
+    expect(finished).toBe(false);
+    expect((await f.send(`${f.base()}/user/session-ticket?unitID=${f.sheet.id}`)).status).toBe(403);
+    expect(finished).toBe(false);
+    release();
+    const changed = await update;
+    expect(changed.status).toBe(200);
+    expect(f.workspace.links.state(f.space.id)?.state).toBe('active');
+    await expect.poll(() => client.socket.readyState).toBe(WebSocket.CLOSED);
+    expect(client.messages.filter((message) => message.cmd === CombCmd.JOIN)).not.toContainEqual(
+      expect.objectContaining({ code: CmdRspCode.OK }),
+    );
+  } finally {
+    release();
+    await update;
+    prepare.mockRestore();
+  }
 }, 30_000);
 
 test('one Space guest capability covers its tree while link transitions fence every child room and ticket', async () => {

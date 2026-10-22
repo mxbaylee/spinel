@@ -17,9 +17,9 @@ export async function startApp(options: {
     APP_ORIGIN: options.origin,
     PORT: new URL(options.origin).port,
     HOST: '127.0.0.1',
-    // Dedicated Space review fixtures opt in. Ambient developer configuration
-    // must never enable the gated routes for other application suites.
-    SPINEL_SPACE_REVIEW: options.spaceReview ? '1' : '0',
+    // Exercise the normal enabled application unless a fixture explicitly
+    // verifies disabled Space boundaries; ignore ambient developer overrides.
+    SPINEL_SPACE_REVIEW: options.spaceReview === false ? '0' : '1',
   };
   delete env.BACKUP_CONFIG_PATH;
   const child = spawn(

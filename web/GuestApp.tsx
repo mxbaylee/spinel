@@ -76,8 +76,8 @@ export function GuestApp() {
               requireResponse(response);
             });
             // A slow earlier exchange must not erase a newer link's fragment.
-            if (location.pathname === `/share/${id}` && location.hash.slice(1) === token)
-              history.replaceState(null, '', location.pathname + location.search);
+            if (guestItemId() === id && location.hash.slice(1) === token)
+              history.replaceState(null, '', `/share/${id}` + location.search);
           })().catch((error) => {
             exchange.current = null;
             throw error;

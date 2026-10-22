@@ -553,7 +553,11 @@ export class CollaborationStore {
     const family = validateDocumentCredentials(this.workspace, user, customData);
     if (family !== 'account' && family !== 'trusted') throw unavailable();
     const custom = Object.freeze({ ...customData });
-    this.workspaceAccess(user, id, 'read', custom);
+    try {
+      this.workspaceAccess(user, id, 'read', custom);
+    } catch {
+      throw unavailable();
+    }
     const initialUnit = this.generations.active(id).unitId;
     try {
       await this.prepare(user, id, custom);
@@ -621,6 +625,8 @@ export class CollaborationStore {
         ? { ...fields, kind: 'sheet', snapshot: data.snapshot as IWorkbookData }
         : { ...fields, kind: 'doc', snapshot: data.snapshot as IDocumentData };
     } catch (error) {
+      // A rejected asynchronous read still has to prove the originating session.
+      verify();
       if (!(error instanceof CollabError) || error.code !== 'PERMISSION_DENIED') throw error;
       // The SDK also refuses a read of a unit that a restore replaced or is
       // replacing. With access intact that is a version change the device can

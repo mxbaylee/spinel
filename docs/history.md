@@ -109,10 +109,12 @@ by authenticated archive restore and reads under a shared viewer's identity.
 
 ## Space documents
 
-[SPN-092](todo/SPN-092.md) uses the same checkpoint, naming and restore policy for
-one native child at `/api/spaces/:spaceId/items/:itemId/history`. The runtime-owned
-Space gate must be enabled. Public list, preview, naming and restore require a
-current everyday account session and the exact root and child; an account Viewer
+[SPN-092](implementation/SPN-092.md) applies the same checkpoint, naming and restore
+policy to one native child at `/api/spaces/:spaceId/items/:itemId/history`.
+[Spaces are enabled by default](sharing.md#space-sharing); explicitly disabling
+them refuses these routes and preserves deferred checkpoints. Public list,
+preview, naming and restore require a current everyday account session and the
+exact root and child; an account Viewer
 can read, while an Editor or Owner can name and restore. Guests, MCP credentials
 and the private background capability gain no public history permission.
 
@@ -136,6 +138,13 @@ to the existing checkpoint retention schedule for the current maintenance pass;
 pruning still resolves current live access again. Space and ordinary candidate
 batches are separate so unsupported Space work cannot consume the ordinary batch.
 This is checkpoint retention only: no automatic Space Trash expiry is introduced.
+
+`src/server/history/space.test.ts` covers account-only routes, each coalesced
+caller's authorization and bounded maintenance. Native restore and the
+[encrypted backup/ownership handover acceptance](backups.md#native-space-recovery-acceptance-2026-10-22)
+also preserve checkpoints, images, generation offsets and Before restore labels.
+The [implementation record](implementation/SPN-092.md) keeps this checkpoint
+acceptance distinct from final-head CI and merge approval.
 
 ## Why application-owned checkpoints
 

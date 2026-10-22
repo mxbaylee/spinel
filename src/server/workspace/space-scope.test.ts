@@ -176,11 +176,11 @@ test('outer ancestry must consist entirely of same-owner ordinary folders and be
   expect(() => f.scope()).toThrow('This Space is not available.');
 });
 
-test('Operator, guest, missing and disabled actors cannot resolve Space content', () => {
+test('Operator, unauthenticated guest, missing and disabled actors cannot resolve Space content', () => {
   const f = fixture();
   f.grant(f.space, f.editor.id, 'editor');
   expect(() => f.scope(f.admin.id)).toThrow('everyday account');
-  expect(() => f.scope(`guest:${randomUUID()}`)).toThrow('everyday account');
+  expect(() => f.scope(`guest:${randomUUID()}`)).toThrow('This Space is not available.');
   expect(() => f.scope(randomUUID())).toThrow('Sign in');
   f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.editor.id);
   expect(() => f.scope(f.editor.id, f.sheet)).toThrow('Sign in');
