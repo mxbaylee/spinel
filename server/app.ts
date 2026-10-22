@@ -37,7 +37,7 @@ export interface AppOptions {
   staticDirectory?: string;
   backupConfigPath?: string;
   image?: string;
-  /** Account-only implementation review; ordinary Space exposure waits for SPN-092. */
+  /** Spaces are enabled by default; false explicitly closes every Space boundary. */
   spaceReview?: boolean;
 }
 
@@ -63,10 +63,10 @@ export async function createApp(options: AppOptions) {
         await realtime?.revalidate();
       }),
     );
-    const spaceReview = options.spaceReview === true;
+    const spaceReview = options.spaceReview !== false;
     const workspace = new WorkspaceStore(auth, { spacesEnabled: spaceReview });
     // Rebuild the pre-production item schema before the collaboration SDK opens
-    // its second connection. This enables storage, not ordinary Space routes.
+    // its second connection. Storage migration is independent of the runtime gate.
     migrateSpaceSchema(database);
     const origin = options.origin ?? 'http://localhost:3000';
     const oauth = new AssistantOAuth(auth, origin);

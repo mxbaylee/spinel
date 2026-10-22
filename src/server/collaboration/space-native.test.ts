@@ -229,7 +229,7 @@ function persistentRows(db: DatabaseSync) {
   );
 }
 
-test('native Space admission is default-off and never inferred from an accessible child ID', async () => {
+test('disabled native Space admission stays closed and is never inferred from an accessible child ID', async () => {
   const f = await fixture(false);
   expect(() => f.collab.access(f.owner.id, f.sheet.id, false, f.context())).toThrow(
     'not available',

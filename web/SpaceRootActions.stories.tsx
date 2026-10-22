@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useRef, useState } from 'react';
 import type { ComponentProps } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, fireEvent, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { SpaceRootActions } from './SpaceRootActions.tsx';
@@ -51,6 +51,14 @@ async function choose(canvasElement: HTMLElement, name: string) {
     await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name }),
   );
 }
+async function themedTarget(control: HTMLElement, dialog: HTMLElement) {
+  const touch = window.matchMedia('(pointer: coarse), (max-width: 640px)').matches;
+  await expect(control.getBoundingClientRect().height).toBeGreaterThanOrEqual(touch ? 44 : 40);
+  await expect(getComputedStyle(control).backgroundColor).toBe(
+    getComputedStyle(dialog).backgroundColor,
+  );
+  await expect(getComputedStyle(control).color).toBe(getComputedStyle(dialog).color);
+}
 export const Owner: Story = {};
 export const Viewer: Story = {
   args: { item: { ...item, access: 'viewer', ownerName: 'Alex Kim' } },
@@ -63,7 +71,13 @@ export const Viewer: Story = {
 export const Rename: Story = { play: ({ canvasElement }) => choose(canvasElement, 'Rename') };
 export const Move: Story = {
   parameters: { api: loaded },
-  play: ({ canvasElement }) => choose(canvasElement, 'Move'),
+  play: async ({ canvasElement }) => {
+    await choose(canvasElement, 'Move');
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Move Space',
+    });
+    await themedTarget(await within(dialog).findByLabelText('Destination'), dialog);
+  },
 };
 export const LoadingDestinations: Story = {
   parameters: { api: { 'GET /api/items': pending() } },
@@ -95,7 +109,18 @@ export const ShareWholeSpace: Story = {
       [`GET /api/items/${item.id}/link`]: { enabled: false, role: 'viewer' },
     },
   },
-  play: ({ canvasElement }) => choose(canvasElement, 'Share'),
+  play: async ({ canvasElement }) => {
+    await choose(canvasElement, 'Share');
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Share Research Space',
+    });
+    await themedTarget(await within(dialog).findByLabelText('Access for Alex Kim'), dialog);
+    await themedTarget(
+      within(dialog).getByRole('button', { name: 'Apply access for Alex Kim' }),
+      dialog,
+    );
+    await themedTarget(within(dialog).getByLabelText('Link access'), dialog);
+  },
 };
 export const SaveFailure: Story = {
   parameters: {
@@ -114,97 +139,159 @@ export const SaveFailure: Story = {
   },
 };
 
-/** Hold the real request across leaving the view or receiving another root. */
-function DelayedAction({
-  replace,
+const nextSpace: SpaceFile = {
+  ...item,
+  id: '00000000-0000-4000-8000-000000000304',
+  name: 'Next Space',
+};
+
+/** Browser Back can replace or unmount the parent even while its modal is busy. */
+function HeldRootResponse({
+  unmount = false,
+  fail = false,
   ...args
-}: ComponentProps<typeof SpaceRootActions> & { replace: boolean }) {
-  const [left, setLeft] = useState(false);
-  const [pendingRequest, setPendingRequest] = useState(false);
-  const [finished, setFinished] = useState(false);
-  const release = useRef<(() => void) | undefined>(undefined);
+}: ComponentProps<typeof SpaceRootActions> & { unmount?: boolean; fail?: boolean }) {
+  const [ready, setReady] = useState(false);
+  const [moved, setMoved] = useState(false);
+  const [phase, setPhase] = useState('Ready');
+  const [draft, setDraft] = useState('Unsaved writing in the next Space.');
+  const release = useRef<(() => void) | null>(null);
   useEffect(() => {
-    const previous = globalThis.fetch;
-    const delayed: typeof fetch = async (input, init) => {
-      if (input !== `/api/items/${item.id}` && input !== `/api/items/${item.id}/trash`)
-        return previous(input, init);
-      setPendingRequest(true);
-      await new Promise<void>((resolve) => {
-        release.current = resolve;
-      });
-      return Response.json({ item: { ...item, name: 'Updated research' } });
+    const previousFetch = globalThis.fetch;
+    const fixtureFetch: typeof fetch = async (input, init) => {
+      if (
+        (input === `/api/items/${item.id}/trash` && init?.method === 'POST') ||
+        (input === `/api/items/${item.id}` && init?.method === 'PATCH')
+      ) {
+        setPhase('Previous response held');
+        return new Promise<Response>((resolve) => {
+          release.current = () => {
+            release.current = null;
+            resolve(
+              Response.json(
+                fail
+                  ? { error: 'The previous Space is no longer available.' }
+                  : { item: { ...item, name: 'Earlier update' } },
+                { status: fail ? 404 : 200 },
+              ),
+            );
+            setPhase('Previous response released');
+          };
+        });
+      }
+      return previousFetch(input, init);
     };
-    globalThis.fetch = delayed;
+    globalThis.fetch = fixtureFetch;
+    setReady(true);
     return () => {
-      release.current?.();
-      if (globalThis.fetch === delayed) globalThis.fetch = previous;
+      if (globalThis.fetch === fixtureFetch) globalThis.fetch = previousFetch;
+      release.current = null;
     };
-  }, []);
+  }, [fail]);
+  if (!ready) return null;
   return (
     <div className="sp-ui">
-      {(!left || replace) && (
-        <SpaceRootActions
-          {...args}
-          item={left ? { ...item, id: nested.id, name: 'Another Space' } : item}
-        />
-      )}
-      <button type="button" onClick={() => setLeft(true)}>
-        Leave current Space
+      <h2>{moved ? nextSpace.name : item.name}</h2>
+      <p role="status">{phase}</p>
+      <button data-testid="navigate-away" onClick={() => setMoved(true)}>
+        Simulate browser navigation
       </button>
       <button
-        type="button"
-        disabled={!pendingRequest}
-        onClick={() => {
-          release.current?.();
-          // Report completion after the response/json microtasks and React updates.
-          requestAnimationFrame(() => requestAnimationFrame(() => setFinished(true)));
-        }}
+        data-testid="release-response"
+        disabled={phase !== 'Previous response held'}
+        onClick={() => release.current?.()}
       >
-        Complete delayed response
+        Release previous response
       </button>
-      {finished && <p role="status">Delayed response completed</p>}
+      {moved && (
+        <label>
+          Current editor draft
+          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} />
+        </label>
+      )}
+      {(!moved || !unmount) && (
+        <SpaceRootActions
+          {...args}
+          item={moved ? nextSpace : item}
+          onChanged={(updated) => {
+            args.onChanged(updated);
+            setDraft('');
+          }}
+          onTrashed={() => {
+            args.onTrashed();
+            setDraft('');
+          }}
+        />
+      )}
     </div>
   );
 }
 
-async function leaveDuringAction(
-  canvasElement: HTMLElement,
-  args: ComponentProps<typeof SpaceRootActions>,
-  action: 'Rename' | 'Move to Trash',
-) {
-  await choose(canvasElement, action);
-  const body = within(canvasElement.ownerDocument.body);
+async function leaveWhileSaving(canvasElement: HTMLElement, mode: 'Rename' | 'Move to Trash') {
+  await choose(canvasElement, mode);
   await userEvent.click(
-    await body.findByRole('button', {
-      name: action === 'Rename' ? 'Save' : 'Move Space to Trash',
+    within(canvasElement.ownerDocument.body).getByRole('button', {
+      name: mode === 'Rename' ? /^Save$/ : /^Move Space to Trash$/,
     }),
   );
   const canvas = within(canvasElement);
-  // Browser Back can leave even while the modal is saving. Use the fixture
-  // control directly because the modal correctly makes background UI inert.
-  canvas.getByRole('button', { name: 'Leave current Space', hidden: true }).click();
-  await userEvent.click(await canvas.findByRole('button', { name: 'Complete delayed response' }));
-  await canvas.findByText('Delayed response completed');
-  await expect(args.onChanged).not.toHaveBeenCalled();
-  await expect(args.onTrashed).not.toHaveBeenCalled();
+  await canvas.findByText('Previous response held');
+  // This models a route update from outside the busy modal, not a pointer click behind it.
+  fireEvent.click(canvas.getByTestId('navigate-away'));
+  await canvas.findByLabelText('Current editor draft');
 }
 
-export const LeaveDuringRename: Story = {
-  render: (args) => <DelayedAction {...args} replace={false} />,
-  play: ({ canvasElement, args }) => leaveDuringAction(canvasElement, args, 'Rename'),
-};
-export const ReplaceDuringRename: Story = {
-  render: (args) => <DelayedAction {...args} replace />,
+async function releasePrevious(canvasElement: HTMLElement) {
+  const canvas = within(canvasElement);
+  fireEvent.click(canvas.getByTestId('release-response'));
+  await canvas.findByText('Previous response released');
+  // Let the response body and the component's async continuation finish before checking.
+  await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+}
+
+export const TrashResponseAfterNavigation: Story = {
+  render: (args) => <HeldRootResponse {...args} />,
   play: async ({ canvasElement, args }) => {
-    await leaveDuringAction(canvasElement, args, 'Rename');
+    await leaveWhileSaving(canvasElement, 'Move to Trash');
+    await releasePrevious(canvasElement);
+    await expect(args.onTrashed).not.toHaveBeenCalled();
+    await expect(args.onChanged).not.toHaveBeenCalled();
+    await expect(within(canvasElement).getByLabelText('Current editor draft')).toHaveValue(
+      'Unsaved writing in the next Space.',
+    );
     await expect(
-      within(canvasElement).getByRole('button', {
-        name: 'Space actions for Another Space',
-      }),
+      within(canvasElement).getByRole('button', { name: 'Space actions for Next Space' }),
     ).toBeEnabled();
   },
 };
-export const LeaveDuringTrash: Story = {
-  render: (args) => <DelayedAction {...args} replace={false} />,
-  play: ({ canvasElement, args }) => leaveDuringAction(canvasElement, args, 'Move to Trash'),
+
+export const RenameResponseAfterUnmount: Story = {
+  render: (args) => <HeldRootResponse {...args} unmount />,
+  play: async ({ canvasElement, args }) => {
+    await leaveWhileSaving(canvasElement, 'Rename');
+    await releasePrevious(canvasElement);
+    await expect(args.onChanged).not.toHaveBeenCalled();
+    await expect(args.onTrashed).not.toHaveBeenCalled();
+    await expect(within(canvasElement).getByLabelText('Current editor draft')).toHaveValue(
+      'Unsaved writing in the next Space.',
+    );
+  },
+};
+
+export const FailedResponseAfterNavigation: Story = {
+  render: (args) => <HeldRootResponse {...args} fail />,
+  play: async ({ canvasElement, args }) => {
+    await leaveWhileSaving(canvasElement, 'Rename');
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Space actions for Next Space' }),
+    );
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Rename' }));
+    const dialog = await body.findByRole('dialog', { name: 'Rename Space' });
+    await releasePrevious(canvasElement);
+    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Save' })).toBeEnabled());
+    await expect(within(dialog).getByLabelText('Name')).toHaveValue(nextSpace.name);
+    await expect(within(dialog).queryByRole('alert')).not.toBeInTheDocument();
+    await expect(args.onChanged).not.toHaveBeenCalled();
+  },
 };

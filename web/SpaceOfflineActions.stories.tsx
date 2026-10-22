@@ -9,7 +9,6 @@ import { SpaceOfflineActions } from './SpaceOfflineActions.tsx';
 import { OFFLINE_SDK_VERSION } from './offline/OfflineAccess.ts';
 import {
   openOfflineStore,
-  lockOfflineAccount,
   preparedAccount,
   setPreparedAccount,
   spaceOfflineCatalog,
@@ -249,7 +248,7 @@ function DelayedDownload({ change }: { change: 'unmount' | 'account' | 'sign-out
         onClick={() => {
           if (change === 'unmount') setLeft(true);
           else if (change === 'account') setAccountId(user.id + '-other');
-          else lockOfflineAccount(); // App does this before awaiting the logout response.
+          else setPreparedAccount(null); // App does this before awaiting the logout response.
         }}
       >
         Change account lifecycle

@@ -118,11 +118,12 @@ test('guest images use the same document grant and recheck after asynchronous de
     const docs = new DocumentStore(f.workspace),
       secret = f.enable('editor');
     const session = f.links.exchange(f.item.id, secret);
-    const principal = f.links.principal(
-      { cookie: `${guestCookieName(f.item.id)}=${session.token}` },
-      f.item.id,
-    );
-    const custom = { guestHash: principal.guestHash, guestItem: f.item.id };
+    const credentials = (token: string) => ({
+      guestHash: f.links.principal({ cookie: `${guestCookieName(f.item.id)}=${token}` }, f.item.id)
+        .guestHash,
+      guestItem: f.item.id,
+    });
+    const custom = credentials(session.token);
     const bytes = await sharp({
       create: { width: 2, height: 2, channels: 3, background: '#ff9900' },
     })
@@ -138,15 +139,8 @@ test('guest images use the same document grant and recheck after asynchronous de
     expect(() => docs.image(session.userId, f.item.id, saved.id, custom)).toThrow();
     const next = f.enable();
     const viewer = f.links.exchange(f.item.id, next);
-    const viewerPrincipal = f.links.principal(
-      { cookie: `${guestCookieName(f.item.id)}=${viewer.token}` },
-      f.item.id,
-    );
     await expect(
-      docs.upload(viewer.userId, f.item.id, bytes, 'image/png', {
-        guestHash: viewerPrincipal.guestHash,
-        guestItem: f.item.id,
-      }),
+      docs.upload(viewer.userId, f.item.id, bytes, 'image/png', credentials(viewer.token)),
     ).rejects.toThrow('viewing only');
     f.db.prepare('UPDATE workspace_items SET trashed_at=1 WHERE id=?').run(f.item.id);
     expect(() => f.links.exchange(f.item.id, next)).toThrow();

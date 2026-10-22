@@ -4,6 +4,7 @@ import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import { Sharing } from './Sharing.tsx';
+import './spaceRootActions.css';
 
 type Mode = 'share' | 'rename' | 'move' | 'trash';
 
@@ -39,17 +40,25 @@ export function SpaceRootActions({
       generation.current++;
     };
   }, [item.id, item.access]);
+  function currentCheck(request: number) {
+    return () => {
+      if (request !== generation.current)
+        throw new Error('This Space action is no longer current.');
+    };
+  }
+  function close() {
+    generation.current++;
+    setMode(null);
+    setLoading(false);
+  }
   async function open(next: Mode) {
     if (beforeChange && !beforeChange()) return;
     const request = ++generation.current;
-    const verifyCurrent = () => {
-      if (request !== generation.current) throw new Error('This Space view is no longer active.');
-    };
-    setLoading(false);
     setMode(next);
     setName(item.name);
     setDestination(item.parentId ?? '');
     setError('');
+    setLoading(false);
     if (next !== 'move') return;
     if (folders) {
       setAvailable(folders);
@@ -57,7 +66,12 @@ export function SpaceRootActions({
     }
     setLoading(true);
     try {
-      const result = await itemsRequest<{ items: FileItem[] }>('', 'GET', undefined, verifyCurrent);
+      const result = await itemsRequest<{ items: FileItem[] }>(
+        '',
+        'GET',
+        undefined,
+        currentCheck(request),
+      );
       if (request === generation.current)
         setAvailable(
           result.items.filter(
@@ -72,16 +86,15 @@ export function SpaceRootActions({
     }
   }
   async function save() {
-    if (mode !== 'rename' && mode !== 'move' && mode !== 'trash') return;
+    if (busy || (mode !== 'rename' && mode !== 'move' && mode !== 'trash')) return;
     const request = ++generation.current;
-    const verifyCurrent = () => {
-      if (request !== generation.current) throw new Error('This Space view is no longer active.');
-    };
     setBusy(true);
     setError('');
     try {
       if (mode === 'trash') {
-        await itemsRequest(`/${item.id}/trash`, 'POST', {}, verifyCurrent);
+        await itemsRequest(`/${item.id}/trash`, 'POST', {}, currentCheck(request));
+        // Browser navigation can replace this root while its mutation completes.
+        // Its server result stands, but it must not clear the next editor's guard.
         if (request !== generation.current) return;
         setMode(null);
         onTrashed();
@@ -90,13 +103,13 @@ export function SpaceRootActions({
           `/${item.id}`,
           'PATCH',
           mode === 'rename' ? { name } : { parentId: destination || null },
-          verifyCurrent,
+          currentCheck(request),
         );
         if (request !== generation.current) return;
-        if (result.item.kind !== 'space')
+        if (result.item.kind !== 'space' || result.item.id !== item.id)
           throw new Error('The Space could not be updated. Refresh and try again.');
-        onChanged(result.item);
         setMode(null);
+        onChanged(result.item);
       }
     } catch (cause) {
       if (request === generation.current)
@@ -166,89 +179,88 @@ export function SpaceRootActions({
           icon={mode === 'trash' ? 'trash' : mode === 'share' ? 'share' : 'space'}
           dismissDisabled={busy}
           onOpenChange={(value) => {
-            if (!value) {
-              generation.current++;
-              setMode(null);
-            }
+            if (!value) close();
           }}
         >
-          {mode === 'share' ? (
-            <Sharing item={item} onClose={() => setMode(null)} />
-          ) : (
-            <form
-              onSubmit={(event) => {
-                event.preventDefault();
-                void save();
-              }}
-            >
-              {mode === 'rename' ? (
-                <label>
-                  Name
-                  <input
-                    autoFocus
-                    required
-                    maxLength={120}
-                    value={name}
-                    disabled={busy}
-                    onChange={(event) => setName(event.target.value)}
-                  />
-                </label>
-              ) : mode === 'move' ? (
-                <>
+          <div className="space-root-actions">
+            {mode === 'share' ? (
+              <Sharing item={item} onClose={close} />
+            ) : (
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void save();
+                }}
+              >
+                {mode === 'rename' ? (
+                  <label>
+                    Name
+                    <input
+                      autoFocus
+                      required
+                      maxLength={120}
+                      value={name}
+                      disabled={busy}
+                      onChange={(event) => setName(event.target.value)}
+                    />
+                  </label>
+                ) : mode === 'move' ? (
+                  <>
+                    <p>
+                      Move the whole Space to My files or one of your folders. Its pages stay
+                      together.
+                    </p>
+                    {loading ? (
+                      <p role="status">Loading your folders…</p>
+                    ) : (
+                      <label>
+                        Destination
+                        <select
+                          value={destination}
+                          disabled={busy}
+                          onChange={(event) => setDestination(event.target.value)}
+                        >
+                          <option value="">My files</option>
+                          {owned
+                            .map((folder) => ({ folder, name: path(folder) }))
+                            .sort(
+                              (a, b) =>
+                                a.name.localeCompare(b.name) ||
+                                a.folder.id.localeCompare(b.folder.id),
+                            )
+                            .map(({ folder, name }) => (
+                              <option key={folder.id} value={folder.id}>
+                                {name}
+                              </option>
+                            ))}
+                        </select>
+                      </label>
+                    )}
+                  </>
+                ) : (
                   <p>
-                    Move the whole Space to My files or one of your folders. Its pages stay
-                    together.
+                    {item.name} and all its pages will become unavailable to collaborators and
+                    guests. You can restore the whole Space from My files → Trash. Pages already in
+                    the Space’s Trash stay there. The Space will be kept until you explicitly delete
+                    it permanently.
                   </p>
-                  {loading ? (
-                    <p role="status">Loading your folders…</p>
-                  ) : (
-                    <label>
-                      Destination
-                      <select
-                        value={destination}
-                        disabled={busy}
-                        onChange={(event) => setDestination(event.target.value)}
-                      >
-                        <option value="">My files</option>
-                        {owned
-                          .map((folder) => ({ folder, name: path(folder) }))
-                          .sort(
-                            (a, b) =>
-                              a.name.localeCompare(b.name) ||
-                              a.folder.id.localeCompare(b.folder.id),
-                          )
-                          .map(({ folder, name }) => (
-                            <option key={folder.id} value={folder.id}>
-                              {name}
-                            </option>
-                          ))}
-                      </select>
-                    </label>
-                  )}
-                </>
-              ) : (
-                <p>
-                  {item.name} and all its pages will become unavailable to collaborators and guests.
-                  You can restore the whole Space from My files → Trash. Pages already in the
-                  Space’s Trash stay there. The Space will be kept until you explicitly delete it
-                  permanently.
-                </p>
-              )}
-              {error && <p role="alert">{error}</p>}
-              <div className="item-actions">
-                <Button
-                  type="submit"
-                  primary
-                  disabled={busy || loading || (mode === 'rename' && !name.trim())}
-                >
-                  {busy ? 'Saving…' : mode === 'trash' ? 'Move Space to Trash' : 'Save'}
-                </Button>
-                <Button type="button" disabled={busy} onClick={() => setMode(null)}>
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          )}
+                )}
+                {error && <p role="alert">{error}</p>}
+                <div className="item-actions">
+                  <Button
+                    type="submit"
+                    primary
+                    disabled={busy || loading || (mode === 'rename' && !name.trim())}
+                  >
+                    {busy ? 'Saving…' : mode === 'trash' ? 'Move Space to Trash' : 'Save'}
+                  </Button>
+                  <Button type="button" disabled={busy} onClick={close}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            )}
+          </div>
         </Modal>
       )}
     </>

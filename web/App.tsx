@@ -35,7 +35,7 @@ import { within } from './offline/shell.ts';
 import type { LocalStart } from './offline/localStart.ts';
 import {
   preparedAccount,
-  lockOfflineAccount,
+  setPreparedAccount,
   setSignOutPending,
   signOutPending,
 } from './offline/offlineStore.ts';
@@ -155,7 +155,7 @@ export function App() {
         if (!isNetworkFailure(failure)) {
           // The server ended this session (sign-out, revocation): stop offline
           // access too. claimDevice restores it after the next sign-in.
-          if ((failure as { status?: number }).status === 401) lockOfflineAccount();
+          if ((failure as { status?: number }).status === 401) setPreparedAccount(null);
           if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
         }
@@ -295,7 +295,7 @@ export function App() {
     cancel();
     // Lock this device's offline data at once; it opens again only for the
     // account that next signs in online.
-    lockOfflineAccount();
+    setPreparedAccount(null);
     if (local) {
       // Offline, the server session can't be revoked yet: do it on the next start.
       setSignOutPending(true);

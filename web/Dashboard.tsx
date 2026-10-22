@@ -23,6 +23,7 @@ import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import type { LocalStart } from './offline/localStart.ts';
 import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
+import { spaceCopies } from './offline/spaceCopies.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
@@ -240,13 +241,14 @@ export function Dashboard({
   }
   function openFile(item: FileItem) {
     if (item.kind !== 'space') return navigate(item.id);
-    if (local) {
+    if (local && !spaceCopies(offline.downloads.values(), item.id).length) {
       setError(`${item.name} needs a connection. Connect to open this Space.`);
       return;
     }
     if (!navigation.allow()) return;
     // A Space has its own navigation. Keep the last My files view intact.
     navigation.dirty(false);
+    setError('');
     if (onOpen) onOpen(item);
     else location.assign(spaceHref(item.id));
   }
@@ -344,6 +346,8 @@ export function Dashboard({
     }
   }
   function offlineState(item: FileItem) {
+    if (item.kind === 'space' && spaceCopies(offline.downloads.values(), item.id).length)
+      return 'pages-available';
     if (offline.downloads.has(item.id)) return 'available';
     return local && (offlineKind(item) || item.kind === 'space') ? 'needs-connection' : null;
   }

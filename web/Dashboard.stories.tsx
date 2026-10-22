@@ -309,3 +309,44 @@ export const LocalSpaceNeedsConnection: Story = {
     await expect(canvas.getByRole('alert')).toHaveTextContent('Connect to open this Space');
   },
 };
+
+const unpreparedSpace: SpaceFile = { ...space, id: id(16), name: 'Unprepared Space' };
+export const LocalPreparedSpaceOpens: Story = {
+  args: {
+    onOpen: fn(),
+    local: {
+      ...local,
+      catalog: { ...local.catalog, items: [...items, space, unpreparedSpace] },
+      downloads: [
+        ...local.downloads,
+        {
+          itemId: id(15),
+          spaceId: space.id,
+          name: 'Prepared notes',
+          kind: 'doc',
+          readOnly: false,
+          revision: 4,
+          downloadedAt: synced,
+        },
+      ],
+    },
+  },
+  parameters: { api: empty },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const prepared = await canvas.findByRole('button', { name: /^Research Space Space$/ });
+    await expect(
+      within(prepared.closest('li')!).getByText('Pages available offline'),
+    ).toBeVisible();
+    const unavailable = canvas.getByRole('button', { name: /^Unprepared Space Space$/ });
+    await expect(within(unavailable.closest('li')!).getByText('Needs a connection')).toBeVisible();
+    await userEvent.click(unavailable);
+    await expect(args.onOpen).not.toHaveBeenCalled();
+    await expect(canvas.getByRole('alert')).toHaveTextContent('Connect to open this Space');
+    await userEvent.click(prepared);
+    await expect(args.onOpen).toHaveBeenCalledTimes(1);
+    await expect(args.onOpen).toHaveBeenCalledWith(space);
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+    await expect(canvas.getByRole('heading', { name: 'My files' })).toBeVisible();
+  },
+};

@@ -1,10 +1,18 @@
 /** Row badge for an item kept on this device, or one that can't open offline. */
-export function OfflineBadge({ state }: { state: 'available' | 'needs-connection' | null }) {
+export function OfflineBadge({
+  state,
+}: {
+  state: 'available' | 'pages-available' | 'needs-connection' | null;
+}) {
   if (!state) return null;
   return (
-    <span className="offline-badge" data-state={state}>
-      <span aria-hidden="true">{state === 'available' ? '⤓' : '⌁'}</span>{' '}
-      {state === 'available' ? 'Available offline' : 'Needs a connection'}
+    <span className="offline-badge" data-state={state === 'pages-available' ? 'available' : state}>
+      <span aria-hidden="true">{state === 'needs-connection' ? '⌁' : '⤓'}</span>{' '}
+      {state === 'pages-available'
+        ? 'Pages available offline'
+        : state === 'available'
+          ? 'Available offline'
+          : 'Needs a connection'}
     </span>
   );
 }
