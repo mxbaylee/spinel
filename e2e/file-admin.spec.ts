@@ -148,6 +148,7 @@ test('Owner delegates file administration on every outer type, administrators ma
         await other.setViewportSize({ width, height: 1000 });
         await other.emulateMedia({ colorScheme: theme });
         await expect(other.locator('html')).toHaveAttribute('data-theme', theme);
+        await move.scrollIntoViewIfNeeded();
         await mkdir('test-results/theme-screenshots', { recursive: true });
         await other.screenshot({
           path: `test-results/theme-screenshots/spn-079-${kind}-move-${variant}-${info.project.name}.png`,
