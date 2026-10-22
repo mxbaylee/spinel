@@ -514,7 +514,13 @@ test('ordinary My files creates and opens one Space root while preserving its pr
     await form.getByRole('button', { name: 'Create', exact: true }).click();
     const created = await creating;
     expect(created.status()).toBe(201);
-    const { item } = (await created.json()) as { item: SpaceFile };
+    // Creation navigates out of Dashboard, which releases Chromium's old-page
+    // response body. Verify the persisted item through its opened stable URL.
+    await expect(page).toHaveURL(new RegExp('^' + escape(f.origin) + '/spaces/[a-f\\d-]{36}$'));
+    const openedId = new URL(page.url()).pathname.split('/').at(-1)!;
+    const metadata = await f.context.request.get(`/api/items/${openedId}`);
+    expect(metadata.status()).toBe(200);
+    const { item } = (await metadata.json()) as { item: SpaceFile };
     expect(item).toMatchObject({ kind: 'space', parentId: f.folder.id, access: 'owner' });
     await expect(page).toHaveURL(f.origin + normalHref(item.id));
     await expect(

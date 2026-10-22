@@ -334,6 +334,8 @@ async function capture(f: Fixture, info: TestInfo, role: string) {
     animations: 'disabled',
   });
   await f.page.getByRole('button', { name: 'Close Space contents', exact: true }).click();
+  // Wait for the animated drawer to leave before revealing the desktop rail.
+  await expect(f.page.getByRole('dialog', { name: 'Space contents', exact: true })).toBeHidden();
   await f.page.setViewportSize({ width: 1440, height: 1050 });
 }
 
