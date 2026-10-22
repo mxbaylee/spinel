@@ -185,7 +185,7 @@ export const StableGeometryAndRetry: Story = {
     await waitFor(() =>
       expect(page.queryByRole('dialog', { name: 'Save details' })).not.toBeInTheDocument(),
     );
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 
@@ -198,12 +198,12 @@ export const KeyboardDetails: Story = {
       name: 'Save details: Not saved',
     });
     await userEvent.tab();
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.keyboard('{Enter}');
     await expect(await page.findByRole('dialog', { name: 'Save details' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Retry saving' })).toHaveFocus();
+    await waitFor(() => expect(page.getByRole('button', { name: 'Retry saving' })).toHaveFocus());
     await userEvent.keyboard('{Escape}');
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 export const TouchDetails: Story = {
