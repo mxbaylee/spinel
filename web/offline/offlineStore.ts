@@ -84,6 +84,7 @@ export function spaceOfflineCatalog(root: SpaceFile, existing?: OfflineCatalog):
 
 const ACCOUNT_KEY = 'spinel.offline.account';
 const SIGN_OUT_KEY = 'spinel.offline.sign-out';
+const CANCELLATION_KEY = 'spinel.offline.cancellation';
 const databaseName = (accountId: string) => `spinel-offline-${accountId}`;
 let preparationEpoch = 0;
 
@@ -102,7 +103,17 @@ export function setPreparedAccount(accountId: string | null) {
   // Clearing an already-empty pointer still cancels a first preparation that
   // was in flight when sign-out began, before its component can unmount.
   const previous = preparedAccount();
-  if (accountId === null || (previous !== null && previous !== accountId)) preparationEpoch++;
+  if (accountId === null || (previous !== null && previous !== accountId)) {
+    preparationEpoch++;
+    // removeItem on an absent account emits no storage event. A fresh nonce
+    // also cancels another tab's first download, before any marker exists.
+    try {
+      storage()?.setItem(CANCELLATION_KEY, crypto.randomUUID());
+    } catch {
+      // Full/blocked storage must not interrupt sign-out. Removing the existing
+      // marker still notifies other tabs, and the local epoch already changed.
+    }
+  }
   if (accountId) storage()?.setItem(ACCOUNT_KEY, accountId);
   else storage()?.removeItem(ACCOUNT_KEY);
 }
@@ -110,9 +121,11 @@ export function setPreparedAccount(accountId: string | null) {
 /** One mounted account's asynchronous preparation, never a reusable sign-in. */
 export function offlinePreparation(accountId: string, isMounted: () => boolean) {
   let epoch = preparationEpoch;
+  let cancellation = storage()?.getItem(CANCELLATION_KEY);
   const isCurrent = () =>
     isMounted() &&
     epoch === preparationEpoch &&
+    cancellation === storage()?.getItem(CANCELLATION_KEY) &&
     (preparedAccount() === null || preparedAccount() === accountId);
   return {
     isMounted,
@@ -140,6 +153,7 @@ export function offlinePreparation(accountId: string, isMounted: () => boolean) 
         // This operation deliberately cleared its own pointer. Its final UI
         // update may complete; other work from before the clear stays cancelled.
         epoch = preparationEpoch;
+        cancellation = storage()?.getItem(CANCELLATION_KEY);
       }
     },
   };
@@ -149,7 +163,8 @@ export type OfflinePreparation = ReturnType<typeof offlinePreparation>;
 /** A sign-out/account change in another tab also cancels pending completions. */
 export function watchOfflineAccount() {
   const changed = (event: StorageEvent) => {
-    if (event.key === ACCOUNT_KEY || event.key === null) preparationEpoch++;
+    if (event.key === ACCOUNT_KEY || event.key === CANCELLATION_KEY || event.key === null)
+      preparationEpoch++;
   };
   window.addEventListener('storage', changed);
   return () => window.removeEventListener('storage', changed);

@@ -495,7 +495,9 @@ test('a View Space link covers nested and future pages without outer access or p
       (await f.guest.request.get(`/api/items/${f.outside.id}/images/${image.id}`)).status(),
     ).toBe(401);
     expect(
-      (await f.guest.request.get(`${endpoint(f.root.id, f.outside.id)}/images/${image.id}`)).status(),
+      (
+        await f.guest.request.get(`${endpoint(f.root.id, f.outside.id)}/images/${image.id}`)
+      ).status(),
     ).toBe(404);
     expect(
       (

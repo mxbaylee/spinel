@@ -188,3 +188,39 @@ test('completion refuses mismatched catalog and storage accounts before either c
   expect(fixture.store.saveCatalog).not.toHaveBeenCalled();
   expect(preparedAccount()).toBeNull();
 });
+
+// An initially absent marker has no removeItem event; the durable nonce fences
+// completion even before the receiving tab's storage-event task is dispatched.
+test('another tab signing out before the first preparation publishes cannot revive its account', async () => {
+  const fixture = delayedCatalog();
+  const scope = offlinePreparation(user.id, () => true);
+  const completion = scope.finish(fixture.store, user, catalog);
+  expect(preparedAccount()).toBeNull();
+  values.set('spinel.offline.cancellation', crypto.randomUUID());
+  fixture.committed.resolve();
+  await expect(completion).resolves.toBe(false);
+  expect(preparedAccount()).toBeNull();
+});
+
+test('every sign-out publishes a new cancellation even with no prepared account', () => {
+  const before = values.get('spinel.offline.cancellation');
+  setPreparedAccount(null);
+  const first = values.get('spinel.offline.cancellation');
+  expect(first).toBeTypeOf('string');
+  expect(first).not.toBe(before);
+  setPreparedAccount(null);
+  expect(values.get('spinel.offline.cancellation')).not.toBe(first);
+  expect(preparedAccount()).toBeNull();
+});
+
+test('a full localStorage cannot stop sign-out from clearing the prepared account', () => {
+  setPreparedAccount(user.id);
+  const scope = offlinePreparation(user.id, () => true);
+  const storage = window.localStorage;
+  vi.spyOn(storage, 'setItem').mockImplementation(() => {
+    throw new DOMException('Storage full', 'QuotaExceededError');
+  });
+  expect(() => setPreparedAccount(null)).not.toThrow();
+  expect(preparedAccount()).toBeNull();
+  expect(scope.isCurrent()).toBe(false);
+});

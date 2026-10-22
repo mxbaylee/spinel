@@ -413,7 +413,9 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
       // Inspect the native drawing itself: a cached manifest or image URL alone
       // would not prove that verified image bytes reach the offline renderer.
       await expect.poll(() => orangePixels(surface), { timeout: 25_000 }).toBeGreaterThan(1000);
-      await surface.click({ position: { x: 130, y: 200 } });
+      // Focus the text row above the drawing, not the image selection. Native
+      // copy of a selected drawing legitimately has no plain-text payload.
+      await surface.click({ position: { x: 220, y: 175 } });
       await page.keyboard.press('Control+a');
       await page.evaluate(() => navigator.clipboard.writeText('not copied'));
       await page.keyboard.press('Control+c');
