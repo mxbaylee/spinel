@@ -10,6 +10,7 @@ import type {
   SpaceTreeData,
 } from '../src/shared/spaces.ts';
 import type { ItemAccess } from '../src/shared/workspace.ts';
+import { App } from './App.tsx';
 import { Space } from './Space.tsx';
 import type { SpaceEditorProps } from './Space.tsx';
 import { spaceHref } from './spaceNavigation.ts';
@@ -104,10 +105,12 @@ const trashApi = (access: 'owner' | 'editor' = 'owner') => ({
 function RouteFixture({
   href,
   failTrashOnce,
+  appSession,
   children,
 }: {
   href: string;
   failTrashOnce?: boolean;
+  appSession?: 'mocked' | 'unreachable';
   children: ReactNode;
 }) {
   const [ready, setReady] = useState(false);
@@ -116,6 +119,9 @@ function RouteFixture({
     const previousFetch = globalThis.fetch;
     let failedTrash = false;
     const fixtureFetch: typeof fetch = async (input, init) => {
+      // A network failure has no HTTP response; App distinguishes it from a denial.
+      if (appSession === 'unreachable' && input === '/api/auth/session')
+        throw new TypeError('Failed to fetch');
       if (failTrashOnce && !failedTrash && input === '/api/spaces/' + root + '/trash') {
         failedTrash = true;
         return Response.json(
@@ -125,10 +131,11 @@ function RouteFixture({
       }
       return previousFetch(input, init);
     };
-    if (failTrashOnce) globalThis.fetch = fixtureFetch;
+    if (failTrashOnce || appSession === 'unreachable') globalThis.fetch = fixtureFetch;
     const memory = [
       'spinel:recent-space:' + encodeURIComponent(user.id),
       'spinel:space-selection:' + encodeURIComponent(user.id) + ':' + root,
+      ...(appSession ? ['spinel.offline.account', 'spinel.offline.sign-out'] : []),
     ].map((key) => {
       let value: string | null = null;
       try {
@@ -153,7 +160,7 @@ function RouteFixture({
         }
       }
     };
-  }, [href, failTrashOnce]);
+  }, [href, failTrashOnce, appSession]);
   return ready ? children : null;
 }
 
@@ -222,7 +229,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The real account Space controller, tree, dialogs and recovery components. API responses and the editor body are fixtures; these examples do not establish native editing, authorization or persistence. The application review surface remains server-gated and default-off.',
+          'The real account Space controller, tree, dialogs and recovery components. API responses and the editor body are fixtures; these examples do not establish native editing, authorization or persistence. App startup stories mount the actual App before Space content is available. The application review surface remains server-gated and default-off.',
       },
     },
   },
@@ -252,6 +259,56 @@ const meta = {
 } satisfies Meta<typeof Space>;
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+const renderApp: NonNullable<Story['render']> = (_args, { parameters }) => (
+  <RouteFixture href={spaceHref(root)} appSession={parameters.appSession ?? 'mocked'}>
+    <App />
+  </RouteFixture>
+);
+
+/** Actual App bootstrap, before a verified account can enter the Space controller. */
+export const AppLoading: Story = {
+  render: renderApp,
+  parameters: { api: { 'GET /api/auth/session': pending() } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('status')).toHaveTextContent('Loading…');
+    await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
+  },
+};
+
+/** Spaces require a live account session; a network failure cannot open local data. */
+export const AppUnreachable: Story = {
+  render: renderApp,
+  parameters: { appSession: 'unreachable' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('heading', { name: "You're offline" })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Try again' })).toBeEnabled();
+    await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
+  },
+};
+
+/** The real Operator-session branch refuses Space content without opening IndexedDB. */
+export const AppUnavailable: Story = {
+  render: renderApp,
+  parameters: {
+    api: {
+      'GET /api/auth/session': {
+        user: { id: 'storybook-space-operator', name: 'Operator', isAdmin: true },
+      },
+      'GET /api/health': { status: 'ok' },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'This Space is not available.',
+    );
+    await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: 'New Space' })).not.toBeInTheDocument();
+  },
+};
 
 async function ready(canvasElement: HTMLElement, title = 'Welcome') {
   await within(canvasElement).findByRole('heading', { name: title, level: 1 });
@@ -454,10 +511,45 @@ export const DeepTree: Story = {
   play: async ({ canvasElement }) => {
     await ready(canvasElement, 'Level 14');
     const navigation = await contents(canvasElement);
-    await expect(navigation.getByRole('link', { name: 'Level 14' })).toHaveAttribute(
-      'aria-current',
-      'page',
+    const selected = navigation.getByRole('link', { name: 'Level 14' });
+    const action = navigation.getByRole('button', { name: 'More actions for Level 14' });
+    const page = within(canvasElement.ownerDocument.body);
+    const region = page.getByRole('region', { name: 'Space pages' });
+    await expect(selected).toHaveAttribute('aria-current', 'page');
+    // Check before any focus/click: browser-assisted scrolling must not hide a
+    // missing action from the initial selected-page reveal.
+    await waitFor(() => {
+      const bounds = region.getBoundingClientRect();
+      for (const target of [selected, action]) {
+        const rect = target.getBoundingClientRect();
+        expect(rect.left).toBeGreaterThanOrEqual(bounds.left - 1);
+        expect(rect.right).toBeLessThanOrEqual(bounds.right + 1);
+        expect(rect.top).toBeGreaterThanOrEqual(bounds.top - 1);
+        expect(rect.bottom).toBeLessThanOrEqual(bounds.bottom + 1);
+      }
+    });
+    const rect = action.getBoundingClientRect();
+    await expect(
+      action.contains(
+        canvasElement.ownerDocument.elementFromPoint(
+          rect.left + rect.width / 2,
+          rect.top + rect.height / 2,
+        ),
+      ),
+    ).toBe(true);
+    const scrollLeft = region.scrollLeft;
+    await userEvent.click(action);
+    const menu = within(await page.findByRole('menu', { name: 'More actions for Level 14' }));
+    for (const name of ['Rename', 'Move or reorder', 'Trash'])
+      await expect(menu.getByRole('menuitem', { name })).toBeVisible();
+    await expect(region.scrollLeft).toBe(scrollLeft);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(
+        page.queryByRole('menu', { name: 'More actions for Level 14' }),
+      ).not.toBeInTheDocument(),
     );
+    await expect(selected).toHaveAttribute('aria-current', 'page');
   },
 };
 

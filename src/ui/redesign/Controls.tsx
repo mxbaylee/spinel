@@ -8,6 +8,8 @@ import { Popover } from '@base-ui/react/popover';
 import { RadioGroup } from '@base-ui/react/radio-group';
 import { Radio } from '@base-ui/react/radio';
 import { ProfileIcon } from '../../profile/ProfileIcon.tsx';
+import { EntityIcon } from '../EntityIcon.tsx';
+import type { EntityKind } from '../entityIconGeometry.ts';
 import './controls.css';
 
 export function Button({
@@ -184,7 +186,7 @@ export function Modal({
   dismissDisabled = false,
 }: {
   title: string;
-  icon?: keyof typeof modalIcons;
+  icon?: keyof typeof modalIcons | EntityKind;
   description?: string;
   trigger?: string;
   children: ReactNode;
@@ -211,7 +213,11 @@ export function Modal({
           <div className="sp-modal-heading">
             <Dialog.Title className="sp-modal-title">
               <span className="sp-modal-title-icon" aria-hidden="true">
-                <ProfileIcon icon={`lucide:${modalIcons[icon]}`} size={20} />
+                {icon === 'doc' || icon === 'sheet' || icon === 'space' ? (
+                  <EntityIcon kind={icon} size={20} />
+                ) : (
+                  <ProfileIcon icon={`lucide:${modalIcons[icon]}`} size={20} />
+                )}
               </span>
               <span>{title}</span>
             </Dialog.Title>

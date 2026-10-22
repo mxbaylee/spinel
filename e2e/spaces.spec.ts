@@ -5,6 +5,7 @@ import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Dialog, Locator, Page, TestInfo } from '@playwright/test';
 import { JSONX } from '@univerjs/core';
 import type { IDocumentData, JSONXActions } from '@univerjs/core';
+import { ErrorCode } from '@univerjs/protocol';
 import type { IGetUnitOnRevResponse } from '@univerjs/protocol';
 import { startApp } from './app-process.ts';
 import { openDatabase } from '../server/database.ts';
@@ -319,8 +320,9 @@ async function nativeState(
   );
   expect(response.ok()).toBe(true);
   const { snapshot, changesets, error } = (await response.json()) as IGetUnitOnRevResponse;
-  expect(error).toBeFalsy();
-  expect(snapshot).toBeDefined();
+  // The public protocol returns an error envelope even on success: OK is 1.
+  expect(error?.code).toBe(ErrorCode.OK);
+  expect(snapshot).toMatchObject({ unitID, type });
   return { unitID, snapshot, changesets };
 }
 function nativeHead(state: Awaited<ReturnType<typeof nativeState>>) {
@@ -347,7 +349,22 @@ function nativeDocText(state: Awaited<ReturnType<typeof nativeState>>) {
         actions: JSONXActions;
       };
       expect(unitId).toBe(state.unitID);
-      document = (JSONX.apply(document, actions) ?? document) as IDocumentData;
+      // JSONX.apply returns undefined for a no-op; a non-no-op must produce the
+      // actual resulting document rather than falling back to its prior text.
+      if (!JSONX.isNoop(actions)) {
+        const replayed = JSONX.apply(document, actions);
+        if (
+          replayed === null ||
+          typeof replayed !== 'object' ||
+          Array.isArray(replayed) ||
+          replayed.id !== document.id ||
+          replayed.documentStyle === null ||
+          typeof replayed.documentStyle !== 'object' ||
+          Array.isArray(replayed.documentStyle)
+        )
+          throw new Error('Native Doc replay did not preserve document identity and structure.');
+        document = replayed as unknown as IDocumentData;
+      }
     }
   }
   return document.body?.dataStream.trim();
@@ -772,15 +789,32 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
       space.id,
     );
     expect(f.errors).toEqual([]);
-  } finally {
-    if (info.status !== info.expectedStatus) {
-      const evidence = JSON.stringify({ phase, events: diagnostics }, null, 2);
-      console.error('Space native recovery diagnostics:', evidence);
-      await info.attach('native-recovery-diagnostics', {
+  } catch (error) {
+    const evidence = JSON.stringify({ phase, events: diagnostics }, null, 2);
+    console.error('Space native recovery diagnostics:', evidence);
+    // The automatic failure image follows fixture shutdown, which can itself
+    // show Offline. Capture the live failure before closing the app or page.
+    await page
+      .screenshot({
+        path: info.outputPath('test-failed-native-recovery.png'),
+        fullPage: true,
+        timeout: 5000,
+      })
+      .catch(() => {
+        console.error('Could not capture the Space native recovery failure before cleanup.');
+      });
+    await info
+      .attach('native-recovery-diagnostics', {
         body: evidence,
         contentType: 'application/json',
+      })
+      .catch(() => {
+        // The console retains bounded diagnostics if attachment itself fails;
+        // preserve the actual test failure instead of masking it with that error.
+        console.error('Could not attach Space native recovery diagnostics.');
       });
-    }
+    throw error;
+  } finally {
     await f.close();
   }
 });

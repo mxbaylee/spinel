@@ -97,7 +97,15 @@ export function SpaceItemDialog({
   return (
     <Modal
       title={title}
-      icon={action.mode === 'trash' ? 'trash' : 'folder'}
+      icon={
+        action.mode === 'root'
+          ? 'space'
+          : action.mode === 'add'
+            ? action.kind
+            : action.mode === 'trash'
+              ? 'trash'
+              : 'folder'
+      }
       open
       dismissDisabled={busy}
       onOpenChange={(open) => {

@@ -44,20 +44,27 @@ export function SpaceTree({
     const container = scroll.current;
     const row = rows.find(({ item }) => item.id === selectedId);
     if (!container || !container.clientWidth || !row) return;
-    const key = `${selectedId}/${row.item.parentId}/${row.depth}`;
+    const key = `${selectedId}/${row.item.parentId}/${row.depth}/${canEdit}`;
     if (scrolled.current === key) return;
     const target = container.querySelector<HTMLElement>('[aria-current="page"]');
     if (!target) return;
     const bounds = container.getBoundingClientRect();
     const selected = target.getBoundingClientRect();
-    // Reveal a deep selection inside its own scroller without moving the editor.
+    const action = canEdit
+      ? target.parentElement?.querySelector<HTMLElement>('[aria-haspopup="menu"]')
+      : null;
+    const actionBounds = action?.getBoundingClientRect();
+    const right = Math.max(selected.right, actionBounds?.right ?? selected.right);
+    const top = Math.min(selected.top, actionBounds?.top ?? selected.top);
+    const bottom = Math.max(selected.bottom, actionBounds?.bottom ?? selected.bottom);
+    // Reveal the deep selection and its actions, not the wide indentation before it.
+    // Keep this within the tree's own scroller so the editor never moves.
     if (selected.left < bounds.left) container.scrollLeft -= bounds.left - selected.left;
-    else if (selected.right > bounds.right) container.scrollLeft += selected.right - bounds.right;
-    if (selected.top < bounds.top) container.scrollTop -= bounds.top - selected.top;
-    else if (selected.bottom > bounds.bottom)
-      container.scrollTop += selected.bottom - bounds.bottom;
+    else if (right > bounds.right) container.scrollLeft += right - bounds.right;
+    if (top < bounds.top) container.scrollTop -= bounds.top - top;
+    else if (bottom > bounds.bottom) container.scrollTop += bottom - bounds.bottom;
     scrolled.current = key;
-  }, [rows, selectedId]);
+  }, [rows, selectedId, canEdit]);
   return (
     <div
       ref={scroll}
