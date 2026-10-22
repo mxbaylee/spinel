@@ -9,6 +9,8 @@ import type { WorkspaceStore } from './store.ts';
 import { DocumentStore, IMAGE_LIMIT, DOCUMENT_IMAGE_LIMIT } from './documents.ts';
 import { SheetStore } from './sheets.ts';
 import { validatePortableLayout } from './portableValidation.ts';
+import { removeImportedSourceBindings } from '../formulas/import.ts';
+import { resolveDocument, validateDocumentCredentials } from './document-access.ts';
 
 import { PORTABLE_LIMIT } from '../../shared/portable.ts';
 export { PORTABLE_LIMIT };
@@ -109,6 +111,7 @@ export class PortableFiles {
         input.filename.replace(/\.(?:univer\.)?json$|\.univer$/i, ''),
     );
     const snapshot = structuredClone(input.snapshot) as unknown as Snapshot;
+    if (kind === 'doc') removeImportedSourceBindings(snapshot);
     const sources = new Set<string>();
     imageSources(snapshot, (source) => {
       sources.add(source);
@@ -137,17 +140,56 @@ export class PortableFiles {
       return item;
     });
   }
-  async export(user: string, id: string, verify: () => void) {
-    const item = this.workspace.get(user, id);
+  async export(
+    user: string,
+    id: string,
+    verify: () => void,
+    customData: Record<string, unknown> = {},
+  ) {
+    const account = (custom: Record<string, unknown>) => {
+      const family = validateDocumentCredentials(this.workspace, user, custom);
+      if (family !== 'account' && family !== 'trusted')
+        throw new AuthError(403, 'Use your everyday account to export documents.');
+    };
+    // Check before copying: a private history capability must retain its read-only
+    // identity, and cannot become an ordinary trusted call by losing that identity.
+    account(customData);
+    const custom = Object.freeze({ ...customData });
+    const access = () => {
+      verify();
+      account(custom);
+      return resolveDocument(this.workspace, user, id, 'read', custom);
+    };
+    const item = access();
     if (item.kind !== 'doc' && item.kind !== 'sheet')
       throw new AuthError(400, 'Only Sheets and Docs can be exported.');
+    const collaboration = this.collaboration;
+    let generation: string | undefined;
+    const current = () => {
+      if (
+        collaboration &&
+        (collaboration.generations.restoring(id) ||
+          (generation !== undefined && collaboration.generations.active(id).unitId !== generation))
+      )
+        throw new AuthError(409, 'This document was restored. Open it again before exporting.');
+    };
     let data: { snapshot: Snapshot | null };
-    if (this.collaboration) {
-      await this.collaboration.prepare(user, id);
-      data = await this.collaboration.load(user, id);
-    } else data = (item.kind === 'doc' ? this.docs : this.sheets).load(user, id);
-    verify();
-    this.workspace.get(user, id);
+    if (collaboration) {
+      current();
+      await collaboration.prepare(user, id, custom);
+      access();
+      generation = collaboration.generations.active(id).unitId;
+      current();
+      data = await collaboration.load(user, id, custom);
+    } else {
+      // Space documents are native collaboration units. The ordinary snapshot
+      // fallback must never reopen their guarded legacy load endpoints.
+      if ('spaceId' in custom || 'spaceItem' in custom)
+        throw new AuthError(404, 'This document is not available.');
+      data = (item.kind === 'doc' ? this.docs : this.sheets).load(user, id);
+    }
+    access();
+    current();
     if (!data.snapshot) throw new AuthError(409, 'Open this document once before exporting it.');
     const snapshot = structuredClone(data.snapshot);
     bounded(snapshot);
@@ -157,12 +199,14 @@ export class PortableFiles {
       const prefix = `/api/items/${id}/images/`;
       if (!source.startsWith(prefix) || !/^[a-f0-9]{64}$/.test(source.slice(prefix.length)))
         throw new AuthError(400, 'This document contains an image that cannot be exported safely.');
-      const image = this.docs.image(user, id, source.slice(prefix.length));
+      const image = this.docs.image(user, id, source.slice(prefix.length), custom);
       return `data:${image.mime};base64,${Buffer.from(image.data).toString('base64')}`;
     });
     const text = JSON.stringify(snapshot);
     if (Buffer.byteLength(text) > PORTABLE_LIMIT)
       throw new AuthError(413, 'This Univer file exceeds 20 MiB. No partial file was exported.');
+    access();
+    current();
     return { text, filename: `${item.name}.univer.json` };
   }
 }

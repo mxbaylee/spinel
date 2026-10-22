@@ -1,5 +1,7 @@
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
-import type { WorkspaceItem } from '../../src/shared/workspace.ts';
+import { FILE_KINDS } from '../../src/shared/workspace.ts';
+import type { FileItem, SpaceFile } from '../../src/shared/workspace.ts';
+import { offlineScope } from './OfflineAccess.ts';
 
 /**
  * Account-scoped IndexedDB storage for documents downloaded on this device
@@ -10,14 +12,14 @@ import type { WorkspaceItem } from '../../src/shared/workspace.ts';
 export type OfflineUser = { id: string; name: string };
 export type OfflineCatalog = {
   syncedAt: number;
-  items: WorkspaceItem[];
-  shared: WorkspaceItem[];
-  pins: WorkspaceItem[];
+  items: FileItem[];
+  shared: FileItem[];
   /** The last-loaded ancestors, item and children for each opened folder or item. */
-  views: Record<string, WorkspaceItem[]>;
+  views: Record<string, FileItem[]>;
 };
 export type OfflineDownload = {
   itemId: string;
+  spaceId?: string;
   name: string;
   kind: 'sheet' | 'doc';
   readOnly: boolean;
@@ -29,6 +31,7 @@ type StoredImage = { itemId: string; source: string; bytes: Uint8Array };
 
 const summary = (item: StoredItem): OfflineDownload => ({
   itemId: item.itemId,
+  ...(item.bundle.spaceId === undefined ? {} : { spaceId: item.bundle.spaceId }),
   name: item.name,
   kind: item.kind,
   readOnly: item.readOnly,
@@ -36,9 +39,54 @@ const summary = (item: StoredItem): OfflineDownload => ({
   downloadedAt: item.downloadedAt,
 });
 
+/** Keep only outer-file metadata here; prepared native children live in downloads. */
+export function isOfflineCatalog(value: unknown): value is OfflineCatalog {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const catalog = value as Partial<OfflineCatalog>;
+  const files = (rows: unknown): rows is FileItem[] =>
+    Array.isArray(rows) &&
+    rows.every(
+      (row: FileItem) =>
+        row &&
+        typeof row === 'object' &&
+        typeof row.id === 'string' &&
+        Boolean(row.id) &&
+        FILE_KINDS.includes(row.kind) &&
+        typeof row.name === 'string' &&
+        (row.parentId === null || typeof row.parentId === 'string') &&
+        ['owner', 'admin', 'editor', 'viewer'].includes(row.access) &&
+        Number.isFinite(row.createdAt) &&
+        Number.isFinite(row.updatedAt) &&
+        Array.isArray(row.tags) &&
+        row.tags.every((tag) => typeof tag === 'string'),
+    );
+  return (
+    typeof catalog.syncedAt === 'number' &&
+    Number.isFinite(catalog.syncedAt) &&
+    catalog.syncedAt >= 0 &&
+    files(catalog.items) &&
+    files(catalog.shared) &&
+    Boolean(catalog.views) &&
+    typeof catalog.views === 'object' &&
+    !Array.isArray(catalog.views) &&
+    Object.values(catalog.views!).every(files)
+  );
+}
+
+/** A first Space download can prepare local launch without an earlier Dashboard visit. */
+export function spaceOfflineCatalog(root: SpaceFile, existing?: OfflineCatalog): OfflineCatalog {
+  const catalog = existing ?? { syncedAt: Date.now(), items: [], shared: [], views: {} };
+  const items = catalog.items.filter((item) => item.id !== root.id);
+  const shared = catalog.shared.filter((item) => item.id !== root.id);
+  (root.access === 'owner' ? items : shared).push(root);
+  return { ...catalog, items, shared, views: { ...catalog.views, [root.id]: [root] } };
+}
+
 const ACCOUNT_KEY = 'spinel.offline.account';
 const SIGN_OUT_KEY = 'spinel.offline.sign-out';
+const CANCELLATION_KEY = 'spinel.offline.cancellation';
 const databaseName = (accountId: string) => `spinel-offline-${accountId}`;
+let preparationEpoch = 0;
 
 function storage() {
   try {
@@ -51,9 +99,118 @@ function storage() {
 export function preparedAccount() {
   return storage()?.getItem(ACCOUNT_KEY) ?? null;
 }
+/** Read-only startup also observes cancellation; it never prepares or claims a device. */
+export function offlineAccountRead(accountId: string) {
+  const epoch = preparationEpoch;
+  const cancellation = storage()?.getItem(CANCELLATION_KEY);
+  return () => {
+    try {
+      return (
+        epoch === preparationEpoch &&
+        cancellation === storage()?.getItem(CANCELLATION_KEY) &&
+        preparedAccount() === accountId
+      );
+    } catch {
+      return false;
+    }
+  };
+}
 export function setPreparedAccount(accountId: string | null) {
+  // Clearing an already-empty pointer still cancels a first preparation that
+  // was in flight when sign-out began, before its component can unmount.
+  const previous = preparedAccount();
+  if (accountId === null || (previous !== null && previous !== accountId)) {
+    preparationEpoch++;
+    // removeItem on an absent account emits no storage event. A fresh nonce
+    // also cancels another tab's first download, before any marker exists.
+    try {
+      storage()?.setItem(CANCELLATION_KEY, crypto.randomUUID());
+    } catch {
+      // Removing the old token invalidates other tabs synchronously, even when
+      // their storage event is delayed and removing the account frees quota.
+      storage()?.removeItem(CANCELLATION_KEY);
+    }
+  }
   if (accountId) storage()?.setItem(ACCOUNT_KEY, accountId);
   else storage()?.removeItem(ACCOUNT_KEY);
+}
+
+function preparationCancellation() {
+  try {
+    const local = storage();
+    if (!local) throw new Error('Storage unavailable.');
+    let value = local.getItem(CANCELLATION_KEY);
+    if (!value) {
+      value = crypto.randomUUID();
+      local.setItem(CANCELLATION_KEY, value);
+    }
+    if (local.getItem(CANCELLATION_KEY) !== value) throw new Error('Storage write failed.');
+    return value;
+  } catch {
+    throw new Error(
+      'Offline downloads need browser storage. Allow storage or free up space, then try again.',
+    );
+  }
+}
+
+/** One mounted account's asynchronous preparation, never a reusable sign-in. */
+export function offlinePreparation(accountId: string, isMounted: () => boolean) {
+  let epoch = preparationEpoch;
+  // Never admit a scope with an absent token: a full legacy store may be unable
+  // to create one at sign-out, and storage events are not a synchronous fence.
+  let cancellation: string | null = preparationCancellation();
+  const isCurrent = () => {
+    if (!isMounted() || epoch !== preparationEpoch || !cancellation) return false;
+    try {
+      const local = storage();
+      if (!local || local.getItem(CANCELLATION_KEY) !== cancellation) return false;
+      const account = local.getItem(ACCOUNT_KEY);
+      return account === null || account === accountId;
+    } catch {
+      return false;
+    }
+  };
+  return {
+    isMounted,
+    isCurrent,
+    async finish(
+      store: Pick<OfflineStore, 'accountId' | 'saveCatalog'>,
+      user: OfflineUser,
+      catalog: OfflineCatalog,
+    ) {
+      if (store.accountId !== accountId || user.id !== accountId)
+        throw new Error('This preparation belongs to another account.');
+      if (!isCurrent()) return false;
+      await store.saveCatalog(user, catalog);
+      if (!isCurrent()) return false;
+      setPreparedAccount(accountId);
+      return true;
+    },
+    async clearIfEmpty(store: Pick<OfflineStore, 'accountId' | 'downloads'>) {
+      if (store.accountId !== accountId)
+        throw new Error('This preparation belongs to another account.');
+      if (!isCurrent()) return;
+      const remaining = await store.downloads();
+      if (!remaining.length && isCurrent() && preparedAccount() === accountId) {
+        setPreparedAccount(null);
+        // This operation deliberately cleared its own pointer. Its final UI
+        // update may complete; other work from before the clear stays cancelled.
+        epoch = preparationEpoch;
+        cancellation = storage()?.getItem(CANCELLATION_KEY) ?? null;
+      }
+    },
+  };
+}
+export type OfflinePreparation = ReturnType<typeof offlinePreparation>;
+
+/** A sign-out/account change in another tab also cancels pending completions. */
+export function watchOfflineAccount() {
+  const changed = (event: StorageEvent) => {
+    if (event.key === ACCOUNT_KEY || event.key === CANCELLATION_KEY || event.key === null)
+      preparationEpoch++;
+  };
+  window.addEventListener('storage', changed);
+  return () => window.removeEventListener('storage', changed);
 }
 /** A sign-out made offline; the server session is revoked on the next online start. */
 export function signOutPending() {
@@ -111,11 +268,12 @@ export class OfflineStore {
   }
   async catalog() {
     const transaction = this.database.transaction('meta');
-    return (await request(transaction.objectStore('meta').get('catalog'))) as
-      OfflineCatalog | undefined;
+    const catalog: unknown = await request(transaction.objectStore('meta').get('catalog'));
+    return isOfflineCatalog(catalog) ? catalog : undefined;
   }
   async saveCatalog(user: OfflineUser, catalog: OfflineCatalog) {
     if (user.id !== this.accountId) throw new Error('This catalog belongs to another account.');
+    if (!isOfflineCatalog(catalog)) throw new Error('This file list is incomplete. Try again.');
     const transaction = this.database.transaction('meta', 'readwrite');
     const meta = transaction.objectStore('meta');
     meta.put(user, 'user');
@@ -147,6 +305,7 @@ export class OfflineStore {
   async saveDownload(bundle: OfflineBundle, bytes: ReadonlyMap<string, Uint8Array>) {
     if (bundle.accountId !== this.accountId)
       throw new Error('This download belongs to another account.');
+    offlineScope(bundle);
     // Check before opening the transaction: a throw inside it would still commit
     // the writes already queued.
     const stored = bundle.images.map((image) => {
@@ -160,6 +319,7 @@ export class OfflineStore {
     for (const image of stored) images.put(image);
     const item: StoredItem = {
       itemId: bundle.itemId,
+      ...(bundle.spaceId === undefined ? {} : { spaceId: bundle.spaceId }),
       name: bundle.name,
       kind: bundle.kind,
       readOnly: bundle.readOnly,

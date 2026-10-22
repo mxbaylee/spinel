@@ -6,6 +6,7 @@ import type {
 } from '@simplewebauthn/server';
 import { AuthStore, hashToken } from './store.ts';
 import { InvitationService } from './invitations.ts';
+import { AdminStore } from './admin.ts';
 
 const databases: DatabaseSync[] = [];
 afterEach(() => databases.splice(0).forEach((db) => db.close()));
@@ -196,4 +197,27 @@ test('recovery does not reactivate disabled users and credential-write failure p
   f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(target.id);
   expect(() => f.service.active(invite.token)).toThrow('unavailable');
   expect(() => f.create(target.id)).toThrow('active account');
+});
+
+test('disable and reactivation invalidate an in-flight recovery; a fresh invite recovers the same account', async () => {
+  const f = fixture();
+  const target = f.store.createUser('Owner');
+  const admin = new AdminStore(f.store, f.service);
+  const oldInvite = f.create(target.id);
+  const oldCeremony = await f.ceremony(oldInvite.token);
+  f.verifier.mockImplementationOnce(async () => {
+    admin.disable(f.admin.id, target.id);
+    admin.reactivate(f.admin.id, target.id);
+    return f.result;
+  });
+  await expect(oldCeremony.accept()).rejects.toThrow();
+  expect(f.store.passkeys(target.id)).toEqual([]);
+  expect(() => f.service.active(oldInvite.token)).toThrow('unavailable');
+  const fresh = f.create(target.id);
+  const next = await f.ceremony(fresh.token);
+  const recovered = await next.accept();
+  expect(recovered.user.id).toBe(target.id);
+  expect(f.store.userCount()).toBe(2);
+  expect(f.store.session(recovered.token)?.user_id).toBe(target.id);
+  expect(f.store.passkeys(target.id).map((key) => key.id)).toEqual(['new-key']);
 });

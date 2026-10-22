@@ -9,6 +9,7 @@ export async function startApp(options: {
   databasePath: string;
   origin: string;
   development: boolean;
+  spaceReview?: boolean;
 }) {
   const env: NodeJS.ProcessEnv = {
     ...process.env,
@@ -16,6 +17,9 @@ export async function startApp(options: {
     APP_ORIGIN: options.origin,
     PORT: new URL(options.origin).port,
     HOST: '127.0.0.1',
+    // Exercise the normal enabled application unless a fixture explicitly
+    // verifies disabled Space boundaries; ignore ambient developer overrides.
+    SPINEL_SPACE_REVIEW: options.spaceReview === false ? '0' : '1',
   };
   delete env.BACKUP_CONFIG_PATH;
   const child = spawn(
@@ -28,7 +32,18 @@ export async function startApp(options: {
   child.on('error', (error) => {
     startupError = error;
   });
-  const exited = new Promise<void>((done) => child.once('close', () => done()));
+  // Playwright can retire a failed worker while fixture cleanup is in flight.
+  // Terminate only this worker's own server, including that final exit path.
+  const stopOnExit = () => {
+    child.kill('SIGKILL');
+  };
+  process.once('exit', stopOnExit);
+  const exited = new Promise<void>((done) =>
+    child.once('close', () => {
+      process.off('exit', stopOnExit);
+      done();
+    }),
+  );
   const close = async () => {
     if (child.exitCode !== null || child.signalCode !== null) return exited;
     child.kill('SIGTERM');

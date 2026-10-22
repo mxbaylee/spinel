@@ -3,14 +3,11 @@
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
-  "workspaces": [
-    "lib/*"
-  ],
   "engines": {
     "node": ">=24"
   },
   "scripts": {
-    "test": "node --test scripts/backlog/tests/*.test.ts scripts/deploy/*.test.ts scripts/dependencies/*.test.ts && vitest run",
+    "test": "node --test scripts/backlog/tests/*.test.ts scripts/deploy/*.test.ts scripts/dependencies/*.test.ts scripts/ci/*.test.ts && vitest run",
     "typecheck": "tsc -p .",
     "backlog:check": "node scripts/backlog/cli.ts check",
     "backlog:index": "node scripts/backlog/cli.ts index",
@@ -22,22 +19,23 @@
     "build-storybook": "NODE_OPTIONS='--import ./.storybook/typescript-api.ts' storybook build -o storybook-static",
     "start": "node server/index.ts",
     "lint": "oxlint --deny-warnings . && npm run format:check",
-    "format": "prettier --write web server src lib e2e .storybook scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies *.config.ts",
-    "format:check": "prettier --check web server src lib e2e .storybook scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies *.config.ts",
+    "format": "prettier --write web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/ci *.config.ts",
+    "format:check": "prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/ci *.config.ts",
     "setup": "node server/setup.ts",
     "passkey:check": "npm run build && node scripts/passkey-check.ts",
     "e2e": "npm run build && node scripts/e2e.ts",
-    "postinstall": "node scripts/dependencies/patch-univer-core.ts"
+    "postinstall": "node scripts/dependencies/patch-univer-core.ts",
+    "screenshots": "node scripts/screenshots.ts"
   },
   "devDependencies": {
     "@napi-rs/canvas": "1.0.11",
     "@playwright/test": "1.64.1",
+    "@storybook/react-vite": "10.3.5",
     "@types/express": "5.0.6",
     "@types/node": "24.19.2",
     "@types/react": "18.3.31",
     "@types/react-dom": "18.3.7",
     "@types/ws": "8.18.2",
-    "@storybook/react-vite": "10.3.5",
     "@vitejs/plugin-react": "6.1.2",
     "oxlint": "1.88.0",
     "pdfjs-dist": "6.4.299",
@@ -51,8 +49,12 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1152.0",
+    "@base-ui/react": "1.9.0",
+    "@modelcontextprotocol/sdk": "1.32.1",
     "@simplewebauthn/browser": "14.0.0",
     "@simplewebauthn/server": "14.0.3",
+    "@spinel/doc-formulas": "*",
+    "@spinel/presence-ui": "^0.0.0",
     "@univerjs-pro/collaboration": "1.1.0",
     "@univerjs-pro/collaboration-client": "1.1.0",
     "@univerjs-pro/collaboration-client-ui": "1.1.0",
@@ -64,6 +66,7 @@
     "@univerjs-pro/license": "1.1.0",
     "@univerjs-pro/sheets-print": "1.1.0",
     "@univerjs/core": "1.1.0",
+    "@univerjs/docs": "1.1.0",
     "@univerjs/drawing": "1.1.0",
     "@univerjs/engine-formula": "1.1.0",
     "@univerjs/preset-docs-core": "1.1.0",
@@ -76,8 +79,12 @@
     "@univerjs/sheets": "1.1.0",
     "express": "5.3.0",
     "libsql": "0.5.29",
+    "lucide": "1.44.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "sharp": "0.35.5"
-  }
+  },
+  "workspaces": [
+    "lib/*"
+  ]
 }

@@ -39,6 +39,9 @@ h1 {
   border: 1px solid var(--sp-border);
   border-radius: 16px;
 }
+.welcome + .welcome {
+  margin-top: 24px;
+}
 h2 {
   margin-top: 0;
   font-size: 22px;
@@ -78,7 +81,9 @@ a {
 a.brand {
   text-decoration: none;
 }
-.workspace button:not(.univer-container *) {
+.workspace button:not(.univer-container *),
+.space-native-editor button:not(.univer-container *),
+.space-bootstrap button:not(.univer-container *) {
   font: inherit;
   cursor: pointer;
   border: 1px solid var(--sp-border);
@@ -92,7 +97,9 @@ button.primary {
   background: var(--sp-accent);
   border-color: var(--sp-accent);
 }
-.workspace button:not(.univer-container *):disabled {
+.workspace button:not(.univer-container *):disabled,
+.space-native-editor button:not(.univer-container *):disabled,
+.space-bootstrap button:not(.univer-container *):disabled {
   opacity: 0.6;
   cursor: wait;
 }
@@ -188,8 +195,7 @@ button.primary {
   gap: 8px;
   flex-wrap: wrap;
 }
-.item-form,
-.empty-document {
+.item-form {
   margin-top: 24px;
   padding: 20px;
   background: var(--sp-panel);
@@ -211,12 +217,22 @@ button.primary {
   margin-top: 20px;
 }
 .save-status {
-  min-height: 44px;
+  /* Reserve Retry's height and width through ordinary connection transitions.
+     SPN-043 still owns the title-adjacent save slot and full error popover. */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
   padding: 10px 0;
   font-size: 14px;
 }
-.save-status button {
-  margin-left: 12px;
+.save-message {
+  flex: 1;
+  min-width: 0;
+}
+.save-retry {
+  flex: 0 0 8rem;
+  min-height: 44px;
 }
 .univer-container {
   height: 640px;
@@ -238,7 +254,8 @@ button.primary {
   align-items: center;
   padding: 0.25rem 0;
 }
-.workspace button.collaborator-badge {
+.workspace button.collaborator-badge,
+.space-native-editor button.collaborator-badge {
   position: relative;
   width: 1.8rem;
   height: 1.8rem;
@@ -367,41 +384,6 @@ button.primary {
   margin-block: 0.5rem;
 }
 
-.workspace-body:has(.pinned-sidebar) {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 28px;
-}
-.workspace:has(.pinned-sidebar) {
-  max-width: 1480px;
-}
-.pinned-sidebar {
-  padding-top: 72px;
-  min-width: 0;
-}
-.pinned-sidebar ol {
-  list-style: none;
-  padding: 0;
-}
-.pinned-sidebar li {
-  margin-bottom: 16px;
-  overflow-wrap: anywhere;
-}
-.pinned-sidebar small {
-  color: var(--sp-muted);
-}
-.pinned-sidebar .pin-actions {
-  display: flex;
-  gap: 4px;
-  margin-top: 6px;
-}
-.workspace .pinned-sidebar button {
-  padding: 5px 8px;
-}
-.pin-drag {
-  cursor: grab;
-  margin-right: 6px;
-}
 .shared-badge {
   display: inline-block;
   font-size: 0.8rem;
@@ -421,27 +403,11 @@ button.primary {
   overflow: auto;
   background: var(--sp-tint-1);
 }
-@media (max-width: 900px) {
-  .workspace-body:has(.pinned-sidebar) {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-  .pinned-sidebar {
-    padding-top: 32px;
-  }
-  .pinned-sidebar ol {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-}
-
 /* Gem rail, adapted from the owner's approved reference. */
 :root {
   font-family: ui-rounded, system-ui, sans-serif;
 }
-.workspace,
-.workspace:has(.pinned-sidebar) {
+.workspace {
   display: flex;
   max-width: none;
   min-height: 100vh;
@@ -466,6 +432,62 @@ button.primary {
 .workspace > header nav {
   flex-direction: column;
   gap: 12px;
+}
+.rail-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.connection-status {
+  display: inline-flex;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  vertical-align: middle;
+}
+.workspace button.connection-trigger:not(.univer-container *),
+.connection-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.workspace button.connection-trigger:not(.univer-container *):hover,
+.connection-trigger:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.connection-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.connection-positioner {
+  z-index: 1500;
+}
+.connection-detail {
+  max-width: min(288px, calc(100vw - 32px));
+  padding: 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  color: var(--sp-text);
+  background: var(--sp-panel);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.connection-detail p {
+  margin: 8px 0 0;
 }
 .workspace > header .rail-button {
   width: 44px;
@@ -538,10 +560,9 @@ button.primary {
   min-width: 0;
   padding-top: 0;
 }
-.pinned-sidebar {
-  padding-top: 0;
-}
-:root[data-theme='dark'] .workspace button:not(.univer-container *) {
+:root[data-theme='dark'] .workspace button:not(.univer-container *),
+:root[data-theme='dark'] .space-native-editor button:not(.univer-container *),
+:root[data-theme='dark'] .space-bootstrap button:not(.univer-container *) {
   border-radius: 5px;
 }
 .workspace input:not(.univer-container *),
@@ -550,7 +571,8 @@ dialog {
   background: var(--sp-panel);
   color: var(--sp-text);
 }
-.workspace button.primary {
+.workspace button.primary,
+.space-bootstrap button.primary {
   background: var(--sp-accent);
   color: var(--sp-on-accent);
   border-color: var(--sp-accent);
@@ -583,7 +605,8 @@ dialog {
   gap: 8px;
   padding: 12px 0;
 }
-.workspace .fill-palette button {
+.workspace .fill-palette button,
+.space-native-editor .fill-palette button {
   padding: 10px 4px;
   font-size: 12px;
   border-color: var(--sp-border);
@@ -601,6 +624,9 @@ dialog {
     padding: 8px 12px;
   }
   .workspace > header nav {
+    flex-direction: row;
+  }
+  .rail-brand {
     flex-direction: row;
   }
   .workspace-body {
@@ -629,6 +655,12 @@ dialog {
   display: block;
   padding: clamp(16px, 3vw, 32px);
   min-width: 0;
+}
+.guest-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
 }
 
 .history-browser > [role='group'],
@@ -670,6 +702,8 @@ dialog {
 
 @media (pointer: coarse) and (max-width: 900px) {
   .workspace button:not(.univer-container *),
+  .space-native-editor button:not(.univer-container *),
+  .space-bootstrap button:not(.univer-container *),
   .workspace select:not(.univer-container *),
   .workspace input:not(.univer-container *) {
     min-height: 44px;
@@ -729,4 +763,62 @@ dialog {
 .banner strong,
 .banner [aria-hidden='true'] {
   color: var(--sp-accent);
+}
+
+.entity-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.item-open > .entity-icon,
+.file-list li > div > .entity-icon {
+  margin-right: 8px;
+}
+.entity-type-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.entity-type-control select {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-icon-dialog > h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.profile-icon-dialog > h2 > svg {
+  flex: 0 0 20px;
+}
+.profile-icon-dialog {
+  width: min(30rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.profile-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 8px;
+}
+.profile-icon-grid button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+}
+.profile-icon-grid button[aria-pressed='true'],
+.fill-palette button[aria-pressed='true'] {
+  outline: 2px solid var(--sp-text);
+  outline-offset: 2px;
+}
+.profile-rail-avatar {
+  display: inline-flex;
+  padding: 8px;
+  border-radius: 8px;
 }

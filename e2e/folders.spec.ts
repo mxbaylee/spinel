@@ -33,6 +33,10 @@ test('builds and renames a nested tree, opens all document types, moves safely a
   async function create(name: string, type = 'Folder') {
     await page.getByRole('button', { name: 'New', exact: true }).click();
     const form = page.getByRole('form', { name: 'New item' });
+    // Supported outer files include Spaces; Slides remain unsupported (SPN-074).
+    await expect(
+      form.getByRole('combobox', { name: 'Type', exact: true }).locator('option'),
+    ).toHaveText(['Folder', 'Sheet', 'Doc', 'Space']);
     await form.getByRole('combobox', { name: 'Type', exact: true }).selectOption({ label: type });
     await form.getByLabel('Name', { exact: true }).fill(name);
     await form.getByRole('button', { name: 'Create', exact: true }).click();
@@ -57,14 +61,16 @@ test('builds and renames a nested tree, opens all document types, moves safely a
     await rename.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(breadcrumb).toHaveText('My files / Personal / Finance / 2027');
     await expect(tree.getByRole('button', { name: '2027', exact: true })).toBeVisible();
-    for (const type of ['Sheet', 'Doc', 'Slides']) {
+    for (const type of ['Sheet', 'Doc']) {
       await create(`${type} example`, type);
       await expect(
         page.getByRole('region', { name: `${type} document`, exact: true }),
-      ).toContainText(type === 'Slides' ? 'Empty document' : 'All changes saved.', {
+      ).toContainText('All changes saved.', {
         timeout: 20000,
       });
+      await expect(page).toHaveTitle(`${type} example — Spinel`);
       await breadcrumb.getByRole('button', { name: '2027', exact: true }).click();
+      await expect(page).toHaveTitle('Spinel');
     }
     await files.getByRole('button', { name: 'Move Sheet example', exact: true }).click();
     const move = page.getByRole('form', { name: 'Move item' });

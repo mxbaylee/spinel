@@ -6,6 +6,10 @@ import type { WorkspaceStore } from './store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import { DocumentStore } from './documents.ts';
 import { guestCookie, guestCookieName, linkGone } from './links.ts';
+import { formulaRoutes } from '../formulas/routes.ts';
+import { documentIdentity } from '../collaboration/identity.ts';
+import { SpaceStore } from './spaces.ts';
+import { WorkspaceFiles } from './files.ts';
 
 export function guestRoutes(
   workspace: WorkspaceStore,
@@ -22,13 +26,14 @@ export function guestRoutes(
     if (!/^[a-f\d-]{36}$/.test(id)) throw linkGone();
     return id;
   };
-  const guest = (request: Request) => links.principal(request.headers, idOf(request)).userId;
+  const identity = (request: Request) =>
+    documentIdentity(workspace, request.headers, idOf(request));
   const owned = (request: Request) => {
     const user = workspace.auth.session(cookieToken(request))?.user_id;
     if (!user) throw new AuthError(401, 'Sign in to continue.');
-    const item = workspace.get(user, idOf(request), 'owner');
-    if (!['sheet', 'doc'].includes(item.kind))
-      throw new AuthError(400, 'Share links are for Sheets and Docs.');
+    const item = new WorkspaceFiles(workspace).get(user, idOf(request), 'admin');
+    if (!['sheet', 'doc', 'space'].includes(item.kind))
+      throw new AuthError(400, 'Share links are for Sheets, Docs and Spaces.');
     return item;
   };
   const guard: express.RequestHandler = (request, response, next) => {
@@ -42,6 +47,8 @@ export function guestRoutes(
     next();
   };
   router.use('/api/guest', guard);
+  router.use('/api/guest-spaces', guard);
+  router.use('/api/guest/:id/formulas', formulaRoutes(workspace, collaboration, identity, true));
   router.use('/api/items/:id/link', guard);
   const attempts = new Map<string, { until: number; count: number }>();
   router.post('/api/guest/:id/session', json, (request, response) => {
@@ -66,7 +73,18 @@ export function guestRoutes(
   });
   router.get('/api/guest/:id', (request, response) => {
     const id = idOf(request),
-      item = workspace.get(guest(request), id);
+      actor = identity(request);
+    const isSpace =
+      workspace.spacesEnabled &&
+      workspace.auth.database
+        .prepare("SELECT 1 FROM workspace_items WHERE id=? AND kind='space'")
+        .get(id);
+    if (isSpace) {
+      const scope = new SpaceStore(workspace).get(actor.userId, id);
+      response.json({ item: { id, kind: 'space', name: scope.space.name, access: scope.access } });
+      return;
+    }
+    const item = workspace.get(actor.userId, id);
     response.json({
       item: { id, kind: item.kind, name: item.name, access: item.access },
       live: {
@@ -77,9 +95,10 @@ export function guestRoutes(
   });
   router.post('/api/guest/:id/collaboration', json, async (request, response) => {
     const id = idOf(request),
-      user = guest(request);
-    await collaboration.prepare(user, id);
-    if (guest(request) !== user) throw linkGone();
+      actor = identity(request),
+      user = actor.userId;
+    await collaboration.prepare(user, id, actor.customData);
+    if (identity(request).userId !== user) throw linkGone();
     const item = workspace.get(user, id);
     response.json({
       unitId: collaboration.generations.active(id).unitId,
@@ -92,14 +111,16 @@ export function guestRoutes(
     express.raw({ type: ['image/png', 'image/jpeg', 'image/webp'], limit: '5mb' }),
     async (request, response) => {
       const id = idOf(request),
-        user = guest(request);
+        actor = identity(request),
+        user = actor.userId;
       const image = await documents.upload(
         user,
         id,
         request.body,
         String(request.headers['content-type'] ?? '').split(';')[0],
+        actor.customData,
       );
-      if (guest(request) !== user) throw linkGone();
+      if (identity(request).userId !== user) throw linkGone();
       response.status(201).json(image);
     },
   );
@@ -107,14 +128,37 @@ export function guestRoutes(
   // accepts a guest cookie; no general account router or metadata listing is opened.
   router.get('/api/items/:id/images/:imageId', (request, response, next) => {
     const id = idOf(request);
-    if (!guestCookie(request.headers, id)) return next();
-    let user: string;
-    try {
-      user = guest(request);
-    } catch {
-      return next();
+    const membership = workspace.spacesEnabled
+      ? (workspace.auth.database
+          .prepare('SELECT space_id FROM workspace_items WHERE id=?')
+          .get(id) as { space_id: string | null } | undefined)
+      : undefined;
+    const root = membership?.space_id ?? id;
+    const scope = membership?.space_id ? { spaceId: root, spaceItem: id } : undefined;
+    let actor: ReturnType<typeof documentIdentity> | undefined;
+    if (guestCookie(request.headers, root)) {
+      try {
+        actor = documentIdentity(workspace, request.headers, root, scope);
+      } catch (error) {
+        if (!(error instanceof AuthError)) throw error;
+      }
     }
-    const image = documents.image(user, id, String(request.params.imageId));
+    if (!actor && scope) {
+      // Canonical images alone admit an independently valid account credential.
+      // Never combine it with a guest credential or apply this fallback to editors.
+      try {
+        actor = documentIdentity(workspace, request.headers, undefined, scope);
+      } catch (error) {
+        if (!(error instanceof AuthError)) throw error;
+      }
+    }
+    if (!actor) return next();
+    const image = documents.image(
+      actor.userId,
+      id,
+      String(request.params.imageId),
+      actor.customData,
+    );
     response
       .set({ 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' })
       .type(image.mime)
@@ -142,7 +186,9 @@ export function guestRoutes(
       response.json({
         enabled: Boolean(role),
         role: role ?? 'viewer',
-        url: change.token ? `${origin}/share/${item.id}#${change.token}` : null,
+        url: change.token
+          ? `${origin}/share/${item.id}?preview=${change.previewToken}#${change.token}`
+          : null,
       });
     } catch (error) {
       links.finish(item.id, change.epoch, false);

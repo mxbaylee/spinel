@@ -4,7 +4,8 @@ import { failure, pending } from '../.storybook/api.ts';
 import { ImportFile } from './ImportFile.tsx';
 
 const meta = {
-  title: 'Dashboard/ImportFile',
+  id: 'dashboard-importfile',
+  title: 'Current production/Dashboard/ImportFile',
   component: ImportFile,
   // Dropping a file anywhere in the folder also imports; stories use the picker.
   args: { parentId: null, dropTarget: { current: null }, enabled: true, onImported: () => {} },

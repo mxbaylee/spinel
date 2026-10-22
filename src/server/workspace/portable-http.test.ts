@@ -28,6 +28,10 @@ test('file routes enforce sessions, CSRF, access, parser limits and admission th
       await held;
       return { snapshot: { id: 'source', body: { dataStream: 'Latest\r\n' } } };
     },
+    generations: {
+      active: (id: string) => ({ unitId: id }),
+      restoring: () => false,
+    },
   } as unknown as CollaborationStore;
   const app = express();
   app.use('/api/items', workspaceRoutes(auth, 'http://localhost:3000', workspace, collaboration));

@@ -43,15 +43,20 @@ import {
 } from './collaboration.ts';
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
+import type { ConnectionState } from './connectionState.ts';
 
 export function SheetEditor({
   id,
   name,
+  spaceId,
   onDirty,
+  onConnectionState,
 }: {
   id: string;
   name: string;
+  spaceId?: string;
   onDirty: (dirty: boolean) => void;
+  onConnectionState?: (state: ConnectionState | null) => void;
 }) {
   const mobile = useRef(useMobileSheetControls()).current;
   const print = useRef<(() => Promise<void>) | null>(null);
@@ -67,6 +72,10 @@ export function SheetEditor({
   });
   useEffect(() => {
     let disposed = false;
+    onConnectionState?.('reconnecting');
+    const publishConnection = (state: ConnectionState) => {
+      if (!disposed) onConnectionState?.(state);
+    };
     let stopPresence: (() => void) | undefined;
     setPeople([]);
     let editing = false;
@@ -81,11 +90,13 @@ export function SheetEditor({
       setStatus({
         ...state,
         dirty,
-        message: editing && !state.failed ? 'Editing cell — changes not saved yet.' : state.message,
+        message: editing
+          ? `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
+          : state.message,
       });
     };
     void (async () => {
-      const data = await prepareCollaboration(id);
+      const data = await prepareCollaboration(id, spaceId);
       if (disposed) return;
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
@@ -102,7 +113,12 @@ export function SheetEditor({
         },
         collaboration: true,
         plugins: [
-          ...collaborationPlugins(data.unitId, [[...sheetImageOverride]]),
+          ...collaborationPlugins(
+            data.unitId,
+            [[...sheetImageOverride]],
+            false,
+            spaceId ? { spaceId, itemId: id } : undefined,
+          ),
           mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
         ],
         presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
@@ -132,7 +148,7 @@ export function SheetEditor({
               context.col,
               cell,
             );
-            return displayPresetCell(cell, style, getTheme());
+            return displayPresetCell(cell, style);
           },
         });
       const stopEditingTheme = univer
@@ -150,14 +166,12 @@ export function SheetEditor({
             return presetCellForEditing(cell, context.origin, style);
           },
         });
-      // Literal document colours render against light paper even with dark chrome.
       const render = univer
         .__getInjector()
         .get(IRenderManagerService)
         .getRenderUnitById(data.unitId);
       if (render) {
         const canvas = render.engine.getCanvasElement();
-        canvas.style.backgroundColor = '#ffffff';
         canvas.setAttribute('aria-label', 'Spreadsheet grid');
       }
       const stopTheme = bindEditorTheme(univer, () => {
@@ -190,7 +204,17 @@ export function SheetEditor({
         readOnlySheetDrawings(univer, data.unitId);
       };
       if (data.access === 'viewer') await readOnly();
-      save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readOnly);
+      save = watchCollaboration(
+        univer,
+        univerAPI,
+        data.unitId,
+        id,
+        data.access,
+        publish,
+        readOnly,
+        publishConnection,
+        spaceId,
+      );
       controller.current = save;
       setEditable(data.access !== 'viewer');
       applyFill.current = async (preset) => {
@@ -222,6 +246,7 @@ export function SheetEditor({
         publish(lastState);
       });
     })().catch((error) => {
+      publishConnection('offline');
       if (!disposed)
         publish({
           dirty: false,
@@ -241,9 +266,10 @@ export function SheetEditor({
       controller.current = null;
       applyFill.current = null;
       onDirty(false);
+      onConnectionState?.(null);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
-  }, [id]);
+  }, [id, spaceId]);
   return (
     <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
       <Collaborators people={people} />
@@ -255,19 +281,23 @@ export function SheetEditor({
         }}
       />
       <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
-        {status.message}
-        {status.failed && status.dirty && (
-          <button onClick={() => controller.current?.retry()}>Retry saving</button>
-        )}
+        <span className="save-message">{status.message}</span>
+        <span className="save-retry">
+          {status.failed && status.dirty && (
+            <button onClick={() => controller.current?.retry()}>Retry saving</button>
+          )}
+        </span>
       </div>
       {!guestItemId() && (
         <>
           <VersionNames
             id={id}
+            spaceId={spaceId}
             saved={!status.dirty && !status.failed && Boolean(controller.current)}
           />
           <FileExports
             id={id}
+            spaceId={spaceId}
             name={name}
             saved={!status.dirty && !status.failed && Boolean(controller.current)}
             print={async () => {

@@ -1,11 +1,11 @@
 # Trash and recovery
 
-Owners can choose **Trash** beside a document or folder, then open **Trash** in
-the folder sidebar to recover it. A folder deletion includes its active subtree.
+Owners and File admins can choose **Trash** beside a document, folder or Space.
+The Owner opens **Trash** in the folder sidebar to recover it. A folder deletion includes its active subtree.
 Trashed items leave ordinary folder listings and reject metadata, content, saves,
 sharing changes and image requests for everyone. Existing browser content cannot
 be recalled; a subsequent save is refused and retains the editor's unsaved-work
-warning. Admin accounts cannot inspect trash or workspace content.
+warning. Server Operator accounts cannot inspect trash or workspace content.
 
 Trash lists every retained item, including nested contents, with deletion and
 recovery dates. **Restore** returns an item and the descendants deleted with it
@@ -23,8 +23,8 @@ warns that deletion cannot be undone. If another tab changes that set, the serve
 refuses the old confirmation and the UI reloads the count. Cancel preserves all
 items. Each owner can empty only their own trash.
 
-Collaborators cannot trash the owner's documents. Removing a shared item from a
-personal folder is part of SPN-018's placement feature, which does not exist yet;
+View/Edit collaborators cannot trash the owner's outer files; delegated File
+admins can. Removing a shared item from a personal folder uses personal filing;
 it leaves the owner's copy, access grant and Shared with me entry intact. This
 scope disposition preserves the original SPN-021 remove-from-view outcome in
 that ticket, where the per-user references belong.

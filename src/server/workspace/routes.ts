@@ -3,47 +3,17 @@ import type { Request, Response, NextFunction } from 'express';
 import { AuthError, AuthStore } from '../auth/store.ts';
 import { cookieToken } from '../auth/routes.ts';
 import { WorkspaceStore } from './store.ts';
-import { WorkspaceSearch } from './search.ts';
+import { WorkspaceFiles } from './files.ts';
 import { SheetStore } from './sheets.ts';
 import { DocumentStore } from './documents.ts';
 import { TrashStore } from './trash.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { HistoryStore } from '../history/store.ts';
 import { PortableFiles, PORTABLE_LIMIT } from './portable.ts';
-
-let transferActive = false;
-const transfers = new WeakMap<Response, { start: () => void; finish: () => void }>();
-function admitTransfer(_request: Request, response: Response, next: NextFunction) {
-  if (transferActive)
-    throw new AuthError(429, 'Another file transfer is running. Try again shortly.');
-  transferActive = true;
-  let running = false;
-  let released = false;
-  const release = () => {
-    if (released) return;
-    released = true;
-    transferActive = false;
-    transfers.delete(response);
-  };
-  const finish = () => {
-    running = false;
-    if (response.writableFinished || response.destroyed) release();
-  };
-  transfers.set(response, {
-    start: () => {
-      running = true;
-    },
-    finish,
-  });
-  // A disconnected client must not release admission while image decoding is active.
-  response.once('close', () => {
-    if (!running) release();
-  });
-  response.once('finish', () => {
-    if (!running) release();
-  });
-  next();
-}
+import { formulaRoutes } from '../formulas/routes.ts';
+import { documentIdentity } from '../collaboration/identity.ts';
+import { historyRoutes } from '../history/routes.ts';
+import { admitTransfer, transfers } from './transfers.ts';
 
 export function workspaceRoutes(
   auth: AuthStore,
@@ -54,10 +24,11 @@ export function workspaceRoutes(
 ) {
   const router = express.Router();
   const trash = new TrashStore(store);
-  const search = new WorkspaceSearch(store);
+  const catalog = new WorkspaceFiles(store);
   const sheets = new SheetStore(store);
   const documents = new DocumentStore(store);
   const files = new PortableFiles(store, collaboration);
+  const account = (request: Request) => documentIdentity(store, request.headers);
   const owner = (request: Request) => {
     const id = auth.session(cookieToken(request))?.user_id;
     if (!id) throw new AuthError(401, 'Sign in to continue.');
@@ -80,19 +51,21 @@ export function workspaceRoutes(
       throw new AuthError(403, 'Open Spinel at its configured address and try again.');
     next();
   });
+  if (collaboration) router.use('/:id/formulas', formulaRoutes(store, collaboration, account));
   const native = async (request: Request, response: Response, kind: 'sheet' | 'doc') => {
-    const user = owner(request),
+    const identity = account(request),
+      user = identity.userId,
       id = String(request.params.id);
     const original = kind === 'sheet' ? sheets.load(user, id) : documents.load(user, id);
     response.json(
       collaboration &&
         auth.database.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id)
-        ? await collaboration.load(user, id)
+        ? await collaboration.load(user, id, identity.customData)
         : original,
     );
   };
   router.get('/search', (request, response) => {
-    response.json({ items: search.find(owner(request), request.query) });
+    response.json({ items: catalog.find(owner(request), request.query) });
   });
   router.get('/:id/sheet', (request, response) => native(request, response, 'sheet'));
   router.put('/:id/sheet', express.json({ limit: '10mb', strict: true }), (request, response) => {
@@ -118,23 +91,27 @@ export function workspaceRoutes(
     '/:id/images',
     express.raw({ type: ['image/png', 'image/jpeg', 'image/webp'], limit: '5mb' }),
     async (request, response) => {
+      const identity = account(request);
       response
         .status(201)
         .json(
           await documents.upload(
-            owner(request),
+            identity.userId,
             String(request.params.id),
             request.body,
             String(request.headers['content-type'] ?? '').split(';')[0],
+            identity.customData,
           ),
         );
     },
   );
   router.get('/:id/images/:imageId', (request, response) => {
+    const identity = account(request);
     const image = documents.image(
-      owner(request),
+      identity.userId,
       String(request.params.id),
       String(request.params.imageId),
+      identity.customData,
     );
     response
       .set('X-Content-Type-Options', 'nosniff')
@@ -168,11 +145,17 @@ export function workspaceRoutes(
     const transfer = transfers.get(response)!;
     transfer.start();
     try {
-      const user = owner(request);
-      const file = await files.export(user, String(request.params.id), () => {
-        if (owner(request) !== user || response.destroyed)
-          throw new AuthError(401, 'Sign in to continue.');
-      });
+      const identity = account(request),
+        user = identity.userId;
+      const file = await files.export(
+        user,
+        String(request.params.id),
+        () => {
+          if (owner(request) !== user || response.destroyed)
+            throw new AuthError(401, 'Sign in to continue.');
+        },
+        identity.customData,
+      );
       response
         .attachment(file.filename)
         .type('application/json')
@@ -187,7 +170,8 @@ export function workspaceRoutes(
     transfer.start();
     try {
       if (!collaboration) throw new AuthError(503, 'Offline downloads are not available.');
-      const user = owner(request),
+      const identity = account(request),
+        user = identity.userId,
         id = String(request.params.id);
       const verify = () => {
         if (owner(request) !== user || response.destroyed)
@@ -195,76 +179,32 @@ export function workspaceRoutes(
       };
       if (!['sheet', 'doc'].includes(store.get(user, id).kind))
         throw new AuthError(400, 'Only Sheets and Docs can be downloaded.');
-      const bundle = await collaboration.offlineBundle(user, id, verify);
+      const bundle = await collaboration.offlineBundle(user, id, verify, identity.customData);
       verify();
       response.json(bundle);
     } finally {
       transfer.finish();
     }
   });
+  if (history && collaboration)
+    router.use(
+      '/:id/history',
+      historyRoutes(store, collaboration, history, (request) => ({
+        ...account(request),
+        itemId: String(request.params.id),
+      })),
+    );
+  else
+    router.use('/:id/history', () => {
+      throw new AuthError(503, 'History is not available.');
+    });
   router.use(express.json({ limit: '8kb', strict: true }));
-  router.get('/:id/history', (request, response) => {
-    if (!history) throw new AuthError(503, 'History is not available.');
-    const user = owner(request),
-      id = String(request.params.id);
-    const item = store.get(user, id);
-    response.json({ versions: history.list(user, id), canName: item.access !== 'viewer' });
-  });
-  router.post('/:id/history', async (request, response) => {
-    if (!history) throw new AuthError(503, 'History is not available.');
-    const user = owner(request),
-      id = String(request.params.id);
-    const version = await history.nameCurrent(user, id, payload(request, ['name']).name, () => {
-      if (owner(request) !== user) throw new AuthError(401, 'Sign in to continue.');
-    });
-    response.status(201).json({ version });
-  });
-  router.patch('/:id/history/:checkpoint', (request, response) => {
-    if (!history) throw new AuthError(503, 'History is not available.');
-    history.rename(
-      owner(request),
-      String(request.params.id),
-      String(request.params.checkpoint),
-      payload(request, ['name']).name,
-    );
-    response.json({ ok: true });
-  });
-  router.get('/:id/history/:checkpoint', async (request, response) => {
-    if (!history) throw new AuthError(503, 'History is not available.');
-    const user = owner(request),
-      id = String(request.params.id);
-    const snapshot = await history.load(user, id, String(request.params.checkpoint));
-    if (owner(request) !== user) throw new AuthError(401, 'Sign in to continue.');
-    response.json({
-      snapshot,
-      item: store.get(user, id),
-      unitId: collaboration?.generations.active(id).unitId,
-    });
-  });
-  router.post('/:id/history/:checkpoint/restore', async (request, response) => {
-    if (!history || !collaboration) throw new AuthError(503, 'Restore is not available.');
-    const user = owner(request),
-      id = String(request.params.id);
-    const body = payload(request, ['requestId', 'unitId']);
-    if (typeof body.requestId !== 'string' || typeof body.unitId !== 'string')
-      throw new AuthError(400, 'Invalid restore request.');
-    const result = await history.restore(
-      user,
-      id,
-      String(request.params.checkpoint),
-      body.unitId,
-      body.requestId,
-      () => {
-        if (owner(request) !== user) throw new AuthError(401, 'Sign in to continue.');
-      },
-    );
-    response.json({ revision: result.revision, unitId: result.nextUnit });
-  });
   router.post('/:id/collaboration', async (request, response) => {
     if (!collaboration) throw new AuthError(503, 'Collaboration is not available.');
-    const user = owner(request),
+    const identity = account(request),
+      user = identity.userId,
       id = String(request.params.id);
-    await collaboration.prepare(user, id);
+    await collaboration.prepare(user, id, identity.customData);
     const item = store.get(owner(request), id);
     response.json({
       unitId: collaboration.generations.active(id).unitId,
@@ -284,11 +224,11 @@ export function workspaceRoutes(
     return body;
   }
   router.get('/shared', (request, response) =>
-    response.json({ items: store.shared(owner(request)) }),
+    response.json({ items: catalog.shared(owner(request)) }),
   );
   router.put('/:id/placement', (request, response) =>
     response.json({
-      items: store.place(
+      items: catalog.place(
         owner(request),
         String(request.params.id),
         payload(request, ['parentId']).parentId,
@@ -297,27 +237,16 @@ export function workspaceRoutes(
   );
   router.delete('/:id/placement', (request, response) =>
     response.json({
-      items: store.place(owner(request), String(request.params.id), null, true),
+      items: catalog.place(owner(request), String(request.params.id), null, true),
     }),
   );
-  router.get('/pins', (request, response) => response.json({ items: store.pins(owner(request)) }));
-  for (const method of ['post', 'delete'] as const)
-    router[method]('/pins', (request, response) =>
-      response.json({
-        items: store.pin(owner(request), payload(request, ['id']).id, method === 'delete'),
-      }),
-    );
-  router.put('/pins', (request, response) => {
-    const body = payload(request, ['id', 'beforeId']);
-    response.json({ items: store.movePin(owner(request), body.id, body.beforeId) });
-  });
   router.get('/tags', (request, response) =>
-    response.json({ tags: store.tagSuggestions(owner(request)) }),
+    response.json({ tags: catalog.tagSuggestions(owner(request)) }),
   );
   for (const method of ['post', 'delete'] as const)
     router[method]('/:id/tags', (request, response) =>
       response.json({
-        item: store.changeTag(
+        item: catalog.changeTag(
           owner(request),
           String(request.params.id),
           payload(request, ['tag']).tag,
@@ -325,7 +254,12 @@ export function workspaceRoutes(
         ),
       }),
     );
-  router.get('/', (request, response) => response.json({ items: store.list(owner(request)) }));
+  router.get('/', (request, response) =>
+    response.json({
+      items: catalog.list(owner(request)),
+      spacesEnabled: store.spacesEnabled,
+    }),
+  );
   router.get('/trash', (request, response) => response.json(trash.list(owner(request))));
   router.post('/trash/empty', (request, response) => {
     response.json(trash.empty(owner(request), payload(request, ['version']).version));
@@ -339,35 +273,40 @@ export function workspaceRoutes(
   router.get('/:id', (request, response) => {
     const user = owner(request),
       id = String(request.params.id);
+    const item = catalog.get(user, id);
     response.json({
-      item: store.get(user, id),
-      live: collaboration
-        ? {
-            unitId: collaboration.generations.active(id).unitId,
-            restoring: collaboration.generations.restoring(id),
-          }
-        : undefined,
-      children: store.children(user, id),
-      ancestors: store.ancestors(user, id),
+      item,
+      live:
+        collaboration && (item.kind === 'doc' || item.kind === 'sheet')
+          ? {
+              unitId: collaboration.generations.active(id).unitId,
+              restoring: collaboration.generations.restoring(id),
+            }
+          : undefined,
+      children: catalog.children(user, id),
+      ancestors: catalog.ancestors(user, id),
     });
   });
   router.get('/:id/sharing', (request, response) =>
-    response.json({ people: store.sharing(owner(request), String(request.params.id)) }),
+    response.json({ people: catalog.sharing(owner(request), String(request.params.id)) }),
+  );
+  router.get('/:id/destinations', (request, response) =>
+    response.json({ items: catalog.moveDestinations(owner(request), String(request.params.id)) }),
   );
   router.put('/:id/sharing', (request, response) => {
     const body = payload(request, ['userId', 'role']);
     response.json({
-      people: store.share(owner(request), String(request.params.id), body.userId, body.role),
+      people: catalog.share(owner(request), String(request.params.id), body.userId, body.role),
     });
   });
   router.post('/', (request, response) =>
-    response
-      .status(201)
-      .json({ item: store.create(owner(request), payload(request, ['name', 'kind', 'parentId'])) }),
+    response.status(201).json({
+      item: catalog.create(owner(request), payload(request, ['name', 'kind', 'parentId'])),
+    }),
   );
   router.patch('/:id', (request, response) =>
     response.json({
-      item: store.update(
+      item: catalog.update(
         owner(request),
         String(request.params.id),
         payload(request, ['name', 'parentId']),

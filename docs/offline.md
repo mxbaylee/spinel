@@ -12,15 +12,21 @@ separate work.
 **What is implemented.** SPN-040 added Sheet-image support, SPN-041 the
 authorized [download bundle](#download-bundle), and SPN-039 offline launch,
 browsing and read-only viewing of downloaded documents ([below](#offline-launch-and-read-only-viewing)).
+[SPN-092](implementation/SPN-092.md) extends preparation and local opening to
+one account-authorized Space child at a time, with its verified images.
 The rest of this contract is open, split by the Owner in chat on 2026-10-19 so
 every unmet requirement stays on a ticket:
 
 - [SPN-053](todo/SPN-053.md): offline editing, the outbox, **Saved on this
-  device**, restart, replay with `flush()` and **Synced**.
+  device**, restart, replay with durable server acknowledgements and **Synced**.
 - [SPN-054](todo/SPN-054.md): the conflicted copy, **Needs attention** and the
   export fallback.
-- [SPN-055](todo/SPN-055.md): the storage lifecycle, home-screen links and the
-  real-device runs.
+- [SPN-055](todo/SPN-055.md): shared device storage, pending-edit protection,
+  honest persistence limits and account/sign-out lifecycle.
+- [SPN-090](todo/SPN-090.md): actual Android/iPhone installed launches, stable
+  home-screen links and the recorded device/browser verification matrix.
+- [SPN-052](todo/SPN-052.md): desktop browser-tab compatibility using SPN-055's
+  shared lifecycle; it does not wait for SPN-090's physical-phone runs.
 
 [Decision #91](https://github.com/mxbaylee/spinel/issues/91) keeps every
 acceptance requirement below.
@@ -44,8 +50,8 @@ sequence and #90's recovery-coordinator choice.
 - **Operator:** keep storage bounded and failures diagnosable without granting
   the admin access to documents or requiring a new paid service. Device recovery
   guidance must distinguish local pending work from the server's backups.
-- **Link guest:** retain document-only online access, with no private offline
-  catalog, guest-token persistence or offline download privilege.
+- **Link guest:** retain online access to the supplied document or Space, with no
+  private offline catalog, guest-token persistence or offline download privilege.
 
 ## What the person can rely on
 
@@ -54,10 +60,10 @@ After an initial online setup in the app context they will use:
 | Layer          | Local contents and behavior                                                                                                                                                                                                                                      |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                  |
-| Catalog        | Last-synchronized authorized folder/file metadata, personal tags/pins and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                            |
+| Catalog        | Last-synchronized authorized folder/file metadata, personal tags and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                                 |
 | Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                         |
 | Changes        | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while the app is running and connected. If the live document changed meanwhile, they become a conflicted copy rather than a merge. Local-save failure remains visible. |
-| Entry points   | Stable item links support direct launch; in-app pins, offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                       |
+| Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                    |
 
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
 personal filing and source permissions: never copy inaccessible owner ancestors,
@@ -76,6 +82,22 @@ was issued for, `readOnly`, the pinned `@univerjs/core` version, and an image
 manifest. The manifest lists each image once by same-item source, SHA-256, MIME
 type and byte length. The device fetches those bytes from the existing image route.
 SPN-041, 2026-10-19.
+
+For a Space child, the account route is
+`GET /api/spaces/:spaceId/items/:itemId/offline-bundle`. Its optional `spaceId`
+field binds this one native child to the exact requested root. The same root,
+current account, child, role and live generation are checked through preparation
+and materialization. Guests, MCP credentials and the private history capability
+cannot prepare an offline bundle. [Spaces are enabled by default](sharing.md#space-sharing);
+an explicitly disabled Space runtime refuses this route. Preparation is per child;
+there is no bulk Space download or native offline editing.
+
+Stored image sources remain `/api/items/:itemId/images/:hash`. A Space download
+fetches those bytes through `/api/spaces/:spaceId/items/:itemId/images/:hash`, then
+stores and verifies them under their original canonical source keys. The client
+rejects a bundle from another root or one whose native snapshot ID differs from
+its stable item ID before fetching images or replacing a local copy. The live
+generation stays separate in `unitId` and `revisionOffset`, including after restore.
 
 - The snapshot and revision come from one `CollaborationStore.load` read. The
   device never replays server changesets, so draft #86's exact-revision replay
@@ -130,7 +152,8 @@ Verified by `src/server/collaboration/offline-bundle.test.ts`:
 
 ## Offline launch and read-only viewing
 
-SPN-039, 2026-10-19. This is what a device does today.
+SPN-039, 2026-10-19, extended to Space children by SPN-092, 2026-10-22.
+This is what a device does today.
 
 **Download.** Signed-in, non-admin accounts see **Available offline on this
 device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
@@ -143,24 +166,41 @@ device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
 2. Fetches every listed image and checks each one's size and SHA-256.
 3. Prepares the app shell (below).
 4. Writes the bundle and image bytes in one IndexedDB transaction.
+5. Saves the account's catalog before marking that account prepared for local launch.
 
-Until that transaction commits nothing counts as downloaded. A failed refresh
-keeps the last complete copy. Transfers run one at a time, because the server
+Until the bundle transaction commits nothing counts as downloaded; local launch
+also requires the saved catalog. A failed refresh keeps the last complete copy.
+Transfers run one at a time, because the server
 admits one transfer at a time (429). **Remove from device** deletes the local copy
 only. A full device shows "This device is out of space for offline documents."
 
 **Local data.** Each account has its own IndexedDB database,
 `spinel-offline-<account id>` (`web/offline/offlineStore.ts`), holding the user's
-ID and name, the last-synced catalog (folders, shared items, pins and each folder
+ID and name, the last-synced catalog (folders, shared items and each folder
 view opened online), downloaded bundles and image bytes. No credential, session,
 setup/invite token or guest token is stored. `localStorage['spinel.offline.account']`
-names the one account this device is prepared for. It is set by the first
-download and kept only after an online sign-in to that same non-admin account
-with downloads (`claimDevice`). Signing out, a 401 from the server (the session
+names the one account this device is prepared for. It is set after the first
+complete download and catalog save, and kept only after an online sign-in to that
+same non-admin account with downloads (`claimDevice`). Signing out, a 401 from the server (the session
 ended or was revoked) and removing the last download clear it, so another account
 never opens this data and a revoked session doesn't open it offline. While prepared and online, the dashboard saves the catalog after
 each load and refreshes every download in the background. A document the account
 can no longer open (404) is removed: SPN-039's copies hold no edits.
+Delayed preparation after sign-out, an account switch or an unmounted view cannot
+reclaim the prepared-account marker or clear another account's marker.
+
+Space download summaries preserve `spaceId`, so a later refresh uses the original
+scoped child route. Local opening matches the requested root and child as well as
+the prepared account. The outer catalog accepts Space root metadata but never
+turns internal pages into ordinary files. A first download from a Space can merge
+its root into the saved catalog even when Dashboard has never opened; its actual
+outer parent is preserved. Prepared-child navigation uses the separate download
+summaries, and an explicit unavailable child does not silently open another page.
+The live Space offers **Make available offline** for the selected, saved Doc or
+Sheet and **On this device** for that root's prepared children. Offline Space
+links open only matching prepared copies in a read-only viewer; a root-only link
+can choose one of its own copies. The Spaces index, full live tree and Trash need
+a connection. The offline list makes no claim that the whole Space is downloaded.
 
 **App shell.** Nothing is cached until the first download has fetched and
 verified its bundle and images (`web/service-worker.ts`).
@@ -181,11 +221,16 @@ also gets the generic page. In the app (`web/App.tsx`), only a network failure
 Local mode reads the prepared account's catalog and downloads, never a cached
 session as fresh authorization.
 
-**Local mode.** A banner says **Offline** and when the files were last synced.
-SPN-042's connection indicator should take that line over. Folders opened online
+**Local mode.** The shared network icon beside the gem reports **Offline**,
+**Reconnecting** or verified **Online**, independently of the read-only session.
+Its hover/focus/tap detail preserves **Files as of** and explains that downloaded
+documents stay read-only in this session, even after connectivity recovers.
+Reopen Spinel while connected to edit; a health response never silently replaces
+an open local viewer. SPN-042 removes the old banner; see [connection behavior](connection.md)
+and [decision #132](https://github.com/mxbaylee/spinel/issues/132). Folders opened online
 are browsable, rows show **Available offline** or **Needs a connection**, and
 anything that would reach the server (New, Import, Search, Trash, sharing, tags,
-pins changes, settings for passkeys, version history) is hidden or says it needs a
+settings for passkeys, version history) is hidden or says it needs a
 connection. A downloaded Sheet or Doc opens in an open-source Univer viewer with no
 collaboration client, autosave or remote image fallback, behind the same
 permission fences as version previews (`web/snapshotViewer.ts`). Images come only
@@ -209,7 +254,7 @@ Verified by:
 - `e2e/offline.spec.ts` (production build): download a Sheet with floating,
   in-cell and background images and a Doc, check CacheStorage holds only the
   shell, keep both copies through a failed refresh, go offline and reload, then
-  check the catalog, saved pins, the badges, read-only
+  check the catalog, the badges, read-only
   Sheet and Doc views with every image from local bytes, no `/api/items`
   request and no request for an `IMAGE()` URL, a not-downloaded item, the generic
   page for `/share/`, another tab releasing the device, the next online sign-in
@@ -219,14 +264,22 @@ Verified by:
 - `e2e/pwa.spec.ts`: an unprepared device keeps CacheStorage empty.
 - `src/ui/preparedImages.test.ts`, `src/ui/offlineAccess.test.ts`,
   `src/ui/offlineDownload.test.ts` and `src/shared/offlineShell.test.ts`.
+- `src/server/collaboration/space-native.test.ts` covers exact Space bundles,
+  images, restored generations and late authorization changes.
+  `src/ui/offlineSpace.test.ts`, `src/ui/offlineCatalog.test.ts` and
+  `src/ui/offlinePreparation.test.ts` cover scoped selection, root metadata and
+  delayed completion across account/sign-out changes. Final-head acceptance is
+  recorded in [SPN-092's implementation record](implementation/SPN-092.md).
 
 ## How offline editing works
 
 Download and launch work as [described above](#offline-launch-and-read-only-viewing).
-The rest of this section is SPN-053 and SPN-054's design. It was written against
-Univer's collaboration client; SPN-053 rewrites the replay mechanics for
-Spinel's own sync client (SPN-058) once SPN-059 removes Univer collaboration.
-Owner, chat 2026-10-19.
+The rest of this section is SPN-053 and SPN-054's design. It follows
+Spinel's own sync server/client contracts ([SPN-057](todo/SPN-057.md) and
+[SPN-058](todo/SPN-058.md)), used after SPN-059 removes Univer collaboration.
+Durability and acknowledgement below are requirements, independent of the
+chosen server database or a particular client method name. Owner, chat
+2026-10-19; updated during grooming, 2026-10-21.
 
 **Edit offline.** A downloaded item opens in an open-source Univer editor created
 from the stored snapshot, with no collaboration plugins. Images come from the
@@ -242,13 +295,14 @@ durability mechanism. Warnings for active, uncommitted cell or text input stay.
 **Reconnect, unchanged live document.** Spinel revalidates the session and
 access, then reads the live revision and generation. If both still equal the
 outbox's base, it marks the outbox `replaying` in IndexedDB and opens the normal
-collaboration editor. It re-executes the outbox mutations as local edits, so the
-collaboration client sends them through the existing protocol. It waits for the
-Pro facade's public `flush(unitId)`, which resolves at `SYNCED`. Then it deletes
-the entries and replaces the stored snapshot with a fresh bundle. Edits that
-arrive from others during this short replay are merged by the collaboration
-protocol, as they are online. Spinel never PUTs a whole snapshot over the live
-document.
+collaboration editor. SPN-058 sends the pending mutations through SPN-057's normal
+authorized sync path, retaining stable retry identities so repeat delivery does
+not apply an edit twice. An acknowledgement must mean the server durably stored
+that edit, not just received it in memory or kept a socket connected. Only
+acknowledged entries can be cleared, with a matching snapshot/revision recorded
+in local storage so restart can reconstruct all remaining work. Edits that arrive
+from others during this short replay use the ordinary collaboration protocol,
+as they do online. Spinel never PUTs a whole snapshot over the live document.
 
 **Reconnect, live document moved on.** If the revision or generation has
 advanced, Spinel never replays. History restore, trash, deletion and revoked
@@ -263,20 +317,24 @@ and an explicit discard. Nothing is written into a forbidden, trashed or replace
 document. Automatic merging of divergent offline edits is out of scope.
 
 **Crash between replay and clearing.** On restart, an outbox still marked
-`replaying` may or may not have reached the server. Every accepted change
-advances the revision. So if the revision still equals the base, nothing landed
-and replay is safe to repeat; if it has advanced, Spinel makes a conflicted copy.
-That never duplicates an edit, though it can make an unneeded copy. Record how
-often that happens. If it is common, a follow-up can record a Spinel batch ID on
-the server at submit time.
+`replaying` may contain edits whose acknowledgements were lost or whose local
+cleanup did not commit. Retain the outbox and original retry identities until
+durable acknowledgement and the corresponding local cleanup/rebase complete.
+Repeated delivery through SPN-057 must be idempotent. SPN-053's conservative
+reconnect rule still applies: after revalidating access, retry pending replay
+only if the live revision/generation equals its base; an advanced
+base goes to SPN-054's conflicted-copy path without changing the live document.
+This can create an unneeded copy after a lost acknowledgement; record how often
+it happens. It must never lose or double-apply an edit; use the existing SPN-057/
+SPN-058 acknowledgement and retry contracts.
 
-**One queue owner.** For downloaded items Spinel sets Pro's
-`enableOfflineEditing` to false, so Pro never holds edits that Spinel's outbox
-lacks. The outbox also captures while online. Each `flush()` that reaches
-`SYNCED` clears the synced entries and re-bases on the current revision, so a
-dropped connection leaves only a short window that may produce a copy. Items that
-are not downloaded keep today's online behavior and make no on-device durability
-claim.
+**One queue owner.** SPN-058's pending queue is authoritative; SPN-053 persists it
+as the downloaded item's outbox, including while online. A mutation must commit
+locally before **Saved on this device** is claimed. Server acknowledgements
+identify the durably accepted edits; local cleanup and rebasing preserve every
+unacknowledged entry across failure or restart. Do not add a separate Pro queue
+or treat a connection/status transition as proof of durability. Items that are
+not downloaded keep the online behavior and make no on-device durability claim.
 
 **Public APIs only.** The design needs no Pro internals, license workaround,
 paid service or engine replacement. Reusable work from draft #86: SPN-039 ported
@@ -290,13 +348,15 @@ and the replay-snapshot server adapter.
 
 Distinguish **Saving on this device**, **Saved on this device — waiting to sync**,
 **Synced**, and **Needs attention**. Only successful local persistence earns a
-local-save claim. Only a `SYNCED` flush followed by cleared outbox entries earns
-**Synced**. A local-save failure stays visible until resolved.
+local-save claim. **Synced** requires durable server acknowledgements for every
+pending edit and successful local outbox cleanup/rebasing. These are SPN-057/
+SPN-058 semantics, independent of the server database; neither an open connection
+nor a UI status alone proves them. A local-save failure stays visible until resolved.
 
 Sync is attempted on startup, on returning to the foreground and when the
 connection returns, while the app is running. Pending work stays visible until it
 actually succeeds. Background Sync may be an optional enhancement. It is not a
-requirement for Firefox/Android or Safari/iOS, and not a promise that the Univer
+requirement for Firefox/Android or Safari/iOS, and not a promise that the sync
 client runs while the app is closed. Follow the existing [history](history.md)
 and [collaboration](collaboration.md) contracts.
 
@@ -324,8 +384,12 @@ and [collaboration](collaboration.md) contracts.
   Handle quota failures and browser eviction without claiming guaranteed retention;
   a missing local store cannot be shown as still available offline. Re-download
   clean content when online. Never evict unsynced work through app cache cleanup.
+  Browser/user deletion or device loss can destroy the only pending copy; server
+  backups and a server database swap cannot recover edits that never durably
+  reached that server. SPN-055 protects against app-controlled deletion and makes
+  these limits visible rather than promising survival of all eviction.
 - **Remove from device** frees local content without deleting the server document
-  or its personal pin. Pending changes require explicit recovery/deletion first.
+  or changing its filing. Pending changes require explicit recovery/deletion first.
   Use bounded storage and report per-item usage; application/storage schema updates
   must preserve pending edits and a compatible offline editor, including interrupted
   migrations. Reloading for a new service worker must respect pending input/work.
@@ -342,9 +406,9 @@ checks beside the authorization tests.
 
 Use the stable application item URL, not the internal SDK generation or a guest
 token. Rename/move must preserve the destination. The browser/user controls icon
-creation; a manifest shortcut menu is not a universal per-document pinning API.
+creation; a manifest shortcut menu is not a universal per-document icon API.
 When independent item icons are unsupported, provide the stable link and a clear
-in-app pin/offline collection fallback, recording that limitation. A shortcut
+in-app offline collection fallback, recording that limitation. A shortcut
 never implicitly claims the document has been downloaded.
 
 Test installed-context startup as well as a browser tab. On iOS, do not assume
@@ -352,7 +416,11 @@ browser storage is copied into or shared with an installed app: prepare offline
 content in the context that will launch. Verify Android Chrome, Android Firefox
 and iPhone Safari Home Screen on actual devices, recording OS/browser versions,
 supported actions and observed launch behavior. CI's mobile viewport alone cannot
-establish installation, storage-context or native home-screen behavior.
+establish installation, storage-context or native home-screen behavior. SPN-090
+owns these recorded physical-device runs, including install icons and the offline
+manifest; SPN-055 owns the shared lifecycle, and SPN-052 separately verifies
+ordinary macOS Chrome, Firefox and Safari tabs with browser versions and
+persistence results recorded here.
 
 The decisive scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,
@@ -374,3 +442,10 @@ replay and interrupted application/storage updates.
 - [Firefox Android home-screen links](https://support.mozilla.org/en-US/kb/add-website-shortcut-your-home-screen-android)
   and [Safari iPhone web apps](https://support.apple.com/guide/iphone/open-as-web-app-iphea86e5236/ios).
 - [WebKit installed-app storage separation](https://webkit.org/blog/14787/webkit-features-in-safari-17-2/#web-apps).
+
+## Live Doc formulas
+
+Offline copies retain [Formula definitions](formulas.md), never calculated
+source values. They show unavailable results and make no formula requests.
+Reconnect must verify source access before rendering results; queued offline
+edits and recovery copies must preserve definitions without baking in values.

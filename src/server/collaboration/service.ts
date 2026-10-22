@@ -25,10 +25,17 @@ import {
   transformSnapshotToWorkbookData,
 } from '@univerjs-pro/collaboration';
 import { AuthError } from '../auth/store.ts';
+import { AccessTokens } from '../auth/tokens.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import { imageSources } from '../workspace/imageSources.ts';
+import {
+  hasSpaceContext,
+  resolveDocument,
+  validateDocumentCredentials,
+} from '../workspace/document-access.ts';
+import type { WorkspaceItem } from '../../shared/workspace.ts';
 import type { IChangeset } from '@univerjs/protocol';
 const runtimeLimits = { maxLoadedUnits: 8, idleTimeoutMs: 60_000 };
 
@@ -81,9 +88,15 @@ export class CollaborationStore {
   private readonly validator = new UnitSnapshotMaterializer(runtimeLimits);
   private readonly lifecycle = Symbol('trusted permanent deletion');
   private purging: Promise<void> | undefined;
-  private readonly prepareListeners = new Set<(user: string, id: string) => Promise<void>>();
+  private readonly prepareListeners = new Set<
+    (user: string, id: string, custom: Record<string, unknown>) => Promise<void>
+  >();
 
-  constructor(workspace: WorkspaceStore, filename: string) {
+  constructor(
+    workspace: WorkspaceStore,
+    filename: string,
+    _options: { spaceReview?: boolean } = {},
+  ) {
     const main = workspace.auth.database
       .prepare('PRAGMA database_list')
       .all()
@@ -91,6 +104,7 @@ export class CollaborationStore {
     if (!main?.file || realpathSync(String(main.file)) !== realpathSync(filename))
       throw new Error('Collaboration must use the application database file.');
     this.workspace = workspace;
+    new AccessTokens(workspace.auth);
     this.generations = new CollaborationGenerations(workspace);
     this.generations.recoverBeforeServing();
     new SheetStore(workspace);
@@ -148,8 +162,8 @@ export class CollaborationStore {
               active.add(pending);
               this.admitted.set(unitId, active);
             }
-            this.access(context.userID, context.request.changeset.unitID, true);
-            this.session(context.userID, context.customData);
+            this.access(context.userID, context.request.changeset.unitID, true, context.customData);
+            this.session(context.userID, context.customData, true);
             validateTargets(context.request.changeset);
             await next();
           } catch (error) {
@@ -171,6 +185,14 @@ export class CollaborationStore {
       );
     }
     this.service.use('commitChangeset', async (context, next) => {
+      if (
+        Object.hasOwn(context.customData, 'mcpTokenHash') &&
+        context.expectedHeadRevision !== context.request.changeset.baseRev
+      )
+        throw new CollabError(
+          'REVISION_MISMATCH',
+          'The document changed. Read it again before editing.',
+        );
       const id = context.changeset.unitID;
       validateTargets(context.changeset);
       if (context.requiredUnitPermissions.some((permission) => permission.unitID !== id))
@@ -198,8 +220,8 @@ export class CollaborationStore {
         if (error instanceof AuthError) throw new CollabError('INVALID_REQUEST', error.message);
         throw error;
       }
-      this.session(context.userID, context.customData);
-      this.access(context.userID, id, true);
+      this.session(context.userID, context.customData, true);
+      this.access(context.userID, id, true, context.customData);
       await next();
     });
     this.service.use('createUnit', async (context, next) => {
@@ -226,21 +248,15 @@ export class CollaborationStore {
     });
   }
 
-  private session(user: string, custom: Record<string, unknown>) {
-    if (user.startsWith('guest:') && Object.hasOwn(custom, 'guestHash')) {
-      try {
-        this.workspace.links.session(user, custom.guestHash);
-      } catch {
-        throw new CollabError('PERMISSION_DENIED', 'This link no longer works.');
-      }
+  private session(user: string, custom: Record<string, unknown>, edit = false) {
+    try {
+      validateDocumentCredentials(this.workspace, user, custom, edit);
+    } catch {
+      throw new CollabError(
+        'PERMISSION_DENIED',
+        'This document credential is no longer available.',
+      );
     }
-    // Internal jobs use trusted user identities; network calls additionally bind the live session.
-    if (
-      Object.hasOwn(custom, 'sessionHash') &&
-      (typeof custom.sessionHash !== 'string' ||
-        this.workspace.auth.sessionByHash(custom.sessionHash)?.user_id !== user)
-    )
-      throw new CollabError('PERMISSION_DENIED', 'Your session expired.');
   }
 
   purgeDeleted() {
@@ -335,21 +351,26 @@ export class CollaborationStore {
       custom.stagedUnit === unitId &&
       typeof custom.itemId === 'string'
     )
-      return this.workspaceAccess(user, custom.itemId, 'edit');
-    return this.access(user, unitId);
+      return this.workspaceAccess(user, custom.itemId, 'edit', custom);
+    return this.access(user, unitId, false, custom);
   }
 
-  access(user: string, id: string, edit = false) {
+  access(user: string, id: string, edit = false, custom: Record<string, unknown> = {}) {
     try {
-      return this.workspaceAccess(user, this.itemForUnit(id), edit ? 'edit' : 'read');
+      return this.workspaceAccess(user, this.itemForUnit(id), edit ? 'edit' : 'read', custom);
     } catch {
       throw new CollabError('PERMISSION_DENIED', 'This document is not available.');
     }
   }
 
-  private workspaceAccess(user: string, id: string, mode: 'read' | 'edit' = 'read') {
+  private workspaceAccess(
+    user: string,
+    id: string,
+    mode: 'read' | 'edit' = 'read',
+    custom: Record<string, unknown> = {},
+  ): WorkspaceItem {
     try {
-      const item = this.workspace.get(user, id, mode);
+      const item = resolveDocument(this.workspace, user, id, mode, custom);
       if (item.kind !== 'sheet' && item.kind !== 'doc') throw new AuthError(404, 'Not a document.');
       return item;
     } catch {
@@ -357,7 +378,9 @@ export class CollaborationStore {
     }
   }
 
-  onPrepared(listener: (user: string, id: string) => Promise<void>) {
+  onPrepared(
+    listener: (user: string, id: string, custom: Record<string, unknown>) => Promise<void>,
+  ) {
     this.prepareListeners.add(listener);
     return {
       dispose: () => {
@@ -366,23 +389,25 @@ export class CollaborationStore {
     };
   }
 
-  async prepare(user: string, id: string) {
-    await this.prepareCore(user, id);
-    for (const listener of this.prepareListeners) await listener(user, id);
-    this.workspaceAccess(user, id);
+  async prepare(user: string, id: string, customData: Record<string, unknown> = {}) {
+    validateDocumentCredentials(this.workspace, user, customData);
+    const custom = Object.freeze({ ...customData });
+    await this.prepareCore(user, id, custom);
+    for (const listener of this.prepareListeners) await listener(user, id, custom);
+    this.workspaceAccess(user, id, 'read', custom);
   }
 
-  private async prepareCore(user: string, id: string) {
-    this.workspaceAccess(user, id);
+  private async prepareCore(user: string, id: string, custom: Record<string, unknown>) {
+    this.workspaceAccess(user, id, 'read', custom);
     if (this.generations.restoring(id))
       throw new AuthError(409, 'A version is being restored. Try again shortly.');
     const existing = this.preparing.get(id);
     if (existing) {
       await existing;
-      this.workspaceAccess(user, id);
+      this.workspaceAccess(user, id, 'read', custom);
       return;
     }
-    const pending = this.prepareUnit(user, id);
+    const pending = this.prepareUnit(user, id, custom);
     this.preparing.set(id, pending);
     try {
       await pending;
@@ -391,26 +416,41 @@ export class CollaborationStore {
     }
   }
 
-  private async prepareUnit(user: string, id: string) {
-    const item = this.workspaceAccess(user, id);
+  private async prepareUnit(user: string, id: string, custom: Record<string, unknown>) {
+    const item = this.workspaceAccess(user, id, 'read', custom);
     const unitId = this.generations.active(id).unitId;
     const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
     const auth = this.workspace.auth;
     // Fence legacy saves before yielding. On interruption the next open retries this migration;
     // it must not clear the fence and allow an old tab to overwrite a collaboration unit.
     const snapshot = auth.transaction(() => {
+      this.workspaceAccess(user, id, 'read', custom);
       auth.database
         .prepare("INSERT OR IGNORE INTO workspace_collaboration VALUES(?,'preparing')")
         .run(id);
+      if (hasSpaceContext(custom)) {
+        // The explicit scope was resolved inside this transaction. Read the same
+        // native rows without admitting Space IDs to legacy document services.
+        const table = item.kind === 'sheet' ? 'sheet_snapshots' : 'doc_snapshots';
+        const row = auth.database.prepare(`SELECT snapshot FROM ${table} WHERE item_id=?`).get(id);
+        const native = row
+          ? (JSON.parse(String(row.snapshot)) as IWorkbookData | IDocumentData)
+          : null;
+        if (native) new DocumentStore(this.workspace).validateImages(id, native);
+        return native;
+      }
       return item.kind === 'sheet'
         ? new SheetStore(this.workspace).load(user, id).snapshot
         : new DocumentStore(this.workspace).load(user, id).snapshot;
     });
     try {
-      await this.service.getUnitLoadData({ unitID: unitId, type, revision: 0 }, { userID: user });
+      await this.service.getUnitLoadData(
+        { unitID: unitId, type, revision: 0 },
+        { userID: user, customData: custom },
+      );
     } catch (error) {
       if (!(error instanceof CollabError) || error.code !== 'UNIT_NOT_FOUND') throw error;
-      const context = { userID: user, customData: { migration: this.migration } };
+      const context = { userID: user, customData: { ...custom, migration: this.migration } };
       if (item.kind === 'sheet') {
         const initial: IWorkbookData = (snapshot as IWorkbookData | null) ?? {
           id,
@@ -450,14 +490,16 @@ export class CollaborationStore {
     // checked independently by the commit middleware above.
     const current = await this.service.getUnitLoadDataWithBlocks(
       { unitID: unitId, type, revision: 0 },
-      { userID: user },
+      { userID: user, customData: custom },
     );
     const prepared = await this.validator.materializeSnapshot(current);
     const native =
       item.kind === 'sheet'
         ? await transformSnapshotToWorkbookData(prepared.snapshot, prepared.sheetBlocks)
         : transformSnapshotToDocumentData(prepared.snapshot);
-    this.workspaceAccess(user, id);
+    this.workspaceAccess(user, id, 'read', custom);
+    if (this.generations.active(id).unitId !== unitId || this.generations.restoring(id))
+      throw new AuthError(409, 'This document was restored. Reload to continue.');
     this.validateImages(id, unitId, native);
     this.rememberResources(unitId, id, snapshot, native);
     auth.database
@@ -465,13 +507,15 @@ export class CollaborationStore {
       .run(id);
   }
 
-  async load(user: string, id: string) {
-    const item = this.workspaceAccess(user, id);
+  async load(user: string, id: string, customData: Record<string, unknown> = {}) {
+    validateDocumentCredentials(this.workspace, user, customData);
+    const custom = Object.freeze({ ...customData });
+    const item = this.workspaceAccess(user, id, 'read', custom);
     const unitId = this.generations.active(id).unitId;
     const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
     const data = await this.service.getUnitLoadDataWithBlocks(
       { unitID: unitId, type, revision: 0 },
-      { userID: user },
+      { userID: user, customData: custom },
     );
     const materialized = await this.materializer.materializeSnapshot(data);
     const snapshot =
@@ -479,7 +523,7 @@ export class CollaborationStore {
         ? await transformSnapshotToWorkbookData(materialized.snapshot, materialized.sheetBlocks)
         : transformSnapshotToDocumentData(materialized.snapshot);
     this.validateImages(id, unitId, snapshot);
-    const current = this.workspaceAccess(user, id);
+    const current = this.workspaceAccess(user, id, 'read', custom);
     const generation = this.generations.active(id);
     if (generation.unitId !== unitId)
       throw new AuthError(409, 'This document was restored. Reload to continue.');
@@ -495,22 +539,32 @@ export class CollaborationStore {
    * (docs/offline.md). Nothing partial is returned: a change of session, access
    * or generation while the read is in flight fails the whole bundle.
    */
-  async offlineBundle(user: string, id: string, verify: () => void): Promise<OfflineBundle> {
+  async offlineBundle(
+    user: string,
+    id: string,
+    verify: () => void,
+    customData: Record<string, unknown> = {},
+  ): Promise<OfflineBundle> {
     const changed = () =>
       new AuthError(409, 'Access or the document version changed. Retry the download.');
     const unavailable = () => new AuthError(404, 'This document is not available.');
     // Link guests use their link while it lasts; an offline copy would outlive it.
     if (user.startsWith('guest:')) throw unavailable();
-    const initialUnit = this.generations.active(id).unitId;
+    const family = validateDocumentCredentials(this.workspace, user, customData);
+    if (family !== 'account' && family !== 'trusted') throw unavailable();
+    const custom = Object.freeze({ ...customData });
+    let initialUnit: string | undefined;
     try {
-      await this.prepare(user, id);
+      this.workspaceAccess(user, id, 'read', custom);
+      initialUnit = this.generations.active(id).unitId;
+      await this.prepare(user, id, custom);
       verify();
-      const item = this.workspaceAccess(user, id);
+      const item = this.workspaceAccess(user, id, 'read', custom);
       const generation = this.generations.active(id);
       if (this.generations.restoring(id)) throw changed();
-      const data = await this.load(user, id);
+      const data = await this.load(user, id, custom);
       verify();
-      const current = this.workspaceAccess(user, id);
+      const current = this.workspaceAccess(user, id, 'read', custom);
       const after = this.generations.active(id);
       if (
         after.unitId !== generation.unitId ||
@@ -533,7 +587,7 @@ export class CollaborationStore {
             400,
             'Insert images from a file so they are saved with this document.',
           );
-        const image = documents.image(user, id, sha256);
+        const image = documents.image(user, id, sha256, custom);
         // Stored IDs are content hashes; a mismatch must never reach a device as verified.
         if (createHash('sha256').update(image.data).digest('hex') !== sha256) {
           // IDs only: never the image bytes or the document's name.
@@ -554,6 +608,7 @@ export class CollaborationStore {
         version: 1 as const,
         accountId: user,
         itemId: id,
+        ...(hasSpaceContext(custom) ? { spaceId: custom.spaceId as string } : {}),
         name: current.name,
         unitId: generation.unitId,
         revision: data.revision,
@@ -567,18 +622,22 @@ export class CollaborationStore {
         ? { ...fields, kind: 'sheet', snapshot: data.snapshot as IWorkbookData }
         : { ...fields, kind: 'doc', snapshot: data.snapshot as IDocumentData };
     } catch (error) {
+      // Preserve the route's signed-out response even when a deeper read
+      // discovers the expired session before returning to this boundary.
+      verify();
       if (!(error instanceof CollabError) || error.code !== 'PERMISSION_DENIED') throw error;
       // The SDK also refuses a read of a unit that a restore replaced or is
       // replacing. With access intact that is a version change the device can
       // retry; any other denial stays indistinguishable from no access.
       let readable = true;
       try {
-        this.workspaceAccess(user, id);
+        this.workspaceAccess(user, id, 'read', custom);
       } catch {
         readable = false;
       }
       if (
         readable &&
+        initialUnit !== undefined &&
         (this.generations.restoring(id) || this.generations.active(id).unitId !== initialUnit)
       )
         throw changed();
@@ -595,26 +654,43 @@ export class CollaborationStore {
     snapshot: IWorkbookData | IDocumentData,
     prepareBefore: (data: Awaited<ReturnType<CollaborationStore['load']>>) => Promise<() => void>,
     checkSession: () => void,
+    customData: Record<string, unknown> = {},
   ) {
     checkSession();
-    const job = this.generations.begin(user, id, expectedUnit, requestId, checkpointId);
+    validateDocumentCredentials(this.workspace, user, customData, true);
+    const custom = Object.freeze({ ...customData });
+    const job = this.generations.begin(user, id, expectedUnit, requestId, checkpointId, custom);
+    const finishWaiter = async (promise: Promise<RestoreJob>) => {
+      const result = await promise;
+      checkSession();
+      this.workspaceAccess(user, id, 'edit', custom);
+      // Every coalesced caller proves its own actor, checkpoint and request again.
+      return this.generations.completed(user, id, requestId, checkpointId, custom) ?? result;
+    };
     const pending = this.restores.get(job.nextUnit);
-    if (pending) return pending;
-    if (job.status === 'complete') return Promise.resolve(job);
+    if (pending) return finishWaiter(pending);
+    if (job.status === 'complete') return finishWaiter(Promise.resolve(job));
     if (job.status !== 'staging')
       throw new AuthError(409, 'Restore was interrupted. Start a new restore.');
     const run = (async () => {
       try {
         await Promise.all(this.admitted.get(job.previousUnit) ?? []);
         checkSession();
-        const item = this.workspaceAccess(user, id, 'edit');
-        const before = await this.load(user, id);
+        const item = this.workspaceAccess(user, id, 'edit', custom);
+        const before = await this.load(user, id, custom);
         const preserve = await prepareBefore(before);
+        checkSession();
+        this.workspaceAccess(user, id, 'edit', custom);
         new DocumentStore(this.workspace).validateImages(id, snapshot);
         const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
         const context = {
           userID: user,
-          customData: { migration: this.migration, itemId: id, stagedUnit: job.nextUnit },
+          customData: {
+            ...custom,
+            migration: this.migration,
+            itemId: id,
+            stagedUnit: job.nextUnit,
+          },
         };
         const replacement = { ...snapshotIdentity(snapshot, job.nextUnit), rev: 1 };
         await this.service.createUnitFromData(
@@ -632,9 +708,9 @@ export class CollaborationStore {
           type === UniverType.UNIVER_SHEET
             ? await transformSnapshotToWorkbookData(checked.snapshot, checked.sheetBlocks)
             : transformSnapshotToDocumentData(checked.snapshot);
-        this.workspaceAccess(user, id, 'edit');
+        this.workspaceAccess(user, id, 'edit', custom);
         this.rememberResources(job.nextUnit, id, replacement, native);
-        return this.generations.finish(job.id, before.revision, preserve, checkSession);
+        return this.generations.finish(job.id, before.revision, preserve, checkSession, custom);
       } catch (error) {
         // All awaited creation work has settled; cancellation cannot race a late create.
         this.generations.cancel(job.id);
@@ -644,7 +720,7 @@ export class CollaborationStore {
       this.restores.delete(job.nextUnit);
     });
     this.restores.set(job.nextUnit, run);
-    return run;
+    return finishWaiter(run);
   }
 
   async close() {

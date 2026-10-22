@@ -46,7 +46,8 @@ function guestLocation(options: { token?: string; noLocks?: boolean } = {}): Dec
 }
 
 const meta = {
-  title: 'Guest/GuestApp',
+  id: 'guest-guestapp',
+  title: 'Current production/Guest/GuestApp',
   component: GuestApp,
   // GuestApp renders its own <main>, so skip the dashboard shell.
   parameters: { shell: 'none' },

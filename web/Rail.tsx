@@ -1,5 +1,9 @@
+import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
 import type { NavigationGuard } from './navigation.ts';
+import { ConnectionStatus } from './ConnectionStatus.tsx';
+import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
+import type { ConnectionState } from './connectionState.ts';
 
 /**
  * The gem rail: a column beside the workspace, and a top bar on phones. It must
@@ -10,11 +14,17 @@ export function Rail({
   user,
   navigation,
   onSignOut,
+  connection,
+  catalog,
+  documentOpen,
 }: {
   /** Signed-out visitors see only the brand link. */
-  user: { isAdmin: boolean } | null;
+  user: { isAdmin: boolean; name?: string; icon?: string; color?: string } | null;
   navigation: Pick<NavigationGuard, 'allow'>;
   onSignOut: () => void;
+  connection?: ConnectionState;
+  catalog?: CatalogConnectionDetails | null;
+  documentOpen?: boolean;
 }) {
   return (
     <header
@@ -28,12 +38,17 @@ export function Rail({
           event.preventDefault();
       }}
     >
-      <a className="brand rail-button" href="/">
-        <span className="wiggle">
-          <GemLogo />
-        </span>
-        <span className="rail-label">Your docs</span>
-      </a>
+      <div className="rail-brand">
+        <a className="brand rail-button" href="/">
+          <span className="wiggle">
+            <GemLogo />
+          </span>
+          <span className="rail-label">Your docs</span>
+        </a>
+        {user && connection && (
+          <ConnectionStatus state={connection} catalog={catalog} documentOpen={documentOpen} />
+        )}
+      </div>
       {user && (
         <nav aria-label="Workspace">
           <a className="rail-button" href={user.isAdmin ? '/admin' : '/'}>
@@ -41,7 +56,15 @@ export function Rail({
             <span className="rail-label">{user.isAdmin ? 'Admin' : 'Dashboard'}</span>
           </a>
           <a className="rail-button" href="/settings">
-            <span aria-hidden="true">⚙</span>
+            <span
+              className="profile-rail-avatar"
+              style={{
+                background: `var(--fill-${user.color ?? 'primary-strong'}-bg)`,
+                color: `var(--fill-${user.color ?? 'primary-strong'}-fg)`,
+              }}
+            >
+              <ProfileIcon icon={user.icon ?? 'lucide:user-round'} />
+            </span>
             <span className="rail-label">Settings</span>
           </a>
           <button className="rail-button" onClick={onSignOut}>

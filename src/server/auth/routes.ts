@@ -1,4 +1,5 @@
 import express from 'express';
+import { Profiles } from './profile.ts';
 import type { Request, Response, NextFunction } from 'express';
 import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simplewebauthn/server';
 import { AuthError, AuthStore, COOKIE_NAME } from './store.ts';
@@ -7,6 +8,9 @@ import { SetupService } from './setup.ts';
 import { InvitationService } from './invitations.ts';
 import type { Session } from './store.ts';
 import { AdminStore } from './admin.ts';
+import { OwnershipTransfer } from './ownership.ts';
+import { AccessTokens } from './tokens.ts';
+import { AssistantOAuth } from './oauth.ts';
 
 export function cookieToken(request: Pick<Request, 'headers'>) {
   const tokens = (request.headers.cookie ?? '')
@@ -31,9 +35,13 @@ export function authRoutes(
 ) {
   const router = express.Router();
   const service = new AuthService(store, origin);
+  const profiles = new Profiles(store);
   const setup = new SetupService(store, origin);
   const invites = new InvitationService(store, origin);
   const admin = new AdminStore(store, invites);
+  const ownership = new OwnershipTransfer(store);
+  const tokens = new AccessTokens(store);
+  const oauth = new AssistantOAuth(store, origin);
   const requireSession = (request: Request, authenticated = false): Session => {
     const session = store.session(cookieToken(request));
     if (!session || (authenticated && !session.user_id))
@@ -54,10 +62,18 @@ export function authRoutes(
     next();
   });
   router.use(express.json({ limit: '64kb', strict: true }));
+  router.get('/profile', (request, response) =>
+    response.json(profiles.get(requireSession(request, true).user_id!)),
+  );
+  router.post('/profile', (request, response) =>
+    response.json(profiles.save(requireSession(request, true).user_id!, request.body)),
+  );
   router.get('/session', (request, response) => {
     const session = requireSession(request, true);
     const user = store.user(session.user_id!)!;
-    response.json({ user: { id: user.id, name: user.name, isAdmin: Boolean(user.is_admin) } });
+    response.json({
+      user: { id: user.id, ...profiles.get(user.id), isAdmin: Boolean(user.is_admin) },
+    });
   });
   const requireAdmin = (request: Request) => {
     const session = store.session(cookieToken(request));
@@ -65,12 +81,85 @@ export function authRoutes(
       throw new AuthError(404, 'Not found.');
     return session;
   };
+  router.get('/tokens', (request, response) => {
+    response.json({ tokens: tokens.list(requireSession(request, true).user_id!) });
+  });
+  router.get('/connections', (request, response) => {
+    response.json({ connections: oauth.list(requireSession(request, true).user_id!) });
+  });
+  router.post('/connections/:id/revoke', (request, response) => {
+    oauth.disconnect(requireSession(request, true).user_id!, String(request.params.id));
+    response.sendStatus(204);
+  });
+  router.get('/admin/connections', (request, response) => {
+    response.json({ connections: oauth.list(requireAdmin(request).user_id!, true) });
+  });
+  router.get('/oauth/pending/:id', (request, response) => {
+    response.json(oauth.details(String(request.params.id), requireSession(request, true)));
+  });
+  router.post('/oauth/pending/:id', (request, response) => {
+    response.json(
+      oauth.consent(String(request.params.id), requireSession(request, true), request.body?.allow),
+    );
+  });
+  router.post('/tokens', (request, response) => {
+    response
+      .status(201)
+      .json(tokens.create(requireSession(request, true).user_id!, request.body?.name));
+  });
+  router.post('/tokens/:id/revoke', (request, response) => {
+    tokens.revoke(requireSession(request, true).user_id!, String(request.params.id));
+    response.sendStatus(204);
+  });
+  router.get('/admin/tokens', (request, response) => {
+    response.json({ tokens: tokens.adminList(requireAdmin(request).user_id!) });
+  });
   router.get('/admin/users', (request, response) => {
     response.json({ users: admin.list(requireAdmin(request).user_id!) });
   });
   router.post('/admin/users/:id/disable', async (request, response) => {
     admin.disable(requireAdmin(request).user_id!, String(request.params.id));
     await accessChanged();
+    response.sendStatus(204);
+  });
+  router.post('/admin/users/:id/reactivate', async (request, response) => {
+    const actor = requireAdmin(request).user_id!;
+    if (!request.body || Array.isArray(request.body) || Object.keys(request.body).length)
+      throw new AuthError(400, 'Confirm reactivation without additional account changes.');
+    admin.reactivate(actor, String(request.params.id));
+    try {
+      await accessChanged();
+    } catch {
+      throw new AuthError(
+        503,
+        'Account reactivated, but open connections could not refresh. Refresh accounts to see the result.',
+      );
+    }
+    response.sendStatus(204);
+  });
+  router.get('/admin/users/:id/transfer-preview', (request, response) => {
+    response.json(ownership.preview(requireAdmin(request).user_id!, String(request.params.id)));
+  });
+  router.post('/admin/users/:id/transfer', async (request, response) => {
+    const actor = requireAdmin(request).user_id!;
+    const body = request.body;
+    if (
+      !body ||
+      Array.isArray(body) ||
+      Object.keys(body).some((key) => !['targetId', 'confirmation'].includes(key)) ||
+      typeof body.targetId !== 'string' ||
+      typeof body.confirmation !== 'string'
+    )
+      throw new AuthError(400, 'Choose an account and confirm the current transfer details.');
+    ownership.transfer(actor, String(request.params.id), body.targetId, body.confirmation);
+    try {
+      await accessChanged();
+    } catch {
+      throw new AuthError(
+        503,
+        'Ownership transferred, but open connections could not refresh. Refresh accounts to see the result.',
+      );
+    }
     response.sendStatus(204);
   });
   router.post('/admin/users/:id/passkeys/:key/remove', async (request, response) => {

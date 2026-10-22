@@ -8,6 +8,7 @@ export type OfflineScope = Readonly<{
   origin: string;
   accountId: string;
   itemId: string;
+  spaceId?: string;
   unitId: string;
   kind: 'doc' | 'sheet';
   access: ItemAccess;
@@ -24,10 +25,11 @@ export type OfflineAccessState = Readonly<{
 export function offlineScope(bundle: OfflineBundle, origin = location.origin): OfflineScope {
   if (bundle.sdkVersion !== OFFLINE_SDK_VERSION)
     throw new Error('This download was made by another version of Spinel.');
-  return {
+  const scope: OfflineScope = {
     origin,
     accountId: bundle.accountId,
     itemId: bundle.itemId,
+    ...(bundle.spaceId === undefined ? {} : { spaceId: bundle.spaceId }),
     unitId: bundle.unitId,
     kind: bundle.kind,
     access: bundle.access,
@@ -35,6 +37,29 @@ export function offlineScope(bundle: OfflineBundle, origin = location.origin): O
     schema: 1,
     revisionOffset: bundle.revisionOffset,
   };
+  validateScope(scope);
+  return scope;
+}
+
+function validateScope(scope: OfflineScope) {
+  if (
+    new URL(scope.origin).origin !== scope.origin ||
+    typeof scope.accountId !== 'string' ||
+    !scope.accountId ||
+    typeof scope.itemId !== 'string' ||
+    !scope.itemId ||
+    (scope.spaceId !== undefined &&
+      (typeof scope.spaceId !== 'string' || !scope.spaceId || scope.spaceId === scope.itemId)) ||
+    typeof scope.unitId !== 'string' ||
+    !scope.unitId ||
+    !['owner', 'admin', 'editor', 'viewer'].includes(scope.access) ||
+    !['doc', 'sheet'].includes(scope.kind) ||
+    scope.sdkVersion !== OFFLINE_SDK_VERSION ||
+    scope.schema !== 1 ||
+    !Number.isSafeInteger(scope.revisionOffset) ||
+    scope.revisionOffset < 0
+  )
+    throw new Error('Invalid offline scope.');
 }
 
 /**
@@ -50,19 +75,7 @@ export class OfflineAccess {
   private listeners = new Set<(state: OfflineAccessState) => void>();
 
   constructor(scope: OfflineScope) {
-    if (
-      new URL(scope.origin).origin !== scope.origin ||
-      !scope.accountId ||
-      !scope.itemId ||
-      !scope.unitId ||
-      !['owner', 'editor', 'viewer'].includes(scope.access) ||
-      !['doc', 'sheet'].includes(scope.kind) ||
-      scope.sdkVersion !== OFFLINE_SDK_VERSION ||
-      scope.schema !== 1 ||
-      !Number.isSafeInteger(scope.revisionOffset) ||
-      scope.revisionOffset < 0
-    )
-      throw new Error('Invalid offline scope.');
+    validateScope(scope);
     this.scope = Object.freeze({ ...scope });
   }
   get state() {

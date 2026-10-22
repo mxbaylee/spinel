@@ -1,24 +1,25 @@
 # Sharing
 
-Items are private by default. The owner can choose **Share** on a document or
-folder, select Viewer or Editor for an active everyday account, and apply the
+Items are private by default. The Owner or a File admin can choose **Share** on a document, folder or
+Space, select Viewer, Editor or File admin for an active everyday account, and apply the
 change. Give that person the displayed address. They must sign in; the address
-alone does not grant access. Admin accounts cannot receive grants or access
+alone does not grant access. Server Operator accounts cannot receive grants or access
 workspace content.
 
 Folder grants apply to every descendant, including future additions. Direct and
-inherited grants combine using the most generous access: an inherited editor
-remains an editor even if the item's direct grant is viewer. The sharing panel
+inherited grants combine using the most generous access: Admin above Edit above
+View. An inherited Admin remains Admin even if the direct grant is Viewer. The sharing panel
 shows both the direct choice and effective access. **No direct access** removes
 only that item's grant; remove the ancestor grant too to revoke inherited access.
 Moving an item out of a shared folder removes that inheritance immediately.
 
 Viewers can open folders, read document content and load its images. Editors can
-also save document content and upload Doc images. Only owners change sharing,
-rename, move or [trash](trash.md) items, or create children in their folders. Sharing never changes
-ownership or the owner's folder structure. Sheets and Docs use their native
-read-only mode for viewers. Slides keep their empty-document placeholder;
-Spinel dropped Slides, and SPN-074 stops offering them.
+also save document content and upload Doc images. File admins additionally manage
+other accounts' grants and guest links, rename, move within authorized destinations,
+and send outer files to recoverable [Trash](trash.md). Creation in ordinary folders
+still requires ownership; [Space roles](#space-sharing) allow Edit to manage the
+internal tree. Sharing never changes ownership. Sheets and Docs use their native
+read-only mode for Viewers.
 
 Shared items open at their authenticated direct address. Shared folders show their
 children and have a Refresh folder button to retrieve new additions. My files
@@ -48,8 +49,15 @@ no additional access. Sheet image uploading is not implemented yet.
 
 ## Decisions and verification
 
-Folder sharing replaces Team Spaces (owner, chat 2026-10-17). The most generous
-grant wins (grooming 2026-10-17). The common resolver, admin exclusion and revision
+Folder sharing replaced the earlier Team Spaces proposal (owner, chat 2026-10-17).
+On 2026-10-20 the owner requested a different Space model: a single file inside
+existing folders, with its own internal Doc/Sheet tree and one sharing boundary
+([decision #116](https://github.com/mxbaylee/spinel/issues/116)). The
+[internal foundation](design/spaces.md#implemented-foundation) is implemented in
+SPN-078. SPN-091 added account navigation and recovery; [SPN-092](implementation/SPN-092.md)
+completes guest sharing and the scoped integrations described below. The most
+generous grant wins (grooming 2026-10-17). The common resolver, admin exclusion and
+revision
 protection were required in [decision #23](https://github.com/mxbaylee/spinel/issues/23).
 Ownership-only organization, authenticated direct addresses and honest revocation
 behavior were recorded in [decision #28](https://github.com/mxbaylee/spinel/issues/28)
@@ -65,6 +73,11 @@ share a folder, create future Sheet/Doc children, edit both, reject a save in an
 open downgraded editor, open read-only viewers and revoke access.
 
 ## Guest links
+
+New guest links automatically show a [branded social card](page-identity.md) with
+the document or Space title and type. Previews never show the owner or contents;
+a Space card also excludes child titles and Formula values. Private pages and
+older fragment-only links use the generic Spinel card.
 
 For a Sheet or Doc, the owner can use **Share → Share without an account** to
 create a view-only or editable guest link. Anyone holding that address gets only
@@ -86,9 +99,10 @@ sessions are pruned when another opens. Token exchanges are rate-limited.
 Guest principals are separate from accounts and never impersonate an owner.
 They count as collaboration members like other visitors; no concurrency/license
 limit is bypassed. Guest pages have no dashboard, account navigation, history,
-sharing controls or account export/import routes. Scoped credentials authorize
-only the selected document, its collaboration routes and its images. View links
-cannot write or upload. Access is rechecked after image decoding and at durable
+sharing controls or account export/import routes. A standalone link authorizes
+only its document, collaboration routes and images; a Space link covers the
+root's internal tree as described below. View links cannot write or upload.
+Access is rechecked after image decoding and at durable
 collaboration commits. Revoked links, trashed documents and disabled owners deny
 access. A transient metadata/network failure retains the guest editor and its
 unsaved-work guard; an authoritative denial removes the editor.
@@ -118,13 +132,13 @@ revocation in both development and production builds.
 The **Shared with me** drawer contains currently accessible documents and folders,
 including inherited folder contents. It shows their owner's display name and a
 shared badge. Those labels also appear in folder listings, the opened item and
-pins and [dashboard search](search.md), using the same item metadata and badge.
+[dashboard search](search.md), using the same item metadata and badge.
 Link guests have no account drawer and receive none of this account metadata.
 
 Drag an item onto one of your folders (or All my files), or use **File into folder**.
 Each person has at most one personal placement per shared item. Filing again moves
 that reference. **Remove from my folder** deletes only the reference: the original,
-your access, the drawer entry and your pins remain. Shared folders are shortcuts
+your access and the drawer entry remain. Shared folders are shortcuts
 to their original accessible contents. Placement never changes owner, canonical
 parent or grants. These preserve SPN-018's rules from decisions #23 and #30 and
 the owner's 2026-10-17 direction that filing is on by default.
@@ -150,3 +164,86 @@ storage for the Operator, an unchanged owner tree, predictable personal filing f
 the Collaborator, and unchanged account isolation for the Link guest. Tests cover
 legacy migration, ordering, destination isolation, inherited grants, revoke/regrant,
 trash, and browser filing/removal/revocation. [Search](search.md) includes these shares and personal filing paths.
+
+## Doc formula sources
+
+A Doc grant never grants access to its [Formula sources](formulas.md). Every
+input must be readable by the viewer; otherwise the whole formula is unavailable,
+including aggregates. A standalone Doc guest link grants no source access. A
+Space guest link covers same-Space sources, including future additions, but no
+external source. Account and MCP callers need their own current access to every
+external source. Stable bindings, formatting and unavailable results keep the
+existing Formula behavior; no cached value bypasses access checks. SPN-076 tracks
+explicit dependency sharing outside the existing permission boundary.
+
+## Space sharing
+
+Spaces are enabled by default in the application. Account navigation uses
+`/spaces`; `/review/spaces` remains a compatibility alias. Explicit
+`createApp({spaceReview:false})` or `SPINEL_SPACE_REVIEW=0` disables Space exposure.
+This runtime switch does not change the permissions below.
+
+A Space is one outer file in folders, search, tags and personal filing. Its
+effective View/Edit/Admin role comes from the root and readable outer-folder grants
+and applies uniformly to every current and future internal page and Sheet.
+Children have no separate grants or links and do not become ordinary catalog
+files. Owner and File admins administer the root; only the Owner permanently deletes its contents.
+An account Editor can manage the internal tree and recover deleted subtrees.
+
+The Owner or a File admin can issue a View or Edit guest link for the root. An Edit guest can
+create, rename, reorder, nest and trash internal content; a View guest reads it.
+Guests receive no outer folders, account identities, sharing controls, recovery
+collection, public history, native-file export or offline preparation. Existing
+native Print policy is unchanged. Account readers can export one authorized native
+child, browse its history and prepare its read-only offline copy; account Editors
+and the Owner can also name and restore versions.
+
+Every content, collaboration, Formula, image, export and MCP boundary checks the
+original credential and exact root/child, current role, live ancestry and, where
+applicable, generation. Mixed or incomplete credentials are refused. Async work
+rechecks authorization; image uploads check again after decoding, and canonical
+stored image URLs grant no access by themselves. Sheet image insertion remains
+unsupported. Disabled Space owners make the whole Space unavailable.
+
+A root link's privacy epoch covers every child room and outstanding admission.
+Rotation, revocation and role changes fence and evict affected connections;
+generic **Guest**/**Collaborator** labels hide account names and avatars. Guest
+navigation, source discovery and metadata stay within that root. The same-Space
+Formula rule follows [decision #117](https://github.com/mxbaylee/spinel/issues/117);
+SPN-076 remains for deliberate external dependency sharing, disclosing the whole
+source Space when that is its permission boundary. Internal Trash and whole-Space
+recovery remain preserved without automatic Space Trash expiry.
+
+The [SPN-092 implementation record](implementation/SPN-092.md) tracks native,
+HTTP/socket, MCP and recovery acceptance separately from final-head CI and merge
+approval. This preserves the Owner's control, the Collaborator's uniform role,
+the Link guest's exact boundary and the Operator's content isolation.
+
+## Delegated file administration
+
+Exactly one Owner inherits every File admin permission. Multiple account Admin
+grants are allowed, directly or inherited from a folder. Grant controls cannot
+alter the Owner, transfer ownership or grant content access to a server Operator;
+the current actor's own grant is excluded from those controls. Another File admin
+or the Owner can revoke or downgrade them. View/Edit guest links never offer Admin.
+
+Canonical moves require Admin on both source and destination, the same owner, and
+an ordinary folder outside every Space. Only the Owner can choose their My files
+root. Destination lists omit unauthorized folders; inherited-role explanations
+never disclose private ancestor names. Rename preserves an undisclosed original
+parent. Personal filing/removing a reference remains available to all non-owners
+and never changes the canonical file location.
+
+Admin can send a file to the Owner's recovery collection. Outer recovery listing,
+restore, permanent deletion and ownership handover retain their existing
+owner/operator rules. Internal Space recovery remains available to account Editors
+and Admins; permanent deletion remains owner-only. Every Space child, including
+future pages, has its root's role without overrides. Ordinary and Space sockets,
+content, images, exports, Formula sources and OAuth/MCP recheck current authority;
+a token's scopes never increase with its user's File admin grant.
+
+Decisions [#118](https://github.com/mxbaylee/spinel/issues/118) and
+[#145](https://github.com/mxbaylee/spinel/issues/145), 2026-10-20/22, retain sole
+ownership, content-blind Operators and View/Edit guests while letting trusted
+Collaborators administer shared work. The approved [capability matrix](design/spaces.md#capability-matrix)
+and [SPN-079 verification contract](implementation/SPN-079.md) document the limits.

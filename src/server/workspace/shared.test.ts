@@ -67,8 +67,6 @@ test('shared discovery orders grant time, not edits; inherited children and role
   expect(f.store.shared(f.owner.id)).toEqual([]);
   expect(f.store.shared(f.other.id)).toEqual([]);
   expect(() => f.store.shared(f.admin.id)).toThrow('everyday account');
-  f.store.pin(who, f.doc.id);
-  expect(f.store.pins(who)[0].ownerName).toBe('Original Owner');
 });
 test('legacy grants migrate without fabricating share dates or altering their roles', () => {
   const f = fixture();
@@ -88,12 +86,11 @@ test('legacy grants migrate without fabricating share dates or altering their ro
   migrated.share(f.owner.id, f.doc.id, f.viewer.id, 'viewer');
   expect(migrated.shared(f.viewer.id)[0].sharedAt).toBe(9000);
 });
-test('personal filing moves one reference and removal preserves content, access, pins and the owner tree', () => {
+test('personal filing moves one reference and removal preserves content, access and the owner tree', () => {
   const f = fixture(),
     who = f.viewer.id;
   f.store.share(f.owner.id, f.folder.id, who, 'viewer');
   const original = f.store.get(f.owner.id, f.doc.id);
-  f.store.pin(who, f.doc.id);
   f.store.place(who, f.doc.id, f.mine.id);
   expect(f.store.shared(who).find((i) => i.id === f.doc.id)).toMatchObject({
     placementParentId: f.mine.id,
@@ -106,7 +103,6 @@ test('personal filing moves one reference and removal preserves content, access,
   expect(f.store.shared(who).find((i) => i.id === f.doc.id)).not.toHaveProperty(
     'placementParentId',
   );
-  expect(f.store.pins(who)).toHaveLength(1);
   expect(f.store.get(who, f.doc.id).access).toBe('viewer');
   expect(f.store.get(f.owner.id, f.doc.id)).toEqual(original);
   // A shared folder is a reference too; its children remain in the owner's tree.

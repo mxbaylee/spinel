@@ -1,8 +1,10 @@
 import { ShareLink } from './ShareLink.tsx';
 import { useEffect, useState } from 'react';
-import type { GrantRole, SharePerson, WorkspaceItem } from '../src/shared/workspace.ts';
+import type { FileItem, GrantRole, SharePerson } from '../src/shared/workspace.ts';
+import { accessLabel } from '../src/shared/workspace.ts';
+import { spaceHref } from './spaceNavigation.ts';
 
-export function Sharing({ item, onClose }: { item: WorkspaceItem; onClose: () => void }) {
+export function Sharing({ item, onClose }: { item: FileItem; onClose: () => void }) {
   const [people, setPeople] = useState<SharePerson[]>([]);
   const [choices, setChoices] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(true);
@@ -66,13 +68,18 @@ export function Sharing({ item, onClose }: { item: WorkspaceItem; onClose: () =>
         Share address
         <input
           readOnly
-          value={`${location.origin}/?item=${encodeURIComponent(item.id)}`}
+          value={`${location.origin}${item.kind === 'space' ? spaceHref(item.id) : '/?item=' + encodeURIComponent(item.id)}`}
           onFocus={(e) => e.currentTarget.select()}
         />
       </label>
       <p>
-        This address opens the item for people you give access to. Folder access includes its
-        contents and future additions.
+        {item.kind === 'space'
+          ? 'This address opens the Space for people you give access to. Their role applies to every page and folder in the Space, including future additions.'
+          : 'This address opens the item for people you give access to. Folder access includes its contents and future additions.'}
+      </p>
+      <p>
+        File admins can manage sharing and file organization. They do not own the file or gain
+        server administration.
       </p>
       {people.map((person) => (
         <div key={person.id}>
@@ -91,10 +98,13 @@ export function Sharing({ item, onClose }: { item: WorkspaceItem; onClose: () =>
               <option value="editor" disabled={Boolean(person.disabled)}>
                 Editor
               </option>
+              <option value="admin" disabled={Boolean(person.disabled)}>
+                File admin
+              </option>
             </select>
           </label>
           <p>
-            Effective access: {person.effectiveRole ?? 'none'}
+            Effective access: {person.effectiveRole ? accessLabel(person.effectiveRole) : 'none'}
             {person.effectiveRole && person.effectiveRole !== person.directRole
               ? ' (from a folder)'
               : ''}
@@ -110,10 +120,11 @@ export function Sharing({ item, onClose }: { item: WorkspaceItem; onClose: () =>
       ))}
       {!busy && !people.length && !error && <p>No other everyday accounts are available.</p>}
       <p>
-        Direct and folder access combine; the most generous grant wins. Only you can change sharing
-        or organize this item.
+        Direct and folder access combine; the most generous grant wins. The Owner and file admins
+        can manage sharing, rename, move to authorized folders and send this item to the Owner’s
+        Trash. Ownership stays with its one Owner.
       </p>
-      {['sheet', 'doc'].includes(item.kind) && <ShareLink id={item.id} />}
+      {item.kind !== 'folder' && <ShareLink id={item.id} space={item.kind === 'space'} />}
       {message && <p role="status">{message}</p>}
       {error && <p role="alert">{error}</p>}
       <button disabled={busy} onClick={onClose}>

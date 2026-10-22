@@ -1,3 +1,4 @@
+import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
@@ -20,6 +21,35 @@ for (const kind of ['sheet', 'doc'] as const) {
     const guest = await browser.newContext(),
       first = await guest.newPage(),
       second = await guest.newPage();
+    const captureGuest = async (role: string) => {
+      await mkdir('test-results/theme-screenshots', { recursive: true });
+      for (const [theme, width, variant] of [
+        ['light', 1280, 'light'],
+        ['dark', 1280, 'dark'],
+        ['light', 390, 'phone'],
+      ] as const) {
+        await first.setViewportSize({ width, height: 900 });
+        await first.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+        await expect(first.locator('html')).toHaveAttribute('data-theme', theme);
+        await expect(
+          first.getByRole('status', { name: 'Connection status', exact: true }),
+        ).toHaveText('Online');
+        // The SDK's initial viewer-protection notice can cover the phone header.
+        // Wait for its real dismissal; screenshot CSS must not hide live UI.
+        await expect(
+          first.getByText('This content is protected. This action is not allowed.', {
+            exact: true,
+          }),
+        ).not.toBeVisible();
+        await first.screenshot({
+          path: `test-results/theme-screenshots/spn-042-guest-${kind}-${role}-${variant}-${info.project.name}.png`,
+          fullPage: true,
+          animations: 'disabled',
+        });
+      }
+      await first.setViewportSize({ width: 1440, height: 1000 });
+      await first.emulateMedia({ colorScheme: 'light' });
+    };
     const diagnostics: string[] = [];
     for (const view of [page, first, second]) {
       view.on('pageerror', (error) => diagnostics.push(error.message.slice(0, 300)));
@@ -79,6 +109,25 @@ for (const kind of ['sheet', 'doc'] as const) {
       await page.goto('/');
       await page.getByRole('button', { name: `Share Guest ${kind}`, exact: true }).click();
       const controls = page.getByRole('region', { name: 'Guest link', exact: true });
+      if (kind === 'doc') {
+        await expect(controls).toContainText('Shared links show the document title and type');
+        for (const [mode, width] of [
+          ['light', 1440],
+          ['dark', 1440],
+          ['phone', 390],
+        ] as const) {
+          await page.setViewportSize({ width, height: 1000 });
+          await page.emulateMedia({ colorScheme: mode === 'dark' ? 'dark' : 'light' });
+          await expect(page.locator('html')).toHaveAttribute(
+            'data-theme',
+            mode === 'dark' ? 'dark' : 'light',
+          );
+          await page.getByRole('region', { name: 'Share Guest doc', exact: true }).screenshot({
+            path: `test-results/theme-screenshots/share-preview-${mode}-${info.project.name}.png`,
+          });
+        }
+        await page.setViewportSize({ width: 1440, height: 1000 });
+      }
       await controls.getByRole('button', { name: 'Create guest link', exact: true }).click();
       const viewLink = await controls
         .getByLabel('Guest link address', { exact: true })
@@ -89,6 +138,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         { timeout: 30_000 },
       );
       await expect(first.getByText('View-only link.', { exact: true })).toBeVisible();
+      await captureGuest('viewer');
       await expect(first.getByText('Your workspace', { exact: true })).toHaveCount(0);
       await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
       expect(await first.locator('body').innerText()).not.toContain(owner.name);
@@ -109,6 +159,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await Promise.all([first.goto(editLink), second.goto(editLink)]);
       await saved(first);
       await saved(second);
+      await captureGuest('editor');
       expect(
         db
           .prepare('SELECT count(*) AS n FROM workspace_guest_sessions WHERE item_id=?')
@@ -139,9 +190,23 @@ for (const kind of ['sheet', 'doc'] as const) {
       } else {
         await edit(first, 'Kept during retry');
       }
-      await expect(
-        first.getByText('Connection interrupted. Keep this tab open; retrying…', { exact: true }),
-      ).toBeVisible();
+      const connection = first.getByRole('status', { name: 'Connection status', exact: true });
+      await expect(connection).toHaveText(/^(Offline|Reconnecting)$/);
+      const network = first.getByRole('button', { name: /^(Offline|Reconnecting) — / });
+      await expect(network).toHaveCount(1);
+      await network.hover();
+      const explanation = first.getByRole('dialog', { name: 'Connection details', exact: true });
+      await expect(explanation).toContainText(/offline|connect/i);
+      expect(await explanation.innerText()).not.toContain(owner.name);
+      expect(await first.locator('body').innerText()).not.toContain(owner.name);
+      await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
+      await first.screenshot({
+        path: `test-results/theme-screenshots/spn-042-guest-${kind}-interrupted-light-${info.project.name}.png`,
+        fullPage: true,
+        animations: 'disabled',
+      });
+      // Do not send Escape to an unfinished cell while checking its network popover.
+      await first.mouse.move(0, 0);
       await expect(region(first)).toBeVisible();
       if (kind === 'sheet')
         await expect(region(first).getByRole('status', { name: 'Save status' })).toContainText(
@@ -163,6 +228,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       await first.unroute(`**/api/guest/${item.id}`);
       if (kind === 'sheet') await first.keyboard.press('Enter');
       await saved(first);
+      // HTTP-only interruption must recover even if the room socket stayed up.
+      await expect(connection).toHaveText('Online', { timeout: 15_000 });
       await expect.poll(async () => JSON.stringify(await live())).toContain('Kept during retry');
       await controls.getByRole('button', { name: 'Turn link off', exact: true }).click();
       await expect(first.getByRole('alert')).toHaveText('This link no longer works.');

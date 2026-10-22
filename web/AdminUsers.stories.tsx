@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
-import { failure } from '../.storybook/api.ts';
+import { expect, userEvent, within } from 'storybook/test';
+import { failure, pending } from '../.storybook/api.ts';
 import { AdminUsers } from './AdminUsers.tsx';
 
 const day = 86_400_000;
@@ -63,7 +63,8 @@ const loaded = {
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
 const meta = {
-  title: 'Admin/AdminUsers',
+  id: 'admin-adminusers',
+  title: 'Current production/Admin/AdminUsers',
   component: AdminUsers,
   args: { currentId: 'u-sam' },
 } satisfies Meta<typeof AdminUsers>;
@@ -72,6 +73,17 @@ type Story = StoryObj<typeof meta>;
 
 /** The signed-in admin cannot disable themselves. The invites panel below is part of this screen. */
 export const Loaded: Story = { parameters: { api: loaded } };
+export const Loading: Story = {
+  parameters: { api: { ...loaded, 'GET /api/auth/admin/users': pending() } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Loading users…')).toBeVisible();
+    await expect(canvas.queryByText('No accounts are available.')).toBeNull();
+  },
+};
+export const Empty: Story = {
+  parameters: { api: { ...loaded, 'GET /api/auth/admin/users': { users: [] } } },
+};
 /** A lone admin with a single passkey cannot remove it. */
 export const LastAdminPasskey: Story = {
   parameters: {

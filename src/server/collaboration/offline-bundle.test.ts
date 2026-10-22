@@ -384,6 +384,7 @@ test('access, session and generation changes during the read fail the whole bund
   for (const user of [f.other.id, f.admin.id])
     await expect(f.collab.offlineBundle(user, f.sheet.id, () => {})).rejects.toMatchObject({
       status: 404,
+      message: 'This document is not available.',
     });
 });
 
@@ -565,6 +566,7 @@ test('the bundle route enforces sessions, accounts, transfer admission and repro
   await hold.ready;
   expect((await get(`${f.doc.id}/offline-bundle`, cookie(session(f.owner.id)))).status).toBe(429);
   f.auth.revokeSession(hashToken(token));
+  // load() now rejects its original credential; the request must still report sign-in.
   hold.release();
   const signedOut = await pending;
   expect(signedOut.status).toBe(401);

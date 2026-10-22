@@ -32,7 +32,8 @@ and bumps `next_id`. IDs are never reused, renumbered or recycled.
 ---
 id: SPN-012
 emoji: 🪞
-effort: M # S | M | L
+effort: M # S | M | L | XL
+# phase: pre_launch # optional; pre_launch (default) | launch | post_launch
 impact_owner: L # S | M | L, one line per persona it affects:
 impact_guest: S #   impact_operator, impact_owner, impact_collaborator, impact_guest
 score: 5 # written by npm run backlog:index; never edit by hand
@@ -86,19 +87,21 @@ reserved.
 - **Effort:** 🌱 **S** one focused change with its tests, or low-effort
   work such as scaffolding however many lines it is · 🌿 **M** several
   coordinated changes, or one design choice inside a known shape · 🌳 **L**
-  design plus a multi-part build or migration.
+  design plus a multi-part build or migration · 🏔️ **XL** sustained algorithmic
+  or architectural work with substantial investigation and verification, even
+  when the resulting diff is small. Owner, chat 2026-10-21.
 - **Impact**, judged for each persona it affects: 🤍 **S** polish, internal
   quality or an option to explore · 💜 **M** noticeable friction or trust for
   that persona · 🩷 **L** protects their documents or access, or unblocks their
   main job. A ticket's impact is the highest of its persona impacts. Judge at
   least one; leave out personas it doesn't touch. Owner, chat 2026-10-19.
 
-|        | 3 points | 2 points | 1 point |
-| ------ | -------- | -------- | ------- |
-| Impact | 🩷 L     | 💜 M     | 🤍 S    |
-| Effort | 🌱 S     | 🌿 M     | 🌳 L    |
+|        | 3 points | 2 points | 1 point | 0 points |
+| ------ | -------- | -------- | ------- | -------- |
+| Impact | 🩷 L     | 💜 M     | 🤍 S    | —        |
+| Effort | 🌱 S     | 🌿 M     | 🌳 L    | 🏔️ XL    |
 
-A ticket's own points run from 2 to 6. Its **score** is the higher of its own
+A ticket's own points run from 1 to 6. Its **score** is the higher of its own
 points and one more than the score of any ticket that depends on it, applied up
 the whole chain. A prerequisite therefore always outranks what waits on it, and
 working highest-first never skips one. Owner, chat 2026-10-19. The score is
@@ -106,16 +109,33 @@ stored in the ticket's frontmatter; `npm run backlog:index` rewrites it and the
 checker fails when it is stale. The index shows a raised score as `5 (own 3)`.
 
 Sizes are estimates: when starting a ticket shows one is wrong, fix it in the
-same PR.
+same PR. Size the expected reasoning and verification as well as implementation;
+elapsed time and line count are evidence, not automatic size thresholds. XL makes
+prolonged work visible in the index; it does not create an XL impact rating or
+waive the split review, PR size limits, acceptance criteria or independent review.
+Owner, chat 2026-10-21.
 
 ## Picking the next ticket
 
-`readme.md` lists every open ticket in pick order: highest score first, with
+`readme.md` lists every open ticket by lifecycle phase first: **Before launch**
+(`pre_launch`, the default), **Launch** (`launch`), then **After launch**
+(`post_launch`). Complete the current phase before advancing; if it is blocked,
+record the blocker rather than starting a later phase. SPN-038 is the launch
+milestone; optional CSV import (SPN-093) and document-type/converter plugins
+(SPN-094) follow it. Phase records this owner sequencing, without implying that
+CSV or plugins technically need public HTTPS. Owner, chat 2026-10-21. The fixed
+three-phase implementation and persona tradeoffs are recorded in
+[decision #129](https://github.com/mxbaylee/spinel/issues/129).
+
+Within each phase, the highest score comes first, with
 ties going to the ticket that unblocks another, then higher impact, then lower
 effort, then lower ID. Each row shows the tie-break that put it ahead of the
-next. Take the first ticket that isn't waiting on an open `depends_on`. Because
-a prerequisite always scores higher, the first row is never waiting. Owner
-sequencing in a ticket's Rules still applies: SPN-038 goes last.
+next. Take the first ticket in the current phase that isn't waiting on an open
+`depends_on`. Score calculation and dependency inheritance are unchanged. A
+prerequisite must be in the same or an earlier phase; the checker rejects a
+dependency on later-phase work. SPN-093/094 also name SPN-038 as an explicit
+launch sequencing dependency. These are timing constraints, not technical
+requirements for a converter or document-type plugin.
 
 Tickets that need owner input still rank normally. Do all the preparation, ask
 once for exactly that input, and work the next ticket while waiting.
@@ -141,6 +161,10 @@ next eligible ticket. Owner, chat 2026-10-19.
    inspect and verify it, using the original ticket, full diff and evidence,
    without a prior or hoped-for grade. Require **at least 95/100 and no unresolved
    blockers**, following the [rubric and repair/split rules](../run-backlog.md#3-get-an-independent-grade).
+   Explicitly assess over-complexity within the rubric's 10 maintainability points,
+   with actionable deductions for unnecessary abstractions, dependencies or
+   speculative flexibility (owner, chat 2026-10-20,
+   [#105](https://github.com/mxbaylee/spinel/issues/105)).
    Weigh scope overlap before changed-line limits: fix acceptance gaps here;
    ticket separable work without hiding a blocker. Re-review repairs, and put
    the score, reviewed SHA and every finding’s disposition in the PR.
@@ -228,6 +252,19 @@ Grooming isn't a ticket and doesn't count toward the seven.
   `lib/` on its own and passes at once when nothing it tests changed.
   Playwright smoke builds the app and checks development and production servers
   (SPN-001).
+
+Documentation-only CI keeps Backlog, Pull request and Lint validation, while
+Typecheck, Unit tests, Playwright smoke and Build Storybook report explicitly
+that application validation is not applicable. Storybook still builds and deploys
+on main pushes/manual runs so a docs push cannot displace a queued code deploy. The allowlist is Markdown under
+`docs/`, root `README.md`, `AGENTS.md`, `THIRD-PARTY-NOTICES.md`, and exactly
+`docs/todo/backlog.json` (which still gets backlog validation). Other JSON,
+executable mockups, code, tests, dependencies, workflows and unknown paths run
+the full suite. Classification uses the complete PR/push diff with both sides
+of renames; uncertain ranges and manual runs use full validation. A failed or
+cancelled classification never passes the browser gate. This is an applicability
+check, not a waiver for failures. Owner, chat 2026-10-20,
+[decision #121](https://github.com/mxbaylee/spinel/issues/121).
 
 Owner setup, once, in the repository settings:
 

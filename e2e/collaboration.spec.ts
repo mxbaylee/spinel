@@ -129,16 +129,20 @@ test('two authenticated editors receive each other’s sheet edits without reloa
     await jump.focus();
     await expect(jump.locator('.collaborator-name')).toBeVisible();
     expect(await jump.boundingBox()).toEqual(before);
+    const address = page
+      .getByRole('region', { name: 'Sheet document', exact: true })
+      .getByRole('textbox')
+      .nth(2);
+    const ownSelection = await address.inputValue();
     await jump.click();
-    await expect(
-      page.getByRole('region', { name: 'Sheet document', exact: true }).getByRole('textbox').nth(2),
-    ).toHaveValue('B2');
-    // Canvas popups are rendered in the SDK's body portal, outside its container.
-    const markers = page.getByRole('button', { name: 'Go to Collaboration editor', exact: true });
-    await expect(markers).toHaveCount(2);
-    await expect(markers.last()).toBeVisible();
-    expect(await markers.first().evaluate((node) => getComputedStyle(node).backgroundColor)).toBe(
-      await markers.last().evaluate((node) => getComputedStyle(node).backgroundColor),
+    // Following reveals the collaborator without overwriting our selection.
+    await expect(address).toHaveValue(ownSelection);
+    const marker = page
+      .locator('[data-presence-label]')
+      .filter({ hasText: 'Collaboration editor' });
+    await expect(marker).toBeVisible();
+    expect(await jump.evaluate((node) => getComputedStyle(node).backgroundColor)).toBe(
+      await marker.evaluate((node) => getComputedStyle(node).backgroundColor),
     );
 
     await network.setOffline(true);
@@ -335,6 +339,11 @@ test('revoking one login preserves another login’s queued edit and stops later
   const pending = new Promise<void>((resolve) => {
     release = resolve;
   });
+  let releaseCatalogDenial!: () => void;
+  const pendingCatalogDenial = new Promise<void>((resolve) => {
+    releaseCatalogDenial = resolve;
+  });
+  let catalogDenialHeld = false;
   let held = false,
     closed = 0;
   const revokedMessages: string[] = [];
@@ -358,13 +367,28 @@ test('revoking one login preserves another login’s queued edit and stops later
       },
     ]);
   try {
+    // The shared-list poll redirects on 401 independently of the editor warning.
+    // Keep its real denial pending while proving revocation in the open editor.
+    await page.route('**/api/items/shared', async (route) => {
+      const response = await route.fetch();
+      if (response.status() === 401) {
+        catalogDenialHeld = true;
+        await pendingCatalogDenial;
+      }
+      await route.fulfill({ response });
+    });
     await page.goto(`/?item=${item.id}`);
     await other.goto(`${baseURL}/?item=${item.id}`);
-    for (const target of [page, other])
+    for (const target of [page, other]) {
       await expect(target.getByRole('status', { name: 'Save status' })).toHaveText(
         'All changes saved.',
         { timeout: 30_000 },
       );
+      // Saved content does not prove that this login has joined the room.
+      await expect(
+        target.getByRole('status', { name: 'Connection status', exact: true }),
+      ).toHaveText('Online');
+    }
     await second.route('**/universer-api/comb/**/new_changes', async (route) => {
       held = true;
       await pending;
@@ -379,9 +403,16 @@ test('revoking one login preserves another login’s queued edit and stops later
     await other.keyboard.type('private-after-revoke');
     await other.keyboard.press('Enter');
     await expect.poll(() => held).toBe(true);
+    const closedBeforeRevocation = closed;
     auth.revokeSession(sessions[0].session.token_hash);
-    await expect.poll(() => closed).toBeGreaterThan(0);
+    await expect.poll(() => closed).toBeGreaterThan(closedBeforeRevocation);
     await expect(page.getByRole('status', { name: 'Save status' })).toContainText('Access changed');
+    await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    expect((await context.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status()).toBe(401);
+    // Exercise the existing focus refresh instead of racing its five-second timer.
+    await page.bringToFront();
+    await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+    await expect.poll(() => catalogDenialHeld).toBe(true);
     const boundary = revokedMessages.length;
     release();
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
@@ -395,6 +426,9 @@ test('revoking one login preserves another login’s queued edit and stops later
       revokedMessages.slice(boundary).some((message) => message.includes('private-after-revoke')),
     ).toBe(false);
     await expect(other.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
+    releaseCatalogDenial();
+    await expect(page).toHaveURL(/\/sign-in$/);
+    await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
     await other.reload();
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
       'All changes saved.',
@@ -402,6 +436,8 @@ test('revoking one login preserves another login’s queued edit and stops later
     );
   } finally {
     release();
+    releaseCatalogDenial();
+    await page.unrouteAll({ behavior: 'wait' });
     await second.close();
     db.prepare('DELETE FROM workspace_items WHERE id=?').run(item.id);
     db.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);

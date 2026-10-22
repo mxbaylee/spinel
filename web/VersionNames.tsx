@@ -1,10 +1,18 @@
 import { useState } from 'react';
-import { itemsRequest } from './itemsApi.ts';
+import { historyHref, historyRequest } from './historyApi.ts';
 
 import type { HistoryVersion as Version } from '../src/shared/historyNavigation.ts';
 
 /** Version naming and entry points to the isolated history browser. */
-export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
+export function VersionNames({
+  id,
+  saved,
+  spaceId,
+}: {
+  id: string;
+  saved: boolean;
+  spaceId?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [versions, setVersions] = useState<Version[]>([]);
   const [canName, setCanName] = useState(false);
@@ -13,7 +21,13 @@ export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
   const [editing, setEditing] = useState<string | null>(null);
   const [name, setName] = useState('');
   const refresh = async () => {
-    const data = await itemsRequest<{ versions: Version[]; canName: boolean }>(`/${id}/history`);
+    const data = await historyRequest<{ versions: Version[]; canName: boolean }>(
+      id,
+      '',
+      'GET',
+      undefined,
+      spaceId,
+    );
     setVersions(data.versions);
     setCanName(data.canName);
   };
@@ -44,7 +58,7 @@ export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
       {open && (
         <section aria-label="Version names">
           <h3>Versions</h3>
-          <a href={`/preview?item=${encodeURIComponent(id)}`} target="_blank" rel="noopener">
+          <a href={historyHref(id, spaceId)} target="_blank" rel="noopener">
             Browse history
           </a>
           {error && <p role="alert">{error}</p>}
@@ -73,8 +87,15 @@ export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
                 void run(async () => {
                   if (editing === 'current') {
                     if (!saved) throw new Error('Wait for all changes to save first.');
-                    await itemsRequest(`/${id}/history`, 'POST', { name });
-                  } else await itemsRequest(`/${id}/history/${editing}`, 'PATCH', { name });
+                    await historyRequest(id, '', 'POST', { name }, spaceId);
+                  } else
+                    await historyRequest(
+                      id,
+                      `/${encodeURIComponent(editing)}`,
+                      'PATCH',
+                      { name },
+                      spaceId,
+                    );
                   setEditing(null);
                   await refresh();
                 });
@@ -105,14 +126,9 @@ export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
           <ul>
             {versions.map((version) => (
               <li key={version.id}>
-                {version.name && <span aria-label="Pinned version">📌 </span>}
                 <span>{version.name ?? 'Unnamed version'}</span>
                 {Boolean(version.beforeRestore) && <strong> — Before restore</strong>}
-                <a
-                  href={`/preview?item=${encodeURIComponent(id)}&version=${encodeURIComponent(version.id)}`}
-                  target="_blank"
-                  rel="noopener"
-                >
+                <a href={historyHref(id, spaceId, version.id)} target="_blank" rel="noopener">
                   Preview version
                 </a>{' '}
                 <time dateTime={new Date(version.capturedAt).toISOString()}>
@@ -134,9 +150,15 @@ export function VersionNames({ id, saved }: { id: string; saved: boolean }) {
                         disabled={busy}
                         onClick={() =>
                           void run(async () => {
-                            await itemsRequest(`/${id}/history/${version.id}`, 'PATCH', {
-                              name: null,
-                            });
+                            await historyRequest(
+                              id,
+                              `/${encodeURIComponent(version.id)}`,
+                              'PATCH',
+                              {
+                                name: null,
+                              },
+                              spaceId,
+                            );
                             await refresh();
                           })
                         }

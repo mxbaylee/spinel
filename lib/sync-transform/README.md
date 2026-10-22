@@ -79,7 +79,7 @@ between screens, can throw `duplicate-custom-range-id` for a single user, and
 builds a negative retain when a new link crosses a paragraph break inside an
 old one. A copy of this lib published on its own needs the same patch, until
 upstream ships the fixes ([dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938))
-and SPN-078 removes it.
+and SPN-097 removes it.
 
 The transforms are stateless, so some facts must travel with the mutation:
 

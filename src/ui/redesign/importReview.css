@@ -1,0 +1,52 @@
+.rd-import-review {
+  display: grid;
+  gap: 16px;
+  margin-block: 20px;
+}
+.rd-import-review p {
+  margin: 0;
+}
+.rd-import-destination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--sp-muted);
+}
+.rd-import-destination strong {
+  color: var(--sp-text);
+  overflow-wrap: anywhere;
+}
+.rd-import-drop {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding: 24px;
+  border: 1px dashed var(--sp-border);
+  border-radius: 12px;
+  background: var(--sp-panel);
+}
+.rd-import-filename {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+.rd-import-error {
+  color: var(--fill-error-soft-fg);
+}
+.rd-import-limits summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rd-import-limits summary::before {
+  content: '›';
+}
+.rd-import-limits[open] summary::before {
+  content: '⌄';
+}
+.rd-import-limits p {
+  margin-block: 12px;
+  color: var(--sp-muted);
+}

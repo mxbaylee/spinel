@@ -5,6 +5,7 @@ import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { AuthError } from '../auth/store.ts';
 import type { WorkspaceStore } from './store.ts';
 import { commitSnapshot } from './snapshots.ts';
+import { resolveDocument, validateDocumentCredentials } from './document-access.ts';
 
 export const IMAGE_LIMIT = 5 * 1024 * 1024;
 export const DOCUMENT_IMAGE_LIMIT = 50 * 1024 * 1024;
@@ -86,8 +87,21 @@ export class DocumentStore {
       return source;
     });
   }
-  async upload(owner: string, id: string, input: unknown, mime: string) {
-    this.document(owner, id, true);
+  async upload(
+    owner: string,
+    id: string,
+    input: unknown,
+    mime: string,
+    customData: Record<string, unknown> = {},
+  ) {
+    validateDocumentCredentials(this.workspace, owner, customData, true);
+    // Retain the admitted credential and exact child through both decode awaits.
+    const custom = Object.freeze({ ...customData });
+    const access = () => {
+      const item = resolveDocument(this.workspace, owner, id, 'edit', custom);
+      if (item.kind !== 'doc') throw new AuthError(400, 'This item is not a document.');
+    };
+    access();
     if (!Buffer.isBuffer(input) || !input.length || input.length > IMAGE_LIMIT)
       throw new AuthError(413, 'Choose an image no larger than 5 MiB.');
     const formats: Record<string, string> = {
@@ -102,11 +116,13 @@ export class DocumentStore {
     try {
       const image = sharp(input, { limitInputPixels: 16_000_000, failOn: 'error' });
       const metadata = await image.metadata();
+      access();
       if (metadata.format !== formats[mime] || (metadata.pages ?? 1) > 1)
         throw new Error('Unsupported image');
       // Decode fully and strip metadata; header sniffing alone accepts broken image data.
       bytes = await image.rotate().toBuffer();
-    } catch {
+    } catch (error) {
+      if (error instanceof AuthError) throw error;
       throw new AuthError(
         400,
         'Choose a valid static PNG, JPEG or WebP image up to 16 megapixels.',
@@ -119,7 +135,7 @@ export class DocumentStore {
     const imageId = createHash('sha256').update(bytes).digest('hex');
     return this.workspace.auth.transaction(() => {
       // Recheck access after asynchronous decoding, including disabled/deleted accounts.
-      this.document(owner, id, true);
+      access();
       const db = this.workspace.auth.database;
       if (!db.prepare('SELECT 1 FROM doc_images WHERE item_id=? AND id=?').get(id, imageId)) {
         const used = db
@@ -132,8 +148,8 @@ export class DocumentStore {
       return { id: imageId, url: `/api/items/${id}/images/${imageId}` };
     });
   }
-  image(owner: string, id: string, imageId: string) {
-    const item = this.workspace.get(owner, id);
+  image(owner: string, id: string, imageId: string, customData: Record<string, unknown> = {}) {
+    const item = resolveDocument(this.workspace, owner, id, 'read', customData);
     if (!['doc', 'sheet'].includes(item.kind))
       throw new AuthError(400, 'This item cannot contain images.');
     const image = this.workspace.auth.database

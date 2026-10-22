@@ -14,12 +14,15 @@ export function presetStyle(id: string, mode: ThemeMode): IStyleData {
     cl: { rgb: palettes[mode][`fill-${id}-fg`] },
   };
 }
-export function displayPresetStyle(style: IStyleData, mode: ThemeMode): IStyleData {
-  const preset = fillPresets.find(
+function matchingPreset(style: IStyleData) {
+  return fillPresets.find(
     ({ id }) =>
       style.bg?.rgb?.toLowerCase() === palettes.light[`fill-${id}-bg`] &&
       style.cl?.rgb?.toLowerCase() === palettes.light[`fill-${id}-fg`],
   );
+}
+export function displayPresetStyle(style: IStyleData, mode: ThemeMode): IStyleData {
+  const preset = matchingPreset(style);
   return preset ? { ...style, ...presetStyle(preset.id, mode) } : style;
 }
 
@@ -28,10 +31,16 @@ export function displayPresetStyle(style: IStyleData, mode: ThemeMode): IStyleDa
 export function displayPresetCell(
   cell: ICellDataForSheetInterceptor,
   style: IStyleData,
-  mode: ThemeMode,
 ): ICellDataForSheetInterceptor {
-  const display = displayPresetStyle(style, mode);
-  if (display === style) return cell;
+  const preset = matchingPreset(style);
+  if (!preset) return cell;
+  // Render-only theme tokens distinguish mapped presets from ordinary literals.
+  // A literal white fill must still become dark paper, even if a preset uses white.
+  const display = {
+    ...style,
+    bg: { rgb: `spinel-${preset.id}.0` },
+    cl: { rgb: `spinel-${preset.id}.1` },
+  };
   const result = { ...cell, interceptorStyle: { ...cell.interceptorStyle, ...display } };
   if (cell.p) {
     result.p = structuredClone(cell.p);

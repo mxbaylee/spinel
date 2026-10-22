@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import type { WorkspaceItem } from '../src/shared/workspace.ts';
+import type { FileItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 
-export function SharedBadge({ item }: { item: WorkspaceItem }) {
+export function SharedBadge({ item }: { item: FileItem }) {
   return item.access !== 'owner' ? (
     <>
       <span className="shared-badge">Shared</span>{' '}
@@ -12,8 +12,8 @@ export function SharedBadge({ item }: { item: WorkspaceItem }) {
 }
 
 /** Items shared with this account. `offline` is local mode's saved list: read only, no requests. */
-export function useSharedItems(offline?: WorkspaceItem[]) {
-  const [items, setItems] = useState<WorkspaceItem[]>(offline ?? []),
+export function useSharedItems(offline?: FileItem[]) {
+  const [items, setItems] = useState<FileItem[]>(offline ?? []),
     [loaded, setLoaded] = useState(Boolean(offline)),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
@@ -24,7 +24,7 @@ export function useSharedItems(offline?: WorkspaceItem[]) {
     if (mutating.current) return;
     const request = ++generation.current;
     try {
-      const result = await itemsRequest<{ items: WorkspaceItem[] }>('/shared');
+      const result = await itemsRequest<{ items: FileItem[] }>('/shared');
       if (mounted.current && request === generation.current) {
         setItems(result.items);
         setError('');
@@ -62,7 +62,7 @@ export function useSharedItems(offline?: WorkspaceItem[]) {
     setBusy(true);
     setError('');
     try {
-      const result = await itemsRequest<{ items: WorkspaceItem[] }>(
+      const result = await itemsRequest<{ items: FileItem[] }>(
         `/${id}/placement`,
         remove ? 'DELETE' : 'PUT',
         remove ? {} : { parentId },

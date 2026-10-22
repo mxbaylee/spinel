@@ -1,5 +1,20 @@
 # File list (dashboard)
 
+## SPN-047 composed redesign proposal
+
+Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Dashboard, Search, SharedFiles, Trash, EmptyFolder, LoadingFiles, FileError.
+
+| Current friction                                                                               | Public reference pattern                                                                              | Adopted proposal                                                                                                 |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Separate pins, folders and shared panels; a wall of row actions; a large heading above search. | Dropbox separates file navigation from actions; Notion combines favorites and hierarchy in a sidebar. | One file sidebar; search above rows; one New menu and one always-visible row menu. Access labels remain visible. |
+
+The redesigned header keeps the current folder title with its ancestor breadcrumb. Search, Filters and List/Grid share one responsive toolbar directly below it; Type, Ownership, Tag and Last modified sit inside Filters. Active constraints remain visible and clearable. On phones search gets a full row, with Filters and view controls immediately beneath it. At phone width Browse files opens a modal navigation drawer. The selected folder becomes the page title, with ancestors as a compact breadcrumb. No pinned-item list or pin actions.
+
+The approved proposal above governs placement during implementation. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
 SPN-048 builds this page's layout. Design changes made while building go back
 into this page, not only into the PR.
 
@@ -18,7 +33,7 @@ The shared pattern: one New button that also holds import, a wide search with
 filter chips, "Shared with me" as a place in the nav rather than a panel, and
 one menu button per row.
 
-## Spinel today
+## Pre-redesign friction (historical, 2026-10-19)
 
 Search panel above everything; a "Shared with me" toggle that opens a drawer
 above the list; New, Refresh folder and Import as three separate buttons; and up
@@ -33,12 +48,12 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
 ┌ sidebar ─────────┬ header ───────────────────────────────────────────┐
 │ My files         │ My files / Budgets              [ Search… ] [ New ▾]│
 │ Shared with me   ├───────────────────────────────────────────────────┤
-│ Pinned  (list)   │ [All] [Sheets] [Docs] [Tagged ▾]       ← filter chips │
-│ Folders (tree)   ├───────────────────────────────────────────────────┤
+│                  │ [Search…] [Filters] [List / Grid]                    │
+│                  ├───────────────────────────────────────────────────┤
 │                  │ ▦ Q3 forecast   Shared · View only  #ops  Oct 12  ⋯ │
 │                  │ ▤ Notes                            #ops  Oct 10  ⋯ │
-│ Trash            │                                                    │
-│ ● Online         │                                                    │
+│ Appearance       │                                                    │
+│ Your profile     │                                                    │
 └──────────────────┴───────────────────────────────────────────────────┘
 ```
 
@@ -52,34 +67,41 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
 - **Shared with me** is a sidebar place, like My files. It lists shared items
   with "Shared by" and the share date in the secondary column. Filing a shared
   reference into a folder (SPN-018) is **File into folder…** in the row menu,
-  and dragging the row onto a sidebar folder still works. The `↗` handle goes.
-- **Pinned** (SPN-020) is a short list in the sidebar; a pinned row also shows a
-  pin badge.
-- **Trash** sits at the bottom of the sidebar, above the connection indicator
-  (SPN-042), which states online/offline/reconnecting and never claims anything
-  is saved on the device.
+  and filing into a folder from My files remains available. The `↗` handle goes.
+- **Trash** is a permanent folder in My files. The network icon by the gem
+  explains connectivity on hover/tap and never claims anything is saved.
 - **Rows** follow the [row pattern](README.md#row). The secondary column is the
   edited date in My files and the shared date in Shared with me.
 - **Folder actions** (Rename, Move, Share, Refresh folder, Trash) are the More
   menu next to the breadcrumb title, the same items as the folder's row menu.
-- **Grid view:** not adopted. With about two people's documents, a list is
-  enough.
+- **List / Grid:** a labelled toggle changes density while preserving the
+  folder, filters, access details and actions. List is the initial default.
 
 ### Always visible / behind a menu
 
-| Always visible                                                             | Behind a menu                                                                                                       |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| New (primary), search, breadcrumb                                          | New → Folder, Sheet, Doc, Import file…                                                                              |
-| Sidebar: My files, Shared with me, Pinned, folders, Trash, connection      | Owned row ⋯ → Open, Pin/Unpin, Tags…, Share…, Rename…, Move…, Available offline on this device, Trash               |
-| Row: icon, name, shared/view-only/pinned/offline badges, two tags, date, ⋯ | Shared row ⋯ → Open, Pin/Unpin, Tags…, File into folder… or Remove from my folder, Available offline on this device |
-|                                                                            | Folder ⋯ → the owned-row items that apply to folders, plus Refresh folder                                           |
-| Filter chips while searching or filtering                                  | Tags chip → tag list                                                                                                |
+| Always visible                                                      | Behind a menu                                                                                            |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| New (primary), search, breadcrumb                                   | New → Folder, Sheet, Doc, Import file…                                                                   |
+| Sidebar: My files, Shared with me, theme, profile; network by gem   | Owned row ⋯ → Open, Tags…, Share…, Rename…, Move…, Available offline on this device, Trash               |
+| Row: icon, name, shared/view-only/offline badges, two tags, date, ⋯ | Shared row ⋯ → Open, Tags…, File into folder… or Remove from my folder, Available offline on this device |
+|                                                                     | Folder ⋯ → the owned-row items that apply to folders, plus Refresh folder                                |
+| Filter chips while searching or filtering                           | Tags chip → tag list                                                                                     |
 
 Access ("View only", "Can edit") stays a visible badge because it decides what
 the person can do once they open the item. The shared-row menu never offers
 Share, Rename, Move or Trash: only the owner can (docs/sharing.md). "Remove from
 my folder" removes the person's filed reference, not the item, so it isn't
 grouped with the destructive items.
+
+## Slides removal before the redesign (SPN-074)
+
+SPN-074 removed Slides entirely before SPN-047. The existing New type selector
+and search type filter offer only Folder, Sheet and Doc; SPN-048's new menu
+layout is not a prerequisite. Spinel has never been in production, so there is
+no legacy Slides placeholder or compatibility requirement. The owner approved
+this removal and waived screenshots for it; the general UI review rule remains.
+Owner correction and approval, chat 2026-10-20, decision
+[#104](https://github.com/mxbaylee/spinel/issues/104).
 
 ## Offline (SPN-039, SPN-053, SPN-054, SPN-051, SPN-052)
 
@@ -102,11 +124,15 @@ files and its row links to the original. See [states.md](states.md#offline).
 
 **Today (SPN-039).** Row actions are still inline buttons until the row menu
 lands, so **Available offline on this device** and **Remove from device** sit
-with them. Badges are `OfflineBadge`. SPN-042's connection indicator doesn't
-exist yet, so local mode shows the [banner](README.md#banner) (`OfflineBanner`):
-"Offline. Files as of 14:05. Downloaded documents open read-only until you
-reconnect." When SPN-042 lands, its popover takes over the "Files as of" line and
-the banner goes. Pending-edit states arrive with SPN-053 and SPN-054.
+with them. Badges are `OfflineBadge`. SPN-042 adds the shared `ConnectionStatus`
+control beside the gem, with Online, Offline and Reconnecting states. Its
+hover, focus or tap detail contains "Files as of" while the catalog is local,
+offline or a refresh failed; `OfflineBanner` is removed. Connectivity returning
+does not refresh a local catalog or promote its downloaded viewers to live
+editing: the detail continues to explain that this session is read-only.
+The indicator makes no on-device save claim. See [connection behavior](../connection.md)
+and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
+Pending-edit states arrive with SPN-053 and SPN-054.
 
 `OfflineViewer` has no story: like the editors and version previews, it hosts
 Univer. Its states are plain text ("Opening offline copy…", "Read only on this
@@ -114,9 +140,55 @@ device. Reconnect to edit." or the problem) and `e2e/offline.spec.ts` covers the
 
 ## Stories
 
-`Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/PinnedSidebar`,
-`Dashboard/PinButton`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
+`Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
 `Dashboard/DocumentTags`, `Dashboard/Trash`, `Dashboard/ImportFile`,
-`Dashboard/OfflineBadge` (also the banner and the "You're offline" page). Local
+`Dashboard/OfflineBadge` (also the "You're offline" page), and
+`Shell/ConnectionStatus` for connection and catalog details. Local
 mode: `Dashboard/Dashboard` `LocalMode`, `LocalNeedsConnection` and
 `LocalFolderNotOpened`.
+
+## Navigation after the persona walkthrough
+
+Use one collapsible 224 px column for gem, places and account
+utilities. Do not retain a separate rail beside it. Tablets/phones start with
+a drawer; Files remains visibly labelled. Remove the repeated workspace eyebrow
+and decorative list caption on phones. Search explicitly names its current
+scope and offers Search all files from a folder/shared view. Returning from
+a document restores folder, filters and scroll position (SPN-048/049).
+
+Current owner direction (chat, 2026-10-21): folders are rows in **My files**.
+Personal pinning and pinned navigation are removed ([decision #128](https://github.com/mxbaylee/spinel/issues/128)); folders, tags and search
+provide retrieval without another shortcut list. The expanded sidebar uses the original saturated `--sp-rail` pink and
+matching `--sp-rail-ink` foreground (owner correction, 2026-10-20). Profile and Appearance occupy separate rows. Trash is a permanent
+folder entry in My files with no rename/move/delete controls; it is not another
+sidebar destination. A network icon beside the gem shows connection state,
+with an accessible label and hover/tap explanation. Document save warnings
+remain explicit; network state never substitutes for save confirmation.
+
+Owner refinement (chat, 2026-10-20): offer **List and Grid** views over the same
+files, filters and actions. Default to List; remember the preference during the
+screen migration. Folders and permanent Trash appear in both. Desktop collapse
+keeps My files and Shared with me directly accessible, with full accessible
+names and hover/focus labels; phone/tablet navigation stays in the drawer.
+Space trees reopen from Pages rather than flattening a hierarchy into icons.
+
+Use a deterministic normalized-filename hash to choose a default botanical emoji
+for Doc/Sheet/Space identity. The same title has the same cue on every surface;
+a rename may change the default, and collisions are expected. It is decorative,
+never an identifier or substitute for a type/access label. Folders and Trash keep
+their functional icons. Defer the persistent emoji/icon picker to **SPN-086**;
+no picker ships in this proposal. Owner/Collaborator gain recognition and view
+choice; Guests retain scoped identity and access clarity; Operators gain no
+personal file navigation or service dependency. Decision #126.
+
+### Unified search follow-up
+
+Owner feedback and persona review (2026-10-20, decision #126) move the query
+builder into SPN-048: one search field may show labelled, removable colored
+conditions such as `type:sheet` and `tag:travel`; Search options opens an
+accessible form that builds the same query. Text entry and the form must agree,
+and plain-text fallback, keyboard editing, paste, touch and errors stay usable.
+This reuses existing supported filters and access scope. It does not add a new
+search engine or expose inaccessible folders. The current proposal meanwhile
+keeps folder titles beside their content, shows accessible ancestor breadcrumbs,
+and uses readable names in search hints.

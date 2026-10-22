@@ -9,7 +9,21 @@ part of an individual file; use the operator backup for the whole workspace.
 Open an owned folder (or My files) and choose **Import Univer file**, or drop one
 file anywhere in its file pane. A `.json` or `.univer` file becomes a new item owned
 by you in that folder. Import never replaces an existing item. PDF, Office and CSV
-uploads are refused; Office/CSV conversion is tracked separately in SPN-035.
+uploads are refused. Optional CSV import is post-launch SPN-093; optional format
+and document-type plugins are post-launch SPN-094. The built-in Office import/export proposal
+SPN-035 was retired at the owner's request on 2026-10-21. An installer could add
+Office conversion through a plugin; core Office support is not promised.
+SPN-094 also covers extension points for new document kinds such as slides or
+kanban boards. It supplies a plugin foundation and reference examples, not those
+complete editors; core Sheets and Docs and native backup/import remain supported.
+
+**Planned CSV semantics (SPN-093):** preserve UTF-8 fields literally, including
+leading zeros, empty values, quoted content and the first row as data. Do not
+infer formulas, dates, numbers or headers. Future typing options require a
+separate decision; the initial importer reuses existing creation/access/cleanup
+and resource limits. This remains backlog acceptance, not current import
+support. Decided 2026-10-21 in
+[decision #130](https://github.com/mxbaylee/spinel/issues/130).
 
 Files are capped at 20 MiB, including embedded images. Native content after image
 extraction must fit the existing 10 MiB save limit. Images must be static PNG,
@@ -41,16 +55,28 @@ uses the same layout budgets so a successful native download remains importable;
 it never truncates an oversized file. Decisions [#69](https://github.com/mxbaylee/spinel/issues/69)
 and [#23](https://github.com/mxbaylee/spinel/issues/23), 2026-10-17/18.
 
-For a read-only copy choose **Print / save PDF**, adjust Univer's print options
-if shown, and choose **Save as PDF** in the browser print dialog. Spinel uses the
+Today, for an account read-only copy choose **Print / save PDF**, adjust Univer's
+print options if shown, and choose **Save as PDF** in the browser print dialog. Spinel uses the
 public Univer Pro print plugins as supplied. Printed page limits and watermarks
 depend on the installed license; the export panel explains this before printing.
 Check the output before sharing. A PDF is not an editable backup, and it may not
 include every page under the current license. Decision
 [#70](https://github.com/mxbaylee/spinel/issues/70), 2026-10-18.
 
-Downloads require current read access. Import requires an everyday account and
-an owned destination folder. Operators and signed-out visitors cannot use these
+**Planned in SPN-075:** replace that flow with **Export as PDF**, a direct
+PDF download with complete pages and no watermark. It will be available to
+anyone with current read access: owners, collaborators, account viewers and
+view-only or editing link guests. There will be no Spinel Print action or
+browser print dialog. Guest output must not add owner/account identity; revoked
+access must prevent a new export. PDF is the exception to account-only native
+and Office exports, not permission to download those formats. This consolidates
+retired SPN-073; owner, chat 2026-10-20, decision [#103](https://github.com/mxbaylee/spinel/issues/103).
+Pagination defaults are recorded in decision [#106](https://github.com/mxbaylee/spinel/issues/106).
+Until SPN-075 lands, the limitations and
+account-only UI described above still apply.
+
+Native downloads require current read access. Import requires an everyday
+account and an owned destination folder. Operators and signed-out visitors cannot use these
 routes; a link does not grant dashboard access. Session/access is checked again
 after asynchronous work. Transfers are serialized, including parsing, image
 decoding and response delivery, to bound memory on the 2 GB server. A disconnected
@@ -64,3 +90,12 @@ and browser downloads/imports of live edits. Browser tests capture the native
 print output at the browser print call, generate a PDF, reopen and render it, and
 retain PDF/PNG evidence in CI. They do not override license checks or print pages
 the plugin did not produce.
+
+## Doc formulas in files
+
+[Live formulas](formulas.md) store expressions and bindings, never calculated
+results. Native imports detach source-bound formulas into ordinary expression
+text; source-free formulas remain active. Current printing uses unavailable
+formula output. SPN-075 will render freshly authorized values/tables in PDFs;
+SPN-094 retains the same source-access boundary for optional format plugins,
+and SPN-067 handles archive reference remapping.

@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { ProfileSettings } from './ProfileSettings.tsx';
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   startAuthentication,
   startRegistration,
@@ -11,29 +12,39 @@ import type {
 } from '@simplewebauthn/browser';
 
 import { signSetupProof } from './setup.ts';
-import { api } from './api.ts';
+import { api, connectionRequest, signInPath } from './api.ts';
 import { BackupStatus } from './BackupStatus.tsx';
 import { AdminUsers } from './AdminUsers.tsx';
+import { AccessTokens } from './AccessTokens.tsx';
+import { AssistantConnections } from './AssistantConnections.tsx';
+import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
-import { PinsProvider, PinnedSidebar } from './Pins.tsx';
+import { Space } from './Space.tsx';
+import { OfflineSpace } from './OfflineSpace.tsx';
+import { spaceHref } from './spaceNavigation.ts';
+import { rememberedFileHref } from './fileNavigation.ts';
+import { spaceReviewReturnPath } from '../src/shared/spaceReviewRoute.ts';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
 import { Rail } from './Rail.tsx';
+import { useBrowserOnline, useServerConnection } from './useConnectionStatus.ts';
+import type { ConnectionState } from './connectionState.ts';
+import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
-import type { LocalStart } from './offline/localStart.ts';
-import {
-  preparedAccount,
-  setPreparedAccount,
-  setSignOutPending,
-  signOutPending,
-} from './offline/offlineStore.ts';
+import { setPreparedAccount, setSignOutPending, signOutPending } from './offline/offlineStore.ts';
 
 const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
 );
+const SpaceDocEditor = lazy(() =>
+  import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })),
+);
+const SpaceSheetEditor = lazy(() =>
+  import('./SheetEditor.tsx').then((m) => ({ default: m.SheetEditor })),
+);
 
-type User = { id: string; name: string; isAdmin: boolean };
+type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?: string };
 type Passkey = { id: string; name: string; provider: string };
 
 export function App() {
@@ -63,9 +74,13 @@ export function App() {
     return () => window.removeEventListener('beforeunload', warn);
   }, []);
   const [user, setUser] = useState<User | null>(null);
+  const [editorConnection, setEditorConnection] = useState<ConnectionState | null>(null);
+  const [catalogStatus, setCatalogStatus] = useState<CatalogConnectionDetails | null>(null);
+  const serverConnection = useServerConnection(Boolean(user) && editorConnection === null);
+  const browserOnline = useBrowserOnline();
   // Local mode (docs/offline.md): the server is unreachable and this device was
   // prepared for an account. `unreachable` is the same outage on an unprepared device.
-  const [local, setLocal] = useState<LocalStart | null>(null);
+  const [local, setLocal] = useState<Awaited<ReturnType<typeof openLocalStart>>>(null);
   const [unreachable, setUnreachable] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [keys, setKeys] = useState<Passkey[]>([]);
@@ -74,6 +89,10 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
   const settings = location.pathname === '/settings';
+  const spaceReview = /^\/(?:review\/)?spaces(?:\/|$)/.test(location.pathname);
+  const connecting = location.pathname === '/connect';
+  const [connectRequest] = useState(connectionRequest);
+  const [spaceReturn] = useState(() => spaceReviewReturnPath(location));
   const setup = location.pathname === '/setup';
   const invitation = location.pathname === '/invite';
   const [inviteToken] = useState(() =>
@@ -113,7 +132,7 @@ export function App() {
             if (isNetworkFailure(failure)) throw failure;
           });
           setSignOutPending(false);
-          if (location.pathname !== '/sign-in') location.assign('/sign-in');
+          if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
         }
         const { user } = await api<{ user: User }>('session');
@@ -121,6 +140,9 @@ export function App() {
         // IndexedDB can fail to answer at all; never hold sign-in on it.
         await within(claimDevice(user), 3000, 'Offline data did not answer.').catch(() => {});
         setUser(user);
+        if (connectRequest && location.pathname === '/sign-in')
+          location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
+        else if (spaceReturn && !user.isAdmin) location.assign(spaceReturn);
         if (settings) await refreshKeys();
       } catch (failure) {
         // Only an unreachable server opens local data; a 401 still signs in.
@@ -128,32 +150,49 @@ export function App() {
           // The server ended this session (sign-out, revocation): stop offline
           // access too. claimDevice restores it after the next sign-in.
           if ((failure as { status?: number }).status === 401) setPreparedAccount(null);
-          if (location.pathname !== '/sign-in') location.assign('/sign-in');
+          if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
         }
-        const start = await openLocalStart().catch(() => null);
-        if (!start) {
+        // Authorizing an assistant always needs a live, verified session.
+        if (connecting || connectRequest) {
           setUnreachable(true);
           return;
         }
-        if (location.pathname === '/sign-in') history.replaceState(null, '', '/');
+        const start = await openLocalStart().catch(() => null);
+        if (!start || !start.isCurrent()) {
+          setUnreachable(true);
+          return;
+        }
+        if (location.pathname === '/sign-in') history.replaceState(null, '', spaceReturn ?? '/');
         setLocal(start);
         setUser({ ...start.user, isAdmin: false });
       } finally {
         setLoaded(true);
       }
     })();
-  }, [settings, setup, invitation, inviteToken]);
-  useEffect(() => {
+  }, [
+    settings,
+    setup,
+    invitation,
+    inviteToken,
+    connecting,
+    connectRequest,
+    spaceReview,
+    spaceReturn,
+  ]);
+  useLayoutEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
     const watch = () => {
-      if (preparedAccount() === local.user.id) return;
+      if (local.isCurrent()) return;
       setLocal(null);
       setUser(null);
       setUnreachable(true);
     };
     window.addEventListener('storage', watch);
+    // A storage event may have arrived between the async read and publication.
+    // Recheck before paint instead of waiting for another event to clear titles.
+    watch();
     return () => window.removeEventListener('storage', watch);
   }, [local]);
 
@@ -217,7 +256,14 @@ export function App() {
       if (register && !setup && !invitation) {
         await refreshKeys();
         setNotice(`${result.name} added. You can use it to sign in.`);
-      } else location.assign(result.redirect ?? '/');
+      } else
+        location.assign(
+          connectRequest && !setup && !invitation
+            ? `/connect?request=${encodeURIComponent(connectRequest)}`
+            : spaceReturn && !setup && !invitation && result.redirect !== '/admin'
+              ? spaceReturn
+              : (result.redirect ?? '/'),
+        );
     } catch (failure) {
       if (!current.cancelled) {
         // Browser exception names vary across providers; keep the retry action clear.
@@ -261,161 +307,249 @@ export function App() {
       setError('Could not sign out. Check your connection and try again.');
     }
   }
+  if (spaceReview) {
+    if (!loaded)
+      return (
+        <main className="space-bootstrap">
+          <p role="status">Loading…</p>
+        </main>
+      );
+    if (unreachable)
+      return (
+        <main className="space-bootstrap">
+          <OfflineUnreachable />
+        </main>
+      );
+    if (!user || user.isAdmin)
+      return (
+        <main className="space-bootstrap">
+          <p role="alert">This Space is not available.</p>
+        </main>
+      );
+    if (local)
+      return (
+        <OfflineSpace
+          local={local}
+          user={user}
+          onExit={() => location.assign(rememberedFileHref(user.id))}
+          onSignOut={() => void signOut()}
+        />
+      );
+    return (
+      <>
+        {error && <p role="alert">{error}</p>}
+        <Space
+          key={user.id}
+          user={user}
+          navigation={navigation}
+          connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
+          onSignOut={() => void signOut()}
+          onExit={() => location.assign(rememberedFileHref(user.id))}
+          onConnectionState={setEditorConnection}
+          renderEditor={({ spaceId, item, onDirty, onConnectionState }) => (
+            <Suspense fallback={<p role="status">Opening page…</p>}>
+              {item.kind === 'doc' ? (
+                <SpaceDocEditor
+                  key={spaceId + ':' + item.id}
+                  spaceId={spaceId}
+                  id={item.id}
+                  name={item.name}
+                  onDirty={onDirty}
+                  onConnectionState={onConnectionState}
+                />
+              ) : (
+                <SpaceSheetEditor
+                  key={spaceId + ':' + item.id}
+                  spaceId={spaceId}
+                  id={item.id}
+                  name={item.name}
+                  onDirty={onDirty}
+                  onConnectionState={onConnectionState}
+                />
+              )}
+            </Suspense>
+          )}
+        />
+      </>
+    );
+  }
   return (
-    // Remount on entering local mode: the provider reads its offline pins once.
-    <PinsProvider
-      key={local ? 'local' : 'online'}
-      enabled={Boolean(user && !user.isAdmin && !local)}
-      offline={local?.catalog.pins}
-    >
-      <div className="workspace">
-        <Rail user={user} navigation={navigation} onSignOut={() => void signOut()} />
-        <div className="workspace-body">
-          {user && !user.isAdmin && <PinnedSidebar navigation={navigation} />}
-          <main>
-            {!loaded ? (
-              <p role="status">Loading…</p>
-            ) : unreachable ? (
-              <OfflineUnreachable />
-            ) : setup ? (
-              <>
-                <p className="eyebrow">A new workspace</p>
-                <h1>Set up Spinel</h1>
-                <section className="welcome">
-                  <h2>Create your admin passkey</h2>
-                  <p>
-                    Your admin account manages the workspace. It cannot open documents; you will
-                    invite a separate everyday account for that.
-                  </p>
-                  {setupId && setupSecret ? (
-                    <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                      Create admin passkey
-                    </button>
-                  ) : (
-                    <p role="alert">
-                      Open the one-time setup link printed on the server. If it expired, run the
-                      setup command again.
-                    </p>
-                  )}
-                </section>
-              </>
-            ) : invitation ? (
-              <>
-                <p className="eyebrow">Your private workspace</p>
-                <h1>{inviteDetails?.recovery ? 'Recover your account' : 'Join Spinel'}</h1>
-                {inviteDetails && (
-                  <section className="welcome">
-                    {inviteDetails.recovery ? (
-                      <>
-                        <h2>{inviteDetails.name}</h2>
-                        <p>
-                          Adding your new passkey will replace all old passkeys and sign out your
-                          other devices. Your account and documents stay yours.
-                        </p>
-                      </>
-                    ) : (
-                      <label>
-                        Your name
-                        <input
-                          value={inviteName}
-                          maxLength={80}
-                          onChange={(event) => setInviteName(event.target.value)}
-                          autoComplete="name"
-                        />
-                      </label>
-                    )}
-                    <button
-                      className="primary"
-                      disabled={busy || !inviteName.trim()}
-                      onClick={() => void ceremony(true)}
-                    >
-                      {inviteDetails.recovery ? 'Recover with a passkey' : 'Join with a passkey'}
-                    </button>
-                  </section>
-                )}
-              </>
-            ) : !user ? (
-              <>
-                <p className="eyebrow">Your private workspace</p>
-                <h1>Sign in</h1>
-                <section className="welcome">
-                  <h2>Welcome back</h2>
-                  <p>Use a passkey from your browser, password manager or phone.</p>
-                  <button className="primary" disabled={busy} onClick={() => void ceremony(false)}>
-                    Sign in with a passkey
-                  </button>
-                  <p className="placeholder">
-                    Need access or a new passkey? Contact your workspace operator.
-                  </p>
-                </section>
-              </>
-            ) : local && settings ? (
-              <>
-                <p className="eyebrow">{user.name}</p>
-                <h1>Settings</h1>
-                <ThemeSettings />
-                <p>Passkeys need a connection.</p>
-              </>
-            ) : local && location.pathname === '/preview' ? (
-              <p role="status">Version history needs a connection.</p>
-            ) : settings ? (
-              <>
-                <p className="eyebrow">{user.name}</p>
-                <h1>Settings</h1>
-                <ThemeSettings />
-                <section className="welcome">
-                  <h2>Your passkeys</h2>
-                  <p>
-                    Add a passkey from another device or password manager so you can sign in there
-                    too.
-                  </p>
-                  {keys.length ? (
-                    <ul>
-                      {keys.map((key) => (
-                        <li key={key.id}>
-                          <strong>{key.name}</strong>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No passkeys added yet.</p>
-                  )}
+    <div className="workspace">
+      <Rail
+        user={user}
+        navigation={navigation}
+        onSignOut={() => void signOut()}
+        connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
+        catalog={catalogStatus}
+        documentOpen={editorConnection !== null}
+      />
+      <div className="workspace-body">
+        <main>
+          {!loaded ? (
+            <p role="status">Loading…</p>
+          ) : unreachable ? (
+            <OfflineUnreachable />
+          ) : setup ? (
+            <>
+              <p className="eyebrow">A new workspace</p>
+              <h1>Set up Spinel</h1>
+              <section className="welcome">
+                <h2>Create your admin passkey</h2>
+                <p>
+                  Your admin account manages the workspace. It cannot open documents; you will
+                  invite a separate everyday account for that.
+                </p>
+                {setupId && setupSecret ? (
                   <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                    Add a passkey
+                    Create admin passkey
+                  </button>
+                ) : (
+                  <p role="alert">
+                    Open the one-time setup link printed on the server. If it expired, run the setup
+                    command again.
+                  </p>
+                )}
+              </section>
+            </>
+          ) : invitation ? (
+            <>
+              <p className="eyebrow">Your private workspace</p>
+              <h1>{inviteDetails?.recovery ? 'Recover your account' : 'Join Spinel'}</h1>
+              {inviteDetails && (
+                <section className="welcome">
+                  {inviteDetails.recovery ? (
+                    <>
+                      <h2>{inviteDetails.name}</h2>
+                      <p>
+                        Adding your new passkey will replace all old passkeys and sign out your
+                        other devices. Your account and documents stay yours.
+                      </p>
+                    </>
+                  ) : (
+                    <label>
+                      Your name
+                      <input
+                        value={inviteName}
+                        maxLength={80}
+                        onChange={(event) => setInviteName(event.target.value)}
+                        autoComplete="name"
+                      />
+                    </label>
+                  )}
+                  <button
+                    className="primary"
+                    disabled={busy || !inviteName.trim()}
+                    onClick={() => void ceremony(true)}
+                  >
+                    {inviteDetails.recovery ? 'Recover with a passkey' : 'Join with a passkey'}
                   </button>
                 </section>
-              </>
-            ) : user.isAdmin ? (
-              <>
-                <h1>Admin</h1>
-                <section className="welcome">
-                  <h2>Workspace administration</h2>
-                  <p>
-                    Invite people or help them recover their passkeys. Use a separate everyday
-                    account for documents.
-                  </p>
-                  <AdminUsers currentId={user.id} />
-                  <BackupStatus />
-                </section>
-              </>
-            ) : location.pathname === '/preview' ? (
-              <Suspense fallback={<p>Loading preview…</p>}>
-                <HistoryBrowser />
-              </Suspense>
-            ) : (
-              <Dashboard navigation={navigation} user={user} local={local} />
-            )}
-            {busy && (
-              <p role="status">
-                Follow the instructions from your passkey manager.{' '}
-                <button onClick={cancel}>Cancel</button>
-              </p>
-            )}
-            {error && <p role="alert">{error}</p>}
-            {notice && <p role="status">{notice}</p>}
-          </main>
-        </div>
+              )}
+            </>
+          ) : !user ? (
+            <>
+              <p className="eyebrow">Your private workspace</p>
+              <h1>Sign in</h1>
+              <section className="welcome">
+                <h2>Welcome back</h2>
+                <p>Use a passkey from your browser, password manager or phone.</p>
+                <button className="primary" disabled={busy} onClick={() => void ceremony(false)}>
+                  Sign in with a passkey
+                </button>
+                <p className="placeholder">
+                  Need access or a new passkey? Contact your workspace operator.
+                </p>
+              </section>
+            </>
+          ) : connecting ? (
+            <ConnectAssistant request={connectRequest} user={user} />
+          ) : local && settings ? (
+            <>
+              <p className="eyebrow">{user.name}</p>
+              <h1>Settings</h1>
+              <ThemeSettings />
+              <p>Passkeys need a connection.</p>
+            </>
+          ) : local && location.pathname === '/preview' ? (
+            <p role="status">Version history needs a connection.</p>
+          ) : settings ? (
+            <>
+              <p className="eyebrow">{user.name}</p>
+              <h1>Settings</h1>
+              <ThemeSettings />
+              <ProfileSettings onSaved={(profile) => setUser({ ...user, ...profile })} />
+              <section className="welcome">
+                <h2>Your passkeys</h2>
+                <p>
+                  Add a passkey from another device or password manager so you can sign in there
+                  too.
+                </p>
+                {keys.length ? (
+                  <ul>
+                    {keys.map((key) => (
+                      <li key={key.id}>
+                        <strong>{key.name}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No passkeys added yet.</p>
+                )}
+                <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
+                  Add a passkey
+                </button>
+              </section>
+              {!user.isAdmin && (
+                <>
+                  <AssistantConnections />
+                  <details>
+                    <summary>Advanced: personal access tokens</summary>
+                    <AccessTokens />
+                  </details>
+                </>
+              )}
+            </>
+          ) : user.isAdmin ? (
+            <>
+              <h1>Admin</h1>
+              <section className="welcome">
+                <h2>Workspace administration</h2>
+                <p>
+                  Invite people or help them recover their passkeys. Use a separate everyday account
+                  for documents.
+                </p>
+                <AdminUsers currentId={user.id} />
+                <AssistantConnections admin />
+                <AccessTokens admin />
+                <BackupStatus />
+              </section>
+            </>
+          ) : location.pathname === '/preview' ? (
+            <Suspense fallback={<p>Loading preview…</p>}>
+              <HistoryBrowser />
+            </Suspense>
+          ) : (
+            <Dashboard
+              navigation={navigation}
+              user={user}
+              local={local}
+              onConnectionState={setEditorConnection}
+              onCatalogStatus={setCatalogStatus}
+              onOpen={(item) => {
+                if (item.kind === 'space') location.assign(spaceHref(item.id));
+              }}
+            />
+          )}
+          {busy && (
+            <p role="status">
+              Follow the instructions from your passkey manager.{' '}
+              <button onClick={cancel}>Cancel</button>
+            </p>
+          )}
+          {error && <p role="alert">{error}</p>}
+          {notice && <p role="status">{notice}</p>}
+        </main>
       </div>
-    </PinsProvider>
+    </div>
   );
 }

@@ -87,16 +87,26 @@ test('admins and disabled owners cannot use document storage', () => {
 });
 test('only folders can contain items, all document kinds remain distinct, names are validated', () => {
   const f = fixture();
-  for (const kind of ['sheet', 'doc', 'slides']) {
+  for (const kind of ['sheet', 'doc']) {
     const doc = f.store.create(f.owner.id, { name: '  Untitled  ', kind, parentId: null });
     expect(doc).toMatchObject({ name: 'Untitled', kind });
     expect(() => f.folder('Bad', doc.id)).toThrow('folder');
   }
   for (const name of ['', '  ', 'x'.repeat(121), 'a/b', 'a\\b', 'a\n'])
     expect(() => f.folder(name)).toThrow('name');
-  expect(() => f.store.create(f.owner.id, { name: 'x', kind: 'unknown', parentId: null })).toThrow(
-    'Choose',
-  );
+  // SPN-074 removes Slides entirely: it was never a production document type.
+  for (const kind of ['unknown', 'slides'])
+    expect(() => f.store.create(f.owner.id, { name: 'x', kind, parentId: null })).toThrow(
+      'Choose Folder, Sheet or Doc.',
+    );
+  expect(() =>
+    f.db
+      .prepare(
+        `INSERT INTO workspace_items(id,owner_id,kind,name,created_at,updated_at)
+         VALUES(?,?,'slides','Unsupported',0,0)`,
+      )
+      .run(randomUUID(), f.owner.id),
+  ).toThrow('CHECK constraint failed');
   expect(() => f.store.create(f.owner.id, { name: 'x', kind: 'doc' })).toThrow('destination');
   // Duplicate names are allowed by decision #14; identity and destinations use IDs.
   expect(f.folder('Same').id).not.toBe(f.folder('Same').id);
@@ -154,6 +164,9 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
     });
   const created = await call('POST', '', { name: 'Budget', kind: 'sheet', parentId: null });
   expect(created.status).toBe(201);
+  const slides = await call('POST', '', { name: 'Deck', kind: 'slides', parentId: null });
+  expect(slides.status).toBe(400);
+  expect(await slides.json()).toEqual({ error: 'Choose Folder, Sheet or Doc.' });
   const { item } = await created.json();
   const foreign = store.create(other.id, { name: 'Secret', kind: 'doc', parentId: null });
   expect((await (await call('GET')).json()).items).toHaveLength(1);
@@ -181,20 +194,11 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
   expect((await (await call('GET', '/tags')).json()).tags).toEqual(['budget']);
   expect((await call('DELETE', `/${item.id}/tags`, { tag: 'budget' })).status).toBe(200);
   expect((await (await call('GET', `/${item.id}`)).json()).item.tags).toEqual([]);
-  expect((await call('POST', '/pins', { id: item.id, userId: other.id })).status).toBe(400);
-  expect((await call('POST', '/pins', { id: foreign.id })).status).toBe(404);
-  expect(
-    (await call('POST', '/pins', { id: item.id }, { ...headers, Origin: 'https://evil.example' }))
-      .status,
-  ).toBe(403);
-  expect((await call('POST', '/pins', { id: item.id })).status).toBe(200);
-  expect(
-    (await (await call('GET', '/pins')).json()).items.map((entry: { id: string }) => entry.id),
-  ).toEqual([item.id]);
-  expect((await call('PUT', '/pins', { id: foreign.id, beforeId: null })).status).toBe(409);
-  expect((await call('PUT', '/pins', { id: item.id, beforeId: null })).status).toBe(200);
-  expect((await call('DELETE', '/pins', { id: item.id })).status).toBe(200);
-  expect((await (await call('GET', '/pins')).json()).items).toEqual([]);
+  // Pinning was removed. Old clients cannot read or mutate a pin list.
+  for (const method of ['GET', 'POST', 'PUT', 'DELETE'])
+    expect(
+      (await call(method, '/pins', method === 'GET' ? undefined : { id: item.id })).status,
+    ).toBe(404);
   expect(
     (
       await call(
@@ -216,10 +220,6 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
       ['GET', `/${item.id}`, undefined],
       ['POST', '', { name: 'x', kind: 'doc', parentId: null }],
       ['PATCH', `/${item.id}`, { name: 'x' }],
-      ['GET', '/pins', undefined],
-      ['POST', '/pins', { id: item.id }],
-      ['PUT', '/pins', { id: item.id, beforeId: null }],
-      ['DELETE', '/pins', { id: item.id }],
       ['GET', '/tags', undefined],
       ['POST', `/${item.id}/tags`, { tag: 'denied' }],
     ] as const)
@@ -227,32 +227,6 @@ test('HTTP boundaries reject missing/admin/disabled sessions, CSRF and ownership
         !denied || !auth.session(denied)?.user_id ? 401 : 403,
       );
   }
-  // A whole-list reorder crossed the 8 KiB request parser at 210 UUID pins.
-  // Moving one reference stays bounded and preserves every other reference.
-  const many: string[] = [];
-  // Bulk fixture setup avoids 210 fsyncs and quadratic list enumeration; the
-  // final addition and reorder still cross the real HTTP/session/parser boundary.
-  auth.transaction(() => {
-    const insertItem = db.prepare(`INSERT INTO workspace_items
-      (id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,NULL,'folder',?,?,?)`);
-    const insertPin = db.prepare(
-      'INSERT INTO workspace_pins(user_id,item_id,position) VALUES(?,?,?)',
-    );
-    for (let n = 0; n < 210; n++) {
-      const id = randomUUID();
-      insertItem.run(id, user.id, `Pin ${n}`, auth.now(), auth.now());
-      if (n < 209) insertPin.run(user.id, id, n);
-      many.push(id);
-    }
-  });
-  expect((await call('POST', '/pins', { id: many[209] })).status).toBe(200);
-  expect(JSON.stringify({ ids: many }).length).toBeGreaterThan(8192);
-  const moved = await call('PUT', '/pins', { id: many[209], beforeId: many[0] });
-  expect(moved.status).toBe(200);
-  expect((await moved.json()).items.map((entry: { id: string }) => entry.id)).toEqual([
-    many[209],
-    ...many.slice(0, 209),
-  ]);
   auth.database.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(user.id);
   expect((await call('GET')).status).toBe(401);
   expect((await call('PATCH', `/${item.id}`, { name: 'x' })).status).toBe(401);

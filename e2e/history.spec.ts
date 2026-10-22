@@ -5,7 +5,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 
 for (const kind of ['sheet', 'doc'] as const) {
-  test(`${kind} versions can be named, renamed, unpinned and read by a viewer`, async ({
+  test(`${kind} versions can be named, renamed, unnamed and read by a viewer`, async ({
     page,
     context,
     baseURL,
@@ -58,7 +58,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await panel.getByLabel('Version name', { exact: true }).fill('Q3 Final Lock');
       await panel.getByRole('button', { name: 'Save version name' }).click();
       const named = panel.getByRole('listitem').filter({ hasText: 'Q3 Final Lock' });
-      await expect(named.getByLabel('Pinned version')).toBeVisible();
+      await expect(named.getByText('Q3 Final Lock', { exact: true })).toBeVisible();
       const stored = db
         .prepare('SELECT id,snapshot FROM history_checkpoints WHERE item_id=? AND name=?')
         .get(item.id, 'Q3 Final Lock')!;

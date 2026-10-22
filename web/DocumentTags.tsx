@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
-import type { WorkspaceItem } from '../src/shared/workspace.ts';
+import type { FileItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 
 export function TagLabels({ tags }: { tags: string[] }) {
@@ -17,8 +17,8 @@ export function DocumentTags({
   onChanged,
   onClose,
 }: {
-  item: WorkspaceItem;
-  onChanged: (item: WorkspaceItem) => void;
+  item: FileItem;
+  onChanged: (item: FileItem) => void;
   onClose: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -61,7 +61,7 @@ export function DocumentTags({
     setBusy(true);
     setError('');
     try {
-      const result = await itemsRequest<{ item: WorkspaceItem }>(
+      const result = await itemsRequest<{ item: FileItem }>(
         `/${item.id}/tags`,
         remove ? 'DELETE' : 'POST',
         { tag: value },
@@ -95,7 +95,7 @@ export function DocumentTags({
       }}
     >
       <h3>Tags for {item.name}</h3>
-      <p>Only you see these tags. They do not change the document.</p>
+      <p>Only you see these tags. They do not change the file.</p>
       <ul aria-label="Your tags">
         {item.tags.map((name) => (
           <li key={name}>

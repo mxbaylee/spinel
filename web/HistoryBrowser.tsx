@@ -7,13 +7,14 @@ import {
   shiftHistoryMonth,
 } from '../src/shared/historyNavigation.ts';
 import type { HistoryVersion } from '../src/shared/historyNavigation.ts';
-import { itemsRequest } from './itemsApi.ts';
+import { historyHref, historyRequest } from './historyApi.ts';
 import { VersionPreview } from './VersionPreview.tsx';
 
 /** History browsing stays in the isolated preview tab, outside the live editor. */
 export function HistoryBrowser() {
   const query = new URLSearchParams(location.search);
   const id = query.get('item') ?? '',
+    spaceId = query.get('space') ?? undefined,
     requested = query.get('version');
   const [versions, setVersions] = useState<HistoryVersion[]>([]);
   const [selected, setSelected] = useState<string | null>(requested);
@@ -43,7 +44,7 @@ export function HistoryBrowser() {
     let disposed = false;
     setLoading(true);
     setError('');
-    void itemsRequest<{ versions: HistoryVersion[] }>(`/${id}/history`)
+    void historyRequest<{ versions: HistoryVersion[] }>(id, '', 'GET', undefined, spaceId)
       .then((data) => {
         if (disposed) return;
         setVersions(data.versions);
@@ -81,7 +82,7 @@ export function HistoryBrowser() {
     return () => {
       disposed = true;
     };
-  }, [id, refresh]);
+  }, [id, spaceId, refresh]);
   useEffect(() => {
     const timer = window.setTimeout(() => setRendered(selected), 180);
     return () => window.clearTimeout(timer);
@@ -90,9 +91,7 @@ export function HistoryBrowser() {
     if (busy || loading) return;
     setError('');
     setSelected(version?.id ?? null);
-    const next = new URLSearchParams({ item: id });
-    if (version) next.set('version', version.id);
-    history.replaceState(null, '', `/preview?${next}`);
+    history.replaceState(null, '', historyHref(id, spaceId, version?.id));
   }
   const current = versions.find((version) => version.id === selected);
   const todays = dayVersions(versions, today),
@@ -256,7 +255,13 @@ export function HistoryBrowser() {
       {selected !== rendered && <p role="status">Loading selected snapshot…</p>}
       <div hidden={selected !== rendered || Boolean(error)}>
         {rendered && !error && (
-          <VersionPreview key={rendered} id={id} checkpoint={rendered} onBusyChange={setBusy} />
+          <VersionPreview
+            key={`${spaceId ?? ''}:${id}:${rendered}`}
+            id={id}
+            spaceId={spaceId}
+            checkpoint={rendered}
+            onBusyChange={setBusy}
+          />
         )}
       </div>
     </section>

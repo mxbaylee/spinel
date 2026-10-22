@@ -113,6 +113,8 @@ test('search rechecks account state and input instead of trusting a cached catal
     'Invalid search filters.',
   );
   expect(() => f.search.find(f.owner.id, { q: ['a', 'b'] })).toThrow('Invalid search filters.');
+  // Slides were never in production; there is no legacy search filter to retain.
+  expect(() => f.search.find(f.owner.id, { type: 'slides' })).toThrow('Invalid search filters.');
 });
 test('modified filters use item timestamps and exclude trashed ancestor anomalies', () => {
   const f = fixture();

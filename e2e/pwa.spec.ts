@@ -171,7 +171,7 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     expect(
       cells(await read()).filter((cell) => [17, 29].includes(Number(cell.value))),
     ).toHaveLength(2);
-    // Isolate input tracking while online: disconnecting alone reports unsaved.
+    // Start the native cell edit while online, before disconnecting.
     const confirm = await startEdit('offline-phone');
     const status = sheet.getByRole('status', { name: 'Save status' });
     await expect(status).toHaveText('Editing cell — changes not saved yet.');
@@ -202,6 +202,16 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await page.reload();
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
     await expect(page.getByText('Private phone budget')).toHaveCount(0);
+    // The offline page permits images, not fetch/connect requests. Exercise
+    // the browser's actual image-loading path under its restrictive CSP.
+    expect(
+      await page.evaluate(async () => {
+        const icon = new Image();
+        icon.src = '/favicon.svg';
+        await icon.decode();
+        return icon.naturalWidth > 0;
+      }),
+    ).toBe(true);
     const guestPath = `/share/${item.id}#private-link-token`;
     await page.goto(guestPath);
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();

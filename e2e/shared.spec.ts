@@ -62,9 +62,6 @@ test('shared drawer files by drag and keyboard, removes only personal placement,
     const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
     await expect(contents.getByText('Shared', { exact: true })).toBeVisible();
     await expect(contents.getByText(owner.name, { exact: true })).toBeVisible();
-    await contents.getByRole('button', { name: 'Pin Shared journal', exact: true }).click();
-    const pins = page.getByRole('complementary', { name: 'Pinned items' });
-    await expect(pins.getByText(owner.name, { exact: true })).toBeVisible();
     await contents
       .getByRole('button', { name: 'Remove Shared journal from my folder', exact: true })
       .click();
@@ -99,9 +96,6 @@ test('shared drawer files by drag and keyboard, removes only personal placement,
     await expect(
       drawer.getByRole('button', { name: 'Open Shared journal', exact: true }),
     ).toHaveCount(0);
-    await expect(pins.getByRole('link', { name: 'Shared journal Doc', exact: true })).toHaveCount(
-      0,
-    );
     expect(store.get(owner.id, doc.id).parentId).toBe(sourceFolder.id);
     expect(store.get(viewer.id, mine.id).name).toBe(mine.name);
   } finally {

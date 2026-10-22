@@ -42,8 +42,72 @@ export class AdminStore {
         .prepare('UPDATE auth_users SET disabled=1 WHERE id=?')
         .run(id);
       if (!result.changes) throw new AuthError(404, 'User not found.');
+      // Keep the source-session association until its pending approvals have
+      // been removed. Other accounts' approvals remain unchanged.
+      if (
+        this.auth.database
+          .prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='oauth_pending'")
+          .get()
+      )
+        this.auth.database
+          .prepare(
+            `DELETE FROM oauth_pending WHERE session_hash IN
+          (SELECT token_hash FROM auth_sessions WHERE user_id=?)`,
+          )
+          .run(id);
       this.auth.database.prepare('DELETE FROM auth_sessions WHERE user_id=?').run(id);
       this.invites.revokeForUser(id);
+    });
+  }
+
+  reactivate(actor: string, id: string) {
+    this.auth.transaction(() => {
+      this.requireAdmin(actor);
+      const target = this.auth.database
+        .prepare('SELECT disabled FROM auth_users WHERE id=?')
+        .get(id);
+      if (!target) throw new AuthError(404, 'User not found.');
+      if (!target.disabled) throw new AuthError(409, 'This account is already active.');
+      const db = this.auth.database;
+      const exists = (table: string) =>
+        Boolean(db.prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name=?").get(table));
+      // Disable blocks credentials by account state; activation must not turn
+      // that old authority back on. Keep connection/token metadata as revoked.
+      if (exists('oauth_connections')) {
+        if (exists('oauth_codes'))
+          db.prepare(
+            `DELETE FROM oauth_codes WHERE connection_id IN
+            (SELECT id FROM oauth_connections WHERE user_id=?)`,
+          ).run(id);
+        if (exists('oauth_access'))
+          db.prepare(
+            `UPDATE oauth_access SET revoked=1 WHERE connection_id IN
+            (SELECT id FROM oauth_connections WHERE user_id=?)`,
+          ).run(id);
+        if (exists('oauth_refresh'))
+          db.prepare(
+            `DELETE FROM oauth_refresh WHERE connection_id IN
+            (SELECT id FROM oauth_connections WHERE user_id=?)`,
+          ).run(id);
+        db.prepare('UPDATE oauth_connections SET revoked=1 WHERE user_id=?').run(id);
+      }
+      if (exists('oauth_pending'))
+        db.prepare(
+          `DELETE FROM oauth_pending WHERE session_hash IN
+          (SELECT token_hash FROM auth_sessions WHERE user_id=?)`,
+        ).run(id);
+      if (exists('auth_access_tokens'))
+        db.prepare('UPDATE auth_access_tokens SET revoked=1 WHERE user_id=?').run(id);
+      db.prepare(
+        `DELETE FROM auth_challenges WHERE id IN (
+        SELECT c.challenge_id FROM auth_invite_ceremonies c JOIN auth_invites i ON i.id=c.invite_id
+        WHERE (i.recovery_user_id=? OR i.created_by=?) AND i.used_at IS NULL
+      )`,
+      ).run(id, id);
+      this.invites.revokeForUser(id);
+      db.prepare('DELETE FROM auth_sessions WHERE user_id=?').run(id);
+      db.prepare('DELETE FROM auth_passkeys WHERE user_id=?').run(id);
+      db.prepare('UPDATE auth_users SET disabled=0 WHERE id=?').run(id);
     });
   }
 

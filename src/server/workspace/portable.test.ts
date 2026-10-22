@@ -6,6 +6,7 @@ import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
 import { PortableFiles, PORTABLE_LIMIT } from './portable.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
+import { docFormulas, formulaBody, parseFormula } from '@spinel/doc-formulas';
 
 const databases: DatabaseSync[] = [];
 afterEach(() => databases.splice(0).forEach((db) => db.close()));
@@ -41,6 +42,49 @@ function fixture() {
   };
   return { db, auth, workspace, owner, other, files, sheet, doc };
 }
+
+test('portable imports keep source formulas as text without binding foreign IDs to local documents', async () => {
+  const f = fixture();
+  const source = f.workspace.create(f.owner.id, {
+    kind: 'sheet',
+    name: 'Budget',
+    parentId: null,
+  });
+  const expression = '=Budget.Summary.A1';
+  const reference = parseFormula(expression)[0];
+  const body = formulaBody('formula', {
+    version: 1,
+    expression,
+    references: [
+      {
+        start: reference.start,
+        end: reference.end,
+        itemId: source.id,
+        sheetId: 'summary',
+        range: reference.range,
+      },
+    ],
+  });
+  body.dataStream += '\r\n';
+  const item = await f.files.import(
+    f.owner.id,
+    { filename: 'formula.json', parentId: null, snapshot: { ...f.doc, body } },
+    () => {},
+  );
+  const loaded = f.files.docs.load(f.owner.id, item.id).snapshot!;
+  expect(loaded.body?.dataStream).toBe(`${expression}\r\n`);
+  expect(docFormulas(loaded.body)).toEqual([]);
+  expect(JSON.stringify(loaded)).not.toContain(source.id);
+  expect(JSON.stringify(loaded)).not.toContain('spinelFormula');
+  const literal = formulaBody('array', { version: 1, expression: '={1,2;3,4}', references: [] });
+  literal.dataStream += '\r\n';
+  const literalItem = await f.files.import(
+    f.owner.id,
+    { filename: 'literal.json', parentId: null, snapshot: { ...f.doc, body: literal } },
+    () => {},
+  );
+  expect(docFormulas(f.files.docs.load(f.owner.id, literalItem.id).snapshot!.body)).toHaveLength(1);
+});
 
 test('native sheet import creates a new owned item in its folder and preserves content, styles, resources and self references', async () => {
   const f = fixture();
@@ -202,12 +246,16 @@ test('exports use current materialized collaboration state and recheck access af
   const collaboration = {
     prepare: vi.fn(async () => {}),
     load: vi.fn(async () => ({ snapshot: current })),
+    generations: {
+      active: (id: string) => ({ unitId: id }),
+      restoring: () => false,
+    },
   } as unknown as CollaborationStore;
   const files = new PortableFiles(f.workspace, collaboration);
   expect(JSON.parse((await files.export(f.owner.id, item.id, () => {})).text).body.dataStream).toBe(
     'Latest accepted edit\r\n',
   );
-  expect(collaboration.prepare).toHaveBeenCalledWith(f.owner.id, item.id);
+  expect(collaboration.prepare).toHaveBeenCalledWith(f.owner.id, item.id, {});
   await expect(
     files.export(f.owner.id, item.id, () => {
       throw new Error('Expired');

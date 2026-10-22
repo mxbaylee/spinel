@@ -4,6 +4,13 @@ Spinel is a private, invite-only workspace for Sheets and Docs, built on
 the open-source [Univer](https://github.com/dream-num/univer) SDK, for about two
 people at a time. The product has no AI features.
 
+Spinel is pre-production until SPN-038 launches `spinel.baylee.dev`; that is the
+last launch prerequisite, with optional CSV import (SPN-093) and document/format plugins
+(SPN-094) after launch. SQLite is the current implementation, not a permanent
+storage constraint. Reconsider it before launch without inventing a live-data
+migration requirement. See [development](docs/development.md#deployment-stage).
+Owner, chat 2026-10-21.
+
 ## Before any work
 
 Read [docs/todo/process.md](docs/todo/process.md). It covers how tickets are

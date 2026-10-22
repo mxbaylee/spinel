@@ -28,7 +28,29 @@ npm start
 The same Node entry point serves `dist/` without starting Vite. Build before
 starting; a missing build fails immediately. The server runs TypeScript directly
 with Node's type stripping, so keep the source and production dependencies when
-running it. Deployment packaging is SPN-029.
+running it. Deployment packaging was delivered by SPN-029.
+
+## Deployment stage
+
+Spinel is **pre-production** until SPN-038 launches `https://spinel.baylee.dev`.
+That is the last launch prerequisite; optional CSV import (SPN-093) and document/format
+plugins (SPN-094) come afterward. The private test host was retired. References to a production
+build, production Playwright project or current production component describe
+the application runtime, not an already-live production deployment.
+
+SQLite is today's database, not a permanent product requirement. Removing Univer
+Pro is a useful point to reconsider one coherent storage setup, including a
+managed database if it simplifies operation. Compare actual access/transaction
+semantics, recovery, resource use and ongoing cost before selecting it. There is
+no assumed live-production dataset or required zero-downtime migration at this
+stage. Preserve any data deliberately selected for retention; disposable fixtures
+can be reseeded. Do not build several backend adapters just for possible future
+choices. Owner, chat 2026-10-21.
+
+Browser offline storage remains a separate concern: changing the server database
+cannot make browser-local pending edits durable on the server before they are
+uploaded and acknowledged. See [offline storage](offline.md) and
+[recovery requirements](backups.md#recovery-requirements-and-hosting-options).
 
 ## Local settings
 
@@ -92,9 +114,34 @@ API responses, in both themes and at Phone, Tablet and Desktop widths. Stories
 are `*.stories.tsx` beside their component and are typechecked and linted with
 everything else. The **Storybook** workflow builds it on every pull request and
 publishes `main` to <https://mxbaylee.github.io/spinel/> (Owner, chat
-2026-10-19). It isn't a required check; SPN-060 adds screenshot and axe checks
-over the stories. What a story must
-cover is in the [design playbook](design/README.md#storybook).
+2026-10-19). It isn't a required branch-protection check. What a story must cover
+is in the [design playbook](design/README.md#storybook); use the
+[manual design review runbook](design/review-runbook.md) when a design changes.
+
+The workflow builds once, then runs desktop, tablet and mobile reviews in
+parallel, each with a 15-minute timeout. Desktop retains light/dark and native
+editor interaction proofs; mobile retains light/dark; tablet retains its light
+captures and the intermediate 613 px mouse interaction checks. The icon suite
+runs once on desktop. The stable **Review Storybook states and interactions**
+gate requires every viewport to pass before Pages can deploy. Explicitly
+classified documentation-only PRs skip the captures; failed or missing results
+cannot pass as documentation-only.
+
+The shared build keeps its ordinary `npm ci` and registry-audit invocation. The
+three viewport installs use `npm ci --no-audit` so duplicate advisory requests
+cannot consume each review budget. Locked installation, integrity verification,
+postinstall and all review coverage remain. This narrow response to repeated
+five-minute installs is recorded in [decision #138](https://github.com/mxbaylee/spinel/issues/138),
+2026-10-22; a retained audit invocation is not evidence that an unavailable
+registry completed a security audit.
+
+Download `design-review-desktop`, `design-review-tablet` and
+`design-review-mobile` for self-contained galleries. `storybook-review` is the
+shared interactive build, and `entity-icon-screenshots` is the icon gallery.
+After building locally, `npm run screenshots` runs the full review;
+`npm run screenshots -- --viewport mobile <story IDs>` runs one viewport and
+optional focused stories. Only manual CI runs can narrow story IDs; PRs always
+review the full catalog.
 
 CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
 and **Playwright smoke**. These are required by the active default-branch ruleset;
@@ -114,6 +161,25 @@ see [the process](todo/process.md#pull-requests-and-main).
   WAL mode and foreign keys remain enabled without resetting migration metadata.
   [Decision #68](https://github.com/mxbaylee/spinel/issues/68), 2026-10-18,
   supersedes the original driver choice in [#2](https://github.com/mxbaylee/spinel/issues/2).
+- Startup upgrades the workspace schema for the [Space foundation](design/spaces.md#implemented-foundation)
+  before the collaboration SDK opens its database connection. The migration
+  preserves existing item IDs, native foreign keys, indexes and cleanup triggers;
+  incomplete or unrecognized schemas fail startup instead of being guessed or
+  partially upgraded. Native children remain inaccessible through ordinary item lookup.
+  [Decision #135](https://github.com/mxbaylee/spinel/issues/135), 2026-10-21;
+  [implementation and verification](implementation/SPN-078.md).
+- Spaces are enabled by default at `/spaces`; `/review/spaces` remains an alias
+  from SPN-091. The legacy `SPINEL_SPACE_REVIEW=0` option (or
+  `createApp({ spaceReview: false })`) explicitly disables every Space boundary
+  while preserving its data. Native access carries exactly one current account,
+  root guest, MCP or private history credential with the exact root and stable
+  child; asynchronous work rechecks access and live generation. Only outer-file
+  metadata/lifecycle composes roots with ordinary files. Images, Formulas, MCP,
+  existing exports, account history and selected-child offline preparation reuse
+  those scoped services. The option gives Operators no document privileges.
+  The original safe sequencing is [decision #137](https://github.com/mxbaylee/spinel/issues/137);
+  the completed boundary is [decision #143](https://github.com/mxbaylee/spinel/issues/143)
+  and the [SPN-092 implementation contract](implementation/SPN-092.md).
 - React and React DOM are pinned to 18.3.1. On 2026-10-17, published
   `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support
   React 16–19; [Univer's UI package](https://github.com/dream-num/univer/blob/dev/packages/ui/package.json)

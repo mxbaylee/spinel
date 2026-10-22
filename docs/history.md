@@ -96,8 +96,8 @@ History reads use the current document access resolver and recheck access after
 decompression. Current viewers can read versions; revoked users, disabled users
 and administrators without document access cannot. Checkpoints are scoped to the
 requested document. Background capture selects a currently authorized active
-user through that same resolver, including inherited shares. Disabling an owner
-does not stop checkpoints while an active collaborator still has access. If no
+user through that same resolver, including inherited shares. For ordinary files,
+disabling an owner does not stop checkpoints while an active collaborator still has access. If no
 eligible user remains, existing history stays stored and capture resumes when
 access returns. Link guests gain no new route or permission.
 
@@ -106,6 +106,45 @@ progress markers and image bytes. The existing encrypted backup archive includes
 all of these in one consistent SQLite backup. Recovery verification covers a
 retained named version whose image was removed from the live document, followed
 by authenticated archive restore and reads under a shared viewer's identity.
+
+## Space documents
+
+[SPN-092](implementation/SPN-092.md) applies the same checkpoint, naming and restore
+policy to one native child at `/api/spaces/:spaceId/items/:itemId/history`.
+[Spaces are enabled by default](sharing.md#space-sharing); explicitly disabling
+them refuses these routes and preserves deferred checkpoints. Public list,
+preview, naming and restore require a current everyday account session and the
+exact root and child; an account Viewer
+can read, while an Editor or Owner can name and restore. Guests, MCP credentials
+and the private background capability gain no public history permission.
+
+A valid guest edit can preserve a private baseline before it commits. Prepared
+documents and raw submissions retain their original credentials through capture;
+every caller joining shared capture or restore work independently rechecks its
+current access. Compression, decompression and native reads do not retain an old
+grant across an await. Current-version capture also fences the live generation.
+Preview links keep the Space root, and historical Formula definitions evaluate
+with current source permissions through the same exact child scope.
+
+Space background work uses an unforgeable in-process read capability bound to one
+active everyday actor, root and child. It does not invent a browser session or
+grant edits. Disabled Space owners make the whole Space unavailable, including
+background history; the ordinary disabled-owner policy above remains separate.
+
+Every deferred Space checkpoint stays intact while the gate is disabled, the
+candidate is unsupported or inaccessible, or its bounded maintenance batch cannot
+be completed. A supported capture or metadata read admits that child's history
+to the existing checkpoint retention schedule for the current maintenance pass;
+pruning still resolves current live access again. Space and ordinary candidate
+batches are separate so unsupported Space work cannot consume the ordinary batch.
+This is checkpoint retention only: no automatic Space Trash expiry is introduced.
+
+`src/server/history/space.test.ts` covers account-only routes, each coalesced
+caller's authorization and bounded maintenance. Native restore and the
+[encrypted backup/ownership handover acceptance](backups.md#native-space-recovery-acceptance-2026-10-22)
+also preserve checkpoints, images, generation offsets and Before restore labels.
+The [implementation record](implementation/SPN-092.md) keeps this checkpoint
+acceptance distinct from final-head CI and merge approval.
 
 ## Why application-owned checkpoints
 

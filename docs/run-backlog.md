@@ -25,8 +25,14 @@ uncommitted work and inspect existing branches/PRs before creating duplicates.
 Resume a relevant unfinished PR first, rechecking its evidence against its head.
 Otherwise branch from current `main`, using `codex/<ticket-and-topic>`.
 
-Take the highest-ranked eligible ticket, honoring explicit owner sequencing in its
-Rules: SPN-038 comes last, even when a score tie would place it earlier. These are scope/timing constraints, not new product dependencies.
+Take the highest-ranked eligible ticket in the earliest remaining lifecycle
+phase: `pre_launch`, then `launch`, then `post_launch`. If that phase is blocked,
+record the blocker and wait; do not advance to a later phase. The generated index
+orders phases before scores, making SPN-038 the last launch prerequisite and
+keeping optional CSV import (SPN-093) and document-type/converter plugins
+(SPN-094) after it. Their explicit launch dependencies record owner sequencing,
+not a technical need for public HTTPS. Owner, chat 2026-10-21; fixed lifecycle
+phases recorded in [decision #129](https://github.com/mxbaylee/spinel/issues/129).
 After each merge, fetch main and pick again; do not preselect a fixed queue. An
 explicit owner-requested ticket takes priority for that run. If seven tickets
 have landed since grooming, do the required grooming PR first, with the same
@@ -48,6 +54,12 @@ Check the original ticket against the code and preserve its acceptance criteria
 for review. Weigh the Operator, Owner, Collaborator and Link guest in every
 decision; record decisions as process.md requires. Build the smallest complete
 change that satisfies the ticket, including meaningful tests and maintained docs.
+
+Reassess effort when implementation reveals more complexity. Use **XL** for
+sustained algorithmic or architectural investigation and verification, including
+work with a small diff; elapsed time alone does not assign a size. Record the
+reason in the ticket and regenerate the index. XL retains the normal split and
+review gates below. Owner, chat 2026-10-21.
 
 Before each push, run `npm run typecheck`, `npm test` and `npm run backlog:check`.
 Also run lint and the verification required by the ticket, including browser tests
@@ -95,7 +107,12 @@ Ask for a score out of 100 using this rubric:
 - **25:** correctness, data integrity and access boundaries.
 - **20:** meaningful regression protection and verification evidence.
 - **10:** CI and operational usability appropriate to the ticket.
-- **10:** maintainability, documentation and backlog/process consistency.
+- **10:** maintainability, documentation, backlog/process consistency and
+  **over-complexity**: unnecessary abstractions, dependencies or speculative
+  flexibility. Prefer the smallest complete implementation that meets the ticket;
+  deduct for avoidable complexity with an actionable simplification, not for
+  necessary safeguards. Owner, chat 2026-10-20, decision
+  [#105](https://github.com/mxbaylee/spinel/issues/105).
 
 Apply the rubric proportionally: for documentation work, verify instructions and
 scenarios rather than inventing runtime features. Require concrete deductions,
@@ -166,6 +183,11 @@ Wait for all required checks on the current head to finish successfully. The
 current set is **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
 and **Playwright smoke**, plus any added repository-required checks. Missing,
 pending, cancelled, skipped or failed required checks do not count as a pass.
+For an allowlisted documentation-only change, successful required jobs may
+explicitly report application tests as not applicable; Backlog, Pull request
+and Lint still validate the change. See the narrow path policy in
+[process.md](todo/process.md#pull-requests-and-main) and decision #121. Changes
+to CI itself always require full validation.
 Inspect failures, fix their causes, run the affected checks and the pre-push checks,
 and push again. Retry a transient infrastructure failure only with evidence.
 

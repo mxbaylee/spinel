@@ -1,5 +1,36 @@
 # Offsite backups and recovery
 
+## Recovery requirements and hosting options
+
+Spinel is [pre-production](development.md#deployment-stage) until SPN-038 launches
+`spinel.baylee.dev`. The SQLite/Spaces procedure below is the current working
+implementation. It may be replaced before launch if another database and recovery
+setup is simpler; the requirement is a tested way to recover the whole workspace,
+not a permanent SQLite dependency. Owner, chat 2026-10-21.
+
+Keep an inventory of accounts and grants, document snapshots and history, images,
+and the configuration/credentials needed to restore service. Set an acceptable
+recovery point and recovery time for the selected deployment, then demonstrate
+them with an isolated restore. SPN-063 adds recurring verification and visible
+last-success/failure status for whichever recovery method is selected.
+
+DigitalOcean offers different kinds of protection, which cover different failures:
+
+| Option | What it supplies | What Spinel still needs to establish |
+| --- | --- | --- |
+| Droplet backups | Scheduled system-disk images. | Attached volumes are excluded; active database writes need an appropriate consistent backup method. |
+| Volumes | Data replicated across hosts, plus volume snapshots. | Hardware redundancy does not recover an earlier application state after a bad write or deletion. |
+| Managed PostgreSQL | Daily backups and seven-day point-in-time recovery; eligible configurations with standby nodes offer failover. | Select an applicable plan, preserve assets/configuration outside that database, and prove application recovery. |
+
+Sources checked 2026-10-21: DigitalOcean's [backup limits](https://docs.digitalocean.com/products/backups/details/limits/),
+[volume durability](https://docs.digitalocean.com/products/volumes/details/features/),
+and [PostgreSQL features](https://docs.digitalocean.com/products/databases/postgresql/details/features/).
+Recheck current plans and costs when choosing a deployment. These options do not
+change the browser storage/eviction and pending-edit requirements in SPN-055.
+No cloud resources are provisioned by this grooming decision.
+
+## Current SQLite and Spaces implementation
+
 Spinel backs up to a **private DigitalOcean Space**. It uses SQLite's `VACUUM INTO`
 to make a consistent copy, compresses it and encrypts it with AES-256-GCM before any
 network transfer. The 32-byte random recovery key must be kept separately from
@@ -14,10 +45,20 @@ corruption. This preserves one consistent backup without that risk; see
 
 This preserves accounts, passkeys, sessions, invitations, folders, grants, trash,
 native Sheets/Docs snapshots, collaboration generations, retained checkpoints,
-restore receipts and uploaded image bytes: all currently live in SQLite. Every
+restore receipts, uploaded image bytes, and Space roots/membership/order and
+subtree recovery metadata: all currently live in SQLite. Every
 table is included. Before adding
 an external database or filesystem blob store, extend this inventory and the
 consistent backup/restore procedure; a SQLite-only backup cannot protect those.
+
+The SPN-078 model tests verify exact native content, stable IDs/formula bindings,
+membership/order and recovery records after reopen and a SQLite snapshot copy.
+[SPN-092](implementation/SPN-092.md) adds the actual encrypted BackupService
+round trip and SPN-064 ownership handover with freshly reopened native services,
+described in the verification record below. Continue restoring the recorded
+immutable application version; an older image cannot be assumed to understand a
+newer Space schema. Space Trash and recovery groups containing Space data have
+no automatic expiry; backup retention does not change that application policy.
 
 The encrypted copy also contains the canonical origin, immutable application
 image reference and runtime environment file. Host-specific Tailscale identity,
@@ -164,8 +205,9 @@ Sources: [SQLite VACUUM INTO](https://www.sqlite.org/lang_vacuum.html#vacuuminto
    encrypted download until verification finishes. Start through the deployment
    preflight, then sign in with the existing operator and everyday accounts.
 4. Verify each document type, image, sharing grant, trash item and existing history
-   checkpoint against pre-backup counts/hashes. Confirm a viewer cannot edit or
-   open unrelated documents. Reopen after a restart. Confirm the next offsite
+   checkpoint against pre-backup counts/hashes. Include Space child IDs/order,
+   Formula bindings, live generations and earlier internal Trash. Confirm a viewer
+   cannot edit or open unrelated documents. Reopen after a restart. Confirm the next offsite
    backup succeeds and status reports its new timestamp.
 5. Record source/target versions, backup identifier, equality checks, sign-in and
    permissions outcomes in the PR. A file listing or successful decryption alone
@@ -179,6 +221,29 @@ round trips, integrity and authentication failures, destination collision,
 retention boundaries, upload failure without pruning, persistent status,
 scheduler catch-up and shared leases. HTTP/browser tests cover admin-only status
 and its failure/last-success presentation.
+
+### Native Space recovery acceptance, 2026-10-22
+
+`src/server/collaboration/space-native.test.ts` runs the real `BackupService`
+against an injected object-storage transport, authenticates and restores the
+encrypted archive, and compares every durable SQL table before starting fresh
+application and native services. Recovery metadata is checked separately and
+the operational backup lease is reset. This exercises the production backup and
+restore path without provisioning a cloud host.
+
+The restored fixture then runs SPN-064's actual disabled-owner handover. Stable
+IDs, content, sibling order, Formula bindings and evaluated results, image bytes,
+live generations, checkpoints, restore labels/receipts and earlier internal Trash
+survive. The new owner restores the whole Space and an earlier deleted subtree;
+an existing viewer can still read snapshots and images but cannot restore them.
+Old guest capabilities are invalidated. The Operator, an unrelated account and
+the departed owner, even after reactivation, cannot read the transferred content.
+
+Checkpoint CI at
+[`4aa5ea4`](https://github.com/mxbaylee/spinel/commit/4aa5ea444a0a3f17dd7e18d46ecbda20ca882b33)
+passed this native acceptance. It is separate from the fresh-host drill below
+and does not substitute for final-head CI or independent merge approval; the
+[implementation record](implementation/SPN-092.md) tracks that evidence.
 
 ### Fresh-host Spaces drill, 2026-10-17 Pacific (2026-10-18 UTC)
 
@@ -212,9 +277,9 @@ the source's logical SHA-256:
 The comparison excluded only backup operational state and recovery metadata.
 Counts included three users/passkeys/sessions, five workspace items (including
 trash), one native Sheet snapshot, one Doc snapshot, one PNG blob, one sharing
-grant and a synthetic historical-checkpoint table. History UI has not shipped;
-this last table verifies preservation of additional database tables, not a
-claim that a history feature exists. Canonical origin and runtime environment
+grant and a synthetic historical-checkpoint table. History UI had not shipped
+at that checkpoint; this last table verified preservation of additional database
+tables, not history-feature acceptance. Canonical origin and runtime environment
 matched the encrypted recovery manifest.
 
 The restored app ran as UID 1000 with a read-only container root and 512 MiB

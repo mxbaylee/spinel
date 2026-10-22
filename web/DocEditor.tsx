@@ -1,3 +1,18 @@
+import {
+  installDocFormulas,
+  type DocFormula,
+  type DocFormulaController,
+  type DocFormulaSelection,
+  type FormulaDefinition,
+  type FormulaResult,
+  type FormulaState,
+} from '@spinel/doc-formulas';
+import {
+  FormulaDialog,
+  FormulaResultView,
+  formulaRequest,
+  formulaPaperColors,
+} from './DocFormulas.tsx';
 import { guestItemId, documentPath } from './documentAccess.ts';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
@@ -7,7 +22,11 @@ import printEnglish from '@univerjs-pro/docs-print/locale/en-US';
 import '@univerjs-pro/docs-print/lib/index.css';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
-import { setDocumentPermissionValue } from '@univerjs/docs';
+import {
+  DocStateChangeManagerService,
+  DocStateEmitService,
+  setDocumentPermissionValue,
+} from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
 import { Collaborators, watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
@@ -55,16 +74,30 @@ import {
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
 import { documentReady } from './documentReady.ts';
+import type { ConnectionState } from './connectionState.ts';
+import { docPendingChanges } from './docPending.ts';
 
 export function DocEditor({
   id,
   name,
+  spaceId,
   onDirty,
+  onConnectionState,
 }: {
   id: string;
   name: string;
+  spaceId?: string;
   onDirty: (dirty: boolean) => void;
+  onConnectionState?: (state: ConnectionState | null) => void;
 }) {
+  const formulas = useRef<DocFormulaController | null>(null);
+  const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
+  const [formulaError, setFormulaError] = useState('');
+  const [formulaEdit, setFormulaEdit] = useState<{
+    formula?: DocFormula;
+    selection?: DocFormulaSelection;
+  } | null>(null);
+  const canEditFormulas = useRef(false);
   const print = useRef<(() => Promise<void>) | null>(null);
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
@@ -78,8 +111,17 @@ export function DocEditor({
   });
   useEffect(() => {
     let disposed = false;
+    onConnectionState?.('reconnecting');
+    const publishConnection = (state: ConnectionState) => {
+      if (!disposed) onConnectionState?.(state);
+    };
     const loading = new AbortController();
     let stopPresence: (() => void) | undefined;
+    let formulaInterval: ReturnType<typeof setInterval> | undefined;
+    let stopFormulaVisibility: (() => void) | undefined;
+    setFormulaStates([]);
+    setFormulaEdit(null);
+    setFormulaError('');
     setPeople([]);
     let uploads = 0;
     let insertions = 0;
@@ -100,7 +142,7 @@ export function DocEditor({
       });
     };
     void (async () => {
-      const data = await prepareCollaboration(id);
+      const data = await prepareCollaboration(id, spaceId);
       if (disposed) return;
       let drawingReady!: () => void;
       const drawingsRendered = new Promise<void>((resolve) => {
@@ -115,7 +157,7 @@ export function DocEditor({
           try {
             if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type))
               throw new Error('Choose a PNG, JPEG or WebP image.');
-            const response = await fetch(`${documentPath(id)}/images`, {
+            const response = await fetch(`${documentPath(id, spaceId)}/images`, {
               method: 'POST',
               headers: { 'Content-Type': file.type },
               body: file,
@@ -218,7 +260,12 @@ export function DocEditor({
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
           UniverDocsPrintPlugin,
-          ...collaborationPlugins(data.unitId, [[IImageIoService, { useClass: StoredImages }]]),
+          ...collaborationPlugins(
+            data.unitId,
+            [[IImageIoService, { useClass: StoredImages }]],
+            true,
+            spaceId ? { spaceId, itemId: id } : undefined,
+          ),
         ],
         presets: [
           UniverDocsCorePreset({
@@ -259,7 +306,38 @@ export function DocEditor({
       if (disposed) return;
       await documentReady(univer, data.unitId, loading.signal);
       if (disposed) return;
+      const installedFormulas = await installDocFormulas({
+        univer,
+        unitId: data.unitId,
+        colors: formulaPaperColors,
+        evaluate: (definition, signal) =>
+          formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal, spaceId),
+        onActivate: (formula) => {
+          if (canEditFormulas.current) setFormulaEdit({ formula });
+        },
+        onChange: (states) => {
+          if (!disposed) setFormulaStates([...states]);
+        },
+      });
+      if (disposed) {
+        installedFormulas.dispose();
+        return;
+      }
+      formulas.current = installedFormulas;
+      const refreshVisible = () => {
+        if (globalThis.document.visibilityState === 'hidden') formulas.current?.clear();
+        else void formulas.current?.refresh();
+      };
+      globalThis.document.addEventListener('visibilitychange', refreshVisible);
+      stopFormulaVisibility = () =>
+        globalThis.document.removeEventListener('visibilitychange', refreshVisible);
+      formulaInterval = setInterval(() => {
+        if (globalThis.document.visibilityState === 'visible') void formulas.current?.refresh();
+      }, 5000);
       const readonly = async () => {
+        canEditFormulas.current = false;
+        setFormulaEdit(null);
+        formulas.current?.clear();
         setEditable(false);
         // Local UI state only: changing the shared document's permission rules
         // would also make still-authorized collaborators read-only.
@@ -269,6 +347,7 @@ export function DocEditor({
       };
       if (data.access === 'viewer') await readonly();
       else {
+        canEditFormulas.current = true;
         setEditable(true);
         document.setSelection(0, 0);
       }
@@ -277,9 +356,25 @@ export function DocEditor({
         stopPresence();
         return;
       }
-      save = watchCollaboration(univer, univerAPI, data.unitId, id, data.access, publish, readonly);
+      save = watchCollaboration(
+        univer,
+        univerAPI,
+        data.unitId,
+        id,
+        data.access,
+        publish,
+        readonly,
+        publishConnection,
+        spaceId,
+        docPendingChanges(
+          data.unitId,
+          univer.__getInjector().get(DocStateEmitService),
+          univer.__getInjector().get(DocStateChangeManagerService),
+        ),
+      );
       controller.current = save;
     })().catch((error) => {
+      publishConnection('offline');
       if (!disposed)
         publish({
           dirty: false,
@@ -292,6 +387,11 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
+      canEditFormulas.current = false;
+      clearInterval(formulaInterval);
+      stopFormulaVisibility?.();
+      formulas.current?.dispose();
+      formulas.current = null;
       loading.abort();
       stopPresence?.();
       save?.dispose();
@@ -300,27 +400,37 @@ export function DocEditor({
       controller.current = null;
       setEditable(false);
       onDirty(false);
+      onConnectionState?.(null);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
-  }, [id]);
+  }, [id, spaceId]);
   return (
     <section className="sheet-editor" aria-label="Doc document">
       <Collaborators people={people} />
       <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
-        {status.message}
-        {status.failed && status.dirty && (
-          <button onClick={() => controller.current?.retry()}>Retry saving</button>
-        )}
+        <span className="save-message">{status.message}</span>
+        <span className="save-retry">
+          {status.failed && status.dirty && (
+            <button onClick={() => controller.current?.retry()}>Retry saving</button>
+          )}
+        </span>
       </div>
-      {uploadError && <p role="alert">{uploadError} Try inserting the file again.</p>}
+      {uploadError && (
+        <p role="alert">
+          {uploadError}
+          {' Try inserting the file again.'}
+        </p>
+      )}
       {!guestItemId() && (
         <>
           <VersionNames
             id={id}
+            spaceId={spaceId}
             saved={!status.dirty && !status.failed && Boolean(controller.current)}
           />
           <FileExports
             id={id}
+            spaceId={spaceId}
             name={name}
             saved={!status.dirty && !status.failed && Boolean(controller.current)}
             print={async () => {
@@ -329,6 +439,75 @@ export function DocEditor({
             }}
           />
         </>
+      )}
+      {Boolean(controller.current) && (
+        <details className="doc-formulas">
+          <summary>Formulas{formulaStates.length ? ` (${formulaStates.length})` : ''}</summary>
+          {editable && (
+            <button
+              onClick={() => {
+                try {
+                  if (!formulas.current) throw new Error('Wait for the document to load.');
+                  setFormulaError('');
+                  setFormulaEdit({ selection: formulas.current.selection() });
+                } catch (cause) {
+                  setFormulaError(
+                    cause instanceof Error
+                      ? cause.message
+                      : 'Place the cursor in the document first.',
+                  );
+                }
+              }}
+            >
+              Insert formula
+            </button>
+          )}
+          {formulaError && <p role="alert">{formulaError}</p>}
+          {!formulaStates.length && (
+            <p>Use a spreadsheet cell, range, or calculation in this Doc.</p>
+          )}
+          <ul>
+            {formulaStates.map(({ formula, result }) => (
+              <li key={formula.id}>
+                {editable ? (
+                  <button onClick={() => setFormulaEdit({ formula })}>
+                    {formula.definition.expression}
+                  </button>
+                ) : (
+                  <code>{formula.definition.expression}</code>
+                )}
+                <FormulaResultView result={result} definition={formula.definition} />
+              </li>
+            ))}
+          </ul>
+          {formulaStates.length > 0 && (
+            <button onClick={() => void formulas.current?.resume()}>Refresh formulas</button>
+          )}
+        </details>
+      )}
+      {formulaEdit && editable && (
+        <FormulaDialog
+          id={id}
+          spaceId={spaceId}
+          initial={formulaEdit.formula}
+          onClose={() => {
+            setFormulaEdit(null);
+            // Wait for dialog cleanup before returning keyboard input to the native document.
+            requestAnimationFrame(() => formulas.current?.focus());
+          }}
+          onSave={async (definition: FormulaDefinition) => {
+            if (!formulas.current || !canEditFormulas.current)
+              throw new Error('This document is read-only.');
+            if (
+              !(await formulas.current.insert(
+                definition,
+                formulaEdit.selection,
+                formulaEdit.formula?.id,
+              ))
+            )
+              throw new Error('The formula could not be inserted.');
+          }}
+        />
       )}
       {editable && <p className="editor-help">Click the page to write. Type / for commands.</p>}
       <div className="univer-container" ref={container} />

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { SharePerson, WorkspaceItem } from '../src/shared/workspace.ts';
+import { within, userEvent, expect } from 'storybook/test';
+import type { FileItem, SharePerson, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { Sharing } from './Sharing.tsx';
 
@@ -19,9 +20,9 @@ const folder: WorkspaceItem = {
   kind: 'folder',
   name: 'Household',
 };
-const sharing = (item: WorkspaceItem) => `GET /api/items/${item.id}/sharing`;
+const sharing = (item: FileItem) => `GET /api/items/${item.id}/sharing`;
 // Sharing also embeds the guest link control for sheets and docs.
-const link = (item: WorkspaceItem) => `GET /api/items/${item.id}/link`;
+const link = (item: FileItem) => `GET /api/items/${item.id}/link`;
 const noLink = { enabled: false, role: 'viewer' };
 
 const people: SharePerson[] = [
@@ -49,9 +50,10 @@ const people: SharePerson[] = [
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
 const meta = {
-  title: 'Sharing/Sharing',
+  id: 'sharing-sharing',
+  title: 'Current production/Sharing/Sharing',
   component: Sharing,
-  args: { item: doc, onClose: () => {} },
+  args: { item: doc as FileItem, onClose: () => {} },
 } satisfies Meta<typeof Sharing>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -78,5 +80,83 @@ export const Failed: Story = {
       [sharing(doc)]: failure('You can no longer change sharing for this item.', 403),
       [link(doc)]: noLink,
     },
+  },
+};
+const space: SpaceFile = { ...doc, kind: 'space', name: 'Research Space' };
+export const WholeSpace: Story = {
+  args: { item: space },
+  parameters: { api: { [sharing(space)]: { people }, [link(space)]: noLink } },
+};
+
+export const FileAdmin: Story = {
+  args: { item: { ...doc, access: 'admin', ownerName: 'Morgan Ellis' } },
+  parameters: {
+    api: {
+      [sharing(doc)]: {
+        people: [
+          {
+            id: 'u-alex',
+            name: 'Alex Kim',
+            disabled: 0,
+            directRole: 'viewer',
+            effectiveRole: 'admin',
+          },
+          {
+            id: 'u-jordan',
+            name: 'Jordan Lee',
+            disabled: 0,
+            directRole: 'admin',
+            effectiveRole: 'admin',
+          },
+        ],
+      },
+      [link(doc)]: noLink,
+    },
+  },
+};
+export const GrantFileAdmin: Story = {
+  parameters: {
+    api: {
+      [sharing(doc)]: { people: [people[0]] },
+      [link(doc)]: noLink,
+      [`PUT /api/items/${doc.id}/sharing`]: {
+        people: [{ ...people[0], directRole: 'admin', effectiveRole: 'admin' }],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.selectOptions(await canvas.findByLabelText('Access for Alex Kim'), 'admin');
+    await userEvent.click(canvas.getByRole('button', { name: 'Apply access for Alex Kim' }));
+    await expect(
+      await canvas.findByText('Access updated for Alex Kim.', { exact: true }),
+    ).toBeVisible();
+    await expect(canvas.getByLabelText('Access for Alex Kim')).toHaveValue('admin');
+    await expect(
+      canvas.getByLabelText('Link access').querySelector('option[value="admin"]'),
+    ).toBeNull();
+  },
+};
+export const AdminRevokedWhileApplying: Story = {
+  args: { item: { ...doc, access: 'admin' } },
+  parameters: {
+    api: {
+      [sharing(doc)]: { people: [people[0]] },
+      [link(doc)]: noLink,
+      [`PUT /api/items/${doc.id}/sharing`]: failure(
+        'Only the owner or a file admin can manage this item.',
+        403,
+      ),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.selectOptions(await canvas.findByLabelText('Access for Alex Kim'), 'admin');
+    await userEvent.click(canvas.getByRole('button', { name: 'Apply access for Alex Kim' }));
+    await expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'Only the owner or a file admin',
+    );
+    await expect(canvas.getByLabelText('Access for Alex Kim')).toHaveValue('admin');
+    await expect(canvas.getByText('Effective access: Can edit.')).toBeVisible();
   },
 };

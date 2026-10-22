@@ -4,7 +4,8 @@ import { fillPresets } from './palette.ts';
 import { FillPresets } from './FillPresets.tsx';
 
 const meta = {
-  title: 'Editor/FillPresets',
+  id: 'editor-fillpresets',
+  title: 'Current production/Editor/FillPresets',
   component: FillPresets,
   args: { apply: async () => {}, disabled: false },
   decorators: [

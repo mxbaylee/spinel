@@ -37,7 +37,8 @@ const items = [
 const loaded = { 'GET /api/items/trash': { items, version: 'v1' } };
 
 const meta = {
-  title: 'Dashboard/Trash',
+  id: 'dashboard-trash',
+  title: 'Current production/Dashboard/Trash',
   component: Trash,
   args: { onChanged: async () => {} },
 } satisfies Meta<typeof Trash>;
@@ -61,6 +62,56 @@ export const ConfirmEmpty: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.click(
       await within(canvasElement).findByRole('button', { name: 'Empty trash' }),
+    );
+  },
+};
+const retained: TrashedItem[] = [
+  { ...trashed(5, 'Archived projects', 'folder', 95), expiresAt: null },
+  { ...trashed(6, 'Research Space', 'doc', 95), kind: 'space', expiresAt: null },
+];
+const retainedListing = {
+  items: [...retained, items[0]],
+  version: 'retained-group',
+  deletion: {
+    count: 6,
+    items: [
+      ...retained.map(({ id, name, kind }) => ({ id, name, kind })),
+      { id: 'page-1', name: 'Research notes', kind: 'doc' },
+      { id: 'page-2', name: 'Old draft already in Space Trash', kind: 'doc' },
+      { id: 'page-3', name: 'Sources', kind: 'sheet' },
+      { id: items[0].id, name: items[0].name, kind: items[0].kind },
+    ],
+  },
+};
+export const RetainedSpaceGroup: Story = {
+  parameters: { api: { 'GET /api/items/trash': retainedListing } },
+};
+export const ConfirmCompleteSpaceGraph: Story = {
+  ...RetainedSpaceGroup,
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Empty trash' }),
+    );
+  },
+};
+export const SpaceGraphChanged: Story = {
+  parameters: {
+    api: {
+      'GET /api/items/trash': retainedListing,
+      'POST /api/items/trash/empty': failure(
+        'Your trash changed. Review the complete contents before deleting.',
+        409,
+      ),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Empty trash' }),
+    );
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole('button', {
+        name: 'Permanently delete 6 items',
+      }),
     );
   },
 };

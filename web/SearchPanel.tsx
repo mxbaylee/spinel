@@ -1,8 +1,9 @@
+import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { useEffect, useState } from 'react';
 import { emptySearch, hasSearch, searchCatalog, searchItems } from '../src/shared/search.ts';
 import type { SearchItem, SearchQuery } from '../src/shared/search.ts';
-import { ITEM_KINDS, kindLabel } from '../src/shared/workspace.ts';
-import type { WorkspaceItem } from '../src/shared/workspace.ts';
+import { FILE_KINDS, fileKindLabel } from '../src/shared/workspace.ts';
+import type { FileItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 import { SharedBadge } from './SharedItems.tsx';
 import { TagLabels } from './DocumentTags.tsx';
@@ -12,15 +13,17 @@ export function SearchPanel({
   onChange,
   loadedItems,
   onOpen,
+  spacesEnabled = false,
 }: {
   query: SearchQuery;
   onChange: (query: SearchQuery) => void;
-  loadedItems: WorkspaceItem[];
-  onOpen: (id: string) => void;
+  loadedItems: FileItem[];
+  onOpen: (item: FileItem) => void;
+  spacesEnabled?: boolean;
 }) {
   const active = hasSearch(query),
     key = new URLSearchParams(query).toString();
-  const [server, setServer] = useState<{ key: string; items: SearchItem[] } | null>(null);
+  const [server, setServer] = useState<{ key: string; items: SearchItem<FileItem>[] } | null>(null);
   const [error, setError] = useState<{ key: string; message: string } | null>(null);
   const [loading, setLoading] = useState(false),
     [refresh, setRefresh] = useState(0);
@@ -30,7 +33,7 @@ export function SearchPanel({
     setLoading(true);
     setError(null);
     const timer = window.setTimeout(() => {
-      void itemsRequest<{ items: SearchItem[] }>(`/search?${key}`)
+      void itemsRequest<{ items: SearchItem<FileItem>[] }>(`/search?${key}`)
         .then((result) => {
           if (!disposed) setServer({ key, items: result.items });
         })
@@ -93,9 +96,9 @@ export function SearchPanel({
             }
           >
             <option value="">All types</option>
-            {ITEM_KINDS.map((kind) => (
+            {FILE_KINDS.filter((kind) => kind !== 'space' || spacesEnabled).map((kind) => (
               <option key={kind} value={kind}>
-                {kindLabel[kind]}
+                {fileKindLabel[kind]}
               </option>
             ))}
           </select>
@@ -167,9 +170,10 @@ export function SearchPanel({
                     <button
                       className="item-open"
                       aria-label={`Open result ${item.name}`}
-                      onClick={() => onOpen(item.id)}
+                      onClick={() => onOpen(item)}
                     >
-                      {item.name} <span className="item-kind">{kindLabel[item.kind]}</span>
+                      {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
+                      {item.name} <span className="item-kind">{fileKindLabel[item.kind]}</span>
                     </button>
                     <SharedBadge item={item} />
                     {item.access === 'viewer' && <span>View only</span>}
