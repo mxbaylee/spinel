@@ -2,7 +2,7 @@ import { LinkAccess, linkGone } from './links.ts';
 import { randomUUID } from 'node:crypto';
 import { AuthError, AuthStore } from '../auth/store.ts';
 import { ITEM_KINDS } from '../../shared/workspace.ts';
-import { isOrdinaryItem } from './ordinary-scope.ts';
+import { classifyOrdinaryItems, isOrdinaryItem, MAX_ANCESTOR_READS } from './ordinary-scope.ts';
 import type { ItemKind, WorkspaceItem, ItemAccess, SharePerson } from '../../shared/workspace.ts';
 import type { SnapshotSaved } from './snapshots.ts';
 
@@ -92,6 +92,11 @@ export class WorkspaceStore {
     this.owner(userId);
     if (!isOrdinaryItem(this.auth.database, id))
       throw new AuthError(404, 'This item is not available.');
+    return this.assignedTags(userId, id);
+  }
+  // Call only after current ordinary-item access/structure is established.
+  // Discovery must not repeat an entire ancestor walk for every tag projection.
+  private assignedTags(userId: string, id: string): string[] {
     return (
       this.auth.database
         .prepare(
@@ -101,23 +106,31 @@ export class WorkspaceStore {
     ).map((row) => row.name);
   }
   tagSuggestions(userId: string): string[] {
-    this.owner(userId);
-    const rows = this.auth.database
-      .prepare(
-        `SELECT t.name,a.item_id AS itemId FROM workspace_tags t
+    return this.auth.transaction(() => {
+      this.owner(userId);
+      const rows = this.auth.database
+        .prepare(
+          `SELECT t.name,a.item_id AS itemId FROM workspace_tags t
          LEFT JOIN workspace_tag_assignments a ON a.user_id=t.user_id AND a.name=t.name
-         WHERE t.user_id=? ORDER BY t.name`,
-      )
-      .all(userId) as { name: string; itemId: string | null }[];
-    // Personal suggestions survive ordinary revocation, trash and untagging,
-    // but an assignment exclusively inside a hidden Space cannot expose a label.
-    return [
-      ...new Set(
-        rows
-          .filter((row) => row.itemId === null || isOrdinaryItem(this.auth.database, row.itemId))
-          .map((row) => row.name),
-      ),
-    ];
+         WHERE t.user_id=? ORDER BY t.name LIMIT ?`,
+        )
+        .all(userId, MAX_ANCESTOR_READS + 1) as { name: string; itemId: string | null }[];
+      if (rows.length > MAX_ANCESTOR_READS)
+        throw new AuthError(413, 'These tag suggestions are too large to process at once.');
+      const ids = [...new Set(rows.flatMap((row) => (row.itemId === null ? [] : [row.itemId])))];
+      const ordinary = classifyOrdinaryItems(this.auth.database, ids);
+      if (!ordinary)
+        throw new AuthError(413, 'These tag suggestions are too large to process at once.');
+      // Personal suggestions survive ordinary revocation, trash and untagging,
+      // but an assignment exclusively inside a hidden Space cannot expose a label.
+      return [
+        ...new Set(
+          rows
+            .filter((row) => row.itemId === null || ordinary.has(row.itemId))
+            .map((row) => row.name),
+        ),
+      ];
+    });
   }
   changeTag(userId: string, id: string, value: unknown, remove = false): WorkspaceItem {
     return this.auth.transaction(() => {
@@ -158,15 +171,40 @@ export class WorkspaceStore {
     if (user.is_admin) throw new AuthError(403, 'Use your everyday account for documents.');
   }
   list(ownerId: string): WorkspaceItem[] {
-    this.owner(ownerId);
-    const items = this.auth.database
-      .prepare(
-        `SELECT ${columns}, 'owner' AS access FROM workspace_items WHERE owner_id=? AND trashed_at IS NULL ORDER BY name COLLATE NOCASE,id`,
-      )
-      .all(ownerId) as unknown as WorkspaceItem[];
-    return items
-      .filter((item) => this.role(ownerId, item.id) !== null)
-      .map((item) => ({ ...item, tags: this.ownTags(ownerId, item.id) }));
+    return this.auth.transaction(() => {
+      this.owner(ownerId);
+      const fields = new Set(
+        this.auth.database
+          .prepare('PRAGMA table_info(workspace_items)')
+          .all()
+          .map((row) => row.name),
+      );
+      // A full hidden Space must not consume the ordinary discovery budget.
+      // Check the current schema because this store can predate startup migration.
+      const membership = ['space_id', 'space_position']
+        .filter((field) => fields.has(field))
+        .map((field) => ` AND ${field} IS NULL`)
+        .join('');
+      const items = this.auth.database
+        .prepare(
+          `SELECT ${columns}, 'owner' AS access FROM workspace_items
+           WHERE owner_id=? AND trashed_at IS NULL
+             AND kind IN (${ITEM_KINDS.map(() => '?').join(',')})${membership}
+           ORDER BY name COLLATE NOCASE,id LIMIT ?`,
+        )
+        .all(ownerId, ...ITEM_KINDS, MAX_ANCESTOR_READS + 1) as unknown as WorkspaceItem[];
+      // Ownership is established by the query; one request-local classification
+      // checks live same-owner folder ancestry without n independent role walks.
+      const ordinary = classifyOrdinaryItems(
+        this.auth.database,
+        items.map((item) => item.id),
+        'live',
+      );
+      if (!ordinary) throw new AuthError(413, 'This item list is too large to process at once.');
+      return items
+        .filter((item) => ordinary.has(item.id))
+        .map((item) => ({ ...item, tags: this.assignedTags(ownerId, item.id) }));
+    });
   }
   shared(userId: string): WorkspaceItem[] {
     this.owner(userId);
@@ -324,7 +362,7 @@ export class WorkspaceStore {
             ).name,
           }
         : {}),
-      tags: this.ownTags(userId, id),
+      tags: this.assignedTags(userId, id),
       parentId: item.parentId && this.role(userId, item.parentId) ? item.parentId : null,
     };
   }

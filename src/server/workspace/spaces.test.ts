@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { DatabaseSync } from '../../../server/database.ts';
 import type { ItemKind } from '../../shared/workspace.ts';
 import { AuthStore } from '../auth/store.ts';
@@ -390,6 +390,79 @@ test('moving the whole Space changes outer inheritance without changing descenda
     name: 'Moved Space',
     parentId: destination.id,
   });
+});
+
+test('creating and moving a Space validates deep outer ancestry with linear statement work', () => {
+  const f = fixture();
+  const doc = f.child('Preserved');
+  let destination: string | null = null;
+  f.auth.transaction(() => {
+    const insert = f.db.prepare(`INSERT INTO workspace_items
+      (id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,?,'folder','Deep',0,0)`);
+    for (let depth = 0; depth < 1_000; depth++) {
+      const id = `outer-depth-${depth}`;
+      insert.run(id, f.owner.id, destination);
+      destination = id;
+    }
+  });
+  const prepare = f.db.prepare.bind(f.db);
+  let statements = 0;
+  const spy = vi.spyOn(f.db, 'prepare').mockImplementation((sql) => {
+    const statement = prepare(sql);
+    return {
+      get: (...values) => {
+        statements++;
+        return statement.get(...values);
+      },
+      all: (...values) => {
+        statements++;
+        return statement.all(...values);
+      },
+      run: (...values) => {
+        statements++;
+        return statement.run(...values);
+      },
+    };
+  });
+  try {
+    expect(
+      f.spaces.createRoot(f.owner.id, { name: 'Deep Space', parentId: destination }).space.parentId,
+    ).toBe(destination);
+    expect(statements).toBeLessThanOrEqual(6_040);
+    statements = 0;
+    expect(
+      f.spaces.updateRoot(f.owner.id, f.space.id, { parentId: destination }).space.parentId,
+    ).toBe(destination);
+    expect(statements).toBeLessThanOrEqual(6_040);
+  } finally {
+    spy.mockRestore();
+  }
+  expect(f.spaces.list(f.owner.id, f.space.id).items).toEqual([doc]);
+});
+
+test('an outer ancestry beyond the work budget refuses Space creation and move atomically', () => {
+  const f = fixture();
+  let destination: string | null = null;
+  f.auth.transaction(() => {
+    const insert = f.db.prepare(`INSERT INTO workspace_items
+      (id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,?,'folder','Deep',0,0)`);
+    for (let depth = 0; depth < 10_001; depth++) {
+      const id = `over-budget-${depth}`;
+      insert.run(id, f.owner.id, destination);
+      destination = id;
+    }
+  });
+  const before = state(f.db);
+  expect(() =>
+    f.spaces.createRoot(f.owner.id, { name: 'Must not save', parentId: destination }),
+  ).toThrow('not available');
+  expect(() =>
+    f.spaces.updateRoot(f.owner.id, f.space.id, {
+      name: 'Must not rename',
+      parentId: destination,
+    }),
+  ).toThrow('not available');
+  expect(state(f.db)).toEqual(before);
 });
 
 test('malformed trees refuse listing and mutation instead of omitting foreign or cyclic descendants', () => {

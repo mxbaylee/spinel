@@ -54,7 +54,7 @@ export class SpaceStore {
     return this.workspace.auth.transaction(() => {
       this.workspace.owner(actorId);
       const name = this.workspace.name(input.name);
-      const parentId = this.workspace.parent(actorId, input.parentId);
+      const parentId = this.outerParent(actorId, input.parentId);
       const id = randomUUID();
       const now = this.workspace.auth.now();
       this.workspace.auth.database
@@ -169,7 +169,7 @@ export class SpaceStore {
       const parentId =
         input.parentId === undefined
           ? scope.space.parentId
-          : this.workspace.parent(actorId, input.parentId, spaceId);
+          : this.outerParent(actorId, input.parentId);
       this.workspace.auth.database
         .prepare('UPDATE workspace_items SET name=?,parent_id=?,updated_at=? WHERE id=?')
         .run(name, parentId, this.workspace.auth.now(), spaceId);
@@ -219,6 +219,17 @@ export class SpaceStore {
       children.set(item.parentId, siblings);
     }
     return { scope, totalItems: structure.items.length, items, byId, children };
+  }
+
+  private outerParent(actorId: string, value: unknown): string | null {
+    if (value === null) return null;
+    if (typeof value !== 'string') throw new AuthError(400, 'Choose a destination folder.');
+    // One ordinary-owner read already validates the complete live folder chain.
+    // It cannot contain any Space, so the destination cannot be below this root.
+    // Rechecking every ancestor with get() would make deep outer moves quadratic.
+    const parent = this.workspace.get(actorId, value, 'owner');
+    if (parent.kind !== 'folder') throw new AuthError(400, 'The destination must be a folder.');
+    return parent.id;
   }
 
   private parent(tree: LiveTree, value: unknown): string {

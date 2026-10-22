@@ -33,6 +33,12 @@ test('legacy ordinary items need no Space migration and retain caller-specific t
       .map((row) => row.name),
   ).not.toContain('space_id');
   expect(isOrdinaryItem(f.db, doc)).toBe(true);
+  expect(
+    f.workspace
+      .list(f.owner.id)
+      .map((item) => item.id)
+      .sort(),
+  ).toEqual([doc, folder].sort());
   f.db
     .prepare('UPDATE workspace_items SET trashed_at=1,trash_batch=? WHERE id=?')
     .run('batch', folder);
@@ -40,6 +46,7 @@ test('legacy ordinary items need no Space migration and retain caller-specific t
   // Structure is reusable by Trash and by existing disabled-owner collaborator policy.
   expect(isOrdinaryItem(f.db, doc)).toBe(true);
   expect(isOrdinaryItem(f.db, folder)).toBe(true);
+  expect(classifyOrdinaryItems(f.db, [doc, folder], 'live')).toEqual(new Set());
   expect(isOrdinaryItem(f.db, randomUUID())).toBe(false);
 });
 

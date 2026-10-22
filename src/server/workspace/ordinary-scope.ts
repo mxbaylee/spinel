@@ -7,6 +7,7 @@ interface OrdinaryRow {
   owner_id: string;
   parent_id: string | null;
   kind: string;
+  trashed_at?: number | null;
   space_id?: string | null;
   space_position?: number | null;
 }
@@ -14,11 +15,12 @@ interface OrdinaryRow {
 // Refuse excessive work rather than truncating an ancestry into a valid item.
 // Shared by an entire batch, not renewed for every leaf. This is a request-work
 // budget, not a product nesting limit.
-const MAX_ANCESTOR_READS = 10_000;
+export const MAX_ANCESTOR_READS = 10_000;
 
 /**
  * Structural boundary for ordinary file APIs, including raw SQL callers.
- * It grants no access and deliberately leaves live/trash policy to its caller.
+ * It grants no access. The default admits ordinary trash for recovery/personal
+ * vocabulary; live discovery can additionally reject any trashed ancestor.
  * SELECT * also supports existing databases before the Space migration: absent
  * nullable membership columns have the same meaning as legacy null values.
  * Undefined means the whole batch exceeded its work budget; never publish a
@@ -27,6 +29,7 @@ const MAX_ANCESTOR_READS = 10_000;
 export function classifyOrdinaryItems(
   database: DatabaseSync,
   ids: readonly string[],
+  status: 'any' | 'live' = 'any',
 ): Set<string> | undefined {
   if (ids.length > MAX_ANCESTOR_READS) return undefined;
   const lookup = database.prepare('SELECT * FROM workspace_items WHERE id=?');
@@ -52,6 +55,7 @@ export function classifyOrdinaryItems(
         !ITEM_KINDS.includes(row.kind as ItemKind) ||
         (row.space_id ?? null) !== null ||
         (row.space_position ?? null) !== null ||
+        (status === 'live' && (row.trashed_at ?? null) !== null) ||
         (row.parent_id !== null && typeof row.parent_id !== 'string')
       ) {
         ordinary.set(cursor, false);

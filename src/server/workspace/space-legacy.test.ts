@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { DatabaseSync } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from './store.ts';
@@ -290,4 +290,127 @@ test('ordinary access never caches an earlier classification across membership c
     .prepare('UPDATE workspace_items SET parent_id=?,space_id=NULL,space_position=NULL WHERE id=?')
     .run(f.outer.id, f.ordinary.id);
   expect(f.workspace.get(f.editor.id, f.ordinary.id).access).toBe('editor');
+});
+
+test('owned discovery batches a deep ancestry and tags without repeating one walk per item', () => {
+  const f = fixture();
+  const ids: string[] = [];
+  f.auth.transaction(() => {
+    let parent: string | null = null;
+    for (let depth = 0; depth < 1_000; depth++) {
+      parent = f.insert('folder', parent);
+      ids.push(parent);
+    }
+    const tag = f.db.prepare('INSERT INTO workspace_tags(user_id,name) VALUES(?,?)');
+    const assignment = f.db.prepare(
+      'INSERT INTO workspace_tag_assignments(user_id,item_id,name) VALUES(?,?,?)',
+    );
+    for (const name of ['first', 'second']) {
+      tag.run(f.owner.id, name);
+      for (const id of ids) assignment.run(f.owner.id, id, name);
+    }
+  });
+  const prepare = f.db.prepare.bind(f.db);
+  let statements = 0;
+  const spy = vi.spyOn(f.db, 'prepare').mockImplementation((sql) => {
+    const statement = prepare(sql);
+    return {
+      get: (...values) => {
+        statements++;
+        return statement.get(...values);
+      },
+      all: (...values) => {
+        statements++;
+        return statement.all(...values);
+      },
+      run: statement.run,
+    };
+  });
+  try {
+    const listing = f.workspace.list(f.owner.id);
+    expect(listing).toHaveLength(ids.length + 2);
+    expect(listing.find((item) => item.id === ids[999])?.tags).toEqual(['first', 'second']);
+    expect(statements).toBeLessThanOrEqual(2 * ids.length + 30);
+    statements = 0;
+    expect(f.workspace.tagSuggestions(f.owner.id)).toEqual(['first', 'second']);
+    // Two assignments on every item still share one classification per unique ID.
+    expect(statements).toBeLessThanOrEqual(ids.length + 5);
+  } finally {
+    spy.mockRestore();
+  }
+});
+
+test('owned discovery checks live ancestry while personal suggestions survive ordinary trash', () => {
+  const f = fixture();
+  f.workspace.changeTag(f.owner.id, f.ordinary.id, 'keep-my-vocabulary');
+  // Simulate a live row below a deleted ancestor: discovery must not leak it,
+  // while decision #62 deliberately keeps the person's existing vocabulary.
+  f.db
+    .prepare('UPDATE workspace_items SET trashed_at=1,trash_batch=? WHERE id=?')
+    .run('outer-deletion', f.outer.id);
+  expect(f.workspace.list(f.owner.id)).toEqual([]);
+  expect(f.workspace.tagSuggestions(f.owner.id)).toEqual(['keep-my-vocabulary']);
+  expect(f.workspace.ownTags(f.owner.id, f.ordinary.id)).toEqual(['keep-my-vocabulary']);
+  f.db
+    .prepare('UPDATE workspace_items SET trashed_at=NULL,trash_batch=NULL WHERE id=?')
+    .run(f.outer.id);
+  expect(
+    f.workspace
+      .list(f.owner.id)
+      .map((item) => item.id)
+      .sort(),
+  ).toEqual([f.outer.id, f.ordinary.id].sort());
+});
+
+test('a full hidden Space does not consume ordinary discovery capacity', () => {
+  const f = fixture();
+  f.auth.transaction(() => {
+    // The fixture already has three marked members. Its unmarked corrupt rows
+    // must still be classified and rejected after the SQL candidate prefilter.
+    for (let index = 3; index < 10_000; index++) f.insert('doc', f.space, f.space);
+  });
+  expect(
+    f.workspace
+      .list(f.owner.id)
+      .map((item) => item.id)
+      .sort(),
+  ).toEqual([f.outer.id, f.ordinary.id].sort());
+  expect(f.workspace.ownTags(f.owner.id, f.ordinary.id)).toEqual([]);
+});
+
+test('oversized owned discovery and assignment joins refuse without materializing an unbounded result', () => {
+  const f = fixture();
+  f.auth.transaction(() => {
+    f.db.prepare('INSERT INTO workspace_tags(user_id,name) VALUES(?,?)').run(f.owner.id, 'many');
+    const assignment = f.db.prepare(
+      'INSERT INTO workspace_tag_assignments(user_id,item_id,name) VALUES(?,?,?)',
+    );
+    for (let index = 0; index < 10_001; index++) {
+      const id = f.insert('doc', null);
+      assignment.run(f.owner.id, id, 'many');
+    }
+  });
+  const prepare = f.db.prepare.bind(f.db);
+  let rows = 0;
+  const spy = vi.spyOn(f.db, 'prepare').mockImplementation((sql) => {
+    const statement = prepare(sql);
+    return {
+      get: statement.get,
+      all: (...values) => {
+        const result = statement.all(...values);
+        if (!sql.startsWith('PRAGMA')) rows += result.length;
+        return result;
+      },
+      run: statement.run,
+    };
+  });
+  try {
+    expect(() => f.workspace.list(f.owner.id)).toThrow('item list is too large');
+    expect(rows).toBeLessThanOrEqual(10_001);
+    rows = 0;
+    expect(() => f.workspace.tagSuggestions(f.owner.id)).toThrow('tag suggestions are too large');
+    expect(rows).toBeLessThanOrEqual(10_001);
+  } finally {
+    spy.mockRestore();
+  }
 });
