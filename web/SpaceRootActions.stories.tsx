@@ -325,5 +325,9 @@ export const FileAdminNoDestinations: Story = {
       name: 'Move Space',
     });
     await expect(await within(dialog).findByRole('button', { name: 'Save' })).toBeDisabled();
+    await expect(
+      await within(dialog).findByText(/No authorized folders are available/),
+    ).toBeVisible();
+    await expect(within(dialog).getByLabelText('Destination')).toBeDisabled();
   },
 };

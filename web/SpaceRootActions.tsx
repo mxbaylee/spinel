@@ -219,7 +219,7 @@ export function SpaceRootActions({
                         Destination
                         <select
                           value={destination}
-                          disabled={busy}
+                          disabled={busy || (item.access === 'admin' && owned.length === 0)}
                           onChange={(event) => setDestination(event.target.value)}
                         >
                           {item.access === 'owner' ? (
@@ -243,6 +243,12 @@ export function SpaceRootActions({
                             ))}
                         </select>
                       </label>
+                    )}
+                    {!loading && item.access === 'admin' && owned.length === 0 && (
+                      <p role="status">
+                        No authorized folders are available. Ask the Owner to grant File admin
+                        access to a destination folder.
+                      </p>
                     )}
                   </>
                 ) : (

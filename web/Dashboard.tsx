@@ -813,7 +813,12 @@ export function Dashboard({
                     Destination
                     <select
                       value={destination}
-                      disabled={busy}
+                      disabled={
+                        busy ||
+                        (action.mode === 'move' &&
+                          action.item?.access === 'admin' &&
+                          (loadingDestinations || moveFolders.length === 0))
+                      }
                       onChange={(event) => setDestination(event.target.value)}
                     >
                       {action.mode === 'move' && action.item?.access === 'admin' ? (
@@ -836,6 +841,16 @@ export function Dashboard({
                     </select>
                   </label>
                 )}
+                {action.mode === 'move' &&
+                  action.item?.access === 'admin' &&
+                  (loadingDestinations ? (
+                    <p role="status">Loading authorized folders…</p>
+                  ) : moveFolders.length === 0 ? (
+                    <p role="status">
+                      No authorized folders are available. Ask the Owner to grant File admin access
+                      to a destination folder.
+                    </p>
+                  ) : null)}
                 <div className="item-actions">
                   <button
                     className="primary"

@@ -390,6 +390,26 @@ export const CancelAdminMoveWhileLoading: Story = {
   },
 };
 
+export const FileAdminNoDestinations: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      'GET /api/items/shared': { items: [{ ...roadmap, access: 'admin' }] },
+      [`GET /api/items/${roadmap.id}/destinations`]: { items: [] },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Move Team roadmap' }));
+    const move = await canvas.findByRole('form', { name: 'Move item' });
+    await expect(
+      await within(move).findByText(/No authorized folders are available/),
+    ).toBeVisible();
+    await expect(within(move).getByLabelText('Destination')).toBeDisabled();
+    await expect(within(move).getByRole('button', { name: 'Save' })).toBeDisabled();
+  },
+};
+
 export const FileAdminPersonalFiling: Story = {
   parameters: {
     api: {
