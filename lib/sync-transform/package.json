@@ -15,6 +15,7 @@
     "@univerjs/sheets": "1.1.0"
   },
   "devDependencies": {
+    "@spinel/doc-formulas": "0.0.0",
     "@univerjs/core": "1.1.0",
     "@univerjs/docs": "1.1.0",
     "@univerjs/docs-hyper-link": "1.1.0",

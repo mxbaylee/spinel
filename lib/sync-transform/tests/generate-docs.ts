@@ -14,6 +14,7 @@ import {
   UniverInstanceType,
 } from '@univerjs/core';
 import type { DocumentDataModel, IDocumentBody, IDocumentData, ITextRange } from '@univerjs/core';
+import { docFormulas, formulaBody } from '@spinel/doc-formulas';
 import { docIds } from '../src/docs.ts';
 import type { Mutation } from '../index.ts';
 import type { Replica } from './harness.ts';
@@ -206,13 +207,46 @@ function removeLink(doc: DocumentDataModel, rangeId: string) {
   return textX && JSONX.getInstance().editOp(textX.serialize());
 }
 
-/** Random rich-text edits, links and renames, built the way Univer's doc commands build them. */
+/**
+ * As SPN-033's adapter (installDocFormulas' insert, through InsertTextCommand):
+ * a formula's source text with one whole-entity range, at the caret, over a
+ * selection, or in place of an existing formula under the same id.
+ */
+function insertFormula(body: IDocumentBody, start: number, end: number, id: string, cell: string) {
+  const expression = `=Budget.Summary.${cell}`;
+  const insert = formulaBody(id, {
+    version: 1,
+    expression,
+    references: [
+      { start: 1, end: expression.length, itemId: 'item', sheetId: 'sheet', range: cell },
+    ],
+  });
+  const textX = new TextX();
+  if (start === end) {
+    if (start > 0) textX.push({ t: TextXActionType.RETAIN, len: start });
+    textX.push({ t: TextXActionType.INSERT, body: insert, len: insert.dataStream.length });
+  } else textX.push(...BuildTextUtils.selection.delete([range(start, end)], body, 0, insert));
+  return JSONX.getInstance().editOp(textX.serialize());
+}
+
+/** A formula over `start` to `end` (the caret when equal), for focused tests. */
+export const docFormulaInsert = (
+  replica: Replica,
+  start: number,
+  end: number,
+  id: string,
+  cell: string,
+) => edit(insertFormula(model(replica).getBody()!, start, end, id, cell));
+
+const cellOf = (next: () => number) => `A${1 + (next() % 9)}`;
+
+/** Random rich-text edits, links, formulas and renames, built the way Univer's doc commands build them. */
 export const docEdit: Generate = (replica, next) => {
   const doc = model(replica);
   const body = doc.getBody()!;
   // The final "\r\n" (paragraph and section break) always stays.
   const content = body.dataStream.length - 2;
-  const kind = next() % 14;
+  const kind = next() % 16;
   if (kind === 0) {
     return [{ id: docIds.rename, params: { unitId, name: `Doc ${next() % 100}` } }];
   }
@@ -225,7 +259,14 @@ export const docEdit: Generate = (replica, next) => {
   }
   if (kind === 9 && blocks.length > 0)
     return edit(updateDrawing(doc, pick(next, blocks).blockId, next));
-  const links = body.customRanges ?? [];
+  const formulas = docFormulas(body);
+  if (kind === 15 && formulas.length > 0) {
+    const { id, start, end } = pick(next, formulas);
+    return edit(insertFormula(body, start, end, id, cellOf(next)));
+  }
+  const links = (body.customRanges ?? []).filter(
+    ({ rangeType }) => rangeType === CustomRangeType.HYPERLINK,
+  );
   if (kind === 12 && links.length > 0) {
     const actions = removeLink(doc, pick(next, links).rangeId);
     return actions ? edit(actions) : null;
@@ -233,6 +274,11 @@ export const docEdit: Generate = (replica, next) => {
   if (content < 2) return null;
   const start = next() % content;
   const end = start + 1 + (next() % Math.min(4, content - start));
+  if (kind >= 14) {
+    // At the caret, or over the selection. The adapter's ids are random UUIDs.
+    const caret = next() % 2 === 0;
+    return edit(insertFormula(body, start, caret ? start : end, `f${next()}`, cellOf(next)));
+  }
   if (kind >= 12) {
     const actions = addLink(body, start, end, next);
     return actions ? edit(actions) : null;

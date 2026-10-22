@@ -1,4 +1,5 @@
-import { ActionIterator, JSON1 } from '@univerjs/core';
+import { ActionIterator, JSON1, JSONX } from '@univerjs/core';
+import type { ICustomRange } from '@univerjs/core';
 import { unaffected } from './family.ts';
 import type { Family } from './family.ts';
 import type { Mutation, Side } from './types.ts';
@@ -26,13 +27,85 @@ type Op = Parameters<typeof JSON1.type.transformNoConflict>[0];
  * edit was made on, so the receiver must lay the result out itself.
  */
 function transformRichText(a: Mutation, b: Mutation, side: Side): Mutation[] {
-  const [mine, theirs] = [a, b].map(({ params }) => withoutUnstyledRuns(params.actions) as Op);
+  let [mine, theirs] = [a, b].map(({ params }) => withoutUnstyledRuns(params.actions) as Op);
+  const theirIds = entityIds(theirs);
+  const shared = new Set([...entityIds(mine)].filter((id) => theirIds.has(id)));
+  let undo: Op | null = null;
+  if (shared.size > 0 && side === 'right') mine = withoutEntities(mine, shared);
+  else if (shared.size > 0) {
+    undo = deleteEntities(theirs, shared);
+    theirs = withoutEntities(theirs, shared);
+  }
   const transformed = JSON1.type.transformNoConflict(mine, theirs, side);
-  if (JSON1.type.isNoop(transformed)) return [];
-  const merged = withoutTransformClears(transformed, mine, theirs);
-  const actions = side === 'right' ? withPeerParagraphIds(merged, theirs) : merged;
+  if (JSON1.type.isNoop(transformed) && !undo) return [];
+  const merged = withoutTransformClears(transformed, mine, theirs) as Op;
+  const moved = side === 'right' ? withPeerParagraphIds(merged, theirs) : merged;
+  const actions = undo ? JSON1.type.compose(undo, moved as Op) : moved;
   const { layoutState: _layoutState, ...params } = a.params;
   return [{ id: a.id, params: { ...params, actions } }];
+}
+
+/**
+ * SPN-033's adapter edits a formula by deleting its text and inserting the
+ * new source under the same id: one insert under one whole-entity custom
+ * range. Two concurrent edits of one formula would both land, and Univer
+ * would rename the second's id `F$1`. Instead the first accepted edit wins:
+ * the loser's insert is dropped, and the winner, arriving where the loser's
+ * already landed, first deletes it. Applied, the loser's edit and that delete
+ * are the loser's edit without the insert, so both screens agree. Univer's own
+ * commands give every inserted entity a fresh id, so they never meet this.
+ */
+function entityId(action: TextAction): string | undefined {
+  const ranges = action.body?.customRanges as ICustomRange[] | undefined;
+  if (action.t !== 'i' || ranges?.length !== 1) return undefined;
+  const [{ rangeId, wholeEntity, startIndex, endIndex }] = ranges;
+  return wholeEntity && startIndex === 0 && endIndex === action.len - 1 ? rangeId : undefined;
+}
+
+const isEntityOf = (ids: Set<string>) => (action: TextAction) => {
+  const id = entityId(action);
+  return id !== undefined && ids.has(id);
+};
+
+function entityIds(op: unknown): Set<string> {
+  const ids = new Set<string>();
+  forEachText(op, ({ e }) => {
+    for (const action of e ?? []) {
+      const id = entityId(action);
+      if (id !== undefined) ids.add(id);
+    }
+  });
+  return ids;
+}
+
+/** `op` without its inserts of the entities `ids`. */
+const withoutEntities = (op: Op, ids: Set<string>) =>
+  mapText(op, (component) => ({
+    ...component,
+    e: component.e?.filter((action) => !isEntityOf(ids)(action)),
+  })) as Op;
+
+/** A delete, on the document after `op`, of the text `op` inserted for the entities `ids`. */
+function deleteEntities(op: Op, ids: Set<string>): Op {
+  const deletes: Op[] = [];
+  forEachText(op, ({ e }, path) => {
+    const actions: TextAction[] = [];
+    let at = 0;
+    let done = 0;
+    for (const action of e ?? []) {
+      if (action.t === 'd') continue;
+      if (isEntityOf(ids)(action)) {
+        // Univer's commands never emit a zero-length retain, and TextX mishandles one.
+        if (at > done) actions.push({ t: 'r', len: at - done });
+        actions.push({ t: 'd', len: action.len });
+        done = at + action.len;
+      }
+      at += action.len;
+    }
+    if (actions.length > 0)
+      deletes.push(JSONX.getInstance().editOp(actions as never, JSON.parse(path)) as Op);
+  });
+  return deletes.reduce((all, part) => JSON1.type.compose(all, part));
 }
 
 /**

@@ -1,10 +1,11 @@
 import { CustomRangeType, JSONX, TextXActionType } from '@univerjs/core';
 import type { IParagraph, TextXAction } from '@univerjs/core';
 import { expect, test } from 'vitest';
+import { docFormulas } from '@spinel/doc-formulas';
 import { transform } from '../index.ts';
 import type { Mutation } from '../index.ts';
 import { docIds } from '../src/docs.ts';
-import { docDrawingInsert, docEdit, seededDoc } from './generate-docs.ts';
+import { docDrawingInsert, docEdit, docFormulaInsert, seededDoc } from './generate-docs.ts';
 import { Replica } from './harness.ts';
 import { random } from './random.ts';
 import { convergesOver } from './simulate.ts';
@@ -203,6 +204,58 @@ test('the first accepted edit names a paragraph that a delete merges into', () =
     doc.body.paragraphs.find(({ startIndex }: any) => startIndex === 10).paragraphId;
   expect(idOf(merge(bullet, deletion, setup).doc)).toBe('p2');
   expect(idOf(merge(deletion, bullet, setup).doc)).toBe('p1');
+});
+
+// SPN-033's formulas: "=Budget.Summary.A1" under one whole-entity range, at 6 to 24.
+const formulaSetup = () => docFormulaInsert(new Replica(document), 6, 6, 'F', 'A1');
+const formulaEdit = (cell: string) => {
+  const replica = new Replica(document);
+  replica.apply(formulaSetup());
+  return docFormulaInsert(replica, 6, 24, 'F', cell);
+};
+const formulas = (doc: any) =>
+  docFormulas(doc.body).map(({ id, definition }) => [id, definition.expression]);
+
+test('a formula stays whole past a style in or over it and text typed beside it', () => {
+  const setup = formulaSetup();
+  for (const styled of [bold(8, 4), bold(4, 24)]) {
+    for (const typed of [insert(0, 'Z'), insert(6, 'Z'), insert(24, 'Q')]) {
+      for (const [a, b] of [
+        [styled, typed],
+        [typed, styled],
+      ]) {
+        expect(formulas(merge(a!, b!, setup).doc)).toEqual([['F', '=Budget.Summary.A1']]);
+      }
+    }
+  }
+});
+
+test('an edited formula survives concurrent typing, deletes and styles in it', () => {
+  const setup = formulaSetup();
+  const edited = formulaEdit('B2');
+  for (const peer of [insert(10, 'Q'), remove(8, 3), remove(6, 18), bold(8, 4), insert(6, 'Z')]) {
+    for (const [a, b] of [
+      [edited, peer],
+      [peer, edited],
+    ]) {
+      expect(formulas(merge(a!, b!, setup).doc)).toEqual([['F', '=Budget.Summary.B2']]);
+    }
+  }
+});
+
+test('formulas inserted at the same offset keep both, winner first', () => {
+  const at = (id: string) => docFormulaInsert(new Replica(document), 6, 6, id, 'A1');
+  expect(formulas(merge(at('A'), at('B')).doc).map(([id]) => id)).toEqual(['A', 'B']);
+});
+
+test('of two edits of one formula, the first accepted stands', () => {
+  const setup = formulaSetup();
+  expect(formulas(merge(formulaEdit('B2'), formulaEdit('C3'), setup).doc)).toEqual([
+    ['F', '=Budget.Summary.B2'],
+  ]);
+  expect(formulas(merge(formulaEdit('C3'), formulaEdit('B2'), setup).doc)).toEqual([
+    ['F', '=Budget.Summary.C3'],
+  ]);
 });
 
 test('the transform drops the layout state captured for the original document', () => {
