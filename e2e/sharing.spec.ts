@@ -127,6 +127,9 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       .getByRole('region', { name: 'Doc document', exact: true })
       .getByRole('status', { name: 'Save status' });
     await expect(docStatus).toHaveText('All changes saved.', { timeout: 20000 });
+    await expect(
+      other.getByRole('button', { name: 'Save details: Saved', exact: true }),
+    ).toBeVisible();
     await expect(other.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText(
       'My files / Shared plans / Nested / Shared journal',
     );
@@ -147,6 +150,9 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       .getByRole('region', { name: 'Sheet document', exact: true })
       .getByRole('status', { name: 'Save status' });
     await expect(sheetStatus).toHaveText('All changes saved.', { timeout: 20000 });
+    await expect(
+      other.getByRole('button', { name: 'Save details: Saved', exact: true }),
+    ).toBeVisible();
     await typeCell(other, '42');
     const readSheet = async () => {
       const saved = await (await context.request.get(`/api/items/${sheetId}/sheet`)).json();

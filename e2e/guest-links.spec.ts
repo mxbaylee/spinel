@@ -85,11 +85,15 @@ for (const kind of ['sheet', 'doc'] as const) {
         name: kind === 'sheet' ? 'Sheet document' : 'Doc document',
         exact: true,
       });
-    const saved = (view: Page) =>
-      expect(region(view).getByRole('status', { name: 'Save status' })).toHaveText(
+    const saved = async (view: Page) => {
+      await expect(region(view).getByRole('status', { name: 'Save status' })).toHaveText(
         'All changes saved.',
         { timeout: 30_000 },
       );
+      await expect(
+        view.getByRole('button', { name: 'Save details: Saved', exact: true }),
+      ).toBeVisible();
+    };
     const edit = async (view: Page, value: string, cell = 'A1') => {
       if (kind === 'sheet') {
         const address = region(view).getByRole('textbox').nth(2);
@@ -137,6 +141,9 @@ for (const kind of ['sheet', 'doc'] as const) {
         'View only — reload after your access changes.',
         { timeout: 30_000 },
       );
+      await expect(
+        first.getByRole('button', { name: 'Save details: View only', exact: true }),
+      ).toBeVisible();
       await expect(first.getByText('View-only link.', { exact: true })).toBeVisible();
       await captureGuest('viewer');
       await expect(first.getByText('Your workspace', { exact: true })).toHaveCount(0);

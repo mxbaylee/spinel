@@ -191,11 +191,18 @@ function deepLink(link: string, child: string) {
 }
 const pageLink = (page: Page, root: string, child: string) =>
   page.locator(`a.space-page-link[href="${guestPath(root, child)}"]`).filter({ visible: true });
-const saved = (page: Page, access: 'viewer' | 'editor' = 'editor') =>
-  expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+const saved = async (page: Page, access: 'viewer' | 'editor' = 'editor') => {
+  await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
     access === 'viewer' ? 'View only — reload after your access changes.' : 'All changes saved.',
     { timeout: 30_000 },
   );
+  await expect(
+    page.getByRole('button', {
+      name: `Save details: ${access === 'viewer' ? 'View only' : 'Saved'}`,
+      exact: true,
+    }),
+  ).toBeVisible();
+};
 const focusDoc = (page: Page) =>
   page
     .getByRole('region', { name: 'Doc document', exact: true })

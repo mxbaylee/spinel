@@ -43,6 +43,7 @@
   white-space: nowrap;
   cursor: pointer;
 }
+.workspace button.save-trigger:not(.univer-container *)[data-failed='true'],
 .sp-ui button.save-trigger[data-failed='true'],
 .save-trigger[data-failed='true'] {
   color: var(--fill-error-soft-fg);

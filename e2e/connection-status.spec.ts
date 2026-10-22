@@ -289,9 +289,13 @@ for (const width of [1280, 390]) {
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
           // A real rejected save remains unconfirmed; no production state is mocked.
+          const rejectedResponse = page.waitForResponse(
+            (response) => response.url().includes('/new_changes') && response.status() === 503,
+          );
           failWrites = true;
           holdWrite = false;
           releaseWrite();
+          await (await rejectedResponse).finished();
           await expect.poll(() => rejectedWrites).toBeGreaterThan(0);
           await expect(save).toContainText(/not saved|keep this tab open/i);
           await expect(save).toHaveAttribute('aria-live', 'polite');

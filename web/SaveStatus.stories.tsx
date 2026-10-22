@@ -101,7 +101,19 @@ export const ViewOnly: Story = {
   },
   play: details,
 };
-export const FailedSave: Story = { args: { state: failed }, play: details };
+export const FailedSave: Story = {
+  args: { state: failed },
+  play: async (context) => {
+    await details(context);
+    const trigger = within(context.canvasElement).getByRole('button', {
+      name: 'Save details: Not saved',
+    });
+    // Production workspace button rules must not erase the semantic error color.
+    await expect(getComputedStyle(trigger).color).not.toBe(
+      getComputedStyle(trigger.parentElement!).color,
+    );
+  },
+};
 export const AccessChanged: Story = {
   args: {
     state: {
