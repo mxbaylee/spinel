@@ -20,7 +20,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 6 | 🫧 [SPN-043](SPN-043.md) Keep the editor still with a fixed save-status slot | 🌱 S | 💜 M | 6 (own 5) | — | — | Approve the PR's screenshots |
 | 7 | 🔀 [SPN-054](SPN-054.md) Keep offline edits as a copy when the live document changed | 🌿 M | 🩷 L | 5 | Lower ID | [SPN-053](SPN-053.md) | — |
 | 8 | 🗝️ [SPN-061](SPN-061.md) Recover admin access from the server console | 🌿 M | 🩷 L | 5 | Lower effort | — | — |
-| 9 | 🤝 [SPN-064](SPN-064.md) Reactivate accounts and hand over a departed person's documents | 🌳 L | 🩷 L | 5 (own 4) | Higher impact | — | Approve the PR's screenshots |
+| 9 | 🤝 [SPN-064](SPN-064.md) Reactivate accounts and hand over a departed person's documents | 🌳 L | 🩷 L | 5 (own 4) | Higher impact | — | — |
 | 10 | 🎛️ [SPN-045](SPN-045.md) Apply the approved profile and appearance navigation | 🌱 S | 💜 M | 5 | Lower ID | — | Approve the PR's screenshots |
 | 11 | 🖌️ [SPN-050](SPN-050.md) Remove the extra fill-preset toolbar | 🌱 S | 💜 M | 5 | Lower ID | — | Approve the PR's screenshots |
 | 12 | 🩹 [SPN-062](SPN-062.md) Keep the server, its images and dependencies patched | 🌱 S | 💜 M | 5 | Lower effort | — | — |
