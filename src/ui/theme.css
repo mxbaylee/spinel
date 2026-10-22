@@ -82,7 +82,8 @@ a.brand {
   text-decoration: none;
 }
 .workspace button:not(.univer-container *),
-.space-native-editor button:not(.univer-container *) {
+.space-native-editor button:not(.univer-container *),
+.space-bootstrap button:not(.univer-container *) {
   font: inherit;
   cursor: pointer;
   border: 1px solid var(--sp-border);
@@ -97,7 +98,8 @@ button.primary {
   border-color: var(--sp-accent);
 }
 .workspace button:not(.univer-container *):disabled,
-.space-native-editor button:not(.univer-container *):disabled {
+.space-native-editor button:not(.univer-container *):disabled,
+.space-bootstrap button:not(.univer-container *):disabled {
   opacity: 0.6;
   cursor: wait;
 }
@@ -559,7 +561,8 @@ button.primary {
   padding-top: 0;
 }
 :root[data-theme='dark'] .workspace button:not(.univer-container *),
-:root[data-theme='dark'] .space-native-editor button:not(.univer-container *) {
+:root[data-theme='dark'] .space-native-editor button:not(.univer-container *),
+:root[data-theme='dark'] .space-bootstrap button:not(.univer-container *) {
   border-radius: 5px;
 }
 .workspace input:not(.univer-container *),
@@ -568,7 +571,8 @@ dialog {
   background: var(--sp-panel);
   color: var(--sp-text);
 }
-.workspace button.primary {
+.workspace button.primary,
+.space-bootstrap button.primary {
   background: var(--sp-accent);
   color: var(--sp-on-accent);
   border-color: var(--sp-accent);
@@ -699,6 +703,7 @@ dialog {
 @media (pointer: coarse) and (max-width: 900px) {
   .workspace button:not(.univer-container *),
   .space-native-editor button:not(.univer-container *),
+  .space-bootstrap button:not(.univer-container *),
   .workspace select:not(.univer-container *),
   .workspace input:not(.univer-container *) {
     min-height: 44px;

@@ -311,19 +311,19 @@ export function App() {
   if (spaceReview) {
     if (!loaded)
       return (
-        <main>
+        <main className="space-bootstrap">
           <p role="status">Loading…</p>
         </main>
       );
     if (unreachable || local)
       return (
-        <main>
+        <main className="space-bootstrap">
           <OfflineUnreachable />
         </main>
       );
     if (!user || user.isAdmin)
       return (
-        <main>
+        <main className="space-bootstrap">
           <p role="alert">This Space is not available.</p>
         </main>
       );

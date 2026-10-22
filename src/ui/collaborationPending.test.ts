@@ -1,10 +1,12 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import type { Univer } from '@univerjs/core';
+import { ICommandService } from '@univerjs/core';
+import type { CommandListener, IExecutionOptions, Univer } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import {
   CollaborationController,
   CollaborationSessionService,
   CollaborationStatus,
+  CollaborationUIEventId,
   CollaborationUIEventService,
   ILocalCacheService,
 } from '@univerjs-pro/collaboration-client';
@@ -14,7 +16,10 @@ import { watchCollaboration } from '../../web/collaboration.ts';
 
 // Exercise Spinel's watcher through public SDK tokens/observables without
 // starting a native editor or loading any Pro implementation.
-vi.mock('@univerjs/core', () => ({ UserManagerService: Symbol('users') }));
+vi.mock('@univerjs/core', () => ({
+  UserManagerService: Symbol('users'),
+  ICommandService: Symbol('commands'),
+}));
 vi.mock('../../web/CollaborationSessions.ts', () => ({ CollaborationSessions: class {} }));
 vi.mock('@univerjs-pro/license', () => ({ UniverLicensePlugin: class {} }));
 vi.mock('@univerjs-pro/collaboration', () => ({ UniverCollaborationPlugin: class {} }));
@@ -65,19 +70,27 @@ function barrier() {
   });
   return { promise, resolve };
 }
+const stops: (() => void)[] = [];
 afterEach(() => {
+  for (const stop of stops.splice(0)) stop();
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
 
-test('only the current native-empty, SYNCED cache completion can clear a newer Doc edit', async () => {
+function fixture({
+  doc = false,
+  initial = CollaborationStatus.SYNCED,
+}: { doc?: boolean; initial?: CollaborationStatus } = {}) {
   vi.useFakeTimers();
   vi.stubGlobal('navigator', { onLine: true });
   vi.stubGlobal('window', Object.assign(new EventTarget(), { setInterval, clearInterval }));
+  const id = doc ? 'live-doc' : 'live-sheet';
+  const itemId = doc ? 'stable-doc' : 'stable-sheet';
   const status$ = stream<CollaborationStatus>();
   const entity = { status$, session: { sessionStatus$: stream<number>() } };
   const entities = stream<typeof entity>();
-  let status: CollaborationStatus = CollaborationStatus.SYNCED;
+  const events = stream<{ id: CollaborationUIEventId; unitID: string }>();
+  let status = initial;
   let nativeQueued = false;
   let nativeChanged = () => {};
   const native: DocPendingChanges = {
@@ -90,6 +103,11 @@ test('only the current native-empty, SYNCED cache completion can clear a newer D
     },
   };
   const flushes: ReturnType<typeof barrier>[] = [];
+  const mutations = new Set<CommandListener>();
+  let response = () => Response.json({ item: { access: 'owner' }, live: { unitId: id } });
+  const request = vi.fn<typeof globalThis.fetch>(async () => response());
+  vi.stubGlobal('fetch', request);
+  const readonly = vi.fn(async () => {});
   const cache = {
     exhaustSavingTask: () => {
       const flush = barrier();
@@ -100,8 +118,17 @@ test('only the current native-empty, SYNCED cache completion can clear a newer D
   const services = new Map<unknown, unknown>([
     [CollaborationSessionService, { socket$: stream<null>(), reconnect() {} }],
     [CollaborationController, { getCollabEntity$: () => entities }],
-    [CollaborationUIEventService, { event$: stream<never>() }],
+    [CollaborationUIEventService, { event$: events }],
     [ILocalCacheService, cache],
+    [
+      ICommandService,
+      {
+        onMutationExecutedForCollab(listener: CommandListener) {
+          mutations.add(listener);
+          return { dispose: () => mutations.delete(listener) };
+        },
+      },
+    ],
   ]);
   const univer = {
     __getInjector: () => ({
@@ -118,66 +145,248 @@ test('only the current native-empty, SYNCED cache completion can clear a newer D
   const watcher = watchCollaboration(
     univer,
     api,
-    'live-doc',
-    'stable-doc',
+    id,
+    itemId,
     'owner',
     (state) => reports.push(state),
-    async () => {},
+    readonly,
     () => {},
     'space',
-    native,
+    doc ? native : undefined,
   );
   entities.next(entity);
-  try {
-    // Establish a genuinely clean baseline, including the first recovery flush.
-    flushes[0].resolve();
-    await flushes[0].promise;
-    expect(reports.at(-1)).toMatchObject({ dirty: false, message: 'All changes saved.' });
-    reports.length = 0;
+  stops.push(() => watcher.dispose());
+  return {
+    id,
+    itemId,
+    reports,
+    flushes,
+    request,
+    readonly,
+    watcher,
+    status(value: CollaborationStatus, notify = true) {
+      status = value;
+      if (notify) status$.next(value);
+    },
+    native(value: boolean) {
+      nativeQueued = value;
+      nativeChanged();
+    },
+    mutate(params: object, options?: IExecutionOptions) {
+      for (const listener of mutations)
+        listener({ id: 'sheet.mutation.set-range-values', params }, options);
+    },
+    access(reply: () => Response) {
+      response = reply;
+    },
+    denied() {
+      events.next({ id: CollaborationUIEventId.PERMISSION_DENIED, unitID: id });
+    },
+  };
+}
+const settle = () => vi.advanceTimersByTimeAsync(0);
+async function complete(flush: ReturnType<typeof barrier>) {
+  flush.resolve();
+  await flush.promise;
+}
 
-    // A raw local Doc notification precedes collaboration's batching/status.
-    nativeQueued = true;
-    nativeChanged();
-    expect(status).toBe(CollaborationStatus.SYNCED);
-    expect(reports.at(-1)).toMatchObject({
-      dirty: true,
-      message: 'Changes not saved yet — keep this tab open.',
-    });
-    expect(flushes).toHaveLength(1);
+test('only the current native-empty, SYNCED cache completion can clear a newer Doc edit', async () => {
+  const f = fixture({ doc: true });
+  // Establish a genuinely clean baseline, including the first recovery flush.
+  await complete(f.flushes[0]);
+  expect(f.reports.at(-1)).toMatchObject({ dirty: false, message: 'All changes saved.' });
+  f.reports.length = 0;
 
-    // An empty native queue still cannot acknowledge the submitted changes.
-    status = CollaborationStatus.PENDING;
-    nativeQueued = false;
-    nativeChanged();
-    expect(reports.at(-1)?.dirty).toBe(true);
-    expect(flushes).toHaveLength(1);
-    status = CollaborationStatus.SYNCED;
-    status$.next(status);
-    const older = flushes.at(-1)!;
-    expect(older).not.toBe(flushes[0]);
+  // A raw local Doc notification precedes collaboration's batching/status.
+  f.native(true);
+  expect(f.reports.at(-1)).toMatchObject({
+    dirty: true,
+    message: 'Changes not saved yet — keep this tab open.',
+  });
+  expect(f.flushes).toHaveLength(1);
 
-    // Another edit invalidates that unresolved flush while the SDK still says
-    // SYNCED. Its later empty-queue notification starts a current flush, without
-    // requiring a status transition that could mask the native invalidation.
-    nativeQueued = true;
-    nativeChanged();
-    nativeQueued = false;
-    nativeChanged();
-    const current = flushes.at(-1)!;
-    expect(current).not.toBe(older);
-    older.resolve();
-    await older.promise;
-    expect(reports.every((state) => state.dirty)).toBe(true);
+  // An empty native queue still cannot acknowledge the submitted changes.
+  f.status(CollaborationStatus.PENDING, false);
+  f.native(false);
+  expect(f.reports.at(-1)?.dirty).toBe(true);
+  expect(f.flushes).toHaveLength(1);
+  f.status(CollaborationStatus.SYNCED);
+  const older = f.flushes.at(-1)!;
+  expect(older).not.toBe(f.flushes[0]);
 
-    current.resolve();
-    await current.promise;
-    expect(reports.at(-1)).toEqual({
+  // Another edit invalidates that unresolved flush while the SDK still says
+  // SYNCED. Its later empty-queue notification starts a current flush, without
+  // requiring a status transition that could mask the native invalidation.
+  f.native(true);
+  f.native(false);
+  const current = f.flushes.at(-1)!;
+  expect(current).not.toBe(older);
+  await complete(older);
+  expect(f.reports.every((state) => state.dirty)).toBe(true);
+
+  await complete(current);
+  expect(f.reports.at(-1)).toEqual({
+    dirty: false,
+    failed: false,
+    message: 'All changes saved.',
+  });
+  expect(f.reports.filter((state) => !state.dirty)).toHaveLength(1);
+});
+
+test.each([
+  { doc: false, disconnected: CollaborationStatus.OFFLINE, missing: true },
+  { doc: false, disconnected: CollaborationStatus.NOT_COLLAB, missing: false },
+  { doc: true, disconnected: CollaborationStatus.OFFLINE, missing: false },
+  { doc: true, disconnected: CollaborationStatus.NOT_COLLAB, missing: true },
+])(
+  'a flushed clean editor stays clean through duplicate sync, retry and denial: %j',
+  async ({ doc, disconnected, missing }) => {
+    const f = fixture({ doc });
+    await complete(f.flushes[0]);
+    expect(f.reports.at(-1)?.dirty).toBe(false);
+    f.reports.length = 0;
+
+    f.status(CollaborationStatus.SYNCED);
+    f.watcher.retry();
+    await settle();
+    expect(f.flushes).toHaveLength(1);
+    expect(f.reports.every((state) => !state.dirty)).toBe(true);
+
+    f.access(() =>
+      missing
+        ? new Response(null, { status: 404 })
+        : Response.json({ item: { access: 'viewer' }, live: { unitId: f.id } }),
+    );
+    f.status(disconnected);
+    expect(f.reports.at(-1)?.dirty).toBe(false);
+    f.denied();
+    await settle();
+    expect(f.request).toHaveBeenCalled();
+    expect(f.readonly).toHaveBeenCalledTimes(1);
+    expect(f.reports.at(-1)).toEqual({
       dirty: false,
-      failed: false,
-      message: 'All changes saved.',
+      failed: true,
+      message: 'Access changed. Copy unsaved changes before reloading.',
     });
-    expect(reports.filter((state) => !state.dirty)).toHaveLength(1);
-  } finally {
-    watcher.dispose();
-  }
+    expect(f.reports.every((state) => !state.dirty)).toBe(true);
+  },
+);
+
+test('initial disconnected state stays guarded until synchronization and a current cache flush', async () => {
+  const f = fixture({ initial: CollaborationStatus.OFFLINE });
+  expect(f.reports.at(-1)?.dirty).toBe(true);
+  expect(f.flushes).toHaveLength(0);
+  f.status(CollaborationStatus.NOT_COLLAB);
+  expect(f.reports.at(-1)?.dirty).toBe(true);
+  f.status(CollaborationStatus.SYNCED);
+  expect(f.reports.every((state) => state.dirty)).toBe(true);
+  expect(f.flushes).toHaveLength(1);
+  await complete(f.flushes[0]);
+  expect(f.reports.at(-1)?.dirty).toBe(false);
+});
+
+test('an outstanding recovery-cache flush stays dirty through disconnect and access denial', async () => {
+  const f = fixture();
+  const unfinished = f.flushes[0];
+  expect(f.reports.at(-1)?.dirty).toBe(true);
+  f.access(() => new Response(null, { status: 404 }));
+  f.status(CollaborationStatus.OFFLINE);
+  await settle();
+  expect(f.readonly).toHaveBeenCalledTimes(1);
+  expect(f.reports.at(-1)).toMatchObject({
+    dirty: true,
+    message: 'Access changed. Copy unsaved changes before reloading.',
+  });
+  await complete(unfinished);
+  expect(f.reports.every((state) => state.dirty)).toBe(true);
+});
+
+test.each(['collaboration', 'native Doc'] as const)(
+  '%s pending work survives disconnect and denial',
+  async (source) => {
+    const f = fixture({ doc: true });
+    await complete(f.flushes[0]);
+    f.reports.length = 0;
+    if (source === 'native Doc') f.native(true);
+    else f.status(CollaborationStatus.PENDING);
+    expect(f.reports.at(-1)?.dirty).toBe(true);
+    f.access(() => new Response(null, { status: 404 }));
+    f.status(CollaborationStatus.OFFLINE);
+    f.status(CollaborationStatus.NOT_COLLAB);
+    await settle();
+    expect(f.readonly).toHaveBeenCalledTimes(1);
+    expect(f.reports.at(-1)).toMatchObject({
+      dirty: true,
+      message: 'Access changed. Copy unsaved changes before reloading.',
+    });
+    expect(f.reports.every((state) => state.dirty)).toBe(true);
+  },
+);
+
+test.each([undefined, { syncOnly: true }] satisfies (IExecutionOptions | undefined)[])(
+  'a local Sheet mutation becomes dirty immediately while already OFFLINE: %j',
+  async (options) => {
+    const f = fixture();
+    await complete(f.flushes[0]);
+    f.status(CollaborationStatus.OFFLINE);
+    await settle();
+    expect(f.reports.at(-1)?.dirty).toBe(false);
+    f.reports.length = 0;
+
+    // No collaboration-status event accompanies this mutation. Pending local
+    // work must be visible before its queued status resample or access response.
+    f.mutate({ unitId: f.id }, options);
+    expect(f.reports.at(-1)?.dirty).toBe(true);
+    await settle();
+    expect(f.flushes).toHaveLength(1);
+    f.access(() => new Response(null, { status: 404 }));
+    f.denied();
+    await settle();
+    expect(f.readonly).toHaveBeenCalledTimes(1);
+    expect(f.reports.every((state) => state.dirty)).toBe(true);
+  },
+);
+
+test('unscoped, other-unit, remote, replay and local-only notifications do not invent Sheet work', async () => {
+  const f = fixture();
+  await complete(f.flushes[0]);
+  f.status(CollaborationStatus.OFFLINE);
+  await settle();
+  const firstIgnored = f.reports.length;
+  f.mutate({});
+  f.mutate({ unitId: 'other-sheet' });
+  f.mutate({ unitId: f.itemId });
+  for (const options of [{ onlyLocal: true }, { fromCollab: true }, { fromChangeset: true }])
+    f.mutate({ unitId: f.id }, options);
+  await settle();
+  expect(f.reports.at(-1)?.dirty).toBe(false);
+  expect(f.reports.slice(firstIgnored).every((state) => !state.dirty)).toBe(true);
+  expect(f.flushes).toHaveLength(1);
+  expect(f.readonly).not.toHaveBeenCalled();
+});
+
+test('a queued older cache completion cannot clear a new local Sheet mutation', async () => {
+  const f = fixture();
+  await complete(f.flushes[0]);
+  f.reports.length = 0;
+  f.status(CollaborationStatus.PENDING);
+  f.status(CollaborationStatus.SYNCED);
+  const older = f.flushes.at(-1)!;
+  expect(older).not.toBe(f.flushes[0]);
+
+  // Queue the old completion first, then publish the real local mutation in
+  // this same turn. Its synchronous invalidation must win before a later
+  // microtask can resample the SDK's still-SYNCED status.
+  older.resolve();
+  f.mutate({ unitId: f.id });
+  expect(f.reports.at(-1)?.dirty).toBe(true);
+  await older.promise;
+  await settle();
+  const current = f.flushes.at(-1)!;
+  expect(current).not.toBe(older);
+  expect(f.reports.every((state) => state.dirty)).toBe(true);
+
+  await complete(current);
+  expect(f.reports.at(-1)).toEqual({ dirty: false, failed: false, message: 'All changes saved.' });
+  expect(f.reports.filter((state) => !state.dirty)).toHaveLength(1);
 });

@@ -52,7 +52,9 @@ On 2026-10-20 the owner requested a different Space model: a single file inside
 existing folders, with its own internal Doc/Sheet tree and one sharing boundary
 ([decision #116](https://github.com/mxbaylee/spinel/issues/116)). The
 [internal foundation](design/spaces.md#implemented-foundation) is implemented in
-SPN-078; account UI and guest/integration acceptance remain SPN-091/SPN-092.
+SPN-078. SPN-091 supplies [default-off account navigation and recovery
+review](design/spaces.md#account-navigation-and-recovery-review); guest and
+integrated-access acceptance remain with SPN-092.
 Ordinary Space creation and public child access remain closed. The most generous
 grant wins (grooming 2026-10-17). The common resolver, admin exclusion and revision
 protection were required in [decision #23](https://github.com/mxbaylee/spinel/issues/23).
@@ -169,8 +171,8 @@ explicit dependency sharing; no source is shared automatically.
 
 ## Space foundation and planned delegated administration
 
-SPN-078 supplies the internal Space model and inherited-access foundation, SPN-091 adds
-account navigation/recovery, and SPN-092 verifies guest and cross-feature
+SPN-078 supplies the internal Space model and inherited-access foundation, SPN-091
+supplies the gated account navigation/recovery interface, and SPN-092 verifies guest and cross-feature
 integration before the feature is exposed. A Space is one file in the existing
 folder view. Its effective
 View/Edit role applies to all internal pages and sheets, including future

@@ -1,4 +1,9 @@
 /* Space review is a separate composition. Ordinary dashboard/editor chrome is unchanged. */
+.space-bootstrap {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 32px;
+}
 .space-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -465,6 +470,10 @@
   outline: 2px solid var(--sp-accent);
   outline-offset: 2px;
 }
+/* The selected deep row can sit at a scroll edge; keep keyboard focus inside its target. */
+.space-tree-row > :is(button, a):focus-visible {
+  outline-offset: -2px;
+}
 @media (max-width: 900px) {
   .space-shell.space-with-tree {
     grid-template-columns: minmax(0, 1fr);
@@ -477,6 +486,9 @@
   }
 }
 @media (max-width: 640px) {
+  .space-bootstrap {
+    padding: 16px;
+  }
   .space-site-header {
     min-height: 56px;
     padding: 6px 8px;

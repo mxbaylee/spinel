@@ -195,7 +195,8 @@ site header reopens the hidden tree, as a drawer on phones.
 This favors Owner/Collaborator orientation without consuming a second navigation
 column; link guests retain scoped navigation without account destinations, and
 Operator workflows remain separate. The durable folder/page hierarchy is provided
-by the SPN-078 foundation; the composed account UI remains SPN-091.
+by the SPN-078 foundation; SPN-091 supplies the composed, default-off account
+review UI described above. SPN-092 retains ordinary activation and guest/integration acceptance.
 
 The Space tree uses the quieter `--sp-bg` / `--sp-text` surface, distinct from
 the saturated pink site header in both themes (owner, chat 2026-10-20). The same

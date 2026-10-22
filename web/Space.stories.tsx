@@ -284,7 +284,21 @@ export const AppUnreachable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('heading', { name: "You're offline" })).toBeVisible();
-    await expect(canvas.getByRole('button', { name: 'Try again' })).toBeEnabled();
+    const retry = canvas.getByRole('button', { name: 'Try again' });
+    await expect(retry).toBeEnabled();
+    const bounds = retry.getBoundingClientRect();
+    await expect(bounds.left).toBeGreaterThanOrEqual(0);
+    await expect(bounds.right).toBeLessThanOrEqual(window.innerWidth);
+    await expect(bounds.top).toBeGreaterThanOrEqual(0);
+    await expect(bounds.bottom).toBeLessThanOrEqual(window.innerHeight);
+    // This is the actual App retry control, including its usable touch area.
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      await expect(bounds.width).toBeGreaterThanOrEqual(44);
+      await expect(bounds.height).toBeGreaterThanOrEqual(44);
+    }
+    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(
+      window.innerWidth,
+    );
     await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
   },
 };
@@ -549,6 +563,7 @@ export const DeepTree: Story = {
         page.queryByRole('menu', { name: 'More actions for Level 14' }),
       ).not.toBeInTheDocument(),
     );
+    await expect(action).toHaveFocus();
     await expect(selected).toHaveAttribute('aria-current', 'page');
   },
 };
