@@ -5,6 +5,7 @@ import { WorkspaceStore } from './store.ts';
 import { WorkspaceFiles } from './files.ts';
 import { SpaceStore } from './spaces.ts';
 import { migrateSpaceSchema } from './space-schema.ts';
+import { TrashStore } from './trash.ts';
 
 const databases: DatabaseSync[] = [];
 afterEach(() => {
@@ -199,10 +200,75 @@ test('disabling Spaces preserves dormant personal filing through unrelated ordin
   expect(f.db.prepare('SELECT * FROM workspace_placements WHERE item_id=?').all(f.root.id)).toEqual(
     before,
   );
+  const hidden = new WorkspaceFiles(disabled);
+  expect(hidden.shared(f.other.id)).toEqual([]);
+  for (const id of [f.root.id, f.child.id, f.internal.id]) {
+    expect(() => hidden.get(f.other.id, id)).toThrow('not available');
+    expect(() => disabled.get(f.other.id, id)).toThrow('not available');
+  }
   expect(f.files.shared(f.other.id)[0].placementParentId).toBe(destination.id);
   // Re-enabling restores normal current-access cleanup, including a revocation.
   f.files.share(f.owner.id, f.root.id, f.other.id, null);
   expect(f.db.prepare('SELECT * FROM workspace_placements WHERE item_id=?').all(f.root.id)).toEqual(
     [],
   );
+});
+
+test.each([false, true])(
+  'disabled Space filing follows actual inherited access through revoke/regrant (independent root grant: %s)',
+  (direct) => {
+    const f = fixture();
+    const destination = f.workspace.create(f.other.id, {
+      kind: 'folder',
+      name: 'References',
+      parentId: null,
+    });
+    f.workspace.share(f.owner.id, f.outer.id, f.other.id, 'editor');
+    if (direct) f.files.share(f.owner.id, f.root.id, f.other.id, 'viewer');
+    f.files.place(f.other.id, f.root.id, destination.id);
+    const placement = () =>
+      f.db
+        .prepare('SELECT parent_id FROM workspace_placements WHERE user_id=? AND item_id=?')
+        .get(f.other.id, f.root.id);
+    expect(placement()?.parent_id).toBe(destination.id);
+    const disabled = new WorkspaceStore(f.auth, { spacesEnabled: false });
+
+    // An ordinary ancestor grant can change while Space APIs are disabled.
+    // Actual access loss permanently removes filing; a surviving direct grant
+    // keeps the same placement even though the effective role is downgraded.
+    disabled.share(f.owner.id, f.outer.id, f.other.id, null);
+    expect(placement()?.parent_id).toBe(direct ? destination.id : undefined);
+    disabled.share(f.owner.id, f.outer.id, f.other.id, 'editor');
+    expect(new WorkspaceFiles(disabled).shared(f.other.id).map((item) => item.id)).toEqual([
+      f.outer.id,
+    ]);
+    const restored = f.files.shared(f.other.id).find((item) => item.id === f.root.id);
+    expect(restored?.access).toBe('editor');
+    expect(restored?.placementParentId).toBe(direct ? destination.id : undefined);
+  },
+);
+
+test('trashing a personal destination while Spaces are disabled permanently removes its Space references', () => {
+  const f = fixture();
+  const destination = f.workspace.create(f.other.id, {
+    kind: 'folder',
+    name: 'References',
+    parentId: null,
+  });
+  f.files.share(f.owner.id, f.root.id, f.other.id, 'viewer');
+  f.files.place(f.other.id, f.root.id, destination.id);
+  const disabled = new WorkspaceStore(f.auth, { spacesEnabled: false });
+  const trash = new TrashStore(disabled);
+  expect(trash.trash(f.other.id, destination.id)).toEqual({ count: 1 });
+  expect(f.db.prepare('SELECT * FROM workspace_placements WHERE item_id=?').all(f.root.id)).toEqual(
+    [],
+  );
+  expect(trash.restore(f.other.id, destination.id).id).toBe(destination.id);
+  const restored = f.files.shared(f.other.id).find((item) => item.id === f.root.id);
+  expect(restored?.access).toBe('viewer');
+  expect(restored?.placementParentId).toBeUndefined();
+  expect(f.files.get(f.owner.id, f.root.id).parentId).toBe(f.outer.id);
+  // Restoring a folder permits a deliberate new filing, not resurrection.
+  f.files.place(f.other.id, f.root.id, destination.id);
+  expect(f.files.shared(f.other.id)[0].placementParentId).toBe(destination.id);
 });

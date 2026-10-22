@@ -317,13 +317,13 @@ export class WorkspaceStore {
     );
     const destination = this.auth.database.prepare('SELECT kind FROM workspace_items WHERE id=?');
     for (const row of rows) {
-      // The runtime kill switch hides Space metadata; it does not revoke grants
-      // or discard personal filing. Revalidate dormant roots when re-enabled.
-      if (!this.spacesEnabled && destination.get(row.item_id)?.kind === 'space') continue;
       let access = this.role(row.user_id, row.item_id);
-      if (!access && this.spacesEnabled) {
+      if (!access && destination.get(row.item_id)?.kind === 'space') {
         try {
-          // A filed reference can target a root, never a Space's internal page.
+          // The runtime switch hides Space services, not changes to authority
+          // or destinations. Check dormant roots internally so revoke/regrant
+          // and trash/restore cannot revive a removed personal placement.
+          // This admits only root references; public Space gates stay closed.
           access = resolveSpaceScope(this.auth, row.user_id, row.item_id, row.item_id).access;
         } catch (error) {
           if (!(error instanceof AuthError) || ![401, 403, 404].includes(error.status)) throw error;

@@ -148,8 +148,9 @@ async function guestOnly(canvasElement: HTMLElement, title = 'Welcome') {
   );
 }
 
-// Keep API mocks on each story: merging a body with failure()/pending() loses its marker.
 export const ViewOnly: Story = {
+  // Keep replies on each story: merging a success body with failure()/pending()
+  // at the meta level drops their Symbol marker and turns them into successes.
   parameters: { api: api('viewer') },
   play: async ({ canvasElement }) => {
     await guestOnly(canvasElement);
@@ -191,20 +192,26 @@ export const PhoneContents: Story = {
   play: async ({ canvasElement }) => {
     await guestOnly(canvasElement);
     const canvas = within(canvasElement);
-    const toggle = canvas.queryByRole('button', { name: 'Open Space contents' });
-    if (toggle) await userEvent.click(toggle);
-    // The full review also renders phone stories at desktop width, where the
-    // contents are already in the permanent navigation instead of a drawer.
-    const contents = toggle
-      ? await within(canvasElement.ownerDocument.body).findByRole('dialog', {
-          name: 'Space contents',
-        })
-      : canvas.getByRole('navigation', { name: 'Pages' });
-    await expect(within(contents).getByRole('button', { name: 'Add page' })).toBeEnabled();
-    await expect(
-      within(contents).queryByRole('link', { name: 'Space Trash' }),
-    ).not.toBeInTheDocument();
-    const links = within(contents).getAllByRole('link');
+    let contents = canvas;
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      await userEvent.click(canvas.getByRole('button', { name: 'Open Space contents' }));
+      const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+        name: 'Space contents',
+      });
+      await expect(dialog).toBeVisible();
+      contents = within(dialog);
+    } else {
+      // The capture matrix also runs this story at desktop width, where Pages
+      // expands inline. Exercise its real collapse/reopen control in that case.
+      await userEvent.click(canvas.getByRole('button', { name: 'Collapse navigation' }));
+      await userEvent.click(await canvas.findByRole('button', { name: 'Open Space contents' }));
+      const navigation = await canvas.findByRole('navigation', { name: 'Pages' });
+      await expect(navigation).toBeVisible();
+      contents = within(navigation);
+    }
+    await expect(contents.getByRole('button', { name: 'Add page' })).toBeEnabled();
+    await expect(contents.queryByRole('link', { name: 'Space Trash' })).not.toBeInTheDocument();
+    const links = contents.getAllByRole('link');
     for (const link of links)
       await expect(link.getAttribute('href')).toMatch(new RegExp(`^/share/${root}\\?item=`));
   },
@@ -220,6 +227,15 @@ export const Empty: Story = {
 };
 export const Loading: Story = {
   parameters: { api: { [`GET /api/guest-spaces/${root}`]: pending() } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const status = await canvas.findByText('Loading Space…', { exact: true });
+    await expect(status).toHaveAttribute('role', 'status');
+    await expect(status).toBeVisible();
+    await expect(
+      canvas.queryByRole('region', { name: 'Guest editor body fixture' }),
+    ).not.toBeInTheDocument();
+  },
 };
 export const Unavailable: Story = {
   parameters: {
@@ -230,6 +246,7 @@ export const Unavailable: Story = {
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
       'This Space is not available.',
     );
+    await expect(canvas.getByRole('button', { name: 'Try again' })).toBeEnabled();
     await expect(canvas.queryByRole('button', { name: 'My files' })).not.toBeInTheDocument();
     await expect(
       canvas.queryByRole('region', { name: 'Guest editor body fixture' }),

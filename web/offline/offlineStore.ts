@@ -110,23 +110,50 @@ export function setPreparedAccount(accountId: string | null) {
     try {
       storage()?.setItem(CANCELLATION_KEY, crypto.randomUUID());
     } catch {
-      // Full/blocked storage must not interrupt sign-out. Removing the existing
-      // marker still notifies other tabs, and the local epoch already changed.
+      // Removing the old token invalidates other tabs synchronously, even when
+      // their storage event is delayed and removing the account frees quota.
+      storage()?.removeItem(CANCELLATION_KEY);
     }
   }
   if (accountId) storage()?.setItem(ACCOUNT_KEY, accountId);
   else storage()?.removeItem(ACCOUNT_KEY);
 }
 
+function preparationCancellation() {
+  try {
+    const local = storage();
+    if (!local) throw new Error('Storage unavailable.');
+    let value = local.getItem(CANCELLATION_KEY);
+    if (!value) {
+      value = crypto.randomUUID();
+      local.setItem(CANCELLATION_KEY, value);
+    }
+    if (local.getItem(CANCELLATION_KEY) !== value) throw new Error('Storage write failed.');
+    return value;
+  } catch {
+    throw new Error(
+      'Offline downloads need browser storage. Allow storage or free up space, then try again.',
+    );
+  }
+}
+
 /** One mounted account's asynchronous preparation, never a reusable sign-in. */
 export function offlinePreparation(accountId: string, isMounted: () => boolean) {
   let epoch = preparationEpoch;
-  let cancellation = storage()?.getItem(CANCELLATION_KEY);
-  const isCurrent = () =>
-    isMounted() &&
-    epoch === preparationEpoch &&
-    cancellation === storage()?.getItem(CANCELLATION_KEY) &&
-    (preparedAccount() === null || preparedAccount() === accountId);
+  // Never admit a scope with an absent token: a full legacy store may be unable
+  // to create one at sign-out, and storage events are not a synchronous fence.
+  let cancellation: string | null = preparationCancellation();
+  const isCurrent = () => {
+    if (!isMounted() || epoch !== preparationEpoch || !cancellation) return false;
+    try {
+      const local = storage();
+      if (!local || local.getItem(CANCELLATION_KEY) !== cancellation) return false;
+      const account = local.getItem(ACCOUNT_KEY);
+      return account === null || account === accountId;
+    } catch {
+      return false;
+    }
+  };
   return {
     isMounted,
     isCurrent,
@@ -153,7 +180,7 @@ export function offlinePreparation(accountId: string, isMounted: () => boolean) 
         // This operation deliberately cleared its own pointer. Its final UI
         // update may complete; other work from before the clear stays cancelled.
         epoch = preparationEpoch;
-        cancellation = storage()?.getItem(CANCELLATION_KEY);
+        cancellation = storage()?.getItem(CANCELLATION_KEY) ?? null;
       }
     },
   };
