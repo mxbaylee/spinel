@@ -106,7 +106,14 @@ async function fixture() {
   seed.close();
 
   const origin = 'http://localhost:3000';
-  const app = await createApp({ databasePath: filename, staticDirectory: directory, origin });
+  // This suite tests explicitly disabled Spaces, independent of the app default.
+  // Enabled root discovery and scoped native/MCP access have separate acceptance tests.
+  const app = await createApp({
+    databasePath: filename,
+    staticDirectory: directory,
+    origin,
+    spaceReview: false,
+  });
   cleanup.push(() => app.close());
   const db = openDatabase(filename);
   cleanup.push(() => db.close());
@@ -175,7 +182,7 @@ async function fixture() {
   };
 }
 
-test('ordinary HTTP discovery and direct-ID content, grants, exports and formulas refuse hidden Space data', async () => {
+test('with Spaces disabled, ordinary HTTP discovery and direct-ID content, grants, exports and formulas refuse hidden Space data', async () => {
   const f = await fixture();
   f.attachToSpace();
   for (const cookie of f.cookies) {
@@ -241,7 +248,7 @@ test('ordinary HTTP discovery and direct-ID content, grants, exports and formula
   f.unchanged();
 }, 30_000);
 
-test('protocol permissions, snapshots, session tickets and guest capabilities close at the real application boundary', async () => {
+test('with Spaces disabled, protocol permissions, snapshots, session tickets and guest capabilities close at the real application boundary', async () => {
   const f = await fixture();
   const snapshotPath = (id: string, type: UniverType) =>
     '/universer-api/snapshot/' + type + '/unit/' + id + '/rev/0';
@@ -400,7 +407,7 @@ test('protocol permissions, snapshots, session tickets and guest capabilities cl
   f.unchanged();
 }, 30_000);
 
-test('MCP enumeration and guessed IDs cannot read or write Space children', async () => {
+test('with Spaces disabled, MCP enumeration and guessed IDs cannot read or write Space children', async () => {
   const f = await fixture();
   f.attachToSpace();
   const client = new Client({ name: 'space-boundary', version: '1.0.0' });
