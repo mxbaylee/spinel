@@ -45,10 +45,18 @@ corruption. This preserves one consistent backup without that risk; see
 
 This preserves accounts, passkeys, sessions, invitations, folders, grants, trash,
 native Sheets/Docs snapshots, collaboration generations, retained checkpoints,
-restore receipts and uploaded image bytes: all currently live in SQLite. Every
+restore receipts, uploaded image bytes, and Space roots/membership/order and
+subtree recovery metadata: all currently live in SQLite. Every
 table is included. Before adding
 an external database or filesystem blob store, extend this inventory and the
 consistent backup/restore procedure; a SQLite-only backup cannot protect those.
+
+The SPN-078 model tests verify exact native content, stable IDs/formula bindings,
+membership/order and recovery records after reopen and a SQLite snapshot copy.
+They do not establish a new operational Space backup/restore drill or ownership
+transfer. Those integrated acceptance checks remain SPN-092, before ordinary
+Space exposure. Continue restoring the recorded immutable application version;
+an older image cannot be assumed to understand a newer Space schema.
 
 The encrypted copy also contains the canonical origin, immutable application
 image reference and runtime environment file. Host-specific Tailscale identity,

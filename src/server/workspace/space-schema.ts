@@ -50,7 +50,7 @@ function checkDatabase(database: DatabaseSync) {
 }
 
 /**
- * Explicit SPN-078 storage migration; deliberately not called by application startup yet.
+ * SPN-078 storage migration, called by application startup before the SDK opens.
  * Run after AuthStore, before opening other application/SDK connections or transactions.
  * This changes storage only: it does not enable ordinary Space creation or child routes.
  *

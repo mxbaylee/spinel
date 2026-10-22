@@ -43,7 +43,7 @@ const unavailable = () => new AuthError(404, 'This Space is not available.');
 const MAX_ANCESTOR_READS = 10_000;
 
 /**
- * Unwired Space foundation: ordinary WorkspaceStore.get() refuses Space scope.
+ * Internal Space foundation: ordinary WorkspaceStore.get() refuses Space scope.
  * Call again inside the mutation transaction and after any await before returning
  * content. Only live trees are admitted here; internal recovery requires a separate
  * explicit policy, rather than an includeTrashed flag available to ordinary reads.

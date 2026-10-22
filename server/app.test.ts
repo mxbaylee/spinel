@@ -7,6 +7,9 @@ import { afterEach, expect, test } from 'vitest';
 import { createApp, projectRoot } from './app.ts';
 import { openDatabase } from './database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { DocumentStore } from '../src/server/workspace/documents.ts';
+import { SpaceStore } from '../src/server/workspace/spaces.ts';
 
 const cleanups: (() => Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -19,6 +22,123 @@ async function temporaryDirectory() {
   cleanups.push(() => rm(directory, { recursive: true, force: true }));
   return directory;
 }
+
+test('startup upgrades ordinary storage before SDK initialization and reopens hidden Space data without exposing it', async () => {
+  const directory = await temporaryDirectory();
+  const path = join(directory, 'app.sqlite');
+  await writeFile(join(directory, 'index.html'), 'Fixture');
+  let db = openDatabase(path);
+  let auth = new AuthStore(db);
+  let workspace = new WorkspaceStore(auth);
+  new DocumentStore(workspace);
+  const owner = auth.createUser('Owner');
+  const ordinary = workspace.create(owner.id, {
+    name: 'Ordinary notes',
+    kind: 'doc',
+    parentId: null,
+  });
+  const native = JSON.stringify({
+    id: ordinary.id,
+    body: { dataStream: 'Keep ordinary data\r\n' },
+  });
+  db.prepare('INSERT INTO doc_snapshots VALUES(?,?,1,?)').run(
+    ordinary.id,
+    native,
+    'original-write',
+  );
+  const session = auth.createSession(owner.id);
+  expect(
+    db
+      .prepare('PRAGMA table_info(workspace_items)')
+      .all()
+      .map((row) => row.name),
+  ).not.toContain('space_id');
+  db.close();
+  const first = await createApp({ databasePath: path, staticDirectory: directory });
+  await first.close();
+  db = openDatabase(path);
+  auth = new AuthStore(db);
+  workspace = new WorkspaceStore(auth);
+  const spaces = new SpaceStore(workspace);
+  const space = spaces.createRoot(owner.id, { name: 'Hidden Space', parentId: null }).space;
+  const child = spaces.createChild(owner.id, space.id, {
+    name: 'Hidden child',
+    kind: 'doc',
+    parentId: space.id,
+  }).item;
+  const hidden = JSON.stringify({ id: child.id, body: { dataStream: 'Keep hidden data\r\n' } });
+  db.prepare('INSERT INTO doc_snapshots VALUES(?,?,1,?)').run(child.id, hidden, 'hidden-write');
+  expect(
+    db.prepare('SELECT snapshot FROM doc_snapshots WHERE item_id=?').get(ordinary.id)?.snapshot,
+  ).toBe(native);
+  expect(
+    db
+      .prepare(
+        "SELECT name FROM sqlite_schema WHERE type='trigger' AND name='spinel_generation_deleted'",
+      )
+      .get(),
+  ).toBeDefined();
+  db.close();
+
+  const reopened = await createApp({ databasePath: path, staticDirectory: directory });
+  cleanups.push(() => reopened.close());
+  await new Promise<void>((resolve) => reopened.server.listen(0, '127.0.0.1', resolve));
+  const root = 'http://127.0.0.1:' + (reopened.server.address() as AddressInfo).port;
+  const headers = { Cookie: COOKIE_NAME + '=' + session.token };
+  const listing = await fetch(root + '/api/items', { headers });
+  expect(listing.status).toBe(200);
+  const listed = await listing.text();
+  expect(listed).toContain(ordinary.id);
+  for (const value of [space.id, child.id, 'Hidden']) expect(listed).not.toContain(value);
+  for (const id of [space.id, child.id])
+    expect((await fetch(root + '/api/items/' + id, { headers })).status).toBe(404);
+  const creation = await fetch(root + '/api/items', {
+    method: 'POST',
+    headers: { ...headers, Origin: 'http://localhost:3000', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: 'Not exposed', kind: 'space', parentId: null }),
+  });
+  expect(creation.status).toBe(400);
+  db = openDatabase(path);
+  try {
+    expect(
+      db.prepare('SELECT snapshot FROM doc_snapshots WHERE item_id=?').get(ordinary.id)?.snapshot,
+    ).toBe(native);
+    expect(
+      db.prepare('SELECT snapshot FROM doc_snapshots WHERE item_id=?').get(child.id)?.snapshot,
+    ).toBe(hidden);
+    expect(db.prepare('PRAGMA foreign_key_check').all()).toEqual([]);
+  } finally {
+    db.close();
+  }
+});
+
+test('startup refuses an incomplete Space migration before creating SDK generation storage', async () => {
+  const directory = await temporaryDirectory();
+  const path = join(directory, 'app.sqlite');
+  await writeFile(join(directory, 'index.html'), 'Fixture');
+  let db = openDatabase(path);
+  new WorkspaceStore(new AuthStore(db));
+  db.exec('ALTER TABLE workspace_items ADD COLUMN space_id TEXT');
+  db.close();
+  await expect(createApp({ databasePath: path, staticDirectory: directory })).rejects.toThrow(
+    'incomplete previous schema',
+  );
+  db = openDatabase(path);
+  try {
+    expect(
+      db.prepare("SELECT name FROM sqlite_schema WHERE name='spinel_live_units'").get(),
+    ).toBeUndefined();
+    expect(
+      db
+        .prepare('PRAGMA table_info(workspace_items)')
+        .all()
+        .map((row) => row.name),
+    ).not.toContain('space_position');
+    expect(db.prepare('PRAGMA foreign_key_check').all()).toEqual([]);
+  } finally {
+    db.close();
+  }
+});
 
 test('creates SQLite in a new directory and preserves data when reopened', async () => {
   const directory = await temporaryDirectory();
@@ -58,6 +178,15 @@ test('protects pages and APIs while keeping database files private', async () =>
     expect(database.prepare('PRAGMA integrity_check').get()).toMatchObject({
       integrity_check: 'ok',
     });
+    expect(
+      database
+        .prepare('PRAGMA table_info(workspace_items)')
+        .all()
+        .map((row) => row.name),
+    ).toEqual(expect.arrayContaining(['space_id', 'space_position']));
+    expect(
+      database.prepare("SELECT name FROM sqlite_schema WHERE name='workspace_space_trash'").get(),
+    ).toMatchObject({ name: 'workspace_space_trash' });
   } finally {
     database.close();
   }
