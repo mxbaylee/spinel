@@ -339,6 +339,11 @@ test('revoking one login preserves another login’s queued edit and stops later
   const pending = new Promise<void>((resolve) => {
     release = resolve;
   });
+  let releaseCatalogDenial!: () => void;
+  const pendingCatalogDenial = new Promise<void>((resolve) => {
+    releaseCatalogDenial = resolve;
+  });
+  let catalogDenialHeld = false;
   let held = false,
     closed = 0;
   const revokedMessages: string[] = [];
@@ -362,6 +367,16 @@ test('revoking one login preserves another login’s queued edit and stops later
       },
     ]);
   try {
+    // The shared-list poll redirects on 401 independently of the editor warning.
+    // Keep its real denial pending while proving revocation in the open editor.
+    await page.route('**/api/items/shared', async (route) => {
+      const response = await route.fetch();
+      if (response.status() === 401) {
+        catalogDenialHeld = true;
+        await pendingCatalogDenial;
+      }
+      await route.fulfill({ response });
+    });
     await page.goto(`/?item=${item.id}`);
     await other.goto(`${baseURL}/?item=${item.id}`);
     for (const target of [page, other]) {
@@ -392,6 +407,12 @@ test('revoking one login preserves another login’s queued edit and stops later
     auth.revokeSession(sessions[0].session.token_hash);
     await expect.poll(() => closed).toBeGreaterThan(closedBeforeRevocation);
     await expect(page.getByRole('status', { name: 'Save status' })).toContainText('Access changed');
+    await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    expect((await context.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status()).toBe(401);
+    // Exercise the existing focus refresh instead of racing its five-second timer.
+    await page.bringToFront();
+    await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+    await expect.poll(() => catalogDenialHeld).toBe(true);
     const boundary = revokedMessages.length;
     release();
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
@@ -405,6 +426,9 @@ test('revoking one login preserves another login’s queued edit and stops later
       revokedMessages.slice(boundary).some((message) => message.includes('private-after-revoke')),
     ).toBe(false);
     await expect(other.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
+    releaseCatalogDenial();
+    await expect(page).toHaveURL(/\/sign-in$/);
+    await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
     await other.reload();
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
       'All changes saved.',
@@ -412,6 +436,8 @@ test('revoking one login preserves another login’s queued edit and stops later
     );
   } finally {
     release();
+    releaseCatalogDenial();
+    await page.unrouteAll({ behavior: 'wait' });
     await second.close();
     db.prepare('DELETE FROM workspace_items WHERE id=?').run(item.id);
     db.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);
