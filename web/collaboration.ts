@@ -29,6 +29,7 @@ import type { SaveState } from '../src/shared/autosave.ts';
 import type { ItemAccess } from '../src/shared/workspace.ts';
 import { createEditorConnection, reduceEditorConnection } from './connectionState.ts';
 import type { ConnectionState, RoomConnectionStatus } from './connectionState.ts';
+import type { DocPendingChanges } from './docPending.ts';
 
 export { ClientEnglish, UIEnglish };
 export function collaborationPlugins(
@@ -105,6 +106,7 @@ export function watchCollaboration(
   readonly: () => Promise<void>,
   publishConnection: (state: ConnectionState) => void = () => {},
   spaceId?: string,
+  native?: DocPendingChanges,
 ) {
   const collaboration = api.getCollaboration();
   let denied = false;
@@ -189,7 +191,7 @@ export function watchCollaboration(
             ? 'not-started'
             : 'active',
     });
-    const dirty = status !== CollaborationStatus.SYNCED;
+    const dirty = status !== CollaborationStatus.SYNCED || Boolean(native?.pending());
     // Acknowledgement precedes the SDK's delayed recovery-cache write. A reload
     // in that gap can replay an already committed insert as a new operation.
     // Keep the navigation guard until the public cache flush finishes; never
@@ -205,7 +207,14 @@ export function watchCollaboration(
     if (!dirty)
       void cache.exhaustSavingTask().then(
         () => {
-          if (disposed || denied || generation !== statusGeneration) return;
+          if (
+            disposed ||
+            denied ||
+            generation !== statusGeneration ||
+            native?.pending() ||
+            collaboration.getCollaborationStatus(id) !== CollaborationStatus.SYNCED
+          )
+            return;
           lastDirty = false;
           publish({
             dirty: false,
@@ -227,6 +236,10 @@ export function watchCollaboration(
       );
     if (status === CollaborationStatus.OFFLINE) void checkAccess();
   };
+  // A local Doc mutation can still be in its native 300 ms batching queue while
+  // collaboration says SYNCED. Invalidate any older asynchronous clean result
+  // synchronously, including when this hook attaches to an already pending Doc.
+  const stopNative = native?.subscribe(() => update());
   let stopStatus = () => {};
   let entityGeneration = 0;
   const roomStates: Record<SessionStatus, RoomConnectionStatus> = {
@@ -307,6 +320,7 @@ export function watchCollaboration(
       entities.unsubscribe();
       stopStatus();
       events.unsubscribe();
+      stopNative?.();
       window.removeEventListener('online', online);
       window.removeEventListener('offline', offline);
     },

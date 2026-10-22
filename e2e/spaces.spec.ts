@@ -3,16 +3,20 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Dialog, Locator, Page, TestInfo } from '@playwright/test';
+import { JSONX } from '@univerjs/core';
+import type { IDocumentData, JSONXActions } from '@univerjs/core';
+import type { IGetUnitOnRevResponse } from '@univerjs/protocol';
 import { startApp } from './app-process.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { SpaceRecoveryStore } from '../src/server/workspace/space-recovery.ts';
+import { SpaceLifecycleStore } from '../src/server/workspace/space-lifecycle.ts';
 import type { SpaceNode, SpaceRoot, SpaceTreeData } from '../src/shared/spaces.ts';
 
-// The server SDK stays in startApp's child process. The collector imports only
-// application storage/types; all native editing evidence comes from the browser.
+// The server/Pro SDK stays in startApp's child process. The collector uses the
+// public core JSONX operation reader only to verify persisted native Doc data.
 async function fixture(browser: Browser, info: TestInfo) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-spaces-e2e-'));
   const databasePath = join(directory, 'app.sqlite');
@@ -265,6 +269,153 @@ async function commitRetainedCell(page: Page, address: string) {
     .click();
   await saved(page);
 }
+async function nativeLayout(page: Page, kind: 'Doc' | 'Sheet', fitViewport = false) {
+  const region = page.getByRole('region', { name: `${kind} document`, exact: true });
+  const badge = region.locator('.collaborator-badge').first();
+  await expect(badge).toBeVisible();
+  const bounds = await region.locator('.univer-container').evaluate((canvas) => {
+    const rect = canvas.getBoundingClientRect();
+    const style = getComputedStyle(canvas);
+    return {
+      width: innerWidth,
+      height: innerHeight,
+      documentWidth: document.documentElement.scrollWidth,
+      documentHeight: document.documentElement.scrollHeight,
+      left: rect.left,
+      right: rect.right,
+      bottom: rect.bottom,
+      touch: matchMedia('(pointer: coarse)').matches,
+      touchAction: style.touchAction,
+      overscrollX: style.overscrollBehaviorX,
+      overscrollY: style.overscrollBehaviorY,
+    };
+  });
+  expect(bounds.documentWidth).toBeLessThanOrEqual(bounds.width + 1);
+  expect(bounds.left).toBeGreaterThanOrEqual(-1);
+  expect(bounds.right).toBeLessThanOrEqual(bounds.width + 1);
+  if (fitViewport) {
+    expect(bounds.bottom).toBeLessThanOrEqual(bounds.height + 1);
+    expect(bounds.documentHeight).toBeLessThanOrEqual(bounds.height + 1);
+  }
+  if (kind === 'Sheet' && bounds.touch) {
+    expect(bounds.touchAction).toBe('none');
+    expect(bounds.overscrollX).toBe('contain');
+    expect(bounds.overscrollY).toBe('contain');
+  } else {
+    expect(bounds.touchAction).not.toBe('none');
+  }
+}
+async function nativeState(
+  context: BrowserContext,
+  spaceId: string,
+  itemId: string,
+  type: 1 | 2 = 1,
+) {
+  const metadata = await context.request.get(`/api/spaces/${spaceId}/items/${itemId}`);
+  expect(metadata.ok()).toBe(true);
+  const unitID = (await metadata.json()).live.unitId as string;
+  const response = await context.request.get(
+    `/space-api/${spaceId}/items/${itemId}/universer-api/snapshot/${type}/unit/${unitID}/rev/0`,
+  );
+  expect(response.ok()).toBe(true);
+  const { snapshot, changesets, error } = (await response.json()) as IGetUnitOnRevResponse;
+  expect(error).toBeFalsy();
+  expect(snapshot).toBeDefined();
+  return { unitID, snapshot, changesets };
+}
+function nativeHead(state: Awaited<ReturnType<typeof nativeState>>) {
+  // Automatic snapshots may compact the representation after acknowledgement;
+  // the live unit and current revision remain the authoritative commit identity.
+  return {
+    unitID: state.unitID,
+    revision: Math.max(state.snapshot!.rev, ...state.changesets.map((change) => change.revision)),
+  };
+}
+function nativeDocText(state: Awaited<ReturnType<typeof nativeState>>) {
+  // The public snapshot protocol carries the original document JSON as bytes;
+  // HTTP JSON represents those bytes either as base64 or a numeric byte object.
+  const meta = state.snapshot?.doc?.originalMeta as Uint8Array | string | undefined;
+  expect(meta).toBeDefined();
+  const bytes =
+    typeof meta === 'string' ? Buffer.from(meta, 'base64') : Buffer.from(Object.values(meta!));
+  let document = JSON.parse(bytes.toString('utf8')) as IDocumentData;
+  for (const changeset of state.changesets) {
+    for (const mutation of changeset.mutations) {
+      expect(mutation.id).toBe('doc.mutation.rich-text-editing');
+      const { unitId, actions } = JSON.parse(mutation.data) as {
+        unitId: string;
+        actions: JSONXActions;
+      };
+      expect(unitId).toBe(state.unitID);
+      document = (JSONX.apply(document, actions) ?? document) as IDocumentData;
+    }
+  }
+  return document.body?.dataStream.trim();
+}
+function nativeDocState(state: Awaited<ReturnType<typeof nativeState>>) {
+  return { ...nativeHead(state), text: nativeDocText(state) };
+}
+function nativeDiagnostics(page: Page, phase: () => string) {
+  const events: object[] = [];
+  const record = (event: object) => {
+    events.push({ phase: phase(), ...event });
+    if (events.length > 100) events.shift();
+  };
+  page.on('response', (response) => {
+    const path = new URL(response.url()).pathname;
+    if (
+      path.includes('/space-api/') ||
+      /^\/api\/spaces\/[^/]+\/items\/[^/]+\/collaboration$/.test(path)
+    )
+      record({ http: path, method: response.request().method(), status: response.status() });
+  });
+  page.on('requestfailed', (request) => {
+    const path = new URL(request.url()).pathname;
+    if (path.includes('/space-api/')) record({ http: path, failed: true });
+  });
+  page.on('websocket', (socket) => {
+    if (!new URL(socket.url()).pathname.includes('/space-api/')) return;
+    socket.on('framereceived', ({ payload }) => {
+      try {
+        const frame = JSON.parse(String(payload)) as { cmd?: unknown; code?: unknown };
+        if (
+          (typeof frame.cmd === 'string' || typeof frame.cmd === 'number') &&
+          (typeof frame.code === 'string' || typeof frame.code === 'number')
+        )
+          record({ socket: 'response', command: frame.cmd, code: frame.code });
+      } catch {
+        // Keep diagnostics to public command/outcome codes, never payload data.
+      }
+    });
+    socket.on('close', () => record({ socket: 'closed' }));
+  });
+  return events;
+}
+async function holdNativeWrites(context: BrowserContext) {
+  let release = () => {};
+  const held = new Promise<void>((done) => {
+    release = done;
+  });
+  let received = 0;
+  let returned = 0;
+  await context.route('**/universer-api/comb/**/new_changes', async (route) => {
+    received++;
+    await held;
+    const response = await route.fetch();
+    // A transport receipt is not proof of a native commit. Callers compare the
+    // authoritative snapshot after every held request has reached the server.
+    await route.fulfill({ response });
+    returned++;
+  });
+  return {
+    release,
+    received: () => received,
+    returned: () => returned,
+    // Call only after the native page has left. Waiting for every handler also
+    // drains retries that arrived after the count observed when release began.
+    drain: () => context.unrouteAll({ behavior: 'wait' }),
+  };
+}
 async function writeCell(page: Page, address: string, text: string, commit = true) {
   await cell(page, address);
   await page.keyboard.type(text);
@@ -339,7 +490,13 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     // The earlier save proof preceded clipboard/theme interaction. Establish
     // the current native state before taking evidence and creating another page.
     await saved(page);
+    await nativeLayout(page, 'Doc', true);
     await screenshot(page, info, 'doc-light');
+    await page.getByRole('radio', { name: 'Dark', exact: true }).click();
+    await saved(page);
+    await screenshot(page, info, 'doc-dark');
+    await page.getByRole('radio', { name: 'Light', exact: true }).click();
+    await saved(page);
     const sheet = await add(page, space.id, 'Sheet', 'Plan');
     await writeCell(page, 'A1', '41');
     await writeCell(page, 'A2', '1');
@@ -348,7 +505,13 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     expect(await copyCell(page, 'A3')).toBe('42');
     await page.getByRole('radio', { name: 'Dark', exact: true }).click();
     await saved(page);
+    await nativeLayout(page, 'Sheet', true);
     await screenshot(page, info, 'sheet-dark');
+    await page.getByRole('radio', { name: 'Light', exact: true }).click();
+    await saved(page);
+    await screenshot(page, info, 'sheet-light');
+    await page.getByRole('radio', { name: 'Dark', exact: true }).click();
+    await saved(page);
     await page.reload();
     await saved(page);
     expect(await copyCell(page, 'A1')).toBe('41');
@@ -424,18 +587,54 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
   test.setTimeout(180_000);
   const f = await fixture(browser, info);
   const { page } = f;
+  let phase = 'initial Doc load';
+  const diagnostics = nativeDiagnostics(page, () => phase);
   try {
     const { space, child } = seed(f);
     const group = child('Archive group', 'folder');
     const doc = child('Retained notes', 'doc', group.id);
     const sheet = child('Retained numbers', 'sheet', doc.id);
+    await page.clock.install();
     await page.goto(href(space.id, doc.id));
     await saved(page);
-    await focusDoc(page);
-    await page.keyboard.type('Keep this native document through recovery.');
-    await saved(page);
+    await expect(page.getByRole('status', { name: 'Connection status', exact: true })).toHaveText(
+      'Online',
+    );
     await page.getByRole('button', { name: `Expand ${doc.name}`, exact: true }).click();
-    await pageLink(page, space.id, sheet.id).click();
+    const destination = pageLink(page, space.id, sheet.id);
+    await expect(destination).toBeVisible();
+    const target = await destination.boundingBox();
+    expect(target).not.toBeNull();
+    await focusDoc(page);
+    await saved(page);
+    phase = 'immediate native Doc edit and cancelled navigation';
+    // Freeze the public browser clock before typing so even slow CI exercises
+    // the native pre-collaboration batching window. The real pointer target was
+    // resolved while clean; no actionability/RAF wait can drain the Doc queue.
+    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
+    try {
+      await page.keyboard.type('K');
+      await cancelDeparture(page, () =>
+        page.mouse.click(target!.x + target!.width / 2, target!.y + target!.height / 2),
+      );
+      await expect(page).toHaveURL(f.origin + href(space.id, doc.id));
+      await expect(page.getByRole('region', { name: 'Doc document', exact: true })).toBeVisible();
+    } finally {
+      await page.clock.resume();
+    }
+    await saved(page);
+    expect(nativeDocText(await nativeState(f.context, space.id, doc.id))).toBe('K');
+    phase = 'original Doc persistence before departure';
+    await focusDoc(page);
+    await page.keyboard.press('Control+End');
+    await page.keyboard.type('eep this native document through recovery.');
+    await saved(page);
+    expect(await copyDoc(page)).toBe('Keep this native document through recovery.');
+    await saved(page);
+    const docBeforeTrash = await nativeState(f.context, space.id, doc.id);
+    expect(nativeDocText(docBeforeTrash)).toBe('Keep this native document through recovery.');
+    phase = 'Sheet edits and pending navigation';
+    await destination.click();
     await saved(page);
     await writeCell(page, 'A1', '73');
     await saved(page);
@@ -456,6 +655,8 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
     await commitRetainedCell(page, 'A3');
     expect(await copyCell(page, 'A3')).toBe('pending-history-edit');
     await saved(page);
+    const sheetBeforeTrash = await nativeState(f.context, space.id, sheet.id, 2);
+    phase = 'whole-subtree Trash';
 
     const cancelledTrash = await action(page, group.name, 'Trash');
     await expect(cancelledTrash).toContainText('2 descendants');
@@ -499,6 +700,10 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
       row.getByRole('button', { name: `Restore ${group.name}`, exact: true }),
     ).toBeEnabled();
     await screenshot(page, info, 'trash-light');
+    await page.getByRole('radio', { name: 'Dark', exact: true }).click();
+    await screenshot(page, info, 'trash-dark');
+    await page.getByRole('radio', { name: 'Light', exact: true }).click();
+    phase = 'subtree restore before native reopen';
     await row.getByRole('button', { name: `Restore ${group.name}`, exact: true }).click();
     await expect(
       page.getByRole('heading', { name: 'Space Trash is empty', exact: true }),
@@ -509,14 +714,29 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
       [doc.id, group.id, 0],
       [sheet.id, doc.id, 0],
     ]);
+    const restoredDoc = await nativeState(f.context, space.id, doc.id);
+    expect(nativeHead(restoredDoc)).toEqual(nativeHead(docBeforeTrash));
+    expect(nativeDocText(restoredDoc)).toBe('Keep this native document through recovery.');
+    expect(nativeHead(await nativeState(f.context, space.id, sheet.id, 2))).toEqual(
+      nativeHead(sheetBeforeTrash),
+    );
+    phase = 'restored Doc load and connection';
     await page.goto(href(space.id, doc.id));
     await saved(page);
+    await expect(page.getByRole('status', { name: 'Connection status', exact: true })).toHaveText(
+      'Online',
+    );
+    await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
+    phase = 'restored Doc content';
     expect(await copyDoc(page)).toBe('Keep this native document through recovery.');
+    await saved(page);
+    phase = 'restored Sheet content';
     await page.goto(href(space.id, sheet.id));
     await saved(page);
     expect(await copyCell(page, 'A1')).toBe('73');
     expect(await copyCell(page, 'A2')).toBe('pending-pointer-edit');
     expect(await copyCell(page, 'A3')).toBe('pending-history-edit');
+    phase = 'permanent deletion';
     const secondTrash = await action(page, group.name, 'Trash');
     await secondTrash.getByRole('button', { name: 'Move to Trash', exact: true }).click();
     const finalPreview = await deletePreview(page, group.name);
@@ -553,6 +773,14 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
     );
     expect(f.errors).toEqual([]);
   } finally {
+    if (info.status !== info.expectedStatus) {
+      const evidence = JSON.stringify({ phase, events: diagnostics }, null, 2);
+      console.error('Space native recovery diagnostics:', evidence);
+      await info.attach('native-recovery-diagnostics', {
+        body: evidence,
+        contentType: 'application/json',
+      });
+    }
     await f.close();
   }
 });
@@ -681,6 +909,7 @@ test('Space navigation works on a touch phone and at 613px with a mouse, with re
     const { space, child } = seed(f, 'Pocket notebook');
     const parent = child('Planning notes', 'doc');
     const nested = child('Nested notes', 'doc', parent.id);
+    const sheet = child('Pocket numbers', 'sheet');
     const removed = child('Deleted draft', 'doc');
     new SpaceRecoveryStore(f.workspace).trash(f.owner.id, space.id, removed.id);
     const phone = await f.open(f.owner.id, true);
@@ -690,6 +919,8 @@ test('Space navigation works on a touch phone and at 613px with a mouse, with re
     await phone.page.keyboard.type('A real Space document on a phone.');
     await saved(phone.page);
     await phone.page.getByRole('radio', { name: 'Light', exact: true }).tap();
+    await saved(phone.page);
+    await nativeLayout(phone.page, 'Doc');
     await screenshot(phone.page, info, 'phone-doc-light');
     const phonePages = phone.page.getByRole('button', { name: 'Open Space contents', exact: true });
     await phonePages.tap();
@@ -702,12 +933,20 @@ test('Space navigation works on a touch phone and at 613px with a mouse, with re
     await expect(drawer).not.toBeVisible();
     await saved(phone.page);
     await phone.page.getByRole('radio', { name: 'Dark', exact: true }).tap();
+    await saved(phone.page);
+    await nativeLayout(phone.page, 'Doc');
     await screenshot(phone.page, info, 'phone-doc-dark');
     await phonePages.tap();
     await expect(drawer).toBeVisible();
     await phone.page.keyboard.press('Escape');
     await expect(drawer).not.toBeVisible();
     await expect(phonePages).toBeFocused();
+    await phonePages.tap();
+    await pageLink(phone.page, space.id, sheet.id).tap();
+    await expect(drawer).not.toBeVisible();
+    await saved(phone.page);
+    await nativeLayout(phone.page, 'Sheet');
+    await screenshot(phone.page, info, 'phone-sheet-dark');
     await phonePages.tap();
     await drawer.getByRole('link', { name: 'Space Trash', exact: true }).tap();
     await deleted(phone.page, removed.name);
@@ -730,7 +969,14 @@ test('Space navigation works on a touch phone and at 613px with a mouse, with re
     await pageLink(f.page, space.id, nested.id).click();
     await expect(mouseDrawer).not.toBeVisible();
     await saved(f.page);
+    await nativeLayout(f.page, 'Doc');
     await screenshot(f.page, info, '613px-mouse-doc');
+    await mousePages.click();
+    await pageLink(f.page, space.id, sheet.id).click();
+    await expect(mouseDrawer).not.toBeVisible();
+    await saved(f.page);
+    await nativeLayout(f.page, 'Sheet');
+    await screenshot(f.page, info, '613px-mouse-sheet');
     await mousePages.click();
     await f.page.keyboard.press('Escape');
     await expect(mousePages).toBeFocused();
@@ -817,41 +1063,18 @@ test('revocation clears private Space navigation while retaining unsaved native 
     await editor.page.reload();
     await saved(editor.page);
     expect(await copyDoc(editor.page)).toBe('Persisted baseline.');
-    const metadata = await f.context.request.get(`/api/spaces/${space.id}/items/${doc.id}`);
-    expect(metadata.ok()).toBe(true);
-    const unitID = (await metadata.json()).live.unitId as string;
-    const read = async () => {
-      const response = await f.context.request.get(
-        `/space-api/${space.id}/items/${doc.id}/universer-api/snapshot/1/unit/${unitID}/rev/0`,
-      );
-      expect(response.ok()).toBe(true);
-      const { snapshot, changesets } = (await response.json()) as {
-        snapshot: unknown;
-        changesets: unknown[];
-      };
-      return { snapshot, changesets };
-    };
-    const before = await read();
-    const held = new Promise<void>((done) => {
-      release = done;
-    });
-    let heldChanges = 0;
-    let returnedChanges = 0;
-    await editor.context.route('**/universer-api/comb/**/new_changes', async (route) => {
-      heldChanges++;
-      await held;
-      const response = await route.fetch();
-      // The protocol may acknowledge receipt separately from commit. Compare
-      // authoritative native snapshot/revisions below, not the receipt alone.
-      returnedChanges++;
-      await route.fulfill({ response });
-    });
+    const before = await nativeState(f.context, space.id, doc.id);
+    const held = await holdNativeWrites(editor.context);
+    release = held.release;
     await focusDoc(editor.page);
     await editor.page.keyboard.press('Control+End');
     await editor.page.keyboard.type(' Unsaved words to rescue.');
-    await expect.poll(() => heldChanges).toBeGreaterThan(0);
+    await expect.poll(held.received).toBeGreaterThan(0);
     const status = editor.page.getByRole('status', { name: 'Save status', exact: true });
     await expect(status).toContainText('not saved');
+    await expect(
+      editor.page.getByRole('button', { name: 'Retry saving', exact: true }),
+    ).toBeVisible();
     f.spaces.share(f.owner.id, space.id, f.editor.id, null);
     await expect(status).toContainText('Access changed', { timeout: 10_000 });
     await expect(
@@ -881,18 +1104,148 @@ test('revocation clears private Space navigation while retaining unsaved native 
     expect(
       (await editor.context.request.get(`/api/spaces/${space.id}/items/${doc.id}`)).status(),
     ).toBe(404);
-    const inFlight = heldChanges;
+    const inFlight = held.received();
     release();
-    await expect.poll(() => returnedChanges).toBeGreaterThanOrEqual(inFlight);
-    expect(await read()).toEqual(before);
+    await expect.poll(held.returned).toBeGreaterThanOrEqual(inFlight);
+    expect(nativeDocState(await nativeState(f.context, space.id, doc.id))).toEqual(
+      nativeDocState(before),
+    );
     await screenshot(editor.page, info, 'revoked-unsaved-recovery');
     editor.page.once('dialog', (dialog) => dialog.accept());
     await editor.page.goto('about:blank');
+    await held.drain();
+    expect(nativeDocState(await nativeState(f.context, space.id, doc.id))).toEqual(
+      nativeDocState(before),
+    );
     // A separate account and native instance reload the persisted state after
     // every held write reached the server; the rescued draft never committed.
     await f.page.goto(href(space.id, doc.id));
     await saved(f.page);
     expect(await copyDoc(f.page)).toBe('Persisted baseline.');
+    expect(f.errors).toEqual([]);
+  } finally {
+    release();
+    await f.close();
+  }
+});
+
+test('external child, ancestor and whole-Space Trash invalidates open native editors while an unsaved draft stays recoverable', async ({
+  browser,
+}, info) => {
+  test.setTimeout(150_000);
+  const f = await fixture(browser, info);
+  let release = () => {};
+  try {
+    const { space, child } = seed(f, 'Externally changed notebook');
+    const group = child('External branch', 'folder');
+    const doc = child('Open native notes', 'doc', group.id);
+    const sheet = child('Open native numbers', 'sheet', doc.id);
+    const available = child('Still available', 'doc');
+    const recovery = new SpaceRecoveryStore(f.workspace);
+    const lifecycle = new SpaceLifecycleStore(f.workspace);
+    const scenarios = [
+      {
+        selected: doc,
+        wholeSpace: false,
+        removed: [doc, sheet],
+        trash: () => recovery.trash(f.owner.id, space.id, doc.id),
+        restore: () => recovery.restore(f.owner.id, space.id, doc.id),
+      },
+      {
+        selected: sheet,
+        wholeSpace: false,
+        removed: [group, doc, sheet],
+        trash: () => recovery.trash(f.owner.id, space.id, group.id),
+        restore: () => recovery.restore(f.owner.id, space.id, group.id),
+      },
+      {
+        selected: doc,
+        wholeSpace: true,
+        removed: [group, doc, sheet, available],
+        trash: () => lifecycle.trash(f.owner.id, space.id),
+        restore: () => lifecycle.restore(f.owner.id, space.id),
+      },
+    ];
+    for (const scenario of scenarios) {
+      await f.page.goto(href(space.id, scenario.selected.id));
+      await saved(f.page);
+      // Existing stores change the same application database from outside the
+      // active page. No reload or navigation may supply the invalidation proof.
+      scenario.trash();
+      if (scenario.wholeSpace) {
+        await expect(
+          f.page.getByRole('heading', { name: 'Space unavailable', exact: true }),
+        ).toBeVisible({ timeout: 10_000 });
+        await expect(f.page.getByRole('region', { name: 'Space pages', exact: true })).toHaveCount(
+          0,
+        );
+      } else {
+        await expect(
+          f.page.getByRole('alert').filter({ hasText: 'This page is not available.' }),
+        ).toBeVisible({ timeout: 10_000 });
+        await expect(pageLink(f.page, space.id, available.id)).toBeVisible();
+      }
+      await expect(f.page).toHaveURL(f.origin + href(space.id, scenario.selected.id));
+      await expect(f.page.getByRole('region', { name: /^(Doc|Sheet) document$/ })).toHaveCount(0);
+      for (const item of scenario.removed)
+        await expect(
+          item.kind === 'folder'
+            ? f.page.getByRole('button', { name: item.name, exact: true })
+            : pageLink(f.page, space.id, item.id),
+        ).toHaveCount(0);
+      expect(
+        (
+          await f.context.request.get(`/api/spaces/${space.id}/items/${scenario.selected.id}`)
+        ).status(),
+      ).toBe(404);
+      await f.page.goto('about:blank');
+      scenario.restore();
+    }
+
+    // An internal ancestor disappears while this Doc has an actual pending
+    // native request. Only its unavailable branch clears; the still-readable
+    // Space remains navigable and cancellation must retain the local draft.
+    await f.page.goto(href(space.id, doc.id));
+    await saved(f.page);
+    const before = await nativeState(f.context, space.id, doc.id);
+    const held = await holdNativeWrites(f.context);
+    release = held.release;
+    await focusDoc(f.page);
+    await f.page.keyboard.type('Rescue this draft after external Trash.');
+    await expect.poll(held.received).toBeGreaterThan(0);
+    recovery.trash(f.owner.id, space.id, group.id);
+    const status = f.page.getByRole('status', { name: 'Save status', exact: true });
+    await expect(status).toContainText('Access changed', { timeout: 10_000 });
+    await expect(
+      f.page.getByRole('alert').filter({ hasText: 'This page is not available.' }),
+    ).toHaveText('This page is not available. Copy unsaved changes before leaving.', {
+      timeout: 10_000,
+    });
+    await expect(f.page.getByRole('region', { name: 'Doc document', exact: true })).toBeVisible();
+    await expect(f.page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    expect(await copyDoc(f.page)).toBe('Rescue this draft after external Trash.');
+    await expect(pageLink(f.page, space.id, available.id)).toBeVisible();
+    for (const item of [group, doc, sheet])
+      await expect(
+        item.kind === 'folder'
+          ? f.page.getByRole('button', { name: item.name, exact: true })
+          : pageLink(f.page, space.id, item.id),
+      ).toHaveCount(0);
+    await cancelDeparture(f.page, () => pageLink(f.page, space.id, available.id).click());
+    await expect(f.page).toHaveURL(f.origin + href(space.id, doc.id));
+    expect((await f.context.request.get(`/api/spaces/${space.id}/items/${doc.id}`)).status()).toBe(
+      404,
+    );
+    const inFlight = held.received();
+    release();
+    await expect.poll(held.returned).toBeGreaterThanOrEqual(inFlight);
+    f.page.once('dialog', (dialog) => dialog.accept());
+    await f.page.goto('about:blank');
+    await held.drain();
+    recovery.restore(f.owner.id, space.id, group.id);
+    expect(nativeDocState(await nativeState(f.context, space.id, doc.id))).toEqual(
+      nativeDocState(before),
+    );
     expect(f.errors).toEqual([]);
   } finally {
     release();

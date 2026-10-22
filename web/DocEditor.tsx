@@ -22,7 +22,11 @@ import printEnglish from '@univerjs-pro/docs-print/locale/en-US';
 import '@univerjs-pro/docs-print/lib/index.css';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
-import { setDocumentPermissionValue } from '@univerjs/docs';
+import {
+  DocStateChangeManagerService,
+  DocStateEmitService,
+  setDocumentPermissionValue,
+} from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
 import { Collaborators, watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
@@ -72,6 +76,7 @@ import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
 import { documentReady } from './documentReady.ts';
 import type { ConnectionState } from './connectionState.ts';
+import { docPendingChanges } from './docPending.ts';
 
 export function DocEditor({
   id,
@@ -378,6 +383,11 @@ export function DocEditor({
         readonly,
         publishConnection,
         spaceId,
+        docPendingChanges(
+          data.unitId,
+          univer.__getInjector().get(DocStateEmitService),
+          univer.__getInjector().get(DocStateChangeManagerService),
+        ),
       );
       controller.current = save;
     })().catch((error) => {

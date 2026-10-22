@@ -62,7 +62,9 @@ export function SpaceShell({
     requestAnimationFrame(() => pages.current?.focus());
   }
   return (
-    <div className={`sp-ui space-shell ${navigation && expanded ? 'space-with-tree' : ''}`}>
+    <div
+      className={`sp-ui space-shell ${navigation && expanded ? 'space-with-tree' : ''} ${documentOpen ? 'space-with-editor' : ''}`}
+    >
       <header className="space-site-header">
         <button
           className="space-brand"

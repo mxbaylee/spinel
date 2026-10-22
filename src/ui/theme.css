@@ -81,7 +81,8 @@ a {
 a.brand {
   text-decoration: none;
 }
-.workspace button:not(.univer-container *) {
+.workspace button:not(.univer-container *),
+.space-native-editor button:not(.univer-container *) {
   font: inherit;
   cursor: pointer;
   border: 1px solid var(--sp-border);
@@ -95,7 +96,8 @@ button.primary {
   background: var(--sp-accent);
   border-color: var(--sp-accent);
 }
-.workspace button:not(.univer-container *):disabled {
+.workspace button:not(.univer-container *):disabled,
+.space-native-editor button:not(.univer-container *):disabled {
   opacity: 0.6;
   cursor: wait;
 }
@@ -250,7 +252,8 @@ button.primary {
   align-items: center;
   padding: 0.25rem 0;
 }
-.workspace button.collaborator-badge {
+.workspace button.collaborator-badge,
+.space-native-editor button.collaborator-badge {
   position: relative;
   width: 1.8rem;
   height: 1.8rem;
@@ -555,7 +558,8 @@ button.primary {
   min-width: 0;
   padding-top: 0;
 }
-:root[data-theme='dark'] .workspace button:not(.univer-container *) {
+:root[data-theme='dark'] .workspace button:not(.univer-container *),
+:root[data-theme='dark'] .space-native-editor button:not(.univer-container *) {
   border-radius: 5px;
 }
 .workspace input:not(.univer-container *),
@@ -597,7 +601,8 @@ dialog {
   gap: 8px;
   padding: 12px 0;
 }
-.workspace .fill-palette button {
+.workspace .fill-palette button,
+.space-native-editor .fill-palette button {
   padding: 10px 4px;
   font-size: 12px;
   border-color: var(--sp-border);
@@ -693,6 +698,7 @@ dialog {
 
 @media (pointer: coarse) and (max-width: 900px) {
   .workspace button:not(.univer-container *),
+  .space-native-editor button:not(.univer-container *),
   .workspace select:not(.univer-container *),
   .workspace input:not(.univer-container *) {
     min-height: 44px;

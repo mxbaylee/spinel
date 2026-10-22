@@ -11,6 +11,10 @@
 .space-shell.space-with-tree {
   grid-template-columns: 224px minmax(0, 1fr);
 }
+.space-shell.space-with-editor {
+  height: 100vh;
+  height: 100dvh;
+}
 .space-site-header {
   grid-column: 1 / -1;
   position: sticky;
@@ -214,6 +218,15 @@
   min-width: 0;
   padding: 0;
 }
+.space-with-editor > .space-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: auto;
+}
+.space-with-editor > .space-main > :not(.space-native-editor) {
+  flex-shrink: 0;
+}
 .space-pages-control {
   padding: 8px 16px 0;
 }
@@ -323,11 +336,33 @@
   color: var(--fill-error-soft-fg);
 }
 .space-native-editor {
+  --space-canvas-min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
   min-width: 0;
 }
-.space-native-editor .univer-container {
-  min-height: 520px;
-  height: calc(100dvh - 280px);
+.space-native-editor > .sheet-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+.space-native-editor > .sheet-editor > :not(.univer-container) {
+  flex-shrink: 0;
+  margin-inline: 24px;
+}
+.space-native-editor > .sheet-editor > .editor-help {
+  padding-bottom: 8px;
+}
+/* Native chrome keeps its existing rows and reserved Retry slot. The canvas
+   fills the remainder; short views and expanded controls scroll without clipping. */
+.space-shell .space-native-editor > .sheet-editor > .univer-container {
+  flex: 1 0 var(--space-canvas-min-height);
+  min-width: 0;
+  min-height: var(--space-canvas-min-height);
+  height: auto;
 }
 .space-index-heading {
   display: flex;
@@ -464,6 +499,9 @@
   .space-limitations {
     padding: 8px 16px;
   }
+  .space-native-editor > .sheet-editor > :not(.univer-container) {
+    margin-inline: 16px;
+  }
   .space-content,
   .space-trash {
     padding: 16px;
@@ -483,6 +521,14 @@
   }
   .space-trash-actions {
     margin-left: 48px;
+  }
+}
+@media (pointer: coarse) and (max-width: 900px) {
+  .space-native-editor {
+    --space-canvas-min-height: 420px;
+  }
+  .space-native-editor .collaborator-badge {
+    min-width: 44px;
   }
 }
 @media (pointer: coarse), (max-width: 640px) {

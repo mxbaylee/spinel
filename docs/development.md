@@ -127,6 +127,14 @@ gate requires every viewport to pass before Pages can deploy. Explicitly
 classified documentation-only PRs skip the captures; failed or missing results
 cannot pass as documentation-only.
 
+The shared build keeps its ordinary `npm ci` and registry-audit invocation. The
+three viewport installs use `npm ci --no-audit` so duplicate advisory requests
+cannot consume each review budget. Locked installation, integrity verification,
+postinstall and all review coverage remain. This narrow response to repeated
+five-minute installs is recorded in [decision #138](https://github.com/mxbaylee/spinel/issues/138),
+2026-10-22; a retained audit invocation is not evidence that an unavailable
+registry completed a security audit.
+
 Download `design-review-desktop`, `design-review-tablet` and
 `design-review-mobile` for self-contained galleries. `storybook-review` is the
 shared interactive build, and `entity-icon-screenshots` is the icon gallery.

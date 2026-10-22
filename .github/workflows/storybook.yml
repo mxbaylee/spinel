@@ -113,7 +113,9 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      - run: npm ci
+      # The upstream build retains the registry audit invocation for this lockfile.
+      # Keep duplicate audit requests outside the viewport budget (decision #138).
+      - run: npm ci --no-audit
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: storybook-review
@@ -160,7 +162,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      - run: npm ci
+      # The upstream build retains the registry audit invocation (decision #138).
+      - run: npm ci --no-audit
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: storybook-review
@@ -196,7 +199,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      - run: npm ci
+      # The upstream build retains the registry audit invocation (decision #138).
+      - run: npm ci --no-audit
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: storybook-review
