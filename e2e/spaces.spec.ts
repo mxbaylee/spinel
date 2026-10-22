@@ -603,6 +603,7 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
   test.setTimeout(180_000);
   const f = await fixture(browser, info);
   const { page } = f;
+  page.setDefaultTimeout(15_000);
   try {
     const space = await newSpace(page);
     expect(space.parentId).toBe(f.folder.id);
@@ -786,6 +787,11 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
       (await historyResponse.json()).versions as { id: string; name: string | null }[]
     ).find((version) => version.name === 'Space integration checkpoint')!;
     expect(checkpoint).toBeDefined();
+    // History uses the existing account shell, without Space appearance radios.
+    // Follow system before leaving so media changes exercise the real theme path.
+    const followSystem = page.getByRole('radio', { name: 'Follow system', exact: true });
+    await followSystem.click();
+    await expect(followSystem).toBeChecked();
     const liveBeforePreview = nativeDocState(await nativeState(f.context, space.id, doc.id));
     await page.goto(`/preview?item=${doc.id}&space=${space.id}&version=${checkpoint.id}`);
     const preview = page.getByRole('region', { name: 'Version preview', exact: true });
@@ -807,9 +813,9 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
       ['light', 390, 'phone'],
     ] as const) {
       await page.setViewportSize({ width, height: 1100 });
-      await page
-        .getByRole('radio', { name: theme === 'dark' ? 'Dark' : 'Light', exact: true })
-        .click();
+      await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+      await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+      await expect(preview.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
       await screenshot(page, info, 'history-preview-' + variant);
     }
     expect(nativeDocState(await nativeState(f.context, space.id, doc.id))).toEqual(
