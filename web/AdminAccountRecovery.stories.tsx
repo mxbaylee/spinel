@@ -261,7 +261,12 @@ export const ReactivationPending: Story = {
 };
 export const ReactivationFailed: Story = {
   args: { scenario: 'reactivate-failed' },
-  play: reactivate,
+  play: async (context) => {
+    await reactivate(context);
+    const portal = within(context.canvasElement.ownerDocument.body);
+    await expect(await portal.findByText(/Account details are up to date/)).toBeVisible();
+    await expect(portal.getByRole('button', { name: 'Reactivate account' })).toBeEnabled();
+  },
 };
 export const ReactivationReadbackFailed: Story = {
   args: { scenario: 'reactivate-readback-failed' },

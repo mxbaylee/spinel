@@ -156,6 +156,12 @@ export function AdminAccountRecovery({
               : 'Create a recovery invite to restore sign-in.'}
           </p>
         )}
+        {!transfer && error && !busy && !loading && !refreshError && disabled === true && (
+          <p role="status">
+            Account details are up to date. This account is still disabled; try reactivating it
+            again.
+          </p>
+        )}
         {!transfer && (
           <>
             <p>
