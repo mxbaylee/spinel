@@ -21,6 +21,7 @@
     "@univerjs/drawing": "1.1.0",
     "@univerjs/engine-render": "1.1.0",
     "@univerjs/sheets": "1.1.0",
-    "@univerjs/sheets-drawing": "1.1.0"
+    "@univerjs/sheets-drawing": "1.1.0",
+    "@univerjs/sheets-numfmt": "1.1.0"
   }
 }

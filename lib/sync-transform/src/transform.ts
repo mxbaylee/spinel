@@ -1,4 +1,4 @@
-import { cellIds, cells } from './cells.ts';
+import { cellIds, cells, ghostId } from './cells.ts';
 import { docs } from './docs.ts';
 import { drawingIds, drawings } from './drawings.ts';
 import type { Family } from './family.ts';
@@ -26,6 +26,9 @@ for (const id of sheetOrderIds) familyById.set(id, 'sheet-order');
 
 /** Every mutation id the transforms understand. Anything else is rejected. */
 export const supportedMutationIds: readonly string[] = [...familyById.keys()];
+const supported = new Set(supportedMutationIds);
+// Routed but never accepted: a ghost exists only inside one `transform` call.
+familyById.set(ghostId, cells);
 
 function familyOf(mutation: Mutation) {
   return familyById.get(mutation.id)!;
@@ -47,7 +50,7 @@ function familyOf(mutation: Mutation) {
  */
 function check(mutation: Mutation): void {
   const { id, params: p } = mutation;
-  if (!familyById.has(id)) throw new UnsupportedMutationError(id);
+  if (!supported.has(id)) throw new UnsupportedMutationError(id);
   // Cutting cells to another sheet edits two sheets; every transform addresses one.
   if (id === cellIds.moveRange && p.from.subUnitId !== p.to.subUnitId) {
     throw new UnsupportedMutationError(id);
@@ -66,11 +69,12 @@ function check(mutation: Mutation): void {
   }
 }
 
-/** Whether any `s` in a sheet mutation's params is a style id rather than a style. */
+/** Whether any `s` or `defaultStyle` in a sheet mutation's params is a style id, not a style. */
 function namesStyleId(value: unknown): boolean {
   if (typeof value !== 'object' || value === null) return false;
   return Object.entries(value).some(
-    ([key, v]) => (key === 's' && typeof v === 'string') || namesStyleId(v),
+    ([key, v]) =>
+      ((key === 's' || key === 'defaultStyle') && typeof v === 'string') || namesStyleId(v),
   );
 }
 
@@ -80,15 +84,8 @@ function sheetOf(mutation: Mutation): string | undefined {
   return p.subUnitId ?? p.sheet?.id ?? p.from?.subUnitId;
 }
 
-/** Transforms one mutation past one concurrent mutation. */
-export function transformMutation(a: Mutation, b: Mutation, side: Side): Mutation[] {
-  check(a);
-  check(b);
-  return pair(a, b, side).filter(isReal);
-}
-
 /** Whether a mutation is no ghost of an overwritten write (see cells.haunted). */
-const isReal = (mutation: Mutation) => !mutation.params.ghost;
+const isReal = (mutation: Mutation) => mutation.id !== ghostId;
 
 function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
   const self = familyOf(a);

@@ -13,5 +13,5 @@ test.each(['left', 'right'] as const)('a sheet dropped in place meets a move (%s
 });
 
 test('row, column and sheet structure converges across two clients', () => {
-  convergesOver(structuralEdit, { seeds: 40, edits: 200 });
+  convergesOver(structuralEdit, { seeds: 40, mutations: 200 });
 }, 300_000);

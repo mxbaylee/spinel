@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { transformMutation } from '../index.ts';
+import { transform } from '../index.ts';
 import type { Mutation, Side } from '../index.ts';
 import { structureIds } from '../src/structure.ts';
 import { settingIds } from '../src/settings.ts';
@@ -45,9 +45,9 @@ describe('transform', () => {
 
   test('different settings, or the same one on different sheets, both apply', () => {
     const color = m(settingIds.tabColor, { color: '#0000ff' });
-    expect(transformMutation(name('X'), color, 'right')).toEqual([name('X')]);
+    expect(transform([name('X')], [color], 'right')).toEqual([name('X')]);
     const other = { id: settingIds.name, params: { unitId: 'wb', subUnitId: 's2', name: 'Y' } };
-    expect(transformMutation(name('X'), other, 'right')).toEqual([name('X')]);
+    expect(transform([name('X')], [other], 'right')).toEqual([name('X')]);
   });
 });
 
@@ -62,14 +62,14 @@ describe('remap', () => {
   test('a column count follows column edits only, and no move', () => {
     expect(converged(columnCount(9), removeCols(1, 2)).sheet.columnCount).toBe(7);
     const insertRow = insertRows(2, 2);
-    expect(transformMutation(columnCount(9), insertRow, 'left')).toEqual([columnCount(9)]);
+    expect(transform([columnCount(9)], [insertRow], 'left')).toEqual([columnCount(9)]);
     const move = m(structureIds.moveCols, { sourceRange: cols(0, 0), targetRange: cols(3, 3) });
-    expect(transformMutation(columnCount(9), move, 'left')).toEqual([columnCount(9)]);
+    expect(transform([columnCount(9)], [move], 'left')).toEqual([columnCount(9)]);
   });
 
   test('frozen panes stay put, as Univer sends its own SetFrozen with a row edit', () => {
     const frozen = m(settingIds.frozen, { startRow: 2, startColumn: 0, ySplit: 2, xSplit: 0 });
-    expect(transformMutation(frozen, insertRows(0, 1), 'left')).toEqual([frozen]);
+    expect(transform([frozen], [insertRows(0, 1)], 'left')).toEqual([frozen]);
   });
 });
 

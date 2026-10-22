@@ -34,6 +34,11 @@ export const insertCols = (at: number, count: number) =>
   edit(structureIds.insertCol, { range: cols(at, at + count - 1) });
 export const removeCols = (at: number, count: number) =>
   edit(structureIds.removeCol, { range: cols(at, at + count - 1) });
+export const moveCols = (from: number, count: number, to: number) =>
+  edit(structureIds.moveCols, {
+    sourceRange: cols(from, from + count - 1),
+    targetRange: cols(to, to + count - 1),
+  });
 
 /** Sheet inserts, removes and reorders, as the sheet-tab commands send them. */
 export const insertSheet = (id: string, index: number) => ({

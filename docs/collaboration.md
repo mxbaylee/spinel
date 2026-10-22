@@ -217,9 +217,11 @@ mutation definitions only; `@univerjs-pro/collaboration` was never read.
   that produce one. The package README lists them.
 - **Conflicts go to the side the server accepted first**, per cell, index or
   key, so the other person's unrelated changes to the same cell survive.
-- **Senders inline styles, keep doc paragraph ids and send a removed sheet's
-  index**, because the transforms are stateless and these facts differ per
-  client or are missing from Univer's mutation.
+- **Senders inline styles, keep doc paragraph ids, send a removed sheet's
+  index, mark a shift's MoveRange and give new docs their drawing
+  containers**, because the transforms are stateless and these facts differ
+  per client or are missing from Univer's mutations (package README, "What a
+  sender must do").
 - **The server checks whole-workbook invariants.** Two edits that each keep at
   least one sheet, or one visible sheet, can together remove them all; no
   transform of the pair can see that.

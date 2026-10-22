@@ -3,10 +3,9 @@
 Operational transforms for concurrent [Univer](https://github.com/dream-num/univer)
 1.1.0 Sheet and Doc mutations, so a central sync server can merge two people's
 edits the same way on every screen. Pure TypeScript with no server, DOM or
-rendering dependency. At runtime it imports `@univerjs/core` and, to type
-cell values exactly as Univer does, `getCellType` and `getCellValue` from
-`@univerjs/sheets`; `docs` and `drawing` are peers too, because the transforms
-implement their 1.1.0 mutation formats.
+rendering dependency. At runtime it imports only `@univerjs/core`; `sheets`,
+`docs` and `drawing` are peers too, because the transforms implement their
+1.1.0 mutation formats.
 
 It is written from the open-source mutation definitions in `@univerjs/sheets`,
 `@univerjs/docs` and `@univerjs/drawing`, not from Univer's closed-source
@@ -65,13 +64,20 @@ SPN-058).
 | Merges                    | add, remove                                                                                           | Intersecting edits conflict and the winner's stands. Merges move as Univer's merge listener moves them; a merge added while someone else's row or column edit cuts through it is dropped on both screens.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | Sheet settings            | frozen panes, row and column count, default style, gridlines, name, tab colour, hidden, workbook name | Two of the same setting: the winner's value stands.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | Drawings                  | sheet drawings (insert, remove, move, z-order), background image                                      | The drawing op is transformed whole with ot-json1; the winner wins a write conflict.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| Docs                      | rich-text editing (body, headers, footers, notes, doc drawings), rename, hyperlinks                   | `JSON1` with the `TextX` subtype from `@univerjs/core`; the winner wins a write conflict.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Docs                      | rich-text editing (body, headers, footers, notes, doc drawings), rename, hyperlinks                   | `JSON1` with the `TextX` subtype from `@univerjs/core`; the winner wins a write conflict. Where both edits name one paragraph, the first accepted edit's paragraph id stands, since Univer's delete can give a paragraph the deleted one's id. Hyperlinks converge only with Spinel's patched `@univerjs/core` (below).                                                                                                                                                                                                                                                                                                                                                                      |
 
 Each rule above that was a choice, not a consequence of Univer's model, is
 marked `Decision (owner, …)` where the code makes it, with the option not
 taken and why.
 
 ## What a sender must do
+
+The server and every client run `@univerjs/core` 1.1.0 with Spinel's patch
+(`scripts/dependencies/patch-univer-core.ts`, applied on install). Stock 1.1.0
+splits a link where a style lands inside it, leaves `$n` range ids that differ
+between screens, can throw `duplicate-custom-range-id` for a single user, and
+builds a negative retain when a new link crosses a paragraph break inside an
+old one. A copy of this lib published on its own needs the same patch.
 
 The transforms are stateless, so some facts must travel with the mutation:
 
@@ -91,11 +97,17 @@ The transforms are stateless, so some facts must travel with the mutation:
 - **A doc gets its `drawings` and `drawingsOrder` containers when it is
   created.** Two first drawings made at once would otherwise each create them.
 - **A client that reloads because an incoming edit cannot pass its pending
-  ones drops a batch it already sent**, as the tests do. That is safe because
-  the server refuses that batch too: `'moved-cells'` and `'format-race'`
-  refuse a pair in either order. `'growth'` is not shown to, so for a growth
-  refusal SPN-058's client should wait for the server's answer to its batch in
-  flight before reloading.
+  edits still waits for the server's answer to the batch it already sent.**
+  The server may accept that batch: it pairs it only with the incoming edit,
+  and the refusal may have come from a later edit still in the client's
+  buffer. So the client keeps the batch it sent and reloads once the server
+  has answered it, whatever the refusal's reason.
+- **A mutation is copied before it is applied.** Univer's handlers can write
+  into the params they apply (a rich-text mutation adds `oldBody` to its
+  actions), so the copy sent or transformed must not be the one applied.
+- **A sender never sets `derived` in a mutation's params.** The transform marks
+  the retype writes it emits with it, and a marked write loses to any unmarked
+  one, so a sender's edit marked so would lose to every concurrent edit.
 
 ## Not supported
 
@@ -111,6 +123,10 @@ Rejected with `UnsupportedMutationError`:
   sheets, and every transform addresses one.
 - Formula results (`sourceFormulaData`), which each client computes locally
   and never sends.
+
+Univer also registers `sheet.mutation.empty`, which no command sends, and
+`sheet.mutation.mark-dirty-filter-change`, from filters, which Spinel does not
+load. Both are rejected like any other unsupported id.
 
 ## Known limits
 
@@ -138,20 +154,27 @@ Also:
   not fuzz-tested. Clear contents, clear formats, clear all and pasting a style
   act on the selection or clipboard, so the fuzz builds their mutations by hand
   rather than capturing the commands.
-- Refusals. Measured 2026-10-21 with captured Univer commands: 300 seeds,
+- The doc fuzz edits body text, its styles, bullets, paragraph styles,
+  hyperlinks (added and removed with Univer's own link builders), doc drawings
+  and the doc's name. Headers, footers and notes travel in the same ot-json1 op
+  and transform the same way, but no test edits them.
+- Refusals. Measured 2026-10-22 with captured Univer commands: 300 seeds,
   each run until two clients have made 40 mutations, with intent checks on.
   The `refusals on a real sheet` test in `tests/cells.test.ts` prints the
   counts when run with `REFUSAL_SEEDS=300`. An edit is one command's mutations (one
   `generate` call); a batch is a client's pending edits sent together. A
-  refusal is the server refusing a batch; a resync is a client whose pending
-  edits an incoming edit cannot pass, which resyncs before the server sees
-  them. Either drops the client's unacknowledged mutations.
+  refusal is the server refusing a batch, which drops it and the edits after
+  it. A resync is a client whose pending edits an incoming edit cannot pass: it
+  drops its unsent edits and reloads once the server has answered the batch it
+  already sent, which the server may accept or refuse. A resync whose sent
+  batch is then refused counts in both, so the third column counts such an
+  episode twice.
 
   | Edits, sheet                                        | Refused / edits     | Refused + resynced / edits | Refused / batches at the server | Mutations discarded / all made |
   | --------------------------------------------------- | ------------------- | -------------------------- | ------------------------------- | ------------------------------ |
-  | `realEdit`, `realBook()` (200×26, content in 30×10) | 213 / 8,151 = 2.61% | 689 / 8,151 = 8.45%        | 213 / 3,074 = 6.93%             | 4,185 / 12,127 = 34.51%        |
-  | `commandEdit`, the dense tests' 4×3 sheet           | 326 / 8,359 = 3.90% | 1,079 / 8,359 = 12.91%     | 326 / 2,958 = 11.02%            | 5,347 / 12,108 = 44.16%        |
-  | `commandEdit`, `realBook()`                         | 35 / 9,824 = 0.36%  | 176 / 9,824 = 1.79%        | 35 / 3,927 = 0.89%              | 1,080 / 12,058 = 8.96%         |
+  | `realEdit`, `realBook()` (200×26, content in 30×10) | 417 / 8,146 = 5.12% | 881 / 8,146 = 10.82%       | 417 / 3,361 = 12.41%            | 3,960 / 12,118 = 32.68%        |
+  | `commandEdit`, the dense tests' 4×3 sheet           | 687 / 8,317 = 8.26% | 1,420 / 8,317 = 17.07%     | 687 / 3,411 = 20.14%            | 5,140 / 12,115 = 42.43%        |
+  | `commandEdit`, `realBook()`                         | 148 / 9,001 = 1.64% | 324 / 9,001 = 3.60%        | 148 / 3,736 = 3.96%             | 1,547 / 12,070 = 12.82%        |
 
   `realEdit` (`tests/generate-cells.ts`) aims at `realBook()`'s content: 40%
   values, 10% bold, 10% drags, 40% inserts and deletes with a shift. A common
@@ -159,7 +182,7 @@ Also:
   just past the content and so cuts the area of a concurrent shift along the
   same axis in any other band. The simulated clients hold many unsent edits,
   so one refusal discards several.
-  The owner accepted these rates (chat 2026-10-21): a refused edit is visible
+  The owner accepted these rates (chat 2026-10-22): a refused edit is visible
   and its sender can redo it, while a merged one could be lost silently.
 
 - A shift is refused only against edits in the cells its MoveRange names, and
@@ -185,9 +208,11 @@ Also:
   `transform` throws `RefusedEditError` (`'growth'`) once a sequence holds
   more than 50 mutations per input, rather than running for hours: the trip
   is refused like any other race, and its sender reloads. Measured
-  2026-10-21: no trips in `tests/fuzz.test.ts` (100 seeds × 1,000 edits), and
-  1 trip each in 1,000 seeds × 40 and × 100 edits of `cellEdit` on the dense
-  tests' 4×3 sheet. The owner chose this (chat 2026-10-21) over dropping the
+  2026-10-22, counting each `'growth'` refusal at the server and each growth
+  resync at a client, so one race can count twice: no trips in
+  `tests/fuzz.test.ts` (100 seeds × 1,000 mutations); 2 in 1,000 seeds × 40 mutations
+  (both seed 893) and 3 in 1,000 seeds × 100 mutations (seeds 667 and 893) of
+  `cellEdit` on the dense tests' 4×3 sheet. The owner chose this (chat 2026-10-21) over dropping the
   retype, which could leave a value with the wrong type.
 
 ## Tests
@@ -198,8 +223,12 @@ editors use, not a re-implementation of it.
 
 - One file per family with unit tests for each transform pair.
 - `tests/fuzz.test.ts`: two simulated clients and a server with random message
-  delays make 100,000 edits from every family at once, and all three replicas
-  must end identical. A failure names its seed; `FUZZ_SEED=<n>` replays it.
+  delays make 100,000 mutations from every family at once, and all three replicas
+  must end identical, and a client must match the server whenever it has
+  nothing pending and has applied every revision. A failure names its seed;
+  `FUZZ_SEED=<n>` replays it. The comparison ignores an empty
+  `bullet.textStyle`, which Univer's own apply adds on one replica and no
+  command writes.
 - `tests/cells.test.ts` also fuzzes small sheets densely and checks intent, not
   only agreement: no token is ever in two cells, and every key of a cell (value,
   formula, rich text, each style key, number format) keeps its value, following
@@ -208,7 +237,8 @@ editors use, not a re-implementation of it.
   past before it was sent, and the server checks each mutation of a batch on
   its own, so a write the batch's later one overwrites is checked too. A client
   must also agree with the server on the keys an incoming edit wrote. A refused
-  edit resyncs its sender, as SPN-058's client will. The checks do not see
+  edit resyncs its sender, as SPN-058's client will, and a resyncing client's
+  sent batch still gets the server's answer. The checks do not see
   where a write onto an empty cell lands if both screens agree on it (see
   "Known limits").
 - `tests/ids.test.ts`: every supported id is one Univer registers, so a renamed

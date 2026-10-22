@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { transformMutation } from '../index.ts';
+import { transform } from '../index.ts';
 import type { Mutation } from '../index.ts';
 import { propertyIds } from '../src/properties.ts';
 import { withStructure } from './generate.ts';
@@ -37,7 +37,7 @@ describe('remap', () => {
 
   test('a width keyed by column is re-keyed, and a removed column drops out', () => {
     converges(width({ 1: 60, 3: 70 }, cols(1, 3)), removeCols(1, 1));
-    expect(transformMutation(width({ 1: 60 }, cols(1)), removeCols(1, 1), 'left')).toEqual([]);
+    expect(transform([width({ 1: 60 }, cols(1))], [removeCols(1, 1)], 'left')).toEqual([]);
   });
 
   test('row data and auto heights follow a move', () => {
@@ -47,7 +47,7 @@ describe('remap', () => {
 
   test('a column edit leaves row heights alone', () => {
     const mutation = height(50, rows(1));
-    expect(transformMutation(mutation, removeCols(0, 1), 'left')).toEqual([mutation]);
+    expect(transform([mutation], [removeCols(0, 1)], 'left')).toEqual([mutation]);
   });
 });
 
@@ -93,7 +93,7 @@ describe('transform', () => {
 
   test('rows and columns never conflict', () => {
     const mutation = height(50, rows(1));
-    expect(transformMutation(mutation, hideCols(cols(1)), 'right')).toEqual([mutation]);
+    expect(transform([mutation], [hideCols(cols(1))], 'right')).toEqual([mutation]);
   });
 });
 

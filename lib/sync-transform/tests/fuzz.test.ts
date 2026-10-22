@@ -22,10 +22,10 @@ const generators: Generate[] = [
 const anyEdit: Generate = (replica, next) => pick(next, generators)(replica, next);
 
 const seeds = 100;
-const editsPerSeed = 1000;
+const mutationsPerSeed = 1000;
 
-test(`${seeds * editsPerSeed} random edits from two clients converge`, () => {
+test(`${seeds * mutationsPerSeed} random mutations from two clients converge`, () => {
   const document = { workbook: seededWorkbook(), doc: seededDoc() };
-  const total = convergesOver(anyEdit, { seeds, edits: editsPerSeed, document });
-  if (!process.env.FUZZ_SEED) expect(total).toBeGreaterThanOrEqual(seeds * editsPerSeed);
+  const total = convergesOver(anyEdit, { seeds, mutations: mutationsPerSeed, document });
+  if (!process.env.FUZZ_SEED) expect(total).toBeGreaterThanOrEqual(seeds * mutationsPerSeed);
 }, 300_000);

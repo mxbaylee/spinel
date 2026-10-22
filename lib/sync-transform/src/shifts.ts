@@ -17,7 +17,7 @@ import type { Mutation } from './types.ts';
  * that axis. A shift moves cells it does not write, so its area (see
  * `areasOf`) is not a drag's.
  */
-export interface Shift {
+interface Shift {
   axis: Axis;
   kind: 'insert' | 'remove';
   at: number;

@@ -3,6 +3,7 @@ import type { IRange, IWorkbookData, Worksheet } from '@univerjs/core';
 import { checkCellValueType, getMoveRangeCommandMutations } from '@univerjs/sheets';
 import type { Mutation } from '../index.ts';
 import { cellIds } from '../src/cells.ts';
+import { structureIds } from '../src/structure.ts';
 import { capture, pick, randomSheet, seededWorkbook, wire } from './generate.ts';
 import type { Generate } from './generate.ts';
 import type { Replica } from './harness.ts';
@@ -312,14 +313,16 @@ const command: Generate = (replica, next) => {
     const redos = sent?.redos.filter(({ id }) => id.includes('.mutation.'));
     return redos?.length ? redos.map(({ id, params }) => ({ id, params: wire(params) })) : null;
   }
-  // Inserting adds lines at the end, so a small sheet stays small.
-  const down = kind === 6 && sheet.getRowCount() < 8;
-  const right = kind === 7 && sheet.getColumnCount() < 6;
-  if (down || right) {
-    return shiftCommand(replica, down ? commands.insertMoveDown : commands.insertMoveRight, {
-      ...target,
-      range,
-    });
+  // Inserting adds lines past the used range where the band's content would
+  // pass it. A sheet of 8 rows or 6 columns or more takes only an insert its
+  // used range absorbs, so a small sheet stays small and a large one shifts.
+  if (kind === 6 || kind === 7) {
+    const down = kind === 6;
+    const small = down ? sheet.getRowCount() < 8 : sheet.getColumnCount() < 6;
+    const shift = down ? commands.insertMoveDown : commands.insertMoveRight;
+    const sent = shiftCommand(replica, shift, { ...target, range });
+    const adds = down ? structureIds.insertRow : structureIds.insertCol;
+    if (small || !sent?.some(({ id }) => id === adds)) return sent;
   }
   if (kind === 8 || kind === 9) {
     return shiftCommand(replica, kind === 8 ? commands.deleteMoveUp : commands.deleteMoveLeft, {

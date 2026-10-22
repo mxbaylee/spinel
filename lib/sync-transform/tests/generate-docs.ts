@@ -1,10 +1,13 @@
 import {
   BuildTextUtils,
+  CustomRangeType,
   DrawingTypeEnum,
   getDocsEmptySnapshot,
   IUniverInstanceService,
   JSONX,
+  NamedStyleType,
   PositionedObjectLayoutType,
+  PresetListType,
   PRESERVE_INSERTED_PARAGRAPH_IDS,
   TextX,
   TextXActionType,
@@ -147,13 +150,69 @@ function updateDrawing(doc: DocumentDataModel, drawingId: string, next: () => nu
   );
 }
 
-/** Random rich-text edits and renames, built the way Univer's doc commands build them. */
+/**
+ * As the list commands: a bullet or numbered list on the paragraphs a range
+ * touches. Or as SetParagraphStyleCommand: a heading or normal text on them.
+ */
+function paragraphEdit(doc: DocumentDataModel, start: number, end: number, next: () => number) {
+  const body = doc.getBody()!;
+  const textRanges = [range(start, end)];
+  if (next() % 2 === 0) {
+    const style = {
+      namedStyleType: pick(next, [NamedStyleType.HEADING_1, NamedStyleType.NORMAL_TEXT]),
+    };
+    const textX = BuildTextUtils.paragraph.style.set({
+      textRanges,
+      segmentId: '',
+      document: doc,
+      style,
+    });
+    return JSONX.getInstance().editOp(textX.serialize());
+  }
+  const paragraphs = BuildTextUtils.range.getParagraphsInRanges(
+    textRanges,
+    body.paragraphs ?? [],
+    body.dataStream,
+  );
+  const textX = BuildTextUtils.paragraph.bullet.set({
+    paragraphs,
+    listType: pick(next, [PresetListType.BULLET_LIST, PresetListType.ORDER_LIST]),
+    listId: `l${next() % 1000}`,
+    segmentId: '',
+    document: doc,
+  });
+  return textX && JSONX.getInstance().editOp(textX.serialize());
+}
+
+/** As AddDocHyperLinkCommand (addCustomRangeBySelectionFactory): a link over a range. */
+function addLink(body: IDocumentBody, start: number, end: number, next: () => number) {
+  const textX = BuildTextUtils.customRange.add({
+    ranges: [range(start, end)],
+    rangeId: `link${next() % 1000}`,
+    rangeType: CustomRangeType.HYPERLINK,
+    properties: { url: `https://example.com/${next() % 10}` },
+    body,
+  });
+  return textX && JSONX.getInstance().editOp(textX.serialize());
+}
+
+/** As DeleteDocHyperLinkCommand (deleteCustomRangeFactory): one link removed by id. */
+function removeLink(doc: DocumentDataModel, rangeId: string) {
+  const textX = BuildTextUtils.customRange.delete({
+    documentDataModel: doc,
+    rangeId,
+    segmentId: '',
+  });
+  return textX && JSONX.getInstance().editOp(textX.serialize());
+}
+
+/** Random rich-text edits, links and renames, built the way Univer's doc commands build them. */
 export const docEdit: Generate = (replica, next) => {
   const doc = model(replica);
   const body = doc.getBody()!;
   // The final "\r\n" (paragraph and section break) always stays.
   const content = body.dataStream.length - 2;
-  const kind = next() % 10;
+  const kind = next() % 14;
   if (kind === 0) {
     return [{ id: docIds.rename, params: { unitId, name: `Doc ${next() % 100}` } }];
   }
@@ -166,8 +225,21 @@ export const docEdit: Generate = (replica, next) => {
   }
   if (kind === 9 && blocks.length > 0)
     return edit(updateDrawing(doc, pick(next, blocks).blockId, next));
+  const links = body.customRanges ?? [];
+  if (kind === 12 && links.length > 0) {
+    const actions = removeLink(doc, pick(next, links).rangeId);
+    return actions ? edit(actions) : null;
+  }
   if (content < 2) return null;
   const start = next() % content;
   const end = start + 1 + (next() % Math.min(4, content - start));
+  if (kind >= 12) {
+    const actions = addLink(body, start, end, next);
+    return actions ? edit(actions) : null;
+  }
+  if (kind >= 10) {
+    const actions = paragraphEdit(doc, start, end, next);
+    return actions ? edit(actions) : null;
+  }
   return edit(kind <= 5 ? deleteRange(doc, body, start, end) : styleRange(start, end, next));
 };

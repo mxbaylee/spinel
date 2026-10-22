@@ -38,7 +38,7 @@ impact_guest: S #   impact_operator, impact_owner, impact_collaborator, impact_g
 score: 5 # written by npm run backlog:index; never edit by hand
 depends_on: [SPN-004]
 decisions: [7] # decision issue numbers
-owner_input: "Approve the restore wording" # optional; shown in the index
+owner_input: 'Approve the restore wording' # optional; shown in the index
 ---
 
 # 🪞 SPN-012 Restore a document from yesterday's checkpoint
@@ -223,8 +223,9 @@ Grooming isn't a ticket and doesn't count toward the seven.
   base branch, so a PR can't loosen its own.
 - CI runs the PR's own copy of the checker. Review any change under
   `scripts/backlog/` or `.github/` as a change to the rules.
-- The **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests** and
-  **Playwright smoke** CI jobs are required. Playwright smoke builds the app and
+- The **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
+  **Lib tests** and **Playwright smoke** CI jobs are required. Lib tests runs
+  `lib/` on its own and passes at once when nothing it tests changed. Playwright smoke builds the app and
   checks development and production servers (SPN-001).
 
 Owner setup, once, in the repository settings:
@@ -232,8 +233,8 @@ Owner setup, once, in the repository settings:
 1. General → Pull Requests: allow only squash merging; default commit message
    "Pull request title"; delete head branches automatically.
 2. Rules → new branch ruleset for `main`: require a pull request, require the
-   status checks **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
-   and **Playwright smoke**, require branches to be up to
+   status checks **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
+   **Lib tests** and **Playwright smoke**, require branches to be up to
    date before merging, block force pushes and deletions. Up to date matters:
    the checks compare against `main` as it was when they ran.
 3. Issues → Labels: create `decision` and `needs-owner`.

@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modified for Spinel: repair paragraph REPLACE composition in open-source
- * @univerjs/core 1.1.0. No @univerjs-pro package is read or modified.
- * Source: packages/core/src/docs/data-model/text-x/{utils,action-iterator}.ts, tag v1.1.0.
+ * Modified for Spinel: repair paragraph REPLACE composition, keep custom ranges
+ * canonical after every update, and stop adding a custom range from emitting a
+ * negative retain, in open-source @univerjs/core 1.1.0. No @univerjs-pro
+ * package is read or modified.
+ * Source: packages/core/src/docs/data-model/text-x/{utils,action-iterator}.ts,
+ * packages/core/src/docs/data-model/text-x/apply-utils/{common,update-apply}.ts and
+ * packages/core/src/docs/data-model/text-x/build-utils/text-x-utils.ts, tag v1.1.0.
  */
 import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -66,29 +70,89 @@ export function patchCore(source: string, format: keyof typeof formats): string 
         ? { paragraphs: getParagraphsSlice(nextAction.body, offset, offset + length) ?? [] } : {})
     }`,
   ]);
+  // Each patch edits one function, and its targets must occur exactly once there.
+  // A region runs from `from` to `to`, or to the end of the source file `to` is in.
+  const regions: { from: string; to: string; toFileEnd?: true; replacements: string[][] }[] = [
+    {
+      from: 'function composeBody(',
+      to: 'var ActionIterator = class',
+      toFileEnd: true,
+      replacements,
+    },
+    {
+      from: 'function mergeContinuousRanges(',
+      to: 'function splitCustomRangesByIndex(',
+      replacements: [
+        [
+          'if (ranges.length <= 1) return ranges;',
+          `// Modified for Spinel: one range is renamed to its root id like any other.
+\tif (ranges.length === 0) return ranges;`,
+        ],
+      ],
+    },
+    {
+      from: 'function updateCustomRanges(',
+      to: 'function updateCustomDecorations(',
+      replacements: [
+        [
+          'if (!updateDataCustomRanges) return [];',
+          `// Modified for Spinel: a retain without ranges still splits them at its
+\t// edges above, so join the pieces again, as a retain with ranges does.
+\tif (!updateDataCustomRanges) {
+\t\tbody.customRanges = mergeContinuousRanges(body.customRanges);
+\t\treturn [];
+\t}`,
+        ],
+      ],
+    },
+    {
+      from: 'function addCustomRangeTextX(',
+      to: 'function isAtomicContainerDeleted(',
+      replacements: [
+        [
+          'const rangeStartIndex = Math.min(',
+          `// Modified for Spinel: each piece grows to swallow the ranges it meets,
+\t\t\t// so the piece before a paragraph can already cover an existing range
+\t\t\t// that runs past it. The next piece met the same range and started
+\t\t\t// back at its start, before the cursor: a negative retain. It now
+\t\t\t// starts at the cursor, and is dropped when nothing is left of it.
+\t\t\tconst rangeStartIndex = Math.max(cursor, Math.min(`,
+        ],
+        [
+          '_relativeCustomRanges.startIndex) ?? Infinity, startIndex);',
+          '_relativeCustomRanges.startIndex) ?? Infinity, startIndex));',
+        ],
+        [
+          '_relativeCustomRanges2.endIndex) ?? -Infinity, endIndex);',
+          `_relativeCustomRanges2.endIndex) ?? -Infinity, endIndex);
+\t\t\tif (rangeEndIndex < rangeStartIndex) return;`,
+        ],
+      ],
+    },
+  ];
   // Idempotent, but never silently patch a different upstream version or local edit.
-  const original = replacements.reduce(
-    (text, [old, replacement]) => text.replace(replacement, old),
-    source,
-  );
+  const original = regions
+    .flatMap((region) => region.replacements)
+    .reduce((text, [old, replacement]) => text.replace(replacement, old), source);
   if (createHash('sha256').update(original).digest('hex') !== spec.sha256)
     throw new Error(
-      `Unrecognized @univerjs/core ${format} build; review the paragraph patch before installing.`,
+      `Unrecognized @univerjs/core ${format} build; review the core patch before installing.`,
     );
-  const start = original.indexOf('function composeBody(');
-  const end = original.indexOf(
-    '//#endregion',
-    original.indexOf('var ActionIterator = class', start),
-  );
-  const body = replacements.reduce(
-    (text, [old, replacement]) => {
-      if (text.split(old).length !== 2)
-        throw new Error('Paragraph patch target must occur exactly once.');
-      return text.replace(old, replacement);
-    },
-    original.slice(start, end),
-  );
-  return original.slice(0, start) + body + original.slice(end);
+  return regions.reduce((text, { from, to, toFileEnd, replacements: edits }) => {
+    const start = text.indexOf(from);
+    const stop = text.indexOf(to, start);
+    const end = toFileEnd ? text.indexOf('//#endregion', stop) : stop;
+    if (start < 0 || stop < 0 || end < 0) throw new Error(`Core patch region ${from} not found.`);
+    const body = edits.reduce(
+      (part, [old, replacement]) => {
+        if (part.split(old).length !== 2)
+          throw new Error('Core patch target must occur exactly once.');
+        return part.replace(old, replacement);
+      },
+      text.slice(start, end),
+    );
+    return text.slice(0, start) + body + text.slice(end);
+  }, original);
 }
 
 export async function patchInstalledCore(root: string) {

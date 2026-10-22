@@ -1,6 +1,6 @@
 import type { IRange } from '@univerjs/core';
 import { describe, expect, test } from 'vitest';
-import { transform, transformMutation } from '../index.ts';
+import { transform } from '../index.ts';
 import type { Mutation, Side } from '../index.ts';
 import { mergeIds } from '../src/merges.ts';
 import { insertCols, insertRows, moveRows, removeRows, target } from './edits.ts';
@@ -35,7 +35,7 @@ describe('remap', () => {
   test('a merge after an insert moves down; one it cuts through is dropped on both sides', () => {
     const cut = add(box(4, 0, 5, 1), box(1, 2, 3, 3));
     expect(converged(cut, insertRows(2, 2))).toEqual([box(6, 0, 7, 1)]);
-    expect(transformMutation(insertRows(2, 2), cut, 'left')).toEqual([
+    expect(transform([insertRows(2, 2)], [cut], 'left')).toEqual([
       remove(box(1, 2, 3, 3)),
       insertRows(2, 2),
     ]);
@@ -67,9 +67,9 @@ describe('remap', () => {
 
   test('a removal range keeps hitting what it did: widened by an insert, trimmed by a remove or move', () => {
     const removal = remove(box(2, 0, 4, 1));
-    expect(transformMutation(removal, insertRows(3, 2), 'left')).toEqual([remove(box(2, 0, 6, 1))]);
-    expect(transformMutation(removal, removeRows(3, 3), 'left')).toEqual([remove(box(2, 0, 2, 1))]);
-    expect(transformMutation(removal, removeRows(1, 5), 'left')).toEqual([]);
+    expect(transform([removal], [insertRows(3, 2)], 'left')).toEqual([remove(box(2, 0, 6, 1))]);
+    expect(transform([removal], [removeRows(3, 3)], 'left')).toEqual([remove(box(2, 0, 2, 1))]);
+    expect(transform([removal], [removeRows(1, 5)], 'left')).toEqual([]);
     // The merge below the removed rows moves up into the removal's place, and survives.
     const setup = [add(box(2, 0, 4, 1), box(6, 0, 6, 1))];
     expect(converged(removal, removeRows(3, 2), setup)).toEqual([box(4, 0, 4, 1)]);
@@ -77,7 +77,7 @@ describe('remap', () => {
 
   test('a merge squeezed to one cell is not added, as the listener drops it', () => {
     const squeezed = box(2, 0, 2, 0);
-    expect(transformMutation(add(squeezed), insertRows(0, 1), 'left')).toEqual([]);
+    expect(transform([add(squeezed)], [insertRows(0, 1)], 'left')).toEqual([]);
   });
 });
 
@@ -113,10 +113,10 @@ describe('transform', () => {
 
   test('disjoint adds and removes, and two removes, pass through', () => {
     const a = add(box(0, 0, 1, 1));
-    expect(transformMutation(a, remove(box(5, 5, 6, 5)), 'right')).toEqual([a]);
-    expect(transformMutation(a, add(box(3, 3, 4, 4)), 'right')).toEqual([a]);
+    expect(transform([a], [remove(box(5, 5, 6, 5))], 'right')).toEqual([a]);
+    expect(transform([a], [add(box(3, 3, 4, 4))], 'right')).toEqual([a]);
     const r = remove(box(0, 0, 1, 1));
-    expect(transformMutation(r, remove(box(0, 0, 2, 2)), 'right')).toEqual([r]);
+    expect(transform([r], [remove(box(0, 0, 2, 2))], 'right')).toEqual([r]);
   });
 });
 

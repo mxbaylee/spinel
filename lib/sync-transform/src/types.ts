@@ -19,14 +19,6 @@ export function flip(side: Side): Side {
   return side === 'left' ? 'right' : 'left';
 }
 
-/**
- * Transforms `a` so it applies after `b`, where both were made from the same
- * document. For every pair, applying `b` then `transform(a, b, side)` must give
- * the same document as applying `a` then `transform(b, a, flip(side))`.
- * Returns zero or more mutations: an edit can vanish, or split in two.
- */
-export type PairTransform = (a: Mutation, b: Mutation, side: Side) => Mutation[];
-
 /** Thrown for a mutation with no transform, so it is never merged by guesswork. */
 export class UnsupportedMutationError extends Error {
   readonly mutationId: string;

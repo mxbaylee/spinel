@@ -18,10 +18,17 @@ type Matrix = Record<number, Record<number, unknown>>;
 export type Cell = { row: number; col: number };
 
 /**
+ * The id of a ghost (see `haunted`): never a Univer mutation, so `check`
+ * rejects one sent in, and `transform` drops every one from what it returns.
+ */
+export const ghostId = 'sync-transform.cells.ghost';
+const isGhost = (mutation: Mutation) => mutation.id === ghostId;
+
+/**
  * One cell a mutation writes. `value` is the cell data (SetRangeValues and
  * MoveRange), the pattern id (SetNumfmt) or null (RemoveNumfmt).
  */
-export interface Write extends Cell {
+interface Write extends Cell {
   value: any;
 }
 
@@ -35,7 +42,7 @@ interface Piece {
   value: unknown;
 }
 
-export const cellKey = (cell: Cell) => `${cell.row}:${cell.col}`;
+const cellKey = (cell: Cell) => `${cell.row}:${cell.col}`;
 
 function matrixWrites(matrix: Matrix): Write[] {
   return Object.entries(matrix ?? {}).flatMap(([row, columns]) =>
@@ -70,7 +77,7 @@ export function writesOf(mutation: Mutation): Write[] {
 
 function cellWrites(mutation: Mutation): Write[] {
   const p = mutation.params;
-  if (mutation.id === cellIds.setRangeValues) {
+  if (mutation.id === cellIds.setRangeValues || isGhost(mutation)) {
     return matrixWrites(p.cellValue);
   }
   if (mutation.id === cellIds.setNumfmt) {
@@ -106,7 +113,9 @@ function rebuild(mutation: Mutation, writes: Write[]): Mutation[] {
   const withParams = (params: Record<string, unknown>) => [
     { id: mutation.id, params: { ...p, ...params } },
   ];
-  if (mutation.id === cellIds.setRangeValues) return withParams({ cellValue: toMatrix(writes) });
+  if (mutation.id === cellIds.setRangeValues || isGhost(mutation)) {
+    return withParams({ cellValue: toMatrix(writes) });
+  }
   if (mutation.id === cellIds.removeNumfmt) return withParams({ ranges: rectangles(writes) });
   // SetNumfmt: each pattern id's cells as ranges.
   const patternIds = [...new Set(writes.map((write) => write.value as string))];
@@ -303,6 +312,13 @@ type Plan = { layer: 'drop' } | { layer: 'alone' | 'merged' | 'whole' | 'replay'
  * with an effect it leaves (rich text a style restyled, which a number format
  * or an override leaves; a text format, which types the next value as text,
  * losing what it was; a type forced with a value, which sticks to the next).
+ *
+ * Decision (owner, chat 2026-10-22): plan the merged write per cell. Not taken:
+ * always landing the loser whole and replaying the winner's writes to shared
+ * cells after it, with no planner. It still needs rules for which format and
+ * value pairs Univer types differently in each order, refuses those (1.3 to
+ * 2.7 times as many format races), and doubles a write per replay, so a run of
+ * writes to one cell reaches the growth cap.
  */
 function plan(
   a: Mutation,
@@ -345,30 +361,6 @@ function plan(
   return { layer: whole ? 'whole' : 'merged', write: { ...kept, value } };
 }
 
-/** Adjacent SetRangeValues with the same flags and no cell in common, as one. */
-function coalesce(mutations: Mutation[]): Mutation[] {
-  const result: Mutation[] = [];
-  for (const mutation of mutations) {
-    const previous = result.at(-1);
-    const joins =
-      previous &&
-      isValues(previous) &&
-      isValues(mutation) &&
-      !previous.params.isOverrideStyle === !mutation.params.isOverrideStyle &&
-      !previous.params.derived === !mutation.params.derived &&
-      previous.params.subUnitId === mutation.params.subUnitId &&
-      !writesOf(mutation).some(
-        (write) => previous.params.cellValue[write.row]?.[write.col] !== undefined,
-      );
-    if (!joins) {
-      result.push(mutation);
-      continue;
-    }
-    result.splice(-1, 1, ...rebuild(previous, [...writesOf(previous), ...writesOf(mutation)]));
-  }
-  return result;
-}
-
 /** `a` past `b` where both write some cells; `b` wins them on the right. */
 function conflict(a: Mutation, b: Mutation, side: Side): Mutation[] {
   if (side === 'left') return [a, ...retype(a, b, side, [a])];
@@ -408,7 +400,7 @@ function conflict(a: Mutation, b: Mutation, side: Side): Mutation[] {
     ...values(layers.whole, true),
     ...rebuild(b, replay),
   ];
-  return coalesce([...landed, ...retype(a, b, side, landed)]);
+  return [...landed, ...retype(a, b, side, landed)];
 }
 
 const typeOnly = (write: Write) => write.value !== null && Object.keys(write.value).join() === 't';
@@ -428,10 +420,11 @@ export function meets(a: Mutation, b: Mutation): boolean {
  * type. RemoveNumfmt's companion write is the `t`-only kind. Forced text
  * sticks to the next value instead, and RemoveNumfmt forces it only where the
  * cell holds no value, which a concurrent write to the cell may change, so any
- * such write cancels it.
+ * such write cancels it. Returns `mutation` without the writes `other`
+ * cancels, or undefined when it cancels them all.
  */
-function cancelled(mutation: Mutation, other: Mutation): Mutation[] {
-  if (!isValues(mutation)) return [mutation];
+function cancelled(mutation: Mutation, other: Mutation): Mutation | undefined {
+  if (!isValues(mutation)) return mutation;
   const touched = new Map(writesOf(other).map((write) => [cellKey(write), piecesOf(other, write)]));
   const cancels = (write: Write) => {
     const theirs = touched.get(cellKey(write));
@@ -444,8 +437,8 @@ function cancelled(mutation: Mutation, other: Mutation): Mutation[] {
     ? rebuild(
         mutation,
         writes.filter((write) => !cancels(write)),
-      )
-    : [mutation];
+      )[0]
+    : mutation;
 }
 
 function transform(a: Mutation, b: Mutation, rank: Side): Mutation[] {
@@ -454,7 +447,7 @@ function transform(a: Mutation, b: Mutation, rank: Side): Mutation[] {
     if (movesMeet(a, b)) throw new RefusedEditError('moved-cells');
     return [a];
   }
-  if (a.params.ghost || b.params.ghost || !meets(a, b)) return [a];
+  if (isGhost(a) || isGhost(b) || !meets(a, b)) return [a];
   // Decision (owner, chat 2026-10-20): a number-format change and a concurrent
   // write to one of its cells that sets no value, such as a style or a retype,
   // are refused. A write under text format '@' turns the cell's value to text,
@@ -465,8 +458,8 @@ function transform(a: Mutation, b: Mutation, rank: Side): Mutation[] {
   if (formatRace(a, b) || formatRace(b, a)) throw new RefusedEditError('format-race');
   // A retype replays content already written, so it loses to any edit of the cell.
   const side = !a.params.derived === !b.params.derived ? rank : a.params.derived ? 'right' : 'left';
-  const [mine] = cancelled(a, b);
-  const [theirs] = cancelled(b, a);
+  const mine = cancelled(a, b);
+  const theirs = cancelled(b, a);
   if (!mine || !theirs) return haunted(a, mine ? [mine] : []);
   return haunted(a, conflict(mine, theirs, side));
 }
@@ -476,8 +469,10 @@ function transform(a: Mutation, b: Mutation, rank: Side): Mutation[] {
  * writes, which a concurrent write overwrote. Those writes still meet any move
  * later in the other sequence, as a shift command's own clear of the cells it
  * deletes comes before its move, so the move refuses them as it would refuse
- * `a` (see shifts.movesMeet). A ghost writes nothing and meets only moves;
- * `transform` drops it from what it returns.
+ * `a` (see shifts.movesMeet). A ghost is a mutation of its own id,
+ * `ghostId`, with the lost cells as a SetRangeValues would name them, so no
+ * flag in a Univer mutation's params can be mistaken for one. It writes
+ * nothing and meets only moves; `transform` drops it from what it returns.
  */
 function haunted(a: Mutation, result: Mutation[]): Mutation[] {
   const kept = new Set(result.flatMap((mutation) => writesOf(mutation).map(cellKey)));
@@ -485,11 +480,7 @@ function haunted(a: Mutation, result: Mutation[]): Mutation[] {
   if (lost.length === 0) return result;
   const { unitId, subUnitId } = a.params;
   const cellValue = toMatrix(lost.map((write) => ({ ...write, value: null })));
-  const ghost = {
-    id: cellIds.setRangeValues,
-    params: { unitId, subUnitId, cellValue, ghost: true },
-  };
-  return [...result, ghost];
+  return [...result, { id: ghostId, params: { unitId, subUnitId, cellValue } }];
 }
 
 /**

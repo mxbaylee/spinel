@@ -101,8 +101,46 @@ jobs:
           package-manager-cache: false
       - name: Install
         run: npm ci
+      # lib/ runs in its own job below.
       - name: Unit tests
-        run: npm test
+        run: npm test -- --exclude 'lib/**'
+
+  # lib/'s seeded fuzz runs about 5 minutes on a laptop, serially (maxWorkers:
+  # 1), so it gets its own job and time. The job always runs, since the ruleset
+  # requires its check, but passes at once when nothing it tests changed.
+  # Owner, chat 2026-10-22.
+  lib-tests:
+    name: Lib tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Changes
+        id: changes
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -z "${BASE//0/}" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null ||
+            ! git diff --quiet "$BASE" HEAD -- lib scripts/dependencies package.json \
+              package-lock.json vitest.config.ts tsconfig.json .nvmrc .github/workflows/ci.yml; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Nothing lib/ depends on changed since $BASE."
+          fi
+      - if: steps.changes.outputs.run
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install
+        if: steps.changes.outputs.run
+        run: npm ci
+      - name: Lib tests
+        if: steps.changes.outputs.run
+        run: npx vitest run lib
 
   playwright-run:
     name: Playwright smoke (${{ matrix.project }}${{ matrix.shard && format(' {0}', matrix.shard) || '' }})

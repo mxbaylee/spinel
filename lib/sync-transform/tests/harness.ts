@@ -116,12 +116,25 @@ export class Replica {
 /**
  * Univer leaves adjacent runs of one style split or joined, and creates empty
  * collections lazily, depending on the order edits arrive in.
+ *
+ * It also gives a bulleted paragraph `bullet.textStyle: {}` when it applies a
+ * merging retain to it (TextX's updateParagraphs fills in a default bullet),
+ * so whether one is there depends on whether a paragraph style or a bullet
+ * landed last. No op carries it, so a transform cannot strip it, and it is
+ * benign: Univer's renderer spreads the bullet's text style over the
+ * paragraph's, bullet.set copies it only as it is, and no command writes one
+ * that is not empty. So an empty one counts as none.
  */
 function normalizeDoc(snapshot: IDocumentData) {
   if (!snapshot.body) return snapshot;
   const body: Record<string, unknown> = {
     ...snapshot.body,
     textRuns: normalizeTextRuns(Tools.deepClone(snapshot.body.textRuns ?? [])),
+    paragraphs: snapshot.body.paragraphs?.map(({ bullet, ...paragraph }) => {
+      if (!bullet) return paragraph;
+      const { textStyle, ...rest } = bullet;
+      return { ...paragraph, bullet: isEmptyObject(textStyle) ? rest : bullet };
+    }),
   };
   for (const [key, value] of Object.entries(body)) {
     if (Array.isArray(value) && value.length === 0) delete body[key];

@@ -57,7 +57,18 @@ interface Client extends Site {
   inbox: ('ack' | number)[];
   /** Edits sent but not yet received by the server, in order. */
   outbox: { revision: number; parts: Part[] }[];
+  /** Resyncing: it waits for the server's answer to the batch it sent, then reloads. */
+  waiting: boolean;
 }
+
+/**
+ * One step of a scripted run: a client makes `edit`, or sends its pending
+ * edits, or the server takes the client's next batch, or the client its next
+ * message.
+ */
+export type Step = { client: number } & (
+  { edit: Mutation[] } | { take: 'send' | 'server' | 'client' }
+);
 
 /** A cell, as `sheet:row:col`. */
 const at = (sheet: string, row: number, col: number) => `${sheet}:${row}:${col}`;
@@ -218,6 +229,14 @@ function compare(x?: Keys, y?: Keys, where = '', named: (key: string) => boolean
   }
 }
 
+/** `value` as JSON with each object's keys sorted, since replicas that agree can order them apart. */
+const sortedJson = (value: unknown) =>
+  JSON.stringify(value, (_key, v) =>
+    v && typeof v === 'object' && !Array.isArray(v)
+      ? Object.fromEntries(Object.entries(v).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
+      : v,
+  );
+
 /** What `simulate` counts (see its doc). */
 export type Stats = ReturnType<typeof newStats>;
 export const newStats = () => ({
@@ -255,7 +274,10 @@ function refusedBothWays(error: unknown, a: Mutation[], b: Mutation[], side: Sid
  * An edit the transforms refuse (RefusedEditError) is refused as a server
  * would: its sender discards its pending edits and reloads the server's
  * document, and `stats.refused` counts it. A client that cannot take an
- * incoming edit past its pending ones resyncs the same way.
+ * incoming edit past its pending ones resyncs too, as the README's sender
+ * rules say: it discards the edits it has not sent, and the batch it sent
+ * still reaches the server, which accepts or refuses it on its own, and the
+ * client reloads once it has the answer.
  *
  * With `intent`, for cell edits only, it also checks the edits keep what they
  * should. Each replica holds every key of every cell (see `stateOf`) with
@@ -275,6 +297,10 @@ function refusedBothWays(error: unknown, a: Mutation[], b: Mutation[], side: Sid
  * A retype (`derived`) writes again what was written and loses to any edit,
  * so it writes no key.
  *
+ * Whether or not `intent` is set, a client that is caught up, with nothing
+ * pending or on its way and every accepted edit applied, must hold the
+ * server's document, not only at the end.
+ *
  * `stats` counts the edits made (`edits`, one per `generate` call, and
  * `mutations`), the batches that reached the server (`batches`), those it
  * accepted and refused, the clients that resynced because an incoming edit
@@ -284,11 +310,14 @@ function refusedBothWays(error: unknown, a: Mutation[], b: Mutation[], side: Sid
 export function simulate(options: {
   seed: number;
   document: { workbook?: IWorkbookData; doc?: IDocumentData };
-  edits: number;
+  /** Runs until the clients have made this many mutations. */
+  mutations: number;
   generate: Generate;
   /** The most mutations a transform may return per mutation it transforms. */
   budget?: number;
   intent?: boolean;
+  /** Steps to run before the random ones. */
+  script?: Step[];
 }) {
   const next = random(options.seed);
   let largest = 0;
@@ -401,6 +430,7 @@ export function simulate(options: {
     buffer: [],
     inbox: [],
     outbox: [],
+    waiting: false,
   }));
   /** The server's keys after the first `revision` edits. */
   const stateAt = (revision: number) => (revision === 0 ? seeded : history[revision - 1].after);
@@ -412,11 +442,11 @@ export function simulate(options: {
     client.outbox.push({ revision: client.revision, parts: client.inflight });
   };
   /**
-   * Refuses `client`'s pending edits: it discards them and reloads the
-   * server's document, which holds every message still on its way to it. The
-   * document is rebuilt from the server's history, as the server's was.
+   * Discards `client`'s pending edits and reloads the server's document, which
+   * holds every message still on its way to it. The document is rebuilt from
+   * the server's history, as the server's was.
    */
-  const resync = (client: Client) => {
+  const reload = (client: Client) => {
     // An acknowledged batch is in the server's history, so the reload keeps it.
     const acknowledged = client.inbox.includes('ack');
     const inflight = acknowledged ? [] : (client.inflight ?? []);
@@ -425,9 +455,21 @@ export function simulate(options: {
     client.replica = new Replica(options.document);
     for (const { mutations } of history) client.replica.apply(mutations);
     Object.assign(client, { revision: history.length, inflight: null, buffer: [] });
-    client.facts = server.facts;
+    Object.assign(client, { facts: server.facts, waiting: false });
     client.inbox.length = 0;
-    client.outbox.length = 0;
+  };
+  /**
+   * Refuses `client`'s pending edits. A batch it sent that the server has not
+   * yet received still reaches it, and may be accepted: the server pairs it
+   * only with the edits accepted since, and what failed here may be a later
+   * edit. So the client discards only its unsent edits now, ignores the edits
+   * that arrive meanwhile, and reloads on the server's answer.
+   */
+  const resync = (client: Client) => {
+    if (client.outbox.length === 0) return reload(client);
+    stats.discarded += flat(client.buffer).length;
+    Object.assign(client, { buffer: [], waiting: true });
+    client.inbox.length = 0;
   };
   /**
    * Runs `transforms`, or resyncs `client` if they refuse, counted as a
@@ -469,8 +511,32 @@ export function simulate(options: {
     history.push({ mutations: flat(incoming), touched, after });
     for (const client of clients) client.inbox.push(client === from ? 'ack' : index);
   };
+  /** The server's snapshot, taken once per revision, as JSON and as `sortedJson` once needed. */
+  let latest: { revision: number; snapshot: unknown; json: string; sorted?: string } | null = null;
+  /**
+   * Expects `client`, if it is caught up (no edit pending or on its way, and
+   * every accepted edit applied), to hold the server's document. Plain JSON
+   * is the quick check, and sorted JSON the next, before a deep comparison.
+   */
+  const caughtUp = (client: Client, where: string) => {
+    if (client.inflight || client.buffer.length > 0 || client.revision !== history.length) return;
+    if (latest?.revision !== history.length) {
+      const snapshot = server.replica.snapshot();
+      latest = { revision: history.length, snapshot, json: JSON.stringify(snapshot) };
+    }
+    const here = client.replica.snapshot();
+    if (JSON.stringify(here) === latest.json) return;
+    latest.sorted ??= sortedJson(latest.snapshot);
+    if (sortedJson(here) === latest.sorted) return;
+    expect(here, `${where}, caught up`).toEqual(latest.snapshot);
+  };
   const receiveAtClient = (client: Client) => {
     const message = client.inbox.shift()!;
+    if (client.waiting) {
+      // Its batch was accepted, so the reload keeps it. A refusal reloads at the server.
+      if (message === 'ack') reload(Object.assign(client, { inflight: null }));
+      return;
+    }
     const where = `client ${clients.indexOf(client)} at ${client.revision++}`;
     if (message === 'ack') {
       client.inflight = null;
@@ -480,6 +546,7 @@ export function simulate(options: {
           compare(here.get(cell), there.get(cell), `${where}, acknowledged: ${cell}`);
         }
       }
+      caughtUp(client, where);
       send(client);
       return;
     }
@@ -517,28 +584,41 @@ export function simulate(options: {
       const keys = stateAt(message + 1).get(cell);
       compare(landed.after.get(here), keys, `${where}: ${here}`, (key) => covered(mine, here, key));
     }
+    caughtUp(client, where);
   };
 
-  let edits = 0;
-  while (edits < options.edits) {
+  let mutationsMade = 0;
+  /** Lands an edit `client` made on it and buffers it. */
+  const edit = (client: Client, mutations: Mutation[]) => {
+    const name = clients.indexOf(client);
+    for (const mutation of mutations) {
+      const [label, changed] = [`${name}:${made++}`, new Set<string>()];
+      changes.set(label, changed);
+      land(client, [mutation], label, `client ${name}`, ({ value }, _cell, key) => {
+        changed.add(`${key}|${value}`);
+        return true;
+      });
+      client.buffer.push({ label, revision: client.revision, mutations: [mutation] });
+    }
+    mutationsMade += mutations.length;
+    stats.edits++;
+    stats.mutations += mutations.length;
+  };
+  for (const step of options.script ?? []) {
+    const client = clients[step.client];
+    if ('edit' in step) edit(client, step.edit);
+    else if (step.take === 'send') send(client);
+    else if (step.take === 'server') receiveAtServer(client);
+    else receiveAtClient(client);
+  }
+  while (mutationsMade < options.mutations) {
     const client = clients[next() % 2];
     const roll = next() % 10;
     if (roll < 4) {
-      const mutations = options.generate(client.replica, next);
+      // A client waiting to reload makes no edits.
+      const mutations = client.waiting ? null : options.generate(client.replica, next);
       if (!mutations || mutations.length === 0) continue;
-      const name = clients.indexOf(client);
-      for (const mutation of mutations) {
-        const [label, changed] = [`${name}:${made++}`, new Set<string>()];
-        changes.set(label, changed);
-        land(client, [mutation], label, `client ${name}`, ({ value }, _cell, key) => {
-          changed.add(`${key}|${value}`);
-          return true;
-        });
-        client.buffer.push({ label, revision: client.revision, mutations: [mutation] });
-      }
-      edits += mutations.length;
-      stats.edits++;
-      stats.mutations += mutations.length;
+      edit(client, mutations);
       if (next() % 2 === 0) send(client);
     } else if (roll < 7 && client.outbox.length > 0) {
       receiveAtServer(client);
@@ -560,7 +640,7 @@ export function simulate(options: {
   return {
     server: server.replica,
     clients: clients.map((client) => client.replica),
-    edits,
+    mutations: mutationsMade,
     largest,
     stats,
   };
@@ -576,20 +656,17 @@ export function convergesOver(
   generate: Generate,
   {
     seeds,
-    edits = 300,
+    mutations = 300,
     document = { workbook: seededWorkbook() },
     budget,
-    seconds,
     intent,
     stats,
   }: {
     seeds: number;
-    edits?: number;
+    mutations?: number;
     document?: { workbook?: IWorkbookData; doc?: IDocumentData };
     /** As simulate's. */
     budget?: number;
-    /** The longest one seed may take. */
-    seconds?: number;
     /** As simulate's. */
     intent?: boolean;
     /** Summed over the seeds. */
@@ -601,19 +678,16 @@ export function convergesOver(
   let total = 0;
   for (const seed of list) {
     let run: ReturnType<typeof simulate>;
-    const start = Date.now();
     try {
-      run = simulate({ seed, document, edits, generate, budget, intent });
+      run = simulate({ seed, document, mutations, generate, budget, intent });
     } catch (error) {
       // Univer rejecting a transformed mutation fails here, not at the comparison.
       throw new Error(`seed ${seed}: ${(error as Error).message}`, { cause: error });
     }
-    const took = (Date.now() - start) / 1000;
-    if (seconds !== undefined && took > seconds) throw new Error(`seed ${seed} took ${took}s`);
     const expected = run.server.snapshot();
     for (const client of run.clients) expect(client.snapshot(), `seed ${seed}`).toEqual(expected);
     for (const replica of [run.server, ...run.clients]) replica.univer.dispose();
-    total += run.edits;
+    total += run.mutations;
     for (const key of Object.keys(run.stats) as (keyof Stats)[]) {
       if (stats) stats[key] += run.stats[key];
     }

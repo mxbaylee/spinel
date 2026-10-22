@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { RefusedEditError, transform, transformMutation } from '../index.ts';
+import { RefusedEditError, transform } from '../index.ts';
 import type { Mutation, Side } from '../index.ts';
 import { cellIds } from '../src/cells.ts';
 import {
@@ -15,7 +15,8 @@ import {
 import { lineEdit, seededWorkbook, withStructure } from './generate.ts';
 import { converges, Replica } from './harness.ts';
 import { insertCols, insertRows, moveRows, removeCols, removeRows } from './edits.ts';
-import { convergesOver, newStats } from './simulate.ts';
+import { convergesOver, newStats, simulate } from './simulate.ts';
+import type { Step } from './simulate.ts';
 
 const unitId = 'wb';
 const subUnitId = 's1';
@@ -169,9 +170,9 @@ describe('concurrent cell writes', () => {
   });
 
   test('a losing number format keeps its other cells, regrouped', () => {
-    const [kept] = transformMutation(
-      setNumfmt('0%', [range(0, 0, 1, 1)]),
-      cell(0, 0, { s: { n: null }, v: 'x' }),
+    const [kept] = transform(
+      [setNumfmt('0%', [range(0, 0, 1, 1)])],
+      [cell(0, 0, { s: { n: null }, v: 'x' })],
       'right',
     );
     expect(kept.params.values.k.ranges).toEqual([range(0, 1), range(1, 0, 1, 1)]);
@@ -281,7 +282,7 @@ describe('a drag against a concurrent row edit', () => {
 
 describe('rows and columns move under cell edits', () => {
   const remapped = (edit: Mutation, structural: Mutation) => {
-    const [result] = transformMutation(edit, structural, 'left');
+    const [result] = transform([edit], [structural], 'left');
     merged(edit, structural);
     return result;
   };
@@ -295,7 +296,7 @@ describe('rows and columns move under cell edits', () => {
   test('a removed row drops its cells, and the edit when none are left', () => {
     const write = set({ 3: { 0: { v: 'x' } }, 4: { 0: { v: 'y' } } });
     expect(remapped(write, removeRows(3, 1)).params.cellValue).toEqual({ 3: { 0: { v: 'y' } } });
-    expect(transformMutation(cell(3, 0, { v: 'x' }), removeRows(2, 2), 'left')).toEqual([]);
+    expect(transform([cell(3, 0, { v: 'x' })], [removeRows(2, 2)], 'left')).toEqual([]);
   });
 
   test('a row move carries the cell with it', () => {
@@ -339,7 +340,7 @@ describe('a drag against a concurrent edit of its cells', () => {
           [edit, drag],
         ]) {
           expect(() => transform([a], [b], side)).toThrow(RefusedEditError);
-          expect(() => transformMutation(a, b, side)).toThrow(
+          expect(() => transform([a], [b], side)).toThrow(
             expect.objectContaining({ reason: 'moved-cells' }),
           );
         }
@@ -350,8 +351,8 @@ describe('a drag against a concurrent edit of its cells', () => {
   test('an edit of another cell passes, both ways and on either side', () => {
     const edit = cell(2, 2, { v: 'x' });
     for (const side of sides) {
-      expect(transformMutation(drag, edit, side)).toEqual([drag]);
-      expect(transformMutation(edit, drag, side)).toEqual([edit]);
+      expect(transform([drag], [edit], side)).toEqual([drag]);
+      expect(transform([edit], [drag], side)).toEqual([edit]);
       const data = merged(drag, edit, side);
       expect([data[5][5].v, data[2][2].v, data[0]?.[0]]).toEqual(['s1:0:0', 'x', undefined]);
     }
@@ -386,7 +387,7 @@ describe('a number format against a write to its cell that sets no value', () =>
         [percent, bold],
       ]) {
         expect(() => transform([a], [b], side)).toThrow(RefusedEditError);
-        expect(() => transformMutation(a, b, side)).toThrow(
+        expect(() => transform([a], [b], side)).toThrow(
           expect.objectContaining({ reason: 'format-race' }),
         );
       }
@@ -403,8 +404,8 @@ describe('a number format against a write to its cell that sets no value', () =>
   test('a style write to another cell passes', () => {
     const bold = cell(0, 0, { s: { bl: 1 } });
     for (const side of sides) {
-      expect(transformMutation(bold, percent, side)).toEqual([bold]);
-      expect(transformMutation(percent, bold, side)).toEqual([percent]);
+      expect(transform([bold], [percent], side)).toEqual([bold]);
+      expect(transform([percent], [bold], side)).toEqual([percent]);
       const data = merged(bold, percent, side, setup);
       expect([data[0][0].s.bl, data[2][1].s.n]).toEqual([1, { pattern: '0%' }]);
     }
@@ -448,8 +449,8 @@ describe('a shift against a concurrent edit', () => {
       const edits = [cell(5, 2, { v: 'x' }), cell(0, 1, { v: 'y' })];
       const move = moveOf(deleteUp());
       for (const edit of edits) {
-        expect(transformMutation(edit, move, side)).toEqual([edit]);
-        expect(transformMutation(move, edit, side)).toEqual([move]);
+        expect(transform([edit], [move], side)).toEqual([edit]);
+        expect(transform([move], [edit], side)).toEqual([move]);
       }
       const data = cells(deleteUp(), edits, side);
       expect([data[5][2].v, data[0][1].v, data[1][1].v]).toEqual(['x', 'y', 's1:3:1']);
@@ -535,11 +536,24 @@ describe('a shift against a concurrent edit', () => {
   for (const side of ['left', 'right'] as const) {
     test(`a drag outside its area passes unchanged (${side})`, () => {
       const drag = move([0, 1], [0, 4], { v: 's1:0:1' });
-      expect(transformMutation(drag, moveOf(deleteUp()), side)).toEqual([drag]);
+      expect(transform([drag], [moveOf(deleteUp())], side)).toEqual([drag]);
       const data = cells(deleteUp(), drag, side);
       expect([data[0][4].v, data[0]?.[1], data[1][1].v]).toEqual(['s1:0:1', undefined, 's1:3:1']);
     });
   }
+
+  // The README's accepted limit (Known limits): the command names only cells
+  // up to the content, which ends at column J, so a write to K5 is merged.
+  test('a write beyond the content stays put while the shift moves the content', () => {
+    for (const side of ['left', 'right'] as const) {
+      const data = cells(
+        shift(commands.insertMoveDown, range(1, 9, 1, 10)),
+        cell(4, 10, { v: 'x' }),
+        side,
+      );
+      expect([data[4][10].v, data[5][9].v, data[4]?.[9]?.v]).toEqual(['x', 's1:4:9', 's1:3:9']);
+    }
+  });
 
   test('a shift whose mark disagrees with its ranges is rejected', () => {
     const wrong = deleteUp().map((mutation) =>
@@ -583,7 +597,7 @@ describe('concurrent moves', () => {
           [y, x],
         ]) {
           expect(() => transform([a], [b], side)).toThrow(RefusedEditError);
-          expect(() => transformMutation(a, b, side)).toThrow(
+          expect(() => transform([a], [b], side)).toThrow(
             expect.objectContaining({ reason: 'moved-cells' }),
           );
         }
@@ -615,21 +629,38 @@ describe('concurrent moves', () => {
   });
 });
 
-// The intent checks make this run take about 20 s on its own (measured
-// 2026-10-21), so the limit allows half as long again.
-test('cell edits converge across two clients, as the edits meant', () => {
-  convergesOver(cellEdit, { seeds: 200, intent: true });
-}, 30000);
+// The seeded runs below are bounded by their seeds and mutations, not by time, so
+// they turn vitest's clock off (a timeout of 0): a slow machine cannot fail
+// them, and CI's job limit still stops a run that never ends.
+const unclocked = 0;
+
+// The intent checks make this the slowest run but one, about 25 s on its own
+// (measured 2026-10-22).
+test(
+  'cell edits converge across two clients, as the edits meant',
+  () => {
+    convergesOver(cellEdit, { seeds: 200, intent: true });
+  },
+  unclocked,
+);
 
 // Moves alone, where concurrent moves meet most: each refused, none merged.
-test('moves alone neither copy nor lose content', () => {
-  convergesOver(cellMove, { seeds: 50, intent: true });
-}, 20000);
+test(
+  'moves alone neither copy nor lose content',
+  () => {
+    convergesOver(cellMove, { seeds: 50, intent: true });
+  },
+  unclocked,
+);
 
 // Structural edits run Univer's own commands, which is slow, so fewer seeds.
-test('cell edits converge with structure across two clients', () => {
-  convergesOver(withStructure(cellEdit), { seeds: 40 });
-}, 20000);
+test(
+  'cell edits converge with structure across two clients',
+  () => {
+    convergesOver(withStructure(cellEdit), { seeds: 40 });
+  },
+  unclocked,
+);
 
 /** The seeded workbook cut to one 4×3 sheet, so nearly every edit meets another. */
 function denseBook(rows = 4, cols = 3) {
@@ -659,27 +690,32 @@ function denseBook(rows = 4, cols = 3) {
 }
 
 // Dense conflict once made output grow without bound: each transform must stay
-// within a few mutations per input, and each seed within seconds. Short runs
+// within a few mutations per input. That, the seeds and the mutations per seed
+// bound each run, with no clock, so a slow machine cannot fail it. Short runs
 // meet the seeded cells before edits replace them.
-test('dense cell edits converge within budget, as the edits meant', () => {
-  const document = { workbook: denseBook() };
-  // Commands' range inserts and deletes move most of the sheet, so their
-  // long runs are few: 300 seeds of 300 edits take over a minute. The four
-  // runs take about a minute together; each seed's own limit is `seconds`.
-  for (const [generate, seeds, edits] of [
-    [cellEdit, 1000, 40],
-    [cellEdit, 300, 300],
-    [commandEdit, 300, 40],
-    [commandEdit, 20, 300],
-  ] as const) {
-    convergesOver(generate, { seeds, edits, document, budget: 5, seconds: 5, intent: true });
-  }
-}, 90000);
+test(
+  'dense cell edits converge within budget, as the edits meant',
+  () => {
+    const document = { workbook: denseBook() };
+    // Commands' range inserts and deletes move most of the sheet, so their
+    // long runs are few: 300 seeds of 300 mutations take over a minute. The four
+    // runs take about a minute together.
+    for (const [generate, seeds, mutations] of [
+      [cellEdit, 1000, 40],
+      [cellEdit, 300, 300],
+      [commandEdit, 300, 40],
+      [commandEdit, 20, 300],
+    ] as const) {
+      convergesOver(generate, { seeds, mutations, document, budget: 5, intent: true });
+    }
+  },
+  unclocked,
+);
 
 // The 4×3 sheet's runs were tuned on their own seeds; other sheets meet other
-// shapes, such as the repeat compacting once dropped (3×3, seed 377) and a
-// stored edit compacted into its shift (5×4 seed 162, 2×5 seeds 314 and 355).
-// Seeds per sheet keep the file's run near two minutes.
+// shapes, such as those that once failed on 3×3 (seed 377), 5×4 (seed 162)
+// and 2×5 (seeds 314 and 355).
+// Seeds per sheet keep the file's run under three minutes (165 s, 2026-10-22).
 test.each([
   [3, 3, 400],
   [2, 3, 250],
@@ -691,14 +727,13 @@ test.each([
     const document = { workbook: denseBook(rows, cols) };
     convergesOver(commandEdit, {
       seeds,
-      edits: 40,
+      mutations: 40,
       document,
       budget: 5,
-      seconds: 5,
       intent: true,
     });
   },
-  60000,
+  unclocked,
 );
 
 // Shifts and drags meet row and column edits, which move or cut their areas.
@@ -712,15 +747,48 @@ test.each([
     const document = { workbook: workbook() };
     convergesOver(withStructure(generate, lineEdit), {
       seeds: 120,
-      edits: 40,
+      mutations: 40,
       document,
       intent: true,
     });
   },
-  30000,
+  unclocked,
 );
 
-// The README's refusal rates, 40 edits a seed: realEdit on realBook, and
+// Review 6's counterexample: the incoming write to B6 cannot pass the drag
+// of B6 still in the client's buffer, so the client resyncs. The write to A1
+// it already sent can, and the server, which pairs it only with the incoming
+// write, accepts it.
+test('a client that resyncs still has the batch it sent accepted', () => {
+  const script: Step[] = [
+    { client: 0, edit: [cell(0, 0, { v: 'w#1' })] },
+    { client: 0, take: 'send' },
+    { client: 0, edit: [move([5, 1], [6, 1], { v: 's1:5:1' })] },
+    { client: 1, edit: [cell(5, 1, { v: 'w#2' })] },
+    { client: 1, take: 'send' },
+    { client: 1, take: 'server' },
+    { client: 0, take: 'client' },
+  ];
+  const document = { workbook: seededWorkbook() };
+  const run = simulate({
+    seed: 1,
+    document,
+    mutations: 0,
+    generate: () => null,
+    intent: true,
+    script,
+  });
+  expect(run.stats).toMatchObject({ batches: 2, accepted: 2, refused: 0, resynced: 1 });
+  // Only the drag, which was never sent, is lost.
+  expect(run.stats.discarded).toBe(1);
+  const expected = run.server.snapshot() as any;
+  for (const client of run.clients) expect(client.snapshot()).toEqual(expected);
+  const data = expected.workbook.sheets[subUnitId].cellData;
+  expect([data[0][0].v, data[5][1].v, data[6][1].v]).toEqual(['w#1', 'w#2', 's1:6:1']);
+  for (const replica of [run.server, ...run.clients]) replica.univer.dispose();
+});
+
+// The README's refusal rates, 40 mutations a seed: realEdit on realBook, and
 // commandEdit on the 4×3 sheet and on realBook. REFUSAL_SEEDS=300 reproduces
 // them and prints the counts (see simulate's `stats`); the default is quick.
 const refusalSeeds = Number(process.env.REFUSAL_SEEDS ?? 10);
@@ -734,20 +802,26 @@ test(
       ['commandEdit, 200×26', commandEdit, realBook()],
     ] as const) {
       const stats = newStats();
-      convergesOver(generate, { seeds, edits: 40, document: { workbook }, intent: true, stats });
+      convergesOver(generate, {
+        seeds,
+        mutations: 40,
+        document: { workbook },
+        intent: true,
+        stats,
+      });
       if (process.env.REFUSAL_SEEDS) process.stdout.write(`${name}: ${JSON.stringify(stats)}\n`);
       expect(stats.accepted + stats.refused).toBe(stats.batches);
       expect(stats.discarded).toBeLessThanOrEqual(stats.mutations);
     }
   },
-  3000 * refusalSeeds,
+  unclocked,
 );
 
 // Once fuzz seed 863 of the dense 40-edit run, shrunk, with no move: a losing
 // write to a cell whose format either side changes keeps its own write, then
 // replays the winner and retypes, so one write becomes three and the next
-// edit meets all of them. Not fixed; the growth cap makes it throw.
-test.fails('writes past many style writes to one cell stay within budget', () => {
+// edit meets all of them. Not fixed; the growth cap refuses it, either way round.
+test('writes past many style writes to one cell are refused as growth', () => {
   const text = { n: { pattern: '@' } };
   const bold = { bl: 1, it: 1 };
   const a = [cell(3, 1, { f: null, p: richDoc('bye'), si: null }), cell(3, 1, { s: text })];
@@ -762,6 +836,7 @@ test.fails('writes past many style writes to one cell stay within budget', () =>
     [a, b, 'right'],
     [b, a, 'left'],
   ] as const) {
-    expect(transform(x, y, side).length).toBeLessThanOrEqual(5 * (a.length + b.length));
+    expect(() => transform(x, y, side)).toThrow(RefusedEditError);
+    expect(() => transform(x, y, side)).toThrow(expect.objectContaining({ reason: 'growth' }));
   }
 });

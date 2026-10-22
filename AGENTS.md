@@ -40,14 +40,18 @@ that isn't waiting on another is next.
   (private until published), README and tests, one public `index.ts`, and no
   imports from Spinel's `src/`, `web/` or `server/`. Spinel imports it by package
   name. The first ticket to add one sets up the `lib/*` npm workspace and adds
-  `lib` to typecheck, lint, format and test runs, and to both Dockerfile stages
-  (`lib/*/package.json` before `npm ci`). Owner, chat 2026-10-19.
+  `lib` to typecheck, lint, format and test runs, and to both Dockerfile stages.
+  The build stage copies each lib's `package.json` by its own path before
+  `npm ci`, one line per lib, since a `COPY` glob flattens directories. Owner,
+  chat 2026-10-19; reworded 2026-10-22.
 - **Code copied from Univer Workspace** or any other Apache-2.0 project keeps its
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 - Run `npm run typecheck`, `npm test` and `npm run backlog:check` before pushing.
   Exception: when the memory watchdog prevents safe local testing, run local
   typecheck, lint and backlog checks, then push a draft PR for full unit/browser
-  validation in CI. Keep it draft while unverified; all six CI gates and independent
+  validation in CI. Keep it draft while unverified; all seven CI gates and independent
   review >=95 with no blockers remain required before merge. Owner, chat
-  2026-10-18; [decision #52](https://github.com/mxbaylee/spinel/issues/52).
+  2026-10-18; [decision #52](https://github.com/mxbaylee/spinel/issues/52). The
+  seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
+  tests changed. Owner, chat 2026-10-22.
