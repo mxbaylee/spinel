@@ -18,6 +18,7 @@ import { AuthStore } from '../src/server/auth/store.ts';
 import { authRoutes, cookieToken } from '../src/server/auth/routes.ts';
 import { workspaceRoutes } from '../src/server/workspace/routes.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { migrateSpaceSchema } from '../src/server/workspace/space-schema.ts';
 import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts';
 import { HistoryStore } from '../src/server/history/store.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
@@ -58,6 +59,9 @@ export async function createApp(options: AppOptions) {
       }),
     );
     const workspace = new WorkspaceStore(auth);
+    // Rebuild the pre-production item schema before the collaboration SDK opens
+    // its second connection. This enables storage, not ordinary Space routes.
+    migrateSpaceSchema(database);
     const origin = options.origin ?? 'http://localhost:3000';
     const oauth = new AssistantOAuth(auth, origin);
     app.use(assistantOAuthRoutes(oauth));

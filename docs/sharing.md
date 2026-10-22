@@ -50,8 +50,10 @@ no additional access. Sheet image uploading is not implemented yet.
 Folder sharing replaced the earlier Team Spaces proposal (owner, chat 2026-10-17).
 On 2026-10-20 the owner requested a different Space model: a single file inside
 existing folders, with its own internal Doc/Sheet tree and one sharing boundary
-([decision #116](https://github.com/mxbaylee/spinel/issues/116)). This is planned
-in SPN-078/SPN-091/SPN-092, not implemented; the current behavior below remains in force. The most generous
+([decision #116](https://github.com/mxbaylee/spinel/issues/116)). The
+[internal foundation](design/spaces.md#implemented-foundation) is implemented in
+SPN-078; account UI and guest/integration acceptance remain SPN-091/SPN-092.
+Ordinary Space creation and public child access remain closed. The most generous
 grant wins (grooming 2026-10-17). The common resolver, admin exclusion and revision
 protection were required in [decision #23](https://github.com/mxbaylee/spinel/issues/23).
 Ownership-only organization, authenticated direct addresses and honest revocation
@@ -165,14 +167,20 @@ input must be readable by the viewer; otherwise the whole formula is unavailable
 including aggregates. Host guest links grant no source access. SPN-076 tracks
 explicit dependency sharing; no source is shared automatically.
 
-## Planned Space files and delegated administration
+## Space foundation and planned delegated administration
 
-SPN-078 supplies the Space model and inherited-access foundation, SPN-091 adds
+SPN-078 supplies the internal Space model and inherited-access foundation, SPN-091 adds
 account navigation/recovery, and SPN-092 verifies guest and cross-feature
 integration before the feature is exposed. A Space is one file in the existing
 folder view. Its effective
 View/Edit role applies to all internal pages and sheets, including future
-additions; children have no separate shares. Space-wide guest links include
+additions; children have no separate shares. Internal operations resolve the
+current active account/owner and complete same-Space ancestry in their transaction.
+Root administration and permanent deletion remain Owner-only; Edit can manage
+the internal tree and recover its deleted subtrees. Ordinary APIs, stale child
+grants and existing guest credentials cannot bypass that boundary.
+
+Space-wide guest links, when implemented in SPN-092, must include
 same-Space formula sources, while sources outside the Space still need separate
 access ([decision #117](https://github.com/mxbaylee/spinel/issues/117)).
 SPN-076 remains for deliberately sharing external sources, with the whole source
@@ -182,5 +190,6 @@ SPN-079 adds delegated file Admin as a follow-up. Exactly one Owner inherits all
 Admin permissions; multiple non-owner Admin grants are possible. This does not
 change the content-blind server Operator role or create a second owner
 ([decision #118](https://github.com/mxbaylee/spinel/issues/118), owner chat
-2026-10-20). Until these tickets land, file sharing uses Viewer/Editor and
-owner-only administration as described above.
+2026-10-20). Until SPN-079 lands, file sharing uses Viewer/Editor and
+owner-only administration as described above. The internal model does not enable
+Space guest links or grant the Operator content access.

@@ -3,6 +3,7 @@ import type { IncomingHttpHeaders } from 'node:http';
 import { AuthError } from '../auth/store.ts';
 import type { AuthStore } from '../auth/store.ts';
 import type { GrantRole } from '../../shared/workspace.ts';
+import { isOrdinaryItem } from './ordinary-scope.ts';
 
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 export const GUEST_TTL = 24 * 60 * 60 * 1000;
@@ -48,6 +49,7 @@ export class LinkAccess {
   preview(id: unknown, secret: unknown) {
     if (typeof id !== 'string' || typeof secret !== 'string' || !/^[\w-]{43}$/.test(secret))
       return undefined;
+    if (!isOrdinaryItem(this.auth.database, id)) return undefined;
     return this.auth.database
       .prepare(
         `SELECT i.name,i.kind FROM workspace_links l
@@ -58,6 +60,7 @@ export class LinkAccess {
       .get(id, hash(secret)) as { name: string; kind: 'sheet' | 'doc' } | undefined;
   }
   state(id: string) {
+    if (!isOrdinaryItem(this.auth.database, id)) return undefined;
     return this.auth.database
       .prepare('SELECT epoch,state,role FROM workspace_links WHERE item_id=?')
       .get(id) as
@@ -67,11 +70,13 @@ export class LinkAccess {
     return this.state(id)?.epoch ?? 0;
   }
   assertEpoch(id: string, epoch: unknown) {
+    if (!isOrdinaryItem(this.auth.database, id)) throw linkGone();
     const state = this.state(id);
     if (state?.state === 'pending' || (state?.epoch ?? 0) !== epoch) throw linkGone();
   }
   begin(id: string, role: GrantRole | null) {
     return this.auth.transaction(() => {
+      if (!isOrdinaryItem(this.auth.database, id)) throw linkGone();
       if (this.state(id)?.state === 'pending')
         throw new AuthError(409, 'Sharing is changing. Try again shortly.');
       const epoch = this.epoch(id) + 1;
@@ -95,6 +100,9 @@ export class LinkAccess {
     });
   }
   finish(id: string, epoch: number, enabled: boolean) {
+    // A pending ordinary link cannot become a Space capability while admission
+    // drains. Revocation remains allowed so failure cleanup can always close it.
+    if (enabled && !isOrdinaryItem(this.auth.database, id)) throw linkGone();
     this.auth.database
       .prepare(
         "UPDATE workspace_links SET state=?,token_hash=CASE WHEN ? THEN token_hash ELSE NULL END,preview_hash=CASE WHEN ? THEN preview_hash ELSE NULL END WHERE item_id=? AND epoch=? AND state='pending'",
@@ -110,6 +118,7 @@ export class LinkAccess {
   exchange(id: string, secret: unknown, currentToken?: string) {
     if (typeof secret !== 'string' || !/^[\w-]{43}$/.test(secret)) throw linkGone();
     return this.auth.transaction(() => {
+      if (!isOrdinaryItem(this.auth.database, id)) throw linkGone();
       const link = this.auth.database
         .prepare(
           `SELECT l.epoch FROM workspace_links l
@@ -172,7 +181,11 @@ export class LinkAccess {
       )
       .get(userId.slice(6), this.auth.now()) as
       { itemId: string; role: GrantRole; tokenHash: string; expires: number } | undefined;
-    return session && (!itemId || session.itemId === itemId) ? session : undefined;
+    return session &&
+      (!itemId || session.itemId === itemId) &&
+      isOrdinaryItem(this.auth.database, session.itemId)
+      ? session
+      : undefined;
   }
   session(userId: string, suppliedHash: unknown) {
     const session = this.access(userId);

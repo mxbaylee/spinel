@@ -153,6 +153,13 @@ see [the process](todo/process.md#pull-requests-and-main).
   WAL mode and foreign keys remain enabled without resetting migration metadata.
   [Decision #68](https://github.com/mxbaylee/spinel/issues/68), 2026-10-18,
   supersedes the original driver choice in [#2](https://github.com/mxbaylee/spinel/issues/2).
+- Startup upgrades the workspace schema for the [Space foundation](design/spaces.md#implemented-foundation)
+  before the collaboration SDK opens its database connection. The migration
+  preserves existing item IDs, native foreign keys, indexes and cleanup triggers;
+  incomplete or unrecognized schemas fail startup instead of being guessed or
+  partially upgraded. Public Space creation and child capabilities remain closed.
+  [Decision #135](https://github.com/mxbaylee/spinel/issues/135), 2026-10-21;
+  [implementation and verification](implementation/SPN-078.md).
 - React and React DOM are pinned to 18.3.1. On 2026-10-17, published
   `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support
   React 16–19; [Univer's UI package](https://github.com/dream-num/univer/blob/dev/packages/ui/package.json)

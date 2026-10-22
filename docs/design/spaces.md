@@ -1,10 +1,11 @@
 # Spaces and file roles
 
 Designed in SPN-047; [decision #126](https://github.com/mxbaylee/spinel/issues/126)
-records the owner's review and refinements. Spaces are planned files, not new
-top-level workspaces. SPN-078, SPN-091 and SPN-092 implement the model, account
-experience and guest/integration acceptance respectively. Delegated file Admin
-follows in SPN-079. These mockups do not themselves enable live routes.
+records the owner's review and refinements. A Space is one file inside existing
+folders. SPN-078 supplies the internal model and recovery foundation; SPN-091 and
+SPN-092 supply the account experience and guest/integration acceptance.
+Delegated file Admin follows in SPN-079. Ordinary Space creation/navigation and
+public child capabilities remain unavailable until their integration is verified.
 
 ## Delivery slices
 
@@ -14,7 +15,7 @@ against its implementation rather than an assumed existing feature:
 
 | Ticket | Owns | Completion boundary |
 | ------ | ---- | ------------------- |
-| [SPN-078](../todo/SPN-078.md) | Durable Space/child model, sole ownership, uniform inherited roles, stable IDs/order/bindings and subtree recovery metadata | Supported server boundaries authorize every child; cycles, child grants and unsupported conversions fail safely. No unfinished product routes are exposed. |
+| [SPN-078 foundation](../implementation/SPN-078.md) | Durable Space/child model, sole ownership, uniform inherited roles, stable IDs/order/bindings and subtree recovery metadata | Supported server boundaries authorize every child; cycles, child grants and unsupported conversions fail safely. No unfinished product routes are exposed. |
 | [SPN-091](../todo/SPN-091.md) | Authenticated creation, editor/navigation, accessible rename/reorder/nesting, remembered/deep-linked selection and persistent internal Trash | Owner/editor/viewer behavior and recovery are reviewable before ordinary access is enabled; approved light/dark/phone UI follows this design. |
 | [SPN-092](../todo/SPN-092.md) | Space-wide View/Edit guests, privacy/social cards, existing formulas/images/collaboration/MCP/export and backup/owner-transfer acceptance | Guest and integration surfaces keep Space scope through asynchronous operations, rotation/revocation, downgrade, trash and disabled owners before being enabled. |
 | [SPN-079](../todo/SPN-079.md) | Delegated account-only file Admin after SPN-092 | One Owner remains; guests never become Admin and the Operator never gains document access. |
@@ -29,6 +30,64 @@ authorized. Whole-Space moves/trash/restore, backups and ownership handover reta
 child identity, contents, order and formula bindings. No slice adds child grants,
 standalone-file conversion/extraction, bulk offline downloads, new formula syntax
 or a new export format. Artwork remains SPN-077.
+
+## Implemented foundation
+
+[Decision #135](https://github.com/mxbaylee/spinel/issues/135), 2026-10-21,
+records the storage and access choice. `workspace_items` stores a real Space
+root, with stable existing item IDs and explicit `space_id`/`space_position`
+membership and sibling order. Internal Docs, Sheets and grouping folders may
+contain children of any of those three kinds. One everyday account owns the
+root and all children; moves and renames never copy native snapshots or change
+formula bindings. Nested Spaces, cycles, cross-Space moves, child grants/links
+and standalone conversion/extraction are refused.
+
+The internal `SpaceStore` resolves fresh account access in the same transaction
+as each read or mutation. View can read the live tree; Edit can create, rename,
+reorder and move its contents. Root sharing, rename and outer-folder moves are
+Owner-only. The most generous Space/outer-folder View/Edit grant applies to
+every existing and future child. Disabled callers/owners, Operators and guests
+are refused; unreadable outer locations are redacted. There is no global bypass
+that admits Space members to ordinary file services.
+
+`SpaceRecoveryStore` records each deleted subtree's original parent/order,
+deletion actor/time and batch, and detaches its root within the same Space.
+Earlier deletion batches remain independent. Account editors can list and
+restore these subtrees; only the active Owner can permanently delete them after
+confirming their exact current membership and batch. Restore uses the current
+authorized original parent, or the Space root with a generic fallback reason;
+saved location metadata never grants access or discloses an unavailable parent.
+
+`SpaceLifecycleStore` controls whole-Space trash, restore and confirmed permanent
+deletion for the active Owner. Trash changes only the root, preserving all native
+data, internal order and earlier deletion batches. Restore does not revive earlier
+internal tombstones. An unavailable outer folder falls back to My files root
+without disclosing its old location. Permanent deletion validates the complete
+graph and deletes leaves before parents in one transaction, preserving native
+foreign-key cascades and cleanup hooks; a late failure rolls everything back.
+
+The complete-tree validator bounds each request to 10,000 retained members,
+including tombstones, and bounded recovery records. It refuses malformed or
+oversized graphs rather than truncating them. This is a resource guard, not a
+presentation depth limit. Ordinary Trash excludes internal nodes and retains a
+whole ordinary subtree containing a hidden Space, while unrelated ordinary trash
+can still expire. **No automatic Space expiry is enabled.** Record a retention
+decision before enabling it; the ordinary 30-day policy does not silently apply.
+
+Startup performs the transactional schema migration before the collaboration SDK
+opens its connection. Migration/reopen and SQLite snapshot-copy tests preserve
+IDs, content, bindings and recovery data. Operational backup/restore and owner
+transfer acceptance remain SPN-092. All public HTTP, socket, MCP, formula,
+image, history, export and offline paths currently refuse Space roots/children;
+SPN-091/092 must add explicit scoped capabilities with their own integration proof.
+The [implementation specification](../implementation/SPN-078.md) records the
+boundary inventory, tests and publication checkpoint.
+
+This foundation keeps one bounded storage model for the Operator, preserves the
+Owner's content and recovery identities, gives Collaborators uniform inherited
+access, and keeps Link guests outside unsupported capabilities. It implements
+the model and recovery rules from owner decisions #116–118 and #126 without
+changing their UI or guest acceptance boundary.
 
 ## Comparison and adopted layout
 
@@ -92,8 +151,8 @@ My files label or a tree-expansion chevron. A local **Pages** control below the
 site header reopens the hidden tree, as a drawer on phones.
 This favors Owner/Collaborator orientation without consuming a second navigation
 column; link guests retain scoped navigation without account destinations, and
-Operator workflows remain separate. Folder/page hierarchy remains a proposal
-for SPN-078's durable model and SPN-091's account UI, not implemented persistence.
+Operator workflows remain separate. The durable folder/page hierarchy is provided
+by the SPN-078 foundation; the composed account UI remains SPN-091.
 
 The Space tree uses the quieter `--sp-bg` / `--sp-text` surface, distinct from
 the saturated pink site header in both themes (owner, chat 2026-10-20). The same

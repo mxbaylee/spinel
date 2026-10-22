@@ -2,6 +2,7 @@ import { LinkAccess, linkGone } from './links.ts';
 import { randomUUID } from 'node:crypto';
 import { AuthError, AuthStore } from '../auth/store.ts';
 import { ITEM_KINDS } from '../../shared/workspace.ts';
+import { classifyOrdinaryItems, isOrdinaryItem, MAX_ANCESTOR_READS } from './ordinary-scope.ts';
 import type { ItemKind, WorkspaceItem, ItemAccess, SharePerson } from '../../shared/workspace.ts';
 import type { SnapshotSaved } from './snapshots.ts';
 
@@ -33,6 +34,7 @@ export class WorkspaceStore {
         name TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_items_owner_parent ON workspace_items(owner_id,parent_id);
+      CREATE INDEX IF NOT EXISTS workspace_items_parent ON workspace_items(parent_id);
       CREATE TABLE IF NOT EXISTS workspace_tags (
         user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
         name TEXT NOT NULL,
@@ -46,6 +48,8 @@ export class WorkspaceStore {
         FOREIGN KEY(user_id,name) REFERENCES workspace_tags(user_id,name) ON DELETE CASCADE
       ) STRICT;
       CREATE INDEX IF NOT EXISTS workspace_tag_assignments_item ON workspace_tag_assignments(item_id);
+      CREATE INDEX IF NOT EXISTS workspace_tag_assignments_user_name
+        ON workspace_tag_assignments(user_id,name,item_id);
       CREATE TABLE IF NOT EXISTS workspace_grants (
         item_id TEXT NOT NULL REFERENCES workspace_items(id) ON DELETE CASCADE,
         user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
@@ -88,6 +92,13 @@ export class WorkspaceStore {
     // Item/trash callers establish document access first; only this person's
     // labels are returned. Suggestions may retain names after access is revoked.
     this.owner(userId);
+    if (!isOrdinaryItem(this.auth.database, id))
+      throw new AuthError(404, 'This item is not available.');
+    return this.assignedTags(userId, id);
+  }
+  // Call only after current ordinary-item access/structure is established.
+  // Discovery must not repeat an entire ancestor walk for every tag projection.
+  private assignedTags(userId: string, id: string): string[] {
     return (
       this.auth.database
         .prepare(
@@ -97,12 +108,31 @@ export class WorkspaceStore {
     ).map((row) => row.name);
   }
   tagSuggestions(userId: string): string[] {
-    this.owner(userId);
-    return (
-      this.auth.database
-        .prepare('SELECT name FROM workspace_tags WHERE user_id=? ORDER BY name')
-        .all(userId) as { name: string }[]
-    ).map((row) => row.name);
+    return this.auth.transaction(() => {
+      this.owner(userId);
+      const rows = this.auth.database
+        .prepare(
+          `SELECT t.name,a.item_id AS itemId FROM workspace_tags t
+         LEFT JOIN workspace_tag_assignments a ON a.user_id=t.user_id AND a.name=t.name
+         WHERE t.user_id=? ORDER BY t.name LIMIT ?`,
+        )
+        .all(userId, MAX_ANCESTOR_READS + 1) as { name: string; itemId: string | null }[];
+      if (rows.length > MAX_ANCESTOR_READS)
+        throw new AuthError(413, 'These tag suggestions are too large to process at once.');
+      const ids = [...new Set(rows.flatMap((row) => (row.itemId === null ? [] : [row.itemId])))];
+      const ordinary = classifyOrdinaryItems(this.auth.database, ids);
+      if (!ordinary)
+        throw new AuthError(413, 'These tag suggestions are too large to process at once.');
+      // Personal suggestions survive ordinary revocation, trash and untagging,
+      // but an assignment exclusively inside a hidden Space cannot expose a label.
+      return [
+        ...new Set(
+          rows
+            .filter((row) => row.itemId === null || ordinary.has(row.itemId))
+            .map((row) => row.name),
+        ),
+      ];
+    });
   }
   changeTag(userId: string, id: string, value: unknown, remove = false): WorkspaceItem {
     return this.auth.transaction(() => {
@@ -143,13 +173,40 @@ export class WorkspaceStore {
     if (user.is_admin) throw new AuthError(403, 'Use your everyday account for documents.');
   }
   list(ownerId: string): WorkspaceItem[] {
-    this.owner(ownerId);
-    const items = this.auth.database
-      .prepare(
-        `SELECT ${columns}, 'owner' AS access FROM workspace_items WHERE owner_id=? AND trashed_at IS NULL ORDER BY name COLLATE NOCASE,id`,
-      )
-      .all(ownerId) as unknown as WorkspaceItem[];
-    return items.map((item) => ({ ...item, tags: this.ownTags(ownerId, item.id) }));
+    return this.auth.transaction(() => {
+      this.owner(ownerId);
+      const fields = new Set(
+        this.auth.database
+          .prepare('PRAGMA table_info(workspace_items)')
+          .all()
+          .map((row) => row.name),
+      );
+      // A full hidden Space must not consume the ordinary discovery budget.
+      // Check the current schema because this store can predate startup migration.
+      const membership = ['space_id', 'space_position']
+        .filter((field) => fields.has(field))
+        .map((field) => ` AND ${field} IS NULL`)
+        .join('');
+      const items = this.auth.database
+        .prepare(
+          `SELECT ${columns}, 'owner' AS access FROM workspace_items
+           WHERE owner_id=? AND trashed_at IS NULL
+             AND kind IN (${ITEM_KINDS.map(() => '?').join(',')})${membership}
+           ORDER BY name COLLATE NOCASE,id LIMIT ?`,
+        )
+        .all(ownerId, ...ITEM_KINDS, MAX_ANCESTOR_READS + 1) as unknown as WorkspaceItem[];
+      // Ownership is established by the query; one request-local classification
+      // checks live same-owner folder ancestry without n independent role walks.
+      const ordinary = classifyOrdinaryItems(
+        this.auth.database,
+        items.map((item) => item.id),
+        'live',
+      );
+      if (!ordinary) throw new AuthError(413, 'This item list is too large to process at once.');
+      return items
+        .filter((item) => ordinary.has(item.id))
+        .map((item) => ({ ...item, tags: this.assignedTags(ownerId, item.id) }));
+    });
   }
   shared(userId: string): WorkspaceItem[] {
     this.owner(userId);
@@ -172,8 +229,8 @@ export class WorkspaceStore {
         )
         .all(userId, userId) as { id: string; sharedAt: number }[];
       return rows.flatMap((row) => {
-        // A direct grant below a trashed ancestor is not visible; use the same
-        // resolver as document reads rather than trusting discovery alone.
+        // Discovery can include a Space or malformed descendant, or a direct
+        // grant below trash. Apply the same ordinary resolver as document reads.
         if (!this.role(userId, row.id)) return [];
         const placement = this.auth.database
           .prepare(
@@ -193,6 +250,8 @@ export class WorkspaceStore {
   place(userId: string, id: string, destination: unknown, remove = false): WorkspaceItem[] {
     this.owner(userId);
     return this.auth.transaction(() => {
+      if (!isOrdinaryItem(this.auth.database, id))
+        throw new AuthError(404, 'This item is not available.');
       this.cleanPlacements();
       if (remove) {
         this.auth.database
@@ -224,19 +283,23 @@ export class WorkspaceStore {
     const remove = this.auth.database.prepare(
       'DELETE FROM workspace_placements WHERE user_id=? AND item_id=?',
     );
+    const destination = this.auth.database.prepare('SELECT kind FROM workspace_items WHERE id=?');
     for (const row of rows) {
       const access = this.role(row.user_id, row.item_id);
       if (
         !access ||
         access === 'owner' ||
-        (row.parent_id !== null && this.role(row.user_id, row.parent_id) !== 'owner')
+        (row.parent_id !== null &&
+          (this.role(row.user_id, row.parent_id) !== 'owner' ||
+            destination.get(row.parent_id)?.kind !== 'folder'))
       )
         remove.run(row.user_id, row.item_id);
     }
   }
-  // All callers use this resolver, including content, metadata and image access.
-  // UNION makes malformed ancestor cycles finite; inherited grants cannot cross owners.
+  // Ordinary content, metadata and image callers share this boundary. Space
+  // services authorize explicitly; no child grant can opt a hidden item in here.
   private role(userId: string, id: string): ItemAccess | null {
+    if (!isOrdinaryItem(this.auth.database, id)) return null;
     const row = this.auth.database
       .prepare(
         `
@@ -262,6 +325,7 @@ export class WorkspaceStore {
   }
   get(userId: string, id: string, needed: 'read' | 'edit' | 'owner' = 'read'): WorkspaceItem {
     if (userId.startsWith('guest:')) {
+      if (!isOrdinaryItem(this.auth.database, id)) throw linkGone();
       const guest = this.links.access(userId, id);
       if (!guest) throw linkGone();
       if (needed === 'owner' || (needed === 'edit' && guest.role !== 'editor'))
@@ -300,7 +364,7 @@ export class WorkspaceStore {
             ).name,
           }
         : {}),
-      tags: this.ownTags(userId, id),
+      tags: this.assignedTags(userId, id),
       parentId: item.parentId && this.role(userId, item.parentId) ? item.parentId : null,
     };
   }
@@ -313,7 +377,9 @@ export class WorkspaceStore {
           'SELECT id FROM workspace_items WHERE parent_id=? AND trashed_at IS NULL ORDER BY name COLLATE NOCASE,id',
         )
         .all(id) as { id: string }[]
-    ).map((row) => this.get(userId, row.id));
+    )
+      .filter((row) => this.role(userId, row.id) !== null)
+      .map((row) => this.get(userId, row.id));
   }
   ancestors(userId: string, id: string): WorkspaceItem[] {
     let item = this.get(userId, id);
