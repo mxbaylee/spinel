@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { linkSync, mkdtempSync, readdirSync, rmSync, statSync, symlinkSync } from 'node:fs';
+import { copyFileSync, existsSync, linkSync, mkdtempSync, readdirSync, rmSync, statSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test, vi } from 'vitest';
@@ -201,6 +201,116 @@ test('bounded queues/storage and unavailable stores drop observations without th
     await f.dispose();
   }
 });
+
+test('the configured logical ceiling admits its exact final record, drops the next and resumes after clear', async () => {
+  const f = fixture();
+  const db = f.read();
+  try {
+    expect(DIAGNOSTICS_LIMITS.storageBytes).toBe(64 * 1024 * 1024);
+    const generation = f.store.status().generation!;
+    const actor = randomUUID();
+    const finalRecord = record();
+    const bytes = Buffer.byteLength(JSON.stringify(finalRecord));
+    // Isolate the real configured arithmetic without allocating 64 MiB or
+    // accidentally reaching SQLite's separate physical-page limit first.
+    db.prepare('UPDATE diagnostics_state SET logical_bytes=? WHERE singleton=1')
+      .run(DIAGNOSTICS_LIMITS.storageBytes - bytes);
+    const started = performance.now();
+    expect(f.store.ingest([finalRecord], actor, generation)).toEqual({ accepted: 1, dropped: 0 });
+    const admittedMs = performance.now() - started;
+    expect(f.store.status()).toMatchObject({ logicalBytes: DIAGNOSTICS_LIMITS.storageBytes, recordCount: 1 });
+    const rejectedRecord = record();
+    const rejectStarted = performance.now();
+    expect(f.store.ingest([rejectedRecord], actor, generation)).toEqual({ accepted: 0, dropped: 1 });
+    const rejectedMs = performance.now() - rejectStarted;
+    expect(db.prepare('SELECT id FROM events WHERE id=?').get(rejectedRecord.id)).toBeUndefined();
+    expect(f.store.status()).toMatchObject({ generation, logicalBytes: DIAGNOSTICS_LIMITS.storageBytes, recordCount: 1, dropped: { storage: 1 } });
+    const next = f.store.truncate().generation;
+    expect(next).not.toBe(generation);
+    expect(f.store.ingest([rejectedRecord], actor, next)).toEqual({ accepted: 1, dropped: 0 });
+    expect(f.store.status().logicalBytes).toBe(Buffer.byteLength(JSON.stringify(rejectedRecord)));
+    console.log(JSON.stringify({ probe: 'diagnostics-logical-boundary', configuredLogicalBytes: DIAGNOSTICS_LIMITS.storageBytes, boundaryMode: 'seeded-counter-not-full-size-store', admittedRecordBytes: bytes, admittedMs, rejectedMs }));
+  } finally {
+    db.close();
+    await f.dispose();
+  }
+});
+
+test('a bounded seeded store exports a standalone consistent SQLite file and reports observed CI costs', async () => {
+  const f = fixture();
+  const seed = f.read();
+  const copies = 4096;
+  const expectedRows = copies + 1;
+  let sample: ReturnType<typeof setInterval> | undefined;
+  try {
+    const original = record();
+    original.id = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+    const generation = f.store.status().generation!;
+    expect(f.store.ingest([original], randomUUID(), generation)).toEqual({ accepted: 1, dropped: 0 });
+    // Clone a validated, actually stored record in one bounded SQLite statement.
+    // Fixed-width unique UUIDs preserve serialized byte_size; this prepares an
+    // export fixture, not a claim about HTTP rate limits or ingestion throughput.
+    seed.exec('BEGIN IMMEDIATE');
+    seed.prepare(`WITH RECURSIVE sequence(n) AS (
+      VALUES(1) UNION ALL SELECT n+1 FROM sequence WHERE n < ?
+    ) INSERT INTO events (
+      id,schema_version,generation,occurred_at,received_at,name,kind,source,component,build,
+      actor_id,file_id,space_id,route,run_id,level,message,metric_kind,metric_unit,metric_value,details,byte_size
+    ) SELECT '00000000-0000-4000-8000-' || printf('%012x',n),
+      schema_version,generation,occurred_at,received_at,name,kind,source,component,build,
+      actor_id,file_id,space_id,route,run_id,level,message,metric_kind,metric_unit,metric_value,details,byte_size
+      FROM sequence CROSS JOIN events WHERE events.id=?`).run(copies, original.id);
+    seed.exec('UPDATE diagnostics_state SET logical_bytes=(SELECT sum(byte_size) FROM events) WHERE singleton=1; COMMIT; PRAGMA wal_checkpoint(TRUNCATE);');
+    const logicalBytes = f.store.status().logicalBytes;
+    expect(f.store.status().recordCount).toBe(expectedRows);
+    expect(logicalBytes).toBe(expectedRows * Buffer.byteLength(JSON.stringify(original)));
+    expect(statSync(f.path).size).toBeLessThanOrEqual(DIAGNOSTICS_LIMITS.storageBytes);
+
+    const rssBeforeBytes = process.memoryUsage().rss;
+    let sampledPeakRssBytes = rssBeforeBytes;
+    sample = setInterval(() => { sampledPeakRssBytes = Math.max(sampledPeakRssBytes, process.memoryUsage().rss); }, 10);
+    const started = performance.now();
+    const snapshot = await f.store.snapshot();
+    const snapshotDurationMs = performance.now() - started;
+    clearInterval(sample);
+    sample = undefined;
+    const rssAfterBytes = process.memoryUsage().rss;
+    sampledPeakRssBytes = Math.max(sampledPeakRssBytes, rssAfterBytes);
+    const snapshotBytes = statSync(snapshot.path).size;
+    expect(snapshotBytes).toBeLessThanOrEqual(DIAGNOSTICS_LIMITS.storageBytes);
+    const standalonePath = join(f.directory, 'standalone.sqlite');
+    try {
+      // Later collection must not change the already completed snapshot.
+      expect(f.store.ingest([record()], randomUUID(), generation)).toEqual({ accepted: 1, dropped: 0 });
+      copyFileSync(snapshot.path, standalonePath);
+    } finally {
+      await snapshot.dispose();
+    }
+    expect(f.store.status()).toMatchObject({ exporting: false, recordCount: expectedRows + 1 });
+    expect(readdirSync(f.directory).filter((name) => name.startsWith('.diagnostics-export-'))).toEqual([]);
+    seed.close();
+    await f.store.close();
+    expect(existsSync(standalonePath + '-wal')).toBe(false);
+    expect(existsSync(standalonePath + '-shm')).toBe(false);
+    const exported = new DatabaseSync(standalonePath);
+    try {
+      expect(exported.prepare('PRAGMA integrity_check').get()?.integrity_check).toBe('ok');
+      expect(exported.prepare('PRAGMA user_version').get()?.user_version).toBe(1);
+      expect(exported.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all().map((row) => row.name)).toEqual(['diagnostics_state', 'events']);
+      expect(exported.prepare('SELECT count(*) AS count FROM events').get()?.count).toBe(expectedRows);
+      expect(exported.prepare('SELECT generation,logical_bytes FROM diagnostics_state').get()).toEqual({ generation, logical_bytes: logicalBytes });
+      expect(exported.prepare('SELECT count(DISTINCT id) AS count FROM events').get()?.count).toBe(expectedRows);
+      expect(exported.prepare('SELECT count(*) AS invalid FROM events WHERE json_valid(details)=0 OR generation<>?').get(generation)?.invalid).toBe(0);
+    } finally {
+      exported.close();
+    }
+    console.log(JSON.stringify({ probe: 'diagnostics-bounded-export', fixtureRows: expectedRows, fixtureLogicalBytes: logicalBytes, snapshotBytes, snapshotDurationMs, rssBeforeBytes, rssAfterBytes, sampledPeakRssBytes, sampleIntervalMs: 10, resourceScope: 'test-process-including-export-worker-not-isolated-worker-or-deployment' }));
+  } finally {
+    if (sample) clearInterval(sample);
+    if (seed.isOpen) seed.close();
+    await f.dispose();
+  }
+}, 30_000);
 
 test('refuses an application database even if accidentally given its path', async () => {
   const f = fixture();
