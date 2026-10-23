@@ -71,7 +71,9 @@ export const ConfirmReplacementEditLink: Story = {
     await expect(access).toHaveValue('editor');
     await userEvent.click(canvas.getByRole('button', { name: 'Guest link actions' }));
     await userEvent.click(
-      await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Replace link…' }),
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', {
+        name: 'Replace link…',
+      }),
     );
     const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
       name: 'Replace the link?',
