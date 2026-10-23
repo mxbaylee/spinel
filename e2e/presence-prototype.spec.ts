@@ -105,6 +105,7 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
     await other.getByLabel('Search icons', { exact: true }).press('ArrowDown');
     await expect(other.getByRole('button', { name: 'Flower', exact: true })).toBeFocused();
     await other.keyboard.press('Enter');
+    await other.getByRole('button', { name: 'Choose color', exact: true }).click();
     await other.getByRole('button', { name: 'Profile colour: Info, strong', exact: true }).click();
     await other.getByRole('button', { name: 'Save profile', exact: true }).click();
     await expect(other.getByRole('status').filter({ hasText: 'Profile saved.' })).toBeVisible();

@@ -183,7 +183,7 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await expect(status).toContainText('not saved');
     const navigationWarning = page.waitForEvent('dialog');
     page.once('dialog', (dialog) => dialog.dismiss());
-    await page.getByRole('link', { name: 'Settings', exact: true }).tap();
+    await page.getByRole('link', { name: 'Your profile', exact: true }).tap();
     await navigationWarning;
     await expect(page).toHaveURL(new RegExp(item.id));
     await expect(status).toContainText('not saved');

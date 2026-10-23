@@ -156,7 +156,6 @@ export function GuestApp() {
               : (editorConnection ?? reachability)
           }
           onExit={() => {}}
-          onSignOut={() => {}}
           onConnectionState={setEditorConnection}
           renderEditor={({ spaceId, item: page, onDirty, onConnectionState, saveStatusTarget }) => (
             <Suspense fallback={<p role="status">Opening page…</p>}>

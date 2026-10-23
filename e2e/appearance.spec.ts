@@ -160,14 +160,14 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await page.emulateMedia({ colorScheme: 'dark' });
     await mode('dark');
     await capture('dashboard-dark');
-    await page.getByRole('link', { name: 'Settings', exact: true }).click();
-    await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('light');
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
+    await page.locator('header').getByRole('radio', { name: 'Light', exact: true }).click();
     await page.reload();
     await mode('light');
     await page.emulateMedia({ colorScheme: 'light' });
     await page.emulateMedia({ colorScheme: 'dark' });
     await mode('light');
-    await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('system');
+    await page.locator('header').getByRole('radio', { name: 'Follow system', exact: true }).click();
     await mode('dark');
     await page.emulateMedia({ colorScheme: 'light' });
     await page.goto(`/?item=${sheet.id}`);

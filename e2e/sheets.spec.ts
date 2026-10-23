@@ -128,7 +128,7 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
     await expect(sheet.getByRole('status', { name: 'Save status' })).toContainText('not saved');
     await page.keyboard.press('Enter');
     page.once('dialog', (dialog) => dialog.dismiss());
-    await page.getByRole('link', { name: 'Settings', exact: true }).click();
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(item.id));
     await expect(sheet.getByRole('status', { name: 'Save status' })).toContainText('not saved');
     await network.setOffline(false);

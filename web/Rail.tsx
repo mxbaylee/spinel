@@ -1,3 +1,5 @@
+import './profile.css';
+import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
 import type { NavigationGuard } from './navigation.ts';
@@ -17,6 +19,7 @@ export function Rail({
   connection,
   catalog,
   documentOpen,
+  compact = false,
 }: {
   /** Signed-out visitors see only the brand link. */
   user: { isAdmin: boolean; name?: string; icon?: string; color?: string } | null;
@@ -25,9 +28,11 @@ export function Rail({
   connection?: ConnectionState;
   catalog?: CatalogConnectionDetails | null;
   documentOpen?: boolean;
+  compact?: boolean;
 }) {
   return (
     <header
+      className={compact ? 'rail-compact' : undefined}
       onClick={(event) => {
         if (
           (event.target as Element).closest('a') &&
@@ -50,28 +55,40 @@ export function Rail({
         )}
       </div>
       {user && (
-        <nav aria-label="Workspace">
-          <a className="rail-button" href={user.isAdmin ? '/admin' : '/'}>
-            <span aria-hidden="true">▦</span>
-            <span className="rail-label">{user.isAdmin ? 'Admin' : 'Dashboard'}</span>
-          </a>
-          <a className="rail-button" href="/settings">
-            <span
-              className="profile-rail-avatar"
-              style={{
-                background: `var(--fill-${user.color ?? 'primary-strong'}-bg)`,
-                color: `var(--fill-${user.color ?? 'primary-strong'}-fg)`,
-              }}
+        <>
+          <nav aria-label="Workspace">
+            <a className="rail-button" href={user.isAdmin ? '/admin' : '/'}>
+              <span aria-hidden="true">▦</span>
+              <span className="rail-label">{user.isAdmin ? 'Admin' : 'Dashboard'}</span>
+            </a>
+          </nav>
+          <div className="rail-account">
+            <ThemeMenu />
+            <a
+              className="rail-button"
+              href="/profile"
+              aria-label="Your profile"
+              title={user.name ? `${user.name} — Your profile` : 'Your profile'}
             >
-              <ProfileIcon icon={user.icon ?? 'lucide:user-round'} />
-            </span>
-            <span className="rail-label">Settings</span>
-          </a>
-          <button className="rail-button" onClick={onSignOut}>
-            <span aria-hidden="true">↪</span>
-            <span className="rail-label">Sign out</span>
-          </button>
-        </nav>
+              <span
+                className="profile-rail-avatar"
+                style={{
+                  background: `var(--fill-${user.color ?? 'primary-strong'}-bg)`,
+                  color: `var(--fill-${user.color ?? 'primary-strong'}-fg)`,
+                }}
+              >
+                <ProfileIcon icon={user.icon ?? 'lucide:user-round'} />
+              </span>
+              <span className="rail-label">{user.name ?? 'Your profile'}</span>
+            </a>
+            {!compact && (
+              <button className="rail-button" onClick={onSignOut}>
+                <span aria-hidden="true">↪</span>
+                <span className="rail-label">Sign out</span>
+              </button>
+            )}
+          </div>
+        </>
       )}
     </header>
   );

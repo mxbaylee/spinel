@@ -50,8 +50,8 @@ test('files and settings remain reachable without personal pin UI or requests', 
     await expect(
       files.getByRole('button', { name: 'Daily journal Doc', exact: true }),
     ).toBeVisible();
-    await page.getByRole('link', { name: 'Settings', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Your profile', exact: true })).toBeVisible();
     await expect(page.getByRole('complementary', { name: 'Pinned items' })).toHaveCount(0);
     await page.getByRole('link', { name: 'Dashboard', exact: true }).click();
     await expect(

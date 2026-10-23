@@ -60,7 +60,6 @@ export interface SpaceProps {
   navigation: NavigationGuard;
   connection: ConnectionState;
   onExit(): void;
-  onSignOut(): void;
   onConnectionState?(state: ConnectionState | null): void;
   renderEditor(props: SpaceEditorProps): ReactNode;
 }
@@ -74,7 +73,6 @@ export function Space({
   navigation,
   connection,
   onExit,
-  onSignOut,
   onConnectionState,
   renderEditor,
 }: SpaceProps) {
@@ -173,7 +171,7 @@ export function Space({
     }
   };
   const exit = () => depart(onExit);
-  const profile = () => depart(() => location.assign('/settings'));
+  const profile = () => depart(() => location.assign('/profile'));
   const spaceId = route.kind === 'space' ? route.spaceId : null;
   const trashView = route.kind === 'space' && route.selection.kind === 'trash';
   const currentTree = tree?.space.id === spaceId ? tree : null;
@@ -634,7 +632,6 @@ export function Space({
       documentOpen={Boolean(visiblePage)}
       onExit={exit}
       onProfile={profile}
-      onSignOut={onSignOut}
       navigation={navigationView}
       navigationButton={pagesButton}
     >

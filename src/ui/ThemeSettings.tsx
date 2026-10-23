@@ -1,31 +1,17 @@
-import { useState, useSyncExternalStore } from 'react';
-import { getPreference, setPreference, watchTheme } from './theme.ts';
-import type { ThemePreference } from './theme.ts';
+import { ThemeMenu } from './redesign/ThemeMenu.tsx';
 export function ThemeSettings() {
-  const preference = useSyncExternalStore(watchTheme, getPreference);
-  const [error, setError] = useState('');
   return (
-    <section className="welcome theme-settings">
-      <h2>Appearance</h2>
-      <label>
-        Theme
-        <select
-          value={preference}
-          onChange={(event) => {
-            setError(
-              setPreference(event.target.value as ThemePreference)
-                ? ''
-                : 'Theme changed for this visit, but this browser could not save your preference.',
-            );
-          }}
-        >
-          <option value="system">Follow system</option>
-          <option value="light">Vintage · Light</option>
-          <option value="dark">Modern · Dark</option>
-        </select>
-      </label>
-      <p>Applies to this browser. Your documents stay the same for everyone.</p>
-      {error && <p role="alert">{error}</p>}
+    <section className="theme-settings" aria-labelledby="device-appearance-heading">
+      <h2 id="device-appearance-heading">Appearance on this device</h2>
+      <p>
+        Saved in this browser. Defaults to System and follows your device’s appearance. Signing in
+        does not change it.
+      </p>
+      <ThemeMenu />
+      <p>
+        Your documents stay the same for everyone. Your saved profile name, color and icon are
+        separate.
+      </p>
     </section>
   );
 }

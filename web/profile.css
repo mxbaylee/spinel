@@ -1,0 +1,285 @@
+/* SPN-045: account placement follows the approved composed profile screen. */
+.profile-workspace {
+  flex-direction: column;
+}
+.workspace.profile-workspace > .workspace-body {
+  padding: 0;
+  width: 100%;
+}
+.workspace.profile-workspace > .workspace-body > main {
+  padding: 0;
+}
+.profile-page {
+  font-size: 0.875rem;
+}
+.profile-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px 40px;
+}
+.profile-page-heading .eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  margin: 0 0 8px;
+}
+.profile-page h1 {
+  font-size: 1.75rem;
+  margin: 0;
+}
+.profile-page h2,
+.profile-settings h2 {
+  font-size: 1.125rem;
+}
+.profile-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.profile-layout {
+  display: grid;
+  grid-template-columns: 216px minmax(0, 640px);
+  padding: 8px 40px 64px;
+  gap: 48px;
+}
+.profile-layout > nav {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+}
+.profile-layout > nav a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  color: var(--sp-muted);
+  text-decoration: none;
+  border-radius: 8px;
+}
+.profile-layout > nav a[aria-current] {
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
+  font-weight: 600;
+}
+.profile-content {
+  padding-top: 8px;
+  min-width: 0;
+}
+.profile-content .welcome {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.profile-content .theme-settings {
+  max-width: none;
+}
+.profile-content p,
+.profile-settings p {
+  color: var(--sp-muted);
+}
+.profile-content > [hidden] {
+  display: none;
+}
+.profile-settings fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  min-width: 0;
+}
+.profile-settings label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.profile-settings input {
+  width: 100%;
+}
+.profile-identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 24px 0;
+}
+.profile-identity-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.profile-identity > div {
+  flex: 1;
+  min-width: 120px;
+  overflow-wrap: anywhere;
+}
+.profile-identity p {
+  margin: 4px 0 0;
+}
+.profile-colors {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.profile-colors button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.profile-colors button[aria-pressed='true'] {
+  outline: 2px solid var(--sp-text);
+  outline-offset: 3px;
+}
+.profile-passkeys {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+.profile-passkeys li {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--sp-border);
+}
+.profile-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.profile-icon-dialog .profile-icon-grid {
+  max-height: min(360px, max(52px, calc(100dvh - 440px)));
+  overflow: auto;
+  padding: 4px;
+}
+.profile-icon-dialog label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.rail-account {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+}
+.rail-account .sp-segments {
+  flex-direction: column;
+}
+.workspace > header.rail-compact {
+  flex: none;
+  height: auto;
+  min-height: 68px;
+  flex-direction: row;
+  padding: 8px 24px;
+  gap: 12px;
+}
+.rail-compact .rail-brand,
+.rail-compact .rail-account {
+  flex-direction: row;
+}
+.rail-compact .rail-account {
+  margin-top: 0;
+  margin-left: auto;
+}
+.rail-compact .rail-account .sp-segments {
+  flex-direction: row;
+}
+.rail-compact .rail-label {
+  top: calc(100% + 8px);
+  left: 0;
+  transform: none;
+}
+@media (any-pointer: coarse) and (min-width: 641px) {
+  header:not(.rail-compact) .rail-account .sp-segments::before {
+    inset: 0 7px;
+  }
+}
+@media (max-width: 900px) {
+  .profile-layout {
+    grid-template-columns: 176px minmax(0, 1fr);
+    gap: 24px;
+    padding-inline: 24px;
+  }
+  .profile-page-heading {
+    padding-inline: 24px;
+  }
+}
+@media (max-width: 640px) {
+  .workspace > header {
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: 8px;
+  }
+  .workspace > header.rail-compact {
+    padding: 8px;
+    gap: 4px;
+  }
+  .workspace > header nav {
+    gap: 4px;
+  }
+  .rail-brand {
+    gap: 0;
+  }
+  .rail-account {
+    flex-direction: row;
+    gap: 4px;
+    margin-top: 0;
+    margin-left: auto;
+  }
+  .rail-account .sp-segments {
+    flex-direction: row;
+  }
+  .rail-account .rail-label {
+    left: auto;
+    right: 0;
+  }
+  .profile-page-heading {
+    padding: 24px 16px;
+    flex-wrap: wrap;
+  }
+  .profile-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 0 16px 32px;
+  }
+  .profile-layout > nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--sp-border);
+  }
+  .profile-layout > nav a {
+    min-width: 0;
+  }
+  .profile-identity {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+  .profile-identity-avatar {
+    width: 44px;
+    height: 44px;
+  }
+  .profile-identity > button {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .profile-page button,
+  .profile-icon-dialog button,
+  .profile-icon-dialog select {
+    min-height: 44px;
+  }
+}
+@media (max-width: 640px) {
+  .rail-account > button.rail-button {
+    display: none;
+  }
+}

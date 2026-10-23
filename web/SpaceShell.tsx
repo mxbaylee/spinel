@@ -3,9 +3,8 @@ import type { ReactNode, RefObject } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { GemLogo, replayGemWiggle } from '../src/ui/GemLogo.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
-import { getPreference, setPreference, watchTheme } from '../src/ui/theme.ts';
-import type { ThemePreference } from '../src/ui/theme.ts';
-import { ActionMenu, Button, SegmentedChoice } from '../src/ui/redesign/Controls.tsx';
+import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
+import { Button } from '../src/ui/redesign/Controls.tsx';
 import { ConnectionStatus } from './ConnectionStatus.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import './space.css';
@@ -31,7 +30,6 @@ export function SpaceShell({
   documentOpen,
   onExit,
   onProfile,
-  onSignOut,
   navigation,
   navigationButton,
   children,
@@ -41,17 +39,14 @@ export function SpaceShell({
   documentOpen: boolean;
   onExit(): void;
   onProfile(): void;
-  onSignOut(): void;
   navigation?: (close: () => void) => ReactNode;
   navigationButton?: RefObject<HTMLButtonElement>;
   children: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(true);
   const [drawer, setDrawer] = useState(false);
-  const [themeError, setThemeError] = useState('');
   const localPages = useRef<HTMLButtonElement>(null);
   const pages = navigationButton ?? localPages;
-  const preference = useSyncExternalStore(watchTheme, getPreference);
   const compact = useSyncExternalStore(watchCompact, compactSnapshot);
   const hasNavigation = Boolean(navigation);
   useEffect(() => {
@@ -98,33 +93,14 @@ export function SpaceShell({
           </button>
         )}
         <div className="space-account-controls">
-          <SegmentedChoice
-            label="Appearance on this device"
-            value={preference}
-            onChange={(next) =>
-              setThemeError(
-                setPreference(next as ThemePreference)
-                  ? ''
-                  : 'Theme changed for this visit. Your preference could not be saved.',
-              )
-            }
-            options={[
-              {
-                value: 'system',
-                label: 'Follow system',
-                icon: <ProfileIcon icon="lucide:monitor" />,
-              },
-              { value: 'light', label: 'Light', icon: <ProfileIcon icon="lucide:sun" /> },
-              { value: 'dark', label: 'Dark', icon: <ProfileIcon icon="lucide:moon" /> },
-            ]}
-          />
+          <ThemeMenu />
           {user && (
-            <ActionMenu
-              label={`${user.name} — Profile`}
-              actions={[
-                { label: 'Profile settings', onClick: onProfile },
-                { label: 'Sign out', onClick: onSignOut },
-              ]}
+            <button
+              className="space-site-button"
+              type="button"
+              aria-label="Your profile"
+              title={`${user.name} — Your profile`}
+              onClick={onProfile}
             >
               <span
                 className="space-avatar"
@@ -135,15 +111,9 @@ export function SpaceShell({
               >
                 <ProfileIcon icon={user.icon ?? 'lucide:user-round'} />
               </span>
-            </ActionMenu>
+            </button>
           )}
         </div>
-        {themeError && (
-          <div className="space-theme-error" role="alert">
-            <p>{themeError}</p>
-            <Button onClick={() => setThemeError('')}>Dismiss</Button>
-          </div>
-        )}
       </header>
       {navigation && expanded && (
         <aside className="space-desktop-tree" aria-label="Space contents">
