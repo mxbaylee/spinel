@@ -102,6 +102,40 @@ that same scaffold; existing backlog and reference/design files keep their
 formatting. All TypeScript, including existing scripts/reference code, extends
 the root `tsconfig.json` and is checked by `npm run typecheck`.
 
+## Reviewed dependency updates
+
+[Dependabot configuration](../.github/dependabot.yml) proposes weekly updates on
+Monday at 09:00 America/Los_Angeles for root npm workspaces, both Node Dockerfile
+stages, Caddy in `deploy/compose.yaml`, and GitHub Actions. Existing Univer packages
+are grouped separately for version and security updates. The updater changes
+existing dependencies; it does not authorize adding Pro packages. Keep Docker
+image digests and Actions commit SHAs immutable, with review of each replacement.
+`SPINEL_IMAGE` remains the Operator's selected built artifact.
+
+The literal `⬆️ Bump ` title prefix includes its trailing space. Dependency PRs
+use the normal review and applicable CI gates. This configuration change also
+requires full CI; neither it nor update PRs enable automatic merge or deployment.
+
+Keep the existing registry configuration. npm version updates have a seven-day
+cooldown; security updates are not delayed by that option. Both remain subject to
+curation: a blocked or too-new version waits, with no retry through another
+registry or tarball. No repository `.npmrc` or private registry is configured at
+this change; the local registry probe returned `https://registry.npmjs.org/`.
+That is not evidence that packages have passed an external curation service. If a
+curated registry is introduced, configure Dependabot for that same registry
+using its supported registry settings and secrets; do not copy developer tokens
+or leave a public fallback that bypasses its policy.
+
+After enabling on the default branch, inspect **Insights → Dependency graph →
+Dependabot** and record actual update logs, failures, or no-update results. If a
+real bump PR opens, record its generated title and **Pull request** check result.
+Fix rejected configuration or access through the normal review process, never by
+loosening curation or CI. Configuration validation and a representative title
+probe do not prove hosted execution. The retained evidence checklist and source
+review are in [SPN-100](implementation/SPN-100.md#verification-and-hosted-rollout).
+Host patching and deployment remain outside this change; the prior live-server
+routine was [retired](implementation/grooming-dependency-registration-2026-10-23.md#align-work-with-the-undeployed-product).
+
 ## Component catalogue
 
 ```sh
