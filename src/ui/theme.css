@@ -578,9 +578,6 @@ dialog {
   border: 2px dashed var(--sp-border);
   border-radius: 18px;
 }
-.fill-presets {
-  margin: 12px 0;
-}
 .fill-palette {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));

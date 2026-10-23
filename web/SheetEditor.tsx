@@ -21,12 +21,10 @@ import {
   SheetSkeletonService,
   INTERCEPTOR_POINT,
   BEFORE_CELL_EDIT,
-  SetRangeValuesCommand,
 } from '@univerjs/sheets';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
-import { presetStyle, displayPresetCell, presetCellForEditing } from '../src/ui/presetStyles.ts';
-import { FillPresets } from '../src/ui/FillPresets.tsx';
+import { displayPresetCell, presetCellForEditing } from '../src/ui/presetStyles.ts';
 import { UnitAction } from '@univerjs/protocol';
 import { Collaborators, watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
@@ -63,8 +61,6 @@ export function SheetEditor({
 }) {
   const mobile = useRef(useMobileSheetControls()).current;
   const print = useRef<(() => Promise<void>) | null>(null);
-  const applyFill = useRef<((id: string) => Promise<void>) | null>(null);
-  const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
@@ -193,7 +189,6 @@ export function SheetEditor({
         univer.dispose();
       };
       const readOnly = async () => {
-        setEditable(false);
         // This tab's presentation follows its grant; never change shared permissions.
         const permissions = univer.__getInjector().get(IPermissionService);
         for (const Point of getAllWorkbookPermissionPoint()) {
@@ -219,25 +214,6 @@ export function SheetEditor({
         spaceId,
       );
       controller.current = save;
-      setEditable(data.access !== 'viewer');
-      applyFill.current = async (preset) => {
-        const book = univerAPI.getActiveWorkbook();
-        if (!book) throw new Error('Open a spreadsheet first.');
-        const sheet = book.getActiveSheet(),
-          range = sheet?.getActiveRange();
-        if (!sheet || !range) throw new Error('Select cells to fill.');
-        // Keep the cells chosen at the click, even if selection changes while
-        // the SDK finishes an in-progress edit asynchronously.
-        const target = { ...range.getRange() };
-        await book.endEditingAsync(true);
-        const result = await univerAPI.executeCommand(SetRangeValuesCommand.id, {
-          unitId: data.unitId,
-          subUnitId: sheet.getSheetId(),
-          range: target,
-          value: { s: presetStyle(preset, 'light') },
-        });
-        if (!result) throw new Error('Could not apply this fill. Check your access and try again.');
-      };
       stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) stopPresence();
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
@@ -267,7 +243,6 @@ export function SheetEditor({
       // Univer owns a separate React root; unmount it after our cleanup commit.
       if (disposeEditor) queueMicrotask(disposeEditor);
       controller.current = null;
-      applyFill.current = null;
       onDirty(false);
       onConnectionState?.(null);
     };
@@ -276,13 +251,6 @@ export function SheetEditor({
   return (
     <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
       <Collaborators people={people} />
-      <FillPresets
-        disabled={!editable || status.failed}
-        apply={async (preset) => {
-          if (!applyFill.current) throw new Error('Wait for the spreadsheet to load.');
-          await applyFill.current(preset);
-        }}
-      />
       <SaveStatus
         state={status}
         target={saveStatusTarget}
