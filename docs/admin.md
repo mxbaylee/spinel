@@ -1,5 +1,11 @@
 # User and passkey administration
 
+Planned SPN-032 diagnostics: [the implementation record](implementation/SPN-032.md)
+defines a separate event/log/metric database and Operator-only download/truncate
+controls, with no query UI. Exports may contain user/file IDs and route templates
+for correlation, but no document content/names, credentials or raw URLs. These
+controls are not implemented yet and do not expand document-access permissions.
+
 The Operator's `/admin` page lists every account, its admin/member role, whether
 it is disabled, and its passkeys with provider, creation time and last use. It
 also includes the existing invitation and recovery controls. Only metadata is

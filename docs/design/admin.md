@@ -121,6 +121,24 @@ refreshes recovery-invitation recipients.
 `Admin/AdminUsers`, `Admin/AdminInvites`, `Admin/BackupStatus`. SPN-032 adds
 `Admin/ServerHealth`.
 
+## Diagnostics handoff (SPN-032)
+
+Owner direction, 2026-10-22; [scope and rationale](../implementation/SPN-032.md).
+Production work is pending. Health cards retain aggregate status and guidance.
+Add **Download diagnostics** and **Truncate diagnostics** to Backups & health;
+there is no query UI, log browser or SQL console. Download produces a standalone
+diagnostics SQLite snapshot for local analysis. It can contain user/file IDs and
+route templates, never document names/content or credentials. This identifier-only
+export is the scoped exception to the earlier counts-only health rule.
+
+Download is the visible action; Truncate belongs behind the contextual menu and
+uses the existing destructive confirmation pattern. Explain that it clears
+diagnostics only, cannot be undone, does not delete files, and collection resumes.
+Show pending, failed and completed states without implying failed work succeeded;
+cancel is safe and focus returns to the surviving control. A download failure
+offers retry without promising an existing artifact. Include light/dark/phone
+stories and owner screenshot review when implementing these controls.
+
 ## Assistant connection metadata (SPN-034)
 
 **Connected assistants** and **Assistant access tokens** sections before Backups

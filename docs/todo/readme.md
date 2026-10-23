@@ -31,18 +31,18 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 17 | 🪟 [SPN-084](SPN-084.md) Apply the approved guest and unavailable screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
 | 18 | 🕰️ [SPN-085](SPN-085.md) Apply the approved history browser design | 🌿 M | 💜 M | 5 (own 4) | — | — | Approve the implementation screenshots |
 | 19 | 🔬 [SPN-097](SPN-097.md) Choose a PDF renderer and split its implementation | 🌿 M | 💜 M | 4 | Unblocks SPN-075 | — | — |
-| 20 | 📈 [SPN-032](SPN-032.md) Show server health to the operator | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 21 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 4 | Lower ID | [SPN-055](SPN-055.md) | — |
-| 22 | 🧯 [SPN-063](SPN-063.md) Regularly prove Spinel can recover from its backups | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 23 | 📑 [SPN-065](SPN-065.md) Make a copy of a Sheet or Doc | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 24 | 🔗 [SPN-066](SPN-066.md) See and expire every guest link in one place | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 25 | 📂 [SPN-069](SPN-069.md) Create items in a folder shared with me as an editor | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 26 | 📵 [SPN-070](SPN-070.md) Remove a lost device's passkey and sign it out | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 27 | 🧷 [SPN-076](SPN-076.md) Share a Doc with its formula sources | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the sharing flow and PR screenshots |
-| 28 | 🌗 [SPN-088](SPN-088.md) Use a theme-aware palette in native editors | 🌿 M | 💜 M | 4 | Lower ID | [SPN-050](SPN-050.md) | Approve the implementation screenshots |
-| 29 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🌿 M | 💜 M | 4 | Lower ID | [SPN-054](SPN-054.md), [SPN-055](SPN-055.md) | — |
-| 30 | 🗑️ [SPN-095](SPN-095.md) Expire Space Trash after 30 days | 🌿 M | 💜 M | 4 | Higher impact | — | Approve the recovery-date screenshots |
-| 31 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 4 | — | [SPN-045](SPN-045.md), [SPN-048](SPN-048.md), [SPN-049](SPN-049.md), [SPN-081](SPN-081.md), [SPN-082](SPN-082.md), [SPN-083](SPN-083.md), [SPN-084](SPN-084.md), [SPN-085](SPN-085.md) | Approve the implementation screenshots |
+| 20 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 4 | Lower ID | [SPN-055](SPN-055.md) | — |
+| 21 | 🧯 [SPN-063](SPN-063.md) Regularly prove Spinel can recover from its backups | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
+| 22 | 📑 [SPN-065](SPN-065.md) Make a copy of a Sheet or Doc | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
+| 23 | 🔗 [SPN-066](SPN-066.md) See and expire every guest link in one place | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
+| 24 | 📂 [SPN-069](SPN-069.md) Create items in a folder shared with me as an editor | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
+| 25 | 📵 [SPN-070](SPN-070.md) Remove a lost device's passkey and sign it out | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
+| 26 | 🧷 [SPN-076](SPN-076.md) Share a Doc with its formula sources | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the sharing flow and PR screenshots |
+| 27 | 🌗 [SPN-088](SPN-088.md) Use a theme-aware palette in native editors | 🌿 M | 💜 M | 4 | Lower ID | [SPN-050](SPN-050.md) | Approve the implementation screenshots |
+| 28 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🌿 M | 💜 M | 4 | Lower ID | [SPN-054](SPN-054.md), [SPN-055](SPN-055.md) | — |
+| 29 | 🗑️ [SPN-095](SPN-095.md) Expire Space Trash after 30 days | 🌿 M | 💜 M | 4 | Higher impact | — | Approve the recovery-date screenshots |
+| 30 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 4 | — | [SPN-045](SPN-045.md), [SPN-048](SPN-048.md), [SPN-049](SPN-049.md), [SPN-081](SPN-081.md), [SPN-082](SPN-082.md), [SPN-083](SPN-083.md), [SPN-084](SPN-084.md), [SPN-085](SPN-085.md) | Approve the implementation screenshots |
+| 31 | 📈 [SPN-032](SPN-032.md) Show server health and export structured diagnostics | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
 | 32 | ✨ [SPN-051](SPN-051.md) Create new documents while offline | 🌳 L | 💜 M | 3 | Lower ID | [SPN-053](SPN-053.md) | — |
 | 33 | 🗃️ [SPN-067](SPN-067.md) Export all my files at once | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
 | 34 | 📱 [SPN-072](SPN-072.md) Edit Docs comfortably on a phone | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
