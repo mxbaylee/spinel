@@ -45,4 +45,7 @@
 @media (max-width: 600px) {
   .access-state { padding: 24px 24px 24px; }
   .access-state-content { padding: 48px 0; }
+  .access-state-header .sp-segments { padding: 0; }
+  .access-state-header .sp-segments::before { inset: 7px 0; }
+  .access-state-header .sp-segment { width: 44px; height: 44px; }
 }

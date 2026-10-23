@@ -11,12 +11,27 @@ const meta = {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
-    const width = canvasElement.ownerDocument.defaultView!.innerWidth;
-    for (const control of canvasElement.querySelectorAll('button')) {
+    const window = canvasElement.ownerDocument.defaultView!;
+    const width = window.innerWidth;
+    // Base UI radios render spans, not buttons. Check the actual targets at
+    // phone widths even when the screenshot browser uses a fine pointer.
+    for (const control of canvasElement.querySelectorAll('button, [role="radio"]')) {
       const rect = control.getBoundingClientRect();
       await expect(rect.left).toBeGreaterThanOrEqual(0);
       await expect(rect.right).toBeLessThanOrEqual(width);
+      if (width <= 600 || window.matchMedia('(any-pointer: coarse)').matches) {
+        await expect(rect.width).toBeGreaterThanOrEqual(44);
+        await expect(rect.height).toBeGreaterThanOrEqual(44);
+      }
     }
+    const radios = canvas.queryAllByRole('radio');
+    const initial = radios.find((radio) => radio.getAttribute('aria-checked') === 'true');
+    for (const radio of radios) {
+      await userEvent.click(radio);
+      await expect(radio).toHaveAttribute('aria-checked', 'true');
+      await expect(canvas.getAllByRole('radio', { checked: true })).toHaveLength(1);
+    }
+    if (initial) await userEvent.click(initial);
     await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(width);
   },
 } satisfies Meta<typeof AccessState>;
