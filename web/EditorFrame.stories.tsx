@@ -120,7 +120,7 @@ export const VersionsDialog: Story = {
   parameters: { api: { 'GET /api/items/fixture/history': { versions: [], canName: true } } },
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
-    await userEvent.click(within(document.body).getByRole('menuitem', { name: 'Versions' }));
+    await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Versions' }));
     const dialog = await within(document.body).findByRole('dialog', { name: 'Versions' });
     await expect(
       await within(dialog).findByRole('button', { name: 'Name this version' }),
@@ -131,7 +131,7 @@ export const VersionsDialog: Story = {
 export const ExportDialog: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
-    await userEvent.click(within(document.body).getByRole('menuitem', { name: 'Export' }));
+    await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Export' }));
     const dialog = await within(document.body).findByRole('dialog', { name: 'Export' });
     await expect(
       within(dialog).getByRole('button', { name: 'Download Univer file' }),
@@ -143,7 +143,7 @@ export const PrintFailure: Story = {
   args: { children: <Fixture printFailure /> },
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
-    await userEvent.click(within(document.body).getByRole('menuitem', { name: 'Export' }));
+    await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Export' }));
     const dialog = await within(document.body).findByRole('dialog', { name: 'Export' });
     await userEvent.click(within(dialog).getByRole('button', { name: 'Print / save PDF' }));
     await expect(await within(document.body).findByRole('alert')).toHaveTextContent(
