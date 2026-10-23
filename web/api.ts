@@ -1,3 +1,4 @@
+import { clearDashboardNavigation } from './dashboardNavigation.ts';
 import { spaceReviewSignInPath } from '../src/shared/spaceReviewRoute.ts';
 
 // An assistant connection carries only its opaque transaction ID through sign-in.
@@ -36,8 +37,10 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
   if (
     response.status === 401 &&
     !['/sign-in', '/setup', '/recover-admin', '/invite'].includes(location.pathname)
-  )
+  ) {
+    clearDashboardNavigation();
     location.assign(signInPath());
+  }
   if (response.status === 204) return undefined as T;
   const data = await response.json();
   if (!response.ok)

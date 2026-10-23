@@ -1,0 +1,103 @@
+/* File dialogs portal outside .workspace. Opt in their existing native form
+   controls here; never apply workspace form rules to native editor content. */
+.file-dialog,
+.file-dialog .item-form,
+.file-dialog form,
+.file-dialog section[aria-label='Guest link'] {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.file-dialog.item-form,
+.file-dialog .item-form {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+.file-dialog label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.file-dialog .item-form > div {
+  display: grid;
+  gap: 8px;
+}
+.file-dialog > button,
+.file-dialog form > button {
+  justify-self: start;
+}
+.file-dialog input,
+.file-dialog select {
+  min-width: 0;
+  max-width: 100%;
+}
+.file-dialog select,
+.file-dialog button:not(.sp-control) {
+  min-height: 40px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  font: inherit;
+}
+.file-dialog select {
+  display: block;
+  width: 100%;
+}
+.file-dialog button:not(.sp-control) {
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.file-dialog button:not(.sp-control):hover {
+  background: var(--sp-header);
+}
+.file-dialog button.primary,
+.file-dialog button.primary:hover {
+  background: var(--sp-accent);
+  border-color: var(--sp-accent);
+  color: var(--sp-on-accent);
+}
+.file-dialog :is(button, input, select):disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.file-dialog :is(button, select, summary):focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 3px;
+}
+.file-dialog .item-actions {
+  justify-content: flex-end;
+}
+.file-dialog summary {
+  min-height: 40px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.file-dialog-tags {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.file-dialog-tags li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+.file-dialog-tags button {
+  flex-shrink: 0;
+}
+@media (pointer: coarse), (max-width: 640px) {
+  .file-dialog :is(button, input:not([type='hidden']), select, summary) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
