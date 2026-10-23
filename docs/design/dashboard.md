@@ -15,8 +15,10 @@ The redesigned header keeps the current folder title with its ancestor breadcrum
 The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
-SPN-048 builds this page's layout. Design changes made while building go back
-into this page, not only into the PR.
+SPN-048 implements this layout with the existing file APIs and access rules; its
+[implementation and validation record](../implementation/SPN-048.md) records the
+query, scope and return-state decisions and any pending verification. Design
+changes still go through this playbook before application changes.
 
 ## How others do it
 
