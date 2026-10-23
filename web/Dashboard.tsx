@@ -802,6 +802,7 @@ export function Dashboard({
                     : current!.name
               }
               onSearchAll={() => setAllFiles(true)}
+              scopeOverride={allFiles}
               onClear={() => {
                 setAllFiles(false);
                 pendingScroll.current = 0;
@@ -836,9 +837,23 @@ export function Dashboard({
           )}
         </>
       ) : (
-        <button className="dashboard-return" onClick={returnToFiles}>
-          Back to files
-        </button>
+        <>
+          <nav aria-label="Breadcrumb" className="dashboard-breadcrumbs">
+            <button onClick={() => navigate(null)}>My files</button>
+            {current &&
+              ancestors(current).map((item) => (
+                <span key={item.id}>
+                  {' '}
+                  / <button onClick={() => openFile(item)}>{item.name}</button>
+                </span>
+              ))}
+          </nav>
+          {currentId !== TRASH_VIEW && (
+            <button className="dashboard-return" onClick={returnToFiles}>
+              Back to files
+            </button>
+          )}
+        </>
       )}
       {/* SPN-049 owns removing dashboard search from editors. Keep lookup usable
           while unsaved work remains mounted, with the existing navigation guard. */}

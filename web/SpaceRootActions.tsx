@@ -60,7 +60,12 @@ export function SpaceRootActions({
     onClose?.();
   }
   async function open(next: Mode) {
-    if (beforeChange && !beforeChange()) return;
+    if (beforeChange && !beforeChange()) {
+      // External row actions mount once per activation; release a cancelled one
+      // so retrying the same action runs the navigation guard again.
+      if (initialMode) close();
+      return;
+    }
     const request = ++generation.current;
     setMode(next);
     setName(item.name);

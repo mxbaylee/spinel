@@ -26,6 +26,7 @@ export function SearchPanel({
   scopeLabel = 'All accessible files',
   onSearchAll,
   onClear,
+  scopeOverride = false,
   refreshKey = 0,
   onReady,
   viewControls,
@@ -44,6 +45,7 @@ export function SearchPanel({
   scopeLabel?: string;
   onSearchAll?: () => void;
   onClear?: () => void;
+  scopeOverride?: boolean;
   refreshKey?: number;
   onReady?: () => void;
   viewControls?: ReactNode;
@@ -135,6 +137,7 @@ export function SearchPanel({
       <SearchControls
         query={query}
         viewControls={viewControls}
+        canClearScope={scopeOverride}
         text={text}
         problem={parsed.ok ? '' : parsed.error}
         tags={tags}

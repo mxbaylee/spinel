@@ -84,7 +84,10 @@ test('folder search preserves draft, scope, view and scroll across browser Back 
       .getByRole('button', { name: 'My files', exact: true })
       .click();
     await page.getByRole('button', { name: 'Trash Recently deleted files', exact: true }).click();
-    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await page
+      .getByRole('navigation', { name: 'Breadcrumb' })
+      .getByRole('button', { name: 'My files', exact: true })
+      .click();
     await expect(page).toHaveURL(baseURL! + '/');
     await expect(query).toHaveValue('');
   } finally {

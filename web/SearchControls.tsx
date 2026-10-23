@@ -20,6 +20,7 @@ export function SearchControls({
   onEdit,
   onApply,
   onClear,
+  canClearScope = false,
   viewControls,
 }: {
   query: SearchQuery;
@@ -30,6 +31,7 @@ export function SearchControls({
   onEdit: (text: string) => void;
   onApply: (query: SearchQuery) => void;
   onClear?: () => void;
+  canClearScope?: boolean;
   viewControls?: ReactNode;
 }) {
   const id = useId();
@@ -75,11 +77,8 @@ export function SearchControls({
           Search options
         </button>
         {viewControls}
-        {(text || hasSearch(query)) && (
-          <button
-            disabled={!text && !hasSearch(query)}
-            onClick={() => (onClear ? onClear() : onApply({ ...emptySearch }))}
-          >
+        {(text || hasSearch(query) || canClearScope) && (
+          <button onClick={() => (onClear ? onClear() : onApply({ ...emptySearch }))}>
             Clear search and filters
           </button>
         )}

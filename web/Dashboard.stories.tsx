@@ -259,6 +259,9 @@ const withSpaces = {
   ...populated,
   'GET /api/items': { items: [...items, space], spacesEnabled: true },
   'GET /api/items/shared': { items: [...shared, filedSpace, viewerSpace] },
+  'GET /api/items/search': {
+    items: searchCatalog([...items, ...shared, space, filedSpace, viewerSpace]),
+  },
 };
 export const SpaceFiles: Story = { parameters: { api: withSpaces } };
 export const NewSpace: Story = {
@@ -531,5 +534,45 @@ export const SharedGrantOrdering: Story = {
     await expect(rows[1]).toHaveTextContent('A older share');
     await expect(rows[2]).toHaveTextContent('Older share');
     await expect(rows[2]).not.toHaveTextContent('1970');
+  },
+};
+
+export const CancelSpaceActionThenRetry: Story = {
+  parameters: { api: withSpaces },
+  args: { navigation: { allow: fn(), dirty() {} } },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    // Cancelling a discard prompt must not consume the next explicit activation.
+    const allow = args.navigation.allow as ReturnType<typeof fn>;
+    allow.mockReset().mockReturnValueOnce(false).mockReturnValue(true);
+    await userEvent.type(
+      await canvas.findByRole('searchbox', { name: 'Search files' }),
+      'Research type:space',
+    );
+    await rowAction(canvasElement, 'Research Space', 'Rename…');
+    await expect(allow).toHaveBeenCalledTimes(1);
+    await expect(
+      within(canvasElement.ownerDocument.body).queryByRole('dialog', { name: 'Rename Space' }),
+    ).not.toBeInTheDocument();
+    await rowAction(canvasElement, 'Research Space', 'Rename…');
+    await expect(allow).toHaveBeenCalledTimes(2);
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Rename Space' }),
+    ).toBeVisible();
+  },
+};
+
+export const ClearEmptyGlobalScope: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Household Folder' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Search all files' }));
+    await expect(canvas.getByText('All accessible files')).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Clear search and filters' }));
+    await expect(canvas.getByRole('searchbox', { name: 'Search files' })).toHaveValue('');
+    await expect(canvas.getByRole('button', { name: 'Search all files' })).toBeVisible();
+    await expect(canvas.getByRole('heading', { name: 'Household' })).toBeVisible();
+    await expect(canvas.queryByText('All accessible files')).not.toBeInTheDocument();
   },
 };
