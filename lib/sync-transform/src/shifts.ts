@@ -40,6 +40,8 @@ export function markError(move: Mutation): string | undefined {
   if (!Number.isInteger(at) || at < 0 || !Number.isInteger(count) || count < 1) {
     return 'it needs a whole `at` and a positive whole `count`';
   }
+  if (move.params.from.subUnitId !== move.params.to.subUnitId)
+    return 'it moves cells within one sheet';
   if (Object.keys(move.params.from.value ?? {}).length === 0)
     return 'a move with no sources is no shift';
   const { fromRange: from, toRange: to } = move.params;

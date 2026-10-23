@@ -4,12 +4,14 @@ Operational transforms for concurrent [Univer](https://github.com/dream-num/univ
 1.1.0 Sheet and Doc mutations, so a central sync server can merge two people's
 edits the same way on every screen. Pure TypeScript with no server, DOM or
 rendering dependency. At runtime it imports only `@univerjs/core`; `sheets`,
-`docs` and `drawing` are peers too, because the transforms implement their
-1.1.0 mutation formats.
+`docs`, `drawing` and `engine-formula` are peers too, because the transforms
+implement their 1.1.0 mutation formats, engine-formula's for defined names.
+The list of commands that make Univer rewrite names comes from
+`@univerjs/sheets-formula`'s `UpdateDefinedNameController`.
 
 It is written from the open-source mutation definitions in `@univerjs/sheets`,
-`@univerjs/docs` and `@univerjs/drawing`, not from Univer's closed-source
-collaboration packages.
+`@univerjs/docs`, `@univerjs/drawing` and `@univerjs/engine-formula` (defined
+names), not from Univer's closed-source collaboration packages.
 
 ```ts
 import { transform, UnsupportedMutationError } from '@spinel/sync-transform';
@@ -46,29 +48,36 @@ shift's start to the sheet's edge, past the band's last cell with content
 (but see "Known limits"). The edits that meet it
 there are cell values, styles and number formats, another drag or shift, a
 merge in a shift's area, and a row or column edit that cuts the area. It also
-throws for a number-format change and a concurrent write to one of its cells
-that sets no value, such as a style (`'format-race'`), since a write under
-text format `@` loses the value's type and only the sender knew it; and for a
-transform whose output would grow past its limit (`'growth'`, below). That is
-a race, not a sender bug: the server refuses the later edit, and its sender
+throws for a number-format change, by a numfmt or a style that names `n`, and
+a concurrent write to one of its cells that sets no value, such as a style
+(`'format-race'`), since a write under text format `@` loses the value's type
+and only the sender knew it; for a defined-name set and a concurrent edit that
+makes Univer rewrite names, such as a row insert, a range move or a sheet
+rename (`'name-race'`), since the set's references were written for the cells
+before it; for two names given the same text, in any scope, which Univer
+could resolve differently on each screen (also `'name-race'`); and for a transform
+whose output would grow past its limit (`'growth'`, below). That is a race,
+not a sender bug: the server refuses the later edit, and its sender
 drops its pending edits from it on and reloads the document (SPN-057,
 SPN-058).
 
 ## What it covers
 
-| Family                    | Mutations                                                                                               | Conflict rule                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Structure                 | row and column insert, remove, move; sheet insert, remove, reorder                                      | Both edits keep their intent: removals stick, a moved block stays with the side that moved it, inserts land before the first surviving row at or after their position. Every other family is re-addressed through the same index mapping.                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| Cells                     | set range values (values, formulas, inline styles), number formats, range moves within a sheet          | Per cell and key, the winner's write stands; the loser keeps the keys the winner did not write. A dragged range or a shift and a concurrent edit in its area are refused (`RefusedEditError`, `'moved-cells'`): a drag's area is its source and target, a shift's its band from its start to the sheet's edge, and what meets it there is a cell write, a number format, another drag or shift, a merge in a shift's area, or a row or column edit that cuts the area. Edits outside the area pass unchanged, and a row or column edit wholly outside it moves the move. A number-format change against a concurrent write of no value to one of its cells is refused too (`'format-race'`). |
-| Row and column properties | height, width, hidden, auto height, row and column data                                                 | Per index and key, the winner's write stands. A width is re-sent as column data where visibility could differ between orders.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| Merges                    | add, remove                                                                                             | Intersecting edits conflict and the winner's stands. Merges move as Univer's merge listener moves them; a merge added while someone else's row or column edit cuts through it is dropped on both screens.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| Sheet settings            | frozen panes, row and column count, default style, gridlines, name, tab colour, hidden, workbook name   | Two of the same setting: the winner's value stands.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| Drawings                  | sheet drawings (insert, remove, move, z-order), background image                                        | The drawing op is transformed whole with ot-json1; the winner wins a write conflict.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| Docs                      | rich-text editing (body, headers, footers, notes, doc drawings), rename, hyperlinks, formulas (SPN-033) | `JSON1` with the `TextX` subtype from `@univerjs/core`; the winner wins a write conflict. Where both edits name one paragraph, the first accepted edit's paragraph id stands, since Univer's delete can give a paragraph the deleted one's id. A formula is its source text under one whole-entity custom range. It stays whole past a style in or over it and text typed beside it, and an edit of it, which re-inserts it under its id, wins over concurrent typing, deletes and styles inside it. Of two edits of one formula, the first accepted stands: the loser's re-insert is dropped. Hyperlinks and formulas converge only with Spinel's patched `@univerjs/core` (below).         |
+| Family                    | Mutations                                                                                                     | Conflict rule                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Structure                 | row and column insert, remove, move; sheet insert, remove, reorder                                            | Both edits keep their intent: removals stick, a moved block stays with the side that moved it, inserts land before the first surviving row at or after their position. Every other family is re-addressed through the same index mapping.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Cells                     | set range values (values, formulas, inline styles), number formats, range moves, within a sheet or to another | Per cell and key, the winner's write stands; the loser keeps the keys the winner did not write. A dragged range or a shift and a concurrent edit in its area are refused (`RefusedEditError`, `'moved-cells'`): a drag's area is its source and target, a shift's its band from its start to the sheet's edge, and what meets it there is a cell write, a number format, another drag or shift, a merge in a shift's area, or a row or column edit that cuts the area. Edits outside the area pass unchanged, and a row or column edit wholly outside it moves the move. A number-format change against a concurrent write of no value to one of its cells is refused too (`'format-race'`). A cut to another sheet is transformed as two moves, one clearing its source and one writing its target, so its area is its source on one sheet and its target on the other, and it reaches the other side's screens as those two. |
+| Defined names             | set, remove                                                                                                   | Of two edits of one name, the first accepted stands: the loser's set or removal is dropped, whole, and the cell formulas a rename rewrites follow the cells' own rule, so they name the name that stands. Two names added or renamed to the same text, in any case or scope, are refused (`'name-race'`). Other edits of different names pass each other. A set against a concurrent edit that makes Univer rewrite names (row and column edits, range moves, sheet removal, sheet and workbook renames) is refused (`'name-race'`).                                                                                                                                                                                                                                                                                                                                                                                           |
+| Row and column properties | height, width, hidden, auto height, row and column data                                                       | Per index and key, the winner's write stands. A width is re-sent as column data where visibility could differ between orders.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Merges                    | add, remove                                                                                                   | Intersecting edits conflict and the winner's stands. Merges move as Univer's merge listener moves them; a merge added while someone else's row or column edit cuts through it is dropped on both screens.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Sheet settings            | frozen panes, row and column count, default style, gridlines, name, tab colour, hidden, workbook name         | Two of the same setting: the winner's value stands.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Drawings                  | sheet drawings (insert, remove, move, z-order), background image                                              | The drawing op is transformed whole with ot-json1; the winner wins a write conflict.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Docs                      | rich-text editing (body, headers, footers, notes, doc drawings), rename, hyperlinks, formulas (SPN-033)       | `JSON1` with the `TextX` subtype from `@univerjs/core`; the winner wins a write conflict. Where both edits name one paragraph, the first accepted edit's paragraph id stands, since Univer's delete can give a paragraph the deleted one's id. A formula is its source text under one whole-entity custom range. It stays whole past a style in or over it and text typed beside it, and an edit of it, which re-inserts it under its id, wins over concurrent typing, deletes and styles inside it. Of two edits of one formula, the first accepted stands: the loser's re-insert is dropped. Hyperlinks and formulas converge only with Spinel's patched `@univerjs/core` (below).                                                                                                                                                                                                                                           |
 
 Each rule above that was a choice, not a consequence of Univer's model, is
-marked `Decision (owner, …)` where the code makes it, with the option not
-taken and why.
+marked `Decision (owner, …)` or `Decision (agent, …)` where the code makes
+it, with the option not taken and why. Spinel lists them all in
+[docs/implementation/SPN-056.md](../../docs/implementation/SPN-056.md).
 
 ## What a sender must do
 
@@ -79,7 +88,7 @@ between screens, can throw `duplicate-custom-range-id` for a single user, and
 builds a negative retain when a new link crosses a paragraph break inside an
 old one. A copy of this lib published on its own needs the same patch, until
 upstream ships the fixes ([dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938))
-and SPN-097 removes it.
+and SPN-095 removes it.
 
 The transforms are stateless, so some facts must travel with the mutation:
 
@@ -115,14 +124,10 @@ The transforms are stateless, so some facts must travel with the mutation:
 
 Rejected with `UnsupportedMutationError`:
 
-- Any id not in `supportedMutationIds`: defined names (the name box and its
-  manager; a row or column edit also emits one when a name refers to the rows),
-  range and sheet protection, copying a sheet of 6000 cells or more,
+- Any id not in `supportedMutationIds`: range and sheet protection, copying a sheet of 6000 cells or more,
   calculation settings, permission rules on sheets and docs, a sheet's
   right-to-left direction, doc shapes, and range themes and sort, which no
   menu Spinel loads sends today.
-- A range move to another sheet (cut and paste across sheets): it edits two
-  sheets, and every transform addresses one.
 - Formula results (`sourceFormulaData`), which each client computes locally
   and never sends.
 
@@ -163,6 +168,14 @@ Also:
   clients converge: typing inside a formula or deleting part of it breaks the
   formula on both screens, as it would for one person alone. Headers, footers and notes travel in the same ot-json1 op
   and transform the same way, but no test edits them.
+- A name set is refused against any concurrent edit that could make Univer
+  rewrite names, wherever the name points, so a rename on one sheet and a row
+  insert on another are refused though they would merge. Two people giving
+  two names the same text at once are refused, in any scope, though Univer
+  would hold both.
+- A formula typed with a name's old text while someone renames that name
+  keeps the old text and shows `#NAME?` on both screens. A cell write is not a
+  name race, so it is merged, not refused.
 - Refusals. Measured 2026-10-22 with captured Univer commands: 300 seeds,
   each run until two clients have made 40 mutations, with intent checks on.
   The `refusals on a real sheet` test in `tests/cells.test.ts` prints the
@@ -178,8 +191,8 @@ Also:
   | Edits, sheet                                        | Refused / edits     | Refused + resynced / edits | Refused / batches at the server | Mutations discarded / all made |
   | --------------------------------------------------- | ------------------- | -------------------------- | ------------------------------- | ------------------------------ |
   | `realEdit`, `realBook()` (200×26, content in 30×10) | 417 / 8,146 = 5.12% | 881 / 8,146 = 10.82%       | 417 / 3,361 = 12.41%            | 3,960 / 12,118 = 32.68%        |
-  | `commandEdit`, the dense tests' 4×3 sheet           | 687 / 8,317 = 8.26% | 1,420 / 8,317 = 17.07%     | 687 / 3,411 = 20.14%            | 5,140 / 12,115 = 42.43%        |
-  | `commandEdit`, `realBook()`                         | 148 / 9,001 = 1.64% | 324 / 9,001 = 3.60%        | 148 / 3,736 = 3.96%             | 1,547 / 12,070 = 12.82%        |
+  | `commandEdit`, the dense tests' 4×3 sheet           | 628 / 7,613 = 8.25% | 1,315 / 7,613 = 17.27%     | 628 / 3,149 = 19.94%            | 5,079 / 12,211 = 41.59%        |
+  | `commandEdit`, `realBook()`                         | 121 / 7,996 = 1.51% | 274 / 7,996 = 3.43%        | 121 / 3,382 = 3.58%             | 1,439 / 12,188 = 11.81%        |
 
   `realEdit` (`tests/generate-cells.ts`) aims at `realBook()`'s content: 40%
   values, 10% bold, 10% drags, 40% inserts and deletes with a shift. A common
@@ -205,6 +218,12 @@ Also:
   agree, not where a write onto an empty cell lands. The owner accepted this
   (chat 2026-10-21) over making the sender mark the command's whole band
   (`src/shifts.ts`, `areasOf`).
+- For the same reason a shift at the content's edge does not race a name set.
+  A delete that reaches the content's last line, or an insert wholly past the
+  content, sends only cell writes and the command's own name set, no
+  MoveRange, so a concurrent name set is merged rather than refused. Both
+  screens still agree, but a name added at the same moment can point at
+  deleted or shifted cells.
 - Many concurrent edits of one cell can make a transform's output grow
   exponentially. A write that loses on a cell whose number format either side
   changes keeps its own write, replays the winner's and retypes the value,
@@ -216,7 +235,7 @@ Also:
   2026-10-22, counting each `'growth'` refusal at the server and each growth
   resync at a client, so one race can count twice: no trips in
   `tests/fuzz.test.ts` (100 seeds × 1,000 mutations); 2 in 1,000 seeds × 40 mutations
-  (both seed 893) and 3 in 1,000 seeds × 100 mutations (seeds 667 and 893) of
+  (both seed 893) and 2 in 1,000 seeds × 100 mutations (both seed 893) of
   `cellEdit` on the dense tests' 4×3 sheet. The owner chose this (chat 2026-10-21) over dropping the
   retype, which could leave a value with the wrong type.
 
@@ -224,7 +243,9 @@ Also:
 
 `tests/` runs every pair against a headless Univer with the real open-source
 handlers (`tests/harness.ts`), so convergence is checked against the model the
-editors use, not a re-implementation of it.
+editors use, not a re-implementation of it. The harness loads
+`@univerjs/sheets-formula`, as Spinel's editor does, so a captured row edit or
+range move sends the defined-name rewrites it sends there.
 
 - One file per family with unit tests for each transform pair.
 - `tests/fuzz.test.ts`: two simulated clients and a server with random message

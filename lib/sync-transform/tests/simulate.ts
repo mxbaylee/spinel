@@ -145,14 +145,36 @@ function targets(move: Mutation): Map<string, { row: number; col: number }> {
   return result;
 }
 
+/** Whether `mutation` is a move whose `side` matrix is empty, as one half of a cut is. */
+const halfOf = (mutation: Mutation, side: 'from' | 'to') =>
+  mutation.id === cellIds.moveRange &&
+  !shiftOf(mutation) &&
+  Object.keys(mutation.params[side].value ?? {}).length === 0;
+
 /**
- * Where `mutation` takes the content of a cell: to the same cell or another,
- * to null where it deletes the cell, or to undefined where a drag takes it to
- * no target, as when a concurrent edit removed the target. A shift moves the
- * cells of its band, written or not, as far as its ranges reach, and deletes
- * those in the lines it removes.
+ * A cut's source half (see cells.perSheet) and the target half after it in
+ * `all`, as the one move they came from, so its cells follow it to the target.
  */
-function follower(mutation: Mutation): (cell: string) => Place {
+function joined(mutation: Mutation, i: number, all: Mutation[]): Mutation {
+  const target = all[i + 1];
+  if (!target || !halfOf(mutation, 'to') || !halfOf(target, 'from')) return mutation;
+  if (target.params.to.subUnitId === mutation.params.from.subUnitId) return mutation;
+  return {
+    ...mutation,
+    params: { ...mutation.params, toRange: target.params.toRange, to: target.params.to },
+  };
+}
+
+/**
+ * Where the `i`th of `all`, `mutation`, takes the content of a cell: to the
+ * same cell or another, to null where it deletes the cell, or to undefined
+ * where a drag takes it to no target, as when a concurrent edit removed the
+ * target. A shift moves the cells of its band, written or not, as far as its
+ * ranges reach, and deletes those in the lines it removes. Takes `map`'s
+ * arguments, so a cut's halves are followed as one (see `joined`).
+ */
+function follower(mutation: Mutation, i = 0, all: Mutation[] = []): (cell: string) => Place {
+  mutation = joined(mutation, i, all);
   const p = mutation.params;
   const line = axisEdit(mutation);
   const shift = line ? { axis: line.axis, ...line.edit } : shiftOf(mutation);
@@ -163,6 +185,9 @@ function follower(mutation: Mutation): (cell: string) => Place {
     if (sheet !== (line ? p.subUnitId : p.from.subUnitId)) return cell;
     if (drag) {
       if (p.from.value[row]?.[col] === undefined) return cell;
+      // A cut's source half with no target half after it (see `joined`) takes
+      // its cells off the sheet.
+      if (Object.keys(p.to.value ?? {}).length === 0) return null;
       const target = drag.get(`${row}:${col}`);
       return target && at(p.to.subUnitId, target.row, target.col);
     }
@@ -191,11 +216,17 @@ function written(mutation: Mutation): { cell: string; key: string }[] {
   const p = mutation.params;
   const cells = Object.values(cellIds) as string[];
   if (!cells.includes(mutation.id) || shiftOf(mutation) || p.derived) return [];
-  // A move's two matrices are on one sheet: transform rejects one across sheets.
-  const move = mutation.id === cellIds.moveRange;
+  // A move writes whole cells, each matrix on its own sheet.
+  if (mutation.id === cellIds.moveRange) {
+    return [p.from, p.to].flatMap(({ subUnitId, value }) =>
+      Object.entries(value ?? {}).flatMap(([row, columns]) =>
+        Object.keys(columns ?? {}).map((col) => ({ cell: at(subUnitId, +row, +col), key: '' })),
+      ),
+    );
+  }
   return writesOf(mutation).flatMap(({ row, col, value }) => {
-    const cell = at(move ? p.from.subUnitId : p.subUnitId, row, col);
-    if (mutation.id !== cellIds.setRangeValues) return [{ cell, key: move ? '' : 's.n' }];
+    const cell = at(p.subUnitId, row, col);
+    if (mutation.id !== cellIds.setRangeValues) return [{ cell, key: 's.n' }];
     if (value === null) return [{ cell, key: '' }];
     return Object.entries(value).flatMap(([key, v]) => {
       if (v === undefined || key === 't') return [];
@@ -387,8 +418,8 @@ export function simulate(options: {
       [...keys].map(([key, fact]) => ({ cell: cell as Place, last: cell, key, fact })),
     );
     const wrote: { cell: Place; key: string }[] = [];
-    for (const mutation of mutations) {
-      const follow = follower(mutation);
+    for (const [i, mutation] of mutations.entries()) {
+      const follow = follower(mutation, i, mutations);
       for (const entry of [...held, ...wrote]) entry.cell &&= follow(entry.cell);
       for (const entry of held) entry.last = entry.cell || entry.last;
       wrote.push(...written(mutation));

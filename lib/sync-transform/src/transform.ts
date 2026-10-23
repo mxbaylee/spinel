@@ -1,8 +1,9 @@
-import { cellIds, cells, ghostId } from './cells.ts';
+import { cellIds, cells, ghostId, perSheet } from './cells.ts';
 import { docs } from './docs.ts';
 import { drawingIds, drawings } from './drawings.ts';
 import type { Family } from './family.ts';
 import { cutBy, merges } from './merges.ts';
+import { names, refuseNameRaces } from './names.ts';
 import { markError, mergeMeets, refuseCut } from './shifts.ts';
 import { properties } from './properties.ts';
 import { settings } from './settings.ts';
@@ -17,7 +18,7 @@ import {
 import { flip, RefusedEditError, UnsupportedMutationError } from './types.ts';
 import type { Mutation, Side } from './types.ts';
 
-const families: Family[] = [cells, properties, merges, settings, drawings, docs];
+const families: Family[] = [cells, properties, merges, settings, drawings, docs, names];
 
 const familyById = new Map<string, Family | 'structure' | 'sheet-order'>();
 for (const family of families) for (const id of family.ids) familyById.set(id, family);
@@ -51,10 +52,6 @@ function familyOf(mutation: Mutation) {
 function check(mutation: Mutation): void {
   const { id, params: p } = mutation;
   if (!supported.has(id)) throw new UnsupportedMutationError(id);
-  // Cutting cells to another sheet edits two sheets; every transform addresses one.
-  if (id === cellIds.moveRange && p.from.subUnitId !== p.to.subUnitId) {
-    throw new UnsupportedMutationError(id);
-  }
   // Formula results apply locally on each client and are never sent.
   if (id === cellIds.setRangeValues && p.sourceFormulaData !== undefined) {
     throw new UnsupportedMutationError(id);
@@ -91,6 +88,8 @@ function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
   const self = familyOf(a);
   const peer = familyOf(b);
   if (a.params.unitId !== b.params.unitId) return [a];
+  // Names are workbook-wide; `transform` refused their races up front.
+  if (self === names || peer === names) return self === peer ? names.transform(a, b, side) : [a];
   if (self === 'sheet-order' && peer === 'sheet-order') return transformSheetOrder(a, b, side);
   // An edit to a removed sheet is dropped, except a drawing op: the drawing
   // tree keeps a removed sheet's entry, and RemoveSheetCommand itself sends
@@ -133,7 +132,9 @@ function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
 export function transform(a: Mutation[], b: Mutation[], side: Side): Mutation[] {
   // Check every mutation up front, even when the other side is empty.
   for (const mutation of [...a, ...b]) check(mutation);
-  return pastMany(a, b, side, growth * (a.length + b.length)).filter(isReal);
+  refuseNameRaces(a, b);
+  const [mine, theirs] = [a.flatMap(perSheet), b.flatMap(perSheet)];
+  return pastMany(mine, theirs, side, growth * (mine.length + theirs.length)).filter(isReal);
 }
 
 /**

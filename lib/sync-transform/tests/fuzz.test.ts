@@ -1,7 +1,8 @@
 import { expect, test } from 'vitest';
-import { cellEdit, commandEdit } from './generate-cells.ts';
+import { cellEdit, commandEdit, sheetCut } from './generate-cells.ts';
 import { docEdit, seededDoc } from './generate-docs.ts';
 import { drawingEdit } from './generate-drawings.ts';
+import { nameEdit } from './generate-names.ts';
 import { mergeEdit, propertyEdit, settingEdit } from './generate-sheet.ts';
 import { pick, seededWorkbook, structuralEdit } from './generate.ts';
 import type { Generate } from './generate.ts';
@@ -13,10 +14,12 @@ const generators: Generate[] = [
   structuralEdit,
   cellEdit,
   commandEdit,
+  sheetCut,
   propertyEdit,
   mergeEdit,
   settingEdit,
   drawingEdit,
+  nameEdit,
   docEdit,
 ];
 const anyEdit: Generate = (replica, next) => pick(next, generators)(replica, next);

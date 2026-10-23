@@ -28,7 +28,14 @@ test.each<[string, Mutation, new (...args: never[]) => Error]>([
     { id: ghostId, params: { ...target, cellValue: { 0: { 0: null } } } },
     UnsupportedMutationError,
   ],
-  ['a range move to another sheet', move('s2'), UnsupportedMutationError],
+  [
+    'a shift to another sheet',
+    {
+      ...move('s2'),
+      params: { ...move('s2').params, shift: { axis: 'row', kind: 'insert', at: 0, count: 1 } },
+    },
+    TypeError,
+  ],
   [
     'a formula result',
     { id: cellIds.setRangeValues, params: { ...target, cellValue: {}, sourceFormulaData: {} } },

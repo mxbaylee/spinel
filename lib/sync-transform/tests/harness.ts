@@ -11,12 +11,14 @@ import type { ICellData, IDocumentData, IWorkbookData, Workbook } from '@univerj
 import { UniverDocsPlugin } from '@univerjs/docs';
 import { UniverDocsHyperLinkPlugin } from '@univerjs/docs-hyper-link';
 import { UniverDrawingPlugin } from '@univerjs/drawing';
+import { IDefinedNamesService } from '@univerjs/engine-formula';
 import { UniverRenderEnginePlugin } from '@univerjs/engine-render';
 import { UniverSheetsPlugin } from '@univerjs/sheets';
+import { UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula';
 import { ISheetDrawingService, UniverSheetsDrawingPlugin } from '@univerjs/sheets-drawing';
 import { expect } from 'vitest';
 import { flip, transform } from '../index.ts';
-import type { Mutation, Side } from '../index.ts';
+import type { Mutation, RefusalReason, Side } from '../index.ts';
 import { seededWorkbook } from './generate.ts';
 
 /**
@@ -32,6 +34,8 @@ export class Replica {
     // The rich-text handler looks up the render manager; nothing is rendered.
     this.univer.registerPlugin(UniverRenderEnginePlugin);
     this.univer.registerPlugin(UniverSheetsPlugin);
+    // Rewrites defined names when a command moves the cells they name, as in Spinel's editor.
+    this.univer.registerPlugin(UniverSheetsFormulaPlugin);
     this.univer.registerPlugin(UniverDocsPlugin);
     this.univer.registerPlugin(UniverDocsHyperLinkPlugin);
     this.univer.registerPlugin(UniverDrawingPlugin);
@@ -90,6 +94,8 @@ export class Replica {
     return {
       workbook: workbook && normalizeWorkbook(workbook.getSnapshot()),
       drawings: workbook && this.sheetDrawings(workbook),
+      names:
+        workbook && this.injector.get(IDefinedNamesService).getDefinedNameMap(workbook.getUnitId()),
       doc: doc && normalizeDoc(doc.getSnapshot() as IDocumentData),
     };
   }
@@ -216,3 +222,20 @@ export function converges(
 
 const isEmptyObject = (value: unknown) =>
   typeof value === 'object' && value !== null && Object.keys(value).length === 0;
+
+/** Expects `x` and `y` refused for `reason`, both ways round and on either side. */
+export function refusedBothWays(
+  x: Mutation | Mutation[],
+  y: Mutation | Mutation[],
+  reason: RefusalReason = 'moved-cells',
+) {
+  const [a, b] = [[x].flat(), [y].flat()];
+  for (const side of ['left', 'right'] as const) {
+    for (const [p, q] of [
+      [a, b],
+      [b, a],
+    ]) {
+      expect(() => transform(p, q, side), side).toThrow(expect.objectContaining({ reason }));
+    }
+  }
+}

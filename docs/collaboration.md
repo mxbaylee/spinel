@@ -140,7 +140,7 @@ rejects unfamiliar bytes. It does not read or modify Pro packages. Docker copies
 the installer before `npm ci`; the dependency's license stays with its package,
 and the patch's attribution is in `THIRD-PARTY-NOTICES.md`.
 
-The patch is temporary: SPN-097 removes it when Spinel upgrades to a Univer
+The patch is temporary: SPN-095 removes it when Spinel upgrades to a Univer
 release with the fixes. The link fixes are upstream as
 [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938). If
 upstream fixes either one another way, Spinel follows upstream rather than
@@ -250,7 +250,6 @@ Public references:
 [identity](https://docs.univer.ai/server/collaboration/identity-and-authorization),
 [middleware](https://docs.univer.ai/server/collaboration/middleware-and-events),
 [presence](https://docs.univer.ai/server/collaboration/presence).
-
 
 ### Profile appearance and following
 

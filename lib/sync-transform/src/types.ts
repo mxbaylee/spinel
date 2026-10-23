@@ -30,7 +30,7 @@ export class UnsupportedMutationError extends Error {
 }
 
 /** Why a RefusedEditError refused an edit; its doc describes each. */
-export type RefusalReason = 'moved-cells' | 'format-race' | 'growth';
+export type RefusalReason = 'moved-cells' | 'format-race' | 'name-race' | 'growth';
 
 /**
  * Thrown when two concurrent edits cannot be merged, so the server refuses
@@ -39,7 +39,11 @@ export type RefusalReason = 'moved-cells' | 'format-race' | 'growth';
  * for a shift runs across its band from its start to the sheet's edge: an
  * edit of a cell there, another drag or shift, a row or column edit that cuts
  * it, or for a shift a merge there. `'format-race'`: a number-format change
- * and a write to one of its cells that sets no value. `'growth'`: a transform
+ * and a write to one of its cells that sets no value. `'name-race'`: a
+ * defined-name set and a concurrent edit that makes Univer rewrite names (a
+ * row or column insert, remove or move, a range move, a sheet removal, or a
+ * sheet or workbook rename), or two sets of different ids that give them
+ * the same text, in any case or scope. `'growth'`: a transform
  * that would grow past its limit. Unlike UnsupportedMutationError it is a
  * race, not a sender bug.
  */

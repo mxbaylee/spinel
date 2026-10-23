@@ -219,18 +219,66 @@ const isContent = (pieces: Piece[]) =>
 
 const isValues = (mutation: Mutation) => mutation.id === cellIds.setRangeValues;
 
-/** Whether `values` writes a cell whose number format `format` changes, without setting its value. */
-function formatRace(format: Mutation, values: Mutation): boolean {
-  if (format.id !== cellIds.setNumfmt && format.id !== cellIds.removeNumfmt) return false;
-  if (!isValues(values)) return false;
-  const cells = new Set(writesOf(format).map(cellKey));
-  return writesOf(values).some(
-    (write) =>
-      cells.has(cellKey(write)) &&
-      !piecesOf(values, write).some(({ path }) => path === 'v' || path === ''),
+const setsValue = (mutation: Mutation, write: Write) =>
+  piecesOf(mutation, write).some(({ path }) => path === 'v' || path === '');
+/** A numfmt, or a style that names `n`. */
+const changesFormat = (mutation: Mutation, write: Write) =>
+  piecesOf(mutation, write).some(
+    ({ path, value }) => path === 's.n' || (path === 's' && (value as CellData)?.n !== undefined),
   );
+
+/**
+ * Whether `values` writes a cell whose number format `format` changes, neither
+ * setting its value.
+ *
+ * Decision (agent, chat 2026-10-22): a style that names `n` changes the format
+ * as a numfmt does, so it races as one. The cross-sheet fuzz found it (seed
+ * 13, shrunk in cells.test.ts): a boolean under '@', with a '0%' style against
+ * a style clear. Two value-less style writes of `n` to one cell are now
+ * refused too, where they used to merge. Not taken: retyping in `retype`,
+ * which cannot recover the type only the sender knew.
+ */
+function formatRace(format: Mutation, values: Mutation): boolean {
+  const numfmt = format.id === cellIds.setNumfmt || format.id === cellIds.removeNumfmt;
+  if ((!numfmt && !isValues(format)) || !isValues(values)) return false;
+  const cells = new Set(
+    writesOf(format)
+      .filter((write) => changesFormat(format, write) && !setsValue(format, write))
+      .map(cellKey),
+  );
+  return writesOf(values).some((write) => cells.has(cellKey(write)) && !setsValue(values, write));
 }
 export const isMove = (mutation: Mutation) => mutation.id === cellIds.moveRange;
+
+/**
+ * A move to another sheet (a cut pasted there) as two moves, one per sheet:
+ * one clears its source, one writes its target. Univer's handler writes each
+ * side's cells on its own sheet, so the two do what the one does, and every
+ * transform addresses one sheet. Each keeps its own range as both of its
+ * ranges, so its area is that range alone (see shifts.areasOf).
+ *
+ * Decision (owner, chat 2026-10-22): a cut and a concurrent edit of its source
+ * or target are refused, like a drag's (see shifts.movesMeet). Not taken:
+ * merging, which lost writes silently for drags.
+ */
+export function perSheet(mutation: Mutation): Mutation[] {
+  const { from, to, fromRange, toRange } = mutation.params;
+  if (!isMove(mutation) || from.subUnitId === to.subUnitId) return [mutation];
+  const half = (subUnitId: string, range: IRange, fromValue: Matrix, toValue: Matrix) => ({
+    id: mutation.id,
+    params: {
+      ...mutation.params,
+      fromRange: range,
+      toRange: range,
+      from: { subUnitId, value: fromValue },
+      to: { subUnitId, value: toValue },
+    },
+  });
+  return [
+    half(from.subUnitId, fromRange, from.value, {}),
+    half(to.subUnitId, toRange, {}, to.value),
+  ];
+}
 
 /**
  * Univer types a value (`t`) when a SetRangeValues writes it, under the

@@ -114,11 +114,17 @@ function editorCommit(replica: Replica, sheet: Worksheet, row: number, col: numb
 }
 
 /** As getMoveRangeUndoRedoMutations builds it: sources cleared, then copied with inline styles. */
-function moveRange(replica: Replica, sheet: Worksheet, from: IRange, next: () => number): Mutation {
+function moveRange(
+  replica: Replica,
+  sheet: Worksheet,
+  from: IRange,
+  next: () => number,
+  toSheet = sheet,
+): Mutation {
   const rows = from.endRow - from.startRow;
   const columns = from.endColumn - from.startColumn;
-  const startRow = next() % (sheet.getRowCount() - rows);
-  const startColumn = next() % (sheet.getColumnCount() - columns);
+  const startRow = next() % (toSheet.getRowCount() - rows);
+  const startColumn = next() % (toSheet.getColumnCount() - columns);
   const to = { startRow, startColumn, endRow: startRow + rows, endColumn: startColumn + columns };
   const styleSheet = replica.workbook()!.getStyles();
   const toValue: Record<number, Record<number, unknown>> = {};
@@ -136,7 +142,7 @@ function moveRange(replica: Replica, sheet: Worksheet, from: IRange, next: () =>
       fromRange: from,
       toRange: to,
       from: { subUnitId, value: fill(from, () => null) },
-      to: { subUnitId, value: toValue },
+      to: { subUnitId: toSheet.getSheetId(), value: toValue },
     },
   };
 }
@@ -303,16 +309,7 @@ const command: Generate = (replica, next) => {
     eachCell(range, (row, col) => cells.push({ row, col, pattern }));
     return capture(replica, commands.setNumfmt, { ...target, values: cells });
   }
-  if (kind === 5) {
-    // MoveRangeCommand awaits before it sends, so its mutations are built as it builds them.
-    const { fromRange, toRange } = moveRange(replica, sheet, range, next).params;
-    const params = { ...target, fromSubUnitId: target.subUnitId, fromRange, toRange };
-    const sent = replica.injector.invoke((accessor) =>
-      getMoveRangeCommandMutations(accessor, params, { includeSelection: false }),
-    );
-    const redos = sent?.redos.filter(({ id }) => id.includes('.mutation.'));
-    return redos?.length ? redos.map(({ id, params }) => ({ id, params: wire(params) })) : null;
-  }
+  if (kind === 5) return randomMove(replica, sheet, range, sheet, next);
   // Inserting adds lines past the used range where the band's content would
   // pass it. A sheet of 8 rows or 6 columns or more takes only an insert its
   // used range absorbs, so a small sheet stays small and a large one shifts.
@@ -331,6 +328,57 @@ const command: Generate = (replica, next) => {
     });
   }
   return cellEdit(replica, next);
+};
+
+/** A range move as MoveRangeCommand sends it, to `toRange` on sheet `to`. */
+export function moveCommand(
+  replica: Replica,
+  from: string,
+  fromRange: IRange,
+  to: string,
+  toRange: IRange,
+): Mutation[] | null {
+  const unitId = replica.workbook()!.getUnitId();
+  const params = {
+    unitId,
+    subUnitId: from,
+    fromSubUnitId: from,
+    toSubUnitId: to,
+    fromRange,
+    toRange,
+  };
+  // The command awaits before it sends, so its mutations are built as it builds them.
+  const sent = replica.injector.invoke((accessor) =>
+    getMoveRangeCommandMutations(accessor, params, { includeSelection: false }),
+  );
+  const redos = sent?.redos.filter(({ id }) => id.includes('.mutation.'));
+  return redos?.length ? redos.map(({ id, params }) => ({ id, params: wire(params) })) : null;
+}
+
+/** `range` moved to a random place on `toSheet`, as MoveRangeCommand sends it. */
+function randomMove(
+  replica: Replica,
+  sheet: Worksheet,
+  range: IRange,
+  toSheet: Worksheet,
+  next: () => number,
+): Mutation[] | null {
+  const fits =
+    range.endRow - range.startRow < toSheet.getRowCount() &&
+    range.endColumn - range.startColumn < toSheet.getColumnCount();
+  if (!fits) return null;
+  const { toRange } = moveRange(replica, sheet, range, next, toSheet).params;
+  return moveCommand(replica, sheet.getSheetId(), range, toSheet.getSheetId(), toRange);
+}
+
+/** Cells cut from one sheet and pasted on another, as MoveRangeCommand sends them. */
+export const sheetCut: Generate = (replica, next) => {
+  const workbook = replica.workbook()!;
+  const sheet = randomSheet(replica, next);
+  const others = workbook.getSheetOrders().filter((id) => id !== sheet.getSheetId());
+  if (others.length === 0) return null;
+  const toSheet = workbook.getSheetBySheetId(pick(next, others))!;
+  return randomMove(replica, sheet, randomRange(sheet, next), toSheet, next);
 };
 
 /** A 200×26 sheet with content in its first 30 rows and 10 columns, for `realEdit`. */

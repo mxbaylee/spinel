@@ -1,22 +1,39 @@
+import { DrawingTypeEnum } from '@univerjs/core';
+import { DrawingApplyType, ISheetDrawingService } from '@univerjs/sheets-drawing';
 import { describe, expect, test } from 'vitest';
 import { RefusedEditError, transform } from '../index.ts';
 import type { Mutation, Side } from '../index.ts';
 import { cellIds } from '../src/cells.ts';
+import { drawingIds } from '../src/drawings.ts';
+import { mergeIds } from '../src/merges.ts';
+import { propertyIds } from '../src/properties.ts';
+import { settingIds } from '../src/settings.ts';
+import { structureIds } from '../src/structure.ts';
 import {
   cellEdit,
   cellMove,
   commandEdit,
   commands,
+  moveCommand,
   realBook,
   realEdit,
   richDoc,
+  sheetCut,
   shiftCommand,
 } from './generate-cells.ts';
-import { lineEdit, seededWorkbook, withStructure } from './generate.ts';
-import { converges, Replica } from './harness.ts';
-import { insertCols, insertRows, moveRows, removeCols, removeRows } from './edits.ts';
+import { capture, lineEdit, seededWorkbook, withStructure } from './generate.ts';
+import { converges, refusedBothWays, Replica } from './harness.ts';
+import {
+  insertCols,
+  insertRows,
+  insertSheet,
+  moveRows,
+  moveSheet,
+  removeCols,
+  removeRows,
+} from './edits.ts';
 import { convergesOver, newStats, simulate } from './simulate.ts';
-import type { Step } from './simulate.ts';
+import type { Generate, Step } from './simulate.ts';
 
 const unitId = 'wb';
 const subUnitId = 's1';
@@ -230,20 +247,140 @@ describe('rich text and styles', () => {
   });
 });
 
-/** Expects `x` and `y` refused as moved cells, both ways round and on either side. */
-function refusedBothWays(x: Mutation | Mutation[], y: Mutation | Mutation[]) {
-  const [a, b] = [[x].flat(), [y].flat()];
-  for (const side of ['left', 'right'] as const) {
-    for (const [p, q] of [
-      [a, b],
-      [b, a],
-    ]) {
-      expect(() => transform(p, q, side), side).toThrow(
-        expect.objectContaining({ reason: 'moved-cells' }),
-      );
+// A cut pasted on another sheet travels as one move per sheet (see cells.perSheet).
+// Decision (owner, chat 2026-10-22): it meets edits as a drag does, so an edit
+// of its source or target is refused (see shifts.movesMeet).
+describe('a cut to another sheet', () => {
+  // B2:C3 of sheet One (s1) to B6:C7 of sheet Two (s2).
+  const area = (row: number) => ({ startRow: row, endRow: row + 1, startColumn: 1, endColumn: 2 });
+  const cut = moveCommand(
+    new Replica({ workbook: seededWorkbook() }),
+    's1',
+    area(1),
+    's2',
+    area(5),
+  )!;
+  const onTwo = (mutation: Mutation): Mutation => ({
+    ...mutation,
+    params: { ...mutation.params, subUnitId: 's2' },
+  });
+
+  test('moves with a row insert on its target sheet and leaves its source empty', () => {
+    for (const side of ['left', 'right'] as const) {
+      const { workbook } = converges(cut, onTwo(insertRows(0, 1)), { side });
+      expect(workbook.sheets.s2.cellData[6][1]).toEqual({ v: 's1:1:1' });
+      expect(workbook.sheets.s2.cellData[7][2]).toEqual({ v: 's1:2:2' });
+      expect(workbook.sheets.s1.cellData[1][1]).toBeUndefined();
     }
-  }
-}
+  });
+
+  test('moves with a row insert above its source, and its cells still land on its target', () => {
+    for (const side of ['left', 'right'] as const) {
+      const { workbook } = converges(cut, insertRows(0, 1), { side });
+      expect(workbook.sheets.s1.cellData[1][1]).toEqual({ v: 's1:0:1' });
+      expect(workbook.sheets.s1.cellData[2][1]).toBeUndefined();
+      expect(workbook.sheets.s1.cellData[3][2]).toBeUndefined();
+      expect(workbook.sheets.s1.cellData[4][1]).toEqual({ v: 's1:3:1' });
+      expect(workbook.sheets.s2.cellData[5][1]).toEqual({ v: 's1:1:1' });
+      expect(workbook.sheets.s2.cellData[6][2]).toEqual({ v: 's1:2:2' });
+    }
+  });
+
+  test('a write to its source or its target is refused', () => {
+    refusedBothWays(cut, cell(1, 1, { v: 'x' }));
+    refusedBothWays(cut, onTwo(cell(6, 2, { v: 'x' })));
+  });
+
+  test('a number format on its target is refused', () => {
+    refusedBothWays(cut, onTwo(setNumfmt('0.00', [area(5)])));
+  });
+
+  test('a write elsewhere on either sheet passes unchanged', () => {
+    for (const side of ['left', 'right'] as const) {
+      for (const write of [cell(0, 0, { v: 'x' }), onTwo(cell(1, 1, { v: 'x' }))]) {
+        expect(transform([write], cut, side)).toEqual([write]);
+        converges(cut, write, { side });
+      }
+    }
+  });
+
+  test('a row edit that cuts its source is refused', () => {
+    refusedBothWays(cut, removeRows(2, 1));
+  });
+
+  /** RemoveSheetCommand's mutations for `sheet`, with the `index` a sender adds. */
+  const removal = (sheet: string, index: number) =>
+    capture(new Replica({ workbook: seededWorkbook() }), 'sheet.command.remove-sheet', {
+      unitId,
+      subUnitId: sheet,
+    })!.map((m) =>
+      m.id === structureIds.removeSheet ? { ...m, params: { ...m.params, index } } : m,
+    );
+
+  test('removing its target sheet leaves its source empty', () => {
+    for (const side of ['left', 'right'] as const) {
+      const { workbook } = converges(cut, removal('s2', 1), { side });
+      expect(workbook.sheets.s2).toBeUndefined();
+      expect(workbook.sheets.s1.cellData[1][1]).toBeUndefined();
+    }
+  });
+
+  test('removing its source sheet leaves the cells on its target', () => {
+    for (const side of ['left', 'right'] as const) {
+      const { workbook } = converges(cut, removal('s1', 0), { side });
+      expect(workbook.sheets.s1).toBeUndefined();
+      expect(workbook.sheets.s2.cellData[5][1]).toEqual({ v: 's1:1:1' });
+      expect(workbook.sheets.s2.cellData[6][2]).toEqual({ v: 's1:2:2' });
+    }
+  });
+
+  test('a row or column insert that cuts its target is refused', () => {
+    refusedBothWays(cut, onTwo(insertRows(6, 1)));
+    refusedBothWays(cut, onTwo(insertCols(2, 1)));
+  });
+
+  // Edits of other families over the cut's cells, on its source and its target.
+  const drawing = (sheet: string, row: number): Mutation => {
+    const at = { unitId, subUnitId: sheet };
+    const image = {
+      ...at,
+      drawingId: 'g',
+      drawingType: DrawingTypeEnum.DRAWING_IMAGE,
+      imageSourceType: 'URL',
+      source: 'https://example.com/g.png',
+      transform: { left: 88, top: row * 20, width: 176, height: 40 },
+    };
+    const service = new Replica({ workbook: seededWorkbook() }).injector.get(ISheetDrawingService);
+    const { redo, objects } = service.getBatchAddOp([image as never]) as any;
+    const type = DrawingApplyType.INSERT;
+    return { id: drawingIds.apply, params: { ...at, op: redo, objects, type } };
+  };
+  const others = (sheet: string, row: number): [string, string, Mutation][] => {
+    const at = { unitId, subUnitId: sheet };
+    const ranges = [area(row)];
+    const edits: [string, Mutation][] = [
+      ['a merge', { id: mergeIds.add, params: { ...at, ranges } }],
+      ['a row height', { id: propertyIds.rowHeight, params: { ...at, ranges, rowHeight: 40 } }],
+      ['a column width', { id: propertyIds.colWidth, params: { ...at, ranges, colWidth: 60 } }],
+      ['a tab colour', { id: settingIds.tabColor, params: { ...at, color: '#0000ff' } }],
+      ['a drawing', drawing(sheet, row)],
+    ];
+    return edits.map(([name, edit]) => [name, sheet, edit]);
+  };
+  const sheets: [string, string, Mutation][] = [
+    ['a sheet reorder', 'the workbook', moveSheet('s2', 1, 0)],
+    ['a sheet insert', 'the workbook', insertSheet('s3', 0)],
+  ];
+  test.each([...others('s1', 1), ...others('s2', 5), ...sheets])(
+    '%s on %s passes unchanged and converges',
+    (_name, _sheet, edit) => {
+      for (const side of ['left', 'right'] as const) {
+        expect(transform([edit], cut, side)).toEqual([edit]);
+        converges(cut, edit, { side });
+      }
+    },
+  );
+});
 
 // Decision (owner, chat 2026-10-21): a row or column edit that cuts a drag's
 // source or target is refused (see shifts.movesMeet).
@@ -387,6 +524,22 @@ describe('a number format against a write to its cell that sets no value', () =>
         [percent, bold],
       ]) {
         expect(() => transform([a], [b], side)).toThrow(RefusedEditError);
+        expect(() => transform([a], [b], side)).toThrow(
+          expect.objectContaining({ reason: 'format-race' }),
+        );
+      }
+    }
+  });
+
+  // Once seed 13 of the cuts to other sheets, shrunk: '0%' as a style and a
+  // style clear, each typing the boolean under the format it finds.
+  test('a format written as a style races as a numfmt does', () => {
+    const [style, clear] = [cell(2, 1, { s: { n: { pattern: '0%' } } }), cell(2, 1, { s: null })];
+    for (const side of sides) {
+      for (const [a, b] of [
+        [style, clear],
+        [clear, style],
+      ]) {
         expect(() => transform([a], [b], side)).toThrow(
           expect.objectContaining({ reason: 'format-race' }),
         );
@@ -662,6 +815,18 @@ test(
   unclocked,
 );
 
+// Cuts to other sheets among cell edits, where intent follows the cut's cells.
+test(
+  'cuts to other sheets converge with cell and structural edits, as the edits meant',
+  () => {
+    const cutOrEdit: Generate = (replica, next) =>
+      next() % 3 === 0 ? sheetCut(replica, next) : cellEdit(replica, next);
+    convergesOver(cutOrEdit, { seeds: 60, intent: true });
+    convergesOver(withStructure(cutOrEdit), { seeds: 20 });
+  },
+  unclocked,
+);
+
 /** The seeded workbook cut to one 4×3 sheet, so nearly every edit meets another. */
 function denseBook(rows = 4, cols = 3) {
   const book = seededWorkbook();
@@ -817,18 +982,19 @@ test(
   unclocked,
 );
 
-// Once fuzz seed 863 of the dense 40-edit run, shrunk, with no move: a losing
-// write to a cell whose format either side changes keeps its own write, then
-// replays the winner and retypes, so one write becomes three and the next
-// edit meets all of them. Not fixed; the growth cap refuses it, either way round.
+// Once fuzz seed 863 of the dense 40-edit run, shrunk, with no move, and b's
+// writes given values so that none races a's format: a losing write to a cell
+// whose format either side changes keeps its own write, then replays the
+// winner and retypes, so one write becomes three and the next edit meets all
+// of them. Not fixed; the growth cap refuses it, either way round.
 test('writes past many style writes to one cell are refused as growth', () => {
   const text = { n: { pattern: '@' } };
   const bold = { bl: 1, it: 1 };
   const a = [cell(3, 1, { f: null, p: richDoc('bye'), si: null }), cell(3, 1, { s: text })];
   const b = [
-    cell(3, 1, { s: null }),
-    cell(3, 1, { s: text }),
-    cell(3, 1, { s: text }),
+    cell(3, 1, { s: null, v: 1 }),
+    cell(3, 1, { s: text, v: 2 }),
+    cell(3, 1, { s: text, v: 3 }),
     set({ 3: { 1: { s: bold, v: 0 } } }, { isOverrideStyle: true }),
     set({ 3: { 1: { s: bold, v: 'b' } } }, { isOverrideStyle: true }),
   ];
