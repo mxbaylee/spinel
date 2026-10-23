@@ -115,10 +115,13 @@ export async function createApp(options: AppOptions) {
       next();
     });
     app.use('/api', diagnosticsRoutes(workspace, diagnostics, origin));
-    app.use('/api/items', workspaceRoutes(auth, origin, workspace, collaboration, history));
+    app.use('/api/items', workspaceRoutes(auth, origin, workspace, collaboration, history,
+      (event, context, actorId) => diagnostics!.record(event, context, actorId)));
     app.use(
       '/api/spaces/:spaceId/items/:itemId',
-      spaceNativeRoutes(workspace, collaboration, origin, { spaceReview, history }),
+      spaceNativeRoutes(workspace, collaboration, origin, { spaceReview, history,
+        diagnostics: (event, context, actorId) => diagnostics!.record(event, context, actorId),
+      }),
     );
     app.use('/api/spaces', spaceRoutes(workspace, origin, { spaceReview }));
     app.post(
