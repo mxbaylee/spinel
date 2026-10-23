@@ -91,8 +91,14 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await expect(other.getByRole('heading', { name: 'Shared plans', exact: true })).toBeVisible();
     await expect(other.getByRole('button', { name: 'New', exact: true })).toBeHidden();
     await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    const folderMenu = other.getByRole('menu', {
+      name: 'More actions for Shared plans',
+      exact: true,
+    });
+    await expect(folderMenu).toBeVisible();
     await expect(other.getByRole('menuitem', { name: 'Share…', exact: true })).toHaveCount(0);
     await other.keyboard.press('Escape');
+    await expect(folderMenu).toBeHidden();
     await shareRegion.getByRole('button', { name: 'Done' }).click();
     await page.getByRole('button', { name: 'Shared plans Folder', exact: true }).click();
     // Create both documents after the grant to prove inheritance applies to future children.
@@ -122,10 +128,10 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       .click();
     await page.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
     await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
-    // Make the collaborator's page active before opening its focus-dismissed menu.
-    // The owner still has a modal open in the other browser context.
+    // Return to the collaborator before reopening its previously closed menu.
     await other.bringToFront();
     await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    await expect(folderMenu).toBeVisible();
     await other.getByRole('menuitem', { name: 'Refresh folder', exact: true }).click();
     await other.getByRole('button', { name: 'Nested Folder', exact: true }).click();
     await expect(
