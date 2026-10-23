@@ -10,7 +10,9 @@ import type { Profile } from '../../profile/profile.ts';
 import { IconPicker } from '../../../web/ProfileSettings.tsx';
 import { fillPresets } from '../palette.ts';
 import { getPreference, setPreference, watchTheme } from '../theme.ts';
-import { ActionMenu, Button, Choice, DetailsPopover, Modal, SegmentedChoice } from './Controls.tsx';
+import { ActionMenu, Button, Choice, DetailsPopover, Modal } from './Controls.tsx';
+import { AppearanceChoice, ThemeMenu } from './ThemeMenu.tsx';
+export { AppearanceChoice, ThemeMenu } from './ThemeMenu.tsx';
 import './mockups.css';
 import { LoadingReview } from './LoadingReview.tsx';
 import { TokenManager } from './TokenManager.tsx';
@@ -126,64 +128,6 @@ function Avatar({ children, color }: { children?: ReactNode; color?: string }) {
     >
       {children ?? <ProfileIcon icon={profile.icon} />}
     </span>
-  );
-}
-export function AppearanceChoice({
-  value,
-  onChange,
-  disabled = false,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <SegmentedChoice
-      label="Appearance"
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      options={[
-        { value: 'system', label: 'Follow system', icon: <Glyph name="monitor" /> },
-        { value: 'light', label: 'Light', icon: <Glyph name="sun" /> },
-        { value: 'dark', label: 'Dark', icon: <Glyph name="moon" /> },
-      ]}
-    />
-  );
-}
-export function ThemeMenu() {
-  const preference = useSyncExternalStore(watchTheme, getPreference);
-  const [error, setError] = useState('');
-  const controlRef = useRef<HTMLDivElement>(null);
-  return (
-    <div ref={controlRef} className="rd-theme-control">
-      <AppearanceChoice
-        value={preference}
-        onChange={(value) =>
-          setError(
-            setPreference(value as 'system' | 'light' | 'dark')
-              ? ''
-              : 'Theme changed for this visit. Your preference could not be saved.',
-          )
-        }
-      />
-      {error && (
-        <div className="sp-ui rd-theme-warning" role="alert">
-          <p>{error}</p>
-          <Button
-            aria-label="Dismiss theme warning"
-            onClick={() => {
-              setError('');
-              controlRef.current
-                ?.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]')
-                ?.focus();
-            }}
-          >
-            Dismiss
-          </Button>
-        </div>
-      )}
-    </div>
   );
 }
 function NetworkStatus({ offline = false }: { offline?: boolean }) {

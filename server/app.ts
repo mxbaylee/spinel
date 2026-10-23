@@ -286,6 +286,7 @@ export async function createApp(options: AppOptions) {
       '/sign-in',
       '/connect',
       '/setup',
+      '/recover-admin',
       '/invite',
       '/',
       '/settings',
@@ -310,7 +311,11 @@ export async function createApp(options: AppOptions) {
         next();
         return;
       }
-      if (request.path === '/invite' || request.path.startsWith('/share/')) {
+      if (
+        request.path === '/invite' ||
+        request.path === '/recover-admin' ||
+        request.path.startsWith('/share/')
+      ) {
         response.set('Referrer-Policy', 'no-referrer');
         next();
         return;
