@@ -96,11 +96,20 @@ export const LastAdminPasskey: Story = {
   },
   play: async ({ canvasElement }) => {
     const body = within(document.body);
-    await userEvent.click(await within(canvasElement).findByRole('button', { name: 'Actions for Sam Rivera' }));
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Actions for Sam Rivera' }),
+    );
     await userEvent.click(await body.findByRole('menuitem', { name: 'Manage passkeys' }));
-    await expect(await body.findByText('This admin’s last passkey cannot be removed. Add another passkey first.')).toBeVisible();
+    await expect(
+      await body.findByText(
+        'This admin’s last passkey cannot be removed. Add another passkey first.',
+      ),
+    ).toBeVisible();
     await userEvent.click(body.getByRole('button', { name: 'Actions for passkey MacBook' }));
-    await expect(await body.findByRole('menuitem', { name: 'Remove passkey…' })).toHaveAttribute('aria-disabled', 'true');
+    await expect(await body.findByRole('menuitem', { name: 'Remove passkey…' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   },
 };
 export const LoadFailed: Story = {
@@ -113,14 +122,18 @@ export const ConfirmDisable: Story = {
   play: async ({ canvasElement }) => {
     const account = await within(canvasElement).findByRole('region', { name: 'Alex Kim account' });
     await userEvent.click(within(account).getByRole('button', { name: 'Actions for Alex Kim' }));
-    await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Disable account…' }));
+    await userEvent.click(
+      await within(document.body).findByRole('menuitem', { name: 'Disable account…' }),
+    );
   },
 };
 export const ConfirmPasskeyRemoval: Story = {
   parameters: { api: loaded },
   play: async ({ canvasElement }) => {
     const body = within(document.body);
-    await userEvent.click(await within(canvasElement).findByRole('button', { name: 'Actions for Alex Kim' }));
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Actions for Alex Kim' }),
+    );
     await userEvent.click(await body.findByRole('menuitem', { name: 'Manage passkeys' }));
     await userEvent.click(await body.findByRole('button', { name: 'Actions for passkey Phone' }));
     await userEvent.click(await body.findByRole('menuitem', { name: 'Remove passkey…' }));
@@ -140,10 +153,10 @@ export const RemovalFailed: Story = {
   play: async ({ canvasElement }) => {
     const account = await within(canvasElement).findByRole('region', { name: 'Alex Kim account' });
     await userEvent.click(within(account).getByRole('button', { name: 'Actions for Alex Kim' }));
-    await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Disable account…' }));
-    const dialog = await within(document.body).findByRole('dialog', { name: 'Disable Alex Kim?' });
     await userEvent.click(
-      within(dialog).getByRole('button', { name: 'Confirm removal' }),
+      await within(document.body).findByRole('menuitem', { name: 'Disable account…' }),
     );
+    const dialog = await within(document.body).findByRole('dialog', { name: 'Disable Alex Kim?' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Confirm removal' }));
   },
 };

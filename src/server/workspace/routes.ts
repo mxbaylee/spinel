@@ -53,7 +53,11 @@ export function workspaceRoutes(
       throw new AuthError(403, 'Open Spinel at its configured address and try again.');
     next();
   });
-  if (collaboration) router.use('/:id/formulas', formulaRoutes(store, collaboration, account, false, 'id', diagnostics));
+  if (collaboration)
+    router.use(
+      '/:id/formulas',
+      formulaRoutes(store, collaboration, account, false, 'id', diagnostics),
+    );
   const native = async (request: Request, response: Response, kind: 'sheet' | 'doc') => {
     const identity = account(request),
       user = identity.userId,

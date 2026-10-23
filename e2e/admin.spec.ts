@@ -86,17 +86,19 @@ test('operator removes a passkey from an open editor, then disables the account 
     await page.getByRole('menuitem', { name: 'Manage passkeys' }).click();
     const passkeys = page.getByRole('dialog', { name: `Passkeys for ${user.name}`, exact: true });
     await expect(passkeys.getByText(/Last used Never/)).toHaveCount(2);
-    await passkeys.getByRole('button', { name: 'Actions for passkey Lost browser', exact: true }).click();
+    await passkeys
+      .getByRole('button', { name: 'Actions for passkey Lost browser', exact: true })
+      .click();
     await page.getByRole('menuitem', { name: 'Remove passkey…' }).click();
     const dialog = page.getByRole('dialog', { name: 'Remove Lost browser?', exact: true });
     await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
     expect(auth.session(device.token)).toBeDefined();
-    await passkeys.getByRole('button', { name: 'Actions for passkey Lost browser', exact: true }).click();
+    await passkeys
+      .getByRole('button', { name: 'Actions for passkey Lost browser', exact: true })
+      .click();
     await page.getByRole('menuitem', { name: 'Remove passkey…' }).click();
     await dialog.getByRole('button', { name: 'Confirm removal' }).click();
-    await expect(
-      passkeys.getByText('Lost browser', { exact: true }),
-    ).toHaveCount(0);
+    await expect(passkeys.getByText('Lost browser', { exact: true })).toHaveCount(0);
     await expect.poll(() => closed).toBeGreaterThan(0);
     await expect(saved).toContainText('Access changed', { timeout: 10_000 });
     expect(
@@ -113,7 +115,10 @@ test('operator removes a passkey from an open editor, then disables the account 
     await passkeys.getByRole('button', { name: 'Done', exact: true }).click();
     await account.getByRole('button', { name: `Actions for ${user.name}`, exact: true }).click();
     await page.getByRole('menuitem', { name: 'Disable account…' }).click();
-    await page.getByRole('dialog', { name: `Disable ${user.name}?`, exact: true }).getByRole('button', { name: 'Confirm removal' }).click();
+    await page
+      .getByRole('dialog', { name: `Disable ${user.name}?`, exact: true })
+      .getByRole('button', { name: 'Confirm removal' })
+      .click();
     await expect(account.getByText('Member · Disabled', { exact: true })).toBeVisible();
     await expect(saved).toContainText('Access changed', { timeout: 10_000 });
     expect(auth.session(kept.token)).toBeUndefined();

@@ -10,7 +10,11 @@ import type { DiagnosticContext, DiagnosticEvent } from '@spinel/diagnostics';
 import { resolveDocument } from '../workspace/document-access.ts';
 
 export type FormulaIdentity = string | { userId: string; customData: Record<string, unknown> };
-export type FormulaDiagnostics = (event: DiagnosticEvent, context: DiagnosticContext, actorId: string) => void;
+export type FormulaDiagnostics = (
+  event: DiagnosticEvent,
+  context: DiagnosticContext,
+  actorId: string,
+) => void;
 
 export function formulaRoutes(
   workspace: WorkspaceStore,
@@ -95,9 +99,23 @@ export function formulaRoutes(
       try {
         verify();
         resolveDocument(workspace, user, hostId(request), 'read', customData);
-        const context: DiagnosticContext = { component: 'formula', fileId: hostId(request), runId, route: '/api/items', ...(typeof customData.spaceId === 'string' ? { spaceId: customData.spaceId } : {}) };
-        observeOperation((event, context) => diagnostics(event, context, user), context, 'formula-evaluate', outcome, Math.max(0, performance.now() - started));
-      } catch { /* Lost access or diagnostics failure cannot alter evaluation semantics. */ }
+        const context: DiagnosticContext = {
+          component: 'formula',
+          fileId: hostId(request),
+          runId,
+          route: '/api/items',
+          ...(typeof customData.spaceId === 'string' ? { spaceId: customData.spaceId } : {}),
+        };
+        observeOperation(
+          (event, context) => diagnostics(event, context, user),
+          context,
+          'formula-evaluate',
+          outcome,
+          Math.max(0, performance.now() - started),
+        );
+      } catch {
+        /* Lost access or diagnostics failure cannot alter evaluation semantics. */
+      }
     };
     try {
       const result = await formulas.evaluate(

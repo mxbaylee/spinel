@@ -46,7 +46,13 @@ export async function formulaRequest<T>(
     signal,
     ...(body === undefined
       ? {}
-      : { headers: { 'Content-Type': 'application/json', ...(isUuid(runId) ? { 'X-Spinel-Diagnostic-Run': runId } : {}) }, body: JSON.stringify(body) }),
+      : {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(isUuid(runId) ? { 'X-Spinel-Diagnostic-Run': runId } : {}),
+          },
+          body: JSON.stringify(body),
+        }),
   });
 }
 
@@ -101,7 +107,12 @@ export function FormulaDialog({
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const diagnostics = useDiagnostics();
-  const diagnosticContext = (runId?: string): DiagnosticContext => ({ component: 'formula', fileId: id, ...(spaceId ? { spaceId } : {}), ...(runId ? { runId } : {}) });
+  const diagnosticContext = (runId?: string): DiagnosticContext => ({
+    component: 'formula',
+    fileId: id,
+    ...(spaceId ? { spaceId } : {}),
+    ...(runId ? { runId } : {}),
+  });
   const input = useRef<HTMLInputElement>(null);
   const [expression, setExpression] = useState(initial?.definition.expression ?? '=');
   const [format, setFormat] = useState<FormulaFormat>(initial?.definition.format ?? 'general');
@@ -229,7 +240,11 @@ export function FormulaDialog({
   function chosenBinding(runId?: string): FormulaReference | undefined {
     if (!chosen?.sheetId) return;
     try {
-      const reference = observedFormulaParse(expression, runId ? diagnostics.sink : undefined, diagnosticContext(runId)).find((item) => item.start === chosen.start);
+      const reference = observedFormulaParse(
+        expression,
+        runId ? diagnostics.sink : undefined,
+        diagnosticContext(runId),
+      ).find((item) => item.start === chosen.start);
       if (
         reference &&
         reference.documentName === chosen.documentName &&
@@ -290,10 +305,29 @@ export function FormulaDialog({
         const started = performance.now();
         let result: FormulaDisplay;
         try {
-          result = await formulaRequest<FormulaDisplay>(id, 'evaluate', { definition }, controller.signal, spaceId, runId);
-          observeOperation(runId ? diagnostics.sink : undefined, diagnosticContext(runId), 'formula-evaluate', result.ok ? 'success' : 'failure', Math.max(0, performance.now() - started));
+          result = await formulaRequest<FormulaDisplay>(
+            id,
+            'evaluate',
+            { definition },
+            controller.signal,
+            spaceId,
+            runId,
+          );
+          observeOperation(
+            runId ? diagnostics.sink : undefined,
+            diagnosticContext(runId),
+            'formula-evaluate',
+            result.ok ? 'success' : 'failure',
+            Math.max(0, performance.now() - started),
+          );
         } catch (cause) {
-          observeOperation(runId ? diagnostics.sink : undefined, diagnosticContext(runId), 'formula-evaluate', controller.signal.aborted ? 'cancelled' : 'failure', Math.max(0, performance.now() - started));
+          observeOperation(
+            runId ? diagnostics.sink : undefined,
+            diagnosticContext(runId),
+            'formula-evaluate',
+            controller.signal.aborted ? 'cancelled' : 'failure',
+            Math.max(0, performance.now() - started),
+          );
           throw cause;
         }
         if (active.current && current === attempt.current) setPreview({ definition, result });

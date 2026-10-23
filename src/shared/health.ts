@@ -1,4 +1,5 @@
-export type HealthJobName = 'history-maintenance' | 'trash-expiry' | 'collaboration-purge' | 'space-trash-expiry';
+export type HealthJobName =
+  'history-maintenance' | 'trash-expiry' | 'collaboration-purge' | 'space-trash-expiry';
 
 export interface HealthJob {
   name: HealthJobName;

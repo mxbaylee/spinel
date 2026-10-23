@@ -25,7 +25,10 @@ export function healthRoutes(auth: AuthStore, monitor: HealthMonitor) {
     try {
       const result = await monitor.sample();
       // Filesystem reads yield. A revoked Operator session must not receive the result.
-      if (auth.session(cookieToken(request))?.user_id !== session.user_id || !auth.user(session.user_id)?.is_admin) {
+      if (
+        auth.session(cookieToken(request))?.user_id !== session.user_id ||
+        !auth.user(session.user_id)?.is_admin
+      ) {
         response.status(404).json({ error: 'Not found' });
         return;
       }

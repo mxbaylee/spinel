@@ -91,17 +91,26 @@ export class BackupService {
       .run(now + HOUR, owner, now, now);
     if (!claim.changes) return Promise.resolve(false);
     const finish = observeJob(this.options.observe);
-    this.active = this.perform(owner).then((result) => {
-      let observedSuccess = false;
-      try { observedSuccess = result && !this.status().error; } catch { /* Reporting cannot change the backup result. */ }
-      finish(observedSuccess);
-      return result;
-    }, (error) => {
-      finish(false);
-      throw error;
-    }).finally(() => {
-      this.active = undefined;
-    });
+    this.active = this.perform(owner)
+      .then(
+        (result) => {
+          let observedSuccess = false;
+          try {
+            observedSuccess = result && !this.status().error;
+          } catch {
+            /* Reporting cannot change the backup result. */
+          }
+          finish(observedSuccess);
+          return result;
+        },
+        (error) => {
+          finish(false);
+          throw error;
+        },
+      )
+      .finally(() => {
+        this.active = undefined;
+      });
     return this.active;
   }
   private async perform(owner: string) {

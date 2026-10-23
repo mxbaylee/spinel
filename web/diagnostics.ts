@@ -1,5 +1,11 @@
 import {
-  exactKeys, isDiagnosticRecord, isObject, isUuid, MAX_BATCH_BYTES, MAX_BATCH_EVENTS, MAX_EVENT_BYTES,
+  exactKeys,
+  isDiagnosticRecord,
+  isObject,
+  isUuid,
+  MAX_BATCH_BYTES,
+  MAX_BATCH_EVENTS,
+  MAX_EVENT_BYTES,
 } from '@spinel/diagnostics';
 import type { DiagnosticRecord, DiagnosticSink } from '@spinel/diagnostics';
 
@@ -33,18 +39,33 @@ export class BrowserDiagnostics {
     this.controller = controller;
     const timeout = setTimeout(() => controller.abort(), 5000);
     try {
-      const response = await this.request('/api/diagnostics/collection', { credentials: 'same-origin', cache: 'no-store', headers: { 'X-Spinel-Diagnostic-Account': this.accountId }, signal: controller.signal });
+      const response = await this.request('/api/diagnostics/collection', {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { 'X-Spinel-Diagnostic-Account': this.accountId },
+        signal: controller.signal,
+      });
       if (this.epoch !== epoch || this.closed || controller.signal.aborted) return;
-      if (response.status === 401 || response.status === 403) { this.stop(); return; }
+      if (response.status === 401 || response.status === 403) {
+        this.stop();
+        return;
+      }
       if (!response.ok) return;
       const body: unknown = await response.json();
       if (this.epoch !== epoch || this.closed || controller.signal.aborted) return;
-      if (isObject(body) && exactKeys(body, ['generation', 'binding']) && isUuid(body.generation) && typeof body.binding === 'string' && /^[a-f0-9]{64}$/.test(body.binding)) {
+      if (
+        isObject(body) &&
+        exactKeys(body, ['generation', 'binding']) &&
+        isUuid(body.generation) &&
+        typeof body.binding === 'string' &&
+        /^[a-f0-9]{64}$/.test(body.binding)
+      ) {
         this.generation = body.generation;
         this.binding = body.binding;
       }
-    } catch { /* Reconnection is explicit; diagnostics never retries edit traffic. */ }
-    finally {
+    } catch {
+      /* Reconnection is explicit; diagnostics never retries edit traffic. */
+    } finally {
       clearTimeout(timeout);
       if (this.controller === controller) this.controller = undefined;
     }
@@ -52,19 +73,39 @@ export class BrowserDiagnostics {
 
   readonly emit: DiagnosticSink = (event, context) => {
     try {
-      if (this.closed || !this.generation) { this.drop(); return; }
+      if (this.closed || !this.generation) {
+        this.drop();
+        return;
+      }
       const record = { id: crypto.randomUUID(), occurredAt: this.now(), event, context };
-      if (!isDiagnosticRecord(record)) { this.drop(); return; }
+      if (!isDiagnosticRecord(record)) {
+        this.drop();
+        return;
+      }
       const encoded = JSON.stringify(record);
       const bytes = new TextEncoder().encode(encoded).length;
-      if (bytes > MAX_EVENT_BYTES || this.queue.length >= 256 || this.queuedBytes + bytes > 1024 * 1024) { this.drop(); return; }
+      if (
+        bytes > MAX_EVENT_BYTES ||
+        this.queue.length >= 256 ||
+        this.queuedBytes + bytes > 1024 * 1024
+      ) {
+        this.drop();
+        return;
+      }
       this.queue.push(JSON.parse(encoded) as DiagnosticRecord);
       this.queuedBytes += bytes;
-      this.timer ??= setTimeout(() => { this.timer = undefined; void this.flush(); }, 2000);
-    } catch { this.drop(); }
+      this.timer ??= setTimeout(() => {
+        this.timer = undefined;
+        void this.flush();
+      }, 2000);
+    } catch {
+      this.drop();
+    }
   };
 
-  private drop(count = 1) { this.dropped = Math.min(Number.MAX_SAFE_INTEGER, this.dropped + count); }
+  private drop(count = 1) {
+    this.dropped = Math.min(Number.MAX_SAFE_INTEGER, this.dropped + count);
+  }
   private settle(flight: { count: number; settled: boolean }, lost = flight.count) {
     if (flight.settled) return;
     flight.settled = true;
@@ -73,14 +114,20 @@ export class BrowserDiagnostics {
   }
 
   async flush() {
-    if (this.closed || this.controller || !this.generation || !this.binding || !this.queue.length) return;
+    if (this.closed || this.controller || !this.generation || !this.binding || !this.queue.length)
+      return;
     const generation = this.generation;
     const binding = this.binding;
     const epoch = this.epoch;
     const records: DiagnosticRecord[] = [];
     while (this.queue.length && records.length < MAX_BATCH_EVENTS) {
       const next = this.queue[0];
-      if (new TextEncoder().encode(JSON.stringify({ generation, binding, records: [...records, next] })).length > MAX_BATCH_BYTES) break;
+      if (
+        new TextEncoder().encode(
+          JSON.stringify({ generation, binding, records: [...records, next] }),
+        ).length > MAX_BATCH_BYTES
+      )
+        break;
       records.push(this.queue.shift()!);
       this.queuedBytes -= new TextEncoder().encode(JSON.stringify(next)).length;
     }
@@ -91,29 +138,61 @@ export class BrowserDiagnostics {
     const timeout = setTimeout(() => controller.abort(), 5000);
     try {
       const response = await this.request('/api/diagnostics/events', {
-        method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-Spinel-Diagnostic-Account': this.accountId },
-        body: JSON.stringify({ generation, binding, records }), signal: controller.signal,
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Spinel-Diagnostic-Account': this.accountId,
+        },
+        body: JSON.stringify({ generation, binding, records }),
+        signal: controller.signal,
       });
       if (this.epoch !== epoch || this.closed || controller.signal.aborted) return;
-      if (response.status === 401 || response.status === 403) { this.settle(flight); this.stop(); return; }
+      if (response.status === 401 || response.status === 403) {
+        this.settle(flight);
+        this.stop();
+        return;
+      }
       if (response.status === 409) {
         this.settle(flight);
         // The old queue is discarded, never relabelled with the new generation.
         await this.start();
         return;
       }
-      if (!response.ok) { this.settle(flight); this.suspend(); return; }
+      if (!response.ok) {
+        this.settle(flight);
+        this.suspend();
+        return;
+      }
       const body: unknown = await response.json();
       if (this.epoch !== epoch || this.closed || controller.signal.aborted) return;
-      if (isObject(body) && exactKeys(body, ['accepted', 'dropped']) && typeof body.accepted === 'number' && Number.isSafeInteger(body.accepted) && body.accepted >= 0 && typeof body.dropped === 'number' && Number.isSafeInteger(body.dropped) && body.dropped >= 0 && body.accepted + body.dropped === records.length) this.settle(flight, body.dropped);
+      if (
+        isObject(body) &&
+        exactKeys(body, ['accepted', 'dropped']) &&
+        typeof body.accepted === 'number' &&
+        Number.isSafeInteger(body.accepted) &&
+        body.accepted >= 0 &&
+        typeof body.dropped === 'number' &&
+        Number.isSafeInteger(body.dropped) &&
+        body.dropped >= 0 &&
+        body.accepted + body.dropped === records.length
+      )
+        this.settle(flight, body.dropped);
       else this.settle(flight);
     } catch {
-      if (this.epoch === epoch) { this.settle(flight); this.suspend(); }
+      if (this.epoch === epoch) {
+        this.settle(flight);
+        this.suspend();
+      }
     } finally {
       clearTimeout(timeout);
       this.settle(flight);
       if (this.controller === controller) this.controller = undefined;
-      if (!this.closed && this.generation && this.queue.length) this.timer ??= setTimeout(() => { this.timer = undefined; void this.flush(); }, 2000);
+      if (!this.closed && this.generation && this.queue.length)
+        this.timer ??= setTimeout(() => {
+          this.timer = undefined;
+          void this.flush();
+        }, 2000);
     }
   }
 
@@ -131,5 +210,8 @@ export class BrowserDiagnostics {
     this.controller?.abort();
     this.controller = undefined;
   }
-  stop() { this.closed = true; this.suspend(); }
+  stop() {
+    this.closed = true;
+    this.suspend();
+  }
 }

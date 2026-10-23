@@ -52,9 +52,15 @@ test('operator sees missing configuration, backup failure and the last good back
     await expect(panel.getByText('Last successful backup:', { exact: false })).not.toContainText(
       'None yet',
     );
-    await page.getByRole('navigation', { name: 'Administration sections' }).getByRole('link', { name: 'Invites', exact: true }).click();
+    await page
+      .getByRole('navigation', { name: 'Administration sections' })
+      .getByRole('link', { name: 'Invites', exact: true })
+      .click();
     await expect(page.getByRole('heading', { name: 'Invites', exact: true })).toBeVisible();
-    await page.getByRole('navigation', { name: 'Administration sections' }).getByRole('link', { name: 'Backups & health', exact: true }).click();
+    await page
+      .getByRole('navigation', { name: 'Administration sections' })
+      .getByRole('link', { name: 'Backups & health', exact: true })
+      .click();
     db.exec('UPDATE backup_state SET error=NULL');
     await page.reload();
     await expect(panel.getByText('Backup or retention failed', { exact: false })).toHaveCount(0);

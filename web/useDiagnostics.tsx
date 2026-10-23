@@ -7,7 +7,9 @@ const DiagnosticsContext = createContext<AccountDiagnostics | null>(null);
 export function DiagnosticsProvider({ children }: { children: ReactNode }) {
   const account = useRef<AccountDiagnostics | null>(null);
   account.current ??= new AccountDiagnostics();
-  return <DiagnosticsContext.Provider value={account.current}>{children}</DiagnosticsContext.Provider>;
+  return (
+    <DiagnosticsContext.Provider value={account.current}>{children}</DiagnosticsContext.Provider>
+  );
 }
 
 /** Account shell only. Guest roots have no provider and receive no sink/run IDs. */
@@ -18,9 +20,18 @@ export function useAccountDiagnostics(userId: string | null, connected: boolean)
     return () => account?.account(null);
   }, [account, userId]);
   useLayoutEffect(() => {
-    const sync = () => account?.connection(connected && navigator.onLine && document.visibilityState !== 'hidden');
+    const sync = () =>
+      account?.connection(connected && navigator.onLine && document.visibilityState !== 'hidden');
     const changedAccount = (event: StorageEvent) => {
-      if (event.key === null || ['spinel.offline.account', 'spinel.offline.cancellation', 'spinel.offline.sign-out'].includes(event.key)) account?.stop();
+      if (
+        event.key === null ||
+        [
+          'spinel.offline.account',
+          'spinel.offline.cancellation',
+          'spinel.offline.sign-out',
+        ].includes(event.key)
+      )
+        account?.stop();
     };
     document.addEventListener('visibilitychange', sync);
     window.addEventListener('online', sync);

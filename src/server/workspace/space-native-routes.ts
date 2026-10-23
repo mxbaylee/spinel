@@ -19,7 +19,12 @@ export function spaceNativeRoutes(
   workspace: WorkspaceStore,
   collaboration: CollaborationStore,
   origin: string,
-  options: { spaceReview?: boolean; guest?: boolean; history?: HistoryStore; diagnostics?: FormulaDiagnostics } = {},
+  options: {
+    spaceReview?: boolean;
+    guest?: boolean;
+    history?: HistoryStore;
+    diagnostics?: FormulaDiagnostics;
+  } = {},
 ) {
   const router = express.Router({ mergeParams: true });
   const spaces = new SpaceStore(workspace);
@@ -49,7 +54,14 @@ export function spaceNativeRoutes(
   });
   router.use(
     '/formulas',
-    formulaRoutes(workspace, collaboration, identity, options.guest, 'itemId', options.guest ? undefined : options.diagnostics),
+    formulaRoutes(
+      workspace,
+      collaboration,
+      identity,
+      options.guest,
+      'itemId',
+      options.guest ? undefined : options.diagnostics,
+    ),
   );
   router.post(
     '/images',

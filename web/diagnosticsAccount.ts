@@ -8,7 +8,9 @@ export class AccountDiagnostics {
   private available = false;
   private stopped = false;
   private readonly create: (accountId: string) => BrowserDiagnostics;
-  constructor(create = (accountId: string) => new BrowserDiagnostics({ accountId })) { this.create = create; }
+  constructor(create = (accountId: string) => new BrowserDiagnostics({ accountId })) {
+    this.create = create;
+  }
   account(id: string | null) {
     if (id === this.owner) return;
     this.client?.stop();
@@ -27,8 +29,11 @@ export class AccountDiagnostics {
     if (this.available && !this.stopped) this.client?.emit(event, context);
   };
   runId() {
-    try { return this.available && !this.stopped ? crypto.randomUUID() : undefined; }
-    catch { return undefined; }
+    try {
+      return this.available && !this.stopped ? crypto.randomUUID() : undefined;
+    } catch {
+      return undefined;
+    }
   }
   stop() {
     this.stopped = true;

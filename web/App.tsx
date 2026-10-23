@@ -46,7 +46,11 @@ type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?:
 type Passkey = { id: string; name: string; provider: string };
 
 export function App() {
-  return <DiagnosticsProvider><AccountApp /></DiagnosticsProvider>;
+  return (
+    <DiagnosticsProvider>
+      <AccountApp />
+    </DiagnosticsProvider>
+  );
 }
 
 function AccountApp() {
@@ -435,7 +439,9 @@ function AccountApp() {
     );
   }
   return (
-    <div className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}`}>
+    <div
+      className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}`}
+    >
       <Rail
         user={user}
         compact={settings || !!user?.isAdmin}

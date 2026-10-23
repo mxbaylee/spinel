@@ -27,17 +27,26 @@ for (const status of [400, 403]) {
     const f = await fixture(() => finish);
     f.save('first');
     f.save('pending checkpoint');
-    const other = f.workspace.create(f.owner.id, { kind: 'doc', name: 'Unaffected', parentId: null });
-    for (const revision of [0, 1]) f.docs.save(f.owner.id, other.id, {
-      revision, writeId: randomUUID(),
-      snapshot: { id: other.id, body: { dataStream: `Other revision ${revision + 1}\r\n` } },
+    const other = f.workspace.create(f.owner.id, {
+      kind: 'doc',
+      name: 'Unaffected',
+      parentId: null,
     });
+    for (const revision of [0, 1])
+      f.docs.save(f.owner.id, other.id, {
+        revision,
+        writeId: randomUUID(),
+        snapshot: { id: other.id, body: { dataStream: `Other revision ${revision + 1}\r\n` } },
+      });
     f.advance(MINUTE);
     const original = f.history.capture.bind(f.history);
-    const capture = vi.spyOn(f.history, 'capture').mockImplementation((user, id, source, custom) => {
-      if (id === f.item.id) return Promise.reject(new AuthError(status, 'Private validation detail'));
-      return original(user, id, source, custom);
-    });
+    const capture = vi
+      .spyOn(f.history, 'capture')
+      .mockImplementation((user, id, source, custom) => {
+        if (id === f.item.id)
+          return Promise.reject(new AuthError(status, 'Private validation detail'));
+        return original(user, id, source, custom);
+      });
     const warning = vi.spyOn(console, 'error').mockImplementation(() => {});
     await f.history.tick();
     expect(finish).toHaveBeenLastCalledWith(status !== 400);
@@ -52,7 +61,9 @@ for (const status of [400, 403]) {
 }
 
 test('a broken maintenance observer cannot prevent a durable native checkpoint', async () => {
-  const f = await fixture(() => () => { throw new Error('Diagnostics unavailable'); });
+  const f = await fixture(() => () => {
+    throw new Error('Diagnostics unavailable');
+  });
   f.save('first');
   f.save('second');
   f.advance(MINUTE);

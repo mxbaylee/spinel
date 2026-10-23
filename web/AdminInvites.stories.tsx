@@ -189,7 +189,9 @@ const failedReadback =
       await userEvent.click(within(dialog).getByRole('button', { name: 'Create invite' }));
     } else {
       await userEvent.click(await canvas.findByRole('button', { name: 'Actions for invite 1' }));
-      await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Revoke invite' }));
+      await userEvent.click(
+        await within(document.body).findByRole('menuitem', { name: 'Revoke invite' }),
+      );
     }
     await expect(await canvas.findByRole('button', { name: 'Refresh invites' })).toBeEnabled();
     await expect(canvas.getByRole('button', { name: 'Create invite' })).toBeDisabled();

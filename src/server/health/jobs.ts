@@ -13,9 +13,17 @@ export type ObserveJob = () => (success: boolean) => void;
 /** Optional observers must never change the job's outcome, even if an adapter fails. */
 export function observeJob(start?: ObserveJob) {
   let finish: ((success: boolean) => void) | undefined;
-  try { finish = start?.(); } catch { /* best effort */ }
+  try {
+    finish = start?.();
+  } catch {
+    /* best effort */
+  }
   return (success: boolean) => {
-    try { finish?.(success); } catch { /* best effort */ }
+    try {
+      finish?.(success);
+    } catch {
+      /* best effort */
+    }
   };
 }
 
@@ -28,8 +36,20 @@ export class HealthJobs {
   constructor(options: { now?: () => number; observe?: (event: JobObservation) => void } = {}) {
     this.now = options.now ?? Date.now;
     this.observe = options.observe;
-    for (const name of ['history-maintenance', 'trash-expiry', 'collaboration-purge', 'space-trash-expiry'] as const)
-      this.states.set(name, { name, configured: false, running: false, lastAttempt: null, lastSuccess: null, failedSince: null });
+    for (const name of [
+      'history-maintenance',
+      'trash-expiry',
+      'collaboration-purge',
+      'space-trash-expiry',
+    ] as const)
+      this.states.set(name, {
+        name,
+        configured: false,
+        running: false,
+        lastAttempt: null,
+        lastSuccess: null,
+        failedSince: null,
+      });
   }
   configure(name: HealthJobName) {
     this.states.get(name)!.configured = true;
@@ -56,7 +76,11 @@ export class HealthJobs {
         state.failedSince = null;
       } else state.failedSince ??= ended;
       // A diagnostics adapter failure cannot fail the operation being measured.
-      try { this.observe?.({ job: name, runId, success, durationMs: Math.max(0, ended - started) }); } catch { /* best effort */ }
+      try {
+        this.observe?.({ job: name, runId, success, durationMs: Math.max(0, ended - started) });
+      } catch {
+        /* best effort */
+      }
     };
   }
   snapshot() {

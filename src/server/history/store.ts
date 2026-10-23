@@ -43,7 +43,11 @@ export class HistoryStore {
   private closing = false;
   private readonly observeMaintenance?: ObserveJob;
 
-  constructor(workspace: WorkspaceStore, collaboration: CollaborationStore, observeMaintenance?: ObserveJob) {
+  constructor(
+    workspace: WorkspaceStore,
+    collaboration: CollaborationStore,
+    observeMaintenance?: ObserveJob,
+  ) {
     this.workspace = workspace;
     this.collaboration = collaboration;
     this.observeMaintenance = observeMaintenance;
@@ -562,12 +566,19 @@ export class HistoryStore {
     if (this.closing) return Promise.resolve();
     if (this.ticking) return this.ticking;
     const finish = observeJob(this.observeMaintenance);
-    this.ticking = this.scan().then((success) => { finish(success); }, (error) => {
-      finish(false);
-      throw error;
-    }).finally(() => {
-      this.ticking = undefined;
-    });
+    this.ticking = this.scan()
+      .then(
+        (success) => {
+          finish(success);
+        },
+        (error) => {
+          finish(false);
+          throw error;
+        },
+      )
+      .finally(() => {
+        this.ticking = undefined;
+      });
     return this.ticking;
   }
 
@@ -599,7 +610,10 @@ export class HistoryStore {
       ...this.spaceMaintenanceItems(),
     ];
     for (const { id, owner_id, state, space_id } of candidates) {
-      if (this.closing) { success = false; break; }
+      if (this.closing) {
+        success = false;
+        break;
+      }
       try {
         const user = space_id
           ? owner_id

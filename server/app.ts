@@ -65,14 +65,25 @@ export async function createApp(options: AppOptions) {
   let diagnostics: DiagnosticsStore | undefined;
 
   try {
-    diagnostics = new DiagnosticsStore(diagnosticsConfiguration(options.databasePath, options.image));
-    const jobs = new HealthJobs({ observe: ({ job, success, durationMs, runId }) => {
-      if (job === 'space-trash-expiry') return;
-      diagnostics!.emit({ name: 'job.result', details: {
-        job: job === 'history-maintenance' ? 'history-prune' : job,
-        outcome: success ? 'success' : 'failure', durationMs,
-      } }, { component: 'health', runId });
-    } });
+    diagnostics = new DiagnosticsStore(
+      diagnosticsConfiguration(options.databasePath, options.image),
+    );
+    const jobs = new HealthJobs({
+      observe: ({ job, success, durationMs, runId }) => {
+        if (job === 'space-trash-expiry') return;
+        diagnostics!.emit(
+          {
+            name: 'job.result',
+            details: {
+              job: job === 'history-maintenance' ? 'history-prune' : job,
+              outcome: success ? 'success' : 'failure',
+              durationMs,
+            },
+          },
+          { component: 'health', runId },
+        );
+      },
+    });
     const auth = new AuthStore(database);
     app.use(
       '/api/auth',
@@ -88,7 +99,10 @@ export async function createApp(options: AppOptions) {
     const origin = options.origin ?? 'http://localhost:3000';
     const oauth = new AssistantOAuth(auth, origin);
     app.use(assistantOAuthRoutes(oauth));
-    collaboration = new CollaborationStore(workspace, options.databasePath, { spaceReview, observePurge: () => jobs.begin('collaboration-purge') });
+    collaboration = new CollaborationStore(workspace, options.databasePath, {
+      spaceReview,
+      observePurge: () => jobs.begin('collaboration-purge'),
+    });
     history = new HistoryStore(workspace, collaboration, () => jobs.begin('history-maintenance'));
     app.use('/mcp', mcpRoutes(workspace, collaboration, origin));
     realtime = attachCollaboration(server, workspace, collaboration, origin, { spaceReview });
@@ -115,11 +129,17 @@ export async function createApp(options: AppOptions) {
       next();
     });
     app.use('/api', diagnosticsRoutes(workspace, diagnostics, origin));
-    app.use('/api/items', workspaceRoutes(auth, origin, workspace, collaboration, history,
-      (event, context, actorId) => diagnostics!.record(event, context, actorId)));
+    app.use(
+      '/api/items',
+      workspaceRoutes(auth, origin, workspace, collaboration, history, (event, context, actorId) =>
+        diagnostics!.record(event, context, actorId),
+      ),
+    );
     app.use(
       '/api/spaces/:spaceId/items/:itemId',
-      spaceNativeRoutes(workspace, collaboration, origin, { spaceReview, history,
+      spaceNativeRoutes(workspace, collaboration, origin, {
+        spaceReview,
+        history,
         diagnostics: (event, context, actorId) => diagnostics!.record(event, context, actorId),
       }),
     );
@@ -260,31 +280,85 @@ export async function createApp(options: AppOptions) {
       configPath: options.backupConfigPath,
       image: options.image,
       observe: () => {
-        const started = Date.now(), runId = randomUUID();
-        return (success) => diagnostics!.emit({ name: 'job.result', details: { job: 'backup', outcome: success ? 'success' : 'failure', durationMs: Math.max(0, Date.now() - started) } }, { component: 'health', runId });
+        const started = Date.now(),
+          runId = randomUUID();
+        return (success) =>
+          diagnostics!.emit(
+            {
+              name: 'job.result',
+              details: {
+                job: 'backup',
+                outcome: success ? 'success' : 'failure',
+                durationMs: Math.max(0, Date.now() - started),
+              },
+            },
+            { component: 'health', runId },
+          );
       },
     });
     const health = new HealthMonitor({
-      applicationPath: options.databasePath, diagnosticsPath: diagnostics.path, jobs,
+      applicationPath: options.databasePath,
+      diagnosticsPath: diagnostics.path,
+      jobs,
       editorConnections: () => realtime!.connectionCount(),
-      logicalDatabaseBytes: () => Number(database.prepare('PRAGMA page_count').get()?.page_count) * Number(database.prepare('PRAGMA page_size').get()?.page_size),
+      logicalDatabaseBytes: () =>
+        Number(database.prepare('PRAGMA page_count').get()?.page_count) *
+        Number(database.prepare('PRAGMA page_size').get()?.page_size),
     });
     app.use(healthRoutes(auth, health));
     const sampleHealth = async () => {
       const sample = await health.sample();
       for (const [scope, value] of [
-        ['process', sample.memory.processRssBytes], ['host', sample.memory.systemUsedBytes], ['container', sample.memory.containerUsedBytes],
-      ] as const) if (value !== null) diagnostics!.emit({ name: 'runtime.memory', metric: { kind: 'gauge', unit: 'bytes', value }, details: { scope } }, { component: 'health' });
-      diagnostics!.emit({ name: 'runtime.connections', metric: { kind: 'gauge', unit: 'count', value: sample.editorConnections }, details: {} }, { component: 'health' });
+        ['process', sample.memory.processRssBytes],
+        ['host', sample.memory.systemUsedBytes],
+        ['container', sample.memory.containerUsedBytes],
+      ] as const)
+        if (value !== null)
+          diagnostics!.emit(
+            {
+              name: 'runtime.memory',
+              metric: { kind: 'gauge', unit: 'bytes', value },
+              details: { scope },
+            },
+            { component: 'health' },
+          );
+      diagnostics!.emit(
+        {
+          name: 'runtime.connections',
+          metric: { kind: 'gauge', unit: 'count', value: sample.editorConnections },
+          details: {},
+        },
+        { component: 'health' },
+      );
       for (const store of ['application', 'diagnostics'] as const) {
         const size = sample[store];
         if (!size) continue;
-        for (const [part, value] of [['database', size.databaseBytes], ['wal', size.walBytes]] as const)
-          diagnostics!.emit({ name: 'storage.bytes', metric: { kind: 'gauge', unit: 'bytes', value }, details: { store, part } }, { component: 'health' });
+        for (const [part, value] of [
+          ['database', size.databaseBytes],
+          ['wal', size.walBytes],
+        ] as const)
+          diagnostics!.emit(
+            {
+              name: 'storage.bytes',
+              metric: { kind: 'gauge', unit: 'bytes', value },
+              details: { store, part },
+            },
+            { component: 'health' },
+          );
       }
-      if (sample.storage.freeBytes !== null) diagnostics!.emit({ name: 'storage.free', metric: { kind: 'gauge', unit: 'bytes', value: sample.storage.freeBytes }, details: {} }, { component: 'health' });
+      if (sample.storage.freeBytes !== null)
+        diagnostics!.emit(
+          {
+            name: 'storage.free',
+            metric: { kind: 'gauge', unit: 'bytes', value: sample.storage.freeBytes },
+            details: {},
+          },
+          { component: 'health' },
+        );
     };
-    const collectHealth = () => { void sampleHealth().catch(() => {}); };
+    const collectHealth = () => {
+      void sampleHealth().catch(() => {});
+    };
     collectHealth();
     healthTimer = setInterval(collectHealth, 60_000);
     healthTimer.unref();

@@ -290,12 +290,19 @@ export class CollaborationStore {
         db.prepare('DELETE FROM spinel_generation_resources WHERE unit_id=?').run(row.item_id);
         db.prepare('DELETE FROM collaboration_purge WHERE item_id=?').run(row.item_id);
       }
-    })().then(() => { finish(true); }, (error) => {
-      finish(false);
-      throw error;
-    }).finally(() => {
-      this.purging = undefined;
-    });
+    })()
+      .then(
+        () => {
+          finish(true);
+        },
+        (error) => {
+          finish(false);
+          throw error;
+        },
+      )
+      .finally(() => {
+        this.purging = undefined;
+      });
     return this.purging;
   }
 

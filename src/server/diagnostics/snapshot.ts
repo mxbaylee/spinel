@@ -9,13 +9,18 @@ export async function snapshotDatabase(source: string, destination: string, sign
   });
   let failure = false;
   let terminated: Promise<number> | undefined;
-  const abort = () => { failure = true; terminated ??= worker.terminate(); };
+  const abort = () => {
+    failure = true;
+    terminated ??= worker.terminate();
+  };
   signal.addEventListener('abort', abort, { once: true });
   const timeout = setTimeout(abort, 30_000);
   timeout.unref();
   try {
     await new Promise<void>((resolve, reject) => {
-      worker.once('error', () => { failure = true; });
+      worker.once('error', () => {
+        failure = true;
+      });
       worker.once('exit', (code) => {
         if (code === 0 && !failure && !signal.aborted) resolve();
         else reject(new Error('Diagnostics export unavailable.'));
