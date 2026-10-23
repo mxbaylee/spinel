@@ -66,12 +66,11 @@ row. A local session remains read-only after verified connectivity returns,
 and keeps its timestamp and read-only explanation until reopened online.
 The dashboard never claims **Saved on this device**. See [offline behavior](offline.md).
 
-The existing save row reserves Retry space through ordinary connection changes,
-while keeping explicit pending-edit warnings. A background shared-file-list
+The fixed title-adjacent save slot keeps a persistent short label while its
+popover holds full pending-edit warnings and Retry (SPN-043). A background shared-file-list
 refresh error remains an announced alert with its Retry action, after the open
 editor so the delayed polling failure cannot push the document down. In the
-file list it retains its existing placement above the list. SPN-043 still owns the shared
-title-adjacent save slot, full error detail and Retry popover; SPN-049 composes
+file list it retains its existing placement above the list. SPN-049 composes
 that slot and this connection control into its wider header migration.
 SPN-053 later adds local/pending-sync durability states, without treating an
 open connection as persistence evidence.

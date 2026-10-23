@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
-import type { Page, TestInfo } from '@playwright/test';
+import type { Locator, Page, TestInfo } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -26,17 +26,37 @@ async function connection(page: Page, state: ConnectionState) {
 
 async function detail(page: Page, state: ConnectionState, touch = false) {
   const trigger = page.getByRole('button', { name: labels[state], exact: true });
-  const before = await trigger.boundingBox();
+  const snapshot = () =>
+    trigger.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        viewport: rect.toJSON(),
+        scroll: { x: scrollX, y: scrollY },
+        bounds: {
+          x: rect.x + scrollX,
+          y: rect.y + scrollY,
+          width: rect.width,
+          height: rect.height,
+        },
+      };
+    });
+  const before = await snapshot();
   if (touch) {
-    expect(before!.width).toBeGreaterThanOrEqual(44);
-    expect(before!.height).toBeGreaterThanOrEqual(44);
+    expect(before.bounds.width).toBeGreaterThanOrEqual(44);
+    expect(before.bounds.height).toBeGreaterThanOrEqual(44);
     await trigger.tap();
   } else await trigger.hover();
   await expect(page.getByRole('dialog', { name: 'Connection details', exact: true })).toBeVisible();
   await expect(page.getByRole('dialog', { name: 'Connection details', exact: true })).toContainText(
     /connect|offline/i,
   );
-  expect(await trigger.boundingBox()).toEqual(before);
+  const after = await snapshot();
+  if (touch && (before.scroll.x !== after.scroll.x || before.scroll.y !== after.scroll.y))
+    console.info('Connection detail scroll evidence', JSON.stringify({ before, after }));
+  // Pointer activation may scroll an already-wide page. Compare exact layout
+  // coordinates; native canvas viewport checks below remain unchanged.
+  expect(after.bounds).toEqual(before.bounds);
+  await expect(trigger).toBeInViewport();
 }
 
 async function closeDetail(page: Page) {
@@ -53,6 +73,14 @@ async function capture(page: Page, info: TestInfo, name: string, variant: string
     path: `test-results/theme-screenshots/spn-042-${name}-${variant}-${info.project.name}.png`,
     fullPage: true,
     animations: 'disabled',
+  });
+}
+
+// Document-relative coordinates ignore deliberate scrolling to reach native controls.
+async function documentBounds(locator: Locator) {
+  return locator.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { x: rect.x + scrollX, y: rect.y + scrollY, width: rect.width, height: rect.height };
   });
 }
 
@@ -212,6 +240,13 @@ for (const width of [1280, 390]) {
         const saved = () => expect(save).toHaveText('All changes saved.', { timeout: 30_000 });
         let holdWrite = true;
         let writeHeld = false;
+        let failWrites = false;
+        let rejectedWrites = 0;
+        let recoveryHeld = true;
+        let releaseRecovery = () => {};
+        const recoveryGate = new Promise<void>((resolve) => {
+          releaseRecovery = resolve;
+        });
         let releaseWrite = () => {};
         const writeGate = new Promise<void>((resolve) => {
           releaseWrite = resolve;
@@ -221,7 +256,19 @@ for (const width of [1280, 390]) {
             writeHeld = true;
             await writeGate;
           }
-          await route.continue();
+          if (failWrites) {
+            // Reject exactly once; repeated 503s would test a reconnect storm,
+            // rather than the save control's failure and user-triggered recovery.
+            failWrites = false;
+            rejectedWrites++;
+            await route.fulfill({
+              status: 503,
+              json: { error: 'Save unavailable for this acceptance test.' },
+            });
+          } else {
+            if (rejectedWrites && recoveryHeld) await recoveryGate;
+            await route.continue();
+          }
         });
         const captureEditor = async (state: ConnectionState) => {
           for (const theme of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
@@ -243,6 +290,10 @@ for (const width of [1280, 390]) {
           await page.goto(`/?item=${item.id}`);
           await saved();
           await connection(page, 'Online');
+          const saveTrigger = page.getByRole('button', { name: /^Save details:/ });
+          await expect(saveTrigger).toHaveText('Saved');
+          const savedBounds = await documentBounds(canvas);
+          const slotBounds = await documentBounds(saveTrigger);
           if (kind === 'sheet' && width === 390) {
             await expect(editor).toHaveAttribute('data-mobile', 'true');
             const grid = editor.getByLabel('Spreadsheet grid', { exact: true });
@@ -266,16 +317,86 @@ for (const width of [1280, 390]) {
           }
           await expect.poll(() => writeHeld).toBe(true);
           await expect(save).toContainText(/not saved|Saving|keep this tab open/i);
-          // An in-flight edit is a save concern, not a lost connection.
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
+          await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
+          // Preserve SPN-042's healthy pending-save Retry proof before the
+          // rejection: a rejected write may legitimately interrupt the room.
           await connection(page, 'Online');
-          // Retrying an unconfirmed save on a healthy connection must not strand
-          // the network indicator waiting for a room event that will never come.
-          await save.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          await saveTrigger.click();
+          await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          await page.keyboard.press('Escape');
+          await connection(page, 'Online');
+          // A real rejected save remains unconfirmed; no production state is mocked.
+          const rejectedResponse = page.waitForResponse(
+            (response) => response.url().includes('/new_changes') && response.status() === 503,
+          );
+          failWrites = true;
+          holdWrite = false;
+          releaseWrite();
+          await (await rejectedResponse).finished();
+          await expect.poll(() => rejectedWrites).toBeGreaterThan(0);
+          await expect(save).toContainText(/not saved|keep this tab open/i);
+          await expect(save).toHaveAttribute('aria-live', 'polite');
+          await expect(saveTrigger).toHaveText('Not saved');
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
+          await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
+          await page.getByRole('button', { name: 'Save details: Not saved', exact: true }).click();
+          const saveDetails = page.getByRole('dialog', { name: 'Save details', exact: true });
+          await expect(saveDetails).toBeVisible();
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
+          for (const theme of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
+            await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+            await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+            // Capture before asserting so teardown cannot hide a failing layout.
+            await page.screenshot({
+              path: `test-results/theme-screenshots/spn-043-${kind}-failed-${width === 390 ? 'phone' : theme}-${info.project.name}.png`,
+              fullPage: true,
+              animations: 'disabled',
+            });
+            // Reconnect can change legacy presence-tooltip overflow (SPN-049).
+            // The isolated component stories prove whole-page overflow; native
+            // acceptance proves actual controls fit and the editor stays still.
+            for (const control of [saveTrigger, page.locator('.save-positioner'), saveDetails]) {
+              await expect
+                .poll(() =>
+                  control.evaluate((element) => {
+                    const rect = element.getBoundingClientRect();
+                    return (
+                      rect.left >= 0 &&
+                      rect.right <= innerWidth &&
+                      rect.top >= 0 &&
+                      rect.bottom <= innerHeight
+                    );
+                  }),
+                )
+                .toBe(true);
+            }
+            await expect(
+              page.getByRole('button', { name: 'Retry saving', exact: true }),
+            ).toBeInViewport();
+          }
+          await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          recoveryHeld = false;
+          releaseRecovery();
+          await page.keyboard.press('Escape');
+          await expect(saveTrigger).toBeFocused();
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await connection(page, 'Online');
           await capture(page, info, `${kind}-online-unsaved`, width === 390 ? 'phone' : 'light');
           holdWrite = false;
           releaseWrite();
           await saved();
+          await expect(saveTrigger).toHaveText('Saved');
+          await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
+          await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
+          for (const theme of width === 390 ? (['light'] as const) : (['light', 'dark'] as const)) {
+            await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+            await page.screenshot({
+              path: `test-results/theme-screenshots/spn-043-${kind}-saved-${width === 390 ? 'phone' : theme}-${info.project.name}.png`,
+              fullPage: true,
+              animations: 'disabled',
+            });
+          }
           await page.evaluate(() => window.scrollTo(0, 0));
           await captureEditor('Online');
           const bounds = await canvas.boundingBox();
@@ -345,6 +466,9 @@ for (const width of [1280, 390]) {
           await expect(refreshShared).toHaveCount(0, { timeout: 10_000 });
           await expect.poll(() => canvas.boundingBox()).toEqual(bounds);
         } finally {
+          recoveryHeld = false;
+          releaseRecovery();
+          failWrites = false;
           holdWrite = false;
           releaseWrite();
           network.releaseJoinAcknowledgements();
