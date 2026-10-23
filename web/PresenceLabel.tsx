@@ -25,10 +25,12 @@ export function PresenceLabel({
         font: '12px system-ui',
         whiteSpace: 'nowrap',
         pointerEvents: 'none',
+        maxWidth: 'min(220px, calc(100vw - 32px))',
+        overflow: 'hidden',
       }}
     >
-      <ProfileIcon icon={icon} />
-      {name}
+      <span style={{ display: 'inline-flex', flexShrink: 0 }}><ProfileIcon icon={icon} /></span>
+      <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
     </span>
   );
 }
