@@ -596,7 +596,9 @@ test('a View Space link covers nested and future pages without outer access or p
 });
 
 for (const kind of ['doc', 'sheet'] as const) {
-  test(`revoked dirty guest ${kind} loses native content, portals and keyboard access across Space children`, async ({ browser }, info) => {
+  test(`revoked dirty guest ${kind} loses native content, portals and keyboard access across Space children`, async ({
+    browser,
+  }, info) => {
     test.setTimeout(150_000);
     const f = await fixture(browser, info);
     let release = () => {};
@@ -614,7 +616,9 @@ for (const kind of ['doc', 'sheet'] as const) {
       const siblingBefore = await f.snapshot(sibling.id);
       let received = 0;
       const returned: number[] = [];
-      const held = new Promise<void>((resolve) => { release = resolve; });
+      const held = new Promise<void>((resolve) => {
+        release = resolve;
+      });
       await f.guest.route('**/universer-api/comb/**/new_changes', async (route) => {
         received++;
         await held;
@@ -622,34 +626,48 @@ for (const kind of ['doc', 'sheet'] as const) {
         returned.push(response.status());
         // Native disposal can cancel the original browser request. Still send
         // its captured write to the server and verify the authoritative refusal.
-        try { await route.fulfill({ response }); } catch { /* Browser request was cancelled. */ }
+        try {
+          await route.fulfill({ response });
+        } catch {
+          /* Browser request was cancelled. */
+        }
       });
       const privateDraft = `Unsent ${kind} private contribution`;
       if (kind === 'doc') {
         await focusDoc(f.page);
         await f.page.keyboard.type(privateDraft);
       } else {
-        const address = f.page.getByRole('region', { name: 'Sheet document', exact: true })
-          .locator('[data-u-comp="defined-name"]').getByRole('textbox');
+        const address = f.page
+          .getByRole('region', { name: 'Sheet document', exact: true })
+          .locator('[data-u-comp="defined-name"]')
+          .getByRole('textbox');
         await address.fill('B2');
         await address.press('Enter');
         await f.page.keyboard.type(privateDraft);
         await f.page.keyboard.press('Enter');
       }
       await expect.poll(() => received).toBeGreaterThan(0);
-      await expect(f.page.getByRole('status', { name: 'Save status', exact: true })).toContainText('not saved');
+      await expect(f.page.getByRole('status', { name: 'Save status', exact: true })).toContainText(
+        'not saved',
+      );
       if (kind === 'doc') {
         await f.page.getByRole('button', { name: /^People/ }).click();
-        await expect(f.page.getByRole('dialog', { name: 'People in this document', exact: true })).toBeVisible();
+        await expect(
+          f.page.getByRole('dialog', { name: 'People in this document', exact: true }),
+        ).toBeVisible();
       } else {
         // This second cell remains actively edited, not yet in the workbook.
         // Capture must include the cell editor's Doc model/composition input.
-        const address = f.page.getByRole('region', { name: 'Sheet document', exact: true })
-          .locator('[data-u-comp="defined-name"]').getByRole('textbox');
+        const address = f.page
+          .getByRole('region', { name: 'Sheet document', exact: true })
+          .locator('[data-u-comp="defined-name"]')
+          .getByRole('textbox');
         await address.fill('C3');
         await address.press('Enter');
         await f.page.keyboard.type('Active cell draft before revocation');
-        await expect(f.page.getByRole('status', { name: 'Save status', exact: true })).toContainText('Editing cell');
+        await expect(
+          f.page.getByRole('status', { name: 'Save status', exact: true }),
+        ).toContainText('Editing cell');
       }
       const oldInput = await f.page.evaluateHandle(() => document.activeElement);
       // Make the root bootstrap/tree probes unreachable in this tab. Its exact
@@ -658,18 +676,35 @@ for (const kind of ['doc', 'sheet'] as const) {
       await f.page.route(`**/api/guest-spaces/${f.root.id}`, (route) => route.abort('failed'));
       await f.link(null);
       for (const target of [f.page, other]) {
-        await expect(target.getByRole('heading', { name: 'This link no longer works.', exact: true })).toBeVisible({ timeout: 15_000 });
+        await expect(
+          target.getByRole('heading', { name: 'This link no longer works.', exact: true }),
+        ).toBeVisible({ timeout: 15_000 });
         await expect(target.locator('.univer-container, canvas, a.space-page-link')).toHaveCount(0);
         await expect(target.getByRole('dialog')).toHaveCount(0);
         await expect(target.getByRole('menu')).toHaveCount(0);
-        await expect(target.getByRole('button', { name: /People|theatre|Formulas|Retry saving|Export|Copy|Recover/i })).toHaveCount(0);
+        await expect(
+          target.getByRole('button', {
+            name: /People|theatre|Formulas|Retry saving|Export|Copy|Recover/i,
+          }),
+        ).toHaveCount(0);
         await expect(target.getByRole('textbox')).toHaveCount(0);
         await expect(target).toHaveTitle('Spinel');
         const text = await target.locator('body').innerText();
-        for (const value of [f.root.name, child.name, sibling.name, f.owner.name, privateDraft, 'Active cell draft before revocation'])
+        for (const value of [
+          f.root.name,
+          child.name,
+          sibling.name,
+          f.owner.name,
+          privateDraft,
+          'Active cell draft before revocation',
+        ])
           expect(text).not.toContain(value);
       }
-      await expect(f.page.getByText('Some changes were not saved. This document is no longer accessible.', { exact: true })).toBeVisible();
+      await expect(
+        f.page.getByText('Some changes were not saved. This document is no longer accessible.', {
+          exact: true,
+        }),
+      ).toBeVisible();
       expect(await oldInput.evaluate((element) => element?.isConnected)).toBe(false);
       await oldInput.dispose();
       await f.page.locator('h1').click();
@@ -683,7 +718,9 @@ for (const kind of ['doc', 'sheet'] as const) {
       const count = received;
       release();
       await expect.poll(() => returned.length).toBeGreaterThanOrEqual(count);
-      expect(returned.every((status) => status === 401 || status === 403 || status === 404)).toBe(true);
+      expect(returned.every((status) => status === 401 || status === 403 || status === 404)).toBe(
+        true,
+      );
       expect(await f.snapshot(child.id)).toEqual(before);
       expect(await f.snapshot(sibling.id)).toEqual(siblingBefore);
       for (const target of [child, sibling])
@@ -696,7 +733,10 @@ for (const kind of ['doc', 'sheet'] as const) {
       ] as const) {
         await f.page.emulateMedia({ colorScheme: mode.colorScheme });
         await f.page.setViewportSize({ width: mode.width, height: 844 });
-        await f.page.screenshot({ path: `test-results/theme-screenshots/spn-084-dirty-${kind}-${mode.name}-${info.project.name}.png`, fullPage: true });
+        await f.page.screenshot({
+          path: `test-results/theme-screenshots/spn-084-dirty-${kind}-${mode.name}-${info.project.name}.png`,
+          fullPage: true,
+        });
       }
       expect(f.errors).toEqual([]);
     } finally {

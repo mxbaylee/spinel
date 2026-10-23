@@ -151,7 +151,9 @@ export function SpaceShell({
           <Dialog.Popup className="sp-ui space-pages-dialog" finalFocus={pages}>
             <div className="space-pages-heading">
               <Dialog.Title className="space-pages-title">
-                <span aria-hidden="true"><ProfileIcon icon="lucide:panel-left" size={20} /></span>
+                <span aria-hidden="true">
+                  <ProfileIcon icon="lucide:panel-left" size={20} />
+                </span>
                 Space contents
               </Dialog.Title>
               <Dialog.Close className="sp-control sp-quiet" aria-label="Close Space contents">

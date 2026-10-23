@@ -6,27 +6,42 @@ import { guestPendingBuffer } from '../../web/guestPendingBuffer.ts';
 afterEach(() => vi.unstubAllGlobals());
 
 test('guest retention includes the active cell Doc and composition before native disposal', () => {
-  class Element { isContentEditable = false; textContent = ''; }
-  class Input extends Element { value = 'composition not yet committed'; }
+  class Element {
+    isContentEditable = false;
+    textContent = '';
+  }
+  class Input extends Element {
+    value = 'composition not yet committed';
+  }
   class Textarea extends Input {}
   vi.stubGlobal('HTMLElement', Element);
   vi.stubGlobal('HTMLInputElement', Input);
   vi.stubGlobal('HTMLTextAreaElement', Textarea);
   vi.stubGlobal('document', { activeElement: new Textarea() });
-  const body = (text: string) => ({ dataStream: text + '\r\n', paragraphs: [{ startIndex: text.length }] });
+  const body = (text: string) => ({
+    dataStream: text + '\r\n',
+    paragraphs: [{ startIndex: text.length }],
+  });
   const live = new DocumentDataModel({ id: 'native-doc', body: body('Pending document edit') });
   const cell = new DocumentDataModel({ id: 'active-cell-editor', body: body('Uncommitted C3') });
-  const workbook = { id: 'native-sheet', sheets: { tab: { cellData: { 1: { 1: { v: 'Unsent B2' } } } } } };
+  const workbook = {
+    id: 'native-sheet',
+    sheets: { tab: { cellData: { 1: { 1: { v: 'Unsent B2' } } } } },
+  };
   const instances = {
     getAllUnitsForType(type: UniverInstanceType) {
-      return type === UniverInstanceType.UNIVER_DOC ? [live, cell] : [{ getSnapshot: () => workbook }];
+      return type === UniverInstanceType.UNIVER_DOC
+        ? [live, cell]
+        : [{ getSnapshot: () => workbook }];
     },
   };
   const univer = {
-    __getInjector: () => ({ get: (token: unknown) => {
-      expect(token).toBe(IUniverInstanceService);
-      return instances;
-    } }),
+    __getInjector: () => ({
+      get: (token: unknown) => {
+        expect(token).toBe(IUniverInstanceService);
+        return instances;
+      },
+    }),
   } as unknown as Univer;
   const retained = guestPendingBuffer(univer);
   expect(JSON.stringify(retained.snapshots)).toContain('Pending document edit');

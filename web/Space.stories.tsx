@@ -520,7 +520,10 @@ export const GuestLoading: Story = {
 };
 export const GuestRevoked: Story = {
   args: guestArgs,
-  parameters: { spacePath: guestPath, api: { ['GET /api/guest-spaces/' + root]: failure('Private title must never appear', 404) } },
+  parameters: {
+    spacePath: guestPath,
+    api: { ['GET /api/guest-spaces/' + root]: failure('Private title must never appear', 404) },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('alert')).toHaveTextContent('This link no longer works.');
@@ -531,7 +534,10 @@ export const GuestRevoked: Story = {
 };
 export const GuestUnreachable: Story = {
   args: guestArgs,
-  parameters: { spacePath: guestPath, api: { ['GET /api/guest-spaces/' + root]: failure('Unavailable', 503) } },
+  parameters: {
+    spacePath: guestPath,
+    api: { ['GET /api/guest-spaces/' + root]: failure('Unavailable', 503) },
+  },
 };
 export const GuestMissingPage: Story = {
   args: guestArgs,

@@ -61,7 +61,9 @@ export const Loading: Story = {
   decorators: [guestLocation()],
   parameters: { api: { [guest]: pending() } },
   play: async ({ canvasElement }) => {
-    await expect(within(canvasElement).getByRole('status')).toHaveTextContent('Opening shared document…');
+    await expect(within(canvasElement).getByRole('status')).toHaveTextContent(
+      'Opening shared document…',
+    );
   },
 };
 /** The link was revoked or replaced: any 401, 403 or 404 ends the page. */

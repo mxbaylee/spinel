@@ -81,7 +81,11 @@ export function collaborationPlugins(
     ],
   ];
 }
-export async function prepareCollaboration(id: string, spaceId?: string, isCurrent: () => boolean = () => true) {
+export async function prepareCollaboration(
+  id: string,
+  spaceId?: string,
+  isCurrent: () => boolean = () => true,
+) {
   const response = await fetch(`${documentPath(id, spaceId)}/collaboration`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -164,7 +168,10 @@ export function watchCollaboration(
         return;
       }
       denied = true;
-      if (guestItemId() && ([401, 403, 404].includes(response.status) || (data && data.item.access !== access))) {
+      if (
+        guestItemId() &&
+        ([401, 403, 404].includes(response.status) || (data && data.item.access !== access))
+      ) {
         revokeGuestView();
         return;
       }

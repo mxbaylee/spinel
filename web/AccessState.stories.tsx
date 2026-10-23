@@ -32,7 +32,9 @@ const meta = {
       await expect(canvas.getAllByRole('radio', { checked: true })).toHaveLength(1);
     }
     if (initial) await userEvent.click(initial);
-    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(width);
+    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(
+      width,
+    );
   },
 } satisfies Meta<typeof AccessState>;
 export default meta;
@@ -42,8 +44,12 @@ export const RevokedWithUnsavedInput: Story = {
   args: { kind: 'revoked', unsaved: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('Some changes were not saved. This document is no longer accessible.')).toBeVisible();
-    await expect(canvas.queryByRole('button', { name: /copy|recover|retry|export/i })).not.toBeInTheDocument();
+    await expect(
+      canvas.getByText('Some changes were not saved. This document is no longer accessible.'),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: /copy|recover|retry|export/i }),
+    ).not.toBeInTheDocument();
     await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
   },
 };

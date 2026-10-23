@@ -11,11 +11,12 @@ import type { GuestPendingBuffer } from './guestRevocation.ts';
 export function guestPendingBuffer(univer: Univer): GuestPendingBuffer {
   const instances = univer.__getInjector().get(IUniverInstanceService);
   const active = document.activeElement;
-  const focusedInput = active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement
-    ? active.value
-    : active instanceof HTMLElement && active.isContentEditable
-      ? active.textContent
-      : null;
+  const focusedInput =
+    active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement
+      ? active.value
+      : active instanceof HTMLElement && active.isContentEditable
+        ? active.textContent
+        : null;
   const units = [
     ...instances.getAllUnitsForType<DocumentDataModel>(UniverInstanceType.UNIVER_DOC),
     ...instances.getAllUnitsForType<Workbook>(UniverInstanceType.UNIVER_SHEET),

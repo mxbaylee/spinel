@@ -38,14 +38,39 @@
   text-align: center;
   overflow-wrap: anywhere;
 }
-.access-state-content h1 { font-size: 2rem; line-height: 1.15; margin: 0; }
-.access-state-content p { color: var(--sp-muted); margin: 0; }
-.access-state > footer { color: var(--sp-muted); font-size: 0.6875rem; text-align: center; }
-.access-state-embedded { padding: 24px; min-width: 0; }
+.access-state-content h1 {
+  font-size: 2rem;
+  line-height: 1.15;
+  margin: 0;
+}
+.access-state-content p {
+  color: var(--sp-muted);
+  margin: 0;
+}
+.access-state > footer {
+  color: var(--sp-muted);
+  font-size: 0.6875rem;
+  text-align: center;
+}
+.access-state-embedded {
+  padding: 24px;
+  min-width: 0;
+}
 @media (max-width: 600px) {
-  .access-state { padding: 24px 24px 24px; }
-  .access-state-content { padding: 48px 0; }
-  .access-state-header .sp-segments { padding: 0; }
-  .access-state-header .sp-segments::before { inset: 7px 0; }
-  .access-state-header .sp-segment { width: 44px; height: 44px; }
+  .access-state {
+    padding: 24px 24px 24px;
+  }
+  .access-state-content {
+    padding: 48px 0;
+  }
+  .access-state-header .sp-segments {
+    padding: 0;
+  }
+  .access-state-header .sp-segments::before {
+    inset: 7px 0;
+  }
+  .access-state-header .sp-segment {
+    width: 44px;
+    height: 44px;
+  }
 }

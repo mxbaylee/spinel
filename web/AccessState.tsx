@@ -34,15 +34,15 @@ export function AccessState({
   const content = (
     <section className="access-state-content" aria-labelledby={titleId}>
       <h1 id={titleId}>
-        <span role={kind === 'revoked' || kind === 'missing' ? 'alert' : undefined}>
-          {copy[0]}
-        </span>
+        <span role={kind === 'revoked' || kind === 'missing' ? 'alert' : undefined}>{copy[0]}</span>
       </h1>
       <p role={kind === 'loading' ? 'status' : kind === 'unsupported' ? 'alert' : undefined}>
         {copy[1]}
       </p>
       {kind === 'offline' && onRetry && <Button onClick={onRetry}>Try again</Button>}
-      {kind === 'revoked' && unsaved && <p>Some changes were not saved. This document is no longer accessible.</p>}
+      {kind === 'revoked' && unsaved && (
+        <p>Some changes were not saved. This document is no longer accessible.</p>
+      )}
       {kind === 'missing' && onFiles && <Button onClick={onFiles}>Go to My files</Button>}
     </section>
   );
@@ -50,7 +50,10 @@ export function AccessState({
   return (
     <div className="sp-ui access-state">
       <header className="access-state-header">
-        <span className="access-state-brand"><GemLogo size={32} /><strong>spinel</strong></span>
+        <span className="access-state-brand">
+          <GemLogo size={32} />
+          <strong>spinel</strong>
+        </span>
         <ThemeMenu />
       </header>
       <main>{content}</main>

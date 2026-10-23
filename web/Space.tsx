@@ -907,7 +907,15 @@ export function Space({
   if (guest && !currentTree && !visiblePage)
     return (
       <AccessState
-        kind={denied ? 'revoked' : route.kind === 'unavailable' ? 'missing' : loadError ? 'offline' : 'loading'}
+        kind={
+          denied
+            ? 'revoked'
+            : route.kind === 'unavailable'
+              ? 'missing'
+              : loadError
+                ? 'offline'
+                : 'loading'
+        }
         onRetry={() => void refresh.current(true)}
       />
     );

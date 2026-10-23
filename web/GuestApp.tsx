@@ -50,7 +50,9 @@ export function GuestApp() {
   const stopEditor = useRef<GuestEditorStop | null>(null);
   const retainedBuffer = useRef<GuestPendingBuffer | null>(null);
   const [unsaved, setUnsaved] = useState(false);
-  const registerGuestEditor = (stop: GuestEditorStop | null) => { stopEditor.current = stop; };
+  const registerGuestEditor = (stop: GuestEditorStop | null) => {
+    stopEditor.current = stop;
+  };
   const [item, setItem] = useState<Item | null>(null);
   const [error, setError] = useState('');
   const [unsupported, setUnsupported] = useState(false);
@@ -225,49 +227,57 @@ export function GuestApp() {
   if (error || !item)
     return (
       <AccessState
-        kind={error ? (unsupported ? 'unsupported' : 'revoked') : !browserOnline || reachability === 'offline' ? 'offline' : 'loading'}
+        kind={
+          error
+            ? unsupported
+              ? 'unsupported'
+              : 'revoked'
+            : !browserOnline || reachability === 'offline'
+              ? 'offline'
+              : 'loading'
+        }
         onRetry={() => void retry.current()}
         unsaved={unsaved}
       />
     );
   return (
     <main className="workspace guest-workspace">
-        <EditorFrame
-          name={item.name}
-          guest
-          access={item.access === 'editor' ? 'Guest editor' : 'View only'}
-          connection={
-            !browserOnline || reachability === 'offline'
-              ? 'offline'
-              : (editorConnection ?? 'reconnecting')
-          }
-        >
-          <Suspense fallback={<p role="status">Opening document…</p>}>
-            {item.kind === 'sheet' ? (
-              <Sheet
-                registerGuestEditor={registerGuestEditor}
-                saveStatusTarget={null}
-                id={id}
-                name={item.name}
-                onConnectionState={setEditorConnection}
-                onDirty={(value) => {
-                  if (!terminal.current) dirty.current = value;
-                }}
-              />
-            ) : (
-              <Doc
-                registerGuestEditor={registerGuestEditor}
-                saveStatusTarget={null}
-                id={id}
-                name={item.name}
-                onConnectionState={setEditorConnection}
-                onDirty={(value) => {
-                  if (!terminal.current) dirty.current = value;
-                }}
-              />
-            )}
-          </Suspense>
-        </EditorFrame>
+      <EditorFrame
+        name={item.name}
+        guest
+        access={item.access === 'editor' ? 'Guest editor' : 'View only'}
+        connection={
+          !browserOnline || reachability === 'offline'
+            ? 'offline'
+            : (editorConnection ?? 'reconnecting')
+        }
+      >
+        <Suspense fallback={<p role="status">Opening document…</p>}>
+          {item.kind === 'sheet' ? (
+            <Sheet
+              registerGuestEditor={registerGuestEditor}
+              saveStatusTarget={null}
+              id={id}
+              name={item.name}
+              onConnectionState={setEditorConnection}
+              onDirty={(value) => {
+                if (!terminal.current) dirty.current = value;
+              }}
+            />
+          ) : (
+            <Doc
+              registerGuestEditor={registerGuestEditor}
+              saveStatusTarget={null}
+              id={id}
+              name={item.name}
+              onConnectionState={setEditorConnection}
+              onDirty={(value) => {
+                if (!terminal.current) dirty.current = value;
+              }}
+            />
+          )}
+        </Suspense>
+      </EditorFrame>
     </main>
   );
 }

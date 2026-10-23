@@ -12,7 +12,9 @@ const variants = [
 ] as const;
 
 async function capture(page: Page, info: TestInfo, state: string) {
-  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+    .toBe(true);
   await mkdir('test-results/theme-screenshots', { recursive: true });
   await page.screenshot({
     path: `test-results/theme-screenshots/spn-084-${state}-${info.project.name}.png`,
@@ -21,14 +23,18 @@ async function capture(page: Page, info: TestInfo, state: string) {
   });
 }
 
-test('guest launch distinguishes offline, retry and authoritative denial without private metadata', async ({ page }, info) => {
+test('guest launch distinguishes offline, retry and authoritative denial without private metadata', async ({
+  page,
+}, info) => {
   const requests: string[] = [];
   page.on('request', (request) => {
     const pathname = new URL(request.url()).pathname;
     if (pathname.startsWith('/api/')) requests.push(pathname);
   });
   let status = 503;
-  await page.route('**' + path, (route) => route.fulfill({ status, json: { error: 'Private file name must not appear' } }));
+  await page.route('**' + path, (route) =>
+    route.fulfill({ status, json: { error: 'Private file name must not appear' } }),
+  );
   for (const [theme, width, variant] of variants) {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme: theme });
@@ -58,11 +64,19 @@ test('guest launch distinguishes offline, retry and authoritative denial without
   expect(requests.every((request) => request === path)).toBe(true);
 });
 
-test('a guest Space with an unreachable tree exposes no root identity or account controls', async ({ page }, info) => {
-  await page.route('**' + path, (route) => route.fulfill({ json: { item: { id, kind: 'space', name: 'Private Space title', access: 'viewer' } } }));
+test('a guest Space with an unreachable tree exposes no root identity or account controls', async ({
+  page,
+}, info) => {
+  await page.route('**' + path, (route) =>
+    route.fulfill({
+      json: { item: { id, kind: 'space', name: 'Private Space title', access: 'viewer' } },
+    }),
+  );
   let treeStatus = 503;
   const treePath = '/api/guest-spaces/' + id;
-  await page.route('**' + treePath, (route) => route.fulfill({ status: treeStatus, json: { error: 'Private tree title' } }));
+  await page.route('**' + treePath, (route) =>
+    route.fulfill({ status: treeStatus, json: { error: 'Private tree title' } }),
+  );
   for (const [theme, width, variant] of variants) {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme: theme });
@@ -72,7 +86,9 @@ test('a guest Space with an unreachable tree exposes no root identity or account
     await expect(page.locator('body')).not.toContainText('Private Space title');
     await expect(page.getByRole('button', { name: 'Open Space contents' })).toHaveCount(0);
     await capture(page, info, 'space-offline-' + variant);
-    const retried = page.waitForResponse((response) => new URL(response.url()).pathname === treePath);
+    const retried = page.waitForResponse(
+      (response) => new URL(response.url()).pathname === treePath,
+    );
     await page.getByRole('button', { name: 'Try again' }).click();
     await retried;
     treeStatus = 404;
@@ -80,12 +96,16 @@ test('a guest Space with an unreachable tree exposes no root identity or account
     await expect(page.getByRole('alert')).toHaveText('This link no longer works.');
     await expect(page.locator('body')).not.toContainText('Private tree title');
     await expect(page.getByRole('button', { name: 'Try again' })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: /My files|Your profile|Document actions/ })).toHaveCount(0);
+    await expect(
+      page.getByRole('button', { name: /My files|Your profile|Document actions/ }),
+    ).toHaveCount(0);
     await capture(page, info, 'space-revoked-' + variant);
   }
 });
 
-test('unsupported guest browsers retain the generic guard and never exchange a capability', async ({ page }, info) => {
+test('unsupported guest browsers retain the generic guard and never exchange a capability', async ({
+  page,
+}, info) => {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'locks', { value: undefined, configurable: true });
   });
@@ -97,7 +117,9 @@ test('unsupported guest browsers retain the generic guard and never exchange a c
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme: theme });
     await page.goto('/share/' + id + '#browser-guard-fixture');
-    await expect(page.getByRole('alert')).toHaveText('Open this link in a current browser that supports Web Locks.');
+    await expect(page.getByRole('alert')).toHaveText(
+      'Open this link in a current browser that supports Web Locks.',
+    );
     await expect(page.getByRole('button', { name: 'Try again' })).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText('browser-guard-fixture');
     await capture(page, info, 'unsupported-' + variant);
