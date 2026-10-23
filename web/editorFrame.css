@@ -224,8 +224,18 @@
   .editor-identity {
     flex-basis: 100%;
   }
+  .editor-header:has(.editor-access) .editor-identity {
+    /* The phone access label is positioned over this row; reserve its 76px
+       maximum plus a gap before laying out either the title or rename form. */
+    padding-right: 84px;
+  }
+  .editor-identity > button,
+  .editor-name form > button {
+    flex-shrink: 0;
+  }
   .editor-name {
-    max-width: calc(100% - 88px);
+    flex: 1;
+    max-width: 100%;
   }
   .editor-frame .save-slot,
   .editor-frame .editor-header.sp-ui button.save-trigger {

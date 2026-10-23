@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { EditorFrame, useEditorChrome } from './EditorFrame.tsx';
 import { EditorTools } from './EditorTools.tsx';
 import { SaveStatus } from './SaveStatus.tsx';
@@ -159,6 +159,16 @@ export const Rename: Story = {
     await expect(input).toHaveFocus();
     await expect(canvas.getByRole('button', { name: 'Save name' })).toBeEnabled();
     await assertDialogTargets(canvas.getByRole('form', { name: 'Rename document' }));
+    const form = canvas.getByRole('form', { name: 'Rename document' }).getBoundingClientRect();
+    const access = canvas.getByText('Can edit').getBoundingClientRect();
+    const back = canvas.getByRole('button', { name: 'Back to files' }).getBoundingClientRect();
+    await expect(form.left).toBeGreaterThanOrEqual(back.right);
+    await expect(
+      form.right <= access.left || form.bottom <= access.top || form.top >= access.bottom,
+    ).toBe(true);
+    const field = input.getBoundingClientRect();
+    const save = canvas.getByRole('button', { name: 'Save name' }).getBoundingClientRect();
+    await expect(field.right).toBeLessThanOrEqual(save.left);
   },
 };
 function RenameAuthorityFixture() {
@@ -346,25 +356,37 @@ export const PeopleAndTheatre: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(document.body);
-    await userEvent.click(canvas.getByRole('button', { name: 'People in this document' }));
+    const peopleTrigger = canvas.getByRole('button', { name: 'People in this document' });
+    await userEvent.click(peopleTrigger);
     const people = await body.findByRole('dialog', { name: 'People in this document' });
     await expect(
       within(people).getByText('Alexandria Nakamura-Fernandez — a long collaborator name'),
     ).toBeVisible();
     await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
     await userEvent.click(within(people).getByRole('button', { name: 'Close dialog' }));
+    await waitFor(() => expect(people).not.toBeInTheDocument());
+    await waitFor(() => expect(peopleTrigger).toHaveFocus());
     await userEvent.click(canvas.getByRole('button', { name: 'Enter theatre mode' }));
     const exit = canvas.getByRole('button', { name: 'Exit theatre mode' });
     await expect(exit).toBeVisible();
     await expect(
       canvas.getByRole('button', { name: 'Save details: Saved' }).getBoundingClientRect().width,
     ).toBe(44);
-    await userEvent.click(canvas.getByRole('button', { name: 'Save details: Saved' }));
+    const saveTrigger = canvas.getByRole('button', { name: 'Save details: Saved' });
+    await userEvent.click(saveTrigger);
+    const details = await body.findByRole('dialog', { name: 'Save details' });
+    await expect(details).toBeVisible();
     await userEvent.keyboard('{Escape}');
     await expect(exit).toBeVisible();
+    // The first Escape belongs to the popover, including its closing lifetime.
+    // Wait for actual removal and restored focus before testing a new idle Escape.
+    await waitFor(() => expect(details).not.toBeInTheDocument());
+    await expect(saveTrigger).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() => expect(saveTrigger).toHaveFocus());
     exit.focus();
+    await expect(exit).toHaveFocus();
     await userEvent.keyboard('{Escape}');
-    await expect(canvas.getByRole('button', { name: 'Enter theatre mode' })).toBeVisible();
+    await expect(await canvas.findByRole('button', { name: 'Enter theatre mode' })).toBeVisible();
   },
 };
 /** Retain the actual open portal beside the composed editor for visual review. */
