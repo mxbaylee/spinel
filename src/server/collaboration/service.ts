@@ -37,6 +37,8 @@ import {
 } from '../workspace/document-access.ts';
 import type { WorkspaceItem } from '../../shared/workspace.ts';
 import type { IChangeset } from '@univerjs/protocol';
+import { observeJob } from '../health/jobs.ts';
+import type { ObserveJob } from '../health/jobs.ts';
 const runtimeLimits = { maxLoadedUnits: 8, idleTimeoutMs: 60_000 };
 
 function validateTargets(changeset: Readonly<IChangeset>) {
@@ -88,6 +90,7 @@ export class CollaborationStore {
   private readonly validator = new UnitSnapshotMaterializer(runtimeLimits);
   private readonly lifecycle = Symbol('trusted permanent deletion');
   private purging: Promise<void> | undefined;
+  private readonly observePurge?: ObserveJob;
   private readonly prepareListeners = new Set<
     (user: string, id: string, custom: Record<string, unknown>) => Promise<void>
   >();
@@ -95,8 +98,9 @@ export class CollaborationStore {
   constructor(
     workspace: WorkspaceStore,
     filename: string,
-    _options: { spaceReview?: boolean } = {},
+    options: { spaceReview?: boolean; observePurge?: ObserveJob } = {},
   ) {
+    this.observePurge = options.observePurge;
     const main = workspace.auth.database
       .prepare('PRAGMA database_list')
       .all()
@@ -261,6 +265,7 @@ export class CollaborationStore {
 
   purgeDeleted() {
     if (this.purging) return this.purging;
+    const finish = observeJob(this.observePurge);
     this.purging = (async () => {
       const db = this.workspace.auth.database;
       const rows = db.prepare('SELECT item_id FROM collaboration_purge').all() as {
@@ -285,7 +290,10 @@ export class CollaborationStore {
         db.prepare('DELETE FROM spinel_generation_resources WHERE unit_id=?').run(row.item_id);
         db.prepare('DELETE FROM collaboration_purge WHERE item_id=?').run(row.item_id);
       }
-    })().finally(() => {
+    })().then(() => { finish(true); }, (error) => {
+      finish(false);
+      throw error;
+    }).finally(() => {
       this.purging = undefined;
     });
     return this.purging;

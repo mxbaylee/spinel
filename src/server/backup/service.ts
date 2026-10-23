@@ -5,6 +5,8 @@ import { makeArchive, privateFile, readKey } from './archive.ts';
 import type { Recovery } from './archive.ts';
 import { expiredBackups, loadConfig, SpacesStore } from './spaces.ts';
 import type { RemoteStore } from './spaces.ts';
+import { observeJob } from '../health/jobs.ts';
+import type { ObserveJob } from '../health/jobs.ts';
 
 const HOUR = 60 * 60_000;
 interface State {
@@ -22,6 +24,7 @@ export interface BackupOptions {
   now?: () => number;
   // A transport seam for failure/retention tests; production always uses Spaces.
   remote?: (config: Awaited<ReturnType<typeof loadConfig>>) => RemoteStore;
+  observe?: ObserveJob;
 }
 export class BackupService {
   db: DatabaseSync;
@@ -87,7 +90,14 @@ export class BackupService {
       )
       .run(now + HOUR, owner, now, now);
     if (!claim.changes) return Promise.resolve(false);
-    this.active = this.perform(owner).finally(() => {
+    const finish = observeJob(this.options.observe);
+    this.active = this.perform(owner).then((result) => {
+      finish(result && !this.status().error);
+      return result;
+    }, (error) => {
+      finish(false);
+      throw error;
+    }).finally(() => {
       this.active = undefined;
     });
     return this.active;
