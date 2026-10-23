@@ -58,7 +58,7 @@
   color: var(--sp-on-accent);
   border-color: var(--sp-accent);
 }
-.workspace .dashboard-content button.sp-segment {
+.workspace .dashboard-content .sp-segment {
   padding: 0;
   border: 0;
   border-radius: 50%;
