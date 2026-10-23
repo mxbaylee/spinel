@@ -7,7 +7,7 @@ keep the choice for the current visit and show an explanation. It is not an
 account setting and never changes another person's view. Signing in does not
 override it. Guests use the same browser-local choice; the redesign places it
 in This device and compact navigation/guest controls, outside saved profile
-identity (owner, chat 2026-10-20, decision #126).
+identity (owner, chat 2026-10-20, decision [#126](implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits)).
 
 The original gem-rail reference now lives in `src/ui/`: palette tokens,
 faceted-heart artwork, shell CSS and editor integration. Light uses warm rose,
@@ -49,7 +49,7 @@ semantics. Snapshot-based exports see the stored canonical colors. Native print
 and raster output use their own rendering paths; identical print colors across
 themes have not been verified, so this is not a print-fidelity guarantee. These explicit semantics
 avoid undocumented metadata or patching Univer internals; decision
-[#66](https://github.com/mxbaylee/spinel/issues/66), 2026-10-18.
+[#66](implementation/SPN-027.md#legacy-decision-66-canonical-colors-and-appearance), 2026-10-18.
 
 ## Verification
 
@@ -67,7 +67,7 @@ contain synthetic fixture data only and expire after seven days.
 
 ## Native colors and follow-up scope
 
-Owner, 2026-10-21, decision #126, corrected in chat: usable native dark canvas
+Owner, 2026-10-21, decision [#126](implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits), corrected in chat: usable native dark canvas
 ships in SPN-047, including the production editors, snapshot viewers and native
 review examples. On 2026-10-23 the owner questioned the need for SPN-088 because
 native colors already adapt to light/dark mode. Independent source and actual

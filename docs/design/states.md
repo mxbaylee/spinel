@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — EmptyFolder, LoadingFiles, FileError, OfflineEditor, OfflineLaunch, MissingFile, RevokedLink.
 
@@ -106,7 +106,7 @@ section places them.
   a polite live announcement and hover/focus/tap detail. It never says Online
   from `navigator.onLine` alone: account screens verify the server and editors
   wait for their room subscription. See [the maintained behavior](../connection.md)
-  and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
+  and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation).
 - **Local save** (SPN-053): SPN-043's shared save slot extends to Saving on this device,
   Saved on this device — waiting to sync, Synced and Needs attention. Needs
   attention stays until resolved and its popover holds the action (open both
@@ -147,7 +147,7 @@ states, including a connected device whose changes are not yet durably saved.
 
 ### Modal title icons
 
-Owner follow-up, 2026-10-21, decision #126: every product modal gets an appropriate
+Owner follow-up, 2026-10-21, decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits): every product modal gets an appropriate
 icon beside its textual title through the shared proposal Modal heading. Screen
 migrations SPN-045/048/049/081–085 apply the pattern to their own dialogs;
 SPN-089 audits the remaining production dialogs after those migrations. Use

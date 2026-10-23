@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Sharing, PlannedFileAdmin.
 

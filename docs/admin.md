@@ -70,7 +70,7 @@ Reactivation preserves the same owner's deliberate document-sharing settings.
 An otherwise active, unexpired guest link can work again once its owner is active.
 A link already turned off or rotated stays invalid. Document links grant scoped
 document access, not an account sign-in. This distinction is deliberate in
-[decision #141](https://github.com/mxbaylee/spinel/issues/141); ownership handover
+[decision #141](implementation/SPN-064.md#legacy-decision-141-same-owner-account-reactivation); ownership handover
 uses the stricter link invalidation below.
 
 ## Hand over a disabled member's work
@@ -120,7 +120,7 @@ undo a committed handover: its message explicitly says the ownership changed
 (or account reactivated) and asks the Operator to refresh accounts. Current
 request/write authorization still applies; refresh the accounts and confirmation
 preview before retrying. A repeated handover cannot create another wrapper for
-the already transferred set. [Decision #140](https://github.com/mxbaylee/spinel/issues/140)
+the already transferred set. [Decision #140](implementation/SPN-064.md#legacy-decision-140-disable-account-ownership-handover)
 records the confirmation, privacy and persona tradeoffs.
 
 ## API and storage
@@ -143,8 +143,8 @@ The session schema adds a nullable credential foreign key idempotently; deleting
 a credential cascades its attributed sessions and pending challenges. Account
 removal deliberately uses `disabled=1` rather than deleting ownership rows.
 
-[Decision #23](https://github.com/mxbaylee/spinel/issues/23) requires preservation
-of document ownership on disable. [Decision #58](https://github.com/mxbaylee/spinel/issues/58)
+[Decision #23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming) requires preservation
+of document ownership on disable. [Decision #58](implementation/SPN-005.md#legacy-decision-58-credential-specific-revocation)
 records credential attribution, legacy-session handling and operator lockout
 protection: safe revocation for the Operator, retained private documents for the
 Owner, independent access for Collaborators and no new privilege for Link guests.
@@ -157,4 +157,4 @@ creation, last use and revoked status). Secrets and document contents are never
 shown. Each everyday account creates and revokes its own tokens from Settings;
 disabling the account also blocks all its connections and tokens. Admin accounts cannot create a
 document token. See [the MCP guide](mcp.md), decision
-[#111](https://github.com/mxbaylee/spinel/issues/111).
+[#111](implementation/SPN-034.md#legacy-decision-111-owner-requested-mcp-through-oauth).

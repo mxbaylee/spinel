@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Doc, Sheet, ViewOnly, OfflineEditor, FormulaInContext, History.
 
@@ -103,7 +103,7 @@ file-list view keeps that message in its existing context above the list.
 read access, including account viewers and guests. There is no separate Print
 action or browser print dialog in this planned flow. Guests use the control
 in [their header](guest.md#adopted-pattern). Owner, chat 2026-10-20, decision
-[#103](https://github.com/mxbaylee/spinel/issues/103).
+[#103](../implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
 
 ### Always visible / behind a menu
 
@@ -171,7 +171,7 @@ view-only and actionable error/recovery feedback remain. Owner, chat 2026-10-20.
 144 × 44 px title slot. Shells pass the slot element to the editor, which portals
 only the control; save controllers, pending guards and the full polite live
 announcement retain their editor lifetime. No connectivity state is treated as
-a save confirmation. See [decision #148](https://github.com/mxbaylee/spinel/issues/148),
+a save confirmation. See [decision #148](../implementation/SPN-043.md#legacy-decision-148-stable-title-adjacent-save-confirmation),
 2026-10-22, and the [implementation contract](../implementation/SPN-043.md).
 
 Saved stays visible. Loading, Editing, Saving, Not saved, View only and Check

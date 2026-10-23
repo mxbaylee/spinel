@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Formula, FormulaInContext.
 
@@ -17,7 +17,7 @@ permission rules below still apply; production migrations remain separate ticket
 
 
 SPN-033 adds one native Formula object in a Doc's main body. It follows the
-owner's approved direction from 2026-10-20 and [decision #113](https://github.com/mxbaylee/spinel/issues/113).
+owner's approved direction from 2026-10-20 and [decision #113](../implementation/SPN-033.md#legacy-decision-113-live-authorized-document-formulas).
 The result determines its presentation: a single value fits into a sentence;
 multiple cells form a table inside the document.
 
