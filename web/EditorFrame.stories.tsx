@@ -120,16 +120,29 @@ export const Rename: Story = { args: { onRename: fn(async () => {}) } };
 function RenameAuthorityFixture() {
   const [allowed, setAllowed] = useState(true);
   const [rejectLate, setRejectLate] = useState<(() => void) | null>(null);
-  return <>
-    <button onClick={() => setAllowed(false)}>Revoke fixture access</button>
-    <button disabled={!rejectLate} onClick={() => rejectLate?.()}>Reject late rename</button>
-    <EditorFrame name={allowed ? 'Private page' : 'Space unavailable'} documentKey="same-dirty-page"
-      connection="offline" onRename={allowed ? () => new Promise<void>((_, reject) => {
-        setRejectLate(() => () => reject(new Error('Private rename failure')));
-      }) : undefined}>
-      <section aria-label="Retained draft fixture">Already pending local draft.</section>
-    </EditorFrame>
-  </>;
+  return (
+    <>
+      <button onClick={() => setAllowed(false)}>Revoke fixture access</button>
+      <button disabled={!rejectLate} onClick={() => rejectLate?.()}>
+        Reject late rename
+      </button>
+      <EditorFrame
+        name={allowed ? 'Private page' : 'Space unavailable'}
+        documentKey="same-dirty-page"
+        connection="offline"
+        onRename={
+          allowed
+            ? () =>
+                new Promise<void>((_, reject) => {
+                  setRejectLate(() => () => reject(new Error('Private rename failure')));
+                })
+            : undefined
+        }
+      >
+        <section aria-label="Retained draft fixture">Already pending local draft.</section>
+      </EditorFrame>
+    </>
+  );
 }
 export const RenameAuthorityRemoved: Story = {
   render: () => <RenameAuthorityFixture />,
@@ -137,7 +150,9 @@ export const RenameAuthorityRemoved: Story = {
     const canvas = within(canvasElement);
     const draft = canvas.getByRole('region', { name: 'Retained draft fixture' });
     await userEvent.click(canvas.getByRole('button', { name: 'Rename Private page' }));
-    await expect(canvas.getByRole('textbox', { name: 'Document name' })).toHaveValue('Private page');
+    await expect(canvas.getByRole('textbox', { name: 'Document name' })).toHaveValue(
+      'Private page',
+    );
     await userEvent.click(canvas.getByRole('button', { name: 'Save name' }));
     await userEvent.click(canvas.getByRole('button', { name: 'Revoke fixture access' }));
     await expect(canvas.getByRole('heading', { name: 'Space unavailable' })).toBeVisible();
