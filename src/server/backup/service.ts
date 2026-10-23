@@ -92,7 +92,9 @@ export class BackupService {
     if (!claim.changes) return Promise.resolve(false);
     const finish = observeJob(this.options.observe);
     this.active = this.perform(owner).then((result) => {
-      finish(result && !this.status().error);
+      let observedSuccess = false;
+      try { observedSuccess = result && !this.status().error; } catch { /* Reporting cannot change the backup result. */ }
+      finish(observedSuccess);
       return result;
     }, (error) => {
       finish(false);
