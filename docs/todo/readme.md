@@ -4,7 +4,7 @@
 
 How this backlog works: [process.md](process.md). Next ID: **SPN-101**. Grooming: **8** tickets completed since 2026-10-21: SPN-042, SPN-078, SPN-091, SPN-064, SPN-092, SPN-079, SPN-043, SPN-061. Reminder every 7; manual review with the owner, never a work gate.
 
-## Open tickets (45)
+## Open tickets (43)
 
 Complete each phase before the next. Within a phase, take the highest-ranked ticket that isn't waiting on another.
 
@@ -16,54 +16,52 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 2 | 🛰️ [SPN-057](SPN-057.md) Order and store every edit on Spinel's own sync server | 🌳 L | 💜 M | 9 (own 3) | — | [SPN-056](SPN-056.md) | — |
 | 3 | 🔌 [SPN-058](SPN-058.md) Sync the editors and presence through Spinel's own client | 🏔️ XL | 💜 M | 8 (own 2) | — | [SPN-057](SPN-057.md) | — |
 | 4 | 🔁 [SPN-059](SPN-059.md) Move every document onto Spinel's sync and remove Univer collaboration | 🌳 L | 💜 M | 7 (own 3) | — | [SPN-058](SPN-058.md) | — |
-| 5 | ✍️ [SPN-053](SPN-053.md) Edit downloaded documents offline and sync them once | 🌳 L | 🩷 L | 6 (own 4) | Higher impact | [SPN-059](SPN-059.md) | — |
-| 6 | 🛠️ [SPN-100](SPN-100.md) Enable reviewed dependency update pull requests | 🌱 S | 💜 M | 6 (own 5) | — | — | — |
-| 7 | 🔀 [SPN-054](SPN-054.md) Keep offline edits as a copy when the live document changed | 🌿 M | 🩷 L | 5 | Higher impact | [SPN-053](SPN-053.md) | — |
-| 8 | 🎛️ [SPN-045](SPN-045.md) Apply the approved profile and appearance navigation | 🌱 S | 💜 M | 5 | Lower ID | — | Approve the PR's screenshots |
-| 9 | 🖌️ [SPN-050](SPN-050.md) Remove the extra fill-preset toolbar | 🌱 S | 💜 M | 5 | Lower ID | — | Approve the PR's screenshots |
-| 10 | 🩹 [SPN-062](SPN-062.md) Keep the server, its images and dependencies patched | 🌱 S | 💜 M | 5 | Lower effort | [SPN-100](SPN-100.md) | — |
-| 11 | 🪴 [SPN-048](SPN-048.md) Declutter the dashboard | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the PR's screenshots |
-| 12 | 🎬 [SPN-049](SPN-049.md) Give the editor a theatre mode | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the PR's screenshots |
-| 13 | 💾 [SPN-055](SPN-055.md) Protect pending edits and show offline storage limits | 🌿 M | 💜 M | 5 (own 4) | Lower ID | [SPN-053](SPN-053.md) | — |
-| 14 | 🎚️ [SPN-081](SPN-081.md) Apply the approved sharing dialog design | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
-| 15 | 🧭 [SPN-082](SPN-082.md) Apply the approved Operator administration layout | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
-| 16 | 🚪 [SPN-083](SPN-083.md) Apply the approved entry and consent screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
-| 17 | 🪟 [SPN-084](SPN-084.md) Apply the approved guest and unavailable screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
-| 18 | 🕰️ [SPN-085](SPN-085.md) Apply the approved history browser design | 🌿 M | 💜 M | 5 (own 4) | Lower effort | — | Approve the implementation screenshots |
-| 19 | 📈 [SPN-032](SPN-032.md) Show server health and export structured diagnostics | 🌳 L | 💜 M | 5 (own 3) | — | — | Approve the PR's screenshots |
-| 20 | 🔬 [SPN-097](SPN-097.md) Choose a PDF renderer and split its implementation | 🌿 M | 💜 M | 4 | Unblocks SPN-075 | — | — |
-| 21 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 4 | Lower ID | [SPN-055](SPN-055.md) | — |
-| 22 | 🧯 [SPN-063](SPN-063.md) Regularly prove Spinel can recover from its backups | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 23 | 📑 [SPN-065](SPN-065.md) Make a copy of a Sheet or Doc | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 24 | 🔗 [SPN-066](SPN-066.md) See and expire every guest link in one place | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 25 | 📂 [SPN-069](SPN-069.md) Create items in a folder shared with me as an editor | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 26 | 📵 [SPN-070](SPN-070.md) Remove a lost device's passkey and sign it out | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
-| 27 | 🧷 [SPN-076](SPN-076.md) Share a Doc with its formula sources | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the sharing flow and PR screenshots |
-| 28 | 🌗 [SPN-088](SPN-088.md) Use a theme-aware palette in native editors | 🌿 M | 💜 M | 4 | Lower ID | [SPN-050](SPN-050.md) | Approve the implementation screenshots |
-| 29 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🌿 M | 💜 M | 4 | Lower ID | [SPN-054](SPN-054.md), [SPN-055](SPN-055.md) | — |
-| 30 | 🗑️ [SPN-095](SPN-095.md) Expire Space Trash after 30 days | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the recovery-date screenshots |
-| 31 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌿 M | 💜 M | 4 | Lower ID | [SPN-032](SPN-032.md) | Approve the feedback and admin-flag screenshots |
-| 32 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🌿 M | 💜 M | 4 | Higher impact | [SPN-056](SPN-056.md) | — |
-| 33 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 4 | — | [SPN-045](SPN-045.md), [SPN-048](SPN-048.md), [SPN-049](SPN-049.md), [SPN-081](SPN-081.md), [SPN-082](SPN-082.md), [SPN-083](SPN-083.md), [SPN-084](SPN-084.md), [SPN-085](SPN-085.md) | Approve the implementation screenshots |
-| 34 | ✨ [SPN-051](SPN-051.md) Create new documents while offline | 🌳 L | 💜 M | 3 | Lower ID | [SPN-053](SPN-053.md) | — |
-| 35 | 🗃️ [SPN-067](SPN-067.md) Export all my files at once | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
-| 36 | 📱 [SPN-072](SPN-072.md) Edit Docs comfortably on a phone | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
-| 37 | 🎨 [SPN-086](SPN-086.md) Personalize icons, folder colors, covers and Space accents | 🌳 L | 💜 M | 3 | Higher impact | [SPN-048](SPN-048.md), [SPN-049](SPN-049.md) | Approve the refined artwork and implementation screenshots |
-| 38 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 3 | Lower ID | — | Approve the PR's screenshots |
-| 39 | 🧺 [SPN-071](SPN-071.md) Leave shares and see where my access comes from | 🌿 M | 🤍 S | 3 | Lower ID | — | Approve the PR's screenshots |
-| 40 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 3 | Lower ID | — | — |
-| 41 | 📚 [SPN-096](SPN-096.md) Move legacy decisions into implementation records | 🌿 M | 🤍 S | 3 | — | — | — |
-| 42 | 🧾 [SPN-075](SPN-075.md) Export Sheets and Docs as PDF without Univer Pro | 🏔️ XL | 💜 M | 2 | — | [SPN-097](SPN-097.md) | Approve the PR's screenshots |
+| 5 | ✍️ [SPN-053](SPN-053.md) Edit downloaded documents offline and sync them once | 🌳 L | 🩷 L | 6 (own 4) | — | [SPN-059](SPN-059.md) | — |
+| 6 | 🔀 [SPN-054](SPN-054.md) Keep offline edits as a copy when the live document changed | 🌿 M | 🩷 L | 5 | Lower ID | [SPN-053](SPN-053.md) | — |
+| 7 | 🔬 [SPN-097](SPN-097.md) Choose a PDF renderer and split its implementation | 🌿 M | 🩷 L | 5 | Higher impact | — | — |
+| 8 | 🎛️ [SPN-045](SPN-045.md) Apply the approved profile and appearance navigation | 🌱 S | 💜 M | 5 | Lower effort | — | Approve the PR's screenshots |
+| 9 | 🪴 [SPN-048](SPN-048.md) Declutter the dashboard | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the PR's screenshots |
+| 10 | 🎬 [SPN-049](SPN-049.md) Give the editor a theatre mode | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the PR's screenshots |
+| 11 | 💾 [SPN-055](SPN-055.md) Protect pending edits and show offline storage limits | 🌿 M | 💜 M | 5 (own 4) | Lower ID | [SPN-053](SPN-053.md) | — |
+| 12 | 🎚️ [SPN-081](SPN-081.md) Apply the approved sharing dialog design | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
+| 13 | 🧭 [SPN-082](SPN-082.md) Apply the approved Operator administration layout | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
+| 14 | 🚪 [SPN-083](SPN-083.md) Apply the approved entry and consent screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
+| 15 | 🪟 [SPN-084](SPN-084.md) Apply the approved guest and unavailable screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
+| 16 | 🕰️ [SPN-085](SPN-085.md) Apply the approved history browser design | 🌿 M | 💜 M | 5 (own 4) | Lower effort | — | Approve the implementation screenshots |
+| 17 | 📈 [SPN-032](SPN-032.md) Show server health and export structured diagnostics | 🌳 L | 💜 M | 5 (own 3) | Unblocks SPN-098 | — | Approve the PR's screenshots |
+| 18 | 🖌️ [SPN-050](SPN-050.md) Remove the extra fill-preset toolbar | 🌱 S | 💜 M | 5 | Lower ID | — | Approve the PR's screenshots |
+| 19 | 🛠️ [SPN-100](SPN-100.md) Enable reviewed dependency update pull requests | 🌱 S | 💜 M | 5 | — | — | — |
+| 20 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 4 | Lower ID | [SPN-055](SPN-055.md) | — |
+| 21 | 📑 [SPN-065](SPN-065.md) Make a copy of a Sheet or Doc | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
+| 22 | 🔗 [SPN-066](SPN-066.md) See and expire every guest link in one place | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
+| 23 | 📂 [SPN-069](SPN-069.md) Create items in a folder shared with me as an editor | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
+| 24 | 📵 [SPN-070](SPN-070.md) Remove a lost device's passkey and sign it out | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the PR's screenshots |
+| 25 | 🧷 [SPN-076](SPN-076.md) Share a Doc with its formula sources | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the sharing flow and PR screenshots |
+| 26 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🌿 M | 💜 M | 4 | Lower ID | [SPN-054](SPN-054.md), [SPN-055](SPN-055.md) | — |
+| 27 | 🗑️ [SPN-095](SPN-095.md) Expire Space Trash after 30 days | 🌿 M | 💜 M | 4 | Lower ID | — | Approve the recovery-date screenshots |
+| 28 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌿 M | 💜 M | 4 | Lower ID | [SPN-032](SPN-032.md) | Approve the feedback and admin-flag screenshots |
+| 29 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🌿 M | 💜 M | 4 | Higher impact | [SPN-056](SPN-056.md) | — |
+| 30 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 4 | — | [SPN-045](SPN-045.md), [SPN-048](SPN-048.md), [SPN-049](SPN-049.md), [SPN-081](SPN-081.md), [SPN-082](SPN-082.md), [SPN-083](SPN-083.md), [SPN-084](SPN-084.md), [SPN-085](SPN-085.md) | Approve the implementation screenshots |
+| 31 | ✨ [SPN-051](SPN-051.md) Create new documents while offline | 🌳 L | 💜 M | 3 | Lower ID | [SPN-053](SPN-053.md) | — |
+| 32 | 🗃️ [SPN-067](SPN-067.md) Export all my files at once | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
+| 33 | 📱 [SPN-072](SPN-072.md) Edit Docs comfortably on a phone | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
+| 34 | 🎨 [SPN-086](SPN-086.md) Personalize icons, folder colors, covers and Space accents | 🌳 L | 💜 M | 3 | Higher impact | [SPN-048](SPN-048.md), [SPN-049](SPN-049.md) | Approve the refined artwork and implementation screenshots |
+| 35 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 3 | Lower ID | — | Approve the PR's screenshots |
+| 36 | 🧺 [SPN-071](SPN-071.md) Leave shares and see where my access comes from | 🌿 M | 🤍 S | 3 | Lower ID | — | Approve the PR's screenshots |
+| 37 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 3 | Lower ID | — | — |
+| 38 | 📚 [SPN-096](SPN-096.md) Move legacy decisions into implementation records | 🌿 M | 🤍 S | 3 | — | — | — |
+| 39 | 🧾 [SPN-075](SPN-075.md) Export Sheets and Docs as PDF without Univer Pro | 🏔️ XL | 💜 M | 2 | — | [SPN-097](SPN-097.md) | Approve the PR's screenshots |
 
 ### Launch
 
 | # | Ticket | Effort | Impact | Score | Tie-break | Waiting on | Owner input |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 43 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🌳 L | 🤍 S | 4 (own 2) | — | [SPN-062](SPN-062.md) | Choose redeployment timing for public HTTPS |
+| 40 | 🧯 [SPN-063](SPN-063.md) Regularly prove Spinel can recover from its backups | 🌿 M | 💜 M | 5 (own 4) | — | — | Approve the PR's screenshots |
+| 41 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🌳 L | 🤍 S | 4 (own 2) | — | [SPN-063](SPN-063.md) | Choose redeployment timing for public HTTPS |
 
 ### After launch
 
 | # | Ticket | Effort | Impact | Score | Tie-break | Waiting on | Owner input |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 44 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 3 | — | [SPN-038](SPN-038.md) | Approve the CSV import screenshots |
-| 45 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 1 | — | [SPN-038](SPN-038.md) | — |
+| 42 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 3 | — | [SPN-038](SPN-038.md) | Approve the CSV import screenshots |
+| 43 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 1 | — | [SPN-038](SPN-038.md) | — |

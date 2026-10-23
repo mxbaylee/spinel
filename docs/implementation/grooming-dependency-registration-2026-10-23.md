@@ -1,4 +1,4 @@
-# Focused dependency-ticket registration
+# Focused backlog registration and owner scope updates
 
 ## Preserve SPN-099 and separate Dependabot enablement
 
@@ -6,6 +6,8 @@ Date: 2026-10-23. Status: accepted agent judgment under the owner's backlog-run
 delegation. The independent `sync_sheet_review` agent assessed all four personas
 and agreed with this sequence; the parent relayed that review in chat. This is
 focused registration, not a full owner-led grooming or implementation approval.
+The SPN-062 sequencing in this initial decision is superseded by the owner's
+later direction below; the SPN-099 reservation remains valid.
 
 Question: how can Dependabot reach the default branch before SPN-062 proves a
 real updater-generated PR, without reusing an ID already allocated elsewhere?
@@ -48,3 +50,68 @@ Persona effects:
   deployment or interruption is introduced.
 - Link guest: access and editing permissions are unchanged; the split adds no
   account visibility or new authority.
+
+## Align work with the undeployed product
+
+Date: 2026-10-23. Status: accepted. Decider: owner, chat 2026-10-23.
+
+Question: which operational tasks are appropriate before a new deployment exists
+and while the database may change? The owner said SPN-062 need not exist because
+there is no current deployment, and requested moving SPN-063 into launch work.
+
+Retire SPN-062 rather than publishing its prepared monthly host-patching runbook
+or pretending an existing server needs maintenance. Remove its dependency and
+obsolete routine reference from SPN-038. This is cancellation, not implementation
+completion, so do not add SPN-062 to the grooming completion list. Local draft
+material is retained as preparation only and is not merged by this change.
+
+Keep SPN-100's repository updater configuration as an independent, small task:
+npm dependencies, pinned images and Actions exist even without a live server.
+Its configuration review remains required. After merge, inspect the real hosted
+updater result and any generated PR, without claiming the removed live-host
+runbook or forcing a synthetic dependency update. This revises the earlier split;
+SPN-062 is no longer a downstream acceptance gate.
+
+Move SPN-063 to the launch phase, keeping its complete recovery and cleanup
+acceptance. Implement against the database and hosting chosen for launch, without
+building a speculative multi-backend verifier now. Public HTTPS remains the final
+launch milestone; this change grants no deployment, spending or DNS authorization.
+SPN-038 explicitly depends on SPN-063 so the generated launch order preserves
+that final milestone. Deployment/database selection can be prepared during
+launch planning; recovery verification precedes public exposure.
+
+Persona effects: Operator avoids maintaining a nonexistent host or a soon-replaced
+database verifier. Owner and Collaborator retain recovery guarantees for the
+selected launch system and reviewed repository updates. Link guest's access
+boundaries and recovery isolation remain unchanged. This is focused maintenance;
+preserve the grooming date and completion history.
+
+## Link migrated decisions from their original issues
+
+Date: 2026-10-23. Status: accepted. Decider: owner, chat 2026-10-23.
+
+The owner reaffirmed moving legacy decision issues into repository documentation
+under the new implementation-record standard, and explicitly requested comments
+on the old issues after merge. Extend SPN-096's acceptance with that final step.
+
+Preserve the original issue and chronology, map every migrated decision to one
+canonical file/heading, and wait for the migration PR's verified merge SHA before
+posting its backlink. Use immutable `blob/<merged-sha>/<path>#<heading>` links,
+check for an existing matching comment, and retain a comment-URL inventory so a
+partial failure can be resumed without duplicate posts. No comment is posted by
+this grooming change, and no record or migration is claimed complete here.
+
+All personas retain the original constraints and status: Operator can trace
+operational decisions, Owner can locate product authority, Collaborator keeps
+sharing and data-integrity guarantees, and Link guest retains access/privacy
+boundaries. Linking existing decisions changes no product behavior or approval.
+
+## Related owner priorities and palette review
+
+The owner's high-impact request for SPN-097 is recorded in its
+[canonical decision](SPN-097.md#raise-pdf-feasibility-impact); effort and evidence
+requirements remain unchanged. SPN-088's possible redundancy was checked against
+source, public APIs and actual Sheet/Doc light/dark captures. Independent
+all-persona review supported [retiring the additional eight-choice proposal](SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal),
+while preserving existing native rendering and legacy stored formatting. Neither
+SPN-062 nor SPN-088 is counted as a completed implementation.
