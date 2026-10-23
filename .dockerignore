@@ -13,3 +13,4 @@ playwright-report
 *.key
 docs
 e2e
+lib/*/tests
