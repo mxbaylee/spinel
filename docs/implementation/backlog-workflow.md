@@ -238,17 +238,19 @@ UI/access changes. Link guest retains the same privacy and verification gates;
 sequencing changes no permissions. This is workflow guidance, not authorization
 to close PRs or mark incomplete tickets done.
 
-## Review Dependabot PRs at the next manual grooming
+## Review Dependabot PRs at every backlog grooming
 
 **Date:** 2026-10-23. **Status:** accepted. **Authority:** Owner, current backlog-run chat.
 
-**Question:** When should the existing dependency update PRs be reviewed after
-SPN-100 enabled the bot?
+**Question:** When should dependency update PRs be reviewed after SPN-100 enabled
+the bot?
 
-Keep the existing bot PRs open and review them at the next manual backlog grooming.
-Check compatibility, security implications, current CI evidence and whether updates
-are sensibly grouped. The owner chose that review point rather than starting
-dependency upgrades now or closing the queued PRs to reduce visible work. This
+Keep the existing bot PRs open and review open Dependabot PRs at every backlog
+grooming. The owner clarified that this is a standing checklist item, expanding
+the initial request for the next grooming. Check compatibility, security
+implications, current CI evidence and whether updates are sensibly grouped;
+record follow-up dispositions for unresolved updates. The owner chose grooming
+rather than starting dependency upgrades now or closing queued PRs. This
 does not approve automatic merges, schedule grooming or force a grooming event;
 the normal dependency review, verification and merge requirements still apply.
 
