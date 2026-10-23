@@ -86,8 +86,11 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await expect(other.getByRole('heading', { name: 'Shared plans', exact: true })).toBeVisible();
     await expect(other.getByRole('button', { name: 'New', exact: true })).toBeHidden();
     await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    const folderMenu = other.getByRole('menu', { name: 'More actions for Shared plans', exact: true });
+    await expect(folderMenu).toBeVisible();
     await expect(other.getByRole('menuitem', { name: 'Share…', exact: true })).toHaveCount(0);
     await other.keyboard.press('Escape');
+    await expect(folderMenu).toBeHidden();
     await shareRegion.getByRole('button', { name: 'Close sharing' }).click();
     await page.getByRole('button', { name: 'Shared plans Folder', exact: true }).click();
     // Create both documents after the grant to prove inheritance applies to future children.
@@ -147,6 +150,8 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       let previous = '';
       const snapshot = () => {
         const state = {
+          documentFocused: document.hasFocus(),
+          visibility: document.visibilityState,
           connected: trigger?.isConnected,
           expanded: trigger?.getAttribute('aria-expanded'),
           menu: !!document.querySelector('[role="menu"]'),
