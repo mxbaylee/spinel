@@ -1,4 +1,6 @@
-type NavigationStorage = Pick<Storage, 'getItem' | 'setItem'>;
+import { dashboardReturnHref } from './dashboardNavigation.ts';
+
+type NavigationStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 const key = (accountId: string) => 'spinel:file-view:' + encodeURIComponent(accountId);
 const uuid = /^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i;
 
@@ -17,6 +19,8 @@ export function rememberFileView(
 }
 
 export function rememberedFileHref(accountId: string, storage?: NavigationStorage) {
+  const retrieval = dashboardReturnHref(accountId, storage);
+  if (retrieval) return retrieval;
   try {
     const value = (storage ?? window.sessionStorage).getItem(key(accountId));
     return value === 'trash' ? '/?trash=1' : value && uuid.test(value) ? '/?item=' + value : '/';

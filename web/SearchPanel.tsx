@@ -1,12 +1,15 @@
-import { EntityIcon } from '../src/ui/EntityIcon.tsx';
+import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
-import { emptySearch, hasSearch, searchCatalog, searchItems } from '../src/shared/search.ts';
+import { hasSearch, parseSearch } from '../src/shared/search.ts';
 import type { SearchItem, SearchQuery } from '../src/shared/search.ts';
-import { FILE_KINDS, fileKindLabel } from '../src/shared/workspace.ts';
 import type { FileItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
-import { SharedBadge } from './SharedItems.tsx';
-import { TagLabels } from './DocumentTags.tsx';
+import { parseSearchInput, serializeSearchInput } from '../src/shared/searchInput.ts';
+import { SearchControls } from './SearchControls.tsx';
+import { DashboardFiles } from './DashboardFiles.tsx';
+import type { DashboardFilesProps } from './DashboardFiles.tsx';
+import { searchWithinScope } from '../src/shared/searchScope.ts';
+import type { SearchScope } from '../src/shared/searchScope.ts';
 
 export function SearchPanel({
   query,
@@ -14,33 +17,86 @@ export function SearchPanel({
   loadedItems,
   onOpen,
   spacesEnabled = false,
+  layout,
+  actionsFor,
+  offlineState,
+  draftText,
+  onDraftTextChange,
+  scope = { kind: 'all' },
+  scopeLabel = 'All accessible files',
+  onSearchAll,
+  onClear,
+  refreshKey = 0,
+  onReady,
+  viewControls,
 }: {
   query: SearchQuery;
   onChange: (query: SearchQuery) => void;
   loadedItems: FileItem[];
   onOpen: (item: FileItem) => void;
   spacesEnabled?: boolean;
+  layout?: DashboardFilesProps<FileItem>['layout'];
+  actionsFor?: DashboardFilesProps<FileItem>['actionsFor'];
+  offlineState?: DashboardFilesProps<FileItem>['offlineState'];
+  draftText?: string;
+  onDraftTextChange?: (text: string) => void;
+  scope?: SearchScope;
+  scopeLabel?: string;
+  onSearchAll?: () => void;
+  onClear?: () => void;
+  refreshKey?: number;
+  onReady?: () => void;
+  viewControls?: ReactNode;
 }) {
   const active = hasSearch(query),
     key = new URLSearchParams(query).toString();
+  // Keep the exact draft while the parent echoes a parsed query, preserving caret/spacing.
+  const [draft, setDraft] = useState({ text: serializeSearchInput(query), key });
+  const text = draftText ?? (draft.key === key ? draft.text : serializeSearchInput(query));
+  const parsed = parseSearchInput(text);
+  const invalid = !parsed.ok;
+  const apply = (next: SearchQuery) => {
+    const normalized = parseSearch(next);
+    setDraft({
+      text: serializeSearchInput(normalized),
+      key: new URLSearchParams(normalized).toString(),
+    });
+    onDraftTextChange?.(serializeSearchInput(normalized));
+    onChange(normalized);
+  };
+  const edit = (text: string) => {
+    const next = parseSearchInput(text);
+    setDraft({ text, key: next.ok ? new URLSearchParams(next.query).toString() : key });
+    onDraftTextChange?.(text);
+    if (next.ok) onChange(next.query);
+  };
   const [server, setServer] = useState<{ key: string; items: SearchItem<FileItem>[] } | null>(null);
   const [error, setError] = useState<{ key: string; message: string } | null>(null);
   const [loading, setLoading] = useState(false),
     [refresh, setRefresh] = useState(0);
+  const scopeKey = scope.kind === 'folder' ? `folder:${scope.id}` : scope.kind;
+  const requestKey = `${key}|${scopeKey}|${refresh}|${refreshKey}`;
   useEffect(() => {
-    if (!active) return;
+    if (!active || invalid) return;
     let disposed = false;
     setLoading(true);
     setError(null);
     const timer = window.setTimeout(() => {
-      void itemsRequest<{ items: SearchItem<FileItem>[] }>(`/search?${key}`)
+      // Empty supported filters return the complete current authorized outer
+      // catalog in one server transaction. Filter after deriving scope, never
+      // infer descendants from filtered results or the dashboard's loaded cache.
+      void itemsRequest<{ items: SearchItem<FileItem>[] }>('/search')
         .then((result) => {
-          if (!disposed) setServer({ key, items: result.items });
+          if (!disposed)
+            setServer({
+              key: requestKey,
+              items: searchWithinScope(result.items, query, scope, Date.now()),
+            });
         })
         .catch((cause) => {
           if (!disposed)
             setError({
-              key,
+              key: requestKey,
               message: cause instanceof Error ? cause.message : 'Could not search. Try again.',
             });
         })
@@ -52,9 +108,9 @@ export function SearchPanel({
       disposed = true;
       window.clearTimeout(timer);
     };
-  }, [active, key, refresh]);
+  }, [active, invalid, requestKey]);
   useEffect(() => {
-    if (!active) return;
+    if (!active || invalid) return;
     const update = () => {
       if (!document.hidden) setRefresh((value) => value + 1);
     };
@@ -66,92 +122,42 @@ export function SearchPanel({
       document.removeEventListener('visibilitychange', update);
       window.clearInterval(timer);
     };
-  }, [active]);
-  const failed = error?.key === key ? error.message : '';
-  const items = failed
-    ? []
-    : server?.key === key
-      ? server.items
-      : searchItems(searchCatalog(loadedItems), query, Date.now());
+  }, [active, invalid]);
+  const failed = error?.key === requestKey ? error.message : '';
+  const items = !failed && server?.key === requestKey ? server.items : [];
+  const searching = loading || (!failed && server?.key !== requestKey);
+  useEffect(() => {
+    if (active && !invalid && !searching && !failed) onReady?.();
+  }, [active, invalid, searching, failed, onReady]);
   const tags = [...new Set(loadedItems.flatMap((item) => item.tags))].sort();
   return (
     <section className="dashboard-search" aria-label="Search your workspace">
-      <div className="search-filters">
-        <label>
-          Search files
-          <input
-            type="search"
-            maxLength={200}
-            value={query.q}
-            placeholder="Title, folder path or tag"
-            onChange={(event) => onChange({ ...query, q: event.target.value })}
-          />
-        </label>
-        <label>
-          File type
-          <select
-            value={query.type}
-            onChange={(event) =>
-              onChange({ ...query, type: event.target.value as SearchQuery['type'] })
-            }
-          >
-            <option value="">All types</option>
-            {FILE_KINDS.filter((kind) => kind !== 'space' || spacesEnabled).map((kind) => (
-              <option key={kind} value={kind}>
-                {fileKindLabel[kind]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Ownership
-          <select
-            value={query.owner}
-            onChange={(event) =>
-              onChange({ ...query, owner: event.target.value as SearchQuery['owner'] })
-            }
-          >
-            <option value="">Mine and shared</option>
-            <option value="mine">Mine</option>
-            <option value="shared">Shared with me</option>
-          </select>
-        </label>
-        <label>
-          Tag
-          <input
-            list="search-personal-tags"
-            maxLength={100}
-            value={query.tag}
-            onChange={(event) => onChange({ ...query, tag: event.target.value })}
-          />
-        </label>
-        <datalist id="search-personal-tags">
-          {tags.map((tag) => (
-            <option key={tag} value={tag} />
-          ))}
-        </datalist>
-        <label>
-          Last modified
-          <select
-            value={query.modified}
-            onChange={(event) =>
-              onChange({ ...query, modified: event.target.value as SearchQuery['modified'] })
-            }
-          >
-            <option value="">Any time</option>
-            <option value="day">Past 24 hours</option>
-            <option value="week">Past 7 days</option>
-            <option value="month">Past 30 days</option>
-          </select>
-        </label>
-        <button disabled={!active} onClick={() => onChange({ ...emptySearch })}>
-          Clear search and filters
-        </button>
-      </div>
-      {active && (
+      <SearchControls
+        query={query}
+        viewControls={viewControls}
+        text={text}
+        problem={parsed.ok ? '' : parsed.error}
+        tags={tags}
+        spacesEnabled={spacesEnabled}
+        onEdit={edit}
+        onApply={apply}
+        onClear={() => {
+          apply({ q: '', type: '', owner: '', tag: '', modified: '' });
+          onClear?.();
+        }}
+      />
+      <p className="search-scope">
+        Searching: <strong>{scopeLabel}</strong>
+        {scope.kind !== 'all' && onSearchAll && (
+          <>
+            {' '}
+            <button onClick={onSearchAll}>Search all files</button>
+          </>
+        )}
+      </p>
+      {active && !invalid && (
         <section aria-label="Search results">
           <h2>Search results</h2>
-          <p>Across your files and shares.</p>
           {failed ? (
             <p role="alert">
               {failed}{' '}
@@ -160,40 +166,29 @@ export function SearchPanel({
           ) : (
             <>
               <p role="status">
-                {loading
+                {searching
                   ? 'Searching…'
                   : `${items.length} ${items.length === 1 ? 'result' : 'results'}`}
               </p>
-              <ul className="file-list">
-                {items.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      className="item-open"
-                      aria-label={`Open result ${item.name}`}
-                      onClick={() => onOpen(item)}
-                    >
-                      {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
-                      {item.name} <span className="item-kind">{fileKindLabel[item.kind]}</span>
-                    </button>
-                    <SharedBadge item={item} />
-                    {item.access === 'viewer' && <span>View only</span>}
-                    <TagLabels tags={item.tags} />
-                    <span className="search-paths">
-                      {item.paths.length
-                        ? item.paths.join(' · ')
-                        : item.access === 'owner' || item.placementParentId === null
-                          ? 'My files'
-                          : 'Shared with me'}
-                    </span>
-                    <time dateTime={new Date(item.updatedAt).toISOString()}>
-                      {new Date(item.updatedAt).toLocaleString()}
-                    </time>
-                  </li>
-                ))}
-              </ul>
-              {!loading && !items.length && (
-                <p>No matching files. Try another search or clear a filter.</p>
-              )}
+              <DashboardFiles<SearchItem<FileItem>>
+                items={items}
+                layout={layout}
+                onOpen={onOpen}
+                actionsFor={actionsFor}
+                offlineState={offlineState}
+                label="Search result files"
+                openLabel={(item) => `Open result ${item.name}`}
+                details={(item) =>
+                  item.paths.length
+                    ? item.paths.join(' · ')
+                    : item.access === 'owner' || item.placementParentId === null
+                      ? 'My files'
+                      : 'Shared with me'
+                }
+                emptyMessage={
+                  searching ? '' : 'No matching files. Try another search or clear a filter.'
+                }
+              />
             </>
           )}
         </section>

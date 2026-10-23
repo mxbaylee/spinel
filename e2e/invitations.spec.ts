@@ -60,7 +60,7 @@ test('admin invites a second browser, rejects reuse and revocation, and recovers
     await expect(second).toHaveURL(`${origin}/invite`);
     await second.getByLabel('Your name').fill('Teammate');
     await second.getByRole('button', { name: 'Join with a passkey' }).click();
-    await expect(second.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(second.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     const user = store.database.prepare("SELECT id FROM auth_users WHERE name='Teammate'").get()!;
     const oldCookie = (await invitee.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!;
     expect((await invitee.request.get(`${origin}/api/auth/invites`)).status()).toBe(404);
@@ -87,13 +87,13 @@ test('admin invites a second browser, rejects reuse and revocation, and recovers
     await second.goto(recovery);
     await expect(second.getByRole('heading', { name: 'Recover your account' })).toBeVisible();
     await second.getByRole('button', { name: 'Recover with a passkey' }).click();
-    await expect(second.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(second.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     expect(store.userCount()).toBe(2);
     expect(store.session(oldCookie.value)).toBeUndefined();
     expect(store.passkeys(String(user.id))).toHaveLength(1);
     await second.getByRole('button', { name: 'Sign out', exact: true }).click();
     await second.getByRole('button', { name: 'Sign in with a passkey' }).click();
-    await expect(second.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(second.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
   } finally {
     await invitee.close();
     await guest.close();

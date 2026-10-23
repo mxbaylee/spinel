@@ -3,7 +3,7 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 
-test('shared drawer files by drag and keyboard, removes only personal placement, and clears revoked references', async ({
+test('shared files are filed by pointer and keyboard, remove only personal placement, and clear revoked references', async ({
   page,
   context,
   browser,
@@ -42,45 +42,63 @@ test('shared drawer files by drag and keyboard, removes only personal placement,
   const ownerContext = await browser.newContext({ baseURL }),
     ownerPage = await ownerContext.newPage();
   await ownerContext.addCookies([cookie(owner.id)]);
+  const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
+  const shared = page.getByRole('list', { name: 'Shared with me files', exact: true });
+  const form = page.getByRole('form', { name: 'File shared item', exact: true });
+  const openMine = async () => {
+    await page.getByRole('button', { name: 'My files', exact: true }).click();
+    await contents.getByRole('button', { name: `${mine.name} Folder`, exact: true }).click();
+  };
   try {
     await page.goto('/');
     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
-    const drawer = page.getByRole('region', { name: 'Shared with me', exact: true });
     await expect(
-      drawer.getByRole('button', { name: 'Open Shared journal', exact: true }),
+      shared.getByRole('button', { name: 'Shared journal Doc', exact: true }),
     ).toBeVisible();
-    await expect(drawer.getByText('Filing owner', { exact: true })).toHaveCount(2);
-    await expect(drawer.getByText('Private parent', { exact: true })).toHaveCount(0);
-    const folders = page.getByRole('complementary', { name: 'Folders', exact: true });
-    await drawer
-      .getByRole('button', { name: 'Drag Shared journal into a folder', exact: true })
-      .dragTo(folders.getByRole('button', { name: mine.name, exact: true }));
-    await expect
-      .poll(() => store.shared(viewer.id).find((i) => i.id === doc.id)?.placementParentId)
-      .toBe(mine.id);
-    await folders.getByRole('button', { name: mine.name, exact: true }).click();
-    const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
-    await expect(contents.getByText('Shared', { exact: true })).toBeVisible();
-    await expect(contents.getByText(owner.name, { exact: true })).toBeVisible();
-    await contents
-      .getByRole('button', { name: 'Remove Shared journal from my folder', exact: true })
+    await expect(shared.getByText('Owner: Filing owner', { exact: true })).toHaveCount(2);
+    await expect(shared.getByText('Private parent', { exact: true })).toHaveCount(0);
+    await shared
+      .getByRole('button', { name: 'More actions for Shared journal', exact: true })
       .click();
-    await expect(contents.getByRole('button', { name: /^Shared journal/ })).toHaveCount(0);
-    await expect(
-      drawer.getByRole('button', { name: 'Open Shared journal', exact: true }),
-    ).toBeVisible();
-    expect(store.get(owner.id, doc.id).parentId).toBe(sourceFolder.id);
-    expect(store.get(viewer.id, doc.id).access).toBe('viewer');
-    await drawer.getByRole('button', { name: 'File Shared journal', exact: true }).click();
-    const form = page.getByRole('form', { name: 'File shared item', exact: true });
+    await page.getByRole('menuitem', { name: 'File into folder…', exact: true }).click();
     await form.getByRole('combobox', { name: 'Destination', exact: true }).selectOption(mine.id);
     await form.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(form).toBeHidden();
+    await expect
+      .poll(() => store.shared(viewer.id).find((i) => i.id === doc.id)?.placementParentId)
+      .toBe(mine.id);
+    await openMine();
+    await expect(contents.getByText('Shared · View only', { exact: true })).toBeVisible();
+    await expect(contents.getByText(`Owner: ${owner.name}`, { exact: true })).toBeVisible();
+    await contents
+      .getByRole('button', { name: 'More actions for Shared journal', exact: true })
+      .click();
+    await page.getByRole('menuitem', { name: 'Remove from my folder', exact: true }).click();
+    await expect(contents.getByRole('button', { name: /^Shared journal/ })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
+    await expect(
+      shared.getByRole('button', { name: 'Shared journal Doc', exact: true }),
+    ).toBeVisible();
+    expect(store.get(owner.id, doc.id).parentId).toBe(sourceFolder.id);
+    expect(store.get(viewer.id, doc.id).access).toBe('viewer');
+    await shared
+      .getByRole('button', { name: 'More actions for Shared journal', exact: true })
+      .focus();
+    await page.keyboard.press('Enter');
+    await page.getByRole('menuitem', { name: 'File into folder…', exact: true }).focus();
+    await page.keyboard.press('Enter');
+    await form.getByRole('combobox', { name: 'Destination', exact: true }).selectOption(mine.id);
+    await form.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(form).toBeHidden();
+    await openMine();
     await page.reload();
     await expect(contents.getByRole('button', { name: /^Shared journal/ })).toBeVisible();
     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
     await ownerPage.goto(`/?item=${sourceFolder.id}`);
-    await ownerPage.getByRole('button', { name: 'Share Shared journal', exact: true }).click();
+    await ownerPage
+      .getByRole('button', { name: 'More actions for Shared journal', exact: true })
+      .click();
+    await ownerPage.getByRole('menuitem', { name: 'Share…', exact: true }).click();
     const sharing = ownerPage.getByRole('region', { name: 'Share Shared journal', exact: true });
     await sharing
       .getByRole('combobox', { name: `Access for ${viewer.name}`, exact: true })
@@ -92,10 +110,11 @@ test('shared drawer files by drag and keyboard, removes only personal placement,
       sharing.getByRole('status').filter({ hasText: `Access updated for ${viewer.name}.` }),
     ).toHaveText(`Access updated for ${viewer.name}.`);
     await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-    await expect(contents.getByRole('button', { name: /^Shared journal/ })).toHaveCount(0);
     await expect(
-      drawer.getByRole('button', { name: 'Open Shared journal', exact: true }),
+      shared.getByRole('button', { name: 'Shared journal Doc', exact: true }),
     ).toHaveCount(0);
+    await openMine();
+    await expect(contents.getByRole('button', { name: /^Shared journal/ })).toHaveCount(0);
     expect(store.get(owner.id, doc.id).parentId).toBe(sourceFolder.id);
     expect(store.get(viewer.id, mine.id).name).toBe(mine.name);
   } finally {

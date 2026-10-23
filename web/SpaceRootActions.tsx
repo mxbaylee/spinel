@@ -1,5 +1,5 @@
 import { canAdminister } from '../src/shared/workspace.ts';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { FileItem, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
@@ -7,7 +7,8 @@ import { itemsRequest } from './itemsApi.ts';
 import { Sharing } from './Sharing.tsx';
 import './spaceRootActions.css';
 
-type Mode = 'share' | 'rename' | 'move' | 'trash';
+export type SpaceRootActionMode = 'share' | 'rename' | 'move' | 'trash';
+type Mode = SpaceRootActionMode;
 
 /** Account-only actions for the outer file; the Space tree never owns these controls. */
 export function SpaceRootActions({
@@ -16,12 +17,17 @@ export function SpaceRootActions({
   onChanged,
   onTrashed,
   beforeChange,
+  initialMode,
+  onClose,
 }: {
   item: SpaceFile;
   folders?: WorkspaceItem[];
   onChanged: (item: SpaceFile) => void;
   onTrashed: () => void;
   beforeChange?: () => boolean;
+  /** A dashboard row's single menu can open this existing action controller. */
+  initialMode?: Mode;
+  onClose?: () => void;
 }) {
   const [mode, setMode] = useState<Mode | null>(null);
   const [name, setName] = useState(item.name);
@@ -51,6 +57,7 @@ export function SpaceRootActions({
     generation.current++;
     setMode(null);
     setLoading(false);
+    onClose?.();
   }
   async function open(next: Mode) {
     if (beforeChange && !beforeChange()) return;
@@ -121,6 +128,9 @@ export function SpaceRootActions({
     }
   }
   const owned = available.filter((entry) => entry.kind === 'folder' && canAdminister(entry.access));
+  useEffect(() => {
+    if (initialMode) void open(initialMode);
+  }, []);
   const byId = new Map(owned.map((folder) => [folder.id, folder]));
   const path = (folder: WorkspaceItem) => {
     const names: string[] = [];
@@ -136,36 +146,38 @@ export function SpaceRootActions({
   if (!canAdminister(item.access)) return null;
   return (
     <>
-      <ActionMenu
-        label={`Space actions for ${item.name}`}
-        actions={[
-          {
-            label: 'Share',
-            icon: <ProfileIcon icon="lucide:share-2" size={16} />,
-            onClick: () => void open('share'),
-            disabled: busy,
-          },
-          {
-            label: 'Rename',
-            icon: <ProfileIcon icon="lucide:pencil" size={16} />,
-            onClick: () => void open('rename'),
-            disabled: busy,
-          },
-          {
-            label: 'Move',
-            icon: <ProfileIcon icon="lucide:folder-input" size={16} />,
-            onClick: () => void open('move'),
-            disabled: busy,
-          },
-          {
-            label: 'Move to Trash',
-            icon: <ProfileIcon icon="lucide:trash-2" size={16} />,
-            onClick: () => void open('trash'),
-            destructive: true,
-            disabled: busy,
-          },
-        ]}
-      />
+      {!initialMode && (
+        <ActionMenu
+          label={`Space actions for ${item.name}`}
+          actions={[
+            {
+              label: 'Share',
+              icon: <ProfileIcon icon="lucide:share-2" size={16} />,
+              onClick: () => void open('share'),
+              disabled: busy,
+            },
+            {
+              label: 'Rename',
+              icon: <ProfileIcon icon="lucide:pencil" size={16} />,
+              onClick: () => void open('rename'),
+              disabled: busy,
+            },
+            {
+              label: 'Move',
+              icon: <ProfileIcon icon="lucide:folder-input" size={16} />,
+              onClick: () => void open('move'),
+              disabled: busy,
+            },
+            {
+              label: 'Move to Trash',
+              icon: <ProfileIcon icon="lucide:trash-2" size={16} />,
+              onClick: () => void open('trash'),
+              destructive: true,
+              disabled: busy,
+            },
+          ]}
+        />
+      )}
       {mode && (
         <Modal
           open

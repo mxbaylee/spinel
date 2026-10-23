@@ -6,13 +6,25 @@ and your personal tags as you type. Words combine: `budget planning` must match
 both words somewhere in those fields. Matching ignores case and normalizes Unicode
 compatibility forms. It never searches document contents.
 
-Combine search with **File type**, **Ownership** (Mine or Shared with me), **Tag**
-and **Last modified**. Every selected filter must match. Tag is an exact personal
+Use **Search options** for search words, **File type**, **Ownership** (Mine or
+Shared with me), **Tag** and **Last modified**. The same field also accepts optional
+qualifiers such as `type:sheet owner:shared tag:"summer travel" modified:week`.
+Each labelled filter chip removes only its own filter. Quote literal qualifier
+words, for example `"type:sheet"`, to search for that text. Unknown colon words
+such as URLs stay literal. Every selected filter must match. Tag is an exact personal
 label match, ignoring case and accepting an optional leading `#`; general search
 also matches displayed `#tag` text. Last modified means the past 24 hours, 7 days
 or 30 days measured from the current time, including the boundary. Tag and personal
 filing changes do not change document modification time. Results are newest
 modified first, then stable item ID for ties.
+
+Incomplete, duplicate or invalid qualifiers pause results and requests while the
+draft stays editable; chips identify the last valid filters. **Search this as
+plain text** treats the whole draft as search words while retaining those filters
+and the current scope. It is disabled above 200 literal characters instead of
+truncating text. Clear remains available. Search help is available by keyboard
+and touch. See the [draft/recovery decision](implementation/SPN-048.md#unified-search-draft-and-recovery)
+and the still-pending [scope integration contract](implementation/SPN-048.md#scope-and-return-context).
 
 **Clear search and filters** returns to the current folder or editor. Searching
 hides the open editor without unmounting it, so unsaved changes stay in place.

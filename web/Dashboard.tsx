@@ -1,22 +1,37 @@
+import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { FILE_KINDS, fileKindLabel, canAdminister, accessLabel } from '../src/shared/workspace.ts';
-import type { FileKind, FileItem, WorkspaceItem } from '../src/shared/workspace.ts';
+import type { FileKind, FileItem, WorkspaceItem, SpaceFile } from '../src/shared/workspace.ts';
 
 import { Sharing } from './Sharing.tsx';
 import { SearchPanel } from './SearchPanel.tsx';
 import { emptySearch, hasSearch } from '../src/shared/search.ts';
 import type { SearchQuery } from '../src/shared/search.ts';
+import { parseSearchInput } from '../src/shared/searchInput.ts';
+import { DashboardFiles } from './DashboardFiles.tsx';
+import type { DashboardFileLayout } from './DashboardFiles.tsx';
+import { ActionMenu, Modal, SegmentedChoice } from '../src/ui/redesign/Controls.tsx';
+import type { Action as MenuAction } from '../src/ui/redesign/Controls.tsx';
+import {
+  consumeDashboardReturn,
+  dashboardSession,
+  rememberDashboardRetrieval,
+  restoreDashboardRetrieval,
+  retrievalHref,
+} from './dashboardNavigation.ts';
+import type { DashboardRetrieval } from './dashboardNavigation.ts';
+import './Dashboard.css';
 import { Trash } from './Trash.tsx';
 import { DocumentTags, TagLabels } from './DocumentTags.tsx';
 import { itemsRequest } from './itemsApi.ts';
-import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { ImportFile } from './ImportFile.tsx';
 import { SharedBadge, useSharedItems } from './SharedItems.tsx';
 import type { NavigationGuard } from './navigation.ts';
 import { rememberFileView } from './fileNavigation.ts';
 import { spaceHref } from './spaceNavigation.ts';
 import { SpaceRootActions } from './SpaceRootActions.tsx';
+import type { SpaceRootActionMode } from './SpaceRootActions.tsx';
 import { OfflineBadge } from './OfflineStatus.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
@@ -30,12 +45,19 @@ const SheetEditor = lazy(() =>
 
 type Action = { mode: 'new' | 'rename' | 'move' | 'file'; item?: FileItem };
 const TRASH_VIEW = 'trash';
+const SHARED_VIEW = 'shared';
 const selectedId = () => {
   const query = new URLSearchParams(location.search);
-  return query.has('trash') ? TRASH_VIEW : query.get('item');
+  return query.has('trash') ? TRASH_VIEW : query.has('shared') ? SHARED_VIEW : query.get('item');
 };
 const viewUrl = (id: string | null) =>
-  id === TRASH_VIEW ? '/?trash=1' : id ? `/?item=${encodeURIComponent(id)}` : '/';
+  id === TRASH_VIEW
+    ? '/?trash=1'
+    : id === SHARED_VIEW
+      ? '/?shared=1'
+      : id
+        ? `/?item=${encodeURIComponent(id)}`
+        : '/';
 
 const DocEditor = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
 const OfflineViewer = lazy(() =>
@@ -55,6 +77,7 @@ export function Dashboard({
   onConnectionState,
   onCatalogStatus,
   onOpen,
+  onPlaces,
 }: {
   navigation: NavigationGuard;
   user: OfflineUser;
@@ -62,14 +85,38 @@ export function Dashboard({
   onConnectionState?: (state: ConnectionState | null) => void;
   onCatalogStatus?: (details: CatalogConnectionDetails | null) => void;
   onOpen?: (item: FileItem) => void;
+  onPlaces?: (places: { shared: boolean; open: (shared: boolean) => void } | null) => void;
 }) {
+  const [initial] = useState(() => {
+    dashboardSession(user.id);
+    const url = new URL(location.href);
+    const returning = url.searchParams.get('files-return') === '1';
+    url.searchParams.delete('files-return');
+    const target = `${url.pathname}${url.search}`;
+    const value = returning
+      ? consumeDashboardReturn(user.id, target)
+      : restoreDashboardRetrieval(user.id, history.state?.spinelDashboard, target);
+    if (returning) history.replaceState(history.state, '', target);
+    return local ? null : value;
+  });
   const dropTarget = useRef<HTMLElement>(null);
   const [saveStatusTarget, setSaveStatusTarget] = useState<HTMLSpanElement | null>(null);
-  const [query, setQuery] = useState<SearchQuery>({ ...emptySearch });
-  const searchActive = hasSearch(query);
+  const [query, setQuery] = useState<SearchQuery>(initial?.query ?? { ...emptySearch });
+  const [draft, setDraft] = useState(initial?.draft ?? '');
+  const [allFiles, setAllFiles] = useState(initial?.allFiles ?? false);
+  const [layout, setLayout] = useState<DashboardFileLayout>(() => {
+    if (initial) return initial.layout;
+    try {
+      return localStorage.getItem('spinel-files-layout') === 'grid' ? 'grid' : 'list';
+    } catch {
+      return 'list';
+    }
+  });
+  const searchActive = hasSearch(query) || !parseSearchInput(draft).ok;
   const shared = useSharedItems(local?.catalog.shared);
-  const [sharedOpen, setSharedOpen] = useState(false);
-  const draggingShared = useRef<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const returnContext = useRef<DashboardRetrieval | null>(null);
+  const pendingScroll = useRef<number | null>(initial?.scroll ?? null);
   const [items, setItems] = useState<FileItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [spacesEnabled, setSpacesEnabled] = useState(false);
@@ -79,9 +126,17 @@ export function Dashboard({
   const [viewMissing, setViewMissing] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
+  const [spaceAction, setSpaceAction] = useState<{
+    item: SpaceFile;
+    mode: SpaceRootActionMode;
+  } | null>(null);
   const [tagging, setTagging] = useState<FileItem | null>(null);
   const [currentId, setCurrentId] = useState<string | null>(selectedId);
-  useEffect(() => rememberFileView(user.id, currentId), [user.id, currentId]);
+  const sharedOpen = currentId === SHARED_VIEW;
+  useEffect(
+    () => rememberFileView(user.id, currentId === SHARED_VIEW ? null : currentId),
+    [user.id, currentId],
+  );
   const currentRef = useRef(currentId);
   currentRef.current = currentId;
   const [action, setAction] = useState<Action | null>(null);
@@ -145,7 +200,16 @@ export function Dashboard({
         history.pushState(null, '', viewUrl(currentRef.current));
         return;
       }
-      setQuery({ ...emptySearch });
+      const restored = restoreDashboardRetrieval(
+        user.id,
+        history.state?.spinelDashboard,
+        `${location.pathname}${location.search}`,
+      );
+      setQuery(restored?.query ?? { ...emptySearch });
+      setDraft(restored?.draft ?? '');
+      setAllFiles(restored?.allFiles ?? false);
+      if (restored) setLayout(restored.layout);
+      pendingScroll.current = restored?.scroll ?? 0;
       setCurrentId(selectedId());
       setTagging(null);
       setAction(null);
@@ -159,7 +223,7 @@ export function Dashboard({
     setViewed([]);
     setViewMissing(false);
     setViewId(null);
-    if (!currentId || currentId === TRASH_VIEW || local) {
+    if (!currentId || currentId === TRASH_VIEW || currentId === SHARED_VIEW || local) {
       if (local && currentId) setViewed(views.current[currentId] ?? []);
       setViewId(currentId);
       setViewLoading(false);
@@ -204,6 +268,28 @@ export function Dashboard({
     [...known, ...items, ...shared.items, ...viewed].map((item) => [item.id, item]),
   );
   const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
+  const browsing = !currentId || sharedOpen || current?.kind === 'folder';
+  useEffect(() => {
+    onPlaces?.({ shared: sharedOpen, open: (shared) => navigate(shared ? SHARED_VIEW : null) });
+    return () => onPlaces?.(null);
+  }, [onPlaces, sharedOpen, currentId, query, draft, layout, allFiles]);
+  useEffect(() => {
+    try {
+      localStorage.setItem('spinel-files-layout', layout);
+    } catch {
+      /* Optional preference. */
+    }
+  }, [layout]);
+  useEffect(() => {
+    if (!browsing || !loaded || viewLoading || pendingScroll.current === null || searchActive)
+      return;
+    const scroll = pendingScroll.current;
+    const frame = requestAnimationFrame(() => {
+      window.scrollTo(0, scroll);
+      pendingScroll.current = null;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [browsing, loaded, viewLoading, searchActive, currentId]);
   const liveEditor =
     !local && current && (current.kind === 'sheet' || current.kind === 'doc') ? current.id : null;
   useEffect(() => {
@@ -259,6 +345,9 @@ export function Dashboard({
   function navigate(id: string | null, check = true) {
     if (check && id !== currentId && !navigation.allow()) return;
     setQuery({ ...emptySearch });
+    setDraft('');
+    setAllFiles(false);
+    pendingScroll.current = 0;
     history.pushState(null, '', viewUrl(id));
     setCurrentId(id);
     setTagging(null);
@@ -266,7 +355,22 @@ export function Dashboard({
     setError('');
   }
   function openFile(item: FileItem) {
-    if (item.kind !== 'space') return navigate(item.id);
+    if (!navigation.allow()) return;
+    if (browsing) {
+      const value: DashboardRetrieval = {
+        folderId: sharedOpen ? null : currentId,
+        shared: sharedOpen,
+        query,
+        draft,
+        allFiles,
+        layout,
+        scroll: window.scrollY,
+      };
+      returnContext.current = value;
+      const saved = rememberDashboardRetrieval(user.id, value);
+      history.replaceState({ ...history.state, spinelDashboard: saved }, '', viewUrl(currentId));
+    }
+    if (item.kind !== 'space') return navigate(item.id, false);
     if (local && !spaceCopies(offline.downloads.values(), item.id).length) {
       setError(`${item.name} needs a connection. Connect to open this Space.`);
       return;
@@ -278,10 +382,10 @@ export function Dashboard({
     if (onOpen) onOpen(item);
     else location.assign(spaceHref(item.id));
   }
-  function edit(mode: Action['mode'], item?: FileItem) {
+  function edit(mode: Action['mode'], item?: FileItem, newKind: FileKind = 'folder') {
     setAction({ mode, item });
     setName(item?.name ?? '');
-    setKind('folder');
+    setKind(newKind);
     setDestination(
       mode === 'file'
         ? (shared.items.find((entry) => entry.id === item?.id)?.placementParentId ?? '')
@@ -302,7 +406,7 @@ export function Dashboard({
         action.mode === 'new' ? '' : `/${action.item!.id}`,
         action.mode === 'new' ? 'POST' : 'PATCH',
         action.mode === 'new'
-          ? { name, kind, parentId: currentId }
+          ? { name, kind, parentId: sharedOpen ? null : currentId }
           : action.mode === 'rename'
             ? { name }
             : { parentId: destination || null },
@@ -313,6 +417,7 @@ export function Dashboard({
       ]);
       setViewed((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
       setAction(null);
+      if (browsing) setRefresh((value) => value + 1);
       if (item.access === 'admin') await shared.refresh();
       if (action.mode === 'new' && item.kind !== 'folder') openFile(item);
     } catch (failure) {
@@ -326,38 +431,6 @@ export function Dashboard({
     setItems(result.items);
     setSpacesEnabled(result.spacesEnabled === true);
   }
-  function folderDrop(parentId: string | null) {
-    return {
-      onDragOver: (event: React.DragEvent) => {
-        if (draggingShared.current && !shared.busy) event.preventDefault();
-      },
-      onDrop: (event: React.DragEvent) => {
-        event.preventDefault();
-        const id = draggingShared.current;
-        draggingShared.current = null;
-        if (id && !shared.busy) void shared.place(id, parentId);
-      },
-    };
-  }
-  function dragShared(item: FileItem) {
-    return (
-      <button
-        draggable={!shared.busy}
-        disabled={shared.busy}
-        aria-label={`Drag ${item.name} into a folder`}
-        onDragStart={(event) => {
-          draggingShared.current = item.id;
-          event.dataTransfer.effectAllowed = 'copy';
-          event.dataTransfer.setData('application/x-spinel-shared-id', item.id);
-        }}
-        onDragEnd={() => {
-          draggingShared.current = null;
-        }}
-      >
-        ↗
-      </button>
-    );
-  }
   async function trashItem(item: FileItem) {
     if (!navigation.allow()) return;
     setBusy(true);
@@ -365,8 +438,7 @@ export function Dashboard({
     try {
       await itemsRequest(`/${item.id}/trash`, 'POST', {});
       setSharing(null);
-      setViewed([]);
-      navigate(item.parentId, false);
+      if (currentId === item.id) navigate(item.parentId, false);
       setRefresh((value) => value + 1);
       await reloadItems();
       if (item.access === 'admin') await shared.refresh();
@@ -429,6 +501,98 @@ export function Dashboard({
         )}
       </>
     );
+  }
+  function rowActions(item: FileItem): MenuAction[] {
+    if (local) return [];
+    const result: MenuAction[] = [];
+    if (item.kind !== 'folder')
+      result.push({ label: 'Tags…', onClick: () => setTagging(item), disabled: busy });
+    if (item.access !== 'owner') {
+      result.push({
+        label: 'File into folder…',
+        onClick: () => edit('file', item),
+        disabled: busy || shared.busy,
+      });
+      if (
+        shared.items.some((entry) => entry.id === item.id && entry.placementParentId !== undefined)
+      )
+        result.push({
+          label: 'Remove from my folder',
+          onClick: () => {
+            void shared.place(item.id, null, true).then(() => setRefresh((value) => value + 1));
+          },
+          disabled: shared.busy,
+        });
+    }
+    if (canAdminister(item.access)) {
+      for (const mode of ['share', 'rename', 'move', 'trash'] as const) {
+        result.push({
+          label: { share: 'Share…', rename: 'Rename…', move: 'Move…', trash: 'Move to Trash' }[
+            mode
+          ],
+          destructive: mode === 'trash',
+          disabled: busy,
+          onClick: () => {
+            if (item.kind === 'space') setSpaceAction({ item, mode });
+            else if (mode === 'share') setSharing(item);
+            else if (mode === 'trash') void trashItem(item);
+            else edit(mode, item);
+          },
+        });
+      }
+    }
+    if (item.kind === 'sheet' || item.kind === 'doc')
+      result.push({
+        label:
+          offline.busy === item.id
+            ? 'Updating offline copy…'
+            : offline.downloads.has(item.id)
+              ? 'Remove from device'
+              : 'Available offline on this device',
+        disabled: offline.busy !== null,
+        onClick: () => {
+          void offline.toggle(item);
+        },
+      });
+    if (item.kind === 'folder')
+      result.push({
+        label: 'Refresh folder',
+        onClick: () => {
+          setRefresh((value) => value + 1);
+          void reloadItems().catch((failure) => setError(failure.message));
+          void shared.refresh();
+        },
+        disabled: busy,
+      });
+    return result;
+  }
+  function returnToFiles() {
+    if (!navigation.allow()) return;
+    const value = returnContext.current;
+    if (!value) return navigate(null, false);
+    history.pushState(
+      { spinelDashboard: rememberDashboardRetrieval(user.id, value) },
+      '',
+      retrievalHref(value),
+    );
+    setCurrentId(value.shared ? SHARED_VIEW : value.folderId);
+    setQuery(value.query);
+    setDraft(value.draft);
+    setAllFiles(value.allFiles);
+    setLayout(value.layout);
+    pendingScroll.current = value.scroll;
+    setAction(null);
+    setTagging(null);
+    setSharing(null);
+    setError('');
+  }
+  function restoreScroll() {
+    if (pendingScroll.current === null) return;
+    const scroll = pendingScroll.current;
+    requestAnimationFrame(() => {
+      window.scrollTo(0, scroll);
+      pendingScroll.current = null;
+    });
   }
   function actions(item: FileItem) {
     // Local mode is read-only: nothing here may reach the server.
@@ -518,400 +682,449 @@ export function Dashboard({
       {shared.error} <button onClick={() => void shared.refresh()}>Refresh shared items</button>
     </p>
   );
+  const canCreate = browsing && !sharedOpen && !local && (!current || current.access === 'owner');
+  const listedItems = [...(sharedOpen ? shared.items : visibleItems)].sort(
+    (a, b) =>
+      Number(b.kind === 'folder') - Number(a.kind === 'folder') ||
+      a.name.localeCompare(b.name) ||
+      a.id.localeCompare(b.id),
+  );
   return (
-    <>
-      <p className="eyebrow">Your workspace</p>
-      <h1>Dashboard</h1>
-      <div className="dashboard">
-        <aside aria-label="Folders">
-          <button {...folderDrop(null)} disabled={busy} onClick={() => navigate(null)}>
-            All my files
+    <section ref={dropTarget} className="dashboard-content" aria-label="Your files">
+      {!onPlaces && (
+        <nav className="dashboard-places" aria-label="File places">
+          <button onClick={() => navigate(null)} aria-current={!sharedOpen ? 'page' : undefined}>
+            My files
           </button>
           <button
-            aria-expanded={sharedOpen && !searchActive}
-            onClick={() => {
-              if (searchActive) {
-                setQuery({ ...emptySearch });
-                setSharedOpen(true);
-              } else setSharedOpen((value) => !value);
-            }}
+            onClick={() => navigate(SHARED_VIEW)}
+            aria-current={sharedOpen ? 'page' : undefined}
           >
             Shared with me
           </button>
-          {!local && (
-            <button
-              disabled={busy}
-              aria-current={currentId === TRASH_VIEW ? 'page' : undefined}
-              onClick={() => navigate(TRASH_VIEW)}
-            >
-              Trash
-            </button>
+        </nav>
+      )}
+      {browsing ? (
+        <>
+          {current && (
+            <nav aria-label="Breadcrumb" className="dashboard-breadcrumbs">
+              <button onClick={() => navigate(null)}>My files</button>
+              {ancestors(current)
+                .slice(0, -1)
+                .map((item) => (
+                  <span key={item.id}>
+                    {' '}
+                    / <button onClick={() => openFile(item)}>{item.name}</button>
+                  </span>
+                ))}
+            </nav>
           )}
-          <ul className="folder-tree">
-            {folders.map(({ item, path }) => (
-              <li key={item.id} style={{ paddingLeft: Math.min(path.length - 1, 8) * 12 }}>
-                <button
-                  {...folderDrop(item.id)}
-                  disabled={busy}
-                  aria-current={currentId === item.id ? 'page' : undefined}
-                  onClick={() => navigate(item.id)}
-                  title={path.map((entry) => entry.name).join(' / ')}
+          <header className="dashboard-heading">
+            <h1>{sharedOpen ? 'Shared with me' : (current?.name ?? 'My files')}</h1>
+            <div className="dashboard-heading-actions">
+              {current && (
+                <ActionMenu
+                  label={`More actions for ${current.name}`}
+                  actions={rowActions(current)}
+                />
+              )}
+              {canCreate && (
+                <ActionMenu
+                  label="New"
+                  primary
+                  actions={[
+                    ...FILE_KINDS.filter((kind) => kind !== 'space' || spacesEnabled).map(
+                      (kind) => ({
+                        label: fileKindLabel[kind],
+                        onClick: () => edit('new', undefined, kind),
+                        disabled: busy,
+                      }),
+                    ),
+                    { label: 'Import file…', onClick: () => setImportOpen(true), disabled: busy },
+                  ]}
                 >
-                  {item.name}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </aside>
-        <section ref={dropTarget} className="files" aria-label="Your files">
+                  New
+                </ActionMenu>
+              )}
+            </div>
+          </header>
+
+          {local && (
+            <div className="dashboard-view-choice">
+              <SegmentedChoice
+                label="File view"
+                value={layout}
+                options={[
+                  {
+                    value: 'list',
+                    label: 'List',
+                    icon: <ProfileIcon icon="lucide:list" size={18} />,
+                  },
+                  {
+                    value: 'grid',
+                    label: 'Grid',
+                    icon: <ProfileIcon icon="lucide:layout-grid" size={18} />,
+                  },
+                ]}
+                onChange={(value) => setLayout(value === 'grid' ? 'grid' : 'list')}
+              />
+            </div>
+          )}
           {!local && (
             <SearchPanel
               spacesEnabled={spacesEnabled}
               query={query}
               onChange={setQuery}
-              loadedItems={[
-                ...items,
-                ...viewed.filter((item) => item.access === 'owner'),
-                ...shared.items,
-              ]}
+              draftText={draft}
+              onDraftTextChange={setDraft}
+              scope={
+                allFiles || (!sharedOpen && !current)
+                  ? { kind: 'all' }
+                  : sharedOpen
+                    ? { kind: 'shared' }
+                    : { kind: 'folder', id: current!.id }
+              }
+              scopeLabel={
+                allFiles || (!sharedOpen && !current)
+                  ? 'All accessible files'
+                  : sharedOpen
+                    ? 'Shared with me'
+                    : current!.name
+              }
+              onSearchAll={() => setAllFiles(true)}
+              onClear={() => {
+                setAllFiles(false);
+                pendingScroll.current = 0;
+              }}
+              loadedItems={[...items, ...viewed, ...shared.items]}
               onOpen={openFile}
+              layout={layout}
+              actionsFor={rowActions}
+              offlineState={offlineState}
+              viewControls={
+                <SegmentedChoice
+                  label="File view"
+                  value={layout}
+                  options={[
+                    {
+                      value: 'list',
+                      label: 'List',
+                      icon: <ProfileIcon icon="lucide:list" size={18} />,
+                    },
+                    {
+                      value: 'grid',
+                      label: 'Grid',
+                      icon: <ProfileIcon icon="lucide:layout-grid" size={18} />,
+                    },
+                  ]}
+                  onChange={(value) => setLayout(value === 'grid' ? 'grid' : 'list')}
+                />
+              }
+              refreshKey={refresh}
+              onReady={restoreScroll}
             />
           )}
-          {offline.message && (
-            <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+        </>
+      ) : (
+        <button className="dashboard-return" onClick={returnToFiles}>
+          Back to files
+        </button>
+      )}
+      {offline.message && (
+        <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+      )}
+      {!liveEditor && sharedFailure}
+      {!loaded || viewLoading || currentId !== viewId ? (
+        <p role="status">
+          {error ? 'Your files could not be loaded. Reload to try again.' : 'Loading your files…'}
+        </p>
+      ) : currentId === TRASH_VIEW ? (
+        <Trash onChanged={reloadItems} />
+      ) : currentId && !sharedOpen && !current ? (
+        <p role="alert">This item is not available. Choose My files to continue.</p>
+      ) : browsing ? (
+        <>
+          {!searchActive && (
+            <DashboardFiles
+              items={listedItems}
+              layout={layout}
+              onOpen={openFile}
+              actionsFor={rowActions}
+              offlineState={offlineState}
+              dateMode={sharedOpen ? 'shared' : 'updated'}
+              loading={sharedOpen && !shared.loaded}
+              busy={busy}
+              label={sharedOpen ? 'Shared with me files' : 'Folder contents'}
+              onOpenTrash={!currentId && !local ? () => navigate(TRASH_VIEW) : undefined}
+              emptyMessage={
+                sharedOpen ? 'Nothing has been shared with you yet.' : 'This folder is empty.'
+              }
+            />
           )}
-          {!liveEditor && sharedFailure}
-          {sharedOpen && !searchActive && (
-            <section className="shared-drawer" aria-label="Shared with me">
-              <h2>Shared with me</h2>
-              <p>File a reference in your folders. The owner's copy stays where it is.</p>
-              {!shared.loaded ? (
-                <p role="status">Loading shared items…</p>
-              ) : (
-                !shared.items.length && <p>Nothing has been shared with you yet.</p>
-              )}
-              <ul className="file-list">
-                {shared.items.map((item) => (
-                  <li key={item.id}>
-                    {dragShared(item)}
-                    <button
-                      className="item-open"
-                      aria-label={`Open ${item.name}`}
-                      onClick={() => openFile(item)}
-                    >
-                      {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
-                      {item.name} <span className="item-kind">{fileKindLabel[item.kind]}</span>
-                    </button>
-                    <SharedBadge item={item} />
-                    <OfflineBadge state={offlineState(item)} />
-                    <small>
-                      {item.sharedAt ? new Date(item.sharedAt).toLocaleDateString() : 'Older share'}
-                    </small>
-                    {actions(item)}
-                    <TagLabels tags={item.tags} />
-                  </li>
-                ))}
-              </ul>
-            </section>
+          {local && current && !views.current[current.id] && !personalFolder && (
+            <p role="status">
+              This folder wasn’t opened online on this device, so its contents aren’t here. Connect
+              to open it.
+            </p>
           )}
-          {/* Keep editors mounted while searching so unsaved work is preserved. */}
-          <div className="file-view" hidden={searchActive}>
-            <nav aria-label="Breadcrumb">
-              <button disabled={busy} onClick={() => navigate(null)}>
-                My files
-              </button>
-              {ancestors(current).map((item) => (
-                <span key={item.id}>
-                  {' '}
-                  /{' '}
-                  <button
-                    disabled={busy}
-                    aria-current={item.id === currentId ? 'page' : undefined}
-                    onClick={() => openFile(item)}
-                  >
-                    {item.name}
-                  </button>
-                </span>
-              ))}
-            </nav>
-            {!loaded || viewLoading || currentId !== viewId ? (
-              <p role="status">
-                {error
-                  ? 'Your files could not be loaded. Reload to try again.'
-                  : 'Loading your files…'}
-              </p>
-            ) : currentId === TRASH_VIEW ? (
-              <Trash onChanged={reloadItems} />
-            ) : currentId && !current ? (
-              <p role="alert">This item is not available. Choose My files to continue.</p>
-            ) : (
-              <>
-                <div className="folder-heading">
-                  <div className="editor-title-status">
-                    <h2>{current?.name ?? 'My files'}</h2>
-                    {!local && current && (current.kind === 'doc' || current.kind === 'sheet') && (
-                      <span className="save-slot" ref={setSaveStatusTarget} />
-                    )}
-                  </div>
-                  {current && <SharedBadge item={current} />}
-                  {current && <OfflineBadge state={offlineState(current)} />}
-                  {current && actions(current)}
-                  {current && <TagLabels tags={current.tags} />}
-                </div>
-                {!current || current.kind === 'folder' ? (
-                  <>
-                    {!local && (!current || current.access === 'owner') && (
-                      <button className="primary" disabled={busy} onClick={() => edit('new')}>
-                        New
-                      </button>
-                    )}
-                    {!local && current && (
-                      <button disabled={busy} onClick={() => setRefresh((value) => value + 1)}>
-                        Refresh folder
-                      </button>
-                    )}
-                    {!local && (!current || current.access === 'owner') && (
-                      <ImportFile
-                        key={currentId ?? 'root'}
-                        parentId={currentId}
-                        dropTarget={dropTarget}
-                        enabled={!searchActive}
-                        onImported={(item) => {
-                          setItems((previous) => [...previous, item]);
-                          setViewed((previous) => [...previous, item]);
-                          setRefresh((value) => value + 1);
-                        }}
-                      />
-                    )}
-                    <ul className="file-list" aria-label="Folder contents">
-                      {visibleItems
-                        .sort(
-                          (a, b) =>
-                            Number(b.kind === 'folder') - Number(a.kind === 'folder') ||
-                            a.name.localeCompare(b.name) ||
-                            a.id.localeCompare(b.id),
-                        )
-                        .map((item) => (
-                          <li key={item.id}>
-                            {item.access !== 'owner' && dragShared(item)}
-                            <button
-                              className="item-open"
-                              disabled={busy}
-                              onClick={() => openFile(item)}
-                            >
-                              {item.kind !== 'folder' && <EntityIcon kind={item.kind} />}
-                              {item.name}{' '}
-                              <span className="item-kind">{fileKindLabel[item.kind]}</span>
-                            </button>
-                            <SharedBadge item={item} />
-                            <OfflineBadge state={offlineState(item)} />
-                            {actions(item)}
-                            <TagLabels tags={item.tags} />
-                          </li>
-                        ))}
-                    </ul>
-                    {local && current && !views.current[current.id] && !personalFolder ? (
-                      <p role="status">
-                        This folder wasn’t opened online on this device, so its contents aren’t
-                        here. Connect to open it.
-                      </p>
-                    ) : (
-                      !visibleItems.length && (
-                        <p className="empty-state">
-                          <GemLogo size={52} />
-                          This folder is empty.
-                          {!local &&
-                            (!current || current.access === 'owner') &&
-                            (spacesEnabled
-                              ? ' Choose New to add a folder, document, or Space.'
-                              : ' Choose New to add a folder or document.')}
-                        </p>
-                      )
-                    )}
-                  </>
-                ) : current.kind === 'space' ? (
-                  <p role="status">
-                    {local ? 'Connect to open this Space.' : 'This Space opens in its own view.'}{' '}
-                    {!local && <button onClick={() => openFile(current)}>Open Space</button>}
-                  </p>
-                ) : local && offlineKind(current) ? (
-                  offline.downloads.has(current.id) ? (
-                    <Suspense fallback={<p role="status">Loading offline copy…</p>}>
-                      <OfflineViewer key={current.id} accountId={user.id} itemId={current.id} />
-                    </Suspense>
-                  ) : (
-                    <p role="status">
-                      {current.name} needs a connection. It isn’t downloaded on this device.
-                    </p>
-                  )
-                ) : current.kind === 'sheet' ? (
-                  <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
-                    <SheetEditor
-                      key={current.id}
-                      id={current.id}
-                      name={current.name}
-                      saveStatusTarget={saveStatusTarget}
-                      onDirty={navigation.dirty}
-                      onConnectionState={onConnectionState}
-                    />
-                  </Suspense>
-                ) : (
-                  <Suspense fallback={<p role="status">Loading document…</p>}>
-                    <DocEditor
-                      key={current.id}
-                      id={current.id}
-                      name={current.name}
-                      saveStatusTarget={saveStatusTarget}
-                      onDirty={navigation.dirty}
-                      onConnectionState={onConnectionState}
-                    />
-                  </Suspense>
+          {canCreate && (
+            <ImportFile
+              key={currentId ?? 'root'}
+              parentId={currentId}
+              dropTarget={dropTarget}
+              enabled={!searchActive}
+              dialogOpen={importOpen}
+              onDialogOpenChange={setImportOpen}
+              onImported={(item) => {
+                setItems((previous) => [...previous, item]);
+                setViewed((previous) => [...previous, item]);
+                setRefresh((value) => value + 1);
+                setImportOpen(false);
+              }}
+            />
+          )}
+        </>
+      ) : (
+        current && (
+          <>
+            <div className="folder-heading">
+              <div className="editor-title-status">
+                <h2>{current.name}</h2>
+                {!local && (current.kind === 'sheet' || current.kind === 'doc') && (
+                  <span className="save-slot" ref={setSaveStatusTarget} />
                 )}
-              </>
+              </div>
+              <SharedBadge item={current} />
+              <OfflineBadge state={offlineState(current)} />
+              {actions(current)}
+              <TagLabels tags={current.tags} />
+            </div>
+            {current.kind === 'space' ? (
+              <p role="status">
+                {local ? 'Connect to open this Space.' : 'This Space opens in its own view.'}{' '}
+                {!local && <button onClick={() => openFile(current)}>Open Space</button>}
+              </p>
+            ) : local && offlineKind(current) ? (
+              offline.downloads.has(current.id) ? (
+                <Suspense fallback={<p role="status">Loading offline copy…</p>}>
+                  <OfflineViewer key={current.id} accountId={user.id} itemId={current.id} />
+                </Suspense>
+              ) : (
+                <p role="status">
+                  {current.name} needs a connection. It isn’t downloaded on this device.
+                </p>
+              )
+            ) : current.kind === 'sheet' ? (
+              <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
+                <SheetEditor
+                  key={current.id}
+                  id={current.id}
+                  name={current.name}
+                  saveStatusTarget={saveStatusTarget}
+                  onDirty={navigation.dirty}
+                  onConnectionState={onConnectionState}
+                />
+              </Suspense>
+            ) : (
+              <Suspense fallback={<p role="status">Loading document…</p>}>
+                <DocEditor
+                  key={current.id}
+                  id={current.id}
+                  name={current.name}
+                  saveStatusTarget={saveStatusTarget}
+                  onDirty={navigation.dirty}
+                  onConnectionState={onConnectionState}
+                />
+              </Suspense>
             )}
-            {action && (
-              <form
-                className="item-form"
-                aria-label={`${action.mode === 'new' ? 'New item' : action.mode === 'file' ? 'File shared item' : action.mode === 'move' ? 'Move item' : 'Rename item'}`}
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  void submit();
+          </>
+        )
+      )}
+      {action && (
+        <Modal
+          title={
+            action.mode === 'new'
+              ? `New ${fileKindLabel[kind].toLowerCase()}`
+              : `${action.mode === 'rename' ? 'Rename' : action.mode === 'file' ? 'File' : 'Move'} ${action.item!.name}`
+          }
+          icon={action.mode === 'new' ? kind : 'folder'}
+          open
+          onOpenChange={(open) => {
+            if (!open) setAction(null);
+          }}
+          dismissDisabled={busy}
+        >
+          <form
+            className="item-form"
+            aria-label={`${action.mode === 'new' ? 'New item' : action.mode === 'file' ? 'File shared item' : action.mode === 'move' ? 'Move item' : 'Rename item'}`}
+            onSubmit={(event) => {
+              event.preventDefault();
+              void submit();
+            }}
+          >
+            {action.mode === 'new' && (
+              <label>
+                Type
+                <span className="entity-type-control">
+                  {kind !== 'folder' && <EntityIcon kind={kind} />}
+                  <select
+                    value={kind}
+                    disabled={busy}
+                    onChange={(event) => setKind(event.target.value as FileKind)}
+                  >
+                    {FILE_KINDS.filter((kind) => kind !== 'space' || spacesEnabled).map((kind) => (
+                      <option key={kind} value={kind}>
+                        {fileKindLabel[kind]}
+                      </option>
+                    ))}
+                  </select>
+                </span>
+              </label>
+            )}
+            {action.mode !== 'move' && action.mode !== 'file' ? (
+              <label>
+                Name
+                <input
+                  autoFocus
+                  value={name}
+                  disabled={busy}
+                  maxLength={120}
+                  required
+                  onChange={(event) => setName(event.target.value)}
+                />
+              </label>
+            ) : (
+              <label>
+                Destination
+                <select
+                  value={destination}
+                  disabled={
+                    busy ||
+                    (action.mode === 'move' &&
+                      action.item?.access === 'admin' &&
+                      (loadingDestinations || moveFolders.length === 0))
+                  }
+                  onChange={(event) => setDestination(event.target.value)}
+                >
+                  {action.mode === 'move' && action.item?.access === 'admin' ? (
+                    <option value="" disabled>
+                      Choose a folder
+                    </option>
+                  ) : (
+                    <option value="">My files</option>
+                  )}
+                  {(action.mode === 'move' && action.item?.access === 'admin'
+                    ? moveFolders.map((item) => ({ item, path: [item] }))
+                    : folders
+                  )
+                    .filter(({ path }) => !path.some((item) => item.id === action.item!.id))
+                    .map(({ item, path }) => (
+                      <option key={item.id} value={item.id}>
+                        {path.map((entry) => entry.name).join(' / ')}
+                      </option>
+                    ))}
+                </select>
+              </label>
+            )}
+            {action.mode === 'move' &&
+              action.item?.access === 'admin' &&
+              (loadingDestinations ? (
+                <p role="status">Loading authorized folders…</p>
+              ) : moveFolders.length === 0 ? (
+                <p role="status">
+                  No authorized folders are available. Ask the Owner to grant File admin access to a
+                  destination folder.
+                </p>
+              ) : null)}
+            {error && <p role="alert">{error}</p>}
+            <div className="item-actions">
+              <button
+                className="primary"
+                disabled={
+                  busy ||
+                  (action.mode === 'move' &&
+                    action.item?.access === 'admin' &&
+                    loadingDestinations) ||
+                  (action.mode === 'move' && action.item?.access === 'admin' && !destination) ||
+                  (action.mode !== 'move' && action.mode !== 'file' && !name.trim())
+                }
+              >
+                {action.mode === 'new' ? 'Create' : 'Save'}
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setAction(null);
+                  setError('');
                 }}
               >
-                <h3>
-                  {action.mode === 'new'
-                    ? 'New item'
-                    : `${action.mode === 'rename' ? 'Rename' : action.mode === 'file' ? 'File' : 'Move'} ${action.item!.name}`}
-                </h3>
-                {action.mode === 'new' && (
-                  <label>
-                    Type
-                    <span className="entity-type-control">
-                      {kind !== 'folder' && <EntityIcon kind={kind} />}
-                      <select
-                        value={kind}
-                        disabled={busy}
-                        onChange={(event) => setKind(event.target.value as FileKind)}
-                      >
-                        {FILE_KINDS.filter((kind) => kind !== 'space' || spacesEnabled).map(
-                          (kind) => (
-                            <option key={kind} value={kind}>
-                              {fileKindLabel[kind]}
-                            </option>
-                          ),
-                        )}
-                      </select>
-                    </span>
-                  </label>
-                )}
-                {action.mode !== 'move' && action.mode !== 'file' ? (
-                  <label>
-                    Name
-                    <input
-                      autoFocus
-                      value={name}
-                      disabled={busy}
-                      maxLength={120}
-                      required
-                      onChange={(event) => setName(event.target.value)}
-                    />
-                  </label>
-                ) : (
-                  <label>
-                    Destination
-                    <select
-                      value={destination}
-                      disabled={
-                        busy ||
-                        (action.mode === 'move' &&
-                          action.item?.access === 'admin' &&
-                          (loadingDestinations || moveFolders.length === 0))
-                      }
-                      onChange={(event) => setDestination(event.target.value)}
-                    >
-                      {action.mode === 'move' && action.item?.access === 'admin' ? (
-                        <option value="" disabled>
-                          Choose a folder
-                        </option>
-                      ) : (
-                        <option value="">My files</option>
-                      )}
-                      {(action.mode === 'move' && action.item?.access === 'admin'
-                        ? moveFolders.map((item) => ({ item, path: [item] }))
-                        : folders
-                      )
-                        .filter(({ path }) => !path.some((item) => item.id === action.item!.id))
-                        .map(({ item, path }) => (
-                          <option key={item.id} value={item.id}>
-                            {path.map((entry) => entry.name).join(' / ')}
-                          </option>
-                        ))}
-                    </select>
-                  </label>
-                )}
-                {action.mode === 'move' &&
-                  action.item?.access === 'admin' &&
-                  (loadingDestinations ? (
-                    <p role="status">Loading authorized folders…</p>
-                  ) : moveFolders.length === 0 ? (
-                    <p role="status">
-                      No authorized folders are available. Ask the Owner to grant File admin access
-                      to a destination folder.
-                    </p>
-                  ) : null)}
-                <div className="item-actions">
-                  <button
-                    className="primary"
-                    disabled={
-                      busy ||
-                      (action.mode === 'move' &&
-                        action.item?.access === 'admin' &&
-                        loadingDestinations) ||
-                      (action.mode === 'move' && action.item?.access === 'admin' && !destination) ||
-                      (action.mode !== 'move' && action.mode !== 'file' && !name.trim())
-                    }
-                  >
-                    {action.mode === 'new' ? 'Create' : 'Save'}
-                  </button>
-                  <button
-                    type="button"
-                    disabled={busy}
-                    onClick={() => {
-                      setAction(null);
-                      setError('');
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            )}
-            {tagging && (
-              <DocumentTags
-                key={tagging.id}
-                item={tagging}
-                onClose={() => setTagging(null)}
-                onChanged={(item) => {
-                  setItems((previous) =>
-                    previous.map((entry) => (entry.id === item.id ? item : entry)),
-                  );
-                  setViewed((previous) =>
-                    previous.map((entry) => (entry.id === item.id ? item : entry)),
-                  );
-                  setTagging(item);
-                }}
-              />
-            )}
-            {sharing && (
-              <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />
-            )}
-            {error && <p role="alert">{error}</p>}
-          </div>
-          {/* A background file-list failure must not move the active document.
-              Keep its alert and retry available after the editor instead. */}
-          {liveEditor && sharedFailure}
-        </section>
-      </div>
-    </>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {tagging && (
+        <>
+          <DocumentTags
+            key={tagging.id}
+            item={tagging}
+            onClose={() => setTagging(null)}
+            onChanged={(item) => {
+              setItems((previous) =>
+                previous.map((entry) => (entry.id === item.id ? item : entry)),
+              );
+              setViewed((previous) =>
+                previous.map((entry) => (entry.id === item.id ? item : entry)),
+              );
+              setTagging(item);
+              if (browsing) setRefresh((value) => value + 1);
+              if (item.access !== 'owner') void shared.refresh();
+            }}
+          />
+        </>
+      )}
+      {sharing && (
+        <Modal
+          title={`Share ${sharing.name}`}
+          icon="share"
+          open
+          onOpenChange={(open) => {
+            if (!open) setSharing(null);
+          }}
+        >
+          <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />
+        </Modal>
+      )}
+      {spaceAction && (
+        <SpaceRootActions
+          key={`${spaceAction.item.id}:${spaceAction.mode}`}
+          item={spaceAction.item}
+          initialMode={spaceAction.mode}
+          onClose={() => setSpaceAction(null)}
+          folders={items.filter(
+            (entry): entry is WorkspaceItem => entry.kind === 'folder' && entry.access === 'owner',
+          )}
+          beforeChange={() => navigation.allow()}
+          onChanged={(item) => {
+            setItems((previous) => previous.map((entry) => (entry.id === item.id ? item : entry)));
+            setViewed((previous) => previous.map((entry) => (entry.id === item.id ? item : entry)));
+            setSpaceAction(null);
+            setRefresh((value) => value + 1);
+            if (item.access !== 'owner') void shared.refresh();
+          }}
+          onTrashed={() => {
+            setSpaceAction(null);
+            setRefresh((value) => value + 1);
+            void reloadItems().catch((failure) => setError(failure.message));
+            void shared.refresh();
+          }}
+        />
+      )}
+      {error && !action && <p role="alert">{error}</p>}
+      {liveEditor && sharedFailure}
+    </section>
   );
 }

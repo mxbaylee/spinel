@@ -153,7 +153,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
   };
   try {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: /^Theme budget/ })).toBeVisible();
     await mode('light');
     await capture('dashboard-light');

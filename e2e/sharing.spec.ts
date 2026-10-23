@@ -46,6 +46,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
   for (const tab of [page, other]) tab.on('pageerror', (e) => errors.push(e.message));
   async function create(name: string, type: string) {
     await page.getByRole('button', { name: 'New', exact: true }).click();
+    await page.getByRole('menuitem', { name: type, exact: true }).click();
     const form = page.getByRole('form', { name: 'New item' });
     await form.getByRole('combobox', { name: 'Type', exact: true }).selectOption({ label: type });
     await form.getByLabel('Name', { exact: true }).fill(name);
@@ -77,20 +78,18 @@ test('owner shares future folder contents, collaborator edits, and open editors 
   try {
     await page.goto('/');
     await create('Shared plans', 'Folder');
-    await page.getByRole('button', { name: 'Share Shared plans', exact: true }).click();
+    await page.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
     await grant('editor');
     const address = await shareRegion.getByLabel('Share address').inputValue();
     await other.goto(address);
     await expect(other.getByRole('heading', { name: 'Shared plans', exact: true })).toBeVisible();
     await expect(other.getByRole('button', { name: 'New', exact: true })).toBeHidden();
-    await expect(
-      other.getByRole('button', { name: 'Share Shared plans', exact: true }),
-    ).toBeHidden();
+    await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    await expect(other.getByRole('menuitem', { name: 'Share…', exact: true })).toHaveCount(0);
+    await other.keyboard.press('Escape');
     await shareRegion.getByRole('button', { name: 'Close sharing' }).click();
-    await page
-      .getByRole('complementary', { name: 'Folders' })
-      .getByRole('button', { name: 'Shared plans', exact: true })
-      .click();
+    await page.getByRole('button', { name: 'Shared plans Folder', exact: true }).click();
     // Create both documents after the grant to prove inheritance applies to future children.
     await create('Nested', 'Folder');
     await page.getByRole('button', { name: 'Nested Folder', exact: true }).click();
@@ -116,8 +115,10 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       .getByRole('navigation', { name: 'Breadcrumb' })
       .getByRole('button', { name: 'Shared plans', exact: true })
       .click();
-    await page.getByRole('button', { name: 'Share Shared plans', exact: true }).click();
-    await other.getByRole('button', { name: 'Refresh folder' }).click();
+    await page.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
+    await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    await other.getByRole('menuitem', { name: 'Refresh folder', exact: true }).click();
     await other.getByRole('button', { name: 'Nested Folder', exact: true }).click();
     await expect(
       other.getByRole('button', { name: 'Shared budget Sheet', exact: true }),

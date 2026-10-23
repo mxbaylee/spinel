@@ -198,10 +198,16 @@ for (const kind of ['sheet', 'doc'] as const) {
         await printed.close();
       }
       await page.goto(`/?item=${folder.id}`);
+      await page.getByRole('button', { name: 'New', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Import file…', exact: true }).click();
       await expect(
         page.getByRole('button', { name: 'Import Univer file', exact: true }),
       ).toBeVisible();
       await expect(page.getByLabel('Univer file', { exact: true })).toBeHidden();
+      await page
+        .getByRole('dialog', { name: 'Import file', exact: true })
+        .getByRole('button', { name: 'Close dialog', exact: true })
+        .click();
       const drop = async (target: string, filename: string, text: string) => {
         const transfer = await page.evaluateHandle(
           ({ filename, text }) => {
@@ -218,10 +224,21 @@ for (const kind of ['sheet', 'doc'] as const) {
         }
       };
       // The empty folder pane and sibling file list must both handle drops.
-      await drop('section.files', 'not-a-univer.pdf', '%PDF-');
+      await drop('section.dashboard-content', 'not-a-univer.pdf', '%PDF-');
       await expect(page.getByRole('alert')).toContainText('Only Univer JSON files can be imported');
-      await drop('ul.file-list', download.suggestedFilename(), bytes.toString());
-      const imported = page.locator('.file-list li').filter({ hasText: `Portable ${kind}` });
+      await page
+        .getByRole('dialog', { name: 'Import file', exact: true })
+        .getByRole('button', { name: 'Close dialog', exact: true })
+        .click();
+      await drop(
+        '[role="list"][aria-label="Folder contents"]',
+        download.suggestedFilename(),
+        bytes.toString(),
+      );
+      const imported = page
+        .getByRole('list', { name: 'Folder contents', exact: true })
+        .getByRole('listitem')
+        .filter({ hasText: `Portable ${kind}` });
       await expect(imported).toHaveCount(1);
       const copies = workspace.list(user.id).filter((entry) => entry.parentId === folder.id);
       expect(copies).toHaveLength(1);
