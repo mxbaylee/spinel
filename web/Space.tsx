@@ -349,6 +349,10 @@ export function Space({
     (route.selection.kind === 'default' || route.selection.id === openPage.item.id);
   const visiblePage = pageMatchesRoute && (selection.item || dirty) ? openPage : null;
   const editorKey = visiblePage ? visiblePage.spaceId + '/' + visiblePage.item.id : null;
+  useEffect(() => {
+    setRootAction(null);
+    setOfflineOpen(false);
+  }, [editorKey]);
   const activeEditor = useRef(editorKey);
   activeEditor.current = editorKey;
   const onDirty = useCallback(
@@ -637,6 +641,7 @@ export function Space({
       onClose={() => setRootAction(null)}
       beforeChange={allow}
       onChanged={(item) => {
+        setRootAction(null);
         setTree((previous) =>
           previous && previous.space.id === item.id
             ? {
@@ -892,6 +897,7 @@ export function Space({
   );
   return visiblePage ? (
     <EditorFrame
+      documentKey={editorKey!}
       name={visiblePage.item.name}
       onRename={
         !guest && canAdminister(currentTree?.access) && canEdit

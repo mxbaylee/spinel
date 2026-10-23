@@ -299,8 +299,8 @@ export function Dashboard({
     });
     return () => cancelAnimationFrame(frame);
   }, [browsing, loaded, viewLoading, searchActive, currentId]);
-  const liveEditor =
-    !local && current && (current.kind === 'sheet' || current.kind === 'doc') ? current.id : null;
+  const framedEditor = current && (current.kind === 'sheet' || current.kind === 'doc');
+  const liveEditor = !local && framedEditor ? current.id : null;
   useEffect(() => {
     onConnectionState?.(liveEditor ? 'reconnecting' : null);
   }, [liveEditor, onConnectionState]);
@@ -578,7 +578,7 @@ export function Dashboard({
       );
   return (
     <section ref={dropTarget} className="dashboard-content" aria-label="Your files">
-      {!onPlaces && !liveEditor && (
+      {!onPlaces && !framedEditor && (
         <nav className="dashboard-places" aria-label="File places">
           <button onClick={() => navigate(null)} aria-current={!sharedOpen ? 'page' : undefined}>
             My files
@@ -713,7 +713,7 @@ export function Dashboard({
             />
           )}
         </>
-      ) : !liveEditor ? (
+      ) : !framedEditor ? (
         <>
           <nav aria-label="Breadcrumb" className="dashboard-breadcrumbs">
             <button onClick={() => navigate(null)}>My files</button>
@@ -735,7 +735,7 @@ export function Dashboard({
       {offline.message && (
         <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
       )}
-      {!liveEditor && sharedFailure}
+      {!framedEditor && sharedFailure}
       {!loaded || viewLoading || currentId !== viewId ? (
         <p role="status">
           {error ? 'Your files could not be loaded. Reload to try again.' : 'Loading your files…'}
@@ -1046,7 +1046,7 @@ export function Dashboard({
         />
       )}
       {error && !action && <p role="alert">{error}</p>}
-      {liveEditor && sharedFailure}
+      {framedEditor && sharedFailure}
     </section>
   );
 }

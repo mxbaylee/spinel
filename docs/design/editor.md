@@ -49,13 +49,14 @@ detail (version history, export) behind menus.
 
 ## Spinel today
 
-Collaborators, version names and exports still stack above the canvas in normal
-flow inside `.sheet-editor`. SPN-043 places the shared save
-control in a fixed title-adjacent slot across account, guest and Space editors;
-full messages and Retry open in its popover. The wider header migration remains
-SPN-049. Univer's own toolbar
-sits inside the canvas container. Connection behavior is maintained in
-[connection.md](../connection.md).
+The compact editor header places document identity, the shared save and
+connection controls, People and permitted document actions above the native
+canvas. People, versions, export and formula details open bounded dialogs;
+save messages and Retry stay in the shared status popover. Account, guest,
+Space and offline views share the frame while retaining their existing access
+rules. Theatre mode hides surrounding navigation without remounting the editor.
+Univer's own toolbar stays inside its container. Connection behavior is
+maintained in [connection.md](../connection.md).
 
 While an editor is open, background shared-file refresh failures keep their
 alert and Retry action after the editor. They must not insert a new row above

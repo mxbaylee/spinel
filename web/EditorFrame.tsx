@@ -50,6 +50,7 @@ export function EditorFrame({
   children,
   contextLabel,
   backLabel = 'Back to files',
+  documentKey,
 }: {
   name: string;
   connection: ConnectionState;
@@ -62,6 +63,7 @@ export function EditorFrame({
   children: ReactNode;
   contextLabel?: string;
   backLabel?: string;
+  documentKey?: string;
 }) {
   const [theatre, setTheatre] = useState(() => {
     try {
@@ -78,6 +80,13 @@ export function EditorFrame({
   const [error, setError] = useState('');
   const editing = useRef(false);
   const frame = useRef<HTMLElement>(null);
+  const identity = useRef({ key: documentKey });
+  if (identity.current.key !== documentKey) identity.current = { key: documentKey };
+  useEffect(() => {
+    setRenaming(false);
+    setBusy(false);
+    setError('');
+  }, [documentKey]);
   function choose(value: boolean) {
     setTheatre(value);
     try {
@@ -132,20 +141,25 @@ export function EditorFrame({
                   onSubmit={(event) => {
                     event.preventDefault();
                     if (!onRename || busy || !draft.trim()) return;
+                    const renamingIdentity = identity.current;
                     setBusy(true);
                     void onRename(draft.trim())
                       .then(() => {
+                        if (identity.current !== renamingIdentity) return;
                         setRenaming(false);
                         setError('');
                       })
-                      .catch((cause) =>
+                      .catch((cause) => {
+                        if (identity.current !== renamingIdentity) return;
                         setError(
                           cause instanceof Error
                             ? cause.message
                             : 'Could not rename this document.',
-                        ),
-                      )
-                      .finally(() => setBusy(false));
+                        );
+                      })
+                      .finally(() => {
+                        if (identity.current === renamingIdentity) setBusy(false);
+                      });
                   }}
                 >
                   <input
