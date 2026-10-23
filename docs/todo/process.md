@@ -278,10 +278,12 @@ Owner setup, once, in the repository settings:
 
 ## Commands
 
-If the memory watchdog prevents safe local testing, follow the owner-approved
-[CI-first exception](../run-backlog.md#2-implement-one-ticket): local typecheck,
-lint and backlog checks before a draft push; full unit/browser CI and the same
-independent review and merge gates afterward. Decision [#52](../implementation/backlog-workflow.md#legacy-decision-52-memory-watchdog-ci-first-exception), owner, chat 2026-10-18.
+CI may be the default for all checks, including typecheck, lint and backlog.
+Draft pushes do not require local checks first. Keep unverified work draft and
+retain every required CI, independent review and visual/merge gate. Local work
+still follows the [memory watchdog](../run-backlog.md#2-implement-one-ticket).
+Owner, chat 2026-10-23;
+[decision](../implementation/backlog-workflow.md#ci-as-the-default-validation-environment).
 
 ```bash
 npm run typecheck                          # type-check every .ts and .tsx file
