@@ -37,6 +37,22 @@ mail records were left intact. Cached DNS answers may persist until expiry.
 
 ## Topology
 
+### Changing the application hostname
+
+When the configured hostname changes, old passkeys may no longer work at the new
+origin. Configure the canonical `APP_ORIGIN` and HTTPS proxy together, restart
+the application with that origin, and use the server console with the same
+database/environment to run `npm run setup -- --recover-admin`. Choose the
+existing active admin by `--id` or exact `--name` if there is more than one.
+Open the printed link at the new origin and register a new passkey. Afterward,
+issue recovery invitations for existing members so they enroll on the new
+hostname. Their account IDs, documents and permissions remain unchanged. Never
+reset the database or rerun first-admin setup to solve a hostname lockout.
+See [console recovery](setup.md#recover-an-existing-admin). Public HTTPS
+redeployment timing and external acceptance remain SPN-038.
+
+### Current private deployment
+
 The Node container binds only `127.0.0.1:3000` on the Linux host. Caddy binds only
 the machine’s Tailscale IPv4 address on TCP 443 and proxies HTTP and WebSockets to
 Node. Caddy requires TLS 1.3, enables HTTP/1.1 and HTTP/2, disables automatic port 80 redirects

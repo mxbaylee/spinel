@@ -33,7 +33,10 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
           body: JSON.stringify(body),
         },
   );
-  if (response.status === 401 && !['/sign-in', '/setup', '/invite'].includes(location.pathname))
+  if (
+    response.status === 401 &&
+    !['/sign-in', '/setup', '/recover-admin', '/invite'].includes(location.pathname)
+  )
     location.assign(signInPath());
   if (response.status === 204) return undefined as T;
   const data = await response.json();
