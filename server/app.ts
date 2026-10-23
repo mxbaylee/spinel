@@ -16,6 +16,7 @@ import { dirname, join, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { DiagnosticsStore } from '../src/server/diagnostics/store.ts';
 import { diagnosticsRoutes } from '../src/server/diagnostics/routes.ts';
+import { diagnosticsConfiguration } from '../src/server/diagnostics/configuration.ts';
 import { HealthJobs } from '../src/server/health/jobs.ts';
 import { HealthMonitor } from '../src/server/health/monitor.ts';
 import { healthRoutes } from '../src/server/health/routes.ts';
@@ -64,10 +65,7 @@ export async function createApp(options: AppOptions) {
   let diagnostics: DiagnosticsStore | undefined;
 
   try {
-    diagnostics = new DiagnosticsStore({
-      path: join(dirname(options.databasePath), 'diagnostics.sqlite'),
-      build: options.image ?? 'development',
-    });
+    diagnostics = new DiagnosticsStore(diagnosticsConfiguration(options.databasePath, options.image));
     const jobs = new HealthJobs({ observe: ({ job, success, durationMs, runId }) => {
       if (job === 'space-trash-expiry') return;
       diagnostics!.emit({ name: 'job.result', details: {

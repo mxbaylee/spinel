@@ -11,10 +11,10 @@ export const BACKUP_UPLOAD_LIMIT = 5 * GiB;
 async function text(path: string) {
   try { return await readFile(path, 'utf8'); } catch { return null; }
 }
-function positive(value: string | null) {
+function nonnegative(value: string | null) {
   if (value === null || !/^\d+\s*$/.test(value)) return null;
   const parsed = Number(value);
-  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : null;
 }
 export function memoryFromProc(contents: string | null, fallback: { total: number; free: number }) {
   const field = (name: string) => {
@@ -34,7 +34,7 @@ export async function sampleMemory() {
   return {
     ...memoryFromProc(proc, { total: totalmem(), free: freemem() }),
     processRssBytes: process.memoryUsage().rss,
-    containerUsedBytes: positive(current), containerLimitBytes: positive(limit),
+    containerUsedBytes: nonnegative(current), containerLimitBytes: nonnegative(limit) || null,
   };
 }
 

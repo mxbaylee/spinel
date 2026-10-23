@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { mkdtempSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { linkSync, mkdtempSync, readdirSync, rmSync, statSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from 'vitest';
@@ -10,6 +10,20 @@ import { DiagnosticsStore, DIAGNOSTICS_LIMITS } from './store.ts';
 const event = { name: 'operation.failed', level: 'error', details: { operation: 'document-open', reason: 'unavailable' } } as const;
 const context = { component: 'editor' } as const;
 const record = (): DiagnosticRecord => ({ id: randomUUID(), occurredAt: 1234, event, context });
+
+test.each(['same', 'symlink', 'hardlink'])('rejects an empty application database through a %s path before creating diagnostics tables', async (kind) => {
+  const directory = mkdtempSync(join(tmpdir(), 'spinel-diagnostics-alias-'));
+  const applicationPath = join(directory, 'app.sqlite');
+  const app = new DatabaseSync(applicationPath);
+  const path = kind === 'same' ? applicationPath : join(directory, 'diagnostics.sqlite');
+  if (kind === 'symlink') symlinkSync(applicationPath, path);
+  if (kind === 'hardlink') linkSync(applicationPath, path);
+  const store = new DiagnosticsStore({ path, applicationPath, build: 'test-build' });
+  try {
+    expect(store.status().available).toBe(false);
+    expect(app.prepare("SELECT name FROM sqlite_master WHERE type='table'").all()).toEqual([]);
+  } finally { await store.close(); app.close(); rmSync(directory, { recursive: true, force: true }); }
+});
 function fixture() {
   const directory = mkdtempSync(join(tmpdir(), 'spinel-diagnostics-'));
   const path = join(directory, 'diagnostics.sqlite');

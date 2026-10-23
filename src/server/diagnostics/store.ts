@@ -47,12 +47,23 @@ export class DiagnosticsStore {
   private closed = false;
   private readonly dropped: DiagnosticsStatus['dropped'] = { invalid: 0, queue: 0, storage: 0, unavailable: 0, stale: 0 };
 
-  constructor(options: { path: string; build: string; now?: () => number }) {
+  constructor(options: { path: string; build: string; now?: () => number; applicationPath?: string }) {
     this.path = resolve(options.path);
     // Deployment build only: never copy request values, branches or URLs here.
     this.build = /^[a-zA-Z0-9._-]{1,64}$/.test(options.build) ? options.build : 'unknown';
     this.now = options.now ?? Date.now;
     try {
+      if (options.applicationPath) {
+        if (this.path === resolve(options.applicationPath)) throw new Error('Application storage is not diagnostics.');
+        // Existing aliases (including hard links) must never become an export source.
+        const application = statSync(options.applicationPath);
+        let target;
+        try { target = statSync(this.path); } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+        }
+        if (target && target.dev === application.dev && target.ino === application.ino)
+          throw new Error('Application storage is not diagnostics.');
+      }
       mkdirSync(dirname(this.path), { recursive: true, mode: 0o700 });
       const database = new DatabaseSync(this.path);
       this.database = database;
