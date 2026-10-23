@@ -6,7 +6,13 @@ import { SaveStatus } from './SaveStatus.tsx';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
 import { FormulaReadout } from './DocFormulas.tsx';
 
-function Fixture({ dialog = false }: { dialog?: boolean }) {
+function Fixture({
+  dialog = false,
+  printFailure = false,
+}: {
+  dialog?: boolean;
+  printFailure?: boolean;
+}) {
   const chrome = useEditorChrome();
   return (
     <section className="sheet-editor" aria-label="Editor geometry fixture">
@@ -29,7 +35,9 @@ function Fixture({ dialog = false }: { dialog?: boolean }) {
           { id: 'b', name: 'Sam Rivera', color: '#087f5b' },
         ]}
         saved
-        print={async () => {}}
+        print={async () => {
+          if (printFailure) throw new Error('Could not open printing.');
+        }}
       />
       <div className="univer-container" style={{ background: 'var(--sp-panel)', padding: 24 }}>
         Geometry fixture. Native selection and rendering are checked in Playwright.
@@ -101,13 +109,49 @@ export const Phone: Story = {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByRole('button', { name: 'Save details: Saved' }).getBoundingClientRect().width,
-    ).toBe(44);
+    ).toBe(window.innerWidth <= 600 ? 44 : 144);
     await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   },
 };
 export const Guest: Story = { args: { guest: true, onBack: undefined, access: 'View only' } };
 export const Reconnecting: Story = { args: { connection: 'reconnecting' } };
 export const Rename: Story = { args: { onRename: fn(async () => {}) } };
+export const VersionsDialog: Story = {
+  parameters: { api: { 'GET /api/items/fixture/history': { versions: [], canName: true } } },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
+    await userEvent.click(within(document.body).getByRole('menuitem', { name: 'Versions' }));
+    const dialog = await within(document.body).findByRole('dialog', { name: 'Versions' });
+    await expect(
+      await within(dialog).findByRole('button', { name: 'Name this version' }),
+    ).toBeEnabled();
+    await expect(within(dialog).getByRole('button', { name: 'Return to document' })).toBeVisible();
+  },
+};
+export const ExportDialog: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
+    await userEvent.click(within(document.body).getByRole('menuitem', { name: 'Export' }));
+    const dialog = await within(document.body).findByRole('dialog', { name: 'Export' });
+    await expect(
+      within(dialog).getByRole('button', { name: 'Download Univer file' }),
+    ).toBeEnabled();
+    await expect(within(dialog).getByRole('button', { name: 'Print / save PDF' })).toBeEnabled();
+  },
+};
+export const PrintFailure: Story = {
+  args: { children: <Fixture printFailure /> },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
+    await userEvent.click(within(document.body).getByRole('menuitem', { name: 'Export' }));
+    const dialog = await within(document.body).findByRole('dialog', { name: 'Export' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Print / save PDF' }));
+    await expect(await within(document.body).findByRole('alert')).toHaveTextContent(
+      'Could not open printing.',
+    );
+    await expect(within(document.body).getByRole('dialog', { name: 'Export' })).toBeVisible();
+  },
+};
 export const OfflineFormulas: Story = {
   args: { connection: 'offline', access: 'Read only', children: <OfflineFixture /> },
   play: async ({ canvasElement }) => {
