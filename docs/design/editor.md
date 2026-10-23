@@ -32,6 +32,13 @@ the native snapshot; the supported interim presentation retains native zoom/pan,
 with further mobile layout work in SPN-072. Native browser and visual acceptance
 are recorded separately from these source choices.
 
+SPN-085 applies the approved History and HistoryCalendar hierarchy to the isolated
+native history browser: desktop chooser beside preview, phone chooser disclosure,
+always-visible selected UTC checkpoint, and semantic naming/restore dialogs.
+The [implementation record](../implementation/SPN-085.md) separates these source
+choices from pending runtime and visual acceptance; capture, retention and restore
+generation semantics remain in [history.md](../history.md).
+
 ## How others do it
 
 |             | Google Sheets                                                         | Excel for the web                    | Numbers for iCloud                     | Zoho Sheet                    |

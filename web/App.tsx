@@ -456,11 +456,11 @@ export function App() {
   }
   return (
     <div
-      className={`workspace${settings ? ' profile-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
+      className={`workspace${settings || location.pathname === '/preview' ? ' profile-workspace' : ''}${location.pathname === '/preview' ? ' history-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
     >
       <Rail
         user={user}
-        compact={settings}
+        compact={settings || location.pathname === '/preview'}
         files={filePlaces}
         navigation={navigation}
         onSignOut={() => void signOut()}

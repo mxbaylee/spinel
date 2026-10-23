@@ -393,8 +393,8 @@ test('Sheet images survive browser export/import and restore, with scoped revoca
       page.getByRole('button', { name: 'Restore this version', exact: true }),
     ).toBeEnabled({ timeout: 30_000 });
     await visible(page);
-    page.once('dialog', (dialog) => void dialog.accept());
     await page.getByRole('button', { name: 'Restore this version', exact: true }).click();
+    await page.getByRole('dialog', { name: /Restore .* for everyone\?/ }).getByRole('button', { name: 'Restore version', exact: true }).click();
     await saved();
     await visible(page);
     const restored = await read();

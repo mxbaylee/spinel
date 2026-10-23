@@ -95,16 +95,30 @@ test('touch history timeline and calendar preview retained choices without chang
       await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
     };
     await ready();
+    const chooser = page.getByRole('button', { name: /^Choose version/ });
+    await expect(chooser).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Saved 4');
+    await chooser.tap();
     const slider = page.getByRole('slider', { name: 'Snapshot timeline', exact: true });
     await slider.scrollIntoViewIfNeeded();
     const box = (await slider.boundingBox())!;
+    let releasePreview!: () => void;
+    const heldPreview = new Promise<void>((resolve) => { releasePreview = resolve; });
+    const selectedRoute = `**/history/${checkpoints[4]}`;
+    await page.route(selectedRoute, async (route) => { await heldPreview; await route.continue(); });
     const nextResponse = page.waitForResponse(
       (response) =>
         response.url().endsWith(`/history/${checkpoints[4]}`) &&
         response.request().method() === 'GET',
     );
     await page.touchscreen.tap(box.x + box.width - 3, box.y + box.height / 2);
+    // The header portal must not retain the old preview's restore action while
+    // the newly selected checkpoint is waiting for its authorized snapshot.
+    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Saved 5');
+    await expect(page.getByRole('button', { name: 'Restore this version', exact: true })).toHaveCount(0);
+    releasePreview();
     expect((await (await nextResponse).json()).snapshot.body.dataStream).toContain('Checkpoint 5');
+    await page.unroute(selectedRoute);
     await ready();
     await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Saved 5');
     await slider.focus();
@@ -151,10 +165,31 @@ test('touch history timeline and calendar preview retained choices without chang
       path: `test-results/theme-screenshots/history-calendar-${info.project.name}.png`,
       fullPage: true,
     });
+    await page.getByRole('button', { name: /Version actions for .*Saved 2/ }).click();
+    await page.getByRole('menuitem', { name: 'Rename version…', exact: true }).click();
+    const naming = page.getByRole('dialog', { name: 'Name saved version', exact: true });
+    await naming.getByRole('textbox', { name: 'Version name', exact: true }).fill('Chosen older checkpoint');
+    await naming.getByRole('button', { name: 'Save version name', exact: true }).click();
+    await expect(naming).not.toBeVisible();
+    await ready();
+    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Chosen older checkpoint');
+    await page.getByRole('button', { name: /Version actions for .*Chosen older checkpoint/ }).click();
+    await page.getByRole('menuitem', { name: 'Remove name', exact: true }).click();
+    await ready();
+    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Unnamed version');
+    await expect(versions.locator('option')).toHaveCount(2);
+    await page.getByRole('button', { name: 'Name current version…', exact: true }).click();
+    const currentName = page.getByRole('dialog', { name: 'Name current version', exact: true });
+    await expect(currentName).toContainText('Unsaved edits in another tab are not included.');
+    await currentName.getByRole('textbox', { name: 'Version name', exact: true }).fill('Current confirmed content');
+    await currentName.getByRole('button', { name: 'Save version name', exact: true }).click();
+    await expect(currentName).not.toBeVisible();
+    await ready();
+    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Current confirmed content');
     expect(await (await context.request.get(`/api/items/${item.id}/doc`)).json()).toEqual(live);
     await context.clearCookies();
     await context.addCookies([cookie(viewer.id)]);
-    await page.reload();
+    await page.goto(`/preview?item=${item.id}&version=${checkpoints[1]}`);
     await expect(page.getByRole('heading', { name: 'Preview — History journal' })).toBeVisible({
       timeout: 30_000,
     });
@@ -162,6 +197,8 @@ test('touch history timeline and calendar preview retained choices without chang
     await expect(
       page.getByRole('button', { name: 'Restore this version', exact: true }),
     ).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Name current version…', exact: true })).toHaveCount(0);
+    await chooser.tap();
     await expect(
       page.getByRole('combobox', { name: `Version on ${yesterday}`, exact: true }),
     ).toHaveValue(checkpoints[1]);

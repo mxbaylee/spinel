@@ -815,7 +815,7 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
       page.getByRole('heading', { name: 'Document history', exact: true }),
     ).toBeVisible();
     await expect(
-      preview.getByRole('button', { name: 'Restore this version', exact: true }),
+      page.getByRole('button', { name: 'Restore this version', exact: true }),
     ).toBeEnabled({ timeout: 30_000 });
     await expect(
       preview.getByRole('link', { name: 'Back to live document', exact: true }),

@@ -117,8 +117,8 @@ for (const kind of ['sheet', 'doc'] as const) {
         await offline.setOffline(true);
         await edit(other, 'Old offline edit', 'B2');
       }
-      preview.once('dialog', (dialog) => void dialog.accept());
       await preview.getByRole('button', { name: 'Restore this version' }).click();
+      await preview.getByRole('dialog', { name: /Restore .* for everyone\?/ }).getByRole('button', { name: 'Restore version', exact: true }).click();
       await saved(preview);
       const restored = await read();
       expect(restored.revision).toBe(latest.revision + 1);
@@ -153,8 +153,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect(undo.getByRole('button', { name: 'Restore this version' })).toBeEnabled({
         timeout: 30_000,
       });
-      undo.once('dialog', (dialog) => void dialog.accept());
       await undo.getByRole('button', { name: 'Restore this version' }).click();
+      await undo.getByRole('dialog', { name: /Restore .* for everyone\?/ }).getByRole('button', { name: 'Restore version', exact: true }).click();
       await saved(undo);
       expect(JSON.stringify((await read()).snapshot)).toContain('Latest collaborative change');
       await undo.close();
