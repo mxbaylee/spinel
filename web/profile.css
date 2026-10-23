@@ -125,6 +125,8 @@
   gap: 12px;
 }
 .profile-colors button {
+  display: grid;
+  place-items: center;
   min-width: 44px;
   min-height: 44px;
   padding: 8px;

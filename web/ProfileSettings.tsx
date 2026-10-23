@@ -243,6 +243,7 @@ export function ProfileSettings({
                 type="button"
                 aria-pressed={profile.color === preset.id}
                 aria-label={`Profile colour: ${preset.label}`}
+                title={preset.label}
                 style={{
                   background: `var(--fill-${preset.id}-bg)`,
                   color: `var(--fill-${preset.id}-fg)`,
@@ -252,7 +253,7 @@ export function ProfileSettings({
                   setPickingColor(false);
                 }}
               >
-                {preset.label}
+                <ProfileIcon icon={profile.icon} />
               </button>
             ))}
           </div>
