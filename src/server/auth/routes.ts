@@ -5,6 +5,7 @@ import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simp
 import { AuthError, AuthStore, COOKIE_NAME } from './store.ts';
 import { AuthService } from './service.ts';
 import { SetupService } from './setup.ts';
+import { ConsoleRecovery } from './console-recovery.ts';
 import { InvitationService } from './invitations.ts';
 import type { Session } from './store.ts';
 import { AdminStore } from './admin.ts';
@@ -37,6 +38,7 @@ export function authRoutes(
   const service = new AuthService(store, origin);
   const profiles = new Profiles(store);
   const setup = new SetupService(store, origin);
+  const recovery = new ConsoleRecovery(store, origin);
   const invites = new InvitationService(store, origin);
   const admin = new AdminStore(store, invites);
   const ownership = new OwnershipTransfer(store);
@@ -225,6 +227,40 @@ export function authRoutes(
     );
     setSessionCookie(response, result.token, result.session.expires_at);
     response.json({ redirect: result.user.is_admin ? '/admin' : '/' });
+  });
+  router.post('/recover-admin/details', (request, response) => {
+    const id = request.body?.setupId;
+    if (typeof id !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(id))
+      throw new AuthError(400, 'Open the recovery link printed on the server.');
+    response.json({ name: recovery.active(id).user.name });
+  });
+  router.post('/recover-admin/options', async (request, response) => {
+    const id = request.body?.setupId;
+    if (typeof id !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(id))
+      throw new AuthError(400, 'Open the recovery link printed on the server.');
+    recovery.active(id);
+    store.checkCapacity();
+    let session = store.session(cookieToken(request));
+    if (!session) {
+      const created = store.createSession(null);
+      session = created.session;
+      setSessionCookie(response, created.token, session.expires_at);
+    }
+    response.json(await recovery.options(session, id));
+  });
+  router.post('/recover-admin/verify', async (request, response) => {
+    const body = payload(request);
+    if (typeof request.body.setupId !== 'string' || typeof request.body.proof !== 'string')
+      throw new AuthError(400, 'Invalid recovery response.');
+    const result = await recovery.claim(
+      requireSession(request),
+      request.body.setupId,
+      body.challengeId,
+      body.response,
+      request.body.proof,
+    );
+    setSessionCookie(response, result.token, result.session.expires_at);
+    response.json({ redirect: '/admin' });
   });
   router.post('/setup/options', async (request, response) => {
     const id = request.body?.setupId;

@@ -8,9 +8,10 @@ export function setupProofMessage(
     id: string;
     response: { attestationObject: string; clientDataJSON: string };
   },
+  recovery = false,
 ) {
   return JSON.stringify([
-    'spinel/setup/v1',
+    recovery ? 'spinel/admin-recovery/v1' : 'spinel/setup/v1',
     origin,
     setupId,
     challenge,
