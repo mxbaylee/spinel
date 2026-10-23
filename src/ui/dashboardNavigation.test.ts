@@ -6,6 +6,7 @@ import {
   dashboardReturnHref,
   dashboardSession,
   parseDashboardRetrieval,
+  readDashboardReturn,
   rememberDashboardRetrieval,
   restoreDashboardRetrieval,
   retrievalHref,
@@ -73,6 +74,21 @@ test('explicit Files return is exact-target and consumed once; a mistaken target
   expect(dashboardReturnHref('owner', storage)).toBe('/?shared=1&files-return=1');
   expect(consumeDashboardReturn('owner', '/?shared=1', storage)).toEqual(shared);
   expect(consumeDashboardReturn('owner', '/?shared=1', storage)).toBeNull();
+});
+
+test('a repeated render reads the return hint until commit and history survives consumption', () => {
+  const storage = memory();
+  rememberDashboardRetrieval('owner', value, storage);
+  const target = retrievalHref(value);
+  const first = readDashboardReturn('owner', target, storage);
+  expect(first?.value).toEqual(value);
+  expect(readDashboardReturn('owner', target, storage)).toEqual(first);
+  expect(readDashboardReturn('owner', '/', storage)).toBeNull();
+  expect(consumeDashboardReturn('owner', target, storage)).toEqual(value);
+  expect(readDashboardReturn('owner', target, storage)).toBeNull();
+  expect(restoreDashboardRetrieval('owner', first, target, storage)).toEqual(value);
+  clearDashboardNavigation(storage);
+  expect(restoreDashboardRetrieval('owner', first, target, storage)).toBeNull();
 });
 
 test('invalid drafts are preserved without truncation but oversized persistence is rejected', () => {

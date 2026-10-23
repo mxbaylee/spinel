@@ -16,6 +16,7 @@ import type { Action as MenuAction } from '../src/ui/redesign/Controls.tsx';
 import {
   consumeDashboardReturn,
   dashboardSession,
+  readDashboardReturn,
   rememberDashboardRetrieval,
   restoreDashboardRetrieval,
   retrievalHref,
@@ -91,18 +92,30 @@ export function Dashboard({
   onOpen?: (item: FileItem) => void;
   onPlaces?: (places: { shared: boolean; open: (shared: boolean) => void } | null) => void;
 }) {
-  const [initial] = useState(() => {
+  const [initialNavigation] = useState(() => {
     dashboardSession(user.id);
     const url = new URL(location.href);
     const returning = url.searchParams.get('files-return') === '1';
     url.searchParams.delete('files-return');
     const target = `${url.pathname}${url.search}`;
+    const envelope = returning && !local ? readDashboardReturn(user.id, target) : null;
     const value = returning
-      ? consumeDashboardReturn(user.id, target)
+      ? (envelope?.value ?? null)
       : restoreDashboardRetrieval(user.id, history.state?.spinelDashboard, target);
-    if (returning) history.replaceState(history.state, '', target);
-    return local ? null : value;
+    return { value: local ? null : value, envelope, returning, target };
   });
+  const initial = initialNavigation.value;
+  useEffect(() => {
+    if (!initialNavigation.returning) return;
+    // Commit the validated hint to history before consuming it. StrictMode and
+    // later remounts must not lose the search while removing the return marker.
+    history.replaceState(
+      { ...history.state, spinelDashboard: initialNavigation.envelope },
+      '',
+      initialNavigation.target,
+    );
+    consumeDashboardReturn(user.id, initialNavigation.target);
+  }, []);
   const dropTarget = useRef<HTMLElement>(null);
   const [query, setQuery] = useState<SearchQuery>(initial?.query ?? { ...emptySearch });
   const [draft, setDraft] = useState(initial?.draft ?? '');

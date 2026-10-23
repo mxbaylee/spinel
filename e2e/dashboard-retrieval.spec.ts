@@ -73,6 +73,11 @@ test('folder search preserves draft, scope, view and scroll across browser Back 
     await expect(page).toHaveURL(new RegExp(`item=${folder.id}$`));
     await expect(query).toHaveValue('Research type:space');
     await expect(page.getByRole('radio', { name: 'Grid', exact: true })).toBeChecked();
+    // Committing an explicit return consumes the tab hint, while this history
+    // entry keeps its search through StrictMode initialization and a reload.
+    await page.reload();
+    await expect(query).toHaveValue('Research type:space');
+    await expect(page.getByRole('radio', { name: 'Grid', exact: true })).toBeChecked();
     await expect(
       page.getByRole('button', { name: 'Open result Research Space', exact: true }),
     ).toBeVisible();

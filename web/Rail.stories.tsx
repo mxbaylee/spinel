@@ -62,7 +62,32 @@ export const FilesCollapsed: Story = {
     await expect(canvas.getByRole('button', { name: 'Shared with me' })).toBeVisible();
   },
 };
-export const FilesPhone: Story = { ...Files, ...Phone };
+export const FilesPhone: Story = {
+  ...Files,
+  ...Phone,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Appearance and profile remain direct actions even before the drawer opens.
+    const profile = canvas.getByRole('link', { name: 'Your profile' });
+    await expect(canvas.getAllByRole('link', { name: 'Your profile' })).toHaveLength(1);
+    await expect(profile).toBeVisible();
+    const controls = [
+      profile,
+      ...['Follow system', 'Light', 'Dark'].map((name) => canvas.getByRole('radio', { name })),
+    ];
+    for (const control of controls) {
+      await expect(control).toBeVisible();
+      const bounds = control.getBoundingClientRect();
+      await expect(bounds.left).toBeGreaterThanOrEqual(0);
+      await expect(bounds.right).toBeLessThanOrEqual(window.innerWidth);
+      if (window.innerWidth <= 640) {
+        await expect(bounds.width).toBeGreaterThanOrEqual(44);
+        await expect(bounds.height).toBeGreaterThanOrEqual(44);
+      }
+    }
+    await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+  },
+};
 export const FilesDrawer: Story = {
   ...FilesPhone,
   play: async ({ canvasElement }) => {
@@ -73,6 +98,9 @@ export const FilesDrawer: Story = {
       await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Browse files' }),
     );
     await expect(modal.getByRole('button', { name: 'My files' })).toBeVisible();
-    await expect(modal.getByRole('link', { name: 'Your profile' })).toBeVisible();
+    await expect(modal.getByRole('button', { name: 'Shared with me' })).toBeVisible();
+    await expect(modal.getByRole('button', { name: 'Sign out' })).toBeVisible();
+    await expect(modal.queryByRole('link', { name: 'Your profile' })).not.toBeInTheDocument();
+    await expect(modal.queryByRole('radiogroup', { name: 'Appearance' })).not.toBeInTheDocument();
   },
 };
