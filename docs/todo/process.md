@@ -225,6 +225,10 @@ A full owner-led grooming, recorded in a PR titled `🧹 Groom backlog …`:
 
 - Rechecks every ticket against the code: still true, still needed, sized right.
 - Captures context learned since the last grooming into the tickets it affects.
+- At the next manual grooming, review the existing Dependabot PRs for compatibility,
+  security, CI results and sensible grouping. Keep them open in the meantime; this
+  is not automatic merge approval or a request to schedule or force grooming.
+  Owner, chat 2026-10-23; [decision](../implementation/backlog-workflow.md#review-dependabot-prs-at-the-next-manual-grooming).
 - Checks persona coverage: walks each persona's journey (Operator, Owner,
   Collaborator, Link guest), rechecks each ticket's persona impacts, and files
   tickets for what is missing.
