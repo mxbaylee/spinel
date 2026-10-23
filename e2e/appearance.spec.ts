@@ -41,15 +41,16 @@ test('themes persist, follow the system, and recolour sheet presets without edit
   const user = auth.createUser(`Theme ${info.testId}`);
   const sheet = store.create(user.id, { name: 'Theme budget', kind: 'sheet', parentId: null });
   const doc = store.create(user.id, { name: 'Theme journal', kind: 'doc', parentId: null });
+  const richForeground = presetStyle('primary-soft', 'light').cl!;
   const richCell = {
     p: {
       id: 'rich-text',
-      documentStyle: {},
+      documentStyle: { textStyle: { cl: richForeground } },
       body: {
         dataStream: 'Rich text\r\n',
         textRuns: [
-          { st: 0, ed: 4, ts: { bl: 1 } },
-          { st: 5, ed: 9, ts: { it: 1 } },
+          { st: 0, ed: 4, ts: { bl: 1, cl: richForeground } },
+          { st: 5, ed: 9, ts: { it: 1, cl: richForeground } },
         ],
       },
     },
@@ -256,8 +257,12 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     const edited = await read();
     const rich = edited.snapshot.sheets[edited.snapshot.sheetOrder[0]].cellData![2]![0]!;
     expect(rich.p?.body?.dataStream).toContain('Rich text!');
-    expect(rich.p?.body?.textRuns?.some((run) => run.ts?.bl === 1)).toBe(true);
-    expect(rich.p?.body?.textRuns?.some((run) => run.ts?.it === 1)).toBe(true);
+    expect(rich.p?.body?.textRuns).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ ts: expect.objectContaining({ bl: 1, cl: richForeground }) }),
+        expect.objectContaining({ ts: expect.objectContaining({ it: 1, cl: richForeground }) }),
+      ]),
+    );
     for (const run of rich.p?.body?.textRuns ?? [])
       if (run.ts?.cl) expect(run.ts.cl.rgb).toBe('#8a1d3f');
     await page.emulateMedia({ colorScheme: 'light' });
