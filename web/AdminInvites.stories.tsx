@@ -200,14 +200,70 @@ const failedReadback =
     await expect(canvas.getByRole('status')).toHaveTextContent(
       operation === 'create' ? 'Invite created.' : 'Invite revoked.',
     );
-    if (operation === 'create')
+    if (operation === 'create') {
       await expect(canvas.getByRole('textbox', { name: 'New invite link' })).toHaveValue(
         'https://spinel.example.com/invite#new-once-only-address',
       );
+      await waitFor(() =>
+        expect(canvas.getByRole('textbox', { name: 'New invite link' })).toHaveFocus(),
+      );
+    }
   };
 export const CreatedButReadbackFailed: Story = {
   render: () => <InvitationReadbackFixture operation="create" />,
   play: failedReadback('create'),
+};
+export const CreatedWhileReadbackPending: Story = {
+  parameters: { api: loaded },
+  play: async ({ canvasElement }) => {
+    const original = globalThis.fetch;
+    let created = false;
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const fixtureFetch: typeof fetch = async (input, init) => {
+      const path = new URL(
+        typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
+        location.href,
+      ).pathname;
+      if (path === '/api/auth/invites' && init?.method === 'POST') {
+        created = true;
+        return Response.json({ url: 'https://spinel.example.com/invite#new-once-only-address' });
+      }
+      if (path === '/api/auth/invites' && created) {
+        await gate;
+        return Response.json({ error: 'Could not refresh invitations.' }, { status: 503 });
+      }
+      return original(input, init);
+    };
+    globalThis.fetch = fixtureFetch;
+    try {
+      const canvas = within(canvasElement);
+      const create = canvas.getByRole('button', { name: 'Create invite' });
+      await waitFor(() => expect(create).toBeEnabled());
+      await userEvent.click(create);
+      const dialog = await within(document.body).findByRole('dialog', { name: 'Create invite' });
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Create invite' }));
+      const address = await canvas.findByRole('textbox', { name: 'New invite link' });
+      await waitFor(() => expect(address).toHaveFocus());
+      await expect(address).toHaveValue('https://spinel.example.com/invite#new-once-only-address');
+      await expect(create).toBeDisabled();
+      await expect(canvas.getByText('Loading invites…')).toBeVisible();
+      release();
+      await waitFor(() =>
+        expect(canvas.getByRole('button', { name: 'Refresh invites' })).toBeEnabled(),
+      );
+      await expect(canvas.getByRole('alert')).toHaveTextContent(
+        'The current invitation list is unavailable.',
+      );
+      await expect(address).toHaveFocus();
+      await expect(create).toBeDisabled();
+    } finally {
+      release();
+      if (globalThis.fetch === fixtureFetch) globalThis.fetch = original;
+    }
+  },
 };
 export const RevokedButReadbackFailed: Story = {
   render: () => <InvitationReadbackFixture operation="revoke" />,

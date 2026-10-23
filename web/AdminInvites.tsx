@@ -251,81 +251,78 @@ export function AdminInvites({
       ) : fresh && !loading ? (
         <p>No invites yet.</p>
       ) : null}
-      {formOpen && (
-        <Modal
-          open
-          title="Create invite"
-          icon="person"
-          dismissDisabled={busy}
-          finalFocus={() =>
-            returnToAddress.current ? createdAddress.current : createButton.current
-          }
-          onOpenChange={(open) => {
-            if (!open) setFormOpen(false);
+      {/* A controlled close restores focus after the new address ref has mounted. */}
+      <Modal
+        open={formOpen}
+        title="Create invite"
+        icon="person"
+        dismissDisabled={busy}
+        finalFocus={() => (returnToAddress.current ? createdAddress.current : createButton.current)}
+        onOpenChange={(open) => {
+          if (!open) setFormOpen(false);
+        }}
+      >
+        <form
+          className="admin-invite-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void create();
           }}
         >
-          <form
-            className="admin-invite-form"
-            onSubmit={(event) => {
-              event.preventDefault();
-              void create();
-            }}
-          >
-            <label>
-              Invite for
-              <select
-                className="sp-control"
-                disabled={disabled}
-                value={recovery}
-                onChange={(event) => setRecovery(event.target.value)}
-              >
-                <option value="">A new account</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    Recover {adminAccountLabel(user, users)}
-                    {user.isAdmin ? ' (admin)' : ''}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Expires in
-              <select
-                className="sp-control"
-                disabled={disabled}
-                value={hours}
-                onChange={(event) => setHours(Number(event.target.value))}
-              >
-                <option value={1}>1 hour</option>
-                <option value={24}>1 day</option>
-                <option value={168}>7 days</option>
-                <option value={720}>30 days</option>
-              </select>
-            </label>
-            {recovery && (
-              <p>
-                Once accepted, recovery replaces this account’s old passkeys and signs out its other
-                devices.
-              </p>
-            )}
-            {fresh && invalidRecipient && (
-              <p role="alert">
-                This account is no longer eligible for recovery. Choose an active account.
-              </p>
-            )}
-            {loading && <p role="status">Loading invitation recipients…</p>}
-            {issues}
-            <div className="admin-dialog-actions">
-              <Button type="button" disabled={busy} onClick={() => setFormOpen(false)}>
-                Cancel
-              </Button>
-              <Button primary type="submit" disabled={disabled || invalidRecipient}>
-                {busy ? 'Creating…' : 'Create invite'}
-              </Button>
-            </div>
-          </form>
-        </Modal>
-      )}
+          <label>
+            Invite for
+            <select
+              className="sp-control"
+              disabled={disabled}
+              value={recovery}
+              onChange={(event) => setRecovery(event.target.value)}
+            >
+              <option value="">A new account</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  Recover {adminAccountLabel(user, users)}
+                  {user.isAdmin ? ' (admin)' : ''}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Expires in
+            <select
+              className="sp-control"
+              disabled={disabled}
+              value={hours}
+              onChange={(event) => setHours(Number(event.target.value))}
+            >
+              <option value={1}>1 hour</option>
+              <option value={24}>1 day</option>
+              <option value={168}>7 days</option>
+              <option value={720}>30 days</option>
+            </select>
+          </label>
+          {recovery && (
+            <p>
+              Once accepted, recovery replaces this account’s old passkeys and signs out its other
+              devices.
+            </p>
+          )}
+          {fresh && invalidRecipient && (
+            <p role="alert">
+              This account is no longer eligible for recovery. Choose an active account.
+            </p>
+          )}
+          {loading && <p role="status">Loading invitation recipients…</p>}
+          {issues}
+          <div className="admin-dialog-actions">
+            <Button type="button" disabled={busy} onClick={() => setFormOpen(false)}>
+              Cancel
+            </Button>
+            <Button primary type="submit" disabled={disabled || invalidRecipient}>
+              {busy ? 'Creating…' : 'Create invite'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </section>
   );
 }

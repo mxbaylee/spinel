@@ -205,9 +205,9 @@ test('pending invitations prevent section changes, manual copying works, and lea
       });
     });
     await page.getByRole('button', { name: 'Copy invite link' }).click();
-    await expect(page.getByRole('status')).toHaveText(
-      'Select the link below and copy it manually.',
-    );
+    await expect(
+      page.getByRole('region', { name: 'Invites', exact: true }).getByRole('status'),
+    ).toHaveText('Select the link below and copy it manually.');
     await expect(address).toHaveValue(secret);
     const nav = page.getByRole('navigation', { name: 'Administration sections' });
     await nav.getByRole('link', { name: 'People', exact: true }).click();
