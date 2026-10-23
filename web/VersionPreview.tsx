@@ -96,7 +96,8 @@ export function VersionPreview({
     ? spaceHref(spaceId, { kind: 'page', id })
     : `/?item=${encodeURIComponent(id)}`;
   const restore = async () => {
-    if (!data || !ready || !canRestore || data.item.access === 'viewer' || restoreRequest.current) return;
+    if (!data || !ready || !canRestore || data.item.access === 'viewer' || restoreRequest.current)
+      return;
     const request = new AbortController();
     restoreRequest.current = request;
     setBusy(true);
@@ -125,7 +126,14 @@ export function VersionPreview({
     }
   };
   const restoreButton = data && canRestore && data.item.access !== 'viewer' && (
-    <Button primary disabled={!ready || busy} onClick={() => { setConfirming(true); onBusyChange(true); }}>
+    <Button
+      primary
+      disabled={!ready || busy}
+      onClick={() => {
+        setConfirming(true);
+        onBusyChange(true);
+      }}
+    >
       {busy ? 'Restoring…' : 'Restore this version'}
     </Button>
   );
@@ -133,10 +141,20 @@ export function VersionPreview({
     <section aria-label="Version preview" className="history-preview">
       <h2>Preview — {data?.item.name ?? 'Saved version'}</h2>
       <p>Read only. The live document is unchanged.</p>
-      <a href={liveHref} aria-disabled={busy || undefined} onClick={(event) => { if (busy) event.preventDefault(); }}>Back to live document</a>
+      <a
+        href={liveHref}
+        aria-disabled={busy || undefined}
+        onClick={(event) => {
+          if (busy) event.preventDefault();
+        }}
+      >
+        Back to live document
+      </a>
       {controlsTarget ? createPortal(restoreButton, controlsTarget) : restoreButton}
       {error && !confirming && <p role="alert">{error}</p>}
-      {!ready && error && <Button onClick={() => setRefresh((value) => value + 1)}>Try again</Button>}
+      {!ready && error && (
+        <Button onClick={() => setRefresh((value) => value + 1)}>Try again</Button>
+      )}
       {!ready && !error && <p role="status">Loading preview…</p>}
       {ready && <FormulaReadout states={formulaStates} />}
       <div
@@ -144,23 +162,49 @@ export function VersionPreview({
         ref={container}
         style={{ visibility: ready ? 'visible' : 'hidden' }}
       />
-      {confirming && <Modal
-        icon="history"
-        title={`Restore ${checkpointLabel} for everyone?`}
-        description="Accepted edits will finish first. The current document will be kept as a Before restore checkpoint. Other open editors must refresh."
-        open
-        dismissDisabled={busy}
-        onOpenChange={(open) => { if (!open && !busy) { setConfirming(false); onBusyChange(false); } }}
-      >
-        {error && <p role="alert">{error}</p>}
-        {error === 'Restore was interrupted. Start a new restore.' && (
-          <Button onClick={() => location.reload()}>Reload preview for a new attempt</Button>
-        )}
-        <div className="sp-actions">
-          <Button disabled={busy} onClick={() => { setConfirming(false); onBusyChange(false); }}>Cancel</Button>
-          <Button primary disabled={busy || !canRestore || !ready || error === 'Restore was interrupted. Start a new restore.'} onClick={() => void restore()}>{busy ? 'Restoring…' : 'Restore version'}</Button>
-        </div>
-      </Modal>}
+      {confirming && (
+        <Modal
+          icon="history"
+          title={`Restore ${checkpointLabel} for everyone?`}
+          description="Accepted edits will finish first. The current document will be kept as a Before restore checkpoint. Other open editors must refresh."
+          open
+          dismissDisabled={busy}
+          onOpenChange={(open) => {
+            if (!open && !busy) {
+              setConfirming(false);
+              onBusyChange(false);
+            }
+          }}
+        >
+          {error && <p role="alert">{error}</p>}
+          {error === 'Restore was interrupted. Start a new restore.' && (
+            <Button onClick={() => location.reload()}>Reload preview for a new attempt</Button>
+          )}
+          <div className="sp-actions">
+            <Button
+              disabled={busy}
+              onClick={() => {
+                setConfirming(false);
+                onBusyChange(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              primary
+              disabled={
+                busy ||
+                !canRestore ||
+                !ready ||
+                error === 'Restore was interrupted. Start a new restore.'
+              }
+              onClick={() => void restore()}
+            >
+              {busy ? 'Restoring…' : 'Restore version'}
+            </Button>
+          </div>
+        </Modal>
+      )}
     </section>
   );
 }
