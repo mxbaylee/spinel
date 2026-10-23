@@ -318,6 +318,26 @@ were recorded; PR evidence uses Spinel sample data.
 
 ## Interactive review publishing
 
+Owner, chat 2026-10-22: a same-repository PR labeled `storybook-preview` may
+replace the shared GitHub Pages catalogue as soon as its Storybook build succeeds.
+Main retains its normal review gate and can overwrite that preview on its next
+deployment. There is no active-PR ownership lock, automatic restoration, or merge
+authorization: **the latest deployment wins**. Rerun the PR Storybook workflow
+when its preview is needed again. A manual branch run can also set
+`publish_preview=true`, optionally with focused `story_ids` for screenshot review.
+GitHub's existing deployment concurrency only serializes overlapping uploads.
+
+`/spinel/sha.json` records source SHA, checked-out SHA (the merge SHA for PR
+events), branch, PR number when available, workflow URL and build time. Fetch
+with a cache-busting query when verifying a fresh deployment. Every static build
+also writes the current app gem to `favicon.svg` and replaces competing favicon
+links in manager/iframe HTML with one SHA-versioned URL. This avoids Storybook's
+default artwork and cached icon ambiguity.
+
+The `github-pages` environment allows `main`, `refs/pull/*/merge`, and `codex/*`
+for these previews. Fork PRs do not receive preview publishing. This is a static
+sample-data catalogue; publishing it does not approve a production UI migration.
+
 The owner authorized a temporary sample-data preview for PR #125. Before merge,
 its workflow exception and environment rule `refs/pull/125/merge` (63792144) were
 removed. Normal main Storybook publishing remains enabled and waits for the

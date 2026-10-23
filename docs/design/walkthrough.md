@@ -28,8 +28,13 @@ retains its existing sign-in presentation until migration.
 The [interactive Storybook catalog](https://mxbaylee.github.io/spinel/?path=/story/redesign-walkthrough--owner)
 opens the Owner journey. The catalog groups the proposal under **Redesign** and
 older baseline specimens under **Current production**, keeping their deep links.
-The temporary PR deployment exception was removed after owner approval.
-Main publishes only after the complete visual/interaction checks pass.
+Main publishes after the complete visual/interaction checks pass. For live design
+review, add `storybook-preview` to a same-repository PR: its successful build
+publishes to the same URL without waiting for visual approval. The latest main
+or preview deployment wins; rerun the PR's Storybook workflow to reclaim it.
+The [build identity endpoint](https://mxbaylee.github.io/spinel/sha.json) identifies
+the live source SHA, branch/PR, checkout SHA, workflow and build time. Owner, chat
+2026-10-22. See [publishing details](redesign.md#interactive-review-publishing).
 
 Alternatively, download **storybook-review** from the proposal workflow linked in the gallery,
 extract it, and serve the extracted static files locally without rebuilding.

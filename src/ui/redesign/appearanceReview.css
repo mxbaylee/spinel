@@ -33,8 +33,8 @@
   background: var(--sp-panel);
 }
 .rd-appearance-review .rd-editor-body {
-  height: calc(100dvh - 148px);
-  min-height: 400px;
+  height: var(--rd-editor-height, calc(100dvh - 148px));
+  min-height: 280px;
   overflow: hidden;
 }
 .rd-appearance-native,
@@ -204,9 +204,6 @@
   }
   .rd-page-cover-empty {
     height: 52px;
-  }
-  .rd-appearance-review .rd-editor-body {
-    height: calc(100dvh - 196px);
   }
   .rd-cover-credit {
     left: 8px;

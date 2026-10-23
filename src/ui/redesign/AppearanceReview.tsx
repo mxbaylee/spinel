@@ -1,5 +1,13 @@
 /** Appearance exploration only. All choices and uploaded images stay in this story. */
-import { lazy, Suspense, useId, useRef, useState, useSyncExternalStore } from 'react';
+import {
+  lazy,
+  Suspense,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import type { CSSProperties } from 'react';
 import { palettes, spaceAccentPalettes } from '../palette.ts';
 import { getTheme, watchTheme } from '../theme.ts';
@@ -117,6 +125,22 @@ export function AppearanceReview({
   const [uploadError, setUploadError] = useState('');
   const [query, setQuery] = useState('');
   const snapshots = useRef(new Map<string, NativeSnapshot>());
+  const root = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const element = root.current!;
+    const main = element.querySelector<HTMLElement>('.rd-main')!;
+    const header = element.querySelector<HTMLElement>('.rd-editor-header')!;
+    const resize = () =>
+      element.style.setProperty(
+        '--rd-editor-height',
+        `${Math.max(280, main.clientHeight - header.offsetHeight)}px`,
+      );
+    const observer = new ResizeObserver(resize);
+    observer.observe(main);
+    observer.observe(header);
+    resize();
+    return () => observer.disconnect();
+  }, []);
   const colors = spaceAccentPalettes[accent][mode];
   const accentStyle = {
     '--sp-accent': colors.accent,
@@ -161,6 +185,7 @@ export function AppearanceReview({
   return (
     <div
       className="sp-ui rd-appearance-review"
+      ref={root}
       data-space={space}
       data-accent={accent}
       style={space ? accentStyle : undefined}
