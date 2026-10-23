@@ -56,7 +56,7 @@ test('capture account and unavailable guest screens for the design review', asyn
       },
     ]);
     await page.goto('/settings');
-    await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Your profile', exact: true })).toBeVisible();
     for (const [theme, width, label] of [
       ['light', 1280, 'light'],
       ['dark', 1280, 'dark'],

@@ -12,7 +12,7 @@ const meta = {
   // The guard declines, as it would with unsaved changes, so clicking a link
   // leaves the canvas where it is instead of loading the app's routes.
   args: {
-    user: { isAdmin: false },
+    user: { isAdmin: false, name: 'Alex Baylee', icon: 'lucide:flower', color: 'info-strong' },
     navigation: { allow: () => false },
     onSignOut: fn(),
     connection: 'online',
@@ -26,7 +26,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** An everyday account: Dashboard, Settings and Sign out. Hover or focus a button for its label. */
+/** An everyday account: Dashboard, appearance, profile and Sign out. Hover or focus a button for its label. */
 export const Member: Story = {};
 /** The admin account's first link goes to Admin instead of the dashboard. */
 export const Admin: Story = { args: { user: { isAdmin: true } } };
@@ -47,3 +47,5 @@ export const SignedOut: Story = {
     await expect(canvas.queryByRole('navigation', { name: 'Workspace' })).not.toBeInTheDocument();
   },
 };
+
+export const Compact: Story = { args: { compact: true } };

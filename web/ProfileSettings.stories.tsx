@@ -38,3 +38,12 @@ export const Saving: Story = {
   },
   parameters: { api: { 'GET /api/auth/profile': profile, 'POST /api/auth/profile': pending() } },
 };
+
+export const ColorPicker: Story = {
+  parameters: { api: { 'GET /api/auth/profile': profile } },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Choose color' }),
+    );
+  },
+};

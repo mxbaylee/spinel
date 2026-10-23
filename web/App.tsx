@@ -1,4 +1,4 @@
-import { ProfileSettings } from './ProfileSettings.tsx';
+import { ProfilePage } from './ProfilePage.tsx';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   startAuthentication,
@@ -30,7 +30,6 @@ import { Rail } from './Rail.tsx';
 import { useBrowserOnline, useServerConnection } from './useConnectionStatus.ts';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
-import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
 import { setPreparedAccount, setSignOutPending, signOutPending } from './offline/offlineStore.ts';
@@ -92,7 +91,12 @@ export function App() {
   const attempt = useRef<{ cancelled: boolean; challengeId?: string; finishing?: boolean } | null>(
     null,
   );
-  const settings = location.pathname === '/settings';
+  const settings = location.pathname === '/profile' || location.pathname === '/settings';
+  useEffect(() => {
+    // Offline app shells also honor old bookmarks without a server redirect.
+    if (location.pathname === '/settings')
+      history.replaceState(null, '', '/profile' + location.search + location.hash);
+  }, []);
   const spaceReview = /^\/(?:review\/)?spaces(?:\/|$)/.test(location.pathname);
   const connecting = location.pathname === '/connect';
   const [connectRequest] = useState(connectionRequest);
@@ -381,7 +385,7 @@ export function App() {
           local={local}
           user={user}
           onExit={() => location.assign(rememberedFileHref(user.id))}
-          onSignOut={() => void signOut()}
+          onProfile={() => location.assign('/profile')}
         />
       );
     return (
@@ -392,7 +396,6 @@ export function App() {
           user={user}
           navigation={navigation}
           connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
-          onSignOut={() => void signOut()}
           onExit={() => location.assign(rememberedFileHref(user.id))}
           onConnectionState={setEditorConnection}
           renderEditor={({ spaceId, item, onDirty, onConnectionState, saveStatusTarget }) => (
@@ -425,9 +428,10 @@ export function App() {
     );
   }
   return (
-    <div className="workspace">
+    <div className={`workspace${settings ? ' profile-workspace' : ''}`}>
       <Rail
         user={user}
+        compact={settings}
         navigation={navigation}
         onSignOut={() => void signOut()}
         connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
@@ -514,52 +518,38 @@ export function App() {
             </>
           ) : connecting ? (
             <ConnectAssistant request={connectRequest} user={user} />
-          ) : local && settings ? (
-            <>
-              <p className="eyebrow">{user.name}</p>
-              <h1>Settings</h1>
-              <ThemeSettings />
-              <p>Passkeys need a connection.</p>
-            </>
           ) : local && location.pathname === '/preview' ? (
             <p role="status">Version history needs a connection.</p>
           ) : settings ? (
-            <>
-              <p className="eyebrow">{user.name}</p>
-              <h1>Settings</h1>
-              <ThemeSettings />
-              <ProfileSettings onSaved={(profile) => setUser({ ...user, ...profile })} />
-              <section className="welcome">
-                <h2>Your passkeys</h2>
-                <p>
-                  Add a passkey from another device or password manager so you can sign in there
-                  too.
-                </p>
-                {keys.length ? (
-                  <ul>
-                    {keys.map((key) => (
-                      <li key={key.id}>
-                        <strong>{key.name}</strong>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No passkeys added yet.</p>
-                )}
-                <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                  Add a passkey
-                </button>
-              </section>
-              {!user.isAdmin && (
-                <>
-                  <AssistantConnections />
-                  <details>
-                    <summary>Advanced: personal access tokens</summary>
-                    <AccessTokens />
-                  </details>
-                </>
-              )}
-            </>
+            <ProfilePage
+              user={user}
+              offline={Boolean(local)}
+              onSaved={(profile) => setUser({ ...user, ...profile })}
+              onSignOut={() => void signOut()}
+              passkeys={
+                <section aria-labelledby="passkeys-heading">
+                  <h2 id="passkeys-heading">Your passkeys</h2>
+                  <p>
+                    Add a passkey from another device or password manager so you can sign in there
+                    too.
+                  </p>
+                  {keys.length ? (
+                    <ul className="profile-passkeys">
+                      {keys.map((key) => (
+                        <li key={key.id}>
+                          <strong>{key.name}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No passkeys added yet.</p>
+                  )}
+                  <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
+                    Add a passkey
+                  </button>
+                </section>
+              }
+            />
           ) : user.isAdmin ? (
             <>
               <h1>Admin</h1>

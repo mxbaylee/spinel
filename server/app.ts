@@ -290,6 +290,7 @@ export async function createApp(options: AppOptions) {
       '/invite',
       '/',
       '/settings',
+      '/profile',
       '/admin',
       '/preview',
       '/share/:id',
@@ -330,6 +331,10 @@ export async function createApp(options: AppOptions) {
           return;
         }
         next();
+        return;
+      }
+      if (request.path === '/settings') {
+        response.redirect(302, '/profile' + request.originalUrl.slice('/settings'.length));
         return;
       }
       const session = auth.session(cookieToken(request));

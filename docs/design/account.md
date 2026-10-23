@@ -28,9 +28,23 @@ the profile and sign-out live; passkeys are one sign-in option among several.
 
 ## Spinel today
 
-The rail has Settings and Sign out links. `/settings` shows Appearance
-(`ThemeSettings`), Your profile (display name, color and icon), and Your passkeys. The Settings link uses the saved profile icon; SPN-045 will move it to the planned rail position. Sign-in, setup, invite and recovery are
-single-purpose pages with one heading, one explanation and one primary button.
+The rail's account foot shows Appearance and the saved profile avatar on separate
+rows; compact/phone headers place the controls horizontally. The avatar opens
+`/profile` (**Your profile**) and `/settings` redirects there. Profile, Passkeys,
+This device and Connected assistants are labeled sections. This device reuses the
+shared browser-local appearance control; saved name/icon/color remain separate.
+Connected assistants retains named connections, last-used dates, Disconnect and
+advanced personal access tokens. Operators see Profile, Passkeys and This device;
+administration retains its existing connection/token metadata. Sign out and a
+return to the remembered file view or administration remain visible on the account
+page. Account sections retain drafts while switching and their hash survives reload.
+See [SPN-045's rationale and implementation](../implementation/SPN-045.md).
+
+The account screen uses the approved compact utility header. Broader dashboard
+and editor shell migrations remain with SPN-048 and SPN-049. Offline profiles
+retain This device and explain which account operations need a connection.
+Sign-in, setup, invite and recovery retain their existing behavior until their
+own screen migration.
 
 ## Adopted pattern
 
@@ -72,16 +86,16 @@ single-purpose pages with one heading, one explanation and one primary button.
 
 ## Stories
 
-`Settings/ThemeSettings`, `Shell/GemLogo` (the sign-in card's mark). The rail has `Shell/Rail`. `Account/Profile` covers loading, editing, saving and errors; `Account/Icon picker` covers the searchable grid; `Editor/Profile cursor label` and `Editor/Collaborators` show presence appearances.
+`Account/Your profile`, `Settings/ThemeSettings`, `Shell/GemLogo` (the sign-in card's mark). The rail has `Shell/Rail`. `Account/Profile` covers loading, editing, saving and errors; `Account/Icon picker` covers the searchable grid; `Editor/Profile cursor label` and `Editor/Collaborators` show presence appearances.
 
 ## Assistant access (SPN-034)
 
-Online everyday-account settings add **Connected assistants** after passkeys. The
+Online everyday-account profiles include a **Connected assistants** section. The
 existing card/list pattern shows the MCP endpoint, supplied client label, callback
 origin, created/last-used times and **Disconnect**. **Advanced: personal access
 tokens** keeps custom labels, last use and **Revoke** in a disclosure. Its once-only
-secret reveal and copy fallback reuse the invite-link pattern. Admin and offline
-settings do not offer connection approval or token creation.
+secret reveal and copy fallback reuse the invite-link pattern. Operator and offline
+profiles do not offer connection approval or token creation.
 
 `/connect` reuses the single-purpose account card and existing **Allow / Cancel**
 actions. Show the signed-in account, unverified client-supplied name, callback

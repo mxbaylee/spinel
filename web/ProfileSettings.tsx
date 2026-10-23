@@ -3,6 +3,8 @@ import { api } from './api.ts';
 import { type Profile } from '../src/profile/profile.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ICON_CATEGORIES, searchPersonIcons } from '../src/profile/person-icon-search.ts';
+import { Modal } from '../src/ui/redesign/Controls.tsx';
+import './profile.css';
 import { fillPresets } from '../src/ui/palette.ts';
 
 export function IconPicker({
@@ -33,8 +35,10 @@ export function IconPicker({
       onCancel={close}
       aria-labelledby="icon-picker-title"
     >
-      <h2 id="icon-picker-title">
-        <ProfileIcon icon="lucide:shapes" size={20} />
+      <h2 id="icon-picker-title" className="sp-modal-title">
+        <span className="sp-modal-title-icon" aria-hidden="true">
+          <ProfileIcon icon="lucide:shapes" size={20} />
+        </span>
         <span>Choose your icon</span>
       </h2>
       <label>
@@ -124,12 +128,19 @@ export function IconPicker({
     </dialog>
   );
 }
-export function ProfileSettings({ onSaved }: { onSaved?: (profile: Profile) => void }) {
+export function ProfileSettings({
+  onSaved,
+  isAdmin = false,
+}: {
+  onSaved?: (profile: Profile) => void;
+  isAdmin?: boolean;
+}) {
   const [profile, setProfile] = useState<Profile | null>(null),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState(''),
-    [picking, setPicking] = useState(false);
+    [picking, setPicking] = useState(false),
+    [pickingColor, setPickingColor] = useState(false);
   const pickerButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     let disposed = false;
@@ -150,8 +161,9 @@ export function ProfileSettings({ onSaved }: { onSaved?: (profile: Profile) => v
     requestAnimationFrame(() => pickerButton.current?.focus());
   };
   return (
-    <section className="welcome" aria-labelledby="profile-heading">
-      <h2 id="profile-heading">Your profile</h2>
+    <section className="profile-settings" aria-labelledby="profile-heading">
+      <h2 id="profile-heading">Make yourself at home</h2>
+      <p>Your name and icon help collaborators recognize you.</p>
       {error && <p role="alert">{error}</p>}
       {!profile ? (
         <p role="status">{error ? 'Reload to try again.' : 'Loading profile…'}</p>
@@ -175,7 +187,28 @@ export function ProfileSettings({ onSaved }: { onSaved?: (profile: Profile) => v
           }}
         >
           <fieldset disabled={busy}>
-            <legend>Name and appearance</legend>
+            <legend className="profile-visually-hidden">Name and appearance</legend>
+            <div className="profile-identity">
+              <span
+                className="profile-identity-avatar"
+                style={{
+                  background: `var(--fill-${profile.color}-bg)`,
+                  color: `var(--fill-${profile.color}-fg)`,
+                }}
+              >
+                <ProfileIcon icon={profile.icon} />
+              </span>
+              <div>
+                <strong>{profile.name}</strong>
+                <p>{isAdmin ? 'Operator account · No document access' : 'Your everyday account'}</p>
+              </div>
+              <button ref={pickerButton} type="button" onClick={() => setPicking(true)}>
+                Choose icon
+              </button>
+              <button type="button" onClick={() => setPickingColor(true)}>
+                Choose color
+              </button>
+            </div>
             <label>
               Display name
               <input
@@ -185,34 +218,6 @@ export function ProfileSettings({ onSaved }: { onSaved?: (profile: Profile) => v
                 onChange={(event) => setProfile({ ...profile, name: event.target.value })}
               />
             </label>
-            <button
-              ref={pickerButton}
-              type="button"
-              onClick={() => setPicking(true)}
-              style={{
-                background: `var(--fill-${profile.color}-bg)`,
-                color: `var(--fill-${profile.color}-fg)`,
-              }}
-            >
-              <ProfileIcon icon={profile.icon} /> Choose icon
-            </button>
-            <div className="fill-palette" aria-label="Profile colour">
-              {fillPresets.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  aria-pressed={profile.color === preset.id}
-                  aria-label={`Profile colour: ${preset.label}`}
-                  style={{
-                    background: `var(--fill-${preset.id}-bg)`,
-                    color: `var(--fill-${preset.id}-fg)`,
-                  }}
-                  onClick={() => setProfile({ ...profile, color: preset.id })}
-                >
-                  {preset.label}
-                </button>
-              ))}
-            </div>
             <button className="primary" type="submit">
               {busy ? 'Saving…' : 'Save profile'}
             </button>
@@ -224,6 +229,36 @@ export function ProfileSettings({ onSaved }: { onSaved?: (profile: Profile) => v
         </form>
       )}
       {notice && <p role="status">{notice}</p>}
+      {profile && (
+        <Modal
+          title="Choose your color"
+          icon="palette"
+          open={pickingColor}
+          onOpenChange={setPickingColor}
+        >
+          <div className="profile-colors" aria-label="Profile colour">
+            {fillPresets.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                aria-pressed={profile.color === preset.id}
+                aria-label={`Profile colour: ${preset.label}`}
+                title={preset.label}
+                style={{
+                  background: `var(--fill-${preset.id}-bg)`,
+                  color: `var(--fill-${preset.id}-fg)`,
+                }}
+                onClick={() => {
+                  setProfile({ ...profile, color: preset.id });
+                  setPickingColor(false);
+                }}
+              >
+                <ProfileIcon icon={profile.icon} />
+              </button>
+            ))}
+          </div>
+        </Modal>
+      )}
       {picking && profile && (
         <IconPicker
           value={profile.icon}

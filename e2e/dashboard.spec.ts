@@ -61,7 +61,7 @@ test('registers two devices, signs in with either, persists and revokes sessions
   };
   const first = (await cdp.send('WebAuthn.addVirtualAuthenticator', { options })).authenticatorId;
   try {
-    await page.goto('/settings');
+    await page.goto('/settings#passkeys');
     await page.getByRole('button', { name: 'Add a passkey' }).click();
     await expect(page.getByRole('listitem')).toHaveCount(1);
     await expect(page.getByRole('listitem')).toContainText('Passkey');
@@ -85,7 +85,8 @@ test('registers two devices, signs in with either, persists and revokes sessions
         options: { ...options, transport: 'usb' },
       })
     ).authenticatorId;
-    await page.getByRole('link', { name: 'Settings' }).click();
+    await page.getByRole('link', { name: 'Your profile' }).click();
+    await page.getByRole('link', { name: 'Passkeys', exact: true }).click();
     await page.getByRole('button', { name: 'Add a passkey' }).click();
     await expect(page.getByRole('listitem')).toHaveCount(2);
     await expect(page.getByRole('listitem').filter({ hasText: 'Passkey 2' })).toBeVisible();
@@ -102,7 +103,8 @@ test('registers two devices, signs in with either, persists and revokes sessions
     await expect(page).toHaveURL(/\/sign-in$/);
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
-    await page.getByRole('link', { name: 'Settings' }).click();
+    await page.getByRole('link', { name: 'Your profile' }).click();
+    await page.getByRole('link', { name: 'Passkeys', exact: true }).click();
     // Cancel before the authenticator responds; the UI remains immediately usable.
     await cdp.send('WebAuthn.setAutomaticPresenceSimulation', {
       authenticatorId: first,

@@ -129,7 +129,8 @@ export function ConnectAssistant({
             {atCapacity && (
               <p role="alert">
                 You have 10 connected assistants. Disconnect an old assistant in{' '}
-                <a href="/settings">Settings</a>, then start again from your assistant.
+                <a href="/profile#connections">Connected assistants</a>, then start again from your
+                assistant.
               </p>
             )}
             {error && <p role="alert">{error}</p>}

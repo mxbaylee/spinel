@@ -75,7 +75,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The select starts on the theme chosen in the toolbar. */
+/** The segments start on the theme chosen in the toolbar. */
 export const Default: Story = {};
 /**
  * "Follow system" is selected, so the page takes the operating system's light or
@@ -86,9 +86,12 @@ export const FollowSystem: Story = { decorators: [followSystem] };
 export const StorageBlocked: Story = {
   decorators: [blockStorage],
   play: async ({ canvasElement }) => {
-    const select = within(canvasElement).getByRole<HTMLSelectElement>('combobox', {
-      name: 'Theme',
-    });
-    await userEvent.selectOptions(select, select.value);
+    const canvas = within(canvasElement);
+    const selected = canvas.getByRole('radio', { checked: true });
+    await userEvent.click(
+      canvas.getByRole('radio', {
+        name: selected.getAttribute('aria-label') === 'Dark' ? 'Light' : 'Dark',
+      }),
+    );
   },
 };
