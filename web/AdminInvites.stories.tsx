@@ -219,7 +219,9 @@ export const CreatedWhileReadbackPending: Story = {
     const original = globalThis.fetch;
     let created = false;
     let release!: () => void;
-    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
     const fixtureFetch: typeof fetch = async (input, init) => {
       const path = new URL(
         typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
@@ -249,8 +251,12 @@ export const CreatedWhileReadbackPending: Story = {
       await expect(create).toBeDisabled();
       await expect(canvas.getByText('Loading invites…')).toBeVisible();
       release();
-      await waitFor(() => expect(canvas.getByRole('button', { name: 'Refresh invites' })).toBeEnabled());
-      await expect(canvas.getByRole('alert')).toHaveTextContent('The current invitation list is unavailable.');
+      await waitFor(() =>
+        expect(canvas.getByRole('button', { name: 'Refresh invites' })).toBeEnabled(),
+      );
+      await expect(canvas.getByRole('alert')).toHaveTextContent(
+        'The current invitation list is unavailable.',
+      );
       await expect(address).toBeFocused();
       await expect(create).toBeDisabled();
     } finally {
