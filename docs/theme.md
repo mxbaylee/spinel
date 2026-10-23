@@ -32,14 +32,16 @@ and shows the typing instruction as normal, contrast-checked shell text.
 
 ## Sheet fills
 
-Cell fill presets provide soft and strong variants of primary, secondary,
-success, warning, error, info, neutral and highlight. Applying a preset writes
-its canonical light background/text pair through the normal collaborative
-command path. A style-only display interceptor maps that exact pair to the
+Use the Sheet's native fill menu to change cell colors. The extra **Cell fill
+presets** toolbar has been removed (SPN-050); native controls are retained after
+the SPN-088 enhancement's retirement. Existing cell fill presets retain soft and strong variants of primary,
+secondary, success, warning, error, info, neutral and highlight. Their stored
+canonical light background/text pair remains unchanged. A style-only display interceptor maps that exact pair to the
 current browser's palette, without modifying saved data, formulas or unrelated
 formatting. Rich-text runs adapt on a cloned display model; the public before-edit
 interceptor restores canonical colors before typing so display colors cannot
-leak into stored edits. Viewers see the result but cannot apply presets.
+leak into stored edits. Viewers see the result but cannot change fills. The sixteen
+palette constants and profile color picker remain available.
 
 Changing either color to a different pair makes it custom formatting. Its stored
 color stays fixed; like ordinary paper and text, its on-screen rendering follows

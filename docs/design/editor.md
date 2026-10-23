@@ -41,8 +41,8 @@ detail (version history, export) behind menus.
 
 ## Spinel today
 
-Collaborators, the fill-preset bar, version names and exports still stack above
-the canvas in normal flow inside `.sheet-editor`. SPN-043 places the shared save
+Collaborators, version names and exports still stack above the canvas in normal
+flow inside `.sheet-editor`. SPN-043 places the shared save
 control in a fixed title-adjacent slot across account, guest and Space editors;
 full messages and Retry open in its popover. The wider header migration remains
 SPN-049. Univer's own toolbar
@@ -136,7 +136,7 @@ same collaborator dialog; owner-only Share remains in More.
 
 ## Stories
 
-Existing production stories include `Editor/Collaborators`, `Editor/FillPresets`,
+Existing production stories include `Editor/Collaborators`,
 `Editor/VersionNames` and `Editor/FileExports`. The redesign's native editor stories
 and connected walkthrough boot Univer against local fixtures; the existing
 Playwright suite checks application editor flows. Use the
