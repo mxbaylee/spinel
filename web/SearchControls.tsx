@@ -6,6 +6,7 @@ import { searchFilterFields, searchInputAsPlainText } from '../src/shared/search
 import { FILE_KINDS, fileKindLabel } from '../src/shared/workspace.ts';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
 import './SearchPanel.css';
+import './fileDialog.css';
 
 const ownership = { mine: 'Mine', shared: 'Shared with me' };
 const modified = { day: 'Past 24 hours', week: 'Past 7 days', month: 'Past 30 days' };
@@ -147,7 +148,7 @@ export function SearchControls({
         onOpenChange={setOptionsOpen}
       >
         <form
-          className="search-options-form"
+          className="search-options-form file-dialog"
           onSubmit={(event) => {
             event.preventDefault();
             if (optionsProblem) return;

@@ -164,9 +164,19 @@ test('dashboard search combines filters across folders without private paths and
     ).toBeVisible();
     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
     await expect(results).toBeHidden();
+    await expect(query).toHaveValue('');
+    await expect(page.getByRole('heading', { name: 'Shared with me', exact: true })).toBeVisible();
     await expect(
-      page.getByRole('list', { name: 'Shared with me files', exact: true }),
+      page.getByText('Nothing has been shared with you yet.', { exact: true }),
     ).toBeVisible();
+    // Revocation leaves an empty list with no box; the visible empty state proves
+    // navigation completed, while no row may expose the revoked document.
+    await expect(page.getByRole('list', { name: 'Shared with me files', exact: true })).toHaveCount(
+      1,
+    );
+    await expect(
+      page.getByRole('list', { name: 'Shared with me files', exact: true }).getByRole('listitem'),
+    ).toHaveCount(0);
   } finally {
     db.close();
   }

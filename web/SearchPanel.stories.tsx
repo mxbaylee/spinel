@@ -6,6 +6,7 @@ import type { SearchItem } from '../src/shared/search.ts';
 import type { FileItem, ItemKind } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { SearchPanel } from './SearchPanel.tsx';
+import { assertDialogControls } from '../.storybook/dialogBounds.ts';
 
 const now = Date.now();
 const hour = 3_600_000;
@@ -217,6 +218,11 @@ export const SearchOptions: Story = {
       'x'.repeat(201),
     );
     await expect(dialog.getByRole('button', { name: 'Apply search' })).toBeDisabled();
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+        name: 'Search options',
+      }),
+    );
     fireEvent.change(dialog.getByRole('textbox', { name: 'Search words' }), {
       target: { value: 'type:sheet' },
     });

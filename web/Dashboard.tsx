@@ -5,6 +5,7 @@ import { FILE_KINDS, fileKindLabel, canAdminister, accessLabel } from '../src/sh
 import type { FileKind, FileItem, WorkspaceItem, SpaceFile } from '../src/shared/workspace.ts';
 
 import { Sharing } from './Sharing.tsx';
+import './fileDialog.css';
 import { SearchPanel } from './SearchPanel.tsx';
 import { emptySearch, hasSearch } from '../src/shared/search.ts';
 import type { SearchQuery } from '../src/shared/search.ts';
@@ -899,29 +900,29 @@ export function Dashboard({
         <p role="alert">This item is not available. Choose My files to continue.</p>
       ) : browsing ? (
         <>
-          {!searchActive && (
-            <DashboardFiles
-              items={listedItems}
-              layout={layout}
-              onOpen={openFile}
-              actionsFor={rowActions}
-              offlineState={offlineState}
-              dateMode={sharedOpen ? 'shared' : 'updated'}
-              loading={sharedOpen && !shared.loaded}
-              busy={busy}
-              label={sharedOpen ? 'Shared with me files' : 'Folder contents'}
-              onOpenTrash={!currentId && !local ? () => navigate(TRASH_VIEW) : undefined}
-              emptyMessage={
-                sharedOpen ? 'Nothing has been shared with you yet.' : 'This folder is empty.'
-              }
-            />
-          )}
-          {local && current && !views.current[current.id] && !personalFolder && (
-            <p role="status">
-              This folder wasn’t opened online on this device, so its contents aren’t here. Connect
-              to open it.
-            </p>
-          )}
+          {!searchActive &&
+            (local && current && !views.current[current.id] && !personalFolder ? (
+              <p role="status">
+                This folder wasn’t opened online on this device, so its contents aren’t here.
+                Connect to open it.
+              </p>
+            ) : (
+              <DashboardFiles
+                items={listedItems}
+                layout={layout}
+                onOpen={openFile}
+                actionsFor={rowActions}
+                offlineState={offlineState}
+                dateMode={sharedOpen ? 'shared' : 'updated'}
+                loading={sharedOpen && !shared.loaded}
+                busy={busy}
+                label={sharedOpen ? 'Shared with me files' : 'Folder contents'}
+                onOpenTrash={!currentId && !local ? () => navigate(TRASH_VIEW) : undefined}
+                emptyMessage={
+                  sharedOpen ? 'Nothing has been shared with you yet.' : 'This folder is empty.'
+                }
+              />
+            ))}
           {canCreate && (
             <ImportFile
               key={currentId ?? 'root'}
@@ -1010,7 +1011,7 @@ export function Dashboard({
           dismissDisabled={busy}
         >
           <form
-            className="item-form"
+            className="item-form file-dialog"
             aria-label={`${action.mode === 'new' ? 'New item' : action.mode === 'file' ? 'File shared item' : action.mode === 'move' ? 'Move item' : 'Rename item'}`}
             onSubmit={(event) => {
               event.preventDefault();
@@ -1150,7 +1151,9 @@ export function Dashboard({
             if (!open) setSharing(null);
           }}
         >
-          <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />
+          <div className="file-dialog">
+            <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />
+          </div>
         </Modal>
       )}
       {spaceAction && (
