@@ -218,3 +218,22 @@ Owner retains actual screenshot evidence and a transparent review record; Collab
 keyboard/touch/access/error-state review; Link guest receives explicit anonymity, scope, revocation
 and unavailable-state review. Human taste feedback may follow later; that tradeoff is explicitly
 accepted by the owner.
+
+## Soft target for open ticket PRs
+
+**Date:** 2026-10-23. **Status:** accepted. **Authority:** Owner, current backlog-run chat.
+
+**Question:** How much parallel ticket work should remain open while CI or review waits?
+
+The owner clarified a soft limit of two PRs, with no hard limit, and explicitly
+said not to close the existing PRs. Prefer completing existing work before opening
+more. Exceptions can permit useful independent progress; neither CI delays nor
+the target waive review, verification or merge requirements. Unlimited parallel
+starts made progress harder to follow; a hard cap or automatic closure would
+contradict the owner's clarification. The current drafts remain open.
+
+Operator gets fewer simultaneous operational changes to track. Owner gets a
+clearer completion order. Collaborator benefits from fewer partially integrated
+UI/access changes. Link guest retains the same privacy and verification gates;
+sequencing changes no permissions. This is workflow guidance, not authorization
+to close PRs or mark incomplete tickets done.
