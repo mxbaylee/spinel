@@ -251,9 +251,9 @@ export function AdminInvites({
       ) : fresh && !loading ? (
         <p>No invites yet.</p>
       ) : null}
-      {formOpen && (
+      {/* A controlled close restores focus after the new address ref has mounted. */}
         <Modal
-          open
+          open={formOpen}
           title="Create invite"
           icon="person"
           dismissDisabled={busy}
@@ -325,7 +325,6 @@ export function AdminInvites({
             </div>
           </form>
         </Modal>
-      )}
     </section>
   );
 }
