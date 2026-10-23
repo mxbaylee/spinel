@@ -498,7 +498,7 @@ const guestBoundaries: NonNullable<Story['play']> = async ({ canvasElement }) =>
   const canvas = within(canvasElement);
   await expect(await canvas.findByRole('region', { name: 'Editor body fixture' })).toBeVisible();
   for (const name of ['My files', 'Your profile', 'Document actions'])
-    await expect(canvas.queryByRole('button', { name, exact: true })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name })).not.toBeInTheDocument();
 };
 export const GuestViewer: Story = {
   args: guestArgs,
