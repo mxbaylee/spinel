@@ -100,8 +100,8 @@ does not modify or inspect Pro implementations. The app owns identity, access,
 transport, worker admission and dialogs.
 
 The owner approved scalar, range, cross-document and array formulas in chat on
-2026-10-20. [Decision #113](https://github.com/mxbaylee/spinel/issues/113) weighs
+2026-10-20. [Decision #113](implementation/SPN-033.md#legacy-decision-113-live-authorized-document-formulas) weighs
 the Owner's report workflow, Collaborator's independent source access, Link
 guest's host-only access and Operator's two-GB server. Existing access and restore
-rules remain from decisions #23, #72 and #92. The interaction is specified in
+rules remain from decisions [#23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming), [#72](implementation/SPN-016.md#legacy-decision-72-scoped-anonymous-link-capabilities) and [#92](implementation/integration-boundaries.md#legacy-decision-92-stable-integration-boundaries). The interaction is specified in
 [the design playbook](design/formulas.md).

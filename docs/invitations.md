@@ -57,7 +57,7 @@ account creation or recovery, leaving the invite and previous access intact.
 The hashed-token rule was chosen in grooming on 2026-10-17; recovery through an
 invite tied to the existing account is SPN-004’s rule. Lifetime, copying and
 successful-recovery behavior were recorded in
-[decision #12](https://github.com/mxbaylee/spinel/issues/12). These choices give the
+[decision #12](implementation/SPN-004.md#legacy-decision-12-invitations-and-credential-recovery). These choices give the
 Operator explicit control, preserve the Owner’s identity and documents, avoid
 duplicate accounts for the Collaborator, and keep Link guests out of the workspace
 unless they receive and accept a valid invitation.

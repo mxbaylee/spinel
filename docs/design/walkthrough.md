@@ -101,7 +101,7 @@ tree, with a separate My files exit. The gem wiggles on hover, keyboard focus or
 unless reduced motion is preferred. Folder creation, tags and moving files update
 local fixtures; unavailable passkey removal actions are explicitly disabled.
 Personal pinning and pinned-item UI are removed (owner, 2026-10-21,
-[decision #128](https://github.com/mxbaylee/spinel/issues/128)).
+[decision #128](../implementation/SPN-047.md#legacy-decision-128-remove-personal-pinning)).
 
 Expand navigation reopens the collapsed sidebar; My files is the destination.
 Connection status uses a hover/focus tooltip (tap on touch), without a close

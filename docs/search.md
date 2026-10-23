@@ -43,8 +43,8 @@ filtering. Administrators, disabled accounts and link guests cannot use search.
 No document snapshots or content index are loaded by this query.
 
 These rules retain SPN-022's title/path/tag scope and split client/server filtering
-(PRD §2.2; grooming 2026-10-17). Sharing decisions #72/#74 and grooming 2026-10-18
+(PRD §2.2; grooming 2026-10-17). Sharing decisions [#72](implementation/SPN-016.md#legacy-decision-72-scoped-anonymous-link-capabilities)/[#74](implementation/SPN-018.md#legacy-decision-74-personal-filing-of-shared-items) and grooming 2026-10-18
 supply the personal-path and privacy constraints.
-[Decision #79](https://github.com/mxbaylee/spinel/issues/79) chooses predictable
+[Decision #79](implementation/SPN-022.md#legacy-decision-79-authorized-metadata-search) chooses predictable
 metadata matching for the Owner and Collaborator, no extra indexing service for
 the Operator, and unchanged document-scoped access for the Link guest.

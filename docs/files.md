@@ -23,7 +23,7 @@ infer formulas, dates, numbers or headers. Future typing options require a
 separate decision; the initial importer reuses existing creation/access/cleanup
 and resource limits. This remains backlog acceptance, not current import
 support. Decided 2026-10-21 in
-[decision #130](https://github.com/mxbaylee/spinel/issues/130).
+[decision #130](implementation/SPN-093.md#legacy-decision-130-literal-bounded-csv-import).
 
 Files are capped at 20 MiB, including embedded images. Native content after image
 extraction must fit the existing 10 MiB save limit. Images must be static PNG,
@@ -39,8 +39,8 @@ cell data (set values, move range, insert sheet); the browser flows for cut/past
 and duplicating a sheet have no end-to-end test yet. Viewers and link guests retain read-only drawing controls,
 including images that finish loading after permissions are applied; revoking
 access prevents subsequent image reads.
-Decisions [#89](https://github.com/mxbaylee/spinel/issues/89) and
-[#91](https://github.com/mxbaylee/spinel/issues/91), 2026-10-18/19, supply the
+Decisions [#89](implementation/SPN-039.md#legacy-decision-89-preserve-existing-sheet-images) and
+[#91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion), 2026-10-18/19, supply the
 existing-image prerequisite for offline documents ([docs/offline.md](offline.md)).
 Unknown plugin resources are preserved without interpreting them.
 
@@ -52,8 +52,8 @@ fit the text. These are import budgets for the small instance, not measured Univ
 capacity limits. JSON is limited to 64 nesting levels and 200,000 values.
 Oversized or invalid files are refused without creating a partial item. Export
 uses the same layout budgets so a successful native download remains importable;
-it never truncates an oversized file. Decisions [#69](https://github.com/mxbaylee/spinel/issues/69)
-and [#23](https://github.com/mxbaylee/spinel/issues/23), 2026-10-17/18.
+it never truncates an oversized file. Decisions [#69](implementation/SPN-031.md#legacy-decision-69-bounded-native-file-transfer)
+and [#23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming), 2026-10-17/18.
 
 Today, for an account read-only copy choose **Print / save PDF**, adjust Univer's
 print options if shown, and choose **Save as PDF** in the browser print dialog. Spinel uses the
@@ -61,7 +61,7 @@ public Univer Pro print plugins as supplied. Printed page limits and watermarks
 depend on the installed license; the export panel explains this before printing.
 Check the output before sharing. A PDF is not an editable backup, and it may not
 include every page under the current license. Decision
-[#70](https://github.com/mxbaylee/spinel/issues/70), 2026-10-18.
+[#70](implementation/SPN-031.md#legacy-decision-70-original-browser-printing), 2026-10-18.
 
 **Planned in SPN-075:** replace that flow with **Export as PDF**, a direct
 PDF download with complete pages and no watermark. It will be available to
@@ -70,8 +70,8 @@ view-only or editing link guests. There will be no Spinel Print action or
 browser print dialog. Guest output must not add owner/account identity; revoked
 access must prevent a new export. PDF is the exception to account-only native
 and Office exports, not permission to download those formats. This consolidates
-retired SPN-073; owner, chat 2026-10-20, decision [#103](https://github.com/mxbaylee/spinel/issues/103).
-Pagination defaults are recorded in decision [#106](https://github.com/mxbaylee/spinel/issues/106).
+retired SPN-073; owner, chat 2026-10-20, decision [#103](implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
+Pagination defaults are recorded in decision [#106](implementation/SPN-075.md#legacy-decision-106-deterministic-pdf-pagination).
 Until SPN-075 lands, the limitations and
 account-only UI described above still apply.
 

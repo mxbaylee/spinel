@@ -35,6 +35,6 @@ item/list/trash responses include that person's `tags` array. `POST` and `DELETE
 JSON, resolve current access, and return the updated item. User identity comes
 from the session, never the payload. No guest-link tag endpoint is added.
 
-Decision #62 records the tradeoff: reusable organization for the Owner,
+Decision [#62](implementation/SPN-019.md#legacy-decision-62-personal-tag-normalization) records the tradeoff: reusable organization for the Owner,
 independent personal labels for the Collaborator, simple bounded-name storage
 for the Operator, and no account metadata exposure for the Link guest.

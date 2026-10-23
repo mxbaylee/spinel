@@ -18,7 +18,7 @@ Spinel was never in production, so there is no legacy Slides type, placeholder o
 migration to maintain. Spinel dropped Slides because Univer's Slides package is
 closed Pro software and Spinel is moving off Pro without watermarks (owner, chat
 2026-10-19). The owner requested complete removal before the redesign in
-[decision #104](https://github.com/mxbaylee/spinel/issues/104), 2026-10-20.
+[decision #104](implementation/SPN-074.md#legacy-decision-104-remove-unsupported-slides), 2026-10-20.
 
 Use the folder list or breadcrumb to navigate. **Rename** updates an item's name
 in the list, tree and breadcrumb without reloading. **Move** offers My files (the
@@ -51,7 +51,7 @@ origin and JSON. Ordinary item routes require accounts; separate [guest-link rou
 additive and keeps existing users, credentials and other data.
 
 These rules retain SPN-006's private ownership and dashboard requirements
-(original PRD §2 and SPN-003). [Decision #14](https://github.com/mxbaylee/spinel/issues/14),
+(original PRD §2 and SPN-003). [Decision #14](implementation/SPN-006.md#legacy-decision-14-private-tree-identity-and-moves),
 2026-10-17, chose one owned tree: a small operational footprint for the Operator,
 stable locations and safe moves for the Owner, isolated personal folders for the
 Collaborator, and no discovery surface for the Link guest. Univer Workspace is a

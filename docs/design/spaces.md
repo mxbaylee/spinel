@@ -1,6 +1,6 @@
 # Spaces and file roles
 
-Designed in SPN-047; [decision #126](https://github.com/mxbaylee/spinel/issues/126)
+Designed in SPN-047; [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits)
 records the owner's review and refinements. A Space is one file inside existing
 folders. SPN-078 supplies the internal model and recovery foundation; SPN-091 and
 SPN-092 supply the account experience and guest/integration acceptance.
@@ -33,7 +33,7 @@ or a new export format. Artwork remains SPN-077.
 
 ## Implemented foundation
 
-[Decision #135](https://github.com/mxbaylee/spinel/issues/135), 2026-10-21,
+[Decision #135](../implementation/SPN-078.md#legacy-decision-135-durable-space-identity-and-scope), 2026-10-21,
 records the storage and access choice. `workspace_items` stores a real Space
 root, with stable existing item IDs and explicit `space_id`/`space_position`
 membership and sibling order. Internal Docs, Sheets and grouping folders may
@@ -90,7 +90,7 @@ boundary inventory, tests and publication checkpoint.
 This foundation keeps one bounded storage model for the Operator, preserves the
 Owner's content and recovery identities, gives Collaborators uniform inherited
 access, and keeps Link guests outside unsupported capabilities. It implements
-the model and recovery rules from owner decisions #116–118 and #126.
+the model and recovery rules from owner decisions [#116](../implementation/SPN-078.md#legacy-decision-116-spaces-remain-files-in-folders), [#117](../implementation/SPN-078.md#legacy-decision-117-whole-space-guest-capability) and [#118](../implementation/SPN-078.md#legacy-decision-118-space-roles-and-internal-editing) and [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits).
 
 ## Account navigation and recovery review
 
@@ -100,7 +100,7 @@ entry and retains `/review/spaces` as an alias. Spaces are enabled by default;
 `SPINEL_SPACE_REVIEW=0` (or `createApp({ spaceReview: false })`) explicitly closes
 all Space boundaries while preserving their stored data. This legacy option
 never grants document privileges to an Operator. Routine
-[decision #137](https://github.com/mxbaylee/spinel/issues/137), 2026-10-22, records
+[decision #137](../implementation/SPN-091.md#legacy-decision-137-default-off-space-review-stage), 2026-10-22, records
 the earlier safe review sequencing and all four persona tradeoffs.
 
 One internal Pages navigation replaces the outer file sidebar. On compact
@@ -233,7 +233,7 @@ The Space tree uses the quieter `--sp-bg` / `--sp-text` surface, distinct from
 the saturated pink site header in both themes (owner, chat 2026-10-20). The same
 surface applies in its phone drawer.
 
-Owner follow-up, 2026-10-21, decision #126: internal Trash should look like the
+Owner follow-up, 2026-10-21, decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits): internal Trash should look like the
 My files Trash collection, with deleted page/sheet/folder icons, names, readable
 original locations and permitted restore/delete controls. Use recovery metadata
 and preserve subtree boundaries; never reveal an inaccessible parent location.
@@ -258,4 +258,4 @@ and the same owner; only the Owner can move to their My files root. Show only
 authorized destination folders and generic inherited-role provenance. Recoverable
 trash enters the Owner’s existing Trash; permanent deletion and ownership handover
 remain unchanged. Personal filing stays distinct from canonical Move. Decision
-[#145](https://github.com/mxbaylee/spinel/issues/145), 2026-10-22.
+[#145](../implementation/SPN-079.md#legacy-decision-145-delegated-file-admin-boundaries), 2026-10-22.

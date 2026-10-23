@@ -125,11 +125,11 @@ retries, and an official SDK client reading and editing both document types.
 The original SPN-034 ticket explicitly described creating a personal access token
 in settings. The owner revised acceptance on 2026-10-20 to a normal browser
 connect/sign-in/approve flow, with connection labels and last-use metadata; personal
-tokens remain an advanced option. Decision [#111](https://github.com/mxbaylee/spinel/issues/111), 2026-10-20, weighs
+tokens remain an advanced option. Decision [#111](implementation/SPN-034.md#legacy-decision-111-owner-requested-mcp-through-oauth), 2026-10-20, weighs
 all four personas and keeps the interface small and the existing access boundary
-intact. It resolves the timing from [#41](https://github.com/mxbaylee/spinel/issues/41)
+intact. It resolves the timing from [#41](implementation/SPN-034.md#legacy-decision-41-initial-mcp-deferral)
 and follows the live-write constraints from
-[#92](https://github.com/mxbaylee/spinel/issues/92).
+[#92](implementation/integration-boundaries.md#legacy-decision-92-stable-integration-boundaries).
 
 Primary references: [MCP Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)
 , [MCP authorization](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization)

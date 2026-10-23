@@ -17,14 +17,14 @@ changed here.
   proposal. Existing design patterns, stories for changed New/search states,
   light/dark/phone screenshots and owner approval still apply. The sequencing
   exception remains in SPN-047 and the design playbook. Owner correction, chat
-  2026-10-20, decision [#104](https://github.com/mxbaylee/spinel/issues/104).
+  2026-10-20, decision [#104](../implementation/SPN-074.md#legacy-decision-104-remove-unsupported-slides).
 - SPN-073 is retired into SPN-075, not completed. SPN-075 becomes **Export Sheets
   and Docs as PDF without Univer Pro**, retaining L effort, its persona impacts
   and SPN-047 dependency. One direct PDF download replaces all app Print actions
   and browser print dialogs, with current read access as the only document-role
   requirement. This includes account viewers and view-only or editing guests.
   Guest privacy and revocation acceptance move with it. Owner, chat 2026-10-20,
-  decision [#103](https://github.com/mxbaylee/spinel/issues/103).
+  decision [#103](../implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
 - `FileExports`, `SheetEditor` and `DocEditor` still use Pro print and hide the
   account export panel from guests. `docs/files.md` preserves those current
   limitations and labels the replacement as planned. The editor/guest design
@@ -36,7 +36,7 @@ changed here.
   page setup. These agent-chosen defaults remain subject to implementation review;
   no PDF library or extra service is selected. Saved content and rechecked access
   prevent exporting stale edits or newly forbidden content. Agent decision
-  [#106](https://github.com/mxbaylee/spinel/issues/106) records these defaults.
+  [#106](../implementation/SPN-075.md#legacy-decision-106-deterministic-pdf-pagination) records these defaults.
 - SPN-035 Office conversion and SPN-067 bulk native backup remain separate. They
   preserve editable data and archive ownership, unlike a readable PDF. SPN-067's
   account-only restriction now explicitly refers to its native archive.
@@ -45,7 +45,7 @@ changed here.
   flexibility need actionable deductions. The smallest complete implementation
   remains the target; necessary access and integrity safeguards are not complexity
   defects. The threshold stays 95/100 with no blockers. Owner, chat 2026-10-20,
-  decision [#105](https://github.com/mxbaylee/spinel/issues/105).
+  decision [#105](../implementation/backlog-workflow.md#legacy-decision-105-deduct-unnecessary-complexity).
 
 ## Remaining backlog recheck
 

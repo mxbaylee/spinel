@@ -18,7 +18,7 @@ Creating a guest link automatically enables a branded social card with the
 There is no separate opt-in. Server metadata and the image expose no owner,
 contents, collaborators or other documents. Private item URLs stay generic.
 Owner, chat 2026-10-20, superseding SPN-044's earlier generic-only preview rule;
-[decision #109](https://github.com/mxbaylee/spinel/issues/109).
+[decision #109](implementation/SPN-044.md#legacy-decision-109-automatic-document-specific-preview-cards).
 
 A new share address has two independent random capabilities: `?preview=…` allows
 only title/type preview, while `#…` grants the existing document access. Only
