@@ -168,7 +168,7 @@ export function EditorFrame({
                   </button>
                 </form>
               ) : (
-                <h1>
+                <h1 aria-label={name}>
                   {onRename ? (
                     <button
                       className="editor-rename"
