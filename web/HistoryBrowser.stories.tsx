@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { getDocsEmptySnapshot } from '@univerjs/core';
 import { failure, pending } from '../.storybook/api.ts';
 import { HistoryBrowser } from './HistoryBrowser.tsx';
@@ -64,7 +64,7 @@ type Story = StoryObj<typeof meta>;
 
 async function ready(canvasElement: HTMLElement) {
   const canvas = within(canvasElement);
-  await expect(await canvas.findByRole('button', { name: 'Restore this version' }, { timeout: 30000 })).toBeEnabled();
+  await waitFor(() => expect(canvas.getByRole('button', { name: 'Restore this version' })).toBeEnabled(), { timeout: 30000 });
   await expect(await canvas.findByRole('button', { name: 'Bold' })).toBeDisabled();
   return canvas;
 }
