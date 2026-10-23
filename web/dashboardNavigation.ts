@@ -158,15 +158,30 @@ export function dashboardReturnHref(accountId: string, storage?: StorageAccess):
   }
 }
 
-export function consumeDashboardReturn(accountId: string, target: string, storage?: StorageAccess) {
+/** Reading during render must survive a discarded or repeated React mount. */
+export function readDashboardReturn(
+  accountId: string,
+  target: string,
+  storage?: StorageAccess,
+): Envelope | null {
   try {
     storage ??= window.sessionStorage;
     const raw = storage.getItem(returnKey(accountId));
-    storage.removeItem(returnKey(accountId));
-    return raw && raw.length <= 6000
-      ? restoreDashboardRetrieval(accountId, JSON.parse(raw), target, storage)
-      : null;
+    if (!raw || raw.length > 6000) return null;
+    const envelope = JSON.parse(raw);
+    const value = restoreDashboardRetrieval(accountId, envelope, target, storage);
+    return value ? { version: 1, accountId, generation: envelope.generation, value } : null;
   } catch {
     return null;
   }
+}
+
+export function consumeDashboardReturn(accountId: string, target: string, storage?: StorageAccess) {
+  const envelope = readDashboardReturn(accountId, target, storage);
+  try {
+    (storage ?? window.sessionStorage).removeItem(returnKey(accountId));
+  } catch {
+    /* Optional storage cannot prevent navigation. */
+  }
+  return envelope?.value ?? null;
 }

@@ -131,21 +131,25 @@ export function Rail({
               {collapsed ? 'Expand navigation' : 'Collapse navigation'}
             </span>
           </button>
-          <div className="file-rail-desktop">
-            {places()}
-            {account()}
-          </div>
+          <div className="file-rail-desktop">{places()}</div>
           <button
-            className="file-rail-browse"
+            className="rail-button file-rail-browse"
+            aria-label="Browse files"
+            title="Browse files"
             onClick={() => setDrawer(true)}
             aria-expanded={drawer}
           >
-            Browse files
+            <ProfileIcon icon="lucide:menu" size={22} />
           </button>
+          {account()}
           <Modal title="Browse files" icon="folder" open={drawer} onOpenChange={setDrawer}>
             <div className="file-rail-drawer">
               {places()}
-              {account()}
+              {!compact && (
+                <button className="rail-button" onClick={onSignOut}>
+                  Sign out
+                </button>
+              )}
             </div>
           </Modal>
         </>

@@ -35,8 +35,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const addTag = async (canvasElement: HTMLElement) => {
-  // The tags dialog is modal and rendered in the canvas.
-  const dialog = within(canvasElement).getByRole('dialog', { hidden: true });
+  // Shared dialogs render through a portal outside the story canvas.
+  const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+    name: 'Tags for Quarterly budget',
+  });
   // The field is focused when the dialog opens, which userEvent.type does not
   // register with React, so set the value with a change event instead.
   fireEvent.change(within(dialog).getByLabelText('Tag'), { target: { value: 'budget' } });

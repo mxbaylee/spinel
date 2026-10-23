@@ -159,7 +159,7 @@ export const OwnerMenu: Story = {
       within(canvasElement).getByRole('button', { name: 'More actions for Quarterly budget' }),
     );
     await expect(
-      within(canvasElement.ownerDocument.body).getByRole('menuitem', { name: 'Trash' }),
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Trash' }),
     ).toBeVisible();
   },
 };
@@ -169,7 +169,7 @@ export const ViewerMenu: Story = {
       within(canvasElement).getByRole('button', { name: 'More actions for Reading list' }),
     );
     const page = within(canvasElement.ownerDocument.body);
-    await expect(page.getByRole('menuitem', { name: 'File into folder…' })).toBeVisible();
+    await expect(await page.findByRole('menuitem', { name: 'File into folder…' })).toBeVisible();
     await expect(page.queryByRole('menuitem', { name: 'Trash' })).not.toBeInTheDocument();
   },
 };
@@ -179,7 +179,7 @@ export const FileAdminMenu: Story = {
       within(canvasElement).getByRole('button', { name: 'More actions for Autumn plans' }),
     );
     await expect(
-      within(canvasElement.ownerDocument.body).getByRole('menuitem', { name: 'Share…' }),
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Share…' }),
     ).toBeVisible();
   },
 };

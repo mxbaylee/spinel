@@ -122,13 +122,14 @@
     align-items: center;
     height: 64px;
     width: 100%;
-    padding: 8px 16px;
-    gap: 16px;
+    padding: 8px;
+    gap: 4px;
   }
   .workspace.files-workspace > header.file-rail .rail-brand {
     flex-direction: row;
     width: auto;
-    flex: 1;
+    flex: none;
+    gap: 0;
     justify-content: flex-start;
   }
   .workspace.files-workspace > header.file-rail .rail-brand .rail-label {
@@ -140,7 +141,37 @@
   }
   .workspace.files-workspace > header.file-rail .file-rail-browse {
     display: inline-flex;
+    flex: none;
+    width: 44px;
+    justify-content: center;
     min-height: 44px;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    width: auto;
+    margin: 0 0 0 auto;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account .sp-segments {
+    flex-direction: row;
+    padding: 0;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account .sp-segments::before {
+    inset: 7px 0;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account .sp-segment {
+    width: 44px;
+    height: 44px;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account > .rail-button {
+    flex: none;
+    width: 44px;
+    justify-content: center;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account .rail-label,
+  .workspace.files-workspace > header.file-rail .rail-account > button.rail-button {
+    display: none;
   }
   .workspace.files-workspace > .workspace-body {
     padding: 20px 16px;
