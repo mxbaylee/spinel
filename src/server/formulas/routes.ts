@@ -4,8 +4,13 @@ import { AuthError } from '../auth/store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import { DocFormulas } from './service.ts';
+import { randomUUID } from 'node:crypto';
+import { isUuid, observeOperation } from '@spinel/diagnostics';
+import type { DiagnosticContext, DiagnosticEvent } from '@spinel/diagnostics';
+import { resolveDocument } from '../workspace/document-access.ts';
 
 export type FormulaIdentity = string | { userId: string; customData: Record<string, unknown> };
+export type FormulaDiagnostics = (event: DiagnosticEvent, context: DiagnosticContext, actorId: string) => void;
 
 export function formulaRoutes(
   workspace: WorkspaceStore,
@@ -13,6 +18,7 @@ export function formulaRoutes(
   identity: (request: Request) => FormulaIdentity,
   guest = false,
   itemParam: 'id' | 'itemId' = 'id',
+  diagnostics?: FormulaDiagnostics,
 ) {
   const router = express.Router({ mergeParams: true });
   const formulas = new DocFormulas(workspace, collaboration);
@@ -80,16 +86,34 @@ export function formulaRoutes(
     )
       throw new AuthError(400, 'Send one formula definition.');
     const { user, customData, verify } = actor(request, () => response.destroyed);
-    response.json(
-      await formulas.evaluate(
+    const header = request.headers['x-spinel-diagnostic-run'];
+    // Unknown headers never break evaluation or become recorded arbitrary text.
+    const runId = isUuid(header) ? header : randomUUID();
+    const started = performance.now();
+    const observed = (outcome: 'success' | 'failure') => {
+      if (!diagnostics || guest || user.startsWith('guest:')) return;
+      try {
+        verify();
+        resolveDocument(workspace, user, hostId(request), 'read', customData);
+        const context: DiagnosticContext = { component: 'formula', fileId: hostId(request), runId, route: '/api/items', ...(typeof customData.spaceId === 'string' ? { spaceId: customData.spaceId } : {}) };
+        observeOperation((event, context) => diagnostics(event, context, user), context, 'formula-evaluate', outcome, Math.max(0, performance.now() - started));
+      } catch { /* Lost access or diagnostics failure cannot alter evaluation semantics. */ }
+    };
+    try {
+      const result = await formulas.evaluate(
         user,
         hostId(request),
         request.body.definition,
         verify,
         guest,
         customData,
-      ),
-    );
+      );
+      observed(result.ok ? 'success' : 'failure');
+      response.json(result);
+    } catch (error) {
+      observed('failure');
+      throw error;
+    }
   });
   return router;
 }

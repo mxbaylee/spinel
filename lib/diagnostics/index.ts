@@ -1,6 +1,6 @@
 /** Optional observations, never edit delivery. No storage, clocks or transport here. */
 export const JOBS = ['history-prune', 'trash-expiry', 'collaboration-purge', 'backup'] as const;
-export const OPERATIONS = ['document-open', 'document-save', 'formula-evaluate', 'search', 'snapshot-restore'] as const;
+export const OPERATIONS = ['document-open', 'document-save', 'formula-parse', 'formula-evaluate', 'search', 'snapshot-restore'] as const;
 export const COMPONENTS = ['editor', 'dashboard', 'formula', 'server', 'health'] as const;
 export const ROUTES = ['/files', '/files/:id', '/spaces/:id', '/api/items', '/api/history/:id', '/admin'] as const;
 export const LEVELS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'] as const;
@@ -34,6 +34,14 @@ export const noDiagnostics: DiagnosticSink = () => {};
 /** A broken observer must not change the outcome of a library operation. */
 export function observe(sink: DiagnosticSink | undefined, event: DiagnosticEvent, context: DiagnosticContext) {
   try { sink?.(event, context); } catch { /* Diagnostics is deliberately lossy. */ }
+}
+
+/** Caller measures around a public operation; pure transforms need no clock or I/O. */
+export function observeOperation(sink: DiagnosticSink | undefined, context: DiagnosticContext, operation: Operation, outcome: 'success' | 'failure' | 'cancelled', durationMs: number) {
+  observe(sink, { name: 'operation.result', details: { operation, outcome, durationMs } }, context);
+  observe(sink, { name: 'operation.duration', metric: { kind: 'histogram', unit: 'milliseconds', value: durationMs }, details: { operation } }, context);
+  observe(sink, { name: 'operation.count', metric: { kind: 'counter', unit: 'count', value: 1 }, details: { operation, outcome } }, context);
+  if (outcome === 'failure') observe(sink, { name: 'operation.failed', level: 'warn', details: { operation, reason: 'unavailable' } }, context);
 }
 
 export function isObject(value: unknown): value is Record<string, unknown> {

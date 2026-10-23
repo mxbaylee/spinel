@@ -1,4 +1,5 @@
 import express from 'express';
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { Request, Response, NextFunction } from 'express';
 import {
   exactKeys, isDiagnosticRecord, isObject, isUuid, MAX_BATCH_BYTES, MAX_BATCH_EVENTS,
@@ -38,6 +39,8 @@ export function diagnosticsRoutes(workspace: WorkspaceStore, diagnostics: Diagno
     else next();
   });
   const rate = new DiagnosticRateLimit();
+  const bindingKey = randomBytes(32);
+  const collectionBinding = (sessionHash: string) => createHmac('sha256', bindingKey).update(sessionHash).digest('hex');
   const session = (request: Request, operator = false) => {
     const current = workspace.auth.session(cookieToken(request));
     const user = current?.user_id && workspace.auth.user(current.user_id);
@@ -52,18 +55,22 @@ export function diagnosticsRoutes(workspace: WorkspaceStore, diagnostics: Diagno
   });
   router.use(express.json({ limit: MAX_BATCH_BYTES, strict: true }));
   router.get('/diagnostics/collection', (request, response) => {
-    session(request);
+    const { current, user } = session(request);
+    if (request.headers['x-spinel-diagnostic-account'] !== user.id) throw new DiagnosticsError(403, 'Diagnostics account changed.');
     const state = diagnostics.status();
     if (!state.available) throw new DiagnosticsError(503, 'Diagnostics are unavailable.');
-    response.json({ generation: state.generation });
+    response.json({ generation: state.generation, binding: collectionBinding(current.token_hash) });
   });
   router.post('/diagnostics/events', (request, response) => {
     const { current, user } = session(request);
+    if (request.headers['x-spinel-diagnostic-account'] !== user.id) throw new DiagnosticsError(403, 'Diagnostics account changed.');
     const body: unknown = request.body;
-    if (!isObject(body) || !exactKeys(body, ['generation', 'records']) || !isUuid(body.generation) ||
+    if (!isObject(body) || !exactKeys(body, ['generation', 'binding', 'records']) || !isUuid(body.generation) ||
+      typeof body.binding !== 'string' || !/^[a-f0-9]{64}$/.test(body.binding) ||
       !Array.isArray(body.records) || body.records.length === 0 || body.records.length > MAX_BATCH_EVENTS ||
       !body.records.every(isDiagnosticRecord)) throw new DiagnosticsError(400, 'Invalid diagnostics batch.');
     const records: DiagnosticRecord[] = body.records;
+    if (!timingSafeEqual(Buffer.from(body.binding, 'hex'), Buffer.from(collectionBinding(current.token_hash), 'hex'))) throw new DiagnosticsError(409, 'Diagnostics session changed. Discard the old batch.');
     if (Buffer.byteLength(JSON.stringify(body)) > MAX_BATCH_BYTES) throw new DiagnosticsError(413, 'Diagnostics batch is too large.');
     if (records.some(({ event, context }) => !event.name.startsWith('operation.') || context.component === 'server' || context.component === 'health')) throw new DiagnosticsError(400, 'Invalid browser diagnostics.');
     if (!rate.take(user.id, records.length)) throw new DiagnosticsError(429, 'Diagnostics collection is limited.');

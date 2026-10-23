@@ -30,11 +30,14 @@ async function fixture() {
   const adminCookie = `${COOKIE_NAME}=${auth.createSession(admin.id).token}`;
   const otherCookie = `${COOKIE_NAME}=${auth.createSession(other.id).token}`;
   const post = (path: string, body: unknown, overrides: Record<string, string> = {}) => fetch(`${root}${path}`, {
-    method: 'POST', headers: { Cookie: cookie, Origin: origin, 'Content-Type': 'application/json', ...overrides }, body: JSON.stringify(body),
+    method: 'POST', headers: { Cookie: cookie, Origin: origin, 'Content-Type': 'application/json', 'X-Spinel-Diagnostic-Account': owner.id, ...overrides }, body: JSON.stringify(body),
   });
   const data = () => ({ id: randomUUID(), occurredAt: 1234, event: { name: 'operation.result', details: { operation: 'document-open', outcome: 'success', durationMs: 10 } }, context: { component: 'editor', fileId: item.id, route: '/files/:id', runId: randomUUID() } });
-  const batch = (record = data()) => ({ generation: diagnostics.status().generation!, records: [record] });
-  return { db, auth, workspace, diagnostics, owner, other, item, root, token, cookie, otherCookie, adminCookie, post, data, batch,
+  const binding = async (cookie: string, account: string) => (await (await fetch(`${root}/diagnostics/collection`, { headers: { Cookie: cookie, 'X-Spinel-Diagnostic-Account': account } })).json()).binding as string;
+  const ownerBinding = await binding(cookie, owner.id), otherBinding = await binding(otherCookie, other.id);
+  const batch = (record = data(), binding = ownerBinding) => ({ generation: diagnostics.status().generation!, binding, records: [record] });
+  const otherHeaders = { Cookie: otherCookie, 'X-Spinel-Diagnostic-Account': other.id };
+  return { db, auth, workspace, diagnostics, owner, other, item, root, token, cookie, otherCookie, otherHeaders, otherBinding, binding, adminCookie, post, data, batch,
     async close() { await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve())); await diagnostics.close(); db.close(); rmSync(directory, { recursive: true, force: true }); } };
 }
 
@@ -44,16 +47,16 @@ test('ingestion derives actor, rejects spoofing/raw content and rechecks file gr
     expect((await f.post('/diagnostics/events', f.batch())).status).toBe(200);
     expect((await f.post('/diagnostics/events', { ...f.batch(), actorId: f.other.id })).status).toBe(400);
     const spoofed = { ...f.data(), actorId: f.other.id };
-    expect((await f.post('/diagnostics/events', { generation: f.diagnostics.status().generation, records: [spoofed] })).status).toBe(400);
+    expect((await f.post('/diagnostics/events', { ...f.batch(), records: [spoofed] })).status).toBe(400);
     const content = f.data();
-    expect((await f.post('/diagnostics/events', { generation: f.diagnostics.status().generation, records: [{ ...content, event: { ...content.event, details: { ...content.event.details, text: 'PRIVATE BODY' } } }] })).status).toBe(400);
+    expect((await f.post('/diagnostics/events', { ...f.batch(), records: [{ ...content, event: { ...content.event, details: { ...content.event.details, text: 'PRIVATE BODY' } } }] })).status).toBe(400);
     expect((await f.post('/diagnostics/events', f.batch(), { Origin: 'https://evil.example' })).status).toBe(403);
     expect((await f.post('/diagnostics/events', f.batch(), { Cookie: '' })).status).toBe(401);
-    expect((await f.post('/diagnostics/events', f.batch(), { Cookie: f.otherCookie })).status).toBe(404);
+    expect((await f.post('/diagnostics/events', f.batch(undefined, f.otherBinding), f.otherHeaders)).status).toBe(404);
     f.workspace.share(f.owner.id, f.item.id, f.other.id, 'viewer');
-    expect((await f.post('/diagnostics/events', f.batch(), { Cookie: f.otherCookie })).status).toBe(200);
+    expect((await f.post('/diagnostics/events', f.batch(undefined, f.otherBinding), f.otherHeaders)).status).toBe(200);
     f.workspace.share(f.owner.id, f.item.id, f.other.id, null);
-    expect((await f.post('/diagnostics/events', f.batch(), { Cookie: f.otherCookie })).status).toBe(404);
+    expect((await f.post('/diagnostics/events', f.batch(undefined, f.otherBinding), f.otherHeaders)).status).toBe(404);
     f.auth.revokeSession(f.auth.session(f.token)!.token_hash);
     expect((await f.post('/diagnostics/events', f.batch())).status).toBe(401);
     const stored = new DatabaseSync(f.diagnostics.path);
@@ -90,7 +93,7 @@ test('operator export/clear are distinct from submission and require current con
 test('batch caps and rate admission are bounded and do not impose diagnostics parsing on other APIs', async () => {
   const f = await fixture();
   try {
-    expect((await f.post('/diagnostics/events', { generation: f.diagnostics.status().generation, records: Array.from({ length: 65 }, () => f.data()) })).status).toBe(400);
+    expect((await f.post('/diagnostics/events', { ...f.batch(), records: Array.from({ length: 65 }, () => f.data()) })).status).toBe(400);
     expect((await f.post('/diagnostics/events', { oversized: 'x'.repeat(65536) })).status).toBe(413);
     expect((await f.post('/unrelated', { content: 'x'.repeat(65536) })).status).toBe(204);
     let now = 0;
@@ -101,5 +104,30 @@ test('batch caps and rate admission are bounded and do not impose diagnostics pa
     expect(rate.take('f', 1)).toBe(false);
     now = 60_000;
     expect(rate.take('a', 1)).toBe(true);
+  } finally { await f.close(); }
+});
+
+test('old queued batches cannot be reassigned to a switched account or a replacement session', async () => {
+  const f = await fixture();
+  try {
+    f.workspace.share(f.owner.id, f.item.id, f.other.id, 'viewer');
+    const queued = f.batch();
+    // Both people can read the same file; current file authorization alone cannot
+    // distinguish the old tab's observation from the new cookie's actor.
+    expect((await f.post('/diagnostics/events', queued, { Cookie: f.otherCookie })).status).toBe(403);
+    expect((await f.post('/diagnostics/events', queued, f.otherHeaders)).status).toBe(409);
+    f.auth.revokeSession(f.auth.session(f.token)!.token_hash);
+    const replacement = `${COOKIE_NAME}=${f.auth.createSession(f.owner.id).token}`;
+    expect((await f.post('/diagnostics/events', queued, { Cookie: replacement })).status).toBe(409);
+    expect(f.diagnostics.status().recordCount).toBe(0);
+    const binding = await f.binding(replacement, f.owner.id);
+    expect(binding).not.toBe(queued.binding);
+    expect((await f.post('/diagnostics/events', f.batch(undefined, binding), { Cookie: replacement })).status).toBe(200);
+    const stored = new DatabaseSync(f.diagnostics.path);
+    try {
+      const rows = JSON.stringify(stored.prepare('SELECT * FROM events').all());
+      expect(rows).not.toContain(binding);
+      expect(rows).not.toContain(queued.binding);
+    } finally { stored.close(); }
   } finally { await f.close(); }
 });
