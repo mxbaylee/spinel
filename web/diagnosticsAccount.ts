@@ -1,6 +1,8 @@
 import type { DiagnosticSink } from '@spinel/diagnostics';
 import { BrowserDiagnostics } from './diagnostics.ts';
 
+export type DiagnosticOperation = { runId: string; sink: DiagnosticSink };
+
 /** One tab's verified account lifetime; never a global telemetry singleton. */
 export class AccountDiagnostics {
   private owner: string | null = null;
@@ -25,12 +27,12 @@ export class AccountDiagnostics {
     if (available) void this.client.start();
     else this.client.suspend();
   }
-  readonly emit: DiagnosticSink = (event, context) => {
-    if (this.available && !this.stopped) this.client?.emit(event, context);
-  };
-  runId() {
+  /** The run ID and sink share one initiating account/collection lifetime. */
+  begin(): DiagnosticOperation | undefined {
     try {
-      return this.available && !this.stopped ? crypto.randomUUID() : undefined;
+      if (!this.available || this.stopped) return;
+      const sink = this.client?.capture();
+      return sink ? { runId: crypto.randomUUID(), sink } : undefined;
     } catch {
       return undefined;
     }

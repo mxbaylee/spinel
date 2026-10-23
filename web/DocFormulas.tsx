@@ -22,6 +22,7 @@ import { requestFormula } from '../src/shared/formulaRequest.ts';
 import { isUuid, observeOperation } from '@spinel/diagnostics';
 import type { DiagnosticContext } from '@spinel/diagnostics';
 import { useDiagnostics } from './useDiagnostics.tsx';
+import type { DiagnosticOperation } from './diagnosticsAccount.ts';
 import { observedFormulaParse } from './formulaDiagnostics.ts';
 
 // Univer's document is paper even when the surrounding application uses dark mode.
@@ -237,13 +238,13 @@ export function FormulaDialog({
     setSuggestion(0);
     setPreview(null);
   };
-  function chosenBinding(runId?: string): FormulaReference | undefined {
+  function chosenBinding(observation?: DiagnosticOperation): FormulaReference | undefined {
     if (!chosen?.sheetId) return;
     try {
       const reference = observedFormulaParse(
         expression,
-        runId ? diagnostics.sink : undefined,
-        diagnosticContext(runId),
+        observation?.sink,
+        diagnosticContext(observation?.runId),
       ).find((item) => item.start === chosen.start);
       if (
         reference &&
@@ -261,12 +262,12 @@ export function FormulaDialog({
       /* An unfinished reference has no binding yet. */
     }
   }
-  async function resolve(signal: AbortSignal, runId?: string) {
+  async function resolve(signal: AbortSignal, observation?: DiagnosticOperation) {
     // Formatting an existing object never changes its source identities. Its evaluator
     // still checks current access; losing a source must not prevent fixing presentation.
     if (initial && expression === initial.definition.expression && !bindings.length && !chosen)
       return { ...initial.definition, format };
-    const pending = chosenBinding(runId);
+    const pending = chosenBinding(observation);
     const explicit = pending
       ? [...bindings.filter((item) => item.start !== pending.start), pending]
       : bindings;
@@ -286,7 +287,8 @@ export function FormulaDialog({
     ).definition;
   }
   async function run(save: boolean) {
-    const runId = diagnostics.runId();
+    const observation = diagnostics.begin();
+    const runId = observation?.runId;
     const current = ++attempt.current;
     operation.current?.abort();
     const controller = new AbortController();
@@ -295,7 +297,7 @@ export function FormulaDialog({
     setBusy(true);
     setError('');
     try {
-      const definition = await resolve(controller.signal, runId);
+      const definition = await resolve(controller.signal, observation);
       if (!active.current || current !== attempt.current) return;
       if (save) {
         await onSave(definition);
@@ -313,16 +315,18 @@ export function FormulaDialog({
             spaceId,
             runId,
           );
+          if (!active.current || current !== attempt.current) return;
           observeOperation(
-            runId ? diagnostics.sink : undefined,
+            observation?.sink,
             diagnosticContext(runId),
             'formula-evaluate',
             result.ok ? 'success' : 'failure',
             Math.max(0, performance.now() - started),
           );
         } catch (cause) {
+          if (!active.current || current !== attempt.current) return;
           observeOperation(
-            runId ? diagnostics.sink : undefined,
+            observation?.sink,
             diagnosticContext(runId),
             'formula-evaluate',
             controller.signal.aborted ? 'cancelled' : 'failure',

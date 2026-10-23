@@ -1,6 +1,6 @@
 import { createContext, useContext, useLayoutEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import type { DiagnosticSink } from '@spinel/diagnostics';
+import type { DiagnosticOperation } from './diagnosticsAccount.ts';
 import { AccountDiagnostics } from './diagnosticsAccount.ts';
 
 const DiagnosticsContext = createContext<AccountDiagnostics | null>(null);
@@ -51,7 +51,7 @@ export function useAccountDiagnostics(userId: string | null, connected: boolean)
   return () => account?.stop();
 }
 
-export function useDiagnostics(): { sink?: DiagnosticSink; runId: () => string | undefined } {
+export function useDiagnostics(): { begin: () => DiagnosticOperation | undefined } {
   const account = useContext(DiagnosticsContext);
-  return { sink: account?.emit, runId: () => account?.runId() };
+  return { begin: () => account?.begin() };
 }

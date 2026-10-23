@@ -71,6 +71,19 @@ export class BrowserDiagnostics {
     }
   }
 
+  /** Capture at operation start: never reassign a late observation to a new collection. */
+  capture(): DiagnosticSink | undefined {
+    if (this.closed || !this.generation || !this.binding) return;
+    const epoch = this.epoch, generation = this.generation, binding = this.binding;
+    return (event, context) => {
+      if (this.closed || this.epoch !== epoch || this.generation !== generation || this.binding !== binding) {
+        this.drop();
+        return;
+      }
+      this.emit(event, context);
+    };
+  }
+
   readonly emit: DiagnosticSink = (event, context) => {
     try {
       if (this.closed || !this.generation) {
