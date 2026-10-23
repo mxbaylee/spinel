@@ -27,8 +27,8 @@ try {
       ['identity-entity-icons--in-context', 'Create and browse'],
       ['dashboard-dashboard--populated', 'Quarterly budget'],
       ['dashboard-dashboard--shared-drawer', 'Shared forecast'],
-      ['dashboard-dashboard--new-doc', 'New item'],
-      ['dashboard-dashboard--new-sheet', 'New item'],
+      ['dashboard-dashboard--new-doc', 'New doc'],
+      ['dashboard-dashboard--new-sheet', 'New sheet'],
       ['dashboard-searchpanel--results', 'Budget notes'],
       ['dashboard-trash--with-items', 'Old budget'],
       ...['document', 'spreadsheet', 'space-preview', 'emoji', 'long-title', 'long-word'].map(

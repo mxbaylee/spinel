@@ -111,7 +111,10 @@ for (const kind of ['sheet', 'doc'] as const) {
     };
     try {
       await page.goto('/');
-      await page.getByRole('button', { name: `Share Guest ${kind}`, exact: true }).click();
+      await page
+        .getByRole('button', { name: `More actions for Guest ${kind}`, exact: true })
+        .click();
+      await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
       const controls = page.getByRole('region', { name: 'Guest link', exact: true });
       if (kind === 'doc') {
         await expect(controls).toContainText('Social previews show only the file title and type');

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, within } from 'storybook/test';
+import { expect, fn, within, userEvent } from 'storybook/test';
 import { Rail } from './Rail.tsx';
 
 const meta = {
@@ -18,7 +18,7 @@ const meta = {
     connection: 'online',
   },
   render: (args) => (
-    <div className="workspace">
+    <div className={`workspace${args.files ? ' files-workspace' : ''}`}>
       <Rail {...args} />
     </div>
   ),
@@ -49,3 +49,58 @@ export const SignedOut: Story = {
 };
 
 export const Compact: Story = { args: { compact: true } };
+
+export const Files: Story = { args: { files: { shared: false, open: fn() } } };
+export const FilesCollapsed: Story = {
+  ...Files,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const collapse = canvas.queryByRole('button', { name: 'Collapse navigation' });
+    if (!collapse) return;
+    await userEvent.click(collapse);
+    await expect(canvas.getByRole('button', { name: 'My files' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Shared with me' })).toBeVisible();
+  },
+};
+export const FilesPhone: Story = {
+  ...Files,
+  ...Phone,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Appearance and profile remain direct actions even before the drawer opens.
+    const profile = canvas.getByRole('link', { name: 'Your profile' });
+    await expect(canvas.getAllByRole('link', { name: 'Your profile' })).toHaveLength(1);
+    await expect(profile).toBeVisible();
+    const controls = [
+      profile,
+      ...['Follow system', 'Light', 'Dark'].map((name) => canvas.getByRole('radio', { name })),
+    ];
+    for (const control of controls) {
+      await expect(control).toBeVisible();
+      const bounds = control.getBoundingClientRect();
+      await expect(bounds.left).toBeGreaterThanOrEqual(0);
+      await expect(bounds.right).toBeLessThanOrEqual(window.innerWidth);
+      if (window.innerWidth <= 640) {
+        await expect(bounds.width).toBeGreaterThanOrEqual(44);
+        await expect(bounds.height).toBeGreaterThanOrEqual(44);
+      }
+    }
+    await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+  },
+};
+export const FilesDrawer: Story = {
+  ...FilesPhone,
+  play: async ({ canvasElement }) => {
+    const browse = within(canvasElement).queryByRole('button', { name: 'Browse files' });
+    if (!browse) return;
+    await userEvent.click(browse);
+    const modal = within(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Browse files' }),
+    );
+    await expect(modal.getByRole('button', { name: 'My files' })).toBeVisible();
+    await expect(modal.getByRole('button', { name: 'Shared with me' })).toBeVisible();
+    await expect(modal.getByRole('button', { name: 'Sign out' })).toBeVisible();
+    await expect(modal.queryByRole('link', { name: 'Your profile' })).not.toBeInTheDocument();
+    await expect(modal.queryByRole('radiogroup', { name: 'Appearance' })).not.toBeInTheDocument();
+  },
+};

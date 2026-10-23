@@ -59,8 +59,9 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     // An unprepared device keeps nothing (pwa.spec.ts checks the same on HTTPS).
     expect(await page.evaluate(() => caches.keys())).toEqual([]);
     for (const name of [sheet.name, doc.name]) {
+      await page.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
       await page
-        .getByRole('button', { name: `Make ${name} available offline on this device` })
+        .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
         .click();
       await expect(page.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
         `${name} is available offline on this device.`,
@@ -114,9 +115,11 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
     });
     await page.reload();
     await expect.poll(() => refused, { timeout: 60_000 }).toBeGreaterThan(0);
+    await page.getByRole('button', { name: `More actions for ${sheet.name}`, exact: true }).click();
     await expect(
-      page.getByRole('button', { name: `Remove ${sheet.name} from this device` }),
+      page.getByRole('menuitem', { name: 'Remove from device', exact: true }),
     ).toBeVisible();
+    await page.keyboard.press('Escape');
     await page.unrouteAll({ behavior: 'wait' });
     expect(await stored()).toEqual(before);
 
@@ -170,19 +173,59 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
         .getByRole('list', { name: 'Folder contents' })
         .getByRole('listitem')
         .filter({
-          has: page.locator('.item-open', { hasText: name }),
+          has: page.locator('.dashboard-file-open', { hasText: name }),
         });
     await expect(row(sheet.name)).toContainText('Available offline');
     await expect(row(doc.name)).toContainText('Available offline');
     await expect(row('Online only')).toContainText('Needs a connection');
+    // Same-account online history must not hide the local catalog behind a search
+    // that offline launch cannot execute or clear.
+    await page.evaluate((accountId) => {
+      const session = JSON.parse(sessionStorage.getItem('spinel:dashboard-navigation-session')!);
+      if (!session?.generation || session.accountId !== accountId)
+        throw new Error('Missing current retrieval epoch');
+      history.replaceState(
+        {
+          spinelDashboard: {
+            version: 1,
+            accountId,
+            generation: session.generation,
+            value: {
+              folderId: null,
+              shared: false,
+              query: { q: 'Private previous query', type: '', owner: '', tag: '', modified: '' },
+              draft: 'Private previous query',
+              allFiles: false,
+              layout: 'list',
+              scroll: 0,
+            },
+          },
+        },
+        '',
+        '/',
+      );
+      history.pushState(null, '', '/?shared=1');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }, user.id);
+    await expect(page.getByRole('heading', { name: 'Shared with me', exact: true })).toBeVisible();
+    await page.goBack();
+    await expect(row(doc.name)).toContainText('Available offline');
+    await expect(page.getByRole('searchbox', { name: 'Search files' })).toHaveCount(0);
+
     await expect(page.getByRole('complementary', { name: 'Pinned items' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /^(Pin|Unpin) / })).toHaveCount(0);
     // Local mode offers nothing that would reach the server.
-    await expect(
-      page.getByRole('button', { name: /available offline on this device/ }),
-    ).toHaveCount(0);
+    for (const name of [sheet.name, doc.name, 'Online only']) {
+      await row(name)
+        .getByRole('button', { name: `More actions for ${name}`, exact: true })
+        .click();
+      await expect(page.getByRole('menuitem')).toHaveText(['Open']);
+      await page.keyboard.press('Escape');
+    }
 
-    await row(sheet.name).locator('.item-open').click();
+    await row(sheet.name)
+      .getByRole('button', { name: `${sheet.name} Sheet`, exact: true })
+      .click();
     await expect(
       page.getByRole('status').filter({ hasText: 'Read only on this device' }),
     ).toBeVisible({ timeout: 30_000 });
@@ -212,12 +255,16 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
       .toBe(true);
 
     await page.goBack();
-    await row(doc.name).locator('.item-open').click();
+    await row(doc.name)
+      .getByRole('button', { name: `${doc.name} Doc`, exact: true })
+      .click();
     await expect(
       page.getByRole('status').filter({ hasText: 'Read only on this device' }),
     ).toBeVisible({ timeout: 30_000 });
     await page.goBack();
-    await row('Online only').locator('.item-open').click();
+    await row('Online only')
+      .getByRole('button', { name: 'Online only Sheet', exact: true })
+      .click();
     await expect(page.getByText('Online only needs a connection.')).toBeVisible();
     expect(api).toEqual([]);
     expect(tracked).toEqual([]);
@@ -463,12 +510,12 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
     await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
     const rootRow = contents.getByRole('listitem').filter({
-      has: page.locator('.item-open', { hasText: root.name }),
+      has: page.locator('.dashboard-file-open', { hasText: root.name }),
     });
     await expect(rootRow).toContainText('Space');
     await expect(contents.getByText(doc.name, { exact: true })).toHaveCount(0);
     await expect(contents.getByText(missing.name, { exact: true })).toHaveCount(0);
-    await rootRow.locator('.item-open').click();
+    await rootRow.getByRole('button', { name: `${root.name} Space`, exact: true }).click();
     await expect(page).toHaveURL(baseURL! + rootHref);
     await assertPreparedDoc();
 

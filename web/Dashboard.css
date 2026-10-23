@@ -1,0 +1,70 @@
+.dashboard-content {
+  min-width: 0;
+  width: 100%;
+}
+.dashboard-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.dashboard-heading h1 {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.dashboard-heading-actions,
+.dashboard-places {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.dashboard-view-choice {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+.dashboard-breadcrumbs {
+  margin-bottom: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.dashboard-return {
+  margin-bottom: 1rem;
+}
+.dashboard-places {
+  margin-bottom: 1rem;
+}
+.dashboard-content .item-form {
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  .dashboard-heading {
+    gap: 0.5rem;
+  }
+  .dashboard-heading h1 {
+    font-size: 1.6rem;
+  }
+  .dashboard-heading-actions {
+    flex-shrink: 0;
+  }
+  .dashboard-content button {
+    min-height: 44px;
+  }
+}
+/* The older workspace button rule must not replace the shared control states. */
+.workspace .dashboard-content button.sp-primary {
+  background: var(--sp-accent);
+  color: var(--sp-on-accent);
+  border-color: var(--sp-accent);
+}
+.workspace .dashboard-content button.sp-segment {
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  min-height: 44px;
+  width: 44px;
+  height: 44px;
+}
