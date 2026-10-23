@@ -35,6 +35,7 @@ import { spaceHref } from './spaceNavigation.ts';
 import { SpaceRootActions } from './SpaceRootActions.tsx';
 import type { SpaceRootActionMode } from './SpaceRootActions.tsx';
 import { EditorFrame } from './EditorFrame.tsx';
+import { AccessState } from './AccessState.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import type { LocalStart } from './offline/localStart.ts';
@@ -757,7 +758,7 @@ export function Dashboard({
       ) : currentId === TRASH_VIEW ? (
         <Trash onChanged={reloadItems} />
       ) : currentId && !sharedOpen && !current ? (
-        <p role="alert">This item is not available. Choose My files to continue.</p>
+        <AccessState kind="missing" embedded onFiles={() => navigate(null)} />
       ) : browsing ? (
         <>
           {!searchActive &&

@@ -46,6 +46,7 @@ import {
 import type { SpaceLocation } from './spaceNavigation.ts';
 import { SpaceRootActions } from './SpaceRootActions.tsx';
 import { SpaceOfflineActions } from './SpaceOfflineActions.tsx';
+import { AccessState } from './AccessState.tsx';
 
 export interface SpaceEditorProps {
   spaceId: string;
@@ -895,6 +896,16 @@ export function Space({
         rootControls}
     </SpaceShell>
   );
+  // A guest with no loaded tree receives no Space identity or account navigation.
+  // Dirty editors deliberately keep the existing recovery path; see SPN-084's
+  // unresolved privacy/recovery decision before changing that separate boundary.
+  if (guest && !currentTree && !visiblePage)
+    return (
+      <AccessState
+        kind={denied ? 'revoked' : route.kind === 'unavailable' ? 'missing' : loadError ? 'offline' : 'loading'}
+        onRetry={() => void refresh.current(true)}
+      />
+    );
   return visiblePage ? (
     <EditorFrame
       documentKey={editorKey!}

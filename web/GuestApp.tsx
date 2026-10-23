@@ -1,8 +1,7 @@
 import { EditorFrame } from './EditorFrame.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { guestItemId, documentPath } from './documentAccess.ts';
-import { GemLogo } from '../src/ui/GemLogo.tsx';
-import { ConnectionStatus } from './ConnectionStatus.tsx';
+import { AccessState } from './AccessState.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import { useBrowserOnline } from './useConnectionStatus.ts';
 import { Space } from './Space.tsx';
@@ -11,7 +10,8 @@ const Doc = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEd
 
 class LinkFailure extends Error {
   readonly revoked: boolean;
-  constructor(revoked: boolean, message?: string) {
+  readonly unsupported: boolean;
+  constructor(revoked: boolean, message?: string, unsupported = false) {
     super(
       message ??
         (revoked
@@ -19,6 +19,7 @@ class LinkFailure extends Error {
           : 'Connection interrupted. Keep this tab open; retrying…'),
     );
     this.revoked = revoked;
+    this.unsupported = unsupported;
   }
 }
 const requireResponse = (response: Response) => {
@@ -44,6 +45,8 @@ export function GuestApp() {
   const dirty = useRef(false);
   const [item, setItem] = useState<Item | null>(null);
   const [error, setError] = useState('');
+  const [unsupported, setUnsupported] = useState(false);
+  const retry = useRef<() => Promise<void>>(async () => {});
   const [reachability, setReachability] = useState<ConnectionState>('reconnecting');
   const [editorConnection, setEditorConnection] = useState<ConnectionState | null>(null);
   const browserOnline = useBrowserOnline();
@@ -65,6 +68,7 @@ export function GuestApp() {
               throw new LinkFailure(
                 true,
                 'Open this link in a current browser that supports Web Locks.',
+                true,
               );
             // Separate tabs share cookies. Serialize their exchange before either opens a socket.
             await navigator.locks.request(`spinel-guest:${id}`, async () => {
@@ -101,12 +105,14 @@ export function GuestApp() {
             ended = true;
             setItem((previous) => (previous?.kind === 'space' && dirty.current ? previous : null));
             setError(cause.message);
+            setUnsupported(cause.unsupported);
           } else setReachability('offline');
         }
       } finally {
         checking = false;
       }
     };
+    retry.current = check;
     void check();
     const interval = setInterval(() => {
       void check();
@@ -120,10 +126,15 @@ export function GuestApp() {
     window.addEventListener('beforeunload', warn);
     return () => {
       disposed = true;
+      retry.current = async () => {};
       clearInterval(interval);
       window.removeEventListener('beforeunload', warn);
     };
   }, [id, token]);
+  useEffect(() => {
+    // A failed link never leaves the previous document name in the browser tab.
+    if (!item || error) document.title = 'Spinel';
+  }, [item, error]);
   if (item?.kind === 'space')
     return (
       <>
@@ -183,29 +194,15 @@ export function GuestApp() {
         />
       </>
     );
+  if (error || !item)
+    return (
+      <AccessState
+        kind={error ? (unsupported ? 'unsupported' : 'revoked') : !browserOnline || reachability === 'offline' ? 'offline' : 'loading'}
+        onRetry={() => void retry.current()}
+      />
+    );
   return (
     <main className="workspace guest-workspace">
-      {!item && (
-        <div className="guest-brand">
-          <GemLogo size={28} />
-          <span>Spinel · Shared document</span>
-          {!error && (
-            <ConnectionStatus
-              state={
-                !browserOnline || reachability === 'offline'
-                  ? 'offline'
-                  : item
-                    ? (editorConnection ?? 'reconnecting')
-                    : reachability
-              }
-              documentOpen={Boolean(item)}
-            />
-          )}
-        </div>
-      )}
-      {error ? (
-        <p role="alert">{error}</p>
-      ) : item ? (
         <EditorFrame
           name={item.name}
           guest
@@ -240,9 +237,6 @@ export function GuestApp() {
             )}
           </Suspense>
         </EditorFrame>
-      ) : (
-        <p role="status">Opening shared document…</p>
-      )}
     </main>
   );
 }

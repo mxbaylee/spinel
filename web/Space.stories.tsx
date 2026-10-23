@@ -489,6 +489,59 @@ export const Unreachable: Story = {
   },
 };
 
+const guestTreeApi = (access: 'viewer' | 'editor' = 'viewer', members = items) => ({
+  ['GET /api/guest-spaces/' + root]: tree(access, members),
+});
+const guestArgs = { guest: true, user: undefined };
+const guestPath = '/share/' + root + '?item=' + id(1);
+const guestBoundaries: NonNullable<Story['play']> = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await expect(await canvas.findByRole('region', { name: 'Editor body fixture' })).toBeVisible();
+  for (const name of ['My files', 'Your profile', 'Document actions'])
+    await expect(canvas.queryByRole('button', { name, exact: true })).not.toBeInTheDocument();
+};
+export const GuestViewer: Story = {
+  args: guestArgs,
+  parameters: { spacePath: guestPath, api: guestTreeApi() },
+  play: guestBoundaries,
+};
+export const GuestEditor: Story = {
+  args: guestArgs,
+  parameters: { spacePath: guestPath, api: guestTreeApi('editor') },
+  play: guestBoundaries,
+};
+export const GuestEmpty: Story = {
+  args: guestArgs,
+  parameters: { spacePath: '/share/' + root, api: guestTreeApi('viewer', []) },
+};
+export const GuestLoading: Story = {
+  args: guestArgs,
+  parameters: { spacePath: guestPath, api: { ['GET /api/guest-spaces/' + root]: pending() } },
+};
+export const GuestRevoked: Story = {
+  args: guestArgs,
+  parameters: { spacePath: guestPath, api: { ['GET /api/guest-spaces/' + root]: failure('Private title must never appear', 404) } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent('This link no longer works.');
+    await expect(canvas.queryByText('Project Atlas')).not.toBeInTheDocument();
+    await expect(canvas.queryByText('Private title must never appear')).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+  },
+};
+export const GuestUnreachable: Story = {
+  args: guestArgs,
+  parameters: { spacePath: guestPath, api: { ['GET /api/guest-spaces/' + root]: failure('Unavailable', 503) } },
+};
+export const GuestMissingPage: Story = {
+  args: guestArgs,
+  parameters: { spacePath: '/share/' + root + '?item=' + id(999), api: guestTreeApi() },
+};
+export const GuestMalformedRoute: Story = {
+  args: guestArgs,
+  parameters: { spacePath: '/share/' + root + '?item=invalid', api: guestTreeApi() },
+};
+
 export const Offline: Story = {
   args: { connection: 'offline' },
   parameters: { api: treeApi() },

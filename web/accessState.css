@@ -1,0 +1,48 @@
+.access-state {
+  min-height: 100dvh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px 24px;
+  background: var(--sp-bg);
+}
+.access-state-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(100%, 960px);
+}
+.access-state-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.375rem;
+  letter-spacing: -0.05em;
+}
+.access-state > main {
+  flex: 1;
+  width: 100%;
+  display: grid;
+  align-items: center;
+}
+.access-state-content {
+  width: min(100%, 420px);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 64px 0;
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.access-state-content h1 { font-size: 2rem; line-height: 1.15; margin: 0; }
+.access-state-content p { color: var(--sp-muted); margin: 0; }
+.access-state > footer { color: var(--sp-muted); font-size: 0.6875rem; text-align: center; }
+.access-state-embedded { padding: 24px; min-width: 0; }
+@media (max-width: 600px) {
+  .access-state { padding: 24px 24px 24px; }
+  .access-state-content { padding: 48px 0; }
+}

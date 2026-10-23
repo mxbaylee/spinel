@@ -70,6 +70,11 @@ and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-co
 
 ## Stories
 
+SPN-084's [implementation record](../implementation/SPN-084.md) tracks the generic
+loading/offline/unavailable migration and its pending validation. Its dirty Space
+guest revocation question remains unresolved; the existing pending-input
+recovery path is not silently removed by this visual migration.
+
 `Guest/GuestApp` (loading and link-revoked states; the editor itself boots
 Univer and is covered by Playwright).
 

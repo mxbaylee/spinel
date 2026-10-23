@@ -245,8 +245,9 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await grant('');
     await other.reload();
     await expect(
-      other.getByText('This item is not available. Choose My files to continue.', { exact: true }),
+      other.getByRole('heading', { name: "This item isn't available", exact: true }),
     ).toBeVisible();
+    await expect(other.getByRole('button', { name: 'Go to My files', exact: true })).toBeVisible();
     expect((await second.request.get(`/api/items/${docId}/doc`)).status()).toBe(404);
     expect((await (await second.request.get('/api/items')).json()).items).toEqual([]);
     // A direct child grant must not expose the now-private shared ancestor names.

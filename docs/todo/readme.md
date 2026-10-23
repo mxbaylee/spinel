@@ -22,7 +22,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 8 | 🎚️ [SPN-081](SPN-081.md) Apply the approved sharing dialog design | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
 | 9 | 🧭 [SPN-082](SPN-082.md) Apply the approved Operator administration layout | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
 | 10 | 🚪 [SPN-083](SPN-083.md) Apply the approved entry and consent screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
-| 11 | 🪟 [SPN-084](SPN-084.md) Apply the approved guest and unavailable screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Approve the implementation screenshots |
+| 11 | 🪟 [SPN-084](SPN-084.md) Apply the approved guest and unavailable screens | 🌿 M | 💜 M | 5 (own 4) | Lower ID | — | Choose dirty guest revocation recovery behavior; approve implementation screenshots |
 | 12 | 🕰️ [SPN-085](SPN-085.md) Apply the approved history browser design | 🌿 M | 💜 M | 5 (own 4) | Lower effort | — | Approve the implementation screenshots |
 | 13 | 📈 [SPN-032](SPN-032.md) Show server health and export structured diagnostics | 🌳 L | 💜 M | 5 (own 3) | Unblocks SPN-098 | — | Approve the PR's screenshots |
 | 14 | 🛠️ [SPN-100](SPN-100.md) Enable reviewed dependency update pull requests | 🌱 S | 💜 M | 5 | — | — | — |
