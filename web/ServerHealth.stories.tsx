@@ -20,6 +20,17 @@ export const Warning: Story = { parameters: { api: { 'GET /api/admin/health': { 
   jobs: healthStory.jobs.map((job) => job.name === 'history-maintenance' ? { ...job, failedSince: healthStoryTime - 600_000 } : job),
 } } } };
 export const UnavailableMeasurements: Story = { parameters: { api: { 'GET /api/admin/health': { ...healthStory, application: null, diagnostics: null, memory: { ...healthStory.memory, systemMeasure: 'free', containerUsedBytes: null }, storage: { ...healthStory.storage, freeBytes: null, logicalDatabaseBytes: null, backupStagingBytes: null } } } } };
+export const LowBackupSpace: Story = { parameters: { api: { 'GET /api/admin/health': { ...healthStory, storage: { ...healthStory.storage, freeBytes: 1 } } } }, play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await expect(await canvas.findByText('Needs attention')).toBeVisible();
+  await expect(canvas.getByRole('alert')).toHaveTextContent('Free space is below the backup staging requirement.');
+  await expect(canvas.queryByText('No warning in this sample')).not.toBeInTheDocument();
+} };
+export const NearUploadCeiling: Story = { parameters: { api: { 'GET /api/admin/health': { ...healthStory, storage: { ...healthStory.storage, logicalDatabaseBytes: healthStory.storage.backupUploadLimitBytes * 0.81 } } } }, play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await expect(await canvas.findByText('Needs attention')).toBeVisible();
+  await expect(canvas.getByRole('alert')).toHaveTextContent('Check the encrypted archive size');
+} };
 export const Loading: Story = { parameters: { api: { 'GET /api/admin/health': pending() } } };
 export const Failed: Story = { parameters: { api: { 'GET /api/admin/health': failure('Private server path must never appear', 503) } }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);

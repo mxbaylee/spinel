@@ -57,12 +57,15 @@ export function ServerHealth() {
     return () => { mounted.current = false; request.current++; controller.current?.abort(); clearInterval(interval); };
   }, []);
   const failures = data?.jobs.filter((job) => job.failedSince !== null) ?? [];
+  const lowStagingSpace = !!data && data.storage.freeBytes !== null && data.storage.backupStagingBytes !== null && data.storage.freeBytes < data.storage.backupStagingBytes;
+  const nearUploadCeiling = !!data && data.storage.logicalDatabaseBytes !== null && data.storage.logicalDatabaseBytes >= data.storage.backupUploadLimitBytes * 0.8;
+  const needsAttention = !!data && (data.memory.aboveBudgetSince !== null || failures.length > 0 || lowStagingSpace || nearUploadCeiling);
   return <section className="admin-health-card server-health sp-ui" aria-label="Server health">
     <div className="admin-section-heading"><h3>Server health</h3><Button disabled={loading} onClick={() => void refresh()}>Refresh server health</Button></div>
     {loading && <p role="status">Loading server health…</p>}
     {error && <p role="alert">{error}</p>}{denied && <a href="/sign-in">Sign in again</a>}
     {data && <>
-      <p className="admin-health-state"><ProfileIcon icon={data.memory.aboveBudgetSince !== null || failures.length ? 'lucide:triangle-alert' : 'lucide:circle-check'} /><strong>{data.memory.aboveBudgetSince !== null || failures.length ? 'Needs attention' : 'No warning in this sample'}</strong></p>
+      <p className="admin-health-state"><ProfileIcon icon={needsAttention ? 'lucide:triangle-alert' : 'lucide:circle-check'} /><strong>{needsAttention ? 'Needs attention' : 'No warning in this sample'}</strong></p>
       {data.memory.aboveBudgetSince !== null && <p role="alert">Host memory is above 80% of the {healthBytes(data.memory.hostBudgetBytes)} budget. First observed {date(data.memory.aboveBudgetSince)}.</p>}
       {failures.map((job) => <p role="alert" key={job.name}>{jobs[job.name]} has failed since {date(job.failedSince)}.</p>)}
       <p className="sp-muted">Sampled {date(data.sampledAt)}. Process started {date(data.startedAt)}. Refreshes every minute.</p>
@@ -84,8 +87,8 @@ export function ServerHealth() {
         <div><dt>Logical application database</dt><dd>{healthBytes(data.storage.logicalDatabaseBytes)}</dd></div>
         <div><dt>Backup upload ceiling</dt><dd>{healthBytes(data.storage.backupUploadLimitBytes)}</dd></div>
       </dl><p className="sp-muted">Staging allows 2.1 times the logical database plus 256 MiB. The encrypted archive size depends on compression; database size alone does not establish whether an upload will fit.</p>
-      {data.storage.freeBytes !== null && data.storage.backupStagingBytes !== null && data.storage.freeBytes < data.storage.backupStagingBytes && <p role="alert">Free space is below the backup staging requirement.</p>}
-      {data.storage.logicalDatabaseBytes !== null && data.storage.logicalDatabaseBytes >= data.storage.backupUploadLimitBytes * 0.8 && <p role="alert">The logical database is at least 80% of the upload ceiling. Check the encrypted archive size before relying on the next backup.</p>}</section>
+      {lowStagingSpace && <p role="alert">Free space is below the backup staging requirement.</p>}
+      {nearUploadCeiling && <p role="alert">The logical database is at least 80% of the upload ceiling. Check the encrypted archive size before relying on the next backup.</p>}</section>
       <section className="health-detail"><h4>Maintenance jobs</h4><ul className="health-jobs">{data.jobs.map((job) => <li key={job.name}><strong>{jobs[job.name]}</strong><p>{!job.configured ? 'Not configured' : job.running ? 'Running' : job.failedSince !== null ? 'Failed' : job.lastSuccess !== null ? 'OK' : 'Not run yet'}</p>{job.configured && <><p>Last attempt: {date(job.lastAttempt)}</p><p>Last success: {date(job.lastSuccess)}</p></>}</li>)}</ul></section>
     </>}
     <a href="https://github.com/mxbaylee/spinel/blob/main/docs/deployment.md" target="_blank" rel="noopener noreferrer">Open server guide</a>
