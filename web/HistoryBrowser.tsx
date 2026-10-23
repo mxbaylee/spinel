@@ -139,7 +139,10 @@ export function HistoryBrowser() {
         version === 'current' ? '' : '/' + encodeURIComponent(version.id),
         version === 'current' ? 'POST' : 'PATCH', { name: value }, spaceId, request.signal);
       if (request.signal.aborted) return;
-      if (version === 'current') setSelected(result.version.id);
+      if (version === 'current') {
+        setSelected(result.version.id);
+        history.replaceState(null, '', historyHref(id, spaceId, result.version.id));
+      }
       setNaming(null);
       setRefresh((value) => value + 1);
     } catch (cause) {

@@ -186,6 +186,12 @@ test('touch history timeline and calendar preview retained choices without chang
     await expect(currentName).not.toBeVisible();
     await ready();
     await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Current confirmed content');
+    const namedHistory = await (await context.request.get(`/api/items/${item.id}/history`)).json();
+    const namedCurrent = namedHistory.versions.find((version: { name: string | null }) => version.name === 'Current confirmed content');
+    expect(new URL(page.url()).searchParams.get('version')).toBe(namedCurrent.id);
+    await page.reload();
+    await ready();
+    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Current confirmed content');
     expect(await (await context.request.get(`/api/items/${item.id}/doc`)).json()).toEqual(live);
     await context.clearCookies();
     await context.addCookies([cookie(viewer.id)]);
