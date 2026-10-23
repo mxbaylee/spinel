@@ -160,15 +160,22 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
     const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
     const openPeople = () =>
       page.getByRole('button', { name: 'People in this document', exact: true }).click();
-    const closePeople = () =>
-      people.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    const closePeople = async () => {
+      await people.getByRole('button', { name: 'Close dialog', exact: true }).click();
+      await expect(people).toHaveCount(0);
+    };
     await openPeople();
     const badge = people.getByRole('button', { name: 'Go to Iris Garden', exact: true });
+    const followPerson = async () => {
+      await badge.click();
+      await expect(people).toHaveCount(0);
+    };
     await expect(label).toBeVisible();
     await expect(label.locator('[data-profile-icon="lucide:flower"]')).toBeVisible();
     await expect(badge.locator('[data-profile-icon="lucide:flower"]')).toBeVisible();
     await closePeople();
     await select(page, 'D5');
+    await expect(address(page)).toHaveValue('D5');
     const own = await address(page).inputValue();
     // Selection changes rebuild the popup before its canvas position settles.
     // Compare real, stable geometry rather than a detached/offscreen placeholder.
@@ -198,20 +205,19 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
       })
       .toBe(true);
     await openPeople();
-    await badge.click();
-    await expect(people).not.toBeVisible();
+    await followPerson();
     await expect.poll(() => label.boundingBox()).toEqual(before);
     await expect(address(page)).toHaveValue(own);
     await select(other, 'Z100');
     await openPeople();
     await expect(badge).toHaveAttribute('data-selection', /!Z100$/);
-    await badge.click();
+    await followPerson();
     await expect(label).toBeVisible();
     await expect(address(page)).toHaveValue(own);
     await select(other, 'B2:C4');
     await openPeople();
     await expect(badge).toHaveAttribute('data-selection', /!B2:C4$/);
-    await badge.click();
+    await followPerson();
     await expect(label).toBeVisible();
     // Another tab's coordinates must not paint the same cells on this tab.
     await other.locator('.univer-container').getByText('Sheet2', { exact: true }).click();
@@ -219,8 +225,11 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
     await openPeople();
     await expect(badge).toHaveAttribute('data-selection', 'second!F7');
     await expect(label).not.toBeVisible();
+    await closePeople();
     await expect(address(page)).toHaveValue(own);
-    await badge.click();
+    await openPeople();
+    await expect(badge).toHaveAttribute('data-selection', 'second!F7');
+    await followPerson();
     await expect(label).toBeVisible();
     await expect(address(page)).not.toHaveValue('F7');
     await page.locator('.univer-container').getByText('Sheet1', { exact: true }).click();
@@ -281,6 +290,9 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
         .getByRole('dialog', { name: 'People in this document', exact: true })
         .getByRole('button', { name: 'Close dialog', exact: true })
         .click();
+      await expect(
+        phone.getByRole('dialog', { name: 'People in this document', exact: true }),
+      ).toHaveCount(0);
       const marker = phone.locator('[data-presence-label]').filter({ hasText: 'Iris Garden' });
       await expect(marker).toBeVisible();
       await expect

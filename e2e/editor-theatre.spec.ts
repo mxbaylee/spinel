@@ -140,6 +140,7 @@ test('Space theatre fills the window and restores its own page navigation', asyn
           await expect(drawer).toContainText('Project doc');
           await capture(page, info, `space-${item.kind}-phone-pages-restored`);
           await page.getByRole('button', { name: 'Close Space contents', exact: true }).click();
+          await expect(drawer).toHaveCount(0);
         } else {
           await expect(
             page.getByRole('complementary', { name: 'Space contents', exact: true }),
@@ -266,10 +267,16 @@ for (const kind of ['sheet', 'doc'] as const) {
           ).toBeVisible();
         await capture(page, info, `account-${kind}-${variant.name}-people`);
         await page.keyboard.press('Escape');
-        await expect(people).toBeHidden();
+        await expect(people).toHaveCount(0);
         await page.getByRole('button', { name: 'Document actions', exact: true }).click();
         await capture(page, info, `account-${kind}-${variant.name}-actions`);
         await page.keyboard.press('Escape');
+        await expect(page.getByRole('menu', { name: 'Document actions', exact: true })).toHaveCount(
+          0,
+        );
+        await expect(
+          page.getByRole('button', { name: 'Document actions', exact: true }),
+        ).toBeFocused();
 
         // Restore the original native input without applying a new pointer selection.
         // A toggle must preserve this native selection, not reconstruct body offsets.
@@ -278,6 +285,9 @@ for (const kind of ['sheet', 'doc'] as const) {
           await address.press('Enter');
         } else {
           await nativeInput.evaluate((node) => node.focus({ preventScroll: true }));
+          await expect
+            .poll(() => nativeInput.evaluate((node) => node === document.activeElement))
+            .toBe(true);
           await page.keyboard.press('Control+a');
         }
         const active = await page.evaluateHandle(() => document.activeElement as HTMLElement);
@@ -371,6 +381,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           await expect(people).toContainText(peerName);
           await capture(page, info, `account-${kind}-phone-people-reconnected`);
           await page.keyboard.press('Escape');
+          await expect(people).toHaveCount(0);
           await capture(page, info, `account-${kind}-phone-reconnected`);
         }
         expect(errors).toEqual([]);
@@ -437,6 +448,9 @@ for (const kind of ['sheet', 'doc'] as const) {
         ).not.toContainText(owner.name);
         await capture(page, info, `guest-${kind}-${variant.name}-people`);
         await page.keyboard.press('Escape');
+        await expect(
+          page.getByRole('dialog', { name: 'People in this document', exact: true }),
+        ).toHaveCount(0);
         await page.getByRole('button', { name: 'Enter theatre mode', exact: true }).click();
         await capture(page, info, `guest-${kind}-${variant.name}-theatre`);
         await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();

@@ -290,6 +290,7 @@ async function nativeLayout(page: Page, kind: 'Doc' | 'Sheet', fitViewport = fal
   const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
   await expect(people.locator('.collaborator-badge').first()).toBeVisible();
   await people.getByRole('button', { name: 'Close dialog', exact: true }).click();
+  await expect(people).toHaveCount(0);
   const bounds = await region.locator('.univer-container').evaluate((canvas) => {
     const rect = canvas.getBoundingClientRect();
     const style = getComputedStyle(canvas);

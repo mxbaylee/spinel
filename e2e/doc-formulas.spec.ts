@@ -633,6 +633,7 @@ test('rich clipboard creates independent native Formula objects and plain text k
     const editDialog = page.getByRole('dialog', { name: 'Edit formula' });
     if (await editDialog.isVisible())
       await editDialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(editDialog).toHaveCount(0);
     await input.focus();
     await expect(input).toBeFocused();
     const originalFormula = (await readRanges())[0];

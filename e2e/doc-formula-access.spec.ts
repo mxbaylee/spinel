@@ -137,6 +137,7 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
     await expect(panel.getByRole('button', { name: expression, exact: true })).toHaveCount(0);
     await expect(panel.getByRole('button', { name: '=40+2', exact: true })).toHaveCount(0);
     await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await expect(panel).toHaveCount(0);
     // Also check native canvas output: the panel alone cannot prove native privacy.
     await expect
       .poll(() =>
