@@ -75,6 +75,13 @@ Pagination defaults are recorded in decision [#106](https://github.com/mxbaylee/
 Until SPN-075 lands, the limitations and
 account-only UI described above still apply.
 
+[SPN-097's feasibility record](implementation/SPN-097.md#native-pdf-recommendation-and-delivery-boundaries)
+recommends public native layout with a Canvas PDF backend in bounded server work.
+The retained synthetic PDFs prove a small rendering path, not production export
+completeness or a safe 2 GB capacity limit. SPN-101 and SPN-102 own the standalone
+Sheet and Doc renderers; SPN-075 retains complete access, Formula-source privacy,
+resource, direct-download and Pro-removal acceptance.
+
 Native downloads require current read access. Import requires an everyday
 account and an owned destination folder. Operators and signed-out visitors cannot use these
 routes; a link does not grant dashboard access. Session/access is checked again
