@@ -1,0 +1,25 @@
+Title:           Synthetic native layout feasibility
+Creator:         SPN-097 probe
+Producer:        Skia/PDF m156
+Custom Metadata: no
+Metadata Stream: no
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           5
+Encrypted:       no
+Page    1 size:  450 x 525 pts
+Page    1 rot:   0
+Page    2 size:  450 x 525 pts
+Page    2 rot:   0
+Page    3 size:  450 x 525 pts
+Page    3 rot:   0
+Page    4 size:  450 x 525 pts
+Page    4 rot:   0
+Page    5 size:  450 x 525 pts
+Page    5 rot:   0
+File size:       29024 bytes
+Optimized:       no
+PDF version:     1.4
