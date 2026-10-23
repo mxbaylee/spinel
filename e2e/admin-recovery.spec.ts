@@ -212,7 +212,9 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
 
     await page.goto('/admin');
     const account = page.getByRole('region', { name: `${departed.name} account`, exact: true });
-    await account.getByRole('button', { name: `Actions for ${departed.name}`, exact: true }).click();
+    await account
+      .getByRole('button', { name: `Actions for ${departed.name}`, exact: true })
+      .click();
     await page.getByRole('menuitem', { name: 'Disable account…' }).click();
     await page
       .getByRole('dialog', { name: `Disable ${departed.name}?`, exact: true })
@@ -396,7 +398,9 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     await expect(account.getByText('Member · Active', { exact: true })).toBeVisible();
     expect(auth.passkey(oldCredential)).toBeUndefined();
     expect(auth.session(oldSession.token)).toBeUndefined();
-    await account.getByRole('button', { name: `Actions for ${departed.name}`, exact: true }).click();
+    await account
+      .getByRole('button', { name: `Actions for ${departed.name}`, exact: true })
+      .click();
     await page.getByRole('menuitem', { name: 'Create recovery invite…' }).click();
     const inviteFor = page.getByRole('combobox', { name: 'Invite for', exact: true });
     await expect(inviteFor).toBeEnabled();
@@ -405,7 +409,10 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     ).toHaveAttribute('value', departed.id);
     await inviteFor.selectOption(departed.id);
     await expect(inviteFor).toHaveValue(departed.id);
-    await page.getByRole('dialog', { name: 'Create invite', exact: true }).getByRole('button', { name: 'Create invite', exact: true }).click();
+    await page
+      .getByRole('dialog', { name: 'Create invite', exact: true })
+      .getByRole('button', { name: 'Create invite', exact: true })
+      .click();
     const recoveryUrl = await page.getByLabel('New invite link', { exact: true }).inputValue();
     const countBeforeRecovery = auth.userCount();
     const cdp = await recovered.newCDPSession(recoveredPage);

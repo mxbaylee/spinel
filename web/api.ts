@@ -22,7 +22,11 @@ export function signInPath(): string {
     : (spaceReviewSignInPath(location) ?? '/sign-in');
 }
 
-export async function api<T>(path: string, body?: unknown, verifyCurrent: () => void = () => {}): Promise<T> {
+export async function api<T>(
+  path: string,
+  body?: unknown,
+  verifyCurrent: () => void = () => {},
+): Promise<T> {
   const response = await fetch(
     `/api/auth/${path}`,
     body === undefined

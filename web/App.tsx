@@ -425,7 +425,9 @@ export function App() {
     );
   }
   return (
-    <div className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}`}>
+    <div
+      className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}`}
+    >
       <Rail
         user={user}
         compact={settings || !!user?.isAdmin}
