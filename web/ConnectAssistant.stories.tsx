@@ -76,13 +76,32 @@ export const ConnectionLimit: Story = {
 };
 
 export const LongIdentity: Story = {
-  args: { user: { name: 'A very long everyday account name that remains readable on a phone', isAdmin: false } },
-  parameters: { api: { [`GET ${path}`]: { ...details, name: 'ClientSuppliedName'.repeat(12), redirectOrigin: `https://${'long-origin-'.repeat(8)}example.test` } } },
+  args: {
+    user: {
+      name: 'A very long everyday account name that remains readable on a phone',
+      isAdmin: false,
+    },
+  },
+  parameters: {
+    api: {
+      [`GET ${path}`]: {
+        ...details,
+        name: 'ClientSuppliedName'.repeat(12),
+        redirectOrigin: `https://${'long-origin-'.repeat(8)}example.test`,
+      },
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('button', { name: 'Allow' })).toBeVisible();
-    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
-    await expect(canvas.getByText('This name is provided by the assistant and has not been verified by Spinel.')).toBeVisible();
+    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(
+      window.innerWidth,
+    );
+    await expect(
+      canvas.getByText(
+        'This name is provided by the assistant and has not been verified by Spinel.',
+      ),
+    ).toBeVisible();
   },
 };
 

@@ -34,7 +34,7 @@ test('capture account and unavailable guest screens for the design review', asyn
         ['light', 1280, 'light'],
         ['dark', 1280, 'dark'],
         ['light', 390, 'phone-light'],
-      ['dark', 390, 'phone-dark'],
+        ['dark', 390, 'phone-dark'],
       ] as const) {
         await page.setViewportSize({ width, height: 900 });
         await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });

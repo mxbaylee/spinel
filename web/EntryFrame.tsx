@@ -39,10 +39,14 @@ export function EntryFrame({
             onHome();
           }}
         >
-          <span className="wiggle"><GemLogo /></span>
+          <span className="wiggle">
+            <GemLogo />
+          </span>
           <span>spinel</span>
         </Button>
-        <div className="ej-header-actions"><ThemeMenu /></div>
+        <div className="ej-header-actions">
+          <ThemeMenu />
+        </div>
       </header>
       <main className="ej-main">
         <section className="ej-card" aria-labelledby={titleId}>
