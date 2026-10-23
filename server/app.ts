@@ -12,7 +12,7 @@ import { guestRoutes } from '../src/server/workspace/guestRoutes.ts';
 import { documentIdentity, protocolSpaceScope } from '../src/server/collaboration/identity.ts';
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { dirname, join, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { DiagnosticsStore } from '../src/server/diagnostics/store.ts';
 import { diagnosticsRoutes } from '../src/server/diagnostics/routes.ts';

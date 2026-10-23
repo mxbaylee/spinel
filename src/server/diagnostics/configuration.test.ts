@@ -6,5 +6,5 @@ test('diagnostics never selects the configured application filename or publishes
   expect(diagnosticsConfiguration('/data/diagnostics.sqlite', `ghcr.io/private/project@sha256:${digest}`)).toEqual({
     applicationPath: '/data/diagnostics.sqlite', path: '/data/diagnostics-events.sqlite', build: digest,
   });
-  expect(diagnosticsConfiguration('/data/spinel.sqlite', 'private-image:branch')).toMatchObject({ path: '/data/diagnostics.sqlite', build: 'development' });
+  expect(diagnosticsConfiguration('/data/spinel.sqlite', 'private-image:branch')).toMatchObject({ path: '/data/diagnostics.sqlite', build: 'unknown' });
 });

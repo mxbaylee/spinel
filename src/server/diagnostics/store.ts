@@ -5,6 +5,8 @@ import {
   diagnosticMessage, isDiagnosticRecord, isUuid, MAX_BATCH_BYTES, MAX_EVENT_BYTES,
 } from '@spinel/diagnostics';
 import type { DiagnosticContext, DiagnosticEvent, DiagnosticRecord, DiagnosticSink } from '@spinel/diagnostics';
+import type { DiagnosticLoss, DiagnosticsStatus } from '../../shared/diagnostics.ts';
+export type { DiagnosticLoss, DiagnosticsStatus } from '../../shared/diagnostics.ts';
 import { DatabaseSync } from '../../../server/database.ts';
 import { snapshotDatabase } from './snapshot.ts';
 
@@ -16,15 +18,6 @@ export const DIAGNOSTICS_LIMITS = {
   queueEvents: 256,
   reserveBytes: 256 * MiB,
 } as const;
-export type DiagnosticLoss = 'invalid' | 'queue' | 'storage' | 'unavailable' | 'stale';
-export interface DiagnosticsStatus {
-  available: boolean;
-  generation: string | null;
-  recordCount: number;
-  logicalBytes: number;
-  dropped: Record<DiagnosticLoss, number>;
-  exporting: boolean;
-}
 interface Attribution { source: 'frontend' | 'backend'; actorId?: string }
 interface Pending { record: DiagnosticRecord; attribution: Attribution; generation: string; bytes: number }
 export class DiagnosticsError extends Error {
