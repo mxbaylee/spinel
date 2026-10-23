@@ -586,8 +586,8 @@ test('ordinary My files creates and opens one Space root while preserving its pr
     await chooseRoot('Share', 'Research collection');
     const sharing = page.getByRole('dialog', { name: 'Share Research collection', exact: true });
     const link = sharing.getByRole('region', { name: 'Guest link', exact: true });
-    await expect(link).toContainText('every current and future page in this Space');
-    await link.getByRole('button', { name: 'Create guest link', exact: true }).click();
+    await expect(link).toContainText('every current and future page and folder in this Space');
+    await link.getByRole('button', { name: 'Create link', exact: true }).click();
     const confirmation = page.getByRole('dialog', { name: 'Share the whole Space?', exact: true });
     await expect(confirmation).toContainText('Child pages cannot have separate guest access.');
     await confirmation.getByRole('button', { name: 'Create view link', exact: true }).click();

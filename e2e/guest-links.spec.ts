@@ -114,7 +114,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await page.getByRole('button', { name: `Share Guest ${kind}`, exact: true }).click();
       const controls = page.getByRole('region', { name: 'Guest link', exact: true });
       if (kind === 'doc') {
-        await expect(controls).toContainText('Shared links show the document title and type');
+        await expect(controls).toContainText('Social previews show only the file title and type');
         for (const [mode, width] of [
           ['light', 1440],
           ['dark', 1440],
@@ -126,13 +126,13 @@ for (const kind of ['sheet', 'doc'] as const) {
             'data-theme',
             mode === 'dark' ? 'dark' : 'light',
           );
-          await page.getByRole('region', { name: 'Share Guest doc', exact: true }).screenshot({
+          await page.getByRole('dialog', { name: 'Share Guest doc', exact: true }).screenshot({
             path: `test-results/theme-screenshots/share-preview-${mode}-${info.project.name}.png`,
           });
         }
         await page.setViewportSize({ width: 1440, height: 1000 });
       }
-      await controls.getByRole('button', { name: 'Create guest link', exact: true }).click();
+      await controls.getByRole('button', { name: 'Create link', exact: true }).click();
       const viewLink = await controls
         .getByLabel('Guest link address', { exact: true })
         .inputValue();
@@ -153,7 +153,11 @@ for (const kind of ['sheet', 'doc'] as const) {
       await controls
         .getByRole('combobox', { name: 'Link access', exact: true })
         .selectOption('editor');
-      await controls.getByRole('button', { name: 'Create replacement link', exact: true }).click();
+      await controls.getByRole('button', { name: 'Guest link actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Replace link…', exact: true }).click();
+      const replacement = page.getByRole('dialog', { name: 'Replace the link?', exact: true });
+      await expect(replacement).toContainText('The old link stops working at once');
+      await replacement.getByRole('button', { name: 'Replace link', exact: true }).click();
       await expect(controls.getByLabel('Guest link address', { exact: true })).not.toHaveValue(
         viewLink,
       );
@@ -238,7 +242,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       // HTTP-only interruption must recover even if the room socket stayed up.
       await expect(connection).toHaveText('Online', { timeout: 15_000 });
       await expect.poll(async () => JSON.stringify(await live())).toContain('Kept during retry');
-      await controls.getByRole('button', { name: 'Turn link off', exact: true }).click();
+      await controls.getByRole('button', { name: 'Guest link actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Turn off link', exact: true }).click();
       await expect(first.getByRole('alert')).toHaveText('This link no longer works.');
       await expect(second.getByRole('alert')).toHaveText('This link no longer works.');
       await expect(region(first)).toHaveCount(0);

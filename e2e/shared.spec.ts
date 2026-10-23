@@ -45,7 +45,7 @@ test('shared drawer files by drag and keyboard, removes only personal placement,
   try {
     await page.goto('/');
     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
-    const drawer = page.getByRole('region', { name: 'Shared with me', exact: true });
+    const drawer = page.getByRole('dialog', { name: 'Shared with me', exact: true });
     await expect(
       drawer.getByRole('button', { name: 'Open Shared journal', exact: true }),
     ).toBeVisible();
@@ -81,7 +81,7 @@ test('shared drawer files by drag and keyboard, removes only personal placement,
     await page.getByRole('button', { name: 'Shared with me', exact: true }).click();
     await ownerPage.goto(`/?item=${sourceFolder.id}`);
     await ownerPage.getByRole('button', { name: 'Share Shared journal', exact: true }).click();
-    const sharing = ownerPage.getByRole('region', { name: 'Share Shared journal', exact: true });
+    const sharing = ownerPage.getByRole('dialog', { name: 'Share Shared journal', exact: true });
     await sharing
       .getByRole('combobox', { name: `Access for ${viewer.name}`, exact: true })
       .selectOption('');

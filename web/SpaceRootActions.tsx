@@ -31,6 +31,7 @@ export function SpaceRootActions({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const generation = useRef(0);
+  const actionTrigger = useRef<HTMLButtonElement>(null);
   useLayoutEffect(() => {
     generation.current++;
     setMode(null);
@@ -138,6 +139,7 @@ export function SpaceRootActions({
     <>
       <ActionMenu
         label={`Space actions for ${item.name}`}
+        triggerRef={actionTrigger}
         actions={[
           {
             label: 'Share',
@@ -166,29 +168,25 @@ export function SpaceRootActions({
           },
         ]}
       />
-      {mode && (
+      {mode === 'share' && <Sharing item={item} onClose={close} finalFocus={() => actionTrigger.current} />}
+      {mode && mode !== 'share' && (
         <Modal
           open
           title={
-            mode === 'share'
-              ? `Share ${item.name}`
-              : mode === 'rename'
+            mode === 'rename'
                 ? 'Rename Space'
                 : mode === 'move'
                   ? 'Move Space'
                   : 'Move Space to Trash?'
           }
-          icon={mode === 'trash' ? 'trash' : mode === 'share' ? 'share' : 'space'}
+          icon={mode === 'trash' ? 'trash' : 'space'}
           dismissDisabled={busy}
           onOpenChange={(value) => {
             if (!value) close();
           }}
         >
           <div className="space-root-actions">
-            {mode === 'share' ? (
-              <Sharing item={item} onClose={close} />
-            ) : (
-              <form
+            <form
                 onSubmit={(event) => {
                   event.preventDefault();
                   void save();
@@ -280,7 +278,6 @@ export function SpaceRootActions({
                   </Button>
                 </div>
               </form>
-            )}
           </div>
         </Modal>
       )}

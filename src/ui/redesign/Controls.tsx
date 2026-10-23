@@ -184,6 +184,7 @@ export function Modal({
   open,
   onOpenChange,
   dismissDisabled = false,
+  finalFocus,
 }: {
   title: string;
   icon?: keyof typeof modalIcons | EntityKind;
@@ -193,6 +194,7 @@ export function Modal({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   dismissDisabled?: boolean;
+  finalFocus?: () => HTMLElement | boolean | null;
 }) {
   return (
     <Dialog.Root
@@ -209,7 +211,7 @@ export function Modal({
       {trigger && <Dialog.Trigger className="sp-control">{trigger}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Backdrop className="sp-backdrop" />
-        <Dialog.Popup className="sp-modal sp-ui">
+        <Dialog.Popup className="sp-modal sp-ui" finalFocus={finalFocus}>
           <div className="sp-modal-heading">
             <Dialog.Title className="sp-modal-title">
               <span className="sp-modal-title-icon" aria-hidden="true">
