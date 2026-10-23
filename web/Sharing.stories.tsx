@@ -164,19 +164,31 @@ export const AdminRevokedWhileApplying: Story = {
 
 /** The approved composed hierarchy, with current File admin capability. */
 export const Composed: Story = {
-  parameters: { api: { [sharing(doc)]: { people: [{ ...people[0], directRole: 'viewer', effectiveRole: 'admin' }] }, [link(doc)]: noLink } },
+  parameters: {
+    api: {
+      [sharing(doc)]: { people: [{ ...people[0], directRole: 'viewer', effectiveRole: 'admin' }] },
+      [link(doc)]: noLink,
+    },
+  },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     const dialog = await body.findByRole('dialog', { name: 'Share Trip plan' });
     await expect(within(dialog).getByRole('button', { name: 'Copy account link' })).toBeVisible();
     await expect(within(dialog).getByRole('button', { name: 'Done' })).toBeEnabled();
-    await expect(within(dialog).getByText('Effective access: File admin (from a folder).')).toBeVisible();
+    await expect(
+      within(dialog).getByText('Effective access: File admin (from a folder).'),
+    ).toBeVisible();
     await expect(body.getAllByRole('dialog')).toHaveLength(1);
   },
 };
 export const AccessSaving: Story = {
-  parameters: { api: { [sharing(doc)]: { people: [people[0]] }, [link(doc)]: noLink,
-    [`PUT /api/items/${doc.id}/sharing`]: pending() } },
+  parameters: {
+    api: {
+      [sharing(doc)]: { people: [people[0]] },
+      [link(doc)]: noLink,
+      [`PUT /api/items/${doc.id}/sharing`]: pending(),
+    },
+  },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.selectOptions(await body.findByLabelText('Access for Alex Kim'), 'viewer');
@@ -189,8 +201,13 @@ export const AccessSaving: Story = {
   },
 };
 export const DisabledAccount: Story = {
-  parameters: { api: { [sharing(doc)]: { people: [{ ...people[4], effectiveRole: null }] }, [link(doc)]: noLink,
-    [`PUT /api/items/${doc.id}/sharing`]: { people: [] } } },
+  parameters: {
+    api: {
+      [sharing(doc)]: { people: [{ ...people[4], effectiveRole: null }] },
+      [link(doc)]: noLink,
+      [`PUT /api/items/${doc.id}/sharing`]: { people: [] },
+    },
+  },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     const select = await body.findByLabelText('Access for Taylor Brooks');
@@ -203,8 +220,15 @@ export const DisabledAccount: Story = {
   },
 };
 export const KeepsOtherDrafts: Story = {
-  parameters: { api: { [sharing(doc)]: { people: people.slice(0, 2) }, [link(doc)]: noLink,
-    [`PUT /api/items/${doc.id}/sharing`]: { people: [{ ...people[0], directRole: 'viewer', effectiveRole: 'viewer' }, people[1]] } } },
+  parameters: {
+    api: {
+      [sharing(doc)]: { people: people.slice(0, 2) },
+      [link(doc)]: noLink,
+      [`PUT /api/items/${doc.id}/sharing`]: {
+        people: [{ ...people[0], directRole: 'viewer', effectiveRole: 'viewer' }, people[1]],
+      },
+    },
+  },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.selectOptions(await body.findByLabelText('Access for Alex Kim'), 'viewer');
@@ -228,23 +252,42 @@ function DeferredAccess({ replace = false }: { replace?: boolean }) {
         if ((init?.method ?? 'GET') === 'PUT') {
           setPhase('Access response held');
           return new Promise<Response>((resolve) => {
-            release.current = () => { resolve(Response.json({ error: 'Sign in to continue.' }, { status: 401 })); setPhase('Access response released'); };
+            release.current = () => {
+              resolve(Response.json({ error: 'Sign in to continue.' }, { status: 401 }));
+              setPhase('Access response released');
+            };
           });
         }
-        return Response.json({ people: String(input).includes('next-item') ? [people[1]] : [people[0]] });
+        return Response.json({
+          people: String(input).includes('next-item') ? [people[1]] : [people[0]],
+        });
       }
       return previous(input, init);
     };
     globalThis.fetch = intercepted;
     setReady(true);
-    return () => { if (globalThis.fetch === intercepted) globalThis.fetch = previous; release.current = null; };
+    return () => {
+      if (globalThis.fetch === intercepted) globalThis.fetch = previous;
+      release.current = null;
+    };
   }, []);
-  return <>
-    <p>{phase}</p>
-    <button data-testid="leave-access" onClick={() => setLeft(true)}>Simulate navigation</button>
-    <button data-testid="release-access" onClick={() => release.current?.()}>Release response</button>
-    {ready && (!left || replace) && <Sharing item={left ? { ...folder, id: 'next-item', name: 'Next folder' } : folder} onClose={() => setLeft(true)} />}
-  </>;
+  return (
+    <>
+      <p>{phase}</p>
+      <button data-testid="leave-access" onClick={() => setLeft(true)}>
+        Simulate navigation
+      </button>
+      <button data-testid="release-access" onClick={() => release.current?.()}>
+        Release response
+      </button>
+      {ready && (!left || replace) && (
+        <Sharing
+          item={left ? { ...folder, id: 'next-item', name: 'Next folder' } : folder}
+          onClose={() => setLeft(true)}
+        />
+      )}
+    </>
+  );
 }
 async function staleAccess(canvasElement: HTMLElement, replace: boolean) {
   const body = within(canvasElement.ownerDocument.body);
@@ -263,8 +306,14 @@ async function staleAccess(canvasElement: HTMLElement, replace: boolean) {
   if (replace) await expect(body.getByLabelText('Access for Jordan Lee')).toHaveValue('viewer');
   else await expect(body.queryByRole('dialog')).not.toBeInTheDocument();
 }
-export const WriteAfterLeaving: Story = { render: () => <DeferredAccess />, play: ({ canvasElement }) => staleAccess(canvasElement, false) };
-export const WriteAfterReplacing: Story = { render: () => <DeferredAccess replace />, play: ({ canvasElement }) => staleAccess(canvasElement, true) };
+export const WriteAfterLeaving: Story = {
+  render: () => <DeferredAccess />,
+  play: ({ canvasElement }) => staleAccess(canvasElement, false),
+};
+export const WriteAfterReplacing: Story = {
+  render: () => <DeferredAccess replace />,
+  play: ({ canvasElement }) => staleAccess(canvasElement, true),
+};
 
 function RetryAccess() {
   const [ready, setReady] = useState(false);
@@ -273,14 +322,25 @@ function RetryAccess() {
     let writes = 0;
     const intercepted: typeof fetch = async (input, init) => {
       if (String(input).endsWith('/sharing')) {
-        if (init?.method === 'PUT' && ++writes === 1) return Response.json({ error: 'Temporary write failure.' }, { status: 503 });
-        return Response.json({ people: [{ ...people[0], directRole: writes > 1 ? 'viewer' : 'editor', effectiveRole: writes > 1 ? 'viewer' : 'editor' }] });
+        if (init?.method === 'PUT' && ++writes === 1)
+          return Response.json({ error: 'Temporary write failure.' }, { status: 503 });
+        return Response.json({
+          people: [
+            {
+              ...people[0],
+              directRole: writes > 1 ? 'viewer' : 'editor',
+              effectiveRole: writes > 1 ? 'viewer' : 'editor',
+            },
+          ],
+        });
       }
       return previous(input, init);
     };
     globalThis.fetch = intercepted;
     setReady(true);
-    return () => { if (globalThis.fetch === intercepted) globalThis.fetch = previous; };
+    return () => {
+      if (globalThis.fetch === intercepted) globalThis.fetch = previous;
+    };
   }, []);
   return ready && <Sharing item={folder} onClose={() => {}} />;
 }
@@ -300,16 +360,32 @@ export const FailedWriteRetry: Story = {
 };
 
 export const GuestLinkCreated: Story = {
-  parameters: { api: { [sharing(doc)]: { people: [people[0]] }, [link(doc)]: noLink,
-    [`PUT /api/items/${doc.id}/link`]: { enabled: true, role: 'viewer', url: 'https://spinel.example/share/trip#only-shown-now' } } },
+  parameters: {
+    api: {
+      [sharing(doc)]: { people: [people[0]] },
+      [link(doc)]: noLink,
+      [`PUT /api/items/${doc.id}/link`]: {
+        enabled: true,
+        role: 'viewer',
+        url: 'https://spinel.example/share/trip#only-shown-now',
+      },
+    },
+  },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(await body.findByRole('button', { name: 'Create link' }));
-    await expect(await body.findByLabelText('Guest link address')).toHaveValue('https://spinel.example/share/trip#only-shown-now');
+    await expect(await body.findByLabelText('Guest link address')).toHaveValue(
+      'https://spinel.example/share/trip#only-shown-now',
+    );
   },
 };
 export const ExistingGuestLink: Story = {
-  parameters: { api: { [sharing(doc)]: { people: [people[0]] }, [link(doc)]: { enabled: true, role: 'viewer' } } },
+  parameters: {
+    api: {
+      [sharing(doc)]: { people: [people[0]] },
+      [link(doc)]: { enabled: true, role: 'viewer' },
+    },
+  },
 };
 export const ReplaceGuestLink: Story = {
   parameters: ExistingGuestLink.parameters,

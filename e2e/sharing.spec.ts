@@ -71,9 +71,11 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await shareRegion
       .getByRole('button', { name: `Apply access for ${collaborator.name}`, exact: true })
       .click();
-    await expect(shareRegion.getByRole('status').filter({ hasText: `Access updated for ${collaborator.name}.` })).toHaveText(
-      `Access updated for ${collaborator.name}.`,
-    );
+    await expect(
+      shareRegion
+        .getByRole('status')
+        .filter({ hasText: `Access updated for ${collaborator.name}.` }),
+    ).toHaveText(`Access updated for ${collaborator.name}.`);
   }
   try {
     await page.goto('/');

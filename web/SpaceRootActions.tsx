@@ -187,16 +187,22 @@ export function SpaceRootActions({
           ]}
         />
       )}
-      {mode === 'share' && <Sharing item={item} onClose={close} finalFocus={() => actionTrigger.current ?? finalFocus?.() ?? true} />}
+      {mode === 'share' && (
+        <Sharing
+          item={item}
+          onClose={close}
+          finalFocus={() => actionTrigger.current ?? finalFocus?.() ?? true}
+        />
+      )}
       {mode && mode !== 'share' && (
         <Modal
           open
           title={
             mode === 'rename'
-                ? 'Rename Space'
-                : mode === 'move'
-                  ? 'Move Space'
-                  : 'Move Space to Trash?'
+              ? 'Rename Space'
+              : mode === 'move'
+                ? 'Move Space'
+                : 'Move Space to Trash?'
           }
           icon={mode === 'trash' ? 'trash' : 'space'}
           dismissDisabled={busy}
@@ -206,97 +212,97 @@ export function SpaceRootActions({
         >
           <div className="space-root-actions">
             <form
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  void save();
-                }}
-              >
-                {mode === 'rename' ? (
-                  <label>
-                    Name
-                    <input
-                      autoFocus
-                      required
-                      maxLength={120}
-                      value={name}
-                      disabled={busy}
-                      onChange={(event) => setName(event.target.value)}
-                    />
-                  </label>
-                ) : mode === 'move' ? (
-                  <>
-                    <p>
-                      Move the whole Space to an authorized folder belonging to its Owner. Its pages
-                      stay together.
-                    </p>
-                    {loading ? (
-                      <p role="status">Loading your folders…</p>
-                    ) : (
-                      <label>
-                        Destination
-                        <select
-                          value={destination}
-                          disabled={busy || (item.access === 'admin' && owned.length === 0)}
-                          onChange={(event) => setDestination(event.target.value)}
-                        >
-                          {item.access === 'owner' ? (
-                            <option value="">My files</option>
-                          ) : (
-                            <option value="" disabled>
-                              Choose a folder
-                            </option>
-                          )}
-                          {owned
-                            .map((folder) => ({ folder, name: path(folder) }))
-                            .sort(
-                              (a, b) =>
-                                a.name.localeCompare(b.name) ||
-                                a.folder.id.localeCompare(b.folder.id),
-                            )
-                            .map(({ folder, name }) => (
-                              <option key={folder.id} value={folder.id}>
-                                {name}
-                              </option>
-                            ))}
-                        </select>
-                      </label>
-                    )}
-                    {!loading && item.access === 'admin' && owned.length === 0 && (
-                      <p role="status">
-                        No authorized folders are available. Ask the Owner to grant File admin
-                        access to a destination folder.
-                      </p>
-                    )}
-                  </>
-                ) : (
+              onSubmit={(event) => {
+                event.preventDefault();
+                void save();
+              }}
+            >
+              {mode === 'rename' ? (
+                <label>
+                  Name
+                  <input
+                    autoFocus
+                    required
+                    maxLength={120}
+                    value={name}
+                    disabled={busy}
+                    onChange={(event) => setName(event.target.value)}
+                  />
+                </label>
+              ) : mode === 'move' ? (
+                <>
                   <p>
-                    {item.name} and all its pages will become unavailable to collaborators and
-                    guests. Its Owner can restore the whole Space from My files → Trash. Pages
-                    already in the Space’s Trash stay there. The Space will be kept until its Owner
-                    explicitly deletes it permanently.
+                    Move the whole Space to an authorized folder belonging to its Owner. Its pages
+                    stay together.
                   </p>
-                )}
-                {error && <p role="alert">{error}</p>}
-                <div className="item-actions">
-                  <Button
-                    type="submit"
-                    primary
-                    disabled={
-                      busy ||
-                      loading ||
-                      (mode === 'rename' && !name.trim()) ||
-                      (mode === 'move' &&
-                        item.access !== 'owner' &&
-                        !owned.some((folder) => folder.id === destination))
-                    }
-                  >
-                    {busy ? 'Saving…' : mode === 'trash' ? 'Move Space to Trash' : 'Save'}
-                  </Button>
-                  <Button type="button" disabled={busy} onClick={close}>
-                    Cancel
-                  </Button>
-                </div>
-              </form>
+                  {loading ? (
+                    <p role="status">Loading your folders…</p>
+                  ) : (
+                    <label>
+                      Destination
+                      <select
+                        value={destination}
+                        disabled={busy || (item.access === 'admin' && owned.length === 0)}
+                        onChange={(event) => setDestination(event.target.value)}
+                      >
+                        {item.access === 'owner' ? (
+                          <option value="">My files</option>
+                        ) : (
+                          <option value="" disabled>
+                            Choose a folder
+                          </option>
+                        )}
+                        {owned
+                          .map((folder) => ({ folder, name: path(folder) }))
+                          .sort(
+                            (a, b) =>
+                              a.name.localeCompare(b.name) ||
+                              a.folder.id.localeCompare(b.folder.id),
+                          )
+                          .map(({ folder, name }) => (
+                            <option key={folder.id} value={folder.id}>
+                              {name}
+                            </option>
+                          ))}
+                      </select>
+                    </label>
+                  )}
+                  {!loading && item.access === 'admin' && owned.length === 0 && (
+                    <p role="status">
+                      No authorized folders are available. Ask the Owner to grant File admin access
+                      to a destination folder.
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p>
+                  {item.name} and all its pages will become unavailable to collaborators and guests.
+                  Its Owner can restore the whole Space from My files → Trash. Pages already in the
+                  Space’s Trash stay there. The Space will be kept until its Owner explicitly
+                  deletes it permanently.
+                </p>
+              )}
+              {error && <p role="alert">{error}</p>}
+              <div className="item-actions">
+                <Button
+                  type="submit"
+                  primary
+                  disabled={
+                    busy ||
+                    loading ||
+                    (mode === 'rename' && !name.trim()) ||
+                    (mode === 'move' &&
+                      item.access !== 'owner' &&
+                      !owned.some((folder) => folder.id === destination))
+                  }
+                >
+                  {busy ? 'Saving…' : mode === 'trash' ? 'Move Space to Trash' : 'Save'}
+                </Button>
+                <Button type="button" disabled={busy} onClick={close}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
           </div>
         </Modal>
       )}

@@ -10,7 +10,9 @@ export function SharingAddress({ value, guest = false }: { value: string; guest?
     generation.current++;
     setFallback(false);
     setNotice('');
-    return () => { generation.current++; };
+    return () => {
+      generation.current++;
+    };
   }, [value]);
   async function copy() {
     const request = generation.current;
@@ -27,10 +29,12 @@ export function SharingAddress({ value, guest = false }: { value: string; guest?
   return (
     <div className="sharing-address">
       <Button onClick={() => void copy()}>{guest ? 'Copy guest link' : 'Copy account link'}</Button>
-      {(guest || fallback) && <label>
-        {guest ? 'Guest link address' : 'Share address'}
-        <input readOnly value={value} onFocus={(event) => event.currentTarget.select()} />
-      </label>}
+      {(guest || fallback) && (
+        <label>
+          {guest ? 'Guest link address' : 'Share address'}
+          <input readOnly value={value} onFocus={(event) => event.currentTarget.select()} />
+        </label>
+      )}
       {notice && <p role="status">{notice}</p>}
     </div>
   );

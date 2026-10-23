@@ -676,7 +676,14 @@ export function Dashboard({
         {item.access === 'admin' && <span>File admin</span>}
         {personalFiling(item)}
         {tagButton}
-        <button disabled={busy} onClick={(event) => { sharingFocus.current = event.currentTarget; setSharing(item); }} aria-label={`Share ${item.name}`}>
+        <button
+          disabled={busy}
+          onClick={(event) => {
+            sharingFocus.current = event.currentTarget;
+            setSharing(item);
+          }}
+          aria-label={`Share ${item.name}`}
+        >
           Share
         </button>
         <button
@@ -1145,15 +1152,19 @@ export function Dashboard({
         </>
       )}
       {sharing && (
-        <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)}
-          finalFocus={() => sharingFocus.current?.isConnected ? sharingFocus.current : true} />
+        <Sharing
+          key={sharing.id}
+          item={sharing}
+          onClose={() => setSharing(null)}
+          finalFocus={() => (sharingFocus.current?.isConnected ? sharingFocus.current : true)}
+        />
       )}
       {spaceAction && (
         <SpaceRootActions
           key={`${spaceAction.item.id}:${spaceAction.mode}`}
           item={spaceAction.item}
           initialMode={spaceAction.mode}
-          finalFocus={() => sharingFocus.current?.isConnected ? sharingFocus.current : true}
+          finalFocus={() => (sharingFocus.current?.isConnected ? sharingFocus.current : true)}
           onClose={() => setSpaceAction(null)}
           folders={items.filter(
             (entry): entry is WorkspaceItem => entry.kind === 'folder' && entry.access === 'owner',
