@@ -286,8 +286,10 @@ async function commitRetainedCell(page: Page, address: string) {
 }
 async function nativeLayout(page: Page, kind: 'Doc' | 'Sheet', fitViewport = false) {
   const region = page.getByRole('region', { name: `${kind} document`, exact: true });
-  const badge = region.locator('.collaborator-badge').first();
-  await expect(badge).toBeVisible();
+  await page.getByRole('button', { name: 'People in this document', exact: true }).click();
+  const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
+  await expect(people.locator('.collaborator-badge').first()).toBeVisible();
+  await people.getByRole('button', { name: 'Close dialog', exact: true }).click();
   const bounds = await region.locator('.univer-container').evaluate((canvas) => {
     const rect = canvas.getBoundingClientRect();
     const style = getComputedStyle(canvas);
@@ -611,6 +613,7 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
   page.setDefaultTimeout(15_000);
   try {
     const space = await newSpace(page);
+    await page.getByRole('radio', { name: 'Follow system', exact: true }).click();
     expect(space.parentId).toBe(f.folder.id);
     const folder = await add(page, space.id, 'Folder', 'Research');
     const doc = await add(page, space.id, 'Doc', 'Project notes');
@@ -618,16 +621,19 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await page.keyboard.type('Native notes in a Space.');
     await saved(page);
     expect(await copyDoc(page)).toBe('Native notes in a Space.');
-    await page.getByRole('radio', { name: 'Light', exact: true }).click();
+    await page.emulateMedia({ colorScheme: 'light' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     // The earlier save proof preceded clipboard/theme interaction. Establish
     // the current native state before taking evidence and creating another page.
     await saved(page);
     await nativeLayout(page, 'Doc', true);
     await screenshot(page, info, 'doc-light');
-    await page.getByRole('radio', { name: 'Dark', exact: true }).click();
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await saved(page);
     await screenshot(page, info, 'doc-dark');
-    await page.getByRole('radio', { name: 'Light', exact: true }).click();
+    await page.emulateMedia({ colorScheme: 'light' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     await saved(page);
     const sheet = await add(page, space.id, 'Sheet', 'Plan');
     await writeCell(page, 'A1', '41');
@@ -635,14 +641,17 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await writeCell(page, 'A3', '=SUM(A1:A2)');
     await saved(page);
     expect(await copyCell(page, 'A3')).toBe('42');
-    await page.getByRole('radio', { name: 'Dark', exact: true }).click();
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await saved(page);
     await nativeLayout(page, 'Sheet', true);
     await screenshot(page, info, 'sheet-dark');
-    await page.getByRole('radio', { name: 'Light', exact: true }).click();
+    await page.emulateMedia({ colorScheme: 'light' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     await saved(page);
     await screenshot(page, info, 'sheet-light');
-    await page.getByRole('radio', { name: 'Dark', exact: true }).click();
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await saved(page);
     await page.reload();
     await saved(page);
@@ -703,11 +712,9 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await saved(page);
     expect(await copyDoc(page)).toBe('Native notes in a Space.');
     const prefix = `/api/spaces/${space.id}/items/${doc.id}`;
-    const formulas = page.locator('details.doc-formulas');
-    await formulas.locator('summary').click();
-    await expect(
-      formulas.getByRole('button', { name: 'Insert formula', exact: true }),
-    ).toBeEnabled();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await expect(page.getByRole('menuitem', { name: 'Insert formula', exact: true })).toBeEnabled();
+    await page.keyboard.press('Escape');
     const sources = await f.context.request.get(`${prefix}/formulas/sources`);
     expect(sources.status()).toBe(200);
     expect((await sources.json()).sources).toContainEqual({ itemId: sheet.id, name: sheet.name });
@@ -731,7 +738,6 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
       data: { definition },
     });
     expect(await evaluated.json()).toMatchObject({ ok: true, kind: 'scalar', value: 42 });
-    await formulas.locator('summary').click();
 
     // Canonical image URLs retain the exact child even outside the scoped upload route.
     const png = await page.evaluate(() => {
@@ -749,7 +755,9 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     expect(image.url).toBe(`/api/items/${doc.id}/images/${image.id}`);
     expect((await f.context.request.get(image.url)).status()).toBe(200);
 
-    await page.getByRole('button', { name: 'Versions', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+
+    await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
     const versions = page.getByRole('region', { name: 'Version names', exact: true });
     await expect(
       versions.getByRole('link', { name: 'Browse history', exact: true }),
@@ -758,9 +766,13 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await versions.getByLabel('Version name', { exact: true }).fill('Space integration checkpoint');
     await versions.getByRole('button', { name: 'Save version name', exact: true }).click();
     await expect(versions.getByText('Space integration checkpoint', { exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Versions', exact: true }).click();
-    const exportPanel = page.locator('details.file-exports');
-    await exportPanel.locator('summary').click();
+    await page
+      .getByRole('dialog', { name: 'Versions', exact: true })
+      .getByRole('button', { name: 'Close dialog', exact: true })
+      .click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
+    const exportPanel = page.getByRole('dialog', { name: 'Export', exact: true });
     await expect(
       exportPanel.getByRole('button', { name: 'Print / save PDF', exact: true }),
     ).toBeEnabled();
@@ -792,11 +804,10 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
       (await historyResponse.json()).versions as { id: string; name: string | null }[]
     ).find((version) => version.name === 'Space integration checkpoint')!;
     expect(checkpoint).toBeDefined();
-    // History uses the existing account shell, without Space appearance radios.
-    // Follow system before leaving so media changes exercise the real theme path.
-    const followSystem = page.getByRole('radio', { name: 'Follow system', exact: true });
-    await followSystem.click();
-    await expect(followSystem).toBeChecked();
+    // Follow system was selected before opening native content; media changes
+    // exercise the same theme lifecycle without replacing the mounted editor.
+    await exportPanel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    expect(await page.evaluate(() => localStorage.getItem('spinel-theme'))).toBeNull();
     const liveBeforePreview = nativeDocState(await nativeState(f.context, space.id, doc.id));
     await page.goto(`/preview?item=${doc.id}&space=${space.id}&version=${checkpoint.id}`);
     const preview = page.getByRole('region', { name: 'Version preview', exact: true });
@@ -1239,7 +1250,8 @@ test('Space navigation works on a touch phone and at 613px with a mouse, with re
     await focusDoc(phone.page);
     await phone.page.keyboard.type('A real Space document on a phone.');
     await saved(phone.page);
-    await phone.page.getByRole('radio', { name: 'Light', exact: true }).tap();
+    await phone.page.emulateMedia({ colorScheme: 'light' });
+    await expect(phone.page.locator('html')).toHaveAttribute('data-theme', 'light');
     await saved(phone.page);
     await nativeLayout(phone.page, 'Doc');
     await screenshot(phone.page, info, 'phone-doc-light');
@@ -1253,7 +1265,8 @@ test('Space navigation works on a touch phone and at 613px with a mouse, with re
     await pageLink(phone.page, space.id, nested.id).tap();
     await expect(drawer).not.toBeVisible();
     await saved(phone.page);
-    await phone.page.getByRole('radio', { name: 'Dark', exact: true }).tap();
+    await phone.page.emulateMedia({ colorScheme: 'dark' });
+    await expect(phone.page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await saved(phone.page);
     await nativeLayout(phone.page, 'Doc');
     await screenshot(phone.page, info, 'phone-doc-dark');
@@ -1418,10 +1431,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
     expect(local).toContain('Persisted baseline.');
     expect(local).toContain('Unsaved words to rescue.');
     await cancelDeparture(editor.page, () =>
-      editor.page
-        .getByRole('banner')
-        .getByRole('button', { name: 'My files', exact: true })
-        .click(),
+      editor.page.getByRole('button', { name: 'My files', exact: true }).click(),
     );
     await expect(editor.page).toHaveURL(f.origin + href(space.id, doc.id));
     expect(

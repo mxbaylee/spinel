@@ -18,7 +18,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Nobody has joined yet, so the group is empty. */
+/** Nobody has joined yet; the count opens an explicit empty people dialog. */
 export const Empty: Story = { args: { people: [] } };
 /** Only you are in the document; your own badge never jumps anywhere. */
 export const Alone: Story = { args: { people: [person('u-sam', 'Sam Rivera')] } };
@@ -53,4 +53,8 @@ export const Many: Story = {
       person('u-riley', 'Riley Okafor'),
     ],
   },
+};
+export const ManyPhone: Story = {
+  ...Many,
+  globals: { viewport: { value: 'phone', isRotated: false } },
 };

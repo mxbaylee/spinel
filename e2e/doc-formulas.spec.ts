@@ -131,15 +131,20 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     });
   const read = async () =>
     (await (await context.request.get(`/api/items/${host.id}/doc`)).json()).snapshot;
-  const formulaPanel = (target: Page) => target.locator('details.doc-formulas');
+  const formulaPanel = (target: Page) =>
+    target.getByRole('dialog', { name: 'Formulas', exact: true });
   const openPanel = async (target: Page) => {
     const panel = formulaPanel(target);
-    if (!(await panel.evaluate((node) => (node as HTMLDetailsElement).open)))
-      await panel.locator('summary').click();
+    if (!(await panel.isVisible())) {
+      await target.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await target.getByRole('menuitem', { name: 'Formulas', exact: true }).click();
+    }
     return panel;
   };
   const nativeInput = () => page.locator('[contenteditable="true"][data-u-comp="editor"]');
   const insert = async (expression: string) => {
+    if (await formulaPanel(page).isVisible())
+      await formulaPanel(page).getByRole('button', { name: 'Close dialog', exact: true }).click();
     const paragraphsBefore = (await read()).body.dataStream.split('\r').length;
     if (!(await read()).body.customRanges?.length)
       await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
@@ -150,8 +155,8 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect
       .poll(async () => (await read()).body.dataStream.split('\r').length)
       .toBe(paragraphsBefore + 1);
-    const panel = await openPanel(page);
-    await panel.getByRole('button', { name: 'Insert formula', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Insert formula', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Insert formula', exact: true });
     await dialog.getByLabel('Formula', { exact: true }).fill(expression);
     await dialog.getByRole('button', { name: 'Insert formula', exact: true }).click();
@@ -159,6 +164,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect(nativeInput()).toBeFocused();
     await saved(page);
     await expect.poll(async () => JSON.stringify(await read())).toContain(expression);
+    const panel = await openPanel(page);
     return panel
       .getByRole('listitem')
       .filter({ has: page.getByRole('button', { name: expression, exact: true }) });
@@ -166,9 +172,13 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   const screenshots = async (name: string, target: Page = page) => {
     await target.bringToFront();
     const panel = formulaPanel(target);
-    const closePanel =
-      name !== 'editing' && (await panel.evaluate((node) => (node as HTMLDetailsElement).open));
-    if (closePanel) await panel.locator('summary').click();
+    const closePanel = name !== 'editing' && (await panel.isVisible());
+    if (closePanel) {
+      await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
+        timeout: 20_000,
+      });
+      await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    }
     await mkdir('test-results/theme-screenshots', { recursive: true });
     for (const [theme, width] of [
       ['light', 1440],
@@ -178,11 +188,13 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       await target.emulateMedia({ colorScheme: theme });
       await target.setViewportSize({ width, height: 1100 });
       if (name !== 'editing') {
-        await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
-        await target.keyboard.press('Control+Home');
+        await openPanel(target);
         await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
           timeout: 20_000,
         });
+        await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+        await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
+        await target.keyboard.press('Control+Home');
       }
       await target.screenshot({
         path: `test-results/theme-screenshots/formulas-${info.project.name}-${name}-${theme}-${width}.png`,
@@ -190,10 +202,13 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
         animations: 'disabled',
       });
       if (name === 'results') {
-        await target.keyboard.press('Control+End');
+        await openPanel(target);
         await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
           timeout: 20_000,
         });
+        await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+        await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
+        await target.keyboard.press('Control+End');
         await target.screenshot({
           path: `test-results/theme-screenshots/formulas-${info.project.name}-${name}-end-${theme}-${width}.png`,
           fullPage: true,
@@ -226,7 +241,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     }
     await target.emulateMedia({ colorScheme: 'light' });
     await target.setViewportSize({ width: 1440, height: 1100 });
-    if (closePanel) await panel.locator('summary').click();
+    if (closePanel) await openPanel(target);
   };
   try {
     await page.goto(`/?item=${host.id}`);
@@ -311,8 +326,11 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     }
     await expect(table).toContainText('230', { timeout: 20_000 });
     await screenshots('results');
-    await page.locator('.file-exports summary').click();
+    await formulaPanel(page).getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
     await page.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Export', exact: true })).not.toBeVisible();
     await expect.poll(() => printHtml.includes('<img'), { timeout: 20_000 }).toBe(true);
     const printed = await context.newPage();
     try {
@@ -386,6 +404,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       await printed.close();
       await page.bringToFront();
     }
+    await openPanel(page);
     await expect(formulaPanel(page)).toContainText('314159', { timeout: 20_000 });
 
     const snapshot = await read();
@@ -408,6 +427,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect.poll(async () => JSON.stringify(await read())).toContain('={1,2;3,4}');
     await page.getByRole('button', { name: 'Redo', exact: true }).click();
     await expect.poll(async () => JSON.stringify(await read())).toContain('={5,6;7,8}');
+    await openPanel(page);
 
     const checkpointResponse = await context.request.post(`/api/items/${budget.id}/history`, {
       headers: { Origin: baseURL! },
@@ -466,6 +486,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await collaboratorEdit.getByRole('button', { name: 'Save formula', exact: true }).click();
     await expect(collaboratorEdit).not.toBeVisible({ timeout: 20_000 });
     await saved(other);
+    await openPanel(other);
     await expect(
       formulaPanel(page).getByRole('button', { name: '={9,10;11,12}', exact: true }),
     ).toBeVisible();
@@ -583,9 +604,8 @@ test('rich clipboard creates independent native Formula objects and plain text k
     // Create through the real UI, but retain the start-of-document boundary that
     // a hand-built fixture exercised. Reload then verifies activation of saved objects.
     await page.keyboard.press('Control+Home');
-    const panel = page.locator('details.doc-formulas');
-    await panel.locator('summary').click();
-    await panel.getByRole('button', { name: 'Insert formula', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Insert formula', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Insert formula', exact: true });
     await dialog.getByLabel('Formula', { exact: true }).fill(expression);
     await dialog.getByRole('button', { name: 'Insert formula', exact: true }).click();

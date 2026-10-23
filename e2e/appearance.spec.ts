@@ -7,6 +7,7 @@ import { ColorKit, invertColorByMatrix } from '@univerjs/core';
 import type { ICellData, IWorkbookData } from '@univerjs/core';
 import { editorNeutrals } from '../src/ui/palette.ts';
 import { presetStyle } from '../src/ui/presetStyles.ts';
+import { defaultProfile } from '../src/profile/profile.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -233,14 +234,19 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     expect((await read()).snapshot.sheets.first.cellData?.[4]?.[0]?.v).toBe('Plain text');
     await expect.poll(() => colouredPixels([255, 255, 255])).toBeGreaterThan(5);
     await expect.poll(() => colouredPixels([255, 156, 198])).toBeGreaterThan(5);
-    const badge = page
-      .getByRole('group', { name: 'People in this document' })
-      .getByRole('button')
-      .first();
+    await page.getByRole('button', { name: 'People in this document', exact: true }).click();
+    const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
+    const badge = people.locator('.collaborator-badge').first();
     await expect(badge.locator('[data-profile-icon]')).toBeVisible();
     await expect(badge).toHaveCSS('border-radius', '8px');
     await badge.focus();
-    await expect(badge.locator('.collaborator-name')).toHaveCSS('color', 'rgb(26, 18, 37)');
+    const personForeground = presetStyle(defaultProfile(user.name).color, 'dark').cl!.rgb!;
+    const foregroundRgb = [1, 3, 5].map((index) =>
+      parseInt(personForeground.slice(index, index + 2), 16),
+    );
+    await expect(badge).toHaveCSS('color', `rgb(${foregroundRgb.join(', ')})`);
+    await expect(people.getByText(user.name, { exact: true })).toBeVisible();
+    await people.getByRole('button', { name: 'Close dialog', exact: true }).click();
     await capture('sheet-dark');
     expect((await read()).revision).toBe(before.revision);
     expect(resolvedWorkbook((await read()).snapshot)).toEqual(resolvedWorkbook(before.snapshot));

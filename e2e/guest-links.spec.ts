@@ -179,11 +179,16 @@ for (const kind of ['sheet', 'doc'] as const) {
       await saved(first);
       await edit(second, 'Guest two 159', 'B1');
       await saved(second);
+      await first.getByRole('button', { name: 'People in this document', exact: true }).click();
       await expect(
         first
-          .getByRole('group', { name: 'People in this document' })
+          .getByRole('dialog', { name: 'People in this document', exact: true })
           .getByRole('button', { name: 'Go to Guest', exact: true }),
       ).toBeVisible();
+      await first
+        .getByRole('dialog', { name: 'People in this document', exact: true })
+        .getByRole('button', { name: 'Close dialog', exact: true })
+        .click();
       const live = async () =>
         (await (await context.request.get(`/api/items/${item.id}/${kind}`)).json()).snapshot;
       await expect.poll(async () => JSON.stringify(await live())).toContain('Guest one 314');

@@ -323,7 +323,8 @@ test('Sheet images survive browser export/import and restore, with scoped revoca
         (entry: { name: string }) => entry.name === 'SHEET_DRAWING_PLUGIN',
       ).data,
     ).tab.data.floating;
-    await page.locator('.file-exports summary').click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
     const downloading = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Download Univer file', exact: true }).click();
     const download = await downloading;
@@ -338,6 +339,8 @@ test('Sheet images survive browser export/import and restore, with scoped revoca
     expect(floating.subUnitId).toBe('tab');
     expect(floating.transform).toEqual(originalDrawing.transform);
     await page.goto('/');
+    await page.getByRole('button', { name: 'New', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Import file…', exact: true }).click();
     const importing = page.waitForResponse(
       (response) =>
         new URL(response.url()).pathname === '/api/items/import' &&

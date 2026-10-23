@@ -6,6 +6,8 @@ import { PreparedImages } from './offline/PreparedImages.ts';
 import { openOfflineStore, preparedAccount } from './offline/offlineStore.ts';
 import { useMobileSheetControls } from './sheetPreset.ts';
 import { openSnapshotViewer } from './snapshotViewer.ts';
+import { useEditorChrome } from './EditorFrame.tsx';
+import { SaveStatus } from './SaveStatus.tsx';
 
 /**
  * Opens this device's copy of a document, read-only, with images from the
@@ -21,6 +23,7 @@ export function OfflineViewer({
   itemId: string;
   spaceId?: string;
 }) {
+  const chrome = useEditorChrome();
   const container = useRef<HTMLDivElement>(null);
   const mobile = useMobileSheetControls();
   const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
@@ -90,6 +93,19 @@ export function OfflineViewer({
   }, [accountId, itemId, spaceId, mobile]);
   return (
     <section aria-label="Offline copy">
+      {chrome && (
+        <SaveStatus
+          target={chrome.saveTarget}
+          state={{
+            dirty: false,
+            failed: Boolean(problem),
+            message:
+              problem ||
+              (ready ? 'View only on this device. Reconnect to edit.' : 'Opening offline copy…'),
+          }}
+          onRetry={() => {}}
+        />
+      )}
       {problem ? (
         <p role="alert">{problem}</p>
       ) : ready ? (

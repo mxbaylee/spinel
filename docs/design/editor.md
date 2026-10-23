@@ -24,6 +24,14 @@ permission rules below still apply; production migrations remain separate ticket
 SPN-049 builds this default layout and theatre mode. It applies to Sheets and
 Docs.
 
+Its [implementation contract](../implementation/SPN-049.md) keeps the same mounted
+editor and status controllers while changing only its viewport. The compact
+People dialog replaces hidden name tooltips. Space Pages remains the sole
+internal tree and hides only during theatre. Public phone Doc zoom APIs mutate
+the native snapshot; the supported interim presentation retains native zoom/pan,
+with further mobile layout work in SPN-072. Native browser and visual acceptance
+are recorded separately from these source choices.
+
 ## How others do it
 
 |             | Google Sheets                                                         | Excel for the web                    | Numbers for iCloud                     | Zoho Sheet                    |
