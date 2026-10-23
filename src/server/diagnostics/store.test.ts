@@ -161,8 +161,9 @@ test('a real SQLite clear failure rolls back deleted rows and preserves the gene
     });
     expect(db.prepare('SELECT id FROM events WHERE id=?').get(stored.id)?.id).toBe(stored.id);
     for (const run of [queuedRun, laterRun]) {
-      expect(db.prepare('SELECT generation,source,actor_id FROM events WHERE run_id=?').get(run))
-        .toEqual({ generation, source: 'backend', actor_id: actor });
+      expect(
+        db.prepare('SELECT generation,source,actor_id FROM events WHERE run_id=?').get(run),
+      ).toEqual({ generation, source: 'backend', actor_id: actor });
     }
   } finally {
     db.close();

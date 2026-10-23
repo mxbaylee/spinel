@@ -52,16 +52,27 @@ test.each(['account switch', 'reconnect', 'new login', 'collection reset'] as co
     vi.useFakeTimers();
     const starts: Promise<void>[] = [];
     const clients: BrowserDiagnostics[] = [];
-    const bodies: { accountId: string | null; generation: string; binding: string; records: DiagnosticRecord[] }[] = [];
+    const bodies: {
+      accountId: string | null;
+      generation: string;
+      binding: string;
+      records: DiagnosticRecord[];
+    }[] = [];
     let generation = randomUUID();
     let binding = 'a'.repeat(64);
     let reset = false;
     const json = (body: unknown, status = 200) =>
-      new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+      new Response(JSON.stringify(body), {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+      });
     const request = vi.fn<typeof fetch>(async (url, options) => {
       if (String(url).endsWith('/collection')) return json({ generation, binding });
       const body = JSON.parse(String(options?.body));
-      bodies.push({ ...body, accountId: new Headers(options?.headers).get('X-Spinel-Diagnostic-Account') });
+      bodies.push({
+        ...body,
+        accountId: new Headers(options?.headers).get('X-Spinel-Diagnostic-Account'),
+      });
       if (reset) {
         reset = false;
         generation = randomUUID();
@@ -86,7 +97,10 @@ test.each(['account switch', 'reconnect', 'new login', 'collection reset'] as co
     // Both accounts may legitimately access this file; authorization cannot identify
     // an old callback that has been wrongly relabelled as the new account's run.
     const fileId = randomUUID();
-    const event = { name: 'operation.result', details: { operation: 'formula-evaluate', outcome: 'success', durationMs: 4 } } as const;
+    const event = {
+      name: 'operation.result',
+      details: { operation: 'formula-evaluate', outcome: 'success', durationMs: 4 },
+    } as const;
     let release!: () => void;
     try {
       account.account(owner);
@@ -95,7 +109,9 @@ test.each(['account switch', 'reconnect', 'new login', 'collection reset'] as co
       await starts.at(-1);
       const old = account.begin()!;
       expect(old).toBeDefined();
-      const completion = new Promise<void>((resolve) => { release = resolve; }).then(() => {
+      const completion = new Promise<void>((resolve) => {
+        release = resolve;
+      }).then(() => {
         old.sink(event, { component: 'formula', fileId, runId: old.runId });
       });
       if (transition === 'account switch') {
@@ -131,7 +147,11 @@ test.each(['account switch', 'reconnect', 'new login', 'collection reset'] as co
       expect(bodies).toHaveLength(1);
       expect(bodies[0]).toMatchObject({ accountId: currentAccount, generation, binding });
       expect(bodies[0].records).toHaveLength(1);
-      expect(bodies[0].records[0].context).toEqual({ component: 'formula', fileId, runId: fresh.runId });
+      expect(bodies[0].records[0].context).toEqual({
+        component: 'formula',
+        fileId,
+        runId: fresh.runId,
+      });
       expect(JSON.stringify(bodies)).not.toContain(old.runId);
       expect(clients[0].dropped).toBe(transition === 'collection reset' ? 2 : 1);
     } finally {
