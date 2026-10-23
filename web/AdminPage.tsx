@@ -4,6 +4,8 @@ import { AdminInvites } from './AdminInvites.tsx';
 import { AssistantConnections } from './AssistantConnections.tsx';
 import { AccessTokens } from './AccessTokens.tsx';
 import { BackupStatus } from './BackupStatus.tsx';
+import { ServerHealth } from './ServerHealth.tsx';
+import { AdminDiagnostics } from './AdminDiagnostics.tsx';
 import './administration.css';
 
 const sections = [['people', 'People'], ['invites', 'Invites'], ['connections', 'Connections'], ['health', 'Backups & health']] as const;
@@ -35,7 +37,7 @@ export function AdminPage({ currentId }: { currentId: string }) {
         {section === 'people' && <AdminUsers currentId={currentId} onRequestInvite={invite} onBusyChange={setBusy} />}
         {section === 'invites' && <AdminInvites initialRecipient={recipient} onBusyChange={setBusy} />}
         {section === 'connections' && <section className="admin-connections" aria-label="Connections"><h2>Connections</h2><p className="sp-muted">Account connection metadata only. Document content stays private.</p><AssistantConnections admin /><details className="admin-token-disclosure"><summary>Personal access token activity</summary><AccessTokens admin /></details></section>}
-        {section === 'health' && <section className="admin-health" aria-label="Backups & health"><h2>Backups &amp; health</h2><BackupStatus /><section className="admin-health-card"><h3>Server health</h3><p className="sp-muted">Detailed server telemetry is not available yet.</p></section></section>}
+        {section === 'health' && <section className="admin-health" aria-label="Backups & health"><h2>Backups &amp; health</h2><BackupStatus /><ServerHealth /><AdminDiagnostics onBusyChange={setBusy} /></section>}
       </div>
     </div>
   </div>;

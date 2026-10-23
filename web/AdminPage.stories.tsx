@@ -4,6 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { AdminPage } from './AdminPage.tsx';
 import { Rail } from './Rail.tsx';
+import { diagnosticsStory, healthStory } from './diagnosticsStoryData.ts';
 
 const now = Date.UTC(2026, 9, 23, 12);
 const key = { id: 'key', name: 'MacBook', provider: 'iCloud Keychain', createdAt: now - 86400_000, lastUsedAt: null };
@@ -20,6 +21,8 @@ const api = {
   'GET /api/auth/admin/connections': { connections: [{ id: 'connection', name: 'Desktop assistant', userName: 'Alex Kim', redirectOrigin: 'https://assistant.example', createdAt: now, lastUsedAt: null, revoked: false, scopes: [] }] },
   'GET /api/auth/admin/tokens': { tokens: [{ id: 'token', name: 'Personal script', userName: 'Alex Kim', createdAt: now, lastUsedAt: null, revoked: false }] },
   'GET /api/admin/backups': { configured: true, lastGood: now - 3600_000, lastAttempt: now - 3600_000, error: null, running: false, overdue: false },
+  'GET /api/admin/health': healthStory,
+  'GET /api/admin/diagnostics': diagnosticsStory,
 };
 function Preview({ section = 'people' }: { section?: string }) {
   const [ready, setReady] = useState(false);
@@ -51,6 +54,31 @@ export const Connections: Story = { args: { section: 'connections' }, parameters
   await expect(canvas.queryByRole('button', { name: /Create|Revoke|Disconnect/ })).toBeNull();
 } };
 export const Health: Story = { args: { section: 'health' }, parameters: { api } };
+export const DiagnosticsDownloadBlocksNavigation: Story = { args: { section: 'health' }, parameters: { api: { ...api, 'POST /api/admin/diagnostics/download': pending() } }, play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await waitFor(() => expect(canvas.getByRole('button', { name: 'Download diagnostics' })).toBeEnabled());
+  await userEvent.click(canvas.getByRole('button', { name: 'Download diagnostics' }));
+  const navigation = within(canvas.getByRole('navigation', { name: 'Administration sections' }));
+  await expect(navigation.getByRole('link', { name: 'People' })).toHaveAttribute('aria-disabled', 'true');
+  await userEvent.click(navigation.getByRole('link', { name: 'People' }));
+  await expect(canvas.getByRole('heading', { name: 'Backups & health' })).toBeVisible();
+  location.hash = 'people';
+  await waitFor(() => expect(location.hash).toBe('#health'));
+  await userEvent.click(canvas.getByRole('button', { name: 'Cancel download' }));
+  await expect(navigation.getByRole('link', { name: 'People' })).not.toHaveAttribute('aria-disabled');
+} };
+export const DiagnosticsClearBlocksNavigation: Story = { args: { section: 'health' }, parameters: { api: { ...api, 'POST /api/admin/diagnostics/truncate': pending() } }, play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement), body = within(document.body);
+  await waitFor(() => expect(canvas.getByRole('button', { name: 'Download diagnostics' })).toBeEnabled());
+  await userEvent.click(canvas.getByRole('button', { name: 'Diagnostics actions' }));
+  await userEvent.click(await body.findByRole('menuitem', { name: 'Truncate diagnostics…' }));
+  const dialog = await body.findByRole('dialog', { name: 'Truncate diagnostics' });
+  await userEvent.click(within(dialog).getByRole('button', { name: 'Truncate diagnostics' }));
+  await userEvent.keyboard('{Escape}');
+  location.hash = 'people';
+  await waitFor(() => expect(location.hash).toBe('#health'));
+  await expect(dialog).toBeVisible();
+} };
 export const HealthWarning: Story = { args: { section: 'health' }, parameters: { api: { ...api, 'GET /api/admin/backups': { ...api['GET /api/admin/backups'], overdue: true, lastGood: now - 3 * 86400_000 } } } };
 export const Phone: Story = { parameters: { api }, globals: { viewport: { value: 'phone', isRotated: false } }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
