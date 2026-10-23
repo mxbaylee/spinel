@@ -80,7 +80,10 @@ export const Empty: Story = {
 export const RecoveryInvite: Story = {
   parameters: { api: loaded },
   play: async ({ canvasElement }) => {
-    const select = await within(canvasElement).findByRole('option', { name: 'Recover Alex Kim' });
+    const button = within(canvasElement).getByRole('button', { name: 'Create invite' });
+    await waitFor(() => expect(button).toBeEnabled());
+    await userEvent.click(button);
+    const select = await within(document.body).findByRole('option', { name: 'Recover Alex Kim' });
     await userEvent.selectOptions(select.parentElement as HTMLSelectElement, 'u-alex');
   },
 };
@@ -98,6 +101,8 @@ export const InviteCreated: Story = {
     const button = within(canvasElement).getByRole('button', { name: 'Create invite' });
     await waitFor(() => expect(button).toBeEnabled());
     await userEvent.click(button);
+    const dialog = await within(document.body).findByRole('dialog', { name: 'Create invite' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Create invite' }));
   },
 };
 export const LoadFailed: Story = {
@@ -116,6 +121,8 @@ export const CreateFailed: Story = {
     const button = within(canvasElement).getByRole('button', { name: 'Create invite' });
     await waitFor(() => expect(button).toBeEnabled());
     await userEvent.click(button);
+    const dialog = await within(document.body).findByRole('dialog', { name: 'Create invite' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Create invite' }));
   },
 };
 
@@ -174,11 +181,16 @@ const failedReadback =
   (operation: 'create' | 'revoke'): NonNullable<Story['play']> =>
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const action = await canvas.findByRole('button', {
-      name: operation === 'create' ? 'Create invite' : 'Revoke invite',
-    });
-    await waitFor(() => expect(action).toBeEnabled());
-    await userEvent.click(action);
+    if (operation === 'create') {
+      const action = await canvas.findByRole('button', { name: 'Create invite' });
+      await waitFor(() => expect(action).toBeEnabled());
+      await userEvent.click(action);
+      const dialog = await within(document.body).findByRole('dialog', { name: 'Create invite' });
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Create invite' }));
+    } else {
+      await userEvent.click(await canvas.findByRole('button', { name: 'Actions for invite 1' }));
+      await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Revoke invite' }));
+    }
     await expect(await canvas.findByRole('button', { name: 'Refresh invites' })).toBeEnabled();
     await expect(canvas.getByRole('button', { name: 'Create invite' })).toBeDisabled();
     await expect(canvas.queryByText('No invites yet.')).toBeNull();
@@ -221,7 +233,7 @@ export const RefreshAfterRevoked: Story = {
     const canvas = within(context.canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Refresh invites' }));
     await expect(await canvas.findByRole('list', { name: 'Invites' })).toHaveTextContent('Revoked');
-    await expect(canvas.queryByRole('button', { name: 'Revoke invite' })).toBeNull();
+    await expect(canvas.queryByRole('button', { name: /^Actions for invite/ })).toBeNull();
     await expect(canvas.queryByRole('alert')).toBeNull();
   },
 };

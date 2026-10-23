@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { TransferPreview } from '../src/shared/adminRecovery.ts';
-import { AdminUsers } from './AdminUsers.tsx';
+import { AdminPage } from './AdminPage.tsx';
 
 type Scenario =
   | 'ready'
@@ -39,6 +39,7 @@ function RecoveryFixture({
 }) {
   const [ready, setReady] = useState(false);
   useEffect(() => {
+    history.replaceState(history.state, '', `${location.pathname}${location.search}#people`);
     const original = globalThis.fetch;
     let previewAttempts = 0;
     let transferAttempts = 0;
@@ -175,7 +176,7 @@ function RecoveryFixture({
       if (globalThis.fetch === fixtureFetch) globalThis.fetch = original;
     };
   }, [scenario, onTransfer]);
-  return ready ? <AdminUsers currentId="operator" /> : null;
+  return ready ? <AdminPage currentId="operator" /> : null;
 }
 
 const meta = {
@@ -296,6 +297,8 @@ export const Reactivated: Story = {
     await waitFor(() => expect(portal.queryByRole('dialog')).toBeNull());
     const account = within(portal.getByRole('region', { name: `${sourceName} account` }));
     await expect(account.getByText('Member · Active')).toBeVisible();
+    await userEvent.click(account.getByRole('button', { name: `Actions for ${sourceName}` }));
+    await userEvent.click(await portal.findByRole('menuitem', { name: 'Create recovery invite…' }));
     await expect(
       await portal.findByRole('option', { name: `Recover ${sourceName}` }),
     ).toBeInTheDocument();

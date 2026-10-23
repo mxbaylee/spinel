@@ -60,10 +60,11 @@ test('console link claims a fresh instance once and keeps the setup secret off t
     }
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.getByRole('button', { name: 'Create admin passkey' }).click();
-    await expect(page.getByRole('heading', { name: 'Admin', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Administration', exact: true })).toBeVisible();
     await page.goto(`${origin}/`);
     await expect(page).toHaveURL(`${origin}/admin`);
     await expect(page.getByRole('link', { name: 'Dashboard', exact: true })).toHaveCount(0);
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(page).toHaveURL(`${origin}/admin`);

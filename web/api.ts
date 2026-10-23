@@ -22,7 +22,7 @@ export function signInPath(): string {
     : (spaceReviewSignInPath(location) ?? '/sign-in');
 }
 
-export async function api<T>(path: string, body?: unknown): Promise<T> {
+export async function api<T>(path: string, body?: unknown, verifyCurrent: () => void = () => {}): Promise<T> {
   const response = await fetch(
     `/api/auth/${path}`,
     body === undefined
@@ -33,6 +33,7 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
           body: JSON.stringify(body),
         },
   );
+  verifyCurrent();
   if (
     response.status === 401 &&
     !['/sign-in', '/setup', '/recover-admin', '/invite'].includes(location.pathname)
@@ -40,6 +41,7 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
     location.assign(signInPath());
   if (response.status === 204) return undefined as T;
   const data = await response.json();
+  verifyCurrent();
   if (!response.ok)
     throw Object.assign(new Error(data.error ?? 'Something went wrong. Try again.'), {
       status: response.status,

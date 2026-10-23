@@ -1,0 +1,58 @@
+/* SPN-082 follows the approved administration composition and shared controls. */
+.admin-workspace { flex-direction: column; }
+.workspace.admin-workspace > .workspace-body { padding: 0; width: 100%; }
+.workspace.admin-workspace > .workspace-body > main { padding: 0; }
+.admin-page { font-size: 0.875rem; }
+.admin-page-heading { padding: 32px 40px; }
+.admin-page-heading .eyebrow { font-size: 0.6875rem; letter-spacing: 0.12em; margin: 0 0 8px; }
+.admin-page h1 { font-size: 1.75rem; margin: 0; }
+.admin-page h2 { font-size: 1.125rem; }
+.admin-layout { display: grid; grid-template-columns: 216px minmax(0, 640px); padding: 8px 40px 64px; gap: 48px; }
+.admin-layout > nav { display: grid; align-content: start; gap: 4px; }
+.admin-layout > nav a { display: flex; align-items: center; min-height: 44px; padding: 8px 12px; color: var(--sp-muted); text-decoration: none; border-radius: 8px; }
+.admin-layout > nav a[aria-current] { background: var(--sp-tint-1); color: var(--sp-text); font-weight: 600; }
+.admin-layout > nav a[aria-disabled] { opacity: 0.6; cursor: wait; }
+.admin-content { padding-top: 8px; min-width: 0; }
+.admin-content h2 { margin-top: 0; }
+.admin-content h3 { font-size: 0.875rem; }
+.admin-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.admin-section-heading h2 { margin: 0; }
+.admin-people-list, .admin-invite-list, .admin-passkeys ul, .admin-connections ul { list-style: none; padding: 0; margin: 24px 0; }
+.admin-person, .admin-invite-list > li, .admin-passkeys li, .admin-connections li { padding: 20px 0; border-bottom: 1px solid var(--sp-border); }
+.admin-person-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.admin-person-row > div { min-width: 0; overflow-wrap: anywhere; }
+.admin-person-row > button { flex-shrink: 0; }
+.admin-person h3, .admin-person p, .admin-invite-list p, .admin-passkeys p { margin: 4px 0; }
+.admin-person > p { margin-top: 12px; }
+.admin-invite-form, .admin-invite-created { display: grid; gap: 16px; }
+.admin-invite-form label, .admin-invite-created label { display: grid; gap: 8px; min-width: 0; }
+.admin-invite-form select { appearance: auto; width: 100%; min-width: 0; }
+.admin-invite-created { margin-top: 24px; padding: 20px; border: 1px solid var(--sp-border); border-radius: 12px; }
+.admin-invite-created input { width: 100%; min-width: 0; }
+.admin-invite-created > button { justify-self: start; }
+.admin-invite-created h3, .admin-invite-created p { margin: 0; }
+.admin-dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 24px; }
+.admin-confirmation-content, .admin-passkeys { overflow-wrap: anywhere; }
+.admin-token-disclosure { margin-top: 32px; border-top: 1px solid var(--sp-border); padding-top: 16px; }
+.admin-token-disclosure > summary { cursor: pointer; min-height: 44px; padding: 12px 0; font-weight: 600; }
+.admin-connections p { overflow-wrap: anywhere; color: var(--sp-muted); }
+.admin-health-card { border: 1px solid var(--sp-border); border-radius: 12px; padding: 24px; margin-top: 24px; }
+.admin-health-card h3 { margin-top: 0; }
+.admin-health-card p { overflow-wrap: anywhere; }
+.admin-health-state { display: flex; align-items: center; gap: 8px; }
+.admin-health-card a { color: var(--sp-text); text-underline-offset: 3px; }
+@media (max-width: 900px) {
+  .admin-layout { grid-template-columns: 176px minmax(0, 1fr); gap: 24px; padding-inline: 24px; }
+  .admin-page-heading { padding-inline: 24px; }
+}
+@media (max-width: 640px) {
+  .admin-page-heading { padding: 24px 16px; }
+  .admin-layout { display: flex; flex-direction: column; gap: 24px; padding: 0 16px 32px; }
+  .admin-layout > nav { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-bottom: 16px; border-bottom: 1px solid var(--sp-border); }
+  .admin-layout > nav a { min-width: 0; }
+  .admin-section-heading { flex-wrap: wrap; }
+  .admin-health-card { padding: 16px; }
+}
+@media (max-width: 640px), (pointer: coarse) {
+  .admin-page .sp-control, .admin-invite-form .sp-control, .admin-passkeys .sp-control, .admin-confirmation-content .sp-control { min-height: 44px; }
+}

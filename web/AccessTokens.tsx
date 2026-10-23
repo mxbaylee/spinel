@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api } from './api.ts';
 
 type Token = {
@@ -23,34 +23,30 @@ export function AccessTokens({ admin = false }: { admin?: boolean }) {
   const limitReached = (tokens?.filter((token) => !token.revoked).length ?? 0) >= 10;
   const Heading = admin ? 'h3' : 'h2';
 
-  useEffect(() => {
-    let disposed = false;
-    void api<{ tokens: Token[] }>(path)
-      .then((result) => {
-        if (!disposed) setTokens(result.tokens);
-      })
-      .catch(() => {
-        if (!disposed) setError('Could not load access tokens. Try again.');
-      })
-      .finally(() => {
-        if (!disposed) setLoading(false);
-      });
-    return () => {
-      disposed = true;
-    };
-  }, [path]);
-
+  const mounted = useRef(false);
+  const generation = useRef(0);
   async function refresh() {
+    const request = ++generation.current;
     setLoading(true);
     setError('');
+    const current = () => {
+      if (!mounted.current || generation.current !== request) throw new Error('This connection view is no longer current.');
+    };
     try {
-      setTokens((await api<{ tokens: Token[] }>(path)).tokens);
+      const result = await api<{ tokens: Token[] }>(path, undefined, current);
+      current();
+      setTokens(result.tokens);
     } catch {
-      setError('Could not load access tokens. Try again.');
+      if (mounted.current && generation.current === request) setError('Could not load access tokens. Try again.');
     } finally {
-      setLoading(false);
+      if (mounted.current && generation.current === request) setLoading(false);
     }
   }
+  useEffect(() => {
+    mounted.current = true;
+    void refresh();
+    return () => { mounted.current = false; generation.current++; };
+  }, [path]);
 
   async function create() {
     setBusy(true);
@@ -160,7 +156,7 @@ export function AccessTokens({ admin = false }: { admin?: boolean }) {
       )}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
-      <button disabled={busy || loading} onClick={() => void refresh()}>
+      <button className={admin ? 'sp-control' : undefined} disabled={busy || loading} onClick={() => void refresh()}>
         Refresh access tokens
       </button>
       {loading ? (
