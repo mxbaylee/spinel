@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fillPresets, palettes, editorNeutrals } from './palette.ts';
+import { fillPresets, palettes, editorNeutrals, spaceAccentPalettes } from './palette.ts';
 import {
   displayPresetStyle,
   presetStyle,
@@ -16,6 +16,26 @@ function luminance(hex: string) {
   return c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
 }
 describe('Spinel theme', () => {
+  it('proposed Space accents keep controls and selected navigation readable in both modes', () => {
+    // Personalization must retain AA text contrast for every person opening a Space.
+    for (const palette of Object.values(spaceAccentPalettes)) {
+      for (const mode of ['light', 'dark'] as const) {
+        const { accent, onAccent, tint, ink } = palette[mode];
+        for (const [fg, bg] of [
+          [onAccent, accent],
+          [ink, tint],
+          [palettes[mode]['sp-text'], tint],
+          [accent, palettes[mode]['sp-panel']],
+        ]) {
+          const [low, high] = [luminance(fg), luminance(bg)].sort((a, b) => a - b);
+          expect(
+            (high + 0.05) / (low + 0.05),
+            `${palette.label} ${mode}: ${fg} on ${bg}`,
+          ).toBeGreaterThanOrEqual(4.5);
+        }
+      }
+    }
+  });
   it('editor neutral text pairs meet AA in both modes', () => {
     for (const [fg, bg] of [
       [500, 0],

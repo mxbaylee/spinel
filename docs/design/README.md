@@ -260,6 +260,10 @@ production-wide replacement.
 
 ## Storybook
 
+The post-launch [covers and Space accents exploration](appearance.md) is under
+**Redesign → Appearance**. These local drafts await owner review; they do not
+change the approved production design or SPN-086's current scope.
+
 ```bash
 npm run storybook
 ```

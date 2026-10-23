@@ -174,3 +174,32 @@ export const editorNeutrals = {
   900: '#221832',
   1000: '#1a1225',
 };
+
+// Proposed Space accents, used only by appearance review stories.
+// Decoration is independent of status colors and authored cell fills.
+export const spaceAccentPalettes = {
+  ruby: {
+    label: 'Ruby',
+    light: { accent: '#b52655', onAccent: '#ffffff', tint: '#fbe4ec', ink: '#78213e' },
+    dark: { accent: '#ff91b5', onAccent: '#301421', tint: '#432235', ink: '#ffd9e6' },
+    facets: ['#9e2852', '#bd3e68', '#d65b83', '#e98ba6', '#f2b2c5'],
+  },
+  emerald: {
+    label: 'Emerald',
+    light: { accent: '#246b54', onAccent: '#ffffff', tint: '#e0eee6', ink: '#194b3c' },
+    dark: { accent: '#82d9b2', onAccent: '#102c22', tint: '#203a31', ink: '#c2f0db' },
+    facets: ['#215747', '#33745a', '#519777', '#80b59a', '#b2d4bf'],
+  },
+  sapphire: {
+    label: 'Sapphire',
+    light: { accent: '#345fa2', onAccent: '#ffffff', tint: '#e4ecf9', ink: '#254570' },
+    dark: { accent: '#9fbeff', onAccent: '#152641', tint: '#25344f', ink: '#d5e2ff' },
+    facets: ['#2b4778', '#3d639c', '#6487bc', '#93acd3', '#becde6'],
+  },
+  amethyst: {
+    label: 'Amethyst',
+    light: { accent: '#75509b', onAccent: '#ffffff', tint: '#eee5f5', ink: '#573874' },
+    dark: { accent: '#d1acf0', onAccent: '#2c1b3a', tint: '#3a2a49', ink: '#ebd6fc' },
+    facets: ['#573b78', '#77529b', '#9977b6', '#b79ccf', '#d6c3e5'],
+  },
+} as const;
