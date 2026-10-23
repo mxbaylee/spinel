@@ -692,4 +692,4 @@ The owner waived refreshing screenshots and requested deleting their embeds from
 the PR description. Historical gallery provenance stays intact. Earlier scores
 and images do not certify the new refinements; the final source needs current-head
 checks and independent review. SPN-086/078/089 retain production integration work;
-SPN-088 remains the eight-color native-picker feasibility follow-up.
+SPN-088 was subsequently [retired on 2026-10-23](../implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal), retaining native colors instead of adding the eight-choice enhancement.

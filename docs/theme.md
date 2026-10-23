@@ -33,8 +33,8 @@ and shows the typing instruction as normal, contrast-checked shell text.
 ## Sheet fills
 
 Use the Sheet's native fill menu to change cell colors. The extra **Cell fill
-presets** toolbar has been removed (SPN-050); native picker customization belongs
-to SPN-088. Existing cell fill presets retain soft and strong variants of primary,
+presets** toolbar has been removed (SPN-050); native controls are retained after
+the SPN-088 enhancement's retirement. Existing cell fill presets retain soft and strong variants of primary,
 secondary, success, warning, error, info, neutral and highlight. Their stored
 canonical light background/text pair remains unchanged. A style-only display interceptor maps that exact pair to the
 current browser's palette, without modifying saved data, formulas or unrelated
@@ -67,13 +67,18 @@ Sheet and Doc canvases. CI captures dashboard, Sheets and Docs in both
 themes under the `theme-screenshots-*` artifacts, one per Playwright run, for visual review. Screenshots
 contain synthetic fixture data only and expire after seven days.
 
-## Approved follow-up
+## Native colors and follow-up scope
 
 Owner, 2026-10-21, decision #126, corrected in chat: usable native dark canvas
 ships in SPN-047, including the production editors, snapshot viewers and native
-review examples. SPN-088 investigates eight logical colors with light/dark
-display pairs in native pickers. Public picker replacement is not yet established; use supported APIs
-and retain the native picker if necessary. Preserve stored styles, existing
-preset/profile colors and exports, rather than treating a theme switch as an edit.
+review examples. On 2026-10-23 the owner questioned the need for SPN-088 because
+native colors already adapt to light/dark mode. Independent source and actual
+Sheet/Doc screenshot review supported retaining native colors and retiring the
+extra eight-choice palette proposal under the owner's delegated decision process
+([decision and evidence](implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal)).
+The eight named semantic choices were cancelled, not implemented; this does not
+establish that every public picker extension is impossible or certify every
+native color's contrast. Preserve stored styles, existing preset/profile colors
+and exports, rather than treating a theme switch as an edit.
 SPN-050 only removes the separate fill-preset toolbar while retaining the sixteen
-legacy fill/profile mappings; it does not repeat SPN-088's palette investigation.
+legacy fill/profile mappings. No replacement palette is required.

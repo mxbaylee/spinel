@@ -439,9 +439,7 @@ final refinements. Current-head checks and independent review remain required.
 - SPN-086 carries document icons and folder-color persistence into production.
 - SPN-078 carries Space Trash metadata into the durable model, SPN-091 builds the collection/recovery UI, and SPN-092 verifies guest/integration boundaries before exposing Spaces.
 - SPN-089 applies the shared proposal modal title-icon pattern to production.
-- SPN-088 investigates eight semantic color choices through public APIs; retain
-  native pickers if replacement is unsupported. Preserve stored formatting,
-  legacy presets and exports.
+- The SPN-088 eight-choice palette proposal was [retired on 2026-10-23](../implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal). Retain native pickers and existing dark rendering, stored formatting, legacy presets and exports.
 
 Production screen migrations remain separate. The Operator gains no document
 access; other personas keep existing permissions, recovery and device-local
