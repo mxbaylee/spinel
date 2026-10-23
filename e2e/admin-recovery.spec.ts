@@ -230,11 +230,18 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
       .all(departed.id);
     await capture(page, info, 'disabled-account');
 
-    const previewResponse = page.waitForResponse((response) =>
-      response.url().endsWith(`/admin/users/${departed.id}/transfer-preview`),
+    // Development StrictMode discards its first preview before consuming the
+    // body. Inspect a completed GET, not headers from that stale effect.
+    const previewRequest = page.waitForEvent(
+      'requestfinished',
+      (request) =>
+        request.method() === 'GET' &&
+        request.url().endsWith(`/admin/users/${departed.id}/transfer-preview`),
     );
     let dialog = await accountAction(page, departed.name, 'transfer');
-    const preview = (await (await previewResponse).json()) as TransferPreview;
+    const previewResponse = await (await previewRequest).response();
+    expect(previewResponse?.status()).toBe(200);
+    const preview = (await previewResponse!.json()) as TransferPreview;
     expect(Object.keys(preview).sort()).toEqual(['confirmation', 'counts', 'recipients', 'source']);
     expect(preview.source).toEqual({ id: departed.id, name: departed.name });
     expect(
