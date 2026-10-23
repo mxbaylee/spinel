@@ -2,6 +2,7 @@ import {
   Direction,
   ICommandService,
   IResourceManagerService,
+  IUniverInstanceService,
   LocaleService,
   LocaleType,
   RANGE_TYPE,
@@ -56,11 +57,14 @@ export const wire = (params: unknown) => JSON.parse(JSON.stringify(params));
  * The mutations a command sends, as a collaboration client would forward them,
  * run on a copy of `replica` so the simulator can apply them to it itself.
  * Univer's undo is not a way back: it rewrites cells and refuses some moves.
+ * `earlier` commands run on the copy first, unrecorded, so that `id` can be
+ * an undo or redo of them.
  */
 export function capture(
   replica: Replica,
   id: string,
   params: { unitId: string; subUnitId?: string; [key: string]: unknown },
+  earlier: [string, object][] = [],
 ) {
   const { unitId, subUnitId } = params;
   const resources = replica.injector
@@ -74,6 +78,13 @@ export function capture(
   copy.injector.get(LocaleService).load({ [LocaleType.EN_US]: {} });
   // Merge interceptors watch only the active sheet.
   if (subUnitId) commands.syncExecuteCommand(SetWorksheetActiveOperation.id, { unitId, subUnitId });
+  // Undo and redo act on the focused unit's history.
+  if (earlier.length > 0) copy.injector.get(IUniverInstanceService).focusUnit(unitId);
+  for (const [command, args] of earlier) {
+    if (!commands.syncExecuteCommand(command, { unitId, ...args })) {
+      throw new Error(`${command} failed before ${id}`);
+    }
+  }
   const sent: Mutation[] = [];
   commands.onCommandExecuted((info) => {
     if (info.id.includes('.mutation.')) sent.push({ id: info.id, params: wire(info.params) });

@@ -129,6 +129,14 @@ function rebuild(mutation: Mutation, writes: Write[]): Mutation[] {
 }
 
 /**
+ * `trigger`, the command that sent `mutation` (see names.rewrites), as params
+ * to spread into a write made for it: a transform's output is its input's, so
+ * each write in it carries its input's `trigger`, or none.
+ */
+const sentBy = (mutation: Mutation) =>
+  mutation.params.trigger === undefined ? {} : { trigger: mutation.params.trigger };
+
+/**
  * SetRangeValues merges each key it names into the cell, and each key of an
  * inline style into the cell's style; a null cell deletes it. isOverrideStyle
  * replaces the whole style. Numfmt mutations write style key `n`, valued as
@@ -446,7 +454,7 @@ function retype(a: Mutation, b: Mutation, side: Side, landed: Mutation[]): Mutat
   return [
     {
       id: cellIds.setRangeValues,
-      params: { unitId, subUnitId, cellValue: toMatrix(cells), derived: true },
+      params: { unitId, subUnitId, ...sentBy(a), cellValue: toMatrix(cells), derived: true },
     },
   ];
 }
@@ -546,16 +554,20 @@ function conflict(a: Mutation, b: Mutation, side: Side): Mutation[] {
             params: {
               unitId,
               subUnitId,
+              ...sentBy(a),
               cellValue: toMatrix(writes),
               ...(whole && { isOverrideStyle: true }),
             },
           },
         ];
+  // The winner's replayed writes are `a`'s output: they carry `a`'s `trigger`,
+  // not `b`'s, and no mark of `b`'s formula rewrite (see names.markRewrites).
+  const { trigger: _, [rewriteKey]: __, ...replayed } = b.params;
   const landed = [
     ...rebuild(a, layers.alone),
     ...values(layers.merged, false),
     ...values(layers.whole, true),
-    ...rebuild(b, replay),
+    ...rebuild({ id: b.id, params: { ...replayed, ...sentBy(a) } }, replay),
   ];
   return [...landed, ...retype(a, b, side, landed)];
 }
