@@ -111,14 +111,17 @@ test('console recovery replaces a lost admin passkey on the existing account and
     expect(store.passkeys(admin.id)).toHaveLength(1);
     expect(store.passkeys(admin.id)[0].id).not.toBe(oldKey);
     expect(requests.some((request) => request.includes(secret))).toBe(false);
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(page).toHaveURL(`${origin}/admin`);
     const recovered = await (await context.request.get(`${origin}/api/auth/session`)).json();
     expect(recovered.user.id).toBe(admin.id);
 
-    await page.getByLabel('Invite for').selectOption(member.id);
+    await page.getByRole('navigation', { name: 'Administration sections' }).getByRole('link', { name: 'Invites', exact: true }).click();
     await page.getByRole('button', { name: 'Create invite', exact: true }).click();
+    await page.getByLabel('Invite for').selectOption(member.id);
+    await page.getByRole('dialog', { name: 'Create invite', exact: true }).getByRole('button', { name: 'Create invite', exact: true }).click();
     const memberLink = await page.getByLabel('New invite link').inputValue();
     const memberPage = await memberContext.newPage();
     const memberCdp = await memberContext.newCDPSession(memberPage);

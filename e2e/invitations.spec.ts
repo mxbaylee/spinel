@@ -51,9 +51,10 @@ test('admin invites a second browser, rejects reuse and revocation, and recovers
   const authenticator = (await cdp.send('WebAuthn.addVirtualAuthenticator', { options }))
     .authenticatorId;
   try {
-    await page.goto(`${origin}/admin`);
-    await expect(page.getByLabel('Expires in')).toHaveValue('168');
+    await page.goto(`${origin}/admin#invites`);
     await page.getByRole('button', { name: 'Create invite', exact: true }).click();
+    await expect(page.getByLabel('Expires in')).toHaveValue('168');
+    await page.getByRole('dialog', { name: 'Create invite', exact: true }).getByRole('button', { name: 'Create invite', exact: true }).click();
     const link = await page.getByLabel('New invite link').inputValue();
     await expect(page.getByRole('button', { name: 'Copy invite link' })).toBeVisible();
     await second.goto(link);
@@ -73,14 +74,17 @@ test('admin invites a second browser, rejects reuse and revocation, and recovers
     await page.reload();
     await expect(page.getByRole('list', { name: 'Invites' })).toContainText('Used by Teammate');
     await page.getByRole('button', { name: 'Create invite', exact: true }).click();
+    await page.getByRole('dialog', { name: 'Create invite', exact: true }).getByRole('button', { name: 'Create invite', exact: true }).click();
     const revoked = await page.getByLabel('New invite link').inputValue();
-    await page.getByRole('button', { name: 'Revoke invite' }).click();
+    await page.getByRole('list', { name: 'Invites' }).getByRole('listitem').filter({ hasText: 'Available' }).getByRole('button', { name: /^Actions for invite/ }).click();
+    await page.getByRole('menuitem', { name: 'Revoke invite' }).click();
     await third.goto(revoked);
     await expect(third.getByRole('alert')).toHaveText(
       'This invite is unavailable or expired. Ask the operator for a new link.',
     );
-    await page.getByLabel('Invite for').selectOption(String(user.id));
     await page.getByRole('button', { name: 'Create invite', exact: true }).click();
+    await page.getByLabel('Invite for').selectOption(String(user.id));
+    await page.getByRole('dialog', { name: 'Create invite', exact: true }).getByRole('button', { name: 'Create invite', exact: true }).click();
     const recovery = await page.getByLabel('New invite link').inputValue();
     await cdp.send('WebAuthn.removeVirtualAuthenticator', { authenticatorId: authenticator });
     await cdp.send('WebAuthn.addVirtualAuthenticator', { options });
