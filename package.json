@@ -55,6 +55,7 @@
     "@simplewebauthn/server": "14.0.3",
     "@spinel/doc-formulas": "*",
     "@spinel/presence-ui": "^0.0.0",
+    "@spinel/print": "*",
     "@univerjs-pro/collaboration": "1.1.0",
     "@univerjs-pro/collaboration-client": "1.1.0",
     "@univerjs-pro/collaboration-client-ui": "1.1.0",
