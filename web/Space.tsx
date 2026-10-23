@@ -262,7 +262,7 @@ export function Space({
         if (spaceAccessDenied(error)) {
           if (guest) {
             revokeGuestView();
-            return;
+            if (disposed) return;
           }
           setDenied(true);
           setTree(null);

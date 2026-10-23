@@ -230,7 +230,10 @@ export function SheetEditor({
       );
       controller.current = save;
       stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
-      if (disposed) stopPresence();
+      if (disposed) {
+        stopPresence();
+        return;
+      }
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
         editing = true;
         if (chrome) chrome.editing.current = true;
