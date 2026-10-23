@@ -25,6 +25,8 @@ export function AdminInvites({ initialRecipient = '', onBusyChange }: { initialR
   const currentUrl = useRef(url);
   currentUrl.current = url;
   const createButton = useRef<HTMLButtonElement>(null);
+  const createdAddress = useRef<HTMLInputElement>(null);
+  const returnToAddress = useRef(false);
   const verify = () => { if (!mounted.current) throw new Error('This invitation view is no longer current.'); };
   useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; request.current++; }; }, []);
   useEffect(() => { onBusyChange?.(busy); return () => onBusyChange?.(false); }, [busy, onBusyChange]);
@@ -49,6 +51,7 @@ export function AdminInvites({ initialRecipient = '', onBusyChange }: { initialR
     try {
       const invite = await api<{ url: string }>('invites', { hours, ...(recovery ? { recoveryUserId: recovery } : {}) }, verify);
       verify();
+      returnToAddress.current = true;
       setUrl(invite.url); setFormOpen(false); setNotice('Invite created. Copy its address before leaving this section.');
       await refresh();
     } catch (cause) {
@@ -81,9 +84,9 @@ export function AdminInvites({ initialRecipient = '', onBusyChange }: { initialR
     {readError && <div role="alert"><p>{readError} The current invitation list is unavailable.</p><Button disabled={busy || loading} onClick={() => void refresh()}>Refresh invites</Button></div>}
   </>;
   return <section className="admin-invites sp-ui" aria-label="Invites">
-    <div className="admin-section-heading"><h2>Invites</h2><button ref={createButton} className="sp-control sp-primary" disabled={disabled} onClick={() => { setError(''); setFormOpen(true); }}>Create invite</button></div>
+    <div className="admin-section-heading"><h2>Invites</h2><button ref={createButton} className="sp-control sp-primary" disabled={disabled} onClick={() => { returnToAddress.current = false; setError(''); setFormOpen(true); }}>Create invite</button></div>
     <p className="sp-muted">Invite a new everyday account, or help an active account register a replacement passkey.</p>
-    {url && <section className="admin-invite-created" aria-label="Invite ready"><h3>Invite ready</h3><p>Copy this link now and send it to the intended person. It will not be shown again after you leave this section.</p><label>New invite link<input readOnly value={url} onFocus={(event) => event.currentTarget.select()} /></label><Button onClick={() => void copy()}>Copy invite link</Button><p className="sp-muted">If copying is unavailable, select the address and copy it manually.</p></section>}
+    {url && <section className="admin-invite-created" aria-label="Invite ready"><h3>Invite ready</h3><p>Copy this link now and send it to the intended person. It will not be shown again after you leave this section.</p><label>New invite link<input ref={createdAddress} readOnly value={url} onFocus={(event) => event.currentTarget.select()} /></label><Button onClick={() => void copy()}>Copy invite link</Button><p className="sp-muted">If copying is unavailable, select the address and copy it manually.</p></section>}
     {!formOpen && issues}
     {notice && <p role="status">{notice}</p>}
     {loading && <p role="status">Loading invites…</p>}
@@ -92,7 +95,7 @@ export function AdminInvites({ initialRecipient = '', onBusyChange }: { initialR
         {invite.status === 'Available' && <ActionMenu label={`Actions for invite ${index + 1}`} actions={[{ label: 'Revoke invite', destructive: true, disabled: busy, onClick: () => void revoke(invite.id) }]} />}
       </li>)}
     </ul> : fresh && !loading ? <p>No invites yet.</p> : null}
-    {formOpen && <Modal open title="Create invite" icon="person" dismissDisabled={busy} finalFocus={() => createButton.current} onOpenChange={(open) => { if (!open) setFormOpen(false); }}>
+    {formOpen && <Modal open title="Create invite" icon="person" dismissDisabled={busy} finalFocus={() => returnToAddress.current ? createdAddress.current : createButton.current} onOpenChange={(open) => { if (!open) setFormOpen(false); }}>
       <form className="admin-invite-form" onSubmit={(event) => { event.preventDefault(); void create(); }}>
         <label>Invite for<select className="sp-control" disabled={disabled} value={recovery} onChange={(event) => setRecovery(event.target.value)}><option value="">A new account</option>{users.map((user) => <option key={user.id} value={user.id}>Recover {adminAccountLabel(user, users)}{user.isAdmin ? ' (admin)' : ''}</option>)}</select></label>
         <label>Expires in<select className="sp-control" disabled={disabled} value={hours} onChange={(event) => setHours(Number(event.target.value))}><option value={1}>1 hour</option><option value={24}>1 day</option><option value={168}>7 days</option><option value={720}>30 days</option></select></label>
@@ -100,7 +103,7 @@ export function AdminInvites({ initialRecipient = '', onBusyChange }: { initialR
         {fresh && invalidRecipient && <p role="alert">This account is no longer eligible for recovery. Choose an active account.</p>}
         {loading && <p role="status">Loading invitation recipients…</p>}
         {issues}
-        <div className="admin-dialog-actions"><Button type="button" disabled={busy} onClick={() => setFormOpen(false)}>Cancel</Button><Button primary disabled={disabled || invalidRecipient}>{busy ? 'Creating…' : 'Create invite'}</Button></div>
+        <div className="admin-dialog-actions"><Button type="button" disabled={busy} onClick={() => setFormOpen(false)}>Cancel</Button><Button primary type="submit" disabled={disabled || invalidRecipient}>{busy ? 'Creating…' : 'Create invite'}</Button></div>
       </form>
     </Modal>}
   </section>;

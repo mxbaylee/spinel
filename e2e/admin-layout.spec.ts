@@ -70,11 +70,21 @@ test('pending invitations prevent section changes, manual copying works, and lea
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`), auth = new AuthStore(db);
   const operator = auth.createUser(`Invite layout ${info.testId}-${info.retry}`, true);
   await context.addCookies([{ name: COOKIE_NAME, value: auth.createSession(operator.id).token, url: baseURL!.replace('http:', 'https:'), secure: true, httpOnly: true, sameSite: 'Strict' }]);
-  let release = () => {};
+  let release = () => {}, releaseReadback = () => {};
+  let created = false, heldReadback = false;
+  const readbackGate = new Promise<void>((resolve) => { releaseReadback = resolve; });
   const gate = new Promise<void>((resolve) => { release = resolve; });
   await page.route('**/api/auth/invites', async (route) => {
-    if (route.request().method() === 'POST') await gate;
-    await route.continue();
+    if (route.request().method() === 'POST') {
+      await gate;
+      const response = await route.fetch();
+      created = true;
+      await route.fulfill({ response });
+    } else if (created && !heldReadback) {
+      heldReadback = true;
+      await readbackGate;
+      await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'Could not refresh invitations.' }) });
+    } else await route.continue();
   });
   try {
     await page.goto('/admin#invites');
@@ -89,6 +99,12 @@ test('pending invitations prevent section changes, manual copying works, and lea
     release();
     const address = page.getByRole('textbox', { name: 'New invite link' });
     await expect(address).toBeVisible();
+    await expect(address).toBeFocused();
+    // The once-only address remains the focus target while a slow readback keeps Create disabled.
+    await expect(page.getByRole('button', { name: 'Create invite', exact: true })).toBeDisabled();
+    releaseReadback();
+    await expect(page.getByRole('button', { name: 'Refresh invites', exact: true })).toBeEnabled();
+    await expect(address).toBeFocused();
     const secret = await address.inputValue();
     await page.evaluate(() => { Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async () => { throw new Error('Unavailable'); } } }); });
     await page.getByRole('button', { name: 'Copy invite link' }).click();
@@ -105,7 +121,7 @@ test('pending invitations prevent section changes, manual copying works, and lea
     await expect(page.getByRole('list', { name: 'Invites' })).toBeVisible();
     await expect(address).toHaveCount(0);
     expect(await (await context.request.get('/api/auth/invites')).text()).not.toContain(secret);
-  } finally { release(); db.close(); }
+  } finally { release(); releaseReadback(); db.close(); }
 });
 
 test('a response from an unmounted section cannot redirect a current administration view', async ({ page, context, baseURL }, info) => {
