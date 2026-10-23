@@ -221,7 +221,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await other.keyboard.press('Control+c');
     await expect.poll(() => other.evaluate(() => navigator.clipboard.readText())).toContain('99');
     other.once('dialog', (dialog) => dialog.dismiss());
-    await other.getByRole('link', { name: 'Settings', exact: true }).click();
+    await other.getByRole('link', { name: 'Your profile', exact: true }).click();
     await expect(other).toHaveURL(new RegExp(sheetId));
     // A fresh viewer uses the SDK's read-only mode and cannot mutate either format.
     other.once('dialog', (dialog) => dialog.accept());

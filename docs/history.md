@@ -31,7 +31,7 @@ work before closing the collaboration service and database.
 ## Retention and storage
 
 The owner approved this schedule in
-[decision #39](https://github.com/mxbaylee/spinel/issues/39):
+[decision #39](implementation/SPN-023.md#legacy-decision-39-history-retention-spacing):
 
 - Under one hour: keep every captured checkpoint, including idle breaks.
 - One to six hours: retain the latest checkpoint in each UTC half-hour bucket.
@@ -78,7 +78,7 @@ work, before committing. A concurrent native migration returns a retryable UI
 error rather than pinning an obsolete native copy. Viewers can read the list but
 cannot name or unname. No anonymous history route is added.
 
-These bounds and semantics were chosen in [decision #56](https://github.com/mxbaylee/spinel/issues/56)
+These bounds and semantics were chosen in [decision #56](implementation/SPN-024.md#legacy-decision-56-names-bind-exact-saved-versions)
 to preserve the Owner's recovery points, allow authorized Collaborators to label
 shared work, keep Operator storage simple and maintain Link guest access boundaries.
 
@@ -89,8 +89,8 @@ remain in SQLite even after an image is removed from the live document. The
 existing 50 MiB image quota applies to all uploads for that document. There is no
 new image garbage collector: an apparently unused upload might still be in an
 offline edit. This conservative policy preserves retained versions and pending
-edits; see [decision #23](https://github.com/mxbaylee/spinel/issues/23) and
-[decision #51](https://github.com/mxbaylee/spinel/issues/51).
+edits; see [decision #23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming) and
+[decision #51](implementation/SPN-023.md#legacy-decision-51-materialized-native-history-checkpoints).
 
 History reads use the current document access resolver and recheck access after
 decompression. Current viewers can read versions; revoked users, disabled users
@@ -153,7 +153,7 @@ README and type declarations. It indexes derived changeset segments, but its
 public API does not provide this compressed snapshot retention and pinned-version
 policy. Spinel therefore materializes native snapshots through public SDK APIs
 and owns only its checkpoint tables. No Pro implementation is inspected or
-patched. [Decision #51](https://github.com/mxbaylee/spinel/issues/51) records the
+patched. [Decision #51](implementation/SPN-023.md#legacy-decision-51-materialized-native-history-checkpoints) records the
 tradeoff for the Owner, Collaborator, Operator and Link guest.
 
 
@@ -181,11 +181,11 @@ requested checkpoint produces an error instead of silently choosing another rest
 target. Current viewers can browse; only editors may restore through the existing
 confirmation and generation guard. No history route is added for Link guests.
 
-[Decision #81](https://github.com/mxbaylee/spinel/issues/81), 2026-10-18, aligns recovery
+[Decision #81](implementation/SPN-026.md#legacy-decision-81-utc-history-navigation), 2026-10-18, aligns recovery
 dates for the Owner and Collaborator, keeps the Operator’s retention/storage model,
 and preserves the Link guest boundary. This carries SPN-026’s two-view and touch
 requirements (PRD §5), using SPN-025’s isolated preview and restore fencing from
-decisions #39/#55/#68 and grooming 2026-10-18.
+decisions [#39](implementation/SPN-023.md#legacy-decision-39-history-retention-spacing)/[#55](implementation/SPN-025.md#legacy-decision-55-atomic-native-restore-and-generation-replacement)/[#68](implementation/SPN-025.md#legacy-decision-68-single-sqlite-runtime-and-consistent-copies) and grooming 2026-10-18.
 
 ## Preview and restore
 
@@ -230,7 +230,7 @@ public API using the durable cleanup queue. These application tables are include
 the same encrypted SQLite backup as checkpoints, images and SDK data.
 Application and SDK connections share one pinned SQLite runtime to avoid competing
 lock registries during restart; repeated reopen/integrity and encrypted recovery
-tests cover this boundary. [Decision #68](https://github.com/mxbaylee/spinel/issues/68).
+tests cover this boundary. [Decision #68](implementation/SPN-025.md#legacy-decision-68-single-sqlite-runtime-and-consistent-copies).
 
 `GET /api/items/:id/history/:checkpoint` returns an authorized native preview.
 `POST /api/items/:id/history/:checkpoint/restore` accepts `{requestId,unitId}`, with
@@ -239,8 +239,8 @@ recheck current access, and the mutation also requires the configured origin and
 current session. No anonymous or administrative document access is introduced.
 
 The owner chose freeze, drain, preserve and refresh in
-[decision #55](https://github.com/mxbaylee/spinel/issues/55), 2026-10-18. This retains
+[decision #55](implementation/SPN-025.md#legacy-decision-55-atomic-native-restore-and-generation-replacement), 2026-10-18. This retains
 all accepted work for the Owner and Collaborator, gives the Operator deterministic
 crash recovery using one database, and preserves Link guest access boundaries.
 Atomic pre-state preservation, retained images and stale-write fencing carry forward
-[decision #23](https://github.com/mxbaylee/spinel/issues/23), 2026-10-17.
+[decision #23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming), 2026-10-17.

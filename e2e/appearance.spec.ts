@@ -6,6 +6,7 @@ import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { ColorKit, invertColorByMatrix } from '@univerjs/core';
 import type { ICellData, IWorkbookData } from '@univerjs/core';
 import { editorNeutrals } from '../src/ui/palette.ts';
+import { presetStyle } from '../src/ui/presetStyles.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -40,15 +41,16 @@ test('themes persist, follow the system, and recolour sheet presets without edit
   const user = auth.createUser(`Theme ${info.testId}`);
   const sheet = store.create(user.id, { name: 'Theme budget', kind: 'sheet', parentId: null });
   const doc = store.create(user.id, { name: 'Theme journal', kind: 'doc', parentId: null });
+  const richForeground = presetStyle('primary-soft', 'light').cl!;
   const richCell = {
     p: {
       id: 'rich-text',
-      documentStyle: {},
+      documentStyle: { textStyle: { cl: richForeground } },
       body: {
         dataStream: 'Rich text\r\n',
         textRuns: [
-          { st: 0, ed: 4, ts: { bl: 1 } },
-          { st: 5, ed: 9, ts: { it: 1 } },
+          { st: 0, ed: 4, ts: { bl: 1, cl: richForeground } },
+          { st: 5, ed: 9, ts: { it: 1, cl: richForeground } },
         ],
       },
     },
@@ -69,7 +71,15 @@ test('themes persist, follow the system, and recolour sheet presets without edit
           name: 'Sheet1',
           rowCount: 100,
           columnCount: 26,
-          cellData: { 2: { 0: richCell }, 4: { 0: { v: 'Plain text' } } },
+          // Legacy stored pairs must retain their appearance after the preset entry point is removed.
+          cellData: {
+            0: {
+              0: { s: presetStyle('warning-strong', 'light') },
+              1: { s: presetStyle('warning-strong', 'light') },
+            },
+            2: { 0: { ...richCell, s: presetStyle('primary-soft', 'light') } },
+            4: { 0: { v: 'Plain text' } },
+          },
         },
       },
     },
@@ -160,14 +170,14 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await page.emulateMedia({ colorScheme: 'dark' });
     await mode('dark');
     await capture('dashboard-dark');
-    await page.getByRole('link', { name: 'Settings', exact: true }).click();
-    await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('light');
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
+    await page.locator('header').getByRole('radio', { name: 'Light', exact: true }).click();
     await page.reload();
     await mode('light');
     await page.emulateMedia({ colorScheme: 'light' });
     await page.emulateMedia({ colorScheme: 'dark' });
     await mode('light');
-    await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('system');
+    await page.locator('header').getByRole('radio', { name: 'Follow system', exact: true }).click();
     await mode('dark');
     await page.emulateMedia({ colorScheme: 'light' });
     await page.goto(`/?item=${sheet.id}`);
@@ -183,12 +193,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await select('A1');
     await page.getByRole('button', { name: 'Bold', exact: true }).click();
     await saved();
-    await select('A1:B1');
-    await page.getByText('Cell fill presets', { exact: true }).click();
-    await page.getByRole('button', { name: 'Apply Warning, strong fill', exact: true }).click();
-    await saved();
-    // Saved may still describe the preceding command. Confirm this fill before
-    // moving the selection and applying a different preset.
+    await expect(page.getByText('Cell fill presets', { exact: true })).toHaveCount(0);
     await expect
       .poll(async () => {
         const { snapshot } = await read();
@@ -196,11 +201,6 @@ test('themes persist, follow the system, and recolour sheet presets without edit
         return (typeof style === 'string' ? snapshot.styles[style] : style)?.bg?.rgb;
       })
       .toBe('#f2a93b');
-    await select('A3');
-    await page.getByRole('button', { name: 'Apply Primary, soft fill', exact: true }).click();
-    await saved();
-    // The previous Saved label can remain briefly while a new command is queued.
-    // Establish the baseline only after the last fill is durable on the server.
     await expect
       .poll(async () => {
         const { snapshot } = await read();
@@ -218,7 +218,6 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     const resolved = typeof style === 'string' ? before.snapshot.styles[style] : style;
     expect(resolved?.bl).toBe(1);
     expect(resolved?.bg?.rgb).toBe('#f2a93b');
-    await page.getByText('Cell fill presets', { exact: true }).click();
     await select('C3');
     await expect(sheetCanvas).toBeVisible();
     await expect.poll(() => colouredPixels([242, 169, 59])).toBeGreaterThan(100);
@@ -258,8 +257,12 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     const edited = await read();
     const rich = edited.snapshot.sheets[edited.snapshot.sheetOrder[0]].cellData![2]![0]!;
     expect(rich.p?.body?.dataStream).toContain('Rich text!');
-    expect(rich.p?.body?.textRuns?.some((run) => run.ts?.bl === 1)).toBe(true);
-    expect(rich.p?.body?.textRuns?.some((run) => run.ts?.it === 1)).toBe(true);
+    expect(rich.p?.body?.textRuns).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ ts: expect.objectContaining({ bl: 1, cl: richForeground }) }),
+        expect.objectContaining({ ts: expect.objectContaining({ it: 1, cl: richForeground }) }),
+      ]),
+    );
     for (const run of rich.p?.body?.textRuns ?? [])
       if (run.ts?.cl) expect(run.ts.cl.rgb).toBe('#8a1d3f');
     await page.emulateMedia({ colorScheme: 'light' });

@@ -1,7 +1,7 @@
 # SPN-047 design review
 
 Status: owner approved as-is and merge authorized on 2026-10-21 in chat,
-recorded in [decision #126](https://github.com/mxbaylee/spinel/issues/126) and [PR #125](https://github.com/mxbaylee/spinel/pull/125).
+recorded in [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits) and [PR #125](https://github.com/mxbaylee/spinel/pull/125).
 The owner authorized this redesign on 2026-10-20. These are review mockups;
 production screen migrations land in their individual tickets after approval.
 
@@ -54,7 +54,7 @@ pattern observations, not claims about every plan, device or current screen.
 - [Dropbox quick access](https://help.dropbox.com/organize/quick-access): personal
   shortcuts do not change shared organization. Preserve filed shared references
   without implying shared ownership. Personal pinning was rejected by the owner
-  on 2026-10-21 ([decision #128](https://github.com/mxbaylee/spinel/issues/128)); competitor favorites are not a requirement.
+  on 2026-10-21 ([decision #128](../implementation/SPN-047.md#legacy-decision-128-remove-personal-pinning)); competitor favorites are not a requirement.
 
 The comparisons on each screen page translate these observations into a
 specific layout. Competitor patterns inform placement; Spinel's access,
@@ -154,7 +154,7 @@ proposals are labelled separately; planned Spaces and file Admin have no
 production “before”. The inventory below maps every surface to its evidence.
 
 Local builds/browser/tests are deferred whenever macOS memory pressure is not
-normal, under decision #52. CI is authoritative for this draft's browser evidence.
+normal, under decision [#52](../implementation/backlog-workflow.md#legacy-decision-52-memory-watchdog-ci-first-exception). CI is authoritative for this draft's browser evidence.
 Do not run another agent's local workload concurrently.
 
 ## Screen and journey inventory
@@ -225,7 +225,7 @@ networking, actual passkey operations or document persistence. Production ticket
 must preserve the existing security/behavior contracts during migration.
 
 Current owner direction (chat, 2026-10-21): folders are rows in **My files**.
-Personal pinning and pinned navigation are removed ([decision #128](https://github.com/mxbaylee/spinel/issues/128)); folders, tags and search
+Personal pinning and pinned navigation are removed ([decision #128](../implementation/SPN-047.md#legacy-decision-128-remove-personal-pinning)); folders, tags and search
 provide retrieval without another shortcut list. The expanded sidebar uses the original saturated `--sp-rail` pink and
 matching `--sp-rail-ink` foreground (owner correction, 2026-10-20). Profile and Appearance occupy separate rows. Trash is a permanent
 folder entry in My files with no rename/move/delete controls; it is not another
@@ -247,7 +247,7 @@ never an identifier or substitute for a type/access label. Folders and Trash kee
 their functional icons. Defer the persistent emoji/icon picker to **SPN-086**;
 no picker ships in this proposal. Owner/Collaborator gain recognition and view
 choice; Guests retain scoped identity and access clarity; Operators gain no
-personal file navigation or service dependency. Decision #126.
+personal file navigation or service dependency. Decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits).
 
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
@@ -271,7 +271,7 @@ Shrink the appearance group to 24 px segments with 15 px glyphs on pointer
 desktops; retain 44 px targets on touch. File metadata pairs each Doc/Sheet/Space
 label with its existing 16 px entity icon, alongside the separate decorative
 filename emoji. Owner and Collaborator gain faster recognition without enlarging
-the row; guest identity and Operator access remain unchanged. Decision #126.
+the row; guest identity and Operator access remain unchanged. Decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits).
 
 ### Connected walkthrough
 
@@ -291,7 +291,7 @@ warning. The CI screenshot runner exercises representative journeys sequentially
 desktop and phone widths. Read the captured workflow’s result separately; rendered
 screenshots alone do not prove every journey assertion passed.
 
-Owner direction (chat, 2026-10-20, decision #126): appearance is local to the
+Owner direction (chat, 2026-10-20, decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits)): appearance is local to the
 browser and defaults to System. No account preference overrides it on sign-in.
 Members, Operators and guests can change it; the profile form only saves personal
 identity. This device labels it explicitly, while compact controls remain in
@@ -439,9 +439,7 @@ final refinements. Current-head checks and independent review remain required.
 - SPN-086 carries document icons and folder-color persistence into production.
 - SPN-078 carries Space Trash metadata into the durable model, SPN-091 builds the collection/recovery UI, and SPN-092 verifies guest/integration boundaries before exposing Spaces.
 - SPN-089 applies the shared proposal modal title-icon pattern to production.
-- SPN-088 investigates eight semantic color choices through public APIs; retain
-  native pickers if replacement is unsupported. Preserve stored formatting,
-  legacy presets and exports.
+- The SPN-088 eight-choice palette proposal was [retired on 2026-10-23](../implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal). Retain native pickers and existing dark rendering, stored formatting, legacy presets and exports.
 
 Production screen migrations remain separate. The Operator gains no document
 access; other personas keep existing permissions, recovery and device-local

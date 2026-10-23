@@ -122,7 +122,7 @@ test('document UI preserves rich text and embedded images through reload and off
     );
     const navigationWarning = page.waitForEvent('dialog');
     page.once('dialog', (dialog) => dialog.dismiss());
-    await page.getByRole('link', { name: 'Settings', exact: true }).click();
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
     await navigationWarning;
     await expect(page).toHaveURL(new RegExp(item.id));
     releaseImage();
@@ -192,7 +192,7 @@ test('document UI preserves rich text and embedded images through reload and off
     await expect(editor).toBeVisible();
     await expect(editor.getByRole('status', { name: 'Save status' })).toContainText('not saved');
     page.once('dialog', (dialog) => dialog.dismiss());
-    await page.getByRole('link', { name: 'Settings', exact: true }).click();
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(item.id));
     await network.setOffline(false);
     await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(

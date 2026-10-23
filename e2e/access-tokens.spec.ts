@@ -43,7 +43,7 @@ test('a member creates and revokes a once-only token while an operator sees only
   await context.addCookies([cookie(auth.createSession(member.id).token)]);
   await adminContext.addCookies([cookie(auth.createSession(operator.id).token)]);
   try {
-    await page.goto('/settings');
+    await page.goto('/settings#connections');
     await page.getByText('Advanced: personal access tokens', { exact: true }).click();
     const settings = page.getByRole('region', { name: 'Personal access tokens' });
     await expect(settings.getByText('No access tokens yet.')).toBeVisible();

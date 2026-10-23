@@ -497,6 +497,13 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
     ).toHaveAttribute('href', docHref);
     expect(remoteReads).toEqual([]);
     expect(errors).toEqual([]);
+    // The account destination remains available from a prepared Space, including
+    // the local sign-out that locks its saved documents until online sign-in.
+    await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+    await expect(page).toHaveURL(baseURL! + '/profile');
+    await expect(page.getByRole('heading', { name: 'Your profile', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+    await expect(page).toHaveURL(baseURL! + '/sign-in');
   } finally {
     await context.close();
     db.close();

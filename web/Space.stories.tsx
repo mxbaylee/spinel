@@ -238,7 +238,6 @@ const meta = {
     connection: 'online',
     navigation: { allow: () => true, dirty: fn() },
     onExit: fn(),
-    onSignOut: fn(),
     onConnectionState: fn(),
     renderEditor: (props) => <EditorFixture {...props} offline={false} />,
   },

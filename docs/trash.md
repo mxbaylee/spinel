@@ -53,8 +53,8 @@ No document title or content is written to the cleanup log. Trash is recovery
 within the same database, not an offsite backup; SPN-030 covers machine loss.
 
 These rules retain SPN-021's 30-day undo and purge requirements (PRD §2.1),
-[decision #23](https://github.com/mxbaylee/spinel/issues/23)'s soft-delete storage
-boundary, and [decision #30](https://github.com/mxbaylee/spinel/issues/30)'s batch
+[decision #23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming)'s soft-delete storage
+boundary, and [decision #30](implementation/SPN-021.md#legacy-decision-30-trash-batches-and-exact-set-deletion)'s batch
 restoration, confirmation and placement scope, dated 2026-10-17. They favour
 predictable cleanup for the Operator, reversible mistakes for the Owner,
 non-destructive organization and current grants for the Collaborator, and no

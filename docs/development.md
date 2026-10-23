@@ -131,7 +131,7 @@ The shared build keeps its ordinary `npm ci` and registry-audit invocation. The
 three viewport installs use `npm ci --no-audit` so duplicate advisory requests
 cannot consume each review budget. Locked installation, integrity verification,
 postinstall and all review coverage remain. This narrow response to repeated
-five-minute installs is recorded in [decision #138](https://github.com/mxbaylee/spinel/issues/138),
+five-minute installs is recorded in [decision #138](implementation/SPN-091.md#legacy-decision-138-avoid-duplicate-registry-audit-requests),
 2026-10-22; a retained audit invocation is not evidence that an unavailable
 registry completed a security audit.
 
@@ -159,14 +159,14 @@ see [the process](todo/process.md#pull-requests-and-main).
   adapter, behind `server/database.ts`. Mixing it with `node:sqlite` in one process
   failed repeated reopen tests and risks independent SQLite lock registries.
   WAL mode and foreign keys remain enabled without resetting migration metadata.
-  [Decision #68](https://github.com/mxbaylee/spinel/issues/68), 2026-10-18,
-  supersedes the original driver choice in [#2](https://github.com/mxbaylee/spinel/issues/2).
+  [Decision #68](implementation/SPN-025.md#legacy-decision-68-single-sqlite-runtime-and-consistent-copies), 2026-10-18,
+  supersedes the original driver choice in [#2](implementation/SPN-001.md#legacy-decision-2-one-process-and-initial-sqlite-adapter).
 - Startup upgrades the workspace schema for the [Space foundation](design/spaces.md#implemented-foundation)
   before the collaboration SDK opens its database connection. The migration
   preserves existing item IDs, native foreign keys, indexes and cleanup triggers;
   incomplete or unrecognized schemas fail startup instead of being guessed or
   partially upgraded. Native children remain inaccessible through ordinary item lookup.
-  [Decision #135](https://github.com/mxbaylee/spinel/issues/135), 2026-10-21;
+  [Decision #135](implementation/SPN-078.md#legacy-decision-135-durable-space-identity-and-scope), 2026-10-21;
   [implementation and verification](implementation/SPN-078.md).
 - Spaces are enabled by default at `/spaces`; `/review/spaces` remains an alias
   from SPN-091. The legacy `SPINEL_SPACE_REVIEW=0` option (or
@@ -177,18 +177,18 @@ see [the process](todo/process.md#pull-requests-and-main).
   metadata/lifecycle composes roots with ordinary files. Images, Formulas, MCP,
   existing exports, account history and selected-child offline preparation reuse
   those scoped services. The option gives Operators no document privileges.
-  The original safe sequencing is [decision #137](https://github.com/mxbaylee/spinel/issues/137);
-  the completed boundary is [decision #143](https://github.com/mxbaylee/spinel/issues/143)
+  The original safe sequencing is [decision #137](implementation/SPN-091.md#legacy-decision-137-default-off-space-review-stage);
+  the completed boundary is [decision #143](implementation/SPN-092.md#legacy-decision-143-exact-space-capabilities-across-integrations)
   and the [SPN-092 implementation contract](implementation/SPN-092.md).
 - React and React DOM are pinned to 18.3.1. On 2026-10-17, published
   `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support
   React 16–19; [Univer's UI package](https://github.com/dream-num/univer/blob/dev/packages/ui/package.json)
   uses 18.3.1 in development. Matching that baseline and the existing React 18
   types reduces editor integration work. Decided 2026-10-17 in
-  [#1](https://github.com/mxbaylee/spinel/issues/1). Recheck when adding editors.
+  [#1](implementation/SPN-001.md#legacy-decision-1-react-version). Recheck when adding editors.
 - Oxlint works alongside the existing TypeScript 7 compiler; typescript-eslint
   8.71.2 requires TypeScript below 6.1. Prettier handles scaffold formatting.
-  Decided 2026-10-17 in [#3](https://github.com/mxbaylee/spinel/issues/3).
+  Decided 2026-10-17 in [#3](implementation/SPN-001.md#legacy-decision-3-compiler-compatible-linting).
 - Build editors on the open-source Univer SDK (`@univerjs/*`, Apache-2.0).
   Univer Workspace is reference material only, never forked or deployed.
   Copied code must preserve license headers, note modifications and appear in

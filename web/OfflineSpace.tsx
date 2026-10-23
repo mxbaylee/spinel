@@ -18,12 +18,12 @@ export function OfflineSpace({
   local,
   user,
   onExit,
-  onSignOut,
+  onProfile,
 }: {
   local: LocalStart;
   user: SpaceUser;
   onExit(): void;
-  onSignOut(): void;
+  onProfile(): void;
 }) {
   const [route, setRoute] = useState(() => readSpaceLocation(location));
   useEffect(() => {
@@ -37,7 +37,7 @@ export function OfflineSpace({
       user={user}
       selection={selection}
       onExit={onExit}
-      onSignOut={onSignOut}
+      onProfile={onProfile}
       viewer={
         selection.selected && selection.spaceId ? (
           <Suspense fallback={<p role="status">Opening offline copy…</p>}>
@@ -71,16 +71,15 @@ export function OfflineSpaceView({
   user,
   selection,
   onExit,
-  onSignOut,
+  onProfile,
   viewer,
 }: {
   user: SpaceUser;
   selection: OfflineSpaceSelection;
   onExit(): void;
-  onSignOut(): void;
+  onProfile(): void;
   viewer: ReactNode;
 }) {
-  const [profileNotice, setProfileNotice] = useState(false);
   const { root, spaceId, copies, selected, problem } = selection;
   return (
     <SpaceShell
@@ -88,8 +87,7 @@ export function OfflineSpaceView({
       connection="offline"
       documentOpen={Boolean(selected)}
       onExit={onExit}
-      onProfile={() => setProfileNotice(true)}
-      onSignOut={onSignOut}
+      onProfile={onProfile}
       navigation={
         spaceId && copies.length
           ? (close) => (
@@ -130,12 +128,6 @@ export function OfflineSpaceView({
         </div>
         {selected && <span className="space-access">Read only</span>}
       </header>
-      {profileNotice && (
-        <div className="space-notice" role="status">
-          <p>Profile settings need a connection.</p>
-          <Button onClick={() => setProfileNotice(false)}>Dismiss</Button>
-        </div>
-      )}
       {problem ? (
         <div className="space-content space-offline-empty">
           <p role="status">{problems[problem]}</p>
