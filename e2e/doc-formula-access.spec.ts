@@ -168,7 +168,11 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
     const visitor = await guest.newPage();
     await visitor.goto(`${baseURL}/share/${host.id}#${link.token}`);
     await assertReadOnly(visitor, 'Source unavailable');
-    await expect(visitor.getByText('View-only link.', { exact: true })).toBeVisible();
+    const viewOnlyAccess = visitor
+      .getByRole('region', { name: 'Document workspace', exact: true })
+      .locator('header .editor-access');
+    await expect(viewOnlyAccess).toHaveText('View only');
+    await expect(viewOnlyAccess).toBeVisible();
     await expect(visitor.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
     expect((await guest.request.get(`${baseURL}/api/items`)).status()).toBe(401);
     expect((await guest.request.get(`${baseURL}/api/guest/${source.id}`)).status()).toBe(404);

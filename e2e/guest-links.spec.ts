@@ -147,7 +147,11 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect(
         first.getByRole('button', { name: 'Save details: View only', exact: true }),
       ).toBeVisible();
-      await expect(first.getByText('View-only link.', { exact: true })).toBeVisible();
+      const viewOnlyAccess = first
+        .getByRole('region', { name: 'Document workspace', exact: true })
+        .locator('header .editor-access');
+      await expect(viewOnlyAccess).toHaveText('View only');
+      await expect(viewOnlyAccess).toBeVisible();
       await captureGuest('viewer');
       await expect(first.getByText('Your workspace', { exact: true })).toHaveCount(0);
       await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
