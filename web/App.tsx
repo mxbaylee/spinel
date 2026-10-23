@@ -12,6 +12,7 @@ import type {
 } from '@simplewebauthn/browser';
 
 import { signSetupProof } from './setup.ts';
+import { ConsoleRecovery } from './ConsoleRecovery.tsx';
 import { api, connectionRequest, signInPath } from './api.ts';
 import { BackupStatus } from './BackupStatus.tsx';
 import { AdminUsers } from './AdminUsers.tsx';
@@ -86,7 +87,10 @@ export function App() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
-  const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
+  const [finishingRecovery, setFinishingRecovery] = useState(false);
+  const attempt = useRef<{ cancelled: boolean; challengeId?: string; finishing?: boolean } | null>(
+    null,
+  );
   const settings = location.pathname === '/profile' || location.pathname === '/settings';
   useEffect(() => {
     // Offline app shells also honor old bookmarks without a server redirect.
@@ -98,6 +102,9 @@ export function App() {
   const [connectRequest] = useState(connectionRequest);
   const [spaceReturn] = useState(() => spaceReviewReturnPath(location));
   const setup = location.pathname === '/setup';
+  const adminRecovery = location.pathname === '/recover-admin';
+  const consoleClaim = setup || adminRecovery;
+  const [recoveryName, setRecoveryName] = useState('');
   const invitation = location.pathname === '/invite';
   const [inviteToken] = useState(() =>
     invitation ? (new URLSearchParams(location.search).get('token') ?? '') : '',
@@ -106,7 +113,7 @@ export function App() {
     null,
   );
   const [inviteName, setInviteName] = useState('');
-  const [setupLink] = useState(() => (setup ? location.hash.slice(1).split('.') : []));
+  const [setupLink] = useState(() => (consoleClaim ? location.hash.slice(1).split('.') : []));
   const [setupId, setupSecret] = setupLink;
   const refreshKeys = async () =>
     setKeys((await api<{ passkeys: Passkey[] }>('passkeys')).passkeys);
@@ -118,6 +125,18 @@ export function App() {
           setInviteDetails(details);
           setInviteName(details.name);
         })
+        .catch((failure) => setError(failure.message))
+        .finally(() => setLoaded(true));
+      return;
+    }
+    if (adminRecovery) {
+      history.replaceState(null, '', '/recover-admin');
+      if (!setupId || !setupSecret) {
+        setLoaded(true);
+        return;
+      }
+      void api<{ name: string }>('recover-admin/details', { setupId })
+        .then(({ name }) => setRecoveryName(name))
         .catch((failure) => setError(failure.message))
         .finally(() => setLoaded(true));
       return;
@@ -177,6 +196,9 @@ export function App() {
   }, [
     settings,
     setup,
+    adminRecovery,
+    setupId,
+    setupSecret,
     invitation,
     inviteToken,
     connecting,
@@ -202,7 +224,7 @@ export function App() {
 
   function cancel() {
     const current = attempt.current;
-    if (!current) return;
+    if (!current || current.finishing) return;
     current.cancelled = true;
     WebAuthnAbortService.cancelCeremony();
     if (current.challengeId)
@@ -211,7 +233,10 @@ export function App() {
     setNotice('Passkey request cancelled.');
   }
   async function ceremony(register: boolean) {
-    const current: { cancelled: boolean; challengeId?: string } = { cancelled: false };
+    if (adminRecovery && attempt.current && !attempt.current.cancelled) return;
+    const current: { cancelled: boolean; challengeId?: string; finishing?: boolean } = {
+      cancelled: false,
+    };
     attempt.current = current;
     setBusy(true);
     setError('');
@@ -219,19 +244,21 @@ export function App() {
     try {
       if (!window.PublicKeyCredential || !window.isSecureContext)
         throw new Error('Passkeys need a supported browser at Spinel’s secure address.');
-      const kind = setup
-        ? 'setup'
-        : invitation
-          ? 'invite'
-          : register
-            ? 'registration'
-            : 'authentication';
+      const kind = adminRecovery
+        ? 'recover-admin'
+        : setup
+          ? 'setup'
+          : invitation
+            ? 'invite'
+            : register
+              ? 'registration'
+              : 'authentication';
       const { options, challengeId } = await api<{
         options: PublicKeyCredentialCreationOptionsJSON & PublicKeyCredentialRequestOptionsJSON;
         challengeId: string;
       }>(
         `${kind}/options`,
-        setup ? { setupId } : invitation ? { token: inviteToken, name: inviteName } : {},
+        consoleClaim ? { setupId } : invitation ? { token: inviteToken, name: inviteName } : {},
       );
       current.challengeId = challengeId;
       if (current.cancelled) {
@@ -242,29 +269,36 @@ export function App() {
         ? await startRegistration({ optionsJSON: options })
         : await startAuthentication({ optionsJSON: options });
       if (current.cancelled) return;
-      const proof = setup
+      const proof = consoleClaim
         ? await signSetupProof(
             setupSecret,
             setupId,
             options.challenge,
             response as RegistrationResponseJSON,
+            adminRecovery,
           )
         : undefined;
       if (current.cancelled) return;
+      // Verification may commit even if the browser stops waiting. Recovery cannot
+      // be cancelled after submitting the credential swap. Keep its result authoritative.
+      if (adminRecovery) {
+        current.finishing = true;
+        setFinishingRecovery(true);
+      }
       const result = await api<{ redirect?: string; name?: string }>(`${kind}/verify`, {
         challengeId,
         response,
-        ...(setup ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
+        ...(consoleClaim ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
       });
       if (current.cancelled) return;
-      if (register && !setup && !invitation) {
+      if (register && !consoleClaim && !invitation) {
         await refreshKeys();
         setNotice(`${result.name} added. You can use it to sign in.`);
       } else
         location.assign(
-          connectRequest && !setup && !invitation
+          connectRequest && !consoleClaim && !invitation
             ? `/connect?request=${encodeURIComponent(connectRequest)}`
-            : spaceReturn && !setup && !invitation && result.redirect !== '/admin'
+            : spaceReturn && !consoleClaim && !invitation && result.redirect !== '/admin'
               ? spaceReturn
               : (result.redirect ?? '/'),
         );
@@ -287,6 +321,7 @@ export function App() {
       if (attempt.current === current) {
         attempt.current = null;
         setBusy(false);
+        setFinishingRecovery(false);
       }
     }
   }
@@ -311,6 +346,20 @@ export function App() {
       setError('Could not sign out. Check your connection and try again.');
     }
   }
+  if (adminRecovery)
+    return (
+      <ConsoleRecovery
+        name={recoveryName}
+        loading={!loaded}
+        validLink={Boolean(setupId && setupSecret)}
+        busy={busy}
+        finishing={finishingRecovery}
+        error={error}
+        notice={notice}
+        onRecover={() => void ceremony(true)}
+        onCancel={cancel}
+      />
+    );
   if (spaceReview) {
     if (!loaded)
       return (
@@ -532,14 +581,14 @@ export function App() {
               }}
             />
           )}
-          {busy && (
+          {!adminRecovery && busy && (
             <p role="status">
               Follow the instructions from your passkey manager.{' '}
               <button onClick={cancel}>Cancel</button>
             </p>
           )}
-          {error && <p role="alert">{error}</p>}
-          {notice && <p role="status">{notice}</p>}
+          {!adminRecovery && error && <p role="alert">{error}</p>}
+          {!adminRecovery && notice && <p role="status">{notice}</p>}
         </main>
       </div>
     </div>

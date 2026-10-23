@@ -30,7 +30,7 @@ export interface Session {
 export interface Challenge {
   id: string;
   session_hash: string;
-  kind: 'authentication' | 'registration' | 'setup' | 'invite';
+  kind: 'authentication' | 'registration' | 'setup' | 'invite' | 'admin-recovery';
   challenge: string;
   expires_at: number;
   used: number;
