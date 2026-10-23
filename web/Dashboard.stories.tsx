@@ -120,6 +120,22 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const FileViewTargets: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByRole('heading', { name: 'My files' });
+    for (const name of ['List', 'Grid']) {
+      const control = canvas.getByRole('radio', { name });
+      const bounds = control.getBoundingClientRect();
+      await expect(bounds.width).toBeGreaterThanOrEqual(44);
+      await expect(bounds.height).toBeGreaterThanOrEqual(44);
+      await userEvent.click(control);
+      await expect(control).toBeChecked();
+    }
+  },
+};
+
 /**
  * Folders, sheets and docs, plus two items shared by Alex Kim, one filed
  * into My files. Opening a sheet or doc would load the Univer editor, so don't.
