@@ -12,7 +12,13 @@ import { guestRoutes } from '../src/server/workspace/guestRoutes.ts';
 import { documentIdentity, protocolSpaceScope } from '../src/server/collaboration/identity.ts';
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { randomUUID } from 'node:crypto';
+import { DiagnosticsStore } from '../src/server/diagnostics/store.ts';
+import { diagnosticsRoutes } from '../src/server/diagnostics/routes.ts';
+import { HealthJobs } from '../src/server/health/jobs.ts';
+import { HealthMonitor } from '../src/server/health/monitor.ts';
+import { healthRoutes } from '../src/server/health/routes.ts';
 import { BackupService } from '../src/server/backup/service.ts';
 import { openDatabase } from './database.ts';
 import { AuthStore } from '../src/server/auth/store.ts';
@@ -54,8 +60,21 @@ export async function createApp(options: AppOptions) {
   let history: HistoryStore | undefined;
   let realtime: ReturnType<typeof attachCollaboration> | undefined;
   let purgeTimer: ReturnType<typeof setInterval> | undefined;
+  let healthTimer: ReturnType<typeof setInterval> | undefined;
+  let diagnostics: DiagnosticsStore | undefined;
 
   try {
+    diagnostics = new DiagnosticsStore({
+      path: join(dirname(options.databasePath), 'diagnostics.sqlite'),
+      build: options.image ?? 'development',
+    });
+    const jobs = new HealthJobs({ observe: ({ job, success, durationMs, runId }) => {
+      if (job === 'space-trash-expiry') return;
+      diagnostics!.emit({ name: 'job.result', details: {
+        job: job === 'history-maintenance' ? 'history-prune' : job,
+        outcome: success ? 'success' : 'failure', durationMs,
+      } }, { component: 'health', runId });
+    } });
     const auth = new AuthStore(database);
     app.use(
       '/api/auth',
@@ -71,8 +90,8 @@ export async function createApp(options: AppOptions) {
     const origin = options.origin ?? 'http://localhost:3000';
     const oauth = new AssistantOAuth(auth, origin);
     app.use(assistantOAuthRoutes(oauth));
-    collaboration = new CollaborationStore(workspace, options.databasePath, { spaceReview });
-    history = new HistoryStore(workspace, collaboration);
+    collaboration = new CollaborationStore(workspace, options.databasePath, { spaceReview, observePurge: () => jobs.begin('collaboration-purge') });
+    history = new HistoryStore(workspace, collaboration, () => jobs.begin('history-maintenance'));
     app.use('/mcp', mcpRoutes(workspace, collaboration, origin));
     realtime = attachCollaboration(server, workspace, collaboration, origin, { spaceReview });
     workspace.links.recover();
@@ -97,6 +116,7 @@ export async function createApp(options: AppOptions) {
       });
       next();
     });
+    app.use('/api', diagnosticsRoutes(workspace, diagnostics, origin));
     app.use('/api/items', workspaceRoutes(auth, origin, workspace, collaboration, history));
     app.use(
       '/api/spaces/:spaceId/items/:itemId',
@@ -225,7 +245,7 @@ export async function createApp(options: AppOptions) {
         });
       },
     );
-    stopCleanup = startTrashCleanup(new TrashStore(workspace));
+    stopCleanup = startTrashCleanup(new TrashStore(workspace), () => jobs.begin('trash-expiry'));
     await collaboration.purgeDeleted();
     purgeTimer = setInterval(() => {
       void collaboration!
@@ -238,7 +258,35 @@ export async function createApp(options: AppOptions) {
       origin: options.origin ?? 'http://localhost:3000',
       configPath: options.backupConfigPath,
       image: options.image,
+      observe: () => {
+        const started = Date.now(), runId = randomUUID();
+        return (success) => diagnostics!.emit({ name: 'job.result', details: { job: 'backup', outcome: success ? 'success' : 'failure', durationMs: Math.max(0, Date.now() - started) } }, { component: 'health', runId });
+      },
     });
+    const health = new HealthMonitor({
+      applicationPath: options.databasePath, diagnosticsPath: diagnostics.path, jobs,
+      editorConnections: () => realtime!.connectionCount(),
+      logicalDatabaseBytes: () => Number(database.prepare('PRAGMA page_count').get()?.page_count) * Number(database.prepare('PRAGMA page_size').get()?.page_size),
+    });
+    app.use(healthRoutes(auth, health));
+    const sampleHealth = async () => {
+      const sample = await health.sample();
+      for (const [scope, value] of [
+        ['process', sample.memory.processRssBytes], ['host', sample.memory.systemUsedBytes], ['container', sample.memory.containerUsedBytes],
+      ] as const) if (value !== null) diagnostics!.emit({ name: 'runtime.memory', metric: { kind: 'gauge', unit: 'bytes', value }, details: { scope } }, { component: 'health' });
+      diagnostics!.emit({ name: 'runtime.connections', metric: { kind: 'gauge', unit: 'count', value: sample.editorConnections }, details: {} }, { component: 'health' });
+      for (const store of ['application', 'diagnostics'] as const) {
+        const size = sample[store];
+        if (!size) continue;
+        for (const [part, value] of [['database', size.databaseBytes], ['wal', size.walBytes]] as const)
+          diagnostics!.emit({ name: 'storage.bytes', metric: { kind: 'gauge', unit: 'bytes', value }, details: { store, part } }, { component: 'health' });
+      }
+      if (sample.storage.freeBytes !== null) diagnostics!.emit({ name: 'storage.free', metric: { kind: 'gauge', unit: 'bytes', value: sample.storage.freeBytes }, details: {} }, { component: 'health' });
+    };
+    const collectHealth = () => { void sampleHealth().catch(() => {}); };
+    collectHealth();
+    healthTimer = setInterval(collectHealth, 60_000);
+    healthTimer.unref();
     app.get('/api/admin/backups', (request, response) => {
       const session = auth.session(cookieToken(request));
       if (!session?.user_id || !auth.user(session.user_id)?.is_admin) {
@@ -437,12 +485,14 @@ export async function createApp(options: AppOptions) {
   } catch (error) {
     stopCleanup();
     clearInterval(purgeTimer);
+    clearInterval(healthTimer);
     await realtime?.close();
     await history?.close();
     await collaboration?.close();
     await backups?.close();
     await vite?.close();
     database.close();
+    await diagnostics?.close();
     throw error;
   }
 
@@ -451,6 +501,7 @@ export async function createApp(options: AppOptions) {
     async close() {
       stopCleanup();
       clearInterval(purgeTimer);
+      clearInterval(healthTimer);
       await realtime?.close();
       await vite?.close();
       if (server.listening) {
@@ -464,6 +515,7 @@ export async function createApp(options: AppOptions) {
       await collaboration?.purgeDeleted();
       await collaboration?.close();
       database.close();
+      await diagnostics?.close();
     },
   };
 }
