@@ -6,20 +6,27 @@ import { EditorTools } from './EditorTools.tsx';
 import { SaveStatus } from './SaveStatus.tsx';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
 import { FormulaReadout } from './DocFormulas.tsx';
+import { failure, pending } from '../.storybook/api.ts';
 
 function Fixture({
   dialog = false,
   printFailure = false,
+  saved = true,
 }: {
   dialog?: boolean;
   printFailure?: boolean;
+  saved?: boolean;
 }) {
   const chrome = useEditorChrome();
   return (
     <section className="sheet-editor" aria-label="Editor geometry fixture">
       <SaveStatus
         target={chrome?.saveTarget ?? null}
-        state={{ dirty: false, failed: false, message: 'All changes saved.' }}
+        state={{
+          dirty: !saved,
+          failed: false,
+          message: saved ? 'All changes saved.' : 'Saving changes…',
+        }}
         onRetry={fn()}
       />
       <EditorTools
@@ -35,7 +42,7 @@ function Fixture({
           },
           { id: 'b', name: 'Sam Rivera', color: '#087f5b' },
         ]}
-        saved
+        saved={saved}
         print={async () => {
           if (printFailure) throw new Error('Could not open printing.');
         }}
@@ -102,6 +109,32 @@ const meta = {
 } satisfies Meta<typeof EditorFrame>;
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+async function assertDialogTargets(dialog: HTMLElement) {
+  const scope = within(dialog);
+  for (const control of [
+    ...scope.getAllByRole('button'),
+    ...scope.queryAllByRole('textbox'),
+    ...scope.queryAllByRole('link'),
+  ]) {
+    const box = control.getBoundingClientRect();
+    await expect(box.left).toBeGreaterThanOrEqual(0);
+    await expect(box.right).toBeLessThanOrEqual(window.innerWidth);
+    if (window.innerWidth <= 640 || matchMedia('(pointer: coarse)').matches) {
+      await expect(box.width).toBeGreaterThanOrEqual(44);
+      await expect(box.height).toBeGreaterThanOrEqual(44);
+    }
+  }
+  await expect(dialog.scrollWidth).toBeLessThanOrEqual(dialog.clientWidth);
+  await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+}
+
+async function openTool(canvasElement: HTMLElement, name: string) {
+  await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
+  await userEvent.click(await within(document.body).findByRole('menuitem', { name }));
+  return within(document.body).findByRole('dialog', { name });
+}
+
 export const Default: Story = {};
 export const Dark: Story = { globals: { theme: 'dark' } };
 export const Phone: Story = {
@@ -116,7 +149,18 @@ export const Phone: Story = {
 };
 export const Guest: Story = { args: { guest: true, onBack: undefined, access: 'View only' } };
 export const Reconnecting: Story = { args: { connection: 'reconnecting' } };
-export const Rename: Story = { args: { onRename: fn(async () => {}) } };
+export const Rename: Story = {
+  args: { onRename: fn(async () => {}) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Rename Quarterly planning' }));
+    const input = canvas.getByRole('textbox', { name: 'Document name' });
+    await expect(input).toHaveValue('Quarterly planning');
+    await expect(input).toHaveFocus();
+    await expect(canvas.getByRole('button', { name: 'Save name' })).toBeEnabled();
+    await assertDialogTargets(canvas.getByRole('form', { name: 'Rename document' }));
+  },
+};
 function RenameAuthorityFixture() {
   const [allowed, setAllowed] = useState(true);
   const [rejectLate, setRejectLate] = useState<(() => void) | null>(null);
@@ -172,6 +216,66 @@ export const VersionsDialog: Story = {
       await within(dialog).findByRole('button', { name: 'Name this version' }),
     ).toBeEnabled();
     await expect(within(dialog).getByRole('button', { name: 'Return to document' })).toBeVisible();
+    await assertDialogTargets(dialog);
+  },
+};
+export const VersionNamingFailure: Story = {
+  parameters: {
+    api: {
+      'GET /api/items/fixture/history': { versions: [], canName: true },
+      'POST /api/items/fixture/history': failure(
+        'Could not save this version name. Try again.',
+        503,
+      ),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openTool(canvasElement, 'Versions'),
+      scope = within(dialog);
+    await userEvent.click(await scope.findByRole('button', { name: 'Name this version' }));
+    const input = scope.getByRole('textbox', { name: 'Version name' });
+    await expect(scope.getByRole('button', { name: 'Save version name' })).toBeDisabled();
+    await userEvent.type(input, 'Ready for review');
+    await userEvent.click(scope.getByRole('button', { name: 'Save version name' }));
+    await expect(await scope.findByRole('alert')).toHaveTextContent(
+      'Could not save this version name. Try again.',
+    );
+    await expect(input).toHaveValue('Ready for review');
+    await expect(scope.getByRole('button', { name: 'Save version name' })).toBeEnabled();
+    await expect(scope.getByRole('button', { name: 'Cancel' })).toBeEnabled();
+    await assertDialogTargets(dialog);
+  },
+};
+export const VersionRename: Story = {
+  parameters: {
+    api: {
+      'GET /api/items/fixture/history': {
+        versions: [{ id: 'named', name: 'Approved budget', capturedAt: Date.UTC(2026, 9, 22, 12) }],
+        canName: true,
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openTool(canvasElement, 'Versions'),
+      scope = within(dialog);
+    await userEvent.click(await scope.findByRole('button', { name: 'Rename version' }));
+    await expect(scope.getByRole('textbox', { name: 'Version name' })).toHaveValue(
+      'Approved budget',
+    );
+    await expect(scope.getByRole('button', { name: 'Remove name' })).toBeEnabled();
+    await expect(scope.getByRole('link', { name: 'Preview version' })).toHaveAttribute(
+      'href',
+      '/preview?item=fixture&version=named',
+    );
+    await assertDialogTargets(dialog);
+  },
+};
+export const VersionsLoading: Story = {
+  parameters: { api: { 'GET /api/items/fixture/history': pending() } },
+  play: async ({ canvasElement }) => {
+    const dialog = await openTool(canvasElement, 'Versions');
+    await expect(within(dialog).getByRole('button', { name: 'Refresh versions' })).toBeDisabled();
+    await assertDialogTargets(dialog);
   },
 };
 export const ExportDialog: Story = {
@@ -183,6 +287,18 @@ export const ExportDialog: Story = {
       within(dialog).getByRole('button', { name: 'Download Univer file' }),
     ).toBeEnabled();
     await expect(within(dialog).getByRole('button', { name: 'Print / save PDF' })).toBeEnabled();
+    await assertDialogTargets(dialog);
+  },
+};
+export const ExportWaitingForSave: Story = {
+  args: { children: <Fixture saved={false} /> },
+  play: async ({ canvasElement }) => {
+    const dialog = await openTool(canvasElement, 'Export'),
+      scope = within(dialog);
+    await expect(scope.getByRole('button', { name: 'Download Univer file' })).toBeDisabled();
+    await expect(scope.getByRole('button', { name: 'Print / save PDF' })).toBeDisabled();
+    await expect(scope.getByText('Wait until changes are saved before exporting.')).toBeVisible();
+    await assertDialogTargets(dialog);
   },
 };
 export const PrintFailure: Story = {
@@ -196,6 +312,7 @@ export const PrintFailure: Story = {
       'Could not open printing.',
     );
     await expect(within(document.body).getByRole('dialog', { name: 'Export' })).toBeVisible();
+    await assertDialogTargets(within(document.body).getByRole('dialog', { name: 'Export' }));
   },
 };
 export const OfflineFormulas: Story = {
@@ -248,5 +365,19 @@ export const PeopleAndTheatre: Story = {
     exit.focus();
     await userEvent.keyboard('{Escape}');
     await expect(canvas.getByRole('button', { name: 'Enter theatre mode' })).toBeVisible();
+  },
+};
+/** Retain the actual open portal beside the composed editor for visual review. */
+export const PeopleDialog: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'People in this document' }));
+    const dialog = await within(document.body).findByRole('dialog', {
+      name: 'People in this document',
+    });
+    await expect(
+      within(dialog).getByText('Alexandria Nakamura-Fernandez — a long collaborator name'),
+    ).toBeVisible();
+    await assertDialogTargets(dialog);
   },
 };

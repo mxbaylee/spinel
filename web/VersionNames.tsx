@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { historyHref, historyRequest } from './historyApi.ts';
+import './fileDialog.css';
 
 import type { HistoryVersion as Version } from '../src/shared/historyNavigation.ts';
 
@@ -63,9 +64,14 @@ export function VersionNames({
         </button>
       )}
       {(embedded || open) && (
-        <section aria-label="Version names">
+        <section aria-label="Version names" className={embedded ? 'file-dialog' : undefined}>
           {!embedded && <h3>Versions</h3>}
-          <a href={historyHref(id, spaceId)} target="_blank" rel="noopener">
+          <a
+            className={embedded ? 'sp-control sp-quiet' : undefined}
+            href={historyHref(id, spaceId)}
+            target="_blank"
+            rel="noopener"
+          >
             Browse history
           </a>
           {error && <p role="alert">{error}</p>}
@@ -135,7 +141,12 @@ export function VersionNames({
               <li key={version.id}>
                 <span>{version.name ?? 'Unnamed version'}</span>
                 {Boolean(version.beforeRestore) && <strong> — Before restore</strong>}
-                <a href={historyHref(id, spaceId, version.id)} target="_blank" rel="noopener">
+                <a
+                  className={embedded ? 'sp-control sp-quiet' : undefined}
+                  href={historyHref(id, spaceId, version.id)}
+                  target="_blank"
+                  rel="noopener"
+                >
                   Preview version
                 </a>{' '}
                 <time dateTime={new Date(version.capturedAt).toISOString()}>
