@@ -39,6 +39,10 @@ Each generation script removes its previous named PDF after argument validation,
 then publishes only after its layout/render loop succeeds. These negative probes
 must exit 1, with failure metrics and **no PDF** in the separate rejected folder:
 
+The rejected runs use byte-identical fixture JSON to the retained successful
+inputs above. Their regenerated duplicate inputs are ignored in that directory;
+the distinct failure metrics are retained.
+
 ```sh
 node scripts/pdf-feasibility/guard.ts node scripts/pdf-feasibility/native.ts output/pdf/spn-097/rejected --page-cap=1
 node scripts/pdf-feasibility/guard.ts node scripts/pdf-feasibility/sheets.ts output/pdf/spn-097/rejected --page-cap=1
