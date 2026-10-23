@@ -38,7 +38,7 @@ impact_owner: L # S | M | L, one line per persona it affects:
 impact_guest: S #   impact_operator, impact_owner, impact_collaborator, impact_guest
 score: 5 # written by npm run backlog:index; never edit by hand
 depends_on: [SPN-004]
-decisions: [7] # decision issue numbers
+decisions: [7] # legacy issue numbers only; new decisions link to docs/implementation/SPN-NNN.md
 owner_input: "Approve the restore wording" # optional; shown in the index
 ---
 
@@ -72,8 +72,8 @@ And ....
 
 - **Story** is what the person wants and why, without implementation words.
 - **Scenarios** are observable outcomes in Given / When / Then. Edge cases go here.
-- **Rules** hold decisions and constraints, each with its date and source (an
-  issue, a PR, or "owner, chat").
+- **Rules** hold decisions and constraints, each with its date and source, linked to its
+  decision in `docs/implementation/SPN-NNN.md` (legacy issue links remain valid).
 - **Out of scope** names the nearby work that belongs to other tickets.
 - **Verify** says what proves it: tests, and what a reviewer should see.
 
@@ -191,50 +191,49 @@ there is no current ticket to land. Never bypass the base-ticket check.
 
 ## Decisions
 
-Agents make routine decisions themselves. They weigh **every** persona, not only
-the one the ticket is for, and write down which persona each option favours.
+Agents make routine decisions themselves. Weigh **every** persona, not only the
+one the ticket is for, and preserve the rationale alongside implementation notes.
 
-- **Decided by the agent:** add the rule to the ticket's Rules with the date and
-  issue number, then open a decision issue and close it as completed. The closed
-  issues are the public decision log.
-- **Needs the owner:** when the answer is uncertain, costly to reverse, or a
-  matter of taste, open the issue and add the `needs-owner` label. Leave it
-  open, put its number in the ticket's `decisions`, and keep working on what
-  doesn't depend on it.
+- **New decisions:** create or extend `docs/implementation/SPN-NNN.md`, following
+  [the record convention](../implementation/README.md). Link its heading from the
+  ticket's Rules. Record date/status, question, context, options, outcome/reason,
+  all four persona effects, and the deciding person/source. No new decision issue
+  is required. Owner, chat 2026-10-22.
+- **Needs the owner:** record `needs-owner`, add the precise question to the ticket's
+  `owner_input`, ask the owner, and keep working on independent work. The Markdown
+  record does not grant approval. Update it and the Rules when the answer arrives.
+- **Cross-ticket policy:** use one named record under `docs/implementation/` and
+  link related tickets to it; do not duplicate competing decisions.
+- **Legacy decisions:** existing issue citations and numeric `decisions` frontmatter
+  remain valid. SPN-096 migrates them with provenance and status intact. Do not
+  create issue numbers for local records or prematurely erase the old sources.
 
-One question per issue. Use the ❓ Decision template:
-
-```markdown
-Title: ❓ SPN-012 Keep pinned versions when a document is trashed?
-Labels: decision (and needs-owner if waiting)
-
-Question: one sentence.
-Ticket: SPN-012 (and any other affected tickets)
-Personas: each affected persona and what they would choose.
-Context: two to four sentences.
-Options: A — …; B — …, with the main cost of each.
-Recommended: A, because ….
-Meanwhile: what work continues, or "Decided".
-```
+Implementation records survive ticket deletion. Maintained product/design/process
+docs still carry the resulting behavior and link to the rationale. An implementation
+note or agent recommendation is never evidence of owner approval or a completed check.
 
 ## Grooming
 
-After every **7** landed tickets, the next PR is a grooming PR. The checker
-blocks ticket PRs until it lands. Agents often leave out context they learned
-while building, and grooming is where it gets captured.
+After **7** landed tickets, show a nonblocking reminder for the next manual
+grooming with the owner. The count never fails checks, blocks a ticket/merge or
+forces an agent to groom. Keep recording completions past seven; the owner chooses
+when to review. Owner, chat 2026-10-22. Grooming captures context learned while building.
 
-A grooming PR, titled `🧹 Groom backlog …`:
+A full owner-led grooming, recorded in a PR titled `🧹 Groom backlog …`:
 
 - Rechecks every ticket against the code: still true, still needed, sized right.
 - Captures context learned since the last grooming into the tickets it affects.
 - Checks persona coverage: walks each persona's journey (Operator, Owner,
   Collaborator, Link guest), rechecks each ticket's persona impacts, and files
   tickets for what is missing.
-- Turns answered decision issues into Rules, and files tickets for gaps.
+- Turns answered decision records (including legacy issues) into Rules, and files tickets for gaps.
 - Resets `grooming.completed_since` to `[]`, sets `grooming.last` to today, and
   regenerates the index.
 
-Grooming isn't a ticket and doesn't count toward the seven.
+A focused backlog maintenance PR can use the same title without claiming a full
+grooming: preserve both the completion list and last-groomed date. Reset them only
+when the manual review is complete. Grooming isn't a ticket and doesn't count
+toward the reminder.
 
 ## Pull requests and `main`
 
@@ -273,7 +272,7 @@ Owner setup, once, in the repository settings:
    and **Playwright smoke**, require branches to be up to
    date before merging, block force pushes and deletions. Up to date matters:
    the checks compare against `main` as it was when they ran.
-3. Issues → Labels: create `decision` and `needs-owner`.
+3. Legacy decision issues retain their labels; new decisions use implementation records, not new issue labels.
 
 ## Commands
 

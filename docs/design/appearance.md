@@ -1,9 +1,10 @@
 # Covers and Space accents — exploration
 
 Owner requested interactive Storybook drafts on 2026-10-22, during grooming.
-These are post-launch design candidates, not approved production behavior.
-SPN-086 still owns its existing icons/folder-colors scope; incorporating the
-selected appearance design and its sequencing remains a grooming decision.
+These are rough design candidates, not approved production behavior. The owner
+subsequently placed all personalization in pre-launch SPN-086; see its
+[decisions and design handoff](../implementation/SPN-086.md). The non-Spinel gem
+artwork needs a stronger iteration before implementation approval.
 
 Open **Redesign → Appearance**. The stories reuse the full-editor chrome and
 native Doc/Sheet engines, including a native editor inside the Space tree.
@@ -46,7 +47,7 @@ or external service in these local-only stories. Existing permission policies ar
 unchanged. Who may change Space accents and child covers needs explicit production
 acceptance, including guest behavior and asset access/revocation.
 
-Exact palette count, facet artwork, cover height/cropping and the treatment of
+Final facet artwork, cover height/cropping and the treatment of
 Space-root covers remain open for owner review. The prototype uses the existing
 theme surfaces, twelve proposed accent pairs in `src/ui/palette.ts`, and AA contrast
 checks. Full-editor toolbar/canvas behavior is retained; the optional cover adds
@@ -66,4 +67,7 @@ complete collection plus Rose Quartz, Pearl, Obsidian and Bismuth in Storybook.
 The new covers preserve that quiet field and left-side focal gem. This gives the
 Owner more identity choices while Collaborator and Link guest retain readable
 controls and unchanged authored content. Operator has no new provider or service.
-The artwork for the additional gems and final ordering remain design candidates.
+The additional gem artwork requires further iteration. Spinel is the site-wide
+default; Space accents also override browser text-selection colors (`::selection`)
+inside the Space, without changing authored formatting. This selection behavior
+is an implementation handoff in SPN-086, not yet wired into this fixture.

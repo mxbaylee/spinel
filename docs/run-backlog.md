@@ -7,7 +7,7 @@ permission between those steps. A request to read, review or edit this document
 alone does not start a run.
 
 The owner authorized this workflow in chat on 2026-10-17 (SPN-037). Invoking it
-authorizes repository changes, decision issues, follow-up tickets, PRs and
+authorizes repository changes, decision records, follow-up tickets, PRs and
 squash merges that meet these gates. It does not waive an explicit owner decision,
 a required manual acceptance check, repository protection, or separate permission
 needed for deployment, spending, credentials or destructive operations. A narrower
@@ -34,12 +34,13 @@ keeping optional CSV import (SPN-093) and document-type/converter plugins
 not a technical need for public HTTPS. Owner, chat 2026-10-21; fixed lifecycle
 phases recorded in [decision #129](https://github.com/mxbaylee/spinel/issues/129).
 After each merge, fetch main and pick again; do not preselect a fixed queue. An
-explicit owner-requested ticket takes priority for that run. If seven tickets
-have landed since grooming, do the required grooming PR first, with the same
-review and CI gates.
+explicit owner-requested ticket takes priority for that run. Seven completed
+tickets trigger only a reminder for the next manual review with the owner.
+Continue eligible work; never force grooming or block landing because of the
+count. Owner, chat 2026-10-22.
 
 When a ticket needs owner input or verification, prepare everything independent
-of that input, ask once with the decision issue or exact verification steps, and
+of that input, ask once with the linked decision record or exact verification steps, and
 save a draft PR/checkpoint. Continue with the next eligible ticket while waiting.
 A UI PR waits on the owner's approval of its light, dark and phone-width
 screenshots ([process](todo/process.md#picking-the-next-ticket)); treat it the
@@ -168,8 +169,9 @@ its reason. All blockers still prevent merging, regardless of the numerical scor
 
 New tickets must exist on `main` before their implementation PRs can land. File
 follow-ups with the current ticket PR whenever possible. If there is no such PR,
-register them in a grooming PR (recheck the backlog and reset its counter as
-required), then implement them on new branches after that PR merges. Never bypass
+register them in a backlog maintenance PR with the grooming title, then implement
+them on new branches after it merges. Preserve the counter/date unless a full
+manual grooming with the owner is complete. Never bypass
 the checker or reuse an ID to avoid this prerequisite.
 
 ## 5. Publish, wait for CI, and merge

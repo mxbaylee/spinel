@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Post-launch appearance exploration using the existing full-editor chrome and native editors. Local fixture state only. Try Space appearance, Change cover, page navigation, and scrolling past the cover. Uploads stay on this device; Unsplash uses one attributed offline sample.',
+          'Pre-launch appearance exploration using the existing full-editor chrome and native editors. Local fixture state only. Try Space appearance, Change cover, page navigation, and scrolling past the cover. Uploads stay on this device; Unsplash uses one attributed offline sample.',
       },
     },
   },
@@ -47,6 +47,9 @@ export const DocInSpaceWithBanner: Story = {
 export const SheetInSpaceWithBanner: Story = { args: { kind: 'sheet', initialAccent: 'ruby' } };
 export const NoCover: Story = { args: { initialCover: 'none' } };
 export const SpaceAccentPicker: Story = { args: { initialDialog: 'accent' } };
+export const YellowDiamondAccentPicker: Story = {
+  args: { initialAccent: 'yellowDiamond', initialDialog: 'accent' },
+};
 export const GemPicker: Story = { args: { initialDialog: 'cover' } };
 export const UploadPicker: Story = { args: { initialDialog: 'cover', initialSource: 'Upload' } };
 export const UnsplashPicker: Story = {

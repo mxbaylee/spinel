@@ -26,6 +26,7 @@ that isn't waiting on another is next.
   merge only.
 - **Weigh every persona** in [docs/product/personas.md](docs/product/personas.md)
   when deciding anything, and log the decision as described in process.md.
+- **New decisions live in `docs/implementation/SPN-NNN.md`**, beside implementation notes, following [the record convention](docs/implementation/README.md). Link them from ticket Rules; keep legacy issue citations until SPN-096 migrates them. Owner, chat 2026-10-22.
 - **TypeScript only.** Server, frontend, tests, scripts and config are `.ts` or
   `.tsx`, never `.js`, `.mjs` or `.cjs`. Node runs scripts directly, so use only
   syntax it can strip (no enums or namespaces). Owner, chat 2026-10-17.

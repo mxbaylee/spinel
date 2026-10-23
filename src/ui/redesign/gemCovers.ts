@@ -40,8 +40,8 @@ const field = [
   '634,-14 836,-14 758,34',
   '758,34 836,-14 948,106 712,106',
   '836,-14 1080,-14 1022,48 948,106',
-  '948,106 1022,48 1220,106',
-  '1080,-14 1220,-14 1220,106 1022,48',
+  '948,106 1022,48 2700,106',
+  '1080,-14 2700,-14 2700,106 1022,48',
 ];
 const fieldTones = [3, 4, 5, 3, 4, 1, 1, 1, 2, 5, 3, 3, 5, 2, 3, 4, 5, 3, 1, 4, 5];
 
@@ -68,6 +68,8 @@ const specialFacets: Partial<Record<Gem, [string, number][]>> = {
   ],
 };
 
+// The extended field keeps height-driven crops on wide editors as well as phones.
+// The focal gem stays at the left; no extra hearts are repeated across the field.
 export function gemCoverSvg(gem: Gem) {
   const palette = spaceAccentPalettes[gem];
   const tones = palette.facets;
@@ -83,9 +85,9 @@ export function gemCoverSvg(gem: Gem) {
           ['M27 30H73L72 70H28Z', 5],
           ['M73 30L72 70L50 94L28 70Z', 0],
         ] as [string, number][]));
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="180" viewBox="0 0 1200 180" fill="none">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="4000" height="180" viewBox="0 0 4000 180" fill="none">
 <title>${palette.label} — soft gem facets</title>
-<rect width="1200" height="180" fill="${tones[3]}"/>
+<rect width="4000" height="180" fill="${tones[3]}"/>
 <g transform="translate(80 21) scale(1.5)">
 ${field
   .map((points, i) => {

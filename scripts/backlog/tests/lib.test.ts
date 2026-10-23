@@ -196,7 +196,11 @@ test('grooming counter must reference landed IDs', () => {
   const over = config({
     grooming: { every: 1, last: '2026-10-17', completed_since: ['SPN-002', 'SPN-003'] },
   });
-  assert.match(check([], over).errors.join(), /groom at 1/);
+  assert.deepEqual(check([], over).errors, []);
+  assert.match(check([], over).warnings.join(), /Grooming reminder: 2/);
+  const at = config({ grooming: { ...over.grooming, every: 2 } });
+  assert.match(check([], at).warnings.join(), /Grooming reminder: 2/);
+  assert.doesNotMatch(check([], config()).warnings.join(), /Grooming reminder/);
 });
 
 test('long tickets and shared emoji warn without failing', () => {
@@ -482,10 +486,17 @@ test('ticket PR title problems', () => {
   );
 });
 
-test('ticket PRs wait for grooming once the count is reached', () => {
+test('the grooming reminder never blocks the next ticket or backlog maintenance', () => {
   const full = ['SPN-002', 'SPN-003', 'SPN-004', 'SPN-005', 'SPN-006', 'SPN-007', 'SPN-008'];
   const baseCfg = config({ grooming: { every: 7, last: '2026-10-17', completed_since: full } });
-  assert.match(pr('🪞 SPN-001 Do the thing', { baseCfg }).errors.join(), /Groom backlog/);
+  // The owner chooses when to groom; ticket eight and later still record completion.
+  for (const done of [full, [...full, 'SPN-009']]) {
+    const baseCfg = config({ grooming: { every: 7, last: '2026-10-17', completed_since: done } });
+    const headCfg = config({
+      grooming: { ...baseCfg.grooming, completed_since: [...done, 'SPN-001'] },
+    });
+    assert.deepEqual(pr('🪞 SPN-001 Do the thing', { baseCfg, headCfg }).errors, []);
+  }
   const groomed = pr('🧹 Groom backlog', { baseCfg, headCfg: config(), head: [ticket('SPN-001')] });
   assert.deepEqual(groomed.errors, []);
   const notReset = pr('🧹 Groom backlog after SPN-008', {
@@ -493,7 +504,21 @@ test('ticket PRs wait for grooming once the count is reached', () => {
     headCfg: baseCfg,
     head: [ticket('SPN-001')],
   });
-  assert.match(notReset.errors.join(), /resets grooming/);
+  assert.deepEqual(notReset.errors, []);
+  const partial = config({ grooming: { ...baseCfg.grooming, completed_since: full.slice(1) } });
+  assert.match(
+    pr('🧹 Groom backlog', { baseCfg, headCfg: partial, head: [ticket('SPN-001')] }).errors.join(),
+    /preserves grooming/,
+  );
+  const falseDate = config({ grooming: { ...baseCfg.grooming, last: '2026-10-18' } });
+  assert.match(
+    pr('🧹 Groom backlog', {
+      baseCfg,
+      headCfg: falseDate,
+      head: [ticket('SPN-001')],
+    }).errors.join(),
+    /also preserves grooming.last/,
+  );
 });
 
 test('exception PRs leave the grooming count alone', () => {

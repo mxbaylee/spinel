@@ -118,7 +118,12 @@
   gap: 8px;
   min-height: 48px;
 }
+.rd-accent-options .sp-control {
+  white-space: normal;
+  text-align: left;
+}
 .rd-accent-options .sp-control > :last-child {
+  flex-shrink: 0;
   margin-left: auto;
 }
 .rd-accent-swatch {
