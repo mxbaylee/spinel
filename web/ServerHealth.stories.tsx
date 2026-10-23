@@ -114,4 +114,29 @@ export const Failed: Story = {
 };
 export const Expired: Story = {
   parameters: { api: { 'GET /api/admin/health': failure('Private account details', 404) } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const signIn = await canvas.findByRole('link', { name: 'Sign in again' });
+    const guide = canvas.getByRole('link', { name: 'Open server guide' });
+    await expect(signIn).toBeVisible();
+    await expect(guide).toBeVisible();
+    await expect(signIn).toHaveAttribute('href', '/sign-in');
+    await expect(guide).toHaveAttribute(
+      'href',
+      'https://github.com/mxbaylee/spinel/blob/main/docs/deployment.md',
+    );
+    await expect(canvas.queryByText('Private account details')).not.toBeInTheDocument();
+    const first = signIn.getBoundingClientRect();
+    const second = guide.getBoundingClientRect();
+    // Either a spaced row or a wrapped row must keep the actual link targets apart.
+    await expect(second.left >= first.right + 8 || second.top >= first.bottom + 8).toBe(true);
+    for (const bounds of [first, second]) {
+      await expect(bounds.left).toBeGreaterThanOrEqual(0);
+      await expect(bounds.right).toBeLessThanOrEqual(window.innerWidth);
+      if (window.matchMedia('(max-width: 640px), (any-pointer: coarse)').matches) {
+        await expect(bounds.width).toBeGreaterThanOrEqual(44);
+        await expect(bounds.height).toBeGreaterThanOrEqual(44);
+      }
+    }
+  },
 };

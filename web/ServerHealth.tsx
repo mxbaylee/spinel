@@ -151,7 +151,6 @@ export function ServerHealth() {
       </div>
       {loading && <p role="status">Loading server health…</p>}
       {error && <p role="alert">{error}</p>}
-      {denied && <a href="/sign-in">Sign in again</a>}
       {data && (
         <>
           <p className="admin-health-state">
@@ -282,13 +281,21 @@ export function ServerHealth() {
           </section>
         </>
       )}
-      <a
-        href="https://github.com/mxbaylee/spinel/blob/main/docs/deployment.md"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Open server guide
-      </a>
+      <div className="diagnostics-footer">
+        {denied && (
+          <a className="sp-control sp-quiet" href="/sign-in">
+            Sign in again
+          </a>
+        )}
+        <a
+          className="sp-control sp-quiet"
+          href="https://github.com/mxbaylee/spinel/blob/main/docs/deployment.md"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open server guide
+        </a>
+      </div>
     </section>
   );
 }
