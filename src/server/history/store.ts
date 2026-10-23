@@ -669,8 +669,9 @@ export class HistoryStore {
         )
           await this.capture(user, id, source, customData);
       } catch (error) {
-        // Trashed/deleted documents are intentionally inaccessible; retain their existing history.
-        if (error instanceof AuthError) continue;
+        // Access loss and a concurrent generation change deliberately defer this
+        // item. Validation/storage errors (including AuthError 400) are failures.
+        if (error instanceof AuthError && [401, 403, 404, 409].includes(error.status)) continue;
         // No contents or credentials in logs. Dirty revision stays durable for the next pass.
         success = false;
         console.error('History checkpoint could not be saved; it will retry.');

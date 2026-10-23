@@ -6,7 +6,8 @@ import sharp from 'sharp';
 import { afterEach, expect, test, vi } from 'vitest';
 import type { IDocumentData } from '@univerjs/core';
 import { openDatabase } from '../../../server/database.ts';
-import { AuthStore } from '../auth/store.ts';
+import { AuthError, AuthStore } from '../auth/store.ts';
+import type { ObserveJob } from '../health/jobs.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
@@ -20,9 +21,48 @@ afterEach(async () => {
   for (const close of cleanup.splice(0).reverse()) await close();
 });
 
+for (const status of [400, 403]) {
+  test(`maintenance reports capture ${status === 400 ? 'validation failures' : 'access deferrals'} truthfully while other candidates continue`, async () => {
+    const finish = vi.fn((_success: boolean) => {});
+    const f = await fixture(() => finish);
+    f.save('first');
+    f.save('pending checkpoint');
+    const other = f.workspace.create(f.owner.id, { kind: 'doc', name: 'Unaffected', parentId: null });
+    for (const revision of [0, 1]) f.docs.save(f.owner.id, other.id, {
+      revision, writeId: randomUUID(),
+      snapshot: { id: other.id, body: { dataStream: `Other revision ${revision + 1}\r\n` } },
+    });
+    f.advance(MINUTE);
+    const original = f.history.capture.bind(f.history);
+    const capture = vi.spyOn(f.history, 'capture').mockImplementation((user, id, source, custom) => {
+      if (id === f.item.id) return Promise.reject(new AuthError(status, 'Private validation detail'));
+      return original(user, id, source, custom);
+    });
+    const warning = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await f.history.tick();
+    expect(finish).toHaveBeenLastCalledWith(status !== 400);
+    expect(f.history.list(f.owner.id, f.item.id).map((point) => point.revision)).toEqual([1]);
+    expect(f.history.list(f.owner.id, other.id).map((point) => point.revision)).toEqual([2, 1]);
+    expect(JSON.stringify(warning.mock.calls)).not.toContain('Private validation detail');
+    capture.mockRestore();
+    await f.history.tick();
+    expect(finish).toHaveBeenLastCalledWith(true);
+    expect(f.history.list(f.owner.id, f.item.id).map((point) => point.revision)).toEqual([2, 1]);
+  });
+}
+
+test('a broken maintenance observer cannot prevent a durable native checkpoint', async () => {
+  const f = await fixture(() => () => { throw new Error('Diagnostics unavailable'); });
+  f.save('first');
+  f.save('second');
+  f.advance(MINUTE);
+  await expect(f.history.tick()).resolves.toBeUndefined();
+  expect(f.history.list(f.owner.id, f.item.id).map((point) => point.revision)).toEqual([2, 1]);
+});
+
 // Native persistence must work without invoking the SDK. The real SDK path and
 // migration are tested separately in store.test.ts; this fixture deliberately forbids it.
-function nativeHistory(workspace: WorkspaceStore) {
+function nativeHistory(workspace: WorkspaceStore, observe?: ObserveJob) {
   workspace.auth.database.exec(`CREATE TABLE IF NOT EXISTS workspace_collaboration (
     item_id TEXT PRIMARY KEY REFERENCES workspace_items(id) ON DELETE CASCADE, state TEXT NOT NULL
   ) STRICT;`);
@@ -34,12 +74,12 @@ function nativeHistory(workspace: WorkspaceStore) {
       throw new Error('A native save must not call the collaboration runtime.');
     },
   } as unknown as CollaborationStore;
-  const history = new HistoryStore(workspace, collaboration);
+  const history = new HistoryStore(workspace, collaboration, observe);
   cleanup.push(() => history.close());
   return history;
 }
 
-async function fixture() {
+async function fixture(observe?: ObserveJob) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-native-history-'));
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
   const path = join(directory, 'app.sqlite');
@@ -54,7 +94,7 @@ async function fixture() {
   const item = workspace.create(owner.id, { kind: 'doc', name: 'Native history', parentId: null });
   workspace.share(owner.id, item.id, viewer.id, 'viewer');
   const docs = new DocumentStore(workspace);
-  const history = nativeHistory(workspace);
+  const history = nativeHistory(workspace, observe);
   let revision = 0;
   const save = (text: string, extra: Partial<IDocumentData> = {}) => {
     const snapshot = { id: item.id, body: { dataStream: text + '\r\n' }, ...extra };
