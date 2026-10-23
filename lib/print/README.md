@@ -23,6 +23,11 @@ do not expand the bounds. Explicit cell formatting does; row/column formatting
 applies within the eventual used range. Text overflow, filtered rows and image
 extent integration remain unfinished.
 
+An internal public-API `PrintWorksheet` adapter now handles number-format display
+and native saved filter models. It preserves raw values, validates filter scans
+and clones input before the SDK fills defaults. The final geometry/render path
+must still integrate that adapter; it has not run locally.
+
 `paginateSheet` consumes final bounds and **actual** PDF MediaBox dimensions.
 Margins are 36 pt (12.7 mm), scaling is at most 0.75 PDF pt per 96-DPI layout
 pixel, and every vertical slice touches the next without rounding to row edges.
@@ -53,3 +58,14 @@ does not demonstrate safety on a 2 GiB deployment.
 
 The source tests in this checkpoint were authored but have not run. No visual,
 PDF, resource-limit or CI validation is claimed.
+
+## Prepared font contract
+
+`PreparedFont` carries static SFNT bytes, exact family/aliases, weight/italic
+metadata and license/provenance supplied by the caller. Internal admission checks
+bounded font tables, subset embedding permissions and Unicode cmap coverage.
+Grapheme runs use explicitly ordered fallbacks; missing families, styles or
+glyphs fail without leaking text into error messages. System fonts are not an
+acceptable fallback. Registration, native shaping and embedded PDF-font evidence
+remain unfinished. The included licensed fixture faces test these requirements;
+they do not silently replace a workbook's requested family.

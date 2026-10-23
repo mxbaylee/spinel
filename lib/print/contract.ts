@@ -6,11 +6,15 @@ export interface PrintLimits {
   rows: number;
   columns: number;
   cells: number;
+  textCharacters: number;
   gridCells: number;
   merges: number;
+  mergeCells: number;
   images: number;
   encodedImageBytes: number;
   decodedImagePixels: number;
+  fonts: number;
+  fontBytes: number;
   pages: number;
   outputBytes: number;
   durationMs: number;
@@ -24,11 +28,15 @@ export const PRINT_LIMITS: Readonly<PrintLimits> = Object.freeze({
   rows: 50_000,
   columns: 2_048,
   cells: 50_000,
+  textCharacters: 250_000,
   gridCells: 250_000,
   merges: 2_000,
+  mergeCells: 250_000,
   images: 128,
   encodedImageBytes: 32 * 1024 * 1024,
   decodedImagePixels: 32_000_000,
+  fonts: 16,
+  fontBytes: 32 * 1024 * 1024,
   pages: 100,
   outputBytes: 64 * 1024 * 1024,
   durationMs: 30_000,
@@ -57,6 +65,16 @@ export interface PreparedImage {
   /** Exact native source reference. This is an opaque lookup key, never fetched. */
   source: string;
   bytes: Uint8Array;
+}
+
+export interface PreparedFont {
+  family: string;
+  aliases?: readonly string[];
+  weight: 400 | 700;
+  italic: boolean;
+  bytes: Uint8Array;
+  /** Caller attests the redistribution/embedding license; nothing is fetched. */
+  license: { identifier: string; text: string; source: string };
 }
 
 export interface PrintBox {

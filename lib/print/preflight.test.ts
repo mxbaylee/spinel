@@ -68,6 +68,9 @@ describe('bounded malformed input handling before native allocation', () => {
     book.sheets.first.mergeData = [{ startRow: 0, endRow: 1, startColumn: 0, endColumn: 1 }];
     book.sheets.second.mergeData = [{ startRow: 0, endRow: 1, startColumn: 0, endColumn: 1 }];
     expect(() => preflightSheets(book, { limits: { merges: 1 } })).toThrow('too many merges');
+    book.sheets.first.rowData = { 0: { hd: 1 }, 1: { hd: 1 } };
+    expect(() => preflightSheets(book, { limits: { mergeCells: 3 } })).toThrow('index budget');
+    expect(() => preflightSheets(workbook(), { limits: { textCharacters: 2 } })).toThrow('text exceeds');
   });
 
   test('caps nodes, text bytes, nesting, arrays and axes', () => {

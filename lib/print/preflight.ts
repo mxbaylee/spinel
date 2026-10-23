@@ -29,7 +29,7 @@ function record(value: unknown): Record<string, unknown> {
 }
 
 /** Inspect without stringify/clone or calling getters. No native allocation happens here. */
-function inspectSnapshot(snapshot: unknown, limits: Readonly<PrintLimits>, check: () => void) {
+export function inspectSnapshot(snapshot: unknown, limits: Readonly<PrintLimits>, check: () => void) {
   const ancestors = new Set<object>();
   const pending: { value: unknown; depth: number; leave?: boolean }[] = [{ value: snapshot, depth: 0 }];
   let bytes = 0;
@@ -140,7 +140,9 @@ export function preflightSheets(snapshot: IWorkbookData, options: SheetPrintOpti
     }
   }
   let cells = 0;
+  let textCharacters = 0;
   let merges = 0;
+  let mergeCells = 0;
   let gridCells = 0;
   const result: SheetGeometry[] = [];
   for (const id of snapshot.sheetOrder) {
@@ -163,6 +165,12 @@ export function preflightSheets(snapshot: IWorkbookData, options: SheetPrintOpti
         if (++cells > limits.cells) throw new PrintError('limit', 'PDF workbook has too many populated cells.');
         if (value == null) continue;
         const cell = record(value);
+        if (typeof cell.v === 'string') textCharacters += cell.v.length;
+        if (cell.p != null) {
+          const body = record(record(cell.p).body ?? {});
+          if (typeof body.dataStream === 'string') textCharacters += body.dataStream.length;
+        }
+        if (textCharacters > limits.textCharacters) throw new PrintError('limit', 'PDF text exceeds its layout budget.');
         if (['v', 'p', 's', 'f'].some((key) => cell[key] !== undefined && cell[key] !== null && cell[key] !== ''))
           addRange(row, row, column, column);
       }
@@ -177,6 +185,9 @@ export function preflightSheets(snapshot: IWorkbookData, options: SheetPrintOpti
       const startColumn = integer(merge.startColumn, columns.length - 2, 'Invalid PDF merge column.');
       const endColumn = integer(merge.endColumn, columns.length - 2, 'Invalid PDF merge column.');
       if (endRow < startRow || endColumn < startColumn) invalid('Invalid PDF merge order.');
+      // Native Worksheet builds an index for every raw merged cell, including hidden axes.
+      mergeCells += (endRow - startRow + 1) * (endColumn - startColumn + 1);
+      if (mergeCells > limits.mergeCells) throw new PrintError('limit', 'PDF merges exceed their index budget.');
       addRange(startRow, endRow, startColumn, endColumn);
     }
     let visibleRows = 0;
