@@ -1,14 +1,15 @@
 import express from 'express';
 import { randomUUID } from 'node:crypto';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { AddressInfo } from 'node:net';
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import { DatabaseSync } from '../../../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { DiagnosticsStore } from './store.ts';
+import type { DiagnosticsSnapshot } from './store.ts';
 import { DiagnosticRateLimit, diagnosticsRoutes } from './routes.ts';
 
 async function fixture() {
@@ -79,12 +80,14 @@ async function fixture() {
   });
   const otherHeaders = { Cookie: otherCookie, 'X-Spinel-Diagnostic-Account': other.id };
   return {
+    directory,
     db,
     auth,
     workspace,
     diagnostics,
     owner,
     other,
+    admin,
     item,
     root,
     token,
@@ -215,6 +218,63 @@ test('operator export/clear are distinct from submission and require current con
       (await fetch(`${f.root}/admin/diagnostics`, { headers: { Cookie: f.cookie } })).status,
     ).toBe(404);
   } finally {
+    await f.close();
+  }
+});
+
+test.each(['session', 'role'] as const)('revoking an Operator %s while a snapshot is pending denies delivery and removes its private lease', async (revocation) => {
+  const f = await fixture();
+  const prepared = Promise.withResolvers<DiagnosticsSnapshot>();
+  const released = Promise.withResolvers<void>();
+  const snapshot = f.diagnostics.snapshot.bind(f.diagnostics);
+  const intercepted = vi.spyOn(f.diagnostics, 'snapshot').mockImplementation(async (signal) => {
+    try {
+      // Exercise the actual worker, private SQLite file and export lease, then
+      // hold the route at its await boundary before its final authorization check.
+      const result = await snapshot(signal);
+      prepared.resolve(result);
+      await released.promise;
+      return result;
+    } catch (error) {
+      prepared.reject(error);
+      throw error;
+    }
+  });
+  let pending: Promise<Response> | undefined;
+  try {
+    expect((await f.post('/diagnostics/events', f.batch())).status).toBe(200);
+    pending = f.post('/admin/diagnostics/download', {}, { Cookie: f.adminCookie });
+    const result = await prepared.promise;
+    const dispose = vi.spyOn(result, 'dispose');
+    expect(existsSync(result.path)).toBe(true);
+    expect(f.diagnostics.status().exporting).toBe(true);
+    expect(() => f.diagnostics.truncate()).toThrow('download is active');
+    if (revocation === 'session') {
+      const token = f.adminCookie.slice(COOKIE_NAME.length + 1);
+      f.auth.revokeSession(f.auth.session(token)!.token_hash);
+    } else {
+      f.db.prepare('UPDATE auth_users SET is_admin=0 WHERE id=?').run(f.admin.id);
+    }
+    released.resolve();
+    const response = await pending;
+    expect(response.status).toBe(revocation === 'session' ? 401 : 404);
+    expect(response.headers.get('content-type')).toContain('application/json');
+    expect(response.headers.get('content-disposition')).toBeNull();
+    const body = await response.text();
+    expect(body).not.toContain('SQLite format 3');
+    expect(body).not.toContain('Secret document title');
+    expect(body).not.toContain(result.path);
+    expect(dispose).toHaveBeenCalledTimes(1);
+    expect(existsSync(result.path)).toBe(false);
+    expect(readdirSync(f.directory).filter((name) => name.startsWith('.diagnostics-export-')))
+      .toEqual([]);
+    expect(f.diagnostics.status()).toMatchObject({ exporting: false, recordCount: 1 });
+    // Cleanup releases the real lock: a later authorized clear can proceed.
+    expect(() => f.diagnostics.truncate()).not.toThrow();
+  } finally {
+    released.resolve();
+    if (pending) await pending.catch(() => {});
+    intercepted.mockRestore();
     await f.close();
   }
 });

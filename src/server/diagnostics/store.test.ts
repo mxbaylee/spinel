@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { linkSync, mkdtempSync, readdirSync, rmSync, statSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import type { DiagnosticRecord } from '@spinel/diagnostics';
 import { DatabaseSync } from '../../../server/database.ts';
 import { DiagnosticsStore, DIAGNOSTICS_LIMITS } from './store.ts';
@@ -123,6 +123,49 @@ test('truncate clears queued old events and persists the retry fence through reo
       await reopened.close();
     }
   } finally {
+    await f.dispose();
+  }
+});
+
+test('a real SQLite clear failure rolls back deleted rows and preserves the generation and pending observations', async () => {
+  const f = fixture();
+  const db = f.read();
+  try {
+    const generation = f.store.status().generation!;
+    const actor = randomUUID();
+    const stored = record();
+    expect(f.store.ingest([stored], actor, generation)).toEqual({ accepted: 1, dropped: 0 });
+    const queuedRun = randomUUID();
+    f.store.record(event, { ...context, runId: queuedRun }, actor);
+    const before = f.store.status();
+    const state = db.prepare('SELECT * FROM diagnostics_state').get();
+    const rows = db.prepare('SELECT * FROM events').all();
+    // Fail after DELETE has run, so the test proves transaction rollback rather
+    // than merely refusing entry. There is no await that could flush the queue.
+    db.exec(`CREATE TRIGGER reject_clear BEFORE UPDATE OF generation ON diagnostics_state
+      BEGIN SELECT RAISE(ABORT, 'Injected clear failure'); END;`);
+    expect(() => f.store.truncate()).toThrow('Diagnostics could not be cleared.');
+    expect(f.store.status()).toEqual(before);
+    expect(db.prepare('SELECT * FROM diagnostics_state').get()).toEqual(state);
+    expect(db.prepare('SELECT * FROM events').all()).toEqual(rows);
+
+    db.exec('DROP TRIGGER reject_clear');
+    const laterRun = randomUUID();
+    f.store.record(event, { ...context, runId: laterRun }, actor);
+    f.store.flush();
+    await vi.waitFor(() => expect(f.store.status().recordCount).toBe(3));
+    expect(f.store.status()).toMatchObject({
+      generation,
+      recordCount: 3,
+      dropped: { stale: 0, storage: 0, unavailable: 0 },
+    });
+    expect(db.prepare('SELECT id FROM events WHERE id=?').get(stored.id)?.id).toBe(stored.id);
+    for (const run of [queuedRun, laterRun]) {
+      expect(db.prepare('SELECT generation,source,actor_id FROM events WHERE run_id=?').get(run))
+        .toEqual({ generation, source: 'backend', actor_id: actor });
+    }
+  } finally {
+    db.close();
     await f.dispose();
   }
 });
