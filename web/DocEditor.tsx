@@ -150,7 +150,7 @@ export function DocEditor({
       });
     };
     void (async () => {
-      const data = await prepareCollaboration(id, spaceId);
+      const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
       let drawingReady!: () => void;
       const drawingsRendered = new Promise<void>((resolve) => {

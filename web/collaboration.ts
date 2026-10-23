@@ -81,13 +81,14 @@ export function collaborationPlugins(
     ],
   ];
 }
-export async function prepareCollaboration(id: string, spaceId?: string) {
+export async function prepareCollaboration(id: string, spaceId?: string, isCurrent: () => boolean = () => true) {
   const response = await fetch(`${documentPath(id, spaceId)}/collaboration`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{}',
   });
-  if ([401, 403, 404].includes(response.status)) revokeGuestView();
+  // A departed child's late response is not authority over the current editor.
+  if (isCurrent() && [401, 403, 404].includes(response.status)) revokeGuestView();
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Could not open live editing.');
   return data as { unitId: string; access: ItemAccess; user: { id: string; name: string } };

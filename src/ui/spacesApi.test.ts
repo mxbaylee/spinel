@@ -8,6 +8,25 @@ import {
 
 afterEach(() => vi.unstubAllGlobals());
 
+test.each([401, 403, 404])('aborted guest Space response %i cannot revoke its successor', async (status) => {
+  const root = '11111111-1111-4111-8111-111111111111';
+  vi.stubGlobal('location', { pathname: `/share/${root}` });
+  const dispatchEvent = vi.fn();
+  vi.stubGlobal('window', { dispatchEvent });
+  let release!: (response: Response) => void;
+  vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>((resolve) => { release = resolve; })));
+  const controller = new AbortController();
+  const reading = spacesRequest(`/${root}`, { signal: controller.signal });
+  controller.abort();
+  release(Response.json({ error: 'Unavailable' }, { status }));
+  await expect(reading).rejects.toMatchObject({ status });
+  expect(dispatchEvent).not.toHaveBeenCalled();
+  const active = spacesRequest(`/${root}`);
+  release(Response.json({ error: 'Unavailable' }, { status }));
+  await expect(active).rejects.toMatchObject({ status });
+  expect(dispatchEvent).toHaveBeenCalledOnce();
+});
+
 test('Space requests preserve scoped paths, JSON mutations, session cookies and cancellation', async () => {
   const signal = new AbortController().signal;
   const body = { name: 'Planning', kind: 'doc', parentId: 'parent' };

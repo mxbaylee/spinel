@@ -99,7 +99,7 @@ export function SheetEditor({
       });
     };
     void (async () => {
-      const data = await prepareCollaboration(id, spaceId);
+      const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),

@@ -28,7 +28,7 @@ export async function spacesRequest<T>(
           body: JSON.stringify(options.body),
         }),
   });
-  if (guest && [401, 403, 404].includes(response.status)) revokeGuestView();
+  if (guest && !options.signal?.aborted && [401, 403, 404].includes(response.status)) revokeGuestView();
   const result: unknown =
     response.status === 204 ? undefined : await response.json().catch(() => null);
   if (!response.ok) {
