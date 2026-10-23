@@ -176,7 +176,7 @@ export const Composed: Story = {
     await expect(within(dialog).getByRole('button', { name: 'Copy account link' })).toBeVisible();
     await expect(within(dialog).getByRole('button', { name: 'Done' })).toBeEnabled();
     await expect(
-      within(dialog).getByText('Effective access: File admin (from a folder).'),
+      await within(dialog).findByText('Effective access: File admin (from a folder).'),
     ).toBeVisible();
     await expect(body.getAllByRole('dialog')).toHaveLength(1);
   },
