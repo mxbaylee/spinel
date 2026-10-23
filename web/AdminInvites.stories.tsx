@@ -205,7 +205,7 @@ const failedReadback =
         'https://spinel.example.com/invite#new-once-only-address',
       );
       await waitFor(() =>
-        expect(canvas.getByRole('textbox', { name: 'New invite link' })).toBeFocused(),
+        expect(canvas.getByRole('textbox', { name: 'New invite link' })).toHaveFocus(),
       );
     }
   };
@@ -246,7 +246,7 @@ export const CreatedWhileReadbackPending: Story = {
       const dialog = await within(document.body).findByRole('dialog', { name: 'Create invite' });
       await userEvent.click(within(dialog).getByRole('button', { name: 'Create invite' }));
       const address = await canvas.findByRole('textbox', { name: 'New invite link' });
-      await waitFor(() => expect(address).toBeFocused());
+      await waitFor(() => expect(address).toHaveFocus());
       await expect(address).toHaveValue('https://spinel.example.com/invite#new-once-only-address');
       await expect(create).toBeDisabled();
       await expect(canvas.getByText('Loading invites…')).toBeVisible();
@@ -257,7 +257,7 @@ export const CreatedWhileReadbackPending: Story = {
       await expect(canvas.getByRole('alert')).toHaveTextContent(
         'The current invitation list is unavailable.',
       );
-      await expect(address).toBeFocused();
+      await expect(address).toHaveFocus();
       await expect(create).toBeDisabled();
     } finally {
       release();
