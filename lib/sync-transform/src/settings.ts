@@ -44,6 +44,7 @@ function remap(mutation: Mutation, axis: Axis, edit: AxisEdit): Mutation[] {
   ];
 }
 
+// Diagnostics (SPN-032, not built): `sync.edit.dropped`, rule 'setting-first-accepted'.
 const transform = (a: Mutation, b: Mutation, side: Side): Mutation[] =>
   a.id === b.id && side === 'right' ? [] : [a];
 

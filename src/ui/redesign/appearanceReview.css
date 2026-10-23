@@ -1,0 +1,243 @@
+.rd-appearance-review {
+  height: 100dvh;
+  color: var(--sp-text);
+  background: var(--sp-panel);
+}
+.rd-appearance-review > .rd-shell {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+.rd-appearance-review > .rd-compact-shell:not(.rd-space-shell) {
+  display: flex;
+  flex-direction: column;
+}
+.rd-appearance-review > .rd-space-shell {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.rd-appearance-review .rd-rail {
+  flex-shrink: 0;
+}
+/* Only the optional cover adds outer scrolling. The title settles at the top;
+   the existing native editor retains its own toolbar and canvas scrolling. */
+.rd-appearance-review .rd-main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.rd-appearance-review .rd-editor-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--sp-panel);
+}
+.rd-appearance-review .rd-editor-body {
+  height: var(--rd-editor-height, calc(100dvh - 148px));
+  min-height: 280px;
+  overflow: hidden;
+}
+.rd-appearance-native,
+.rd-appearance-native .rd-native-editor {
+  height: 100%;
+  min-height: 0;
+}
+.rd-appearance-review .rd-desktop-nav {
+  min-height: 0;
+  overflow: auto;
+}
+.rd-appearance-review .rd-desktop-nav > .rd-sidebar {
+  position: static;
+  height: 100%;
+}
+.rd-appearance-review[data-space='true'] .rd-sidebar,
+.rd-sidebar.rd-appearance-navigation {
+  background: color-mix(in srgb, var(--sp-tint-1) 35%, var(--sp-panel));
+}
+.rd-appearance-review[data-space='true'] .rd-nav-item[aria-current='page'],
+.rd-appearance-navigation .rd-nav-item[aria-current='page'] {
+  color: var(--rd-accent-ink);
+}
+.rd-appearance-review .rd-sidebar :focus-visible,
+.rd-appearance-navigation :focus-visible {
+  outline-color: var(--sp-accent);
+}
+.rd-page-cover {
+  position: relative;
+  height: 144px;
+  overflow: hidden;
+  background: var(--sp-header);
+}
+.rd-page-cover-empty {
+  height: 52px;
+  background: var(--sp-panel);
+}
+.rd-gem-cover,
+.rd-page-cover > img,
+.rd-cover-preview > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rd-cover-actions {
+  position: absolute;
+  right: 16px;
+  bottom: 8px;
+}
+.rd-cover-actions .sp-control {
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  gap: 8px;
+}
+.rd-cover-credit {
+  position: absolute;
+  left: 16px;
+  bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  font-size: 0.6875rem;
+}
+.rd-appearance-picker {
+  display: grid;
+  gap: 16px;
+}
+.rd-appearance-picker h3,
+.rd-appearance-picker p {
+  margin: 0;
+}
+.rd-accent-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.rd-accent-options .sp-control {
+  justify-content: flex-start;
+  gap: 8px;
+  min-height: 48px;
+}
+.rd-accent-options .sp-control {
+  white-space: normal;
+  text-align: left;
+}
+.rd-accent-options .sp-control > :last-child {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.rd-accent-swatch {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.rd-appearance-picker [aria-pressed='true'] {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: -2px;
+  background: var(--sp-tint-1);
+}
+.rd-cover-preview {
+  height: 96px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.rd-cover-sources,
+.rd-cover-footer {
+  display: flex;
+  gap: 8px;
+}
+.rd-cover-sources .sp-control {
+  flex: 1;
+  padding-inline: 8px;
+}
+.rd-gem-presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.rd-gem-presets .sp-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  overflow: hidden;
+}
+.rd-gem-thumbnail {
+  width: 100%;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.rd-cover-footer {
+  justify-content: space-between;
+}
+.rd-cover-upload,
+.rd-unsplash-preview,
+.rd-cover-position {
+  display: grid;
+  gap: 8px;
+}
+.rd-appearance-picker input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  accent-color: var(--sp-accent);
+}
+.rd-photo-result.sp-control {
+  display: grid;
+  gap: 8px;
+  padding: 8px;
+}
+.rd-photo-result img {
+  width: 100%;
+  height: 112px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+@media (max-width: 640px) {
+  .rd-page-cover {
+    height: 112px;
+  }
+  .rd-page-cover-empty {
+    height: 52px;
+  }
+  .rd-cover-credit {
+    left: 8px;
+    bottom: auto;
+    top: 8px;
+  }
+  .rd-cover-actions {
+    right: 8px;
+  }
+}
+
+/* Keep the gem beside the title's left edge at every crop, including thumbnails. */
+.rd-gem-cover {
+  object-position: left center;
+}
+.rd-gem-collection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  padding: 24px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+}
+.rd-gem-collection .rd-gem-cover {
+  height: 120px;
+  border-radius: 8px;
+}
+.rd-gem-collection h2 {
+  margin: 8px 0 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+@media (max-width: 640px) {
+  .rd-gem-collection {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 16px;
+  }
+}

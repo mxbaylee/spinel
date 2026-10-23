@@ -31,6 +31,7 @@ function transformRichText(a: Mutation, b: Mutation, side: Side): Mutation[] {
   const theirIds = entityIds(theirs);
   const shared = new Set([...entityIds(mine)].filter((id) => theirIds.has(id)));
   let undo: Op | null = null;
+  // Diagnostics (SPN-032, not built): `sync.edit.dropped`, rule 'doc-formula-first-accepted'.
   if (shared.size > 0 && side === 'right') mine = withoutEntities(mine, shared);
   else if (shared.size > 0) {
     undo = deleteEntities(theirs, shared);

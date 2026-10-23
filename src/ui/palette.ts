@@ -174,3 +174,105 @@ export const editorNeutrals = {
   900: '#221832',
   1000: '#1a1225',
 };
+
+// Proposed Space accents and decorative cover tones, used only by appearance stories.
+// Rainbow first, then blush, pearl, charcoal and multicolor; authored/status colors stay independent.
+export const spaceAccentPalettes = {
+  ruby: {
+    label: 'Ruby',
+    light: { accent: '#aa3045', onAccent: '#ffffff', tint: '#f7e4e7', ink: '#702536' },
+    dark: { accent: '#ff9ba9', onAccent: '#391e28', tint: '#4a2631', ink: '#ffdae0' },
+    facets: ['#d9a9af', '#e2b9bf', '#eac7ca', '#f0d4d5', '#f5dfda', '#faeae3'],
+  },
+  jasper: {
+    label: 'Jasper',
+    light: { accent: '#9c481c', onAccent: '#ffffff', tint: '#faeadc', ink: '#703612' },
+    dark: { accent: '#ffb27a', onAccent: '#382416', tint: '#493122', ink: '#ffe1c8' },
+    facets: ['#d6ad8f', '#dfbc9f', '#e8c9ae', '#efd5bb', '#f5e1ce', '#faedde'],
+  },
+  yellowDiamond: {
+    label: 'Yellow Diamond',
+    light: { accent: '#7c6009', onAccent: '#ffffff', tint: '#f8efd3', ink: '#604b0b' },
+    dark: { accent: '#f1d578', onAccent: '#302812', tint: '#433a23', ink: '#fff0bc' },
+    facets: ['#d6c48e', '#e0d1a1', '#e9dcb5', '#efe5c9', '#f5edda', '#faf4e5'],
+  },
+  peridot: {
+    label: 'Peridot',
+    light: { accent: '#4c681f', onAccent: '#ffffff', tint: '#edf1da', ink: '#385014' },
+    dark: { accent: '#bddb83', onAccent: '#26321a', tint: '#354126', ink: '#e3f3c7' },
+    facets: ['#bbc8a1', '#c8d3b1', '#d4ddc1', '#e0e6d0', '#eaf0de', '#f3f5e9'],
+  },
+  sapphire: {
+    label: 'Sapphire',
+    light: { accent: '#285f9f', onAccent: '#ffffff', tint: '#e4edf9', ink: '#204771' },
+    dark: { accent: '#9bc9ff', onAccent: '#172c43', tint: '#253950', ink: '#d5e9ff' },
+    facets: ['#aebfd7', '#bdccdf', '#cbd7e7', '#d8e1ed', '#e4eaf3', '#eef2f7'],
+  },
+  lapis: {
+    label: 'Lapis',
+    light: { accent: '#484f9f', onAccent: '#ffffff', tint: '#e8e9fa', ink: '#353a73' },
+    dark: { accent: '#b0b7ff', onAccent: '#222342', tint: '#303452', ink: '#e0e2ff' },
+    facets: ['#b3b4d3', '#c2c3de', '#cfd0e7', '#dcdded', '#e7e7f3', '#f1eff7'],
+  },
+  amethyst: {
+    label: 'Amethyst',
+    light: { accent: '#75509b', onAccent: '#ffffff', tint: '#eee5f5', ink: '#573874' },
+    dark: { accent: '#d1acf0', onAccent: '#2c1b3a', tint: '#3a2a49', ink: '#ebd6fc' },
+    facets: ['#c2add3', '#cfbcdf', '#dacbe7', '#e4d8ed', '#ede4f3', '#f5edf7'],
+  },
+  spinel: {
+    label: 'Spinel',
+    light: { accent: '#b52655', onAccent: '#ffffff', tint: '#fbe4ec', ink: '#78213e' },
+    dark: { accent: '#ff91b5', onAccent: '#301421', tint: '#432235', ink: '#ffd9e6' },
+    facets: ['#d8afb9', '#e2bdc5', '#eacbd0', '#efd7d5', '#f4e1d9', '#f8ebe2'],
+  },
+  roseQuartz: {
+    label: 'Rose Quartz',
+    light: { accent: '#97546d', onAccent: '#ffffff', tint: '#f7e8ee', ink: '#733b50' },
+    dark: { accent: '#eab4ca', onAccent: '#351f2b', tint: '#47303d', ink: '#ffe0ec' },
+    facets: ['#d9b6c4', '#e3c4d0', '#ebd2db', '#f0dde2', '#f6e6e8', '#fbefed'],
+  },
+  pearl: {
+    label: 'Pearl',
+    light: { accent: '#74604b', onAccent: '#ffffff', tint: '#f4eee4', ink: '#574838' },
+    dark: { accent: '#dccbb6', onAccent: '#30291f', tint: '#3f382f', ink: '#f5e9d7' },
+    facets: ['#cfc6b9', '#dcd3c6', '#e7ded2', '#eee6dd', '#f5eee5', '#faf6ef'],
+  },
+  obsidian: {
+    label: 'Obsidian',
+    light: { accent: '#555264', onAccent: '#ffffff', tint: '#eceaf0', ink: '#403d4c' },
+    dark: { accent: '#c5bfd5', onAccent: '#25222e', tint: '#35313f', ink: '#eae6f2' },
+    facets: ['#a9a4b4', '#b9b4c2', '#c8c3cf', '#d6d1db', '#e2dde5', '#ede8ed'],
+  },
+  bismuth: {
+    label: 'Bismuth',
+    light: { accent: '#326c68', onAccent: '#ffffff', tint: '#e3efed', ink: '#24534f' },
+    dark: { accent: '#93d9cf', onAccent: '#182e2c', tint: '#29413d', ink: '#c9f4eb' },
+    facets: ['#c6b4d7', '#e0b8c7', '#ecd0ac', '#d7ddb5', '#b9d6c9', '#c4cee5'],
+  },
+} as const;
+
+// Preserve the owner's approved Spinel SVG exactly, including its warmer outer facets.
+export const spinelCoverField = [
+  '#efd7d5',
+  '#f4e1d9',
+  '#f8ebe2',
+  '#efd7d5',
+  '#f5e2da',
+  '#e4c1c8',
+  '#e2bdc5',
+  '#e2bdc5',
+  '#eacbd0',
+  '#f7e7dc',
+  '#f2d9cf',
+  '#efd4ce',
+  '#f7e7dc',
+  '#e7c5c7',
+  '#edd2d0',
+  '#f3ded3',
+  '#f8eade',
+  '#efd7d5',
+  '#e6c4c8',
+  '#f4dfd7',
+  '#f7e7dc',
+] as const;

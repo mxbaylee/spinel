@@ -1,4 +1,4 @@
-import { cellIds, hasFormula, rewriteKey, writesOf } from './cells.ts';
+import { cellIds, hasFormula, matrixWrites, rewriteKey, writesOf } from './cells.ts';
 import { unaffected } from './family.ts';
 import type { Family } from './family.ts';
 import { settingIds } from './settings.ts';
@@ -66,7 +66,8 @@ const textOf = (mutation: Mutation) => (mutation.params.name as string).trim().t
  *
  * Two sets of one id are not a race: the first accepted stands (see
  * `transform`), and the cell formulas a rename's command rewrites follow the
- * cells' own first-accepted rule, so they name the name that stands.
+ * cells' own first-accepted rule, so they name the name that stands, where
+ * both senders had them (see `refuseFormulaRaces`).
  */
 function racesName(a: Mutation, b: Mutation): boolean {
   if (isSet(a) && isSet(b)) {
@@ -87,40 +88,92 @@ function racesName(a: Mutation, b: Mutation): boolean {
 export const refuseNameRaces = (a: Mutation[], b: Mutation[]) =>
   refuseRaces(a, b, racesName, 'name-race');
 
-/** Whether a SetRangeValues writes a formula: a cell with `f`, or a shared formula's `si`. */
-const writesFormula = (mutation: Mutation) =>
-  mutation.id === cellIds.setRangeValues && writesOf(mutation).some(hasFormula);
+/**
+ * The cells a mutation writes with a formula (`f`, or a shared formula's
+ * `si`), as `unitId subUnitId row:col`, each with that formula: a
+ * SetRangeValues's, or those of the sheet an InsertSheet adds (its
+ * `sheet.cellData`), which is what CopySheetCommand sends for a sheet under
+ * its split threshold and what undo of a sheet removal sends.
+ */
+function formulaWrites(mutation: Mutation): { cell: string; formula: unknown }[] {
+  const { unitId } = mutation.params;
+  const [subUnitId, writes] =
+    mutation.id === cellIds.setRangeValues
+      ? [mutation.params.subUnitId, writesOf(mutation)]
+      : mutation.id === structureIds.insertSheet
+        ? [mutation.params.sheet.id, matrixWrites(mutation.params.sheet.cellData)]
+        : [undefined, []];
+  return writes.filter(hasFormula).map(({ row, col, value }) => ({
+    cell: `${unitId} ${subUnitId} ${row}:${col}`,
+    formula: value.f || value.si,
+  }));
+}
+
+const formulaCells = (mutation: Mutation) => formulaWrites(mutation).map(({ cell }) => cell);
+
+const writesFormula = (mutation: Mutation) => formulaCells(mutation).length > 0;
 
 const nameKey = (mutation: Mutation) => `${mutation.params.unitId} ${mutation.params.id}`;
 
 /**
- * Refuses two concurrent sequences when one writes a formula and the other
- * makes Univer rewrite formulas: a mutation in `rewritesReferences`, or a name
- * set or removal, unless the formula's own sequence edits that name too.
+ * The names `mutations` edits whose commands' rewrites can be all its formula
+ * writes, so that the other sequence's edit of one stays first-accepted: each
+ * formula write comes after the sequence's first edit of the name, as a name
+ * command sends its rewrites after its name mutations, every write to a cell
+ * gives it the same formula (the command writes each cell twice), and
+ * `theirs`, the cells the other sequence writes a formula to, holds each cell.
+ * A formula typed in the same batch fails one of those, before the name edit
+ * or after it. None otherwise.
+ */
+function rewrittenNames(mutations: Mutation[], theirs: Set<string>): Set<string> {
+  const formulas = new Map<string, unknown>();
+  for (const { cell, formula } of mutations.flatMap(formulaWrites)) {
+    if (!theirs.has(cell) || (formulas.get(cell) ?? formula) !== formula) return new Set();
+    formulas.set(cell, formula);
+  }
+  const first = mutations.findIndex(writesFormula);
+  if (first < 0) return new Set();
+  return new Set(mutations.slice(0, first).filter(editsName).map(nameKey));
+}
+
+/**
+ * Refuses two concurrent sequences when one writes a formula, in a cell or in
+ * a sheet it inserts, and the other makes Univer rewrite formulas: a mutation
+ * in `rewritesReferences`, or a name set or removal, unless the formula's own
+ * sequence edits that name too and its formula writes are only that edit's
+ * rewrites (see `rewrittenNames`).
  *
  * Decision (owner, chat 2026-10-22): refuse them, either way round
  * (`'formula-race'`). This is the cells counterpart of the name set rule
  * above: a formula written, or rewritten by a command, for the cells before
  * the other edit is not rewritten past it, and a stateless transform cannot
  * redo that. Two edits of one name keep the first-accepted rule (see
- * `transform`), since the formulas each rewrites follow the name that stands.
- * Not taken: remapping references inside the transform, which would
- * re-implement Univer's unexported reference rewriting. This refuses more
- * edits in books with formulas, such as two row inserts that each move one.
+ * `transform`), since the formulas each rewrites follow the name that stands,
+ * but only for formulas both senders had: each command rewrites the cells it
+ * saw. So the exemption holds only where the other sequence writes a formula
+ * to every cell this one does; name commands move no cells, so the two
+ * address the same cells untransformed. A formula typed in the same batch as
+ * the name edit, before or after it, is refused, since the other name edit
+ * could win and drop it or leave it naming a name that no longer stands. Not taken:
+ * remapping references inside the transform, which would re-implement
+ * Univer's unexported reference rewriting. This refuses more edits in books
+ * with formulas, such as two row inserts that each move one.
  *
  * Decision (owner, chat 2026-10-22): a command's formula rewrite and a
- * concurrent write to the same cell that writes no formula, such as a value
- * typed over it (which sends `f: null`), are refused too, either way round:
- * where the rewrite was accepted first it would put back the formula the
- * write replaced. `markRewrites` marks the rewrites, and cells' `transform`
- * refuses them where they meet such a write.
+ * concurrent write to the same cell that replaces its value or formula with
+ * no formula, such as a value typed over it (which sends `v` and `f: null`)
+ * or a clear, are refused too, either way round: where the rewrite was
+ * accepted first it would put back the formula the write replaced. A style
+ * or number format there overlaps no key of the rewrite and merges.
+ * `markRewrites` marks the rewrites, and cells' `transform` refuses them
+ * where they meet such a write.
  */
 export function refuseFormulaRaces(a: Mutation[], b: Mutation[]): void {
   for (const [writes, edits] of [
     [a, b],
     [b, a],
   ]) {
-    const own = new Set(writes.filter(editsName).map(nameKey));
+    const own = rewrittenNames(writes, new Set(edits.flatMap(formulaCells)));
     const rewrites = (edit: Mutation) =>
       rewritesReferences.has(edit.id) || (editsName(edit) && !own.has(nameKey(edit)));
     refuseRaces(writes.filter(writesFormula), edits, (_, edit) => rewrites(edit), 'formula-race');
@@ -130,7 +183,9 @@ export function refuseFormulaRaces(a: Mutation[], b: Mutation[]): void {
 /**
  * `mutations` with each formula write marked (cells.rewriteKey) where the
  * sequence also holds a mutation that makes Univer rewrite formulas in its
- * workbook, so that the write is the command's rewrite.
+ * workbook, so that the write is the command's rewrite. Only a SetRangeValues
+ * is marked: an inserted sheet's formulas are no command's rewrite, and no
+ * concurrent edit can write a cell of a sheet it never had.
  */
 export function markRewrites(mutations: Mutation[]): Mutation[] {
   const units = new Set(
@@ -139,7 +194,9 @@ export function markRewrites(mutations: Mutation[]): Mutation[] {
       .map((mutation) => mutation.params.unitId),
   );
   return mutations.map((mutation) =>
-    units.has(mutation.params.unitId) && writesFormula(mutation)
+    units.has(mutation.params.unitId) &&
+    mutation.id === cellIds.setRangeValues &&
+    writesFormula(mutation)
       ? { id: mutation.id, params: { ...mutation.params, [rewriteKey]: true } }
       : mutation,
   );

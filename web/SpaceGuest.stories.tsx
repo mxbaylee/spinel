@@ -154,8 +154,9 @@ export const ViewOnly: Story = {
   parameters: { api: api('viewer') },
   play: async ({ canvasElement }) => {
     await guestOnly(canvasElement);
+    // The shell heading can appear before the selected editor mounts.
     await expect(
-      within(canvasElement).getByLabelText('Shared page content fixture'),
+      await within(canvasElement).findByLabelText('Shared page content fixture'),
     ).toHaveAttribute('readonly');
     await expect(
       within(canvasElement).queryByRole('button', { name: 'Add page' }),
@@ -172,7 +173,7 @@ export const CanEdit: Story = {
   play: async ({ canvasElement }) => {
     await guestOnly(canvasElement);
     await expect(
-      within(canvasElement).getByLabelText('Shared page content fixture'),
+      await within(canvasElement).findByLabelText('Shared page content fixture'),
     ).not.toHaveAttribute('readonly');
     await expect(within(canvasElement).getByText('Can edit', { exact: true })).toBeVisible();
   },

@@ -45,7 +45,7 @@ interface Piece {
 
 const cellKey = (cell: Cell) => `${cell.row}:${cell.col}`;
 
-function matrixWrites(matrix: Matrix): Write[] {
+export function matrixWrites(matrix: Matrix): Write[] {
   return Object.entries(matrix ?? {}).flatMap(([row, columns]) =>
     Object.entries(columns ?? {}).map(([col, value]) => ({
       row: Number(row),
@@ -270,20 +270,27 @@ export function unmarked(mutation: Mutation): Mutation {
 
 /**
  * Whether `rewrite`, marked as a command's formula rewrite, rewrites a cell
- * that `other` writes without a formula. A write with a formula is left to
+ * whose value or formula `other` replaces without a formula: a piece of its
+ * write there sets `v`, `f` or `si`, or the whole cell, as a typed value
+ * (`f: null`) or a clear does. A style or number format there overlaps no
+ * piece of the rewrite and merges. A write with a formula is left to
  * names.refuseFormulaRaces, which keeps two edits of one name first-accepted.
  */
 function rewriteMet(rewrite: Mutation, other: Mutation): boolean {
   if (!rewrite.params[rewriteKey]) return false;
   const cells = new Set(writesOf(rewrite).filter(hasFormula).map(cellKey));
-  return writesOf(other).some((write) => cells.has(cellKey(write)) && !hasFormula(write));
+  return writesOf(other).some(
+    (write) =>
+      cells.has(cellKey(write)) &&
+      !hasFormula(write) &&
+      piecesOf(other, write).some(({ path }) => path === '' || valuePaths.has(path)),
+  );
 }
 
 /**
  * The params key that marks a half of a cut (see `perSheet`) as its `source`
- * or `target` half of cut `n`: never a Univer param, so `check` rejects one
- * sent in, and `transform` joins or strips every one before it returns (see
- * `joinCuts`).
+ * or `target` half: never a Univer param, so `check` rejects one sent in, and
+ * `transform` joins or strips every one before it returns (see `joinCuts`).
  */
 export const halfKey = 'sync-transform.cells.half';
 
@@ -293,14 +300,13 @@ export const halfKey = 'sync-transform.cells.half';
  * side's cells on its own sheet, so the two do what the one does, and every
  * transform addresses one sheet. Each keeps its own range as both of its
  * ranges, so its area is that range alone (see shifts.areasOf). Each is
- * marked with `halfKey` and the cut's index `n` in its sequence, and
- * `joinCuts` joins them again once transformed.
+ * marked with `halfKey`, and `joinCuts` joins them again once transformed.
  *
  * Decision (owner, chat 2026-10-22): a cut and a concurrent edit of its source
  * or target are refused, like a drag's (see shifts.movesMeet). Not taken:
  * merging, which lost writes silently for drags.
  */
-export function perSheet(mutation: Mutation, n: number): Mutation[] {
+export function perSheet(mutation: Mutation): Mutation[] {
   const { from, to, fromRange, toRange } = mutation.params;
   if (!isMove(mutation) || from.subUnitId === to.subUnitId) return [mutation];
   const half = (
@@ -317,7 +323,7 @@ export function perSheet(mutation: Mutation, n: number): Mutation[] {
       toRange: range,
       from: { subUnitId, value: fromValue },
       to: { subUnitId, value: toValue },
-      [halfKey]: { kind, n },
+      [halfKey]: { kind },
     },
   });
   return [
@@ -335,6 +341,11 @@ export function perSheet(mutation: Mutation, n: number): Mutation[] {
  * `refuseCutsToRemoved`). Univer's handler writes `from` on its sheet, then
  * `to` on its own, as the two halves did in turn. A half whose partner was
  * dropped, by a removal of its sheet, stays a move within its sheet.
+ *
+ * Pairing by kind alone is enough: a source half survives only beside its own
+ * target half. A removal of the target sheet is refused before the cut is
+ * split (`refuseCutsToRemoved`), and nothing else drops a target half, so a
+ * source half is always followed by its own target half, never another's.
  */
 export function joinCuts(mutations: Mutation[]): Mutation[] {
   const result: Mutation[] = [];
@@ -347,7 +358,7 @@ export function joinCuts(mutations: Mutation[]): Mutation[] {
     const { [halfKey]: half, ...plain } = params;
     const next = mutations[i + 1];
     const partner = next?.params[halfKey];
-    if (half.kind === 'source' && partner?.kind === 'target' && partner.n === half.n) {
+    if (half.kind === 'source' && partner?.kind === 'target') {
       Object.assign(plain, { toRange: next.params.toRange, to: next.params.to });
       i++;
     }

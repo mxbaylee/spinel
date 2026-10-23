@@ -399,6 +399,41 @@ describe('a cut to another sheet', () => {
     }
   });
 
+  // joinCuts pairs halves by kind alone, so the first cut's lone target half
+  // must not take the second cut's source half as its partner.
+  test('two cuts in turn, past removing the first one’s source sheet, leave its target half and the second cut', () => {
+    const threeSheets = () => {
+      const workbook = seededWorkbook();
+      workbook.sheetOrder.push('s3');
+      workbook.sheets.s3 = { ...workbook.sheets.s2, id: 's3', name: 'Three', cellData: {} };
+      return { workbook };
+    };
+    const replica = new Replica(threeSheets());
+    const first = moveCommand(replica, 's1', area(1), 's2', area(5))!;
+    replica.apply(first);
+    const second = moveCommand(replica, 's2', area(5), 's3', area(1))!;
+    const [one] = moves(first);
+    const [two] = moves(second);
+    for (const side of ['left', 'right'] as const) {
+      expect(moves(transform([...first, ...second], removal('s1', 0), side))).toEqual([
+        {
+          ...one,
+          params: {
+            ...one.params,
+            fromRange: one.params.toRange,
+            from: { subUnitId: 's2', value: {} },
+          },
+        },
+        two,
+      ]);
+      const after = converges([...first, ...second], removal('s1', 0), {
+        side,
+        document: threeSheets(),
+      });
+      expect(after.workbook.sheets.s3.cellData[1][1]).toEqual({ v: 's1:1:1' });
+    }
+  });
+
   test('a row or column insert that cuts its target is refused', () => {
     refusedBothWays(cut, onTwo(insertRows(6, 1)));
     refusedBothWays(cut, onTwo(insertCols(2, 1)));

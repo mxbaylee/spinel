@@ -30,7 +30,7 @@ test.each<[string, Mutation, new (...args: never[]) => Error]>([
   ],
   [
     "a cut's half, which exists only inside one transform",
-    { ...move('s1'), params: { ...move('s1').params, [halfKey]: { kind: 'source', n: 0 } } },
+    { ...move('s1'), params: { ...move('s1').params, [halfKey]: { kind: 'source' } } },
     TypeError,
   ],
   [

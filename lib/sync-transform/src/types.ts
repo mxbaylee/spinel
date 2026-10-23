@@ -40,23 +40,20 @@ export type RefusalReason = 'moved-cells' | 'format-race' | 'name-race' | 'formu
 
 /**
  * Thrown when two concurrent edits cannot be merged, so the server refuses
- * the later one and its sender discards its pending edits and resyncs.
- * `'moved-cells'`: a dragged range or a shift and an edit in its area, which
- * for a shift runs across its band from its start to the sheet's edge: an
- * edit of a cell there, another drag or shift, a row or column edit that cuts
- * it, or for a shift a merge there; also a cut to another sheet and a removal
- * of its target sheet. `'format-race'`: a number-format change and a write
- * to one of its cells that sets no value. `'name-race'`: a defined-name set
- * or removal and a concurrent edit that makes Univer rewrite names (a row or
- * column insert, remove or move, a range move, a sheet removal, or a sheet or
- * workbook rename), or two sets of different ids that give them the same
- * text, in any case or scope. `'formula-race'`: a write of a cell formula
- * and a concurrent edit that makes Univer rewrite formulas (any of those that
- * rewrite names, or a defined-name set or removal, unless the formula's own
- * edit sets or removes that name too), or a command's rewrite of a formula
- * and a concurrent write of no formula to its cell, such as a typed value.
- * `'growth'`: a transform that would grow past its limit. Unlike
- * UnsupportedMutationError it is a race, not a sender bug.
+ * the later one and its sender discards its pending edits and resyncs. The
+ * README's "What it covers" gives each rule in full:
+ * - `'moved-cells'`: a drag, shift or cut and an edit in its area, or a
+ *   removal of a cut's target sheet.
+ * - `'format-race'`: a number-format change and a write of no value to one of
+ *   its cells.
+ * - `'name-race'`: a defined-name edit and an edit that makes Univer rewrite
+ *   names, or two names given the same text.
+ * - `'formula-race'`: a formula write and an edit that makes Univer rewrite
+ *   formulas, or a command's rewrite of a formula and a write that replaces
+ *   its cell's formula with none.
+ * - `'growth'`: a transform that would grow past its limit.
+ *
+ * Unlike UnsupportedMutationError it is a race, not a sender bug.
  *
  * Diagnostics (SPN-032, not built): the server counts each refusal as
  * `sync.edit.refused` by `reason`, against `sync.edit.transformed` for the

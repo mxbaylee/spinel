@@ -58,7 +58,8 @@ test('a row insert moves the names it shifts, past a concurrent cell write', () 
   }
 });
 
-// Decisions (owner and agent, chat 2026-10-22): see names.racesName.
+// Decision (owner, chat 2026-10-22): see names.racesName, for a set.
+// Decision (agent, chat 2026-10-22): see names.racesName, for a removal.
 describe('a name set or removal and a concurrent edit that rewrites names', () => {
   const peers: [string, Mutation[]][] = [
     ['a row insert on its sheet', insertRow('s1')],
@@ -242,6 +243,39 @@ describe('a formula write and a concurrent edit that rewrites formulas', () => {
       refusedBothWays(typed(0, 0), insertAbove(before), 'formula-race');
     });
 
+    // A style writes no key the rewrite writes, so the two merge.
+    test('a bold on it merges', () => {
+      const bold: Mutation[] = [
+        {
+          id: cellIds.setRangeValues,
+          params: { unitId, subUnitId: 's2', cellValue: { 0: { 0: { s: { bl: 1 } } } } },
+        },
+      ];
+      for (const side of ['left', 'right'] as const) {
+        const after = converges(bold, insertAbove(before), { side, setup: before, document });
+        expect(after.workbook.sheets.s2.cellData[0][0]).toMatchObject({
+          f: '=One!A9',
+          s: { bl: 1 },
+        });
+      }
+    });
+
+    // The rewrite writes no value, so a number format on it is a format race (see cells.formatRace).
+    test('a number format on it is refused as a format race', () => {
+      const numfmt: Mutation[] = [
+        {
+          id: cellIds.setNumfmt,
+          params: {
+            unitId,
+            subUnitId: 's2',
+            values: { k: { ranges: [{ startRow: 0, endRow: 0, startColumn: 0, endColumn: 0 }] } },
+            refMap: { k: { pattern: '0%' } },
+          },
+        },
+      ];
+      refusedBothWays(numfmt, insertAbove(before), 'format-race');
+    });
+
     test('a value typed in another cell passes', () => {
       for (const side of ['left', 'right'] as const) {
         expect(transform(typed(1, 1), insertAbove(before), side)).toEqual(typed(1, 1));
@@ -268,6 +302,94 @@ describe('a formula write and a concurrent edit that rewrites formulas', () => {
     const total = sent('sheet.command.set-defined-name', { ...budget, name: 'total' }, both);
     const cost = sent('sheet.command.set-defined-name', { ...spend, name: 'cost' }, both);
     refusedBothWays(total, cost, 'formula-race');
+  });
+
+  // B types =SUM(budget) at Two!B6, then renames budget to spend, so its
+  // command rewrites B6 to =SUM(spend). Were A's rename to total accepted
+  // first, B's rename would be dropped and B6 would read #NAME? on both screens.
+  test('a rename against a rename of the same name with a formula only one side had is refused', () => {
+    const typed = formula('s2', 5, 1, '=SUM(budget)');
+    const spend = sent('sheet.command.set-defined-name', { ...budget, name: 'spend' }, [
+      ...setup,
+      ...typed,
+    ]);
+    const rewrite = spend.find(({ id }) => id === cellIds.setRangeValues);
+    expect(rewrite?.params.cellValue[5][1].f).toBe('=SUM(spend)');
+    refusedBothWays(setName({ name: 'total' }), [...typed, ...spend], 'formula-race');
+  });
+
+  // Two!A1 holds =SUM(budget), so both renames, and the removal, rewrite it.
+  // Were the peer accepted first, A1 would read the peer's rewrite on both
+  // screens and the formula typed in the batch would be lost.
+  describe('a rename in a batch that also types a formula over a cell it rewrites', () => {
+    const a1 = { subUnitId: 's2', range: { startRow: 0, endRow: 0, startColumn: 0, endColumn: 0 } };
+    const type = (f: string, before: Mutation[]) =>
+      sent('sheet.command.set-range-values', { ...a1, value: { f } }, before);
+    const rename = (before: Mutation[]) =>
+      sent('sheet.command.set-defined-name', { ...budget, name: 'spend' }, before);
+    const before = (f: string) => {
+      const typed = type(f, used);
+      return [...typed, ...rename([...used, ...typed])];
+    };
+    const after = (f: string) => {
+      const renamed = rename(used);
+      return [...renamed, ...type(f, [...used, ...renamed])];
+    };
+    const batches: [string, Mutation[]][] = [
+      ['=SUM(budget)*2 typed before it', before('=SUM(budget)*2')],
+      ['=SUM(spend)*2 typed after it', after('=SUM(spend)*2')],
+      ['=5 typed before it', before('=5')],
+      ['=5 typed after it', after('=5')],
+    ];
+    const peers = [
+      sent('sheet.command.set-defined-name', { ...budget, name: 'total' }, used),
+      sent('sheet.command.remove-defined-name', budget, used),
+    ];
+    test.each(batches)('%s, against a rename or a removal, is refused', (_name, batch) => {
+      for (const peer of peers) refusedBothWays(batch, peer, 'formula-race');
+    });
+  });
+
+  // CopySheetCommand sends a sheet under its split threshold as one
+  // InsertSheet, its formulas in `sheet.cellData`, as undo of a sheet removal does.
+  describe('a sheet copy', () => {
+    const copy = (before: Mutation[]) =>
+      sent('sheet.command.copy-sheet', { subUnitId: 's1' }, [...setup, ...before]);
+    const insertOnTwo = (before: Mutation[]) =>
+      sent(
+        'sheet.command.insert-row-by-range',
+        {
+          subUnitId: 's2',
+          range: { startRow: 0, endRow: 0, startColumn: 0, endColumn: 5 },
+          direction: Direction.UP,
+        },
+        [...setup, ...before],
+      );
+
+    test('with a formula that reads Two, against a row insert on Two, is refused', () => {
+      const before = formula('s1', 0, 0, '=Two!A8');
+      const copied = copy(before);
+      expect(copied.map(({ id }) => id)).toEqual([structureIds.insertSheet]);
+      expect(copied[0].params.sheet.cellData[0][0].f).toBe('=Two!A8');
+      refusedBothWays(copied, insertOnTwo(before), 'formula-race');
+    });
+
+    test('with a formula that uses a name, against a rename of the name, is refused', () => {
+      const before = formula('s1', 0, 0, '=SUM(budget)');
+      const renamed = sent('sheet.command.set-defined-name', { ...budget, name: 'total' }, [
+        ...setup,
+        ...before,
+      ]);
+      refusedBothWays(copy(before), renamed, 'formula-race');
+    });
+
+    test('with no formulas, against a row insert on Two, passes', () => {
+      const copied = copy([]);
+      for (const side of ['left', 'right'] as const) {
+        expect(transform(copied, insertOnTwo([]), side)).toEqual(copied);
+        converges(copied, insertOnTwo([]), { side, setup, document });
+      }
+    });
   });
 
   const at = { unitId, subUnitId: 's2' };
