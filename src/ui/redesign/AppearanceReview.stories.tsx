@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { AppearanceReview } from './AppearanceReview.tsx';
+import { AppearanceReview, GemCollection } from './AppearanceReview.tsx';
 
 const meta = {
   title: 'Redesign/Appearance',
@@ -19,10 +19,20 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const GemsCollection: Story = { render: () => <GemCollection /> };
+export const SpinelSoftBanner: Story = { args: { initialAccent: 'spinel' } };
 export const SpaceRuby: Story = { args: { initialAccent: 'ruby' } };
-export const SpaceEmerald: Story = { args: { initialAccent: 'emerald' } };
+export const SpaceJasper: Story = { args: { initialAccent: 'jasper' } };
+export const SpaceYellowDiamond: Story = { args: { initialAccent: 'yellowDiamond' } };
+export const SpacePeridot: Story = { args: { initialAccent: 'peridot' } };
 export const SpaceSapphire: Story = { args: { initialAccent: 'sapphire' } };
+export const SpaceLapis: Story = { args: { initialAccent: 'lapis' } };
 export const SpaceAmethyst: Story = { args: { initialAccent: 'amethyst' } };
+export const SpaceSpinel: Story = { args: { initialAccent: 'spinel' } };
+export const SpaceRoseQuartz: Story = { args: { initialAccent: 'roseQuartz' } };
+export const SpacePearl: Story = { args: { initialAccent: 'pearl' } };
+export const SpaceObsidian: Story = { args: { initialAccent: 'obsidian' } };
+export const SpaceBismuth: Story = { args: { initialAccent: 'bismuth' } };
 export const DocWithGemBanner: Story = { args: { space: false, initialAccent: 'amethyst' } };
 export const SheetWithGemBanner: Story = {
   args: { space: false, kind: 'sheet', initialAccent: 'sapphire' },
@@ -32,7 +42,7 @@ export const SheetWithPhotoBanner: Story = {
   args: { space: false, kind: 'sheet', initialCover: 'photo' },
 };
 export const DocInSpaceWithBanner: Story = {
-  args: { initialAccent: 'emerald', initialCover: 'photo' },
+  args: { initialAccent: 'peridot', initialCover: 'photo' },
 };
 export const SheetInSpaceWithBanner: Story = { args: { kind: 'sheet', initialAccent: 'ruby' } };
 export const NoCover: Story = { args: { initialCover: 'none' } };
@@ -123,7 +133,7 @@ export const UnsplashEmpty: Story = {
 
 // Color changes must leave the independently chosen page cover alone.
 export const IndependentAccentAndCover: Story = {
-  args: { initialAccent: 'emerald', initialCover: 'photo' },
+  args: { initialAccent: 'peridot', initialCover: 'photo' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -143,11 +153,34 @@ export const IndependentAccentAndCover: Story = {
     await expect(canvas.getByRole('button', { name: 'Add cover' })).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'Add cover' }));
     await userEvent.click(body.getByRole('button', { name: /^Amethyst$/ }));
-    await userEvent.click(body.getByRole('button', { name: 'Wide prism' }));
     await userEvent.click(body.getByRole('button', { name: /^Done$/ }));
     await expect(canvasElement.querySelector('.rd-page-cover')).toHaveAttribute(
       'data-cover',
       'gem',
+    );
+  },
+};
+
+// The last tile must remain reachable on a phone; changing a cover leaves the accent alone.
+export const ChooseBismuthCover: Story = {
+  args: { initialAccent: 'spinel', initialDialog: 'cover' },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const covers = within(body.getByRole('group', { name: 'Gem covers' }));
+    await expect(covers.getAllByRole('button')).toHaveLength(12);
+    await userEvent.click(covers.getByRole('button', { name: 'Bismuth' }));
+    await expect(covers.getByRole('button', { name: 'Bismuth' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await userEvent.click(body.getByRole('button', { name: /^Done$/ }));
+    await expect(canvasElement.querySelector('[data-accent]')).toHaveAttribute(
+      'data-accent',
+      'spinel',
+    );
+    await expect(canvasElement.querySelector('.rd-page-cover > img')).toHaveAttribute(
+      'src',
+      expect.stringContaining('Bismuth'),
     );
   },
 };

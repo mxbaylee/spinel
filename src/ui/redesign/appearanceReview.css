@@ -139,7 +139,6 @@
   border-radius: 8px;
 }
 .rd-cover-sources,
-.rd-gem-colors,
 .rd-cover-footer {
   display: flex;
   gap: 8px;
@@ -147,11 +146,6 @@
 .rd-cover-sources .sp-control {
   flex: 1;
   padding-inline: 8px;
-}
-.rd-gem-colors .sp-control {
-  min-height: 44px;
-  min-width: 44px;
-  gap: 4px;
 }
 .rd-gem-presets {
   display: grid;
@@ -212,5 +206,33 @@
   }
   .rd-cover-actions {
     right: 8px;
+  }
+}
+
+/* Keep the gem beside the title's left edge at every crop, including thumbnails. */
+.rd-gem-cover {
+  object-position: left center;
+}
+.rd-gem-collection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  padding: 24px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+}
+.rd-gem-collection .rd-gem-cover {
+  height: 120px;
+  border-radius: 8px;
+}
+.rd-gem-collection h2 {
+  margin: 8px 0 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+@media (max-width: 640px) {
+  .rd-gem-collection {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 16px;
   }
 }

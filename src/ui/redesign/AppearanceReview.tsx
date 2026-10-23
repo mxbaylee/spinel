@@ -1,13 +1,5 @@
 /** Appearance exploration only. All choices and uploaded images stay in this story. */
-import {
-  lazy,
-  Suspense,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from 'react';
+import { lazy, Suspense, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import type { CSSProperties } from 'react';
 import { palettes, spaceAccentPalettes } from '../palette.ts';
 import { getTheme, watchTheme } from '../theme.ts';
@@ -17,6 +9,7 @@ import { EditorMockup } from './Mockups.tsx';
 import { LoadingReview } from './LoadingReview.tsx';
 import type { NativeSnapshot } from './NativeEditors.tsx';
 import coast from './assets/coast.jpg';
+import { gemCoverSources, gems } from './gemCovers.ts';
 import './appearanceReview.css';
 
 const NativeEditor = lazy(() =>
@@ -24,7 +17,7 @@ const NativeEditor = lazy(() =>
 );
 type Accent = keyof typeof spaceAccentPalettes;
 type Cover =
-  | { type: 'gem'; color: Accent; cut: 'facets' | 'prism' }
+  | { type: 'gem'; color: Accent }
   | { type: 'photo'; src: string; name: string; position: number; credit?: boolean };
 const accents = Object.keys(spaceAccentPalettes) as Accent[];
 const samplePhoto: Cover = {
@@ -36,51 +29,26 @@ const samplePhoto: Cover = {
 };
 const photoSource = 'https://unsplash.com/photos/e0-Qsr4vIzo';
 
-function GemCover({ color, cut }: { color: Accent; cut: 'facets' | 'prism' }) {
-  const id = useId();
-  const colors = spaceAccentPalettes[color].facets;
-  // A repeatable mesh, not a stretched illustration. Left/right edges share vertices.
-  const faces = [
-    '0,0 140,0 82,74',
-    '140,0 300,0 242,64 82,74',
-    '300,0 420,0 420,96 242,64',
-    '0,0 82,74 0,96',
-    '0,96 82,74 132,160 0,220',
-    '82,74 242,64 132,160',
-    '242,64 420,96 312,184 132,160',
-    '420,96 420,220 312,184',
-    '0,220 132,160 220,220',
-    '132,160 312,184 220,220',
-    '220,220 312,184 420,220',
-  ];
+function GemCover({ color }: { color: Accent }) {
+  return <img className="rd-gem-cover" src={gemCoverSources[color]} alt="" />;
+}
+
+export function GemCollection() {
   return (
-    <svg className="rd-gem-cover" width="100%" height="100%" aria-hidden="true">
-      <defs>
-        <pattern
-          id={id}
-          width={cut === 'prism' ? 680 : 420}
-          height="220"
-          patternUnits="userSpaceOnUse"
-          viewBox="0 0 420 220"
-          preserveAspectRatio="none"
-        >
-          {faces.map((points, index) => (
-            <polygon
-              key={points}
-              points={points}
-              fill={colors[(index * 3 + (cut === 'prism' ? 1 : 0)) % colors.length]}
-            />
-          ))}
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill={`url(#${id})`} />
-    </svg>
+    <div className="sp-ui rd-gem-collection" role="list" aria-label="Gem cover collection">
+      {gems.map((gem) => (
+        <div key={gem} role="listitem">
+          <GemCover color={gem} />
+          <h2>{spaceAccentPalettes[gem].label}</h2>
+        </div>
+      ))}
+    </div>
   );
 }
 
 function CoverArt({ cover }: { cover: Cover }) {
   return cover.type === 'gem' ? (
-    <GemCover color={cover.color} cut={cover.cut} />
+    <GemCover color={cover.color} />
   ) : (
     <img src={cover.src} alt="" style={{ objectPosition: `50% ${cover.position}%` }} />
   );
@@ -89,17 +57,17 @@ function CoverArt({ cover }: { cover: Cover }) {
 export function AppearanceReview({
   space = true,
   kind = 'doc',
-  initialAccent = 'emerald',
+  initialAccent = 'spinel',
   initialCover = 'gem',
   initialDialog,
-  initialSource = 'Spinel Gems',
+  initialSource = 'Gems',
 }: {
   space?: boolean;
   kind?: 'doc' | 'sheet';
   initialAccent?: Accent;
   initialCover?: 'gem' | 'photo' | 'none';
   initialDialog?: 'cover' | 'accent';
-  initialSource?: 'Spinel Gems' | 'Upload' | 'Unsplash';
+  initialSource?: 'Gems' | 'Upload' | 'Unsplash';
 }) {
   const mode = useSyncExternalStore(watchTheme, getTheme);
   const [accent, setAccent] = useState(initialAccent);
@@ -116,12 +84,11 @@ export function AppearanceReview({
         ? samplePhoto
         : initialCover === 'none'
           ? null
-          : { type: 'gem', color: initialAccent, cut: 'facets' },
+          : { type: 'gem', color: initialAccent },
   });
   const [dialog, setDialog] = useState(initialDialog);
   const [page, setPage] = useState(title);
   const [source, setSource] = useState(initialSource);
-  const [gemColor, setGemColor] = useState(initialAccent);
   const [uploadError, setUploadError] = useState('');
   const [query, setQuery] = useState('');
   const snapshots = useRef(new Map<string, NativeSnapshot>());
@@ -257,7 +224,12 @@ export function AppearanceReview({
               <Button key={key} aria-pressed={key === accent} onClick={() => setAccent(key)}>
                 <span
                   className="rd-accent-swatch"
-                  style={{ background: spaceAccentPalettes[key][mode].accent }}
+                  style={{
+                    background:
+                      key === 'bismuth'
+                        ? `linear-gradient(135deg, ${spaceAccentPalettes.bismuth.facets.join(', ')})`
+                        : spaceAccentPalettes[key][mode].accent,
+                  }}
                 />
                 {spaceAccentPalettes[key].label}
                 <span aria-hidden="true">{key === accent ? '✓' : ''}</span>
@@ -287,48 +259,27 @@ export function AppearanceReview({
             </div>
           )}
           <div className="rd-cover-sources" role="group" aria-label="Cover source">
-            {(['Spinel Gems', 'Upload', 'Unsplash'] as const).map((item) => (
+            {(['Gems', 'Upload', 'Unsplash'] as const).map((item) => (
               <Button key={item} aria-pressed={source === item} onClick={() => setSource(item)}>
                 {item}
               </Button>
             ))}
           </div>
-          {source === 'Spinel Gems' && (
-            <>
-              <div className="rd-gem-colors" role="group" aria-label="Gem color">
-                {accents.map((key) => (
-                  <Button
-                    key={key}
-                    aria-label={spaceAccentPalettes[key].label}
-                    title={spaceAccentPalettes[key].label}
-                    aria-pressed={gemColor === key}
-                    onClick={() => setGemColor(key)}
-                  >
-                    <span
-                      className="rd-accent-swatch"
-                      style={{ background: spaceAccentPalettes[key][mode].accent }}
-                    />
-                    <span aria-hidden="true">{gemColor === key ? '✓' : ''}</span>
-                  </Button>
-                ))}
-              </div>
-              <div className="rd-gem-presets">
-                {(['facets', 'prism'] as const).map((cut) => (
-                  <Button
-                    key={cut}
-                    aria-pressed={
-                      cover?.type === 'gem' && cover.color === gemColor && cover.cut === cut
-                    }
-                    onClick={() => setCover({ type: 'gem', color: gemColor, cut })}
-                  >
-                    <span className="rd-gem-thumbnail">
-                      <GemCover color={gemColor} cut={cut} />
-                    </span>
-                    <span>{cut === 'facets' ? 'Endless facets' : 'Wide prism'}</span>
-                  </Button>
-                ))}
-              </div>
-            </>
+          {source === 'Gems' && (
+            <div className="rd-gem-presets" role="group" aria-label="Gem covers">
+              {gems.map((gem) => (
+                <Button
+                  key={gem}
+                  aria-pressed={cover?.type === 'gem' && cover.color === gem}
+                  onClick={() => setCover({ type: 'gem', color: gem })}
+                >
+                  <span className="rd-gem-thumbnail">
+                    <GemCover color={gem} />
+                  </span>
+                  <span>{spaceAccentPalettes[gem].label}</span>
+                </Button>
+              ))}
+            </div>
           )}
           {source === 'Upload' && (
             <div className="rd-cover-upload">
