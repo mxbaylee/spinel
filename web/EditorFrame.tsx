@@ -80,13 +80,16 @@ export function EditorFrame({
   const [error, setError] = useState('');
   const editing = useRef(false);
   const frame = useRef<HTMLElement>(null);
-  const identity = useRef({ key: documentKey });
-  if (identity.current.key !== documentKey) identity.current = { key: documentKey };
+  const canRename = Boolean(onRename);
+  const identity = useRef({ key: documentKey, canRename });
+  if (identity.current.key !== documentKey || identity.current.canRename !== canRename)
+    identity.current = { key: documentKey, canRename };
   useEffect(() => {
     setRenaming(false);
     setBusy(false);
     setError('');
-  }, [documentKey]);
+    if (!canRename) setDraft('');
+  }, [documentKey, canRename]);
   function choose(value: boolean) {
     setTheatre(value);
     try {
@@ -135,7 +138,7 @@ export function EditorFrame({
             )}
             <div className="editor-name">
               {contextLabel && <span className="editor-context">{contextLabel}</span>}
-              {renaming ? (
+              {renaming && onRename ? (
                 <form
                   aria-label="Rename document"
                   onSubmit={(event) => {
@@ -215,7 +218,7 @@ export function EditorFrame({
             <ProfileIcon icon={theatre ? 'lucide:minimize' : 'lucide:maximize'} />
           </button>
         </header>
-        {error && <p role="alert">{error}</p>}
+        {canRename && error && <p role="alert">{error}</p>}
         <div className="editor-content">{children}</div>
       </section>
     </Chrome.Provider>

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { EditorFrame, useEditorChrome } from './EditorFrame.tsx';
 import { EditorTools } from './EditorTools.tsx';
@@ -116,6 +117,36 @@ export const Phone: Story = {
 export const Guest: Story = { args: { guest: true, onBack: undefined, access: 'View only' } };
 export const Reconnecting: Story = { args: { connection: 'reconnecting' } };
 export const Rename: Story = { args: { onRename: fn(async () => {}) } };
+function RenameAuthorityFixture() {
+  const [allowed, setAllowed] = useState(true);
+  const [rejectLate, setRejectLate] = useState<(() => void) | null>(null);
+  return <>
+    <button onClick={() => setAllowed(false)}>Revoke fixture access</button>
+    <button disabled={!rejectLate} onClick={() => rejectLate?.()}>Reject late rename</button>
+    <EditorFrame name={allowed ? 'Private page' : 'Space unavailable'} documentKey="same-dirty-page"
+      connection="offline" onRename={allowed ? () => new Promise<void>((_, reject) => {
+        setRejectLate(() => () => reject(new Error('Private rename failure')));
+      }) : undefined}>
+      <section aria-label="Retained draft fixture">Already pending local draft.</section>
+    </EditorFrame>
+  </>;
+}
+export const RenameAuthorityRemoved: Story = {
+  render: () => <RenameAuthorityFixture />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const draft = canvas.getByRole('region', { name: 'Retained draft fixture' });
+    await userEvent.click(canvas.getByRole('button', { name: 'Rename Private page' }));
+    await expect(canvas.getByRole('textbox', { name: 'Document name' })).toHaveValue('Private page');
+    await userEvent.click(canvas.getByRole('button', { name: 'Save name' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Revoke fixture access' }));
+    await expect(canvas.getByRole('heading', { name: 'Space unavailable' })).toBeVisible();
+    await expect(canvas.queryByRole('textbox', { name: 'Document name' })).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole('button', { name: 'Reject late rename' }));
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+    await expect(canvas.getByRole('region', { name: 'Retained draft fixture' })).toBe(draft);
+  },
+};
 export const VersionsDialog: Story = {
   parameters: { api: { 'GET /api/items/fixture/history': { versions: [], canName: true } } },
   play: async ({ canvasElement }) => {

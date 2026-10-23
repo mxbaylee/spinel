@@ -1387,7 +1387,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
   try {
     const { space, child } = seed(f, 'Private recovery notebook');
     const doc = child('Private native notes', 'doc');
-    f.spaces.share(f.owner.id, space.id, f.editor.id, 'editor');
+    f.spaces.share(f.owner.id, space.id, f.editor.id, 'admin');
     const editor = await f.open(f.editor.id);
     await editor.page.goto(href(space.id, doc.id));
     await saved(editor.page);
@@ -1411,6 +1411,9 @@ test('revocation clears private Space navigation while retaining unsaved native 
       editor.page.getByRole('button', { name: 'Retry saving', exact: true }),
     ).toBeVisible();
     await editor.page.keyboard.press('Escape');
+    // A File admin can have a private rename draft open when the grant disappears.
+    await editor.page.getByRole('button', { name: `Rename ${doc.name}`, exact: true }).click();
+    await expect(editor.page.getByRole('textbox', { name: 'Document name' })).toHaveValue(doc.name);
     f.spaces.share(f.owner.id, space.id, f.editor.id, null);
     await expect(status).toContainText('Access changed', { timeout: 10_000 });
     await expect(
@@ -1418,6 +1421,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
     ).toBeVisible({ timeout: 10_000 });
     // A retained local draft must not restore revoked Space/page identity in chrome.
     await expect(editor.page.getByRole('heading', { name: doc.name, exact: true })).toHaveCount(0);
+    await expect(editor.page.getByRole('textbox', { name: 'Document name' })).toHaveCount(0);
     await expect(editor.page.getByText(`Space · ${space.name}`, { exact: true })).toHaveCount(0);
     await expect(editor.page).not.toHaveTitle(new RegExp(doc.name));
     await expect(
