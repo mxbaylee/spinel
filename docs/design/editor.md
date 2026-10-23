@@ -27,10 +27,12 @@ Docs.
 Its [implementation contract](../implementation/SPN-049.md) keeps the same mounted
 editor and status controllers while changing only its viewport. The compact
 People dialog replaces hidden name tooltips. Space Pages remains the sole
-internal tree and hides only during theatre. Public phone Doc zoom APIs mutate
-the native snapshot; the supported interim presentation retains native zoom/pan,
-with further mobile layout work in SPN-072. Native browser and visual acceptance
-are recorded separately from these source choices.
+internal tree and hides only during theatre. The native Doc zoom control changes
+the snapshot's zoom setting; the separate public `fitToWidth`/`DocViewScaleService`
+route computes view scale independently. This implementation retains native
+zoom/pan; evaluating that separate fit integration and further mobile layout work
+remain in SPN-072. Native browser and visual acceptance are recorded separately
+from these source choices.
 
 ## How others do it
 
