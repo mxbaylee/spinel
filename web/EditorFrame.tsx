@@ -21,10 +21,10 @@ export function escapeMayExitTheatre(event: KeyboardEvent, editing: boolean) {
       target instanceof Element &&
       Boolean(
         target.closest(
-          'input, textarea, select, [contenteditable="true"], [role="dialog"], [role="menu"]',
+          'input, textarea, select, [contenteditable="true"], dialog, [role="dialog"], [role="menu"]',
         ),
       ),
-    overlay: Boolean(document.querySelector('[role="dialog"], [role="menu"]')),
+    overlay: Boolean(document.querySelector('dialog[open], [role="dialog"], [role="menu"]')),
   });
 }
 
