@@ -1,0 +1,100 @@
+.editor-title-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  max-width: 100%;
+}
+.editor-title-status > :first-child {
+  min-width: 0;
+  margin-block: 0;
+  overflow-wrap: anywhere;
+}
+.save-slot {
+  display: inline-flex;
+  flex: 0 0 144px;
+  width: 144px;
+  height: 44px;
+}
+.save-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.workspace button.save-trigger:not(.univer-container *),
+.sp-ui button.save-trigger,
+.save-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 144px;
+  height: 44px;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sp-text);
+  font: inherit;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.workspace button.save-trigger:not(.univer-container *)[data-failed='true'],
+.sp-ui button.save-trigger[data-failed='true'],
+.save-trigger[data-failed='true'] {
+  color: var(--fill-error-soft-fg);
+}
+.save-trigger:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+.save-positioner {
+  z-index: 1500;
+}
+.save-detail {
+  width: min(320px, calc(100vw - 32px));
+  max-height: var(--available-height);
+  overflow: auto;
+  overflow-wrap: anywhere;
+  padding: 16px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.save-detail h2 {
+  font-size: 1rem;
+  margin: 0;
+}
+.save-detail p {
+  margin: 8px 0 12px;
+}
+.save-detail button {
+  min-height: 44px;
+  margin-right: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  font: inherit;
+  cursor: pointer;
+}
+.save-trigger:focus-visible,
+.save-detail button:focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 2px;
+}
+@media (max-width: 600px) {
+  .editor-title-status {
+    flex-wrap: wrap;
+  }
+  .editor-title-status > :first-child {
+    flex-basis: 100%;
+  }
+}

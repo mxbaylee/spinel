@@ -206,9 +206,8 @@ SPN-043 owns save-slot geometry and Retry, and SPN-049 composes the editor heade
   an edit is durably saved. Do not create another status row for the same concern.
 
 SPN-042 implements the shared fixed-size connection control and real room/server
-lifecycle, and reserves Retry space through ordinary connection transitions in
-the existing save row. See [connection behavior](../connection.md). SPN-043 still
-adopts the title-adjacent shared save component and full error/Retry popover;
+lifecycle, and remains separate from the title-adjacent shared save control (SPN-043).
+See [connection behavior](../connection.md) and [save presentation](editor.md#save-control-implementation-spn-043);
 SPN-049 composes the wider header. The proposal's boolean `offline` fixture is
 not the production state machine.
 

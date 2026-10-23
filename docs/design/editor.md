@@ -41,11 +41,11 @@ detail (version history, export) behind menus.
 
 ## Spinel today
 
-Collaborators, the fill-preset bar, the save-status line, version names and
-exports all stack above the canvas in normal flow inside `.sheet-editor`. The
-status row now reserves Retry space through ordinary connection transitions
-(SPN-042). The shared title-adjacent save slot and complete error/popover layout
-remain SPN-043; the wider header migration remains SPN-049. Univer's own toolbar
+Collaborators, the fill-preset bar, version names and exports still stack above
+the canvas in normal flow inside `.sheet-editor`. SPN-043 places the shared save
+control in a fixed title-adjacent slot across account, guest and Space editors;
+full messages and Retry open in its popover. The wider header migration remains
+SPN-049. Univer's own toolbar
 sits inside the canvas container. Connection behavior is maintained in
 [connection.md](../connection.md).
 
@@ -164,3 +164,28 @@ do not add another Back button; use the Pages tree for internal navigation
 (owner, chat 2026-10-21). Link guests retain scoped Pages navigation
 without account destinations. Routine editable-access/footer text is omitted;
 view-only and actionable error/recovery feedback remain. Owner, chat 2026-10-20.
+
+## Save control implementation (SPN-043)
+
+`web/SaveStatus.tsx` presents the existing editor-owned save state in a fixed
+144 × 44 px title slot. Shells pass the slot element to the editor, which portals
+only the control; save controllers, pending guards and the full polite live
+announcement retain their editor lifetime. No connectivity state is treated as
+a save confirmation. See [decision #148](https://github.com/mxbaylee/spinel/issues/148),
+2026-10-22, and the [implementation contract](../implementation/SPN-043.md).
+
+Saved stays visible. Loading, Editing, Saving, Not saved, View only and Check
+status use the same footprint; longer messages never wrap the header. A click,
+tap or keyboard activation opens full detail. Failed dirty saves retain Retry
+in that popover; clean access/load failures do not acquire a spurious Retry.
+Escape, Close or an outside click dismisses it. Base UI restores keyboard focus
+to the trigger. The full message is announced with `role="status"`,
+`aria-live="polite"` and `aria-atomic="true"`. Phone titles occupy their own row.
+
+Native browser tests compare exact document-relative editor bounds before an
+edit, while unconfirmed, after a rejected write, with Retry open and after
+recovery; viewport-relative SPN-042 connection checks remain intact. Production
+component stories cover long errors, all states, keyboard/touch and Retry.
+The old inline row is removed; a minimum height alone cannot bound wrapped
+errors or inline Retry. Persistent confirmation, retry behavior and accessible
+announcements predate this ticket and remain unchanged.

@@ -114,11 +114,15 @@ const href = (spaceId: string, itemId?: string) =>
 const normalHref = (spaceId: string, itemId?: string) =>
   `/spaces/${spaceId}${itemId ? '?item=' + itemId : ''}`;
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const saved = (page: Page) =>
-  expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+const saved = async (page: Page) => {
+  await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
     'All changes saved.',
     { timeout: 30_000 },
   );
+  await expect(
+    page.getByRole('button', { name: 'Save details: Saved', exact: true }),
+  ).toBeVisible();
+};
 const pageLink = (page: Page, spaceId: string, itemId: string) =>
   page
     .locator(
@@ -1118,6 +1122,9 @@ for (const role of ['editor', 'admin'] as const) {
       await expect(
         viewer.page.getByRole('status', { name: 'Save status', exact: true }),
       ).toHaveText('View only — reload after your access changes.', { timeout: 30_000 });
+      await expect(
+        viewer.page.getByRole('button', { name: 'Save details: View only', exact: true }),
+      ).toBeVisible();
       expect(await copyDoc(viewer.page)).toBe('A scoped editor can save these notes.');
       await expect(viewer.page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
       await expect(viewer.page.getByRole('button', { name: 'Add page', exact: true })).toHaveCount(
@@ -1385,9 +1392,11 @@ test('revocation clears private Space navigation while retaining unsaved native 
     await expect.poll(held.received).toBeGreaterThan(0);
     const status = editor.page.getByRole('status', { name: 'Save status', exact: true });
     await expect(status).toContainText('not saved');
+    await editor.page.getByRole('button', { name: 'Save details: Not saved', exact: true }).click();
     await expect(
       editor.page.getByRole('button', { name: 'Retry saving', exact: true }),
     ).toBeVisible();
+    await editor.page.keyboard.press('Escape');
     f.spaces.share(f.owner.id, space.id, f.editor.id, null);
     await expect(status).toContainText('Access changed', { timeout: 10_000 });
     await expect(

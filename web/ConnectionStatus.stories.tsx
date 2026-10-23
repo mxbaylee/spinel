@@ -1,3 +1,4 @@
+import { SaveStatus } from './SaveStatus.tsx';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
@@ -19,6 +20,7 @@ const meta = {
   },
   render: function Example(args) {
     const [ready, setReady] = useState(false);
+    const [saveTarget, setSaveTarget] = useState<HTMLSpanElement | null>(null);
     // A built preview can finish rendering before passive effects attach the
     // popover's native hover listeners. Let the fixture finish that phase first.
     useEffect(() => setReady(true), []);
@@ -34,8 +36,18 @@ const meta = {
         </div>
         {args.documentOpen && (
           // An intentionally pending save fixture makes the two meanings visible together.
-          <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
-            Changes not saved yet — keep this tab open.
+          <div className="editor-title-status">
+            <h2>Travel plans</h2>
+            <span className="save-slot" ref={setSaveTarget} />
+            <SaveStatus
+              target={saveTarget}
+              state={{
+                dirty: true,
+                failed: true,
+                message: 'Changes not saved yet — keep this tab open.',
+              }}
+              onRetry={() => {}}
+            />
           </div>
         )}
       </section>

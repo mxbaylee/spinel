@@ -64,6 +64,7 @@ export function Dashboard({
   onOpen?: (item: FileItem) => void;
 }) {
   const dropTarget = useRef<HTMLElement>(null);
+  const [saveStatusTarget, setSaveStatusTarget] = useState<HTMLSpanElement | null>(null);
   const [query, setQuery] = useState<SearchQuery>({ ...emptySearch });
   const searchActive = hasSearch(query);
   const shared = useSharedItems(local?.catalog.shared);
@@ -646,7 +647,12 @@ export function Dashboard({
             ) : (
               <>
                 <div className="folder-heading">
-                  <h2>{current?.name ?? 'My files'}</h2>
+                  <div className="editor-title-status">
+                    <h2>{current?.name ?? 'My files'}</h2>
+                    {!local && current && (current.kind === 'doc' || current.kind === 'sheet') && (
+                      <span className="save-slot" ref={setSaveStatusTarget} />
+                    )}
+                  </div>
                   {current && <SharedBadge item={current} />}
                   {current && <OfflineBadge state={offlineState(current)} />}
                   {current && actions(current)}
@@ -744,6 +750,7 @@ export function Dashboard({
                       key={current.id}
                       id={current.id}
                       name={current.name}
+                      saveStatusTarget={saveStatusTarget}
                       onDirty={navigation.dirty}
                       onConnectionState={onConnectionState}
                     />
@@ -754,6 +761,7 @@ export function Dashboard({
                       key={current.id}
                       id={current.id}
                       name={current.name}
+                      saveStatusTarget={saveStatusTarget}
                       onDirty={navigation.dirty}
                       onConnectionState={onConnectionState}
                     />

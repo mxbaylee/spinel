@@ -37,6 +37,7 @@ export function GuestApp() {
     window.addEventListener('hashchange', changed);
     return () => window.removeEventListener('hashchange', changed);
   }, []);
+  const [saveStatusTarget, setSaveStatusTarget] = useState<HTMLSpanElement | null>(null);
   const id = guestItemId()!;
   const [token] = useState(() => location.hash.slice(1));
   const exchange = useRef<Promise<void> | null>(null);
@@ -157,10 +158,11 @@ export function GuestApp() {
           onExit={() => {}}
           onSignOut={() => {}}
           onConnectionState={setEditorConnection}
-          renderEditor={({ spaceId, item: page, onDirty, onConnectionState }) => (
+          renderEditor={({ spaceId, item: page, onDirty, onConnectionState, saveStatusTarget }) => (
             <Suspense fallback={<p role="status">Opening page…</p>}>
               {page.kind === 'doc' ? (
                 <Doc
+                  saveStatusTarget={saveStatusTarget}
                   spaceId={spaceId}
                   id={page.id}
                   name={page.name}
@@ -169,6 +171,7 @@ export function GuestApp() {
                 />
               ) : (
                 <Sheet
+                  saveStatusTarget={saveStatusTarget}
                   spaceId={spaceId}
                   id={page.id}
                   name={page.name}
@@ -203,11 +206,15 @@ export function GuestApp() {
         <p role="alert">{error}</p>
       ) : item ? (
         <>
-          <h1>{item.name}</h1>
+          <div className="editor-title-status">
+            <h1>{item.name}</h1>
+            <span className="save-slot" ref={setSaveStatusTarget} />
+          </div>
           <p>{item.access === 'editor' ? 'You are editing as a guest.' : 'View-only link.'}</p>
           <Suspense fallback={<p role="status">Opening document…</p>}>
             {item.kind === 'sheet' ? (
               <Sheet
+                saveStatusTarget={saveStatusTarget}
                 id={id}
                 name={item.name}
                 onConnectionState={setEditorConnection}
@@ -217,6 +224,7 @@ export function GuestApp() {
               />
             ) : (
               <Doc
+                saveStatusTarget={saveStatusTarget}
                 id={id}
                 name={item.name}
                 onConnectionState={setEditorConnection}

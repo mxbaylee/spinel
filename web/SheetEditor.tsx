@@ -1,3 +1,4 @@
+import { SaveStatus } from './SaveStatus.tsx';
 import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages, sheetImageOverride } from './sheetImages.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
@@ -51,10 +52,12 @@ export function SheetEditor({
   spaceId,
   onDirty,
   onConnectionState,
+  saveStatusTarget,
 }: {
   id: string;
   name: string;
   spaceId?: string;
+  saveStatusTarget: HTMLElement | null;
   onDirty: (dirty: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
@@ -280,14 +283,11 @@ export function SheetEditor({
           await applyFill.current(preset);
         }}
       />
-      <div className="save-status" role="status" aria-label="Save status" aria-live="polite">
-        <span className="save-message">{status.message}</span>
-        <span className="save-retry">
-          {status.failed && status.dirty && (
-            <button onClick={() => controller.current?.retry()}>Retry saving</button>
-          )}
-        </span>
-      </div>
+      <SaveStatus
+        state={status}
+        target={saveStatusTarget}
+        onRetry={() => controller.current?.retry()}
+      />
       {!guestItemId() && (
         <>
           <VersionNames
