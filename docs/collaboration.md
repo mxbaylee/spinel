@@ -134,6 +134,12 @@ and then reintroducing it without an ID retains the old ID in composition while
 sequential application leaves it absent. The tested editor operations preserve
 their IDs; content and formatting matched in the independent replacement matrix.
 
+The same patch fixes how a text style that replaces a run's style (REPLACE, as
+the format painter sends) transforms past a concurrent style that merges
+(COVER): stock 1.1.0 overrides the merged style's keys only where the
+replacing style's value is truthy, so a concurrent bold survived a winning
+`bl: 0` on one screen only. Any key the replacing style sets now wins.
+
 The installer validates the version and whole-file SHA-256 of both ESM and CJS
 builds before writing either, accepts an already repaired installation, and
 rejects unfamiliar bytes. It does not read or modify Pro packages. Docker copies
@@ -143,7 +149,7 @@ and the patch's attribution is in `THIRD-PARTY-NOTICES.md`.
 The patch is temporary: SPN-099 removes it when Spinel upgrades to a Univer
 release with the fixes. The link fixes are upstream as
 [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938). If
-upstream fixes either one another way, Spinel follows upstream rather than
+upstream fixes any of them another way, Spinel follows upstream rather than
 re-patching. Never bypass the guard just to make an install pass.
 
 ## Verification completed

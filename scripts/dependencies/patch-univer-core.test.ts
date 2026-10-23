@@ -101,6 +101,21 @@ test('install patch is idempotent and rejects changed upstream bytes', async () 
   }
 });
 
+test("both builds let a REPLACE style's falsy keys win in transformTextRuns", async () => {
+  for (const format of ['es', 'cjs'] as const) {
+    const source = await readFile(
+      new URL(`../../node_modules/@univerjs/core/lib/${format}/index.js`, import.meta.url),
+      'utf8',
+    );
+    const start = source.indexOf('function transformTextRuns(');
+    const body = source.slice(start, source.indexOf('function transformCustomRanges(', start));
+    assert.ok(
+      body.includes('for (const key of keys) if (originStyle[key] !== void 0) delete newTs[key];'),
+      format,
+    );
+  }
+});
+
 test('explicit replacement arrays clear omitted paragraphs while absent arrays preserve them', () => {
   const base: IDocumentBody = {
     dataStream: '\r\r\n',

@@ -86,10 +86,11 @@ const booleans = new Map([
 ]);
 
 /**
- * Each key `replica` holds, by cell: `s` as `s.<key>` for each style key, and
- * no `t`, which Univer derives. A value reads as its text, as a text format
- * types it, and rich text as its text, which a style restyles. With `where`,
- * throws if a token is in two cells: moves move content, and nothing copies it.
+ * Each key `replica` holds, by cell: `s` as `s.<key>` for each style key and
+ * `s.bd.<edge>` for each border edge, and no `t`, which Univer derives. A
+ * value reads as its text, as a text format types it, and rich text as its
+ * text, which a style restyles. With `where`, throws if a token is in two
+ * cells: moves move content, and nothing copies it.
  */
 function stateOf(replica: Replica, where?: string): State {
   const state: State = new Map();
@@ -99,9 +100,13 @@ function stateOf(replica: Replica, where?: string): State {
     if (value == null || key === 't') return [];
     if (key === 's') {
       const style = typeof value === 'string' ? styles.get(value) : value;
-      return Object.entries(style ?? {}).flatMap(([name, v]) =>
-        v == null ? [] : [[`s.${name}`, JSON.stringify(v)]],
-      );
+      return Object.entries(style ?? {}).flatMap(([name, v]): [string, string][] => {
+        if (v == null) return [];
+        if (name !== 'bd') return [[`s.${name}`, JSON.stringify(v)]];
+        return Object.entries(v).flatMap(([edge, e]): [string, string][] =>
+          e == null ? [] : [[`s.bd.${edge}`, JSON.stringify(e)]],
+        );
+      });
     }
     // Univer stores TRUE as 1, so a value's type may turn one into the other.
     if (key === 'v') return [['v', booleans.get(String(value).toLowerCase()) ?? String(value)]];
@@ -206,7 +211,11 @@ function written(mutation: Mutation): { cell: string; key: string }[] {
     return Object.entries(value).flatMap(([key, v]) => {
       if (v === undefined || key === 't') return [];
       if (key !== 's' || v === null || p.isOverrideStyle) return [{ cell, key }];
-      return Object.keys(v as object).map((name) => ({ cell, key: `s.${name}` }));
+      return Object.entries(v as object).flatMap(([name, style]) =>
+        name === 'bd' && style
+          ? Object.keys(style).map((edge) => ({ cell, key: `s.bd.${edge}` }))
+          : [{ cell, key: `s.${name}` }],
+      );
     });
   });
 }
@@ -215,7 +224,8 @@ function written(mutation: Mutation): { cell: string; key: string }[] {
 const covered = (touched: Set<string>, cell: string, key: string) =>
   touched.has(`${cell}|${key}`) ||
   touched.has(`${cell}|`) ||
-  (key.startsWith('s.') && touched.has(`${cell}|s`));
+  (key.startsWith('s.') && touched.has(`${cell}|s`)) ||
+  (key.startsWith('s.bd.') && touched.has(`${cell}|s.bd`));
 
 /** `touched` (see `covered`), with each cell where `mutations` take it. */
 function moved(touched: Iterable<string>, mutations: Mutation[]): string[] {

@@ -32,6 +32,15 @@ export function mapIndex(edit: AxisEdit, index: number): number | null {
  */
 type Token = number | { owner: 'peer' | 'self'; offset: number };
 
+/**
+ * Each token's position in `list`, keyed by its index, or its owner and offset
+ * for an inserted one, so the window can span every item between two edits far
+ * apart and still be searched in linear time.
+ */
+const keyOf = (token: Token) =>
+  typeof token === 'number' ? token : `${token.owner}${token.offset}`;
+const positions = (list: Token[]) => new Map(list.map((token, i) => [keyOf(token), i]));
+
 /** A step that turns the peer's result into the merged result. */
 export type AxisStep =
   | { kind: 'insert'; at: number; count: number; offset: number }
@@ -75,10 +84,9 @@ function originals(edit: AxisEdit): number[] {
  * `diff` relies on.
  */
 function anchor(list: Token[], index: number, limit: number, moved: Set<number>): number {
+  const at = positions(list);
   for (let item = index; item < limit; item++) {
-    if (moved.has(item)) continue;
-    const at = list.indexOf(item);
-    if (at >= 0) return at;
+    if (!moved.has(item) && at.has(item)) return at.get(item)!;
   }
   return list.length;
 }
@@ -102,11 +110,12 @@ function applyIntent(
     next.splice(anchor(next, edit.at, end, winnerMoved), 0, ...inserted);
     return next;
   }
-  const items = originals(edit).filter((item) => next.includes(item));
-  if (edit.kind === 'remove') return next.filter((token) => !items.includes(token as number));
-  const moving = items.filter((item) => !winnerMoved.has(item));
-  if (moving.length === 0) return next;
-  const rest = next.filter((token) => !moving.includes(token as number));
+  const present = new Set(next);
+  const items = new Set(originals(edit).filter((item) => present.has(item)));
+  if (edit.kind === 'remove') return next.filter((token) => !items.has(token as number));
+  const moving = new Set([...items].filter((item) => !winnerMoved.has(item)));
+  if (moving.size === 0) return next;
+  const rest = next.filter((token) => !moving.has(token as number));
   rest.splice(anchor(rest, edit.to, end, winnerMoved), 0, ...moving);
   return rest;
 }
@@ -114,8 +123,6 @@ function applyIntent(
 const same = (x: Token, y: Token) =>
   x === y ||
   (typeof x === 'object' && typeof y === 'object' && x.owner === y.owner && x.offset === y.offset);
-
-const indexOf = (list: Token[], token: Token) => list.findIndex((item) => same(item, token));
 
 /**
  * The steps that turn `from` into `to`: removals, then, in `to`'s order, each
@@ -125,19 +132,22 @@ const indexOf = (list: Token[], token: Token) => list.findIndex((item) => same(i
  */
 function diff(from: Token[], to: Token[], offset: number, movable: Set<number>): AxisStep[] {
   const steps: AxisStep[] = [];
-  let list = [...from];
-  for (let i = list.length - 1; i >= 0; i--) {
-    if (indexOf(to, list[i]) >= 0) continue;
+  const kept = positions(to);
+  const isKept = (token: Token) => kept.has(keyOf(token));
+  for (let i = from.length - 1; i >= 0; i--) {
+    if (isKept(from[i])) continue;
     let start = i;
-    while (start > 0 && indexOf(to, list[start - 1]) < 0) start--;
+    while (start > 0 && !isKept(from[start - 1])) start--;
     steps.push({ kind: 'remove', at: start + offset, count: i - start + 1 });
-    list.splice(start, i - start + 1);
     i = start;
   }
-  const isNew = (token: Token) => indexOf(list, token) < 0;
+  let list = from.filter(isKept);
+  // Rebuilt after each step: there are few steps, but many items.
+  let where = positions(list);
+  const isNew = (token: Token) => !where.has(keyOf(token));
   const isMovable = (token: Token) => typeof token === 'number' && movable.has(token);
   for (let i = 0; i < to.length; i++) {
-    const at = i === 0 ? 0 : indexOf(list, to[i - 1]) + 1;
+    const at = i === 0 ? 0 : where.get(keyOf(to[i - 1]))! + 1;
     const token = to[i];
     if (typeof token === 'object' && isNew(token)) {
       let count = 1;
@@ -145,12 +155,13 @@ function diff(from: Token[], to: Token[], offset: number, movable: Set<number>):
         count++;
       }
       list.splice(at, 0, ...to.slice(i, i + count));
+      where = positions(list);
       steps.push({ kind: 'insert', at: at + offset, count, offset: token.offset });
       i += count - 1;
       continue;
     }
     if (!isMovable(token) || same(list[at], token)) continue;
-    const from = indexOf(list, token);
+    const from = where.get(keyOf(token))!;
     let count = 1;
     while (
       i + count < to.length &&
@@ -162,6 +173,7 @@ function diff(from: Token[], to: Token[], offset: number, movable: Set<number>):
     const items = list.slice(from, from + count) as number[];
     steps.push({ kind: 'move', from: from + offset, count, to: at + offset, items });
     list = apply({ kind: 'move', from, count, to: at }, list, 'self', 0);
+    where = positions(list);
     i += count - 1;
   }
   return steps;

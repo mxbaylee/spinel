@@ -14,13 +14,14 @@
  * limitations under the License.
  *
  * Modified for Spinel: repair paragraph REPLACE composition, keep custom ranges
- * canonical after every update, and stop adding a custom range from emitting a
- * negative retain, in open-source @univerjs/core 1.1.0. No @univerjs-pro
+ * canonical after every update, stop adding a custom range from emitting a
+ * negative retain, and let a REPLACE style's falsy keys win over a concurrent
+ * COVER style, in open-source @univerjs/core 1.1.0. No @univerjs-pro
  * package is read or modified.
  * Temporary: SPN-099 removes this once upstream ships the fixes. The custom
  * range fixes are https://github.com/dream-num/univer/pull/7938; if upstream
  * takes another direction, follow it rather than keep this patch.
- * Source: packages/core/src/docs/data-model/text-x/{utils,action-iterator}.ts,
+ * Source: packages/core/src/docs/data-model/text-x/{utils,action-iterator,transform-utils}.ts,
  * packages/core/src/docs/data-model/text-x/apply-utils/{common,update-apply}.ts and
  * packages/core/src/docs/data-model/text-x/build-utils/text-x-utils.ts, tag v1.1.0.
  */
@@ -105,6 +106,18 @@ export function patchCore(source: string, format: keyof typeof formats): string 
 \t\tbody.customRanges = mergeContinuousRanges(body.customRanges);
 \t\treturn [];
 \t}`,
+        ],
+      ],
+    },
+    {
+      from: 'function transformTextRuns(',
+      to: 'function transformCustomRanges(',
+      replacements: [
+        [
+          'for (const key of keys) if (originStyle[key]) delete newTs[key];',
+          `// Modified for Spinel: a winning REPLACE style's falsy keys, such as
+					// \`bl: 0\`, also win over the losing COVER's, as its truthy ones do.
+					for (const key of keys) if (originStyle[key] !== void 0) delete newTs[key];`,
         ],
       ],
     },

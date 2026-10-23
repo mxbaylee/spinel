@@ -30,6 +30,11 @@ const styles = [
   (next: () => number) => ({ cl: { rgb: pick(next, ['#ff0000', '#00ff00', '#0000ff']) } }),
   (next: () => number) => ({ n: { pattern: pick(next, patterns) } }),
   (next: () => number) => ({ bl: 1, cl: { rgb: pick(next, ['#111111', '#222222']) } }),
+  // Univer merges a border one edge at a time, and a null edge clears one.
+  (next: () => number) => ({
+    bd: { [pick(next, ['t', 'b'])]: pick(next, [{ s: 1, cl: { rgb: '#000000' } }, null]) },
+  }),
+  () => ({ bd: null }),
 ];
 /**
  * Off for all of a command edit: Univer's inserts copy a neighbour's style

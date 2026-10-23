@@ -1,3 +1,4 @@
+import { BORDER_KEYS, isFormulaId } from '@univerjs/core';
 import type { IRange } from '@univerjs/core';
 import { mapIndex } from './axis.ts';
 import type { AxisEdit } from './axis.ts';
@@ -35,8 +36,9 @@ interface Write extends Cell {
 
 /**
  * A part of a write that conflicts on its own. `path` is '' for the whole
- * cell, a top-level key such as `v` or `f`, `s` for the whole style, or
- * `s.<key>` for one style key, which Univer merges into the existing style.
+ * cell, a top-level key such as `v` or `f`, `s` for the whole style,
+ * `s.<key>` for one style key, which Univer merges into the existing style,
+ * or `s.bd.<edge>` for one border edge, which it merges into the border.
  */
 interface Piece {
   path: string;
@@ -138,9 +140,16 @@ const sentBy = (mutation: Mutation) =>
 
 /**
  * SetRangeValues merges each key it names into the cell, and each key of an
- * inline style into the cell's style; a null cell deletes it. isOverrideStyle
- * replaces the whole style. Numfmt mutations write style key `n`, valued as
+ * inline style into the cell's style, and each edge of a border into the
+ * border (mergeBorderData); a null cell deletes it, a null border every edge.
+ * isOverrideStyle replaces the whole style. A formula cleared (`f` null or
+ * '') with no formula id in `si` deletes `ft` and `fd` too (mergeCellData),
+ * so it writes them as null. Numfmt mutations write style key `n`, valued as
  * SetRangeValues would write it.
+ *
+ * Decision (owner, chat 2026-10-23): a border conflicts edge by edge, as
+ * Univer merges it. Not taken: the border as one key, which diverged, and
+ * refusing two border writes to one cell, which refuses edits that merge.
  */
 function piecesOf(mutation: Mutation, write: Write): Piece[] {
   if (mutation.id === cellIds.setNumfmt) {
@@ -148,8 +157,10 @@ function piecesOf(mutation: Mutation, write: Write): Piece[] {
   }
   if (mutation.id === cellIds.removeNumfmt) return [{ path: 's.n', value: null }];
   if (write.value === null) return [{ path: '', value: null }];
+  const cell = write.value as CellData;
+  const cleared = (cell.f === null || cell.f === '') && !isFormulaId(cell.si);
   // A key set to undefined is absent, as JSON leaves it. An empty write still retypes the value.
-  const entries = Object.entries(write.value as CellData).filter(
+  const entries = Object.entries(cleared ? { ...cell, ft: null, fd: null } : cell).filter(
     ([, value]) => value !== undefined,
   );
   if (entries.length === 0) return [{ path: 't', value: undefined }];
@@ -157,7 +168,14 @@ function piecesOf(mutation: Mutation, write: Write): Piece[] {
     if (key !== 's' || value === null || mutation.params.isOverrideStyle) {
       return [{ path: key, value }];
     }
-    return Object.entries(value).map(([styleKey, v]) => ({ path: `s.${styleKey}`, value: v }));
+    return Object.entries(value).flatMap(([styleKey, v]): Piece[] =>
+      styleKey === 'bd' && v
+        ? BORDER_KEYS.filter((edge) => (v as CellData)[edge] !== undefined).map((edge) => ({
+            path: `s.bd.${edge}`,
+            value: (v as CellData)[edge],
+          }))
+        : [{ path: `s.${styleKey}`, value: v }],
+    );
   });
 }
 
@@ -170,8 +188,11 @@ function assemble(pieces: Piece[], base: CellData | null = {}): CellData | null 
       continue;
     }
     cell ??= {};
-    const [key, styleKey] = path.split('.');
-    if (styleKey !== undefined) (cell.s ??= {})[styleKey] = value;
+    const [key, styleKey, edge] = path.split('.');
+    if (edge !== undefined) {
+      const s = (cell.s ??= {});
+      s.bd = { ...s.bd, [edge]: value };
+    } else if (styleKey !== undefined) (cell.s ??= {})[styleKey] = value;
     else cell[key] = key === 's' && value ? { ...value } : value;
   }
   return cell;
@@ -221,7 +242,7 @@ const isTextFormat = ({ path, value }: Piece) =>
   ((path === 's.n' && value) || (path === 's' && (value as CellData)?.n))?.pattern === '@';
 /** The keys that make a cell's value, which a retype writes again. */
 const valuePaths = new Set(['v', 'f', 'si']);
-const contentPaths = new Set([...valuePaths, 't', 'p']);
+const contentPaths = new Set([...valuePaths, 't', 'p', 'ft', 'fd']);
 /** Whether pieces write content only, which nothing else derives from. */
 const isContent = (pieces: Piece[]) =>
   pieces.every((piece) => contentPaths.has(piece.path) && !isFormat(piece));
@@ -459,6 +480,26 @@ function retype(a: Mutation, b: Mutation, side: Side, landed: Mutation[]): Mutat
   ];
 }
 
+/**
+ * Whether the winner's `winning` write lands the same after a write it covers
+ * as without it: it forces its type (`t`), which Univer takes as it is
+ * (getCellType), and sets the value, rich text and no formula (`f` or `si`),
+ * so a covered write leaves nothing it reads, not even the `t`, `p`, `ft` or
+ * `fd` Univer derives. A loser it covers can go.
+ *
+ * Decision (agent, chat 2026-10-23): drop such a loser. Replaying both after
+ * the winner's doubled each editor commit under '@' past a stale clear, so
+ * nine reached the growth cap. Not taken: dropping only a loser equal to the
+ * winner, which still multiplied commits that took turns, and dropping any
+ * covered loser: unforced, the type reads what it left, so `v: '1'` with
+ * number format '0', over forced text under '@', lands text once and a number
+ * twice.
+ */
+function settles(winning: Piece[]): boolean {
+  const cell = assemble(winning);
+  return !!cell?.t && cell.v != null && cell.p !== undefined && !cell.f && !cell.si;
+}
+
 type Plan = { layer: 'drop' } | { layer: 'alone' | 'merged' | 'whole' | 'replay'; write: Write };
 
 /**
@@ -470,13 +511,16 @@ type Plan = { layer: 'drop' } | { layer: 'alone' | 'merged' | 'whole' | 'replay'
  * number format derives nothing, so it stays apart unless a whole style takes
  * it in: as a style key it would restyle rich text. Where no one write can do
  * what the two did in order, the loser lands and the winner's write is
- * replayed after it: past a losing whole cell or whole style; a winning style
- * past losing rich text, which Univer restyles in a cell but not written with
- * or after the style; a style with a value, under which Univer drops rich
- * text; a winning forced type; and where the winner overwrites a losing style
- * with an effect it leaves (rich text a style restyled, which a number format
- * or an override leaves; a text format, which types the next value as text,
- * losing what it was; a type forced with a value, which sticks to the next).
+ * replayed after it: past a losing whole cell, whole style, or whole border
+ * where the winner writes an edge; a winning style past losing rich text,
+ * which Univer restyles in a cell but not written with or after the style; a
+ * style with a value, under which Univer drops rich text; a winning forced
+ * type; and where the winner overwrites a losing style with an effect it
+ * leaves (rich text a style restyled, which a number format or an override
+ * leaves; a text format, which types the next value as text, losing what it
+ * was; a type forced with a value, which sticks to the next). A loser the
+ * winner covers goes where no replay applies, and where the winner `settles`
+ * the cell whether one does or not.
  *
  * Decision (owner, chat 2026-10-22): plan the merged write per cell. Not taken:
  * always landing the loser whole and replaying the winner's writes to shared
@@ -500,6 +544,7 @@ function plan(
   const restyled = isValues(a) && !a.params.isOverrideStyle && leaves && covered(isStyle);
   const typed =
     isValues(b) && ((write.value?.v != null && covered(isForced)) || covered(isTextFormat));
+  if (!kept && settles(winning)) return { layer: 'drop' };
   if (restyled || typed) return { layer: 'replay', write };
   if (!kept) return { layer: 'drop' };
   const ours = piecesOf(a, kept);
@@ -507,9 +552,14 @@ function plan(
     isValues(b) && ours.some(({ path, value }) => path === 'p' && value) && winning.some(isStyle);
   if (restylesOurs) return { layer: 'replay', write: kept };
   if (isContent(ours)) return { layer: 'alone', write: kept };
+  // A whole border merged with the winner's edges would drop its clear of the rest.
+  const edges = winning.some(({ path }) => path.startsWith('s.bd.'));
   const apart =
     winning.some(isForced) ||
-    ours.some(({ path }) => path === '' || (path === 's' && !a.params.isOverrideStyle));
+    ours.some(
+      ({ path }) =>
+        path === '' || (path === 's.bd' && edges) || (path === 's' && !a.params.isOverrideStyle),
+    );
   if (apart) return { layer: 'replay', write: kept };
   const pieces = [...ours, ...winning];
   const whole = pieces.some(({ path }) => path === 's');

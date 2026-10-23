@@ -67,7 +67,7 @@ test('an edit made obsolete by the peer vanishes', () => {
   expect(transform(remove(0, 6), remove(0, 6), 'right')).toEqual([]);
 });
 
-const style = (at: number, len: number, ts: Record<string, number>) =>
+const style = (at: number, len: number, ts: Record<string, number>, coverType = 0) =>
   edit(
     JSONX.getInstance().editOp([
       ...retain(at),
@@ -75,7 +75,7 @@ const style = (at: number, len: number, ts: Record<string, number>) =>
         t: TextXActionType.RETAIN,
         len,
         body: { dataStream: '', textRuns: [{ st: 0, ed: len, ts }] },
-        coverType: 0,
+        coverType,
       },
     ]),
   );
@@ -92,6 +92,25 @@ test('a style edit after one the peer overrode keeps its styles', () => {
   // where the second edit's bold then went missing on one side only.
   const { doc } = merge([...italic(21, 2), ...bold(22, 2)], italic(22, 4));
   expect(doc.body.textRuns).toContainEqual({ st: 22, ed: 24, ts: { bl: 1, it: 1 } });
+});
+
+// The format painter replaces a run's style (coverType 1, REPLACE), with its
+// unset keys as 0.
+test('a replaced style with falsy keys converges with a concurrent style over it', () => {
+  const painted = style(6, 4, { bl: 0, it: 0 }, 1);
+  const bolded = bold(8, 5);
+  // Accepted first, the painter's `bl: 0` stands over 8–10.
+  expect(merge(painted, bolded).doc.body.textRuns).toContainEqual({
+    st: 6,
+    ed: 10,
+    ts: { bl: 0, it: 0 },
+  });
+  // Accepted first, the bold's `bl: 1` stands there, beside the painter's `it: 0`.
+  expect(merge(bolded, painted).doc.body.textRuns).toContainEqual({
+    st: 8,
+    ed: 10,
+    ts: { bl: 1, it: 0 },
+  });
 });
 
 // As BuildTextUtils.customRange.add builds a link, and DeleteDocHyperLinkCommand
@@ -281,6 +300,8 @@ test('a drawing inserted beside a concurrent delete keeps its anchor and data', 
   expect(doc.drawingsOrder).toHaveLength(1);
 });
 
+// Bounded by its seeds, not by time, so the clock is off (a timeout of 0), as
+// in cells.test.ts: it took 6.9 s on CI (2026-10-23).
 test('docs converge across two clients', () => {
   convergesOver(docEdit, { seeds: 30, document });
-});
+}, 0);

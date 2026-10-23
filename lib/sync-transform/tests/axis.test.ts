@@ -67,6 +67,21 @@ test('a concurrent edit keeps its own rows: a move survives an insert above it',
   expect(steps).toEqual([{ kind: 'move', from: 5, count: 1, to: 0, items: [3] }]);
 });
 
+// The window between two far-apart edits holds every line between them.
+test('inserts far apart transform in linear time', () => {
+  const first = { kind: 'insert', at: 0, count: 1 } as const;
+  const far = { kind: 'insert', at: 100_000, count: 1 } as const;
+  for (const side of sides) {
+    expect(transformAxis(first, far, side)).toEqual([
+      { kind: 'insert', at: 0, count: 1, offset: 0 },
+    ]);
+    expect(transformAxis(far, first, side)).toEqual([
+      { kind: 'insert', at: 100_001, count: 1, offset: 0 },
+    ]);
+  }
+  // Timed, as only a clock sees the work: a quadratic window takes about a minute, not 5 s.
+}, 5000);
+
 describe.each(
   (['row', 'column'] as const).flatMap((axis) => sides.map((side) => [axis, side] as const)),
 )('%ss, %s wins', (axis, side) => {

@@ -88,16 +88,22 @@ function deleteRange(doc: DocumentDataModel, body: IDocumentBody, start: number,
   );
 }
 
-/** As UpdateTextCommand: retain a range with a style merged in. */
+/**
+ * As UpdateTextCommand: retain a range with a style merged in, or replacing
+ * its style, as the format painter does, with the keys it unsets as 0.
+ */
 function styleRange(start: number, end: number, next: () => number): unknown {
-  const ts = pick(next, [{ bl: 1 }, { it: 1 }, { fs: 14 }, { cl: { rgb: '#cc0000' } }]);
+  const replace = next() % 5 === 0;
+  const ts = replace
+    ? { bl: 0, it: 0 }
+    : pick(next, [{ bl: 1 }, { it: 1 }, { fs: 14 }, { cl: { rgb: '#cc0000' } }]);
   const textX = new TextX();
   if (start > 0) textX.push({ t: TextXActionType.RETAIN, len: start });
   textX.push({
     t: TextXActionType.RETAIN,
     len: end - start,
     body: { dataStream: '', textRuns: [{ st: 0, ed: end - start, ts }] },
-    coverType: 0,
+    coverType: replace ? 1 : 0,
   });
   return JSONX.getInstance().editOp(textX.serialize());
 }

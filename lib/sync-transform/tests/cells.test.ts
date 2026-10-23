@@ -214,6 +214,170 @@ describe('concurrent cell writes', () => {
     expect(merged(commit, value, 'right', stuck)[0][0]).toMatchObject({ v: '1', t: 1 });
     expect(merged(commit, value, 'left', stuck)[0][0]).toMatchObject({ v: '=1+2', t: 1 });
   });
+
+  test('a clear past a run of commits that force their type does not double', () => {
+    // Enter pressed again and again in a cell under `@`, against a stale Clear All of it.
+    const text = { s: { n: { pattern: '@' } }, t: 1, f: null };
+    const commit = cell(1, 0, { ...text, v: 'x', p: null });
+    const rich = cell(1, 0, { ...text, v: 'hi', p: richDoc('hi') });
+    for (const n of [1, 2, 3, 9]) {
+      const same = Array.from({ length: n }, () => commit);
+      const turns = Array.from({ length: n }, (_, i) => (i % 2 ? rich : commit));
+      // The clear, then the last commit replayed after it.
+      expect(transform([cell(1, 0, null)], same, 'right')).toEqual([cell(1, 0, null), commit]);
+      expect(transform([cell(1, 0, null)], turns, 'right')).toEqual([
+        cell(1, 0, null),
+        turns.at(-1),
+      ]);
+      for (const side of ['left', 'right'] as const) {
+        expect(merged(cell(1, 0, null), same, side)[1]?.[0]).toEqual(
+          side === 'right' ? { v: 'x', t: 1, s: { n: { pattern: '@' } } } : undefined,
+        );
+        merged(cell(1, 0, null), turns, side);
+      }
+    }
+  });
+
+  test('a commit that forces its type drops a format or style it covers', () => {
+    const text = { n: { pattern: '@' } };
+    const commit = (s: object, extra = {}) =>
+      set({ 1: { 0: { s, t: 1, f: null, v: 'x', p: null } } }, extra);
+    for (const [loser, winner] of [
+      [setNumfmt('@', [range(1, 0)]), commit(text)],
+      [cell(1, 0, { s: { bl: 0 } }), commit({ ...text, bl: 1 })],
+      [cell(1, 0, { s: { bl: 1 } }), commit(text, { isOverrideStyle: true })],
+    ]) {
+      expect(transform([loser], [winner], 'right')).toEqual([]);
+      expect(merged(winner, loser)[1][0]).toEqual(cellAt([winner], 1, 0));
+      expect(merged(loser, winner, 'right')[1][0]).toEqual(cellAt([winner], 1, 0));
+    }
+  });
+
+  test('a winner with a formula id keeps a loser that clears the formula', () => {
+    // The loser deletes `ft` and `fd`; a write with `si` keeps them (mergeCellData).
+    const setup = [cell(0, 0, { f: '=1', v: 1, ft: 1, fd: 1 })];
+    const winner = cell(0, 0, { f: null, si: 'id', v: 3, t: 2, p: null });
+    for (const loser of [cell(0, 0, { v: 2, f: null }), cell(0, 0, { v: 2, f: null, t: 2 })]) {
+      expect(merged(winner, loser, 'left', setup)[0][0]).toEqual({ v: 3, t: 2, si: 'id' });
+      expect(merged(loser, winner, 'right', setup)[0][0]).toEqual({ v: 3, t: 2, si: 'id' });
+    }
+    // A loser it covers that clears no formula goes.
+    expect(transform([cell(0, 0, { v: 2 })], [winner], 'right')).toEqual([]);
+  });
+
+  test('a winner that writes a formula keeps a loser that clears the formula', () => {
+    // The loser deletes `ft` and `fd`; a write of `f` keeps them (mergeCellData).
+    const setup = [cell(0, 0, { f: '=1', v: 1, ft: 1, fd: 1 })];
+    const clear = { v: null, p: null, f: null, si: null, custom: null };
+    const paste = { p: null, s: { bl: 1 }, v: 2, t: null, f: '=2', si: null, ref: null, xf: null };
+    for (const [loser, winner] of [
+      [cell(0, 0, clear), cell(0, 0, { ...clear, f: '=2' })],
+      [cell(0, 0, clear), cell(0, 0, paste)],
+      [cell(0, 0, { v: 5, f: null }), cell(0, 0, { f: '=2' })],
+    ]) {
+      const inTurn = cellAt([...setup, loser, winner], 0, 0);
+      expect(inTurn).not.toHaveProperty('ft');
+      expect(merged(winner, loser, 'left', setup)[0][0]).toEqual(inTurn);
+      expect(merged(loser, winner, 'right', setup)[0][0]).toEqual(inTurn);
+    }
+  });
+});
+
+// Univer merges a border into the cell's one edge at a time (mergeBorderData).
+describe('borders', () => {
+  const edge = (rgb: string) => ({ s: 1, cl: { rgb } });
+  const border = (bd: unknown) => cell(0, 0, { s: { bd } });
+  const top = border({ t: edge('#000000') });
+  const bottom = border({ b: edge('#000000') });
+
+  test('concurrent edges of one cell both land', () => {
+    for (const side of ['left', 'right'] as const) {
+      expect(Object.keys(merged(top, bottom, side)[0][0].s.bd).sort()).toEqual(['b', 't']);
+    }
+  });
+
+  test('the winner takes an edge both write', () => {
+    const red = border({ t: edge('#ff0000') });
+    expect(merged(top, red, 'left')[0][0].s.bd).toEqual({ t: edge('#000000') });
+    expect(merged(top, red, 'right')[0][0].s.bd).toEqual({ t: edge('#ff0000') });
+  });
+
+  test('a border cleared whole beats an edge it wins, and keeps one it loses to', () => {
+    const setup = [border({ l: edge('#000000') })];
+    expect(merged(border(null), top, 'left', setup)[0][0].s).toBeUndefined();
+    expect(merged(border(null), top, 'right', setup)[0][0].s.bd).toEqual({ t: edge('#000000') });
+  });
+
+  test('a border cleared whole merges into one write with a winning style of no edge', () => {
+    const bold = cell(0, 0, { s: { bl: 1 } });
+    expect(transform([border(null)], [bold], 'right')).toHaveLength(1);
+    for (const side of ['left', 'right'] as const) {
+      expect(merged(border(null), bold, side, [top])[0][0].s).toEqual({ bl: 1 });
+    }
+  });
+
+  const [red, black] = ['#ff0000', '#000000'];
+  // The border menu's SetBorderCommand: every edge of B2, and a null edge on
+  // each neighbour that shares one.
+  const all: [string, object] = [
+    'sheet.command.set-border-basic',
+    { subUnitId, ranges: [range(1, 1)], value: { type: 'all', color: red, style: 1 } },
+  ];
+  const replica = () => new Replica({ workbook: seededWorkbook() });
+  const bordered = capture(replica(), all[0], { unitId, ...all[1] })!;
+  const undone = capture(replica(), 'univer.command.undo', { unitId }, [all])!;
+  // Black edges on B2 and on the edges B1 and A2 share with it.
+  const shared = set({
+    0: { 1: { s: { bd: { b: edge(black) } } } },
+    1: { 0: { s: { bd: { r: edge(black) } } }, 1: { s: { bd: { t: edge(black) } } } },
+  });
+  /** The colour of each edge of B2, B1 and A2. */
+  const colours = (data: any) =>
+    [data[1][1], data[0][1], data[1][0]].map(({ s }) =>
+      Object.fromEntries(
+        Object.entries(s?.bd ?? {}).map(([key, v]: [string, any]) => [key, v.cl.rgb]),
+      ),
+    );
+
+  test.each<[string, Mutation[], Mutation[], object[], object[]]>([
+    [
+      'SetBorderCommand',
+      bordered,
+      [],
+      [{ t: red, r: red, b: red, l: red }, {}, {}],
+      [{ t: black, r: red, b: red, l: red }, { b: black }, { r: black }],
+    ],
+    ['its undo', undone, bordered, [{}, {}, {}], [{ t: black }, { b: black }, { r: black }]],
+  ])('%s and concurrent edges on cells it writes', (_, command, setup, won, lost) => {
+    expect(colours(merged(command, shared, 'left', setup))).toEqual(won);
+    expect(colours(merged(command, shared, 'right', setup))).toEqual(lost);
+  });
+
+  const override = set(
+    { 0: { 0: { s: { bd: { b: edge(red) }, bl: 1 } } } },
+    { isOverrideStyle: true },
+  );
+  const blackTop = { bd: { t: edge(black) } };
+  test.each<[string, Mutation, Mutation[], string, unknown, unknown]>([
+    ['a null edge', border({ t: null }), [border({ t: edge(red) })], 's1:0:0', undefined, blackTop],
+    [
+      'an overriding style with a border',
+      override,
+      [border({ l: edge(black) })],
+      's1:0:0',
+      { bl: 1, bd: { b: edge(red) } },
+      { bl: 1, bd: { t: edge(black), b: edge(red) } },
+    ],
+    ['a value', cell(0, 0, { v: 'x' }), [], 'x', blackTop, blackTop],
+  ])('%s against an edge, winning and losing', (_, write, setup, v, won, lost) => {
+    for (const [side, s] of [
+      ['left', won],
+      ['right', lost],
+    ] as const) {
+      const data = merged(write, top, side, setup)[0][0];
+      expect([data.v, data.s]).toEqual([v, s]);
+    }
+  });
 });
 
 describe('rich text and styles', () => {
@@ -971,6 +1135,7 @@ test(
       [commandEdit, 300, 40],
       [commandEdit, 20, 300],
     ] as const) {
+      // 5× holds for this generator's stream only; the hard bound is the 50× 'growth' cap.
       convergesOver(generate, { seeds, mutations, document, budget: 5, intent: true });
     }
   },
@@ -1113,6 +1278,23 @@ test(
   },
   unclocked,
 );
+
+// Once dense seed 80 of the 300-edit run, with a separate `bd: { t: null }`
+// style in `cellEdit`, shrunk: a style, an overriding style with a value and
+// its retype, past stale clears of the style. Each clear about triples the
+// output (the README's growth limit), past the dense tests' 5× budget, and a
+// fourth reaches the growth cap. Not fixed; it converges.
+test('writes past clears of a style grow, and converge', () => {
+  const a = [
+    cell(2, 2, { s: { it: 1 } }),
+    set({ 2: { 2: { s: { bd: { t: null }, it: 1 }, v: 0 } } }, { isOverrideStyle: true }),
+    set({ 2: { 2: { f: null, si: null, v: 0 } } }, { derived: true }),
+  ];
+  const b = [cell(2, 2, { s: null }), cell(2, 2, { s: null })];
+  expect(transform(a, b, 'left')).toHaveLength(26);
+  expect(transform(b, a, 'right')).toHaveLength(14);
+  merged(a, b);
+});
 
 // Once fuzz seed 863 of the dense 40-edit run, shrunk, with no move, and b's
 // writes given values so that none races a's format: a losing write to a cell
