@@ -79,9 +79,9 @@ export const OnceOnlyInvite: Story = { args: { section: 'invites' }, parameters:
   await userEvent.click(within(dialog).getByRole('button', { name: 'Create invite' }));
   await expect(await canvas.findByRole('textbox', { name: 'New invite link' })).toHaveValue('https://spinel.example/invite#once-only-story-link');
   const nav = within(canvas.getByRole('navigation', { name: 'Administration sections' }));
-  await userEvent.click(nav.getByRole('link', { name: 'People', exact: true }));
-  await expect(await canvas.findByRole('heading', { name: 'People', exact: true })).toBeVisible();
-  await userEvent.click(nav.getByRole('link', { name: 'Invites', exact: true }));
+  await userEvent.click(nav.getByRole('link', { name: 'People' }));
+  await expect(await canvas.findByRole('heading', { name: 'People' })).toBeVisible();
+  await userEvent.click(nav.getByRole('link', { name: 'Invites' }));
   await expect(await canvas.findByRole('list', { name: 'Invites' })).toBeVisible();
   await expect(canvas.queryByRole('textbox', { name: 'New invite link' })).toBeNull();
 } };
