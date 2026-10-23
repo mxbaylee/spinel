@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { AuthEntry } from './AuthEntry.tsx';
 
 const meta = {
@@ -110,11 +110,12 @@ export const HelpKeyboardReturn: Story = {
   play: async ({ canvasElement }) => {
     const help = within(canvasElement).getByRole('button', { name: 'Need help?' });
     await userEvent.click(help);
-    await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
       name: 'Access to this workspace',
     });
     await userEvent.keyboard('{Escape}');
-    await expect(help).toHaveFocus();
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() => expect(help).toHaveFocus());
   },
 };
 export const InviteThenCancel: Story = {
