@@ -11,7 +11,7 @@ fresh-host run on 2026-10-17 verified private HTTPS/SSH, locked-boot recovery,
 account and document persistence, editor reconnection and measured memory use.
 After removing a leftover inbound SSH rule, all 65,535 public IPv4 TCP ports were
 filtered in an external scan. UDP 443/41641 did not answer probes; the ambiguity
-of that result is recorded below. The owner waived external IPv6 scanning in #17;
+of that result is recorded below. The owner waived external IPv6 scanning in [#17](implementation/SPN-029.md#legacy-decision-17-retired-private-host-acceptance-evidence);
 IPv6 firewall closure was configured for that run. No external IPv6 scan pass is claimed.
 
 ## Test host retired, 2026-10-17
@@ -147,7 +147,7 @@ From a machine outside the tailnet, scan the public IPv4 address:
 as applicable; no public service should answer. Record date, vantage point,
 commands and results. A local scan or firewall screenshot is insufficient.
 The owner explicitly removed external IPv6 scanning from SPN-029 acceptance on
-2026-10-17 ([decision #17](https://github.com/mxbaylee/spinel/issues/17)): the
+2026-10-17 ([decision #17](implementation/SPN-029.md#legacy-decision-17-retired-private-host-acceptance-evidence)): the
 current Mac connection has no global IPv6 address or route and no alternate
 vantage point is available. IPv6 firewall closure remains required; an unperformed
 scan is not a passing result. No replacement IPv6-check ticket is required.
@@ -167,7 +167,7 @@ measured target-host results, including total OS/Tailscale overhead.
 ## Acceptance record
 
 The required fresh-host evidence is recorded below and in
-[owner check #17](https://github.com/mxbaylee/spinel/issues/17). The original
+[owner check #17](implementation/SPN-029.md#legacy-decision-17-retired-private-host-acceptance-evidence). The original
 external scan requirement was revised by the owner to exclude IPv6. Private Mac
 HTTPS/SSH, reboot/unlock recovery, two-editor memory and editor recovery passed.
 The independent reviewer accepted the combined version-update and later
@@ -177,8 +177,8 @@ renewal and simultaneous Proton/Tailscale use are not additional SPN-029 criteri
 Local preparation on 2026-10-17 passed Docker build, Caddy configuration validation,
 container access checks and SQLite persistence across container restart. An idle
 app-only Docker Desktop sample was 148.3 MiB; this does not establish memory use
-on the target. [Decision #16](https://github.com/mxbaylee/spinel/issues/16) records
-the proposed startup gate. [Owner check #17](https://github.com/mxbaylee/spinel/issues/17)
+on the target. [Decision #16](implementation/SPN-029.md#legacy-decision-16-private-deployment-startup-guard) records
+the proposed startup gate. [Owner check #17](implementation/SPN-029.md#legacy-decision-17-retired-private-host-acceptance-evidence)
 records the owner input and live evidence.
 
 ### Initial target-host run, 2026-10-17
@@ -297,7 +297,7 @@ without local elevated privileges. Neither is recorded as a pass.
 
 The owner then requested: "Let's just skip ipv6 check for now and remove it from
 the todo." This explicitly revises the earlier dual-stack scan requirement in
-this guide and #17. The Operator can proceed without another IPv6-capable machine;
+this guide and [#17](implementation/SPN-029.md#legacy-decision-17-retired-private-host-acceptance-evidence). The Operator can proceed without another IPv6-capable machine;
 the Owner and Collaborator keep the same private deployment and data protection;
 the Link guest's access boundaries are unchanged. The tradeoff is absent external
 IPv6 verification, accepted by the owner. IPv6 configuration and firewall rules

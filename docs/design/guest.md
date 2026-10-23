@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — GuestViewer, GuestEditor, RevokedLink, OfflineLaunch, PlannedSpaceGuest.
 
@@ -34,7 +34,7 @@ use the fixed control's detail, preserving the mounted editor and pending-input
 warning. An authoritative 401/403/404 removes document content and its title,
 leaving only the generic link error. Guests make no account health/session probe
 and receive no account navigation or identity. See [connection behavior](../connection.md)
-and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
+and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation).
 
 ## Adopted pattern
 
@@ -47,7 +47,7 @@ and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
   It adds no owner/account identity to the content or PDF metadata. Revocation
   removes the action and shows the revoked-link state; no printer dialog.
   This is planned behavior, authorized by the owner in chat on 2026-10-20,
-  decision [#103](https://github.com/mxbaylee/spinel/issues/103).
+  decision [#103](../implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
 - No identity. Collaborators show as generic Guest/Collaborator labels with
   empty avatars and default colors (SPN-016). The connection slot (SPN-042)
   works as for everyone else.

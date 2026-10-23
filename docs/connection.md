@@ -3,8 +3,8 @@
 SPN-042 implements the network control approved in SPN-047, beside the gem in
 the account shell and the identity-free guest header. It is one connection
 indicator, separate from the editor's save confirmation. Owner direction,
-2026-10-19 and 2026-10-21; [design decision #126](https://github.com/mxbaylee/spinel/issues/126)
-and [runtime decision #132](https://github.com/mxbaylee/spinel/issues/132).
+2026-10-19 and 2026-10-21; [design decision #126](implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits)
+and [runtime decision #132](implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation).
 
 ## What each state proves
 
@@ -94,6 +94,6 @@ open connection as persistence evidence.
 
 These are verification contracts; the PR records the actual executed commands,
 results, resource limits, independent review and owner screenshot approval.
-The all-persona tradeoff and S-to-M effort reassessment are in decision #132.
+The all-persona tradeoff and S-to-M effort reassessment are in decision [#132](implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation).
 The [SPN-042 screenshot review index](design/review/spn-042/README.md) links the
 production browser artifacts and preserves their exact capture provenance.

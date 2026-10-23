@@ -23,12 +23,12 @@ cannot bypass account, image or live-connection checks.
   That is not a demonstrated SDK limit or a passing soak. The task-owned local
   server and soak were stopped after memory pressure. Retain the original
   more-than-a-day requirement; use a resource-safe uninterrupted window and do
-  not run it alongside other local test/build/browser workloads (decision #52).
+  not run it alongside other local test/build/browser workloads (decision [#52](../implementation/backlog-workflow.md#legacy-decision-52-memory-watchdog-ci-first-exception)).
 - SPN-013: retain low impact, high effort and optional status. No reproducible
   capacity rejection was found at the tested bounds. The queue needs positive
   evidence before implementation; do not infer unlimited capacity or retire it.
 - SPN-014: the live service/transport boundary exists for a possible replacement,
-  but replacement remains an owner choice in #42 and depends on SPN-010.
+  but replacement remains an owner choice in [#42](../implementation/SPN-014.md#legacy-decision-42-replacement-of-pro-collaboration) and depends on SPN-010.
 - SPN-016: no guest token route exists. Extend document-scoped authorization
   across HTTP, images, socket admission and final commits, including disabled
   links. Do not let guests list accounts, personal metadata or history merely
@@ -42,7 +42,7 @@ cannot bypass account, image or live-connection checks.
   Reuse the current access resolver for reads and personal mutations, including
   viewers, revoked shares and trash. Personal tags/pins do not grant document
   edit permission or reveal another person's organization. Retain current sizes.
-- SPN-025: raise effort M to L and expose decision #55. The public
+- SPN-025: raise effort M to L and expose decision [#55](../implementation/SPN-025.md#legacy-decision-55-atomic-native-restore-and-generation-replacement). The public
   RevertRevisionMutation probe restored a Sheet to an earlier collaboration
   revision by creating a newer revision, but it does not replace arbitrary native
   checkpoints. Native and collaboration revision numbers are separate. The
@@ -68,7 +68,7 @@ cannot bypass account, image or live-connection checks.
 - SPN-033: no live embedding exists. Source authorization must hold in rendered,
   cached and exported payloads, not only the insert dialog. Slides remains out
   of scope until SPN-009.
-- SPN-034: optional MCP still awaits owner decision #41; no built-in AI feature
+- SPN-034: optional MCP still awaits owner decision [#41](../implementation/SPN-034.md#legacy-decision-41-initial-mcp-deferral); no built-in AI feature
   is authorized. Existing passkey sessions are not scoped assistant tokens.
 - SPN-035: retain post-production conversion and SPN-031 dependency. Native
   snapshots and existing backup archives do not establish Office fidelity.
@@ -78,15 +78,15 @@ cannot bypass account, image or live-connection checks.
   wiring saved profile fields into existing presence belongs here, while rebuilding
   collaboration transport does not. The current transport supplies names and empty
   avatars, and the view still derives six colors from user IDs.
-- SPN-038: no public host is deployed. Retain owner timing decision #40, guided
+- SPN-038: no public host is deployed. Retain owner timing decision [#40](../implementation/SPN-038.md#legacy-decision-40-public-launch-timing), guided
   fresh A/AAAA setup, new-origin enrollment, public security/TLS checks and
   rollback. Historical private-host verification and its IPv6 waiver do not
   establish public dual-stack behavior or authorize new resources.
 
-Decision #60 records the persona tradeoffs. Existing resolved choices
-remain in maintained docs: #30 trash, #34/#36 Spaces recovery, #37/#43–#49
-collaboration, #39/#51 history capture, #52 resource-safe verification, #56 named
-versions and #58 administration. Decisions #40, #41, #42 and #55 remain open.
+Decision [#60](../implementation/grooming-2026-10-18.md#legacy-decision-60-recovery-and-organization-grooming) records the persona tradeoffs. Existing resolved choices
+remain in maintained docs: [#30](../implementation/SPN-021.md#legacy-decision-30-trash-batches-and-exact-set-deletion) trash, [#34](../implementation/SPN-030.md#legacy-decision-34-backup-destination-and-temporary-drill)/[#36](../implementation/SPN-030.md#legacy-decision-36-encrypted-nightly-recovery-bundle) Spaces recovery, [#37](../implementation/SPN-012.md#legacy-decision-37-one-database-for-collaboration-recovery)/[#43](../implementation/SPN-012.md#legacy-decision-43-authenticated-collaboration-boundary)–[#49](../implementation/SPN-017.md#legacy-decision-49-document-bound-websocket-admission)
+collaboration, [#39](../implementation/SPN-023.md#legacy-decision-39-history-retention-spacing)/[#51](../implementation/SPN-023.md#legacy-decision-51-materialized-native-history-checkpoints) history capture, [#52](../implementation/backlog-workflow.md#legacy-decision-52-memory-watchdog-ci-first-exception) resource-safe verification, [#56](../implementation/SPN-024.md#legacy-decision-56-names-bind-exact-saved-versions) named
+versions and [#58](../implementation/SPN-005.md#legacy-decision-58-credential-specific-revocation) administration. Decisions [#40](../implementation/SPN-038.md#legacy-decision-40-public-launch-timing), [#41](../implementation/SPN-034.md#legacy-decision-41-initial-mcp-deferral), [#42](../implementation/SPN-014.md#legacy-decision-42-replacement-of-pro-collaboration) and [#55](../implementation/SPN-025.md#legacy-decision-55-atomic-native-restore-and-generation-replacement) remain open.
 Other effort/impact/must-ship estimates remain appropriate; no new ticket is
 needed because the observed integration work belongs to existing acceptance
 criteria. Reset the seven-ticket counter and select again by generated points,

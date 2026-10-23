@@ -3,7 +3,7 @@
 Sheets and Docs use Univer collaboration in the application server with SQLite
 storage, authenticated access, presence and offline recovery. The integration
 uses public SDK interfaces behind a TypeScript boundary. The owner chose this
-approach on 2026-10-17 (decision #31), then on 2026-10-19 chose to replace it
+approach on 2026-10-17 (decision [#31](implementation/SPN-012.md#legacy-decision-31-collaboration-independent-of-the-soak)), then on 2026-10-19 chose to replace it
 with Spinel's own sync: SPN-056 (merging concurrent edits), SPN-057 (the sync
 server), SPN-058 (the client) and SPN-059 (moving every document over and
 removing Univer collaboration). That grooming retired the SPN-010 limits
@@ -21,7 +21,7 @@ tables; workspace ownership, grants, accounts and images retain their existing
 stores. This keeps the online backup from SPN-030 consistent across all data,
 without a second database archive or cross-database snapshot protocol. The
 constructor refuses a different database path. This choice is recorded in
-[decision #37](https://github.com/mxbaylee/spinel/issues/37): it simplifies
+[decision #37](implementation/SPN-012.md#legacy-decision-37-one-database-for-collaboration-recovery): it simplifies
 recovery for the Operator, preserves the Owner's documents, gives the Collaborator
 durable shared state and keeps Link guests behind the same access rules.
 
@@ -52,7 +52,7 @@ become a query-token authentication fallback.
 HTTP payloads are capped at 10 MiB and socket frames at 64 KiB. At most 64 live
 connections are tracked; connections without a room expire after 30 seconds.
 
-[Decision #49](https://github.com/mxbaylee/spinel/issues/49) records the scoped
+[Decision #49](implementation/SPN-017.md#legacy-decision-49-document-bound-websocket-admission) records the scoped
 connection and audit policy. Permission-denied edits emit a structured stderr
 `collaboration.edit_denied` event with a timestamp, stage and UUID-shaped account
 and document identifiers. Requests, mutation contents, names, cookie values,
@@ -84,7 +84,7 @@ acknowledges the queue only afterward. Startup and a minute timer retry pending
 purges; interruption leaves the record for retry. Raw protocol lifecycle calls
 cannot invoke this trusted path. Soft trash/restore retains the live state.
 These boundaries and the retryable purge were recorded in
-[decision #43](https://github.com/mxbaylee/spinel/issues/43).
+[decision #43](implementation/SPN-012.md#legacy-decision-43-authenticated-collaboration-boundary).
 
 ## Editor behavior
 
@@ -95,12 +95,12 @@ and a synchronized editor remains guarded until the public recovery-cache flush
 finishes. A newer edit or access change invalidates an older flush completion;
 pending recovery data is never cleared. Preparation warms the candidate validator
 before opening the editor without dropping validation of subsequent changes
-([decision #47](https://github.com/mxbaylee/spinel/issues/47)). Reconnect retries every second. A public session-service override returns
+([decision #47](implementation/SPN-012.md#legacy-decision-47-truthful-saved-acknowledgement)). Reconnect retries every second. A public session-service override returns
 forwarding handles that omit only ephemeral cursor sends while offline; durable
 changes, joins and status streams retain SDK behavior. SDK instances and prototypes
-are untouched ([decision #45](https://github.com/mxbaylee/spinel/issues/45)). Renderer language dictionaries are bundled
+are untouched ([decision #45](implementation/SPN-012.md#legacy-decision-45-offline-ephemeral-cursor-handling)). Renderer language dictionaries are bundled
 with the renderer in development and production so first-time text layout never
-needs a late network download ([decision #44](https://github.com/mxbaylee/spinel/issues/44)). Image insertion retains its upload and
+needs a late network download ([decision #44](implementation/SPN-012.md#legacy-decision-44-cold-offline-layout-assets)). Image insertion retains its upload and
 insertion guard until the drawing mutation has entered synchronization.
 
 Docs also wait for their own page layout, viewport and attached text input before
@@ -114,7 +114,7 @@ Following a Sheet range reveals it without replacing the local selection. Docs
 retain native canvas presence; supported body-text selections can still be selected
 from the header, while unsupported encodings remain presence without a jump.
 See [profile behaviour](design/account.md#saved-profile-behaviour-spn-036) and
-[decision #127](https://github.com/mxbaylee/spinel/issues/127).
+[decision #127](implementation/SPN-036.md#legacy-decision-127-profiles-and-public-sheet-following).
 
 Each service/materializer runtime is capped at eight loaded units and evicts
 idle units after a minute. This is a cache bound, not a measured capacity claim
@@ -128,7 +128,7 @@ when an operation requests replacement: leaving a bullet list can look correct
 locally but restore a bullet or heading when saved. Its operation slicer also
 loses explicit empty paragraph replacement arrays. The repair matches the tested
 editor replacement semantics, preserves stable paragraph IDs, and leaves ordinary
-COVER behavior unchanged ([decision #46](https://github.com/mxbaylee/spinel/issues/46)).
+COVER behavior unchanged ([decision #46](implementation/SPN-012.md#legacy-decision-46-guarded-open-source-paragraph-repair)).
 It is not a general proof of operation-algebra equivalence: removing a paragraph
 and then reintroducing it without an ID retains the old ID in composition while
 sequential application leaves it absent. The tested editor operations preserve
@@ -158,7 +158,7 @@ its own traces and disposable database. Tests that need a fresh setup/admin
 instance launch and close a real server child rather than retaining a second
 SDK/Vite module graph inside Playwright. These controls bound test resources;
 both builds still enforce the first committed edit arriving within one second
-([decision #48](https://github.com/mxbaylee/spinel/issues/48)).
+([decision #48](implementation/SPN-012.md#legacy-decision-48-bounded-strict-browser-validation)).
 
 For a focused run after building, use
 `SPINEL_E2E_PROJECT=production npx playwright test e2e/collaboration.spec.ts --project production`;
@@ -239,4 +239,4 @@ Following a Sheet collaborator uses the public reveal-range controller without
 changing the local active range. Already-visible cells stay in place. Profile
 saves take effect in editor membership on reopening the editor. Docs retain native
 canvas presence until SPN-058; disabling the entire collaboration UI caused missing
-Docs dependencies in the prototype. Owner scope decision [#127](https://github.com/mxbaylee/spinel/issues/127).
+Docs dependencies in the prototype. Owner scope decision [#127](implementation/SPN-036.md#legacy-decision-127-profiles-and-public-sheet-following).

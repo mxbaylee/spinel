@@ -72,7 +72,7 @@ Owner and Collaborator get the same connection/save distinction without changed
 edit permissions. Guests see only the linked document, a generic gem header and
 their role, with no account identity or navigation. Operators gain no document
 access or new monitoring service. See [connection behavior](../../../connection.md)
-and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
+and [decision #132](../../../implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation).
 
 ## Scope and comparison limits
 

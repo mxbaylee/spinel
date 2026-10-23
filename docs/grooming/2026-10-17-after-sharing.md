@@ -5,20 +5,20 @@ landed. This early grooming records the owner's dependency and queue decisions;
 it does not promote collaboration ahead of the normal point order. No ticket
 was removed or ID reused. The counter resets after this full backlog review.
 
-[Decision #31](https://github.com/mxbaylee/spinel/issues/31) removes SPN-010 from
+[Decision #31](../implementation/SPN-012.md#legacy-decision-31-collaboration-independent-of-the-soak) removes SPN-010 from
 SPN-012's dependencies. SPN-015 already landed, so production collaboration is
 now eligible at its unchanged score of 7. SPN-021 remains ahead at 8. SPN-010's
 more-than-a-day experiment is independent and still incomplete: short tests
 cannot establish duration limits or unrestricted use. Its draft PR #26 retains
 the evidence and disposable harness provenance.
 
-[Decision #27](https://github.com/mxbaylee/spinel/issues/27) keeps SPN-013 as an
+[Decision #27](../implementation/SPN-013.md#legacy-decision-27-optional-capacity-queue) keeps SPN-013 as an
 optional queue with low impact and high effort (score 2). Bounded testing found
 no capacity rejection, so evidence remains inconclusive. Build it only for a
 reproducible reachable limit; do not automatically retire it. This supersedes
-that part of the previous grooming and decision #23.
+that part of the previous grooming and decision [#23](../implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming).
 
-[Decision #30](https://github.com/mxbaylee/spinel/issues/30) records the upcoming
+[Decision #30](../implementation/SPN-021.md#legacy-decision-30-trash-batches-and-exact-set-deletion) records the upcoming
 trash design. Snapshots, images and grants survive soft deletion; restoring a
 folder must not resurrect earlier independent deletions. The collaborator's
 remove-from-view outcome is retained explicitly in SPN-018, where personal

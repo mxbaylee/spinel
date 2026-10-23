@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup, Invite, Recovery, Consent, ConsentExpired.
 
@@ -69,7 +69,7 @@ own screen migration.
 - **Need help?** appears once below the entry form on arrival, invitation,
   recovery and setup screens. It opens shared invitation/recovery guidance and
   expandable Operator commands. “Need access?” is no longer a separate label.
-  Owner, chat 2026-10-20, decision #126.
+  Owner, chat 2026-10-20, decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits).
 - **Setup, invite, recovery** share the quiet entry layout but retain their
   distinct requirements. Invite requires a name; recovery names the existing
   account and explains replacement of old passkeys and sessions. Setup explains
@@ -108,7 +108,7 @@ without changing the planned profile redesign.
 Stories: `Settings/AssistantConnections`, `Settings/ConnectAssistant`, and
 `Settings/AccessTokens` cover loading, empty, busy, failure, consent, expiration,
 reveal and revoked states. See [MCP](../mcp.md), decision
-[#111](https://github.com/mxbaylee/spinel/issues/111), owner correction 2026-10-20.
+[#111](../implementation/SPN-034.md#legacy-decision-111-owner-requested-mcp-through-oauth), owner correction 2026-10-20.
 
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
@@ -126,8 +126,8 @@ must report a storage failure without undoing the in-session theme choice.
 - Profiles contain a display name, one of the 16 fill presets, a Lucide catalog icon, and the existing passkey list. Icon strokes use the preset text color. New users start with `user-round` and a name-derived color (owner, 2026-10-17).
 - The icon dialog searches names, Lucide tags, local synonyms and typos (`flowre` finds Flower). Category and search combine; blank search shows all non-alias icons, 60 at a time, with Show more. Arrow Down enters the grid; arrows/Home/End navigate; Enter picks; Escape cancels and restores focus. It uses the existing dialog and palette patterns, before the redesign (owner, 2026-10-20).
 - Store `lucide:<name>` and validate against the pinned catalog. Search/reference code now lives in `src/profile/`; no emojis or photos. Names are 1–80 characters with no control characters. Saving updates the rail immediately; reopen editors to refresh their membership appearance.
-- Account-only room badges and Sheet canvas labels use saved icons/colors. Guest-linked rooms keep generic names, empty personal avatars and default ID-derived colors (#72); generic user-round glyphs reveal no profile identity. Settings explains this distinction.
-- Sheet labels have rounded corners and include icon plus name. Following reveals an offscreen range without overwriting the local selection or scrolling an already-visible range. Doc canvas colors remain with SPN-058; native Docs services stay enabled. Owner approval, 2026-10-20, [decision #127](https://github.com/mxbaylee/spinel/issues/127).
+- Account-only room badges and Sheet canvas labels use saved icons/colors. Guest-linked rooms keep generic names, empty personal avatars and default ID-derived colors ([#72](../implementation/SPN-016.md#legacy-decision-72-scoped-anonymous-link-capabilities)); generic user-round glyphs reveal no profile identity. Settings explains this distinction.
+- Sheet labels have rounded corners and include icon plus name. Following reveals an offscreen range without overwriting the local selection or scrolling an already-visible range. Doc canvas colors remain with SPN-058; native Docs services stay enabled. Owner approval, 2026-10-20, [decision #127](../implementation/SPN-036.md#legacy-decision-127-profiles-and-public-sheet-following).
 
 SPN-036 merged at `6c09bd4` and is included in this branch. Profile fixtures reuse
 its real `IconPicker`, `ProfileIcon`, catalog and sixteen fill presets. Save in

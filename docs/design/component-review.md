@@ -600,7 +600,7 @@ passkeys, authorization, server persistence, exports or live revocation.
 
 ## Owner-directed subtraction and loading follow-up
 
-[Decision #128](https://github.com/mxbaylee/spinel/issues/128) removes personal
+[Decision #128](../implementation/SPN-047.md#legacy-decision-128-remove-personal-pinning) removes personal
 pinning in this branch, including production controls, API routes, providers and
 new schema creation. Legacy SQL tables and cached fields are safely unused;
 files, grants, personal folder placement, offline downloads and named-version

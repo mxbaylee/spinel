@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Admin, AdminLoading, AdminError.
 
@@ -106,7 +106,7 @@ native opening and invitation recovery.
 The authorized Pages-first run permits an independent subagent to approve the
 actual light/dark/phone UI/UX across all four personas. Such merges explicitly
 state **agent review only**, per the owner's 2026-10-21 instruction and
-[decision #139](https://github.com/mxbaylee/spinel/issues/139). This does not claim
+[decision #139](../implementation/backlog-workflow.md#legacy-decision-139-run-specific-delegated-visual-approval). This does not claim
 human screenshot approval or waive any code, access or CI requirement.
 
 ## Loading and failure states
@@ -165,7 +165,7 @@ reuse the read-only list pattern. Show client/token and account names, callback
 origins for connections, creation, last use and revoked status; never secrets or
 document details. No token creation or document access for the Operator.
 `Settings/AssistantConnections` and `Admin/AccessTokens` cover loading, empty, metadata and failure states. See
-[MCP](../mcp.md), decision [#111](https://github.com/mxbaylee/spinel/issues/111).
+[MCP](../mcp.md), decision [#111](../implementation/SPN-034.md#legacy-decision-111-owner-requested-mcp-through-oauth).
 
 ## Operator walkthrough refinements
 

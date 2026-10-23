@@ -1,9 +1,9 @@
 # Offline-first documents
 
 This is the acceptance contract for Spinel's offline experience. The Owner
-supplied it in chat on 2026-10-18; [decision #83](https://github.com/mxbaylee/spinel/issues/83)
+supplied it in chat on 2026-10-18; [decision #83](implementation/SPN-039.md#legacy-decision-83-complete-opted-in-offline-product)
 records its scope. It starts after Spinel's own sync replaces Univer collaboration (SPN-059; owner, chat 2026-10-19). The [mobile installation slice](mobile.md) (SPN-028) supplies installation and
-touch support. Its network-only fallback and [decision #82](https://github.com/mxbaylee/spinel/issues/82)
+touch support. Its network-only fallback and [decision #82](implementation/SPN-028.md#legacy-decision-82-initial-mobile-and-installable-shell)
 describe the initial slice; this explicit signed-in feature supersedes the earlier
 PRD/grooming ban. Guests and unprepared devices keep a generic offline screen.
 Configured test HTTPS is enough for development; public deployment is
@@ -28,7 +28,7 @@ every unmet requirement stays on a ticket:
 - [SPN-052](todo/SPN-052.md): desktop browser-tab compatibility using SPN-055's
   shared lifecycle; it does not wait for SPN-090's physical-phone runs.
 
-[Decision #91](https://github.com/mxbaylee/spinel/issues/91) keeps every
+[Decision #91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion) keeps every
 acceptance requirement below.
 
 **Design, Owner, chat 2026-10-19.** Spinel owns offline durability itself: a
@@ -39,7 +39,7 @@ but Univer documents neither cold-start recovery nor a recovery-complete signal,
 and its documented conflict handling clears that cache without guaranteeing that
 unsent edits synced. When the live document has moved on, Spinel saves the offline
 work as a conflicted copy instead of merging. This supersedes the probe-first
-sequence and #90's recovery-coordinator choice.
+sequence and [#90](implementation/SPN-039.md#legacy-decision-90-public-pro-recovery-coordinator-proposal)'s recovery-coordinator choice.
 
 ## Persona requirements
 
@@ -102,7 +102,7 @@ generation stays separate in `unitId` and `revisionOffset`, including after rest
 - The snapshot and revision come from one `CollaborationStore.load` read. The
   device never replays server changesets, so draft #86's exact-revision replay
   endpoint and changeset codec are not used. Owner, chat 2026-10-19; this
-  supersedes #88's replay-base scope.
+  supersedes [#88](implementation/SPN-039.md#legacy-decision-88-complete-public-replay-evidence)'s replay-base scope.
 - Image sources pass the same validation as every load: a source that is not a
   stored image of this item fails with 400, so cross-item and remote images are
   never fetched. The bundle also checks each source's same-item prefix itself;
@@ -119,13 +119,13 @@ generation stays separate in `unitId` and `revisionOffset`, including after rest
   live generation changed, including when the collaboration service refuses a
   read because a restore replaced the unit. A revoked account learns no more
   than one that never had access, and a 409 tells a device that still has
-  access to retry. #91, 2026-10-19.
+  access to retry. [#91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion), 2026-10-19.
 - The route shares export's one-transfer admission (429 while another transfer
   runs) and `no-store` caching, and returns 400 for anything but a Sheet or Doc.
   Only signed-in, non-admin accounts with access can reach it: no account
   session is 401 (link guests included) and an operator is 403. The store itself
   refuses link-guest identities with 404, because a guest's access ends with the
-  link and an offline copy would outlive it. #91, 2026-10-19.
+  link and an offline copy would outlive it. [#91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion), 2026-10-19.
 - A viewer's bundle has `readOnly: true`, and the device must open it read-only.
   A bundle alone does not mean downloaded, durable or synced; see
   [what a device does with it](#offline-launch-and-read-only-viewing). Grooming,
@@ -227,7 +227,7 @@ Its hover/focus/tap detail preserves **Files as of** and explains that downloade
 documents stay read-only in this session, even after connectivity recovers.
 Reopen Spinel while connected to edit; a health response never silently replaces
 an open local viewer. SPN-042 removes the old banner; see [connection behavior](connection.md)
-and [decision #132](https://github.com/mxbaylee/spinel/issues/132). Folders opened online
+and [decision #132](implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation). Folders opened online
 are browsable, rows show **Available offline** or **Needs a connection**, and
 anything that would reach the server (New, Import, Search, Trash, sharing, tags,
 settings for passkeys, version history) is hidden or says it needs a

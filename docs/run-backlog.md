@@ -32,7 +32,7 @@ orders phases before scores, making SPN-038 the last launch prerequisite and
 keeping optional CSV import (SPN-093) and document-type/converter plugins
 (SPN-094) after it. Their explicit launch dependencies record owner sequencing,
 not a technical need for public HTTPS. Owner, chat 2026-10-21; fixed lifecycle
-phases recorded in [decision #129](https://github.com/mxbaylee/spinel/issues/129).
+phases recorded in [decision #129](implementation/backlog-workflow.md#legacy-decision-129-fixed-lifecycle-phases).
 After each merge, fetch main and pick again; do not preselect a fixed queue. An
 explicit owner-requested ticket takes priority for that run. Seven completed
 tickets trigger only a reminder for the next manual review with the owner.
@@ -85,7 +85,7 @@ in GitHub CI instead; keep the PR draft until verified. Record the resource abor
 and deferred checks in the PR. All six required CI gates, independent review of
 at least 95 with no blockers, and the other merge gates still apply. This changes
 verification order only; it does not waive tests or authorize paid test hosts.
-Owner approval, chat 2026-10-18, [decision #52](https://github.com/mxbaylee/spinel/issues/52).
+Owner approval, chat 2026-10-18, [decision #52](implementation/backlog-workflow.md#legacy-decision-52-memory-watchdog-ci-first-exception).
 
 Prepare the landing changes in the same PR: preserve Rules in maintained docs,
 delete only this completed ticket, remove its ID from dependents' `depends_on`,
@@ -113,7 +113,7 @@ Ask for a score out of 100 using this rubric:
   flexibility. Prefer the smallest complete implementation that meets the ticket;
   deduct for avoidable complexity with an actionable simplification, not for
   necessary safeguards. Owner, chat 2026-10-20, decision
-  [#105](https://github.com/mxbaylee/spinel/issues/105).
+  [#105](implementation/backlog-workflow.md#legacy-decision-105-deduct-unnecessary-complexity).
 
 Apply the rubric proportionally: for documentation work, verify instructions and
 scenarios rather than inventing runtime features. Require concrete deductions,
@@ -188,7 +188,7 @@ pending, cancelled, skipped or failed required checks do not count as a pass.
 For an allowlisted documentation-only change, successful required jobs may
 explicitly report application tests as not applicable; Backlog, Pull request
 and Lint still validate the change. See the narrow path policy in
-[process.md](todo/process.md#pull-requests-and-main) and decision #121. Changes
+[process.md](todo/process.md#pull-requests-and-main) and decision [#121](implementation/backlog-workflow.md#legacy-decision-121-documentation-only-ci-applicability). Changes
 to CI itself always require full validation.
 Inspect failures, fix their causes, run the affected checks and the pre-push checks,
 and push again. Retry a transient infrastructure failure only with evidence.
@@ -240,7 +240,7 @@ an entire backlog will finish in one chat or survive an abrupt limit automatical
 
 The owner chose independent review, the 95% threshold, CI-gated merges and
 continued backlog execution on 2026-10-17 (SPN-037). Scope-first repair/splitting
-and the rubric were recorded in [decision #6](https://github.com/mxbaylee/spinel/issues/6).
+and the rubric were recorded in [decision #6](implementation/backlog-workflow.md#legacy-decision-6-independent-review-and-coherent-scope).
 They favour predictable operations for the Operator, complete work and preserved
 documents for the Owner, safe edits and permissions for the Collaborator, and
 access boundaries that cannot be deferred for the Link guest. The two ticket
