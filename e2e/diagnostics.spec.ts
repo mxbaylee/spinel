@@ -76,6 +76,8 @@ test('Operator downloads real correlated diagnostics without document data and c
     await memberPage.bringToFront();
     await collection;
     await expect(memberPage.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', { timeout: 30_000 });
+    // Formula insertion uses the native selection even when this test only previews.
+    await memberPage.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     const formulas = memberPage.locator('details.doc-formulas');
     await formulas.locator('summary').click();
     await formulas.getByRole('button', { name: 'Insert formula', exact: true }).click();
