@@ -23,7 +23,16 @@ export const Pending: Story = { args: { busy: true } };
 export const Cancelled: Story = { args: { notice: 'Passkey request cancelled.' } };
 export const Failed: Story = { args: { error: 'Passkey request did not finish. Try again and choose your passkey manager.' } };
 export const UnsupportedBrowser: Story = { args: { error: 'Passkeys need a supported browser at Spinel’s secure address.' } };
-export const Unreachable: Story = { args: { unreachable: true } };
+export const Unreachable: Story = {
+  args: { unreachable: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+    await expect(canvas.getByRole('heading', { name: "You're offline", exact: true })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Try again', exact: true })).toBeEnabled();
+    await expect(canvas.queryByRole('button', { name: 'Sign in with a passkey', exact: true })).toBeNull();
+  },
+};
 export const Setup: Story = { args: { mode: 'setup', validSetup: true } };
 export const SetupPending: Story = { args: { ...Setup.args, busy: true } };
 export const SetupUnavailable: Story = { args: { mode: 'setup' } };

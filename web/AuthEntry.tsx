@@ -3,7 +3,6 @@ import { Button } from '../src/ui/redesign/Controls.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { EntryFrame } from './EntryFrame.tsx';
 import { EntryHelp } from './EntryHelp.tsx';
-import { OfflineUnreachable } from './OfflineStatus.tsx';
 
 export function AuthEntry({
   mode, loading, validSetup, inviteDetails, name, onName, busy, error, notice,
@@ -40,12 +39,12 @@ export function AuthEntry({
   const available = setup ? validSetup : invitation ? Boolean(inviteDetails) : true;
   const accountName = inviteDetails?.name ?? '';
   const invalid = !loading && !unreachable && !available;
-  const title = invalid ? setup ? 'This setup link isn’t available.' : 'This invitation isn’t available.' : setup ? 'Set up Spinel' : recovery ? 'Recover your account' : invitation ? 'You’re invited.' : 'Your workspace.';
+  const title = unreachable ? "You're offline" : invalid ? setup ? 'This setup link isn’t available.' : 'This invitation isn’t available.' : setup ? 'Set up Spinel' : recovery ? 'Recover your account' : invitation ? 'You’re invited.' : 'Your workspace.';
   return <EntryFrame title={title} home={mode === 'sign-in'} busy={busy} onHome={onHome}
     eyebrow={setup ? 'SERVER OPERATOR' : undefined}
-    intro={invalid ? undefined : setup ? 'Create the first Operator account.' : recovery ? `Create a new passkey for ${accountName}.` : invitation ? 'Create your everyday account to join this workspace.' : 'Sheets and Docs, together in a private place.'}
+    intro={unreachable ? 'Connect to the internet, then try again to open Spinel.' : invalid ? undefined : setup ? 'Create the first Operator account.' : recovery ? `Create a new passkey for ${accountName}.` : invitation ? 'Create your everyday account to join this workspace.' : 'Sheets and Docs, together in a private place.'}
     footer={mode === 'sign-in' ? 'Have a shared link? Open it directly to view the document.' : undefined}>
-    {loading ? <p role="status">{invitation ? 'Checking the invitation…' : 'Loading…'}</p> : unreachable ? <OfflineUnreachable /> : !available ? <>
+    {loading ? <p role="status">{invitation ? 'Checking the invitation…' : 'Loading…'}</p> : unreachable ? <Button onClick={() => location.reload()}>Try again</Button> : !available ? <>
       <p className="ej-feedback" role={error ? undefined : 'alert'}>{setup
         ? 'Open the one-time setup link printed on the server. If it expired, run the setup command again.'
         : 'This invitation or recovery link is not available. It may have expired, been used or been revoked. Ask your workspace Operator for a new link.'}</p>
