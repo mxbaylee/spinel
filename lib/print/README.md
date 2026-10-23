@@ -40,13 +40,16 @@ does not demonstrate safety on a 2 GiB deployment.
 
 ## Work still required
 
-- Prepared-image validation, native floating/cell/background geometry, decoded
-  pixel admission and byte-only rendering with no native URL fallback.
+- Internal prepared-image admission now copies bounded raster bytes and checks
+  actual PNG/JPEG/WebP metadata and aggregate pixel counts before decode. Its
+  source tests are unrun; full decoding, animation fixtures, native
+  floating/cell/background geometry and byte-only rendering remain unfinished.
 - Native number formatting, rich text, fonts, overflow and complete page-spanning
   cell/merge/image rendering; licensed font faces and missing-glyph behavior.
 - Atomic PDF output, actual A4 MediaBox choice, output/resource failure evidence.
-- Runtime dependencies/lockfile and Docker manifest wiring, independently checked
-  package imports and retained rendered PDF/PNG artifacts for every page.
+- Native rendering runtime dependencies and independently checked package/Docker
+  installation, plus retained rendered PDF/PNG artifacts for every page. Initial
+  workspace/lockfile/Docker source registration is present, not installation proof.
 
 The source tests in this checkpoint were authored but have not run. No visual,
 PDF, resource-limit or CI validation is claimed.
