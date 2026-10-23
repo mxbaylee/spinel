@@ -1416,6 +1416,10 @@ test('revocation clears private Space navigation while retaining unsaved native 
     await expect(
       editor.page.getByRole('heading', { name: 'Space unavailable', exact: true }),
     ).toBeVisible({ timeout: 10_000 });
+    // A retained local draft must not restore revoked Space/page identity in chrome.
+    await expect(editor.page.getByRole('heading', { name: doc.name, exact: true })).toHaveCount(0);
+    await expect(editor.page.getByText(`Space · ${space.name}`, { exact: true })).toHaveCount(0);
+    await expect(editor.page).not.toHaveTitle(new RegExp(doc.name));
     await expect(
       editor.page.getByRole('region', { name: 'Doc document', exact: true }),
     ).toBeVisible();
