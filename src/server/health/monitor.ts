@@ -40,14 +40,14 @@ export async function sampleMemory() {
 
 export async function physicalDatabase(path: string): Promise<{ identity: string; databaseBytes: number; walBytes: number } | null> {
   try {
-    const identity = await realpath(path);
-    const database = await stat(identity);
+    const resolved = await realpath(path);
+    const database = await stat(resolved);
     if (!database.isFile()) return null;
     let walBytes = 0;
-    try { walBytes = (await stat(identity + '-wal')).size; } catch (error) {
+    try { walBytes = (await stat(resolved + '-wal')).size; } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') return null;
     }
-    return { identity, databaseBytes: database.size, walBytes };
+    return { identity: `${database.dev}:${database.ino}`, databaseBytes: database.size, walBytes };
   } catch { return null; }
 }
 

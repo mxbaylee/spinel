@@ -1,4 +1,4 @@
-import { mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
+import { link, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test, vi } from 'vitest';
@@ -49,6 +49,25 @@ test('growth uses the first real measurement and preserves signed physical chang
   expect((await monitor.sample()).application).toMatchObject({ growthBytes: 40, measuredSince: 10 });
   now = 30; walBytes = 0;
   expect((await monitor.sample()).application).toMatchObject({ growthBytes: -10, measuredSince: 10 });
+});
+
+test('a rejected hard-linked diagnostics path never counts application storage twice', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'spinel-health-hardlink-'));
+  try {
+    const applicationPath = join(directory, 'app.sqlite');
+    const diagnosticsPath = join(directory, 'diagnostics.sqlite');
+    await writeFile(applicationPath, Buffer.alloc(100));
+    await writeFile(applicationPath + '-wal', Buffer.alloc(40));
+    await link(applicationPath, diagnosticsPath);
+    const monitor = new HealthMonitor({
+      applicationPath, diagnosticsPath, jobs: new HealthJobs(), editorConnections: () => 0,
+      logicalDatabaseBytes: () => 100, freeBytes: async () => 1000,
+      memory: async () => ({ processRssBytes: 10, systemTotalBytes: HOST_MEMORY_BUDGET, systemUsedBytes: 100, systemMeasure: 'available', containerUsedBytes: null, containerLimitBytes: null }),
+    });
+    const result = await monitor.sample();
+    expect(result.application).toMatchObject({ databaseBytes: 100, walBytes: 40 });
+    expect(result.diagnostics).toBeNull();
+  } finally { await rm(directory, { recursive: true, force: true }); }
 });
 
 test('shared database aliases are not counted as separate diagnostics and failures stay unknown', async () => {
