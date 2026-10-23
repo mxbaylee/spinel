@@ -12,6 +12,10 @@ pending/cancellation/retry feedback and shared Need help guidance. Help displays
 Operator commands without running them. Setup, invitation validation and recovery
 semantics remain distinct. Consent account switching preserves only the validated
 opaque request ID through sign-out; arbitrary return URLs are never accepted.
+An unbound request can continue from an Operator to an everyday account. Once an
+everyday session has viewed consent, it remains bound to that session; after
+signing out, start a fresh request from the assistant instead of transferring it
+to another session or account.
 See [SPN-083](implementation/SPN-083.md) for implementation and verification status.
 
 ## Access and storage
