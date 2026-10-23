@@ -53,9 +53,9 @@ for (const admin of [false, true]) {
           await page.reload();
           await expect(rail.getByRole('radio', { name, exact: true })).toBeChecked();
           // Missing storage means System; clicking its initially selected radio need not write it.
-          expect((await page.evaluate(() => localStorage.getItem('spinel-theme'))) ?? 'system').toBe(
-            value,
-          );
+          expect(
+            (await page.evaluate(() => localStorage.getItem('spinel-theme'))) ?? 'system',
+          ).toBe(value);
           await page.emulateMedia({ colorScheme: 'dark' });
           await expect(page.locator('html')).toHaveAttribute(
             'data-theme',
