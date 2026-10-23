@@ -7,6 +7,13 @@ create everyday accounts. There is no public signup or password
 fallback. Recovery is an Operator-issued invite. Sign-in does not use PRF or encryption key wrapping.
 These are the owner’s SPN-002 rules, 2026-10-17.
 
+Entry screens use the quiet single-task layout with one passkey action, explicit
+pending/cancellation/retry feedback and shared Need help guidance. Help displays
+Operator commands without running them. Setup, invitation validation and recovery
+semantics remain distinct. Consent account switching preserves only the validated
+opaque request ID through sign-out; arbitrary return URLs are never accepted.
+See [SPN-083](implementation/SPN-083.md) for implementation and verification status.
+
 ## Access and storage
 
 `APP_ORIGIN` is the exact HTTPS browser origin (no trailing slash); only

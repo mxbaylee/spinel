@@ -5,7 +5,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 test('signed-out pages redirect and APIs expose no workspace data', async ({ page, request }) => {
   await page.goto('/settings');
   await expect(page).toHaveURL(/\/sign-in$/);
-  await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your workspace.', exact: true })).toBeVisible();
   for (const path of ['/api/health', '/api/missing', '/api/auth/passkeys', '/api/auth/session'])
     expect((await request.get(path)).status()).toBe(401);
   expect(

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { ConnectAssistant } from './ConnectAssistant.tsx';
 
@@ -16,7 +16,8 @@ const meta = {
   id: 'settings-connectassistant',
   title: 'Current production/Settings/ConnectAssistant',
   component: ConnectAssistant,
-  args: { request, user: { name: 'Alex Kim', isAdmin: false } },
+  parameters: { shell: 'none' },
+  args: { request, user: { name: 'Alex Kim', isAdmin: false }, onSignOut: fn() },
 } satisfies Meta<typeof ConnectAssistant>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -72,4 +73,20 @@ export const ConnectionLimit: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.click(await within(canvasElement).findByRole('button', { name: 'Allow' }));
   },
+};
+
+export const LongIdentity: Story = {
+  args: { user: { name: 'A very long everyday account name that remains readable on a phone', isAdmin: false } },
+  parameters: { api: { [`GET ${path}`]: { ...details, name: 'ClientSuppliedName'.repeat(12), redirectOrigin: `https://${'long-origin-'.repeat(8)}example.test` } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('button', { name: 'Allow' })).toBeVisible();
+    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+    await expect(canvas.getByText('This name is provided by the assistant and has not been verified by Spinel.')).toBeVisible();
+  },
+};
+
+export const SignOutFailed: Story = {
+  ...Consent,
+  args: { signOutError: 'Could not sign out. Check your connection and try again.' },
 };

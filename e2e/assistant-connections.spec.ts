@@ -95,14 +95,14 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
     await expect(consent).toContainText(user.name);
     await expect(consent).toContainText('Edit documents you have permission to edit.');
     await mkdir('test-results/theme-screenshots', { recursive: true });
-    for (const variant of ['light', 'dark', 'phone'] as const) {
-      const theme = variant === 'dark' ? 'dark' : 'light';
-      await page.setViewportSize({ width: variant === 'phone' ? 390 : 1280, height: 900 });
+    for (const variant of ['light', 'dark', 'phone-light', 'phone-dark'] as const) {
+      const theme = variant.endsWith('dark') ? 'dark' : 'light';
+      await page.setViewportSize({ width: variant.startsWith('phone') ? 390 : 1280, height: 900 });
       await page.emulateMedia({ colorScheme: theme });
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.screenshot({
-        path: `test-results/theme-screenshots/mcp-${info.project.name}-consent-${variant}.png`,
+        path: `test-results/theme-screenshots/spn-083-consent-${variant}-${info.project.name}.png`,
         fullPage: true,
       });
     }
