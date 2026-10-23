@@ -1,4 +1,5 @@
 import { EditorFrame } from './EditorFrame.tsx';
+import { revokeGuestView } from './guestRevocation.ts';
 import type { SpaceRootActionMode } from './SpaceRootActions.tsx';
 import { canAdminister, accessLabel } from '../src/shared/workspace.ts';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -259,6 +260,10 @@ export function Space({
         setFresh(false);
         setLoadError(spaceRequestMessage(error));
         if (spaceAccessDenied(error)) {
+          if (guest) {
+            revokeGuestView();
+            return;
+          }
           setDenied(true);
           setTree(null);
           setBootstrap(null);

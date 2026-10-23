@@ -1,5 +1,8 @@
 import { EditorFrame } from './EditorFrame.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
+import { guestRevokedEvent } from './guestRevocation.ts';
+import type { GuestEditorStop, GuestPendingBuffer } from './guestRevocation.ts';
 import { guestItemId, documentPath } from './documentAccess.ts';
 import { AccessState } from './AccessState.tsx';
 import type { ConnectionState } from './connectionState.ts';
@@ -43,6 +46,11 @@ export function GuestApp() {
   const [token] = useState(() => location.hash.slice(1));
   const exchange = useRef<Promise<void> | null>(null);
   const dirty = useRef(false);
+  const terminal = useRef(false);
+  const stopEditor = useRef<GuestEditorStop | null>(null);
+  const retainedBuffer = useRef<GuestPendingBuffer | null>(null);
+  const [unsaved, setUnsaved] = useState(false);
+  const registerGuestEditor = (stop: GuestEditorStop | null) => { stopEditor.current = stop; };
   const [item, setItem] = useState<Item | null>(null);
   const [error, setError] = useState('');
   const [unsupported, setUnsupported] = useState(false);
@@ -57,6 +65,25 @@ export function GuestApp() {
     let disposed = false,
       checking = false,
       ended = false;
+    const revoke = () => {
+      if (disposed || ended) return;
+      ended = true;
+      terminal.current = true;
+      const pending = dirty.current;
+      try {
+        // Native roots, body portals and keyboard handlers are disposed before
+        // removing the React shell. The retained data has no retrieval path.
+        retainedBuffer.current = stopEditor.current?.(pending) ?? null;
+      } finally {
+        document.title = 'Spinel';
+        flushSync(() => {
+          setUnsaved(pending);
+          setItem(null);
+          setError('This link no longer works.');
+          setUnsupported(false);
+        });
+      }
+    };
     const check = async () => {
       if (checking || ended) return;
       checking = true;
@@ -94,7 +121,7 @@ export function GuestApp() {
         });
         requireResponse(response);
         const data = await response.json();
-        if (!disposed) {
+        if (!disposed && !ended) {
           setItem(data.item);
           setError('');
           setReachability('online');
@@ -102,10 +129,12 @@ export function GuestApp() {
       } catch (cause) {
         if (!disposed) {
           if (cause instanceof LinkFailure && cause.revoked) {
-            ended = true;
-            setItem((previous) => (previous?.kind === 'space' && dirty.current ? previous : null));
-            setError(cause.message);
-            setUnsupported(cause.unsupported);
+            if (cause.unsupported) {
+              ended = true;
+              setItem(null);
+              setError(cause.message);
+              setUnsupported(true);
+            } else revoke();
           } else setReachability('offline');
         }
       } finally {
@@ -113,6 +142,7 @@ export function GuestApp() {
       }
     };
     retry.current = check;
+    window.addEventListener(guestRevokedEvent, revoke);
     void check();
     const interval = setInterval(() => {
       void check();
@@ -129,6 +159,7 @@ export function GuestApp() {
       retry.current = async () => {};
       clearInterval(interval);
       window.removeEventListener('beforeunload', warn);
+      window.removeEventListener(guestRevokedEvent, revoke);
     };
   }, [id, token]);
   useEffect(() => {
@@ -138,11 +169,6 @@ export function GuestApp() {
   if (item?.kind === 'space')
     return (
       <>
-        {error && (
-          <p role="alert">
-            {error} {dirty.current && 'Copy unsaved changes before leaving.'}
-          </p>
-        )}
         <Space
           guest
           navigation={{
@@ -158,7 +184,7 @@ export function GuestApp() {
               return true;
             },
             dirty(value) {
-              dirty.current = value;
+              if (!terminal.current) dirty.current = value;
             },
           }}
           connection={
@@ -172,6 +198,7 @@ export function GuestApp() {
             <Suspense fallback={<p role="status">Opening page…</p>}>
               {page.kind === 'doc' ? (
                 <Doc
+                  registerGuestEditor={registerGuestEditor}
                   saveStatusTarget={saveStatusTarget}
                   spaceId={spaceId}
                   id={page.id}
@@ -181,6 +208,7 @@ export function GuestApp() {
                 />
               ) : (
                 <Sheet
+                  registerGuestEditor={registerGuestEditor}
                   saveStatusTarget={saveStatusTarget}
                   spaceId={spaceId}
                   id={page.id}
@@ -199,6 +227,7 @@ export function GuestApp() {
       <AccessState
         kind={error ? (unsupported ? 'unsupported' : 'revoked') : !browserOnline || reachability === 'offline' ? 'offline' : 'loading'}
         onRetry={() => void retry.current()}
+        unsaved={unsaved}
       />
     );
   return (
@@ -216,22 +245,24 @@ export function GuestApp() {
           <Suspense fallback={<p role="status">Opening document…</p>}>
             {item.kind === 'sheet' ? (
               <Sheet
+                registerGuestEditor={registerGuestEditor}
                 saveStatusTarget={null}
                 id={id}
                 name={item.name}
                 onConnectionState={setEditorConnection}
                 onDirty={(value) => {
-                  dirty.current = value;
+                  if (!terminal.current) dirty.current = value;
                 }}
               />
             ) : (
               <Doc
+                registerGuestEditor={registerGuestEditor}
                 saveStatusTarget={null}
                 id={id}
                 name={item.name}
                 onConnectionState={setEditorConnection}
                 onDirty={(value) => {
-                  dirty.current = value;
+                  if (!terminal.current) dirty.current = value;
                 }}
               />
             )}

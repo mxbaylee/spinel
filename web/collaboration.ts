@@ -30,6 +30,7 @@ import type { ItemAccess } from '../src/shared/workspace.ts';
 import { createEditorConnection, reduceEditorConnection } from './connectionState.ts';
 import type { ConnectionState, RoomConnectionStatus } from './connectionState.ts';
 import type { DocPendingChanges } from './docPending.ts';
+import { revokeGuestView } from './guestRevocation.ts';
 
 export { ClientEnglish, UIEnglish };
 export function collaborationPlugins(
@@ -86,6 +87,7 @@ export async function prepareCollaboration(id: string, spaceId?: string) {
     headers: { 'Content-Type': 'application/json' },
     body: '{}',
   });
+  if ([401, 403, 404].includes(response.status)) revokeGuestView();
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Could not open live editing.');
   return data as { unitId: string; access: ItemAccess; user: { id: string; name: string } };
@@ -161,6 +163,10 @@ export function watchCollaboration(
         return;
       }
       denied = true;
+      if (guestItemId() && ([401, 403, 404].includes(response.status) || (data && data.item.access !== access))) {
+        revokeGuestView();
+        return;
+      }
       connectionEvent({ type: 'sync', status: 'offline' });
       publish({
         dirty: lastDirty,

@@ -12,11 +12,13 @@ export function AccessState({
   onRetry,
   onFiles,
   embedded = false,
+  unsaved = false,
 }: {
   kind: AccessStateKind;
   onRetry?: () => void;
   onFiles?: () => void;
   embedded?: boolean;
+  unsaved?: boolean;
 }) {
   const titleId = useId();
   const copy = {
@@ -40,6 +42,7 @@ export function AccessState({
         {copy[1]}
       </p>
       {kind === 'offline' && onRetry && <Button onClick={onRetry}>Try again</Button>}
+      {kind === 'revoked' && unsaved && <p>Some changes were not saved. This document is no longer accessible.</p>}
       {kind === 'missing' && onFiles && <Button onClick={onFiles}>Go to My files</Button>}
     </section>
   );

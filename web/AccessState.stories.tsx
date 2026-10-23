@@ -38,6 +38,15 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Revoked: Story = {};
+export const RevokedWithUnsavedInput: Story = {
+  args: { kind: 'revoked', unsaved: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Some changes were not saved. This document is no longer accessible.')).toBeVisible();
+    await expect(canvas.queryByRole('button', { name: /copy|recover|retry|export/i })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
+  },
+};
 export const Loading: Story = { args: { kind: 'loading' } };
 export const UnsupportedBrowser: Story = { args: { kind: 'unsupported' } };
 export const Offline: Story = { args: { kind: 'offline', onRetry: fn() } };
