@@ -121,6 +121,12 @@ test('two authenticated editors receive each other’s sheet edits without reloa
     const cells = snapshot.sheets[snapshot.sheetOrder[0]].cellData;
     expect(cells[0][0].v).toBe(41);
     expect(cells[0][1].v).toBe(73);
+    // Read our native selection before the modal makes the document inaccessible.
+    const address = page
+      .getByRole('region', { name: 'Sheet document', exact: true })
+      .getByRole('textbox')
+      .nth(2);
+    const ownSelection = await address.inputValue();
     // The bounded people dialog and cell markers identify the same person.
     await page.getByRole('button', { name: 'People in this document', exact: true }).click();
     const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
@@ -130,14 +136,9 @@ test('two authenticated editors receive each other’s sheet edits without reloa
     await jump.focus();
     await expect(people.getByText('Collaboration editor', { exact: true })).toBeVisible();
     expect(await jump.boundingBox()).toEqual(before);
-    const address = page
-      .getByRole('region', { name: 'Sheet document', exact: true })
-      .getByRole('textbox')
-      .nth(2);
-    const ownSelection = await address.inputValue();
     const personColor = await jump.evaluate((node) => getComputedStyle(node).backgroundColor);
     await jump.click();
-    await expect(people).not.toBeVisible();
+    await expect(people).toHaveCount(0);
     // Following reveals the collaborator without overwriting our selection.
     await expect(address).toHaveValue(ownSelection);
     const marker = page
@@ -275,8 +276,14 @@ test('two document editors merge text and navigate to a collaborator selection',
       .getByRole('button', { name: 'Close dialog', exact: true })
       .click();
     // Refocus native inputs without moving the established start/end selections.
-    for (const target of [page, other])
-      await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
+    for (const target of [page, other]) {
+      await expect(
+        target.getByRole('dialog', { name: 'People in this document', exact: true }),
+      ).toHaveCount(0);
+      const input = target.locator('[contenteditable="true"][data-u-comp="editor"]');
+      await input.focus();
+      await expect(input).toBeFocused();
+    }
     await Promise.all([page.keyboard.type('Owner'), other.keyboard.type(' Collaborato')]);
     // Measure the final explicit insertion from before dispatch, while still
     // checking the complete simultaneous text burst in both live editors.
@@ -315,7 +322,7 @@ test('two document editors merge text and navigate to a collaborator selection',
     await jump.click();
     await expect(
       page.getByRole('dialog', { name: 'People in this document', exact: true }),
-    ).not.toBeVisible();
+    ).toHaveCount(0);
     await expect(page.locator('[contenteditable="true"][data-u-comp="editor"]')).toBeFocused();
     // Replacing the selected remote range proves the cursor jump used this live document.
     await page.keyboard.type('XX');
