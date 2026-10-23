@@ -35,6 +35,7 @@ sequencing dependency; it must not duplicate those controls before they land.
   fill/profile mappings. **SPN-088** alone investigates eight logical native
   picker colors, with a supported-API fallback. Native dark canvas behavior
   already exists; do not recreate it or conduct two palette investigations.
+  **Later update, 2026-10-23:** [SPN-088 was retired](../implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal), superseding the eight-choice follow-up without claiming it was implemented.
 - Screen migrations **SPN-045/048/049/081–085** apply the shared modal title-icon
   pattern where they work. **SPN-089** follows them as a residual inventory/audit,
   including standalone dialogs; new features continue to own their own dialogs.
