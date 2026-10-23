@@ -6,6 +6,7 @@ import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { ColorKit, invertColorByMatrix } from '@univerjs/core';
 import type { ICellData, IWorkbookData } from '@univerjs/core';
 import { editorNeutrals } from '../src/ui/palette.ts';
+import { presetStyle } from '../src/ui/presetStyles.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -69,7 +70,15 @@ test('themes persist, follow the system, and recolour sheet presets without edit
           name: 'Sheet1',
           rowCount: 100,
           columnCount: 26,
-          cellData: { 2: { 0: richCell }, 4: { 0: { v: 'Plain text' } } },
+          // Legacy stored pairs must retain their appearance after the preset entry point is removed.
+          cellData: {
+            0: {
+              0: { s: presetStyle('warning-strong', 'light') },
+              1: { s: presetStyle('warning-strong', 'light') },
+            },
+            2: { 0: { ...richCell, s: presetStyle('primary-soft', 'light') } },
+            4: { 0: { v: 'Plain text' } },
+          },
         },
       },
     },
@@ -183,12 +192,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await select('A1');
     await page.getByRole('button', { name: 'Bold', exact: true }).click();
     await saved();
-    await select('A1:B1');
-    await page.getByText('Cell fill presets', { exact: true }).click();
-    await page.getByRole('button', { name: 'Apply Warning, strong fill', exact: true }).click();
-    await saved();
-    // Saved may still describe the preceding command. Confirm this fill before
-    // moving the selection and applying a different preset.
+    await expect(page.getByText('Cell fill presets', { exact: true })).toHaveCount(0);
     await expect
       .poll(async () => {
         const { snapshot } = await read();
@@ -196,11 +200,6 @@ test('themes persist, follow the system, and recolour sheet presets without edit
         return (typeof style === 'string' ? snapshot.styles[style] : style)?.bg?.rgb;
       })
       .toBe('#f2a93b');
-    await select('A3');
-    await page.getByRole('button', { name: 'Apply Primary, soft fill', exact: true }).click();
-    await saved();
-    // The previous Saved label can remain briefly while a new command is queued.
-    // Establish the baseline only after the last fill is durable on the server.
     await expect
       .poll(async () => {
         const { snapshot } = await read();
@@ -218,7 +217,6 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     const resolved = typeof style === 'string' ? before.snapshot.styles[style] : style;
     expect(resolved?.bl).toBe(1);
     expect(resolved?.bg?.rgb).toBe('#f2a93b');
-    await page.getByText('Cell fill presets', { exact: true }).click();
     await select('C3');
     await expect(sheetCanvas).toBeVisible();
     await expect.poll(() => colouredPixels([242, 169, 59])).toBeGreaterThan(100);

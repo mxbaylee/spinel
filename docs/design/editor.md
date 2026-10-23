@@ -136,7 +136,7 @@ same collaborator dialog; owner-only Share remains in More.
 
 ## Stories
 
-Existing production stories include `Editor/Collaborators`, `Editor/FillPresets`,
+Existing production stories include `Editor/Collaborators`,
 `Editor/VersionNames` and `Editor/FileExports`. The redesign's native editor stories
 and connected walkthrough boot Univer against local fixtures; the existing
 Playwright suite checks application editor flows. Use the
