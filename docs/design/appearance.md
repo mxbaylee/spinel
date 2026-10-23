@@ -29,7 +29,10 @@ and photo covers; and Doc In Space With Banner. Theme switching also works.
   Bismuth's multicolor swatch uses a single readable teal for controls. Pearl's
   cream cover uses a darker warm neutral accent for readable controls.
 - The initial cover matches the story's accent; changing the accent subsequently
-  never changes any cover. Cover colors stay fixed in light and dark mode.
+  never changes any cover. These drafts use one image shared across light and dark
+  mode. SPN-086 also supports optional separate light/dark images for any cover
+  source; one shared image remains a valid choice, including for Gems. See the
+  [theme-variant decision](../implementation/SPN-086.md#optional-cover-theme-variants).
 - Remove cover returns to Add cover. Page switching retains independent choices
   and native editor snapshots for the lifetime of the story.
 - Upload previews a local JPG/PNG/WebP, with file validation and vertical crop
