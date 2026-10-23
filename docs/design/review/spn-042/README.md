@@ -77,7 +77,7 @@ and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
 ## Scope and comparison limits
 
 The complete save component and header migrations remain in SPN-043 and SPN-049;
-native editor theme/palette work remains in SPN-088. Existing Univer license marks
+the extra native palette proposal was later [retired as SPN-088](../../../implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal), retaining existing native dark rendering. Existing Univer license marks
 are retained without concealment or license workarounds; SPN-059/SPN-075 remove
 the remaining Pro dependencies.
 

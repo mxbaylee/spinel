@@ -5,6 +5,11 @@ implementation starts. This replaces opening GitHub decision issues for new work
 Owner, chat 2026-10-22. SPN-096 migrates older issues; their existing citations stay
 valid until a faithful replacement exists.
 
+After a legacy migration merges, comment on each original decision issue with
+its canonical file and heading at the verified merged commit SHA, retaining the
+old discussion and checking for duplicate backlinks first. SPN-096 tracks these
+post-merge comments and their URLs. Owner, chat 2026-10-23.
+
 Use one file per ticket. Extend existing notes without replacing their contract,
 verification or history. Link a decision's heading from the ticket's Rules and
 from the maintained product/design/process document where it applies. Records

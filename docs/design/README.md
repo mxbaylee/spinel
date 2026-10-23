@@ -385,6 +385,7 @@ must report a storage failure without undoing the in-session theme choice.
 Owner follow-ups accepted with as-is approval, 2026-10-21, decision #126:
 folder colors and the identity-picker mockup belong to SPN-086; Space Trash uses
 a deleted-item collection (SPN-078 model, SPN-091 UI); all product modals get consistent title icons
-(SPN-089); native editor dark-canvas behavior and an eight-color theme-aware picker
-are investigated in SPN-088. These are implementation handoffs, not claims that
+(SPN-089). The later [2026-10-23 decision](../implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal)
+retired SPN-088's extra eight-color picker proposal while retaining the existing
+native dark rendering. These are implementation handoffs, not claims that
 the approved sample-data proposal implements them.
