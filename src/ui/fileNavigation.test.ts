@@ -5,7 +5,9 @@ test('My files return is account-scoped and accepts only ordinary IDs or the Tra
   const values = new Map<string, string>();
   const storage = {
     getItem: (key: string) => values.get(key) ?? null,
-    removeItem: (key: string) => { values.delete(key); },
+    removeItem: (key: string) => {
+      values.delete(key);
+    },
     setItem: (key: string, value: string) => {
       values.set(key, value);
     },
@@ -19,7 +21,11 @@ test('My files return is account-scoped and accepts only ordinary IDs or the Tra
   rememberFileView('owner', 'https://unrelated.invalid', storage);
   expect(rememberedFileHref('owner', storage)).toBe('/');
   expect(
-    rememberedFileHref('owner', { getItem: () => '/review/spaces/secret', setItem: () => {}, removeItem: () => {} }),
+    rememberedFileHref('owner', {
+      getItem: () => '/review/spaces/secret',
+      setItem: () => {},
+      removeItem: () => {},
+    }),
   ).toBe('/');
 });
 
@@ -38,11 +44,32 @@ test('unavailable browser storage cannot block returning to My files', () => {
 });
 
 test('explicit Space return prefers validated retrieval state with the same injected storage', async () => {
-  const { rememberDashboardRetrieval, clearDashboardNavigation } = await import('../../web/dashboardNavigation.ts');
+  const { rememberDashboardRetrieval, clearDashboardNavigation } =
+    await import('../../web/dashboardNavigation.ts');
   const values = new Map<string, string>();
-  const storage = { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => { values.set(key, value); }, removeItem: (key: string) => { values.delete(key); } };
+  const storage = {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      values.set(key, value);
+    },
+    removeItem: (key: string) => {
+      values.delete(key);
+    },
+  };
   rememberFileView('owner', null, storage);
-  rememberDashboardRetrieval('owner', { folderId: null, shared: true, query: { q: 'private query', type: '', owner: '', tag: '', modified: '' }, draft: 'private query', allFiles: false, layout: 'list', scroll: 0 }, storage);
+  rememberDashboardRetrieval(
+    'owner',
+    {
+      folderId: null,
+      shared: true,
+      query: { q: 'private query', type: '', owner: '', tag: '', modified: '' },
+      draft: 'private query',
+      allFiles: false,
+      layout: 'list',
+      scroll: 0,
+    },
+    storage,
+  );
   expect(rememberedFileHref('owner', storage)).toBe('/?shared=1&files-return=1');
   clearDashboardNavigation(storage);
   expect(rememberedFileHref('owner', storage)).toBe('/');

@@ -400,7 +400,6 @@ export const CancelAdminMoveWhileLoading: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     await rowAction(canvasElement, 'Team roadmap', 'Move…');
     const move = await within(canvasElement.ownerDocument.body).findByRole('form', {
       name: 'Move item',
@@ -424,7 +423,6 @@ export const FileAdminNoDestinations: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     await rowAction(canvasElement, 'Team roadmap', 'Move…');
     const move = await within(canvasElement.ownerDocument.body).findByRole('form', {
       name: 'Move item',
@@ -508,5 +506,30 @@ export const ImportDialog: Story = {
     await expect(
       await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Import file' }),
     ).toBeVisible();
+  },
+};
+
+export const SharedGrantOrdering: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      'GET /api/items/shared': {
+        items: [
+          { ...roadmap, name: 'Z newest share', sharedAt: now },
+          { ...forecast, name: 'A older share', sharedAt: now - day },
+          { ...photos, name: 'Unknown legacy share', sharedAt: 0 },
+        ],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
+    const files = within(await canvas.findByRole('list', { name: 'Shared with me files' }));
+    const rows = files.getAllByRole('listitem');
+    await expect(rows[0]).toHaveTextContent('Z newest share');
+    await expect(rows[1]).toHaveTextContent('A older share');
+    await expect(rows[2]).toHaveTextContent('Older share');
+    await expect(rows[2]).not.toHaveTextContent('1970');
   },
 };

@@ -84,13 +84,17 @@ test('trash restores nested native documents, preserves prior deletions and conf
     await page.getByRole('button', { name: 'My files', exact: true }).click();
     await contents.getByRole('button', { name: 'Keep folder Folder', exact: true }).click();
     await contents.getByRole('button', { name: 'Nested Folder', exact: true }).click();
-    await expect(files.getByRole('button', { name: 'Refresh item Doc', exact: true })).toBeVisible();
+    await expect(
+      files.getByRole('button', { name: 'Refresh item Doc', exact: true }),
+    ).toBeVisible();
     trash.trash(user.id, refreshed.id);
     await folderAction('Nested', 'Refresh folder');
     await expect(files.getByRole('button', { name: 'Refresh item Doc', exact: true })).toBeHidden();
     trash.restore(user.id, refreshed.id);
     await folderAction('Nested', 'Refresh folder');
-    await expect(files.getByRole('button', { name: 'Refresh item Doc', exact: true })).toBeVisible();
+    await expect(
+      files.getByRole('button', { name: 'Refresh item Doc', exact: true }),
+    ).toBeVisible();
 
     await files.getByRole('button', { name: 'Budget Sheet', exact: true }).click();
     await expect(page.getByRole('region', { name: 'Sheet document', exact: true })).toContainText(

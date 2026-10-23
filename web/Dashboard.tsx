@@ -200,11 +200,13 @@ export function Dashboard({
         history.pushState(null, '', viewUrl(currentRef.current));
         return;
       }
-      const restored = restoreDashboardRetrieval(
-        user.id,
-        history.state?.spinelDashboard,
-        `${location.pathname}${location.search}`,
-      );
+      const restored = local
+        ? null
+        : restoreDashboardRetrieval(
+            user.id,
+            history.state?.spinelDashboard,
+            `${location.pathname}${location.search}`,
+          );
       setQuery(restored?.query ?? { ...emptySearch });
       setDraft(restored?.draft ?? '');
       setAllFiles(restored?.allFiles ?? false);
@@ -270,9 +272,13 @@ export function Dashboard({
   const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
   const browsing = !currentId || sharedOpen || current?.kind === 'folder';
   useEffect(() => {
-    onPlaces?.({ shared: sharedOpen, open: (shared) => navigate(shared ? SHARED_VIEW : null) });
+    onPlaces?.(
+      browsing
+        ? { shared: sharedOpen, open: (shared) => navigate(shared ? SHARED_VIEW : null) }
+        : null,
+    );
     return () => onPlaces?.(null);
-  }, [onPlaces, sharedOpen, currentId, query, draft, layout, allFiles]);
+  }, [onPlaces, browsing, sharedOpen, currentId, query, draft, layout, allFiles]);
   useEffect(() => {
     try {
       localStorage.setItem('spinel-files-layout', layout);
@@ -344,6 +350,7 @@ export function Dashboard({
   }
   function navigate(id: string | null, check = true) {
     if (check && id !== currentId && !navigation.allow()) return;
+    if (check) returnContext.current = null;
     setQuery({ ...emptySearch });
     setDraft('');
     setAllFiles(false);
@@ -683,12 +690,15 @@ export function Dashboard({
     </p>
   );
   const canCreate = browsing && !sharedOpen && !local && (!current || current.access === 'owner');
-  const listedItems = [...(sharedOpen ? shared.items : visibleItems)].sort(
-    (a, b) =>
-      Number(b.kind === 'folder') - Number(a.kind === 'folder') ||
-      a.name.localeCompare(b.name) ||
-      a.id.localeCompare(b.id),
-  );
+  // Shared is already ordered by latest grant; alphabetizing would hide recent shares.
+  const listedItems = sharedOpen
+    ? shared.items
+    : [...visibleItems].sort(
+        (a, b) =>
+          Number(b.kind === 'folder') - Number(a.kind === 'folder') ||
+          a.name.localeCompare(b.name) ||
+          a.id.localeCompare(b.id),
+      );
   return (
     <section ref={dropTarget} className="dashboard-content" aria-label="Your files">
       {!onPlaces && (
@@ -722,7 +732,7 @@ export function Dashboard({
           <header className="dashboard-heading">
             <h1>{sharedOpen ? 'Shared with me' : (current?.name ?? 'My files')}</h1>
             <div className="dashboard-heading-actions">
-              {current && (
+              {current && !local && (
                 <ActionMenu
                   label={`More actions for ${current.name}`}
                   actions={rowActions(current)}
@@ -830,6 +840,23 @@ export function Dashboard({
           Back to files
         </button>
       )}
+      {/* SPN-049 owns removing dashboard search from editors. Keep lookup usable
+          while unsaved work remains mounted, with the existing navigation guard. */}
+      {liveEditor && (
+        <SearchPanel
+          spacesEnabled={spacesEnabled}
+          query={query}
+          onChange={setQuery}
+          draftText={draft}
+          onDraftTextChange={setDraft}
+          loadedItems={[...items, ...viewed, ...shared.items]}
+          onOpen={openFile}
+          layout={layout}
+          actionsFor={rowActions}
+          offlineState={offlineState}
+          refreshKey={refresh}
+        />
+      )}
       {offline.message && (
         <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
       )}
@@ -886,7 +913,7 @@ export function Dashboard({
         </>
       ) : (
         current && (
-          <>
+          <div className="file-view" hidden={searchActive}>
             <div className="folder-heading">
               <div className="editor-title-status">
                 <h2>{current.name}</h2>
@@ -937,7 +964,7 @@ export function Dashboard({
                 />
               </Suspense>
             )}
-          </>
+          </div>
         )
       )}
       {action && (

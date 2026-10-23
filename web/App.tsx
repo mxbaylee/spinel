@@ -75,6 +75,10 @@ export function App() {
     return () => window.removeEventListener('beforeunload', warn);
   }, []);
   const [user, setUser] = useState<User | null>(null);
+  const [filePlaces, setFilePlaces] = useState<{
+    shared: boolean;
+    open: (shared: boolean) => void;
+  } | null>(null);
   const [editorConnection, setEditorConnection] = useState<ConnectionState | null>(null);
   const [catalogStatus, setCatalogStatus] = useState<CatalogConnectionDetails | null>(null);
   const serverConnection = useServerConnection(Boolean(user) && editorConnection === null);
@@ -451,10 +455,13 @@ export function App() {
     );
   }
   return (
-    <div className={`workspace${settings ? ' profile-workspace' : ''}`}>
+    <div
+      className={`workspace${settings ? ' profile-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
+    >
       <Rail
         user={user}
         compact={settings}
+        files={filePlaces}
         navigation={navigation}
         onSignOut={() => void signOut()}
         connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
@@ -600,6 +607,7 @@ export function App() {
               local={local}
               onConnectionState={setEditorConnection}
               onCatalogStatus={setCatalogStatus}
+              onPlaces={setFilePlaces}
               onOpen={(item) => {
                 if (item.kind === 'space') location.assign(spaceHref(item.id));
               }}

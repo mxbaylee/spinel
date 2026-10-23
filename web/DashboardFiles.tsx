@@ -83,7 +83,11 @@ export function DashboardFiles<T extends FileItem>({
       >
         {items.map((item, index) => {
           const date = dateMode === 'shared' ? item.sharedAt : item.updatedAt;
-          const validDate = date !== undefined && Number.isFinite(new Date(date).getTime());
+          // Legacy grants use zero for unknown dates, never a Unix-epoch share date.
+          const validDate =
+            date !== undefined &&
+            (dateMode !== 'shared' || date > 0) &&
+            Number.isFinite(new Date(date).getTime());
           const actions: Action[] = [
             { label: 'Open', onClick: () => onOpen(item), disabled: busy },
             ...(actionsFor?.(item) ?? []).map((action) => ({

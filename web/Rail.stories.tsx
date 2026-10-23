@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, within } from 'storybook/test';
+import { expect, fn, within, userEvent } from 'storybook/test';
 import { Rail } from './Rail.tsx';
 
 const meta = {
@@ -18,7 +18,7 @@ const meta = {
     connection: 'online',
   },
   render: (args) => (
-    <div className="workspace">
+    <div className={`workspace${args.files ? ' files-workspace' : ''}`}>
       <Rail {...args} />
     </div>
   ),
@@ -49,3 +49,30 @@ export const SignedOut: Story = {
 };
 
 export const Compact: Story = { args: { compact: true } };
+
+export const Files: Story = { args: { files: { shared: false, open: fn() } } };
+export const FilesCollapsed: Story = {
+  ...Files,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const collapse = canvas.queryByRole('button', { name: 'Collapse navigation' });
+    if (!collapse) return;
+    await userEvent.click(collapse);
+    await expect(canvas.getByRole('button', { name: 'My files' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Shared with me' })).toBeVisible();
+  },
+};
+export const FilesPhone: Story = { ...Files, ...Phone };
+export const FilesDrawer: Story = {
+  ...FilesPhone,
+  play: async ({ canvasElement }) => {
+    const browse = within(canvasElement).queryByRole('button', { name: 'Browse files' });
+    if (!browse) return;
+    await userEvent.click(browse);
+    const modal = within(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Browse files' }),
+    );
+    await expect(modal.getByRole('button', { name: 'My files' })).toBeVisible();
+    await expect(modal.getByRole('link', { name: 'Your profile' })).toBeVisible();
+  },
+};

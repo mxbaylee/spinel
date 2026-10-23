@@ -88,8 +88,9 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
 | Filter chips while searching or filtering                           | Tags chip → tag list                                                                                     |
 
 Access ("View only", "Can edit") stays a visible badge because it decides what
-the person can do once they open the item. The shared-row menu never offers
-Share, Rename, Move or Trash: only the owner can (docs/sharing.md). "Remove from
+the person can do once they open the item. The shared-row menu offers Share, Rename, Move and Trash only when existing
+File admin access permits them; viewers and editors do not receive these actions
+(see [sharing](../sharing.md)). "Remove from
 my folder" removes the person's filed reference, not the item, so it isn't
 grouped with the destructive items.
 
@@ -122,9 +123,8 @@ attention" and its menu offers **Choose another folder…** (SPN-051). An offlin
 copy, `<title> (offline copy, <local date and time>)`, lands in the person's own
 files and its row links to the original. See [states.md](states.md#offline).
 
-**Today (SPN-039).** Row actions are still inline buttons until the row menu
-lands, so **Available offline on this device** and **Remove from device** sit
-with them. Badges are `OfflineBadge`. SPN-042 adds the shared `ConnectionStatus`
+**Dashboard migration (SPN-048).** **Available offline on this device** and
+**Remove from device** are in the row menu. Badges remain `OfflineBadge`. SPN-042 adds the shared `ConnectionStatus`
 control beside the gem, with Online, Offline and Reconnecting states. Its
 hover, focus or tap detail contains "Files as of" while the catalog is local,
 offline or a refresh failed; `OfflineBanner` is removed. Connectivity returning

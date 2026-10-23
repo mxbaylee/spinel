@@ -24,12 +24,22 @@ plain text** treats the whole draft as search words while retaining those filter
 and the current scope. It is disabled above 200 literal characters instead of
 truncating text. Clear remains available. Search help is available by keyboard
 and touch. See the [draft/recovery decision](implementation/SPN-048.md#unified-search-draft-and-recovery)
-and the still-pending [scope integration contract](implementation/SPN-048.md#scope-and-return-context).
+and the [scope and return contract](implementation/SPN-048.md#scope-and-return-context).
 
 **Clear search and filters** returns to the current folder or editor. Searching
 hides the open editor without unmounting it, so unsaved changes stay in place.
 Opening another result uses the ordinary unsaved-change confirmation. Cancelling
 that confirmation keeps both the search and the current editor's work.
+
+My files searches all accessible owned and shared files, including unfiled shares.
+Inside a folder, search includes its descendants through accessible canonical
+ancestry and valid personal placement, excluding the folder itself. Shared with me
+searches non-owner files, including File admin access. **Search all files** removes
+only the scope; **Clear search and filters** restores that folder/shared context.
+Scope remains visible and a missing or unavailable folder never expands it.
+Spaces are outer files only. Opening and returning from a file restores the draft,
+query, list/grid view and scroll using current authorized metadata. These private
+navigation hints expire on sign-out/account change and are never permissions.
 
 ## Personal filing and access
 
@@ -40,8 +50,9 @@ shared document cannot reveal its owner's private ancestors. Personal references
 produce one result per source item; filing never moves the owner's document.
 Only the caller's tags participate, never another person's labels.
 
-Loaded metadata filters immediately; a debounced server query supplies the complete
-currently permitted catalog. Results refresh on window focus, becoming visible
+A debounced server query supplies the complete currently permitted outer-file
+catalog. The dashboard derives folder reachability before applying the same five
+filters; stale loaded metadata is never substituted for a pending response. Results refresh on window focus, becoming visible
 and every 15 seconds while searching. A failed server query hides results and
 provides Retry search. Opening a result and every content request still enforce
 current access, regardless of the visible search results.

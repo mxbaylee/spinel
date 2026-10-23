@@ -39,6 +39,9 @@ test('folder search preserves draft, scope, view and scroll across browser Back 
   ]);
   const query = page.getByRole('searchbox', { name: 'Search files', exact: true });
   const draft = 'Research   type:folder';
+  database
+    .prepare('UPDATE workspace_items SET updated_at=? WHERE id=?')
+    .run(Date.now() - 86_400_000, child.id);
   try {
     await page.goto(`/?item=${folder.id}`);
     await page.getByRole('radio', { name: 'Grid', exact: true }).click();
@@ -53,6 +56,7 @@ test('folder search preserves draft, scope, view and scroll across browser Back 
       .getByRole('button', { name: 'Open result Research child', exact: true })
       .scrollIntoViewIfNeeded();
     const scroll = await page.evaluate(() => window.scrollY);
+    expect(scroll).toBeGreaterThan(0);
     await page.getByRole('button', { name: 'Open result Research child', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(child.id));
     await page.goBack();
@@ -75,6 +79,14 @@ test('folder search preserves draft, scope, view and scroll across browser Back 
     await page.getByRole('button', { name: 'Clear search and filters', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Research', exact: true })).toBeVisible();
     await expect(page.getByRole('list', { name: 'Folder contents' })).toBeVisible();
+    await page
+      .getByRole('navigation', { name: 'Breadcrumb' })
+      .getByRole('button', { name: 'My files', exact: true })
+      .click();
+    await page.getByRole('button', { name: 'Trash Recently deleted files', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await expect(page).toHaveURL(baseURL! + '/');
+    await expect(query).toHaveValue('');
   } finally {
     database.close();
   }
