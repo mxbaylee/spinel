@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { shouldExitTheatre } from './theatre.ts';
+import { shouldExitTheatre } from '../../web/theatre.ts';
 
 describe('theatre Escape ownership', () => {
   const idle = {
