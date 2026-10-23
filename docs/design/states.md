@@ -141,7 +141,8 @@ section places them.
 Empty, loading and error states are stories of each component:
 `Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/Trash`,
 `Sharing/Sharing`, `Sharing/ShareLink`, `Admin/*`,
-`Guest/GuestApp`, `Editor/FillPresets`. Offline stories distinguish SPN-042's
+`Guest/GuestApp`. The duplicate fill toolbar and its stories were removed in SPN-050;
+native editor stories retain the fill menu and viewer state. Offline stories distinguish SPN-042's
 connection indicator from SPN-043's shared save slot and its SPN-053 local-save
 states, including a connected device whose changes are not yet durably saved.
 
