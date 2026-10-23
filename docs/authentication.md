@@ -41,7 +41,7 @@ never evidence that an authenticator is trusted.
 These choices favour revocation and a small SQLite footprint for the Operator,
 reload persistence and clear recovery for the Owner, equivalent access for the
 Collaborator, and a closed workspace boundary for the Link guest. Recorded
-2026-10-17 in [decision #8](https://github.com/mxbaylee/spinel/issues/8).
+2026-10-17 in [decision #8](implementation/SPN-002.md#legacy-decision-8-passkey-bound-sessions).
 
 ## Reused reference behaviour
 

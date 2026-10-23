@@ -3,7 +3,7 @@
 Reviewed all 29 open tickets against main `e21b8c7` after SPN-037, SPN-002,
 SPN-003, SPN-004, SPN-006, SPN-007 and SPN-029 landed. All remain needed;
 existing effort, impact and must-ship estimates remain appropriate. No IDs were
-removed or reused. [Decision #23](https://github.com/mxbaylee/spinel/issues/23)
+removed or reused. [Decision #23](../implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming)
 records the integration and sequencing choices.
 
 The Operator has verified private deployment tooling and authentication, but still needs
@@ -16,7 +16,7 @@ connections, without dashboard or unrelated data access.
 - SPN-005: retain account/device management; reuse auth stores and disable users
   without triggering ownership deletion cascades.
 - SPN-008: retain until PR #22 lands. Its reviewed native JSON/image contract is
-  recorded by #21; this grooming does not claim document editing is on main.
+  recorded by [#21](../implementation/SPN-008.md#legacy-decision-21-native-doc-snapshots-and-embedded-images); this grooming does not claim document editing is on main.
 - SPN-009: retain optional Slides with the existing terms/owner-acceptance gate.
 - SPN-010, SPN-012, SPN-013, SPN-014, SPN-017: retain the UI collaboration spike,
   production integration, conditional queue, owner-approved fallback and live

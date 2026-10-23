@@ -125,7 +125,7 @@ milestone; optional CSV import (SPN-093) and document-type/converter plugins
 (SPN-094) follow it. Phase records this owner sequencing, without implying that
 CSV or plugins technically need public HTTPS. Owner, chat 2026-10-21. The fixed
 three-phase implementation and persona tradeoffs are recorded in
-[decision #129](https://github.com/mxbaylee/spinel/issues/129).
+[decision #129](../implementation/backlog-workflow.md#legacy-decision-129-fixed-lifecycle-phases).
 
 Within each phase, the highest score comes first, with
 ties going to the ticket that unblocks another, then higher impact, then lower
@@ -164,7 +164,7 @@ next eligible ticket. Owner, chat 2026-10-19.
    Explicitly assess over-complexity within the rubric's 10 maintainability points,
    with actionable deductions for unnecessary abstractions, dependencies or
    speculative flexibility (owner, chat 2026-10-20,
-   [#105](https://github.com/mxbaylee/spinel/issues/105)).
+   [#105](../implementation/backlog-workflow.md#legacy-decision-105-deduct-unnecessary-complexity)).
    Weigh scope overlap before changed-line limits: fix acceptance gaps here;
    ticket separable work without hiding a blocker. Re-review repairs, and put
    the score, reviewed SHA and every finding’s disposition in the PR.
@@ -204,9 +204,11 @@ one the ticket is for, and preserve the rationale alongside implementation notes
   record does not grant approval. Update it and the Rules when the answer arrives.
 - **Cross-ticket policy:** use one named record under `docs/implementation/` and
   link related tickets to it; do not duplicate competing decisions.
-- **Legacy decisions:** existing issue citations and numeric `decisions` frontmatter
-  remain valid. SPN-096 migrates them with provenance and status intact. Do not
-  create issue numbers for local records or prematurely erase the old sources.
+- **Legacy decisions:** use [SPN-096's inventory](../implementation/SPN-096.md) to
+  find the canonical local entry, with original issue/comment provenance and
+  status intact. Migrated active tickets link entries from Rules and use an empty
+  `decisions` list. The CLI still accepts numeric issue lists from older branches
+  and history; do not create issue numbers for local records or erase old sources.
 
 Implementation records survive ticket deletion. Maintained product/design/process
 docs still carry the resulting behavior and link to the rationale. An implementation
@@ -261,7 +263,7 @@ the full suite. Classification uses the complete PR/push diff with both sides
 of renames; uncertain ranges and manual runs use full validation. A failed or
 cancelled classification never passes the browser gate. This is an applicability
 check, not a waiver for failures. Owner, chat 2026-10-20,
-[decision #121](https://github.com/mxbaylee/spinel/issues/121).
+[decision #121](../implementation/backlog-workflow.md#legacy-decision-121-documentation-only-ci-applicability).
 
 Owner setup, once, in the repository settings:
 
@@ -279,7 +281,7 @@ Owner setup, once, in the repository settings:
 If the memory watchdog prevents safe local testing, follow the owner-approved
 [CI-first exception](../run-backlog.md#2-implement-one-ticket): local typecheck,
 lint and backlog checks before a draft push; full unit/browser CI and the same
-independent review and merge gates afterward. Decision #52, owner, chat 2026-10-18.
+independent review and merge gates afterward. Decision [#52](../implementation/backlog-workflow.md#legacy-decision-52-memory-watchdog-ci-first-exception), owner, chat 2026-10-18.
 
 ```bash
 npm run typecheck                          # type-check every .ts and .tsx file

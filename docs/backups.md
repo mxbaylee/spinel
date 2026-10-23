@@ -41,7 +41,7 @@ collaboration adapter, briefly queuing other application requests. It does not
 copy live database/WAL files directly. The SDK's libsql package has no implemented
 JavaScript backup method; using a second SQLite library in the process risks
 corruption. This preserves one consistent backup without that risk; see
-[decision #68](https://github.com/mxbaylee/spinel/issues/68).
+[decision #68](implementation/SPN-025.md#legacy-decision-68-single-sqlite-runtime-and-consistent-copies).
 
 This preserves accounts, passkeys, sessions, invitations, folders, grants, trash,
 native Sheets/Docs snapshots, collaboration generations, retained checkpoints,
@@ -68,13 +68,13 @@ independent archive: a local Docker image ID alone does not preserve the image.
 
 Offsite recovery is required before daily use: the droplet is a single point
 of failure for the Owner's documents (grooming, 2026-10-17;
-[decision #23](https://github.com/mxbaylee/spinel/issues/23)). Backup tooling is
+[decision #23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming)). Backup tooling is
 TypeScript, as required by the owner on 2026-10-17.
 
 The owner selected Spaces and authorized a temporary cloud restore drill in
-[decision #34](https://github.com/mxbaylee/spinel/issues/34). The format, schedule
+[decision #34](implementation/SPN-030.md#legacy-decision-34-backup-destination-and-temporary-drill). The format, schedule
 and recovery choices are recorded in
-[decision #36](https://github.com/mxbaylee/spinel/issues/36). They give the Operator
+[decision #36](implementation/SPN-030.md#legacy-decision-36-encrypted-nightly-recovery-bundle). They give the Operator
 one recovery bundle and visible failures, preserve the Owner's work and the
 Collaborator's permissions, and keep Link guests' access scoped to their grants.
 Full database backups and restored credentials remain sensitive even though the

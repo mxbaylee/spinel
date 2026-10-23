@@ -46,7 +46,7 @@ rolls back the account too. No provisional admin can lock out a later valid clai
 This favours a recoverable bootstrap for the Operator, separate everyday identity
 for the Owner, rejection of later hostile claims for the Collaborator, and no
 workspace access for the Link guest. Recorded 2026-10-17 in
-[decision #10](https://github.com/mxbaylee/spinel/issues/10). Admin/document
+[decision #10](implementation/SPN-003.md#legacy-decision-10-first-admin-setup-proof). Admin/document
 separation is the owner’s 2026-10-17 rule; future document and share endpoints must
 enforce it on the server as well as in navigation.
 

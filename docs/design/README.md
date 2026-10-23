@@ -3,7 +3,7 @@
 ## SPN-047 review status
 
 The owner approved the [composed redesign](redesign.md) and authorized PR #125
-to merge as-is on 2026-10-21, recorded in decision #126. Its screen inventory, public-source comparisons,
+to merge as-is on 2026-10-21, recorded in decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Its screen inventory, public-source comparisons,
 Base UI controls and before/after screenshot gallery define the next UI work.
 Start with the [connected walkthrough guide](walkthrough.md) to review full journeys.
 The [component, section and journey audit](component-review.md) tracks coverage and
@@ -36,17 +36,17 @@ products, because the owner finds the current UI cluttered (chat 2026-10-19). It
 updates these pages before the UI tickets above build on them. SPN-074 is the
 first explicit exception: removing unsupported Slides could land before the redesign,
 using the existing dashboard patterns and the usual stories, light/dark/phone
-screenshots and owner approval. Owner, chat 2026-10-20, decision [#104](https://github.com/mxbaylee/spinel/issues/104).
+screenshots and owner approval. Owner, chat 2026-10-20, decision [#104](../implementation/SPN-074.md#legacy-decision-104-remove-unsupported-slides).
 
 The owner also authorized SPN-044 and SPN-034 (now landed) and SPN-033 before
-the redesign (chat 2026-10-20; #113). Formula insertion follows
+the redesign (chat 2026-10-20; [#113](../implementation/SPN-033.md#legacy-decision-113-live-authorized-document-formulas)). Formula insertion follows
 [formulas.md](formulas.md), with the same story and screenshot gates.
 
 The starting point is the approved gem-rail mockup
 (`git show 30a4a61^:docs/design/gem-rail-mockup.tsx`) and the landed SPN-027
 theme in `src/ui/`. Initial research used public help pages and product blogs.
 The owner also authorized live third-party UI research in Firefox on 2026-10-20
-(decision #126). Describe interaction patterns; do not copy private content or
+(decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits)). Describe interaction patterns; do not copy private content or
 third-party assets into the proposal.
 
 ## Principles
@@ -104,7 +104,7 @@ chooses visual styling, including any Material-like treatment. Shared components
 used by the mockups get stories and keyboard, focus, touch and theme verification.
 The shared controls and composed stories live in `src/ui/redesign/`. Consumer screen migrations remain in their implementation tickets. Use `npm run screenshots -- <story ids>` after building Storybook; see [review evidence](redesign.md#review-and-screenshots). Tailwind is
 not currently installed and is not required for this adoption. Owner, chat
-2026-10-20; [decision #120](https://github.com/mxbaylee/spinel/issues/120).
+2026-10-20; [decision #120](../implementation/SPN-047.md#legacy-decision-120-unstyled-accessible-controls).
 SPN-077's icon assets/current-surface integration can land first.
 
 ## Entity artwork
@@ -306,7 +306,7 @@ polished component. Required access, save, recovery and destructive-action
 information must remain discoverable. Owner, chat 2026-10-21.
 
 The owner removed personal pinning and all pinned-item UI from this branch
-([decision #128](https://github.com/mxbaylee/spinel/issues/128), 2026-10-21).
+([decision #128](../implementation/SPN-047.md#legacy-decision-128-remove-personal-pinning), 2026-10-21).
 Do not preserve or reintroduce them as favorites, shortcuts or disabled controls.
 Compact site headers use an icon-only My files destination with an accessible
 name and tooltip. Space page headers have no redundant Back button: the local
@@ -332,7 +332,7 @@ Pages tree handles page navigation and My files exits the Space.
   is one source of color and one contrast test.
 - Public references and owner-authorized live UI research inform the patterns,
   without copying private content or third-party assets. Owner, chat 2026-10-20,
-  decision #126; expands the original public-material research scope.
+  decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits); expands the original public-material research scope.
 - The owner reviews this playbook before the UI tickets it unblocks start
   (SPN-046 owner input).
 
@@ -369,7 +369,7 @@ never an identifier or substitute for a type/access label. Folders and Trash kee
 their functional icons. Defer the persistent emoji/icon picker to **SPN-086**;
 no picker ships in this proposal. Owner/Collaborator gain recognition and view
 choice; Guests retain scoped identity and access clarity; Operators gain no
-personal file navigation or service dependency. Decision #126.
+personal file navigation or service dependency. Decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits).
 
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
@@ -382,7 +382,7 @@ and is separate from saved profile identity. This supersedes the earlier explici
 one theme store and follows OS changes while System is selected. The picker
 must report a storage failure without undoing the in-session theme choice.
 
-Owner follow-ups accepted with as-is approval, 2026-10-21, decision #126:
+Owner follow-ups accepted with as-is approval, 2026-10-21, decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits):
 folder colors and the identity-picker mockup belong to SPN-086; Space Trash uses
 a deleted-item collection (SPN-078 model, SPN-091 UI); all product modals get consistent title icons
 (SPN-089). The later [2026-10-23 decision](../implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal)

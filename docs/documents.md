@@ -42,7 +42,7 @@ check retained versions and pending uploads before deleting bytes. This limit in
 images removed from the visible document, and its error states that the document
 has reached its image allowance.
 
-These choices were recorded in [decision #21](https://github.com/mxbaylee/spinel/issues/21)
+These choices were recorded in [decision #21](implementation/SPN-008.md#legacy-decision-21-native-doc-snapshots-and-embedded-images)
 on 2026-10-17. The Operator gets bounded decoding and one encrypted SQLite storage
 location; the Owner keeps images with the document; the Collaborator gets the
 same visible save/conflict behavior as sheets; the Link guest gains no access

@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Dashboard, Doc, Sheet, PlannedSpace.
 
@@ -29,7 +29,7 @@ authorized before the broader SPN-047 redesign and before Spaces exist.
 The owner selected the common B2 beveled outline and equal visual bounds for all
 three. Interior marks and adjacent labels distinguish type without color alone;
 this supersedes the draft requirement for distinct outer silhouettes. Owner,
-chat 2026-10-20, [decision #122](https://github.com/mxbaylee/spinel/issues/122).
+chat 2026-10-20, [decision #122](../implementation/SPN-077.md#legacy-decision-122-consistent-gem-icon-family).
 Review at 16, 24 and 32px, in monochrome, in both themes and at social-card size.
 
 Keep one consistent SVG viewBox, normally 24×24, with enough internal padding to
@@ -59,7 +59,7 @@ icon has an accessible type name. A button's name describes its action.
 
 The current New control uses a native type selector. A replacement visual type
 picker with facet-and-label choices is allowed; its component-library adoption
-belongs to SPN-047, where the owner selected Base UI (decision #120, chat
+belongs to SPN-047, where the owner selected Base UI (decision [#120](../implementation/SPN-047.md#legacy-decision-120-unstyled-accessible-controls), chat
 2026-10-20). SPN-077 remains independent and next: integrate artwork into the
 current creation surface and Storybook without waiting for or independently
 rolling out that library. A selected-type facet beside today's selector is a
@@ -112,7 +112,7 @@ service is needed. The app's heart logo and favicon remain unchanged.
 
 Storybook CI captures these stories and the actual dashboard integration stories
 in light, dark and phone layouts as the `entity-icon-screenshots` artifact. The
-same ticket implements both artwork and current-surface integration (#122).
+same ticket implements both artwork and current-surface integration ([#122](../implementation/SPN-077.md#legacy-decision-122-consistent-gem-icon-family)).
 
 ## Optional file identity (SPN-047 owner refinement)
 
@@ -120,7 +120,7 @@ The proposal now uses deterministic filename-derived botanical emoji beside
 names, while a visible Doc/Sheet/Space label preserves type recognition. Existing
 facets remain the type artwork and fallback; this is not a replacement of the
 approved assets. Folders/Trash retain functional icons. The future persistent
-picker is SPN-086. Owner, chat 2026-10-20; decision #126.
+picker is SPN-086. Owner, chat 2026-10-20; decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits).
 
 Folder and permanent Trash glyphs use the same 32 px artwork bounds as filename
 emoji in list and grid views (owner, chat 2026-10-20). The container alone must

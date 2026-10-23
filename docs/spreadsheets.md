@@ -48,7 +48,7 @@ does not duplicate a save. Older revisions return 409; newer local edits wait fo
 the outstanding request's acknowledgement before using the next revision.
 
 These rules preserve SPN-007's single-user editing, native storage compatibility
-and visible unsaved-state requirements. [Decision #19](https://github.com/mxbaylee/spinel/issues/19),
+and visible unsaved-state requirements. [Decision #19](implementation/SPN-007.md#legacy-decision-19-revision-checked-native-sheet-snapshots),
 2026-10-17, favours a small SQLite service for the Operator, explicit preservation
 of edits for the Owner, conflict detection for the Collaborator's separate tabs,
 and continued isolation for the Link guest.

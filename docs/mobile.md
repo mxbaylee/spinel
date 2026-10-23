@@ -29,7 +29,7 @@ Spinel opens offline with the last-synced file list and downloaded documents ope
 read-only. Pages that need the server, guest links and unprepared devices still
 get the generic offline page above. Offline editing and real-device runs are
 SPN-053 and SPN-090, with shared storage lifecycle in SPN-055. The earlier global no-offline-feature policy is superseded
-for this feature, while guests keep the generic fallback ([decision #83](https://github.com/mxbaylee/spinel/issues/83)).
+for this feature, while guests keep the generic fallback ([decision #83](implementation/SPN-039.md#legacy-decision-83-complete-opted-in-offline-product)).
 
 An editor already open when connectivity drops retains its existing unsaved-edit
 warning. Keep that tab open until changes are saved. Installing Spinel does not
@@ -63,16 +63,16 @@ public DNS, certificates or deployment readiness.
 
 - A manifest and a small service worker, with no offline editing feature: PRD §6
   and grooming, 2026-10-17. Keep already-open editors' unsaved warnings and never
-  service-worker-cache private data: offline privacy #23, guest isolation #72 and
+  service-worker-cache private data: offline privacy [#23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming), guest isolation [#72](implementation/SPN-016.md#legacy-decision-72-scoped-anonymous-link-capabilities) and
   grooming, 2026-10-18.
 - Touch gestures come from Univer's renderer; Spinel selects its public UI
-  plugins and adapts controls. Install icons reuse SPN-027's heart: grooming #60,
+  plugins and adapts controls. Install icons reuse SPN-027's heart: grooming [#60](implementation/grooming-2026-10-18.md#legacy-decision-60-recovery-and-organization-grooming),
   2026-10-18. Choose controls once per editor and preserve privacy with network-only
-  navigation: [decision #82](https://github.com/mxbaylee/spinel/issues/82).
+  navigation: [decision #82](implementation/SPN-028.md#legacy-decision-82-initial-mobile-and-installable-shell).
 - Test configured HTTPS now and repeat at the approved public origin during
-  SPN-038; guest access stays document-only: #72 and grooming, 2026-10-18.
+  SPN-038; guest access stays document-only: [#72](implementation/SPN-016.md#legacy-decision-72-scoped-anonymous-link-capabilities) and grooming, 2026-10-18.
 - Current Chromium installability, manifest/icons and offline privacy checks
-  replace the deprecated Lighthouse PWA audit: [decision #77](https://github.com/mxbaylee/spinel/issues/77),
+  replace the deprecated Lighthouse PWA audit: [decision #77](implementation/SPN-028.md#legacy-decision-77-maintained-installability-verification),
   2026-10-18.
 
 Public SDK guidance: [mobile installation](https://docs.univer.ai/guides/sheets/getting-started/installation#mobile-support).

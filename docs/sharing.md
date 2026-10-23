@@ -52,15 +52,15 @@ no additional access. Sheet image uploading is not implemented yet.
 Folder sharing replaced the earlier Team Spaces proposal (owner, chat 2026-10-17).
 On 2026-10-20 the owner requested a different Space model: a single file inside
 existing folders, with its own internal Doc/Sheet tree and one sharing boundary
-([decision #116](https://github.com/mxbaylee/spinel/issues/116)). The
+([decision #116](implementation/SPN-078.md#legacy-decision-116-spaces-remain-files-in-folders)). The
 [internal foundation](design/spaces.md#implemented-foundation) is implemented in
 SPN-078. SPN-091 added account navigation and recovery; [SPN-092](implementation/SPN-092.md)
 completes guest sharing and the scoped integrations described below. The most
 generous grant wins (grooming 2026-10-17). The common resolver, admin exclusion and
 revision
-protection were required in [decision #23](https://github.com/mxbaylee/spinel/issues/23).
+protection were required in [decision #23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming).
 Ownership-only organization, authenticated direct addresses and honest revocation
-behavior were recorded in [decision #28](https://github.com/mxbaylee/spinel/issues/28)
+behavior were recorded in [decision #28](implementation/SPN-015.md#legacy-decision-28-current-viewer-and-editor-grants)
 on 2026-10-17. The Operator stays outside workspace content; the Owner retains
 control; the Collaborator gets readable permissions and preserved unsaved work;
 the Link guest receives no access from an ordinary item address.
@@ -119,9 +119,9 @@ old tickets and credentials.
 
 These boundaries preserve the Operator's account separation, the Owner's control,
 the Collaborator's private details and the Link guest's document-only access.
-Decisions [#23](https://github.com/mxbaylee/spinel/issues/23),
-[#60](https://github.com/mxbaylee/spinel/issues/60) and
-[#72](https://github.com/mxbaylee/spinel/issues/72), 2026-10-17/18. The original
+Decisions [#23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming),
+[#60](implementation/grooming-2026-10-18.md#legacy-decision-60-recovery-and-organization-grooming) and
+[#72](implementation/SPN-016.md#legacy-decision-72-scoped-anonymous-link-capabilities), 2026-10-17/18. The original
 128-bit minimum is exceeded by 256-bit tokens. Tests cover expiry, rotation,
 scope, image authorization after decoding, personal metadata filtering, pending
 connections, multiple guest tabs, transient polling failures and open-editor
@@ -140,7 +140,7 @@ Each person has at most one personal placement per shared item. Filing again mov
 that reference. **Remove from my folder** deletes only the reference: the original,
 your access and the drawer entry remain. Shared folders are shortcuts
 to their original accessible contents. Placement never changes owner, canonical
-parent or grants. These preserve SPN-018's rules from decisions #23 and #30 and
+parent or grants. These preserve SPN-018's rules from decisions [#23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming) and [#30](implementation/SPN-021.md#legacy-decision-30-trash-batches-and-exact-set-deletion) and
 the owner's 2026-10-17 direction that filing is on by default.
 
 The drawer sorts by latest applicable grant time, then ID. For children created
@@ -148,7 +148,7 @@ after an inherited grant, creation time bounds that timestamp. Content edits,
 role changes and moves do not reset an existing grant's time; revoke/regrant does.
 Legacy grants migrate with an unknown timestamp and display **Older share**, after
 dated shares, rather than using document modification time as a fabricated share
-date. This resolves the migration requirement recorded in grooming #60.
+date. This resolves the migration requirement recorded in grooming [#60](implementation/grooming-2026-10-18.md#legacy-decision-60-recovery-and-organization-grooming).
 
 Access loss permanently removes personal placements, including source trash or a
 move out of inherited access. A later regrant does not revive them. Trashing a
@@ -159,7 +159,7 @@ The drawer and personal placements refresh on focus and every five seconds while
 visible; an inaccessible document is rejected immediately at the server boundary.
 Refreshing this catalog does not recreate an open editor or discard pending edits.
 
-Decision [#74](https://github.com/mxbaylee/spinel/issues/74), 2026-10-18, weighs simple
+Decision [#74](implementation/SPN-018.md#legacy-decision-74-personal-filing-of-shared-items), 2026-10-18, weighs simple
 storage for the Operator, an unchanged owner tree, predictable personal filing for
 the Collaborator, and unchanged account isolation for the Link guest. Tests cover
 legacy migration, ordering, destination isolation, inherited grants, revoke/regrant,
@@ -209,7 +209,7 @@ A root link's privacy epoch covers every child room and outstanding admission.
 Rotation, revocation and role changes fence and evict affected connections;
 generic **Guest**/**Collaborator** labels hide account names and avatars. Guest
 navigation, source discovery and metadata stay within that root. The same-Space
-Formula rule follows [decision #117](https://github.com/mxbaylee/spinel/issues/117);
+Formula rule follows [decision #117](implementation/SPN-078.md#legacy-decision-117-whole-space-guest-capability);
 SPN-076 remains for deliberate external dependency sharing, disclosing the whole
 source Space when that is its permission boundary. Internal Trash and whole-Space
 recovery remain preserved without automatic Space Trash expiry.
@@ -242,8 +242,8 @@ future pages, has its root's role without overrides. Ordinary and Space sockets,
 content, images, exports, Formula sources and OAuth/MCP recheck current authority;
 a token's scopes never increase with its user's File admin grant.
 
-Decisions [#118](https://github.com/mxbaylee/spinel/issues/118) and
-[#145](https://github.com/mxbaylee/spinel/issues/145), 2026-10-20/22, retain sole
+Decisions [#118](implementation/SPN-078.md#legacy-decision-118-space-roles-and-internal-editing) and
+[#145](implementation/SPN-079.md#legacy-decision-145-delegated-file-admin-boundaries), 2026-10-20/22, retain sole
 ownership, content-blind Operators and View/Edit guests while letting trusted
 Collaborators administer shared work. The approved [capability matrix](design/spaces.md#capability-matrix)
 and [SPN-079 verification contract](implementation/SPN-079.md) document the limits.

@@ -38,11 +38,14 @@ Source: [src/ui/Favicon.stories.tsx](../../src/ui/Favicon.stories.tsx). Baseline
 
 States inventoried: Light, Dark, Automatic.
 
-## Current production/Editor/FillPresets
+## Historical Editor/FillPresets (removed in SPN-050)
 
-**Intentionally removed.** Owner chose native Univer fill. Baseline remains for comparison; production removal belongs to migration.
+**Intentionally removed.** Owner chose native Univer fill; SPN-050 removed the
+production control after this baseline comparison.
 
-Source: [src/ui/FillPresets.stories.tsx](../../src/ui/FillPresets.stories.tsx). Baseline family: yes.
+The baseline source and stories were removed in SPN-050. Use the native Sheet fill
+menu; stored preset mappings and profile palette remain. This section records the
+historical audit, not a current component. Baseline family: yes.
 
 States inventoried: Default, Disabled, Applying, Failed.
 
@@ -597,7 +600,7 @@ passkeys, authorization, server persistence, exports or live revocation.
 
 ## Owner-directed subtraction and loading follow-up
 
-[Decision #128](https://github.com/mxbaylee/spinel/issues/128) removes personal
+[Decision #128](../implementation/SPN-047.md#legacy-decision-128-remove-personal-pinning) removes personal
 pinning in this branch, including production controls, API routes, providers and
 new schema creation. Legacy SQL tables and cached fields are safely unused;
 files, grants, personal folder placement, offline downloads and named-version
