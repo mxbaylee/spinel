@@ -909,7 +909,7 @@ export function Space({
   return visiblePage ? (
     <EditorFrame
       documentKey={editorKey!}
-      name={visiblePage.item.name}
+      name={denied ? 'Space unavailable' : visiblePage.item.name}
       onRename={
         !guest && canAdminister(currentTree?.access) && canEdit
           ? async (name) => {
