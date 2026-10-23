@@ -230,6 +230,16 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
       page.getByRole('status').filter({ hasText: 'Read only on this device' }),
     ).toBeVisible({ timeout: 30_000 });
     await expect(page.getByLabel('Spreadsheet grid', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Back to files', exact: true })).toHaveCount(1);
+    await expect(page.getByRole('navigation', { name: 'Breadcrumb', exact: true })).toHaveCount(0);
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const frame = document.querySelector('.editor-frame')!.getBoundingClientRect();
+          return frame.top === 0 && frame.bottom <= innerHeight + 1;
+        }),
+      )
+      .toBe(true);
     await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
     const rgb = [
       [255, 153, 0],
@@ -422,6 +432,8 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
       .toBeGreaterThan(1000);
     await saved();
 
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Offline copies', exact: true }).click();
     const availability = page.getByRole('region', { name: 'Offline availability', exact: true });
     const downloaded = page.waitForResponse(
       (response) => new URL(response.url()).pathname === `${childApi}/offline-bundle`,
@@ -447,14 +459,17 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
       `${doc.name} is available offline on this device.`,
       { timeout: 120_000 },
     );
+    await page
+      .getByRole('dialog', { name: 'Offline copies', exact: true })
+      .getByRole('button', { name: 'Close dialog', exact: true })
+      .click();
 
     const assertPreparedDoc = async () => {
       await expect(page.getByRole('heading', { name: doc.name, exact: true })).toBeVisible();
       const copy = page.getByRole('region', { name: 'Offline copy', exact: true });
-      await expect(copy.getByRole('status')).toHaveText(
-        'Read only on this device. Reconnect to edit.',
-        { timeout: 30_000 },
-      );
+      await expect(
+        copy.getByRole('status').filter({ hasText: 'Read only on this device' }),
+      ).toHaveText('Read only on this device. Reconnect to edit.', { timeout: 30_000 });
       await expect(copy.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
       const surface = copy.locator('.univer-container');
       // Inspect the native drawing itself: a cached manifest or image URL alone
@@ -481,11 +496,13 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
       ['light', 390, 'phone'],
     ] as const) {
       await page.setViewportSize({ width, height: 1100 });
-      await page
-        .getByRole('radio', { name: theme === 'dark' ? 'Dark' : 'Light', exact: true })
-        .click();
+      await page.emulateMedia({ colorScheme: theme });
+      await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await expect(
-        page.getByRole('region', { name: 'Offline copy', exact: true }).getByRole('status'),
+        page
+          .getByRole('region', { name: 'Offline copy', exact: true })
+          .getByRole('status')
+          .filter({ hasText: 'Read only on this device' }),
       ).toHaveText('Read only on this device. Reconnect to edit.');
       await expect(
         page

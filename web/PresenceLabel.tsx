@@ -29,7 +29,9 @@ export function PresenceLabel({
         overflow: 'hidden',
       }}
     >
-      <span style={{ display: 'inline-flex', flexShrink: 0 }}><ProfileIcon icon={icon} /></span>
+      <span style={{ display: 'inline-flex', flexShrink: 0 }}>
+        <ProfileIcon icon={icon} />
+      </span>
       <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
     </span>
   );

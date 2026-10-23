@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
-import type { Page, TestInfo } from '@playwright/test';
+import type { BrowserContext, Page, TestInfo } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -59,6 +59,47 @@ test('Space theatre fills the window and restores its own page navigation', asyn
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   try {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto(`/spaces/${root.id}?item=${pages[0]!.id}`);
+    await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+      { timeout: 30_000 },
+    );
+    await page.getByRole('button', { name: `Rename ${pages[0]!.name}`, exact: true }).click();
+    await page
+      .getByRole('textbox', { name: 'Document name', exact: true })
+      .fill('Draft for the first page');
+    await page
+      .getByRole('complementary', { name: 'Space contents', exact: true })
+      .locator(`a[href="/spaces/${root.id}?item=${pages[1]!.id}"]`)
+      .click();
+    await expect(page.getByRole('heading', { name: pages[1]!.name, exact: true })).toBeVisible();
+    await expect(page.getByRole('form', { name: 'Rename document' })).toHaveCount(0);
+    await page.getByRole('button', { name: `Rename ${pages[1]!.name}`, exact: true }).click();
+    await expect(page.getByRole('textbox', { name: 'Document name', exact: true })).toHaveValue(
+      pages[1]!.name,
+    );
+    await page.keyboard.press('Escape');
+    // A completed root action releases its controller, so both the same and a
+    // different subsequent action open rather than changing a stale initialMode.
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Rename Space…', exact: true }).click();
+    const renameRoot = page.getByRole('dialog', { name: 'Rename Space', exact: true });
+    await renameRoot
+      .getByRole('textbox', { name: 'Name', exact: true })
+      .fill('Renamed theatre project');
+    await renameRoot.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(renameRoot).toHaveCount(0);
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Rename Space…', exact: true }).click();
+    await expect(renameRoot.getByRole('textbox', { name: 'Name', exact: true })).toHaveValue(
+      'Renamed theatre project',
+    );
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Move…', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Move Space', exact: true })).toBeVisible();
+    await page.keyboard.press('Escape');
     for (const item of pages) {
       await page.goto(`/spaces/${root.id}?item=${item.id}`);
       const editor = page.getByRole('region', {
@@ -117,6 +158,7 @@ for (const kind of ['sheet', 'doc'] as const) {
     test(`${kind} theatre preserves the live editor and selection in ${variant.name}`, async ({
       page,
       context,
+      browser,
       baseURL,
     }, info) => {
       test.setTimeout(120_000);
@@ -127,6 +169,10 @@ for (const kind of ['sheet', 'doc'] as const) {
       const displayName = 'Alexandria Very Long Collaborator Name Beyond The Phone Width';
       const owner = auth.createUser(displayName);
       const item = store.create(owner.id, { name: `Theatre ${kind}`, kind, parentId: null });
+      const peerName = 'Morgan Another Very Long Collaborator Name Beyond The Phone Header';
+      const collaborator = variant.name === 'phone' ? auth.createUser(peerName) : null;
+      if (collaborator) store.share(owner.id, item.id, collaborator.id, 'editor');
+      let peer: BrowserContext | undefined;
       await context.addCookies([
         {
           name: COOKIE_NAME,
@@ -174,6 +220,38 @@ for (const kind of ['sheet', 'doc'] as const) {
         const nativeInput = await page.evaluateHandle(() => document.activeElement as HTMLElement);
         await saved();
         await expect.poll(async () => JSON.stringify(await read())).toContain('Before theatre');
+        if (collaborator) {
+          peer = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1000 } });
+          await peer.addCookies([
+            {
+              name: COOKIE_NAME,
+              value: auth.createSession(collaborator.id).token,
+              url: baseURL!.replace('http:', 'https:'),
+              secure: true,
+              httpOnly: true,
+              sameSite: 'Strict',
+            },
+          ]);
+          const other = await peer.newPage();
+          other.on('pageerror', (error) => errors.push(error.message));
+          await other.goto(`/?item=${item.id}`);
+          await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
+            'All changes saved.',
+            { timeout: 30_000 },
+          );
+          const native = other.getByRole('region', {
+            name: kind === 'sheet' ? 'Sheet document' : 'Doc document',
+            exact: true,
+          });
+          if (kind === 'sheet') {
+            await native.getByRole('textbox').nth(2).fill('C4');
+            await native.getByRole('textbox').nth(2).press('Enter');
+          } else {
+            await native.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+            await other.keyboard.press('End');
+          }
+          await page.bringToFront();
+        }
         await page.setViewportSize({ width: variant.width, height: variant.height });
         await expect(
           page.getByRole('searchbox', { name: 'Search files', exact: true }),
@@ -182,6 +260,10 @@ for (const kind of ['sheet', 'doc'] as const) {
         await page.getByRole('button', { name: 'People in this document', exact: true }).click();
         const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
         await expect(people).toContainText(displayName);
+        if (collaborator)
+          await expect(
+            people.getByRole('button', { name: `Go to ${peerName}`, exact: true }),
+          ).toBeVisible();
         await capture(page, info, `account-${kind}-${variant.name}-people`);
         await page.keyboard.press('Escape');
         await expect(people).toBeHidden();
@@ -286,6 +368,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           ).toHaveText('Online', { timeout: 30_000 });
           await page.getByRole('button', { name: 'People in this document', exact: true }).click();
           await expect(people).toContainText(displayName);
+          await expect(people).toContainText(peerName);
           await capture(page, info, `account-${kind}-phone-people-reconnected`);
           await page.keyboard.press('Escape');
           await capture(page, info, `account-${kind}-phone-reconnected`);
@@ -293,6 +376,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         expect(errors).toEqual([]);
       } finally {
         await network.setOffline(false);
+        await peer?.close();
         db.close();
       }
     });

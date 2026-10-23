@@ -113,7 +113,7 @@ export function OfflineViewer({
       ) : (
         <p role="status">Opening offline copy…</p>
       )}
-      {ready && !problem && <FormulaReadout states={formulaStates} />}
+      {ready && !problem && <FormulaReadout states={formulaStates} target={chrome?.toolsTarget} />}
       <div
         className="univer-container"
         ref={container}

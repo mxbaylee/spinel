@@ -910,7 +910,10 @@ export function Space({
                   ),
                 () => {},
               );
-              if (!renamed) throw new Error('Could not rename this page. Check the connection and your access.');
+              if (!renamed)
+                throw new Error(
+                  'Could not rename this page. Check the connection and your access.',
+                );
             }
           : undefined
       }
