@@ -1,0 +1,31 @@
+{
+  "pages": [
+    {
+      "sheet": "wide",
+      "slice": 0,
+      "scale": 0.775223097112861
+    },
+    {
+      "sheet": "wide",
+      "slice": 1,
+      "scale": 0.775223097112861
+    },
+    {
+      "sheet": "narrow",
+      "slice": 0,
+      "scale": 1
+    }
+  ],
+  "failures": [],
+  "bytes": 15175,
+  "durationMs": 26.901042000000018,
+  "maxRssKiB": 169184,
+  "memory": {
+    "rss": 173244416,
+    "heapTotal": 58408960,
+    "heapUsed": 29248400,
+    "external": 12263618,
+    "arrayBuffers": 483657
+  },
+  "limitation": "Fixture uses explicit extent and fixed-height row-aligned page slices; image is composited from prepared bytes, not parsed drawing anchors. Variable heights and page-spanning merges/images remain unproven."
+}
