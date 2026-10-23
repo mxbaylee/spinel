@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
@@ -62,6 +63,21 @@ for (const kind of ['doc', 'sheet'] as const) {
         return blue;
       }, { timeout: 30_000 }).toBeGreaterThan(1000);
     };
+    const capture = async (state: 'preview' | 'restore-confirmation') => {
+      await mkdir('test-results/theme-screenshots', { recursive: true });
+      for (const [theme, width, variant] of [
+        ['light', 1440, 'light'], ['dark', 1440, 'dark'],
+        ['light', 390, 'phone-light'], ['dark', 390, 'phone-dark'],
+      ] as const) {
+        await page.setViewportSize({ width, height: width === 390 ? 844 : 1100 });
+        await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+        await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+        await page.screenshot({ path: `test-results/theme-screenshots/spn-085-space-${kind}-${state}-${variant}-${info.project.name}.png`, fullPage: true, animations: 'disabled' });
+      }
+      await page.setViewportSize({ width: 1440, height: 1100 });
+      await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+    };
     try {
       const sheet = await sheetImageFixture();
       const embedded = sheet.sheets.tab.cellData[1][0].p;
@@ -116,6 +132,7 @@ for (const kind of ['doc', 'sheet'] as const) {
         .getByRole('link', { name: 'Back to live document', exact: true })).toHaveAttribute('href', liveHref);
       await imageVisible(page);
       expect(await exported()).toEqual(latest);
+      await capture('preview');
 
       const readOnly = await viewerContext.newPage();
       await readOnly.goto(previewHref);
@@ -133,6 +150,7 @@ for (const kind of ['doc', 'sheet'] as const) {
       await page.getByRole('button', { name: 'Restore this version', exact: true }).click();
       const confirmation = page.getByRole('dialog', { name: /Restore .*Original with image.*for everyone\?/ });
       await expect(confirmation).toContainText('Before restore');
+      await capture('restore-confirmation');
       // Cancelling leaves the selected checkpoint and live data intact.
       await confirmation.getByRole('button', { name: 'Cancel', exact: true }).click();
       await expect(page.getByRole('button', { name: 'Restore this version', exact: true })).toBeFocused();
