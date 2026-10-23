@@ -1,6 +1,6 @@
 /** SPN-047 review prototypes. No production routes, network calls or document writes. */
 import { createContext, useContext, useRef, useState, useSyncExternalStore } from 'react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { Tooltip } from '@base-ui/react/tooltip';
 import { GemLogo, replayGemWiggle } from '../GemLogo.tsx';
 import { EntityIcon } from '../EntityIcon.tsx';
@@ -337,7 +337,9 @@ function Sidebar({
   canEdit = true,
   onCollapse,
   offline = false,
+  appearanceStyle,
 }: {
+  appearanceStyle?: CSSProperties;
   spaceEntries?: SpaceEntry[];
   offline?: boolean;
   onCollapse?: () => void;
@@ -361,7 +363,8 @@ function Sidebar({
   ];
   return (
     <nav
-      className={`rd-sidebar ${space ? 'rd-space-sidebar' : ''}`}
+      className={`rd-sidebar ${space ? 'rd-space-sidebar' : ''} ${appearanceStyle ? 'rd-appearance-navigation' : ''}`}
+      style={appearanceStyle}
       aria-label={space ? 'Space contents' : 'Files'}
     >
       {onCollapse && !space && (
@@ -530,7 +533,9 @@ function Shell({
   compact = false,
   offline = false,
   accountAvatar,
+  navigationAppearance,
 }: {
+  navigationAppearance?: CSSProperties;
   spaceEntries?: SpaceEntry[];
   accountAvatar?: ReactNode;
   offline?: boolean;
@@ -682,6 +687,7 @@ function Shell({
             onOpenChange={setNav}
           >
             <Sidebar
+              appearanceStyle={navigationAppearance}
               spaceEntries={spaceEntries}
               space={space}
               offline={offline}
@@ -2275,10 +2281,17 @@ export function EditorMockup({
   exportState = 'ready',
   editorContent,
   presence,
+  beforeTitle,
+  appearanceAction,
+  navigationAppearance,
 }: {
+  navigationAppearance?: CSSProperties;
+  /** Storybook appearance exploration; no production persistence. */
+  beforeTitle?: (page: string) => ReactNode;
+  appearanceAction?: ReactNode;
   presence?: Collaborator[];
   exportState?: 'ready' | 'open' | 'loading' | 'error' | 'print-error';
-  editorContent?: ReactNode;
+  editorContent?: ReactNode | ((page: string, kind: 'doc' | 'sheet') => ReactNode);
   onNameVersion?: (name: string) => void;
   onBack?: () => void;
   onProfile?: () => void;
@@ -2342,6 +2355,7 @@ export function EditorMockup({
   const name = space ? selected : (title ?? (sheet ? 'Quarterly budget' : 'Autumn plans'));
   return (
     <Shell
+      navigationAppearance={navigationAppearance}
       sidebar={space}
       collapsed={collapsed}
       offline={offline}
@@ -2365,6 +2379,7 @@ export function EditorMockup({
         }
       }}
     >
+      {!isSpaceTrash && beforeTitle?.(name)}
       <header className="rd-editor-header">
         <div className="rd-editor-title">
           {guest ? (
@@ -2475,6 +2490,7 @@ export function EditorMockup({
         )}
         {!isSpaceTrash && (
           <div className="rd-editor-actions">
+            {appearanceAction}
             <PresenceReview people={presentPeople} selfId={presence ? undefined : 'self'} />
             {guest ? null : viewOnly || collaborator ? (
               <span className="rd-badge">
@@ -2614,7 +2630,16 @@ export function EditorMockup({
             </div>
           )
         ) : editorContent !== undefined ? (
-          <div className="rd-live-editor">{editorContent}</div>
+          <div className="rd-live-editor">
+            {typeof editorContent === 'function'
+              ? editorContent(
+                  name,
+                  sheet || findSpaceEntry(spaceEntries, selected)?.kind === 'sheet'
+                    ? 'sheet'
+                    : 'doc',
+                )
+              : editorContent}
+          </div>
         ) : (
           <DocumentSurface
             sheet={sheet || findSpaceEntry(spaceEntries, selected)?.kind === 'sheet'}
