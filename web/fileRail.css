@@ -96,6 +96,17 @@
   color: var(--sp-text);
   text-decoration: none;
   border-radius: 8px;
+  border: 1px solid var(--sp-border);
+  background: var(--sp-panel);
+  font: inherit;
+  cursor: pointer;
+}
+.file-rail-drawer .rail-button:hover {
+  background: var(--sp-header);
+}
+.file-rail-drawer .rail-button:focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 3px;
 }
 .file-rail-drawer .rail-label {
   position: static;
@@ -111,6 +122,23 @@
 }
 .file-rail-drawer .rail-account .sp-segments {
   flex-direction: row;
+}
+@media (min-width: 1024px) {
+  .workspace > header.file-rail:not(.file-rail-collapsed) .rail-account .sp-segments {
+    align-self: center;
+  }
+  .workspace > header.file-rail:not(.file-rail-collapsed) .rail-account a.rail-button {
+    min-width: 0;
+  }
+  .workspace > header.file-rail:not(.file-rail-collapsed) .rail-account .profile-rail-avatar {
+    flex-shrink: 0;
+  }
+  .workspace > header.file-rail:not(.file-rail-collapsed) .rail-account .rail-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 @media (max-width: 1023px) {
   .workspace.files-workspace {

@@ -122,6 +122,9 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       .click();
     await page.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
     await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
+    // Make the collaborator's page active before opening its focus-dismissed menu.
+    // The owner still has a modal open in the other browser context.
+    await other.bringToFront();
     await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
     await other.getByRole('menuitem', { name: 'Refresh folder', exact: true }).click();
     await other.getByRole('button', { name: 'Nested Folder', exact: true }).click();

@@ -50,7 +50,21 @@ export const SignedOut: Story = {
 
 export const Compact: Story = { args: { compact: true } };
 
-export const Files: Story = { args: { files: { shared: false, open: fn() } } };
+export const Files: Story = {
+  args: { files: { shared: false, open: fn() } },
+  play: async ({ canvasElement }) => {
+    if (window.innerWidth < 1024) return;
+    const canvas = within(canvasElement);
+    const rail = canvas.getByRole('banner').getBoundingClientRect();
+    const appearance = canvas
+      .getByRole('radiogroup', { name: 'Appearance' })
+      .getBoundingClientRect();
+    // The approved expanded rail centers appearance above the profile row.
+    await expect(
+      Math.abs((appearance.left + appearance.right - rail.left - rail.right) / 2),
+    ).toBeLessThanOrEqual(1);
+  },
+};
 export const FilesCollapsed: Story = {
   ...Files,
   play: async ({ canvasElement }) => {
@@ -60,6 +74,22 @@ export const FilesCollapsed: Story = {
     await userEvent.click(collapse);
     await expect(canvas.getByRole('button', { name: 'My files' })).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Shared with me' })).toBeVisible();
+  },
+};
+export const FilesLongProfileName: Story = {
+  ...Files,
+  args: {
+    ...Files.args,
+    user: { isAdmin: false, name: 'Alex With A Very Long Display Name That Stays In The Sidebar' },
+  },
+  play: async ({ canvasElement, args }) => {
+    const profile = within(canvasElement).getByRole('link', { name: 'Your profile' });
+    await expect(profile).toHaveAttribute('title', `${args.user!.name} — Your profile`);
+    if (window.innerWidth < 1024) return;
+    const label = within(profile).getByText(args.user!.name!);
+    await expect(getComputedStyle(label).textOverflow).toBe('ellipsis');
+    await expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+    await expect(profile.getBoundingClientRect().right).toBeLessThanOrEqual(224);
   },
 };
 export const FilesPhone: Story = {
@@ -100,6 +130,11 @@ export const FilesDrawer: Story = {
     await expect(modal.getByRole('button', { name: 'My files' })).toBeVisible();
     await expect(modal.getByRole('button', { name: 'Shared with me' })).toBeVisible();
     await expect(modal.getByRole('button', { name: 'Sign out' })).toBeVisible();
+    for (const name of ['My files', 'Shared with me', 'Sign out']) {
+      const control = modal.getByRole('button', { name });
+      await expect(getComputedStyle(control).borderTopStyle).toBe('solid');
+      await expect(control.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
+    }
     await expect(modal.queryByRole('link', { name: 'Your profile' })).not.toBeInTheDocument();
     await expect(modal.queryByRole('radiogroup', { name: 'Appearance' })).not.toBeInTheDocument();
   },
