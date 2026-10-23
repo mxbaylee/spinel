@@ -86,7 +86,25 @@ test('console recovery replaces a lost admin passkey on the existing account and
       await testInfo.attach(`console-recovery-${label}`, { path, contentType: 'image/png' });
     }
     await page.setViewportSize({ width: 1280, height: 900 });
+    // Hold verification after submission: cancellation must no longer claim it can
+    // undo a credential swap, and the eventual server success must still navigate.
+    let releaseVerification!: () => void;
+    const verificationGate = new Promise<void>((resolve) => {
+      releaseVerification = resolve;
+    });
+    await page.route('**/api/auth/recover-admin/verify', async (route) => {
+      await verificationGate;
+      await route.continue();
+    });
     await page.getByRole('button', { name: 'Recover admin with a passkey' }).click();
+    try {
+      await expect(page.getByRole('status')).toHaveText(
+        'Finishing admin recovery… Keep this page open.',
+      );
+      await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toHaveCount(0);
+    } finally {
+      releaseVerification();
+    }
     await expect(page).toHaveURL(`${origin}/admin`);
     expect(store.userCount()).toBe(accountCount);
     expect(store.session(oldCookie.value)).toBeUndefined();

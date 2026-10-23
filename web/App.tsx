@@ -88,7 +88,10 @@ export function App() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
-  const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
+  const [finishingRecovery, setFinishingRecovery] = useState(false);
+  const attempt = useRef<{ cancelled: boolean; challengeId?: string; finishing?: boolean } | null>(
+    null,
+  );
   const settings = location.pathname === '/settings';
   const spaceReview = /^\/(?:review\/)?spaces(?:\/|$)/.test(location.pathname);
   const connecting = location.pathname === '/connect';
@@ -217,7 +220,7 @@ export function App() {
 
   function cancel() {
     const current = attempt.current;
-    if (!current) return;
+    if (!current || current.finishing) return;
     current.cancelled = true;
     WebAuthnAbortService.cancelCeremony();
     if (current.challengeId)
@@ -226,7 +229,10 @@ export function App() {
     setNotice('Passkey request cancelled.');
   }
   async function ceremony(register: boolean) {
-    const current: { cancelled: boolean; challengeId?: string } = { cancelled: false };
+    if (adminRecovery && attempt.current && !attempt.current.cancelled) return;
+    const current: { cancelled: boolean; challengeId?: string; finishing?: boolean } = {
+      cancelled: false,
+    };
     attempt.current = current;
     setBusy(true);
     setError('');
@@ -269,6 +275,12 @@ export function App() {
           )
         : undefined;
       if (current.cancelled) return;
+      // Verification may commit even if the browser stops waiting. Recovery cannot
+      // be cancelled after submitting the credential swap. Keep its result authoritative.
+      if (adminRecovery) {
+        current.finishing = true;
+        setFinishingRecovery(true);
+      }
       const result = await api<{ redirect?: string; name?: string }>(`${kind}/verify`, {
         challengeId,
         response,
@@ -305,6 +317,7 @@ export function App() {
       if (attempt.current === current) {
         attempt.current = null;
         setBusy(false);
+        setFinishingRecovery(false);
       }
     }
   }
@@ -329,6 +342,20 @@ export function App() {
       setError('Could not sign out. Check your connection and try again.');
     }
   }
+  if (adminRecovery)
+    return (
+      <ConsoleRecovery
+        name={recoveryName}
+        loading={!loaded}
+        validLink={Boolean(setupId && setupSecret)}
+        busy={busy}
+        finishing={finishingRecovery}
+        error={error}
+        notice={notice}
+        onRecover={() => void ceremony(true)}
+        onCancel={cancel}
+      />
+    );
   if (spaceReview) {
     if (!loaded)
       return (
@@ -409,18 +436,7 @@ export function App() {
       />
       <div className="workspace-body">
         <main>
-          {adminRecovery ? (
-            <ConsoleRecovery
-              name={recoveryName}
-              loading={!loaded}
-              validLink={Boolean(setupId && setupSecret)}
-              busy={busy}
-              error={error}
-              notice={notice}
-              onRecover={() => void ceremony(true)}
-              onCancel={cancel}
-            />
-          ) : !loaded ? (
+          {!loaded ? (
             <p role="status">Loading…</p>
           ) : unreachable ? (
             <OfflineUnreachable />

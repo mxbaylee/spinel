@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { ConsoleRecovery } from './ConsoleRecovery.tsx';
-import { Rail } from './Rail.tsx';
 
 const meta = {
   id: 'account-console-recovery',
@@ -13,21 +12,12 @@ const meta = {
     loading: false,
     validLink: true,
     busy: false,
+    finishing: false,
     error: '',
     notice: '',
     onRecover: fn(),
     onCancel: fn(),
   },
-  render: (args) => (
-    <div className="workspace">
-      <Rail user={null} navigation={{ allow: () => false }} onSignOut={() => {}} />
-      <div className="workspace-body">
-        <main>
-          <ConsoleRecovery {...args} />
-        </main>
-      </div>
-    </div>
-  ),
 } satisfies Meta<typeof ConsoleRecovery>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -54,8 +44,8 @@ export const Pending: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getByRole('button', { name: 'Recover admin with a passkey' }),
-    ).toBeDisabled();
+      canvas.queryByRole('button', { name: 'Recover admin with a passkey' }),
+    ).not.toBeInTheDocument();
     await expect(canvas.getByRole('button', { name: 'Cancel' })).toBeEnabled();
   },
 };
@@ -64,3 +54,25 @@ export const Retry: Story = {
   args: { error: 'Passkey request did not finish. Try again and choose your passkey manager.' },
 };
 export const Phone: Story = { globals: { viewport: { value: 'phone', isRotated: false } } };
+
+export const Finishing: Story = {
+  args: { busy: true, finishing: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('status')).toHaveTextContent(
+      'Finishing admin recovery… Keep this page open.',
+    );
+    await expect(canvas.queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument();
+  },
+};
+export const Help: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Need help?' }));
+    await expect(
+      within(canvasElement.ownerDocument.body).getByRole('dialog', {
+        name: 'Recover admin access',
+      }),
+    ).toBeVisible();
+  },
+};
