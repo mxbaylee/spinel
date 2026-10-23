@@ -144,6 +144,7 @@ for (const kind of ['doc', 'sheet'] as const) {
       expect(response.status(), await response.text()).toBe(200);
       expect(response.request().postDataJSON()).toMatchObject({ unitId: originalUnit });
       const nextUnit = (await response.json()).unitId as string;
+      expect(nextUnit).toMatch(/^[a-f\d-]{36}$/);
       expect(nextUnit).not.toBe(originalUnit);
       await expect(page).toHaveURL(baseURL! + liveHref);
       await saved();
@@ -173,7 +174,7 @@ for (const kind of ['doc', 'sheet'] as const) {
       expect(preserved.status()).toBe(200);
       const beforeSnapshot = (await preserved.json()).snapshot;
       expect(JSON.stringify(beforeSnapshot)).toContain('Latest accepted change');
-      expect(imageList(beforeSnapshot)).toHaveLength(imageList(original).length);
+      expect(imageList(beforeSnapshot)).toEqual(imageList(native));
       // Scope is exact: another child and the ordinary route cannot read this checkpoint.
       expect((await context.request.get(`/api/spaces/${root.id}/items/${sibling.id}/history/${checkpoint}`)).status()).toBe(404);
       expect((await context.request.get(`/api/items/${child.id}/history/${checkpoint}`)).status()).toBe(404);
