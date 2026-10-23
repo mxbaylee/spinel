@@ -1,6 +1,8 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import type { FileItem } from '../src/shared/workspace.ts';
+import { Modal } from '../src/ui/redesign/Controls.tsx';
 import { itemsRequest } from './itemsApi.ts';
+import './fileDialog.css';
 
 export function TagLabels({ tags }: { tags: string[] }) {
   return tags.length ? (
@@ -21,7 +23,6 @@ export function DocumentTags({
   onChanged: (item: FileItem) => void;
   onClose: () => void;
 }) {
-  const dialog = useRef<HTMLDialogElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const active = useRef(false);
   const suggestionsId = useId();
@@ -36,8 +37,6 @@ export function DocumentTags({
     };
   }, []);
   useEffect(() => {
-    const modal = dialog.current;
-    modal?.showModal();
     let disposed = false;
     void itemsRequest<{ tags: string[] }>('/tags')
       .then((result) => {
@@ -49,12 +48,10 @@ export function DocumentTags({
       });
     return () => {
       disposed = true;
-      modal?.close();
     };
   }, []);
   function finish() {
     active.current = false;
-    dialog.current?.close();
     onClose();
   }
   async function change(value: string, remove = false) {
@@ -85,61 +82,62 @@ export function DocumentTags({
     }
   }
   return (
-    <dialog
-      ref={dialog}
-      className="document-tags"
-      aria-label={`Tags for ${item.name}`}
-      onCancel={(event) => {
-        event.preventDefault();
-        if (!busy) finish();
+    <Modal
+      title={`Tags for ${item.name}`}
+      icon="info"
+      open
+      dismissDisabled={busy}
+      onOpenChange={(open) => {
+        if (!open) finish();
       }}
     >
-      <h3>Tags for {item.name}</h3>
-      <p>Only you see these tags. They do not change the file.</p>
-      <ul aria-label="Your tags">
-        {item.tags.map((name) => (
-          <li key={name}>
-            #{name}{' '}
-            <button
-              disabled={busy}
-              onClick={() => void change(name, true)}
-              aria-label={`Remove #${name}`}
-            >
-              Remove
-            </button>
-          </li>
-        ))}
-      </ul>
-      {!item.tags.length && <p>No tags yet.</p>}
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          void change(tag);
-        }}
-      >
-        <label>
-          Tag
-          <input
-            ref={input}
-            autoFocus
-            value={tag}
-            onChange={(event) => setTag(event.target.value)}
-            disabled={busy}
-            list={suggestionsId}
-            required
-          />
-        </label>
-        <datalist id={suggestionsId}>
-          {suggestions.map((name) => (
-            <option key={name} value={name} />
+      <div className="file-dialog">
+        <p>Only you see these tags. They do not change the file.</p>
+        <ul aria-label="Your tags" className="file-dialog-tags">
+          {item.tags.map((name) => (
+            <li key={name}>
+              #{name}{' '}
+              <button
+                disabled={busy}
+                onClick={() => void change(name, true)}
+                aria-label={`Remove #${name}`}
+              >
+                Remove
+              </button>
+            </li>
           ))}
-        </datalist>
-        <button disabled={busy || !tag.trim()}>Add tag</button>
-      </form>
-      {error && <p role="alert">{error}</p>}
-      <button disabled={busy} onClick={finish}>
-        Done
-      </button>
-    </dialog>
+        </ul>
+        {!item.tags.length && <p>No tags yet.</p>}
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void change(tag);
+          }}
+        >
+          <label>
+            Tag
+            <input
+              ref={input}
+              autoFocus
+              value={tag}
+              onChange={(event) => setTag(event.target.value)}
+              disabled={busy}
+              list={suggestionsId}
+              required
+            />
+          </label>
+          <datalist id={suggestionsId}>
+            {suggestions.map((name) => (
+              <option key={name} value={name} />
+            ))}
+          </datalist>
+          <button disabled={busy || !tag.trim()}>Add tag</button>
+        </form>
+        {error && <p role="alert">{error}</p>}
+        <button disabled={busy} onClick={finish}>
+          Done
+        </button>
+      </div>
+    </Modal>
   );
 }

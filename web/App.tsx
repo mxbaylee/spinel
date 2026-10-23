@@ -20,6 +20,7 @@ import { Dashboard } from './Dashboard.tsx';
 import { Space } from './Space.tsx';
 import { OfflineSpace } from './OfflineSpace.tsx';
 import { spaceHref } from './spaceNavigation.ts';
+import { clearDashboardNavigation, dashboardSession } from './dashboardNavigation.ts';
 import { rememberedFileHref } from './fileNavigation.ts';
 import { spaceReviewReturnPath } from '../src/shared/spaceReviewRoute.ts';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
@@ -71,6 +72,10 @@ export function App() {
     return () => window.removeEventListener('beforeunload', warn);
   }, []);
   const [user, setUser] = useState<User | null>(null);
+  const [filePlaces, setFilePlaces] = useState<{
+    shared: boolean;
+    open: (shared: boolean) => void;
+  } | null>(null);
   const [editorConnection, setEditorConnection] = useState<ConnectionState | null>(null);
   const [catalogStatus, setCatalogStatus] = useState<CatalogConnectionDetails | null>(null);
   const serverConnection = useServerConnection(Boolean(user) && editorConnection === null);
@@ -146,6 +151,7 @@ export function App() {
     void (async () => {
       try {
         if (signOutPending()) {
+          clearDashboardNavigation();
           // A sign-out made offline: revoke the session before anything else.
           // Any server answer settles it, including a session that already ended.
           await api('sign-out', {}).catch((failure) => {
@@ -159,6 +165,8 @@ export function App() {
         // Claim the device first: the dashboard reads the pointer when it mounts.
         // IndexedDB can fail to answer at all; never hold sign-in on it.
         await within(claimDevice(user), 3000, 'Offline data did not answer.').catch(() => {});
+        if (user.isAdmin) clearDashboardNavigation();
+        else dashboardSession(user.id);
         setUser(user);
         if (connectRequest && location.pathname === '/sign-in')
           location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
@@ -169,7 +177,10 @@ export function App() {
         if (!isNetworkFailure(failure)) {
           // The server ended this session (sign-out, revocation): stop offline
           // access too. claimDevice restores it after the next sign-in.
-          if ((failure as { status?: number }).status === 401) setPreparedAccount(null);
+          if ((failure as { status?: number }).status === 401) {
+            clearDashboardNavigation();
+            setPreparedAccount(null);
+          }
           if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
         }
@@ -184,6 +195,7 @@ export function App() {
           return;
         }
         if (location.pathname === '/sign-in') history.replaceState(null, '', spaceReturn ?? '/');
+        dashboardSession(start.user.id);
         setLocal(start);
         setUser({ ...start.user, isAdmin: false });
       } finally {
@@ -203,11 +215,25 @@ export function App() {
     spaceReview,
     spaceReturn,
   ]);
+  useEffect(() => {
+    // Account cancellation also invalidates old history in an online tab.
+    const changed = (event: StorageEvent) => {
+      if (
+        event.key === null ||
+        event.key === 'spinel.offline.cancellation' ||
+        (event.key === 'spinel.offline.account' && event.newValue !== user?.id)
+      )
+        clearDashboardNavigation();
+    };
+    window.addEventListener('storage', changed);
+    return () => window.removeEventListener('storage', changed);
+  }, [user?.id]);
   useLayoutEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
     const watch = () => {
       if (local.isCurrent()) return;
+      clearDashboardNavigation();
       setLocal(null);
       setUser(null);
       setUnreachable(true);
@@ -325,6 +351,7 @@ export function App() {
   async function signOut() {
     const hadUnsavedChanges = unsaved.current;
     if (!navigation.allow()) return;
+    clearDashboardNavigation();
     cancel();
     // Lock this device's offline data at once; it opens again only for the
     // account that next signs in online.
@@ -426,11 +453,12 @@ export function App() {
   }
   return (
     <div
-      className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}`}
+      className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
     >
       <Rail
         user={user}
         compact={settings || !!user?.isAdmin}
+        files={filePlaces}
         navigation={navigation}
         onSignOut={() => void signOut()}
         connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
@@ -557,11 +585,13 @@ export function App() {
             </Suspense>
           ) : (
             <Dashboard
+              key={user.id}
               navigation={navigation}
               user={user}
               local={local}
               onConnectionState={setEditorConnection}
               onCatalogStatus={setCatalogStatus}
+              onPlaces={setFilePlaces}
               onOpen={(item) => {
                 if (item.kind === 'space') location.assign(spaceHref(item.id));
               }}

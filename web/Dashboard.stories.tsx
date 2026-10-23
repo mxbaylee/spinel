@@ -4,8 +4,10 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import type { ItemKind, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
+import { searchCatalog } from '../src/shared/search.ts';
 import { Dashboard } from './Dashboard.tsx';
 import type { LocalStart } from './offline/localStart.ts';
+import { assertDialogControls } from '../.storybook/dialogBounds.ts';
 
 const day = 86_400_000;
 const now = Date.now();
@@ -64,6 +66,7 @@ const empty = {
 const populated = {
   'GET /api/items': { items },
   'GET /api/items/shared': { items: shared },
+  'GET /api/items/search': { items: searchCatalog([...items, ...shared]) },
   // Opening a folder lists what it holds, with its parents.
   [`GET /api/items/${household.id}`]: {
     item: household,
@@ -83,10 +86,13 @@ const populated = {
 // Hold history still while the story is mounted.
 function StillHistory({ children }: { children: ReactNode }) {
   useEffect(() => {
-    const push = history.pushState;
+    const push = history.pushState,
+      replace = history.replaceState;
     history.pushState = () => {};
+    history.replaceState = () => {};
     return () => {
       history.pushState = push;
+      history.replaceState = replace;
     };
   }, []);
   return <>{children}</>;
@@ -114,6 +120,22 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const FileViewTargets: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByRole('heading', { name: 'My files' });
+    for (const name of ['List', 'Grid']) {
+      const control = canvas.getByRole('radio', { name });
+      const bounds = control.getBoundingClientRect();
+      await expect(bounds.width).toBeGreaterThanOrEqual(44);
+      await expect(bounds.height).toBeGreaterThanOrEqual(44);
+      await userEvent.click(control);
+      await expect(control).toBeChecked();
+    }
+  },
+};
+
 /**
  * Folders, sheets and docs, plus two items shared by Alex Kim, one filed
  * into My files. Opening a sheet or doc would load the Univer editor, so don't.
@@ -123,6 +145,12 @@ export const NewItem: Story = {
   parameters: { api: populated },
   play: async ({ canvasElement }) => {
     await userEvent.click(await within(canvasElement).findByRole('button', { name: 'New' }));
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Folder' }),
+    );
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'New folder' }),
+    );
   },
 };
 export const NewDoc: Story = {
@@ -130,7 +158,12 @@ export const NewDoc: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'New' }));
-    await userEvent.selectOptions(canvas.getByLabelText('Type'), 'doc');
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Doc' }),
+    );
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'New doc' }),
+    );
   },
 };
 export const NewSheet: Story = {
@@ -138,11 +171,16 @@ export const NewSheet: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'New' }));
-    await userEvent.selectOptions(canvas.getByLabelText('Type'), 'sheet');
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Sheet' }),
+    );
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'New sheet' }),
+    );
   },
 };
 export const EmptyWorkspace: Story = { parameters: { api: empty } };
-/** The "Shared with me" drawer lists every share, filed or not, with its access level. */
+/** The "Shared with me" place lists every share, filed or not, with its access level. */
 export const SharedDrawer: Story = {
   parameters: { api: populated },
   play: async ({ canvasElement }) => {
@@ -151,21 +189,22 @@ export const SharedDrawer: Story = {
     );
   },
 };
-/** The drawer opened before the shared items have arrived. */
+/** The place opened before the shared items have arrived. */
 export const SharedDrawerLoading: Story = {
   parameters: { api: { ...populated, 'GET /api/items/shared': pending() } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
-    await canvas.findByText('Loading shared items…');
+    await canvas.findByText('Loading files…');
   },
 };
 /** A folder two levels down, with its breadcrumb. */
 export const InsideFolder: Story = {
   parameters: { api: populated },
   play: async ({ canvasElement }) => {
-    const sidebar = await within(canvasElement).findByRole('complementary', { name: 'Folders' });
-    await userEvent.click(await within(sidebar).findByRole('button', { name: 'Finance' }));
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Household Folder' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Finance Folder' }));
   },
 };
 export const Loading: Story = { parameters: { api: { ...empty, 'GET /api/items': pending() } } };
@@ -217,7 +256,9 @@ export const LocalFolderNotOpened: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
-    await userEvent.click(await canvas.findByRole('button', { name: `Open ${photos.name}` }));
+    await userEvent.click(await canvas.findByRole('button', { name: `${photos.name} Folder` }));
+    await expect(await canvas.findByText(/This folder wasn’t opened online/)).toBeVisible();
+    await expect(canvas.queryByText('This folder is empty.')).not.toBeInTheDocument();
   },
 };
 
@@ -246,6 +287,9 @@ const withSpaces = {
   ...populated,
   'GET /api/items': { items: [...items, space], spacesEnabled: true },
   'GET /api/items/shared': { items: [...shared, filedSpace, viewerSpace] },
+  'GET /api/items/search': {
+    items: searchCatalog([...items, ...shared, space, filedSpace, viewerSpace]),
+  },
 };
 export const SpaceFiles: Story = { parameters: { api: withSpaces } };
 export const NewSpace: Story = {
@@ -253,7 +297,9 @@ export const NewSpace: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'New' }));
-    await userEvent.selectOptions(canvas.getByLabelText('Type'), 'space');
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Space' }),
+    );
   },
 };
 export const OpenSpaceKeepsMyFiles: Story = {
@@ -270,14 +316,13 @@ export const SharedSpaces: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
-    const drawer = within(canvas.getByRole('region', { name: 'Shared with me' }));
-    await expect(await drawer.findByRole('button', { name: 'Open Team Space' })).toBeVisible();
-    await expect(
-      drawer.queryByRole('button', { name: 'Share Team Space' }),
-    ).not.toBeInTheDocument();
-    await expect(
-      drawer.queryByRole('button', { name: 'Move Reference Space' }),
-    ).not.toBeInTheDocument();
+    const files = within(canvas.getByRole('list', { name: 'Shared with me files' }));
+    await expect(await files.findByRole('button', { name: 'Team Space Space' })).toBeVisible();
+    await userEvent.click(files.getByRole('button', { name: 'More actions for Team Space' }));
+    const menu = within(await within(canvasElement.ownerDocument.body).findByRole('menu'));
+    await expect(menu.queryByRole('menuitem', { name: 'Share…' })).not.toBeInTheDocument();
+    await expect(menu.queryByRole('menuitem', { name: 'Move…' })).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
   },
 };
 export const SpaceInsideFolder: Story = {
@@ -296,8 +341,9 @@ export const SpaceInsideFolder: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const sidebar = await within(canvasElement).findByRole('complementary', { name: 'Folders' });
-    await userEvent.click(await within(sidebar).findByRole('button', { name: 'Household' }));
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Household Folder' }),
+    );
   },
 };
 export const LocalSpaceNeedsConnection: Story = {
@@ -336,10 +382,12 @@ export const LocalPreparedSpaceOpens: Story = {
     const canvas = within(canvasElement);
     const prepared = await canvas.findByRole('button', { name: /^Research Space Space$/ });
     await expect(
-      within(prepared.closest('li')!).getByText('Pages available offline'),
+      within(prepared.closest('[role=listitem]')!).getByText('Pages available offline'),
     ).toBeVisible();
     const unavailable = canvas.getByRole('button', { name: /^Unprepared Space Space$/ });
-    await expect(within(unavailable.closest('li')!).getByText('Needs a connection')).toBeVisible();
+    await expect(
+      within(unavailable.closest('[role=listitem]')!).getByText('Needs a connection'),
+    ).toBeVisible();
     await userEvent.click(unavailable);
     await expect(args.onOpen).not.toHaveBeenCalled();
     await expect(canvas.getByRole('alert')).toHaveTextContent('Connect to open this Space');
@@ -365,8 +413,12 @@ export const FileAdmins: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByRole('button', { name: 'Share Team roadmap' })).toBeVisible();
-    await expect(canvas.getByRole('button', { name: 'Move Shared forecast' })).toBeVisible();
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'More actions for Team roadmap' }),
+    );
+    const menu = within(await within(canvasElement.ownerDocument.body).findByRole('menu'));
+    await expect(menu.getByRole('menuitem', { name: 'Share…' })).toBeEnabled();
+    await expect(menu.getByRole('menuitem', { name: 'Move…' })).toBeEnabled();
   },
 };
 
@@ -379,14 +431,18 @@ export const CancelAdminMoveWhileLoading: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Move Team roadmap' }));
-    const move = await canvas.findByRole('form', { name: 'Move item' });
+    await rowAction(canvasElement, 'Team roadmap', 'Move…');
+    const move = await within(canvasElement.ownerDocument.body).findByRole('form', {
+      name: 'Move item',
+    });
     await expect(within(move).getByRole('button', { name: 'Save' })).toBeDisabled();
     await userEvent.click(within(move).getByRole('button', { name: 'Cancel' }));
-    await userEvent.click(canvas.getByRole('button', { name: 'Rename Team roadmap' }));
-    const rename = await canvas.findByRole('form', { name: 'Rename item' });
+    await rowAction(canvasElement, 'Team roadmap', 'Rename…');
+    const rename = await within(canvasElement.ownerDocument.body).findByRole('form', {
+      name: 'Rename item',
+    });
     await expect(within(rename).getByRole('button', { name: 'Save' })).toBeEnabled();
+    await assertDialogControls(rename);
   },
 };
 
@@ -399,14 +455,16 @@ export const FileAdminNoDestinations: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Move Team roadmap' }));
-    const move = await canvas.findByRole('form', { name: 'Move item' });
+    await rowAction(canvasElement, 'Team roadmap', 'Move…');
+    const move = await within(canvasElement.ownerDocument.body).findByRole('form', {
+      name: 'Move item',
+    });
     await expect(
       await within(move).findByText(/No authorized folders are available/),
     ).toBeVisible();
     await expect(within(move).getByLabelText('Destination')).toBeDisabled();
     await expect(within(move).getByRole('button', { name: 'Save' })).toBeDisabled();
+    await assertDialogControls(move);
   },
 };
 
@@ -422,13 +480,178 @@ export const FileAdminPersonalFiling: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Remove Team roadmap from my folder' }),
-    );
+    await rowAction(canvasElement, 'Team roadmap', 'Remove from my folder');
     await expect(
-      canvas.queryByRole('button', { name: 'Remove Team roadmap from my folder' }),
+      canvas.queryByRole('button', { name: 'Team roadmap Doc' }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Shared with me' }));
-    await expect(await canvas.findByRole('button', { name: 'Share Team roadmap' })).toBeVisible();
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'More actions for Team roadmap' }),
+    );
+    const menu = within(await within(canvasElement.ownerDocument.body).findByRole('menu'));
+    await expect(menu.getByRole('menuitem', { name: 'Share…' })).toBeEnabled();
+    await expect(
+      menu.queryByRole('menuitem', { name: 'Remove from my folder' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+async function rowAction(element: HTMLElement, name: string, action: string) {
+  await userEvent.click(
+    await within(element).findByRole('button', { name: `More actions for ${name}` }),
+  );
+  await userEvent.click(
+    await within(element.ownerDocument.body).findByRole('menuitem', { name: action }),
+  );
+}
+export const Grid: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(await within(canvasElement).findByRole('radio', { name: 'Grid' }));
+  },
+};
+export const FolderScopedSearch: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Household Folder' }));
+    await userEvent.type(
+      await canvas.findByRole('searchbox', { name: 'Search files' }),
+      'type:sheet',
+    );
+    await expect(
+      await canvas.findByRole('button', { name: 'Open result Receipts 2026' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Open result Quarterly budget' }),
+    ).not.toBeInTheDocument();
+  },
+};
+export const ImportDialog: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(await within(canvasElement).findByRole('button', { name: 'New' }));
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', {
+        name: 'Import file…',
+      }),
+    );
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Import file' }),
+    ).toBeVisible();
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Import file' }),
+    );
+  },
+};
+
+export const PersonalFilingDialog: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Shared with me' }),
+    );
+    await rowAction(canvasElement, forecast.name, 'File into folder…');
+    const form = await within(canvasElement.ownerDocument.body).findByRole('form', {
+      name: 'File shared item',
+    });
+    await expect(within(form).getByRole('button', { name: 'Save' })).toBeEnabled();
+    await assertDialogControls(form);
+  },
+};
+
+export const SharingDialog: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      [`GET /api/items/${budget.id}/sharing`]: {
+        people: [
+          {
+            id: 'morgan',
+            name: 'Morgan Lee',
+            disabled: 0,
+            directRole: 'editor',
+            effectiveRole: 'editor',
+          },
+        ],
+      },
+      [`GET /api/items/${budget.id}/link`]: { enabled: false, role: 'viewer' },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await rowAction(canvasElement, budget.name, 'Share…');
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: `Share ${budget.name}`,
+    });
+    await expect(await within(dialog).findByLabelText('Access for Morgan Lee')).toBeEnabled();
+    await expect(
+      within(dialog).getByRole('button', { name: 'Apply access for Morgan Lee' }),
+    ).toBeDisabled();
+    await assertDialogControls(dialog);
+  },
+};
+
+export const SharedGrantOrdering: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      'GET /api/items/shared': {
+        items: [
+          { ...roadmap, name: 'Z newest share', sharedAt: now },
+          { ...forecast, name: 'A older share', sharedAt: now - day },
+          { ...photos, name: 'Unknown legacy share', sharedAt: 0 },
+        ],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
+    const files = within(await canvas.findByRole('list', { name: 'Shared with me files' }));
+    const rows = files.getAllByRole('listitem');
+    await expect(rows[0]).toHaveTextContent('Z newest share');
+    await expect(rows[1]).toHaveTextContent('A older share');
+    await expect(rows[2]).toHaveTextContent('Older share');
+    await expect(rows[2]).not.toHaveTextContent('1970');
+  },
+};
+
+export const CancelSpaceActionThenRetry: Story = {
+  parameters: { api: withSpaces },
+  args: { navigation: { allow: fn(), dirty() {} } },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    // Cancelling a discard prompt must not consume the next explicit activation.
+    const allow = args.navigation.allow as ReturnType<typeof fn>;
+    allow.mockReset().mockReturnValueOnce(false).mockReturnValue(true);
+    await userEvent.type(
+      await canvas.findByRole('searchbox', { name: 'Search files' }),
+      'Research type:space',
+    );
+    await rowAction(canvasElement, 'Research Space', 'Rename…');
+    await expect(allow).toHaveBeenCalledTimes(1);
+    await expect(
+      within(canvasElement.ownerDocument.body).queryByRole('dialog', { name: 'Rename Space' }),
+    ).not.toBeInTheDocument();
+    await rowAction(canvasElement, 'Research Space', 'Rename…');
+    await expect(allow).toHaveBeenCalledTimes(2);
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Rename Space' }),
+    ).toBeVisible();
+  },
+};
+
+export const ClearEmptyGlobalScope: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Household Folder' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Search all files' }));
+    await expect(canvas.getByText('All accessible files')).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Clear search and filters' }));
+    await expect(canvas.getByRole('searchbox', { name: 'Search files' })).toHaveValue('');
+    await expect(canvas.getByRole('button', { name: 'Search all files' })).toBeVisible();
+    await expect(canvas.getByRole('heading', { name: 'Household' })).toBeVisible();
+    await expect(canvas.queryByText('All accessible files')).not.toBeInTheDocument();
   },
 };

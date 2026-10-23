@@ -40,13 +40,9 @@ test('files and settings remain reachable without personal pin UI or requests', 
     ).toBeVisible();
     await expect(page.getByRole('complementary', { name: 'Pinned items' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /^(Pin|Unpin) / })).toHaveCount(0);
-    await page
-      .getByRole('complementary', { name: 'Folders' })
-      .getByRole('button', { name: 'Daily folder', exact: true })
-      .click();
-    await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText(
-      'My files / Daily folder',
-    );
+    await files.getByRole('button', { name: 'Daily folder Folder', exact: true }).click();
+    await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText('My files');
+    await expect(page.getByRole('heading', { name: 'Daily folder', exact: true })).toBeVisible();
     await expect(
       files.getByRole('button', { name: 'Daily journal Doc', exact: true }),
     ).toBeVisible();
