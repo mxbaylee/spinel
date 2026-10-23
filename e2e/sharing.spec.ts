@@ -123,80 +123,11 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       .click();
     await page.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
     await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
-    // Make the collaborator's page active before opening its focus-dismissed menu.
-    // The owner still has a modal open in the other browser context.
+    // Return to the collaborator before reopening its previously closed menu.
     await other.bringToFront();
-    // Keep bounded, content-free evidence if the real menu closes before its action.
-    const menuProbe = await other.evaluateHandle(() => {
-      const trigger = document.querySelector('[aria-label="More actions for Shared plans"]');
-      const records: unknown[] = [];
-      const describe = (target: EventTarget | null) =>
-        target instanceof Element
-          ? {
-              tag: target.tagName,
-              role: target.getAttribute('role'),
-              label: target.getAttribute('aria-label'),
-              id: target.id,
-            }
-          : null;
-      const record = (value: object) => {
-        if (records.length < 100) records.push({ time: Math.round(performance.now()), ...value });
-      };
-      const events = ['focusin', 'focusout', 'pointerdown', 'pointerup', 'click'];
-      const listener = (event: Event) =>
-        record({
-          event: event.type,
-          target: describe(event.target),
-          related: event instanceof FocusEvent ? describe(event.relatedTarget) : null,
-        });
-      for (const event of events) document.addEventListener(event, listener, true);
-      let previous = '';
-      const snapshot = () => {
-        const state = {
-          documentFocused: document.hasFocus(),
-          visibility: document.visibilityState,
-          connected: trigger?.isConnected,
-          expanded: trigger?.getAttribute('aria-expanded'),
-          menu: !!document.querySelector('[role="menu"]'),
-          focused: describe(document.activeElement),
-        };
-        const signature = JSON.stringify(state);
-        if (signature !== previous) {
-          previous = signature;
-          record({ state });
-        }
-      };
-      const observer = new MutationObserver(snapshot);
-      observer.observe(document.body, {
-        subtree: true,
-        childList: true,
-        attributes: true,
-        attributeFilter: ['aria-expanded', 'data-open'],
-      });
-      snapshot();
-      return {
-        records,
-        dispose: () => {
-          observer.disconnect();
-          for (const event of events) document.removeEventListener(event, listener, true);
-        },
-      };
-    });
-    try {
-      await other
-        .getByRole('button', { name: 'More actions for Shared plans', exact: true })
-        .click();
-      await other.getByRole('menuitem', { name: 'Refresh folder', exact: true }).click();
-    } catch (failure) {
-      console.log(
-        'Sharing folder menu evidence:',
-        JSON.stringify(await menuProbe.evaluate((probe) => probe.records)),
-      );
-      throw failure;
-    } finally {
-      await menuProbe.evaluate((probe) => probe.dispose());
-      await menuProbe.dispose();
-    }
+    await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    await expect(folderMenu).toBeVisible();
+    await other.getByRole('menuitem', { name: 'Refresh folder', exact: true }).click();
     await other.getByRole('button', { name: 'Nested Folder', exact: true }).click();
     await expect(
       other.getByRole('button', { name: 'Shared budget Sheet', exact: true }),
