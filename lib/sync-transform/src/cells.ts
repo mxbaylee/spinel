@@ -3,7 +3,8 @@ import { mapIndex } from './axis.ts';
 import type { AxisEdit } from './axis.ts';
 import type { Axis, Family } from './family.ts';
 import { movesMeet, refuseCut, remapMove } from './shifts.ts';
-import { RefusedEditError } from './types.ts';
+import { structureIds } from './structure.ts';
+import { RefusedEditError, refuseRaces } from './types.ts';
 import type { Mutation, Side } from './types.ts';
 
 export const cellIds = {
@@ -234,8 +235,9 @@ const changesFormat = (mutation: Mutation, write: Write) =>
  * Decision (agent, chat 2026-10-22): a style that names `n` changes the format
  * as a numfmt does, so it races as one. The cross-sheet fuzz found it (seed
  * 13, shrunk in cells.test.ts): a boolean under '@', with a '0%' style against
- * a style clear. Two value-less style writes of `n` to one cell are now
- * refused too, where they used to merge. Not taken: retyping in `retype`,
+ * a style clear. A value-less style write of `n` and any concurrent write to
+ * the cell that sets no value, such as a bold, are now refused too, where they
+ * used to merge. Not taken: retyping in `retype`,
  * which cannot recover the type only the sender knew.
  */
 function formatRace(format: Mutation, values: Mutation): boolean {
@@ -250,21 +252,64 @@ function formatRace(format: Mutation, values: Mutation): boolean {
 }
 export const isMove = (mutation: Mutation) => mutation.id === cellIds.moveRange;
 
+/** Whether a cell write holds a formula: `f`, or a shared formula's `si`. */
+export const hasFormula = (write: Write) => Boolean(write.value?.f || write.value?.si);
+
+/**
+ * The params key that marks a formula rewrite a command sent (see
+ * names.markRewrites): never a Univer param, so `check` rejects one sent in,
+ * and `transform` strips every one before it returns (see `unmarked`).
+ */
+export const rewriteKey = 'sync-transform.cells.rewrite';
+
+export function unmarked(mutation: Mutation): Mutation {
+  if (!Object.hasOwn(mutation.params, rewriteKey)) return mutation;
+  const { [rewriteKey]: _, ...params } = mutation.params;
+  return { id: mutation.id, params };
+}
+
+/**
+ * Whether `rewrite`, marked as a command's formula rewrite, rewrites a cell
+ * that `other` writes without a formula. A write with a formula is left to
+ * names.refuseFormulaRaces, which keeps two edits of one name first-accepted.
+ */
+function rewriteMet(rewrite: Mutation, other: Mutation): boolean {
+  if (!rewrite.params[rewriteKey]) return false;
+  const cells = new Set(writesOf(rewrite).filter(hasFormula).map(cellKey));
+  return writesOf(other).some((write) => cells.has(cellKey(write)) && !hasFormula(write));
+}
+
+/**
+ * The params key that marks a half of a cut (see `perSheet`) as its `source`
+ * or `target` half of cut `n`: never a Univer param, so `check` rejects one
+ * sent in, and `transform` joins or strips every one before it returns (see
+ * `joinCuts`).
+ */
+export const halfKey = 'sync-transform.cells.half';
+
 /**
  * A move to another sheet (a cut pasted there) as two moves, one per sheet:
  * one clears its source, one writes its target. Univer's handler writes each
  * side's cells on its own sheet, so the two do what the one does, and every
  * transform addresses one sheet. Each keeps its own range as both of its
- * ranges, so its area is that range alone (see shifts.areasOf).
+ * ranges, so its area is that range alone (see shifts.areasOf). Each is
+ * marked with `halfKey` and the cut's index `n` in its sequence, and
+ * `joinCuts` joins them again once transformed.
  *
  * Decision (owner, chat 2026-10-22): a cut and a concurrent edit of its source
  * or target are refused, like a drag's (see shifts.movesMeet). Not taken:
  * merging, which lost writes silently for drags.
  */
-export function perSheet(mutation: Mutation): Mutation[] {
+export function perSheet(mutation: Mutation, n: number): Mutation[] {
   const { from, to, fromRange, toRange } = mutation.params;
   if (!isMove(mutation) || from.subUnitId === to.subUnitId) return [mutation];
-  const half = (subUnitId: string, range: IRange, fromValue: Matrix, toValue: Matrix) => ({
+  const half = (
+    kind: 'source' | 'target',
+    subUnitId: string,
+    range: IRange,
+    fromValue: Matrix,
+    toValue: Matrix,
+  ) => ({
     id: mutation.id,
     params: {
       ...mutation.params,
@@ -272,13 +317,66 @@ export function perSheet(mutation: Mutation): Mutation[] {
       toRange: range,
       from: { subUnitId, value: fromValue },
       to: { subUnitId, value: toValue },
+      [halfKey]: { kind, n },
     },
   });
   return [
-    half(from.subUnitId, fromRange, from.value, {}),
-    half(to.subUnitId, toRange, {}, to.value),
+    half('source', from.subUnitId, fromRange, from.value, {}),
+    half('target', to.subUnitId, toRange, {}, to.value),
   ];
 }
+
+/**
+ * `mutations`, transformed, with each cut's halves (see `perSheet`) joined
+ * again: a source half directly followed by the target half of the same cut
+ * becomes one move to the other sheet, so a cut transformed once is still a
+ * cut, and a removal of its target sheet is refused when it is transformed
+ * again (see
+ * `refuseCutsToRemoved`). Univer's handler writes `from` on its sheet, then
+ * `to` on its own, as the two halves did in turn. A half whose partner was
+ * dropped, by a removal of its sheet, stays a move within its sheet.
+ */
+export function joinCuts(mutations: Mutation[]): Mutation[] {
+  const result: Mutation[] = [];
+  for (let i = 0; i < mutations.length; i++) {
+    const { id, params } = mutations[i];
+    if (!isMove(mutations[i]) || params[halfKey] === undefined) {
+      result.push(mutations[i]);
+      continue;
+    }
+    const { [halfKey]: half, ...plain } = params;
+    const next = mutations[i + 1];
+    const partner = next?.params[halfKey];
+    if (half.kind === 'source' && partner?.kind === 'target' && partner.n === half.n) {
+      Object.assign(plain, { toRange: next.params.toRange, to: next.params.to });
+      i++;
+    }
+    result.push({ id, params: plain });
+  }
+  return result;
+}
+
+/** Whether `a` cuts cells to another sheet that `b` removes. */
+function cutsToRemoved(a: Mutation, b: Mutation): boolean {
+  if (!isMove(a) || b.id !== structureIds.removeSheet) return false;
+  const { from, to } = a.params;
+  return from.subUnitId !== to.subUnitId && b.params.subUnitId === to.subUnitId;
+}
+
+/**
+ * Refuses a cut to another sheet and a concurrent removal of that sheet,
+ * either way round, before `perSheet` splits the cut: the removal drops the
+ * half that writes the target, and the half that clears the source would
+ * still clear it, losing the cells on both screens.
+ *
+ * Decision (agent, chat 2026-10-22): refuse it (`'moved-cells'`), extending
+ * the owner's rule above that a cut and an edit of its target are refused to
+ * the most destructive edit of the target. A removal of the source sheet
+ * still converges, with the cells on the target, since nothing is lost. Not
+ * taken: letting it converge with the cells lost.
+ */
+export const refuseCutsToRemoved = (a: Mutation[], b: Mutation[]) =>
+  refuseRaces(a, b, (x, y) => cutsToRemoved(x, y) || cutsToRemoved(y, x), 'moved-cells');
 
 /**
  * Univer types a value (`t`) when a SetRangeValues writes it, under the
@@ -496,6 +594,8 @@ function transform(a: Mutation, b: Mutation, rank: Side): Mutation[] {
     return [a];
   }
   if (isGhost(a) || isGhost(b) || !meets(a, b)) return [a];
+  // Decision (owner, chat 2026-10-22): see names.refuseFormulaRaces.
+  if (rewriteMet(a, b) || rewriteMet(b, a)) throw new RefusedEditError('formula-race');
   // Decision (owner, chat 2026-10-20): a number-format change and a concurrent
   // write to one of its cells that sets no value, such as a style or a retype,
   // are refused. A write under text format '@' turns the cell's value to text,
@@ -508,6 +608,8 @@ function transform(a: Mutation, b: Mutation, rank: Side): Mutation[] {
   const side = !a.params.derived === !b.params.derived ? rank : a.params.derived ? 'right' : 'left';
   const mine = cancelled(a, b);
   const theirs = cancelled(b, a);
+  // Diagnostics (SPN-032, not built): `sync.edit.dropped`, rule
+  // 'cell-overwritten', when `haunted` adds a ghost.
   if (!mine || !theirs) return haunted(a, mine ? [mine] : []);
   return haunted(a, conflict(mine, theirs, side));
 }

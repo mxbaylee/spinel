@@ -1,4 +1,5 @@
-import { DrawingTypeEnum } from '@univerjs/core';
+import { DrawingTypeEnum, IResourceManagerService, UniverInstanceType } from '@univerjs/core';
+import type { IWorkbookData } from '@univerjs/core';
 import { DrawingApplyType, ISheetDrawingService } from '@univerjs/sheets-drawing';
 import { describe, expect, test } from 'vitest';
 import { RefusedEditError, transform } from '../index.ts';
@@ -6,6 +7,7 @@ import type { Mutation, Side } from '../index.ts';
 import { cellIds } from '../src/cells.ts';
 import { drawingIds } from '../src/drawings.ts';
 import { mergeIds } from '../src/merges.ts';
+import { nameIds } from '../src/names.ts';
 import { propertyIds } from '../src/properties.ts';
 import { settingIds } from '../src/settings.ts';
 import { structureIds } from '../src/structure.ts';
@@ -247,7 +249,7 @@ describe('rich text and styles', () => {
   });
 });
 
-// A cut pasted on another sheet travels as one move per sheet (see cells.perSheet).
+// A cut pasted on another sheet is transformed as one move per sheet (see cells.perSheet).
 // Decision (owner, chat 2026-10-22): it meets edits as a drag does, so an edit
 // of its source or target is refused (see shifts.movesMeet).
 describe('a cut to another sheet', () => {
@@ -317,12 +319,9 @@ describe('a cut to another sheet', () => {
       m.id === structureIds.removeSheet ? { ...m, params: { ...m.params, index } } : m,
     );
 
-  test('removing its target sheet leaves its source empty', () => {
-    for (const side of ['left', 'right'] as const) {
-      const { workbook } = converges(cut, removal('s2', 1), { side });
-      expect(workbook.sheets.s2).toBeUndefined();
-      expect(workbook.sheets.s1.cellData[1][1]).toBeUndefined();
-    }
+  // Decision (agent, chat 2026-10-22): see cells.refuseCutsToRemoved.
+  test('removing its target sheet is refused', () => {
+    refusedBothWays(cut, removal('s2', 1));
   });
 
   test('removing its source sheet leaves the cells on its target', () => {
@@ -331,6 +330,72 @@ describe('a cut to another sheet', () => {
       expect(workbook.sheets.s1).toBeUndefined();
       expect(workbook.sheets.s2.cellData[5][1]).toEqual({ v: 's1:1:1' });
       expect(workbook.sheets.s2.cellData[6][2]).toEqual({ v: 's1:2:2' });
+    }
+  });
+
+  // The transform joins a cut's halves again (see cells.joinCuts), so a cut
+  // the server stored, or a client rebased, is still one when transformed again.
+  const moves = (mutations: Mutation[]) => mutations.filter(({ id }) => id === cellIds.moveRange);
+  const [moved] = moves(cut);
+  const elsewhere = cell(0, 0, { v: 'x' });
+
+  test('past an unrelated edit it is one move to the other sheet', () => {
+    for (const side of ['left', 'right'] as const) {
+      expect(moves(transform(cut, [elsewhere], side))).toEqual([moved]);
+    }
+  });
+
+  test('transformed once, it is still refused against removing its target sheet', () => {
+    for (const side of ['left', 'right'] as const) {
+      refusedBothWays(transform(cut, [elsewhere], side), removal('s2', 1));
+    }
+  });
+
+  test('past a row insert on its source or its target it is one move, with that side moved', () => {
+    const { fromRange, toRange, from, to } = moved.params;
+    const down = (range: typeof fromRange) => ({
+      ...range,
+      startRow: range.startRow + 1,
+      endRow: range.endRow + 1,
+    });
+    const rowsDown = (matrix: object) =>
+      Object.fromEntries(Object.entries(matrix).map(([row, cells]) => [Number(row) + 1, cells]));
+    for (const side of ['left', 'right'] as const) {
+      expect(moves(transform(cut, [insertRows(0, 1)], side))).toEqual([
+        {
+          ...moved,
+          params: {
+            ...moved.params,
+            fromRange: down(fromRange),
+            from: { ...from, value: rowsDown(from.value) },
+          },
+        },
+      ]);
+      expect(moves(transform(cut, [onTwo(insertRows(0, 1))], side))).toEqual([
+        {
+          ...moved,
+          params: {
+            ...moved.params,
+            toRange: down(toRange),
+            to: { ...to, value: rowsDown(to.value) },
+          },
+        },
+      ]);
+    }
+  });
+
+  test('past removing its source sheet only its target half is left', () => {
+    for (const side of ['left', 'right'] as const) {
+      expect(moves(transform(cut, removal('s1', 0), side))).toEqual([
+        {
+          ...moved,
+          params: {
+            ...moved.params,
+            fromRange: moved.params.toRange,
+            from: { subUnitId: 's2', value: {} },
+          },
+        },
+      ]);
     }
   });
 
@@ -953,9 +1018,39 @@ test('a client that resyncs still has the batch it sent accepted', () => {
   for (const replica of [run.server, ...run.clients]) replica.univer.dispose();
 });
 
-// The README's refusal rates, 40 mutations a seed: realEdit on realBook, and
-// commandEdit on the 4×3 sheet and on realBook. REFUSAL_SEEDS=300 reproduces
-// them and prints the counts (see simulate's `stats`); the default is quick.
+/** `realBook()` with one defined name, over A3:B5 of its content, held as Univer saves it. */
+function namedBook(): IWorkbookData {
+  const replica = new Replica({ workbook: realBook() });
+  const budget = { unitId, id: 'N', name: 'budget', formulaOrRefString: 'One!$A$3:$B$5' };
+  replica.apply([{ id: nameIds.set, params: budget }]);
+  const resources = replica.injector
+    .get(IResourceManagerService)
+    .getResourcesByType(unitId, UniverInstanceType.UNIVER_SHEET);
+  const workbook = { ...replica.workbook()!.getSnapshot(), resources };
+  replica.univer.dispose();
+  return workbook;
+}
+
+/**
+ * `namedBook()` with formulas Univer rewrites when a command moves the cells
+ * they read: beside One's content a column sum, a product and a sum of the
+ * name, and on a second 200×26 sheet, Two, two references to One's content.
+ */
+function formulaBook(): IWorkbookData {
+  const book = namedBook();
+  Object.assign(book.sheets.s1.cellData![0], { 10: { f: '=SUM(A1:A30)' } });
+  Object.assign(book.sheets.s1.cellData![1], { 10: { f: '=B2*2' } });
+  Object.assign(book.sheets.s1.cellData![2], { 10: { f: '=SUM(budget)' } });
+  const cellData = { 0: { 0: { f: '=One!B10' }, 1: { f: '=SUM(One!C1:C30)' } } };
+  book.sheets.s2 = { id: 's2', name: 'Two', rowCount: 200, columnCount: 26, cellData };
+  book.sheetOrder = ['s1', 's2'];
+  return book;
+}
+
+// The README's refusal rates, 40 mutations a seed: realEdit on realBook, with
+// and without a defined name, and commandEdit on the 4×3 sheet, on realBook
+// and on a book with formulas. REFUSAL_SEEDS=300 reproduces them and prints the counts (see
+// simulate's `stats`); the default is quick.
 const refusalSeeds = Number(process.env.REFUSAL_SEEDS ?? 10);
 test(
   'refusals on a real sheet and a dense one are counted as the README counts them',
@@ -963,8 +1058,10 @@ test(
     const seeds = refusalSeeds;
     for (const [name, generate, workbook] of [
       ['realEdit, 200×26', realEdit, realBook()],
+      ['realEdit, 200×26, one name', realEdit, namedBook()],
       ['commandEdit, 4×3', commandEdit, denseBook()],
       ['commandEdit, 200×26', commandEdit, realBook()],
+      ['commandEdit, 200×26, formulas and one name', commandEdit, formulaBook()],
     ] as const) {
       const stats = newStats();
       convergesOver(generate, {

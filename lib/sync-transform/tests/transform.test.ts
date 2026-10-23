@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import { supportedMutationIds, transform, UnsupportedMutationError } from '../index.ts';
 import type { Mutation } from '../index.ts';
-import { cellIds, ghostId } from '../src/cells.ts';
+import { cellIds, ghostId, halfKey, rewriteKey } from '../src/cells.ts';
 import { settingIds } from '../src/settings.ts';
 import { structureIds } from '../src/structure.ts';
 
@@ -27,6 +27,19 @@ test.each<[string, Mutation, new (...args: never[]) => Error]>([
     'a ghost, which exists only inside one transform',
     { id: ghostId, params: { ...target, cellValue: { 0: { 0: null } } } },
     UnsupportedMutationError,
+  ],
+  [
+    "a cut's half, which exists only inside one transform",
+    { ...move('s1'), params: { ...move('s1').params, [halfKey]: { kind: 'source', n: 0 } } },
+    TypeError,
+  ],
+  [
+    "a formula rewrite's mark, which exists only inside one transform",
+    {
+      id: cellIds.setRangeValues,
+      params: { ...target, cellValue: { 0: { 0: { f: '=A2' } } }, [rewriteKey]: true },
+    },
+    TypeError,
   ],
   [
     'a shift to another sheet',

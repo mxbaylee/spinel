@@ -1,8 +1,11 @@
 import { Direction, RANGE_TYPE } from '@univerjs/core';
 import { describe, expect, test } from 'vitest';
+import { transform } from '../index.ts';
 import type { Mutation } from '../index.ts';
 import { cellIds } from '../src/cells.ts';
+import { mergeIds } from '../src/merges.ts';
 import { nameIds } from '../src/names.ts';
+import { propertyIds } from '../src/properties.ts';
 import { structureIds } from '../src/structure.ts';
 import { cols, rows } from './edits.ts';
 import { capture, seededWorkbook, withStructure } from './generate.ts';
@@ -38,6 +41,14 @@ const write = sent('sheet.command.set-range-values', {
   range: { startRow: 0, endRow: 0, startColumn: 0, endColumn: 0 },
   value: { v: 'x' },
 });
+// Two!A1 holds =SUM(budget), so a rename's or removal's command rewrites it too.
+const used: Mutation[] = [
+  ...setup,
+  {
+    id: cellIds.setRangeValues,
+    params: { unitId, subUnitId: 's2', cellValue: { 0: { 0: { f: '=SUM(budget)' } } } },
+  },
+];
 const namesAfter = (a: Mutation[], b: Mutation[], side: 'left' | 'right') =>
   converges(a, b, { side, setup, document }).names;
 
@@ -47,8 +58,8 @@ test('a row insert moves the names it shifts, past a concurrent cell write', () 
   }
 });
 
-// Decision (owner, chat 2026-10-22): see names.racesName.
-describe('a name edit and a concurrent edit that rewrites names', () => {
+// Decisions (owner and agent, chat 2026-10-22): see names.racesName.
+describe('a name set or removal and a concurrent edit that rewrites names', () => {
   const peers: [string, Mutation[]][] = [
     ['a row insert on its sheet', insertRow('s1')],
     ['a row insert on another sheet', insertRow('s2')],
@@ -116,9 +127,19 @@ describe('a name edit and a concurrent edit that rewrites names', () => {
   ];
   test.each(peers)('are refused: %s', (_name, peer) => {
     refusedBothWays(setName({ name: 'total' }), peer, 'name-race');
+    refusedBothWays(removeName(), peer, 'name-race');
+  });
+
+  // A removal's own rewrite of Two!A1 to #REF! would stand if the first
+  // accepted row insert's name set dropped the removal.
+  test('a removal of a name a cell uses and a row insert that moves the name are refused', () => {
+    const removal = sent('sheet.command.remove-defined-name', budget, used);
+    expect(removal.map(({ id }) => id)).toContain(cellIds.setRangeValues);
+    refusedBothWays(removal, insertRow('s1'), 'name-race');
   });
 });
 
+// Decision (owner, chat 2026-10-22): see names.transform.
 test('of two edits of one name, the first accepted stands', () => {
   const moved = setName({ formulaOrRefString: 'Two!$A$1:$A$2' });
   const widened = setName({ formulaOrRefString: 'One!$A$3:$C$5' });
@@ -129,15 +150,8 @@ test('of two edits of one name, the first accepted stands', () => {
   expect(namesAfter(removeName(), renamed, 'right').N.name).toBe('total');
 });
 
+// Decision (owner, chat 2026-10-22): see names.transform.
 describe('a rename and a concurrent edit of the same name, with a cell that uses it', () => {
-  // Two!A1 holds =SUM(budget), so a rename's command rewrites it too.
-  const used: Mutation[] = [
-    ...setup,
-    {
-      id: cellIds.setRangeValues,
-      params: { unitId, subUnitId: 's2', cellValue: { 0: { 0: { f: '=SUM(budget)' } } } },
-    },
-  ];
   const edit = (change: object) =>
     sent('sheet.command.set-defined-name', { ...budget, ...change }, used);
   const renamed = edit({ name: 'total' });
@@ -161,8 +175,128 @@ describe('a rename and a concurrent edit of the same name, with a cell that uses
   });
 });
 
+// Decision (owner, chat 2026-10-22): see names.refuseFormulaRaces.
+describe('a formula write and a concurrent edit that rewrites formulas', () => {
+  const formula = (subUnitId: string, row: number, col: number, f: string): Mutation[] => [
+    {
+      id: cellIds.setRangeValues,
+      params: { unitId, subUnitId, cellValue: { [row]: { [col]: { f } } } },
+    },
+  ];
+  /** A row inserted above row 1 of sheet One, after `before`, with no name defined. */
+  const insertAbove = (before: Mutation[]) =>
+    sent(
+      'sheet.command.insert-row-by-range',
+      {
+        subUnitId: 's1',
+        range: { startRow: 0, endRow: 0, startColumn: 0, endColumn: 5 },
+        direction: Direction.UP,
+      },
+      before,
+    );
+
+  // Each command rewrites the formula to =One!A9 for its own insert, while two
+  // inserts in turn leave A8's value at A10.
+  test('two row inserts that each move a formula on another sheet are refused', () => {
+    const insert = insertAbove(formula('s2', 0, 0, '=One!A8'));
+    const rewrite = insert.find(({ id }) => id === cellIds.setRangeValues);
+    expect(rewrite?.params.cellValue[0][0].f).toBe('=One!A9');
+    refusedBothWays(insert, insert, 'formula-race');
+  });
+
+  test('two row inserts that each move a formula on their own sheet are refused', () => {
+    const insert = insertAbove(formula('s1', 11, 5, '=A8'));
+    expect(insert.map(({ id }) => id)).toContain(cellIds.setRangeValues);
+    refusedBothWays(insert, insert, 'formula-race');
+  });
+
+  test('a formula typed while a row is inserted is refused', () => {
+    const typed = sent(
+      'sheet.command.set-range-values',
+      {
+        subUnitId: 's2',
+        range: { startRow: 0, endRow: 0, startColumn: 0, endColumn: 0 },
+        value: { f: '=One!A8' },
+      },
+      [],
+    );
+    refusedBothWays(typed, insertAbove([]), 'formula-race');
+  });
+
+  // Two!A1 holds =One!A8, which the insert's command rewrites to =One!A9.
+  // Accepted first, that rewrite would put the formula back over the value.
+  describe('a value typed over a formula a row insert rewrites', () => {
+    const before = formula('s2', 0, 0, '=One!A8');
+    const typed = (row: number, col: number) =>
+      sent(
+        'sheet.command.set-range-values',
+        {
+          subUnitId: 's2',
+          range: { startRow: row, endRow: row, startColumn: col, endColumn: col },
+          value: { v: 3, f: null, si: null, p: null },
+        },
+        before,
+      );
+
+    test('is refused', () => {
+      refusedBothWays(typed(0, 0), insertAbove(before), 'formula-race');
+    });
+
+    test('a value typed in another cell passes', () => {
+      for (const side of ['left', 'right'] as const) {
+        expect(transform(typed(1, 1), insertAbove(before), side)).toEqual(typed(1, 1));
+        const after = converges(typed(1, 1), insertAbove(before), {
+          side,
+          setup: before,
+          document,
+        });
+        expect(after.workbook.sheets.s2.cellData[0][0].f).toBe('=One!A9');
+        expect(after.workbook.sheets.s2.cellData[1][1].v).toBe(3);
+      }
+    });
+  });
+
+  // Each rename's command rewrites Two!A1 for its own name only, so the first
+  // accepted rewrite would leave the other name's old text, #NAME?, on both screens.
+  test('renames of two names that one formula uses are refused', () => {
+    const spend = { unitId, id: 'K', name: 'spend', formulaOrRefString: 'One!$C$3:$C$5' };
+    const both = [
+      ...setup,
+      { id: nameIds.set, params: spend },
+      ...formula('s2', 0, 0, '=SUM(budget)+SUM(spend)'),
+    ];
+    const total = sent('sheet.command.set-defined-name', { ...budget, name: 'total' }, both);
+    const cost = sent('sheet.command.set-defined-name', { ...spend, name: 'cost' }, both);
+    refusedBothWays(total, cost, 'formula-race');
+  });
+
+  const at = { unitId, subUnitId: 's2' };
+  const ranges = [{ startRow: 2, endRow: 4, startColumn: 0, endColumn: 1 }];
+  const peers: [string, Mutation[]][] = [
+    ['a cell write', write],
+    ['a merge', [{ id: mergeIds.add, params: { ...at, ranges } }]],
+    ['a row height', [{ id: propertyIds.rowHeight, params: { ...at, ranges, rowHeight: 40 } }]],
+    [
+      'a style',
+      [
+        {
+          id: cellIds.setRangeValues,
+          params: { ...at, cellValue: { 3: { 1: { s: { bl: 1 } } } } },
+        },
+      ],
+    ],
+  ];
+  test.each(peers)('a formula write passes unchanged: %s', (_name, peer) => {
+    const typed = formula('s2', 0, 0, '=One!A8');
+    for (const side of ['left', 'right'] as const) {
+      expect(transform(typed, peer, side)).toEqual(typed);
+      converges(typed, peer, { side, document });
+    }
+  });
+});
+
 // Decision (agent, chat 2026-10-22): see names.racesName.
-describe('two names added with the same text', () => {
+describe('two names given the same text', () => {
   const add = (id: string, name: string, localSheetId?: string) =>
     sent('sheet.command.insert-defined-name', {
       id,
@@ -176,6 +310,36 @@ describe('two names added with the same text', () => {
     refusedBothWays(add('M', 'total', ''), add('K', 'total'), 'name-race');
     refusedBothWays(add('M', 'total', 's1'), add('K', 'TOTAL', 's1'), 'name-race');
     refusedBothWays(add('M', 'total', 's1'), add('K', 'total'), 'name-race');
+  });
+
+  test('a rename onto the text of a name added at once is refused', () => {
+    refusedBothWays(setName({ name: 'total' }), add('M', 'Total'), 'name-race');
+  });
+});
+
+describe('a name set or removal and a concurrent edit that rewrites no names', () => {
+  const at = { unitId, subUnitId: 's1' };
+  const ranges = [{ startRow: 2, endRow: 4, startColumn: 0, endColumn: 1 }];
+  const peers: [string, Mutation[]][] = [
+    ['a merge', [{ id: mergeIds.add, params: { ...at, ranges } }]],
+    ['a row height', [{ id: propertyIds.rowHeight, params: { ...at, ranges, rowHeight: 40 } }]],
+    ['a cell write', write],
+  ];
+  const renamed = setName({ name: 'total' });
+  test.each(peers)('a rename passes unchanged and keeps the name: %s', (_name, peer) => {
+    for (const side of ['left', 'right'] as const) {
+      expect(transform(renamed, peer, side)).toEqual(renamed);
+      expect(namesAfter(renamed, peer, side).N).toMatchObject({
+        name: 'total',
+        formulaOrRefString: 'One!$A$3:$B$5',
+      });
+    }
+  });
+  test.each(peers)('a removal passes unchanged and goes: %s', (_name, peer) => {
+    for (const side of ['left', 'right'] as const) {
+      expect(transform(removeName(), peer, side)).toEqual(removeName());
+      expect(namesAfter(removeName(), peer, side)).toEqual({});
+    }
   });
 });
 
@@ -195,13 +359,6 @@ test("a delete of the content's last row and a name added on it converge", () =>
   for (const side of ['left', 'right'] as const) {
     expect(namesAfter(deleted, added, side).M.formulaOrRefString).toBe('One!$A$12:$B$12');
   }
-});
-
-test('a removal and a row insert that moves the name: the first accepted stands', () => {
-  expect(namesAfter(removeName(), insertRow('s1'), 'left')).toEqual({});
-  expect(namesAfter(removeName(), insertRow('s1'), 'right').N.formulaOrRefString).toBe(
-    'One!$A$4:$B$6',
-  );
 });
 
 test('edits of different names both land', () => {

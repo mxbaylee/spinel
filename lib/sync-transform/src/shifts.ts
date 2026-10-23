@@ -85,6 +85,9 @@ const areaOf = (range: IRange): Area => ({
  * "Known limits"). Not taken: a `shift` mark that carries the command's whole
  * band and is sent even with no MoveRange, which would make SPN-058's sender
  * read Univer's command params rather than only its mutations.
+ * Diagnostics (SPN-032, not built): `sync.edit.offset`, a counter of writes
+ * merged in the part of a shift's band its MoveRange leaves out, would show
+ * whether that mark is worth building.
  */
 function areasOf(move: Mutation): Area[] {
   const shift = shiftOf(move);

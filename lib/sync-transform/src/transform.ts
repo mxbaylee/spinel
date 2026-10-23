@@ -1,9 +1,19 @@
-import { cellIds, cells, ghostId, perSheet } from './cells.ts';
+import {
+  cellIds,
+  cells,
+  ghostId,
+  halfKey,
+  joinCuts,
+  perSheet,
+  refuseCutsToRemoved,
+  rewriteKey,
+  unmarked,
+} from './cells.ts';
 import { docs } from './docs.ts';
 import { drawingIds, drawings } from './drawings.ts';
 import type { Family } from './family.ts';
 import { cutBy, merges } from './merges.ts';
-import { names, refuseNameRaces } from './names.ts';
+import { markRewrites, names, refuseFormulaRaces, refuseNameRaces } from './names.ts';
 import { markError, mergeMeets, refuseCut } from './shifts.ts';
 import { properties } from './properties.ts';
 import { settings } from './settings.ts';
@@ -58,6 +68,11 @@ function check(mutation: Mutation): void {
   }
   const shiftError = id === cellIds.moveRange ? markError(mutation) : undefined;
   if (shiftError) throw new TypeError(`MoveRangeMutation's \`shift\` is wrong: ${shiftError}.`);
+  // A cut's half and a rewrite's mark exist only inside one `transform` (see
+  // cells.joinCuts and names.markRewrites).
+  for (const key of [halfKey, rewriteKey]) {
+    if (Object.hasOwn(p, key)) throw new TypeError(`\`${key}\` is the transform's own mark.`);
+  }
   if (id === structureIds.removeSheet && !Number.isInteger(p.index)) {
     throw new TypeError('RemoveSheetMutation needs `index`, its position before removal.');
   }
@@ -96,6 +111,7 @@ function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
   // its drawing removals after the sheet removal, so later ops still meet it.
   if (peer === 'sheet-order') {
     const gone = b.id === structureIds.removeSheet && sheetOf(a) === sheetOf(b);
+    // Diagnostics (SPN-032, not built): `sync.edit.dropped`, rule 'removed-sheet'.
     return gone && a.id !== drawingIds.apply ? [] : [a];
   }
   if (self === 'sheet-order' || sheetOf(a) !== sheetOf(b)) return [a];
@@ -130,11 +146,20 @@ function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
  * applying `a` then `transform(b, a, flip(side))`.
  */
 export function transform(a: Mutation[], b: Mutation[], side: Side): Mutation[] {
+  // Diagnostics (SPN-032, not built): this stays pure, so the server records
+  // around each call: `sync.transform.duration` (histogram, ms),
+  // `sync.transform.concurrent` (histogram of b.length, how far apart edits
+  // really are) and the output's length against its input's (histogram).
+  // Silent drops below would need an optional observer argument, no-op by
+  // default; each site says `Diagnostics (SPN-032` and what it would record.
   // Check every mutation up front, even when the other side is empty.
   for (const mutation of [...a, ...b]) check(mutation);
   refuseNameRaces(a, b);
-  const [mine, theirs] = [a.flatMap(perSheet), b.flatMap(perSheet)];
-  return pastMany(mine, theirs, side, growth * (mine.length + theirs.length)).filter(isReal);
+  refuseFormulaRaces(a, b);
+  refuseCutsToRemoved(a, b);
+  const [mine, theirs] = [markRewrites(a).flatMap(perSheet), markRewrites(b).flatMap(perSheet)];
+  const limit = growth * (mine.length + theirs.length);
+  return joinCuts(pastMany(mine, theirs, side, limit).filter(isReal)).map(unmarked);
 }
 
 /**
@@ -162,6 +187,8 @@ function pastOne(a: Mutation[], b: Mutation, side: Side, limit: number): Mutatio
   for (const mutation of a) {
     result.push(...pastMany([mutation], peer, side, limit));
     peer = pastMany(peer, [mutation], flip(side), limit);
+    // Diagnostics (SPN-032, not built): `sync.transform.growth` (histogram of
+    // the peak against `limit`) would show whether 50 is near real edits.
     if (result.length + peer.length > limit) {
       throw new RefusedEditError('growth', `past ${limit} mutations`);
     }
