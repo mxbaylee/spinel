@@ -2,9 +2,14 @@
 
 Planned SPN-032 diagnostics: [the implementation record](implementation/SPN-032.md)
 defines a separate event/log/metric database and Operator-only download/truncate
-controls, with no query UI. Exports may contain user/file IDs and route templates
-for correlation, but no document content/names, credentials or raw URLs. These
+controls, with no query UI. Automatic records may contain user/file IDs and route
+templates for correlation, but no document content/names, credentials or raw URLs. These
 controls are not implemented yet and do not expand document-access permissions.
+SPN-098 adds intentionally submitted feedback text to that same export, with
+availability flags on the admin user list. Truncation deletes feedback as well as
+logs; see [the feedback contract](implementation/SPN-098.md). Automatic document
+capture remains excluded. Health includes separate diagnostics database size/growth,
+application/collaboration storage (including WAL) and volume free space.
 
 The Operator's `/admin` page lists every account, its admin/member role, whether
 it is disabled, and its passkeys with provider, creation time and last use. It

@@ -127,17 +127,36 @@ Owner direction, 2026-10-22; [scope and rationale](../implementation/SPN-032.md)
 Production work is pending. Health cards retain aggregate status and guidance.
 Add **Download diagnostics** and **Truncate diagnostics** to Backups & health;
 there is no query UI, log browser or SQL console. Download produces a standalone
-diagnostics SQLite snapshot for local analysis. It can contain user/file IDs and
-route templates, never document names/content or credentials. This identifier-only
+diagnostics SQLite snapshot for local analysis. Automatic records can contain
+user/file IDs and route templates, never document names/content or credentials. This identifier-only
 export is the scoped exception to the earlier counts-only health rule.
 
 Download is the visible action; Truncate belongs behind the contextual menu and
 uses the existing destructive confirmation pattern. Explain that it clears
 diagnostics only, cannot be undone, does not delete files, and collection resumes.
+Mention that submitted user feedback is also deleted and its user-list flags reset;
+new reports may appear afterward. Show database size/growth and WAL usage for
+application/collaboration and diagnostics storage, without counting shared files twice,
+alongside volume free space. A cleared store need not physically shrink immediately.
 Show pending, failed and completed states without implying failed work succeeded;
 cancel is safe and focus returns to the surviving control. A download failure
 offers retry without promising an existing artifact. Include light/dark/phone
 stories and owner screenshot review when implementing these controls.
+
+## User feedback handoff (SPN-098)
+
+Owner direction, 2026-10-22; [scope and rationale](../implementation/SPN-098.md).
+Production work is pending. An everyday account's menu opens a short feedback
+dialog using existing form/status patterns, explaining that the message and page
+context go to the server Operator. Submission success requires persistence; keep
+the draft on failure and prevent duplicate submissions while pending.
+
+The admin user list shows an accessible **Feedback available** flag when stored
+feedback exists for that user. It is not an unread/resolution badge and does not
+open a query panel or feedback inbox. The Operator reads the downloaded SQLite
+file. Missing/failed flag data stays visibly unknown. Truncate diagnostics clears
+feedback too, then refreshes these flags. Add light/dark/phone stories for the
+dialog and absent/present/loading/failed flags before owner implementation review.
 
 ## Assistant connection metadata (SPN-034)
 
