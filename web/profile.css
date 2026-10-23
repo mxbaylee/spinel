@@ -197,6 +197,10 @@
   left: 0;
   transform: none;
 }
+.rail-compact .rail-account .rail-label {
+  left: auto;
+  right: 0;
+}
 @media (any-pointer: coarse) and (min-width: 641px) {
   header:not(.rail-compact) .rail-account .sp-segments::before {
     inset: 0 7px;
