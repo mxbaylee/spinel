@@ -4,6 +4,7 @@ import { PORTABLE_LIMIT } from '../src/shared/portable.ts';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
+import './fileDialog.css';
 
 export function ImportFile({
   parentId,
@@ -85,7 +86,10 @@ export function ImportFile({
     };
   });
   const content = (
-    <section className="import-file" aria-label="Import a Univer file">
+    <section
+      className={`import-file${dialogOpen === undefined ? '' : ' file-dialog'}`}
+      aria-label="Import a Univer file"
+    >
       <button disabled={busy} onClick={() => input.current?.click()}>
         Import Univer file
       </button>

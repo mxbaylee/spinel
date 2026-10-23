@@ -7,6 +7,7 @@ import { failure, pending } from '../.storybook/api.ts';
 import { searchCatalog } from '../src/shared/search.ts';
 import { Dashboard } from './Dashboard.tsx';
 import type { LocalStart } from './offline/localStart.ts';
+import { assertDialogControls } from '../.storybook/dialogBounds.ts';
 
 const day = 86_400_000;
 const now = Date.now();
@@ -131,6 +132,9 @@ export const NewItem: Story = {
     await userEvent.click(
       await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Folder' }),
     );
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'New folder' }),
+    );
   },
 };
 export const NewDoc: Story = {
@@ -141,6 +145,9 @@ export const NewDoc: Story = {
     await userEvent.click(
       await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Doc' }),
     );
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'New doc' }),
+    );
   },
 };
 export const NewSheet: Story = {
@@ -150,6 +157,9 @@ export const NewSheet: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'New' }));
     await userEvent.click(
       await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Sheet' }),
+    );
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'New sheet' }),
     );
   },
 };
@@ -231,6 +241,8 @@ export const LocalFolderNotOpened: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'Shared with me' }));
     await userEvent.click(await canvas.findByRole('button', { name: `${photos.name} Folder` }));
+    await expect(await canvas.findByText(/This folder wasn’t opened online/)).toBeVisible();
+    await expect(canvas.queryByText('This folder is empty.')).not.toBeInTheDocument();
   },
 };
 
@@ -414,6 +426,7 @@ export const CancelAdminMoveWhileLoading: Story = {
       name: 'Rename item',
     });
     await expect(within(rename).getByRole('button', { name: 'Save' })).toBeEnabled();
+    await assertDialogControls(rename);
   },
 };
 
@@ -435,6 +448,7 @@ export const FileAdminNoDestinations: Story = {
     ).toBeVisible();
     await expect(within(move).getByLabelText('Destination')).toBeDisabled();
     await expect(within(move).getByRole('button', { name: 'Save' })).toBeDisabled();
+    await assertDialogControls(move);
   },
 };
 
@@ -509,6 +523,55 @@ export const ImportDialog: Story = {
     await expect(
       await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Import file' }),
     ).toBeVisible();
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Import file' }),
+    );
+  },
+};
+
+export const PersonalFilingDialog: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Shared with me' }),
+    );
+    await rowAction(canvasElement, forecast.name, 'File into folder…');
+    const form = await within(canvasElement.ownerDocument.body).findByRole('form', {
+      name: 'File shared item',
+    });
+    await expect(within(form).getByRole('button', { name: 'Save' })).toBeEnabled();
+    await assertDialogControls(form);
+  },
+};
+
+export const SharingDialog: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      [`GET /api/items/${budget.id}/sharing`]: {
+        people: [
+          {
+            id: 'morgan',
+            name: 'Morgan Lee',
+            disabled: 0,
+            directRole: 'editor',
+            effectiveRole: 'editor',
+          },
+        ],
+      },
+      [`GET /api/items/${budget.id}/link`]: { enabled: false, role: 'viewer' },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await rowAction(canvasElement, budget.name, 'Share…');
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: `Share ${budget.name}`,
+    });
+    await expect(await within(dialog).findByLabelText('Access for Morgan Lee')).toBeEnabled();
+    await expect(
+      within(dialog).getByRole('button', { name: 'Apply access for Morgan Lee' }),
+    ).toBeDisabled();
+    await assertDialogControls(dialog);
   },
 };
 
