@@ -164,7 +164,7 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
       });
     }
     const admin = await adminContext.newPage();
-    await admin.goto(`${baseURL}/admin`);
+    await admin.goto(`${baseURL}/admin#connections`);
     const metadata = admin.getByRole('region', { name: 'Connected assistants' });
     const connectionRow = metadata.getByRole('listitem').filter({ hasText: user.name });
     await expect(connectionRow).toContainText('Chosen desktop assistant');
