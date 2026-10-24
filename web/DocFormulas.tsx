@@ -8,6 +8,7 @@ import {
   FORMULA_FORMATS,
   FORMULA_LIMITS,
   FORMULA_MESSAGES,
+  FormulaSaveError,
   formulaDisplayRows,
   type DocFormula,
   type FormulaDefinition,
@@ -103,7 +104,7 @@ export function FormulaDialog({
   id: string;
   spaceId?: string;
   initial?: DocFormula;
-  onSave: (definition: FormulaDefinition) => Promise<void>;
+  onSave: (definition: FormulaDefinition, signal: AbortSignal) => Promise<void>;
   onClose: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -126,6 +127,7 @@ export function FormulaDialog({
   const [loadingSheets, setLoadingSheets] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [retrySave, setRetrySave] = useState(false);
   const [preview, setPreview] = useState<{
     definition: FormulaDefinition;
     result: FormulaDisplay;
@@ -153,7 +155,6 @@ export function FormulaDialog({
   useEffect(() => {
     const hide = () => {
       if (document.visibilityState === 'hidden') {
-        attempt.current++;
         operation.current?.abort();
         setPreview(null);
       }
@@ -164,9 +165,11 @@ export function FormulaDialog({
   useEffect(() => {
     active.current = true;
     attempt.current++;
+    operation.current = null;
     setPreview(null);
     setBusy(false);
     setError('');
+    setRetrySave(false);
     const modal = dialog.current;
     modal?.showModal();
     const abort = new AbortController();
@@ -234,6 +237,8 @@ export function FormulaDialog({
       return moved ? { ...current, start: moved.start } : null;
     });
     setExpression(value);
+    setError('');
+    setRetrySave(false);
     setCursor(value.length);
     setSuggestion(0);
     setPreview(null);
@@ -286,22 +291,33 @@ export function FormulaDialog({
       )
     ).definition;
   }
+  function close() {
+    if (!active.current) return;
+    // Fence completion synchronously, before the parent can unmount this dialog.
+    active.current = false;
+    attempt.current++;
+    operation.current?.abort();
+    setBusy(false);
+    onClose();
+  }
   async function run(save: boolean) {
+    // A second submit in the same event turn must not start another native save.
+    if (operation.current || !active.current) return;
     const observation = diagnostics.begin();
     const runId = observation?.runId;
     const current = ++attempt.current;
-    operation.current?.abort();
     const controller = new AbortController();
     operation.current = controller;
     setPreview(null);
     setBusy(true);
     setError('');
+    setRetrySave(false);
     try {
       const definition = await resolve(controller.signal, observation);
-      if (!active.current || current !== attempt.current) return;
+      if (!active.current || current !== attempt.current || controller.signal.aborted) return;
       if (save) {
-        await onSave(definition);
-        if (active.current) onClose();
+        await onSave(definition, controller.signal);
+        if (active.current && current === attempt.current && !controller.signal.aborted) close();
       } else {
         setPreview({ definition, result: { ok: false, reason: 'loading' } });
         const started = performance.now();
@@ -315,7 +331,7 @@ export function FormulaDialog({
             spaceId,
             runId,
           );
-          if (!active.current || current !== attempt.current) return;
+          if (!active.current || current !== attempt.current || controller.signal.aborted) return;
           observeOperation(
             observation?.sink,
             diagnosticContext(runId),
@@ -324,7 +340,7 @@ export function FormulaDialog({
             Math.max(0, performance.now() - started),
           );
         } catch (cause) {
-          if (!active.current || current !== attempt.current) return;
+          if (!active.current || current !== attempt.current || controller.signal.aborted) return;
           observeOperation(
             observation?.sink,
             diagnosticContext(runId),
@@ -334,13 +350,17 @@ export function FormulaDialog({
           );
           throw cause;
         }
-        if (active.current && current === attempt.current) setPreview({ definition, result });
+        if (active.current && current === attempt.current && !controller.signal.aborted)
+          setPreview({ definition, result });
       }
     } catch (cause) {
-      if (active.current && current === attempt.current)
+      if (active.current && current === attempt.current && !controller.signal.aborted) {
         setError(cause instanceof Error ? cause.message : 'Could not update the formula.');
+        setRetrySave(save && cause instanceof FormulaSaveError && cause.retryable);
+      }
     } finally {
-      if (active.current) setBusy(false);
+      if (operation.current === controller) operation.current = null;
+      if (active.current && current === attempt.current) setBusy(false);
     }
   }
   function addReference() {
@@ -408,7 +428,7 @@ export function FormulaDialog({
       aria-label={initial ? 'Edit formula' : 'Insert formula'}
       onCancel={(event) => {
         event.preventDefault();
-        if (!busy) onClose();
+        close();
       }}
     >
       <h2>{initial ? 'Edit formula' : 'Insert formula'}</h2>
@@ -569,6 +589,8 @@ export function FormulaDialog({
             onChange={(event) => {
               setFormat(event.target.value as FormulaFormat);
               setPreview(null);
+              setError('');
+              setRetrySave(false);
             }}
             disabled={busy}
           >
@@ -599,9 +621,17 @@ export function FormulaDialog({
             Preview
           </button>
           <button className="primary" disabled={busy || expression.length < 2}>
-            {busy ? 'Working…' : initial ? 'Save formula' : 'Insert formula'}
+            {busy
+              ? 'Working…'
+              : retrySave
+                ? initial
+                  ? 'Retry save'
+                  : 'Retry insert'
+                : initial
+                  ? 'Save formula'
+                  : 'Insert formula'}
           </button>
-          <button type="button" disabled={busy} onClick={onClose}>
+          <button type="button" onClick={close}>
             Cancel
           </button>
         </div>
