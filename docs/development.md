@@ -152,30 +152,36 @@ publishes `main` to <https://mxbaylee.github.io/spinel/> (Owner, chat
 is in the [design playbook](design/README.md#storybook); use the
 [manual design review runbook](design/review-runbook.md) when a design changes.
 
-The workflow builds once, then runs desktop, tablet and mobile reviews in
-parallel, each with a 15-minute timeout. Desktop retains light/dark and native
-editor interaction proofs; mobile retains light/dark; tablet retains its light
+The workflow builds once, then runs desktop, tablet and two mobile theme reviews
+in parallel. Desktop has a 25-minute timeout; tablet and each mobile job have
+15 minutes. Desktop retains light/dark and native
+editor interaction proofs; the mobile jobs cover light and dark separately; tablet retains its light
 captures and the intermediate 613 px mouse interaction checks. The icon suite
 runs once on desktop. The stable **Review Storybook states and interactions**
-gate requires every viewport to pass before Pages can deploy. Explicitly
+gate requires every viewport and both mobile jobs to pass before main deploys to Pages. Explicitly
 classified documentation-only PRs skip the captures; failed or missing results
 cannot pass as documentation-only.
 
 The shared build keeps its ordinary `npm ci` and registry-audit invocation. The
-three viewport installs use `npm ci --no-audit` so duplicate advisory requests
+viewport installs use `npm ci --no-audit` so duplicate advisory requests
 cannot consume each review budget. Locked installation, integrity verification,
 postinstall and all review coverage remain. This narrow response to repeated
 five-minute installs is recorded in [decision #138](implementation/SPN-091.md#legacy-decision-138-avoid-duplicate-registry-audit-requests),
 2026-10-22; a retained audit invocation is not evidence that an unavailable
 registry completed a security audit.
 
-Download `design-review-desktop`, `design-review-tablet` and
-`design-review-mobile` for self-contained galleries. `storybook-review` is the
+Download `design-review-desktop`, `design-review-tablet`, `design-review-mobile-light`
+and `design-review-mobile-dark` for self-contained galleries. `storybook-review` is the
 shared interactive build, and `entity-icon-screenshots` is the icon gallery.
 After building locally, `npm run screenshots` runs the full review;
 `npm run screenshots -- --viewport mobile <story IDs>` runs one viewport and
 optional focused stories. Only manual CI runs can narrow story IDs; PRs always
 review the full catalog.
+Add `--theme light` or `--theme dark` with the mobile viewport to reproduce one
+CI partition; default `all` retains both. Both jobs run every requested story
+and the shared-control checks for their theme. Fixed-light auxiliary journeys
+run once in the light job. The split preserves coverage after repeated catalog
+timeouts; see [the SPN-081 decision](implementation/SPN-081.md#split-mobile-review-by-theme).
 
 CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
 and **Playwright smoke**. These are required by the active default-branch ruleset;
