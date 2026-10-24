@@ -147,6 +147,31 @@ export function workspaceRoutes(
       }
     },
   );
+  router.post(
+    '/:id/copy',
+    admitTransfer,
+    express.json({ limit: '8kb', strict: true }),
+    async (request, response) => {
+      const transfer = transfers.get(response)!;
+      transfer.start();
+      try {
+        const identity = account(request);
+        const item = await files.copy(
+          identity.userId,
+          String(request.params.id),
+          payload(request, ['name', 'parentId']),
+          () => {
+            if (owner(request) !== identity.userId || response.destroyed)
+              throw new AuthError(401, 'Sign in to continue.');
+          },
+          identity.customData,
+        );
+        response.status(201).json({ item });
+      } finally {
+        transfer.finish();
+      }
+    },
+  );
   router.get('/:id/export', admitTransfer, async (request, response) => {
     const transfer = transfers.get(response)!;
     transfer.start();
@@ -325,7 +350,9 @@ export function workspaceRoutes(
         ? error.status
         : (error as { status?: number })?.status === 413
           ? 413
-          : 400;
+          : request.path.endsWith('/copy') && !(error instanceof SyntaxError)
+            ? 500
+            : 400;
     response.status(status).json({
       error:
         error instanceof AuthError

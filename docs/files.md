@@ -106,3 +106,27 @@ text; source-free formulas remain active. Current printing uses unavailable
 formula output. SPN-075 will render freshly authorized values/tables in PDFs;
 SPN-094 retains the same source-access boundary for optional format plugins,
 and SPN-067 handles archive reference remapping.
+
+## Account copy server contract
+
+SPN-065's server capability (UI and CI verification pending) copies an ordinary
+Doc/Sheet or an exactly scoped Space Doc/Sheet into a new standalone item owned by
+the calling everyday account. `POST /api/items/:id/copy` and
+`POST /api/spaces/:spaceId/items/:itemId/copy` accept only optional `name` and
+`parentId` fields and return `201 { item }`. Omitted name uses `<name> (copy)` within
+120 UTF-16 units; omitted parent retains an owned ordinary source's folder, otherwise
+My files. Explicit destinations must be caller-owned ordinary folders. Destination
+folder inheritance applies, but source direct grants, links, tags and history do not
+carry over. Guests, Operators and non-account capabilities cannot copy.
+
+The server materializes confirmed collaboration state and rechecks the original
+credential, source generation/access and destination around awaited work and commit.
+Formula definitions/bindings survive without copied results or grants to their sources.
+Images receive independent stored bytes and new item-scoped URLs; each image ID
+remains its validated bytes' SHA-256 for offline and history integrity. Copy reuses
+import's image validation and atomic writer, with independent 10 MiB content and 50 MiB image limits; it does
+not serialize through the portable 20 MiB envelope. Any pre-commit failure leaves no
+new item or image rows. No automatic POST replay is safe: a lost response can follow
+a successful commit, so clients must explain uncertainty and require checking the
+destination before a deliberate new copy. See the
+[implementation decision](implementation/SPN-065.md#placement-naming-and-uncertain-outcomes).

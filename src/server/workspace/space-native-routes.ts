@@ -100,6 +100,44 @@ export function spaceNativeRoutes(
           itemId: scopeOf(request).spaceItem,
         })),
       );
+    router.post(
+      '/copy',
+      (request, _response, next) => {
+        // Do not let an unauthenticated body reserve the shared transfer slot.
+        identity(request);
+        next();
+      },
+      admitTransfer,
+      express.json({ limit: '8kb', strict: true }),
+      async (request, response) => {
+        const transfer = transfers.get(response)!;
+        transfer.start();
+        try {
+          if (
+            !request.is('application/json') ||
+            !request.body ||
+            typeof request.body !== 'object' ||
+            Array.isArray(request.body) ||
+            Object.keys(request.body).some((key) => !['name', 'parentId'].includes(key))
+          )
+            throw new AuthError(400, 'Choose a name and destination for the copy.');
+          const actor = identity(request);
+          const item = await files.copy(
+            actor.userId,
+            scopeOf(request).spaceItem,
+            request.body,
+            () => {
+              if (response.destroyed || identity(request).userId !== actor.userId)
+                throw new AuthError(401, 'Sign in to continue.');
+            },
+            actor.customData,
+          );
+          response.status(201).json({ item });
+        } finally {
+          transfer.finish();
+        }
+      },
+    );
     router.get('/export', admitTransfer, async (request, response) => {
       const transfer = transfers.get(response)!;
       transfer.start();

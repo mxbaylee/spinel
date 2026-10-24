@@ -1,4 +1,5 @@
 import { imageSources } from './imageSources.ts';
+import { defaultCopyName } from '../../shared/copy.ts';
 import { createHash, randomUUID } from 'node:crypto';
 import sharp from 'sharp';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
@@ -6,6 +7,7 @@ import { AuthError } from '../auth/store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import { snapshotIdentity } from '../collaboration/snapshotIdentity.ts';
 import type { WorkspaceStore } from './store.ts';
+import type { WorkspaceItem } from '../../shared/workspace.ts';
 import { DocumentStore, IMAGE_LIMIT, DOCUMENT_IMAGE_LIMIT } from './documents.ts';
 import { SheetStore } from './sheets.ts';
 import { validatePortableLayout } from './portableValidation.ts';
@@ -39,11 +41,19 @@ async function embeddedImage(source: string) {
   const bytes = Buffer.from(match[2], 'base64');
   if (!bytes.length || bytes.length > IMAGE_LIMIT || bytes.toString('base64') !== match[2])
     throw new AuthError(413, 'Each embedded image must be at most 5 MiB.');
+  return validatedImage(bytes, match[1]);
+}
+
+async function validatedImage(bytes: Buffer, mime: string) {
+  if (!['image/png', 'image/jpeg', 'image/webp'].includes(mime))
+    throw new AuthError(400, 'Choose static PNG, JPEG or WebP images.');
+  if (!bytes.length || bytes.length > IMAGE_LIMIT)
+    throw new AuthError(413, 'Each image must be at most 5 MiB.');
   let safe = bytes;
   try {
     const image = sharp(bytes, { limitInputPixels: 16_000_000, failOn: 'error' });
     const metadata = await image.metadata();
-    if (`image/${metadata.format}` !== match[1] || (metadata.pages ?? 1) > 1) throw invalid();
+    if (`image/${metadata.format}` !== mime || (metadata.pages ?? 1) > 1) throw invalid();
     // Fully decode, but preserve already-sanitized exported bytes (especially JPEG).
     await image.clone().raw().toBuffer();
     if (metadata.exif || metadata.icc || metadata.iptc || metadata.xmp || metadata.orientation)
@@ -52,7 +62,7 @@ async function embeddedImage(source: string) {
     throw new AuthError(400, 'Choose valid static PNG, JPEG or WebP images up to 16 megapixels.');
   }
   if (safe.length > IMAGE_LIMIT) throw new AuthError(413, 'An embedded image exceeds 5 MiB.');
-  return { id: createHash('sha256').update(safe).digest('hex'), mime: match[1], data: safe };
+  return { id: createHash('sha256').update(safe).digest('hex'), mime, data: safe };
 }
 
 export class PortableFiles {
@@ -126,9 +136,20 @@ export class PortableFiles {
         throw new AuthError(413, 'The document exceeds its 50 MiB image limit.');
       images.set(source, image);
     }
+    return this.write(user, name, kind, input.parentId, snapshot, images, verify);
+  }
+  private write(
+    user: string,
+    name: string,
+    kind: 'doc' | 'sheet',
+    parentId: unknown,
+    snapshot: Snapshot,
+    images: Map<string, Awaited<ReturnType<typeof validatedImage>>>,
+    verify: () => void,
+  ) {
     return this.workspace.auth.transaction(() => {
       verify();
-      const item = this.workspace.create(user, { name, kind, parentId: input.parentId });
+      const item = this.workspace.create(user, { name, kind, parentId });
       imageSources(snapshot, (source) => `/api/items/${item.id}/images/${images.get(source)!.id}`);
       const native = snapshotIdentity(snapshot, item.id);
       for (const image of images.values())
@@ -137,8 +158,84 @@ export class PortableFiles {
           .run(item.id, image.id, image.mime, image.data);
       const store = kind === 'doc' ? this.docs : this.sheets;
       store.save(user, item.id, { snapshot: native, revision: 0, writeId: randomUUID() });
+      verify();
       return item;
     });
+  }
+  async copy(
+    user: string,
+    id: string,
+    input: { name?: unknown; parentId?: unknown },
+    verify: () => void,
+    customData: Record<string, unknown> = {},
+  ): Promise<WorkspaceItem> {
+    const custom = Object.freeze({ ...customData });
+    const access = () => {
+      verify();
+      if (validateDocumentCredentials(this.workspace, user, custom) !== 'account')
+        throw new AuthError(403, 'Use your everyday account to copy documents.');
+      this.workspace.owner(user);
+      return resolveDocument(this.workspace, user, id, 'read', custom);
+    };
+    const source = access();
+    if (source.kind !== 'doc' && source.kind !== 'sheet')
+      throw new AuthError(400, 'Only Sheets and Docs can be copied.');
+    const name = this.workspace.name(
+      input.name === undefined ? defaultCopyName(source.name) : input.name,
+    );
+    const parentId = this.workspace.parent(
+      user,
+      input.parentId === undefined
+        ? !custom.spaceId && source.access === 'owner'
+          ? source.parentId
+          : null
+        : input.parentId,
+    );
+    const collaboration = this.collaboration;
+    if (!collaboration) throw new AuthError(503, 'Copying is temporarily unavailable.');
+    const generation = collaboration.generations.active(id).unitId;
+    const check = () => {
+      access();
+      this.workspace.parent(user, parentId);
+      if (
+        collaboration.generations.restoring(id) ||
+        collaboration.generations.active(id).unitId !== generation
+      )
+        throw new AuthError(409, 'This document was restored. Open it again before copying.');
+    };
+    check();
+    await collaboration.prepare(user, id, custom);
+    check();
+    const data = await collaboration.load(user, id, custom);
+    check();
+    if (!data.snapshot) throw new AuthError(409, 'Open this document once before copying it.');
+    // Copy is trusted same-instance content, not a serialized portable-file import.
+    if (Buffer.byteLength(JSON.stringify(data.snapshot)) > 10 * 1024 * 1024)
+      throw new AuthError(413, 'This document exceeds the 10 MiB content limit.');
+    const snapshot = structuredClone(data.snapshot) as Snapshot;
+    if (source.kind === 'sheet') (snapshot as IWorkbookData).name = name;
+    else (snapshot as IDocumentData).title = name;
+    const sources = new Set<string>();
+    imageSources(snapshot, (url) => {
+      sources.add(url);
+      return url;
+    });
+    const images = new Map<string, Awaited<ReturnType<typeof validatedImage>>>();
+    let total = 0;
+    for (const url of sources) {
+      check();
+      const prefix = `/api/items/${id}/images/`;
+      if (!url.startsWith(prefix) || !/^[a-f0-9]{64}$/.test(url.slice(prefix.length)))
+        throw new AuthError(400, 'This document contains an image that cannot be copied safely.');
+      const stored = this.docs.image(user, id, url.slice(prefix.length), custom);
+      const image = await validatedImage(Buffer.from(stored.data), stored.mime);
+      check();
+      total += image.data.length;
+      if (total > DOCUMENT_IMAGE_LIMIT)
+        throw new AuthError(413, 'The document exceeds its 50 MiB image limit.');
+      images.set(url, image);
+    }
+    return this.write(user, name, source.kind, parentId, snapshot, images, check);
   }
   async export(
     user: string,
