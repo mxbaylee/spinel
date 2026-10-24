@@ -348,5 +348,6 @@ supervision through private-network/LUKS preflight, loopback app and tailnet-onl
 TLS 1.3 proxy, environment-supplied secrets, measured headroom on the 2 GB host,
 and TypeScript-only deployment/maintenance scripts. The original PostgreSQL
 storage plan was replaced with encrypted SQLite by owner decision on 2026-10-17.
-The [offsite backup procedure](backups.md) covers SPN-030; diagnostics remain SPN-032. Public-domain deployment is
+The [offsite backup procedure](backups.md) covers SPN-030;
+[diagnostics and the future external health check](diagnostics.md) cover SPN-032. Public-domain deployment is
 SPN-038 and does not change this tested private configuration.

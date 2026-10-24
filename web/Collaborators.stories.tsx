@@ -117,3 +117,38 @@ export const LongNamesOpen: Story = {
     ).toBeEnabled();
   },
 };
+
+export const DocCursorOpen: Story = {
+  args: {
+    people: [
+      { ...person('doc', 'Alex Kim', () => {}), selection: '14:14:1:TEXT::-1' },
+      { ...person('segment', 'Sam Rivera'), selection: 'unsupported-segment-token' },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(dialog.getByText('Shared text cursor')).toBeVisible();
+    await expect(dialog.getByText('Shared cursor position')).toBeVisible();
+    await expect(dialog.queryByText('14:14:1:TEXT::-1')).not.toBeInTheDocument();
+    await expect(dialog.queryByText('unsupported-segment-token')).not.toBeInTheDocument();
+    await expect(dialog.getByRole('button', { name: 'Go to Alex Kim' })).toHaveAttribute(
+      'data-selection',
+      '14:14:1:TEXT::-1',
+    );
+  },
+};
+
+export const SheetCursorOpen: Story = {
+  args: {
+    people: [{ ...person('sheet', 'Alex Kim', () => {}), selection: 'internal-sheet-id!A1:B3' }],
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(dialog.getByText('A1:B3')).toBeVisible();
+    await expect(dialog.queryByText(/internal-sheet-id/)).not.toBeInTheDocument();
+    await expect(dialog.getByRole('button', { name: 'Go to Alex Kim' })).toHaveAttribute(
+      'data-selection',
+      'internal-sheet-id!A1:B3',
+    );
+  },
+};

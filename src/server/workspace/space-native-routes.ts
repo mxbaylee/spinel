@@ -9,6 +9,7 @@ import { SpaceStore } from './spaces.ts';
 import { DocumentStore } from './documents.ts';
 import { PortableFiles } from './portable.ts';
 import { formulaRoutes } from '../formulas/routes.ts';
+import type { FormulaDiagnostics } from '../formulas/routes.ts';
 import { historyRoutes } from '../history/routes.ts';
 import type { HistoryStore } from '../history/store.ts';
 import { admitTransfer, transfers } from './transfers.ts';
@@ -18,7 +19,12 @@ export function spaceNativeRoutes(
   workspace: WorkspaceStore,
   collaboration: CollaborationStore,
   origin: string,
-  options: { spaceReview?: boolean; guest?: boolean; history?: HistoryStore } = {},
+  options: {
+    spaceReview?: boolean;
+    guest?: boolean;
+    history?: HistoryStore;
+    diagnostics?: FormulaDiagnostics;
+  } = {},
 ) {
   const router = express.Router({ mergeParams: true });
   const spaces = new SpaceStore(workspace);
@@ -48,7 +54,14 @@ export function spaceNativeRoutes(
   });
   router.use(
     '/formulas',
-    formulaRoutes(workspace, collaboration, identity, options.guest, 'itemId'),
+    formulaRoutes(
+      workspace,
+      collaboration,
+      identity,
+      options.guest,
+      'itemId',
+      options.guest ? undefined : options.diagnostics,
+    ),
   );
   router.post(
     '/images',

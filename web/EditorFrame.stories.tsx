@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { EditorFrame, useEditorChrome } from './EditorFrame.tsx';
 import { EditorTools } from './EditorTools.tsx';
@@ -7,19 +8,33 @@ import { SaveStatus } from './SaveStatus.tsx';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
 import { FormulaReadout } from './DocFormulas.tsx';
 import { failure, pending } from '../.storybook/api.ts';
+import { PresenceLabel, presencePopupZIndex } from './PresenceLabel.tsx';
 
 function Fixture({
   dialog = false,
   printFailure = false,
   saved = true,
+  presence = false,
 }: {
   dialog?: boolean;
   printFailure?: boolean;
   saved?: boolean;
+  presence?: boolean;
 }) {
   const chrome = useEditorChrome();
   return (
     <section className="sheet-editor" aria-label="Editor geometry fixture">
+      {presence &&
+        createPortal(
+          <div
+            data-presence-layer-fixture
+            aria-hidden
+            style={{ position: 'fixed', right: 8, top: '40%', zIndex: presencePopupZIndex }}
+          >
+            <PresenceLabel name="Morgan Another Very Long Collaborator Name" color="#c54835" />
+          </div>,
+          document.body,
+        )}
       <SaveStatus
         target={chrome?.saveTarget ?? null}
         state={{
@@ -404,5 +419,35 @@ export const PeopleDialog: Story = {
       within(dialog).getByText('Alexandria Nakamura-Fernandez — a long collaborator name'),
     ).toBeVisible();
     await assertDialogTargets(dialog);
+  },
+};
+
+/** Geometry only; native popup forwarding and live overlap are verified in Playwright. */
+export const PeopleOverPresence: Story = {
+  args: { children: <Fixture presence /> },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'People in this document' }),
+    );
+    const dialog = await within(document.body).findByRole('dialog', {
+      name: 'People in this document',
+    });
+    await assertDialogTargets(dialog);
+    const label = document.querySelector('[data-presence-layer-fixture]')!;
+    await expect(Number(getComputedStyle(label).zIndex)).toBeLessThan(
+      Number(getComputedStyle(dialog).zIndex),
+    );
+  },
+};
+export const ActionsOverPresence: Story = {
+  args: { children: <Fixture presence /> },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
+    const menu = await within(document.body).findByRole('menu', { name: 'Document actions' });
+    const positioner = menu.closest('.sp-positioner')!;
+    const label = document.querySelector('[data-presence-layer-fixture]')!;
+    await expect(Number(getComputedStyle(label).zIndex)).toBeLessThan(
+      Number(getComputedStyle(positioner).zIndex),
+    );
   },
 };

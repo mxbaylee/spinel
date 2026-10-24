@@ -41,6 +41,11 @@ The [implementation record](../implementation/SPN-085.md) separates these source
 choices from pending runtime and visual acceptance; capture, retention and restore
 generation semantics remain in [history.md](../history.md).
 
+People shows readable shared positions: Sheet cell addresses and a shared-text
+cursor label for Docs. Internal worksheet IDs and cursor protocol tokens are not
+display copy. Unknown position formats retain a neutral shared-cursor label;
+jump availability still follows the validated native destination.
+
 ## How others do it
 
 |             | Google Sheets                                                         | Excel for the web                    | Numbers for iCloud                     | Zoho Sheet                    |
@@ -66,6 +71,12 @@ Space and offline views share the frame while retaining their existing access
 rules. Theatre mode hides surrounding navigation without remounting the editor.
 Univer's own toolbar stays inside its container. Connection behavior is
 maintained in [connection.md](../connection.md).
+
+Remote document labels remain above the native canvas/theatre frame and below
+application backdrops, dialogs and menus. Spinel supplies their layer through the
+public Sheet popup API; opening People or document actions must never leave a
+collaborator badge painted over those controls. Labels remain present when the
+overlay closes. Native peer captures verify this separately from geometry stories.
 
 While an editor is open, background shared-file refresh failures keep their
 alert and Retry action after the editor. They must not insert a new row above

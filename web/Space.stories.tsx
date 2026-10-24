@@ -559,7 +559,8 @@ export const DeepTree: Story = {
   play: async ({ canvasElement }) => {
     await ready(canvasElement, 'Level 14');
     const navigation = await contents(canvasElement);
-    const selected = navigation.getByRole('link', { name: 'Level 14' });
+    // The page heading can precede the asynchronously loaded navigation tree.
+    const selected = await navigation.findByRole('link', { name: 'Level 14' });
     const action = navigation.getByRole('button', { name: 'More actions for Level 14' });
     const page = within(canvasElement.ownerDocument.body);
     const region = page.getByRole('region', { name: 'Space pages' });

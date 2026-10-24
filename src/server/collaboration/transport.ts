@@ -328,6 +328,8 @@ export function attachCollaboration(
   timer.unref();
   return {
     revalidate,
+    // Aggregate only; never expose member IDs, presence payloads or document names.
+    connectionCount: () => [...live.values()].filter((entry) => entry.units.size > 0).length,
     async privacyChanged(itemId: string) {
       // begin() has already fenced admission and revoked all prior guest credentials.
       await Promise.all(admissions.get(itemId) ?? []);
