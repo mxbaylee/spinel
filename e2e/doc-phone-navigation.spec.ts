@@ -15,6 +15,10 @@ async function changedContent(before: Buffer, after: Buffer) {
   const rows = new Set<number>(),
     columns = new Set<number>();
   let pixels = 0;
+  let left = first.info.width,
+    right = -1,
+    top = first.info.height,
+    bottom = -1;
   // Exclude the outer canvas edges/scrollbars. Requiring spatially distributed
   // changes rejects a blinking caret, a hover scrollbar, or PNG metadata changes.
   for (let y = 20; y < first.info.height - 20; y++) {
@@ -29,10 +33,20 @@ async function changedContent(before: Buffer, after: Buffer) {
         pixels++;
         rows.add(y);
         columns.add(x);
+        left = Math.min(left, x);
+        right = Math.max(right, x);
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y);
       }
     }
   }
-  return { pixels, rows: rows.size, columns: columns.size };
+  return {
+    pixels,
+    rows: rows.size,
+    columns: columns.size,
+    width: pixels ? right - left + 1 : 0,
+    height: pixels ? bottom - top + 1 : 0,
+  };
 }
 
 async function renderedChange(canvas: Locator, before: Buffer) {
@@ -45,20 +59,39 @@ async function renderedChange(canvas: Locator, before: Buffer) {
 }
 
 async function settledCanvas(canvas: Locator) {
-  let previous = await canvas.screenshot(),
+  let reference = await canvas.screenshot(),
+    alternate: Buffer | undefined,
+    current = reference,
     stable = 0;
+  // The OSS native caret has a timer independent of DOM focus. At this
+  // fixture's DPR1/default font, permit two recurring raster states only when
+  // their difference fits one small caret-sized rectangle. A third state resets
+  // the fixed references, so gradual drift or oscillating document content
+  // cannot accumulate as "stable". Movement assertions below remain unchanged.
   await expect
     .poll(
       async () => {
-        const current = await canvas.screenshot();
-        stable = (await changedContent(previous, current)).pixels === 0 ? stable + 1 : 0;
-        previous = current;
-        return stable;
+        current = await canvas.screenshot();
+        const change = await changedContent(reference, current);
+        if (
+          change.pixels === 0 ||
+          (alternate && (await changedContent(alternate, current)).pixels === 0)
+        ) {
+          stable++;
+        } else if (!alternate && change.width <= 3 && change.height <= 32 && change.pixels <= 96) {
+          alternate = current;
+          stable = 0;
+        } else {
+          reference = current;
+          alternate = undefined;
+          stable = 0;
+        }
+        return { settled: stable >= 3, stable, change };
       },
       { intervals: [100], timeout: 10_000 },
     )
-    .toBeGreaterThanOrEqual(3);
-  return previous;
+    .toMatchObject({ settled: true });
+  return current;
 }
 
 async function capture(page: Page, info: TestInfo, name: string) {
@@ -166,6 +199,7 @@ for (const role of ['editor', 'guest-viewer'] as const) {
       );
       await page.getByRole('button', { name: 'Enter theatre mode', exact: true }).click();
       const exit = page.getByRole('button', { name: 'Exit theatre mode', exact: true });
+      expect(await page.evaluate(() => devicePixelRatio)).toBe(1);
       const canvas = editor.locator('canvas').first();
       const mounted = await canvas.elementHandle();
       expect(mounted).not.toBeNull();
