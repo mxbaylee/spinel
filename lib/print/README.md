@@ -112,11 +112,17 @@ Calls in one module are serialized by rejecting overlap, not by an unbounded que
 Aliases are never reused by later operations, because the public document-metrics
 invalidator does not clear every native text-layout cache.
 
-The candidate currently rejects rich cells, mixed-font grapheme runs, multiline,
-wrapped and rotated text. Plain-cell width and height are measured against the
-registered face, padded cell rectangle and a conservative two-pixel allowance;
+The candidate currently rejects rich cells, mixed-font grapheme runs, explicit
+multiline and rotated text. Plain single-paragraph wrapping uses the exported
+`DocSimpleSkeleton`, the same layout path as native Sheet text. Its complete
+line sequence must preserve the paragraph and grapheme boundaries, with all ink
+fitting the padded ordinary-cell or merge rectangle on one page. Plain-cell width
+and height are measured against the registered face and a conservative two-pixel allowance;
 the native width-only fitting hint is insufficient to admit vertical ink.
-Oversized text is rejected until complete overflow/continuation exists.
+Oversized text is rejected until complete overflow/continuation exists. Text
+cells/merges crossing a page clip are also rejected: the native printing cache
+can omit partial non-final rows. Expanding its public cache bounds and proving
+every continuation slice is still required; this checkpoint does not implement it.
 Axis-aligned floating
 images are decoded from admitted bytes and composited with page source crops;
 background tiles retain worksheet phase. Native canvas allocation is bounded.

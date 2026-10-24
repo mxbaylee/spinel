@@ -13,6 +13,7 @@ import {
 import type { ICellDataForSheetInterceptor, IStyleData, IWorkbookData } from '@univerjs/core';
 import {
   DEFAULT_PADDING_DATA,
+  DocSimpleSkeleton,
   Group,
   Spreadsheet,
   SpreadsheetSkeleton,
@@ -69,12 +70,7 @@ class FontWorksheet extends PrintWorksheet {
     if (style.fs !== undefined && (!Number.isFinite(style.fs) || style.fs <= 0 || style.fs > 512))
       throw new PrintError('limit', 'PDF font size exceeds its layout budget.');
     const text = getDisplayValueFromCell(cell);
-    if (
-      /[\r\n\u2028\u2029]/u.test(text) ||
-      style.tr?.a ||
-      style.tr?.v ||
-      style.tb === WrapStrategy.WRAP
-    )
+    if (/[\r\n\u000b\u000c\u0085\u2028\u2029]/u.test(text) || style.tr?.a || style.tr?.v)
       throw new PrintError('unsupported', 'PDF multiline or rotated text is not implemented yet.');
     const runs = this.fonts.runs(text || ' ', style.ff, style.bl === 1, style.it === 1);
     const families = new Set(runs.map((run) => run.family));
@@ -280,18 +276,18 @@ export async function renderSheetPdfCandidate(
           check();
           const view = viewport(page.source);
           skeleton.updateVisibleRange(view);
+          // This public cache uses the nonprinting inclusive range, including
+          // partial end rows and intersecting merge anchors. No render-context
+          // options means it does not skip font caching for short rows. The
+          // narrower printing range is applied only later by spreadsheet.draw.
           skeleton.setStylesCache(view);
           // textFitsCurrentCell is only a native width hint (and is unset for
           // some numeric cells). Independently admit both dimensions of plain
-          // text using the registered face; complex layout remains unsupported.
+          // text using the registered face. Wrapping uses the same public layout
+          // as the native Text renderer, with complete (not height-truncated) lines.
           skeleton.stylesCache.fontMatrix.forValue((row, column, font) => {
             check();
-            if (
-              font.documentSkeleton ||
-              font.vertexAngle ||
-              font.centerAngle ||
-              font.wrapStrategy === WrapStrategy.WRAP
-            )
+            if (font.documentSkeleton || font.vertexAngle || font.centerAngle)
               throw new PrintError('unsupported', 'PDF text continuation is not implemented yet.');
             measurement.font = font.fontString;
             const metrics = measurement.measureText(
@@ -302,15 +298,95 @@ export async function renderSheetPdfCandidate(
             const bottom = padding?.b ?? DEFAULT_PADDING_DATA.b;
             const left = padding?.l ?? DEFAULT_PADDING_DATA.l;
             const right = padding?.r ?? DEFAULT_PADDING_DATA.r;
-            const height = Math.max(
+            let height = Math.max(
               metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent,
               metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent,
             );
-            const width = Math.max(
+            let width = Math.max(
               metrics.width,
               metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight,
             );
-            const bounds = skeleton.getCellWithCoordByIndex(row, column);
+            const cellBounds = skeleton.getCellWithCoordByIndex(row, column);
+            const bounds = cellBounds.isMergedMainCell ? cellBounds.mergeInfo : cellBounds;
+            // Styles persist across page caches. Only inspect this page's touched
+            // cells; an old cache entry outside the clip is not continuation.
+            if (
+              bounds.endX <= page.source.left ||
+              bounds.startX >= page.source.right ||
+              bounds.endY <= page.source.top ||
+              bounds.startY >= page.source.bottom
+            )
+              return null;
+            // The public native printing range omits partial non-final rows.
+            // Until complete continuation is implemented and rendered, reject it
+            // rather than publishing a page with silently missing text.
+            if (
+              bounds.startX < page.source.left ||
+              bounds.endX > page.source.right ||
+              bounds.startY < page.source.top ||
+              bounds.endY > page.source.bottom
+            )
+              throw new PrintError(
+                'unsupported',
+                'PDF text page continuation is not implemented yet.',
+              );
+            if (font.wrapStrategy === WrapStrategy.WRAP) {
+              const text = font.displayText ?? getDisplayValueFromCell(font.cellData);
+              const availableWidth = bounds.endX - bounds.startX - left - right;
+              if (!Number.isFinite(availableWidth) || availableWidth <= 0)
+                throw new PrintError('unsupported', 'PDF text exceeds its supported cell bounds.');
+              // The SDK stops top-aligned layout at its supplied height. Infinity
+              // measures the complete bounded paragraph before admitting the cell.
+              const wrapped = new DocSimpleSkeleton(
+                text,
+                font.fontString,
+                true,
+                availableWidth,
+                Infinity,
+                skeleton.textLineGap,
+              );
+              const lines = wrapped.calculate();
+              check();
+              if (lines.map((line) => line.text).join('') !== text)
+                throw new PrintError('unsupported', 'PDF wrapped text is incomplete.');
+              const boundaries = new Set([0, text.length]);
+              for (const part of new Intl.Segmenter('en', { granularity: 'grapheme' }).segment(
+                text,
+              ))
+                boundaries.add(part.index);
+              let offset = 0;
+              width = wrapped.getTotalWidth();
+              for (const line of lines) {
+                check();
+                offset += line.text.length;
+                if (!boundaries.has(offset))
+                  throw new PrintError('unsupported', 'PDF wrapped text splits a grapheme.');
+                const ink = measurement.measureText(line.text);
+                if (
+                  ![
+                    line.width,
+                    line.height,
+                    line.baseline,
+                    ink.actualBoundingBoxAscent,
+                    ink.actualBoundingBoxDescent,
+                    ink.actualBoundingBoxLeft,
+                    ink.actualBoundingBoxRight,
+                  ].every(Number.isFinite) ||
+                  line.width < 0 ||
+                  line.height <= 0 ||
+                  line.baseline < 0 ||
+                  ink.actualBoundingBoxAscent > line.baseline ||
+                  ink.actualBoundingBoxDescent > line.height - line.baseline
+                )
+                  throw new PrintError('unsupported', 'PDF wrapped text exceeds its line bounds.');
+                width = Math.max(
+                  width,
+                  ink.width,
+                  ink.actualBoundingBoxLeft + ink.actualBoundingBoxRight,
+                );
+              }
+              height = wrapped.getTotalHeight();
+            }
             if (
               ![top, bottom, left, right, width, height].every(
                 (value) => Number.isFinite(value) && value >= 0,

@@ -231,18 +231,16 @@ async function singleCell(text: string, height = 120): Promise<NativeSheetInput>
   } as NativeSheetInput;
 }
 
-test('large single-line ink must fit the row; multiline, wrapped and rotated cells publish nothing', async () => {
+test('large single-line ink must fit the row; multiline and rotated cells publish nothing', async () => {
   const short = await singleCell('X', 24);
   short.snapshot.sheets.sheet.cellData![0][0]!.s = { fs: 64 };
   const tall = structuredClone(short);
   tall.snapshot.sheets.sheet.defaultRowHeight = 120;
   const multiline = await singleCell('A\nB');
-  const wrapped = await singleCell('Wrapped');
-  wrapped.snapshot.sheets.sheet.cellData![0][0]!.s = { tb: WrapStrategy.WRAP };
   const rotated = await singleCell('Rotated');
   rotated.snapshot.sheets.sheet.cellData![0][0]!.s = { tr: { a: 90 } };
-  const results = await run([short, multiline, wrapped, rotated, tall].map((input) => ({ input })));
-  for (const result of results.slice(0, 4)) {
+  const results = await run([short, multiline, rotated, tall].map((input) => ({ input })));
+  for (const result of results.slice(0, 3)) {
     expect(result).toMatchObject({
       ok: false,
       code: 'unsupported',
@@ -251,13 +249,13 @@ test('large single-line ink must fit the row; multiline, wrapped and rotated cel
     });
     expect(result.bytes).toBeUndefined();
   }
-  expect(results[4]).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
-  expect((await renderedGeometry(results[4].bytes!)).text.map((item) => item.text).join('')).toBe(
+  expect(results[3]).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  expect((await renderedGeometry(results[3].bytes!)).text.map((item) => item.text).join('')).toBe(
     'X',
   );
 }, 60_000);
 
-async function renderedGeometry(bytes: Uint8Array) {
+async function renderedGeometry(bytes: Uint8Array, filename?: string) {
   const loading = getDocument({ data: new Uint8Array(bytes), useSystemFonts: false });
   try {
     const pdf = await loading.promise;
@@ -275,6 +273,11 @@ async function renderedGeometry(bytes: Uint8Array) {
       canvasContext: context as unknown as CanvasRenderingContext2D,
       viewport: page.getViewport({ scale: 1 }),
     }).promise;
+    if (filename)
+      await writeFile(
+        resolve('output/pdf/spn-101-candidate', filename),
+        await canvas.encode('png'),
+      );
     return { text, pixels: Buffer.from(context.getImageData(0, 0, 595, 842).data) };
   } finally {
     await loading.destroy();
@@ -301,3 +304,81 @@ test('a different prepared font in the same process matches its fresh-process te
   expect(original.text).not.toEqual(isolated.text);
   expect(original.pixels.equals(isolated.pixels)).toBe(false);
 }, 90_000);
+
+test('complete wrapped paragraphs fit ordinary and merged cells without dropping their final words', async () => {
+  const text = 'First budget paragraph with several wrapped words and a final sentinel.';
+  const ordinary = await singleCell(text, 260);
+  ordinary.snapshot.sheets.sheet.defaultColumnWidth = 160;
+  ordinary.snapshot.sheets.sheet.showGridlines = 0;
+  ordinary.snapshot.sheets.sheet.cellData![0][0]!.s = { fs: 16, tb: WrapStrategy.WRAP };
+  const merged = structuredClone(ordinary);
+  merged.snapshot.sheets.sheet.columnCount = 2;
+  merged.snapshot.sheets.sheet.defaultColumnWidth = 80;
+  merged.snapshot.sheets.sheet.mergeData = [
+    { startRow: 0, endRow: 0, startColumn: 0, endColumn: 1 },
+  ];
+  const results = await run([{ input: ordinary }, { input: merged }]);
+  const output = resolve('output/pdf/spn-101-candidate');
+  await mkdir(output, { recursive: true });
+  for (const [index, result] of results.entries()) {
+    expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+    await writeFile(resolve(output, `wrapped-${index}.pdf`), result.bytes!);
+    const geometry = await renderedGeometry(result.bytes!, `wrapped-${index}.png`);
+    expect(
+      geometry.text
+        .map((item) => item.text)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim(),
+    ).toBe(text);
+    // At least two actual baselines establish wrapping, not squeezed single-line text.
+    expect(
+      new Set(geometry.text.filter((item) => item.text.trim()).map((item) => item.transform[5]))
+        .size,
+    ).toBeGreaterThan(1);
+    let inkPixels = 0;
+    for (let n = 0; n < geometry.pixels.length; n += 4)
+      if (geometry.pixels[n] < 100 && geometry.pixels[n + 1] < 100 && geometry.pixels[n + 2] < 100)
+        inkPixels++;
+    expect(inkPixels).toBeGreaterThan(100);
+  }
+}, 60_000);
+
+test('wrapped overflow and ordinary or merged page-crossing text fail atomically before a later valid render', async () => {
+  const text =
+    'Every word must survive complete paragraph admission, including this final sentinel.';
+  const short = await singleCell(text, 24);
+  short.snapshot.sheets.sheet.defaultColumnWidth = 100;
+  short.snapshot.sheets.sheet.cellData![0][0]!.s = { fs: 16, tb: WrapStrategy.WRAP };
+  const tall = await singleCell('Page crossing sentinel', 2400);
+  // A non-final tall row exercises the native printing end-row exclusion.
+  tall.snapshot.sheets.sheet.rowCount = 2;
+  tall.snapshot.sheets.sheet.rowData = { 1: { h: 24 } };
+  tall.snapshot.sheets.sheet.cellData![1] = { 0: { v: 'Tail', s: { fs: 12 } } };
+  const merged = structuredClone(tall);
+  merged.snapshot.sheets.sheet.defaultRowHeight = 800;
+  merged.snapshot.sheets.sheet.rowCount = 4;
+  merged.snapshot.sheets.sheet.rowData = { 3: { h: 24 } };
+  merged.snapshot.sheets.sheet.cellData = {
+    0: { 0: { v: 'Merged crossing sentinel', s: { fs: 16, tb: WrapStrategy.WRAP } } },
+    3: { 0: { v: 'Tail', s: { fs: 12 } } },
+  };
+  merged.snapshot.sheets.sheet.mergeData = [
+    { startRow: 0, endRow: 2, startColumn: 0, endColumn: 0 },
+  ];
+  const good = await singleCell('Still works');
+  const results = await run([short, tall, merged, good].map((input) => ({ input })));
+  for (const result of results.slice(1, 3))
+    expect(result.message).toBe('PDF text page continuation is not implemented yet.');
+  for (const result of results.slice(0, 3)) {
+    expect(result).toMatchObject({
+      ok: false,
+      code: 'unsupported',
+      restored: true,
+      remainingFonts: 0,
+    });
+    expect(result.bytes).toBeUndefined();
+    expect(result.message).not.toContain('sentinel');
+  }
+  expect(results[3]).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+}, 60_000);
