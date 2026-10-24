@@ -294,6 +294,9 @@ async function nativeLayout(page: Page, kind: 'Doc' | 'Sheet', fitViewport = fal
   const bounds = await region.locator('.univer-container').evaluate((canvas) => {
     const rect = canvas.getBoundingClientRect();
     const style = getComputedStyle(canvas);
+    const frame = canvas.closest('.editor-frame');
+    const tree = frame?.querySelector('.space-desktop-tree');
+    const heading = frame?.querySelector('.editor-name h1');
     return {
       width: innerWidth,
       height: innerHeight,
@@ -302,6 +305,12 @@ async function nativeLayout(page: Page, kind: 'Doc' | 'Sheet', fitViewport = fal
       left: rect.left,
       right: rect.right,
       bottom: rect.bottom,
+      treeBottom:
+        tree && getComputedStyle(tree).display !== 'none'
+          ? tree.getBoundingClientRect().bottom
+          : null,
+      headerBottom: frame?.querySelector('.editor-header')?.getBoundingClientRect().bottom,
+      titleFontSize: heading ? getComputedStyle(heading).fontSize : null,
       touch: matchMedia('(pointer: coarse)').matches,
       touchAction: style.touchAction,
       overscrollX: style.overscrollBehaviorX,
@@ -313,7 +322,10 @@ async function nativeLayout(page: Page, kind: 'Doc' | 'Sheet', fitViewport = fal
   expect(bounds.right).toBeLessThanOrEqual(bounds.width + 1);
   if (fitViewport) {
     expect(bounds.bottom).toBeLessThanOrEqual(bounds.height + 1);
-    expect(bounds.documentHeight).toBeLessThanOrEqual(bounds.height + 1);
+    if (bounds.treeBottom !== null)
+      expect(bounds.treeBottom).toBeLessThanOrEqual(bounds.height + 1);
+    expect(bounds.titleFontSize).toBe('16px');
+    expect(bounds.documentHeight, JSON.stringify(bounds)).toBeLessThanOrEqual(bounds.height + 1);
   }
   if (kind === 'Sheet' && bounds.touch) {
     expect(bounds.touchAction).toBe('none');

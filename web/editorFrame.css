@@ -26,8 +26,9 @@
 .editor-name {
   min-width: 0;
 }
-.editor-name h1 {
+.editor-frame .editor-name h1 {
   font-size: 1rem;
+  line-height: 1.5;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -94,11 +95,17 @@
   min-height: 0;
   border: 0;
 }
-.editor-frame .space-shell {
+.editor-frame .space-shell,
+.editor-frame .space-shell.space-with-editor {
   height: 100%;
   min-height: 0;
   flex: 1;
   grid-template-rows: minmax(0, 1fr);
+}
+.editor-frame .space-desktop-tree {
+  /* The compact header can change height; its grid row owns the remaining space. */
+  top: 0;
+  height: 100%;
 }
 .editor-frame .space-site-header {
   display: none;

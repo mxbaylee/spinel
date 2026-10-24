@@ -373,6 +373,25 @@ export const Populated: Story = {
     await expect(
       await within(canvasElement).findByRole('region', { name: 'Editor body fixture' }),
     ).toBeVisible();
+    const frame = within(canvasElement).getByRole('region', { name: 'Document workspace' });
+    const heading = within(frame).getByRole('heading', { name: 'Welcome', level: 1 });
+    await expect(getComputedStyle(heading).fontSize).toBe('16px');
+    const content = frame.querySelector('.editor-content')!;
+    const shell = frame.querySelector('.space-shell')!;
+    await expect(
+      Math.abs(shell.getBoundingClientRect().bottom - content.getBoundingClientRect().bottom),
+    ).toBeLessThanOrEqual(1);
+    const tree = frame.querySelector('.space-desktop-tree')!;
+    if (getComputedStyle(tree).display !== 'none') {
+      // Space contents follows the actual header, not the old fixed 64px allowance.
+      await expect(
+        Math.abs(tree.getBoundingClientRect().bottom - content.getBoundingClientRect().bottom),
+      ).toBeLessThanOrEqual(1);
+      await expect(tree.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        content.getBoundingClientRect().top,
+      );
+    }
+    await expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight + 1);
   },
 };
 
