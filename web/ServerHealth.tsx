@@ -21,7 +21,15 @@ export function healthBytes(value: number | null) {
           ? 1024
           : 1;
   const unit =
-    scale === 1024 ** 3 ? 'GiB' : scale === 1024 ** 2 ? 'MiB' : scale === 1024 ? 'KiB' : 'bytes';
+    scale === 1024 ** 3
+      ? 'GiB'
+      : scale === 1024 ** 2
+        ? 'MiB'
+        : scale === 1024
+          ? 'KiB'
+          : magnitude === 1
+            ? 'byte'
+            : 'bytes';
   return `${(value / scale).toLocaleString(undefined, { maximumFractionDigits: scale === 1 ? 0 : 1 })} ${unit}`;
 }
 const date = (value: number | null) =>
