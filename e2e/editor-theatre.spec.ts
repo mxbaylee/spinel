@@ -132,6 +132,25 @@ test('Space theatre fills the window and restores its own page navigation', asyn
         await page.emulateMedia({ colorScheme: variant.theme, reducedMotion: 'reduce' });
         await nativeTheme(page, editor.locator('canvas').first(), variant.theme);
         await capture(page, info, `space-${item.kind}-${variant.name}-normal`);
+        // A Space page shares through the theatre header, not an empty root's menu.
+        const actions = page.getByRole('button', { name: 'Document actions', exact: true });
+        await actions.click();
+        await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
+        const sharing = page.getByRole('dialog', {
+          name: 'Share Renamed theatre project',
+          exact: true,
+        });
+        await expect(page.getByRole('dialog')).toHaveCount(1);
+        await expect(sharing).toBeVisible();
+        await capture(page, info, `space-${item.kind}-${variant.name}-sharing`);
+        await page.keyboard.press('Escape');
+        await expect(sharing).toBeHidden();
+        await expect(actions).toBeFocused();
+        await actions.press('Enter');
+        await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
+        await sharing.getByRole('button', { name: 'Done', exact: true }).click();
+        await expect(sharing).toBeHidden();
+        await expect(actions).toBeFocused();
         const canvas = await editor.locator('canvas').first().elementHandle();
         expect(canvas).not.toBeNull();
         await page.getByRole('button', { name: 'Enter theatre mode', exact: true }).click();
