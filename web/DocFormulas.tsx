@@ -291,6 +291,15 @@ export function FormulaDialog({
       )
     ).definition;
   }
+  function close() {
+    if (!active.current) return;
+    // Fence completion synchronously, before the parent can unmount this dialog.
+    active.current = false;
+    attempt.current++;
+    operation.current?.abort();
+    setBusy(false);
+    onClose();
+  }
   async function run(save: boolean) {
     // A second submit in the same event turn must not start another native save.
     if (operation.current || !active.current) return;
@@ -308,7 +317,7 @@ export function FormulaDialog({
       if (!active.current || current !== attempt.current || controller.signal.aborted) return;
       if (save) {
         await onSave(definition, controller.signal);
-        if (active.current && current === attempt.current && !controller.signal.aborted) onClose();
+        if (active.current && current === attempt.current && !controller.signal.aborted) close();
       } else {
         setPreview({ definition, result: { ok: false, reason: 'loading' } });
         const started = performance.now();
@@ -419,7 +428,7 @@ export function FormulaDialog({
       aria-label={initial ? 'Edit formula' : 'Insert formula'}
       onCancel={(event) => {
         event.preventDefault();
-        if (!busy) onClose();
+        close();
       }}
     >
       <h2>{initial ? 'Edit formula' : 'Insert formula'}</h2>
@@ -622,7 +631,7 @@ export function FormulaDialog({
                   ? 'Save formula'
                   : 'Insert formula'}
           </button>
-          <button type="button" disabled={busy} onClick={onClose}>
+          <button type="button" onClick={close}>
             Cancel
           </button>
         </div>

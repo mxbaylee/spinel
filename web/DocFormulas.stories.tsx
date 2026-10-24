@@ -203,6 +203,62 @@ export const SaveCancelledRetry: Story = {
     await expect(staleSave).toHaveBeenCalledTimes(2);
   },
 };
+function pendingSaveCancellation(method: 'button' | 'escape'): Story {
+  const save = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {});
+  const close = fn();
+  return {
+    args: {
+      initial: { id: 'formula', start: 0, end: 18, definition },
+      onSave: save,
+      onClose: close,
+    },
+    parameters: { api: { ...formulaApi, ...availableSources } },
+    play: async ({ canvasElement }) => {
+      save.mockReset();
+      close.mockReset();
+      let release!: () => void;
+      const pending = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      save.mockImplementation(() => pending);
+      close.mockImplementation(() => {
+        // The request is cancelled before the parent receives its close callback.
+        expect(save.mock.calls[0]![1].aborted).toBe(true);
+      });
+      await sourcesReady(canvasElement);
+      const canvas = within(canvasElement);
+      await userEvent.click(canvas.getByRole('button', { name: 'Save formula', exact: true }));
+      await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
+      await expect(canvas.getByRole('button', { name: 'Working…', exact: true })).toBeDisabled();
+      const cancel = canvas.getByRole('button', { name: 'Cancel', exact: true });
+      await expect(cancel).toBeEnabled();
+      const modal = canvas.getByRole('dialog');
+      try {
+        if (method === 'button') await userEvent.click(cancel);
+        else {
+          // Escape's native dialog action dispatches cancel; synthetic keyboard events
+          // do not perform that browser default action in Storybook's test driver.
+          modal.dispatchEvent(new Event('cancel', { cancelable: true }));
+        }
+        await expect(save.mock.calls[0]![1].aborted).toBe(true);
+        await expect(close).toHaveBeenCalledTimes(1);
+        // A second close/submit before parent unmount must not activate anything again.
+        modal.dispatchEvent(new Event('cancel', { cancelable: true }));
+        canvasElement
+          .querySelector('form')!
+          .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      } finally {
+        release();
+      }
+      await pending;
+      await expect(close).toHaveBeenCalledTimes(1);
+      await expect(save).toHaveBeenCalledTimes(1);
+    },
+  };
+}
+export const SaveCancelPending: Story = pendingSaveCancellation('button');
+export const SaveEscapePending: Story = pendingSaveCancellation('escape');
+
 export const LoadingSources: Story = {
   parameters: { api: { ...formulaApi, [`GET ${sources}`]: pending() } },
   play: async ({ canvasElement }) => {
