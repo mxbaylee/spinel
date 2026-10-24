@@ -494,6 +494,20 @@ for (const kind of ['sheet', 'doc'] as const) {
         await page.setViewportSize({ width: variant.width, height: variant.height });
         await page.emulateMedia({ colorScheme: variant.theme, reducedMotion: 'reduce' });
         await nativeTheme(page, editor.locator('canvas').first(), variant.theme);
+        // The phone Sheet toolbar omits Bold. Require a visible editing command
+        // to remain disabled rather than inspecting hidden UI.
+        const editingCommand = editor.getByRole('button', {
+          name: kind === 'sheet' && variant.name === 'phone' ? 'Clear formatting' : 'Bold',
+          exact: true,
+        });
+        const readOnly = async () => {
+          await expect(editingCommand).toBeVisible();
+          await expect(editingCommand).toBeDisabled();
+          await expect(editor.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+            /^View only/,
+          );
+        };
+        await readOnly();
         await expect(
           page.getByText('This content is protected. This action is not allowed.', { exact: true }),
         ).not.toBeVisible();
@@ -508,8 +522,34 @@ for (const kind of ['sheet', 'doc'] as const) {
           page.getByRole('dialog', { name: 'People in this document', exact: true }),
         ).toHaveCount(0);
         await page.getByRole('button', { name: 'Enter theatre mode', exact: true }).click();
+        await readOnly();
+        await expect
+          .poll(async () => {
+            const box = await editor.locator('.univer-container').boundingBox();
+            return !!box && box.width >= variant.width - 24 && box.height >= variant.height - 150;
+          })
+          .toBe(true);
+        // The native resize observer runs on idle. Wait for both canvas dimensions
+        // to catch up to its mount before recording the expanded theatre pixels.
+        await expect
+          .poll(() =>
+            editor
+              .locator('canvas')
+              .first()
+              .evaluate((canvas) => {
+                if (!canvas.parentElement) return false;
+                const mount = getComputedStyle(canvas.parentElement);
+                const box = canvas.getBoundingClientRect();
+                return (
+                  box.width > 0 &&
+                  box.height > 0 &&
+                  Math.abs(box.width - parseFloat(mount.width)) <= 1 &&
+                  Math.abs(box.height - parseFloat(mount.height)) <= 1
+                );
+              }),
+          )
+          .toBe(true);
         await capture(page, info, `guest-${kind}-${variant.name}-theatre`);
-        await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
         for (const name of ['Document actions', 'My files', 'Versions', 'Download Univer file'])
           await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0);
         await expect(page.getByRole('link', { name: 'Your profile', exact: true })).toHaveCount(0);
