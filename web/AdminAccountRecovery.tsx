@@ -22,11 +22,13 @@ export function AdminAccountRecovery({
   onClose,
   onComplete,
   onRefresh,
+  onBusyChange,
 }: {
   action: RecoveryAction;
   onClose: () => void;
   onComplete: (notice: string) => void;
   onRefresh: () => Promise<RecoveryAccount[]>;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const { user, kind } = action;
   const sourceLabel = action.label ?? user.name;
@@ -42,6 +44,13 @@ export function AdminAccountRecovery({
   const request = useRef(0);
   const mounted = useRef(true);
   const path = `admin/users/${encodeURIComponent(user.id)}`;
+  const verifyCurrent = () => {
+    if (!mounted.current) throw new Error('This account action is no longer current.');
+  };
+  useEffect(() => {
+    onBusyChange?.(busy);
+    return () => onBusyChange?.(false);
+  }, [busy, onBusyChange]);
 
   async function refresh(reconcile: boolean, keepError = false) {
     const generation = ++request.current;
@@ -62,7 +71,10 @@ export function AdminAccountRecovery({
         }
       }
       if (transfer) {
-        const next = await api<TransferPreview>(`${path}/transfer-preview`);
+        const next = await api<TransferPreview>(`${path}/transfer-preview`, undefined, () => {
+          verifyCurrent();
+          if (generation !== request.current) throw new Error('A newer account preview is active.');
+        });
         if (!mounted.current || generation !== request.current) return;
         setPreview(next);
         setTarget((value) => (next.recipients.some((person) => person.id === value) ? value : ''));
@@ -98,6 +110,7 @@ export function AdminAccountRecovery({
       await api(
         `${path}/${kind}`,
         transfer ? { targetId: target, confirmation: preview!.confirmation } : {},
+        verifyCurrent,
       );
       if (!mounted.current) return;
       onComplete(

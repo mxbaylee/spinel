@@ -10,7 +10,7 @@ Stories: `Redesign/Screens` — Admin, AdminLoading, AdminError.
 | --- | --- | --- |
 | Nested passkeys, invites, connections and backups create a long page with repeated destructive controls. | The applicable pattern is grouped navigation and contextual actions from Dropbox/Notion; consumer editors offer no evidence for Spinel’s content-blind Operator permissions. | Administration section navigation: People, Invites, Connections, Backups & health. |
 
-This proposal supersedes the earlier stack of equal cards. People rows disclose passkeys and destructive actions; confirmations retain their consequences. Backups/health show text status, timestamps, last good verification and recovery guidance. Loading never masquerades as an empty list. Server Operator remains content-blind and distinct from delegated file Admin.
+This proposal supersedes the earlier stack of equal cards. People rows disclose passkeys and destructive actions; confirmations retain their consequences. Backups/health show text status, timestamps and recovery guidance. Verification results remain a separate SPN-063 delivery; this screen does not invent them. Loading never masquerades as an empty list. Server Operator remains content-blind and distinct from delegated file Admin.
 
 The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
@@ -31,27 +31,31 @@ Numbers.
 
 ## Spinel today
 
-`/admin` shows Users and passkeys, then Invites (rendered inside `AdminUsers`),
-then Backups. Each user is a list item with its passkeys nested underneath (each
-with its last use), a Disable button and a Remove button per passkey. Disabling
-and removing confirm in a modal `<dialog>` with the consequence spelled out;
-revoking an invite doesn't confirm. SPN-064 adds a disabled account's contextual
-Reactivate and Transfer ownership actions using the shared modal/choice patterns
-below. The complete section-navigation migration remains SPN-082.
+`/admin` uses the compact utility header and four sections: People, Invites,
+Connections, and Backups & health. People rows expose account menus; Manage
+passkeys opens a focused dialog with credential metadata and per-passkey menus.
+Disable/removal and the landed SPN-064 Reactivate/Transfer flows preserve their
+consequences and server safeguards. Invites creates an address once, keeps its
+manual-copy fallback while that section remains open, and discards it on leaving.
+Connections shows read-only assistant metadata with token activity in a disclosure.
+Health retains existing backup facts and adds measured memory, connections,
+physical storage and actual job status. Diagnostics offers download and confirmed
+clear; its runtime/visual validation is tracked in
+[SPN-032](../implementation/SPN-032.md). Restore verification remains SPN-063.
+See [the section lifetime decision](../implementation/SPN-082.md#section-lifetime-and-recovery-handoff).
 
 ## Adopted pattern
 
-- One page, sections in this order: **Users**, **Invites**, **Backups**, then
-  **Server health** (SPN-032). Each section is a card with its heading and, at
-  most, one primary action (Invites: **Create invite**).
-- **Users:** a row per account: name, role badge (Admin/Member), status badge
-  (Active/Disabled), and contextual actions. Active accounts retain Disable;
-  disabled accounts offer Reactivate, and disabled everyday accounts additionally
-  offer Transfer ownership. Passkeys show under the row as a
-  compact list, each with its last use in the muted column and its own More menu
-  → Remove. The rules that block an action ("This is your admin account. It
-  cannot disable itself.") show as the menu item's disabled reason, not as a
-  hidden item.
+- One page with section navigation: **People**, **Invites**, **Connections**,
+  **Backups & health**. On phones the navigation wraps into two columns, keeping
+  all sections visible. The shared compact header retains appearance and profile.
+- **People:** a row per account with name, Operator/Member role, Active/Disabled
+  status, passkey count and contextual actions. Manage passkeys reveals provider,
+  creation and last use. Each passkey has a More → Remove menu. Active accounts
+  retain Disable; disabled accounts offer Reactivate, and disabled everyday
+  accounts additionally offer Transfer ownership. Protected actions remain
+  disabled with visible explanations. Create recovery invite explicitly hands
+  an active account to the invitation dialog after refreshing eligible recipients.
 - **Confirmations** stay modal dialogs with today's full sentences; they are the
   right length for something that ends sessions. Revoking an invite stays
   unconfirmed: it is cheap to redo.
@@ -67,14 +71,14 @@ creation, with the manual-copy fallback.
 | Always visible                                         | Behind a menu         |
 | ------------------------------------------------------ | --------------------- |
 | Section headings, Create invite                        | Account actions → Disable / Reactivate / Transfer ownership |
-| User name, role, status; passkey last use              | Passkey More → Remove |
+| User name, role, status, passkey count              | Manage passkeys → passkey More → Remove |
 | Invite expiry and kind; Copy link right after creation | Invite More → Revoke  |
 | Backup and health status, last success, guide link     |                       |
 
 ## Account recovery and handover
 
-SPN-064 implements these existing confirmation patterns without moving the whole
-administration screen. See [the behavior and privacy contract](../admin.md).
+SPN-064 supplies the landed recovery controllers; SPN-082 preserves them in
+the section layout. See [the behavior and privacy contract](../admin.md).
 
 **Reactivate** names the account and explains that existing documents/shares stay
 but old passkeys, sessions and assistant credentials do not return. A recovery
@@ -114,17 +118,20 @@ human screenshot approval or waive any code, access or CI requirement.
 `AdminUsers` and `AdminInvites` show an explicit loading status until their
 requests complete. Failed loads offer a retry; an empty state is shown only
 after a successful empty response. Refreshing an account after reactivation also
-refreshes recovery-invitation recipients.
+loads fresh recovery-invitation recipients when the Operator explicitly opens Invites.
 
 ## Stories
 
-`Admin/AdminUsers`, `Admin/AdminInvites`, `Admin/BackupStatus`. SPN-032 adds
+`Current production/Admin/Administration`, `AdminUsers`, `AdminInvites`,
+`AdminAccountRecovery` and `BackupStatus`. SPN-032 adds
 `Admin/ServerHealth`.
 
 ## Diagnostics handoff (SPN-032)
 
 Owner direction, 2026-10-22; [scope and rationale](../implementation/SPN-032.md).
-Production work is pending. Health cards retain aggregate status and guidance.
+Source implementation is prepared; runtime checks and actual screenshot approval
+remain pending in the implementation record. Health cards retain aggregate status
+and guidance. See the [operator guide](../diagnostics.md) for measurement meaning.
 Add **Download diagnostics** and **Truncate diagnostics** to Backups & health;
 there is no query UI, log browser or SQL console. Download produces a standalone
 diagnostics SQLite snapshot for local analysis. Automatic records can contain
@@ -160,8 +167,8 @@ dialog and absent/present/loading/failed flags before owner implementation revie
 
 ## Assistant connection metadata (SPN-034)
 
-**Connected assistants** and **Assistant access tokens** sections before Backups
-reuse the read-only list pattern. Show client/token and account names, callback
+**Connections** contains **Connected assistants**, with **Personal access token
+activity** behind a disclosure. Both reuse the read-only list pattern. Show client/token and account names, callback
 origins for connections, creation, last use and revoked status; never secrets or
 document details. No token creation or document access for the Operator.
 `Settings/AssistantConnections` and `Admin/AccessTokens` cover loading, empty, metadata and failure states. See

@@ -140,6 +140,8 @@ check no returned bytes and restored fonts/globals before another operation.
 Additional regressions reject large ink in short rows, retain it in a tall row,
 and compare a different prepared font's second-operation geometry and pixels
 against its fresh-process output.
-These tests have not run; no artifacts or pixel approvals exist yet, and CI
-artifact-upload wiring remains pending. The native runtime dependencies reuse
+These tests have not run; no artifacts or pixel approvals exist yet. The existing
+Unit tests CI job retains only this synthetic fixture directory's PDF/PNG files
+for seven days, including pages written before an assertion failure. Missing
+files are reported without claiming rendered evidence. The native runtime dependencies reuse
 already locked versions; independent install/Docker checks are still required.

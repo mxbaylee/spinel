@@ -53,6 +53,7 @@
     "@modelcontextprotocol/sdk": "1.32.1",
     "@simplewebauthn/browser": "14.0.0",
     "@simplewebauthn/server": "14.0.3",
+    "@spinel/diagnostics": "*",
     "@spinel/doc-formulas": "*",
     "@spinel/presence-ui": "^0.0.0",
     "@spinel/print": "*",

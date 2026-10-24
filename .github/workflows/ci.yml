@@ -132,6 +132,16 @@ jobs:
       - name: Unit tests
         if: needs.changes.outputs.docs_only != 'true'
         run: npm test
+      - name: Synthetic Sheet PDF evidence
+        if: always() && needs.changes.outputs.docs_only != 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sheet-pdf-candidate-evidence
+          path: |
+            output/pdf/spn-101-candidate/*.pdf
+            output/pdf/spn-101-candidate/*.png
+          retention-days: 7
+          if-no-files-found: warn
       - name: Documentation-only change
         if: needs.changes.outputs.docs_only == 'true'
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'

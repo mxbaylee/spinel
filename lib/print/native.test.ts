@@ -145,6 +145,8 @@ test('candidate PDF reopens every page with ordered text, embedded fonts, image 
         canvasContext: context as unknown as CanvasRenderingContext2D,
         viewport,
       }).promise;
+      // Keep the actual page even if a following pixel assertion fails in CI.
+      await writeFile(resolve(output, `candidate-${index}.png`), await canvas.encode('png'));
       const margin = context.getImageData(5, 5, 1, 1).data;
       expect([...margin]).toEqual([255, 255, 255, 255]);
       const pixels = context.getImageData(0, 0, 595, 842).data;
@@ -153,7 +155,6 @@ test('candidate PDF reopens every page with ordered text, embedded fonts, image 
         if (pixels[n] > 170 && pixels[n + 1] < 80 && pixels[n + 2] < 110) red++;
       if (index <= 3) expect(red).toBeGreaterThan(100);
       else expect(red).toBe(0);
-      await writeFile(resolve(output, `candidate-${index}.png`), await canvas.encode('png'));
       page.cleanup();
     }
     expect(text.join(' ')).not.toContain('HIDDEN-SENTINEL');

@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { ImportFile } from './ImportFile.tsx';
+import { assertDialogControls } from '../.storybook/dialogBounds.ts';
 
 const meta = {
   id: 'dashboard-importfile',
@@ -14,9 +15,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const pick = async (canvasElement: HTMLElement, ...files: File[]) => {
-  const input = within(canvasElement).getByLabelText<HTMLInputElement>('Univer file', {
-    selector: 'input',
-  });
+  const input = within(canvasElement.ownerDocument.body).getByLabelText<HTMLInputElement>(
+    'Univer file',
+    {
+      selector: 'input',
+    },
+  );
   // The picker takes one file, but a drop can carry several. Let the test send more than one.
   input.multiple = files.length > 1;
   await userEvent.upload(input, files, { applyAccept: false });
@@ -25,6 +29,23 @@ const snapshot = JSON.stringify({ id: 'sheet-1', sheets: {} });
 const univerFile = () => new File([snapshot], 'budget.univer.json', { type: 'application/json' });
 
 export const Default: Story = {};
+export const Dialog: Story = {
+  args: { dialogOpen: true },
+  play: async ({ canvasElement }) =>
+    assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Import file' }),
+    ),
+};
+export const ImportingDialog: Story = {
+  args: { dialogOpen: true },
+  parameters: { api: { 'POST /api/items/import': pending() } },
+  play: async ({ canvasElement }) => {
+    await pick(canvasElement, univerFile());
+    await assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Import file' }),
+    );
+  },
+};
 /** The limits disclosure is closed by default. */
 export const LimitsOpen: Story = {
   play: ({ canvasElement }) => {

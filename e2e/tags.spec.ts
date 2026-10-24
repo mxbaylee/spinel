@@ -36,7 +36,8 @@ test('personal tags work in the dashboard and editor, suggest earlier names and 
   }
   try {
     await page.goto('/');
-    await page.getByRole('button', { name: 'Tags Tagged budget', exact: true }).click();
+    await page.getByRole('button', { name: 'More actions for Tagged budget', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Tags…', exact: true }).click();
     await add('#BUDGET');
     await expect(dialog.getByRole('button', { name: 'Remove #budget', exact: true })).toBeVisible();
     await dialog.getByRole('button', { name: 'Done', exact: true }).click();
