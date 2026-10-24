@@ -99,7 +99,7 @@ test('shared files are filed by pointer and keyboard, remove only personal place
       .getByRole('button', { name: 'More actions for Shared journal', exact: true })
       .click();
     await ownerPage.getByRole('menuitem', { name: 'Share…', exact: true }).click();
-    const sharing = ownerPage.getByRole('region', { name: 'Share Shared journal', exact: true });
+    const sharing = ownerPage.getByRole('dialog', { name: 'Share Shared journal', exact: true });
     await sharing
       .getByRole('combobox', { name: `Access for ${viewer.name}`, exact: true })
       .selectOption('');

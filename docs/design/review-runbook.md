@@ -28,7 +28,9 @@ regression check when a concrete repeated defect makes one worthwhile.
 After `npm run build-storybook`, run `npm run screenshots -- <story IDs>` for all
 five existing variants, or add `--viewport desktop`, `tablet` or `mobile` for one
 partition. Each CI artifact (`design-review-desktop`, `design-review-tablet`,
-`design-review-mobile`) contains its own gallery and manifest. See
+`design-review-mobile-light`, `design-review-mobile-dark`) contains its own gallery
+and manifest. Mobile CI splits the themes; `--viewport mobile --theme light|dark`
+reproduces one partition while the default captures both. See
 [capture details](redesign.md#review-and-screenshots). Retain the fixed fixture
 time, and link the actual artifacts rather than calling captures approved
 regression baselines.

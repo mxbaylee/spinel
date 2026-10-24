@@ -48,7 +48,7 @@ test('Owner delegates file administration on every outer type, administrators ma
   }
   async function sharing(tab: Page, name: string) {
     await action(tab, name, 'Share');
-    return tab.getByRole('region', { name: `Share ${name}`, exact: true });
+    return tab.getByRole('dialog', { name: `Share ${name}`, exact: true });
   }
   async function grant(panel: Locator, name: string, role: string) {
     await panel
@@ -93,20 +93,21 @@ test('Owner delegates file administration on every outer type, administrators ma
         await expect(panel.getByLabel('Link access').locator('option[value="admin"]')).toHaveCount(
           0,
         );
-        await panel.getByRole('button', { name: 'Create guest link', exact: true }).click();
+        await panel.getByRole('button', { name: 'Create link', exact: true }).click();
         if (kind === 'space')
           await other.getByRole('button', { name: 'Create view link', exact: true }).click();
         await expect(
-          panel.getByRole('button', { name: 'Turn link off', exact: true }),
+          panel.getByRole('button', { name: 'Guest link actions', exact: true }),
         ).toBeVisible();
-        await panel.getByRole('button', { name: 'Turn link off', exact: true }).click();
+        await panel.getByRole('button', { name: 'Guest link actions', exact: true }).click();
+        await other.getByRole('menuitem', { name: 'Turn off link', exact: true }).click();
         if (kind === 'space')
           await other
             .getByRole('dialog', { name: 'Turn off this Space link?' })
-            .getByRole('button', { name: 'Turn link off', exact: true })
+            .getByRole('button', { name: 'Turn off link', exact: true })
             .click();
       }
-      await panel.getByRole('button', { name: 'Close sharing', exact: true }).click();
+      await panel.getByRole('button', { name: 'Done', exact: true }).click();
       await action(other, name, 'Rename');
       const rename =
         kind === 'space'

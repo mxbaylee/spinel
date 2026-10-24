@@ -143,6 +143,7 @@ export function Dashboard({
   const [viewMissing, setViewMissing] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
+  const sharingFocus = useRef<HTMLButtonElement | null>(null);
   const [spaceAction, setSpaceAction] = useState<{
     item: SpaceFile;
     mode: SpaceRootActionMode;
@@ -508,7 +509,8 @@ export function Dashboard({
           ],
           destructive: mode === 'trash',
           disabled: busy,
-          onClick: () => {
+          onClick: (trigger) => {
+            if (mode === 'share') sharingFocus.current = trigger ?? null;
             if (item.kind === 'space') setSpaceAction({ item, mode });
             else if (mode === 'share') setSharing(item);
             else if (mode === 'trash') void trashItem(item);
@@ -1023,24 +1025,19 @@ export function Dashboard({
         </>
       )}
       {sharing && (
-        <Modal
-          title={`Share ${sharing.name}`}
-          icon="share"
-          open
-          onOpenChange={(open) => {
-            if (!open) setSharing(null);
-          }}
-        >
-          <div className="file-dialog">
-            <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />
-          </div>
-        </Modal>
+        <Sharing
+          key={sharing.id}
+          item={sharing}
+          onClose={() => setSharing(null)}
+          finalFocus={() => (sharingFocus.current?.isConnected ? sharingFocus.current : true)}
+        />
       )}
       {spaceAction && (
         <SpaceRootActions
           key={`${spaceAction.item.id}:${spaceAction.mode}`}
           item={spaceAction.item}
           initialMode={spaceAction.mode}
+          finalFocus={() => (sharingFocus.current?.isConnected ? sharingFocus.current : true)}
           onClose={() => setSpaceAction(null)}
           folders={items.filter(
             (entry): entry is WorkspaceItem => entry.kind === 'folder' && entry.access === 'owner',
