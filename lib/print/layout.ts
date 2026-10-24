@@ -241,8 +241,12 @@ export async function prepareSheetLayout(
   preparedImages: readonly PreparedImage[],
   mediaBox: { width: number; height: number },
   options: SheetPrintOptions = {},
+  sharedDeadline?: number,
 ) {
-  const initial = preflightSheets(snapshot, options);
+  const initial =
+    sharedDeadline === undefined
+      ? preflightSheets(snapshot, options)
+      : preflightSheetsBefore(snapshot, options, sharedDeadline);
   const { limits, deadline } = initial;
   const check = () => printCheckpoint(options.signal, deadline);
   const book = structuredClone(snapshot);

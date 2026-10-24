@@ -1,8 +1,9 @@
 # @spinel/print
 
-Private, in-progress standalone Sheet PDF package (SPN-101). There is **no PDF
-renderer yet**. The current checkpoint admits a bounded native workbook and
-plans continuous page slices; it must not be integrated as a successful export.
+Private, in-progress standalone Sheet PDF package (SPN-101). There is **no complete
+or public PDF renderer yet**. Internal source now includes a candidate native
+bridge for a restricted plain-cell/image subset; it has not been executed and
+must not be integrated as a successful export.
 
 The package owns no users, database, HTTP client, credentials or authorization.
 The future renderer will receive an already authorized public `IWorkbookData`
@@ -75,9 +76,9 @@ does not demonstrate safety on a 2 GiB deployment.
   source tests are unrun; full decoding, animation fixtures, transformed/cell
   image geometry and byte-only rendering remain unfinished. Axis-aligned floating
   and finite background layout now have authored, unexecuted integration tests.
-- Native number formatting, rich text, fonts, overflow and complete page-spanning
-  cell/merge/image rendering; licensed font faces and missing-glyph behavior.
-- Atomic PDF output, actual A4 MediaBox choice, output/resource failure evidence.
+- Native number-format/font execution proof, rich text and per-cell mixed-font
+  shaping, overflow and complete page-spanning cell/merge/image rendering.
+- Actual atomic-output, A4 MediaBox, embedding and resource-failure evidence.
 - Native rendering runtime dependencies and independently checked package/Docker
   installation, plus retained rendered PDF/PNG artifacts for every page. Initial
   workspace/lockfile/Docker source registration is present, not installation proof.
@@ -92,6 +93,53 @@ metadata and license/provenance supplied by the caller. Internal admission check
 bounded font tables, subset embedding permissions and Unicode cmap coverage.
 Grapheme runs use explicitly ordered fallbacks; missing families, styles or
 glyphs fail without leaking text into error messages. System fonts are not an
-acceptable fallback. Registration, native shaping and embedded PDF-font evidence
-remain unfinished. The included licensed fixture faces test these requirements;
+acceptable fallback. Executed registration, native shaping and embedded PDF-font
+evidence remain unfinished. The included licensed fixture faces test these requirements;
 they do not silently replace a workbook's requested family.
+
+## Internal native candidate
+
+`native.ts` is deliberately absent from the public entry point. Its candidate
+uses the public `SpreadsheetSkeleton`, `Spreadsheet`, printing context and
+`@napi-rs/canvas` PDF backend. It requires a dedicated process launched with
+`DISABLE_SYSTEM_FONTS_LOAD=1` **before importing the module**, and refuses a
+nonempty native font registry. JavaScript worker isolation alone is insufficient
+for potentially process-global native registries. Registration uses owned
+prepared bytes and operation-unique generated aliases; cleanup removes only returned font keys,
+invalidates those font metrics and restores the exact canvas-global descriptors.
+Calls in one module are serialized by rejecting overlap, not by an unbounded queue.
+
+Aliases are never reused by later operations, because the public document-metrics
+invalidator does not clear every native text-layout cache.
+
+The candidate currently rejects rich cells, mixed-font grapheme runs, multiline,
+wrapped and rotated text. Plain-cell width and height are measured against the
+registered face, padded cell rectangle and a conservative two-pixel allowance;
+the native width-only fitting hint is insufficient to admit vertical ink.
+Oversized text is rejected until complete overflow/continuation exists.
+Axis-aligned floating
+images are decoded from admitted bytes and composited with page source crops;
+background tiles retain worksheet phase. Native canvas allocation is bounded.
+No URL or file string reaches the native Image loader: the native font extension's
+fixed small inline SVG fallback is decoded to bytes, while actual workbook images
+must use the prepared input map. No fallback placeholder is accepted as workbook
+image output.
+
+All clips use the backend's 595×842 pt A4 frame and 36 pt margins. These integer
+dimensions match the SPN-097 public-backend observation; the candidate test must
+reopen and verify every page before production adoption. The bridge returns bytes
+only after every sheet, page, serialization and final size/time check succeeds.
+Native serialization can allocate before the final output-size check, and
+synchronous native calls cannot be interrupted by an AbortSignal; process memory
+and hard timeout enforcement still belong to the host. No 2 GiB capacity claim is made.
+
+Authored native tests use a separate child process, disable system font loading,
+reopen PDFs with system fonts disabled, inspect all pages and write synthetic
+`output/pdf/spn-101-candidate/candidate.pdf` and page PNGs when run. Failure tests
+check no returned bytes and restored fonts/globals before another operation.
+Additional regressions reject large ink in short rows, retain it in a tall row,
+and compare a different prepared font's second-operation geometry and pixels
+against its fresh-process output.
+These tests have not run; no artifacts or pixel approvals exist yet, and CI
+artifact-upload wiring remains pending. The native runtime dependencies reuse
+already locked versions; independent install/Docker checks are still required.

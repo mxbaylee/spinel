@@ -6,5 +6,12 @@
   "type": "module",
   "exports": "./index.ts",
   "engines": { "node": ">=24" },
-  "dependencies": { "@univerjs/core": "1.1.0", "@univerjs/sheets-filter": "1.1.0", "sharp": "0.35.5" }
+  "dependencies": {
+    "@napi-rs/canvas": "1.0.11",
+    "@univerjs/core": "1.1.0",
+    "@univerjs/engine-render": "1.1.0",
+    "@univerjs/sheets-filter": "1.1.0",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": { "pdfjs-dist": "6.4.299", "vitest": "5.0.5" }
 }
