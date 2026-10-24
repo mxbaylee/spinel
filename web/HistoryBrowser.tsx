@@ -409,7 +409,9 @@ export function HistoryBrowser() {
           </div>
         </aside>
         <div className="history-preview-pane">
-          {selected !== rendered && <p role="status">Loading selected snapshot…</p>}
+          {!loading && !error && current && selected !== rendered && (
+            <p role="status">Loading selected snapshot…</p>
+          )}
           <div hidden={selected !== rendered || Boolean(error) || loading}>
             {rendered && !error && !loading && (
               <VersionPreview

@@ -170,6 +170,11 @@ export const Loading: Story = { parameters: { api: { [`GET ${endpoint}`]: pendin
 export const Empty: Story = {
   args: { checkpoint: '' },
   parameters: { api: { [`GET ${endpoint}`]: { versions: [], canName: true } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('No versions yet', { exact: true })).toBeVisible();
+    await expect(canvas.queryByText('Loading selected snapshot…')).not.toBeInTheDocument();
+  },
 };
 export const Unavailable: Story = {
   parameters: { api: { [`GET ${endpoint}`]: failure('This document is unavailable.', 403) } },
@@ -178,6 +183,7 @@ export const Unavailable: Story = {
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
       'This document is unavailable.',
     );
+    await expect(canvas.queryByText('Loading selected snapshot…')).not.toBeInTheDocument();
     await expect(canvas.queryByRole('button', { name: 'Restore this version' })).toBeNull();
     await expect(canvas.queryByRole('button', { name: 'Name current version…' })).toBeNull();
   },
@@ -188,6 +194,7 @@ export const MissingCheckpoint: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('alert')).toHaveTextContent('no longer available');
+    await expect(canvas.queryByText('Loading selected snapshot…')).not.toBeInTheDocument();
     await expect(canvas.queryByRole('button', { name: 'Restore this version' })).toBeNull();
   },
 };
