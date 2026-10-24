@@ -311,6 +311,25 @@ export const FailedReplacement: Story = {
     );
   },
 };
+export const FailedReplacementVisible: Story = {
+  parameters: FailedReplacement.parameters,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await userEvent.selectOptions(await canvas.findByLabelText('Link access'), 'editor');
+    await userEvent.click(canvas.getByRole('button', { name: 'Guest link actions' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Replace link…' }));
+    const dialog = within(await body.findByRole('dialog', { name: 'Replace the link?' }));
+    await userEvent.click(dialog.getByRole('button', { name: /^Replace link$/ }));
+    await expect(await dialog.findByRole('alert')).toHaveTextContent(
+      'Only the owner or a file admin',
+    );
+    await expect(canvas.getByText('Guests can view.')).toBeInTheDocument();
+    await expect(canvas.getByLabelText('Link access')).toHaveValue('editor');
+    await expect(canvas.queryByLabelText('Guest link address')).not.toBeInTheDocument();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeEnabled();
+  },
+};
 export const FailedTurnOff: Story = {
   parameters: {
     api: {

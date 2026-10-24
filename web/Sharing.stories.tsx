@@ -219,6 +219,19 @@ export const DisabledAccount: Story = {
     await expect(body.queryByLabelText('Access for Taylor Brooks')).not.toBeInTheDocument();
   },
 };
+export const DisabledAccountBeforeRemoval: Story = {
+  parameters: DisabledAccount.parameters,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const select = await body.findByLabelText('Access for Taylor Brooks');
+    await expect(select).toHaveValue('viewer');
+    for (const name of ['Can view', 'Can edit', 'File admin']) {
+      await expect(within(select).getByRole('option', { name })).toBeDisabled();
+    }
+    await expect(within(select).getByRole('option', { name: 'No direct access' })).toBeEnabled();
+    await expect(body.getByText('Taylor Brooks · Disabled account')).toBeVisible();
+  },
+};
 export const KeepsOtherDrafts: Story = {
   parameters: {
     api: {

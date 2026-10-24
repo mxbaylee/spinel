@@ -23,7 +23,8 @@ export function ShareLink({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [pending, setPending] = useState<Change | null>(null);
+  const [pending, setPending] = useState<Change>({ role: 'viewer', replacing: false });
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [failed, setFailed] = useState<Change | null>(null);
   const generation = useRef(0);
   const actionTrigger = useRef<HTMLButtonElement>(null);
@@ -59,7 +60,8 @@ export function ShareLink({
     setRole('viewer');
     setLoaded(false);
     setBusy(false);
-    setPending(null);
+    setPending({ role: 'viewer', replacing: false });
+    setConfirmationOpen(false);
     setFailed(null);
     setNotice('');
     mutation.current = false;
@@ -85,7 +87,7 @@ export function ShareLink({
       );
       if (request !== generation.current) return;
       setState(value);
-      setPending(null);
+      setConfirmationOpen(false);
       setNotice(
         action.role === null
           ? 'Guest link turned off.'
@@ -109,8 +111,10 @@ export function ShareLink({
     const action = { role: next, replacing: state.enabled && next !== null };
     setError('');
     setFailed(null);
-    if (space || action.replacing) setPending(action);
-    else void change(action);
+    if (space || action.replacing) {
+      setPending(action);
+      setConfirmationOpen(true);
+    } else void change(action);
   }
   return (
     <section
@@ -192,7 +196,7 @@ export function ShareLink({
           </div>
           {busy && <p role="status">Saving guest link…</p>}
           {notice && <p role="status">{notice}</p>}
-          {error && !pending && (
+          {error && !confirmationOpen && (
             <>
               <p role="alert">{error} The last confirmed link access is shown above.</p>
               {failed && (
@@ -208,73 +212,73 @@ export function ShareLink({
           </p>
         </>
       )}
-      {pending && (
-        <Modal
-          open
-          finalFocus={() =>
-            actionTrigger.current ??
-            section.current?.querySelector<HTMLButtonElement>('.sharing-create') ??
-            true
+      {/* Keep the controller mounted while its popup closes, so focus resolves
+          after successful link changes replace Create link / Guest link actions. */}
+      <Modal
+        open={confirmationOpen}
+        finalFocus={() =>
+          actionTrigger.current ??
+          section.current?.querySelector<HTMLButtonElement>('.sharing-create') ??
+          true
+        }
+        icon={space ? 'space' : 'share'}
+        dismissDisabled={busy}
+        title={
+          pending.role === null
+            ? 'Turn off this Space link?'
+            : pending.replacing
+              ? 'Replace the link?'
+              : 'Share the whole Space?'
+        }
+        onOpenChange={(open) => {
+          if (!open) {
+            setConfirmationOpen(false);
+            setError('');
+            setFailed(null);
           }
-          icon={space ? 'space' : 'share'}
-          dismissDisabled={busy}
-          title={
-            pending.role === null
-              ? 'Turn off this Space link?'
-              : pending.replacing
-                ? 'Replace the link?'
-                : 'Share the whole Space?'
-          }
-          onOpenChange={(open) => {
-            if (!open) {
-              setPending(null);
+        }}
+        description={
+          pending.role === null
+            ? 'Every guest using this link will lose access to the Space and all its pages.'
+            : pending.replacing
+              ? 'The old link stops working at once, and anyone using it loses access.'
+              : 'Child pages cannot have separate guest access.'
+        }
+      >
+        {pending.role !== null && (
+          <p>
+            {space
+              ? `Anyone with the new link can ${pending.role === 'editor' ? 'edit' : 'view'} every current and future page and folder in this Space.`
+              : `The replacement lets guests ${pending.role === 'editor' ? 'edit' : 'view'} this file.`}
+          </p>
+        )}
+        {error && (
+          <p role="alert">{error} The last confirmed link access is unchanged in this view.</p>
+        )}
+        <div className="sharing-link-actions">
+          <Button
+            disabled={busy}
+            onClick={() => {
+              setConfirmationOpen(false);
               setError('');
               setFailed(null);
-            }
-          }}
-          description={
-            pending.role === null
-              ? 'Every guest using this link will lose access to the Space and all its pages.'
-              : pending.replacing
-                ? 'The old link stops working at once, and anyone using it loses access.'
-                : 'Child pages cannot have separate guest access.'
-          }
-        >
-          {pending.role !== null && (
-            <p>
-              {space
-                ? `Anyone with the new link can ${pending.role === 'editor' ? 'edit' : 'view'} every current and future page and folder in this Space.`
-                : `The replacement lets guests ${pending.role === 'editor' ? 'edit' : 'view'} this file.`}
-            </p>
-          )}
-          {error && (
-            <p role="alert">{error} The last confirmed link access is unchanged in this view.</p>
-          )}
-          <div className="sharing-link-actions">
-            <Button
-              disabled={busy}
-              onClick={() => {
-                setPending(null);
-                setError('');
-                setFailed(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button primary disabled={busy} onClick={() => void change(pending)}>
-              {busy
-                ? 'Saving…'
-                : failed
-                  ? 'Retry link update'
-                  : pending.role === null
-                    ? 'Turn off link'
-                    : pending.replacing
-                      ? 'Replace link'
-                      : `Create ${pending.role === 'editor' ? 'edit' : 'view'} link`}
-            </Button>
-          </div>
-        </Modal>
-      )}
+            }}
+          >
+            Cancel
+          </Button>
+          <Button primary disabled={busy} onClick={() => void change(pending)}>
+            {busy
+              ? 'Saving…'
+              : failed
+                ? 'Retry link update'
+                : pending.role === null
+                  ? 'Turn off link'
+                  : pending.replacing
+                    ? 'Replace link'
+                    : `Create ${pending.role === 'editor' ? 'edit' : 'view'} link`}
+          </Button>
+        </div>
+      </Modal>
     </section>
   );
 }
