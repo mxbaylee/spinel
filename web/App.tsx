@@ -14,10 +14,7 @@ import type {
 import { signSetupProof } from './setup.ts';
 import { ConsoleRecovery } from './ConsoleRecovery.tsx';
 import { api, connectionRequest, signInPath } from './api.ts';
-import { BackupStatus } from './BackupStatus.tsx';
-import { AdminUsers } from './AdminUsers.tsx';
-import { AccessTokens } from './AccessTokens.tsx';
-import { AssistantConnections } from './AssistantConnections.tsx';
+import { AdminPage } from './AdminPage.tsx';
 import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { Space } from './Space.tsx';
@@ -456,11 +453,11 @@ export function App() {
   }
   return (
     <div
-      className={`workspace${settings ? ' profile-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
+      className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
     >
       <Rail
         user={user}
-        compact={settings}
+        compact={settings || !!user?.isAdmin}
         files={filePlaces}
         navigation={navigation}
         onSignOut={() => void signOut()}
@@ -581,20 +578,7 @@ export function App() {
               }
             />
           ) : user.isAdmin ? (
-            <>
-              <h1>Admin</h1>
-              <section className="welcome">
-                <h2>Workspace administration</h2>
-                <p>
-                  Invite people or help them recover their passkeys. Use a separate everyday account
-                  for documents.
-                </p>
-                <AdminUsers currentId={user.id} />
-                <AssistantConnections admin />
-                <AccessTokens admin />
-                <BackupStatus />
-              </section>
-            </>
+            <AdminPage key={user.id} currentId={user.id} />
           ) : location.pathname === '/preview' ? (
             <Suspense fallback={<p>Loading preview…</p>}>
               <HistoryBrowser />
