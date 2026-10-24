@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from './api.ts';
+import { Button } from '../src/ui/redesign/Controls.tsx';
+import { EntryFrame } from './EntryFrame.tsx';
 
 type PendingConnection = {
   request: string;
@@ -12,9 +14,13 @@ type PendingConnection = {
 export function ConnectAssistant({
   request,
   user,
+  onSignOut,
+  signOutError,
 }: {
   request: string | null;
   user: { name: string; isAdmin: boolean };
+  onSignOut?: () => void;
+  signOutError?: string;
 }) {
   const [pending, setPending] = useState<PendingConnection | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,9 +80,37 @@ export function ConnectAssistant({
   }
 
   return (
-    <>
-      <h1>Connect an assistant</h1>
-      <section className="welcome" aria-label="Assistant consent">
+    <EntryFrame
+      title={
+        !request || expired
+          ? 'This request has expired.'
+          : user.isAdmin || unavailable || loading || !pending
+            ? 'Connect an assistant'
+            : 'Allow this connection?'
+      }
+      intro={
+        !user.isAdmin && !unavailable && !expired && pending
+          ? 'Only continue if you started this connection yourself.'
+          : undefined
+      }
+      busy={busy}
+      onHome={() => location.assign(user.isAdmin ? '/admin' : '/')}
+      footer={
+        <div className="entry-footer-actions">
+          {!busy && (
+            <a href={user.isAdmin ? '/admin' : '/profile#connections'}>
+              {user.isAdmin ? 'Back to administration' : 'Connected assistants'}
+            </a>
+          )}
+          {onSignOut && (
+            <Button disabled={busy} onClick={onSignOut}>
+              Sign out
+            </Button>
+          )}
+        </div>
+      }
+    >
+      <section className="entry-consent" aria-label="Assistant consent">
         {user.isAdmin ? (
           <p role="alert">
             Admin accounts cannot connect assistants. Sign out and use your everyday account.
@@ -97,46 +131,55 @@ export function ConnectAssistant({
           <>
             {pending && (
               <>
-                <h2>{pending.name}</h2>
-                <p>This name is provided by the assistant and has not been verified by Spinel.</p>
-                <p>
-                  Return address: <bdi>{pending.redirectOrigin}</bdi>
-                </p>
-                <p>
-                  Signed in as <strong>{user.name}</strong>. Allow this assistant to:
-                </p>
-                <ul>
-                  {pending.scopes.includes('documents:read') && (
-                    <li>List and read documents you can access.</li>
+                <div className="entry-consent-details">
+                  <h2>{pending.name}</h2>
+                  <p>This name is provided by the assistant and has not been verified by Spinel.</p>
+                  <p>
+                    Return address: <bdi>{pending.redirectOrigin}</bdi>
+                  </p>
+                  <p>
+                    Signed in as <strong>{user.name}</strong>. Allow this assistant to:
+                  </p>
+                  <ul>
+                    {pending.scopes.includes('documents:read') && (
+                      <li>List and read documents you can access.</li>
+                    )}
+                    {pending.scopes.includes('documents:write') && (
+                      <li>Edit documents you have permission to edit.</li>
+                    )}
+                  </ul>
+                  {!pending.scopes.includes('documents:write') && (
+                    <p>This connection cannot edit documents.</p>
                   )}
-                  {pending.scopes.includes('documents:write') && (
-                    <li>Edit documents you have permission to edit.</li>
-                  )}
-                </ul>
-                <p>
-                  Only continue if you started this request and trust this assistant. You can
-                  disconnect it in Settings at any time.
-                </p>
-                <button className="primary" disabled={busy} onClick={() => void decide(true)}>
-                  Allow
-                </button>{' '}
-                <button disabled={busy} onClick={() => void decide(false)}>
-                  Cancel
-                </button>
+                  <p>
+                    Only continue if you started this request and trust this assistant. You can
+                    disconnect it in Connected assistants at any time.
+                  </p>
+                </div>
+                <div className="entry-actions">
+                  <Button primary disabled={busy || atCapacity} onClick={() => void decide(true)}>
+                    Allow
+                  </Button>
+                  <Button disabled={busy} onClick={() => void decide(false)}>
+                    Cancel
+                  </Button>
+                </div>
                 {busy && <p role="status">Finishing connection request…</p>}
               </>
             )}
             {atCapacity && (
               <p role="alert">
                 You have 10 connected assistants. Disconnect an old assistant in{' '}
-                <a href="/settings">Settings</a>, then start again from your assistant.
+                <a href="/profile#connections">Connected assistants</a>, then start again from your
+                assistant.
               </p>
             )}
             {error && <p role="alert">{error}</p>}
-            {!pending && error && <button onClick={() => location.reload()}>Try again</button>}
+            {!pending && error && <Button onClick={() => location.reload()}>Try again</Button>}
           </>
         )}
       </section>
-    </>
+      {signOutError && <p role="alert">{signOutError}</p>}
+    </EntryFrame>
   );
 }

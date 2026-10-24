@@ -279,7 +279,7 @@ export function markRewrites(mutations: Mutation[]): Mutation[] {
  * Not taken: keeping the loser's fields the winner did not change, which would
  * need the sender to send the record as it was before the edit.
  */
-// Diagnostics (SPN-032, not built): `sync.edit.dropped`, rule 'name-first-accepted'.
+// Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule 'name-first-accepted'.
 const transform = (a: Mutation, b: Mutation, side: Side): Mutation[] =>
   a.params.id === b.params.id && side === 'right' ? [] : [a];
 

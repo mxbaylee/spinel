@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Sharing, PlannedFileAdmin.
 
@@ -10,7 +10,7 @@ Stories: `Redesign/Screens` — Sharing, PlannedFileAdmin.
 | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | Per-person Apply buttons and multiple guest-link actions compete with the people and permissions being changed. | Google separates people from general access; Numbers illustrates collaboration options grouped in one menu. | One dialog: people first, guest links second; access choices beside the relevant person. |
 
-Retain No direct access and inherited-access explanation. Direct-access choices are staged until Apply access; pending and failed changes preserve confirmed access and the selected draft. Success confirms in place, and failure offers retry. Guest links retain role selection, creation, once-only copy, replacement confirmation and turn-off; the SharingCreatedLink, SharingExistingLink, SharingReplaceLink and SharingError stories make those states reviewable. Do not reveal an inaccessible parent name. Future File admin choices are isolated in PlannedFileAdmin and never offered to guests.
+Retain No direct access and inherited-access explanation. Direct-access choices are staged until Apply access; pending and failed changes preserve confirmed access and the selected draft. Success confirms in place, and failure offers retry. Guest links retain role selection, creation, once-only copy, replacement confirmation and turn-off; the SharingCreatedLink, SharingExistingLink, SharingReplaceLink and SharingError stories make those states reviewable. Do not reveal an inaccessible parent name. SPN-079 implemented File admin; its approved PlannedFileAdmin choices apply to account grants and are never offered to guests.
 
 The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
@@ -28,20 +28,22 @@ person with removal inside it; one Copy link action.
 
 ## Spinel today
 
-`Sharing` shows the item's share address, then every other everyday account with
-a role select (No direct access / Viewer / Editor), its effective access and its
-own "Apply access for <name>" button, then two paragraphs of rules. `ShareLink`
-follows under "Share without an account" with a role select and
-create/replace/turn-off buttons. The guest address is only readable right after
-it is created (docs/sharing.md). "Close sharing" ends the panel.
+`Sharing` owns one Base UI dialog for account access and guest links. The server
+returns only the other everyday accounts whose direct grants the current Owner
+or File admin may manage; protected ownership and the actor's own grant are not
+editable. People appear first, with No direct access / Can view / Can edit /
+File admin, confirmed effective access and an explicit Apply access action.
+Guest links follow for Sheets, Docs and whole Spaces. Folders have no guest links.
+The implementation is recorded in [SPN-081](../implementation/SPN-081.md);
+its verification status is separate from the approved design.
 
 ## Adopted pattern
 
 Spinel has about two people, so there is no invite field: every other account is
 already listed. A [dialog](README.md#dialog) titled "Share <name>":
 
-1. **Header:** the title and **Copy link** (the account-only share address).
-2. **People:** each account with a select: No direct access, Can view, Can edit.
+1. **Header:** the title and close control. **Copy account link** remains in the footer, as in the approved composed mock, beside Done. Clipboard failure exposes a selectable account address.
+2. **People:** each account with a select: No direct access, Can view, Can edit, File admin.
    "No direct access", as in docs/sharing.md, because access inherited from a
    folder survives it. Selecting a role keeps a draft until **Apply access**.
    While applying, the role control is disabled and confirmed access stays
@@ -50,12 +52,14 @@ already listed. A [dialog](README.md#dialog) titled "Share <name>":
    a muted line, "Can edit through a folder". Naming the folder ("through
    Budgets") needs the sharing API to return it; `SharePerson` carries only the
    roles today. Disabled accounts say "(disabled)" and can't be granted.
-3. **Anyone with the link** (Sheets and Docs only): a status line ("Off",
+3. **Anyone with the link** (Sheets, Docs and whole Spaces): a status line ("Off",
    "Guests can view", "Guests can edit"), the role select, and **Create link**
    when off. Right after creating, the address shows with **Copy link**; later
    visits say "Replace the link to copy a new address." Replace link… and Turn
    off sit in the section's More menu. Replace confirms: "Replace the link? The
-   old link stops working at once, and anyone using it loses access."
+   old link stops working at once, and anyone using it loses access." Space link
+   creation additionally confirms that access covers every current and future page
+   and folder; turning off a Space link confirms the all-contents loss of access.
    (docs/sharing.md: a replacement ends every guest connection on the old link;
    only account editors briefly reconnect.)
 4. One muted sentence keeps the rule that matters: "Collaborator names are
@@ -64,8 +68,9 @@ already listed. A [dialog](README.md#dialog) titled "Share <name>":
 5. **Done** closes. There is no Save.
 
 Select options say "Can view" / "Can edit"; badges elsewhere say "View only" /
-"Can edit". People who aren't the owner never see Share; they see their access
-badge.
+"Can edit". Owners and File admins can open Share. Viewers, Editors and guests see no
+account-sharing controls. File admin is never a guest-link role. Ownership and
+the acting account’s direct grant remain protected by the existing API.
 
 ### Always visible / behind a menu
 
@@ -87,7 +92,11 @@ design PR before implementation.
 
 ## Stories
 
-`Sharing/Sharing`, `Sharing/ShareLink`.
+`Current production/Sharing/Sharing`, `Current production/Sharing/ShareLink`.
+The composed, loading, empty, inherited, disabled-account, failed-write, pending,
+File admin, Space, replacement, once-only address and stale-response states are
+covered. The shared screenshot runner captures these in light, dark and phone
+variants when run; a story’s presence is not screenshot approval.
 
 ## Guest-link inventory (planned, SPN-066)
 

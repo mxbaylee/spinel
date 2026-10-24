@@ -1,4 +1,6 @@
-import { ProfileSettings } from './ProfileSettings.tsx';
+import { AuthEntry } from './AuthEntry.tsx';
+import { ProfilePage } from './ProfilePage.tsx';
+import { DiagnosticsProvider, useAccountDiagnostics } from './useDiagnostics.tsx';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   startAuthentication,
@@ -12,16 +14,15 @@ import type {
 } from '@simplewebauthn/browser';
 
 import { signSetupProof } from './setup.ts';
+import { ConsoleRecovery } from './ConsoleRecovery.tsx';
 import { api, connectionRequest, signInPath } from './api.ts';
-import { BackupStatus } from './BackupStatus.tsx';
-import { AdminUsers } from './AdminUsers.tsx';
-import { AccessTokens } from './AccessTokens.tsx';
-import { AssistantConnections } from './AssistantConnections.tsx';
+import { AdminPage } from './AdminPage.tsx';
 import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { Space } from './Space.tsx';
 import { OfflineSpace } from './OfflineSpace.tsx';
 import { spaceHref } from './spaceNavigation.ts';
+import { clearDashboardNavigation, dashboardSession } from './dashboardNavigation.ts';
 import { rememberedFileHref } from './fileNavigation.ts';
 import { spaceReviewReturnPath } from '../src/shared/spaceReviewRoute.ts';
 import { OfflineUnreachable } from './OfflineStatus.tsx';
@@ -29,7 +30,6 @@ import { Rail } from './Rail.tsx';
 import { useBrowserOnline, useServerConnection } from './useConnectionStatus.ts';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
-import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
 import { setPreparedAccount, setSignOutPending, signOutPending } from './offline/offlineStore.ts';
@@ -48,6 +48,14 @@ type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?:
 type Passkey = { id: string; name: string; provider: string };
 
 export function App() {
+  return (
+    <DiagnosticsProvider>
+      <AccountApp />
+    </DiagnosticsProvider>
+  );
+}
+
+function AccountApp() {
   const unsaved = useRef(false);
   const navigation = {
     allow() {
@@ -74,6 +82,10 @@ export function App() {
     return () => window.removeEventListener('beforeunload', warn);
   }, []);
   const [user, setUser] = useState<User | null>(null);
+  const [filePlaces, setFilePlaces] = useState<{
+    shared: boolean;
+    open: (shared: boolean) => void;
+  } | null>(null);
   const [editorConnection, setEditorConnection] = useState<ConnectionState | null>(null);
   const [catalogStatus, setCatalogStatus] = useState<CatalogConnectionDetails | null>(null);
   const serverConnection = useServerConnection(Boolean(user) && editorConnection === null);
@@ -83,17 +95,32 @@ export function App() {
   const [local, setLocal] = useState<Awaited<ReturnType<typeof openLocalStart>>>(null);
   const [unreachable, setUnreachable] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const stopDiagnostics = useAccountDiagnostics(
+    user && loaded && !local && !signOutPending() ? user.id : null,
+    browserOnline && (editorConnection ?? serverConnection) === 'online',
+  );
   const [keys, setKeys] = useState<Passkey[]>([]);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
-  const attempt = useRef<{ cancelled: boolean; challengeId?: string } | null>(null);
-  const settings = location.pathname === '/settings';
+  const [finishingRecovery, setFinishingRecovery] = useState(false);
+  const attempt = useRef<{ cancelled: boolean; challengeId?: string; finishing?: boolean } | null>(
+    null,
+  );
+  const settings = location.pathname === '/profile' || location.pathname === '/settings';
+  useEffect(() => {
+    // Offline app shells also honor old bookmarks without a server redirect.
+    if (location.pathname === '/settings')
+      history.replaceState(null, '', '/profile' + location.search + location.hash);
+  }, []);
   const spaceReview = /^\/(?:review\/)?spaces(?:\/|$)/.test(location.pathname);
   const connecting = location.pathname === '/connect';
   const [connectRequest] = useState(connectionRequest);
   const [spaceReturn] = useState(() => spaceReviewReturnPath(location));
   const setup = location.pathname === '/setup';
+  const adminRecovery = location.pathname === '/recover-admin';
+  const consoleClaim = setup || adminRecovery;
+  const [recoveryName, setRecoveryName] = useState('');
   const invitation = location.pathname === '/invite';
   const [inviteToken] = useState(() =>
     invitation ? (new URLSearchParams(location.search).get('token') ?? '') : '',
@@ -102,7 +129,7 @@ export function App() {
     null,
   );
   const [inviteName, setInviteName] = useState('');
-  const [setupLink] = useState(() => (setup ? location.hash.slice(1).split('.') : []));
+  const [setupLink] = useState(() => (consoleClaim ? location.hash.slice(1).split('.') : []));
   const [setupId, setupSecret] = setupLink;
   const refreshKeys = async () =>
     setKeys((await api<{ passkeys: Passkey[] }>('passkeys')).passkeys);
@@ -118,6 +145,18 @@ export function App() {
         .finally(() => setLoaded(true));
       return;
     }
+    if (adminRecovery) {
+      history.replaceState(null, '', '/recover-admin');
+      if (!setupId || !setupSecret) {
+        setLoaded(true);
+        return;
+      }
+      void api<{ name: string }>('recover-admin/details', { setupId })
+        .then(({ name }) => setRecoveryName(name))
+        .catch((failure) => setError(failure.message))
+        .finally(() => setLoaded(true));
+      return;
+    }
     if (setup) {
       history.replaceState(null, '', '/setup');
       setLoaded(true);
@@ -126,6 +165,7 @@ export function App() {
     void (async () => {
       try {
         if (signOutPending()) {
+          clearDashboardNavigation();
           // A sign-out made offline: revoke the session before anything else.
           // Any server answer settles it, including a session that already ended.
           await api('sign-out', {}).catch((failure) => {
@@ -139,6 +179,8 @@ export function App() {
         // Claim the device first: the dashboard reads the pointer when it mounts.
         // IndexedDB can fail to answer at all; never hold sign-in on it.
         await within(claimDevice(user), 3000, 'Offline data did not answer.').catch(() => {});
+        if (user.isAdmin) clearDashboardNavigation();
+        else dashboardSession(user.id);
         setUser(user);
         if (connectRequest && location.pathname === '/sign-in')
           location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
@@ -149,7 +191,10 @@ export function App() {
         if (!isNetworkFailure(failure)) {
           // The server ended this session (sign-out, revocation): stop offline
           // access too. claimDevice restores it after the next sign-in.
-          if ((failure as { status?: number }).status === 401) setPreparedAccount(null);
+          if ((failure as { status?: number }).status === 401) {
+            clearDashboardNavigation();
+            setPreparedAccount(null);
+          }
           if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
         }
@@ -164,6 +209,7 @@ export function App() {
           return;
         }
         if (location.pathname === '/sign-in') history.replaceState(null, '', spaceReturn ?? '/');
+        dashboardSession(start.user.id);
         setLocal(start);
         setUser({ ...start.user, isAdmin: false });
       } finally {
@@ -173,6 +219,9 @@ export function App() {
   }, [
     settings,
     setup,
+    adminRecovery,
+    setupId,
+    setupSecret,
     invitation,
     inviteToken,
     connecting,
@@ -180,11 +229,25 @@ export function App() {
     spaceReview,
     spaceReturn,
   ]);
+  useEffect(() => {
+    // Account cancellation also invalidates old history in an online tab.
+    const changed = (event: StorageEvent) => {
+      if (
+        event.key === null ||
+        event.key === 'spinel.offline.cancellation' ||
+        (event.key === 'spinel.offline.account' && event.newValue !== user?.id)
+      )
+        clearDashboardNavigation();
+    };
+    window.addEventListener('storage', changed);
+    return () => window.removeEventListener('storage', changed);
+  }, [user?.id]);
   useLayoutEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
     const watch = () => {
       if (local.isCurrent()) return;
+      clearDashboardNavigation();
       setLocal(null);
       setUser(null);
       setUnreachable(true);
@@ -198,7 +261,7 @@ export function App() {
 
   function cancel() {
     const current = attempt.current;
-    if (!current) return;
+    if (!current || current.finishing) return;
     current.cancelled = true;
     WebAuthnAbortService.cancelCeremony();
     if (current.challengeId)
@@ -207,7 +270,10 @@ export function App() {
     setNotice('Passkey request cancelled.');
   }
   async function ceremony(register: boolean) {
-    const current: { cancelled: boolean; challengeId?: string } = { cancelled: false };
+    if (adminRecovery && attempt.current && !attempt.current.cancelled) return;
+    const current: { cancelled: boolean; challengeId?: string; finishing?: boolean } = {
+      cancelled: false,
+    };
     attempt.current = current;
     setBusy(true);
     setError('');
@@ -215,19 +281,21 @@ export function App() {
     try {
       if (!window.PublicKeyCredential || !window.isSecureContext)
         throw new Error('Passkeys need a supported browser at Spinel’s secure address.');
-      const kind = setup
-        ? 'setup'
-        : invitation
-          ? 'invite'
-          : register
-            ? 'registration'
-            : 'authentication';
+      const kind = adminRecovery
+        ? 'recover-admin'
+        : setup
+          ? 'setup'
+          : invitation
+            ? 'invite'
+            : register
+              ? 'registration'
+              : 'authentication';
       const { options, challengeId } = await api<{
         options: PublicKeyCredentialCreationOptionsJSON & PublicKeyCredentialRequestOptionsJSON;
         challengeId: string;
       }>(
         `${kind}/options`,
-        setup ? { setupId } : invitation ? { token: inviteToken, name: inviteName } : {},
+        consoleClaim ? { setupId } : invitation ? { token: inviteToken, name: inviteName } : {},
       );
       current.challengeId = challengeId;
       if (current.cancelled) {
@@ -238,29 +306,36 @@ export function App() {
         ? await startRegistration({ optionsJSON: options })
         : await startAuthentication({ optionsJSON: options });
       if (current.cancelled) return;
-      const proof = setup
+      const proof = consoleClaim
         ? await signSetupProof(
             setupSecret,
             setupId,
             options.challenge,
             response as RegistrationResponseJSON,
+            adminRecovery,
           )
         : undefined;
       if (current.cancelled) return;
+      // Verification may commit even if the browser stops waiting. Recovery cannot
+      // be cancelled after submitting the credential swap. Keep its result authoritative.
+      if (adminRecovery) {
+        current.finishing = true;
+        setFinishingRecovery(true);
+      }
       const result = await api<{ redirect?: string; name?: string }>(`${kind}/verify`, {
         challengeId,
         response,
-        ...(setup ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
+        ...(consoleClaim ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
       });
       if (current.cancelled) return;
-      if (register && !setup && !invitation) {
+      if (register && !consoleClaim && !invitation) {
         await refreshKeys();
         setNotice(`${result.name} added. You can use it to sign in.`);
       } else
         location.assign(
-          connectRequest && !setup && !invitation
+          connectRequest && !consoleClaim && !invitation
             ? `/connect?request=${encodeURIComponent(connectRequest)}`
-            : spaceReturn && !setup && !invitation && result.redirect !== '/admin'
+            : spaceReturn && !consoleClaim && !invitation && result.redirect !== '/admin'
               ? spaceReturn
               : (result.redirect ?? '/'),
         );
@@ -283,12 +358,15 @@ export function App() {
       if (attempt.current === current) {
         attempt.current = null;
         setBusy(false);
+        setFinishingRecovery(false);
       }
     }
   }
   async function signOut() {
     const hadUnsavedChanges = unsaved.current;
     if (!navigation.allow()) return;
+    stopDiagnostics();
+    clearDashboardNavigation();
     cancel();
     // Lock this device's offline data at once; it opens again only for the
     // account that next signs in online.
@@ -301,12 +379,28 @@ export function App() {
     }
     try {
       await api('sign-out', {});
-      location.assign('/sign-in');
+      // Switching to an everyday account from consent retains only its validated
+      // opaque transaction ID, never a client-provided callback URL.
+      location.assign(connecting ? signInPath() : '/sign-in');
     } catch {
       unsaved.current ||= hadUnsavedChanges;
       setError('Could not sign out. Check your connection and try again.');
     }
   }
+  if (adminRecovery)
+    return (
+      <ConsoleRecovery
+        name={recoveryName}
+        loading={!loaded}
+        validLink={Boolean(setupId && setupSecret)}
+        busy={busy}
+        finishing={finishingRecovery}
+        error={error}
+        notice={notice}
+        onRecover={() => void ceremony(true)}
+        onCancel={cancel}
+      />
+    );
   if (spaceReview) {
     if (!loaded)
       return (
@@ -332,7 +426,7 @@ export function App() {
           local={local}
           user={user}
           onExit={() => location.assign(rememberedFileHref(user.id))}
-          onSignOut={() => void signOut()}
+          onProfile={() => location.assign('/profile')}
         />
       );
     return (
@@ -343,7 +437,6 @@ export function App() {
           user={user}
           navigation={navigation}
           connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
-          onSignOut={() => void signOut()}
           onExit={() => location.assign(rememberedFileHref(user.id))}
           onConnectionState={setEditorConnection}
           renderEditor={({ spaceId, item, onDirty, onConnectionState, saveStatusTarget }) => (
@@ -375,10 +468,41 @@ export function App() {
       </>
     );
   }
+  if (setup || invitation || !user)
+    return (
+      <AuthEntry
+        mode={setup ? 'setup' : invitation ? 'invite' : 'sign-in'}
+        loading={!loaded}
+        validSetup={Boolean(setupId && setupSecret)}
+        inviteDetails={inviteDetails}
+        name={inviteName}
+        onName={setInviteName}
+        busy={busy}
+        error={error}
+        notice={notice}
+        unreachable={unreachable}
+        onPasskey={() => void ceremony(setup || invitation)}
+        onCancel={cancel}
+        onHome={() => location.assign(signInPath())}
+      />
+    );
+  if (connecting)
+    return (
+      <ConnectAssistant
+        request={connectRequest}
+        user={user}
+        onSignOut={() => void signOut()}
+        signOutError={error}
+      />
+    );
   return (
-    <div className="workspace">
+    <div
+      className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
+    >
       <Rail
         user={user}
+        compact={settings || !!user?.isAdmin}
+        files={filePlaces}
         navigation={navigation}
         onSignOut={() => void signOut()}
         connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
@@ -391,165 +515,66 @@ export function App() {
             <p role="status">Loading…</p>
           ) : unreachable ? (
             <OfflineUnreachable />
-          ) : setup ? (
-            <>
-              <p className="eyebrow">A new workspace</p>
-              <h1>Set up Spinel</h1>
-              <section className="welcome">
-                <h2>Create your admin passkey</h2>
-                <p>
-                  Your admin account manages the workspace. It cannot open documents; you will
-                  invite a separate everyday account for that.
-                </p>
-                {setupId && setupSecret ? (
-                  <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                    Create admin passkey
-                  </button>
-                ) : (
-                  <p role="alert">
-                    Open the one-time setup link printed on the server. If it expired, run the setup
-                    command again.
-                  </p>
-                )}
-              </section>
-            </>
-          ) : invitation ? (
-            <>
-              <p className="eyebrow">Your private workspace</p>
-              <h1>{inviteDetails?.recovery ? 'Recover your account' : 'Join Spinel'}</h1>
-              {inviteDetails && (
-                <section className="welcome">
-                  {inviteDetails.recovery ? (
-                    <>
-                      <h2>{inviteDetails.name}</h2>
-                      <p>
-                        Adding your new passkey will replace all old passkeys and sign out your
-                        other devices. Your account and documents stay yours.
-                      </p>
-                    </>
-                  ) : (
-                    <label>
-                      Your name
-                      <input
-                        value={inviteName}
-                        maxLength={80}
-                        onChange={(event) => setInviteName(event.target.value)}
-                        autoComplete="name"
-                      />
-                    </label>
-                  )}
-                  <button
-                    className="primary"
-                    disabled={busy || !inviteName.trim()}
-                    onClick={() => void ceremony(true)}
-                  >
-                    {inviteDetails.recovery ? 'Recover with a passkey' : 'Join with a passkey'}
-                  </button>
-                </section>
-              )}
-            </>
-          ) : !user ? (
-            <>
-              <p className="eyebrow">Your private workspace</p>
-              <h1>Sign in</h1>
-              <section className="welcome">
-                <h2>Welcome back</h2>
-                <p>Use a passkey from your browser, password manager or phone.</p>
-                <button className="primary" disabled={busy} onClick={() => void ceremony(false)}>
-                  Sign in with a passkey
-                </button>
-                <p className="placeholder">
-                  Need access or a new passkey? Contact your workspace operator.
-                </p>
-              </section>
-            </>
-          ) : connecting ? (
-            <ConnectAssistant request={connectRequest} user={user} />
-          ) : local && settings ? (
-            <>
-              <p className="eyebrow">{user.name}</p>
-              <h1>Settings</h1>
-              <ThemeSettings />
-              <p>Passkeys need a connection.</p>
-            </>
           ) : local && location.pathname === '/preview' ? (
             <p role="status">Version history needs a connection.</p>
           ) : settings ? (
-            <>
-              <p className="eyebrow">{user.name}</p>
-              <h1>Settings</h1>
-              <ThemeSettings />
-              <ProfileSettings onSaved={(profile) => setUser({ ...user, ...profile })} />
-              <section className="welcome">
-                <h2>Your passkeys</h2>
-                <p>
-                  Add a passkey from another device or password manager so you can sign in there
-                  too.
-                </p>
-                {keys.length ? (
-                  <ul>
-                    {keys.map((key) => (
-                      <li key={key.id}>
-                        <strong>{key.name}</strong>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No passkeys added yet.</p>
-                )}
-                <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                  Add a passkey
-                </button>
-              </section>
-              {!user.isAdmin && (
-                <>
-                  <AssistantConnections />
-                  <details>
-                    <summary>Advanced: personal access tokens</summary>
-                    <AccessTokens />
-                  </details>
-                </>
-              )}
-            </>
+            <ProfilePage
+              user={user}
+              offline={Boolean(local)}
+              onSaved={(profile) => setUser({ ...user, ...profile })}
+              onSignOut={() => void signOut()}
+              passkeys={
+                <section aria-labelledby="passkeys-heading">
+                  <h2 id="passkeys-heading">Your passkeys</h2>
+                  <p>
+                    Add a passkey from another device or password manager so you can sign in there
+                    too.
+                  </p>
+                  {keys.length ? (
+                    <ul className="profile-passkeys">
+                      {keys.map((key) => (
+                        <li key={key.id}>
+                          <strong>{key.name}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No passkeys added yet.</p>
+                  )}
+                  <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
+                    Add a passkey
+                  </button>
+                </section>
+              }
+            />
           ) : user.isAdmin ? (
-            <>
-              <h1>Admin</h1>
-              <section className="welcome">
-                <h2>Workspace administration</h2>
-                <p>
-                  Invite people or help them recover their passkeys. Use a separate everyday account
-                  for documents.
-                </p>
-                <AdminUsers currentId={user.id} />
-                <AssistantConnections admin />
-                <AccessTokens admin />
-                <BackupStatus />
-              </section>
-            </>
+            <AdminPage key={user.id} currentId={user.id} />
           ) : location.pathname === '/preview' ? (
             <Suspense fallback={<p>Loading preview…</p>}>
               <HistoryBrowser />
             </Suspense>
           ) : (
             <Dashboard
+              key={user.id}
               navigation={navigation}
               user={user}
               local={local}
               onConnectionState={setEditorConnection}
               onCatalogStatus={setCatalogStatus}
+              onPlaces={setFilePlaces}
               onOpen={(item) => {
                 if (item.kind === 'space') location.assign(spaceHref(item.id));
               }}
             />
           )}
-          {busy && (
+          {!adminRecovery && busy && (
             <p role="status">
               Follow the instructions from your passkey manager.{' '}
               <button onClick={cancel}>Cancel</button>
             </p>
           )}
-          {error && <p role="alert">{error}</p>}
-          {notice && <p role="status">{notice}</p>}
+          {!adminRecovery && error && <p role="alert">{error}</p>}
+          {!adminRecovery && notice && <p role="status">{notice}</p>}
         </main>
       </div>
     </div>

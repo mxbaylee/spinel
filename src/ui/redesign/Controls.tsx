@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, useRef } from 'react';
 import type { ButtonHTMLAttributes, ReactNode, RefObject } from 'react';
 import { Button as BaseButton } from '@base-ui/react/button';
 import { Menu } from '@base-ui/react/menu';
@@ -110,7 +110,7 @@ export function SegmentedChoice({
 export type Action = {
   label: string;
   icon?: ReactNode;
-  onClick?: () => void;
+  onClick?: (trigger?: HTMLButtonElement | null) => void;
   disabled?: boolean;
   destructive?: boolean;
 };
@@ -129,10 +129,12 @@ export function ActionMenu({
   triggerRef?: RefObject<HTMLButtonElement>;
   finalFocus?: () => HTMLElement | boolean | null;
 }) {
+  const ownTrigger = useRef<HTMLButtonElement>(null);
+  const actionTrigger = triggerRef ?? ownTrigger;
   return (
     <Menu.Root>
       <Menu.Trigger
-        ref={triggerRef}
+        ref={actionTrigger}
         aria-label={label}
         className={`sp-control ${primary ? 'sp-primary' : ''}`}
       >
@@ -145,7 +147,7 @@ export function ActionMenu({
               <Menu.Item
                 key={action.label}
                 disabled={action.disabled}
-                onClick={action.onClick}
+                onClick={() => action.onClick?.(actionTrigger.current)}
                 className={`sp-option ${action.destructive ? 'sp-destructive' : ''} ${action.icon ? 'sp-option-with-icon' : ''}`}
               >
                 {action.icon && (
@@ -184,6 +186,7 @@ export function Modal({
   open,
   onOpenChange,
   dismissDisabled = false,
+  finalFocus,
 }: {
   title: string;
   icon?: keyof typeof modalIcons | EntityKind;
@@ -193,6 +196,7 @@ export function Modal({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   dismissDisabled?: boolean;
+  finalFocus?: () => HTMLElement | boolean | null;
 }) {
   return (
     <Dialog.Root
@@ -209,7 +213,7 @@ export function Modal({
       {trigger && <Dialog.Trigger className="sp-control">{trigger}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Backdrop className="sp-backdrop" />
-        <Dialog.Popup className="sp-modal sp-ui">
+        <Dialog.Popup className="sp-modal sp-ui" finalFocus={finalFocus}>
           <div className="sp-modal-heading">
             <Dialog.Title className="sp-modal-title">
               <span className="sp-modal-title-icon" aria-hidden="true">

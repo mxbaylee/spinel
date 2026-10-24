@@ -293,7 +293,7 @@ async function png(page: Page) {
 async function guestOnly(f: Fixture) {
   for (const name of ['My files', 'Spinel home', 'Versions', 'Download Univer file', 'New Space'])
     await expect(f.page.getByRole('button', { name, exact: true })).toHaveCount(0);
-  await expect(f.page.getByRole('button', { name: /— Profile$/ })).toHaveCount(0);
+  await expect(f.page.getByRole('button', { name: 'Your profile', exact: true })).toHaveCount(0);
   await expect(f.page.getByRole('button', { name: /^Space actions for / })).toHaveCount(0);
   await expect(f.page.getByRole('link', { name: 'Space Trash', exact: true })).toHaveCount(0);
   await expect(f.page.getByRole('navigation', { name: 'Workspace', exact: true })).toHaveCount(0);

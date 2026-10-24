@@ -102,6 +102,40 @@ that same scaffold; existing backlog and reference/design files keep their
 formatting. All TypeScript, including existing scripts/reference code, extends
 the root `tsconfig.json` and is checked by `npm run typecheck`.
 
+## Reviewed dependency updates
+
+[Dependabot configuration](../.github/dependabot.yml) proposes weekly updates on
+Monday at 09:00 America/Los_Angeles for root npm workspaces, both Node Dockerfile
+stages, Caddy in `deploy/compose.yaml`, and GitHub Actions. Existing Univer packages
+are grouped separately for version and security updates. The updater changes
+existing dependencies; it does not authorize adding Pro packages. Keep Docker
+image digests and Actions commit SHAs immutable, with review of each replacement.
+`SPINEL_IMAGE` remains the Operator's selected built artifact.
+
+The literal `⬆️ Bump ` title prefix includes its trailing space. Dependency PRs
+use the normal review and applicable CI gates. This configuration change also
+requires full CI; neither it nor update PRs enable automatic merge or deployment.
+
+Keep the existing registry configuration. npm version updates have a seven-day
+cooldown; security updates are not delayed by that option. Both remain subject to
+curation: a blocked or too-new version waits, with no retry through another
+registry or tarball. No repository `.npmrc` or private registry is configured at
+this change; the local registry probe returned `https://registry.npmjs.org/`.
+That is not evidence that packages have passed an external curation service. If a
+curated registry is introduced, configure Dependabot for that same registry
+using its supported registry settings and secrets; do not copy developer tokens
+or leave a public fallback that bypasses its policy.
+
+After enabling on the default branch, inspect **Insights → Dependency graph →
+Dependabot** and record actual update logs, failures, or no-update results. If a
+real bump PR opens, record its generated title and **Pull request** check result.
+Fix rejected configuration or access through the normal review process, never by
+loosening curation or CI. Configuration validation and a representative title
+probe do not prove hosted execution. The retained evidence checklist and source
+review are in [SPN-100](implementation/SPN-100.md#verification-and-hosted-rollout).
+Host patching and deployment remain outside this change; the prior live-server
+routine was [retired](implementation/grooming-dependency-registration-2026-10-23.md#align-work-with-the-undeployed-product).
+
 ## Component catalogue
 
 ```sh
@@ -118,30 +152,36 @@ publishes `main` to <https://mxbaylee.github.io/spinel/> (Owner, chat
 is in the [design playbook](design/README.md#storybook); use the
 [manual design review runbook](design/review-runbook.md) when a design changes.
 
-The workflow builds once, then runs desktop, tablet and mobile reviews in
-parallel, each with a 15-minute timeout. Desktop retains light/dark and native
-editor interaction proofs; mobile retains light/dark; tablet retains its light
+The workflow builds once, then runs desktop, tablet and two mobile theme reviews
+in parallel. Desktop has a 25-minute timeout; tablet and each mobile job have
+15 minutes. Desktop retains light/dark and native
+editor interaction proofs; the mobile jobs cover light and dark separately; tablet retains its light
 captures and the intermediate 613 px mouse interaction checks. The icon suite
 runs once on desktop. The stable **Review Storybook states and interactions**
-gate requires every viewport to pass before Pages can deploy. Explicitly
+gate requires every viewport and both mobile jobs to pass before main deploys to Pages. Explicitly
 classified documentation-only PRs skip the captures; failed or missing results
 cannot pass as documentation-only.
 
 The shared build keeps its ordinary `npm ci` and registry-audit invocation. The
-three viewport installs use `npm ci --no-audit` so duplicate advisory requests
+viewport installs use `npm ci --no-audit` so duplicate advisory requests
 cannot consume each review budget. Locked installation, integrity verification,
 postinstall and all review coverage remain. This narrow response to repeated
-five-minute installs is recorded in [decision #138](https://github.com/mxbaylee/spinel/issues/138),
+five-minute installs is recorded in [decision #138](implementation/SPN-091.md#legacy-decision-138-avoid-duplicate-registry-audit-requests),
 2026-10-22; a retained audit invocation is not evidence that an unavailable
 registry completed a security audit.
 
-Download `design-review-desktop`, `design-review-tablet` and
-`design-review-mobile` for self-contained galleries. `storybook-review` is the
+Download `design-review-desktop`, `design-review-tablet`, `design-review-mobile-light`
+and `design-review-mobile-dark` for self-contained galleries. `storybook-review` is the
 shared interactive build, and `entity-icon-screenshots` is the icon gallery.
 After building locally, `npm run screenshots` runs the full review;
 `npm run screenshots -- --viewport mobile <story IDs>` runs one viewport and
 optional focused stories. Only manual CI runs can narrow story IDs; PRs always
 review the full catalog.
+Add `--theme light` or `--theme dark` with the mobile viewport to reproduce one
+CI partition; default `all` retains both. Both jobs run every requested story
+and the shared-control checks for their theme. Fixed-light auxiliary journeys
+run once in the light job. The split preserves coverage after repeated catalog
+timeouts; see [the SPN-081 decision](implementation/SPN-081.md#split-mobile-review-by-theme).
 
 CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
 and **Playwright smoke**. These are required by the active default-branch ruleset;
@@ -159,14 +199,14 @@ see [the process](todo/process.md#pull-requests-and-main).
   adapter, behind `server/database.ts`. Mixing it with `node:sqlite` in one process
   failed repeated reopen tests and risks independent SQLite lock registries.
   WAL mode and foreign keys remain enabled without resetting migration metadata.
-  [Decision #68](https://github.com/mxbaylee/spinel/issues/68), 2026-10-18,
-  supersedes the original driver choice in [#2](https://github.com/mxbaylee/spinel/issues/2).
+  [Decision #68](implementation/SPN-025.md#legacy-decision-68-single-sqlite-runtime-and-consistent-copies), 2026-10-18,
+  supersedes the original driver choice in [#2](implementation/SPN-001.md#legacy-decision-2-one-process-and-initial-sqlite-adapter).
 - Startup upgrades the workspace schema for the [Space foundation](design/spaces.md#implemented-foundation)
   before the collaboration SDK opens its database connection. The migration
   preserves existing item IDs, native foreign keys, indexes and cleanup triggers;
   incomplete or unrecognized schemas fail startup instead of being guessed or
   partially upgraded. Native children remain inaccessible through ordinary item lookup.
-  [Decision #135](https://github.com/mxbaylee/spinel/issues/135), 2026-10-21;
+  [Decision #135](implementation/SPN-078.md#legacy-decision-135-durable-space-identity-and-scope), 2026-10-21;
   [implementation and verification](implementation/SPN-078.md).
 - Spaces are enabled by default at `/spaces`; `/review/spaces` remains an alias
   from SPN-091. The legacy `SPINEL_SPACE_REVIEW=0` option (or
@@ -177,18 +217,18 @@ see [the process](todo/process.md#pull-requests-and-main).
   metadata/lifecycle composes roots with ordinary files. Images, Formulas, MCP,
   existing exports, account history and selected-child offline preparation reuse
   those scoped services. The option gives Operators no document privileges.
-  The original safe sequencing is [decision #137](https://github.com/mxbaylee/spinel/issues/137);
-  the completed boundary is [decision #143](https://github.com/mxbaylee/spinel/issues/143)
+  The original safe sequencing is [decision #137](implementation/SPN-091.md#legacy-decision-137-default-off-space-review-stage);
+  the completed boundary is [decision #143](implementation/SPN-092.md#legacy-decision-143-exact-space-capabilities-across-integrations)
   and the [SPN-092 implementation contract](implementation/SPN-092.md).
 - React and React DOM are pinned to 18.3.1. On 2026-10-17, published
   `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support
   React 16–19; [Univer's UI package](https://github.com/dream-num/univer/blob/dev/packages/ui/package.json)
   uses 18.3.1 in development. Matching that baseline and the existing React 18
   types reduces editor integration work. Decided 2026-10-17 in
-  [#1](https://github.com/mxbaylee/spinel/issues/1). Recheck when adding editors.
+  [#1](implementation/SPN-001.md#legacy-decision-1-react-version). Recheck when adding editors.
 - Oxlint works alongside the existing TypeScript 7 compiler; typescript-eslint
   8.71.2 requires TypeScript below 6.1. Prettier handles scaffold formatting.
-  Decided 2026-10-17 in [#3](https://github.com/mxbaylee/spinel/issues/3).
+  Decided 2026-10-17 in [#3](implementation/SPN-001.md#legacy-decision-3-compiler-compatible-linting).
 - Build editors on the open-source Univer SDK (`@univerjs/*`, Apache-2.0).
   Univer Workspace is reference material only, never forked or deployed.
   Copied code must preserve license headers, note modifications and appear in

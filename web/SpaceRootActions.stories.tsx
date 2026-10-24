@@ -45,7 +45,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 async function choose(canvasElement: HTMLElement, name: string) {
   await userEvent.click(
-    within(canvasElement).getByRole('button', { name: 'Space actions for Research Space' }),
+    await within(canvasElement).findByRole('button', { name: 'Space actions for Research Space' }),
   );
   await userEvent.click(
     await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name }),

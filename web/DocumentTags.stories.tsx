@@ -4,6 +4,7 @@ import { fireEvent, userEvent, within } from 'storybook/test';
 import type { FileItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { DocumentTags } from './DocumentTags.tsx';
+import { assertDialogControls } from '../.storybook/dialogBounds.ts';
 
 const id = '00000000-0000-4000-8000-000000000011';
 const item = (tags: string[]): FileItem => ({
@@ -25,6 +26,12 @@ const meta = {
   title: 'Current production/Dashboard/DocumentTags',
   component: DocumentTags,
   args: { item: item([]), onChanged: () => {}, onClose: () => {} },
+  play: async ({ canvasElement, args }) =>
+    assertDialogControls(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+        name: `Tags for ${args.item.name}`,
+      }),
+    ),
   // The dialog keeps the item in the dashboard; hold it here so adding a tag shows up.
   render: ({ item: initial, ...args }) => {
     const [current, setCurrent] = useState(initial);
@@ -35,12 +42,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const addTag = async (canvasElement: HTMLElement) => {
-  // The tags dialog is modal and rendered in the canvas.
-  const dialog = within(canvasElement).getByRole('dialog', { hidden: true });
+  // Shared dialogs render through a portal outside the story canvas.
+  const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+    name: 'Tags for Quarterly budget',
+  });
   // The field is focused when the dialog opens, which userEvent.type does not
   // register with React, so set the value with a change event instead.
   fireEvent.change(within(dialog).getByLabelText('Tag'), { target: { value: 'budget' } });
   await userEvent.click(within(dialog).getByRole('button', { name: 'Add tag' }));
+  await assertDialogControls(dialog);
 };
 
 /** A document with no tags yet; the datalist suggests tags used elsewhere. */

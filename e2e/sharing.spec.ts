@@ -46,6 +46,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
   for (const tab of [page, other]) tab.on('pageerror', (e) => errors.push(e.message));
   async function create(name: string, type: string) {
     await page.getByRole('button', { name: 'New', exact: true }).click();
+    await page.getByRole('menuitem', { name: type, exact: true }).click();
     const form = page.getByRole('form', { name: 'New item' });
     await form.getByRole('combobox', { name: 'Type', exact: true }).selectOption({ label: type });
     await form.getByLabel('Name', { exact: true }).fill(name);
@@ -62,7 +63,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await tab.keyboard.type(value);
     await tab.keyboard.press('Enter');
   }
-  const shareRegion = page.getByRole('region', { name: 'Share Shared plans', exact: true });
+  const shareRegion = page.getByRole('dialog', { name: 'Share Shared plans', exact: true });
   async function grant(role: string) {
     await shareRegion
       .getByRole('combobox', { name: `Access for ${collaborator.name}`, exact: true })
@@ -70,27 +71,36 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await shareRegion
       .getByRole('button', { name: `Apply access for ${collaborator.name}`, exact: true })
       .click();
-    await expect(shareRegion.getByRole('status')).toHaveText(
-      `Access updated for ${collaborator.name}.`,
-    );
+    await expect(
+      shareRegion
+        .getByRole('status')
+        .filter({ hasText: `Access updated for ${collaborator.name}.` }),
+    ).toHaveText(`Access updated for ${collaborator.name}.`);
   }
   try {
     await page.goto('/');
     await create('Shared plans', 'Folder');
-    await page.getByRole('button', { name: 'Share Shared plans', exact: true }).click();
+    await page.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
     await grant('editor');
-    const address = await shareRegion.getByLabel('Share address').inputValue();
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await shareRegion.getByRole('button', { name: 'Copy account link', exact: true }).click();
+    await expect(shareRegion.getByText('Account link copied.', { exact: true })).toBeVisible();
+    const address = await page.evaluate(() => navigator.clipboard.readText());
     await other.goto(address);
     await expect(other.getByRole('heading', { name: 'Shared plans', exact: true })).toBeVisible();
     await expect(other.getByRole('button', { name: 'New', exact: true })).toBeHidden();
-    await expect(
-      other.getByRole('button', { name: 'Share Shared plans', exact: true }),
-    ).toBeHidden();
-    await shareRegion.getByRole('button', { name: 'Close sharing' }).click();
-    await page
-      .getByRole('complementary', { name: 'Folders' })
-      .getByRole('button', { name: 'Shared plans', exact: true })
-      .click();
+    await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    const folderMenu = other.getByRole('menu', {
+      name: 'More actions for Shared plans',
+      exact: true,
+    });
+    await expect(folderMenu).toBeVisible();
+    await expect(other.getByRole('menuitem', { name: 'Share…', exact: true })).toHaveCount(0);
+    await other.keyboard.press('Escape');
+    await expect(folderMenu).toBeHidden();
+    await shareRegion.getByRole('button', { name: 'Done' }).click();
+    await page.getByRole('button', { name: 'Shared plans Folder', exact: true }).click();
     // Create both documents after the grant to prove inheritance applies to future children.
     await create('Nested', 'Folder');
     await page.getByRole('button', { name: 'Nested Folder', exact: true }).click();
@@ -116,8 +126,13 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       .getByRole('navigation', { name: 'Breadcrumb' })
       .getByRole('button', { name: 'Shared plans', exact: true })
       .click();
-    await page.getByRole('button', { name: 'Share Shared plans', exact: true }).click();
-    await other.getByRole('button', { name: 'Refresh folder' }).click();
+    await page.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
+    // Return to the collaborator before reopening its previously closed menu.
+    await other.bringToFront();
+    await other.getByRole('button', { name: 'More actions for Shared plans', exact: true }).click();
+    await expect(folderMenu).toBeVisible();
+    await other.getByRole('menuitem', { name: 'Refresh folder', exact: true }).click();
     await other.getByRole('button', { name: 'Nested Folder', exact: true }).click();
     await expect(
       other.getByRole('button', { name: 'Shared budget Sheet', exact: true }),
@@ -220,7 +235,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await other.keyboard.press('Control+c');
     await expect.poll(() => other.evaluate(() => navigator.clipboard.readText())).toContain('99');
     other.once('dialog', (dialog) => dialog.dismiss());
-    await other.getByRole('link', { name: 'Settings', exact: true }).click();
+    await other.getByRole('link', { name: 'Your profile', exact: true }).click();
     await expect(other).toHaveURL(new RegExp(sheetId));
     // A fresh viewer uses the SDK's read-only mode and cannot mutate either format.
     other.once('dialog', (dialog) => dialog.accept());

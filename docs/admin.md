@@ -1,26 +1,29 @@
 # User and passkey administration
 
-Planned SPN-032 diagnostics: [the implementation record](implementation/SPN-032.md)
-defines a separate event/log/metric database and Operator-only download/truncate
+SPN-032 diagnostics: [the operator guide](diagnostics.md) describes a separate
+event/log/metric database and Operator-only download/truncate
 controls, with no query UI. Automatic records may contain user/file IDs and route
 templates for correlation, but no document content/names, credentials or raw URLs. These
-controls are not implemented yet and do not expand document-access permissions.
+controls do not expand document-access permissions. Validation status remains in
+[the implementation record](implementation/SPN-032.md).
 SPN-098 adds intentionally submitted feedback text to that same export, with
 availability flags on the admin user list. Truncation deletes feedback as well as
 logs; see [the feedback contract](implementation/SPN-098.md). Automatic document
 capture remains excluded. Health includes separate diagnostics database size/growth,
 application/collaboration storage (including WAL) and volume free space.
 
-The Operator's `/admin` page lists every account, its admin/member role, whether
-it is disabled, and its passkeys with provider, creation time and last use. It
-also includes the existing invitation and recovery controls. Only metadata is
+The Operator's `/admin` page has People, Invites, Connections, and Backups & health
+sections. People lists every account, its Operator/Member role and active/disabled
+status. **Actions → Manage passkeys** shows provider, creation time and last use.
+Invites contains the existing invitation and recovery controls. Only metadata is
 shown: administrators never gain access to documents, images, shares or history.
 Non-admins, including signed-out callers, receive a not-found response for the
 admin page and user/invitation administration APIs.
 
 ## Remove a passkey
 
-Choose **Remove …**, read the confirmation and confirm. Cancel changes nothing.
+In **People → Actions → Manage passkeys**, choose the credential’s
+**Actions → Remove passkey**, read the confirmation and confirm. Cancel changes nothing.
 The credential is deleted, its authenticated sessions end, and its open editors
 are disconnected. A synced passkey can cover several physical devices; removal
 applies to the credential everywhere it is used.
@@ -40,7 +43,7 @@ Removing the key that authenticated your own session sends you to sign-in.
 
 ## Disable an account
 
-Choose **Disable account** and confirm. Its sessions end and live editors are
+In People, choose the account’s **Actions → Disable account** and confirm. Its sessions end and live editors are
 revalidated before the API reports success. No user row is deleted: documents,
 images, history, ownership and sharing grants remain. Other active collaborators
 keep their existing access. Unused recovery invites for the disabled account and
@@ -62,15 +65,16 @@ This action permanently invalidates old passkeys, sessions and pending sign-in
 ceremonies, unused invitations, assistant connections, OAuth credentials and
 personal access tokens. It never restores a previous credential.
 
-Then create a **Recovery** invitation for that account using the existing Invites
-section. No invite is created or sent automatically. The person registers a new
+Then choose **Actions → Create recovery invite**, or open **Invites → Create
+invite** and select that active account. The recipient list is freshly loaded and
+an account that is no longer eligible must be changed explicitly. No invite is created or sent automatically. The person registers a new
 passkey through that invitation; transferred files do not return to them.
 
 Reactivation preserves the same owner's deliberate document-sharing settings.
 An otherwise active, unexpired guest link can work again once its owner is active.
 A link already turned off or rotated stays invalid. Document links grant scoped
 document access, not an account sign-in. This distinction is deliberate in
-[decision #141](https://github.com/mxbaylee/spinel/issues/141); ownership handover
+[decision #141](implementation/SPN-064.md#legacy-decision-141-same-owner-account-reactivation); ownership handover
 uses the stricter link invalidation below.
 
 ## Hand over a disabled member's work
@@ -120,8 +124,30 @@ undo a committed handover: its message explicitly says the ownership changed
 (or account reactivated) and asks the Operator to refresh accounts. Current
 request/write authorization still applies; refresh the accounts and confirmation
 preview before retrying. A repeated handover cannot create another wrapper for
-the already transferred set. [Decision #140](https://github.com/mxbaylee/spinel/issues/140)
+the already transferred set. [Decision #140](implementation/SPN-064.md#legacy-decision-140-disable-account-ownership-handover)
 records the confirmation, privacy and persona tradeoffs.
+
+## Section navigation and invitation privacy
+
+The compact header retains appearance and Your profile; sign-out is available in
+Your profile. Section navigation is disabled while an access mutation is pending,
+including browser hash navigation, so its result stays visible. Finished failures
+remain explicit; closing them does not assert that a committed change rolled back.
+
+Create invite opens a dialog. After success, copy the once-only address or select
+it manually if clipboard access fails. Refreshing the list within Invites retains
+that in-memory address; leaving the section or reloading discards it. Existing
+invitation listings never reconstruct the secret. Recipient eligibility is read
+again when entering Invites, including a handoff from a People action.
+
+Connections exposes account/client names, origins and activity only; token
+activity is behind its named disclosure and never reveals secrets or offers token
+creation. Backups & health shows the existing configuration, running/error/overdue
+state and last-success/attempt timestamps, with refresh and a backup-guide link.
+Server health adds memory, connections, storage and real job observations;
+[diagnostics](diagnostics.md) documents interpretation and export/clear. Backup
+restore verification remains SPN-063. [SPN-082](implementation/SPN-082.md) records the
+layout and asynchronous lifetime decisions without changing authorization.
 
 ## API and storage
 
@@ -143,8 +169,8 @@ The session schema adds a nullable credential foreign key idempotently; deleting
 a credential cascades its attributed sessions and pending challenges. Account
 removal deliberately uses `disabled=1` rather than deleting ownership rows.
 
-[Decision #23](https://github.com/mxbaylee/spinel/issues/23) requires preservation
-of document ownership on disable. [Decision #58](https://github.com/mxbaylee/spinel/issues/58)
+[Decision #23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming) requires preservation
+of document ownership on disable. [Decision #58](implementation/SPN-005.md#legacy-decision-58-credential-specific-revocation)
 records credential attribution, legacy-session handling and operator lockout
 protection: safe revocation for the Operator, retained private documents for the
 Owner, independent access for Collaborators and no new privilege for Link guests.
@@ -157,4 +183,4 @@ creation, last use and revoked status). Secrets and document contents are never
 shown. Each everyday account creates and revokes its own tokens from Settings;
 disabling the account also blocks all its connections and tokens. Admin accounts cannot create a
 document token. See [the MCP guide](mcp.md), decision
-[#111](https://github.com/mxbaylee/spinel/issues/111).
+[#111](implementation/SPN-034.md#legacy-decision-111-owner-requested-mcp-through-oauth).

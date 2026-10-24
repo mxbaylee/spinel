@@ -55,7 +55,7 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
   );
   try {
     // Use the actual passkey ceremony after the opaque authorization request survives sign-out.
-    await page.goto('/settings');
+    await page.goto('/settings#passkeys');
     await page.getByRole('button', { name: 'Add a passkey' }).click();
     await expect(page.getByRole('listitem').filter({ hasText: 'Passkey' })).toHaveCount(1);
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
@@ -95,14 +95,14 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
     await expect(consent).toContainText(user.name);
     await expect(consent).toContainText('Edit documents you have permission to edit.');
     await mkdir('test-results/theme-screenshots', { recursive: true });
-    for (const variant of ['light', 'dark', 'phone'] as const) {
-      const theme = variant === 'dark' ? 'dark' : 'light';
-      await page.setViewportSize({ width: variant === 'phone' ? 390 : 1280, height: 900 });
+    for (const variant of ['light', 'dark', 'phone-light', 'phone-dark'] as const) {
+      const theme = variant.endsWith('dark') ? 'dark' : 'light';
+      await page.setViewportSize({ width: variant.startsWith('phone') ? 390 : 1280, height: 900 });
       await page.emulateMedia({ colorScheme: theme });
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.screenshot({
-        path: `test-results/theme-screenshots/mcp-${info.project.name}-consent-${variant}.png`,
+        path: `test-results/theme-screenshots/spn-083-consent-${variant}-${info.project.name}.png`,
         fullPage: true,
       });
     }
@@ -146,7 +146,7 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
     expect(listed.result).toBeDefined();
     expect(listed.result?.isError).not.toBe(true);
 
-    await page.goto(`${baseURL}/settings`);
+    await page.goto(`${baseURL}/settings#connections`);
     const connections = page.getByRole('region', { name: 'Connected assistants' });
     await expect(connections.getByRole('listitem')).toContainText('Chosen desktop assistant');
     await expect(connections.getByRole('listitem')).toContainText('https://assistant.example');
@@ -164,7 +164,7 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
       });
     }
     const admin = await adminContext.newPage();
-    await admin.goto(`${baseURL}/admin`);
+    await admin.goto(`${baseURL}/admin#connections`);
     const metadata = admin.getByRole('region', { name: 'Connected assistants' });
     const connectionRow = metadata.getByRole('listitem').filter({ hasText: user.name });
     await expect(connectionRow).toContainText('Chosen desktop assistant');

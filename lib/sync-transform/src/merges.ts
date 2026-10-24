@@ -61,7 +61,7 @@ export function cuts(range: IRange, axis: Axis, edit: AxisEdit): boolean {
  * edit is dropped on both screens rather than grown or shrunk. Univer's merge
  * listener leaves a cut merge in place, so resizing it would differ from what
  * Univer does for one person; losing the new merge beats screens that differ.
- * Diagnostics (SPN-032, not built): `sync.edit.dropped`, rule 'merge-cut'.
+ * Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule 'merge-cut'.
  */
 export function cutBy(mutation: Mutation, axis: Axis, edit: AxisEdit): Mutation[] {
   if (mutation.id !== mergeIds.add) return [];

@@ -21,7 +21,7 @@ Admin accounts can't view, edit or create documents.
   access, and recovery that has been tried, not just written down.
 - The accepted test deployment was tailnet-only and has been retired. The Owner
   chose public app HTTPS with private management for the later SPN-038 redeployment;
-  its timing and internet-facing acceptance remain pending (decision #40).
+  its timing and internet-facing acceptance remain pending (decision [#40](../implementation/SPN-038.md#legacy-decision-40-public-launch-timing)).
 - Production begins with SPN-038 at `spinel.baylee.dev`, the last launch
   prerequisite; optional CSV import (SPN-093) and document/format plugins (SPN-094) follow launch.
   Before that, database choices can change without a live-production migration;

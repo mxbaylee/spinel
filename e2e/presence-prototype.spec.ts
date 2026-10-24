@@ -76,6 +76,16 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
       window.dispatchEvent(new StorageEvent('storage', { key: 'spinel-theme', newValue: value }));
     }, value);
   };
+  const captureProfile = async (name: string) => {
+    // Even an invisible account tooltip must not widen the profile page.
+    await expect
+      .poll(() => other.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+      .toBe(true);
+    await other.screenshot({
+      path: `test-results/theme-screenshots/${name}-${info.project.name}.png`,
+      fullPage: true,
+    });
+  };
   try {
     await other.goto(`${baseURL}/settings`);
     await other.getByLabel('Display name', { exact: true }).fill('Iris Garden');
@@ -92,38 +102,44 @@ test('saved profile: picker, rail and two Sheet peers share icons and colours', 
     await expect(other.getByRole('button', { name: 'Flower', exact: true })).toBeVisible();
     for (const mode of ['light', 'dark'] as const) {
       await theme(other, mode);
-      await other.screenshot({
-        path: `test-results/theme-screenshots/profile-picker-${mode}-${info.project.name}.png`,
-        fullPage: true,
-      });
+      await captureProfile(`profile-picker-${mode}`);
     }
     await other.setViewportSize({ width: 390, height: 844 });
-    await other.screenshot({
-      path: `test-results/theme-screenshots/profile-picker-phone-${info.project.name}.png`,
-    });
+    await captureProfile('profile-picker-phone');
     await other.setViewportSize({ width: 1440, height: 1100 });
     await other.getByLabel('Search icons', { exact: true }).press('ArrowDown');
     await expect(other.getByRole('button', { name: 'Flower', exact: true })).toBeFocused();
     await other.keyboard.press('Enter');
+    await other.getByRole('button', { name: 'Choose color', exact: true }).click();
     await other.getByRole('button', { name: 'Profile colour: Info, strong', exact: true }).click();
     await other.getByRole('button', { name: 'Save profile', exact: true }).click();
     await expect(other.getByRole('status').filter({ hasText: 'Profile saved.' })).toBeVisible();
     await expect(
       other.locator('.profile-rail-avatar [data-profile-icon="lucide:flower"]'),
     ).toBeVisible();
+    // Reopen the picker after saving so review captures show the persisted selection.
+    await other.getByRole('button', { name: 'Choose color', exact: true }).click();
+    const colorPicker = other.getByRole('dialog', { name: 'Choose your color', exact: true });
+    await expect(colorPicker).toBeVisible();
+    await expect(
+      colorPicker.getByRole('button', { name: 'Profile colour: Info, strong', exact: true }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    for (const mode of ['light', 'dark'] as const) {
+      await theme(other, mode);
+      await captureProfile(`profile-color-picker-${mode}`);
+    }
+    await other.setViewportSize({ width: 390, height: 844 });
+    await captureProfile('profile-color-picker-phone');
+    await other.keyboard.press('Escape');
+    await expect(colorPicker).not.toBeVisible();
+    await other.setViewportSize({ width: 1440, height: 1100 });
     await mkdir('test-results/theme-screenshots', { recursive: true });
     for (const mode of ['light', 'dark'] as const) {
       await theme(other, mode);
-      await other.screenshot({
-        path: `test-results/theme-screenshots/profile-settings-${mode}-${info.project.name}.png`,
-        fullPage: true,
-      });
+      await captureProfile(`profile-settings-${mode}`);
     }
     await other.setViewportSize({ width: 390, height: 844 });
-    await other.screenshot({
-      path: `test-results/theme-screenshots/profile-settings-phone-${info.project.name}.png`,
-      fullPage: true,
-    });
+    await captureProfile('profile-settings-phone');
     await other.setViewportSize({ width: 1440, height: 1100 });
     await other.reload();
     await expect(other.getByLabel('Display name', { exact: true })).toHaveValue('Iris Garden');

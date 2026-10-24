@@ -98,7 +98,7 @@ const meta = {
     user,
     selection: selection(path),
     onExit: fn(),
-    onSignOut: fn(),
+    onProfile: fn(),
     viewer: <NativeViewerFixture />,
   },
 } satisfies Meta<typeof OfflineSpaceView>;
@@ -129,6 +129,12 @@ export const Light: Story = {
   play: ({ canvasElement }) => checkCopies(canvasElement),
 };
 export const Dark: Story = { ...Light, globals: { theme: 'dark' } };
+export const ProfileNavigation: Story = {
+  play: async ({ canvasElement, args }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Your profile' }));
+    await expect(args.onProfile).toHaveBeenCalled();
+  },
+};
 export const Phone: Story = {
   globals: { viewport: { value: 'phone', isRotated: false } },
   play: ({ canvasElement }) => checkCopies(canvasElement, true),
@@ -137,7 +143,7 @@ export const Phone: Story = {
 export const ExplicitPageNotPrepared: Story = {
   render: (args) => (
     <RouteFixture href={path + '?item=' + id(99)}>
-      <OfflineSpace local={local} user={user} onExit={args.onExit} onSignOut={args.onSignOut} />
+      <OfflineSpace local={local} user={user} onExit={args.onExit} onProfile={args.onProfile} />
     </RouteFixture>
   ),
   play: async ({ canvasElement }) => {

@@ -1,0 +1,120 @@
+[
+  {
+    "name": "native-doc",
+    "pages": [
+      {
+        "number": 1,
+        "view": [
+          0,
+          0,
+          450,
+          525
+        ],
+        "text": "SPN-097 native Doc layout  Paragraph 01: Native public layout must preserve every word and paginate this bounded document. Paragraph 02: Native public layout must preserve every word and paginate this bounded document. Paragraph 03: Native public layout must preserve every word and paginate this bounded document. Paragraph 04: Native public layout must preserve every word and paginate this bounded document. Paragraph 05: Native public layout must preserve every word and paginate this bounded document. Paragraph 06: Native public layout must preserve every word and paginate this bounded document. Paragraph 07: Native public layout must preserve every word and paginate this bounded document. Paragraph 08: Native public layout must preserve every word and paginate this bounded document. Paragraph 09: Native public layout must preserve every word and paginate this bounded document. Paragraph 10: Native public layout must preserve every word and paginate this bounded document. Paragraph 11: Native public layout must preserve every word and paginate this bounded document. Paragraph 12: Native public layout must preserve every word and paginate this bounded document."
+      },
+      {
+        "number": 2,
+        "view": [
+          0,
+          0,
+          450,
+          525
+        ],
+        "text": "Paragraph 13: Native public layout must preserve every word and paginate this bounded document. Paragraph 14: Native public layout must preserve every word and paginate this bounded document. Paragraph 15: Native public layout must preserve every word and paginate this bounded document. Paragraph 16: Native public layout must preserve every word and paginate this bounded document. Paragraph 17: Native public layout must preserve every word and paginate this bounded document. Paragraph 18: Native public layout must preserve every word and paginate this bounded document. Paragraph 19: Native public layout must preserve every word and paginate this bounded document. Paragraph 20: Native public layout must preserve every word and paginate this bounded document. Paragraph 21: Native public layout must preserve every word and paginate this bounded document. Paragraph 22: Native public layout must preserve every word and paginate this bounded document."
+      },
+      {
+        "number": 3,
+        "view": [
+          0,
+          0,
+          450,
+          525
+        ],
+        "text": "ROW-01   Prepared value 7 ROW-02   Prepared value 14 ROW-03   Prepared value 21 ROW-04   Prepared value 28 ROW-05   Prepared value 35 ROW-06   Prepared value 42 ROW-07   Prepared value 49 ROW-08   Prepared value 56 ROW-09   Prepared value 63 ROW-10   Prepared value 70 ROW-11   Prepared value 77 ROW-12   Prepared value 84 ROW-13   Prepared value 91 ROW-14   Prepared value 98 ROW-15   Prepared value 105 ROW-16   Prepared value 112 ROW-17   Prepared value 119"
+      },
+      {
+        "number": 4,
+        "view": [
+          0,
+          0,
+          450,
+          525
+        ],
+        "text": "ROW-18   Prepared value 126 ROW-19   Prepared value 133 ROW-20   Prepared value 140 ROW-21   Prepared value 147 ROW-22   Prepared value 154 ROW-23   Prepared value 161 ROW-24   Prepared value 168 ROW-25   Prepared value 175 ROW-26   Prepared value 182 ROW-27   Prepared value 189 ROW-28   Prepared value 196 ROW-29   Prepared value 203 ROW-30   Prepared value 210"
+      },
+      {
+        "number": 5,
+        "view": [
+          0,
+          0,
+          450,
+          525
+        ],
+        "text": "EXPLICIT BREAK - final paragraph"
+      }
+    ],
+    "metadata": {
+      "PDFFormatVersion": "1.4",
+      "Language": null,
+      "EncryptFilterName": null,
+      "IsLinearized": false,
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "IsCollectionPresent": false,
+      "IsSignaturesPresent": false,
+      "Title": "Synthetic native layout feasibility",
+      "Creator": "SPN-097 probe",
+      "Producer": "Skia/PDF m156"
+    },
+    "errors": []
+  },
+  {
+    "name": "native-sheet",
+    "pages": [
+      {
+        "number": 1,
+        "view": [
+          0,
+          0,
+          595,
+          842
+        ],
+        "text": "R2 C1   R2 C2   R2 C4   R2 C5   R2 C6 R3 C1   R3 C2   R3 C4   R3 C5   R3 C6 R4 C1   R4 C2   R4 C4   R4 C5   R4 C6 R6 C1   R6 C2   R6 C4   R6 C5   R6 C6 R7 C1   R7 C2   R7 C4   R7 C5   R7 C6 R8 C1   R8 C2   R8 C4   R8 C5   R8 C6 R9 C1   R9 C2   R9 C4   R9 C5   R9 C6 R10 C1   R10 C2   R10 C4   R10 C5   R10 C6 R11 C1   R11 C2   R11 C4   R11 C5   R11 C6 R12 C1   R12 C2   R12 C4   R12 C5   R12 C6 R13 C1   R13 C2   R13 C4   R13 C5   R13 C6 R14 C1   R14 C2   R14 C4   R14 C5   R14 C6 R15 C1   R15 C2   R15 C4   R15 C5   R15 C6 R16 C1   R16 C2   R16 C4   R16 C5   R16 C6 R17 C1   R17 C2   R17 C4   R17 C5   R17 C6 R18 C1   R18 C2   R18 C4   R18 C5   R18 C6 R19 C1   R19 C2   R19 C4   R19 C5   R19 C6 R20 C1   R20 C2   R20 C4   R20 C5   R20 C6 R21 C1   R21 C2   R21 C4   R21 C5   R21 C6 R22 C1   R22 C2   R22 C4   R22 C5   R22 C6 R23 C1   R23 C2   R23 C4   R23 C5   R23 C6 R24 C1   R24 C2   R24 C4   R24 C5   R24 C6 R25 C1   R25 C2   R25 C4   R25 C5   R25 C6 R26 C1   R26 C2   R26 C4   R26 C5   R26 C6 R27 C1   R27 C2   R27 C4   R27 C5   R27 C6 R28 C1   R28 C2   R28 C4   R28 C5   R28 C6 R29 C1   R29 C2   R29 C4   R29 C5   R29 C6 R30 C1   R30 C2   R30 C4   R30 C5   R30 C6 R31 C1   R31 C2   R31 C4   R31 C5   R31 C6 R32 C1   R32 C2   R32 C4   R32 C5   R32 C6 R33 C1   R33 C2   R33 C4   R33 C5   R33 C6 R34 C1   R34 C2   R34 C4   R34 C5   R34 C6 R35 C1   R35 C2   R35 C4   R35 C5   R35 C6 R36 C1   R36 C2   R36 C4   R36 C5   R36 C6 R37 C1   R37 C2   R37 C4   R37 C5   R37 C6 R38 C1   R38 C2   R38 C4   R38 C5   R38 C6 R39 C1   R39 C2   R39 C4   R39 C5   R39 C6 R40 C1   R40 C2   R40 C4   R40 C5   R40 C6 R41 C1   R41 C2   R41 C4   R41 C5   R41 C6 R42 C1   R42 C2   R42 C4   R42 C5   R42 C6 R43 C1   R43 C2   R43 C4   R43 C5   R43 C6 R44 C1   R44 C2   R44 C4   R44 C5   R44 C6 R45 C1   R45 C2   R45 C4   R45 C5   R45 C6 R46 C1   R46 C2   R46 C4   R46 C5   R46 C6 R47 C1   R47 C2   R47 C4   R47 C5   R47 C6 R48 C1   R48 C2   R48 C4   R48 C5   R48 C6  Merged heading"
+      },
+      {
+        "number": 2,
+        "view": [
+          0,
+          0,
+          595,
+          842
+        ],
+        "text": "R49 C1   R49 C2   R49 C4   R49 C5   R49 C6 R50 C1   R50 C2   R50 C4   R50 C5   R50 C6 R51 C1   R51 C2   R51 C4   R51 C5   R51 C6 R52 C1   R52 C2   R52 C4   R52 C5   R52 C6 R53 C1   R53 C2   R53 C4   R53 C5   R53 C6 R54 C1   R54 C2   R54 C4   R54 C5   R54 C6 R55 C1   R55 C2   R55 C4   R55 C5   R55 C6 R56 C1   R56 C2   R56 C4   R56 C5   R56 C6 R57 C1   R57 C2   R57 C4   R57 C5   R57 C6 R58 C1   R58 C2   R58 C4   R58 C5   R58 C6 R59 C1   R59 C2   R59 C4   R59 C5   R59 C6 R60 C1   R60 C2   R60 C4   R60 C5   R60 C6 R61 C1   R61 C2   R61 C4   R61 C5   R61 C6 R62 C1   R62 C2   R62 C4   R62 C5   R62 C6 R63 C1   R63 C2   R63 C4   R63 C5   R63 C6 R64 C1   R64 C2   R64 C4   R64 C5   R64 C6 R65 C1   R65 C2   R65 C4   R65 C5   R65 C6 R66 C1   R66 C2   R66 C4   R66 C5   R66 C6"
+      },
+      {
+        "number": 3,
+        "view": [
+          0,
+          0,
+          595,
+          842
+        ],
+        "text": "NARROW-END"
+      }
+    ],
+    "metadata": {
+      "PDFFormatVersion": "1.4",
+      "Language": null,
+      "EncryptFilterName": null,
+      "IsLinearized": false,
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "IsCollectionPresent": false,
+      "IsSignaturesPresent": false,
+      "Title": "Synthetic Sheet feasibility",
+      "Creator": "SPN-097 probe",
+      "Producer": "Skia/PDF m156"
+    },
+    "errors": []
+  }
+]

@@ -3,12 +3,12 @@ import {
   completeFormula,
   moveFormulaBindings,
   quoteFormulaName,
-  parseFormula,
   type FormulaReference,
   type FormulaCompletion,
   FORMULA_FORMATS,
   FORMULA_LIMITS,
   FORMULA_MESSAGES,
+  FormulaSaveError,
   formulaDisplayRows,
   type DocFormula,
   type FormulaDefinition,
@@ -20,6 +20,11 @@ import { documentPath } from './documentAccess.ts';
 import './docFormulas.css';
 import { palettes } from '../src/ui/palette.ts';
 import { requestFormula } from '../src/shared/formulaRequest.ts';
+import { isUuid, observeOperation } from '@spinel/diagnostics';
+import type { DiagnosticContext } from '@spinel/diagnostics';
+import { useDiagnostics } from './useDiagnostics.tsx';
+import type { DiagnosticOperation } from './diagnosticsAccount.ts';
+import { observedFormulaParse } from './formulaDiagnostics.ts';
 
 // Univer's document is paper even when the surrounding application uses dark mode.
 export const formulaPaperColors = {
@@ -35,6 +40,7 @@ export async function formulaRequest<T>(
   body?: unknown,
   signal?: AbortSignal,
   spaceId?: string,
+  runId?: string,
 ): Promise<T> {
   return requestFormula<T>(`${documentPath(id, spaceId)}/formulas/${path}`, {
     method: body === undefined ? 'GET' : 'POST',
@@ -42,7 +48,13 @@ export async function formulaRequest<T>(
     signal,
     ...(body === undefined
       ? {}
-      : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
+      : {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(isUuid(runId) ? { 'X-Spinel-Diagnostic-Run': runId } : {}),
+          },
+          body: JSON.stringify(body),
+        }),
   });
 }
 
@@ -92,10 +104,17 @@ export function FormulaDialog({
   id: string;
   spaceId?: string;
   initial?: DocFormula;
-  onSave: (definition: FormulaDefinition) => Promise<void>;
+  onSave: (definition: FormulaDefinition, signal: AbortSignal) => Promise<void>;
   onClose: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const diagnostics = useDiagnostics();
+  const diagnosticContext = (runId?: string): DiagnosticContext => ({
+    component: 'formula',
+    fileId: id,
+    ...(spaceId ? { spaceId } : {}),
+    ...(runId ? { runId } : {}),
+  });
   const input = useRef<HTMLInputElement>(null);
   const [expression, setExpression] = useState(initial?.definition.expression ?? '=');
   const [format, setFormat] = useState<FormulaFormat>(initial?.definition.format ?? 'general');
@@ -108,6 +127,7 @@ export function FormulaDialog({
   const [loadingSheets, setLoadingSheets] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [retrySave, setRetrySave] = useState(false);
   const [preview, setPreview] = useState<{
     definition: FormulaDefinition;
     result: FormulaDisplay;
@@ -135,7 +155,6 @@ export function FormulaDialog({
   useEffect(() => {
     const hide = () => {
       if (document.visibilityState === 'hidden') {
-        attempt.current++;
         operation.current?.abort();
         setPreview(null);
       }
@@ -146,9 +165,11 @@ export function FormulaDialog({
   useEffect(() => {
     active.current = true;
     attempt.current++;
+    operation.current = null;
     setPreview(null);
     setBusy(false);
     setError('');
+    setRetrySave(false);
     const modal = dialog.current;
     modal?.showModal();
     const abort = new AbortController();
@@ -216,14 +237,20 @@ export function FormulaDialog({
       return moved ? { ...current, start: moved.start } : null;
     });
     setExpression(value);
+    setError('');
+    setRetrySave(false);
     setCursor(value.length);
     setSuggestion(0);
     setPreview(null);
   };
-  function chosenBinding(): FormulaReference | undefined {
+  function chosenBinding(observation?: DiagnosticOperation): FormulaReference | undefined {
     if (!chosen?.sheetId) return;
     try {
-      const reference = parseFormula(expression).find((item) => item.start === chosen.start);
+      const reference = observedFormulaParse(
+        expression,
+        observation?.sink,
+        diagnosticContext(observation?.runId),
+      ).find((item) => item.start === chosen.start);
       if (
         reference &&
         reference.documentName === chosen.documentName &&
@@ -240,12 +267,12 @@ export function FormulaDialog({
       /* An unfinished reference has no binding yet. */
     }
   }
-  async function resolve(signal: AbortSignal) {
+  async function resolve(signal: AbortSignal, observation?: DiagnosticOperation) {
     // Formatting an existing object never changes its source identities. Its evaluator
     // still checks current access; losing a source must not prevent fixing presentation.
     if (initial && expression === initial.definition.expression && !bindings.length && !chosen)
       return { ...initial.definition, format };
-    const pending = chosenBinding();
+    const pending = chosenBinding(observation);
     const explicit = pending
       ? [...bindings.filter((item) => item.start !== pending.start), pending]
       : bindings;
@@ -264,36 +291,76 @@ export function FormulaDialog({
       )
     ).definition;
   }
-  async function run(save: boolean) {
-    const current = ++attempt.current;
+  function close() {
+    if (!active.current) return;
+    // Fence completion synchronously, before the parent can unmount this dialog.
+    active.current = false;
+    attempt.current++;
     operation.current?.abort();
+    setBusy(false);
+    onClose();
+  }
+  async function run(save: boolean) {
+    // A second submit in the same event turn must not start another native save.
+    if (operation.current || !active.current) return;
+    const observation = diagnostics.begin();
+    const runId = observation?.runId;
+    const current = ++attempt.current;
     const controller = new AbortController();
     operation.current = controller;
     setPreview(null);
     setBusy(true);
     setError('');
+    setRetrySave(false);
     try {
-      const definition = await resolve(controller.signal);
-      if (!active.current || current !== attempt.current) return;
+      const definition = await resolve(controller.signal, observation);
+      if (!active.current || current !== attempt.current || controller.signal.aborted) return;
       if (save) {
-        await onSave(definition);
-        if (active.current) onClose();
+        await onSave(definition, controller.signal);
+        if (active.current && current === attempt.current && !controller.signal.aborted) close();
       } else {
         setPreview({ definition, result: { ok: false, reason: 'loading' } });
-        const result = await formulaRequest<FormulaDisplay>(
-          id,
-          'evaluate',
-          { definition },
-          controller.signal,
-          spaceId,
-        );
-        if (active.current && current === attempt.current) setPreview({ definition, result });
+        const started = performance.now();
+        let result: FormulaDisplay;
+        try {
+          result = await formulaRequest<FormulaDisplay>(
+            id,
+            'evaluate',
+            { definition },
+            controller.signal,
+            spaceId,
+            runId,
+          );
+          if (!active.current || current !== attempt.current || controller.signal.aborted) return;
+          observeOperation(
+            observation?.sink,
+            diagnosticContext(runId),
+            'formula-evaluate',
+            result.ok ? 'success' : 'failure',
+            Math.max(0, performance.now() - started),
+          );
+        } catch (cause) {
+          if (!active.current || current !== attempt.current || controller.signal.aborted) return;
+          observeOperation(
+            observation?.sink,
+            diagnosticContext(runId),
+            'formula-evaluate',
+            controller.signal.aborted ? 'cancelled' : 'failure',
+            Math.max(0, performance.now() - started),
+          );
+          throw cause;
+        }
+        if (active.current && current === attempt.current && !controller.signal.aborted)
+          setPreview({ definition, result });
       }
     } catch (cause) {
-      if (active.current && current === attempt.current)
+      if (active.current && current === attempt.current && !controller.signal.aborted) {
         setError(cause instanceof Error ? cause.message : 'Could not update the formula.');
+        setRetrySave(save && cause instanceof FormulaSaveError && cause.retryable);
+      }
     } finally {
-      if (active.current) setBusy(false);
+      if (operation.current === controller) operation.current = null;
+      if (active.current && current === attempt.current) setBusy(false);
     }
   }
   function addReference() {
@@ -361,7 +428,7 @@ export function FormulaDialog({
       aria-label={initial ? 'Edit formula' : 'Insert formula'}
       onCancel={(event) => {
         event.preventDefault();
-        if (!busy) onClose();
+        close();
       }}
     >
       <h2>{initial ? 'Edit formula' : 'Insert formula'}</h2>
@@ -522,6 +589,8 @@ export function FormulaDialog({
             onChange={(event) => {
               setFormat(event.target.value as FormulaFormat);
               setPreview(null);
+              setError('');
+              setRetrySave(false);
             }}
             disabled={busy}
           >
@@ -552,9 +621,17 @@ export function FormulaDialog({
             Preview
           </button>
           <button className="primary" disabled={busy || expression.length < 2}>
-            {busy ? 'Working…' : initial ? 'Save formula' : 'Insert formula'}
+            {busy
+              ? 'Working…'
+              : retrySave
+                ? initial
+                  ? 'Retry save'
+                  : 'Retry insert'
+                : initial
+                  ? 'Save formula'
+                  : 'Insert formula'}
           </button>
-          <button type="button" disabled={busy} onClick={onClose}>
+          <button type="button" onClick={close}>
             Cancel
           </button>
         </div>

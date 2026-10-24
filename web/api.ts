@@ -1,3 +1,4 @@
+import { clearDashboardNavigation } from './dashboardNavigation.ts';
 import { spaceReviewSignInPath } from '../src/shared/spaceReviewRoute.ts';
 
 // An assistant connection carries only its opaque transaction ID through sign-in.
@@ -22,7 +23,11 @@ export function signInPath(): string {
     : (spaceReviewSignInPath(location) ?? '/sign-in');
 }
 
-export async function api<T>(path: string, body?: unknown): Promise<T> {
+export async function api<T>(
+  path: string,
+  body?: unknown,
+  verifyCurrent: () => void = () => {},
+): Promise<T> {
   const response = await fetch(
     `/api/auth/${path}`,
     body === undefined
@@ -33,10 +38,17 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
           body: JSON.stringify(body),
         },
   );
-  if (response.status === 401 && !['/sign-in', '/setup', '/invite'].includes(location.pathname))
+  verifyCurrent();
+  if (
+    response.status === 401 &&
+    !['/sign-in', '/setup', '/recover-admin', '/invite'].includes(location.pathname)
+  ) {
+    clearDashboardNavigation();
     location.assign(signInPath());
+  }
   if (response.status === 204) return undefined as T;
   const data = await response.json();
+  verifyCurrent();
   if (!response.ok)
     throw Object.assign(new Error(data.error ?? 'Something went wrong. Try again.'), {
       status: response.status,

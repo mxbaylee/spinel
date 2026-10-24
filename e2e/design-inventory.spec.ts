@@ -20,8 +20,8 @@ test('capture account and unavailable guest screens for the design review', asyn
   await mkdir('test-results/theme-screenshots', { recursive: true });
   try {
     for (const [name, url, heading] of [
-      ['sign-in', '/sign-in', 'Sign in'],
-      ['invite', invitation.url, 'Join Spinel'],
+      ['sign-in', '/sign-in', 'Your workspace.'],
+      ['invite', invitation.url, 'You’re invited.'],
       ['recovery', recovery.url, 'Recover your account'],
       ['revoked', '/share/00000000-0000-4000-8000-000000000000#invalid', ''],
     ]) {
@@ -33,13 +33,14 @@ test('capture account and unavailable guest screens for the design review', asyn
       for (const [theme, width, label] of [
         ['light', 1280, 'light'],
         ['dark', 1280, 'dark'],
-        ['light', 390, 'phone'],
+        ['light', 390, 'phone-light'],
+        ['dark', 390, 'phone-dark'],
       ] as const) {
         await page.setViewportSize({ width, height: 900 });
         await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
         await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
         await page.screenshot({
-          path: `test-results/theme-screenshots/before-${name}-${label}-${info.project.name}.png`,
+          path: `test-results/theme-screenshots/${name === 'revoked' ? 'before' : 'spn-083'}-${name}-${label}-${info.project.name}.png`,
           fullPage: true,
           animations: 'disabled',
         });
@@ -56,7 +57,7 @@ test('capture account and unavailable guest screens for the design review', asyn
       },
     ]);
     await page.goto('/settings');
-    await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Your profile', exact: true })).toBeVisible();
     for (const [theme, width, label] of [
       ['light', 1280, 'light'],
       ['dark', 1280, 'dark'],

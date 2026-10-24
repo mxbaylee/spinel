@@ -6,6 +6,7 @@ export async function signSetupProof(
   id: string,
   challenge: string,
   response: RegistrationResponseJSON,
+  recovery = false,
 ) {
   const binary = atob(secret.replaceAll('-', '+').replaceAll('_', '/'));
   const der = Uint8Array.from(binary, (char) => char.charCodeAt(0));
@@ -13,7 +14,7 @@ export async function signSetupProof(
   const signature = await crypto.subtle.sign(
     'Ed25519',
     key,
-    new TextEncoder().encode(setupProofMessage(location.origin, id, challenge, response)),
+    new TextEncoder().encode(setupProofMessage(location.origin, id, challenge, response, recovery)),
   );
   return btoa(String.fromCharCode(...new Uint8Array(signature)))
     .replaceAll('+', '-')

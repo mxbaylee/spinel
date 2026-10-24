@@ -26,7 +26,7 @@ that isn't waiting on another is next.
   merge only.
 - **Weigh every persona** in [docs/product/personas.md](docs/product/personas.md)
   when deciding anything, and log the decision as described in process.md.
-- **New decisions live in `docs/implementation/SPN-NNN.md`**, beside implementation notes, following [the record convention](docs/implementation/README.md). Link them from ticket Rules; keep legacy issue citations until SPN-096 migrates them. Owner, chat 2026-10-22.
+- **Decisions live in `docs/implementation/SPN-NNN.md`**, beside implementation notes, following [the record convention](docs/implementation/README.md). Link them from ticket Rules; [SPN-096's inventory](docs/implementation/SPN-096.md) maps legacy issues to canonical records with original provenance. Owner, chat 2026-10-22.
 - **TypeScript only.** Server, frontend, tests, scripts and config are `.ts` or
   `.tsx`, never `.js`, `.mjs` or `.cjs`. Node runs scripts directly, so use only
   syntax it can strip (no enums or namespaces). Owner, chat 2026-10-17.
@@ -55,11 +55,11 @@ that isn't waiting on another is next.
 - **Code copied from Univer Workspace** or any other Apache-2.0 project keeps its
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
-- Run `npm run typecheck`, `npm test` and `npm run backlog:check` before pushing.
-  Exception: when the memory watchdog prevents safe local testing, run local
-  typecheck, lint and backlog checks, then push a draft PR for full unit/browser
-  validation in CI. Keep it draft while unverified; all seven CI gates and independent
-  review >=95 with no blockers remain required before merge. Owner, chat
-  2026-10-18; [decision #52](https://github.com/mxbaylee/spinel/issues/52). The
-  seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
+- **CI may be the default for validation**, including typecheck, lint, backlog,
+  unit and browser checks. Draft pushes do not require local checks to pass first.
+  Keep unverified work draft; all seven CI gates, independent review >=95 with no
+  blockers and required visual approval remain merge requirements. Local workloads
+  still obey the memory watchdog. Owner, chat 2026-10-23;
+  [decision](docs/implementation/backlog-workflow.md#ci-as-the-default-validation-environment).
+  The seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
   tests changed. Owner, chat 2026-10-22.

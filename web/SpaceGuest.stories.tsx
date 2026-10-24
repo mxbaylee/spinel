@@ -116,7 +116,6 @@ const meta = {
     connection: 'online',
     navigation: { allow: () => true, dirty: fn() },
     onExit: fn(),
-    onSignOut: fn(),
     onConnectionState: fn(),
     renderEditor: (props) => <GuestEditor {...props} />,
   },
@@ -136,9 +135,8 @@ async function guestOnly(canvasElement: HTMLElement, title = 'Welcome') {
   const canvas = within(canvasElement);
   await expect(await canvas.findByRole('heading', { name: title, level: 1 })).toBeVisible();
   await expect(canvas.getByText('Guest', { exact: true })).toBeVisible();
-  for (const name of ['My files', 'Spinel home', 'New Space', 'Versions', 'Profile settings'])
+  for (const name of ['My files', 'Spinel home', 'New Space', 'Versions', 'Your profile'])
     await expect(canvas.queryByRole('button', { name })).not.toBeInTheDocument();
-  await expect(canvas.queryByRole('button', { name: /— Profile$/ })).not.toBeInTheDocument();
   await expect(canvas.queryByRole('link', { name: 'Space Trash' })).not.toBeInTheDocument();
   await expect(
     canvas.queryByRole('button', { name: /^Space actions for/ }),

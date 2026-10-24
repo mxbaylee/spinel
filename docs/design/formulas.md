@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Formula, FormulaInContext.
 
@@ -17,7 +17,7 @@ permission rules below still apply; production migrations remain separate ticket
 
 
 SPN-033 adds one native Formula object in a Doc's main body. It follows the
-owner's approved direction from 2026-10-20 and [decision #113](https://github.com/mxbaylee/spinel/issues/113).
+owner's approved direction from 2026-10-20 and [decision #113](../implementation/SPN-033.md#legacy-decision-113-live-authorized-document-formulas).
 The result determines its presentation: a single value fits into a sentence;
 multiple cells form a table inside the document.
 
@@ -75,6 +75,15 @@ calculated values. Viewer-specific presentation is transient.
   useful syntax or size guidance without exposing server internals.
 - **Offline:** “Formula unavailable offline.” Definitions remain intact; no
   stale result is presented as authorized or live.
+- **Temporary Save failure:** keep the expression, format and chosen bindings
+  in the same dialog. Explain busy, timeout or temporary unavailability separately
+  from invalid or inaccessible sources. Offer an explicit retry using the existing
+  primary action position; never replay insertion automatically. While a Save is
+  pending, a second activation cannot insert another object. Closing, leaving or
+  losing access cancels pending evaluation before insertion; a late result cannot
+  close or overwrite a newer editing attempt. This uses the existing inline-error
+  pattern, with no new dialog or permission flow. See
+  [SPN-103's recovery decision](../implementation/SPN-103.md#bounded-admission-and-recovery).
 
 Number formatting is independent of expression and result shape. Results must
 remain readable at phone width, using existing page zoom/viewport behavior and

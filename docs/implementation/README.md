@@ -2,8 +2,16 @@
 
 New decisions live beside the implementation notes in `SPN-NNN.md`, even before
 implementation starts. This replaces opening GitHub decision issues for new work.
-Owner, chat 2026-10-22. SPN-096 migrates older issues; their existing citations stay
-valid until a faithful replacement exists.
+Owner, chat 2026-10-22. [SPN-096](SPN-096.md) maps the 87 inventoried legacy
+decisions to canonical local entries with their original sources and chronology.
+Use those entries for maintained navigation; source issues remain provenance.
+
+After a legacy migration merges, comment on each original decision issue with
+its canonical file and heading at the verified merged commit SHA, retaining the
+old discussion and checking for duplicate backlinks first. SPN-096 tracks these
+post-merge comments and their URLs in its migration PR audit. Until the audit
+verifies every backlink, external posting remains pending even after repository
+merge. Owner, chat 2026-10-23.
 
 Use one file per ticket. Extend existing notes without replacing their contract,
 verification or history. Link a decision's heading from the ticket's Rules and
@@ -27,5 +35,6 @@ A record is not approval by itself. Ask the owner when required, leave its statu
 truthful, and update `owner_input` on the active ticket while waiting. Once settled,
 update the ticket Rules and the relevant maintained docs. Keep routine code notes
 brief; do not turn this into a transcript or another general documentation system.
-Legacy `decisions: [123]` frontmatter remains an issue-number list during migration;
-new records are ordinary Markdown links, not fabricated issue numbers.
+The CLI retains compatibility with legacy `decisions: [123]` issue-number lists
+on older branches and in history. Migrated active tickets use ordinary Markdown
+Rule links and an empty `decisions` list; no fabricated issue numbers are used.

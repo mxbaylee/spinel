@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Dashboard, Search, SharedFiles, Trash, EmptyFolder, LoadingFiles, FileError.
 
@@ -15,8 +15,10 @@ The redesigned header keeps the current folder title with its ancestor breadcrum
 The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
-SPN-048 builds this page's layout. Design changes made while building go back
-into this page, not only into the PR.
+SPN-048 implements this layout with the existing file APIs and access rules; its
+[implementation and validation record](../implementation/SPN-048.md) records the
+query, scope and return-state decisions and any pending verification. Design
+changes still go through this playbook before application changes.
 
 ## How others do it
 
@@ -88,8 +90,9 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
 | Filter chips while searching or filtering                           | Tags chip → tag list                                                                                     |
 
 Access ("View only", "Can edit") stays a visible badge because it decides what
-the person can do once they open the item. The shared-row menu never offers
-Share, Rename, Move or Trash: only the owner can (docs/sharing.md). "Remove from
+the person can do once they open the item. The shared-row menu offers Share, Rename, Move and Trash only when existing
+File admin access permits them; viewers and editors do not receive these actions
+(see [sharing](../sharing.md)). "Remove from
 my folder" removes the person's filed reference, not the item, so it isn't
 grouped with the destructive items.
 
@@ -101,7 +104,7 @@ layout is not a prerequisite. Spinel has never been in production, so there is
 no legacy Slides placeholder or compatibility requirement. The owner approved
 this removal and waived screenshots for it; the general UI review rule remains.
 Owner correction and approval, chat 2026-10-20, decision
-[#104](https://github.com/mxbaylee/spinel/issues/104).
+[#104](../implementation/SPN-074.md#legacy-decision-104-remove-unsupported-slides).
 
 ## Offline (SPN-039, SPN-053, SPN-054, SPN-051, SPN-052)
 
@@ -122,16 +125,15 @@ attention" and its menu offers **Choose another folder…** (SPN-051). An offlin
 copy, `<title> (offline copy, <local date and time>)`, lands in the person's own
 files and its row links to the original. See [states.md](states.md#offline).
 
-**Today (SPN-039).** Row actions are still inline buttons until the row menu
-lands, so **Available offline on this device** and **Remove from device** sit
-with them. Badges are `OfflineBadge`. SPN-042 adds the shared `ConnectionStatus`
+**Dashboard migration (SPN-048).** **Available offline on this device** and
+**Remove from device** are in the row menu. Badges remain `OfflineBadge`. SPN-042 adds the shared `ConnectionStatus`
 control beside the gem, with Online, Offline and Reconnecting states. Its
 hover, focus or tap detail contains "Files as of" while the catalog is local,
 offline or a refresh failed; `OfflineBanner` is removed. Connectivity returning
 does not refresh a local catalog or promote its downloaded viewers to live
 editing: the detail continues to explain that this session is read-only.
 The indicator makes no on-device save claim. See [connection behavior](../connection.md)
-and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
+and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation).
 Pending-edit states arrive with SPN-053 and SPN-054.
 
 `OfflineViewer` has no story: like the editors and version previews, it hosts
@@ -157,7 +159,7 @@ scope and offers Search all files from a folder/shared view. Returning from
 a document restores folder, filters and scroll position (SPN-048/049).
 
 Current owner direction (chat, 2026-10-21): folders are rows in **My files**.
-Personal pinning and pinned navigation are removed ([decision #128](https://github.com/mxbaylee/spinel/issues/128)); folders, tags and search
+Personal pinning and pinned navigation are removed ([decision #128](../implementation/SPN-047.md#legacy-decision-128-remove-personal-pinning)); folders, tags and search
 provide retrieval without another shortcut list. The expanded sidebar uses the original saturated `--sp-rail` pink and
 matching `--sp-rail-ink` foreground (owner correction, 2026-10-20). Profile and Appearance occupy separate rows. Trash is a permanent
 folder entry in My files with no rename/move/delete controls; it is not another
@@ -179,11 +181,11 @@ never an identifier or substitute for a type/access label. Folders and Trash kee
 their functional icons. Defer the persistent emoji/icon picker to **SPN-086**;
 no picker ships in this proposal. Owner/Collaborator gain recognition and view
 choice; Guests retain scoped identity and access clarity; Operators gain no
-personal file navigation or service dependency. Decision #126.
+personal file navigation or service dependency. Decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits).
 
 ### Unified search follow-up
 
-Owner feedback and persona review (2026-10-20, decision #126) move the query
+Owner feedback and persona review (2026-10-20, decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits)) move the query
 builder into SPN-048: one search field may show labelled, removable colored
 conditions such as `type:sheet` and `tag:travel`; Search options opens an
 accessible form that builds the same query. Text entry and the form must agree,

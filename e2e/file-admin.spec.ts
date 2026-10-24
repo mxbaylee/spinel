@@ -5,7 +5,6 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { WorkspaceFiles } from '../src/server/workspace/files.ts';
-import type { FileKind } from '../src/shared/workspace.ts';
 
 test('Owner delegates file administration on every outer type, administrators manage access and lose downgraded authority', async ({
   page,
@@ -43,15 +42,13 @@ test('Owner delegates file administration on every outer type, administrators ma
   });
   files.share(owner.id, destination.id, admin.id, 'admin');
   const headers = { Origin: baseURL!, 'Content-Type': 'application/json' };
-  async function action(tab: Page, kind: FileKind, name: string, verb: string) {
-    if (kind === 'space') {
-      await tab.getByRole('button', { name: `Space actions for ${name}`, exact: true }).click();
-      await tab.getByRole('menuitem', { name: verb, exact: true }).click();
-    } else await tab.getByRole('button', { name: `${verb} ${name}`, exact: true }).click();
+  async function action(tab: Page, name: string, verb: string) {
+    await tab.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
+    await tab.getByRole('menuitem', { name: `${verb}…`, exact: true }).click();
   }
-  async function sharing(tab: Page, kind: FileKind, name: string) {
-    await action(tab, kind, name, 'Share');
-    return tab.getByRole('region', { name: `Share ${name}`, exact: true });
+  async function sharing(tab: Page, name: string) {
+    await action(tab, name, 'Share');
+    return tab.getByRole('dialog', { name: `Share ${name}`, exact: true });
   }
   async function grant(panel: Locator, name: string, role: string) {
     await panel
@@ -71,11 +68,11 @@ test('Owner delegates file administration on every outer type, administrators ma
       const name = `Delegated ${kind} ${runId}`;
       const item = files.create(owner.id, { kind, name, parentId: null });
       await page.goto('/');
-      const ownerPanel = await sharing(page, kind, name);
+      const ownerPanel = await sharing(page, name);
       await grant(ownerPanel, admin.name, 'admin');
       await other.goto('/');
       await other.getByRole('button', { name: 'Shared with me', exact: true }).click();
-      const panel = await sharing(other, kind, name);
+      const panel = await sharing(other, name);
       await expect(
         panel.getByRole('combobox', { name: `Access for ${owner.name}`, exact: true }),
       ).toHaveCount(0);
@@ -96,21 +93,22 @@ test('Owner delegates file administration on every outer type, administrators ma
         await expect(panel.getByLabel('Link access').locator('option[value="admin"]')).toHaveCount(
           0,
         );
-        await panel.getByRole('button', { name: 'Create guest link', exact: true }).click();
+        await panel.getByRole('button', { name: 'Create link', exact: true }).click();
         if (kind === 'space')
           await other.getByRole('button', { name: 'Create view link', exact: true }).click();
         await expect(
-          panel.getByRole('button', { name: 'Turn link off', exact: true }),
+          panel.getByRole('button', { name: 'Guest link actions', exact: true }),
         ).toBeVisible();
-        await panel.getByRole('button', { name: 'Turn link off', exact: true }).click();
+        await panel.getByRole('button', { name: 'Guest link actions', exact: true }).click();
+        await other.getByRole('menuitem', { name: 'Turn off link', exact: true }).click();
         if (kind === 'space')
           await other
             .getByRole('dialog', { name: 'Turn off this Space link?' })
-            .getByRole('button', { name: 'Turn link off', exact: true })
+            .getByRole('button', { name: 'Turn off link', exact: true })
             .click();
       }
-      await panel.getByRole('button', { name: 'Close sharing', exact: true }).click();
-      await action(other, kind, name, 'Rename');
+      await panel.getByRole('button', { name: 'Done', exact: true }).click();
+      await action(other, name, 'Rename');
       const rename =
         kind === 'space'
           ? other.getByRole('dialog', { name: 'Rename Space' })
@@ -120,19 +118,24 @@ test('Owner delegates file administration on every outer type, administrators ma
       await expect(rename).toBeHidden();
       expect(files.get(owner.id, item.id).name).toBe(name + ' renamed');
       if (kind === 'folder') {
+        await other.getByRole('button', { name: 'My files', exact: true }).click();
         await expect(
           other
-            .getByRole('complementary', { name: 'Folders' })
-            .getByRole('button', { name: name + ' renamed', exact: true }),
+            .getByRole('list', { name: 'Folder contents', exact: true })
+            .getByRole('button', { name: name + ' renamed Folder', exact: true }),
         ).toHaveCount(0);
-        await other.getByRole('button', { name: `File ${name} renamed`, exact: true }).click();
+        await other.getByRole('button', { name: 'Shared with me', exact: true }).click();
+        await other
+          .getByRole('button', { name: `More actions for ${name} renamed`, exact: true })
+          .click();
+        await other.getByRole('menuitem', { name: 'File into folder…', exact: true }).click();
         const filing = other.getByRole('form', { name: 'File shared item' });
         await expect(
           filing.getByRole('option', { name: name + ' renamed', exact: true }),
         ).toHaveCount(0);
         await filing.getByRole('button', { name: 'Cancel', exact: true }).click();
       }
-      await action(other, kind, name + ' renamed', 'Move');
+      await action(other, name + ' renamed', 'Move');
       const move =
         kind === 'space'
           ? other.getByRole('dialog', { name: 'Move Space' })
@@ -169,12 +172,12 @@ test('Owner delegates file administration on every outer type, administrators ma
       ).toBe(403);
       await other.reload();
       await other.getByRole('button', { name: 'Shared with me', exact: true }).click();
-      await expect(
-        other.getByRole('button', {
-          name: kind === 'space' ? `Space actions for ${name} renamed` : `Share ${name} renamed`,
-          exact: true,
-        }),
-      ).toHaveCount(0);
+      await other
+        .getByRole('button', { name: `More actions for ${name} renamed`, exact: true })
+        .click();
+      for (const verb of ['Share…', 'Rename…', 'Move…', 'Move to Trash'])
+        await expect(other.getByRole('menuitem', { name: verb, exact: true })).toHaveCount(0);
+      await other.keyboard.press('Escape');
       await grant(ownerPanel, admin.name, '');
       expect((await second.request.get(`/api/items/${item.id}`)).status()).toBe(404);
       expect(files.get(owner.id, item.id).access).toBe('owner');

@@ -122,7 +122,7 @@ test('document UI preserves rich text and embedded images through reload and off
     );
     const navigationWarning = page.waitForEvent('dialog');
     page.once('dialog', (dialog) => dialog.dismiss());
-    await page.getByRole('link', { name: 'Settings', exact: true }).click();
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
     await navigationWarning;
     await expect(page).toHaveURL(new RegExp(item.id));
     releaseImage();
@@ -188,11 +188,15 @@ test('document UI preserves rich text and embedded images through reload and off
     // Search must preserve the mounted editor and its unsaved offline edits.
     await page.getByRole('searchbox', { name: 'Search files', exact: true }).fill('Journal');
     await expect(editor).toBeHidden();
+    await page.screenshot({
+      path: testInfo.outputPath('unsaved-editor-search.png'),
+      fullPage: true,
+    });
     await page.getByRole('button', { name: 'Clear search and filters', exact: true }).click();
     await expect(editor).toBeVisible();
     await expect(editor.getByRole('status', { name: 'Save status' })).toContainText('not saved');
     page.once('dialog', (dialog) => dialog.dismiss());
-    await page.getByRole('link', { name: 'Settings', exact: true }).click();
+    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(item.id));
     await network.setOffline(false);
     await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(

@@ -156,7 +156,7 @@ function pair(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[] {
   // its drawing removals after the sheet removal, so later ops still meet it.
   if (peer === 'sheet-order') {
     const gone = b.id === structureIds.removeSheet && sheetOf(a) === sheetOf(b);
-    // Diagnostics (SPN-032, not built): `sync.edit.dropped`, rule 'removed-sheet'.
+    // Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule 'removed-sheet'.
     return gone && a.id !== drawingIds.apply ? [] : [a];
   }
   if (self === 'sheet-order' || sheetOf(a) !== sheetOf(b)) return [a];
@@ -204,12 +204,12 @@ export function transform(
   side: Side,
   options: { cells?: BaseCells } = {},
 ): Mutation[] {
-  // Diagnostics (SPN-032, not built): this stays pure, so the server records
+  // Diagnostics (SPN-057, not built): this stays pure, so the server records
   // around each call: `sync.transform.duration` (histogram, ms),
   // `sync.transform.concurrent` (histogram of b.length, how far apart edits
   // really are) and the output's length against its input's (histogram).
   // Silent drops below would need an optional observer argument, no-op by
-  // default; each site says `Diagnostics (SPN-032` and what it would record.
+  // default; each site says `Diagnostics (SPN-057` and what it would record.
   // Check every mutation up front, even when the other side is empty.
   for (const mutation of [...a, ...b]) check(mutation);
   const state = Cells.of(options.cells);
@@ -259,7 +259,7 @@ function pastOne(a: Mutation[], b: Mutation, side: Side, limit: number, state: C
     result.push(...pastMany([mutation], peer, side, limit, state));
     peer = pastMany(peer, [mutation], flip(side), limit, state);
     state = state.after(mutation);
-    // Diagnostics (SPN-032, not built): `sync.transform.growth` (histogram of
+    // Diagnostics (SPN-057, not built): `sync.transform.growth` (histogram of
     // the peak against `limit`) would show whether 50 is near real edits.
     if (result.length + peer.length > limit) {
       throw new RefusedEditError('growth', `past ${limit} mutations`);

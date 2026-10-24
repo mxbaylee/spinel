@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 # Workspace manifests (lib/<name>/) must be in place before npm ci links them.
 # One line per package: COPY of a glob flattens the directories.
+COPY lib/diagnostics/package.json ./lib/diagnostics/package.json
 COPY lib/doc-formulas/package.json ./lib/doc-formulas/package.json
 COPY lib/presence-ui/package.json ./lib/presence-ui/package.json
 COPY lib/sync-transform/package.json ./lib/sync-transform/package.json

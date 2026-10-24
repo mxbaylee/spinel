@@ -22,7 +22,7 @@ export function flip(side: Side): Side {
 /**
  * Thrown for a mutation with no transform, so it is never merged by guesswork.
  *
- * Diagnostics (SPN-032, not built): the server counts these as
+ * Diagnostics (SPN-057, not built): the server counts these as
  * `sync.edit.unsupported` by `mutationId` and logs at error. One means a
  * sender bug or a Univer upgrade that added a mutation, never a user race.
  */
@@ -53,7 +53,7 @@ export type RefusalReason = 'moved-cells' | 'name-race' | 'formula-race' | 'grow
  *
  * Unlike UnsupportedMutationError it is a race, not a sender bug.
  *
- * Diagnostics (SPN-032, not built): the server counts each refusal as
+ * Diagnostics (SPN-057, not built): the server counts each refusal as
  * `sync.edit.refused` by `reason`, against `sync.edit.transformed` for the
  * rate, and logs at info, since a refusal is the designed outcome of a race.
  * To tell which rule to replace with a real merge, it would also carry the

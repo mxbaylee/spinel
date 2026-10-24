@@ -495,7 +495,7 @@ export function DocEditor({
             // Wait for dialog cleanup before returning keyboard input to the native document.
             requestAnimationFrame(() => formulas.current?.focus());
           }}
-          onSave={async (definition: FormulaDefinition) => {
+          onSave={async (definition: FormulaDefinition, signal: AbortSignal) => {
             if (!formulas.current || !canEditFormulas.current)
               throw new Error('This document is read-only.');
             if (
@@ -503,6 +503,7 @@ export function DocEditor({
                 definition,
                 formulaEdit.selection,
                 formulaEdit.formula?.id,
+                signal,
               ))
             )
               throw new Error('The formula could not be inserted.');

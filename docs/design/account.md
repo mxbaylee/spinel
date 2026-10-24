@@ -2,7 +2,7 @@
 
 ## SPN-047 composed redesign proposal
 
-Approved by the owner, 2026-10-21, [decision #126](https://github.com/mxbaylee/spinel/issues/126). Production implementation remains separate.
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
 See the [review, sources and screenshot inventory](redesign.md).
 Stories: `Redesign/Screens` — Profile, Connections, ThisDevice, SignIn, Setup, Invite, Recovery, Consent, ConsentExpired.
 
@@ -28,9 +28,27 @@ the profile and sign-out live; passkeys are one sign-in option among several.
 
 ## Spinel today
 
-The rail has Settings and Sign out links. `/settings` shows Appearance
-(`ThemeSettings`), Your profile (display name, color and icon), and Your passkeys. The Settings link uses the saved profile icon; SPN-045 will move it to the planned rail position. Sign-in, setup, invite and recovery are
-single-purpose pages with one heading, one explanation and one primary button.
+The rail's account foot shows Appearance and the saved profile avatar on separate
+rows; compact/phone headers place the controls horizontally. The avatar opens
+`/profile` (**Your profile**) and `/settings` redirects there. Profile, Passkeys,
+This device and Connected assistants are labeled sections. This device reuses the
+shared browser-local appearance control; saved name/icon/color remain separate.
+Connected assistants retains named connections, last-used dates, Disconnect and
+advanced personal access tokens. Operators see Profile, Passkeys and This device;
+administration retains its existing connection/token metadata. Sign out and a
+return to the remembered file view or administration remain visible on the account
+page. Account sections retain drafts while switching and their hash survives reload.
+See [SPN-045's rationale and implementation](../implementation/SPN-045.md).
+
+The account screen uses the approved compact utility header. Broader dashboard
+and editor shell migrations remain with SPN-048 and SPN-049. Offline profiles
+retain This device and explain which account operations need a connection.
+Sign-in, setup, invite and recovery use the approved quiet entry layout while
+retaining their existing authentication behavior. One Need help dialog provides
+member guidance followed by expandable Operator commands. Pending/cancelled/error
+states preserve the task and keyboard return. Consent uses the same frame with
+client provenance, origin, capabilities and account visible. See the
+[SPN-083 implementation and pending visual verification](../implementation/SPN-083.md).
 
 ## Adopted pattern
 
@@ -55,7 +73,7 @@ single-purpose pages with one heading, one explanation and one primary button.
 - **Need help?** appears once below the entry form on arrival, invitation,
   recovery and setup screens. It opens shared invitation/recovery guidance and
   expandable Operator commands. “Need access?” is no longer a separate label.
-  Owner, chat 2026-10-20, decision #126.
+  Owner, chat 2026-10-20, decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits).
 - **Setup, invite, recovery** share the quiet entry layout but retain their
   distinct requirements. Invite requires a name; recovery names the existing
   account and explains replacement of old passkeys and sessions. Setup explains
@@ -72,16 +90,16 @@ single-purpose pages with one heading, one explanation and one primary button.
 
 ## Stories
 
-`Settings/ThemeSettings`, `Shell/GemLogo` (the sign-in card's mark). The rail has `Shell/Rail`. `Account/Profile` covers loading, editing, saving and errors; `Account/Icon picker` covers the searchable grid; `Editor/Profile cursor label` and `Editor/Collaborators` show presence appearances.
+`Account/Your profile`, `Settings/ThemeSettings`, `Shell/GemLogo` (the sign-in card's mark). The rail has `Shell/Rail`. `Account/Profile` covers loading, editing, saving and errors; `Account/Icon picker` covers the searchable grid; `Editor/Profile cursor label` and `Editor/Collaborators` show presence appearances.
 
 ## Assistant access (SPN-034)
 
-Online everyday-account settings add **Connected assistants** after passkeys. The
+Online everyday-account profiles include a **Connected assistants** section. The
 existing card/list pattern shows the MCP endpoint, supplied client label, callback
 origin, created/last-used times and **Disconnect**. **Advanced: personal access
 tokens** keeps custom labels, last use and **Revoke** in a disclosure. Its once-only
-secret reveal and copy fallback reuse the invite-link pattern. Admin and offline
-settings do not offer connection approval or token creation.
+secret reveal and copy fallback reuse the invite-link pattern. Operator and offline
+profiles do not offer connection approval or token creation.
 
 `/connect` reuses the single-purpose account card and existing **Allow / Cancel**
 actions. Show the signed-in account, unverified client-supplied name, callback
@@ -94,7 +112,7 @@ without changing the planned profile redesign.
 Stories: `Settings/AssistantConnections`, `Settings/ConnectAssistant`, and
 `Settings/AccessTokens` cover loading, empty, busy, failure, consent, expiration,
 reveal and revoked states. See [MCP](../mcp.md), decision
-[#111](https://github.com/mxbaylee/spinel/issues/111), owner correction 2026-10-20.
+[#111](../implementation/SPN-034.md#legacy-decision-111-owner-requested-mcp-through-oauth), owner correction 2026-10-20.
 
 Owner selection (chat, 2026-10-20): **System / Light / Dark** is a three-segment
 icon control (monitor, sun, moon), with a circular selected surface. Use Base UI
@@ -112,8 +130,8 @@ must report a storage failure without undoing the in-session theme choice.
 - Profiles contain a display name, one of the 16 fill presets, a Lucide catalog icon, and the existing passkey list. Icon strokes use the preset text color. New users start with `user-round` and a name-derived color (owner, 2026-10-17).
 - The icon dialog searches names, Lucide tags, local synonyms and typos (`flowre` finds Flower). Category and search combine; blank search shows all non-alias icons, 60 at a time, with Show more. Arrow Down enters the grid; arrows/Home/End navigate; Enter picks; Escape cancels and restores focus. It uses the existing dialog and palette patterns, before the redesign (owner, 2026-10-20).
 - Store `lucide:<name>` and validate against the pinned catalog. Search/reference code now lives in `src/profile/`; no emojis or photos. Names are 1–80 characters with no control characters. Saving updates the rail immediately; reopen editors to refresh their membership appearance.
-- Account-only room badges and Sheet canvas labels use saved icons/colors. Guest-linked rooms keep generic names, empty personal avatars and default ID-derived colors (#72); generic user-round glyphs reveal no profile identity. Settings explains this distinction.
-- Sheet labels have rounded corners and include icon plus name. Following reveals an offscreen range without overwriting the local selection or scrolling an already-visible range. Doc canvas colors remain with SPN-058; native Docs services stay enabled. Owner approval, 2026-10-20, [decision #127](https://github.com/mxbaylee/spinel/issues/127).
+- Account-only room badges and Sheet canvas labels use saved icons/colors. Guest-linked rooms keep generic names, empty personal avatars and default ID-derived colors ([#72](../implementation/SPN-016.md#legacy-decision-72-scoped-anonymous-link-capabilities)); generic user-round glyphs reveal no profile identity. Settings explains this distinction.
+- Sheet labels have rounded corners and include icon plus name. Following reveals an offscreen range without overwriting the local selection or scrolling an already-visible range. Doc canvas colors remain with SPN-058; native Docs services stay enabled. Owner approval, 2026-10-20, [decision #127](../implementation/SPN-036.md#legacy-decision-127-profiles-and-public-sheet-following).
 
 SPN-036 merged at `6c09bd4` and is included in this branch. Profile fixtures reuse
 its real `IconPicker`, `ProfileIcon`, catalog and sixteen fill presets. Save in

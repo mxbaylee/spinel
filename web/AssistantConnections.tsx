@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api } from './api.ts';
 
 type Connection = {
@@ -21,34 +21,35 @@ export function AssistantConnections({ admin = false }: { admin?: boolean }) {
   const path = admin ? 'admin/connections' : 'connections';
   const Heading = admin ? 'h3' : 'h2';
 
-  useEffect(() => {
-    let disposed = false;
-    void api<{ connections: Connection[] }>(path)
-      .then((result) => {
-        if (!disposed) setConnections(result.connections);
-      })
-      .catch(() => {
-        if (!disposed) setError('Could not load connected assistants. Try again.');
-      })
-      .finally(() => {
-        if (!disposed) setLoading(false);
-      });
-    return () => {
-      disposed = true;
-    };
-  }, [path]);
-
+  const mounted = useRef(false);
+  const generation = useRef(0);
   async function refresh() {
+    const request = ++generation.current;
     setLoading(true);
     setError('');
+    const current = () => {
+      if (!mounted.current || generation.current !== request)
+        throw new Error('This connection view is no longer current.');
+    };
     try {
-      setConnections((await api<{ connections: Connection[] }>(path)).connections);
+      const result = await api<{ connections: Connection[] }>(path, undefined, current);
+      current();
+      setConnections(result.connections);
     } catch {
-      setError('Could not load connected assistants. Try again.');
+      if (mounted.current && generation.current === request)
+        setError('Could not load connected assistants. Try again.');
     } finally {
-      setLoading(false);
+      if (mounted.current && generation.current === request) setLoading(false);
     }
   }
+  useEffect(() => {
+    mounted.current = true;
+    void refresh();
+    return () => {
+      mounted.current = false;
+      generation.current++;
+    };
+  }, [path]);
 
   async function disconnect(id: string) {
     setBusy(true);
@@ -94,7 +95,11 @@ export function AssistantConnections({ admin = false }: { admin?: boolean }) {
       )}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
-      <button disabled={busy || loading} onClick={() => void refresh()}>
+      <button
+        className={admin ? 'sp-control' : undefined}
+        disabled={busy || loading}
+        onClick={() => void refresh()}
+      >
         Refresh connected assistants
       </button>
       {loading ? (

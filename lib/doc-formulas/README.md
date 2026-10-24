@@ -35,6 +35,17 @@ on identity changes/backgrounding, and dispose the adapter before the editor.
 The returned state supports an accessible semantic rendering alongside the canvas.
 Only the main body is supported; insertion in headers and footers is rejected.
 
+`insert(definition, selection?, replaceId?, signal?)` accepts the host dialog's
+operation signal. It holds a single insertion lock until evaluation and the native
+command settle. Cancellation, `clear()` and disposal abort pending evaluation;
+the adapter checks cancellation, disposal and document revision before issuing
+the command. Cancellation does not roll back a native mutation already started.
+`FormulaSaveError` exposes a safe failure reason and `retryable` flag. Busy,
+timeout and temporary unavailability can offer an explicit retained retry; other
+failures require correction or renewed source access. The adapter never retries
+an insertion automatically. The host must retain the edit, avoid duplicate
+submits and ignore stale completion when the editing context changes.
+
 ## Security boundary
 
 Definitions are untrusted data. The server validates all bindings and checks every

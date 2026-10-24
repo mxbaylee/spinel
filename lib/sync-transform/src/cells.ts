@@ -371,7 +371,7 @@ function transform(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation
   if (isGhost(a) || isGhost(b) || !meets(a, b)) return [a];
   // Decision (owner, chat 2026-10-22): see names.refuseFormulaRaces.
   if (rewriteMet(a, b) || rewriteMet(b, a)) throw new RefusedEditError('formula-race');
-  // Diagnostics (SPN-032, not built): `sync.edit.dropped`, rule
+  // Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule
   // 'cell-overwritten', when `haunted` adds a ghost.
   return haunted(a, conflict(a, b, side, state));
 }

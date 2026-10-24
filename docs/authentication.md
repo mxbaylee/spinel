@@ -7,6 +7,17 @@ create everyday accounts. There is no public signup or password
 fallback. Recovery is an Operator-issued invite. Sign-in does not use PRF or encryption key wrapping.
 These are the owner’s SPN-002 rules, 2026-10-17.
 
+Entry screens use the quiet single-task layout with one passkey action, explicit
+pending/cancellation/retry feedback and shared Need help guidance. Help displays
+Operator commands without running them. Setup, invitation validation and recovery
+semantics remain distinct. Consent account switching preserves only the validated
+opaque request ID through sign-out; arbitrary return URLs are never accepted.
+An unbound request can continue from an Operator to an everyday account. Once an
+everyday session has viewed consent, it remains bound to that session; after
+signing out, start a fresh request from the assistant instead of transferring it
+to another session or account.
+See [SPN-083](implementation/SPN-083.md) for implementation and verification status.
+
 ## Access and storage
 
 `APP_ORIGIN` is the exact HTTPS browser origin (no trailing slash); only
@@ -41,7 +52,7 @@ never evidence that an authenticator is trusted.
 These choices favour revocation and a small SQLite footprint for the Operator,
 reload persistence and clear recovery for the Owner, equivalent access for the
 Collaborator, and a closed workspace boundary for the Link guest. Recorded
-2026-10-17 in [decision #8](https://github.com/mxbaylee/spinel/issues/8).
+2026-10-17 in [decision #8](implementation/SPN-002.md#legacy-decision-8-passkey-bound-sessions).
 
 ## Reused reference behaviour
 

@@ -35,6 +35,7 @@ sequencing dependency; it must not duplicate those controls before they land.
   fill/profile mappings. **SPN-088** alone investigates eight logical native
   picker colors, with a supported-API fallback. Native dark canvas behavior
   already exists; do not recreate it or conduct two palette investigations.
+  **Later update, 2026-10-23:** [SPN-088 was retired](../implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal), superseding the eight-choice follow-up without claiming it was implemented.
 - Screen migrations **SPN-045/048/049/081–085** apply the shared modal title-icon
   pattern where they work. **SPN-089** follows them as a residual inventory/audit,
   including standalone dialogs; new features continue to own their own dialogs.
@@ -63,11 +64,11 @@ a later phase, and the runbook completes a phase before advancing. This prevents
 optional work's inherited score from moving SPN-038 into the middle of launch
 work. Ordinary untagged backlogs retain their previous display. The routine
 implementation and all four persona tradeoffs are recorded in closed
-[decision #129](https://github.com/mxbaylee/spinel/issues/129).
+[decision #129](../implementation/backlog-workflow.md#legacy-decision-129-fixed-lifecycle-phases).
 
 SPN-093 preserves literal CSV fields, the first row as data and leading zeros,
 without automatic formula/date/number/header inference. Closed
-[decision #130](https://github.com/mxbaylee/spinel/issues/130) records the
+[decision #130](../implementation/SPN-093.md#legacy-decision-130-literal-bounded-csv-import) records the
 rationale, alternatives and persona tradeoffs; the rule is maintained in
 [import guidance](../files.md). These decisions complete the preparation's
 external decision log without implementing the backlog features.

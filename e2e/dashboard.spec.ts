@@ -5,7 +5,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 test('signed-out pages redirect and APIs expose no workspace data', async ({ page, request }) => {
   await page.goto('/settings');
   await expect(page).toHaveURL(/\/sign-in$/);
-  await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your workspace.', exact: true })).toBeVisible();
   for (const path of ['/api/health', '/api/missing', '/api/auth/passkeys', '/api/auth/session'])
     expect((await request.get(path)).status()).toBe(401);
   expect(
@@ -61,7 +61,7 @@ test('registers two devices, signs in with either, persists and revokes sessions
   };
   const first = (await cdp.send('WebAuthn.addVirtualAuthenticator', { options })).authenticatorId;
   try {
-    await page.goto('/settings');
+    await page.goto('/settings#passkeys');
     await page.getByRole('button', { name: 'Add a passkey' }).click();
     await expect(page.getByRole('listitem')).toHaveCount(1);
     await expect(page.getByRole('listitem')).toContainText('Passkey');
@@ -69,9 +69,9 @@ test('registers two devices, signs in with either, persists and revokes sessions
     await expect(page).toHaveURL(/\/sign-in$/);
     expect(store.session(initial.token)).toBeUndefined();
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
-    await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     await page.reload();
-    await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     const cookie = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!;
     expect(cookie).toMatchObject({ httpOnly: true, secure: true, sameSite: 'Strict' });
     expect(cookie.value).not.toBe(initial.token);
@@ -85,14 +85,15 @@ test('registers two devices, signs in with either, persists and revokes sessions
         options: { ...options, transport: 'usb' },
       })
     ).authenticatorId;
-    await page.getByRole('link', { name: 'Settings' }).click();
+    await page.getByRole('link', { name: 'Your profile' }).click();
+    await page.getByRole('link', { name: 'Passkeys', exact: true }).click();
     await page.getByRole('button', { name: 'Add a passkey' }).click();
     await expect(page.getByRole('listitem')).toHaveCount(2);
     await expect(page.getByRole('listitem').filter({ hasText: 'Passkey 2' })).toBeVisible();
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(page).toHaveURL(/\/sign-in$/);
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
-    await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     await cdp.send('WebAuthn.removeVirtualAuthenticator', { authenticatorId: second });
     await cdp.send('WebAuthn.setAutomaticPresenceSimulation', {
       authenticatorId: first,
@@ -101,8 +102,9 @@ test('registers two devices, signs in with either, persists and revokes sessions
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(page).toHaveURL(/\/sign-in$/);
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
-    await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
-    await page.getByRole('link', { name: 'Settings' }).click();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    await page.getByRole('link', { name: 'Your profile' }).click();
+    await page.getByRole('link', { name: 'Passkeys', exact: true }).click();
     // Cancel before the authenticator responds; the UI remains immediately usable.
     await cdp.send('WebAuthn.setAutomaticPresenceSimulation', {
       authenticatorId: first,
@@ -157,7 +159,7 @@ test('registers two devices, signs in with either, persists and revokes sessions
     expect(replay.status()).toBe(400);
     expect((await context.request.get('/api/auth/session')).status()).toBe(401);
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
-    await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
   } finally {
     store.database.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
     database.close();

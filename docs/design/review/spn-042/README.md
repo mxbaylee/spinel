@@ -72,12 +72,12 @@ Owner and Collaborator get the same connection/save distinction without changed
 edit permissions. Guests see only the linked document, a generic gem header and
 their role, with no account identity or navigation. Operators gain no document
 access or new monitoring service. See [connection behavior](../../../connection.md)
-and [decision #132](https://github.com/mxbaylee/spinel/issues/132).
+and [decision #132](../../../implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation).
 
 ## Scope and comparison limits
 
 The complete save component and header migrations remain in SPN-043 and SPN-049;
-native editor theme/palette work remains in SPN-088. Existing Univer license marks
+the extra native palette proposal was later [retired as SPN-088](../../../implementation/SPN-088.md#retain-native-colors-and-retire-the-extra-palette-proposal), retaining existing native dark rendering. Existing Univer license marks
 are retained without concealment or license workarounds; SPN-059/SPN-075 remove
 the remaining Pro dependencies.
 
