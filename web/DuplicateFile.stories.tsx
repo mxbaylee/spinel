@@ -429,3 +429,97 @@ export const SourceChangesWhilePending: Story = {
     }
   },
 };
+
+function ChangingMetadata(props: ComponentProps<typeof DuplicateFile>) {
+  const [revision, setRevision] = useState(0);
+  useEffect(() => {
+    const change = () => setRevision((value) => value + 1);
+    document.addEventListener('duplicate-metadata-change', change);
+    return () => document.removeEventListener('duplicate-metadata-change', change);
+  }, []);
+  return (
+    <DuplicateFile
+      {...props}
+      source={
+        revision
+          ? {
+              ...props.source,
+              name: `Renamed source ${revision}`,
+              access: revision === 1 ? 'viewer' : 'owner',
+              parentId: revision === 1 ? null : 'personal',
+            }
+          : props.source
+      }
+    />
+  );
+}
+
+async function preserveOutcome(canvasElement: HTMLElement, confirmed: boolean) {
+  const { canvas, dialog } = await ready(canvasElement);
+  await userEvent.clear(canvas.getByLabelText('Name'));
+  await userEvent.type(canvas.getByLabelText('Name'), 'Next budget');
+  await userEvent.selectOptions(canvas.getByLabelText('Destination'), 'personal');
+  const original = globalThis.fetch;
+  let posts = 0;
+  let signal: AbortSignal | null | undefined;
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  globalThis.fetch = async (input, init) => {
+    if (init?.method !== 'POST') return original(input, init);
+    posts++;
+    signal = init.signal;
+    await held;
+    if (!confirmed) throw new TypeError('The committed response was lost');
+    return new Response(
+      JSON.stringify({ item: { ...copied, name: 'Next budget', parentId: 'personal' } }),
+      { status: 201 },
+    );
+  };
+  try {
+    await userEvent.click(canvas.getByRole('button', { name: /^Duplicate$/ }));
+    await waitFor(() => expect(signal).toBeDefined());
+    document.dispatchEvent(new Event('duplicate-metadata-change'));
+    await waitFor(() => expect(dialog).toHaveTextContent('Renamed source 1'));
+    await expect(signal?.aborted).toBe(false);
+    await expect(canvas.getByRole('status')).toHaveTextContent('Making copy…');
+    release();
+    if (confirmed)
+      await waitFor(() =>
+        expect(canvas.getByRole('button', { name: /^Open copy$/ })).toBeEnabled(),
+      );
+    else
+      await expect(await canvas.findByRole('alert')).toHaveTextContent(
+        'Could not confirm whether the copy was created. Check Personal before trying again.',
+      );
+    document.dispatchEvent(new Event('duplicate-metadata-change'));
+    await waitFor(() => expect(dialog).toHaveTextContent('Renamed source 2'));
+    await expect(canvas.getByLabelText('Name')).toHaveValue('Next budget');
+    await expect(canvas.getByLabelText('Destination')).toHaveValue('personal');
+    await expect(canvas.getByLabelText('Name')).toBeDisabled();
+    await expect(canvas.queryByRole('button', { name: /^Duplicate$/ })).not.toBeInTheDocument();
+    if (confirmed) {
+      await expect(canvas.getByRole('status')).toHaveTextContent(
+        'Created Next budget in Personal.',
+      );
+      await userEvent.click(canvas.getByRole('button', { name: /^Open copy$/ }));
+      await expect(canvas.getByRole('button', { name: /^Open copy$/ })).toBeEnabled();
+    } else await expect(canvas.getByRole('button', { name: /^Check destination$/ })).toBeEnabled();
+    await expect(posts).toBe(1);
+    await assertDialogControls(dialog);
+  } finally {
+    release();
+    globalThis.fetch = original;
+  }
+}
+export const MetadataChangesAfterUncertainCopy: Story = {
+  render: (args) => <ChangingMetadata {...args} />,
+  parameters: { api: catalog },
+  play: ({ canvasElement }) => preserveOutcome(canvasElement, false),
+};
+export const MetadataChangesAfterCreatedCopy: Story = {
+  render: (args) => <ChangingMetadata {...args} />,
+  parameters: { api: catalog },
+  play: ({ canvasElement }) => preserveOutcome(canvasElement, true),
+};

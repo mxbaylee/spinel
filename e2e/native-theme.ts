@@ -3,13 +3,20 @@ import { expect } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
 /** Wait for the rendered SDK surface, not just the earlier app theme update. */
-export async function nativeTheme(page: Page, target: Locator, scheme: 'light' | 'dark') {
+export async function nativeTheme(
+  page: Page,
+  target: Locator,
+  scheme: 'light' | 'dark',
+  screenshotStyle?: string,
+) {
   await expect(page.locator('html')).toHaveAttribute('data-theme', scheme);
   // Match appearance.spec.ts's composited-surface check: transparent native
   // cells must be measured over the SDK's CSS surface, not as raw canvas pixels.
   await expect
     .poll(async () => {
-      const image = await loadImage(await target.screenshot());
+      // An open modal can obscure the surface. Probe-only screenshot styles may
+      // hide that overlay; retained evidence screenshots must keep the real UI.
+      const image = await loadImage(await target.screenshot({ style: screenshotStyle }));
       const canvas = createCanvas(image.width, image.height);
       const drawing = canvas.getContext('2d');
       drawing.drawImage(image, 0, 0);

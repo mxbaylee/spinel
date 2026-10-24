@@ -166,7 +166,9 @@ export function DuplicateFile({
       catalog.current?.abort();
       mutation.current?.abort();
     };
-  }, [source.id, source.spaceId, source.access, source.parentId]);
+    // Access and folder metadata may refresh after the POST committed. Preserve
+    // its receipt or uncertainty for this identity; the server reauthorizes retries.
+  }, [source.id, source.spaceId]);
   function close() {
     if (submitting.current || closed.current) return;
     closed.current = true;

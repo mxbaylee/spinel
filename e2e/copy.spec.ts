@@ -12,6 +12,7 @@ import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { imageSources } from '../src/server/workspace/imageSources.ts';
 import { sheetImageFixture } from './sheet-image-fixture.ts';
+import { nativeTheme } from './native-theme.ts';
 
 function fixture(info: TestInfo) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
@@ -55,6 +56,7 @@ async function editorDuplicate(page: Page) {
 }
 async function capture(page: Page, info: TestInfo, state: string) {
   await mkdir('test-results/theme-screenshots', { recursive: true });
+  const native = state !== 'uncertain-created';
   for (const [theme, width] of [
     ['light', 1440],
     ['dark', 1440],
@@ -62,7 +64,7 @@ async function capture(page: Page, info: TestInfo, state: string) {
   ] as const) {
     await page.emulateMedia({ colorScheme: theme });
     await page.setViewportSize({ width, height: 1000 });
-    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    await settledNative(page, theme, native);
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth))
       .toBeLessThanOrEqual(width);
@@ -74,6 +76,38 @@ async function capture(page: Page, info: TestInfo, state: string) {
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ colorScheme: 'light' });
+  await settledNative(page, 'light', native);
+}
+async function settledNative(page: Page, theme: 'light' | 'dark', native: boolean) {
+  await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+  const canvas = page.locator('.univer-container canvas').first();
+  // The uncertain row-copy state has no mounted editor.
+  if (!native) {
+    await expect(canvas).toHaveCount(0);
+    return;
+  }
+  await expect(canvas).toBeVisible();
+  await expect
+    .poll(() =>
+      canvas.evaluate((node) => {
+        if (!node.parentElement) return false;
+        const mount = getComputedStyle(node.parentElement);
+        const box = node.getBoundingClientRect();
+        return (
+          box.width > 0 &&
+          box.height > 0 &&
+          Math.abs(box.width - parseFloat(mount.width)) <= 1 &&
+          Math.abs(box.height - parseFloat(mount.height)) <= 1
+        );
+      }),
+    )
+    .toBe(true);
+  await nativeTheme(
+    page,
+    canvas,
+    theme,
+    '.sp-backdrop, .sp-modal { visibility: hidden !important; }',
+  );
 }
 async function imagePixels(page: Page) {
   const { data, info } = await sharp(await page.locator('.univer-container').screenshot())
@@ -96,8 +130,9 @@ async function imagePixels(page: Page) {
 async function typeCell(page: Page, value: string) {
   const address = page
     .getByRole('region', { name: 'Sheet document', exact: true })
-    .getByRole('textbox')
-    .nth(2);
+    .locator('[data-u-comp="defined-name"]')
+    .getByRole('textbox');
+  await expect(address).toBeEnabled();
   await address.fill('A1');
   await address.press('Enter');
   await page.keyboard.type(value);
@@ -120,12 +155,27 @@ test('owned Sheet copy waits for saved edits, keeps all images and inherited fol
       parentId: null,
     });
     f.workspace.share(f.owner.id, folder.id, f.viewer.id, 'viewer');
+    const snapshot = await sheetImageFixture();
+    // Retain a real tiled background image while leaving paper visible for the
+    // native light/dark readiness probe. All three image models remain present.
+    const mark = await sharp({
+      create: { width: 20, height: 20, channels: 4, background: '#22bb66' },
+    })
+      .png()
+      .toBuffer();
+    const background = await sharp({
+      create: { width: 80, height: 60, channels: 4, background: '#00000000' },
+    })
+      .composite([{ input: mark, top: 0, left: 0 }])
+      .png()
+      .toBuffer();
+    snapshot.sheets.tab.backgroundImage.source = `data:image/png;base64,${background.toString('base64')}`;
     const imported = await context.request.post('/api/items/import', {
       headers: { Origin: baseURL! },
       data: {
         filename: 'Images.univer.json',
         parentId: folder.id,
-        snapshot: await sheetImageFixture(),
+        snapshot,
       },
     });
     expect(imported.status()).toBe(201);
