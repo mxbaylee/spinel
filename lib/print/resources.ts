@@ -9,7 +9,12 @@ export function resourceRecord(value: unknown): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
 
-export function readResource(snapshot: IWorkbookData, name: string, limits: Readonly<PrintLimits>, check: () => void): Record<string, unknown> {
+export function readResource(
+  snapshot: IWorkbookData,
+  name: string,
+  limits: Readonly<PrintLimits>,
+  check: () => void,
+): Record<string, unknown> {
   const matches = (snapshot.resources ?? []).filter((resource) => resource.name === name);
   if (!matches.length) return {};
   if (matches.length !== 1 || typeof matches[0].data !== 'string')

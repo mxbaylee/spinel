@@ -11,9 +11,25 @@ export interface AdmittedImage {
 }
 
 function imageFormat(bytes: Uint8Array): AdmittedImage['format'] {
-  if (bytes.length >= 8 && bytes[0] === 137 && bytes[1] === 80 && bytes[2] === 78 && bytes[3] === 71 && bytes[4] === 13 && bytes[5] === 10 && bytes[6] === 26 && bytes[7] === 10) return 'png';
+  if (
+    bytes.length >= 8 &&
+    bytes[0] === 137 &&
+    bytes[1] === 80 &&
+    bytes[2] === 78 &&
+    bytes[3] === 71 &&
+    bytes[4] === 13 &&
+    bytes[5] === 10 &&
+    bytes[6] === 26 &&
+    bytes[7] === 10
+  )
+    return 'png';
   if (bytes.length >= 3 && bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return 'jpeg';
-  if (bytes.length >= 12 && String.fromCharCode(...bytes.subarray(0, 4)) === 'RIFF' && String.fromCharCode(...bytes.subarray(8, 12)) === 'WEBP') return 'webp';
+  if (
+    bytes.length >= 12 &&
+    String.fromCharCode(...bytes.subarray(0, 4)) === 'RIFF' &&
+    String.fromCharCode(...bytes.subarray(8, 12)) === 'WEBP'
+  )
+    return 'webp';
   throw new PrintError('unsupported', 'PDF images must be static PNG, JPEG or WebP bytes.');
 }
 
@@ -36,7 +52,14 @@ export async function admitImages(
   let encodedBytes = 0;
   for (const input of prepared) {
     check();
-    if (!input || typeof input.source !== 'string' || !input.source || !(input.bytes instanceof Uint8Array) || !input.bytes.byteLength || inputs.has(input.source))
+    if (
+      !input ||
+      typeof input.source !== 'string' ||
+      !input.source ||
+      !(input.bytes instanceof Uint8Array) ||
+      !input.bytes.byteLength ||
+      inputs.has(input.source)
+    )
       throw new PrintError('invalid-input', 'Invalid or duplicate prepared PDF image.');
     if (Buffer.byteLength(input.source, 'utf8') > limits.snapshotBytes)
       throw new PrintError('limit', 'PDF image reference is too large.');
@@ -58,7 +81,11 @@ export async function admitImages(
     check();
     const format = imageFormat(bytes);
     let metadata;
-    const image = sharp(bytes, { limitInputPixels: limits.decodedImagePixels, failOn: 'error', sequentialRead: true });
+    const image = sharp(bytes, {
+      limitInputPixels: limits.decodedImagePixels,
+      failOn: 'error',
+      sequentialRead: true,
+    });
     try {
       metadata = await image.metadata();
     } catch {
@@ -68,8 +95,18 @@ export async function admitImages(
     }
     check();
     const { width, height } = metadata;
-    if (metadata.format !== format || !width || !height || !Number.isSafeInteger(width) || !Number.isSafeInteger(height) || (metadata.pages ?? 1) !== 1)
-      throw new PrintError('invalid-input', 'A PDF image has invalid dimensions or multiple frames.');
+    if (
+      metadata.format !== format ||
+      !width ||
+      !height ||
+      !Number.isSafeInteger(width) ||
+      !Number.isSafeInteger(height) ||
+      (metadata.pages ?? 1) !== 1
+    )
+      throw new PrintError(
+        'invalid-input',
+        'A PDF image has invalid dimensions or multiple frames.',
+      );
     pixels += width * height;
     if (!Number.isSafeInteger(pixels) || pixels > limits.decodedImagePixels)
       throw new PrintError('limit', 'PDF images exceed their aggregate decoded pixel budget.');

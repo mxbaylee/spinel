@@ -99,7 +99,10 @@ export function printLimits(options: SheetPrintOptions): Readonly<PrintLimits> {
       throw new PrintError('invalid-input', 'Unknown PDF resource limit.');
     const name = key as keyof PrintLimits;
     if (!Number.isSafeInteger(value) || value <= 0 || value > PRINT_LIMITS[name])
-      throw new PrintError('invalid-input', 'PDF limits must be positive and within package bounds.');
+      throw new PrintError(
+        'invalid-input',
+        'PDF limits must be positive and within package bounds.',
+      );
     limits[name] = value;
   }
   return Object.freeze(limits);
@@ -107,5 +110,6 @@ export function printLimits(options: SheetPrintOptions): Readonly<PrintLimits> {
 
 export function printCheckpoint(signal: AbortSignal | undefined, deadline: number) {
   if (signal?.aborted) throw new PrintError('cancelled', 'PDF rendering was cancelled.');
-  if (performance.now() >= deadline) throw new PrintError('limit', 'PDF rendering exceeded its time limit.');
+  if (performance.now() >= deadline)
+    throw new PrintError('limit', 'PDF rendering exceeded its time limit.');
 }
