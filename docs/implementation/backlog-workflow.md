@@ -1,5 +1,29 @@
 # backlog-workflow decision record
 
+## CI as the default validation environment
+
+**Date/status:** 2026-10-23, accepted. **Authority:** Owner, this backlog chat:
+“Yes—run blocked checks in CI” and “of course you can always use ci or even prefer it.”
+
+**Question/context:** Must local typecheck and lint pass before draft publication
+when the memory watchdog repeatedly aborts them? The earlier CI-first exception
+retained those local prerequisites, blocking reviewed source checkpoints.
+
+**Options:** wait for safe local runs; allow only resource-blocked checks in CI;
+or allow CI as the normal validation environment. The owner chose the last.
+
+**Outcome/reason:** Agents may prefer CI for typecheck, lint, backlog, unit,
+browser and other required checks. Local passes are not prerequisites for draft
+pushes. Keep unverified PRs draft and report deferred/aborted checks honestly.
+All required current-head CI, independent review >=95 with no blockers, actual
+visual approval and guarded squash-merge requirements remain. Local workloads
+still obey the memory watchdog. No paid host or deployment authority is added.
+
+**Personas:** Operator retains reproducible checks and avoids host pressure;
+Owner avoids local disruption without unverified merges; Collaborator retains
+save/access regression checks; Link guest retains anonymity and revocation checks.
+This supersedes only the local-before-push prerequisite in historical decision52.
+
 ## Migrated decision history
 
 Migrated by [SPN-096](SPN-096.md) on 2026-10-23. “Recorded” is the source issue opening
@@ -194,3 +218,45 @@ Owner retains actual screenshot evidence and a transparent review record; Collab
 keyboard/touch/access/error-state review; Link guest receives explicit anonymity, scope, revocation
 and unavailable-state review. Human taste feedback may follow later; that tradeoff is explicitly
 accepted by the owner.
+
+## Soft target for open ticket PRs
+
+**Date:** 2026-10-23. **Status:** accepted. **Authority:** Owner, current backlog-run chat.
+
+**Question:** How much parallel ticket work should remain open while CI or review waits?
+
+The owner clarified a soft limit of two PRs, with no hard limit, and explicitly
+said not to close the existing PRs. Prefer completing existing work before opening
+more. Exceptions can permit useful independent progress; neither CI delays nor
+the target waive review, verification or merge requirements. Unlimited parallel
+starts made progress harder to follow; a hard cap or automatic closure would
+contradict the owner's clarification. The current drafts remain open.
+
+Operator gets fewer simultaneous operational changes to track. Owner gets a
+clearer completion order. Collaborator benefits from fewer partially integrated
+UI/access changes. Link guest retains the same privacy and verification gates;
+sequencing changes no permissions. This is workflow guidance, not authorization
+to close PRs or mark incomplete tickets done.
+
+## Review Dependabot PRs at every backlog grooming
+
+**Date:** 2026-10-23. **Status:** accepted. **Authority:** Owner, current backlog-run chat.
+
+**Question:** When should dependency update PRs be reviewed after SPN-100 enabled
+the bot?
+
+Keep the existing bot PRs open and review open Dependabot PRs at every backlog
+grooming. The owner clarified that this is a standing checklist item, expanding
+the initial request for the next grooming. Check compatibility, security
+implications, current CI evidence and whether updates are sensibly grouped;
+record follow-up dispositions for unresolved updates. The owner chose grooming
+rather than starting dependency upgrades now or closing queued PRs. This
+does not approve automatic merges, schedule grooming or force a grooming event;
+the normal dependency review, verification and merge requirements still apply.
+
+Operator gets an explicit point to assess security and maintenance costs. Owner
+keeps the current completion queue clear while retaining visible update proposals.
+Collaborator gets compatibility and editing checks before upgrades land. Link
+guest retains access/privacy validation for dependency changes; this workflow
+decision changes no guest capability. No package or lockfile is updated by this
+record.

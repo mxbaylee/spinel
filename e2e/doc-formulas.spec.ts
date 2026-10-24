@@ -145,6 +145,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   const insert = async (expression: string) => {
     if (await formulaPanel(page).isVisible())
       await formulaPanel(page).getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await expect(formulaPanel(page)).toHaveCount(0);
     const paragraphsBefore = (await read()).body.dataStream.split('\r').length;
     if (!(await read()).body.customRanges?.length)
       await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
@@ -178,6 +179,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
         timeout: 20_000,
       });
       await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+      await expect(panel).toHaveCount(0);
     }
     await mkdir('test-results/theme-screenshots', { recursive: true });
     for (const [theme, width] of [
@@ -193,7 +195,11 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
           timeout: 20_000,
         });
         await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+        await expect(panel).toHaveCount(0);
         await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
+        await expect(
+          target.locator('[contenteditable="true"][data-u-comp="editor"]'),
+        ).toBeFocused();
         await target.keyboard.press('Control+Home');
       }
       await target.screenshot({
@@ -207,7 +213,11 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
           timeout: 20_000,
         });
         await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+        await expect(panel).toHaveCount(0);
         await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
+        await expect(
+          target.locator('[contenteditable="true"][data-u-comp="editor"]'),
+        ).toBeFocused();
         await target.keyboard.press('Control+End');
         await target.screenshot({
           path: `test-results/theme-screenshots/formulas-${info.project.name}-${name}-end-${theme}-${width}.png`,
@@ -623,6 +633,7 @@ test('rich clipboard creates independent native Formula objects and plain text k
     const editDialog = page.getByRole('dialog', { name: 'Edit formula' });
     if (await editDialog.isVisible())
       await editDialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(editDialog).toHaveCount(0);
     await input.focus();
     await expect(input).toBeFocused();
     const originalFormula = (await readRanges())[0];

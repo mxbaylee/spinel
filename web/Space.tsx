@@ -902,8 +902,8 @@ export function Space({
     </SpaceShell>
   );
   // A guest with no loaded tree receives no Space identity or account navigation.
-  // Dirty editors deliberately keep the existing recovery path; see SPN-084's
-  // unresolved privacy/recovery decision before changing that separate boundary.
+  // GuestApp disposes even dirty guest editors on authoritative revocation.
+  // Account draft recovery remains a separate, unchanged boundary.
   if (guest && !currentTree && !visiblePage)
     return (
       <AccessState
@@ -924,7 +924,7 @@ export function Space({
       documentKey={editorKey!}
       name={denied ? 'Space unavailable' : visiblePage.item.name}
       onRename={
-        !guest && canAdminister(currentTree?.access) && canEdit
+        !guest && !denied && selection.item && canAdminister(currentTree?.access) && canEdit
           ? async (name) => {
               const renamed = await mutate(
                 (signal) =>
@@ -945,17 +945,19 @@ export function Space({
       connection={connection}
       guest={Boolean(guest)}
       access={
-        guest
-          ? canEdit
-            ? 'Guest editor'
-            : 'View only'
-          : currentTree?.access === 'owner'
-            ? undefined
-            : currentTree?.access === 'viewer'
-              ? 'View only'
-              : currentTree?.access === 'admin'
-                ? 'File admin'
-                : 'Can edit'
+        denied || selection.missing
+          ? 'Access changed'
+          : guest
+            ? canEdit
+              ? 'Guest editor'
+              : 'View only'
+            : currentTree?.access === 'owner'
+              ? undefined
+              : currentTree?.access === 'viewer'
+                ? 'View only'
+                : currentTree?.access === 'admin'
+                  ? 'File admin'
+                  : 'Can edit'
       }
       onBack={user && !guest ? exit : undefined}
       backLabel="My files"

@@ -741,8 +741,11 @@ for (const kind of ['doc', 'sheet'] as const) {
       expect(f.errors).toEqual([]);
     } finally {
       release();
-      await f.guest.unrouteAll({ behavior: 'wait' });
-      await f.close();
+      try {
+        await f.guest.unrouteAll({ behavior: 'wait' });
+      } finally {
+        await f.close();
+      }
     }
   });
 }
@@ -781,6 +784,7 @@ test('an Edit Space guest manages native pages and loses every child on rotation
     expect(bound).toContain('=Budget.Summary.A1');
     expect(bound).toContain(f.source.id);
     await formulas.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await expect(formulas).toHaveCount(0);
     await capture(f, info, 'editor');
 
     const folder = await add(f, 'Folder', 'Guest research', f.root.name);

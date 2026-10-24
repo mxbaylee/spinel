@@ -1,3 +1,4 @@
+import { AuthEntry } from './AuthEntry.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -14,10 +15,7 @@ import type {
 import { signSetupProof } from './setup.ts';
 import { ConsoleRecovery } from './ConsoleRecovery.tsx';
 import { api, connectionRequest, signInPath } from './api.ts';
-import { BackupStatus } from './BackupStatus.tsx';
-import { AdminUsers } from './AdminUsers.tsx';
-import { AccessTokens } from './AccessTokens.tsx';
-import { AssistantConnections } from './AssistantConnections.tsx';
+import { AdminPage } from './AdminPage.tsx';
 import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { Space } from './Space.tsx';
@@ -367,7 +365,9 @@ export function App() {
     }
     try {
       await api('sign-out', {});
-      location.assign('/sign-in');
+      // Switching to an everyday account from consent retains only its validated
+      // opaque transaction ID, never a client-provided callback URL.
+      location.assign(connecting ? signInPath() : '/sign-in');
     } catch {
       unsaved.current ||= hadUnsavedChanges;
       setError('Could not sign out. Check your connection and try again.');
@@ -454,13 +454,40 @@ export function App() {
       </>
     );
   }
+  if (setup || invitation || !user)
+    return (
+      <AuthEntry
+        mode={setup ? 'setup' : invitation ? 'invite' : 'sign-in'}
+        loading={!loaded}
+        validSetup={Boolean(setupId && setupSecret)}
+        inviteDetails={inviteDetails}
+        name={inviteName}
+        onName={setInviteName}
+        busy={busy}
+        error={error}
+        notice={notice}
+        unreachable={unreachable}
+        onPasskey={() => void ceremony(setup || invitation)}
+        onCancel={cancel}
+        onHome={() => location.assign(signInPath())}
+      />
+    );
+  if (connecting)
+    return (
+      <ConnectAssistant
+        request={connectRequest}
+        user={user}
+        onSignOut={() => void signOut()}
+        signOutError={error}
+      />
+    );
   return (
     <div
-      className={`workspace${settings ? ' profile-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
+      className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
     >
       <Rail
         user={user}
-        compact={settings}
+        compact={settings || !!user?.isAdmin}
         files={filePlaces}
         navigation={navigation}
         onSignOut={() => void signOut()}
@@ -474,80 +501,6 @@ export function App() {
             <p role="status">Loading…</p>
           ) : unreachable ? (
             <OfflineUnreachable />
-          ) : setup ? (
-            <>
-              <p className="eyebrow">A new workspace</p>
-              <h1>Set up Spinel</h1>
-              <section className="welcome">
-                <h2>Create your admin passkey</h2>
-                <p>
-                  Your admin account manages the workspace. It cannot open documents; you will
-                  invite a separate everyday account for that.
-                </p>
-                {setupId && setupSecret ? (
-                  <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                    Create admin passkey
-                  </button>
-                ) : (
-                  <p role="alert">
-                    Open the one-time setup link printed on the server. If it expired, run the setup
-                    command again.
-                  </p>
-                )}
-              </section>
-            </>
-          ) : invitation ? (
-            <>
-              <p className="eyebrow">Your private workspace</p>
-              <h1>{inviteDetails?.recovery ? 'Recover your account' : 'Join Spinel'}</h1>
-              {inviteDetails && (
-                <section className="welcome">
-                  {inviteDetails.recovery ? (
-                    <>
-                      <h2>{inviteDetails.name}</h2>
-                      <p>
-                        Adding your new passkey will replace all old passkeys and sign out your
-                        other devices. Your account and documents stay yours.
-                      </p>
-                    </>
-                  ) : (
-                    <label>
-                      Your name
-                      <input
-                        value={inviteName}
-                        maxLength={80}
-                        onChange={(event) => setInviteName(event.target.value)}
-                        autoComplete="name"
-                      />
-                    </label>
-                  )}
-                  <button
-                    className="primary"
-                    disabled={busy || !inviteName.trim()}
-                    onClick={() => void ceremony(true)}
-                  >
-                    {inviteDetails.recovery ? 'Recover with a passkey' : 'Join with a passkey'}
-                  </button>
-                </section>
-              )}
-            </>
-          ) : !user ? (
-            <>
-              <p className="eyebrow">Your private workspace</p>
-              <h1>Sign in</h1>
-              <section className="welcome">
-                <h2>Welcome back</h2>
-                <p>Use a passkey from your browser, password manager or phone.</p>
-                <button className="primary" disabled={busy} onClick={() => void ceremony(false)}>
-                  Sign in with a passkey
-                </button>
-                <p className="placeholder">
-                  Need access or a new passkey? Contact your workspace operator.
-                </p>
-              </section>
-            </>
-          ) : connecting ? (
-            <ConnectAssistant request={connectRequest} user={user} />
           ) : local && location.pathname === '/preview' ? (
             <p role="status">Version history needs a connection.</p>
           ) : settings ? (
@@ -581,20 +534,7 @@ export function App() {
               }
             />
           ) : user.isAdmin ? (
-            <>
-              <h1>Admin</h1>
-              <section className="welcome">
-                <h2>Workspace administration</h2>
-                <p>
-                  Invite people or help them recover their passkeys. Use a separate everyday account
-                  for documents.
-                </p>
-                <AdminUsers currentId={user.id} />
-                <AssistantConnections admin />
-                <AccessTokens admin />
-                <BackupStatus />
-              </section>
-            </>
+            <AdminPage key={user.id} currentId={user.id} />
           ) : location.pathname === '/preview' ? (
             <Suspense fallback={<p>Loading preview…</p>}>
               <HistoryBrowser />

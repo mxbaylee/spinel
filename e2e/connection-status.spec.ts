@@ -29,14 +29,21 @@ async function detail(page: Page, state: ConnectionState, touch = false) {
   const snapshot = () =>
     trigger.evaluate((element) => {
       const rect = element.getBoundingClientRect();
+      const header = element.closest('header');
+      if (!header) throw new Error('Connection status must remain in the navigation rail.');
+      const rail = header.getBoundingClientRect();
       return {
         viewport: rect.toJSON(),
         scroll: { x: scrollX, y: scrollY },
         bounds: {
-          x: rect.x + scrollX,
-          y: rect.y + scrollY,
+          x: rect.x - rail.x,
+          y: rect.y - rail.y,
           width: rect.width,
           height: rect.height,
+          railWidth: rail.width,
+          railHeight: rail.height,
+          railDocumentX: rail.x + scrollX,
+          railViewportY: rail.y,
         },
       };
     });
@@ -53,9 +60,11 @@ async function detail(page: Page, state: ConnectionState, touch = false) {
   const after = await snapshot();
   if (touch && (before.scroll.x !== after.scroll.x || before.scroll.y !== after.scroll.y))
     console.info('Connection detail scroll evidence', JSON.stringify({ before, after }));
-  // Pointer activation may scroll an already-wide page. Compare exact layout
-  // coordinates; native canvas viewport checks below remain unchanged.
+  // The rail is sticky: adding scrollY would invent movement when it stays
+  // anchored. Check exact rail-relative layout, rail size and viewport anchoring;
+  // document-relative native canvas/save geometry is checked separately below.
   expect(after.bounds).toEqual(before.bounds);
+  expect(after.viewport.y).toBe(before.viewport.y);
   await expect(trigger).toBeInViewport();
 }
 

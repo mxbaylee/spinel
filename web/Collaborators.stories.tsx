@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Collaborators, collaboratorColor } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
+import { expect, userEvent, within } from 'storybook/test';
 
 const person = (id: string, name: string, jump?: () => void): Collaborator => ({
   id,
@@ -57,4 +58,62 @@ export const Many: Story = {
 export const ManyPhone: Story = {
   ...Many,
   globals: { viewport: { value: 'phone', isRotated: false } },
+};
+
+async function openPeople(canvasElement: HTMLElement) {
+  await userEvent.click(
+    within(canvasElement).getByRole('button', { name: 'People in this document' }),
+  );
+  const dialog = await within(document.body).findByRole('dialog', {
+    name: 'People in this document',
+  });
+  for (const button of within(dialog).getAllByRole('button')) {
+    const box = button.getBoundingClientRect();
+    await expect(box.left).toBeGreaterThanOrEqual(0);
+    await expect(box.right).toBeLessThanOrEqual(window.innerWidth);
+    if (window.innerWidth <= 640 || matchMedia('(pointer: coarse)').matches) {
+      await expect(box.width).toBeGreaterThanOrEqual(44);
+      await expect(box.height).toBeGreaterThanOrEqual(44);
+    }
+  }
+  await expect(dialog.scrollWidth).toBeLessThanOrEqual(dialog.clientWidth);
+  await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+  return within(dialog);
+}
+
+/** These finish open so screenshot capture includes the actual people state. */
+export const EmptyOpen: Story = {
+  ...Empty,
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(dialog.getByText('No one is connected yet.')).toBeVisible();
+  },
+};
+export const GuestLabelsOpen: Story = {
+  ...GuestLabels,
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(dialog.getByText('Collaborator')).toBeVisible();
+    await expect(dialog.getAllByText('Guest')).toHaveLength(2);
+    await expect(dialog.queryByText('Sam Rivera')).not.toBeInTheDocument();
+  },
+};
+export const LongNamesOpen: Story = {
+  args: {
+    people: [
+      person('long', 'Alexandria Nakamura-Fernandez — a long collaborator name', () => {}),
+      person('self', 'Sam Rivera'),
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(
+      dialog.getByText('Alexandria Nakamura-Fernandez — a long collaborator name'),
+    ).toBeVisible();
+    await expect(
+      dialog.getByRole('button', {
+        name: 'Go to Alexandria Nakamura-Fernandez — a long collaborator name',
+      }),
+    ).toBeEnabled();
+  },
 };
