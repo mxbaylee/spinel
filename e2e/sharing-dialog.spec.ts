@@ -15,8 +15,10 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db),
     files = new WorkspaceFiles(new WorkspaceStore(auth, { spacesEnabled: true }));
-  const owner = auth.createUser('Dialog owner ' + info.testId),
-    peer = auth.createUser('Dialog peer ' + info.testId);
+  // Retried tests share the database: keep each attempt's accessible names unique.
+  const attempt = `${info.testId}-${info.retry}`;
+  const owner = auth.createUser('Dialog owner ' + attempt),
+    peer = auth.createUser('Dialog peer ' + attempt);
   const item = files.create(owner.id, {
     kind: 'space',
     name: 'Sharing dialog Space',
@@ -61,7 +63,10 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
     const dialog = page.getByRole('dialog', { name: `Share ${item.name}`, exact: true });
     await expect(page.getByRole('dialog')).toHaveCount(1);
     const choice = dialog.getByRole('combobox', { name: `Access for ${peer.name}`, exact: true });
-    const row = dialog.locator('.sharing-person').filter({ has: choice });
+    // `has` is evaluated inside each row, so it must not include the outer dialog.
+    const row = dialog.locator('.sharing-person').filter({
+      has: page.getByRole('combobox', { name: `Access for ${peer.name}`, exact: true }),
+    });
     await choice.selectOption('viewer');
     await dialog
       .getByRole('button', { name: `Apply access for ${peer.name}`, exact: true })
