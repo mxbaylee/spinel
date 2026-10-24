@@ -15,7 +15,7 @@ measurement, total minus free memory is explicitly labelled as an approximation.
 Process RSS and cgroup-v2 container usage/limit are separate measurements; never
 add them to host usage. Missing cgroup data is unavailable, not zero. The warning
 starts at the first observed sample above 80% of the host budget and clears when
-usage falls below it. Sampling occurs at startup, each minute and on refresh;
+usage falls to or below it. Sampling occurs at startup, each minute and on refresh;
 the warning timestamp is an observation, not the exact instant a problem began.
 
 Live connections counts connected editors with an open unit. Physical database
