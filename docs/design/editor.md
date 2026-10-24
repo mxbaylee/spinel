@@ -60,6 +60,12 @@ rules. Theatre mode hides surrounding navigation without remounting the editor.
 Univer's own toolbar stays inside its container. Connection behavior is
 maintained in [connection.md](../connection.md).
 
+Remote document labels remain above the native canvas/theatre frame and below
+application backdrops, dialogs and menus. Spinel supplies their layer through the
+public Sheet popup API; opening People or document actions must never leave a
+collaborator badge painted over those controls. Labels remain present when the
+overlay closes. Native peer captures verify this separately from geometry stories.
+
 While an editor is open, background shared-file refresh failures keep their
 alert and Retry action after the editor. They must not insert a new row above
 the active document when the polling request fails (SPN-042). The dashboard's

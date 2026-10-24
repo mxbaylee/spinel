@@ -12,7 +12,7 @@ import { avatarProfile } from '../src/profile/profile.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { palettes, presenceFallbackColors } from '../src/ui/palette.ts';
 import { getTheme, watchTheme } from '../src/ui/theme.ts';
-import { PresenceLabel } from './PresenceLabel.tsx';
+import { PresenceLabel, presencePopupZIndex } from './PresenceLabel.tsx';
 import { presenceRenderColors } from './presenceColors.ts';
 import { useState } from 'react';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
@@ -186,6 +186,7 @@ export async function watchPresence(
               person.color,
               () => <PresenceLabel {...person} />,
               presenceRenderColors(profile?.color ?? person.color, 'remote'),
+              { zIndex: presencePopupZIndex },
             ),
           );
         } catch {

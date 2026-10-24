@@ -1,6 +1,6 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
-import type { BrowserContext, Page, TestInfo } from '@playwright/test';
+import type { BrowserContext, Locator, Page, TestInfo } from '@playwright/test';
 import type { ICellData, IWorkbookData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
@@ -222,6 +222,23 @@ for (const kind of ['sheet', 'doc'] as const) {
         const snapshot = (await response.json()).snapshot;
         return kind === 'sheet' ? resolvedWorkbook(snapshot) : snapshot;
       };
+      const presencePopup = page.locator('[data-u-comp="rect-popup"]').filter({
+        has: page.locator('[data-presence-label]'),
+        hasText: peerName,
+      });
+      const presenceBelow = async (overlay: Locator) => {
+        if (kind !== 'sheet' || !collaborator) return;
+        // Pointer hit testing omits the non-interactive badge even when it paints
+        // over a dialog. Check its real public popup layer and retain native pixels.
+        await expect(presencePopup).toBeVisible();
+        const popupLayer = await presencePopup.evaluate((node) =>
+          Number(getComputedStyle(node).zIndex),
+        );
+        const overlayLayer = await overlay.evaluate((node) =>
+          Number(getComputedStyle(node).zIndex),
+        );
+        expect(popupLayer).toBeLessThan(overlayLayer);
+      };
       try {
         await page.goto(`/?item=${item.id}`);
         await saved();
@@ -290,10 +307,16 @@ for (const kind of ['sheet', 'doc'] as const) {
           await expect(
             people.getByRole('button', { name: `Go to ${peerName}`, exact: true }),
           ).toBeVisible();
+        await presenceBelow(page.locator('.sp-backdrop'));
         await capture(page, info, `account-${kind}-${variant.name}-people`);
         await page.keyboard.press('Escape');
         await expect(people).toHaveCount(0);
         await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+        await presenceBelow(
+          page.locator('.sp-positioner').filter({
+            has: page.getByRole('menu', { name: 'Document actions', exact: true }),
+          }),
+        );
         await capture(page, info, `account-${kind}-${variant.name}-actions`);
         await page.keyboard.press('Escape');
         await expect(page.getByRole('menu', { name: 'Document actions', exact: true })).toHaveCount(
@@ -302,6 +325,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         await expect(
           page.getByRole('button', { name: 'Document actions', exact: true }),
         ).toBeFocused();
+        if (kind === 'sheet' && collaborator) await expect(presencePopup).toBeVisible();
 
         // Restore the original native input without applying a new pointer selection.
         // A toggle must preserve this native selection, not reconstruct body offsets.
