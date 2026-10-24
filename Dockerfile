@@ -1,4 +1,4 @@
-FROM node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS build
+FROM node:26.11.1-bookworm-slim@sha256:86f07bc9c5dce4578cf37e5a418b7bfc7f817cda25cde66e2b66e95ed86c4567 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY lib/diagnostics/package.json ./lib/diagnostics/package.json
@@ -9,7 +9,7 @@ RUN npm ci
 COPY . .
 RUN npm run build && npm prune --omit=dev && mkdir -p src
 
-FROM node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df
+FROM node:26.11.1-bookworm-slim@sha256:86f07bc9c5dce4578cf37e5a418b7bfc7f817cda25cde66e2b66e95ed86c4567
 ENV NODE_ENV=production HOST=127.0.0.1 PORT=3000 DATABASE_PATH=/data/spinel.sqlite
 WORKDIR /app
 COPY --from=build /app/package.json ./package.json
