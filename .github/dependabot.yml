@@ -1,0 +1,53 @@
+# Reviewed updates only; deploying still follows docs/deployment.md.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/Los_Angeles
+    cooldown:
+      default-days: 7
+    versioning-strategy: increase
+    groups:
+      univer:
+        patterns: ['@univerjs/*', '@univerjs-pro/*']
+      univer-security:
+        applies-to: security-updates
+        patterns: ['@univerjs/*', '@univerjs-pro/*']
+    # The trailing space prevents Dependabot adding a colon after "Bump".
+    # Keep this literal prefix even if its generated description uses lowercase.
+    commit-message:
+      prefix: '⬆️ Bump '
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/Los_Angeles
+    commit-message:
+      prefix: '⬆️ Bump '
+  - package-ecosystem: docker-compose
+    directory: /deploy
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/Los_Angeles
+    # SPINEL_IMAGE is an operator-selected built artifact, not an upstream image.
+    allow:
+      - dependency-name: caddy
+    commit-message:
+      prefix: '⬆️ Bump '
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/Los_Angeles
+    commit-message:
+      prefix: '⬆️ Bump '

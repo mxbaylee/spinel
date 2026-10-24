@@ -43,8 +43,12 @@ See [SPN-045's rationale and implementation](../implementation/SPN-045.md).
 The account screen uses the approved compact utility header. Broader dashboard
 and editor shell migrations remain with SPN-048 and SPN-049. Offline profiles
 retain This device and explain which account operations need a connection.
-Sign-in, setup, invite and recovery retain their existing behavior until their
-own screen migration.
+Sign-in, setup, invite and recovery use the approved quiet entry layout while
+retaining their existing authentication behavior. One Need help dialog provides
+member guidance followed by expandable Operator commands. Pending/cancelled/error
+states preserve the task and keyboard return. Consent uses the same frame with
+client provenance, origin, capabilities and account visible. See the
+[SPN-083 implementation and pending visual verification](../implementation/SPN-083.md).
 
 ## Adopted pattern
 

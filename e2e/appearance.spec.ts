@@ -247,6 +247,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await expect(badge).toHaveCSS('color', `rgb(${foregroundRgb.join(', ')})`);
     await expect(people.getByText(user.name, { exact: true })).toBeVisible();
     await people.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await expect(people).toHaveCount(0);
     await capture('sheet-dark');
     expect((await read()).revision).toBe(before.revision);
     expect(resolvedWorkbook((await read()).snapshot)).toEqual(resolvedWorkbook(before.snapshot));

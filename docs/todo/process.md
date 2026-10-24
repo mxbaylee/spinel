@@ -221,6 +221,12 @@ grooming with the owner. The count never fails checks, blocks a ticket/merge or
 forces an agent to groom. Keep recording completions past seven; the owner chooses
 when to review. Owner, chat 2026-10-22. Grooming captures context learned while building.
 
+Every backlog grooming includes a review of open Dependabot PRs for security,
+compatibility, current CI results and sensible grouping. Record the disposition of
+updates that need follow-up; review does not imply automatic merge. Existing PRs
+remain open for that review. Owner, chat 2026-10-23;
+[decision](../implementation/backlog-workflow.md#review-dependabot-prs-at-every-backlog-grooming).
+
 A full owner-led grooming, recorded in a PR titled `🧹 Groom backlog …`:
 
 - Rechecks every ticket against the code: still true, still needed, sized right.
@@ -278,10 +284,12 @@ Owner setup, once, in the repository settings:
 
 ## Commands
 
-If the memory watchdog prevents safe local testing, follow the owner-approved
-[CI-first exception](../run-backlog.md#2-implement-one-ticket): local typecheck,
-lint and backlog checks before a draft push; full unit/browser CI and the same
-independent review and merge gates afterward. Decision [#52](../implementation/backlog-workflow.md#legacy-decision-52-memory-watchdog-ci-first-exception), owner, chat 2026-10-18.
+CI may be the default for all checks, including typecheck, lint and backlog.
+Draft pushes do not require local checks first. Keep unverified work draft and
+retain every required CI, independent review and visual/merge gate. Local work
+still follows the [memory watchdog](../run-backlog.md#2-implement-one-ticket).
+Owner, chat 2026-10-23;
+[decision](../implementation/backlog-workflow.md#ci-as-the-default-validation-environment).
 
 ```bash
 npm run typecheck                          # type-check every .ts and .tsx file

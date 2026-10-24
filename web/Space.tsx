@@ -900,7 +900,7 @@ export function Space({
       documentKey={editorKey!}
       name={denied ? 'Space unavailable' : visiblePage.item.name}
       onRename={
-        !guest && canAdminister(currentTree?.access) && canEdit
+        !guest && !denied && selection.item && canAdminister(currentTree?.access) && canEdit
           ? async (name) => {
               const renamed = await mutate(
                 (signal) =>
@@ -921,17 +921,19 @@ export function Space({
       connection={connection}
       guest={Boolean(guest)}
       access={
-        guest
-          ? canEdit
-            ? 'Guest editor'
-            : 'View only'
-          : currentTree?.access === 'owner'
-            ? undefined
-            : currentTree?.access === 'viewer'
-              ? 'View only'
-              : currentTree?.access === 'admin'
-                ? 'File admin'
-                : 'Can edit'
+        denied || selection.missing
+          ? 'Access changed'
+          : guest
+            ? canEdit
+              ? 'Guest editor'
+              : 'View only'
+            : currentTree?.access === 'owner'
+              ? undefined
+              : currentTree?.access === 'viewer'
+                ? 'View only'
+                : currentTree?.access === 'admin'
+                  ? 'File admin'
+                  : 'Can edit'
       }
       onBack={user && !guest ? exit : undefined}
       backLabel="My files"

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { documentPath } from './documentAccess.ts';
+import './fileDialog.css';
 
 export function FileExports({
   id,
@@ -65,7 +66,7 @@ export function FileExports({
     </>
   );
   return embedded ? (
-    <div className="file-exports">{content}</div>
+    <div className="file-exports file-dialog">{content}</div>
   ) : (
     <details className="file-exports">
       <summary>Export</summary>
