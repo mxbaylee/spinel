@@ -89,7 +89,7 @@ jobs:
           done
       - name: Upload interactive review build
         if: needs.changes.outputs.docs_only != 'true'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: storybook-review
           path: storybook-static
@@ -139,7 +139,7 @@ jobs:
           node scripts/ci/icon-screenshots.ts
       - name: Upload visual review
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: entity-icon-screenshots
           path: test-results/entity-icons
@@ -153,7 +153,7 @@ jobs:
           npm run screenshots -- --viewport desktop "${stories[@]}"
       - name: Upload redesign review
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: design-review-desktop
           path: test-results/design-review
@@ -190,7 +190,7 @@ jobs:
           npm run screenshots -- --viewport tablet "${stories[@]}"
       - name: Upload redesign review
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: design-review-tablet
           path: test-results/design-review
@@ -232,7 +232,7 @@ jobs:
           npm run screenshots -- --viewport mobile --theme "$MOBILE_THEME" "${stories[@]}"
       - name: Upload redesign review
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: design-review-mobile-${{ matrix.theme }}
           path: test-results/design-review
