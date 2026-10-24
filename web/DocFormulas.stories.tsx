@@ -5,6 +5,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { FormulaDialog, FormulaResultView } from './DocFormulas.tsx';
 import type { FormulaDefinition } from '@spinel/doc-formulas';
+import { FormulaSaveError, type FormulaFailureReason } from '@spinel/doc-formulas';
 
 const id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const sources = `/api/items/${id}/formulas/sources`;
@@ -52,6 +53,211 @@ export const Edit: Story = {
   parameters: { api: { ...formulaApi, ...availableSources } },
   play: ({ canvasElement }) => sourcesReady(canvasElement),
 };
+
+function saveFailure(reason: FormulaFailureReason): Story {
+  const save = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {
+    throw new FormulaSaveError(reason);
+  });
+  const close = fn();
+  return {
+    args: {
+      initial: { id: 'formula', start: 0, end: 18, definition },
+      onSave: save,
+      onClose: close,
+    },
+    parameters: { api: { ...formulaApi, ...availableSources } },
+    play: async ({ canvasElement }) => {
+      save.mockClear();
+      close.mockClear();
+      await sourcesReady(canvasElement);
+      const canvas = within(canvasElement);
+      await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
+      await expect(await canvas.findByRole('alert')).toHaveTextContent(
+        new FormulaSaveError(reason).message,
+      );
+      await expect(canvas.getByRole('combobox', { name: /^Formula$/ })).toHaveValue(
+        definition.expression,
+      );
+      await expect(canvas.getByLabelText('Number format')).toHaveValue('currency');
+      await expect(save).toHaveBeenCalledTimes(1);
+      await expect(close).not.toHaveBeenCalled();
+      await expect(
+        canvas.getByRole('button', {
+          name: new FormulaSaveError(reason).retryable ? /^Retry save$/ : /^Save formula$/,
+        }),
+      ).toBeEnabled();
+    },
+  };
+}
+export const SaveBusy: Story = saveFailure('busy');
+export const SaveTimedOut: Story = saveFailure('timeout');
+export const SaveUnavailable: Story = saveFailure('unavailable');
+export const SaveInvalid: Story = saveFailure('invalid-formula');
+export const SavePrivateSource: Story = saveFailure('private-source');
+export const SaveTooLarge: Story = saveFailure('too-large');
+
+const retrySave = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {});
+const retryClose = fn();
+export const SaveRetry: Story = {
+  args: {
+    initial: { id: 'formula', start: 0, end: 18, definition },
+    onSave: retrySave,
+    onClose: retryClose,
+  },
+  parameters: { api: { ...formulaApi, ...availableSources } },
+  play: async ({ canvasElement }) => {
+    retrySave.mockReset();
+    retryClose.mockClear();
+    retrySave.mockRejectedValueOnce(new FormulaSaveError('busy')).mockResolvedValue(undefined);
+    await sourcesReady(canvasElement);
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
+    await expect(await canvas.findByRole('alert')).toHaveTextContent('Calculation is busy');
+    await expect(retrySave).toHaveBeenCalledTimes(1);
+    await expect(retryClose).not.toHaveBeenCalled();
+    await userEvent.click(canvas.getByRole('button', { name: /^Retry save$/ }));
+    await waitFor(() => expect(retryClose).toHaveBeenCalledTimes(1));
+    await expect(retrySave).toHaveBeenCalledTimes(2);
+    for (const [saved] of retrySave.mock.calls) await expect(saved).toEqual(definition);
+  },
+};
+
+const heldSave = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {});
+const heldClose = fn();
+export const SaveDoubleActivation: Story = {
+  args: {
+    initial: { id: 'formula', start: 0, end: 18, definition },
+    onSave: heldSave,
+    onClose: heldClose,
+  },
+  parameters: { api: { ...formulaApi, ...availableSources } },
+  play: async ({ canvasElement }) => {
+    heldSave.mockReset();
+    heldClose.mockClear();
+    let release!: () => void;
+    heldSave.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          release = resolve;
+        }),
+    );
+    await sourcesReady(canvasElement);
+    const form = canvasElement.querySelector('form')!;
+    // Two submissions in the same turn bypass the rendered disabled attribute.
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await waitFor(() => expect(heldSave).toHaveBeenCalledTimes(1));
+    await expect(heldClose).not.toHaveBeenCalled();
+    release();
+    await waitFor(() => expect(heldClose).toHaveBeenCalledTimes(1));
+    await expect(heldSave).toHaveBeenCalledTimes(1);
+  },
+};
+
+const staleSave = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {});
+const staleClose = fn();
+export const SaveCancelledRetry: Story = {
+  args: {
+    initial: { id: 'formula', start: 0, end: 18, definition },
+    onSave: staleSave,
+    onClose: staleClose,
+  },
+  parameters: { api: { ...formulaApi, ...availableSources } },
+  play: async ({ canvasElement }) => {
+    staleSave.mockReset();
+    staleClose.mockClear();
+    let release!: () => void;
+    staleSave
+      .mockImplementationOnce(
+        () =>
+          new Promise<void>((resolve) => {
+            release = resolve;
+          }),
+      )
+      .mockResolvedValue(undefined);
+    await sourcesReady(canvasElement);
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
+    await waitFor(() => expect(staleSave).toHaveBeenCalledTimes(1));
+    const original = Object.getOwnPropertyDescriptor(document, 'visibilityState');
+    try {
+      Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' });
+      document.dispatchEvent(new Event('visibilitychange'));
+      await expect(staleSave.mock.calls[0]![1].aborted).toBe(true);
+    } finally {
+      if (original) Object.defineProperty(document, 'visibilityState', original);
+      else Reflect.deleteProperty(document, 'visibilityState');
+      document.dispatchEvent(new Event('visibilitychange'));
+      release();
+    }
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: /^Save formula$/ })).toBeEnabled(),
+    );
+    await expect(staleClose).not.toHaveBeenCalled();
+    await expect(canvas.getByRole('combobox', { name: /^Formula$/ })).toHaveValue(
+      definition.expression,
+    );
+    await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
+    await waitFor(() => expect(staleClose).toHaveBeenCalledTimes(1));
+    await expect(staleSave).toHaveBeenCalledTimes(2);
+  },
+};
+function pendingSaveCancellation(method: 'button' | 'escape'): Story {
+  const save = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {});
+  const close = fn();
+  return {
+    args: {
+      initial: { id: 'formula', start: 0, end: 18, definition },
+      onSave: save,
+      onClose: close,
+    },
+    parameters: { api: { ...formulaApi, ...availableSources } },
+    play: async ({ canvasElement }) => {
+      save.mockReset();
+      close.mockReset();
+      let release!: () => void;
+      const pending = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      save.mockImplementation(() => pending);
+      close.mockImplementation(() => {
+        // The request is cancelled before the parent receives its close callback.
+        expect(save.mock.calls[0]![1].aborted).toBe(true);
+      });
+      await sourcesReady(canvasElement);
+      const canvas = within(canvasElement);
+      await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
+      await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
+      await expect(canvas.getByRole('button', { name: /^Working…$/ })).toBeDisabled();
+      const cancel = canvas.getByRole('button', { name: /^Cancel$/ });
+      await expect(cancel).toBeEnabled();
+      const modal = canvas.getByRole('dialog');
+      try {
+        if (method === 'button') await userEvent.click(cancel);
+        else {
+          // Escape's native dialog action dispatches cancel; synthetic keyboard events
+          // do not perform that browser default action in Storybook's test driver.
+          modal.dispatchEvent(new Event('cancel', { cancelable: true }));
+        }
+        await expect(save.mock.calls[0]![1].aborted).toBe(true);
+        await expect(close).toHaveBeenCalledTimes(1);
+        // A second close/submit before parent unmount must not activate anything again.
+        modal.dispatchEvent(new Event('cancel', { cancelable: true }));
+        canvasElement
+          .querySelector('form')!
+          .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      } finally {
+        release();
+      }
+      await pending;
+      await expect(close).toHaveBeenCalledTimes(1);
+      await expect(save).toHaveBeenCalledTimes(1);
+    },
+  };
+}
+export const SaveCancelPending: Story = pendingSaveCancellation('button');
+export const SaveEscapePending: Story = pendingSaveCancellation('escape');
+
 export const LoadingSources: Story = {
   parameters: { api: { ...formulaApi, [`GET ${sources}`]: pending() } },
   play: async ({ canvasElement }) => {
