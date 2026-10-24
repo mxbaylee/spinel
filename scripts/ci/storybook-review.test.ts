@@ -64,6 +64,49 @@ test('default reviews include all stories; focused manual reviews keep their IDs
   );
 });
 
+test('mobile theme jobs preserve every capture and interaction without duplication', () => {
+  for (const ids of [[], ['screen--error']]) {
+    const full = selectStorybookReview(['--viewport', 'mobile', ...ids], entries);
+    const shards = ['light', 'dark'].map((theme) =>
+      selectStorybookReview(['--viewport', 'mobile', '--theme', theme, ...ids], entries),
+    );
+    for (const key of [
+      'variants',
+      'nativeEditorKinds',
+      'dashboardViewports',
+      'spaceWidths',
+      'journeyWidths',
+    ] as const) {
+      assert.deepEqual(
+        shards.flatMap<unknown>((shard) => shard[key]),
+        full[key],
+        key,
+      );
+    }
+    assert.deepEqual(
+      shards.map((shard) => shard.variants),
+      [[['light', 390, 'phone']], [['dark', 390, 'phone-dark']]],
+    );
+    for (const shard of shards) assert.deepEqual(shard.requested, full.requested);
+    assert.deepEqual(
+      selectStorybookReview(['--viewport', 'mobile', '--theme', 'all', ...ids], entries),
+      full,
+    );
+  }
+});
+
+test('invalid theme splits cannot silently omit validation', () => {
+  for (const args of [
+    ['--viewport', 'mobile', '--theme'],
+    ['--viewport', 'mobile', '--theme', 'system'],
+    ['--viewport', 'mobile', '--theme', 'light', '--theme', 'dark'],
+    ['--theme', 'dark'],
+    ['--viewport', 'tablet', '--theme', 'dark'],
+    ['--viewport', 'desktop', '--theme', 'light'],
+  ])
+    assert.throws(() => selectStorybookReview(args, entries));
+});
+
 test('invalid viewports, repeated viewport flags and unknown stories fail instead of narrowing coverage silently', () => {
   for (const args of [
     ['--viewport'],

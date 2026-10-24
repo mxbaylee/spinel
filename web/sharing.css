@@ -1,0 +1,86 @@
+.sharing-content,
+.sharing-content section,
+.sharing-person,
+.sharing-address {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.sharing-content {
+  overflow-wrap: anywhere;
+}
+.sharing-content .sp-control {
+  min-height: 40px;
+}
+.sharing-owner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0 12px;
+  border-bottom: 1px solid var(--sp-border);
+}
+.sharing-owner > span {
+  padding: 4px 8px;
+  border: 1px solid var(--sp-border);
+  border-radius: 6px;
+  color: var(--sp-muted);
+  font-size: 0.75rem;
+}
+.sharing-person {
+  padding: 12px 0;
+}
+.sharing-person-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(130px, 40%);
+  gap: 16px;
+  align-items: start;
+}
+.sharing-choice {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  color: var(--sp-muted);
+  font-size: 0.75rem;
+}
+.sharing-choice select {
+  appearance: auto;
+  width: 100%;
+  min-width: 0;
+}
+.sharing-person > button,
+.sharing-address > button {
+  justify-self: start;
+}
+.sharing-link {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--sp-border);
+  padding-top: 16px;
+}
+.sharing-link-actions,
+.sharing-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.sharing-address {
+  flex: 1 1 auto;
+}
+.sharing-address label {
+  display: grid;
+  gap: 8px;
+  color: var(--sp-muted);
+  font-size: 0.75rem;
+}
+@media (max-width: 640px) {
+  .sharing-person-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (pointer: coarse), (max-width: 640px) {
+  .sharing-content .sp-control {
+    min-height: 44px;
+  }
+}

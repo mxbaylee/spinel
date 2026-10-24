@@ -136,12 +136,16 @@ runtime failures, horizontal page overflow and visible 44 px touch targets for p
 
 Output: `test-results/design-review/index.html`, PNGs, `manifest.json`, control
 semantics and bundle sizes. Storybook CI builds once and captures in parallel:
-**design-review-desktop** (light/dark), **design-review-tablet** (light) and
-**design-review-mobile** (light/dark). Each artifact is a complete gallery for
+**design-review-desktop** (light/dark), **design-review-tablet** (light),
+**design-review-mobile-light** and **design-review-mobile-dark**. Each artifact is a complete gallery for
 its selected variants. `--viewport desktop|tablet|mobile` selects the same local
-partition; omitting it retains the full review. Native editor interaction proofs
-and the icon suite run once on desktop; tablet retains the 613 px mouse checks.
-The aggregate review gate requires every partition before Pages deployment.
+partition; omitting it retains the full review.
+For mobile only, `--theme light|dark` selects one CI theme; default `all` preserves
+both and all requested story IDs. Fixed-light auxiliary journeys run once in
+the light job; per-theme story and shared-control checks run in both.
+Native editor interaction proofs and the icon suite run once on desktop;
+tablet retains the 613 px mouse checks.
+The aggregate review gate requires every partition before main Pages deployment.
 Open the downloaded index for paired current/proposed stories, followed by every state across sizes. The PR links
 this artifact and embeds representative before/after images. These are review
 captures, not approved regression baselines.
