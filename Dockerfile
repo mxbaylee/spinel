@@ -4,6 +4,7 @@ COPY package.json package-lock.json ./
 COPY lib/diagnostics/package.json ./lib/diagnostics/package.json
 COPY lib/doc-formulas/package.json ./lib/doc-formulas/package.json
 COPY lib/presence-ui/package.json ./lib/presence-ui/package.json
+COPY lib/print/package.json ./lib/print/package.json
 COPY scripts/dependencies ./scripts/dependencies
 RUN npm ci
 COPY . .
@@ -14,6 +15,7 @@ ENV NODE_ENV=production HOST=127.0.0.1 PORT=3000 DATABASE_PATH=/data/spinel.sqli
 WORKDIR /app
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/lib ./lib
+# The complete workspace copy above includes lib/print's manifest and source.
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/server ./server
 COPY --from=build /app/src ./src

@@ -19,6 +19,13 @@ It supplies server-rendered shared-card text only. The unmodified
 with its SIL Open Font License 1.1 and copyright in `src/ui/fonts/NotoEmoji-OFL.txt`.
 It supplies server-rendered title emoji on hosts without system fonts.
 
+The unmodified PDF test font fixtures in `lib/print/test-fixtures/fonts/` include
+Atkinson Hyperlegible Regular/Bold/Italic/BoldItalic from the same pinned Google
+Fonts revision above, and [Noto Sans Symbols 2 Regular at that revision](https://github.com/google/fonts/tree/95f4904fc8bcf26d3420fe315560c96417c6dec7/ofl/notosanssymbols2).
+Their SIL Open Font License 1.1 texts and copyrights are retained beside the
+files in `Atkinson-OFL.txt` and `NotoSymbols-OFL.txt`. These are explicit test
+inputs for prepared-font validation, not production font substitutions.
+
 Code from [mxbaylee/circus-health](https://github.com/mxbaylee/circus-health) isn't listed:
 Baylee Schmeisser, Spinel's owner, wrote it.
 
