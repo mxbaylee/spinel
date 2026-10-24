@@ -11,16 +11,18 @@ logs; see [the feedback contract](implementation/SPN-098.md). Automatic document
 capture remains excluded. Health includes separate diagnostics database size/growth,
 application/collaboration storage (including WAL) and volume free space.
 
-The Operator's `/admin` page lists every account, its admin/member role, whether
-it is disabled, and its passkeys with provider, creation time and last use. It
-also includes the existing invitation and recovery controls. Only metadata is
+The Operator's `/admin` page has People, Invites, Connections, and Backups & health
+sections. People lists every account, its Operator/Member role and active/disabled
+status. **Actions → Manage passkeys** shows provider, creation time and last use.
+Invites contains the existing invitation and recovery controls. Only metadata is
 shown: administrators never gain access to documents, images, shares or history.
 Non-admins, including signed-out callers, receive a not-found response for the
 admin page and user/invitation administration APIs.
 
 ## Remove a passkey
 
-Choose **Remove …**, read the confirmation and confirm. Cancel changes nothing.
+In **People → Actions → Manage passkeys**, choose the credential’s
+**Actions → Remove passkey**, read the confirmation and confirm. Cancel changes nothing.
 The credential is deleted, its authenticated sessions end, and its open editors
 are disconnected. A synced passkey can cover several physical devices; removal
 applies to the credential everywhere it is used.
@@ -40,7 +42,7 @@ Removing the key that authenticated your own session sends you to sign-in.
 
 ## Disable an account
 
-Choose **Disable account** and confirm. Its sessions end and live editors are
+In People, choose the account’s **Actions → Disable account** and confirm. Its sessions end and live editors are
 revalidated before the API reports success. No user row is deleted: documents,
 images, history, ownership and sharing grants remain. Other active collaborators
 keep their existing access. Unused recovery invites for the disabled account and
@@ -62,8 +64,9 @@ This action permanently invalidates old passkeys, sessions and pending sign-in
 ceremonies, unused invitations, assistant connections, OAuth credentials and
 personal access tokens. It never restores a previous credential.
 
-Then create a **Recovery** invitation for that account using the existing Invites
-section. No invite is created or sent automatically. The person registers a new
+Then choose **Actions → Create recovery invite**, or open **Invites → Create
+invite** and select that active account. The recipient list is freshly loaded and
+an account that is no longer eligible must be changed explicitly. No invite is created or sent automatically. The person registers a new
 passkey through that invitation; transferred files do not return to them.
 
 Reactivation preserves the same owner's deliberate document-sharing settings.
@@ -122,6 +125,27 @@ request/write authorization still applies; refresh the accounts and confirmation
 preview before retrying. A repeated handover cannot create another wrapper for
 the already transferred set. [Decision #140](implementation/SPN-064.md#legacy-decision-140-disable-account-ownership-handover)
 records the confirmation, privacy and persona tradeoffs.
+
+## Section navigation and invitation privacy
+
+The compact header retains appearance and Your profile; sign-out is available in
+Your profile. Section navigation is disabled while an access mutation is pending,
+including browser hash navigation, so its result stays visible. Finished failures
+remain explicit; closing them does not assert that a committed change rolled back.
+
+Create invite opens a dialog. After success, copy the once-only address or select
+it manually if clipboard access fails. Refreshing the list within Invites retains
+that in-memory address; leaving the section or reloading discards it. Existing
+invitation listings never reconstruct the secret. Recipient eligibility is read
+again when entering Invites, including a handoff from a People action.
+
+Connections exposes account/client names, origins and activity only; token
+activity is behind its named disclosure and never reveals secrets or offers token
+creation. Backups & health shows the existing configuration, running/error/overdue
+state and last-success/attempt timestamps, with refresh and a backup-guide link.
+Verification results and detailed server telemetry are explicitly unavailable
+until their owning tickets ship. [SPN-082](implementation/SPN-082.md) records the
+layout and asynchronous lifetime decisions without changing authorization.
 
 ## API and storage
 
