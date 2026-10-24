@@ -34,14 +34,18 @@ test('remote highlights accept complete render colors without corrupting token f
     '#123456',
     label,
     renderColors,
+    { zIndex: 60 },
   );
   expect(highlight).toHaveBeenLastCalledWith(renderColors);
-  expect(attachPopup).toHaveBeenLastCalledWith(expect.objectContaining({ componentKey: label }));
+  expect(attachPopup).toHaveBeenLastCalledWith(
+    expect.objectContaining({ componentKey: label, zIndex: 60 }),
+  );
   disposable.dispose();
   expect(highlightDispose).toHaveBeenCalledTimes(1);
   expect(popupDispose).toHaveBeenCalledTimes(1);
   drawPresence({} as Univer, api, 'book', 'sheet!A1', '#123456', label).dispose();
   expect(highlight).toHaveBeenLastCalledWith({ stroke: '#123456', fill: '#12345628' });
+  expect(attachPopup).toHaveBeenLastCalledWith(expect.objectContaining({ zIndex: undefined }));
 });
 
 test('local tokens preserve geometry, literal theme arithmetic and newly created selections', () => {

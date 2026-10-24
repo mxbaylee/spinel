@@ -1,18 +1,35 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
-import type { BrowserContext, Page, TestInfo } from '@playwright/test';
+import type { BrowserContext, Locator, Page, TestInfo } from '@playwright/test';
+import type { ICellData, IWorkbookData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import type { SpaceNode } from '../src/shared/spaces.ts';
 import { interruptibleNetwork } from './live-network.ts';
+import { nativeTheme } from './native-theme.ts';
 
 const variants = [
   { name: 'light', width: 1440, height: 1000, theme: 'light' },
   { name: 'dark', width: 1440, height: 1000, theme: 'dark' },
   { name: 'phone', width: 390, height: 844, theme: 'light' },
 ] as const;
+
+// Collaboration materialization can re-key styles on every read. Compare the
+// complete cell style, rather than its incidental dictionary key, as the native
+// appearance tests do. All other workbook fields remain in the equality check.
+function resolvedWorkbook(snapshot: IWorkbookData) {
+  const { styles, ...workbook } = structuredClone(snapshot);
+  for (const sheet of Object.values(workbook.sheets))
+    for (const row of Object.values(sheet.cellData ?? {}))
+      for (const cell of Object.values(row ?? {}) as (ICellData | null)[])
+        if (cell && typeof cell.s === 'string') {
+          expect(styles[cell.s], `Style ${cell.s} must resolve`).toBeDefined();
+          cell.s = styles[cell.s];
+        }
+  return workbook;
+}
 
 async function capture(page: Page, info: TestInfo, name: string) {
   await expect
@@ -113,6 +130,7 @@ test('Space theatre fills the window and restores its own page navigation', asyn
       for (const variant of variants) {
         await page.setViewportSize({ width: variant.width, height: variant.height });
         await page.emulateMedia({ colorScheme: variant.theme, reducedMotion: 'reduce' });
+        await nativeTheme(page, editor.locator('canvas').first(), variant.theme);
         await capture(page, info, `space-${item.kind}-${variant.name}-normal`);
         const canvas = await editor.locator('canvas').first().elementHandle();
         expect(canvas).not.toBeNull();
@@ -198,16 +216,38 @@ for (const kind of ['sheet', 'doc'] as const) {
         expect(page.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
           timeout: 30_000,
         });
-      const read = async () =>
-        (await (await context.request.get(`/api/items/${item.id}/${kind}`)).json()).snapshot;
+      const read = async () => {
+        const response = await context.request.get(`/api/items/${item.id}/${kind}`);
+        expect(response.ok()).toBe(true);
+        const snapshot = (await response.json()).snapshot;
+        return kind === 'sheet' ? resolvedWorkbook(snapshot) : snapshot;
+      };
+      const presencePopup = page.locator('[data-u-comp="rect-popup"]').filter({
+        has: page.locator('[data-presence-label]'),
+        hasText: peerName,
+      });
+      const presenceBelow = async (overlay: Locator) => {
+        if (kind !== 'sheet' || !collaborator) return;
+        // Pointer hit testing omits the non-interactive badge even when it paints
+        // over a dialog. Check its real public popup layer and retain native pixels.
+        await expect(presencePopup).toBeVisible();
+        const popupLayer = await presencePopup.evaluate((node) =>
+          Number(getComputedStyle(node).zIndex),
+        );
+        const overlayLayer = await overlay.evaluate((node) =>
+          Number(getComputedStyle(node).zIndex),
+        );
+        expect(popupLayer).toBeLessThan(overlayLayer);
+      };
       try {
         await page.goto(`/?item=${item.id}`);
         await saved();
         await expect(
           page.getByRole('status', { name: 'Connection status', exact: true }),
         ).toHaveText('Online');
-        const address = editor.getByRole('textbox').nth(2);
+        const address = editor.locator('[data-u-comp="defined-name"]').getByRole('textbox');
         if (kind === 'sheet') {
+          await expect(address).toBeEnabled();
           await address.fill('B2');
           await address.press('Enter');
           await page.keyboard.type('Before theatre');
@@ -245,8 +285,10 @@ for (const kind of ['sheet', 'doc'] as const) {
             exact: true,
           });
           if (kind === 'sheet') {
-            await native.getByRole('textbox').nth(2).fill('C4');
-            await native.getByRole('textbox').nth(2).press('Enter');
+            const peerAddress = native.locator('[data-u-comp="defined-name"]').getByRole('textbox');
+            await expect(peerAddress).toBeEnabled();
+            await peerAddress.fill('C4');
+            await peerAddress.press('Enter');
           } else {
             await native.locator('.univer-container').click({ position: { x: 130, y: 200 } });
             await other.keyboard.press('End');
@@ -261,14 +303,24 @@ for (const kind of ['sheet', 'doc'] as const) {
         await page.getByRole('button', { name: 'People in this document', exact: true }).click();
         const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
         await expect(people).toContainText(displayName);
-        if (collaborator)
-          await expect(
-            people.getByRole('button', { name: `Go to ${peerName}`, exact: true }),
-          ).toBeVisible();
+        if (collaborator) {
+          const peerBadge = people.getByRole('button', { name: `Go to ${peerName}`, exact: true });
+          await expect(peerBadge).toBeVisible();
+          const cursor = await peerBadge.getAttribute('data-selection');
+          expect(cursor).toBeTruthy();
+          await expect(people).not.toContainText(cursor!);
+          if (kind === 'doc') await expect(people).toContainText('Shared text cursor');
+        }
+        await presenceBelow(page.locator('.sp-backdrop'));
         await capture(page, info, `account-${kind}-${variant.name}-people`);
         await page.keyboard.press('Escape');
         await expect(people).toHaveCount(0);
         await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+        await presenceBelow(
+          page.locator('.sp-positioner').filter({
+            has: page.getByRole('menu', { name: 'Document actions', exact: true }),
+          }),
+        );
         await capture(page, info, `account-${kind}-${variant.name}-actions`);
         await page.keyboard.press('Escape');
         await expect(page.getByRole('menu', { name: 'Document actions', exact: true })).toHaveCount(
@@ -277,10 +329,12 @@ for (const kind of ['sheet', 'doc'] as const) {
         await expect(
           page.getByRole('button', { name: 'Document actions', exact: true }),
         ).toBeFocused();
+        if (kind === 'sheet' && collaborator) await expect(presencePopup).toBeVisible();
 
         // Restore the original native input without applying a new pointer selection.
         // A toggle must preserve this native selection, not reconstruct body offsets.
         if (kind === 'sheet') {
+          await expect(address).toBeEnabled();
           await address.fill('B2');
           await address.press('Enter');
         } else {
@@ -386,9 +440,15 @@ for (const kind of ['sheet', 'doc'] as const) {
         }
         expect(errors).toEqual([]);
       } finally {
-        await network.setOffline(false);
-        await peer?.close();
-        db.close();
+        try {
+          if (!page.isClosed()) await network.setOffline(false);
+        } finally {
+          try {
+            await peer?.close();
+          } finally {
+            db.close();
+          }
+        }
       }
     });
   }
@@ -437,7 +497,21 @@ for (const kind of ['sheet', 'doc'] as const) {
       for (const variant of variants) {
         await page.setViewportSize({ width: variant.width, height: variant.height });
         await page.emulateMedia({ colorScheme: variant.theme, reducedMotion: 'reduce' });
-        await expect(page.locator('html')).toHaveAttribute('data-theme', variant.theme);
+        await nativeTheme(page, editor.locator('canvas').first(), variant.theme);
+        // The phone Sheet toolbar omits Bold. Require a visible editing command
+        // to remain disabled rather than inspecting hidden UI.
+        const editingCommand = editor.getByRole('button', {
+          name: kind === 'sheet' && variant.name === 'phone' ? 'Clear formatting' : 'Bold',
+          exact: true,
+        });
+        const readOnly = async () => {
+          await expect(editingCommand).toBeVisible();
+          await expect(editingCommand).toBeDisabled();
+          await expect(editor.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+            /^View only/,
+          );
+        };
+        await readOnly();
         await expect(
           page.getByText('This content is protected. This action is not allowed.', { exact: true }),
         ).not.toBeVisible();
@@ -452,8 +526,34 @@ for (const kind of ['sheet', 'doc'] as const) {
           page.getByRole('dialog', { name: 'People in this document', exact: true }),
         ).toHaveCount(0);
         await page.getByRole('button', { name: 'Enter theatre mode', exact: true }).click();
+        await readOnly();
+        await expect
+          .poll(async () => {
+            const box = await editor.locator('.univer-container').boundingBox();
+            return !!box && box.width >= variant.width - 24 && box.height >= variant.height - 150;
+          })
+          .toBe(true);
+        // The native resize observer runs on idle. Wait for both canvas dimensions
+        // to catch up to its mount before recording the expanded theatre pixels.
+        await expect
+          .poll(() =>
+            editor
+              .locator('canvas')
+              .first()
+              .evaluate((canvas) => {
+                if (!canvas.parentElement) return false;
+                const mount = getComputedStyle(canvas.parentElement);
+                const box = canvas.getBoundingClientRect();
+                return (
+                  box.width > 0 &&
+                  box.height > 0 &&
+                  Math.abs(box.width - parseFloat(mount.width)) <= 1 &&
+                  Math.abs(box.height - parseFloat(mount.height)) <= 1
+                );
+              }),
+          )
+          .toBe(true);
         await capture(page, info, `guest-${kind}-${variant.name}-theatre`);
-        await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
         for (const name of ['Document actions', 'My files', 'Versions', 'Download Univer file'])
           await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0);
         await expect(page.getByRole('link', { name: 'Your profile', exact: true })).toHaveCount(0);

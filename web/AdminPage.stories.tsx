@@ -4,6 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { AdminPage } from './AdminPage.tsx';
 import { Rail } from './Rail.tsx';
+import { diagnosticsStory, healthStory } from './diagnosticsStoryData.ts';
 
 const now = Date.UTC(2026, 9, 23, 12);
 const key = {
@@ -83,6 +84,8 @@ const api = {
     running: false,
     overdue: false,
   },
+  'GET /api/admin/health': healthStory,
+  'GET /api/admin/diagnostics': diagnosticsStory,
 };
 function Preview({ section = 'people' }: { section?: string }) {
   const [ready, setReady] = useState(false);
@@ -140,6 +143,49 @@ export const Connections: Story = {
   },
 };
 export const Health: Story = { args: { section: 'health' }, parameters: { api } };
+export const DiagnosticsDownloadBlocksNavigation: Story = {
+  args: { section: 'health' },
+  parameters: { api: { ...api, 'POST /api/admin/diagnostics/download': pending() } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Download diagnostics' })).toBeEnabled(),
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Download diagnostics' }));
+    const navigation = within(canvas.getByRole('navigation', { name: 'Administration sections' }));
+    await expect(navigation.getByRole('link', { name: 'People' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    await userEvent.click(navigation.getByRole('link', { name: 'People' }));
+    await expect(canvas.getByRole('heading', { name: 'Backups & health' })).toBeVisible();
+    location.hash = 'people';
+    await waitFor(() => expect(location.hash).toBe('#health'));
+    await userEvent.click(canvas.getByRole('button', { name: 'Cancel download' }));
+    await expect(navigation.getByRole('link', { name: 'People' })).not.toHaveAttribute(
+      'aria-disabled',
+    );
+  },
+};
+export const DiagnosticsClearBlocksNavigation: Story = {
+  args: { section: 'health' },
+  parameters: { api: { ...api, 'POST /api/admin/diagnostics/truncate': pending() } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(document.body);
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Download diagnostics' })).toBeEnabled(),
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Diagnostics actions' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Truncate diagnostics…' }));
+    const dialog = await body.findByRole('dialog', { name: 'Truncate diagnostics' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Truncate diagnostics' }));
+    await userEvent.keyboard('{Escape}');
+    location.hash = 'people';
+    await waitFor(() => expect(location.hash).toBe('#health'));
+    await expect(dialog).toBeVisible();
+  },
+};
 export const HealthWarning: Story = {
   args: { section: 'health' },
   parameters: {

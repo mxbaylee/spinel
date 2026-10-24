@@ -12,7 +12,7 @@ import { avatarProfile } from '../src/profile/profile.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { palettes, presenceFallbackColors } from '../src/ui/palette.ts';
 import { getTheme, watchTheme } from '../src/ui/theme.ts';
-import { PresenceLabel } from './PresenceLabel.tsx';
+import { PresenceLabel, presencePopupZIndex } from './PresenceLabel.tsx';
 import { presenceRenderColors } from './presenceColors.ts';
 import { useState } from 'react';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
@@ -26,6 +26,12 @@ export interface Collaborator {
   icon?: string;
   selection?: string;
   jump?: () => void;
+}
+function cursorDescription(selection?: string) {
+  if (!selection) return 'No shared cursor position';
+  if (/^\d+:\d+:\d+:TEXT::-1$/.test(selection)) return 'Shared text cursor';
+  const address = selection.slice(selection.lastIndexOf('!') + 1);
+  return /^[A-Z]+[1-9]\d*(?::[A-Z]+[1-9]\d*)?$/.test(address) ? address : 'Shared cursor position';
 }
 function Badge({ person, onJump }: { person: Collaborator; onJump(): void }) {
   return (
@@ -73,7 +79,7 @@ export function Collaborators({ people }: { people: Collaborator[] }) {
                 />
                 <div className="editor-people-detail">
                   <strong>{person.name}</strong>
-                  <span>{person.selection ?? 'No shared cursor position'}</span>
+                  <span>{cursorDescription(person.selection)}</span>
                 </div>
               </li>
             ))}
@@ -186,6 +192,7 @@ export async function watchPresence(
               person.color,
               () => <PresenceLabel {...person} />,
               presenceRenderColors(profile?.color ?? person.color, 'remote'),
+              { zIndex: presencePopupZIndex },
             ),
           );
         } catch {

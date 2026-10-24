@@ -4,6 +4,8 @@ import type { TrashListing, TrashedItem } from '../../shared/workspace.ts';
 import type { WorkspaceStore } from './store.ts';
 import { classifyOrdinaryItems, isOrdinaryItem } from './ordinary-scope.ts';
 import { FileTrash } from './file-trash.ts';
+import { observeJob } from '../health/jobs.ts';
+import type { ObserveJob } from '../health/jobs.ts';
 
 export const DAY_MS = 24 * 60 * 60 * 1000;
 export const TRASH_RETENTION_MS = 30 * DAY_MS;
@@ -233,11 +235,14 @@ export class TrashStore {
   }
 }
 
-export function startTrashCleanup(store: TrashStore) {
+export function startTrashCleanup(store: TrashStore, observe?: ObserveJob) {
   const run = () => {
+    const finish = observeJob(observe);
     try {
       store.purgeExpired();
+      finish(true);
     } catch (error) {
+      finish(false);
       console.error(
         'Trash cleanup failed; retained items will be retried on the next daily run.',
         error,

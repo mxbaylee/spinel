@@ -251,7 +251,12 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     }
     await target.emulateMedia({ colorScheme: 'light' });
     await target.setViewportSize({ width: 1440, height: 1100 });
-    if (closePanel) await openPanel(target);
+    if (closePanel) {
+      await openPanel(target);
+      await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
+        timeout: 20_000,
+      });
+    }
   };
   try {
     await page.goto(`/?item=${host.id}`);
@@ -490,6 +495,10 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect(otherPanel).not.toContainText('314159');
     await expect(otherPanel).not.toContainText('314166');
     await screenshots('private-source', other);
+    const editableArray = otherPanel.getByRole('listitem').filter({
+      has: other.getByRole('button', { name: '={5,6;7,8}', exact: true }),
+    });
+    await expect(editableArray.getByRole('cell')).toHaveText(['5', '6', '7', '8']);
     await otherPanel.getByRole('button', { name: '={5,6;7,8}', exact: true }).click();
     const collaboratorEdit = other.getByRole('dialog', { name: 'Edit formula', exact: true });
     await collaboratorEdit.getByLabel('Formula', { exact: true }).fill('={9,10;11,12}');

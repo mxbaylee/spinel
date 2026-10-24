@@ -15,6 +15,7 @@ export function drawPresence(
   color: string,
   label: ComponentType,
   renderColors?: PresenceRenderColors,
+  popupOptions?: { zIndex?: number },
 ): IDisposable {
   const owned: IDisposable[] = [];
   const dispose = () => {
@@ -36,6 +37,7 @@ export function drawPresence(
         direction: 'top-left',
         hideOnInvisible: true,
         constrainToCanvas: true,
+        zIndex: popupOptions?.zIndex,
       });
       if (popup) owned.push(popup);
     }
