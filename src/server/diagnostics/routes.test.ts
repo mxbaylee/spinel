@@ -230,7 +230,7 @@ test('an authorized Operator downloads the real private SQLite snapshot and rele
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toBe('application/vnd.sqlite3');
     expect(response.headers.get('content-disposition')).toBe(
-      'attachment; filename="spinel-diagnostics.sqlite"',
+      'attachment; filename=spinel-diagnostics.sqlite',
     );
     expect(response.headers.get('x-content-type-options')).toBe('nosniff');
     const bytes = Buffer.from(await response.arrayBuffer());

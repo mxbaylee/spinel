@@ -598,10 +598,24 @@ test('diagnostics failures, cancelled downloads, pending clear navigation and ex
     await expect(panel.getByText('Diagnostics cleared.', { exact: false })).toBeVisible();
     await page.unroute(`${endpoint}/truncate`);
 
-    // Expire the real ingress session without navigating away first. A denied
-    // download must not create a file or turn old status into a success notice.
+    // Let clear's refresh finish, then isolate the independent session poll so the
+    // real download denial is observable before the global sign-out takes over.
+    await expect(
+      panel.getByRole('button', { name: 'Download diagnostics', exact: true }),
+    ).toBeEnabled();
+    let healthIntercepted = false;
+    await page.route(`${f.origin}/api/health`, (route) => {
+      healthIntercepted = true;
+      return route.fulfill({ json: { status: 'ok' } });
+    });
+    await expect.poll(() => healthIntercepted).toBe(true);
     f.auth.revokeSession(f.operatorSession.session.token_hash);
+    const deniedDownload = page.waitForResponse(
+      (response) =>
+        response.url() === `${endpoint}/download` && response.request().method() === 'POST',
+    );
     await panel.getByRole('button', { name: 'Download diagnostics', exact: true }).click();
+    expect((await deniedDownload).status()).toBe(401);
     await expect(panel.getByRole('alert')).toContainText('Operator access is unavailable.');
     await expect(panel.getByRole('link', { name: 'Sign in again' })).toBeVisible();
     await expect(
@@ -609,10 +623,18 @@ test('diagnostics failures, cancelled downloads, pending clear navigation and ex
     ).toBeDisabled();
     expect(downloads).toBe(0);
     expect((await context.request.get(`${f.origin}/api/admin/health`)).status()).toBe(401);
+    await page.unroute(`${f.origin}/api/health`);
+    await expect(
+      page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+    ).toBeVisible();
+    expect(downloads).toBe(0);
   } finally {
     releaseDownload?.();
     releaseClear?.();
-    await page.unrouteAll({ behavior: 'ignoreErrors' });
-    await f.close();
+    try {
+      if (!page.isClosed()) await page.unrouteAll({ behavior: 'wait' });
+    } finally {
+      await f.close();
+    }
   }
 });
