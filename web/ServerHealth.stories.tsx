@@ -3,6 +3,7 @@ import { expect, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { ServerHealth } from './ServerHealth.tsx';
 import { healthStory, healthStoryTime } from './diagnosticsStoryData.ts';
+import './administration.css';
 
 const meta = {
   title: 'Current production/Admin/ServerHealth',

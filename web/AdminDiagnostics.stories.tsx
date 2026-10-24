@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
+import { assertDialogControls } from '../.storybook/dialogBounds.ts';
 import { AdminDiagnostics } from './AdminDiagnostics.tsx';
 import { diagnosticsStory } from './diagnosticsStoryData.ts';
+import './administration.css';
 
 const api = { 'GET /api/admin/diagnostics': diagnosticsStory };
 async function openClear(canvasElement: HTMLElement) {
@@ -70,7 +72,15 @@ export const Losses: Story = {
 export const Confirmation: Story = {
   parameters: { api },
   play: async ({ canvasElement }) => {
-    await openClear(canvasElement);
+    const dialog = await openClear(canvasElement);
+    await assertDialogControls(dialog);
+    const cancel = within(dialog).getByRole('button', { name: 'Cancel' });
+    const truncate = within(dialog).getByRole('button', { name: 'Truncate diagnostics' });
+    await waitFor(() => {
+      const first = cancel.getBoundingClientRect();
+      const second = truncate.getBoundingClientRect();
+      expect(second.left >= first.right + 8 || second.top >= first.bottom + 8).toBe(true);
+    });
   },
 };
 export const CancelClear: Story = {
