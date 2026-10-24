@@ -2,17 +2,18 @@ import { Direction, RANGE_TYPE } from '@univerjs/core';
 import { describe, expect, test } from 'vitest';
 import { transform } from '../index.ts';
 import type { Mutation } from '../index.ts';
-import { cellIds } from '../src/cells.ts';
 import { mergeIds } from '../src/merges.ts';
 import { nameIds } from '../src/names.ts';
 import { propertyIds } from '../src/properties.ts';
+import { claimKey } from '../src/state.ts';
 import { structureIds } from '../src/structure.ts';
+import { cellIds } from '../src/writes.ts';
 import { cols, rows } from './edits.ts';
 import { capture, seededWorkbook, withStructure } from './generate.ts';
 import { realBook } from './generate-cells.ts';
 import { nameEdit } from './generate-names.ts';
 import { settingEdit } from './generate-sheet.ts';
-import { converges, refusedBothWays, Replica } from './harness.ts';
+import { converges, liveCells, refusedBothWays, Replica } from './harness.ts';
 import { convergesOver } from './simulate.ts';
 
 const unitId = 'wb';
@@ -20,6 +21,29 @@ const document = { workbook: seededWorkbook() };
 // "budget" names rows 3 to 5 of the first two columns of sheet One (s1).
 const budget = { unitId, id: 'N', name: 'budget', formulaOrRefString: 'One!$A$3:$B$5' };
 const setup: Mutation[] = [{ id: nameIds.set, params: budget }];
+
+/** The cells of `on` after `before`, for a transform called directly. */
+/** An absolute write of s1's A1 (see state.absolute), as `transform` returns one. */
+function absoluteWrite(cell: object, claims: object, trigger: string): Mutation {
+  const keys = ['v', 't', 'f', 'si', 'p', 's', 'custom', 'ft', 'fd', 'ref', 'xf'];
+  const value = Object.fromEntries(keys.map((key) => [key, (cell as any)[key] ?? null]));
+  return {
+    id: cellIds.setRangeValues,
+    params: {
+      unitId,
+      subUnitId: 's1',
+      trigger,
+      isOverrideStyle: true,
+      cellValue: { 0: { 0: { ...value, [claimKey]: claims } } },
+    },
+  };
+}
+
+function cellsAfter(before = setup, on = document) {
+  const replica = new Replica(on);
+  replica.apply(before);
+  return { cells: liveCells(replica) };
+}
 
 /** What Univer's `command` sends after `before`, by default "budget" defined. */
 function sent(command: string, params: object, before = setup, on = document): Mutation[] {
@@ -186,6 +210,40 @@ describe('a formula write and a concurrent edit that rewrites formulas', () => {
     refusedBothWays(formula('s2', 0, 0, '=One!A8'), peer, 'formula-race');
   });
 
+  // Replay round 20: a sender's absolute write of a formula that claims none
+  // of it. `'formula-race'` reads the claims, so it passed in all four orders
+  // and kept the stale =One!A8. A claim picks which of a write's keys are its
+  // own edit, so every key it does not claim must be its base cell's
+  // (decision 33): Two!A1 holds no formula, and the write is rejected.
+  test('an absolute write of a formula it does not claim is rejected, not merged', () => {
+    const keys = ['v', 't', 'f', 'si', 'p', 's', 'custom', 'ft', 'fd', 'ref', 'xf'];
+    const all = Object.fromEntries(keys.map((key) => [key, null]));
+    const forged: Mutation[] = [
+      {
+        id: cellIds.setRangeValues,
+        params: {
+          unitId,
+          subUnitId: 's2',
+          isOverrideStyle: true,
+          cellValue: { 0: { 0: { ...all, f: '=One!A8', [claimKey]: {} } } },
+        },
+      },
+    ];
+    const peer = insertRow('s1');
+    for (const side of ['left', 'right'] as const) {
+      for (const [x, y] of [
+        [forged, peer],
+        [peer, forged],
+      ]) {
+        expect(() => transform(x, y, side, cellsAfter()), side).toThrow(TypeError);
+      }
+    }
+    // Claimed, it is a formula write, and refused as one.
+    const claimed = structuredClone(forged);
+    claimed[0].params.cellValue[0][0][claimKey] = { f: '=One!A8', v: null };
+    refusedBothWays(claimed, peer, 'formula-race', cellsAfter().cells);
+  });
+
   /** A row inserted above row 1 of sheet One, after `before`, with no name defined. */
   const insertAbove = (before: Mutation[]) =>
     sent(
@@ -286,8 +344,9 @@ describe('a formula write and a concurrent edit that rewrites formulas', () => {
       }
     });
 
-    // The rewrite writes no value, so a number format on it is a format race (see cells.formatRace).
-    test('a number format on it is refused as a format race', () => {
+    // The rewrite writes no value, so a number format on it was once refused
+    // as a format race; resolved on the cell, both land.
+    test('a number format on it lands with the rewrite', () => {
       const numfmt: Mutation[] = [
         {
           id: cellIds.setNumfmt,
@@ -299,7 +358,13 @@ describe('a formula write and a concurrent edit that rewrites formulas', () => {
           },
         },
       ];
-      refusedBothWays(numfmt, insertAbove(before), 'format-race');
+      for (const side of ['left', 'right'] as const) {
+        const after = converges(numfmt, insertAbove(before), { side, setup: before, document });
+        expect(after.workbook.sheets.s2.cellData[0][0]).toEqual({
+          f: '=One!A9',
+          s: { n: { pattern: '0%' } },
+        });
+      }
     });
 
     test('a value typed in another cell passes', () => {
@@ -629,11 +694,15 @@ describe("a command's `trigger`", () => {
     );
     expect(deleted.map(({ id }) => id)).not.toContain(cellIds.moveRange);
     for (const side of ['left', 'right'] as const) {
-      const stored = transform(deleted, style(29, 0, { bl: 1 }), side);
+      const stored = transform(deleted, style(29, 0, { bl: 1 }), side, cellsAfter(setup, real));
       expect(new Set(stored.map(({ params }) => params.trigger))).toEqual(
         new Set([deleted[0].params.trigger]),
       );
-      refusedBothWays(stored, setName({ name: 'total' }), 'name-race');
+      // A rename that saw neither meets the stored edit once it is past the
+      // bold, so on the cells after it, which the stored edit's absolute
+      // writes are checked against (decision 33).
+      const bolded = cellsAfter([...setup, ...style(29, 0, { bl: 1 })], real).cells;
+      refusedBothWays(stored, setName({ name: 'total' }), 'name-race', bolded);
     }
   });
 
@@ -650,26 +719,25 @@ describe("a command's `trigger`", () => {
         },
       },
     ];
-    const stored = transform(shifted, style(0, 0, { bl: 1 }), 'right');
+    // The stored write is an absolute write of the cell, claiming the italic.
+    const stored = transform(shifted, style(0, 0, { bl: 1 }), 'right', cellsAfter());
     expect(stored).toEqual([
-      {
-        id: cellIds.setRangeValues,
-        params: {
-          unitId,
-          subUnitId: 's1',
-          trigger: 'sheet.command.delete-range-move-up',
-          cellValue: { 0: { 0: { s: { it: 1, bl: 1 } } } },
-        },
-      },
+      absoluteWrite(
+        { v: 's1:0:0', t: 1, s: { it: 1, bl: 1 } },
+        { s: { it: 1 } },
+        'sheet.command.delete-range-move-up',
+      ),
     ]);
-    refusedBothWays(stored, formula('s2', 0, 0, '=1+1'), 'formula-race');
+    const after = converges(shifted, style(0, 0, { bl: 1 }), { side: 'right', setup, document });
+    expect(after.workbook.sheets.s1.cellData[0][0].s).toMatchObject({ it: 1, bl: 1 });
+    const bolded = cellsAfter([...setup, ...style(0, 0, { bl: 1 })]).cells;
+    refusedBothWays(stored, formula('s2', 0, 0, '=1+1'), 'formula-race', bolded);
   });
 
   // Decision (owner, chat 2026-10-22): see names.rewrites. A shift's write
-  // that loses its cell to a number format is retyped after it (see
-  // cells.retype), and the retype is the shift's output too, so it keeps the
-  // shift's `trigger`.
-  test("a shift's write that loses to a number format keeps its `trigger` in the retype", () => {
+  // that loses its cell to a number format becomes an absolute write of the
+  // cell, which is the shift's output too, so it keeps the shift's `trigger`.
+  test("a shift's write that loses to a number format keeps its `trigger`", () => {
     const trigger = 'sheet.command.delete-range-move-up';
     const shifted: Mutation[] = [
       {
@@ -677,10 +745,12 @@ describe("a command's `trigger`", () => {
         params: { unitId, subUnitId: 's1', trigger, cellValue: { 0: { 0: { v: 7, t: 2 } } } },
       },
     ];
-    const stored = transform(shifted, style(0, 0, { n: { pattern: '0%' } }), 'right');
-    const retyped = stored.filter(({ params }) => params.derived);
-    expect(retyped.map(({ params }) => params.cellValue)).toEqual([{ 0: { 0: { v: 7 } } }]);
-    expect(stored.map(({ params }) => params.trigger)).toEqual([trigger, trigger, trigger]);
+    const percent = style(0, 0, { n: { pattern: '0%' } });
+    const stored = transform(shifted, percent, 'right', cellsAfter());
+    const s = { n: { pattern: '0%' } };
+    expect(stored).toEqual([absoluteWrite({ v: 7, t: 2, s }, { v: 7, t: 2 }, trigger)]);
+    const after = converges(shifted, percent, { side: 'right', setup, document });
+    expect(after.workbook.sheets.s1.cellData[0][0]).toEqual({ v: 7, t: 2, s });
   });
 
   // A typed value with a forced type loses A1 to a shift's write accepted
@@ -711,15 +781,12 @@ describe("a command's `trigger`", () => {
         },
       },
     ];
-    const stored = transform(typed, shift, 'right');
-    expect(stored.map(({ params }) => params.cellValue[0][0])).toEqual([
-      { v: 1, t: 1 },
-      { v: 'moved' },
-    ]);
-    expect(stored.map(({ params }) => params.trigger)).toEqual([
-      'sheet.command.set-range-values',
-      'sheet.command.set-range-values',
-    ]);
+    // Resolved on the cell there is no replay: the typed write goes, since
+    // the cell it would leave is the cell the shift left (Univer keeps a
+    // forced string under a later plain value), so nothing carries the
+    // shift's `trigger`.
+    const stored = transform(typed, shift, 'right', cellsAfter());
+    expect(stored).toEqual([]);
     const seen = [...setup, ...shift];
     for (const later of [formula('s2', 0, 0, '=1+1'), setName({ name: 'total' })]) {
       for (const side of ['left', 'right'] as const) {

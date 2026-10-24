@@ -78,6 +78,9 @@ terminate the owner's apps or count a resource-aborted check as passing. Save a
 checkpoint before long work, and record any aborted verification and the next
 safe step. Owner, chat
 2026-10-18, after a memory-induced forced pause stalled the backlog run.
+`node scripts/serial.ts <command>` enforces the one-at-a-time and pressure
+rules and kills a run after 8 minutes, for example
+`node scripts/serial.ts npx vitest run lib/sync-transform/tests/cells.test.ts`.
 
 When the watchdog prevents safe local tests, the owner permits a draft push after
 local typecheck, lint and backlog checks pass. Run the full unit and browser suites

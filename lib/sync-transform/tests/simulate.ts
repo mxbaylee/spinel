@@ -1,13 +1,16 @@
 import { expect } from 'vitest';
-import { flip, RefusedEditError, transform as transformAll } from '../index.ts';
-import type { Mutation, Side } from '../index.ts';
+import { flip, RefusedEditError, transform as realTransform } from '../index.ts';
+import type { BaseCells, Mutation, Side } from '../index.ts';
 import { mapIndex } from '../src/axis.ts';
-import { cellIds, writesOf } from '../src/cells.ts';
 import { shiftOf } from '../src/shifts.ts';
+import { Cells, claimsOf, isAbsolute } from '../src/state.ts';
 import { axisEdit } from '../src/structure.ts';
+import { checkBases } from '../src/transform.ts';
+import { cellIds, writesOf } from '../src/writes.ts';
 import { random } from './random.ts';
 import { seededWorkbook } from './generate.ts';
-import { Replica } from './harness.ts';
+import { liveCells, Replica, snapshotCells } from './harness.ts';
+import { isFormulaId } from '@univerjs/core';
 import type { IDocumentData, IRange, IWorkbookData } from '@univerjs/core';
 
 /** Makes one random edit from a replica's current state, or null to skip a turn. */
@@ -22,7 +25,8 @@ type Keys = Map<string, string>;
  * applied it.
  */
 type Facts = Map<string, Map<string, Fact>>;
-type Fact = { value: string; by: string };
+/** `typeOnly`: a value `by` retyped with a write of `t` alone (see `shapes`). */
+type Fact = { value: string; by: string; typeOnly?: true };
 /** Where a cell's content is: a cell, null once deleted, undefined once dragged nowhere. */
 type Place = string | null | undefined;
 
@@ -50,6 +54,11 @@ const flat = (parts: Part[]) => parts.flatMap((part) => part.mutations);
 const sender = (label: string) => label.split(':')[0];
 
 interface Client extends Site {
+  /**
+   * Its document before its pending edits: each accepted edit as the server
+   * sent it, and its own as acknowledged. What its transforms read (BaseCells).
+   */
+  confirmed: Replica;
   revision: number;
   inflight: Part[] | null;
   buffer: Part[];
@@ -80,6 +89,9 @@ const parse = (key: string) => {
 /** Seeded values name their first cell (`s1:0:2`); each text, formula or colour written has a token. */
 const tokenPattern = /s\d+:\d+:\d+|[wc]#\d+/g;
 
+/** The text decorations whose colour follows the font colour. */
+const decorations = new Set(['ul', 'ol', 'st']);
+
 const booleans = new Map([
   ['true', '1'],
   ['false', '0'],
@@ -102,6 +114,13 @@ function stateOf(replica: Replica, where?: string): State {
       const style = typeof value === 'string' ? styles.get(value) : value;
       return Object.entries(style ?? {}).flatMap(([name, v]): [string, string][] => {
         if (v == null) return [];
+        // Univer copies the font colour into these lines whenever a style
+        // holds `cl`, even a null one (mergeStyle), so a line's own colour is
+        // not its writer's to keep.
+        if (decorations.has(name)) {
+          const { cl: _, ...line } = v as Record<string, unknown>;
+          return [[`s.${name}`, JSON.stringify(line)]];
+        }
         if (name !== 'bd') return [[`s.${name}`, JSON.stringify(v)]];
         return Object.entries(v).flatMap(([edge, e]): [string, string][] =>
           e == null ? [] : [[`s.bd.${edge}`, JSON.stringify(e)]],
@@ -190,12 +209,16 @@ function follower(mutation: Mutation): (cell: string) => Place {
 /**
  * The keys `mutation` writes in each cell: '' for a whole cell
  * (a null write or a drag's), `s` for a whole style. A shift moves cells and
- * writes none, and a retype writes again what the cell holds.
+ * writes none. A write that clears its formula also deletes `ft` and `fd`
+ * (mergeCellData), and one with a value and a merged style rich text it does
+ * not name (handleStyle), so it writes those keys too. An absolute write (see
+ * state.absolute) writes only the keys it claims; the rest it writes again as
+ * the cell held them.
  */
 function written(mutation: Mutation): { cell: string; key: string }[] {
   const p = mutation.params;
   const cells = Object.values(cellIds) as string[];
-  if (!cells.includes(mutation.id) || shiftOf(mutation) || p.derived) return [];
+  if (!cells.includes(mutation.id) || shiftOf(mutation)) return [];
   // A move writes whole cells, each matrix on its own sheet.
   if (mutation.id === cellIds.moveRange) {
     return [p.from, p.to].flatMap(({ subUnitId, value }) =>
@@ -208,17 +231,92 @@ function written(mutation: Mutation): { cell: string; key: string }[] {
     const cell = at(p.subUnitId, row, col);
     if (mutation.id !== cellIds.setRangeValues) return [{ cell, key: 's.n' }];
     if (value === null) return [{ cell, key: '' }];
-    return Object.entries(value).flatMap(([key, v]) => {
-      if (v === undefined || key === 't') return [];
-      if (key !== 's' || v === null || p.isOverrideStyle) return [{ cell, key }];
-      return Object.entries(v as object).flatMap(([name, style]) =>
-        name === 'bd' && style
-          ? Object.keys(style).map((edge) => ({ cell, key: `s.bd.${edge}` }))
-          : [{ cell, key: `s.${name}` }],
-      );
-    });
+    // An absolute write writes what it claims, with what Univer derives in it.
+    if (isAbsolute(value)) return claimed(cell, claimsOf(value));
+    const cleared = (value.f === null || value.f === '') && !isFormulaId(value.si);
+    const dropsText = value.s !== undefined && value.v && value.p === undefined;
+    const derived = [
+      ...(cleared ? ['ft', 'fd'] : []),
+      ...(dropsText && !p.isOverrideStyle ? ['p'] : []),
+    ];
+    return [
+      ...derived.map((key) => ({ cell, key })),
+      ...Object.entries(value).flatMap(([key, v]) => {
+        if (v === undefined || key === 't') return [];
+        if (key !== 's' || v === null || p.isOverrideStyle) return [{ cell, key }];
+        return Object.entries(v as object).flatMap(([name, style]) =>
+          name === 'bd' && style
+            ? Object.keys(style).map((edge) => ({ cell, key: `s.bd.${edge}` }))
+            : [{ cell, key: `s.${name}` }],
+        );
+      }),
+    ];
   });
 }
+
+/** The keys an absolute write's `claims` name in `cell` (see state.difference). */
+function claimed(
+  cell: string,
+  claims: Record<string, any> | null,
+): { cell: string; key: string }[] {
+  if (!claims) return [{ cell, key: '' }];
+  return Object.entries(claims).flatMap(([key, v]) => {
+    if (key === 't') return [];
+    if (key !== 's' || v === null) return [{ cell, key }];
+    return Object.entries(v as object).flatMap(([name, style]) =>
+      name === 'bd' && style
+        ? Object.keys(style).map((edge) => ({ cell, key: `s.bd.${edge}` }))
+        : [{ cell, key: `s.${name}` }],
+    );
+  });
+}
+
+/** Whether a cell write names `t` and nothing else: as sent, or as an absolute write's claims. */
+const typeOnly = (value: unknown) => {
+  const own = claimsOf(value);
+  if (!own || typeof own !== 'object') return false;
+  return (
+    Object.keys(own)
+      .filter((key) => own[key] !== undefined)
+      .join() === 't'
+  );
+};
+
+/**
+ * The cells where `mutation` makes one of the two writes the intent checks
+ * let a concurrent edit beat, as `cell|type` and `cell|restyle`:
+ * - `type`: a write of `t` alone, the retype SetNumfmtCommand sends, which
+ *   yields to a concurrent write of the value (decision 35).
+ * - `restyle`: a value with a style and no rich text, not overriding, which
+ *   Univer lands as a restyle of the cell's rich text where the value is its
+ *   text (handleStyle), and otherwise as a deletion of it (decision 32).
+ */
+function shapes(mutation: Mutation): string[] {
+  const p = mutation.params;
+  if (mutation.id !== cellIds.setRangeValues || shiftOf(mutation)) return [];
+  return writesOf(mutation).flatMap(({ row, col, value }) => {
+    const cell = at(p.subUnitId, row, col);
+    if (typeOnly(value)) return [`${cell}|type`];
+    const restyle =
+      !!value &&
+      !isAbsolute(value) &&
+      !p.isOverrideStyle &&
+      value.s !== undefined &&
+      !!value.v &&
+      value.p === undefined;
+    return restyle ? [`${cell}|restyle`] : [];
+  });
+}
+
+/** Each entry `each` gives for `mutations`, as `cell|…`, in the cell the later ones take it to. */
+function followed(mutations: Mutation[], each: (mutation: Mutation) => string[]): Set<string> {
+  let entries: string[] = [];
+  for (const mutation of mutations) entries = [...moved(entries, [mutation]), ...each(mutation)];
+  return new Set(entries);
+}
+
+/** What `mutation` writes (see `written`), as `cell|key`. */
+const writes = (mutation: Mutation) => written(mutation).map(({ cell, key }) => `${cell}|${key}`);
 
 /** Whether `touched`, as `cell|key` (see `written`), holds `key` of `cell`. */
 const covered = (touched: Set<string>, cell: string, key: string) =>
@@ -253,6 +351,12 @@ const sortedJson = (value: unknown) =>
       : v,
   );
 
+/** `transform`'s signature, for a run that swaps in another (see `simulate`). */
+export type Transform = typeof realTransform;
+
+/** Refusals and resyncs by reason, as `count:reason`, over every run since it was cleared. */
+export const reasons = new Map<string, number>();
+
 /** What `simulate` counts (see its doc). */
 export type Stats = ReturnType<typeof newStats>;
 export const newStats = () => ({
@@ -270,10 +374,17 @@ export const newStats = () => ({
  * to refuse the other order too, whichever edit lands first. Growth depends
  * on the order, so it is not checked.
  */
-function refusedBothWays(error: unknown, a: Mutation[], b: Mutation[], side: Side) {
+function refusedBothWays(
+  error: unknown,
+  a: Mutation[],
+  b: Mutation[],
+  side: Side,
+  cells: BaseCells,
+  transformAll: Transform,
+) {
   if (!(error instanceof RefusedEditError) || error.reason === 'growth') return;
   try {
-    transformAll(b, a, flip(side));
+    transformAll(b, a, flip(side), { cells });
   } catch (other) {
     if (other instanceof RefusedEditError) return;
   }
@@ -305,13 +416,22 @@ function refusedBothWays(error: unknown, a: Mutation[], b: Mutation[], side: Sid
  *   deletes its cell or saw the key: its writer was accepted before the
  *   mutation's revision, or is its sender's earlier mutation, whose key it
  *   changed on its sender too. History wins, even over a mutation that was
- *   transformed past it on its sender before it was sent.
+ *   transformed past it on its sender before it was sent, except over a
+ *   write of the value (`v` named, or the cell deleted) where history's
+ *   writer of `v` was a write of `t` alone (decision 35, F12).
  * - On a client, an incoming edit changes only keys it changed on the server
  *   (see `written`), in the cells the pending edits, landing after it there,
- *   take them to, and they must then be as on the server.
+ *   take them to, and they must then be as on the server, except where a
+ *   pending edit writes the key too and one of two rules gives it the say
+ *   (see `yields`): `v`, where the incoming edit writes `t` alone and the
+ *   client keeps the value it held (decision 35, F12); and `p`, where the
+ *   incoming edit is a value with a style that restyled the server's rich
+ *   text of its own text and the client ends with no `p` (decision 32, F8).
  * - A client whose edit is acknowledged, with none pending, holds the server's.
- * A retype (`derived`) writes again what was written and loses to any edit,
- * so it writes no key.
+ * The transform reads cells where two writes meet: the server those of the
+ * revision a batch was made on (`revisions`, the snapshots SPN-057 would
+ * keep), and a client those of its `confirmed` replica, the server's document
+ * as it last heard, advanced past each pending edit in turn.
  *
  * Whether or not `intent` is set, a client that is caught up, with nothing
  * pending or on its way and every accepted edit applied, must hold the
@@ -332,19 +452,35 @@ export function simulate(options: {
   /** The most mutations a transform may return per mutation it transforms. */
   budget?: number;
   intent?: boolean;
-  /** Steps to run before the random ones. */
+  /**
+   * Steps to run before the random ones. A step that cannot run is skipped,
+   * as the random steps skip it, so a shrunk script still runs: an edit by a
+   * client waiting to reload, or taking a batch or message where none waits.
+   */
   script?: Step[];
+  /** Filled with the random steps as they run, to replay them as a `script`. */
+  trace?: Step[];
+  /** The transform the server and clients run: `transform`, or a broken one a test plants. */
+  transform?: Transform;
 }) {
+  const transformAll = options.transform ?? realTransform;
   const next = random(options.seed);
   let largest = 0;
-  const transform = (a: Mutation[], b: Mutation[], side: Side) => {
+  /** Transforms `a` past `b`, both made on `cells`. */
+  const transform = (a: Mutation[], b: Mutation[], side: Side, cells: BaseCells) => {
     let result: Mutation[];
     try {
-      result = transformAll(a, b, side);
+      result = transformAll(a, b, side, { cells });
     } catch (error) {
-      refusedBothWays(error, a, b, side);
+      refusedBothWays(error, a, b, side, cells, transformAll);
       throw error;
     }
+    // Every absolute write it returns restates its cell, after `b`, wherever
+    // it claims nothing (state.baseError), whether or not it is transformed
+    // again: the server's stored edits, and a client's rebased pending ones.
+    let after = Cells.of(cells);
+    for (const mutation of b) after = after.after(mutation);
+    checkBases(result, after);
     const inputs = a.length + b.length;
     largest = Math.max(largest, result.length / Math.max(inputs, 1));
     if (options.budget !== undefined && result.length > options.budget * inputs) {
@@ -357,13 +493,13 @@ export function simulate(options: {
    * Transforms `parts` past `b`, keeping what each became: transform pairs
    * mutations up in order, so the first n parts become the start of the whole.
    */
-  const pastParts = (parts: Part[], b: Mutation[], side: Side): Part[] => {
-    const all = transform(flat(parts), b, side);
+  const pastParts = (parts: Part[], b: Mutation[], side: Side, cells: BaseCells): Part[] => {
+    const all = transform(flat(parts), b, side, cells);
     if (!intent) return [{ ...parts[0], mutations: all }];
     let [done, prefix] = [0, [] as Mutation[]];
     return parts.map((part, i) => {
       prefix = [...prefix, ...part.mutations];
-      const upTo = i === parts.length - 1 ? all : transformAll(prefix, b, side);
+      const upTo = i === parts.length - 1 ? all : transformAll(prefix, b, side, { cells });
       if (JSON.stringify(upTo) !== JSON.stringify(all.slice(0, upTo.length))) {
         throw new Error(`${part.label} became no start of its batch's transform`);
       }
@@ -373,7 +509,11 @@ export function simulate(options: {
     });
   };
   const server: Site = { replica: new Replica(options.document), facts: new Map() };
-  const history: ({ mutations: Mutation[] } & Landed)[] = [];
+  /** Each accepted edit, with `shapes` (see `shapes`) where it lands, as `touched`. */
+  const history: ({ mutations: Mutation[]; shapes: Set<string> } & Landed)[] = [];
+  /** The server's cells after the first `revision` edits, by revision: its snapshots (SPN-057). */
+  const snapshot = () => snapshotCells(structuredClone(server.replica.workbook()?.getSnapshot()));
+  const revisions: BaseCells[] = [snapshot()];
   /** Each client mutation's history index; the seeded document's is -1. */
   const acceptedAt = new Map([['seed', -1]]);
   const indexOf = (by: string) =>
@@ -387,15 +527,16 @@ export function simulate(options: {
   const stats = newStats();
   /**
    * Applies `mutations`, which `by` made, to `site`, and checks the
-   * keys it held as `simulate` says, `mayChange` allowing changes. Returns
-   * the keys the mutations wrote or changed (see `written`), and the state.
+   * keys it held as `simulate` says, `mayChange` allowing changes, told
+   * whether the mutations write the key (see `written`). Returns the keys
+   * the mutations wrote or changed, and the state.
    */
   const land = (
     site: Site,
     mutations: Mutation[],
     by: string,
     where: string,
-    mayChange: (fact: Fact, cell: string, key: string) => boolean = () => true,
+    mayChange: (fact: Fact, cell: string, key: string, writes: boolean) => boolean = () => true,
   ): Landed => {
     site.replica.apply(mutations);
     if (!intent) return { touched: new Set(), after: new Map() };
@@ -403,17 +544,24 @@ export function simulate(options: {
       [...keys].map(([key, fact]) => ({ cell: cell as Place, last: cell, key, fact })),
     );
     const wrote: { cell: Place; key: string }[] = [];
+    const retyped: { cell: Place }[] = [];
     for (const mutation of mutations) {
       const follow = follower(mutation);
-      for (const entry of [...held, ...wrote]) entry.cell &&= follow(entry.cell);
+      for (const entry of [...held, ...wrote, ...retyped]) entry.cell &&= follow(entry.cell);
       for (const entry of held) entry.last = entry.cell || entry.last;
       wrote.push(...written(mutation));
+      for (const entry of shapes(mutation)) {
+        const [cell, shape] = entry.split('|');
+        if (shape === 'type') retyped.push({ cell });
+      }
     }
+    const typed = new Set(retyped.flatMap(({ cell }) => (cell ? [cell] : [])));
     const after = stateOf(site.replica, where);
     const kept: Facts = new Map();
     const keep = (cell: string, key: string, fact: Fact) =>
       kept.set(cell, (kept.get(cell) ?? new Map()).set(key, fact));
     const touched = new Set(wrote.flatMap(({ cell, key }) => (cell ? [`${cell}|${key}`] : [])));
+    const writing = new Set(touched);
     for (const { cell, last, key, fact } of held) {
       if (cell === null) continue;
       const value = cell && after.get(cell)?.get(key);
@@ -424,13 +572,17 @@ export function simulate(options: {
         continue;
       }
       touched.add(`${last}|${key}`);
-      if (mayChange(fact, last, key)) continue;
+      if (mayChange(fact, last, key, covered(writing, last, key))) continue;
       throw new Error(`${where}: ${key} of ${last} by ${fact.by}, ${fact.value}, is now ${value}`);
     }
     for (const [cell, keys] of after) {
       for (const [key, value] of keys) {
         if (kept.get(cell)?.has(key)) continue;
-        keep(cell, key, { value, by });
+        keep(
+          cell,
+          key,
+          key === 'v' && typed.has(cell) ? { value, by, typeOnly: true } : { value, by },
+        );
         touched.add(`${cell}|${key}`);
       }
     }
@@ -440,6 +592,7 @@ export function simulate(options: {
   const seeded = land(server, [], 'seed', 'seeded').after;
   const clients: Client[] = [0, 1].map(() => ({
     replica: new Replica(options.document),
+    confirmed: new Replica(options.document),
     facts: server.facts,
     revision: 0,
     inflight: null,
@@ -467,9 +620,13 @@ export function simulate(options: {
     const acknowledged = client.inbox.includes('ack');
     const inflight = acknowledged ? [] : (client.inflight ?? []);
     stats.discarded += flat([...inflight, ...client.buffer]).length;
-    client.replica.univer.dispose();
+    for (const replica of [client.replica, client.confirmed]) replica.univer.dispose();
     client.replica = new Replica(options.document);
-    for (const { mutations } of history) client.replica.apply(mutations);
+    client.confirmed = new Replica(options.document);
+    for (const { mutations } of history) {
+      client.replica.apply(mutations);
+      client.confirmed.apply(mutations);
+    }
     Object.assign(client, { revision: history.length, inflight: null, buffer: [] });
     Object.assign(client, { facts: server.facts, waiting: false });
     client.inbox.length = 0;
@@ -497,6 +654,8 @@ export function simulate(options: {
     } catch (error) {
       if (!(error instanceof RefusedEditError)) throw error;
       stats[count]++;
+      const at = `${count}:${error.reason}`;
+      reasons.set(at, (reasons.get(at) ?? 0) + 1);
       resync(client);
       return null;
     }
@@ -505,26 +664,38 @@ export function simulate(options: {
     const { revision, parts } = from.outbox.shift()!;
     stats.batches++;
     let incoming: Part[] | null = parts;
-    for (const { mutations } of history.slice(revision)) {
-      incoming = transformOr(from, 'refused', () => pastParts(incoming!, mutations, 'right'));
+    for (let at = revision; at < history.length; at++) {
+      const { mutations } = history[at];
+      const cells = revisions[at];
+      incoming = transformOr(from, 'refused', () =>
+        pastParts(incoming!, mutations, 'right', cells),
+      );
       if (!incoming) return;
     }
     stats.accepted++;
     const index = history.length;
     for (const { label } of incoming) acceptedAt.set(label, index);
     const where = `server at ${index}`;
-    // Each mutation changes only keys it saw: the edits accepted since lose nothing to it.
+    // Each mutation changes only keys it saw: the edits accepted since lose
+    // nothing to it, except a value retyped by a write of `t` alone, which
+    // yields to a concurrent write of the value (decision 35).
     let { touched, after } = { touched: new Set<string>(), after: stateAt(index) };
+    let shaped = new Set<string>();
     for (const { label, revision: saw, mutations } of incoming) {
       if (mutations.length === 0) continue;
-      const landed = land(server, mutations, label, where, ({ by, value }, _cell, key) => {
-        if (indexOf(by) < saw) return true;
-        return sender(by) === sender(label) && !!changes.get(label)?.has(`${key}|${value}`);
+      const landed = land(server, mutations, label, where, (fact, _cell, key, writes) => {
+        if (indexOf(fact.by) < saw) return true;
+        if (key === 'v' && fact.typeOnly && writes) return true;
+        return (
+          sender(fact.by) === sender(label) && !!changes.get(label)?.has(`${key}|${fact.value}`)
+        );
       });
       touched = new Set([...moved(touched, mutations), ...landed.touched]);
+      shaped = new Set([...moved(shaped, mutations), ...followed(mutations, shapes)]);
       after = landed.after;
     }
-    history.push({ mutations: flat(incoming), touched, after });
+    history.push({ mutations: flat(incoming), touched, after, shapes: shaped });
+    revisions.push(snapshot());
     for (const client of clients) client.inbox.push(client === from ? 'ack' : index);
   };
   /** The server's snapshot, taken once per revision, as JSON and as `sortedJson` once needed. */
@@ -555,6 +726,8 @@ export function simulate(options: {
     }
     const where = `client ${clients.indexOf(client)} at ${client.revision++}`;
     if (message === 'ack') {
+      // Acknowledged as the server landed it: transformed past every edit it took.
+      client.confirmed.apply(flat(client.inflight!));
       client.inflight = null;
       if (intent && client.buffer.length === 0) {
         const [here, there] = [stateOf(client.replica), stateAt(client.revision)];
@@ -566,39 +739,85 @@ export function simulate(options: {
       send(client);
       return;
     }
-    const { mutations, touched } = history[message];
+    const { mutations, touched, shapes: shaped } = history[message];
     let incoming = mutations;
+    // The inflight edits were made on the confirmed document, and the buffer
+    // on it with the inflight edits, as they were before this edit came.
+    let made = Cells.of(liveCells(client.confirmed));
     for (const key of ['inflight', 'buffer'] as const) {
       const pending = client[key];
       if (!pending || pending.length === 0) continue;
+      const on = made;
+      const cells: BaseCells = (...at) => on.get(...at);
       // The server refuses the pending edits for the same reason. Where only
       // the incoming edit cannot go past them, the client cannot apply it
       // and resyncs as well.
-      const kept = transformOr(client, 'resynced', () => pastParts(pending, incoming, 'right'));
+      const kept = transformOr(client, 'resynced', () =>
+        pastParts(pending, incoming, 'right', cells),
+      );
       const past =
-        kept && transformOr(client, 'resynced', () => transform(incoming, flat(pending), 'left'));
+        kept &&
+        transformOr(client, 'resynced', () => transform(incoming, flat(pending), 'left', cells));
       if (!kept || !past) return;
+      for (const mutation of flat(pending)) made = made.after(mutation);
       client[key] = kept;
       incoming = past;
     }
-    // What the incoming edit wrote on the server, in the cells the pending
-    // edits, landing after it there, take it to here.
-    const follows = flat([...(client.inflight ?? []), ...client.buffer]).map(follower);
-    const [there, mine] = [new Map<string, string>(), new Set<string>()];
-    for (const entry of intent ? touched : []) {
-      const [cell, key] = entry.split('|');
-      let here: Place = cell;
-      for (const follow of follows) here &&= follow(here);
-      if (!here) continue;
-      mine.add(`${here}|${key}`);
-      there.set(here, cell);
+    client.confirmed.apply(mutations);
+    // What the incoming edit wrote on the server, and its shapes, in the
+    // cells the pending edits, landing after it there, take them to here.
+    const pending = flat([...(client.inflight ?? []), ...client.buffer]);
+    const follows = pending.map(follower);
+    const [there, mine, kinds] = [new Map<string, string>(), new Set<string>(), new Set<string>()];
+    for (const [entries, into] of intent
+      ? ([
+          [touched, mine],
+          [shaped, kinds],
+        ] as const)
+      : []) {
+      for (const entry of entries) {
+        const [cell, key] = entry.split('|');
+        let here: Place = cell;
+        for (const follow of follows) here &&= follow(here);
+        if (!here) continue;
+        into.add(`${here}|${key}`);
+        if (into === mine) there.set(here, cell);
+      }
     }
+    // What the pending edits write here, and the keys here before the incoming edit.
+    const [theirs, before] = [intent ? followed(pending, writes) : new Set<string>(), client.facts];
+    /**
+     * Whether `key` of `here` may differ from the server's `server`, where
+     * the client ends with `after`: the incoming edit wrote it, but by an
+     * accepted rule a pending edit that writes it too has the say there.
+     */
+    const yields = (here: string, key: string, server?: Keys, after?: Keys) => {
+      if (!covered(theirs, here, key)) return false;
+      // Decision 35 (F12): a write of `t` alone, accepted first, yields to a
+      // concurrent write of the value, which keeps what the pending edit left.
+      if (key === 'v') {
+        return kinds.has(`${here}|type`) && after?.get('v') === before.get(here)?.get('v')?.value;
+      }
+      // Decision 32 (F8): a restyle of the cell's own rich text, accepted
+      // first, past a concurrent deletion of the rich text: the value, its
+      // style and no `p`, as one person doing both in that order makes.
+      if (key === 'p') {
+        const restyled = server?.get('p') === `${server?.get('v')}\r\n`;
+        return kinds.has(`${here}|restyle`) && restyled && after?.get('p') === undefined;
+      }
+      return false;
+    };
     const landed = land(client, incoming, `#${message}`, where, (_fact, cell, key) =>
       covered(mine, cell, key),
     );
     for (const [here, cell] of there) {
-      const keys = stateAt(message + 1).get(cell);
-      compare(landed.after.get(here), keys, `${where}: ${here}`, (key) => covered(mine, here, key));
+      const [keys, after] = [stateAt(message + 1).get(cell), landed.after.get(here)];
+      compare(
+        after,
+        keys,
+        `${where}: ${here}`,
+        (key) => covered(mine, here, key) && !yields(here, key, keys, after),
+      );
     }
     caughtUp(client, where);
   };
@@ -620,39 +839,58 @@ export function simulate(options: {
     stats.edits++;
     stats.mutations += mutations.length;
   };
-  for (const step of options.script ?? []) {
-    const client = clients[step.client];
-    if ('edit' in step) edit(client, step.edit);
-    else if (step.take === 'send') send(client);
-    else if (step.take === 'server') receiveAtServer(client);
-    else receiveAtClient(client);
-  }
-  while (mutationsMade < options.mutations) {
-    const client = clients[next() % 2];
-    const roll = next() % 10;
-    if (roll < 4) {
-      // A client waiting to reload makes no edits.
-      const mutations = client.waiting ? null : options.generate(client.replica, next);
-      if (!mutations || mutations.length === 0) continue;
-      edit(client, mutations);
-      if (next() % 2 === 0) send(client);
-    } else if (roll < 7 && client.outbox.length > 0) {
-      receiveAtServer(client);
-    } else if (client.inbox.length > 0) {
-      receiveAtClient(client);
+  // A run that throws leaves no replicas to its caller, so it disposes them.
+  try {
+    for (const step of options.script ?? []) {
+      const client = clients[step.client];
+      if ('edit' in step) {
+        if (!client.waiting && step.edit.length > 0) edit(client, step.edit);
+      } else if (step.take === 'send') send(client);
+      else if (step.take === 'server') {
+        if (client.outbox.length > 0) receiveAtServer(client);
+      } else if (client.inbox.length > 0) receiveAtClient(client);
     }
+    const trace = (step: Step) => options.trace?.push(step);
+    while (mutationsMade < options.mutations) {
+      const client = clients[next() % 2];
+      const at = { client: clients.indexOf(client) };
+      const roll = next() % 10;
+      if (roll < 4) {
+        // A client waiting to reload makes no edits.
+        const mutations = client.waiting ? null : options.generate(client.replica, next);
+        if (!mutations || mutations.length === 0) continue;
+        // As sent: the replicas apply copies, but a trace keeps its own.
+        trace({ ...at, edit: structuredClone(mutations) });
+        edit(client, mutations);
+        if (next() % 2 === 0) {
+          trace({ ...at, take: 'send' });
+          send(client);
+        }
+      } else if (roll < 7 && client.outbox.length > 0) {
+        trace({ ...at, take: 'server' });
+        receiveAtServer(client);
+      } else if (client.inbox.length > 0) {
+        trace({ ...at, take: 'client' });
+        receiveAtClient(client);
+      }
+    }
+    // Deliver everything still in flight.
+    for (;;) {
+      const busy = clients.find(
+        (client) => client.outbox.length > 0 || client.inbox.length > 0 || client.buffer.length > 0,
+      );
+      if (!busy) break;
+      send(busy);
+      if (busy.outbox.length > 0) receiveAtServer(busy);
+      while (busy.inbox.length > 0) receiveAtClient(busy);
+      for (const client of clients) while (client.inbox.length > 0) receiveAtClient(client);
+    }
+  } catch (error) {
+    for (const site of [server, ...clients]) site.replica.univer.dispose();
+    for (const client of clients) client.confirmed.univer.dispose();
+    throw error;
   }
-  // Deliver everything still in flight.
-  for (;;) {
-    const busy = clients.find(
-      (client) => client.outbox.length > 0 || client.inbox.length > 0 || client.buffer.length > 0,
-    );
-    if (!busy) break;
-    send(busy);
-    if (busy.outbox.length > 0) receiveAtServer(busy);
-    while (busy.inbox.length > 0) receiveAtClient(busy);
-    for (const client of clients) while (client.inbox.length > 0) receiveAtClient(client);
-  }
+  for (const client of clients) client.confirmed.univer.dispose();
   return {
     server: server.replica,
     clients: clients.map((client) => client.replica),
@@ -663,7 +901,7 @@ export function simulate(options: {
 }
 
 /**
- * Runs `simulate` for seeds 1 to `seeds`, or only `FUZZ_SEED` when set, and
+ * Runs `simulate` for each of `seeds`, or only `FUZZ_SEED` when set, and
  * checks every client ends with the server's document. A failure names its
  * seed. Returns the number of mutations made, and adds each seed's counts to
  * `stats` if given.
@@ -678,7 +916,8 @@ export function convergesOver(
     intent,
     stats,
   }: {
-    seeds: number;
+    /** Seeds 1 to this many, or the seeds listed. */
+    seeds: number | number[];
     mutations?: number;
     document?: { workbook?: IWorkbookData; doc?: IDocumentData };
     /** As simulate's. */
@@ -690,7 +929,8 @@ export function convergesOver(
   },
 ): number {
   const only = process.env.FUZZ_SEED;
-  const list = only ? [Number(only)] : Array.from({ length: seeds }, (_, i) => i + 1);
+  const all = Array.isArray(seeds) ? seeds : Array.from({ length: seeds }, (_, i) => i + 1);
+  const list = only ? [Number(only)] : all;
   let total = 0;
   for (const seed of list) {
     let run: ReturnType<typeof simulate>;

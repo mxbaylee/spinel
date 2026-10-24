@@ -5,7 +5,13 @@ import { docFormulas } from '@spinel/doc-formulas';
 import { transform } from '../index.ts';
 import type { Mutation } from '../index.ts';
 import { docIds } from '../src/docs.ts';
-import { docDrawingInsert, docEdit, docFormulaInsert, seededDoc } from './generate-docs.ts';
+import {
+  docDrawingInsert,
+  docEdit,
+  docFormulaInsert,
+  seededDoc,
+  textStyleEdit,
+} from './generate-docs.ts';
 import { Replica } from './harness.ts';
 import { random } from './random.ts';
 import { convergesOver } from './simulate.ts';
@@ -304,4 +310,10 @@ test('a drawing inserted beside a concurrent delete keeps its anchor and data', 
 // in cells.test.ts: it took 6.9 s on CI (2026-10-23).
 test('docs converge across two clients', () => {
   convergesOver(docEdit, { seeds: 30, document });
+}, 0);
+
+// Text-run styles with every ITextStyle key left out, null, falsy or set,
+// merged in or replacing, among the edits above. Unclocked, as above.
+test('docs converge with schema text styles across two clients', () => {
+  convergesOver(textStyleEdit, { seeds: 30, document });
 }, 0);

@@ -18,7 +18,7 @@ import { UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula';
 import { ISheetDrawingService, UniverSheetsDrawingPlugin } from '@univerjs/sheets-drawing';
 import { expect } from 'vitest';
 import { flip, transform } from '../index.ts';
-import type { Mutation, RefusalReason, Side } from '../index.ts';
+import type { BaseCells, Mutation, RefusalReason, Side } from '../index.ts';
 import { seededWorkbook } from './generate.ts';
 
 /**
@@ -214,20 +214,52 @@ export function converges(
   const second = new Replica(document);
   first.apply(setup);
   second.apply(setup);
-  first.apply([...bs, ...transform(as, bs, side)]);
-  second.apply([...as, ...transform(bs, as, flip(side))]);
+  // Each transform reads the cells both were made on, before either lands.
+  first.apply([...bs, ...transform(as, bs, side, { cells: liveCells(first) })]);
+  second.apply([...as, ...transform(bs, as, flip(side), { cells: liveCells(second) })]);
   expect(first.snapshot()).toEqual(second.snapshot());
   return first.snapshot();
+}
+
+/**
+ * The cells of `replica`'s workbook as it is when read, styles inline, as a
+ * transform reads them (BaseCells). A transform reads them while it runs, so
+ * the replica must not change meanwhile.
+ */
+export function liveCells(replica: Replica): BaseCells {
+  return (unitId, subUnitId, row, col) => {
+    const workbook = replica.workbook();
+    if (workbook?.getUnitId() !== unitId) return null;
+    const cell = workbook.getSheetBySheetId(subUnitId)?.getCellRaw(row, col);
+    if (!cell) return null;
+    const s = typeof cell.s === 'string' ? workbook.getStyles().get(cell.s) : cell.s;
+    return { ...cell, s };
+  };
+}
+
+/** The cells of a workbook snapshot (IWorkbookData), styles inline (see `liveCells`). */
+export function snapshotCells(data: IWorkbookData | undefined): BaseCells {
+  return (unitId, subUnitId, row, col) => {
+    if (data?.id !== unitId) return null;
+    const cell = data.sheets[subUnitId]?.cellData?.[row]?.[col];
+    if (!cell) return null;
+    const s = typeof cell.s === 'string' ? data.styles?.[cell.s] : cell.s;
+    return { ...cell, s };
+  };
 }
 
 const isEmptyObject = (value: unknown) =>
   typeof value === 'object' && value !== null && Object.keys(value).length === 0;
 
-/** Expects `x` and `y` refused for `reason`, both ways round and on either side. */
+/**
+ * Expects `x` and `y` refused for `reason`, both ways round and on either
+ * side, reading `cells` where two writes meet before the refusal.
+ */
 export function refusedBothWays(
   x: Mutation | Mutation[],
   y: Mutation | Mutation[],
   reason: RefusalReason = 'moved-cells',
+  cells?: BaseCells,
 ) {
   const [a, b] = [[x].flat(), [y].flat()];
   for (const side of ['left', 'right'] as const) {
@@ -235,7 +267,9 @@ export function refusedBothWays(
       [a, b],
       [b, a],
     ]) {
-      expect(() => transform(p, q, side), side).toThrow(expect.objectContaining({ reason }));
+      expect(() => transform(p, q, side, { cells }), side).toThrow(
+        expect.objectContaining({ reason }),
+      );
     }
   }
 }

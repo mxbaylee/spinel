@@ -1,10 +1,12 @@
-import { cellIds, hasFormula, matrixWrites, rewriteKey, writesOf } from './cells.ts';
+import { hasFormula, rewriteKey } from './cells.ts';
+import { claimsOf } from './state.ts';
 import { unaffected } from './family.ts';
 import type { Family } from './family.ts';
 import { settingIds } from './settings.ts';
 import { axisIds, structureIds } from './structure.ts';
 import { refuseRaces } from './types.ts';
 import type { Mutation, Side } from './types.ts';
+import { cellIds, matrixWrites, writesOf } from './writes.ts';
 
 /** Defined names: workbook-wide, each a whole record that a set replaces by its `id`. */
 export const nameIds = {
@@ -166,7 +168,7 @@ function formulaWrites(mutation: Mutation): { cell: string; formula: unknown }[]
         : [undefined, []];
   return writes.filter(hasFormula).map(({ row, col, value }) => ({
     cell: `${unitId} ${subUnitId} ${row}:${col}`,
-    formula: value.f || value.si,
+    formula: claimsOf(value).f || claimsOf(value).si,
   }));
 }
 

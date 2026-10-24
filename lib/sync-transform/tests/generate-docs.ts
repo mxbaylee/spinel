@@ -1,4 +1,6 @@
 import {
+  BaselineOffset,
+  BooleanNumber,
   BuildTextUtils,
   CustomRangeType,
   DrawingTypeEnum,
@@ -9,11 +11,19 @@ import {
   PositionedObjectLayoutType,
   PresetListType,
   PRESERVE_INSERTED_PARAGRAPH_IDS,
+  TabStopAlignment,
   TextX,
   TextXActionType,
   UniverInstanceType,
+  UpdateDocsAttributeType,
 } from '@univerjs/core';
-import type { DocumentDataModel, IDocumentBody, IDocumentData, ITextRange } from '@univerjs/core';
+import type {
+  DocumentDataModel,
+  IDocumentBody,
+  IDocumentData,
+  ITextRange,
+  ITextStyle,
+} from '@univerjs/core';
 import { docFormulas, formulaBody } from '@spinel/doc-formulas';
 import { docIds } from '../src/docs.ts';
 import type { Mutation } from '../index.ts';
@@ -294,4 +304,85 @@ export const docEdit: Generate = (replica, next) => {
     return actions ? edit(actions) : null;
   }
   return edit(kind <= 5 ? deleteRange(doc, body, start, end) : styleRange(start, end, next));
+};
+
+/** A text-run style key's falsy value, where its type has one, and set values. */
+interface Values {
+  falsy?: unknown;
+  set: readonly unknown[];
+}
+const line = { falsy: { s: BooleanNumber.FALSE }, set: [{ s: BooleanNumber.TRUE }] };
+const flag = { falsy: false, set: [true] };
+const color = { set: [{ rgb: '#cc0000' }] };
+/** Every ITextStyle key (IStyleBase's and the text run's own), as cell-schema writes take them. */
+const textStyleValues: Record<keyof ITextStyle, Values> = {
+  ff: { falsy: '', set: ['Arial'] },
+  eastAsiaFontFamily: { falsy: '', set: ['SimSun'] },
+  fs: { falsy: 0, set: [9, 14] },
+  it: { falsy: BooleanNumber.FALSE, set: [BooleanNumber.TRUE] },
+  bl: { falsy: BooleanNumber.FALSE, set: [BooleanNumber.TRUE] },
+  ul: line,
+  bbl: line,
+  st: line,
+  ol: line,
+  bg: color,
+  bd: { set: [{ b: { s: 1, cl: { rgb: '#000000' } } }] },
+  cl: color,
+  va: { set: [BaselineOffset.SUBSCRIPT, BaselineOffset.SUPERSCRIPT] },
+  n: { falsy: { pattern: '' }, set: [{ pattern: '0.00' }] },
+  hidden: flag,
+  fontHint: { set: ['eastAsia', 'cs'] },
+  positionedTab: { set: [{ alignment: TabStopAlignment.CENTER, relativeTo: 'margin' }] },
+  symbol: { set: [{ font: 'Symbol', code: 0x2022 }] },
+  lang: { falsy: '', set: ['en-US'] },
+  altLang: { falsy: '', set: ['fr-FR'] },
+  kerning: { falsy: 0, set: [1] },
+  caps: flag,
+  smallCaps: flag,
+  sc: { falsy: 0, set: [90] },
+  pos: { falsy: 0, set: [3] },
+  sa: { falsy: 0, set: [1] },
+  textFill: { falsy: { type: 'none' }, set: [{ type: 'solid', color: '#00aa00' }] },
+  textOutline: { falsy: { width: 0 }, set: [{ color: '#000000', width: 1 }] },
+  glow: { set: [{ color: '#ffcc00', radius: 2 }] },
+  outerShadow: { set: [{ color: '#000000', blurRadius: 2 }] },
+};
+
+/**
+ * A text-run style with each ITextStyle key left out (most), null, falsy or
+ * set: about three of its 30 keys, never none.
+ */
+function textStyle(next: () => number): ITextStyle {
+  const ts: Record<string, unknown> = {};
+  for (const [key, { falsy, set }] of Object.entries(textStyleValues)) {
+    if (next() % 10 !== 0) continue;
+    const choice = next() % 3;
+    if (choice === 0) ts[key] = null;
+    else if (choice === 1 && falsy !== undefined) ts[key] = structuredClone(falsy);
+    else ts[key] = structuredClone(pick(next, set));
+  }
+  return Object.keys(ts).length > 0 ? ts : { bl: BooleanNumber.TRUE };
+}
+
+/**
+ * `docEdit`, or half the time a range restyled with `textStyle`, merged in
+ * (COVER) or replacing the run's style (REPLACE), as UpdateTextCommand sends
+ * either.
+ */
+export const textStyleEdit: Generate = (replica, next) => {
+  const body = model(replica).getBody()!;
+  const content = body.dataStream.length - 2;
+  if (next() % 2 === 0 || content < 2) return docEdit(replica, next);
+  const start = next() % content;
+  const end = start + 1 + (next() % Math.min(4, content - start));
+  const coverType = pick(next, [UpdateDocsAttributeType.COVER, UpdateDocsAttributeType.REPLACE]);
+  const textX = new TextX();
+  if (start > 0) textX.push({ t: TextXActionType.RETAIN, len: start });
+  textX.push({
+    t: TextXActionType.RETAIN,
+    len: end - start,
+    body: { dataStream: '', textRuns: [{ st: 0, ed: end - start, ts: textStyle(next) }] },
+    coverType,
+  });
+  return edit(JSONX.getInstance().editOp(textX.serialize()));
 };

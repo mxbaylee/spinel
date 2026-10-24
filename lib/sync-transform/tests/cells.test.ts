@@ -4,18 +4,20 @@ import { DrawingApplyType, ISheetDrawingService } from '@univerjs/sheets-drawing
 import { describe, expect, test } from 'vitest';
 import { RefusedEditError, transform } from '../index.ts';
 import type { Mutation, Side } from '../index.ts';
-import { cellIds } from '../src/cells.ts';
 import { drawingIds } from '../src/drawings.ts';
 import { mergeIds } from '../src/merges.ts';
 import { nameIds } from '../src/names.ts';
 import { propertyIds } from '../src/properties.ts';
 import { settingIds } from '../src/settings.ts';
+import { claimKey } from '../src/state.ts';
 import { structureIds } from '../src/structure.ts';
+import { cellIds } from '../src/writes.ts';
 import {
   cellEdit,
   cellMove,
   commandEdit,
   commands,
+  denseBook,
   moveCommand,
   realBook,
   realEdit,
@@ -24,7 +26,7 @@ import {
   shiftCommand,
 } from './generate-cells.ts';
 import { capture, lineEdit, seededWorkbook, withStructure } from './generate.ts';
-import { converges, refusedBothWays, Replica } from './harness.ts';
+import { converges, liveCells, refusedBothWays, Replica } from './harness.ts';
 import {
   insertCols,
   insertRows,
@@ -34,7 +36,7 @@ import {
   removeCols,
   removeRows,
 } from './edits.ts';
-import { convergesOver, newStats, simulate } from './simulate.ts';
+import { convergesOver, newStats, reasons, simulate } from './simulate.ts';
 import type { Generate, Step } from './simulate.ts';
 
 const unitId = 'wb';
@@ -107,6 +109,27 @@ function cellAt(mutations: Mutation[], row: number, col: number) {
   return snapshot.workbook.sheets[subUnitId].cellData[row]?.[col];
 }
 
+/** The seeded book's cells after `setup`, for a transform called directly. */
+function on(setup: Mutation[] = []) {
+  const replica = new Replica({ workbook: seededWorkbook() });
+  replica.apply(setup);
+  return { cells: liveCells(replica) };
+}
+
+/**
+ * Expects `a` and `b`, after `setup`, to converge on the cell Univer makes of
+ * the loser and then the winner, at `row` and `col`, on either side: what
+ * a shared cell resolves to (docs/implementation/SPN-056.md decision 29).
+ */
+function landsInTurn(a: Mutation, b: Mutation, row: number, col: number, setup: Mutation[] = []) {
+  for (const side of ['left', 'right'] as const) {
+    const [loser, winner] = side === 'left' ? [b, a] : [a, b];
+    expect(merged(a, b, side, setup)[row]?.[col], side).toEqual(
+      cellAt([...setup, loser, winner], row, col),
+    );
+  }
+}
+
 /** The cells of s1 after both orders of `a` and `b`, which must agree. */
 const merged = (
   a: Mutation | Mutation[],
@@ -166,26 +189,38 @@ describe('concurrent cell writes', () => {
     });
   });
 
-  test('a value written concurrently with text format is typed as text in both orders', () => {
+  // A number format no longer retypes a concurrent value (docs/implementation/
+  // SPN-056.md decision 30). The cell ends as Univer lands the loser, then the
+  // winner: a value under a winning '@' keeps the type it was given, as it
+  // would on one screen, and one typed under '@' stays text past it.
+  test('a value written concurrently with text format lands as Univer lands it in turn', () => {
     const value = cell(0, 0, { v: 7, f: null, si: null, p: null });
-    for (const side of ['left', 'right'] as const) {
-      expect(merged(setNumfmt('@', [range(0, 0)]), value, side)[0][0]).toMatchObject({
-        t: 1,
-        v: '7',
-      });
-    }
+    const text = { n: { pattern: '@' } };
+    landsInTurn(setNumfmt('@', [range(0, 0)]), value, 0, 0);
+    expect(merged(setNumfmt('@', [range(0, 0)]), value, 'left')[0][0]).toEqual({
+      v: 7,
+      t: 2,
+      s: text,
+    });
+    expect(merged(setNumfmt('@', [range(0, 0)]), value, 'right')[0][0]).toEqual({
+      v: '7',
+      t: 1,
+      s: text,
+    });
   });
 
-  test('a value is typed by the format that wins its cell', () => {
+  // As above: the format that wins no longer retypes.
+  test('a value and a format that win its cell land as Univer lands them in turn', () => {
     const pasted = set(
       { 0: { 0: { s: { n: { pattern: '@' } }, v: 0 } } },
       { isOverrideStyle: true },
     );
-    expect(merged(setNumfmt('0%', [range(0, 0)]), pasted)[0][0]).toMatchObject({ t: 2, v: 0 });
-    expect(merged(setNumfmt('0%', [range(0, 0)]), pasted, 'right')[0][0]).toMatchObject({
-      t: 1,
-      v: '0',
-    });
+    landsInTurn(setNumfmt('0%', [range(0, 0)]), pasted, 0, 0);
+    const [left, right] = (['left', 'right'] as const).map(
+      (side) => merged(setNumfmt('0%', [range(0, 0)]), pasted, side)[0][0],
+    );
+    expect(left).toEqual({ v: '0', t: 1, s: { n: { pattern: '0%' } } });
+    expect(right).toEqual({ v: '0', t: 1, s: { n: { pattern: '@' } } });
   });
 
   test('a losing number format keeps its other cells, regrouped', () => {
@@ -193,6 +228,7 @@ describe('concurrent cell writes', () => {
       [setNumfmt('0%', [range(0, 0, 1, 1)])],
       [cell(0, 0, { s: { n: null }, v: 'x' })],
       'right',
+      on(),
     );
     expect(kept.params.values.k.ranges).toEqual([range(0, 1), range(1, 0, 1, 1)]);
   });
@@ -223,12 +259,10 @@ describe('concurrent cell writes', () => {
     for (const n of [1, 2, 3, 9]) {
       const same = Array.from({ length: n }, () => commit);
       const turns = Array.from({ length: n }, (_, i) => (i % 2 ? rich : commit));
-      // The clear, then the last commit replayed after it.
-      expect(transform([cell(1, 0, null)], same, 'right')).toEqual([cell(1, 0, null), commit]);
-      expect(transform([cell(1, 0, null)], turns, 'right')).toEqual([
-        cell(1, 0, null),
-        turns.at(-1),
-      ]);
+      // The clear resolves against the cell, which the last commit leaves
+      // whole, so it goes past any number of commits.
+      expect(transform([cell(1, 0, null)], same, 'right', on())).toEqual([]);
+      expect(transform([cell(1, 0, null)], turns, 'right', on())).toEqual([]);
       for (const side of ['left', 'right'] as const) {
         expect(merged(cell(1, 0, null), same, side)[1]?.[0]).toEqual(
           side === 'right' ? { v: 'x', t: 1, s: { n: { pattern: '@' } } } : undefined,
@@ -247,7 +281,7 @@ describe('concurrent cell writes', () => {
       [cell(1, 0, { s: { bl: 0 } }), commit({ ...text, bl: 1 })],
       [cell(1, 0, { s: { bl: 1 } }), commit(text, { isOverrideStyle: true })],
     ]) {
-      expect(transform([loser], [winner], 'right')).toEqual([]);
+      expect(transform([loser], [winner], 'right', on())).toEqual([]);
       expect(merged(winner, loser)[1][0]).toEqual(cellAt([winner], 1, 0));
       expect(merged(loser, winner, 'right')[1][0]).toEqual(cellAt([winner], 1, 0));
     }
@@ -262,7 +296,7 @@ describe('concurrent cell writes', () => {
       expect(merged(loser, winner, 'right', setup)[0][0]).toEqual({ v: 3, t: 2, si: 'id' });
     }
     // A loser it covers that clears no formula goes.
-    expect(transform([cell(0, 0, { v: 2 })], [winner], 'right')).toEqual([]);
+    expect(transform([cell(0, 0, { v: 2 })], [winner], 'right', on(setup))).toEqual([]);
   });
 
   test('a winner that writes a formula keeps a loser that clears the formula', () => {
@@ -310,7 +344,26 @@ describe('borders', () => {
 
   test('a border cleared whole merges into one write with a winning style of no edge', () => {
     const bold = cell(0, 0, { s: { bl: 1 } });
-    expect(transform([border(null)], [bold], 'right')).toHaveLength(1);
+    // Resolved against the cell: with no border there it goes, and with one
+    // it lands as one absolute write that claims the edge it clears.
+    expect(transform([border(null)], [bold], 'right', on())).toEqual([]);
+    const absolute = {
+      v: 's1:0:0',
+      t: 1,
+      f: null,
+      si: null,
+      p: null,
+      s: { bl: 1 },
+      custom: null,
+      ft: null,
+      fd: null,
+      ref: null,
+      xf: null,
+      [claimKey]: { s: { bd: { t: null } } },
+    };
+    expect(transform([border(null)], [bold], 'right', on([top]))).toEqual([
+      set({ 0: { 0: absolute } }, { isOverrideStyle: true }),
+    ]);
     for (const side of ['left', 'right'] as const) {
       expect(merged(border(null), bold, side, [top])[0][0].s).toEqual({ bl: 1 });
     }
@@ -780,42 +833,36 @@ describe('a number format against a write to its cell that sets no value', () =>
   const percent = setNumfmt('0%', [range(2, 1, 3, 1)]);
   const sides = ['left', 'right'] as const;
 
-  test('is refused, both ways and on either side', () => {
+  // No format race is left to refuse. Both orders land the cell Univer makes
+  // of the loser, then the winner: bold under '@' turns the boolean to text
+  // "1", which '0%' then types as a number.
+  test('converges, both ways and on either side', () => {
     const bold = cell(2, 1, { s: { bl: 0 } });
-    for (const side of sides) {
-      for (const [a, b] of [
-        [bold, percent],
-        [percent, bold],
-      ]) {
-        expect(() => transform([a], [b], side)).toThrow(RefusedEditError);
-        expect(() => transform([a], [b], side)).toThrow(
-          expect.objectContaining({ reason: 'format-race' }),
-        );
-      }
-    }
+    landsInTurn(bold, percent, 2, 1, setup);
+    landsInTurn(percent, bold, 2, 1, setup);
+    const s = { bl: 0, n: { pattern: '0%' } };
+    expect(merged(bold, percent, 'left', setup)[2][1]).toEqual({ v: 1, t: 3, s });
+    expect(merged(bold, percent, 'right', setup)[2][1]).toEqual({ v: '1', t: 1, s });
   });
 
   // Once seed 13 of the cuts to other sheets, shrunk: '0%' as a style and a
   // style clear, each typing the boolean under the format it finds.
-  test('a format written as a style races as a numfmt does', () => {
+  test('a format written as a style converges as a numfmt does', () => {
     const [style, clear] = [cell(2, 1, { s: { n: { pattern: '0%' } } }), cell(2, 1, { s: null })];
-    for (const side of sides) {
-      for (const [a, b] of [
-        [style, clear],
-        [clear, style],
-      ]) {
-        expect(() => transform([a], [b], side)).toThrow(
-          expect.objectContaining({ reason: 'format-race' }),
-        );
-      }
-    }
+    landsInTurn(style, clear, 2, 1, setup);
+    landsInTurn(clear, style, 2, 1, setup);
+    const s = { n: { pattern: '0%' } };
+    expect(merged(style, clear, 'left', setup)[2][1]).toEqual({ v: 1, t: 2, s });
+    expect(merged(style, clear, 'right', setup)[2][1]).toEqual({ v: 1, t: 3 });
   });
 
+  // No retype, so a value written under '@' stays text where the format wins.
   test('a value written under text format converges with it', () => {
     const value = cell(2, 1, { v: 'TRUE', f: null, si: null, p: null });
-    for (const side of sides) {
-      expect(merged(value, percent, side, setup)[2][1]).toMatchObject({ v: 1, t: 3 });
-    }
+    landsInTurn(value, percent, 2, 1, setup);
+    const s = { n: { pattern: '0%' } };
+    expect(merged(value, percent, 'left', setup)[2][1]).toEqual({ v: 1, t: 3, s });
+    expect(merged(value, percent, 'right', setup)[2][1]).toEqual({ v: 'TRUE', t: 1, s });
   });
 
   test('a style write to another cell passes', () => {
@@ -850,8 +897,10 @@ describe('a shift against a concurrent edit', () => {
       cell(1, 1, { v: 'x' }),
       setNumfmt('0.00', [range(5, 1)]),
     ]) {
-      refusedBothWays(deleteUp(), edit);
-      refusedBothWays(shift(commands.insertMoveDown), edit);
+      // The shift's own clear meets B2 before its move refuses, so it reads the cells.
+      const cells = liveCells(new Replica(document));
+      refusedBothWays(deleteUp(), edit, 'moved-cells', cells);
+      refusedBothWays(shift(commands.insertMoveDown), edit, 'moved-cells', cells);
     }
   });
 
@@ -1091,33 +1140,6 @@ test(
   unclocked,
 );
 
-/** The seeded workbook cut to one 4×3 sheet, so nearly every edit meets another. */
-function denseBook(rows = 4, cols = 3) {
-  const book = seededWorkbook();
-  const sheet = book.sheets.s1;
-  sheet.rowCount = rows;
-  sheet.columnCount = cols;
-  const cells: NonNullable<typeof sheet.cellData> = {};
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const value = sheet.cellData?.[row]?.[col];
-      if (value) (cells[row] ??= {})[col] = value;
-    }
-  }
-  // Numbers under text format, which removing the format retypes on the next write.
-  for (const [row, col] of [
-    [1, 0],
-    [2, 1],
-    [3, 0],
-  ]) {
-    if (row < rows) (cells[row] ??= {})[col] = { v: 7, t: 2, s: { n: { pattern: '@' } } };
-  }
-  sheet.cellData = cells;
-  book.sheetOrder = ['s1'];
-  delete book.sheets.s2;
-  return book;
-}
-
 // Dense conflict once made output grow without bound: each transform must stay
 // within a few mutations per input. That, the seeds and the mutations per seed
 // bound each run, with no clock, so a slow machine cannot fail it. Short runs
@@ -1264,6 +1286,7 @@ test(
       ['commandEdit, 200×26, formulas and one name', commandEdit, formulaBook()],
     ] as const) {
       const stats = newStats();
+      reasons.clear();
       convergesOver(generate, {
         seeds,
         mutations: 40,
@@ -1271,7 +1294,10 @@ test(
         intent: true,
         stats,
       });
-      if (process.env.REFUSAL_SEEDS) process.stdout.write(`${name}: ${JSON.stringify(stats)}\n`);
+      if (process.env.REFUSAL_SEEDS) {
+        const by = Object.fromEntries([...reasons].sort());
+        process.stdout.write(`${name}: ${JSON.stringify(stats)} ${JSON.stringify(by)}\n`);
+      }
       expect(stats.accepted + stats.refused).toBe(stats.batches);
       expect(stats.discarded).toBeLessThanOrEqual(stats.mutations);
     }
@@ -1284,24 +1310,28 @@ test(
 // its retype, past stale clears of the style. Each clear about triples the
 // output (the README's growth limit), past the dense tests' 5× budget, and a
 // fourth reaches the growth cap. Not fixed; it converges.
-test('writes past clears of a style grow, and converge', () => {
+// Each shared cell resolves against the cell: the winners pass as they are,
+// and the losing style clears, which change nothing the winners leave, go.
+test('writes past clears of a style stay small, and converge', () => {
   const a = [
     cell(2, 2, { s: { it: 1 } }),
     set({ 2: { 2: { s: { bd: { t: null }, it: 1 }, v: 0 } } }, { isOverrideStyle: true }),
-    set({ 2: { 2: { f: null, si: null, v: 0 } } }, { derived: true }),
+    set({ 2: { 2: { f: null, si: null, v: 0 } } }),
   ];
   const b = [cell(2, 2, { s: null }), cell(2, 2, { s: null })];
-  expect(transform(a, b, 'left')).toHaveLength(26);
-  expect(transform(b, a, 'right')).toHaveLength(14);
-  merged(a, b);
+  const { cells } = on();
+  expect(transform(a, b, 'left', { cells })).toEqual(a);
+  expect(transform(b, a, 'right', { cells })).toEqual([]);
+  expect(merged(a, b)[2][2]).toEqual({ v: 0, t: 2, s: { it: 1 } });
 });
 
 // Once fuzz seed 863 of the dense 40-edit run, shrunk, with no move, and b's
 // writes given values so that none races a's format: a losing write to a cell
 // whose format either side changes keeps its own write, then replays the
 // winner and retypes, so one write becomes three and the next edit meets all
-// of them. Not fixed; the growth cap refuses it, either way round.
-test('writes past many style writes to one cell are refused as growth', () => {
+// of them. The growth cap refused it, either way round. Resolved on the
+// cell, the winners pass as they are, the losers go, and both orders converge.
+test('writes past many style writes to one cell stay small, and converge', () => {
   const text = { n: { pattern: '@' } };
   const bold = { bl: 1, it: 1 };
   const a = [cell(3, 1, { f: null, p: richDoc('bye'), si: null }), cell(3, 1, { s: text })];
@@ -1312,11 +1342,11 @@ test('writes past many style writes to one cell are refused as growth', () => {
     set({ 3: { 1: { s: bold, v: 0 } } }, { isOverrideStyle: true }),
     set({ 3: { 1: { s: bold, v: 'b' } } }, { isOverrideStyle: true }),
   ];
-  for (const [x, y, side] of [
-    [a, b, 'right'],
-    [b, a, 'left'],
-  ] as const) {
-    expect(() => transform(x, y, side)).toThrow(RefusedEditError);
-    expect(() => transform(x, y, side)).toThrow(expect.objectContaining({ reason: 'growth' }));
-  }
+  expect(transform(a, b, 'right', on())).toEqual([]);
+  expect(transform(b, a, 'left', on())).toEqual(b);
+  expect(merged(a, b)[3][1]).toMatchObject({
+    v: 'b',
+    t: 1,
+    s: { bl: 1, it: 1, n: { pattern: '@' } },
+  });
 });

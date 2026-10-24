@@ -3,8 +3,8 @@ import { mapIndex } from './axis.ts';
 import type { AxisEdit } from './axis.ts';
 import { axisKeys } from './family.ts';
 import type { Axis } from './family.ts';
-import { isMove, meets, writesOf } from './cells.ts';
-import type { Cell } from './cells.ts';
+import { isMove, meets, writesOf } from './writes.ts';
+import type { Cell } from './writes.ts';
 import { RefusedEditError } from './types.ts';
 import type { Mutation } from './types.ts';
 

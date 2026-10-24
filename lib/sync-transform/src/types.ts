@@ -36,7 +36,7 @@ export class UnsupportedMutationError extends Error {
 }
 
 /** Why a RefusedEditError refused an edit; its doc describes each. */
-export type RefusalReason = 'moved-cells' | 'format-race' | 'name-race' | 'formula-race' | 'growth';
+export type RefusalReason = 'moved-cells' | 'name-race' | 'formula-race' | 'growth';
 
 /**
  * Thrown when two concurrent edits cannot be merged, so the server refuses
@@ -44,8 +44,6 @@ export type RefusalReason = 'moved-cells' | 'format-race' | 'name-race' | 'formu
  * README's "What it covers" gives each rule in full:
  * - `'moved-cells'`: a drag, shift or cut and an edit in its area, or a
  *   removal of a cut's target sheet.
- * - `'format-race'`: a number-format change and a write of no value to one of
- *   its cells.
  * - `'name-race'`: a defined-name edit and an edit that makes Univer rewrite
  *   names, or two names given the same text.
  * - `'formula-race'`: a formula write and an edit that makes Univer rewrite

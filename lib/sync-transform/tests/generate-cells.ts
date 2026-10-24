@@ -2,8 +2,8 @@ import { Tools } from '@univerjs/core';
 import type { IRange, IWorkbookData, Worksheet } from '@univerjs/core';
 import { checkCellValueType, getMoveRangeCommandMutations } from '@univerjs/sheets';
 import type { Mutation } from '../index.ts';
-import { cellIds } from '../src/cells.ts';
 import { structureIds } from '../src/structure.ts';
+import { cellIds } from '../src/writes.ts';
 import { capture, pick, randomSheet, seededWorkbook, wire } from './generate.ts';
 import type { Generate } from './generate.ts';
 import type { Replica } from './harness.ts';
@@ -14,7 +14,7 @@ let written = 0;
  * colour, so the intent checks can tell content copied from content moved
  * (see simulate).
  */
-const token = (text: string, kind: 'w' | 'c' = 'w') => `${text}${kind}#${++written}`;
+export const token = (text: string, kind: 'w' | 'c' = 'w') => `${text}${kind}#${++written}`;
 
 /** A value to write: text gets a token; numbers and their text stay as they are, for retyping. */
 const value = (next: () => number) => {
@@ -445,3 +445,30 @@ export const realEdit: Generate = (replica, next) => {
   ];
   return shiftCommand(replica, shifts[kind - 6], { ...target, range });
 };
+
+/** The seeded workbook cut to one 4×3 sheet, so nearly every edit meets another. */
+export function denseBook(rows = 4, cols = 3) {
+  const book = seededWorkbook();
+  const sheet = book.sheets.s1;
+  sheet.rowCount = rows;
+  sheet.columnCount = cols;
+  const cells: NonNullable<typeof sheet.cellData> = {};
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const value = sheet.cellData?.[row]?.[col];
+      if (value) (cells[row] ??= {})[col] = value;
+    }
+  }
+  // Numbers under text format, which removing the format retypes on the next write.
+  for (const [row, col] of [
+    [1, 0],
+    [2, 1],
+    [3, 0],
+  ]) {
+    if (row < rows) (cells[row] ??= {})[col] = { v: 7, t: 2, s: { n: { pattern: '@' } } };
+  }
+  sheet.cellData = cells;
+  book.sheetOrder = ['s1'];
+  delete book.sheets.s2;
+  return book;
+}

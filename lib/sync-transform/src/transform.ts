@@ -1,7 +1,5 @@
 import {
-  cellIds,
   cells,
-  ghostId,
   halfKey,
   joinCuts,
   perSheet,
@@ -17,6 +15,8 @@ import { markRewrites, names, refuseFormulaRaces, refuseNameRaces } from './name
 import { markError, mergeMeets, refuseCut } from './shifts.ts';
 import { properties } from './properties.ts';
 import { settings } from './settings.ts';
+import { baseError, Cells, claimError, isAbsolute } from './state.ts';
+import type { BaseCells } from './state.ts';
 import {
   axisEdit,
   sheetOrderIds,
@@ -27,6 +27,7 @@ import {
 } from './structure.ts';
 import { flip, RefusedEditError, UnsupportedMutationError } from './types.ts';
 import type { Mutation, Side } from './types.ts';
+import { cellIds, ghostId, matrixWrites } from './writes.ts';
 
 const families: Family[] = [cells, properties, merges, settings, drawings, docs, names];
 
@@ -54,10 +55,11 @@ function familyOf(mutation: Mutation) {
  * passed through untransformed. A guess lets two screens drift with no sign; a
  * refusal shows up in logs, and SPN-059 hides the menus that send them.
  *
- * Decision (owner, chat 2026-10-20): the sender adds what the transforms, being
- * stateless, cannot know: inline styles, RemoveSheet's `index`, kept paragraph
- * ids and a new doc's drawing containers (SPN-058). The alternative, a server
- * that keeps per-document state to fill them in, is not built.
+ * Decision (owner, chat 2026-10-20): the sender adds what the transforms
+ * cannot know from the mutations alone: inline styles, RemoveSheet's `index`,
+ * kept paragraph ids and a new doc's drawing containers (SPN-058). Since
+ * decision 29 (docs/implementation/SPN-056.md) the transforms also read the
+ * base cells, but only where two writes meet one cell.
  */
 function check(mutation: Mutation): void {
   const { id, params: p } = mutation;
@@ -72,6 +74,20 @@ function check(mutation: Mutation): void {
   // cells.joinCuts and names.markRewrites).
   for (const key of [halfKey, rewriteKey]) {
     if (Object.hasOwn(p, key)) throw new TypeError(`\`${key}\` is the transform's own mark.`);
+  }
+  // An absolute write's claims come back as the transform returned them, so
+  // each is checked against what its cell writes (see state.claimError). A
+  // move, which never overrides styles, carries none.
+  const matrices =
+    id === cellIds.setRangeValues
+      ? [p.cellValue]
+      : id === cellIds.moveRange
+        ? [p.from?.value, p.to?.value]
+        : [];
+  const override = id === cellIds.setRangeValues && p.isOverrideStyle === true;
+  for (const { value } of matrices.flatMap(matrixWrites)) {
+    const error = claimError(value, override);
+    if (error) throw new TypeError(`A cell of ${id} ${error}.`);
   }
   if (id === structureIds.removeSheet && !Number.isInteger(p.index)) {
     throw new TypeError('RemoveSheetMutation needs `index`, its position before removal.');
@@ -90,6 +106,34 @@ function namesStyleId(value: unknown): boolean {
   );
 }
 
+/**
+ * Rejects an absolute write in `mutations`, made in turn on `state`, that
+ * changes a key of its cell it does not claim (see state.baseError), as
+ * `check` rejects a claim of a key it does not write. The base is the one
+ * the list was made on, with the list's earlier mutations applied. Without
+ * it no claim can be checked, so an absolute write needs the base cells
+ * (`state` null where none were given), even where no two writes meet: a
+ * claim taken on trust could carry a formula past `'formula-race'`.
+ */
+export function checkBases(mutations: Mutation[], state: Cells | null): void {
+  for (const mutation of mutations) {
+    if (mutation.id === cellIds.setRangeValues) {
+      const { unitId, subUnitId, cellValue } = mutation.params;
+      for (const { row, col, value } of matrixWrites(cellValue)) {
+        if (!isAbsolute(value)) continue;
+        if (!state) {
+          throw new TypeError(
+            'An absolute write needs the base cells (`options.cells`) to check its claims.',
+          );
+        }
+        const error = baseError(value, state.get(unitId, subUnitId, row, col));
+        if (error) throw new TypeError(`A cell of ${mutation.id} ${error}.`);
+      }
+    }
+    state = state && state.after(mutation);
+  }
+}
+
 /** The sheet a mutation edits, or undefined for a workbook- or document-wide edit. */
 function sheetOf(mutation: Mutation): string | undefined {
   const p = mutation.params;
@@ -99,12 +143,13 @@ function sheetOf(mutation: Mutation): string | undefined {
 /** Whether a mutation is no ghost of an overwritten write (see cells.haunted). */
 const isReal = (mutation: Mutation) => mutation.id !== ghostId;
 
-function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
+function pair(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[] {
   const self = familyOf(a);
   const peer = familyOf(b);
   if (a.params.unitId !== b.params.unitId) return [a];
   // Names are workbook-wide; `transform` refused their races up front.
-  if (self === names || peer === names) return self === peer ? names.transform(a, b, side) : [a];
+  if (self === names || peer === names)
+    return self === peer ? names.transform(a, b, side, state) : [a];
   if (self === 'sheet-order' && peer === 'sheet-order') return transformSheetOrder(a, b, side);
   // An edit to a removed sheet is dropped, except a drawing op: the drawing
   // tree keeps a removed sheet's entry, and RemoveSheetCommand itself sends
@@ -136,7 +181,7 @@ function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
     refuseCut(b, axis, edit);
   }
   if (self === 'structure' || self !== peer) return [a];
-  return self.transform(a, b, side);
+  return self.transform(a, b, side, state);
 }
 
 /**
@@ -144,8 +189,21 @@ function pair(a: Mutation, b: Mutation, side: Side): Mutation[] {
  * from the same document, by pairing them up in order. For every `a` and `b`:
  * applying `b` then `transform(a, b, side)` gives the same document as
  * applying `a` then `transform(b, a, flip(side))`.
+ *
+ * `options.cells` reads that document's cells. Two writes to one cell are
+ * resolved against the cell (see cells.conflict), and an absolute write is
+ * checked against it (see `checkBases`), so a transform where two writes
+ * meet, or either list holds an absolute write, needs it, and throws a
+ * TypeError without it; any other never reads it. The server reads its
+ * snapshot at the revision both sequences were made on; a client its
+ * document before its pending edits.
  */
-export function transform(a: Mutation[], b: Mutation[], side: Side): Mutation[] {
+export function transform(
+  a: Mutation[],
+  b: Mutation[],
+  side: Side,
+  options: { cells?: BaseCells } = {},
+): Mutation[] {
   // Diagnostics (SPN-032, not built): this stays pure, so the server records
   // around each call: `sync.transform.duration` (histogram, ms),
   // `sync.transform.concurrent` (histogram of b.length, how far apart edits
@@ -154,12 +212,14 @@ export function transform(a: Mutation[], b: Mutation[], side: Side): Mutation[] 
   // default; each site says `Diagnostics (SPN-032` and what it would record.
   // Check every mutation up front, even when the other side is empty.
   for (const mutation of [...a, ...b]) check(mutation);
+  const state = Cells.of(options.cells);
+  for (const list of [a, b]) checkBases(list, options.cells ? state : null);
   refuseNameRaces(a, b);
   refuseFormulaRaces(a, b);
   refuseCutsToRemoved(a, b);
   const [mine, theirs] = [markRewrites(a).flatMap(perSheet), markRewrites(b).flatMap(perSheet)];
   const limit = growth * (mine.length + theirs.length);
-  return joinCuts(pastMany(mine, theirs, side, limit).filter(isReal)).map(unmarked);
+  return joinCuts(pastMany(mine, theirs, side, limit, state).filter(isReal)).map(unmarked);
 }
 
 /**
@@ -168,25 +228,37 @@ export function transform(a: Mutation[], b: Mutation[], side: Side): Mutation[] 
  * for hours on a few dozen edits; this refuses them in milliseconds.
  *
  * Decision (owner, chat 2026-10-21): a transform that grows past this is
- * refused like any other race, rather than left to run for hours. Not taken:
- * dropping the retype that makes a write grow (cells.ts), which could leave a
- * value with the wrong type.
+ * refused like any other race, rather than left to run for hours. The retype
+ * that made a write grow went with decision 29 (docs/implementation/
+ * SPN-056.md); a losing write now becomes at most its other cells, an
+ * absolute write and its tail, and the cap stays as a cheap guard.
  */
 const growth = 50;
 
-function pastMany(a: Mutation[], b: Mutation[], side: Side, limit: number): Mutation[] {
-  if (a.length === 1 && b.length === 1) return pair(a[0], b[0], side);
-  for (const peer of b) a = pastOne(a, peer, side, limit);
+/** `a` past `b`, both made on `state`. Each pair meets on the cells both made it on. */
+function pastMany(
+  a: Mutation[],
+  b: Mutation[],
+  side: Side,
+  limit: number,
+  state: Cells,
+): Mutation[] {
+  if (a.length === 1 && b.length === 1) return pair(a[0], b[0], side, state);
+  for (const peer of b) {
+    a = pastOne(a, peer, side, limit, state);
+    state = state.after(peer);
+  }
   return a;
 }
 
 /** Each of `a` goes past `b` as `b` has been changed by the earlier ones. */
-function pastOne(a: Mutation[], b: Mutation, side: Side, limit: number): Mutation[] {
+function pastOne(a: Mutation[], b: Mutation, side: Side, limit: number, state: Cells): Mutation[] {
   const result: Mutation[] = [];
   let peer = [b];
   for (const mutation of a) {
-    result.push(...pastMany([mutation], peer, side, limit));
-    peer = pastMany(peer, [mutation], flip(side), limit);
+    result.push(...pastMany([mutation], peer, side, limit, state));
+    peer = pastMany(peer, [mutation], flip(side), limit, state);
+    state = state.after(mutation);
     // Diagnostics (SPN-032, not built): `sync.transform.growth` (histogram of
     // the peak against `limit`) would show whether 50 is near real edits.
     if (result.length + peer.length > limit) {

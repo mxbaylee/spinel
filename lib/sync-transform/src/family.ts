@@ -1,4 +1,5 @@
 import type { AxisEdit } from './axis.ts';
+import type { Cells } from './state.ts';
 import type { Mutation, Side } from './types.ts';
 
 export type Axis = 'row' | 'column';
@@ -16,8 +17,11 @@ export interface Family {
   readonly ids: readonly string[];
   /** Re-addresses `mutation` after rows or columns of its sheet changed. */
   remap(mutation: Mutation, axis: Axis, edit: AxisEdit): Mutation[];
-  /** Transforms `a` past `b`; both are in this family and on the same sheet. */
-  transform(a: Mutation, b: Mutation, side: Side): Mutation[];
+  /**
+   * Transforms `a` past `b`; both are in this family and on the same sheet,
+   * and made on `state`.
+   */
+  transform(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[];
 }
 
 /** For families whose state does not depend on row or column positions. */
