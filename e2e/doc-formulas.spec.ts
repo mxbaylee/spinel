@@ -75,6 +75,48 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   await second.addCookies([cookie(friend.id)]);
   const other = await second.newPage();
   const errors: string[] = [];
+  const formulaOutcomes: { actor: string; operation: string; status: number; outcome: string }[] =
+    [];
+  // Keep failure evidence bounded and value-free: a rejected Save must not be
+  // disguised as a dialog timeout or repaired by silently retrying the click.
+  for (const [actor, target] of [
+    ['owner', page],
+    ['collaborator', other],
+  ] as const) {
+    target.on('response', async (response) => {
+      const path = new URL(response.url()).pathname;
+      const operation = path.slice(path.lastIndexOf('/') + 1);
+      if (
+        path !== `/api/items/${host.id}/formulas/${operation}` ||
+        !['resolve', 'evaluate'].includes(operation)
+      )
+        return;
+      const record = { actor, operation, status: response.status(), outcome: 'unread' };
+      formulaOutcomes.push(record);
+      if (formulaOutcomes.length > 64) formulaOutcomes.shift();
+      try {
+        const result = await response.json();
+        record.outcome =
+          result?.ok === true
+            ? 'success'
+            : [
+                  'private-source',
+                  'missing-source',
+                  'invalid-formula',
+                  'too-large',
+                  'busy',
+                  'timeout',
+                  'unavailable',
+                ].includes(result?.reason)
+              ? result.reason
+              : response.ok() && operation === 'resolve'
+                ? 'resolved'
+                : 'unknown';
+      } catch {
+        record.outcome = 'unread';
+      }
+    });
+  }
   let printHtml = '';
   await context.exposeBinding('captureFormulaPrint', (_source, html: string) => {
     printHtml = html;
@@ -539,6 +581,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     expect(JSON.stringify(await read())).not.toContain('314159');
     expect(errors).toEqual([]);
   } catch (error) {
+    console.log('Formula response outcomes (no values or source identities):', formulaOutcomes);
     await mkdir('test-results/theme-screenshots', { recursive: true });
     await page
       .screenshot({
