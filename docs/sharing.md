@@ -1,9 +1,10 @@
 # Sharing
 
 Items are private by default. The Owner or a File admin can choose **Share** on a document, folder or
-Space, select Viewer, Editor or File admin for an active everyday account, and apply the
-change. Give that person the displayed address. They must sign in; the address
-alone does not grant access. Server Operator accounts cannot receive grants or access
+Space, select Can view, Can edit or File admin for an active everyday account, and
+choose **Apply access**. **Copy account link** copies the authenticated address;
+if the clipboard is unavailable, a selectable address appears for manual copying.
+Give that address to the person. They must sign in; the address alone does not grant access. Server Operator accounts cannot receive grants or access
 workspace content.
 
 Folder grants apply to every descendant, including future additions. Direct and
@@ -79,11 +80,14 @@ the document or Space title and type. Previews never show the owner or contents;
 a Space card also excludes child titles and Formula values. Private pages and
 older fragment-only links use the generic Spinel card.
 
-For a Sheet or Doc, the owner can use **Share → Share without an account** to
-create a view-only or editable guest link. Anyone holding that address gets only
-that document. Folder links are unsupported. A replacement immediately invalidates
-the old link; **Turn link off** removes access from open guest editors too. Link
-changes briefly reconnect open account editors so old personal labels cannot
+For a Sheet or Doc, the Owner or a File admin uses **Share → Anyone with the link**,
+chooses Can view or Can edit, then **Create link**. Anyone holding that address gets
+only that document. Folder links are unsupported. Copy the guest address while it
+is shown; closing and reopening sharing cannot reveal it again. **Guest link actions
+→ Replace link…** confirms before creating a replacement that immediately invalidates
+the old link. **Guest link actions → Turn off link** removes access from open guest
+editors too. Changing the role selector alone leaves the current link unchanged.
+Link changes briefly reconnect open account editors so old personal labels cannot
 remain in the shared room. Already delivered content cannot be recalled.
 
 The address contains a 256-bit random capability in its fragment, which browsers

@@ -1,4 +1,4 @@
-/** npm run screenshots -- [--viewport desktop|tablet|mobile] <story ids>. Build Storybook first. */
+/** npm run screenshots -- [--viewport desktop|tablet|mobile] [--theme all|light|dark] <story ids>. Build Storybook first. Theme splitting is mobile-only. */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -1066,6 +1066,7 @@ await writeFile(
       capturedAt: new Date().toISOString(),
       fixtureTime: '2026-10-20T16:00:00Z',
       viewport: review.viewport,
+      theme: review.theme,
       variants: variants.map(([, , variant]) => variant),
       requested,
       captures,
