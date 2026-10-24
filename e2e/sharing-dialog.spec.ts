@@ -109,6 +109,10 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
     const confirmation = page.getByRole('dialog', { name: 'Share the whole Space?', exact: true });
     await expect(confirmation).toContainText('every current and future page and folder');
     await confirmation.getByRole('button', { name: 'Create view link', exact: true }).click();
+    await expect(confirmation).toBeHidden();
+    await expect(
+      link.getByRole('button', { name: 'Guest link actions', exact: true }),
+    ).toBeFocused();
     const address = await link.getByLabel('Guest link address', { exact: true }).inputValue();
     expect(address).toMatch(/#.+$/);
     await dialog.getByRole('button', { name: 'Done', exact: true }).click();
@@ -124,6 +128,15 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
       link.getByRole('button', { name: 'Guest link actions', exact: true }),
     ).toBeFocused();
     await expect(link.getByText('Guests can view.', { exact: true })).toBeVisible();
+    await link.getByRole('button', { name: 'Guest link actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Turn off link', exact: true }).click();
+    const turnOff = page.getByRole('dialog', { name: 'Turn off this Space link?', exact: true });
+    await turnOff.getByRole('button', { name: 'Turn off link', exact: true }).click();
+    await expect(turnOff).toBeHidden();
+    await expect(link.getByRole('button', { name: 'Create link', exact: true })).toBeFocused();
+    await expect(
+      link.getByText('Off. Only people with access can open this item.', { exact: true }),
+    ).toBeVisible();
   } finally {
     db.close();
   }

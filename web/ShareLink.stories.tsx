@@ -200,6 +200,49 @@ export const CreatedLink: Story = {
     await expect(canvas.getByRole('button', { name: 'Copy guest link' })).toBeVisible();
   },
 };
+export const CreatedSpaceLinkFocus: Story = {
+  args: { space: true },
+  parameters: {
+    api: {
+      [link]: { enabled: false, role: 'viewer' },
+      [`PUT /api/items/${id}/link`]: { enabled: true, role: 'viewer', url },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Create link' }));
+    const dialog = await body.findByRole('dialog', { name: 'Share the whole Space?' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Create view link' }));
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await expect(await canvas.findByLabelText('Guest link address')).toHaveValue(url);
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Guest link actions' })).toHaveFocus(),
+    );
+  },
+};
+export const TurnedOffSpaceLinkFocus: Story = {
+  args: { space: true },
+  parameters: {
+    api: {
+      [link]: { enabled: true, role: 'viewer' },
+      [`PUT /api/items/${id}/link`]: { enabled: false, role: 'viewer' },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Guest link actions' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Turn off link' }));
+    const dialog = await body.findByRole('dialog', { name: 'Turn off this Space link?' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Turn off link' }));
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await expect(
+      canvas.getByText('Off. Only people with access can open this item.'),
+    ).toBeVisible();
+    await waitFor(() => expect(canvas.getByRole('button', { name: 'Create link' })).toHaveFocus());
+  },
+};
 export const NoSecretReadback: Story = {
   parameters: { api: { [link]: { enabled: true, role: 'viewer', url } } },
   play: async ({ canvasElement }) => {
@@ -255,7 +298,7 @@ export const FailedReplacement: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Guest link actions' }));
     await userEvent.click(await body.findByRole('menuitem', { name: 'Replace link…' }));
     const dialog = within(await body.findByRole('dialog', { name: 'Replace the link?' }));
-    await userEvent.click(dialog.getByRole('button', { name: 'Replace link', exact: true }));
+    await userEvent.click(dialog.getByRole('button', { name: /^Replace link$/ }));
     await expect(await dialog.findByRole('alert')).toHaveTextContent(
       'Only the owner or a file admin',
     );
