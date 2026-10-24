@@ -18,6 +18,8 @@ import {
 import { AuthError } from '../auth/store.ts';
 import { expiredCheckpoints, MINUTE } from './policy.ts';
 import type { Checkpoint } from './policy.ts';
+import { observeJob } from '../health/jobs.ts';
+import type { ObserveJob } from '../health/jobs.ts';
 
 const compress = promisify(gzip),
   decompress = promisify(gunzip);
@@ -39,10 +41,16 @@ export class HistoryStore {
   private timer: ReturnType<typeof setInterval> | undefined;
   private ticking: Promise<void> | undefined;
   private closing = false;
+  private readonly observeMaintenance?: ObserveJob;
 
-  constructor(workspace: WorkspaceStore, collaboration: CollaborationStore) {
+  constructor(
+    workspace: WorkspaceStore,
+    collaboration: CollaborationStore,
+    observeMaintenance?: ObserveJob,
+  ) {
     this.workspace = workspace;
     this.collaboration = collaboration;
+    this.observeMaintenance = observeMaintenance;
     const db = workspace.auth.database;
     db.exec(`
       CREATE TABLE IF NOT EXISTS history_checkpoints (
@@ -557,13 +565,25 @@ export class HistoryStore {
   tick(): Promise<void> {
     if (this.closing) return Promise.resolve();
     if (this.ticking) return this.ticking;
-    this.ticking = this.scan().finally(() => {
-      this.ticking = undefined;
-    });
+    const finish = observeJob(this.observeMaintenance);
+    this.ticking = this.scan()
+      .then(
+        (success) => {
+          finish(success);
+        },
+        (error) => {
+          finish(false);
+          throw error;
+        },
+      )
+      .finally(() => {
+        this.ticking = undefined;
+      });
     return this.ticking;
   }
 
   private async scan() {
+    let success = true;
     const db = this.workspace.auth.database;
     const rows = db
       .prepare(
@@ -590,7 +610,10 @@ export class HistoryStore {
       ...this.spaceMaintenanceItems(),
     ];
     for (const { id, owner_id, state, space_id } of candidates) {
-      if (this.closing) break;
+      if (this.closing) {
+        success = false;
+        break;
+      }
       try {
         const user = space_id
           ? owner_id
@@ -660,13 +683,16 @@ export class HistoryStore {
         )
           await this.capture(user, id, source, customData);
       } catch (error) {
-        // Trashed/deleted documents are intentionally inaccessible; retain their existing history.
-        if (error instanceof AuthError) continue;
+        // Access loss and a concurrent generation change deliberately defer this
+        // item. Validation/storage errors (including AuthError 400) are failures.
+        if (error instanceof AuthError && [401, 403, 404, 409].includes(error.status)) continue;
         // No contents or credentials in logs. Dirty revision stays durable for the next pass.
+        success = false;
         console.error('History checkpoint could not be saved; it will retry.');
       }
     }
     this.prune();
+    return success;
   }
 
   start() {

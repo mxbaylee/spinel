@@ -4,6 +4,8 @@ import { AdminInvites } from './AdminInvites.tsx';
 import { AssistantConnections } from './AssistantConnections.tsx';
 import { AccessTokens } from './AccessTokens.tsx';
 import { BackupStatus } from './BackupStatus.tsx';
+import { ServerHealth } from './ServerHealth.tsx';
+import { AdminDiagnostics } from './AdminDiagnostics.tsx';
 import './administration.css';
 
 const sections = [
@@ -90,10 +92,8 @@ export function AdminPage({ currentId }: { currentId: string }) {
             <section className="admin-health" aria-label="Backups & health">
               <h2>Backups &amp; health</h2>
               <BackupStatus />
-              <section className="admin-health-card">
-                <h3>Server health</h3>
-                <p className="sp-muted">Detailed server telemetry is not available yet.</p>
-              </section>
+              <ServerHealth />
+              <AdminDiagnostics onBusyChange={setBusy} />
             </section>
           )}
         </div>

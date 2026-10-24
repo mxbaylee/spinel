@@ -11,6 +11,7 @@ import type { CollaborationStore } from '../collaboration/service.ts';
 import type { HistoryStore } from '../history/store.ts';
 import { PortableFiles, PORTABLE_LIMIT } from './portable.ts';
 import { formulaRoutes } from '../formulas/routes.ts';
+import type { FormulaDiagnostics } from '../formulas/routes.ts';
 import { documentIdentity } from '../collaboration/identity.ts';
 import { historyRoutes } from '../history/routes.ts';
 import { admitTransfer, transfers } from './transfers.ts';
@@ -21,6 +22,7 @@ export function workspaceRoutes(
   store = new WorkspaceStore(auth),
   collaboration?: CollaborationStore,
   history?: HistoryStore,
+  diagnostics?: FormulaDiagnostics,
 ) {
   const router = express.Router();
   const trash = new TrashStore(store);
@@ -51,7 +53,11 @@ export function workspaceRoutes(
       throw new AuthError(403, 'Open Spinel at its configured address and try again.');
     next();
   });
-  if (collaboration) router.use('/:id/formulas', formulaRoutes(store, collaboration, account));
+  if (collaboration)
+    router.use(
+      '/:id/formulas',
+      formulaRoutes(store, collaboration, account, false, 'id', diagnostics),
+    );
   const native = async (request: Request, response: Response, kind: 'sheet' | 'doc') => {
     const identity = account(request),
       user = identity.userId,

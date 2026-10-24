@@ -1,10 +1,11 @@
 # User and passkey administration
 
-Planned SPN-032 diagnostics: [the implementation record](implementation/SPN-032.md)
-defines a separate event/log/metric database and Operator-only download/truncate
+SPN-032 diagnostics: [the operator guide](diagnostics.md) describes a separate
+event/log/metric database and Operator-only download/truncate
 controls, with no query UI. Automatic records may contain user/file IDs and route
 templates for correlation, but no document content/names, credentials or raw URLs. These
-controls are not implemented yet and do not expand document-access permissions.
+controls do not expand document-access permissions. Validation status remains in
+[the implementation record](implementation/SPN-032.md).
 SPN-098 adds intentionally submitted feedback text to that same export, with
 availability flags on the admin user list. Truncation deletes feedback as well as
 logs; see [the feedback contract](implementation/SPN-098.md). Automatic document
@@ -143,8 +144,9 @@ Connections exposes account/client names, origins and activity only; token
 activity is behind its named disclosure and never reveals secrets or offers token
 creation. Backups & health shows the existing configuration, running/error/overdue
 state and last-success/attempt timestamps, with refresh and a backup-guide link.
-Verification results and detailed server telemetry are explicitly unavailable
-until their owning tickets ship. [SPN-082](implementation/SPN-082.md) records the
+Server health adds memory, connections, storage and real job observations;
+[diagnostics](diagnostics.md) documents interpretation and export/clear. Backup
+restore verification remains SPN-063. [SPN-082](implementation/SPN-082.md) records the
 layout and asynchronous lifetime decisions without changing authorization.
 
 ## API and storage
