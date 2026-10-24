@@ -27,9 +27,10 @@ opens the document with a read-only banner.
 
 ## Spinel today
 
-`GuestApp` shows a non-link gem and the shared connection control beside
-"Spinel · Shared document", then the document name, a line ("You are editing
-as a guest." or "View-only link."), and the editor. Connection interruptions
+`GuestApp` uses the compact shared editor frame: a non-link gem, plain document
+name, shared save/connection controls, bounded People disclosure, access badge
+and theatre toggle. Authorized Doc formula controls remain available without an
+account actions menu. Connection interruptions
 use the fixed control's detail, preserving the mounted editor and pending-input
 warning. An authoritative 401/403/404 removes document content and its title,
 leaving only the generic link error. Guests make no account health/session probe
@@ -65,7 +66,7 @@ and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-co
 
 | Always visible                                                                | Behind a menu |
 | ----------------------------------------------------------------------------- | ------------- |
-| Name, status cluster, View only / Guest editor badge, Export as PDF (SPN-075) | Nothing       |
+| Name, status cluster, View only / Guest editor badge, People, theatre toggle; Export as PDF remains SPN-075 | People details and authorized formula details |
 
 ## Stories
 

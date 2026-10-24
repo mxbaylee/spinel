@@ -229,13 +229,6 @@ button.primary {
   display: none;
 }
 
-.collaborators {
-  display: flex;
-  gap: 0.5rem;
-  min-height: 2.25rem;
-  align-items: center;
-  padding: 0.25rem 0;
-}
 .workspace button.collaborator-badge,
 .space-native-editor button.collaborator-badge {
   position: relative;
@@ -255,23 +248,6 @@ button.primary {
 .collaborator-badge:disabled {
   opacity: 1;
   cursor: default;
-}
-.collaborator-name {
-  position: absolute;
-  bottom: calc(100% + 0.35rem);
-  left: 0;
-  background: var(--sp-text);
-  color: var(--sp-bg);
-  border-radius: 0.35rem;
-  padding: 0.3rem 0.5rem;
-  white-space: nowrap;
-  z-index: 50;
-  visibility: hidden;
-  pointer-events: none;
-}
-.collaborator-badge:hover .collaborator-name,
-.collaborator-badge:focus-visible .collaborator-name {
-  visibility: visible;
 }
 .collaborator-badge:focus-visible {
   outline: 2px solid var(--sp-text);

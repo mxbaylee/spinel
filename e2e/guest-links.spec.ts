@@ -147,7 +147,11 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect(
         first.getByRole('button', { name: 'Save details: View only', exact: true }),
       ).toBeVisible();
-      await expect(first.getByText('View-only link.', { exact: true })).toBeVisible();
+      const viewOnlyAccess = first
+        .getByRole('region', { name: 'Document workspace', exact: true })
+        .locator('header .editor-access');
+      await expect(viewOnlyAccess).toHaveText('View only');
+      await expect(viewOnlyAccess).toBeVisible();
       await captureGuest('viewer');
       await expect(first.getByText('Your workspace', { exact: true })).toHaveCount(0);
       await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
@@ -183,11 +187,16 @@ for (const kind of ['sheet', 'doc'] as const) {
       await saved(first);
       await edit(second, 'Guest two 159', 'B1');
       await saved(second);
+      await first.getByRole('button', { name: 'People in this document', exact: true }).click();
       await expect(
         first
-          .getByRole('group', { name: 'People in this document' })
+          .getByRole('dialog', { name: 'People in this document', exact: true })
           .getByRole('button', { name: 'Go to Guest', exact: true }),
       ).toBeVisible();
+      await first
+        .getByRole('dialog', { name: 'People in this document', exact: true })
+        .getByRole('button', { name: 'Close dialog', exact: true })
+        .click();
       const live = async () =>
         (await (await context.request.get(`/api/items/${item.id}/${kind}`)).json()).snapshot;
       await expect.poll(async () => JSON.stringify(await live())).toContain('Guest one 314');

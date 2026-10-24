@@ -122,7 +122,7 @@ test('document UI preserves rich text and embedded images through reload and off
     );
     const navigationWarning = page.waitForEvent('dialog');
     page.once('dialog', (dialog) => dialog.dismiss());
-    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
     await navigationWarning;
     await expect(page).toHaveURL(new RegExp(item.id));
     releaseImage();
@@ -185,19 +185,22 @@ test('document UI preserves rich text and embedded images through reload and off
     await network.setOffline(true);
     await page.keyboard.type('Offline ');
     await expect(editor.getByRole('status', { name: 'Save status' })).toContainText('not saved');
-    // Search must preserve the mounted editor and its unsaved offline edits.
-    await page.getByRole('searchbox', { name: 'Search files', exact: true }).fill('Journal');
-    await expect(editor).toBeHidden();
+    // Theatre resizes the existing editor; unsaved work must survive both toggles.
+    const mountedCanvas = await surface.elementHandle();
+    await expect(page.getByRole('searchbox', { name: 'Search files' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Enter theatre mode', exact: true }).click();
+    await expect(editor).toBeVisible();
+    expect(await mountedCanvas!.evaluate((node) => node.isConnected)).toBe(true);
     await page.screenshot({
-      path: testInfo.outputPath('unsaved-editor-search.png'),
+      path: testInfo.outputPath('unsaved-editor-theatre.png'),
       fullPage: true,
     });
-    await page.getByRole('button', { name: 'Clear search and filters', exact: true }).click();
-    await expect(editor).toBeVisible();
+    await page.getByRole('button', { name: 'Exit theatre mode', exact: true }).click();
     await expect(editor.getByRole('status', { name: 'Save status' })).toContainText('not saved');
     page.once('dialog', (dialog) => dialog.dismiss());
-    await page.getByRole('link', { name: 'Your profile', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(item.id));
+    expect(await mountedCanvas!.evaluate((node) => node.isConnected)).toBe(true);
     await network.setOffline(false);
     await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
       'All changes saved.',

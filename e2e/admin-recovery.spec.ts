@@ -196,11 +196,16 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     expect(JSON.stringify((await readSheet()).snapshot)).toContain(
       'Budget preserved through handover',
     );
-    await memberPage.getByRole('button', { name: 'Versions', exact: true }).click();
+    await memberPage.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await memberPage.getByRole('menuitem', { name: 'Versions', exact: true }).click();
     await memberPage.getByRole('button', { name: 'Name this version', exact: true }).click();
     await memberPage.getByLabel('Version name', { exact: true }).fill('Before departure');
     await memberPage.getByRole('button', { name: 'Save version name' }).click();
     await expect(memberPage.getByText('Before departure', { exact: true })).toBeVisible();
+    await memberPage
+      .getByRole('dialog', { name: 'Versions', exact: true })
+      .getByRole('button', { name: 'Close dialog', exact: true })
+      .click();
     const retainedHistory = db
       .prepare('SELECT * FROM history_checkpoints WHERE item_id=? ORDER BY id')
       .all(sheet.id);
