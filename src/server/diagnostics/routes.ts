@@ -194,6 +194,9 @@ export function diagnosticsRoutes(
           snapshot!.path,
           'spinel-diagnostics.sqlite',
           {
+            // The authorized snapshot is inside our private .diagnostics-export-* directory.
+            // Express otherwise rejects that directory before it can stream the SQLite file.
+            dotfiles: 'allow',
             headers: {
               'Content-Type': 'application/vnd.sqlite3',
               'X-Content-Type-Options': 'nosniff',

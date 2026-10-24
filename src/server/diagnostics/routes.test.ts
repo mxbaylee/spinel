@@ -1,6 +1,6 @@
 import express from 'express';
 import { randomUUID } from 'node:crypto';
-import { existsSync, mkdtempSync, readdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { AddressInfo } from 'node:net';
@@ -217,6 +217,41 @@ test('operator export/clear are distinct from submission and require current con
     expect(
       (await fetch(`${f.root}/admin/diagnostics`, { headers: { Cookie: f.cookie } })).status,
     ).toBe(404);
+  } finally {
+    await f.close();
+  }
+});
+
+test('an authorized Operator downloads the real private SQLite snapshot and releases its lease', async () => {
+  const f = await fixture();
+  try {
+    expect((await f.post('/diagnostics/events', f.batch())).status).toBe(200);
+    const response = await f.post('/admin/diagnostics/download', {}, { Cookie: f.adminCookie });
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toBe('application/vnd.sqlite3');
+    expect(response.headers.get('content-disposition')).toBe(
+      'attachment; filename="spinel-diagnostics.sqlite"',
+    );
+    expect(response.headers.get('x-content-type-options')).toBe('nosniff');
+    const bytes = Buffer.from(await response.arrayBuffer());
+    expect(bytes.subarray(0, 16).toString()).toBe('SQLite format 3\0');
+    const downloadedPath = join(f.directory, 'downloaded.sqlite');
+    writeFileSync(downloadedPath, bytes);
+    const downloaded = new DatabaseSync(downloadedPath);
+    try {
+      expect(downloaded.prepare('PRAGMA integrity_check').get()).toEqual({ integrity_check: 'ok' });
+      expect(downloaded.prepare('SELECT actor_id, source FROM events').all()).toEqual([
+        { actor_id: f.owner.id, source: 'frontend' },
+      ]);
+    } finally {
+      downloaded.close();
+    }
+    await expect.poll(() => f.diagnostics.status().exporting).toBe(false);
+    expect(
+      readdirSync(f.directory).filter((name) => name.startsWith('.diagnostics-export-')),
+    ).toEqual([]);
+    expect(f.diagnostics.status().recordCount).toBe(1);
+    expect(() => f.diagnostics.truncate()).not.toThrow();
   } finally {
     await f.close();
   }

@@ -77,7 +77,17 @@ async function openClear(page: Page) {
 
 async function downloadDatabase(page: Page, destination: string) {
   const downloaded = page.waitForEvent('download');
+  // Report a rejected export at its HTTP boundary rather than waiting for an absent download.
+  void downloaded.catch(() => {});
+  const responsePromise = page.waitForResponse(
+    (response) =>
+      response.url().endsWith('/api/admin/diagnostics/download') &&
+      response.request().method() === 'POST',
+  );
   await page.getByRole('button', { name: 'Download diagnostics', exact: true }).click();
+  const response = await responsePromise;
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toBe('application/vnd.sqlite3');
   const download = await downloaded;
   expect(download.suggestedFilename()).toBe('spinel-diagnostics.sqlite');
   await download.saveAs(destination);
