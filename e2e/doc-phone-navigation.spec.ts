@@ -5,6 +5,7 @@ import type { Locator, Page, TestInfo } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { nativeTheme } from './native-theme.ts';
 
 // These exercise the shipped desktop Doc preset at phone width. Wheel input is
 // intentional: physical touch/pinch and the software keyboard remain SPN-072/090.
@@ -228,7 +229,7 @@ for (const role of ['editor', 'guest-viewer'] as const) {
       };
       for (const theme of ['light', 'dark'] as const) {
         await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
-        await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+        await nativeTheme(page, canvas, theme);
         await setZoom(100);
         await pan(-10_000, -10_000);
         await settledCanvas(canvas);

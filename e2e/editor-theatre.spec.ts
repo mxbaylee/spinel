@@ -8,6 +8,7 @@ import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import type { SpaceNode } from '../src/shared/spaces.ts';
 import { interruptibleNetwork } from './live-network.ts';
+import { nativeTheme } from './native-theme.ts';
 
 const variants = [
   { name: 'light', width: 1440, height: 1000, theme: 'light' },
@@ -129,6 +130,7 @@ test('Space theatre fills the window and restores its own page navigation', asyn
       for (const variant of variants) {
         await page.setViewportSize({ width: variant.width, height: variant.height });
         await page.emulateMedia({ colorScheme: variant.theme, reducedMotion: 'reduce' });
+        await nativeTheme(page, editor.locator('canvas').first(), variant.theme);
         await capture(page, info, `space-${item.kind}-${variant.name}-normal`);
         const canvas = await editor.locator('canvas').first().elementHandle();
         expect(canvas).not.toBeNull();
@@ -457,7 +459,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       for (const variant of variants) {
         await page.setViewportSize({ width: variant.width, height: variant.height });
         await page.emulateMedia({ colorScheme: variant.theme, reducedMotion: 'reduce' });
-        await expect(page.locator('html')).toHaveAttribute('data-theme', variant.theme);
+        await nativeTheme(page, editor.locator('canvas').first(), variant.theme);
         await expect(
           page.getByText('This content is protected. This action is not allowed.', { exact: true }),
         ).not.toBeVisible();
