@@ -74,7 +74,8 @@ test('a member creates and revokes a once-only token while an operator sees only
     await screenshots(page, 'token-revealed', [reveal]);
 
     const admin = await adminContext.newPage();
-    await admin.goto(`${baseURL}/admin`);
+    await admin.goto(`${baseURL}/admin#connections`);
+    await admin.getByText('Personal access token activity', { exact: true }).click();
     const metadata = admin.getByRole('region', { name: 'Personal access tokens' });
     await expect(
       metadata.getByRole('listitem').filter({ hasText: 'Chosen desktop assistant' }),
@@ -97,6 +98,7 @@ test('a member creates and revokes a once-only token while an operator sees only
       settings.getByRole('button', { name: 'Revoke Chosen desktop assistant' }),
     ).toHaveCount(0);
     await admin.reload();
+    await admin.getByText('Personal access token activity', { exact: true }).click();
     await expect(
       metadata.getByRole('listitem').filter({ hasText: 'Chosen desktop assistant' }),
     ).toContainText('Assistant owner · Revoked');

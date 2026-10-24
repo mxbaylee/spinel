@@ -25,6 +25,12 @@ uncommitted work and inspect existing branches/PRs before creating duplicates.
 Resume a relevant unfinished PR first, rechecking its evidence against its head.
 Otherwise branch from current `main`, using `codex/<ticket-and-topic>`.
 
+Aim for two open ticket PRs in this run as a soft target, not a hard limit.
+Prefer finishing existing PRs before opening more; exceptions may be useful when
+independent work can proceed. Do not automatically close existing PRs to reach
+the target. Owner, chat 2026-10-23,
+[decision](implementation/backlog-workflow.md#soft-target-for-open-ticket-prs).
+
 Take the highest-ranked eligible ticket in the earliest remaining lifecycle
 phase: `pre_launch`, then `launch`, then `post_launch`. If that phase is blocked,
 record the blocker and wait; do not advance to a later phase. The generated index
