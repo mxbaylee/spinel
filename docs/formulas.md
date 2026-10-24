@@ -22,6 +22,15 @@ Spreadsheet error values such as `#NAME?` and `#DIV/0!` remain recognizable
 cell results; malformed definitions and unavailable calculations have separate
 error states.
 
+If saving cannot finish because another calculation is running, the evaluator
+times out or the service is temporarily unavailable, the dialog keeps the
+expression, format and source choices. Retry explicitly after the failure; a
+failed attempt is not a saved edit. Invalid expressions and inaccessible sources
+keep their own correction/access messages without disclosing additional source
+details. A pending Save admits only one insertion. Closing the dialog, navigating
+away or losing access cancels unfinished evaluation before mutation; stale
+completion cannot dismiss a newer attempt.
+
 ## Sharing and copies
 
 Every source must be readable by the current viewer before a result is returned.
@@ -71,9 +80,15 @@ than 100,000 rows or 1,024 columns. Results are limited to 30 rows, 12 columns,
 360 cells and 64 KiB. These are explicit errors, never silent truncation.
 
 A disposable worker has a five-second deadline and a 256 MiB old-generation
-heap limit. One calculation/materialization request is admitted at a time;
-there is no result cache or unbounded queue. Clients briefly retry busy admission
-with a bounded, cancellable wait; authorization failures are not retried. A timeout
+heap limit. One calculation/materialization request runs at a time, with at most
+two requests waiting in a shared FIFO across ordinary, Space and guest routes.
+Later requests cannot overtake an admitted waiter; overflow remains busy. Waiting
+has a 12-second deadline and cancellation removes the waiter without materializing sources.
+Session, host and source access are checked before admission and again on promotion.
+The queue stores bounded validated input, never snapshots; there is no result cache.
+Clients briefly retry read-only busy admission with a bounded, cancellable wait;
+authorization failures, an expired queued wait and native insertion are not
+automatically retried. A timeout
 terminates the worker, including synchronous calculation. Access and source
 generations are checked again after asynchronous work.
 
@@ -104,4 +119,5 @@ The owner approved scalar, range, cross-document and array formulas in chat on
 the Owner's report workflow, Collaborator's independent source access, Link
 guest's host-only access and Operator's two-GB server. Existing access and restore
 rules remain from decisions [#23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming), [#72](implementation/SPN-016.md#legacy-decision-72-scoped-anonymous-link-capabilities) and [#92](implementation/integration-boundaries.md#legacy-decision-92-stable-integration-boundaries). The interaction is specified in
-[the design playbook](design/formulas.md).
+[the design playbook](design/formulas.md). Bounded waiting and retained explicit
+recovery follow [SPN-103](implementation/SPN-103.md#bounded-admission-and-recovery).

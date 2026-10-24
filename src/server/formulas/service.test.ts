@@ -7,6 +7,7 @@ import { AuthError, AuthStore } from '../auth/store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { DocFormulas } from './service.ts';
+import { formulaAdmission, FORMULA_QUEUE_WAIT_MS } from './admission.ts';
 import { AdminStore } from '../auth/admin.ts';
 import { InvitationService } from '../auth/invitations.ts';
 import { OwnershipTransfer } from '../auth/ownership.ts';
@@ -298,7 +299,7 @@ test('guest host links never authorize source reads, while source-free formulas 
   ).rejects.toMatchObject({ status: 404 });
 });
 
-test('one admitted request bounds reads and calculation; a busy request is never queued', async () => {
+test('one active read holds two FIFO waiters without loading their sources; overflow is busy', async () => {
   const f = fixture();
   const definition = await f.resolve();
   let finish!: (result: FormulaResult) => void;
@@ -314,16 +315,104 @@ test('one admitted request bounds reads and calculation; a busy request is never
   });
   const running = f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify);
   await started;
-  expect(await f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify)).toEqual({
-    ok: false,
-    reason: 'busy',
-  });
-  await expect(f.resolve()).rejects.toMatchObject({ status: 429 });
-  finish({ ok: true, kind: 'scalar', value: 3 });
+  f.load.mockClear();
+  const background = f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify);
+  const save = f.resolve();
+  expect(f.load).not.toHaveBeenCalled();
+  try {
+    expect(await f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify)).toEqual({
+      ok: false,
+      reason: 'busy',
+    });
+    await expect(f.resolve()).rejects.toMatchObject({ status: 429 });
+  } finally {
+    finish({ ok: true, kind: 'scalar', value: 3 });
+  }
   expect(await running).toMatchObject({ ok: true });
-  expect(await f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify)).toMatchObject({
-    ok: true,
+  expect(await background).toMatchObject({ ok: true });
+  expect(await save).toEqual(definition);
+  expect(f.load).toHaveBeenCalledTimes(2);
+});
+
+test.each(['source', 'host', 'session'] as const)(
+  'queued %s revocation is checked before any source loads',
+  async (boundary) => {
+    const f = fixture();
+    f.workspace.share(f.owner.id, f.source.id, f.reader.id, 'viewer');
+    const definition = await f.resolve();
+    let finish!: (result: FormulaResult) => void;
+    let entered!: () => void;
+    const started = new Promise<void>((resolve) => {
+      entered = resolve;
+    });
+    f.calculate.mockImplementationOnce(() => {
+      entered();
+      return new Promise((resolve) => {
+        finish = resolve;
+      });
+    });
+    const running = f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify);
+    await started;
+    let valid = true;
+    const verify = () => {
+      if (!valid) throw new AuthError(401, 'Session expired');
+    };
+    f.load.mockClear();
+    const queued = f.formulas.evaluate(f.reader.id, f.host.id, definition, verify);
+    const outcome =
+      boundary === 'source'
+        ? expect(queued).resolves.toEqual({ ok: false, reason: 'private-source' })
+        : expect(queued).rejects.toMatchObject({ status: boundary === 'host' ? 404 : 401 });
+    if (boundary === 'source') f.workspace.share(f.owner.id, f.source.id, f.reader.id, null);
+    else if (boundary === 'host') f.workspace.share(f.owner.id, f.host.id, f.reader.id, null);
+    else valid = false;
+    finish({ ok: true, kind: 'scalar', value: 3 });
+    await running;
+    await outcome;
+    expect(f.load).not.toHaveBeenCalled();
+    expect(await f.resolve()).toEqual(definition);
+  },
+);
+
+test('active cancellation retains the permit until calculation settles and exceptions release it', async () => {
+  const f = fixture();
+  const definition = await f.resolve();
+  let fail!: (error: Error) => void;
+  let entered!: () => void;
+  const started = new Promise<void>((resolve) => {
+    entered = resolve;
   });
+  f.calculate.mockImplementationOnce(() => {
+    entered();
+    return new Promise((_resolve, reject) => {
+      fail = reject;
+    });
+  });
+  const controller = new AbortController();
+  const running = f.formulas.evaluate(
+    f.owner.id,
+    f.host.id,
+    definition,
+    f.verify,
+    false,
+    {},
+    controller.signal,
+  );
+  const aborted = expect(running).rejects.toMatchObject({ name: 'AbortError' });
+  await started;
+  controller.abort();
+  f.load.mockClear();
+  const queued = f.resolve();
+  await Promise.resolve();
+  expect(f.load).not.toHaveBeenCalled();
+  fail(new Error('Worker stopped'));
+  await aborted;
+  expect(await queued).toEqual(definition);
+  f.calculate.mockRejectedValueOnce(new Error('Unexpected worker error'));
+  await expect(f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify)).rejects.toThrow(
+    'Unexpected worker error',
+  );
+  expect(await f.resolve()).toEqual(definition);
 });
 
 test('picker bindings disambiguate duplicate names and cannot bypass source permissions', async () => {
@@ -469,4 +558,37 @@ test('duplicate-name address edits preserve slots and ambiguous reference remova
     f.verify,
   );
   expect(selected.references[0].itemId).toBe(f.source.id);
+});
+
+test('queue expiration is HTTP503 for resolving and a non-busy timeout result for evaluation', async () => {
+  const f = fixture();
+  const definition = await f.resolve();
+  vi.useFakeTimers();
+  const release = await formulaAdmission.acquire(() => {});
+  try {
+    f.load.mockClear();
+    const resolve = expect(f.resolve()).rejects.toMatchObject({ status: 503 });
+    const evaluate = f.formulas.evaluate(f.owner.id, f.host.id, definition, f.verify);
+    await vi.advanceTimersByTimeAsync(FORMULA_QUEUE_WAIT_MS);
+    await resolve;
+    expect(await evaluate).toEqual({ ok: false, reason: 'timeout' });
+    expect(f.load).not.toHaveBeenCalled();
+  } finally {
+    release();
+    vi.useRealTimers();
+  }
+  expect(await f.resolve()).toEqual(definition);
+});
+
+test('even immediate acquisition rechecks authorization after its asynchronous boundary', async () => {
+  const f = fixture();
+  let valid = true;
+  const verify = () => {
+    if (!valid) throw new AuthError(401, 'Expired');
+  };
+  const request = f.formulas.sheets(f.owner.id, f.host.id, f.source.id, verify);
+  valid = false;
+  await expect(request).rejects.toMatchObject({ status: 401 });
+  expect(f.load).not.toHaveBeenCalled();
+  expect(await f.resolve()).toHaveProperty('version', 1);
 });
