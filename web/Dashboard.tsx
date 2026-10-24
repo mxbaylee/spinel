@@ -5,6 +5,7 @@ import { FILE_KINDS, fileKindLabel, canAdminister, accessLabel } from '../src/sh
 import type { FileKind, FileItem, WorkspaceItem, SpaceFile } from '../src/shared/workspace.ts';
 
 import { Sharing } from './Sharing.tsx';
+import { DuplicateFile } from './DuplicateFile.tsx';
 import './fileDialog.css';
 import { SearchPanel } from './SearchPanel.tsx';
 import { emptySearch, hasSearch } from '../src/shared/search.ts';
@@ -144,6 +145,10 @@ export function Dashboard({
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
   const sharingFocus = useRef<HTMLButtonElement | null>(null);
+  const [duplicateId, setDuplicateId] = useState<string | null>(null);
+  const [copyNotice, setCopyNotice] = useState('');
+  const duplicateTrigger = useRef<HTMLButtonElement | null>(null);
+
   const [spaceAction, setSpaceAction] = useState<{
     item: SpaceFile;
     mode: SpaceRootActionMode;
@@ -151,6 +156,7 @@ export function Dashboard({
   const [tagging, setTagging] = useState<FileItem | null>(null);
   const [currentId, setCurrentId] = useState<string | null>(selectedId);
   const sharedOpen = currentId === SHARED_VIEW;
+  useEffect(() => setDuplicateId(null), [user.id, currentId]);
   useEffect(
     () => rememberFileView(user.id, currentId === SHARED_VIEW ? null : currentId),
     [user.id, currentId],
@@ -367,7 +373,7 @@ export function Dashboard({
       stack.push({ item: child, path: [...entry.path, child] });
   }
   function navigate(id: string | null, check = true) {
-    if (check && id !== currentId && !navigation.allow()) return;
+    if (check && id !== currentId && !navigation.allow()) return false;
     if (check) returnContext.current = null;
     setQuery({ ...emptySearch });
     setDraft('');
@@ -378,9 +384,10 @@ export function Dashboard({
     setTagging(null);
     setAction(null);
     setError('');
+    return true;
   }
   function openFile(item: FileItem) {
-    if (!navigation.allow()) return;
+    if (!navigation.allow()) return false;
     if (browsing) {
       const value: DashboardRetrieval = {
         folderId: sharedOpen ? null : currentId,
@@ -398,14 +405,15 @@ export function Dashboard({
     if (item.kind !== 'space') return navigate(item.id, false);
     if (local && !spaceCopies(offline.downloads.values(), item.id).length) {
       setError(`${item.name} needs a connection. Connect to open this Space.`);
-      return;
+      return false;
     }
-    if (!navigation.allow()) return;
+    if (!navigation.allow()) return false;
     // A Space has its own navigation. Keep the last My files view intact.
     navigation.dirty(false);
     setError('');
     if (onOpen) onOpen(item);
     else location.assign(spaceHref(item.id));
+    return true;
   }
   function edit(mode: Action['mode'], item?: FileItem, newKind: FileKind = 'folder') {
     setAction({ mode, item });
@@ -479,9 +487,31 @@ export function Dashboard({
     if (offline.downloads.has(item.id)) return 'available';
     return local && (offlineKind(item) || item.kind === 'space') ? 'needs-connection' : null;
   }
-  function rowActions(item: FileItem): MenuAction[] {
+  async function copyCreated(item: WorkspaceItem) {
+    setCopyNotice(`Created ${item.name}.`);
+    setItems((previous) => [...previous.filter((entry) => entry.id !== item.id), item]);
+    await reloadItems();
+    setRefresh((value) => value + 1);
+  }
+  function checkCopyDestination(parent: string | null) {
+    if (!navigate(parent)) return false;
+    setRefresh((value) => value + 1);
+    void reloadItems().catch((failure) => setError(failure.message));
+    return true;
+  }
+  const duplicateSource = duplicateId ? byId.get(duplicateId) : undefined;
+  function rowActions(item: FileItem, editor = false): MenuAction[] {
     if (local) return [];
     const result: MenuAction[] = [];
+    if (!editor && (item.kind === 'doc' || item.kind === 'sheet'))
+      result.push({
+        label: 'Duplicate…',
+        disabled: busy,
+        onClick: (trigger) => {
+          duplicateTrigger.current = trigger ?? null;
+          setDuplicateId(item.id);
+        },
+      });
     if (item.kind !== 'folder')
       result.push({ label: 'Tags…', onClick: () => setTagging(item), disabled: busy });
     if (item.access !== 'owner') {
@@ -594,6 +624,7 @@ export function Dashboard({
       );
   return (
     <section ref={dropTarget} className="dashboard-content" aria-label="Your files">
+      {browsing && copyNotice && <p role="status">{copyNotice}</p>}
       {!onPlaces && !framedEditor && (
         <nav className="dashboard-places" aria-label="File places">
           <button onClick={() => navigate(null)} aria-current={!sharedOpen ? 'page' : undefined}>
@@ -817,7 +848,17 @@ export function Dashboard({
                   : accessLabel(current.access)
             }
             onBack={returnToFiles}
-            actions={rowActions(current).filter((action) => action.label !== 'Rename…')}
+            actions={rowActions(current, true).filter((action) => action.label !== 'Rename…')}
+            duplicate={
+              !local && (current.kind === 'doc' || current.kind === 'sheet')
+                ? {
+                    source: { ...current, kind: current.kind },
+                    onCreated: copyCreated,
+                    onOpen: openFile,
+                    onCheckDestination: checkCopyDestination,
+                  }
+                : undefined
+            }
             onRename={
               !local && canAdminister(current.access)
                 ? async (name) => {
@@ -1024,6 +1065,22 @@ export function Dashboard({
           />
         </>
       )}
+      {!local &&
+        duplicateSource &&
+        (duplicateSource.kind === 'doc' || duplicateSource.kind === 'sheet') && (
+          <DuplicateFile
+            source={{ ...duplicateSource, kind: duplicateSource.kind }}
+            dirty={false}
+            saveReady
+            onCreated={copyCreated}
+            onOpen={openFile}
+            onCheckDestination={checkCopyDestination}
+            onClose={() => setDuplicateId(null)}
+            finalFocus={() =>
+              duplicateTrigger.current?.isConnected ? duplicateTrigger.current : true
+            }
+          />
+        )}
       {sharing && (
         <Sharing
           key={sharing.id}

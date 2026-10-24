@@ -421,6 +421,7 @@ export function DocEditor({
         spaceId={spaceId}
         people={people}
         saved={!status.dirty && !status.failed && Boolean(controller.current)}
+        dirty={status.dirty}
         print={async () => {
           if (!print.current) throw new Error('Wait for the document to load.');
           await print.current();

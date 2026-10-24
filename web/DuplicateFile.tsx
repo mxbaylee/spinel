@@ -13,6 +13,13 @@ export interface DuplicateSource {
   spaceId?: string;
 }
 
+export interface DuplicateActions {
+  source: DuplicateSource;
+  onCreated(item: WorkspaceItem): void | Promise<void>;
+  onOpen(item: WorkspaceItem): boolean;
+  onCheckDestination(parentId: string | null): boolean;
+}
+
 /** Bound the entire response, including its body. Abort only ends our wait, not a committed copy. */
 async function responseJson(url: string, init: RequestInit, signal: AbortSignal) {
   const request = new AbortController();
@@ -88,13 +95,9 @@ export function DuplicateFile({
   onCheckDestination,
   onClose,
   finalFocus,
-}: {
-  source: DuplicateSource;
+}: DuplicateActions & {
   dirty: boolean;
   saveReady: boolean;
-  onCreated(item: WorkspaceItem): void | Promise<void>;
-  onOpen(item: WorkspaceItem): boolean;
-  onCheckDestination(parentId: string | null): boolean;
   onClose(): void;
   finalFocus?: () => HTMLElement | boolean | null;
 }) {

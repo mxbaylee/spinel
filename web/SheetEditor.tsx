@@ -264,6 +264,7 @@ export function SheetEditor({
         name={name}
         people={people}
         saved={!status.dirty && !status.failed && Boolean(controller.current)}
+        dirty={status.dirty}
         print={async () => {
           if (!print.current) throw new Error('Wait for the spreadsheet to load.');
           await print.current();

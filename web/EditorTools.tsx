@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { DuplicateFile } from './DuplicateFile.tsx';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { ActionMenu, Modal } from '../src/ui/redesign/Controls.tsx';
@@ -16,6 +17,7 @@ export function EditorTools({
   spaceId,
   people,
   saved,
+  dirty = false,
   print,
   insertFormula,
   formulas,
@@ -25,6 +27,7 @@ export function EditorTools({
   spaceId?: string;
   people: Collaborator[];
   saved: boolean;
+  dirty?: boolean;
   print(): Promise<void>;
   insertFormula?: () => void;
   formulas?: (close: () => void) => ReactNode;
@@ -32,6 +35,8 @@ export function EditorTools({
   const chrome = useEditorChrome();
   const [panel, setPanel] = useState<'Versions' | 'Export' | 'Formulas' | null>(null);
   const [exportError, setExportError] = useState('');
+  const [duplicateOpen, setDuplicateOpen] = useState(false);
+  const duplicateTrigger = useRef<HTMLButtonElement | null>(null);
   const guest = chrome?.guest ?? Boolean(guestItemId());
   const controls = (
     <>
@@ -64,6 +69,17 @@ export function EditorTools({
           label="Document actions"
           actions={[
             ...(chrome?.actions ?? []),
+            ...(chrome?.duplicate
+              ? [
+                  {
+                    label: 'Duplicate…',
+                    onClick: (trigger?: HTMLButtonElement | null) => {
+                      duplicateTrigger.current = trigger ?? null;
+                      setDuplicateOpen(true);
+                    },
+                  },
+                ]
+              : []),
             { label: 'Versions', onClick: () => setPanel('Versions') },
             { label: 'Export', onClick: () => setPanel('Export') },
             ...(insertFormula ? [{ label: 'Insert formula', onClick: insertFormula }] : []),
@@ -76,6 +92,17 @@ export function EditorTools({
   return (
     <>
       {chrome ? chrome.toolsTarget && createPortal(controls, chrome.toolsTarget) : controls}
+      {duplicateOpen && chrome?.duplicate && !guest && (
+        <DuplicateFile
+          {...chrome.duplicate}
+          dirty={dirty}
+          saveReady={saved}
+          onClose={() => setDuplicateOpen(false)}
+          finalFocus={() =>
+            duplicateTrigger.current?.isConnected ? duplicateTrigger.current : true
+          }
+        />
+      )}
       {panel && (
         <Modal
           title={panel}

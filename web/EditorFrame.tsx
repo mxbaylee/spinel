@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import type { DuplicateActions } from './DuplicateFile.tsx';
 import type { Action } from '../src/ui/redesign/Controls.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
@@ -33,6 +34,7 @@ const Chrome = createContext<{
   toolsTarget: HTMLElement | null;
   actions: Action[];
   guest: boolean;
+  duplicate?: DuplicateActions;
   editing: { current: boolean };
 } | null>(null);
 export const useEditorChrome = () => useContext(Chrome);
@@ -47,6 +49,7 @@ export function EditorFrame({
   onBack,
   onRename,
   actions = [],
+  duplicate,
   children,
   contextLabel,
   backLabel = 'Back to files',
@@ -60,6 +63,7 @@ export function EditorFrame({
   onBack?: () => void;
   onRename?: (name: string) => Promise<void>;
   actions?: Action[];
+  duplicate?: DuplicateActions;
   children: ReactNode;
   contextLabel?: string;
   backLabel?: string;
@@ -118,7 +122,7 @@ export function EditorFrame({
     };
   }, [theatre]);
   return (
-    <Chrome.Provider value={{ saveTarget, toolsTarget, actions, guest, editing }}>
+    <Chrome.Provider value={{ saveTarget, toolsTarget, actions, guest, editing, duplicate }}>
       <section
         ref={frame}
         className="editor-frame"

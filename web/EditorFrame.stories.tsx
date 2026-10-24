@@ -58,6 +58,7 @@ function Fixture({
           { id: 'b', name: 'Sam Rivera', color: '#087f5b' },
         ]}
         saved={saved}
+        dirty={!saved}
         print={async () => {
           if (printFailure) throw new Error('Could not open printing.');
         }}
@@ -449,5 +450,60 @@ export const ActionsOverPresence: Story = {
     await expect(Number(getComputedStyle(label).zIndex)).toBeLessThan(
       Number(getComputedStyle(positioner).zIndex),
     );
+  },
+};
+
+const duplicateActions = {
+  source: {
+    id: 'fixture',
+    name: 'Quarterly planning',
+    kind: 'doc' as const,
+    access: 'viewer' as const,
+    parentId: null,
+  },
+  onCreated: fn(),
+  onOpen: fn(() => false),
+  onCheckDestination: fn(() => false),
+};
+export const DuplicateUnsaved: Story = {
+  args: { duplicate: duplicateActions, children: <Fixture saved={false} /> },
+  parameters: { api: { 'GET /api/items': { items: [] } } },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const actions = body.getByRole('button', { name: /^Document actions$/ });
+    await userEvent.click(actions);
+    await userEvent.click(await body.findByRole('menuitem', { name: /^Duplicate…$/ }));
+    const dialog = within(await body.findByRole('dialog', { name: /^Duplicate file$/ }));
+    await waitFor(() =>
+      expect(dialog.queryByText('Loading destinations…')).not.toBeInTheDocument(),
+    );
+    await expect(dialog.getByRole('button', { name: /^Duplicate$/ })).toBeDisabled();
+    await expect(
+      dialog.getByText('Wait for the original’s changes to be saved before making a copy.'),
+    ).toBeVisible();
+    await userEvent.click(dialog.getByRole('button', { name: /^Cancel$/ }));
+    await waitFor(() => expect(actions).toHaveFocus());
+  },
+};
+export const DuplicateViewer: Story = {
+  args: { duplicate: duplicateActions, access: 'View only' },
+  parameters: { api: { 'GET /api/items': { items: [] } } },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(body.getByRole('button', { name: /^Document actions$/ }));
+    await userEvent.click(await body.findByRole('menuitem', { name: /^Duplicate…$/ }));
+    const dialog = within(await body.findByRole('dialog', { name: /^Duplicate file$/ }));
+    await waitFor(() => expect(dialog.getByRole('button', { name: /^Duplicate$/ })).toBeEnabled());
+    await expect(dialog.getByLabelText('Destination')).toHaveValue('');
+  },
+};
+export const GuestCannotDuplicate: Story = {
+  args: { duplicate: duplicateActions, guest: true },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await expect(
+      body.queryByRole('button', { name: /^Document actions$/ }),
+    ).not.toBeInTheDocument();
+    await expect(body.queryByRole('menuitem', { name: /^Duplicate…$/ })).not.toBeInTheDocument();
   },
 };

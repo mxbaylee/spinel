@@ -164,11 +164,12 @@ export function Space({
   const go = (href: string, options?: { replace?: boolean; checked?: boolean }) =>
     navigator.current?.navigate(href, options) ?? false;
   const depart = (leave: () => void) => {
-    if (!allow()) return;
+    if (!allow()) return false;
     // The accepted full-document departure must not ask again in beforeunload.
     navigationRef.current.dirty(false);
     try {
       leave();
+      return true;
     } catch (error) {
       navigationRef.current.dirty(dirtyRef.current);
       throw error;
@@ -943,6 +944,32 @@ export function Space({
       }
       onBack={user && !guest ? exit : undefined}
       backLabel="My files"
+      duplicate={
+        user &&
+        !guest &&
+        !denied &&
+        selection.item &&
+        currentTree &&
+        (selection.item.kind === 'doc' || selection.item.kind === 'sheet')
+          ? {
+              source: {
+                ...selection.item,
+                kind: selection.item.kind,
+                access: currentTree.access,
+                spaceId: visiblePage.spaceId,
+              },
+              onCreated: () => {
+                void refresh.current(true);
+              },
+              onOpen: (item) =>
+                depart(() => location.assign(`/?item=${encodeURIComponent(item.id)}`)),
+              onCheckDestination: (parent) =>
+                depart(() =>
+                  location.assign(parent ? `/?item=${encodeURIComponent(parent)}` : '/'),
+                ),
+            }
+          : undefined
+      }
       actions={[
         ...(user && !guest && canAdminister(rootFile?.access)
           ? (['share', 'rename', 'move', 'trash'] as const).map((mode) => ({
