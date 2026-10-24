@@ -122,17 +122,29 @@ for (const role of ['editor', 'guest-viewer'] as const) {
         { timeout: 30_000 },
       );
       await seed.locator('.univer-container').click({ position: { x: 130, y: 200 } });
-      for (let line = 1; line <= 16; line++) {
-        if (line > 1) await seed.keyboard.press('Enter');
-        await seed.keyboard.type(
-          `Line ${line}: Read the whole paragraph, including the far right edge. ` +
-            'Keep the original page size and all of this text when navigating.',
-        );
+      await expect(seed.locator('[contenteditable="true"][data-u-comp="editor"]')).toBeFocused();
+      const paragraphs = Array.from(
+        { length: 16 },
+        (_, index) =>
+          `Line ${index + 1}: Read the whole paragraph, including the far right edge. ` +
+          'Keep the original page size and all of this text when navigating.',
+      );
+      for (const [index, paragraph] of paragraphs.entries()) {
+        if (index > 0) await seed.keyboard.press('Enter');
+        await seed.keyboard.type(paragraph);
       }
-      await expect.poll(async () => (await read()).body.dataStream).toContain('Line 16:');
+      // The visible native text can precede room acknowledgement and the
+      // recovery-cache flush. Observe that lifecycle before reading its saved
+      // snapshot; this seed is not a per-keystroke latency measurement.
       await expect(seed.getByRole('status', { name: 'Save status' })).toHaveText(
         'All changes saved.',
+        { timeout: 30_000 },
       );
+      // As in the collaboration tests, the first API read may cold-materialize
+      // the native snapshot. Require every paragraph, not just the final marker.
+      await expect
+        .poll(async () => (await read()).body.dataStream, { timeout: 30_000 })
+        .toBe(paragraphs.join('\r') + '\r\n');
       const original = await read();
       let expectedText: string = original.body.dataStream;
       let expectedBody = original.body;
