@@ -38,7 +38,10 @@ Disable/removal and the landed SPN-064 Reactivate/Transfer flows preserve their
 consequences and server safeguards. Invites creates an address once, keeps its
 manual-copy fallback while that section remains open, and discards it on leaving.
 Connections shows read-only assistant metadata with token activity in a disclosure.
-Health shows existing backup facts; diagnostics and verification remain deferred.
+Health retains existing backup facts and adds measured memory, connections,
+physical storage and actual job status. Diagnostics offers download and confirmed
+clear; its runtime/visual validation is tracked in
+[SPN-032](../implementation/SPN-032.md). Restore verification remains SPN-063.
 See [the section lifetime decision](../implementation/SPN-082.md#section-lifetime-and-recovery-handoff).
 
 ## Adopted pattern
@@ -126,7 +129,9 @@ loads fresh recovery-invitation recipients when the Operator explicitly opens In
 ## Diagnostics handoff (SPN-032)
 
 Owner direction, 2026-10-22; [scope and rationale](../implementation/SPN-032.md).
-Production work is pending. Health cards retain aggregate status and guidance.
+Source implementation is prepared; runtime checks and actual screenshot approval
+remain pending in the implementation record. Health cards retain aggregate status
+and guidance. See the [operator guide](../diagnostics.md) for measurement meaning.
 Add **Download diagnostics** and **Truncate diagnostics** to Backups & health;
 there is no query UI, log browser or SQL console. Download produces a standalone
 diagnostics SQLite snapshot for local analysis. Automatic records can contain

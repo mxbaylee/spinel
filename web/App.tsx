@@ -1,5 +1,6 @@
 import { AuthEntry } from './AuthEntry.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
+import { DiagnosticsProvider, useAccountDiagnostics } from './useDiagnostics.tsx';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   startAuthentication,
@@ -47,6 +48,14 @@ type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?:
 type Passkey = { id: string; name: string; provider: string };
 
 export function App() {
+  return (
+    <DiagnosticsProvider>
+      <AccountApp />
+    </DiagnosticsProvider>
+  );
+}
+
+function AccountApp() {
   const unsaved = useRef(false);
   const navigation = {
     allow() {
@@ -86,6 +95,10 @@ export function App() {
   const [local, setLocal] = useState<Awaited<ReturnType<typeof openLocalStart>>>(null);
   const [unreachable, setUnreachable] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const stopDiagnostics = useAccountDiagnostics(
+    user && loaded && !local && !signOutPending() ? user.id : null,
+    browserOnline && (editorConnection ?? serverConnection) === 'online',
+  );
   const [keys, setKeys] = useState<Passkey[]>([]);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -352,6 +365,7 @@ export function App() {
   async function signOut() {
     const hadUnsavedChanges = unsaved.current;
     if (!navigation.allow()) return;
+    stopDiagnostics();
     clearDashboardNavigation();
     cancel();
     // Lock this device's offline data at once; it opens again only for the
