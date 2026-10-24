@@ -338,6 +338,8 @@ test('Sheet images survive browser export/import and restore, with scoped revoca
     expect(floating.subUnitId).toBe('tab');
     expect(floating.transform).toEqual(originalDrawing.transform);
     await page.goto('/');
+    await page.getByRole('button', { name: 'New', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Import file…', exact: true }).click();
     const importing = page.waitForResponse(
       (response) =>
         new URL(response.url()).pathname === '/api/items/import' &&

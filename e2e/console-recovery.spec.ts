@@ -127,7 +127,7 @@ test('console recovery replaces a lost admin passkey on the existing account and
     await memberPage.goto(memberLink);
     await expect(memberPage.getByRole('heading', { name: 'Recover your account' })).toBeVisible();
     await memberPage.getByRole('button', { name: 'Recover with a passkey' }).click();
-    await expect(memberPage.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(memberPage.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     const recoveredMember = await (
       await memberContext.request.get(`${origin}/api/auth/session`)
     ).json();

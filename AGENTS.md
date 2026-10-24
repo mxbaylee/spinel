@@ -53,9 +53,9 @@ that isn't waiting on another is next.
 - **Code copied from Univer Workspace** or any other Apache-2.0 project keeps its
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
-- Run `npm run typecheck`, `npm test` and `npm run backlog:check` before pushing.
-  Exception: when the memory watchdog prevents safe local testing, run local
-  typecheck, lint and backlog checks, then push a draft PR for full unit/browser
-  validation in CI. Keep it draft while unverified; all six CI gates and independent
-  review >=95 with no blockers remain required before merge. Owner, chat
-  2026-10-18; [decision #52](docs/implementation/backlog-workflow.md#legacy-decision-52-memory-watchdog-ci-first-exception).
+- **CI may be the default for validation**, including typecheck, lint, backlog,
+  unit and browser checks. Draft pushes do not require local checks to pass first.
+  Keep unverified work draft; all six CI gates, independent review >=95 with no
+  blockers and required visual approval remain merge requirements. Local workloads
+  still obey the memory watchdog. Owner, chat 2026-10-23;
+  [decision](docs/implementation/backlog-workflow.md#ci-as-the-default-validation-environment).

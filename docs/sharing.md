@@ -22,9 +22,9 @@ internal tree. Sharing never changes ownership. Sheets and Docs use their native
 read-only mode for Viewers.
 
 Shared items open at their authenticated direct address. Shared folders show their
-children and have a Refresh folder button to retrieve new additions. My files
-lists owned items and shared items personally filed there. The Shared with me drawer adds account-only discovery
-and personal filing, described below alongside guest links.
+children; **More → Refresh folder** retrieves new additions. My files lists owned
+items and shared items personally filed there. The Shared with me place adds
+account-only discovery and personal filing, described below alongside guest links.
 
 ## Permission changes and unsaved work
 
@@ -129,21 +129,22 @@ revocation in both development and production builds.
 
 ## Finding and filing account shares
 
-The **Shared with me** drawer contains currently accessible documents and folders,
+The **Shared with me** place contains currently accessible documents and folders,
 including inherited folder contents. It shows their owner's display name and a
 shared badge. Those labels also appear in folder listings, the opened item and
 [dashboard search](search.md), using the same item metadata and badge.
-Link guests have no account drawer and receive none of this account metadata.
+Link guests have no account file catalog and receive none of this account metadata.
 
-Drag an item onto one of your folders (or All my files), or use **File into folder**.
+Open the item’s **More** menu and choose **File into folder…** to file it into
+one of your folders or My files. The menu supports pointer and keyboard use.
 Each person has at most one personal placement per shared item. Filing again moves
 that reference. **Remove from my folder** deletes only the reference: the original,
-your access and the drawer entry remain. Shared folders are shortcuts
+your access and the Shared with me entry remain. Shared folders are shortcuts
 to their original accessible contents. Placement never changes owner, canonical
 parent or grants. These preserve SPN-018's rules from decisions [#23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming) and [#30](implementation/SPN-021.md#legacy-decision-30-trash-batches-and-exact-set-deletion) and
 the owner's 2026-10-17 direction that filing is on by default.
 
-The drawer sorts by latest applicable grant time, then ID. For children created
+Shared with me sorts by latest applicable grant time, then ID. For children created
 after an inherited grant, creation time bounds that timestamp. Content edits,
 role changes and moves do not reset an existing grant's time; revoke/regrant does.
 Legacy grants migrate with an unknown timestamp and display **Older share**, after
@@ -155,7 +156,7 @@ move out of inherited access. A later regrant does not revive them. Trashing a
 personal destination removes its references without touching shared originals;
 restoring that folder permits filing again. Deleting it cascades only the references.
 Requests check current source access and an owned destination within a transaction.
-The drawer and personal placements refresh on focus and every five seconds while
+Shared with me and personal placements refresh on focus and every five seconds while
 visible; an inaccessible document is rejected immediately at the server boundary.
 Refreshing this catalog does not recreate an open editor or discard pending edits.
 

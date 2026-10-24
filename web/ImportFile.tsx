@@ -3,17 +3,23 @@ import type { RefObject } from 'react';
 import { PORTABLE_LIMIT } from '../src/shared/portable.ts';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
+import { Modal } from '../src/ui/redesign/Controls.tsx';
+import './fileDialog.css';
 
 export function ImportFile({
   parentId,
   dropTarget,
   enabled,
   onImported,
+  dialogOpen,
+  onDialogOpenChange,
 }: {
   parentId: string | null;
   dropTarget: RefObject<HTMLElement>;
   enabled: boolean;
   onImported: (item: WorkspaceItem) => void;
+  dialogOpen?: boolean;
+  onDialogOpenChange?: (open: boolean) => void;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const running = useRef(false);
@@ -21,6 +27,7 @@ export function ImportFile({
   const [error, setError] = useState('');
   const upload = async (files: FileList | null) => {
     if (running.current || !files?.length) return;
+    onDialogOpenChange?.(true);
     setError('');
     if (files.length !== 1) {
       setError('Import one Univer file at a time.');
@@ -78,8 +85,11 @@ export function ImportFile({
       target.removeEventListener('drop', drop);
     };
   });
-  return (
-    <section className="import-file" aria-label="Import a Univer file">
+  const content = (
+    <section
+      className={`import-file${dialogOpen === undefined ? '' : ' file-dialog'}`}
+      aria-label="Import a Univer file"
+    >
       <button disabled={busy} onClick={() => input.current?.click()}>
         Import Univer file
       </button>
@@ -107,5 +117,18 @@ export function ImportFile({
       </details>
       {error && <p role="alert">{error}</p>}
     </section>
+  );
+  return dialogOpen === undefined ? (
+    content
+  ) : (
+    <Modal
+      title="Import file"
+      icon="upload"
+      open={dialogOpen}
+      onOpenChange={onDialogOpenChange}
+      dismissDisabled={busy}
+    >
+      {content}
+    </Modal>
   );
 }

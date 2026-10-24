@@ -64,7 +64,7 @@ test('console link claims a fresh instance once and keeps the setup secret off t
     await expect(page.getByRole('heading', { name: 'Admin', exact: true })).toBeVisible();
     await page.goto(`${origin}/`);
     await expect(page).toHaveURL(`${origin}/admin`);
-    await expect(page.getByRole('link', { name: 'Dashboard', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'My files', exact: true })).toHaveCount(0);
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(page).toHaveURL(`${origin}/admin`);

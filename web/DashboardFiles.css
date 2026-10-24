@@ -1,0 +1,115 @@
+.dashboard-files {
+  min-width: 0;
+}
+.dashboard-files .dashboard-file {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px 44px;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--sp-border);
+}
+.dashboard-files .dashboard-file .dashboard-file-open {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 4px;
+  min-width: 0;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--sp-text);
+  text-align: start;
+  font: inherit;
+  cursor: pointer;
+}
+.dashboard-file-open:focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 3px;
+}
+.dashboard-file-identity {
+  flex: 0 0 36px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 32px;
+  line-height: 1;
+}
+.dashboard-file-description {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.dashboard-file-description strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+.dashboard-file-metadata,
+.dashboard-file-type,
+.dashboard-file-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  color: var(--sp-muted);
+  font-size: 12px;
+}
+.dashboard-file-tags > span {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
+}
+.dashboard-file-date,
+.dashboard-file-details {
+  color: var(--sp-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.dashboard-file-menu .sp-control {
+  width: 44px;
+  min-height: 44px;
+}
+.dashboard-files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 16px;
+}
+.dashboard-files-grid .dashboard-file {
+  grid-template-columns: minmax(0, 1fr) 44px;
+  padding: 16px;
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
+  gap: 12px;
+  align-items: start;
+}
+.dashboard-files-grid .dashboard-file .dashboard-file-open {
+  grid-column: 1 / -1;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 112px;
+}
+.dashboard-files-grid .dashboard-file-date {
+  align-self: center;
+}
+.dashboard-files-grid .dashboard-file-menu {
+  grid-column: 2;
+}
+.dashboard-files-state {
+  padding: 24px 0;
+  color: var(--sp-muted);
+}
+@media (max-width: 640px) {
+  .dashboard-files-list .dashboard-file {
+    grid-template-columns: minmax(0, 1fr) 44px;
+    gap: 8px;
+  }
+  .dashboard-files-list .dashboard-file-menu {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: start;
+  }
+  .dashboard-files-list .dashboard-file-date {
+    padding-left: 56px;
+  }
+}
