@@ -228,8 +228,9 @@ for (const kind of ['sheet', 'doc'] as const) {
         await expect(
           page.getByRole('status', { name: 'Connection status', exact: true }),
         ).toHaveText('Online');
-        const address = editor.getByRole('textbox').nth(2);
+        const address = editor.locator('[data-u-comp="defined-name"]').getByRole('textbox');
         if (kind === 'sheet') {
+          await expect(address).toBeEnabled();
           await address.fill('B2');
           await address.press('Enter');
           await page.keyboard.type('Before theatre');
@@ -267,8 +268,10 @@ for (const kind of ['sheet', 'doc'] as const) {
             exact: true,
           });
           if (kind === 'sheet') {
-            await native.getByRole('textbox').nth(2).fill('C4');
-            await native.getByRole('textbox').nth(2).press('Enter');
+            const peerAddress = native.locator('[data-u-comp="defined-name"]').getByRole('textbox');
+            await expect(peerAddress).toBeEnabled();
+            await peerAddress.fill('C4');
+            await peerAddress.press('Enter');
           } else {
             await native.locator('.univer-container').click({ position: { x: 130, y: 200 } });
             await other.keyboard.press('End');
@@ -303,6 +306,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         // Restore the original native input without applying a new pointer selection.
         // A toggle must preserve this native selection, not reconstruct body offsets.
         if (kind === 'sheet') {
+          await expect(address).toBeEnabled();
           await address.fill('B2');
           await address.press('Enter');
         } else {
@@ -408,9 +412,15 @@ for (const kind of ['sheet', 'doc'] as const) {
         }
         expect(errors).toEqual([]);
       } finally {
-        await network.setOffline(false);
-        await peer?.close();
-        db.close();
+        try {
+          if (!page.isClosed()) await network.setOffline(false);
+        } finally {
+          try {
+            await peer?.close();
+          } finally {
+            db.close();
+          }
+        }
       }
     });
   }
