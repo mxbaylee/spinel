@@ -142,6 +142,14 @@ test('Space theatre fills the window and restores its own page navigation', asyn
         });
         await expect(page.getByRole('dialog')).toHaveCount(1);
         await expect(sharing).toBeVisible();
+        await expect(sharing.getByRole('region', { name: 'People with access' })).toHaveAttribute(
+          'aria-busy',
+          'false',
+        );
+        await expect(
+          sharing.getByRole('button', { name: 'Create link', exact: true }),
+        ).toBeVisible();
+        await expect(sharing.getByRole('alert')).toHaveCount(0);
         await capture(page, info, `space-${item.kind}-${variant.name}-sharing`);
         await page.keyboard.press('Escape');
         await expect(sharing).toBeHidden();
