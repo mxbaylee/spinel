@@ -182,6 +182,7 @@ function RenameAuthorityFixture() {
       </button>
       <EditorFrame
         name={allowed ? 'Private page' : 'Space unavailable'}
+        access={allowed ? 'Can edit' : 'Access changed'}
         documentKey="same-dirty-page"
         connection="offline"
         onRename={
@@ -210,6 +211,8 @@ export const RenameAuthorityRemoved: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Save name' }));
     await userEvent.click(canvas.getByRole('button', { name: 'Revoke fixture access' }));
     await expect(canvas.getByRole('heading', { name: 'Space unavailable' })).toBeVisible();
+    await expect(canvas.getByText('Access changed', { exact: true })).toBeVisible();
+    await expect(canvas.queryByText('Can edit', { exact: true })).not.toBeInTheDocument();
     await expect(canvas.queryByRole('textbox', { name: 'Document name' })).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Reject late rename' }));
     await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();

@@ -457,8 +457,9 @@ async function holdNativeWrites(context: BrowserContext) {
     release,
     received: () => received,
     returned: () => returned,
-    // Call only after the native page has left. Waiting for every handler also
-    // drains retries that arrived after the count observed when release began.
+    // On the assertion path, call after the native page has left to include
+    // retries in the persisted-state proof. Also drain on failure while the
+    // server is still alive, so fixture shutdown cannot mask the first failure.
     drain: () => context.unrouteAll({ behavior: 'wait' }),
   };
 }
@@ -1397,6 +1398,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
   test.setTimeout(120_000);
   const f = await fixture(browser, info);
   let release = () => {};
+  let drain = async () => {};
   try {
     const { space, child } = seed(f, 'Private recovery notebook');
     const doc = child('Private native notes', 'doc');
@@ -1413,6 +1415,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
     const before = await nativeState(f.context, space.id, doc.id);
     const held = await holdNativeWrites(editor.context);
     release = held.release;
+    drain = held.drain;
     await focusDoc(editor.page);
     await editor.page.keyboard.press('Control+End');
     await editor.page.keyboard.type(' Unsaved words to rescue.');
@@ -1435,6 +1438,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
     // A retained local draft must not restore revoked Space/page identity in chrome.
     await expect(editor.page.getByRole('heading', { name: doc.name, exact: true })).toHaveCount(0);
     await expect(editor.page.getByRole('textbox', { name: 'Document name' })).toHaveCount(0);
+    await expect(editor.page.locator('.editor-header .editor-access')).toHaveText('Access changed');
     await expect(editor.page.getByText(`Space · ${space.name}`, { exact: true })).toHaveCount(0);
     await expect(editor.page).not.toHaveTitle(new RegExp(doc.name));
     await expect(
@@ -1452,7 +1456,10 @@ test('revocation clears private Space navigation while retaining unsaved native 
     expect(local).toContain('Persisted baseline.');
     expect(local).toContain('Unsaved words to rescue.');
     await cancelDeparture(editor.page, () =>
-      editor.page.getByRole('button', { name: 'My files', exact: true }).click(),
+      editor.page
+        .locator('.editor-header')
+        .getByRole('button', { name: 'My files', exact: true })
+        .click(),
     );
     await expect(editor.page).toHaveURL(f.origin + href(space.id, doc.id));
     expect(
@@ -1479,7 +1486,11 @@ test('revocation clears private Space navigation while retaining unsaved native 
     expect(f.errors).toEqual([]);
   } finally {
     release();
-    await f.close();
+    try {
+      await drain();
+    } finally {
+      await f.close();
+    }
   }
 });
 
@@ -1489,6 +1500,7 @@ test('external child, ancestor and whole-Space Trash invalidates open native edi
   test.setTimeout(150_000);
   const f = await fixture(browser, info);
   let release = () => {};
+  let drain = async () => {};
   try {
     const { space, child } = seed(f, 'Externally changed notebook');
     const group = child('External branch', 'folder');
@@ -1564,6 +1576,7 @@ test('external child, ancestor and whole-Space Trash invalidates open native edi
     const before = await nativeState(f.context, space.id, doc.id);
     const held = await holdNativeWrites(f.context);
     release = held.release;
+    drain = held.drain;
     await focusDoc(f.page);
     await f.page.keyboard.type('Rescue this draft after external Trash.');
     await expect.poll(held.received).toBeGreaterThan(0);
@@ -1577,6 +1590,10 @@ test('external child, ancestor and whole-Space Trash invalidates open native edi
     });
     await expect(f.page.getByRole('region', { name: 'Doc document', exact: true })).toBeVisible();
     await expect(f.page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+    await expect(f.page.locator('.editor-header .editor-access')).toHaveText('Access changed');
+    await expect(
+      f.page.getByRole('button', { name: `Rename ${doc.name}`, exact: true }),
+    ).toHaveCount(0);
     expect(await copyDoc(f.page)).toBe('Rescue this draft after external Trash.');
     await expect(pageLink(f.page, space.id, available.id)).toBeVisible();
     for (const item of [group, doc, sheet])
@@ -1603,6 +1620,10 @@ test('external child, ancestor and whole-Space Trash invalidates open native edi
     expect(f.errors).toEqual([]);
   } finally {
     release();
-    await f.close();
+    try {
+      await drain();
+    } finally {
+      await f.close();
+    }
   }
 });
