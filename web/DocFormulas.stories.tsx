@@ -71,11 +71,11 @@ function saveFailure(reason: FormulaFailureReason): Story {
       close.mockClear();
       await sourcesReady(canvasElement);
       const canvas = within(canvasElement);
-      await userEvent.click(canvas.getByRole('button', { name: 'Save formula', exact: true }));
+      await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
       await expect(await canvas.findByRole('alert')).toHaveTextContent(
         new FormulaSaveError(reason).message,
       );
-      await expect(canvas.getByRole('combobox', { name: 'Formula', exact: true })).toHaveValue(
+      await expect(canvas.getByRole('combobox', { name: /^Formula$/ })).toHaveValue(
         definition.expression,
       );
       await expect(canvas.getByLabelText('Number format')).toHaveValue('currency');
@@ -83,8 +83,7 @@ function saveFailure(reason: FormulaFailureReason): Story {
       await expect(close).not.toHaveBeenCalled();
       await expect(
         canvas.getByRole('button', {
-          name: new FormulaSaveError(reason).retryable ? 'Retry save' : 'Save formula',
-          exact: true,
+          name: new FormulaSaveError(reason).retryable ? /^Retry save$/ : /^Save formula$/,
         }),
       ).toBeEnabled();
     },
@@ -112,11 +111,11 @@ export const SaveRetry: Story = {
     retrySave.mockRejectedValueOnce(new FormulaSaveError('busy')).mockResolvedValue(undefined);
     await sourcesReady(canvasElement);
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Save formula', exact: true }));
+    await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
     await expect(await canvas.findByRole('alert')).toHaveTextContent('Calculation is busy');
     await expect(retrySave).toHaveBeenCalledTimes(1);
     await expect(retryClose).not.toHaveBeenCalled();
-    await userEvent.click(canvas.getByRole('button', { name: 'Retry save', exact: true }));
+    await userEvent.click(canvas.getByRole('button', { name: /^Retry save$/ }));
     await waitFor(() => expect(retryClose).toHaveBeenCalledTimes(1));
     await expect(retrySave).toHaveBeenCalledTimes(2);
     for (const [saved] of retrySave.mock.calls) await expect(saved).toEqual(definition);
@@ -178,7 +177,7 @@ export const SaveCancelledRetry: Story = {
       .mockResolvedValue(undefined);
     await sourcesReady(canvasElement);
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Save formula', exact: true }));
+    await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
     await waitFor(() => expect(staleSave).toHaveBeenCalledTimes(1));
     const original = Object.getOwnPropertyDescriptor(document, 'visibilityState');
     try {
@@ -192,13 +191,13 @@ export const SaveCancelledRetry: Story = {
       release();
     }
     await waitFor(() =>
-      expect(canvas.getByRole('button', { name: 'Save formula', exact: true })).toBeEnabled(),
+      expect(canvas.getByRole('button', { name: /^Save formula$/ })).toBeEnabled(),
     );
     await expect(staleClose).not.toHaveBeenCalled();
-    await expect(canvas.getByRole('combobox', { name: 'Formula', exact: true })).toHaveValue(
+    await expect(canvas.getByRole('combobox', { name: /^Formula$/ })).toHaveValue(
       definition.expression,
     );
-    await userEvent.click(canvas.getByRole('button', { name: 'Save formula', exact: true }));
+    await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
     await waitFor(() => expect(staleClose).toHaveBeenCalledTimes(1));
     await expect(staleSave).toHaveBeenCalledTimes(2);
   },
@@ -227,10 +226,10 @@ function pendingSaveCancellation(method: 'button' | 'escape'): Story {
       });
       await sourcesReady(canvasElement);
       const canvas = within(canvasElement);
-      await userEvent.click(canvas.getByRole('button', { name: 'Save formula', exact: true }));
+      await userEvent.click(canvas.getByRole('button', { name: /^Save formula$/ }));
       await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
-      await expect(canvas.getByRole('button', { name: 'Working…', exact: true })).toBeDisabled();
-      const cancel = canvas.getByRole('button', { name: 'Cancel', exact: true });
+      await expect(canvas.getByRole('button', { name: /^Working…$/ })).toBeDisabled();
+      const cancel = canvas.getByRole('button', { name: /^Cancel$/ });
       await expect(cancel).toBeEnabled();
       const modal = canvas.getByRole('dialog');
       try {
