@@ -22,6 +22,8 @@ export function selectStorybookReview(
 ) {
   let viewport: ReviewViewport | 'all' = 'all';
   let viewportSpecified = false;
+  let theme: 'all' | 'light' | 'dark' = 'all';
+  let themeSpecified = false;
   const storyIds: string[] = [];
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -33,11 +35,22 @@ export function selectStorybookReview(
       }
       viewport = value as ReviewViewport | 'all';
       viewportSpecified = true;
+    } else if (arg === '--theme') {
+      if (themeSpecified) throw new Error('Specify --theme only once.');
+      const value = args[++i];
+      if (value !== 'all' && value !== 'light' && value !== 'dark') {
+        throw new Error('--theme requires light, dark, or all.');
+      }
+      theme = value;
+      themeSpecified = true;
     } else if (arg.startsWith('-')) {
       throw new Error(`Unknown review option: ${arg}`);
     } else {
       storyIds.push(arg);
     }
+  }
+  if (theme !== 'all' && viewport !== 'mobile') {
+    throw new Error('Theme splitting requires --viewport mobile.');
   }
   const requested = storyIds.length
     ? storyIds
@@ -48,8 +61,12 @@ export function selectStorybookReview(
   const includesWidth = (width: number) => viewport === 'all' || widths[viewport].includes(width);
   return {
     viewport,
+    theme,
     requested,
-    variants: variants.filter(([, width]) => includesWidth(width)),
+    variants: variants.filter(
+      ([variantTheme, width]) =>
+        includesWidth(width) && (theme === 'all' || theme === variantTheme),
+    ),
     nativeEditorKinds:
       viewport === 'all' || viewport === 'desktop' ? (['sheet', 'doc'] as const) : [],
     dashboardViewports: (
@@ -59,8 +76,10 @@ export function selectStorybookReview(
         [613, false],
         [390, true],
       ] as const
-    ).filter(([width]) => includesWidth(width)),
-    spaceWidths: [1280, 768, 390].filter(includesWidth),
-    journeyWidths: [1280, 390].filter(includesWidth),
+    ).filter(([width]) => theme !== 'dark' && includesWidth(width)),
+    // These additional journeys use a fixed light theme. Capture them once;
+    // per-theme story and shared-control interactions remain in both jobs.
+    spaceWidths: [1280, 768, 390].filter((width) => theme !== 'dark' && includesWidth(width)),
+    journeyWidths: [1280, 390].filter((width) => theme !== 'dark' && includesWidth(width)),
   };
 }
