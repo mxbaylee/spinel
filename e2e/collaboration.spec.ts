@@ -456,7 +456,7 @@ test('revoking one login preserves another login’s queued edit and stops later
     await expect(other.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
     releaseCatalogDenial();
     await expect(page).toHaveURL(/\/sign-in$/);
-    await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Your workspace.', exact: true })).toBeVisible();
     await other.reload();
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
       'All changes saved.',
