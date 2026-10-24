@@ -252,6 +252,57 @@ test.each([
   },
 );
 
+test.each([
+  { left: 1e20, top: 0, width: 40, height: 30 },
+  { left: 0, top: 1e20, width: 40, height: 30 },
+  { left: 80, top: 40, width: Number.MIN_VALUE, height: 30 },
+  { left: 80, top: 40, width: 40, height: Number.MIN_VALUE },
+])(
+  'rejects unrepresentable positive image extents before zero-area omission (%j)',
+  async (transform) => {
+    const book = workbook();
+    drawings(book, { image: drawing('image', { anchorType: '2', transform }) });
+    // No bytes supplied: the original bug returned a successful blank plan instead
+    // of either validating the geometry or requiring the image's prepared source.
+    await expect(prepareSheetLayout(book, [], frame)).rejects.toMatchObject({
+      code: 'invalid-input',
+      message: 'Invalid PDF image layout.',
+    });
+  },
+);
+
+test.each(['width', 'height'])(
+  'rejects a fixed anchored image whose positive %s disappears',
+  async (axis) => {
+    const book = workbook();
+    drawings(book, {
+      image: drawing('image', {
+        transform: { width: 40, height: 30, [axis]: Number.MIN_VALUE },
+      }),
+    });
+    await expect(prepareSheetLayout(book, [], frame)).rejects.toMatchObject({
+      code: 'invalid-input',
+    });
+  },
+);
+
+test('intentional zero-size images remain omitted without requesting bytes', async () => {
+  const book = workbook();
+  drawings(book, {
+    width: drawing('width', {
+      anchorType: '2',
+      transform: { left: 80, top: 40, width: 0, height: 30 },
+    }),
+    height: drawing('height', {
+      anchorType: '2',
+      transform: { left: 80, top: 40, width: 40, height: 0 },
+    }),
+  });
+  const layout = await prepareSheetLayout(book, [], frame);
+  expect(layout.images.size).toBe(0);
+  expect(layout.sheets[0].bounds).toBeNull();
+});
+
 test('cell drawing support remains an explicit pending requirement instead of a hidden URL-cache fetch', async () => {
   const book = workbook();
   book.sheets.first.cellData = {

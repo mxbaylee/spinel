@@ -1,7 +1,7 @@
 import { Styles } from '@univerjs/core';
 import type { IWorkbookData } from '@univerjs/core';
 import { SHEET_FILTER_SNAPSHOT_ID } from '@univerjs/sheets-filter';
-import { PrintError, printCheckpoint } from './contract.ts';
+import { PRINT_LIMITS, PrintError, printCheckpoint } from './contract.ts';
 import type { PreparedImage, PrintBox, SheetPrintOptions, SheetPrintPage } from './contract.ts';
 import { admitImages } from './images.ts';
 import type { AdmittedImage } from './images.ts';
@@ -51,10 +51,28 @@ function unsupported(): never {
   throw new PrintError('unsupported', 'This PDF drawing layout is not implemented yet.');
 }
 
+// No supported axis can exceed this ceiling (50k rows of 100k layout pixels,
+// plus one bounded marker offset). Keep absolute drawings in the same domain.
+const MAX_LAYOUT_COORDINATE = (PRINT_LIMITS.rows + 1) * 100_000;
+
 function coordinate(value: unknown, fallback?: number): number {
   const number = value === undefined ? fallback : value;
-  if (typeof number !== 'number' || !Number.isFinite(number) || number < 0) invalid();
+  if (
+    typeof number !== 'number' ||
+    !Number.isFinite(number) ||
+    number < 0 ||
+    number > MAX_LAYOUT_COORDINATE
+  )
+    invalid();
   return number;
+}
+
+function addExtent(start: number, size: number): number {
+  const end = coordinate(start + size);
+  // A positive dimension must not round back to its starting coordinate. This
+  // check precedes intentional zero-area omission, including marker offsets.
+  if (size > 0 && end <= start) invalid();
+  return end;
 }
 
 function extent(value: unknown): number {
@@ -82,8 +100,8 @@ function marker(value: unknown, sheet: SheetGeometry) {
   )
     invalid();
   return {
-    x: sheet.columns[column] + extent(point.columnOffset),
-    y: sheet.rows[row] + extent(point.rowOffset),
+    x: addExtent(sheet.columns[column], extent(point.columnOffset)),
+    y: addExtent(sheet.rows[row], extent(point.rowOffset)),
   };
 }
 
@@ -131,8 +149,8 @@ function floatingImage(
   if (anchor === '2') {
     left = coordinate(transform.left, 0);
     top = coordinate(transform.top, 0);
-    right = left + extent(transform.width ?? 0);
-    bottom = top + extent(transform.height ?? 0);
+    right = addExtent(left, extent(transform.width ?? 0));
+    bottom = addExtent(top, extent(transform.height ?? 0));
   } else if (anchor === '0' || anchor === '1') {
     const from = marker(anchored.from, sheet);
     left = from.x;
@@ -142,8 +160,8 @@ function floatingImage(
       right = to.x;
       bottom = to.y;
     } else {
-      right = left + extent(transform.width ?? 0);
-      bottom = top + extent(transform.height ?? 0);
+      right = addExtent(left, extent(transform.width ?? 0));
+      bottom = addExtent(top, extent(transform.height ?? 0));
     }
   } else invalid();
   if (right < left || bottom < top || ![left, top, right, bottom].every(Number.isFinite)) invalid();

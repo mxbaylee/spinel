@@ -40,6 +40,9 @@ metadata inspection; tile work is also bounded before a plan is returned. Each
 page retains the full image destination plus a normalized source crop, so a tall
 image is not independently squeezed into each page. This is geometry, not proof
 that a native compositor draws those pixels correctly.
+Coordinates are bounded by the maximum supported axis domain, and positive image
+dimensions/marker offsets that disappear through floating-point addition fail
+before zero-area omission. Intentionally zero-sized images remain omitted.
 
 The stage deliberately remains internal, outside `index.ts`. It rejects visible
 cell drawings (including hidden anchors until merge-aware layout exists),
