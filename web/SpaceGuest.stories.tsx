@@ -253,8 +253,8 @@ export const Loading: Story = {
   parameters: { api: { [`GET /api/guest-spaces/${root}`]: pending() } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const status = await canvas.findByText('Loading Space…', { exact: true });
-    await expect(status).toHaveAttribute('role', 'status');
+    const status = await canvas.findByRole('status');
+    await expect(status).toHaveTextContent('Opening shared document…');
     await expect(status).toBeVisible();
     await expect(
       canvas.queryByRole('region', { name: 'Guest editor body fixture' }),
@@ -267,11 +267,9 @@ export const Unavailable: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByRole('alert')).toHaveTextContent(
-      'This Space is not available.',
-    );
-    await expect(canvas.getByRole('button', { name: 'Try again' })).toBeEnabled();
-    await expect(canvas.queryByRole('button', { name: 'My files' })).not.toBeInTheDocument();
+    await expect(await canvas.findByRole('alert')).toHaveTextContent('This link no longer works.');
+    await expect(canvas.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: /My files/ })).not.toBeInTheDocument();
     await expect(
       canvas.queryByRole('region', { name: 'Guest editor body fixture' }),
     ).not.toBeInTheDocument();
@@ -285,9 +283,9 @@ export const RecoveryDeepLinkRefused: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      await canvas.findByRole('heading', { name: 'This Space link is not available.' }),
+      await canvas.findByRole('heading', { name: "This item isn't available" }),
     ).toBeVisible();
-    await expect(canvas.queryByRole('button', { name: 'My files' })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: /My files/ })).not.toBeInTheDocument();
     await expect(
       canvas.queryByRole('region', { name: 'Deleted Space contents' }),
     ).not.toBeInTheDocument();
