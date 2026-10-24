@@ -34,6 +34,11 @@ zoom/pan; evaluating that separate fit integration and further mobile layout wor
 remain in SPN-072. Native browser and visual acceptance are recorded separately
 from these source choices.
 
+People shows readable shared positions: Sheet cell addresses and a shared-text
+cursor label for Docs. Internal worksheet IDs and cursor protocol tokens are not
+display copy. Unknown position formats retain a neutral shared-cursor label;
+jump availability still follows the validated native destination.
+
 ## How others do it
 
 |             | Google Sheets                                                         | Excel for the web                    | Numbers for iCloud                     | Zoho Sheet                    |

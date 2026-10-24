@@ -303,10 +303,14 @@ for (const kind of ['sheet', 'doc'] as const) {
         await page.getByRole('button', { name: 'People in this document', exact: true }).click();
         const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
         await expect(people).toContainText(displayName);
-        if (collaborator)
-          await expect(
-            people.getByRole('button', { name: `Go to ${peerName}`, exact: true }),
-          ).toBeVisible();
+        if (collaborator) {
+          const peerBadge = people.getByRole('button', { name: `Go to ${peerName}`, exact: true });
+          await expect(peerBadge).toBeVisible();
+          const cursor = await peerBadge.getAttribute('data-selection');
+          expect(cursor).toBeTruthy();
+          await expect(people).not.toContainText(cursor!);
+          if (kind === 'doc') await expect(people).toContainText('Shared text cursor');
+        }
         await presenceBelow(page.locator('.sp-backdrop'));
         await capture(page, info, `account-${kind}-${variant.name}-people`);
         await page.keyboard.press('Escape');
