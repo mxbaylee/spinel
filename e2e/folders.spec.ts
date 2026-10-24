@@ -27,11 +27,20 @@ test('builds and renames a nested tree, opens all document types, moves safely a
   ]);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  const tree = page.getByRole('complementary', { name: 'Folders' });
   const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
   const files = page.getByRole('region', { name: 'Your files' });
+  const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
+  async function rowAction(name: string, action: string) {
+    await files.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
+    await page.getByRole('menuitem', { name: action, exact: true }).click();
+  }
+  async function folderHeading(name: string, ancestors: string) {
+    await expect(files.getByRole('heading', { name, exact: true })).toBeVisible();
+    await expect(breadcrumb).toHaveText(ancestors);
+  }
   async function create(name: string, type = 'Folder') {
     await page.getByRole('button', { name: 'New', exact: true }).click();
+    await page.getByRole('menuitem', { name: type, exact: true }).click();
     const form = page.getByRole('form', { name: 'New item' });
     // Supported outer files include Spaces; Slides remain unsupported (SPN-074).
     await expect(
@@ -44,7 +53,7 @@ test('builds and renames a nested tree, opens all document types, moves safely a
   }
   try {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     await expect(page.getByText('This folder is empty.', { exact: false })).toBeVisible();
     // A marker survives every tree mutation/navigation until the explicit reload.
     await page.evaluate(() => {
@@ -52,15 +61,14 @@ test('builds and renames a nested tree, opens all document types, moves safely a
     });
     for (const name of ['Personal', 'Finance', '2026']) {
       await create(name);
-      await tree.getByRole('button', { name, exact: true }).click();
+      await contents.getByRole('button', { name: `${name} Folder`, exact: true }).click();
     }
-    await expect(breadcrumb).toHaveText('My files / Personal / Finance / 2026');
-    await files.getByRole('button', { name: 'Rename 2026', exact: true }).click();
+    await folderHeading('2026', 'My files / Personal / Finance');
+    await rowAction('2026', 'Rename…');
     const rename = page.getByRole('form', { name: 'Rename item' });
     await rename.getByLabel('Name').fill('2027');
     await rename.getByRole('button', { name: 'Save', exact: true }).click();
-    await expect(breadcrumb).toHaveText('My files / Personal / Finance / 2027');
-    await expect(tree.getByRole('button', { name: '2027', exact: true })).toBeVisible();
+    await folderHeading('2027', 'My files / Personal / Finance');
     for (const type of ['Sheet', 'Doc']) {
       await create(`${type} example`, type);
       await expect(
@@ -72,7 +80,7 @@ test('builds and renames a nested tree, opens all document types, moves safely a
       await breadcrumb.getByRole('button', { name: '2027', exact: true }).click();
       await expect(page).toHaveTitle('Spinel');
     }
-    await files.getByRole('button', { name: 'Move Sheet example', exact: true }).click();
+    await rowAction('Sheet example', 'Move…');
     const move = page.getByRole('form', { name: 'Move item' });
     await move
       .getByRole('combobox', { name: 'Destination', exact: true })
@@ -81,11 +89,11 @@ test('builds and renames a nested tree, opens all document types, moves safely a
     await expect(
       files.getByRole('button', { name: 'Sheet example Sheet', exact: true }),
     ).toBeHidden();
-    await tree.getByRole('button', { name: 'Personal', exact: true }).click();
+    await breadcrumb.getByRole('button', { name: 'Personal', exact: true }).click();
     await expect(
       files.getByRole('button', { name: 'Sheet example Sheet', exact: true }),
     ).toBeVisible();
-    await files.getByRole('button', { name: 'Move Personal', exact: true }).click();
+    await rowAction('Personal', 'Move…');
     await expect(
       move.getByRole('combobox', { name: 'Destination', exact: true }).locator('option'),
     ).toHaveCount(1);
@@ -102,7 +110,7 @@ test('builds and renames a nested tree, opens all document types, moves safely a
     expect(badMove.status()).toBe(409);
     expect(await page.evaluate(() => document.body.dataset.navigationMarker)).toBe('kept');
     await page.reload();
-    await expect(breadcrumb).toHaveText('My files / Personal');
+    await folderHeading('Personal', 'My files');
     await expect(
       files.getByRole('button', { name: 'Sheet example Sheet', exact: true }),
     ).toBeVisible();
@@ -113,17 +121,15 @@ test('builds and renames a nested tree, opens all document types, moves safely a
       { timeout: 20000 },
     );
     await page.goBack();
-    await expect(breadcrumb).toHaveText('My files / Personal');
+    await folderHeading('Personal', 'My files');
     await page.setViewportSize({ width: 375, height: 812 });
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
-    await tree.getByRole('button', { name: 'All my files', exact: true }).click();
+    await breadcrumb.getByRole('button', { name: 'My files', exact: true }).click();
     await create('Personal projects');
-    await expect(tree.locator('li button')).toHaveText([
+    await expect(contents.getByRole('button', { name: / Folder$/ }).locator('strong')).toHaveText([
       'Personal',
-      'Finance',
-      '2027',
       'Personal projects',
     ]);
     // Duplicate names cannot sort one parent's children into another subtree.
@@ -142,16 +148,22 @@ test('builds and renames a nested tree, opens all document types, moves safely a
     await page.reload();
     const firstChild = twinA.id.localeCompare(twinB.id) < 0 ? 'Alpha child' : 'Beta child';
     const secondChild = firstChild === 'Alpha child' ? 'Beta child' : 'Alpha child';
-    await expect(tree.locator('li button')).toHaveText([
-      'Personal',
-      'Finance',
-      '2027',
-      'Personal projects',
-      'Twin',
-      firstChild,
-      'Twin',
-      secondChild,
-    ]);
+    // Folders are rows, not an expanded sidebar tree. Each same-named row must
+    // still open only its own children, in the stable ID tie-break order.
+    await expect(contents.getByRole('button', { name: 'Twin Folder', exact: true })).toHaveCount(2);
+    for (const [index, child] of [firstChild, secondChild].entries()) {
+      await contents.getByRole('button', { name: 'Twin Folder', exact: true }).nth(index).click();
+      await expect(
+        contents.getByRole('button', { name: `${child} Folder`, exact: true }),
+      ).toBeVisible();
+      await expect(
+        contents.getByRole('button', {
+          name: `${child === firstChild ? secondChild : firstChild} Folder`,
+          exact: true,
+        }),
+      ).toHaveCount(0);
+      await breadcrumb.getByRole('button', { name: 'My files', exact: true }).click();
+    }
     expect(errors).toEqual([]);
   } finally {
     // Remove only this fixture's leaves, then parents, to respect the no-delete schema.

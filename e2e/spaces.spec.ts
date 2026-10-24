@@ -515,6 +515,7 @@ test('ordinary My files creates and opens one Space root while preserving its pr
     await page.goto(`/?item=${f.folder.id}`);
     await expect(page.getByRole('heading', { name: f.folder.name, exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'New', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Space', exact: true }).click();
     const form = page.getByRole('form', { name: 'New item', exact: true });
     await form.getByRole('combobox', { name: 'Type', exact: true }).selectOption('space');
     await form.getByLabel('Name', { exact: true }).fill('Outer research');

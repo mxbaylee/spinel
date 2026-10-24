@@ -317,7 +317,7 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     await member.clearCookies();
     await member.addCookies([cookie(auth.createSession(recipient.id).token)]);
     await memberPage.goto('/');
-    await expect(memberPage.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(memberPage.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     await expect(
       memberPage.getByRole('button', { name: `${departed.name} Folder`, exact: true }),
     ).toBeVisible();
@@ -440,7 +440,7 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     ).toBeVisible();
     await recoveredPage.getByRole('button', { name: 'Recover with a passkey' }).click();
     await expect(
-      recoveredPage.getByRole('heading', { name: 'Dashboard', exact: true }),
+      recoveredPage.getByRole('heading', { name: 'My files', exact: true }),
     ).toBeVisible();
     expect(auth.userCount()).toBe(countBeforeRecovery);
     const freshCookie = (await recovered.cookies()).find((entry) => entry.name === COOKIE_NAME)!;
@@ -452,7 +452,7 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     await recoveredPage.getByRole('button', { name: 'Sign out', exact: true }).click();
     await recoveredPage.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(
-      recoveredPage.getByRole('heading', { name: 'Dashboard', exact: true }),
+      recoveredPage.getByRole('heading', { name: 'My files', exact: true }),
     ).toBeVisible();
     expect(errors).toEqual([]);
   } finally {

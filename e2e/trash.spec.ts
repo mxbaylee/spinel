@@ -33,10 +33,14 @@ test('trash restores nested native documents, preserves prior deletions and conf
   ]);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  const tree = page.getByRole('complementary', { name: 'Folders' });
   const files = page.getByRole('region', { name: 'Your files', exact: true });
+  const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
   const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
   const bin = page.getByRole('region', { name: 'Trash', exact: true });
+  async function folderAction(name: string, action: string) {
+    await files.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
+    await page.getByRole('menuitem', { name: action, exact: true }).click();
+  }
   async function create(name: string, kind: string, parentId: string | null) {
     const response = await context.request.post('/api/items', {
       headers: { Origin: baseURL! },
@@ -64,9 +68,11 @@ test('trash restores nested native documents, preserves prior deletions and conf
       { timeout: 20000 },
     );
     await breadcrumb.getByRole('button', { name: 'My files', exact: true }).click();
-    await files.getByRole('button', { name: 'Move Keep folder to trash', exact: true }).click();
-    await expect(tree.getByRole('button', { name: 'Keep folder', exact: true })).toBeHidden();
-    await tree.getByRole('button', { name: 'Trash', exact: true }).click();
+    await folderAction('Keep folder', 'Move to Trash');
+    await expect(
+      contents.getByRole('button', { name: 'Keep folder Folder', exact: true }),
+    ).toBeHidden();
+    await contents.getByRole('button', { name: /^Trash/ }).click();
     await expect(bin.getByRole('button', { name: /^Restore / })).toHaveCount(6);
     await page.reload();
     await expect(bin.getByRole('button', { name: /^Restore / })).toHaveCount(6);
@@ -75,15 +81,17 @@ test('trash restores nested native documents, preserves prior deletions and conf
     await expect(
       bin.getByRole('button', { name: 'Restore Previously deleted', exact: true }),
     ).toBeVisible();
-    await tree.getByRole('button', { name: 'Nested', exact: true }).click();
+    await page.getByRole('button', { name: 'My files', exact: true }).click();
+    await contents.getByRole('button', { name: 'Keep folder Folder', exact: true }).click();
+    await contents.getByRole('button', { name: 'Nested Folder', exact: true }).click();
     await expect(
       files.getByRole('button', { name: 'Refresh item Doc', exact: true }),
     ).toBeVisible();
     trash.trash(user.id, refreshed.id);
-    await files.getByRole('button', { name: 'Refresh folder', exact: true }).click();
+    await folderAction('Nested', 'Refresh folder');
     await expect(files.getByRole('button', { name: 'Refresh item Doc', exact: true })).toBeHidden();
     trash.restore(user.id, refreshed.id);
-    await files.getByRole('button', { name: 'Refresh folder', exact: true }).click();
+    await folderAction('Nested', 'Refresh folder');
     await expect(
       files.getByRole('button', { name: 'Refresh item Doc', exact: true }),
     ).toBeVisible();
@@ -100,7 +108,7 @@ test('trash restores nested native documents, preserves prior deletions and conf
       { timeout: 20000 },
     );
     await breadcrumb.getByRole('button', { name: 'My files', exact: true }).click();
-    await tree.getByRole('button', { name: 'Trash', exact: true }).click();
+    await contents.getByRole('button', { name: /^Trash/ }).click();
     await bin.getByRole('button', { name: 'Empty trash', exact: true }).click();
     const confirm = page.getByRole('dialog', { name: 'Empty trash confirmation' });
     await expect(confirm).toContainText('Permanently delete 1 item?');
