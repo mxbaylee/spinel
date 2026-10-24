@@ -20,13 +20,35 @@ and merges outside declared axes fail. Supplied workbook objects are not mutated
 Axes use the public Univer 1.1.0 defaults (1000 rows, 20 columns, 24/88 layout
 pixels), custom dimensions and saved automatic row heights. Metadata-only cells
 do not expand the bounds. Explicit cell formatting does; row/column formatting
-applies within the eventual used range. Text overflow, filtered rows and image
-extent integration remain unfinished.
+applies within the eventual used range. This public preflight is a first admission
+stage; final text overflow and rich-cell image extents remain unfinished.
 
 An internal public-API `PrintWorksheet` adapter now handles number-format display
 and native saved filter models. It preserves raw values, validates filter scans
-and clones input before the SDK fills defaults. The final geometry/render path
-must still integrate that adapter; it has not run locally.
+and clones input before the SDK fills defaults. The internal `prepareSheetLayout`
+stage applies saved filters to an owned snapshot, then measures collapsed axes
+using the original shared deadline. Number-format display still needs the final
+native rendering bridge; this code has not run locally.
+
+That internal stage combines occupied cells/merges with axis-aligned floating
+image bounds. It interprets the public Position (one-cell/fixed size), Both
+(two-cell) and None (absolute) anchors, keeps saved z-order, and binds required
+sources only to explicit prepared bytes. A background covers the finite declared
+worksheet rectangle, with its tile origin fixed at worksheet `(0, 0)` across
+hidden axes and continuation pages. Aggregate grid and page limits precede image
+metadata inspection; tile work is also bounded before a plan is returned. Each
+page retains the full image destination plus a normalized source crop, so a tall
+image is not independently squeezed into each page. This is geometry, not proof
+that a native compositor draws those pixels correctly.
+
+The stage deliberately remains internal, outside `index.ts`. It rejects visible
+cell drawings (including hidden anchors until merge-aware layout exists),
+grouped/transformed/cropped or nonrectangular floating drawings
+until their native layout/composition is implemented. Hidden or unselected
+worksheet images and explicitly hidden/zero-area drawings need no prepared bytes.
+These temporary failures do not satisfy the ticket's complete image requirement.
+Text overflow can still enlarge the final used range; the current plan cannot be
+treated as a finished export or used to publish partial PDF bytes.
 
 `paginateSheet` consumes final bounds and **actual** PDF MediaBox dimensions.
 Margins are 36 pt (12.7 mm), scaling is at most 0.75 PDF pt per 96-DPI layout
@@ -47,8 +69,9 @@ does not demonstrate safety on a 2 GiB deployment.
 
 - Internal prepared-image admission now copies bounded raster bytes and checks
   actual PNG/JPEG/WebP metadata and aggregate pixel counts before decode. Its
-  source tests are unrun; full decoding, animation fixtures, native
-  floating/cell/background geometry and byte-only rendering remain unfinished.
+  source tests are unrun; full decoding, animation fixtures, transformed/cell
+  image geometry and byte-only rendering remain unfinished. Axis-aligned floating
+  and finite background layout now have authored, unexecuted integration tests.
 - Native number formatting, rich text, fonts, overflow and complete page-spanning
   cell/merge/image rendering; licensed font faces and missing-glyph behavior.
 - Atomic PDF output, actual A4 MediaBox choice, output/resource failure evidence.

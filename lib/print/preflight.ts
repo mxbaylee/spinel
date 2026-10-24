@@ -168,8 +168,20 @@ export function preflightSheets(
   snapshot: IWorkbookData,
   options: SheetPrintOptions = {},
 ): SheetPreflight {
+  return preflightSheetsBefore(
+    snapshot,
+    options,
+    performance.now() + printLimits(options).durationMs,
+  );
+}
+
+/** Internal stages share one deadline; remeasuring filtered axes must not reset it. */
+export function preflightSheetsBefore(
+  snapshot: IWorkbookData,
+  options: SheetPrintOptions,
+  deadline: number,
+): SheetPreflight {
   const limits = printLimits(options);
-  const deadline = performance.now() + limits.durationMs;
   const check = () => printCheckpoint(options.signal, deadline);
   inspectSnapshot(snapshot, limits, check);
   record(snapshot);
