@@ -141,9 +141,10 @@ test('Operator downloads real correlated diagnostics without document data and c
     await formulas.getByRole('button', { name: 'Insert formula', exact: true }).click();
     const formula = memberPage.getByRole('dialog', { name: 'Insert formula', exact: true });
     await formula.getByRole('combobox', { name: 'Formula', exact: true }).fill('=Bud');
-    await formula.getByRole('option', { name: 'Budget', exact: true }).click();
-    await formula.getByRole('option', { name: 'Summary', exact: true }).click();
-    await formula.getByRole('option', { name: 'A1', exact: true }).click();
+    const suggestions = formula.getByRole('listbox', { name: 'Formula suggestions', exact: true });
+    await suggestions.getByRole('option', { name: 'Budget', exact: true }).click();
+    await suggestions.getByRole('option', { name: 'Summary', exact: true }).click();
+    await suggestions.getByRole('option', { name: 'A1', exact: true }).click();
     const expression = await formula
       .getByRole('combobox', { name: 'Formula', exact: true })
       .inputValue();
@@ -222,9 +223,7 @@ test('Operator downloads real correlated diagnostics without document data and c
       expect(exported.prepare('PRAGMA user_version').get()?.user_version).toBe(1);
       expect(
         exported
-          .prepare(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
-          )
+          .prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
           .all()
           .map((row) => row.name),
       ).toEqual(['diagnostics_state', 'events']);
@@ -271,6 +270,120 @@ test('Operator downloads real correlated diagnostics without document data and c
           }),
         ]),
       );
+      // Execute the schema-v1 examples from docs/diagnostics.md against the
+      // actual browser download, including SQLite JSON aggregation semantics.
+      const logs = exported
+        .prepare(
+          `
+        SELECT received_at, source, level, message, actor_id, file_id, route, run_id, details
+        FROM events WHERE kind='log' ORDER BY received_at;
+      `,
+        )
+        .all();
+      expect(logs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            source: 'backend',
+            level: 'warn',
+            message: 'An operation failed.',
+            actor_id: f.owner.id,
+            file_id: host.id,
+            run_id: failedRun,
+          }),
+        ]),
+      );
+      const runRows = exported
+        .prepare(
+          `
+        SELECT run_id, source, component, name, details, metric_kind, metric_unit, metric_value
+        FROM events WHERE run_id IS NOT NULL ORDER BY run_id, received_at;
+      `,
+        )
+        .all()
+        .filter((row) => row.run_id === runId);
+      expect(runRows).toHaveLength(correlated.length);
+      const counters = exported
+        .prepare(
+          `
+        SELECT source, json_extract(details, '$.operation') AS operation,
+               sum(metric_value) AS increments
+        FROM events WHERE metric_kind='counter' GROUP BY source, operation;
+      `,
+        )
+        .all();
+      const histograms = exported
+        .prepare(
+          `
+        SELECT source, json_extract(details, '$.operation') AS operation,
+               count(*) AS observations, avg(metric_value) AS mean_ms, max(metric_value) AS max_ms
+        FROM events WHERE name='operation.duration' AND metric_unit='milliseconds'
+        GROUP BY source, operation;
+      `,
+        )
+        .all();
+      for (const [source, operation] of [
+        ['frontend', 'formula-parse'],
+        ['frontend', 'formula-evaluate'],
+        ['backend', 'formula-evaluate'],
+      ]) {
+        expect(
+          runRows.some(
+            (row) =>
+              row.source === source &&
+              row.name === 'operation.result' &&
+              JSON.parse(String(row.details)).operation === operation,
+          ),
+        ).toBe(true);
+        const samples = rows.filter(
+          (row) => row.source === source && JSON.parse(String(row.details)).operation === operation,
+        );
+        const increments = samples.filter((row) => row.metric_kind === 'counter');
+        expect(increments.length).toBeGreaterThanOrEqual(1);
+        expect(
+          increments.every((row) => row.metric_value === 1 && row.metric_unit === 'count'),
+        ).toBe(true);
+        expect(
+          counters.find((row) => row.source === source && row.operation === operation)?.increments,
+        ).toBe(increments.length);
+        const durations = samples.filter((row) => row.name === 'operation.duration');
+        expect(durations.length).toBeGreaterThanOrEqual(1);
+        const values = durations.map((row) => Number(row.metric_value));
+        expect(
+          durations.every(
+            (row) => row.metric_kind === 'histogram' && row.metric_unit === 'milliseconds',
+          ),
+        ).toBe(true);
+        expect(values.every((value) => Number.isFinite(value) && value >= 0)).toBe(true);
+        const summary = histograms.find(
+          (row) => row.source === source && row.operation === operation,
+        );
+        expect(summary?.observations).toBe(values.length);
+        expect(summary?.max_ms).toBe(Math.max(...values));
+        expect(Number(summary?.mean_ms)).toBeCloseTo(
+          values.reduce((sum, value) => sum + value, 0) / values.length,
+          8,
+        );
+      }
+      const gauges = exported
+        .prepare(
+          `
+        SELECT received_at, name, details, metric_value, metric_unit
+        FROM events WHERE metric_kind='gauge' ORDER BY received_at;
+      `,
+        )
+        .all();
+      const memory = gauges.filter((row) => row.name === 'runtime.memory');
+      expect(memory).toHaveLength(
+        rows.filter((row) => row.metric_kind === 'gauge' && row.name === 'runtime.memory').length,
+      );
+      expect(memory.some((row) => JSON.parse(String(row.details)).scope === 'process')).toBe(true);
+      for (const point of memory) {
+        expect(['process', 'host', 'container']).toContain(JSON.parse(String(point.details)).scope);
+        expect(point.metric_unit).toBe('bytes');
+        expect(Number.isFinite(Number(point.metric_value))).toBe(true);
+        expect(Number(point.metric_value)).toBeGreaterThanOrEqual(0);
+        expect(Number(point.received_at)).toBeGreaterThan(0);
+      }
       const serialized = JSON.stringify(rows);
       for (const privateText of [
         host.name,
