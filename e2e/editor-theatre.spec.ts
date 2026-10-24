@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { BrowserContext, Page, TestInfo } from '@playwright/test';
+import type { ICellData, IWorkbookData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -13,6 +14,21 @@ const variants = [
   { name: 'dark', width: 1440, height: 1000, theme: 'dark' },
   { name: 'phone', width: 390, height: 844, theme: 'light' },
 ] as const;
+
+// Collaboration materialization can re-key styles on every read. Compare the
+// complete cell style, rather than its incidental dictionary key, as the native
+// appearance tests do. All other workbook fields remain in the equality check.
+function resolvedWorkbook(snapshot: IWorkbookData) {
+  const { styles, ...workbook } = structuredClone(snapshot);
+  for (const sheet of Object.values(workbook.sheets))
+    for (const row of Object.values(sheet.cellData ?? {}))
+      for (const cell of Object.values(row ?? {}) as (ICellData | null)[])
+        if (cell && typeof cell.s === 'string') {
+          expect(styles[cell.s], `Style ${cell.s} must resolve`).toBeDefined();
+          cell.s = styles[cell.s];
+        }
+  return workbook;
+}
 
 async function capture(page: Page, info: TestInfo, name: string) {
   await expect
@@ -198,8 +214,12 @@ for (const kind of ['sheet', 'doc'] as const) {
         expect(page.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
           timeout: 30_000,
         });
-      const read = async () =>
-        (await (await context.request.get(`/api/items/${item.id}/${kind}`)).json()).snapshot;
+      const read = async () => {
+        const response = await context.request.get(`/api/items/${item.id}/${kind}`);
+        expect(response.ok()).toBe(true);
+        const snapshot = (await response.json()).snapshot;
+        return kind === 'sheet' ? resolvedWorkbook(snapshot) : snapshot;
+      };
       try {
         await page.goto(`/?item=${item.id}`);
         await saved();
