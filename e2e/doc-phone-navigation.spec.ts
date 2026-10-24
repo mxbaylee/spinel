@@ -173,7 +173,15 @@ for (const role of ['editor', 'guest-viewer'] as const) {
       const nativeBox = editor.locator('.univer-container');
       const setZoom = async (percent: number) => {
         await expect(zoom).toBeVisible();
+        const displayed = await zoom.inputValue();
+        expect(displayed).toMatch(/^\d+%$/);
+        // Native focus changes the controlled value from e.g. '100%' to '100'.
+        // Let that transition finish before selecting/replacing the input text.
+        await zoom.click();
+        await expect(zoom).toBeFocused();
+        await expect(zoom).toHaveValue(displayed.slice(0, -1));
         await zoom.fill(String(percent));
+        await expect(zoom).toHaveValue(String(percent));
         await zoom.press('Enter');
         await expect(zoom).toHaveValue(`${percent}%`);
         await exit.focus(); // Blur native input before every pixel comparison.
