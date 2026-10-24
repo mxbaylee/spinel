@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { documentPath } from './documentAccess.ts';
+import './fileDialog.css';
 
 export function FileExports({
   id,
@@ -7,12 +8,14 @@ export function FileExports({
   saved,
   print,
   spaceId,
+  embedded = false,
 }: {
   id: string;
   name: string;
   saved: boolean;
   print: () => Promise<void>;
   spaceId?: string;
+  embedded?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -37,9 +40,8 @@ export function FileExports({
       setBusy(false);
     }
   };
-  return (
-    <details className="file-exports">
-      <summary>Export</summary>
+  const content = (
+    <>
       <p>Univer files keep editable content and document images, up to 20 MiB.</p>
       <button disabled={!saved || busy} onClick={() => void download()}>
         Download Univer file
@@ -61,6 +63,14 @@ export function FileExports({
       </button>
       {!saved && <p>Wait until changes are saved before exporting.</p>}
       {error && <p role="alert">{error}</p>}
+    </>
+  );
+  return embedded ? (
+    <div className="file-exports file-dialog">{content}</div>
+  ) : (
+    <details className="file-exports">
+      <summary>Export</summary>
+      {content}
     </details>
   );
 }

@@ -111,10 +111,8 @@ test('owner shares future folder contents, collaborator edits, and open editors 
         .getByRole('status', { name: 'Save status' }),
     ).toHaveText('All changes saved.', { timeout: 20000 });
     const sheetId = new URL(page.url()).searchParams.get('item')!;
-    await page
-      .getByRole('navigation', { name: 'Breadcrumb' })
-      .getByRole('button', { name: 'Nested', exact: true })
-      .click();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Nested', exact: true })).toBeVisible();
     await create('Shared journal', 'Doc');
     await expect(
       page
@@ -122,6 +120,8 @@ test('owner shares future folder contents, collaborator edits, and open editors 
         .getByRole('status', { name: 'Save status' }),
     ).toHaveText('All changes saved.', { timeout: 20000 });
     const docId = new URL(page.url()).searchParams.get('item')!;
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Nested', exact: true })).toBeVisible();
     await page
       .getByRole('navigation', { name: 'Breadcrumb' })
       .getByRole('button', { name: 'Shared plans', exact: true })
@@ -145,9 +145,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await expect(
       other.getByRole('button', { name: 'Save details: Saved', exact: true }),
     ).toBeVisible();
-    await expect(other.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText(
-      'My files / Shared plans / Nested / Shared journal',
-    );
+    await expect(other.getByRole('heading', { name: 'Shared journal', exact: true })).toBeVisible();
     await other.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await other.keyboard.type('Written by collaborator');
     const readDoc = async () => await (await context.request.get(`/api/items/${docId}/doc`)).json();
@@ -155,6 +153,11 @@ test('owner shares future folder contents, collaborator edits, and open editors 
       .poll(async () => (await readDoc()).snapshot.body.dataStream)
       .toContain('Written by collaborator');
     await expect(docStatus).toHaveText('All changes saved.');
+    await other.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await expect(other.getByRole('heading', { name: 'Nested', exact: true })).toBeVisible();
+    await expect(other.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText(
+      'My files / Shared plans',
+    );
     await other
       .getByRole('navigation', { name: 'Breadcrumb' })
       .getByRole('button', { name: 'Shared plans', exact: true })
@@ -235,7 +238,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await other.keyboard.press('Control+c');
     await expect.poll(() => other.evaluate(() => navigator.clipboard.readText())).toContain('99');
     other.once('dialog', (dialog) => dialog.dismiss());
-    await other.getByRole('link', { name: 'Your profile', exact: true }).click();
+    await other.getByRole('button', { name: 'Back to files', exact: true }).click();
     await expect(other).toHaveURL(new RegExp(sheetId));
     // A fresh viewer uses the SDK's read-only mode and cannot mutate either format.
     other.once('dialog', (dialog) => dialog.accept());
@@ -265,9 +268,14 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     expect(direct.ok()).toBe(true);
     await other.reload();
     await expect(docStatus).toContainText('View only', { timeout: 20000 });
-    await expect(other.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText(
-      'My files / Shared journal',
-    );
+    await expect(other.getByRole('heading', { name: 'Shared journal', exact: true })).toBeVisible();
+    // The compact editor must not expose inaccessible ancestor names either.
+    await expect(
+      other.getByRole('region', { name: 'Document workspace', exact: true }),
+    ).not.toContainText('Shared plans');
+    await expect(
+      other.getByRole('region', { name: 'Document workspace', exact: true }),
+    ).not.toContainText('Nested');
     expect(permissionWrites).toEqual([]);
     expect(errors).toEqual([]);
   } finally {

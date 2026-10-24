@@ -35,5 +35,7 @@ export async function evaluateFormula(definition: FormulaDefinition, sources: Fo
 }
 
 export type { DocFormulaSelection } from './native.ts';
+export { FormulaSaveError } from './saveError.ts';
+export type { FormulaFailureReason } from './saveError.ts';
 export { completeFormula, moveFormulaBindings, quoteFormulaName } from './completion.ts';
 export type { FormulaCompletion, FormulaSourceOption, FormulaSheetOption } from './completion.ts';

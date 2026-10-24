@@ -19,8 +19,7 @@ import { resolveDocument, sourceDocumentContext } from '../workspace/document-ac
 import { documentCatalog } from '../workspace/document-catalog.ts';
 import { runFormula } from './runner.ts';
 
-// Admission covers materialization as well as calculation, across all router instances.
-let reading = false;
+import { formulaAdmission, FormulaQueueTimeout } from './admission.ts';
 const privateSource = (): FormulaResult => ({ ok: false, reason: 'private-source' });
 const invalid = () => new AuthError(400, 'Use a valid formula and choose its source sheets.');
 type Verify = () => void;
@@ -90,10 +89,19 @@ export class DocFormulas {
     sourceId: string,
     verify: Verify,
     customData: Record<string, unknown> = {},
+    signal?: AbortSignal,
   ) {
+    const originalVerify = verify;
+    verify = () => {
+      signal?.throwIfAborted();
+      originalVerify();
+    };
     this.host(user, hostId, verify, customData);
-    if (reading) throw new AuthError(429, 'Another formula is loading. Try again shortly.');
-    reading = true;
+    const check = () => {
+      this.host(user, hostId, verify, customData);
+      this.source(user, hostId, sourceId, customData);
+    };
+    const release = await formulaAdmission.acquire(check, signal);
     try {
       const source = await this.load(
         user,
@@ -110,7 +118,7 @@ export class DocFormulas {
         name: source.snapshot.sheets[id].name,
       }));
     } finally {
-      reading = false;
+      release();
     }
   }
   async resolve(
@@ -120,6 +128,7 @@ export class DocFormulas {
     verify: Verify,
     guest = false,
     customData: Record<string, unknown> = {},
+    signal?: AbortSignal,
   ): Promise<FormulaDefinition> {
     this.host(user, hostId, verify, customData);
     if (!input || typeof input !== 'object' || Array.isArray(input)) throw invalid();
@@ -164,37 +173,39 @@ export class DocFormulas {
     }
     if (guest && !customData.spaceId && parsed.length)
       throw new AuthError(403, 'A guest link does not grant access to source spreadsheets.');
-    if (reading) throw new AuthError(429, 'Another formula is loading. Try again shortly.');
-    reading = true;
-    try {
-      const previousParsed = previous ? parseFormula(previous.expression) : [];
-      const sameQualifier = (first: (typeof parsed)[number], second: (typeof parsed)[number]) =>
-        first.documentName === second.documentName && first.sheetName === second.sheetName;
-      const sameQualifierOrder =
-        parsed.length === previousParsed.length &&
-        parsed.every((reference, index) => sameQualifier(reference, previousParsed[index]));
-      const prior = parsed.map((reference, index) => {
-        const picked = selected.find((candidate) => candidate.start === reference.start);
-        if (picked) return picked;
-        // Editing a cell address must not rebind a renamed source to its namesake.
-        // With unchanged qualifier order, even duplicate names retain each slot's identity.
-        if (previous && sameQualifierOrder) return previous.references[index];
-        const matches = previous?.references.filter((_, previousIndex) =>
-          sameQualifier(reference, previousParsed[previousIndex]),
-        );
-        if (!matches?.length) return undefined;
-        if (
-          new Set(matches.map((candidate) => `${candidate.itemId}/${candidate.sheetId}`)).size > 1
-        )
-          throw new AuthError(400, 'Choose the intended spreadsheet again for this reference.');
-        return matches[0];
-      });
-      // Stable bindings do not need a discovery scan. A large unrelated catalog
-      // must not make an already-bound, independently authorized formula unusable.
+    const originalVerify = verify;
+    verify = () => {
+      signal?.throwIfAborted();
+      originalVerify();
+    };
+    const previousParsed = previous ? parseFormula(previous.expression) : [];
+    const sameQualifier = (first: (typeof parsed)[number], second: (typeof parsed)[number]) =>
+      first.documentName === second.documentName && first.sheetName === second.sheetName;
+    const sameQualifierOrder =
+      parsed.length === previousParsed.length &&
+      parsed.every((reference, index) => sameQualifier(reference, previousParsed[index]));
+    const prior = parsed.map((reference, index) => {
+      const picked = selected.find((candidate) => candidate.start === reference.start);
+      if (picked) return picked;
+      // Editing a cell address must not rebind a renamed source to its namesake.
+      // With unchanged qualifier order, even duplicate names retain each slot's identity.
+      if (previous && sameQualifierOrder) return previous.references[index];
+      const matches = previous?.references.filter((_, previousIndex) =>
+        sameQualifier(reference, previousParsed[previousIndex]),
+      );
+      if (!matches?.length) return undefined;
+      if (new Set(matches.map((candidate) => `${candidate.itemId}/${candidate.sheetId}`)).size > 1)
+        throw new AuthError(400, 'Choose the intended spreadsheet again for this reference.');
+      return matches[0];
+    });
+    // Stable bindings do not need a discovery scan. A large unrelated catalog
+    // must not make an already-bound, independently authorized formula unusable.
+    // Keep the potentially large discovery catalog out of the suspended request.
+    const items = (() => {
       const catalog = prior.some((binding) => !binding)
         ? documentCatalog(this.workspace, user, customData)
         : [];
-      const items = parsed.map((reference, index) => {
+      return parsed.map((reference, index) => {
         if (prior[index]) return this.source(user, hostId, prior[index]!.itemId, customData).item;
         const matches = catalog.filter(
           (item) => item.kind === 'sheet' && item.name === reference.documentName,
@@ -206,13 +217,16 @@ export class DocFormulas {
           );
         return matches[0];
       });
-      if (new Set(items.map((item) => item.id)).size > FORMULA_LIMITS.sources) throw invalid();
-      const loaded = new Map<string, Awaited<ReturnType<DocFormulas['load']>>>();
-      const check = () => {
-        this.host(user, hostId, verify, customData);
-        for (const item of items) this.source(user, hostId, item.id, customData);
-        for (const source of loaded.values()) this.current(source.itemId, source.generation);
-      };
+    })();
+    if (new Set(items.map((item) => item.id)).size > FORMULA_LIMITS.sources) throw invalid();
+    const loaded = new Map<string, Awaited<ReturnType<DocFormulas['load']>>>();
+    const check = () => {
+      this.host(user, hostId, verify, customData);
+      for (const item of items) this.source(user, hostId, item.id, customData);
+      for (const source of loaded.values()) this.current(source.itemId, source.generation);
+    };
+    const release = await formulaAdmission.acquire(check, signal);
+    try {
       check();
       for (const item of items)
         if (!loaded.has(item.id)) {
@@ -242,7 +256,7 @@ export class DocFormulas {
         ...(body.format === undefined ? {} : { format: body.format }),
       });
     } finally {
-      reading = false;
+      release();
     }
   }
   async evaluate(
@@ -252,6 +266,7 @@ export class DocFormulas {
     verify: Verify,
     guest = false,
     customData: Record<string, unknown> = {},
+    signal?: AbortSignal,
   ): Promise<FormulaResult> {
     this.host(user, hostId, verify, customData);
     let definition: FormulaDefinition;
@@ -262,8 +277,12 @@ export class DocFormulas {
     }
     if (guest && !customData.spaceId && definition.references.length)
       return { ok: false, reason: 'missing-source' };
-    if (reading) return { ok: false, reason: 'busy' };
-    reading = true;
+    const originalVerify = verify;
+    verify = () => {
+      signal?.throwIfAborted();
+      originalVerify();
+    };
+    let release: (() => void) | undefined;
     try {
       const ids = [...new Set(definition.references.map((reference) => reference.itemId))];
       const sources: (FormulaSource & { generation: string })[] = [];
@@ -273,6 +292,7 @@ export class DocFormulas {
         for (const source of sources) this.current(source.itemId, source.generation);
       };
       try {
+        release = await formulaAdmission.acquire(check, signal);
         check();
         for (const id of ids) {
           sources.push(await this.load(user, hostId, id, check, customData));
@@ -289,7 +309,9 @@ export class DocFormulas {
       } catch (error) {
         // A lost host/session is an authorization failure, not a source placeholder.
         this.host(user, hostId, verify, customData);
+        if (error instanceof FormulaQueueTimeout) return { ok: false, reason: 'timeout' };
         if (error instanceof AuthError) {
+          if (error.status === 429) return { ok: false, reason: 'busy' };
           if (error.status === 404 || error.status === 403) return privateSource();
           if (error.status === 413) return { ok: false, reason: 'too-large' };
           if (error.status === 409) return { ok: false, reason: 'unavailable' };
@@ -297,7 +319,7 @@ export class DocFormulas {
         throw error;
       }
     } finally {
-      reading = false;
+      release?.();
     }
   }
 }

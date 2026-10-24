@@ -57,10 +57,19 @@ async function fixture(browser: Browser, context: BrowserContext, info: TestInfo
     headers,
     create,
     async close() {
-      await member.close();
-      database.close();
-      await app.close();
-      await rm(directory, { recursive: true, force: true });
+      try {
+        await member.close();
+      } finally {
+        try {
+          database.close();
+        } finally {
+          try {
+            await app.close();
+          } finally {
+            await rm(directory, { recursive: true, force: true });
+          }
+        }
+      }
     },
   };
 }
@@ -146,9 +155,8 @@ test('Operator downloads real correlated diagnostics without document data and c
     );
     // Formula insertion uses the native selection even when this test only previews.
     await memberPage.locator('.univer-container').click({ position: { x: 130, y: 200 } });
-    const formulas = memberPage.locator('details.doc-formulas');
-    await formulas.locator('summary').click();
-    await formulas.getByRole('button', { name: 'Insert formula', exact: true }).click();
+    await memberPage.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await memberPage.getByRole('menuitem', { name: 'Insert formula', exact: true }).click();
     const formula = memberPage.getByRole('dialog', { name: 'Insert formula', exact: true });
     await formula.getByRole('combobox', { name: 'Formula', exact: true }).fill('=Bud');
     const suggestions = formula.getByRole('listbox', { name: 'Formula suggestions', exact: true });

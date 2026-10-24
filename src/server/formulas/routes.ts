@@ -1,5 +1,5 @@
 import express from 'express';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import { AuthError } from '../auth/store.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
@@ -15,6 +15,24 @@ export type FormulaDiagnostics = (
   context: DiagnosticContext,
   actorId: string,
 ) => void;
+
+function connection(request: Request, response: Response) {
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  const close = () => {
+    if (!response.writableEnded) abort();
+  };
+  request.once('aborted', abort);
+  response.once('close', close);
+  if (request.aborted || response.destroyed) abort();
+  return {
+    signal: controller.signal,
+    dispose: () => {
+      request.off('aborted', abort);
+      response.off('close', close);
+    },
+  };
+}
 
 export function formulaRoutes(
   workspace: WorkspaceStore,
@@ -57,29 +75,41 @@ export function formulaRoutes(
     });
     router.get('/sources/:sourceId', async (request, response) => {
       const { user, customData, verify } = actor(request, () => response.destroyed);
-      response.json({
-        sheets: await formulas.sheets(
-          user,
-          hostId(request),
-          String(request.params.sourceId),
-          verify,
-          customData,
-        ),
-      });
+      const lifetime = connection(request, response);
+      try {
+        response.json({
+          sheets: await formulas.sheets(
+            user,
+            hostId(request),
+            String(request.params.sourceId),
+            verify,
+            customData,
+            lifetime.signal,
+          ),
+        });
+      } finally {
+        lifetime.dispose();
+      }
     });
   }
   router.post('/resolve', async (request, response) => {
     const { user, customData, verify } = actor(request, () => response.destroyed);
-    response.json({
-      definition: await formulas.resolve(
-        user,
-        hostId(request),
-        request.body,
-        verify,
-        guest,
-        customData,
-      ),
-    });
+    const lifetime = connection(request, response);
+    try {
+      response.json({
+        definition: await formulas.resolve(
+          user,
+          hostId(request),
+          request.body,
+          verify,
+          guest,
+          customData,
+          lifetime.signal,
+        ),
+      });
+    } finally {
+      lifetime.dispose();
+    }
   });
   router.post('/evaluate', async (request, response) => {
     if (
@@ -90,6 +120,7 @@ export function formulaRoutes(
     )
       throw new AuthError(400, 'Send one formula definition.');
     const { user, customData, verify } = actor(request, () => response.destroyed);
+    const lifetime = connection(request, response);
     const header = request.headers['x-spinel-diagnostic-run'];
     // Unknown headers never break evaluation or become recorded arbitrary text.
     const runId = isUuid(header) ? header : randomUUID();
@@ -125,12 +156,15 @@ export function formulaRoutes(
         verify,
         guest,
         customData,
+        lifetime.signal,
       );
       observed(result.ok ? 'success' : 'failure');
       response.json(result);
     } catch (error) {
       observed('failure');
       throw error;
+    } finally {
+      lifetime.dispose();
     }
   });
   return router;

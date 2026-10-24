@@ -130,9 +130,21 @@ export const Light: Story = {
 };
 export const Dark: Story = { ...Light, globals: { theme: 'dark' } };
 export const ProfileNavigation: Story = {
+  args: { selection: selection('/spaces/' + id(20)) },
   play: async ({ canvasElement, args }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Your profile' }));
     await expect(args.onProfile).toHaveBeenCalled();
+  },
+};
+export const EditorNavigation: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const workspace = within(await canvas.findByRole('region', { name: 'Document workspace' }));
+    await expect(canvas.getAllByRole('button', { name: 'My files' })).toHaveLength(1);
+    await expect(canvas.queryByRole('button', { name: 'Your profile' })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: 'Spinel home' })).not.toBeInTheDocument();
+    await userEvent.click(workspace.getByRole('button', { name: 'My files' }));
+    await expect(args.onExit).toHaveBeenCalled();
   },
 };
 export const Phone: Story = {

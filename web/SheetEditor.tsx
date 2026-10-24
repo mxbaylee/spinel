@@ -2,9 +2,8 @@ import { SaveStatus } from './SaveStatus.tsx';
 import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages, sheetImageOverride } from './sheetImages.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
-import { guestItemId } from './documentAccess.ts';
-import { VersionNames } from './VersionNames.tsx';
-import { FileExports } from './FileExports.tsx';
+import { EditorTools } from './EditorTools.tsx';
+import { useEditorChrome } from './EditorFrame.tsx';
 import { sheetPreset, useMobileSheetControls } from './sheetPreset.ts';
 import {
   SheetPrintOpenOperation,
@@ -26,7 +25,7 @@ import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/edi
 import { getTheme } from '../src/ui/theme.ts';
 import { displayPresetCell, presetCellForEditing } from '../src/ui/presetStyles.ts';
 import { UnitAction } from '@univerjs/protocol';
-import { Collaborators, watchPresence } from './Collaborators.tsx';
+import { watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
@@ -59,6 +58,7 @@ export function SheetEditor({
   onDirty: (dirty: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
+  const chrome = useEditorChrome();
   const mobile = useRef(useMobileSheetControls()).current;
   const print = useRef<(() => Promise<void>) | null>(null);
   const [people, setPeople] = useState<Collaborator[]>([]);
@@ -218,10 +218,12 @@ export function SheetEditor({
       if (disposed) stopPresence();
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
         editing = true;
+        if (chrome) chrome.editing.current = true;
         publish(lastState);
       });
       univerAPI.addEvent(univerAPI.Event.SheetEditEnded, () => {
         editing = false;
+        if (chrome) chrome.editing.current = false;
         publish(lastState);
       });
     })().catch((error) => {
@@ -243,6 +245,7 @@ export function SheetEditor({
       // Univer owns a separate React root; unmount it after our cleanup commit.
       if (disposeEditor) queueMicrotask(disposeEditor);
       controller.current = null;
+      if (chrome) chrome.editing.current = false;
       onDirty(false);
       onConnectionState?.(null);
     };
@@ -250,31 +253,22 @@ export function SheetEditor({
   }, [id, spaceId]);
   return (
     <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
-      <Collaborators people={people} />
       <SaveStatus
         state={status}
-        target={saveStatusTarget}
+        target={chrome?.saveTarget ?? saveStatusTarget}
         onRetry={() => controller.current?.retry()}
       />
-      {!guestItemId() && (
-        <>
-          <VersionNames
-            id={id}
-            spaceId={spaceId}
-            saved={!status.dirty && !status.failed && Boolean(controller.current)}
-          />
-          <FileExports
-            id={id}
-            spaceId={spaceId}
-            name={name}
-            saved={!status.dirty && !status.failed && Boolean(controller.current)}
-            print={async () => {
-              if (!print.current) throw new Error('Wait for the spreadsheet to load.');
-              await print.current();
-            }}
-          />
-        </>
-      )}
+      <EditorTools
+        id={id}
+        spaceId={spaceId}
+        name={name}
+        people={people}
+        saved={!status.dirty && !status.failed && Boolean(controller.current)}
+        print={async () => {
+          if (!print.current) throw new Error('Wait for the spreadsheet to load.');
+          await print.current();
+        }}
+      />
       <div className="univer-container" ref={container} />
     </section>
   );

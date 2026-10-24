@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { historyHref, historyRequest } from './historyApi.ts';
+import './fileDialog.css';
 
 import type { HistoryVersion as Version } from '../src/shared/historyNavigation.ts';
 
@@ -8,10 +9,12 @@ export function VersionNames({
   id,
   saved,
   spaceId,
+  embedded = false,
 }: {
   id: string;
   saved: boolean;
   spaceId?: string;
+  embedded?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [versions, setVersions] = useState<Version[]>([]);
@@ -42,23 +45,33 @@ export function VersionNames({
       setBusy(false);
     }
   };
+  useEffect(() => {
+    if (embedded) void run(refresh);
+  }, [id, spaceId, embedded]);
   return (
     <div className="version-names">
-      <button
-        aria-expanded={open}
-        disabled={busy}
-        onClick={() => {
-          setOpen(!open);
-          setEditing(null);
-          if (!open) void run(refresh);
-        }}
-      >
-        Versions
-      </button>
-      {open && (
-        <section aria-label="Version names">
-          <h3>Versions</h3>
-          <a href={historyHref(id, spaceId)} target="_blank" rel="noopener">
+      {!embedded && (
+        <button
+          aria-expanded={open}
+          disabled={busy}
+          onClick={() => {
+            setOpen(!open);
+            setEditing(null);
+            if (!open) void run(refresh);
+          }}
+        >
+          Versions
+        </button>
+      )}
+      {(embedded || open) && (
+        <section aria-label="Version names" className={embedded ? 'file-dialog' : undefined}>
+          {!embedded && <h3>Versions</h3>}
+          <a
+            className={embedded ? 'sp-control sp-quiet' : undefined}
+            href={historyHref(id, spaceId)}
+            target="_blank"
+            rel="noopener"
+          >
             Browse history
           </a>
           {error && <p role="alert">{error}</p>}
@@ -128,7 +141,12 @@ export function VersionNames({
               <li key={version.id}>
                 <span>{version.name ?? 'Unnamed version'}</span>
                 {Boolean(version.beforeRestore) && <strong> — Before restore</strong>}
-                <a href={historyHref(id, spaceId, version.id)} target="_blank" rel="noopener">
+                <a
+                  className={embedded ? 'sp-control sp-quiet' : undefined}
+                  href={historyHref(id, spaceId, version.id)}
+                  target="_blank"
+                  rel="noopener"
+                >
                   Preview version
                 </a>{' '}
                 <time dateTime={new Date(version.capturedAt).toISOString()}>

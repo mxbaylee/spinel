@@ -4,6 +4,7 @@ import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { LocaleType } from '@univerjs/core';
+import { docFormulas, FormulaSaveError } from '@spinel/doc-formulas';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -75,6 +76,48 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   await second.addCookies([cookie(friend.id)]);
   const other = await second.newPage();
   const errors: string[] = [];
+  const formulaOutcomes: { actor: string; operation: string; status: number; outcome: string }[] =
+    [];
+  // Keep failure evidence bounded and value-free: a rejected Save must not be
+  // disguised as a dialog timeout or repaired by silently retrying the click.
+  for (const [actor, target] of [
+    ['owner', page],
+    ['collaborator', other],
+  ] as const) {
+    target.on('response', async (response) => {
+      const path = new URL(response.url()).pathname;
+      const operation = path.slice(path.lastIndexOf('/') + 1);
+      if (
+        path !== `/api/items/${host.id}/formulas/${operation}` ||
+        !['resolve', 'evaluate'].includes(operation)
+      )
+        return;
+      const record = { actor, operation, status: response.status(), outcome: 'unread' };
+      formulaOutcomes.push(record);
+      if (formulaOutcomes.length > 64) formulaOutcomes.shift();
+      try {
+        const result = await response.json();
+        record.outcome =
+          result?.ok === true
+            ? 'success'
+            : [
+                  'private-source',
+                  'missing-source',
+                  'invalid-formula',
+                  'too-large',
+                  'busy',
+                  'timeout',
+                  'unavailable',
+                ].includes(result?.reason)
+              ? result.reason
+              : response.ok() && operation === 'resolve'
+                ? 'resolved'
+                : 'unknown';
+      } catch {
+        record.outcome = 'unread';
+      }
+    });
+  }
   let printHtml = '';
   await context.exposeBinding('captureFormulaPrint', (_source, html: string) => {
     printHtml = html;
@@ -131,15 +174,21 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     });
   const read = async () =>
     (await (await context.request.get(`/api/items/${host.id}/doc`)).json()).snapshot;
-  const formulaPanel = (target: Page) => target.locator('details.doc-formulas');
+  const formulaPanel = (target: Page) =>
+    target.getByRole('dialog', { name: 'Formulas', exact: true });
   const openPanel = async (target: Page) => {
     const panel = formulaPanel(target);
-    if (!(await panel.evaluate((node) => (node as HTMLDetailsElement).open)))
-      await panel.locator('summary').click();
+    if (!(await panel.isVisible())) {
+      await target.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await target.getByRole('menuitem', { name: 'Formulas', exact: true }).click();
+    }
     return panel;
   };
   const nativeInput = () => page.locator('[contenteditable="true"][data-u-comp="editor"]');
   const insert = async (expression: string) => {
+    if (await formulaPanel(page).isVisible())
+      await formulaPanel(page).getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await expect(formulaPanel(page)).toHaveCount(0);
     const paragraphsBefore = (await read()).body.dataStream.split('\r').length;
     if (!(await read()).body.customRanges?.length)
       await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
@@ -150,8 +199,8 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect
       .poll(async () => (await read()).body.dataStream.split('\r').length)
       .toBe(paragraphsBefore + 1);
-    const panel = await openPanel(page);
-    await panel.getByRole('button', { name: 'Insert formula', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Insert formula', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Insert formula', exact: true });
     await dialog.getByLabel('Formula', { exact: true }).fill(expression);
     await dialog.getByRole('button', { name: 'Insert formula', exact: true }).click();
@@ -159,6 +208,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect(nativeInput()).toBeFocused();
     await saved(page);
     await expect.poll(async () => JSON.stringify(await read())).toContain(expression);
+    const panel = await openPanel(page);
     return panel
       .getByRole('listitem')
       .filter({ has: page.getByRole('button', { name: expression, exact: true }) });
@@ -166,9 +216,14 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
   const screenshots = async (name: string, target: Page = page) => {
     await target.bringToFront();
     const panel = formulaPanel(target);
-    const closePanel =
-      name !== 'editing' && (await panel.evaluate((node) => (node as HTMLDetailsElement).open));
-    if (closePanel) await panel.locator('summary').click();
+    const closePanel = name !== 'editing' && (await panel.isVisible());
+    if (closePanel) {
+      await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
+        timeout: 20_000,
+      });
+      await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+      await expect(panel).toHaveCount(0);
+    }
     await mkdir('test-results/theme-screenshots', { recursive: true });
     for (const [theme, width] of [
       ['light', 1440],
@@ -178,11 +233,17 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       await target.emulateMedia({ colorScheme: theme });
       await target.setViewportSize({ width, height: 1100 });
       if (name !== 'editing') {
-        await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
-        await target.keyboard.press('Control+Home');
+        await openPanel(target);
         await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
           timeout: 20_000,
         });
+        await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+        await expect(panel).toHaveCount(0);
+        await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
+        await expect(
+          target.locator('[contenteditable="true"][data-u-comp="editor"]'),
+        ).toBeFocused();
+        await target.keyboard.press('Control+Home');
       }
       await target.screenshot({
         path: `test-results/theme-screenshots/formulas-${info.project.name}-${name}-${theme}-${width}.png`,
@@ -190,10 +251,17 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
         animations: 'disabled',
       });
       if (name === 'results') {
-        await target.keyboard.press('Control+End');
+        await openPanel(target);
         await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
           timeout: 20_000,
         });
+        await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+        await expect(panel).toHaveCount(0);
+        await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();
+        await expect(
+          target.locator('[contenteditable="true"][data-u-comp="editor"]'),
+        ).toBeFocused();
+        await target.keyboard.press('Control+End');
         await target.screenshot({
           path: `test-results/theme-screenshots/formulas-${info.project.name}-${name}-end-${theme}-${width}.png`,
           fullPage: true,
@@ -226,7 +294,12 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     }
     await target.emulateMedia({ colorScheme: 'light' });
     await target.setViewportSize({ width: 1440, height: 1100 });
-    if (closePanel) await panel.locator('summary').click();
+    if (closePanel) {
+      await openPanel(target);
+      await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
+        timeout: 20_000,
+      });
+    }
   };
   try {
     await page.goto(`/?item=${host.id}`);
@@ -311,8 +384,11 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     }
     await expect(table).toContainText('230', { timeout: 20_000 });
     await screenshots('results');
-    await page.locator('.file-exports summary').click();
+    await formulaPanel(page).getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
     await page.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Export', exact: true })).not.toBeVisible();
     await expect.poll(() => printHtml.includes('<img'), { timeout: 20_000 }).toBe(true);
     const printed = await context.newPage();
     try {
@@ -386,6 +462,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       await printed.close();
       await page.bringToFront();
     }
+    await openPanel(page);
     await expect(formulaPanel(page)).toContainText('314159', { timeout: 20_000 });
 
     const snapshot = await read();
@@ -408,6 +485,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect.poll(async () => JSON.stringify(await read())).toContain('={1,2;3,4}');
     await page.getByRole('button', { name: 'Redo', exact: true }).click();
     await expect.poll(async () => JSON.stringify(await read())).toContain('={5,6;7,8}');
+    await openPanel(page);
 
     const checkpointResponse = await context.request.post(`/api/items/${budget.id}/history`, {
       headers: { Origin: baseURL! },
@@ -460,12 +538,17 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await expect(otherPanel).not.toContainText('314159');
     await expect(otherPanel).not.toContainText('314166');
     await screenshots('private-source', other);
+    const editableArray = otherPanel.getByRole('listitem').filter({
+      has: other.getByRole('button', { name: '={5,6;7,8}', exact: true }),
+    });
+    await expect(editableArray.getByRole('cell')).toHaveText(['5', '6', '7', '8']);
     await otherPanel.getByRole('button', { name: '={5,6;7,8}', exact: true }).click();
     const collaboratorEdit = other.getByRole('dialog', { name: 'Edit formula', exact: true });
     await collaboratorEdit.getByLabel('Formula', { exact: true }).fill('={9,10;11,12}');
     await collaboratorEdit.getByRole('button', { name: 'Save formula', exact: true }).click();
     await expect(collaboratorEdit).not.toBeVisible({ timeout: 20_000 });
     await saved(other);
+    await openPanel(other);
     await expect(
       formulaPanel(page).getByRole('button', { name: '={9,10;11,12}', exact: true }),
     ).toBeVisible();
@@ -499,6 +582,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     expect(JSON.stringify(await read())).not.toContain('314159');
     expect(errors).toEqual([]);
   } catch (error) {
+    console.log('Formula response outcomes (no values or source identities):', formulaOutcomes);
     await mkdir('test-results/theme-screenshots', { recursive: true });
     await page
       .screenshot({
@@ -583,9 +667,8 @@ test('rich clipboard creates independent native Formula objects and plain text k
     // Create through the real UI, but retain the start-of-document boundary that
     // a hand-built fixture exercised. Reload then verifies activation of saved objects.
     await page.keyboard.press('Control+Home');
-    const panel = page.locator('details.doc-formulas');
-    await panel.locator('summary').click();
-    await panel.getByRole('button', { name: 'Insert formula', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Insert formula', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Insert formula', exact: true });
     await dialog.getByLabel('Formula', { exact: true }).fill(expression);
     await dialog.getByRole('button', { name: 'Insert formula', exact: true }).click();
@@ -603,6 +686,7 @@ test('rich clipboard creates independent native Formula objects and plain text k
     const editDialog = page.getByRole('dialog', { name: 'Edit formula' });
     if (await editDialog.isVisible())
       await editDialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(editDialog).toHaveCount(0);
     await input.focus();
     await expect(input).toBeFocused();
     const originalFormula = (await readRanges())[0];
@@ -671,3 +755,118 @@ test('rich clipboard creates independent native Formula objects and plain text k
     db.close();
   }
 });
+
+for (const reason of ['busy', 'timeout', 'unavailable'] as const) {
+  test(`native Formula ${reason} retains edits and only an explicit retry inserts once`, async ({
+    page,
+    context,
+    baseURL,
+  }, info) => {
+    test.setTimeout(120_000);
+    const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+    const auth = new AuthStore(db);
+    const workspace = new WorkspaceStore(auth);
+    const owner = auth.createUser(`Formula retry ${reason}`);
+    const host = workspace.create(owner.id, {
+      name: 'Retained formula',
+      kind: 'doc',
+      parentId: null,
+    });
+    const expression = '=1234.5';
+    let failEvaluation = true;
+    let failures = 0;
+    await context.addCookies([
+      {
+        name: COOKIE_NAME,
+        value: auth.createSession(owner.id).token,
+        url: baseURL!.replace('http:', 'https:'),
+        secure: true,
+        httpOnly: true,
+        sameSite: 'Strict',
+      },
+    ]);
+    const read = async () => {
+      const response = await page.request.get(`/api/items/${host.id}/doc`);
+      expect(response.ok()).toBe(true);
+      return (await response.json()).snapshot;
+    };
+    const saved = () =>
+      expect(page.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
+        timeout: 30_000,
+      });
+    try {
+      await page.route(`**/api/items/${host.id}/formulas/evaluate`, async (route) => {
+        if (!failEvaluation) return route.continue();
+        failures++;
+        await route.fulfill({
+          status: reason === 'busy' ? 429 : reason === 'unavailable' ? 503 : 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ ok: false, reason }),
+        });
+      });
+      await page.goto(`/?item=${host.id}`);
+      await saved();
+      await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+      const input = page.locator('[contenteditable="true"][data-u-comp="editor"]');
+      await input.focus();
+      await expect(input).toBeFocused();
+      const paragraphs = (await read()).body.dataStream.split('\r').length;
+      await page.keyboard.press('Control+End');
+      await page.keyboard.press('Enter');
+      await expect
+        .poll(async () => (await read()).body.dataStream.split('\r').length)
+        .toBe(paragraphs + 1);
+      await saved();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Insert formula', exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Insert formula', exact: true });
+      await dialog.getByLabel('Formula', { exact: true }).fill(expression);
+      await dialog.getByLabel('Number format').selectOption('currency');
+      const before = await read();
+      await dialog.getByRole('button', { name: 'Insert formula', exact: true }).click();
+      await expect(dialog.getByRole('alert')).toHaveText(new FormulaSaveError(reason).message, {
+        timeout: 20_000,
+      });
+      await expect(dialog.getByLabel('Formula', { exact: true })).toHaveValue(expression);
+      await expect(dialog.getByLabel('Number format')).toHaveValue('currency');
+      await expect(dialog.getByRole('button', { name: 'Retry insert', exact: true })).toBeEnabled();
+      expect(failures).toBe(reason === 'busy' ? 7 : 1);
+      expect(await read()).toEqual(before);
+      await mkdir('test-results/theme-screenshots', { recursive: true });
+      for (const [theme, width] of [
+        ['light', 1440],
+        ['dark', 1440],
+        ['light', 390],
+      ] as const) {
+        await page.emulateMedia({ colorScheme: theme });
+        await page.setViewportSize({ width, height: 1100 });
+        await page.screenshot({
+          path: `test-results/theme-screenshots/formulas-${info.project.name}-retry-${reason}-${theme}-${width}.png`,
+          fullPage: true,
+          animations: 'disabled',
+        });
+      }
+      // The bounded reads have ended. Nothing replays Save until this activation.
+      expect(await read()).toEqual(before);
+      failEvaluation = false;
+      await dialog.getByRole('button', { name: 'Retry insert', exact: true }).click();
+      await expect(dialog).not.toBeVisible({ timeout: 20_000 });
+      await saved();
+      await expect
+        .poll(async () => docFormulas((await read()).body).map((item) => item.definition))
+        .toEqual([{ version: 1, expression, references: [], format: 'currency' }]);
+      await page.reload();
+      await saved();
+      expect(docFormulas((await read()).body)).toHaveLength(1);
+    } finally {
+      try {
+        await page.goto('/sign-in').catch(() => {});
+        if (!page.isClosed()) await page.unrouteAll({ behavior: 'wait' });
+      } finally {
+        db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
+        db.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);
+        db.close();
+      }
+    }
+  });
+}

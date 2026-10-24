@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Collaborators, collaboratorColor } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
+import { expect, userEvent, within } from 'storybook/test';
 
 const person = (id: string, name: string, jump?: () => void): Collaborator => ({
   id,
@@ -18,7 +19,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Nobody has joined yet, so the group is empty. */
+/** Nobody has joined yet; the count opens an explicit empty people dialog. */
 export const Empty: Story = { args: { people: [] } };
 /** Only you are in the document; your own badge never jumps anywhere. */
 export const Alone: Story = { args: { people: [person('u-sam', 'Sam Rivera')] } };
@@ -52,5 +53,102 @@ export const Many: Story = {
       person('u-casey', 'Casey Nakamura-Fernandez', () => {}),
       person('u-riley', 'Riley Okafor'),
     ],
+  },
+};
+export const ManyPhone: Story = {
+  ...Many,
+  globals: { viewport: { value: 'phone', isRotated: false } },
+};
+
+async function openPeople(canvasElement: HTMLElement) {
+  await userEvent.click(
+    within(canvasElement).getByRole('button', { name: 'People in this document' }),
+  );
+  const dialog = await within(document.body).findByRole('dialog', {
+    name: 'People in this document',
+  });
+  for (const button of within(dialog).getAllByRole('button')) {
+    const box = button.getBoundingClientRect();
+    await expect(box.left).toBeGreaterThanOrEqual(0);
+    await expect(box.right).toBeLessThanOrEqual(window.innerWidth);
+    if (window.innerWidth <= 640 || matchMedia('(pointer: coarse)').matches) {
+      await expect(box.width).toBeGreaterThanOrEqual(44);
+      await expect(box.height).toBeGreaterThanOrEqual(44);
+    }
+  }
+  await expect(dialog.scrollWidth).toBeLessThanOrEqual(dialog.clientWidth);
+  await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+  return within(dialog);
+}
+
+/** These finish open so screenshot capture includes the actual people state. */
+export const EmptyOpen: Story = {
+  ...Empty,
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(dialog.getByText('No one is connected yet.')).toBeVisible();
+  },
+};
+export const GuestLabelsOpen: Story = {
+  ...GuestLabels,
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(dialog.getByText('Collaborator')).toBeVisible();
+    await expect(dialog.getAllByText('Guest')).toHaveLength(2);
+    await expect(dialog.queryByText('Sam Rivera')).not.toBeInTheDocument();
+  },
+};
+export const LongNamesOpen: Story = {
+  args: {
+    people: [
+      person('long', 'Alexandria Nakamura-Fernandez — a long collaborator name', () => {}),
+      person('self', 'Sam Rivera'),
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(
+      dialog.getByText('Alexandria Nakamura-Fernandez — a long collaborator name'),
+    ).toBeVisible();
+    await expect(
+      dialog.getByRole('button', {
+        name: 'Go to Alexandria Nakamura-Fernandez — a long collaborator name',
+      }),
+    ).toBeEnabled();
+  },
+};
+
+export const DocCursorOpen: Story = {
+  args: {
+    people: [
+      { ...person('doc', 'Alex Kim', () => {}), selection: '14:14:1:TEXT::-1' },
+      { ...person('segment', 'Sam Rivera'), selection: 'unsupported-segment-token' },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(dialog.getByText('Shared text cursor')).toBeVisible();
+    await expect(dialog.getByText('Shared cursor position')).toBeVisible();
+    await expect(dialog.queryByText('14:14:1:TEXT::-1')).not.toBeInTheDocument();
+    await expect(dialog.queryByText('unsupported-segment-token')).not.toBeInTheDocument();
+    await expect(dialog.getByRole('button', { name: 'Go to Alex Kim' })).toHaveAttribute(
+      'data-selection',
+      '14:14:1:TEXT::-1',
+    );
+  },
+};
+
+export const SheetCursorOpen: Story = {
+  args: {
+    people: [{ ...person('sheet', 'Alex Kim', () => {}), selection: 'internal-sheet-id!A1:B3' }],
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openPeople(canvasElement);
+    await expect(dialog.getByText('A1:B3')).toBeVisible();
+    await expect(dialog.queryByText(/internal-sheet-id/)).not.toBeInTheDocument();
+    await expect(dialog.getByRole('button', { name: 'Go to Alex Kim' })).toHaveAttribute(
+      'data-selection',
+      'internal-sheet-id!A1:B3',
+    );
   },
 };

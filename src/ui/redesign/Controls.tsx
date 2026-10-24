@@ -186,6 +186,7 @@ export function Modal({
   open,
   onOpenChange,
   dismissDisabled = false,
+  onBack,
   finalFocus,
 }: {
   title: string;
@@ -196,6 +197,7 @@ export function Modal({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   dismissDisabled?: boolean;
+  onBack?: () => void;
   finalFocus?: () => HTMLElement | boolean | null;
 }) {
   return (
@@ -215,6 +217,15 @@ export function Modal({
         <Dialog.Backdrop className="sp-backdrop" />
         <Dialog.Popup className="sp-modal sp-ui" finalFocus={finalFocus}>
           <div className="sp-modal-heading">
+            {onBack && (
+              <button
+                className="sp-control sp-quiet"
+                aria-label="Return to document"
+                onClick={onBack}
+              >
+                <ProfileIcon icon="lucide:arrow-left" />
+              </button>
+            )}
             <Dialog.Title className="sp-modal-title">
               <span className="sp-modal-title-icon" aria-hidden="true">
                 {icon === 'doc' || icon === 'sheet' || icon === 'space' ? (

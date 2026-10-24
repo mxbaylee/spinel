@@ -291,13 +291,20 @@ async function png(page: Page) {
   );
 }
 async function guestOnly(f: Fixture) {
-  for (const name of ['My files', 'Spinel home', 'Versions', 'Download Univer file', 'New Space'])
+  for (const name of [
+    'My files',
+    'Spinel home',
+    'Versions',
+    'Download Univer file',
+    'Document actions',
+    'New Space',
+  ])
     await expect(f.page.getByRole('button', { name, exact: true })).toHaveCount(0);
   await expect(f.page.getByRole('button', { name: 'Your profile', exact: true })).toHaveCount(0);
   await expect(f.page.getByRole('button', { name: /^Space actions for / })).toHaveCount(0);
   await expect(f.page.getByRole('link', { name: 'Space Trash', exact: true })).toHaveCount(0);
   await expect(f.page.getByRole('navigation', { name: 'Workspace', exact: true })).toHaveCount(0);
-  await expect(f.page.locator('details.file-exports')).toHaveCount(0);
+  await expect(f.page.getByRole('dialog', { name: 'Export', exact: true })).toHaveCount(0);
   const body = await f.page.locator('body').innerText();
   for (const privateName of [
     f.owner.name,
@@ -317,9 +324,8 @@ async function capture(f: Fixture, info: TestInfo, role: string) {
     ['light', 390, 'phone'],
   ] as const) {
     await f.page.setViewportSize({ width, height: 1050 });
-    await f.page
-      .getByRole('radio', { name: theme === 'dark' ? 'Dark' : 'Light', exact: true })
-      .click();
+    // Guests retain system appearance without account settings in the editor.
+    await f.page.emulateMedia({ colorScheme: theme });
     await expect(f.page.locator('html')).toHaveAttribute('data-theme', theme);
     await expect(
       f.page.getByText('This content is protected. This action is not allowed.', { exact: true }),
@@ -608,21 +614,22 @@ test('an Edit Space guest manages native pages and loses every child on rotation
     await f.page.keyboard.press('Control+End');
     await f.page.keyboard.press('Enter');
     await saved(f.page);
-    const formulas = f.page.locator('details.doc-formulas');
-    await formulas.locator('summary').click();
-    await formulas.getByRole('button', { name: 'Insert formula', exact: true }).click();
+    await f.page.getByRole('button', { name: 'Insert formula', exact: true }).click();
+    const formulas = f.page.getByRole('dialog', { name: 'Formulas', exact: true });
     const formula = f.page.getByRole('dialog', { name: 'Insert formula', exact: true });
     await formula.getByLabel('Formula', { exact: true }).fill('=Budget.Summary.A1');
     await formula.getByRole('button', { name: 'Insert formula', exact: true }).click();
     await expect(formula).not.toBeVisible();
     await saved(f.page);
+    await f.page.getByRole('button', { name: 'Formulas', exact: true }).click();
     await expect(formulas.locator('output.formula-value')).toHaveText('314159265', {
       timeout: 20_000,
     });
     const bound = JSON.stringify(await f.snapshot<IDocumentData>(f.overview.id));
     expect(bound).toContain('=Budget.Summary.A1');
     expect(bound).toContain(f.source.id);
-    await formulas.locator('summary').click();
+    await formulas.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await expect(formulas).toHaveCount(0);
     await capture(f, info, 'editor');
 
     const folder = await add(f, 'Folder', 'Guest research', f.root.name);

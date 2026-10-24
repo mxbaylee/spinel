@@ -5,6 +5,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import type { SpaceNode, SpaceTreeData } from '../src/shared/spaces.ts';
 import { Space } from './Space.tsx';
+import { EditorTools } from './EditorTools.tsx';
 import type { SpaceEditorProps } from './Space.tsx';
 
 const root = '88888888-8888-4888-8888-888888888888';
@@ -66,6 +67,16 @@ function GuestEditor({ item, access, onDirty }: SpaceEditorProps) {
   const [value, setValue] = useState('Shared project notes belong to this Space.');
   return (
     <section aria-label="Guest editor body fixture" style={{ padding: 24 }}>
+      <EditorTools
+        id={item.id}
+        name={item.name}
+        spaceId={item.spaceId}
+        people={[]}
+        saved
+        print={async () => {
+          throw new Error('Native printing is covered by browser tests.');
+        }}
+      />
       <p className="sp-muted">
         {item.kind === 'doc' ? 'Doc' : 'Sheet'} body fixture · native editing is verified in the
         browser suite.
@@ -131,16 +142,31 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-async function guestOnly(canvasElement: HTMLElement, title = 'Welcome') {
+async function guestOnly(
+  canvasElement: HTMLElement,
+  title = 'Welcome',
+  access: 'View only' | 'Guest editor' | null = 'View only',
+) {
   const canvas = within(canvasElement);
-  await expect(await canvas.findByRole('heading', { name: title, level: 1 })).toBeVisible();
-  await expect(canvas.getByText('Guest', { exact: true })).toBeVisible();
+  if (access) {
+    const workspace = await canvas.findByRole('region', { name: 'Document workspace' });
+    const header = within(workspace.querySelector<HTMLElement>('.editor-header')!);
+    await expect(await header.findByRole('heading', { name: title, level: 1 })).toBeVisible();
+    await expect(header.getByText(access, { exact: true })).toBeVisible();
+    await expect(
+      await header.findByRole('button', { name: 'People in this document' }),
+    ).toBeVisible();
+  } else {
+    await expect(await canvas.findByRole('heading', { name: title, level: 1 })).toBeVisible();
+    await expect(canvas.getByText('Guest', { exact: true })).toBeVisible();
+  }
   for (const name of ['My files', 'Spinel home', 'New Space', 'Versions', 'Your profile'])
     await expect(canvas.queryByRole('button', { name })).not.toBeInTheDocument();
   await expect(canvas.queryByRole('link', { name: 'Space Trash' })).not.toBeInTheDocument();
   await expect(
     canvas.queryByRole('button', { name: /^Space actions for/ }),
   ).not.toBeInTheDocument();
+  await expect(canvas.queryByRole('button', { name: 'Document actions' })).not.toBeInTheDocument();
   await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(
     window.innerWidth,
   );
@@ -169,11 +195,10 @@ export const ViewOnlyPhone: Story = {
 export const CanEdit: Story = {
   parameters: { api: api('editor') },
   play: async ({ canvasElement }) => {
-    await guestOnly(canvasElement);
+    await guestOnly(canvasElement, 'Welcome', 'Guest editor');
     await expect(
       await within(canvasElement).findByLabelText('Shared page content fixture'),
     ).not.toHaveAttribute('readonly');
-    await expect(within(canvasElement).getByText('Can edit', { exact: true })).toBeVisible();
   },
 };
 export const CanEditDark: Story = { ...CanEdit, globals: { theme: 'dark' } };
@@ -189,7 +214,7 @@ export const PhoneContents: Story = {
   parameters: { api: api('editor') },
   globals: { viewport: { value: 'phone', isRotated: false } },
   play: async ({ canvasElement }) => {
-    await guestOnly(canvasElement);
+    await guestOnly(canvasElement, 'Welcome', 'Guest editor');
     const canvas = within(canvasElement);
     let contents = canvas;
     if (window.matchMedia('(max-width: 900px)').matches) {
@@ -218,7 +243,7 @@ export const PhoneContents: Story = {
 export const Empty: Story = {
   parameters: { guestPath: `/share/${root}`, api: api('viewer', []) },
   play: async ({ canvasElement }) => {
-    await guestOnly(canvasElement, 'Project Atlas');
+    await guestOnly(canvasElement, 'Project Atlas', null);
     await expect(
       await within(canvasElement).findByRole('heading', { name: 'This Space is empty' }),
     ).toBeVisible();

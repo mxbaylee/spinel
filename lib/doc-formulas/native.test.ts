@@ -15,6 +15,7 @@ import { DocEventManagerService, DocPrintInterceptorService } from '@univerjs/do
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { installDocFormulas, type FormulaState } from './native.ts';
 import { formulaBody } from './model.ts';
+import { FormulaSaveError } from './saveError.ts';
 import type { FormulaDefinition, FormulaResult } from './definition.ts';
 import type { IDocumentLayoutSnapshot } from '@univerjs/engine-render';
 
@@ -185,6 +186,89 @@ function fixture(
   };
 }
 describe('native formula lifecycle', () => {
+  it.each([
+    'busy',
+    'timeout',
+    'unavailable',
+    'invalid-formula',
+    'private-source',
+    'missing-source',
+    'too-large',
+  ] as const)('classifies %s before mutation and permits one explicit retry', async (reason) => {
+    const evaluate = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: false, reason })
+      .mockResolvedValue({ ok: true, kind: 'scalar', value: 1 });
+    const { controller, executeCommand } = fixture(evaluate, true);
+    const selection = controller.selection();
+    await expect(controller.insert(definition, selection)).rejects.toMatchObject({
+      name: 'FormulaSaveError',
+      reason,
+      retryable: ['busy', 'timeout', 'unavailable'].includes(reason),
+    });
+    expect(evaluate).toHaveBeenCalledTimes(1);
+    expect(executeCommand).not.toHaveBeenCalled();
+    await controller.insert(definition, selection);
+    expect(evaluate).toHaveBeenCalledTimes(2);
+    expect(executeCommand).toHaveBeenCalledTimes(1);
+  });
+  it('uses identical safe missing/private-source guidance without source metadata', () => {
+    expect(new FormulaSaveError('private-source').message).toBe(
+      new FormulaSaveError('missing-source').message,
+    );
+  });
+  it('holds one insertion lock through evaluation and native command completion', async () => {
+    const pending = deferred();
+    const evaluate = vi.fn(() => pending.promise);
+    const { controller, executeCommand } = fixture(evaluate, true);
+    let finish!: (value: boolean) => void;
+    executeCommand.mockImplementationOnce(
+      () =>
+        new Promise<boolean>((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const selected = controller.selection();
+    const first = controller.insert(definition, selected);
+    await expect(controller.insert(definition, selected)).rejects.toMatchObject({ reason: 'busy' });
+    expect(evaluate).toHaveBeenCalledTimes(1);
+    pending.resolve({ ok: true, kind: 'scalar', value: 1 });
+    await vi.waitFor(() => expect(executeCommand).toHaveBeenCalledOnce());
+    await expect(controller.insert(definition, selected)).rejects.toMatchObject({ reason: 'busy' });
+    finish(true);
+    await first;
+    expect(executeCommand).toHaveBeenCalledTimes(1);
+  });
+  it.each(['signal', 'clear', 'dispose', 'revision'] as const)(
+    'rejects a late evaluation after %s without a native mutation',
+    async (change) => {
+      const pending = deferred();
+      const evaluate = vi.fn(
+        (_definition: FormulaDefinition, _signal: AbortSignal) => pending.promise,
+      );
+      const { controller, executeCommand, move } = fixture(evaluate, true);
+      const abort = new AbortController();
+      const saving = controller.insert(definition, controller.selection(), undefined, abort.signal);
+      const rejected = expect(saving).rejects.toThrow();
+      if (change === 'signal') abort.abort();
+      else if (change === 'revision') move();
+      else controller[change]();
+      if (change !== 'revision') expect(evaluate.mock.calls[0]![1].aborted).toBe(true);
+      // The evaluator deliberately ignores cancellation; the pre-mutation fence still applies.
+      pending.resolve({ ok: true, kind: 'scalar', value: 1 });
+      await rejected;
+      expect(executeCommand).not.toHaveBeenCalled();
+    },
+  );
+  it('preserves the existing private-source formatting exception for the same binding', async () => {
+    const { controller, executeCommand } = fixture(async () => ({
+      ok: false,
+      reason: 'private-source',
+    }));
+    await controller.refresh();
+    await controller.insert({ ...definition, format: 'currency' }, undefined, 'formula');
+    expect(executeCommand).toHaveBeenCalledTimes(1);
+  });
   it('leaves plain documents on their original layout path without polling repaints', async () => {
     const evaluate = vi.fn(async (): Promise<FormulaResult> => ({
       ok: true,

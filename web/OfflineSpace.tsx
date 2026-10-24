@@ -1,3 +1,4 @@
+import { EditorFrame } from './EditorFrame.tsx';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
@@ -81,7 +82,7 @@ export function OfflineSpaceView({
   viewer: ReactNode;
 }) {
   const { root, spaceId, copies, selected, problem } = selection;
-  return (
+  const shell = (
     <SpaceShell
       user={user}
       connection="offline"
@@ -117,7 +118,7 @@ export function OfflineSpaceView({
           : undefined
       }
     >
-      <header className="space-page-header">
+      <header className="space-page-header" hidden={Boolean(selected && !problem)}>
         <EntityIcon kind={selected?.kind ?? 'space'} size={32} />
         <div className="space-page-identity">
           <p>{root ? 'Space · ' + root.name : 'Space'}</p>
@@ -145,5 +146,19 @@ export function OfflineSpaceView({
         )
       )}
     </SpaceShell>
+  );
+  return selected && !problem ? (
+    <EditorFrame
+      name={selected.name}
+      contextLabel={root ? `Space · ${root.name}` : undefined}
+      connection="offline"
+      access="Read only"
+      onBack={onExit}
+      backLabel="My files"
+    >
+      {shell}
+    </EditorFrame>
+  ) : (
+    shell
   );
 }

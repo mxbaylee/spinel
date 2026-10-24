@@ -673,6 +673,25 @@ test('Space and ordinary Formula requests share one admission and never queue un
     f.readerContext,
   );
   await started;
+  const ordinary = f.formulas.evaluate(
+    f.owner.id,
+    f.ordinaryHost.id,
+    { version: 1, expression: '=1', references: [] },
+    f.verify,
+    false,
+    f.account(f.owner.id, false),
+  );
+  const guest = f.guest();
+  const guestRead = f.formulas.evaluate(
+    guest.userId,
+    f.host.id,
+    definition,
+    f.verify,
+    true,
+    guest.context,
+  );
+  const denied = expect(guestRead).rejects.toMatchObject({ status: 404 });
+  f.load.mockClear();
   try {
     expect(
       await f.formulas.evaluate(
@@ -684,8 +703,13 @@ test('Space and ordinary Formula requests share one admission and never queue un
         f.account(f.owner.id, false),
       ),
     ).toEqual({ ok: false, reason: 'busy' });
+    const replacement = f.workspace.links.begin(f.root.id, null);
+    f.workspace.links.finish(f.root.id, replacement.epoch, false);
   } finally {
     finish({ ok: true, kind: 'scalar', value: 42 });
     await first;
   }
+  expect(await ordinary).toMatchObject({ ok: true });
+  await denied;
+  expect(f.load).not.toHaveBeenCalled();
 });

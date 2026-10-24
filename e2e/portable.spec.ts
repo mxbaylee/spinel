@@ -115,9 +115,10 @@ for (const kind of ['sheet', 'doc'] as const) {
         await expect.poll(async () => (await live()).snapshot.drawingsOrder?.length).toBe(1);
         await saved();
       }
-      await region.locator('.file-exports summary').click();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
       const downloadPromise = page.waitForEvent('download');
-      await region.getByRole('button', { name: 'Download Univer file', exact: true }).click();
+      await page.getByRole('button', { name: 'Download Univer file', exact: true }).click();
       const download = await downloadPromise;
       expect(download.suggestedFilename()).toBe(`Portable ${kind}.univer.json`);
       const bytes = await readFile((await download.path())!);
@@ -133,7 +134,8 @@ for (const kind of ['sheet', 'doc'] as const) {
           : snapshot.body.dataStream,
       ).toContain('Portable proof 314');
       // Exercise the actual app export control and plugin print UI.
-      await region.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
+      await page.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
+      await expect(page.getByRole('dialog', { name: 'Export', exact: true })).not.toBeVisible();
       await expect(region.getByRole('alert')).toHaveCount(0);
       if (kind === 'sheet') await page.getByRole('button', { name: /^next$/i }).click();
       await expect.poll(() => printHtml.includes('<img'), { timeout: 20_000 }).toBe(true);

@@ -12,6 +12,7 @@ export async function interruptibleNetwork(context: BrowserContext) {
   let loseNextCommit = false;
   let suppressCommittedFrames = false;
   let lost = false;
+  let connectionCount = 0;
   const setOffline = async (value: boolean) => {
     offline = value;
     await context.setOffline(value);
@@ -46,6 +47,7 @@ export async function interruptibleNetwork(context: BrowserContext) {
       return;
     }
     const server = client.connectToServer();
+    connectionCount++;
     const socket = { client, server };
     sockets.add(socket);
     server.onMessage((message) => {
@@ -83,6 +85,9 @@ export async function interruptibleNetwork(context: BrowserContext) {
     });
   });
   return {
+    connectionCount() {
+      return connectionCount;
+    },
     holdJoinAcknowledgements() {
       holdJoins = true;
     },

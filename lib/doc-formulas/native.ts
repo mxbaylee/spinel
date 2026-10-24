@@ -28,6 +28,7 @@ import {
   registerDocumentLayoutPresentation,
 } from '@univerjs/engine-render';
 import type { FormulaDefinition, FormulaResult } from './definition.ts';
+import { FormulaSaveError } from './saveError.ts';
 import {
   docFormulas,
   formulaBody,
@@ -77,6 +78,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
   const skeleton = render.with(DocSkeletonManagerService);
   const scope = crypto.randomUUID();
   let disposed = false;
+  let insertion: AbortController | null = null;
   let abort = new AbortController();
   let states: FormulaState[] = [];
   let refreshing: Promise<void> | undefined;
@@ -317,6 +319,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
     return task;
   };
   const clear = () => {
+    insertion?.abort();
     footprints.clear();
     abort.abort();
     refreshing = undefined;
@@ -377,7 +380,11 @@ export function installDocFormulas(options: DocFormulaOptions) {
     definition: FormulaDefinition,
     selected?: DocFormulaSelection,
     replaceId?: string,
+    signal?: AbortSignal,
   ) => {
+    signal?.throwIfAborted();
+    if (disposed) throw new Error('The document was closed.');
+    if (insertion) throw new FormulaSaveError('busy');
     if (printPaused)
       throw new Error('Finish the PDF dialog, then refresh formulas before editing.');
     const existing = replaceId
@@ -391,35 +398,43 @@ export function installDocFormulas(options: DocFormulaOptions) {
       : (selected ?? selection());
     const revision = document.getMutationRevision();
     const check = new AbortController();
-    const evaluated = await options.evaluate(definition, check.signal);
-    if (disposed) throw new Error('The document was closed.');
-    if (revision !== document.getMutationRevision())
-      throw new Error('The document changed while calculating. Try saving the formula again.');
-    const fitted = fit(evaluated, definition, range.startOffset);
-    const unchangedPrivate =
-      !fitted.ok &&
-      fitted.reason === 'private-source' &&
-      existing &&
-      existing.definition.expression === definition.expression &&
-      JSON.stringify(existing.definition.references) === JSON.stringify(definition.references);
-    if (!fitted.ok && !unchangedPrivate)
-      throw new Error(
-        fitted.reason === 'too-large'
-          ? 'This result does not fit the page. Use a smaller range or shorter cell values.'
-          : 'This formula cannot be calculated. Preview it and check its sources.',
-      );
-    return commands.executeCommand(InsertTextCommand.id, {
-      unitId,
-      body: formulaBody(replaceId ?? crypto.randomUUID(), definition),
-      range,
-      textRanges: [
-        {
-          startOffset: range.startOffset + definition.expression.length,
-          endOffset: range.startOffset + definition.expression.length,
-          collapsed: true,
-        },
-      ],
-    });
+    insertion = check;
+    const cancel = () => check.abort(signal?.reason);
+    signal?.addEventListener('abort', cancel, { once: true });
+    if (signal?.aborted) cancel();
+    try {
+      check.signal.throwIfAborted();
+      const evaluated = await options.evaluate(definition, check.signal);
+      check.signal.throwIfAborted();
+      if (disposed) throw new Error('The document was closed.');
+      if (revision !== document.getMutationRevision())
+        throw new Error('The document changed while calculating. Try saving the formula again.');
+      const fitted = fit(evaluated, definition, range.startOffset);
+      const unchangedPrivate =
+        !fitted.ok &&
+        fitted.reason === 'private-source' &&
+        existing &&
+        existing.definition.expression === definition.expression &&
+        JSON.stringify(existing.definition.references) === JSON.stringify(definition.references);
+      if (!fitted.ok && !unchangedPrivate) throw new FormulaSaveError(fitted.reason);
+      // No await separates these fences from the single native mutation.
+      check.signal.throwIfAborted();
+      return await commands.executeCommand(InsertTextCommand.id, {
+        unitId,
+        body: formulaBody(replaceId ?? crypto.randomUUID(), definition),
+        range,
+        textRanges: [
+          {
+            startOffset: range.startOffset + definition.expression.length,
+            endOffset: range.startOffset + definition.expression.length,
+            collapsed: true,
+          },
+        ],
+      });
+    } finally {
+      signal?.removeEventListener('abort', cancel);
+      if (insertion === check) insertion = null;
+    }
   };
   void refresh();
   return {
@@ -434,6 +449,7 @@ export function installDocFormulas(options: DocFormulaOptions) {
     dispose: () => {
       if (disposed) return;
       disposed = true;
+      insertion?.abort();
       abort.abort();
       changes.dispose();
       clicks.unsubscribe();

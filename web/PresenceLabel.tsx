@@ -1,4 +1,7 @@
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
+// Native document labels sit above theatre (50) and below app backdrops/dialogs (80+).
+export const presencePopupZIndex = 60;
+
 export function PresenceLabel({
   name,
   icon = 'lucide:user-round',
@@ -25,10 +28,14 @@ export function PresenceLabel({
         font: '12px system-ui',
         whiteSpace: 'nowrap',
         pointerEvents: 'none',
+        maxWidth: 'min(220px, calc(100vw - 32px))',
+        overflow: 'hidden',
       }}
     >
-      <ProfileIcon icon={icon} />
-      {name}
+      <span style={{ display: 'inline-flex', flexShrink: 0 }}>
+        <ProfileIcon icon={icon} />
+      </span>
+      <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
     </span>
   );
 }

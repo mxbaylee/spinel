@@ -52,3 +52,56 @@ it('stops retrying after the bounded wait and does not retry authorization failu
   await expect(requestFormula('/formulas/resolve', {})).rejects.toThrow('Source unavailable');
   expect(fetch).toHaveBeenCalledTimes(1);
 });
+
+it('exhausted HTTP overflow is a typed retryable save failure, but admission expiration is not retried', async () => {
+  vi.useFakeTimers();
+  const fetch = vi
+    .fn()
+    .mockImplementation(async () => Response.json({ error: 'busy' }, { status: 429 }));
+  vi.stubGlobal('fetch', fetch);
+  const request = requestFormula('/formulas/resolve', {});
+  const failed = expect(request).rejects.toMatchObject({
+    name: 'FormulaSaveError',
+    reason: 'busy',
+    retryable: true,
+  });
+  await vi.runAllTimersAsync();
+  await failed;
+  expect(fetch).toHaveBeenCalledTimes(7);
+  fetch
+    .mockClear()
+    .mockImplementation(async () => Response.json({ error: 'waiting expired' }, { status: 503 }));
+  await expect(requestFormula('/formulas/resolve', {})).rejects.toMatchObject({
+    reason: 'unavailable',
+    retryable: true,
+  });
+  expect(fetch).toHaveBeenCalledTimes(1);
+  fetch.mockClear().mockImplementation(async () => Response.json({ ok: false, reason: 'timeout' }));
+  await expect(requestFormula('/formulas/evaluate', {})).resolves.toEqual({
+    ok: false,
+    reason: 'timeout',
+  });
+  expect(fetch).toHaveBeenCalledTimes(1);
+});
+
+it('transport and malformed responses offer explicit retry without replaying a request or leaking diagnostics', async () => {
+  const fetch = vi.fn().mockRejectedValue(new TypeError('secret transport detail'));
+  vi.stubGlobal('fetch', fetch);
+  await expect(requestFormula('/formulas/resolve', {})).rejects.toMatchObject({
+    reason: 'unavailable',
+    retryable: true,
+  });
+  expect(fetch).toHaveBeenCalledTimes(1);
+  fetch
+    .mockClear()
+    .mockImplementation(async () => new Response('private upstream body', { status: 503 }));
+  await expect(requestFormula('/formulas/resolve', {})).rejects.toThrow(
+    'Calculation is temporarily unavailable.',
+  );
+  expect(fetch).toHaveBeenCalledTimes(1);
+  fetch.mockClear().mockRejectedValue(new DOMException('Cancelled', 'AbortError'));
+  await expect(requestFormula('/formulas/resolve', {})).rejects.toMatchObject({
+    name: 'AbortError',
+  });
+  expect(fetch).toHaveBeenCalledTimes(1);
+});

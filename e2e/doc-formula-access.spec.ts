@@ -118,13 +118,26 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
       'View only — reload after your access changes.',
       { timeout: 30_000 },
     );
-    const panel = region.locator('details.doc-formulas');
-    await panel.locator('summary').click();
+    if (await view.getByRole('button', { name: 'Document actions', exact: true }).count()) {
+      await view.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await expect(view.getByRole('menuitem', { name: 'Insert formula', exact: true })).toHaveCount(
+        0,
+      );
+      await view.getByRole('menuitem', { name: 'Formulas', exact: true }).click();
+    } else {
+      await expect(view.getByRole('button', { name: 'Insert formula', exact: true })).toHaveCount(
+        0,
+      );
+      await view.getByRole('button', { name: 'Formulas', exact: true }).click();
+    }
+    const panel = view.getByRole('dialog', { name: 'Formulas', exact: true });
     await expect(panel.getByText(message, { exact: true })).toBeVisible({ timeout: 20_000 });
     await expect(panel.locator('output')).toHaveText('42', { timeout: 20_000 });
     await expect(panel.getByRole('button', { name: 'Insert formula', exact: true })).toHaveCount(0);
     await expect(panel.getByRole('button', { name: expression, exact: true })).toHaveCount(0);
     await expect(panel.getByRole('button', { name: '=40+2', exact: true })).toHaveCount(0);
+    await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await expect(panel).toHaveCount(0);
     // Also check native canvas output: the panel alone cannot prove native privacy.
     await expect
       .poll(() =>
@@ -156,7 +169,11 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
     const visitor = await guest.newPage();
     await visitor.goto(`${baseURL}/share/${host.id}#${link.token}`);
     await assertReadOnly(visitor, 'Source unavailable');
-    await expect(visitor.getByText('View-only link.', { exact: true })).toBeVisible();
+    const viewOnlyAccess = visitor
+      .getByRole('region', { name: 'Document workspace', exact: true })
+      .locator('header .editor-access');
+    await expect(viewOnlyAccess).toHaveText('View only');
+    await expect(viewOnlyAccess).toBeVisible();
     await expect(visitor.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
     expect((await guest.request.get(`${baseURL}/api/items`)).status()).toBe(401);
     expect((await guest.request.get(`${baseURL}/api/guest/${source.id}`)).status()).toBe(404);

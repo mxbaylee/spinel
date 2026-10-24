@@ -12,8 +12,11 @@ import { avatarProfile } from '../src/profile/profile.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { palettes, presenceFallbackColors } from '../src/ui/palette.ts';
 import { getTheme, watchTheme } from '../src/ui/theme.ts';
-import { PresenceLabel } from './PresenceLabel.tsx';
+import { PresenceLabel, presencePopupZIndex } from './PresenceLabel.tsx';
 import { presenceRenderColors } from './presenceColors.ts';
+import { useState } from 'react';
+import { Modal } from '../src/ui/redesign/Controls.tsx';
+import './editorFrame.css';
 
 export interface Collaborator {
   id: string;
@@ -24,7 +27,13 @@ export interface Collaborator {
   selection?: string;
   jump?: () => void;
 }
-function Badge({ person }: { person: Collaborator }) {
+function cursorDescription(selection?: string) {
+  if (!selection) return 'No shared cursor position';
+  if (/^\d+:\d+:\d+:TEXT::-1$/.test(selection)) return 'Shared text cursor';
+  const address = selection.slice(selection.lastIndexOf('!') + 1);
+  return /^[A-Z]+[1-9]\d*(?::[A-Z]+[1-9]\d*)?$/.test(address) ? address : 'Shared cursor position';
+}
+function Badge({ person, onJump }: { person: Collaborator; onJump(): void }) {
   return (
     <button
       className="collaborator-badge"
@@ -35,21 +44,49 @@ function Badge({ person }: { person: Collaborator }) {
       }}
       aria-label={person.jump ? `Go to ${person.name}` : `${person.name} is here`}
       data-selection={person.selection}
-      onClick={person.jump}
+      onClick={onJump}
       aria-disabled={!person.jump}
     >
       <ProfileIcon icon={person.icon ?? 'lucide:user-round'} />
-      <span className="collaborator-name">{person.name}</span>
     </button>
   );
 }
 export function Collaborators({ people }: { people: Collaborator[] }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="collaborators" role="group" aria-label="People in this document">
-      {people.map((person) => (
-        <Badge key={person.id} person={person} />
-      ))}
-    </div>
+    <>
+      <button
+        className="sp-control sp-quiet"
+        aria-label="People in this document"
+        onClick={() => setOpen(true)}
+      >
+        <ProfileIcon icon="lucide:users" size={20} />
+        <span aria-hidden="true">{people.length}</span>
+      </button>
+      <Modal title="People in this document" icon="person" open={open} onOpenChange={setOpen}>
+        <div role="group" aria-label="People in this document">
+          {!people.length && <p>No one is connected yet.</p>}
+          <ul className="editor-people-list">
+            {people.map((person) => (
+              <li key={person.id}>
+                <Badge
+                  person={person}
+                  onJump={() => {
+                    if (!person.jump) return;
+                    setOpen(false);
+                    requestAnimationFrame(() => person.jump?.());
+                  }}
+                />
+                <div className="editor-people-detail">
+                  <strong>{person.name}</strong>
+                  <span>{cursorDescription(person.selection)}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Modal>
+    </>
   );
 }
 
@@ -155,6 +192,7 @@ export async function watchPresence(
               person.color,
               () => <PresenceLabel {...person} />,
               presenceRenderColors(profile?.color ?? person.color, 'remote'),
+              { zIndex: presencePopupZIndex },
             ),
           );
         } catch {

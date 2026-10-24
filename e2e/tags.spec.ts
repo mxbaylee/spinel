@@ -47,7 +47,8 @@ test('personal tags work in the dashboard and editor, suggest earlier names and 
       'All changes saved.',
       { timeout: 30000 },
     );
-    await page.getByRole('button', { name: 'Tags Tagged budget', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Tags…', exact: true }).click();
     await add('recipes');
     await expect(
       dialog.getByRole('button', { name: 'Remove #recipes', exact: true }),
@@ -58,16 +59,16 @@ test('personal tags work in the dashboard and editor, suggest earlier names and 
     );
     await dialog.getByRole('button', { name: 'Done', exact: true }).click();
     await page.reload();
-    await expect(page.getByText('#recipes', { exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Tags Tagged budget', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Tags…', exact: true }).click();
+    await expect(
+      dialog.getByRole('button', { name: 'Remove #recipes', exact: true }),
+    ).toBeVisible();
     await expect(dialog.locator('datalist option[value="budget"]')).toHaveCount(1);
     await add('BUDGET');
     await expect(dialog.getByRole('button', { name: 'Remove #budget', exact: true })).toBeVisible();
     await dialog.getByRole('button', { name: 'Done', exact: true }).click();
-    await page
-      .getByRole('navigation', { name: 'Breadcrumb' })
-      .getByRole('button', { name: 'My files', exact: true })
-      .click();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
     await expect(page.getByText('#budget', { exact: true })).toBeVisible();
     await expect(page.getByText('#recipes', { exact: true })).toBeVisible();
     await otherPage.goto(`${baseURL}/?item=${item.id}`);
@@ -76,8 +77,12 @@ test('personal tags work in the dashboard and editor, suggest earlier names and 
       { timeout: 30000 },
     );
     await expect(otherPage.getByText('#budget', { exact: true })).toHaveCount(0);
-    await otherPage.getByRole('button', { name: 'Tags Tagged budget', exact: true }).click();
+    await otherPage.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await otherPage.getByRole('menuitem', { name: 'Tags…', exact: true }).click();
     const ownDialog = otherPage.getByRole('dialog', { name: 'Tags for Tagged budget' });
+    await expect(
+      ownDialog.getByRole('button', { name: 'Remove #budget', exact: true }),
+    ).toHaveCount(0);
     await expect(ownDialog.locator('datalist option')).toHaveCount(0);
     await ownDialog.getByLabel('Tag', { exact: true }).fill('reading');
     await ownDialog.getByRole('button', { name: 'Add tag', exact: true }).click();
@@ -86,7 +91,15 @@ test('personal tags work in the dashboard and editor, suggest earlier names and 
     ).toBeVisible();
     await ownDialog.getByRole('button', { name: 'Done', exact: true }).click();
     await otherPage.reload();
-    await expect(otherPage.getByText('#reading', { exact: true })).toBeVisible();
+    await otherPage.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await otherPage.getByRole('menuitem', { name: 'Tags…', exact: true }).click();
+    await expect(
+      ownDialog.getByRole('button', { name: 'Remove #reading', exact: true }),
+    ).toBeVisible();
+    await expect(
+      ownDialog.getByRole('button', { name: 'Remove #budget', exact: true }),
+    ).toHaveCount(0);
+    await ownDialog.getByRole('button', { name: 'Done', exact: true }).click();
     expect(store.get(owner.id, item.id).tags).toEqual(['budget', 'recipes']);
     expect(store.get(viewer.id, item.id).tags).toEqual(['reading']);
     await page.getByRole('button', { name: 'Tagged budget Sheet', exact: true }).click();
@@ -94,7 +107,8 @@ test('personal tags work in the dashboard and editor, suggest earlier names and 
       'All changes saved.',
       { timeout: 30000 },
     );
-    await page.getByRole('button', { name: 'Tags Tagged budget', exact: true }).click();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Tags…', exact: true }).click();
     let release = () => {};
     const held = new Promise<void>((resolve) => {
       release = resolve;

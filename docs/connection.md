@@ -70,8 +70,9 @@ The fixed title-adjacent save slot keeps a persistent short label while its
 popover holds full pending-edit warnings and Retry (SPN-043). A background shared-file-list
 refresh error remains an announced alert with its Retry action, after the open
 editor so the delayed polling failure cannot push the document down. In the
-file list it retains its existing placement above the list. SPN-049 composes
-that slot and this connection control into its wider header migration.
+file list it retains its existing placement above the list. The compact editor
+header composes that slot and this connection control without replacing either
+controller, including its slim theatre strip (SPN-049).
 SPN-053 later adds local/pending-sync durability states, without treating an
 open connection as persistence evidence.
 

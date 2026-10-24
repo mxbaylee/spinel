@@ -14,6 +14,7 @@ import { migrateSpaceSchema } from '../workspace/space-schema.ts';
 import { SpaceStore } from '../workspace/spaces.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
 import { formulaRoutes } from './routes.ts';
+import { formulaAdmission } from './admission.ts';
 
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
 afterEach(async () => {
@@ -139,8 +140,10 @@ async function fixture() {
     credential: string,
     body?: unknown,
     contentType = 'application/json',
+    signal?: AbortSignal,
   ) =>
     fetch(base + path, {
+      signal,
       method: body === undefined ? 'GET' : 'POST',
       headers: {
         Cookie: credential,
@@ -254,4 +257,62 @@ test('Space guest worksheet HTTP discards names loaded before root link revocati
   expect(response.status).toBe(404);
   expect(response.headers.get('cache-control')).toBe('no-store');
   expect(await response.text()).not.toContain('Summary');
+});
+
+test('account, Space and root-guest routers share capacity; disconnect removes queued work and promotion reauthorizes', async () => {
+  const f = await fixture();
+  const ordinary = f.workspace.create(f.owner.id, {
+    kind: 'doc',
+    name: 'Ordinary',
+    parentId: null,
+  });
+  const release = await formulaAdmission.acquire(() => {});
+  const acquire = vi.spyOn(formulaAdmission, 'acquire');
+  const controller = new AbortController();
+  const cancelled = f.send(
+    `${f.endpoint}/sources/${f.source.id}`,
+    f.ownerCookie,
+    undefined,
+    'application/json',
+    controller.signal,
+  );
+  const cancelledOutcome = expect(cancelled).rejects.toMatchObject({ name: 'AbortError' });
+  const requests: Promise<unknown>[] = [cancelledOutcome];
+  try {
+    await vi.waitFor(() => expect(acquire).toHaveBeenCalledTimes(1));
+    const guest = f.send(`${f.guestEndpoint}/sources/${f.source.id}`, f.guestCookie);
+    requests.push(guest);
+    await vi.waitFor(() => expect(acquire).toHaveBeenCalledTimes(2));
+    const overflow = await f.send(`/api/items/${ordinary.id}/formulas/resolve`, f.ownerCookie, {
+      expression: '=1',
+    });
+    expect(overflow.status).toBe(429);
+    expect(f.load).not.toHaveBeenCalled();
+    const cancelledSignal = acquire.mock.calls[0][1]!;
+    controller.abort();
+    await cancelledOutcome;
+    await vi.waitFor(() => expect(cancelledSignal.aborted).toBe(true));
+    // Capacity is recovered immediately, while the actual active work still owns its permit.
+    const saved = f.send(`/api/items/${ordinary.id}/formulas/resolve`, f.ownerCookie, {
+      expression: '=1',
+    });
+    requests.push(saved);
+    await vi.waitFor(() => expect(acquire).toHaveBeenCalledTimes(4));
+    f.workspace.links.begin(f.root.id, null);
+    release();
+    const revoked = await guest;
+    expect(revoked.status).toBe(404);
+    expect(await revoked.text()).not.toContain('Summary');
+    const resolved = await saved;
+    expect(resolved.status).toBe(200);
+    expect(await resolved.json()).toEqual({
+      definition: { version: 1, expression: '=1', references: [] },
+    });
+    expect(f.load).not.toHaveBeenCalled();
+  } finally {
+    controller.abort();
+    release();
+    await Promise.allSettled(requests);
+    acquire.mockRestore();
+  }
 });

@@ -221,6 +221,12 @@ grooming with the owner. The count never fails checks, blocks a ticket/merge or
 forces an agent to groom. Keep recording completions past seven; the owner chooses
 when to review. Owner, chat 2026-10-22. Grooming captures context learned while building.
 
+Every backlog grooming includes a review of open Dependabot PRs for security,
+compatibility, current CI results and sensible grouping. Record the disposition of
+updates that need follow-up; review does not imply automatic merge. Existing PRs
+remain open for that review. Owner, chat 2026-10-23;
+[decision](../implementation/backlog-workflow.md#review-dependabot-prs-at-every-backlog-grooming).
+
 A full owner-led grooming, recorded in a PR titled `🧹 Groom backlog …`:
 
 - Rechecks every ticket against the code: still true, still needed, sized right.
