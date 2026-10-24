@@ -316,7 +316,9 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
 
     await member.clearCookies();
     await member.addCookies([cookie(auth.createSession(recipient.id).token)]);
-    await memberPage.goto('/');
+    // The dashboard and transferred folder below define readiness; unrelated
+    // resource load events must not hold an already-rendered recipient page.
+    await memberPage.goto('/', { waitUntil: 'domcontentloaded' });
     await expect(memberPage.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
     await expect(
       memberPage.getByRole('button', { name: `${departed.name} Folder`, exact: true }),

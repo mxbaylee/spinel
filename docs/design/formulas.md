@@ -75,6 +75,15 @@ calculated values. Viewer-specific presentation is transient.
   useful syntax or size guidance without exposing server internals.
 - **Offline:** “Formula unavailable offline.” Definitions remain intact; no
   stale result is presented as authorized or live.
+- **Temporary Save failure:** keep the expression, format and chosen bindings
+  in the same dialog. Explain busy, timeout or temporary unavailability separately
+  from invalid or inaccessible sources. Offer an explicit retry using the existing
+  primary action position; never replay insertion automatically. While a Save is
+  pending, a second activation cannot insert another object. Closing, leaving or
+  losing access cancels pending evaluation before insertion; a late result cannot
+  close or overwrite a newer editing attempt. This uses the existing inline-error
+  pattern, with no new dialog or permission flow. See
+  [SPN-103's recovery decision](../implementation/SPN-103.md#bounded-admission-and-recovery).
 
 Number formatting is independent of expression and result shape. Results must
 remain readable at phone width, using existing page zoom/viewport behavior and
