@@ -21,6 +21,7 @@ type Running = {
   kind: 'runner' | 'dummy';
   child: ChildProcess;
   done: Promise<{ code: number | null; signal: NodeJS.Signals | null }>;
+  closed: Promise<void>;
   output: () => string;
 };
 
@@ -57,7 +58,8 @@ function fixture(t: TestContext) {
   writeFileSync(join(dir, 'package.json'), '{"type":"module"}');
   writeFileSync(
     dummy,
-    `import { appendFileSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+    `import { spawn } from 'node:child_process';
+import { appendFileSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 const [mode, path, value] = process.argv.slice(2);
 if (mode === 'hold') {
   writeFileSync(path, 'ready');
@@ -74,6 +76,24 @@ if (mode === 'hold') {
   await new Promise((resolve) => setTimeout(resolve, 300));
   appendFileSync(value, 'end\\n');
   rmSync(path, { recursive: true });
+} else if (mode === 'leave-worker') {
+  spawn(process.execPath, [process.argv[1], 'wait-worker', path, value], {
+    stdio: 'inherit',
+  }).unref();
+  while (!existsSync(path)) await new Promise((resolve) => setTimeout(resolve, 10));
+  process.exit(0);
+} else if (mode === 'wait-worker') {
+  mkdirSync(path);
+  appendFileSync(value, 'start\\n');
+  // Removing the fixture also stops this worker after a broken runner has
+  // exited early. Inherited pipes let cleanup await its actual termination.
+  while (existsSync(path) && !existsSync(path + '.release')) {
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  if (existsSync(path)) {
+    appendFileSync(value, 'end\\n');
+    rmSync(path, { recursive: true });
+  }
 } else if (mode === 'probe') {
   let state = 'alive';
   try {
@@ -189,7 +209,8 @@ process.kill = (pid, signal) => {
         child.once('exit', (code, signal) => resolve({ code, signal }));
       },
     );
-    const running = { kind, child, done, output: () => output };
+    const closed = new Promise<void>((resolve) => child.once('close', () => resolve()));
+    const running = { kind, child, done, closed, output: () => output };
     processes.push(running);
     return running;
   }
@@ -207,6 +228,7 @@ process.kill = (pid, signal) => {
       clearTimeout(force);
     }
     rmSync(dir, { recursive: true, force: true });
+    await Promise.allSettled(processes.map((run) => run.closed));
   });
 
   async function finish(run: Running) {
@@ -311,6 +333,63 @@ test(
     assert.equal(readFileSync(state, 'utf8'), 'gone', 'the successor must start after group exit');
     assert.ok(readFileSync(signals, 'utf8').split('\n').includes('SIGKILL'));
     assert.deepEqual(await group.done, { code: null, signal: 'SIGKILL' });
+    assert.ok(!existsSync(f.lock));
+  },
+);
+
+test(
+  'an exited command retains its lock until its surviving worker finishes',
+  options,
+  async (t) => {
+    const f = fixture(t);
+    const active = join(f.dir, 'active');
+    const events = join(f.dir, 'events');
+    const first = f.start('runner', [process.execPath, f.dummy, 'leave-worker', active, events]);
+    await until(() => existsSync(active), 'the command to start its worker');
+    const second = f.start('runner', [process.execPath, f.dummy, 'work', active, events]);
+    await until(
+      () =>
+        first.output().includes('waiting for remaining workers') || first.child.exitCode !== null,
+      'the command leader to exit',
+    );
+    assert.equal(first.child.exitCode, null, 'the runner must retain its surviving worker');
+    await until(
+      () => second.output().includes('waiting for another run') || second.child.exitCode !== null,
+      'the successor to wait for the remaining worker',
+    );
+    assert.equal(second.child.exitCode, null, second.output());
+    assert.equal(readFileSync(join(f.lock, 'pid'), 'utf8').split(' ')[0], `${first.child.pid}`);
+    assert.equal(readFileSync(events, 'utf8'), 'start\n');
+    writeFileSync(`${active}.release`, 'finish');
+    await Promise.all([f.finish(first), f.finish(second)]);
+    assert.deepEqual(readFileSync(events, 'utf8').trim().split('\n'), [
+      'start',
+      'end',
+      'start',
+      'end',
+    ]);
+    assert.ok(!existsSync(f.lock));
+  },
+);
+
+test(
+  'the original watchdog still stops a worker after its successful command exits',
+  options,
+  async (t) => {
+    const f = fixture(t);
+    const active = join(f.dir, 'active');
+    const events = join(f.dir, 'events');
+    const first = f.start('runner', [process.execPath, f.dummy, 'leave-worker', active, events]);
+    await until(() => existsSync(active), 'the command to start its worker');
+    const group = Number(readFileSync(join(f.lock, 'pid'), 'utf8').split(' ')[1]);
+    assert.ok(group);
+    const state = join(f.dir, 'state');
+    const second = f.start('runner', [process.execPath, f.dummy, 'probe', state, `${group}`]);
+    const result = await first.done;
+    assert.deepEqual(result, { code: 1, signal: null }, first.output());
+    assert.ok(first.output().includes('over the 8 min limit'), first.output());
+    await f.finish(second);
+    assert.equal(readFileSync(state, 'utf8'), 'gone', 'the successor must start after group exit');
     assert.ok(!existsSync(f.lock));
   },
 );
