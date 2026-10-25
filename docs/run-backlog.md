@@ -85,11 +85,18 @@ terminate the owner's apps or count a resource-aborted check as passing. Save a
 checkpoint before long work, and record any aborted verification and the next
 safe step. Owner, chat
 2026-10-18, after a memory-induced forced pause stalled the backlog run.
+`node scripts/serial.ts <command>` serializes commands using its shared lock,
+checks macOS memory pressure once before startup, and kills the command's
+process group after 8 minutes, for example
+`node scripts/serial.ts npx vitest run lib/sync-transform/tests/cells.test.ts`.
+The runtime pressure and combined process-tree resident-memory monitoring
+required above remain the agent's responsibility; the runner does not poll
+either or enforce the 2 GiB limit.
 
 The owner permits and prefers CI when convenient, including for typecheck, lint
 and backlog checks. This is always available, not conditional on a watchdog abort.
 Keep the PR draft until verified and record deferred or resource-aborted local
-checks honestly. All six required CI gates, independent review of at least 95 with
+checks honestly. All seven required CI gates, independent review of at least 95 with
 no blockers, and the other merge gates still apply. This changes where validation
 runs, not acceptance, and does not authorize paid test hosts. Owner, chat
 2026-10-23, [decision](implementation/backlog-workflow.md#ci-as-the-default-validation-environment),
@@ -191,9 +198,12 @@ mark it ready only when its acceptance criteria and independent review are compl
 Publish early if helpful, but do not treat opening the PR as completing the ticket.
 
 Wait for all required checks on the current head to finish successfully. The
-current set is **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
-and **Playwright smoke**, plus any added repository-required checks. Missing,
+current set is **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
+**Lib tests** and **Playwright smoke**, plus any added repository-required checks. Missing,
 pending, cancelled, skipped or failed required checks do not count as a pass.
+The required Lib tests aggregate must succeed: either every required library
+partition passes, or successful classification explicitly finds no relevant
+library change. A skipped partition is not itself a passing required check.
 For an allowlisted documentation-only change, successful required jobs may
 explicitly report application tests as not applicable; Backlog, Pull request
 and Lint still validate the change. See the narrow path policy in

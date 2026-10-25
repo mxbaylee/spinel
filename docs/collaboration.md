@@ -4,10 +4,14 @@ Sheets and Docs use Univer collaboration in the application server with SQLite
 storage, authenticated access, presence and offline recovery. The integration
 uses public SDK interfaces behind a TypeScript boundary. The owner chose this
 approach on 2026-10-17 (decision [#31](implementation/SPN-012.md#legacy-decision-31-collaboration-independent-of-the-soak)), then on 2026-10-19 chose to replace it
-with Spinel's own sync: SPN-056 (merging concurrent edits), SPN-057 (the sync
-server), SPN-058 (the client) and SPN-059 (moving every document over and
-removing Univer collaboration). That grooming retired the SPN-010 limits
-experiment and the SPN-013 queue.
+with Spinel's own sync, originally scoped as SPN-056 through SPN-059. That
+grooming retired the SPN-010 limits experiment and the SPN-013 queue.
+
+The [staged landing](implementation/sync-staged-landing-2026-10-25.md#land-the-library-and-retain-spn-056-for-integrated-review)
+now separates SPN-104 (the transform library), SPN-057 (the sync server),
+SPN-058 (the client), the retained SPN-056 (independent integrated review), and
+SPN-059 (cutover and removal of Univer collaboration). The replacement remains
+inactive until the server/client work and integrated review pass.
 
 ## Storage boundary
 
@@ -134,18 +138,23 @@ and then reintroducing it without an ID retains the old ID in composition while
 sequential application leaves it absent. The tested editor operations preserve
 their IDs; content and formatting matched in the independent replacement matrix.
 
+The same patch fixes how a text style that replaces a run's style (REPLACE, as
+the format painter sends) transforms past a concurrent style that merges
+(COVER): stock 1.1.0 overrides the merged style's keys only where the
+replacing style's value is truthy, so a concurrent bold survived a winning
+`bl: 0` on one screen only. Any key the replacing style sets now wins.
+
 The installer validates the version and whole-file SHA-256 of both ESM and CJS
 builds before writing either, accepts an already repaired installation, and
 rejects unfamiliar bytes. It does not read or modify Pro packages. Docker copies
 the installer before `npm ci`; the dependency's license stays with its package,
 and the patch's attribution is in `THIRD-PARTY-NOTICES.md`.
 
-When upgrading core, first test sequential versus composed replacements,
-including missing/empty paragraph arrays and stable identities, and run the rich
-Doc/reconnect browser regressions against the unmodified candidate. Remove the
-installer and postinstall hook when upstream passes. Otherwise review the new
-source and update the narrowly scoped repair and hashes explicitly; never bypass
-the guard merely to make installation pass.
+The patch is temporary: SPN-099 removes it when Spinel upgrades to a Univer
+release with the fixes. The link fixes are upstream as
+[dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938). If
+upstream fixes any of them another way, Spinel follows upstream rather than
+re-patching. Never bypass the guard just to make an install pass.
 
 ## Verification completed
 
@@ -200,11 +209,65 @@ stays offline and reports unsaved work until explicitly reconnected. Recovery
 and a subsequent reload preserve the edit with exactly one durable revision
 increment, so an idempotent cell value cannot conceal duplicate application.
 
+## Merging concurrent edits
+
+[`lib/sync-transform/`](../lib/sync-transform/README.md) (SPN-104, originally SPN-056) merges two
+people's concurrent Sheet and Doc edits so both screens end with the same
+document. It is the first implementation slice replacing Univer collaboration,
+because the owner chose to rewrite it rather than keep the closed-source
+transforms (owner, chat 2026-10-19). It is written from the open-source
+mutation definitions only; `@univerjs-pro/collaboration` was never read.
+
+- **Its own package** with Univer as peer dependencies and no server or DOM
+  imports, so the sync server (SPN-057) and the client (SPN-058) share it
+  (AGENTS.md).
+- **Pure transforms read caller-supplied base cells.**
+  `transform(a, b, side, { cells })` keeps no document store and performs no
+  I/O. Its `cells(unitId, subUnitId, row, col)` callback returns the cell at
+  the revision both sequences started from, with styles inline, or null or
+  undefined for an absent cell. The transform reads cells where two writes
+  meet and for every absolute write in either input, even without a conflict;
+  it applies earlier mutations in each sequence to those cells itself.
+  Omitting the callback when those reads are needed throws a `TypeError`.
+  Wrong base cells can give a wrong merge the transform cannot detect (the
+  replay merge, [SPN-056 decision 29](implementation/SPN-056.md#29-resolve-same-cell-writes-by-replaying-them-through-univers-own-merge-on-the-base-cells-the-replay-merge);
+  [package contract](../lib/sync-transform/README.md#contract)).
+- **The server supplies the incoming batch's base-revision cells.** A client
+  keeps a confirmed snapshot of the server's state at the last revision it
+  applied, before its own pending edits. It reads that snapshot when rebasing
+  an incoming edit past its sent batch, and that snapshot with the sent batch
+  applied when rebasing past its unsent edits. The confirmed snapshot must
+  match the server's state at that revision exactly; the live document
+  including all optimistic edits is not that base (SPN-057 and SPN-058).
+- **Unsupported mutations are rejected, never guessed at.** A wrong guess makes
+  two screens drift silently; a rejection is visible and SPN-059 hides the menus
+  that produce one. The package README lists them.
+- **Conflicts go to the side the server accepted first**, per cell, index or
+  key, so the other person's unrelated changes to the same cell survive.
+- **Senders inline styles, keep doc paragraph ids, send a removed sheet's
+  index, mark a shift's MoveRange and give new docs their drawing
+  containers**, because these facts differ per client or are missing from
+  Univer's mutations and cannot be supplied by the base-cell lookup (package
+  README, "What a sender must do").
+- **The server checks whole-workbook invariants.** Two edits that each keep at
+  least one sheet, or one visible sheet, can together remove them all; no
+  transform of the pair can see that. Before persistence or broadcast, the
+  final candidate must also have matching worksheet IDs, snapshot keys and
+  order, with case-insensitively unique sheet names. The transform refuses
+  concurrent name/restore collisions as `name-race`; the server additionally
+  rejects malformed assignments against unchanged sheets. Reopening a native
+  snapshot must not be relied on to repair names, since that can change formula
+  targets ([decision 37](implementation/SPN-056.md#37-refuse-concurrent-worksheet-identity-collisions)).
+- **Verified against Univer itself.** Each transform pair, and a seeded
+  100,000-mutation run of two clients and a server, are checked with the real
+  open-source handlers running headless.
+
 ## Related work and limits
 
 This integration does not establish an unlimited editor count or a
 more-than-a-day soak. Rather than measure Univer's limits (the retired SPN-010)
-or queue editors past them (the retired SPN-013), SPN-056 to SPN-059 replace it.
+or queue editors past them (the retired SPN-013), the staged library, server,
+client, integrated review and cutover tickets above replace it.
 SPN-017's raw socket tests cover missing cookies, missing/foreign document scope,
 stale sessions, hostile origins, single-use tickets, a second-document JOIN,
 viewer edits with a forged owner ID, and downgrade/removal after JOIN. A positive
@@ -222,7 +285,6 @@ Public references:
 [identity](https://docs.univer.ai/server/collaboration/identity-and-authorization),
 [middleware](https://docs.univer.ai/server/collaboration/middleware-and-events),
 [presence](https://docs.univer.ai/server/collaboration/presence).
-
 
 ### Profile appearance and following
 
