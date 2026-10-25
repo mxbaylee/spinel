@@ -134,6 +134,67 @@ jobs:
         if: needs.changes.outputs.docs_only != 'true'
         run: npm ci
       # lib/ runs in its own job below.
+      # WIP only: prove the isolated serial regressions detect their intended faults.
+      # Remove this step after recording its CI evidence.
+      - name: Verify serial regression controls
+        if: needs.changes.outputs.docs_only != 'true'
+        run: |
+          cat > "$RUNNER_TEMP/serial-faults.ts" <<'TS'
+          import assert from 'node:assert/strict';
+          import { spawnSync } from 'node:child_process';
+          import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+          import { join } from 'node:path';
+
+          const source = readFileSync('scripts/serial.ts', 'utf8');
+          const dir = mkdtempSync(join(process.env.RUNNER_TEMP!, 'serial-faults-'));
+          const faults = [
+            {
+              name: 'breaker',
+              remove: '    mkdirSync(breaker);',
+              test: 'six simultaneous waiters',
+              expected: 'serial fixture: overlapping workloads',
+            },
+            {
+              name: 'expired-identity',
+              remove: '  if (held > expired) return true;',
+              test: 'an expired lock',
+              expected: 'expired identity must not be consulted or signalled',
+            },
+            {
+              name: 'early-release',
+              remove: [
+                '    // Signal delivery is asynchronous. Keep the lock until a later check',
+                '    // observes that the abandoned run has gone, including its workers.',
+                '    return false;',
+              ].join('\n'),
+              test: 'a dead runner past the limit',
+              expected: 'the successor must start after group exit',
+            },
+          ];
+          try {
+            for (const fault of faults) {
+              assert.equal(source.split(fault.remove).length, 2, fault.name);
+              const path = join(dir, fault.name + '.ts');
+              writeFileSync(path, source.replace(fault.remove, ''));
+              const result = spawnSync(process.execPath, [
+                '--test', '--test-name-pattern=' + fault.test, 'scripts/serial.test.ts',
+              ], {
+                env: { ...process.env, SPINEL_SERIAL_TEST_SOURCE: path },
+                encoding: 'utf8',
+                timeout: 30_000,
+              });
+              const output = result.stdout + result.stderr;
+              assert.ifError(result.error);
+              assert.equal(result.signal, null, output);
+              assert.notEqual(result.status, 0, output);
+              assert.ok(output.includes(fault.expected), output);
+              console.log('Detected ' + fault.name + ': ' + fault.expected);
+            }
+          } finally {
+            rmSync(dir, { recursive: true, force: true });
+          }
+          TS
+          node "$RUNNER_TEMP/serial-faults.ts"
       - name: Unit tests
         if: needs.changes.outputs.docs_only != 'true'
         run: npm test -- --exclude 'lib/**'
@@ -175,11 +236,6 @@ jobs:
         if: steps.changes.outputs.run
         run: npm ci
       - name: Lib tests
-        if: steps.changes.outputs.run
-        # WIP negative control: demonstrate the newly found admission bug in CI
-        # before repairing it. Remove this duplicate run after the regression fails.
-        run: npx vitest run lib/sync-transform/tests/transform.test.ts
-      - name: Full lib tests
         if: steps.changes.outputs.run
         # A path filter: it selects every test whose path holds "lib/", which
         # today is only lib/, the same set the unit job excludes.

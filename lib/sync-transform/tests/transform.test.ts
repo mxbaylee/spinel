@@ -188,26 +188,22 @@ test.each<[string, Mutation]>([
     'inserted column info',
     { id: structureIds.insertCol, params: { ...target, colInfo: { 0: { s: 'a1' } } } },
   ],
-  ...['defaultStyle', 'rowData', 'columnData'].map(
-    (slot): [string, Mutation] => [
-      `an inserted sheet's ${slot}`,
-      {
-        id: structureIds.insertSheet,
-        params: {
-          unitId: 'wb',
-          index: 0,
-          sheet: { id: 'new', [slot]: slot === 'defaultStyle' ? 'a1' : { 0: { s: 'a1' } } },
-        },
+  ...['defaultStyle', 'rowData', 'columnData'].map((slot): [string, Mutation] => [
+    `an inserted sheet's ${slot}`,
+    {
+      id: structureIds.insertSheet,
+      params: {
+        unitId: 'wb',
+        index: 0,
+        sheet: { id: 'new', [slot]: slot === 'defaultStyle' ? 'a1' : { 0: { s: 'a1' } } },
       },
-    ],
-  ),
-  ...['from', 'to'].map(
-    (part): [string, Mutation] => {
-      const mutation = move('s1');
-      mutation.params[part].value = { 0: { 0: { s: 'a1' } } };
-      return [`a range move's ${part} cells`, mutation];
     },
-  ),
+  ]),
+  ...['from', 'to'].map((part): [string, Mutation] => {
+    const mutation = move('s1');
+    mutation.params[part].value = { 0: { 0: { s: 'a1' } } };
+    return [`a range move's ${part} cells`, mutation];
+  }),
 ])('refuses a style id in %s', (_, mutation) => {
   expect(() => transform([mutation], [], 'left')).toThrow(/needs inline styles/);
   expect(() => transform([], [mutation], 'right')).toThrow(/needs inline styles/);

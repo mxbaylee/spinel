@@ -15,8 +15,8 @@ import type { Family } from './family.ts';
 import { cutBy, merges } from './merges.ts';
 import { markRewrites, names, refuseFormulaRaces, refuseNameRaces } from './names.ts';
 import { markError, mergeMeets, refuseCut } from './shifts.ts';
-import { properties } from './properties.ts';
-import { settings } from './settings.ts';
+import { properties, propertyIds } from './properties.ts';
+import { settings, settingIds } from './settings.ts';
 import { baseError, Cells, claimError, isAbsolute } from './state.ts';
 import type { BaseCells } from './state.ts';
 import {
@@ -30,6 +30,7 @@ import {
 import { flip, RefusedEditError, UnsupportedMutationError } from './types.ts';
 import type { Mutation, Side } from './types.ts';
 import { cellIds, ghostId, matrixWrites } from './writes.ts';
+import type { Matrix } from './writes.ts';
 
 const families: Family[] = [cells, properties, merges, settings, drawings, docs, names];
 
@@ -61,7 +62,8 @@ function familyOf(mutation: Mutation) {
  * cannot know from the mutations alone: inline styles, RemoveSheet's `index`,
  * kept paragraph ids and a new doc's drawing containers (SPN-058). Since
  * decision 29 (docs/implementation/SPN-056.md) the transforms also read the
- * base cells, but only where two writes meet one cell.
+ * base cells where two writes meet one cell, and to validate every absolute
+ * write against the exact base it was made on.
  */
 function check(mutation: Mutation): void {
   const { id, params: p } = mutation;
@@ -94,18 +96,42 @@ function check(mutation: Mutation): void {
   if (id === structureIds.removeSheet && !Number.isInteger(p.index)) {
     throw new TypeError('RemoveSheetMutation needs `index`, its position before removal.');
   }
-  if (id.startsWith('sheet.') && namesStyleId(p)) {
+  if (namesStyleId(mutation)) {
     throw new TypeError(`${id} needs inline styles: style ids differ on every client.`);
   }
 }
 
-/** Whether any `s` or `defaultStyle` in a sheet mutation's params is a style id, not a style. */
-function namesStyleId(value: unknown): boolean {
-  if (typeof value !== 'object' || value === null) return false;
-  return Object.entries(value).some(
-    ([key, v]) =>
-      ((key === 's' || key === 'defaultStyle') && typeof v === 'string') || namesStyleId(v),
-  );
+/** Only actual style slots contain style ids; custom data may use the same keys. */
+function namesStyleId({ id, params: p }: Mutation): boolean {
+  const dataStyles = (data: Record<number, { s?: unknown } | null> | undefined) =>
+    Object.values(data ?? {}).some((value) => typeof value?.s === 'string');
+  const cellStyles = (matrix: Matrix) =>
+    matrixWrites(matrix).some(({ value }) => typeof value?.s === 'string');
+  switch (id) {
+    case cellIds.setRangeValues:
+      return cellStyles(p.cellValue);
+    case cellIds.moveRange:
+      return cellStyles(p.from?.value) || cellStyles(p.to?.value);
+    case settingIds.defaultStyle:
+      return typeof p.defaultStyle === 'string';
+    case propertyIds.rowData:
+      return dataStyles(p.rowData);
+    case propertyIds.colData:
+      return dataStyles(p.columnData);
+    case structureIds.insertRow:
+      return dataStyles(p.rowInfo);
+    case structureIds.insertCol:
+      return dataStyles(p.colInfo);
+    case structureIds.insertSheet:
+      return (
+        typeof p.sheet?.defaultStyle === 'string' ||
+        cellStyles(p.sheet?.cellData) ||
+        dataStyles(p.sheet?.rowData) ||
+        dataStyles(p.sheet?.columnData)
+      );
+    default:
+      return false;
+  }
 }
 
 /**

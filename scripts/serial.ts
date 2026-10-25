@@ -63,6 +63,9 @@ const stale = () => {
     try {
       process.kill(-group, 'SIGKILL');
     } catch {}
+    // Signal delivery is asynchronous. Keep the lock until a later check
+    // observes that the abandoned run has gone, including its workers.
+    return false;
   }
   return true;
 };

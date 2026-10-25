@@ -3,7 +3,7 @@ import { expect } from 'vitest';
 import { flip, transform } from '../index.ts';
 import type { Mutation, Side } from '../index.ts';
 import { cellIds } from '../src/writes.ts';
-import { Replica } from './harness.ts';
+import { Replica, snapshotCells } from './harness.ts';
 import { simulate } from './simulate.ts';
 import type { Generate, Step } from './simulate.ts';
 
@@ -142,21 +142,32 @@ function smaller(mutation: Mutation): Mutation[] {
 
 /**
  * The two clients' mutations of `steps` as one pair, `a` (client 0) and `b`
- * (client 1), if both orders of the pair alone already differ on some side.
+ * (client 1), if both orders replay successfully but their snapshots differ
+ * on some side. Undefined if collapsing the script into a pair cannot be
+ * replayed, and null if no divergent pair is found.
  */
 function asPair(document: Document, steps: Step[]) {
   const of = (client: number) =>
     steps.flatMap((step) => ('edit' in step && step.client === client ? step.edit : []));
   const [a, b] = [of(0), of(1)];
   if (a.length === 0 || b.length === 0) return null;
+  const cells = snapshotCells(document.workbook);
   for (const side of ['left', 'right'] as Side[]) {
     const [x, y] = [new Replica(document), new Replica(document)];
     try {
-      x.apply([...b, ...transform(a, b, side)]);
-      y.apply([...a, ...transform(b, a, flip(side))]);
-      expect(x.snapshot()).toEqual(y.snapshot());
+      x.apply([...b, ...transform(a, b, side, { cells })]);
+      y.apply([...a, ...transform(b, a, flip(side), { cells })]);
+      const [left, right] = [x.snapshot(), y.snapshot()];
+      try {
+        expect(left).toEqual(right);
+      } catch {
+        return { a, b, side };
+      }
     } catch {
-      return { a, b, side };
+      // Collapsing a script can invalidate its edits or turn them into a
+      // refused race. That is not evidence of different landed snapshots;
+      // shrinkSeed still reports the replayed script's classified failure.
+      return undefined;
     } finally {
       x.univer.dispose();
       y.univer.dispose();
