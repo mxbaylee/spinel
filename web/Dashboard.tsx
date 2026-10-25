@@ -144,6 +144,7 @@ export function Dashboard({
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
   const sharingFocus = useRef<HTMLButtonElement | null>(null);
+  const offlineFocus = useRef<HTMLButtonElement | null>(null);
   const [spaceAction, setSpaceAction] = useState<{
     item: SpaceFile;
     mode: SpaceRootActionMode;
@@ -368,6 +369,7 @@ export function Dashboard({
   }
   function navigate(id: string | null, check = true) {
     if (check && id !== currentId && !navigation.allow()) return;
+    offline.clearMessage();
     if (check) returnContext.current = null;
     setQuery({ ...emptySearch });
     setDraft('');
@@ -528,7 +530,8 @@ export function Dashboard({
               ? 'Remove from device'
               : 'Available offline on this device',
         disabled: offline.busy !== null,
-        onClick: () => {
+        onClick: (trigger) => {
+          offlineFocus.current = trigger ?? null;
           void offline.toggle(item);
         },
       });
@@ -748,8 +751,24 @@ export function Dashboard({
           )}
         </>
       ) : null}
-      {offline.message && (
+      {!framedEditor && offline.message && (
         <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+      )}
+      {framedEditor && offline.message && (
+        <Modal
+          title="Offline availability"
+          icon={offline.message.failed ? 'warning' : 'info'}
+          open
+          onOpenChange={(open) => {
+            if (!open) offline.clearMessage();
+          }}
+          finalFocus={() => (offlineFocus.current?.isConnected ? offlineFocus.current : true)}
+        >
+          <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+          <button className="sp-control" onClick={offline.clearMessage}>
+            Done
+          </button>
+        </Modal>
       )}
       {!framedEditor && sharedFailure}
       {!loaded || viewLoading || currentId !== viewId ? (

@@ -255,6 +255,22 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
         await expect(panel.getByText('Calculating…', { exact: true })).toHaveCount(0, {
           timeout: 20_000,
         });
+        for (const button of await panel.getByRole('button').all()) {
+          const box = await button.boundingBox();
+          expect(box).not.toBeNull();
+          expect(box!.x).toBeGreaterThanOrEqual(0);
+          expect(box!.x + box!.width).toBeLessThanOrEqual(width);
+          if (width === 390) {
+            expect(box!.width).toBeGreaterThanOrEqual(44);
+            expect(box!.height).toBeGreaterThanOrEqual(44);
+          }
+        }
+        expect(await panel.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
+        await target.screenshot({
+          path: `test-results/theme-screenshots/formulas-${info.project.name}-readout-${theme}-${width}.png`,
+          fullPage: true,
+          animations: 'disabled',
+        });
         await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
         await expect(panel).toHaveCount(0);
         await target.locator('[contenteditable="true"][data-u-comp="editor"]').focus();

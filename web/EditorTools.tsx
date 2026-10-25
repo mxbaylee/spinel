@@ -9,6 +9,7 @@ import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
 import { guestItemId } from './documentAccess.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
+import './fileDialog.css';
 
 export function EditorTools({
   id,
@@ -112,7 +113,9 @@ export function EditorTools({
               embedded
             />
           )}
-          {panel === 'Formulas' && formulas?.(() => setPanel(null))}
+          {panel === 'Formulas' && (
+            <div className="file-dialog">{formulas?.(() => setPanel(null))}</div>
+          )}
         </Modal>
       )}
     </>

@@ -48,14 +48,18 @@ that isn't waiting on another is next.
   (private until published), README and tests, one public `index.ts`, and no
   imports from Spinel's `src/`, `web/` or `server/`. Spinel imports it by package
   name. The first ticket to add one sets up the `lib/*` npm workspace and adds
-  `lib` to typecheck, lint, format and test runs, and to both Dockerfile stages
-  (`lib/*/package.json` before `npm ci`). Owner, chat 2026-10-19.
+  `lib` to typecheck, lint, format and test runs, and to both Dockerfile stages.
+  The build stage copies each lib's `package.json` by its own path before
+  `npm ci`, one line per lib, since a `COPY` glob flattens directories. Owner,
+  chat 2026-10-19; reworded 2026-10-22.
 - **Code copied from Univer Workspace** or any other Apache-2.0 project keeps its
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 - **CI may be the default for validation**, including typecheck, lint, backlog,
   unit and browser checks. Draft pushes do not require local checks to pass first.
-  Keep unverified work draft; all six CI gates, independent review >=95 with no
+  Keep unverified work draft; all seven CI gates, independent review >=95 with no
   blockers and required visual approval remain merge requirements. Local workloads
   still obey the memory watchdog. Owner, chat 2026-10-23;
   [decision](docs/implementation/backlog-workflow.md#ci-as-the-default-validation-environment).
+  The seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
+  tests changed. Owner, chat 2026-10-22.

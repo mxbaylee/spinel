@@ -15,11 +15,13 @@ function Fixture({
   printFailure = false,
   saved = true,
   presence = false,
+  formulas = false,
 }: {
   dialog?: boolean;
   printFailure?: boolean;
   saved?: boolean;
   presence?: boolean;
+  formulas?: boolean;
 }) {
   const chrome = useEditorChrome();
   return (
@@ -61,6 +63,23 @@ function Fixture({
         print={async () => {
           if (printFailure) throw new Error('Could not open printing.');
         }}
+        formulas={
+          formulas
+            ? (close) => (
+                <div className="doc-formulas">
+                  <ul>
+                    <li>
+                      <button onClick={close}>
+                        =123456789+123456789+123456789+123456789+123456789+123456789
+                      </button>
+                      <span className="formula-value">740740734</span>
+                    </li>
+                  </ul>
+                  <button onClick={fn()}>Refresh formulas</button>
+                </div>
+              )
+            : undefined
+        }
       />
       <div className="univer-container" style={{ background: 'var(--sp-panel)', padding: 24 }}>
         Geometry fixture. Native selection and rendering are checked in Playwright.
@@ -158,7 +177,7 @@ export const Phone: Story = {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByRole('button', { name: 'Save details: Saved' }).getBoundingClientRect().width,
-    ).toBe(window.innerWidth <= 600 ? 44 : 144);
+    ).toBe(window.innerWidth <= 640 ? 44 : 144);
     await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   },
 };
@@ -351,6 +370,15 @@ export const OfflineFormulas: Story = {
     await expect(within(dialog).getByText('=123')).toBeVisible();
     await expect(within(dialog).getByText('123', { exact: true })).toBeVisible();
     await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+  },
+};
+/** The actual populated native readout is also retained by doc-formulas.spec.ts. */
+export const EditableFormulas: Story = {
+  args: { children: <Fixture formulas /> },
+  play: async ({ canvasElement }) => {
+    const dialog = await openTool(canvasElement, 'Formulas');
+    await expect(within(dialog).getByRole('button', { name: 'Refresh formulas' })).toBeEnabled();
+    await assertDialogTargets(dialog);
   },
 };
 export const TheatreDialog: Story = {
