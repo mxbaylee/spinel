@@ -148,7 +148,9 @@ jobs:
   lib-tests:
     name: Lib tests
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Full runs took 17 minutes on one runner and projected 24–25 on a slower
+    # one. Keep every test and one worker, with headroom for runner variation.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
