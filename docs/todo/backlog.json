@@ -27,7 +27,8 @@
       "SPN-081",
       "SPN-103",
       "SPN-104",
-      "SPN-049"
+      "SPN-049",
+      "SPN-101"
     ]
   },
   "size": {
@@ -44,8 +45,5 @@
       "docs/todo/readme.md"
     ]
   },
-  "pr_title_exceptions": [
-    "🧹 Groom backlog",
-    "⬆️ Bump"
-  ]
+  "pr_title_exceptions": ["🧹 Groom backlog", "⬆️ Bump"]
 }

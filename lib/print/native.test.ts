@@ -420,7 +420,26 @@ test('rich formatting embeds all prepared faces and renders mixed-family Unicode
   // silently use synthetic styling or a machine's installed font.
   const pdf = Buffer.from(result.bytes!).toString('latin1');
   expect((pdf.match(/\/FontFile[23]\s+\d+\s+0\s+R/g) ?? []).length).toBeGreaterThanOrEqual(5);
+  const embeddedNames = [...pdf.matchAll(/\/FontName\s+\/(?:[A-Z]{6}\+)?([^\s<>/]+)/g)].map(
+    (match) => match[1],
+  );
+  expect(embeddedNames).toEqual(
+    expect.arrayContaining([
+      'AtkinsonHyperlegible-Regular',
+      'AtkinsonHyperlegible-Bold',
+      'AtkinsonHyperlegible-Italic',
+      'AtkinsonHyperlegible-BoldItalic',
+      'NotoSansSymbols2-Regular',
+    ]),
+  );
   expect(new Set(pages[0].items.map((item) => item.fontName)).size).toBeGreaterThanOrEqual(5);
+  const styleItems = ['Regular café', 'Bold', 'Italic', 'Both'].map((text) =>
+    pages[0].items.find((item) => item.str.trim() === text),
+  );
+  expect(styleItems.every(Boolean)).toBe(true);
+  expect(new Set(styleItems.map((item) => item!.fontName)).size).toBe(4);
+  const fallback = pages[0].items.find((item) => item.str.includes('♜'))!;
+  expect(styleItems.map((item) => item!.fontName)).not.toContain(fallback.fontName);
 }, 60_000);
 
 test('native overflow includes its actual ink and outer thick borders stay inside the complete crop', async () => {
@@ -466,6 +485,80 @@ test('native overflow includes its actual ink and outer thick borders stay insid
   expect(Math.min(...redRows)).toBeGreaterThanOrEqual(35);
   expect(redColumns.size).toBeGreaterThan(265);
   expect(redRows.size).toBeGreaterThan(72);
+}, 90_000);
+
+test('a wide worksheet shrinks once across both vertical pages and retains its right edge and final row', async () => {
+  const input = await singleCell('', 40);
+  const sheet = input.snapshot.sheets.sheet;
+  sheet.rowCount = 80;
+  sheet.columnCount = 4;
+  sheet.defaultColumnWidth = 350;
+  sheet.showGridlines = 0;
+  const rightStyle = {
+    fs: 16,
+    ht: HorizontalAlign.RIGHT,
+    bd: { r: { s: BorderStyleTypes.THICK, cl: { rgb: '#dd2244' } } },
+  };
+  sheet.cellData = {};
+  for (let row = 0; row < 80; row++) sheet.cellData[row] = { 3: { v: '', s: rightStyle } };
+  sheet.cellData[0][0] = { v: 'TOP LEFT', s: { fs: 16 } };
+  sheet.cellData[0][3]!.v = 'TOP RIGHT';
+  sheet.cellData[79][0] = { v: 'FINAL LEFT', s: { fs: 16 } };
+  sheet.cellData[79][3]!.v = 'FINAL RIGHT';
+
+  const [result] = await run([{ input }]);
+  expect(result).toMatchObject({ ok: true, pages: 2, restored: true, remainingFonts: 0 });
+  const pages = await retainPdf('wide-sheet-vertical-continuation', result.bytes!);
+  expect(pages).toHaveLength(2);
+  const allText = pages.map((page) => page.text).join(' ');
+  for (const marker of ['TOP LEFT', 'TOP RIGHT', 'FINAL LEFT', 'FINAL RIGHT'])
+    expect(allText.split(marker)).toHaveLength(2);
+  expect(pages[0].text).toContain('TOP LEFT');
+  expect(pages[0].text).toContain('TOP RIGHT');
+  expect(pages[1].text).toContain('FINAL LEFT');
+  expect(pages[1].text).toContain('FINAL RIGHT');
+
+  // An authored font size is CSS points at the native 96px/inch layout scale.
+  // The 1400px sheet fits the 523pt printable width, giving about 7.97pt text;
+  // the outside border adds less than 0.02pt to this independent expectation.
+  const expectedPointSize = ((16 * 96) / 72) * (523 / 1400);
+  for (const page of pages) {
+    expect(page.view).toEqual([0, 0, 595, 842]);
+    const left = page.items.find((item) => item.str.includes('LEFT'))!;
+    const right = page.items.find((item) => item.str.includes('RIGHT'))!;
+    expect(left.height).toBeCloseTo(expectedPointSize, 1);
+    expect(right.height).toBeCloseTo(expectedPointSize, 1);
+    expect(right.transform[4] + right.width).toBeGreaterThan(550);
+    expect(right.transform[4] + right.width).toBeLessThanOrEqual(559.5);
+
+    const redColumns = new Set<number>(),
+      redRows = new Set<number>();
+    let marginInk = 0;
+    for (let y = 0; y < page.height; y++)
+      for (let x = 0; x < page.width; x++) {
+        const offset = (y * page.width + x) * 4;
+        const r = page.pixels[offset],
+          g = page.pixels[offset + 1],
+          b = page.pixels[offset + 2];
+        if (r > 150 && g < 100 && b < 130) {
+          redColumns.add(x);
+          redRows.add(y);
+        }
+        if ((x < 35 || x >= 560 || y < 35 || y >= 807) && Math.min(r, g, b) < 250) marginInk++;
+      }
+    expect(Math.min(...redColumns)).toBeGreaterThanOrEqual(556);
+    expect(Math.max(...redColumns)).toBeGreaterThanOrEqual(557);
+    expect(Math.max(...redColumns)).toBeLessThanOrEqual(559);
+    expect(redRows.size).toBeGreaterThan(350);
+    expect(marginInk).toBe(0);
+    // Both sides of the cut include the same right border. The final page also
+    // retains its bottom tail, rather than adding horizontal pages or spilling.
+    if (page === pages[0]) expect(Math.max(...redRows)).toBeGreaterThanOrEqual(804);
+    else {
+      expect(Math.min(...redRows)).toBeLessThanOrEqual(37);
+      expect(Math.max(...redRows)).toBeGreaterThan(450);
+    }
+  }
 }, 90_000);
 
 test('rejects extreme text geometry before native layout and accepts a cleared font size', async () => {

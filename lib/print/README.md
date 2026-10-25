@@ -119,6 +119,8 @@ this does not permit SPN-075 to drop content or weaken its full export contract.
 italic state, and license identifier/text/source. Callers attest licensing; the
 package checks bounded tables, embedding permissions and Unicode cmap coverage.
 Family/style selection and grapheme fallback are explicit and deterministic.
+Each selected face has its own native alias, preserving the admitted font even
+when the backend parses native style shorthand differently.
 Unknown families, missing faces/glyphs and unsupported variable/restricted fonts
 fail. No host font or synthetic weight/style fills a missing input.
 

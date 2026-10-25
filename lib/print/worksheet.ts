@@ -15,21 +15,25 @@ import { resourceRecord } from './resources.ts';
 
 /** One admission ledger spans filter evaluation, geometry and final native drawing. */
 export function displayTextBudget(limits: Readonly<PrintLimits>, check: () => void) {
-  const admitted = new Set<string>();
+  const admitted = new Map<string, Set<string>>();
   let characters = 0;
   return {
     check,
     admit(sheet: string, row: number, column: number, cell: ICellDataForSheetInterceptor) {
       check();
-      const key = JSON.stringify([sheet, row, column]);
-      if (admitted.has(key)) return;
+      // Retain a worksheet id once: copying a long input id into every cell key
+      // would amplify snapshot bytes outside the displayed-character budget.
+      let cells = admitted.get(sheet);
+      const key = `${row}:${column}`;
+      if (cells?.has(key)) return;
       const text = cell.p?.body?.dataStream ?? getDisplayValueFromCell(cell);
       if (typeof text !== 'string')
         throw new PrintError('invalid-input', 'Invalid PDF displayed text.');
       characters += text.length;
       if (!Number.isSafeInteger(characters) || characters > limits.textCharacters)
         throw new PrintError('limit', 'PDF formatted text exceeds its layout budget.');
-      admitted.add(key);
+      if (!cells) admitted.set(sheet, (cells = new Set()));
+      cells.add(key);
     },
   };
 }

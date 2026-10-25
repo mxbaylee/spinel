@@ -160,7 +160,7 @@ function canvasGlobals(pixelLimit: number, check: () => void) {
 }
 
 /**
- * Call only inside the host's isolated worker/process. Never stream partial bytes.
+ * Call only inside the host's isolated process. Never stream partial bytes.
  * All selected content, complete native text layout, pages and cleanup must succeed.
  */
 export async function renderSheetPdfCandidate(

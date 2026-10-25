@@ -217,8 +217,10 @@ export class PreparedFonts {
         this.names.set(key, family);
       }
       const bytes = Buffer.from(font.bytes);
-      const alias =
-        this.faces.find((face) => face.family === family)?.alias ?? `PrintFont${this.faces.length}`;
+      // Each admitted face has an exact cmap/style contract. Give it its own
+      // native family alias so a canvas font parser cannot substitute a sibling
+      // style (notably when parsing Univer's `italic normal` font shorthand).
+      const alias = `PrintFont${this.faces.length}`;
       this.faces.push({
         family,
         alias,

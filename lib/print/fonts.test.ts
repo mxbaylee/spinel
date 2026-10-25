@@ -3,7 +3,7 @@ import { PRINT_LIMITS } from './index.ts';
 import { PreparedFonts } from './fonts.ts';
 import { fixtureFonts } from './font-fixtures.ts';
 
-test('admits licensed regular/bold/italic faces with deterministic aliases and Unicode runs', async () => {
+test('admits licensed regular/bold/italic faces with distinct deterministic aliases and Unicode runs', async () => {
   const input = await fixtureFonts();
   const fonts = new PreparedFonts(
     input,
@@ -11,14 +11,14 @@ test('admits licensed regular/bold/italic faces with deterministic aliases and U
     ['Noto Sans Symbols 2'],
     PRINT_LIMITS,
   );
-  for (const [bold, italic] of [
+  for (const [index, [bold, italic]] of [
     [false, false],
     [true, false],
     [false, true],
     [true, true],
-  ])
+  ].entries())
     expect(fonts.runs('Budget café', undefined, bold, italic)).toEqual([
-      { start: 0, end: 11, family: 'PrintFont0' },
+      { start: 0, end: 11, family: `PrintFont${index}` },
     ]);
   const text = 'Card 🂡';
   const runs = fonts.runs(text, undefined);
