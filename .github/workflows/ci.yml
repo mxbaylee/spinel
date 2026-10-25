@@ -5,14 +5,19 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-    types: [opened, edited, synchronize, reopened, ready_for_review]
+    # Draft commits already run every check; becoming ready changes no code.
+    types: [opened, edited, synchronize, reopened]
 
 permissions:
   contents: read
 
 concurrency:
   group: ci-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  # A running push to main is never cancelled: Lib tests diffs each push against
+  # the one before it, so a cancelled run would leave that push's lib changes
+  # untested on main. A newer push can still replace one that is only pending;
+  # that push's changes were already tested on its up-to-date PR.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   changes:
@@ -21,17 +26,31 @@ jobs:
     timeout-minutes: 5
     outputs:
       docs_only: ${{ steps.changes.outputs.docs_only }}
+      lib_run: ${{ steps.lib-changes.outputs.run }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - id: changes
         run: node scripts/ci/changes.ts
+      - name: Library dependencies
+        id: lib-changes
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -z "${BASE//0/}" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null ||
+            ! git diff --quiet "$BASE" HEAD -- lib scripts/dependencies package.json \
+              package-lock.json vitest.config.ts tsconfig.json .nvmrc .github/workflows/ci.yml; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Nothing lib/ depends on changed since $BASE."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
 
   backlog:
     name: Backlog
@@ -41,7 +60,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
@@ -58,7 +77,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
@@ -77,7 +96,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
@@ -97,7 +116,7 @@ jobs:
         with:
           persist-credentials: false
       - if: needs.changes.outputs.docs_only != 'true'
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
@@ -122,29 +141,109 @@ jobs:
         with:
           persist-credentials: false
       - if: needs.changes.outputs.docs_only != 'true'
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
         if: needs.changes.outputs.docs_only != 'true'
         run: npm ci
+      # lib/ runs in separate partitions below.
       - name: Unit tests
         if: needs.changes.outputs.docs_only != 'true'
-        run: npm test
-      - name: Synthetic Sheet PDF evidence
-        if: always() && needs.changes.outputs.docs_only != 'true'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: sheet-pdf-candidate-evidence
-          path: |
-            output/pdf/spn-101-candidate/*.pdf
-            output/pdf/spn-101-candidate/*.png
-          retention-days: 7
-          if-no-files-found: warn
+        run: npm test -- --exclude 'lib/**'
       - name: Documentation-only change
         if: needs.changes.outputs.docs_only == 'true'
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
+
+  # Separate runners retain maxWorkers: 1 and every seed/assertion. Dense cells,
+  # other cells plus mixed fuzz, and the complement balance the measured work.
+  lib-test-run:
+    name: Lib tests (${{ matrix.suite }})
+    needs: changes
+    if: needs.changes.outputs.lib_run == 'true'
+    runs-on: ubuntu-latest
+    # Existing test timings project roughly 5–7 minutes per partition; leave
+    # headroom for the substantial speed variation between hosted runners.
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [dense-cells, cells-and-fuzz, remaining]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install
+        run: npm ci
+      - name: Lib tests
+        env:
+          SUITE: ${{ matrix.suite }}
+        run: |
+          case "$SUITE" in
+            dense-cells)
+              npx vitest run lib/sync-transform/tests/cells-dense.test.ts
+              ;;
+            cells-and-fuzz)
+              npx vitest run lib/sync-transform/tests/cells.test.ts lib/sync-transform/tests/fuzz.test.ts
+              ;;
+            remaining)
+              # Exact exclusions keep future lib test files in this partition.
+              npx vitest run lib/ \
+                --exclude 'lib/sync-transform/tests/cells-dense.test.ts' \
+                --exclude 'lib/sync-transform/tests/cells.test.ts' \
+                --exclude 'lib/sync-transform/tests/fuzz.test.ts'
+              ;;
+            *)
+              echo "Unknown library partition: $SUITE" >&2
+              exit 1
+              ;;
+          esac
+
+
+      - name: Synthetic Sheet PDF evidence
+        if: always() && matrix.suite == 'remaining'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sheet-pdf-evidence
+          path: |
+            output/pdf/spn-101-candidate/*.pdf
+            output/pdf/spn-101-candidate/*.png
+            output/pdf/spn-101-candidate/*.json
+          retention-days: 7
+          if-no-files-found: warn
+
+  # Keep the policy-required check available for branch protection, including
+  # explicit non-applicable runs. Every required partition must succeed.
+  lib-tests:
+    name: Lib tests
+    needs: [changes, lib-test-run]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Required library validation
+        env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          LIB_RUN: ${{ needs.changes.outputs.lib_run }}
+          RESULT: ${{ needs.lib-test-run.result }}
+        run: |
+          case "$CLASSIFICATION:$LIB_RUN:$RESULT" in
+            success:true:success)
+              echo 'All library partitions passed.'
+              ;;
+            success:false:skipped)
+              echo 'Not applicable — nothing the library tests depend on changed.'
+              ;;
+            *)
+              echo "Library validation incomplete: $CLASSIFICATION:$LIB_RUN:$RESULT"
+              exit 1
+              ;;
+          esac
 
   playwright-run:
     needs: changes
@@ -168,7 +267,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false

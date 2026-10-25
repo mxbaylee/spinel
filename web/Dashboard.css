@@ -48,7 +48,7 @@
   .dashboard-heading-actions {
     flex-shrink: 0;
   }
-  .dashboard-content button {
+  .dashboard-content button:not(.univer-container *) {
     min-height: 44px;
   }
 }

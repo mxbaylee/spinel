@@ -14,9 +14,9 @@ import {
   formulaRequest,
   formulaPaperColors,
 } from './DocFormulas.tsx';
-import { guestItemId, documentPath } from './documentAccess.ts';
-import { VersionNames } from './VersionNames.tsx';
-import { FileExports } from './FileExports.tsx';
+import { documentPath } from './documentAccess.ts';
+import { EditorTools } from './EditorTools.tsx';
+import { useEditorChrome } from './EditorFrame.tsx';
 import { printDocument } from './documentPrint.ts';
 import { UniverDocsPrintPlugin } from '@univerjs-pro/docs-print';
 import printEnglish from '@univerjs-pro/docs-print/locale/en-US';
@@ -29,7 +29,7 @@ import {
   setDocumentPermissionValue,
 } from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
-import { Collaborators, watchPresence } from './Collaborators.tsx';
+import { watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -93,6 +93,7 @@ export function DocEditor({
   onDirty: (dirty: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
+  const chrome = useEditorChrome();
   const formulas = useRef<DocFormulaController | null>(null);
   const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
   const [formulaError, setFormulaError] = useState('');
@@ -409,43 +410,24 @@ export function DocEditor({
   }, [id, spaceId]);
   return (
     <section className="sheet-editor" aria-label="Doc document">
-      <Collaborators people={people} />
       <SaveStatus
         state={status}
-        target={saveStatusTarget}
+        target={chrome?.saveTarget ?? saveStatusTarget}
         onRetry={() => controller.current?.retry()}
       />
-      {uploadError && (
-        <p role="alert">
-          {uploadError}
-          {' Try inserting the file again.'}
-        </p>
-      )}
-      {!guestItemId() && (
-        <>
-          <VersionNames
-            id={id}
-            spaceId={spaceId}
-            saved={!status.dirty && !status.failed && Boolean(controller.current)}
-          />
-          <FileExports
-            id={id}
-            spaceId={spaceId}
-            name={name}
-            saved={!status.dirty && !status.failed && Boolean(controller.current)}
-            print={async () => {
-              if (!print.current) throw new Error('Wait for the document to load.');
-              await print.current();
-            }}
-          />
-        </>
-      )}
-      {Boolean(controller.current) && (
-        <details className="doc-formulas">
-          <summary>Formulas{formulaStates.length ? ` (${formulaStates.length})` : ''}</summary>
-          {editable && (
-            <button
-              onClick={() => {
+      <EditorTools
+        id={id}
+        name={name}
+        spaceId={spaceId}
+        people={people}
+        saved={!status.dirty && !status.failed && Boolean(controller.current)}
+        print={async () => {
+          if (!print.current) throw new Error('Wait for the document to load.');
+          await print.current();
+        }}
+        insertFormula={
+          editable
+            ? () => {
                 try {
                   if (!formulas.current) throw new Error('Wait for the document to load.');
                   setFormulaError('');
@@ -457,34 +439,46 @@ export function DocEditor({
                       : 'Place the cursor in the document first.',
                   );
                 }
-              }}
-            >
-              Insert formula
-            </button>
-          )}
-          {formulaError && <p role="alert">{formulaError}</p>}
-          {!formulaStates.length && (
-            <p>Use a spreadsheet cell, range, or calculation in this Doc.</p>
-          )}
-          <ul>
-            {formulaStates.map(({ formula, result }) => (
-              <li key={formula.id}>
-                {editable ? (
-                  <button onClick={() => setFormulaEdit({ formula })}>
-                    {formula.definition.expression}
-                  </button>
-                ) : (
-                  <code>{formula.definition.expression}</code>
-                )}
-                <FormulaResultView result={result} definition={formula.definition} />
-              </li>
-            ))}
-          </ul>
-          {formulaStates.length > 0 && (
-            <button onClick={() => void formulas.current?.resume()}>Refresh formulas</button>
-          )}
-        </details>
-      )}
+              }
+            : undefined
+        }
+        formulas={
+          controller.current
+            ? (close) => (
+                <div className="doc-formulas">
+                  {formulaError && <p role="alert">{formulaError}</p>}
+                  {!formulaStates.length && (
+                    <p>Use a spreadsheet cell, range, or calculation in this Doc.</p>
+                  )}
+                  <ul>
+                    {formulaStates.map(({ formula, result }) => (
+                      <li key={formula.id}>
+                        {editable ? (
+                          <button
+                            onClick={() => {
+                              close();
+                              setFormulaEdit({ formula });
+                            }}
+                          >
+                            {formula.definition.expression}
+                          </button>
+                        ) : (
+                          <code>{formula.definition.expression}</code>
+                        )}
+                        <FormulaResultView result={result} definition={formula.definition} />
+                      </li>
+                    ))}
+                  </ul>
+                  {formulaStates.length > 0 && (
+                    <button onClick={() => void formulas.current?.resume()}>
+                      Refresh formulas
+                    </button>
+                  )}
+                </div>
+              )
+            : undefined
+        }
+      />
       {formulaEdit && editable && (
         <FormulaDialog
           id={id}
@@ -510,7 +504,11 @@ export function DocEditor({
           }}
         />
       )}
-      {editable && <p className="editor-help">Click the page to write. Type / for commands.</p>}
+      <p className="editor-help" role={uploadError || formulaError ? 'alert' : undefined}>
+        {uploadError
+          ? `${uploadError} Try inserting the file again.`
+          : formulaError || (editable ? 'Click the page to write. Type / for commands.' : '')}
+      </p>
       <div className="univer-container" ref={container} />
     </section>
   );

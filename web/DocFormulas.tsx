@@ -1,4 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Modal } from '../src/ui/redesign/Controls.tsx';
+import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import {
   completeFormula,
   moveFormulaBindings,
@@ -640,19 +643,56 @@ export function FormulaDialog({
   );
 }
 
-export function FormulaReadout({ states }: { states: FormulaState[] }) {
+export function FormulaReadout({
+  states,
+  target,
+}: {
+  states: FormulaState[];
+  /** A framed viewer discloses results from its header, keeping the canvas fixed. */
+  target?: HTMLElement | null;
+}) {
+  const [open, setOpen] = useState(false);
   if (!states.length) return null;
+  const results = (
+    <ul>
+      {states.map(({ formula, result }) => (
+        <li key={formula.id}>
+          <code>{formula.definition.expression}</code>
+          <FormulaResultView definition={formula.definition} result={result} />
+        </li>
+      ))}
+    </ul>
+  );
+  if (target !== undefined)
+    return (
+      target &&
+      createPortal(
+        <>
+          <button
+            className="sp-control"
+            aria-label="Formulas"
+            title="Formulas"
+            onClick={() => setOpen(true)}
+          >
+            <ProfileIcon icon="lucide:list" />
+          </button>
+          <Modal
+            title="Formulas"
+            icon="info"
+            open={open}
+            onOpenChange={setOpen}
+            onBack={() => setOpen(false)}
+          >
+            <div className="doc-formulas">{results}</div>
+          </Modal>
+        </>,
+        target,
+      )
+    );
   return (
     <details className="doc-formulas">
       <summary>Formula results ({states.length})</summary>
-      <ul>
-        {states.map(({ formula, result }) => (
-          <li key={formula.id}>
-            <code>{formula.definition.expression}</code>
-            <FormulaResultView definition={formula.definition} result={result} />
-          </li>
-        ))}
-      </ul>
+      {results}
     </details>
   );
 }

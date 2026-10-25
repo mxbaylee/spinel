@@ -1,10 +1,13 @@
 FROM node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
+# Workspace manifests (lib/<name>/) must be in place before npm ci links them.
+# One line per package: COPY of a glob flattens the directories.
 COPY lib/diagnostics/package.json ./lib/diagnostics/package.json
 COPY lib/doc-formulas/package.json ./lib/doc-formulas/package.json
 COPY lib/presence-ui/package.json ./lib/presence-ui/package.json
 COPY lib/print/package.json ./lib/print/package.json
+COPY lib/sync-transform/package.json ./lib/sync-transform/package.json
 COPY scripts/dependencies ./scripts/dependencies
 RUN npm ci
 COPY . .

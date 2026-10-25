@@ -77,7 +77,8 @@ test('builds and renames a nested tree, opens all document types, moves safely a
         timeout: 20000,
       });
       await expect(page).toHaveTitle(`${type} example — Spinel`);
-      await breadcrumb.getByRole('button', { name: '2027', exact: true }).click();
+      await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      await folderHeading('2027', 'My files / Personal / Finance');
       await expect(page).toHaveTitle('Spinel');
     }
     await rowAction('Sheet example', 'Move…');

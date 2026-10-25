@@ -221,6 +221,12 @@ grooming with the owner. The count never fails checks, blocks a ticket/merge or
 forces an agent to groom. Keep recording completions past seven; the owner chooses
 when to review. Owner, chat 2026-10-22. Grooming captures context learned while building.
 
+Every backlog grooming includes a review of open Dependabot PRs for security,
+compatibility, current CI results and sensible grouping. Record the disposition of
+updates that need follow-up; review does not imply automatic merge. Existing PRs
+remain open for that review. Owner, chat 2026-10-23;
+[decision](../implementation/backlog-workflow.md#review-dependabot-prs-at-every-backlog-grooming).
+
 A full owner-led grooming, recorded in a PR titled `🧹 Groom backlog …`:
 
 - Rechecks every ticket against the code: still true, still needed, sized right.
@@ -248,9 +254,11 @@ toward the reminder.
   base branch, so a PR can't loosen its own.
 - CI runs the PR's own copy of the checker. Review any change under
   `scripts/backlog/` or `.github/` as a change to the rules.
-- The **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests** and
-  **Playwright smoke** CI jobs are required. Playwright smoke builds the app and
-  checks development and production servers (SPN-001).
+- The **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
+  **Lib tests** and **Playwright smoke** CI jobs are required. Lib tests runs
+  `lib/` on its own and passes at once when nothing it tests changed.
+  Playwright smoke builds the app and checks development and production servers
+  (SPN-001).
 
 Documentation-only CI keeps Backlog, Pull request and Lint validation, while
 Typecheck, Unit tests, Playwright smoke and Build Storybook report explicitly
@@ -270,8 +278,8 @@ Owner setup, once, in the repository settings:
 1. General → Pull Requests: allow only squash merging; default commit message
    "Pull request title"; delete head branches automatically.
 2. Rules → new branch ruleset for `main`: require a pull request, require the
-   status checks **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
-   and **Playwright smoke**, require branches to be up to
+   status checks **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
+   **Lib tests** and **Playwright smoke**, require branches to be up to
    date before merging, block force pushes and deletions. Up to date matters:
    the checks compare against `main` as it was when they ran.
 3. Legacy decision issues retain their labels; new decisions use implementation records, not new issue labels.

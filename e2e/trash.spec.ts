@@ -35,7 +35,6 @@ test('trash restores nested native documents, preserves prior deletions and conf
   page.on('pageerror', (error) => errors.push(error.message));
   const files = page.getByRole('region', { name: 'Your files', exact: true });
   const contents = page.getByRole('list', { name: 'Folder contents', exact: true });
-  const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
   const bin = page.getByRole('region', { name: 'Trash', exact: true });
   async function folderAction(name: string, action: string) {
     await files.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
@@ -67,7 +66,11 @@ test('trash restores nested native documents, preserves prior deletions and conf
       'All changes saved.',
       { timeout: 20000 },
     );
-    await breadcrumb.getByRole('button', { name: 'My files', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await page
+      .getByRole('navigation', { name: 'File places', exact: true })
+      .getByRole('button', { name: 'My files', exact: true })
+      .click();
     await folderAction('Keep folder', 'Move to Trash');
     await expect(
       contents.getByRole('button', { name: 'Keep folder Folder', exact: true }),
@@ -101,13 +104,18 @@ test('trash restores nested native documents, preserves prior deletions and conf
       'All changes saved.',
       { timeout: 20000 },
     );
-    await breadcrumb.getByRole('button', { name: 'Nested', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Nested', exact: true })).toBeVisible();
     await files.getByRole('button', { name: 'Journal Doc', exact: true }).click();
     await expect(page.getByRole('region', { name: 'Doc document', exact: true })).toContainText(
       'All changes saved.',
       { timeout: 20000 },
     );
-    await breadcrumb.getByRole('button', { name: 'My files', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await page
+      .getByRole('navigation', { name: 'File places', exact: true })
+      .getByRole('button', { name: 'My files', exact: true })
+      .click();
     await contents.getByRole('button', { name: /^Trash/ }).click();
     await bin.getByRole('button', { name: 'Empty trash', exact: true }).click();
     const confirm = page.getByRole('dialog', { name: 'Empty trash confirmation' });

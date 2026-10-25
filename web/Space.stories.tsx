@@ -11,6 +11,7 @@ import type {
 } from '../src/shared/spaces.ts';
 import type { ItemAccess } from '../src/shared/workspace.ts';
 import { App } from './App.tsx';
+import { EditorTools } from './EditorTools.tsx';
 import { Space } from './Space.tsx';
 import type { SpaceEditorProps } from './Space.tsx';
 import { spaceHref } from './spaceNavigation.ts';
@@ -185,6 +186,16 @@ function EditorFixture({
   }, [offline, onDirty, onConnectionState]);
   return (
     <section aria-label="Editor body fixture" style={{ padding: 24 }}>
+      <EditorTools
+        id={current.id}
+        name={current.name}
+        spaceId={current.spaceId}
+        people={[]}
+        saved={!dirty}
+        print={async () => {
+          throw new Error('Native printing is covered by browser tests.');
+        }}
+      />
       <p className="sp-muted" style={{ marginBottom: 16 }}>
         {current.kind === 'doc' ? 'Doc' : 'Sheet'} body fixture · the application uses its native
         editor here.
@@ -324,7 +335,12 @@ export const AppUnavailable: Story = {
 };
 
 async function ready(canvasElement: HTMLElement, title = 'Welcome') {
-  await within(canvasElement).findByRole('heading', { name: title, level: 1 });
+  const canvas = within(canvasElement);
+  const scope =
+    title === 'Space Trash'
+      ? canvas
+      : within(await canvas.findByRole('region', { name: 'Document workspace' }));
+  await expect(await scope.findByRole('heading', { name: title, level: 1 })).toBeVisible();
 }
 async function contents(canvasElement: HTMLElement) {
   const canvas = within(canvasElement);
@@ -357,6 +373,25 @@ export const Populated: Story = {
     await expect(
       await within(canvasElement).findByRole('region', { name: 'Editor body fixture' }),
     ).toBeVisible();
+    const frame = within(canvasElement).getByRole('region', { name: 'Document workspace' });
+    const heading = within(frame).getByRole('heading', { name: 'Welcome', level: 1 });
+    await expect(getComputedStyle(heading).fontSize).toBe('16px');
+    const content = frame.querySelector('.editor-content')!;
+    const shell = frame.querySelector('.space-shell')!;
+    await expect(
+      Math.abs(shell.getBoundingClientRect().bottom - content.getBoundingClientRect().bottom),
+    ).toBeLessThanOrEqual(1);
+    const tree = frame.querySelector('.space-desktop-tree')!;
+    if (getComputedStyle(tree).display !== 'none') {
+      // Space contents follows the actual header, not the old fixed 64px allowance.
+      await expect(
+        Math.abs(tree.getBoundingClientRect().bottom - content.getBoundingClientRect().bottom),
+      ).toBeLessThanOrEqual(1);
+      await expect(tree.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        content.getBoundingClientRect().top,
+      );
+    }
+    await expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight + 1);
   },
 };
 
@@ -839,8 +874,17 @@ export const FileAdmin: Story = {
   play: async ({ canvasElement }) => {
     await ready(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
-    await expect(page.getByText('File admin', { exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: /^Space actions for/ })).toBeVisible();
+    const workspace = within(canvasElement).getByRole('region', { name: 'Document workspace' });
+    const header = within(workspace.querySelector<HTMLElement>('.editor-header')!);
+    await expect(header.getByText('File admin', { exact: true })).toBeVisible();
+    await userEvent.click(await header.findByRole('button', { name: 'Document actions' }));
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Rename Space…' }));
+    const dialog = await page.findByRole('dialog', { name: 'Rename Space' });
+    await expect(within(dialog).getByRole('textbox', { name: 'Name' })).toHaveValue(
+      'Project Atlas',
+    );
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await contents(canvasElement);
     await expect(page.getByRole('button', { name: 'Add page' })).toBeVisible();
   },
