@@ -194,8 +194,17 @@ exclude events marked `onlyLocal`, `fromCollab` or `fromChangeset`. Keep
 `syncOnly` events: they are intended for collaboration even though their local
 execution happens separately. The general `onCommandExecuted` hook includes
 local formula-cache/normalization work and omits `syncOnly` events, so it does
-not represent outgoing edits. This boundary uses execution options, never a
-mutation-ID filter; unsupported outgoing mutations still fail admission.
+not represent outgoing edits. Exclude two additional, verified render-only
+events: `sheet.operation.clear-drawing-transformer` and
+`doc.operation.clear-drawing-transformer`. Univer 1.1.0 registers these as
+mutations, but their public handlers only refresh drawing selection controls;
+they change no document data. Do not generalize these exceptions to an
+operation prefix or a supported-ID filter. Every other outgoing mutation
+still reaches strict admission, and both render-only IDs remain unsupported
+if sent to `transform` ([decision 40](../../docs/implementation/SPN-056.md#40-exclude-the-native-render-only-drawing-refresh-from-outgoing-edits)).
+This branch's native Sheet recorder exercises the Sheet exception. The Doc
+counterpart is verified from pinned public source; actual Doc UI capture is
+an explicit SPN-058 integration check, followed by SPN-056's integrated review.
 
 The transforms read the base cells and nothing else of the document, so some
 facts must travel with the mutation, and the client must keep a base of its
@@ -471,7 +480,7 @@ editors use, not a re-implementation of it. The harness loads
 `@univerjs/sheets-formula`, as Spinel's editor does, so a captured row edit or
 range move sends the defined-name rewrites it sends there. `liveCells` reads a
 replica's cells as `BaseCells`, and `snapshotCells` a snapshot's.
-Native command fixtures use the same public collaboration-event boundary
+Native Sheet command fixtures use the public collaboration-event boundary
 described above. The undo/redo regression explicitly observes local formula
 cache updates, proves they stay off the wire, and retains exact assertions for
 the outgoing cell formula rewrites.

@@ -10,7 +10,10 @@ import {
 } from '@univerjs/core';
 import type { IExecutionOptions, IRange, IWorkbookData, Worksheet } from '@univerjs/core';
 import { SetWorksheetActiveOperation } from '@univerjs/sheets';
-import { ISheetDrawingService } from '@univerjs/sheets-drawing';
+import {
+  ClearSheetDrawingTransformerOperation,
+  ISheetDrawingService,
+} from '@univerjs/sheets-drawing';
 import { SetNumfmtCommand } from '@univerjs/sheets-numfmt';
 import type { Mutation } from '../index.ts';
 import { structureIds } from '../src/structure.ts';
@@ -64,8 +67,12 @@ export function recordWire(commands: ICommandService) {
     observed.push({ id: info.id, options: options && { ...options } });
     // UpdateFormulaController starts cache updates without awaiting them, so
     // their callbacks can arrive while another command is being recorded.
-    // Execution options, not mutation IDs or timing, define the wire boundary.
+    // Their execution options, not IDs or timing, keep that work off the wire.
     if (options?.onlyLocal || options?.fromCollab || options?.fromChangeset) return;
+    // Univer 1.1.0 declares this renderer refresh as a mutation, but its public
+    // handler changes no persisted model. Decision 40 keeps this one event
+    // local; unknown IDs still reach strict transform admission.
+    if (info.id === ClearSheetDrawingTransformerOperation.id) return;
     mutations.push({ id: info.id, params: wire(info.params) });
   });
   return { mutations, observed, dispose: () => listener.dispose() };

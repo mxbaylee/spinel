@@ -1,4 +1,4 @@
-import { Direction, RANGE_TYPE } from '@univerjs/core';
+import { CellValueType, Direction, RANGE_TYPE } from '@univerjs/core';
 import { describe, expect, test } from 'vitest';
 import { transform } from '../index.ts';
 import type { Mutation } from '../index.ts';
@@ -358,12 +358,34 @@ describe('a formula write and a concurrent edit that rewrites formulas', () => {
           },
         },
       ];
+      const rewritten = insertAbove(before);
+      const expected = {
+        v: 's2:0:0',
+        t: CellValueType.STRING,
+        f: '=One!A9',
+        s: { n: { pattern: '0%' } },
+      };
+      // The outbound rewrite leaves v untouched. Only the local formula
+      // normalizer clears v/t, and capture no longer forwards local work.
+      // Pin native replay without any transform before checking the merge.
+      for (const mutations of [
+        [...numfmt, ...rewritten],
+        [...rewritten, ...numfmt],
+      ]) {
+        const native = new Replica(document);
+        try {
+          native.apply([...before, ...mutations]);
+          const workbook = native.workbook()!;
+          const cell = workbook.getSheetBySheetId('s2')!.getCellRaw(0, 0)!;
+          const s = typeof cell.s === 'string' ? workbook.getStyles().get(cell.s) : cell.s;
+          expect({ ...cell, s }).toEqual(expected);
+        } finally {
+          native.univer.dispose();
+        }
+      }
       for (const side of ['left', 'right'] as const) {
-        const after = converges(numfmt, insertAbove(before), { side, setup: before, document });
-        expect(after.workbook.sheets.s2.cellData[0][0]).toEqual({
-          f: '=One!A9',
-          s: { n: { pattern: '0%' } },
-        });
+        const after = converges(numfmt, rewritten, { side, setup: before, document });
+        expect(after.workbook.sheets.s2.cellData[0][0]).toEqual(expected);
       }
     });
 

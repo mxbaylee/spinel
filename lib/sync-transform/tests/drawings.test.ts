@@ -1,10 +1,13 @@
-import { DrawingTypeEnum } from '@univerjs/core';
-import { ISheetDrawingService } from '@univerjs/sheets-drawing';
+import { CommandType, DrawingTypeEnum, ICommandService } from '@univerjs/core';
+import {
+  ClearSheetDrawingTransformerOperation,
+  ISheetDrawingService,
+} from '@univerjs/sheets-drawing';
 import { expect, test } from 'vitest';
-import { transform } from '../index.ts';
+import { transform, UnsupportedMutationError } from '../index.ts';
 import type { Mutation } from '../index.ts';
 import { drawingIds } from '../src/drawings.ts';
-import { seededWorkbook, withStructure } from './generate.ts';
+import { recordWire, seededWorkbook, wire, withStructure } from './generate.ts';
 import { drawingEdit } from './generate-drawings.ts';
 import { removeSheet } from './edits.ts';
 import { converges, Replica } from './harness.ts';
@@ -55,6 +58,69 @@ function merge(make: (replica: Replica) => [Mutation, Mutation]) {
   return (left as { drawings: Record<string, { data: Record<string, any>; order: string[] }> })
     .drawings.s1;
 }
+
+test('the native renderer refresh stays local while drawing model writes are sent', () => {
+  const replica = start();
+  const commands = replica.injector.get(ICommandService);
+  const recording = recordWire(commands);
+  const persisted = () => ({
+    workbook: structuredClone(replica.workbook()!.getSnapshot()),
+    drawings: structuredClone(service(replica).getDrawingDataForUnit(target.unitId)),
+  });
+  try {
+    const before = persisted();
+    expect(ClearSheetDrawingTransformerOperation.type).toBe(CommandType.MUTATION);
+    expect(
+      commands.syncExecuteCommand(ClearSheetDrawingTransformerOperation.id, [target.unitId]),
+    ).toBe(true);
+    expect(persisted()).toEqual(before);
+    expect(recording.observed.map(({ id }) => id)).toContain(
+      ClearSheetDrawingTransformerOperation.id,
+    );
+    expect(recording.mutations).toEqual([]);
+
+    const edit = move(replica, 'a', 123);
+    expect(commands.syncExecuteCommand(edit.id, edit.params)).toBe(true);
+    expect(recording.mutations).toEqual([{ id: edit.id, params: wire(edit.params) }]);
+    expect(service(replica).getDrawingDataForUnit(target.unitId).s1.data.a.transform?.left).toBe(
+      123,
+    );
+
+    // Decision 40 excludes a proven render-only event at the sender. It does
+    // not make this ID an accepted persistent mutation if a sender forwards it.
+    expect(() =>
+      transform(
+        [{ id: ClearSheetDrawingTransformerOperation.id, params: [target.unitId] }],
+        [],
+        'left',
+      ),
+    ).toThrow(UnsupportedMutationError);
+  } finally {
+    recording.dispose();
+    replica.univer.dispose();
+  }
+});
+
+test('an unknown operation-shaped mutation is captured and rejected', () => {
+  const replica = new Replica({ workbook: seededWorkbook() });
+  const commands = replica.injector.get(ICommandService);
+  const id = `${ClearSheetDrawingTransformerOperation.id}.unknown`;
+  const registration = commands.registerCommand({
+    id,
+    type: CommandType.MUTATION,
+    handler: () => true,
+  });
+  const recording = recordWire(commands);
+  try {
+    expect(commands.syncExecuteCommand(id, target)).toBe(true);
+    expect(recording.mutations).toEqual([{ id, params: target }]);
+    expect(() => transform(recording.mutations, [], 'left')).toThrow(UnsupportedMutationError);
+  } finally {
+    recording.dispose();
+    registration.dispose();
+    replica.univer.dispose();
+  }
+});
 
 test('concurrent inserts both land, the winner first', () => {
   const sheet = merge((r) => [insert(r, 'x'), insert(r, 'y')]);
