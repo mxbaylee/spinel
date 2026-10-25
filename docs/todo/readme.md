@@ -12,7 +12,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 
 | # | Ticket | Effort | Impact | Score | Tie-break | Waiting on | Owner input |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 🛰️ [SPN-057](SPN-057.md) Order and store every edit on Spinel's own sync server | 🌳 L | 💜 M | 9 (own 3) | — | — | — |
+| 1 | 🛰️ [SPN-057](SPN-057.md) Order and store every edit on Spinel's own sync server | 🌳 L | 💜 M | 9 (own 3) | — | — | Decide on redacted sync refusal shapes |
 | 2 | 🔌 [SPN-058](SPN-058.md) Sync the editors and presence through Spinel's own client | 🏔️ XL | 💜 M | 8 (own 2) | — | [SPN-057](SPN-057.md) | — |
 | 3 | 🔁 [SPN-059](SPN-059.md) Move every document onto Spinel's sync and remove Univer collaboration | 🌳 L | 💜 M | 7 (own 3) | — | [SPN-058](SPN-058.md) | — |
 | 4 | ✍️ [SPN-053](SPN-053.md) Edit downloaded documents offline and sync them once | 🌳 L | 🩷 L | 6 (own 4) | — | [SPN-059](SPN-059.md) | — |

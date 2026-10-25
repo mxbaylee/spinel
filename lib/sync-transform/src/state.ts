@@ -40,6 +40,10 @@ function normalize(cell: CellData | null | undefined): CellData | null {
 export const sameCell = (x: CellData | null, y: CellData | null) =>
   JSON.stringify(sorted(normalize(x))) === JSON.stringify(sorted(normalize(y)));
 
+/** Whether two values are equal key for key, null keys and claims included; unset is null. */
+export const same = (p: unknown, q: unknown) =>
+  JSON.stringify(sorted(p ?? null)) === JSON.stringify(sorted(q ?? null));
+
 function sorted(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(sorted);
   if (value && typeof value === 'object') {
@@ -90,8 +94,6 @@ export function claimError(value: unknown, override: boolean): string | undefine
   if (!override) return 'claims without `isOverrideStyle`';
   const claims = cell[claimKey];
   if (!claims || typeof claims !== 'object' || Array.isArray(claims)) return 'claims no object';
-  const same = (p: unknown, q: unknown) =>
-    JSON.stringify(sorted(p ?? null)) === JSON.stringify(sorted(q ?? null));
   for (const [key, claim] of Object.entries(claims as CellData)) {
     if (!(cellKeys as readonly string[]).includes(key)) return `claims \`${key}\``;
     if (key !== 's' || claim === null) {
@@ -144,8 +146,6 @@ export function claimError(value: unknown, override: boolean): string | undefine
 export function baseError(value: CellData, base: CellData | null): string | undefined {
   const claims: CellData = value[claimKey];
   const cell = base ?? {};
-  const same = (p: unknown, q: unknown) =>
-    JSON.stringify(sorted(p ?? null)) === JSON.stringify(sorted(q ?? null));
   const dropped = dropsFormulaData(value);
   for (const key of cellKeys) {
     if (key === 's' || key === 't' || value[key] === undefined || key in claims) continue;
@@ -207,6 +207,35 @@ export function effect(mutation: Mutation, value: unknown, cell: CellData | null
 }
 
 /**
+ * What one cell of `mutation` leaves on `cell` once all of it has landed
+ * (see `effect`): an absolute write with its tail (see `absolute`), since
+ * Univer's merge drops ft and fd under a write that clears `f`, and the tail
+ * puts them back. Read without it, the loser claimed the winner's `fd` as its
+ * own edit and later beat its sender's next `fd` (schema seed 50,205, shrunk).
+ *
+ * Only a write that clears `f` has a tail. A tail is itself an absolute
+ * write, of ft and fd, and drops nothing; given a tail of its own, with no
+ * `t`, it retyped a text `'7'` that no screen retypes, so a loser's retype of
+ * it matched the wrongly landed cell and was dropped (seed 100,646, shrunk).
+ */
+export function lands(mutation: Mutation, value: unknown, cell: CellData | null): CellData | null {
+  const landed = effect(mutation, value, cell);
+  const tail = tailFor(value);
+  return tail ? effect(mutation, tail, landed) : landed;
+}
+
+/**
+ * The tail a cell value needs after it (see `absolute`): one of the ft and
+ * fd it names, for an absolute write that drops formula data
+ * (`dropsFormulaData`) and names either; otherwise undefined.
+ */
+export function tailFor(value: unknown): CellData | undefined {
+  if (!isAbsolute(value) || !dropsFormulaData(value)) return undefined;
+  const { [claimKey]: _, ...plain } = value;
+  return absolute(plain, {}).tail;
+}
+
+/**
  * Univer's own merge of `write` into `cell` (mergeCellData), with styles
  * inline. It passes no `sourceFormulaData`: that only makes the merge skip a
  * cell whose formula changed since a formula result was computed, and
@@ -248,8 +277,8 @@ export function absolute(
   if (!cell || (cell.ft == null && cell.fd == null) || cell.f || isFormulaId(cell.si)) {
     return { value };
   }
-  // The tail claims only ft and fd, so a transform that meets it overlays
-  // them and never replays its `t`, which retypes a value written since.
+  // The tail claims only ft and fd: `checkBases` accepts those though its base
+  // cell lacks them, and its `t`, unclaimed, is not read as an edit.
   const own: CellData = {};
   for (const key of ['ft', 'fd']) if (cell[key] != null) own[key] = cell[key];
   const tail: CellData = { ...own, [claimKey]: own };
@@ -267,7 +296,6 @@ export function absolute(
 export function difference(from: CellData | null, to: CellData | null): CellData {
   const [x, y] = [from ?? {}, to ?? {}];
   const claims: CellData = {};
-  const same = (p: unknown, q: unknown) => JSON.stringify(sorted(p)) === JSON.stringify(sorted(q));
   for (const key of cellKeys) {
     if (key === 's' || key === 't') continue;
     if (!same(x[key] ?? null, y[key] ?? null)) claims[key] = y[key] ?? null;
@@ -385,8 +413,12 @@ export class Cells {
     return this.kept.get(key)!;
   }
 
-  /** The cells once `mutation` is applied. */
-  after(mutation: Mutation): Cells {
+  /**
+   * The cells once `mutation` is applied, with `tails` each absolute write's
+   * tail too, as a transform reads a list with its tails folded in (see
+   * cells.withoutTails).
+   */
+  after(mutation: Mutation, tails = false): Cells {
     const p = mutation.params;
     const read = this.get.bind(this);
     const line = axisEdit(mutation);
@@ -436,7 +468,8 @@ export class Cells {
     return new Cells((unitId, subUnitId, row, col) => {
       const cell = read(unitId, subUnitId, row, col);
       const write = unitId === p.unitId && subUnitId === p.subUnitId && writes.get(`${row}:${col}`);
-      return write ? effect(mutation, write.value, cell) : cell;
+      if (!write) return cell;
+      return tails ? lands(mutation, write.value, cell) : effect(mutation, write.value, cell);
     });
   }
 }

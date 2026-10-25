@@ -366,6 +366,23 @@ describe('Cells.after', () => {
     expect(reads).toEqual(['0:0']);
   });
 
+  // Decision 36: with `tails`, an absolute write lands with the tail Univer
+  // needs after it (state.lands), as a transform reads a list with its tails
+  // folded in; without it, as Univer lands the write alone, ft and fd go.
+  test('with tails, an absolute write that drops ft and fd puts them back', () => {
+    const cells = Cells.of(() => ({ v: 'base', t: 1, ft: 2, fd: 1 }));
+    const own = { custom: { note: 'n' } };
+    const { value } = absolute({ v: 'base', t: 1, ft: 2, fd: 1, ...own }, own);
+    const landed = { v: 'base', t: 1, custom: { note: 'n' } };
+    const absoluteWrite = write({ 0: { 0: value } }, { isOverrideStyle: true });
+    expect(cells.after(absoluteWrite).get(unitId, subUnitId, 0, 0)).toEqual(landed);
+    expect(cells.after(absoluteWrite, true).get(unitId, subUnitId, 0, 0)).toEqual({
+      ...landed,
+      ft: 2,
+      fd: 1,
+    });
+  });
+
   test('without base cells, a read throws', () => {
     expect(() => Cells.of().get(unitId, subUnitId, 0, 0)).toThrow(TypeError);
     // No read, no throw.

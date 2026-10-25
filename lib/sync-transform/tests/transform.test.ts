@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { supportedMutationIds, transform, UnsupportedMutationError } from '../index.ts';
+import {
+  RefusedEditError,
+  supportedMutationIds,
+  transform,
+  UnsupportedMutationError,
+} from '../index.ts';
 import type { Mutation } from '../index.ts';
 import { halfKey, rewriteKey } from '../src/cells.ts';
 import { settingIds } from '../src/settings.ts';
@@ -193,6 +198,118 @@ test("the transform's own absolute writes pass the check again", () => {
   ]);
 });
 
+// Decision 36: an absolute write that names an `fd` Univer drops is read with
+// the tail after it as one write, and comes back followed by it; without its
+// tail it is rejected, since the transform would put one back.
+test('an absolute write that needs a tail travels with it', () => {
+  const cells = () => ({ v: 'base', fd: 1 });
+  const [a, b] = [claimed({ custom: { note: 'n' } }), claimed({ v: 'b' })];
+  const out = transform([a], [b], 'right', { cells });
+  expect(out).toHaveLength(2);
+  expect(out[1].params.cellValue[0][0]).toEqual({ fd: 1, t: 1, [claimKey]: { fd: 1 } });
+  const after = Cells.of(cells).after(b);
+  const base = { cells: (...at: [string, string, number, number]) => after.get(...at) };
+  for (const side of ['left', 'right'] as const) {
+    expect(transform(out, [], side, base)).toEqual(out);
+    expect(() => transform([out[0]], [], side, base)).toThrow(/needs its tail after it/);
+  }
+});
+
+// F25-1: what follows an absolute write that needs a tail is read as that
+// tail and goes, so it must be just that tail, cell for cell. Reading any
+// SetRangeValues as one lost a real write that followed.
+describe('an absolute write and what follows it', () => {
+  const cells = (_: string, __: string, row: number, col: number) =>
+    row === 0 && col === 0
+      ? { v: 'base', t: 1, ft: 2, fd: 1 }
+      : row === 0 && col === 1
+        ? { v: 'base', fd: 1 }
+        : null;
+  const both = (value: object): Mutation => ({
+    id: cellIds.setRangeValues,
+    params: { ...target, cellValue: { 0: { 0: value, 1: value } } },
+  });
+  const [mine, peer] = [both({ custom: { note: 'n' } }), both({ v: 'b' })];
+  const [write] = transform([mine], [peer], 'right', { cells });
+  const after = Cells.of(cells).after(peer);
+  const base = { cells: (...at: [string, string, number, number]) => after.get(...at) };
+  const tailOf = (row: object): Mutation => ({
+    id: cellIds.setRangeValues,
+    params: { ...target, isOverrideStyle: true, cellValue: { 0: row } },
+  });
+  const own = {
+    0: { ft: 2, fd: 1, t: 1, [claimKey]: { ft: 2, fd: 1 } },
+    1: { fd: 1, t: 1, [claimKey]: { fd: 1 } },
+  };
+  const tail = tailOf(own);
+
+  test('is its own tail, which passes', () => {
+    expect(transform([mine], [peer], 'right', { cells })).toEqual([write, tail]);
+    for (const side of ['left', 'right'] as const) {
+      expect(transform([write, tail], [], side, base)).toEqual([write, tail]);
+    }
+  });
+
+  // A transform's output is its input's, so the tail carries its write's trigger.
+  test("carries its write's trigger in the tail", () => {
+    const sent = { ...mine, params: { ...mine.params, trigger: 'sheet.command.set-range-values' } };
+    const [, rebuilt] = transform([sent], [peer], 'right', { cells });
+    expect(rebuilt).toEqual({ ...tail, params: { ...tail.params, trigger: sent.params.trigger } });
+  });
+
+  test.each<[string, Mutation]>([
+    [
+      'a tail of another ft',
+      tailOf({ ...own, 0: { ft: 0, fd: 1, t: 1, [claimKey]: { ft: 0, fd: 1 } } }),
+    ],
+    ['a tail of another fd', tailOf({ ...own, 1: { fd: 0, t: 1, [claimKey]: { fd: 0 } } })],
+    ['a tail with an extra f: null', tailOf({ ...own, 1: { ...own[1], f: null } })],
+    ['a tail missing a cell', tailOf({ 0: own[0] })],
+    ['a tail with an extra cell', tailOf({ ...own, 2: { v: 'X' } })],
+    [
+      'the tail on another sheet',
+      {
+        id: cellIds.setRangeValues,
+        params: { ...target, subUnitId: 's2', isOverrideStyle: true, cellValue: { 0: own } },
+      },
+    ],
+    [
+      'the tail in another workbook',
+      {
+        id: cellIds.setRangeValues,
+        params: { ...target, unitId: 'u2', isOverrideStyle: true, cellValue: { 0: own } },
+      },
+    ],
+    ['an ordinary write', claimed({ v: 'x' })],
+  ])('is rejected when it is %s', (_, next) => {
+    for (const side of ['left', 'right'] as const) {
+      expect(() => transform([write, next], [], side, base)).toThrow(/needs its tail after it/);
+    }
+  });
+
+  // N1: the list is malformed, and that is said before any race is refused.
+  test('is checked before a race is refused', () => {
+    const formula = {
+      id: cellIds.setRangeValues,
+      params: { ...target, cellValue: { 3: { 3: { f: '=A1' } } } },
+    };
+    const range = { startRow: 5, endRow: 5, startColumn: 0, endColumn: 2 };
+    const insert = { id: structureIds.insertRow, params: { ...target, range } };
+    expect(() => transform([formula], [insert], 'right', base)).toThrow(RefusedEditError);
+    expect(() => transform([write, formula], [insert], 'right', base)).toThrow(
+      /needs its tail after it/,
+    );
+  });
+
+  // Past the peer's absolute write, the cell is read with its tail landed
+  // (Cells.after's `tails`). Read without it, the `fd` the tail puts back
+  // looked gone, and a write the peer made again claimed it as its own edit.
+  test('lands with its tail before the next write is read', () => {
+    const again = claimed({ v: 'y', ft: 1 });
+    expect(transform([again], [write, tail, again], 'right', base)).toEqual([]);
+  });
+});
+
 // Decision 33: a claim picks which of the keys a write sets are its own edit,
 // so a key it does not claim must hold what its base cell holds. Otherwise a
 // forged claim could carry a formula past `'formula-race'`, which reads the
@@ -253,12 +370,15 @@ describe('an absolute write and its base cell', () => {
   });
 
   // Univer's merge drops the ft and fd of a write that clears `f` with no
-  // formula id in `si`, so they change nothing there (schema seed 90,082).
+  // formula id in `si`, so they change nothing there (schema seed 90,082),
+  // and the tail after it, which claims them, puts them back (decision 36).
   test('accepts a format it does not claim where Univer drops it', () => {
     for (const cleared of [{}, { f: '', si: '' }]) {
       const format = absolute({ ...base, ...cleared, ft: 0, fd: 1 }, {});
+      const own = { ft: 0, fd: 1 };
+      const tail = claimed({ ...own, t: 1, [claimKey]: own }, { isOverrideStyle: true });
       const at = () => ({ ...base, ...cleared });
-      expect(() => transform([format], [], 'left', { cells: at })).not.toThrow();
+      expect(() => transform([format, tail], [], 'left', { cells: at })).not.toThrow();
     }
   });
 

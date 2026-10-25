@@ -6,6 +6,8 @@ import {
   refuseCutsToRemoved,
   rewriteKey,
   unmarked,
+  withoutTails,
+  withTails,
 } from './cells.ts';
 import { docs } from './docs.ts';
 import { drawingIds, drawings } from './drawings.ts';
@@ -214,12 +216,17 @@ export function transform(
   for (const mutation of [...a, ...b]) check(mutation);
   const state = Cells.of(options.cells);
   for (const list of [a, b]) checkBases(list, options.cells ? state : null);
+  const [mine, theirs] = [markRewrites(a).flatMap(perSheet), markRewrites(b).flatMap(perSheet)];
+  const limit = growth * (mine.length + theirs.length);
+  // Each absolute write and its tail are transformed as one (see
+  // cells.withoutTails). A write missing its tail is rejected before any race
+  // is refused, so it is never reported as a refusal.
+  const [lone, peers] = [withoutTails(mine), withoutTails(theirs)];
   refuseNameRaces(a, b);
   refuseFormulaRaces(a, b);
   refuseCutsToRemoved(a, b);
-  const [mine, theirs] = [markRewrites(a).flatMap(perSheet), markRewrites(b).flatMap(perSheet)];
-  const limit = growth * (mine.length + theirs.length);
-  return joinCuts(pastMany(mine, theirs, side, limit, state).filter(isReal)).map(unmarked);
+  const past = pastMany(lone, peers, side, limit, state);
+  return withTails(joinCuts(past.filter(isReal)).map(unmarked));
 }
 
 /**
@@ -246,7 +253,7 @@ function pastMany(
   if (a.length === 1 && b.length === 1) return pair(a[0], b[0], side, state);
   for (const peer of b) {
     a = pastOne(a, peer, side, limit, state);
-    state = state.after(peer);
+    state = state.after(peer, true);
   }
   return a;
 }
@@ -258,7 +265,7 @@ function pastOne(a: Mutation[], b: Mutation, side: Side, limit: number, state: C
   for (const mutation of a) {
     result.push(...pastMany([mutation], peer, side, limit, state));
     peer = pastMany(peer, [mutation], flip(side), limit, state);
-    state = state.after(mutation);
+    state = state.after(mutation, true);
     // Diagnostics (SPN-057, not built): `sync.transform.growth` (histogram of
     // the peak against `limit`) would show whether 50 is near real edits.
     if (result.length + peer.length > limit) {

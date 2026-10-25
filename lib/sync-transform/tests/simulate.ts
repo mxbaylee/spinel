@@ -13,6 +13,12 @@ import { liveCells, Replica, snapshotCells } from './harness.ts';
 import { isFormulaId } from '@univerjs/core';
 import type { IDocumentData, IRange, IWorkbookData } from '@univerjs/core';
 
+/**
+ * Whether a cell value is a tail (state.ts `absolute`): an absolute write that
+ * names no `v`, where every other absolute write names each key.
+ */
+const isTail = (value: unknown) => isAbsolute(value) && value.v === undefined;
+
 /** Makes one random edit from a replica's current state, or null to skip a turn. */
 export type Generate = (replica: Replica, next: () => number) => Mutation[] | null;
 
@@ -231,6 +237,9 @@ function written(mutation: Mutation): { cell: string; key: string }[] {
     const cell = at(p.subUnitId, row, col);
     if (mutation.id !== cellIds.setRangeValues) return [{ cell, key: 's.n' }];
     if (value === null) return [{ cell, key: '' }];
+    // A tail puts back what its absolute write dropped, and is no edit of
+    // its own: the transform reads it as part of that write (decision 36).
+    if (isTail(value)) return [];
     // An absolute write writes what it claims, with what Univer derives in it.
     if (isAbsolute(value)) return claimed(cell, claimsOf(value));
     const cleared = (value.f === null || value.f === '') && !isFormulaId(value.si);
@@ -691,7 +700,14 @@ export function simulate(options: {
         );
       });
       touched = new Set([...moved(touched, mutations), ...landed.touched]);
-      shaped = new Set([...moved(shaped, mutations), ...followed(mutations, shapes)]);
+      // A shape is its writer's: a later part that writes the key it lets a
+      // pending edit keep there (`v` for `type`, `p` for `restyle`) ends it.
+      const wrote = followed(mutations, writes);
+      const kept = moved(shaped, mutations).filter((entry) => {
+        const [cell, shape] = entry.split('|');
+        return !covered(wrote, cell, shape === 'type' ? 'v' : 'p');
+      });
+      shaped = new Set([...kept, ...followed(mutations, shapes)]);
       after = landed.after;
     }
     history.push({ mutations: flat(incoming), touched, after, shapes: shaped });

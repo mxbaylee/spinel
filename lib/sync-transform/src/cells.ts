@@ -5,14 +5,15 @@ import type { Axis, Family } from './family.ts';
 import { movesMeet, refuseCut, remapMove } from './shifts.ts';
 import {
   absolute,
-  claimKey,
   claimsOf,
   difference,
-  dropsFormulaData,
   effect,
   isAbsolute,
+  lands,
   overlay,
+  same,
   sameCell,
+  tailFor,
 } from './state.ts';
 import type { CellData, Cells } from './state.ts';
 import { structureIds } from './structure.ts';
@@ -220,8 +221,6 @@ function cutsToRemoved(a: Mutation, b: Mutation): boolean {
 export const refuseCutsToRemoved = (a: Mutation[], b: Mutation[]) =>
   refuseRaces(a, b, (x, y) => cutsToRemoved(x, y) || cutsToRemoved(y, x), 'moved-cells');
 
-type Settled = { value: unknown; tail?: CellData };
-
 /** A write of `t` alone: a retype of the value its sender saw, as SetNumfmtCommand sends. */
 function typeOnly(mutation: Mutation, write: Write): boolean {
   const own = claimsOf(write.value);
@@ -263,24 +262,80 @@ function winning(mutation: Mutation, write: Write, cell: CellData | null): CellD
 }
 
 /**
- * What the winner's write leaves on `cell` once all of it has landed: an
- * absolute write with its tail (see state.absolute), since Univer's merge
- * drops ft and fd under a write that clears `f`, and the tail puts them back.
- * Read without it, the loser claimed the winner's `fd` as its own edit and
- * later beat its sender's next `fd` (schema seed 50,205, shrunk).
- *
- * Only a write that clears `f` has a tail. A tail is itself an absolute
- * write, of ft and fd, and drops nothing; given a tail of its own, with no
- * `t`, it retyped a text `'7'` that no screen retypes, so a loser's retype of
- * it matched the wrongly landed cell and was dropped (seed 100,646, shrunk).
+ * The write of the tails `mutation`'s absolute writes need after them (see
+ * state.tailFor), or null where none needs one. A tail is rebuilt from its
+ * absolute write's cell, which names the ft and fd it puts back.
  */
-function landing(mutation: Mutation, write: Write, cell: CellData | null): CellData | null {
-  const landed = effect(mutation, write.value, cell);
-  if (!isAbsolute(write.value) || !dropsFormulaData(write.value)) return landed;
-  const { [claimKey]: _, ...value } = write.value as CellData;
-  const { tail } = absolute(value, {});
-  return tail ? effect(mutation, tail, landed) : landed;
+function tailOf(mutation: Mutation): Mutation | null {
+  if (mutation.id !== cellIds.setRangeValues) return null;
+  const tails = writesOf(mutation).flatMap((write) => {
+    const tail = tailFor(write.value);
+    return tail ? [{ ...write, value: tail }] : [];
+  });
+  if (tails.length === 0) return null;
+  const { unitId, subUnitId } = mutation.params;
+  // The tail carries claims too, so it is an override write: one with no `s`
+  // leaves the style alone (sheets' overrideStyle).
+  const params = { unitId, subUnitId, ...sentBy(mutation), isOverrideStyle: true };
+  return { id: cellIds.setRangeValues, params: { ...params, cellValue: toMatrix(tails) } };
 }
+
+/**
+ * Whether `next` writes just the tails `tail` writes, as `tailOf` makes them,
+ * key for key: an extra `f: null` would make the sender's Univer drop the ft
+ * and fd the tail puts back. `check` already rejects claims without
+ * `isOverrideStyle`.
+ */
+function isTailOf(tail: Mutation, next: Mutation | undefined): boolean {
+  if (next?.id !== cellIds.setRangeValues) return false;
+  const p = next.params;
+  if (p.unitId !== tail.params.unitId || p.subUnitId !== tail.params.subUnitId) return false;
+  const theirs = new Map(writesOf(next).map((write) => [cellKey(write), write.value]));
+  const mine = writesOf(tail);
+  return (
+    mine.length === theirs.size &&
+    mine.every((write) => same(theirs.get(cellKey(write)), write.value))
+  );
+}
+
+/**
+ * `mutations` with each absolute write's tail folded into it: the write
+ * after it of the ft and fd Univer's merge drops (see state.absolute). An
+ * absolute write that drops formula data then means itself and its tail
+ * (state.lands), so a transform resolves the two as one cell and
+ * `withTails` rebuilds the tail from the final cell. Transformed apart, a
+ * tail kept the ft or fd of the cell it was made for once its absolute write
+ * was resolved again past a later write, and landed it over that write's
+ * (F13, schema seed 141,057, shrunk). An absolute write that needs a tail and
+ * is not followed by it, as the transform returns it, is rejected
+ * (`TypeError`): a transform would put it back where its sender has none.
+ *
+ * Decision (agent, 2026-10-24, docs/implementation/SPN-056.md decision 36):
+ * one tail, rebuilt from the final cell. Not taken: a tail yielding to any
+ * other write, which dropped tails a later write still read as landed.
+ */
+export function withoutTails(mutations: Mutation[]): Mutation[] {
+  const result: Mutation[] = [];
+  for (let i = 0; i < mutations.length; i++) {
+    result.push(mutations[i]);
+    const tail = tailOf(mutations[i]);
+    if (!tail) continue;
+    if (!isTailOf(tail, mutations[i + 1])) {
+      throw new TypeError(
+        'An absolute write that names ft or fd Univer drops needs its tail after it.',
+      );
+    }
+    i++;
+  }
+  return result;
+}
+
+/** `mutations`, each absolute write followed by its tail where it needs one (see `withoutTails`). */
+export const withTails = (mutations: Mutation[]): Mutation[] =>
+  mutations.flatMap((mutation) => {
+    const tail = tailOf(mutation);
+    return tail ? [mutation, tail] : [mutation];
+  });
 
 /**
  * `a`'s write to a cell `b` writes too, past `b`, with `cell` the cell both
@@ -289,8 +344,8 @@ function landing(mutation: Mutation, write: Write, cell: CellData | null): CellD
  * as it is, unless it is an absolute write, which lands its claims over the
  * loser's (see `winning`). The loser lands that cell as an absolute write,
  * claiming what it changes of the winner's, or goes where it changes
- * nothing. Returns the write's new value, null to delete the cell, or
- * undefined to drop it, and a write to make after it (see state.absolute).
+ * nothing. Each write lands with its tail (see `withoutTails`). Returns
+ * the write's new value, null to delete the cell, or undefined to drop it.
  */
 function resolve(
   a: Mutation,
@@ -299,18 +354,18 @@ function resolve(
   theirs: Write,
   side: Side,
   cell: CellData | null,
-): Settled {
+): unknown {
   if (side === 'left') {
-    if (!isAbsolute(write.value)) return { value: write.value };
-    const under = effect(b, theirs.value, cell);
+    if (!isAbsolute(write.value)) return write.value;
+    const under = lands(b, theirs.value, cell);
     const desired = winning(a, write, under);
-    if (sameCell(effect(a, write.value, under), desired)) return { value: write.value };
-    return absolute(desired, claimsOf(write.value));
+    if (sameCell(lands(a, write.value, under), desired)) return write.value;
+    return absolute(desired, claimsOf(write.value)).value;
   }
-  const landed = landing(b, theirs, cell);
-  const desired = winning(b, theirs, effect(a, write.value, cell));
-  if (sameCell(desired, landed)) return { value: undefined };
-  return absolute(desired, difference(landed, desired));
+  const landed = lands(b, theirs.value, cell);
+  const desired = winning(b, theirs, lands(a, write.value, cell));
+  if (sameCell(desired, landed)) return undefined;
+  return absolute(desired, difference(landed, desired)).value;
 }
 
 /**
@@ -330,16 +385,14 @@ function conflict(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[
   const theirs = new Map(writesOf(b).map((write) => [cellKey(write), write]));
   const kept: Write[] = [];
   const settled: Write[] = [];
-  const tails: Write[] = [];
   for (const write of writesOf(a)) {
     const other = theirs.get(cellKey(write));
     const cell = other ? state.get(unitId, subUnitId, write.row, write.col) : null;
-    const result: Settled = other
+    const value = other
       ? resolve(a, write, b, other, sideOf(a, write, b, other, side), cell)
-      : { value: write.value };
-    if (result.value === write.value) kept.push(write);
-    else if (result.value !== undefined) settled.push({ ...write, value: result.value });
-    if (result.tail) tails.push({ ...write, value: result.tail });
+      : write.value;
+    if (value === write.value) kept.push(write);
+    else if (value !== undefined) settled.push({ ...write, value });
   }
   if (kept.length === writesOf(a).length) return [a];
   const marks = a.params[rewriteKey] === undefined ? {} : { [rewriteKey]: a.params[rewriteKey] };
@@ -353,13 +406,7 @@ function conflict(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[
             params: { ...params, ...extra, cellValue: toMatrix(writes) },
           },
         ];
-  return [
-    ...rebuild(a, kept),
-    ...values(settled, { isOverrideStyle: true }),
-    // The tail carries claims too, so it is an override write: one with no `s`
-    // leaves the style alone (sheets' overrideStyle).
-    ...values(tails, { isOverrideStyle: true }),
-  ];
+  return [...rebuild(a, kept), ...values(settled, { isOverrideStyle: true })];
 }
 
 function transform(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[] {

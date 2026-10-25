@@ -629,7 +629,7 @@ test('a sender’s absolute write converges where it claims what it changes', ()
 // counted as that write's edit, so it claimed the value, the format command's
 // retype yielded to it, and the sender's later `fd` was lost (state.inferred).
 // With a value between, the retype read the value's absolute write without
-// its tail, so it claimed the `fd` that tail puts back (cells.landing).
+// its tail, so it claimed the `fd` that tail puts back (state.lands).
 test('a value read with no type is no edit of a write that types it', () => {
   const removal = {
     id: cellIds.removeNumfmt,
@@ -674,7 +674,7 @@ test('an absolute write’s ft that Univer drops is no change of its base', () =
 // `custom` there. Univer types '7' as a number under the `ft` write. The
 // incoming write's tail was landed with a tail of its own, which retyped
 // '7' too, so the rebased `ft` dropped its retype and the base check
-// rejected the write that followed (cells.landing). The judge's variants,
+// rejected the write that followed (state.lands). The judge's variants,
 // paste-shaped ones included, against each partner, converge too.
 test('seed 100646: ft rebased past a custom on a cell its fd and style clear left', () => {
   const at = (value: unknown) => write(1, 0, value);
@@ -701,6 +701,33 @@ test('seed 100646: ft rebased past a custom on a cell its fd and style clear lef
       ]);
     }
   }
+});
+
+// F13 (decision 36; schema seed 141,057 of replay round 24's sweep, shrunk):
+// client 0's `custom: null`, accepted past client 1's `fd`, is an absolute
+// write with a tail that puts the `fd` back. Past client 1's `ft: 2` the
+// tail, transformed apart from its absolute write, kept that `ft` and as the
+// winner landed it over client 1's later `ft: 0`, on the server and on
+// client 1. The transform now reads a write and its tail as one and rebuilds
+// the tail from the cell it resolves (cells.withoutTails), so the cell ends
+// as one person's edits in that order make it, with the first `ft` sent
+// before the second or not.
+test('F13: a tail keeps no stale ft over its sender’s later ft', () => {
+  const at = (value: unknown) => write(1, 2, value);
+  const cell = (ft: number) => ({ v: 's1:1:2', t: 1, ft, fd: 1 });
+  const steps = (first: number, then: number, sendFirst: boolean): Step[] => [
+    { client: 1, edit: [at({ fd: 1 })] },
+    { client: 1, take: 'send' },
+    { client: 0, edit: [at({ custom: null })] },
+    { client: 1, edit: [at({ ft: first })] },
+    { client: 1, take: 'server' },
+    // The acknowledgement sends the first `ft` before the second is made.
+    ...(sendFirst ? [{ client: 1, take: 'client' } as const] : []),
+    { client: 1, edit: [at({ ft: then })] },
+  ];
+  expect(landed(steps(2, 0, false), 1, 2)).toEqual(cell(0));
+  expect(landed(steps(0, 2, false), 1, 2)).toEqual(cell(2));
+  expect(landed(steps(2, 0, true), 1, 2)).toEqual(cell(0));
 });
 
 // SHRINK_SEED=n (and SHRINK_SKIP=ft,fd for the longer run) prints seed n's
