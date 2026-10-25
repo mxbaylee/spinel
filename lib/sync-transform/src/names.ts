@@ -63,6 +63,9 @@ const shiftCommands = new Set([
   'sheet.command.delete-range-move-left',
 ]);
 
+/** Undo/redo replaces the original command's trigger on its saved mutations. */
+const historyCommands = new Set(['univer.command.undo', 'univer.command.redo']);
+
 const isSet = (mutation: Mutation) => mutation.id === nameIds.set;
 const isRemove = (mutation: Mutation) => mutation.id === nameIds.remove;
 const editsName = (mutation: Mutation) => isSet(mutation) || isRemove(mutation);
@@ -70,8 +73,8 @@ const editsName = (mutation: Mutation) => isSet(mutation) || isRemove(mutation);
 /**
  * Whether a mutation makes Univer rewrite names and formulas, or is one of
  * the rewrites of a command that does: a mutation in `rewritesReferences`,
- * any a shift command sent, or a name set or removal that no name command
- * sent.
+ * any a shift command sent, a cell write an undo/redo sent, or a name set or
+ * removal that no name command sent.
  *
  * Decision (owner, chat 2026-10-22): a shift at the content's edge races name
  * edits and formula writes as one inside the content does, and a name set
@@ -91,10 +94,21 @@ const editsName = (mutation: Mutation) => isSet(mutation) || isRemove(mutation);
  * concurrent name edit, even of the same name. Not taken: rejecting one with
  * no `trigger` as a sender bug, since Univer leaves it unset on a mutation run
  * outside any command.
+ *
+ * Decision 39 (agent, 2026-10-25): a SetRangeValues sent by undo/redo counts
+ * too. At the content's edge, undoing or redoing a shift can send only cell
+ * writes, with no MoveRange or defined-name edit revealing the shift. Its
+ * saved formula rewrite must not restore a formula over a concurrent typed
+ * value, and a newly typed reference must not pass the unseen shift. The
+ * original command is unavailable, so ordinary cell undos/redos also refuse
+ * concurrent formula/name edits. A concurrent style still merges. Not taken:
+ * requiring a formula in the undo/redo itself, since a shift with no existing
+ * formulas can still change the meaning of a concurrent new reference.
  */
 const rewrites = (mutation: Mutation) =>
   rewritesReferences.has(mutation.id) ||
   shiftCommands.has(mutation.params.trigger) ||
+  (mutation.id === cellIds.setRangeValues && historyCommands.has(mutation.params.trigger)) ||
   (editsName(mutation) && !nameCommands.has(mutation.params.trigger));
 
 /** The text Univer looks a name up by: trimmed, and matched case-insensitively. */

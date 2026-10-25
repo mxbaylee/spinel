@@ -49,7 +49,8 @@ export type RefusalReason = 'moved-cells' | 'name-race' | 'formula-race' | 'grow
  *   names/inserted IDs (including native add, copy and restore commands).
  * - `'formula-race'`: a formula write and an edit that makes Univer rewrite
  *   formulas, or a command's rewrite of a formula and a write that replaces
- *   its cell's formula with none.
+ *   its cell's formula with none. Undo/redo cell writes conservatively count
+ *   as possible reference rewrites because their original command is hidden.
  * - `'growth'`: a transform that would grow past its limit.
  *
  * Unlike UnsupportedMutationError it is a race, not a sender bug.

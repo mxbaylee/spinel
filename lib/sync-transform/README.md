@@ -134,6 +134,23 @@ different workbooks remain independent. Concurrent renames of the same sheet
 retain their existing first-accepted and formula-race rules. See
 [decision 37](../../docs/implementation/SPN-056.md#37-refuse-concurrent-worksheet-identity-collisions).
 
+### Undo and redo reference edits
+
+A SetRangeValues mutation sent by undo or redo counts as a possible reference
+rewrite. Univer replaces the original command's `trigger` with the history
+command's ID, and a shift at the content's edge can send only cell writes,
+with no MoveRange or defined-name mutation revealing the shift. The guard
+therefore applies even when the history edit contains no formula: it may still
+move the cells a concurrent new formula refers to.
+
+Such a batch is refused against a concurrent formula or defined-name edit in
+the same workbook. A formula it restores is also refused against a concurrent
+value or clear replacing that formula; a concurrent style still merges.
+This conservatively refuses some ordinary cell undos/redos too, since the
+original command cannot be recovered from these mutation payloads. It avoids
+the previously documented stale-rewrite loss without adding sender metadata
+or rewriting references ([decision 39](../../docs/implementation/SPN-056.md#39-refuse-ambiguous-undo-and-redo-reference-rewrites)).
+
 ## What a server must do
 
 - **Pass `{ cells }` to every transform**, read from its snapshot at the
@@ -414,13 +431,11 @@ Also:
 - A shift at the content's edge is told by its mutations' `trigger`, since a
   delete that reaches the content's last line sends no MoveRange, so it races
   name edits and formula writes as a shift inside the content does
-  (`'name-race'`, `'formula-race'`). An undo or redo of such a delete carries
-  the undo command's `trigger` instead. Its name sets still count as rewrites,
-  but where no name refers to its sheet, so it sends no name set, its formula
-  rewrites are plain cell writes, so a
-  concurrent formula write, or a value typed over a formula it rewrites, is
-  merged: both screens agree, but the formula can point at shifted cells, and
-  the typed value can lose to the rewrite.
+  (`'name-race'`, `'formula-race'`). Undo/redo replaces that trigger, so its cell
+  writes conservatively count as possible rewrites even without a MoveRange,
+  name edit or existing formula. This also refuses some ordinary cell history
+  edits against concurrent formula/name edits; see "Undo and redo reference
+  edits" above. The earlier stale-rewrite loss is repaired by decision 39.
 - Growth. Each mutation of one list can split into several past the other
   (a write into the cells only it writes, an absolute write and its tail),
   and each later mutation meets all of them, so many concurrent edits could
