@@ -165,6 +165,9 @@ test('rejects incomplete raster bodies and unresolved formulas without publishin
     expect(result.message).not.toContain('PRIVATE_SOURCE');
   }
   expect(results[2]).toMatchObject({ ok: true, restored: true, remainingFonts: 0 });
+  const pages = await retainPdf('resource-recovery', results[2].bytes!);
+  expect(pages).toHaveLength(2);
+  expect(pages[1].text).toContain('Complete tail');
 }, 90_000);
 
 test('rejects unsupported rendering resources instead of silently losing their appearance', async () => {
@@ -188,4 +191,21 @@ test('rejects unsupported rendering resources instead of silently losing their a
   expect(() => validateSheetResources(input.snapshot, PRINT_LIMITS, () => {})).not.toThrow();
   input.snapshot.resources!.push(input.snapshot.resources![1]);
   expect(() => validateSheetResources(input.snapshot, PRINT_LIMITS, () => {})).toThrow('Duplicate');
+}, 90_000);
+
+test('cleanup failure overrides a rendering rejection and tells the host to discard the process', async () => {
+  const input = await resourceFixture();
+  // A dedicated test process deliberately leaves its own font registrations
+  // behind. It exits after this result; no later render reuses that process.
+  const [result] = await runNativeJobs([
+    { input, options: { limits: { outputBytes: 1 } }, failCleanup: true },
+  ]);
+  expect(result).toMatchObject({
+    ok: false,
+    code: 'cleanup',
+    message: 'Native PDF cleanup failed.',
+    restored: true,
+  });
+  expect(result.bytes).toBeUndefined();
+  expect(result.remainingFonts).toBeGreaterThan(0);
 }, 90_000);

@@ -14,7 +14,7 @@ import type { AdmittedImage } from './images.ts';
 import { paginateSheet, preflightSheets, preflightSheetsBefore, unionBox } from './preflight.ts';
 import type { SheetGeometry } from './preflight.ts';
 import { readResource, resourceRecord, validateSheetResources } from './resources.ts';
-import { PrintWorksheet } from './worksheet.ts';
+import { PrintWorksheet, displayTextBudget } from './worksheet.ts';
 import { imageBounds } from './image-render.ts';
 import type { ImageAppearance } from './image-render.ts';
 import { calculateCellImageRect } from '@univerjs/engine-render';
@@ -38,9 +38,8 @@ export interface TiledBackground {
 }
 
 export interface ImageSlice extends PlacedImage {
+  /** Intersection of the transformed object bounds with this worksheet-space page. */
   clip: PrintBox;
-  /** Normalized source crop; each continuation draws the corresponding pixels. */
-  crop: PrintBox;
 }
 
 export interface LayoutPage extends SheetPrintPage {
@@ -375,24 +374,11 @@ function intersection(a: PrintBox, b: PrintBox): PrintBox | null {
   return result.right > result.left && result.bottom > result.top ? result : null;
 }
 
-/** Source-space cropping keeps a tall image continuous instead of fitting it per page. */
+/** Keep the complete object transform on each page; the exact page clip limits drawing. */
 export function sliceImages(images: readonly PlacedImage[], page: PrintBox): ImageSlice[] {
   return images.flatMap((image) => {
     const clip = intersection(image.bounds, page);
-    if (!clip) return [];
-    const { left, top, right, bottom } = image.bounds;
-    return [
-      {
-        ...image,
-        clip,
-        crop: {
-          left: (clip.left - left) / (right - left),
-          right: (clip.right - left) / (right - left),
-          top: (clip.top - top) / (bottom - top),
-          bottom: (clip.bottom - top) / (bottom - top),
-        },
-      },
-    ];
+    return clip ? [{ ...image, clip }] : [];
   });
 }
 
@@ -456,7 +442,7 @@ export function replanSheetPages(
 
 /**
  * Internal renderer preparation, NOT a completed PDF or final text used range.
- * Text overflow/shaping and cell-image layout still require the native bridge.
+ * Text overflow/shaping and actual painted bounds still require the native bridge.
  * Caller receives nothing until every selected sheet and aggregate budget passes.
  */
 export async function prepareSheetLayout(
@@ -472,6 +458,7 @@ export async function prepareSheetLayout(
       : preflightSheetsBefore(snapshot, options, sharedDeadline);
   const { limits, deadline } = initial;
   const check = () => printCheckpoint(options.signal, deadline);
+  const textBudget = displayTextBudget(limits, check);
   validateSheetResources(snapshot, limits, check);
   const book = structuredClone(snapshot);
   const filters = readResource(book, SHEET_FILTER_SNAPSHOT_ID, limits, check);
@@ -480,7 +467,10 @@ export async function prepareSheetLayout(
   // Evaluate public saved filters before geometry, preserving every raw cell/value.
   for (const geometry of initial.sheets) {
     check();
-    const sheet = new PrintWorksheet(book, book.sheets[geometry.id], styles);
+    // Public Worksheet assigns the same default id when a snapshot omits it.
+    // Use the validated workbook key for all per-sheet admission and rendering.
+    book.sheets[geometry.id].id = geometry.id;
+    const sheet = new PrintWorksheet(book, book.sheets[geometry.id], styles, textBudget);
     sheet.applyFilter(
       Object.hasOwn(filters, geometry.id) ? filters[geometry.id] : undefined,
       limits,
@@ -505,7 +495,7 @@ export async function prepareSheetLayout(
     const config = book.sheets[geometry.id];
     const images: PlacedImage[] = [];
     let bounds = geometry.cellBounds;
-    const worksheet = new PrintWorksheet(book, config, styles);
+    const worksheet = new PrintWorksheet(book, config, styles, textBudget);
     for (const [row, cells] of Object.entries(config.cellData ?? {})) {
       for (const [column, cell] of Object.entries<ICellData | null>(cells)) {
         check();
@@ -597,5 +587,5 @@ export async function prepareSheetLayout(
   }
   const pages = replanSheetPages({ sheets, limits }, mediaBox, check);
   check();
-  return { book, sheets, pages, images, limits, deadline };
+  return { book, sheets, pages, images, limits, deadline, textBudget };
 }

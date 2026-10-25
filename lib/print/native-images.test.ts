@@ -159,12 +159,66 @@ test.each([false, true])(
     for (const boundary of [pageHeight, pageHeight * 2])
       for (const y of [boundary - 5, boundary + 5])
         atSource(pages, 25, y, colors[Math.floor((y % 80) / 40) * 2]);
-    atSource(pages, 75, 2360, colors[Math.floor((2360 % 80) / 40) * 2 + 1]);
+    // Sample inside the final band; an exact color boundary can floor to the
+    // preceding pixel after the fractional page translation.
+    atSource(pages, 75, 2368, colors[3]);
+    // 99 visible 24px rows end at source y2376, exactly PDF y278 on page 3.
+    colorAt(pages[2], 92, 277, colors[3]);
+    colorAt(pages[2], 92, 278, '#ffffff');
     if (mixed) expect(pages[2].text).toContain('LAST');
     else expect(pages.every((page) => !page.text)).toBe(true);
   },
   70_000,
 );
+
+test('rotated image retains corners across negative worksheet extents and the final edge', async () => {
+  const raster = createCanvas(120, 80),
+    context = raster.getContext('2d');
+  for (let index = 0; index < 4; index++) {
+    context.fillStyle = colors[index];
+    context.fillRect((index % 2) * 60, Math.floor(index / 2) * 40, 60, 40);
+  }
+  const snapshot = book();
+  snapshot.resources = [
+    {
+      name: 'SHEET_DRAWING_PLUGIN',
+      data: JSON.stringify({
+        first: {
+          order: ['negative-extents'],
+          data: {
+            'negative-extents': floating('negative-extents', 'prepared-pattern', {
+              left: 0,
+              top: 0,
+              width: 240,
+              height: 160,
+              angle: 45,
+            }),
+          },
+        },
+      }),
+    },
+  ];
+  const [result] = await runNativeJobs([
+    { input: await input(snapshot, await raster.encode('png')) },
+  ]);
+  expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  const pages = await retainPdf('negative-extent-rotated-image', result.bytes!);
+  expect(pages).toHaveLength(1);
+  const page = pages[0];
+  expect(page.view).toEqual([0, 0, 595, 842]);
+  expect(page.text).toBe('');
+  // Rotation alone extends the image to x=-21.42 and y=-61.42. The complete
+  // rotated rectangle starts at the 36pt margins, retaining all four corners.
+  colorAt(page, 123, 47, colors[0]);
+  colorAt(page, 237, 161, colors[1]);
+  colorAt(page, 47, 123, colors[2]);
+  colorAt(page, 161, 237, colors[3]);
+  colorAt(page, 163, 244, colors[3]); // the final tip ends at PDF y248.13
+  colorAt(page, 121, 35, '#ffffff');
+  colorAt(page, 35, 121, '#ffffff');
+  colorAt(page, 249, 163, '#ffffff');
+  colorAt(page, 163, 249, '#ffffff');
+}, 70_000);
 
 function cellPicture(id: string, angle = 0): ICellData {
   return {

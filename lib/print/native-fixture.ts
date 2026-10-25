@@ -11,6 +11,8 @@ export interface NativeJob {
   options?: Omit<SheetPrintOptions, 'signal'>;
   abort?: boolean;
   abortDuringPrepare?: boolean;
+  /** Test-only failure of the public cleanup API, after native work has run. */
+  failCleanup?: boolean;
 }
 
 export interface NativeResult {
@@ -37,6 +39,8 @@ process.once('message', async (message) => {
     const started = performance.now();
     const controller = new AbortController();
     if (job.abort) controller.abort();
+    const removeBatch = GlobalFonts.removeBatch;
+    if (job.failCleanup) GlobalFonts.removeBatch = () => 0;
     let result;
     try {
       const pending = renderSheetPdf(job.input, {
@@ -54,6 +58,8 @@ process.once('message', async (message) => {
         code: (error as { code?: string }).code,
         message: error instanceof Error ? error.message : 'Unknown failure',
       };
+    } finally {
+      GlobalFonts.removeBatch = removeBatch;
     }
     const restored = names.every((name, index) => {
       const current = Object.getOwnPropertyDescriptor(globalThis, name),

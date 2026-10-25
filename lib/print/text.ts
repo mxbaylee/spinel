@@ -2,6 +2,7 @@
 import {
   DEFAULT_STYLES,
   HorizontalAlign,
+  TabStopLeader,
   WrapStrategy,
   createDocumentModelWithStyle,
   getDisplayValueFromCell,
@@ -9,6 +10,7 @@ import {
 import type {
   ICellDataForSheetInterceptor,
   IDocumentData,
+  IParagraphStyle,
   IStyleData,
   ITextRun,
   ITextStyle,
@@ -19,6 +21,7 @@ import {
   SpreadsheetSkeleton,
   UniverPrintingContext,
   getDocsSkeletonPageSize,
+  getTextWithCaps,
   glyphIterator,
   lineIterator,
   shouldRenderRowText,
@@ -40,9 +43,60 @@ function unsupported(message = 'PDF text exceeds its supported cell bounds.'): n
   throw new PrintError('unsupported', message);
 }
 
+/** Match the admitted axis domain before native paragraph/shaping work begins. */
+function boundedGeometry(value: unknown, minimum = -100_000, maximum = 100_000) {
+  if (value === undefined || value === null) return;
+  if (typeof value !== 'number' || !Number.isFinite(value))
+    throw new PrintError('invalid-input', 'Invalid PDF text geometry.');
+  if (value < minimum || value > maximum)
+    throw new PrintError('limit', 'PDF text geometry exceeds its layout budget.');
+}
+
+function paragraphGeometry(style: IParagraphStyle | undefined) {
+  if (!style) return;
+  boundedGeometry(style.defaultTabStop, 0);
+  boundedGeometry(style.lineSpacing, 0);
+  for (const name of [
+    'spaceAbove',
+    'spaceBelow',
+    'indentFirstLine',
+    'hanging',
+    'indentStart',
+    'indentEnd',
+  ] as const)
+    boundedGeometry(style[name]?.v);
+  for (const stop of style.tabStops ?? []) {
+    boundedGeometry(stop.offset, 0);
+    tabLeader(stop.leader);
+  }
+  for (const name of [
+    'borderBetween',
+    'borderTop',
+    'borderBottom',
+    'borderLeft',
+    'borderRight',
+  ] as const) {
+    boundedGeometry(style[name]?.padding, 0);
+    boundedGeometry(style[name]?.width, 0, 512);
+  }
+}
+
+function tabLeader(leader: TabStopLeader | undefined) {
+  if (
+    leader != null &&
+    ![TabStopLeader.TAB_STOP_LEADER_UNSPECIFIED, TabStopLeader.NONE].includes(leader)
+  )
+    unsupported('PDF rich-text tab leaders require a prepared representation.');
+}
+
 function validStyle(style: ITextStyle) {
   if (style.fs !== undefined && (!Number.isFinite(style.fs) || style.fs <= 0 || style.fs > 512))
     throw new PrintError('limit', 'PDF font size exceeds its layout budget.');
+  boundedGeometry(style.sc);
+  boundedGeometry(style.pos);
+  boundedGeometry(style.sa, 1, 1_000);
+  boundedGeometry(style.kerning, 0, 512);
+  tabLeader(style.positionedTab?.leader);
   // These document-only paint models can introduce images or effect surfaces.
   // They are not native Sheet rich-text formatting and are not silently flattened.
   if (style.symbol || style.textFill || style.textOutline || style.glow || style.outerShadow)
@@ -50,21 +104,29 @@ function validStyle(style: ITextStyle) {
 }
 
 function aliasedRuns(text: string, style: ITextStyle, fonts: PreparedFonts): ITextRun[] {
-  style = { ...style, fs: style.fs ?? DEFAULT_STYLES.fs };
+  style = { ...style, fs: style.fs ?? DEFAULT_STYLES.fs, bl: style.bl ?? 0, it: style.it ?? 0 };
   validStyle(style);
+  // Cmap admission must cover the glyphs the native painter will actually use.
+  // Keep authored text and UTF-16 run indices; the public Office casing helper
+  // preserves one source character (including ß) instead of expanding strings.
+  const displayed = getTextWithCaps(text, Boolean(style.caps || style.smallCaps));
+  if (displayed.length !== text.length)
+    unsupported('PDF display casing changes unsupported text-run indices.');
   const result: ITextRun[] = [];
   const pieces = style.eastAsiaFontFamily
-    ? [...new Intl.Segmenter('und', { granularity: 'grapheme' }).segment(text)].map((part) => ({
-        text: part.segment,
-        start: part.index,
-        family:
-          /[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Bopomofo}]/u.test(
-            part.segment,
-          )
-            ? style.eastAsiaFontFamily!
-            : style.ff,
-      }))
-    : [{ text, start: 0, family: style.ff }];
+    ? [...new Intl.Segmenter('und', { granularity: 'grapheme' }).segment(displayed)].map(
+        (part) => ({
+          text: part.segment,
+          start: part.index,
+          family:
+            /[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Bopomofo}]/u.test(
+              part.segment,
+            )
+              ? style.eastAsiaFontFamily!
+              : style.ff,
+        }),
+      )
+    : [{ text: displayed, start: 0, family: style.ff }];
   for (const piece of pieces) {
     for (const run of fonts.runs(
       piece.text,
@@ -102,8 +164,12 @@ export function prepareCellText(
   const style: IStyleData = {
     ...(cell.s as IStyleData | null),
     fs: (cell.s as IStyleData | null)?.fs ?? DEFAULT_STYLES.fs,
+    bl: (cell.s as IStyleData | null)?.bl ?? 0,
+    it: (cell.s as IStyleData | null)?.it ?? 0,
   };
   validStyle(style);
+  boundedGeometry(style.tr?.a, -360, 360);
+  for (const side of ['t', 'r', 'b', 'l'] as const) boundedGeometry(style.pd?.[side], 0);
   const text = getDisplayValueFromCell(cell);
   if (
     text
@@ -125,6 +191,10 @@ export function prepareCellText(
     return { ...cell, s: mappedStyle };
 
   const document = cell.p ? structuredClone(cell.p) : plainDocument(text, style);
+  boundedGeometry(document.documentStyle?.defaultTabStop, 0);
+  boundedGeometry(document.documentStyle?.paragraphLineGapDefault, 0);
+  boundedGeometry(document.documentStyle?.hyphenationZone, 0);
+  paragraphGeometry(document.documentStyle?.defaultParagraphStyle);
   const body = document.body;
   if (!body || typeof body.dataStream !== 'string' || !body.dataStream.endsWith('\r\n'))
     throw new PrintError('invalid-input', 'Invalid PDF rich-text stream.');
@@ -148,6 +218,7 @@ export function prepareCellText(
 
   const paragraphMap = new Map<number, NonNullable<typeof body.paragraphs>[number]>();
   for (const paragraph of body.paragraphs ?? []) {
+    paragraphGeometry(paragraph.paragraphStyle);
     if (
       !Number.isSafeInteger(paragraph.startIndex) ||
       stream[paragraph.startIndex] !== '\r' ||
@@ -159,10 +230,27 @@ export function prepareCellText(
     paragraphMap.set(paragraph.startIndex, paragraph);
   }
   body.paragraphs = [];
-  for (let index = 0; index < stream.length; index++)
-    if (stream[index] === '\r')
-      body.paragraphs.push(paragraphMap.get(index) ?? { startIndex: index });
-  if ((body.sectionBreaks ?? []).some((section) => section.startIndex !== stream.length - 1))
+  const paragraphIds = new Set(
+    [...paragraphMap.values()].map((paragraph) => paragraph.paragraphId),
+  );
+  for (let index = 0; index < stream.length; index++) {
+    if (stream[index] !== '\r') continue;
+    const existing = paragraphMap.get(index);
+    if (existing) body.paragraphs.push(existing);
+    else {
+      let paragraphId = `print-paragraph-${index}`;
+      while (paragraphIds.has(paragraphId)) paragraphId += '-generated';
+      paragraphIds.add(paragraphId);
+      body.paragraphs.push({ startIndex: index, paragraphId });
+    }
+  }
+  if (
+    (body.sectionBreaks ?? []).some(
+      (section) =>
+        section.startIndex !== stream.length - 1 ||
+        Object.keys(section).some((key) => !['startIndex', 'sectionId'].includes(key)),
+    )
+  )
     unsupported('PDF cell text cannot contain document section breaks.');
 
   const base: ITextStyle = { ...style, ...document.documentStyle?.textStyle };
@@ -474,6 +562,15 @@ class InkContext extends UniverPrintingContext {
       bottom: this.path.bottom + radius,
     };
     this.bounds = unionBox(this.bounds, intersect(this.clipBox, box)!);
+  }
+  override fillRect(x: number, y: number, width: number, height: number) {
+    this.check();
+    if (!width || !height || this.raw.globalAlpha === 0) return;
+    // Native rich-text highlights include glyph spacing and trailing spaces.
+    // Their painted rectangle can extend beyond the last glyph's ink bounds.
+    const box = intersect(this.clipBox, this.box(x, y, x + width, y + height));
+    if (box && box.right > box.left && box.bottom > box.top)
+      this.bounds = unionBox(this.bounds, box);
   }
   override fillText(text: string, x: number, y: number, maxWidth?: number) {
     this.text(text, x, y, maxWidth, false);

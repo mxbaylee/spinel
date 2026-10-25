@@ -29,8 +29,7 @@ import { measureSheetInk, prepareCellText, PrintSkeleton } from './text.ts';
 import { PrintWorksheet } from './worksheet.ts';
 
 // Skia's public PDF backend quantizes the requested A4 MediaBox to integer points
-// (SPN-097). Use that same actual frame for every clip/margin calculation. This
-// candidate still needs reopened-PDF evidence before becoming a production API.
+// (SPN-097). Use that same actual frame for every clip/margin calculation.
 const FRAME = { width: 595, height: 842 };
 const MARGIN = 36;
 let rendering = false;
@@ -61,6 +60,7 @@ class FontWorksheet extends PrintWorksheet {
   fonts!: PreparedFonts;
   private prepared = new Map<string, ICellDataForSheetInterceptor | null>();
   override getCell(row: number, column: number): ICellDataForSheetInterceptor | null {
+    this.textBudget?.check();
     const key = `${row}:${column}`;
     if (this.prepared.has(key)) return this.prepared.get(key)!;
     const raw = super.getCell(row, column);
@@ -203,7 +203,7 @@ export async function renderSheetPdfCandidate(
     check();
     const layout = await prepareSheetLayout(input.snapshot, input.images, FRAME, options, deadline);
     check();
-    // Require a dedicated worker started with DISABLE_SYSTEM_FONTS_LOAD=1 before
+    // Require a dedicated process started with DISABLE_SYSTEM_FONTS_LOAD=1 before
     // importing this module. Never remove or implicitly fall back to host fonts.
     if (GlobalFonts.families.length)
       throw new PrintError(
@@ -249,7 +249,7 @@ export async function renderSheetPdfCandidate(
         scrollTop: 0,
         scrollLeft: 0,
       };
-      const worksheet = new FontWorksheet(layout.book, sheetConfig, styles);
+      const worksheet = new FontWorksheet(layout.book, sheetConfig, styles, layout.textBudget);
       worksheet.fonts = fonts;
       const skeleton = new PrintSkeleton(worksheet, styles, locale, context, config, injector);
       const spreadsheet = new HeadlessSpreadsheet(`print-${sheet.id}`, skeleton, false);
@@ -331,10 +331,19 @@ export async function renderSheetPdfCandidate(
           pdf.endPage();
         }
       } finally {
-        spreadsheet.parent = undefined;
-        group.dispose();
-        skeleton.dispose();
+        try {
+          spreadsheet.parent = undefined;
+          group.dispose();
+        } catch {
+          cleanupFailed = true;
+        }
+        try {
+          skeleton.dispose();
+        } catch {
+          cleanupFailed = true;
+        }
       }
+      if (cleanupFailed) throw new PrintError('cleanup', 'Native PDF cleanup failed.');
     }
     check();
     const bytes = pdf.close();
@@ -361,16 +370,19 @@ export async function renderSheetPdfCandidate(
     } catch {
       cleanupFailed = true;
     }
+    for (const service of [locale, context, config, injector]) {
+      try {
+        service?.dispose();
+      } catch {
+        cleanupFailed = true;
+      }
+    }
     try {
-      locale?.dispose();
-      context?.dispose();
-      config?.dispose();
-      injector?.dispose();
+      if (keys.length && GlobalFonts.removeBatch(keys) !== keys.length) cleanupFailed = true;
     } catch {
       cleanupFailed = true;
     }
     try {
-      if (keys.length && GlobalFonts.removeBatch(keys) !== keys.length) cleanupFailed = true;
       invalidateDocumentFontMetrics((style) => fontAliases.some((alias) => style.includes(alias)));
     } catch {
       cleanupFailed = true;
@@ -382,7 +394,7 @@ export async function renderSheetPdfCandidate(
     }
     rendering = false;
   }
+  if (cleanupFailed) throw new PrintError('cleanup', 'Native PDF cleanup failed.');
   if (failure) throw failure;
-  if (cleanupFailed) throw new PrintError('invalid-input', 'Native PDF cleanup failed.');
   return result!;
 }

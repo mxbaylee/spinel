@@ -6,6 +6,7 @@ export type {
   SheetPrintOptions,
   SheetPrintPage,
   PrintBox,
+  PrintErrorCode,
 } from './contract.ts';
 export { preflightSheets, paginateSheet } from './preflight.ts';
 export type { SheetGeometry, SheetPreflight } from './preflight.ts';

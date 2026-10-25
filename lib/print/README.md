@@ -52,7 +52,8 @@ Canvas is imported. Use a dedicated **process**, not merely a JavaScript worker:
 native registries can be process-global. Overlapping calls are rejected instead
 of queued. Every operation uses fresh font aliases and removes only its own
 registrations, invalidates public metrics and restores exact canvas-global
-descriptors on success or failure. Discard a process reporting cleanup failure.
+descriptors on success or failure. Discard a process reporting the `cleanup`
+error code, even when its original render was cancelled or exceeded a limit.
 
 `preflightSheets` and `paginateSheet` remain available for bounded initial
 geometry. Preflight's cell/merge bounds are not final output bounds: rendering
@@ -75,7 +76,7 @@ initial plan.
   prepared cached values: missing `v` fails; explicit `v: null` means an
   intentionally blank prepared result. The package never evaluates formulas.
 - Standard rich runs, multiline/wrapped text, number formats, alignment,
-  decorations, native rotation and merges use native layout. Complete layout is
+  decorations, highlights, native rotation and merges use native layout. Complete layout is
   measured before drawing; text physically clipped by its native cell/overflow
   clip fails instead of being reported as a complete export.
 - Tall rows, merged cells and images keep one worksheet coordinate system across
@@ -127,7 +128,7 @@ accents, combining text and symbol fallback; they do not prove universal script
 support or silently substitute production fonts. Actual shaping remains native
 and depends on the supplied licensed faces.
 
-Embedded rich tables, lists/named paragraph styles, extra document sections,
+Embedded rich tables, lists/named paragraph styles, generated tab leaders, extra document sections,
 document backgrounds, document-level fallback maps, custom render extensions and
 document-only glow/shadow/outline/fill/symbol effects require an explicitly
 prepared representation and currently fail. Ordinary Sheet rich text is retained.
@@ -143,9 +144,11 @@ rather than quietly strip their appearance.
 capacity**. Callers can lower any limit but cannot raise it. Budgets cover snapshot
 bytes/nodes/nesting, worksheets/axes/cells/text, visible grid and merge indexing,
 images/encoded bytes/aggregate decoded pixels, fonts/bytes, pages, duration and
-final PDF bytes. Generic `PrintError` codes are `invalid-input`, `unsupported`,
-`limit` and `cancelled`; messages contain no document names, cell values, source
-URLs or supplied bytes.
+final PDF bytes. Formatted display strings share one per-operation character
+budget across filter preparation and rendering, including cells later filtered
+out; repeated reads of a cell do not charge it twice. Generic `PrintError` codes
+are `invalid-input`, `unsupported`, `limit`, `cancelled` and `cleanup`; messages
+contain no document names, cell values, source URLs or supplied bytes.
 
 No bytes are streamed or returned after a failed page, cap, cancellation or
 cleanup. Tests measure cap failures and cancellation, verify no output, then render

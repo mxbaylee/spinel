@@ -143,11 +143,16 @@ test('counts late floating images in the used range without appending unused gri
   expect(layout.sheets[0].bounds).toEqual({ left: 0, top: 0, right: 360, bottom: 1600 });
   expect(layout.pages).toHaveLength(2);
   expect(layout.pages[0].images).toEqual([]);
-  expect(layout.pages[1].images[0].crop).toEqual({ left: 0, top: 0, right: 1, bottom: 1 });
+  expect(layout.pages[1].images[0].clip).toEqual({
+    left: 300,
+    top: 1500,
+    right: 360,
+    bottom: 1600,
+  });
   expect(layout.pages.at(-1)?.source.bottom).toBe(1600);
 });
 
-test('a tall image has adjacent source crops with an intact tail and no per-page fitting', async () => {
+test('a tall image has adjacent page clips with an intact tail and no per-page fitting', async () => {
   const book = workbook();
   drawings(book, {
     tall: drawing('tall', {
@@ -161,11 +166,14 @@ test('a tall image has adjacent source crops with an intact tail and no per-page
   expect(slices.every((slice) => slice.bounds.top === 30 && slice.bounds.bottom === 3030)).toBe(
     true,
   );
-  expect(slices[0].crop.top).toBe(0);
-  expect(slices[2].crop.bottom).toBe(1);
-  expect(slices[0].crop.bottom).toBe(slices[1].crop.top);
-  expect(slices[1].crop.bottom).toBe(slices[2].crop.top);
-  expect(slices.reduce((sum, slice) => sum + slice.crop.bottom - slice.crop.top, 0)).toBeCloseTo(1);
+  expect(slices[0].clip.top).toBe(30);
+  expect(slices[2].clip.bottom).toBe(3030);
+  expect(slices[0].clip.bottom).toBe(slices[1].clip.top);
+  expect(slices[1].clip.bottom).toBe(slices[2].clip.top);
+  expect(slices.every((slice) => slice.clip.left === 10 && slice.clip.right === 110)).toBe(true);
+  expect(slices.reduce((sum, slice) => sum + slice.clip.bottom - slice.clip.top, 0)).toBeCloseTo(
+    3000,
+  );
 });
 
 test.each([false, true])(
@@ -349,7 +357,7 @@ test('single native cell images keep aspect and merge/hidden geometry without a 
   const first = await prepareSheetLayout(book, await prepared(), frame);
   expect(first.sheets[0].images).toHaveLength(1);
   expect(first.sheets[0].images[0].bounds).toEqual({ left: 2, top: 2, right: 26, bottom: 18 });
-  expect(first.book.sheets.first.cellData[0][0]?.p).toBeUndefined();
+  expect(first.book.sheets.first.cellData![0][0]?.p).toBeUndefined();
   expect(book).toEqual(before);
   // A hidden anchor must retain an image across the visible merged remainder.
   book.sheets.first.rowData = { 0: { hd: 1 } };
@@ -368,8 +376,8 @@ test('fully hidden and nonanchor cell images need no unrelated prepared bytes', 
   const layout = await prepareSheetLayout(book, [], frame);
   expect(layout.sheets[0].images).toEqual([]);
   expect(layout.images.size).toBe(0);
-  expect(layout.book.sheets.first.cellData[0][0]?.p).toBeUndefined();
-  expect(layout.book.sheets.first.cellData[1][1]?.p).toBeUndefined();
+  expect(layout.book.sheets.first.cellData![0][0]?.p).toBeUndefined();
+  expect(layout.book.sheets.first.cellData![1][1]?.p).toBeUndefined();
 });
 
 test('mixed cell text/drawings fail clearly rather than dropping either content', async () => {
@@ -435,8 +443,12 @@ test('text-expanded repagination keeps image slices contiguous and rechecks aggr
   layout.sheets[0].bounds = { left: -2, top: -2, right: 1000, bottom: 2000 };
   const pages = replanSheetPages(layout, frame);
   expect(pages[0].scale).toBeCloseTo(523 / 1002);
-  expect(pages[0].images[0].crop.bottom).toBe(pages[1].images[0].crop.top);
-  expect(pages[1].images[0].crop.bottom).toBe(1);
+  expect(pages[0].images[0].clip.top).toBe(20);
+  expect(pages[0].images[0].clip.bottom).toBe(pages[1].images[0].clip.top);
+  expect(pages[1].images[0].clip.bottom).toBe(1520);
+  expect(
+    pages.reduce((sum, page) => sum + page.images[0].clip.bottom - page.images[0].clip.top, 0),
+  ).toBeCloseTo(1500);
   expect(pages.at(-1)?.source.bottom).toBe(2000);
   expect(() =>
     replanSheetPages({ ...layout, limits: { ...layout.limits, pages: 1 } }, frame),

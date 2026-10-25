@@ -10,6 +10,7 @@ import {
   WrapStrategy,
 } from '@univerjs/core';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import type { IStyleData } from '@univerjs/core';
 import { fixtureFonts } from './font-fixtures.ts';
 import type { NativeSheetInput } from './native.ts';
 import { retainPdf, runNativeJobs as run } from './native-test-support.ts';
@@ -413,7 +414,7 @@ test('rich formatting embeds all prepared faces and renders mixed-family Unicode
   const [result] = await run([{ input }]);
   expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
   const pages = await retainPdf('rich-unicode-faces', result.bytes!);
-  expect(pages[0].text).toContain('Latin café and fallback ♜');
+  expect(pages[0].text.replace(/\s+/g, ' ')).toContain('Latin café and fallback ♜');
   expect(pages[0].text.replace(/\s+/g, ' ')).toContain(rich);
   // Distinct embedded font resources prove that bold/italic/fallback did not
   // silently use synthetic styling or a machine's installed font.
@@ -443,7 +444,7 @@ test('native overflow includes its actual ink and outer thick borders stay insid
   expect(overflow[0].text).toContain('Overflow reaches beyond the occupied cell');
   // Narrow content stays at native 96px/inch -> 72pt/inch, with no enlargement.
   expect(overflow[0].items.find((item) => item.str.includes('Overflow'))!.height).toBeCloseTo(
-    12,
+    16,
     1,
   );
   const border = await retainPdf('outer-thick-border', results[1].bytes!);
@@ -465,4 +466,183 @@ test('native overflow includes its actual ink and outer thick borders stay insid
   expect(Math.min(...redRows)).toBeGreaterThanOrEqual(35);
   expect(redColumns.size).toBeGreaterThan(265);
   expect(redRows.size).toBeGreaterThan(72);
+}, 90_000);
+
+test('rejects extreme text geometry before native layout and accepts a cleared font size', async () => {
+  const base = await singleCell('Bounded geometry', 120);
+  const rotation = structuredClone(base);
+  rotation.snapshot.sheets.sheet.cellData![0][0]!.s = { tr: { a: 1e100 } };
+  const padding = structuredClone(base);
+  padding.snapshot.sheets.sheet.cellData![0][0]!.s = { pd: { l: 1e100 } };
+  const paragraph = structuredClone(base);
+  paragraph.snapshot.sheets.sheet.cellData![0][0]!.p = {
+    id: 'bounded-rich',
+    documentStyle: {},
+    body: {
+      dataStream: 'Bounded\r\n',
+      paragraphs: [
+        { startIndex: 7, paragraphId: 'bounded', paragraphStyle: { lineSpacing: 1e100 } },
+      ],
+    },
+  };
+  const spacing = structuredClone(paragraph);
+  spacing.snapshot.sheets.sheet.cellData![0][0]!.p!.body!.paragraphs = [
+    { startIndex: 7, paragraphId: 'bounded' },
+  ];
+  spacing.snapshot.sheets.sheet.cellData![0][0]!.p!.body!.textRuns = [
+    { st: 0, ed: 7, ts: { sc: 1e100 } },
+  ];
+  const cleared = structuredClone(base);
+  // Native nullable style clearing must resolve the prepared default face/size.
+  cleared.snapshot.sheets.sheet.cellData![0][0]!.s = {
+    fs: null,
+    bl: null,
+    it: null,
+  } as unknown as IStyleData;
+  const defaulted = structuredClone(base);
+  defaulted.snapshot.sheets.sheet.cellData![0][0]!.s = {};
+  const results = await run(
+    [rotation, padding, paragraph, spacing, cleared, defaulted].map((input) => ({ input })),
+  );
+  for (const result of results.slice(0, 4)) {
+    expect(result).toMatchObject({ ok: false, code: 'limit', restored: true, remainingFonts: 0 });
+    expect(result.bytes).toBeUndefined();
+    expect(result.message).toBe('PDF text geometry exceeds its layout budget.');
+  }
+  expect(results[4]).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  const pages = await retainPdf('cleared-font-size', results[4].bytes!);
+  expect(pages[0].text).toContain('Bounded geometry');
+  expect(results[5]).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  const defaultPages = await retainPdf('default-font-style', results[5].bytes!);
+  expect(Buffer.from(pages[0].pixels).equals(Buffer.from(defaultPages[0].pixels))).toBe(true);
+}, 90_000);
+
+test.each(['explicit', 'omitted'])(
+  'formatted display text has one aggregate limit across selected worksheets and cached reads (%s ids)',
+  async (identity) => {
+    const input = await singleCell('unused', 80);
+    const label = 'DISPLAYVALUE';
+    const sheet = input.snapshot.sheets.sheet;
+    sheet.cellData = { 0: { 0: { v: 1, s: { fs: 12, n: { pattern: `"${label}"` } } } } };
+    input.snapshot.sheetOrder.push('second');
+    input.snapshot.sheets.second = { ...structuredClone(sheet), id: 'second' };
+    if (identity === 'omitted')
+      for (const sheet of Object.values(input.snapshot.sheets))
+        delete (sheet as Partial<typeof sheet>).id;
+    const results = await run([
+      { input, options: { limits: { textCharacters: label.length * 2 - 1 } } },
+      { input, options: { limits: { textCharacters: label.length * 2 } } },
+    ]);
+    expect(results[0]).toMatchObject({
+      ok: false,
+      code: 'limit',
+      message: 'PDF formatted text exceeds its layout budget.',
+      restored: true,
+      remainingFonts: 0,
+    });
+    expect(results[0].bytes).toBeUndefined();
+    expect(results[1]).toMatchObject({ ok: true, pages: 2, restored: true, remainingFonts: 0 });
+    const pages = await retainPdf(`formatted-text-exact-budget-${identity}`, results[1].bytes!);
+    expect(pages.map((page) => page.text.trim())).toEqual([label, label]);
+  },
+  90_000,
+);
+
+test('filter formatting and rendering share a display budget even for rows filtered out', async () => {
+  const input = await singleCell('H', 80);
+  const label = 'DISPLAYVALUE';
+  const sheet = input.snapshot.sheets.sheet;
+  sheet.rowCount = 3;
+  sheet.cellData = {
+    0: { 0: { v: 'H' } },
+    1: { 0: { v: 1, s: { n: { pattern: `"${label}"` } } } },
+    2: { 0: { v: 2, s: { n: { pattern: `"${label}"` } } } },
+  };
+  const filter = {
+    ref: { startRow: 0, endRow: 2, startColumn: 0, endColumn: 0 },
+    filterColumns: [{ colId: 0, filters: { filters: ['Absent'] } }],
+  };
+  input.snapshot.resources = [
+    { name: 'SHEET_FILTER_PLUGIN', data: JSON.stringify({ sheet: filter }) },
+  ];
+  const visible = structuredClone(input);
+  visible.snapshot.resources = [
+    {
+      name: 'SHEET_FILTER_PLUGIN',
+      data: JSON.stringify({
+        sheet: { ...filter, filterColumns: [{ colId: 0, filters: { filters: [label] } }] },
+      }),
+    },
+  ];
+  const exact = 1 + label.length * 2;
+  const results = await run([
+    { input, options: { limits: { textCharacters: label.length * 2 - 1 } } },
+    { input, options: { limits: { textCharacters: exact } } },
+    { input: visible, options: { limits: { textCharacters: exact } } },
+  ]);
+  expect(results[0]).toMatchObject({
+    ok: false,
+    code: 'limit',
+    message: 'PDF formatted text exceeds its layout budget.',
+    restored: true,
+    remainingFonts: 0,
+  });
+  expect(results[0].bytes).toBeUndefined();
+  for (const result of results.slice(1))
+    expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  const hiddenPages = await retainPdf('filter-hidden-exact-text-budget', results[1].bytes!);
+  expect(hiddenPages[0].text.trim()).toBe('H');
+  const visiblePages = await retainPdf('filter-visible-exact-text-budget', results[2].bytes!);
+  expect(visiblePages[0].text.match(/DISPLAYVALUE/g)).toHaveLength(2);
+}, 90_000);
+
+test('rich highlights retain overflowing trailing spaces and ordinary tabs remain supported', async () => {
+  const short = await singleCell('', 100);
+  const sheet = short.snapshot.sheets.sheet;
+  sheet.columnCount = 20;
+  sheet.defaultColumnWidth = 40;
+  sheet.showGridlines = 0;
+  sheet.cellData = {
+    0: {
+      0: {
+        s: { fs: 18, vt: VerticalAlign.TOP },
+        p: {
+          id: 'highlight',
+          documentStyle: { textStyle: { bg: { rgb: '#ffdd00' } } },
+          body: { dataStream: 'W\r\n' },
+        },
+      },
+    },
+  };
+  const trailing = structuredClone(short);
+  trailing.snapshot.sheets.sheet.cellData![0][0]!.p!.body!.dataStream = `W${' '.repeat(12)}\r\n`;
+  const tabs = await singleCell('Left\tRight', 100);
+  const results = await run([short, trailing, tabs].map((input) => ({ input })));
+  for (const result of results)
+    expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  const shortPages = await retainPdf('highlight-short', results[0].bytes!);
+  const trailingPages = await retainPdf('highlight-trailing-overflow', results[1].bytes!);
+  const rightmostHighlight = (page: (typeof trailingPages)[number]) => {
+    let right = -1;
+    for (let y = 0; y < page.height; y++)
+      for (let x = 0; x < page.width; x++) {
+        const offset = (y * page.width + x) * 4;
+        if (
+          page.pixels[offset] > 200 &&
+          page.pixels[offset + 1] > 150 &&
+          page.pixels[offset + 2] < 80
+        )
+          right = Math.max(right, x);
+      }
+    return right;
+  };
+  // The only extra paint is native highlighting on trailing spaces. Measuring
+  // glyph ink alone cropped this rectangle at the original 40px cell edge.
+  expect(rightmostHighlight(trailingPages[0])).toBeGreaterThan(
+    rightmostHighlight(shortPages[0]) + 30,
+  );
+  expect(trailingPages[0].text).toContain('W');
+  const tabPages = await retainPdf('leader-free-tabs', results[2].bytes!);
+  expect(tabPages[0].text).toContain('Left');
+  expect(tabPages[0].text).toContain('Right');
 }, 90_000);

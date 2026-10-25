@@ -1,4 +1,11 @@
-import { CellValueType, Styles, Worksheet, getNumfmtLocaleTag, numfmt } from '@univerjs/core';
+import {
+  CellValueType,
+  Styles,
+  Worksheet,
+  getDisplayValueFromCell,
+  getNumfmtLocaleTag,
+  numfmt,
+} from '@univerjs/core';
 import type { ICellDataForSheetInterceptor, IWorkbookData, IWorksheetData } from '@univerjs/core';
 import { CustomFilterOperator, FilterModel } from '@univerjs/sheets-filter';
 import type { IAutoFilter } from '@univerjs/sheets-filter';
@@ -6,12 +13,41 @@ import { PrintError } from './contract.ts';
 import type { PrintLimits } from './contract.ts';
 import { resourceRecord } from './resources.ts';
 
+/** One admission ledger spans filter evaluation, geometry and final native drawing. */
+export function displayTextBudget(limits: Readonly<PrintLimits>, check: () => void) {
+  const admitted = new Set<string>();
+  let characters = 0;
+  return {
+    check,
+    admit(sheet: string, row: number, column: number, cell: ICellDataForSheetInterceptor) {
+      check();
+      const key = JSON.stringify([sheet, row, column]);
+      if (admitted.has(key)) return;
+      const text = cell.p?.body?.dataStream ?? getDisplayValueFromCell(cell);
+      if (typeof text !== 'string')
+        throw new PrintError('invalid-input', 'Invalid PDF displayed text.');
+      characters += text.length;
+      if (!Number.isSafeInteger(characters) || characters > limits.textCharacters)
+        throw new PrintError('limit', 'PDF formatted text exceeds its layout budget.');
+      admitted.add(key);
+    },
+  };
+}
+
+type DisplayTextBudget = ReturnType<typeof displayTextBudget>;
+
 /** Public Worksheet adapters replace editor-only interceptors, not SDK internals. */
 export class PrintWorksheet extends Worksheet {
   readonly book: IWorkbookData;
+  protected textBudget?: DisplayTextBudget;
   private excludedRows = new Set<number>();
 
-  constructor(book: IWorkbookData, sheet: Partial<IWorksheetData>, styles: Styles) {
+  constructor(
+    book: IWorkbookData,
+    sheet: Partial<IWorksheetData>,
+    styles: Styles,
+    textBudget?: DisplayTextBudget,
+  ) {
     // Worksheet fills defaults in place; never pass caller-owned snapshot objects.
     super(
       book.id,
@@ -19,9 +55,17 @@ export class PrintWorksheet extends Worksheet {
       styles,
     );
     this.book = book;
+    this.textBudget = textBudget;
   }
 
   override getCell(row: number, column: number): ICellDataForSheetInterceptor | null {
+    this.textBudget?.check();
+    const cell = this.displayCell(row, column);
+    if (cell) this.textBudget?.admit(this.getSheetId(), row, column, cell);
+    return cell;
+  }
+
+  private displayCell(row: number, column: number): ICellDataForSheetInterceptor | null {
     const raw = super.getCellRaw(row, column);
     if (!raw) return null;
     // Formula evaluation and authorization belong to the caller. Missing cached

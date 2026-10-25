@@ -42,7 +42,7 @@ export const PRINT_LIMITS: Readonly<PrintLimits> = Object.freeze({
   durationMs: 30_000,
 });
 
-export type PrintErrorCode = 'invalid-input' | 'limit' | 'cancelled' | 'unsupported';
+export type PrintErrorCode = 'invalid-input' | 'limit' | 'cancelled' | 'unsupported' | 'cleanup';
 
 /** Messages intentionally contain no workbook names, cell values, image URLs or bytes. */
 export class PrintError extends Error {
