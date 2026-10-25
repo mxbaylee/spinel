@@ -1,3 +1,4 @@
+import { EditorFrame } from './EditorFrame.tsx';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { guestItemId, documentPath } from './documentAccess.ts';
 import { GemLogo } from '../src/ui/GemLogo.tsx';
@@ -37,7 +38,6 @@ export function GuestApp() {
     window.addEventListener('hashchange', changed);
     return () => window.removeEventListener('hashchange', changed);
   }, []);
-  const [saveStatusTarget, setSaveStatusTarget] = useState<HTMLSpanElement | null>(null);
   const id = guestItemId()!;
   const [token] = useState(() => location.hash.slice(1));
   const exchange = useRef<Promise<void> | null>(null);
@@ -185,35 +185,41 @@ export function GuestApp() {
     );
   return (
     <main className="workspace guest-workspace">
-      <div className="guest-brand">
-        <GemLogo size={28} />
-        <span>Spinel · Shared document</span>
-        {!error && (
-          <ConnectionStatus
-            state={
-              !browserOnline || reachability === 'offline'
-                ? 'offline'
-                : item
-                  ? (editorConnection ?? 'reconnecting')
-                  : reachability
-            }
-            documentOpen={Boolean(item)}
-          />
-        )}
-      </div>
+      {!item && (
+        <div className="guest-brand">
+          <GemLogo size={28} />
+          <span>Spinel · Shared document</span>
+          {!error && (
+            <ConnectionStatus
+              state={
+                !browserOnline || reachability === 'offline'
+                  ? 'offline'
+                  : item
+                    ? (editorConnection ?? 'reconnecting')
+                    : reachability
+              }
+              documentOpen={Boolean(item)}
+            />
+          )}
+        </div>
+      )}
       {error ? (
         <p role="alert">{error}</p>
       ) : item ? (
-        <>
-          <div className="editor-title-status">
-            <h1>{item.name}</h1>
-            <span className="save-slot" ref={setSaveStatusTarget} />
-          </div>
-          <p>{item.access === 'editor' ? 'You are editing as a guest.' : 'View-only link.'}</p>
+        <EditorFrame
+          name={item.name}
+          guest
+          access={item.access === 'editor' ? 'Guest editor' : 'View only'}
+          connection={
+            !browserOnline || reachability === 'offline'
+              ? 'offline'
+              : (editorConnection ?? 'reconnecting')
+          }
+        >
           <Suspense fallback={<p role="status">Opening document…</p>}>
             {item.kind === 'sheet' ? (
               <Sheet
-                saveStatusTarget={saveStatusTarget}
+                saveStatusTarget={null}
                 id={id}
                 name={item.name}
                 onConnectionState={setEditorConnection}
@@ -223,7 +229,7 @@ export function GuestApp() {
               />
             ) : (
               <Doc
-                saveStatusTarget={saveStatusTarget}
+                saveStatusTarget={null}
                 id={id}
                 name={item.name}
                 onConnectionState={setEditorConnection}
@@ -233,7 +239,7 @@ export function GuestApp() {
               />
             )}
           </Suspense>
-        </>
+        </EditorFrame>
       ) : (
         <p role="status">Opening shared document…</p>
       )}

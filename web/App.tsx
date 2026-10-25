@@ -560,6 +560,8 @@ function AccountApp() {
               user={user}
               local={local}
               onConnectionState={setEditorConnection}
+              connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
+              catalog={catalogStatus}
               onCatalogStatus={setCatalogStatus}
               onPlaces={setFilePlaces}
               onOpen={(item) => {

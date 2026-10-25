@@ -38,9 +38,12 @@ unavailable rather than binding to a new file with the same name.
 
 ## Insert and edit
 
-**Insert formula…** belongs in the editor's existing actions/menu, never in a
-second toolbar. Until SPN-049 consolidates today's editor controls, a collapsed
-Formula control may sit with the existing collapsed controls.
+**Insert formula** belongs in the account editor's Document actions menu, never
+in a second toolbar. Guests with edit access retain a plain header control.
+Formula details open a bounded Formulas dialog, including prepared offline
+results; offline viewing never adds source requests. Editing a result closes
+the readout dialog before opening the existing formula editor, so returning
+to the canvas restores native focus.
 
 The dialog contains a labelled expression field, source suggestions, a labelled
 format selector (General, Number, Currency, Percent, Date), and a result preview.

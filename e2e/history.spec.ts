@@ -52,8 +52,9 @@ for (const kind of ['sheet', 'doc'] as const) {
         )
         .toContain('Keep this content');
       await expect(saved).toHaveText('All changes saved.');
-      await editor.getByRole('button', { name: 'Versions', exact: true }).click();
-      const panel = editor.getByRole('region', { name: 'Version names' });
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
+      const panel = page.getByRole('region', { name: 'Version names' });
       await panel.getByRole('button', { name: 'Name this version', exact: true }).click();
       await panel.getByLabel('Version name', { exact: true }).fill('Q3 Final Lock');
       await panel.getByRole('button', { name: 'Save version name' }).click();
@@ -75,7 +76,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect(panel.getByText('Before editing', { exact: true })).toBeVisible();
       await page.reload();
       await expect(saved).toHaveText('All changes saved.', { timeout: 30_000 });
-      await editor.getByRole('button', { name: 'Versions', exact: true }).click();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       await panel
         .getByRole('listitem')
         .filter({ hasText: 'Final approved' })
@@ -89,7 +91,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       await context.addCookies([cookie(viewer.id)]);
       await page.reload();
       await expect(saved).toContainText('View only', { timeout: 30_000 });
-      await editor.getByRole('button', { name: 'Versions', exact: true }).click();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       await expect(panel.getByText('Before editing', { exact: true })).toBeVisible();
       await expect(
         panel.getByRole('button', {

@@ -1,3 +1,5 @@
+import { EditorFrame } from './EditorFrame.tsx';
+import type { SpaceRootActionMode } from './SpaceRootActions.tsx';
 import { canAdminister, accessLabel } from '../src/shared/workspace.ts';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -14,7 +16,7 @@ import type {
 import type { ItemAccess, ItemKind, SpaceFile } from '../src/shared/workspace.ts';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
-import { ActionMenu, Button } from '../src/ui/redesign/Controls.tsx';
+import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import type { NavigationGuard } from './navigation.ts';
 import type { ConnectionState } from './connectionState.ts';
 import { SpaceShell } from './SpaceShell.tsx';
@@ -76,7 +78,9 @@ export function Space({
   onConnectionState,
   renderEditor,
 }: SpaceProps) {
-  const [saveStatusTarget, setSaveStatusTarget] = useState<HTMLSpanElement | null>(null);
+  const [rootAction, setRootAction] = useState<SpaceRootActionMode | null>(null);
+  const rootActionTrigger = useRef<HTMLButtonElement | null>(null);
+  const [offlineOpen, setOfflineOpen] = useState(false);
   const [route, setRoute] = useState<SpaceLocation>(() => readSpaceLocation(location));
   const routeRef = useRef(route);
   routeRef.current = route;
@@ -346,6 +350,10 @@ export function Space({
     (route.selection.kind === 'default' || route.selection.id === openPage.item.id);
   const visiblePage = pageMatchesRoute && (selection.item || dirty) ? openPage : null;
   const editorKey = visiblePage ? visiblePage.spaceId + '/' + visiblePage.item.id : null;
+  useEffect(() => {
+    setRootAction(null);
+    setOfflineOpen(false);
+  }, [editorKey]);
   const activeEditor = useRef(editorKey);
   activeEditor.current = editorKey;
   const onDirty = useCallback(
@@ -406,6 +414,7 @@ export function Space({
       if (sameView()) success(result);
       busyRef.current = false;
       if (current()) await refresh.current(true);
+      return true;
     } catch (error) {
       if (!current()) return;
       if (sameView()) {
@@ -419,6 +428,7 @@ export function Space({
       }
       busyRef.current = false;
       await refresh.current(true);
+      return false;
     } finally {
       if (mutation.current === active) {
         mutation.current = null;
@@ -625,7 +635,49 @@ export function Space({
         tags: [],
       }
     : null;
-  return (
+  const rootControls = (
+    <SpaceRootActions
+      item={rootFile!}
+      initialMode={visiblePage ? (rootAction ?? undefined) : undefined}
+      finalFocus={
+        visiblePage
+          ? () => (rootActionTrigger.current?.isConnected ? rootActionTrigger.current : true)
+          : undefined
+      }
+      onClose={() => setRootAction(null)}
+      beforeChange={allow}
+      onChanged={(item) => {
+        setRootAction(null);
+        setTree((previous) =>
+          previous && previous.space.id === item.id
+            ? {
+                ...previous,
+                space: { ...previous.space, name: item.name, parentId: item.parentId },
+              }
+            : previous,
+        );
+        void refresh.current(true);
+      }}
+      onTrashed={() => {
+        navigationRef.current.dirty(false);
+        onExit();
+      }}
+    />
+  );
+  const offlineControls =
+    user && !guest && rootFile ? (
+      <SpaceOfflineActions
+        key={rootFile.id}
+        user={user}
+        root={rootFile}
+        item={selection.item}
+        saved={!dirty && fresh && connection === 'online'}
+        onOpen={(id) => {
+          go(spaceHref(rootFile.id, { kind: 'page', id }));
+        }}
+      />
+    ) : null;
+  const shell = (
     <SpaceShell
       user={guest ? undefined : user}
       connection={connection}
@@ -683,7 +735,7 @@ export function Space({
         </>
       ) : (
         <>
-          <header className="space-page-header">
+          <header className="space-page-header" hidden={Boolean(visiblePage)}>
             {trashView ? (
               <ProfileIcon icon="lucide:trash-2" size={32} />
             ) : (
@@ -698,45 +750,29 @@ export function Space({
                     (denied ? 'Space unavailable' : (currentTree?.space.name ?? 'Open a Space')))}
               </h1>
             </div>
-            {visiblePage && <span className="save-slot" ref={setSaveStatusTarget} />}
             {currentTree?.access === 'viewer' && <span className="space-access">View only</span>}
             {currentTree?.access === 'admin' && <span className="space-access">File admin</span>}
             {currentTree?.access === 'editor' && <span className="space-access">Can edit</span>}
             {guest && <span className="space-access">Guest</span>}
-            {user && !guest && canAdminister(rootFile?.access) && (
-              <SpaceRootActions
-                item={rootFile}
-                beforeChange={allow}
-                onChanged={(item) => {
-                  setTree((previous) =>
-                    previous && previous.space.id === item.id
-                      ? {
-                          ...previous,
-                          space: { ...previous.space, name: item.name, parentId: item.parentId },
-                        }
-                      : previous,
-                  );
-                  void refresh.current(true);
-                }}
-                onTrashed={() => {
-                  navigationRef.current.dirty(false);
-                  onExit();
-                }}
-              />
-            )}
+            {!visiblePage && user && !guest && canAdminister(rootFile?.access) && rootControls}
           </header>
-          {user && !guest && rootFile && !trashView && (
-            <SpaceOfflineActions
-              key={rootFile.id}
-              user={user}
-              root={rootFile}
-              item={selection.item}
-              saved={!dirty && fresh && connection === 'online'}
-              onOpen={(id) => {
-                go(spaceHref(rootFile.id, { kind: 'page', id }));
-              }}
-            />
-          )}
+          {user &&
+            !guest &&
+            rootFile &&
+            !trashView &&
+            (!visiblePage || offlineOpen) &&
+            (visiblePage ? (
+              <Modal
+                title="Offline copies"
+                icon="info"
+                open
+                onOpenChange={() => setOfflineOpen(false)}
+              >
+                {offlineControls}
+              </Modal>
+            ) : (
+              offlineControls
+            ))}
         </>
       )}
       {loading && !currentTree && !bootstrap && (
@@ -822,7 +858,7 @@ export function Space({
         <div className="space-native-editor rd-native-editor" key={editorKey!}>
           {renderEditor({
             ...visiblePage,
-            saveStatusTarget,
+            saveStatusTarget: null,
             onDirty,
             onConnectionState: publishConnection,
           })}
@@ -857,6 +893,80 @@ export function Space({
           onSubmit={submit}
         />
       )}
+      {visiblePage &&
+        rootAction &&
+        user &&
+        !guest &&
+        canAdminister(rootFile?.access) &&
+        rootControls}
     </SpaceShell>
+  );
+  return visiblePage ? (
+    <EditorFrame
+      documentKey={editorKey!}
+      name={denied ? 'Space unavailable' : visiblePage.item.name}
+      onRename={
+        !guest && !denied && selection.item && canAdminister(currentTree?.access) && canEdit
+          ? async (name) => {
+              const renamed = await mutate(
+                (signal) =>
+                  spacesRequest<{ item: SpaceNode }>(
+                    `/${visiblePage.spaceId}/items/${visiblePage.item.id}`,
+                    { method: 'PATCH', body: { name }, signal },
+                  ),
+                () => {},
+              );
+              if (!renamed)
+                throw new Error(
+                  'Could not rename this page. Check the connection and your access.',
+                );
+            }
+          : undefined
+      }
+      contextLabel={currentTree ? `Space · ${currentTree.space.name}` : undefined}
+      connection={connection}
+      guest={Boolean(guest)}
+      access={
+        denied || selection.missing
+          ? 'Access changed'
+          : guest
+            ? canEdit
+              ? 'Guest editor'
+              : 'View only'
+            : currentTree?.access === 'owner'
+              ? undefined
+              : currentTree?.access === 'viewer'
+                ? 'View only'
+                : currentTree?.access === 'admin'
+                  ? 'File admin'
+                  : 'Can edit'
+      }
+      onBack={user && !guest ? exit : undefined}
+      backLabel="My files"
+      actions={[
+        ...(user && !guest && canAdminister(rootFile?.access)
+          ? (['share', 'rename', 'move', 'trash'] as const).map((mode) => ({
+              label: {
+                share: 'Share…',
+                rename: 'Rename Space…',
+                move: 'Move…',
+                trash: 'Move to Trash',
+              }[mode],
+              onClick: (trigger?: HTMLButtonElement | null) => {
+                rootActionTrigger.current = trigger ?? null;
+                setRootAction(mode);
+              },
+              destructive: mode === 'trash',
+            }))
+          : []),
+        ...(user && !guest
+          ? [{ label: 'Offline copies', onClick: () => setOfflineOpen(true) }]
+          : []),
+      ]}
+    >
+      {shell}
+    </EditorFrame>
+  ) : (
+    shell
   );
 }

@@ -236,6 +236,7 @@ export function useOfflineDownloads(
     downloads: shownAccount === user.id ? downloads : new Map<string, OfflineDownload>(),
     busy: shownAccount === user.id ? busy : null,
     message: shownAccount === user.id ? message : null,
+    clearMessage: () => setMessage(null),
     toggle,
     saveCatalog,
   };

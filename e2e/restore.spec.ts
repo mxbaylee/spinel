@@ -61,7 +61,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       await edit(page, 'Original');
       await expect.poll(async () => JSON.stringify((await read()).snapshot)).toContain('Original');
       await saved(page);
-      await page.getByRole('button', { name: 'Versions', exact: true }).click();
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       await page.getByRole('button', { name: 'Name this version', exact: true }).click();
       await page.getByLabel('Version name', { exact: true }).fill('Original version');
       await page.getByRole('button', { name: 'Save version name' }).click();
@@ -70,6 +71,10 @@ for (const kind of ['sheet', 'doc'] as const) {
       const popup = page.waitForEvent('popup');
       await original.getByRole('link', { name: 'Preview version' }).click();
       preview = await popup;
+      await page
+        .getByRole('dialog', { name: 'Versions', exact: true })
+        .getByRole('button', { name: 'Close dialog', exact: true })
+        .click();
       preview.setDefaultTimeout(15_000);
       await expect(
         preview.getByRole('heading', { name: 'Preview — Restore example' }),
@@ -136,7 +141,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       other.on('dialog', (dialog) => void dialog.accept());
       await other.reload();
       await saved(other);
-      await other.getByRole('button', { name: 'Versions', exact: true }).click();
+      await other.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await other.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       const before = other.getByRole('listitem').filter({ hasText: 'Before restore' });
       await expect(before).toBeVisible();
       // The collaborator can recover their accepted work from the retained pre-state.

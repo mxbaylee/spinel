@@ -14,6 +14,10 @@ only to transient canvas controls; labels and profile storage remain host-owned.
 
 Sheet popups use canvas containment and disappear when their cell is offscreen.
 The host owns membership cleanup, theme/resize redraw and cursor events.
+The final optional `popupOptions` argument accepts `{ zIndex }`, forwarded through
+the public popup API so a host can place remote labels below its dialogs and
+menus. Omission preserves the SDK default; the package defines no application
+layer policy.
 
 The SPN-036 prototype established that disabling document collaboration UI is not
 safe for Docs in Univer 1.1.0: it causes missing-dependency errors. Docs retain the
