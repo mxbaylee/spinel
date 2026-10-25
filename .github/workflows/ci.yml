@@ -204,6 +204,19 @@ jobs:
               ;;
           esac
 
+
+      - name: Synthetic Sheet PDF evidence
+        if: always() && matrix.suite == 'remaining'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sheet-pdf-evidence
+          path: |
+            output/pdf/spn-101-candidate/*.pdf
+            output/pdf/spn-101-candidate/*.png
+            output/pdf/spn-101-candidate/*.json
+          retention-days: 7
+          if-no-files-found: warn
+
   # Keep the policy-required check available for branch protection, including
   # explicit non-applicable runs. Every required partition must succeed.
   lib-tests:
