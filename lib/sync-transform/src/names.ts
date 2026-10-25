@@ -224,7 +224,7 @@ const nameKey = (mutation: Mutation) => `${mutation.params.unitId} ${mutation.pa
  * writes, so that the other sequence's edit of one stays first-accepted: each
  * formula write comes after the sequence's first edit of the name, as a name
  * command sends its rewrites after its name mutations, every write to a cell
- * gives it the same formula (the command writes each cell twice), and
+ * gives it the same formula, and
  * `theirs`, the cells the other sequence writes a formula to, holds each cell.
  * A formula typed in the same batch fails one of those, before the name edit
  * or after it. None otherwise.

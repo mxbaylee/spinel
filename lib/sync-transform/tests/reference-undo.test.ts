@@ -5,7 +5,8 @@ import { flip, transform } from '../index.ts';
 import type { Mutation } from '../index.ts';
 import { nameIds } from '../src/names.ts';
 import { cellIds } from '../src/writes.ts';
-import { capture, wire } from './generate.ts';
+import { recordWire } from './generate.ts';
+import type { ObservedMutation } from './generate.ts';
 import { realBook } from './generate-cells.ts';
 import { refusedBothWays, Replica, snapshotCells } from './harness.ts';
 
@@ -17,7 +18,11 @@ const one = (row: number, col: number) => ({
   endColumn: col,
 });
 type Action = 'undo' | 'redo';
-type Fixture = { document: { workbook: IWorkbookData }; mutations: Mutation[] };
+type Fixture = {
+  document: { workbook: IWorkbookData };
+  mutations: Mutation[];
+  observed: ObservedMutation[];
+};
 
 /** Capture native history mutations and the exact state immediately before them. */
 async function historyOfEdgeDelete(action: Action, withFormula = true): Promise<Fixture> {
@@ -42,15 +47,15 @@ async function historyOfEdgeDelete(action: Action, withFormula = true): Promise<
       );
     }
     const document = { workbook: structuredClone(replica.workbook()!.getSnapshot()) };
-    const mutations: Mutation[] = [];
-    commands.onCommandExecuted((info) => {
-      if (info.id.includes('.mutation.'))
-        mutations.push({ id: info.id, params: wire(info.params) });
-    });
-    expect(
-      await commands.executeCommand(`univer.command.${action}`, { unitId: target.unitId }),
-    ).toBe(true);
-    return { document, mutations };
+    const recording = recordWire(commands);
+    try {
+      expect(
+        await commands.executeCommand(`univer.command.${action}`, { unitId: target.unitId }),
+      ).toBe(true);
+      return { document, mutations: recording.mutations, observed: recording.observed };
+    } finally {
+      recording.dispose();
+    }
   } finally {
     replica.univer.dispose();
   }
@@ -59,14 +64,54 @@ async function historyOfEdgeDelete(action: Action, withFormula = true): Promise<
 /** A native peer command made on the same snapshot as the history mutation. */
 function peer(on: Fixture, command: string, params: object): Mutation[] {
   const replica = new Replica(on.document);
+  const commands = replica.injector.get(ICommandService);
+  const recording = recordWire(commands);
   try {
-    const sent = capture(replica, command, { ...target, ...params });
-    expect(sent?.length).toBeGreaterThan(0);
-    return sent!;
+    replica.injector.get(LocaleService).load({ [LocaleType.EN_US]: {} });
+    expect(commands.syncExecuteCommand(command, { ...target, ...params })).toBe(true);
+    expect(recording.mutations.length).toBeGreaterThan(0);
+    return recording.mutations;
   } finally {
+    recording.dispose();
     replica.univer.dispose();
   }
 }
+
+test('the shared recorder keeps sync-only writes and excludes local-only writes', () => {
+  const replica = new Replica({ workbook: realBook() });
+  const commands = replica.injector.get(ICommandService);
+  const recording = recordWire(commands);
+  const executed: string[] = [];
+  const listener = commands.onCommandExecuted(({ id }) => executed.push(id));
+  try {
+    const write = (value: string) => ({ ...target, cellValue: { 0: { 0: { v: value } } } });
+    expect(
+      commands.syncExecuteCommand(cellIds.setRangeValues, write('local'), { onlyLocal: true }),
+    ).toBe(true);
+    expect(
+      commands.syncExecuteCommand(cellIds.setRangeValues, write('sent'), { syncOnly: true }),
+    ).toBe(true);
+    // The ordinary callback sees local work but misses syncOnly; the native
+    // collaboration stream plus execution options has the opposite boundary.
+    expect(executed).toEqual([cellIds.setRangeValues]);
+    expect(recording.mutations).toHaveLength(1);
+    expect(recording.mutations[0]).toMatchObject({
+      id: cellIds.setRangeValues,
+      params: write('sent'),
+    });
+    expect(recording.observed.map(({ options }) => options)).toEqual([
+      { onlyLocal: true },
+      { syncOnly: true },
+    ]);
+    expect(replica.workbook()!.getSheetBySheetId(target.subUnitId)!.getCellRaw(0, 0)?.v).toBe(
+      'local',
+    );
+  } finally {
+    listener.dispose();
+    recording.dispose();
+    replica.univer.dispose();
+  }
+});
 
 // Decision 39: undo/redo hides the original shift command, so a possibly
 // stale rewrite is refused visibly instead of overwriting a typed value or
@@ -79,7 +124,7 @@ describe.each(['undo', 'redo'] as const)('%s of a nameless content-edge shift', 
   });
 
   test('only its history trigger reveals the native formula rewrite', () => {
-    const { mutations, document } = fixture;
+    const { mutations, document, observed } = fixture;
     expect(mutations.length).toBeGreaterThan(0);
     expect(mutations.map(({ id }) => id)).not.toContain(cellIds.moveRange);
     expect(mutations.map(({ id }) => id)).not.toContain(nameIds.set);
@@ -91,6 +136,13 @@ describe.each(['undo', 'redo'] as const)('%s of a nameless content-edge shift', 
       action === 'undo' ? '=A30' : '=A31',
     );
     expect(mutations.some(({ params }) => params.cellValue?.[5]?.[5]?.f === expected)).toBe(true);
+    // This cache work really occurs, but Univer explicitly keeps it local.
+    // The actual SetRangeValues rewrite above must remain on the wire.
+    const cacheId = 'formula.mutation.set-formula-data';
+    const cached = observed.filter(({ id }) => id === cacheId);
+    expect(cached.length).toBeGreaterThan(0);
+    expect(cached.every(({ options }) => options?.onlyLocal === true)).toBe(true);
+    expect(mutations.map(({ id }) => id)).not.toContain(cacheId);
   });
 
   test('refuses a formula typed elsewhere while the history edit is pending', () => {

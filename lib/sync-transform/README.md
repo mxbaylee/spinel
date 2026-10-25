@@ -189,6 +189,14 @@ published on its own needs the same patch, until upstream ships the fixes (the
 link fixes are [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938))
 and SPN-099 removes it.
 
+Capture the public `ICommandService.onMutationExecutedForCollab` stream and
+exclude events marked `onlyLocal`, `fromCollab` or `fromChangeset`. Keep
+`syncOnly` events: they are intended for collaboration even though their local
+execution happens separately. The general `onCommandExecuted` hook includes
+local formula-cache/normalization work and omits `syncOnly` events, so it does
+not represent outgoing edits. This boundary uses execution options, never a
+mutation-ID filter; unsupported outgoing mutations still fail admission.
+
 The transforms read the base cells and nothing else of the document, so some
 facts must travel with the mutation, and the client must keep a base of its
 own:
@@ -367,6 +375,10 @@ Also:
   where the other side also typed a formula after its own rename.
 - Refusals. Measured 2026-10-23 with captured Univer commands: 300 seeds,
   each run until two clients have made 40 mutations, with intent checks on.
+  These historical measurements predate the corrected collaboration-event
+  capture and the additional worksheet/history guards; they are not current
+  refusal rates. SPN-056's integrated review measures the resulting accepted
+  and refused edits by family again.
   The `refusals on a real sheet` test in `tests/cells.test.ts` prints the
   counts when run with `REFUSAL_SEEDS=300`. An edit is one command's mutations (one
   `generate` call); a batch is a client's pending edits sent together. A
@@ -459,6 +471,10 @@ editors use, not a re-implementation of it. The harness loads
 `@univerjs/sheets-formula`, as Spinel's editor does, so a captured row edit or
 range move sends the defined-name rewrites it sends there. `liveCells` reads a
 replica's cells as `BaseCells`, and `snapshotCells` a snapshot's.
+Native command fixtures use the same public collaboration-event boundary
+described above. The undo/redo regression explicitly observes local formula
+cache updates, proves they stay off the wire, and retains exact assertions for
+the outgoing cell formula rewrites.
 
 - One file per family with unit tests for each transform pair.
 - `tests/state.test.ts`: the cell state the merge reads, on its own:

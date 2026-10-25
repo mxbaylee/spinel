@@ -8,7 +8,7 @@ import {
   RANGE_TYPE,
   UniverInstanceType,
 } from '@univerjs/core';
-import type { IRange, IWorkbookData, Worksheet } from '@univerjs/core';
+import type { IExecutionOptions, IRange, IWorkbookData, Worksheet } from '@univerjs/core';
 import { SetWorksheetActiveOperation } from '@univerjs/sheets';
 import { ISheetDrawingService } from '@univerjs/sheets-drawing';
 import { SetNumfmtCommand } from '@univerjs/sheets-numfmt';
@@ -53,6 +53,24 @@ export function randomSheet(replica: Replica, next: () => number): Worksheet {
 /** Params as they arrive over the wire, as JSON: a key set to undefined is gone. */
 export const wire = (params: unknown) => JSON.parse(JSON.stringify(params));
 
+export type ObservedMutation = { id: string; options?: IExecutionOptions };
+
+/** The native outbound stream, including syncOnly but excluding local/received work. */
+export function recordWire(commands: ICommandService) {
+  const mutations: Mutation[] = [];
+  const observed: ObservedMutation[] = [];
+  const listener = commands.onMutationExecutedForCollab((info, options) => {
+    // Keep metadata for boundary assertions without cloning excluded caches.
+    observed.push({ id: info.id, options: options && { ...options } });
+    // UpdateFormulaController starts cache updates without awaiting them, so
+    // their callbacks can arrive while another command is being recorded.
+    // Execution options, not mutation IDs or timing, define the wire boundary.
+    if (options?.onlyLocal || options?.fromCollab || options?.fromChangeset) return;
+    mutations.push({ id: info.id, params: wire(info.params) });
+  });
+  return { mutations, observed, dispose: () => listener.dispose() };
+}
+
 /**
  * The mutations a command sends, as a collaboration client would forward them,
  * run on a copy of `replica` so the simulator can apply them to it itself.
@@ -85,10 +103,8 @@ export function capture(
       throw new Error(`${command} failed before ${id}`);
     }
   }
-  const sent: Mutation[] = [];
-  commands.onCommandExecuted((info) => {
-    if (info.id.includes('.mutation.')) sent.push({ id: info.id, params: wire(info.params) });
-  });
+  const recording = recordWire(commands);
+  const sent = recording.mutations;
   let ok: boolean;
   let skip = false;
   try {
@@ -103,6 +119,7 @@ export function capture(
     // so they send every mutation before syncExecuteCommand refuses the promise.
     ok = String(error).includes('should not return a promise') && sent.length > 0;
   } finally {
+    recording.dispose();
     copy.univer.dispose();
   }
   if (!ok && sent.length > 0)
