@@ -436,8 +436,9 @@ replica's cells as `BaseCells`, and `snapshotCells` a snapshot's.
   as SPN-057 and SPN-058 will. A failure names its seed; `FUZZ_SEED=<n>`
   replays it. The comparison ignores an empty `bullet.textStyle`, which
   Univer's own apply adds on one replica and no command writes.
-- `tests/cells.test.ts` also fuzzes small sheets densely and checks intent, not
-  only agreement: no token is ever in two cells, and every key of a cell (value,
+- `tests/cells.test.ts` and `tests/cells-dense.test.ts` also fuzz small sheets
+  densely and check intent, not only agreement: no token is ever in two cells,
+  and every key of a cell (value,
   formula, rich text, each style key and border edge, number format) keeps its value, following
   moves, unless an edit that saw it wrote that key or deleted the cell. An edit
   saw what its sender had applied when it made it, not what it was transformed
@@ -485,6 +486,15 @@ replica's cells as `BaseCells`, and `snapshotCells` a snapshot's.
   key left out, null, falsy or set, merged in (COVER) or replacing (REPLACE).
 - `tests/ids.test.ts`: every supported id is one Univer registers, so a renamed
   mutation in an upgrade fails here instead of passing through untransformed.
+
+CI runs the dense-cell file, the remaining cell tests plus mixed-family fuzz,
+and every other library test on three separate runners. Each keeps one Vitest
+worker and a 15-minute job budget. The required `Lib tests` aggregate passes
+only when every expected partition passes, or when classification explicitly
+finds no relevant library change. New library test files enter the complement
+automatically. This changes execution layout without reducing seed sets,
+mutation counts or assertions; the [runtime record](../../docs/implementation/SPN-056.md#ci-runtime-and-parallel-execution)
+explains the partition and the simulator work removed.
 
 ```bash
 npx vitest run lib/sync-transform

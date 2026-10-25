@@ -1100,8 +1100,7 @@ describe('concurrent moves', () => {
 // them, and CI's job limit still stops a run that never ends.
 const unclocked = 0;
 
-// The intent checks make this the slowest run but one, about 25 s on its own
-// (measured 2026-10-22).
+// The wider two-sheet book exercises movement and intent away from dense conflicts.
 test(
   'cell edits converge across two clients, as the edits meant',
   () => {
@@ -1140,54 +1139,6 @@ test(
   unclocked,
 );
 
-// Dense conflict once made output grow without bound: each transform must stay
-// within a few mutations per input. That, the seeds and the mutations per seed
-// bound each run, with no clock, so a slow machine cannot fail it. Short runs
-// meet the seeded cells before edits replace them.
-test(
-  'dense cell edits converge within budget, as the edits meant',
-  () => {
-    const document = { workbook: denseBook() };
-    // Commands' range inserts and deletes move most of the sheet, so their
-    // long runs are few: 300 seeds of 300 mutations take over a minute. The four
-    // runs take about a minute together.
-    for (const [generate, seeds, mutations] of [
-      [cellEdit, 1000, 40],
-      [cellEdit, 300, 300],
-      [commandEdit, 300, 40],
-      [commandEdit, 20, 300],
-    ] as const) {
-      // 5× holds for this generator's stream only; the hard bound is the 50× 'growth' cap.
-      convergesOver(generate, { seeds, mutations, document, budget: 5, intent: true });
-    }
-  },
-  unclocked,
-);
-
-// The 4×3 sheet's runs were tuned on their own seeds; other sheets meet other
-// shapes, such as those that once failed on 3×3 (seed 377), 5×4 (seed 162)
-// and 2×5 (seeds 314 and 355).
-// Seeds per sheet keep the file's run under three minutes (165 s, 2026-10-22).
-test.each([
-  [3, 3, 400],
-  [2, 3, 250],
-  [5, 4, 200],
-  [2, 5, 400],
-])(
-  'dense command edits on a %i×%i sheet converge, as the edits meant',
-  (rows, cols, seeds) => {
-    const document = { workbook: denseBook(rows, cols) };
-    convergesOver(commandEdit, {
-      seeds,
-      mutations: 40,
-      document,
-      budget: 5,
-      intent: true,
-    });
-  },
-  unclocked,
-);
-
 // Shifts and drags meet row and column edits, which move or cut their areas.
 // Sheet edits are left out: the intent check does not follow a removed sheet.
 test.each([
@@ -1206,6 +1157,56 @@ test.each([
   },
   unclocked,
 );
+
+// Recording is diagnostic only: it must neither alter the run nor retain a
+// generator's mutable params. Replay uses the recorded deliveries, not its RNG.
+test('recording and replaying a run preserves its edits and results', () => {
+  const document = { workbook: denseBook() };
+  const outcomes: unknown[] = [];
+  for (const intent of [false, true]) {
+    const trace: Step[] = [];
+    const emitted: Mutation[] = [];
+    const generate: Generate = (_replica, next) => {
+      const mutations = [cell(next() % 4, next() % 3, { v: next() % 17 })];
+      emitted.push(...mutations);
+      return mutations;
+    };
+    const options = { seed: 19, document, mutations: 24, generate, intent };
+    const runs: ReturnType<typeof simulate>[] = [];
+    try {
+      const plain = simulate(options);
+      runs.push(plain);
+      emitted.length = 0;
+      const recorded = simulate({ ...options, trace });
+      runs.push(recorded);
+      const captured = structuredClone(trace);
+      expect(emitted.length).toBeGreaterThan(0);
+      for (const mutation of emitted) {
+        mutation.params.cellValue = { 0: { 0: { v: 'changed after recording' } } };
+      }
+      expect(trace).toEqual(captured);
+      const replayed = simulate({ ...options, mutations: 0, generate: () => null, script: trace });
+      runs.push(replayed);
+      const result = (run: ReturnType<typeof simulate>) => ({
+        snapshot: run.server.snapshot(),
+        stats: run.stats,
+        mutations: run.mutations,
+        largest: run.largest,
+      });
+      const expected = result(plain);
+      outcomes.push(expected);
+      for (const run of runs) {
+        expect(result(run)).toEqual(expected);
+        for (const client of run.clients) expect(client.snapshot()).toEqual(expected.snapshot);
+      }
+    } finally {
+      for (const run of runs) {
+        for (const replica of [run.server, ...run.clients]) replica.univer.dispose();
+      }
+    }
+  }
+  expect(outcomes[1]).toEqual(outcomes[0]);
+});
 
 // Review 6's counterexample: the incoming write to B6 cannot pass the drag
 // of B6 still in the client's buffer, so the client resyncs. The write to A1

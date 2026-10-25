@@ -145,10 +145,12 @@ function stateOf(replica: Replica, where?: string): State {
         Object.entries(cell ?? {}).flatMap(([name, value]) => read(name, value)),
       );
       if (keys.size > 0) state.set(key, keys);
-      for (const token of [...keys.values()].join(' ').match(tokenPattern) ?? []) {
-        const other = tokens.get(token) ?? key;
-        if (where && other !== key) throw new Error(`${where}: ${token} is in ${other} and ${key}`);
-        tokens.set(token, key);
+      if (where) {
+        for (const token of [...keys.values()].join(' ').match(tokenPattern) ?? []) {
+          const other = tokens.get(token) ?? key;
+          if (other !== key) throw new Error(`${where}: ${token} is in ${other} and ${key}`);
+          tokens.set(token, key);
+        }
       }
     });
   }
@@ -507,8 +509,11 @@ export function simulate(options: {
     if (!intent) return [{ ...parts[0], mutations: all }];
     let [done, prefix] = [0, [] as Mutation[]];
     return parts.map((part, i) => {
+      // The final part owns the remainder; comparing `all` with its own slice
+      // proves nothing. Every proper prefix still gets transformed and checked.
+      if (i === parts.length - 1) return { ...part, mutations: all.slice(done) };
       prefix = [...prefix, ...part.mutations];
-      const upTo = i === parts.length - 1 ? all : transformAll(prefix, b, side, { cells });
+      const upTo = transformAll(prefix, b, side, { cells });
       if (JSON.stringify(upTo) !== JSON.stringify(all.slice(0, upTo.length))) {
         throw new Error(`${part.label} became no start of its batch's transform`);
       }
@@ -683,7 +688,7 @@ export function simulate(options: {
     }
     stats.accepted++;
     const index = history.length;
-    for (const { label } of incoming) acceptedAt.set(label, index);
+    if (intent) for (const { label } of incoming) acceptedAt.set(label, index);
     const where = `server at ${index}`;
     // Each mutation changes only keys it saw: the edits accepted since lose
     // nothing to it, except a value retyped by a write of `t` alone, which
@@ -699,15 +704,17 @@ export function simulate(options: {
           sender(fact.by) === sender(label) && !!changes.get(label)?.has(`${key}|${fact.value}`)
         );
       });
-      touched = new Set([...moved(touched, mutations), ...landed.touched]);
-      // A shape is its writer's: a later part that writes the key it lets a
-      // pending edit keep there (`v` for `type`, `p` for `restyle`) ends it.
-      const wrote = followed(mutations, writes);
-      const kept = moved(shaped, mutations).filter((entry) => {
-        const [cell, shape] = entry.split('|');
-        return !covered(wrote, cell, shape === 'type' ? 'v' : 'p');
-      });
-      shaped = new Set([...kept, ...followed(mutations, shapes)]);
+      if (intent) {
+        touched = new Set([...moved(touched, mutations), ...landed.touched]);
+        // A shape is its writer's: a later part that writes the key it lets a
+        // pending edit keep there (`v` for `type`, `p` for `restyle`) ends it.
+        const wrote = followed(mutations, writes);
+        const kept = moved(shaped, mutations).filter((entry) => {
+          const [cell, shape] = entry.split('|');
+          return !covered(wrote, cell, shape === 'type' ? 'v' : 'p');
+        });
+        shaped = new Set([...kept, ...followed(mutations, shapes)]);
+      }
       after = landed.after;
     }
     history.push({ mutations: flat(incoming), touched, after, shapes: shaped });
@@ -782,7 +789,7 @@ export function simulate(options: {
     client.confirmed.apply(mutations);
     // What the incoming edit wrote on the server, and its shapes, in the
     // cells the pending edits, landing after it there, take them to here.
-    const pending = flat([...(client.inflight ?? []), ...client.buffer]);
+    const pending = intent ? flat([...(client.inflight ?? []), ...client.buffer]) : [];
     const follows = pending.map(follower);
     const [there, mine, kinds] = [new Map<string, string>(), new Set<string>(), new Set<string>()];
     for (const [entries, into] of intent
@@ -844,7 +851,7 @@ export function simulate(options: {
     const name = clients.indexOf(client);
     for (const mutation of mutations) {
       const [label, changed] = [`${name}:${made++}`, new Set<string>()];
-      changes.set(label, changed);
+      if (intent) changes.set(label, changed);
       land(client, [mutation], label, `client ${name}`, ({ value }, _cell, key) => {
         changed.add(`${key}|${value}`);
         return true;
@@ -876,7 +883,7 @@ export function simulate(options: {
         const mutations = client.waiting ? null : options.generate(client.replica, next);
         if (!mutations || mutations.length === 0) continue;
         // As sent: the replicas apply copies, but a trace keeps its own.
-        trace({ ...at, edit: structuredClone(mutations) });
+        options.trace?.push({ ...at, edit: structuredClone(mutations) });
         edit(client, mutations);
         if (next() % 2 === 0) {
           trace({ ...at, take: 'send' });
