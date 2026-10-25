@@ -131,7 +131,9 @@ if (process.platform === 'darwin') {
 // Its own process group, so a kill reaches vitest's workers, not just npx.
 const child = spawn(command, args, { stdio: 'inherit', detached: true });
 if (child.pid) writeFileSync(owner, `${process.pid} ${child.pid}`);
+let stopped = false;
 const stop = (reason: string) => {
+  stopped = true;
   console.error(`serial: ${reason}; killing the run.`);
   try {
     process.kill(-child.pid!, 'SIGKILL');
@@ -148,8 +150,14 @@ child.on('error', (error) => {
   console.error(`serial: ${error.message}`);
   process.exit(127);
 });
-child.on('exit', (code) => {
+child.on('exit', async (code) => {
+  // A wrapper can exit before the workers it started. Its process group still
+  // owns the lock and the original watchdog until every worker has gone.
+  if (child.pid && alive(-child.pid)) {
+    console.error('serial: waiting for remaining workers.');
+    while (alive(-child.pid)) await wait(100);
+  }
   clearTimeout(timer);
   release();
-  process.exit(code ?? 1);
+  process.exit(stopped ? 1 : (code ?? 1));
 });

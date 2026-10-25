@@ -198,9 +198,12 @@ mark it ready only when its acceptance criteria and independent review are compl
 Publish early if helpful, but do not treat opening the PR as completing the ticket.
 
 Wait for all required checks on the current head to finish successfully. The
-current set is **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
-and **Playwright smoke**, plus any added repository-required checks. Missing,
+current set is **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
+**Lib tests** and **Playwright smoke**, plus any added repository-required checks. Missing,
 pending, cancelled, skipped or failed required checks do not count as a pass.
+The required Lib tests aggregate must succeed: either every required library
+partition passes, or successful classification explicitly finds no relevant
+library change. A skipped partition is not itself a passing required check.
 For an allowlisted documentation-only change, successful required jobs may
 explicitly report application tests as not applicable; Backlog, Pull request
 and Lint still validate the change. See the narrow path policy in

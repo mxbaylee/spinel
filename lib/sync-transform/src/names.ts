@@ -141,15 +141,42 @@ function racesName(a: Mutation, b: Mutation): boolean {
   return (editsName(a) && rewrites(b)) || (editsName(b) && rewrites(a));
 }
 
+/** A worksheet name assignment, including native add, copy and restore mutations. */
+function sheetIdentity(mutation: Mutation): { id: string; name: string } | undefined {
+  if (mutation.id === structureIds.insertSheet) return mutation.params.sheet;
+  if (mutation.id === settingIds.name) {
+    return { id: mutation.params.subUnitId, name: mutation.params.name };
+  }
+}
+
+/**
+ * Decision 37 (agent, 2026-10-25): refuse concurrent assignments of the same
+ * case-insensitive name to different sheets, or two inserts restoring one ID.
+ * Native add/copy commands choose names against their own snapshot, while the
+ * remote mutations do not enforce uniqueness. Suffixing a name here would
+ * leave the sender's pending formulas referring to the other person's sheet.
+ * Check every assignment, including an intermediate rename later overwritten
+ * in its own batch, before pair transforms can drop it. A same-sheet rename
+ * conflict keeps its existing first-accepted and formula-race rules.
+ */
+function racesSheetIdentity(a: Mutation, b: Mutation): boolean {
+  const [x, y] = [sheetIdentity(a), sheetIdentity(b)];
+  if (!x || !y) return false;
+  if (x.id === y.id) {
+    return a.id === structureIds.insertSheet && b.id === structureIds.insertSheet;
+  }
+  // Workbook.checkSheetName folds case but does not trim worksheet names.
+  return x.name.toLowerCase() === y.name.toLowerCase();
+}
+
 /**
  * Refuses two concurrent sequences when a mutation of one races a name set or
- * removal of the other (see `racesName`). They are checked whole, before any
- * pair is transformed: Univer's SetDefinedNameCommand sends a removal before
- * its set, and the first accepted removal drops the other side's set before
- * the two sets would meet.
+ * removal of the other, or their worksheet identities collide. They are
+ * checked whole, before any pair is transformed: a first-accepted edit can
+ * drop a later assignment before the two colliding names would meet.
  */
 export const refuseNameRaces = (a: Mutation[], b: Mutation[]) =>
-  refuseRaces(a, b, racesName, 'name-race');
+  refuseRaces(a, b, (x, y) => racesName(x, y) || racesSheetIdentity(x, y), 'name-race');
 
 /**
  * The cells a mutation writes with a formula (`f`, or a shared formula's

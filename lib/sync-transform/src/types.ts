@@ -45,7 +45,8 @@ export type RefusalReason = 'moved-cells' | 'name-race' | 'formula-race' | 'grow
  * - `'moved-cells'`: a drag, shift or cut and an edit in its area, or a
  *   removal of a cut's target sheet.
  * - `'name-race'`: a defined-name edit and an edit that makes Univer rewrite
- *   names, or two names given the same text.
+ *   names, two defined names given the same text, or colliding worksheet
+ *   names/inserted IDs (including native add, copy and restore commands).
  * - `'formula-race'`: a formula write and an edit that makes Univer rewrite
  *   formulas, or a command's rewrite of a formula and a write that replaces
  *   its cell's formula with none.

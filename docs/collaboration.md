@@ -4,10 +4,14 @@ Sheets and Docs use Univer collaboration in the application server with SQLite
 storage, authenticated access, presence and offline recovery. The integration
 uses public SDK interfaces behind a TypeScript boundary. The owner chose this
 approach on 2026-10-17 (decision [#31](implementation/SPN-012.md#legacy-decision-31-collaboration-independent-of-the-soak)), then on 2026-10-19 chose to replace it
-with Spinel's own sync: SPN-056 (merging concurrent edits), SPN-057 (the sync
-server), SPN-058 (the client) and SPN-059 (moving every document over and
-removing Univer collaboration). That grooming retired the SPN-010 limits
-experiment and the SPN-013 queue.
+with Spinel's own sync, originally scoped as SPN-056 through SPN-059. That
+grooming retired the SPN-010 limits experiment and the SPN-013 queue.
+
+The [staged landing](implementation/sync-staged-landing-2026-10-25.md#land-the-library-and-retain-spn-056-for-integrated-review)
+now separates SPN-104 (the transform library), SPN-057 (the sync server),
+SPN-058 (the client), the retained SPN-056 (independent integrated review), and
+SPN-059 (cutover and removal of Univer collaboration). The replacement remains
+inactive until the server/client work and integrated review pass.
 
 ## Storage boundary
 
@@ -207,9 +211,9 @@ increment, so an idempotent cell value cannot conceal duplicate application.
 
 ## Merging concurrent edits
 
-[`lib/sync-transform/`](../lib/sync-transform/README.md) (SPN-056) merges two
+[`lib/sync-transform/`](../lib/sync-transform/README.md) (SPN-104, originally SPN-056) merges two
 people's concurrent Sheet and Doc edits so both screens end with the same
-document. It is the first of the four tickets replacing Univer collaboration,
+document. It is the first implementation slice replacing Univer collaboration,
 because the owner chose to rewrite it rather than keep the closed-source
 transforms (owner, chat 2026-10-19). It is written from the open-source
 mutation definitions only; `@univerjs-pro/collaboration` was never read.
@@ -247,7 +251,13 @@ mutation definitions only; `@univerjs-pro/collaboration` was never read.
   README, "What a sender must do").
 - **The server checks whole-workbook invariants.** Two edits that each keep at
   least one sheet, or one visible sheet, can together remove them all; no
-  transform of the pair can see that.
+  transform of the pair can see that. Before persistence or broadcast, the
+  final candidate must also have matching worksheet IDs, snapshot keys and
+  order, with case-insensitively unique sheet names. The transform refuses
+  concurrent name/restore collisions as `name-race`; the server additionally
+  rejects malformed assignments against unchanged sheets. Reopening a native
+  snapshot must not be relied on to repair names, since that can change formula
+  targets ([decision 37](implementation/SPN-056.md#37-refuse-concurrent-worksheet-identity-collisions)).
 - **Verified against Univer itself.** Each transform pair, and a seeded
   100,000-mutation run of two clients and a server, are checked with the real
   open-source handlers running headless.
@@ -256,7 +266,8 @@ mutation definitions only; `@univerjs-pro/collaboration` was never read.
 
 This integration does not establish an unlimited editor count or a
 more-than-a-day soak. Rather than measure Univer's limits (the retired SPN-010)
-or queue editors past them (the retired SPN-013), SPN-056 to SPN-059 replace it.
+or queue editors past them (the retired SPN-013), the staged library, server,
+client, integrated review and cutover tickets above replace it.
 SPN-017's raw socket tests cover missing cookies, missing/foreign document scope,
 stale sessions, hostile origins, single-use tickets, a second-document JOIN,
 viewer edits with a forged owner ID, and downgrade/removal after JOIN. A positive
