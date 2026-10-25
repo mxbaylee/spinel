@@ -9,6 +9,7 @@ import { Modal } from '../src/ui/redesign/Controls.tsx';
 import { FormulaReadout } from './DocFormulas.tsx';
 import { failure, pending } from '../.storybook/api.ts';
 import { PresenceLabel, presencePopupZIndex } from './PresenceLabel.tsx';
+import { OfflineAvailability } from './offline/OfflineAvailability.tsx';
 
 function Fixture({
   dialog = false,
@@ -378,6 +379,49 @@ export const EditableFormulas: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await openTool(canvasElement, 'Formulas');
     await expect(within(dialog).getByRole('button', { name: 'Refresh formulas' })).toBeEnabled();
+    await assertDialogTargets(dialog);
+  },
+};
+export const OfflineAvailabilitySuccess: Story = {
+  args: {
+    children: (
+      <>
+        <Fixture />
+        <OfflineAvailability
+          message={{
+            failed: false,
+            text: 'Quarterly planning — a long document title is available offline on this device.',
+          }}
+          onDismiss={fn()}
+        />
+      </>
+    ),
+  },
+  play: async () => {
+    const dialog = await within(document.body).findByRole('dialog', {
+      name: 'Offline availability',
+    });
+    await expect(within(dialog).getByRole('status')).toHaveTextContent('available offline');
+    await assertDialogTargets(dialog);
+  },
+};
+export const OfflineAvailabilityFailure: Story = {
+  args: {
+    children: (
+      <>
+        <Fixture />
+        <OfflineAvailability
+          message={{ failed: true, text: 'Offline download is temporarily unavailable.' }}
+          onDismiss={fn()}
+        />
+      </>
+    ),
+  },
+  play: async () => {
+    const dialog = await within(document.body).findByRole('dialog', {
+      name: 'Offline availability',
+    });
+    await expect(within(dialog).getByRole('alert')).toHaveTextContent('temporarily unavailable');
     await assertDialogTargets(dialog);
   },
 };

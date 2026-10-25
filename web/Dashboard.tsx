@@ -40,6 +40,7 @@ import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import type { LocalStart } from './offline/localStart.ts';
 import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
+import { OfflineAvailability } from './offline/OfflineAvailability.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
@@ -755,20 +756,11 @@ export function Dashboard({
         <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
       )}
       {framedEditor && offline.message && (
-        <Modal
-          title="Offline availability"
-          icon={offline.message.failed ? 'warning' : 'info'}
-          open
-          onOpenChange={(open) => {
-            if (!open) offline.clearMessage();
-          }}
+        <OfflineAvailability
+          message={offline.message}
+          onDismiss={offline.clearMessage}
           finalFocus={() => (offlineFocus.current?.isConnected ? offlineFocus.current : true)}
-        >
-          <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
-          <button className="sp-control" onClick={offline.clearMessage}>
-            Done
-          </button>
-        </Modal>
+        />
       )}
       {!framedEditor && sharedFailure}
       {!loaded || viewLoading || currentId !== viewId ? (
