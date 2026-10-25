@@ -7,6 +7,7 @@ import {
 } from '../index.ts';
 import type { Mutation } from '../index.ts';
 import { halfKey, rewriteKey } from '../src/cells.ts';
+import { propertyIds } from '../src/properties.ts';
 import { settingIds } from '../src/settings.ts';
 import { Cells, claimKey } from '../src/state.ts';
 import { structureIds } from '../src/structure.ts';
@@ -134,6 +135,82 @@ test('a range move within a sheet, with inline styles, is accepted', () => {
   const styled = move('s1');
   styled.params.to.value = { 0: { 0: { v: 1, s: { bl: 1 } } } };
   expect(transform([styled], [], 'left')).toEqual([styled]);
+});
+
+// Inline-style validation must inspect actual style slots. Custom content can
+// use these property names without referring to another client's style table.
+test('custom cell content named s or defaultStyle survives validation', () => {
+  const mutation = claimed({
+    v: 'value',
+    s: { bl: 1 },
+    custom: { s: 'note', defaultStyle: 'label', nested: [{ s: 'kept' }] },
+  });
+  for (const side of ['left', 'right'] as const) {
+    expect(transform([mutation], [], side)).toEqual([mutation]);
+    expect(transform([], [mutation], side)).toEqual([]);
+  }
+});
+
+test('custom data in an inserted sheet and its cells survives validation', () => {
+  const mutation: Mutation = {
+    id: structureIds.insertSheet,
+    params: {
+      unitId: 'wb',
+      index: 0,
+      sheet: {
+        id: 'new',
+        name: 'New',
+        defaultStyle: { bl: 1 },
+        custom: { s: 'sheet note' },
+        cellData: { 0: { 0: { v: 'cell', custom: { defaultStyle: 'cell note' } } } },
+      },
+    },
+  };
+  for (const side of ['left', 'right'] as const) {
+    expect(transform([mutation], [], side)).toEqual([mutation]);
+    expect(transform([], [mutation], side)).toEqual([]);
+  }
+});
+
+// Narrowing the check must still reject every supported row/column and sheet
+// style location, even before it meets another mutation.
+test.each<[string, Mutation]>([
+  ['row data', { id: propertyIds.rowData, params: { ...target, rowData: { 0: { s: 'a1' } } } }],
+  [
+    'column data',
+    { id: propertyIds.colData, params: { ...target, columnData: { 0: { s: 'a1' } } } },
+  ],
+  [
+    'inserted row info',
+    { id: structureIds.insertRow, params: { ...target, rowInfo: { 0: { s: 'a1' } } } },
+  ],
+  [
+    'inserted column info',
+    { id: structureIds.insertCol, params: { ...target, colInfo: { 0: { s: 'a1' } } } },
+  ],
+  ...['defaultStyle', 'rowData', 'columnData'].map(
+    (slot): [string, Mutation] => [
+      `an inserted sheet's ${slot}`,
+      {
+        id: structureIds.insertSheet,
+        params: {
+          unitId: 'wb',
+          index: 0,
+          sheet: { id: 'new', [slot]: slot === 'defaultStyle' ? 'a1' : { 0: { s: 'a1' } } },
+        },
+      },
+    ],
+  ),
+  ...['from', 'to'].map(
+    (part): [string, Mutation] => {
+      const mutation = move('s1');
+      mutation.params[part].value = { 0: { 0: { s: 'a1' } } };
+      return [`a range move's ${part} cells`, mutation];
+    },
+  ),
+])('refuses a style id in %s', (_, mutation) => {
+  expect(() => transform([mutation], [], 'left')).toThrow(/needs inline styles/);
+  expect(() => transform([], [mutation], 'right')).toThrow(/needs inline styles/);
 });
 
 test('no ghost is a supported id', () => {

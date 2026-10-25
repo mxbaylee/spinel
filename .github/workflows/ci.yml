@@ -176,6 +176,11 @@ jobs:
         run: npm ci
       - name: Lib tests
         if: steps.changes.outputs.run
+        # WIP negative control: demonstrate the newly found admission bug in CI
+        # before repairing it. Remove this duplicate run after the regression fails.
+        run: npx vitest run lib/sync-transform/tests/transform.test.ts
+      - name: Full lib tests
+        if: steps.changes.outputs.run
         # A path filter: it selects every test whose path holds "lib/", which
         # today is only lib/, the same set the unit job excludes.
         run: npx vitest run lib/

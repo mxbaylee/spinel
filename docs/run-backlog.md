@@ -85,9 +85,13 @@ terminate the owner's apps or count a resource-aborted check as passing. Save a
 checkpoint before long work, and record any aborted verification and the next
 safe step. Owner, chat
 2026-10-18, after a memory-induced forced pause stalled the backlog run.
-`node scripts/serial.ts <command>` enforces the one-at-a-time and pressure
-rules and kills a run after 8 minutes, for example
+`node scripts/serial.ts <command>` serializes commands using its shared lock,
+checks macOS memory pressure once before startup, and kills the command's
+process group after 8 minutes, for example
 `node scripts/serial.ts npx vitest run lib/sync-transform/tests/cells.test.ts`.
+The runtime pressure and combined process-tree resident-memory monitoring
+required above remain the agent's responsibility; the runner does not poll
+either or enforce the 2 GiB limit.
 
 The owner permits and prefers CI when convenient, including for typecheck, lint
 and backlog checks. This is always available, not conditional on a watchdog abort.

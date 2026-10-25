@@ -217,6 +217,24 @@ mutation definitions only; `@univerjs-pro/collaboration` was never read.
 - **Its own package** with Univer as peer dependencies and no server or DOM
   imports, so the sync server (SPN-057) and the client (SPN-058) share it
   (AGENTS.md).
+- **Pure transforms read caller-supplied base cells.**
+  `transform(a, b, side, { cells })` keeps no document store and performs no
+  I/O. Its `cells(unitId, subUnitId, row, col)` callback returns the cell at
+  the revision both sequences started from, with styles inline, or null or
+  undefined for an absent cell. The transform reads cells where two writes
+  meet and for every absolute write in either input, even without a conflict;
+  it applies earlier mutations in each sequence to those cells itself.
+  Omitting the callback when those reads are needed throws a `TypeError`.
+  Wrong base cells can give a wrong merge the transform cannot detect (the
+  replay merge, [SPN-056 decision 29](implementation/SPN-056.md#29-resolve-same-cell-writes-by-replaying-them-through-univers-own-merge-on-the-base-cells-the-replay-merge);
+  [package contract](../lib/sync-transform/README.md#contract)).
+- **The server supplies the incoming batch's base-revision cells.** A client
+  keeps a confirmed snapshot of the server's state at the last revision it
+  applied, before its own pending edits. It reads that snapshot when rebasing
+  an incoming edit past its sent batch, and that snapshot with the sent batch
+  applied when rebasing past its unsent edits. The confirmed snapshot must
+  match the server's state at that revision exactly; the live document
+  including all optimistic edits is not that base (SPN-057 and SPN-058).
 - **Unsupported mutations are rejected, never guessed at.** A wrong guess makes
   two screens drift silently; a rejection is visible and SPN-059 hides the menus
   that produce one. The package README lists them.
@@ -224,9 +242,9 @@ mutation definitions only; `@univerjs-pro/collaboration` was never read.
   key, so the other person's unrelated changes to the same cell survive.
 - **Senders inline styles, keep doc paragraph ids, send a removed sheet's
   index, mark a shift's MoveRange and give new docs their drawing
-  containers**, because the transforms are stateless and these facts differ
-  per client or are missing from Univer's mutations (package README, "What a
-  sender must do").
+  containers**, because these facts differ per client or are missing from
+  Univer's mutations and cannot be supplied by the base-cell lookup (package
+  README, "What a sender must do").
 - **The server checks whole-workbook invariants.** Two edits that each keep at
   least one sheet, or one visible sheet, can together remove them all; no
   transform of the pair can see that.
