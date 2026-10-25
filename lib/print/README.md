@@ -153,7 +153,8 @@ are `invalid-input`, `unsupported`, `limit`, `cancelled` and `cleanup`; messages
 contain no document names, cell values, source URLs or supplied bytes.
 
 No bytes are streamed or returned after a failed page, cap, cancellation or
-cleanup. Tests measure cap failures and cancellation, verify no output, then render
+cleanup. The final signal/deadline check and reported duration include cleanup.
+Tests measure cap failures and cancellation, verify no output, then render
 successfully in the same isolated process. This does **not** make a synchronous
 native call interruptible. Serialization and orientation normalization can
 allocate before final byte checks. Snapshot clones, native raster/layout/font

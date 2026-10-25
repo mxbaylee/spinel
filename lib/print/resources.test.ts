@@ -105,6 +105,7 @@ test('measures resource failures and cancellation with no partial output or resi
     },
     { name: 'cancel-before', job: { input, abort: true }, code: 'cancelled' },
     { name: 'cancel-during-prepare', job: { input, abortDuringPrepare: true }, code: 'cancelled' },
+    { name: 'cancel-during-cleanup', job: { input, abortDuringCleanup: true }, code: 'cancelled' },
   ];
   const results = await runNativeJobs([...cases.map((item) => item.job), { input }]);
   await mkdir(evidenceDirectory, { recursive: true });

@@ -171,6 +171,7 @@ export async function renderSheetPdfCandidate(
     throw new PrintError('limit', 'A native PDF render is already active in this worker.');
   rendering = true;
   const started = performance.now();
+  let deadline = started;
   const keys: FontKey[] = [];
   let fontAliases: string[] = [];
   let restore: (() => void) | undefined;
@@ -178,13 +179,12 @@ export async function renderSheetPdfCandidate(
   let closed = false;
   let locale: LocaleService | undefined, context: ContextService | undefined;
   let config: ConfigService | undefined, injector: Injector | undefined;
-  let result:
-    { bytes: Uint8Array; pages: number; mediaBox: typeof FRAME; durationMs: number } | undefined;
+  let result: { bytes: Uint8Array; pages: number; mediaBox: typeof FRAME } | undefined;
   let failure: PrintError | undefined;
   let cleanupFailed = false;
   try {
     const limits = printLimits(options);
-    const deadline = started + limits.durationMs;
+    deadline = started + limits.durationMs;
     const check = () => printCheckpoint(options.signal, deadline);
     check();
     // Admission owns the font bytes before any await; metadata validation cannot
@@ -355,7 +355,6 @@ export async function renderSheetPdfCandidate(
       bytes,
       pages: layout.pages.length,
       mediaBox: { ...FRAME },
-      durationMs: performance.now() - started,
     };
   } catch (error) {
     failure =
@@ -396,5 +395,8 @@ export async function renderSheetPdfCandidate(
   }
   if (cleanupFailed) throw new PrintError('cleanup', 'Native PDF cleanup failed.');
   if (failure) throw failure;
-  return result!;
+  // Cleanup is part of the operation. A late cancellation/deadline still
+  // discards the completed bytes, and reported duration includes that cleanup.
+  printCheckpoint(options.signal, deadline);
+  return { ...result!, durationMs: performance.now() - started };
 }
