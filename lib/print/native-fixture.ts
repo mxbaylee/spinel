@@ -1,13 +1,32 @@
 /** Test child process only: native font registries may be shared by JS workers. */
 import { GlobalFonts } from '@napi-rs/canvas';
-import { renderSheetPdfCandidate } from './native.ts';
-import type { NativeSheetInput } from './native.ts';
-import type { SheetPrintOptions } from './contract.ts';
+import type { SheetPrintInput, SheetPrintOptions } from '@spinel/print';
+
+// The standalone-package test supplies an isolated source copy. Ordinary tests
+// resolve the same public package name used by future Spinel integration.
+const { renderSheetPdf } = await import(process.env.PRINT_PACKAGE_ENTRY ?? '@spinel/print');
 
 export interface NativeJob {
-  input: NativeSheetInput;
+  input: SheetPrintInput;
   options?: Omit<SheetPrintOptions, 'signal'>;
   abort?: boolean;
+  abortDuringPrepare?: boolean;
+}
+
+export interface NativeResult {
+  ok: boolean;
+  bytes?: Uint8Array;
+  pages?: number;
+  code?: string;
+  message?: string;
+  restored: boolean;
+  remainingFonts: number;
+  metrics: {
+    durationMs: number;
+    maxRssKiB: number;
+    heapUsedBytes: number;
+    externalBytes: number;
+  };
 }
 
 process.once('message', async (message) => {
@@ -15,14 +34,19 @@ process.once('message', async (message) => {
   const before = names.map((name) => Object.getOwnPropertyDescriptor(globalThis, name));
   const results = [];
   for (const job of message as NativeJob[]) {
+    const started = performance.now();
+    const controller = new AbortController();
+    if (job.abort) controller.abort();
     let result;
     try {
+      const pending = renderSheetPdf(job.input, {
+        ...job.options,
+        signal: controller.signal,
+      });
+      if (job.abortDuringPrepare) queueMicrotask(() => controller.abort());
       result = {
         ok: true,
-        ...(await renderSheetPdfCandidate(job.input, {
-          ...job.options,
-          ...(job.abort ? { signal: AbortSignal.abort() } : {}),
-        })),
+        ...(await pending),
       };
     } catch (error) {
       result = {
@@ -43,7 +67,18 @@ process.once('message', async (message) => {
         current?.configurable === original?.configurable
       );
     });
-    results.push({ ...result, restored, remainingFonts: GlobalFonts.families.length });
+    const memory = process.memoryUsage();
+    results.push({
+      ...result,
+      restored,
+      remainingFonts: GlobalFonts.families.length,
+      metrics: {
+        durationMs: performance.now() - started,
+        maxRssKiB: process.resourceUsage().maxRSS,
+        heapUsedBytes: memory.heapUsed,
+        externalBytes: memory.external,
+      },
+    });
   }
   process.send!(results);
   process.disconnect();

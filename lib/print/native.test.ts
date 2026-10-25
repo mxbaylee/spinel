@@ -1,49 +1,18 @@
-import { fork } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect, test } from 'vitest';
 import { createCanvas } from '@napi-rs/canvas';
-import { HorizontalAlign, WrapStrategy } from '@univerjs/core';
+import {
+  BorderStyleTypes,
+  HorizontalAlign,
+  LocaleType,
+  VerticalAlign,
+  WrapStrategy,
+} from '@univerjs/core';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { fixtureFonts } from './font-fixtures.ts';
 import type { NativeSheetInput } from './native.ts';
-import type { NativeJob } from './native-fixture.ts';
-
-interface Result {
-  ok: boolean;
-  bytes?: Uint8Array;
-  pages?: number;
-  code?: string;
-  message?: string;
-  restored: boolean;
-  remainingFonts: number;
-}
-
-async function run(jobs: NativeJob[]): Promise<Result[]> {
-  const worker = fork(new URL('./native-fixture.ts', import.meta.url), [], {
-    env: { ...process.env, DISABLE_SYSTEM_FONTS_LOAD: '1' },
-    serialization: 'advanced',
-    stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
-  });
-  let timeout: ReturnType<typeof setTimeout> | undefined;
-  try {
-    return await new Promise<Result[]>((accept, reject) => {
-      worker.once('message', (message) => accept(message as Result[]));
-      worker.once('error', reject);
-      worker.once('exit', (code) =>
-        reject(new Error(`Native fixture exited without a result (${code}).`)),
-      );
-      timeout = setTimeout(
-        () => reject(new Error('Native fixture exceeded its process deadline.')),
-        40_000,
-      );
-      worker.send(jobs);
-    });
-  } finally {
-    clearTimeout(timeout);
-    worker.kill('SIGKILL');
-  }
-}
+import { retainPdf, runNativeJobs as run } from './native-test-support.ts';
 
 async function fixture(): Promise<NativeSheetInput> {
   const raster = createCanvas(3, 2),
@@ -176,7 +145,8 @@ test('late failures publish no bytes, release native fonts/globals and allow a f
       0: {
         p: {
           id: 'rich',
-          body: { dataStream: 'Unimplemented rich text\r\n' },
+          documentStyle: { background: { source: 'unprepared-background' } },
+          body: { dataStream: 'Unsupported rich paint\r\n' },
         },
       },
     },
@@ -199,10 +169,11 @@ test('late failures publish no bytes, release native fonts/globals and allow a f
   for (const result of results.slice(0, 4)) {
     expect(result.ok).toBe(false);
     expect(result.bytes).toBeUndefined();
-    expect(result.message).not.toContain('Unimplemented rich text');
+    expect(result.message).not.toContain('Unsupported rich paint');
   }
   expect(results.every((result) => result.restored && result.remainingFonts === 0)).toBe(true);
   expect(results[4]).toMatchObject({ ok: true, pages: 4 });
+  await retainPdf('cleanup-recovery', results[4].bytes!);
 }, 60_000);
 
 async function singleCell(text: string, height = 120): Promise<NativeSheetInput> {
@@ -215,7 +186,8 @@ async function singleCell(text: string, height = 120): Promise<NativeSheetInput>
       id: 'one',
       name: 'Geometry fixture',
       appVersion: '1.1.0',
-      locale: 'enUS',
+      locale: LocaleType.EN_US,
+      styles: {},
       sheetOrder: ['sheet'],
       sheets: {
         sheet: {
@@ -231,57 +203,52 @@ async function singleCell(text: string, height = 120): Promise<NativeSheetInput>
   } as NativeSheetInput;
 }
 
-test('large single-line ink must fit the row; multiline and rotated cells publish nothing', async () => {
+test('large ink rejects a short row while multiline and rotated text remain complete', async () => {
   const short = await singleCell('X', 24);
   short.snapshot.sheets.sheet.cellData![0][0]!.s = { fs: 64 };
   const tall = structuredClone(short);
   tall.snapshot.sheets.sheet.defaultRowHeight = 120;
-  const multiline = await singleCell('A\nB');
-  const rotated = await singleCell('Rotated');
-  rotated.snapshot.sheets.sheet.cellData![0][0]!.s = { tr: { a: 90 } };
+  const multiline = await singleCell('First line\nFinal line');
+  const rotated = await singleCell('Rotated', 260);
+  rotated.snapshot.sheets.sheet.cellData![0][0]!.s = { fs: 16, tr: { a: 90 } };
   const results = await run([short, multiline, rotated, tall].map((input) => ({ input })));
-  for (const result of results.slice(0, 3)) {
-    expect(result).toMatchObject({
-      ok: false,
-      code: 'unsupported',
-      restored: true,
-      remainingFonts: 0,
-    });
-    expect(result.bytes).toBeUndefined();
-  }
-  expect(results[3]).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
-  expect((await renderedGeometry(results[3].bytes!)).text.map((item) => item.text).join('')).toBe(
-    'X',
-  );
-}, 60_000);
-
-async function renderedGeometry(bytes: Uint8Array, filename?: string) {
-  const loading = getDocument({ data: new Uint8Array(bytes), useSystemFonts: false });
-  try {
-    const pdf = await loading.promise;
-    expect(pdf.numPages).toBe(1);
-    const page = await pdf.getPage(1);
-    const text = (await page.getTextContent()).items.flatMap((item) =>
-      'str' in item
-        ? [{ text: item.str, transform: item.transform, width: item.width, height: item.height }]
-        : [],
+  expect(results[0]).toMatchObject({
+    ok: false,
+    code: 'unsupported',
+    restored: true,
+    remainingFonts: 0,
+  });
+  expect(results[0].bytes).toBeUndefined();
+  for (const [index, result] of results.slice(1).entries()) {
+    expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+    const pages = await retainPdf(`native-text-${index}`, result.bytes!);
+    expect(pages[0].text.replace(/\s+/g, ' ').trim()).toBe(
+      ['First line Final line', 'Rotated', 'X'][index],
     );
-    const canvas = createCanvas(595, 842),
-      context = canvas.getContext('2d');
-    await page.render({
-      canvas: canvas as unknown as HTMLCanvasElement,
-      canvasContext: context as unknown as CanvasRenderingContext2D,
-      viewport: page.getViewport({ scale: 1 }),
-    }).promise;
-    if (filename)
-      await writeFile(
-        resolve('output/pdf/spn-101-candidate', filename),
-        await canvas.encode('png'),
-      );
-    return { text, pixels: Buffer.from(context.getImageData(0, 0, 595, 842).data) };
-  } finally {
-    await loading.destroy();
+    if (index === 0)
+      expect(
+        new Set(pages[0].items.filter((item) => item.str.trim()).map((item) => item.transform[5]))
+          .size,
+      ).toBeGreaterThan(1);
+    if (index === 1)
+      expect(
+        pages[0].items.some((item) => Math.abs(item.transform[1]) > Math.abs(item.transform[0])),
+      ).toBe(true);
   }
+}, 90_000);
+
+async function renderedGeometry(bytes: Uint8Array, name: string) {
+  const pages = await retainPdf(name, bytes);
+  expect(pages).toHaveLength(1);
+  return {
+    text: pages[0].items.map((item) => ({
+      text: item.str,
+      transform: item.transform,
+      width: item.width,
+      height: item.height,
+    })),
+    pixels: Buffer.from(pages[0].pixels),
+  };
 }
 
 test('a different prepared font in the same process matches its fresh-process text geometry and pixels', async () => {
@@ -295,9 +262,9 @@ test('a different prepared font in the same process matches its fresh-process te
   const [fresh] = await run([{ input: second }]);
   for (const result of [...sequential, fresh])
     expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
-  const original = await renderedGeometry(sequential[0].bytes!);
-  const reused = await renderedGeometry(sequential[1].bytes!);
-  const isolated = await renderedGeometry(fresh.bytes!);
+  const original = await renderedGeometry(sequential[0].bytes!, 'font-original');
+  const reused = await renderedGeometry(sequential[1].bytes!, 'font-sequential');
+  const isolated = await renderedGeometry(fresh.bytes!, 'font-fresh');
   expect(reused.text.map((item) => item.text).join('')).toBe('Budget');
   expect(reused.text).toEqual(isolated.text);
   expect(reused.pixels.equals(isolated.pixels)).toBe(true);
@@ -323,7 +290,7 @@ test('complete wrapped paragraphs fit ordinary and merged cells without dropping
   for (const [index, result] of results.entries()) {
     expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
     await writeFile(resolve(output, `wrapped-${index}.pdf`), result.bytes!);
-    const geometry = await renderedGeometry(result.bytes!, `wrapped-${index}.png`);
+    const geometry = await renderedGeometry(result.bytes!, `wrapped-${index}`);
     expect(
       geometry.text
         .map((item) => item.text)
@@ -344,41 +311,158 @@ test('complete wrapped paragraphs fit ordinary and merged cells without dropping
   }
 }, 60_000);
 
-test('wrapped overflow and ordinary or merged page-crossing text fail atomically before a later valid render', async () => {
-  const text =
-    'Every word must survive complete paragraph admission, including this final sentinel.';
-  const short = await singleCell(text, 24);
+test('overfull wrapping fails atomically but tall ordinary and merged glyphs continue through page seams', async () => {
+  const short = await singleCell(
+    'Every word must survive complete paragraph admission, including the final sentinel.',
+    24,
+  );
   short.snapshot.sheets.sheet.defaultColumnWidth = 100;
   short.snapshot.sheets.sheet.cellData![0][0]!.s = { fs: 16, tb: WrapStrategy.WRAP };
-  const tall = await singleCell('Page crossing sentinel', 2400);
-  // A non-final tall row exercises the native printing end-row exclusion.
-  tall.snapshot.sheets.sheet.rowCount = 2;
-  tall.snapshot.sheets.sheet.rowData = { 1: { h: 24 } };
-  tall.snapshot.sheets.sheet.cellData![1] = { 0: { v: 'Tail', s: { fs: 12 } } };
+  const tall = await singleCell('M', 2052);
+  const sheet = tall.snapshot.sheets.sheet;
+  sheet.showGridlines = 0;
+  sheet.rowCount = 2;
+  sheet.rowData = { 1: { h: 24 } };
+  sheet.cellData![0][0]!.s = { fs: 128, vt: VerticalAlign.MIDDLE, cl: { rgb: '#cc2266' } };
+  sheet.cellData![1] = { 0: { v: 'Final tail', s: { fs: 12 } } };
   const merged = structuredClone(tall);
-  merged.snapshot.sheets.sheet.defaultRowHeight = 800;
-  merged.snapshot.sheets.sheet.rowCount = 4;
-  merged.snapshot.sheets.sheet.rowData = { 3: { h: 24 } };
-  merged.snapshot.sheets.sheet.cellData = {
-    0: { 0: { v: 'Merged crossing sentinel', s: { fs: 16, tb: WrapStrategy.WRAP } } },
-    3: { 0: { v: 'Tail', s: { fs: 12 } } },
-  };
-  merged.snapshot.sheets.sheet.mergeData = [
-    { startRow: 0, endRow: 2, startColumn: 0, endColumn: 0 },
-  ];
+  const mergeSheet = merged.snapshot.sheets.sheet;
+  mergeSheet.defaultRowHeight = 1026;
+  mergeSheet.rowCount = 3;
+  mergeSheet.rowData = { 2: { h: 24 } };
+  mergeSheet.cellData = { 0: sheet.cellData![0], 2: sheet.cellData![1] };
+  mergeSheet.mergeData = [{ startRow: 0, endRow: 1, startColumn: 0, endColumn: 0 }];
   const good = await singleCell('Still works');
   const results = await run([short, tall, merged, good].map((input) => ({ input })));
-  for (const result of results.slice(1, 3))
-    expect(result.message).toBe('PDF text page continuation is not implemented yet.');
-  for (const result of results.slice(0, 3)) {
-    expect(result).toMatchObject({
-      ok: false,
-      code: 'unsupported',
-      restored: true,
-      remainingFonts: 0,
-    });
-    expect(result.bytes).toBeUndefined();
-    expect(result.message).not.toContain('sentinel');
+  expect(results[0]).toMatchObject({
+    ok: false,
+    code: 'unsupported',
+    restored: true,
+    remainingFonts: 0,
+  });
+  expect(results[0].bytes).toBeUndefined();
+  for (const [index, result] of results.slice(1, 3).entries()) {
+    expect(result).toMatchObject({ ok: true, pages: 3, restored: true, remainingFonts: 0 });
+    const pages = await retainPdf(`text-continuation-${index}`, result.bytes!);
+    const magenta = (page: (typeof pages)[number], top: number, bottom: number) => {
+      let count = 0;
+      for (let y = top; y < bottom; y++)
+        for (let x = 35; x < 310; x++) {
+          const offset = (y * page.width + x) * 4;
+          if (
+            page.pixels[offset] > 140 &&
+            page.pixels[offset + 1] < 90 &&
+            page.pixels[offset + 2] > 70
+          )
+            count++;
+        }
+      return count;
+    };
+    // Actual glyph ink straddles the seam. The prior native print cache omitted
+    // the partial non-final row entirely from the first page.
+    expect(magenta(pages[0], 786, 806)).toBeGreaterThan(30);
+    expect(magenta(pages[1], 36, 56)).toBeGreaterThan(30);
+    expect(pages[2].text).toContain('Final tail');
+    for (const page of pages) expect(page.view).toEqual([0, 0, 595, 842]);
   }
   expect(results[3]).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  await retainPdf('continuation-recovery', results[3].bytes!);
+}, 90_000);
+
+test('rich formatting embeds all prepared faces and renders mixed-family Unicode fallback', async () => {
+  const input = await singleCell('placeholder', 90);
+  input.fonts = await fixtureFonts();
+  input.fallbackFamilies = ['Noto Sans Symbols 2'];
+  const sheet = input.snapshot.sheets.sheet;
+  sheet.rowCount = 6;
+  sheet.defaultColumnWidth = 560;
+  sheet.showGridlines = 0;
+  const rich = 'Regular café Bold Italic Both ♜';
+  sheet.cellData = {
+    0: { 0: { v: 'Regular café', s: { fs: 18 } } },
+    1: { 0: { v: 'Bold', s: { fs: 18, bl: 1 } } },
+    2: { 0: { v: 'Italic', s: { fs: 18, it: 1 } } },
+    3: { 0: { v: 'Both', s: { fs: 18, bl: 1, it: 1 } } },
+    4: { 0: { v: 'Latin café and fallback ♜', s: { fs: 18 } } },
+    5: {
+      0: {
+        p: {
+          id: 'rich-styles',
+          documentStyle: {},
+          body: {
+            dataStream: `${rich}\r\n`,
+            textRuns: [
+              {
+                st: rich.indexOf('Bold'),
+                ed: rich.indexOf('Bold') + 4,
+                ts: { bl: 1, cl: { rgb: '#9f205b' } },
+              },
+              {
+                st: rich.indexOf('Italic'),
+                ed: rich.indexOf('Italic') + 6,
+                ts: { it: 1, ul: { s: 1 } },
+              },
+              { st: rich.indexOf('Both'), ed: rich.indexOf('Both') + 4, ts: { bl: 1, it: 1 } },
+            ],
+          },
+        },
+        s: { fs: 18, tb: WrapStrategy.WRAP },
+      },
+    },
+  };
+  const [result] = await run([{ input }]);
+  expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  const pages = await retainPdf('rich-unicode-faces', result.bytes!);
+  expect(pages[0].text).toContain('Latin café and fallback ♜');
+  expect(pages[0].text.replace(/\s+/g, ' ')).toContain(rich);
+  // Distinct embedded font resources prove that bold/italic/fallback did not
+  // silently use synthetic styling or a machine's installed font.
+  const pdf = Buffer.from(result.bytes!).toString('latin1');
+  expect((pdf.match(/\/FontFile[23]\s+\d+\s+0\s+R/g) ?? []).length).toBeGreaterThanOrEqual(5);
+  expect(new Set(pages[0].items.map((item) => item.fontName)).size).toBeGreaterThanOrEqual(5);
 }, 60_000);
+
+test('native overflow includes its actual ink and outer thick borders stay inside the complete crop', async () => {
+  const input = await singleCell('Overflow reaches beyond the occupied cell', 100);
+  const sheet = input.snapshot.sheets.sheet;
+  sheet.columnCount = 20;
+  sheet.defaultColumnWidth = 80;
+  sheet.showGridlines = 0;
+  sheet.cellData![0][0]!.s = { fs: 16, vt: VerticalAlign.TOP };
+  const bordered = await singleCell('Bordered', 100);
+  bordered.snapshot.sheets.sheet.showGridlines = 0;
+  const thick = { s: BorderStyleTypes.THICK, cl: { rgb: '#dd2244' } };
+  bordered.snapshot.sheets.sheet.cellData![0][0]!.s = {
+    fs: 16,
+    bd: { t: thick, b: thick, l: thick, r: thick },
+  };
+  const results = await run([{ input }, { input: bordered }]);
+  for (const result of results)
+    expect(result).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  const overflow = await retainPdf('text-overflow', results[0].bytes!);
+  expect(overflow[0].text).toContain('Overflow reaches beyond the occupied cell');
+  // Narrow content stays at native 96px/inch -> 72pt/inch, with no enlargement.
+  expect(overflow[0].items.find((item) => item.str.includes('Overflow'))!.height).toBeCloseTo(
+    12,
+    1,
+  );
+  const border = await retainPdf('outer-thick-border', results[1].bytes!);
+  const redColumns = new Set<number>(),
+    redRows = new Set<number>();
+  for (let y = 0; y < border[0].height; y++)
+    for (let x = 0; x < border[0].width; x++) {
+      const offset = (y * border[0].width + x) * 4;
+      if (
+        border[0].pixels[offset] > 150 &&
+        border[0].pixels[offset + 1] < 90 &&
+        border[0].pixels[offset + 2] < 120
+      ) {
+        redColumns.add(x);
+        redRows.add(y);
+      }
+    }
+  expect(Math.min(...redColumns)).toBeGreaterThanOrEqual(35);
+  expect(Math.min(...redRows)).toBeGreaterThanOrEqual(35);
+  expect(redColumns.size).toBeGreaterThan(265);
+  expect(redRows.size).toBeGreaterThan(72);
+}, 90_000);

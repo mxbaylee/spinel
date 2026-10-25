@@ -3,6 +3,13 @@ import type { IWorkbookData } from '@univerjs/core';
 import { PRINT_LIMITS, PrintError, paginateSheet, preflightSheets } from './index.ts';
 import { inspectSnapshot } from './preflight.ts';
 
+function sparseArray<T>(length: number): T[] {
+  const result: T[] = [];
+  // Preserve real holes: filled entries would not exercise logical-length admission.
+  result.length = length;
+  return result;
+}
+
 function workbook(): IWorkbookData {
   return {
     id: 'book',
@@ -51,8 +58,8 @@ test('keeps native indices but collapses hidden axes and honors automatic row he
   book.sheets.first.columnData = { 0: { w: 100 }, 1: { hd: 1 }, 2: { w: 25 } };
   book.sheets.first.cellData = { 1: { 1: { v: 'Hidden only' } }, 2: { 2: { v: 0 } } };
   const first = preflightSheets(book).sheets[0];
-  expect([...first.rows.slice(0, 4)]).toEqual([0, 30, 30, 70]);
-  expect([...first.columns.slice(0, 4)]).toEqual([0, 100, 100, 125]);
+  expect(first.rows.subarray(0, 4)).toEqual(Float64Array.of(0, 30, 30, 70));
+  expect(first.columns.subarray(0, 4)).toEqual(Float64Array.of(0, 100, 100, 125));
   expect(first.cellBounds).toEqual({ left: 100, top: 30, right: 125, bottom: 70 });
   expect(first.visibleGridCells).toBe(1);
 });
@@ -98,6 +105,31 @@ describe('bounded malformed input handling before native allocation', () => {
     );
   });
 
+  test('rejects whole-axis and overlapping merges before native indexing', () => {
+    const book = workbook();
+    for (const rangeType of [1, 2, 3]) {
+      book.sheets.first.mergeData = [
+        { startRow: 0, endRow: 0, startColumn: 0, endColumn: 0, rangeType },
+      ];
+      expect(() => preflightSheets(book)).toThrow('finite cell ranges');
+    }
+    const first = { startRow: 0, endRow: 2, startColumn: 0, endColumn: 1 };
+    for (const overlapping of [
+      first,
+      { startRow: 1, endRow: 3, startColumn: 1, endColumn: 2 },
+      { startRow: 1, endRow: 1, startColumn: 0, endColumn: 0 },
+    ]) {
+      book.sheets.first.mergeData = [first, overlapping];
+      expect(() => preflightSheets(book)).toThrow('must not overlap');
+    }
+    book.sheets.first.mergeData = [
+      first,
+      { startRow: 0, endRow: 2, startColumn: 2, endColumn: 3 },
+      { startRow: 3, endRow: 4, startColumn: 0, endColumn: 1, rangeType: 0 },
+    ];
+    expect(() => preflightSheets(book)).not.toThrow();
+  });
+
   test('caps nodes, text bytes, nesting, arrays and axes', () => {
     expect(() => preflightSheets(workbook(), { limits: { snapshotNodes: 3 } })).toThrow('entries');
     expect(() => preflightSheets(workbook(), { limits: { snapshotBytes: 30 } })).toThrow(
@@ -119,13 +151,13 @@ describe('bounded malformed input handling before native allocation', () => {
     const book = workbook();
     // This allocates no image/resource payload, but an unchecked consumer would
     // still see billions of logical entries rather than the tiny own-key count.
-    book.resources = new Array(0xffffffff);
+    book.resources = sparseArray(0xffffffff);
     expect(() => preflightSheets(book)).toThrow('array exceeds its entry budget');
     delete book.resources;
-    book.custom = { first: new Array(130_000), second: new Array(130_000) };
+    book.custom = { first: sparseArray(130_000), second: sparseArray(130_000) };
     expect(() => preflightSheets(book)).toThrow('too many entries');
 
-    const sparse = new Array(4);
+    const sparse = sparseArray(4);
     expect(() =>
       inspectSnapshot(sparse, { ...PRINT_LIMITS, snapshotNodes: 5 }, () => {}),
     ).not.toThrow();
@@ -226,7 +258,12 @@ test('continues oversized row/merge/image pixel slices, with zero overlap or mis
   expect(pages[0].source.top).toBe(42);
   expect(pages.at(-1)!.source.bottom).toBe(3042);
   expect(pages.slice(1).every((page, i) => page.source.top === pages[i].source.bottom)).toBe(true);
-  expect(pages.reduce((sum, page) => sum + page.source.bottom - page.source.top, 0)).toBe(3000);
+  // Exact adjacent edges above prove continuity; summing fractional page heights
+  // adds ordinary floating-point rounding and needs a sub-pixel tolerance.
+  expect(pages.reduce((sum, page) => sum + page.source.bottom - page.source.top, 0)).toBeCloseTo(
+    3000,
+    9,
+  );
   expect(() => paginateSheet('first', source, { width: 595, height: 842 }, 2)).toThrow(
     'page budget',
   );
@@ -236,4 +273,16 @@ test('continues oversized row/merge/image pixel slices, with zero overlap or mis
     right: 0,
     bottom: 0,
   });
+});
+
+test('preserves bounded negative drawing and border extents inside the PDF margins', () => {
+  const bounds = { left: -30.25, top: -0.5, right: 180, bottom: 40 };
+  expect(paginateSheet('rotated', bounds, { width: 595, height: 842 }, 1)[0]).toEqual({
+    sheetId: 'rotated',
+    source: bounds,
+    scale: 0.75,
+  });
+  expect(() =>
+    paginateSheet('invalid', { ...bounds, left: -1e20 }, { width: 595, height: 842 }, 1),
+  ).toThrow('used range');
 });

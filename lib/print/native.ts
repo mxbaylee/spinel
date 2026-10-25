@@ -1,4 +1,4 @@
-/** Internal, incomplete native bridge. Not exported by the package entry point. */
+/** Isolated native renderer using only public open-source model and drawing APIs. */
 import { randomUUID } from 'node:crypto';
 import {
   ConfigService,
@@ -7,16 +7,11 @@ import {
   LocaleService,
   Styles,
   ThemeService,
-  WrapStrategy,
-  getDisplayValueFromCell,
 } from '@univerjs/core';
-import type { ICellDataForSheetInterceptor, IStyleData, IWorkbookData } from '@univerjs/core';
+import type { ICellDataForSheetInterceptor, IWorkbookData } from '@univerjs/core';
 import {
-  DEFAULT_PADDING_DATA,
-  DocSimpleSkeleton,
   Group,
   Spreadsheet,
-  SpreadsheetSkeleton,
   Transform,
   UniverPrintingContext,
   invalidateDocumentFontMetrics,
@@ -27,7 +22,10 @@ import type { FontKey, SKRSContext2D } from '@napi-rs/canvas';
 import { PrintError, printCheckpoint, printLimits } from './contract.ts';
 import type { PreparedFont, PreparedImage, PrintBox, SheetPrintOptions } from './contract.ts';
 import { PreparedFonts } from './fonts.ts';
-import { prepareSheetLayout } from './layout.ts';
+import { prepareSheetLayout, replanSheetPages } from './layout.ts';
+import { drawPreparedImage } from './image-render.ts';
+import { unionBox } from './preflight.ts';
+import { measureSheetInk, prepareCellText, PrintSkeleton } from './text.ts';
 import { PrintWorksheet } from './worksheet.ts';
 
 // Skia's public PDF backend quantizes the requested A4 MediaBox to integer points
@@ -61,22 +59,14 @@ class HeadlessSpreadsheet extends Spreadsheet {
 
 class FontWorksheet extends PrintWorksheet {
   fonts!: PreparedFonts;
+  private prepared = new Map<string, ICellDataForSheetInterceptor | null>();
   override getCell(row: number, column: number): ICellDataForSheetInterceptor | null {
-    const cell = super.getCell(row, column);
-    if (!cell) return null;
-    if (cell.p)
-      throw new PrintError('unsupported', 'PDF rich-cell rendering is not implemented yet.');
-    const style = cell.s as IStyleData;
-    if (style.fs !== undefined && (!Number.isFinite(style.fs) || style.fs <= 0 || style.fs > 512))
-      throw new PrintError('limit', 'PDF font size exceeds its layout budget.');
-    const text = getDisplayValueFromCell(cell);
-    if (/[\r\n\u000b\u000c\u0085\u2028\u2029]/u.test(text) || style.tr?.a || style.tr?.v)
-      throw new PrintError('unsupported', 'PDF multiline or rotated text is not implemented yet.');
-    const runs = this.fonts.runs(text || ' ', style.ff, style.bl === 1, style.it === 1);
-    const families = new Set(runs.map((run) => run.family));
-    if (families.size !== 1)
-      throw new PrintError('unsupported', 'PDF mixed-font cell shaping is not implemented yet.');
-    return { ...cell, s: { ...style, ff: runs[0].family } };
+    const key = `${row}:${column}`;
+    if (this.prepared.has(key)) return this.prepared.get(key)!;
+    const raw = super.getCell(row, column);
+    const cell = raw ? prepareCellText(raw, this.fonts) : null;
+    this.prepared.set(key, cell);
+    return cell;
   }
 }
 
@@ -170,9 +160,8 @@ function canvasGlobals(pixelLimit: number, check: () => void) {
 }
 
 /**
- * Candidate renderer for the currently supported axis-aligned/plain-cell subset.
  * Call only inside the host's isolated worker/process. Never stream partial bytes.
- * Final rich text, overflow and complete image acceptance remain unfinished.
+ * All selected content, complete native text layout, pages and cleanup must succeed.
  */
 export async function renderSheetPdfCandidate(
   input: NativeSheetInput,
@@ -189,6 +178,10 @@ export async function renderSheetPdfCandidate(
   let closed = false;
   let locale: LocaleService | undefined, context: ContextService | undefined;
   let config: ConfigService | undefined, injector: Injector | undefined;
+  let result:
+    { bytes: Uint8Array; pages: number; mediaBox: typeof FRAME; durationMs: number } | undefined;
+  let failure: PrintError | undefined;
+  let cleanupFailed = false;
   try {
     const limits = printLimits(options);
     const deadline = started + limits.durationMs;
@@ -245,7 +238,6 @@ export async function renderSheetPdfCandidate(
     config = new ConfigService();
     injector = new Injector([[ThemeService]]);
     const styles = new Styles(layout.book.styles);
-    const measurement = createCanvas(1, 1).getContext('2d');
     pdf = new PDFDocument({ title: '', author: '', creator: '@spinel/print' });
     for (const sheet of layout.sheets) {
       check();
@@ -259,144 +251,29 @@ export async function renderSheetPdfCandidate(
       };
       const worksheet = new FontWorksheet(layout.book, sheetConfig, styles);
       worksheet.fonts = fonts;
-      const skeleton = new SpreadsheetSkeleton(
-        worksheet,
-        styles,
-        locale,
-        context,
-        config,
-        injector,
-      );
+      const skeleton = new PrintSkeleton(worksheet, styles, locale, context, config, injector);
       const spreadsheet = new HeadlessSpreadsheet(`print-${sheet.id}`, skeleton, false);
       const group = new Group(`print-group-${sheet.id}`, spreadsheet);
       spreadsheet.isPrinting = true;
       try {
         skeleton.calculate();
+        if (sheet.bounds) {
+          const ink = measureSheetInk(
+            spreadsheet,
+            skeleton,
+            viewport(sheet.bounds),
+            layout.limits,
+            check,
+          );
+          if (ink) sheet.bounds = unionBox(sheet.bounds, ink);
+        }
+        // Native overflow and outer border ink can extend beyond occupied cells.
+        // Recheck aggregate grid/page/tile budgets before allocating their pages.
+        layout.pages = replanSheetPages(layout, FRAME, check);
         for (const page of layout.pages.filter((page) => page.sheetId === sheet.id)) {
           check();
           const view = viewport(page.source);
-          skeleton.updateVisibleRange(view);
-          // This public cache uses the nonprinting inclusive range, including
-          // partial end rows and intersecting merge anchors. No render-context
-          // options means it does not skip font caching for short rows. The
-          // narrower printing range is applied only later by spreadsheet.draw.
           skeleton.setStylesCache(view);
-          // textFitsCurrentCell is only a native width hint (and is unset for
-          // some numeric cells). Independently admit both dimensions of plain
-          // text using the registered face. Wrapping uses the same public layout
-          // as the native Text renderer, with complete (not height-truncated) lines.
-          skeleton.stylesCache.fontMatrix.forValue((row, column, font) => {
-            check();
-            if (font.documentSkeleton || font.vertexAngle || font.centerAngle)
-              throw new PrintError('unsupported', 'PDF text continuation is not implemented yet.');
-            measurement.font = font.fontString;
-            const metrics = measurement.measureText(
-              font.displayText ?? getDisplayValueFromCell(font.cellData),
-            );
-            const padding = font.style?.pd;
-            const top = padding?.t ?? DEFAULT_PADDING_DATA.t;
-            const bottom = padding?.b ?? DEFAULT_PADDING_DATA.b;
-            const left = padding?.l ?? DEFAULT_PADDING_DATA.l;
-            const right = padding?.r ?? DEFAULT_PADDING_DATA.r;
-            let height = Math.max(
-              metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent,
-              metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent,
-            );
-            let width = Math.max(
-              metrics.width,
-              metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight,
-            );
-            const cellBounds = skeleton.getCellWithCoordByIndex(row, column);
-            const bounds = cellBounds.isMergedMainCell ? cellBounds.mergeInfo : cellBounds;
-            // Styles persist across page caches. Only inspect this page's touched
-            // cells; an old cache entry outside the clip is not continuation.
-            if (
-              bounds.endX <= page.source.left ||
-              bounds.startX >= page.source.right ||
-              bounds.endY <= page.source.top ||
-              bounds.startY >= page.source.bottom
-            )
-              return null;
-            // The public native printing range omits partial non-final rows.
-            // Until complete continuation is implemented and rendered, reject it
-            // rather than publishing a page with silently missing text.
-            if (
-              bounds.startX < page.source.left ||
-              bounds.endX > page.source.right ||
-              bounds.startY < page.source.top ||
-              bounds.endY > page.source.bottom
-            )
-              throw new PrintError(
-                'unsupported',
-                'PDF text page continuation is not implemented yet.',
-              );
-            if (font.wrapStrategy === WrapStrategy.WRAP) {
-              const text = font.displayText ?? getDisplayValueFromCell(font.cellData);
-              const availableWidth = bounds.endX - bounds.startX - left - right;
-              if (!Number.isFinite(availableWidth) || availableWidth <= 0)
-                throw new PrintError('unsupported', 'PDF text exceeds its supported cell bounds.');
-              // The SDK stops top-aligned layout at its supplied height. Infinity
-              // measures the complete bounded paragraph before admitting the cell.
-              const wrapped = new DocSimpleSkeleton(
-                text,
-                font.fontString,
-                true,
-                availableWidth,
-                Infinity,
-                skeleton.textLineGap,
-              );
-              const lines = wrapped.calculate();
-              check();
-              if (lines.map((line) => line.text).join('') !== text)
-                throw new PrintError('unsupported', 'PDF wrapped text is incomplete.');
-              const boundaries = new Set([0, text.length]);
-              for (const part of new Intl.Segmenter('en', { granularity: 'grapheme' }).segment(
-                text,
-              ))
-                boundaries.add(part.index);
-              let offset = 0;
-              width = wrapped.getTotalWidth();
-              for (const line of lines) {
-                check();
-                offset += line.text.length;
-                if (!boundaries.has(offset))
-                  throw new PrintError('unsupported', 'PDF wrapped text splits a grapheme.');
-                const ink = measurement.measureText(line.text);
-                if (
-                  ![
-                    line.width,
-                    line.height,
-                    line.baseline,
-                    ink.actualBoundingBoxAscent,
-                    ink.actualBoundingBoxDescent,
-                    ink.actualBoundingBoxLeft,
-                    ink.actualBoundingBoxRight,
-                  ].every(Number.isFinite) ||
-                  line.width < 0 ||
-                  line.height <= 0 ||
-                  line.baseline < 0 ||
-                  ink.actualBoundingBoxAscent > line.baseline ||
-                  ink.actualBoundingBoxDescent > line.height - line.baseline
-                )
-                  throw new PrintError('unsupported', 'PDF wrapped text exceeds its line bounds.');
-                width = Math.max(
-                  width,
-                  ink.width,
-                  ink.actualBoundingBoxLeft + ink.actualBoundingBoxRight,
-                );
-              }
-              height = wrapped.getTotalHeight();
-            }
-            if (
-              ![top, bottom, left, right, width, height].every(
-                (value) => Number.isFinite(value) && value >= 0,
-              ) ||
-              width + left + right + 2 > bounds.endX - bounds.startX ||
-              height + top + bottom + 2 > bounds.endY - bounds.startY
-            )
-              throw new PrintError('unsupported', 'PDF text exceeds its supported cell bounds.');
-            return null;
-          });
           const raw = pdf.beginPage(FRAME.width, FRAME.height);
           raw.fillStyle = '#ffffff';
           raw.fillRect(0, 0, FRAME.width, FRAME.height);
@@ -443,20 +320,10 @@ export async function renderSheetPdfCandidate(
           spreadsheet.draw(new PdfContext(raw as unknown as CanvasRenderingContext2D), view);
           for (const image of page.images) {
             check();
-            const raster = decoded.get(image.source)!;
-            const crop = image.crop,
-              clip = image.clip;
-            raw.globalAlpha = image.opacity;
-            imageContext.drawImage(
-              raster,
-              crop.left * raster.width,
-              crop.top * raster.height,
-              (crop.right - crop.left) * raster.width,
-              (crop.bottom - crop.top) * raster.height,
-              clip.left,
-              clip.top,
-              clip.right - clip.left,
-              clip.bottom - clip.top,
+            drawPreparedImage(
+              new PdfContext(raw as unknown as CanvasRenderingContext2D),
+              decoded.get(image.source)!,
+              image,
             );
           }
           raw.globalAlpha = 1;
@@ -475,42 +342,47 @@ export async function renderSheetPdfCandidate(
     check();
     if (bytes.length > limits.outputBytes)
       throw new PrintError('limit', 'PDF output exceeds its byte budget.');
-    return {
+    result = {
       bytes,
       pages: layout.pages.length,
       mediaBox: { ...FRAME },
       durationMs: performance.now() - started,
     };
   } catch (error) {
-    if (error instanceof PrintError) throw error;
-    throw new PrintError('invalid-input', 'Native PDF rendering failed.');
+    failure =
+      error instanceof PrintError
+        ? error
+        : new PrintError('invalid-input', 'Native PDF rendering failed.');
   } finally {
-    // close() is the backend's only public finalizer. Failure output is discarded;
-    // the host must terminate the worker for hard native-time/memory enforcement.
+    // close() is the backend's public finalizer. Failed output is discarded; the
+    // host terminates its process for hard native-time/memory enforcement.
     try {
       if (pdf && !closed) pdf.close();
     } catch {
-      /* Preserve the original failure. */
+      cleanupFailed = true;
     }
     try {
       locale?.dispose();
       context?.dispose();
       config?.dispose();
       injector?.dispose();
-    } finally {
-      try {
-        if (keys.length && GlobalFonts.removeBatch(keys) !== keys.length)
-          throw new PrintError('invalid-input', 'Native PDF font cleanup failed.');
-        invalidateDocumentFontMetrics((style) =>
-          fontAliases.some((alias) => style.includes(alias)),
-        );
-      } finally {
-        try {
-          restore?.();
-        } finally {
-          rendering = false;
-        }
-      }
+    } catch {
+      cleanupFailed = true;
     }
+    try {
+      if (keys.length && GlobalFonts.removeBatch(keys) !== keys.length) cleanupFailed = true;
+      invalidateDocumentFontMetrics((style) => fontAliases.some((alias) => style.includes(alias)));
+    } catch {
+      cleanupFailed = true;
+    }
+    try {
+      restore?.();
+    } catch {
+      cleanupFailed = true;
+    }
+    rendering = false;
   }
+  if (failure) throw failure;
+  if (cleanupFailed) throw new PrintError('invalid-input', 'Native PDF cleanup failed.');
+  return result!;
 }

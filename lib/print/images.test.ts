@@ -97,3 +97,58 @@ test('rejects URL/SVG input, broken images and cancelled work without output', a
     admitImages(['private'], [{ source: 'private', bytes }], PRINT_LIMITS, performance.now() - 1),
   ).rejects.toThrow('time limit');
 });
+
+test.each(['jpeg', 'webp'] as const)(
+  'admits the actual static %s decoder, not just a signature',
+  async (format) => {
+    const bytes = await sharp({
+      create: { width: 3, height: 2, channels: 3, background: '#dd2244' },
+    })
+      .toFormat(format)
+      .toBuffer();
+    const admitted = await admitImages(
+      ['raster'],
+      [{ source: 'raster', bytes }],
+      PRINT_LIMITS,
+      deadline(),
+    );
+    expect(admitted.get('raster')).toMatchObject({ width: 3, height: 2, format, orientation: 1 });
+  },
+);
+
+test('normalizes all EXIF orientations from owned bytes after aggregate pixel admission', async () => {
+  for (const orientation of [2, 3, 4, 5, 6, 7, 8]) {
+    const bytes = await sharp({
+      create: { width: 6, height: 4, channels: 3, background: '#dd2244' },
+    })
+      .withMetadata({ orientation })
+      .jpeg()
+      .toBuffer();
+    const admitted = await admitImages(
+      ['photo'],
+      [{ source: 'photo', bytes }],
+      PRINT_LIMITS,
+      deadline(),
+    );
+    const image = admitted.get('photo')!;
+    expect(image).toMatchObject({
+      width: orientation >= 5 ? 4 : 6,
+      height: orientation >= 5 ? 6 : 4,
+      format: 'png',
+      orientation: 1,
+    });
+    expect((await sharp(image.bytes).metadata()).orientation).toBeUndefined();
+  }
+});
+
+test('rejects actual animated WebP rather than silently exporting its first frame', async () => {
+  const bytes = await sharp(Buffer.from([255, 0, 0, 0, 0, 255]), {
+    raw: { width: 1, height: 2, channels: 3, pageHeight: 1 },
+  })
+    .webp({ loop: 0, delay: [100, 100], lossless: true })
+    .toBuffer();
+  expect((await sharp(bytes, { animated: true }).metadata()).pages).toBe(2);
+  await expect(
+    admitImages(['animation'], [{ source: 'animation', bytes }], PRINT_LIMITS, deadline()),
+  ).rejects.toThrow('multiple frames');
+});

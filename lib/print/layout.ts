@@ -1,20 +1,31 @@
-import { Styles } from '@univerjs/core';
-import type { IWorkbookData } from '@univerjs/core';
+import { HorizontalAlign, Styles, VerticalAlign } from '@univerjs/core';
+import type { ICellData, IWorkbookData } from '@univerjs/core';
 import { SHEET_FILTER_SNAPSHOT_ID } from '@univerjs/sheets-filter';
 import { PRINT_LIMITS, PrintError, printCheckpoint } from './contract.ts';
-import type { PreparedImage, PrintBox, SheetPrintOptions, SheetPrintPage } from './contract.ts';
+import type {
+  PreparedImage,
+  PrintBox,
+  PrintLimits,
+  SheetPrintOptions,
+  SheetPrintPage,
+} from './contract.ts';
 import { admitImages } from './images.ts';
 import type { AdmittedImage } from './images.ts';
 import { paginateSheet, preflightSheets, preflightSheetsBefore, unionBox } from './preflight.ts';
 import type { SheetGeometry } from './preflight.ts';
-import { readResource, resourceRecord } from './resources.ts';
+import { readResource, resourceRecord, validateSheetResources } from './resources.ts';
 import { PrintWorksheet } from './worksheet.ts';
+import { imageBounds } from './image-render.ts';
+import type { ImageAppearance } from './image-render.ts';
+import { calculateCellImageRect } from '@univerjs/engine-render';
 
 export interface PlacedImage {
   source: string;
   /** Full drawing destination, never resized separately for a continuation page. */
   bounds: PrintBox;
   opacity: number;
+  /** Public native rectangular-image appearance, drawn without any URL loading. */
+  appearance?: ImageAppearance;
 }
 
 export interface TiledBackground {
@@ -48,7 +59,7 @@ function invalid(): never {
 }
 
 function unsupported(): never {
-  throw new PrintError('unsupported', 'This PDF drawing layout is not implemented yet.');
+  throw new PrintError('unsupported', 'This PDF drawing model is not supported.');
 }
 
 // No supported axis can exceed this ceiling (50k rows of 100k layout pixels,
@@ -67,8 +78,19 @@ function coordinate(value: unknown, fallback?: number): number {
   return number;
 }
 
+function position(value: unknown, fallback = 0): number {
+  const number = value === undefined ? fallback : value;
+  if (
+    typeof number !== 'number' ||
+    !Number.isFinite(number) ||
+    Math.abs(number) > MAX_LAYOUT_COORDINATE
+  )
+    invalid();
+  return number;
+}
+
 function addExtent(start: number, size: number): number {
-  const end = coordinate(start + size);
+  const end = position(start + size);
   // A positive dimension must not round back to its starting coordinate. This
   // check precedes intentional zero-area omission, including marker offsets.
   if (size > 0 && end <= start) invalid();
@@ -84,6 +106,72 @@ function extent(value: unknown): number {
 function source(value: unknown): string {
   if (typeof value !== 'string' || !value) invalid();
   return value;
+}
+
+function imageAppearance(
+  drawing: Record<string, unknown>,
+  transform: Record<string, unknown>,
+  frame: PrintBox,
+): ImageAppearance {
+  if (
+    drawing.drawingType !== 0 ||
+    drawing.groupId ||
+    drawing.isMultiTransform ||
+    drawing.transforms != null ||
+    (drawing.prstGeom != null && drawing.prstGeom !== 'rect') ||
+    drawing.adjustValues != null ||
+    ['skewX', 'skewY'].some((key) => transform[key] !== undefined && transform[key] !== 0) ||
+    ['scaleX', 'scaleY'].some((key) => transform[key] !== undefined && transform[key] !== 1)
+  )
+    unsupported();
+  const angle = transform.angle ?? 0;
+  if (typeof angle !== 'number' || !Number.isFinite(angle) || Math.abs(angle) > 100_000) invalid();
+  for (const key of ['flipX', 'flipY'])
+    if (transform[key] !== undefined && typeof transform[key] !== 'boolean') invalid();
+  const appearance: ImageAppearance = {
+    left: frame.left,
+    top: frame.top,
+    width: frame.right - frame.left,
+    height: frame.bottom - frame.top,
+    angle: angle % 360,
+    flipX: transform.flipX === true,
+    flipY: transform.flipY === true,
+  };
+  if (drawing.srcRect != null) {
+    const crop = resourceRecord(drawing.srcRect);
+    if (Object.keys(crop).some((key) => !['left', 'top', 'right', 'bottom'].includes(key)))
+      invalid();
+    const offset = (key: string) => {
+      const value = crop[key] ?? 0;
+      if (typeof value !== 'number' || !Number.isFinite(value) || Math.abs(value) > 100_000)
+        invalid();
+      return value;
+    };
+    const srcRect = {
+      left: offset('left'),
+      top: offset('top'),
+      right: offset('right'),
+      bottom: offset('bottom'),
+    };
+    if (
+      appearance.width + srcRect.left + srcRect.right <= 0 ||
+      appearance.height + srcRect.top + srcRect.bottom <= 0
+    )
+      invalid();
+    appearance.srcRect = srcRect;
+  }
+  return appearance;
+}
+
+function placedImage(
+  drawing: Record<string, unknown>,
+  appearance: ImageAppearance,
+): PlacedImage | null {
+  const opacity = coordinate(drawing.opacity, 1);
+  if (opacity > 1) invalid();
+  if (!appearance.width || !appearance.height || !opacity) return null;
+  const bounds = imageBounds(appearance);
+  return bounds ? { source: source(drawing.source), bounds, opacity, appearance } : null;
 }
 
 function marker(value: unknown, sheet: SheetGeometry) {
@@ -120,35 +208,17 @@ function floatingImage(
     invalid();
   if (drawing.hidden !== undefined && typeof drawing.hidden !== 'boolean') invalid();
   if (drawing.hidden) return null;
-  if (
-    drawing.drawingType !== 0 ||
-    drawing.groupId ||
-    drawing.isMultiTransform ||
-    drawing.transforms != null
-  )
-    unsupported();
   const transform = resourceRecord(drawing.transform ?? {});
   const anchored = resourceRecord(drawing.sheetTransform ?? {});
-  for (const state of [transform, anchored]) {
-    if (
-      ['angle', 'skewX', 'skewY'].some((key) => state[key] !== undefined && state[key] !== 0) ||
-      ['flipX', 'flipY'].some((key) => state[key] !== undefined && state[key] !== false)
-    )
-      unsupported();
-  }
-  if (
-    drawing.srcRect != null ||
-    (drawing.prstGeom != null && drawing.prstGeom !== 'rect') ||
-    drawing.adjustValues != null
-  )
-    unsupported();
-  const opacity = coordinate(drawing.opacity, 1);
-  if (opacity > 1) invalid();
+  // The native cell-anchor transform owns orientation for anchored drawings.
+  const orientation = { ...transform };
+  for (const key of ['angle', 'skewX', 'skewY', 'flipX', 'flipY'])
+    if (anchored[key] !== undefined) orientation[key] = anchored[key];
   const anchor = drawing.anchorType ?? '0';
   let left: number, top: number, right: number, bottom: number;
   if (anchor === '2') {
-    left = coordinate(transform.left, 0);
-    top = coordinate(transform.top, 0);
+    left = position(transform.left);
+    top = position(transform.top);
     right = addExtent(left, extent(transform.width ?? 0));
     bottom = addExtent(top, extent(transform.height ?? 0));
   } else if (anchor === '0' || anchor === '1') {
@@ -165,8 +235,116 @@ function floatingImage(
     }
   } else invalid();
   if (right < left || bottom < top || ![left, top, right, bottom].every(Number.isFinite)) invalid();
-  if (left === right || top === bottom || opacity === 0) return null;
-  return { source: source(drawing.source), bounds: { left, top, right, bottom }, opacity };
+  return placedImage(drawing, imageAppearance(drawing, orientation, { left, top, right, bottom }));
+}
+
+/** Standard native in-cell pictures are single inline-image documents. */
+function cellImage(
+  cell: ICellData,
+  row: number,
+  column: number,
+  book: IWorkbookData,
+  sheet: SheetGeometry,
+  worksheet: PrintWorksheet,
+  check: () => void,
+): PlacedImage | null {
+  const document = resourceRecord(cell.p);
+  const config = book.sheets[sheet.id];
+  let firstRow = row,
+    lastRow = row,
+    firstColumn = column,
+    lastColumn = column;
+  for (const merge of config.mergeData ?? []) {
+    check();
+    if (
+      row >= merge.startRow &&
+      row <= merge.endRow &&
+      column >= merge.startColumn &&
+      column <= merge.endColumn
+    ) {
+      // Only the native merge anchor is visible; nonanchor cell data is not output.
+      if (row !== merge.startRow || column !== merge.startColumn) return null;
+      firstRow = merge.startRow;
+      lastRow = merge.endRow;
+      firstColumn = merge.startColumn;
+      lastColumn = merge.endColumn;
+      break;
+    }
+  }
+  const cellRect = {
+    left: sheet.columns[firstColumn],
+    top: sheet.rows[firstRow],
+    right: sheet.columns[lastColumn + 1],
+    bottom: sheet.rows[lastRow + 1],
+  };
+  // A hidden anchor can still have a visible merged remainder. Fully collapsed
+  // cells do not resolve, validate or copy any unrelated prepared image bytes.
+  if (cellRect.right === cellRect.left || cellRect.bottom === cellRect.top) return null;
+  const order = document.drawingsOrder;
+  const data = resourceRecord(document.drawings ?? {});
+  const body = resourceRecord(document.body);
+  if (
+    !Array.isArray(order) ||
+    order.length !== 1 ||
+    Object.keys(data).length !== 1 ||
+    typeof order[0] !== 'string' ||
+    !Object.hasOwn(data, order[0])
+  )
+    unsupported();
+  if (body.dataStream !== '\b\r\n') unsupported();
+  const blocks = body.customBlocks;
+  if (!Array.isArray(blocks) || blocks.length !== 1) invalid();
+  const block = resourceRecord(blocks[0]);
+  if (block.startIndex !== 0 || block.blockId !== order[0]) invalid();
+  const drawing = resourceRecord(data[order[0]]);
+  if (
+    drawing.drawingId !== order[0] ||
+    drawing.unitId !== document.id ||
+    drawing.subUnitId !== document.id
+  )
+    invalid();
+  if (drawing.hidden !== undefined && typeof drawing.hidden !== 'boolean') invalid();
+  if (drawing.hidden) return null;
+  const transform = resourceRecord(drawing.docTransform);
+  const size = resourceRecord(transform.size);
+  const width = extent(size.width),
+    height = extent(size.height);
+  if (!width || !height) return null;
+  const appearance = imageAppearance(drawing, transform, {
+    left: 0,
+    top: 0,
+    right: width,
+    bottom: height,
+  });
+  const originalBounds = imageBounds(appearance)!;
+  const rotatedWidth = originalBounds.right - originalBounds.left;
+  const rotatedHeight = originalBounds.bottom - originalBounds.top;
+  const style = worksheet.getComposedCellStyleByCellData(row, column, cell);
+  const padding = style.pd ?? {};
+  const pad = (key: 'l' | 'r' | 't' | 'b') => extent(padding[key] ?? 2);
+  const availableWidth = cellRect.right - cellRect.left - pad('l') - pad('r');
+  const availableHeight = cellRect.bottom - cellRect.top - pad('t') - pad('b');
+  if (availableWidth <= 0 || availableHeight <= 0)
+    throw new PrintError('unsupported', 'A PDF cell image has no visible padded area.');
+  const scale = Math.min(availableWidth / rotatedWidth, availableHeight / rotatedHeight);
+  const scaledWidth = width * scale,
+    scaledHeight = height * scale;
+  const positioned = calculateCellImageRect({
+    cellRect,
+    imageWidth: rotatedWidth * scale,
+    imageHeight: rotatedHeight * scale,
+    horizontalAlign: style.ht ?? HorizontalAlign.UNSPECIFIED,
+    verticalAlign: style.vt ?? VerticalAlign.UNSPECIFIED,
+    padding,
+  });
+  appearance.left = (positioned.left + positioned.right - scaledWidth) / 2;
+  appearance.top = (positioned.top + positioned.bottom - scaledHeight) / 2;
+  appearance.width = scaledWidth;
+  appearance.height = scaledHeight;
+  if (appearance.srcRect) {
+    for (const key of ['left', 'right', 'top', 'bottom'] as const) appearance.srcRect[key] *= scale;
+  }
+  return placedImage(drawing, appearance);
 }
 
 function drawings(value: unknown): [string, unknown][] {
@@ -231,6 +409,51 @@ function gridWork(sheet: SheetGeometry, bounds: PrintBox | null) {
   );
 }
 
+/** Rebuild slices after text/image bounds expand, rechecking every shared budget. */
+export function replanSheetPages(
+  layout: { sheets: LayoutSheet[]; limits: Readonly<PrintLimits> },
+  mediaBox: { width: number; height: number },
+  check: () => void = () => {},
+): LayoutPage[] {
+  let work = 0;
+  const pages: LayoutPage[] = [];
+  for (const sheet of layout.sheets) {
+    check();
+    sheet.visibleGridCells = gridWork(sheet, sheet.bounds);
+    work += sheet.visibleGridCells;
+    if (!Number.isSafeInteger(work) || work > layout.limits.gridCells)
+      throw new PrintError('limit', 'PDF grid and background exceed their layout budget.');
+    if (pages.length >= layout.limits.pages)
+      throw new PrintError('limit', 'PDF exceeds its page budget.');
+    for (const page of paginateSheet(
+      sheet.id,
+      sheet.bounds,
+      mediaBox,
+      layout.limits.pages - pages.length,
+    )) {
+      check();
+      const background = sheet.background;
+      const clip = background && intersection(background.bounds, page.source);
+      if (background && clip) {
+        // Count actual per-page draws: a boundary-crossing tile is drawn twice.
+        work +=
+          (Math.ceil(clip.right / background.tileWidth) -
+            Math.floor(clip.left / background.tileWidth)) *
+          (Math.ceil(clip.bottom / background.tileHeight) -
+            Math.floor(clip.top / background.tileHeight));
+        if (!Number.isSafeInteger(work) || work > layout.limits.gridCells)
+          throw new PrintError('limit', 'PDF grid and background exceed their layout budget.');
+      }
+      pages.push({
+        ...page,
+        images: sliceImages(sheet.images, page.source),
+        background: background && clip ? { ...background, clip } : null,
+      });
+    }
+  }
+  return pages;
+}
+
 /**
  * Internal renderer preparation, NOT a completed PDF or final text used range.
  * Text overflow/shaping and cell-image layout still require the native bridge.
@@ -249,6 +472,7 @@ export async function prepareSheetLayout(
       : preflightSheetsBefore(snapshot, options, sharedDeadline);
   const { limits, deadline } = initial;
   const check = () => printCheckpoint(options.signal, deadline);
+  validateSheetResources(snapshot, limits, check);
   const book = structuredClone(snapshot);
   const filters = readResource(book, SHEET_FILTER_SNAPSHOT_ID, limits, check);
   const drawingResource = readResource(book, 'SHEET_DRAWING_PLUGIN', limits, check);
@@ -279,17 +503,41 @@ export async function prepareSheetLayout(
   for (const geometry of measured.sheets) {
     check();
     const config = book.sheets[geometry.id];
-    // A future native rich-text bridge must supply their true image rectangles;
-    // accepting only text bounds here would silently omit or fetch these images.
-    // Reject even a hidden anchor until merge-aware rich-cell layout exists: a
-    // hidden anchor can belong to a merge that still has visible row/column area.
-    for (const cells of Object.values(config.cellData ?? {})) {
-      for (const cell of Object.values(cells)) {
-        if (cell?.p?.drawings && Object.keys(cell.p.drawings).length) unsupported();
-      }
-    }
     const images: PlacedImage[] = [];
     let bounds = geometry.cellBounds;
+    const worksheet = new PrintWorksheet(book, config, styles);
+    for (const [row, cells] of Object.entries(config.cellData ?? {})) {
+      for (const [column, cell] of Object.entries<ICellData | null>(cells)) {
+        check();
+        if (
+          !cell?.p ||
+          (!Object.keys(cell.p.drawings ?? {}).length && !cell.p.drawingsOrder?.length)
+        )
+          continue;
+        if (++imageCount > limits.images)
+          throw new PrintError('limit', 'PDF has too many drawings.');
+        const image = cellImage(
+          cell,
+          Number(row),
+          Number(column),
+          book,
+          geometry,
+          worksheet,
+          check,
+        );
+        if (image) {
+          images.push(image);
+          sources.add(image.source);
+          bounds = unionBox(bounds, image.bounds);
+        }
+        // Native Font has an asynchronous URL cache. The owned clone keeps the
+        // cell's ordinary style but cannot reach that cache after composition.
+        delete cell.p;
+        delete cell.v;
+        delete cell.f;
+        delete cell.si;
+      }
+    }
     for (const [id, value] of drawings(
       Object.hasOwn(drawingResource, geometry.id) ? drawingResource[geometry.id] : undefined,
     )) {
@@ -301,7 +549,7 @@ export async function prepareSheetLayout(
       sources.add(image.source);
       bounds = unionBox(bounds, image.bounds);
     }
-    if (config.backgroundImage) {
+    if (config.backgroundImage && geometry.rows.at(-1)! > 0 && geometry.columns.at(-1)! > 0) {
       if (++imageCount > limits.images) throw new PrintError('limit', 'PDF has too many drawings.');
       const background = resourceRecord(config.backgroundImage);
       sources.add(source(background.source));
@@ -315,20 +563,7 @@ export async function prepareSheetLayout(
     }
     sheets.push({ ...geometry, bounds, images, background: null });
   }
-  let work = 0;
-  const plannedPages: SheetPrintPage[] = [];
-  for (const sheet of sheets) {
-    check();
-    sheet.visibleGridCells = gridWork(sheet, sheet.bounds);
-    work += sheet.visibleGridCells;
-    if (!Number.isSafeInteger(work) || work > limits.gridCells)
-      throw new PrintError('limit', 'PDF grid and background exceed their layout budget.');
-    if (plannedPages.length === limits.pages)
-      throw new PrintError('limit', 'PDF exceeds its page budget.');
-    plannedPages.push(
-      ...paginateSheet(sheet.id, sheet.bounds, mediaBox, limits.pages - plannedPages.length),
-    );
-  }
+  replanSheetPages({ sheets, limits }, mediaBox, check);
   // Grid/page admission precedes image inspection. Both snapshot and required byte
   // copies are owned before this first await; the original deadline still applies.
   const images: Map<string, AdmittedImage> = await admitImages(
@@ -338,7 +573,6 @@ export async function prepareSheetLayout(
     deadline,
     options.signal,
   );
-  const pages: LayoutPage[] = [];
   for (const sheet of sheets) {
     check();
     const background = backgrounds.get(sheet.id);
@@ -351,21 +585,17 @@ export async function prepareSheetLayout(
       const bounds = { left: 0, top: 0, right: sheet.columns.at(-1)!, bottom: sheet.rows.at(-1)! };
       const tileWidth = image.width * scaleX,
         tileHeight = image.height * scaleY;
-      work += Math.ceil(bounds.right / tileWidth) * Math.ceil(bounds.bottom / tileHeight);
+      if (
+        !Number.isFinite(tileWidth) ||
+        !Number.isFinite(tileHeight) ||
+        tileWidth <= 0 ||
+        tileHeight <= 0
+      )
+        invalid();
       sheet.background = { source: key, bounds, tileWidth, tileHeight, origin: { x: 0, y: 0 } };
     }
-    if (!Number.isSafeInteger(work) || work > limits.gridCells)
-      throw new PrintError('limit', 'PDF grid and background exceed their layout budget.');
-    for (const page of plannedPages.filter((page) => page.sheetId === sheet.id)) {
-      check();
-      const clip = sheet.background && intersection(sheet.background.bounds, page.source);
-      pages.push({
-        ...page,
-        images: sliceImages(sheet.images, page.source),
-        background: clip && sheet.background ? { ...sheet.background, clip } : null,
-      });
-    }
   }
+  const pages = replanSheetPages({ sheets, limits }, mediaBox, check);
   check();
   return { book, sheets, pages, images, limits, deadline };
 }

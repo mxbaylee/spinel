@@ -35,6 +35,21 @@ test('public number formatting preserves raw values and numeric alignment', () =
   expect(sheet.getCellRaw(0, 0)).toEqual({ v: 1250.5, s: 'money' });
 });
 
+test('requires prepared formula values and preserves explicit blank or false results', () => {
+  const { book } = fixture();
+  book.sheets.sheet.cellData = {
+    0: {
+      0: { f: '=PRIVATE_SOURCE()' },
+      1: { f: '=PREPARED_BLANK()', v: null },
+      2: { f: '=PREPARED_FALSE()', v: false },
+    },
+  };
+  const sheet = new PrintWorksheet(book, book.sheets.sheet, new Styles(book.styles));
+  expect(() => sheet.getCell(0, 0)).toThrow('require prepared cached values');
+  expect(sheet.getCell(0, 1)?.v).toBeNull();
+  expect(sheet.getCell(0, 2)?.v).toBe(false);
+});
+
 test('formats explicitly numeric strings without changing their raw values or literal strings', () => {
   const { book } = fixture();
   book.dateSystem = DateSystem.Date1904;

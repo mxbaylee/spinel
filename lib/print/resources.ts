@@ -9,6 +9,39 @@ export function resourceRecord(value: unknown): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
 
+/** Unknown nonempty plugin state can affect appearance; do not silently omit it. */
+export function validateSheetResources(
+  snapshot: IWorkbookData,
+  limits: Readonly<PrintLimits>,
+  check: () => void,
+) {
+  if (snapshot.resources !== undefined && !Array.isArray(snapshot.resources))
+    throw new PrintError('invalid-input', 'Invalid PDF resource collection.');
+  const names = new Set<string>();
+  for (const value of snapshot.resources ?? []) {
+    check();
+    const resource = resourceRecord(value);
+    if (
+      typeof resource.name !== 'string' ||
+      !resource.name ||
+      names.has(resource.name) ||
+      typeof resource.data !== 'string'
+    )
+      throw new PrintError('invalid-input', 'Duplicate or invalid PDF resource.');
+    names.add(resource.name);
+    if (['SHEET_DRAWING_PLUGIN', 'SHEET_FILTER_PLUGIN'].includes(resource.name)) continue;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(resource.data);
+    } catch {
+      throw new PrintError('invalid-input', 'Invalid PDF resource serialization.');
+    }
+    inspectSnapshot(parsed, limits, check);
+    if (!parsed || typeof parsed !== 'object' || Object.keys(parsed).length !== 0)
+      throw new PrintError('unsupported', 'PDF contains an unsupported worksheet resource.');
+  }
+}
+
 export function readResource(
   snapshot: IWorkbookData,
   name: string,

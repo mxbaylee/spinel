@@ -24,6 +24,10 @@ export class PrintWorksheet extends Worksheet {
   override getCell(row: number, column: number): ICellDataForSheetInterceptor | null {
     const raw = super.getCellRaw(row, column);
     if (!raw) return null;
+    // Formula evaluation and authorization belong to the caller. Missing cached
+    // results must never turn a visible formula into a successful blank export.
+    if (raw.f && raw.v === undefined && !raw.p)
+      throw new PrintError('invalid-input', 'PDF formulas require prepared cached values.');
     const style = this.getComposedCellStyleByCellData(row, column, raw);
     const cell: ICellDataForSheetInterceptor = { ...raw, s: style };
     const pattern = style.n?.pattern;

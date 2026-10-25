@@ -8,6 +8,7 @@ export interface AdmittedImage {
   width: number;
   height: number;
   format: 'png' | 'jpeg' | 'webp';
+  orientation: number;
 }
 
 function imageFormat(bytes: Uint8Array): AdmittedImage['format'] {
@@ -95,13 +96,17 @@ export async function admitImages(
     }
     check();
     const { width, height } = metadata;
+    const orientation = metadata.orientation ?? 1;
     if (
       metadata.format !== format ||
       !width ||
       !height ||
       !Number.isSafeInteger(width) ||
       !Number.isSafeInteger(height) ||
-      (metadata.pages ?? 1) !== 1
+      (metadata.pages ?? 1) !== 1 ||
+      !Number.isInteger(orientation) ||
+      orientation < 1 ||
+      orientation > 8
     )
       throw new PrintError(
         'invalid-input',
@@ -110,7 +115,41 @@ export async function admitImages(
     pixels += width * height;
     if (!Number.isSafeInteger(pixels) || pixels > limits.decodedImagePixels)
       throw new PrintError('limit', 'PDF images exceed their aggregate decoded pixel budget.');
-    admitted.set(source, { bytes, width, height, format });
+    admitted.set(source, { bytes, width, height, format, orientation });
+  }
+  // Header admission for the complete set precedes orientation decoding. Native
+  // decoders differ in EXIF handling; canonical pixels keep PDF geometry stable.
+  let normalizedBytes = 0;
+  for (const [source, entry] of admitted) {
+    check();
+    if (entry.orientation !== 1) {
+      const decoder = sharp(entry.bytes, {
+        limitInputPixels: limits.decodedImagePixels,
+        failOn: 'warning',
+        sequentialRead: true,
+      });
+      try {
+        const normalized = await decoder.autoOrient().png().toBuffer({ resolveWithObject: true });
+        check();
+        if (normalized.info.width * normalized.info.height !== entry.width * entry.height)
+          throw new PrintError('invalid-input', 'PDF image orientation changed its pixel budget.');
+        admitted.set(source, {
+          bytes: normalized.data,
+          width: normalized.info.width,
+          height: normalized.info.height,
+          format: 'png',
+          orientation: 1,
+        });
+      } catch (error) {
+        if (error instanceof PrintError) throw error;
+        throw new PrintError('invalid-input', 'PDF image orientation could not be decoded.');
+      } finally {
+        decoder.destroy();
+      }
+    }
+    normalizedBytes += admitted.get(source)!.bytes.length;
+    if (normalizedBytes > limits.encodedImageBytes)
+      throw new PrintError('limit', 'Normalized PDF images exceed their encoded byte budget.');
   }
   return admitted;
 }

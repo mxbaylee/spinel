@@ -1,8 +1,8 @@
 import { expect, test, vi } from 'vitest';
-import { ImageSourceType } from '@univerjs/core';
-import type { IWorkbookData } from '@univerjs/core';
+import { HorizontalAlign, ImageSourceType, VerticalAlign } from '@univerjs/core';
+import type { ICellData, IWorkbookData } from '@univerjs/core';
 import sharp from 'sharp';
-import { prepareSheetLayout } from './layout.ts';
+import { prepareSheetLayout, replanSheetPages } from './layout.ts';
 
 const frame = { width: 595, height: 842 };
 function workbook(): IWorkbookData {
@@ -66,6 +66,29 @@ async function prepared() {
   ];
 }
 
+function cellPicture() {
+  return {
+    p: {
+      id: 'cell-picture',
+      body: { dataStream: '\b\r\n', customBlocks: [{ startIndex: 0, blockId: 'picture' }] },
+      documentStyle: {},
+      drawingsOrder: ['picture'],
+      drawings: {
+        picture: {
+          drawingId: 'picture',
+          unitId: 'cell-picture',
+          subUnitId: 'cell-picture',
+          drawingType: 0,
+          source: 'opaque-image',
+          imageSourceType: ImageSourceType.UUID,
+          layoutType: 0,
+          docTransform: { size: { width: 3, height: 2 }, angle: 0 },
+        },
+      },
+    },
+  } as unknown as ICellData;
+}
+
 test('resolves native filter and hidden axes before anchored images, preserving z-order and raw input', async () => {
   const book = workbook();
   book.sheets.first.rowData = { 0: { h: 30 }, 1: { hd: 1 }, 2: { ah: 35 } };
@@ -96,7 +119,7 @@ test('resolves native filter and hidden axes before anchored images, preserving 
   );
   const before = structuredClone(book);
   const layout = await prepareSheetLayout(book, await prepared(), frame);
-  expect([...layout.sheets[0].rows.slice(0, 6)]).toEqual([0, 30, 30, 65, 65, 85]);
+  expect(layout.sheets[0].rows.subarray(0, 6)).toEqual(Float64Array.of(0, 30, 30, 65, 65, 85));
   expect(layout.sheets[0].images.map((image) => image.bounds)).toEqual([
     { left: 85, top: 33, right: 226, bottom: 69 },
     { left: 85, top: 33, right: 125, bottom: 63 },
@@ -226,12 +249,28 @@ test('omits hidden/unselected sheets and collapsed two-cell images without resol
   expect(layout.pages[0].source).toEqual({ left: 0, top: 0, right: 0, bottom: 0 });
 });
 
+test('a wholly collapsed background does not request any prepared bytes', async () => {
+  const book = workbook();
+  book.sheets.first.columnData = Object.fromEntries(
+    Array.from({ length: 5 }, (_, column) => [column, { hd: 1 }]),
+  );
+  book.sheets.first.backgroundImage = {
+    source: 'not-prepared',
+    imageSourceType: ImageSourceType.UUID,
+  };
+  const layout = await prepareSheetLayout(book, [], frame);
+  expect(layout.images.size).toBe(0);
+  expect(layout.sheets[0].background).toBeNull();
+  expect(layout.sheets[0].bounds).toBeNull();
+});
+
 test.each([
   { anchorType: 'unknown' },
   { unitId: 'another-book' },
   { sheetTransform: { from: { row: 8, column: 0, rowOffset: 0, columnOffset: 0 } } },
   { transform: { left: 0, top: 0, width: 100_001, height: 1 } },
   { opacity: 2 },
+  { srcRect: { l: 1000 } },
 ])('rejects malformed geometry without exposing source input (%j)', async (extra) => {
   const book = workbook();
   drawings(book, { image: drawing('image', extra) });
@@ -241,14 +280,14 @@ test.each([
 test.each([
   { drawingType: 1 },
   { groupId: 'group' },
-  { transform: { angle: 25 } },
-  { srcRect: { l: 1000 } },
+  { transform: { skewX: 25 } },
+  { prstGeom: 'ellipse' },
 ])(
   'fails explicitly for unfinished visible appearance, never silently exporting it (%j)',
   async (extra) => {
     const book = workbook();
     drawings(book, { image: drawing('image', extra) });
-    await expect(prepareSheetLayout(book, [], frame)).rejects.toThrow('not implemented yet');
+    await expect(prepareSheetLayout(book, [], frame)).rejects.toThrow('not supported');
   },
 );
 
@@ -303,24 +342,105 @@ test('intentional zero-size images remain omitted without requesting bytes', asy
   expect(layout.sheets[0].bounds).toBeNull();
 });
 
-test('cell drawing support remains an explicit pending requirement instead of a hidden URL-cache fetch', async () => {
+test('single native cell images keep aspect and merge/hidden geometry without a URL cache', async () => {
   const book = workbook();
-  book.sheets.first.cellData = {
-    0: {
-      0: {
-        p: {
-          id: 'rich',
-          body: { dataStream: '\b\r\n' },
-          drawings: { image: { source: 'private-image' } },
-        },
-      },
-    },
-  } as IWorkbookData['sheets'][string]['cellData'];
-  await expect(prepareSheetLayout(book, [], frame)).rejects.toThrow('not implemented yet');
-  // Hiding the anchor does not hide the visible remainder of its merged cell.
+  book.sheets.first.cellData = { 0: { 0: cellPicture() } };
+  const before = structuredClone(book);
+  const first = await prepareSheetLayout(book, await prepared(), frame);
+  expect(first.sheets[0].images).toHaveLength(1);
+  expect(first.sheets[0].images[0].bounds).toEqual({ left: 2, top: 2, right: 26, bottom: 18 });
+  expect(first.book.sheets.first.cellData[0][0]?.p).toBeUndefined();
+  expect(book).toEqual(before);
+  // A hidden anchor must retain an image across the visible merged remainder.
   book.sheets.first.rowData = { 0: { hd: 1 } };
+  book.sheets.first.columnData = { 0: { hd: 1 } };
   book.sheets.first.mergeData = [{ startRow: 0, endRow: 2, startColumn: 0, endColumn: 1 }];
-  await expect(prepareSheetLayout(book, [], frame)).rejects.toThrow('not implemented yet');
+  book.sheets.first.cellData[0][0]!.s = { ht: HorizontalAlign.CENTER, vt: VerticalAlign.MIDDLE };
+  const merged = await prepareSheetLayout(book, await prepared(), frame);
+  expect(merged.sheets[0].images[0].bounds).toEqual({ left: 13, top: 2, right: 67, bottom: 38 });
+});
+
+test('fully hidden and nonanchor cell images need no unrelated prepared bytes', async () => {
+  const book = workbook();
+  book.sheets.first.cellData = { 0: { 0: cellPicture() }, 1: { 1: cellPicture() } };
+  book.sheets.first.rowData = { 0: { hd: 1 } };
+  book.sheets.first.mergeData = [{ startRow: 1, endRow: 2, startColumn: 0, endColumn: 1 }];
+  const layout = await prepareSheetLayout(book, [], frame);
+  expect(layout.sheets[0].images).toEqual([]);
+  expect(layout.images.size).toBe(0);
+  expect(layout.book.sheets.first.cellData[0][0]?.p).toBeUndefined();
+  expect(layout.book.sheets.first.cellData[1][1]?.p).toBeUndefined();
+});
+
+test('mixed cell text/drawings fail clearly rather than dropping either content', async () => {
+  const book = workbook();
+  const picture = cellPicture();
+  picture.p!.body!.dataStream = 'Text\b\r\n';
+  book.sheets.first.cellData = { 0: { 0: picture } };
+  await expect(prepareSheetLayout(book, await prepared(), frame)).rejects.toMatchObject({
+    code: 'unsupported',
+  });
+});
+
+test('floating rotation, flips and native source crops preserve their whole transformed frame', async () => {
+  const book = workbook();
+  drawings(book, {
+    picture: drawing('picture', {
+      anchorType: '2',
+      transform: { left: 100, top: 200, width: 40, height: 30, angle: 90, flipX: true },
+      srcRect: { left: 5, right: 10, top: 2, bottom: 4 },
+    }),
+  });
+  const layout = await prepareSheetLayout(book, await prepared(), frame);
+  const image = layout.sheets[0].images[0];
+  expect(image.bounds.left).toBeCloseTo(105);
+  expect(image.bounds.top).toBeCloseTo(195);
+  expect(image.bounds.right).toBeCloseTo(135);
+  expect(image.bounds.bottom).toBeCloseTo(235);
+  expect(image.appearance).toMatchObject({
+    angle: 90,
+    flipX: true,
+    flipY: false,
+    srcRect: { left: 5, right: 10, top: 2, bottom: 4 },
+  });
+  expect(layout.sheets[0].bounds).toEqual(image.bounds);
+});
+
+test('negative authored positions and rotated extents are preserved inside a bounded crop', async () => {
+  const book = workbook();
+  drawings(book, {
+    picture: drawing('picture', {
+      anchorType: '2',
+      transform: { left: -20, top: -10, width: 100, height: 40, angle: 90 },
+    }),
+  });
+  const layout = await prepareSheetLayout(book, await prepared(), frame);
+  expect(layout.pages).toHaveLength(1);
+  expect(layout.pages[0].source.left).toBeCloseTo(10);
+  expect(layout.pages[0].source.top).toBeCloseTo(-40);
+  expect(layout.pages[0].source.right).toBeCloseTo(50);
+  expect(layout.pages[0].source.bottom).toBeCloseTo(60);
+  expect(layout.pages[0].scale).toBe(0.75);
+});
+
+test('text-expanded repagination keeps image slices contiguous and rechecks aggregate admission', async () => {
+  const book = workbook();
+  drawings(book, {
+    picture: drawing('picture', {
+      anchorType: '2',
+      transform: { left: 20, top: 20, width: 60, height: 1500 },
+    }),
+  });
+  const layout = await prepareSheetLayout(book, await prepared(), frame);
+  layout.sheets[0].bounds = { left: -2, top: -2, right: 1000, bottom: 2000 };
+  const pages = replanSheetPages(layout, frame);
+  expect(pages[0].scale).toBeCloseTo(523 / 1002);
+  expect(pages[0].images[0].crop.bottom).toBe(pages[1].images[0].crop.top);
+  expect(pages[1].images[0].crop.bottom).toBe(1);
+  expect(pages.at(-1)?.source.bottom).toBe(2000);
+  expect(() =>
+    replanSheetPages({ ...layout, limits: { ...layout.limits, pages: 1 } }, frame),
+  ).toThrow('page budget');
 });
 
 test('owns prepared data across metadata awaits, performs no network work and honors cancellation', async () => {

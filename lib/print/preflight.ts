@@ -1,5 +1,5 @@
 import type { IWorkbookData, IWorksheetData } from '@univerjs/core';
-import { PrintError, printCheckpoint, printLimits } from './contract.ts';
+import { PRINT_LIMITS, PrintError, printCheckpoint, printLimits } from './contract.ts';
 import type { PrintBox, PrintLimits, SheetPrintOptions, SheetPrintPage } from './contract.ts';
 
 export interface SheetGeometry {
@@ -258,11 +258,21 @@ export function preflightSheetsBefore(
     }
     if (sheet.mergeData !== undefined && !Array.isArray(sheet.mergeData))
       invalid('Invalid PDF merge collection.');
+    const mergeRanges: {
+      startRow: number;
+      endRow: number;
+      startColumn: number;
+      endColumn: number;
+    }[] = [];
     for (const mergeValue of sheet.mergeData ?? []) {
       check();
       if (++merges > limits.merges)
         throw new PrintError('limit', 'PDF workbook has too many merges.');
       const merge = record(mergeValue);
+      // Whole-axis range types have different native SpanModel semantics and
+      // would bypass the finite rectangle/index budget below.
+      if (merge.rangeType !== undefined && merge.rangeType !== 0)
+        invalid('PDF merges must use finite cell ranges.');
       const startRow = integer(merge.startRow, rows.length - 2, 'Invalid PDF merge row.');
       const endRow = integer(merge.endRow, rows.length - 2, 'Invalid PDF merge row.');
       const startColumn = integer(
@@ -272,6 +282,17 @@ export function preflightSheetsBefore(
       );
       const endColumn = integer(merge.endColumn, columns.length - 2, 'Invalid PDF merge column.');
       if (endRow < startRow || endColumn < startColumn) invalid('Invalid PDF merge order.');
+      if (
+        mergeRanges.some(
+          (other) =>
+            startRow <= other.endRow &&
+            endRow >= other.startRow &&
+            startColumn <= other.endColumn &&
+            endColumn >= other.startColumn,
+        )
+      )
+        invalid('PDF merges must not overlap.');
+      mergeRanges.push({ startRow, endRow, startColumn, endColumn });
       // Native Worksheet builds an index for every raw merged cell, including hidden axes.
       mergeCells += (endRow - startRow + 1) * (endColumn - startColumn + 1);
       if (mergeCells > limits.mergeCells)
@@ -324,9 +345,9 @@ export function paginateSheet(
   // An empty visible worksheet has one deliberately blank page and no surplus grid.
   const source = bounds ?? { left: 0, top: 0, right: 0, bottom: 0 };
   if (
-    !Object.values(source).every(Number.isFinite) ||
-    source.left < 0 ||
-    source.top < 0 ||
+    !Object.values(source).every(
+      (value) => Number.isFinite(value) && Math.abs(value) <= (PRINT_LIMITS.rows + 1) * 100_000,
+    ) ||
     source.right < source.left ||
     source.bottom < source.top
   )
