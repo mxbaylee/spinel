@@ -147,13 +147,29 @@ nonimage/grouped/contour drawings and unsupported floating anchors. These remain
 explicit acceptance gaps for SPN-075; ignoring them would change visible content.
 Malformed indexes, merges, geometry or unprepared glyphs also fail without bytes.
 
-In particular, top-and-bottom wrapping requires a leading, paragraph-relative
-image anchor followed by authored caption text in the same paragraph. Anchor-only,
-line-relative, non-leading or multiple-block paragraphs fail explicitly: the
-pinned native layout can reserve the image height twice or drift its placement.
-The supported captioned case preserves native flow and is covered by the tall
-floating-image fixture. The renderer does not add synthetic captions, remove
-saved spacing or patch the native engine. Tables must also fit their actual
+Top-and-bottom wrapping supports a leading, paragraph-relative image with an
+authored caption or an otherwise empty image paragraph. The pinned native
+Traditional layout places an image-only anchor below its own image, then reserves
+that height a second time. For that exact source shape, a first public native
+layout measures the original paragraph strut with a non-wrapping positioned
+image. The owned public model then reserves the larger of that strut and the
+image's complete lower extent, including its bottom wrap distance, through the
+existing paragraph's line height. A second complete native layout retains the
+original image transform and before/after spacing; relative spacing is resolved
+against the original strut before the image reservation grows it. Small images
+and larger authored line heights retain their original flow. Both passes share
+one work/deadline budget, and final native geometry must preserve the measured
+origin and full reservation before painting. No text, source indexes, or captions
+are synthesized, and the SDK is not patched.
+
+Line-relative, non-leading, multiple-block and invisible-caption anchors still
+fail explicitly, as do image-only paragraphs with independently painted list
+markers/borders or an offset/wrap distance that collides with preceding text.
+Those models need additional native flow support; painting them as overlapping
+non-wrapping images would change their appearance. Tall captioned and image-only
+fixtures verify every color-band pixel across page continuations with no empty
+pages; separate fixtures verify spacing, small-image pixels and caller ownership.
+Tables must also fit their actual
 containing viewport, including nested cells, even when an overflowing area
 contains only a background or border. Square wrapping that blocks the entire
 containing text column also fails explicitly because native retries can add blank

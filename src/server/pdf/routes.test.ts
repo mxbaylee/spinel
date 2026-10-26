@@ -24,7 +24,11 @@ async function fixture() {
   const operator = auth.createUser('Operator', true);
   const doc = workspace.create(owner.id, { kind: 'doc', name: 'Public Report', parentId: null });
   workspace.share(owner.id, doc.id, viewer.id, 'viewer');
-  const snapshot: IDocumentData = { id: doc.id, documentStyle: {}, body: { dataStream: 'Readable content\r\n' } };
+  const snapshot: IDocumentData = {
+    id: doc.id,
+    documentStyle: {},
+    body: { dataStream: 'Readable content\r\n' },
+  };
   const collaboration = {
     prepare: async () => {},
     load: async () => ({ snapshot, revision: 0, access: 'owner' }),
@@ -38,9 +42,25 @@ async function fixture() {
   server.listen(0, '127.0.0.1');
   await new Promise<void>((resolve) => server.once('listening', resolve));
   const root = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  const headers = (user = owner.id) => ({ Cookie: `${COOKIE_NAME}=${auth.createSession(user).token}`, Origin: origin, 'Content-Type': 'application/json' });
-  const post = (path = `/api/items/${doc.id}/pdf`, extra = headers(), body = '{}') => fetch(`${root}${path}`, { method: 'POST', headers: extra, body });
-  return { db, auth, workspace, owner, viewer, operator, doc, snapshot, root, headers, post,
+  const headers = (user = owner.id) => ({
+    Cookie: `${COOKIE_NAME}=${auth.createSession(user).token}`,
+    Origin: origin,
+    'Content-Type': 'application/json',
+  });
+  const post = (path = `/api/items/${doc.id}/pdf`, extra = headers(), body = '{}') =>
+    fetch(`${root}${path}`, { method: 'POST', headers: extra, body });
+  return {
+    db,
+    auth,
+    workspace,
+    owner,
+    viewer,
+    operator,
+    doc,
+    snapshot,
+    root,
+    headers,
+    post,
     async close() {
       server.closeAllConnections();
       await new Promise<void>((resolve) => server.close(() => resolve()));
@@ -65,11 +85,15 @@ test('account PDF routes require current ordinary access, CSRF and strict select
       expect(response.headers.get('content-type')).toContain('application/json');
     }
     expect(exportPdf).not.toHaveBeenCalled();
-    const options = await fetch(`${f.root}/api/items/${f.doc.id}/pdf`, { headers: f.headers(f.viewer.id) });
+    const options = await fetch(`${f.root}/api/items/${f.doc.id}/pdf`, {
+      headers: f.headers(f.viewer.id),
+    });
     expect(options.status).toBe(200);
     expect(await options.json()).toEqual({ kind: 'doc' });
     expect(options.headers.get('cache-control')).toBe('no-store');
-  } finally { await f.close(); }
+  } finally {
+    await f.close();
+  }
 });
 
 test('PDF publication occurs after final verification and failures have no attachment header or bytes', async () => {
@@ -77,7 +101,15 @@ test('PDF publication occurs after final verification and failures have no attac
   try {
     const verify = vi.fn();
     const bytes = Buffer.from('%PDF-all-pages');
-    const exportPdf = vi.spyOn(PdfExports.prototype, 'export').mockResolvedValue({ bytes, pages: 1, mediaBox: { width: 595, height: 842 }, durationMs: 1, peakRssBytes: 1, filename: 'Public Report.pdf', verify });
+    const exportPdf = vi.spyOn(PdfExports.prototype, 'export').mockResolvedValue({
+      bytes,
+      pages: 1,
+      mediaBox: { width: 595, height: 842 },
+      durationMs: 1,
+      peakRssBytes: 1,
+      filename: 'Public Report.pdf',
+      verify,
+    });
     const response = await f.post();
     expect(verify).toHaveBeenCalledOnce();
     expect(response.headers.get('content-type')).toBe('application/pdf');
@@ -89,7 +121,9 @@ test('PDF publication occurs after final verification and failures have no attac
     expect(failure.headers.get('content-disposition')).toBeNull();
     expect(await failure.text()).not.toContain('%PDF');
     expect(failure.headers.get('cache-control')).toBe('no-store');
-  } finally { await f.close(); }
+  } finally {
+    await f.close();
+  }
 });
 
 test('guest PDF is a scoped read capability and does not enable native export', async () => {
@@ -109,5 +143,7 @@ test('guest PDF is a scoped read capability and does not enable native export', 
     const revoked = await f.post(`/api/guest/${f.doc.id}/pdf`, headers);
     expect([401, 403, 404]).toContain(revoked.status);
     expect(await revoked.text()).not.toContain('Readable content');
-  } finally { await f.close(); }
+  } finally {
+    await f.close();
+  }
 });

@@ -41,7 +41,10 @@ class Child extends EventEmitter {
 
 const job = (): Extract<PdfJob, { kind: 'doc' }> => ({
   kind: 'doc',
-  input: { snapshot: { id: 'one', documentStyle: {}, body: { dataStream: 'Private content\r\n' } }, images: [] },
+  input: {
+    snapshot: { id: 'one', documentStyle: {}, body: { dataStream: 'Private content\r\n' } },
+    images: [],
+  },
 });
 let child: Child;
 beforeEach(() => {

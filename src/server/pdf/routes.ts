@@ -43,18 +43,31 @@ export function pdfRoutes(
         response.json(await exports.options(initial.userId, id, verify, custom));
       } else if (request.method === 'POST') {
         if (!request.is('application/json')) throw new AuthError(400, 'Send PDF options as JSON.');
-        const file = await exports.export(initial.userId, id, pdfSelection(request.body), verify, custom, controller.signal);
+        const file = await exports.export(
+          initial.userId,
+          id,
+          pdfSelection(request.body),
+          verify,
+          custom,
+          controller.signal,
+        );
         // No await between these checks and publication: stale bytes never reach
         // response headers or the socket while generation is still pending.
         file.verify();
         const completion = finished(response, { cleanup: true });
         response.attachment(file.filename).type('application/pdf').send(file.bytes);
         await completion;
-      } else response.status(405).set('Allow', 'GET, POST').json({ error: 'Use the PDF export action.' });
+      } else
+        response
+          .status(405)
+          .set('Allow', 'GET, POST')
+          .json({ error: 'Use the PDF export action.' });
     } catch (error) {
       if (response.headersSent || response.destroyed) response.destroy();
       else if (error instanceof PdfError) {
-        response.status(error.code === 'busy' ? 429 : error.code === 'limit' ? 413 : 422).json({ error: error.message });
+        response
+          .status(error.code === 'busy' ? 429 : error.code === 'limit' ? 413 : 422)
+          .json({ error: error.message });
       } else next(error);
     } finally {
       request.off('aborted', stop);

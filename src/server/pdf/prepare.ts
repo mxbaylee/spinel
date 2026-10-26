@@ -24,14 +24,17 @@ export function inspectPdfSnapshot(value: unknown) {
       if (strings > PDF_LIMITS.snapshotBytes) throw new PdfError('limit');
     } else if (typeof entry === 'number') {
       if (!Number.isFinite(entry)) invalid();
-    }
-    else if (entry && typeof entry === 'object') {
+    } else if (entry && typeof entry === 'object') {
       if (seen.has(entry)) invalid();
       seen.add(entry);
       if (Array.isArray(entry) && entry.length > PDF_LIMITS.snapshotNodes)
         throw new PdfError('limit');
-      if (!Array.isArray(entry) && Object.getPrototypeOf(entry) !== Object.prototype &&
-          Object.getPrototypeOf(entry) !== null) invalid();
+      if (
+        !Array.isArray(entry) &&
+        Object.getPrototypeOf(entry) !== Object.prototype &&
+        Object.getPrototypeOf(entry) !== null
+      )
+        invalid();
       for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(entry))) {
         if (['__proto__', 'prototype', 'constructor'].includes(key) || !('value' in descriptor))
           invalid();
@@ -49,12 +52,21 @@ function resourceData(snapshot: Snapshot) {
   const result = new Map<string, unknown>();
   if (snapshot.resources !== undefined && !Array.isArray(snapshot.resources)) invalid();
   for (const resource of snapshot.resources ?? []) {
-    if (!resource || typeof resource.name !== 'string' || !resource.name ||
-        typeof resource.data !== 'string' || result.has(resource.name)) invalid();
+    if (
+      !resource ||
+      typeof resource.name !== 'string' ||
+      !resource.name ||
+      typeof resource.data !== 'string' ||
+      result.has(resource.name)
+    )
+      invalid();
     let data: unknown;
     // Several public native resource serializers use the empty string for no state.
-    try { data = resource.data === '' ? {} : JSON.parse(resource.data); }
-    catch { invalid(); }
+    try {
+      data = resource.data === '' ? {} : JSON.parse(resource.data);
+    } catch {
+      invalid();
+    }
     inspectPdfSnapshot(data);
     result.set(resource.name, data);
   }
@@ -81,13 +93,27 @@ function prepareDocResources(snapshot: IDocumentData, resources: Map<string, unk
   }
   const links = resources.get('DOC_HYPER_LINK_PLUGIN');
   if (links !== undefined) {
-    if (!object(links) || Object.keys(links).some((key) => key !== 'links') ||
-        (links.links !== undefined && !Array.isArray(links.links))) invalid();
+    if (
+      !object(links) ||
+      Object.keys(links).some((key) => key !== 'links') ||
+      (links.links !== undefined && !Array.isArray(links.links))
+    )
+      invalid();
     const ids = new Set<string>();
-    const ranges = snapshot.body?.customRanges ?? [];
+    const stories = [
+      snapshot,
+      ...Object.values(snapshot.headers ?? {}),
+      ...Object.values(snapshot.footers ?? {}),
+    ];
+    const ranges = stories.flatMap((story) => story.body?.customRanges ?? []);
     for (const value of (links.links ?? []) as unknown[]) {
-      if (!object(value) || typeof value.id !== 'string' || typeof value.payload !== 'string' ||
-          ids.has(value.id) || Object.keys(value).some((key) => !['id', 'payload'].includes(key)))
+      if (
+        !object(value) ||
+        typeof value.id !== 'string' ||
+        typeof value.payload !== 'string' ||
+        ids.has(value.id) ||
+        Object.keys(value).some((key) => !['id', 'payload'].includes(key))
+      )
         invalid();
       const range = ranges.find((entry) => entry.rangeId === value.id && entry.rangeType === 0);
       if (!range) invalid();
@@ -99,9 +125,13 @@ function prepareDocResources(snapshot: IDocumentData, resources: Map<string, unk
   const config = snapshot.documentStyle?.renderConfig;
   if (config) {
     const data = config as Record<string, unknown>;
-    if (Object.keys(data).some((key) => ![
-      'zeroWidthParagraphBreak', 'vertexAngle', 'centerAngle', 'background',
-    ].includes(key))) invalid();
+    if (
+      Object.keys(data).some(
+        (key) =>
+          !['zeroWidthParagraphBreak', 'vertexAngle', 'centerAngle', 'background'].includes(key),
+      )
+    )
+      invalid();
     for (const key of ['zeroWidthParagraphBreak', 'vertexAngle', 'centerAngle'])
       if (data[key] != null && data[key] !== 0) invalid();
     // The standard modern editor stores a gray canvas background. PDF paper is
@@ -130,7 +160,9 @@ export function preparePdfSnapshot<T extends Snapshot>(
   // Sheets remain present until the isolated native preparation consumes them.
   snapshot.resources = [...resources].flatMap(([name, data]) =>
     data && typeof data === 'object' && Object.keys(data).length === 0
-      ? [] : [{ name, data: JSON.stringify(data) }]);
+      ? []
+      : [{ name, data: JSON.stringify(data) }],
+  );
   if (kind === 'doc' && snapshot.resources.length) invalid();
   if (kind === 'doc') delete snapshot.resources;
   const images = new Map<string, PreparedImage>();
@@ -141,21 +173,34 @@ export function preparePdfSnapshot<T extends Snapshot>(
     const book = snapshot as IWorkbookData;
     if (!Array.isArray(book.sheetOrder) || !object(book.sheets)) invalid();
     const selected = options.worksheetIds ? new Set(options.worksheetIds) : undefined;
-    if (selected && (selected.size !== options.worksheetIds!.length || !selected.size ||
-        [...selected].some((id) => !book.sheetOrder.includes(id)))) invalid();
-    const included = new Set(book.sheetOrder.filter((id) =>
-      book.sheets[id] && !book.sheets[id].hidden && (!selected || selected.has(id))));
+    if (
+      selected &&
+      (selected.size !== options.worksheetIds!.length ||
+        !selected.size ||
+        [...selected].some((id) => !book.sheetOrder.includes(id)))
+    )
+      invalid();
+    const included = new Set(
+      book.sheetOrder.filter(
+        (id) => book.sheets[id] && !book.sheets[id].hidden && (!selected || selected.has(id)),
+      ),
+    );
     if (!included.size) invalid();
-    imageView = { ...book, sheets: Object.fromEntries(
-      Object.entries(book.sheets).filter(([id]) => included.has(id)),
-    ), resources: book.resources?.map((resource) => {
-      if (resource.name !== 'SHEET_DRAWING_PLUGIN') return resource;
-      const data = resources.get(resource.name);
-      if (!object(data)) invalid();
-      return { ...resource, data: JSON.stringify(Object.fromEntries(
-        Object.entries(data).filter(([id]) => included.has(id)),
-      )) };
-    }) };
+    imageView = {
+      ...book,
+      sheets: Object.fromEntries(Object.entries(book.sheets).filter(([id]) => included.has(id))),
+      resources: book.resources?.map((resource) => {
+        if (resource.name !== 'SHEET_DRAWING_PLUGIN') return resource;
+        const data = resources.get(resource.name);
+        if (!object(data)) invalid();
+        return {
+          ...resource,
+          data: JSON.stringify(
+            Object.fromEntries(Object.entries(data).filter(([id]) => included.has(id))),
+          ),
+        };
+      }),
+    };
   }
   imageSources(imageView, (reference) => {
     if (images.has(reference)) return reference;
@@ -164,8 +209,12 @@ export function preparePdfSnapshot<T extends Snapshot>(
       invalid();
     const id = reference.slice(prefix.length);
     const image = options.readImage(id);
-    if (!(image.data instanceof Uint8Array) || !image.data.byteLength ||
-        !['image/png', 'image/jpeg', 'image/webp'].includes(image.mime)) invalid();
+    if (
+      !(image.data instanceof Uint8Array) ||
+      !image.data.byteLength ||
+      !['image/png', 'image/jpeg', 'image/webp'].includes(image.mime)
+    )
+      invalid();
     bytes += image.data.byteLength;
     if (images.size >= PDF_LIMITS.images || bytes > PDF_LIMITS.encodedImageBytes)
       throw new PdfError('limit');

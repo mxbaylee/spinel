@@ -270,6 +270,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
+      - name: Install PDF verification tools
+        run: npm ci
       - name: Build and exercise the final image
         run: node scripts/ci/container-smoke.ts
 

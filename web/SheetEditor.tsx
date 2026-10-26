@@ -98,12 +98,7 @@ export function SheetEditor({
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
-          [LocaleType.EN_US]: mergeLocales(
-            enUS,
-            ClientEnglish,
-            UIEnglish,
-            sheetDrawingEnglish,
-          ),
+          [LocaleType.EN_US]: mergeLocales(enUS, ClientEnglish, UIEnglish, sheetDrawingEnglish),
         },
         collaboration: true,
         plugins: [

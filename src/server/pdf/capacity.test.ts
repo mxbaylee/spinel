@@ -18,13 +18,21 @@ test('the production 512 MiB container lowers the worker allowance while preserv
 });
 
 test('shared cgroup pressure stops native work before the configured container ceiling', () => {
-  expect(pdfMemoryExceeded(memory({ containerUsedBytes: 481 * MiB }), 100 * MiB, 290 * MiB)).toBe(true);
-  expect(pdfMemoryExceeded(memory({ containerUsedBytes: 400 * MiB }), 291 * MiB, 290 * MiB)).toBe(true);
-  expect(pdfMemoryExceeded(memory({ containerUsedBytes: 400 * MiB }), 200 * MiB, 290 * MiB)).toBe(false);
+  expect(pdfMemoryExceeded(memory({ containerUsedBytes: 481 * MiB }), 100 * MiB, 290 * MiB)).toBe(
+    true,
+  );
+  expect(pdfMemoryExceeded(memory({ containerUsedBytes: 400 * MiB }), 291 * MiB, 290 * MiB)).toBe(
+    true,
+  );
+  expect(pdfMemoryExceeded(memory({ containerUsedBytes: 400 * MiB }), 200 * MiB, 290 * MiB)).toBe(
+    false,
+  );
 });
 
 test('host pressure and parent growth independently reject or stop work', () => {
   expect(() => pdfWorkerBudget(memory({ availableBytes: 250 * MiB }))).toThrow();
   expect(pdfMemoryExceeded(memory({ availableBytes: 100 * MiB }), 100 * MiB, 290 * MiB)).toBe(true);
-  expect(pdfMemoryExceeded(memory({ parentRssBytes: 1500 * MiB }), 100 * MiB, 290 * MiB)).toBe(true);
+  expect(pdfMemoryExceeded(memory({ parentRssBytes: 1500 * MiB }), 100 * MiB, 290 * MiB)).toBe(
+    true,
+  );
 });

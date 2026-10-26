@@ -22,7 +22,10 @@ async function checked(
       // A moved/deleted child must not revoke a still-valid Space link. Recheck
       // through the guest namespace, even when an account cookie is present.
       const root = await fetch(`/api/guest-spaces/${encodeURIComponent(guest)}`, {
-        credentials: 'same-origin', cache: 'no-store', redirect: 'error', signal,
+        credentials: 'same-origin',
+        cache: 'no-store',
+        redirect: 'error',
+        signal,
       });
       signal.throwIfAborted();
       verifyCurrent();
@@ -60,14 +63,21 @@ export async function readPdfOptions(
   signal.throwIfAborted();
   verifyCurrent();
   if (
-    !options || typeof options !== 'object' || !('kind' in options) ||
+    !options ||
+    typeof options !== 'object' ||
+    !('kind' in options) ||
     (options.kind !== 'sheet' && options.kind !== 'doc') ||
     (options.kind === 'sheet' &&
-      (!('worksheets' in options) || !Array.isArray(options.worksheets) ||
+      (!('worksheets' in options) ||
+        !Array.isArray(options.worksheets) ||
         options.worksheets.some(
-          (sheet: unknown) => !sheet || typeof sheet !== 'object' ||
-            !('id' in sheet) || typeof sheet.id !== 'string' ||
-            !('name' in sheet) || typeof sheet.name !== 'string',
+          (sheet: unknown) =>
+            !sheet ||
+            typeof sheet !== 'object' ||
+            !('id' in sheet) ||
+            typeof sheet.id !== 'string' ||
+            !('name' in sheet) ||
+            typeof sheet.name !== 'string',
         )))
   )
     throw new Error('Could not load PDF options. Try again.');
@@ -86,7 +96,10 @@ export function pdfFilename(disposition: string | null, fallback: string) {
       /* A malformed header uses the already visible document title. */
     }
   } else if (quoted) name = quoted;
-  name = name.replace(/[\\/:*?"<>|\p{Cc}\p{Cf}]/gu, '_').replace(/\.pdf$/i, '').trim();
+  name = name
+    .replace(/[\\/:*?"<>|\p{Cc}\p{Cf}]/gu, '_')
+    .replace(/\.pdf$/i, '')
+    .trim();
   name = name.replace(/^[. ]+|[. ]+$/g, '').slice(0, 180);
   return `${name || 'document'}.pdf`;
 }

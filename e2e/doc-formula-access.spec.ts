@@ -157,12 +157,17 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
         ),
       ),
     ).not.toContain(secret);
-    const account = Boolean(await view.getByRole('button', { name: 'Document actions', exact: true }).count());
+    const account = Boolean(
+      await view.getByRole('button', { name: 'Document actions', exact: true }).count(),
+    );
     if (account) {
       await view.getByRole('button', { name: 'Document actions', exact: true }).click();
       await view.getByRole('menuitem', { name: 'Export', exact: true }).click();
     } else await view.getByRole('button', { name: 'Export as PDF', exact: true }).click();
-    const pdf = view.getByRole('dialog', { name: account ? 'Export' : 'Export as PDF', exact: true });
+    const pdf = view.getByRole('dialog', {
+      name: account ? 'Export' : 'Export as PDF',
+      exact: true,
+    });
     const downloaded = view.waitForEvent('download');
     await pdf.getByRole('button', { name: 'Export as PDF', exact: true }).click();
     await inspectPdf(await downloaded, info, `${account ? 'account' : 'guest'}-private-formulas`, {

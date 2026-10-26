@@ -2,7 +2,12 @@
 import { ObjectRelativeFromV, PositionedObjectLayoutType } from '@univerjs/core';
 import type { IDocDrawingBase, IDocumentData } from '@univerjs/core';
 import { getDocsTableLayoutViewportWidth } from '@univerjs/engine-render';
-import type { IDocumentSkeletonCached, IDocumentSkeletonPage } from '@univerjs/engine-render';
+import type {
+  IDocumentSkeletonCached,
+  IDocumentSkeletonDivide,
+  IDocumentSkeletonLine,
+  IDocumentSkeletonPage,
+} from '@univerjs/engine-render';
 import { PrintError } from './contract.ts';
 import type { PrintBox, PrintLimits } from './contract.ts';
 import { imageBounds } from './image-render.ts';
@@ -27,6 +32,7 @@ export interface DocPlacedImage extends PlacedImage {
 
 export interface DocPageSlice {
   page: IDocumentSkeletonPage;
+  frame: DocFrame;
   /** Absolute coordinates within one complete native page; consecutive edges are identical. */
   top: number;
   bottom: number;
@@ -106,8 +112,9 @@ export function virtualDocFrame(snapshot: IDocumentData, limits: Readonly<PrintL
       const anchor = anchors.get(id);
       const end = anchor === undefined ? -1 : stream.indexOf('\r', anchor);
       const suffix = end < 0 ? '' : stream.slice(anchor! + 1, end);
-      // Public native flow reserves an anchor-only paragraph once, then uses
-      // its shifted line as the image origin, reserving the image height twice.
+      // Image-only paragraphs have already received their measured equivalent
+      // flow reservation in doc-image-flow. Other unsupported source shapes
+      // must not reach the pinned native double-height/drifting-anchor path.
       // LINE-relative anchors and non-leading paragraph anchors also drift.
       // A leading PARAGRAPH anchor followed by real authored text gets its own
       // native zero-height anchor line and preserves both position and wrapping.
@@ -149,7 +156,7 @@ export function virtualDocFrame(snapshot: IDocumentData, limits: Readonly<PrintL
 export function paginateDocument(
   snapshot: IDocumentData,
   data: IDocumentSkeletonCached,
-  frame: DocFrame,
+  baseFrame: DocFrame,
   fonts: PreparedFonts,
   limits: Readonly<PrintLimits>,
   check: () => void,
@@ -157,27 +164,86 @@ export function paginateDocument(
     IDocumentSkeletonPage,
     { bounds: PrintBox | null; text: PrintBox[]; horizontal: PrintBox[] }
   >,
+  nativePages = false,
+  budget = { nodes: 0, paintWork: 0 },
 ): DocPageSlice[] {
   if (!data.pages.length || data.pages.length > limits.pages) {
     throw new PrintError('limit', 'PDF document exceeds its page budget.');
   }
-  const contentHeight = frame.height - frame.top - frame.bottom;
-  const maximum = contentHeight * limits.pages + frame.top + frame.bottom;
   const covered = new Uint8Array(snapshot.body!.dataStream.length);
   const result: DocPageSlice[] = [];
   const seenImages = new Set<string>();
   const rowHeights = new Map<string, Map<number, number>>();
   const sourceOrder = new Map((snapshot.drawingsOrder ?? []).map((id, i) => [id, i]));
-  let nodes = 0;
-  let paintWork = 0;
+  let nodes = budget.nodes;
+  let paintWork = budget.paintWork;
   const visit = () => {
     check();
-    if (++nodes > limits.gridCells)
+    budget.nodes = ++nodes;
+    if (nodes > limits.gridCells)
       throw new PrintError('limit', 'PDF layout exceeds its work budget.');
   };
 
+  // Empty native parity pages/columns consume presentation indexes, but no
+  // source characters. Paragraph endpoints remain source-owned. Reconstruct
+  // coverage offsets from those endpoints and actual source glyph counts so
+  // an intentional empty column cannot shift or omit later source text.
+  const paragraphs = new Map<number, IDocumentSkeletonLine[]>();
+  const collect = (page: IDocumentSkeletonPage, depth: number) => {
+    visit();
+    if (depth > 32) unsupported();
+    for (const section of page.sections)
+      for (const column of section.columns)
+        for (const line of column.lines) {
+          visit();
+          const lines = paragraphs.get(line.paragraphIndex) ?? [];
+          lines.push(line);
+          paragraphs.set(line.paragraphIndex, lines);
+        }
+    for (const table of page.skeTables.values())
+      for (const row of table.rows)
+        for (const cell of row.cells) if (!cell.isMergedCellCovered) collect(cell, depth + 1);
+  };
+  for (const page of data.pages) collect(page, 0);
+  const sourceStarts = new Map<IDocumentSkeletonDivide, number>();
+  for (const [paragraphIndex, lines] of paragraphs) {
+    let characters = 0;
+    let endCount: number | undefined;
+    for (const line of lines)
+      for (const divide of line.divides)
+        for (const glyph of divide.glyphGroup) {
+          visit();
+          if (glyph.glyphType === 2) continue;
+          characters += glyph.count;
+          if ((glyph.raw ?? glyph.streamType) === '\r') endCount = characters;
+        }
+    if (endCount === undefined) continue;
+    if (snapshot.body!.dataStream[paragraphIndex] !== '\r') invalid();
+    let offset = paragraphIndex + 1 - endCount;
+    if (!Number.isSafeInteger(offset) || offset < 0) invalid();
+    for (const line of lines)
+      for (const divide of line.divides) {
+        sourceStarts.set(divide, offset);
+        for (const glyph of divide.glyphGroup) if (glyph.glyphType !== 2) offset += glyph.count;
+      }
+  }
+
   for (const root of data.pages) {
     check();
+    const frame = nativePages
+      ? {
+          width: root.pageWidth,
+          height: root.pageHeight,
+          top: root.marginTop,
+          bottom: root.marginBottom,
+          left: root.marginLeft,
+          right: root.marginRight,
+        }
+      : baseFrame;
+    for (const value of Object.values(frame)) finite(value, 100_000);
+    const contentHeight = frame.height - frame.top - frame.bottom;
+    if (contentHeight <= 0 || frame.width <= frame.left + frame.right) invalid();
+    const maximum = contentHeight * limits.pages + frame.top + frame.bottom;
     const firstLayoutNode = nodes;
     const textInk = [...(inks.get(root)?.text ?? [])].sort((a, b) => a.top - b.top);
     const maximumTextHeight = textInk.reduce(
@@ -232,7 +298,9 @@ export function paginateDocument(
     const paragraphLines = new Map<number, Interval[]>();
     const images: DocPlacedImage[] = [];
     const drawingAnchors = new Map<string, number>();
-    let bottom = Math.max(frame.top, inks.get(root)?.bounds?.bottom ?? frame.top);
+    let bottom = nativePages
+      ? frame.top
+      : Math.max(frame.top, inks.get(root)?.bounds?.bottom ?? frame.top);
     const walk = (page: IDocumentSkeletonPage, x: number, y: number, depth: number) => {
       visit();
       if (depth > 32 || page.isLayoutPlaceholder || page.isMaterializationPlaceholder)
@@ -279,20 +347,21 @@ export function paginateDocument(
               paragraphLines.set(line.paragraphIndex, lines);
             }
             for (const divide of line.divides) {
-              let offset = divide.st;
+              let offset = sourceStarts.get(divide) ?? divide.st;
               for (const glyph of divide.glyphGroup) {
                 visit();
                 finite(glyph.width, frame.width);
+                const count = glyph.glyphType === 2 ? 0 : glyph.count;
                 if (
                   !Number.isSafeInteger(glyph.count) ||
                   glyph.count < 0 ||
                   !Number.isSafeInteger(offset) ||
                   offset < 0 ||
-                  offset + glyph.count > covered.length
+                  offset + count > covered.length
                 )
                   invalid();
-                covered.fill(1, offset, offset + glyph.count);
-                offset += glyph.count;
+                covered.fill(1, offset, offset + count);
+                offset += count;
                 if (glyph.drawingId) drawingAnchors.set(glyph.drawingId, top);
                 if (hasVisibleText(glyph.content)) {
                   // Native shaping may prepend the explicitly identical East
@@ -472,9 +541,10 @@ export function paginateDocument(
     atomic.sort((a, b) => a.top - b.top || a.bottom - b.bottom);
     let start = frame.top;
     const first = result.length;
+    if (nativePages && bottom > frame.height + 0.01) unsupported();
     do {
       check();
-      let end = Math.min(start + contentHeight, bottom);
+      let end = nativePages ? bottom : Math.min(start + contentHeight, bottom);
       if (end < bottom) {
         // A backwards pass reaches the same earliest safe seam as repeated
         // forwards scans. Once the seam moves, previously visited intervals
@@ -494,16 +564,17 @@ export function paginateDocument(
       if (end <= start) end = Math.min(start + contentHeight, bottom);
       if (result.length >= limits.pages)
         throw new PrintError('limit', 'PDF document exceeds its page budget.');
-      result.push({ page: root, top: start, bottom: end, images: [] });
+      result.push({ page: root, frame, top: start, bottom: end, images: [] });
       start = end;
     } while (start < bottom - 0.001);
     if (result.length === first)
-      result.push({ page: root, top: frame.top, bottom: frame.top, images: [] });
+      result.push({ page: root, frame, top: frame.top, bottom: frame.top, images: [] });
     const slices = result.slice(first);
     // Documents paints a complete native virtual page through each physical
     // clip. Charge that repeated traversal, plus the earlier ink pass, before
     // allocating PDF output; a source-only node cap would miss this multiplier.
     paintWork += layoutUnits * (slices.length + 1);
+    budget.paintWork = paintWork;
     if (!Number.isSafeInteger(paintWork) || paintWork + nodes > limits.gridCells)
       throw new PrintError('limit', 'PDF repeated painting exceeds its work budget.');
     // Unwrapped page-relative objects belong to the physical page containing

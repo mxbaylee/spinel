@@ -39,7 +39,9 @@ for (const kind of ['sheet', 'doc'] as const) {
     let phase = 'open source editor';
     page.on('pageerror', (error) => errors.push(`${phase}: ${error.stack ?? error.message}`));
     await context.addInitScript(() => {
-      window.print = () => { throw new Error('Browser print must not be called.'); };
+      window.print = () => {
+        throw new Error('Browser print must not be called.');
+      };
     });
     try {
       await page.goto(`/?item=${item.id}`);
@@ -115,8 +117,9 @@ for (const kind of ['sheet', 'doc'] as const) {
         forbidden: [user.name, 'Your workspace'],
         image: kind === 'doc',
       });
-      await expect(page.getByRole('dialog', { name: 'Export', exact: true }))
-        .toContainText('PDF download started.');
+      await expect(page.getByRole('dialog', { name: 'Export', exact: true })).toContainText(
+        'PDF download started.',
+      );
       phase = 'leave source editor and import';
       await page.goto(`/?item=${folder.id}`);
       await page.getByRole('button', { name: 'New', exact: true }).click();

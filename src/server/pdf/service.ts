@@ -47,8 +47,7 @@ export function pdfSelection(input: unknown): string[] | undefined {
 }
 
 function worksheets(snapshot: IWorkbookData) {
-  if (!Array.isArray(snapshot.sheetOrder) || !snapshot.sheets)
-    throw new PdfError('unsupported');
+  if (!Array.isArray(snapshot.sheetOrder) || !snapshot.sheets) throw new PdfError('unsupported');
   if (snapshot.sheetOrder.length > PDF_LIMITS.worksheets) throw new PdfError('limit');
   return snapshot.sheetOrder.flatMap((id) => {
     const sheet = snapshot.sheets[id];
@@ -97,7 +96,8 @@ export class PdfExports {
         throw new AuthError(400, 'Only Sheets and Docs can be exported as PDF.');
       if (
         this.collaboration.generations.restoring(id) ||
-        (generation !== undefined && this.collaboration.generations.active(id).unitId !== generation)
+        (generation !== undefined &&
+          this.collaboration.generations.active(id).unitId !== generation)
       )
         throw new AuthError(409, 'This document was restored. Open it again before exporting.');
       return item;
@@ -210,7 +210,11 @@ export class PdfExports {
           for (const sourceId of new Set(formula.definition.references.map((ref) => ref.itemId))) {
             try {
               const scope = sourceDocumentContext(this.workspace, user, id, sourceId, custom);
-              const source = { id: sourceId, context: scope, generation: this.collaboration.generations.active(sourceId).unitId };
+              const source = {
+                id: sourceId,
+                context: scope,
+                generation: this.collaboration.generations.active(sourceId).unitId,
+              };
               sourceCheck(source);
               sources.push(source);
             } catch (error) {
@@ -223,7 +227,15 @@ export class PdfExports {
           const result = inaccessible
             ? { kind: 'unavailable' as const }
             : preparedResult(
-                await this.formulas.evaluate(user, id, formula.definition, imagesCheck, user.startsWith('guest:'), custom, controller.signal),
+                await this.formulas.evaluate(
+                  user,
+                  id,
+                  formula.definition,
+                  imagesCheck,
+                  user.startsWith('guest:'),
+                  custom,
+                  controller.signal,
+                ),
                 formula,
               );
           imagesCheck();
@@ -257,9 +269,21 @@ export class PdfExports {
         const release = await formulaAdmission.acquire(imagesCheck, controller.signal);
         let result: Awaited<ReturnType<typeof runPdf>>;
         try {
-          const job: PdfJob = kind === 'sheet'
-            ? { kind, input: { snapshot: prepared.snapshot as IWorkbookData, images: prepared.images }, worksheetIds: selection }
-            : { kind, input: { snapshot: prepared.snapshot as IDocumentData, images: prepared.images, formulas: entries.map((entry) => entry.prepared) } };
+          const job: PdfJob =
+            kind === 'sheet'
+              ? {
+                  kind,
+                  input: { snapshot: prepared.snapshot as IWorkbookData, images: prepared.images },
+                  worksheetIds: selection,
+                }
+              : {
+                  kind,
+                  input: {
+                    snapshot: prepared.snapshot as IDocumentData,
+                    images: prepared.images,
+                    formulas: entries.map((entry) => entry.prepared),
+                  },
+                };
           result = await this.render(job, controller.signal);
         } finally {
           release();
@@ -272,10 +296,21 @@ export class PdfExports {
         }
         return {
           ...result,
-          filename: `${loaded.item.name.replace(/[\u0000-\u001f\u007f/\\]/g, '_').slice(0, 160) || 'Document'}.pdf`,
+          filename: `${
+            Array.from(loaded.item.name, (character) =>
+              character.charCodeAt(0) < 32 ||
+              character.charCodeAt(0) === 127 ||
+              '/\\'.includes(character)
+                ? '_'
+                : character,
+            )
+              .join('')
+              .slice(0, 160) || 'Document'
+          }.pdf`,
           verify: () => {
             imagesCheck();
-            if (invalidate()) throw new AuthError(409, 'Formula access changed. Try exporting again.');
+            if (invalidate())
+              throw new AuthError(409, 'Formula access changed. Try exporting again.');
           },
         };
       }

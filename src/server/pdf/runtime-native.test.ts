@@ -57,26 +57,37 @@ test('the standard modern Doc exports complete link text without its private des
   snapshot.body = {
     dataStream: 'Reference and complete document text.\r\n',
     paragraphs: [{ startIndex: 37, paragraphId: 'one' }],
-    customRanges: [{
-      rangeId: 'link', rangeType: 0, startIndex: 0, endIndex: 8,
-      properties: { url: 'https://example.invalid/PRIVATE-DESTINATION' },
-    }],
+    customRanges: [
+      {
+        rangeId: 'link',
+        rangeType: 0,
+        startIndex: 0,
+        endIndex: 8,
+        properties: { url: 'https://example.invalid/PRIVATE-DESTINATION' },
+      },
+    ],
   };
   // Paragraph terminators follow the native dataStream, including its final CRLF.
   snapshot.body.paragraphs![0].startIndex = snapshot.body.dataStream.length - 2;
   const prepared = preparePdfSnapshot('doc', snapshot.id, snapshot, {
-    readImage: () => { throw new Error('This fixture contains no image.'); },
+    readImage: () => {
+      throw new Error('This fixture contains no image.');
+    },
   });
   const result = await runPdf({ kind: 'doc', input: prepared });
   const loading = getDocument({ data: new Uint8Array(result.bytes), useSystemFonts: false });
   try {
     const pdf = await loading.promise;
     const page = await pdf.getPage(1);
-    const text = (await page.getTextContent()).items.map((item) => 'str' in item ? item.str : '').join(' ');
+    const text = (await page.getTextContent()).items
+      .map((item) => ('str' in item ? item.str : ''))
+      .join(' ');
     expect(text).toContain('Reference and complete document text.');
     expect(await page.getAnnotations()).toEqual([]);
     expect(result.bytes.toString('latin1')).not.toContain('PRIVATE-DESTINATION');
-  } finally { await loading.destroy(); }
+  } finally {
+    await loading.destroy();
+  }
 }, 45_000);
 
 test('runtime worker supports worksheet selection and starts fresh after an unsupported job', async () => {
@@ -88,11 +99,23 @@ test('runtime worker supports worksheet selection and starts fresh after an unsu
     styles: {},
     sheetOrder: ['first', 'second'],
     sheets: {
-      first: { id: 'first', name: 'First', rowCount: 10, columnCount: 4, cellData: { 0: { 0: { v: 'UNSELECTED' } } } },
-      second: { id: 'second', name: 'Second', rowCount: 10, columnCount: 4, cellData: {
-        0: { 0: { v: 'Selected' } },
-        1: { 0: { f: '=SUM(12,34)', v: 'STALE-CACHED-VALUE' } },
-      } },
+      first: {
+        id: 'first',
+        name: 'First',
+        rowCount: 10,
+        columnCount: 4,
+        cellData: { 0: { 0: { v: 'UNSELECTED' } } },
+      },
+      second: {
+        id: 'second',
+        name: 'Second',
+        rowCount: 10,
+        columnCount: 4,
+        cellData: {
+          0: { 0: { v: 'Selected' } },
+          1: { 0: { f: '=SUM(12,34)', v: 'STALE-CACHED-VALUE' } },
+        },
+      },
     },
   };
   const unsupported = structuredClone(snapshot);

@@ -18,12 +18,33 @@ export function preservePdfPageGeometry(
   expectedPages: number,
   check: () => void = () => {},
 ): Uint8Array {
-  check();
   if (
-    ![width, height].every((value) => Number.isFinite(value) && value >= 1 && value <= 100_000) ||
     !Number.isSafeInteger(expectedPages) ||
     expectedPages < 1 ||
     expectedPages > PRINT_LIMITS.pages
+  )
+    unsupported();
+  return preservePdfPageGeometries(
+    bytes,
+    Array.from({ length: expectedPages }, () => ({ width, height })),
+    check,
+  );
+}
+
+/** Preserve the individually stored section frame for every physical page. */
+export function preservePdfPageGeometries(
+  bytes: Uint8Array,
+  frames: readonly { width: number; height: number }[],
+  check: () => void = () => {},
+): Uint8Array {
+  check();
+  if (
+    frames.length < 1 ||
+    frames.length > PRINT_LIMITS.pages ||
+    frames.some(
+      ({ width, height }) =>
+        ![width, height].every((value) => Number.isFinite(value) && value >= 1 && value <= 100_000),
+    )
   )
     unsupported();
   if (bytes.length > PRINT_LIMITS.outputBytes)
@@ -69,7 +90,7 @@ export function preservePdfPageGeometry(
   )
     unsupported();
   objects.sort((a, b) => a.offset - b.offset);
-  const pages: { id: number; body: string }[] = [];
+  const dictionaries = new Map<number, string>();
   for (let index = 0; index < objects.length; index++) {
     check();
     const object = objects[index];
@@ -81,7 +102,36 @@ export function preservePdfPageGeometry(
     const body = raw.slice(prefix.length).replace(/\s*endobj\s*$/, '');
     // A stream may contain arbitrary bytes resembling page dictionaries; only
     // dictionaries at validated xref offsets, with no stream body, are examined.
-    if (/\bstream(?:\r?\n)/.test(body) || !/\/Type\s*\/Page\b/.test(body)) continue;
+    if (/\bstream(?:\r?\n)/.test(body) || !/\/Type\s*\/(?:Page|Pages|Catalog)\b/.test(body))
+      continue;
+    dictionaries.set(object.id, body);
+  }
+  const catalog = dictionaries.get(Number(trailer[2]));
+  const root = catalog && /\/Pages\s+(\d+) 0 R\b/.exec(catalog);
+  if (!root) unsupported();
+  const ordered: { id: number; body: string }[] = [];
+  const visited = new Set<number>();
+  const walk = (id: number) => {
+    check();
+    if (visited.has(id) || visited.size > PRINT_LIMITS.snapshotNodes) unsupported();
+    visited.add(id);
+    const body = dictionaries.get(id);
+    if (!body) unsupported();
+    if (/\/Type\s*\/Page\b/.test(body)) {
+      ordered.push({ id, body });
+      if (ordered.length > frames.length) unsupported();
+      return;
+    }
+    const children = /\/Type\s*\/Pages\b/.test(body) && /\/Kids\s*\[([^\]]*)\]/.exec(body);
+    if (!children || !/^(?:\s*\d+ 0 R\s*)+$/.test(children[1])) unsupported();
+    for (const child of children[1].matchAll(/(\d+) 0 R/g)) walk(Number(child[1]));
+  };
+  walk(Number(root[1]));
+  if (ordered.length !== frames.length) unsupported();
+  const pages: { id: number; body: string }[] = [];
+  for (const [index, { id, body }] of ordered.entries()) {
+    check();
+    const { width, height } = frames[index];
     if (
       body.length > 65_536 ||
       !body.startsWith('<<') ||
@@ -89,20 +139,20 @@ export function preservePdfPageGeometry(
       /\/(?:CropBox|Rotate|UserUnit)\b/.test(body)
     )
       unsupported();
-    const frames = [...body.matchAll(/\/MediaBox\s*\[\s*0\s+0\s+(\d+)\s+(\d+)\s*\]/g)];
+    const boxes = [...body.matchAll(/\/MediaBox\s*\[\s*0\s+0\s+(\d+)\s+(\d+)\s*\]/g)];
     if (
-      frames.length !== 1 ||
-      Number(frames[0][1]) !== Math.ceil(width) ||
-      Number(frames[0][2]) !== Math.ceil(height)
+      boxes.length !== 1 ||
+      Number(boxes[0][1]) !== Math.ceil(width) ||
+      Number(boxes[0][2]) !== Math.ceil(height)
     )
       unsupported();
     pages.push({
-      id: object.id,
-      body: body.replace(frames[0][0], `/MediaBox [0 0 ${width} ${height}]`),
+      id,
+      body: body.replace(boxes[0][0], `/MediaBox [0 0 ${width} ${height}]`),
     });
   }
-  if (pages.length !== expectedPages) unsupported();
-  if (Number.isInteger(width) && Number.isInteger(height)) return bytes;
+  if (frames.every(({ width, height }) => Number.isInteger(width) && Number.isInteger(height)))
+    return bytes;
   const additions: string[] = ['\n'];
   let size = bytes.length + 1;
   const offsets: { id: number; offset: number }[] = [];

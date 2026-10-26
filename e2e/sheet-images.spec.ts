@@ -343,7 +343,11 @@ test('Sheet images survive browser export/import and restore, with scoped revoca
     await page.getByRole('button', { name: 'Export as PDF', exact: true }).click();
     await inspectPdf(await pdfDownload, info, 'sheet-images', {
       image: true,
-      colors: [[255, 153, 0], [34, 85, 238], [34, 187, 102]],
+      colors: [
+        [255, 153, 0],
+        [34, 85, 238],
+        [34, 187, 102],
+      ],
       forbidden: [user.name],
     });
     await page.goto('/');

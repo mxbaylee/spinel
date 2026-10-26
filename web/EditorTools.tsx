@@ -30,7 +30,9 @@ export function EditorTools({
   formulas?: (close: () => void) => ReactNode;
 }) {
   const chrome = useEditorChrome();
-  const [panel, setPanel] = useState<'Versions' | 'Export' | 'Export as PDF' | 'Formulas' | null>(null);
+  const [panel, setPanel] = useState<'Versions' | 'Export' | 'Export as PDF' | 'Formulas' | null>(
+    null,
+  );
   const guest = chrome?.guest ?? Boolean(guestItemId());
   const controls = (
     <>

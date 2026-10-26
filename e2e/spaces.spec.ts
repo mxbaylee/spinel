@@ -808,7 +808,10 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     expect(snapshot.id).toBe(doc.id);
     expect(snapshot.body?.dataStream).toContain('Native notes in a Space.');
     const pdfDownload = page.waitForEvent('download');
-    const pdfResponse = page.waitForResponse((response) => response.url().endsWith(`${prefix}/pdf`) && response.request().method() === 'POST');
+    const pdfResponse = page.waitForResponse(
+      (response) =>
+        response.url().endsWith(`${prefix}/pdf`) && response.request().method() === 'POST',
+    );
     await exportPanel.getByRole('button', { name: 'Export as PDF', exact: true }).click();
     expect((await pdfResponse).status()).toBe(200);
     await inspectPdf(await pdfDownload, info, 'space-doc', { text: ['Native notes in a Space.'] });

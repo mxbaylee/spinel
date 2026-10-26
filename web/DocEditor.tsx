@@ -239,13 +239,7 @@ export function DocEditor({
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
-          [LocaleType.EN_US]: mergeLocales(
-            enUS,
-            drawingEnUS,
-            linkEnUS,
-            ClientEnglish,
-            UIEnglish,
-          ),
+          [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, ClientEnglish, UIEnglish),
         },
         collaboration: true,
         override: [[IImageIoService, { useClass: StoredImages }]],

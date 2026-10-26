@@ -5,14 +5,26 @@ import { PRINT_LIMITS, PrintError } from './contract.ts';
 import { prepareDocSnapshot } from './doc-preparation.ts';
 
 function linked(): IDocumentData {
-  return { id: 'document', documentStyle: {}, body: {
-    dataStream: 'Before Linked text after\r\n',
-    textRuns: [{ st: 8, ed: 12, ts: { bl: 1, cl: { rgb: '#aabbcc' } } }],
-    customRanges: [{ rangeId: 'link', rangeType: CustomRangeType.HYPERLINK, startIndex: 7, endIndex: 17,
-      properties: { url: 'https://private.invalid/account', sourceName: 'private account' } }],
-  } };
+  return {
+    id: 'document',
+    documentStyle: {},
+    body: {
+      dataStream: 'Before Linked text after\r\n',
+      textRuns: [{ st: 8, ed: 12, ts: { bl: 1, cl: { rgb: '#aabbcc' } } }],
+      customRanges: [
+        {
+          rangeId: 'link',
+          rangeType: CustomRangeType.HYPERLINK,
+          startIndex: 7,
+          endIndex: 17,
+          properties: { url: 'https://private.invalid/account', sourceName: 'private account' },
+        },
+      ],
+    },
+  };
 }
-const prepare = (snapshot: IDocumentData) => prepareDocSnapshot(snapshot, [], PRINT_LIMITS, () => {}).snapshot;
+const prepare = (snapshot: IDocumentData) =>
+  prepareDocSnapshot(snapshot, [], PRINT_LIMITS, () => {}).snapshot;
 
 test('link text retains exact content, underline, color and rich styles without destinations', () => {
   const source = linked();
@@ -41,22 +53,42 @@ test('text color/style modes and hidden link annotations retain authored appeara
 
 test('links preserve named character styles outside and inside their ranges', () => {
   const source = linked();
-  source.styles = { emphasis: { name: 'Emphasis', type: 0, textStyle: { bl: 1, ff: 'Times New Roman' } } };
+  source.styles = {
+    emphasis: { name: 'Emphasis', type: 0, textStyle: { bl: 1, ff: 'Times New Roman' } },
+  };
   source.body!.textRuns = [
     { st: 0, ed: 6, sId: 'emphasis' },
     { st: 8, ed: 12, sId: 'emphasis', ts: { it: 1 } },
   ];
   const result = prepare(source);
-  expect(result.body!.textRuns!.find((run) => run.st === 0)).toMatchObject({ st: 0, ed: 6, sId: 'emphasis' });
-  expect(result.body!.textRuns!.find((run) => run.st === 8)).toMatchObject({ sId: 'emphasis', ts: { it: 1, ul: { s: 1 } } });
+  expect(result.body!.textRuns!.find((run) => run.st === 0)).toMatchObject({
+    st: 0,
+    ed: 6,
+    sId: 'emphasis',
+  });
+  expect(result.body!.textRuns!.find((run) => run.st === 8)).toMatchObject({
+    sId: 'emphasis',
+    ts: { it: 1, ul: { s: 1 } },
+  });
   expect(result.styles).toEqual(source.styles);
 });
 
 test('Formula replacement shifts complete linked text but never retains either private source', () => {
   const source = linked();
-  source.body!.customRanges!.push({ rangeId: 'formula', rangeType: CustomRangeType.CUSTOM,
-    wholeEntity: true, startIndex: 0, endIndex: 5, properties: { source: 'secret formula' } });
-  const prepared = prepareDocSnapshot(source, [{ rangeId: 'formula', result: { kind: 'scalar', value: 42 } }], PRINT_LIMITS, () => {}).snapshot;
+  source.body!.customRanges!.push({
+    rangeId: 'formula',
+    rangeType: CustomRangeType.CUSTOM,
+    wholeEntity: true,
+    startIndex: 0,
+    endIndex: 5,
+    properties: { source: 'secret formula' },
+  });
+  const prepared = prepareDocSnapshot(
+    source,
+    [{ rangeId: 'formula', result: { kind: 'scalar', value: 42 } }],
+    PRINT_LIMITS,
+    () => {},
+  ).snapshot;
   expect(prepared.body!.dataStream).toBe('42 Linked text after\r\n');
   expect(prepared.body!.textRuns!.find((run) => run.st === 3)?.ts?.ul).toEqual({ s: 1 });
   expect(JSON.stringify(prepared)).not.toContain('secret');
@@ -65,7 +97,11 @@ test('Formula replacement shifts complete linked text but never retains either p
 
 test('overlapping or split-grapheme links fail before projection', () => {
   const source = linked();
-  source.body!.customRanges!.push({ ...source.body!.customRanges![0], rangeId: 'second', startIndex: 10 });
+  source.body!.customRanges!.push({
+    ...source.body!.customRanges![0],
+    rangeId: 'second',
+    startIndex: 10,
+  });
   expect(() => prepare(source)).toThrow(PrintError);
   const emoji = linked();
   emoji.body!.dataStream = 'A😀Z\r\n';

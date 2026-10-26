@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
@@ -168,11 +168,83 @@ function stop(name: string) {
   run('docker', ['rm', name]);
 }
 
+async function checkPdfMemoryRefusal(name: string, requestPdf: () => Promise<Response>) {
+  // Hold a bounded, touched allocation in this disposable container. It shares
+  // the real cgroup with the app, proving admission accounts for other processes
+  // before starting native work. Closing stdin releases only this helper.
+  const pressure = spawn(
+    'docker',
+    [
+      'exec',
+      '-i',
+      name,
+      'node',
+      '--input-type=module',
+      '-e',
+      String.raw`
+import { readFileSync } from 'node:fs';
+const allocations = [];
+for (let chunk = 0; chunk < 64; chunk++) {
+  const current = Number(readFileSync('/sys/fs/cgroup/memory.current', 'utf8'));
+  const stat = readFileSync('/sys/fs/cgroup/memory.stat', 'utf8');
+  const inactive = Number(stat.match(/^inactive_file\s+(\d+)$/m)?.[1] ?? 0);
+  const needed = 350 * 1024 * 1024 - Math.max(0, current - inactive);
+  if (needed <= 0) break;
+  allocations.push(Buffer.alloc(Math.min(8 * 1024 * 1024, needed), 0x5a));
+}
+globalThis.spinelPdfPressure = allocations;
+process.stdin.on('end', () => process.exit(0));
+process.stdin.resume();
+setTimeout(() => process.exit(1), 20_000);
+console.log('ready');
+`,
+    ],
+    { stdio: ['pipe', 'pipe', 'inherit'] },
+  );
+  const completion = new Promise<number | null>((resolve, reject) => {
+    pressure.once('error', reject);
+    pressure.once('close', resolve);
+  });
+  // Attach the rejection immediately even if startup fails before the ready wait.
+  void completion.catch(() => {});
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error('PDF memory fixture was not ready.')),
+        10_000,
+      );
+      pressure.stdout.once('data', (chunk: Buffer) => {
+        clearTimeout(timer);
+        if (chunk.toString().trim() === 'ready') resolve();
+        else reject(new Error('PDF memory fixture did not report readiness.'));
+      });
+      completion.then(() => {
+        clearTimeout(timer);
+        reject(new Error('PDF memory fixture exited before its check.'));
+      }, reject);
+    });
+    const response = await requestPdf();
+    assert.equal(response.status, 413, 'PDF admission ignored the real container memory pressure.');
+    assert.match(response.headers.get('content-type') ?? '', /^application\/json\b/);
+    assert.equal(response.headers.has('content-disposition'), false);
+    assert.equal(typeof (await response.json()).error, 'string');
+    await checkServer();
+  } finally {
+    pressure.stdin.end();
+    assert.equal(await completion, 0, 'PDF memory fixture did not release its allocation.');
+  }
+  const recovery = await requestPdf();
+  assert.equal(recovery.status, 200, 'PDF capacity did not recover after releasing memory.');
+  assert.match(recovery.headers.get('content-type') ?? '', /^application\/pdf\b/);
+  assert.ok((await recovery.arrayBuffer()).byteLength > 0);
+}
+
 async function checkPdfExports(name: string) {
   // Seed a synthetic everyday account through the existing stores. Its private
   // cookie stays inside this process and never enters logs or assertion output.
-  const seed = JSON.parse(run('docker', ['exec', '-i', name, 'node', '--input-type=module'], {
-    input: String.raw`
+  const seed = JSON.parse(
+    run('docker', ['exec', '-i', name, 'node', '--input-type=module'], {
+      input: String.raw`
 import { randomUUID } from 'node:crypto';
 import { openDatabase } from './server/database.ts';
 import { AuthStore } from './src/server/auth/store.ts';
@@ -198,31 +270,64 @@ try {
   const session=auth.createSession(owner.id);
   console.log(JSON.stringify({token:session.token,doc:doc.id,sheet:sheet.id}));
 } finally { db.close(); }
-`, timeout: 20_000,
-  }));
-  assert.ok(typeof seed.token === 'string' && typeof seed.doc === 'string' && typeof seed.sheet === 'string', 'PDF fixture setup failed.');
+`,
+      timeout: 20_000,
+    }),
+  );
+  assert.ok(
+    typeof seed.token === 'string' &&
+      typeof seed.doc === 'string' &&
+      typeof seed.sheet === 'string',
+    'PDF fixture setup failed.',
+  );
   const { COOKIE_NAME } = await import('../../src/server/auth/store.ts');
-  for (const [id, expected] of [[seed.doc, 'Container paragraph 35.'], [seed.sheet, '42']]) {
-    const response = await fetch(`${base}/api/items/${id}/pdf`, {
-      method: 'POST', headers: { Cookie: `${COOKIE_NAME}=${seed.token}`, Origin: origin, 'Content-Type': 'application/json' },
-      body: '{}', signal: AbortSignal.timeout(60_000),
+  const requestPdf = (id: string) =>
+    fetch(`${base}/api/items/${id}/pdf`, {
+      method: 'POST',
+      headers: {
+        Cookie: `${COOKIE_NAME}=${seed.token}`,
+        Origin: origin,
+        'Content-Type': 'application/json',
+      },
+      body: '{}',
+      signal: AbortSignal.timeout(60_000),
     });
-    assert.equal(response.status, 200, 'Production PDF export did not succeed within the existing 512 MiB limit.');
+  for (const [id, expected] of [
+    [seed.doc, 'Container paragraph 35.'],
+    [seed.sheet, '42'],
+  ]) {
+    const response = await requestPdf(id);
+    assert.equal(
+      response.status,
+      200,
+      'Production PDF export did not succeed within the existing 512 MiB limit.',
+    );
     assert.match(response.headers.get('content-type') ?? '', /^application\/pdf\b/);
-    const task = getDocument({data:new Uint8Array(await response.arrayBuffer()),useSystemFonts:false});
+    const task = getDocument({
+      data: new Uint8Array(await response.arrayBuffer()),
+      useSystemFonts: false,
+    });
     try {
       const pdf = await task.promise;
       let text = '';
       for (let page = 1; page <= pdf.numPages; page++) {
         const content = await (await pdf.getPage(page)).getTextContent();
-        text += content.items.map((item) => 'str' in item ? item.str : '').join(' ');
+        text += content.items.map((item) => ('str' in item ? item.str : '')).join(' ');
       }
       assert.ok(text.includes(expected), 'The production PDF omitted confirmed content.');
-      assert.ok(!JSON.stringify(await pdf.getMetadata()).includes('Synthetic PDF owner'), 'PDF metadata exposed an account.');
-    } finally { await task.destroy(); }
+      assert.ok(
+        !JSON.stringify(await pdf.getMetadata()).includes('Synthetic PDF owner'),
+        'PDF metadata exposed an account.',
+      );
+    } finally {
+      await task.destroy();
+    }
   }
+  await checkPdfMemoryRefusal(name, () => requestPdf(seed.doc));
   const peak = run('docker', ['exec', name, 'cat', '/sys/fs/cgroup/memory.peak']).trim();
-  console.log(`Production Sheet and multipage Doc PDFs passed; container peak ${(Number(peak) / 1024 / 1024).toFixed(1)} MiB.`);
+  console.log(
+    `Production PDFs, memory refusal and recovery passed; container peak ${(Number(peak) / 1024 / 1024).toFixed(1)} MiB.`,
+  );
   await checkServer();
 }
 

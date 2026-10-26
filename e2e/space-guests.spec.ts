@@ -474,10 +474,15 @@ test('a View Space link covers nested and future pages without outer access or p
     await f.page.getByRole('button', { name: 'Export as PDF', exact: true }).click();
     const pdfPanel = f.page.getByRole('dialog', { name: 'Export as PDF', exact: true });
     const pdfDownload = f.page.waitForEvent('download');
-    const pdfResponse = f.page.waitForResponse((response) => response.url().endsWith(`${host}/pdf`) && response.request().method() === 'POST');
+    const pdfResponse = f.page.waitForResponse(
+      (response) =>
+        response.url().endsWith(`${host}/pdf`) && response.request().method() === 'POST',
+    );
     await pdfPanel.getByRole('button', { name: 'Export as PDF', exact: true }).click();
     expect((await pdfResponse).status()).toBe(200);
-    await inspectPdf(await pdfDownload, info, 'space-guest-doc', { forbidden: ['Changed private identity', 'Changed private outer location', f.external.name] });
+    await inspectPdf(await pdfDownload, info, 'space-guest-doc', {
+      forbidden: ['Changed private identity', 'Changed private outer location', f.external.name],
+    });
     await pdfPanel.getByRole('button', { name: 'Close dialog', exact: true }).click();
     for (const path of [
       '/api/items',

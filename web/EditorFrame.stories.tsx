@@ -330,7 +330,9 @@ export const ExportDialog: Story = {
     await expect(
       within(dialog).getByRole('button', { name: 'Download Univer file' }),
     ).toBeEnabled();
-    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Export as PDF' })).toBeEnabled());
+    await waitFor(() =>
+      expect(within(dialog).getByRole('button', { name: 'Export as PDF' })).toBeEnabled(),
+    );
     await assertDialogTargets(dialog);
   },
 };
@@ -356,7 +358,9 @@ export const PdfFailure: Story = {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
     await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Export' }));
     const dialog = await within(document.body).findByRole('dialog', { name: 'Export' });
-    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Export as PDF' })).toBeEnabled());
+    await waitFor(() =>
+      expect(within(dialog).getByRole('button', { name: 'Export as PDF' })).toBeEnabled(),
+    );
     await userEvent.click(within(dialog).getByRole('button', { name: 'Export as PDF' }));
     await expect(await within(document.body).findByRole('alert')).toHaveTextContent(
       'Could not export this PDF. Try again.',
@@ -532,7 +536,9 @@ export const GuestPdf: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Export as PDF' }));
     const dialog = await within(document.body).findByRole('dialog', { name: 'Export as PDF' });
-    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Export as PDF' })).toBeEnabled());
+    await waitFor(() =>
+      expect(within(dialog).getByRole('button', { name: 'Export as PDF' })).toBeEnabled(),
+    );
     await expect(within(dialog).queryByRole('button', { name: 'Download Univer file' })).toBeNull();
     await assertDialogTargets(dialog);
   },

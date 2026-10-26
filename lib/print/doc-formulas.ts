@@ -2,6 +2,7 @@
 import {
   CustomRangeType,
   NAMED_STYLE_MAP,
+  NumberUnitType,
   PRESET_LIST_TYPE,
   resolveDocumentParagraphStyle,
 } from '@univerjs/core';
@@ -52,6 +53,52 @@ interface Replacement {
   tableStart?: number;
   tableEnd?: number;
   style: ITextStyle;
+}
+
+/** Native percentage tables use the containing page, so body columns need their own fraction. */
+function formulaTableViewport(snapshot: IDocumentData, check: () => void) {
+  const body = snapshot.body!;
+  const base = snapshot.documentStyle;
+  const definitions = new Map((body.sectionBreaks ?? []).map((section) => [section.startIndex, section]));
+  const sections: { end: number; width: number; columns: number[] }[] = [];
+  let nesting = 0;
+  for (let index = 0; index < body.dataStream.length; index++) {
+    check();
+    const token = body.dataStream[index];
+    if (token === '\x1a') nesting++;
+    else if (token === '\x0f') nesting--;
+    else if (token === '\n' && nesting === 0) {
+      const section = definitions.get(index);
+      const width = (section?.pageSize?.width ?? base.pageSize!.width!) -
+        (section?.marginLeft ?? base.marginLeft!) - (section?.marginRight ?? base.marginRight!);
+      const columns = section?.columnProperties?.map((column) => column.width) ?? [];
+      // Native section columns shrink together only when their combined width
+      // exceeds the section. Gaps consume the remaining space separately.
+      const scale = Math.min(1, width / columns.reduce((sum, column) => sum + column, 0));
+      sections.push({ end: index, width, columns: columns.map((column) => column * scale) });
+    }
+  }
+  let cursor = 0;
+  let sectionIndex = 0;
+  nesting = 0;
+  return (position: number, explicit: boolean) => {
+    while (cursor < position) {
+      check();
+      if (body.dataStream[cursor] === '\x1a') nesting++;
+      else if (body.dataStream[cursor] === '\x0f') nesting--;
+      cursor++;
+    }
+    while (sections[sectionIndex]?.end < position) sectionIndex++;
+    const section = sections[sectionIndex];
+    if (!section) invalid();
+    // Cell pages already resolve their actual span/margins. Do not apply the
+    // body-column fraction again to a table nested inside one of those cells.
+    if (nesting > 0 || !section.columns.length) return { width: section.width, percent: 100 };
+    if (!explicit && section.columns.some((width) => Math.abs(width - section.columns[0]) > 0.01))
+      throw new PrintError('unsupported', 'PDF Formula table requires a prepared unequal-column width.');
+    const width = Math.min(...section.columns);
+    return { width, percent: width / section.width * 100 };
+  };
 }
 
 /** The caller has already inspected/cloned the aggregate snapshot and results. */
@@ -108,10 +155,7 @@ export function projectDocFormulas(
     seen.add(id);
     return { ...resolveStyle(definition.basedOn, seen), ...definition.textStyle };
   };
-  const width =
-    snapshot.documentStyle.pageSize!.width! -
-    snapshot.documentStyle.marginLeft! -
-    snapshot.documentStyle.marginRight!;
+  let tableViewport: ReturnType<typeof formulaTableViewport> | undefined;
   const display = (value: PreparedFormulaValue): string => {
     check();
     if (
@@ -194,21 +238,14 @@ export function projectDocFormulas(
           });
     } else if (result.kind === 'array' || result.kind === 'table') {
       if (keys.some((key) => !['kind', 'rows', 'columnWidths'].includes(key))) invalid();
-      // A nested result needs the containing cell's final native width, which
-      // can depend on font metrics, autofit, spans and margins. The root width
-      // is not a safe substitute. Scalars still project within ordinary cells;
-      // prepared native nested tables remain a separate admitted model.
-      if ((body.tables ?? []).some((table) => table.startIndex < start && end < table.endIndex))
-        throw new PrintError(
-          'unsupported',
-          'Nested PDF Formula tables require prepared cell-width layout.',
-        );
       if (!Array.isArray(result.rows) || !result.rows.length || result.rows.length > limits.rows)
         limit();
       const columns = result.rows[0]?.length;
       if (!Number.isSafeInteger(columns) || !columns || columns > limits.columns) invalid();
       cells += result.rows.length * columns;
       if (!Number.isSafeInteger(cells) || cells > limits.cells) limit();
+      tableViewport ??= formulaTableViewport(snapshot, check);
+      const { width, percent } = tableViewport(start, result.columnWidths !== undefined);
       const widths = result.columnWidths ?? Array.from({ length: columns }, () => width / columns);
       if (
         !Array.isArray(widths) ||
@@ -228,14 +265,25 @@ export function projectDocFormulas(
         textWrap: 0,
         position: { positionH: { relativeFrom: 3 }, positionV: { relativeFrom: 1 } },
         dist: { distT: 0, distB: 0, distL: 0, distR: 0 },
-        size: { type: 1, width: { v: widths.reduce((sum, value) => sum + value, 0), u: 3 } },
+        // The native public percent-width model resolves against the actual
+        // containing page/cell after spans, margins and outer-table sizing.
+        // Its grid remains proportional; no root-page estimate becomes the
+        // nested table's physical width. Explicit prepared widths stay exact
+        // and must pass the final native containing-viewport/ink checks.
+        size: {
+          type: 1,
+          width: result.columnWidths
+            ? { v: widths.reduce((sum, value) => sum + value, 0), u: NumberUnitType.PIXEL }
+            : { v: percent, u: NumberUnitType.PERCENT },
+        },
         layout: 1,
         tableColumns: widths.map((value) => ({ size: { type: 1, width: { v: value, u: 3 } } })),
         tableRows: [],
       };
       // A table result is a block. An inline occurrence splits its surrounding
       // paragraph without dropping either adjacent piece of text.
-      let text = start > 0 && !['\r', '\n', '\x0f'].includes(original[start - 1]) ? '\r' : '';
+      let text =
+        start > 0 && !['\r', '\n', '\x1c', '\x0f'].includes(original[start - 1]) ? '\r' : '';
       const hasPrefixParagraph = Boolean(text);
       if (text)
         replacement.paragraphs.push({

@@ -45,7 +45,7 @@ that isn't waiting on another is next.
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or
   watermarks. Spinel is moving off Pro so nothing is watermarked: add no new
-  `@univerjs-pro` packages; SPN-059 and SPN-075 remove the rest. Owner, chat
+  `@univerjs-pro` packages; SPN-075 removed printing and SPN-059 removes the rest. Owner, chat
   2026-10-19.
 - **Code that replaces a Univer package lives in `lib/<name>/`**, so it could be
   published on its own later without extracting it: its own `package.json`

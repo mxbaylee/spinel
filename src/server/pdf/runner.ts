@@ -25,7 +25,7 @@ export type PdfResult = {
   peakRssBytes: number;
 };
 export type PdfWorkerReply =
-  | { type: 'complete'; byteLength: number } & Omit<PdfResult, 'bytes'>
+  | ({ type: 'complete'; byteLength: number } & Omit<PdfResult, 'bytes'>)
   | { type: 'chunk'; bytes: Uint8Array }
   | { type: 'failure'; code: PdfErrorCode };
 
@@ -33,8 +33,7 @@ const exec = promisify(execFile);
 let active = false;
 
 function admitJob(job: PdfJob) {
-  if (!job || !['doc', 'sheet'].includes(job.kind) || !job.input)
-    throw new PdfError('unsupported');
+  if (!job || !['doc', 'sheet'].includes(job.kind) || !job.input) throw new PdfError('unsupported');
   let nodes = 0;
   let bytes = 0;
   const seen = new WeakSet<object>();
@@ -54,8 +53,9 @@ function admitJob(job: PdfJob) {
   visit(job.input.snapshot, 0);
   if (job.kind === 'doc') visit(job.input.formulas, 0);
   if (
-    Buffer.byteLength(JSON.stringify([job.input.snapshot, job.kind === 'doc' && job.input.formulas])) >
-    PDF_LIMITS.snapshotBytes
+    Buffer.byteLength(
+      JSON.stringify([job.input.snapshot, job.kind === 'doc' && job.input.formulas]),
+    ) > PDF_LIMITS.snapshotBytes
   )
     throw new PdfError('limit');
   const images = job.input.images;
@@ -159,8 +159,7 @@ export async function runPdf(job: PdfJob, signal?: AbortSignal): Promise<PdfResu
           .then((rss) => {
             if (closed || failure) return;
             peakRssBytes = Math.max(peakRssBytes, rss ?? 0);
-            if (pdfMemoryExceeded(pdfMemory(), rss ?? 0, workerBudget))
-              stop('limit');
+            if (pdfMemoryExceeded(pdfMemory(), rss ?? 0, workerBudget)) stop('limit');
           })
           .catch(() => {
             // Exit/close may be waiting behind this memory read's continuation.
@@ -206,13 +205,15 @@ export async function runPdf(job: PdfJob, signal?: AbortSignal): Promise<PdfResu
           reply.pages < 1 ||
           reply.pages > PDF_LIMITS.pages ||
           !reply.mediaBox ||
-          ![reply.mediaBox.width, reply.mediaBox.height, reply.durationMs, reply.peakRssBytes].every(
-            (value) => Number.isFinite(value) && value > 0,
-          )
+          ![
+            reply.mediaBox.width,
+            reply.mediaBox.height,
+            reply.durationMs,
+            reply.peakRssBytes,
+          ].every((value) => Number.isFinite(value) && value > 0)
         )
           failure ??= new PdfError('failed');
-        if (reply && reply.peakRssBytes > workerBudget)
-          failure ??= new PdfError('limit');
+        if (reply && reply.peakRssBytes > workerBudget) failure ??= new PdfError('limit');
         if (failure) {
           chunks.length = 0;
           reject(failure);

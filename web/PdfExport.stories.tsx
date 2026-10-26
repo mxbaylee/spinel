@@ -34,14 +34,18 @@ export const AllVisibleWorksheets: Story = {
   parameters: { api: { [get]: sheets } },
   play: async ({ canvasElement }) => {
     for (const sheet of sheets.worksheets)
-      await expect(await within(canvasElement).findByRole('checkbox', { name: sheet.name })).toBeChecked();
+      await expect(
+        await within(canvasElement).findByRole('checkbox', { name: sheet.name }),
+      ).toBeChecked();
   },
 };
 export const WorksheetSubset: Story = {
   parameters: { api: { [get]: sheets } },
   play: async ({ canvasElement }) => {
     await userEvent.click(await within(canvasElement).findByRole('checkbox', { name: 'Archive' }));
-    await expect(within(canvasElement).getByRole('checkbox', { name: 'Archive' })).not.toBeChecked();
+    await expect(
+      within(canvasElement).getByRole('checkbox', { name: 'Archive' }),
+    ).not.toBeChecked();
     await expect(within(canvasElement).getByRole('checkbox', { name: 'Budget' })).toBeChecked();
   },
 };
@@ -49,8 +53,12 @@ export const NoWorksheetsSelected: Story = {
   parameters: { api: { [get]: sheets } },
   play: async ({ canvasElement }) => {
     for (const sheet of sheets.worksheets)
-      await userEvent.click(await within(canvasElement).findByRole('checkbox', { name: sheet.name }));
-    await expect(within(canvasElement).getByRole('button', { name: 'Export as PDF' })).toBeDisabled();
+      await userEvent.click(
+        await within(canvasElement).findByRole('checkbox', { name: sheet.name }),
+      );
+    await expect(
+      within(canvasElement).getByRole('button', { name: 'Export as PDF' }),
+    ).toBeDisabled();
   },
 };
 export const NoVisibleWorksheets: Story = {
@@ -66,7 +74,9 @@ export const Preparing: Story = {
   play: async ({ canvasElement }) => {
     await start(canvasElement);
     await expect(within(canvasElement).getByRole('status')).toHaveTextContent('Preparing PDF…');
-    await expect(within(canvasElement).getByRole('button', { name: 'Cancel export' })).toBeEnabled();
+    await expect(
+      within(canvasElement).getByRole('button', { name: 'Cancel export' }),
+    ).toBeEnabled();
   },
 };
 export const Cancelled: Story = {
@@ -75,19 +85,31 @@ export const Cancelled: Story = {
     await start(canvasElement);
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Cancel export' }));
     await expect(within(canvasElement).getByRole('status')).toHaveTextContent('Export cancelled.');
-    await expect(within(canvasElement).getByRole('button', { name: 'Export as PDF' })).toBeEnabled();
+    await expect(
+      within(canvasElement).getByRole('button', { name: 'Export as PDF' }),
+    ).toBeEnabled();
   },
 };
 export const ExportFailed: Story = {
-  parameters: { api: { [get]: sheets, [post]: failure('This PDF exceeds the export limit. Try fewer worksheets.', 413) } },
+  parameters: {
+    api: {
+      [get]: sheets,
+      [post]: failure('This PDF exceeds the export limit. Try fewer worksheets.', 413),
+    },
+  },
   play: ({ canvasElement }) => start(canvasElement),
 };
 export const DownloadStarted: Story = {
   parameters: {
-    api: { [get]: { kind: 'doc' }, [post]: fileReply('%PDF-1.7\n%%EOF', 'application/pdf', 'Quarterly budget.pdf') },
+    api: {
+      [get]: { kind: 'doc' },
+      [post]: fileReply('%PDF-1.7\n%%EOF', 'application/pdf', 'Quarterly budget.pdf'),
+    },
   },
   play: async ({ canvasElement }) => {
     await start(canvasElement);
-    await waitFor(() => expect(within(canvasElement).getByRole('status')).toHaveTextContent('PDF download started.'));
+    await waitFor(() =>
+      expect(within(canvasElement).getByRole('status')).toHaveTextContent('PDF download started.'),
+    );
   },
 };

@@ -102,7 +102,14 @@ export function pdfWorkerBudget(memory: PdfMemory) {
 
 /** Call before loading/cloning a snapshot as well as immediately before forking. */
 export function checkPdfCapacity() {
-  return pdfWorkerBudget(pdfMemory());
+  const memory = pdfMemory();
+  try {
+    return pdfWorkerBudget(memory);
+  } catch (error) {
+    // Operational evidence only: no file, account, credential or source data.
+    console.warn('PDF memory admission refused', memory);
+    throw error;
+  }
 }
 
 export function pdfMemoryExceeded(memory: PdfMemory, workerRssBytes: number, workerBudget: number) {

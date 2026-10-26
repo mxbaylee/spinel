@@ -29,9 +29,15 @@ export async function inspectPdf(
     for (let number = 1; number <= reopened.numPages; number++) {
       const page = await reopened.getPage(number);
       const viewport = page.getViewport({ scale: 1 });
-      text.push((await page.getTextContent()).items.map((item) => ('str' in item ? item.str : '')).join(' '));
+      text.push(
+        (await page.getTextContent()).items
+          .map((item) => ('str' in item ? item.str : ''))
+          .join(' '),
+      );
       image ||= (await page.getOperatorList()).fnArray.some((operation) =>
-        [OPS.paintImageXObject, OPS.paintInlineImageXObject, OPS.paintImageMaskXObject].includes(operation),
+        [OPS.paintImageXObject, OPS.paintInlineImageXObject, OPS.paintImageMaskXObject].includes(
+          operation,
+        ),
       );
       const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
       await page.render({
@@ -41,25 +47,35 @@ export async function inspectPdf(
       }).promise;
       const pixels = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
       for (let index = 0; index < pixels.length; index += 4) {
-        if (pixels[index + 3] && Math.min(pixels[index], pixels[index + 1], pixels[index + 2]) < 240)
+        if (
+          pixels[index + 3] &&
+          Math.min(pixels[index], pixels[index + 1], pixels[index + 2]) < 240
+        )
           ink++;
         expected.colors?.forEach((color, colorIndex) => {
           if (color.every((value, channel) => Math.abs(pixels[index + channel] - value) < 12))
             colorCounts[colorIndex]++;
         });
       }
-      await writeFile(info.outputPath(`${label}-page-${number}-export-opened.png`), await canvas.encode('png'));
+      await writeFile(
+        info.outputPath(`${label}-page-${number}-export-opened.png`),
+        await canvas.encode('png'),
+      );
     }
     const content = text.join('\n');
     for (const value of expected.text ?? [])
       expect(content.replace(/\s/g, '')).toContain(value.replace(/\s/g, ''));
-    for (const value of ['watermark', ...expected.forbidden ?? []]) {
+    for (const value of ['watermark', ...(expected.forbidden ?? [])]) {
       expect(content.toLowerCase()).not.toContain(value.toLowerCase());
       expect(JSON.stringify(metadata).toLowerCase()).not.toContain(value.toLowerCase());
     }
     if (expected.text?.length || expected.image)
-      expect(ink, 'The downloaded PDF must contain visible content on its rendered pages').toBeGreaterThan(50);
-    if (expected.image) expect(image, 'The downloaded PDF must preserve its authored image').toBe(true);
+      expect(
+        ink,
+        'The downloaded PDF must contain visible content on its rendered pages',
+      ).toBeGreaterThan(50);
+    if (expected.image)
+      expect(image, 'The downloaded PDF must preserve its authored image').toBe(true);
     for (const count of colorCounts)
       expect(count, 'Each authored image color must remain visible in the PDF').toBeGreaterThan(50);
     return { text: content, pages: reopened.numPages };

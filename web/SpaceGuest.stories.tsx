@@ -67,13 +67,7 @@ function GuestEditor({ item, access, onDirty }: SpaceEditorProps) {
   const [value, setValue] = useState('Shared project notes belong to this Space.');
   return (
     <section aria-label="Guest editor body fixture" style={{ padding: 24 }}>
-      <EditorTools
-        id={item.id}
-        name={item.name}
-        spaceId={item.spaceId}
-        people={[]}
-        saved
-      />
+      <EditorTools id={item.id} name={item.name} spaceId={item.spaceId} people={[]} saved />
       <p className="sp-muted">
         {item.kind === 'doc' ? 'Doc' : 'Sheet'} body fixture · native editing is verified in the
         browser suite.

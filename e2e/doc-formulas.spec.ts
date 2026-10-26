@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
 import { inspectPdf } from './pdfEvidence.ts';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
@@ -140,7 +140,9 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       if (painted.length > 20000) painted.splice(0, 10000);
       return original.call(this, text, ...args);
     };
-    window.print = () => { throw new Error('Browser print must not be called.'); };
+    window.print = () => {
+      throw new Error('Browser print must not be called.');
+    };
   });
   const saved = (target: Page) =>
     expect(target.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
@@ -383,8 +385,10 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       text: ['314159', '314166', ...Array.from({ length: 30 }, (_, row) => String(row + 201))],
       forbidden: [owner.name, friend.name],
     });
-    await page.getByRole('dialog', { name: 'Export', exact: true })
-      .getByRole('button', { name: 'Close dialog', exact: true }).click();
+    await page
+      .getByRole('dialog', { name: 'Export', exact: true })
+      .getByRole('button', { name: 'Close dialog', exact: true })
+      .click();
     await openPanel(page);
     await expect(formulaPanel(page)).toContainText('314159', { timeout: 20_000 });
 

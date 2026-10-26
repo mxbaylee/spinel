@@ -89,13 +89,20 @@ export function PdfExport({
         },
       );
       if (
-        controller.signal.aborted || !savedNow.current ||
-        current !== identity.current || request.current !== controller
-      ) return;
+        controller.signal.aborted ||
+        !savedNow.current ||
+        current !== identity.current ||
+        request.current !== controller
+      )
+        return;
       downloadPdf(result.blob, result.filename);
       setMessage('PDF download started.');
     } catch (cause) {
-      if (!controller.signal.aborted && current === identity.current && request.current === controller)
+      if (
+        !controller.signal.aborted &&
+        current === identity.current &&
+        request.current === controller
+      )
         setError(cause instanceof Error ? cause.message : 'Could not export this PDF. Try again.');
     } finally {
       if (request.current === controller) {
@@ -131,11 +138,7 @@ export function PdfExport({
       )}
       {!saved && <p>Wait until changes are saved before exporting.</p>}
       <div className="pdf-export-status" role="status" aria-live="polite" aria-atomic="true">
-        {busy
-          ? 'Preparing PDF…'
-          : saved && !options && !error
-            ? 'Loading PDF options…'
-            : message}
+        {busy ? 'Preparing PDF…' : saved && !options && !error ? 'Loading PDF options…' : message}
       </div>
       {error && <p role="alert">{error}</p>}
       {error && !options ? (

@@ -21,13 +21,18 @@ process.once('message', async (job: PdfJob) => {
     };
     const result =
       job.kind === 'sheet'
-        ? await renderSheetPdf({
-            ...input,
-            snapshot: await (await import('./sheet-formulas.ts')).prepareSheetFormulas(job.input.snapshot),
-          } as Parameters<typeof renderSheetPdf>[0], {
-            worksheetIds: job.worksheetIds,
-            limits: PDF_LIMITS,
-          })
+        ? await renderSheetPdf(
+            {
+              ...input,
+              snapshot: await (
+                await import('./sheet-formulas.ts')
+              ).prepareSheetFormulas(job.input.snapshot),
+            } as Parameters<typeof renderSheetPdf>[0],
+            {
+              worksheetIds: job.worksheetIds,
+              limits: PDF_LIMITS,
+            },
+          )
         : await renderDocPdf(input as Parameters<typeof renderDocPdf>[0], { limits: PDF_LIMITS });
     // Small, sequential IPC messages bound parent deserialization and retain
     // atomic publication even if the child dies during the final transfer.
@@ -46,7 +51,7 @@ process.once('message', async (job: PdfJob) => {
       durationMs: result.durationMs,
       peakRssBytes: process.resourceUsage().maxRSS * 1024,
     });
-    process.disconnect();
+    process.disconnect?.();
     process.exit(0);
   } catch (error) {
     const code = error instanceof PrintError || error instanceof PdfError ? error.code : 'failed';
@@ -56,7 +61,7 @@ process.once('message', async (job: PdfJob) => {
         code: code === 'limit' || code === 'cancelled' || code === 'unsupported' ? code : 'failed',
       });
     } finally {
-      process.disconnect();
+      process.disconnect?.();
       process.exit(1);
     }
   }

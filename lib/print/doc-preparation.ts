@@ -23,6 +23,7 @@ import type { PreparedFonts } from './fonts.ts';
 import { inspectSnapshot } from './preflight.ts';
 import { projectDocFormulas } from './doc-formulas.ts';
 import { projectDocHyperlinks } from './doc-hyperlinks.ts';
+import { docStories, prepareDocStoryFields, replaceDocStories } from './doc-stories.ts';
 import type { PreparedDocFormula } from './doc-formulas.ts';
 export type {
   PreparedDocFormula,
@@ -151,15 +152,23 @@ function documentStyle(style: IDocumentStyle, inherited?: IDocumentStyle) {
     nonempty(style.background) ||
     nonempty(style.fontFamilyFallbacks) ||
     nonempty(style.pageBorders) ||
-    style.defaultHeaderId ||
-    style.defaultFooterId ||
-    style.evenPageHeaderId ||
-    style.evenPageFooterId ||
-    style.firstPageHeaderId ||
-    style.firstPageFooterId ||
     nonempty(style.renderConfig)
   )
     unsupported();
+  for (const key of [
+    'defaultHeaderId',
+    'defaultFooterId',
+    'evenPageHeaderId',
+    'evenPageFooterId',
+    'firstPageHeaderId',
+    'firstPageFooterId',
+  ] as const)
+    if (style[key] !== undefined && typeof style[key] !== 'string') invalid();
+  for (const key of ['useFirstPageHeaderFooter', 'evenAndOddHeaders'] as const)
+    if (style[key] !== undefined && ![0, 1].includes(style[key])) invalid();
+  for (const key of ['marginHeader', 'marginFooter'] as const)
+    if (style[key] !== undefined) number(style[key], 0, height);
+  if (style.pageNumberStart !== undefined) integer(style.pageNumberStart, 0, 100_000);
   for (const name of ['defaultTabStop', 'paragraphLineGapDefault', 'hyphenationZone'] as const)
     if (style[name] !== undefined) number(style[name]);
   textStyle(style.textStyle);
@@ -327,7 +336,12 @@ function validateTables(snapshot: IDocumentData, limits: Readonly<PrintLimits>, 
   if (stack.length) invalid();
 }
 
-function validateBody(snapshot: IDocumentData, limits: Readonly<PrintLimits>, check: () => void) {
+function validateBody(
+  snapshot: IDocumentData,
+  limits: Readonly<PrintLimits>,
+  check: () => void,
+  fieldMarkers: ReadonlySet<number> = new Set(),
+) {
   const body = snapshot.body!;
   record(body);
   const stream = body.dataStream;
@@ -357,7 +371,12 @@ function validateBody(snapshot: IDocumentData, limits: Readonly<PrintLimits>, ch
   // Only native table, image, tab, authored/soft page and paragraph/section tokens.
   for (let index = 0; index < stream.length; index++) {
     const point = stream.charCodeAt(index);
-    if (point <= 7 || (point >= 16 && point <= 25) || (point >= 30 && point <= 31)) unsupported();
+    if (
+      point <= 7 ||
+      (point >= 16 && point <= 25) ||
+      (point >= 30 && point <= 31 && !fieldMarkers.has(index))
+    )
+      unsupported();
   }
   const paragraphMap = new Map<number, NonNullable<typeof body.paragraphs>[number]>();
   const paragraphIds = new Set<string>();
@@ -438,26 +457,25 @@ function validateBody(snapshot: IDocumentData, limits: Readonly<PrintLimits>, ch
     )
       invalid();
     sections.add(section.startIndex);
-    if (section.columnProperties?.length || section.textDirection || section.noteProperties)
-      unsupported();
+    if (section.textDirection || section.noteProperties) unsupported();
+    if (section.columnProperties !== undefined) {
+      if (!Array.isArray(section.columnProperties)) invalid();
+      if (section.columnProperties.length > limits.columns)
+        throw new PrintError('limit', 'PDF section exceeds its column budget.');
+      for (const column of section.columnProperties) {
+        record(column);
+        number(column.width, Number.MIN_VALUE);
+        number(column.paddingEnd);
+      }
+    }
+    for (const key of ['sectionType', 'sectionTypeNext'] as const)
+      if (section[key] !== undefined && ![0, 1, 2, 3, 4, 5].includes(section[key])) invalid();
     if (
-      section.sectionType === 4 ||
-      section.sectionType === 5 ||
-      section.sectionTypeNext === 4 ||
-      section.sectionTypeNext === 5
+      section.columnSeparatorType !== undefined &&
+      ![0, 1, 2].includes(section.columnSeparatorType)
     )
-      unsupported();
+      invalid();
     documentStyle(section, snapshot.documentStyle);
-    if (
-      section.pageSize!.width !== snapshot.documentStyle.pageSize!.width ||
-      section.pageSize!.height !== snapshot.documentStyle.pageSize!.height ||
-      ['marginTop', 'marginBottom', 'marginLeft', 'marginRight'].some(
-        (side) =>
-          section[side as keyof typeof section] !==
-          snapshot.documentStyle[side as keyof IDocumentStyle],
-      )
-    )
-      unsupported();
   }
   validateTables(snapshot, limits, check);
 }
@@ -626,27 +644,40 @@ export function prepareDocSnapshot(
   if (!snapshot.body || !snapshot.documentStyle) invalid();
   const owned = structuredClone(snapshot);
   const prepared = structuredClone(formulas);
-  for (const name of [
-    'headers',
-    'footers',
-    'notes',
-    'noteSettings',
-    'footnotes',
-    'endnotes',
-    'headerFooterDrawingsOrder',
-    'resources',
-  ] as const)
+  for (const name of ['notes', 'noteSettings', 'footnotes', 'endnotes', 'resources'] as const)
     if (nonempty(owned[name])) unsupported();
   for (const style of Object.values(owned.styles ?? {})) {
     textStyle(style.textStyle);
     paragraphStyle(style.paragraphStyle);
   }
   documentStyle(owned.documentStyle);
-  validateBody(owned, limits, check);
-  projectDocHyperlinks(owned, limits, check);
-  projectDocFormulas(owned, prepared, limits, check);
-  validateBody(owned, limits, check);
-  const sources = imageSources(owned, limits);
+  const stories = docStories(owned);
+  const sources: string[] = [];
+  let characters = 0;
+  let images = 0;
+  for (const story of stories) {
+    check();
+    const item = story.snapshot;
+    const markers = story.kind === 'body' ? undefined : prepareDocStoryFields(item);
+    validateBody(item, limits, check, markers);
+    projectDocHyperlinks(item, limits, check);
+    if (story.kind === 'body') {
+      projectDocFormulas(item, prepared, limits, check);
+      validateBody(item, limits, check);
+    }
+    characters += item.body!.dataStream.length;
+    images += Object.keys(item.drawings ?? {}).length;
+    if (characters > limits.textCharacters || images > limits.images)
+      throw new PrintError('limit', 'PDF document stories exceed their resource budget.');
+    sources.push(...imageSources(item, limits));
+  }
+  replaceDocStories(owned, stories);
+  for (const style of [owned.documentStyle, ...(owned.body!.sectionBreaks ?? [])]) {
+    for (const key of ['defaultHeaderId', 'evenPageHeaderId', 'firstPageHeaderId'] as const)
+      if (style[key] && !Object.hasOwn(owned.headers ?? {}, style[key])) invalid();
+    for (const key of ['defaultFooterId', 'evenPageFooterId', 'firstPageFooterId'] as const)
+      if (style[key] && !Object.hasOwn(owned.footers ?? {}, style[key])) invalid();
+  }
   // The renderer uses fixed metadata; remove unrelated document identity from
   // its owned model as well, without touching the caller's snapshot.
   owned.id = 'print-document';
@@ -661,7 +692,7 @@ export function prepareDocSnapshot(
   }
   for (const table of Object.values(owned.tableSource ?? {})) delete table.description;
   inspectSnapshot(owned, limits, check);
-  return { snapshot: owned, imageSources: sources };
+  return { snapshot: owned, imageSources: [...new Set(sources)] };
 }
 
 /** Alias every effective face, including heading inheritance and generated lists. */
@@ -670,6 +701,20 @@ export function prepareDocFonts(
   fonts: PreparedFonts,
   limits: Readonly<PrintLimits>,
   check: () => void,
+) {
+  const stories = docStories(snapshot);
+  for (const [index, story] of stories.entries())
+    prepareDocBodyFonts(story.snapshot, fonts, limits, check, index);
+  replaceDocStories(snapshot, stories);
+  inspectSnapshot(snapshot, limits, check);
+}
+
+function prepareDocBodyFonts(
+  snapshot: IDocumentData,
+  fonts: PreparedFonts,
+  limits: Readonly<PrintLimits>,
+  check: () => void,
+  storyIndex: number,
 ) {
   const body = snapshot.body!;
   const style = snapshot.documentStyle;
@@ -814,7 +859,7 @@ export function prepareDocFonts(
       ]);
       let listType = listCache.get(key);
       if (!listType) {
-        listType = `print-list-${listCache.size}`;
+        listType = `print-list-${storyIndex}-${listCache.size}`;
         const copy = structuredClone(list);
         copy.listType = listType;
         for (const level of copy.nestingLevel) {
