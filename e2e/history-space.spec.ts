@@ -57,6 +57,10 @@ for (const kind of ['doc', 'sheet'] as const) {
     const prefix = `/api/spaces/${root.id}/items/${child.id}`;
     const liveHref = `/spaces/${root.id}?item=${child.id}`;
     const headers = { Origin: baseURL! };
+    const region = page.getByRole('region', {
+      name: kind === 'doc' ? 'Doc document' : 'Sheet document',
+      exact: true,
+    });
     const saved = () =>
       expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
         'All changes saved.',
@@ -117,51 +121,56 @@ for (const kind of ['doc', 'sheet'] as const) {
       await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
     };
     try {
-      const sheet = await sheetImageFixture();
-      const embedded = sheet.sheets.tab.cellData[1][0].p;
-      const text = '\bOriginal\r\n';
-      const seed =
-        kind === 'sheet'
-          ? sheet
-          : {
-              id: embedded.id,
-              title: child.name,
-              body: {
-                dataStream: text,
-                paragraphs: [{ startIndex: text.length - 2, paragraphId: 'history-paragraph' }],
-                customBlocks: [{ startIndex: 0, blockId: 'cell' }],
-              },
-              drawingsOrder: embedded.drawingsOrder,
-              drawings: embedded.drawings,
-              documentStyle: {
-                pageSize: { width: 595, height: 842 },
-                marginTop: 40,
-                marginBottom: 40,
-                marginLeft: 40,
-                marginRight: 40,
-              },
-            };
-      if (kind === 'sheet')
+      if (kind === 'sheet') {
+        const sheet = await sheetImageFixture();
         Object.assign(sheet.sheets.tab.cellData, { 0: { 0: { v: 'Original' } } });
-      const native = snapshotIdentity(seed as unknown as IDocumentData | IWorkbookData, child.id);
-      // Seed application-owned pre-collaboration snapshots, then use the real native
-      // engine, history API and restore transaction for every observed transition.
-      imageSources(native, (source) => {
-        const bytes = Buffer.from(source.split(',')[1], 'base64');
-        const hash = createHash('sha256').update(bytes).digest('hex');
-        db.prepare('INSERT OR IGNORE INTO doc_images VALUES(?,?,?,?)').run(
+        const seed = snapshotIdentity(sheet as unknown as IWorkbookData, child.id);
+        // Reuse the native Sheet image fixture's floating, cell and background
+        // coverage. The Doc below uses its real image-insertion UI.
+        imageSources(seed, (source) => {
+          const bytes = Buffer.from(source.split(',')[1], 'base64');
+          const hash = createHash('sha256').update(bytes).digest('hex');
+          db.prepare('INSERT OR IGNORE INTO doc_images VALUES(?,?,?,?)').run(
+            child.id,
+            hash,
+            'image/png',
+            bytes,
+          );
+          return `/api/items/${child.id}/images/${hash}`;
+        });
+        db.prepare('INSERT INTO sheet_snapshots VALUES(?,?,?,?)').run(
           child.id,
-          hash,
-          'image/png',
-          bytes,
+          JSON.stringify(seed),
+          1,
+          randomUUID(),
         );
-        return `/api/items/${child.id}/images/${hash}`;
-      });
-      db.prepare(
-        `INSERT INTO ${kind === 'doc' ? 'doc_snapshots' : 'sheet_snapshots'} VALUES(?,?,?,?)`,
-      ).run(child.id, JSON.stringify(native), 1, randomUUID());
+      }
       await page.goto(liveHref);
       await saved();
+      if (kind === 'doc') {
+        await region.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+        await page.keyboard.type('Original');
+        await expect.poll(async () => JSON.stringify(await exported())).toContain('Original');
+        await saved();
+        const insert = region.getByRole('tab', { name: 'Insert', exact: true });
+        await insert.click();
+        await expect(insert).toHaveAttribute('aria-selected', 'true');
+        const chooser = page.waitForEvent('filechooser');
+        await region.getByRole('button', { name: 'Image', exact: true }).click();
+        await (
+          await chooser
+        ).setFiles({
+          name: 'history-blue.png',
+          mimeType: 'image/png',
+          buffer: await sharp({
+            create: { width: 80, height: 60, channels: 3, background: '#2255ee' },
+          })
+            .png()
+            .toBuffer(),
+        });
+        await expect.poll(async () => (await exported()).drawingsOrder?.length ?? 0).toBe(1);
+        await saved();
+      }
       await imageVisible(page);
       const named = await context.request.post(`${prefix}/history`, {
         headers,
@@ -173,11 +182,9 @@ for (const kind of ['doc', 'sheet'] as const) {
       const previewHref = `/preview?item=${child.id}&space=${root.id}&version=${checkpoint}`;
       const originalResponse = await context.request.get(`${prefix}/history/${checkpoint}`);
       expect(originalResponse.status()).toBe(200);
-      const originalUnit = (await originalResponse.json()).unitId as string;
-      const region = page.getByRole('region', {
-        name: kind === 'doc' ? 'Doc document' : 'Sheet document',
-        exact: true,
-      });
+      const originalVersion = await originalResponse.json();
+      const originalUnit = originalVersion.unitId as string;
+      const native = originalVersion.snapshot as IDocumentData | IWorkbookData;
       if (kind === 'sheet') {
         const address = region.locator('[data-u-comp="defined-name"]').getByRole('textbox');
         await address.fill('C4');
