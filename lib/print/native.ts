@@ -13,11 +13,10 @@ import {
   Group,
   Spreadsheet,
   Transform,
-  UniverPrintingContext,
   invalidateDocumentFontMetrics,
 } from '@univerjs/engine-render';
 import type { IViewportInfo } from '@univerjs/engine-render';
-import { createCanvas, GlobalFonts, Image, Path2D, PDFDocument } from '@napi-rs/canvas';
+import { GlobalFonts, Image, PDFDocument } from '@napi-rs/canvas';
 import type { FontKey, SKRSContext2D } from '@napi-rs/canvas';
 import { PrintError, printCheckpoint, printLimits } from './contract.ts';
 import type { PreparedFont, PreparedImage, PrintBox, SheetPrintOptions } from './contract.ts';
@@ -27,12 +26,12 @@ import { drawPreparedImage } from './image-render.ts';
 import { unionBox } from './preflight.ts';
 import { measureSheetInk, prepareCellText, PrintSkeleton } from './text.ts';
 import { PrintWorksheet } from './worksheet.ts';
+import { canvasGlobals, PdfContext, acquireNativeRender } from './native-runtime.ts';
 
 // Skia's public PDF backend quantizes the requested A4 MediaBox to integer points
 // (SPN-097). Use that same actual frame for every clip/margin calculation.
 const FRAME = { width: 595, height: 842 };
 const MARGIN = 36;
-let rendering = false;
 
 export interface NativeSheetInput {
   snapshot: IWorkbookData;
@@ -40,13 +39,6 @@ export interface NativeSheetInput {
   fonts: readonly PreparedFont[];
   defaultFamily: string;
   fallbackFamilies?: readonly string[];
-}
-
-class PdfContext extends UniverPrintingContext {
-  override setLineDash(segments: number[]) {
-    // Canvas permits an all-zero dash array; the native PDF backend rejects it.
-    super.setLineDash(segments.every((value) => value === 0) ? [] : segments);
-  }
 }
 
 class HeadlessSpreadsheet extends Spreadsheet {
@@ -92,73 +84,6 @@ function viewport(bounds: PrintBox): IViewportInfo {
   };
 }
 
-/** Install only for the serialized native operation and restore exact descriptors. */
-function canvasGlobals(pixelLimit: number, check: () => void) {
-  const names = ['OffscreenCanvas', 'Image', 'Path2D'] as const;
-  const saved = names.map((name) => Object.getOwnPropertyDescriptor(globalThis, name));
-  const restore = () => {
-    names.forEach((name, index) => {
-      if (saved[index]) Object.defineProperty(globalThis, name, saved[index]!);
-      else Reflect.deleteProperty(globalThis, name);
-    });
-  };
-  const nativeSource = Object.getOwnPropertyDescriptor(Image.prototype, 'src');
-  if (!nativeSource?.set || !nativeSource.get)
-    throw new PrintError('unsupported', 'The native PDF image adapter is unavailable.');
-  class LocalImage extends Image {
-    constructor() {
-      super();
-      Object.defineProperty(this, 'src', {
-        get: () => nativeSource!.get!.call(this),
-        set: (value: unknown) => {
-          check();
-          // The native Font extension creates a fixed inline SVG fallback even
-          // without cell images. Decode inline bytes only; never pass a string
-          // (which the canvas API can interpret as a file/URL) to native Image.
-          if (
-            typeof value === 'string' &&
-            value.length <= 16_384 &&
-            /^data:image\/svg\+xml;base64,[A-Za-z0-9+/=]+$/.test(value)
-          ) {
-            nativeSource!.set!.call(
-              this,
-              Buffer.from(value.slice(value.indexOf(',') + 1), 'base64'),
-            );
-          } else if (value instanceof Uint8Array) nativeSource!.set!.call(this, value);
-          else throw new PrintError('unsupported', 'Native PDF images require prepared bytes.');
-        },
-      });
-    }
-  }
-  class BoundedCanvas {
-    constructor(width: number, height: number) {
-      check();
-      if (
-        !Number.isSafeInteger(width) ||
-        !Number.isSafeInteger(height) ||
-        width < 0 ||
-        height < 0 ||
-        !Number.isSafeInteger(width * height) ||
-        width * height > pixelLimit
-      )
-        throw new PrintError('limit', 'PDF canvas exceeds its pixel budget.');
-      return createCanvas(width, height);
-    }
-  }
-  try {
-    for (const [name, value] of Object.entries({
-      OffscreenCanvas: BoundedCanvas,
-      Image: LocalImage,
-      Path2D,
-    }))
-      Object.defineProperty(globalThis, name, { value, writable: true, configurable: true });
-  } catch {
-    restore();
-    throw new PrintError('unsupported', 'The native PDF canvas environment is unavailable.');
-  }
-  return restore;
-}
-
 /**
  * Call only inside the host's isolated process. Never stream partial bytes.
  * All selected content, complete native text layout, pages and cleanup must succeed.
@@ -167,9 +92,7 @@ export async function renderSheetPdfCandidate(
   input: NativeSheetInput,
   options: SheetPrintOptions = {},
 ) {
-  if (rendering)
-    throw new PrintError('limit', 'A native PDF render is already active in this worker.');
-  rendering = true;
+  const release = acquireNativeRender();
   const started = performance.now();
   let deadline = started;
   const keys: FontKey[] = [];
@@ -391,7 +314,7 @@ export async function renderSheetPdfCandidate(
     } catch {
       cleanupFailed = true;
     }
-    rendering = false;
+    release();
   }
   if (cleanupFailed) throw new PrintError('cleanup', 'Native PDF cleanup failed.');
   if (failure) throw failure;
