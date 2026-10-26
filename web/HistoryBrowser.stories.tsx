@@ -182,7 +182,7 @@ export const NoOlderDays: Story = {
     await expect(canvas.getByText('No saved snapshots from earlier days.')).toBeVisible();
     await expect(rows.queryAllByRole('listitem')).toHaveLength(0);
     await expect(canvas.queryByRole('button', { name: 'Restore this version' })).toBeNull();
-    await userEvent.click(canvas.getByRole('button', { name: 'Today', exact: true }));
+    await userEvent.click(canvas.getByRole('button', { name: /^Today$/ }));
     await expect(rows.getAllByRole('listitem')).toHaveLength(2);
     await userEvent.click(canvas.getByRole('button', { name: 'Older days' }));
     await expect(rows.queryAllByRole('listitem')).toHaveLength(0);
@@ -195,7 +195,7 @@ export const HistoryFailure: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('alert')).toHaveTextContent('Could not load history.');
-    const retry = canvas.getByRole('button', { name: 'Try again', exact: true });
+    const retry = canvas.getByRole('button', { name: /^Try again$/ });
     await expect(retry).toBeVisible();
     if (window.innerWidth <= 900)
       await expect(canvas.getByRole('button', { name: /^Choose version/ })).toHaveAttribute(
@@ -203,15 +203,15 @@ export const HistoryFailure: Story = {
         'false',
       );
     await choose(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Older days', exact: true }));
+    await userEvent.click(canvas.getByRole('button', { name: /^Older days$/ }));
     await expect(canvas.getByRole('alert')).toHaveTextContent('Could not load history.');
-    await userEvent.click(canvas.getByRole('button', { name: 'Today', exact: true }));
+    await userEvent.click(canvas.getByRole('button', { name: /^Today$/ }));
     await expect(canvas.getByRole('alert')).toHaveTextContent('Could not load history.');
     if (window.innerWidth <= 900)
       await userEvent.click(canvas.getByRole('button', { name: /^Choose version/ }));
     await userEvent.click(retry);
     await expect(await canvas.findByRole('alert')).toHaveTextContent('Could not load history.');
-    await expect(canvas.getByRole('button', { name: 'Try again', exact: true })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: /^Try again$/ })).toBeVisible();
     await bounds(canvasElement);
   },
 };
