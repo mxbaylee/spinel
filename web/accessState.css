@@ -57,6 +57,12 @@
   padding: 24px;
   min-width: 0;
 }
+/* Legacy account and Space button rules must preserve the primary recovery action. */
+.access-state-embedded .access-state-content button.sp-primary {
+  background: var(--sp-accent);
+  color: var(--sp-on-accent);
+  border-color: var(--sp-accent);
+}
 @media (max-width: 640px) {
   .access-state {
     padding: 24px 24px 24px;

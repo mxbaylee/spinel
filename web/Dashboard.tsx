@@ -292,6 +292,15 @@ export function Dashboard({
   );
   const current = currentId && !viewMissing ? byId.get(currentId) : undefined;
   const browsing = !currentId || sharedOpen || current?.kind === 'folder';
+  const missingView = Boolean(
+    loaded &&
+    !viewLoading &&
+    currentId === viewId &&
+    currentId &&
+    currentId !== TRASH_VIEW &&
+    !sharedOpen &&
+    !current,
+  );
   useEffect(() => {
     onPlaces?.(
       browsing
@@ -734,7 +743,7 @@ export function Dashboard({
             />
           )}
         </>
-      ) : !framedEditor ? (
+      ) : !framedEditor && !missingView ? (
         <>
           <nav aria-label="Breadcrumb" className="dashboard-breadcrumbs">
             <button onClick={() => navigate(null)}>My files</button>
@@ -770,7 +779,7 @@ export function Dashboard({
         </p>
       ) : currentId === TRASH_VIEW ? (
         <Trash onChanged={reloadItems} />
-      ) : currentId && !sharedOpen && !current ? (
+      ) : missingView ? (
         <AccessState kind="missing" embedded onFiles={() => navigate(null)} />
       ) : browsing ? (
         <>
@@ -1070,7 +1079,11 @@ export function Dashboard({
           }}
         />
       )}
-      {error && !action && <p role="alert">{error}</p>}
+      {/* AccessState already presents this generic failure. Keep distinct
+          request errors and their state for network/server failure reporting. */}
+      {error && !action && !(missingView && error === 'This item is not available.') && (
+        <p role="alert">{error}</p>
+      )}
       {framedEditor && sharedFailure}
     </section>
   );
