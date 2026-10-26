@@ -97,7 +97,7 @@ function ranges(params: Record<string, any>) {
   }
 }
 
-/** Run before applying a local native mutation, not after its collaboration event. */
+/** Bound the live model before either local or remote native handlers can allocate. */
 export function admitNativeMutation(mutation: Mutation, workbook: Workbook | null) {
   if (!mutation.id.startsWith('sheet.mutation.')) return;
   if (!workbook) throw new ClientError('malformed');

@@ -23,7 +23,7 @@ import type { BaseCells, Mutation } from '@spinel/sync-transform';
 import { SyncClient } from './client.ts';
 import { captureNative } from './capture.ts';
 import { byteBudget } from './hash.ts';
-import { admitSnapshot } from './admission.ts';
+import { admitNativeMutation, admitSnapshot } from './admission.ts';
 import { ClientError } from './types.ts';
 import type { DocumentKind, NativeSnapshot, NativeSyncOptions, SyncReplica } from './types.ts';
 
@@ -40,8 +40,16 @@ export function nativeSnapshot(univer: Univer, unitId: string): NativeSnapshot {
 
 /** Remote styles need onlyLocal for native formula recalculation; fromCollab prevents echo. */
 export function applyNative(univer: Univer, mutations: readonly Mutation[]) {
-  const commands = univer.__getInjector().get(ICommandService);
+  const injector = univer.__getInjector();
+  const commands = injector.get(ICommandService);
+  const instances = injector.get(IUniverInstanceService);
   for (const mutation of mutations) {
+    // A valid server edit can exceed the visible model's budget when combined
+    // with optimistic local work. Refuse before the native handler allocates.
+    admitNativeMutation(
+      mutation,
+      instances.getUnit<Workbook>(mutation.params.unitId, UniverInstanceType.UNIVER_SHEET) ?? null,
+    );
     const accepted = commands.syncExecuteCommand(mutation.id, structuredClone(mutation.params), {
       onlyLocal: true,
       fromCollab: true,

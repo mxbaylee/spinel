@@ -9,9 +9,9 @@ import {
   SetWorksheetRowCountMutation,
 } from '@univerjs/sheets';
 import { expect, test, vi } from 'vitest';
-import { captureNative, NativeReplica } from '../index.ts';
+import { captureNative, createNativeSyncClient, NativeReplica } from '../index.ts';
 import type { ClientFailure } from '../index.ts';
-import { book } from './fixture.ts';
+import { book, fixture as serverFixture, turns, wire } from './fixture.ts';
 
 const oneCell = { startRow: 0, endRow: 0, startColumn: 0, endColumn: 0 };
 const huge = { ...oneCell, endRow: 1000, endColumn: 1000 };
@@ -203,5 +203,92 @@ test('bounds the worksheet count before constructing another native sheet', () =
   } finally {
     state.mockRestore();
     f.close();
+  }
+});
+
+test('refuses disjoint replay before the visible handler exceeds an optimistic merge budget', async () => {
+  const snapshot = book();
+  snapshot.sheets.one.rowCount = 1000;
+  snapshot.sheets.one.columnCount = 501;
+  const server = serverFixture(snapshot);
+  const peerRange = { startRow: 500, endRow: 500, startColumn: 0, endColumn: 1 };
+  const peer = await server.accept(
+    {
+      type: 'submit',
+      mutationId: '00000000-0000-4000-8000-000000000099',
+      baseRevision: 1,
+      mutations: [
+        {
+          id: AddWorksheetMergeMutation.id,
+          params: {
+            unitId: 'book',
+            subUnitId: 'one',
+            ranges: [peerRange],
+          },
+        },
+      ],
+    },
+    'peer',
+  );
+  // Both source edits are individually within the limit. Stub native allocation
+  // before registration so this regression remains small even if the guard breaks.
+  const handler = vi.spyOn(AddWorksheetMergeMutation, 'handler').mockReturnValue(true);
+  const visible = new NativeReplica(snapshot, 'sheet');
+  const injector = visible.univer.__getInjector();
+  const sheet = injector
+    .get(IUniverInstanceService)
+    .getUnit<Workbook>('book', UniverInstanceType.UNIVER_SHEET)!
+    .getSheetBySheetId('one')!;
+  const failures: ClientFailure[] = [];
+  const send = vi.fn();
+  const client = createNativeSyncClient({
+    univer: visible.univer,
+    unitId: 'book',
+    kind: 'sheet',
+    snapshot,
+    revision: 1,
+    send,
+    onState() {},
+    onResync: (reason) => failures.push(reason),
+    batchDelayMs: 100_000,
+  });
+  const pendingRange = { ...oneCell, endRow: 499, endColumn: 499 };
+  let state: ReturnType<typeof vi.spyOn> | undefined;
+  try {
+    expect(
+      injector.get(ICommandService).syncExecuteCommand(AddWorksheetMergeMutation.id, {
+        unitId: 'book',
+        subUnitId: 'one',
+        ranges: [pendingRange],
+      }),
+    ).toBe(true);
+    expect(client.state.pending).toBe(true);
+    state = vi.spyOn(sheet, 'getConfig').mockReturnValue({
+      ...sheet.getConfig(),
+      mergeData: [pendingRange],
+    });
+    handler.mockClear();
+    client.setConnected(true);
+    client.receive({
+      type: 'resume',
+      version: 1,
+      unitId: 'book',
+      fromRevision: 1,
+      revision: 2,
+      edits: [wire(peer.edit)],
+    });
+    await turns();
+    expect(failures).toEqual(['capacity']);
+    // The bounded confirmed copy accepts the two-cell merge. The visible copy
+    // refuses before the same handler can combine it with pending local work.
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(handler.mock.calls[0][1]).toMatchObject({ ranges: [peerRange] });
+    expect(send.mock.calls.some(([frame]) => frame.type === 'submit')).toBe(false);
+  } finally {
+    state?.mockRestore();
+    client.dispose();
+    visible.dispose();
+    handler.mockRestore();
+    server.close();
   }
 });

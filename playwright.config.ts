@@ -20,8 +20,9 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   failOnFlakyTests: Boolean(process.env.CI),
-  // Stop repeated downstream failures early; a failed run still fails the gate.
-  maxFailures: process.env.CI ? 1 : 0,
+  // Keep all five independent native-client acceptance scenarios observable;
+  // ordinary large suites still stop repeated downstream failures early.
+  maxFailures: process.env.CI && !project?.startsWith('sync-') ? 1 : 0,
   reporter: 'line',
   // Recording every action/DOM snapshot distorts the real-time latency checks.
   // Keep CI failure diagnostics on its first retry; all assertions still run.

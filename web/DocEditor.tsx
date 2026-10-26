@@ -81,6 +81,7 @@ import type { ConnectionState } from './connectionState.ts';
 import { docPendingChanges } from './docPending.ts';
 import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
+import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 
 export function DocEditor({
   id,
@@ -112,7 +113,6 @@ export function DocEditor({
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
-  const [ready, setReady] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [reloadGeneration, reload] = useState(0);
@@ -126,8 +126,6 @@ export function DocEditor({
   useEffect(() => {
     let disposed = false;
     let initialized = false;
-    setReady(false);
-    if (container.current) container.current.inert = true;
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
     lastRoom.current = room;
@@ -171,6 +169,8 @@ export function DocEditor({
     void (async () => {
       const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
+      const nativePermissions =
+        data.syncVersion === 1 ? nativeSyncPermissions(data.unitId, data.access) : undefined;
       let drawingReady!: () => void;
       const drawingsRendered = new Promise<void>((resolve) => {
         drawingReady = resolve;
@@ -273,7 +273,10 @@ export function DocEditor({
           ),
         },
         ...(data.syncVersion !== 1 ? { collaboration: true as const } : {}),
-        override: [[IImageIoService, { useClass: StoredImages }]],
+        override: [
+          ...(nativePermissions?.override ?? []),
+          [IImageIoService, { useClass: StoredImages }],
+        ],
         plugins: [
           [
             UniverDrawingPlugin,
@@ -346,6 +349,7 @@ export function DocEditor({
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const readonly = async () => {
+        nativePermissions?.readonly();
         canEditFormulas.current = false;
         setFormulaEdit(null);
         formulas.current?.clear();
@@ -376,8 +380,6 @@ export function DocEditor({
           reload: () => {
             if (disposed) return;
             initialized = false;
-            setReady(false);
-            if (container.current) container.current.inert = true;
             syncNotice.current =
               'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
             publish({
@@ -459,8 +461,6 @@ export function DocEditor({
             ),
       );
       controller.current = save;
-      setReady(true);
-      if (container.current) container.current.inert = false;
     })().catch((error) => {
       publishConnection('offline');
       if (!disposed)
@@ -475,7 +475,6 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
-      if (container.current) container.current.inert = true;
       registerGuestEditor?.(null);
       canEditFormulas.current = false;
       clearInterval(formulaInterval);
@@ -595,7 +594,7 @@ export function DocEditor({
           ? `${uploadError} Try inserting the file again.`
           : formulaError || (editable ? 'Click the page to write. Type / for commands.' : '')}
       </p>
-      <div className="univer-container" ref={container} inert={!ready} />
+      <div className="univer-container" ref={container} />
     </section>
   );
 }

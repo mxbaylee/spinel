@@ -116,13 +116,15 @@ reads and lazy intermediate cell caches have 10 MiB budgets checked before
 cloning or retaining expanded values. Long identifiers are charged as part of
 addresses, not merely once in the source snapshot.
 
-The capture before-hook also checks compact local native geometry before its
-handler runs. It enforces the server's 250,000-cell range and aggregate merge
+The capture before-hook and remote adapter check compact native geometry before
+each handler runs. They enforce the server's 250,000-cell range and aggregate merge
 cache budgets, axis dimensions and 1,024-sheet limit. Merge additions and sheet
 insertions include the current workbook's existing merges in that budget, so an
 earlier removal can free capacity without letting a compact request allocate an
-oversized native `SpanModel`. `syncOnly` emissions do not execute this handler,
-so this check does not count a second structural effect for them.
+oversized native `SpanModel`. A server-valid replay is also checked against the
+visible optimistic model, whose pending work can already consume that capacity.
+`syncOnly` emissions do not execute this handler, so the local capture check does
+not count a second structural effect for them.
 
 When pending work is empty, the client hashes the **visible** native model over
 the last acknowledged/applied revision's declared footprint. Browser Web Crypto

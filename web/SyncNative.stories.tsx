@@ -328,7 +328,9 @@ export const DocDrawingCapture: Story = {
     expect(read().raw).toContain('doc.mutation.rich-text-editing');
     expect(read().pendingIds).toContain('doc.mutation.rich-text-editing');
     const pending = read().pending;
-    const nativeCanvas = canvasElement.querySelector('canvas[aria-label="Document canvas"]')!;
+    const nativeCanvas = canvasElement.querySelector<HTMLCanvasElement>(
+      'canvas[aria-label="Document canvas"]',
+    )!;
     const clickRange = async (key: 'imageBounds' | 'textBounds') => {
       // Rendering the object and publishing text layout are asynchronous. Re-read the
       // geometry after each layout change, and click only the visible part of the target.
@@ -346,7 +348,18 @@ export const DocDrawingCapture: Story = {
           const bottom = Math.min(bounds.bottom, visible.bottom - 1);
           expect(right).toBeGreaterThan(left);
           expect(bottom).toBeGreaterThan(top);
-          return { clientX: (left + right) / 2, clientY: (top + bottom) / 2 };
+          const clientX = (left + right) / 2;
+          const clientY = (top + bottom) / 2;
+          // userEvent defaults omitted offsets to zero; Univer's mouse hit testing
+          // reads offsets in the canvas's unscaled CSS pixel coordinate system.
+          return {
+            clientX,
+            clientY,
+            offsetX: ((clientX - visible.left) * nativeCanvas.clientWidth) / visible.width,
+            offsetY: ((clientY - visible.top) * nativeCanvas.clientHeight) / visible.height,
+            pageX: clientX + window.scrollX,
+            pageY: clientY + window.scrollY,
+          };
         },
         { timeout: 10_000 },
       );
@@ -359,10 +372,7 @@ export const DocDrawingCapture: Story = {
     await clickRange('textBounds');
     await waitFor(() => expect(read().focused).toBe(0));
     await clickRange('imageBounds');
-    await waitFor(() => {
-      expect(read().focused).toBe(1);
-      expect(read().controls).toBe(1);
-    });
+    await waitFor(() => expect(read()).toMatchObject({ focused: 1, controls: 1 }));
     const resized = read().resized,
       controlsCreated = read().controlsCreated;
     await userEvent.click(canvas.getByRole('button', { name: 'Narrow editor' }));

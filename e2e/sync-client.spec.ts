@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import type { IWorkbookData, IDocumentData } from '@univerjs/core';
 import sharp from 'sharp';
+import { writeFile } from 'node:fs/promises';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { Profiles } from '../src/server/auth/profile.ts';
@@ -126,6 +127,33 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, kind: 
     read,
     account,
     async close() {
+      // Preserve actual model/wire evidence before teardown, including failures
+      // that occur before the final full-snapshot assertions can run.
+      const observed = await Promise.allSettled(
+        [page, other].map((target) =>
+          target.evaluate(() => ({
+            native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
+            focus: document.activeElement?.outerHTML,
+            status: document.querySelector('[role="status"][aria-label="Save status"]')
+              ?.textContent,
+          })),
+        ),
+      );
+      await writeFile(
+        info.outputPath('sync-diagnostics.json'),
+        JSON.stringify(
+          {
+            observed,
+            errors,
+            outgoing: network.outgoing,
+            incoming: network.incoming,
+            peerOutgoing: otherNetwork.outgoing,
+            peerIncoming: otherNetwork.incoming,
+          },
+          null,
+          2,
+        ),
+      );
       await Promise.all(contexts.map((context) => context.close()));
       db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
       for (const user of [owner, editor])

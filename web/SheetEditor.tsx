@@ -46,6 +46,7 @@ import { editorReady } from './editorReady.ts';
 import type { ConnectionState } from './connectionState.ts';
 import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
+import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 
 export function SheetEditor({
   id,
@@ -68,7 +69,6 @@ export function SheetEditor({
   const mobile = useRef(useMobileSheetControls()).current;
   const print = useRef<(() => Promise<void>) | null>(null);
   const [people, setPeople] = useState<Collaborator[]>([]);
-  const [ready, setReady] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [reloadGeneration, reload] = useState(0);
@@ -82,8 +82,6 @@ export function SheetEditor({
   useEffect(() => {
     let disposed = false;
     let initialized = false;
-    setReady(false);
-    if (container.current) container.current.inert = true;
     const loading = new AbortController();
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
@@ -119,6 +117,8 @@ export function SheetEditor({
     void (async () => {
       const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
+      const nativePermissions =
+        data.syncVersion === 1 ? nativeSyncPermissions(data.unitId, data.access) : undefined;
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
         darkMode: getTheme() === 'dark',
@@ -133,6 +133,7 @@ export function SheetEditor({
           ),
         },
         ...(data.syncVersion !== 1 ? { collaboration: true as const } : {}),
+        ...(nativePermissions ? { override: nativePermissions.override } : {}),
         plugins: [
           ...collaborationPlugins(
             data.unitId,
@@ -157,6 +158,22 @@ export function SheetEditor({
         disposeSpinelSync(univer);
         univer.dispose();
       };
+      // Register before unit loading can yield to input. An unfinished native
+      // cell edit has no collaboration mutation yet, but still blocks leaving.
+      const editingCell = () => {
+        if (disposed) return;
+        editing = true;
+        if (chrome) chrome.editing.current = true;
+        publish(lastState);
+      };
+      univerAPI.addEvent(univerAPI.Event.SheetEditStarted, editingCell);
+      univerAPI.addEvent(univerAPI.Event.SheetEditChanging, editingCell);
+      univerAPI.addEvent(univerAPI.Event.SheetEditEnded, () => {
+        if (disposed) return;
+        editing = false;
+        if (chrome) chrome.editing.current = false;
+        publish(lastState);
+      });
       registerGuestEditor?.((retain) => {
         try {
           return retain ? guestPendingBuffer(univer) : null;
@@ -171,6 +188,7 @@ export function SheetEditor({
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const readOnly = async () => {
+        nativePermissions?.readonly();
         // This tab's presentation follows its grant; never change shared permissions.
         const permissions = univer.__getInjector().get(IPermissionService);
         for (const Point of getAllWorkbookPermissionPoint()) {
@@ -203,8 +221,6 @@ export function SheetEditor({
           reload: () => {
             if (disposed) return;
             initialized = false;
-            setReady(false);
-            if (container.current) container.current.inert = true;
             syncNotice.current =
               'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
             publish({
@@ -283,16 +299,6 @@ export function SheetEditor({
         stopPresence();
         return;
       }
-      univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
-        editing = true;
-        if (chrome) chrome.editing.current = true;
-        publish(lastState);
-      });
-      univerAPI.addEvent(univerAPI.Event.SheetEditEnded, () => {
-        editing = false;
-        if (chrome) chrome.editing.current = false;
-        publish(lastState);
-      });
       initialized = true;
       save = watchCollaboration(
         univer,
@@ -306,8 +312,6 @@ export function SheetEditor({
         spaceId,
       );
       controller.current = save;
-      setReady(true);
-      if (container.current) container.current.inert = false;
     })().catch((error) => {
       publishConnection('offline');
       if (!disposed)
@@ -322,7 +326,6 @@ export function SheetEditor({
     });
     return () => {
       disposed = true;
-      if (container.current) container.current.inert = true;
       loading.abort();
       registerGuestEditor?.(null);
       stopPresence?.();
@@ -354,7 +357,7 @@ export function SheetEditor({
           await print.current();
         }}
       />
-      <div className="univer-container" ref={container} inert={!ready} />
+      <div className="univer-container" ref={container} />
     </section>
   );
 }
