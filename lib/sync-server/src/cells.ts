@@ -10,7 +10,7 @@ import type {
   SyncUnit,
   Touched,
 } from './types.ts';
-import { SyncError } from './types.ts';
+import { MAX_CELL_WORK_BYTES, SyncError } from './types.ts';
 import { sheetRangePath } from './geometry.ts';
 
 /** Stable JSON is shared with clients; no document values enter diagnostics. */
@@ -30,28 +30,53 @@ export function canonical(value: unknown): string {
 }
 export const digest = (value: unknown) =>
   createHash('sha256').update(canonical(value)).digest('hex');
-const key = ({ sheetId, row, column }: CellAddress) => JSON.stringify([sheetId, row, column]);
 const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
+/** Compact IDs and shared styles can expand once per cell. Charge each encoded
+ * key/value before retaining or cloning it, including lazy transform base reads. */
+class CellBudget {
+  private remaining = MAX_CELL_WORK_BYTES;
+  json(value: unknown): string {
+    const encoded = JSON.stringify(value);
+    this.remaining -= Buffer.byteLength(encoded);
+    if (this.remaining < 0) throw new SyncError('capacity');
+    return encoded;
+  }
+  key({ sheetId, row, column }: CellAddress): string {
+    return this.json([sheetId, row, column]);
+  }
+  clone(cell: ICellData | null): ICellData | null {
+    this.json(cell);
+    return structuredClone(cell);
+  }
+}
+
+function inlineCell(snapshot: IWorkbookData, { sheetId, row, column }: CellAddress) {
+  const cell = snapshot.sheets[sheetId]?.cellData?.[row]?.[column];
+  if (!cell) return null;
+  const s = typeof cell.s === 'string' ? snapshot.styles?.[cell.s] : cell.s;
+  return { ...cell, s };
+}
+
 export function snapshotCells(snapshot: IWorkbookData): BaseCells {
+  const budget = new CellBudget();
   return (unitId, sheetId, row, column) => {
     if (snapshot.id !== unitId) return null;
-    const cell = snapshot.sheets[sheetId]?.cellData?.[row]?.[column];
-    if (!cell) return null;
-    const s = typeof cell.s === 'string' ? snapshot.styles?.[cell.s] : cell.s;
-    return structuredClone({ ...cell, s });
+    const address = { sheetId, row, column };
+    budget.key(address);
+    return budget.clone(inlineCell(snapshot, address));
   };
 }
 
-function allCells(snapshot: IWorkbookData): Map<string, CellBeforeImage> {
+function allCells(snapshot: IWorkbookData, budget: CellBudget): Map<string, CellBeforeImage> {
   const cells = new Map<string, CellBeforeImage>();
-  const read = snapshotCells(snapshot);
   for (const [sheetId, sheet] of Object.entries(snapshot.sheets)) {
     for (const [r, columns] of Object.entries(sheet.cellData ?? {})) {
       for (const [c, cell] of Object.entries(columns ?? {})) {
         if (!cell) continue;
         const address = { sheetId, row: Number(r), column: Number(c) };
-        cells.set(key(address), { ...address, value: read(snapshot.id, sheetId, +r, +c) ?? null });
+        const id = budget.key(address);
+        cells.set(id, { ...address, value: budget.clone(inlineCell(snapshot, address)) });
       }
     }
   }
@@ -68,24 +93,33 @@ export function changes(
 ) {
   if (kind === 'doc')
     return { beforeCells: [] as CellBeforeImage[], touched: { kind: 'doc' } as Touched };
-  const old = allCells(before as IWorkbookData);
-  const next = allCells(after as IWorkbookData);
-  const beforeCells: CellBeforeImage[] = [];
+  const old = allCells(before as IWorkbookData, new CellBudget());
+  const next = allCells(after as IWorkbookData, new CellBudget());
+  const changed: { id: string; image: CellBeforeImage }[] = [];
   for (const id of new Set([...old.keys(), ...next.keys()])) {
     const a = old.get(id);
     const b = next.get(id);
     if (canonical(a?.value ?? null) === canonical(b?.value ?? null)) continue;
     const address = a ?? b!;
-    beforeCells.push({
-      sheetId: address.sheetId,
-      row: address.row,
-      column: address.column,
-      value: a?.value ?? null,
+    changed.push({
+      id,
+      image: {
+        sheetId: address.sheetId,
+        row: address.row,
+        column: address.column,
+        value: a?.value ?? null,
+      },
     });
   }
-  beforeCells.sort((a, b) => compare(key(a), key(b)));
+  const beforeCells = changed.sort((a, b) => compare(a.id, b.id)).map(({ image }) => image);
+  const budget = new CellBudget();
   const touched = new Map<string, CellAddress>();
-  const add = (address: CellAddress) => touched.set(key(address), address);
+  const add = (address: CellAddress) => {
+    const id = budget.key(address);
+    if (touched.has(id)) return;
+    budget.json(address);
+    touched.set(id, address);
+  };
   for (const { value: _, ...address } of beforeCells) add(address);
   const matrix = (
     data: Record<string, Record<string, unknown>> | undefined,
@@ -142,21 +176,22 @@ export function changes(
 /** Sparse rollback overlays exact before-images over the one live snapshot. */
 export function cellsAt(unit: SyncUnit, revision: number, later: SyncRevision[]): BaseCells {
   if (unit.kind !== 'sheet') return () => null;
-  const read = snapshotCells(unit.snapshot as IWorkbookData);
+  const budget = new CellBudget();
   const overrides = new Map<string, ICellData | null>();
   let expected = unit.revision;
   for (const edit of [...later].reverse()) {
     if (edit.revision <= revision) continue;
     if (edit.revision !== expected || edit.beforeCells === null) throw new SyncError('stale');
-    for (const image of edit.beforeCells) overrides.set(key(image), image.value);
+    for (const image of edit.beforeCells) overrides.set(budget.key(image), image.value);
     expected--;
   }
   if (expected !== revision) throw new SyncError('stale');
   return (unitId, sheetId, row, column) => {
     if (unitId !== unit.unitId) return null;
-    const address = key({ sheetId, row, column });
-    return structuredClone(
-      overrides.has(address) ? overrides.get(address)! : read(unitId, sheetId, row, column),
+    const address = { sheetId, row, column };
+    const id = budget.key(address);
+    return budget.clone(
+      overrides.has(id) ? overrides.get(id)! : inlineCell(unit.snapshot as IWorkbookData, address),
     );
   };
 }
@@ -198,13 +233,15 @@ function normalizedBody(body: IDocumentData['body']) {
 export function hashTouched(snapshot: NativeSnapshot, touched: Touched): string {
   if (touched.kind === 'doc') return digest(normalizedBody((snapshot as IDocumentData).body));
   const book = snapshot as IWorkbookData;
-  const read = snapshotCells(book);
-  return digest(
-    [...touched.cells]
-      .sort((a, b) => compare(key(a), key(b)))
-      .map((address) => ({
-        ...address,
-        value: hashCell(read(book.id, address.sheetId, address.row, address.column)),
-      })),
-  );
+  const budget = new CellBudget();
+  const addresses = touched.cells.map((address) => ({ id: budget.key(address), address }));
+  addresses.sort((a, b) => compare(a.id, b.id));
+  const hash = createHash('sha256').update('[');
+  for (const [index, { address }] of addresses.entries()) {
+    budget.json(address);
+    const value = hashCell(budget.clone(inlineCell(book, address)));
+    if (index) hash.update(',');
+    hash.update(canonical({ ...address, value }));
+  }
+  return hash.update(']').digest('hex');
 }

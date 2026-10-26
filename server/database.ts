@@ -9,7 +9,9 @@ type Row = Record<string, Value>;
  * the SDK's libsql in one process can corrupt shared WAL locking on reopen (#68). */
 export class DatabaseSync {
   private readonly database: Sqlite.Database;
+  readonly path: string;
   constructor(path: string) {
+    this.path = path;
     this.database = new Sqlite(path);
     this.database.exec('PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;');
   }

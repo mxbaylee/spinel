@@ -9,6 +9,7 @@ export {
   MAX_BATCH_MUTATIONS,
   MAX_WORKSHEETS,
   MAX_MERGE_CELLS,
+  MAX_CELL_WORK_BYTES,
 } from './src/types.ts';
 export type {
   CellAddress,

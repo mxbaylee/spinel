@@ -97,6 +97,17 @@ most 64 submissions in total. Requests and final native snapshots are bounded by
 and the aggregate enumerated range area by 250,000 cells. Oversized requests resync
 without attempting an unbounded transformation. These are conservative admission
 limits, not a promise that every document below 10 MiB supports every selection.
+Expanded cell work has a separate **10 MiB cumulative byte budget** for each
+expanded snapshot, touched footprint, transform-base reader and touched-cell hash.
+It charges encoded address keys and inline cell values before retaining or cloning
+them; footprint and hash addresses also count. A difference uses separate old,
+new and footprint budgets, bounding their combined counted work to **30 MiB** while
+preserving edits beside an unchanged large cell. A compact shared style or long
+worksheet ID may still be refused when repeated across many cells, even if its
+stored snapshot is smaller than 10 MiB. This deliberately bounds expansion without
+imposing an arbitrary worksheet-ID length limit. Current and historical base reads
+share one reader budget. Hashing streams the same canonical array representation
+after bounded address sorting.
 Axis-only row/column ranges consume the same work budget. Coordinates and counts
 must be bounded safe integers, including sparse metadata indices; a missing axis
 endpoint cannot fall through to a native loop. Transformed output passes the same

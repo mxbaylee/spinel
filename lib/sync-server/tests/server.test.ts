@@ -184,6 +184,52 @@ test('failed persistence never acknowledges or contaminates the next materialize
   expect(f.cell()).toMatchObject({ v: 42, s: { bl: 1, it: 1 } });
 });
 
+test('expanded long-ID footprints refuse before commit and leave the next valid edit usable', async () => {
+  const f = fixture();
+  const sheetId = 's'.repeat(30 * 1024);
+  const inserted = insertSheet(sheetId, 2);
+  inserted.params.sheet.name = 'Long ID';
+  await f.server.submit(request('long-sheet', [inserted]), undefined);
+  const range = (end: number): Mutation => ({
+    id: 'sheet.mutation.remove.numfmt',
+    params: {
+      unitId: 'book',
+      subUnitId: sheetId,
+      ranges: [{ startRow: 0, endRow: end, startColumn: 0, endColumn: end }],
+    },
+  });
+  const oversized = request('expanded-footprint', [range(19)], 2);
+  expect(Buffer.byteLength(JSON.stringify(oversized))).toBeLessThan(64 * 1024);
+  await expect(f.server.submit(oversized, undefined)).rejects.toMatchObject({ code: 'capacity' });
+  expect(f.storage.load('book')?.revision).toBe(2);
+  expect(f.storage.receipt('book', 'owner', 'expanded-footprint')).toBeUndefined();
+  expect(f.server.load('book', undefined).revision).toBe(2);
+  const accepted = await f.server.submit(request('bounded-footprint', [range(1)], 2), undefined);
+  expect(accepted.edit.revision).toBe(3);
+  expect(accepted.edit.touched).toMatchObject({ kind: 'sheet', cells: expect.any(Array) });
+  expect(f.storage.edits).toHaveLength(2);
+  await f.server.submit(request('ordinary-after-capacity', [write({ v: 123 })], 3), undefined);
+  expect(f.cell()?.v).toBe(123);
+});
+
+test('a large admitted cell does not prevent a neighboring edit from reaching persistence or retrying', async () => {
+  const f = fixture();
+  const large = 'v'.repeat(6 * 1024 * 1024);
+  await f.server.submit(request('large-cell', [write({ v: large })]), undefined);
+  const neighbor = request('neighbor', [write({ v: 'nearby' }, 0, 1)], 2);
+  f.storage.fail = true;
+  await expect(f.server.submit(neighbor, undefined)).rejects.toThrow(
+    'Simulated durable write failure',
+  );
+  expect(f.storage.load('book')?.revision).toBe(2);
+  expect(f.storage.receipt('book', 'owner', 'neighbor')).toBeUndefined();
+  f.storage.fail = false;
+  const accepted = await f.server.submit(neighbor, undefined);
+  expect(accepted.edit.revision).toBe(3);
+  expect(f.cell()?.v).toBe(large);
+  expect(f.cell(0, 1)?.v).toBe('nearby');
+});
+
 async function outcomeFixture() {
   const events: DiagnosticEvent[] = [];
   const f = fixture({ diagnostics: (event) => events.push(event) });

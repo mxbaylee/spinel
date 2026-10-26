@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { ItemKind, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { searchCatalog } from '../src/shared/search.ts';
@@ -599,6 +599,38 @@ export const ImportDialog: Story = {
     await assertDialogControls(
       await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Import file' }),
     );
+  },
+};
+
+export const ExportAllFiles: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const screen = within(canvasElement.ownerDocument.body);
+    const menu = await within(canvasElement).findByRole('button', {
+      name: 'More actions for My files',
+    });
+    await userEvent.click(menu);
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Export all my files' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Export all my files' });
+    await expect(within(dialog).getByRole('button', { name: 'Export files' })).toBeEnabled();
+    await assertDialogControls(dialog);
+  },
+};
+
+export const CancelExportConfirmation: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const screen = within(canvasElement.ownerDocument.body);
+    const menu = await within(canvasElement).findByRole('button', {
+      name: 'More actions for My files',
+    });
+    await userEvent.click(menu);
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Export all my files' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }));
+    await expect(
+      screen.queryByRole('dialog', { name: 'Export all my files' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(menu).toHaveFocus());
   },
 };
 

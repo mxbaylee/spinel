@@ -174,6 +174,7 @@ const modalIcons = {
   person: 'user-round',
   warning: 'triangle-alert',
   upload: 'upload',
+  download: 'download',
   info: 'info',
 } as const;
 

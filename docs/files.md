@@ -4,9 +4,10 @@ In a Sheet or Doc, open **Export → Download Univer file** after changes are sa
 This downloads the current collaboration content as native Univer JSON. It includes
 Sheet and Doc images as embedded PNG, JPEG or WebP data URLs, so a copy does not depend
 on private URLs on this instance. Named versions, sharing and ownership are not
-part of an individual file; use the operator backup for the whole workspace.
+part of an individual file. Use the owned archive below for all your files, or the
+Operator's backup for server recovery.
 
-Open an owned folder (or My files) and choose **Import Univer file**, or drop one
+Open an owned folder (or My files) and choose **Import file**, or drop one
 file anywhere in its file pane. A `.json` or `.univer` file becomes a new item owned
 by you in that folder. Import never replaces an existing item. PDF, Office and CSV
 uploads are refused. Optional CSV import is post-launch SPN-093; optional format
@@ -110,6 +111,66 @@ print output at the browser print call, generate a PDF, reopen and render it, an
 retain PDF/PNG evidence in CI. They do not override license checks or print pages
 the plugin did not produce.
 
+## Export all my files
+
+At the root of **My files**, choose **More → Export all my files** and confirm.
+Spinel streams a ZIP to the browser while one dialog shows file progress,
+cancellation, completion or a retryable error. Completion means the archive was
+sent to the browser; check the browser's downloads for its saved file.
+
+The archive contains only live items you own: folders (including empty folders),
+Sheets, Docs and whole Spaces with their internal tree and sibling positions.
+Files shared with you, personal placements of other people's files, Trash,
+history, named versions, grants and guest links are excluded. An owned file
+that you have shared with someone else is still included. Everyday File admins
+use the same owned-only boundary; Operators and link guests cannot use archives.
+
+Each document uses the same native Univer content and embedded raster images as
+**Download Univer file**. A versioned `spinel-manifest.json` records exact names,
+original dates, identity and tree structure. ZIP path components use safe names
+and disambiguating IDs so duplicate names and platform-special characters do not
+overwrite one another. Space children remain inside their original Space rather
+than becoming independently shared files. Formulas contain definitions only,
+never cached results.
+
+Import the `.zip` through **New → Import file**, or drop it into the root of
+**My files**. Spinel validates every member before publishing the complete tree
+in one transaction. It creates new items owned by the importing account, with
+new IDs and creation dates, leaving the original dates in the archive manifest.
+Existing items are never replaced. Formula references to included Sheets map to
+their new IDs; external or missing sources stay unavailable, even if an unrelated
+destination item happens to have the original ID. No sharing settings transfer.
+
+The same native file, image and structural limits apply to each member. Archives
+allow at most 10,000 items, an 8 MiB manifest and 8 GiB of compressed and expanded
+data. Export processes one native file at a time under download backpressure;
+the browser does not build a whole-archive Blob. One pending or running export is
+allowed per account, and archive work shares the process-wide native-transfer
+admission. Pending tasks expire after 15 minutes; active transfers have a one-hour
+deadline. Revocation, cancellation and disconnects stop further work, but admission
+remains held until in-flight processing has settled.
+The HTTP server keeps a one-minute header timeout and five-minute ordinary body
+deadline; only an authenticated, admitted archive upload receives the longer
+body window, so large uploads are not cut off by Node's default five-minute cap.
+
+Imports stage privately beside `DATABASE_PATH` on the encrypted writable data
+volume, because production `/tmp` is a 16 MiB tmpfs. The upload is capped at 8 GiB
+and its staging database at 9 GiB, with free-space checks reserving additional
+room for the destination database and transaction WAL plus a 64 MiB floor.
+These are disk limits, not memory reservations. A small archive needs space
+proportional to its declared expanded size and staging database. Temporary files
+are removed on success, rejection and cancellation; abandoned import directories
+older than two hours are reclaimed when the next archive import starts. The
+Operator can reclaim those private directories while Spinel is stopped. The
+production app's 512 MiB memory limit remains unchanged.
+
+A validation rejection adds no files. If the browser loses the final response,
+the import is reported as unconfirmed: refresh My files before trying again,
+because the transaction may already have committed. This archive is independent
+of Operator disaster-recovery backups and does not restore history. CSV, format
+plugins and PDF retain their separate ticket scopes. See the
+[SPN-067 decision record](implementation/SPN-067.md).
+
 ## Doc formulas in files
 
 [Live formulas](formulas.md) store expressions and bindings, never calculated
@@ -117,4 +178,4 @@ results. Native imports detach source-bound formulas into ordinary expression
 text; source-free formulas remain active. Current printing uses unavailable
 formula output. SPN-075 will render freshly authorized values/tables in PDFs;
 SPN-094 retains the same source-access boundary for optional format plugins,
-and SPN-067 handles archive reference remapping.
+and owned workspace archives use the deliberate reference remapping described above.

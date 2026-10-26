@@ -10,6 +10,7 @@ export const MAX_RETAINED_BYTES = 16 * 1024 * 1024;
 export const MAX_BATCH_MUTATIONS = 1024;
 export const MAX_WORKSHEETS = 1024;
 export const MAX_MERGE_CELLS = 250_000;
+export const MAX_CELL_WORK_BYTES = 10 * 1024 * 1024;
 
 export interface CellAddress {
   sheetId: string;
