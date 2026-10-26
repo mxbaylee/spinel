@@ -15,6 +15,7 @@ import type { FormulaDiagnostics } from '../formulas/routes.ts';
 import { documentIdentity } from '../collaboration/identity.ts';
 import { historyRoutes } from '../history/routes.ts';
 import { admitTransfer, transfers } from './transfers.ts';
+import { archiveRoutes } from './archive-routes.ts';
 
 export function workspaceRoutes(
   auth: AuthStore,
@@ -48,11 +49,17 @@ export function workspaceRoutes(
             request.method === 'POST' &&
             /^\/[^/]+\/images$/.test(request.path) &&
             request.is(['image/png', 'image/jpeg', 'image/webp'])
+          ) &&
+          !(
+            request.method === 'POST' &&
+            request.path === '/archive-import' &&
+            request.is('application/zip')
           )))
     )
       throw new AuthError(403, 'Open Spinel at its configured address and try again.');
     next();
   });
+  router.use(archiveRoutes(store, files));
   if (collaboration)
     router.use(
       '/:id/formulas',

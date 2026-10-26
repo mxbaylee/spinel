@@ -28,6 +28,7 @@ import { Trash } from './Trash.tsx';
 import { DocumentTags } from './DocumentTags.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import { ImportFile } from './ImportFile.tsx';
+import { WorkspaceArchive } from './WorkspaceArchive.tsx';
 import { useSharedItems } from './SharedItems.tsx';
 import type { NavigationGuard } from './navigation.ts';
 import { rememberFileView } from './fileNavigation.ts';
@@ -134,6 +135,8 @@ export function Dashboard({
   const searchActive = hasSearch(query) || !parseSearchInput(draft).ok;
   const shared = useSharedItems(local?.catalog.shared);
   const [importOpen, setImportOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
+  const archiveFocus = useRef<HTMLButtonElement | null>(null);
   const returnContext = useRef<DashboardRetrieval | null>(null);
   const pendingScroll = useRef<number | null>(initial?.scroll ?? null);
   const [items, setItems] = useState<FileItem[]>([]);
@@ -639,6 +642,21 @@ export function Dashboard({
           <header className="dashboard-heading">
             <h1>{sharedOpen ? 'Shared with me' : (current?.name ?? 'My files')}</h1>
             <div className="dashboard-heading-actions">
+              {!currentId && !local && (
+                <ActionMenu
+                  label="More actions for My files"
+                  actions={[
+                    {
+                      label: 'Export all my files',
+                      disabled: busy,
+                      onClick: (trigger) => {
+                        archiveFocus.current = trigger ?? null;
+                        setArchiveOpen(true);
+                      },
+                    },
+                  ]}
+                />
+              )}
               {current && !local && (
                 <ActionMenu
                   label={`More actions for ${current.name}`}
@@ -819,6 +837,10 @@ export function Dashboard({
                 setViewed((previous) => [...previous, item]);
                 setRefresh((value) => value + 1);
                 setImportOpen(false);
+              }}
+              onArchiveImported={() => {
+                setRefresh((value) => value + 1);
+                void reloadItems().catch((failure) => setError(failure.message));
               }}
             />
           )}
@@ -1025,6 +1047,12 @@ export function Dashboard({
         </Modal>
       )}
 
+      {archiveOpen && (
+        <WorkspaceArchive
+          onClose={() => setArchiveOpen(false)}
+          finalFocus={() => (archiveFocus.current?.isConnected ? archiveFocus.current : true)}
+        />
+      )}
       {tagging && (
         <>
           <DocumentTags

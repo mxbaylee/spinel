@@ -11,6 +11,7 @@ import { SheetStore } from './sheets.ts';
 import { validatePortableLayout } from './portableValidation.ts';
 import { removeImportedSourceBindings } from '../formulas/import.ts';
 import { resolveDocument, validateDocumentCredentials } from './document-access.ts';
+import { mapArchiveFormulaSources } from './archive-formulas.ts';
 
 import { PORTABLE_LIMIT } from '../../shared/portable.ts';
 export { PORTABLE_LIMIT };
@@ -27,6 +28,27 @@ function bounded(value: unknown, depth = 0, count = { nodes: 0 }) {
       if (key === '__proto__' || key === 'constructor' || key === 'prototype') throw invalid();
       bounded(child, depth + 1, count);
     }
+}
+
+function validateNative(snapshot: ObjectValue, kind: 'sheet' | 'doc') {
+  if (typeof snapshot.id !== 'string' || !snapshot.id || snapshot.id.length > 256) throw invalid();
+  // Archive publication bypasses the ordinary save methods, so their native
+  // shape requirements are enforced before either importer can publish a row.
+  if (kind === 'sheet' && typeof snapshot.name !== 'string')
+    throw new AuthError(400, 'Invalid spreadsheet data. Changes have not been saved.');
+  validatePortableLayout(snapshot, kind);
+  const resources = snapshot.resources;
+  if (
+    resources !== undefined &&
+    (!Array.isArray(resources) ||
+      resources.some(
+        (resource) =>
+          !object(resource) ||
+          typeof resource.name !== 'string' ||
+          typeof resource.data !== 'string',
+      ))
+  )
+    throw invalid();
 }
 
 async function embeddedImage(source: string) {
@@ -55,6 +77,13 @@ async function embeddedImage(source: string) {
   return { id: createHash('sha256').update(safe).digest('hex'), mime: match[1], data: safe };
 }
 
+export interface PreparedPortableFile {
+  kind: 'sheet' | 'doc';
+  name: string;
+  snapshot: Snapshot;
+  images: Map<string, Awaited<ReturnType<typeof embeddedImage>>>;
+}
+
 export class PortableFiles {
   readonly docs: DocumentStore;
   readonly sheets: SheetStore;
@@ -73,18 +102,35 @@ export class PortableFiles {
   ) {
     this.workspace.owner(user);
     this.workspace.parent(user, input.parentId);
+    const prepared = await this.prepare(input);
+    return this.workspace.auth.transaction(() => {
+      verify();
+      const item = this.workspace.create(user, {
+        name: prepared.name,
+        kind: prepared.kind,
+        parentId: input.parentId,
+      });
+      const native = this.materialize(prepared, item.id);
+      for (const image of prepared.images.values())
+        this.workspace.auth.database
+          .prepare('INSERT OR IGNORE INTO doc_images VALUES(?,?,?,?)')
+          .run(item.id, image.id, image.mime, image.data);
+      const store = prepared.kind === 'doc' ? this.docs : this.sheets;
+      store.save(user, item.id, { snapshot: native, revision: 0, writeId: randomUUID() });
+      return item;
+    });
+  }
+  /** Decode one bounded native member before either import publishes anything. */
+  async prepare(
+    input: { filename?: unknown; snapshot?: unknown },
+    mapFormulaSource?: (sourceId: string) => string,
+  ): Promise<PreparedPortableFile> {
     if (typeof input.filename !== 'string' || !/\.(?:json|univer)$/i.test(input.filename))
       throw invalid();
+    bounded(input.snapshot);
     if (Buffer.byteLength(JSON.stringify(input.snapshot) ?? '') > PORTABLE_LIMIT)
       throw new AuthError(413, 'Univer files must be at most 20 MiB.');
-    bounded(input.snapshot);
-    if (
-      !object(input.snapshot) ||
-      typeof input.snapshot.id !== 'string' ||
-      !input.snapshot.id ||
-      input.snapshot.id.length > 256
-    )
-      throw invalid();
+    if (!object(input.snapshot)) throw invalid();
     const kind =
       object(input.snapshot.sheets) && Array.isArray(input.snapshot.sheetOrder)
         ? 'sheet'
@@ -92,26 +138,15 @@ export class PortableFiles {
           ? 'doc'
           : null;
     if (!kind) throw invalid();
-    validatePortableLayout(input.snapshot, kind);
-    const resources = input.snapshot.resources;
-    if (
-      resources !== undefined &&
-      (!Array.isArray(resources) ||
-        resources.some(
-          (resource) =>
-            !object(resource) ||
-            typeof resource.name !== 'string' ||
-            typeof resource.data !== 'string',
-        ))
-    )
-      throw invalid();
+    validateNative(input.snapshot, kind);
     const name = this.workspace.name(
       input.snapshot.name ??
         input.snapshot.title ??
         input.filename.replace(/\.(?:univer\.)?json$|\.univer$/i, ''),
     );
     const snapshot = structuredClone(input.snapshot) as unknown as Snapshot;
-    if (kind === 'doc') removeImportedSourceBindings(snapshot);
+    if (mapFormulaSource) mapArchiveFormulaSources(snapshot, mapFormulaSource);
+    else if (kind === 'doc') removeImportedSourceBindings(snapshot);
     const sources = new Set<string>();
     imageSources(snapshot, (source) => {
       sources.add(source);
@@ -126,19 +161,18 @@ export class PortableFiles {
         throw new AuthError(413, 'The document exceeds its 50 MiB image limit.');
       images.set(source, image);
     }
-    return this.workspace.auth.transaction(() => {
-      verify();
-      const item = this.workspace.create(user, { name, kind, parentId: input.parentId });
-      imageSources(snapshot, (source) => `/api/items/${item.id}/images/${images.get(source)!.id}`);
-      const native = snapshotIdentity(snapshot, item.id);
-      for (const image of images.values())
-        this.workspace.auth.database
-          .prepare('INSERT OR IGNORE INTO doc_images VALUES(?,?,?,?)')
-          .run(item.id, image.id, image.mime, image.data);
-      const store = kind === 'doc' ? this.docs : this.sheets;
-      store.save(user, item.id, { snapshot: native, revision: 0, writeId: randomUUID() });
-      return item;
-    });
+    return { kind, name, snapshot, images };
+  }
+  /** Rebase only after all archive identities are allocated; never writes live data. */
+  materialize(prepared: PreparedPortableFile, id: string): Snapshot {
+    const snapshot = snapshotIdentity(prepared.snapshot, id);
+    imageSources(
+      snapshot,
+      (source) => `/api/items/${id}/images/${prepared.images.get(source)!.id}`,
+    );
+    if (Buffer.byteLength(JSON.stringify(snapshot)) > 10 * 1024 * 1024)
+      throw new AuthError(413, 'The native content exceeds the 10 MiB save limit.');
+    return snapshot;
   }
   async export(
     user: string,
@@ -193,8 +227,14 @@ export class PortableFiles {
     if (!data.snapshot) throw new AuthError(409, 'Open this document once before exporting it.');
     const snapshot = structuredClone(data.snapshot);
     bounded(snapshot);
+    // Definition validation also refuses persisted calculated results in a Formula.
+    mapArchiveFormulaSources(snapshot, (sourceId) => sourceId);
     // A successful native download must remain importable under the same budgets.
-    validatePortableLayout(snapshot as unknown as ObjectValue, item.kind);
+    validateNative(snapshot as unknown as ObjectValue, item.kind);
+    const names = snapshot as unknown as ObjectValue;
+    this.workspace.name(names.name ?? names.title ?? item.name);
+    if (Buffer.byteLength(JSON.stringify(snapshot)) > 10 * 1024 * 1024)
+      throw new AuthError(413, 'The native content exceeds the 10 MiB save limit.');
     imageSources(snapshot, (source) => {
       const prefix = `/api/items/${id}/images/`;
       if (!source.startsWith(prefix) || !/^[a-f0-9]{64}$/.test(source.slice(prefix.length)))

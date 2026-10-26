@@ -206,10 +206,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       await page.goto(`/?item=${folder.id}`);
       await page.getByRole('button', { name: 'New', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Import file…', exact: true }).click();
-      await expect(
-        page.getByRole('button', { name: 'Import Univer file', exact: true }),
-      ).toBeVisible();
-      await expect(page.getByLabel('Univer file', { exact: true })).toBeHidden();
+      await expect(page.getByRole('button', { name: 'Choose file', exact: true })).toBeVisible();
+      await expect(page.getByLabel('Univer file or archive', { exact: true })).toBeHidden();
       await page
         .getByRole('dialog', { name: 'Import file', exact: true })
         .getByRole('button', { name: 'Close dialog', exact: true })
@@ -231,7 +229,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       };
       // The empty folder pane and sibling file list must both handle drops.
       await drop('section.dashboard-content', 'not-a-univer.pdf', '%PDF-');
-      await expect(page.getByRole('alert')).toContainText('Only Univer JSON files can be imported');
+      await expect(page.getByRole('alert')).toContainText(
+        'Choose a Univer JSON file or Spinel ZIP archive',
+      );
       await page
         .getByRole('dialog', { name: 'Import file', exact: true })
         .getByRole('button', { name: 'Close dialog', exact: true })
