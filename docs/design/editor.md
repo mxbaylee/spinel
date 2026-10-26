@@ -37,8 +37,9 @@ from these source choices.
 SPN-085 applies the approved History and HistoryCalendar hierarchy to the isolated
 native history browser: desktop chooser beside preview, phone chooser disclosure,
 always-visible selected UTC checkpoint, and semantic naming/restore dialogs.
-The [implementation record](../implementation/SPN-085.md) separates these source
-choices from pending runtime and visual acceptance; capture, retention and restore
+The [implementation record](../implementation/SPN-085.md) preserves the contract
+and decisions; exact-commit CI and visual review are recorded in
+[PR #179](https://github.com/mxbaylee/spinel/pull/179). Capture, retention and restore
 generation semantics remain in [history.md](../history.md).
 
 People shows readable shared positions: Sheet cell addresses and a shared-text
