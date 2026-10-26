@@ -18,6 +18,7 @@ import {
   UniverDocsHyperLinkUIPlugin,
   UniverDocsHyperLinkMobileUIPlugin,
 } from '@univerjs/preset-docs-hyper-link';
+import './docMobile.css';
 
 export function useMobileDocControls() {
   return window.matchMedia('(pointer: coarse) and (max-width: 900px)').matches;
@@ -49,6 +50,7 @@ export function docPreset(
   readOnly = false,
   menu?: IUniverDocsCorePresetConfig['menu'],
 ): IPreset {
+  container.classList.toggle('spinel-mobile-doc', mobile);
   const preset = UniverDocsCorePreset({
     container,
     menu,

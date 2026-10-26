@@ -1,22 +1,14 @@
 import { mkdir } from 'node:fs/promises';
+import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Locator, Page, TestInfo } from '@playwright/test';
-import { getDocsEmptySnapshot, NamedStyleType } from '@univerjs/core';
+import { DocumentFlavor, getDocsEmptySnapshot, LocaleType, NamedStyleType } from '@univerjs/core';
 import type { ICustomRange, IDocumentData } from '@univerjs/core';
 import { formulaBody } from '@spinel/doc-formulas';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { DocumentStore } from '../src/server/workspace/documents.ts';
-
-type Paint = {
-  canvas: HTMLCanvasElement;
-  text: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
 
 const tableExpression = `={${Array.from({ length: 30 }, (_, row) => `${row + 1},${row + 101},${row + 201}`).join(';')}}`;
 const saved = (page: Page) =>
@@ -25,60 +17,87 @@ const saved = (page: Page) =>
   });
 const input = (page: Page) => page.locator('[contenteditable="true"][data-u-comp="editor"]');
 
-// Observe real canvas output without adding an editor reference or a mutation
-// endpoint to the app. Coordinates are used only to touch actually painted text.
-async function recordPaint(context: BrowserContext) {
-  await context.addInitScript(() => {
-    const original = CanvasRenderingContext2D.prototype.fillText;
-    const paints: Paint[] = [];
-    Object.assign(window, { docMobilePaints: paints });
-    CanvasRenderingContext2D.prototype.fillText = function (text, x, y, maxWidth) {
-      const transform = this.getTransform();
-      const metrics = this.measureText(text);
-      paints.push({
-        canvas: this.canvas,
-        text,
-        x: transform.a * x + transform.c * y + transform.e,
-        y: transform.b * x + transform.d * y + transform.f,
-        width: metrics.width * Math.hypot(transform.a, transform.b),
-        height:
-          (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) *
-          Math.hypot(transform.c, transform.d),
-      });
-      if (paints.length > 20_000) paints.splice(0, 10_000);
-      return original.call(this, text, x, y, maxWidth);
-    };
-  });
-}
-
-async function textPoint(page: Page, first = 'P') {
-  const read = () =>
-    page.evaluate((first) => {
-      const paints = (window as unknown as { docMobilePaints: Paint[] }).docMobilePaints;
-      for (const paint of [...paints].reverse()) {
-        if (
-          !paint.canvas.isConnected ||
-          paint.canvas.getAttribute('aria-label') !== 'Document canvas' ||
-          !paint.text.startsWith(first)
-        )
-          continue;
-        const box = paint.canvas.getBoundingClientRect();
-        const x =
-          box.x + ((paint.x + Math.min(paint.width * 0.15, 2)) / paint.canvas.width) * box.width;
-        const y = box.y + ((paint.y - paint.height / 2) / paint.canvas.height) * box.height;
-        if (
-          x >= box.left &&
-          x < box.right &&
-          y >= box.top &&
-          y < box.bottom &&
-          document.elementFromPoint(x, y) === paint.canvas
-        )
-          return { x, y };
+// The renderer caches glyphs on offscreen canvases, so fillText interception
+// cannot locate their final screen positions. Find the first real text line in
+// the visible raster instead. The fixture starts with "Phone journal"; its
+// neutral, high-contrast ink is distinct from the pale SDK watermark.
+async function textPoint(page: Page) {
+  const canvas = page
+    .getByRole('region', { name: 'Doc document', exact: true })
+    .getByLabel('Document canvas', { exact: true });
+  const read = async () => {
+    const box = await canvas.boundingBox();
+    if (!box || box.width <= 0 || box.height <= 0) return null;
+    const { data, info } = await sharp(await canvas.screenshot())
+      .removeAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    let light = 0,
+      dark = 0;
+    for (let y = 8; y < info.height - 8; y += 8)
+      for (let x = 8; x < info.width - 8; x += 8) {
+        const at = (y * info.width + x) * info.channels;
+        const value = (data[at]! + data[at + 1]! + data[at + 2]!) / 3;
+        if (value > 192) light++;
+        if (value < 64) dark++;
       }
-      return null;
-    }, first);
+    const darkPaper = dark > light;
+    const ink = (x: number, y: number) => {
+      const at = (y * info.width + x) * info.channels;
+      const low = Math.min(data[at]!, data[at + 1]!, data[at + 2]!);
+      const high = Math.max(data[at]!, data[at + 1]!, data[at + 2]!);
+      return high - low < 60 && (darkPaper ? low > 170 : high < 115);
+    };
+    const inset = Math.max(8, Math.round((info.width / box.width) * 8));
+    const bottom = Math.min(info.height - inset, Math.floor(info.height * 0.65));
+    for (let y = inset; y < bottom; y++) {
+      const top = y;
+      let pixels = 0,
+        left = info.width,
+        right = -1;
+      while (y < bottom) {
+        let rowPixels = 0;
+        for (let x = inset; x < info.width - inset; x++)
+          if (ink(x, y)) {
+            rowPixels++;
+            left = Math.min(left, x);
+            right = Math.max(right, x);
+          }
+        if (rowPixels < 2) break;
+        pixels += rowPixels;
+        y++;
+      }
+      // Reject a border, a blinking caret or a few incidental antialiased pixels.
+      const lineHeight = y - top;
+      if (lineHeight < 4 || pixels < 24 || right - left < 12) continue;
+      let glyphRight = left;
+      while (glyphRight <= right) {
+        let occupied = false;
+        for (let row = top; row < y; row++) occupied ||= ink(glyphRight, row);
+        if (!occupied) break;
+        glyphRight++;
+      }
+      if (glyphRight - left < 2) continue;
+      const point = {
+        // The leading edge of P selects the start of the first paragraph.
+        x: box.x + ((left + 0.2) / info.width) * box.width,
+        y: box.y + ((top + lineHeight / 2) / info.height) * box.height,
+      };
+      const hit = await canvas.evaluate((node, point) => {
+        const target = document.elementFromPoint(point.x, point.y);
+        // Native layers may use a sibling interaction canvas above the paint.
+        return target === node || Boolean(target && node.parentElement?.contains(target));
+      }, point);
+      if (hit) return { ...point, glyphWidth: glyphRight - left, lineHeight, pixels };
+    }
+    return null;
+  };
   await expect.poll(read).not.toBeNull();
-  return (await read())!;
+  const point = (await read())!;
+  expect(point.glyphWidth).toBeGreaterThanOrEqual(2);
+  expect(point.lineHeight).toBeGreaterThanOrEqual(4);
+  expect(point.pixels).toBeGreaterThanOrEqual(24);
+  return point;
 }
 
 async function beginWriting(page: Page) {
@@ -125,7 +144,13 @@ async function touchTargets(target: Locator) {
   }
 }
 
-async function fixture(browser: Browser, baseURL: string, info: TestInfo, formulas = false) {
+async function fixture(
+  browser: Browser,
+  baseURL: string,
+  info: TestInfo,
+  formulas = false,
+  flavor = DocumentFlavor.MODERN,
+) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db),
     workspace = new WorkspaceStore(auth);
@@ -135,7 +160,7 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, formul
     kind: 'doc',
     parentId: null,
   });
-  const snapshot = getDocsEmptySnapshot(item.id);
+  const snapshot = getDocsEmptySnapshot(item.id, LocaleType.EN_US, item.name, flavor);
   const paragraphs = [
     'Phone journal',
     'A readable phone paragraph wraps onto several lines without shrinking its letters. ' +
@@ -199,7 +224,6 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, formul
           sameSite: 'Strict',
         },
       ]);
-    await recordPaint(context);
     return context;
   };
   const account = await phone(true),
@@ -271,9 +295,13 @@ test('phone Docs keep native mobile layout while rotating, writing, formatting a
     await expect(input(page)).toBeFocused();
     await page.keyboard.type('Mobile ');
     await saved(page);
-    await expect.poll(async () => (await f.read()).body!.dataStream).toContain('Mobile ');
+    // The two taps target the left edge of the first painted P. Formatting must
+    // retain that exact insertion point, not move the edit to another paragraph.
+    await expect
+      .poll(async () => (await f.read()).body!.dataStream)
+      .toBe('Mobile ' + original.body!.dataStream);
     const bold = await f.read();
-    expect(bold.body!.dataStream.replace('Mobile ', '')).toBe(original.body!.dataStream);
+    expect(bold.body!.dataStream).toBe('Mobile ' + original.body!.dataStream);
     expect(
       bold.body!.textRuns!.some(
         (run) => run.ts?.bl === 1 && bold.body!.dataStream.slice(run.st, run.ed).includes('Mobile'),
@@ -426,3 +454,98 @@ test('phone guest Doc reader cannot write and loses its document when the link i
     await f.close();
   }
 });
+
+for (const role of ['owner', 'guest-editor'] as const) {
+  test(`traditional phone Doc is locally read-only without revoking its ${role} grant`, async ({
+    browser,
+    baseURL,
+  }, info) => {
+    test.setTimeout(120_000);
+    const f = await fixture(browser, baseURL!, info, true, DocumentFlavor.TRADITIONAL);
+    try {
+      let page = f.page;
+      let path = `/api/items/${f.item.id}`;
+      if (role === 'guest-editor') {
+        const link = await f.account.request.put(`/api/items/${f.item.id}/link`, {
+          headers: { Origin: baseURL! },
+          data: { role: 'editor' },
+        });
+        expect(link.ok()).toBe(true);
+        await f.page.close();
+        const guest = await f.phone();
+        page = await guest.newPage();
+        page.on('pageerror', (error) => f.errors.push(error.message));
+        path = `/api/guest/${f.item.id}`;
+        await page.goto((await link.json()).url);
+      } else await page.goto(`/?item=${f.item.id}`);
+      const region = page.getByRole('region', { name: 'Doc document', exact: true });
+      const status = page.getByRole('status', { name: 'Save status', exact: true });
+      const connection = page.getByRole('status', { name: 'Connection status', exact: true });
+      const note = 'Edit on a larger screen. This Doc keeps its page layout.';
+      const message = 'View only on this phone. Edit on a larger screen.';
+      await expect(region).toHaveAttribute('data-mobile', 'true');
+      await expect(status).toHaveText(message, { timeout: 30_000 });
+      await expect(connection).toHaveText('Online');
+      await expect(region.getByText(note, { exact: true })).toBeVisible();
+      await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+      await expect(region.getByRole('button', { name: 'Format', exact: true })).toHaveCount(0);
+      const original = await f.read();
+      expect(original.documentStyle.documentFlavor).toBe(DocumentFlavor.TRADITIONAL);
+
+      const point = await textPoint(page);
+      await page.touchscreen.tap(point.x, point.y);
+      await page.touchscreen.tap(point.x, point.y);
+      await page.keyboard.type('FORBIDDEN TRADITIONAL PHONE EDIT');
+      await expect(status).toHaveText(message);
+      const afterInput = await f.read();
+      expect(afterInput.body).toEqual(original.body);
+      expect(afterInput.documentStyle).toEqual(original.documentStyle);
+      expect(afterInput.settings).toEqual(original.settings);
+
+      if (role === 'owner') {
+        await page.getByRole('button', { name: 'Document actions', exact: true }).tap();
+        await expect(
+          page.getByRole('menuitem', { name: 'Insert formula', exact: true }),
+        ).toHaveCount(0);
+        await page.getByRole('menuitem', { name: 'Formulas', exact: true }).tap();
+      } else {
+        await expect(page.getByRole('button', { name: 'Insert formula', exact: true })).toHaveCount(
+          0,
+        );
+        await page.getByRole('button', { name: 'Formulas', exact: true }).tap();
+      }
+      const formulas = page.getByRole('dialog', { name: 'Formulas', exact: true });
+      await expect(formulas.getByText('=40+2', { exact: true })).toBeVisible();
+      await expect(formulas.getByRole('button', { name: '=40+2', exact: true })).toHaveCount(0);
+      await expect(page.getByRole('dialog', { name: 'Edit formula', exact: true })).toHaveCount(0);
+      await formulas.getByRole('button', { name: 'Close dialog', exact: true }).tap();
+
+      // Wait for two real scheduled access checks, not a fixed sleep. The local
+      // presentation fallback must not compare an invented viewer role against
+      // the owner's/editor's real grant and mark a healthy room revoked/offline.
+      for (let check = 0; check < 2; check++) {
+        const response = await page.waitForResponse(
+          (response) =>
+            response.request().method() === 'GET' && new URL(response.url()).pathname === path,
+          { timeout: 10_000 },
+        );
+        expect(response.status()).toBe(200);
+        expect((await response.json()).item.access).toBe(role === 'owner' ? 'owner' : 'editor');
+      }
+      await expect(connection).toHaveText('Online');
+      await expect(status).toHaveText(message);
+      await expect(region.getByText(note, { exact: true })).toBeVisible();
+      for (const theme of ['light', 'dark'] as const) {
+        await page.emulateMedia({ colorScheme: theme });
+        await capture(page, info, `traditional-${role}-${theme}`);
+      }
+      const unchanged = await f.read();
+      expect(unchanged.body).toEqual(original.body);
+      expect(unchanged.documentStyle).toEqual(original.documentStyle);
+      expect(unchanged.settings).toEqual(original.settings);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
+}

@@ -1,0 +1,12 @@
+/* Style the host and controls, never scale or alter the native canvas. */
+.spinel-mobile-doc button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* The mobile workbench retains a pixel height across same-width resizes.
+   Its containing editor frame owns the available space, including theatre. */
+.spinel-mobile-doc > div:has(> [data-u-comp='app-layout']) {
+  min-height: 100%;
+  max-height: 100%;
+}

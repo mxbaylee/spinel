@@ -35,9 +35,9 @@ Physical iPhone and Android acceptance is **pending** for this candidate; browse
 emulation is not an OS keyboard or IME test.
 
 | Physical device | OS/browser versions | Doc reading, selection, keyboard, formatting and IME |
-| --- | --- | --- |
-| iPhone | Not recorded | Not run |
-| Android phone | Not recorded | Not run |
+| --------------- | ------------------- | ---------------------------------------------------- |
+| iPhone          | Not recorded        | Not run                                              |
+| Android phone   | Not recorded        | Not run                                              |
 
 Record device model, OS/browser version, installed-app/browser mode, commit,
 date and result. On each device open a populated modern Doc; read long paragraphs;

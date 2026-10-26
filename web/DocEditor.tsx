@@ -458,8 +458,13 @@ export function DocEditor({
         univerAPI,
         data.unitId,
         id,
-        deviceReadOnly ? 'viewer' : data.access,
-        publish,
+        data.access,
+        (state) =>
+          publish(
+            deviceReadOnly && !state.dirty && !state.failed
+              ? { ...state, message: 'View only on this phone. Edit on a larger screen.' }
+              : state,
+          ),
         readonly,
         publishConnection,
         spaceId,
