@@ -832,7 +832,7 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
       page.getByRole('button', { name: 'Restore this version', exact: true }),
     ).toBeEnabled({ timeout: 30_000 });
     await expect(
-      preview.getByRole('link', { name: 'Back to live document', exact: true }),
+      preview.getByRole('link', { name: 'Return to document', exact: true }),
     ).toHaveAttribute('href', normalHref(space.id, doc.id));
     await preview.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await page.keyboard.press('Control+a');

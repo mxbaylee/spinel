@@ -172,9 +172,19 @@ test('touch history timeline and calendar preview retained choices without chang
       path: `test-results/theme-screenshots/history-calendar-${info.project.name}.png`,
       fullPage: true,
     });
-    await page.getByRole('button', { name: /Version actions for .*Saved 2/ }).click();
+    const versionActions = page.getByRole('button', { name: /Version actions for .*Saved 2/ });
+    await versionActions.click();
     await page.getByRole('menuitem', { name: 'Rename version…', exact: true }).click();
     const naming = page.getByRole('dialog', { name: 'Name saved version', exact: true });
+    await naming.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(versionActions).toBeFocused();
+    await versionActions.click();
+    await page.getByRole('menuitem', { name: 'Rename version…', exact: true }).click();
+    await page.keyboard.press('Escape');
+    await expect(naming).not.toBeVisible();
+    await expect(versionActions).toBeFocused();
+    await versionActions.click();
+    await page.getByRole('menuitem', { name: 'Rename version…', exact: true }).click();
     await naming
       .getByRole('textbox', { name: 'Version name', exact: true })
       .fill('Chosen older checkpoint');
@@ -184,6 +194,9 @@ test('touch history timeline and calendar preview retained choices without chang
     await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText(
       'Chosen older checkpoint',
     );
+    await expect(
+      page.getByRole('button', { name: /Version actions for .*Chosen older checkpoint/ }),
+    ).toBeFocused();
     await page
       .getByRole('button', { name: /Version actions for .*Chosen older checkpoint/ })
       .click();

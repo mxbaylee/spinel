@@ -141,15 +141,6 @@ export function VersionPreview({
     <section aria-label="Version preview" className="history-preview">
       <h2>Preview — {data?.item.name ?? 'Saved version'}</h2>
       <p>Read only. The live document is unchanged.</p>
-      <a
-        href={liveHref}
-        aria-disabled={busy || undefined}
-        onClick={(event) => {
-          if (busy) event.preventDefault();
-        }}
-      >
-        Back to live document
-      </a>
       {controlsTarget ? createPortal(restoreButton, controlsTarget) : restoreButton}
       {error && !confirming && <p role="alert">{error}</p>}
       {!ready && error && (

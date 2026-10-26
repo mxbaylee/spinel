@@ -38,6 +38,7 @@ export function HistoryBrowser() {
   const [nameError, setNameError] = useState('');
   const [savingName, setSavingName] = useState(false);
   const mutation = useRef<AbortController | null>(null);
+  const namingTrigger = useRef<HTMLButtonElement | null>(null);
   const [chooserOpen, setChooserOpen] = useState(false);
   const [controlsTarget, setControlsTarget] = useState<HTMLDivElement | null>(null);
   const liveHref = spaceId
@@ -122,7 +123,7 @@ export function HistoryBrowser() {
   }
   const current = versions.find((version) => version.id === selected);
   const todays = dayVersions(versions, today),
-    chosenDay = dayVersions(versions, day);
+    chosenDay = day < today ? dayVersions(versions, day) : [];
   const days = new Map<string, HistoryVersion[]>();
   for (const version of versions) {
     const key = historyDay(version.capturedAt);
@@ -132,7 +133,8 @@ export function HistoryBrowser() {
     ...new Set(versions.map((version) => historyDay(version.capturedAt).slice(0, 7))),
   ].sort();
   const locked = busy || loading || savingName;
-  function editName(version: HistoryVersion | 'current') {
+  function editName(version: HistoryVersion | 'current', trigger?: HTMLButtonElement | null) {
+    namingTrigger.current = trigger ?? null;
     setName(version === 'current' ? '' : (version.name ?? ''));
     setNameError('');
     setNaming(version);
@@ -191,7 +193,7 @@ export function HistoryBrowser() {
         </div>
         <div className="history-actions">
           {canName && (
-            <Button disabled={locked} onClick={() => editName('current')}>
+            <Button disabled={locked} onClick={(event) => editName('current', event.currentTarget)}>
               Name current version…
             </Button>
           )}
@@ -389,7 +391,7 @@ export function HistoryBrowser() {
                         {
                           label: version.name ? 'Rename version…' : 'Name version…',
                           disabled: locked,
-                          onClick: () => editName(version),
+                          onClick: (trigger) => editName(version, trigger),
                         },
                         ...(version.name
                           ? [
@@ -433,6 +435,7 @@ export function HistoryBrowser() {
           icon="history"
           title={naming === 'current' ? 'Name current version' : 'Name saved version'}
           open
+          finalFocus={() => (namingTrigger.current?.isConnected ? namingTrigger.current : true)}
           dismissDisabled={savingName}
           onOpenChange={(open) => {
             if (!open) setNaming(null);

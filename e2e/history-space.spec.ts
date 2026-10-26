@@ -201,7 +201,7 @@ for (const kind of ['doc', 'sheet'] as const) {
       await expect(
         page
           .getByRole('region', { name: 'Version preview', exact: true })
-          .getByRole('link', { name: 'Back to live document', exact: true }),
+          .getByRole('link', { name: 'Return to document', exact: true }),
       ).toHaveAttribute('href', liveHref);
       await imageVisible(page);
       expect(await exported()).toEqual(latest);

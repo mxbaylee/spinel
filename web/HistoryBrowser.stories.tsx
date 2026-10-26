@@ -166,6 +166,29 @@ export const Calendar: Story = {
     await bounds(canvasElement);
   },
 };
+export const NoOlderDays: Story = {
+  parameters: {
+    api: {
+      ...api(),
+      [`GET ${endpoint}`]: { versions: versions.slice(0, 2), canName: true },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    const canvas = await choose(canvasElement);
+    const rows = within(canvas.getByRole('list', { name: 'Retained checkpoints' }));
+    await expect(rows.getAllByRole('listitem')).toHaveLength(2);
+    await userEvent.click(canvas.getByRole('button', { name: 'Older days' }));
+    await expect(canvas.getByText('No saved snapshots from earlier days.')).toBeVisible();
+    await expect(rows.queryAllByRole('listitem')).toHaveLength(0);
+    await expect(canvas.queryByRole('button', { name: 'Restore this version' })).toBeNull();
+    await userEvent.click(canvas.getByRole('button', { name: 'Today', exact: true }));
+    await expect(rows.getAllByRole('listitem')).toHaveLength(2);
+    await userEvent.click(canvas.getByRole('button', { name: 'Older days' }));
+    await expect(rows.queryAllByRole('listitem')).toHaveLength(0);
+    await bounds(canvasElement);
+  },
+};
 export const Loading: Story = { parameters: { api: { [`GET ${endpoint}`]: pending() } } };
 export const Empty: Story = {
   args: { checkpoint: '' },
@@ -248,6 +271,35 @@ export const NameFailure: Story = {
     await expect(dialog.getByRole('textbox', { name: 'Version name' })).toHaveValue(
       'Approved plan',
     );
+  },
+};
+export const NamingFocusReturn: Story = {
+  parameters: {
+    api: {
+      ...api({ preview: pending() }),
+      [`PATCH ${endpoint}/today-a`]: { version: versions[0] },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByRole('button', { name: 'Name current version…' });
+    const canvas = await choose(canvasElement);
+    const trigger = canvas.getByRole('button', { name: /Version actions for .*Ready for review/ });
+    const body = within(document.body);
+    for (const dismissal of ['cancel', 'escape', 'save']) {
+      await userEvent.click(trigger);
+      await userEvent.click(await body.findByRole('menuitem', { name: 'Rename version…' }));
+      const dialog = await body.findByRole('dialog', { name: 'Name saved version' });
+      await expect(within(dialog).getByRole('textbox', { name: 'Version name' })).toHaveFocus();
+      if (dismissal === 'escape') await userEvent.keyboard('{Escape}');
+      else
+        await userEvent.click(
+          within(dialog).getByRole('button', {
+            name: dismissal === 'save' ? 'Save version name' : 'Cancel',
+          }),
+        );
+      await waitFor(() => expect(dialog).not.toBeInTheDocument());
+      await waitFor(() => expect(trigger).toHaveFocus());
+    }
   },
 };
 export const RestoreConfirmation: Story = {
