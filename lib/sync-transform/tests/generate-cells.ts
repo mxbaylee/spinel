@@ -223,6 +223,20 @@ export const cellEdit: Generate = (replica, next) => {
   return [moveRange(replica, sheet, range, next)];
 };
 
+/**
+ * Mixed structural fuzz may legitimately copy a neighbouring cell's colour
+ * into inserted rows. Keep actual colour values there; per-key intent still
+ * checks preservation, while unique content tokens continue detecting copies.
+ */
+export const mixedCellEdit: Generate = (replica, next) => {
+  tokenColours = false;
+  try {
+    return cellEdit(replica, next);
+  } finally {
+    tokenColours = true;
+  }
+};
+
 export const commands = {
   setRangeValues: 'sheet.command.set-range-values',
   setStyle: 'sheet.command.set-style',

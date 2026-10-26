@@ -10,7 +10,11 @@ import {
 } from '@univerjs/core';
 import type { IExecutionOptions, IRange, IWorkbookData, Worksheet } from '@univerjs/core';
 import { SetWorksheetActiveOperation } from '@univerjs/sheets';
-import { ClearSheetDrawingTransformerOperation } from '@univerjs/sheets-drawing';
+import {
+  ClearSheetDrawingTransformerOperation,
+  ISheetDrawingService,
+} from '@univerjs/sheets-drawing';
+import type { ISheetDrawing } from '@univerjs/sheets-drawing';
 import { SetNumfmtCommand } from '@univerjs/sheets-numfmt';
 import type { Mutation } from '../index.ts';
 import { structureIds } from '../src/structure.ts';
@@ -52,6 +56,48 @@ export function randomSheet(replica: Replica, next: () => number): Worksheet {
 
 /** Params as they arrive over the wire, as JSON: a key set to undefined is gone. */
 export const wire = (params: unknown) => JSON.parse(JSON.stringify(params));
+
+type CollapsedDrawingSample = {
+  seed: number;
+  command: string;
+  params: unknown;
+  before: unknown;
+  after: unknown;
+};
+const drawingCaptures = {
+  withCollapsedDrawing: 0,
+  creatingCollapsedDrawing: 0,
+  firstCreated: undefined as CollapsedDrawingSample | undefined,
+};
+let captureSeed = 0;
+
+export function resetDrawingCaptureCoverage() {
+  drawingCaptures.withCollapsedDrawing = 0;
+  drawingCaptures.creatingCollapsedDrawing = 0;
+  drawingCaptures.firstCreated = undefined;
+}
+export const setDrawingCaptureSeed = (seed: number) => {
+  captureSeed = seed;
+};
+export const drawingCaptureCoverage = () => structuredClone(drawingCaptures);
+
+function drawings(replica: Replica, unitId: string) {
+  return new Map(
+    Object.entries(
+      replica.injector.get(ISheetDrawingService).getDrawingDataForUnit(unitId),
+    ).flatMap(([sheetId, sheet]) =>
+      Object.entries(sheet.data ?? {}).map(
+        ([id, drawing]) => [`${sheetId}/${id}`, drawing] as const,
+      ),
+    ),
+  );
+}
+
+function collapsed(drawing: ISheetDrawing) {
+  return [drawing.transform?.width, drawing.transform?.height].some(
+    (extent) => typeof extent === 'number' && Number.isFinite(extent) && extent <= 0,
+  );
+}
 
 export type ObservedMutation = { id: string; options?: IExecutionOptions };
 
@@ -107,9 +153,10 @@ export function capture(
       throw new Error(`${command} failed before ${id}`);
     }
   }
+  const before = structuredClone(drawings(copy, unitId));
   const recording = recordWire(commands);
   const sent = recording.mutations;
-  let ok: boolean;
+  let ok = false;
   try {
     ok = commands.syncExecuteCommand(id, params);
   } catch (error) {
@@ -119,6 +166,21 @@ export function capture(
     ok = String(error).includes('should not return a promise') && sent.length > 0;
   } finally {
     recording.dispose();
+    const after = drawings(copy, unitId);
+    const empty =
+      ok && sent.length > 0 ? [...after].filter(([, drawing]) => collapsed(drawing)) : [];
+    if (empty.length > 0) drawingCaptures.withCollapsedDrawing++;
+    const created = empty.find(([id]) => !before.has(id) || !collapsed(before.get(id)!));
+    if (created) {
+      drawingCaptures.creatingCollapsedDrawing++;
+      drawingCaptures.firstCreated ??= {
+        seed: captureSeed,
+        command: id,
+        params: wire(params),
+        before: structuredClone(before.get(created[0])),
+        after: structuredClone(created[1]),
+      };
+    }
     copy.univer.dispose();
   }
   if (!ok && sent.length > 0)

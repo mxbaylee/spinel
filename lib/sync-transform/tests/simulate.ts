@@ -4,7 +4,7 @@ import type { BaseCells, Mutation, Side } from '../index.ts';
 import { mapIndex } from '../src/axis.ts';
 import { shiftOf } from '../src/shifts.ts';
 import { Cells, claimsOf, isAbsolute } from '../src/state.ts';
-import { axisEdit } from '../src/structure.ts';
+import { axisEdit, structureIds } from '../src/structure.ts';
 import { checkBases } from '../src/transform.ts';
 import { cellIds, writesOf } from '../src/writes.ts';
 import { random } from './random.ts';
@@ -12,6 +12,9 @@ import { seededWorkbook } from './generate.ts';
 import { liveCells, Replica, snapshotCells } from './harness.ts';
 import { isFormulaId } from '@univerjs/core';
 import type { IDocumentData, IRange, IWorkbookData } from '@univerjs/core';
+import { ContentIntent, contentState } from './content-intent.ts';
+import { FamilyCoverage } from './coverage.ts';
+import type { EditDescription } from './coverage.ts';
 
 /**
  * Whether a cell value is a tail (state.ts `absolute`): an absolute write that
@@ -186,6 +189,9 @@ function targets(move: Mutation): Map<string, { row: number; col: number }> {
  */
 function follower(mutation: Mutation): (cell: string) => Place {
   const p = mutation.params;
+  if (mutation.id === structureIds.removeSheet) {
+    return (cell) => (parse(cell).sheet === p.subUnitId ? null : cell);
+  }
   const line = axisEdit(mutation);
   const shift = line ? { axis: line.axis, ...line.edit } : shiftOf(mutation);
   const drag = !shift && mutation.id === cellIds.moveRange && targets(mutation);
@@ -463,6 +469,10 @@ export function simulate(options: {
   /** The most mutations a transform may return per mutation it transforms. */
   budget?: number;
   intent?: boolean;
+  /** Preserve original Doc character and sheet identity intent independently of transforms. */
+  contentIntent?: boolean;
+  /** The originating generator/action, kept through transform splitting and dropping. */
+  describeEdit?: (mutations: Mutation[]) => EditDescription;
   /**
    * Steps to run before the random ones. A step that cannot run is skipped,
    * as the random steps skip it, so a shrunk script still runs: an edit by a
@@ -500,13 +510,14 @@ export function simulate(options: {
     return result;
   };
   const intent = options.intent;
+  const preserveParts = intent || options.contentIntent || options.describeEdit;
   /**
    * Transforms `parts` past `b`, keeping what each became: transform pairs
    * mutations up in order, so the first n parts become the start of the whole.
    */
   const pastParts = (parts: Part[], b: Mutation[], side: Side, cells: BaseCells): Part[] => {
     const all = transform(flat(parts), b, side, cells);
-    if (!intent) return [{ ...parts[0], mutations: all }];
+    if (!preserveParts) return [{ ...parts[0], mutations: all }];
     let [done, prefix] = [0, [] as Mutation[]];
     return parts.map((part, i) => {
       // The final part owns the remainder; comparing `all` with its own slice
@@ -523,6 +534,8 @@ export function simulate(options: {
     });
   };
   const server: Site = { replica: new Replica(options.document), facts: new Map() };
+  const content = options.contentIntent ? new ContentIntent(server.replica) : undefined;
+  const coverage = new FamilyCoverage();
   /** Each accepted edit, with `shapes` (see `shapes`) where it lands, as `touched`. */
   const history: ({ mutations: Mutation[]; shapes: Set<string> } & Landed)[] = [];
   /** The server's cells after the first `revision` edits, by revision: its snapshots (SPN-057). */
@@ -634,6 +647,10 @@ export function simulate(options: {
     const acknowledged = client.inbox.includes('ack');
     const inflight = acknowledged ? [] : (client.inflight ?? []);
     stats.discarded += flat([...inflight, ...client.buffer]).length;
+    coverage.finish(
+      [...inflight, ...client.buffer].map(({ label }) => label),
+      'discarded',
+    );
     for (const replica of [client.replica, client.confirmed]) replica.univer.dispose();
     client.replica = new Replica(options.document);
     client.confirmed = new Replica(options.document);
@@ -655,6 +672,10 @@ export function simulate(options: {
   const resync = (client: Client) => {
     if (client.outbox.length === 0) return reload(client);
     stats.discarded += flat(client.buffer).length;
+    coverage.finish(
+      client.buffer.map(({ label }) => label),
+      'discarded',
+    );
     Object.assign(client, { buffer: [], waiting: true });
     client.inbox.length = 0;
   };
@@ -662,7 +683,12 @@ export function simulate(options: {
    * Runs `transforms`, or resyncs `client` if they refuse, counted as a
    * refusal at the server and as a resync at a client.
    */
-  const transformOr = <T>(client: Client, count: 'refused' | 'resynced', transforms: () => T) => {
+  const transformOr = <T>(
+    client: Client,
+    count: 'refused' | 'resynced',
+    transforms: () => T,
+    onRefused?: () => void,
+  ) => {
     try {
       return transforms();
     } catch (error) {
@@ -670,6 +696,7 @@ export function simulate(options: {
       stats[count]++;
       const at = `${count}:${error.reason}`;
       reasons.set(at, (reasons.get(at) ?? 0) + 1);
+      onRefused?.();
       resync(client);
       return null;
     }
@@ -681,12 +708,23 @@ export function simulate(options: {
     for (let at = revision; at < history.length; at++) {
       const { mutations } = history[at];
       const cells = revisions[at];
-      incoming = transformOr(from, 'refused', () =>
-        pastParts(incoming!, mutations, 'right', cells),
+      incoming = transformOr(
+        from,
+        'refused',
+        () => pastParts(incoming!, mutations, 'right', cells),
+        () =>
+          coverage.finish(
+            parts.map(({ label }) => label),
+            'refused',
+          ),
       );
       if (!incoming) return;
     }
     stats.accepted++;
+    coverage.finish(
+      incoming.map(({ label }) => label),
+      'accepted',
+    );
     const index = history.length;
     if (intent) for (const { label } of incoming) acceptedAt.set(label, index);
     const where = `server at ${index}`;
@@ -696,7 +734,10 @@ export function simulate(options: {
     let { touched, after } = { touched: new Set<string>(), after: stateAt(index) };
     let shaped = new Set<string>();
     for (const { label, revision: saw, mutations } of incoming) {
-      if (mutations.length === 0) continue;
+      if (mutations.length === 0) {
+        content?.accept(label, server.replica);
+        continue;
+      }
       const landed = land(server, mutations, label, where, (fact, _cell, key, writes) => {
         if (indexOf(fact.by) < saw) return true;
         if (key === 'v' && fact.typeOnly && writes) return true;
@@ -704,6 +745,7 @@ export function simulate(options: {
           sender(fact.by) === sender(label) && !!changes.get(label)?.has(`${key}|${fact.value}`)
         );
       });
+      content?.accept(label, server.replica);
       if (intent) {
         touched = new Set([...moved(touched, mutations), ...landed.touched]);
         // A shape is its writer's: a later part that writes the key it lets a
@@ -849,13 +891,17 @@ export function simulate(options: {
   /** Lands an edit `client` made on it and buffers it. */
   const edit = (client: Client, mutations: Mutation[]) => {
     const name = clients.indexOf(client);
+    const description = options.describeEdit?.(mutations);
     for (const mutation of mutations) {
       const [label, changed] = [`${name}:${made++}`, new Set<string>()];
+      if (description) coverage.generated(label, { ...description });
+      const before = content && contentState(client.replica);
       if (intent) changes.set(label, changed);
       land(client, [mutation], label, `client ${name}`, ({ value }, _cell, key) => {
         changed.add(`${key}|${value}`);
         return true;
       });
+      if (before) content!.record(label, before, contentState(client.replica), client.replica);
       client.buffer.push({ label, revision: client.revision, mutations: [mutation] });
     }
     mutationsMade += mutations.length;
@@ -914,12 +960,15 @@ export function simulate(options: {
     throw error;
   }
   for (const client of clients) client.confirmed.univer.dispose();
+  coverage.assertSettled();
   return {
     server: server.replica,
     clients: clients.map((client) => client.replica),
     mutations: mutationsMade,
     largest,
     stats,
+    coverage,
+    contentChecks: content?.checks,
   };
 }
 
@@ -938,6 +987,11 @@ export function convergesOver(
     budget,
     intent,
     stats,
+    contentIntent,
+    describeEdit,
+    coverage,
+    contentChecks,
+    beforeSeed,
   }: {
     /** Seeds 1 to this many, or the seeds listed. */
     seeds: number | number[];
@@ -949,6 +1003,11 @@ export function convergesOver(
     intent?: boolean;
     /** Summed over the seeds. */
     stats?: Stats;
+    contentIntent?: boolean;
+    describeEdit?: (mutations: Mutation[]) => EditDescription;
+    coverage?: FamilyCoverage;
+    contentChecks?: { doc: number; sheetInsert: number; sheetRemove: number };
+    beforeSeed?: (seed: number) => void;
   },
 ): number {
   const only = process.env.FUZZ_SEED;
@@ -956,9 +1015,19 @@ export function convergesOver(
   const list = only ? [Number(only)] : all;
   let total = 0;
   for (const seed of list) {
+    beforeSeed?.(seed);
     let run: ReturnType<typeof simulate>;
     try {
-      run = simulate({ seed, document, mutations, generate, budget, intent });
+      run = simulate({
+        seed,
+        document,
+        mutations,
+        generate,
+        budget,
+        intent,
+        contentIntent,
+        describeEdit,
+      });
     } catch (error) {
       // Univer rejecting a transformed mutation fails here, not at the comparison.
       throw new Error(`seed ${seed}: ${(error as Error).message}`, { cause: error });
@@ -967,6 +1036,12 @@ export function convergesOver(
     for (const client of run.clients) expect(client.snapshot(), `seed ${seed}`).toEqual(expected);
     for (const replica of [run.server, ...run.clients]) replica.univer.dispose();
     total += run.mutations;
+    coverage?.add(run.coverage);
+    if (contentChecks && run.contentChecks) {
+      for (const key of ['doc', 'sheetInsert', 'sheetRemove'] as const) {
+        contentChecks[key] += run.contentChecks[key];
+      }
+    }
     for (const key of Object.keys(run.stats) as (keyof Stats)[]) {
       if (stats) stats[key] += run.stats[key];
     }

@@ -5,9 +5,16 @@ import {
   LocaleService,
   LocaleType,
 } from '@univerjs/core';
-import { SetColWidthCommand, SetRowHeightCommand } from '@univerjs/sheets';
+import {
+  convertPositionCellToSheetOverGrid,
+  RemoveColByRangeCommand,
+  SetColWidthCommand,
+  SetRowHeightCommand,
+  SheetSkeletonService,
+} from '@univerjs/sheets';
 import {
   applySheetDrawingPlacement,
+  InsertSheetDrawingCommand,
   ISheetDrawingService,
   SetSheetDrawingPlacementCommand,
   SheetDrawingAnchorType,
@@ -18,6 +25,8 @@ import { captureNative, NativeReplica } from '../index.ts';
 import type { NativeSnapshot } from '../index.ts';
 import type { Mutation } from '@spinel/sync-transform';
 import { book, comparable, fixture, turns, wire } from './fixture.ts';
+import { nativeSession } from './native-session.ts';
+import type { NativePeer } from './native-session.ts';
 
 function drawingSnapshot(snapshot: NativeSnapshot) {
   const value = comparable(snapshot) as NativeSnapshot;
@@ -201,6 +210,165 @@ test.each([0, 20])(
     } finally {
       capture.dispose();
       sender.dispose();
+      f.close();
+    }
+  },
+);
+
+test.each([0, 1].flatMap((first) => [0, 20].map((offset) => ({ first, offset }))))(
+  'concurrent insertion and removal produce native collapsed geometry ($first first, $offset offset)',
+  async ({ first, offset }) => {
+    const source = book();
+    source.sheets.one.columnCount = 4;
+    source.sheets.one.defaultColumnWidth = 88;
+    source.sheets.one.defaultRowHeight = 20;
+    const f = nativeSession(source, 'sheet');
+    const target = { unitId: 'book', subUnitId: 'one' };
+    const remove = { ...target, range: { startRow: 0, endRow: 11, startColumn: 0, endColumn: 0 } };
+    const drawing = (peer: NativePeer) =>
+      peer.live.univer.__getInjector().get(ISheetDrawingService).getDrawingData('book', 'one')
+        .image;
+    try {
+      const peers = [f.client('image-author'), f.client('column-author')];
+      const [sender, receiver] = peers;
+      await turns();
+      for (const peer of peers)
+        peer.commands.syncExecuteCommand('sheet.operation.set-worksheet-active', target);
+      const skeleton = sender.live.univer
+        .__getInjector()
+        .get(SheetSkeletonService)
+        .ensureSkeleton('book', 'one')!;
+      skeleton.calculate();
+      // Keep both endpoints one pixel inside their cells so the native
+      // conversion has unambiguous, initially in-bounds cell indices.
+      const geometry = convertPositionCellToSheetOverGrid(
+        'book',
+        'one',
+        { row: 0, column: 2, rowOffset: 1, columnOffset: 1 + offset },
+        88 - offset,
+        40,
+        skeleton,
+      );
+      expect(geometry.sheetTransform.from.column).toBe(2);
+      expect(geometry.sheetTransform.to.column).toBe(3);
+      expect(geometry.transform.width).toBeGreaterThan(0);
+      expect(
+        await sender.commands.executeCommand(InsertSheetDrawingCommand.id, {
+          drawings: [
+            {
+              ...geometry,
+              drawingId: 'image',
+              drawingType: DrawingTypeEnum.DRAWING_IMAGE,
+              imageSourceType: 'URL',
+              source: '/images/example.png',
+              anchorType: SheetDrawingAnchorType.Position,
+              axisAlignSheetTransform: geometry.sheetTransform,
+            },
+          ],
+        }),
+      ).toBe(true);
+      expect(await receiver.commands.executeCommand(RemoveColByRangeCommand.id, remove)).toBe(true);
+      const requests = [await f.request(sender), await f.request(receiver)];
+      expect(requests[0].baseRevision).toBe(requests[1].baseRevision);
+      expect(
+        requests[0].mutations.some(
+          (mutation) => mutation.id === 'sheet.mutation.set-drawing-apply',
+        ),
+      ).toBe(true);
+      expect(
+        requests[1].mutations.some(
+          (mutation) => mutation.id === 'sheet.mutation.set-drawing-apply',
+        ),
+      ).toBe(false);
+      const second = 1 - first;
+      const acceptedFirst = await f.submit(peers[first], requests[first]);
+      await f.acknowledge(peers[first], acceptedFirst);
+      const acceptedSecond = await f.submit(peers[second], requests[second]);
+      await f.acknowledge(peers[second], acceptedSecond);
+      peers[first].sync.receive({ type: 'edit', ...wire(acceptedSecond.edit) });
+      await turns();
+      for (const peer of peers) {
+        expect(peer.failures).toEqual([]);
+        expect(peer.sync.state).toMatchObject({ pending: false, resyncing: false, revision: 3 });
+        expect((peer.live.snapshot() as ReturnType<typeof book>).sheets.one.columnCount).toBe(3);
+        expect(drawing(peer).transform?.width).toBe(88 - offset);
+        expect(drawing(peer).sheetTransform.from.column).toBe(2);
+        expect(drawing(peer).sheetTransform.to.column).toBe(3);
+      }
+
+      // Concurrently created drawings retain their sender's anchors. The first
+      // deletion therefore leaves a positive drawing beyond the shortened
+      // sheet. The next native deletion maps its endpoints to columns 1 and 2;
+      // native geometry clamps both to the final existing column, producing
+      // width 0 or -20 without a hand-authored collapsed drawing mutation.
+      const queued: ReturnType<typeof wire>[] = [];
+      async function send(command: string, params: object) {
+        expect(await sender.commands.executeCommand(command, { ...target, ...params })).toBe(true);
+        const request = await f.request(sender);
+        const accepted = await f.submit(sender, request);
+        await f.acknowledge(sender, accepted);
+        queued.push(wire(accepted.edit));
+        return request;
+      }
+      const collapsing = await send(RemoveColByRangeCommand.id, remove);
+      expect(
+        collapsing.mutations.some((mutation) => mutation.id === 'sheet.mutation.set-drawing-apply'),
+      ).toBe(true);
+      const width = offset === 0 ? 0 : -offset;
+      expect(drawing(sender).transform?.width).toBe(width);
+      expect(drawing(sender).drawingId).toBe('image');
+      expect(drawing(receiver).transform?.width).toBe(88 - offset);
+      await send(SetRowHeightCommand.id, {
+        ranges: [{ startRow: 0, endRow: 0, startColumn: 0, endColumn: 1 }],
+        value: 35,
+      });
+      await send(SetColWidthCommand.id, {
+        ranges: [{ startRow: 0, endRow: 11, startColumn: 1, endColumn: 1 }],
+        value: 100,
+      });
+      await send('sheet.command.insert-row-by-range', {
+        range: { startRow: 0, endRow: 0, startColumn: 0, endColumn: 1 },
+        direction: 0,
+      });
+      await send('sheet.command.set-range-values', {
+        range: { startRow: 4, endRow: 4, startColumn: 1, endColumn: 1 },
+        value: { v: 'after-native-collapse' },
+      });
+      expect(queued).toHaveLength(5);
+      for (const edit of queued) receiver.sync.receive({ type: 'edit', ...edit });
+      for (let index = 0; index < queued.length; index++) await turns();
+      for (const peer of peers) {
+        expect(peer.failures).toEqual([]);
+        expect(peer.sync.state).toMatchObject({
+          pending: false,
+          resyncing: false,
+          revision: f.storage.unit.revision,
+        });
+        expect(drawing(peer).transform?.width).toBe(width);
+        expect(drawingSnapshot(peer.live.snapshot())).toEqual(
+          drawingSnapshot(f.storage.unit.snapshot),
+        );
+      }
+      const reopened = new NativeReplica(
+        JSON.parse(JSON.stringify(f.storage.unit.snapshot)),
+        'sheet',
+      );
+      try {
+        expect(drawingSnapshot(reopened.snapshot())).toEqual(
+          drawingSnapshot(receiver.live.snapshot()),
+        );
+        const saved = reopened.univer
+          .__getInjector()
+          .get(ISheetDrawingService)
+          .getDrawingData('book', 'one').image;
+        expect(saved).toMatchObject({ drawingId: 'image', transform: { width, height: 40 } });
+        expect(
+          (reopened.snapshot() as ReturnType<typeof book>).sheets.one.cellData?.[4]?.[1]?.v,
+        ).toBe('after-native-collapse');
+      } finally {
+        reopened.dispose();
+      }
+    } finally {
       f.close();
     }
   },

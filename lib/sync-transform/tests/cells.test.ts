@@ -1140,7 +1140,7 @@ test(
 );
 
 // Shifts and drags meet row and column edits, which move or cut their areas.
-// Sheet edits are left out: the intent check does not follow a removed sheet.
+// These sweeps isolate line edits; the mixed fuzz also follows removed sheets.
 test.each([
   ['realEdit on a real sheet', realEdit, () => realBook()],
   ['commandEdit on a 6×5 sheet', commandEdit, () => denseBook(6, 5)],

@@ -10,8 +10,10 @@ grooming retired the SPN-010 limits experiment and the SPN-013 queue.
 The [staged landing](implementation/sync-staged-landing-2026-10-25.md#land-the-library-and-retain-spn-056-for-integrated-review)
 now separates SPN-104 (the transform library), SPN-057 (the sync server),
 SPN-058 (the client), the retained SPN-056 (independent integrated review), and
-SPN-059 (cutover and removal of Univer collaboration). The replacement remains
-inactive until the server/client work and integrated review pass.
+SPN-059 (cutover and removal of Univer collaboration). The
+[integrated verification record](implementation/SPN-056.md#integrated-verification-2026-10-26)
+contains the acceptance evidence and adopted conflict policies. The replacement
+remains inactive until SPN-059 completes cutover.
 
 ## Spinel server integration flag
 
@@ -20,7 +22,7 @@ SPN-057 supplies `@spinel/sync-server` and the application SQLite adapter behind
 off. SPN-058 connects the native browser client and ephemeral presence to that
 same flag: preparation returns `syncVersion: 1` only for this backend. There is
 no separate frontend flag. Retained-data conversion and Pro removal remain
-SPN-059; SPN-056's integrated review still gates activation by default.
+SPN-059; SPN-056's integrated review does not activate the replacement.
 
 With the flag enabled, newly prepared native documents use one durable revision
 log. An incoming edit is transformed past each accepted edit using the cells at
@@ -100,9 +102,10 @@ marks inserted paragraph IDs and supplies shift context. Atomic transform groups
 cell claims and tails stay together under the wire bounds. Remote application
 copies params and sets `onlyLocal` and `fromCollab`, preventing echo while retaining
 native formula recalculation. Native undo services remain enabled; the legacy
-Pro collaboration preset is not used to create this client. A nonempty remote
-change clears local undo/redo history because Univer's local inverse mutations
-retain old positions. Normal local undo remains available until another editor's
+Pro collaboration preset is not used to create this client. Every accepted peer
+revision clears local undo/redo history, including one whose transformed edit
+is empty, because Univer's local inverse mutations retain old positions.
+Own acknowledgments preserve history. Normal local undo remains available until another editor's
 change arrives; collaborative undo-history rebasing is not implemented. This
 prevents an old inverse from changing the wrong cell or text offset.
 

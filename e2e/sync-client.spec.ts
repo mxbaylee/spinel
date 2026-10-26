@@ -183,24 +183,26 @@ async function fixture(
   };
 }
 
-test('the actual mobile Sheet preset has a complete mutation classification', async ({
-  browser,
-  baseURL,
-}, info) => {
-  const f = await fixture(browser, baseURL!, info, 'sheet', true);
-  try {
-    await Promise.all([f.page.goto(`/?item=${f.item.id}`), f.other.goto(`/?item=${f.item.id}`)]);
-    await Promise.all([saved(f.page), saved(f.other)]);
-    expect(
-      await f.page.evaluate(() => matchMedia('(pointer: coarse) and (max-width: 900px)').matches),
-    ).toBe(true);
-    await expectNativeMutationInventory(f.page, f.unitId);
-    await expectNativeMutationInventory(f.other, f.unitId);
-    expect(f.errors).toEqual([]);
-  } finally {
-    await f.close();
-  }
-});
+for (const kind of ['sheet', 'doc'] as const) {
+  test(`the actual mobile ${kind} preset has a complete mutation classification`, async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, kind, true);
+    try {
+      await Promise.all([f.page.goto(`/?item=${f.item.id}`), f.other.goto(`/?item=${f.item.id}`)]);
+      await Promise.all([saved(f.page), saved(f.other)]);
+      expect(
+        await f.page.evaluate(() => matchMedia('(pointer: coarse) and (max-width: 900px)').matches),
+      ).toBe(true);
+      await expectNativeMutationInventory(f.page, f.unitId);
+      await expectNativeMutationInventory(f.other, f.unitId);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
+}
 
 test('native Sheets deliver within a second, rebase offline edits, and retry one durable write after a lost acknowledgment', async ({
   browser,

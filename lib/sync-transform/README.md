@@ -413,10 +413,15 @@ Also:
   painter does), bullets, paragraph styles,
   hyperlinks (added and removed with Univer's own link builders), formulas
   (inserted at the caret or over a selection, and edited in place, as
-  SPN-033's adapter does), doc drawings and the doc's name. It checks only that
-  clients converge: typing inside a formula or deleting part of it breaks the
-  formula on both screens, as it would for one person alone. Headers, footers and notes travel in the same ot-json1 op
-  and transform the same way, but no test edits them.
+  SPN-033's adapter does), doc drawings and the doc's name. Alongside convergence,
+  the mixed fuzz independently checks ordinary text identities, deletion intent,
+  surviving order and the sender's insertion anchors. Entity/style semantics
+  retain their dedicated regressions, including concurrent native hyperlink and
+  Formula copy through client/server queues and raw snapshot reopen. Typing
+  inside a formula or deleting part of it can still break the formula on both
+  screens, as it would for one person alone. Headers, footers and notes travel in
+  the same ot-json1 op, but no test edits them; this is not a verification claim
+  for those regions.
 - A name set or removal is refused against any concurrent edit that could make
   Univer rewrite names, wherever the name points, so a rename on one sheet and
   a row insert on another are refused though they would merge. Two people
