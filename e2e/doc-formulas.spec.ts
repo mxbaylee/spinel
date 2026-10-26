@@ -1,6 +1,5 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import { createCanvas } from '@napi-rs/canvas';
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import { mkdir } from 'node:fs/promises';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { LocaleType } from '@univerjs/core';
@@ -118,10 +117,6 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       }
     });
   }
-  let printHtml = '';
-  await context.exposeBinding('captureFormulaPrint', (_source, html: string) => {
-    printHtml = html;
-  });
   for (const target of [page, other]) target.on('pageerror', (error) => errors.push(error.message));
   // Observe actual native canvas text, not just the accessible Formula panel.
   await context.addInitScript(() => {
@@ -146,26 +141,7 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
       return original.call(this, text, ...args);
     };
     window.print = () => {
-      // Match the browser event order used by the existing portable-export check.
-      window.dispatchEvent(new Event('beforeprint'));
-      const clone = document.documentElement.cloneNode(true) as HTMLElement;
-      const originalCanvases = [...document.querySelectorAll('canvas')];
-      clone.querySelectorAll('canvas').forEach((canvas, index) => {
-        const image = document.createElement('img');
-        image.src = originalCanvases[index].toDataURL();
-        image.style.cssText = canvas.style.cssText;
-        image.width = originalCanvases[index].width;
-        image.height = originalCanvases[index].height;
-        canvas.replaceWith(image);
-      });
-      clone.querySelectorAll('script').forEach((script) => script.remove());
-      const base = document.createElement('base');
-      base.href = document.baseURI;
-      clone.querySelector('head')!.prepend(base);
-      void (
-        window as unknown as { captureFormulaPrint: (html: string) => Promise<void> }
-      ).captureFormulaPrint(clone.outerHTML);
-      window.dispatchEvent(new Event('afterprint'));
+      throw new Error('Browser print must not be called.');
     };
   });
   const saved = (target: Page) =>
@@ -403,81 +379,18 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await formulaPanel(page).getByRole('button', { name: 'Close dialog', exact: true }).click();
     await page.getByRole('button', { name: 'Document actions', exact: true }).click();
     await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
-    await page.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
-    await expect(page.getByRole('dialog', { name: 'Export', exact: true })).not.toBeVisible();
-    await expect.poll(() => printHtml.includes('<img'), { timeout: 20_000 }).toBe(true);
-    const printed = await context.newPage();
-    try {
-      await printed.emulateMedia({ media: 'print' });
-      await printed.setContent(printHtml, { waitUntil: 'networkidle' });
-      await printed.evaluate(() =>
-        Promise.all([...document.images].map((image) => image.decode().catch(() => {}))),
-      );
-      console.log(
-        'Formula print surface:',
-        await printed.evaluate(() =>
-          [...document.images].map((image) => ({
-            width: image.naturalWidth,
-            height: image.naturalHeight,
-            bounds: image.getBoundingClientRect().toJSON(),
-            display: getComputedStyle(image).display,
-            ancestors: [image.parentElement, image.parentElement?.parentElement].map((node) =>
-              node
-                ? {
-                    tag: node.tagName,
-                    className: node.className,
-                    display: getComputedStyle(node).display,
-                    visibility: getComputedStyle(node).visibility,
-                  }
-                : null,
-            ),
-          })),
-        ),
-      );
-      const pdf = await printed.pdf({
-        path: info.outputPath('formulas-export.pdf'),
-        printBackground: true,
-        preferCSSPageSize: true,
-      });
-      const loading = getDocument({ data: new Uint8Array(pdf), useSystemFonts: true });
-      const reopened = await loading.promise;
-      try {
-        expect(reopened.numPages).toBeGreaterThan(0);
-        let ink = 0;
-        for (let number = 1; number <= reopened.numPages; number++) {
-          const sheet = await reopened.getPage(number);
-          const viewport = sheet.getViewport({ scale: 1 });
-          const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
-          await sheet.render({
-            canvas: canvas as unknown as HTMLCanvasElement,
-            canvasContext: canvas.getContext('2d') as unknown as CanvasRenderingContext2D,
-            viewport,
-          }).promise;
-          const pixels = canvas
-            .getContext('2d')
-            .getImageData(0, 0, canvas.width, canvas.height).data;
-          for (let index = 0; index < pixels.length; index += 4)
-            if (
-              pixels[index + 3] &&
-              Math.min(pixels[index], pixels[index + 1], pixels[index + 2]) < 240
-            )
-              ink++;
-          await writeFile(
-            info.outputPath(`formulas-page-${number}-export-opened.png`),
-            await canvas.encode('png'),
-          );
-        }
-        expect(
-          ink,
-          'The prepared PDF must have visible content for privacy review',
-        ).toBeGreaterThan(50);
-      } finally {
-        await loading.destroy();
-      }
-    } finally {
-      await printed.close();
-      await page.bringToFront();
-    }
+    const pdfDownload = await downloadPdf(
+      page,
+      page.getByRole('button', { name: 'Export as PDF', exact: true }),
+    );
+    await inspectPdf(pdfDownload, info, 'formulas', {
+      text: ['314159', '314166', ...Array.from({ length: 30 }, (_, row) => String(row + 201))],
+      forbidden: [owner.name, friend.name],
+    });
+    await page
+      .getByRole('dialog', { name: 'Export', exact: true })
+      .getByRole('button', { name: 'Close dialog', exact: true })
+      .click();
     await openPanel(page);
     await expect(formulaPanel(page)).toContainText('314159', { timeout: 20_000 });
 

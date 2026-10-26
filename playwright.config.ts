@@ -3,9 +3,15 @@ import { defineConfig, devices } from '@playwright/test';
 const project = process.env.SPINEL_E2E_PROJECT;
 if (
   project &&
-  !['development', 'production', 'mobile-https', 'sync-development', 'sync-production', 'sync-soak-sheet', 'sync-soak-doc'].includes(
-    project,
-  )
+  ![
+    'development',
+    'production',
+    'mobile-https',
+    'sync-development',
+    'sync-production',
+    'sync-soak-sheet',
+    'sync-soak-doc',
+  ].includes(project)
 )
   throw new Error('SPINEL_E2E_PROJECT must name a configured browser project.');
 
@@ -55,7 +61,10 @@ export default defineConfig({
       name: `sync-soak-${kind}`,
       testMatch: '**/sync-client.spec.ts',
       grep: new RegExp(`seeded two-editor ${kind} sync soak`),
-      use: { ...devices['Desktop Chrome'], baseURL: kind === 'sheet' ? 'http://localhost:3106' : 'http://localhost:3107' },
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: kind === 'sheet' ? 'http://localhost:3106' : 'http://localhost:3107',
+      },
     })),
     {
       name: 'mobile-https',
@@ -72,7 +81,8 @@ export default defineConfig({
     {
       // Vite still serves development modules. A second Node file watcher is
       // unnecessary for fixed-source tests and adds work to cold SDK imports.
-      command: 'node server/index.ts --dev --no-open',
+      command:
+        'node --max-old-space-size=512 --max-semi-space-size=8 server/index.ts --dev --no-open',
       url: 'http://localhost:3100/sign-in',
       env: {
         PORT: '3100',
@@ -94,7 +104,8 @@ export default defineConfig({
       reuseExistingServer: false,
     },
     {
-      command: 'node server/index.ts --dev --no-open',
+      command:
+        'node --max-old-space-size=512 --max-semi-space-size=8 server/index.ts --dev --no-open',
       url: 'http://localhost:3104/sign-in',
       env: {
         PORT: '3104',
@@ -127,7 +138,7 @@ export default defineConfig({
       reuseExistingServer: false,
     })),
     {
-      command: 'node scripts/e2e-https.ts',
+      command: 'node --max-old-space-size=256 --max-semi-space-size=8 scripts/e2e-https.ts',
       url: 'https://localhost:3103/sign-in',
       ignoreHTTPSErrors: true,
       reuseExistingServer: false,

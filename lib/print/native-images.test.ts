@@ -8,7 +8,9 @@ import { retainPdf, runNativeJobs } from './native-test-support.ts';
 
 type Page = Awaited<ReturnType<typeof retainPdf>>[number];
 const colors = ['#d62828', '#2563eb', '#16a34a', '#eab308', '#9333ea', '#ea580c'];
-const pageHeight = 770 / 0.75;
+// The fixture's ordinary 24px rows stay whole at each seam. Image and tile
+// sampling still uses one absolute worksheet origin across these row cuts.
+const pageHeight = Math.floor(770 / 0.75 / 24) * 24;
 
 function colorAt(page: Page, x: number, y: number, expected: string) {
   const offset = (Math.floor(y) * page.width + Math.floor(x)) * 4;
@@ -162,9 +164,9 @@ test.each([false, true])(
     // Sample inside the final band; an exact color boundary can floor to the
     // preceding pixel after the fractional page translation.
     atSource(pages, 75, 2368, colors[3]);
-    // 99 visible 24px rows end at source y2376, exactly PDF y278 on page 3.
-    colorAt(pages[2], 92, 277, colors[3]);
-    colorAt(pages[2], 92, 278, '#ffffff');
+    // 99 visible 24px rows end at source y2376, exactly PDF y306 on page 3.
+    colorAt(pages[2], 92, 305, colors[3]);
+    colorAt(pages[2], 92, 306, '#ffffff');
     if (mixed) expect(pages[2].text).toContain('LAST');
     else expect(pages.every((page) => !page.text)).toBe(true);
   },

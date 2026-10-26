@@ -142,10 +142,7 @@ test('raw sheet revision revert cannot bypass the application restore transactio
     ],
   };
   await expect(
-    f.collab.submitChangeset(
-      { changeset },
-      { userID: f.owner.id, memberID: 'test-member' },
-    ),
+    f.collab.submitChangeset({ changeset }, { userID: f.owner.id, memberID: 'test-member' }),
   ).rejects.toThrow('Restore versions through Spinel so the current state is kept.');
   const current = await f.collab.load(f.owner.id, f.sheet.id);
   expect(current.revision).toBe(2);
@@ -205,12 +202,20 @@ test('raw document revision revert cannot bypass the application restore transac
 test('permanent purge after atomic preparation removes the unit and acknowledges its outbox', async () => {
   const f = await fixture();
   await f.collab.prepare(f.owner.id, f.doc.id);
-  expect(f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(f.doc.id)).toBeDefined();
+  expect(
+    f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(f.doc.id),
+  ).toBeDefined();
   f.db.prepare('DELETE FROM workspace_items WHERE id=?').run(f.doc.id);
-  expect(f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id)).toBeDefined();
+  expect(
+    f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id),
+  ).toBeDefined();
   await f.collab.purgeDeleted();
-  expect(f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(f.doc.id)).toBeUndefined();
-  expect(f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id)).toBeUndefined();
+  expect(
+    f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(f.doc.id),
+  ).toBeUndefined();
+  expect(
+    f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id),
+  ).toBeUndefined();
 });
 
 test('foreign and external image mutations are permanently rejected before persistence', async () => {
@@ -241,10 +246,7 @@ test('foreign and external image mutations are permanently rejected before persi
       ],
     };
     await expect(
-      f.collab.submitChangeset(
-        { changeset },
-        { userID: f.owner.id, memberID: 'test-member' },
-      ),
+      f.collab.submitChangeset({ changeset }, { userID: f.owner.id, memberID: 'test-member' }),
     ).rejects.toThrow();
     const saved = await f.collab.load(f.owner.id, f.doc.id);
     expect(saved.revision).toBe(1);
@@ -308,10 +310,7 @@ test('expired network sessions cannot submit and cross-unit mutations cannot mod
     cellValue: { 0: { 0: { v: 'foreign' } } },
   });
   await expect(
-    f.collab.submitChangeset(
-      { changeset },
-      { userID: f.owner.id, memberID: 'test-member' },
-    ),
+    f.collab.submitChangeset({ changeset }, { userID: f.owner.id, memberID: 'test-member' }),
   ).rejects.toThrow();
   expect((await f.load()).revision).toBe(1);
 });
@@ -350,24 +349,41 @@ test('migration is idempotent, preserves legacy snapshots and fences stale-tab s
 test('interrupted atomic preparation rolls back both unit and fence and retries without overwriting saved work', async () => {
   const f = await fixture();
   const original = SQLiteSyncStorage.prototype.create;
-  const create = vi.spyOn(SQLiteSyncStorage.prototype, 'create').mockImplementationOnce(function (this: SQLiteSyncStorage, unit, guard) {
+  const create = vi.spyOn(SQLiteSyncStorage.prototype, 'create').mockImplementationOnce(function (
+    this: SQLiteSyncStorage,
+    unit,
+    guard,
+  ) {
     return original.call(this, unit, () => {
       guard();
       throw new Error('interrupted');
     });
   });
   await expect(f.collab.prepare(f.owner.id, f.sheet.id)).rejects.toThrow('interrupted');
-  expect(f.db.prepare('SELECT state FROM workspace_collaboration WHERE item_id=?').get(f.sheet.id)).toBeUndefined();
-  expect(f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(f.sheet.id)).toBeUndefined();
+  expect(
+    f.db.prepare('SELECT state FROM workspace_collaboration WHERE item_id=?').get(f.sheet.id),
+  ).toBeUndefined();
+  expect(
+    f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(f.sheet.id),
+  ).toBeUndefined();
   expect(f.sheets.load(f.owner.id, f.sheet.id).snapshot).toEqual(f.snapshot);
   create.mockRestore();
   await f.collab.prepare(f.owner.id, f.sheet.id);
-  await f.collab.submitChangeset({ changeset: f.edit() }, { userID: f.owner.id, memberID: 'test-member' });
+  await f.collab.submitChangeset(
+    { changeset: f.edit() },
+    { userID: f.owner.id, memberID: 'test-member' },
+  );
   const before = await f.load();
   await f.collab.prepare(f.owner.id, f.sheet.id);
   expect(await f.load()).toEqual(before);
   expect((await f.load()).revision).toBe(2);
-  expect(() => f.sheets.save(f.owner.id, f.sheet.id, { snapshot: f.snapshot, revision: 1, writeId: randomUUID() })).toThrow('live collaboration');
+  expect(() =>
+    f.sheets.save(f.owner.id, f.sheet.id, {
+      snapshot: f.snapshot,
+      revision: 1,
+      writeId: randomUUID(),
+    }),
+  ).toThrow('live collaboration');
 });
 
 test('service read, edit and lifecycle boundaries reuse current workspace grants', async () => {
@@ -380,10 +396,12 @@ test('service read, edit and lifecycle boundaries reuse current workspace grants
   }
   const before = f.workspace.get(f.owner.id, f.sheet.id).updatedAt;
   f.auth.now = () => before + 1000;
-  await expect(f.collab.submitChangeset(
-    { changeset: f.edit(f.viewer.id) },
-    { userID: f.viewer.id, memberID: 'test-member' },
-  )).rejects.toThrow();
+  await expect(
+    f.collab.submitChangeset(
+      { changeset: f.edit(f.viewer.id) },
+      { userID: f.viewer.id, memberID: 'test-member' },
+    ),
+  ).rejects.toThrow();
   expect(f.workspace.get(f.owner.id, f.sheet.id).updatedAt).toBe(before);
   expect((await f.load()).revision).toBe(1);
   // No raw deletion API remains; only the application purge outbox may delete.
@@ -435,9 +453,7 @@ test('actual collaboration changes survive encrypted application backup, fresh r
     [f.doc.id, expectedDoc],
   ] as const) {
     await collab.prepare(f.owner.id, id);
-    expect(
-      collab.sync.load(id, { userID: f.owner.id, customData: {} }),
-    ).toEqual(expected);
+    expect(collab.sync.load(id, { userID: f.owner.id, customData: {} })).toEqual(expected);
   }
   expect(workspace.get(f.viewer.id, f.sheet.id).access).toBe('viewer');
   expect(
@@ -470,10 +486,12 @@ test('access revoked during mutation application is checked again before durable
   });
   const before = f.workspace.get(f.owner.id, f.sheet.id).updatedAt;
   f.auth.now = () => before + 1000;
-  await expect(f.collab.submitChangeset(
-    { changeset: f.edit(f.viewer.id) },
-    { userID: f.viewer.id, memberID: 'test-member' },
-  )).rejects.toThrow();
+  await expect(
+    f.collab.submitChangeset(
+      { changeset: f.edit(f.viewer.id) },
+      { userID: f.viewer.id, memberID: 'test-member' },
+    ),
+  ).rejects.toThrow();
   expect(f.workspace.get(f.owner.id, f.sheet.id).updatedAt).toBe(before);
   expect(audit.mock.calls.map((call) => String(call[0])).join('\n')).toContain(
     'collaboration.edit_denied',
@@ -818,10 +836,7 @@ test('sync generation restore retains multi-tab formulas, styles, resources and 
       },
     ],
   };
-  await f.collab.submitChangeset(
-    { changeset },
-    { userID: f.owner.id, memberID: 'test-member' },
-  );
+  await f.collab.submitChangeset({ changeset }, { userID: f.owner.id, memberID: 'test-member' });
   const after = (await f.collab.load(f.owner.id, f.doc.id)).snapshot as IDocumentData;
   expect(after.body?.dataStream).toBe('Image still here\r\n');
   expect(after.drawings?.photo).toMatchObject(drawing);
@@ -867,7 +882,9 @@ test('file-backed restart cancels a staged sync replacement and preserves a comp
     .prepare("SELECT next_unit FROM spinel_restore_jobs WHERE status='staging'")
     .get()!;
   expect(
-    f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(String(staged.next_unit)),
+    f.db
+      .prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?')
+      .get(String(staged.next_unit)),
   ).toBeDefined();
   await history.close();
   historyClosed = true;
@@ -905,7 +922,9 @@ test('file-backed restart cancels a staged sync replacement and preserves a comp
   await step('purge abandoned stage', () => collab.purgeDeleted());
   integrity(db, 'after purging abandoned stage');
   expect(
-    db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(String(staged.next_unit)),
+    db
+      .prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?')
+      .get(String(staged.next_unit)),
   ).toBeUndefined();
   const request = randomUUID();
   const completed = await step('complete restore after first restart', () =>
@@ -1064,10 +1083,7 @@ test('moving and restoring an existing Sheet cell image preserves its identity a
       mutations: [{ id: SetRangeValuesMutation.id, data: JSON.stringify(data) }],
     };
     await expect(
-      f.collab.submitChangeset(
-        { changeset: bad },
-        { userID: f.owner.id, memberID: 'test-member' },
-      ),
+      f.collab.submitChangeset({ changeset: bad }, { userID: f.owner.id, memberID: 'test-member' }),
     ).rejects.toThrow('Cross-document changes are not allowed.');
   }
   const removal = await f.collab.submitChangeset(

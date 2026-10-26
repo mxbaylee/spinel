@@ -268,9 +268,12 @@ for (const width of [1280, 390]) {
           if (failWrites) {
             // A real transport disconnect leaves the native envelope unconfirmed.
             // Reconnect/retry must recover it; no document or save state is mocked.
-            failWrites = false;
-            rejectedWrites++;
-            write.disconnect();
+            // Retry already replaced earlier held connections. Only consume
+            // this failure when it interrupts the current live submission.
+            if (write.disconnect()) {
+              failWrites = false;
+              rejectedWrites++;
+            }
           } else {
             if (rejectedWrites && recoveryHeld) await recoveryGate;
             write.forward();
@@ -474,11 +477,16 @@ for (const width of [1280, 390]) {
           holdWrite = false;
           releaseWrite();
           network.releaseJoinAcknowledgements();
-          await page.unrouteAll({ behavior: 'ignoreErrors' });
-          await page.close();
-          db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
-          db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
-          db.close();
+          network.interceptWrites(undefined);
+          try {
+            await network.drainWrites();
+          } finally {
+            await page.unrouteAll({ behavior: 'ignoreErrors' });
+            await page.close();
+            db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
+            db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+            db.close();
+          }
         }
       });
     }

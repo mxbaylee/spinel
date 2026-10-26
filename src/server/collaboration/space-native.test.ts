@@ -508,13 +508,11 @@ test('permissions changed during materialization refuse the read and prevent a n
   const f = await fixture();
   await f.collab.prepare(f.owner.id, f.sheet.id, f.context());
   const original = f.collab.sync.load.bind(f.collab.sync);
-  const read = vi
-    .spyOn(f.collab.sync, 'load')
-    .mockImplementationOnce((...args) => {
-      const data = original(...args);
-      f.spaces.share(f.owner.id, f.space.id, f.editor.id, null);
-      return data;
-    });
+  const read = vi.spyOn(f.collab.sync, 'load').mockImplementationOnce((...args) => {
+    const data = original(...args);
+    f.spaces.share(f.owner.id, f.space.id, f.editor.id, null);
+    return data;
+  });
   await expect(f.collab.load(f.editor.id, f.sheet.id, f.context(f.editor.id))).rejects.toThrow(
     'not available',
   );

@@ -384,6 +384,13 @@ export async function createApp(options: AppOptions) {
       next();
     });
     if (options.development) {
+      // Vite's native compiler otherwise sizes its pools from the host CPU
+      // count. Bound its default parallelism beside the live collaboration
+      // runtime and return freed native arenas promptly so a cold editor load
+      // leaves room for the PDF child. Apply before loading the native compiler.
+      process.env.ROLLDOWN_WORKER_THREADS ??= '2';
+      process.env.RAYON_NUM_THREADS ??= '2';
+      process.env.MIMALLOC_PURGE_DELAY ??= '0';
       const { createServer: createViteServer } = await import('vite');
       vite = await createViteServer({
         configFile: resolve(projectRoot, 'vite.config.ts'),

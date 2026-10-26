@@ -152,6 +152,14 @@ jobs:
       - name: Unit tests
         if: needs.changes.outputs.docs_only != 'true'
         run: npm test -- --exclude 'lib/**'
+      - name: PDF collaboration overlap evidence
+        if: always() && needs.changes.outputs.docs_only != 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: pdf-collaboration-overlap
+          path: output/pdf/spn-075-overlap/
+          retention-days: 7
+          if-no-files-found: warn
       - name: Documentation-only change
         if: needs.changes.outputs.docs_only == 'true'
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
@@ -274,6 +282,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
+      - name: Install PDF verification tools
+        run: npm ci
       - name: Build and exercise the final image
         run: node scripts/ci/container-smoke.ts
 
@@ -340,7 +350,9 @@ jobs:
             test-results/**/*-restore-preview.png
             test-results/**/*-export.pdf
             test-results/**/*-export-opened.png
+            test-results/**/*-permission-notices.json
             test-results/**/*-sync-presence.png
+            test-results/**/spn-059-sheet-menu-*.png
             test-results/**/sync-diagnostics.json
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md

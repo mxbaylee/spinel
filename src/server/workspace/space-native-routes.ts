@@ -9,6 +9,7 @@ import { SpaceStore } from './spaces.ts';
 import { DocumentStore } from './documents.ts';
 import { PortableFiles } from './portable.ts';
 import { formulaRoutes } from '../formulas/routes.ts';
+import { pdfRoutes } from '../pdf/routes.ts';
 import type { FormulaDiagnostics } from '../formulas/routes.ts';
 import { historyRoutes } from '../history/routes.ts';
 import type { HistoryStore } from '../history/store.ts';
@@ -63,6 +64,7 @@ export function spaceNativeRoutes(
       options.guest ? undefined : options.diagnostics,
     ),
   );
+  router.use('/pdf', pdfRoutes(workspace, collaboration, identity, 'itemId'));
   router.post(
     '/images',
     express.raw({ type: ['image/png', 'image/jpeg', 'image/webp'], limit: '5mb' }),

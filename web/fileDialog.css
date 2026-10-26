@@ -95,9 +95,49 @@
 .file-dialog-tags button {
   flex-shrink: 0;
 }
+.pdf-worksheets {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+}
+.pdf-worksheets p {
+  margin: 0;
+  color: var(--sp-muted);
+}
+.file-dialog .pdf-worksheets label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.pdf-worksheets input[type='checkbox'] {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--sp-accent);
+}
+.pdf-export-status {
+  min-height: 24px;
+}
+.pdf-export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 @media (pointer: coarse), (max-width: 640px) {
   .file-dialog :is(button, input:not([type='hidden']), select, summary) {
     min-height: 44px;
     min-width: 44px;
+  }
+  .file-dialog .pdf-worksheets input[type='checkbox'] {
+    /* The full 44px label is the touch target; keep the checkbox itself compact. */
+    min-width: 20px;
+    min-height: 20px;
   }
 }

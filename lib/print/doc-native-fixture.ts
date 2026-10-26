@@ -2,6 +2,7 @@
 import { GlobalFonts } from '@napi-rs/canvas';
 import type { DocPrintInput, DocPrintOptions, SheetPrintInput } from './index.ts';
 import type { NativeResult } from './native-fixture.ts';
+import type { OriginalDocGeometry } from './doc-native-geometry-fixture.ts';
 
 const { renderDocPdf, renderSheetPdf } = await import(
   process.env.PRINT_PACKAGE_ENTRY ?? '@spinel/print'
@@ -15,12 +16,15 @@ export interface DocNativeJob {
   abortDuringCleanup?: boolean;
   failCleanup?: boolean;
   overlapSheet?: SheetPrintInput;
+  /** Independent public native geometry before the print image projection. */
+  nativeGeometry?: boolean;
 }
 
 export interface DocNativeResult extends NativeResult {
   mediaBox?: { width: number; height: number };
   overlapCode?: string;
   debugStack?: string;
+  nativeGeometry?: OriginalDocGeometry;
 }
 
 process.once('message', async (message) => {
@@ -42,13 +46,18 @@ process.once('message', async (message) => {
     let result: Partial<DocNativeResult>;
     let overlapCode: string | undefined;
     try {
+      const nativeGeometry = job.nativeGeometry
+        ? await (
+            await import('./doc-native-geometry-fixture.ts')
+          ).measureOriginalDocGeometry(job.input)
+        : undefined;
       const pending = renderDocPdf(job.input, { ...job.options, signal: controller.signal });
       if (job.abortDuringPrepare) queueMicrotask(() => controller.abort());
       if (job.overlapSheet)
         await renderSheetPdf(job.overlapSheet).catch((error: { code?: string }) => {
           overlapCode = error.code;
         });
-      result = { ok: true, ...(await pending) };
+      result = { ok: true, ...(await pending), ...(nativeGeometry ? { nativeGeometry } : {}) };
     } catch (error) {
       result = {
         ok: false,
@@ -89,6 +98,5 @@ process.once('message', async (message) => {
     });
   }
   if (!process.send || !process.disconnect) throw new Error('Fixture requires IPC.');
-  process.send(results);
-  process.disconnect();
+  process.send(results, () => process.disconnect?.());
 });

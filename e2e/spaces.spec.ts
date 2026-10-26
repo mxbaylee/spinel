@@ -1,4 +1,5 @@
 import { syncNetwork } from './sync-network.ts';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -347,7 +348,11 @@ async function nativeState(
     `/sync-api/spaces/${spaceId}/items/${itemId}/snapshot?unitId=${unitID}`,
   );
   expect(response.ok()).toBe(true);
-  const state = (await response.json()) as { unitId: string; revision: number; snapshot: IDocumentData | IWorkbookData };
+  const state = (await response.json()) as {
+    unitId: string;
+    revision: number;
+    snapshot: IDocumentData | IWorkbookData;
+  };
   expect(state.unitId).toBe(unitID);
   expect(state.snapshot.id).toBe(unitID);
   expect(type === 1 ? 'body' in state.snapshot : 'sheets' in state.snapshot).toBe(true);
@@ -371,27 +376,36 @@ function nativeDiagnostics(page: Page, phase: () => string) {
   page.on('response', (response) => {
     const path = new URL(response.url()).pathname;
     if (
-      path.includes('/space-api/') ||
+      path.startsWith('/sync-api/spaces/') ||
       /^\/api\/spaces\/[^/]+\/items\/[^/]+\/collaboration$/.test(path)
     )
       record({ http: path, method: response.request().method(), status: response.status() });
   });
   page.on('requestfailed', (request) => {
     const path = new URL(request.url()).pathname;
-    if (path.includes('/space-api/')) record({ http: path, failed: true });
+    if (path.startsWith('/sync-api/spaces/')) record({ http: path, failed: true });
   });
   page.on('websocket', (socket) => {
-    if (!new URL(socket.url()).pathname.includes('/space-api/')) return;
+    if (!new URL(socket.url()).pathname.startsWith('/sync-api/spaces/')) return;
     socket.on('framereceived', ({ payload }) => {
       try {
-        const frame = JSON.parse(String(payload)) as { cmd?: unknown; code?: unknown };
+        const frame = JSON.parse(String(payload)) as {
+          type?: unknown;
+          revision?: unknown;
+          reason?: unknown;
+        };
         if (
-          (typeof frame.cmd === 'string' || typeof frame.cmd === 'number') &&
-          (typeof frame.code === 'string' || typeof frame.code === 'number')
+          typeof frame.type === 'string' &&
+          ['resume', 'edit', 'ack', 'resync', 'presence', 'verified'].includes(frame.type)
         )
-          record({ socket: 'response', command: frame.cmd, code: frame.code });
+          record({
+            socket: 'response',
+            type: frame.type,
+            revision: typeof frame.revision === 'number' ? frame.revision : undefined,
+            reason: typeof frame.reason === 'string' ? frame.reason : undefined,
+          });
       } catch {
-        // Keep diagnostics to public command/outcome codes, never payload data.
+        // Keep diagnostics to public frame/outcome fields, never document data.
       }
     });
     socket.on('close', () => record({ socket: 'closed' }));
@@ -404,20 +418,20 @@ async function holdNativeWrites(context: BrowserContext) {
     release = done;
   });
   let received = 0;
-  let returned = 0;
+  const forwarded: boolean[] = [];
   const network = await syncNetwork(context);
   network.interceptWrites(async (write) => {
     received++;
     await held;
     // A revoked connection is closed. A live one forwards to the real server;
     // callers compare authoritative state, never treating forwarding as commit.
-    write.forward();
-    returned++;
+    forwarded.push(write.forward());
   });
   return {
     release,
     received: () => received,
-    returned: () => returned,
+    returned: () => forwarded.length,
+    forwarded: () => forwarded.filter(Boolean).length,
     // On the assertion path, call after the native page has left to include
     // retries in the persisted-state proof. Also drain on failure while the
     // server is still alive, so fixture shutdown cannot mask the first failure.
@@ -749,7 +763,7 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
     const exportPanel = page.getByRole('dialog', { name: 'Export', exact: true });
     await expect(
-      exportPanel.getByRole('button', { name: 'Print / save PDF', exact: true }),
+      exportPanel.getByRole('button', { name: 'Export as PDF', exact: true }),
     ).toBeEnabled();
     const download = page.waitForEvent('download');
     const exported = page.waitForResponse((response) =>
@@ -767,6 +781,12 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     ) as IDocumentData;
     expect(snapshot.id).toBe(doc.id);
     expect(snapshot.body?.dataStream).toContain('Native notes in a Space.');
+    const pdfDownload = await downloadPdf(
+      page,
+      exportPanel.getByRole('button', { name: 'Export as PDF', exact: true }),
+      `${prefix}/pdf`,
+    );
+    await inspectPdf(pdfDownload, info, 'space-doc', { text: ['Native notes in a Space.'] });
     // Outer document services remain closed: activation never widens ordinary lookup.
     expect((await f.context.request.get(`/api/items/${sheet.id}/sheet`)).status()).toBe(404);
     expect((await f.context.request.get(`/api/items/${doc.id}/history`)).status()).toBe(404);
@@ -1429,6 +1449,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
     const inFlight = held.received();
     release();
     await expect.poll(held.returned).toBeGreaterThanOrEqual(inFlight);
+    expect(held.forwarded()).toBe(0);
     expect(nativeDocState(await nativeState(f.context, space.id, doc.id))).toEqual(
       nativeDocState(before),
     );
@@ -1440,7 +1461,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
       nativeDocState(before),
     );
     // A separate account and native instance reload the persisted state after
-    // every held write reached the server; the rescued draft never committed.
+    // every held write was fenced by its closed channel; the draft never committed.
     await f.page.goto(href(space.id, doc.id));
     await saved(f.page);
     expect(await copyDoc(f.page)).toBe('Persisted baseline.');
@@ -1571,6 +1592,7 @@ test('external child, ancestor and whole-Space Trash invalidates open native edi
     const inFlight = held.received();
     release();
     await expect.poll(held.returned).toBeGreaterThanOrEqual(inFlight);
+    expect(held.forwarded()).toBe(0);
     f.page.once('dialog', (dialog) => dialog.accept());
     await f.page.goto('about:blank');
     await held.drain();

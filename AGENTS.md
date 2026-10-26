@@ -45,8 +45,10 @@ that isn't waiting on another is next.
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or
   watermarks. Spinel is moving off Pro so nothing is watermarked: add no new
-  `@univerjs-pro` packages; SPN-059 and SPN-075 remove the rest. Owner, chat
-  2026-10-19.
+  `@univerjs-pro` packages. SPN-075 and SPN-059 replaced printing and collaboration;
+  `npm run dependencies:check` enforces the root/workspace manifest and lockfile
+  boundary in required CI. The separately installed pre-cutover checkout is only
+  for explicit offline retained-data export. Owner, chat 2026-10-19 and 2026-10-26.
 - **Code that replaces a Univer package lives in `lib/<name>/`**, so it could be
   published on its own later without extracting it: its own `package.json`
   (private until published), README and tests, one public `index.ts`, and no

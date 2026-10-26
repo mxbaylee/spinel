@@ -192,9 +192,6 @@ function EditorFixture({
         spaceId={current.spaceId}
         people={[]}
         saved={!dirty}
-        print={async () => {
-          throw new Error('Native printing is covered by browser tests.');
-        }}
       />
       <p className="sp-muted" style={{ marginBottom: 16 }}>
         {current.kind === 'doc' ? 'Doc' : 'Sheet'} body fixture · the application uses its native

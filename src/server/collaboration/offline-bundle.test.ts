@@ -438,7 +438,10 @@ test('a sync denial is 409 when the unit was replaced and 404 when access is gon
   const checkpoint = await history.nameCurrent(f.owner.id, f.doc.id, 'Before');
   const unit = f.collab.generations.active(f.doc.id).unitId;
   const stale = () =>
-    new CollaborationError('PERMISSION_DENIED', 'This version is no longer live. Reload to continue.');
+    new CollaborationError(
+      'PERMISSION_DENIED',
+      'This version is no longer live. Reload to continue.',
+    );
   // The sync service refuses a read of a unit that a restore replaced mid-read.
   vi.spyOn(f.collab, 'load').mockImplementationOnce(async () => {
     await history.restore(f.owner.id, f.doc.id, checkpoint.id, unit, randomUUID());

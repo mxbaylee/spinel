@@ -11,6 +11,9 @@ import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { syncSheetMenuFixture } from '../src/ui/syncSheetMenus.fixture.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { syncNetwork } from './sync-network.ts';
+import { assertDocSoakContent, docSoakInsertion } from './sync-soak-intent.ts';
+import type { DocSoakInsertion } from './sync-soak-intent.ts';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import {
   recordNativeSnapshots,
   expectNativeSnapshots,
@@ -23,6 +26,30 @@ const saved = (page: Page) =>
     timeout: 30_000,
   });
 const nativeInput = (page: Page) => page.locator('[contenteditable="true"][data-u-comp="editor"]');
+
+async function exportConfirmedPdf(
+  page: Page,
+  info: TestInfo,
+  kind: 'sheet' | 'doc',
+  text: string[],
+) {
+  await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Export', exact: true });
+  const download = await downloadPdf(
+    page,
+    dialog.getByRole('button', { name: 'Export as PDF', exact: true }),
+  );
+  // PDF preparation must read the same acknowledged native head as the new
+  // client, including reconnected edits and an image inserted through the UI.
+  await inspectPdf(download, info, `native-sync-${kind}`, {
+    text,
+    forbidden: ['Sync owner', 'Sync collaborator'],
+    ...(kind === 'doc' ? { image: true, colors: [[255, 153, 0]] } : {}),
+  });
+  await expect(dialog).toContainText('PDF download started.');
+}
+
 async function focusDoc(page: Page) {
   await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
   await nativeInput(page).focus();
@@ -303,6 +330,13 @@ test('native Sheets deliver within a second, rebase offline edits, and retry one
     await expectNativeSnapshots([f.page, f.other], committed);
     expect(await copyCell(f.page, 'A3')).toBe('one durable edit');
     expect(await copyCell(f.other, 'A3')).toBe('one durable edit');
+    await exportConfirmedPdf(f.page, info, 'sheet', [
+      '41',
+      '73',
+      'offline owner',
+      'online collaborator',
+      'one durable edit',
+    ]);
     expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
     expect(f.errors).toEqual([]);
   } finally {
@@ -416,6 +450,10 @@ test('native Docs preserve concurrent text and undo across reconnect, render pro
     await expectNativeSnapshots([f.page, f.other], committed);
     expect(await copyDoc(f.page)).toBe(await copyDoc(f.other));
     expect((await f.read()).snapshot.drawingsOrder).toEqual(committed.snapshot.drawingsOrder);
+    await exportConfirmedPdf(f.page, info, 'doc', [
+      'Owner Shared anchor CollaboratXX',
+      'after image',
+    ]);
     expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
     expect(f.errors).toEqual([]);
   } finally {
@@ -557,7 +595,12 @@ for (const mobile of [false, true]) {
     test.setTimeout(150_000);
     const f = await fixture(browser, baseURL!, info, 'sheet', mobile, syncSheetMenuFixture());
     const openSheetMenu = async (name: string) => {
-      const tab = f.page.getByRole('tab', { name, exact: mobile ? false : true });
+      const namedTab = f.page.getByRole('tab', { name, exact: true });
+      // The active mobile tab includes its menu button in its accessible name.
+      // Both names are exact so a newly copied tab cannot match the original.
+      const tab = mobile
+        ? namedTab.or(f.page.getByRole('tab', { name: `${name} Open sheet menu`, exact: true }))
+        : namedTab;
       await tab.click();
       if (mobile)
         await f.page.getByRole('button', { name: 'Open sheet menu', exact: true }).click();
@@ -662,14 +705,46 @@ for (const kind of ['sheet', 'doc'] as const) {
       let state = seed;
       const random = (limit: number) => {
         state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
-        return state % limit;
+        // The low bit alternates, which would make every owner edit go to End
+        // and every peer edit go to Home when two positions are chosen per round.
+        return Math.floor((state / 0x100000000) * limit);
       };
       const f = await fixture(browser, baseURL!, info, kind);
-      const expected = new Map<string, number>();
-      const tokens: string[] = [];
+      const expected = new Map<string, { value: number; formula?: string }>();
+      const docEdits: DocSoakInsertion[] = [];
+      const authored: object[] = [];
       const rounds = 150;
       let reconnects = 0,
         lostAcks = 0;
+      let completedRounds = 0;
+      let fullSnapshotCheckpoints = 0;
+      let authoredContentCheckpoints = 0;
+      let formulaDisplayChecks = 0;
+      let revision: number | undefined;
+      let completed = false;
+      const verifyIntent = async (snapshot: IWorkbookData & IDocumentData) => {
+        if (kind === 'sheet') {
+          const sheet = snapshot.sheets[snapshot.sheetOrder[0]];
+          for (const [address, intent] of expected) {
+            const column = address[0] === 'A' ? 0 : 1;
+            const cell = sheet.cellData?.[Number(address.slice(1)) - 1]?.[column];
+            if (intent.formula) expect(cell?.f, address).toBe(intent.formula);
+            else {
+              expect(cell?.f ?? null, address).toBeNull();
+              expect(cell?.v, address).toBe(intent.value);
+            }
+          }
+          // The server persists authored formulas, not browser calculation
+          // caches. Independently verify a computed result in both live views.
+          const formula = [...expected].findLast(([, intent]) => intent.formula);
+          if (formula)
+            for (const page of [f.page, f.other]) {
+              await expect.poll(() => copyCell(page, formula[0])).toBe(String(formula[1].value));
+              formulaDisplayChecks++;
+            }
+        } else assertDocSoakContent(snapshot.body!.dataStream, docEdits);
+        authoredContentCheckpoints++;
+      };
       try {
         await Promise.all([
           f.page.goto(`/?item=${f.item.id}`),
@@ -688,29 +763,33 @@ for (const kind of ['sheet', 'doc'] as const) {
             await Promise.all(
               [f.page, f.other].map((page, index) => {
                 const address = `${index === 0 ? 'A' : 'B'}${rows[index] + 1}`;
-                expected.set(address, values[index]);
-                return editCell(
-                  page,
-                  address,
-                  formulas[index] ? `=${values[index]}+0` : String(values[index]),
-                );
+                const formula = formulas[index] ? `=${values[index]}+0` : undefined;
+                const input = formula ?? String(values[index]);
+                expected.set(address, { value: values[index], formula });
+                authored.push({ round, author: index === 0 ? 'owner' : 'peer', address, input });
+                return editCell(page, address, input);
               }),
             );
           } else {
-            const additions = [
-              `[owner-${round.toString().padStart(3, '0')}]`,
-              `[peer-${round.toString().padStart(3, '0')}]`,
-            ];
-            tokens.push(...additions);
+            const additions = (['owner', 'peer'] as const).map((author) =>
+              docSoakInsertion(round, author),
+            );
+            docEdits.push(...additions);
             const positions = [random(2), random(2)];
             await Promise.all(
               [f.page, f.other].map(async (page, index) => {
+                authored.push({
+                  round,
+                  ...additions[index],
+                  position: positions[index] ? 'end' : 'start',
+                });
                 await nativeInput(page).focus();
                 await page.keyboard.press(positions[index] ? 'Control+End' : 'Control+Home');
-                await page.keyboard.insertText(additions[index]);
+                await page.keyboard.insertText(additions[index].text);
               }),
             );
           }
+          completedRounds = round + 1;
           if (round % 30 === 8) {
             await f.network.setOffline(false);
             reconnects++;
@@ -723,50 +802,53 @@ for (const kind of ['sheet', 'doc'] as const) {
           if (round % 10 === 9) {
             await Promise.all([saved(f.page), saved(f.other)]);
             const checkpoint = await f.read();
+            revision = checkpoint.revision;
             await expectNativeSnapshots([f.page, f.other], checkpoint);
-            if (kind === 'sheet') {
-              const sheet = checkpoint.snapshot.sheets[checkpoint.snapshot.sheetOrder[0]];
-              for (const [address, value] of expected) {
-                const column = address[0] === 'A' ? 0 : 1;
-                expect(sheet.cellData?.[Number(address.slice(1)) - 1]?.[column]?.v, address).toBe(
-                  value,
-                );
-              }
-            } else {
-              const stream = checkpoint.snapshot.body!.dataStream;
-              for (const token of tokens) expect(stream.split(token).length - 1, token).toBe(1);
-            }
+            fullSnapshotCheckpoints++;
+            await verifyIntent(checkpoint.snapshot);
           }
         }
         await Promise.all([saved(f.page), saved(f.other)]);
         const committed = await f.read();
+        revision = committed.revision;
         await Promise.all([f.page.reload(), f.other.reload()]);
         await Promise.all([saved(f.page), saved(f.other)]);
         await expectNativeSnapshots([f.page, f.other], committed);
+        fullSnapshotCheckpoints++;
+        await verifyIntent(committed.snapshot);
         expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
         expect(f.otherNetwork.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
         expect(f.errors).toEqual([]);
-        await writeFile(
-          info.outputPath(`spn-059-${kind}-soak.json`),
-          JSON.stringify(
-            {
-              seed,
-              rounds,
-              authoredEdits: rounds * 2,
-              reconnects,
-              lostAcks,
-              revision: committed.revision,
-              outgoingSubmissions: [f.network, f.otherNetwork].map(
-                (wire) => wire.outgoing.filter((frame) => frame.type === 'submit').length,
-              ),
-              fullSnapshotCheckpoints: rounds / 10 + 1,
-            },
-            null,
-            2,
-          ),
-        );
+        completed = true;
       } finally {
-        await f.close();
+        try {
+          await writeFile(
+            info.outputPath(`spn-059-${kind}-soak.json`),
+            JSON.stringify(
+              {
+                seed,
+                rounds,
+                completed,
+                completedRounds,
+                authoredEdits: completedRounds * 2,
+                reconnects,
+                lostAcks,
+                revision,
+                outgoingSubmissions: [f.network, f.otherNetwork].map(
+                  (wire) => wire.outgoing.filter((frame) => frame.type === 'submit').length,
+                ),
+                fullSnapshotCheckpoints,
+                authoredContentCheckpoints,
+                formulaDisplayChecks,
+                authored,
+              },
+              null,
+              2,
+            ),
+          );
+        } finally {
+          await f.close();
+        }
       }
     },
   );

@@ -380,7 +380,13 @@ test('Space MCP final commit rejects root grant, token, owner, downgrade and anc
     await Promise.resolve();
     invalidate?.();
   });
-  const transport = attachSync(createServer(), express(), f.workspace, f.collab, 'http://localhost');
+  const transport = attachSync(
+    createServer(),
+    express(),
+    f.workspace,
+    f.collab,
+    'http://localhost',
+  );
   cleanup.push(() => transport.close());
   for (const reason of ['grant', 'token', 'owner', 'downgrade', 'ancestry'] as const) {
     const editor = f.credentials(f.editor.id);

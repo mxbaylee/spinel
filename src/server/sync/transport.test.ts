@@ -181,9 +181,15 @@ async function fixture() {
 test('the native protocol is available by default and the old protocol is retired', async () => {
   const f = await fixture();
   await f.prepare();
-  expect((await f.send(`${f.prefix}/ticket?unitId=${f.sheet.id}`, f.cookie(), 'POST')).status).toBe(200);
-  expect((await f.send(`/universer-api/snapshot/2/unit/${f.sheet.id}/rev/0`, f.cookie())).status).toBe(404);
-  expect(f.db.prepare("SELECT 1 FROM sqlite_master WHERE name='spinel_sync_units'").get()).toBeTruthy();
+  expect((await f.send(`${f.prefix}/ticket?unitId=${f.sheet.id}`, f.cookie(), 'POST')).status).toBe(
+    200,
+  );
+  expect(
+    (await f.send(`/universer-api/snapshot/2/unit/${f.sheet.id}/rev/0`, f.cookie())).status,
+  ).toBe(404);
+  expect(
+    f.db.prepare("SELECT 1 FROM sqlite_master WHERE name='spinel_sync_units'").get(),
+  ).toBeTruthy();
 });
 
 test('two real sockets converge through durable ordering, retry, divergence resync and no duplicate broadcasts', async () => {

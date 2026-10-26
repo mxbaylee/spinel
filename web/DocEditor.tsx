@@ -18,11 +18,6 @@ import {
 import { documentPath } from './documentAccess.ts';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
-import { printDocument } from './documentPrint.ts';
-import { UniverDocsPrintPlugin } from '@univerjs-pro/docs-print';
-import { UniverLicensePlugin } from '@univerjs-pro/license';
-import printEnglish from '@univerjs-pro/docs-print/locale/en-US';
-import '@univerjs-pro/docs-print/lib/index.css';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
 import { setDocumentPermissionValue } from '@univerjs/docs';
@@ -103,7 +98,6 @@ export function DocEditor({
     selection?: DocFormulaSelection;
   } | null>(null);
   const canEditFormulas = useRef(false);
-  const print = useRef<(() => Promise<void>) | null>(null);
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
@@ -257,7 +251,7 @@ export function DocEditor({
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
-          [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, printEnglish),
+          [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS),
         },
         override: [...nativePermissions.override, [IImageIoService, { useClass: StoredImages }]],
         plugins: [
@@ -272,9 +266,6 @@ export function DocEditor({
           UniverDocsDrawingPlugin,
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
-          UniverDocsPrintPlugin,
-          // Retained only for the print plugin until SPN-075.
-          UniverLicensePlugin,
         ],
         presets: [
           UniverDocsCorePreset({
@@ -296,9 +287,6 @@ export function DocEditor({
           UniverDocsHyperLinkPreset(),
         ],
       });
-      print.current = async () => {
-        await printDocument(univerAPI);
-      };
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
         disposeSpinelSync(univer);
@@ -461,10 +449,6 @@ export function DocEditor({
         spaceId={spaceId}
         people={people}
         saved={!status.dirty && !status.failed && Boolean(controller.current)}
-        print={async () => {
-          if (!print.current) throw new Error('Wait for the document to load.');
-          await print.current();
-        }}
         insertFormula={
           editable
             ? () => {

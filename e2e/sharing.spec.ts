@@ -283,14 +283,19 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     expect(errors).toEqual([]);
   } finally {
     releasePending();
-    await second.close();
-    while (db.prepare('SELECT id FROM workspace_items WHERE owner_id=?').get(owner.id)) {
-      db.prepare(
-        'DELETE FROM workspace_items WHERE owner_id=? AND id NOT IN (SELECT parent_id FROM workspace_items WHERE parent_id IS NOT NULL)',
-      ).run(owner.id);
+    network.interceptWrites(undefined);
+    try {
+      await network.drainWrites();
+    } finally {
+      await second.close();
+      while (db.prepare('SELECT id FROM workspace_items WHERE owner_id=?').get(owner.id)) {
+        db.prepare(
+          'DELETE FROM workspace_items WHERE owner_id=? AND id NOT IN (SELECT parent_id FROM workspace_items WHERE parent_id IS NOT NULL)',
+        ).run(owner.id);
+      }
+      for (const id of [owner.id, collaborator.id])
+        db.prepare('DELETE FROM auth_users WHERE id=?').run(id);
+      db.close();
     }
-    for (const id of [owner.id, collaborator.id])
-      db.prepare('DELETE FROM auth_users WHERE id=?').run(id);
-    db.close();
   }
 });

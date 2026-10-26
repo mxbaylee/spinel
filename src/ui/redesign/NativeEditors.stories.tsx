@@ -111,13 +111,12 @@ function inspectCopyMenu(available: boolean): NonNullable<Story['play']> {
       },
       { timeout: 30_000 },
     );
-    const mobile = canvas.queryByRole('button', { name: 'Open sheet menu', exact: true });
+    const mobile = canvas.queryByRole('button', { name: 'Open sheet menu' });
     if (mobile) await userEvent.click(mobile);
     else
       await userEvent.pointer({
         target: canvas.getByRole('tab', {
           name: available ? 'Small sheet' : 'Large sheet',
-          exact: true,
         }),
         keys: '[MouseRight]',
       });

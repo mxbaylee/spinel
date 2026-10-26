@@ -45,7 +45,11 @@ function fixture(count: number) {
   });
   cleanups.push(() => univer.dispose());
   const injector = univer.__getInjector();
-  injector.add([IMenuManagerService, { useValue: { updateMenuConfig } as IMenuManagerService }]);
+  const menus: Pick<IMenuManagerService, 'updateMenuConfig'> = { updateMenuConfig };
+  injector.add<Pick<IMenuManagerService, 'updateMenuConfig'>>([
+    IMenuManagerService,
+    { useValue: menus },
+  ]);
   injector.get(ILogService).setLogLevel(LogLevel.SILENT);
   univer.registerPlugin(UniverRenderEnginePlugin);
   univer.registerPlugin(UniverSheetsPlugin);

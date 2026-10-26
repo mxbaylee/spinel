@@ -3,7 +3,8 @@ import type { BrowserContext, WebSocketRoute } from '@playwright/test';
 export interface NativeWrite {
   /** False means this exact server connection was already closed. */
   forward(): boolean;
-  disconnect(): void;
+  /** False means there was no live captured connection left to interrupt. */
+  disconnect(): boolean;
 }
 const networks = new WeakMap<BrowserContext, Promise<Awaited<ReturnType<typeof install>>>>();
 
@@ -61,18 +62,27 @@ async function install(context: BrowserContext) {
         losing = frame.mutationId;
       }
       if (frame.type === 'submit' && intercept) {
-        const task = Promise.resolve().then(() => intercept?.({
-          forward: () => {
-            if (!sockets.has(connection)) return false;
-            server.send(message);
-            return true;
-          },
-          disconnect: () => {
-            sockets.delete(connection);
-            void client.close();
-            void server.close();
-          },
-        })).catch((error) => { failures.push(error); }).finally(() => pending.delete(task));
+        const handler = intercept;
+        const task = Promise.resolve()
+          .then(() =>
+            handler({
+              forward: () => {
+                if (!sockets.has(connection)) return false;
+                server.send(message);
+                return true;
+              },
+              disconnect: () => {
+                if (!sockets.delete(connection)) return false;
+                void client.close();
+                void server.close();
+                return true;
+              },
+            }),
+          )
+          .catch((error) => {
+            failures.push(error);
+          })
+          .finally(() => pending.delete(task));
         pending.add(task);
       } else server.send(message);
     });
@@ -112,7 +122,7 @@ async function install(context: BrowserContext) {
       intercept = handler;
     },
     async drainWrites() {
-      await Promise.all([...pending]);
+      await Promise.all(pending);
       if (failures.length) throw new AggregateError(failures, 'Native write interception failed.');
     },
     setOffline,

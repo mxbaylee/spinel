@@ -9,6 +9,8 @@ export interface SheetGeometry {
   columns: Float64Array;
   /** Cell/merge extent only. Native text overflow and image extents must augment it. */
   cellBounds: PrintBox | null;
+  /** Visible merged row extents; ordinary-sized merges prefer one complete page. */
+  mergeSpans: { top: number; bottom: number }[];
   visibleGridCells: number;
 }
 
@@ -264,6 +266,7 @@ export function preflightSheetsBefore(
       startColumn: number;
       endColumn: number;
     }[] = [];
+    const mergeSpans: SheetGeometry['mergeSpans'] = [];
     for (const mergeValue of sheet.mergeData ?? []) {
       check();
       if (++merges > limits.merges)
@@ -298,6 +301,8 @@ export function preflightSheetsBefore(
       if (mergeCells > limits.mergeCells)
         throw new PrintError('limit', 'PDF merges exceed their index budget.');
       addRange(startRow, endRow, startColumn, endColumn);
+      if (columns[endColumn + 1] > columns[startColumn] && rows[endRow + 1] > rows[startRow])
+        mergeSpans.push({ top: rows[startRow], bottom: rows[endRow + 1] });
     }
     let visibleRows = 0;
     let visibleColumns = 0;
@@ -318,7 +323,7 @@ export function preflightSheetsBefore(
     gridCells += visibleGridCells;
     if (gridCells > limits.gridCells)
       throw new PrintError('limit', 'PDF visible grid exceeds its layout budget.');
-    result.push({ id, rows, columns, cellBounds: bounds, visibleGridCells });
+    result.push({ id, rows, columns, cellBounds: bounds, mergeSpans, visibleGridCells });
   }
   if (!result.length) invalid('PDF selection contains no visible worksheets.');
   check();
@@ -331,6 +336,7 @@ export function paginateSheet(
   bounds: PrintBox | null,
   mediaBox: { width: number; height: number },
   pageLimit: number,
+  geometry?: { rows: Float64Array; spans: readonly { top: number; bottom: number }[] },
 ): SheetPrintPage[] {
   const margin = 36; // 12.7 mm at 72 PDF points/inch.
   if (
@@ -359,13 +365,83 @@ export function paginateSheet(
   const count = Math.max(1, Math.ceil(height / sliceHeight));
   if (!Number.isFinite(count) || count > pageLimit)
     throw new PrintError('limit', 'PDF exceeds its page budget.');
-  return Array.from({ length: count }, (_, index) => ({
-    sheetId,
-    scale,
-    source: {
-      ...source,
-      top: source.top + sliceHeight * index,
-      bottom: Math.min(source.bottom, source.top + sliceHeight * (index + 1)),
-    },
-  }));
+  const rows = geometry?.rows ?? new Float64Array();
+  if (!(rows instanceof Float64Array) || rows.length > PRINT_LIMITS.rows + 1)
+    invalid('Invalid PDF row break geometry.');
+  for (let index = 0; index < rows.length; index++)
+    if (
+      !Number.isFinite(rows[index]) ||
+      rows[index] < 0 ||
+      rows[index] > (PRINT_LIMITS.rows + 1) * 100_000 ||
+      (index > 0 && rows[index] < rows[index - 1])
+    )
+      invalid('Invalid PDF row break geometry.');
+  const spans = geometry?.spans ?? [];
+  if (!Array.isArray(spans) || spans.length > PRINT_LIMITS.merges + PRINT_LIMITS.images)
+    invalid('Invalid PDF object break geometry.');
+  // Binary lookup preserves native raw indices and repeated hidden-row edges.
+  // A coordinate already on an edge is a valid cut, not a partial next row.
+  const containingRow = (value: number) => {
+    let low = 0,
+      high = rows.length;
+    while (low < high) {
+      const middle = Math.floor((low + high) / 2);
+      if (rows[middle] < value) low = middle + 1;
+      else high = middle;
+    }
+    return low > 0 && low < rows.length && rows[low] !== value
+      ? { top: rows[low - 1], bottom: rows[low] }
+      : undefined;
+  };
+  const whole: { top: number; bottom: number }[] = [];
+  for (const span of spans) {
+    if (
+      !span ||
+      ![span.top, span.bottom].every(
+        (value) => Number.isFinite(value) && Math.abs(value) <= (PRINT_LIMITS.rows + 1) * 100_000,
+      ) ||
+      span.bottom < span.top
+    )
+      invalid('Invalid PDF object break geometry.');
+    if (span.bottom <= span.top || span.bottom - span.top > sliceHeight) continue;
+    const first = containingRow(span.top),
+      last = containingRow(span.bottom);
+    const top = Math.max(
+      source.top,
+      first && first.bottom - first.top <= sliceHeight ? first.top : span.top,
+    );
+    const bottom = Math.min(
+      source.bottom,
+      last && last.bottom - last.top <= sliceHeight ? last.bottom : span.bottom,
+    );
+    if (bottom > top && bottom - top <= sliceHeight) whole.push({ top, bottom });
+  }
+  // Overlapping objects cannot be kept separately without cutting their shared
+  // source region. Preserve a connected group when it fits; oversized groups
+  // keep the existing exact continuation clips, with ordinary row cuts preferred.
+  whole.sort((a, b) => a.top - b.top || a.bottom - b.bottom);
+  const groups: typeof whole = [];
+  for (const span of whole) {
+    const previous = groups.at(-1);
+    if (previous && span.top < previous.bottom)
+      previous.bottom = Math.max(previous.bottom, span.bottom);
+    else groups.push({ ...span });
+  }
+  const keep = groups.filter((span) => span.bottom - span.top <= sliceHeight);
+  const pages: SheetPrintPage[] = [];
+  let top = source.top;
+  do {
+    if (pages.length >= pageLimit) throw new PrintError('limit', 'PDF exceeds its page budget.');
+    let bottom = Math.min(source.bottom, top + sliceHeight);
+    if (bottom < source.bottom) {
+      const row = containingRow(bottom);
+      if (row && row.bottom - row.top <= sliceHeight && row.top > top) bottom = row.top;
+      const group = keep.find((span) => span.top < bottom && span.bottom > bottom);
+      if (group && group.top > top) bottom = group.top;
+    }
+    if (bottom <= top && source.bottom > source.top) invalid('Invalid PDF page continuation.');
+    pages.push({ sheetId, scale, source: { ...source, top, bottom } });
+    top = bottom;
+  } while (top < source.bottom);
+  return pages;
 }

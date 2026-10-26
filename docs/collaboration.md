@@ -8,12 +8,14 @@ in `@spinel/sync-transform`, `@spinel/sync-client` and `@spinel/sync-server`.
 
 The [SPN-056 integrated review](implementation/SPN-056.md#integrated-verification-2026-10-26)
 records accepted conflict/refusal and undo policies. [SPN-059](implementation/SPN-059.md)
-records activation, retained-data transition and verification. Print dependencies
-are a separate SPN-075 transition. If SPN-059 lands first, the old Sheet print
-package still installs transitive collaboration packages; SPN-075 must remove them
-and the license and enforce the final no-Pro check. If SPN-075 lands first,
-SPN-059 finalizes removal. The [owner-approved sequencing](implementation/SPN-059.md#coordinate-the-two-pro-removal-prs)
-retains the existing Print capability while the PRs proceed independently.
+records activation, retained-data transition and verification. SPN-075 supplies
+native PDF export. The application has no Univer Pro dependency or license
+registration. `npm run dependencies:check`, enforced by the required Lint gate,
+checks dependency declarations in the root and every workspace plus the complete
+resolved lockfile, including aliases and transitive packages. The independently
+installed legacy checkout used by the offline exporter remains outside this graph.
+The [integration decision](implementation/SPN-059.md#coordinate-the-two-pro-removal-prs)
+records how the two replacement PRs were combined.
 
 ## Storage and retained-data transition
 

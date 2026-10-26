@@ -13,7 +13,7 @@ import { realpathSync } from 'node:fs';
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { CollaborationError } from './errors.ts';
-import { assertSyncTransitionReady } from '../sync/transition.ts';
+import { assertSyncTransitionReady, markNativeSyncActivated } from '../sync/transition.ts';
 import { AuthError } from '../auth/store.ts';
 import { AccessTokens } from '../auth/tokens.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
@@ -112,6 +112,7 @@ export class CollaborationStore {
     if (!main?.file || realpathSync(String(main.file)) !== realpathSync(filename))
       throw new Error('Collaboration must use the application database file.');
     assertSyncTransitionReady(workspace.auth.database);
+    markNativeSyncActivated(workspace.auth.database);
     this.workspace = workspace;
     new AccessTokens(workspace.auth);
     this.generations = new CollaborationGenerations(workspace);

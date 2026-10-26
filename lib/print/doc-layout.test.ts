@@ -11,6 +11,55 @@ const summary = (value: unknown) =>
   JSON.stringify(value, (key, item) => (key === 'bytes' ? '<bytes>' : item));
 const compact = (text: string) => text.replace(/\s+/gu, '');
 
+test('terminal font padding does not add a page while authored blank and border endings survive', async () => {
+  const lines = Array.from(
+    { length: 13 },
+    (_, index) => `TAIL-${String(index).padStart(2, '0')}-END`,
+  );
+  const plain = textDoc(lines, { pageSize: { width: 600, height: 396 } });
+  const blank = textDoc([...lines, ''], plain.documentStyle);
+  const explicit = textDoc([...lines, '\f'], {
+    ...plain.documentStyle,
+    pageSize: { width: 600, height: 400 },
+  });
+  const bordered = structuredClone(plain);
+  bordered.body!.paragraphs!.at(-1)!.paragraphStyle = {
+    borderBottom: { color: { rgb: '#5522bb' }, width: 6, padding: 2, dashStyle: 0 },
+  };
+  const results = await runDocJobs(
+    await Promise.all(
+      [plain, blank, explicit, bordered].map(async (snapshot) => ({
+        input: await docInput(snapshot),
+      })),
+    ),
+  );
+  for (const [index, result] of results.entries()) {
+    expect(result, summary(result)).toMatchObject({
+      ok: true,
+      pages: index === 0 ? 1 : 2,
+      restored: true,
+      remainingFonts: 0,
+    });
+    const pages = await retainDocPdf(`terminal-native-extent-${index}`, result.bytes!);
+    const text = compact(pages.map((page) => page.text).join(' '));
+    for (const line of lines) expect(text.split(line)).toHaveLength(2);
+    if (index === 1 || index === 2)
+      expect(pages.at(-1)!.pixels.every((value, offset) => offset % 4 === 3 || value === 255)).toBe(
+        true,
+      );
+    if (index === 3) {
+      let borderPixels = 0;
+      for (const page of pages)
+        for (let offset = 0; offset < page.pixels.length; offset += 4) {
+          const [r, g, b] = page.pixels.slice(offset, offset + 3);
+          if (Math.abs(r - 85) < 3 && Math.abs(g - 34) < 3 && Math.abs(b - 187) < 3) borderPixels++;
+        }
+      expect(borderPixels).toBeGreaterThan(1_500);
+      expect(pages.at(-1)!.text).toContain(lines.at(-1)!);
+    }
+  }
+}, 60_000);
+
 test('literal form feeds create distinct physical boundaries without repeated text', async () => {
   const input = await docInput(
     textDoc(['BEFOREBREAK', '\fAFTERFIRSTBREAK', '\fAFTERSECONDBREAK'], {

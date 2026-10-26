@@ -22,7 +22,7 @@ import { PrintError, printCheckpoint, printLimits } from './contract.ts';
 import type { PreparedFont, PreparedImage, PrintBox, SheetPrintOptions } from './contract.ts';
 import { PreparedFonts } from './fonts.ts';
 import { prepareSheetLayout, replanSheetPages } from './layout.ts';
-import { drawPreparedImage } from './image-render.ts';
+import { drawPreparedGroupedImage } from './image-groups.ts';
 import { unionBox } from './preflight.ts';
 import { measureSheetInk, prepareCellText, PrintSkeleton } from './text.ts';
 import { PrintWorksheet } from './worksheet.ts';
@@ -243,10 +243,12 @@ export async function renderSheetPdfCandidate(
           spreadsheet.draw(new PdfContext(raw as unknown as CanvasRenderingContext2D), view);
           for (const image of page.images) {
             check();
-            drawPreparedImage(
+            drawPreparedGroupedImage(
               new PdfContext(raw as unknown as CanvasRenderingContext2D),
-              decoded.get(image.source)!,
+              decoded,
               image,
+              layout.imageGroups,
+              layout.visitImage,
             );
           }
           raw.globalAlpha = 1;

@@ -53,7 +53,9 @@ test('legacy SDK HTTP routes and sockets cannot remain a second read or write pa
   expect((await f.open({ ticket: token, prefix: '/universer-api/comb/connect' })).status).toBe(403);
   const client = await f.connect({ ticket: token });
   expect((await f.submit(client, 'Only the native path commits'))?.type).toBe('ack');
-  expect((await (await f.snapshot()).json()).snapshot.sheets.first.cellData[0][0].v).toBe('Only the native path commits');
+  expect((await (await f.snapshot()).json()).snapshot.sheets.first.cellData[0][0].v).toBe(
+    'Only the native path commits',
+  );
 }, 30_000);
 
 test('native sockets reject viewer and revoked writes, audit without content, and cannot join a second document', async () => {
@@ -65,13 +67,25 @@ test('native sockets reject viewer and revoked writes, audit without content, an
   const viewer = await f.connect({ credential: f.cookie(f.viewer.id) });
   expect((await f.submit(viewer, 'never persist this payload'))?.type).toBe('resync');
   expect(await (await f.snapshot()).json()).toEqual(baseline);
-  const events = audit.mock.calls.filter(call => String(call[0]).includes('collaboration.edit_denied')).map(call => JSON.parse(String(call[0])));
-  expect(events[0]).toMatchObject({ userID: f.viewer.id, unitID: f.sheet.id, stage: 'submitChangeset' });
+  const events = audit.mock.calls
+    .filter((call) => String(call[0]).includes('collaboration.edit_denied'))
+    .map((call) => JSON.parse(String(call[0])));
+  expect(events[0]).toMatchObject({
+    userID: f.viewer.id,
+    unitID: f.sheet.id,
+    stage: 'submitChangeset',
+  });
   expect(JSON.stringify(audit.mock.calls)).not.toContain('never persist this payload');
   expect(JSON.stringify(audit.mock.calls)).not.toContain(f.sessions.get(f.viewer.id)!.token);
-  expect(JSON.stringify(audit.mock.calls)).not.toContain(f.sessions.get(f.viewer.id)!.session.token_hash);
+  expect(JSON.stringify(audit.mock.calls)).not.toContain(
+    f.sessions.get(f.viewer.id)!.session.token_hash,
+  );
   viewer.socket.send(JSON.stringify({ type: 'join', unitId: f.doc.id }));
-  await expect.poll(() => viewer.messages.some(frame => frame.type === 'resync' && frame.reason === 'malformed')).toBe(true);
+  await expect
+    .poll(() =>
+      viewer.messages.some((frame) => frame.type === 'resync' && frame.reason === 'malformed'),
+    )
+    .toBe(true);
   expect(JSON.stringify(viewer.messages)).not.toContain(f.doc.name);
   const editor = await f.connect({ credential: f.cookie(f.editor.id) });
   expect((await f.submit(editor, 'authorized raw edit'))?.type).toBe('ack');

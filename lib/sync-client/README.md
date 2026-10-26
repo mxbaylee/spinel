@@ -137,6 +137,13 @@ generation fence discards verification results invalidated by a newer edit,
 connection change or disposal. The server receives `verify` and decides whether
 the authoritative hash agrees.
 
+For a cell with a native formula or shared-formula identity, its calculated `v`
+is a local cache and does not enter this authored-content hash. Formula text,
+shared identity, array metadata, styles, rich text and custom metadata still do.
+Ordinary values remain hashed, including cells with array metadata but no formula
+identity. Pinned Univer supplies array spill values through its display
+interceptor; they do not replace ordinary raw values in the saved snapshot.
+
 An optional `persist(checkpoint)` hook receives the confirmed snapshot, revision,
 immutable sent envelope, rebased inflight and buffered groups. The immutable
 request reaches the hook before its first send. Writes are serialized and create

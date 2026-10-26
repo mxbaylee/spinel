@@ -1,19 +1,18 @@
 import { useState } from 'react';
 import { documentPath } from './documentAccess.ts';
+import { PdfExport } from './PdfExport.tsx';
 import './fileDialog.css';
 
 export function FileExports({
   id,
   name,
   saved,
-  print,
   spaceId,
   embedded = false,
 }: {
   id: string;
   name: string;
   saved: boolean;
-  print: () => Promise<void>;
   spaceId?: string;
   embedded?: boolean;
 }) {
@@ -42,26 +41,14 @@ export function FileExports({
   };
   const content = (
     <>
-      <p>Univer files keep editable content and document images, up to 20 MiB.</p>
-      <button disabled={!saved || busy} onClick={() => void download()}>
-        Download Univer file
-      </button>
-      <p>
-        For PDF, choose Save as PDF in the print dialog. Univer may limit printed pages depending on
-        the license.
-      </p>
-      <button
-        disabled={!saved || busy}
-        onClick={() => {
-          setError('');
-          void print().catch((cause) =>
-            setError(cause instanceof Error ? cause.message : 'Could not open printing.'),
-          );
-        }}
-      >
-        Print / save PDF
-      </button>
-      {!saved && <p>Wait until changes are saved before exporting.</p>}
+      <PdfExport id={id} name={name} spaceId={spaceId} saved={saved} />
+      <section className="file-dialog" aria-label="Editable file export">
+        <h3>Editable file</h3>
+        <p>Univer files keep editable content and document images, up to 20 MiB.</p>
+        <button disabled={!saved || busy} onClick={() => void download()}>
+          Download Univer file
+        </button>
+      </section>
       {error && <p role="alert">{error}</p>}
     </>
   );

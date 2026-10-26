@@ -4,6 +4,7 @@ import {
   DocumentFlavor,
   NAMED_STYLE_MAP,
   NamedStyleType,
+  NumberUnitType,
   PresetListType,
   resolveDocumentParagraphStyle,
 } from '@univerjs/core';
@@ -235,7 +236,7 @@ test('Formula arrays become complete native tables with every row and wrapped/mu
   expect(snapshot.body!.dataStream).toContain('PRIVATE SOURCE EXPRESSION');
 });
 
-test('Formula scalar and unavailable results work inside native cells while nested table results fail explicitly', () => {
+test('Formula scalar, unavailable and complete table results project inside native cells', () => {
   const expression = 'PRIVATE NESTED EXPRESSION';
   const base = formula({ kind: 'table', rows: [[expression]] });
   const snapshot = prepare(base.snapshot, base.formulas);
@@ -262,10 +263,32 @@ test('Formula scalar and unavailable results work inside native cells while nest
     expect(Object.keys(projected.tableSource!)).toHaveLength(1);
   }
   for (const kind of ['array', 'table'] as const) {
-    expect(() =>
-      prepare(snapshot, [{ rangeId: 'nested', result: { kind, rows: [['NESTED VALUE']] } }]),
-    ).toThrow('Nested PDF Formula tables');
+    const projected = prepare(snapshot, [
+      { rangeId: 'nested', result: { kind, rows: [['NESTED VALUE']] } },
+    ]);
+    expect(Object.keys(projected.tableSource!)).toHaveLength(2);
+    const nestedRange = projected.body!.tables![1];
+    expect(projected.tableSource![nestedRange.tableId].size.width).toEqual({
+      v: 100,
+      u: NumberUnitType.PERCENT,
+    });
+    expect(projected.body!.dataStream).toContain('NESTED VALUE');
+    expect(JSON.stringify(projected)).not.toContain('PRIVATE');
   }
+  const explicit = prepare(snapshot, [
+    {
+      rangeId: 'nested',
+      result: {
+        kind: 'table',
+        rows: [['NESTED VALUE']],
+        columnWidths: [120],
+      },
+    },
+  ]);
+  expect(explicit.tableSource![explicit.body!.tables![1].tableId].size.width).toEqual({
+    v: 120,
+    u: 3,
+  });
   expect(snapshot.body!.dataStream).toContain(expression);
 });
 
@@ -462,7 +485,7 @@ test('native table tree, merge coverage and payload integrity are checked before
   expect(() => prepare(projected)).toThrow(PrintError);
 });
 
-test('unsupported appearance and heterogeneous section geometry fail without changing source', () => {
+test('unsupported appearance and malformed section geometry fail without changing source', () => {
   for (const mutate of [
     (source: IDocumentData) => {
       source.resources = [{ name: 'unknown', data: '{"private":1}' }];
@@ -478,13 +501,17 @@ test('unsupported appearance and heterogeneous section geometry fail without cha
         {
           sectionId: 'second',
           startIndex: source.body!.dataStream.length - 1,
-          pageSize: { width: 800, height: 800 },
+          pageSize: { width: 80, height: 800 },
         },
       ];
     },
     (source: IDocumentData) => {
       source.body!.sectionBreaks = [
-        { sectionId: 'odd', startIndex: source.body!.dataStream.length - 1, sectionType: 5 },
+        {
+          sectionId: 'columns',
+          startIndex: source.body!.dataStream.length - 1,
+          columnProperties: [{ width: -1, paddingEnd: 12 }],
+        },
       ];
     },
   ]) {
