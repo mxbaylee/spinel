@@ -414,6 +414,7 @@ function nativeDiagnostics(page: Page, phase: () => string) {
 }
 async function holdNativeWrites(context: BrowserContext) {
   let release = () => {};
+  let disconnect = () => false;
   const held = new Promise<void>((done) => {
     release = done;
   });
@@ -422,6 +423,7 @@ async function holdNativeWrites(context: BrowserContext) {
   const network = await syncNetwork(context);
   network.interceptWrites(async (write) => {
     received++;
+    disconnect = write.disconnect;
     await held;
     // A revoked connection is closed. A live one forwards to the real server;
     // callers compare authoritative state, never treating forwarding as commit.
@@ -429,6 +431,7 @@ async function holdNativeWrites(context: BrowserContext) {
   });
   return {
     release,
+    disconnect: () => disconnect(),
     received: () => received,
     returned: () => forwarded.length,
     forwarded: () => forwarded.filter(Boolean).length,
@@ -1379,6 +1382,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
   test.setTimeout(120_000);
   const f = await fixture(browser, info);
   let release = () => {};
+  let releaseResume = () => {};
   let drain = async () => {};
   try {
     const { space, child } = seed(f, 'Private recovery notebook');
@@ -1395,12 +1399,24 @@ test('revocation clears private Space navigation while retaining unsaved native 
     expect(await copyDoc(editor.page)).toBe('Persisted baseline.');
     const before = await nativeState(f.context, space.id, doc.id);
     const held = await holdNativeWrites(editor.context);
+    const network = await syncNetwork(editor.context);
     release = held.release;
+    releaseResume = network.releaseResume;
     drain = held.drain;
     await focusDoc(editor.page);
     await editor.page.keyboard.press('Control+End');
     await editor.page.keyboard.type(' Unsaved words to rescue.');
     await expect.poll(held.received).toBeGreaterThan(0);
+    // Fail this actual unconfirmed submit, then hold the replacement room's
+    // response so automatic reconnection cannot remove Retry mid-assertion.
+    network.holdResume();
+    expect(held.disconnect()).toBe(true);
+    await expect.poll(network.resumeHeld).toBe(true);
+    const connection = editor.page.getByRole('status', {
+      name: 'Connection status',
+      exact: true,
+    });
+    await expect(connection).toHaveText('Reconnecting');
     const status = editor.page.getByRole('status', { name: 'Save status', exact: true });
     await expect(status).toContainText('not saved');
     await editor.page.getByRole('button', { name: 'Save details: Not saved', exact: true }).click();
@@ -1408,6 +1424,13 @@ test('revocation clears private Space navigation while retaining unsaved native 
       editor.page.getByRole('button', { name: 'Retry saving', exact: true }),
     ).toBeVisible();
     await editor.page.keyboard.press('Escape');
+    // Re-enter a real live room and capture its retry before revocation. The
+    // zero-forwarding proof below must cover this new channel, not just the one
+    // deliberately closed to establish the failed-save state above.
+    const beforeResume = held.received();
+    releaseResume();
+    await expect.poll(held.received).toBeGreaterThan(beforeResume);
+    await expect(connection).toHaveText('Online');
     // A File admin can have a private rename draft open when the grant disappears.
     await editor.page.getByRole('button', { name: `Rename ${doc.name}`, exact: true }).click();
     await expect(editor.page.getByRole('textbox', { name: 'Document name' })).toHaveValue(doc.name);
@@ -1467,6 +1490,7 @@ test('revocation clears private Space navigation while retaining unsaved native 
     expect(await copyDoc(f.page)).toBe('Persisted baseline.');
     expect(f.errors).toEqual([]);
   } finally {
+    releaseResume();
     release();
     try {
       await drain();

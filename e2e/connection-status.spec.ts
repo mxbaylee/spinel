@@ -249,6 +249,8 @@ for (const width of [1280, 390]) {
         const saved = () => expect(save).toHaveText('All changes saved.', { timeout: 30_000 });
         let holdWrite = true;
         let writeHeld = false;
+        let heldWrites = 0;
+        let disconnectHeldWrite = () => false;
         let failWrites = false;
         let rejectedWrites = 0;
         let recoveryHeld = true;
@@ -263,6 +265,8 @@ for (const width of [1280, 390]) {
         network.interceptWrites(async (write) => {
           if (holdWrite) {
             writeHeld = true;
+            heldWrites++;
+            disconnectHeldWrite = write.disconnect;
             await writeGate;
           }
           if (failWrites) {
@@ -328,14 +332,21 @@ for (const width of [1280, 390]) {
           await expect(save).toContainText(/not saved|Saving|keep this tab open/i);
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
-          // The unanswered native request times out and starts automatic
-          // reconnection. Retry remains actionable while that write is pending;
-          // its replacement socket must regain actual room readiness.
+          // Interrupt the actual unconfirmed submit and withhold the replacement
+          // room response through Retry. A normal RESUME would otherwise clear
+          // the failed state before the control is activated.
           await connection(page, 'Online');
+          network.holdJoinAcknowledgements();
+          const beforeRetry = heldWrites;
+          expect(disconnectHeldWrite()).toBe(true);
+          await expect.poll(() => network.joinAcknowledgementHeld()).toBe(true);
+          await connection(page, 'Reconnecting');
           await saveTrigger.click();
           await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          network.releaseJoinAcknowledgements();
           await page.keyboard.press('Escape');
           await connection(page, 'Online');
+          await expect.poll(() => heldWrites).toBeGreaterThan(beforeRetry);
           // A real disconnected save remains unconfirmed; no production state is mocked.
           // Keep the next room response withheld through failed-save geometry.
           // An acknowledged native reconnect legitimately returns pending work
