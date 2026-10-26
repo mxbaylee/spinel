@@ -152,6 +152,15 @@
 .history-empty {
   padding: 32px 24px;
 }
+.history-notice {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding: 16px 24px;
+}
+.history-notice button {
+  min-height: 44px;
+}
 .history-name-form {
   display: grid;
   gap: 16px;
@@ -185,6 +194,9 @@
     padding: 16px;
   }
   .history-selection {
+    padding: 16px;
+  }
+  .history-notice {
     padding: 16px;
   }
   .history-preview-pane {

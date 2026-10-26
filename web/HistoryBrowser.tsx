@@ -32,6 +32,7 @@ export function HistoryBrowser() {
   const [busy, setBusy] = useState(false),
     [refresh, setRefresh] = useState(0);
   const [error, setError] = useState('');
+  const [loadFailed, setLoadFailed] = useState(false);
   const [canName, setCanName] = useState(false);
   const [naming, setNaming] = useState<HistoryVersion | 'current' | null>(null);
   const [name, setName] = useState('');
@@ -62,6 +63,7 @@ export function HistoryBrowser() {
     const request = new AbortController();
     setLoading(true);
     setError('');
+    setLoadFailed(false);
     void historyRequest<{ versions: HistoryVersion[]; canName: boolean }>(
       id,
       '',
@@ -100,6 +102,7 @@ export function HistoryBrowser() {
         if (!disposed) {
           setVersions([]);
           setCanName(false);
+          setLoadFailed(true);
           setError(cause instanceof Error ? cause.message : 'Could not load history.');
         }
       })
@@ -203,7 +206,16 @@ export function HistoryBrowser() {
       <p className="history-selection" role="status">
         Selected {selectionLabel}
       </p>
-      {error && <p role="alert">{error}</p>}
+      {error && (
+        <div className="sp-ui history-notice">
+          <p role="alert">{error}</p>
+          {loadFailed && (
+            <Button disabled={locked} onClick={() => setRefresh((value) => value + 1)}>
+              Try again
+            </Button>
+          )}
+        </div>
+      )}
       {!loaded && loading && <p role="status">Loading history…</p>}
       {loaded && !versions.length && !error && (
         <div className="history-empty">

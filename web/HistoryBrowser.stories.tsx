@@ -190,6 +190,24 @@ export const NoOlderDays: Story = {
   },
 };
 export const Loading: Story = { parameters: { api: { [`GET ${endpoint}`]: pending() } } };
+export const HistoryFailure: Story = {
+  parameters: { api: { [`GET ${endpoint}`]: failure('Could not load history. Try again.', 503) } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent('Could not load history.');
+    const retry = canvas.getByRole('button', { name: 'Try again', exact: true });
+    await expect(retry).toBeVisible();
+    if (window.innerWidth <= 900)
+      await expect(canvas.getByRole('button', { name: /^Choose version/ })).toHaveAttribute(
+        'aria-expanded',
+        'false',
+      );
+    await userEvent.click(retry);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent('Could not load history.');
+    await expect(canvas.getByRole('button', { name: 'Try again', exact: true })).toBeVisible();
+    await bounds(canvasElement);
+  },
+};
 export const Empty: Story = {
   args: { checkpoint: '' },
   parameters: { api: { [`GET ${endpoint}`]: { versions: [], canName: true } } },
@@ -277,7 +295,7 @@ export const NamingFocusReturn: Story = {
   parameters: {
     api: {
       ...api({ preview: pending() }),
-      [`PATCH ${endpoint}/today-a`]: { version: versions[0] },
+      [`PATCH ${endpoint}/today-a`]: { ok: true },
     },
   },
   play: async ({ canvasElement }) => {

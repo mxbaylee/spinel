@@ -199,9 +199,7 @@ for (const kind of ['doc', 'sheet'] as const) {
       ).toBeEnabled({ timeout: 30_000 });
       await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
       await expect(
-        page
-          .getByRole('region', { name: 'Version preview', exact: true })
-          .getByRole('link', { name: 'Return to document', exact: true }),
+        page.getByRole('link', { name: 'Return to document', exact: true }),
       ).toHaveAttribute('href', liveHref);
       await imageVisible(page);
       expect(await exported()).toEqual(latest);
