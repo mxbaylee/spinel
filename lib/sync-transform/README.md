@@ -307,6 +307,67 @@ Univer also registers `sheet.mutation.empty`, which no command sends, and
 `sheet.mutation.mark-dirty-filter-change`, from filters, which Spinel does not
 load. Both are rejected like any other unsupported id.
 
+### Loaded preset mutation exclusions
+
+The actual Sheet, mobile Sheet and Doc editors are inventoried in browser CI by
+observing public command registration before their normal presets start. Every
+mutation-typed registration, including IDs named `.operation.`, must either be
+in `supportedMutationIds` or explicitly listed here. The inventory is evidence
+only and never changes outgoing admission. An unexpected ID fails the test.
+
+These native cache/service entries are local or worker coordination. They have
+no transform and are refused if submitted as document edits:
+
+- `formula.mutation.register-function`
+- `formula.mutation.remove-feature-calculation`
+- `formula.mutation.remove-other-formula`
+- `formula.mutation.remove-super-table`
+- `formula.mutation.set-array-formula-data`
+- `formula.mutation.set-cell-formula-dependency-calculation`
+- `formula.mutation.set-cell-formula-dependency-calculation-result`
+- `formula.mutation.set-feature-calculation`
+- `formula.mutation.set-formula-calculation-notification`
+- `formula.mutation.set-formula-calculation-result`
+- `formula.mutation.set-formula-calculation-start`
+- `formula.mutation.set-formula-calculation-stop`
+- `formula.mutation.set-formula-data`
+- `formula.mutation.set-formula-dependency-calculation`
+- `formula.mutation.set-formula-dependency-calculation-result`
+- `formula.mutation.set-formula-string-batch-calculation`
+- `formula.mutation.set-formula-string-batch-calculation-result`
+- `formula.mutation.set-image-formula-data`
+- `formula.mutation.set-other-formula`
+- `formula.mutation.set-query-formula-dependency`
+- `formula.mutation.set-query-formula-dependency-all`
+- `formula.mutation.set-query-formula-dependency-all-result`
+- `formula.mutation.set-query-formula-dependency-result`
+- `formula.mutation.set-super-table`
+- `formula.mutation.set-super-table-option`
+- `formula.mutation.set-trigger-formula-calculation-start`
+- `sheet.mutation.data-validation-formula-mark-dirty`
+
+The preset packages also contain unsupported document features. Registering a
+handler does not enable it for collaboration. Range/worksheet protection and
+permission changes, range themes/sort, large-sheet copy completion, calculation
+settings and right-to-left worksheets remain refused. SPN-059 owns their final
+menu audit before activation:
+
+- `doc.mutation.set-permission-rule`, `doc.mutation.set-permission-rules`
+- `sheet.mutation.add-range-protection`, `sheet.mutation.set-range-protection`,
+  `sheet.mutation.delete-range-protection`
+- `sheet.mutation.add-worksheet-protection`, `sheet.mutation.set-worksheet-protection`,
+  `sheet.mutation.delete-worksheet-protection`, `sheet.mutation.set-worksheet-permission-points`
+- `sheet.mutation.add-range-theme`, `sheet.mutation.set-range-theme`, `sheet.mutation.remove-range-theme`
+- `sheet.mutation.register-worksheet-range-theme-style`, `sheet.mutation.unregister-worksheet-range-theme-style`,
+  `sheet.mutation.set-worksheet-range-theme-style`, `sheet.mutation.remove-worksheet-range-theme-style`
+- `sheet.mutation.reorder-range`, `sheet.mutation.copy-worksheet-end`
+- `sheet.mutation.set-workbook-calculation-settings`, `sheet.mutation.set-worksheet-right-to-left`
+
+Finally, `sheet.operation.clear-drawing-transformer` and
+`doc.operation.clear-drawing-transformer` are native mutation-typed renderer
+refreshes. Exact-ID sender exclusions keep these two local; they are still
+unsupported if received over the wire. Actual drawing writes remain supported.
+
 ## Known limits
 
 Invariants over the whole workbook cannot be kept by transforming two edits

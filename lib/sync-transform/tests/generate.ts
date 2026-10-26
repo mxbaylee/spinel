@@ -10,10 +10,7 @@ import {
 } from '@univerjs/core';
 import type { IExecutionOptions, IRange, IWorkbookData, Worksheet } from '@univerjs/core';
 import { SetWorksheetActiveOperation } from '@univerjs/sheets';
-import {
-  ClearSheetDrawingTransformerOperation,
-  ISheetDrawingService,
-} from '@univerjs/sheets-drawing';
+import { ClearSheetDrawingTransformerOperation } from '@univerjs/sheets-drawing';
 import { SetNumfmtCommand } from '@univerjs/sheets-numfmt';
 import type { Mutation } from '../index.ts';
 import { structureIds } from '../src/structure.ts';
@@ -113,13 +110,8 @@ export function capture(
   const recording = recordWire(commands);
   const sent = recording.mutations;
   let ok: boolean;
-  let skip = false;
   try {
     ok = commands.syncExecuteCommand(id, params);
-    // Univer 1.1.0's own row and column commands can leave a drawing with a
-    // zero or negative size, and its resize listener then throws on the next
-    // row or column change. Such edits are skipped (README, "Known limits").
-    skip = hasEmptyDrawing(copy, unitId);
   } catch (error) {
     // Commands throw on some edits they refuse, such as an out-of-range anchor.
     // The range insert and delete commands are async with nothing to await,
@@ -131,17 +123,7 @@ export function capture(
   }
   if (!ok && sent.length > 0)
     throw new Error(`${id} failed after sending ${sent.length} mutations`);
-  return ok && !skip && sent.length > 0 ? sent : null;
-}
-
-function hasEmptyDrawing(replica: Replica, unitId: string): boolean {
-  const sheets = replica.injector.get(ISheetDrawingService).getDrawingDataForUnit(unitId);
-  const positive = (size: number | undefined) => (size ?? 0) > 0;
-  return Object.values(sheets).some((sheet) =>
-    Object.values(sheet.data ?? {}).some(
-      ({ transform }) => !positive(transform?.width) || !positive(transform?.height),
-    ),
-  );
+  return ok && sent.length > 0 ? sent : null;
 }
 
 /** Whole rows or columns `start` to `start + count - 1`, as a header selection gives. */

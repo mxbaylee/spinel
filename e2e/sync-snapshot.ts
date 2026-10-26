@@ -1,11 +1,13 @@
 import type { BrowserContext, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 import type { NativeSnapshot } from '@spinel/sync-client';
 import {
   canonical,
   inlineSnapshotCell,
   normalizedCell,
   normalizedDocBody,
+  supportedMutationIds,
 } from '@spinel/sync-transform';
 
 interface Evidence {
@@ -13,8 +15,32 @@ interface Evidence {
   revision: number;
   snapshot: NativeSnapshot;
   observedAt: number;
+  mutations: string[];
 }
 type RecordedWindow = Window & { nativeSyncEvidence?: Record<string, Evidence> };
+
+const unsupportedSection =
+  readFileSync(new URL('../lib/sync-transform/README.md', import.meta.url), 'utf8')
+    .split('## Not supported\n')[1]
+    ?.split('\n## ')[0] ?? '';
+const classifiedMutations = new Set([
+  ...supportedMutationIds,
+  ...[...unsupportedSection.matchAll(/`([^`\s]+(?:\.mutation\.|\.operation\.)[^`\s]+)`/g)].map(
+    (match) => match[1],
+  ),
+]);
+
+export async function expectNativeMutationInventory(page: Page, unitId: string) {
+  const read = () =>
+    page.evaluate((id) => (window as RecordedWindow).nativeSyncEvidence?.[id]?.mutations, unitId);
+  await expect.poll(async () => (await read())?.length ?? 0).toBeGreaterThan(0);
+  const ids = (await read())!;
+  expect(ids).toContain('doc.mutation.rich-text-editing');
+  expect(
+    ids.filter((id) => !classifiedMutations.has(id)),
+    'Every actual loaded mutation must have a transform or an exact documented exclusion',
+  ).toEqual([]);
+}
 
 /** The listener belongs to the test context; normal app builds emit no event. */
 export async function recordNativeSnapshots(context: BrowserContext) {
@@ -92,6 +118,7 @@ export async function expectNativeSnapshots(
         expected.snapshot.id,
       );
     await expect.poll(async () => (await read())?.revision).toBe(expected.revision);
+    await expectNativeMutationInventory(page, expected.snapshot.id);
     native.push((await read())!.snapshot);
   }
   // Compare every native field, including all cells, metadata, drawings and resources.
