@@ -149,9 +149,17 @@ export class CollaborationStore {
     this.database = new SQLiteDatabaseAdapter({ filename, busyTimeoutMs: 5_000 });
     this.service = new UniverCollabService({ dbAdapter: this.database, runtime: runtimeLimits });
     this.materializer = new UnitSnapshotMaterializer(runtimeLimits);
-    if (options.syncServer) {
+    // Serving can be disabled without forgetting ownership or orphaning purge
+    // work from units already accepted by the new backend.
+    if (
+      options.syncServer ||
+      workspace.auth.database
+        .prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='spinel_sync_units'")
+        .get()
+    )
       this.syncStorage = new SQLiteSyncStorage(workspace.auth);
-      this.sync = new SyncServer(this.syncStorage, {
+    if (options.syncServer) {
+      this.sync = new SyncServer(this.syncStorage!, {
         ...runtimeLimits,
         authorize: (unitId, identity, edit) => this.authorizeSync(unitId, identity, edit),
         beforeSubmit: async (unitId, identity) => {
@@ -347,7 +355,7 @@ export class CollaborationStore {
 
   async headRevision(userID: string, unitId: string, customData: Record<string, unknown>) {
     this.authorizeSync(unitId, { userID, customData }, false);
-    if (this.syncStorage) return this.syncStorage.load(unitId)?.revision;
+    if (this.sync) return this.syncStorage!.load(unitId)?.revision;
     const unit = await this.service.dbAdapter.getUnit({ userID, customData, request: {} }, unitId);
     this.authorizeSync(unitId, { userID, customData }, false);
     return unit?.headRevision;
@@ -368,7 +376,7 @@ export class CollaborationStore {
     }
     const root =
       typeof identity.customData.spaceId === 'string' ? identity.customData.spaceId : item.id;
-    const custom = Object.freeze({
+    const custom: Readonly<Record<string, unknown>> = Object.freeze({
       privacyEpoch: this.workspace.links.epoch(root),
       ...identity.customData,
     });
@@ -433,23 +441,33 @@ export class CollaborationStore {
   /** Assistant ingress shares its existing wire representation with the legacy backend. */
   async submitChangeset(
     request: { changeset: IChangeset },
-    context: { userID: string; memberID?: string; customData?: Record<string, unknown> },
+    context: { userID: string; memberID: string; customData?: Record<string, unknown> },
   ) {
     if (!this.sync) return this.service.submitChangeset(request, context);
     const changeset = request.changeset;
     validateTargets(changeset);
-    const result = await this.submitSync(
-      {
-        unitId: changeset.unitID,
-        baseRevision: changeset.baseRev,
-        mutationId: `${changeset.sid}:${changeset.reqId}`,
-        mutations: changeset.mutations.map((mutation) => ({
-          id: mutation.id,
-          params: JSON.parse(mutation.data),
-        })),
-      },
-      { userID: context.userID, customData: context.customData ?? {} },
-    );
+    let result;
+    try {
+      result = await this.submitSync(
+        {
+          unitId: changeset.unitID,
+          baseRevision: changeset.baseRev,
+          mutationId: `${changeset.sid}:${changeset.reqId}`,
+          mutations: changeset.mutations.map((mutation) => ({
+            id: mutation.id,
+            params: JSON.parse(mutation.data),
+          })),
+        },
+        { userID: context.userID, customData: context.customData ?? {} },
+      );
+    } catch (error) {
+      if (error instanceof SyncError)
+        throw new AuthError(
+          409,
+          'The document changed or the edit could not be applied. Read it again before editing.',
+        );
+      throw error;
+    }
     return {
       status: result.duplicate ? ('already-committed' as const) : ('committed' as const),
       changeset: { ...changeset, revision: result.edit.revision },
@@ -569,6 +587,8 @@ export class CollaborationStore {
 
   access(user: string, id: string, edit = false, custom: Record<string, unknown> = {}) {
     try {
+      if (!this.sync && this.syncStorage?.has(id))
+        throw new AuthError(409, 'This document requires the Spinel sync server.');
       return this.workspaceAccess(user, this.itemForUnit(id), edit ? 'edit' : 'read', custom);
     } catch {
       throw new CollabError('PERMISSION_DENIED', 'This document is not available.');
@@ -633,6 +653,8 @@ export class CollaborationStore {
     const unitId = this.generations.active(id).unitId;
     const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
     const auth = this.workspace.auth;
+    if (!this.sync && this.syncStorage?.has(unitId))
+      throw new AuthError(409, 'This document requires the Spinel sync server.');
     if (this.syncStorage && this.sync) {
       if (!this.syncStorage.has(unitId)) {
         if (auth.database.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id))
@@ -981,7 +1003,7 @@ export class CollaborationStore {
           },
         };
         const replacement = { ...snapshotIdentity(snapshot, job.nextUnit), rev: 1 };
-        if (this.syncStorage) {
+        if (this.sync && this.syncStorage) {
           const native = materialize(replacement, item.kind as 'sheet' | 'doc');
           new DocumentStore(this.workspace).validateImages(id, native);
           this.syncStorage.create(

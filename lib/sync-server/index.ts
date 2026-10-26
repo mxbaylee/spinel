@@ -7,6 +7,8 @@ export {
   MAX_RETAINED_REVISIONS,
   MAX_RETAINED_BYTES,
   MAX_BATCH_MUTATIONS,
+  MAX_WORKSHEETS,
+  MAX_MERGE_CELLS,
 } from './src/types.ts';
 export type {
   CellAddress,

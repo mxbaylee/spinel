@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { normalizeTextRuns } from '@univerjs/core';
 import type { ICellData, IDocumentData, IWorkbookData } from '@univerjs/core';
-import type { BaseCells } from '@spinel/sync-transform';
+import type { BaseCells, Mutation } from '@spinel/sync-transform';
 import type {
   CellAddress,
   CellBeforeImage,
@@ -27,8 +27,10 @@ export function canonical(value: unknown): string {
   };
   return JSON.stringify(sort(value));
 }
-export const digest = (value: unknown) => createHash('sha256').update(canonical(value)).digest('hex');
+export const digest = (value: unknown) =>
+  createHash('sha256').update(canonical(value)).digest('hex');
 const key = ({ sheetId, row, column }: CellAddress) => JSON.stringify([sheetId, row, column]);
+const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
 export function snapshotCells(snapshot: IWorkbookData): BaseCells {
   return (unitId, sheetId, row, column) => {
@@ -57,8 +59,14 @@ function allCells(snapshot: IWorkbookData): Map<string, CellBeforeImage> {
 
 /** Capture only changed native cells. Comparing both coordinate sets covers moves,
  * inserted/deleted axes and whole removed/restored sheets without inverse commands. */
-export function changes(before: NativeSnapshot, after: NativeSnapshot, kind: SyncUnit['kind']) {
-  if (kind === 'doc') return { beforeCells: [] as CellBeforeImage[], touched: { kind: 'doc' } as Touched };
+export function changes(
+  before: NativeSnapshot,
+  after: NativeSnapshot,
+  kind: SyncUnit['kind'],
+  mutations: Mutation[],
+) {
+  if (kind === 'doc')
+    return { beforeCells: [] as CellBeforeImage[], touched: { kind: 'doc' } as Touched };
   const old = allCells(before as IWorkbookData);
   const next = allCells(after as IWorkbookData);
   const beforeCells: CellBeforeImage[] = [];
@@ -67,14 +75,53 @@ export function changes(before: NativeSnapshot, after: NativeSnapshot, kind: Syn
     const b = next.get(id);
     if (canonical(a?.value ?? null) === canonical(b?.value ?? null)) continue;
     const address = a ?? b!;
-    beforeCells.push({ sheetId: address.sheetId, row: address.row, column: address.column, value: a?.value ?? null });
+    beforeCells.push({
+      sheetId: address.sheetId,
+      row: address.row,
+      column: address.column,
+      value: a?.value ?? null,
+    });
   }
-  beforeCells.sort((a, b) => key(a).localeCompare(key(b)));
+  beforeCells.sort((a, b) => compare(key(a), key(b)));
+  const touched = new Map<string, CellAddress>();
+  const add = (address: CellAddress) => touched.set(key(address), address);
+  for (const { value: _, ...address } of beforeCells) add(address);
+  const matrix = (
+    data: Record<string, Record<string, unknown>> | undefined,
+    sheetId: string | undefined,
+  ) => {
+    if (!data || typeof sheetId !== 'string') return;
+    for (const [row, columns] of Object.entries(data))
+      for (const column of Object.keys(columns ?? {})) add({ sheetId, row: +row, column: +column });
+  };
+  const ranges = (value: unknown, sheetId: string | undefined) => {
+    if (!value || typeof value !== 'object') return;
+    const data = value as Record<string, any>;
+    if (typeof data.subUnitId === 'string') sheetId = data.subUnitId;
+    if (
+      typeof sheetId === 'string' &&
+      ['startRow', 'endRow', 'startColumn', 'endColumn'].every((field) =>
+        Number.isSafeInteger(data[field]),
+      )
+    ) {
+      // Admission bounds the aggregate range area before native replay.
+      for (let row = data.startRow; row <= data.endRow; row++)
+        for (let column = data.startColumn; column <= data.endColumn; column++)
+          add({ sheetId, row, column });
+    }
+    for (const child of Object.values(data)) ranges(child, sheetId);
+  };
+  for (const { params } of mutations) {
+    matrix(params.cellValue, params.subUnitId);
+    matrix(params.from?.value, params.from?.subUnitId ?? params.subUnitId);
+    matrix(params.to?.value, params.to?.subUnitId ?? params.subUnitId);
+    ranges(params, params.subUnitId);
+  }
   return {
     beforeCells,
     touched: {
       kind: 'sheet',
-      cells: beforeCells.map(({ value: _, ...address }) => address),
+      cells: [...touched.values()],
     } as Touched,
   };
 }
@@ -95,7 +142,9 @@ export function cellsAt(unit: SyncUnit, revision: number, later: SyncRevision[])
   return (unitId, sheetId, row, column) => {
     if (unitId !== unit.unitId) return null;
     const address = key({ sheetId, row, column });
-    return structuredClone(overrides.has(address) ? overrides.get(address)! : read(unitId, sheetId, row, column));
+    return structuredClone(
+      overrides.has(address) ? overrides.get(address)! : read(unitId, sheetId, row, column),
+    );
   };
 }
 
@@ -139,7 +188,7 @@ export function hashTouched(snapshot: NativeSnapshot, touched: Touched): string 
   const read = snapshotCells(book);
   return digest(
     [...touched.cells]
-      .sort((a, b) => key(a).localeCompare(key(b)))
+      .sort((a, b) => compare(key(a), key(b)))
       .map((address) => ({
         ...address,
         value: hashCell(read(book.id, address.sheetId, address.row, address.column)),

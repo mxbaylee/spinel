@@ -1,10 +1,45 @@
 import { expect, test } from 'vitest';
+import { createCanvas } from '@napi-rs/canvas';
 import { TabStopAlignment, TabStopLeader } from '@univerjs/core';
 import type { ICellDataForSheetInterceptor } from '@univerjs/core';
 import { PRINT_LIMITS } from './contract.ts';
+import type { PrintBox } from './contract.ts';
 import { fixtureFonts } from './font-fixtures.ts';
 import { PreparedFonts } from './fonts.ts';
-import { prepareCellText } from './text.ts';
+import { InkContext, prepareCellText } from './text.ts';
+
+test('only visible horizontal stroke ink contributes a pagination border constraint', () => {
+  const borders: PrintBox[] = [];
+  const ink = new InkContext(
+    createCanvas(32, 32).getContext('2d'),
+    () => {},
+    undefined,
+    (box) => borders.push(box),
+  );
+  ink.beginPath();
+  ink.rect(0, 0, 10, 10);
+  ink.clip();
+  ink.beginPath();
+  ink.moveTo(1, 20);
+  ink.lineTo(8, 20);
+  ink.stroke();
+  expect(ink.bounds).toBeNull();
+  expect(borders).toHaveLength(0);
+  ink.beginPath();
+  ink.moveTo(1, 5);
+  ink.lineTo(8, 5);
+  ink.stroke();
+  expect(borders).toHaveLength(1);
+  expect(borders[0].top).toBeLessThan(5);
+  expect(borders[0].bottom).toBeGreaterThan(5);
+  ink.beginPath();
+  ink.moveTo(3, 2);
+  ink.lineTo(3, 8);
+  ink.stroke();
+  expect(ink.bounds!.top).toBeLessThan(2);
+  // A long vertical table border remains splittable across physical pages.
+  expect(borders).toHaveLength(1);
+});
 
 test('prepared glyph coverage follows native display casing rather than only the authored lowercase text', async () => {
   const input = await fixtureFonts();

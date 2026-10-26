@@ -19,6 +19,7 @@ import { guestCookieName } from '../workspace/links.ts';
 import { migrateSpaceSchema } from '../workspace/space-schema.ts';
 import { SpaceStore } from '../workspace/spaces.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
+import { TrashStore } from '../workspace/trash.ts';
 
 vi.setConfig({ testTimeout: 20_000 });
 const cleanup: (() => Promise<unknown> | unknown)[] = [];
@@ -32,7 +33,9 @@ async function fixture(space = false, syncServer = true) {
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
   const path = join(directory, 'app.sqlite');
   const db = openDatabase(path);
-  cleanup.push(() => { if (db.isOpen) db.close(); });
+  cleanup.push(() => {
+    if (db.isOpen) db.close();
+  });
   const auth = new AuthStore(db);
   const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
   migrateSpaceSchema(db);
@@ -41,16 +44,28 @@ async function fixture(space = false, syncServer = true) {
   const viewer = auth.createUser('Viewer');
   const fileAdmin = auth.createUser('File admin');
   const operator = auth.createUser('Operator', true);
-  const sessions = new Map([owner, editor, viewer, fileAdmin, operator].map((user) => [user.id, auth.createSession(user.id)]));
+  const sessions = new Map(
+    [owner, editor, viewer, fileAdmin, operator].map((user) => [
+      user.id,
+      auth.createSession(user.id),
+    ]),
+  );
   const spaces = new SpaceStore(workspace);
-  const root = space ? spaces.createRoot(owner.id, { name: 'Project', parentId: null }).space : undefined;
+  const root = space
+    ? spaces.createRoot(owner.id, { name: 'Project', parentId: null }).space
+    : undefined;
   const sheet = root
-    ? spaces.createChild(owner.id, root.id, { name: 'Budget', kind: 'sheet', parentId: root.id }).item
+    ? spaces.createChild(owner.id, root.id, { name: 'Budget', kind: 'sheet', parentId: root.id })
+        .item
     : workspace.create(owner.id, { name: 'Budget', kind: 'sheet', parentId: null });
   const doc = root
     ? spaces.createChild(owner.id, root.id, { name: 'Notes', kind: 'doc', parentId: root.id }).item
     : workspace.create(owner.id, { name: 'Notes', kind: 'doc', parentId: null });
-  for (const [user, role] of [[editor, 'editor'], [viewer, 'viewer'], [fileAdmin, 'admin']] as const) {
+  for (const [user, role] of [
+    [editor, 'editor'],
+    [viewer, 'viewer'],
+    [fileAdmin, 'admin'],
+  ] as const) {
     if (root) spaces.share(owner.id, root.id, user.id, role);
     else for (const item of [sheet, doc]) workspace.share(owner.id, item.id, user.id, role);
   }
@@ -61,11 +76,16 @@ async function fixture(space = false, syncServer = true) {
   const diagnostics = vi.fn();
   let collab = new CollaborationStore(workspace, path, { syncServer, diagnostics });
   let closed = false;
-  const close = async () => { if (!closed) { closed = true; await collab.close(); } };
+  const close = async () => {
+    if (!closed) {
+      closed = true;
+      await collab.close();
+    }
+  };
   cleanup.push(close);
-  const restart = async () => {
+  const restart = async (enabled = syncServer) => {
     await close();
-    collab = new CollaborationStore(workspace, path, { syncServer, diagnostics });
+    collab = new CollaborationStore(workspace, path, { syncServer: enabled, diagnostics });
     closed = false;
     return collab;
   };
@@ -73,16 +93,42 @@ async function fixture(space = false, syncServer = true) {
     unitId: sheet.id,
     baseRevision,
     mutationId: randomUUID(),
-    mutations: [{ id: SetRangeValuesMutation.id, params: {
-      unitId: sheet.id, subUnitId: 'first',
-      cellValue: { 0: { [column]: { v: value } } },
-      trigger: 'sheet.command.set-range-values',
-    } }],
+    mutations: [
+      {
+        id: SetRangeValuesMutation.id,
+        params: {
+          unitId: sheet.id,
+          subUnitId: 'first',
+          cellValue: { 0: { [column]: { v: value } } },
+          trigger: 'sheet.command.set-range-values',
+        },
+      },
+    ],
   });
   const submit = (edit: ReturnType<typeof request>, user = owner.id, data = custom(user)) =>
     collab.submitSync(edit, { userID: user, customData: data });
   const load = () => collab.load(owner.id, sheet.id, custom());
-  return { db, path, auth, workspace, spaces, root, owner, editor, viewer, fileAdmin, operator, sessions, custom, collab, diagnostics, restart, request, submit, load };
+  return {
+    db,
+    path,
+    auth,
+    workspace,
+    spaces,
+    root,
+    owner,
+    editor,
+    viewer,
+    fileAdmin,
+    operator,
+    sessions,
+    custom,
+    collab,
+    diagnostics,
+    restart,
+    request,
+    submit,
+    load,
+  };
 }
 
 for (const space of [false, true]) {
@@ -96,10 +142,15 @@ for (const space of [false, true]) {
     expect([a.edit.revision, b.edit.revision]).toEqual([2, 3]);
     expect(b.missing.map((edit) => edit.revision)).toEqual([2, 3]);
     expect(a.edit.mutations[0].params.trigger).toBe(first.mutations[0].params.trigger);
-    expect((await f.load()).snapshot).toMatchObject({ sheets: { first: { cellData: { 0: { 0: { v: 'first' }, 1: { v: 'second' } } } } } });
+    expect((await f.load()).snapshot).toMatchObject({
+      sheets: { first: { cellData: { 0: { 0: { v: 'first' }, 1: { v: 'second' } } } } },
+    });
     expect(await f.submit(first)).toMatchObject({ duplicate: true, edit: { revision: 2 } });
     await f.restart();
-    expect(await f.submit(second, f.editor.id)).toMatchObject({ duplicate: true, edit: { revision: 3 } });
+    expect(await f.submit(second, f.editor.id)).toMatchObject({
+      duplicate: true,
+      edit: { revision: 3 },
+    });
     expect((await f.load()).revision).toBe(3);
     expect(f.db.prepare('SELECT count(*) AS n FROM spinel_sync_revisions').get()!.n).toBe(2);
   });
@@ -114,7 +165,9 @@ for (const space of [false, true]) {
       expect(warn).toHaveBeenLastCalledWith(expect.stringContaining('collaboration.edit_denied'));
     }
     expect(JSON.stringify(warn.mock.calls)).not.toContain('private refused edit');
-    await expect(f.submit(f.request('allowed'), f.fileAdmin.id)).resolves.toMatchObject({ edit: { revision: 2 } });
+    await expect(f.submit(f.request('allowed'), f.fileAdmin.id)).resolves.toMatchObject({
+      edit: { revision: 2 },
+    });
     expect((await f.load()).revision).toBe(2);
   });
 
@@ -125,13 +178,17 @@ for (const space of [false, true]) {
       await f.collab.prepare(f.owner.id, id, f.custom());
       const entered = Promise.withResolvers<void>();
       const resume = Promise.withResolvers<void>();
-      f.collab.onSubmitting(async () => { entered.resolve(); await resume.promise; });
+      f.collab.onSubmitting(async () => {
+        entered.resolve();
+        await resume.promise;
+      });
       const committed = vi.fn();
       f.collab.onCommitted(committed);
       const result = f.submit(f.request('revoked'), f.editor.id);
       const rejected = expect(result).rejects.toThrow();
       await entered.promise;
-      if (boundary === 'session') f.auth.revokeSession(f.sessions.get(f.editor.id)!.session.token_hash);
+      if (boundary === 'session')
+        f.auth.revokeSession(f.sessions.get(f.editor.id)!.session.token_hash);
       if (boundary === 'grant') {
         if (f.root) f.spaces.share(f.owner.id, f.root.id, f.editor.id, null);
         else f.workspace.share(f.owner.id, id, f.editor.id, null);
@@ -157,9 +214,18 @@ for (const space of [false, true]) {
     const link = f.workspace.links.begin(root, 'editor');
     f.workspace.links.finish(root, link.epoch, true);
     const session = f.workspace.links.exchange(root, link.token!);
-    const principal = f.workspace.links.principal({ cookie: `${guestCookieName(root)}=${session.token}` }, root);
-    const custom = { guestHash: principal.guestHash, guestItem: root, ...(f.root && { spaceId: root, spaceItem: id }) };
-    await expect(f.submit(f.request('guest'), principal.userId, custom)).resolves.toMatchObject({ edit: { revision: 2 } });
+    const principal = f.workspace.links.principal(
+      { cookie: `${guestCookieName(root)}=${session.token}` },
+      root,
+    );
+    const custom = {
+      guestHash: principal.guestHash,
+      guestItem: root,
+      ...(f.root && { spaceId: root, spaceItem: id }),
+    };
+    await expect(f.submit(f.request('guest'), principal.userId, custom)).resolves.toMatchObject({
+      edit: { revision: 2 },
+    });
     const off = f.workspace.links.begin(root, null);
     f.workspace.links.finish(root, off.epoch, false);
     await expect(f.submit(f.request('revoked', 1, 2), principal.userId, custom)).rejects.toThrow();
@@ -173,8 +239,10 @@ test('Space native service never falls back from wrong, missing or mixed credent
   await f.collab.prepare(f.owner.id, id, f.custom());
   const other = f.spaces.createRoot(f.owner.id, { name: 'Other', parentId: null }).space;
   for (const custom of [
-    {}, { sessionHash: f.sessions.get(f.owner.id)!.session.token_hash },
-    { ...f.custom(), spaceId: other.id }, { ...f.custom(), spaceItem: other.id },
+    {},
+    { sessionHash: f.sessions.get(f.owner.id)!.session.token_hash },
+    { ...f.custom(), spaceId: other.id },
+    { ...f.custom(), spaceItem: other.id },
     { ...f.custom(), guestHash: 'forged', guestItem: f.root!.id },
   ]) {
     await expect(f.collab.load(f.owner.id, id, custom)).rejects.toThrow();
@@ -206,7 +274,9 @@ test('a candidate over 10 MiB and a failed SQLite commit leave the prior native 
   await f.submit(f.request(large));
   await expect(f.submit(f.request(large, 1, 2))).rejects.toThrow();
   expect((await f.load()).revision).toBe(2);
-  expect(((await f.load()).snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[1]).toBeUndefined();
+  expect(
+    ((await f.load()).snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[1],
+  ).toBeUndefined();
   f.db.exec(`CREATE TEMP TRIGGER reject_owned_head BEFORE UPDATE ON spinel_sync_units
     BEGIN SELECT RAISE(ABORT,'simulated disk failure'); END;`);
   const retry = f.request('retry', 1, 2);
@@ -214,7 +284,9 @@ test('a candidate over 10 MiB and a failed SQLite commit leave the prior native 
   expect((await f.load()).revision).toBe(2);
   f.db.exec('DROP TRIGGER reject_owned_head');
   await expect(f.submit(retry)).resolves.toMatchObject({ duplicate: false, edit: { revision: 3 } });
-  expect(((await f.load()).snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[1]?.v).toBe('retry');
+  expect(((await f.load()).snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[1]?.v).toBe(
+    'retry',
+  );
 });
 
 test('MCP writes retain exact revision semantics and token-specific durable retry identity', async () => {
@@ -226,15 +298,35 @@ test('MCP writes retain exact revision semantics and token-specific durable retr
   const identity = tokens.authenticate(token.token);
   const edit = f.request('assistant');
   const changeset: IChangeset = {
-    unitID: id, type: UniverType.UNIVER_SHEET, baseRev: 1, revision: 0,
-    userID: f.owner.id, memberID: 'mcp:test', sid: 'mcp:test', reqId: 1,
-    mutations: edit.mutations.map((mutation) => ({ id: mutation.id, data: JSON.stringify(mutation.params) })),
+    unitID: id,
+    type: UniverType.UNIVER_SHEET,
+    baseRev: 1,
+    revision: 0,
+    userID: f.owner.id,
+    memberID: 'mcp:test',
+    sid: 'mcp:test',
+    reqId: 1,
+    mutations: edit.mutations.map((mutation) => ({
+      id: mutation.id,
+      data: JSON.stringify(mutation.params),
+    })),
   };
-  const context = { userID: f.owner.id, customData: { mcpTokenHash: identity.hash } };
-  await expect(f.collab.submitChangeset({ changeset }, context)).resolves.toMatchObject({ changeset: { revision: 2 } });
-  await expect(f.collab.submitChangeset({ changeset }, context)).resolves.toMatchObject({ status: 'duplicate', changeset: { revision: 2 } });
+  const context = {
+    userID: f.owner.id,
+    memberID: 'mcp:test',
+    customData: { mcpTokenHash: identity.hash },
+  };
+  await expect(f.collab.submitChangeset({ changeset }, context)).resolves.toMatchObject({
+    changeset: { revision: 2 },
+  });
+  await expect(f.collab.submitChangeset({ changeset }, context)).resolves.toMatchObject({
+    status: 'already-committed',
+    changeset: { revision: 2 },
+  });
   await f.submit(f.request('human', 1, 2));
-  await expect(f.collab.submitChangeset({ changeset: { ...changeset, reqId: 2 } }, context)).rejects.toThrow('stale');
+  await expect(
+    f.collab.submitChangeset({ changeset: { ...changeset, reqId: 2 } }, context),
+  ).rejects.toMatchObject({ status: 409 });
   expect((await f.load()).revision).toBe(3);
   tokens.revoke(f.owner.id, token.id);
   await expect(f.collab.submitChangeset({ changeset }, context)).rejects.toThrow();
@@ -245,26 +337,111 @@ test('an enabled server prepares native Docs but refuses automatic migration of 
   const doc = f.workspace.create(f.owner.id, { name: 'Native Doc', kind: 'doc', parentId: null });
   new DocumentStore(f.workspace).save(f.owner.id, doc.id, {
     snapshot: { ...getDocsEmptySnapshot(doc.id), body: { dataStream: 'Original\r\n' } },
-    revision: 0, writeId: randomUUID(),
+    revision: 0,
+    writeId: randomUUID(),
   });
   await f.collab.prepare(f.owner.id, doc.id, f.custom(f.owner.id, doc.id));
-  const before = (await f.collab.load(f.owner.id, doc.id, f.custom(f.owner.id, doc.id))).snapshot as IDocumentData;
-  await f.collab.submitSync({
-    unitId: doc.id, baseRevision: 1, mutationId: randomUUID(), mutations: [{
-      id: RichTextEditingMutation.id,
-      params: { unitId: doc.id, actions: new JSONX().replaceOp(['body'], before.body, { dataStream: 'Changed\r\n' }), textRanges: [] },
-    }],
-  }, { userID: f.owner.id, customData: f.custom(f.owner.id, doc.id) });
-  expect((await f.collab.load(f.owner.id, doc.id, f.custom(f.owner.id, doc.id))).snapshot).toMatchObject({ body: { dataStream: 'Changed\r\n' } });
+  const before = (await f.collab.load(f.owner.id, doc.id, f.custom(f.owner.id, doc.id)))
+    .snapshot as IDocumentData;
+  await f.collab.submitSync(
+    {
+      unitId: doc.id,
+      baseRevision: 1,
+      mutationId: randomUUID(),
+      mutations: [
+        {
+          id: RichTextEditingMutation.id,
+          params: {
+            unitId: doc.id,
+            actions: new JSONX().replaceOp(['body'], before.body, { dataStream: 'Changed\r\n' }),
+            textRanges: [],
+          },
+        },
+      ],
+    },
+    { userID: f.owner.id, customData: f.custom(f.owner.id, doc.id) },
+  );
+  expect(
+    (await f.collab.load(f.owner.id, doc.id, f.custom(f.owner.id, doc.id))).snapshot,
+  ).toMatchObject({ body: { dataStream: 'Changed\r\n' } });
   const legacy = f.workspace.create(f.owner.id, { name: 'Legacy', kind: 'sheet', parentId: null });
   f.db.prepare("INSERT INTO workspace_collaboration VALUES(?,'ready')").run(legacy.id);
-  await expect(f.collab.prepare(f.owner.id, legacy.id, f.custom(f.owner.id, legacy.id))).rejects.toThrow('migration');
-  expect(f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(legacy.id)).toBeUndefined();
+  await expect(
+    f.collab.prepare(f.owner.id, legacy.id, f.custom(f.owner.id, legacy.id)),
+  ).rejects.toThrow('migration');
+  expect(
+    f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(legacy.id),
+  ).toBeUndefined();
 });
 
 test('the own server remains disabled unless explicitly enabled', async () => {
   const f = await fixture(false, false);
   expect(f.collab.sync).toBeUndefined();
   await expect(f.submit(f.request('not enabled'))).rejects.toThrow('unavailable');
-  expect(f.db.prepare("SELECT 1 FROM sqlite_schema WHERE name='spinel_sync_units'").get()).toBeUndefined();
+  expect(
+    f.db.prepare("SELECT 1 FROM sqlite_schema WHERE name='spinel_sync_units'").get(),
+  ).toBeUndefined();
+});
+
+test('changing the server flag cannot open or overwrite owned data through the legacy backend', async () => {
+  const f = await fixture();
+  const edit = f.request('owned-server data');
+  await f.collab.prepare(f.owner.id, edit.unitId, f.custom());
+  await f.submit(edit);
+  const disabled = await f.restart(false);
+  await expect(disabled.prepare(f.owner.id, edit.unitId, f.custom())).rejects.toThrow();
+  await expect(disabled.load(f.owner.id, edit.unitId, f.custom())).rejects.toThrow();
+  const changeset: IChangeset = {
+    unitID: edit.unitId,
+    type: UniverType.UNIVER_SHEET,
+    baseRev: 2,
+    revision: 0,
+    userID: f.owner.id,
+    memberID: 'legacy-tab',
+    sid: 'legacy-tab',
+    reqId: 1,
+    mutations: edit.mutations.map((mutation) => ({
+      id: mutation.id,
+      data: JSON.stringify(mutation.params),
+    })),
+  };
+  await expect(
+    disabled.submitChangeset(
+      { changeset },
+      { userID: f.owner.id, memberID: 'legacy-tab', customData: f.custom() },
+    ),
+  ).resolves.toMatchObject({ status: 'rejected' });
+  expect(
+    f.db.prepare('SELECT revision FROM spinel_sync_units WHERE unit_id=?').get(edit.unitId)
+      ?.revision,
+  ).toBe(2);
+  await f.restart(true);
+  expect((await f.load()).revision).toBe(2);
+  expect(((await f.load()).snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]?.v).toBe(
+    'owned-server data',
+  );
+});
+
+test('the purge queue removes owned generations even after the server flag is disabled', async () => {
+  const f = await fixture();
+  const edit = f.request('deleted owned data');
+  await f.collab.prepare(f.owner.id, edit.unitId, f.custom());
+  await f.submit(edit);
+  const disabled = await f.restart(false);
+  const trash = new TrashStore(f.workspace);
+  trash.trash(f.owner.id, edit.unitId);
+  trash.empty(f.owner.id, trash.list(f.owner.id).version);
+  expect(
+    f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(edit.unitId),
+  ).toBeTruthy();
+  await disabled.purgeDeleted();
+  expect(
+    f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(edit.unitId),
+  ).toBeUndefined();
+  expect(
+    f.db.prepare('SELECT 1 FROM spinel_sync_revisions WHERE unit_id=?').get(edit.unitId),
+  ).toBeUndefined();
+  expect(
+    f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(edit.unitId),
+  ).toBeUndefined();
 });

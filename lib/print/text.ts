@@ -464,17 +464,26 @@ function intersect(a: PrintBox | null, b: PrintBox): PrintBox | null {
 }
 
 /** Measure native paint coordinates without allocating a worksheet-size raster. */
-class InkContext extends UniverPrintingContext {
+export class InkContext extends UniverPrintingContext {
   bounds: PrintBox | null = null;
   private clipBox: PrintBox | null = null;
   private path: PrintBox | null = null;
   private saved: (PrintBox | null)[] = [];
   readonly raw: SKRSContext2D;
   readonly check: () => void;
-  constructor(raw: SKRSContext2D, check: () => void) {
+  readonly onTextInk: ((box: PrintBox) => void) | undefined;
+  readonly onHorizontalInk: ((box: PrintBox) => void) | undefined;
+  constructor(
+    raw: SKRSContext2D,
+    check: () => void,
+    onTextInk?: (box: PrintBox) => void,
+    onHorizontalInk?: (box: PrintBox) => void,
+  ) {
     super(raw as unknown as CanvasRenderingContext2D);
     this.raw = raw;
     this.check = check;
+    this.onTextInk = onTextInk;
+    this.onHorizontalInk = onHorizontalInk;
   }
   private box(left: number, top: number, right: number, bottom: number): PrintBox {
     const matrix = this.raw.getTransform();
@@ -561,7 +570,11 @@ class InkContext extends UniverPrintingContext {
       right: this.path.right + radius,
       bottom: this.path.bottom + radius,
     };
-    this.bounds = unionBox(this.bounds, intersect(this.clipBox, box)!);
+    const visible = intersect(this.clipBox, box);
+    if (visible && visible.right > visible.left && visible.bottom > visible.top) {
+      if (this.path.bottom - this.path.top < 0.001) this.onHorizontalInk?.(visible);
+      this.bounds = unionBox(this.bounds, visible);
+    }
   }
   override fillRect(x: number, y: number, width: number, height: number) {
     this.check();
@@ -603,6 +616,7 @@ class InkContext extends UniverPrintingContext {
         box.bottom > this.clipBox.bottom + 0.01)
     )
       unsupported();
+    this.onTextInk?.(box);
     this.bounds = unionBox(this.bounds, box);
   }
   override setLineDash(segments: number[]) {

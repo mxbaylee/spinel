@@ -77,7 +77,7 @@ function makeUnit(unitId: string): SyncUnit {
   };
 }
 
-function next(unit: SyncUnit, actorId: string, mutationId = randomUUID()): SyncCommit {
+function next(unit: SyncUnit, actorId: string, mutationId: string = randomUUID()): SyncCommit {
   const revision = unit.revision + 1;
   const edit: SyncRevision = {
     unitId: unit.unitId,
@@ -195,7 +195,7 @@ test('a competing SQLite writer cannot revoke access between authorization and c
   expect(f.store.load(f.item.id)?.revision).toBe(2);
   revoke();
   expect(f.guard).toThrow();
-});
+}, 10_000); // libsql's competing writer can use its five-second driver busy wait.
 
 test.each(['wrong-root', 'wrong-child', 'grant', 'epoch', 'generation', 'ancestry'] as const)(
   'the final Space guard rejects %s changes before any edit becomes durable',

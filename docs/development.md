@@ -1,5 +1,12 @@
 # Developing Spinel
 
+For the SPN-057 server protocol integration, `SPINEL_SYNC_SERVER=1` selects the
+new server; it defaults off. Use newly prepared test documents. Each backend
+refuses documents already owned by the other, so changing the flag cannot create
+a separate edit history. This is not the browser-client cutover: SPN-058 supplies
+the client, SPN-056 reviews the integrated path, and SPN-059 owns activation and
+retained-data conversion. See [the protocol and limits](collaboration.md#spinel-server-integration-flag).
+
 Use the Node version in `.nvmrc` (26.12.1). From a fresh checkout:
 
 ```sh

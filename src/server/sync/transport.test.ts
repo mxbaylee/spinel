@@ -7,6 +7,7 @@ import { afterEach, expect, test, vi } from 'vitest';
 import WebSocket from 'ws';
 import { hashTouched, materialize } from '@spinel/sync-server';
 import type { NativeSnapshot, Touched } from '@spinel/sync-server';
+import type { IWorkbookData } from '@univerjs/core';
 import type { Mutation } from '@spinel/sync-transform';
 import { createApp } from '../../../server/app.ts';
 import { openDatabase } from '../../../server/database.ts';
@@ -17,6 +18,7 @@ import { SpaceStore } from '../workspace/spaces.ts';
 vi.setConfig({ testTimeout: 30_000 });
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
 afterEach(async () => {
+  vi.restoreAllMocks();
   for (const close of cleanup.splice(0).reverse()) await close();
 });
 type Frame = {
@@ -227,7 +229,15 @@ test('two real sockets converge through durable ordering, retry, divergence resy
   expect(hash).toBe(last.hash);
   a.socket.send(JSON.stringify({ type: 'verify', revision: 3, hash }));
   await expect.poll(() => a.frames.some((frame) => frame.type === 'verified')).toBe(true);
-  a.socket.send(JSON.stringify({ type: 'verify', revision: 3, hash: '0'.repeat(64) }));
+  const divergent = structuredClone(replay(a.frames)) as IWorkbookData;
+  const address = last.touched!.kind === 'sheet' ? last.touched!.cells[0] : undefined;
+  expect(address).toBeDefined();
+  divergent.sheets[address!.sheetId].cellData![address!.row]![address!.column] = {
+    v: 'Divergent private client value',
+  };
+  a.socket.send(
+    JSON.stringify({ type: 'verify', revision: 3, hash: hashTouched(divergent, last.touched!) }),
+  );
   await expect
     .poll(() => a.frames.find((frame) => frame.type === 'resync')?.reason)
     .toBe('divergence');
@@ -258,6 +268,7 @@ test('Origin, one-time tickets, operator/viewer boundaries and revoked recipient
   const owner = await f.connect(f.prefix, f.sheet.id, f.cookie(), token);
   await f.rejectedSocket(token);
   const viewer = await f.connect(f.prefix, f.sheet.id, f.cookie(f.viewer.id));
+  const deniedAudit = vi.spyOn(console, 'warn').mockImplementation(() => {});
   viewer.socket.send(
     JSON.stringify({
       type: 'submit',
@@ -267,6 +278,19 @@ test('Origin, one-time tickets, operator/viewer boundaries and revoked recipient
     }),
   );
   await expect.poll(() => viewer.frames.some((frame) => frame.type === 'resync')).toBe(true);
+  const audits = deniedAudit.mock.calls
+    .map(([value]) => JSON.parse(String(value)))
+    .filter((entry) => entry.event === 'collaboration.edit_denied');
+  expect(audits).toEqual([
+    {
+      event: 'collaboration.edit_denied',
+      at: expect.any(String),
+      stage: 'submitChangeset',
+      userID: f.viewer.id,
+      unitID: f.sheet.id,
+    },
+  ]);
+  expect(JSON.stringify(audits)).not.toContain('forged');
   expect(f.db.prepare('SELECT count(*) AS n FROM spinel_sync_revisions').get()!.n).toBe(0);
   const editor = await f.connect(f.prefix, f.sheet.id, f.cookie(f.editor.id));
   f.db

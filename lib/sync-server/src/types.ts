@@ -8,6 +8,8 @@ export const MAX_SNAPSHOT_BYTES = 10 * 1024 * 1024;
 export const MAX_RETAINED_REVISIONS = 128;
 export const MAX_RETAINED_BYTES = 16 * 1024 * 1024;
 export const MAX_BATCH_MUTATIONS = 1024;
+export const MAX_WORKSHEETS = 1024;
+export const MAX_MERGE_CELLS = 250_000;
 
 export interface CellAddress {
   sheetId: string;

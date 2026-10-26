@@ -275,7 +275,7 @@ Verified by:
 
 Download and launch work as [described above](#offline-launch-and-read-only-viewing).
 The rest of this section is SPN-053 and SPN-054's design. It follows
-Spinel's own sync server/client contracts ([SPN-057](todo/SPN-057.md) and
+Spinel's own sync server/client contracts ([SPN-057](implementation/SPN-057.md) and
 [SPN-058](todo/SPN-058.md)), used after SPN-059 removes Univer collaboration.
 Durability and acknowledgement below are requirements, independent of the
 chosen server database or a particular client method name. Owner, chat

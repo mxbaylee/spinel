@@ -7,6 +7,7 @@ import type { SyncRevision } from '@spinel/sync-server';
 import type { WorkspaceStore } from '../workspace/store.ts';
 import type { CollaborationStore, SyncIdentity } from '../collaboration/service.ts';
 import { documentIdentity, validateIdentity } from '../collaboration/identity.ts';
+import { auditDeniedEdit } from '../collaboration/audit.ts';
 
 const TICKET_TTL = 30_000;
 const MAX_TICKETS = 256;
@@ -297,7 +298,6 @@ export function attachSync(
       entry.queue = entry.queue
         .then(async () => {
           if (socket.readyState !== WebSocket.OPEN) return;
-          current(session);
           let message: Record<string, unknown>;
           try {
             message = JSON.parse(bytes.toString());
@@ -306,6 +306,13 @@ export function attachSync(
           }
           if (!message || typeof message !== 'object' || Array.isArray(message))
             throw new SyncError('malformed');
+          try {
+            current(session);
+          } catch (error) {
+            if (message.type === 'submit')
+              auditDeniedEdit(session.identity.userID, session.unitId, 'submitChangeset');
+            throw error;
+          }
           if (message.type === 'verify') {
             if (Object.keys(message).some((key) => !['type', 'revision', 'hash'].includes(key)))
               throw new SyncError('malformed');
@@ -330,7 +337,8 @@ export function attachSync(
             )
           )
             throw new SyncError('malformed');
-          current(session, true);
+          // The service owns edit authorization and its denied-edit audit.
+          // Rejecting viewers here would bypass that single audited boundary.
           const result = await collaboration.submitSync(
             {
               unitId: session.unitId,

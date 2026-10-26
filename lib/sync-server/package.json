@@ -5,12 +5,16 @@
   "license": "Apache-2.0",
   "type": "module",
   "description": "Durable, access-guarded ordering for native Univer edits.",
-  "exports": { ".": "./index.ts" },
+  "exports": {
+    ".": "./index.ts"
+  },
   "dependencies": {
     "@spinel/diagnostics": "0.0.0",
     "@spinel/sync-transform": "0.0.0"
   },
-  "devDependencies": { "@spinel/doc-formulas": "0.0.0" },
+  "devDependencies": {
+    "@spinel/doc-formulas": "0.0.0"
+  },
   "peerDependencies": {
     "@univerjs/core": "1.1.0",
     "@univerjs/docs": "1.1.0",
