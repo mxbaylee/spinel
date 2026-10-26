@@ -11,7 +11,7 @@ import { pwaRoutes } from '../src/server/pwa.ts';
 import { guestRoutes } from '../src/server/workspace/guestRoutes.ts';
 import { documentIdentity, protocolSpaceScope } from '../src/server/collaboration/identity.ts';
 import { readFile } from 'node:fs/promises';
-import { createServer } from 'node:http';
+import { createHttpServer } from './http.ts';
 import { resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { DiagnosticsStore } from '../src/server/diagnostics/store.ts';
@@ -52,8 +52,8 @@ export async function createApp(options: AppOptions) {
   const database = openDatabase(options.databasePath);
   const app = express();
   app.disable('x-powered-by');
+  const server = createHttpServer(app);
   app.use(profileAvatarRoutes());
-  const server = createServer(app);
   let vite: import('vite').ViteDevServer | undefined;
   let stopCleanup = () => {};
   let backups: BackupService | undefined;

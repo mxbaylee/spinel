@@ -15,6 +15,24 @@ The redesigned header keeps the current folder title with its ancestor breadcrum
 The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
 
+### Owned workspace archives
+
+At the My files root, **More → Export all my files** opens one focused dialog.
+It explains owned-only scope before starting, then shows progress, cancellation,
+completion or a recoverable error in place. Files shared with the person and
+Trash are excluded; owned files shared with others remain included. Completion
+directs the person to their browser's downloads without claiming the archive was
+saved. The root action is absent from Shared with me, local mode and guest views.
+
+**New → Import file** and the file-pane drop target accept native files and
+Spinel ZIP archives. Archives import at the My files root; selecting one inside
+a folder explains where to return. During upload/validation the dialog offers
+Cancel, and only a confirmed atomic success refreshes the file tree. An
+unconfirmed response asks the person to refresh before retrying. Existing Modal,
+ActionMenu, semantic icon, focus-return and wrapping phone action-row patterns
+apply. Every added state has a Storybook example; see the
+[SPN-067 record](../implementation/SPN-067.md).
+
 SPN-048 implements this layout with the existing file APIs and access rules; its
 [implementation and validation record](../implementation/SPN-048.md) records the
 query, scope and return-state decisions and any pending verification. Design

@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { ImportFile } from './ImportFile.tsx';
 import { assertDialogControls } from '../.storybook/dialogBounds.ts';
+import { ARCHIVE_LIMIT } from '../src/shared/archive.ts';
 
 const meta = {
   id: 'dashboard-importfile',
@@ -16,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 
 const pick = async (canvasElement: HTMLElement, ...files: File[]) => {
   const input = within(canvasElement.ownerDocument.body).getByLabelText<HTMLInputElement>(
-    'Univer file',
+    'Univer file or archive',
     {
       selector: 'input',
     },
@@ -72,4 +73,129 @@ export const ImportFailed: Story = {
     api: { 'POST /api/items/import': failure('This file is not a Spinel-compatible Univer file.') },
   },
   play: ({ canvasElement }) => pick(canvasElement, univerFile()),
+};
+
+const archive = () => new File(['ZIP fixture'], 'my-files.zip', { type: 'application/zip' });
+
+export const ArchiveImporting: Story = {
+  args: { dialogOpen: true },
+  parameters: { api: { 'POST /api/items/archive-import': pending() } },
+  play: async ({ canvasElement }) => {
+    await pick(canvasElement, archive());
+    const screen = within(canvasElement.ownerDocument.body);
+    await expect(screen.getByRole('status')).toHaveTextContent(/Your files will appear together/);
+    await expect(screen.getByRole('button', { name: 'Cancel import' })).toBeEnabled();
+    await assertDialogControls(screen.getByRole('dialog', { name: 'Import file' }));
+  },
+};
+
+export const ArchiveImported: Story = {
+  args: { dialogOpen: true, onArchiveImported: fn(), onDialogOpenChange: fn() },
+  parameters: {
+    api: {
+      'POST /api/items/archive-import': { result: { items: 9, files: 5, folders: 3, spaces: 1 } },
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    await pick(canvasElement, archive());
+    const screen = within(canvasElement.ownerDocument.body);
+    await expect(await screen.findByRole('status')).toHaveTextContent(
+      'Imported 5 files, 3 folders and 1 Space into My files.',
+    );
+    await expect(args.onArchiveImported).toHaveBeenCalledOnce();
+    await expect(screen.getByRole('button', { name: 'Done' })).toBeEnabled();
+    await expect(screen.queryByRole('button', { name: 'Cancel import' })).not.toBeInTheDocument();
+    await assertDialogControls(screen.getByRole('dialog', { name: 'Import file' }));
+  },
+};
+
+export const EmptyArchive: Story = {
+  args: { dialogOpen: true },
+  parameters: {
+    api: {
+      'POST /api/items/archive-import': { result: { items: 0, files: 0, folders: 0, spaces: 0 } },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await pick(canvasElement, archive());
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('status'),
+    ).toHaveTextContent('This archive was empty. No items were added.');
+  },
+};
+
+export const ArchiveFailed: Story = {
+  args: { dialogOpen: true, onArchiveImported: fn() },
+  parameters: {
+    api: {
+      'POST /api/items/archive-import': failure('This archive is invalid. No files were added.'),
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    await pick(canvasElement, archive());
+    const screen = within(canvasElement.ownerDocument.body);
+    await expect(await screen.findByRole('alert')).toHaveTextContent(
+      'This archive is invalid. No files were added.',
+    );
+    await expect(args.onArchiveImported).not.toHaveBeenCalled();
+    await expect(screen.getByRole('button', { name: 'Choose another file' })).toBeEnabled();
+  },
+};
+
+export const ArchiveCancelled: Story = {
+  args: { dialogOpen: true, onArchiveImported: fn() },
+  parameters: { api: { 'POST /api/items/archive-import': pending() } },
+  play: async ({ canvasElement, args }) => {
+    await pick(canvasElement, archive());
+    const screen = within(canvasElement.ownerDocument.body);
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel import' }));
+    await expect(screen.getByRole('status')).toHaveTextContent(
+      'Import stopped. Refresh your files to check whether it finished before trying again.',
+    );
+    await expect(args.onArchiveImported).not.toHaveBeenCalled();
+    await expect(screen.getByRole('button', { name: 'Choose another file' })).toBeEnabled();
+  },
+};
+
+export const ArchiveNeedsMyFiles: Story = {
+  args: { parentId: 'owned-folder', dialogOpen: true },
+  play: async ({ canvasElement }) => {
+    await pick(canvasElement, archive());
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('alert'),
+    ).toHaveTextContent('Open My files to import a Spinel ZIP archive.');
+  },
+};
+
+export const ArchiveTooLarge: Story = {
+  args: { dialogOpen: true },
+  play: async ({ canvasElement }) => {
+    const oversized = archive();
+    // Exercise the size guard without allocating an oversized fixture in the browser.
+    Object.defineProperty(oversized, 'size', { value: ARCHIVE_LIMIT + 1 });
+    await pick(canvasElement, oversized);
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('alert'),
+    ).toHaveTextContent('Spinel archives must be at most 8 GiB.');
+  },
+};
+
+export const ArchiveUnconfirmed: Story = {
+  args: { dialogOpen: true, onArchiveImported: fn() },
+  play: async ({ canvasElement, args }) => {
+    const original = globalThis.fetch;
+    globalThis.fetch = async (input, init) => {
+      if (String(input).endsWith('/archive-import')) throw new TypeError('Connection lost');
+      return original(input, init);
+    };
+    try {
+      await pick(canvasElement, archive());
+      await expect(
+        await within(canvasElement.ownerDocument.body).findByRole('alert'),
+      ).toHaveTextContent('Could not confirm the import. Refresh your files before trying again.');
+      await expect(args.onArchiveImported).not.toHaveBeenCalled();
+    } finally {
+      globalThis.fetch = original;
+    }
+  },
 };

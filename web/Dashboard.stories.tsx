@@ -602,6 +602,38 @@ export const ImportDialog: Story = {
   },
 };
 
+export const ExportAllFiles: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const screen = within(canvasElement.ownerDocument.body);
+    const menu = await within(canvasElement).findByRole('button', {
+      name: 'More actions for My files',
+    });
+    await userEvent.click(menu);
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Export all my files' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Export all my files' });
+    await expect(within(dialog).getByRole('button', { name: 'Export files' })).toBeEnabled();
+    await assertDialogControls(dialog);
+  },
+};
+
+export const CancelExportConfirmation: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const screen = within(canvasElement.ownerDocument.body);
+    const menu = await within(canvasElement).findByRole('button', {
+      name: 'More actions for My files',
+    });
+    await userEvent.click(menu);
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Export all my files' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }));
+    await expect(
+      screen.queryByRole('dialog', { name: 'Export all my files' }),
+    ).not.toBeInTheDocument();
+    await expect(menu).toHaveFocus();
+  },
+};
+
 export const PersonalFilingDialog: Story = {
   parameters: { api: populated },
   play: async ({ canvasElement }) => {
