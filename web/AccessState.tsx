@@ -39,11 +39,19 @@ export function AccessState({
       <p role={kind === 'loading' ? 'status' : kind === 'unsupported' ? 'alert' : undefined}>
         {copy[1]}
       </p>
-      {kind === 'offline' && onRetry && <Button onClick={onRetry}>Try again</Button>}
+      {kind === 'offline' && onRetry && (
+        <Button primary onClick={onRetry}>
+          Try again
+        </Button>
+      )}
       {kind === 'revoked' && unsaved && (
         <p>Some changes were not saved. This document is no longer accessible.</p>
       )}
-      {kind === 'missing' && onFiles && <Button onClick={onFiles}>Go to My files</Button>}
+      {kind === 'missing' && onFiles && (
+        <Button primary onClick={onFiles}>
+          Go to My files
+        </Button>
+      )}
     </section>
   );
   if (embedded) return <div className="sp-ui access-state-embedded">{content}</div>;

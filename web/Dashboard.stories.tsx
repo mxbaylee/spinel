@@ -213,6 +213,31 @@ export const LoadFailed: Story = {
     api: { ...empty, 'GET /api/items': failure('Could not load your items. Try again.', 500) },
   },
 };
+/** A previously listed item can disappear before it is opened. */
+export const MissingItem: Story = {
+  parameters: {
+    api: {
+      ...populated,
+      [`GET /api/items/${household.id}`]: failure('This item is not available.', 404),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Household Folder' }));
+    await expect(
+      await canvas.findByRole('heading', { name: "This item isn't available" }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Go to My files' }));
+    await expect(canvas.queryByRole('heading', { name: "This item isn't available" })).toBeNull();
+    await userEvent.click(await canvas.findByRole('button', { name: 'Household Folder' }));
+    await expect(
+      await canvas.findByRole('heading', { name: "This item isn't available" }),
+    ).toBeVisible();
+    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(
+      window.innerWidth,
+    );
+  },
+};
 
 // A fixed time, so the banner reads the same on any day.
 const synced = Date.UTC(2026, 9, 19, 14, 5);

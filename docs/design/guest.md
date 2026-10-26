@@ -76,11 +76,12 @@ and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-co
 
 ## Stories
 
-SPN-084's [implementation record](../implementation/SPN-084.md) tracks the generic
-loading/offline/unavailable migration and its pending validation. The owner chose
+SPN-084's [implementation record](../implementation/SPN-084.md) preserves the generic
+loading/offline/unavailable contract and its decisions. The owner chose
 immediate hiding after revocation, including dirty Space guests. The native
-Doc/Sheet regressions and revoked-unsaved story cover the intended behavior;
-execution and actual screenshot review remain pending.
+Doc/Sheet regressions and revoked-unsaved story cover that behavior. Exact-commit
+CI evidence and independent screenshot review are recorded in
+[PR #180](https://github.com/mxbaylee/spinel/pull/180).
 
 `Guest/GuestApp` (loading and link-revoked states; the editor itself boots
 Univer and is covered by Playwright).
