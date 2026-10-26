@@ -12,6 +12,7 @@ interface Evidence {
   unitId: string;
   revision: number;
   snapshot: NativeSnapshot;
+  observedAt: number;
 }
 type RecordedWindow = Window & { nativeSyncEvidence?: Record<string, Evidence> };
 
@@ -21,10 +22,30 @@ export async function recordNativeSnapshots(context: BrowserContext) {
     const records: Record<string, Evidence> = Object.create(null);
     (window as RecordedWindow).nativeSyncEvidence = records;
     window.addEventListener('spinel-sync-native-snapshot', (event) => {
-      const value = (event as CustomEvent<Evidence>).detail;
-      records[value.unitId] = structuredClone(value);
+      const value = (event as CustomEvent<Omit<Evidence, 'observedAt'>>).detail;
+      records[value.unitId] = { ...structuredClone(value), observedAt: Date.now() };
     });
   });
+}
+
+/** Measure native delivery itself; clipboard/selection automation is separate proof. */
+export async function expectNativeCellDelivery(pages: Page[], unitId: string, started: number) {
+  await Promise.all(
+    pages.map(async (page) => {
+      const read = () =>
+        page.evaluate((id) => {
+          const evidence = (window as RecordedWindow).nativeSyncEvidence?.[id];
+          if (!evidence || !('sheets' in evidence.snapshot)) return null;
+          const sheet = evidence.snapshot.sheets[evidence.snapshot.sheetOrder[0]];
+          return {
+            values: [sheet.cellData?.[0]?.[0]?.v, sheet.cellData?.[0]?.[1]?.v],
+            observedAt: evidence.observedAt,
+          };
+        }, unitId);
+      await expect.poll(async () => (await read())?.values, { intervals: [10] }).toEqual([41, 73]);
+      expect((await read())!.observedAt - started).toBeLessThan(1000);
+    }),
+  );
 }
 
 /** Only documented native defaults/style indirection and revision are normalized. */

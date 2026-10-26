@@ -102,9 +102,13 @@ undo/redo works until another person's change arrives; this package does not
 claim to rebase native history.
 
 `NativeReplica` creates the same OSS headless handlers and resource-loading
-boundary as the server. It preserves unknown resources, reads inline native
-cells, and saves via the public resource loader. New Docs use the prepared
-snapshot's native `drawings` and `drawingsOrder` containers.
+boundary as the server. It reads inline native cells and saves via the public
+resource loader. The public Docs drawing plugin manages `DOC_DRAWING_PLUGIN`,
+keeping its serialized drawing map and order aligned with the canonical
+`drawings` and `drawingsOrder` fields through insertion, updates, deletion and
+save/reopen. Loading uses the same native resource contract as the visible
+editor, so a stale opaque copy cannot restore earlier drawing data. Unrelated
+opaque resources retain their original bytes without replacing managed data.
 
 ## Bounds, verification and persistence
 

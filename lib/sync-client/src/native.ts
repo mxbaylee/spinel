@@ -12,6 +12,7 @@ import {
 } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData, Workbook } from '@univerjs/core';
 import { DocStateChangeManagerService, UniverDocsPlugin } from '@univerjs/docs';
+import { UniverDocsDrawingPlugin } from '@univerjs/docs-drawing';
 import { UniverDocsHyperLinkPlugin } from '@univerjs/docs-hyper-link';
 import { UniverDrawingPlugin } from '@univerjs/drawing';
 import { UniverRenderEnginePlugin } from '@univerjs/engine-render';
@@ -79,6 +80,9 @@ export class NativeReplica implements SyncReplica {
       this.univer.registerPlugin(UniverDocsHyperLinkPlugin);
       this.univer.registerPlugin(UniverDrawingPlugin);
       this.univer.registerPlugin(UniverSheetsDrawingPlugin);
+      // Its resource is a serialized copy of the canonical Doc drawing map.
+      // Keep it current so reloading cannot restore an older opaque copy.
+      this.univer.registerPlugin(UniverDocsDrawingPlugin);
       const resources = injector.get(IResourceManagerService);
       const hooks = resources.getAllResourceHooks();
       for (const resource of snapshot.resources ?? []) {

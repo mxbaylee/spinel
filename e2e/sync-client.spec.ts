@@ -9,7 +9,11 @@ import { Profiles } from '../src/server/auth/profile.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { syncNetwork } from './sync-network.ts';
-import { recordNativeSnapshots, expectNativeSnapshots } from './sync-snapshot.ts';
+import {
+  recordNativeSnapshots,
+  expectNativeSnapshots,
+  expectNativeCellDelivery,
+} from './sync-snapshot.ts';
 
 const saved = (page: Page) =>
   expect(page.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
@@ -117,6 +121,7 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, kind: 
     owner,
     editor,
     item,
+    unitId: data.unitId as string,
     first,
     second,
     page,
@@ -155,7 +160,13 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, kind: 
         ),
       );
       await Promise.all(contexts.map((context) => context.close()));
-      db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
+      // Workspace parent foreign keys are RESTRICT, so remove this fixture's
+      // descendants before their Space root instead of depending on row order.
+      const leaves = db.prepare(`DELETE FROM workspace_items WHERE owner_id=?
+        AND id NOT IN (SELECT parent_id FROM workspace_items WHERE parent_id IS NOT NULL)`);
+      while (leaves.run(owner.id).changes) {
+        /* Continue through this fixture's tree. */
+      }
       for (const user of [owner, editor])
         db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
       db.close();
@@ -198,10 +209,10 @@ test('native Sheets deliver within a second, rebase offline edits, and retry one
     await Promise.all([f.page.keyboard.type('41'), f.other.keyboard.type('73')]);
     const started = Date.now();
     await Promise.all([f.page.keyboard.press('Enter'), f.other.keyboard.press('Enter')]);
+    await expectNativeCellDelivery([f.page, f.other], f.unitId, started);
     await Promise.all([selectCell(f.page, 'B1'), selectCell(f.other, 'A1')]);
     await expect.poll(() => copySelection(f.page), { intervals: [20] }).toBe('73');
     await expect.poll(() => copySelection(f.other), { intervals: [20] }).toBe('41');
-    expect(Date.now() - started).toBeLessThan(1000);
     await Promise.all([saved(f.page), saved(f.other)]);
     await f.network.setOffline(true);
     await editCell(f.page, 'A2', 'offline owner');
@@ -310,6 +321,9 @@ test('native Docs preserve concurrent text and undo across reconnect, render pro
     const jump = f.page
       .getByRole('dialog', { name: 'People in this document', exact: true })
       .getByRole('button', { name: 'Go to Sync collaborator', exact: true });
+    // Cursor updates are coalesced. Follow the new two-character selection,
+    // not the prior select-all range used by the clipboard assertion.
+    await expect(jump).toHaveAttribute('data-selection', '30:32:1:TEXT::-1');
     await expect(jump).toBeEnabled();
     await jump.click();
     await expect(nativeInput(f.page)).toBeFocused();
@@ -475,6 +489,16 @@ for (const kind of ['sheet', 'doc'] as const) {
         'View only — reload after your access changes.',
         { timeout: 30_000 },
       );
+      const refusal = f.other.getByText(
+        'The range is protected, and you do not have edit permission. To edit, please contact the creator.',
+        { exact: true },
+      );
+      // Native Sheets may explain the first blocked edit in a modal. Dismiss
+      // that observed denial before testing another actual surface interaction.
+      if (await refusal.isVisible()) {
+        await f.other.getByRole('button', { name: 'ok', exact: true }).click();
+        await expect(refusal).toBeHidden();
+      }
       await surface.click({ position: { x: 130, y: 200 } });
       await f.other.keyboard.type('still read only');
       await f.other.keyboard.press('Enter');

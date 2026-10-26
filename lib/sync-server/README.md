@@ -61,6 +61,13 @@ open-source Univer handlers and resource APIs. Its public resource loader saves
 current managed resources; opaque resource names survive without replacing live
 plugin data. Formula custom ranges are native Doc metadata and survive replay.
 
+The public Docs drawing plugin manages `DOC_DRAWING_PLUGIN`. Its serialized map
+and order mirror the canonical `drawings` and `drawingsOrder` fields after native
+drawing edits and remain aligned through save/reopen. Native loading also restores
+drawings supplied through that resource. Keeping it managed prevents an older
+serialized copy from replacing newer drawing data on reopen; unrelated opaque
+resources retain their original bytes.
+
 Each accepted edit stores the exact transform output, including params, claims,
 tails and triggers. Its `beforeCells` stores only cells that changed, with their
 styles resolved inline. A structural edit records changed coordinates on both
