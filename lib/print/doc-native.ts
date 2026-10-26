@@ -154,17 +154,28 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     // source coverage alone cannot detect ink clipped by an authored exact row.
     const inkBounds = new Map<
       IDocumentSkeletonPage,
-      { bounds: PrintBox | null; text: PrintBox[] }
+      { bounds: PrintBox | null; text: PrintBox[]; horizontal: PrintBox[] }
     >();
     for (const page of data.pages) {
       check();
       skeleton.renderedPage = page;
       const text: PrintBox[] = [];
-      const ink = new InkContext(createCanvas(1, 1).getContext('2d'), check, (box) => {
-        if (text.length >= limits.textCharacters * 4)
-          throw new PrintError('limit', 'PDF glyph paint exceeds its work budget.');
-        text.push(box);
-      });
+      const horizontal: PrintBox[] = [];
+      const ink = new InkContext(
+        createCanvas(1, 1).getContext('2d'),
+        check,
+        (box) => {
+          if (text.length >= limits.textCharacters * 4)
+            throw new PrintError('limit', 'PDF glyph paint exceeds its work budget.');
+          text.push(box);
+        },
+        (box) => {
+          check();
+          if (horizontal.length >= limits.gridCells)
+            throw new PrintError('limit', 'PDF border paint exceeds its work budget.');
+          horizontal.push(box);
+        },
+      );
       document.draw(ink);
       if (
         ink.bounds &&
@@ -173,7 +184,7 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
           ink.bounds.top < frame.top - 0.01)
       )
         throw new PrintError('unsupported', 'PDF document ink exceeds its prepared page bounds.');
-      inkBounds.set(page, { bounds: ink.bounds, text });
+      inkBounds.set(page, { bounds: ink.bounds, text, horizontal });
     }
     const pages = paginateDocument(prepared.snapshot, data, frame, fonts, limits, check, inkBounds);
     const mediaBox = { width: frame.width * 0.75, height: frame.height * 0.75 };

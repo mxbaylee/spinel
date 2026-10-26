@@ -472,11 +472,18 @@ export class InkContext extends UniverPrintingContext {
   readonly raw: SKRSContext2D;
   readonly check: () => void;
   readonly onTextInk: ((box: PrintBox) => void) | undefined;
-  constructor(raw: SKRSContext2D, check: () => void, onTextInk?: (box: PrintBox) => void) {
+  readonly onHorizontalInk: ((box: PrintBox) => void) | undefined;
+  constructor(
+    raw: SKRSContext2D,
+    check: () => void,
+    onTextInk?: (box: PrintBox) => void,
+    onHorizontalInk?: (box: PrintBox) => void,
+  ) {
     super(raw as unknown as CanvasRenderingContext2D);
     this.raw = raw;
     this.check = check;
     this.onTextInk = onTextInk;
+    this.onHorizontalInk = onHorizontalInk;
   }
   private box(left: number, top: number, right: number, bottom: number): PrintBox {
     const matrix = this.raw.getTransform();
@@ -563,7 +570,11 @@ export class InkContext extends UniverPrintingContext {
       right: this.path.right + radius,
       bottom: this.path.bottom + radius,
     };
-    this.bounds = unionBox(this.bounds, intersect(this.clipBox, box)!);
+    const visible = intersect(this.clipBox, box);
+    if (visible && visible.right > visible.left && visible.bottom > visible.top) {
+      if (this.path.bottom - this.path.top < 0.001) this.onHorizontalInk?.(visible);
+      this.bounds = unionBox(this.bounds, visible);
+    }
   }
   override fillRect(x: number, y: number, width: number, height: number) {
     this.check();

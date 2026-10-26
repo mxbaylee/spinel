@@ -77,14 +77,21 @@ account-only UI described above still apply.
 
 [SPN-097's feasibility record](implementation/SPN-097.md#native-pdf-recommendation-and-delivery-boundaries)
 recommends public native layout with a Canvas PDF backend in bounded server work.
-The standalone [`@spinel/print` Sheet renderer](../lib/print/README.md), delivered
-by [SPN-101](implementation/SPN-101.md), accepts a prepared workbook, authorized
+The standalone [`@spinel/print` package](../lib/print/README.md) includes the Sheet
+renderer from [SPN-101](implementation/SPN-101.md) and Doc renderer from
+[SPN-102](implementation/SPN-102.md). The Sheet entry accepts a prepared workbook, authorized
 image bytes and licensed fonts. It preserves visible worksheet order and subsets,
 complete used ranges, native text and image continuation, and light A4 pages with
 12.7 mm margins and no enlargement. Unsupported or over-budget models fail without
 partial bytes. Its retained synthetic PDFs and measured resource failures do not
-establish production export completeness or a safe 2 GB capacity limit. SPN-102
-extends the same package for Docs; SPN-075 retains complete access, Formula-source
+establish production export completeness or a safe 2 GB capacity limit. The Doc
+entry accepts public document data, licensed fonts, authorized raster bytes and
+prepared Formula values or whole-value unavailable placeholders. It preserves
+stored geometry, explicit breaks and complete long text/table/image continuation,
+using finite pages for modern Docs and exact A4/12.7 mm defaults when absent.
+Unsupported models fail explicitly under the package's documented acceptance gaps.
+Both entries share native resource admission, atomic output and cleanup;
+SPN-075 retains complete access, Formula-source
 privacy, hard process isolation, direct-download and Pro-removal acceptance.
 
 Native downloads require current read access. Import requires an everyday

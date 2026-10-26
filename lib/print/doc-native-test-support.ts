@@ -26,7 +26,6 @@ export async function runDocJobs(
   let stderr = '';
   worker.stderr?.on('data', (data: Buffer) => {
     if (process.env.PRINT_FIXTURE_DEBUG) process.stderr.write(data);
-    if (process.env.PRINT_FIXTURE_DEBUG) process.stderr.write(data);
     if (stderr.length < 8192) stderr += data.toString();
   });
   let timer: ReturnType<typeof setTimeout> | undefined;

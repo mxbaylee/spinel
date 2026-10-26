@@ -116,7 +116,9 @@ Unexpected backend PDF structure fails explicitly instead of rounding silently.
 Heading and named character/paragraph styles, rich text, nested lists and their
 generated markers use the prepared licensed faces. Source coverage, actual ink
 bounds and per-face glyph coverage must pass before PDF bytes can be returned.
-Raster drawings use only supplied bytes and the public native placement model.
+Raster drawings use only supplied bytes and the public native placement model,
+including admitted rectangular crops, opacity, rotation and flips. Modern Docs'
+implicit paragraph spacing is materialized before finite page normalization.
 
 Each prepared Formula entry identifies a whole-entity `CUSTOM` range by `rangeId`.
 The result is a scalar (`string | number | boolean | null`), a rectangular array
@@ -127,6 +129,9 @@ use the live editor adapter's atomic-table size limit. Source expressions and
 range properties are removed from the owned model; unavailable results contain
 the fixed word **Unavailable**, with no source name, identity or explanation.
 Every custom range requires an explicit prepared result. Nothing is evaluated.
+Scalar and unavailable results can appear inside native table cells. Array/table
+results nested inside a native table currently fail explicitly: guessing the
+cell's auto-fit/span geometry before native layout could clip the generated table.
 
 Doc admission currently rejects nonempty headers/footers/notes, raw OOXML or
 custom rendering payloads, unprepared links/mentions/plugin resources, page
@@ -136,6 +141,18 @@ wrapped/floating tables, sparse table grids, rotated cell text, column groups,
 nonimage/grouped/contour drawings and unsupported floating anchors. These remain
 explicit acceptance gaps for SPN-075; ignoring them would change visible content.
 Malformed indexes, merges, geometry or unprepared glyphs also fail without bytes.
+
+In particular, top-and-bottom wrapping requires a leading, paragraph-relative
+image anchor followed by authored caption text in the same paragraph. Anchor-only,
+line-relative, non-leading or multiple-block paragraphs fail explicitly: the
+pinned native layout can reserve the image height twice or drift its placement.
+The supported captioned case preserves native flow and is covered by the tall
+floating-image fixture. The renderer does not add synthetic captions, remove
+saved spacing or patch the native engine. Tables must also fit their actual
+containing viewport, including nested cells, even when an overflowing area
+contains only a background or border. Square wrapping that blocks the entire
+containing text column also fails explicitly because native retries can add blank
+space; the guard uses actual native column geometry, including nested cells.
 
 Doc limits cover both the original and projected model, generated list/Formula
 text, native layout work, repeated drawing across physical slices and all shared
@@ -152,7 +169,7 @@ formats fail. Aggregate header dimensions are admitted before native decoding.
 EXIF orientations are normalized from owned bytes, with dimensions and normalized
 byte totals checked again.
 
-Floating images support public Position, Both and None anchors, saved z-order,
+Sheet floating images support public Position, Both and None anchors, saved z-order,
 opacity, source cropping, rotation and flips. A standard single native cell image
 uses its saved dimensions, padded aspect fit and alignment; a hidden merge anchor
 can still supply the visible merged remainder. Image cells are removed from the

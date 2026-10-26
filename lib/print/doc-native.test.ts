@@ -7,6 +7,8 @@ import {
   DocStyleType,
   ListGlyphType,
   LocaleType,
+  ObjectRelativeFromV,
+  PositionedObjectLayoutType,
 } from '@univerjs/core';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { expect, test } from 'vitest';
@@ -200,7 +202,10 @@ function formulaDoc(prefix: string[], value = 'PRIVATE_SOURCE_EXPRESSION') {
 
 test('a 30-row wrapped Formula table beginning near a page bottom remains complete', async () => {
   const prefix = Array.from({ length: 14 }, (_, index) => `PREFIX-${index}`);
-  const input = await docInput(formulaDoc(prefix));
+  const snapshot = formulaDoc(prefix);
+  // A group taller than a page must continue completely despite a saved keep rule.
+  snapshot.body!.paragraphs![prefix.length].paragraphStyle = { keepLines: 1 };
+  const input = await docInput(snapshot);
   const rows = Array.from({ length: 30 }, (_, index) => [
     `ROW-${String(index + 1).padStart(2, '0')}`,
     `Wrapped authorized value ${index + 1} with enough words to wrap across several lines in its narrow prepared cell.`,
@@ -275,6 +280,96 @@ test('prepared scalar, array and whole unavailable Formula results expose no sou
       await loading.destroy();
     }
   }
+}, 60_000);
+
+test('a Formula table retains its paragraph page break before the first result row', async () => {
+  const snapshot = formulaDoc(['BEFORE-TABLE-BREAK']);
+  snapshot.body!.paragraphs![1].paragraphStyle = { pageBreakBefore: 1 };
+  const input = await docInput(snapshot);
+  input.formulas = [{ rangeId: 'f', result: { kind: 'table', rows: [['RESULT-A', 'RESULT-B']] } }];
+  const [result] = await runDocJobs([{ input }]);
+  expect(
+    result,
+    JSON.stringify(result, (key, value) => (key === 'bytes' ? '<bytes>' : value)),
+  ).toMatchObject({ ok: true, pages: 2 });
+  const pages = await retainDocPdf('formula-explicit-break', result.bytes!);
+  expect(pages[0].text).toContain('BEFORE-TABLE-BREAK');
+  expect(pages[0].text).not.toContain('RESULT-A');
+  expect(pages[1].text).toContain('RESULT-A');
+  expect(pages[1].text).toContain('RESULT-B');
+  expect(pages[1].text).toContain('AFTER-FORMULA-SENTINEL');
+}, 60_000);
+
+test('modern implicit paragraph spacing survives finite print geometry', async () => {
+  const inputs = await Promise.all(
+    [DocumentFlavor.MODERN, DocumentFlavor.TRADITIONAL].map((flavor) =>
+      docInput(
+        textDoc(['FIRST-SPACING-MARKER', 'SECOND-SPACING-MARKER'], { documentFlavor: flavor }),
+      ),
+    ),
+  );
+  const results = await runDocJobs(inputs.map((input) => ({ input })));
+  const gaps: number[] = [];
+  for (const [index, result] of results.entries()) {
+    expect(
+      result,
+      JSON.stringify(result, (key, value) => (key === 'bytes' ? '<bytes>' : value)),
+    ).toMatchObject({ ok: true, pages: 1 });
+    const [page] = await retainDocPdf(
+      index === 0 ? 'modern-spacing' : 'traditional-spacing',
+      result.bytes!,
+    );
+    const first = page.items.find((item) => item.str.includes('FIRST-SPACING-MARKER'))!;
+    const second = page.items.find((item) => item.str.includes('SECOND-SPACING-MARKER'))!;
+    expect(first).toBeDefined();
+    expect(second).toBeDefined();
+    gaps.push(first.transform[5] - second.transform[5]);
+  }
+  expect(gaps[0]).toBeGreaterThan(gaps[1] + 5);
+}, 60_000);
+
+test('a short Formula table preserves its source paragraph keep-lines group near a page bottom', async () => {
+  const snapshot = formulaDoc(Array.from({ length: 15 }, (_, index) => `KEEP-PREFIX-${index}`));
+  snapshot.body!.paragraphs![15].paragraphStyle = { keepLines: 1 };
+  const input = await docInput(snapshot);
+  input.formulas = [
+    {
+      rangeId: 'f',
+      result: {
+        kind: 'table',
+        rows: [
+          ['KEPT-ROW-ONE', 'A'],
+          ['KEPT-ROW-TWO', 'B'],
+        ],
+      },
+    },
+  ];
+  const [result] = await runDocJobs([{ input }]);
+  expect(
+    result,
+    JSON.stringify(result, (key, value) => (key === 'bytes' ? '<bytes>' : value)),
+  ).toMatchObject({ ok: true, pages: 2 });
+  const pages = await retainDocPdf('formula-keep-lines', result.bytes!);
+  expect(pages[0].text).toContain('KEEP-PREFIX-14');
+  expect(
+    pages
+      .map((page) => page.text)
+      .join(' ')
+      .split('KEEP-PREFIX-14'),
+  ).toHaveLength(2);
+  expect(pages[1].text).not.toContain('KEEP-PREFIX-14');
+  expect(pages[0].text).not.toContain('KEPT-ROW-ONE');
+  expect(pages[1].text).toContain('KEPT-ROW-ONE');
+  expect(pages[1].text).toContain('KEPT-ROW-TWO');
+  // No table decoration belongs on the page containing only short prefix lines.
+  // Text extraction alone misses an orphan top border at the physical seam.
+  let rightSideInk = 0;
+  for (let i = 0; i < pages[0].pixels.length; i += 4) {
+    if ((i / 4) % pages[0].width < pages[0].width * 0.6) continue;
+    if (pages[0].pixels[i] < 240 || pages[0].pixels[i + 1] < 240 || pages[0].pixels[i + 2] < 240)
+      rightSideInk++;
+  }
+  expect(rightSideInk).toBe(0);
 }, 60_000);
 
 test('a native row taller than a physical page preserves every wrapped word and its following row', async () => {
@@ -448,7 +543,7 @@ test('Doc and Sheet operations share one native registry lock', async () => {
   await retainDocPdf('shared-native-lock', result.bytes!);
 }, 60_000);
 
-test('inline and floating image bytes continue with their source colors and trailing content', async () => {
+test('supported tall image anchors continue completely and broken native anchors fail without bytes', async () => {
   const canvas = createCanvas(12, 90),
     context = canvas.getContext('2d');
   for (const [index, color] of ['#d02040', '#20a040', '#2040d0'].entries()) {
@@ -457,9 +552,12 @@ test('inline and floating image bytes continue with their source colors and trai
   }
   const inputs: DocPrintInput[] = [];
   for (const inline of [true, false]) {
-    const snapshot = textDoc(['Before image', '\b', 'AFTER-IMAGE-SENTINEL'], {
-      pageSize: { width: 600, height: 400 },
-    });
+    const snapshot = textDoc(
+      ['Before image', inline ? '\b' : '\bAnchor caption', 'AFTER-IMAGE-SENTINEL'],
+      {
+        pageSize: { width: 600, height: 400 },
+      },
+    );
     snapshot.body!.customBlocks = [{ startIndex: 'Before image\r'.length, blockId: 'image' }];
     snapshot.drawingsOrder = ['image'];
     snapshot.drawings = {
@@ -482,18 +580,63 @@ test('inline and floating image bytes continue with their source colors and trai
     input.images = [{ source: 'opaque-authorized-image', bytes: await canvas.encode('png') }];
     inputs.push(input);
   }
-  const results = await runDocJobs(inputs.map((input) => ({ input })));
+  const anchorVariant = (text: string) => {
+    const input = structuredClone(inputs[1]);
+    input.snapshot.body = textDoc(['Before image', text, 'AFTER-IMAGE-SENTINEL']).body;
+    const stream = input.snapshot.body!.dataStream;
+    input.snapshot.body!.customBlocks = [{ startIndex: stream.indexOf('\b'), blockId: 'image' }];
+    return input;
+  };
+  const bare = anchorVariant('\b');
+  const invisible = anchorVariant('\b\u200b');
+  const line = anchorVariant('\bAnchor caption');
+  line.snapshot.drawings!.image.docTransform.positionV.relativeFrom = ObjectRelativeFromV.LINE;
+  const nonLeading = anchorVariant('Leading text\bAnchor caption');
+  const multiple = anchorVariant('\bAnchor caption\b');
+  multiple.snapshot.body!.customBlocks!.push({
+    startIndex: multiple.snapshot.body!.dataStream.lastIndexOf('\b'),
+    blockId: 'second-image',
+  });
+  multiple.snapshot.drawings!['second-image'] = {
+    ...structuredClone(multiple.snapshot.drawings!.image),
+    drawingId: 'second-image',
+  };
+  multiple.snapshot.drawingsOrder!.push('second-image');
+  const fullColumn = anchorVariant('\b');
+  fullColumn.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_SQUARE;
+  fullColumn.snapshot.drawings!.image.distL = 600;
+  fullColumn.snapshot.drawings!.image.distR = 600;
+  const square = anchorVariant('\b');
+  square.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_SQUARE;
+  inputs.push(square);
+  const badAnchors = [bare, invisible, line, nonLeading, multiple, fullColumn];
+  const allResults = await runDocJobs([...badAnchors, ...inputs].map((input) => ({ input })));
+  for (const rejected of allResults.slice(0, badAnchors.length)) {
+    expect(rejected, JSON.stringify(rejected)).toMatchObject({
+      ok: false,
+      code: 'unsupported',
+      restored: true,
+      remainingFonts: 0,
+    });
+    expect(rejected.bytes).toBeUndefined();
+  }
+  const results = allResults.slice(badAnchors.length);
   for (const [index, result] of results.entries()) {
     expect(
       result,
       JSON.stringify(result, (key, value) => (key === 'bytes' ? '<bytes>' : value)),
     ).toMatchObject({ ok: true, restored: true, remainingFonts: 0 });
     const pages = await retainDocPdf(
-      index === 0 ? 'tall-inline-image' : 'tall-floating-image',
+      ['tall-inline-image', 'tall-floating-image', 'tall-square-image'][index],
       result.bytes!,
     );
     expect(pages.length).toBeGreaterThanOrEqual(3);
     expect(pages.map((page) => page.text).join(' ')).toContain('AFTER-IMAGE-SENTINEL');
+    if (index === 1) expect(pages.map((page) => page.text).join(' ')).toContain('Anchor caption');
+    // An omitted or displaced anchor can retain every pixel while adding blank pages.
+    expect(pages.every((page) => page.pixels.some((value, i) => i % 4 !== 3 && value < 250))).toBe(
+      true,
+    );
     const colors = [0, 0, 0];
     for (const page of pages)
       for (let n = 0; n < page.pixels.length; n += 4) {
@@ -507,3 +650,60 @@ test('inline and floating image bytes continue with their source colors and trai
     for (const count of colors) expect(Math.abs(count - 8100)).toBeLessThan(200);
   }
 }, 90_000);
+
+test('cropped translucent floating images use authorized raster pixels and physical anchors', async () => {
+  const canvas = createCanvas(40, 20),
+    context = canvas.getContext('2d');
+  context.fillStyle = '#d02040';
+  context.fillRect(0, 0, 20, 20);
+  context.fillStyle = '#2040d0';
+  context.fillRect(20, 0, 20, 20);
+  const snapshot = textDoc(['Cropped authorized image', '\b']);
+  snapshot.body!.customBlocks = [
+    { startIndex: 'Cropped authorized image\r'.length, blockId: 'crop' },
+  ];
+  snapshot.drawingsOrder = ['crop'];
+  snapshot.drawings = {
+    crop: {
+      drawingId: 'crop',
+      unitId: snapshot.id,
+      subUnitId: snapshot.id,
+      drawingType: 0,
+      source: 'https://not-fetched.invalid/authorized-image',
+      layoutType: 1,
+      docTransform: {
+        size: { width: 100, height: 80 },
+        positionH: { relativeFrom: 3, posOffset: 20 },
+        positionV: { relativeFrom: 1, posOffset: 30 },
+        angle: 0,
+      },
+      opacity: 0.5,
+      srcRect: { left: 100, top: 0, right: 0, bottom: 0 },
+    },
+  } as typeof snapshot.drawings;
+  const input = await docInput(snapshot);
+  input.images = [
+    { source: 'https://not-fetched.invalid/authorized-image', bytes: await canvas.encode('png') },
+  ];
+  const [result] = await runDocJobs([{ input }]);
+  expect(
+    result,
+    JSON.stringify(result, (key, value) => (key === 'bytes' ? '<bytes>' : value)),
+  ).toMatchObject({ ok: true, pages: 1 });
+  const [page] = await retainDocPdf('cropped-translucent-image', result.bytes!);
+  let blue = 0,
+    red = 0,
+    firstX = page.width;
+  for (let i = 0; i < page.pixels.length; i += 4) {
+    const [r, g, b] = page.pixels.slice(i, i + 3);
+    if (Math.abs(r - 144) <= 1 && Math.abs(g - 160) <= 1 && Math.abs(b - 232) <= 1) {
+      blue++;
+      firstX = Math.min(firstX, (i / 4) % page.width);
+    }
+    if (r > 180 && g < 160 && b < 180) red++;
+  }
+  expect(blue).toBeGreaterThan(4000);
+  expect(red).toBe(0);
+  // Stored page margin48px plus margin-relative offset20px, at0.75pt/px.
+  expect(firstX).toBe(51);
+}, 60_000);

@@ -5,6 +5,7 @@ import {
   NAMED_STYLE_MAP,
   NamedStyleType,
   PresetListType,
+  resolveDocumentParagraphStyle,
 } from '@univerjs/core';
 import type { IDocumentData, ITextStyle } from '@univerjs/core';
 import { PRINT_LIMITS, PrintError } from './contract.ts';
@@ -65,9 +66,15 @@ test('owns public document data and preserves stored geometry while defining exa
   const stored = prepare(source);
   expect(stored.documentStyle).toEqual({
     ...source.documentStyle,
+    defaultParagraphStyle: resolveDocumentParagraphStyle(source.documentStyle, undefined),
     documentFlavor: DocumentFlavor.TRADITIONAL,
   });
   expect(stored.body).not.toBe(source.body);
+  source.documentStyle.defaultParagraphStyle = { spaceBelow: { v: 4 }, lineSpacing: 1.3 };
+  expect(prepare(source).documentStyle.defaultParagraphStyle).toMatchObject({
+    spaceBelow: { v: 4 },
+    lineSpacing: 1.3,
+  });
 });
 
 test('rejects malformed data and accessors without evaluating getter or copying invalid content', () => {
@@ -150,6 +157,27 @@ test('scalar Formula projection shifts following formatting, image anchors and s
     ed: 15,
   });
   expect(projected.drawings!.image.unitId).toBe('print-document');
+  const styled = structuredClone(projected);
+  const appearance = styled.drawings!.image as unknown as Record<string, unknown>;
+  appearance.opacity = 0.5;
+  appearance.srcRect = { left: 4, top: 2 };
+  appearance.prstGeom = 'rect';
+  expect(prepare(styled).drawings!.image).toMatchObject({
+    opacity: 0.5,
+    srcRect: { left: 4, top: 2, right: 0, bottom: 0 },
+  });
+  for (const props of [
+    { prstGeom: 'ellipse' },
+    { adjustValues: { shape: 1 } },
+    { transform: { scaleX: 2 } },
+    { srcRect: { left: -100 } },
+    { srcRect: { left: 0, unknown: 1 } },
+    { opacity: 2 },
+  ]) {
+    const malformed = structuredClone(styled);
+    Object.assign(malformed.drawings!.image, props);
+    expect(() => prepare(malformed)).toThrow(PrintError);
+  }
   for (const flag of [1, 'yes']) {
     const malformed = structuredClone(projected);
     (malformed.drawings!.image as unknown as Record<string, unknown>).hidden = flag;
@@ -205,6 +233,101 @@ test('Formula arrays become complete native tables with every row and wrapped/mu
   expect(projected.body!.dataStream).toContain('\x0f after\r\n');
   expect(projected.body!.paragraphs).toHaveLength(63);
   expect(snapshot.body!.dataStream).toContain('PRIVATE SOURCE EXPRESSION');
+});
+
+test('Formula scalar and unavailable results work inside native cells while nested table results fail explicitly', () => {
+  const expression = 'PRIVATE NESTED EXPRESSION';
+  const base = formula({ kind: 'table', rows: [[expression]] });
+  const snapshot = prepare(base.snapshot, base.formulas);
+  const start = snapshot.body!.dataStream.indexOf(expression);
+  snapshot.body!.customRanges = [
+    {
+      rangeId: 'nested',
+      rangeType: CustomRangeType.CUSTOM,
+      wholeEntity: true,
+      startIndex: start,
+      endIndex: start + expression.length - 1,
+      properties: { privateSource: 'PRIVATE SOURCE NAME' },
+    },
+  ];
+  for (const result of [
+    { kind: 'scalar', value: 'CELL VALUE' },
+    { kind: 'unavailable' },
+  ] as PreparedDocFormulaResult[]) {
+    const projected = prepare(snapshot, [{ rangeId: 'nested', result }]);
+    expect(projected.body!.dataStream).toContain(
+      result.kind === 'scalar' ? 'CELL VALUE' : 'Unavailable',
+    );
+    expect(JSON.stringify(projected)).not.toContain('PRIVATE');
+    expect(Object.keys(projected.tableSource!)).toHaveLength(1);
+  }
+  for (const kind of ['array', 'table'] as const) {
+    expect(() =>
+      prepare(snapshot, [{ rangeId: 'nested', result: { kind, rows: [['NESTED VALUE']] } }]),
+    ).toThrow('Nested PDF Formula tables');
+  }
+  expect(snapshot.body!.dataStream).toContain(expression);
+});
+
+test('Formula block projection keeps authored paragraph breaks before the result', () => {
+  for (const inlinePrefix of ['', 'Inline prefix ']) {
+    const { snapshot, formulas } = formula(
+      { kind: 'table', rows: [['RESULT']] },
+      `BEFORE\r${inlinePrefix}`,
+      '\rAFTER',
+    );
+    snapshot.body!.paragraphs = [...snapshot.body!.dataStream.matchAll(/\r/gu)].map(
+      (match, index) => ({
+        paragraphId: `paragraph-${index}`,
+        startIndex: match.index,
+        paragraphStyle: index === 1 ? { pageBreakBefore: 1 } : {},
+      }),
+    );
+    const projected = prepare(snapshot, formulas);
+    const breaks = projected.body!.paragraphs!.filter(
+      (paragraph) => paragraph.paragraphStyle?.pageBreakBefore === 1,
+    );
+    expect(breaks).toHaveLength(1);
+    if (inlinePrefix) {
+      expect(projected.body!.dataStream.slice(0, breaks[0].startIndex)).toBe(
+        `BEFORE\r${inlinePrefix}`,
+      );
+    } else {
+      const result = projected.body!.dataStream.indexOf('RESULT');
+      expect(breaks[0].startIndex).toBe(result + 'RESULT'.length);
+    }
+    expect(
+      projected.body!.paragraphs!.find((paragraph) => paragraph.paragraphId === 'paragraph-1')!
+        .paragraphStyle?.pageBreakBefore,
+    ).toBe(0);
+  }
+});
+
+test('Formula block projection preserves a fitting source paragraph keep chain without forcing an atomic table', () => {
+  for (const keepNext of [0, 1] as const) {
+    const { snapshot, formulas } = formula(
+      { kind: 'table', rows: Array.from({ length: 30 }, (_, index) => [`Row ${index}`]) },
+      'Inline ',
+      ' suffix',
+    );
+    snapshot.body!.paragraphs = [
+      {
+        paragraphId: 'source',
+        startIndex: snapshot.body!.dataStream.length - 2,
+        paragraphStyle: { keepLines: 1, keepNext },
+      },
+    ];
+    const projected = prepare(snapshot, formulas);
+    const source = projected.body!.paragraphs!.find(
+      (paragraph) => paragraph.paragraphId === 'source',
+    )!;
+    expect(source.paragraphStyle).toMatchObject({ keepLines: 1, keepNext });
+    const generated = projected.body!.paragraphs!.filter((paragraph) => paragraph !== source);
+    expect(generated).toHaveLength(31);
+    expect(generated.every((paragraph) => paragraph.paragraphStyle?.keepNext === 1)).toBe(true);
+    expect(Object.values(projected.tableSource!)[0].tableRows).toHaveLength(30);
+    expect(projected.body!.dataStream).toContain('Row 29');
+  }
 });
 
 test('prepared results cannot inject native tokens or bypass aggregate projection limits', () => {
@@ -385,6 +508,7 @@ test('font admission includes rich styles, heading inheritance, Unicode fallback
     listId: 'same-list',
     listType: PresetListType.ORDER_LIST,
     nestingLevel: 1,
+    startNumber: 0,
   };
   source.body!.textRuns = [{ st: 8, ed: 15, ts: { it: 1 } }];
   const prepared = prepare(source);
@@ -400,9 +524,10 @@ test('font admission includes rich styles, heading inheritance, Unicode fallback
   expect(styles.some((style) => style.ff === 'PrintFont4')).toBe(true);
   expect(prepared.body!.textRuns![0].ts!.fs).toBe(NAMED_STYLE_MAP[NamedStyleType.HEADING_1]!.fs);
   expect(prepared.body!.paragraphs![2].bullet!.listType).toMatch(/^print-list-/u);
+  expect(prepared.body!.paragraphs![2].bullet!.startNumber).toBe(0);
   expect(
     Object.values(prepared.lists!)[0].nestingLevel.every((level) =>
-      /^PrintFont/u.test(level.textStyle!.ff!),
+      level.textStyle!.ff!.startsWith('PrintFont'),
     ),
   ).toBe(true);
 });

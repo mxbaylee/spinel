@@ -110,3 +110,149 @@ test('saved tall row geometry cannot disappear into a virtual-page clamp', async
   const pages = await retainDocPdf('after-saved-row-limit', results[2].bytes!);
   expect(pages[0].text).toContain('AFTERROWLIMIT');
 }, 60_000);
+
+test('a saved exact tall row retains its complete blank area and background on every continuation', async () => {
+  const snapshot = tableDoc([['SHORT-EXACT-ROW', 'NEIGHBOR']], [], 700);
+  snapshot.documentStyle.pageSize = { width: 600, height: 400 };
+  const row = snapshot.tableSource!['native-table'].tableRows[0];
+  row.trHeight.hRule = 2;
+  row.tableCells[0].backgroundColor = { rgb: '#ccddaa' };
+  const [result] = await runDocJobs([{ input: await docInput(snapshot) }]);
+  expect(result, summary(result)).toMatchObject({
+    ok: true,
+    pages: 3,
+    restored: true,
+    remainingFonts: 0,
+  });
+  const pages = await retainDocPdf('saved-exact-tall-row', result.bytes!);
+  let coloredHeight = 0;
+  const bands: number[] = [];
+  for (const page of pages) {
+    let band = 0;
+    // A vertical scan away from text/borders proves saved empty row geometry,
+    // rather than relying on extraction of its one short text line.
+    for (let y = 0; y < page.height; y++) {
+      const offset = (y * page.width + 170) * 4;
+      const [red, green, blue] = page.pixels.slice(offset, offset + 3);
+      if (Math.abs(red - 204) < 2 && Math.abs(green - 221) < 2 && Math.abs(blue - 170) < 2) band++;
+    }
+    bands.push(band);
+    coloredHeight += band;
+  }
+  expect(bands.every((height) => height > 50)).toBe(true);
+  // 700 native 96-DPI pixels occupy 525 PDF points, allowing boundary rasterization.
+  expect(coloredHeight).toBeGreaterThanOrEqual(523);
+  expect(coloredHeight).toBeLessThanOrEqual(527);
+  const text = compact(pages.map((page) => page.text).join(''));
+  for (const marker of ['SHORT-EXACT-ROW', 'NEIGHBOR', 'TABLE-END-SENTINEL'])
+    expect(text.split(marker)).toHaveLength(2);
+}, 60_000);
+
+test('nested native tables fit their containing cell or fail before clipping empty columns', async () => {
+  const snapshots = [200, 480].map((width) => {
+    const snapshot = tableDoc([['', 'OUTER-RIGHT']]);
+    const outer = snapshot.tableSource!['native-table'];
+    const inner = structuredClone(outer);
+    inner.tableId = 'inner-table';
+    inner.size.width.v = width;
+    inner.tableColumns[0].size.width.v = 100;
+    inner.tableColumns[1].size.width.v = width - 100;
+    inner.tableRows[0].tableCells[0].size!.width.v = 100;
+    inner.tableRows[0].tableCells[1].size!.width.v = width - 100;
+    inner.tableRows[0].tableCells[1].backgroundColor = { rgb: '#ccddaa' };
+    // The wide fixture's short text fits its first column. Only its empty
+    // second column's saved background/borders cross the local cell viewport.
+    let stream = '\x1a\x1b\x1c';
+    const innerStart = stream.length;
+    stream += '\x1a\x1b\x1cINNER-LEFT\r\n\x1d\x1c\r\n\x1d\x0e\x0f';
+    const innerEnd = stream.length;
+    stream += 'OUTER-CELL-TAIL\r\n\x1d\x1cOUTER-RIGHT\r\n\x1d\x0e\x0f';
+    const outerEnd = stream.length;
+    stream += 'NESTED-DOC-TAIL\r\n';
+    snapshot.body = {
+      dataStream: stream,
+      paragraphs: [...stream.matchAll(/\r/g)].map((match, index) => ({
+        startIndex: match.index,
+        paragraphId: `nested-${index}`,
+      })),
+      tables: [
+        { startIndex: 0, endIndex: outerEnd, tableId: outer.tableId },
+        { startIndex: innerStart, endIndex: innerEnd, tableId: inner.tableId },
+      ],
+    };
+    snapshot.tableSource![inner.tableId] = inner;
+    return snapshot;
+  });
+  const inputs = await Promise.all(snapshots.map((snapshot) => docInput(snapshot)));
+  const [fitting, clipped] = await runDocJobs(inputs.map((input) => ({ input })));
+  expect(fitting, summary(fitting)).toMatchObject({
+    ok: true,
+    restored: true,
+    remainingFonts: 0,
+  });
+  const pages = await retainDocPdf('native-nested-table', fitting.bytes!);
+  const text = compact(pages.map((page) => page.text).join(''));
+  for (const marker of ['INNER-LEFT', 'OUTER-CELL-TAIL', 'OUTER-RIGHT', 'NESTED-DOC-TAIL'])
+    expect(text.split(marker)).toHaveLength(2);
+  expect(clipped, summary(clipped)).toMatchObject({
+    ok: false,
+    code: 'unsupported',
+    restored: true,
+    remainingFonts: 0,
+  });
+  expect(clipped.bytes).toBeUndefined();
+}, 60_000);
+
+test('a moved first row carries its thick native outer border without orphan ink', async () => {
+  const prefix = Array.from(
+    { length: 12 },
+    (_, index) => `THICK-PREFIX-${String(index).padStart(2, '0')}`,
+  );
+  const snapshot = tableDoc(
+    [
+      ['THICK-ROW-ONE', 'A'],
+      ['THICK-ROW-TWO', 'B'],
+    ],
+    prefix,
+  );
+  snapshot.documentStyle.pageSize = { width: 600, height: 400 };
+  const rows = snapshot.tableSource!['native-table'].tableRows;
+  const outer = {
+    color: { rgb: '#5522bb' },
+    width: { v: 12, u: 3 as const },
+    dashStyle: 1 as const,
+  };
+  for (const cell of rows[0].tableCells) cell.borderTop = structuredClone(outer);
+  for (const cell of rows.at(-1)!.tableCells) cell.borderBottom = structuredClone(outer);
+  const [result] = await runDocJobs([{ input: await docInput(snapshot) }]);
+  expect(result, summary(result)).toMatchObject({
+    ok: true,
+    pages: 2,
+    restored: true,
+    remainingFonts: 0,
+  });
+  const pages = await retainDocPdf('native-thick-outer-border', result.bytes!);
+  expect(pages[0].text).toContain('THICK-PREFIX-11');
+  expect(pages[0].text).not.toContain('THICK-ROW-ONE');
+  expect(pages[1].text).toContain('THICK-ROW-ONE');
+  expect(pages[1].text).toContain('THICK-ROW-TWO');
+  const allText = compact(pages.map((page) => page.text).join(''));
+  for (const marker of [...prefix, 'THICK-ROW-ONE', 'THICK-ROW-TWO', 'TABLE-END-SENTINEL'])
+    expect(allText.split(marker)).toHaveLength(2);
+  // Native thick borders add spacing to row.top. Their complete stroke belongs
+  // with the moved row, even when the table's outer box starts on the prior page.
+  let orphanInk = 0;
+  for (let offset = 0; offset < pages[0].pixels.length; offset += 4) {
+    if ((offset / 4) % pages[0].width < pages[0].width * 0.6) continue;
+    if (pages[0].pixels.slice(offset, offset + 3).some((channel) => channel < 240)) orphanInk++;
+  }
+  expect(orphanInk).toBe(0);
+  let borderPixels = 0;
+  for (let offset = 0; offset < pages[1].pixels.length; offset += 4) {
+    const [red, green, blue] = pages[1].pixels.slice(offset, offset + 3);
+    if (Math.abs(red - 85) < 3 && Math.abs(green - 34) < 3 && Math.abs(blue - 187) < 3)
+      borderPixels++;
+  }
+  // Two 480px-wide, 12px-thick source strokes occupy about 6,480 PDF pixels.
+  expect(borderPixels).toBeGreaterThan(6_000);
+}, 60_000);

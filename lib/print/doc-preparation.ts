@@ -163,6 +163,11 @@ function documentStyle(style: IDocumentStyle, inherited?: IDocumentStyle) {
     if (style[name] !== undefined) number(style[name]);
   textStyle(style.textStyle);
   paragraphStyle(style.defaultParagraphStyle);
+  if (style.documentFlavor === DocumentFlavor.MODERN) {
+    // Keep the native continuous document's implicit paragraph spacing when
+    // choosing finite physical pages. Explicit stored defaults still win.
+    style.defaultParagraphStyle = resolveDocumentParagraphStyle(style, undefined);
+  }
   // A finite Traditional layout is the print representation for continuous Docs.
   // It retains all explicitly stored dimensions and margins rather than letting
   // MODERN's viewport-oriented defaults replace them during native layout.
@@ -349,7 +354,10 @@ function validateBody(snapshot: IDocumentData, limits: Readonly<PrintLimits>, ch
   ] as const)
     if (nonempty(body[name])) unsupported();
   // Only native table, image, tab, authored/soft page and paragraph/section tokens.
-  if (/[\x00-\x07\x10-\x19\x1e-\x1f]/u.test(stream)) unsupported();
+  for (let index = 0; index < stream.length; index++) {
+    const point = stream.charCodeAt(index);
+    if (point <= 7 || (point >= 16 && point <= 25) || (point >= 30 && point <= 31)) unsupported();
+  }
   const paragraphMap = new Map<number, NonNullable<typeof body.paragraphs>[number]>();
   const paragraphIds = new Set<string>();
   for (const paragraph of body.paragraphs ?? []) {
@@ -379,7 +387,7 @@ function validateBody(snapshot: IDocumentData, limits: Readonly<PrintLimits>, ch
       )
         invalid();
       integer(bullet.nestingLevel, 0, 8);
-      if (bullet.startNumber !== undefined) integer(bullet.startNumber, 1, limits.rows);
+      if (bullet.startNumber !== undefined) integer(bullet.startNumber, 0, limits.rows);
       if (bullet.image) unsupported();
       textStyle(bullet.textStyle);
     }
@@ -501,7 +509,9 @@ function imageSources(snapshot: IDocumentData, limits: Readonly<PrintLimits>) {
       drawing.isMultiTransform ||
       drawing.groupBaseBound ||
       drawing.start?.length ||
-      drawing.lineTo?.length
+      drawing.lineTo?.length ||
+      (raw.prstGeom != null && raw.prstGeom !== 'rect') ||
+      nonempty(raw.adjustValues)
     )
       unsupported();
     if (![0, 1, 3, 6].includes(drawing.layoutType)) unsupported();
@@ -514,6 +524,13 @@ function imageSources(snapshot: IDocumentData, limits: Readonly<PrintLimits>) {
     number(transform.size?.height, Number.MIN_VALUE);
     number(transform.angle ?? 0, -360, 360);
     if (drawing.transform?.skewX || drawing.transform?.skewY) unsupported();
+    for (const candidate of [raw.transform, raw.docTransform]) {
+      const values = candidate == null ? {} : record(candidate);
+      for (const key of ['skewX', 'skewY'])
+        if (values[key] != null && values[key] !== 0) unsupported();
+      for (const key of ['scaleX', 'scaleY'])
+        if (values[key] != null && values[key] !== 1) unsupported();
+    }
     for (const position of [transform.positionH, transform.positionV]) {
       if (position === undefined && drawing.layoutType === 0) continue;
       record(position);
@@ -568,12 +585,28 @@ function imageSources(snapshot: IDocumentData, limits: Readonly<PrintLimits>) {
     if (
       nonempty(drawing.effectExtent) ||
       nonempty(drawing.drawingMLSizeScale) ||
-      nonempty(raw.srcRect) ||
       nonempty(raw.crop) ||
-      raw.geometry ||
-      (raw.opacity != null && raw.opacity !== 1)
+      raw.geometry
     )
       unsupported();
+    if (raw.opacity != null) number(raw.opacity, 0, 1);
+    if (raw.srcRect != null) {
+      const source = record(raw.srcRect);
+      if (Object.keys(source).some((key) => !['left', 'top', 'right', 'bottom'].includes(key)))
+        invalid();
+      const crop = {
+        left: number(source.left ?? 0, -100_000),
+        top: number(source.top ?? 0, -100_000),
+        right: number(source.right ?? 0, -100_000),
+        bottom: number(source.bottom ?? 0, -100_000),
+      };
+      if (
+        transform.size.width! + crop.left + crop.right <= 0 ||
+        transform.size.height! + crop.top + crop.bottom <= 0
+      )
+        invalid();
+      raw.srcRect = crop;
+    }
     if (drawing.hidden !== true) sources.push(raw.source);
   }
   snapshot.drawingsOrder = [...order];

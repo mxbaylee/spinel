@@ -1,6 +1,7 @@
 /** Finite physical pagination over complete public native Doc geometry. */
 import { ObjectRelativeFromV, PositionedObjectLayoutType } from '@univerjs/core';
 import type { IDocDrawingBase, IDocumentData } from '@univerjs/core';
+import { getDocsTableLayoutViewportWidth } from '@univerjs/engine-render';
 import type { IDocumentSkeletonCached, IDocumentSkeletonPage } from '@univerjs/engine-render';
 import { PrintError } from './contract.ts';
 import type { PrintBox, PrintLimits } from './contract.ts';
@@ -40,6 +41,13 @@ interface DocImageSource extends IDocDrawingBase {
   source: string;
   opacity?: number;
   srcRect?: { left: number; top: number; right: number; bottom: number };
+}
+
+function hasVisibleText(text: string): boolean {
+  return [...text].some(
+    (character) =>
+      character.codePointAt(0)! >= 0x20 && character !== '\ufffc' && !/\s/u.test(character),
+  );
 }
 
 function invalid(): never {
@@ -88,8 +96,36 @@ export function virtualDocFrame(snapshot: IDocumentData, limits: Readonly<PrintL
   }
   // A page-relative floating image is positioned after pagination. Text-wrapping
   // page-relative anchors require iterative flow and are explicitly unsupported.
-  for (const drawing of Object.values(snapshot.drawings ?? {})) {
+  const anchors = new Map(
+    (snapshot.body?.customBlocks ?? []).map((block) => [block.blockId, block.startIndex]),
+  );
+  const stream = snapshot.body!.dataStream;
+  for (const [id, drawing] of Object.entries(snapshot.drawings ?? {})) {
     const position = drawing.docTransform.positionV;
+    if (drawing.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM) {
+      const anchor = anchors.get(id);
+      const end = anchor === undefined ? -1 : stream.indexOf('\r', anchor);
+      const suffix = end < 0 ? '' : stream.slice(anchor! + 1, end);
+      // Public native flow reserves an anchor-only paragraph once, then uses
+      // its shifted line as the image origin, reserving the image height twice.
+      // LINE-relative anchors and non-leading paragraph anchors also drift.
+      // A leading PARAGRAPH anchor followed by real authored text gets its own
+      // native zero-height anchor line and preserves both position and wrapping.
+      // Invisible markers do not separate that line and are not a workaround.
+      if (
+        position.relativeFrom !== ObjectRelativeFromV.PARAGRAPH ||
+        anchor === undefined ||
+        (anchor > 0 && !['\r', '\n', '\x1c', '\x0f'].includes(stream[anchor - 1])) ||
+        suffix.includes('\b') ||
+        ![...suffix].some(
+          (character) =>
+            character.codePointAt(0)! >= 0x20 &&
+            character !== '\ufffc' &&
+            !/\s|\p{Default_Ignorable_Code_Point}/u.test(character),
+        )
+      )
+        unsupported();
+    }
     if (
       drawing.layoutType !== PositionedObjectLayoutType.INLINE &&
       [ObjectRelativeFromV.PAGE, ObjectRelativeFromV.MARGIN].includes(position.relativeFrom)
@@ -117,7 +153,10 @@ export function paginateDocument(
   fonts: PreparedFonts,
   limits: Readonly<PrintLimits>,
   check: () => void,
-  inks: ReadonlyMap<IDocumentSkeletonPage, { bounds: PrintBox | null; text: PrintBox[] }>,
+  inks: ReadonlyMap<
+    IDocumentSkeletonPage,
+    { bounds: PrintBox | null; text: PrintBox[]; horizontal: PrintBox[] }
+  >,
 ): DocPageSlice[] {
   if (!data.pages.length || data.pages.length > limits.pages) {
     throw new PrintError('limit', 'PDF document exceeds its page budget.');
@@ -140,7 +179,56 @@ export function paginateDocument(
   for (const root of data.pages) {
     check();
     const firstLayoutNode = nodes;
-    const intervals: Interval[] = [...(inks.get(root)?.text ?? [])];
+    const textInk = [...(inks.get(root)?.text ?? [])].sort((a, b) => a.top - b.top);
+    const maximumTextHeight = textInk.reduce(
+      (height, box) => Math.max(height, box.bottom - box.top),
+      0,
+    );
+    const horizontalInk = (inks.get(root)?.horizontal ?? [])
+      .map((box) => ({ ...box, center: (box.top + box.bottom) / 2 }))
+      .sort((a, b) => a.center - b.center);
+    const intervals: Interval[] = [...textInk];
+    const tableEdge = (edge: number, left: number, right: number) => {
+      let low = 0;
+      let high = horizontalInk.length;
+      while (low < high) {
+        const middle = (low + high) >>> 1;
+        if (horizontalInk[middle].center < edge - 1) low = middle + 1;
+        else high = middle;
+      }
+      for (let index = low; index < horizontalInk.length; index++) {
+        const box = horizontalInk[index];
+        if (box.center > edge + 1) break;
+        visit();
+        if (box.right <= left || box.left >= right) continue;
+        // Native 1x border-center snapping differs from the saved edge by less
+        // than one source pixel. Two more pixels conservatively cover the
+        // destination 0.75x PDF snap. Protect only the table's outer edges:
+        // padding every shared internal border would join all adjacent rows
+        // into a single atomic group. Internal/vertical borders continue in
+        // the exact source slices with their neighboring rows.
+        intervals.push({ top: box.top - 2, bottom: box.bottom + 2 });
+      }
+    };
+    const lineInk = (top: number, bottom: number): Interval | undefined => {
+      let low = 0;
+      let high = textInk.length;
+      while (low < high) {
+        const middle = (low + high) >>> 1;
+        if (textInk[middle].top < top - maximumTextHeight) low = middle + 1;
+        else high = middle;
+      }
+      let found: Interval | undefined;
+      for (let index = low; index < textInk.length && textInk[index].top < bottom; index++) {
+        visit();
+        const box = textInk[index];
+        if (box.bottom <= top) continue;
+        found = found
+          ? { top: Math.min(found.top, box.top), bottom: Math.max(found.bottom, box.bottom) }
+          : { top: box.top, bottom: box.bottom };
+      }
+      return found;
+    };
     const paragraphLines = new Map<number, Interval[]>();
     const images: DocPlacedImage[] = [];
     const drawingAnchors = new Map<string, number>();
@@ -162,7 +250,30 @@ export function paginateDocument(
             bottom = Math.max(bottom, end);
             if (line.lineHeight > 0) {
               const interval = { top, bottom: end };
-              intervals.push(interval);
+              // Preserve each native line's complete mixed-font ink envelope.
+              // Its empty trailing font padding can contain a table-top stroke;
+              // keeping that blank padding atomic would orphan the stroke or
+              // unnecessarily move the preceding text with the following table.
+              const painted = lineInk(top, end);
+              const decorated =
+                line.borderTop ||
+                line.borderBottom ||
+                line.borderBetween ||
+                line.divides.some((divide) =>
+                  divide.glyphGroup.some((glyph) =>
+                    [glyph.ts?.ul, glyph.ts?.st, glyph.ts?.ol, glyph.ts?.bbl].some(
+                      (decoration) => decoration?.s === 1,
+                    ),
+                  ),
+                );
+              // Retain the full native line box for under/over/strike lines and
+              // paragraph borders; their decoration may extend past glyph ink.
+              if (decorated)
+                intervals.push({
+                  top: Math.min(top - 2, painted?.top ?? top),
+                  bottom: Math.max(end + 2, painted?.bottom ?? end),
+                });
+              else if (painted) intervals.push(painted);
               const lines = paragraphLines.get(line.paragraphIndex) ?? [];
               lines.push(interval);
               paragraphLines.set(line.paragraphIndex, lines);
@@ -183,7 +294,7 @@ export function paginateDocument(
                 covered.fill(1, offset, offset + glyph.count);
                 offset += glyph.count;
                 if (glyph.drawingId) drawingAnchors.set(glyph.drawingId, top);
-                if (glyph.content && /[^\x00-\x1f\s\ufffc]/u.test(glyph.content)) {
+                if (hasVisibleText(glyph.content)) {
                   // Native shaping may prepend the explicitly identical East
                   // Asian face even to Latin glyphs. Permit that exact duplicate
                   // only; an unknown/default fallback is never admitted.
@@ -218,8 +329,30 @@ export function paginateDocument(
         finite(table.left, frame.width, -frame.left);
         finite(table.top, maximum);
         finite(table.height, maximum);
+        // The native painter clips an overflowing table to this public viewport.
+        // Validate that same containing page/cell width even when all short text
+        // fits: otherwise blank columns, background and borders could disappear.
+        const viewportWidth = getDocsTableLayoutViewportWidth(
+          page,
+          table.left,
+          table.tableSource,
+          snapshot.documentStyle.documentFlavor,
+        );
+        if (table.width > viewportWidth + 0.01) unsupported();
         const tableLeft = x + table.left;
         if (tableLeft < -0.01 || tableLeft + table.width > frame.width + 0.01) unsupported();
+        // Traditional native layout adds outer-border inset to row.top and
+        // table.height. The painter strokes the actual first/last row edges,
+        // not the outer table box, which differs for thick admitted borders.
+        const firstRow = table.rows[0];
+        const lastRow = table.rows.at(-1);
+        if (firstRow) tableEdge(y + table.top + firstRow.top, tableLeft, tableLeft + table.width);
+        if (lastRow)
+          tableEdge(
+            y + table.top + lastRow.top + lastRow.height,
+            tableLeft,
+            tableLeft + table.width,
+          );
         bottom = Math.max(bottom, y + table.top + table.height);
         const heights = rowHeights.get(table.tableSource.tableId) ?? new Map<number, number>();
         rowHeights.set(table.tableSource.tableId, heights);
@@ -261,6 +394,21 @@ export function paginateDocument(
         };
         const bounds = imageBounds(appearance);
         if (!bounds) continue;
+        // Full-column square exclusion causes the pinned native float relayout
+        // loop to move its own preceding paragraph repeatedly. Keep ordinary
+        // square wrapping, but fail this known geometry before any PDF pages
+        // are emitted. Native cell/column widths also cover nested anchors.
+        if (
+          source.layoutType === PositionedObjectLayoutType.WRAP_SQUARE &&
+          page.sections.some((section) =>
+            section.columns.some(
+              (column) =>
+                bounds.right - bounds.left + (source.distL ?? 0) + (source.distR ?? 0) >=
+                column.width - 0.01,
+            ),
+          )
+        )
+          unsupported();
         for (const value of Object.values(bounds)) finite(value, maximum, -maximum);
         if (
           bounds.left < -0.01 ||
@@ -406,7 +554,11 @@ export function paginateDocument(
   }
   for (let i = 0; i < covered.length; i++) {
     check();
-    if (!covered[i] && !/[\x00-\x1f\s]/u.test(snapshot.body!.dataStream[i]))
+    if (
+      !covered[i] &&
+      snapshot.body!.dataStream.charCodeAt(i) >= 0x20 &&
+      !/\s/u.test(snapshot.body!.dataStream[i])
+    )
       throw new PrintError('unsupported', 'PDF document layout omitted source text.');
   }
   for (const drawing of Object.values(snapshot.drawings ?? {}))

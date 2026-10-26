@@ -35,6 +35,14 @@ function limit(): never {
   throw new PrintError('limit', 'PDF Formula projection exceeds its resource budget.');
 }
 
+function hasControl(text: string, allowed: readonly number[] = []) {
+  for (let index = 0; index < text.length; index++) {
+    const point = text.charCodeAt(index);
+    if (point < 32 && !allowed.includes(point)) return true;
+  }
+  return false;
+}
+
 interface Replacement {
   start: number;
   end: number;
@@ -114,14 +122,14 @@ export function projectDocFormulas(
     )
       invalid();
     const text = value === null ? '' : String(value);
-    // Result text cannot inject native control tokens or paragraphs. Newlines in
-    // a prepared cell remain ordinary soft line breaks after normalization.
-    if (/[\x00-\x08\x0b\x0c\x0e-\x1f]/u.test(text)) invalid();
+    // Result text cannot inject native structural tokens. Prepared newlines
+    // become ordinary native paragraphs with explicit paragraph metadata.
+    if (hasControl(text, [9, 10, 13])) invalid();
     projectedCharacters += text.length;
     if (projectedCharacters > limits.textCharacters) limit();
     return text.replace(/\r\n|[\r\n\u0085\u2028\u2029]/gu, '\r');
   };
-  for (const range of ranges) {
+  for (const range of [...ranges].sort((a, b) => a.startIndex - b.startIndex)) {
     check();
     if (
       range.rangeType !== CustomRangeType.CUSTOM ||
@@ -138,11 +146,7 @@ export function projectDocFormulas(
     ids.add(range.rangeId);
     const start = range.startIndex;
     const end = range.endIndex + 1;
-    if (
-      !graphemes.has(start) ||
-      !graphemes.has(end) ||
-      /[\x00-\x1f]/u.test(original.slice(start, end))
-    )
+    if (!graphemes.has(start) || !graphemes.has(end) || hasControl(original.slice(start, end)))
       invalid();
     const paragraph = firstAt(body.paragraphs ?? [], start, (item) => item.startIndex + 1);
     const run = firstAt(body.textRuns ?? [], start, (item) => item.ed);
@@ -190,6 +194,15 @@ export function projectDocFormulas(
           });
     } else if (result.kind === 'array' || result.kind === 'table') {
       if (keys.some((key) => !['kind', 'rows', 'columnWidths'].includes(key))) invalid();
+      // A nested result needs the containing cell's final native width, which
+      // can depend on font metrics, autofit, spans and margins. The root width
+      // is not a safe substitute. Scalars still project within ordinary cells;
+      // prepared native nested tables remain a separate admitted model.
+      if ((body.tables ?? []).some((table) => table.startIndex < start && end < table.endIndex))
+        throw new PrintError(
+          'unsupported',
+          'Nested PDF Formula tables require prepared cell-width layout.',
+        );
       if (!Array.isArray(result.rows) || !result.rows.length || result.rows.length > limits.rows)
         limit();
       const columns = result.rows[0]?.length;
@@ -223,6 +236,7 @@ export function projectDocFormulas(
       // A table result is a block. An inline occurrence splits its surrounding
       // paragraph without dropping either adjacent piece of text.
       let text = start > 0 && !['\r', '\n', '\x0f'].includes(original[start - 1]) ? '\r' : '';
+      const hasPrefixParagraph = Boolean(text);
       if (text)
         replacement.paragraphs.push({
           ...structuredClone(paragraph ?? { paragraphId: '', startIndex: 0 }),
@@ -281,6 +295,24 @@ export function projectDocFormulas(
       replacement.tableEnd = text.length;
       replacement.table = table;
       replacement.text = text;
+      if (resolved.keepLines === 1 || resolved.keepNext === 1) {
+        // A block result replaces one source paragraph with several native cell
+        // paragraphs. Preserve its grouping as one bounded chain through the
+        // original suffix. Physical pagination keeps the group only when it
+        // fits; long Formula tables remain complete and continue normally.
+        for (const generated of replacement.paragraphs)
+          generated.paragraphStyle = { ...generated.paragraphStyle, keepNext: 1 };
+      }
+      if (paragraph && resolved.pageBreakBefore === 1) {
+        if (!hasPrefixParagraph) {
+          // The native table checks its first cell paragraph for an authored
+          // break. Keeping this flag on the old trailing paragraph would move
+          // the break after the Formula result instead of before it.
+          replacement.paragraphs[0].paragraphStyle ??= {};
+          replacement.paragraphs[0].paragraphStyle.pageBreakBefore = 1;
+        }
+        paragraph.paragraphStyle = { ...paragraph.paragraphStyle, pageBreakBefore: 0 };
+      }
     } else invalid();
     if (
       projectedCharacters > limits.textCharacters ||
