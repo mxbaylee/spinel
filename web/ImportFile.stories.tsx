@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { ImportFile } from './ImportFile.tsx';
 import { assertDialogControls } from '../.storybook/dialogBounds.ts';
@@ -99,8 +99,10 @@ export const ArchiveImported: Story = {
   play: async ({ canvasElement, args }) => {
     await pick(canvasElement, archive());
     const screen = within(canvasElement.ownerDocument.body);
-    await expect(await screen.findByRole('status')).toHaveTextContent(
-      'Imported 5 files, 3 folders and 1 Space into My files.',
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Imported 5 files, 3 folders and 1 Space into My files.',
+      ),
     );
     await expect(args.onArchiveImported).toHaveBeenCalledOnce();
     await expect(screen.getByRole('button', { name: 'Done' })).toBeEnabled();
@@ -118,9 +120,12 @@ export const EmptyArchive: Story = {
   },
   play: async ({ canvasElement }) => {
     await pick(canvasElement, archive());
-    await expect(
-      await within(canvasElement.ownerDocument.body).findByRole('status'),
-    ).toHaveTextContent('This archive was empty. No items were added.');
+    const screen = within(canvasElement.ownerDocument.body);
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'This archive was empty. No items were added.',
+      ),
+    );
   },
 };
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { ItemKind, SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { searchCatalog } from '../src/shared/search.ts';
@@ -630,7 +630,7 @@ export const CancelExportConfirmation: Story = {
     await expect(
       screen.queryByRole('dialog', { name: 'Export all my files' }),
     ).not.toBeInTheDocument();
-    await expect(menu).toHaveFocus();
+    await waitFor(() => expect(menu).toHaveFocus());
   },
 };
 

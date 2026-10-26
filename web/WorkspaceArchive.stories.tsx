@@ -62,7 +62,9 @@ export const Preparing: Story = {
   },
   play: async ({ canvasElement }) => {
     const screen = await begin(canvasElement);
-    await expect(await screen.findByRole('status')).toHaveTextContent('Preparing your archive…');
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent('Preparing your archive…'),
+    );
   },
 };
 
@@ -98,7 +100,9 @@ export const Exporting: Story = {
   parameters: { api: exporting },
   play: async ({ canvasElement }) => {
     const screen = await begin(canvasElement);
-    await expect(await screen.findByRole('status')).toHaveTextContent('Exporting 3 of 12 files…');
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent('Exporting 3 of 12 files…'),
+    );
     await assertDialogControls(screen.getByRole('dialog'));
   },
 };
@@ -113,8 +117,10 @@ export const Completed: Story = {
   },
   play: async ({ canvasElement }) => {
     const screen = await begin(canvasElement);
-    await expect(await screen.findByRole('status')).toHaveTextContent(
-      'Archive sent to your browser. Check your downloads.',
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Archive sent to your browser. Check your downloads.',
+      ),
     );
     await expect(screen.getByRole('button', { name: 'Done' })).toBeEnabled();
   },
@@ -130,8 +136,10 @@ export const EmptyArchive: Story = {
   },
   play: async ({ canvasElement }) => {
     const screen = await begin(canvasElement);
-    await expect(await screen.findByRole('status')).toHaveTextContent(
-      'Archive sent to your browser. Check your downloads.',
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Archive sent to your browser. Check your downloads.',
+      ),
     );
   },
 };
@@ -234,6 +242,7 @@ export const CancelExpiredTask: Story = {
   },
   play: async ({ canvasElement }) => {
     const screen = await begin(canvasElement);
+    await screen.findByText('Exporting 3 of 12 files…');
     await userEvent.click(await screen.findByRole('button', { name: 'Cancel export' }));
     await expect(
       await screen.findByText(
@@ -266,8 +275,10 @@ export const RetryProgress: Story = {
     try {
       const screen = await begin(canvasElement);
       await userEvent.click(await screen.findByRole('button', { name: 'Retry status' }));
-      await expect(await screen.findByRole('status')).toHaveTextContent(
-        'Archive sent to your browser. Check your downloads.',
+      await waitFor(() =>
+        expect(screen.getByRole('status')).toHaveTextContent(
+          'Archive sent to your browser. Check your downloads.',
+        ),
       );
       await expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     } finally {
@@ -282,6 +293,7 @@ export const Cancelling: Story = {
   },
   play: async ({ canvasElement }) => {
     const screen = await begin(canvasElement);
+    await screen.findByText('Exporting 3 of 12 files…');
     await userEvent.click(await screen.findByRole('button', { name: 'Cancel export' }));
     await expect(screen.getByRole('status')).toHaveTextContent('Cancelling export…');
     await expect(screen.getByRole('button', { name: 'Cancel export' })).toBeDisabled();
@@ -298,8 +310,9 @@ export const Cancelled: Story = {
   },
   play: async ({ canvasElement }) => {
     const screen = await begin(canvasElement);
+    await screen.findByText('Exporting 3 of 12 files…');
     await userEvent.click(await screen.findByRole('button', { name: 'Cancel export' }));
-    await expect(screen.getByRole('status')).toHaveTextContent('Export cancelled.');
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Export cancelled.'));
     await expect(screen.getByRole('button', { name: 'Try again' })).toBeEnabled();
   },
 };
@@ -326,6 +339,7 @@ export const CancellationFailed: Story = {
   },
   play: async ({ canvasElement }) => {
     const screen = await begin(canvasElement);
+    await screen.findByText('Exporting 3 of 12 files…');
     await userEvent.click(await screen.findByRole('button', { name: 'Cancel export' }));
     await expect(await screen.findByRole('alert')).toHaveTextContent(
       /Could not confirm cancellation/,

@@ -1,5 +1,5 @@
 import express from 'express';
-import type { Request, Response } from 'express';
+import type { Request } from 'express';
 import { randomUUID } from 'node:crypto';
 import { once } from 'node:events';
 import { open, rm } from 'node:fs/promises';

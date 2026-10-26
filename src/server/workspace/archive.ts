@@ -200,7 +200,6 @@ export class WorkspaceArchive {
     let archive: ArchiveZip | undefined;
     let stage: DatabaseSync | undefined;
     let attached = false;
-    let committed = false;
     const stagePath = join(dirname(zipPath), `stage-${randomUUID()}.sqlite`);
     const database = this.workspace.auth.database;
     try {
@@ -322,7 +321,6 @@ export class WorkspaceArchive {
         `);
         check();
       });
-      committed = true;
       return {
         items: manifest.items.length,
         files: members.length,
@@ -347,10 +345,9 @@ export class WorkspaceArchive {
         cleanupError ??= error;
       }
       if (cleanupError) {
-        if (!committed) throw cleanupError;
-        // Publication is already durable. Never tell the caller nothing was
-        // imported, which would encourage retrying a successful copy operation.
-        console.error('Archive import completed, but temporary database cleanup failed.');
+        // Keep the original failure before publication, or the successful result
+        // afterward. A cleanup error must never change either outcome.
+        console.error('Archive import temporary database cleanup failed.');
       }
     }
   }

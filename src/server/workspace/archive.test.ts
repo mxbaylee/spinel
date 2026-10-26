@@ -434,6 +434,52 @@ test('a late native failure or revoked account publishes no folder, item, image 
   });
 });
 
+test('cleanup failures preserve the original import error or committed result without content in logs', async () => {
+  const source = fixture();
+  const item = source.create('Private native notes');
+  source.save(item.id, doc());
+  const path = await exportPath(source);
+  const close = ArchiveZip.prototype.close;
+  vi.spyOn(ArchiveZip.prototype, 'close').mockImplementation(async function (this: ArchiveZip) {
+    await close.call(this);
+    throw new Error('Private native notes cleanup fault');
+  });
+  const diagnostic = vi.spyOn(console, 'error').mockImplementation(() => {});
+  const target = fixture();
+  const revoked = new AuthError(401, 'Session revoked');
+  let active = true;
+  await expect(
+    target.archive.import(
+      target.owner.id,
+      path,
+      () => {
+        if (!active) throw revoked;
+      },
+      ({ completed, total }) => {
+        if (completed === total) active = false;
+      },
+    ),
+  ).rejects.toBe(revoked);
+  expect(rows(target)).toEqual([]);
+  await expect(target.archive.import(target.owner.id, path, () => {})).resolves.toEqual({
+    items: 1,
+    files: 1,
+    folders: 0,
+    spaces: 0,
+  });
+  expect(rows(target)).toHaveLength(1);
+  expect(
+    target.database
+      .prepare('PRAGMA database_list')
+      .all()
+      .some((row) => row.name === 'workspace_archive_import'),
+  ).toBe(false);
+  expect(diagnostic.mock.calls).toEqual([
+    ['Archive import temporary database cleanup failed.'],
+    ['Archive import temporary database cleanup failed.'],
+  ]);
+});
+
 test('complete graph validation refuses cycles, foreign memberships and missing parents before publication', () => {
   const f = fixture();
   const parent = f.create('Folder', 'folder');
