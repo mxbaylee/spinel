@@ -605,6 +605,11 @@ test('a stale missing sibling action preserves a valid guest root and pending na
     const link = (await f.link('editor'))!;
     await f.page.goto(deepLink(link, f.overview.id));
     await saved(f.page);
+    const activeAddress = f.page.url();
+    const activeUrl = new URL(activeAddress);
+    expect(activeUrl.origin + activeUrl.pathname).toBe(f.origin + `/share/${f.root.id}`);
+    expect(activeUrl.searchParams.get('item')).toBe(f.overview.id);
+    expect(activeUrl.hash).toBe('');
     await (
       await pages(f.page)
     )
@@ -659,7 +664,7 @@ test('a stale missing sibling action preserves a valid guest root and pending na
     expect((await refreshed).status()).toBe(200);
     await expect(rename.getByRole('alert')).toBeVisible();
     await rename.getByRole('button', { name: 'Cancel', exact: true }).click();
-    await expect(f.page).toHaveURL(f.origin + guestPath(f.root.id, f.overview.id));
+    await expect(f.page).toHaveURL(activeAddress);
     expect(await native?.evaluate((element) => element.isConnected)).toBe(true);
     await expect(f.page.getByRole('status', { name: 'Save status', exact: true })).toContainText(
       'not saved',

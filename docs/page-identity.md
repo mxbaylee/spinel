@@ -29,8 +29,9 @@ A new share address has two independent random capabilities: `?preview=…` allo
 only title/type preview, while `#…` grants the existing document access. Only
 hashes are stored. The document capability is still absent from HTTP request
 URLs/referrers. Preview tokens cannot create guest sessions, read contents or
-edit. The query is removed with the fragment after the guest browser exchanges
-the link; copy the original address from Share when sending it to others.
+edit. After exchanging the link, the guest browser removes the content fragment
+and preserves the query parameters, including any preview token. Copy the
+original address from Share when sending it to others.
 
 Both metadata and image requests check the current link, owner and trash state.
 Rotation, link-off, trash and disabled owners stop serving the old preview; image
