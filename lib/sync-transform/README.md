@@ -405,6 +405,11 @@ Also:
   continue. It does not clamp the image, remove its identity, or allow invalid
   new placement requests. The mixed native-command fuzz no longer skips these
   states; focused native queue/reopen and ES/CJS patch controls cover the repair.
+  Reopen assertions verify the saved model. The browser's separate activation
+  renderer catches invalid-extent preparation per image and omits its rendered
+  object/selection while leaving the model intact. A collapsed image may thus
+  be invisible and unselectable after a tab switch or reopen; automatic visual
+  recovery is not implemented. Other drawings continue through preparation.
 - Locked SDT blocks and footnote edits in docs depend on document state and are
   not fuzz-tested. Clear contents, clear formats, clear all and pasting a style
   act on the selection or clipboard, so the fuzz builds their mutations by hand

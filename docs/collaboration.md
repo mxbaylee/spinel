@@ -303,6 +303,13 @@ anchors and exact finite extent through native coordinate conversion; it does
 not clamp or delete content. Explicit new placement, invalid anchor coordinates
 and nonfinite sizes keep strict validation.
 
+Raw snapshot reopen verifies the saved drawing model. The separate browser
+activation renderer catches invalid-extent preparation per image, omits that
+image and its selection, and continues with other drawings. It does not delete
+the persisted image. Thus a retained collapsed image can be invisible and
+unselectable after a tab switch or reopen; automatic visual recovery is not
+implemented. See the [accepted rendering boundary](implementation/SPN-056.md#retained-drawing-visibility-on-tab-activation-and-reopen).
+
 Both full-file hashes and the pinned version are validated before either format
 is written. Tests execute the actual upstream resize/refresh methods in both
 formats, assert upstream rejection and repaired preservation, and exercise
