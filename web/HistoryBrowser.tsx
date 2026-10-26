@@ -120,7 +120,7 @@ export function HistoryBrowser() {
   }, [selected]);
   function choose(version?: HistoryVersion) {
     if (busy || loading || savingName) return;
-    setError('');
+    if (!loadFailed) setError('');
     setSelected(version?.id ?? null);
     history.replaceState(null, '', historyHref(id, spaceId, version?.id));
   }

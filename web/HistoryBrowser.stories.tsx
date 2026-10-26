@@ -202,6 +202,13 @@ export const HistoryFailure: Story = {
         'aria-expanded',
         'false',
       );
+    await choose(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Older days', exact: true }));
+    await expect(canvas.getByRole('alert')).toHaveTextContent('Could not load history.');
+    await userEvent.click(canvas.getByRole('button', { name: 'Today', exact: true }));
+    await expect(canvas.getByRole('alert')).toHaveTextContent('Could not load history.');
+    if (window.innerWidth <= 900)
+      await userEvent.click(canvas.getByRole('button', { name: /^Choose version/ }));
     await userEvent.click(retry);
     await expect(await canvas.findByRole('alert')).toHaveTextContent('Could not load history.');
     await expect(canvas.getByRole('button', { name: 'Try again', exact: true })).toBeVisible();
