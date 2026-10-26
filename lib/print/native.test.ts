@@ -553,8 +553,13 @@ test('a wide worksheet shrinks once across both vertical pages and retains its r
     expect(marginInk).toBe(0);
     // Both sides of the cut include the same right border. The final page also
     // retains its bottom tail, rather than adding horizontal pages or spilling.
-    if (page === pages[0]) expect(Math.max(...redRows)).toBeGreaterThanOrEqual(804);
-    else {
+    if (page === pages[0]) {
+      const scale = left.height / ((16 * 96) / 72);
+      const rows = Math.floor(770 / scale / 40);
+      // The full-width border now ends at a complete 40px row edge, leaving the
+      // unused remainder of the printable frame white instead of cutting a row.
+      expect(Math.abs(Math.max(...redRows) - (36 + rows * 40 * scale))).toBeLessThan(2);
+    } else {
       expect(Math.min(...redRows)).toBeLessThanOrEqual(37);
       expect(Math.max(...redRows)).toBeGreaterThan(450);
     }

@@ -9,6 +9,7 @@ import {
 import type { IDocumentData, IParagraph, ITable, ITextRun, ITextStyle } from '@univerjs/core';
 import { PrintError } from './contract.ts';
 import type { PrintLimits } from './contract.ts';
+import { isDocColumnBreak } from './doc-column-breaks.ts';
 
 export type PreparedFormulaValue = string | number | boolean | null;
 
@@ -59,7 +60,9 @@ interface Replacement {
 function formulaTableViewport(snapshot: IDocumentData, check: () => void) {
   const body = snapshot.body!;
   const base = snapshot.documentStyle;
-  const definitions = new Map((body.sectionBreaks ?? []).map((section) => [section.startIndex, section]));
+  const definitions = new Map(
+    (body.sectionBreaks ?? []).map((section) => [section.startIndex, section]),
+  );
   const sections: { end: number; width: number; columns: number[] }[] = [];
   let nesting = 0;
   for (let index = 0; index < body.dataStream.length; index++) {
@@ -69,8 +72,10 @@ function formulaTableViewport(snapshot: IDocumentData, check: () => void) {
     else if (token === '\x0f') nesting--;
     else if (token === '\n' && nesting === 0) {
       const section = definitions.get(index);
-      const width = (section?.pageSize?.width ?? base.pageSize!.width!) -
-        (section?.marginLeft ?? base.marginLeft!) - (section?.marginRight ?? base.marginRight!);
+      const width =
+        (section?.pageSize?.width ?? base.pageSize!.width!) -
+        (section?.marginLeft ?? base.marginLeft!) -
+        (section?.marginRight ?? base.marginRight!);
       const columns = section?.columnProperties?.map((column) => column.width) ?? [];
       // Native section columns shrink together only when their combined width
       // exceeds the section. Gaps consume the remaining space separately.
@@ -95,9 +100,12 @@ function formulaTableViewport(snapshot: IDocumentData, check: () => void) {
     // body-column fraction again to a table nested inside one of those cells.
     if (nesting > 0 || !section.columns.length) return { width: section.width, percent: 100 };
     if (!explicit && section.columns.some((width) => Math.abs(width - section.columns[0]) > 0.01))
-      throw new PrintError('unsupported', 'PDF Formula table requires a prepared unequal-column width.');
+      throw new PrintError(
+        'unsupported',
+        'PDF Formula table requires a prepared unequal-column width.',
+      );
     const width = Math.min(...section.columns);
-    return { width, percent: width / section.width * 100 };
+    return { width, percent: (width / section.width) * 100 };
   };
 }
 
@@ -109,7 +117,8 @@ export function projectDocFormulas(
   check: () => void,
 ) {
   const body = snapshot.body!;
-  const ranges = body.customRanges ?? [];
+  const structural = (body.customRanges ?? []).filter(isDocColumnBreak);
+  const ranges = (body.customRanges ?? []).filter((range) => !isDocColumnBreak(range));
   if (!Array.isArray(prepared) || prepared.length > limits.cells) limit();
   const supplied = new Map<string, PreparedDocFormula>();
   for (const item of prepared) {
@@ -450,5 +459,11 @@ export function projectDocFormulas(
   body.paragraphs?.sort((a, b) => a.startIndex - b.startIndex);
   body.tables?.sort((a, b) => a.startIndex - b.startIndex);
   // Source expressions and properties leave the owned rendering model entirely.
-  delete body.customRanges;
+  // The editor's structural column-break ranges retain only their public marker.
+  body.customRanges = structural.map((range) => {
+    if (replacementAt(range.startIndex)) invalid();
+    const position = offset(range.startIndex);
+    return { ...range, startIndex: position, endIndex: position };
+  });
+  if (!body.customRanges.length) delete body.customRanges;
 }

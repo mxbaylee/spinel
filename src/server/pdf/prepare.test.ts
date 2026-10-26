@@ -187,6 +187,24 @@ test('empty pivot wrappers must have exactly the current workbook ID and no pivo
   }
 });
 
+test('a restored Sheet accepts only its explicitly proved generation or stable identity', () => {
+  const snapshot = plainBook();
+  const generation = 'verified-restored-unit';
+  for (const id of [snapshot.id, generation]) {
+    snapshot.resources = capturedSheetResources(id);
+    expect(
+      preparePdfSnapshot('sheet', itemId, snapshot, { readImage, sourceUnitId: generation })
+        .snapshot.resources,
+    ).toEqual([]);
+  }
+  snapshot.resources = capturedSheetResources('unrelated-unit');
+  expect(() =>
+    preparePdfSnapshot('sheet', itemId, snapshot, { readImage, sourceUnitId: generation }),
+  ).toThrow(PdfError);
+  snapshot.resources = capturedSheetResources(generation);
+  expect(() => preparePdfSnapshot('sheet', itemId, snapshot, { readImage })).toThrow(PdfError);
+});
+
 test('unrecognized nonempty wrappers are never inferred to be empty', () => {
   const resources = [{ name: 'FUTURE_APPEARANCE_PLUGIN', data: '{"schemaVersion":1,"shapes":{}}' }];
   const document = { ...doc(), resources };

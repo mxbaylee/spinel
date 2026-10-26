@@ -1,4 +1,4 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
@@ -132,6 +132,29 @@ for (const kind of ['sheet', 'doc'] as const) {
               : 'All changes saved.',
             { timeout: 30_000 },
           );
+          const protectedMessage = 'This content is protected. This action is not allowed.';
+          const protectedNotice = page.getByText(protectedMessage, { exact: true });
+          const startupProtectionNotice = await protectedNotice.isVisible();
+          // Native Doc initialization attempts an on-open field refresh even
+          // for readers. Record that existing startup notice separately; any
+          // new warning from Export, theme/viewport changes or download fails.
+          await expect(protectedNotice).toBeHidden({ timeout: 6000 });
+          await page.evaluate((message) => {
+            const notices: string[] = [];
+            const state = { phase: 'open-export', notices };
+            (window as unknown as { pdfPermissionEvidence: typeof state }).pdfPermissionEvidence =
+              state;
+            new MutationObserver((records) => {
+              for (const record of records) {
+                const changed =
+                  record.type === 'characterData' ? [record.target] : record.addedNodes;
+                if ([...changed].some((node) => node.textContent?.includes(message))) {
+                  notices.push(state.phase);
+                  break;
+                }
+              }
+            }).observe(document.body, { childList: true, characterData: true, subtree: true });
+          }, protectedMessage);
           const guest = role.startsWith('guest-');
           const pdfPath = `/api/${guest ? 'guest' : 'items'}/${item.id}/pdf`;
           const optionsResponse = page.waitForResponse(
@@ -180,12 +203,18 @@ for (const kind of ['sheet', 'doc'] as const) {
               ['dark', 1280],
               ['light', 390],
             ] as const) {
+              await page.evaluate((phase) => {
+                (
+                  window as unknown as { pdfPermissionEvidence: { phase: string } }
+                ).pdfPermissionEvidence.phase = phase;
+              }, `theme-${theme}-${width}`);
               await page.emulateMedia({ colorScheme: theme });
               await page.setViewportSize({ width, height: 960 });
               await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
               await expect
                 .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
                 .toBe(true);
+              await expect(protectedNotice).toBeHidden();
               await page.screenshot({
                 path: `test-results/theme-screenshots/spn-075-${kind}-${role}-${theme}-${width}-${info.project.name}.png`,
                 fullPage: true,
@@ -193,6 +222,11 @@ for (const kind of ['sheet', 'doc'] as const) {
               });
             }
           }
+          await page.evaluate(() => {
+            (
+              window as unknown as { pdfPermissionEvidence: { phase: string } }
+            ).pdfPermissionEvidence.phase = 'download';
+          });
           const download = await downloadPdf(page, button, pdfPath);
           const evidence = await inspectPdf(download, info, `${kind}-${role}`, {
             text:
@@ -213,6 +247,25 @@ for (const kind of ['sheet', 'doc'] as const) {
           });
           expect(evidence.pages).toBeGreaterThan(1);
           await expect(dialog).toContainText('PDF download started.');
+          const permissionEvidence = await page.evaluate(
+            () =>
+              (window as unknown as { pdfPermissionEvidence: { phase: string; notices: string[] } })
+                .pdfPermissionEvidence,
+          );
+          const permissionReport = JSON.stringify({
+            startupProtectionNotice,
+            ...permissionEvidence,
+          });
+          await writeFile(
+            info.outputPath(`${kind}-${role}-permission-notices.json`),
+            permissionReport,
+          );
+          await info.attach(`${kind}-${role}-permission-notices`, {
+            body: permissionReport,
+            contentType: 'application/json',
+          });
+          expect(permissionEvidence.notices).toEqual([]);
+          await expect(protectedNotice).toBeHidden();
           expect(failures).toEqual([]);
           if (role === 'guest-editor') {
             // Hold the next POST until its previously valid link is revoked.

@@ -27,12 +27,14 @@ import { docStories, needsPhysicalDocPages } from './doc-stories.ts';
 import { bodyOnlyPage, prepareDocStoryPaints } from './doc-story-layout.ts';
 import type { DocInk } from './doc-story-layout.ts';
 import {
+  pendingImageLineAnchors,
   prepareImageParagraphFlow,
   reserveImageParagraphFlow,
   verifyImageParagraphFlow,
 } from './doc-image-flow.ts';
 import { prepareNativeTableFlow, withoutTableReservations } from './doc-table-render.ts';
 import type { DocTablePaint } from './doc-table-render.ts';
+import { reserveGeneratedDocHyphens } from './doc-hyphen-flow.ts';
 
 export type DocPrintOptions = Pick<SheetPrintOptions, 'limits' | 'signal'>;
 export interface NativeDocInput {
@@ -50,7 +52,9 @@ class PrintDocumentSkeleton extends DocumentSkeleton {
   renderedResources: Pick<IDocumentSkeletonCached, 'skeHeaders' | 'skeFooters'> | undefined;
   override getSkeletonData() {
     const data = super.getSkeletonData();
-    return data && this.renderedPage ? { ...data, ...this.renderedResources, pages: [this.renderedPage] } : data;
+    return data && this.renderedPage
+      ? { ...data, ...this.renderedResources, pages: [this.renderedPage] }
+      : data;
   }
 }
 
@@ -94,7 +98,9 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     const prepared = prepareDocSnapshot(input.snapshot, input.formulas ?? [], limits, check);
     prepareDocFonts(prepared.snapshot, fonts, limits, check);
     const imageFlow = prepareImageParagraphFlow(prepared.snapshot, check);
-    for (const story of docStories(prepared.snapshot)) validateDocImageAnchors(story.snapshot);
+    const deferredLineAnchors = pendingImageLineAnchors(imageFlow);
+    for (const story of docStories(prepared.snapshot, false))
+      validateDocImageAnchors(story.snapshot, deferredLineAnchors);
     const physical = needsPhysicalDocPages(prepared.snapshot);
     const stored = prepared.snapshot.documentStyle;
     const frame = physical
@@ -106,7 +112,7 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
           left: stored.marginLeft!,
           right: stored.marginRight!,
         }
-      : virtualDocFrame(prepared.snapshot, limits);
+      : virtualDocFrame(prepared.snapshot, limits, deferredLineAnchors);
     const admitted = await admitImages(
       prepared.imageSources,
       input.images,
@@ -147,34 +153,54 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     // Public incremental layout creates bounded checkpoints between native work
     // units. Both image-reservation passes share the same work/deadline budget.
     let work = 0;
+    const visit = () => {
+      check();
+      if (++work > limits.gridCells)
+        throw new PrintError('limit', 'PDF document layout exceeds its work budget.');
+    };
     const layout = async (snapshot = prepared.snapshot) => {
-      for (const item of [document, skeleton, view, model]) item?.dispose();
-      document = undefined; skeleton = undefined; view = undefined; model = undefined;
-      model = new DocumentDataModel(snapshot);
-      view = new DocumentViewModel(model);
-      skeleton = new PrintDocumentSkeleton(view, locale!);
-      const generation = skeleton.startIncrementalLayout({ reason: 'initial' });
-      let complete = false;
-      while (!complete) {
-        check();
-        if (++work > limits.gridCells)
-          throw new PrintError('limit', 'PDF document layout exceeds its work budget.');
-        const progress = skeleton.stepIncrementalLayout(generation, 8, 64);
-        check();
-        if (progress.cancelled) throw new PrintError('cancelled', 'PDF rendering was cancelled.');
-        if (progress.pageCount > limits.pages)
-          throw new PrintError('limit', 'PDF document exceeds its page budget.');
-        complete = progress.complete;
-        if (!complete) await yieldTurn();
+      for (let attempt = 0; attempt < Math.max(2, limits.pages); attempt++) {
+        for (const item of [document, skeleton, view, model]) item?.dispose();
+        document = undefined;
+        skeleton = undefined;
+        view = undefined;
+        model = undefined;
+        model = new DocumentDataModel(snapshot);
+        view = new DocumentViewModel(model);
+        skeleton = new PrintDocumentSkeleton(view, locale!);
+        const generation = skeleton.startIncrementalLayout({
+          reason: 'initial',
+          waitForHyphenationPatterns: true,
+        });
+        let complete = false;
+        while (!complete) {
+          visit();
+          const progress = skeleton.stepIncrementalLayout(generation, 8, 64);
+          check();
+          if (progress.cancelled) throw new PrintError('cancelled', 'PDF rendering was cancelled.');
+          if (progress.pageCount > limits.pages)
+            throw new PrintError('limit', 'PDF document exceeds its page budget.');
+          complete = progress.complete;
+          if (!complete) await yieldTurn();
+        }
+        if (!skeleton.hasCompleteLayout())
+          throw new PrintError('unsupported', 'PDF document layout is incomplete.');
+        let data = skeleton.getSkeletonData();
+        if (!data) throw new PrintError('unsupported', 'PDF document layout is unavailable.');
+        if (reserveGeneratedDocHyphens(snapshot, data, visit)) {
+          data = undefined;
+          await yieldTurn();
+          continue;
+        }
+        document = new Documents('print-doc', skeleton, {
+          pageMarginLeft: 0,
+          pageMarginTop: 0,
+          hasEditor: false,
+          pageFillColor: '#ffffff',
+        });
+        return data;
       }
-      if (!skeleton.hasCompleteLayout())
-        throw new PrintError('unsupported', 'PDF document layout is incomplete.');
-      const data = skeleton.getSkeletonData();
-      if (!data) throw new PrintError('unsupported', 'PDF document layout is unavailable.');
-      document = new Documents('print-doc', skeleton, {
-        pageMarginLeft: 0, pageMarginTop: 0, hasEditor: false, pageFillColor: '#ffffff',
-      });
-      return data;
+      throw new PrintError('limit', 'PDF hyphen layout exceeds its bounded relayout budget.');
     };
     let data: IDocumentSkeletonCached | undefined = await layout();
     if (reserveImageParagraphFlow(imageFlow, data, limits, check)) {
@@ -184,7 +210,10 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     verifyImageParagraphFlow(imageFlow, data, check);
     // The same native painter is measured before publishing. In particular,
     // source coverage alone cannot detect ink clipped by an authored exact row.
-    const measure = (page: IDocumentSkeletonPage, resources?: PrintDocumentSkeleton['renderedResources']): DocInk => {
+    const measure = (
+      page: IDocumentSkeletonPage,
+      resources?: PrintDocumentSkeleton['renderedResources'],
+    ): DocInk => {
       check();
       skeleton!.renderedPage = page;
       skeleton!.renderedResources = resources;
@@ -213,7 +242,16 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     let tablePaints = new Map<IDocumentSkeletonPage, DocTablePaint[]>();
     let reservationIds = new Set<string>();
     if (physical) {
-      const pending = prepareNativeTableFlow(renderedSnapshot, data, fonts, limits, check, budget, { layout, measure });
+      const pending = prepareNativeTableFlow(
+        renderedSnapshot,
+        data,
+        fonts,
+        limits,
+        check,
+        budget,
+        { layout, measure },
+        new Set(imageFlow.keys()),
+      );
       data = undefined;
       const flow = await pending;
       data = flow.data;
@@ -232,12 +270,19 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
           (physical && ink.bounds.bottom > page.pageHeight + 0.01))
       )
         throw new PrintError('unsupported', 'PDF document ink exceeds its prepared page bounds.');
-      if (physical && ink.text.some((box) => box.top < page.marginTop - 0.01 || box.bottom > page.pageHeight - page.marginBottom + 0.01))
+      if (
+        physical &&
+        ink.text.some(
+          (box) =>
+            box.top < page.marginTop - 0.01 ||
+            box.bottom > page.pageHeight - page.marginBottom + 0.01,
+        )
+      )
         throw new PrintError('unsupported', 'PDF document text exceeds its body reservation.');
       inkBounds.set(page, ink);
     }
     const pages = paginateDocument(
-      docStories(renderedSnapshot)[0].snapshot,
+      docStories(renderedSnapshot, false)[0].snapshot,
       data,
       frame,
       fonts,
@@ -291,18 +336,25 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       raw.translate(0, frame.top - page.top);
       const ctx = new PdfContext(raw as unknown as CanvasRenderingContext2D, check);
       const compositions = tablePaints.get(page.page) ?? [];
-      const order = new Map((prepared.snapshot.drawingsOrder ?? []).map((id, index) => [id, index]));
+      const order = new Map(
+        (prepared.snapshot.drawingsOrder ?? []).map((id, index) => [id, index]),
+      );
       const drawings = [
         ...page.images.map((image) => ({ image, table: undefined as DocTablePaint | undefined })),
         ...compositions.flatMap((table) => table.slice.images.map((image) => ({ image, table }))),
-      ].sort((a, b) => (order.get(a.image.id) ?? a.image.order) - (order.get(b.image.id) ?? b.image.order));
+      ].sort(
+        (a, b) =>
+          (order.get(a.image.id) ?? a.image.order) - (order.get(b.image.id) ?? b.image.order),
+      );
       const layer = (behind: boolean) => {
         for (const { image, table } of drawings) {
           check();
           if (image.behind !== behind) continue;
           raw.save();
           if (table) {
-            raw.beginPath(); raw.rect(table.left, table.top, table.width, table.slice.bottom - table.slice.top); raw.clip();
+            raw.beginPath();
+            raw.rect(table.left, table.top, table.width, table.slice.bottom - table.slice.top);
+            raw.clip();
             raw.translate(table.left, table.top - table.slice.top);
           }
           drawPreparedImage(ctx, decoded.get(image.source)!, image);
@@ -314,7 +366,9 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       for (const table of compositions) {
         check();
         raw.save();
-        raw.beginPath(); raw.rect(table.left, table.top, table.width, table.slice.bottom - table.slice.top); raw.clip();
+        raw.beginPath();
+        raw.rect(table.left, table.top, table.width, table.slice.bottom - table.slice.top);
+        raw.clip();
         raw.translate(table.left, table.top - table.slice.top);
         skeleton!.renderedPage = table.slice.page;
         skeleton!.renderedResources = { skeHeaders: new Map(), skeFooters: new Map() };

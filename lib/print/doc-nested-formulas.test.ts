@@ -1,4 +1,4 @@
-import { CustomRangeType } from '@univerjs/core';
+import { CustomRangeType, DocxBreakType } from '@univerjs/core';
 import type { IDocumentData } from '@univerjs/core';
 import { expect, test } from 'vitest';
 import { PRINT_LIMITS } from './contract.ts';
@@ -189,18 +189,48 @@ test('explicit nested widths must fit the native cell and failure returns no byt
 
 test('body Formula tables fit the second native section column without covering adjacent content', async () => {
   const snapshot = textDoc(['LEFT-COLUMN', '\vRIGHT-COLUMN', expression, 'AFTER-COLUMN-TABLE']);
-  snapshot.body!.sectionBreaks = [{
-    sectionId: 'two-columns', startIndex: snapshot.body!.dataStream.length - 1,
-    columnProperties: [{ width: 240, paddingEnd: 24 }, { width: 240, paddingEnd: 0 }],
-  }];
+  snapshot.body!.sectionBreaks = [
+    {
+      sectionId: 'two-columns',
+      startIndex: snapshot.body!.dataStream.length - 1,
+      columnProperties: [
+        { width: 240, paddingEnd: 24 },
+        { width: 240, paddingEnd: 0 },
+      ],
+    },
+  ];
   const startIndex = snapshot.body!.dataStream.indexOf(expression);
-  snapshot.body!.customRanges = [{
-    rangeId: 'nested', rangeType: CustomRangeType.CUSTOM, wholeEntity: true,
-    startIndex, endIndex: startIndex + expression.length - 1,
-  }];
-  const rows = [['COL-A1', 'COL-B1'], ['COL-A2', 'COL-B2']];
-  const [result] = await runDocJobs([{ input: await nestedInput(snapshot, { kind: 'table', rows }) }]);
-  expect(result, summary(result)).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+  const columnBreak = snapshot.body!.dataStream.indexOf('\v');
+  snapshot.body!.customRanges = [
+    {
+      rangeId: 'native-column-break',
+      rangeType: CustomRangeType.CUSTOM,
+      wholeEntity: true,
+      startIndex: columnBreak,
+      endIndex: columnBreak,
+      properties: { breakType: DocxBreakType.COLUMN },
+    },
+    {
+      rangeId: 'nested',
+      rangeType: CustomRangeType.CUSTOM,
+      wholeEntity: true,
+      startIndex,
+      endIndex: startIndex + expression.length - 1,
+    },
+  ];
+  const rows = [
+    ['COL-A1', 'COL-B1'],
+    ['COL-A2', 'COL-B2'],
+  ];
+  const [result] = await runDocJobs([
+    { input: await nestedInput(snapshot, { kind: 'table', rows }) },
+  ]);
+  expect(result, summary(result)).toMatchObject({
+    ok: true,
+    pages: 1,
+    restored: true,
+    remainingFonts: 0,
+  });
   const pages = await retainDocPdf('formula-second-section-column', result.bytes!);
   const text = compact(pages[0].text);
   for (const value of ['LEFT-COLUMN', 'RIGHT-COLUMN', ...rows.flat(), 'AFTER-COLUMN-TABLE'])
@@ -208,6 +238,6 @@ test('body Formula tables fit the second native section column without covering 
   const first = pages[0].items.find((item) => item.str.includes('COL-A1'))!;
   const second = pages[0].items.find((item) => item.str.includes('COL-B1'))!;
   expect(first.transform[4]).toBeGreaterThan(234);
-  expect(second.transform[4] - first.transform[4]).toBeCloseTo(240 * 0.75 / 2, 1);
+  expect(second.transform[4] - first.transform[4]).toBeCloseTo((240 * 0.75) / 2, 1);
   expect(second.transform[4] + second.width).toBeLessThan((600 - 48) * 0.75);
 }, 60_000);

@@ -34,7 +34,7 @@ export function prepareDocStoryPaints(
   budget: { nodes: number; paintWork: number },
 ): Map<IDocumentSkeletonPage, DocStoryPaint[]> {
   const sources = new Map(
-    docStories(snapshot)
+    docStories(snapshot, false)
       .filter((story) => story.kind !== 'body')
       .map((story) => [story.id, story]),
   );
@@ -60,14 +60,19 @@ export function prepareDocStoryPaints(
         headerId: kind === 'header' ? id : '',
         footerId: kind === 'footer' ? id : '',
       };
-      const resources = { skeHeaders: new Map(data.skeHeaders), skeFooters: new Map(data.skeFooters) };
+      const resources = {
+        skeHeaders: new Map(data.skeHeaders),
+        skeFooters: new Map(data.skeFooters),
+      };
       const layouts = new Map((kind === 'header' ? data.skeHeaders : data.skeFooters).get(id)!);
       // Native story layout stores only the content width, while its public
       // painter adds the parent page's margins to the table viewport. Present
       // the physical width for painting so those margins are deducted once.
       // All shaped lines, cells and drawing coordinates remain unchanged.
-      layouts.set((kind === 'header' ? root.headerLayoutKey : root.footerLayoutKey) ?? root.pageWidth,
-        { ...page, pageWidth: root.pageWidth });
+      layouts.set(
+        (kind === 'header' ? root.headerLayoutKey : root.footerLayoutKey) ?? root.pageWidth,
+        { ...page, pageWidth: root.pageWidth },
+      );
       (kind === 'header' ? resources.skeHeaders : resources.skeFooters).set(id, layouts);
       const ink = measure(rendered, resources);
       const top =

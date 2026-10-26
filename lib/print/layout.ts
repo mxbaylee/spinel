@@ -416,6 +416,10 @@ export function replanSheetPages(
       sheet.bounds,
       mediaBox,
       layout.limits.pages - pages.length,
+      {
+        rows: sheet.rows,
+        spans: [...sheet.mergeSpans, ...sheet.images.map((image) => image.bounds)],
+      },
     )) {
       check();
       const background = sheet.background;

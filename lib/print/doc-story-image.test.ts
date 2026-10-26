@@ -5,30 +5,43 @@ import { prepareDocSnapshot } from './doc-preparation.ts';
 
 function fixture(): IDocumentData {
   const drawing = {
-    drawingId: 'logo', unitId: 'source', subUnitId: 'source', drawingType: 0,
-    source: 'authorized-logo', layoutType: 0, isMultiTransform: 1 as const,
+    drawingId: 'logo',
+    unitId: 'source',
+    subUnitId: 'source',
+    drawingType: 0,
+    source: 'authorized-logo',
+    layoutType: 0,
+    isMultiTransform: 1 as const,
     transform: { left: 400, top: 1_000, width: 100, height: 50 },
     transforms: [{ left: 400, top: 1_000, width: 100, height: 50 }],
-    opacity: 0.6, srcRect: { left: 2, right: 3, top: 4, bottom: 5 },
+    opacity: 0.6,
+    srcRect: { left: 2, right: 3, top: 4, bottom: 5 },
     docTransform: {
-      size: { width: 100, height: 50 }, angle: 30, flipX: true, flipY: false,
+      size: { width: 100, height: 50 },
+      angle: 30,
+      flipX: true,
+      flipY: false,
       positionH: { relativeFrom: 0, posOffset: 0 },
       positionV: { relativeFrom: 1, posOffset: 0 },
     },
   } satisfies IDocDrawingBase & Record<string, unknown>;
   return {
-    id: 'source', documentStyle: { defaultHeaderId: 'header' },
+    id: 'source',
+    documentStyle: { defaultHeaderId: 'header' },
     body: { dataStream: 'Body\r\n', paragraphs: [{ startIndex: 4, paragraphId: 'body' }] },
     headers: {
       header: {
         headerId: 'header',
         body: {
-          dataStream: '\b\r\n', paragraphs: [{ startIndex: 1, paragraphId: 'header' }],
+          dataStream: '\b\r\n',
+          paragraphs: [{ startIndex: 1, paragraphId: 'header' }],
           customBlocks: [{ startIndex: 0, blockId: 'logo' }],
         },
       },
     },
-    drawings: { logo: drawing }, drawingsOrder: [], headerFooterDrawingsOrder: ['logo'],
+    drawings: { logo: drawing },
+    drawingsOrder: [],
+    headerFooterDrawingsOrder: ['logo'],
   };
 }
 
@@ -42,7 +55,9 @@ test('header presentation caches normalize without changing authoritative image 
   expect(drawing.transforms).toBeUndefined();
   expect(drawing).toMatchObject({
     docTransform: original.drawings!.logo.docTransform,
-    opacity: 0.6, srcRect: { left: 2, right: 3, top: 4, bottom: 5 }, source: 'authorized-logo',
+    opacity: 0.6,
+    srcRect: { left: 2, right: 3, top: 4, bottom: 5 },
+    source: 'authorized-logo',
   });
   expect(prepared.snapshot.headerFooterDrawingsOrder).toEqual(['logo']);
   expect(source).toEqual(original);

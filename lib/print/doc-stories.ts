@@ -1,7 +1,9 @@
 /** Public document stories share resources, but have independent source offsets. */
 import { CustomRangeType } from '@univerjs/core';
 import type { IDocumentData, IDocumentStyle, IFooterData, IHeaderData } from '@univerjs/core';
-import { PrintError } from './contract.ts';
+import { PRINT_LIMITS, PrintError } from './contract.ts';
+import type { PrintLimits } from './contract.ts';
+import { inspectSnapshot } from './preflight.ts';
 
 export interface DocStory {
   kind: 'body' | 'header' | 'footer';
@@ -32,7 +34,10 @@ export function pruneUnusedDocStories(snapshot: IDocumentData, check: () => void
     const first = explicit
       ? section.useFirstPageHeaderFooter === 1
       : base.useFirstPageHeaderFooter === 1;
-    for (const [kind, selected] of [['Header', headers], ['Footer', footers]] as const) {
+    for (const [kind, selected] of [
+      ['Header', headers],
+      ['Footer', footers],
+    ] as const) {
       const keys = [
         `default${kind}Id`,
         ...(first ? [`firstPage${kind}Id`] : []),
@@ -47,28 +52,40 @@ export function pruneUnusedDocStories(snapshot: IDocumentData, check: () => void
   }
   const removedTables = new Set<string>();
   const removedDrawings = new Set<string>();
-  for (const [key, selected] of [['headers', headers], ['footers', footers]] as const) {
+  for (const [key, selected] of [
+    ['headers', headers],
+    ['footers', footers],
+  ] as const) {
     const definitions = snapshot[key];
-    if (definitions != null && (typeof definitions !== 'object' || Array.isArray(definitions))) invalid();
+    if (definitions != null && (typeof definitions !== 'object' || Array.isArray(definitions)))
+      invalid();
     for (const [id, value] of Object.entries(definitions ?? {})) {
       check();
       if (selected.has(id)) continue;
-      for (const range of Array.isArray(value?.body?.tables) ? value.body.tables : []) removedTables.add(range.tableId);
-      for (const block of Array.isArray(value?.body?.customBlocks) ? value.body.customBlocks : []) removedDrawings.add(block.blockId);
+      for (const range of Array.isArray(value?.body?.tables) ? value.body.tables : [])
+        removedTables.add(range.tableId);
+      for (const block of Array.isArray(value?.body?.customBlocks) ? value.body.customBlocks : [])
+        removedDrawings.add(block.blockId);
       delete definitions![id];
     }
     if (definitions && !Object.keys(definitions).length) delete snapshot[key];
   }
   for (const style of [base, ...sections]) {
-    for (const [kind, selected] of [['Header', headers], ['Footer', footers]] as const) {
+    for (const [kind, selected] of [
+      ['Header', headers],
+      ['Footer', footers],
+    ] as const) {
       for (const prefix of ['default', 'firstPage', 'evenPage'] as const) {
         const key = `${prefix}${kind}Id` as 'defaultHeaderId';
         if (style[key] && !selected.has(style[key]!)) style[key] = '';
       }
     }
   }
-  for (const body of [snapshot.body, ...Object.values(snapshot.headers ?? {}).map((value) => value.body),
-    ...Object.values(snapshot.footers ?? {}).map((value) => value.body)]) {
+  for (const body of [
+    snapshot.body,
+    ...Object.values(snapshot.headers ?? {}).map((value) => value.body),
+    ...Object.values(snapshot.footers ?? {}).map((value) => value.body),
+  ]) {
     check();
     for (const range of body?.tables ?? []) removedTables.delete(range.tableId);
     for (const block of body?.customBlocks ?? []) removedDrawings.delete(block.blockId);
@@ -76,7 +93,131 @@ export function pruneUnusedDocStories(snapshot: IDocumentData, check: () => void
   for (const id of removedTables) delete snapshot.tableSource?.[id];
   for (const id of removedDrawings) delete snapshot.drawings?.[id];
   snapshot.drawingsOrder = snapshot.drawingsOrder?.filter((id) => !removedDrawings.has(id));
-  snapshot.headerFooterDrawingsOrder = snapshot.headerFooterDrawingsOrder?.filter((id) => !removedDrawings.has(id));
+  snapshot.headerFooterDrawingsOrder = snapshot.headerFooterDrawingsOrder?.filter(
+    (id) => !removedDrawings.has(id),
+  );
+}
+
+/** Public story IDs isolate the native width-only cache when section margins differ. */
+export function isolateDocStoryGeometry(
+  snapshot: IDocumentData,
+  limits: Readonly<PrintLimits>,
+  check: () => void,
+) {
+  const base = snapshot.documentStyle;
+  let characters = 0;
+  let images = 0;
+  const charge = (body: IDocumentData['body']) => {
+    check();
+    if (!body || typeof body.dataStream !== 'string') invalid();
+    characters += body.dataStream.length;
+    images += body.customBlocks?.length ?? 0;
+    if (characters > limits.textCharacters || images > limits.images)
+      throw new PrintError('limit', 'PDF document stories exceed their resource budget.');
+  };
+  for (const story of docStories(snapshot, false)) charge(story.snapshot.body);
+  const variants = new Map<string, Map<string, string>>();
+  let serial = 0;
+  for (const section of snapshot.body?.sectionBreaks ?? []) {
+    check();
+    const geometry = JSON.stringify([
+      section.pageSize?.width ?? base.pageSize?.width,
+      section.pageSize?.height ?? base.pageSize?.height,
+      section.marginLeft ?? base.marginLeft,
+      section.marginRight ?? base.marginRight,
+      section.marginHeader ?? base.marginHeader ?? 0,
+      section.marginFooter ?? base.marginFooter ?? 0,
+      section.charSpace,
+      section.linePitch,
+      section.gridType,
+      section.contentDirection,
+    ]);
+    for (const kind of ['Header', 'Footer'] as const)
+      for (const prefix of ['default', 'firstPage', 'evenPage'] as const) {
+        if (prefix === 'firstPage' && section.useFirstPageHeaderFooter !== 1) continue;
+        if (prefix === 'evenPage' && (section.evenAndOddHeaders ?? base.evenAndOddHeaders) !== 1)
+          continue;
+        const key = `${prefix}${kind}Id` as 'defaultHeaderId';
+        const id = section[key] ?? base[key];
+        if (!id) continue;
+        const definitions = kind === 'Header' ? snapshot.headers : snapshot.footers;
+        const source = definitions?.[id];
+        if (!source) invalid();
+        const byGeometry = variants.get(`${kind}:${id}`) ?? new Map<string, string>();
+        let selected = byGeometry.get(geometry);
+        if (!selected) {
+          selected = id;
+          if (byGeometry.size) {
+            selected = `print-story-geometry-${serial++}`;
+            while (
+              Object.hasOwn(snapshot.headers ?? {}, selected) ||
+              Object.hasOwn(snapshot.footers ?? {}, selected)
+            )
+              selected += '-generated';
+            charge(source.body);
+            // Inspect the prospective extra story before copying its data. A late
+            // aggregate check cannot bound many geometry variants of one story.
+            inspectSnapshot({ snapshot, additionalStory: source }, limits, check);
+            if (kind === 'Header')
+              snapshot.headers![selected] = {
+                ...structuredClone(source),
+                headerId: selected,
+              } as IHeaderData;
+            else
+              snapshot.footers![selected] = {
+                ...structuredClone(source),
+                footerId: selected,
+              } as IFooterData;
+          }
+          byGeometry.set(geometry, selected);
+          variants.set(`${kind}:${id}`, byGeometry);
+        }
+        section[key] = selected;
+      }
+  }
+  // A copied story has independent paragraph flow even when its source image is
+  // shared. The native drawing registry (and measured image-flow reservations)
+  // keys by drawing ID, so a geometry variant must not mutate another story's
+  // drawing. Reuse the existing scoped admission/order before assigning private
+  // IDs; only metadata is cloned and the prepared source bytes remain shared.
+  const stories = docStories(snapshot, false);
+  const available = new Set(stories.flatMap((story) => Object.keys(story.snapshot.drawings ?? {})));
+  const used = new Set<string>();
+  const copied = new Set<string>();
+  let drawingSerial = 0;
+  for (const story of stories) {
+    check();
+    const aliases = new Map<string, string>();
+    const drawings = story.snapshot.drawings!;
+    for (const id of Object.keys(drawings)) {
+      if (!used.has(id)) {
+        used.add(id);
+        continue;
+      }
+      let selected = `print-story-drawing-${drawingSerial++}`;
+      while (available.has(selected)) selected += '-generated';
+      available.add(selected);
+      used.add(selected);
+      copied.add(selected);
+      aliases.set(id, selected);
+      // Borrow nested metadata until the complete projected shape is admitted.
+      drawings[selected] = { ...drawings[id], drawingId: selected };
+      delete drawings[id];
+    }
+    for (const block of story.snapshot.body!.customBlocks ?? [])
+      block.blockId = aliases.get(block.blockId) ?? block.blockId;
+    story.snapshot.drawingsOrder = story.snapshot.drawingsOrder?.map((id) => aliases.get(id) ?? id);
+  }
+  replaceDocStories(snapshot, stories);
+  inspectSnapshot(snapshot, limits, check);
+  for (const story of stories)
+    for (const id of Object.keys(story.snapshot.drawings ?? {})) {
+      if (!copied.has(id)) continue;
+      check();
+      const drawing = structuredClone(story.snapshot.drawings![id]);
+      story.snapshot.drawings![id] = drawing;
+      snapshot.drawings![id] = drawing;
+    }
 }
 
 /**
@@ -84,7 +225,12 @@ export function pruneUnusedDocStories(snapshot: IDocumentData, check: () => void
  * each validation pass to its own anchors without losing the shared resources
  * required by the public native layout model.
  */
-export function docStories(snapshot: IDocumentData): DocStory[] {
+export function docStories(
+  snapshot: IDocumentData,
+  ownStyles = true,
+  limits: Readonly<PrintLimits> = PRINT_LIMITS,
+  check: () => void = () => {},
+): DocStory[] {
   for (const value of [snapshot.headers, snapshot.footers])
     if (value != null && (typeof value !== 'object' || Array.isArray(value))) invalid();
   const definitions: {
@@ -104,6 +250,24 @@ export function docStories(snapshot: IDocumentData): DocStory[] {
       value,
     })),
   ];
+  if (ownStyles) {
+    // Native preparation needs independently mutable styles, but many tiny
+    // stories must not amplify a large shared style/list bank before admission.
+    // These are borrowed references only; inspectSnapshot charges each planned
+    // copy before the first structuredClone below allocates its payload.
+    inspectSnapshot(
+      {
+        snapshot,
+        storyStyles: definitions.map(({ value }) => ({
+          documentStyle: snapshot.documentStyle,
+          styles: snapshot.styles,
+          lists: [snapshot.lists, value?.lists],
+        })),
+      },
+      limits,
+      check,
+    );
+  }
   const ids = new Set<string>();
   const usedTables = new Set<string>();
   const usedDrawings = new Set<string>();
@@ -164,9 +328,13 @@ export function docStories(snapshot: IDocumentData): DocStory[] {
       snapshot: {
         id: 'print-document',
         body: value.body,
-        documentStyle: structuredClone(snapshot.documentStyle),
-        styles: structuredClone(snapshot.styles),
-        lists: structuredClone({ ...snapshot.lists, ...value.lists }),
+        // Identity projection only borrows these read-only values. Preparation
+        // and font projection retain independent mutable styles by default.
+        documentStyle: ownStyles ? structuredClone(snapshot.documentStyle) : snapshot.documentStyle,
+        styles: ownStyles ? structuredClone(snapshot.styles) : snapshot.styles,
+        lists: ownStyles
+          ? structuredClone({ ...snapshot.lists, ...value.lists })
+          : { ...snapshot.lists, ...value.lists },
         tableSource: Object.fromEntries([...tableIds].map((key) => [key, tables[key]])),
         drawings: Object.fromEntries([...drawingIds].map((key) => [key, drawings[key]])),
         drawingsOrder: order,
@@ -208,6 +376,7 @@ export function replaceDocStories(snapshot: IDocumentData, stories: readonly Doc
     target.lists = story.snapshot.lists;
     snapshot.headerFooterDrawingsOrder.push(...(story.snapshot.drawingsOrder ?? []));
   }
+  snapshot.headerFooterDrawingsOrder = [...new Set(snapshot.headerFooterDrawingsOrder)];
   if (!snapshot.headerFooterDrawingsOrder.length) delete snapshot.headerFooterDrawingsOrder;
 }
 

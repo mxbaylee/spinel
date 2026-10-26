@@ -76,7 +76,11 @@ function finite(value: number, maximum: number, minimum = 0) {
  * Explicit native breaks still produce separate virtual pages. Stored geometry
  * is returned unchanged and is used for every final MediaBox and margin.
  */
-export function virtualDocFrame(snapshot: IDocumentData, limits: Readonly<PrintLimits>): DocFrame {
+export function virtualDocFrame(
+  snapshot: IDocumentData,
+  limits: Readonly<PrintLimits>,
+  deferredLineAnchors?: ReadonlySet<string>,
+): DocFrame {
   const style = snapshot.documentStyle;
   const frame = {
     width: style.pageSize!.width!,
@@ -101,12 +105,15 @@ export function virtualDocFrame(snapshot: IDocumentData, limits: Readonly<PrintL
   for (const section of snapshot.body?.sectionBreaks ?? []) {
     if (section.pageSize) section.pageSize = { width: frame.width, height: virtualHeight };
   }
-  validateDocImageAnchors(snapshot);
+  validateDocImageAnchors(snapshot, deferredLineAnchors);
   return frame;
 }
 
 /** Shared by finite native pages and virtual continuation after image-flow projection. */
-export function validateDocImageAnchors(snapshot: IDocumentData): void {
+export function validateDocImageAnchors(
+  snapshot: IDocumentData,
+  deferredLineAnchors?: ReadonlySet<string>,
+): void {
   // A page-relative floating image is positioned after pagination. Text-wrapping
   // page-relative anchors require iterative flow and are explicitly unsupported.
   const anchors = new Map(
@@ -122,14 +129,15 @@ export function validateDocImageAnchors(snapshot: IDocumentData): void {
       // Image-only paragraphs have already received their measured equivalent
       // flow reservation in doc-image-flow. Other unsupported source shapes
       // must not reach the pinned native double-height/drifting-anchor path.
-      // LINE-relative anchors and non-leading paragraph anchors also drift.
-      // A leading PARAGRAPH anchor followed by real authored text gets its own
-      // native zero-height anchor line and preserves both position and wrapping.
+      // Pending LINE-relative captions receive a measured public-model anchor
+      // projection after the first layout. A PARAGRAPH anchor followed by real
+      // authored text gets its own native zero-height anchor line, preserving
+      // earlier text above and the caption below it.
       // Invisible markers do not separate that line and are not a workaround.
       if (
-        position.relativeFrom !== ObjectRelativeFromV.PARAGRAPH ||
+        (position.relativeFrom !== ObjectRelativeFromV.PARAGRAPH &&
+          !(position.relativeFrom === ObjectRelativeFromV.LINE && deferredLineAnchors?.has(id))) ||
         anchor === undefined ||
-        (anchor > 0 && !['\r', '\n', '\x1c', '\x0f'].includes(stream[anchor - 1])) ||
         suffix.includes('\b') ||
         ![...suffix].some(
           (character) =>
@@ -543,27 +551,39 @@ export function paginateDocument(
     // Fully contained intervals are atomic only if they fit an otherwise empty
     // physical page. This leaves a finite continuation rule for tall cells/images.
     const critical: Interval[] = [];
-    for (const interval of intervals.filter((entry) => entry.required).sort((a, b) => a.top - b.top)) {
+    for (const interval of intervals
+      .filter((entry) => entry.required)
+      .sort((a, b) => a.top - b.top)) {
       visit();
       const previous = critical.at(-1);
       if (previous && interval.top < previous.bottom - 0.001)
         previous.bottom = Math.max(previous.bottom, interval.bottom);
       else critical.push({ ...interval });
     }
-    if (critical.some((interval) => interval.bottom - interval.top > contentHeight + 0.001)) unsupported();
+    if (critical.some((interval) => interval.bottom - interval.top > contentHeight + 0.001))
+      unsupported();
     const atomic = [
       ...critical,
-      ...intervals.filter((interval) => !interval.required && interval.bottom - interval.top <= contentHeight + 0.001),
+      ...intervals.filter(
+        (interval) => !interval.required && interval.bottom - interval.top <= contentHeight + 0.001,
+      ),
     ];
     atomic.sort((a, b) => a.top - b.top || a.bottom - b.bottom);
     let start = frame.top;
+    let criticalCursor = 0;
     const first = result.length;
     if (nativePages && bottom > frame.height + 0.01) unsupported();
     do {
       check();
       const capacity = sliceHeights[result.length] ?? contentHeight;
       if (!Number.isFinite(capacity) || capacity < 1 || capacity > contentHeight + 0.01) invalid();
-      const minimumEnd = critical.find((interval) => interval.top <= start + 0.001 && interval.bottom > start + 0.001)?.bottom ?? start;
+      while (critical[criticalCursor]?.bottom <= start + 0.001) {
+        visit();
+        criticalCursor++;
+      }
+      const firstCritical = critical[criticalCursor];
+      const minimumEnd =
+        firstCritical && firstCritical.top <= start + 0.001 ? firstCritical.bottom : start;
       let end = nativePages ? bottom : Math.min(Math.max(start + capacity, minimumEnd), bottom);
       if (end < bottom) {
         // A backwards pass reaches the same earliest safe seam as repeated

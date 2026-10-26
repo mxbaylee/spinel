@@ -24,7 +24,14 @@ import type { PreparedFonts } from './fonts.ts';
 import { inspectSnapshot } from './preflight.ts';
 import { projectDocFormulas } from './doc-formulas.ts';
 import { projectDocHyperlinks } from './doc-hyperlinks.ts';
-import { docStories, prepareDocStoryFields, pruneUnusedDocStories, replaceDocStories } from './doc-stories.ts';
+import {
+  docStories,
+  isolateDocStoryGeometry,
+  prepareDocStoryFields,
+  pruneUnusedDocStories,
+  replaceDocStories,
+} from './doc-stories.ts';
+import { prepareDocColumnBreaks } from './doc-column-breaks.ts';
 import type { PreparedDocFormula } from './doc-formulas.ts';
 export type {
   PreparedDocFormula,
@@ -471,6 +478,10 @@ function validateBody(
     }
     for (const key of ['sectionType', 'sectionTypeNext'] as const)
       if (section[key] !== undefined && ![0, 1, 2, 3, 4, 5].includes(section[key])) invalid();
+    // Public native layout derives this configuration hint from the following
+    // section's authoritative sectionType. A saved stale hint has no separate
+    // transition semantics and must not select the physical print path.
+    delete section.sectionTypeNext;
     if (
       section.columnSeparatorType !== undefined &&
       ![0, 1, 2].includes(section.columnSeparatorType)
@@ -496,15 +507,18 @@ function normalizeStoryImageViews(drawing: IDocDrawingBase, limits: Readonly<Pri
   const flags = ['flipX', 'flipY', 'rotateEnabled', 'resizeEnabled', 'borderEnabled'];
   for (const value of views) {
     const view = record(value);
-    if (Object.keys(view).some((key) => ![...numeric, ...flags, 'clipBounds'].includes(key))) unsupported();
-    for (const key of numeric) if (view[key] != null)
-      number(view[key], key === 'width' || key === 'height' ? 0 : -10_000_000, 10_000_000);
+    if (Object.keys(view).some((key) => ![...numeric, ...flags, 'clipBounds'].includes(key)))
+      unsupported();
+    for (const key of numeric)
+      if (view[key] != null)
+        number(view[key], key === 'width' || key === 'height' ? 0 : -10_000_000, 10_000_000);
     for (const key of flags) if (view[key] != null && typeof view[key] !== 'boolean') invalid();
     for (const key of ['skewX', 'skewY']) if (view[key] != null && view[key] !== 0) unsupported();
     for (const key of ['scaleX', 'scaleY']) if (view[key] != null && view[key] !== 1) unsupported();
     if (view.clipBounds != null) {
       const clip = record(view.clipBounds);
-      if (Object.keys(clip).some((key) => !['left', 'top', 'width', 'height'].includes(key))) unsupported();
+      if (Object.keys(clip).some((key) => !['left', 'top', 'width', 'height'].includes(key)))
+        unsupported();
       for (const key of ['left', 'top', 'width', 'height'])
         number(clip[key], key === 'width' || key === 'height' ? 0 : -10_000_000, 10_000_000);
     }
@@ -515,7 +529,11 @@ function normalizeStoryImageViews(drawing: IDocDrawingBase, limits: Readonly<Pri
   delete drawing.isMultiTransform;
 }
 
-function imageSources(snapshot: IDocumentData, limits: Readonly<PrintLimits>, repeatedStory = false) {
+function imageSources(
+  snapshot: IDocumentData,
+  limits: Readonly<PrintLimits>,
+  repeatedStory = false,
+) {
   const body = snapshot.body!;
   const drawings = snapshot.drawings ?? {};
   const order = snapshot.drawingsOrder ?? Object.keys(drawings);
@@ -688,7 +706,8 @@ export function prepareDocSnapshot(
   }
   documentStyle(owned.documentStyle);
   pruneUnusedDocStories(owned, check);
-  const stories = docStories(owned);
+  isolateDocStoryGeometry(owned, limits, check);
+  const stories = docStories(owned, true, limits, check);
   const sources: string[] = [];
   let characters = 0;
   let images = 0;
@@ -699,6 +718,7 @@ export function prepareDocSnapshot(
     validateBody(item, limits, check, markers);
     projectDocHyperlinks(item, limits, check);
     if (story.kind === 'body') {
+      prepareDocColumnBreaks(item, limits, check);
       projectDocFormulas(item, prepared, limits, check);
       validateBody(item, limits, check);
     }
@@ -739,7 +759,7 @@ export function prepareDocFonts(
   limits: Readonly<PrintLimits>,
   check: () => void,
 ) {
-  const stories = docStories(snapshot);
+  const stories = docStories(snapshot, true, limits, check);
   for (const [index, story] of stories.entries())
     prepareDocBodyFonts(story.snapshot, fonts, limits, check, index);
   replaceDocStories(snapshot, stories);

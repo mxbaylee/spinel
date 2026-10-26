@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
@@ -287,21 +288,19 @@ try {
     'PDF fixture setup failed.',
   );
   const { COOKIE_NAME } = await import('../../src/server/auth/store.ts');
+  const headers = {
+    Cookie: `${COOKIE_NAME}=${seed.token}`,
+    Origin: origin,
+    'Content-Type': 'application/json',
+  };
   const requestPdf = (id: string) =>
     fetch(`${base}/api/items/${id}/pdf`, {
       method: 'POST',
-      headers: {
-        Cookie: `${COOKIE_NAME}=${seed.token}`,
-        Origin: origin,
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: '{}',
       signal: AbortSignal.timeout(60_000),
     });
-  for (const [id, expected] of [
-    [seed.doc, 'Container paragraph 35.'],
-    [seed.sheet, '42'],
-  ]) {
+  async function verifyPdf(id: string, expected: string) {
     const response = await requestPdf(id);
     assert.equal(
       response.status,
@@ -329,10 +328,40 @@ try {
       await task.destroy();
     }
   }
+  await verifyPdf(seed.doc, 'Container paragraph 35.');
+  await verifyPdf(seed.sheet, '42');
+  // Real history restores give the SDK's empty pivot wrapper a new generation
+  // identity. Only the server-proved generation may be normalized for export.
+  const history = `${base}/api/items/${seed.sheet}/history`;
+  const named = await fetch(history, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ name: 'Before PDF restore' }),
+  });
+  assert.equal(named.status, 201, 'Could not name the PDF restore checkpoint.');
+  const checkpoint = (await named.json()).version?.id;
+  assert.equal(typeof checkpoint, 'string', 'PDF checkpoint identity is missing.');
+  const inspected = await fetch(`${history}/${checkpoint}`, { headers });
+  assert.equal(inspected.status, 200, 'Could not inspect the PDF restore checkpoint.');
+  let unitId = (await inspected.json()).unitId;
+  assert.equal(typeof unitId, 'string', 'PDF restore generation is missing.');
+  for (let restore = 0; restore < 2; restore++) {
+    const restored = await fetch(`${history}/${checkpoint}/restore`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ requestId: randomUUID(), unitId }),
+    });
+    assert.equal(restored.status, 200, 'The Sheet PDF fixture could not be restored.');
+    const nextUnit = (await restored.json()).unitId;
+    assert.equal(typeof nextUnit, 'string', 'Restored PDF generation is missing.');
+    assert.notEqual(nextUnit, unitId, 'Restore did not advance the active generation.');
+    unitId = nextUnit;
+    await verifyPdf(seed.sheet, '42');
+  }
   await checkPdfMemoryRefusal(name, () => requestPdf(seed.doc));
   const peak = run('docker', ['exec', name, 'cat', '/sys/fs/cgroup/memory.peak']).trim();
   console.log(
-    `Production PDFs, memory refusal and recovery passed; container peak ${(Number(peak) / 1024 / 1024).toFixed(1)} MiB.`,
+    `Production PDFs, two history restores, memory refusal and recovery passed; container peak ${(Number(peak) / 1024 / 1024).toFixed(1)} MiB.`,
   );
   await checkServer();
 }

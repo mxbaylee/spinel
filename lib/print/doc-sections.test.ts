@@ -28,20 +28,18 @@ function footerFields(): IDocumentBody {
   const starts: number[] = [];
   for (let index = 0; index < result.dataStream.length; index++)
     if (result.dataStream.charCodeAt(index) === 31) starts.push(index);
-  result.customRanges = starts.map(
-    (start, index) => ({
-      rangeType: CustomRangeType.FIELD,
-      rangeId: `field-${index}`,
-      startIndex: start,
-      endIndex: result.dataStream.indexOf('\x1e', start + 1),
-      wholeEntity: false,
-      properties: {
-        fieldType: ['PAGE', 'NUMPAGES', 'DATE'][index],
-        instruction: 'PRIVATE INSTRUCTION',
-        cachedResult: 'PRIVATE CACHE',
-      },
-    }),
-  );
+  result.customRanges = starts.map((start, index) => ({
+    rangeType: CustomRangeType.FIELD,
+    rangeId: `field-${index}`,
+    startIndex: start,
+    endIndex: result.dataStream.indexOf('\x1e', start + 1),
+    wholeEntity: false,
+    properties: {
+      fieldType: ['PAGE', 'NUMPAGES', 'DATE'][index],
+      instruction: 'PRIVATE INSTRUCTION',
+      cachedResult: 'PRIVATE CACHE',
+    },
+  }));
   return result;
 }
 
@@ -200,10 +198,16 @@ test('header tables and authorized inline images repeat within their own native 
     // Header layout uses a content-width page. The native painter must not
     // subtract the document margins a second time and clip a blank table edge.
     let rightBorder = 0;
-    for (let y = 25; y < 52; y++) for (let x = 394; x <= 398; x++) {
-      const offset = (y * page.width + x) * 4;
-      if (page.pixels[offset] < 220 && page.pixels[offset + 1] < 180 && page.pixels[offset + 2] < 220) rightBorder++;
-    }
+    for (let y = 25; y < 52; y++)
+      for (let x = 394; x <= 398; x++) {
+        const offset = (y * page.width + x) * 4;
+        if (
+          page.pixels[offset] < 220 &&
+          page.pixels[offset + 1] < 180 &&
+          page.pixels[offset + 2] < 220
+        )
+          rightBorder++;
+      }
     expect(rightBorder).toBeGreaterThan(10);
     let red = 0;
     for (let index = 0; index < page.pixels.length; index += 4)
@@ -326,24 +330,39 @@ test('headers and section columns retain a saved oversized row rather than clamp
       table.size.width.v = 200;
       for (const column of table.tableColumns) column.size.width.v = 100;
       for (const cell of table.tableRows[0].tableCells) cell.size!.width.v = 100;
-      snapshot.body!.sectionBreaks = [{
-        sectionId: 'two-columns', startIndex: snapshot.body!.dataStream.length - 1,
-        columnProperties: [{ width: 240, paddingEnd: 24 }, { width: 240, paddingEnd: 0 }],
-      }];
+      snapshot.body!.sectionBreaks = [
+        {
+          sectionId: 'two-columns',
+          startIndex: snapshot.body!.dataStream.length - 1,
+          columnProperties: [
+            { width: 240, paddingEnd: 24 },
+            { width: 240, paddingEnd: 0 },
+          ],
+        },
+      ];
     }
     return snapshot;
   });
-  const results = await runDocJobs(await Promise.all(snapshots.map(async (snapshot) => ({ input: await docInput(snapshot) }))));
+  const results = await runDocJobs(
+    await Promise.all(snapshots.map(async (snapshot) => ({ input: await docInput(snapshot) }))),
+  );
   for (const [index, result] of results.entries()) {
     expect(result, summary(result)).toMatchObject({ ok: true, restored: true, remainingFonts: 0 });
     const pages = await retainDocPdf(`tall-row-${index ? 'columns' : 'header'}`, result.bytes!);
     const text = compact(pages.map((page) => page.text).join('')).replaceAll('-', '');
     for (const marker of ['TALL-ROW-SOURCE', 'NEIGHBOR', 'TABLE-END-SENTINEL'])
       expect(text.split(marker.replaceAll('-', '')), marker).toHaveLength(2);
-    if (index === 0) expect(pages.every((page) => page.text.includes('REPEATED-HEADER'))).toBe(true);
+    if (index === 0)
+      expect(pages.every((page) => page.text.includes('REPEATED-HEADER'))).toBe(true);
     let pixels = 0;
-    for (const page of pages) for (let offset = 0; offset < page.pixels.length; offset += 4)
-      if (Math.abs(page.pixels[offset] - 204) < 2 && Math.abs(page.pixels[offset + 1] - 221) < 2 && Math.abs(page.pixels[offset + 2] - 170) < 2) pixels++;
+    for (const page of pages)
+      for (let offset = 0; offset < page.pixels.length; offset += 4)
+        if (
+          Math.abs(page.pixels[offset] - 204) < 2 &&
+          Math.abs(page.pixels[offset + 1] - 221) < 2 &&
+          Math.abs(page.pixels[offset + 2] - 170) < 2
+        )
+          pixels++;
     expect(pixels).toBeGreaterThan(700 * (index ? 100 : 240) * 0.75 ** 2 * 0.96);
   }
 }, 60_000);
@@ -351,38 +370,66 @@ test('headers and section columns retain a saved oversized row rather than clamp
 test('auto-height wrapped rows retain every word through header and column reservations', async () => {
   const words = Array.from({ length: 100 }, (_, index) => `AUTO${String(index).padStart(3, '0')}`);
   const snapshots = ['header-footer', 'columns'].map((kind) => {
-    const snapshot = tableDoc([[words.join(' '), 'WRAPPED-NEIGHBOR'], ['AFTER-WRAPPED-ROW', 'LAST-CELL']]);
+    const snapshot = tableDoc([
+      [words.join(' '), 'WRAPPED-NEIGHBOR'],
+      ['AFTER-WRAPPED-ROW', 'LAST-CELL'],
+    ]);
     snapshot.documentStyle.pageSize = { width: 600, height: 400 };
     for (const row of snapshot.tableSource!['native-table'].tableRows) row.trHeight.hRule = 0;
     snapshot.headers = { header: { headerId: 'header', body: body('REPEATED-HEADER') } };
     snapshot.footers = { footer: { footerId: 'footer', body: footerFields() } };
-    Object.assign(snapshot.documentStyle, { defaultHeaderId: 'header', defaultFooterId: 'footer', marginHeader: 10, marginFooter: 10 });
+    Object.assign(snapshot.documentStyle, {
+      defaultHeaderId: 'header',
+      defaultFooterId: 'footer',
+      marginHeader: 10,
+      marginFooter: 10,
+    });
     if (kind === 'columns') {
       const table = snapshot.tableSource!['native-table'];
       table.size.width.v = 200;
       for (const column of table.tableColumns) column.size.width.v = 100;
-      for (const row of table.tableRows) for (const cell of row.tableCells) cell.size!.width.v = 100;
-      snapshot.body!.sectionBreaks = [{
-        sectionId: 'two-columns', startIndex: snapshot.body!.dataStream.length - 1,
-        columnProperties: [{ width: 240, paddingEnd: 24 }, { width: 240, paddingEnd: 0 }],
-      }];
+      for (const row of table.tableRows)
+        for (const cell of row.tableCells) cell.size!.width.v = 100;
+      snapshot.body!.sectionBreaks = [
+        {
+          sectionId: 'two-columns',
+          startIndex: snapshot.body!.dataStream.length - 1,
+          columnProperties: [
+            { width: 240, paddingEnd: 24 },
+            { width: 240, paddingEnd: 0 },
+          ],
+        },
+      ];
     }
     return snapshot;
   });
-  const results = await runDocJobs(await Promise.all(snapshots.map(async (snapshot) => ({ input: await docInput(snapshot) }))));
+  const results = await runDocJobs(
+    await Promise.all(snapshots.map(async (snapshot) => ({ input: await docInput(snapshot) }))),
+  );
   for (const [index, result] of results.entries()) {
     expect(result, summary(result)).toMatchObject({ ok: true, restored: true, remainingFonts: 0 });
-    const pages = await retainDocPdf(`auto-row-${index ? 'columns' : 'header-footer'}`, result.bytes!);
+    const pages = await retainDocPdf(
+      `auto-row-${index ? 'columns' : 'header-footer'}`,
+      result.bytes!,
+    );
     expect(pages.length).toBeGreaterThan(1);
     const text = compact(pages.map((page) => page.text).join('')).replaceAll('-', '');
-    for (const marker of [...words, 'WRAPPED-NEIGHBOR', 'AFTER-WRAPPED-ROW', 'LAST-CELL', 'TABLE-END-SENTINEL'])
+    for (const marker of [
+      ...words,
+      'WRAPPED-NEIGHBOR',
+      'AFTER-WRAPPED-ROW',
+      'LAST-CELL',
+      'TABLE-END-SENTINEL',
+    ])
       expect(text.split(marker.replaceAll('-', '')), marker).toHaveLength(2);
     for (const [pageIndex, page] of pages.entries()) {
       expect(page.text).toContain('REPEATED-HEADER');
       expect(compact(page.text)).toContain(`Page${pageIndex + 1}of${pages.length}`);
       const header = page.items.find((item) => item.str.includes('REPEATED-HEADER'))!;
       const footer = page.items.find((item) => item.str.includes('Page'))!;
-      const content = page.items.filter((item) => /AUTO|NEIGHBOR|WRAPPED-ROW|LAST-CELL|TABLE-END/.test(item.str));
+      const content = page.items.filter((item) =>
+        /AUTO|NEIGHBOR|WRAPPED-ROW|LAST-CELL|TABLE-END/.test(item.str),
+      );
       expect(content.length).toBeGreaterThan(0);
       for (const item of content) {
         expect(item.transform[5]).toBeLessThan(header.transform[5] - 5);
@@ -390,4 +437,236 @@ test('auto-height wrapped rows retain every word through header and column reser
       }
     }
   }
+}, 60_000);
+
+test('merged cells retain nested Formula tables and image bands across varying stories, columns and later section geometry', async () => {
+  const words = Array.from({ length: 42 }, (_, index) => `MERGE${String(index).padStart(2, '0')}`);
+  const expression = 'PRIVATE-NESTED-RESULT';
+  const snapshot = tableDoc([
+    [`${words.join(' ')}\r${expression}\r\b`, 'NEIGHBOR-ONE'],
+    ['', 'NEIGHBOR-TWO'],
+    ['AFTER-MERGE', 'LAST-CELL'],
+  ]);
+  snapshot.documentStyle.pageSize = { width: 600, height: 400 };
+  const table = snapshot.tableSource!['native-table'];
+  table.size.width.v = 220;
+  table.indent = { v: 8, u: 3 };
+  for (const column of table.tableColumns) column.size.width.v = 110;
+  for (const row of table.tableRows) {
+    row.trHeight.hRule = 0;
+    for (const cell of row.tableCells) cell.size!.width.v = 110;
+  }
+  table.tableRows[0].tableCells[0].rowSpan = 2;
+  table.tableRows[1].tableCells[0].rowSpan = 0;
+  const start = snapshot.body!.dataStream.indexOf(expression);
+  snapshot.body!.customRanges = [
+    {
+      rangeId: 'nested-result',
+      rangeType: CustomRangeType.CUSTOM,
+      wholeEntity: true,
+      startIndex: start,
+      endIndex: start + expression.length - 1,
+    },
+  ];
+  const anchor = snapshot.body!.dataStream.indexOf('\b');
+  snapshot.body!.customBlocks = [{ startIndex: anchor, blockId: 'cell-image' }];
+  snapshot.drawingsOrder = ['cell-image'];
+  snapshot.drawings = {
+    'cell-image': {
+      drawingId: 'cell-image',
+      unitId: snapshot.id,
+      subUnitId: snapshot.id,
+      drawingType: 0,
+      source: 'authorized-cell-image',
+      layoutType: 0,
+      docTransform: {
+        size: { width: 32, height: 360 },
+        positionH: { relativeFrom: 0, posOffset: 0 },
+        positionV: { relativeFrom: 1, posOffset: 0 },
+        angle: 0,
+      },
+    },
+  } as typeof snapshot.drawings;
+  snapshot.headers = {
+    first: { headerId: 'first', body: body('H-FIRST-ONE\rH-FIRST-TWO\rH-FIRST-THREE') },
+    even: { headerId: 'even', body: body('H-EVEN-ONE\rH-EVEN-TWO') },
+    normal: { headerId: 'normal', body: body('H-DEFAULT') },
+  };
+  snapshot.footers = { footer: { footerId: 'footer', body: footerFields() } };
+  Object.assign(snapshot.documentStyle, {
+    defaultHeaderId: 'normal',
+    evenPageHeaderId: 'even',
+    firstPageHeaderId: 'first',
+    defaultFooterId: 'footer',
+    evenPageFooterId: 'footer',
+    firstPageFooterId: 'footer',
+    evenAndOddHeaders: 1,
+    useFirstPageHeaderFooter: 1,
+    marginHeader: 10,
+    marginFooter: 10,
+  });
+  const end = snapshot.body!.dataStream.length - 1;
+  snapshot.body!.dataStream += 'WIDE-SECTION-FINAL\r\n';
+  snapshot.body!.paragraphs!.push({
+    startIndex: snapshot.body!.dataStream.length - 2,
+    paragraphId: 'wide-final',
+  });
+  snapshot.body!.sectionBreaks = [
+    {
+      sectionId: 'columns',
+      startIndex: end,
+      useFirstPageHeaderFooter: 1,
+      columnProperties: [
+        { width: 240, paddingEnd: 24 },
+        { width: 240, paddingEnd: 0 },
+      ],
+    },
+    {
+      sectionId: 'wide',
+      startIndex: snapshot.body!.dataStream.length - 1,
+      sectionType: 5,
+      pageSize: { width: 800.25, height: 500.5 },
+      marginLeft: 65,
+      marginRight: 30,
+      marginTop: 52,
+      marginBottom: 50,
+    },
+  ];
+  const canvas = createCanvas(32, 360);
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#2877bb';
+  ctx.fillRect(0, 0, 32, 360);
+  const input = await docInput(snapshot);
+  input.images = [{ source: 'authorized-cell-image', bytes: await canvas.encode('png') }];
+  input.formulas = [
+    {
+      rangeId: 'nested-result',
+      result: {
+        kind: 'table',
+        rows: [
+          ['A1', 'B1'],
+          ['A2', 'B2'],
+        ],
+      },
+    },
+  ];
+  const [result] = await runDocJobs([{ input }]);
+  expect(result, summary(result)).toMatchObject({ ok: true, restored: true, remainingFonts: 0 });
+  const pages = await retainDocPdf('merged-nested-image-story-columns', result.bytes!);
+  const text = compact(pages.map((page) => page.text).join('')).replaceAll('-', '');
+  for (const marker of [
+    ...words,
+    'NEIGHBOR-ONE',
+    'NEIGHBOR-TWO',
+    'AFTER-MERGE',
+    'LAST-CELL',
+    'A1',
+    'B1',
+    'A2',
+    'B2',
+    'TABLE-END-SENTINEL',
+    'WIDE-SECTION-FINAL',
+  ])
+    expect(text.split(marker.replaceAll('-', '')), marker).toHaveLength(2);
+  expect(text).not.toContain('PRIVATE');
+  expect(pages[0].text).toContain('H-FIRST-THREE');
+  expect(pages.some((page) => page.text.includes('H-EVEN-TWO'))).toBe(true);
+  expect(pages.at(-1)!.view).toEqual([0, 0, 600.1875, 375.375]);
+  let pixels = 0;
+  for (const [index, page] of pages.entries()) {
+    expect(compact(page.text)).toContain(`Page${index + 1}of${pages.length}`);
+    const headers = page.items.filter((item) => item.str.startsWith('H-'));
+    const footer = page.items.find((item) => item.str.includes('Page'))!;
+    let first = Infinity,
+      last = -Infinity;
+    for (let offset = 0; offset < page.pixels.length; offset += 4) {
+      if (
+        Math.abs(page.pixels[offset] - 40) > 1 ||
+        Math.abs(page.pixels[offset + 1] - 119) > 1 ||
+        Math.abs(page.pixels[offset + 2] - 187) > 1
+      )
+        continue;
+      pixels++;
+      const y = Math.floor(offset / 4 / page.width);
+      first = Math.min(first, y);
+      last = Math.max(last, y);
+    }
+    if (last >= 0) {
+      expect(first).toBeGreaterThan(
+        page.view[3] - Math.min(...headers.map((item) => item.transform[5])),
+      );
+      expect(last).toBeLessThan(page.view[3] - footer.transform[5] - footer.height);
+    }
+  }
+  expect(pixels).toBeGreaterThan(32 * 360 * 0.75 ** 2 * 0.97);
+  expect(pixels).toBeLessThan(32 * 360 * 0.75 ** 2 * 1.02);
+}, 60_000);
+
+test('the same header story follows each section margin even when paper width stays unchanged', async () => {
+  const snapshot = sections([
+    {
+      text: 'NARROW-MARGINS-BODY',
+      style: {
+        pageSize: { width: 600, height: 420 },
+        marginLeft: 40,
+        marginRight: 40,
+        marginHeader: 10,
+      },
+    },
+    {
+      text: 'WIDE-MARGINS-BODY',
+      style: {
+        pageSize: { width: 600, height: 420 },
+        marginLeft: 140,
+        marginRight: 140,
+        marginHeader: 20,
+      },
+    },
+  ]);
+  const words = ['HEADER-ONE', 'HEADER-TWO', 'HEADER-THREE', 'HEADER-FOUR'];
+  snapshot.headers = { header: { headerId: 'header', body: body(words.join(' ')) } };
+  snapshot.documentStyle.defaultHeaderId = 'header';
+  const [result] = await runDocJobs([{ input: await docInput(snapshot) }]);
+  expect(result, summary(result)).toMatchObject({ ok: true, pages: 2 });
+  const pages = await retainDocPdf('header-same-width-section-margins', result.bytes!);
+  for (const [index, page] of pages.entries()) {
+    for (const word of words)
+      expect(compact(page.text).replaceAll('-', '').split(word.replaceAll('-', ''))).toHaveLength(
+        2,
+      );
+    const header = page.items.filter((item) => item.str.includes('HEADER'));
+    expect(header[0].transform[4]).toBeCloseTo((index ? 140 : 40) * 0.75, 1);
+    expect(Math.max(...header.map((item) => item.transform[4] + item.width))).toBeLessThanOrEqual(
+      (600 - (index ? 140 : 40)) * 0.75 + 0.01,
+    );
+  }
+  const lines = pages.map(
+    (page) =>
+      new Set(
+        page.items
+          .filter((item) => item.str.includes('HEADER'))
+          .map((item) => Math.round(item.transform[5])),
+      ).size,
+  );
+  expect(lines[1]).toBeGreaterThan(lines[0]);
+}, 60_000);
+
+test('stored next-section hints do not override the following native section transition', async () => {
+  const snapshot = sections([
+    { text: 'FIRST-CONTINUOUS', style: { sectionTypeNext: 5 } },
+    { text: 'SECOND-CONTINUOUS', style: { sectionType: 1, sectionTypeNext: 4 } },
+  ]);
+  const original = structuredClone(snapshot);
+  const prepared = prepareDocSnapshot(snapshot, [], PRINT_LIMITS, () => {}).snapshot;
+  expect(prepared.body!.sectionBreaks!.map((section) => section.sectionTypeNext)).toEqual([
+    undefined,
+    undefined,
+  ]);
+  expect(prepared.body!.sectionBreaks![1].sectionType).toBe(1);
+  const [result] = await runDocJobs([{ input: await docInput(snapshot) }]);
+  expect(result, summary(result)).toMatchObject({ ok: true, pages: 1 });
+  const pages = await retainDocPdf('continuous-section-stale-next-hint', result.bytes!);
+  for (const marker of ['FIRST-CONTINUOUS', 'SECOND-CONTINUOUS'])
+    expect(compact(pages[0].text).split(marker)).toHaveLength(2);
+  expect(snapshot).toEqual(original);
 }, 60_000);

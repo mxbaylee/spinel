@@ -615,20 +615,15 @@ test('tall image-only and captioned anchors continue completely and invalid nati
   multiple.snapshot.drawingsOrder!.push('second-image');
   const fullColumn = anchorVariant('\b');
   fullColumn.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_SQUARE;
-  fullColumn.snapshot.drawings!.image.distL = 600;
-  fullColumn.snapshot.drawings!.image.distR = 600;
+  fullColumn.snapshot.drawings!.image.docTransform.size.width = 480;
+  fullColumn.snapshot.drawings!.image.distL = 20;
+  fullColumn.snapshot.drawings!.image.distR = 20;
   const square = anchorVariant('\b');
   square.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_SQUARE;
-  inputs.push(square, bare);
-  const withHeader = [line, nonLeading].map((input) => {
-    const projected = structuredClone(input);
-    projected.snapshot.headers = {
-      header: { headerId: 'header', body: textDoc(['REPEATED-HEADER']).body! },
-    };
-    projected.snapshot.documentStyle.defaultHeaderId = 'header';
-    return projected;
-  });
-  const badAnchors = [invisible, line, nonLeading, multiple, fullColumn, overlapping, ...withHeader];
+  const bareLine = structuredClone(bare);
+  bareLine.snapshot.drawings!.image.docTransform.positionV.relativeFrom = ObjectRelativeFromV.LINE;
+  inputs.push(square, bare, nonLeading, fullColumn, bareLine, line);
+  const badAnchors = [invisible, multiple, overlapping];
   const allResults = await runDocJobs([...badAnchors, ...inputs].map((input) => ({ input })));
   for (const rejected of allResults.slice(0, badAnchors.length)) {
     expect(rejected, JSON.stringify(rejected)).toMatchObject({
@@ -651,12 +646,22 @@ test('tall image-only and captioned anchors continue completely and invalid nati
         'tall-floating-image',
         'tall-square-image',
         'tall-image-only-top-bottom',
+        'tall-nonleading-top-bottom',
+        'tall-full-column-square',
+        'tall-line-relative-image-only',
+        'tall-line-relative-caption',
       ][index],
       result.bytes!,
     );
     expect(pages.length).toBeGreaterThanOrEqual(3);
     expect(pages.map((page) => page.text).join(' ')).toContain('AFTER-IMAGE-SENTINEL');
-    if (index === 1) expect(pages.map((page) => page.text).join(' ')).toContain('Anchor caption');
+    const text = pages.map((page) => page.text).join(' ');
+    if ([1, 4, 7].includes(index)) expect(text).toContain('Anchor caption');
+    if (index === 4) {
+      expect(text.split('Leading text')).toHaveLength(2);
+      expect(pages[0].text).toContain('Leading text');
+      expect(pages.at(-1)!.text).toContain('Anchor caption');
+    }
     // An omitted or displaced anchor can retain every pixel while adding blank pages.
     expect(pages.every((page) => page.pixels.some((value, i) => i % 4 !== 3 && value < 250))).toBe(
       true,
@@ -669,11 +674,118 @@ test('tall image-only and captioned anchors continue completely and invalid nati
         if (g > 100 && r < 80 && b < 100) colors[1]++;
         if (b > 150 && r < 80 && g < 100) colors[2]++;
       }
-    // Each band is 48×300 source px at 0.75 pt/px: 8,100 colored pixels.
+    // Each band retains its complete authored width and one third of its height.
     // A repeated/clipped source slice changes this area, even if all colors occur.
-    for (const count of colors) expect(Math.abs(count - 8100)).toBeLessThan(200);
+    const size = inputs[index].snapshot.drawings!.image.docTransform.size;
+    const bandArea = size.width! * (size.height! / 3) * 0.75 ** 2;
+    for (const count of colors) expect(Math.abs(count - bandArea)).toBeLessThan(200);
   }
 }, 90_000);
+
+test('nonleading Top-and-bottom and LINE captions retain complete flow and measured origins with repeated headers', async () => {
+  const canvas = createCanvas(12, 12);
+  const context = canvas.getContext('2d');
+  context.fillStyle = '#2040d0';
+  context.fillRect(0, 0, 12, 12);
+  const snapshot = textDoc([
+    'BEFORE-IMAGE',
+    'PREFIX-BEFORE-IMAGE\bCAPTION-AFTER-IMAGE',
+    'AFTER-IMAGE-SENTINEL',
+  ]);
+  snapshot.headers = {
+    header: { headerId: 'header', body: textDoc(['REPEATED-HEADER']).body! },
+  };
+  snapshot.documentStyle.defaultHeaderId = 'header';
+  snapshot.documentStyle.marginHeader = 12;
+  snapshot.body!.customBlocks = [
+    { startIndex: snapshot.body!.dataStream.indexOf('\b'), blockId: 'image' },
+  ];
+  snapshot.drawingsOrder = ['image'];
+  snapshot.drawings = {
+    image: {
+      drawingId: 'image',
+      unitId: snapshot.id,
+      subUnitId: snapshot.id,
+      drawingType: 0,
+      source: 'authorized-image',
+      layoutType: PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM,
+      docTransform: {
+        size: { width: 48, height: 90 },
+        positionH: { relativeFrom: ObjectRelativeFromH.PAGE, posOffset: 60 },
+        positionV: { relativeFrom: ObjectRelativeFromV.PARAGRAPH, posOffset: 0 },
+        angle: 0,
+      },
+    },
+  } as typeof snapshot.drawings;
+  const inputs = await Promise.all(
+    [undefined, 0, 20, -90].map(async (offset) => {
+      const source = structuredClone(snapshot);
+      if (offset !== undefined)
+        source.drawings!.image.docTransform.positionV = {
+          relativeFrom: ObjectRelativeFromV.LINE,
+          posOffset: offset,
+        };
+      const input = await docInput(source);
+      input.images = [{ source: 'authorized-image', bytes: await canvas.encode('png') }];
+      return input;
+    }),
+  );
+  const originals = inputs.map((input) => structuredClone(input.snapshot));
+  const results = await runDocJobs(inputs.map((input) => ({ input })));
+  const pages: Awaited<ReturnType<typeof retainDocPdf>> = [];
+  const tops: number[] = [];
+  for (const [index, result] of results.entries()) {
+    expect(
+      result,
+      JSON.stringify(result, (key, value) => (key === 'bytes' ? '<bytes>' : value)),
+    ).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+    const [page] = await retainDocPdf(
+      [
+        'nonleading-image-physical-header',
+        'line-zero-physical-header',
+        'line-offset-physical-header',
+        'line-compensated-physical-header',
+      ][index],
+      result.bytes!,
+    );
+    pages.push(page);
+    for (const marker of [
+      'REPEATED-HEADER',
+      'BEFORE-IMAGE',
+      'PREFIX-BEFORE-IMAGE',
+      'CAPTION-AFTER-IMAGE',
+      'AFTER-IMAGE-SENTINEL',
+    ])
+      expect(
+        page.items.filter((item) => item.str === marker),
+        marker,
+      ).toHaveLength(1);
+    let top = page.height;
+    let bottom = 0;
+    let area = 0;
+    for (let offset = 0; offset < page.pixels.length; offset += 4) {
+      const [red, green, blue] = page.pixels.slice(offset, offset + 3);
+      if (blue > 150 && red < 80 && green < 100) {
+        const y = Math.floor(offset / 4 / page.width);
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y);
+        area++;
+      }
+    }
+    tops.push(top);
+    const prefix = page.items.find((item) => item.str === 'PREFIX-BEFORE-IMAGE')!;
+    const caption = page.items.find((item) => item.str === 'CAPTION-AFTER-IMAGE')!;
+    expect(page.height - prefix.transform[5]).toBeLessThan(top);
+    expect(page.height - caption.transform[5] - caption.height).toBeGreaterThan(bottom - 1);
+    expect(Math.abs(area - 48 * 90 * 0.75 ** 2)).toBeLessThan(100);
+  }
+  expect(Buffer.from(pages[1].pixels).equals(Buffer.from(pages[0].pixels))).toBe(true);
+  expect(tops[2] - tops[0]).toBe(20 * 0.75);
+  // The public native LINE reference-switch compensation resolves -90 to a
+  // measured +2.586665px offset in this saved fixture, not -90px above its line.
+  expect(Math.abs(tops[3] - tops[0] - 2.586665 * 0.75)).toBeLessThan(1);
+  expect(inputs.map((input) => input.snapshot)).toEqual(originals);
+}, 60_000);
 
 test('image-only Top-and-bottom flow retains native origins, relative paragraph spacing and small-image struts', async () => {
   const canvas = createCanvas(12, 12);

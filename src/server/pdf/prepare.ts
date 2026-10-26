@@ -77,6 +77,7 @@ function prepareEmptyResources(
   kind: 'sheet' | 'doc',
   snapshotId: string,
   resources: Map<string, unknown>,
+  sourceUnitId: string,
 ) {
   // The public collaboration snapshot includes these wrappers even when no
   // feature has been used. Match the complete observed schema, never recursively
@@ -92,19 +93,30 @@ function prepareEmptyResources(
     empty.set('DOC_LATEX_PLUGIN', { formulas: {} });
     empty.set('DOC_TABLE_PLUGIN', { tables: {} });
   } else {
-    empty.set('SHEET_PIVOT_TABLE_PLUGIN', {
-      dataFieldManagerConfig: { [snapshotId]: { collections: {}, dataFields: {} } },
-      pivotTableConfigs: {},
-      pivotCacheConfigs: { [snapshotId]: {} },
-    });
+    empty.set('SHEET_PIVOT_TABLE_PLUGIN', emptyPivot(snapshotId));
     empty.set('SHEET_PIVOT_CHART_PLUGIN', { charts: {} });
     empty.set('SHEET_EXTERNAL_DATA_PLUGIN', { schemaVersion: 1, links: [] });
   }
   for (const [name, expected] of empty) {
     if (!resources.has(name)) continue;
-    if (!isDeepStrictEqual(resources.get(name), expected)) invalid();
+    if (
+      !isDeepStrictEqual(resources.get(name), expected) &&
+      !(
+        name === 'SHEET_PIVOT_TABLE_PLUGIN' &&
+        isDeepStrictEqual(resources.get(name), emptyPivot(sourceUnitId))
+      )
+    )
+      invalid();
     resources.delete(name);
   }
+}
+
+function emptyPivot(unitId: string) {
+  return {
+    dataFieldManagerConfig: { [unitId]: { collections: {}, dataFields: {} } },
+    pivotTableConfigs: {},
+    pivotCacheConfigs: { [unitId]: {} },
+  };
 }
 
 function prepareDocResources(snapshot: IDocumentData, resources: Map<string, unknown>) {
@@ -177,6 +189,8 @@ function prepareDocResources(snapshot: IDocumentData, resources: Map<string, unk
 export interface PreparePdfOptions {
   readImage(imageId: string): { mime: string; data: Uint8Array };
   worksheetIds?: readonly string[];
+  /** Current generation proved by the caller, never inferred from a resource key. */
+  sourceUnitId?: string;
 }
 
 /** No credential, arbitrary URL, filename, image decoder or network fetch crosses this API. */
@@ -189,7 +203,7 @@ export function preparePdfSnapshot<T extends Snapshot>(
   inspectPdfSnapshot(source);
   const snapshot = structuredClone(source);
   const resources = resourceData(snapshot);
-  prepareEmptyResources(kind, snapshot.id, resources);
+  prepareEmptyResources(kind, snapshot.id, resources, options.sourceUnitId ?? snapshot.id);
   if (kind === 'doc') prepareDocResources(snapshot as IDocumentData, resources);
   // Only empty state is discarded here. Calculation/appearance resources for
   // Sheets remain present until the isolated native preparation consumes them.

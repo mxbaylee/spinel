@@ -5,10 +5,10 @@ against the native `@napi-rs/canvas` PDF backend. The package owns no user ident
 database, HTTP client, cookies, credentials or source evaluation. It imports no
 Spinel application code and uses no Pro packages or browser Print.
 
-SPN-101 supplies the Sheet renderer; SPN-102 extends it for Docs. SPN-075 retains the
-complete production export contract: current authorized snapshots, prepared
-sources, final access revalidation, process isolation/admission and download UI.
-This package alone does not make production PDF export available.
+SPN-101 supplies the Sheet renderer; SPN-102 extends it for Docs. The SPN-075
+[application adapter](../../src/server/pdf) supplies current authorized snapshots,
+prepared sources, final access revalidation, process isolation/admission and the
+download UI. This standalone package owns the rendering contract.
 
 ## Public API and runtime
 
@@ -79,10 +79,14 @@ initial plan.
   decorations, highlights, native rotation and merges use native layout. Complete layout is
   measured before drawing; text physically clipped by its native cell/overflow
   clip fails instead of being reported as a complete export.
-- Tall rows, merged cells and images keep one worksheet coordinate system across
-  contiguous vertical slices, including objects taller than a page. Cache queries
-  expand outward across fractional seams; PDF clips retain exact adjacent edges.
-  Content is not independently squeezed or restarted on each page.
+- Ordinary rows break at their visible native edges, so a page seam does not
+  bisect text that fits its row. Fitting merged cells and image footprints move
+  to the following page together when their combined row footprint fits. Hidden
+  rows retain their raw indices with zero extent. Tall rows, merged cells,
+  overlapping object groups and images keep one worksheet coordinate system
+  across contiguous vertical slices when a whole region exceeds a page. Cache
+  queries expand outward across fractional seams; PDF clips retain exact adjacent
+  edges. Content is not independently squeezed or restarted on each page.
 - Finite negative ink extents from rotation or outer border strokes are included
   inside the margins. Invalid geometry and overlapping/nonfinite merge models
   fail before native indexing.
@@ -100,13 +104,34 @@ A4 portrait (210 × 297 mm); missing margins to 12.7 mm. Continuous/modern Docs
 receive this finite print geometry. Authored page breaks remain explicit, while
 `renderedPageBreaks` marks stay soft. Paper is white.
 
-Native public layout shapes the complete model in bounded virtual pages before
-physical pagination. This avoids its ordinary-page clamp on oversized table rows.
-Physical source slices are contiguous, preserve explicit native breaks and avoid
-text ink, ordinary rows, merged regions and paragraph keep groups when they fit
-an empty page. Tall rows, merged cells and images continue in the same coordinate
-system, without independent scaling or omitted late content. Saved minimum/exact
-row heights must survive native layout; clipped text or an oversized plan fails.
+Uniform body documents use complete native layout in bounded virtual pages before
+physical pagination. Documents with header/footer stories, section columns or
+varying page geometry use native physical flow, including continuous, next-column,
+next-page and odd/even section starts. The exact public range emitted by the
+editor's column-break command survives Formula replacement and pagination.
+
+Oversized tables and image paragraphs are shaped completely at their actual
+containing width. Contiguous source bands are placed through empty public native
+table-row reservations, so section flow and each page's header/footer reservation
+determine their destination. Only the original source paints those bands; the
+reservation rows have no visible output. Glyph ink, ordinary rows, merged regions
+and paragraph keep groups remain together when they fit. Tall cells, nested
+tables, drawings and saved blank row space retain one source coordinate system
+across continuations, without independent scaling. Original-source coverage and
+the remaining body projection are checked separately. Saved minimum/exact row
+heights, image area and destination body bounds must survive the complete plan.
+Exact native reservations also respect the first table page's row-height ceiling
+when later pages select shorter headers and provide more body space.
+
+Default, first-page and even-page header/footer stories repeat on their selected
+physical pages, with native tables, rich text and prepared images. PAGE and
+NUMPAGES fields use the final page plan; DATE/TIME fields retain prepared saved
+text. Unknown field types or unprepared custom results fail. Story IDs are scoped
+to effective section geometry in the owned model so the native width-only cache
+cannot reuse another section's margins. Disconnected story definitions do not
+request fonts or image bytes. Reused story drawings receive independent private
+identities for layout while sharing the same prepared source bytes. Projected
+story copies are admitted before allocation. The caller's snapshot remains unchanged.
 
 Native output page canvases use ceiling integer points. A narrowly validated
 incremental page-dictionary update restores the exact stored MediaBox without
@@ -119,6 +144,12 @@ bounds and per-face glyph coverage must pass before PDF bytes can be returned.
 Raster drawings use only supplied bytes and the public native placement model,
 including admitted rectangular crops, opacity, rotation and flips. Modern Docs'
 implicit paragraph spacing is materialized before finite page normalization.
+Native incremental layout waits for its bundled hyphenation dictionaries. When
+native wrapping appends a generated hyphen beyond a cell or column edge, only
+that paragraph reserves the measured dash advance through its public end indent
+and is laid out again. Authored dashes, runs, spacing, cell widths and strict ink
+checks remain intact; cold and repeated renders are checked against the same
+native reservation reference.
 
 Each prepared Formula entry identifies a whole-entity `CUSTOM` range by `rangeId`.
 The result is a scalar (`string | number | boolean | null`), a rectangular array
@@ -134,46 +165,75 @@ text and authored text-color/style modes. Its destination and annotation metadat
 are removed before layout; the PDF contains the readable link text rather than
 an active external action. Hyperlink and Formula ranges may coexist without
 retaining either private source annotation. Overlapping or malformed ranges fail.
-Scalar and unavailable results can appear inside native table cells. Array/table
-results nested inside a native table currently fail explicitly: guessing the
-cell's auto-fit/span geometry before native layout could clip the generated table.
+Scalar, unavailable, array and table results can appear inside native table cells.
+Default result tables use the public percentage-width model, resolved by native
+layout against the actual cell or column viewport, including spans and margins.
+Explicit prepared widths stay exact and must fit that final viewport even when
+an overflowing area contains only blank cells, background or borders.
 
-Doc admission currently rejects nonempty headers/footers/notes, raw OOXML or
+Doc admission currently rejects nonempty notes, raw OOXML or
 custom rendering payloads, unprepared mentions/plugin resources, page
 backgrounds/borders, custom text effects and tab leaders, paragraph frames,
-heterogeneous section geometry, odd/even section parity, repeated table headers,
-wrapped/floating tables, sparse table grids, rotated cell text, column groups,
+repeated table headers, wrapped/floating tables, sparse table grids, rotated cell
+text, embedded column-group blocks,
 nonimage/grouped/contour drawings and unsupported floating anchors. These remain
-explicit acceptance gaps for SPN-075; ignoring them would change visible content.
+explicit unsupported source models; active editor models retain the SPN-075
+complete-content contract. Ignoring unsupported payloads would change visible content.
 Malformed indexes, merges, geometry or unprepared glyphs also fail without bytes.
 
-Top-and-bottom wrapping supports a leading, paragraph-relative image with an
-authored caption or an otherwise empty image paragraph. The pinned native
-Traditional layout places an image-only anchor below its own image, then reserves
-that height a second time. For that exact source shape, a first public native
-layout measures the original paragraph strut with a non-wrapping positioned
-image. The owned public model then reserves the larger of that strut and the
-image's complete lower extent, including its bottom wrap distance, through the
-existing paragraph's line height. A second complete native layout retains the
-original image transform and before/after spacing; relative spacing is resolved
-against the original strut before the image reservation grows it. Small images
-and larger authored line heights retain their original flow. Both passes share
-one work/deadline budget, and final native geometry must preserve the measured
-origin and full reservation before painting. No text, source indexes, or captions
-are synthesized, and the SDK is not patched.
+Top-and-bottom wrapping supports paragraph-relative images with authored text
+before the anchor and a caption after it, or an otherwise empty image paragraph.
+Native caption flow preserves the prefix above the image and the caption below
+it. The pinned Traditional layout places an image-only anchor below its own
+image, then reserves that height a second time. For that exact source shape, a
+first public native layout measures the original paragraph strut with a
+non-wrapping positioned image. The owned public model reserves the larger of
+that strut and the image's complete lower extent, including its bottom wrap
+distance, through the existing paragraph's line height. A second complete native
+layout retains the image transform and before/after spacing; relative spacing is
+resolved against the original strut before its image reservation grows. Small
+images and larger authored line heights retain their original flow.
 
-Line-relative, non-leading, multiple-block and invisible-caption anchors still
-fail explicitly, as do image-only paragraphs with independently painted list
+The same measured reservation handles an empty LINE-relative image paragraph
+and an empty Square image paragraph whose wrap rectangle covers both edges of
+its actual native column. A full-column Square image with authored paragraph
+text uses the same measured image origin and native Top-and-bottom exclusion:
+only its existing zero-width image control moves to the paragraph's start, while
+all visible prefix/suffix text keeps its order, styling and prepared field ranges.
+The paragraph length and terminator stay unchanged. Relative before-spacing is
+resolved against the original native strut, and final after-spacing is checked
+on the actual last paragraph line. Narrow Square images keep native side wrapping
+after measurement. These projections admit ordinary near-column-width images
+with small left/right wrap distances without allowing native retries to displace
+preceding paragraphs repeatedly.
+
+Captioned LINE references retain their first native layout for measurement.
+The zero-offset case uses the actual separate source anchor line, correcting a
+pinned native stale-line origin. Nonzero offsets preserve the measured image
+position, including negative compensation written by the editor when changing
+positioning references. The owned model then uses an equivalent paragraph anchor
+and, where necessary, a measured page-relative horizontal coordinate. Final
+geometry must retain the origin, dimensions, rotation and after-spacing and
+must not overlap authored text. Both native passes share one work/deadline
+budget. No visible text or captions are added, every remapped position retains
+its authored character/style mapping, and the SDK is not patched.
+
+Multiple-block and invisible-caption Top-and-bottom anchors still fail
+explicitly, as do empty image paragraphs with independently painted list
 markers/borders or an offset/wrap distance that collides with preceding text.
-Those models need additional native flow support; painting them as overlapping
-non-wrapping images would change their appearance. Tall captioned and image-only
-fixtures verify every color-band pixel across page continuations with no empty
-pages; separate fixtures verify spacing, small-image pixels and caller ownership.
-Tables must also fit their actual
-containing viewport, including nested cells, even when an overflowing area
-contains only a background or border. Square wrapping that blocks the entire
-containing text column also fails explicitly because native retries can add blank
-space; the guard uses actual native column geometry, including nested cells.
+Tall captioned and image-only fixtures verify every color-band pixel across
+continuations with no empty pages; full-column Square text fixtures match the
+equivalent authored native flow pixel for pixel, including rich styling, saved
+spacing and repeated-header continuation. Separate fixtures verify prefix/caption
+order, saved LINE offsets, relative spacing, small-image pixels and caller
+ownership. Tables must also fit their actual containing viewport, including
+nested cells, even when an overflowing area contains only a background or border.
+
+Repeated header/footer inline images accept the public editor's validated
+`isMultiTransform`/`transforms` presentation cache. Those cached screen/page
+positions are removed from the owned model; native repeated-story layout uses
+the authoritative `docTransform`, source crop, rotation, flips, opacity and
+source ordering. Grouped or skewed multi-transform drawings remain unsupported.
 
 Doc limits cover both the original and projected model, generated list/Formula
 text, native layout work, repeated drawing across physical slices and all shared
@@ -253,10 +313,11 @@ native call interruptible. Serialization and orientation normalization can
 allocate before final byte checks. Snapshot clones, native raster/layout/font
 state and PDF buffers consume memory outside the V8 heap too.
 
-SPN-075 must enforce hard process deadlines and aggregate RSS/admission budgets,
-retain admission until cancelled processes terminate, account for concurrent
-source/Formula/transfer work, and revalidate all access before releasing bytes.
-Small fixture measurements cannot select safe limits for the 2 GB host.
+The [SPN-075 runtime](../../src/server/pdf/runner.ts) enforces hard process deadlines
+and aggregate RSS/admission budgets, retains admission until cancelled processes
+terminate, accounts for concurrent source/Formula/transfer work, and revalidates
+access before releasing bytes. Small fixture measurements alone cannot select
+safe limits for the 2 GB host.
 
 ## CI evidence and licenses
 

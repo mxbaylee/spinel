@@ -6,6 +6,11 @@ import type { Download, Locator, Page, TestInfo } from '@playwright/test';
 
 /** Fail on the real endpoint response instead of hiding a rejection behind a download timeout. */
 export async function downloadPdf(page: Page, button: Locator, path?: string) {
+  // An options error leaves this control disabled and never sends a POST.
+  // Surface that state before starting the longer rendering/download waits.
+  await expect(button, 'PDF options should make the export action available.').toBeEnabled({
+    timeout: 20_000,
+  });
   const download = page.waitForEvent('download', { timeout: 65_000 }).then(
     (value) => ({ value }),
     (error: unknown) => ({ error }),

@@ -2,6 +2,7 @@ import { renderSheetPdf, renderDocPdf, PrintError } from '@spinel/print';
 import { pdfFonts, PDF_DEFAULT_FAMILY, PDF_FALLBACK_FAMILIES } from './fonts.ts';
 import { PDF_LIMITS, PdfError } from './limits.ts';
 import type { PdfJob, PdfWorkerReply } from './runner.ts';
+import { pdfWorkerPeakRss } from './worker-memory.ts';
 
 /** Exactly one prepared job; no credentials, storage API, network fetch or public output. */
 process.once('message', async (job: PdfJob) => {
@@ -49,7 +50,7 @@ process.once('message', async (job: PdfJob) => {
       pages: result.pages,
       mediaBox: result.mediaBox,
       durationMs: result.durationMs,
-      peakRssBytes: process.resourceUsage().maxRSS * 1024,
+      peakRssBytes: pdfWorkerPeakRss(),
     });
     process.disconnect?.();
     process.exit(0);

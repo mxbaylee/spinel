@@ -110,7 +110,7 @@ export class PdfExports {
     const data = await this.collaboration.load(user, id, context);
     const item = check();
     if (!data.snapshot) throw new AuthError(409, 'Open this document once before exporting it.');
-    return { item, snapshot: data.snapshot, check };
+    return { item, snapshot: data.snapshot, sourceUnitId: generation, check };
   }
 
   async options(user: string, id: string, verify: Verify, context: Context = {}) {
@@ -176,6 +176,7 @@ export class PdfExports {
       }
       const prepared = preparePdfSnapshot(kind, id, loaded.snapshot, {
         worksheetIds: selection,
+        sourceUnitId: loaded.sourceUnitId,
         readImage: (imageId) => {
           hostCheck();
           return this.documents.image(user, id, imageId, custom);
