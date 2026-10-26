@@ -399,10 +399,12 @@ Also:
   commands send their own SetFrozen from the sender's layout, and two of those
   conflict like any setting. Both screens agree; the frozen line may sit one
   row off from where the sender meant it.
-- Univer 1.1.0's own row and column commands can leave a sheet drawing with a
-  zero or negative size, and its resize listener then throws on the next row
-  or column change. The size comes from the sender's command, not a transform,
-  so the fuzz skips those edits.
+- Univer 1.1.0 can retain a sheet drawing with zero or negative size after
+  structural work. Spinel's pinned open-source drawing patch preserves that
+  finite geometry through native resize and queued refresh, so following edits
+  continue. It does not clamp the image, remove its identity, or allow invalid
+  new placement requests. The mixed native-command fuzz no longer skips these
+  states; focused native queue/reopen and ES/CJS patch controls cover the repair.
 - Locked SDT blocks and footnote edits in docs depend on document state and are
   not fuzz-tested. Clear contents, clear formats, clear all and pasting a style
   act on the selection or clipboard, so the fuzz builds their mutations by hand

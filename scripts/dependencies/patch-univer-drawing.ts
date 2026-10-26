@@ -29,7 +29,7 @@ const formats = {
   cjs: '0887a284c9856cae8d4933d48d0032b27953e1636aa5729045c4397cd4d81e67',
 } as const;
 const marker = '//#region src/controllers/sheet-drawing-transform-affected.controller.ts';
-const helper = `${marker}
+const helper = (format: keyof typeof formats) => `${marker}
 // Modified for Spinel: structural edits can retain an image with zero/signed
 // extent. Refresh its existing anchor without changing that extent or identity.
 function refreshRetainedSheetDrawingPlacement(drawing, skeleton) {
@@ -39,7 +39,7 @@ function refreshRetainedSheetDrawingPlacement(drawing, skeleton) {
     return applySheetDrawingPlacement(drawing, placement, skeleton);
   }
   validateCellPosition(placement.from);
-  const converted = convertPositionCellToSheetOverGrid(
+  const converted = ${format === 'cjs' ? '(0, _univerjs_sheets.convertPositionCellToSheetOverGrid)' : 'convertPositionCellToSheetOverGrid'}(
     drawing.unitId, drawing.subUnitId, placement.from, placement.width, placement.height, skeleton);
   const transform = withExistingTransform(drawing.transform, converted.transform);
   return {
@@ -49,15 +49,14 @@ function refreshRetainedSheetDrawingPlacement(drawing, skeleton) {
     axisAlignSheetTransform: transformToAxisAlignPosition(transform, skeleton)
   };
 }`;
-const replacements = [
-  [marker, helper],
-  ...['skeleton', 'sheetSkeletonParam.skeleton'].map((skeleton) => [
-    `applySheetDrawingPlacement(drawing, getSheetDrawingPlacement(drawing), ${skeleton})`,
-    `refreshRetainedSheetDrawingPlacement(drawing, ${skeleton})`,
-  ]),
-];
-
 export function patchDrawing(source: string, format: keyof typeof formats): string {
+  const replacements = [
+    [marker, helper(format)],
+    ...['skeleton', 'sheetSkeletonParam.skeleton'].map((skeleton) => [
+      `applySheetDrawingPlacement(drawing, getSheetDrawingPlacement(drawing), ${skeleton})`,
+      `refreshRetainedSheetDrawingPlacement(drawing, ${skeleton})`,
+    ]),
+  ];
   const original = replacements.reduce(
     (text, [before, after]) => text.replace(after, before),
     source,

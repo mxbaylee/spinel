@@ -48,12 +48,12 @@ Conversion remains SPN-059.
 The protocol uses these route prefixes followed by `/ticket`, `/snapshot` or
 `/socket`, always with `?unitId=<active-generation>`:
 
-| Credential | Prefix |
-| --- | --- |
-| Ordinary account | `/sync-api/items/:itemId` |
-| Ordinary guest | `/sync-api/guest/:itemId` |
-| Space account | `/sync-api/spaces/:spaceId/items/:itemId` |
-| Space guest | `/sync-api/guest-spaces/:spaceId/items/:itemId` |
+| Credential       | Prefix                                          |
+| ---------------- | ----------------------------------------------- |
+| Ordinary account | `/sync-api/items/:itemId`                       |
+| Ordinary guest   | `/sync-api/guest/:itemId`                       |
+| Space account    | `/sync-api/spaces/:spaceId/items/:itemId`       |
+| Space guest      | `/sync-api/guest-spaces/:spaceId/items/:itemId` |
 
 `POST /ticket` requires the configured Origin and returns a single-use, 30-second
 ticket. The socket URL supplies that ticket as `ticket`; upgrade requires the same
@@ -288,6 +288,25 @@ release with the fixes. The link fixes are upstream as
 [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938). If
 upstream fixes any of them another way, Spinel follows upstream rather than
 re-patching. Never bypass the guard just to make an install pass.
+
+## Pinned open-source drawing refresh repair
+
+`npm ci` also runs `scripts/dependencies/patch-univer-drawing.ts` against the
+Apache-2.0 `@univerjs/sheets-drawing` 1.1.0 ES and CJS builds. Its two internal
+resize/refresh paths can encounter a retained image with finite zero or signed
+extents after structural work. Applying new-placement validation there throws
+and can stop later native edits. The repair preserves the image's identity,
+anchors and exact finite extent through native coordinate conversion; it does
+not clamp or delete content. Explicit new placement, invalid anchor coordinates
+and nonfinite sizes keep strict validation.
+
+Both full-file hashes and the pinned version are validated before either format
+is written. Tests execute the actual upstream resize/refresh methods in both
+formats, assert upstream rejection and repaired preservation, and exercise
+native queued delivery plus raw snapshot reopen. The installer touches no Pro
+package. SPN-099 independently reviews removal on upgrade; unfamiliar bytes
+must be investigated instead of bypassing the guard. See the
+[decision and evidence](implementation/SPN-056.md#retain-collapsed-drawing-geometry-through-native-refresh).
 
 ## Verification completed
 
