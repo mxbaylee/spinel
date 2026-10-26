@@ -1,7 +1,7 @@
 /** Finite physical pagination over complete public native Doc geometry. */
 import { ObjectRelativeFromV, PositionedObjectLayoutType } from '@univerjs/core';
 import type { IDocDrawingBase, IDocumentData } from '@univerjs/core';
-import { getDocsTableLayoutViewportWidth } from '@univerjs/engine-render';
+import { DocumentSkeletonPageType, getDocsTableLayoutViewportWidth } from '@univerjs/engine-render';
 import type {
   IDocumentSkeletonCached,
   IDocumentSkeletonDivide,
@@ -12,6 +12,7 @@ import { PrintError } from './contract.ts';
 import type { PrintBox, PrintLimits } from './contract.ts';
 import { imageBounds } from './image-render.ts';
 import type { ImageAppearance } from './image-render.ts';
+import type { DocImageGeometry } from './doc-image-groups.ts';
 import type { PlacedImage } from './layout.ts';
 import type { PreparedFonts } from './fonts.ts';
 
@@ -82,6 +83,7 @@ export function virtualDocFrame(
   snapshot: IDocumentData,
   limits: Readonly<PrintLimits>,
   deferredLineAnchors?: ReadonlySet<string>,
+  fixedAnchors?: ReadonlySet<string>,
 ): DocFrame {
   const style = snapshot.documentStyle;
   const frame = {
@@ -107,7 +109,7 @@ export function virtualDocFrame(
   for (const section of snapshot.body?.sectionBreaks ?? []) {
     if (section.pageSize) section.pageSize = { width: frame.width, height: virtualHeight };
   }
-  validateDocImageAnchors(snapshot, deferredLineAnchors);
+  validateDocImageAnchors(snapshot, deferredLineAnchors, fixedAnchors);
   return frame;
 }
 
@@ -115,15 +117,24 @@ export function virtualDocFrame(
 export function validateDocImageAnchors(
   snapshot: IDocumentData,
   deferredLineAnchors?: ReadonlySet<string>,
+  fixedAnchors?: ReadonlySet<string>,
 ): void {
-  // A page-relative floating image is positioned after pagination. Text-wrapping
-  // page-relative anchors require iterative flow and are explicitly unsupported.
+  // Fixed wrapping is admitted only after the caller chooses its source-mode
+  // coordinate space: finite native pages or continuous logical-page slices.
   const anchors = new Map(
     (snapshot.body?.customBlocks ?? []).map((block) => [block.blockId, block.startIndex]),
   );
   const stream = snapshot.body!.dataStream;
   for (const [id, drawing] of Object.entries(snapshot.drawings ?? {})) {
     const position = drawing.docTransform.positionV;
+    if (
+      fixedAnchors?.has(id) &&
+      [ObjectRelativeFromV.PAGE, ObjectRelativeFromV.MARGIN].includes(position.relativeFrom) &&
+      Number.isFinite(position.posOffset) &&
+      position.align === undefined &&
+      position.percent === undefined
+    )
+      continue;
     if (drawing.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM) {
       const anchor = anchors.get(id);
       const end = anchor === undefined ? -1 : stream.indexOf('\r', anchor);
@@ -134,6 +145,14 @@ export function validateDocImageAnchors(
       const inlineContent = following.some(
         (image) => image?.layoutType === PositionedObjectLayoutType.INLINE && image.hidden !== true,
       );
+      const nativeContent =
+        following.some(
+          (image) =>
+            image?.layoutType === PositionedObjectLayoutType.WRAP_SQUARE && image.hidden !== true,
+        ) ||
+        Boolean(
+          snapshot.body!.paragraphs?.find((paragraph) => paragraph.startIndex === end)?.bullet,
+        );
       const measuredTerminal = following.some(
         (image) => image && deferredLineAnchors?.has(image.drawingId),
       );
@@ -145,7 +164,11 @@ export function validateDocImageAnchors(
         [drawing, ...floating].some(
           (image) =>
             !image ||
-            image.docTransform.positionV.relativeFrom !== ObjectRelativeFromV.PARAGRAPH ||
+            (image.docTransform.positionV.relativeFrom !== ObjectRelativeFromV.PARAGRAPH &&
+              !(
+                image.docTransform.positionV.relativeFrom === ObjectRelativeFromV.LINE &&
+                deferredLineAnchors?.has(image.drawingId)
+              )) ||
             !Number.isFinite(image.docTransform.positionV.posOffset) ||
             image.docTransform.positionV.align !== undefined ||
             image.docTransform.positionV.percent !== undefined,
@@ -170,9 +193,12 @@ export function validateDocImageAnchors(
         following.some(
           (image) =>
             image?.layoutType !== PositionedObjectLayoutType.INLINE &&
+            image?.layoutType !== PositionedObjectLayoutType.WRAP_SQUARE &&
+            image?.layoutType !== PositionedObjectLayoutType.WRAP_NONE &&
             image?.layoutType !== PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM,
         ) ||
         (!inlineContent &&
+          !nativeContent &&
           !measuredTerminal &&
           !deferredLineAnchors?.has(id) &&
           ![...suffix].some(
@@ -218,6 +244,8 @@ export function paginateDocument(
   budget = { nodes: 0, paintWork: 0 },
   sliceHeights: readonly number[] = [],
   floatingImages: ReadonlySet<string> = new Set(),
+  continuousFixedImages: ReadonlySet<string> = new Set(),
+  imageGeometry: DocImageGeometry = (_source, appearance) => imageBounds(appearance),
 ): DocPageSlice[] {
   if (!data.pages.length || data.pages.length > limits.pages) {
     throw new PrintError('limit', 'PDF document exceeds its page budget.');
@@ -279,6 +307,14 @@ export function paginateDocument(
         for (const glyph of divide.glyphGroup) if (glyph.glyphType !== 2) offset += glyph.count;
       }
   }
+
+  const tail = snapshot.body!.paragraphs?.at(-1);
+  const plainTail =
+    tail &&
+    !tail.bullet &&
+    Object.keys(tail.paragraphStyle ?? {}).every((key) =>
+      ['textStyle', 'widowControl'].includes(key),
+    );
 
   for (const root of data.pages) {
     check();
@@ -367,7 +403,7 @@ export function paginateDocument(
             const end = top + line.lineHeight;
             finite(top, maximum);
             finite(end, maximum);
-            bottom = Math.max(bottom, end);
+            let flowEnd = end;
             if (line.lineHeight > 0) {
               const interval = { top, bottom: end };
               // Preserve each native line's complete mixed-font ink envelope.
@@ -394,10 +430,32 @@ export function paginateDocument(
                   bottom: Math.max(end + 2, painted?.bottom ?? end),
                 });
               else if (painted) intervals.push(painted);
+              // The final ordinary text line's unused font descent/leading is
+              // not another authored page. Keep its complete painted envelope,
+              // but do not allocate a trailing page for that empty strut alone.
+              // Authored spacing, marks, borders, blank paragraphs and explicit
+              // breaks retain their original extent. Physical sections/stories
+              // and nested table/cell geometry never take this presentation path.
+              if (
+                !nativePages &&
+                depth === 0 &&
+                root.type === DocumentSkeletonPageType.BODY &&
+                plainTail &&
+                line.paragraphIndex === tail.startIndex &&
+                line.ed >= tail.startIndex &&
+                !decorated &&
+                painted &&
+                line.divides.some((divide) =>
+                  divide.glyphGroup.some((glyph) => hasVisibleText(glyph.content)),
+                ) &&
+                !line.divides.some((divide) => divide.glyphGroup.some((glyph) => glyph.drawingId))
+              )
+                flowEnd = painted.bottom;
               const lines = paragraphLines.get(line.paragraphIndex) ?? [];
               lines.push(interval);
               paragraphLines.set(line.paragraphIndex, lines);
             }
+            bottom = Math.max(bottom, flowEnd);
             for (const divide of line.divides) {
               let offset = sourceStarts.get(divide) ?? divide.st;
               for (const glyph of divide.glyphGroup) {
@@ -514,7 +572,7 @@ export function paginateDocument(
           flipY: source.docTransform.flipY ?? false,
           ...(source.srcRect ? { srcRect: source.srcRect } : {}),
         };
-        const bounds = imageBounds(appearance);
+        const bounds = imageGeometry(source.source, appearance, visit);
         if (!bounds) continue;
         // Full-column square exclusion causes the pinned native float relayout
         // loop to move its own preceding paragraph repeatedly. Keep ordinary
@@ -522,6 +580,9 @@ export function paginateDocument(
         // are emitted. Native cell/column widths also cover nested anchors.
         if (
           source.layoutType === PositionedObjectLayoutType.WRAP_SQUARE &&
+          ![ObjectRelativeFromV.PAGE, ObjectRelativeFromV.MARGIN].includes(
+            source.docTransform.positionV.relativeFrom,
+          ) &&
           page.sections.some((section) =>
             section.columns.some(
               (column) =>
@@ -535,10 +596,23 @@ export function paginateDocument(
         if (
           bounds.left < -0.01 ||
           bounds.right > frame.width + 0.01 ||
-          bounds.top < frame.top - 0.01
+          bounds.top <
+            ((nativePages &&
+              [ObjectRelativeFromV.PAGE, ObjectRelativeFromV.MARGIN].includes(
+                source.docTransform.positionV.relativeFrom,
+              )) ||
+            continuousFixedImages.has(drawing.drawingId)
+              ? 0
+              : frame.top) -
+              0.01
         )
           unsupported();
         bottom = Math.max(bottom, bounds.bottom);
+        // A continuous fixed image and its surrounding native wrap share one
+        // logical Y. Keep an ordinary image whole when it fits one paper body;
+        // genuinely taller images retain exact consecutive source clips.
+        if (continuousFixedImages.has(drawing.drawingId))
+          intervals.push({ top: bounds.top, bottom: bounds.bottom });
         images.push({
           id: drawing.drawingId,
           source: source.source,
@@ -665,6 +739,7 @@ export function paginateDocument(
       const position = source.docTransform.positionV;
       if (
         source.layoutType !== PositionedObjectLayoutType.INLINE &&
+        !continuousFixedImages.has(image.id) &&
         [ObjectRelativeFromV.PAGE, ObjectRelativeFromV.MARGIN].includes(position.relativeFrom)
       ) {
         const anchor = drawingAnchors.get(image.id);
@@ -682,10 +757,15 @@ export function paginateDocument(
       }
     }
     images.sort((a, b) => a.order - b.order);
-    for (const slice of slices)
-      slice.images = images.filter(
-        (image) => image.bounds.bottom > slice.top && image.bounds.top < slice.bottom,
-      );
+    for (const [index, slice] of slices.entries())
+      slice.images = nativePages
+        ? images
+        : images.filter(
+            (image) =>
+              image.bounds.bottom >
+                (index === 0 && continuousFixedImages.has(image.id) ? 0 : slice.top) &&
+              image.bounds.top < slice.bottom,
+          );
   }
   // Short text does not prove a saved tall row retained its full blank area,
   // borders and background. Check authored min/exact heights separately from

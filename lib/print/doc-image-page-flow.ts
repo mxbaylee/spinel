@@ -6,6 +6,7 @@ import { PrintError } from './contract.ts';
 import type { PrintLimits } from './contract.ts';
 import { bodyImageFlowParagraphs } from './doc-image-flow.ts';
 import { imageBounds } from './image-render.ts';
+import type { DocImageGeometry } from './doc-image-groups.ts';
 import type { TableFlowTarget } from './doc-table-flow.ts';
 
 export function imageParagraphTargets(
@@ -15,6 +16,7 @@ export function imageParagraphTargets(
   limits: Readonly<PrintLimits>,
   check: () => void,
   budget: { nodes: number; paintWork: number },
+  imageGeometry: DocImageGeometry = (_source, appearance) => imageBounds(appearance),
 ): TableFlowTarget[] {
   const ends = new Set(bodyImageFlowParagraphs(snapshot, check));
   const result = new Map<number, TableFlowTarget>();
@@ -73,15 +75,19 @@ export function imageParagraphTargets(
                 glyph.drawingId,
                 drawing.aLeft - column.left,
               );
-              const bounds = imageBounds({
-                left: drawing.aLeft,
-                top: drawing.aTop,
-                width: drawing.width,
-                height: drawing.height,
-                angle: drawing.angle,
-                flipX: source.docTransform.flipX ?? false,
-                flipY: source.docTransform.flipY ?? false,
-              });
+              const bounds = imageGeometry(
+                (source as typeof source & { source: string }).source,
+                {
+                  left: drawing.aLeft,
+                  top: drawing.aTop,
+                  width: drawing.width,
+                  height: drawing.height,
+                  angle: drawing.angle,
+                  flipX: source.docTransform.flipX ?? false,
+                  flipY: source.docTransform.flipY ?? false,
+                },
+                visit,
+              );
               const flowing =
                 source.layoutType !== PositionedObjectLayoutType.WRAP_NONE ||
                 reserved.has(glyph.drawingId);

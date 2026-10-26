@@ -23,7 +23,6 @@ import {
 } from '@univerjs-pro/collaboration-client-ui';
 import ClientEnglish from '@univerjs-pro/collaboration-client/locale/en-US';
 import UIEnglish from '@univerjs-pro/collaboration-client-ui/locale/en-US';
-import '@univerjs-pro/collaboration-client/facade';
 import '@univerjs-pro/collaboration-client-ui/lib/index.css';
 import type { SaveState } from '../src/shared/autosave.ts';
 import type { ItemAccess } from '../src/shared/workspace.ts';
@@ -31,14 +30,22 @@ import { createEditorConnection, reduceEditorConnection } from './connectionStat
 import type { ConnectionState, RoomConnectionStatus } from './connectionState.ts';
 import type { DocPendingChanges } from './docPending.ts';
 import { revokeGuestView } from './guestRevocation.ts';
+import { getSpinelSync } from './spinelSync.ts';
+
+export { loadSpinelDocument, disposeSpinelSync } from './spinelSync.ts';
 
 export { ClientEnglish, UIEnglish };
+let legacyFacadeStarted = false;
 export function collaborationPlugins(
   unitID: string,
   override?: DependencyOverride,
   keepDocumentUI = false,
   space?: { spaceId: string; itemId: string },
+  spinel = false,
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
+  // Direct PDF export needs no editor plugin. The native sync path has no
+  // remaining Pro consumer; the legacy collaboration path keeps its license.
+  if (spinel) return [];
   const guest = guestItemId();
   const base = location.origin + documentProtocolPath(space);
   // Public URL extension point: scope is checked before the server accepts a socket.
@@ -95,7 +102,21 @@ export async function prepareCollaboration(
   if (isCurrent() && [401, 403, 404].includes(response.status)) revokeGuestView();
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Could not open live editing.');
-  return data as { unitId: string; access: ItemAccess; user: { id: string; name: string } };
+  // Facade mixins are global and run when each FUniver is created. Loading the
+  // legacy initializer in a native-only editor asks for omitted Pro services.
+  if (data.syncVersion === 1) {
+    if (legacyFacadeStarted)
+      throw new Error('Reload this page to use the updated collaboration service.');
+  } else {
+    legacyFacadeStarted = true;
+    await import('@univerjs-pro/collaboration-client/facade');
+  }
+  return data as {
+    unitId: string;
+    access: ItemAccess;
+    user: { id: string; name: string };
+    syncVersion?: 1;
+  };
 }
 export function identifyCollaborator(univer: Univer, user: { id: string; name: string }) {
   univer
@@ -115,6 +136,8 @@ export function watchCollaboration(
   spaceId?: string,
   native?: DocPendingChanges,
 ) {
+  const spinel = getSpinelSync(univer);
+  if (spinel) return spinel.watch({ publish, readonly, connection: publishConnection });
   const collaboration = api.getCollaboration();
   let denied = false;
   // Until synchronization and the recovery-cache barrier both complete, the

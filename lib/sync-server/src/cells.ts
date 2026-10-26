@@ -1,7 +1,12 @@
 import { createHash } from 'node:crypto';
-import { normalizeTextRuns } from '@univerjs/core';
 import type { ICellData, IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { BaseCells, Mutation } from '@spinel/sync-transform';
+import {
+  canonical,
+  inlineSnapshotCell as inlineCell,
+  normalizedCell as hashCell,
+  normalizedDocBody as normalizedBody,
+} from '@spinel/sync-transform';
 import type {
   CellAddress,
   CellBeforeImage,
@@ -13,21 +18,7 @@ import type {
 import { MAX_CELL_WORK_BYTES, SyncError } from './types.ts';
 import { sheetRangePath } from './geometry.ts';
 
-/** Stable JSON is shared with clients; no document values enter diagnostics. */
-export function canonical(value: unknown): string {
-  const sort = (input: unknown): unknown => {
-    if (Array.isArray(input)) return input.map(sort);
-    if (input !== null && typeof input === 'object')
-      return Object.fromEntries(
-        Object.entries(input)
-          .filter(([, child]) => child !== undefined)
-          .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-          .map(([key, child]) => [key, sort(child)]),
-      );
-    return input;
-  };
-  return JSON.stringify(sort(value));
-}
+export { canonical };
 export const digest = (value: unknown) =>
   createHash('sha256').update(canonical(value)).digest('hex');
 const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -49,13 +40,6 @@ class CellBudget {
     this.json(cell);
     return structuredClone(cell);
   }
-}
-
-function inlineCell(snapshot: IWorkbookData, { sheetId, row, column }: CellAddress) {
-  const cell = snapshot.sheets[sheetId]?.cellData?.[row]?.[column];
-  if (!cell) return null;
-  const s = typeof cell.s === 'string' ? snapshot.styles?.[cell.s] : cell.s;
-  return { ...cell, s };
 }
 
 export function snapshotCells(snapshot: IWorkbookData): BaseCells {
@@ -194,39 +178,6 @@ export function cellsAt(unit: SyncUnit, revision: number, later: SyncRevision[])
       overrides.has(id) ? overrides.get(id)! : inlineCell(unit.snapshot as IWorkbookData, address),
     );
   };
-}
-
-/** Match the transform fuzz model's native-only defaults: type is derived, and
- * font color is copied into decoration color during application. Preserve rich
- * text and all other document content rather than reducing it to plain text. */
-function hashCell(cell: ICellData | null | undefined) {
-  if (!cell) return null;
-  const value = structuredClone(cell) as Record<string, any>;
-  delete value.t;
-  for (const field of Object.keys(value)) if (value[field] == null) delete value[field];
-  if (value.s && typeof value.s === 'object') {
-    for (const decoration of ['ul', 'ol', 'st']) {
-      const line = value.s[decoration];
-      if (line && typeof line === 'object') delete line.cl;
-    }
-    for (const field of Object.keys(value.s)) if (value.s[field] == null) delete value.s[field];
-    if (!Object.keys(value.s).length) delete value.s;
-  }
-  if (value.p?.body) value.p.body = normalizedBody(value.p.body);
-  return Object.keys(value).length ? value : null;
-}
-
-function normalizedBody(body: IDocumentData['body']) {
-  if (!body) return null;
-  const value = structuredClone(body);
-  if (value.textRuns) value.textRuns = normalizeTextRuns(value.textRuns);
-  for (const paragraph of value.paragraphs ?? []) {
-    if (paragraph.bullet?.textStyle && !Object.keys(paragraph.bullet.textStyle).length)
-      delete paragraph.bullet.textStyle;
-  }
-  return Object.fromEntries(
-    Object.entries(value).filter(([, child]) => !(Array.isArray(child) && child.length === 0)),
-  );
 }
 
 /** A pending-free client hashes the last applied revision's declared footprint. */

@@ -622,17 +622,23 @@ test('tall image-only and captioned anchors continue completely and invalid nati
   square.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_SQUARE;
   const bareLine = structuredClone(bare);
   bareLine.snapshot.drawings!.image.docTransform.positionV.relativeFrom = ObjectRelativeFromV.LINE;
-  inputs.push(square, bare, nonLeading, fullColumn, bareLine, line);
-  const badAnchors = [invisible, multiple, overlapping];
-  const allResults = await runDocJobs([...badAnchors, ...inputs].map((input) => ({ input })));
+  inputs.push(square, bare, nonLeading, fullColumn, bareLine, line, multiple, overlapping);
+  const badAnchors = [invisible];
+  const allResults = await runDocJobs(
+    [...badAnchors, ...inputs].map((input) => ({
+      input,
+      nativeGeometry: input === overlapping,
+    })),
+  );
   for (const rejected of allResults.slice(0, badAnchors.length)) {
-    expect(rejected, JSON.stringify(rejected)).toMatchObject({
+    const { bytes, ...diagnostic } = rejected;
+    expect(diagnostic, JSON.stringify(diagnostic)).toMatchObject({
       ok: false,
       code: 'unsupported',
       restored: true,
       remainingFonts: 0,
     });
-    expect(rejected.bytes).toBeUndefined();
+    expect(bytes).toBeUndefined();
   }
   const results = allResults.slice(badAnchors.length);
   for (const [index, result] of results.entries()) {
@@ -650,35 +656,113 @@ test('tall image-only and captioned anchors continue completely and invalid nati
         'tall-full-column-square',
         'tall-line-relative-image-only',
         'tall-line-relative-caption',
+        'tall-interleaved-multiple-images',
+        'tall-negative-native-image',
       ][index],
       result.bytes!,
     );
     expect(pages.length).toBeGreaterThanOrEqual(3);
     expect(pages.map((page) => page.text).join(' ')).toContain('AFTER-IMAGE-SENTINEL');
     const text = pages.map((page) => page.text).join(' ');
-    if ([1, 4, 7].includes(index)) expect(text).toContain('Anchor caption');
+    if ([1, 4, 7, 8].includes(index)) expect(text.split('Anchor caption')).toHaveLength(2);
+    if (index === 8) {
+      expect(pages.length).toBeGreaterThanOrEqual(6);
+      expect(pages.at(-1)!.text).toContain('AFTER-IMAGE-SENTINEL');
+    }
     if (index === 4) {
       expect(text.split('Leading text')).toHaveLength(2);
       expect(pages[0].text).toContain('Leading text');
       expect(pages.at(-1)!.text).toContain('Anchor caption');
     }
-    // An omitted or displaced anchor can retain every pixel while adding blank pages.
-    expect(pages.every((page) => page.pixels.some((value, i) => i % 4 !== 3 && value < 250))).toBe(
-      true,
-    );
+    // Default and corrected anchors cannot manufacture empty pages. A negative
+    // offset can itself move the native exclusion backwards into earlier flow;
+    // that exact source layout is checked independently below, including its gap.
+    if (!result.nativeGeometry)
+      expect(
+        pages.every((page) => page.pixels.some((value, i) => i % 4 !== 3 && value < 250)),
+      ).toBe(true);
     const colors = [0, 0, 0];
-    for (const page of pages)
-      for (let n = 0; n < page.pixels.length; n += 4) {
-        const [r, g, b] = page.pixels.slice(n, n + 3);
-        if (r > 150 && g < 80 && b < 100) colors[0]++;
-        if (g > 100 && r < 80 && b < 100) colors[1]++;
-        if (b > 150 && r < 80 && g < 100) colors[2]++;
+    const bands: number[] = [];
+    let firstImage: { page: number; x: number; y: number } | undefined;
+    for (const [pageIndex, page] of pages.entries())
+      for (let y = 0; y < page.height; y++) {
+        const row = [0, 0, 0];
+        for (let x = 0; x < page.width; x++) {
+          const n = (y * page.width + x) * 4;
+          const [r, g, b] = page.pixels.slice(n, n + 3);
+          if (r > 150 && g < 80 && b < 100) {
+            row[0]++;
+            firstImage ??= { page: pageIndex, x, y };
+          }
+          if (g > 100 && r < 80 && b < 100) row[1]++;
+          if (b > 150 && r < 80 && g < 100) row[2]++;
+        }
+        for (const [color, count] of row.entries()) colors[color] += count;
+        const dominant = row.indexOf(Math.max(...row));
+        if (row[dominant] > 3 && bands.at(-1) !== dominant) bands.push(dominant);
       }
     // Each band retains its complete authored width and one third of its height.
     // A repeated/clipped source slice changes this area, even if all colors occur.
     const size = inputs[index].snapshot.drawings!.image.docTransform.size;
-    const bandArea = size.width! * (size.height! / 3) * 0.75 ** 2;
+    const count = inputs[index].snapshot.body!.customBlocks!.length;
+    const bandArea = size.width! * (size.height! / 3) * 0.75 ** 2 * count;
     for (const count of colors) expect(Math.abs(count - bandArea)).toBeLessThan(200);
+    expect(bands).toEqual(Array.from({ length: count }, () => [0, 1, 2]).flat());
+    if (result.nativeGeometry) {
+      const native = result.nativeGeometry;
+      await writeFile(
+        resolve(docEvidenceDirectory, 'negative-tall-native-geometry.json'),
+        JSON.stringify(native, null, 2),
+      );
+      expect(native.sourceFlavor).toBeNull(); // This saved fixture has no explicit flavor.
+      expect(native.layoutFlavor).toBe(DocumentFlavor.TRADITIONAL);
+      expect(native.logical).toHaveLength(1);
+      const source = native.logical[0];
+      const image = source.images.find((drawing) => drawing.id === 'image')!;
+      const before = source.lines.find((line) => line.text.includes('Before image'))!;
+      const after = source.lines.find((line) => line.text.includes('AFTER-IMAGE-SENTINEL'))!;
+      const capacity = native.frame.height - native.frame.top - native.frame.bottom;
+      expect(image).toMatchObject({ left: 60, width: 48, height: 900 });
+      expect(native.finite.flatMap((page) => page.images)).toEqual([image]);
+      expect(image.top - (before.top + before.height)).toBeGreaterThan(capacity * 2);
+      expect(after.top).toBeGreaterThanOrEqual(image.top + image.height - 0.01);
+      // No source ink exists between the first text paragraph and the native
+      // image. Its absolute logical origin therefore maps through full, empty
+      // paper bodies without any text seam adjustment.
+      const imagePage = Math.floor((image.top - native.frame.top) / capacity);
+      expect(firstImage!.page).toBe(imagePage);
+      expect(Math.abs(firstImage!.x - image.left * 0.75)).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(firstImage!.y - (image.top - imagePage * capacity) * 0.75),
+      ).toBeLessThanOrEqual(1);
+      for (const page of pages.slice(1, imagePage))
+        expect(page.pixels.every((value, offset) => offset % 4 === 3 || value === 255)).toBe(true);
+      // The final plain line is the sole atomic text interval after the image.
+      // Native glyph metrics determine whether its ink crosses the next paper
+      // edge; keep the whole line at its native baseline relative to that ink.
+      const candidatePage = Math.floor((after.ink!.top - native.frame.top) / capacity);
+      const crosses = after.ink!.bottom > native.frame.top + (candidatePage + 1) * capacity;
+      const afterPage = candidatePage + Number(crosses);
+      const afterBaseline = crosses
+        ? native.frame.top + after.baseline - after.ink!.top
+        : after.baseline - candidatePage * capacity;
+      const item = pages[afterPage].items.find((item) =>
+        item.str.includes('AFTER-IMAGE-SENTINEL'),
+      )!;
+      expect(item).toBeDefined();
+      expect(Math.abs(item.transform[4] - native.frame.left * 0.75)).toBeLessThan(0.001);
+      // The native PDF font painter snaps its baseline within one source pixel.
+      // Measure that shared font offset on the unaffected first paragraph;
+      // compare the final line's relative position without relaxing its bound.
+      const firstText = pages[0].items.find((item) => item.str.includes('Before image'))!;
+      const paintOffset = pages[0].height - firstText.transform[5] - before.baseline * 0.75;
+      expect(Math.abs(paintOffset)).toBeLessThan(0.75);
+      expect(
+        Math.abs(pages[afterPage].height - item.transform[5] - afterBaseline * 0.75 - paintOffset),
+      ).toBeLessThan(0.001);
+      expect(pages.findIndex((page) => page.text.includes('AFTER-IMAGE-SENTINEL'))).toBe(afterPage);
+      expect(pages.length).toBe(afterPage + 1);
+    }
   }
 }, 90_000);
 

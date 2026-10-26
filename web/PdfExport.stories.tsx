@@ -94,7 +94,7 @@ export const ExportFailed: Story = {
   parameters: {
     api: {
       [get]: sheets,
-      [post]: failure('This PDF exceeds the export limit. Try fewer worksheets.', 413),
+      [post]: failure('This file exceeds the PDF export limit.', 413),
     },
   },
   play: ({ canvasElement }) => start(canvasElement),

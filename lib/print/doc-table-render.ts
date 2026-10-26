@@ -10,6 +10,7 @@ import type { DocInk } from './doc-story-layout.ts';
 import { projectTableReservations, tableFlowSnapshot, tallTableTargets } from './doc-table-flow.ts';
 import type { TableFlowTarget } from './doc-table-flow.ts';
 import { imageParagraphTargets } from './doc-image-page-flow.ts';
+import type { DocImageGeometry } from './doc-image-groups.ts';
 
 export interface DocTablePaint {
   slice: DocPageSlice;
@@ -61,10 +62,19 @@ export async function prepareNativeTableFlow(
     measure: (page: IDocumentSkeletonPage) => DocInk;
   },
   reservedImages: ReadonlySet<string> = new Set(),
+  imageGeometry?: DocImageGeometry,
 ) {
   const targets = [
     ...tallTableTargets(original, initial!, limits, check, budget),
-    ...imageParagraphTargets(original, initial!, reservedImages, limits, check, budget),
+    ...imageParagraphTargets(
+      original,
+      initial!,
+      reservedImages,
+      limits,
+      check,
+      budget,
+      imageGeometry,
+    ),
   ];
   if (!targets.length)
     return {
@@ -169,6 +179,9 @@ export async function prepareNativeTableFlow(
         false,
         budget,
         source.target.capacities,
+        new Set(),
+        new Set(),
+        imageGeometry,
       );
     const snapshot = projectTableReservations(
       original,

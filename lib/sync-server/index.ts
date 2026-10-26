@@ -16,6 +16,7 @@ export type {
   CellBeforeImage,
   DocumentKind,
   NativeSnapshot,
+  ReplayResult,
   SubmitRequest,
   SubmitResult,
   SyncCommit,

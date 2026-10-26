@@ -25,7 +25,8 @@ interface FlowEntry {
   body: IDocumentBody;
   snapshot: IDocumentData;
   layoutType: PositionedObjectLayoutType;
-  kind: 'empty' | 'line-caption' | 'square-caption' | 'group' | 'terminal';
+  kind:
+    'empty' | 'line-caption' | 'square-caption' | 'group' | 'terminal' | 'whitespace' | 'native';
   group?: { ids: string[] };
   carrier?: { drawing: IDocDrawingBase; baseline?: NonNullable<FlowEntry['baseline']> };
   baseline?: {
@@ -40,6 +41,11 @@ interface FlowEntry {
 }
 
 export type ImageParagraphFlow = Map<string, FlowEntry>;
+
+// These ordinary authored whitespace characters have distinct native line and
+// tab metrics. Keep the characters/runs untouched; zero-width controls are not
+// substitutes for this actual source content.
+const typedWhitespace = new Set([' ', '\t', '\u00a0']);
 
 function unsupported(): never {
   throw new PrintError(
@@ -78,6 +84,23 @@ export function prepareImageParagraphFlow(
     ...Object.values(snapshot.footers ?? {}).map((story) => story.body),
   ];
   for (const body of bodies) {
+    if (body === snapshot.body)
+      for (const block of body.customBlocks ?? []) {
+        check();
+        const drawing = snapshot.drawings?.[block.blockId];
+        // The editor's current wrap style owns layering. Its Behind -> wrap
+        // command leaves this old flag behind, but its visible body painter
+        // reads it only for WRAP_NONE. Native block stacking still reads the
+        // stale flag, so normalize that inactive presentation state here.
+        if (
+          drawing?.behindDoc === 1 &&
+          [
+            PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM,
+            PositionedObjectLayoutType.WRAP_SQUARE,
+          ].includes(drawing.layoutType)
+        )
+          drawing.behindDoc = 0;
+      }
     const paragraphs = new Map(
       (body.paragraphs ?? []).map((paragraph) => [paragraph.startIndex, paragraph]),
     );
@@ -122,21 +145,31 @@ export function prepareImageParagraphFlow(
           const position = image?.docTransform.positionV;
           return (
             entry.startIndex === paragraphStart + index &&
-            image?.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM &&
+            image &&
+            position &&
             image.hidden !== true &&
-            image.behindDoc !== 1 &&
-            position?.relativeFrom === ObjectRelativeFromV.PARAGRAPH &&
-            position.align === undefined &&
-            position.percent === undefined &&
-            (position.posOffset ?? 0) >= 0
+            (image.layoutType === PositionedObjectLayoutType.WRAP_NONE ||
+              (image.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM &&
+                image.behindDoc !== 1 &&
+                [ObjectRelativeFromV.PARAGRAPH, ObjectRelativeFromV.LINE].includes(
+                  position.relativeFrom,
+                ) &&
+                position.align === undefined &&
+                position.percent === undefined &&
+                (position.posOffset ?? 0) >= 0))
           );
         }) &&
         !paragraph.bullet &&
         !Object.keys(paragraph.paragraphStyle ?? {}).some((key) => key.startsWith('border'))
       ) {
         if (paragraphStart + siblings.length === end) {
-          const group = { ids: siblings.map((entry) => entry.blockId) };
-          for (const sibling of siblings) {
+          const wrapping = siblings.filter(
+            ({ blockId }) =>
+              snapshot.drawings![blockId].layoutType ===
+              PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM,
+          );
+          const group = { ids: wrapping.map((entry) => entry.blockId) };
+          for (const sibling of wrapping) {
             const image = snapshot.drawings![sibling.blockId];
             const layoutType = image.layoutType;
             image.layoutType = PositionedObjectLayoutType.WRAP_NONE;
@@ -158,10 +191,19 @@ export function prepareImageParagraphFlow(
         (anchor === 0 || ['\r', '\n', '\x1c', '\x0f'].includes(body.dataStream[anchor - 1]));
       const previous = siblings.find((entry) => entry.startIndex === anchor - 1);
       const carrier = previous && snapshot.drawings?.[previous.blockId];
+      const prefix = body.dataStream.slice(paragraphStart, anchor);
+      const suffix = body.dataStream.slice(anchor + 1, end);
+      const whitespaceTerminal =
+        !paragraph.bullet &&
+        [...suffix].every((character) => typedWhitespace.has(character)) &&
+        (/[^\s\p{C}\uFFFC]/u.test(prefix) ||
+          [...prefix].every((character) => character === '\b' || typedWhitespace.has(character))) &&
+        [...prefix, ...suffix].some((character) => typedWhitespace.has(character));
       if (
         drawing.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM &&
-        end === anchor + 1 &&
-        (/[^\s\p{C}\uFFFC]/u.test(body.dataStream.slice(paragraphStart, anchor)) ||
+        (end === anchor + 1 || whitespaceTerminal) &&
+        (/[^\s\p{C}\uFFFC]/u.test(prefix) ||
+          whitespaceTerminal ||
           siblings.some(
             ({ blockId }) =>
               snapshot.drawings?.[blockId]?.layoutType === PositionedObjectLayoutType.INLINE,
@@ -171,11 +213,14 @@ export function prepareImageParagraphFlow(
           const position = image?.docTransform.positionV;
           return (
             image &&
+            position &&
             image.hidden !== true &&
             image.behindDoc !== 1 &&
             (image.layoutType === PositionedObjectLayoutType.INLINE ||
               (image.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM &&
-                position?.relativeFrom === ObjectRelativeFromV.PARAGRAPH &&
+                [ObjectRelativeFromV.PARAGRAPH, ObjectRelativeFromV.LINE].includes(
+                  position.relativeFrom,
+                ) &&
                 position.align === undefined &&
                 position.percent === undefined &&
                 Number.isFinite(position.posOffset)))
@@ -188,7 +233,7 @@ export function prepareImageParagraphFlow(
           body,
           snapshot,
           layoutType: drawing.layoutType,
-          kind: 'terminal',
+          kind: whitespaceTerminal ? 'whitespace' : 'terminal',
           ...(carrier?.layoutType === PositionedObjectLayoutType.INLINE
             ? { carrier: { drawing: carrier } }
             : {}),
@@ -196,7 +241,6 @@ export function prepareImageParagraphFlow(
         continue;
       }
       if (!empty) {
-        const suffix = body.dataStream.slice(anchor + 1, end);
         const following = (body.customBlocks ?? [])
           .filter((entry) => entry.startIndex > anchor && entry.startIndex < end)
           .map((entry) => snapshot.drawings?.[entry.blockId]);
@@ -207,8 +251,23 @@ export function prepareImageParagraphFlow(
         if (
           drawing.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM &&
           drawing.docTransform.positionV.relativeFrom === ObjectRelativeFromV.LINE &&
-          following.every((image) => image?.layoutType === PositionedObjectLayoutType.INLINE) &&
-          (/[^\s\p{C}\uFFFC]/u.test(suffix) || inlineContent)
+          following.every(
+            (image) =>
+              image &&
+              [
+                PositionedObjectLayoutType.INLINE,
+                PositionedObjectLayoutType.WRAP_NONE,
+                PositionedObjectLayoutType.WRAP_SQUARE,
+                PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM,
+              ].includes(image.layoutType),
+          ) &&
+          (/[^\s\p{C}\uFFFC]/u.test(suffix) ||
+            inlineContent ||
+            ([...suffix].some((character) => typedWhitespace.has(character)) &&
+              [...suffix].every(
+                (character) => character === '\b' || typedWhitespace.has(character),
+              )) ||
+            following.some((image) => image?.layoutType === PositionedObjectLayoutType.WRAP_SQUARE))
         )
           result.set(block.blockId, {
             drawing,
@@ -244,6 +303,21 @@ export function prepareImageParagraphFlow(
       )
         continue;
       const layoutType = drawing.layoutType;
+      if ((drawing.docTransform.positionV.posOffset ?? 0) < 0 || (drawing.distT ?? 0) > 0) {
+        // These authored exclusions reach back into preceding flow. The native
+        // wrapping pass owns that reflow; a forward-only empty-line reservation
+        // would remove it. Keep the source model and verify its complete native
+        // image geometry and separation after every subsequent layout.
+        result.set(block.blockId, {
+          drawing,
+          paragraph,
+          body,
+          snapshot,
+          layoutType,
+          kind: 'native',
+        });
+        continue;
+      }
       drawing.layoutType = PositionedObjectLayoutType.WRAP_NONE;
       result.set(block.blockId, { drawing, paragraph, body, snapshot, layoutType, kind: 'empty' });
     }
@@ -255,7 +329,9 @@ export function prepareImageParagraphFlow(
 export function pendingImageLineAnchors(flow: ImageParagraphFlow): ReadonlySet<string> {
   return new Set(
     [...flow]
-      .filter(([, entry]) => ['line-caption', 'terminal'].includes(entry.kind))
+      .filter(([, entry]) =>
+        ['line-caption', 'terminal', 'whitespace', 'native'].includes(entry.kind),
+      )
       .map(([id]) => id),
   );
 }
@@ -395,6 +471,21 @@ export function reserveImageParagraphFlow(
     check();
     const values = found.get(id);
     if (!values?.length) unsupported();
+    if (entry.kind === 'native') {
+      for (const anchor of values) {
+        const { appearance } = geometry(entry, anchor);
+        rememberBaseline(entry, {
+          left: appearance.left,
+          top: appearance.top - anchor.top,
+          width: appearance.width,
+          height: appearance.height,
+          angle: appearance.angle,
+          spaceBelow: anchor.line.spaceBelowApply,
+          span: anchor.line.contentHeight + anchor.line.paddingTop + anchor.line.paddingBottom,
+        });
+      }
+      continue;
+    }
     if (entry.carrier) {
       let reservation:
         { bottom: number; offset: number; before: number; after: number } | undefined;
@@ -406,7 +497,12 @@ export function reserveImageParagraphFlow(
         const native = inline.page.skeDrawings.get(entry.carrier.drawing.drawingId)!;
         const line = inline.line;
         const span = line.contentHeight + line.paddingTop + line.paddingBottom;
-        const top = line.marginTop + span + appearance.top - anchor.top;
+        const displacement =
+          entry.drawing.docTransform.positionV.relativeFrom === ObjectRelativeFromV.LINE &&
+          entry.drawing.docTransform.positionV.posOffset === 0
+            ? 0
+            : appearance.top - anchor.top;
+        const top = line.marginTop + span + displacement;
         const bounds = imageBounds({ ...appearance, top: inline.top + top });
         if (!bounds) unsupported();
         const required = bounds.bottom - inline.top + (entry.drawing.distB ?? 0);
@@ -454,7 +550,10 @@ export function reserveImageParagraphFlow(
       }
       entry.carrier.drawing.effectExtent = { bottom: reservation!.bottom };
       entry.drawing.layoutType = PositionedObjectLayoutType.WRAP_NONE;
-      entry.drawing.docTransform.positionV.posOffset = reservation!.offset;
+      entry.drawing.docTransform.positionV = {
+        relativeFrom: ObjectRelativeFromV.PARAGRAPH,
+        posOffset: reservation!.offset,
+      };
       entry.paragraph.paragraphStyle = {
         ...entry.paragraph.paragraphStyle,
         spaceAbove: { v: reservation!.before, u: NumberUnitType.PIXEL },
@@ -463,15 +562,20 @@ export function reserveImageParagraphFlow(
       changed = true;
       continue;
     }
-    if (entry.kind === 'terminal') {
+    if (entry.kind === 'terminal' || entry.kind === 'whitespace') {
       let extent: IDocDrawingBase['effectExtent'];
+      let spacing: { before: number; after: number } | undefined;
       for (const anchor of values) {
         const { appearance, bounds } = geometry(entry, anchor);
         const divide = anchor.line.divides[0];
         if (anchor.line.divides.length !== 1 || !divide) unsupported();
         const width = bounds.right - bounds.left;
         const height = bounds.bottom - bounds.top;
-        const top = appearance.top - anchor.top;
+        const top =
+          entry.drawing.docTransform.positionV.relativeFrom === ObjectRelativeFromV.LINE &&
+          entry.drawing.docTransform.positionV.posOffset === 0
+            ? 0
+            : appearance.top - anchor.top;
         // The last floating control and paragraph mark otherwise form a real
         // text strut, triggering native own-height displacement. Give only that
         // existing control a full-width inline layout box. Public effect extents
@@ -505,18 +609,43 @@ export function reserveImageParagraphFlow(
         )
           unsupported();
         extent = projected;
+        if (entry.kind === 'whitespace') {
+          const next = {
+            before: anchor.paragraphFirst.line.marginTop,
+            after: anchor.paragraphLast.line.spaceBelowApply,
+          };
+          if (
+            !Object.values(next).every(Number.isFinite) ||
+            (spacing &&
+              Object.entries(next).some(
+                ([key, value]) => Math.abs(value - spacing![key as keyof typeof next]) > 0.01,
+              ))
+          )
+            unsupported();
+          spacing = next;
+        }
         rememberBaseline(entry, {
           left: appearance.left,
           top,
           width: appearance.width,
           height: appearance.height,
           angle: appearance.angle,
-          spaceBelow: anchor.line.spaceBelowApply,
+          spaceBelow: spacing?.after ?? anchor.line.spaceBelowApply,
           span: anchor.line.contentHeight + anchor.line.paddingTop + anchor.line.paddingBottom,
         });
       }
       entry.drawing.layoutType = PositionedObjectLayoutType.INLINE;
       entry.drawing.effectExtent = extent;
+      if (spacing) {
+        // The actual spaces, tabs, runs and source offsets remain native. The
+        // larger inline image strut must not scale authored relative paragraph
+        // spacing; retain the first/last native spacing measured before it.
+        entry.paragraph.paragraphStyle = {
+          ...entry.paragraph.paragraphStyle,
+          spaceAbove: { v: spacing.before, u: NumberUnitType.PIXEL },
+          spaceBelow: { v: spacing.after, u: NumberUnitType.PIXEL },
+        };
+      }
       changed = true;
       continue;
     }
@@ -802,7 +931,7 @@ export function verifyImageParagraphFlow(
         appearance.width,
         appearance.height,
         appearance.angle,
-        entry.kind === 'square-caption' || entry.group
+        entry.kind === 'square-caption' || entry.kind === 'whitespace' || entry.group
           ? anchor.paragraphLast.line.spaceBelowApply
           : anchor.line.spaceBelowApply,
       ];
@@ -815,7 +944,12 @@ export function verifyImageParagraphFlow(
         baseline.spaceBelow,
       ];
       if (actual.some((value, index) => Math.abs(value - expected[index]) > 0.01)) unsupported();
-      if (entry.kind === 'empty' || entry.kind === 'terminal' || entry.group) {
+      if (
+        entry.kind === 'empty' ||
+        entry.kind === 'terminal' ||
+        entry.kind === 'whitespace' ||
+        entry.group
+      ) {
         const bottom = anchor.top + anchor.line.lineHeight - (anchor.line.marginBottom ?? 0);
         if (bottom + 0.01 < bounds.bottom + (entry.drawing.distB ?? 0)) unsupported();
       }

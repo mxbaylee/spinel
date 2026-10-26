@@ -10,6 +10,7 @@ import {
 } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData, Workbook } from '@univerjs/core';
 import { UniverDocsPlugin } from '@univerjs/docs';
+import { UniverDocsDrawingPlugin } from '@univerjs/docs-drawing';
 import { UniverDocsHyperLinkPlugin } from '@univerjs/docs-hyper-link';
 import { UniverDrawingPlugin } from '@univerjs/drawing';
 import { UniverRenderEnginePlugin } from '@univerjs/engine-render';
@@ -178,6 +179,9 @@ export class NativeModel {
       this.univer.registerPlugin(UniverDocsHyperLinkPlugin);
       this.univer.registerPlugin(UniverDrawingPlugin);
       this.univer.registerPlugin(UniverSheetsDrawingPlugin);
+      // Match the browser's canonical drawing map and serialized resource;
+      // treating the duplicate as opaque would restore stale drawings on load.
+      this.univer.registerPlugin(UniverDocsDrawingPlugin);
       this.loader = injector.get(IResourceLoaderService);
       const resources = injector.get(IResourceManagerService);
       const hooks = resources.getAllResourceHooks();

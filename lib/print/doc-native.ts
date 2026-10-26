@@ -1,7 +1,7 @@
 /** Standalone native Doc rendering with no source resolver, browser, or Pro code. */
 import { randomUUID } from 'node:crypto';
 import { setImmediate as yieldTurn } from 'node:timers/promises';
-import { DocumentDataModel, LocaleService } from '@univerjs/core';
+import { DocumentDataModel, DocumentFlavor, LocaleService } from '@univerjs/core';
 import type { IDocumentData } from '@univerjs/core';
 import {
   DocumentSkeleton,
@@ -16,7 +16,6 @@ import { PrintError, printCheckpoint, printLimits } from './contract.ts';
 import type { PreparedFont, PreparedImage, PrintBox, SheetPrintOptions } from './contract.ts';
 import { PreparedFonts } from './fonts.ts';
 import { admitImages } from './images.ts';
-import { drawPreparedImage } from './image-render.ts';
 import { acquireNativeRender, canvasGlobals, PdfContext } from './native-runtime.ts';
 import { InkContext } from './text.ts';
 import { prepareDocSnapshot, prepareDocFonts } from './doc-preparation.ts';
@@ -36,6 +35,10 @@ import { prepareNativeTableFlow, withoutTableReservations } from './doc-table-re
 import type { DocTablePaint } from './doc-table-render.ts';
 import { reserveGeneratedDocHyphens } from './doc-hyphen-flow.ts';
 import { appendFloatingDocPages, planFloatingDocImages } from './doc-floating-pages.ts';
+import { fixedDocImageAnchors } from './doc-fixed-images.ts';
+import { projectContinuousFixedImages } from './doc-fixed-image-flow.ts';
+import { docImageGroupBounds, drawPreparedDocImage } from './doc-image-groups.ts';
+import type { DocImageGeometry } from './doc-image-groups.ts';
 
 export type DocPrintOptions = Pick<SheetPrintOptions, 'limits' | 'signal'>;
 export interface NativeDocInput {
@@ -97,23 +100,17 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     // Both prepared snapshot and fonts become owned synchronously, before image
     // header inspection can yield to a caller that still owns the original data.
     const prepared = prepareDocSnapshot(input.snapshot, input.formulas ?? [], limits, check);
+    const imageGeometry: DocImageGeometry = (source, appearance, visit) =>
+      docImageGroupBounds(prepared.imageGroups, source, appearance, visit);
     prepareDocFonts(prepared.snapshot, fonts, limits, check);
-    const imageFlow = prepareImageParagraphFlow(prepared.snapshot, check);
-    const deferredLineAnchors = pendingImageLineAnchors(imageFlow);
-    for (const story of docStories(prepared.snapshot, false))
-      validateDocImageAnchors(story.snapshot, deferredLineAnchors);
-    const physical = needsPhysicalDocPages(prepared.snapshot);
-    const stored = prepared.snapshot.documentStyle;
-    const frame = physical
-      ? {
-          width: stored.pageSize!.width!,
-          height: stored.pageSize!.height!,
-          top: stored.marginTop!,
-          bottom: stored.marginBottom!,
-          left: stored.marginLeft!,
-          right: stored.marginRight!,
-        }
-      : virtualDocFrame(prepared.snapshot, limits, deferredLineAnchors);
+    const fixedAnchors = fixedDocImageAnchors(prepared.snapshot);
+    const physical =
+      needsPhysicalDocPages(prepared.snapshot) ||
+      (fixedAnchors.size > 0 && prepared.sourceFlavor !== DocumentFlavor.MODERN);
+    const continuousFixedImages =
+      prepared.sourceFlavor === DocumentFlavor.MODERN && !physical
+        ? fixedAnchors
+        : new Set<string>();
     const admitted = await admitImages(
       prepared.imageSources,
       input.images,
@@ -203,6 +200,31 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       }
       throw new PrintError('limit', 'PDF hyphen layout exceeds its bounded relayout budget.');
     };
+    if (physical && fixedAnchors.size && prepared.sourceGeometry)
+      await projectContinuousFixedImages(
+        prepared.snapshot,
+        fixedAnchors,
+        prepared.sourceGeometry,
+        limits,
+        check,
+        visit,
+        layout,
+      );
+    const imageFlow = prepareImageParagraphFlow(prepared.snapshot, check);
+    const deferredLineAnchors = pendingImageLineAnchors(imageFlow);
+    for (const story of docStories(prepared.snapshot, false))
+      validateDocImageAnchors(story.snapshot, deferredLineAnchors, fixedAnchors);
+    const stored = prepared.snapshot.documentStyle;
+    const frame = physical
+      ? {
+          width: stored.pageSize!.width!,
+          height: stored.pageSize!.height!,
+          top: stored.marginTop!,
+          bottom: stored.marginBottom!,
+          left: stored.marginLeft!,
+          right: stored.marginRight!,
+        }
+      : virtualDocFrame(prepared.snapshot, limits, deferredLineAnchors, fixedAnchors);
     let data: IDocumentSkeletonCached | undefined = await layout();
     if (reserveImageParagraphFlow(imageFlow, data, limits, check)) {
       data = undefined;
@@ -256,6 +278,7 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
             budget,
             { layout, measure },
             new Set(imageFlow.keys()),
+            imageGeometry,
           );
           data = undefined;
           const flow = await pending;
@@ -271,6 +294,7 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
           limits,
           check,
           budget,
+          imageGeometry,
         );
         if (!floats.additionalPages) break;
         source = appendFloatingDocPages(source, floats.additionalPages, limits, check);
@@ -317,6 +341,8 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       budget,
       [],
       floats?.ids,
+      continuousFixedImages,
+      imageGeometry,
     );
     for (const page of pages) page.images.push(...(floats?.paints.get(page.page) ?? []));
     const stories = prepareDocStoryPaints(
@@ -327,7 +353,13 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       check,
       measure,
       budget,
+      imageGeometry,
     );
+    const paintVisit = () => {
+      check();
+      if (++budget.paintWork + budget.nodes > limits.gridCells)
+        throw new PrintError('limit', 'PDF image painting exceeds its work budget.');
+    };
     const mediaBoxes = pages.map(({ frame }) => ({
       width: frame.width * 0.75,
       height: frame.height * 0.75,
@@ -358,7 +390,10 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       raw.scale(0.75, 0.75);
       raw.beginPath();
       if (physical) raw.rect(0, 0, frame.width, frame.height);
-      else raw.rect(0, frame.top, frame.width, Math.max(0, page.bottom - page.top));
+      else {
+        const top = continuousFixedImages.size && page.top === frame.top ? 0 : frame.top;
+        raw.rect(0, top, frame.width, Math.max(0, page.bottom - page.top + frame.top - top));
+      }
       raw.clip();
       raw.translate(0, frame.top - page.top);
       const ctx = new PdfContext(raw as unknown as CanvasRenderingContext2D, check);
@@ -394,7 +429,7 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
             raw.clip();
             raw.translate(table.left, table.top - table.slice.top);
           }
-          drawPreparedImage(ctx, decoded.get(image.source)!, image);
+          drawPreparedDocImage(ctx, decoded, image, prepared.imageGroups, paintVisit);
           raw.restore();
         }
       };
@@ -423,10 +458,10 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
         raw.scale(0.75, 0.75);
         const ctx = new PdfContext(raw as unknown as CanvasRenderingContext2D, check);
         for (const image of story.images.filter((image) => image.behind))
-          drawPreparedImage(ctx, decoded.get(image.source)!, image);
+          drawPreparedDocImage(ctx, decoded, image, prepared.imageGroups, paintVisit);
         document!.draw(ctx);
         for (const image of story.images.filter((image) => !image.behind))
-          drawPreparedImage(ctx, decoded.get(image.source)!, image);
+          drawPreparedDocImage(ctx, decoded, image, prepared.imageGroups, paintVisit);
         raw.restore();
       }
       pdf.endPage();

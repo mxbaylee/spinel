@@ -1,6 +1,6 @@
 import { expect, test, vi } from 'vitest';
 import { getDocsEmptySnapshot, ImageSourceType, LocaleType } from '@univerjs/core';
-import type { IDocumentData, IWorkbookData } from '@univerjs/core';
+import type { ICellData, IDocumentData, IWorkbookData } from '@univerjs/core';
 import { inspectPdfSnapshot, preparePdfSnapshot } from './prepare.ts';
 import { PDF_LIMITS, PdfError } from './limits.ts';
 
@@ -98,6 +98,34 @@ function plainBook(): IWorkbookData {
   const snapshot = book();
   for (const sheet of Object.values(snapshot.sheets)) delete sheet.backgroundImage;
   return snapshot;
+}
+
+function sheetCellPicture(source: string): ICellData {
+  return {
+    p: {
+      id: 'cell',
+      documentStyle: {},
+      body: { dataStream: '\b\r\n', customBlocks: [{ startIndex: 0, blockId: 'picture' }] },
+      drawingsOrder: ['picture'],
+      drawings: {
+        picture: {
+          drawingId: 'picture',
+          unitId: 'cell',
+          subUnitId: 'cell',
+          drawingType: 0,
+          layoutType: 0,
+          imageSourceType: ImageSourceType.URL,
+          source,
+          docTransform: {
+            size: { width: 10, height: 10 },
+            positionH: { relativeFrom: 1, posOffset: 0 },
+            positionV: { relativeFrom: 1, posOffset: 0 },
+            angle: 0,
+          },
+        },
+      },
+    },
+  } as ICellData;
 }
 
 test('accepts the exact empty resource wrappers emitted by public Doc and Sheet snapshots', () => {
@@ -279,6 +307,129 @@ test('selected visible worksheet images are the only sources prepared', () => {
     );
 });
 
+test.each(['missing', 'existing'])(
+  'omitted Sheet sources do not read %s blobs or consume the encoded-byte budget',
+  (mode) => {
+    const snapshot = plainBook();
+    const unused = ['b', 'c', 'd'].map(
+      (digit) => `/api/items/${itemId}/images/${digit.repeat(64)}`,
+    );
+    snapshot.sheets.one.rowData = { 1: { hd: 1 }, 2: { hd: 1 }, 3: { hd: 1 } };
+    snapshot.sheets.one.mergeData = [{ startRow: 4, endRow: 5, startColumn: 0, endColumn: 1 }];
+    snapshot.sheets.one.cellData = {
+      0: { 1: sheetCellPicture(imagePath) },
+      1: { 1: sheetCellPicture(unused[0]) },
+      2: { 1: sheetCellPicture(unused[1]) },
+      3: { 1: sheetCellPicture(unused[2]) },
+      4: { 1: sheetCellPicture(unused[0]) },
+    };
+    snapshot.sheets.two.columnData = { 0: { hd: 1 }, 1: { hd: 1 }, 2: { hd: 1 } };
+    snapshot.sheets.two.backgroundImage = {
+      source: unused[1],
+      imageSourceType: ImageSourceType.URL,
+    };
+    const base = {
+      unitId: itemId,
+      subUnitId: 'one',
+      anchorType: '2',
+      transform: { left: 0, top: 0, width: 20, height: 20 },
+    };
+    const data = {
+      group: {
+        ...base,
+        drawingId: 'group',
+        drawingType: 6,
+        groupBaseBound: { left: 0, top: 0, width: 20, height: 20 },
+      },
+      active: { ...base, drawingId: 'active', drawingType: 0, groupId: 'group', source: imagePath },
+      hidden: {
+        ...base,
+        drawingId: 'hidden',
+        drawingType: 6,
+        groupId: 'group',
+        hidden: true,
+        groupBaseBound: { left: 0, top: 0, width: 20, height: 20 },
+      },
+      hiddenChild: {
+        ...base,
+        drawingId: 'hiddenChild',
+        drawingType: 0,
+        groupId: 'hidden',
+        source: unused[2],
+      },
+      collapsed: {
+        ...base,
+        drawingId: 'collapsed',
+        drawingType: 0,
+        source: unused[0],
+        anchorType: '1',
+        sheetTransform: {
+          from: { row: 1, column: 0, rowOffset: 0, columnOffset: 0 },
+          to: { row: 2, column: 1, rowOffset: 0, columnOffset: 0 },
+        },
+      },
+    };
+    snapshot.resources = [
+      {
+        name: 'SHEET_DRAWING_PLUGIN',
+        data: JSON.stringify({ one: { data, order: Object.keys(data) } }),
+      },
+    ];
+    const original = structuredClone(snapshot);
+    // All references are valid same-item ownership identities. Raw ownership
+    // validation remains in CollaborationStore.load; this step selects blobs.
+    const read = vi.fn((id: string) => {
+      if (mode === 'missing' && id !== imageId) throw new Error('Inactive blob was read.');
+      return { mime: 'image/png', data: new Uint8Array(3 * 1024 * 1024) };
+    });
+    const prepared = preparePdfSnapshot('sheet', itemId, snapshot, { readImage: read });
+    expect(read).toHaveBeenCalledExactlyOnceWith(imageId);
+    expect(prepared.images.map(({ source }) => source)).toEqual([imagePath]);
+    expect(prepared.imageIds).toEqual([imageId]);
+    expect(prepared.snapshot).toEqual(original);
+    expect(snapshot).toEqual(original);
+  },
+);
+
+test('formula recalculation can reveal a filtered image after host byte selection', async () => {
+  const snapshot = plainBook();
+  snapshot.sheets.one.cellData = {
+    0: { 0: { v: 'Header' } },
+    1: { 0: { f: '=1', v: 0 }, 1: sheetCellPicture(imagePath) },
+  };
+  snapshot.resources = [
+    {
+      name: 'SHEET_FILTER_PLUGIN',
+      data: JSON.stringify({
+        one: {
+          ref: { startRow: 0, endRow: 9, startColumn: 0, endColumn: 1 },
+          filterColumns: [{ colId: 0, filters: { filters: ['1'] } }],
+        },
+      }),
+    },
+  ];
+  const { default: sharp } = await import('sharp');
+  const bytes = await sharp({ create: { width: 2, height: 2, channels: 4, background: '#8020f0' } })
+    .png()
+    .toBuffer();
+  const read = vi.fn(() => ({ mime: 'image/png', data: bytes }));
+  const prepared = preparePdfSnapshot('sheet', itemId, snapshot, { readImage: read });
+  expect(prepared.imageIds).toEqual([imageId]);
+  const { prepareSheetFormulas } = await import('./sheet-formulas.ts');
+  const calculated = await prepareSheetFormulas(prepared.snapshot);
+  expect(calculated.sheets.one.cellData![1][0]?.v).toBe(1);
+  const { runPdf } = await import('./runner.ts');
+  const rendered = await runPdf({
+    kind: 'sheet',
+    input: { snapshot: prepared.snapshot, images: prepared.images },
+    worksheetIds: ['one'],
+  });
+  expect(rendered.pages).toBe(1);
+  expect(Buffer.from(rendered.bytes).subarray(0, 5).toString()).toBe('%PDF-');
+  expect(Buffer.from(rendered.bytes).toString('latin1')).toMatch(/\/Subtype\s*\/Image/);
+  expect(read).toHaveBeenCalledExactlyOnceWith(imageId);
+});
+
 test('normalizes the standard modern editor canvas and redundant links without losing content', () => {
   const snapshot = getDocsEmptySnapshot(itemId);
   snapshot.body!.dataStream = 'Reference\r\n';
@@ -311,6 +462,8 @@ test('normalizes the standard modern editor canvas and redundant links without l
 
 test('header and footer resources preserve links and prepare only this document’s images', () => {
   const snapshot = doc();
+  snapshot.documentStyle.defaultHeaderId = 'header';
+  snapshot.documentStyle.defaultFooterId = 'footer';
   const drawing = {
     source: imagePath,
     drawingId: 'picture',
@@ -408,4 +561,97 @@ test('snapshot and image limits reject whole preparations without evaluating get
       }),
     }),
   ).toThrow(PdfError);
+});
+
+test('inactive Doc story groups never read blobs or consume the active image budget', () => {
+  const snapshot = doc();
+  const data: Record<string, unknown> = {
+    active: { drawingId: 'active', drawingType: 0, source: imagePath },
+    unused: { drawingId: 'unused', drawingType: 6 },
+  };
+  for (let index = 0; index <= PDF_LIMITS.images; index++)
+    data[`unused-${index}`] = {
+      drawingId: `unused-${index}`,
+      drawingType: 0,
+      groupId: 'unused',
+      source: `/api/items/${itemId}/images/${index.toString(16).padStart(64, '0')}`,
+    };
+  snapshot.drawings = data as IDocumentData['drawings'];
+  snapshot.headers = {
+    unused: {
+      headerId: 'unused',
+      body: { dataStream: '\b\r\n', customBlocks: [{ startIndex: 0, blockId: 'unused' }] },
+    },
+  };
+  const original = structuredClone(snapshot);
+  const read = vi.fn((id: string) => {
+    if (id !== imageId) throw new Error('Inactive image bytes were requested.');
+    return readImage();
+  });
+  const prepared = preparePdfSnapshot('doc', itemId, snapshot, { readImage: read });
+  expect(read).toHaveBeenCalledExactlyOnceWith(imageId);
+  expect(prepared.images.map(({ source }) => source)).toEqual([imagePath]);
+  expect(prepared.imageIds).toEqual([imageId]);
+  expect(prepared.snapshot.headers).toEqual(original.headers);
+  expect(snapshot).toEqual(original);
+});
+
+test('active group sources deduplicate while hidden groups and leaves stay out of final image revalidation IDs', () => {
+  const snapshot = doc();
+  const secondId = 'b'.repeat(64);
+  const secondPath = `/api/items/${itemId}/images/${secondId}`;
+  // Raw source ownership is checked separately by CollaborationStore.load.
+  // This boundary selects blob reads and does not make hidden URLs authorized.
+  snapshot.drawings = {
+    group: { drawingId: 'group', drawingType: 6 },
+    first: { drawingId: 'first', drawingType: 0, groupId: 'group', source: imagePath },
+    duplicate: { drawingId: 'duplicate', drawingType: 0, groupId: 'group', source: imagePath },
+    nested: { drawingId: 'nested', drawingType: 6, groupId: 'group' },
+    second: { drawingId: 'second', drawingType: 0, groupId: 'nested', source: secondPath },
+    hidden: { drawingId: 'hidden', drawingType: 6, hidden: true },
+    'hidden-child': {
+      drawingId: 'hidden-child',
+      drawingType: 0,
+      groupId: 'hidden',
+      source: 'https://unused.invalid/child',
+    },
+    'hidden-leaf': {
+      drawingId: 'hidden-leaf',
+      drawingType: 0,
+      hidden: true,
+      source: 'https://unused.invalid/leaf',
+    },
+  } as unknown as IDocumentData['drawings'];
+  const original = structuredClone(snapshot);
+  const read = vi.fn((id: string) => {
+    if (![imageId, secondId].includes(id)) throw new Error('Hidden image bytes were requested.');
+    return readImage();
+  });
+  const prepared = preparePdfSnapshot('doc', itemId, snapshot, { readImage: read });
+  expect(read.mock.calls.map(([id]) => id)).toEqual([imageId, secondId]);
+  expect(prepared.images.map(({ source }) => source)).toEqual([imagePath, secondPath]);
+  // PdfService rechecks this exact list before returning complete bytes.
+  expect(prepared.imageIds).toEqual([imageId, secondId]);
+  expect(snapshot).toEqual(original);
+  for (const edit of [
+    (source: IDocumentData) => {
+      source.drawings!.first.groupId = 'missing';
+    },
+    (source: IDocumentData) => {
+      source.drawings!.group.groupId = 'nested';
+    },
+    (source: IDocumentData) => {
+      Object.assign(source.drawings!.second, { source: 17 });
+    },
+  ]) {
+    const bad = structuredClone(snapshot);
+    edit(bad);
+    const forbidden = vi.fn(() => {
+      throw new Error('Malformed source must not read bytes.');
+    });
+    expect(() => preparePdfSnapshot('doc', itemId, bad, { readImage: forbidden })).toThrow(
+      PdfError,
+    );
+    expect(forbidden).not.toHaveBeenCalled();
+  }
 });

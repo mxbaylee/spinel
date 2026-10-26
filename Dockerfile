@@ -9,6 +9,7 @@ COPY lib/presence-ui/package.json ./lib/presence-ui/package.json
 COPY lib/print/package.json ./lib/print/package.json
 COPY lib/sync-transform/package.json ./lib/sync-transform/package.json
 COPY lib/sync-server/package.json ./lib/sync-server/package.json
+COPY lib/sync-client/package.json ./lib/sync-client/package.json
 COPY scripts/dependencies ./scripts/dependencies
 RUN npm ci
 COPY . .

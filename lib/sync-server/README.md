@@ -61,6 +61,13 @@ open-source Univer handlers and resource APIs. Its public resource loader saves
 current managed resources; opaque resource names survive without replacing live
 plugin data. Formula custom ranges are native Doc metadata and survive replay.
 
+The public Docs drawing plugin manages `DOC_DRAWING_PLUGIN`. Its serialized map
+and order mirror the canonical `drawings` and `drawingsOrder` fields after native
+drawing edits and remain aligned through save/reopen. Native loading also restores
+drawings supplied through that resource. Keeping it managed prevents an older
+serialized copy from replacing newer drawing data on reopen; unrelated opaque
+resources retain their original bytes.
+
 Each accepted edit stores the exact transform output, including params, claims,
 tails and triggers. Its `beforeCells` stores only cells that changed, with their
 styles resolved inline. A structural edit records changed coordinates on both
@@ -171,6 +178,19 @@ The headless native logger is set to `SILENT` through its public service before
 plugins or snapshots load, so native warnings and parser errors cannot bypass
 the content-free diagnostic boundary.
 
-Browser pending state, presence and sender resync UX belong to SPN-058. Activation,
+## Reconnect replay
+
+`server.replay(unitId, afterRevision, actor)` synchronously returns
+`{ revision, edits }`, where each edit contains its revision, mutations, touched
+footprint and hash. It checks read access before and after the read, exact
+contiguity through the current head, and the retained revision/byte limits. The
+application subscribes and reads replay without yielding, so loading a snapshot
+and opening its live socket cannot lose an intermediate edit. A stale replay
+does not erase durable retry receipts; the transport can still accept the
+original immutable request and return its receipt before asking the client to
+reload.
+
+Browser pending state and sender resync UX live in `@spinel/sync-client`; scoped
+sockets and ephemeral presence remain in the application transport. Activation,
 existing-unit cutover and Pro removal belong to SPN-059 after the retained
 SPN-056 integrated review. This package does not enable that cutover.

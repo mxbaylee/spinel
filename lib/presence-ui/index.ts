@@ -1,5 +1,6 @@
 import { parseSheetSelection } from './selection.ts';
-// Public Sheet selection rendering; no transport or profile storage.
+import { drawDocPresence } from './docPresence.ts';
+// Public editor selection rendering; no transport or profile storage.
 import type { IDisposable, Univer } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import type { ComponentType } from 'react';
@@ -8,7 +9,7 @@ import '@univerjs/sheets-ui/facade';
 
 /** Draw an ephemeral remote selection. Never writes formatting into the document. */
 export function drawPresence(
-  _univer: Univer,
+  univer: Univer,
   api: FUniver,
   unitId: string,
   selection: string,
@@ -17,6 +18,17 @@ export function drawPresence(
   renderColors?: PresenceRenderColors,
   popupOptions?: { zIndex?: number },
 ): IDisposable {
+  if (api.getActiveDocument?.()?.getId() === unitId)
+    return drawDocPresence(
+      univer,
+      api,
+      unitId,
+      selection,
+      color,
+      label,
+      renderColors,
+      popupOptions,
+    );
   const owned: IDisposable[] = [];
   const dispose = () => {
     for (const item of owned.reverse()) item.dispose();
@@ -48,7 +60,7 @@ export function drawPresence(
   return { dispose };
 }
 
-export { setLocalSelectionColor } from './localSelection.ts';
+export { setLocalSelectionColor, setLocalDocSelectionColor } from './localSelection.ts';
 export type { PresenceRenderColors } from './renderColors.ts';
 
-export { boundedSheetRange } from './selection.ts';
+export { boundedSheetRange, parseDocSelection } from './selection.ts';

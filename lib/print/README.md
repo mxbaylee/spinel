@@ -40,6 +40,27 @@ fail. Hidden and very-hidden worksheets and hidden/filtered rows/columns are
 omitted. Caller-owned snapshots and required image/font bytes are copied before
 asynchronous preparation can observe later caller changes.
 
+`selectDocImageSources(snapshot, { limits, signal })` and
+`selectSheetImageSources(snapshot, { worksheetIds, limits, signal })` return opaque
+image references for host-side byte preparation. Docs reuse the renderer's
+story selection and suppress hidden group descendants. Sheets share filter-applied
+geometry, merged-cell visibility, floating anchors and group ancestry with the
+renderer. Both preserve the caller's snapshot and perform no native layout. Hosts
+still authorize each returned reference before reading it and validate the
+integrity of their complete saved document. The renderer repeats its own source
+and appearance admission; selection does not certify a document as renderable.
+Saved filter-row caches are authoritative. If an uncached filter may depend on
+formula values or range-theme styles that still need isolated preparation, Sheet
+selection conservatively retains those rows' image references until the renderer
+has the prepared values. Those possible sources remain subject to the byte budget.
+
+The single public entry loads only metadata code until a render function is
+called. Native loading happens synchronously at that call so the existing input
+ownership and shared operation lock still precede any asynchronous yield. This
+lets the application select bytes without loading Canvas or initializing fonts
+outside its isolated worker. A separate-process module-hook test verifies the
+boundary and first-call ownership, overlap rejection and successful cleanup.
+
 Use Node 24+ with the locked native Canvas and Sharp packages and their matching
 platform binaries. CI exercises Linux x64. This private TypeScript source
 workspace runs from outside `node_modules` (as npm workspaces do); publishing a
@@ -176,7 +197,7 @@ custom rendering payloads, unprepared mentions/plugin resources, page
 backgrounds/borders, custom text effects and tab leaders, paragraph frames,
 repeated table headers, wrapped/floating tables, sparse table grids, rotated cell
 text, embedded column-group blocks,
-nonimage/grouped/contour drawings and unsupported floating anchors. These remain
+nonimage/contour drawings and unsupported imported floating anchors. These remain
 explicit unsupported source models; active editor models retain the SPN-075
 complete-content contract. Ignoring unsupported payloads would change visible content.
 Malformed indexes, merges, geometry or unprepared glyphs also fail without bytes.
@@ -234,11 +255,23 @@ origins and the retained paragraph spacing, including the first inline image's
 unchanged ascent and paint.
 No paragraph marks or captions are inserted. Independent authored inline
 references verify image area, text order and complete output pixels for these
-cases. Invisible-caption anchors still fail explicitly, as do empty image
-paragraphs with independently painted list markers/borders or an offset/wrap
-distance that collides with preceding text.
+cases. Native list paragraphs keep their visible markers and indentation. Mixed
+Top-and-bottom, Square and nonwrapping controls retain their native layering;
+inactive stale behind-text flags are removed only for body wrapping modes whose
+editor painter ignores them. Negative offsets and top wrap distances retain the
+native backward exclusion when a forward-only reservation would change it.
+Ordinary Space, Tab and nonbreaking-space spans before, after or between image
+controls retain their native line height, tab stops and visible decoration. The
+existing measured terminal-control projection completes the final image without
+changing any authored text, run or range index. Independent ordinary-inline
+references include styled whitespace and tall repeated-header continuations.
+Invisible fake-caption controls, unsupported decorated-paragraph projections and
+actual text/image collisions still fail explicitly.
 Tall captioned and image-only fixtures verify every color-band pixel across
-continuations with no empty pages; full-column Square text fixtures match the
+continuations. Gaps established by independent native layout remain intact;
+unused font descent on a final ordinary visible-text line cannot add an otherwise
+empty page. Authored blank paragraphs, breaks, borders and saved spacing retain
+their complete extent. Full-column Square text fixtures match the
 equivalent authored native flow pixel for pixel, including rich styling, saved
 spacing and repeated-header continuation. Separate fixtures verify prefix/caption
 order, saved LINE offsets, relative spacing, small-image pixels and caller
@@ -258,11 +291,32 @@ fields again after any appended pages. Every destination must fit the unchanged
 horizontal geometry. Color-band, layering and unchanged-text references cover
 headers, columns, existing-page reuse and page-limit refusal with recovery.
 
+Numeric Page- and Margin-relative images retain their source coordinate space.
+Traditional Docs use finite native pages; ordinary Modern Docs retain continuous
+coordinates across physical slices. Modern documents with saved headers, columns
+or section geometry use a bounded native equivalence check to map the picture's
+actual source location into that retained physical flow. Only the existing
+zero-width control and positioning reference are projected; visible glyphs,
+image geometry and authored formatting must remain equivalent. An image left
+beyond all text after deletions retains its native gap and continues across the
+required physical pages. Imported alignment/percentage references with different
+native origins remain explicit unsupported models.
+
+Image groups keep one layout anchor and paint their validated hierarchy through
+the public native drawing group. Nested local Doc transforms, group base bounds,
+rotation, resizing, flips, rectangular crops, opacity and child ordering remain
+intact. Actual descendant corners, including rotated ink outside the group's
+layout rectangle, determine complete print bounds and continuation clips. Only
+active retained groups request prepared leaf bytes. Group nodes, depth, cycles,
+source identities and every repeated painting operation share finite admission
+and work budgets; no extra flattened bitmap or image fetch is introduced.
+
 Repeated header/footer inline images accept the public editor's validated
 `isMultiTransform`/`transforms` presentation cache. Those cached screen/page
 positions are removed from the owned model; native repeated-story layout uses
 the authoritative `docTransform`, source crop, rotation, flips, opacity and
-source ordering. Grouped or skewed multi-transform drawings remain unsupported.
+source ordering. Group children use their authoritative local transforms;
+unsupported skewed appearance caches still fail explicitly.
 
 Doc limits cover both the original and projected model, generated list/Formula
 text, native layout work, repeated drawing across physical slices and all shared
@@ -286,13 +340,21 @@ can still supply the visible merged remainder. Image cells are removed from the
 owned native text snapshot after composition so the SDK's URL cache is never
 used. Page-spanning objects are drawn in full through the exact page clip.
 
+Sheet image groups use the same native hierarchy painter. The root follows its
+saved cell or absolute anchor; children retain the raw transforms and original
+nonzero group base rectangle written by the public grouping command. Their
+cached cell anchors are deliberately inactive while grouped. Hidden rows and
+columns affect the root's saved anchor without independently shifting its
+children. Whole descendant ink participates in used-range sizing and page breaks,
+including nested transformed groups and tall contiguous continuations.
+
 Worksheet backgrounds cover the finite configured worksheet rectangle, including
 background-only sheets, with hidden axes collapsed. This deliberate content
 extent is not the editor viewport. Tile phase remains fixed at worksheet zero
 across every page; repeated draws at boundaries count against the layout budget.
 
-Explicit unsupported models include grouped, skewed, nonrectangular or extra-scale
-drawings, and mixed-text/multiple-image cell documents. They fail without bytes;
+Explicit unsupported models include groups with nonimage descendants, skewed,
+nonrectangular or extra-scale drawings, and mixed-text/multiple-image cell documents. They fail without bytes;
 this does not permit SPN-075 to drop content or weaken its full export contract.
 
 ## Fonts and unsupported rich models

@@ -38,7 +38,7 @@ export class PdfError extends Error {
   constructor(code: PdfErrorCode) {
     const messages: Record<PdfErrorCode, string> = {
       busy: 'Another PDF is being prepared. Try again shortly.',
-      limit: 'This file exceeds the PDF export limit. Try exporting fewer worksheets.',
+      limit: 'This file exceeds the PDF export limit.',
       cancelled: 'PDF export was cancelled.',
       unsupported: 'This file contains formatting or text that cannot be exported as PDF yet.',
       failed: 'Could not create a complete PDF. Try again.',

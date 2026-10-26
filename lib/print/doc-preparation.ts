@@ -32,6 +32,8 @@ import {
   replaceDocStories,
 } from './doc-stories.ts';
 import { prepareDocColumnBreaks } from './doc-column-breaks.ts';
+import { fixedDocSourceGeometry } from './doc-fixed-images.ts';
+import { docGroupImageSources, prepareDocImageGroups } from './doc-image-groups.ts';
 import type { PreparedDocFormula } from './doc-formulas.ts';
 export type {
   PreparedDocFormula,
@@ -704,8 +706,13 @@ export function prepareDocSnapshot(
     textStyle(style.textStyle);
     paragraphStyle(style.paragraphStyle);
   }
+  const sourceFlavor = owned.documentStyle.documentFlavor;
+  const sourceGeometry = fixedDocSourceGeometry(owned);
   documentStyle(owned.documentStyle);
   pruneUnusedDocStories(owned, check);
+  const imageGroups = prepareDocImageGroups(owned, limits, check, (view, repeated) =>
+    imageSources(view, limits, repeated),
+  );
   isolateDocStoryGeometry(owned, limits, check);
   const stories = docStories(owned, true, limits, check);
   const sources: string[] = [];
@@ -749,7 +756,13 @@ export function prepareDocSnapshot(
   }
   for (const table of Object.values(owned.tableSource ?? {})) delete table.description;
   inspectSnapshot(owned, limits, check);
-  return { snapshot: owned, imageSources: [...new Set(sources)] };
+  return {
+    snapshot: owned,
+    imageSources: docGroupImageSources(sources, imageGroups),
+    imageGroups,
+    sourceFlavor,
+    sourceGeometry,
+  };
 }
 
 /** Alias every effective face, including heading inheritance and generated lists. */

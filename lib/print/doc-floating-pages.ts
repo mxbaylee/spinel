@@ -6,6 +6,7 @@ import { PrintError } from './contract.ts';
 import type { PrintLimits } from './contract.ts';
 import type { DocPlacedImage } from './doc-layout.ts';
 import { imageBounds } from './image-render.ts';
+import type { DocImageGeometry } from './doc-image-groups.ts';
 import { inspectSnapshot } from './preflight.ts';
 
 interface ImageSource extends IDocDrawingBase {
@@ -34,6 +35,7 @@ export function planFloatingDocImages(
   limits: Readonly<PrintLimits>,
   check: () => void,
   budget: { nodes: number; paintWork: number },
+  imageGeometry: DocImageGeometry = (_source, appearance) => imageBounds(appearance),
 ) {
   const ids = new Set<string>();
   const seen = new Set<string>();
@@ -68,7 +70,7 @@ export function planFloatingDocImages(
         flipY: source.docTransform.flipY ?? false,
         ...(source.srcRect ? { srcRect: source.srcRect } : {}),
       };
-      const bounds = imageBounds(appearance);
+      const bounds = imageGeometry(source.source, appearance, visit);
       if (!bounds || bounds.bottom <= anchor.pageHeight - anchor.marginBottom + 0.01) continue;
       if (bounds.top < anchor.marginTop - 0.01 || typeof source.source !== 'string') unsupported();
       ids.add(drawing.drawingId);

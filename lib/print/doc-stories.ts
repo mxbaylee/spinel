@@ -1,5 +1,5 @@
 /** Public document stories share resources, but have independent source offsets. */
-import { CustomRangeType } from '@univerjs/core';
+import { CustomRangeType, DrawingTypeEnum } from '@univerjs/core';
 import type { IDocumentData, IDocumentStyle, IFooterData, IHeaderData } from '@univerjs/core';
 import { PRINT_LIMITS, PrintError } from './contract.ts';
 import type { PrintLimits } from './contract.ts';
@@ -81,6 +81,7 @@ export function pruneUnusedDocStories(snapshot: IDocumentData, check: () => void
       }
     }
   }
+  const retainedDrawings = new Set<string>();
   for (const body of [
     snapshot.body,
     ...Object.values(snapshot.headers ?? {}).map((value) => value.body),
@@ -88,7 +89,35 @@ export function pruneUnusedDocStories(snapshot: IDocumentData, check: () => void
   ]) {
     check();
     for (const range of body?.tables ?? []) removedTables.delete(range.tableId);
-    for (const block of body?.customBlocks ?? []) removedDrawings.delete(block.blockId);
+    for (const block of body?.customBlocks ?? []) {
+      removedDrawings.delete(block.blockId);
+      retainedDrawings.add(block.blockId);
+    }
+  }
+  // A saved image group has one text anchor; its descendants remain in the
+  // shared drawing registry. Removing an inactive story must remove those
+  // descendants too, before image admission can request their sources. An
+  // independently anchored child is retained so malformed active ownership
+  // still fails rather than losing visible content.
+  const children = new Map<string, string[]>();
+  for (const [id, drawing] of Object.entries(snapshot.drawings ?? {})) {
+    check();
+    if (!drawing?.groupId) continue;
+    const siblings = children.get(drawing.groupId) ?? [];
+    siblings.push(id);
+    children.set(drawing.groupId, siblings);
+  }
+  const pending = [...removedDrawings];
+  for (let index = 0; index < pending.length; index++) {
+    check();
+    const id = pending[index];
+    if (snapshot.drawings?.[id]?.drawingType !== DrawingTypeEnum.DRAWING_GROUP) continue;
+    for (const child of children.get(id) ?? []) {
+      check();
+      if (retainedDrawings.has(child) || removedDrawings.has(child)) continue;
+      removedDrawings.add(child);
+      pending.push(child);
+    }
   }
   for (const id of removedTables) delete snapshot.tableSource?.[id];
   for (const id of removedDrawings) delete snapshot.drawings?.[id];

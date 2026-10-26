@@ -7,6 +7,7 @@ import type { PreparedFonts } from './fonts.ts';
 import { paginateDocument } from './doc-layout.ts';
 import type { DocPlacedImage } from './doc-layout.ts';
 import { docStories } from './doc-stories.ts';
+import type { DocImageGeometry } from './doc-image-groups.ts';
 
 export interface DocInk {
   bounds: PrintBox | null;
@@ -32,6 +33,7 @@ export function prepareDocStoryPaints(
   check: () => void,
   measure: (page: IDocumentSkeletonPage, resources: DocStoryPaint['resources']) => DocInk,
   budget: { nodes: number; paintWork: number },
+  imageGeometry?: DocImageGeometry,
 ): Map<IDocumentSkeletonPage, DocStoryPaint[]> {
   const sources = new Map(
     docStories(snapshot, false)
@@ -114,6 +116,10 @@ export function prepareDocStoryPaints(
         new Map([[page, ink]]),
         false,
         budget,
+        [],
+        new Set(),
+        new Set(),
+        imageGeometry,
       );
       if (slices.length !== 1)
         throw new PrintError('unsupported', 'PDF header or footer layout is incomplete.');

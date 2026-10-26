@@ -1,7 +1,7 @@
 import { isDeepStrictEqual } from 'node:util';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
+import { PrintError, selectDocImageSources, selectSheetImageSources } from '@spinel/print';
 import type { PreparedImage } from '@spinel/print';
-import { imageSources } from '../workspace/imageSources.ts';
 import { PDF_LIMITS, PdfError } from './limits.ts';
 
 type Snapshot = IDocumentData | IWorkbookData;
@@ -217,41 +217,7 @@ export function preparePdfSnapshot<T extends Snapshot>(
   const images = new Map<string, PreparedImage>();
   const imageIds: string[] = [];
   let bytes = 0;
-  let imageView: Snapshot = snapshot;
-  if (kind === 'sheet') {
-    const book = snapshot as IWorkbookData;
-    if (!Array.isArray(book.sheetOrder) || !object(book.sheets)) invalid();
-    const selected = options.worksheetIds ? new Set(options.worksheetIds) : undefined;
-    if (
-      selected &&
-      (selected.size !== options.worksheetIds!.length ||
-        !selected.size ||
-        [...selected].some((id) => !book.sheetOrder.includes(id)))
-    )
-      invalid();
-    const included = new Set(
-      book.sheetOrder.filter(
-        (id) => book.sheets[id] && !book.sheets[id].hidden && (!selected || selected.has(id)),
-      ),
-    );
-    if (!included.size) invalid();
-    imageView = {
-      ...book,
-      sheets: Object.fromEntries(Object.entries(book.sheets).filter(([id]) => included.has(id))),
-      resources: book.resources?.map((resource) => {
-        if (resource.name !== 'SHEET_DRAWING_PLUGIN') return resource;
-        const data = resources.get(resource.name);
-        if (!object(data)) invalid();
-        return {
-          ...resource,
-          data: JSON.stringify(
-            Object.fromEntries(Object.entries(data).filter(([id]) => included.has(id))),
-          ),
-        };
-      }),
-    };
-  }
-  imageSources(imageView, (reference) => {
+  const prepareImage = (reference: string) => {
     if (images.has(reference)) return reference;
     const prefix = `/api/items/${itemId}/images/`;
     if (!reference.startsWith(prefix) || !/^[a-f0-9]{64}$/.test(reference.slice(prefix.length)))
@@ -270,7 +236,23 @@ export function preparePdfSnapshot<T extends Snapshot>(
     images.set(reference, { source: reference, bytes: new Uint8Array(image.data) });
     imageIds.push(id);
     return reference;
-  });
+  };
+  let references: readonly string[];
+  try {
+    references =
+      kind === 'doc'
+        ? selectDocImageSources(snapshot as IDocumentData, { limits: PDF_LIMITS })
+        : selectSheetImageSources(snapshot as IWorkbookData, {
+            limits: PDF_LIMITS,
+            worksheetIds: options.worksheetIds,
+          });
+  } catch (error) {
+    if (!(error instanceof PrintError)) throw error;
+    throw new PdfError(
+      error.code === 'limit' || error.code === 'cancelled' ? error.code : 'unsupported',
+    );
+  }
+  for (const reference of references) prepareImage(reference);
   inspectPdfSnapshot(snapshot);
   return { snapshot, images: [...images.values()], imageIds };
 }
