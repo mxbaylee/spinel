@@ -101,6 +101,11 @@ Axis-only row/column ranges consume the same work budget. Coordinates and counts
 must be bounded safe integers, including sparse metadata indices; a missing axis
 endpoint cannot fall through to a native loop. Transformed output passes the same
 admission again before replay.
+Geometry checks follow native Sheet paths, including inserted worksheets, move
+matrices and number-format ranges. Doc bodies, embedded rich text and opaque cell
+metadata retain their own meaning for fields such as `range` or `rowCount`;
+general nesting, finite-number, prototype-key and unit-reference checks still
+apply throughout every payload.
 Worksheet positions have the same finite bound before transformation, in addition
 to their exact-base identity checks. The worksheet cap bounds native unit creation
 and the transform's positional window; a compact forged insertion at position

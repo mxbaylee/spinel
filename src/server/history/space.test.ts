@@ -103,12 +103,8 @@ function fixture(spacesEnabled = true) {
   const generations = new CollaborationGenerations(workspace);
   let prepared:
     ((user: string, id: string, custom: Record<string, unknown>) => Promise<void>) | undefined;
-  type Submission = {
-    userID: string;
-    customData: Record<string, unknown>;
-    request: { changeset: { unitID: string } };
-  };
-  let submitting: ((context: Submission, next: () => Promise<void>) => Promise<void>) | undefined;
+  type Submission = Parameters<CollaborationStore['onSubmitting']>[0];
+  let submitting: Submission | undefined;
   const read = (user: string, id: string, custom: Record<string, unknown> = {}) => ({
     ...structuredClone(snapshots.get(id)!),
     access: resolveDocument(workspace, user, id, 'read', custom).access,
@@ -156,14 +152,13 @@ function fixture(spacesEnabled = true) {
       return { dispose() {} };
     },
     itemForUnit: (id: string) => generations.resolve(id)?.itemId ?? id,
-    service: {
-      use: (_method: string, callback: typeof submitting) => {
-        submitting = callback;
-        return { dispose() {} };
-      },
-      on: () => ({ dispose() {} }),
-      dbAdapter: { getUnit },
+    onSubmitting: (callback: Submission) => {
+      submitting = callback;
+      return { dispose() {} };
     },
+    onCommitted: () => ({ dispose() {} }),
+    headRevision: async (user: string, unit: string, custom: Record<string, unknown>) =>
+      (await getUnit({ userID: user, customData: custom, request: {} }, unit))?.headRevision,
     generations,
     load,
     prepare,
@@ -214,16 +209,15 @@ function fixture(spacesEnabled = true) {
     rows,
     prepared: (user: string, id: string, custom: Record<string, unknown>) =>
       prepared!(user, id, custom),
-    submit: (
+    submit: async (
       user: string,
       id: string,
       custom: Record<string, unknown>,
       next: () => Promise<void>,
-    ) =>
-      submitting!(
-        { userID: user, customData: custom, request: { changeset: { unitID: id } } },
-        next,
-      ),
+    ) => {
+      await submitting!({ userID: user, customData: custom }, id);
+      await next();
+    },
   };
 }
 

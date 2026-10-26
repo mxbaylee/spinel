@@ -11,6 +11,7 @@ import type {
   Touched,
 } from './types.ts';
 import { SyncError } from './types.ts';
+import { sheetRangePath } from './geometry.ts';
 
 /** Stable JSON is shared with clients; no document values enter diagnostics. */
 export function canonical(value: unknown): string {
@@ -94,24 +95,36 @@ export function changes(
     for (const [row, columns] of Object.entries(data))
       for (const column of Object.keys(columns ?? {})) add({ sheetId, row: +row, column: +column });
   };
-  const ranges = (value: unknown, sheetId: string | undefined) => {
+  const ranges = (value: unknown, sheetId: string | undefined, path: string[] = []) => {
+    const scope = sheetRangePath(path);
+    if (!scope) return;
     if (!value || typeof value !== 'object') return;
     const data = value as Record<string, any>;
-    if (typeof data.subUnitId === 'string') sheetId = data.subUnitId;
     if (
+      scope === 'range' &&
       typeof sheetId === 'string' &&
       ['startRow', 'endRow', 'startColumn', 'endColumn'].every((field) =>
         Number.isSafeInteger(data[field]),
       )
     ) {
-      // Admission bounds the aggregate range area before native replay.
+      // Admission uses this same path grammar and bounds aggregate range area.
       for (let row = data.startRow; row <= data.endRow; row++)
         for (let column = data.startColumn; column <= data.endColumn; column++)
           add({ sheetId, row, column });
     }
-    for (const child of Object.values(data)) ranges(child, sheetId);
+    if (scope === 'range') return;
+    for (const [field, child] of Object.entries(data)) {
+      let target = sheetId;
+      if (!path.length) {
+        if (field === 'fromRange') target = data.from?.subUnitId ?? target;
+        else if (field === 'toRange') target = data.to?.subUnitId ?? target;
+        else if (field === 'sheet') target = data.sheet?.id;
+      }
+      ranges(child, target, [...path, field]);
+    }
   };
-  for (const { params } of mutations) {
+  for (const { id, params } of mutations) {
+    if (!id.startsWith('sheet.mutation.')) continue;
     matrix(params.cellValue, params.subUnitId);
     matrix(params.from?.value, params.from?.subUnitId ?? params.subUnitId);
     matrix(params.to?.value, params.to?.subUnitId ?? params.subUnitId);

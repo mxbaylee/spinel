@@ -8,6 +8,7 @@ import {
 } from '@spinel/sync-transform';
 import type { Mutation } from '@spinel/sync-transform';
 import { cellsAt, changes, digest, hashTouched } from './cells.ts';
+import { sheetRangePath } from './geometry.ts';
 import { InvariantError, NativeModel } from './native.ts';
 import { applySheetOrder, sheetOrderAt } from './order.ts';
 import {
@@ -62,33 +63,46 @@ function validateRequest(request: SubmitRequest) {
     if ((value as number) > maximum) throw new SyncError('capacity');
     return value as number;
   };
-  const rangeField = (path: string[]) =>
-    /^(range|sourceRange|targetRange|fromRange|toRange)$/.test(path.at(-1) ?? '') ||
-    path.at(-2) === 'ranges';
-  const walk = (value: unknown, path: string[], allowedUnit: string, frozenRoot = false) => {
+  const walk = (
+    value: unknown,
+    path: string[],
+    allowedUnit: string,
+    sheetMutation: boolean,
+    frozenRoot = false,
+  ) => {
     if (++nodes > 500_000 || path.length > 64) throw new SyncError('capacity');
     if (typeof value === 'number' && !Number.isFinite(value)) throw new SyncError('malformed');
-    if (rangeField(path) && (!value || typeof value !== 'object' || Array.isArray(value)))
+    // Geometry belongs to known native Sheet locations. Rich-text bodies,
+    // Formula references and opaque metadata may use these same field names.
+    const nativeRoot =
+      sheetMutation && (!path.length || (path.length === 1 && path[0] === 'sheet'));
+    const nativeField =
+      sheetMutation && (path.length === 1 || (path.length === 2 && path[0] === 'sheet'));
+    const rangePath = sheetMutation ? sheetRangePath(path) : undefined;
+    const nativeRange = rangePath === 'range';
+    if (nativeRange && (!value || typeof value !== 'object' || Array.isArray(value)))
       throw new SyncError('malformed');
-    if (path.at(-1) === 'ranges' && !Array.isArray(value)) throw new SyncError('malformed');
+    if (rangePath === 'ranges' && !Array.isArray(value)) throw new SyncError('malformed');
     if (value === null || typeof value !== 'object') return;
     const data = value as Record<string, unknown>;
     // Native worksheet defaults and cancel-freeze mutations use -1 anchors.
     // Only this bounded configuration accepts them; ordinary ranges stay strict.
-    const frozen = frozenRoot || path.at(-1) === 'freeze';
+    const frozen =
+      frozenRoot ||
+      (sheetMutation && path.length === 2 && path[0] === 'sheet' && path[1] === 'freeze');
     if (frozen) {
       coordinate(data.startRow, 1_048_575, -1);
       coordinate(data.startColumn, 16_383, -1);
       coordinate(data.ySplit, 1_048_575);
       coordinate(data.xSplit, 16_383);
     }
-    const mapLimit = ['rowData', 'rowInfo', 'rowHeight', 'autoHeightInfo'].includes(
-      path.at(-1) ?? '',
-    )
-      ? 1_048_575
-      : ['columnData', 'colInfo', 'colWidth'].includes(path.at(-1) ?? '')
-        ? 16_383
-        : undefined;
+    const mapLimit =
+      nativeField &&
+      ['rowData', 'rowInfo', 'rowHeight', 'autoHeightInfo'].includes(path.at(-1) ?? '')
+        ? 1_048_575
+        : nativeField && ['columnData', 'colInfo', 'colWidth'].includes(path.at(-1) ?? '')
+          ? 16_383
+          : undefined;
     if (mapLimit !== undefined) {
       if (Array.isArray(value)) throw new SyncError('malformed');
       for (const index of Object.keys(data)) {
@@ -97,9 +111,10 @@ function validateRequest(request: SubmitRequest) {
       }
     }
     if (
-      path.at(-1) === 'cellValue' ||
-      path.at(-1) === 'cellData' ||
-      (path.at(-1) === 'value' && ['from', 'to'].includes(path.at(-2) ?? ''))
+      sheetMutation &&
+      ((path.length === 1 && path[0] === 'cellValue') ||
+        (path.length === 2 && path[0] === 'sheet' && path[1] === 'cellData') ||
+        (path.length === 2 && ['from', 'to'].includes(path[0]) && path[1] === 'value'))
     ) {
       for (const [row, columns] of Object.entries(data)) {
         if (
@@ -124,7 +139,7 @@ function validateRequest(request: SubmitRequest) {
     ) {
       if (typeof data.id === 'string' && data.id) allowedUnit = data.id;
     }
-    if (rangeField(path) || ('endRow' in data && 'endColumn' in data)) {
+    if (nativeRange) {
       let axes = 0;
       let area = 1;
       for (const [start, end, maximum] of [
@@ -147,14 +162,15 @@ function validateRequest(request: SubmitRequest) {
         throw new SyncError('malformed');
       if ((field === 'unitId' || field === 'unitID') && child !== allowedUnit)
         throw new SyncError('malformed');
-      if (field === 'rowCount') coordinate(child, 1_048_576, 1);
-      if (field === 'columnCount') coordinate(child, 16_384, 1);
-      if (['startRow', 'endRow'].includes(field))
+      if (nativeRoot && field === 'rowCount') coordinate(child, 1_048_576, 1);
+      if (nativeRoot && field === 'columnCount') coordinate(child, 16_384, 1);
+      if ((nativeRoot || nativeRange || frozen) && ['startRow', 'endRow'].includes(field))
         coordinate(child, 1_048_575, frozen && field === 'startRow' ? -1 : 0);
-      if (['startColumn', 'endColumn'].includes(field))
+      if ((nativeRoot || nativeRange || frozen) && ['startColumn', 'endColumn'].includes(field))
         coordinate(child, 16_383, frozen && field === 'startColumn' ? -1 : 0);
-      if (path.at(-2) === 'rowsAutoHeightInfo' && field === 'row') coordinate(child, 1_048_575);
-      walk(child, [...path, field], allowedUnit);
+      if (sheetMutation && path.length === 2 && path[0] === 'rowsAutoHeightInfo' && field === 'row')
+        coordinate(child, 1_048_575);
+      walk(child, [...path, field], allowedUnit, sheetMutation);
     }
   };
   for (const mutation of request.mutations) {
@@ -224,7 +240,13 @@ function validateRequest(request: SubmitRequest) {
               : op.every((branch) => Array.isArray(branch) && scoped(branch)))));
       if (!scoped(mutation.params.op)) throw new SyncError('malformed');
     }
-    walk(mutation.params, [], request.unitId, mutation.id === 'sheet.mutation.set-frozen');
+    walk(
+      mutation.params,
+      [],
+      request.unitId,
+      mutation.id.startsWith('sheet.mutation.'),
+      mutation.id === 'sheet.mutation.set-frozen',
+    );
   }
 }
 

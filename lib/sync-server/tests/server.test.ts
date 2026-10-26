@@ -7,10 +7,11 @@ import {
   Univer,
   mergeWorksheetSnapshotWithDefault,
 } from '@univerjs/core';
-import type { IWorkbookData } from '@univerjs/core';
+import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { Mutation } from '@spinel/sync-transform';
 import type { DiagnosticEvent } from '@spinel/diagnostics';
-import { docFormulas, formulaBody } from '@spinel/doc-formulas';
+import { docFormulas, formulaBody, parseFormula } from '@spinel/doc-formulas';
+import type { FormulaDefinition } from '@spinel/doc-formulas';
 import {
   hashTouched,
   materialize,
@@ -963,6 +964,120 @@ test('cell footprints hash identically across locales with different Unicode col
   });
   const swedish = hashTouched(snapshot, touched);
   expect(english).toBe(swedish);
+});
+
+function referencedFormula() {
+  const expression = '=Budget.Sheet1.A1';
+  const reference = parseFormula(expression)[0];
+  const definition: FormulaDefinition = {
+    expression,
+    version: 1,
+    format: 'currency',
+    references: [
+      {
+        start: reference.start,
+        end: reference.end,
+        range: reference.range,
+        itemId: 'budget-item',
+        sheetId: 'first',
+      },
+    ],
+  };
+  const body = formulaBody('saved-total', definition);
+  body.dataStream += '\r\n';
+  return { body, definition };
+}
+
+test('a native Doc body replacement preserves Formula reference text named range', async () => {
+  const f = fixture();
+  const { body, definition } = referencedFormula();
+  const initial = { ...getDocsEmptySnapshot('doc'), body };
+  f.storage.units.set('doc', {
+    unitId: 'doc',
+    kind: 'doc',
+    revision: 1,
+    retainedFrom: 1,
+    snapshot: materialize(initial, 'doc'),
+  });
+  const original = f.server.load('doc', undefined).snapshot as IDocumentData;
+  const updated = { ...original.body!, dataStream: `${original.body!.dataStream}More text\r\n` };
+  const accepted = await f.server.submit(
+    {
+      unitId: 'doc',
+      actorId: 'owner',
+      mutationId: 'formula-body-edit',
+      baseRevision: 1,
+      mutations: [
+        {
+          id: 'doc.mutation.rich-text-editing',
+          params: {
+            unitId: 'doc',
+            textRanges: [],
+            actions: new JSONX().replaceOp(['body'], original.body, updated),
+          },
+        },
+      ],
+    },
+    undefined,
+  );
+  expect(accepted.edit.revision).toBe(2);
+  f.server.invalidate('doc');
+  const reopened = f.server.load('doc', undefined).snapshot as IDocumentData;
+  expect(reopened.body?.dataStream).toBe(updated.dataStream);
+  expect(docFormulas(reopened.body)[0].definition).toEqual(definition);
+  expect(definition.references[0].range).toBe('A1');
+});
+
+test('Sheet rich text and opaque metadata stay distinct from bounded native geometry', async () => {
+  const f = fixture();
+  const apply = vi.spyOn(NativeModel.prototype, 'apply');
+  const custom = {
+    range: 'A1',
+    ranges: 'Saved selection label',
+    rowCount: 'A descriptive count',
+    endRow: 'bottom',
+    endColumn: 'right',
+    columnData: { label: 'opaque' },
+    rectangle: { startRow: 0, endRow: 1_000_000_000, startColumn: 0, endColumn: 0 },
+  };
+  const unsafe: Mutation[] = [
+    {
+      id: 'sheet.mutation.set-row-hidden',
+      params: {
+        unitId: 'book',
+        subUnitId: 'first',
+        custom,
+        ranges: [{ startRow: 0, endRow: 1_000_000_000 }],
+      },
+    },
+    write({ custom: { ...custom, nested: { unitId: 'another-unit' } } }),
+    write({ custom: { ...custom, nested: JSON.parse('{"constructor":"reserved"}') } }),
+    write({ custom: { ...custom, nested: { value: Infinity } } }),
+  ];
+  for (let i = 0; i < unsafe.length; i++)
+    await expect(
+      f.server.submit(request(`metadata-unsafe-${i}`, [unsafe[i]]), undefined),
+    ).rejects.toMatchObject({ resync: true });
+  expect(apply).not.toHaveBeenCalled();
+  const isSafeInteger = Number.isSafeInteger;
+  vi.spyOn(Number, 'isSafeInteger').mockImplementation((value) => {
+    // If footprint code regresses to rectangle inference, stop before its loop.
+    if (value === custom.rectangle.endRow) throw new Error('Opaque rectangle reached geometry');
+    return isSafeInteger(value);
+  });
+  const { body, definition } = referencedFormula();
+  const rich = { ...getDocsEmptySnapshot('embedded-doc'), body };
+  const accepted = await f.server.submit(
+    request('rich-metadata', [write({ p: rich, custom }, 4, 2)]),
+    undefined,
+  );
+  expect(apply).toHaveBeenCalledOnce();
+  expect(accepted.edit.touched).toEqual({
+    kind: 'sheet',
+    cells: [{ sheetId: 'first', row: 4, column: 2 }],
+  });
+  expect(docFormulas(f.cell(4, 2)?.p?.body)[0].definition).toEqual(definition);
+  expect(f.cell(4, 2)?.custom).toEqual(custom);
 });
 
 test('native Docs keep Formula metadata, opaque resources and ordered concurrent text across reopen', async () => {
