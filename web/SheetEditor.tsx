@@ -42,6 +42,8 @@ import {
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
 import type { ConnectionState } from './connectionState.ts';
+import { guestPendingBuffer } from './guestPendingBuffer.ts';
+import type { RegisterGuestEditor } from './guestRevocation.ts';
 
 export function SheetEditor({
   id,
@@ -50,6 +52,7 @@ export function SheetEditor({
   onDirty,
   onConnectionState,
   saveStatusTarget,
+  registerGuestEditor,
 }: {
   id: string;
   name: string;
@@ -57,6 +60,7 @@ export function SheetEditor({
   saveStatusTarget: HTMLElement | null;
   onDirty: (dirty: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
+  registerGuestEditor?: RegisterGuestEditor;
 }) {
   const chrome = useEditorChrome();
   const mobile = useRef(useMobileSheetControls()).current;
@@ -95,7 +99,7 @@ export function SheetEditor({
       });
     };
     void (async () => {
-      const data = await prepareCollaboration(id, spaceId);
+      const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
@@ -128,6 +132,17 @@ export function SheetEditor({
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => univer.dispose();
+      registerGuestEditor?.((retain) => {
+        try {
+          return retain ? guestPendingBuffer(univer) : null;
+        } finally {
+          disposed = true;
+          stopPresence?.();
+          save?.dispose();
+          disposeEditor?.();
+          disposeEditor = undefined;
+        }
+      });
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const workbook = await univerAPI.getCollaboration().loadSheetAsync(data.unitId);
@@ -215,7 +230,10 @@ export function SheetEditor({
       );
       controller.current = save;
       stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
-      if (disposed) stopPresence();
+      if (disposed) {
+        stopPresence();
+        return;
+      }
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, () => {
         editing = true;
         if (chrome) chrome.editing.current = true;
@@ -240,6 +258,7 @@ export function SheetEditor({
     });
     return () => {
       disposed = true;
+      registerGuestEditor?.(null);
       stopPresence?.();
       save?.dispose();
       // Univer owns a separate React root; unmount it after our cleanup commit.
