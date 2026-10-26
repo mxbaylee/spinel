@@ -80,6 +80,26 @@ keyboard focus, and no forced focus transfer. Keep the copy, styling and retaine
 tap/Escape assertions. This fixes the observed review interaction without
 changing production connection-state or save-status semantics.
 
+## Fresh peer-copy latency observations
+
+[CI run 40273980487](https://github.com/mxbaylee/spinel/actions/runs/40273980487)
+passed both native print flows, but its development Doc collaboration test
+failed the retained fail-on-flaky gate: the first two complete UI observations
+took 1,051 and 1,106 ms against the 1,000 ms limit; the third attempt passed.
+These totals include browser-driver navigation, selection and clipboard work,
+so they do not isolate a React propagation regression.
+
+Source review found that the Doc helper re-clicked the canvas after both native
+inputs were already focused and edited, then read the shared clipboard without
+confirming that this peer's asynchronous copy had replaced the previous value.
+Use the established native-input focus target and the Sheet test's fresh
+sentinel/completion-poll pattern. This prevents the second peer from passing on
+the first peer's clipboard data. Keep both actual UI observations, focus and
+clipboard waits inside the original clock; retain the strict 1,000 ms limit,
+fail-on-flaky policy and all save/reload/selection assertions. Include the first
+peer's observation time in a failed latency assertion for diagnosis. Fresh CI,
+not this helper change alone, must establish the retained latency requirement.
+
 ## Persona effects
 
 - Operator: one coherent locked runtime avoids failed installs and duplicate React
