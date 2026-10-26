@@ -620,7 +620,15 @@ test('tall image-only and captioned anchors continue completely and invalid nati
   const square = anchorVariant('\b');
   square.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_SQUARE;
   inputs.push(square, bare);
-  const badAnchors = [invisible, line, nonLeading, multiple, fullColumn, overlapping];
+  const withHeader = [line, nonLeading].map((input) => {
+    const projected = structuredClone(input);
+    projected.snapshot.headers = {
+      header: { headerId: 'header', body: textDoc(['REPEATED-HEADER']).body! },
+    };
+    projected.snapshot.documentStyle.defaultHeaderId = 'header';
+    return projected;
+  });
+  const badAnchors = [invisible, line, nonLeading, multiple, fullColumn, overlapping, ...withHeader];
   const allResults = await runDocJobs([...badAnchors, ...inputs].map((input) => ({ input })));
   for (const rejected of allResults.slice(0, badAnchors.length)) {
     expect(rejected, JSON.stringify(rejected)).toMatchObject({

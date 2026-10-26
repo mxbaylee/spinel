@@ -48,7 +48,8 @@ export default defineConfig({
     {
       // Vite still serves development modules. A second Node file watcher is
       // unnecessary for fixed-source tests and adds work to cold SDK imports.
-      command: 'node server/index.ts --dev --no-open',
+      command:
+        'node --max-old-space-size=512 --max-semi-space-size=8 server/index.ts --dev --no-open',
       url: 'http://localhost:3100/sign-in',
       env: {
         PORT: '3100',
@@ -64,7 +65,7 @@ export default defineConfig({
       reuseExistingServer: false,
     },
     {
-      command: 'node scripts/e2e-https.ts',
+      command: 'node --max-old-space-size=256 --max-semi-space-size=8 scripts/e2e-https.ts',
       url: 'https://localhost:3103/sign-in',
       ignoreHTTPSErrors: true,
       reuseExistingServer: false,

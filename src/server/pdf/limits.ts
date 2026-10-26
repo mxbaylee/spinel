@@ -17,7 +17,7 @@ export const PDF_LIMITS = Object.freeze({
   images: 32,
   encodedImageBytes: 8 * MiB,
   decodedImagePixels: 8_000_000,
-  fonts: 16,
+  fonts: 17,
   fontBytes: 12 * MiB,
   pages: 100,
   outputBytes: 16 * MiB,

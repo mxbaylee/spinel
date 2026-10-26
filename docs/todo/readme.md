@@ -13,7 +13,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | # | Ticket | Effort | Impact | Score | Tie-break | Waiting on | Owner input |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | 🔌 [SPN-058](SPN-058.md) Sync the editors and presence through Spinel's own client | 🏔️ XL | 💜 M | 9 (own 2) | — | — | — |
-| 2 | 🧬 [SPN-056](SPN-056.md) Independently verify integrated Sheet and Doc sync before activation | 🏔️ XL | 💜 M | 8 (own 2) | — | [SPN-058](SPN-058.md) | — |
+| 2 | 🧬 [SPN-056](SPN-056.md) Independently verify integrated Sheet and Doc sync before activation | 🏔️ XL | 💜 M | 8 (own 2) | — | [SPN-058](SPN-058.md) | Accept or revise SPN-056 decisions 4, 20, 21, 23, 37, 39 and 40 |
 | 3 | 🔁 [SPN-059](SPN-059.md) Move every document onto Spinel's sync and remove Univer collaboration | 🌳 L | 💜 M | 7 (own 3) | — | [SPN-058](SPN-058.md), [SPN-056](SPN-056.md) | — |
 | 4 | ✍️ [SPN-053](SPN-053.md) Edit downloaded documents offline and sync them once | 🌳 L | 🩷 L | 6 (own 4) | — | [SPN-059](SPN-059.md) | — |
 | 5 | 🔀 [SPN-054](SPN-054.md) Keep offline edits as a copy when the live document changed | 🌿 M | 🩷 L | 5 | Higher impact | [SPN-053](SPN-053.md) | — |

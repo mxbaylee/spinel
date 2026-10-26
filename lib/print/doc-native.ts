@@ -21,7 +21,7 @@ import { acquireNativeRender, canvasGlobals, PdfContext } from './native-runtime
 import { InkContext } from './text.ts';
 import { prepareDocSnapshot, prepareDocFonts } from './doc-preparation.ts';
 import type { PreparedDocFormula } from './doc-preparation.ts';
-import { paginateDocument, virtualDocFrame } from './doc-layout.ts';
+import { paginateDocument, validateDocImageAnchors, virtualDocFrame } from './doc-layout.ts';
 import { preservePdfPageGeometries } from './pdf-geometry.ts';
 import { docStories, needsPhysicalDocPages } from './doc-stories.ts';
 import { bodyOnlyPage, prepareDocStoryPaints } from './doc-story-layout.ts';
@@ -31,6 +31,8 @@ import {
   reserveImageParagraphFlow,
   verifyImageParagraphFlow,
 } from './doc-image-flow.ts';
+import { prepareNativeTableFlow, withoutTableReservations } from './doc-table-render.ts';
+import type { DocTablePaint } from './doc-table-render.ts';
 
 export type DocPrintOptions = Pick<SheetPrintOptions, 'limits' | 'signal'>;
 export interface NativeDocInput {
@@ -92,6 +94,7 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     const prepared = prepareDocSnapshot(input.snapshot, input.formulas ?? [], limits, check);
     prepareDocFonts(prepared.snapshot, fonts, limits, check);
     const imageFlow = prepareImageParagraphFlow(prepared.snapshot, check);
+    for (const story of docStories(prepared.snapshot)) validateDocImageAnchors(story.snapshot);
     const physical = needsPhysicalDocPages(prepared.snapshot);
     const stored = prepared.snapshot.documentStyle;
     const frame = physical
@@ -144,8 +147,10 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     // Public incremental layout creates bounded checkpoints between native work
     // units. Both image-reservation passes share the same work/deadline budget.
     let work = 0;
-    const layout = async () => {
-      model = new DocumentDataModel(prepared.snapshot);
+    const layout = async (snapshot = prepared.snapshot) => {
+      for (const item of [document, skeleton, view, model]) item?.dispose();
+      document = undefined; skeleton = undefined; view = undefined; model = undefined;
+      model = new DocumentDataModel(snapshot);
       view = new DocumentViewModel(model);
       skeleton = new PrintDocumentSkeleton(view, locale!);
       const generation = skeleton.startIncrementalLayout({ reason: 'initial' });
@@ -166,23 +171,17 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
         throw new PrintError('unsupported', 'PDF document layout is incomplete.');
       const data = skeleton.getSkeletonData();
       if (!data) throw new PrintError('unsupported', 'PDF document layout is unavailable.');
+      document = new Documents('print-doc', skeleton, {
+        pageMarginLeft: 0, pageMarginTop: 0, hasEditor: false, pageFillColor: '#ffffff',
+      });
       return data;
     };
-    let data = await layout();
+    let data: IDocumentSkeletonCached | undefined = await layout();
     if (reserveImageParagraphFlow(imageFlow, data, limits, check)) {
-      for (const item of [skeleton, view, model]) item!.dispose();
-      skeleton = undefined;
-      view = undefined;
-      model = undefined;
+      data = undefined;
       data = await layout();
     }
     verifyImageParagraphFlow(imageFlow, data, check);
-    document = new Documents('print-doc', skeleton!, {
-      pageMarginLeft: 0,
-      pageMarginTop: 0,
-      hasEditor: false,
-      pageFillColor: '#ffffff',
-    });
     // The same native painter is measured before publishing. In particular,
     // source coverage alone cannot detect ink clipped by an authored exact row.
     const measure = (page: IDocumentSkeletonPage, resources?: PrintDocumentSkeleton['renderedResources']): DocInk => {
@@ -209,9 +208,22 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       document!.draw(ink);
       return { bounds: ink.bounds, text, horizontal };
     };
+    const budget = { nodes: 0, paintWork: 0 };
+    let renderedSnapshot = prepared.snapshot;
+    let tablePaints = new Map<IDocumentSkeletonPage, DocTablePaint[]>();
+    let reservationIds = new Set<string>();
+    if (physical) {
+      const pending = prepareNativeTableFlow(renderedSnapshot, data, fonts, limits, check, budget, { layout, measure });
+      data = undefined;
+      const flow = await pending;
+      data = flow.data;
+      renderedSnapshot = flow.snapshot;
+      tablePaints = flow.paints;
+      reservationIds = flow.reservationIds;
+    }
     const inkBounds = new Map<IDocumentSkeletonPage, DocInk>();
     for (const page of data.pages) {
-      const ink = measure(bodyOnlyPage(page));
+      const ink = measure(bodyOnlyPage(withoutTableReservations(page, reservationIds)));
       if (
         ink.bounds &&
         (ink.bounds.left < -0.01 ||
@@ -220,11 +232,12 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
           (physical && ink.bounds.bottom > page.pageHeight + 0.01))
       )
         throw new PrintError('unsupported', 'PDF document ink exceeds its prepared page bounds.');
+      if (physical && ink.text.some((box) => box.top < page.marginTop - 0.01 || box.bottom > page.pageHeight - page.marginBottom + 0.01))
+        throw new PrintError('unsupported', 'PDF document text exceeds its body reservation.');
       inkBounds.set(page, ink);
     }
-    const budget = { nodes: 0, paintWork: 0 };
     const pages = paginateDocument(
-      docStories(prepared.snapshot)[0].snapshot,
+      docStories(renderedSnapshot)[0].snapshot,
       data,
       frame,
       fonts,
@@ -235,7 +248,7 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       budget,
     );
     const stories = prepareDocStoryPaints(
-      prepared.snapshot,
+      renderedSnapshot,
       data,
       fonts,
       limits,
@@ -257,7 +270,7 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     });
     for (const [index, page] of pages.entries()) {
       check();
-      skeleton!.renderedPage = bodyOnlyPage(page.page);
+      skeleton!.renderedPage = bodyOnlyPage(withoutTableReservations(page.page, reservationIds));
       skeleton!.renderedResources = undefined;
       const frame = page.frame;
       const mediaBox = mediaBoxes[index];
@@ -277,15 +290,38 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       raw.clip();
       raw.translate(0, frame.top - page.top);
       const ctx = new PdfContext(raw as unknown as CanvasRenderingContext2D, check);
-      for (const image of page.images.filter((image) => image.behind)) {
+      const compositions = tablePaints.get(page.page) ?? [];
+      const order = new Map((prepared.snapshot.drawingsOrder ?? []).map((id, index) => [id, index]));
+      const drawings = [
+        ...page.images.map((image) => ({ image, table: undefined as DocTablePaint | undefined })),
+        ...compositions.flatMap((table) => table.slice.images.map((image) => ({ image, table }))),
+      ].sort((a, b) => (order.get(a.image.id) ?? a.image.order) - (order.get(b.image.id) ?? b.image.order));
+      const layer = (behind: boolean) => {
+        for (const { image, table } of drawings) {
+          check();
+          if (image.behind !== behind) continue;
+          raw.save();
+          if (table) {
+            raw.beginPath(); raw.rect(table.left, table.top, table.width, table.slice.bottom - table.slice.top); raw.clip();
+            raw.translate(table.left, table.top - table.slice.top);
+          }
+          drawPreparedImage(ctx, decoded.get(image.source)!, image);
+          raw.restore();
+        }
+      };
+      layer(true);
+      document!.draw(ctx);
+      for (const table of compositions) {
         check();
-        drawPreparedImage(ctx, decoded.get(image.source)!, image);
+        raw.save();
+        raw.beginPath(); raw.rect(table.left, table.top, table.width, table.slice.bottom - table.slice.top); raw.clip();
+        raw.translate(table.left, table.top - table.slice.top);
+        skeleton!.renderedPage = table.slice.page;
+        skeleton!.renderedResources = { skeHeaders: new Map(), skeFooters: new Map() };
+        document!.draw(ctx);
+        raw.restore();
       }
-      document.draw(ctx);
-      for (const image of page.images.filter((image) => !image.behind)) {
-        check();
-        drawPreparedImage(ctx, decoded.get(image.source)!, image);
-      }
+      layer(false);
       raw.restore();
       for (const story of stories.get(page.page) ?? []) {
         check();
@@ -297,7 +333,7 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
         const ctx = new PdfContext(raw as unknown as CanvasRenderingContext2D, check);
         for (const image of story.images.filter((image) => image.behind))
           drawPreparedImage(ctx, decoded.get(image.source)!, image);
-        document.draw(ctx);
+        document!.draw(ctx);
         for (const image of story.images.filter((image) => !image.behind))
           drawPreparedImage(ctx, decoded.get(image.source)!, image);
         raw.restore();

@@ -26,4 +26,4 @@ COPY --from=build /app/src ./src
 COPY --from=build /app/scripts/deploy ./scripts/deploy
 COPY --from=build /app/dist ./dist
 USER node
-CMD ["node", "server/index.ts"]
+CMD ["node", "--max-old-space-size=256", "--max-semi-space-size=8", "server/index.ts"]

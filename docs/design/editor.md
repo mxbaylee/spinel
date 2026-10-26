@@ -131,7 +131,7 @@ file-list view keeps that message in its existing context above the list.
 
 **Export as PDF** (SPN-075) downloads a PDF directly for anyone with current
 read access, including account viewers and guests. There is no separate Print
-action or browser print dialog in this planned flow. Guests use the control
+action or browser print dialog. Guests use the control
 in [their header](guest.md#adopted-pattern). Owner, chat 2026-10-20, decision
 [#103](../implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
 

@@ -8,6 +8,7 @@ import {
 } from '@univerjs/core';
 import type {
   IDocumentData,
+  IDocDrawingBase,
   IDocumentStyle,
   IListData,
   INumberUnit,
@@ -23,7 +24,7 @@ import type { PreparedFonts } from './fonts.ts';
 import { inspectSnapshot } from './preflight.ts';
 import { projectDocFormulas } from './doc-formulas.ts';
 import { projectDocHyperlinks } from './doc-hyperlinks.ts';
-import { docStories, prepareDocStoryFields, replaceDocStories } from './doc-stories.ts';
+import { docStories, prepareDocStoryFields, pruneUnusedDocStories, replaceDocStories } from './doc-stories.ts';
 import type { PreparedDocFormula } from './doc-formulas.ts';
 export type {
   PreparedDocFormula,
@@ -480,7 +481,41 @@ function validateBody(
   validateTables(snapshot, limits, check);
 }
 
-function imageSources(snapshot: IDocumentData, limits: Readonly<PrintLimits>) {
+/**
+ * The public editor marks an inline story image as one object with repeated
+ * viewport presentations. Those cached positions include screen/page offsets;
+ * native story layout derives authoritative geometry from docTransform instead.
+ */
+function normalizeStoryImageViews(drawing: IDocDrawingBase, limits: Readonly<PrintLimits>) {
+  if (drawing.isMultiTransform !== 1 || drawing.layoutType !== 0) return;
+  const views = drawing.transforms ?? [];
+  if (!Array.isArray(views)) invalid();
+  if (views.length > limits.pages)
+    throw new PrintError('limit', 'PDF image view cache exceeds its entry budget.');
+  const numeric = ['left', 'top', 'width', 'height', 'angle', 'skewX', 'skewY', 'scaleX', 'scaleY'];
+  const flags = ['flipX', 'flipY', 'rotateEnabled', 'resizeEnabled', 'borderEnabled'];
+  for (const value of views) {
+    const view = record(value);
+    if (Object.keys(view).some((key) => ![...numeric, ...flags, 'clipBounds'].includes(key))) unsupported();
+    for (const key of numeric) if (view[key] != null)
+      number(view[key], key === 'width' || key === 'height' ? 0 : -10_000_000, 10_000_000);
+    for (const key of flags) if (view[key] != null && typeof view[key] !== 'boolean') invalid();
+    for (const key of ['skewX', 'skewY']) if (view[key] != null && view[key] !== 0) unsupported();
+    for (const key of ['scaleX', 'scaleY']) if (view[key] != null && view[key] !== 1) unsupported();
+    if (view.clipBounds != null) {
+      const clip = record(view.clipBounds);
+      if (Object.keys(clip).some((key) => !['left', 'top', 'width', 'height'].includes(key))) unsupported();
+      for (const key of ['left', 'top', 'width', 'height'])
+        number(clip[key], key === 'width' || key === 'height' ? 0 : -10_000_000, 10_000_000);
+    }
+  }
+  // This is one anchored image, repeated by the native header/footer plan.
+  // Keep its docTransform, crop, opacity, flips and source ordering untouched.
+  delete drawing.transforms;
+  delete drawing.isMultiTransform;
+}
+
+function imageSources(snapshot: IDocumentData, limits: Readonly<PrintLimits>, repeatedStory = false) {
   const body = snapshot.body!;
   const drawings = snapshot.drawings ?? {};
   const order = snapshot.drawingsOrder ?? Object.keys(drawings);
@@ -518,6 +553,7 @@ function imageSources(snapshot: IDocumentData, limits: Readonly<PrintLimits>) {
   for (const id of order) {
     const drawing = drawings[id];
     const raw = record(drawing);
+    if (repeatedStory) normalizeStoryImageViews(drawing, limits);
     if (drawing.drawingId !== id || !anchored.has(id)) invalid();
     if (drawing.hidden !== undefined && typeof drawing.hidden !== 'boolean') invalid();
     if (drawing.behindDoc !== undefined && ![0, 1].includes(drawing.behindDoc)) invalid();
@@ -651,6 +687,7 @@ export function prepareDocSnapshot(
     paragraphStyle(style.paragraphStyle);
   }
   documentStyle(owned.documentStyle);
+  pruneUnusedDocStories(owned, check);
   const stories = docStories(owned);
   const sources: string[] = [];
   let characters = 0;
@@ -669,7 +706,7 @@ export function prepareDocSnapshot(
     images += Object.keys(item.drawings ?? {}).length;
     if (characters > limits.textCharacters || images > limits.images)
       throw new PrintError('limit', 'PDF document stories exceed their resource budget.');
-    sources.push(...imageSources(item, limits));
+    sources.push(...imageSources(item, limits, story.kind !== 'body'));
   }
   replaceDocStories(owned, stories);
   for (const style of [owned.documentStyle, ...(owned.body!.sectionBreaks ?? [])]) {

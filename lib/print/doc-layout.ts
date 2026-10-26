@@ -42,6 +42,7 @@ export interface DocPageSlice {
 interface Interval {
   top: number;
   bottom: number;
+  required?: boolean;
 }
 interface DocImageSource extends IDocDrawingBase {
   source: string;
@@ -100,6 +101,12 @@ export function virtualDocFrame(snapshot: IDocumentData, limits: Readonly<PrintL
   for (const section of snapshot.body?.sectionBreaks ?? []) {
     if (section.pageSize) section.pageSize = { width: frame.width, height: virtualHeight };
   }
+  validateDocImageAnchors(snapshot);
+  return frame;
+}
+
+/** Shared by finite native pages and virtual continuation after image-flow projection. */
+export function validateDocImageAnchors(snapshot: IDocumentData): void {
   // A page-relative floating image is positioned after pagination. Text-wrapping
   // page-relative anchors require iterative flow and are explicitly unsupported.
   const anchors = new Map(
@@ -145,7 +152,6 @@ export function virtualDocFrame(snapshot: IDocumentData, limits: Readonly<PrintL
         unsupported();
     }
   }
-  return frame;
 }
 
 /**
@@ -166,6 +172,7 @@ export function paginateDocument(
   >,
   nativePages = false,
   budget = { nodes: 0, paintWork: 0 },
+  sliceHeights: readonly number[] = [],
 ): DocPageSlice[] {
   if (!data.pages.length || data.pages.length > limits.pages) {
     throw new PrintError('limit', 'PDF document exceeds its page budget.');
@@ -253,7 +260,7 @@ export function paginateDocument(
     const horizontalInk = (inks.get(root)?.horizontal ?? [])
       .map((box) => ({ ...box, center: (box.top + box.bottom) / 2 }))
       .sort((a, b) => a.center - b.center);
-    const intervals: Interval[] = [...textInk];
+    const intervals: Interval[] = textInk.map((box) => ({ ...box, required: true }));
     const tableEdge = (edge: number, left: number, right: number) => {
       let low = 0;
       let high = horizontalInk.length;
@@ -535,16 +542,29 @@ export function paginateDocument(
     }
     // Fully contained intervals are atomic only if they fit an otherwise empty
     // physical page. This leaves a finite continuation rule for tall cells/images.
-    const atomic = intervals.filter(
-      (interval) => interval.bottom - interval.top <= contentHeight + 0.001,
-    );
+    const critical: Interval[] = [];
+    for (const interval of intervals.filter((entry) => entry.required).sort((a, b) => a.top - b.top)) {
+      visit();
+      const previous = critical.at(-1);
+      if (previous && interval.top < previous.bottom - 0.001)
+        previous.bottom = Math.max(previous.bottom, interval.bottom);
+      else critical.push({ ...interval });
+    }
+    if (critical.some((interval) => interval.bottom - interval.top > contentHeight + 0.001)) unsupported();
+    const atomic = [
+      ...critical,
+      ...intervals.filter((interval) => !interval.required && interval.bottom - interval.top <= contentHeight + 0.001),
+    ];
     atomic.sort((a, b) => a.top - b.top || a.bottom - b.bottom);
     let start = frame.top;
     const first = result.length;
     if (nativePages && bottom > frame.height + 0.01) unsupported();
     do {
       check();
-      let end = nativePages ? bottom : Math.min(start + contentHeight, bottom);
+      const capacity = sliceHeights[result.length] ?? contentHeight;
+      if (!Number.isFinite(capacity) || capacity < 1 || capacity > contentHeight + 0.01) invalid();
+      const minimumEnd = critical.find((interval) => interval.top <= start + 0.001 && interval.bottom > start + 0.001)?.bottom ?? start;
+      let end = nativePages ? bottom : Math.min(Math.max(start + capacity, minimumEnd), bottom);
       if (end < bottom) {
         // A backwards pass reaches the same earliest safe seam as repeated
         // forwards scans. Once the seam moves, previously visited intervals
@@ -553,6 +573,7 @@ export function paginateDocument(
         for (let index = atomic.length - 1; index >= 0; index--) {
           visit();
           const interval = atomic[index];
+          if (!interval.required && interval.bottom - interval.top > capacity + 0.001) continue;
           if (
             interval.top < end - 0.001 &&
             interval.bottom > end + 0.001 &&
@@ -560,8 +581,9 @@ export function paginateDocument(
           )
             end = interval.top;
         }
+        end = Math.max(end, minimumEnd);
       }
-      if (end <= start) end = Math.min(start + contentHeight, bottom);
+      if (end <= start) end = Math.min(start + capacity, bottom);
       if (result.length >= limits.pages)
         throw new PrintError('limit', 'PDF document exceeds its page budget.');
       result.push({ page: root, frame, top: start, bottom: end, images: [] });

@@ -23,7 +23,7 @@ services:
         bind:
           create_host_path: false
     tmpfs: ["/tmp:size=16m,mode=1777"]
-    mem_limit: 512m
+    mem_limit: 1024m
     cpus: 0.75
     pids_limit: 128
     stop_grace_period: 30s

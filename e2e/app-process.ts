@@ -24,7 +24,12 @@ export async function startApp(options: {
   delete env.BACKUP_CONFIG_PATH;
   const child = spawn(
     process.execPath,
-    ['server/index.ts', ...(options.development ? ['--dev', '--no-open'] : [])],
+    [
+      `--max-old-space-size=${options.development ? 512 : 256}`,
+      '--max-semi-space-size=8',
+      'server/index.ts',
+      ...(options.development ? ['--dev', '--no-open'] : []),
+    ],
     { cwd: projectRoot, env, stdio: ['ignore', 'pipe', 'pipe'] },
   );
   let output = '';

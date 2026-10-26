@@ -12,7 +12,7 @@ process.once('message', async (job: PdfJob) => {
       sendMessage(message, (error) => (error ? reject(error) : resolve()));
     });
   try {
-    const fonts = await pdfFonts(job.input.snapshot);
+    const fonts = await pdfFonts();
     const input = {
       ...job.input,
       fonts,

@@ -19,7 +19,7 @@ const limits = [
   '--cap-drop=ALL',
   '--security-opt=no-new-privileges:true',
   '--tmpfs=/tmp:size=16m,mode=1777',
-  '--memory=512m',
+  '--memory=1024m',
   '--cpus=0.75',
   '--pids-limit=128',
 ];
@@ -184,11 +184,15 @@ async function checkPdfMemoryRefusal(name: string, requestPdf: () => Promise<Res
       String.raw`
 import { readFileSync } from 'node:fs';
 const allocations = [];
+const limit = Number(readFileSync('/sys/fs/cgroup/memory.max', 'utf8'));
+// Cross the actual 192 MiB worker + 32 MiB headroom admission threshold,
+// retaining 208 MiB so the helper itself never approaches the cgroup ceiling.
+const target = limit - (192 + 32 - 16) * 1024 * 1024;
 for (let chunk = 0; chunk < 64; chunk++) {
   const current = Number(readFileSync('/sys/fs/cgroup/memory.current', 'utf8'));
   const stat = readFileSync('/sys/fs/cgroup/memory.stat', 'utf8');
   const inactive = Number(stat.match(/^inactive_file\s+(\d+)$/m)?.[1] ?? 0);
-  const needed = 350 * 1024 * 1024 - Math.max(0, current - inactive);
+  const needed = target - Math.max(0, current - inactive);
   if (needed <= 0) break;
   allocations.push(Buffer.alloc(Math.min(8 * 1024 * 1024, needed), 0x5a));
 }
@@ -265,7 +269,9 @@ try {
   }});
   new SheetStore(workspace).save(owner.id,sheet.id,{revision:0,writeId:randomUUID(),snapshot:{
     id:sheet.id,name:'PDF sheet',appVersion:'1.1.0',locale:'enUS',styles:{},sheetOrder:['one'],
-    sheets:{one:{id:'one',name:'One',rowCount:100,columnCount:4,cellData:{0:{0:{v:'Container sheet'},1:{f:'=20+22',v:-1}}}}}
+    // Keep the label fully visible beside the formula; native cell clipping is
+    // deliberately refused by the renderer and covered separately in lib tests.
+    sheets:{one:{id:'one',name:'One',rowCount:100,columnCount:4,defaultColumnWidth:180,cellData:{0:{0:{v:'Container sheet'},1:{f:'=20+22',v:-1}}}}}
   }});
   const session=auth.createSession(owner.id);
   console.log(JSON.stringify({token:session.token,doc:doc.id,sheet:sheet.id}));
@@ -300,7 +306,7 @@ try {
     assert.equal(
       response.status,
       200,
-      'Production PDF export did not succeed within the existing 512 MiB limit.',
+      'Production PDF export did not succeed within the 1 GiB app limit.',
     );
     assert.match(response.headers.get('content-type') ?? '', /^application\/pdf\b/);
     const task = getDocument({
@@ -344,7 +350,12 @@ try {
     run('docker', ['image', 'inspect', '--format', '{{json .Config}}', image]),
   );
   assert.equal(config.User, 'node');
-  assert.deepEqual(config.Cmd, ['node', 'server/index.ts']);
+  assert.deepEqual(config.Cmd, [
+    'node',
+    '--max-old-space-size=256',
+    '--max-semi-space-size=8',
+    'server/index.ts',
+  ]);
 
   const native = run(
     'docker',

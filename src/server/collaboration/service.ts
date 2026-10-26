@@ -44,6 +44,10 @@ import type { IChangeset } from '@univerjs/protocol';
 import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
 const runtimeLimits = { maxLoadedUnits: 8, idleTimeoutMs: 60_000 };
+// Keep all three legacy runtime owners in this process: the SDK's default
+// execution exceeded the startup memory budget before any document opened.
+// PDF rendering retains its separately bounded, disposable child process.
+const legacyRuntimeLimits = { ...runtimeLimits, execution: { mode: 'in-process' as const } };
 
 export interface SyncIdentity {
   userID: string;
@@ -103,7 +107,7 @@ export class CollaborationStore {
   private readonly migration = Symbol('trusted snapshot migration');
   private readonly preparing = new Map<string, Promise<void>>();
   private readonly materializer: UnitSnapshotMaterializer;
-  private readonly validator = new UnitSnapshotMaterializer(runtimeLimits);
+  private readonly validator = new UnitSnapshotMaterializer(legacyRuntimeLimits);
   private readonly lifecycle = Symbol('trusted permanent deletion');
   private purging: Promise<void> | undefined;
   private readonly observePurge?: ObserveJob;
@@ -147,8 +151,11 @@ export class CollaborationStore {
     BEGIN INSERT OR IGNORE INTO collaboration_purge VALUES(OLD.id); END;`);
     // One physical file keeps application and collaboration data in the same online backup.
     this.database = new SQLiteDatabaseAdapter({ filename, busyTimeoutMs: 5_000 });
-    this.service = new UniverCollabService({ dbAdapter: this.database, runtime: runtimeLimits });
-    this.materializer = new UnitSnapshotMaterializer(runtimeLimits);
+    this.service = new UniverCollabService({
+      dbAdapter: this.database,
+      runtime: legacyRuntimeLimits,
+    });
+    this.materializer = new UnitSnapshotMaterializer(legacyRuntimeLimits);
     // Serving can be disabled without forgetting ownership or orphaning purge
     // work from units already accepted by the new backend.
     if (

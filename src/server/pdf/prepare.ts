@@ -73,6 +73,40 @@ function resourceData(snapshot: Snapshot) {
   return result;
 }
 
+function prepareEmptyResources(
+  kind: 'sheet' | 'doc',
+  snapshotId: string,
+  resources: Map<string, unknown>,
+) {
+  // The public collaboration snapshot includes these wrappers even when no
+  // feature has been used. Match the complete observed schema, never recursively
+  // infer emptiness: a new field or version may describe printable content.
+  const empty = new Map<string, unknown>([
+    ['UNIVER_EMBED_RESOURCE_PLUGIN', { version: 1, embeds: {} }],
+    ['UNIVER_EXTERNAL_REFERENCE_PLUGIN', { schemaVersion: 1, references: {} }],
+  ]);
+  if (kind === 'doc') {
+    empty.set('DOC_CALLOUT_PLUGIN', { callouts: {} });
+    empty.set('DOC_CHART_PLUGIN', { dataSources: {}, charts: {} });
+    empty.set('DOC_CODE_PLUGIN', { codes: {} });
+    empty.set('DOC_LATEX_PLUGIN', { formulas: {} });
+    empty.set('DOC_TABLE_PLUGIN', { tables: {} });
+  } else {
+    empty.set('SHEET_PIVOT_TABLE_PLUGIN', {
+      dataFieldManagerConfig: { [snapshotId]: { collections: {}, dataFields: {} } },
+      pivotTableConfigs: {},
+      pivotCacheConfigs: { [snapshotId]: {} },
+    });
+    empty.set('SHEET_PIVOT_CHART_PLUGIN', { charts: {} });
+    empty.set('SHEET_EXTERNAL_DATA_PLUGIN', { schemaVersion: 1, links: [] });
+  }
+  for (const [name, expected] of empty) {
+    if (!resources.has(name)) continue;
+    if (!isDeepStrictEqual(resources.get(name), expected)) invalid();
+    resources.delete(name);
+  }
+}
+
 function prepareDocResources(snapshot: IDocumentData, resources: Map<string, unknown>) {
   const drawings = resources.get('DOC_DRAWING_PLUGIN');
   if (drawings !== undefined) {
@@ -155,6 +189,7 @@ export function preparePdfSnapshot<T extends Snapshot>(
   inspectPdfSnapshot(source);
   const snapshot = structuredClone(source);
   const resources = resourceData(snapshot);
+  prepareEmptyResources(kind, snapshot.id, resources);
   if (kind === 'doc') prepareDocResources(snapshot as IDocumentData, resources);
   // Only empty state is discarded here. Calculation/appearance resources for
   // Sheets remain present until the isolated native preparation consumes them.

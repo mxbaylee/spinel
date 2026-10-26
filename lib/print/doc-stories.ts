@@ -1,6 +1,6 @@
 /** Public document stories share resources, but have independent source offsets. */
 import { CustomRangeType } from '@univerjs/core';
-import type { IDocumentData, IFooterData, IHeaderData } from '@univerjs/core';
+import type { IDocumentData, IDocumentStyle, IFooterData, IHeaderData } from '@univerjs/core';
 import { PrintError } from './contract.ts';
 
 export interface DocStory {
@@ -11,6 +11,72 @@ export interface DocStory {
 
 function invalid(): never {
   throw new PrintError('invalid-input', 'Invalid PDF document story.');
+}
+
+/**
+ * Saved editors retain disconnected story definitions after changing section
+ * links. They are not visible document content and must not request fonts or
+ * image access. Keep every story eligible under a section's public selectors;
+ * final physical layout still decides which of those stories each page uses.
+ */
+export function pruneUnusedDocStories(snapshot: IDocumentData, check: () => void) {
+  const base = snapshot.documentStyle;
+  const headers = new Set<string>();
+  const footers = new Set<string>();
+  const sections = snapshot.body?.sectionBreaks ?? [];
+  if (!Array.isArray(sections)) invalid();
+  for (const section of sections.length ? sections : [base]) {
+    check();
+    const explicit = section !== base;
+    const effective = { ...base, ...section };
+    const first = explicit
+      ? section.useFirstPageHeaderFooter === 1
+      : base.useFirstPageHeaderFooter === 1;
+    for (const [kind, selected] of [['Header', headers], ['Footer', footers]] as const) {
+      const keys = [
+        `default${kind}Id`,
+        ...(first ? [`firstPage${kind}Id`] : []),
+        ...(effective.evenAndOddHeaders === 1 ? [`evenPage${kind}Id`] : []),
+      ] as (keyof IDocumentStyle)[];
+      for (const key of keys) {
+        const id = effective[key];
+        if (id !== undefined && typeof id !== 'string') invalid();
+        if (id) selected.add(id as string);
+      }
+    }
+  }
+  const removedTables = new Set<string>();
+  const removedDrawings = new Set<string>();
+  for (const [key, selected] of [['headers', headers], ['footers', footers]] as const) {
+    const definitions = snapshot[key];
+    if (definitions != null && (typeof definitions !== 'object' || Array.isArray(definitions))) invalid();
+    for (const [id, value] of Object.entries(definitions ?? {})) {
+      check();
+      if (selected.has(id)) continue;
+      for (const range of Array.isArray(value?.body?.tables) ? value.body.tables : []) removedTables.add(range.tableId);
+      for (const block of Array.isArray(value?.body?.customBlocks) ? value.body.customBlocks : []) removedDrawings.add(block.blockId);
+      delete definitions![id];
+    }
+    if (definitions && !Object.keys(definitions).length) delete snapshot[key];
+  }
+  for (const style of [base, ...sections]) {
+    for (const [kind, selected] of [['Header', headers], ['Footer', footers]] as const) {
+      for (const prefix of ['default', 'firstPage', 'evenPage'] as const) {
+        const key = `${prefix}${kind}Id` as 'defaultHeaderId';
+        if (style[key] && !selected.has(style[key]!)) style[key] = '';
+      }
+    }
+  }
+  for (const body of [snapshot.body, ...Object.values(snapshot.headers ?? {}).map((value) => value.body),
+    ...Object.values(snapshot.footers ?? {}).map((value) => value.body)]) {
+    check();
+    for (const range of body?.tables ?? []) removedTables.delete(range.tableId);
+    for (const block of body?.customBlocks ?? []) removedDrawings.delete(block.blockId);
+  }
+  for (const id of removedTables) delete snapshot.tableSource?.[id];
+  for (const id of removedDrawings) delete snapshot.drawings?.[id];
+  snapshot.drawingsOrder = snapshot.drawingsOrder?.filter((id) => !removedDrawings.has(id));
+  snapshot.headerFooterDrawingsOrder = snapshot.headerFooterDrawingsOrder?.filter((id) => !removedDrawings.has(id));
 }
 
 /**

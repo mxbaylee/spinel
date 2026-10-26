@@ -35,7 +35,8 @@ export const PRINT_LIMITS: Readonly<PrintLimits> = Object.freeze({
   images: 128,
   encodedImageBytes: 32 * 1024 * 1024,
   decodedImagePixels: 32_000_000,
-  fonts: 16,
+  // Four complete static families plus one regular symbol face; bytes stay capped.
+  fonts: 17,
   fontBytes: 32 * 1024 * 1024,
   pages: 100,
   outputBytes: 64 * 1024 * 1024,

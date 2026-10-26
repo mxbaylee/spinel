@@ -25,12 +25,15 @@ const body = (text: string): IDocumentBody => ({
 
 function footerFields(): IDocumentBody {
   const result = body('Page \x1f88\x1e of \x1f88\x1e · Saved \x1f2026-10-26\x1e');
-  result.customRanges = [...result.dataStream.matchAll(/\x1f([^\x1e]+)\x1e/g)].map(
-    (match, index) => ({
+  const starts: number[] = [];
+  for (let index = 0; index < result.dataStream.length; index++)
+    if (result.dataStream.charCodeAt(index) === 31) starts.push(index);
+  result.customRanges = starts.map(
+    (start, index) => ({
       rangeType: CustomRangeType.FIELD,
       rangeId: `field-${index}`,
-      startIndex: match.index,
-      endIndex: match.index + match[0].length - 1,
+      startIndex: start,
+      endIndex: result.dataStream.indexOf('\x1e', start + 1),
       wholeEntity: false,
       properties: {
         fieldType: ['PAGE', 'NUMPAGES', 'DATE'][index],
@@ -167,6 +170,11 @@ test('header tables and authorized inline images repeat within their own native 
       drawingType: 0,
       source: 'authorized-header-image',
       layoutType: 0,
+      isMultiTransform: 1,
+      // Public header insertion persists viewport positions as a repeated-image
+      // cache. Screen coordinates must not replace native story geometry.
+      transform: { left: 400, top: 1_000, width: 24, height: 20, angle: 0 },
+      transforms: [{ left: 400, top: 1_000, width: 24, height: 20, angle: 0 }],
       docTransform: {
         size: { width: 24, height: 20 },
         angle: 0,
@@ -329,13 +337,57 @@ test('headers and section columns retain a saved oversized row rather than clamp
   for (const [index, result] of results.entries()) {
     expect(result, summary(result)).toMatchObject({ ok: true, restored: true, remainingFonts: 0 });
     const pages = await retainDocPdf(`tall-row-${index ? 'columns' : 'header'}`, result.bytes!);
-    const text = compact(pages.map((page) => page.text).join(''));
+    const text = compact(pages.map((page) => page.text).join('')).replaceAll('-', '');
     for (const marker of ['TALL-ROW-SOURCE', 'NEIGHBOR', 'TABLE-END-SENTINEL'])
-      expect(text.split(marker)).toHaveLength(2);
+      expect(text.split(marker.replaceAll('-', '')), marker).toHaveLength(2);
     if (index === 0) expect(pages.every((page) => page.text.includes('REPEATED-HEADER'))).toBe(true);
     let pixels = 0;
     for (const page of pages) for (let offset = 0; offset < page.pixels.length; offset += 4)
       if (Math.abs(page.pixels[offset] - 204) < 2 && Math.abs(page.pixels[offset + 1] - 221) < 2 && Math.abs(page.pixels[offset + 2] - 170) < 2) pixels++;
     expect(pixels).toBeGreaterThan(700 * (index ? 100 : 240) * 0.75 ** 2 * 0.96);
+  }
+}, 60_000);
+
+test('auto-height wrapped rows retain every word through header and column reservations', async () => {
+  const words = Array.from({ length: 100 }, (_, index) => `AUTO${String(index).padStart(3, '0')}`);
+  const snapshots = ['header-footer', 'columns'].map((kind) => {
+    const snapshot = tableDoc([[words.join(' '), 'WRAPPED-NEIGHBOR'], ['AFTER-WRAPPED-ROW', 'LAST-CELL']]);
+    snapshot.documentStyle.pageSize = { width: 600, height: 400 };
+    for (const row of snapshot.tableSource!['native-table'].tableRows) row.trHeight.hRule = 0;
+    snapshot.headers = { header: { headerId: 'header', body: body('REPEATED-HEADER') } };
+    snapshot.footers = { footer: { footerId: 'footer', body: footerFields() } };
+    Object.assign(snapshot.documentStyle, { defaultHeaderId: 'header', defaultFooterId: 'footer', marginHeader: 10, marginFooter: 10 });
+    if (kind === 'columns') {
+      const table = snapshot.tableSource!['native-table'];
+      table.size.width.v = 200;
+      for (const column of table.tableColumns) column.size.width.v = 100;
+      for (const row of table.tableRows) for (const cell of row.tableCells) cell.size!.width.v = 100;
+      snapshot.body!.sectionBreaks = [{
+        sectionId: 'two-columns', startIndex: snapshot.body!.dataStream.length - 1,
+        columnProperties: [{ width: 240, paddingEnd: 24 }, { width: 240, paddingEnd: 0 }],
+      }];
+    }
+    return snapshot;
+  });
+  const results = await runDocJobs(await Promise.all(snapshots.map(async (snapshot) => ({ input: await docInput(snapshot) }))));
+  for (const [index, result] of results.entries()) {
+    expect(result, summary(result)).toMatchObject({ ok: true, restored: true, remainingFonts: 0 });
+    const pages = await retainDocPdf(`auto-row-${index ? 'columns' : 'header-footer'}`, result.bytes!);
+    expect(pages.length).toBeGreaterThan(1);
+    const text = compact(pages.map((page) => page.text).join('')).replaceAll('-', '');
+    for (const marker of [...words, 'WRAPPED-NEIGHBOR', 'AFTER-WRAPPED-ROW', 'LAST-CELL', 'TABLE-END-SENTINEL'])
+      expect(text.split(marker.replaceAll('-', '')), marker).toHaveLength(2);
+    for (const [pageIndex, page] of pages.entries()) {
+      expect(page.text).toContain('REPEATED-HEADER');
+      expect(compact(page.text)).toContain(`Page${pageIndex + 1}of${pages.length}`);
+      const header = page.items.find((item) => item.str.includes('REPEATED-HEADER'))!;
+      const footer = page.items.find((item) => item.str.includes('Page'))!;
+      const content = page.items.filter((item) => /AUTO|NEIGHBOR|WRAPPED-ROW|LAST-CELL|TABLE-END/.test(item.str));
+      expect(content.length).toBeGreaterThan(0);
+      for (const item of content) {
+        expect(item.transform[5]).toBeLessThan(header.transform[5] - 5);
+        expect(item.transform[5]).toBeGreaterThan(footer.transform[5] + 5);
+      }
+    }
   }
 }, 60_000);

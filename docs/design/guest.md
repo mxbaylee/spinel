@@ -47,7 +47,7 @@ and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-co
   the badge downloads the same PDF as for accounts, with current read access.
   It adds no owner/account identity to the content or PDF metadata. Revocation
   removes the action and shows the revoked-link state; no printer dialog.
-  This is planned behavior, authorized by the owner in chat on 2026-10-20,
+  Authorized by the owner in chat on 2026-10-20,
   decision [#103](../implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
 - No identity. Collaborators show as generic Guest/Collaborator labels with
   empty avatars and default colors (SPN-016). The connection slot (SPN-042)

@@ -83,7 +83,7 @@ export function pdfMemory(): PdfMemory {
   };
 }
 
-/** Pure calculation retained separately so the actual 512 MiB deployment is regression tested. */
+/** Pure calculation retained separately so deployed and smaller container budgets are tested. */
 export function pdfWorkerBudget(memory: PdfMemory) {
   const containerRemaining =
     memory.containerLimitBytes !== null && memory.containerUsedBytes !== null

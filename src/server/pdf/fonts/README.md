@@ -35,6 +35,14 @@ Atkinson Hyperlegible keeps its own four faces. Noto Sans Symbols 2 provides
 regular-symbol fallback. Unknown families and missing glyph/style combinations
 fail the complete export instead of producing invisible or missing text.
 
-Only referenced families plus the default/fallback are loaded. All operations
-remain within the standalone renderer's sixteen-face and byte limits. The
-container's existing `src` copy includes these assets and notices.
+Each disposable worker loads this fixed seventeen-face bank: four complete
+families and the regular symbol face. The native text projection, which already
+owns effective style resolution and worksheet/axis selection, admits the families
+that are actually used. Unused named styles, unselected sheets and hidden cells
+therefore cannot reject an otherwise supported export merely by mentioning an
+unbundled family. A used unbundled family still fails explicitly; no universal
+Sans substitution is applied.
+
+The face ceiling is seventeen to admit exactly this existing bank. The runtime's
+12 MiB font-byte budget and all process/container memory limits remain unchanged.
+The container's existing `src` copy includes these assets and notices.

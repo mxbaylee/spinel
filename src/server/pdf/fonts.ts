@@ -53,28 +53,13 @@ const families = [
 export const PDF_DEFAULT_FAMILY = 'Liberation Sans';
 export const PDF_FALLBACK_FAMILIES = ['Noto Sans Symbols 2'];
 
-/** Fixed, documented font substitutions. Never read system fonts or request a URL. */
-export async function pdfFonts(snapshot: unknown): Promise<PreparedFont[]> {
-  const requested = new Set<string>([PDF_DEFAULT_FAMILY.toLowerCase()]);
-  const visit = (value: unknown, depth: number) => {
-    if (depth > 64) throw new PdfError('limit');
-    if (!value || typeof value !== 'object') return;
-    for (const [key, child] of Object.entries(value)) {
-      if (key === 'ff' && typeof child === 'string' && child.trim())
-        requested.add(child.trim().toLowerCase());
-      else if (child && typeof child === 'object') visit(child, depth + 1);
-    }
-  };
-  visit(snapshot, 0);
-  const selected = families.filter((entry) =>
-    [entry.family, ...entry.aliases].some((name) => requested.has(name.toLowerCase())),
-  );
-  const known = new Set(
-    selected.flatMap((entry) => [entry.family, ...entry.aliases].map((name) => name.toLowerCase())),
-  );
-  known.add('noto sans symbols 2');
-  if ([...requested].some((name) => !known.has(name))) throw new PdfError('unsupported');
-  if (selected.length * 4 + 1 > PDF_LIMITS.fonts) throw new PdfError('limit');
+/**
+ * Fixed licensed bank; never inspect stored styles, system fonts or a URL.
+ * The renderer resolves families against actual selected text. An unused style,
+ * hidden cell or unselected sheet must not veto another part of the document.
+ */
+export async function pdfFonts(): Promise<PreparedFont[]> {
+  if (families.length * 4 + 1 > PDF_LIMITS.fonts) throw new PdfError('limit');
   const faces = [
     { suffix: 'Regular', weight: 400 as const, italic: false },
     { suffix: 'Bold', weight: 700 as const, italic: false },
@@ -82,7 +67,7 @@ export async function pdfFonts(snapshot: unknown): Promise<PreparedFont[]> {
     { suffix: 'BoldItalic', weight: 700 as const, italic: true },
   ];
   const fonts: PreparedFont[] = [];
-  for (const entry of selected) {
+  for (const entry of families) {
     const text = await readFile(new URL(entry.license, base), 'utf8');
     for (const face of faces)
       fonts.push({
