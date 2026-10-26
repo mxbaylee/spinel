@@ -165,8 +165,10 @@ export function GuestApp() {
     };
   }, [id, token]);
   useEffect(() => {
-    // A failed link never leaves the previous document name in the browser tab.
+    // Only an authorized item supplies the live tab name. Space owns its child
+    // titles; a failed link never retains the previous document's identity.
     if (!item || error) document.title = 'Spinel';
+    else if (item.kind !== 'space') document.title = `${item.name} — Spinel`;
   }, [item, error]);
   if (item?.kind === 'space')
     return (

@@ -13,6 +13,11 @@ Signed-in document tabs become **<name> — Spinel** only after authorized clien
 loading, and reset on navigation/unmount. All app HTML includes `noindex`; access
 control still protects documents. The fallback page is **Spinel — Offline**.
 
+Guest document tabs also use **<name> — Spinel** after authorized client loading,
+including a reload through an existing guest session. Unavailable or revoked
+guest access resets the tab to **Spinel**. A title/type preview token alone does
+not authorize that live document state.
+
 Creating a guest link automatically enables a branded social card with the
 **document title and Document/Spreadsheet type**, for both view and edit links.
 There is no separate opt-in. Server metadata and the image expose no owner,
