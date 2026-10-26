@@ -255,13 +255,20 @@ for (const kind of ['doc', 'sheet'] as const) {
       );
       await confirmation.getByRole('button', { name: 'Restore version', exact: true }).click();
       const response = await restoredResponse;
-      expect(response.status(), await response.text()).toBe(200);
+      expect(response.status()).toBe(200);
       expect(response.request().postDataJSON()).toMatchObject({ unitId: originalUnit });
-      const nextUnit = (await response.json()).unitId as string;
-      expect(nextUnit).toMatch(/^[a-f\d-]{36}$/);
-      expect(nextUnit).not.toBe(originalUnit);
       await expect(page).toHaveURL(baseURL! + liveHref);
       await saved();
+      // Restore navigates to the live editor and releases Chromium's old-page
+      // response body. Read the persisted generation from the exact child's metadata.
+      const metadata = await context.request.get(prefix);
+      expect(metadata.status(), await metadata.text()).toBe(200);
+      const { live } = (await metadata.json()) as {
+        live: { unitId: string; restoring: boolean };
+      };
+      expect(live.unitId).toMatch(/^[a-f\d-]{36}$/);
+      expect(live.unitId).not.toBe(originalUnit);
+      expect(live.restoring).toBe(false);
       await imageVisible(page);
       const restored = await exported();
       expect(JSON.stringify(restored)).toContain('Original');
