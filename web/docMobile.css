@@ -10,3 +10,13 @@
   min-height: 100%;
   max-height: 100%;
 }
+
+/* Native mobile headers use viewport width inside a grid. Constrain the host
+   layout when a Doc is narrower than the window, so the renderer can reflow. */
+.spinel-mobile-doc [data-u-comp='app-layout'] header {
+  width: 100%;
+}
+
+.spinel-mobile-doc [data-u-comp='app-layout'] section {
+  min-width: 0;
+}

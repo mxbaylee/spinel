@@ -10,6 +10,7 @@ import {
   PresetListType,
 } from '@univerjs/core';
 import type { ICustomRange, IDocumentData } from '@univerjs/core';
+import { CombCmd } from '@univerjs/protocol';
 import { formulaBody } from '@spinel/doc-formulas';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
@@ -263,8 +264,26 @@ async function fixture(
   const errors: string[] = [];
   const diagnostics: unknown[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  page.on('requestfailed', (request) =>
+    diagnostics.push({
+      path: new URL(request.url()).pathname,
+      failure: request.failure()?.errorText,
+    }),
+  );
   page.on('console', (message) => {
     if (message.type() === 'error') diagnostics.push({ console: message.text().slice(0, 800) });
+  });
+  page.on('websocket', (socket) => {
+    socket.on('framereceived', ({ payload }) => {
+      try {
+        const frame = JSON.parse(String(payload));
+        if (frame.cmd === CombCmd.RECV)
+          diagnostics.push({ received: JSON.stringify(frame).slice(0, 6000) });
+      } catch {
+        // Binary frames are unrelated to this legacy protocol observation.
+      }
+    });
+    socket.on('socketerror', (error) => diagnostics.push({ socketError: error }));
   });
   page.on('response', async (response) => {
     const path = new URL(response.url()).pathname;
@@ -273,6 +292,9 @@ async function fixture(
       path,
       status: response.status(),
       body: (await response.text().catch(() => '')).slice(0, 1000),
+      ...(path.includes('new_changes') && {
+        submitted: response.request().postData()?.slice(0, 6000),
+      }),
     });
   });
   const read = async () => {
@@ -289,9 +311,23 @@ async function fixture(
     read,
     phone,
     async close() {
+      const observed = await Promise.allSettled(
+        contexts
+          .flatMap((context) => context.pages())
+          .map((target) =>
+            target.evaluate(() => ({
+              save: document.querySelector('[role="status"][aria-label="Save status"]')
+                ?.textContent,
+              connection: document.querySelector('[role="status"][aria-label="Connection status"]')
+                ?.textContent,
+              native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
+            })),
+          ),
+      );
+      const persisted = await read().catch((error) => ({ error: String(error) }));
       await writeFile(
         info.outputPath('sync-diagnostics.json'),
-        JSON.stringify({ errors, diagnostics }, null, 2),
+        JSON.stringify({ errors, diagnostics, observed, persisted }, null, 2),
       );
       for (const context of contexts) await context.close();
       db.close();
@@ -311,6 +347,10 @@ for (const zoomRatio of [1, 0.5, 2])
       const original = await f.read();
       await page.goto(`/?item=${f.item.id}`);
       await saved(page);
+      await expect(page.getByRole('status', { name: 'Connection status', exact: true })).toHaveText(
+        'Online',
+        { timeout: 30_000 },
+      );
       const region = page.getByRole('region', { name: 'Doc document', exact: true });
       await expect(region).toHaveAttribute('data-mobile', 'true');
       const canvas = region.getByLabel('Document canvas', { exact: true });

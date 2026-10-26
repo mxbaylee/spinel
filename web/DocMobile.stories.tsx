@@ -46,9 +46,10 @@ interface Observation {
 // Story-local commands/observations only. No test API or editor reference is
 // exposed by the application. The bounds come from the native selected range,
 // never from its deliberately off-caret, fixed-position contenteditable input.
-const keyboardFixtures = new WeakMap<
+const mobileDocFixtures = new WeakMap<
   HTMLElement,
   {
+    observe(): Observation;
     append(): { applied: boolean; end: number; text: string };
     focus(): boolean;
     caret(): {
@@ -78,16 +79,13 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
   const host = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
-  const [observation, setObservation] = useState<Observation | null>(null);
   const readOnly = viewer || traditional;
   useEffect(() => {
     const abort = new AbortController();
     const cleanups: (() => void)[] = [];
     let univer: Univer | undefined;
-    let frame = 0;
     setReady(false);
     setError('');
-    setObservation(null);
     void (async () => {
       await Promise.resolve();
       if (abort.signal.aborted) return;
@@ -148,7 +146,38 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
       const selections = render.with(DocSelectionRenderService);
       const layout = JSON.stringify([data.documentStyle, data.settings]);
       const fixtureHost = host.current!;
-      keyboardFixtures.set(fixtureHost, {
+      mobileDocFixtures.set(fixtureHost, {
+        observe() {
+          // Native resizing waits for an idle callback, and incremental layout
+          // publishes on the skeleton itself without replacing currentSkeleton$.
+          // Read each assertion's current geometry instead of caching one RAF.
+          const pages = skeletons.getSkeleton().getSkeletonData()?.pages ?? [];
+          const lines = pages.flatMap((page) =>
+            page.sections.flatMap((section) => section.columns.flatMap((column) => column.lines)),
+          );
+          const fonts = lines.flatMap((line) =>
+            line.divides.flatMap((divide) =>
+              divide.glyphGroup.flatMap((glyph) =>
+                glyph.content.trim() && glyph.fontStyle
+                  ? [ptToPixel(glyph.fontStyle.originFontSize) * render.scene.scaleX]
+                  : [],
+              ),
+            ),
+          );
+          const snapshot = doc.getDocumentDataModel().getSnapshot();
+          return {
+            hostWidth: fixtureHost.getBoundingClientRect().width,
+            canvasWidth: canvas.getBoundingClientRect().width,
+            pageWidths: pages.map((page) => page.pageWidth),
+            lines: lines.length,
+            minimumFontPixels: Math.min(...fonts),
+            scale: render.scene.scaleX,
+            userZoom: snapshot.settings?.zoomRatio ?? 1,
+            unchanged:
+              JSON.stringify([snapshot.body, snapshot.documentStyle, snapshot.settings]) === stored,
+            canEdit: doc.getPermission().canEdit(),
+          };
+        },
         append() {
           const before = doc.getDocumentDataModel().getSnapshot().body!.dataStream;
           const text = ' Keep the final sentence visible while writing on a phone.'.repeat(24);
@@ -188,54 +217,13 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
           };
         },
       });
-      cleanups.push(() => keyboardFixtures.delete(fixtureHost));
-      const sample = () => {
-        cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(() => {
-          if (abort.signal.aborted) return;
-          const pages = skeletons.getSkeleton().getSkeletonData()?.pages ?? [];
-          const lines = pages.flatMap((page) =>
-            page.sections.flatMap((section) => section.columns.flatMap((column) => column.lines)),
-          );
-          const fonts = lines.flatMap((line) =>
-            line.divides.flatMap((divide) =>
-              divide.glyphGroup.flatMap((glyph) =>
-                glyph.content.trim() && glyph.fontStyle
-                  ? [ptToPixel(glyph.fontStyle.originFontSize) * render.scene.scaleX]
-                  : [],
-              ),
-            ),
-          );
-          const snapshot = doc.getDocumentDataModel().getSnapshot();
-          setObservation({
-            hostWidth: host.current!.getBoundingClientRect().width,
-            canvasWidth: canvas.getBoundingClientRect().width,
-            pageWidths: pages.map((page) => page.pageWidth),
-            lines: lines.length,
-            minimumFontPixels: Math.min(...fonts),
-            scale: render.scene.scaleX,
-            userZoom: snapshot.settings?.zoomRatio ?? 1,
-            unchanged:
-              JSON.stringify([snapshot.body, snapshot.documentStyle, snapshot.settings]) === stored,
-            canEdit: doc.getPermission().canEdit(),
-          });
-        });
-      };
-      const subscription = skeletons.currentSkeleton$.subscribe(sample);
-      const resize = new ResizeObserver(sample);
-      resize.observe(host.current!);
-      cleanups.push(
-        () => subscription.unsubscribe(),
-        () => resize.disconnect(),
-      );
-      sample();
+      cleanups.push(() => mobileDocFixtures.delete(fixtureHost));
       setReady(true);
     })().catch((cause) => {
       if (!abort.signal.aborted) setError(String(cause));
     });
     return () => {
       abort.abort();
-      cancelAnimationFrame(frame);
       cleanups.reverse().forEach((close) => close());
       queueMicrotask(() => univer?.dispose());
     };
@@ -269,9 +257,6 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
               : 'Tap Edit to write. Use the toolbar to format text.')}
       </p>
       <div className="univer-container" ref={host} />
-      <output hidden data-mobile-doc-evidence>
-        {JSON.stringify(observation)}
-      </output>
     </section>
   );
 }
@@ -310,7 +295,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const observe = (canvas: HTMLElement): Observation =>
-  JSON.parse(canvas.querySelector('[data-mobile-doc-evidence]')!.textContent!);
+  mobileDocFixtures.get(canvas.querySelector<HTMLElement>('.univer-container')!)!.observe();
 
 async function ready(
   canvasElement: HTMLElement,
@@ -417,7 +402,7 @@ export const KeyboardViewportResponse: Story = {
   play: async ({ canvasElement }) => {
     await ready(canvasElement, true, true);
     const host = canvasElement.querySelector<HTMLElement>('.univer-container')!;
-    const fixture = keyboardFixtures.get(host)!;
+    const fixture = mobileDocFixtures.get(host)!;
     const viewport = window.visualViewport;
     expect(viewport).not.toBeNull();
     const originalHeight = Object.getOwnPropertyDescriptor(viewport!, 'height');

@@ -20,7 +20,7 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   failOnFlakyTests: Boolean(process.env.CI),
-  // Keep all five independent native-client acceptance scenarios observable;
+  // Keep independent native-client and phone acceptance scenarios observable;
   // ordinary large suites still stop repeated downstream failures early.
   maxFailures: process.env.CI && !project?.startsWith('sync-') ? 1 : 0,
   reporter: 'line',
@@ -41,12 +41,12 @@ export default defineConfig({
     },
     {
       name: 'sync-development',
-      testMatch: '**/sync-client.spec.ts',
+      testMatch: ['**/sync-client.spec.ts', '**/doc-mobile.spec.ts'],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3104' },
     },
     {
       name: 'sync-production',
-      testMatch: '**/sync-client.spec.ts',
+      testMatch: ['**/sync-client.spec.ts', '**/doc-mobile.spec.ts'],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3105' },
     },
     {
