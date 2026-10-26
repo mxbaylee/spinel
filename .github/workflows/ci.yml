@@ -204,7 +204,6 @@ jobs:
               ;;
           esac
 
-
       - name: Synthetic Sheet PDF evidence
         if: always() && matrix.suite == 'remaining'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -291,7 +290,9 @@ jobs:
       - name: Install
         run: npm ci
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
       - name: Build
         run: npm run build
       - name: Playwright smoke

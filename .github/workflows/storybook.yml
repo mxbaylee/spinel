@@ -147,7 +147,9 @@ jobs:
           name: storybook-review
           path: storybook-static
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
       - name: Check icon and integration stories
         # This suite, including its phone checks, belongs to desktop light once.
         if: matrix.theme == 'light'
@@ -205,7 +207,9 @@ jobs:
           name: storybook-review
           path: storybook-static
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
       - name: Review stories and verify shared controls
         env:
           STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
@@ -249,7 +253,9 @@ jobs:
           name: storybook-review
           path: storybook-static
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
       - name: Review stories and verify shared controls
         env:
           STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
