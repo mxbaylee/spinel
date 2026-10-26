@@ -1,5 +1,5 @@
 import { observeSync } from '@spinel/diagnostics';
-import type { SyncObservation } from '@spinel/diagnostics';
+import type { SyncDropRule, SyncObservation } from '@spinel/diagnostics';
 import {
   MalformedEditError,
   RefusedEditError,
@@ -381,6 +381,8 @@ export class SyncServer<Context = unknown> {
     )
       throw new SyncError('stale');
     let mutations = request.mutations;
+    const dropped = new Map<SyncDropRule, number>();
+    let offsets = 0;
     const transformPast = (other: Mutation[], revision: number) => {
       // Check every intermediate rebase before it can feed the next axis model.
       // Positional metadata is proven on this pair's exact common base.
@@ -394,13 +396,8 @@ export class SyncServer<Context = unknown> {
           cells: cellsAt(unit, revision, history),
           observe: (event) => {
             if (event.kind === 'dropped')
-              this.observe(context, unitId, {
-                name: 'sync.edit.dropped',
-                rule: event.rule,
-                value: event.value,
-              });
-            else if (event.kind === 'offset')
-              this.observe(context, unitId, { name: 'sync.edit.offset', value: event.value });
+              dropped.set(event.rule, (dropped.get(event.rule) ?? 0) + event.value);
+            else if (event.kind === 'offset') offsets += event.value;
             else
               this.observe(context, unitId, { name: 'sync.transform.growth', value: event.value });
           },
@@ -449,6 +446,11 @@ export class SyncServer<Context = unknown> {
       );
       const cached = this.cache.get(unitId);
       if (cached) cached.revision = edit.revision;
+      // These describe delivered losses/offsets, not attempted transforms. A
+      // refused candidate or failed transaction must not count them on a retry.
+      for (const [rule, value] of dropped)
+        this.observe(context, unitId, { name: 'sync.edit.dropped', rule, value });
+      if (offsets) this.observe(context, unitId, { name: 'sync.edit.offset', value: offsets });
       return { duplicate: false, edit, missing: [...history, edit] };
     } catch (error) {
       // A rejected handler or failed commit may have mutated the candidate. The

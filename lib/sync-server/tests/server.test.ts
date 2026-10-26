@@ -9,6 +9,7 @@ import {
 } from '@univerjs/core';
 import type { IWorkbookData } from '@univerjs/core';
 import type { Mutation } from '@spinel/sync-transform';
+import type { DiagnosticEvent } from '@spinel/diagnostics';
 import { docFormulas, formulaBody } from '@spinel/doc-formulas';
 import {
   hashTouched,
@@ -180,6 +181,96 @@ test('failed persistence never acknowledges or contaminates the next materialize
   const next = await f.server.submit(request('next', [write({ s: { it: 1 } })]), undefined);
   expect(next.edit.revision).toBe(2);
   expect(f.cell()).toMatchObject({ v: 42, s: { bl: 1, it: 1 } });
+});
+
+async function outcomeFixture() {
+  const events: DiagnosticEvent[] = [];
+  const f = fixture({ diagnostics: (event) => events.push(event) });
+  await f.server.submit(request('earlier-cell', [write({ v: 100 })]), undefined);
+  await f.server.submit(
+    request(
+      'earlier-shift',
+      [
+        write({ v: 200 }, 0, 1),
+        {
+          id: 'sheet.mutation.move-range',
+          params: {
+            unitId: 'book',
+            fromRange: { startRow: 1, endRow: 2, startColumn: 0, endColumn: 0 },
+            toRange: { startRow: 2, endRow: 3, startColumn: 0, endColumn: 0 },
+            from: { subUnitId: 'first', value: { 1: { 0: null }, 2: { 0: null } } },
+            to: { subUnitId: 'first', value: { 2: { 0: null }, 3: { 0: null } } },
+            shift: { axis: 'row', kind: 'insert', at: 1, count: 1 },
+          },
+        },
+      ],
+      2,
+    ),
+    undefined,
+  );
+  events.length = 0;
+  const incoming = request('stale-outcomes', [
+    write({ v: 'overwritten once' }),
+    write({ v: 'overwritten twice' }, 0, 1),
+    write({ v: 'beside clipped band' }, 2, 1),
+  ]);
+  const outcomes = () =>
+    events.filter((event) => /^sync\.edit\.(dropped|offset)(\.log)?$/.test(event.name));
+  return { ...f, events, incoming, outcomes };
+}
+
+test('drop and offset outcomes count only a committed retry, once across all transforms', async () => {
+  const f = await outcomeFixture();
+  f.storage.fail = true;
+  await expect(f.server.submit(f.incoming, undefined)).rejects.toThrow(
+    'Simulated durable write failure',
+  );
+  expect(f.outcomes()).toEqual([]);
+  expect(f.events.some((event) => event.name === 'sync.edit.transformed')).toBe(true);
+  expect(f.events.some((event) => event.name === 'sync.transform.duration')).toBe(true);
+  expect(f.storage.load('book')?.revision).toBe(3);
+  expect(f.cell(2, 1)).toBeNull();
+  f.storage.fail = false;
+  const accepted = await f.server.submit(f.incoming, undefined);
+  expect(accepted.duplicate).toBe(false);
+  expect(f.outcomes()).toEqual([
+    {
+      name: 'sync.edit.dropped',
+      details: { rule: 'cell-overwritten' },
+      metric: { kind: 'counter', unit: 'count', value: 2 },
+    },
+    { name: 'sync.edit.dropped.log', details: { rule: 'cell-overwritten' }, level: 'debug' },
+    {
+      name: 'sync.edit.offset',
+      details: {},
+      metric: { kind: 'counter', unit: 'count', value: 1 },
+    },
+    { name: 'sync.edit.offset.log', details: {}, level: 'debug' },
+  ]);
+  expect(f.cell(2, 1)?.v).toBe('beside clipped band');
+  expect((await f.server.submit(f.incoming, undefined)).duplicate).toBe(true);
+  expect(f.outcomes()).toHaveLength(4);
+  expect(f.storage.edits).toHaveLength(3);
+});
+
+test('a final invariant refusal emits no drop or offset outcome from its earlier transforms', async () => {
+  const f = await outcomeFixture();
+  f.incoming.mutations.push(
+    ...['first', 'second'].map((subUnitId) => ({
+      id: 'sheet.mutation.set-worksheet-hidden',
+      params: { unitId: 'book', subUnitId, hidden: 1 },
+    })),
+  );
+  await expect(f.server.submit(f.incoming, undefined)).rejects.toMatchObject({ code: 'invariant' });
+  expect(f.outcomes()).toEqual([]);
+  expect(f.events).toContainEqual({
+    name: 'sync.invariant.failed',
+    details: { invariant: 'no-visible-sheet' },
+    metric: { kind: 'counter', unit: 'count', value: 1 },
+  });
+  expect(f.events.some((event) => event.name === 'sync.transform.duration')).toBe(true);
+  expect(f.storage.load('book')?.revision).toBe(3);
+  expect(f.cell(2, 1)).toBeNull();
 });
 
 test('authorization is repeated after asynchronous preparation and inside the durable boundary', async () => {

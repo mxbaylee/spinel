@@ -147,6 +147,10 @@ messages. Mutation labels are allowlisted; unknown sender strings become `other`
 `diagnosticsFor` lets the application enforce per-actor consent and guest rules.
 Broken observers never change delivery. No refusal or divergence shapes are
 collected: that separate owner decision remains unresolved.
+Drop counts by rule and offset counts describe committed outcomes. The server
+aggregates them across a submission's transforms and emits them only after its
+durable transaction succeeds; failures and duplicate receipts emit neither.
+Transform attempts, timing, growth and refusal/invariant observations remain immediate.
 The headless native logger is set to `SILENT` through its public service before
 plugins or snapshots load, so native warnings and parser errors cannot bypass
 the content-free diagnostic boundary.

@@ -84,6 +84,7 @@ async function fixture(space = false) {
       response,
     );
     const request = new URL(destination, oauth.origin).searchParams.get('request')!;
+    oauth.details(request, sessions.get(editor.id)!);
     const callback = new URL(oauth.consent(request, sessions.get(editor.id)!, true).redirect);
     const tokens = await oauth.exchangeAuthorizationCode(
       client,
