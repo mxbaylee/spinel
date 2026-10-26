@@ -344,6 +344,25 @@ account- and epoch-scoped `ScopedHTTP` and `scopedSocket` adapters. Retire the
 recovery probe, `ProbeLocalCache`, the recovery ledger, the compression observer
 and the replay-snapshot server adapter.
 
+### Space-child editing and recovery handoff
+
+The future SPN-053/SPN-054 implementation must preserve the landed per-child
+preparation boundary through local persistence, refresh, replay and recovery.
+Retain the original Space root and native-child identity; reconnect revalidates
+the downloading account, current root/child access, live ancestry and generation.
+Use the exact scoped Space route and credential, without an ordinary-item
+fallback. Preparation remains per child and does not download an entire Space.
+An unavailable explicit child link never substitutes another prepared page.
+
+SPN-054's recovery copy is deliberately a new item in the account's own files;
+the original link retains its exact root/child destination. Include root
+revocation/downgrade, child trash and history restore-generation changes in the
+existing standalone Doc/Sheet replay and recovery verification. Account recovery
+remains separate from SPN-084's anonymous-guest immediate-hiding policy: guests
+gain no offline store or outbox. These are compatibility requirements for the
+already-prepared Space children, not a claim that offline editing is delivered.
+Grooming, 2026-10-25.
+
 ## Save states
 
 Distinguish **Saving on this device**, **Saved on this device — waiting to sync**,

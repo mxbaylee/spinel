@@ -34,9 +34,13 @@ that isn't waiting on another is next.
   needs a pattern the playbook doesn't cover adds it there in its own PR first,
   and every new component or state gets a Storybook story. Owner, chat
   2026-10-19 (SPN-046).
-- **UI PRs carry screenshots** in light, dark and phone width, and merge only
-  after the owner approves them. Work the next ticket while waiting. Owner, chat
-  2026-10-19.
+- **UI PRs request screenshots with `visual-review`** and carry current light,
+  dark and phone evidence for affected screens. Approval comes from the owner
+  or a reviewer the owner explicitly delegates for that run. Other PRs keep
+  Storybook rendering and interaction checks without routine PNG capture;
+  failure diagnostics remain. Work the next ticket while approval waits.
+  Owner, chat 2026-10-19 and 2026-10-25;
+  [capture policy](docs/implementation/backlog-workflow.md#on-demand-storybook-captures).
 - **Univer Pro packages** (`@univerjs-pro/*`) are closed source under Univer's
   terms. Use them through their public API and docs only: don't decompile,
   deobfuscate or patch them, and don't work around license checks or

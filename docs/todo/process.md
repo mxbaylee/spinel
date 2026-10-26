@@ -142,8 +142,14 @@ once for exactly that input, and work the next ticket while waiting.
 
 **UI changes need the owner's eye.** A PR that changes what a screen looks like
 includes light, dark and phone-width screenshots of every changed screen, and
-merges only after the owner approves them in the PR. While it waits, start the
-next eligible ticket. Owner, chat 2026-10-19.
+uses the `visual-review` label to request current Storybook captures. Add it for
+layout, theme, typography, icons and visible interaction-state changes, including
+dependency updates that affect those surfaces. Record approval by the owner or
+their explicitly delegated reviewer in the PR. The label requests evidence; it
+does not grant approval. PRs without a visual change keep the applicable rendering
+and interaction checks without routine PNG capture. While approval waits, start
+the next eligible ticket. Owner, chat 2026-10-19 and 2026-10-25;
+[capture policy](../implementation/backlog-workflow.md#on-demand-storybook-captures).
 
 ## Working a ticket
 
