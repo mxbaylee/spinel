@@ -28,7 +28,8 @@ import { getTheme } from '../src/ui/theme.ts';
 import { displayPresetCell } from '../src/ui/presetStyles.ts';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import type { IPreset } from '@univerjs/presets';
-import { UniverDocsCorePreset, UniverDocsUIPlugin } from '@univerjs/preset-docs-core';
+import { docPreset, mobileDocPlugins, useMobileDocControls } from './docPreset.ts';
+import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 import { UniverDocsDrawingPreset } from '@univerjs/preset-docs-drawing';
 import { UniverDocsHyperLinkPreset } from '@univerjs/preset-docs-hyper-link';
 import sheetsEnglish from '@univerjs/preset-sheets-core/locales/en-US';
@@ -72,7 +73,7 @@ export async function openSnapshotViewer({
   snapshot,
   signal,
   images,
-  mobile = false,
+  mobile = kind === 'doc' && useMobileDocControls(),
   evaluateFormula,
   onFormulaChange,
 }: {
@@ -100,6 +101,9 @@ export async function openSnapshotViewer({
         sheetDrawingEnglish,
       ),
     },
+    ...(mobile && !sheet
+      ? { override: nativeSyncPermissions(snapshot.id, 'viewer').override }
+      : {}),
     presets: sheet
       ? [
           // Offline (local images), show stored values only: computing IMAGE()
@@ -112,10 +116,9 @@ export async function openSnapshotViewer({
           drawings(sheetImages(mobile, false)),
         ]
       : [
-          UniverDocsCorePreset({ container }),
-          { plugins: [[UniverDocsUIPlugin, { placeholder: false }]] },
-          drawings(UniverDocsDrawingPreset()),
-          UniverDocsHyperLinkPreset(),
+          docPreset(container, mobile, true),
+          mobileDocPlugins(drawings(UniverDocsDrawingPreset()), mobile),
+          mobileDocPlugins(UniverDocsHyperLinkPreset(), mobile),
         ],
   });
   let formulas: DocFormulaController | undefined;
@@ -197,9 +200,9 @@ export async function openSnapshotViewer({
           })
       : undefined;
     const render = univer.__getInjector().get(IRenderManagerService).getRenderUnitById(unitId);
-    if (sheet && render) {
+    if (render) {
       const canvas = render.engine.getCanvasElement();
-      canvas.setAttribute('aria-label', 'Spreadsheet grid');
+      canvas.setAttribute('aria-label', sheet ? 'Spreadsheet grid' : 'Document canvas');
     }
     const stopTheme = bindEditorTheme(
       univer,

@@ -164,6 +164,16 @@ Under 900 px with a coarse pointer, Sheets use Univer's mobile controls
 the second row. The compact people/count control stays available and opens the
 same collaborator dialog; authorized Share remains in More.
 
+Docs select the corresponding public mobile UI once when opened with a coarse
+pointer at up to 900 px. Modern Doc text reflows locally; its native Edit control
+opens the keyboard and compact formatting controls. Read-only viewers omit edit
+controls. Traditional page-layout Docs retain their layout with the existing
+help-slot instruction, “Edit on a larger screen. This Doc keeps its page layout.”
+No second application toolbar or CSS-scaled canvas is added. Formula dialogs and
+full table readouts retain [the existing pattern](formulas.md). See
+[SPN-072](../implementation/SPN-072.md) for the public API choice and verification
+boundary.
+
 ## Stories
 
 Production stories include `Editor/Frame` (including theatre, phone, guest,

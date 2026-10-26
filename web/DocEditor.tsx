@@ -39,13 +39,16 @@ import {
   Injector,
   Plugin,
   UniverInstanceType,
+  DocumentFlavor,
 } from '@univerjs/core';
 import { ImageIoService } from '@univerjs/drawing';
 import {
   UniverDrawingPlugin,
   UniverDrawingUIPlugin,
+  UniverDrawingMobileUIPlugin,
   UniverDocsDrawingPlugin,
   UniverDocsDrawingUIPlugin,
+  UniverDocsDrawingMobileUIPlugin,
   DOCS_SHAPE_MENU_ID,
   DOCS_SHAPE_BELOW_MENU_ID,
   InsertDocImageCommand,
@@ -58,7 +61,8 @@ import '@univerjs/preset-docs-hyper-link/lib/index.css';
 import drawingEnUS from '@univerjs/preset-docs-drawing/locales/en-US';
 import '@univerjs/preset-docs-drawing/lib/index.css';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
-import { UniverDocsCorePreset, UniverDocsUIPlugin } from '@univerjs/preset-docs-core';
+import { BuiltInUIPart, IRenderManagerService } from '@univerjs/preset-docs-core';
+import { docPreset, mobileDocPlugins, useMobileDocControls } from './docPreset.ts';
 import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
 import {
@@ -98,6 +102,9 @@ export function DocEditor({
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
   const chrome = useEditorChrome();
+  // Rotation or a keyboard resize must not remount an editor with pending edits.
+  const [mobile] = useState(useMobileDocControls);
+  const [phoneReadOnly, setPhoneReadOnly] = useState(false);
   const formulas = useRef<DocFormulaController | null>(null);
   const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
   const [formulaError, setFormulaError] = useState('');
@@ -137,6 +144,7 @@ export function DocEditor({
     setFormulaEdit(null);
     setFormulaError('');
     setPeople([]);
+    setPhoneReadOnly(false);
     let uploads = 0;
     let insertions = 0;
     let uploaded = 0;
@@ -277,9 +285,9 @@ export function DocEditor({
               allowImageSize: 5 * 1024 * 1024,
             },
           ],
-          UniverDrawingUIPlugin,
+          mobile ? UniverDrawingMobileUIPlugin : UniverDrawingUIPlugin,
           UniverDocsDrawingPlugin,
-          UniverDocsDrawingUIPlugin,
+          mobile ? UniverDocsDrawingMobileUIPlugin : UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
           ...collaborationPlugins(
             data.unitId,
@@ -290,9 +298,11 @@ export function DocEditor({
           ),
         ],
         presets: [
-          UniverDocsCorePreset({
-            container: container.current!,
-            menu: Object.fromEntries(
+          docPreset(
+            container.current!,
+            mobile,
+            data.access === 'viewer',
+            Object.fromEntries(
               [
                 DOCS_SHAPE_MENU_ID,
                 DOCS_SHAPE_BELOW_MENU_ID,
@@ -302,11 +312,8 @@ export function DocEditor({
                 `${InsertDocEllipseShapeCommand.id}.below`,
               ].map((id) => [id, { hidden: true }]),
             ),
-          }),
-          // SDK canvas hints are painted at 50% opacity, below AA on white paper.
-          // Keep the instruction in accessible shell text instead.
-          { plugins: [[UniverDocsUIPlugin, { placeholder: false }]] },
-          UniverDocsHyperLinkPreset(),
+          ),
+          mobileDocPlugins(UniverDocsHyperLinkPreset(), mobile),
         ],
       });
       const stopTheme = bindEditorTheme(univer);
@@ -340,6 +347,11 @@ export function DocEditor({
         setFormulaEdit(null);
         formulas.current?.clear();
         setEditable(false);
+        if (mobile)
+          univerAPI
+            .setUIVisible(BuiltInUIPart.HEADER, false)
+            .setUIVisible(BuiltInUIPart.FOOTER, false)
+            .setUIVisible(BuiltInUIPart.TOOLBAR, false);
         // Local UI state only: changing the shared document's permission rules
         // would also make still-authorized collaborators read-only.
         const permissions = univer.__getInjector().get(IPermissionService);
@@ -388,6 +400,19 @@ export function DocEditor({
       if (disposed) return;
       await documentReady(univer, data.unitId, loading.signal);
       if (disposed) return;
+      const render = univer
+        .__getInjector()
+        .get(IRenderManagerService)
+        .getRenderUnitById(data.unitId);
+      render?.engine.getCanvasElement().setAttribute('aria-label', 'Document canvas');
+      // Modern Docs reflow through device-local layout options. Paginated Docs
+      // only scale to fit, so retain their original layout and use the ticket's
+      // read-only phone fallback instead of rewriting shared page geometry.
+      const deviceReadOnly =
+        mobile &&
+        document.getDocumentDataModel().getSnapshot().documentStyle?.documentFlavor !==
+          DocumentFlavor.MODERN;
+      setPhoneReadOnly(deviceReadOnly);
       const installedFormulas = await installDocFormulas({
         univer,
         unitId: data.unitId,
@@ -416,11 +441,11 @@ export function DocEditor({
       formulaInterval = setInterval(() => {
         if (globalThis.document.visibilityState === 'visible') void formulas.current?.refresh();
       }, 5000);
-      if (data.access === 'viewer') await readonly();
+      if (data.access === 'viewer' || deviceReadOnly) await readonly();
       else {
         canEditFormulas.current = true;
         setEditable(true);
-        document.setSelection(0, 0);
+        if (!mobile) document.setSelection(0, 0);
       }
       stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) {
@@ -433,7 +458,7 @@ export function DocEditor({
         univerAPI,
         data.unitId,
         id,
-        data.access,
+        deviceReadOnly ? 'viewer' : data.access,
         publish,
         readonly,
         publishConnection,
@@ -480,7 +505,7 @@ export function DocEditor({
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
   }, [id, spaceId, reloadGeneration]);
   return (
-    <section className="sheet-editor" aria-label="Doc document">
+    <section className="sheet-editor" aria-label="Doc document" data-mobile={mobile}>
       <SaveStatus
         state={status}
         target={chrome?.saveTarget ?? saveStatusTarget}
@@ -574,7 +599,14 @@ export function DocEditor({
       <p className="editor-help" role={uploadError || formulaError ? 'alert' : undefined}>
         {uploadError
           ? `${uploadError} Try inserting the file again.`
-          : formulaError || (editable ? 'Click the page to write. Type / for commands.' : '')}
+          : formulaError ||
+            (phoneReadOnly
+              ? 'Edit on a larger screen. This Doc keeps its page layout.'
+              : editable
+                ? mobile
+                  ? 'Tap Edit to write. Use the toolbar to format text.'
+                  : 'Click the page to write. Type / for commands.'
+                : '')}
       </p>
       <div className="univer-container" ref={container} />
     </section>

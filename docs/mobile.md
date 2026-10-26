@@ -11,9 +11,43 @@ screen up to 900 CSS pixels wide. Touch the canvas to select cells; double-tap a
 cell to edit, then use OK to commit. Pan and pinch use Univer's renderer. The
 control mode stays fixed while that editor is open, so rotating the screen does
 not recreate an editor containing unsaved changes. Desktop controls remain on
-other devices. This is Sheet touch support; it does not promise a separate phone
-interface for Docs (SPN-072). Univer currently describes its
-mobile UI as experimental.
+other devices. Univer currently describes its mobile UI as experimental.
+
+## Docs
+
+Docs choose the public mobile UI with the same coarse-pointer/900px rule, once
+per open editor. Ordinary (modern) Docs wrap to the phone's width while keeping
+their stored page settings. Tap **Edit** to write; the native compact toolbar
+provides formatting, lists and headings when the keyboard is open. Opening a Doc
+does not open the keyboard. Rotate the device or enter theatre mode without
+recreating the document. People stays available, and Share and Formula insertion
+remain in More according to the current account or guest permissions.
+
+Docs with a traditional page layout keep that layout and are read-only on a
+phone, with **“Edit on a larger screen. This Doc keeps its page layout.”** This
+avoids changing shared page dimensions merely to fit a device. Formula results
+remain readable in their existing dialog, including all rows of table results;
+insertion and editing require an editable modern Doc. History and downloaded
+offline copies use the same mobile renderer and remain read-only.
+
+See the [SPN-072 decision and evidence boundaries](implementation/SPN-072.md).
+Physical iPhone and Android acceptance is **pending** for this candidate; browser
+emulation is not an OS keyboard or IME test.
+
+| Physical device | OS/browser versions | Doc reading, selection, keyboard, formatting and IME |
+| --- | --- | --- |
+| iPhone | Not recorded | Not run |
+| Android phone | Not recorded | Not run |
+
+Record device model, OS/browser version, installed-app/browser mode, commit,
+date and result. On each device open a populated modern Doc; read long paragraphs;
+type with its software keyboard; move/extend a selection across wrapped lines;
+apply bold, a list and a heading; compose non-Latin text with an IME; confirm the
+caret and controls remain above the keyboard; rotate; save and reopen. Check
+Formula scalar/30-row results and insertion/editing, then repeat viewing through
+an anonymous viewer link and verify it cannot edit. Confirm a traditional Doc
+shows the larger-screen note and keeps its saved/exported layout. Record failures
+with exact steps; do not mark the check passed from an emulator screenshot.
 
 ## Connection loss
 

@@ -25,7 +25,7 @@ export function OfflineViewer({
 }) {
   const chrome = useEditorChrome();
   const container = useRef<HTMLDivElement>(null);
-  const mobile = useMobileSheetControls();
+  const [mobile] = useState(useMobileSheetControls);
   const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
   const [ready, setReady] = useState(false);
   const [problem, setProblem] = useState('');
@@ -71,7 +71,7 @@ export function OfflineViewer({
         snapshot: images.localize(bundle.snapshot),
         signal: loading.signal,
         images,
-        mobile: bundle.kind === 'sheet' && mobile,
+        mobile,
         onFormulaChange: (states) => {
           if (!loading.signal.aborted) setFormulaStates([...states]);
         },

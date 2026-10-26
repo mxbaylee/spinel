@@ -51,7 +51,7 @@ export default defineConfig({
     },
     {
       name: 'mobile-https',
-      testMatch: '**/pwa.spec.ts',
+      testMatch: ['**/pwa.spec.ts', '**/doc-mobile.spec.ts'],
       use: {
         ...devices['Pixel 7'],
         baseURL: 'https://localhost:3103',
