@@ -2,7 +2,7 @@ import type { IRange } from '@univerjs/core';
 import { mapIndex } from './axis.ts';
 import type { AxisEdit } from './axis.ts';
 import type { Axis, Family } from './family.ts';
-import { movesMeet, refuseCut, remapMove } from './shifts.ts';
+import { movesMeet, refuseCut, remapMove, clippedShiftWrites } from './shifts.ts';
 import {
   absolute,
   claimsOf,
@@ -17,8 +17,8 @@ import {
 } from './state.ts';
 import type { CellData, Cells } from './state.ts';
 import { structureIds } from './structure.ts';
-import { RefusedEditError, refuseRaces } from './types.ts';
-import type { Mutation, Side } from './types.ts';
+import { RefusedEditError, refuseRaces, MalformedEditError, observeTransform } from './types.ts';
+import type { Mutation, Side, TransformObserver } from './types.ts';
 import { cellIds, cellKey, ghostId, isGhost, isMove, meets, writesOf } from './writes.ts';
 import type { Matrix, Write } from './writes.ts';
 
@@ -321,7 +321,8 @@ export function withoutTails(mutations: Mutation[]): Mutation[] {
     const tail = tailOf(mutations[i]);
     if (!tail) continue;
     if (!isTailOf(tail, mutations[i + 1])) {
-      throw new TypeError(
+      throw new MalformedEditError(
+        'tail',
         'An absolute write that names ft or fd Univer drops needs its tail after it.',
       );
     }
@@ -409,18 +410,24 @@ function conflict(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[
   return [...rebuild(a, kept), ...values(settled, { isOverrideStyle: true })];
 }
 
-function transform(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[] {
+function transform(
+  a: Mutation,
+  b: Mutation,
+  side: Side,
+  state: Cells,
+  observe?: TransformObserver,
+): Mutation[] {
   // A move and an edit in its area are refused (see shifts.movesMeet).
   if (isMove(a) || isMove(b)) {
     if (movesMeet(a, b)) throw new RefusedEditError('moved-cells');
+    const offset = clippedShiftWrites(a, b);
+    if (offset) observeTransform(observe, { kind: 'offset', value: offset });
     return [a];
   }
   if (isGhost(a) || isGhost(b) || !meets(a, b)) return [a];
   // Decision (owner, chat 2026-10-22): see names.refuseFormulaRaces.
   if (rewriteMet(a, b) || rewriteMet(b, a)) throw new RefusedEditError('formula-race');
-  // Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule
-  // 'cell-overwritten', when `haunted` adds a ghost.
-  return haunted(a, conflict(a, b, side, state));
+  return haunted(a, conflict(a, b, side, state), observe);
 }
 
 /**
@@ -433,10 +440,11 @@ function transform(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation
  * flag in a Univer mutation's params can be mistaken for one. It writes
  * nothing and meets only moves; `transform` drops it from what it returns.
  */
-function haunted(a: Mutation, result: Mutation[]): Mutation[] {
+function haunted(a: Mutation, result: Mutation[], observe?: TransformObserver): Mutation[] {
   const kept = new Set(result.flatMap((mutation) => writesOf(mutation).map(cellKey)));
   const lost = writesOf(a).filter((write) => !kept.has(cellKey(write)));
   if (lost.length === 0) return result;
+  observeTransform(observe, { kind: 'dropped', rule: 'cell-overwritten', value: lost.length });
   const { unitId, subUnitId } = a.params;
   const cellValue = toMatrix(lost.map((write) => ({ ...write, value: null })));
   return [...result, { id: ghostId, params: { unitId, subUnitId, cellValue } }];

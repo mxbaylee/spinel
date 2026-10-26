@@ -2,7 +2,8 @@ import { ActionIterator, JSON1, JSONX } from '@univerjs/core';
 import type { ICustomRange } from '@univerjs/core';
 import { unaffected } from './family.ts';
 import type { Family } from './family.ts';
-import type { Mutation, Side } from './types.ts';
+import { observeTransform } from './types.ts';
+import type { Mutation, Side, TransformObserver } from './types.ts';
 
 export const docIds = {
   richText: 'doc.mutation.rich-text-editing',
@@ -26,14 +27,24 @@ type Op = Parameters<typeof JSON1.type.transformNoConflict>[0];
  * selection. `layoutState` is dropped: it was captured for the document the
  * edit was made on, so the receiver must lay the result out itself.
  */
-function transformRichText(a: Mutation, b: Mutation, side: Side): Mutation[] {
+function transformRichText(
+  a: Mutation,
+  b: Mutation,
+  side: Side,
+  observe?: TransformObserver,
+): Mutation[] {
   let [mine, theirs] = [a, b].map(({ params }) => withoutUnstyledRuns(params.actions) as Op);
   const theirIds = entityIds(theirs);
   const shared = new Set([...entityIds(mine)].filter((id) => theirIds.has(id)));
   let undo: Op | null = null;
-  // Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule 'doc-formula-first-accepted'.
-  if (shared.size > 0 && side === 'right') mine = withoutEntities(mine, shared);
-  else if (shared.size > 0) {
+  if (shared.size > 0 && side === 'right') {
+    mine = withoutEntities(mine, shared);
+    observeTransform(observe, {
+      kind: 'dropped',
+      rule: 'doc-formula-first-accepted',
+      value: shared.size,
+    });
+  } else if (shared.size > 0) {
     undo = deleteEntities(theirs, shared);
     theirs = withoutEntities(theirs, shared);
   }
@@ -326,9 +337,9 @@ export const docs: Family = {
   ids: Object.values(docIds),
   // Docs have no rows or columns.
   remap: unaffected,
-  transform(a, b, side) {
+  transform(a, b, side, _state, observe) {
     if (a.id !== b.id) return [a];
-    if (a.id === docIds.richText) return transformRichText(a, b, side);
+    if (a.id === docIds.richText) return transformRichText(a, b, side, observe);
     // Two renames: the winner's name stands.
     if (a.id === docIds.rename) return side === 'left' ? [a] : [];
     return [a];

@@ -14,6 +14,7 @@ const app = await createApp({
   backupConfigPath: process.env.BACKUP_CONFIG_PATH,
   image: process.env.SPINEL_IMAGE,
   spaceReview: process.env.SPINEL_SPACE_REVIEW !== '0',
+  syncServer: process.env.SPINEL_SYNC_SERVER === '1',
   origin: process.env.APP_ORIGIN ?? `http://localhost:${port}`,
   databasePath: resolve(process.env.DATABASE_PATH ?? resolve(projectRoot, 'data/spinel.sqlite')),
 });

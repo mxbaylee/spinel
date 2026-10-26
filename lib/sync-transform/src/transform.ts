@@ -27,8 +27,14 @@ import {
   transformSheetOrder,
   transformStructure,
 } from './structure.ts';
-import { flip, RefusedEditError, UnsupportedMutationError } from './types.ts';
-import type { Mutation, Side } from './types.ts';
+import {
+  flip,
+  RefusedEditError,
+  UnsupportedMutationError,
+  MalformedEditError,
+  observeTransform,
+} from './types.ts';
+import type { Mutation, Side, TransformObserver, DropRule } from './types.ts';
 import { cellIds, ghostId, matrixWrites } from './writes.ts';
 import type { Matrix } from './writes.ts';
 
@@ -73,11 +79,13 @@ function check(mutation: Mutation): void {
     throw new UnsupportedMutationError(id);
   }
   const shiftError = id === cellIds.moveRange ? markError(mutation) : undefined;
-  if (shiftError) throw new TypeError(`MoveRangeMutation's \`shift\` is wrong: ${shiftError}.`);
+  if (shiftError)
+    throw new MalformedEditError('shift', `MoveRangeMutation's \`shift\` is wrong: ${shiftError}.`);
   // A cut's half and a rewrite's mark exist only inside one `transform` (see
   // cells.joinCuts and names.markRewrites).
   for (const key of [halfKey, rewriteKey]) {
-    if (Object.hasOwn(p, key)) throw new TypeError(`\`${key}\` is the transform's own mark.`);
+    if (Object.hasOwn(p, key))
+      throw new MalformedEditError('reserved-key', `\`${key}\` is the transform's own mark.`);
   }
   // An absolute write's claims come back as the transform returned them, so
   // each is checked against what its cell writes (see state.claimError). A
@@ -91,13 +99,19 @@ function check(mutation: Mutation): void {
   const override = id === cellIds.setRangeValues && p.isOverrideStyle === true;
   for (const { value } of matrices.flatMap(matrixWrites)) {
     const error = claimError(value, override);
-    if (error) throw new TypeError(`A cell of ${id} ${error}.`);
+    if (error) throw new MalformedEditError('claim', `A cell of ${id} ${error}.`);
   }
   if (id === structureIds.removeSheet && !Number.isInteger(p.index)) {
-    throw new TypeError('RemoveSheetMutation needs `index`, its position before removal.');
+    throw new MalformedEditError(
+      'remove-index',
+      'RemoveSheetMutation needs `index`, its position before removal.',
+    );
   }
   if (namesStyleId(mutation)) {
-    throw new TypeError(`${id} needs inline styles: style ids differ on every client.`);
+    throw new MalformedEditError(
+      'inline-style',
+      `${id} needs inline styles: style ids differ on every client.`,
+    );
   }
 }
 
@@ -150,12 +164,13 @@ export function checkBases(mutations: Mutation[], state: Cells | null): void {
       for (const { row, col, value } of matrixWrites(cellValue)) {
         if (!isAbsolute(value)) continue;
         if (!state) {
-          throw new TypeError(
+          throw new MalformedEditError(
+            'base-cells',
             'An absolute write needs the base cells (`options.cells`) to check its claims.',
           );
         }
         const error = baseError(value, state.get(unitId, subUnitId, row, col));
-        if (error) throw new TypeError(`A cell of ${mutation.id} ${error}.`);
+        if (error) throw new MalformedEditError('base-claim', `A cell of ${mutation.id} ${error}.`);
       }
     }
     state = state && state.after(mutation);
@@ -171,32 +186,59 @@ function sheetOf(mutation: Mutation): string | undefined {
 /** Whether a mutation is no ghost of an overwritten write (see cells.haunted). */
 const isReal = (mutation: Mutation) => mutation.id !== ghostId;
 
-function pair(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[] {
+function pair(
+  a: Mutation,
+  b: Mutation,
+  side: Side,
+  state: Cells,
+  observe?: TransformObserver,
+): Mutation[] {
+  try {
+    return pairCore(a, b, side, state, observe);
+  } catch (error) {
+    if (error instanceof RefusedEditError) {
+      error.mutationId ??= a.id;
+      error.againstMutationId ??= b.id;
+    }
+    throw error;
+  }
+}
+
+function pairCore(
+  a: Mutation,
+  b: Mutation,
+  side: Side,
+  state: Cells,
+  observe?: TransformObserver,
+): Mutation[] {
   const self = familyOf(a);
   const peer = familyOf(b);
   if (a.params.unitId !== b.params.unitId) return [a];
   // Names are workbook-wide; `transform` refused their races up front.
   if (self === names || peer === names)
-    return self === peer ? names.transform(a, b, side, state) : [a];
+    return self === peer ? names.transform(a, b, side, state, observe) : [a];
   if (self === 'sheet-order' && peer === 'sheet-order') return transformSheetOrder(a, b, side);
   // An edit to a removed sheet is dropped, except a drawing op: the drawing
   // tree keeps a removed sheet's entry, and RemoveSheetCommand itself sends
   // its drawing removals after the sheet removal, so later ops still meet it.
   if (peer === 'sheet-order') {
     const gone = b.id === structureIds.removeSheet && sheetOf(a) === sheetOf(b);
-    // Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule 'removed-sheet'.
-    return gone && a.id !== drawingIds.apply ? [] : [a];
+    if (gone && a.id !== drawingIds.apply) {
+      observeTransform(observe, { kind: 'dropped', rule: 'removed-sheet', value: 1 });
+      return [];
+    }
+    return [a];
   }
   if (self === 'sheet-order' || sheetOf(a) !== sheetOf(b)) return [a];
   if (peer === 'structure') {
     if (self === 'structure') return transformStructure(a, b, side);
     const { axis, edit } = axisEdit(b)!;
-    return self.remap(a, axis, edit);
+    return self.remap(a, axis, edit, observe);
   }
   // A row edit removes the concurrently added merges it cuts (see merges.cutBy).
   if (self === 'structure' && peer === merges) {
     const { axis, edit } = axisEdit(a)!;
-    return [...cutBy(b, axis, edit), a];
+    return [...cutBy(b, axis, edit, observe), a];
   }
   // A shift and a merge edit in its area are refused (see shifts.movesMeet).
   const [merge, move] = self === merges ? [a, b] : [b, a];
@@ -209,7 +251,7 @@ function pair(a: Mutation, b: Mutation, side: Side, state: Cells): Mutation[] {
     refuseCut(b, axis, edit);
   }
   if (self === 'structure' || self !== peer) return [a];
-  return self.transform(a, b, side, state);
+  return self.transform(a, b, side, state, observe);
 }
 
 /**
@@ -230,14 +272,9 @@ export function transform(
   a: Mutation[],
   b: Mutation[],
   side: Side,
-  options: { cells?: BaseCells } = {},
+  options: { cells?: BaseCells; observe?: TransformObserver } = {},
 ): Mutation[] {
-  // Diagnostics (SPN-057, not built): this stays pure, so the server records
-  // around each call: `sync.transform.duration` (histogram, ms),
-  // `sync.transform.concurrent` (histogram of b.length, how far apart edits
-  // really are) and the output's length against its input's (histogram).
-  // Silent drops below would need an optional observer argument, no-op by
-  // default; each site says `Diagnostics (SPN-057` and what it would record.
+  // Timing belongs to the server. This call only observes content-free counts.
   // Check every mutation up front, even when the other side is empty.
   for (const mutation of [...a, ...b]) check(mutation);
   const state = Cells.of(options.cells);
@@ -251,8 +288,27 @@ export function transform(
   refuseNameRaces(a, b);
   refuseFormulaRaces(a, b);
   refuseCutsToRemoved(a, b);
-  const past = pastMany(lone, peers, side, limit, state);
-  return withTails(joinCuts(past.filter(isReal)).map(unmarked));
+  const observation = { peak: lone.length + peers.length };
+  const dropped = new Map<DropRule, number>();
+  let offsets = 0;
+  const collect: TransformObserver | undefined = options.observe
+    ? (event) => {
+        if (event.kind === 'dropped')
+          dropped.set(event.rule, (dropped.get(event.rule) ?? 0) + event.value);
+        else if (event.kind === 'offset') offsets += event.value;
+      }
+    : undefined;
+  try {
+    const past = pastMany(lone, peers, side, limit, state, observation, collect);
+    const result = withTails(joinCuts(past.filter(isReal)).map(unmarked));
+    // If a later pair refuses the batch, none of its earlier drops are delivered.
+    for (const [rule, value] of dropped)
+      observeTransform(options.observe, { kind: 'dropped', rule, value });
+    if (offsets) observeTransform(options.observe, { kind: 'offset', value: offsets });
+    return result;
+  } finally {
+    observeTransform(options.observe, { kind: 'growth', value: observation.peak });
+  }
 }
 
 /**
@@ -275,27 +331,44 @@ function pastMany(
   side: Side,
   limit: number,
   state: Cells,
+  observation: { peak: number },
+  observe?: TransformObserver,
 ): Mutation[] {
-  if (a.length === 1 && b.length === 1) return pair(a[0], b[0], side, state);
+  if (a.length === 1 && b.length === 1) {
+    const result = pair(a[0], b[0], side, state, observe);
+    observation.peak = Math.max(observation.peak, result.length + b.length);
+    return result;
+  }
   for (const peer of b) {
-    a = pastOne(a, peer, side, limit, state);
+    a = pastOne(a, peer, side, limit, state, observation, observe);
     state = state.after(peer, true);
   }
   return a;
 }
 
 /** Each of `a` goes past `b` as `b` has been changed by the earlier ones. */
-function pastOne(a: Mutation[], b: Mutation, side: Side, limit: number, state: Cells): Mutation[] {
+function pastOne(
+  a: Mutation[],
+  b: Mutation,
+  side: Side,
+  limit: number,
+  state: Cells,
+  observation: { peak: number },
+  observe?: TransformObserver,
+): Mutation[] {
   const result: Mutation[] = [];
   let peer = [b];
   for (const mutation of a) {
-    result.push(...pastMany([mutation], peer, side, limit, state));
-    peer = pastMany(peer, [mutation], flip(side), limit, state);
+    result.push(...pastMany([mutation], peer, side, limit, state, observation, observe));
+    // The reversed transform only aligns the next pair; its losses are not delivered.
+    peer = pastMany(peer, [mutation], flip(side), limit, state, observation);
     state = state.after(mutation, true);
-    // Diagnostics (SPN-057, not built): `sync.transform.growth` (histogram of
-    // the peak against `limit`) would show whether 50 is near real edits.
+    observation.peak = Math.max(observation.peak, result.length + peer.length);
     if (result.length + peer.length > limit) {
-      throw new RefusedEditError('growth', `past ${limit} mutations`);
+      const error = new RefusedEditError('growth', `past ${limit} mutations`);
+      error.mutationId = mutation.id;
+      error.againstMutationId = b.id;
+      throw error;
     }
   }
   return result;

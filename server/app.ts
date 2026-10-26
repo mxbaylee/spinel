@@ -33,6 +33,7 @@ import { TrashStore, startTrashCleanup } from '../src/server/workspace/trash.ts'
 import { HistoryStore } from '../src/server/history/store.ts';
 import { CollaborationStore } from '../src/server/collaboration/service.ts';
 import { attachCollaboration } from '../src/server/collaboration/transport.ts';
+import { attachSync } from '../src/server/sync/transport.ts';
 import { UnitAction, ErrorCode } from '@univerjs/protocol';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
@@ -46,6 +47,8 @@ export interface AppOptions {
   image?: string;
   /** Spaces are enabled by default; false explicitly closes every Space boundary. */
   spaceReview?: boolean;
+  /** New protocol integration only; activation of existing documents is SPN-059. */
+  syncServer?: boolean;
 }
 
 export async function createApp(options: AppOptions) {
@@ -102,10 +105,17 @@ export async function createApp(options: AppOptions) {
     collaboration = new CollaborationStore(workspace, options.databasePath, {
       spaceReview,
       observePurge: () => jobs.begin('collaboration-purge'),
+      syncServer: options.syncServer === true,
+      diagnostics: (event, context, actorId) => {
+        if (!actorId.startsWith('guest:')) diagnostics!.record(event, context, actorId);
+      },
     });
     history = new HistoryStore(workspace, collaboration, () => jobs.begin('history-maintenance'));
     app.use('/mcp', mcpRoutes(workspace, collaboration, origin));
-    realtime = attachCollaboration(server, workspace, collaboration, origin, { spaceReview });
+    realtime =
+      options.syncServer === true
+        ? attachSync(server, app, workspace, collaboration, origin)
+        : attachCollaboration(server, workspace, collaboration, origin, { spaceReview });
     workspace.links.recover();
     app.use(guestRoutes(workspace, collaboration, origin, (id) => realtime!.privacyChanged(id)));
     app.use(

@@ -108,14 +108,13 @@ export class HistoryStore {
     );
     // Raw clients may skip the application preparation route; preserve their baseline too.
     this.subscriptions.push(
-      collaboration.service.use('submitChangeset', async (context, next) => {
-        const id = collaboration.itemForUnit(context.request.changeset.unitID);
+      collaboration.onSubmitting(async (context, unitId) => {
+        const id = collaboration.itemForUnit(unitId);
         await this.ensureInitial(context.userID, id, context.customData);
-        await next();
       }),
     );
     this.subscriptions.push(
-      collaboration.service.on('changesetCommitted', ({ changeset }) => {
+      collaboration.onCommitted((changeset) => {
         const generation = collaboration.generations.resolve(changeset.unitID);
         if (!generation) return;
         const now = workspace.auth.now();
@@ -635,12 +634,9 @@ export class HistoryStore {
         // Public adapter metadata repairs a missed commit event after an interrupted process.
         const generation =
           source === 'collaboration' ? this.collaboration.generations.active(id) : undefined;
-        const unit =
+        const headRevision =
           source === 'collaboration'
-            ? await this.collaboration.service.dbAdapter.getUnit(
-                { userID: user, customData, request: {} },
-                generation!.unitId,
-              )
+            ? await this.collaboration.headRevision(user, generation!.unitId, customData)
             : undefined;
         resolveDocument(this.workspace, user, id, 'read', customData);
         if (generation) {
@@ -650,8 +646,8 @@ export class HistoryStore {
         }
         const revision =
           source === 'collaboration'
-            ? unit
-              ? unit.headRevision + generation!.offset
+            ? headRevision !== undefined
+              ? headRevision + generation!.offset
               : undefined
             : this.native(user, id, customData)?.revision;
         if (revision === undefined) continue;
