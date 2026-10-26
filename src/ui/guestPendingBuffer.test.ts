@@ -20,7 +20,7 @@ test('guest retention includes the active cell Doc and composition before native
   vi.stubGlobal('document', { activeElement: new Textarea() });
   const body = (text: string) => ({
     dataStream: text + '\r\n',
-    paragraphs: [{ startIndex: text.length }],
+    paragraphs: [{ startIndex: text.length, paragraphId: 'pending-paragraph' }],
   });
   const live = new DocumentDataModel({ id: 'native-doc', body: body('Pending document edit') });
   const cell = new DocumentDataModel({ id: 'active-cell-editor', body: body('Uncommitted C3') });
