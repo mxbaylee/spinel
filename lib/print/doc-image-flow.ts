@@ -25,7 +25,9 @@ interface FlowEntry {
   body: IDocumentBody;
   snapshot: IDocumentData;
   layoutType: PositionedObjectLayoutType;
-  kind: 'empty' | 'line-caption' | 'square-caption';
+  kind: 'empty' | 'line-caption' | 'square-caption' | 'group' | 'terminal';
+  group?: { ids: string[] };
+  carrier?: { drawing: IDocDrawingBase; baseline?: NonNullable<FlowEntry['baseline']> };
   baseline?: {
     left: number;
     top: number;
@@ -102,21 +104,111 @@ export function prepareImageParagraphFlow(
         drawing.docTransform.positionV.percent !== undefined
       )
         continue;
+      let paragraphStart = anchor;
+      while (
+        paragraphStart > 0 &&
+        !['\r', '\n', '\x1c', '\x0f'].includes(body.dataStream[paragraphStart - 1])
+      ) {
+        check();
+        paragraphStart--;
+      }
+      const siblings = (body.customBlocks ?? [])
+        .filter((entry) => entry.startIndex >= paragraphStart && entry.startIndex < end)
+        .sort((a, b) => a.startIndex - b.startIndex);
+      if (
+        siblings.length > 1 &&
+        siblings.every((entry, index) => {
+          const image = snapshot.drawings?.[entry.blockId];
+          const position = image?.docTransform.positionV;
+          return (
+            entry.startIndex === paragraphStart + index &&
+            image?.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM &&
+            image.hidden !== true &&
+            image.behindDoc !== 1 &&
+            position?.relativeFrom === ObjectRelativeFromV.PARAGRAPH &&
+            position.align === undefined &&
+            position.percent === undefined &&
+            (position.posOffset ?? 0) >= 0
+          );
+        }) &&
+        !paragraph.bullet &&
+        !Object.keys(paragraph.paragraphStyle ?? {}).some((key) => key.startsWith('border'))
+      ) {
+        if (paragraphStart + siblings.length === end) {
+          const group = { ids: siblings.map((entry) => entry.blockId) };
+          for (const sibling of siblings) {
+            const image = snapshot.drawings![sibling.blockId];
+            const layoutType = image.layoutType;
+            image.layoutType = PositionedObjectLayoutType.WRAP_NONE;
+            result.set(sibling.blockId, {
+              drawing: image,
+              paragraph,
+              body,
+              snapshot,
+              layoutType,
+              kind: 'group',
+              group,
+            });
+          }
+          continue;
+        }
+      }
       const empty =
         end === anchor + 1 &&
         (anchor === 0 || ['\r', '\n', '\x1c', '\x0f'].includes(body.dataStream[anchor - 1]));
+      const previous = siblings.find((entry) => entry.startIndex === anchor - 1);
+      const carrier = previous && snapshot.drawings?.[previous.blockId];
+      if (
+        drawing.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM &&
+        end === anchor + 1 &&
+        (/[^\s\p{C}\uFFFC]/u.test(body.dataStream.slice(paragraphStart, anchor)) ||
+          siblings.some(
+            ({ blockId }) =>
+              snapshot.drawings?.[blockId]?.layoutType === PositionedObjectLayoutType.INLINE,
+          )) &&
+        siblings.every(({ blockId }) => {
+          const image = snapshot.drawings?.[blockId];
+          const position = image?.docTransform.positionV;
+          return (
+            image &&
+            image.hidden !== true &&
+            image.behindDoc !== 1 &&
+            (image.layoutType === PositionedObjectLayoutType.INLINE ||
+              (image.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM &&
+                position?.relativeFrom === ObjectRelativeFromV.PARAGRAPH &&
+                position.align === undefined &&
+                position.percent === undefined &&
+                Number.isFinite(position.posOffset)))
+          );
+        })
+      ) {
+        result.set(block.blockId, {
+          drawing,
+          paragraph,
+          body,
+          snapshot,
+          layoutType: drawing.layoutType,
+          kind: 'terminal',
+          ...(carrier?.layoutType === PositionedObjectLayoutType.INLINE
+            ? { carrier: { drawing: carrier } }
+            : {}),
+        });
+        continue;
+      }
       if (!empty) {
         const suffix = body.dataStream.slice(anchor + 1, end);
-        let start = anchor;
-        while (start > 0 && !['\r', '\n', '\x1c', '\x0f'].includes(body.dataStream[start - 1])) {
-          check();
-          start--;
-        }
+        const following = (body.customBlocks ?? [])
+          .filter((entry) => entry.startIndex > anchor && entry.startIndex < end)
+          .map((entry) => snapshot.drawings?.[entry.blockId]);
+        const inlineContent = following.some(
+          (image) =>
+            image?.layoutType === PositionedObjectLayoutType.INLINE && image.hidden !== true,
+        );
         if (
           drawing.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM &&
           drawing.docTransform.positionV.relativeFrom === ObjectRelativeFromV.LINE &&
-          !suffix.includes('\b') &&
-          /[^\s\p{C}\uFFFC]/u.test(suffix)
+          following.every((image) => image?.layoutType === PositionedObjectLayoutType.INLINE) &&
+          (/[^\s\p{C}\uFFFC]/u.test(suffix) || inlineContent)
         )
           result.set(block.blockId, {
             drawing,
@@ -128,10 +220,8 @@ export function prepareImageParagraphFlow(
           });
         else if (
           drawing.layoutType === PositionedObjectLayoutType.WRAP_SQUARE &&
-          /[^\s\p{C}\uFFFC]/u.test(body.dataStream.slice(start, end)) &&
-          (body.customBlocks ?? []).filter(
-            (entry) => entry.startIndex >= start && entry.startIndex < end,
-          ).length === 1
+          /[^\s\p{C}\uFFFC]/u.test(body.dataStream.slice(paragraphStart, end)) &&
+          siblings.length === 1
         ) {
           const layoutType = drawing.layoutType;
           drawing.layoutType = PositionedObjectLayoutType.WRAP_NONE;
@@ -161,9 +251,13 @@ export function prepareImageParagraphFlow(
   return result;
 }
 
-/** These native LINE anchors need their first complete layout before normalization. */
+/** These anchors need their first complete layout before measured normalization. */
 export function pendingImageLineAnchors(flow: ImageParagraphFlow): ReadonlySet<string> {
-  return new Set([...flow].filter(([, entry]) => entry.kind === 'line-caption').map(([id]) => id));
+  return new Set(
+    [...flow]
+      .filter(([, entry]) => ['line-caption', 'terminal'].includes(entry.kind))
+      .map(([id]) => id),
+  );
 }
 
 interface NativeLine {
@@ -187,6 +281,12 @@ function anchors(
   const result = new Map<string, NativeAnchor[]>();
   const paragraphs = new Map<string, NativeLine[]>();
   const scopes = new Map<NativeAnchor, string>();
+  const tracked = new Set([
+    ...flow.keys(),
+    ...[...flow.values()].flatMap((entry) =>
+      entry.carrier ? [entry.carrier.drawing.drawingId] : [],
+    ),
+  ]);
   const visited = new Set<IDocumentSkeletonPage>();
   const walk = (page: IDocumentSkeletonPage, depth: number, scope: string) => {
     check();
@@ -212,7 +312,7 @@ function anchors(
             line.divides.flatMap((divide) => divide.glyphGroup.map((glyph) => glyph.drawingId)),
           );
           for (const id of ids)
-            if (id && flow.has(id)) {
+            if (id && tracked.has(id)) {
               const values = result.get(id) ?? [];
               const anchor = { ...point, paragraphFirst: point, paragraphLast: point };
               values.push(anchor);
@@ -239,12 +339,13 @@ function anchors(
             divide.glyphGroup.some((glyph) => (glyph.raw ?? glyph.streamType) === '\r'),
           ),
         ) ?? lines.at(-1)!;
-      if (flow.get(id)!.kind === 'square-caption') Object.assign(anchor, anchor.paragraphFirst);
+      if (['square-caption', 'group'].includes(flow.get(id)?.kind ?? ''))
+        Object.assign(anchor, anchor.paragraphFirst);
     }
   return result;
 }
 
-function geometry(entry: FlowEntry, anchor: NativeAnchor) {
+function geometry(entry: Pick<FlowEntry, 'drawing'>, anchor: NativeAnchor) {
   const drawing = anchor.page.skeDrawings.get(entry.drawing.drawingId);
   if (!drawing) unsupported();
   const appearance = {
@@ -261,7 +362,10 @@ function geometry(entry: FlowEntry, anchor: NativeAnchor) {
   return { appearance, bounds };
 }
 
-function rememberBaseline(entry: FlowEntry, baseline: NonNullable<FlowEntry['baseline']>) {
+function rememberBaseline(
+  entry: Pick<FlowEntry, 'baseline'>,
+  baseline: NonNullable<FlowEntry['baseline']>,
+) {
   if (!Object.values(baseline).every(Number.isFinite)) unsupported();
   if (
     entry.baseline &&
@@ -291,6 +395,196 @@ export function reserveImageParagraphFlow(
     check();
     const values = found.get(id);
     if (!values?.length) unsupported();
+    if (entry.carrier) {
+      let reservation:
+        { bottom: number; offset: number; before: number; after: number } | undefined;
+      for (const [index, anchor] of values.entries()) {
+        const inline = found.get(entry.carrier.drawing.drawingId)?.[index];
+        if (!inline || inline.page !== anchor.page) unsupported();
+        const { appearance } = geometry(entry, anchor);
+        const first = geometry(entry.carrier, inline).appearance;
+        const native = inline.page.skeDrawings.get(entry.carrier.drawing.drawingId)!;
+        const line = inline.line;
+        const span = line.contentHeight + line.paddingTop + line.paddingBottom;
+        const top = line.marginTop + span + appearance.top - anchor.top;
+        const bounds = imageBounds({ ...appearance, top: inline.top + top });
+        if (!bounds) unsupported();
+        const required = bounds.bottom - inline.top + (entry.drawing.distB ?? 0);
+        // Adjacent INLINE controls are one native glyph group. Growing its
+        // descent preserves the original ascent, first image and prefix baseline,
+        // while reserving the terminal floating image below the complete line.
+        const next = {
+          bottom: Math.max(
+            line.dsc,
+            required - line.marginTop - line.paddingTop - line.paddingBottom - line.asc,
+          ),
+          offset: inline.top + top - native.blockAnchorTop,
+          before: inline.paragraphFirst.line.marginTop,
+          after: anchor.line.spaceBelowApply,
+        };
+        if (!Object.values(next).every(Number.isFinite) || next.bottom < 0) unsupported();
+        if (required > Math.max(...data.pages.map((page) => page.pageHeight)) * limits.pages)
+          throw new PrintError('limit', 'PDF image flow exceeds its page budget.');
+        if (
+          reservation &&
+          Object.entries(next).some(
+            ([key, value]) => Math.abs(value - reservation![key as keyof typeof next]) > 0.01,
+          )
+        )
+          unsupported();
+        reservation = next;
+        rememberBaseline(entry, {
+          left: appearance.left,
+          top,
+          width: appearance.width,
+          height: appearance.height,
+          angle: appearance.angle,
+          spaceBelow: next.after,
+          span,
+        });
+        rememberBaseline(entry.carrier, {
+          left: first.left,
+          top: first.top - inline.top,
+          width: first.width,
+          height: first.height,
+          angle: first.angle,
+          spaceBelow: next.after,
+          span,
+        });
+      }
+      entry.carrier.drawing.effectExtent = { bottom: reservation!.bottom };
+      entry.drawing.layoutType = PositionedObjectLayoutType.WRAP_NONE;
+      entry.drawing.docTransform.positionV.posOffset = reservation!.offset;
+      entry.paragraph.paragraphStyle = {
+        ...entry.paragraph.paragraphStyle,
+        spaceAbove: { v: reservation!.before, u: NumberUnitType.PIXEL },
+        spaceBelow: { v: reservation!.after, u: NumberUnitType.PIXEL },
+      };
+      changed = true;
+      continue;
+    }
+    if (entry.kind === 'terminal') {
+      let extent: IDocDrawingBase['effectExtent'];
+      for (const anchor of values) {
+        const { appearance, bounds } = geometry(entry, anchor);
+        const divide = anchor.line.divides[0];
+        if (anchor.line.divides.length !== 1 || !divide) unsupported();
+        const width = bounds.right - bounds.left;
+        const height = bounds.bottom - bounds.top;
+        const top = appearance.top - anchor.top;
+        // The last floating control and paragraph mark otherwise form a real
+        // text strut, triggering native own-height displacement. Give only that
+        // existing control a full-width inline layout box. Public effect extents
+        // supply layout padding; native image size, rotation and source stay intact.
+        const left =
+          appearance.left -
+          anchor.columnLeft -
+          divide.left -
+          divide.paddingLeft -
+          (width - appearance.width) / 2;
+        const projected = {
+          left,
+          right: divide.width - width - left,
+          top: top - (height - appearance.height) / 2,
+          bottom: entry.drawing.distB ?? 0,
+        };
+        if (
+          !Object.values(projected).every(Number.isFinite) ||
+          projected.left < -0.01 ||
+          projected.right < -0.01 ||
+          width <= 0 ||
+          height <= 0
+        )
+          unsupported();
+        if (
+          extent &&
+          Object.entries(projected).some(
+            ([key, value]) =>
+              Math.abs(value - (extent![key as keyof typeof projected] ?? 0)) > 0.01,
+          )
+        )
+          unsupported();
+        extent = projected;
+        rememberBaseline(entry, {
+          left: appearance.left,
+          top,
+          width: appearance.width,
+          height: appearance.height,
+          angle: appearance.angle,
+          spaceBelow: anchor.line.spaceBelowApply,
+          span: anchor.line.contentHeight + anchor.line.paddingTop + anchor.line.paddingBottom,
+        });
+      }
+      entry.drawing.layoutType = PositionedObjectLayoutType.INLINE;
+      entry.drawing.effectExtent = extent;
+      changed = true;
+      continue;
+    }
+    if (entry.group) {
+      if (id !== entry.group.ids[0]) continue;
+      let required = 0,
+        originalSpan = 0,
+        marginTop = 0;
+      for (const [index, first] of values.entries()) {
+        let cursor = 0;
+        const original = first.paragraphFirst;
+        originalSpan = Math.max(
+          originalSpan,
+          original.line.contentHeight + original.line.paddingTop + original.line.paddingBottom,
+        );
+        marginTop = Math.max(marginTop, original.line.marginTop);
+        for (const memberId of entry.group.ids) {
+          const member = flow.get(memberId)!;
+          const anchor = found.get(memberId)?.[index];
+          if (!anchor || anchor.page !== first.page || Math.abs(anchor.top - first.top) > 0.01)
+            unsupported();
+          const { appearance } = geometry(member, anchor);
+          // Public Top-and-bottom blocks deliberately stack in source order:
+          // each next anchor follows the preceding native image flow bottom.
+          // Measure common paragraph origin first, then retain that cumulative
+          // stack in one reservation instead of repeating the native drift.
+          const top = cursor + appearance.top - first.top;
+          const bounds = imageBounds({ ...appearance, top: first.top + top });
+          if (!bounds) unsupported();
+          cursor = top + appearance.height + (member.drawing.distB ?? 0);
+          required = Math.max(
+            required,
+            cursor,
+            bounds.bottom - first.top + (member.drawing.distB ?? 0),
+          );
+          rememberBaseline(member, {
+            left: appearance.left,
+            top,
+            width: appearance.width,
+            height: appearance.height,
+            angle: appearance.angle,
+            spaceBelow: anchor.paragraphLast.line.spaceBelowApply,
+            span: originalSpan,
+          });
+        }
+      }
+      const maximum = Math.max(...data.pages.map((page) => page.pageHeight)) * limits.pages;
+      if (!Number.isFinite(required) || required > maximum)
+        throw new PrintError('limit', 'PDF image flow exceeds its page budget.');
+      for (const memberId of entry.group.ids) {
+        const member = flow.get(memberId)!;
+        member.drawing.docTransform.positionV.posOffset = member.baseline!.top;
+      }
+      const style = entry.paragraph.paragraphStyle ?? {};
+      const absolute = (value: typeof style.spaceAbove) =>
+        value == null
+          ? undefined
+          : { v: getNumberUnitValue(value, originalSpan), u: NumberUnitType.PIXEL };
+      entry.paragraph.paragraphStyle = {
+        ...style,
+        lineSpacing: Math.max(originalSpan, required - marginTop),
+        spacingRule: SpacingRule.EXACT,
+        ...(style.spaceAbove == null ? {} : { spaceAbove: absolute(style.spaceAbove) }),
+        ...(style.spaceBelow == null ? {} : { spaceBelow: absolute(style.spaceBelow) }),
+      };
+      changed = true;
+      continue;
+    }
     if (entry.kind === 'line-caption') {
       let horizontal: number | undefined;
       for (const anchor of values) {
@@ -481,6 +775,24 @@ export function verifyImageParagraphFlow(
     const baseline = entry.baseline;
     const values = found.get(id);
     if (!baseline || !values?.length) unsupported();
+    if (entry.carrier) {
+      const prior = entry.carrier.baseline;
+      const positions = found.get(entry.carrier.drawing.drawingId);
+      if (!prior || !positions?.length) unsupported();
+      for (const inline of positions) {
+        const { appearance } = geometry(entry.carrier, inline);
+        if (
+          [
+            appearance.left - prior.left,
+            appearance.top - inline.top - prior.top,
+            appearance.width - prior.width,
+            appearance.height - prior.height,
+            appearance.angle - prior.angle,
+          ].some((value) => Math.abs(value) > 0.01)
+        )
+          unsupported();
+      }
+    }
     for (const anchor of values) {
       check();
       const { appearance, bounds } = geometry(entry, anchor);
@@ -490,7 +802,7 @@ export function verifyImageParagraphFlow(
         appearance.width,
         appearance.height,
         appearance.angle,
-        entry.kind === 'square-caption'
+        entry.kind === 'square-caption' || entry.group
           ? anchor.paragraphLast.line.spaceBelowApply
           : anchor.line.spaceBelowApply,
       ];
@@ -503,7 +815,7 @@ export function verifyImageParagraphFlow(
         baseline.spaceBelow,
       ];
       if (actual.some((value, index) => Math.abs(value - expected[index]) > 0.01)) unsupported();
-      if (entry.kind === 'empty') {
+      if (entry.kind === 'empty' || entry.kind === 'terminal' || entry.group) {
         const bottom = anchor.top + anchor.line.lineHeight - (anchor.line.marginBottom ?? 0);
         if (bottom + 0.01 < bounds.bottom + (entry.drawing.distB ?? 0)) unsupported();
       }
@@ -515,10 +827,24 @@ export function verifyImageParagraphFlow(
           if (bounds.right <= column.left || bounds.left >= column.left + column.width) continue;
           for (const line of column.lines) {
             check();
-            if (line === anchor.line) continue;
-            const top = section.top + line.top;
+            if (line === anchor.line && !entry.carrier) continue;
+            const contentOnly = Boolean(entry.group || entry.carrier);
+            const top =
+              section.top +
+              line.top +
+              (contentOnly
+                ? line.marginTop +
+                  // The retained carrier span already includes its native padding.
+                  (line === anchor.line && entry.carrier ? 0 : line.paddingTop)
+                : 0);
+            const height =
+              line === anchor.line && entry.carrier
+                ? entry.carrier.baseline!.span
+                : contentOnly
+                  ? line.contentHeight
+                  : line.lineHeight;
             if (
-              top + line.lineHeight <= bounds.top - (entry.drawing.distT ?? 0) + 0.01 ||
+              top + height <= bounds.top - (entry.drawing.distT ?? 0) + 0.01 ||
               top >= bounds.bottom + (entry.drawing.distB ?? 0) - 0.01
             )
               continue;

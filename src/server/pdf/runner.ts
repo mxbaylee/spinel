@@ -20,7 +20,12 @@ export type PdfResult = {
 export type PdfWorkerReply =
   | ({ type: 'complete'; byteLength: number } & Omit<PdfResult, 'bytes'>)
   | { type: 'chunk'; bytes: Uint8Array }
-  | { type: 'failure'; code: PdfErrorCode };
+  | {
+      type: 'failure';
+      code: PdfErrorCode;
+      phase?: 'fonts' | 'render' | 'peak' | 'transfer';
+      detail?: 'invalid-input' | 'cleanup' | PdfErrorCode;
+    };
 
 const exec = promisify(execFile);
 let active = false;
@@ -82,13 +87,36 @@ async function residentBytes(pid: number): Promise<number | null> {
     try {
       status = await readFile(`/proc/${pid}/status`, 'utf8');
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
+      if (['ENOENT', 'ESRCH'].includes((error as NodeJS.ErrnoException).code ?? '')) return null;
       throw error;
     }
     const match = /^VmRSS:\s+(\d+)\s+kB$/m.exec(status);
     // A zombie may briefly have no RSS while its close event is still pending.
     if (!match && /^State:\s+Z/m.test(status)) return 0;
-    if (!match) throw new Error('Worker memory unavailable.');
+    if (!match) {
+      let stat: string;
+      try {
+        stat = await readFile(`/proc/${pid}/stat`, 'utf8');
+      } catch (error) {
+        if (['ENOENT', 'ESRCH'].includes((error as NodeJS.ErrnoException).code ?? '')) return null;
+        throw error;
+      }
+      // Linux exit_mm clears the address space before exit_notify marks Z.
+      // Field 9 is the task flags; PF_EXITING (0x4) proves this is teardown,
+      // rather than missing accounting for a live renderer. Names may contain ).
+      const end = stat.lastIndexOf(')');
+      const flagsText =
+        end >= 0
+          ? stat
+              .slice(end + 1)
+              .trim()
+              .split(/\s+/)[6]
+          : undefined;
+      const flags = Number(flagsText);
+      if (flagsText && /^\d+$/.test(flagsText) && Number.isSafeInteger(flags) && flags & 4)
+        return 0;
+      throw new Error('Worker memory unavailable.');
+    }
     return Number(match[1]) * 1024;
   }
   const { stdout } = await exec('ps', ['-o', 'rss=', '-p', String(pid)], {
@@ -134,9 +162,15 @@ export async function runPdf(job: PdfJob, signal?: AbortSignal): Promise<PdfResu
       let peakRssBytes = 0;
       let sampling = false;
       let closed = false;
+      let failureReason = 'completion';
+      let workerPhase: string | undefined;
+      let workerDetail: string | undefined;
       const chunks: Buffer[] = [];
-      const stop = (code: PdfErrorCode) => {
-        failure ??= new PdfError(code);
+      const stop = (code: PdfErrorCode, reason = 'protocol') => {
+        if (!failure) {
+          failure = new PdfError(code);
+          failureReason = reason;
+        }
         chunks.length = 0;
         // Native rendering need not yield to JavaScript. Kill, then await close.
         if (!closed) worker.kill('SIGKILL');
@@ -154,7 +188,8 @@ export async function runPdf(job: PdfJob, signal?: AbortSignal): Promise<PdfResu
           })
           .catch(() => {
             // Exit/close may be waiting behind this memory read's continuation.
-            if (!closed && worker.exitCode === null && worker.signalCode === null) stop('failed');
+            if (!closed && worker.exitCode === null && worker.signalCode === null)
+              stop('failed', 'memory-accounting');
           })
           .finally(() => {
             sampling = false;
@@ -172,21 +207,36 @@ export async function runPdf(job: PdfJob, signal?: AbortSignal): Promise<PdfResu
             return stop('limit');
           chunks.push(Buffer.from(message.bytes));
         } else if (message.type === 'failure') {
+          if (['fonts', 'render', 'peak', 'transfer'].includes(message.phase ?? ''))
+            workerPhase = message.phase;
+          if (
+            [
+              'invalid-input',
+              'cleanup',
+              'busy',
+              'limit',
+              'cancelled',
+              'unsupported',
+              'failed',
+            ].includes(message.detail ?? '')
+          )
+            workerDetail = message.detail;
           const code = ['limit', 'cancelled', 'unsupported'].includes(message.code)
             ? message.code
             : 'failed';
-          stop(code);
+          stop(code, 'worker');
         } else if (message.type === 'complete' && !reply) reply = message;
         else stop('failed');
       });
-      worker.once('error', () => stop('failed'));
-      worker.once('close', (code) => {
+      worker.once('error', () => stop('failed', 'process'));
+      worker.once('close', (code, exitSignal) => {
         closed = true;
         clearTimeout(timer);
         clearInterval(monitor);
         signal?.removeEventListener('abort', abort);
         if (signal?.aborted) failure ??= new PdfError('cancelled');
         if (performance.now() >= deadline) failure ??= new PdfError('limit');
+        if (code !== 0 && !failure) failureReason = 'exit';
         if (
           code !== 0 ||
           !reply ||
@@ -205,13 +255,32 @@ export async function runPdf(job: PdfJob, signal?: AbortSignal): Promise<PdfResu
         )
           failure ??= new PdfError('failed');
         if (reply && reply.peakRssBytes > workerBudget) failure ??= new PdfError('limit');
+        // Fixed lifecycle labels and counters only: never source, paths, IDs,
+        // exception text, stack traces or captured worker stdout/stderr.
+        const reportFailure = () =>
+          console.warn('PDF worker failed', {
+            kind: job.kind,
+            reason: failureReason,
+            phase: workerPhase,
+            detail: workerDetail,
+            exitCode: code,
+            exitSignal,
+            completed: Boolean(reply),
+            outputBytes,
+            sampledPeakRssBytes: peakRssBytes,
+            workerBudget,
+            durationMs: Math.round(performance.now() - started),
+          });
         if (failure) {
           chunks.length = 0;
+          if (failure.code === 'failed') reportFailure();
           reject(failure);
           return;
         }
         const bytes = Buffer.concat(chunks, outputBytes);
         if (bytes.subarray(0, 5).toString() !== '%PDF-') {
+          failureReason = 'signature';
+          reportFailure();
           reject(new PdfError('failed'));
           return;
         }
@@ -228,10 +297,10 @@ export async function runPdf(job: PdfJob, signal?: AbortSignal): Promise<PdfResu
       else {
         try {
           worker.send(owned, (error) => {
-            if (error) stop('failed');
+            if (error) stop('failed', 'send');
           });
         } catch {
-          stop('failed');
+          stop('failed', 'send');
         }
       }
     });

@@ -6,6 +6,22 @@ afterEach(() => vi.unstubAllGlobals());
 
 const root = '00000000-0000-4000-8000-000000000075';
 
+test('immediate options cleanup sends no abandoned transfer before the replacement load', async () => {
+  vi.stubGlobal('location', { pathname: '/' });
+  const fetcher = vi.fn(async () => Response.json({ kind: 'doc' }));
+  vi.stubGlobal('fetch', fetcher);
+  const initial = new AbortController();
+  // React's development effect replay cleans up the first setup immediately.
+  // A request already received by the server would retain its lease until its
+  // native snapshot load stops, causing the replacement request to receive 429.
+  const abandoned = readPdfOptions(root, initial.signal).catch((error: unknown) => error);
+  initial.abort();
+  const current = readPdfOptions(root, new AbortController().signal);
+  expect(await abandoned).toMatchObject({ name: 'AbortError' });
+  await expect(current).resolves.toEqual({ kind: 'doc' });
+  expect(fetcher).toHaveBeenCalledOnce();
+});
+
 test('PDF requests preserve exact guest Space child scope and only selected worksheet IDs', async () => {
   vi.stubGlobal('location', { pathname: `/share/${root}` });
   const signal = new AbortController().signal;

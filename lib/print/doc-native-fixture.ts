@@ -89,6 +89,5 @@ process.once('message', async (message) => {
     });
   }
   if (!process.send || !process.disconnect) throw new Error('Fixture requires IPC.');
-  process.send(results);
-  process.disconnect();
+  process.send(results, () => process.disconnect?.());
 });

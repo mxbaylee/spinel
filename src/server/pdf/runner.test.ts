@@ -47,13 +47,16 @@ const job = (): Extract<PdfJob, { kind: 'doc' }> => ({
   },
 });
 let child: Child;
+let warning: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   child = new Child();
   mocks.fork.mockReset().mockReturnValue(child as unknown as ChildProcess);
   mocks.memory.mockReset().mockResolvedValue('State:\tR\nVmRSS:\t1024 kB\n');
+  warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
   vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] });
 });
 afterEach(() => {
+  warning.mockRestore();
   vi.useRealTimers();
 });
 
@@ -151,6 +154,34 @@ test('worker errors never expose exception text, source data or process output',
   child.emit('error', new Error('PRIVATE URL, account name and file data'));
   child.close(1);
   await rejected;
+  expect(warning).toHaveBeenCalledWith(
+    'PDF worker failed',
+    expect.objectContaining({ reason: 'process', completed: false }),
+  );
+  expect(JSON.stringify(warning.mock.calls)).not.toMatch(/PRIVATE|account name|file data/);
+});
+
+test('worker failure diagnostics retain only fixed lifecycle labels', async () => {
+  const pending = runPdf(job());
+  const rejected = expect(pending).rejects.toMatchObject({ code: 'failed' });
+  child.emit('message', { type: 'failure', code: 'failed', phase: 'render', detail: 'cleanup' });
+  child.close(1);
+  await rejected;
+  expect(warning).toHaveBeenLastCalledWith(
+    'PDF worker failed',
+    expect.objectContaining({ reason: 'worker', phase: 'render', detail: 'cleanup' }),
+  );
+  const untrusted = runPdf(job());
+  const untrustedRejection = expect(untrusted).rejects.toMatchObject({ code: 'failed' });
+  child.emit('message', {
+    type: 'failure',
+    code: 'failed',
+    phase: 'PRIVATE CONTENT',
+    detail: 'PRIVATE URL',
+  });
+  child.close(1);
+  await untrustedRejection;
+  expect(JSON.stringify(warning.mock.calls)).not.toContain('PRIVATE');
 });
 
 test('copies admitted input and gives workers no inherited secrets or loader flags', async () => {
@@ -203,6 +234,43 @@ test('native RSS over budget kills work and retains its reservation until close'
   await expect(runPdf(job())).rejects.toMatchObject({ code: 'busy' });
   child.close(1);
   await rejected;
+});
+
+test('an exiting Linux task may lose its memory fields before becoming a zombie', async () => {
+  if (process.platform !== 'linux') return;
+  child.pid = 42;
+  mocks.memory.mockImplementation(async (path: string) =>
+    path.endsWith('/status')
+      ? 'State:\tR (running)\n'
+      : '42 (pdf ) worker) R 1 2 3 0 -1 4194308 0 0',
+  );
+  const pending = runPdf(job());
+  child.complete();
+  await vi.advanceTimersByTimeAsync(100);
+  expect(child.kill).not.toHaveBeenCalled();
+  await expect(runPdf(job())).rejects.toMatchObject({ code: 'busy' });
+  child.close(0);
+  await expect(pending).resolves.toMatchObject({ pages: 1 });
+  expect(warning).not.toHaveBeenCalled();
+});
+
+test('missing memory accounting for a live task still kills and rejects a complete PDF', async () => {
+  if (process.platform !== 'linux') return;
+  child.pid = 42;
+  mocks.memory.mockImplementation(async (path: string) =>
+    path.endsWith('/status') ? 'State:\tR (running)\n' : '42 (pdf worker) R 1 2 3 0 -1 4194304 0 0',
+  );
+  const pending = runPdf(job());
+  const rejected = expect(pending).rejects.toMatchObject({ code: 'failed' });
+  child.complete();
+  await vi.advanceTimersByTimeAsync(100);
+  expect(child.kill).toHaveBeenCalledWith('SIGKILL');
+  child.close(0);
+  await rejected;
+  expect(warning).toHaveBeenCalledWith(
+    'PDF worker failed',
+    expect.objectContaining({ reason: 'memory-accounting' }),
+  );
 });
 
 test('an unsampled worker high-water mark above budget invalidates an otherwise complete PDF', async () => {

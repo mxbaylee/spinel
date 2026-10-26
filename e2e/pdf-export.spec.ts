@@ -157,6 +157,11 @@ for (const kind of ['sheet', 'doc'] as const) {
           }, protectedMessage);
           const guest = role.startsWith('guest-');
           const pdfPath = `/api/${guest ? 'guest' : 'items'}/${item.id}/pdf`;
+          let optionRequests = 0;
+          page.on('request', (request) => {
+            if (new URL(request.url()).pathname === pdfPath && request.method() === 'GET')
+              optionRequests++;
+          });
           const optionsResponse = page.waitForResponse(
             (response) =>
               new URL(response.url()).pathname === pdfPath && response.request().method() === 'GET',
@@ -181,6 +186,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           ).toBe(200);
           const button = dialog.getByRole('button', { name: 'Export as PDF', exact: true });
           await expect(button).toBeEnabled();
+          expect(optionRequests, 'Opening Export starts one current options request.').toBe(1);
           if (guest)
             await expect(dialog.getByRole('button', { name: 'Download Univer file' })).toHaveCount(
               0,

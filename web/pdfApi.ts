@@ -51,6 +51,12 @@ export async function readPdfOptions(
   spaceId?: string,
   verifyCurrent: () => void = () => {},
 ) {
+  // Let an effect's immediate cleanup cancel a superseded options load before
+  // it takes the server's snapshot/transfer lease. In development StrictMode
+  // replays setup/cleanup; an aborted fetch may already have reached the server.
+  await Promise.resolve();
+  signal.throwIfAborted();
+  verifyCurrent();
   const response = await checked(
     await fetch(`${documentPath(id, spaceId)}/pdf`, {
       credentials: 'same-origin',

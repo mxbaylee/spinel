@@ -218,9 +218,25 @@ must not overlap authored text. Both native passes share one work/deadline
 budget. No visible text or captions are added, every remapped position retains
 its authored character/style mapping, and the SDK is not patched.
 
-Multiple-block and invisible-caption Top-and-bottom anchors still fail
-explicitly, as do empty image paragraphs with independently painted list
-markers/borders or an offset/wrap distance that collides with preceding text.
+Same-paragraph multi-file inserts retain all image controls and visible text.
+A Top-and-bottom image followed by an inline image uses native mixed flow;
+multiple Top-and-bottom controls followed by real caption text use their native
+stacked block lines, including styled prefixes and interleaved text. An otherwise
+empty group gets one measured paragraph reservation with cumulative image
+positions in source order. When visible text precedes a terminal floating image
+without a caption, that existing control receives an equivalent full-line inline
+layout box through public effect extents. If an inline control immediately
+precedes it, the native engine merges adjacent inline controls, so the existing
+line instead receives measured extra descent and the terminal image keeps an
+equivalent positioned origin. Both forms preserve the original dimensions,
+rotation, crop and source. The second native pass checks both images' measured
+origins and the retained paragraph spacing, including the first inline image's
+unchanged ascent and paint.
+No paragraph marks or captions are inserted. Independent authored inline
+references verify image area, text order and complete output pixels for these
+cases. Invisible-caption anchors still fail explicitly, as do empty image
+paragraphs with independently painted list markers/borders or an offset/wrap
+distance that collides with preceding text.
 Tall captioned and image-only fixtures verify every color-band pixel across
 continuations with no empty pages; full-column Square text fixtures match the
 equivalent authored native flow pixel for pixel, including rich styling, saved
@@ -228,6 +244,19 @@ spacing and repeated-header continuation. Separate fixtures verify prefix/captio
 order, saved LINE offsets, relative spacing, small-image pixels and caller
 ownership. Tables must also fit their actual containing viewport, including
 nested cells, even when an overflowing area contains only a background or border.
+
+Authored nonwrapping images keep their native overlay position and front/behind
+order without reserving body flow space. An image taller than its physical body
+continues through the actual body clips of subsequent pages, using existing pages
+first and appending bounded public page breaks only after all authored content
+when more pages are needed. Each band paints the complete original transform
+through its verified clip; image area and source-body positions must remain
+complete. Synthetic boundary paragraphs use a separate neutral style so document
+defaults cannot change the authored tail's spacing or borders, or create extra
+pages. Native layout selects first/even/default stories and resolves page
+fields again after any appended pages. Every destination must fit the unchanged
+horizontal geometry. Color-band, layering and unchanged-text references cover
+headers, columns, existing-page reuse and page-limit refusal with recovery.
 
 Repeated header/footer inline images accept the public editor's validated
 `isMultiTransform`/`transforms` presentation cache. Those cached screen/page

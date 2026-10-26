@@ -35,6 +35,7 @@ import {
 import { prepareNativeTableFlow, withoutTableReservations } from './doc-table-render.ts';
 import type { DocTablePaint } from './doc-table-render.ts';
 import { reserveGeneratedDocHyphens } from './doc-hyphen-flow.ts';
+import { appendFloatingDocPages, planFloatingDocImages } from './doc-floating-pages.ts';
 
 export type DocPrintOptions = Pick<SheetPrintOptions, 'limits' | 'signal'>;
 export interface NativeDocInput {
@@ -241,23 +242,46 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
     let renderedSnapshot = prepared.snapshot;
     let tablePaints = new Map<IDocumentSkeletonPage, DocTablePaint[]>();
     let reservationIds = new Set<string>();
+    let floats: ReturnType<typeof planFloatingDocImages> | undefined;
     if (physical) {
-      const pending = prepareNativeTableFlow(
-        renderedSnapshot,
-        data,
-        fonts,
-        limits,
-        check,
-        budget,
-        { layout, measure },
-        new Set(imageFlow.keys()),
-      );
-      data = undefined;
-      const flow = await pending;
-      data = flow.data;
-      renderedSnapshot = flow.snapshot;
-      tablePaints = flow.paints;
-      reservationIds = flow.reservationIds;
+      let source = renderedSnapshot;
+      for (let attempt = 0; attempt < limits.pages; attempt++) {
+        {
+          const pending = prepareNativeTableFlow(
+            source,
+            data,
+            fonts,
+            limits,
+            check,
+            budget,
+            { layout, measure },
+            new Set(imageFlow.keys()),
+          );
+          data = undefined;
+          const flow = await pending;
+          data = flow.data;
+          renderedSnapshot = flow.snapshot;
+          tablePaints = flow.paints;
+          reservationIds = flow.reservationIds;
+        }
+        floats = planFloatingDocImages(
+          renderedSnapshot,
+          data,
+          new Set(imageFlow.keys()),
+          limits,
+          check,
+          budget,
+        );
+        if (!floats.additionalPages) break;
+        source = appendFloatingDocPages(source, floats.additionalPages, limits, check);
+        tablePaints.clear();
+        floats.paints.clear();
+        data = undefined;
+        data = await layout(source);
+        verifyImageParagraphFlow(imageFlow, data, check);
+      }
+      if (floats?.additionalPages)
+        throw new PrintError('limit', 'PDF floating images exceed their bounded relayout budget.');
     }
     const inkBounds = new Map<IDocumentSkeletonPage, DocInk>();
     for (const page of data.pages) {
@@ -291,7 +315,10 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
       inkBounds,
       physical,
       budget,
+      [],
+      floats?.ids,
     );
+    for (const page of pages) page.images.push(...(floats?.paints.get(page.page) ?? []));
     const stories = prepareDocStoryPaints(
       renderedSnapshot,
       data,
@@ -351,6 +378,16 @@ export async function renderDocPdf(input: NativeDocInput, options: DocPrintOptio
           check();
           if (image.behind !== behind) continue;
           raw.save();
+          if (image.clip) {
+            raw.beginPath();
+            raw.rect(
+              image.clip.left,
+              image.clip.top,
+              image.clip.right - image.clip.left,
+              image.clip.bottom - image.clip.top,
+            );
+            raw.clip();
+          }
           if (table) {
             raw.beginPath();
             raw.rect(table.left, table.top, table.width, table.slice.bottom - table.slice.top);

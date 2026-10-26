@@ -28,6 +28,8 @@ export interface DocPlacedImage extends PlacedImage {
   id: string;
   behind: boolean;
   order: number;
+  /** A verified overlay band retains its whole original transform inside this clip. */
+  clip?: PrintBox;
 }
 
 export interface DocPageSlice {
@@ -126,25 +128,59 @@ export function validateDocImageAnchors(
       const anchor = anchors.get(id);
       const end = anchor === undefined ? -1 : stream.indexOf('\r', anchor);
       const suffix = end < 0 ? '' : stream.slice(anchor! + 1, end);
+      const following = (snapshot.body!.customBlocks ?? [])
+        .filter((block) => block.startIndex > (anchor ?? -1) && block.startIndex < end)
+        .map((block) => snapshot.drawings?.[block.blockId]);
+      const inlineContent = following.some(
+        (image) => image?.layoutType === PositionedObjectLayoutType.INLINE && image.hidden !== true,
+      );
+      const measuredTerminal = following.some(
+        (image) => image && deferredLineAnchors?.has(image.drawingId),
+      );
+      const floating = following.filter(
+        (image) => image?.layoutType === PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM,
+      );
+      if (
+        floating.length &&
+        [drawing, ...floating].some(
+          (image) =>
+            !image ||
+            image.docTransform.positionV.relativeFrom !== ObjectRelativeFromV.PARAGRAPH ||
+            !Number.isFinite(image.docTransform.positionV.posOffset) ||
+            image.docTransform.positionV.align !== undefined ||
+            image.docTransform.positionV.percent !== undefined,
+        )
+      )
+        unsupported();
       // Image-only paragraphs have already received their measured equivalent
       // flow reservation in doc-image-flow. Other unsupported source shapes
       // must not reach the pinned native double-height/drifting-anchor path.
       // Pending LINE-relative captions receive a measured public-model anchor
       // projection after the first layout. A PARAGRAPH anchor followed by real
       // authored text gets its own native zero-height anchor line, preserving
-      // earlier text above and the caption below it.
+      // earlier text above and the caption below it. A following visible inline
+      // image supplies real line metrics as well, including a multi-file insert
+      // with no caption. Consecutive Top-and-bottom anchors each get their own
+      // native block line, so captions and interleaved text retain source order.
       // Invisible markers do not separate that line and are not a workaround.
       if (
         (position.relativeFrom !== ObjectRelativeFromV.PARAGRAPH &&
           !(position.relativeFrom === ObjectRelativeFromV.LINE && deferredLineAnchors?.has(id))) ||
         anchor === undefined ||
-        suffix.includes('\b') ||
-        ![...suffix].some(
-          (character) =>
-            character.codePointAt(0)! >= 0x20 &&
-            character !== '\ufffc' &&
-            !/\s|\p{Default_Ignorable_Code_Point}/u.test(character),
-        )
+        following.some(
+          (image) =>
+            image?.layoutType !== PositionedObjectLayoutType.INLINE &&
+            image?.layoutType !== PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM,
+        ) ||
+        (!inlineContent &&
+          !measuredTerminal &&
+          !deferredLineAnchors?.has(id) &&
+          ![...suffix].some(
+            (character) =>
+              character.codePointAt(0)! >= 0x20 &&
+              character !== '\ufffc' &&
+              !/\s|\p{Default_Ignorable_Code_Point}/u.test(character),
+          ))
       )
         unsupported();
     }
@@ -181,6 +217,7 @@ export function paginateDocument(
   nativePages = false,
   budget = { nodes: 0, paintWork: 0 },
   sliceHeights: readonly number[] = [],
+  floatingImages: ReadonlySet<string> = new Set(),
 ): DocPageSlice[] {
   if (!data.pages.length || data.pages.length > limits.pages) {
     throw new PrintError('limit', 'PDF document exceeds its page budget.');
@@ -461,6 +498,7 @@ export function paginateDocument(
       if (page.skeColumnGroups.size) unsupported();
       for (const drawing of page.skeDrawings.values()) {
         visit();
+        if (floatingImages.has(drawing.drawingId)) continue;
         const source = snapshot.drawings?.[drawing.drawingId] as DocImageSource | undefined;
         if (!source || typeof source.source !== 'string') invalid();
         if (source.hidden) continue;
@@ -671,7 +709,11 @@ export function paginateDocument(
       throw new PrintError('unsupported', 'PDF document layout omitted source text.');
   }
   for (const drawing of Object.values(snapshot.drawings ?? {}))
-    if (!drawing.hidden && !seenImages.has(drawing.drawingId))
+    if (
+      !drawing.hidden &&
+      !seenImages.has(drawing.drawingId) &&
+      !floatingImages.has(drawing.drawingId)
+    )
       throw new PrintError('unsupported', 'PDF document layout omitted an image.');
   return result;
 }

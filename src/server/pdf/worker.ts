@@ -12,6 +12,7 @@ process.once('message', async (job: PdfJob) => {
       if (!sendMessage) return reject(new Error('No parent process.'));
       sendMessage(message, (error) => (error ? reject(error) : resolve()));
     });
+  let phase: Extract<PdfWorkerReply, { type: 'failure' }>['phase'] = 'fonts';
   try {
     const fonts = await pdfFonts();
     const input = {
@@ -20,6 +21,7 @@ process.once('message', async (job: PdfJob) => {
       defaultFamily: PDF_DEFAULT_FAMILY,
       fallbackFamilies: PDF_FALLBACK_FAMILIES,
     };
+    phase = 'render';
     const result =
       job.kind === 'sheet'
         ? await renderSheetPdf(
@@ -37,6 +39,7 @@ process.once('message', async (job: PdfJob) => {
         : await renderDocPdf(input as Parameters<typeof renderDocPdf>[0], { limits: PDF_LIMITS });
     // Small, sequential IPC messages bound parent deserialization and retain
     // atomic publication even if the child dies during the final transfer.
+    phase = 'transfer';
     for (let offset = 0; offset < result.bytes.byteLength; offset += 64 * 1024)
       await send({
         type: 'chunk',
@@ -44,13 +47,16 @@ process.once('message', async (job: PdfJob) => {
         // never copy the complete PDF's backing store for every chunk.
         bytes: new Uint8Array(result.bytes.subarray(offset, offset + 64 * 1024)),
       });
+    phase = 'peak';
+    const peakRssBytes = pdfWorkerPeakRss();
+    phase = 'transfer';
     await send({
       type: 'complete',
       byteLength: result.bytes.byteLength,
       pages: result.pages,
       mediaBox: result.mediaBox,
       durationMs: result.durationMs,
-      peakRssBytes: pdfWorkerPeakRss(),
+      peakRssBytes,
     });
     process.disconnect?.();
     process.exit(0);
@@ -60,6 +66,8 @@ process.once('message', async (job: PdfJob) => {
       await send({
         type: 'failure',
         code: code === 'limit' || code === 'cancelled' || code === 'unsupported' ? code : 'failed',
+        phase,
+        detail: code,
       });
     } finally {
       process.disconnect?.();

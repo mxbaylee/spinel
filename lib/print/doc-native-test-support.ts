@@ -36,7 +36,8 @@ export async function runDocJobs(
         results = message as DocNativeResult[];
       });
       worker.once('error', reject);
-      worker.once('exit', (code) => {
+      // The process may exit before its final PDF batch has drained from IPC.
+      worker.once('close', (code) => {
         if (code === 0 && results) accept(results);
         else reject(new Error(`Doc fixture exited (${code}): ${stderr}`));
       });
