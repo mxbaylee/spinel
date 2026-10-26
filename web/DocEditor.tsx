@@ -104,6 +104,7 @@ export function DocEditor({
   const chrome = useEditorChrome();
   // Rotation or a keyboard resize must not remount an editor with pending edits.
   const [mobile] = useState(useMobileDocControls);
+  const [phoneReady, setPhoneReady] = useState(false);
   const [phoneReadOnly, setPhoneReadOnly] = useState(false);
   const formulas = useRef<DocFormulaController | null>(null);
   const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
@@ -145,6 +146,7 @@ export function DocEditor({
     setFormulaError('');
     setPeople([]);
     setPhoneReadOnly(false);
+    setPhoneReady(false);
     let uploads = 0;
     let insertions = 0;
     let uploaded = 0;
@@ -413,6 +415,8 @@ export function DocEditor({
         document.getDocumentDataModel().getSnapshot().documentStyle?.documentFlavor !==
           DocumentFlavor.MODERN;
       setPhoneReadOnly(deviceReadOnly);
+      // Apply the fence before loading Formula code, which can wait on network.
+      if (data.access === 'viewer' || deviceReadOnly) await readonly();
       const installedFormulas = await installDocFormulas({
         univer,
         unitId: data.unitId,
@@ -441,8 +445,7 @@ export function DocEditor({
       formulaInterval = setInterval(() => {
         if (globalThis.document.visibilityState === 'visible') void formulas.current?.refresh();
       }, 5000);
-      if (data.access === 'viewer' || deviceReadOnly) await readonly();
-      else {
+      if (data.access !== 'viewer' && !deviceReadOnly) {
         canEditFormulas.current = true;
         setEditable(true);
         if (!mobile) document.setSelection(0, 0);
@@ -477,6 +480,7 @@ export function DocEditor({
             ),
       );
       controller.current = save;
+      setPhoneReady(true);
     })().catch((error) => {
       publishConnection('offline');
       if (!disposed)
@@ -613,7 +617,7 @@ export function DocEditor({
                   : 'Click the page to write. Type / for commands.'
                 : '')}
       </p>
-      <div className="univer-container" ref={container} />
+      <div className="univer-container" ref={container} inert={mobile && !phoneReady} />
     </section>
   );
 }

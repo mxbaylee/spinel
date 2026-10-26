@@ -16,8 +16,9 @@ other devices. Univer currently describes its mobile UI as experimental.
 ## Docs
 
 Docs choose the public mobile UI with the same coarse-pointer/900px rule, once
-per open editor. Ordinary (modern) Docs wrap to the phone's width while keeping
-their stored page settings. Tap **Edit** to write; the native compact toolbar
+per open editor. Ordinary (modern) Docs wrap to the phone's width at a local
+reading scale while keeping their stored page settings and desktop zoom. Tap
+**Edit**, then touch the text to write; the native compact toolbar
 provides formatting, lists and headings when the keyboard is open. Opening a Doc
 does not open the keyboard. Rotate the device or enter theatre mode without
 recreating the document. People stays available, and Share and Formula insertion

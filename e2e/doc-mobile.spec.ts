@@ -1,8 +1,14 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Locator, Page, TestInfo } from '@playwright/test';
-import { DocumentFlavor, getDocsEmptySnapshot, LocaleType, NamedStyleType } from '@univerjs/core';
+import {
+  DocumentFlavor,
+  getDocsEmptySnapshot,
+  LocaleType,
+  NamedStyleType,
+  PresetListType,
+} from '@univerjs/core';
 import type { ICustomRange, IDocumentData } from '@univerjs/core';
 import { formulaBody } from '@spinel/doc-formulas';
 import { openDatabase } from '../server/database.ts';
@@ -88,7 +94,14 @@ async function textPoint(page: Page) {
         // Native layers may use a sibling interaction canvas above the paint.
         return target === node || Boolean(target && node.parentElement?.contains(target));
       }, point);
-      if (hit) return { ...point, glyphWidth: glyphRight - left, lineHeight, pixels };
+      if (hit)
+        return {
+          ...point,
+          centerX: box.x + ((left + glyphRight) / 2 / info.width) * box.width,
+          glyphWidth: glyphRight - left,
+          lineHeight,
+          pixels,
+        };
     }
     return null;
   };
@@ -105,6 +118,23 @@ async function beginWriting(page: Page) {
   await page.touchscreen.tap(point.x, point.y);
   await page.touchscreen.tap(point.x, point.y);
   await expect(input(page)).toBeFocused();
+}
+
+async function selectFirstWord(page: Page) {
+  const point = await textPoint(page);
+  const touch = await page.context().newCDPSession(page);
+  try {
+    await touch.send('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [{ x: point.centerX, y: point.y }],
+    });
+    // A genuine held touch crosses the native long-press threshold; do not
+    // substitute a programmatic text range for this selection interaction.
+    await page.waitForTimeout(650);
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  } finally {
+    await touch.detach();
+  }
 }
 
 // Chromium desktop automation does not open an OS keyboard. Drive the browser
@@ -150,6 +180,7 @@ async function fixture(
   info: TestInfo,
   formulas = false,
   flavor = DocumentFlavor.MODERN,
+  zoomRatio = 1,
 ) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db),
@@ -161,6 +192,7 @@ async function fixture(
     parentId: null,
   });
   const snapshot = getDocsEmptySnapshot(item.id, LocaleType.EN_US, item.name, flavor);
+  snapshot.settings = { ...snapshot.settings, zoomRatio };
   const paragraphs = [
     'Phone journal',
     'A readable phone paragraph wraps onto several lines without shrinking its letters. ' +
@@ -229,7 +261,20 @@ async function fixture(
   const account = await phone(true),
     page = await account.newPage();
   const errors: string[] = [];
+  const diagnostics: unknown[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') diagnostics.push({ console: message.text().slice(0, 800) });
+  });
+  page.on('response', async (response) => {
+    const path = new URL(response.url()).pathname;
+    if (!path.includes('new_changes') && response.status() < 400) return;
+    diagnostics.push({
+      path,
+      status: response.status(),
+      body: (await response.text().catch(() => '')).slice(0, 1000),
+    });
+  });
   const read = async () => {
     const response = await account.request.get(`/api/items/${item.id}/doc`);
     expect(response.ok()).toBe(true);
@@ -244,92 +289,122 @@ async function fixture(
     read,
     phone,
     async close() {
+      await writeFile(
+        info.outputPath('sync-diagnostics.json'),
+        JSON.stringify({ errors, diagnostics }, null, 2),
+      );
       for (const context of contexts) await context.close();
       db.close();
     },
   };
 }
 
-test('phone Docs keep native mobile layout while rotating, writing, formatting and saving', async ({
-  browser,
-  baseURL,
-}, info) => {
-  test.setTimeout(150_000);
-  const f = await fixture(browser, baseURL!, info);
-  const { page } = f;
-  try {
-    await page.goto(`/?item=${f.item.id}`);
-    await saved(page);
-    const region = page.getByRole('region', { name: 'Doc document', exact: true });
-    await expect(region).toHaveAttribute('data-mobile', 'true');
-    const canvas = region.getByLabel('Document canvas', { exact: true });
-    await expect(canvas).toBeVisible();
-    const mounted = (await canvas.elementHandle())!;
-    const original = await f.read();
-    expect(original.body!.dataStream).toContain('A readable phone paragraph');
-    await textPoint(page);
-    await capture(page, info, 'reading-light');
-    await page.setViewportSize({ width: 844, height: 390 });
-    await expect(region).toHaveAttribute('data-mobile', 'true');
-    expect(await mounted.evaluate((node) => node.isConnected)).toBe(true);
-    await capture(page, info, 'reading-landscape');
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.emulateMedia({ colorScheme: 'dark' });
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await textPoint(page);
-    await capture(page, info, 'reading-dark');
-    const rotated = await f.read();
-    expect(rotated.body).toEqual(original.body);
-    expect(rotated.documentStyle).toEqual(original.documentStyle);
-    expect(rotated.settings).toEqual(original.settings);
-    await page.emulateMedia({ colorScheme: 'light' });
-    await beginWriting(page);
-    await keyboardOcclusion(page, 320);
-    const format = page.getByRole('button', { name: 'Format', exact: true });
-    await expect(format).toBeVisible();
-    await format.tap();
-    const drawer = page.locator('[data-u-comp="mobile-doc-toolbar-drawer"]');
-    await expect(drawer).toBeVisible();
-    await page.getByRole('button', { name: 'Bold', exact: true }).tap();
-    await page.getByRole('button', { name: 'Show keyboard', exact: true }).tap();
-    await expect(input(page)).toBeFocused();
-    await page.keyboard.type('Mobile ');
-    await saved(page);
-    // The two taps target the left edge of the first painted P. Formatting must
-    // retain that exact insertion point, not move the edit to another paragraph.
-    await expect
-      .poll(async () => (await f.read()).body!.dataStream)
-      .toBe('Mobile ' + original.body!.dataStream);
-    const bold = await f.read();
-    expect(bold.body!.dataStream).toBe('Mobile ' + original.body!.dataStream);
-    expect(
-      bold.body!.textRuns!.some(
-        (run) => run.ts?.bl === 1 && bold.body!.dataStream.slice(run.st, run.ed).includes('Mobile'),
-      ),
-    ).toBe(true);
-    await page.getByRole('button', { name: 'Heading', exact: true }).tap();
-    await page.getByText('Heading 1', { exact: true }).tap();
-    await saved(page);
-    await expect
-      .poll(async () => (await f.read()).body!.paragraphs![0]!.paragraphStyle?.namedStyleType)
-      .toBe(NamedStyleType.HEADING_1);
-    await capture(page, info, 'writing-toolbar');
-    await keyboardOcclusion(page, 0);
-    const written = await f.read();
-    expect(written.documentStyle).toEqual(original.documentStyle);
-    expect(written.settings).toEqual(original.settings);
-    await page.reload();
-    await saved(page);
-    await expect(region).toHaveAttribute('data-mobile', 'true');
-    const reloaded = await f.read();
-    expect(reloaded.body).toEqual(written.body);
-    expect(reloaded.documentStyle).toEqual(original.documentStyle);
-    expect(reloaded.settings).toEqual(original.settings);
-    expect(f.errors).toEqual([]);
-  } finally {
-    await f.close();
-  }
-});
+for (const zoomRatio of [1, 0.5, 2])
+  test(`phone Docs at saved ${zoomRatio * 100}% zoom keep readable layout, touch formatting and saved settings`, async ({
+    browser,
+    baseURL,
+  }, info) => {
+    test.setTimeout(150_000);
+    const f = await fixture(browser, baseURL!, info, false, DocumentFlavor.MODERN, zoomRatio);
+    const { page } = f;
+    try {
+      const original = await f.read();
+      await page.goto(`/?item=${f.item.id}`);
+      await saved(page);
+      const region = page.getByRole('region', { name: 'Doc document', exact: true });
+      await expect(region).toHaveAttribute('data-mobile', 'true');
+      const canvas = region.getByLabel('Document canvas', { exact: true });
+      await expect(canvas).toBeVisible();
+      const mounted = (await canvas.elementHandle())!;
+      const opened = await f.read();
+      expect(opened.body).toEqual(original.body);
+      expect(opened.documentStyle).toEqual(original.documentStyle);
+      expect(opened.settings).toEqual(original.settings);
+      expect(original.body!.dataStream).toContain('A readable phone paragraph');
+      await textPoint(page);
+      await capture(page, info, `reading-light-zoom-${zoomRatio}`);
+      await page.setViewportSize({ width: 844, height: 390 });
+      await expect(region).toHaveAttribute('data-mobile', 'true');
+      expect(await mounted.evaluate((node) => node.isConnected)).toBe(true);
+      await capture(page, info, `reading-landscape-zoom-${zoomRatio}`);
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.emulateMedia({ colorScheme: 'dark' });
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+      await textPoint(page);
+      await capture(page, info, `reading-dark-zoom-${zoomRatio}`);
+      const rotated = await f.read();
+      expect(rotated.body).toEqual(original.body);
+      expect(rotated.documentStyle).toEqual(original.documentStyle);
+      expect(rotated.settings).toEqual(original.settings);
+      await page.emulateMedia({ colorScheme: 'light' });
+      await beginWriting(page);
+      await keyboardOcclusion(page, 320);
+      const format = page.getByRole('button', { name: 'Format', exact: true });
+      await expect(format).toBeVisible();
+      await format.tap();
+      const drawer = page.locator('[data-u-comp="mobile-doc-toolbar-drawer"]');
+      await expect(drawer).toBeVisible();
+      await page.getByRole('button', { name: 'Bold', exact: true }).tap();
+      await page.getByRole('button', { name: 'Show keyboard', exact: true }).tap();
+      await expect(input(page)).toBeFocused();
+      await page.keyboard.type('Mobile ');
+      await saved(page);
+      // The two taps target the left edge of the first painted P. Formatting must
+      // retain that exact insertion point, not move the edit to another paragraph.
+      await expect
+        .poll(async () => (await f.read()).body!.dataStream)
+        .toBe('Mobile ' + original.body!.dataStream);
+      const bold = await f.read();
+      expect(bold.body!.dataStream).toBe('Mobile ' + original.body!.dataStream);
+      expect(
+        bold.body!.textRuns!.some(
+          (run) =>
+            run.ts?.bl === 1 && bold.body!.dataStream.slice(run.st, run.ed).includes('Mobile'),
+        ),
+      ).toBe(true);
+      await selectFirstWord(page);
+      await format.tap();
+      await expect(drawer).toBeVisible();
+      await page.getByRole('button', { name: 'Italic', exact: true }).tap();
+      await saved(page);
+      await expect
+        .poll(async () => {
+          const selected = await f.read();
+          return selected
+            .body!.textRuns!.filter((run) => run.ts?.it === 1)
+            .map((run) => selected.body!.dataStream.slice(run.st, run.ed));
+        })
+        .toEqual(['Mobile']);
+      await page.getByRole('button', { name: 'Show keyboard', exact: true }).tap();
+      await page.getByRole('button', { name: 'Heading', exact: true }).tap();
+      await page.getByText('Heading 1', { exact: true }).tap();
+      await saved(page);
+      await expect
+        .poll(async () => (await f.read()).body!.paragraphs![0]!.paragraphStyle?.namedStyleType)
+        .toBe(NamedStyleType.HEADING_1);
+      await page.getByRole('button', { name: 'Heading', exact: true }).tap();
+      await page.getByText('Unordered list', { exact: true }).tap();
+      await saved(page);
+      await expect
+        .poll(async () => (await f.read()).body!.paragraphs![0]!.bullet?.listType)
+        .toBe(PresetListType.BULLET_LIST);
+      await capture(page, info, `writing-toolbar-zoom-${zoomRatio}`);
+      await keyboardOcclusion(page, 0);
+      const written = await f.read();
+      expect(written.documentStyle).toEqual(original.documentStyle);
+      expect(written.settings).toEqual(original.settings);
+      await page.reload();
+      await saved(page);
+      await expect(region).toHaveAttribute('data-mobile', 'true');
+      const reloaded = await f.read();
+      expect(reloaded.body).toEqual(written.body);
+      expect(reloaded.documentStyle).toEqual(original.documentStyle);
+      expect(reloaded.settings).toEqual(original.settings);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
 
 test('phone Doc formulas preserve scalar values, all table rows and usable edit dialogs', async ({
   browser,

@@ -19,6 +19,7 @@ import {
   UniverDocsHyperLinkMobileUIPlugin,
 } from '@univerjs/preset-docs-hyper-link';
 import './docMobile.css';
+import { DocPhoneViewPlugin } from './docPhoneView.ts';
 
 export function useMobileDocControls() {
   return window.matchMedia('(pointer: coarse) and (max-width: 900px)').matches;
@@ -62,19 +63,22 @@ export function docPreset(
   return mobileDocPlugins(
     {
       ...preset,
-      plugins: preset.plugins.map((entry) => {
-        const [plugin, options] = Array.isArray(entry) ? entry : [entry, undefined];
-        if (plugin !== UniverDocsUIPlugin) return entry;
-        return [
-          plugin,
-          {
-            ...options,
-            // SDK hints are painted at 50% opacity. Use accessible shell text.
-            placeholder: false,
-            ...(mobile && readOnly ? { footer: false } : {}),
-          },
-        ];
-      }),
+      plugins: [
+        ...preset.plugins.map((entry): IPreset['plugins'][number] => {
+          const [plugin, options] = Array.isArray(entry) ? entry : [entry, undefined];
+          if (plugin !== UniverDocsUIPlugin) return entry;
+          return [
+            plugin,
+            {
+              ...options,
+              // SDK hints are painted at 50% opacity. Use accessible shell text.
+              placeholder: false,
+              ...(mobile && readOnly ? { footer: false } : {}),
+            },
+          ];
+        }),
+        ...(mobile ? [DocPhoneViewPlugin] : []),
+      ],
     },
     mobile,
   );

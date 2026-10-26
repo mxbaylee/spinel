@@ -28,6 +28,7 @@ import { SaveStatus } from './SaveStatus.tsx';
 interface MobileDocProps {
   viewer?: boolean;
   traditional?: boolean;
+  zoomRatio?: number;
 }
 
 interface Observation {
@@ -72,7 +73,7 @@ const paragraphs = [
 ];
 
 /** Local fixture using the production preset; live persistence is tested in Playwright. */
-function MobileCanvas({ viewer = false, traditional = false }: MobileDocProps) {
+function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: MobileDocProps) {
   const chrome = useEditorChrome();
   const host = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
@@ -97,7 +98,7 @@ function MobileCanvas({ viewer = false, traditional = false }: MobileDocProps) {
         'Autumn notes',
         traditional ? DocumentFlavor.TRADITIONAL : DocumentFlavor.MODERN,
       );
-      data.settings = { ...data.settings, zoomRatio: 1 };
+      data.settings = { ...data.settings, zoomRatio };
       data.drawings = {};
       data.drawingsOrder = [];
       const stream = paragraphs.join('\r') + '\r\n';
@@ -238,7 +239,7 @@ function MobileCanvas({ viewer = false, traditional = false }: MobileDocProps) {
       cleanups.reverse().forEach((close) => close());
       queueMicrotask(() => univer?.dispose());
     };
-  }, [readOnly, traditional]);
+  }, [readOnly, traditional, zoomRatio]);
   return (
     <section
       className="sheet-editor"
@@ -311,7 +312,12 @@ type Story = StoryObj<typeof meta>;
 const observe = (canvas: HTMLElement): Observation =>
   JSON.parse(canvas.querySelector('[data-mobile-doc-evidence]')!.textContent!);
 
-async function ready(canvasElement: HTMLElement, editable: boolean, modern: boolean) {
+async function ready(
+  canvasElement: HTMLElement,
+  editable: boolean,
+  modern: boolean,
+  zoomRatio = 1,
+) {
   await waitFor(
     () => {
       expect(within(canvasElement).queryByRole('alert')).not.toBeInTheDocument();
@@ -322,7 +328,7 @@ async function ready(canvasElement: HTMLElement, editable: boolean, modern: bool
       expect(evidence).not.toBeNull();
       expect(evidence.unchanged).toBe(true);
       expect(evidence.canEdit).toBe(editable);
-      expect(evidence.userZoom).toBe(1);
+      expect(evidence.userZoom).toBe(zoomRatio);
       expect(evidence.canvasWidth).toBeLessThanOrEqual(evidence.hostWidth + 1);
       expect(evidence.lines).toBeGreaterThanOrEqual(paragraphs.length);
       if (editable) {
@@ -340,8 +346,8 @@ async function ready(canvasElement: HTMLElement, editable: boolean, modern: bool
   );
 }
 
-async function reflows(canvasElement: HTMLElement, editable: boolean) {
-  await ready(canvasElement, editable, true);
+async function reflows(canvasElement: HTMLElement, editable: boolean, zoomRatio = 1) {
+  await ready(canvasElement, editable, true, zoomRatio);
   const initial = observe(canvasElement);
   const shell = canvasElement.querySelector<HTMLElement>('[data-mobile-doc-shell]')!;
   const canvas = within(canvasElement).getByLabelText('Document canvas');
@@ -369,10 +375,18 @@ async function reflows(canvasElement: HTMLElement, editable: boolean) {
 }
 
 export const Reading: Story = { play: ({ canvasElement }) => reflows(canvasElement, true) };
+export const SavedHalfZoom: Story = {
+  args: { zoomRatio: 0.5 },
+  play: ({ canvasElement }) => reflows(canvasElement, true, 0.5),
+};
+export const SavedDoubleZoom: Story = {
+  args: { zoomRatio: 2 },
+  play: ({ canvasElement }) => reflows(canvasElement, true, 2),
+};
 export const Viewer: Story = {
-  args: { viewer: true },
+  args: { viewer: true, zoomRatio: 2 },
   play: async ({ canvasElement }) => {
-    await reflows(canvasElement, false);
+    await reflows(canvasElement, false, 2);
     await expect(
       within(canvasElement).queryByRole('button', { name: 'Edit' }),
     ).not.toBeInTheDocument();
