@@ -347,7 +347,7 @@ test('Sheet images survive browser export/import and restore, with scoped revoca
         response.request().method() === 'POST',
     );
     await page
-      .getByLabel('Univer file', { exact: true })
+      .getByLabel('Univer file or archive', { exact: true })
       .setInputFiles({ name: 'copy.univer.json', mimeType: 'application/json', buffer: bytes });
     const imported = await importing;
     expect(imported.status()).toBe(201);
