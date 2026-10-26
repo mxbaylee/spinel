@@ -21,7 +21,9 @@ Univer 1.1.0 UI/design/presets, Base UI 1.9.0 and Storybook 10.3.5 already decla
 React 19-compatible peers in their published metadata. Spinel already uses
 `createRoot`, StrictMode and the modern JSX transform. Adapt the three DOM ref
 prop types to include null and give the native-editor story ref an explicit
-undefined initializer. Preserve the historical [scaffold choice](SPN-001.md#legacy-decision-1-react-version),
+undefined initializer. React 19 also treats `inert` as a boolean DOM prop: pass
+`true` for the existing read-only loading/error guard instead of the React 18
+empty-string attribute. Preserve the historical [scaffold choice](SPN-001.md#legacy-decision-1-react-version),
 which expressly allows later reviewed upgrades.
 
 The primary migration reference is the [React 19 upgrade guide](https://react.dev/blog/2024/04/25/react-19-upgrade-guide).
