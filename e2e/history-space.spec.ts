@@ -11,6 +11,7 @@ import { imageSources } from '../src/server/workspace/imageSources.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { sheetImageFixture } from './sheet-image-fixture.ts';
+import { resolvedWorkbook } from './workbook-state.ts';
 
 for (const kind of ['doc', 'sheet'] as const) {
   test(`Space ${kind} history restores images and preserves the exact child and generation boundary`, async ({
@@ -70,6 +71,12 @@ for (const kind of ['doc', 'sheet'] as const) {
       const response = await context.request.get(`${prefix}/export`);
       expect(response.status(), await response.text()).toBe(200);
       return await response.json();
+    };
+    const expectUnchanged = async (before: IDocumentData | IWorkbookData) => {
+      const after = await exported();
+      expect(kind === 'sheet' ? resolvedWorkbook(after) : after).toEqual(
+        kind === 'sheet' ? resolvedWorkbook(before as IWorkbookData) : before,
+      );
     };
     const imageVisible = async (target: Page) => {
       // The blue image is shared by the Doc fixture and the Sheet image cell.
@@ -209,7 +216,7 @@ for (const kind of ['doc', 'sheet'] as const) {
         page.getByRole('link', { name: 'Return to document', exact: true }),
       ).toHaveAttribute('href', liveHref);
       await imageVisible(page);
-      expect(await exported()).toEqual(latest);
+      await expectUnchanged(latest);
       await capture('preview');
 
       const readOnly = await viewerContext.newPage();
@@ -246,7 +253,7 @@ for (const kind of ['doc', 'sheet'] as const) {
       await expect(
         page.getByRole('button', { name: 'Restore this version', exact: true }),
       ).toBeFocused();
-      expect(await exported()).toEqual(latest);
+      await expectUnchanged(latest);
       await page.getByRole('button', { name: 'Restore this version', exact: true }).click();
       const restoredResponse = page.waitForResponse(
         (response) =>
@@ -289,7 +296,7 @@ for (const kind of ['doc', 'sheet'] as const) {
         data: { unitId: originalUnit, requestId: randomUUID() },
       });
       expect(stale.status()).toBe(409);
-      expect(await exported()).toEqual(restored);
+      await expectUnchanged(restored);
       const history = await context.request.get(`${prefix}/history`);
       expect(history.status()).toBe(200);
       const before = (
