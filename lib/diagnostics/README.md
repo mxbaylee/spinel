@@ -9,7 +9,7 @@ Pure transformations remain deterministic and do not perform I/O.
 event name and strict validator together. Logs have six explicit levels and
 static messages; reason/operation/job codes are allowlists. Metric observations
 fix their kind and unit per name: counters are **increments**, gauges are point
-observations, histograms are raw duration observations. No percentile rollups are
+observations, histograms are raw duration or integral count observations. No percentile rollups are
 implied. Finite nonnegative values only, integral counts.
 
 Context permits opaque UUID file/Space/run IDs and registered route templates.
@@ -22,3 +22,24 @@ document edit reliability. A queue must never relabel an old event after a clear
 The package exports validation and the optional sink from `index.ts`. Tests cover
 schema privacy boundaries, metric semantics and failure isolation. CI runs them
 in the Lib tests job with the rest of `lib/`; this package is not yet published.
+
+## Sync observations
+
+`observeSync(sink, context, observation)` records a registered sync metric. A
+metric that also warrants a log emits a separate `<metric-name>.log` event with
+its fixed level and static message. Refusal reasons, malformed checks, invariant
+codes and drop rules are allowlists. Mutation labels match the supported
+sync-transform vocabulary; unknown sender strings become `other`. The registry
+rejects unknown detail fields and arbitrary error messages even for custom sinks.
+
+The transform library's optional observer carries only drop-rule/count, candidate
+offset/count and peak-growth/count observations. It performs no I/O; caller timing,
+concurrent length, refusals, invariant failures and divergence belong at the server
+boundary. The six loss rules are registered with their content-free validators.
+The caller supplies already-authorized file/Space context and preserves the existing
+exclusion of guest telemetry. No refusal or divergence payload shapes are collected.
+
+`sync.edit.offset` is a count of writes alongside a clipped shift band. The wider
+original command band is absent from the mutation, so the count is an upper bound
+on actual offset writes. It contains no coordinates, values, ranges or dimensions.
+SPN-058 owns the registered resync/pending-loss observations from browser state.

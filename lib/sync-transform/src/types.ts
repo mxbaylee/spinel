@@ -15,6 +15,49 @@ export interface Mutation<P = any> {
  */
 export type Side = 'left' | 'right';
 
+export type DropRule =
+  | 'name-first-accepted'
+  | 'cell-overwritten'
+  | 'merge-cut'
+  | 'removed-sheet'
+  | 'setting-first-accepted'
+  | 'doc-formula-first-accepted';
+export type TransformObservation =
+  | { kind: 'dropped'; rule: DropRule; value: number }
+  | { kind: 'offset'; value: number }
+  | { kind: 'growth'; value: number };
+export type TransformObserver = (event: TransformObservation) => void;
+/** Optional observations cannot change the output or throw through a transform. */
+export function observeTransform(
+  observer: TransformObserver | undefined,
+  event: TransformObservation,
+) {
+  try {
+    observer?.(event);
+  } catch {
+    /* A broken observer cannot lose an edit. */
+  }
+}
+export type MalformedCheck =
+  | 'shift'
+  | 'reserved-key'
+  | 'claim'
+  | 'remove-index'
+  | 'inline-style'
+  | 'base-cells'
+  | 'base-claim'
+  | 'tail'
+  | 'other';
+/** A stable content-free diagnostic code; the inherited message is never telemetry. */
+export class MalformedEditError extends TypeError {
+  readonly check: MalformedCheck;
+  constructor(check: MalformedCheck, message: string) {
+    super(message);
+    this.name = 'MalformedEditError';
+    this.check = check;
+  }
+}
+
 export function flip(side: Side): Side {
   return side === 'left' ? 'right' : 'left';
 }
@@ -22,7 +65,7 @@ export function flip(side: Side): Side {
 /**
  * Thrown for a mutation with no transform, so it is never merged by guesswork.
  *
- * Diagnostics (SPN-057, not built): the server counts these as
+ * Diagnostics (SPN-057): the server counts these as
  * `sync.edit.unsupported` by `mutationId` and logs at error. One means a
  * sender bug or a Univer upgrade that added a mutation, never a user race.
  */
@@ -55,15 +98,17 @@ export type RefusalReason = 'moved-cells' | 'name-race' | 'formula-race' | 'grow
  *
  * Unlike UnsupportedMutationError it is a race, not a sender bug.
  *
- * Diagnostics (SPN-057, not built): the server counts each refusal as
+ * Diagnostics (SPN-057): the server counts each refusal as
  * `sync.edit.refused` by `reason`, against `sync.edit.transformed` for the
  * rate, and logs at info, since a refusal is the designed outcome of a race.
- * To tell which rule to replace with a real merge, it would also carry the
- * ids of the two mutations that raced, as labels; never their params, which
- * hold cell content. The sender's resync is the cost to measure (SPN-058).
+ * The error also carries the ids of the two mutations that raced; the server
+ * maps these through its fixed mutation vocabulary before using them as labels.
+ * It never exports error messages or params, which may hold cell content. The sender's resync is the cost to measure (SPN-058).
  */
 export class RefusedEditError extends Error {
   readonly reason: RefusalReason;
+  mutationId?: string;
+  againstMutationId?: string;
   constructor(reason: RefusalReason, detail?: string) {
     super(`Edit refused: ${reason}${detail ? ` (${detail})` : ''}.`);
     this.name = 'RefusedEditError';
@@ -84,7 +129,12 @@ export function refuseRaces(
 ): void {
   for (const x of a) {
     for (const y of b) {
-      if (x.params.unitId === y.params.unitId && race(x, y)) throw new RefusedEditError(reason);
+      if (x.params.unitId === y.params.unitId && race(x, y)) {
+        const error = new RefusedEditError(reason);
+        error.mutationId = x.id;
+        error.againstMutationId = y.id;
+        throw error;
+      }
     }
   }
 }

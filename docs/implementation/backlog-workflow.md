@@ -1,5 +1,39 @@
 # backlog-workflow decision record
 
+## Two independent grades on the same commit
+
+**Date/status:** 2026-10-26, accepted. **Authority:** Owner, SPN-057 review chat:
+require two subagents to agree on the same commit, each scoring above 95, for every
+merge after a fresh review found a blocker missed by the earlier passing review.
+
+**Question/context:** Is one passing independent review sufficient after the
+SPN-057 re-review exposed compact edits that could expand into excessive memory
+use? The repair also needed a compatibility check for a large existing cell.
+
+**Options:** retain one reviewer; require a second review only after a failure;
+or require two independent grades for every Spinel PR merge. The owner chose the
+last to reduce the chance of another missed issue.
+
+**Outcome/reason:** Two independent subagents that did not implement the change
+must each inspect the full candidate, apply the existing rubric and score
+**above 95/100 on the same current commit**. Exactly 95 does not pass; neither
+an average nor an older commit's grade satisfies the gate. Both reviews must have
+no unresolved blockers. Reviewers may exchange concrete findings and evidence,
+but neither receives the other's score or a desired result. Both revalidate the
+final SHA after repairs or base updates. Record both identities, scores, rubrics,
+shared SHA and every finding's disposition in the PR before a guarded squash merge.
+
+This supersedes the earlier reviewer-count and numerical threshold in the
+historical decisions below. The rubric weights, scope-first repair rules, CI
+requirements, visual approval, memory watchdog and merge authorization remain.
+This is an agent-enforced review gate; the record does not claim that GitHub can
+enforce numerical subagent grades.
+
+**Personas:** Operator accepts additional review time to catch resource and
+operational faults; Owner gains a second independent check of completeness and
+saved documents; Collaborator gains another check of concurrency and durability;
+Link guest gains another check of access, revocation and untrusted-input boundaries.
+
 ## CI as the default validation environment
 
 **Date/status:** 2026-10-23, accepted. **Authority:** Owner, this backlog chat:
@@ -15,8 +49,8 @@ or allow CI as the normal validation environment. The owner chose the last.
 **Outcome/reason:** Agents may prefer CI for typecheck, lint, backlog, unit,
 browser and other required checks. Local passes are not prerequisites for draft
 pushes. Keep unverified PRs draft and report deferred/aborted checks honestly.
-All required current-head CI, independent review >=95 with no blockers, actual
-visual approval and guarded squash-merge requirements remain. Local workloads
+All required current-head CI, the [current independent-review gate](#two-independent-grades-on-the-same-commit),
+actual visual approval and guarded squash-merge requirements remain. Local workloads
 still obey the memory watchdog. No paid host or deployment authority is added.
 
 **Personas:** Operator retains reproducible checks and avoids host pressure;

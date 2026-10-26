@@ -13,6 +13,69 @@ SPN-058 (the client), the retained SPN-056 (independent integrated review), and
 SPN-059 (cutover and removal of Univer collaboration). The replacement remains
 inactive until the server/client work and integrated review pass.
 
+## Spinel server integration flag
+
+SPN-057 supplies `@spinel/sync-server` and the application SQLite adapter behind
+`SPINEL_SYNC_SERVER=1` (`createApp({syncServer:true})` in tests). The flag defaults
+off. It exposes a versioned JSON protocol for SPN-058; it does not activate a
+browser client, presence, retained-data conversion or Pro removal. SPN-056's
+integrated review and SPN-059 still gate activation.
+
+With the flag enabled, newly prepared native documents use one durable revision
+log. An incoming edit is transformed past each accepted edit using the cells at
+their exact common base and `side: 'right'`. Sparse cell before-images reconstruct
+those bases from the current snapshot; whole snapshots are not stored for every
+revision. The working window is at most 128 revisions and 16 MiB per unit. Older
+submissions resync. Accepted edits and immutable retry identities remain durable.
+The server keeps at most eight headless OSS Univer units and evicts idle units
+after 60 seconds.
+
+Final credential, grant, exact Space scope, ancestry, root privacy epoch and
+generation checks run inside the same SQLite transaction as the revision, receipt
+and current snapshot write. Acknowledgements follow that commit. A failed
+validation or write discards the candidate runtime. Stale assistant writes retain
+exact-revision rejection and OAuth refresh retains the original connection's retry
+identity. Each broadcast recipient proves current access immediately before send;
+the 500 ms scan and precommit scan close revoked sockets.
+
+Backend ownership survives restarting with a different flag. The new server
+refuses existing legacy collaboration units; the legacy path refuses units owned
+by the new log. Neither path falls back to an obsolete native snapshot. Purge
+continues to remove owned generations even with the new serving flag disabled.
+Conversion remains SPN-059.
+
+The protocol uses these route prefixes followed by `/ticket`, `/snapshot` or
+`/socket`, always with `?unitId=<active-generation>`:
+
+| Credential | Prefix |
+| --- | --- |
+| Ordinary account | `/sync-api/items/:itemId` |
+| Ordinary guest | `/sync-api/guest/:itemId` |
+| Space account | `/sync-api/spaces/:spaceId/items/:itemId` |
+| Space guest | `/sync-api/guest-spaces/:spaceId/items/:itemId` |
+
+`POST /ticket` requires the configured Origin and returns a single-use, 30-second
+ticket. The socket URL supplies that ticket as `ticket`; upgrade requires the same
+cookie, scope and privacy epoch. `GET /snapshot` and the initial socket frame return
+the native snapshot and current revision. Socket submissions carry
+`{type:'submit',mutationId,baseRevision,mutations}`. The server sends ordered `edit`
+frames and a durable `ack`; the sender must account for its own revision appearing
+in both. Retries return the original ack without rebroadcasting the edit. Frames
+never contain internal before-images, actor identities or payload fingerprints.
+Refusal sends `resync` with a fixed reason; SPN-058 owns pending-edit disposal and
+the user-facing reload behavior.
+
+A client with no pending edits sends `{type:'verify',revision,hash}` for its latest
+applied revision, using the shared touched-footprint hash contract. A mismatch
+requests resync and emits `sync.divergence.detected`. Metrics and static log events
+have strict allowlists; no document values or diagnostic replay shapes are
+collected. Guest activity is excluded from the diagnostics collector. See the
+[package contract](../lib/sync-server/README.md) and
+[implementation decisions and evidence](implementation/SPN-057.md).
+
+The following sections describe the default legacy transport and shared access,
+lifecycle and editor behavior until SPN-059 performs the cutover.
+
 ## Storage boundary
 
 `src/server/collaboration/service.ts` is the TypeScript boundary around Univer's
