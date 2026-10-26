@@ -137,7 +137,7 @@ test('exports owned nested files and whole Spaces, then imports their contents i
   };
   const folder = source.create(owner.id, { name: 'Archive home', kind: 'folder', parentId: null });
   const nested = source.create(owner.id, {
-    name: 'Plans / 2026',
+    name: 'Plans 2026',
     kind: 'folder',
     parentId: folder.id,
   });
@@ -284,7 +284,7 @@ test('exports owned nested files and whole Spaces, then imports their contents i
     await expect(
       importedPage.getByRole('button', { name: 'Trip Space Space', exact: true }),
     ).toBeVisible();
-    await importedPage.getByRole('button', { name: 'Plans / 2026 Folder', exact: true }).click();
+    await importedPage.getByRole('button', { name: 'Plans 2026 Folder', exact: true }).click();
     await expect(
       importedPage.getByRole('button', { name: 'Empty folder Folder', exact: true }),
     ).toBeVisible();
