@@ -4,7 +4,7 @@ import {
   PRESERVE_INSERTED_PARAGRAPH_IDS,
   TextXActionType,
 } from '@univerjs/core';
-import type { IDocumentBody, IDocumentData, TextXAction } from '@univerjs/core';
+import type { IDocumentBody, IDocumentData, IParagraph, TextXAction } from '@univerjs/core';
 import type { Mutation } from '@spinel/sync-transform';
 import { expect, test } from 'vitest';
 import { captureNative, NativeReplica } from '../index.ts';
@@ -74,7 +74,8 @@ function insertion(mutation: Mutation) {
 function insertBody(properties: Record<string, unknown>): IDocumentBody {
   return {
     dataStream: 'first\rsecond\r',
-    paragraphs: [{ startIndex: 5 }, { startIndex: 12, paragraphId: 'paragraph-1' }],
+    // Native producer input can precede ID realization; the persisted type requires it.
+    paragraphs: [{ startIndex: 5 } as IParagraph, { startIndex: 12, paragraphId: 'paragraph-1' }],
     customRanges: [{ startIndex: 0, endIndex: 4, rangeId: 'metadata', rangeType: 99, properties }],
   };
 }
@@ -260,7 +261,8 @@ test('syncOnly still refuses a genuine insertion whose producer has not realized
       {
         t: TextXActionType.INSERT,
         len: 1,
-        body: { dataStream: '\r', paragraphs: [{ startIndex: 0 }] },
+        // Deliberately violate the realized paragraph contract to verify refusal.
+        body: { dataStream: '\r', paragraphs: [{ startIndex: 0 } as IParagraph] },
       },
     ]),
   };
