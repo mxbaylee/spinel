@@ -1,6 +1,6 @@
 import { createNativeSyncClient, hashTouched, nativeSnapshot } from '@spinel/sync-client';
 import type { ClientState, ClientFailure, OutgoingFrame, Touched } from '@spinel/sync-client';
-import { UniverInstanceType } from '@univerjs/core';
+import { ICommandService, UniverInstanceType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData, Univer } from '@univerjs/core';
 import type { SaveState } from '../src/shared/autosave.ts';
 import type { ItemAccess } from '../src/shared/workspace.ts';
@@ -9,6 +9,7 @@ import { documentPath, documentSyncPath, guestItemId } from './documentAccess.ts
 import { revokeGuestView } from './guestRevocation.ts';
 import { setSyncPresence } from './syncPresence.ts';
 import type { SyncPresenceState, SyncPresenceMember } from './syncPresence.ts';
+import { nativeMutationInventory } from './nativeMutationInventory.ts';
 
 interface Watch {
   publish(state: SaveState): void;
@@ -179,7 +180,12 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     if (evidence)
       window.dispatchEvent(
         new CustomEvent('spinel-sync-native-snapshot', {
-          detail: { unitId, revision: state.revision, snapshot: structuredClone(snapshot) },
+          detail: {
+            unitId,
+            revision: state.revision,
+            snapshot: structuredClone(snapshot),
+            mutations: nativeMutationInventory(univer.__getInjector().get(ICommandService)),
+          },
         }),
       );
   };

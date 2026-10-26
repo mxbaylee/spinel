@@ -10,8 +10,10 @@ grooming retired the SPN-010 limits experiment and the SPN-013 queue.
 The [staged landing](implementation/sync-staged-landing-2026-10-25.md#land-the-library-and-retain-spn-056-for-integrated-review)
 now separates SPN-104 (the transform library), SPN-057 (the sync server),
 SPN-058 (the client), the retained SPN-056 (independent integrated review), and
-SPN-059 (cutover and removal of Univer collaboration). The replacement remains
-inactive until the server/client work and integrated review pass.
+SPN-059 (cutover and removal of Univer collaboration). The
+[integrated verification record](implementation/SPN-056.md#integrated-verification-2026-10-26)
+contains the acceptance evidence and adopted conflict policies. The replacement
+remains inactive until SPN-059 completes cutover.
 
 ## Spinel server integration flag
 
@@ -20,7 +22,7 @@ SPN-057 supplies `@spinel/sync-server` and the application SQLite adapter behind
 off. SPN-058 connects the native browser client and ephemeral presence to that
 same flag: preparation returns `syncVersion: 1` only for this backend. There is
 no separate frontend flag. Retained-data conversion and Pro removal remain
-SPN-059; SPN-056's integrated review still gates activation by default.
+SPN-059; SPN-056's integrated review does not activate the replacement.
 
 With the flag enabled, newly prepared native documents use one durable revision
 log. An incoming edit is transformed past each accepted edit using the cells at
@@ -48,12 +50,12 @@ Conversion remains SPN-059.
 The protocol uses these route prefixes followed by `/ticket`, `/snapshot` or
 `/socket`, always with `?unitId=<active-generation>`:
 
-| Credential | Prefix |
-| --- | --- |
-| Ordinary account | `/sync-api/items/:itemId` |
-| Ordinary guest | `/sync-api/guest/:itemId` |
-| Space account | `/sync-api/spaces/:spaceId/items/:itemId` |
-| Space guest | `/sync-api/guest-spaces/:spaceId/items/:itemId` |
+| Credential       | Prefix                                          |
+| ---------------- | ----------------------------------------------- |
+| Ordinary account | `/sync-api/items/:itemId`                       |
+| Ordinary guest   | `/sync-api/guest/:itemId`                       |
+| Space account    | `/sync-api/spaces/:spaceId/items/:itemId`       |
+| Space guest      | `/sync-api/guest-spaces/:spaceId/items/:itemId` |
 
 `POST /ticket` requires the configured Origin and returns a single-use, 30-second
 ticket. The socket URL supplies that ticket as `ticket`; upgrade requires the same
@@ -100,9 +102,10 @@ marks inserted paragraph IDs and supplies shift context. Atomic transform groups
 cell claims and tails stay together under the wire bounds. Remote application
 copies params and sets `onlyLocal` and `fromCollab`, preventing echo while retaining
 native formula recalculation. Native undo services remain enabled; the legacy
-Pro collaboration preset is not used to create this client. A nonempty remote
-change clears local undo/redo history because Univer's local inverse mutations
-retain old positions. Normal local undo remains available until another editor's
+Pro collaboration preset is not used to create this client. Every accepted peer
+revision clears local undo/redo history, including one whose transformed edit
+is empty, because Univer's local inverse mutations retain old positions.
+Own acknowledgments preserve history. Normal local undo remains available until another editor's
 change arrives; collaborative undo-history rebasing is not implemented. This
 prevents an old inverse from changing the wrong cell or text offset.
 
@@ -288,6 +291,32 @@ release with the fixes. The link fixes are upstream as
 [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938). If
 upstream fixes any of them another way, Spinel follows upstream rather than
 re-patching. Never bypass the guard just to make an install pass.
+
+## Pinned open-source drawing refresh repair
+
+`npm ci` also runs `scripts/dependencies/patch-univer-drawing.ts` against the
+Apache-2.0 `@univerjs/sheets-drawing` 1.1.0 ES and CJS builds. Its two internal
+resize/refresh paths can encounter a retained image with finite zero or signed
+extents after structural work. Applying new-placement validation there throws
+and can stop later native edits. The repair preserves the image's identity,
+anchors and exact finite extent through native coordinate conversion; it does
+not clamp or delete content. Explicit new placement, invalid anchor coordinates
+and nonfinite sizes keep strict validation.
+
+Raw snapshot reopen verifies the saved drawing model. The separate browser
+activation renderer catches invalid-extent preparation per image, omits that
+image and its selection, and continues with other drawings. It does not delete
+the persisted image. Thus a retained collapsed image can be invisible and
+unselectable after a tab switch or reopen; automatic visual recovery is not
+implemented. See the [accepted rendering boundary](implementation/SPN-056.md#retained-drawing-visibility-on-tab-activation-and-reopen).
+
+Both full-file hashes and the pinned version are validated before either format
+is written. Tests execute the actual upstream resize/refresh methods in both
+formats, assert upstream rejection and repaired preservation, and exercise
+native queued delivery plus raw snapshot reopen. The installer touches no Pro
+package. SPN-099 independently reviews removal on upgrade; unfamiliar bytes
+must be investigated instead of bypassing the guard. See the
+[decision and evidence](implementation/SPN-056.md#retain-collapsed-drawing-geometry-through-native-refresh).
 
 ## Verification completed
 
