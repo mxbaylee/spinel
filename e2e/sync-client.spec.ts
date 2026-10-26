@@ -18,6 +18,7 @@ import {
   recordNativeSnapshots,
   expectNativeSnapshots,
   expectNativeCellDelivery,
+  nativeCellDeliveryTiming,
   expectNativeMutationInventory,
 } from './sync-snapshot.ts';
 
@@ -193,6 +194,7 @@ async function fixture(
         JSON.stringify(
           {
             observed,
+            delivery: [page, other].map(nativeCellDeliveryTiming),
             errors,
             outgoing: network.outgoing,
             incoming: network.incoming,
@@ -272,9 +274,7 @@ test('native Sheets deliver within a second, rebase offline edits, and retry one
     await selectCell(f.page, 'A1');
     await f.page.screenshot({ path: info.outputPath('sheet-light-sync-presence.png') });
     await Promise.all([f.page.keyboard.type('41'), f.other.keyboard.type('73')]);
-    const started = Date.now();
-    await Promise.all([f.page.keyboard.press('Enter'), f.other.keyboard.press('Enter')]);
-    await expectNativeCellDelivery([f.page, f.other], f.unitId, started);
+    await expectNativeCellDelivery([f.page, f.other], f.unitId);
     await Promise.all([selectCell(f.page, 'B1'), selectCell(f.other, 'A1')]);
     await expect.poll(() => copySelection(f.page), { intervals: [20] }).toBe('73');
     await expect.poll(() => copySelection(f.other), { intervals: [20] }).toBe('41');
@@ -634,12 +634,16 @@ for (const mobile of [false, true]) {
       await expect(f.page.getByText('Copy', { exact: true })).toHaveCount(0);
       await f.page.screenshot({
         path: info.outputPath(`spn-059-sheet-menu-${mobile ? 'phone' : 'light'}.png`),
+        animations: 'disabled',
       });
       await f.page.keyboard.press('Escape');
       if (!mobile) {
         await f.page.emulateMedia({ colorScheme: 'dark' });
         await openSheetMenu('Large sheet');
-        await f.page.screenshot({ path: info.outputPath('spn-059-sheet-menu-dark.png') });
+        await f.page.screenshot({
+          path: info.outputPath('spn-059-sheet-menu-dark.png'),
+          animations: 'disabled',
+        });
         await f.page.keyboard.press('Escape');
         await f.page.getByRole('tab', { name: 'Formulas', exact: true }).click();
         await expect(f.page.getByRole('button', { name: /Calculation options/i })).toHaveCount(0);

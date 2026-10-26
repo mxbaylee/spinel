@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import {
   chmodSync,
   existsSync,
-  mkdirSync,
+  mkdtempSync,
   readFileSync,
   realpathSync,
   renameSync,
@@ -143,6 +143,22 @@ function writeJson(path: string, value: unknown) {
   writeFileSync(temporary, JSON.stringify(value) + '\n', { mode: 0o600 });
   chmodSync(temporary, 0o600);
   renameSync(temporary, path);
+}
+function initializeDirectory(directory: string, marker: string, provenance: unknown) {
+  if (existsSync(directory)) {
+    equal(readJson(join(directory, marker)), provenance);
+    return;
+  }
+  // Publish provenance with its directory. A crash or failed first write must
+  // leave the requested path absent, so the same command can start it again.
+  const preparing = mkdtempSync(`${directory}.preparing-`);
+  try {
+    writeJson(join(preparing, marker), provenance);
+    if (existsSync(directory)) throw unavailable();
+    renameSync(preparing, directory);
+  } finally {
+    rmSync(preparing, { recursive: true, force: true });
+  }
 }
 function readManifest(directory: string): Manifest {
   const value = readJson(join(directory, manifestName)) as Manifest;
@@ -426,11 +442,7 @@ export async function exportSyncTransition(options: {
   const directory = resolve(options.directory);
   const original = realpathSync(options.source);
   if (original === join(directory, sourceName)) throw unavailable();
-  const provenance = join(directory, 'source-origin.json');
-  if (!existsSync(directory)) {
-    mkdirSync(directory, { mode: 0o700 });
-    writeJson(provenance, { format: 1, originalPath: original });
-  } else equal(readJson(provenance), { format: 1, originalPath: original });
+  initializeDirectory(directory, 'source-origin.json', { format: 1, originalPath: original });
   let manifest: Manifest;
   if (existsSync(join(directory, manifestName))) {
     manifest = readManifest(directory);
@@ -737,13 +749,11 @@ export async function importSyncTransition(options: {
   const manifestHash = hash(readFileSync(join(directory, manifestName)));
   const destination = resolve(options.destination);
   if (destination === directory) throw unavailable();
-  const marker = join(destination, manifestName);
-  if (!existsSync(destination)) {
-    mkdirSync(destination, { mode: 0o700 });
-    writeJson(marker, { format: 1, sourceHash: manifest.sourceHash, manifestHash });
-  } else {
-    equal(readJson(marker), { format: 1, sourceHash: manifest.sourceHash, manifestHash });
-  }
+  initializeDirectory(destination, manifestName, {
+    format: 1,
+    sourceHash: manifest.sourceHash,
+    manifestHash,
+  });
   const finalPath = join(destination, publishedName);
   const pendingPath = join(destination, pendingName);
   const source = new DatabaseSync(sourcePath, { readOnly: true });

@@ -28,7 +28,10 @@ snapshots and a full database copy, including credentials and image bytes.
    ```
 
    Use initially absent bundle and destination directories. Reuse the exact same
-   paths when retrying an interruption. Export retries use the frozen source copy
+   paths when retrying an interruption. Each new directory is published with its
+   provenance record already in place; an interrupted first write leaves the
+   requested path available for retry. Unrelated existing directories are refused.
+   Export retries use the frozen source copy
    created by the first invocation; they do not merge later changes from the old
    application. If the old application was restarted, stop it and make a new bundle
    and destination from its latest database before switching.

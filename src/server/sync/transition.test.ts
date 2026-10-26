@@ -1,7 +1,16 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync } from 'node:fs';
+import {
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+  existsSync,
+  readdirSync,
+  renameSync,
+  statSync,
+} from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
 import type { IDocumentData } from '@univerjs/core';
 import { materialize } from '@spinel/sync-server';
@@ -21,9 +30,23 @@ import {
 } from './transition.ts';
 import type { LegacyTransitionReaderFactory } from './transition.ts';
 
+vi.mock('node:fs', async (importOriginal) => {
+  const original = await importOriginal<typeof import('node:fs')>();
+  return {
+    ...original,
+    writeFileSync: vi.fn(original.writeFileSync),
+    renameSync: vi.fn(original.renameSync),
+    rmSync: vi.fn(original.rmSync),
+  };
+});
+
 vi.setConfig({ testTimeout: 30_000 });
 const cleanup: (() => void)[] = [];
-afterEach(() => {
+afterEach(async () => {
+  const original = await vi.importActual<typeof import('node:fs')>('node:fs');
+  vi.mocked(writeFileSync).mockImplementation(original.writeFileSync);
+  vi.mocked(renameSync).mockImplementation(original.renameSync);
+  vi.mocked(rmSync).mockImplementation(original.rmSync);
   vi.restoreAllMocks();
   for (const close of cleanup.splice(0).reverse()) close();
 });
@@ -330,6 +353,114 @@ test('fresh application initialization needs no transition and existing destinat
   ).rejects.toThrow();
   expect(existsSync(f.source)).toBe(true);
 });
+
+test.each([
+  ['export', 'write'],
+  ['export', 'rename'],
+  ['import', 'write'],
+  ['import', 'rename'],
+] as const)(
+  'initial %s provenance %s interruption retries the same paths without changing source data',
+  async (operation, failure) => {
+    const f = fixture();
+    const sourceHash = await digest(f.source);
+    const frozen = join(f.bundle, 'source.sqlite');
+    if (operation === 'import')
+      await exportSyncTransition({ source: f.source, directory: f.bundle, legacy: f.legacy });
+    let frozenHash = operation === 'import' ? await digest(frozen) : undefined;
+    const directory = operation === 'export' ? f.bundle : f.destination;
+    const marker = operation === 'export' ? 'source-origin.json' : 'transition.json';
+    const start = () =>
+      operation === 'export'
+        ? exportSyncTransition({ source: f.source, directory: f.bundle, legacy: f.legacy })
+        : importSyncTransition({ directory: f.bundle, destination: f.destination });
+    const original = await vi.importActual<typeof import('node:fs')>('node:fs');
+    const interrupted = Object.assign(new Error('initial provenance interrupted'), {
+      code: 'ENOSPC',
+    });
+    let abandoned: string | undefined;
+    const initialMarker = (path: unknown) =>
+      String(path).startsWith(`${directory}.preparing-`) &&
+      String(path).endsWith(`/${marker}.writing`);
+    vi.mocked(writeFileSync).mockImplementation((path, data, options) => {
+      if (initialMarker(path)) {
+        abandoned = dirname(String(path));
+        if (failure === 'write') throw interrupted;
+      }
+      original.writeFileSync(path, data, options);
+    });
+    vi.mocked(renameSync).mockImplementation((from, to) => {
+      if (failure === 'rename' && initialMarker(from)) throw interrupted;
+      original.renameSync(from, to);
+    });
+    // A stopped process cannot run finally. Leave that private staging directory
+    // behind to prove retry does not depend on successful exception cleanup.
+    vi.mocked(rmSync).mockImplementation((path, options) => {
+      if (path !== abandoned) original.rmSync(path, options);
+    });
+    await expect(start()).rejects.toBe(interrupted);
+    expect(existsSync(directory)).toBe(false);
+    expect(abandoned).toBeDefined();
+    if (!abandoned) throw new Error('The initial provenance write was not reached.');
+    expect(statSync(abandoned).mode & 0o077).toBe(0);
+    expect(readdirSync(abandoned)).toEqual(failure === 'write' ? [] : [`${marker}.writing`]);
+    if (failure === 'rename')
+      expect(JSON.parse(readFileSync(join(abandoned, `${marker}.writing`), 'utf8'))).toMatchObject({
+        format: 1,
+      });
+    expect(await digest(f.source)).toBe(sourceHash);
+    if (frozenHash) expect(await digest(frozen)).toBe(frozenHash);
+    else expect(existsSync(frozen)).toBe(false);
+    vi.mocked(writeFileSync).mockImplementation(original.writeFileSync);
+    vi.mocked(renameSync).mockImplementation(original.renameSync);
+    vi.mocked(rmSync).mockImplementation(original.rmSync);
+    expect(await start()).toMatchObject({ documents: 7, converted: 5 });
+    expect(statSync(directory).mode & 0o077).toBe(0);
+    expect(existsSync(join(directory, marker))).toBe(true);
+    if (operation === 'export') {
+      frozenHash = await digest(frozen);
+      expect(
+        await importSyncTransition({ directory: f.bundle, destination: f.destination }),
+      ).toMatchObject({ documents: 7, converted: 5 });
+    }
+    expect(await digest(f.source)).toBe(sourceHash);
+    expect(await digest(frozen)).toBe(frozenHash);
+    expect(existsSync(abandoned)).toBe(true);
+  },
+);
+
+test.each(['export', 'import'] as const)(
+  'initial %s refuses unrelated empty and writing-only directories without replacing them',
+  async (operation) => {
+    const f = fixture();
+    const sourceHash = await digest(f.source);
+    await exportSyncTransition({ source: f.source, directory: f.bundle, legacy: f.legacy });
+    const frozen = join(f.bundle, 'source.sqlite');
+    const frozenHash = await digest(frozen);
+    const original = await vi.importActual<typeof import('node:fs')>('node:fs');
+    const marker = operation === 'export' ? 'source-origin.json' : 'transition.json';
+    for (const writing of [false, true]) {
+      const directory = join(f.directory, `unrelated-${operation}-${writing}`);
+      original.mkdirSync(directory, { mode: 0o700 });
+      if (writing)
+        original.writeFileSync(join(directory, `${marker}.writing`), 'Unrelated partial marker', {
+          mode: 0o600,
+        });
+      const start =
+        operation === 'export'
+          ? exportSyncTransition({ source: f.source, directory, legacy: f.legacy })
+          : importSyncTransition({ directory: f.bundle, destination: directory });
+      await expect(start).rejects.toThrow();
+      expect(readdirSync(directory)).toEqual(writing ? [`${marker}.writing`] : []);
+      if (writing)
+        expect(readFileSync(join(directory, `${marker}.writing`), 'utf8')).toBe(
+          'Unrelated partial marker',
+        );
+    }
+    expect(await digest(f.source)).toBe(sourceHash);
+    expect(await digest(frozen)).toBe(frozenHash);
+  },
+);
 
 test('an opaque name collision cannot conceal an unsafe image and a completed copy is reverified on retry', async () => {
   const f = fixture();

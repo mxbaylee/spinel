@@ -328,18 +328,25 @@ for (const width of [1280, 390]) {
           await expect(save).toContainText(/not saved|Saving|keep this tab open/i);
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await expect.poll(() => documentBounds(saveTrigger)).toEqual(slotBounds);
-          // Preserve SPN-042's healthy pending-save Retry proof before the
-          // rejection: a rejected write may legitimately interrupt the room.
+          // The unanswered native request times out and starts automatic
+          // reconnection. Retry remains actionable while that write is pending;
+          // its replacement socket must regain actual room readiness.
           await connection(page, 'Online');
           await saveTrigger.click();
           await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
           await page.keyboard.press('Escape');
           await connection(page, 'Online');
           // A real disconnected save remains unconfirmed; no production state is mocked.
+          // Keep the next room response withheld through failed-save geometry.
+          // An acknowledged native reconnect legitimately returns pending work
+          // to Saving and removes the failed-save Retry control.
+          network.holdJoinAcknowledgements();
           failWrites = true;
           holdWrite = false;
           releaseWrite();
           await expect.poll(() => rejectedWrites).toBeGreaterThan(0);
+          await expect.poll(() => network.joinAcknowledgementHeld()).toBe(true);
+          await connection(page, 'Reconnecting');
           await expect(save).toContainText(/not saved|keep this tab open/i);
           await expect(save).toHaveAttribute('aria-live', 'polite');
           await expect(saveTrigger).toHaveText('Not saved');
@@ -381,13 +388,15 @@ for (const width of [1280, 390]) {
             ).toBeInViewport();
           }
           await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
-          recoveryHeld = false;
-          releaseRecovery();
+          network.releaseJoinAcknowledgements();
           await page.keyboard.press('Escape');
           await expect(saveTrigger).toBeFocused();
           await expect.poll(() => documentBounds(canvas)).toEqual(savedBounds);
           await connection(page, 'Online');
+          await expect(save).toContainText(/not saved|keep this tab open/i);
           await capture(page, info, `${kind}-online-unsaved`, width === 390 ? 'phone' : 'light');
+          recoveryHeld = false;
+          releaseRecovery();
           holdWrite = false;
           releaseWrite();
           await saved();

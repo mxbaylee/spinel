@@ -120,8 +120,10 @@ other mutation receives strict admission, including unknown operation-shaped IDs
 Sender normalization preserves triggers, inlines styles, records worksheet order,
 marks inserted paragraph IDs and supplies shift context. Atomic transform groups,
 cell claims and tails stay together under the wire bounds. Remote application
-copies params and sets `onlyLocal` and `fromCollab`, preventing echo while retaining
-native formula recalculation. Native undo services remain enabled; no Pro collaboration preset is used. Every accepted peer
+copies params and sets `fromCollab` on the live editor, preventing echo while
+retaining native formula registration and dependent recalculation. Its confirmed
+revision replica retains a separate local-only application path. Native undo
+services remain enabled; no Pro collaboration preset is used. Every accepted peer
 revision clears local undo/redo history, including one whose transformed edit
 is empty, because Univer's local inverse mutations retain old positions.
 Own acknowledgments preserve history. Normal local undo remains available until another editor's
