@@ -291,19 +291,37 @@ test('two document editors merge text and navigate to a collaborator selection',
     await Promise.all([page.keyboard.type(' '), other.keyboard.type('r')]);
     const copyText = async (target: typeof page) => {
       await target.bringToFront();
-      await focus(target);
+      const input = target.locator('[contenteditable="true"][data-u-comp="editor"]');
+      await input.focus();
+      await expect(input).toBeFocused();
       await target.keyboard.press('Control+a');
+      // Each editor must complete its own copy, not read the other peer's text.
+      const sentinel = `not-copied-${crypto.randomUUID()}`;
+      await target.evaluate((value) => navigator.clipboard.writeText(value), sentinel);
       // Desktop Chrome fixture advertises Windows, even on a macOS test host.
       await target.keyboard.press('Control+c');
+      await expect
+        .poll(() => target.evaluate(() => navigator.clipboard.readText()), {
+          timeout: 5000,
+          intervals: [10],
+        })
+        .not.toBe(sentinel);
       return (await target.evaluate(() => navigator.clipboard.readText())).trim();
     };
+    // Shared clipboard copies stay sequential. Focus and both fresh UI
+    // observations remain inside the original strict one-second budget.
     await expect
       .poll(() => copyText(page), { timeout: 5000, intervals: [50] })
       .toBe('Owner Shared anchor Collaborator');
+    const firstObserved = Date.now() - sentAt;
     await expect
       .poll(() => copyText(other), { timeout: 5000, intervals: [50] })
       .toBe('Owner Shared anchor Collaborator');
-    expect(Date.now() - sentAt).toBeLessThan(1000);
+    const total = Date.now() - sentAt;
+    expect(
+      total,
+      `First peer observed after ${firstObserved} ms; both peers after ${total} ms`,
+    ).toBeLessThan(1000);
     await other.keyboard.press('ArrowRight');
     await saved(page);
     await saved(other);

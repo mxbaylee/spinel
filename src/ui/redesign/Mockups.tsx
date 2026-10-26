@@ -2,6 +2,7 @@
 import { createContext, useContext, useRef, useState, useSyncExternalStore } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { Tooltip } from '@base-ui/react/tooltip';
+import { Popover } from '@base-ui/react/popover';
 import { GemLogo, replayGemWiggle } from '../GemLogo.tsx';
 import { EntityIcon } from '../EntityIcon.tsx';
 import { ProfileIcon } from '../../profile/ProfileIcon.tsx';
@@ -133,28 +134,35 @@ function Avatar({ children, color }: { children?: ReactNode; color?: string }) {
 function NetworkStatus({ offline = false }: { offline?: boolean }) {
   const [open, setOpen] = useState(false);
   return (
-    <Tooltip.Root open={open} onOpenChange={setOpen}>
-      <Tooltip.Trigger
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger
         className="rd-network-trigger"
         aria-label={offline ? 'Offline — not connected to Spinel' : 'Online — connected to Spinel'}
+        openOnHover
         delay={200}
-        closeOnClick={false}
-        onPointerDown={(event) => {
-          if (event.pointerType === 'touch') setOpen(true);
+        onFocus={(event) => {
+          // Match the production connection control: keyboard focus reveals
+          // the detail; the primitive handles pointer and touch activation.
+          if (event.currentTarget.matches(':focus-visible')) setOpen(true);
         }}
       >
         <Glyph name={offline ? 'network-off' : 'network'} />
-      </Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Positioner className="rd-tooltip-positioner" side="right" sideOffset={8}>
-          <Tooltip.Popup className="sp-ui rd-network-tooltip">
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Positioner className="rd-tooltip-positioner" side="right" sideOffset={8}>
+          <Popover.Popup
+            className="sp-ui rd-network-tooltip"
+            aria-label="Connection details"
+            initialFocus={false}
+            finalFocus={false}
+          >
             {offline
               ? 'You are offline. Open files may have changes waiting to sync. Check their save status before closing.'
               : 'Connected to Spinel. Open save status for details about this document.'}
-          </Tooltip.Popup>
-        </Tooltip.Positioner>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }
 export type SpaceEntry = {

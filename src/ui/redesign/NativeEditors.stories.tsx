@@ -6,7 +6,7 @@ import { Button } from './Controls.tsx';
 
 /** Observation belongs to the isolated story, never a production global. */
 function NativeEditorStory(props: NativeEditorProps) {
-  const editor = useRef<NativeEditorHandle>();
+  const editor = useRef<NativeEditorHandle>(undefined);
   const [observation, setObservation] = useState('');
   const observe = () => {
     if (editor.current)

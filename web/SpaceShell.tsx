@@ -40,7 +40,7 @@ export function SpaceShell({
   onExit(): void;
   onProfile(): void;
   navigation?: (close: () => void) => ReactNode;
-  navigationButton?: RefObject<HTMLButtonElement>;
+  navigationButton?: RefObject<HTMLButtonElement | null>;
   children: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(true);

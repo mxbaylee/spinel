@@ -37,7 +37,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       },
     ]);
     const errors: string[] = [];
-    page.on('pageerror', (error) => errors.push(error.message));
+    let phase = 'open source editor';
+    page.on('pageerror', (error) => errors.push(`${phase}: ${error.stack ?? error.message}`));
     let printHtml = '';
     await context.exposeBinding('captureNativePrint', (_source, html: string) => {
       printHtml = html;
@@ -134,9 +135,11 @@ for (const kind of ['sheet', 'doc'] as const) {
           : snapshot.body.dataStream,
       ).toContain('Portable proof 314');
       // Exercise the actual app export control and plugin print UI.
+      phase = 'open native print';
       await page.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
       await expect(page.getByRole('dialog', { name: 'Export', exact: true })).not.toBeVisible();
       await expect(region.getByRole('alert')).toHaveCount(0);
+      phase = 'print native document';
       if (kind === 'sheet') await page.getByRole('button', { name: /^next$/i }).click();
       await expect.poll(() => printHtml.includes('<img'), { timeout: 20_000 }).toBe(true);
       const printed = await context.newPage();
@@ -199,6 +202,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       } finally {
         await printed.close();
       }
+      phase = 'leave source editor and import';
       await page.goto(`/?item=${folder.id}`);
       await page.getByRole('button', { name: 'New', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Import file…', exact: true }).click();
@@ -245,8 +249,10 @@ for (const kind of ['sheet', 'doc'] as const) {
       const copies = workspace.list(user.id).filter((entry) => entry.parentId === folder.id);
       expect(copies).toHaveLength(1);
       expect(copies[0].id).not.toBe(item.id);
+      phase = 'open imported editor';
       await page.goto(`/?item=${copies[0].id}`);
       await saved();
+      phase = 'reload imported editor';
       await page.reload();
       await saved();
       const copy = await (await context.request.get(`/api/items/${copies[0].id}/${kind}`)).json();

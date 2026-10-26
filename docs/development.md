@@ -231,12 +231,14 @@ see [the process](todo/process.md#pull-requests-and-main).
   The original safe sequencing is [decision #137](implementation/SPN-091.md#legacy-decision-137-default-off-space-review-stage);
   the completed boundary is [decision #143](implementation/SPN-092.md#legacy-decision-143-exact-space-capabilities-across-integrations)
   and the [SPN-092 implementation contract](implementation/SPN-092.md).
-- React and React DOM are pinned to 18.3.1. On 2026-10-17, published
-  `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support
-  React 16–19; [Univer's UI package](https://github.com/dream-num/univer/blob/dev/packages/ui/package.json)
-  uses 18.3.1 in development. Matching that baseline and the existing React 18
-  types reduces editor integration work. Decided 2026-10-17 in
-  [#1](implementation/SPN-001.md#legacy-decision-1-react-version). Recheck when adding editors.
+- React and React DOM are pinned together to 19.3.1, with React and React DOM
+  types at 19.3.0. The installed Univer 1.1.0, Base UI 1.9.0 and Storybook 10.3.5
+  peer ranges allow React 19. The presence workspace follows the tested runtime;
+  DOM ref types explicitly include their unmounted null state, and a guarded
+  open-source Univer UI repair ignores resize callbacks after that ref detaches.
+  Keep these four packages coordinated when upgrading and verify native editor lifecycle, portals,
+  focus and save/access behavior. The [React 19 upgrade record](implementation/dependency-react-19.md)
+  supersedes the initial [React 18 scaffold baseline](implementation/SPN-001.md#legacy-decision-1-react-version).
 - Oxlint works alongside the existing TypeScript 7 compiler; typescript-eslint
   8.71.2 requires TypeScript below 6.1. Prettier handles scaffold formatting.
   Decided 2026-10-17 in [#3](implementation/SPN-001.md#legacy-decision-3-compiler-compatible-linting).

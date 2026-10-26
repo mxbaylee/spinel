@@ -97,7 +97,7 @@ reviewable in the screenshots before consumer migration.
 
 ## Base UI foundation
 
-`@base-ui/react` 1.9.0 (MIT) is pinned. It supports the existing React 18 setup.
+`@base-ui/react` 1.9.0 (MIT) is pinned. Its peer range supports the React 19 setup.
 Button, Menu, Select, Dialog, Popover and RadioGroup/Radio are used. There is no second
 primitive library, no Tailwind, and no production consumer migration here.
 

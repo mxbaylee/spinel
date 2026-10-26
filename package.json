@@ -24,7 +24,7 @@
     "setup": "node server/setup.ts",
     "passkey:check": "npm run build && node scripts/passkey-check.ts",
     "e2e": "npm run build && node scripts/e2e.ts",
-    "postinstall": "node scripts/dependencies/patch-univer-core.ts",
+    "postinstall": "node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-ui.ts",
     "screenshots": "node scripts/screenshots.ts"
   },
   "devDependencies": {
@@ -33,8 +33,8 @@
     "@storybook/react-vite": "10.3.5",
     "@types/express": "5.0.6",
     "@types/node": "24.19.2",
-    "@types/react": "18.3.31",
-    "@types/react-dom": "18.3.7",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "@types/ws": "8.18.2",
     "@vitejs/plugin-react": "6.1.2",
     "oxlint": "1.88.0",
@@ -82,8 +82,8 @@
     "express": "5.3.0",
     "libsql": "0.5.29",
     "lucide": "1.44.0",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "sharp": "0.35.5"
   },
   "workspaces": [
