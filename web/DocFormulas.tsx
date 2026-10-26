@@ -301,6 +301,9 @@ export function FormulaDialog({
     attempt.current++;
     operation.current?.abort();
     setBusy(false);
+    // End native modal focus handling while still mounted, before the parent
+    // unmounts this dialog and restores keyboard input to the document.
+    dialog.current?.close();
     onClose();
   }
   async function run(save: boolean) {
