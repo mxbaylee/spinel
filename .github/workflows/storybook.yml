@@ -103,7 +103,7 @@ jobs:
           done
       - name: Upload interactive review build
         if: needs.changes.outputs.review_required == 'true'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: storybook-review
           path: storybook-static
@@ -147,7 +147,9 @@ jobs:
           name: storybook-review
           path: storybook-static
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
       - name: Check icon and integration stories
         # This suite, including its phone checks, belongs to desktop light once.
         if: matrix.theme == 'light'
@@ -159,7 +161,7 @@ jobs:
           node scripts/ci/icon-screenshots.ts "${options[@]}"
       - name: Upload icon evidence
         if: always() && matrix.theme == 'light'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: ${{ needs.changes.outputs.capture_screenshots == 'true' && 'entity-icon-screenshots' || 'entity-icon-checks' }}
           path: test-results/entity-icons
@@ -177,7 +179,7 @@ jobs:
           npm run screenshots -- --viewport desktop --theme "$REVIEW_THEME" "${options[@]}" "${stories[@]}"
       - name: Upload review evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: ${{ needs.changes.outputs.capture_screenshots == 'true' && 'design-review' || 'storybook-check' }}-desktop-${{ matrix.theme }}
           path: test-results/design-review
@@ -205,7 +207,9 @@ jobs:
           name: storybook-review
           path: storybook-static
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
       - name: Review stories and verify shared controls
         env:
           STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
@@ -217,7 +221,7 @@ jobs:
           npm run screenshots -- --viewport tablet "${options[@]}" "${stories[@]}"
       - name: Upload review evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: ${{ needs.changes.outputs.capture_screenshots == 'true' && 'design-review' || 'storybook-check' }}-tablet
           path: test-results/design-review
@@ -249,7 +253,9 @@ jobs:
           name: storybook-review
           path: storybook-static
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
       - name: Review stories and verify shared controls
         env:
           STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
@@ -262,7 +268,7 @@ jobs:
           npm run screenshots -- --viewport mobile --theme "$MOBILE_THEME" "${options[@]}" "${stories[@]}"
       - name: Upload review evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: ${{ needs.changes.outputs.capture_screenshots == 'true' && 'design-review' || 'storybook-check' }}-mobile-${{ matrix.theme }}
           path: test-results/design-review
