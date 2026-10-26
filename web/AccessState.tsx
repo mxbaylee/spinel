@@ -33,9 +33,9 @@ export function AccessState({
   }[kind];
   const content = (
     <section className="access-state-content" aria-labelledby={titleId}>
-      <h1 id={titleId}>
-        <span role={kind === 'revoked' || kind === 'missing' ? 'alert' : undefined}>{copy[0]}</span>
-      </h1>
+      <div role={kind === 'revoked' || kind === 'missing' ? 'alert' : undefined}>
+        <h1 id={titleId}>{copy[0]}</h1>
+      </div>
       <p role={kind === 'loading' ? 'status' : kind === 'unsupported' ? 'alert' : undefined}>
         {copy[1]}
       </p>

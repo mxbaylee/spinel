@@ -9,7 +9,9 @@ const meta = {
   args: { kind: 'revoked' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByRole('heading', { level: 1 })).toBeVisible();
+    const heading = canvas.getByRole('heading', { level: 1 });
+    await expect(heading).toBeVisible();
+    await expect(heading).toHaveAccessibleName(/.+/);
     await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
     const window = canvasElement.ownerDocument.defaultView!;
     const width = window.innerWidth;
