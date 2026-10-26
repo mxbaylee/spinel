@@ -35,6 +35,19 @@ async function capture(page: Page, info: TestInfo, name: string) {
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
     .toBe(true);
+  if (name.endsWith('-normal')) {
+    await expect
+      .poll(() =>
+        page.locator('.editor-frame').evaluate((node) => {
+          const box = node.getBoundingClientRect();
+          return box.top === 0 && box.bottom <= innerHeight;
+        }),
+      )
+      .toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight)).toBe(
+      true,
+    );
+  }
   await mkdir('test-results/theme-screenshots', { recursive: true });
   await page.screenshot({
     path: `test-results/theme-screenshots/spn-049-${name}-${info.project.name}.png`,
@@ -132,6 +145,33 @@ test('Space theatre fills the window and restores its own page navigation', asyn
         await page.emulateMedia({ colorScheme: variant.theme, reducedMotion: 'reduce' });
         await nativeTheme(page, editor.locator('canvas').first(), variant.theme);
         await capture(page, info, `space-${item.kind}-${variant.name}-normal`);
+        // A Space page shares through the theatre header, not an empty root's menu.
+        const actions = page.getByRole('button', { name: 'Document actions', exact: true });
+        await actions.click();
+        await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
+        const sharing = page.getByRole('dialog', {
+          name: 'Share Renamed theatre project',
+          exact: true,
+        });
+        await expect(page.getByRole('dialog')).toHaveCount(1);
+        await expect(sharing).toBeVisible();
+        await expect(sharing.getByRole('region', { name: 'People with access' })).toHaveAttribute(
+          'aria-busy',
+          'false',
+        );
+        await expect(
+          sharing.getByRole('button', { name: 'Create link', exact: true }),
+        ).toBeVisible();
+        await expect(sharing.getByRole('alert')).toHaveCount(0);
+        await capture(page, info, `space-${item.kind}-${variant.name}-sharing`);
+        await page.keyboard.press('Escape');
+        await expect(sharing).toBeHidden();
+        await expect(actions).toBeFocused();
+        await actions.press('Enter');
+        await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
+        await sharing.getByRole('button', { name: 'Done', exact: true }).click();
+        await expect(sharing).toBeHidden();
+        await expect(actions).toBeFocused();
         const canvas = await editor.locator('canvas').first().elementHandle();
         expect(canvas).not.toBeNull();
         await page.getByRole('button', { name: 'Enter theatre mode', exact: true }).click();
@@ -294,6 +334,22 @@ for (const kind of ['sheet', 'doc'] as const) {
             await other.keyboard.press('End');
           }
           await page.bringToFront();
+        }
+        if (kind === 'sheet' && variant.name === 'light') {
+          for (const width of [601, 640, 641]) {
+            await page.setViewportSize({ width, height: variant.height });
+            const save = page.getByRole('button', { name: 'Save details: Saved', exact: true });
+            await expect
+              .poll(async () => (await save.boundingBox())?.width)
+              .toBe(width <= 640 ? 44 : 144);
+            const identity = await page.locator('.editor-identity').boundingBox();
+            const status = await save.boundingBox();
+            expect(identity).not.toBeNull();
+            expect(status).not.toBeNull();
+            if (width <= 640) expect(identity!.y + identity!.height).toBeLessThanOrEqual(status!.y);
+            else expect(identity!.y).toBeLessThan(status!.y + status!.height);
+            if (width !== 601) await capture(page, info, `account-sheet-header-${width}`);
+          }
         }
         await page.setViewportSize({ width: variant.width, height: variant.height });
         await expect(

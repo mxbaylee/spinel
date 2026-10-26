@@ -1,135 +1,248 @@
-import { ShareLink } from './ShareLink.tsx';
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import type { FileItem, GrantRole, SharePerson } from '../src/shared/workspace.ts';
 import { accessLabel } from '../src/shared/workspace.ts';
+import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
+import { ShareLink } from './ShareLink.tsx';
+import { SharingAddress } from './SharingAddress.tsx';
+import { itemsRequest } from './itemsApi.ts';
 import { spaceHref } from './spaceNavigation.ts';
+import './sharing.css';
 
-export function Sharing({ item, onClose }: { item: FileItem; onClose: () => void }) {
+export function Sharing({
+  item,
+  onClose,
+  finalFocus,
+}: {
+  item: FileItem;
+  onClose: () => void;
+  finalFocus?: () => HTMLElement | boolean | null;
+}) {
   const [people, setPeople] = useState<SharePerson[]>([]);
   const [choices, setChoices] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [linkBusy, setLinkBusy] = useState(false);
   const [error, setError] = useState('');
-  const [message, setMessage] = useState('Loading access…');
-  function show(rows: SharePerson[]) {
-    setPeople(rows);
-    setChoices(Object.fromEntries(rows.map((p) => [p.id, p.directRole ?? ''])));
-  }
-  useEffect(() => {
-    let disposed = false;
-    void fetch(`/api/items/${item.id}/sharing`)
-      .then(async (response) => {
-        const body = await response.json();
-        if (!response.ok) throw new Error(body.error);
-        if (!disposed) {
-          show(body.people);
-          setMessage('');
-        }
-      })
-      .catch((e) => {
-        if (!disposed) {
-          setError(e.message);
-          setMessage('');
-        }
-      })
-      .finally(() => {
-        if (!disposed) setBusy(false);
-      });
-    return () => {
-      disposed = true;
-    };
-  }, [item.id]);
-  async function apply(person: SharePerson) {
-    setBusy(true);
+  const [failedPerson, setFailedPerson] = useState<string | null>(null);
+  const [message, setMessage] = useState('');
+  const generation = useRef(0);
+  const mutation = useRef(false);
+  const verify = (request: number) => () => {
+    if (request !== generation.current) throw new Error('This sharing view is no longer current.');
+  };
+  async function load() {
+    const request = ++generation.current;
+    setLoading(true);
     setError('');
+    setFailedPerson(null);
+    try {
+      const body = await itemsRequest<{ people: SharePerson[] }>(
+        `/${item.id}/sharing`,
+        'GET',
+        undefined,
+        verify(request),
+      );
+      if (request !== generation.current) return;
+      setPeople(body.people);
+      setChoices(
+        Object.fromEntries(body.people.map((person) => [person.id, person.directRole ?? ''])),
+      );
+    } catch (cause) {
+      if (request === generation.current)
+        setError(cause instanceof Error ? cause.message : 'Could not load access.');
+    } finally {
+      if (request === generation.current) setLoading(false);
+    }
+  }
+  useLayoutEffect(() => {
+    setPeople([]);
+    setChoices({});
+    setSaving(null);
+    setLinkBusy(false);
+    setMessage('');
+    mutation.current = false;
+    void load();
+    return () => {
+      generation.current++;
+    };
+  }, [item.id, item.access]);
+  async function apply(person: SharePerson) {
+    if (mutation.current) return;
+    mutation.current = true;
+    const request = ++generation.current;
+    setSaving(person.id);
+    setError('');
+    setFailedPerson(null);
     setMessage('');
     try {
-      const response = await fetch(`/api/items/${item.id}/sharing`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const body = await itemsRequest<{ people: SharePerson[] }>(
+        `/${item.id}/sharing`,
+        'PUT',
+        {
           userId: person.id,
           role: (choices[person.id] || null) as GrantRole | null,
-        }),
-      });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error);
-      show(body.people);
+        },
+        verify(request),
+      );
+      if (request !== generation.current) return;
+      setPeople(body.people);
+      // Saving one person's grant must not discard another person's staged choice.
+      setChoices((previous) =>
+        Object.fromEntries(
+          body.people.map((row) => [
+            row.id,
+            row.id === person.id
+              ? (row.directRole ?? '')
+              : (previous[row.id] ?? row.directRole ?? ''),
+          ]),
+        ),
+      );
       setMessage(`Access updated for ${person.name}.`);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not update access.');
+    } catch (cause) {
+      if (request === generation.current) {
+        setFailedPerson(person.id);
+        setError(cause instanceof Error ? cause.message : 'Could not update access.');
+      }
     } finally {
-      setBusy(false);
+      if (request === generation.current) {
+        mutation.current = false;
+        setSaving(null);
+      }
     }
   }
   return (
-    <section aria-label={`Share ${item.name}`} className="item-form">
-      <h3>Share {item.name}</h3>
-      <label>
-        Share address
-        <input
-          readOnly
-          value={`${location.origin}${item.kind === 'space' ? spaceHref(item.id) : '/?item=' + encodeURIComponent(item.id)}`}
-          onFocus={(e) => e.currentTarget.select()}
-        />
-      </label>
-      <p>
-        {item.kind === 'space'
-          ? 'This address opens the Space for people you give access to. Their role applies to every page and folder in the Space, including future additions.'
-          : 'This address opens the item for people you give access to. Folder access includes its contents and future additions.'}
-      </p>
-      <p>
-        File admins can manage sharing and file organization. They do not own the file or gain
-        server administration.
-      </p>
-      {people.map((person) => (
-        <div key={person.id}>
-          <label>
-            Access for {person.name}
-            {person.disabled ? ' (disabled)' : ''}
-            <select
-              disabled={busy}
-              value={choices[person.id] ?? ''}
-              onChange={(e) => setChoices({ ...choices, [person.id]: e.target.value })}
-            >
-              <option value="">No direct access</option>
-              <option value="viewer" disabled={Boolean(person.disabled)}>
-                Viewer
-              </option>
-              <option value="editor" disabled={Boolean(person.disabled)}>
-                Editor
-              </option>
-              <option value="admin" disabled={Boolean(person.disabled)}>
-                File admin
-              </option>
-            </select>
-          </label>
-          <p>
-            Effective access: {person.effectiveRole ? accessLabel(person.effectiveRole) : 'none'}
-            {person.effectiveRole && person.effectiveRole !== person.directRole
-              ? ' (from a folder)'
-              : ''}
-            .
-          </p>
-          <button
-            disabled={busy || (choices[person.id] ?? '') === (person.directRole ?? '')}
-            onClick={() => void apply(person)}
-          >
-            Apply access for {person.name}
-          </button>
+    <Modal
+      open
+      finalFocus={finalFocus}
+      title={`Share ${item.name}`}
+      icon="share"
+      dismissDisabled={!!saving || linkBusy}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <div className="sharing-content">
+        <p className="sp-muted">
+          Choose who can open this {item.kind === 'space' ? 'Space' : 'item'}.
+        </p>
+        <div className="sharing-owner">
+          <strong>{item.access === 'owner' ? 'You' : (item.ownerName ?? 'File owner')}</strong>
+          <span>Owner</span>
         </div>
-      ))}
-      {!busy && !people.length && !error && <p>No other everyday accounts are available.</p>}
-      <p>
-        Direct and folder access combine; the most generous grant wins. The Owner and file admins
-        can manage sharing, rename, move to authorized folders and send this item to the Owner’s
-        Trash. Ownership stays with its one Owner.
-      </p>
-      {item.kind !== 'folder' && <ShareLink id={item.id} space={item.kind === 'space'} />}
-      {message && <p role="status">{message}</p>}
-      {error && <p role="alert">{error}</p>}
-      <button disabled={busy} onClick={onClose}>
-        Close sharing
-      </button>
-    </section>
+        {item.access === 'admin' && (
+          <p className="sp-muted">
+            You are a File admin. The Owner and your own direct grant are protected.
+          </p>
+        )}
+        <section aria-label="People with access" aria-busy={loading || !!saving}>
+          {loading ? (
+            <p role="status">Loading access…</p>
+          ) : (
+            <>
+              {people.map((person) => (
+                <div className="sharing-person" key={person.id}>
+                  <div className="sharing-person-row">
+                    <div>
+                      <strong>
+                        {person.name}
+                        {person.disabled ? ' · Disabled account' : ''}
+                      </strong>
+                      <p className="sp-muted">
+                        Effective access:{' '}
+                        {person.effectiveRole ? accessLabel(person.effectiveRole) : 'none'}
+                        {person.effectiveRole && person.effectiveRole !== person.directRole
+                          ? ' (from a folder)'
+                          : ''}
+                        .
+                      </p>
+                      {person.disabled ? (
+                        <p className="sp-muted">
+                          This account cannot sign in. You can remove its direct access.
+                        </p>
+                      ) : null}
+                    </div>
+                    <label className="sharing-choice">
+                      Access for {person.name}
+                      <select
+                        className="sp-control"
+                        disabled={!!saving}
+                        value={choices[person.id] ?? ''}
+                        onChange={(event) =>
+                          setChoices({ ...choices, [person.id]: event.target.value })
+                        }
+                      >
+                        <option value="">No direct access</option>
+                        <option value="viewer" disabled={!!person.disabled}>
+                          Can view
+                        </option>
+                        <option value="editor" disabled={!!person.disabled}>
+                          Can edit
+                        </option>
+                        <option value="admin" disabled={!!person.disabled}>
+                          File admin
+                        </option>
+                      </select>
+                    </label>
+                  </div>
+                  <Button
+                    disabled={!!saving || (choices[person.id] ?? '') === (person.directRole ?? '')}
+                    aria-label={
+                      failedPerson === person.id
+                        ? `Retry access update for ${person.name}`
+                        : `Apply access for ${person.name}`
+                    }
+                    onClick={() => void apply(person)}
+                  >
+                    {saving === person.id
+                      ? 'Updating access…'
+                      : failedPerson === person.id
+                        ? 'Retry access update'
+                        : 'Apply access'}
+                  </Button>
+                  {failedPerson === person.id && (
+                    <p role="alert">
+                      {error} Confirmed access is shown above; your choice is kept.
+                    </p>
+                  )}
+                </div>
+              ))}
+              {!people.length && !error && <p>No other everyday accounts are available.</p>}
+              {error && !failedPerson && (
+                <>
+                  <p role="alert">{error}</p>
+                  <Button onClick={() => void load()}>Retry loading access</Button>
+                </>
+              )}
+            </>
+          )}
+          {message && <p role="status">{message}</p>}
+        </section>
+        <p className="sp-muted">
+          {item.kind === 'space'
+            ? 'Access applies to every current and future page and folder in this Space.'
+            : item.kind === 'folder'
+              ? 'Folder access includes its contents and future additions. Folders cannot have guest links.'
+              : 'Direct and folder access combine; the most generous grant wins.'}{' '}
+          File admins manage sharing and file organization, without ownership or server
+          administration.
+        </p>
+        {item.kind !== 'folder' && (
+          <ShareLink
+            key={`${item.id}:${item.access}`}
+            id={item.id}
+            space={item.kind === 'space'}
+            onBusyChange={setLinkBusy}
+          />
+        )}
+        <div className="sharing-footer">
+          <SharingAddress
+            value={`${location.origin}${item.kind === 'space' ? spaceHref(item.id) : '/?item=' + encodeURIComponent(item.id)}`}
+          />
+          <Button disabled={!!saving || linkBusy} onClick={onClose}>
+            Done
+          </Button>
+        </div>
+      </div>
+    </Modal>
   );
 }

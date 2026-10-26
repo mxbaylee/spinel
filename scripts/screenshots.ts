@@ -1,4 +1,4 @@
-/** npm run screenshots -- [--viewport desktop|tablet|mobile] <story ids>. Build Storybook first. */
+/** npm run screenshots -- [--viewport desktop|tablet|mobile] [--theme all|light|dark] <story ids>. Build Storybook first. Theme splitting is mobile-only. */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -140,63 +140,7 @@ try {
         await page.goto(
           `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`,
         );
-        // Images and intentionally empty components are valid stories. Require
-        // the root to exist, then use Storybook's lifecycle rather than text content.
-        await expect(page.locator('#storybook-root')).toBeAttached();
-        // Many catalogue states are established by a play function (open dialogs,
-        // rejected requests, pending mutations). Storybook marks the render finished
-        // after those interactions, rather than when the first component appears.
-        await page.waitForFunction(() => {
-          const preview = (
-            window as Window & {
-              __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } };
-            }
-          ).__STORYBOOK_PREVIEW__;
-          return preview?.currentRender?.phase === 'finished';
-        });
-        // A failed play function also reaches "finished". Its result must match
-        // this story and succeed before a screenshot can count as state evidence.
-        await page.waitForFunction((storyId) => {
-          const preview = (
-            window as Window & {
-              __STORYBOOK_PREVIEW__?: {
-                channel?: { last: (event: string) => { storyId: string }[] | undefined };
-              };
-            }
-          ).__STORYBOOK_PREVIEW__;
-          return preview?.channel?.last('storyFinished')?.[0]?.storyId === storyId;
-        }, id);
-        const storyResult = await page.evaluate(() => {
-          const preview = (
-            window as Window & {
-              __STORYBOOK_PREVIEW__?: {
-                channel?: {
-                  last: (event: string) => { storyId: string; status: string }[] | undefined;
-                };
-              };
-            }
-          ).__STORYBOOK_PREVIEW__;
-          return preview?.channel?.last('storyFinished')?.[0];
-        });
-        expect(storyResult?.storyId).toBe(id);
-        expect(storyResult?.status, `${id}: Storybook play must succeed`).toBe('success');
-        // Some Storybook versions report finished after swallowing a play error.
-        // Each story loads a fresh document, so recorded play exceptions belong here.
-        const playErrors = await page.evaluate(() => {
-          const channel = (
-            window as Window & {
-              __STORYBOOK_PREVIEW__?: {
-                channel?: { last: (event: string) => unknown[] | undefined };
-              };
-            }
-          ).__STORYBOOK_PREVIEW__?.channel;
-          return ['playFunctionThrewException', 'unhandledErrorsWhilePlaying'].flatMap(
-            (event) => channel?.last(event) ?? [],
-          );
-        });
-        expect(playErrors, `${id}: no swallowed play exceptions`).toEqual([]);
-        await page.evaluate(() => document.fonts.ready);
-        await expect(page.locator('.sb-errordisplay')).toBeHidden();
+        await waitForStory(page, id);
         if (id.startsWith('docs-native-formulas--')) {
           // The component's dynamic viewer can still be booting after Storybook
           // finishes its synchronous render. Capture the native result, not its skeleton.
@@ -512,120 +456,134 @@ try {
         viewport: { width, height: 900 },
         hasTouch,
       });
-      await page.goto(
-        'http://127.0.0.1:6007/iframe.html?id=redesign-screens--dashboard&viewMode=story&globals=theme:light',
-      );
-      const network = page.getByRole('button', {
-        name: 'Online — connected to Spinel',
-        exact: true,
-      });
-      if (hasTouch) await network.tap();
-      else await network.hover();
-      await expect(
-        page.getByText('Connected to Spinel. Open save status for details about this document.', {
+      try {
+        await page.goto(
+          'http://127.0.0.1:6007/iframe.html?id=redesign-screens--dashboard&viewMode=story&globals=theme:light',
+        );
+        await waitForStory(page, 'redesign-screens--dashboard');
+        const network = page.getByRole('button', {
+          name: 'Online — connected to Spinel',
           exact: true,
-        }),
-      ).toBeVisible();
-      await page.screenshot({ path: resolve(directory, `network-explanation-${width}.png`) });
-      await page.keyboard.press('Escape');
-      await expect(
-        page.getByText('Connected to Spinel. Open save status for details about this document.', {
-          exact: true,
-        }),
-      ).toBeHidden();
-      const namesBefore = await page
-        .getByRole('list', { name: 'Files', exact: true })
-        .getByRole('listitem')
-        .allTextContents();
-      await page.getByRole('button', { name: 'Grid view', exact: true }).click();
-      await expect(page.getByRole('button', { name: 'Grid view', exact: true })).toHaveAttribute(
-        'aria-pressed',
-        'true',
-      );
-      expect(
-        await page
+        });
+        if (hasTouch) await network.tap();
+        else await network.hover();
+        await expect(
+          page.getByText('Connected to Spinel. Open save status for details about this document.', {
+            exact: true,
+          }),
+        ).toBeVisible();
+        await page.screenshot({ path: resolve(directory, `network-explanation-${width}.png`) });
+        await page.keyboard.press('Escape');
+        await expect(
+          page.getByText('Connected to Spinel. Open save status for details about this document.', {
+            exact: true,
+          }),
+        ).toBeHidden();
+        const namesBefore = await page
           .getByRole('list', { name: 'Files', exact: true })
           .getByRole('listitem')
-          .allTextContents(),
-      ).toEqual(namesBefore);
-      await page.getByRole('button', { name: 'List view', exact: true }).click();
-      if (width > 900) {
-        await page.getByRole('button', { name: 'Collapse navigation', exact: true }).click();
-        await expect(
-          page.getByRole('button', { name: 'Expand navigation', exact: true }),
-        ).toBeFocused();
-        const destination = page
-          .getByRole('navigation', { name: 'File shortcuts' })
-          .getByRole('button', { name: 'Shared with me', exact: true });
-        // Use actual keyboard navigation so the browser enters :focus-visible mode.
-        for (
-          let step = 0;
-          step < 8 && !(await destination.evaluate((node) => node === document.activeElement));
-          step += 1
-        )
-          await page.keyboard.press('Tab');
-        await expect(destination).toBeFocused();
-        await expect(destination.locator('.rd-nav-tooltip')).toBeVisible();
-        await page
-          .getByRole('navigation', { name: 'File shortcuts' })
-          .getByRole('button', { name: 'Shared with me', exact: true })
-          .click();
-        await expect(
-          page.getByRole('heading', { name: 'Shared with me', exact: true }),
-        ).toBeVisible();
-        await page
-          .getByRole('navigation', { name: 'File shortcuts' })
-          .getByRole('button', { name: 'My files', exact: true })
-          .click();
-        await page.getByRole('button', { name: 'Expand navigation', exact: true }).click();
-        await expect(
-          page.getByRole('button', { name: 'Collapse navigation', exact: true }),
-        ).toBeFocused();
-        await page.getByRole('button', { name: /^Filters/ }).click();
-        await page.getByRole('combobox', { name: 'Ownership', exact: true }).click();
-        await page.getByRole('option', { name: 'Mine', exact: true }).click();
-        const files = page.getByRole('list', { name: 'Files', exact: true });
-        await expect(files.getByRole('listitem').filter({ hasText: 'Household' })).toBeVisible();
-        await expect(
-          files.getByRole('listitem').filter({ hasText: 'Quarterly budget' }),
-        ).toHaveCount(0);
-      } else {
-        await page.getByRole('button', { name: 'Expand navigation', exact: true }).click();
-        await expect(page.getByRole('dialog', { name: 'Browse files', exact: true })).toBeVisible();
-        await page.screenshot({ path: resolve(directory, `navigation-open-${width}.png`) });
-        await page
-          .getByRole('dialog')
-          .getByRole('button', { name: 'Shared with me', exact: true })
-          .click();
-        await expect(page.getByRole('dialog')).toBeHidden();
-        await expect(
-          page.getByRole('heading', { name: 'Shared with me', exact: true }),
-        ).toBeVisible();
-      }
-      const appearance = page.getByRole('radiogroup', { name: 'Appearance', exact: true });
-      for (const radio of await appearance.getByRole('radio').all()) {
-        const box = await radio.boundingBox();
-        expect(box, `Visible appearance control at ${width}px`).not.toBeNull();
-        expect(Math.round(box!.width), `${width}px ${hasTouch ? 'coarse' : 'fine'} pointer`).toBe(
-          hasTouch ? 44 : 24,
+          .allTextContents();
+        await page.getByRole('button', { name: 'Grid view', exact: true }).click();
+        await expect(page.getByRole('button', { name: 'Grid view', exact: true })).toHaveAttribute(
+          'aria-pressed',
+          'true',
         );
-        expect(Math.round(box!.height)).toBe(hasTouch ? 44 : 24);
+        expect(
+          await page
+            .getByRole('list', { name: 'Files', exact: true })
+            .getByRole('listitem')
+            .allTextContents(),
+        ).toEqual(namesBefore);
+        await page.getByRole('button', { name: 'List view', exact: true }).click();
+        if (width > 900) {
+          await page.getByRole('button', { name: 'Collapse navigation', exact: true }).click();
+          await expect(
+            page.getByRole('button', { name: 'Expand navigation', exact: true }),
+          ).toBeFocused();
+          const destination = page
+            .getByRole('navigation', { name: 'File shortcuts' })
+            .getByRole('button', { name: 'Shared with me', exact: true });
+          // Use actual keyboard navigation so the browser enters :focus-visible mode.
+          for (
+            let step = 0;
+            step < 8 && !(await destination.evaluate((node) => node === document.activeElement));
+            step += 1
+          )
+            await page.keyboard.press('Tab');
+          await expect(destination).toBeFocused();
+          await expect(destination.locator('.rd-nav-tooltip')).toBeVisible();
+          await page
+            .getByRole('navigation', { name: 'File shortcuts' })
+            .getByRole('button', { name: 'Shared with me', exact: true })
+            .click();
+          await expect(
+            page.getByRole('heading', { name: 'Shared with me', exact: true }),
+          ).toBeVisible();
+          await page
+            .getByRole('navigation', { name: 'File shortcuts' })
+            .getByRole('button', { name: 'My files', exact: true })
+            .click();
+          await page.getByRole('button', { name: 'Expand navigation', exact: true }).click();
+          await expect(
+            page.getByRole('button', { name: 'Collapse navigation', exact: true }),
+          ).toBeFocused();
+          await page.getByRole('button', { name: /^Filters/ }).click();
+          await page.getByRole('combobox', { name: 'Ownership', exact: true }).click();
+          await page.getByRole('option', { name: 'Mine', exact: true }).click();
+          const files = page.getByRole('list', { name: 'Files', exact: true });
+          await expect(files.getByRole('listitem').filter({ hasText: 'Household' })).toBeVisible();
+          await expect(
+            files.getByRole('listitem').filter({ hasText: 'Quarterly budget' }),
+          ).toHaveCount(0);
+        } else {
+          await page.getByRole('button', { name: 'Expand navigation', exact: true }).click();
+          await expect(
+            page.getByRole('dialog', { name: 'Browse files', exact: true }),
+          ).toBeVisible();
+          await page.screenshot({ path: resolve(directory, `navigation-open-${width}.png`) });
+          await page
+            .getByRole('dialog')
+            .getByRole('button', { name: 'Shared with me', exact: true })
+            .click();
+          await expect(page.getByRole('dialog')).toBeHidden();
+          await expect(
+            page.getByRole('heading', { name: 'Shared with me', exact: true }),
+          ).toBeVisible();
+        }
+        const appearance = page.getByRole('radiogroup', { name: 'Appearance', exact: true });
+        for (const radio of await appearance.getByRole('radio').all()) {
+          const box = await radio.boundingBox();
+          expect(box, `Visible appearance control at ${width}px`).not.toBeNull();
+          expect(Math.round(box!.width), `${width}px ${hasTouch ? 'coarse' : 'fine'} pointer`).toBe(
+            hasTouch ? 44 : 24,
+          );
+          expect(Math.round(box!.height)).toBe(hasTouch ? 44 : 24);
+        }
+        await appearance.getByRole('radio', { name: 'Dark', exact: true }).click();
+        await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+        await appearance.getByRole('radio', { name: 'Follow system', exact: true }).click();
+        await page.emulateMedia({ colorScheme: 'dark' });
+        await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+        await page.emulateMedia({ colorScheme: 'light' });
+        await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+        await expect(
+          appearance.getByRole('radio', { name: 'Follow system', exact: true }),
+        ).toBeChecked();
+        await page.screenshot({ path: resolve(directory, `appearance-system-${width}.png`) });
+        verifications.push(
+          `${width}px: navigation/focus, list/grid parity and segmented appearance/system response`,
+        );
+      } catch (error) {
+        await recordCaptureFailure(
+          page,
+          'redesign-screens--dashboard',
+          `journey-${width}-${hasTouch ? 'touch' : 'pointer'}`,
+          error,
+        );
+        throw error;
+      } finally {
+        await page.close();
       }
-      await appearance.getByRole('radio', { name: 'Dark', exact: true }).click();
-      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-      await appearance.getByRole('radio', { name: 'Follow system', exact: true }).click();
-      await page.emulateMedia({ colorScheme: 'dark' });
-      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-      await page.emulateMedia({ colorScheme: 'light' });
-      await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-      await expect(
-        appearance.getByRole('radio', { name: 'Follow system', exact: true }),
-      ).toBeChecked();
-      await page.screenshot({ path: resolve(directory, `appearance-system-${width}.png`) });
-      await page.close();
-      verifications.push(
-        `${width}px: navigation/focus, list/grid parity and segmented appearance/system response`,
-      );
     }
   }
   if (requested.includes('redesign-screens--planned-space')) {
@@ -1066,6 +1024,7 @@ await writeFile(
       capturedAt: new Date().toISOString(),
       fixtureTime: '2026-10-20T16:00:00Z',
       viewport: review.viewport,
+      theme: review.theme,
       variants: variants.map(([, , variant]) => variant),
       requested,
       captures,
@@ -1140,6 +1099,66 @@ console.log(
   `Captured ${captures.length} screenshots in ${directory}; ${verifications.length} interaction passes.`,
 );
 
+async function waitForStory(page: Page, id: string) {
+  // Images and intentionally empty components are valid stories. Require
+  // the root to exist, then use Storybook's lifecycle rather than text content.
+  await expect(page.locator('#storybook-root')).toBeAttached();
+  // Many catalogue states are established by a play function (open dialogs,
+  // rejected requests, pending mutations). Storybook marks the render finished
+  // after those interactions, rather than when the first component appears.
+  await page.waitForFunction(() => {
+    const preview = (
+      window as Window & {
+        __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } };
+      }
+    ).__STORYBOOK_PREVIEW__;
+    return preview?.currentRender?.phase === 'finished';
+  });
+  // A failed play function also reaches "finished". Its result must match
+  // this story and succeed before a screenshot can count as state evidence.
+  await page.waitForFunction((storyId) => {
+    const preview = (
+      window as Window & {
+        __STORYBOOK_PREVIEW__?: {
+          channel?: { last: (event: string) => { storyId: string }[] | undefined };
+        };
+      }
+    ).__STORYBOOK_PREVIEW__;
+    return preview?.channel?.last('storyFinished')?.[0]?.storyId === storyId;
+  }, id);
+  const storyResult = await page.evaluate(() => {
+    const preview = (
+      window as Window & {
+        __STORYBOOK_PREVIEW__?: {
+          channel?: {
+            last: (event: string) => { storyId: string; status: string }[] | undefined;
+          };
+        };
+      }
+    ).__STORYBOOK_PREVIEW__;
+    return preview?.channel?.last('storyFinished')?.[0];
+  });
+  expect(storyResult?.storyId).toBe(id);
+  expect(storyResult?.status, `${id}: Storybook play must succeed`).toBe('success');
+  // Some Storybook versions report finished after swallowing a play error.
+  // Each story loads a fresh document, so recorded play exceptions belong here.
+  const playErrors = await page.evaluate(() => {
+    const channel = (
+      window as Window & {
+        __STORYBOOK_PREVIEW__?: {
+          channel?: { last: (event: string) => unknown[] | undefined };
+        };
+      }
+    ).__STORYBOOK_PREVIEW__?.channel;
+    return ['playFunctionThrewException', 'unhandledErrorsWhilePlaying'].flatMap(
+      (event) => channel?.last(event) ?? [],
+    );
+  });
+  expect(playErrors, `${id}: no swallowed play exceptions`).toEqual([]);
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('.sb-errordisplay')).toBeHidden();
+}
+
 async function recordCaptureFailure(page: Page, id: string, variant: string, error: unknown) {
   const message = (error instanceof Error ? (error.stack ?? error.message) : String(error)).slice(
     0,
@@ -1155,6 +1174,41 @@ async function recordCaptureFailure(page: Page, id: string, variant: string, err
       timeout: 5000,
     }),
     page.locator('body').ariaSnapshot({ timeout: 5000 }),
+    page.locator('html').evaluate(
+      () => {
+        const preview = (
+          window as Window & {
+            __STORYBOOK_PREVIEW__?: {
+              currentRender?: { phase?: string };
+              channel?: { last: (event: string) => unknown[] | undefined };
+            };
+          }
+        ).__STORYBOOK_PREVIEW__;
+        const finished = preview?.channel?.last('storyFinished')?.[0] as
+          { storyId?: unknown; status?: unknown } | undefined;
+        const describe = (value: unknown) => {
+          if (value instanceof Error) return value.message.slice(0, 1000);
+          try {
+            return (JSON.stringify(value) ?? String(value)).slice(0, 1000);
+          } catch {
+            return String(value).slice(0, 1000);
+          }
+        };
+        return {
+          phase: String(preview?.currentRender?.phase ?? 'unavailable').slice(0, 100),
+          storyFinished: {
+            storyId: String(finished?.storyId ?? '').slice(0, 256),
+            status: String(finished?.status ?? '').slice(0, 100),
+          },
+          playErrors: ['playFunctionThrewException', 'unhandledErrorsWhilePlaying'].map((event) => {
+            const errors = preview?.channel?.last(event) ?? [];
+            return { event, count: errors.length, samples: errors.slice(0, 4).map(describe) };
+          }),
+        };
+      },
+      undefined,
+      { timeout: 5000 },
+    ),
   ]);
   const failure = {
     id,
@@ -1175,6 +1229,10 @@ async function recordCaptureFailure(page: Page, id: string, variant: string, err
     JSON.stringify(
       {
         ...failure,
+        storybook:
+          evidence[2].status === 'fulfilled'
+            ? evidence[2].value
+            : String(evidence[2].reason).slice(0, 1000),
         accessibility:
           evidence[1].status === 'fulfilled'
             ? evidence[1].value.slice(0, 16000)

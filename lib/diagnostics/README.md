@@ -20,5 +20,5 @@ Adapters add event IDs, timestamps and bounded delivery; these are separate from
 document edit reliability. A queue must never relabel an old event after a clear.
 
 The package exports validation and the optional sink from `index.ts`. Tests cover
-schema privacy boundaries, metric semantics and failure isolation. Run through
-the repository's unit tests; this package is not yet published.
+schema privacy boundaries, metric semantics and failure isolation. CI runs them
+in the Lib tests job with the rest of `lib/`; this package is not yet published.

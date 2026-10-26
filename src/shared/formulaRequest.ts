@@ -1,10 +1,20 @@
-/** Formula admission is deliberately bounded on the server; clients wait briefly instead of queuing work there. */
+import { FormulaSaveError } from '@spinel/doc-formulas';
+
+/** Retry only read-only busy/overflow responses, never an expired admission wait. */
 export async function requestFormula<T>(url: string, init: RequestInit): Promise<T> {
   const delays = [200, 400, 800, 1200, 1600, 2000];
   for (let attempt = 0; ; attempt++) {
     init.signal?.throwIfAborted();
-    const response = await fetch(url, init);
-    const result = await response.json();
+    let response: Response;
+    let result;
+    try {
+      response = await fetch(url, init);
+      result = await response.json();
+    } catch (error) {
+      init.signal?.throwIfAborted();
+      if (error instanceof Error && error.name === 'AbortError') throw error;
+      throw new FormulaSaveError('unavailable');
+    }
     init.signal?.throwIfAborted();
     const busy = response.status === 429 || (result?.ok === false && result.reason === 'busy');
     if (busy && attempt < delays.length) {
@@ -27,6 +37,8 @@ export async function requestFormula<T>(url: string, init: RequestInit): Promise
       });
       continue;
     }
+    if (response.status === 429) throw new FormulaSaveError('busy');
+    if (response.status === 503) throw new FormulaSaveError('unavailable');
     if (!response.ok)
       throw new Error(result.error ?? 'The formula could not be loaded. Try again.');
     return result as T;

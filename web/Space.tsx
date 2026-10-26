@@ -81,6 +81,7 @@ export function Space({
   renderEditor,
 }: SpaceProps) {
   const [rootAction, setRootAction] = useState<SpaceRootActionMode | null>(null);
+  const rootActionTrigger = useRef<HTMLButtonElement | null>(null);
   const [offlineOpen, setOfflineOpen] = useState(false);
   const [route, setRoute] = useState<SpaceLocation>(() => readSpaceLocation(location));
   const routeRef = useRef(route);
@@ -644,6 +645,11 @@ export function Space({
     <SpaceRootActions
       item={rootFile!}
       initialMode={visiblePage ? (rootAction ?? undefined) : undefined}
+      finalFocus={
+        visiblePage
+          ? () => (rootActionTrigger.current?.isConnected ? rootActionTrigger.current : true)
+          : undefined
+      }
       onClose={() => setRootAction(null)}
       beforeChange={allow}
       onChanged={(item) => {
@@ -970,7 +976,10 @@ export function Space({
                 move: 'Move…',
                 trash: 'Move to Trash',
               }[mode],
-              onClick: () => setRootAction(mode),
+              onClick: (trigger?: HTMLButtonElement | null) => {
+                rootActionTrigger.current = trigger ?? null;
+                setRootAction(mode);
+              },
               destructive: mode === 'trash',
             }))
           : []),
