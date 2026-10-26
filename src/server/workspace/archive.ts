@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { chmod, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -247,7 +247,9 @@ export class WorkspaceArchive {
         if (sheets.has(id)) return ids.get(id)!;
         let missing = unavailable.get(id);
         if (!missing) {
-          missing = `unavailable-${randomUUID()}`;
+          // Match a workspace UUID's 36 characters, preserving a file exactly at
+          // its native save limit. The reserved prefix can never bind a UUID item.
+          missing = `unavailable-${randomBytes(18).toString('base64url')}`;
           unavailable.set(id, missing);
         }
         return missing;

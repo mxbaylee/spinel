@@ -722,3 +722,64 @@ test('a 2,176 MiB logical workspace streams one native member at a time within a
     `Archive streaming fixture: 2,176 MiB native payload; process RSS baseline ${(baseline / 1024 / 1024).toFixed(1)} MiB, peak ${(peakRss / 1024 / 1024).toFixed(1)} MiB.`,
   );
 }, 60_000);
+
+test('a Doc exactly at the 10 MiB native limit round-trips with an unavailable external Formula source', async () => {
+  const source = fixture();
+  const host = source.create('Native limit');
+  const external = source.create('External budget', 'sheet', null, source.other.id);
+  source.save(external.id, sheet());
+  source.workspace.share(source.other.id, external.id, source.owner.id, 'viewer');
+  const expression = '=External.Summary.A1';
+  const reference = parseFormula(expression)[0];
+  const body = formulaBody('boundary-formula', {
+    version: 1,
+    expression,
+    references: [
+      {
+        start: reference.start,
+        end: reference.end,
+        range: reference.range,
+        itemId: external.id,
+        sheetId: 'tab',
+      },
+    ],
+  });
+  body.dataStream += '\r\n';
+  const snapshot = {
+    ...doc(),
+    id: host.id,
+    body,
+    resources: [{ name: 'future-resource', data: '' }],
+  };
+  const limit = 10 * 1024 * 1024;
+  snapshot.resources[0].data = 'x'.repeat(limit - Buffer.byteLength(JSON.stringify(snapshot)));
+  expect(Buffer.byteLength(JSON.stringify(snapshot))).toBe(limit);
+  source.files.docs.save(source.owner.id, host.id, {
+    snapshot,
+    revision: 0,
+    writeId: randomUUID(),
+  });
+  const path = await exportPath(source);
+  const target = fixture();
+  // An unrelated local Sheet has the old source's exact ID; import must not bind it.
+  target.database
+    .prepare(
+      'INSERT INTO workspace_items(id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,NULL,?,?,0,0)',
+    )
+    .run(external.id, target.owner.id, 'sheet', 'Local namesake');
+  target.save(external.id, sheet());
+  expect(await target.archive.import(target.owner.id, path, () => {})).toMatchObject({
+    items: 1,
+    files: 1,
+  });
+  const imported = rows(target).find((item) => item.kind === 'doc')!;
+  const copied = target.files.docs.load(target.owner.id, String(imported.id)).snapshot!;
+  expect(Buffer.byteLength(JSON.stringify(copied))).toBe(limit);
+  const mapped = docFormulas(copied.body)[0].definition.references[0].itemId;
+  expect(mapped).toMatch(/^unavailable-[\w-]{24}$/);
+  expect(mapped).toHaveLength(external.id.length);
+  expect(mapped).not.toBe(external.id);
+  expect(
+    target.database.prepare('SELECT 1 FROM workspace_items WHERE id=?').get(mapped),
+  ).toBeUndefined();
+});
