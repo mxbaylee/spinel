@@ -7,6 +7,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { DocumentStore } from '../src/server/workspace/documents.ts';
+import { inspectPdf } from './pdfEvidence.ts';
 
 test('Doc readers and host-only guests see literal formulas without receiving private source values', async ({
   page,
@@ -14,7 +15,7 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
   browser,
   baseURL,
 }, info) => {
-  test.setTimeout(90_000);
+  test.setTimeout(120_000);
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db),
     workspace = new WorkspaceStore(auth);
@@ -156,6 +157,19 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
         ),
       ),
     ).not.toContain(secret);
+    const account = Boolean(await view.getByRole('button', { name: 'Document actions', exact: true }).count());
+    if (account) {
+      await view.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await view.getByRole('menuitem', { name: 'Export', exact: true }).click();
+    } else await view.getByRole('button', { name: 'Export as PDF', exact: true }).click();
+    const pdf = view.getByRole('dialog', { name: account ? 'Export' : 'Export as PDF', exact: true });
+    const downloaded = view.waitForEvent('download');
+    await pdf.getByRole('button', { name: 'Export as PDF', exact: true }).click();
+    await inspectPdf(await downloaded, info, `${account ? 'account' : 'guest'}-private-formulas`, {
+      text: ['42', 'Unavailable'],
+      forbidden: [secret, source.name, source.id, expression, owner.name, reader.name],
+    });
+    await pdf.getByRole('button', { name: 'Close dialog', exact: true }).click();
   };
   try {
     await page.goto(`/?item=${host.id}`);

@@ -72,7 +72,7 @@ and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-co
 
 | Always visible                                                                | Behind a menu |
 | ----------------------------------------------------------------------------- | ------------- |
-| Name, status cluster, View only / Guest editor badge, People, theatre toggle; Export as PDF remains SPN-075 | People details and authorized formula details |
+| Name, status cluster, View only / Guest editor badge, People, theatre toggle; Export as PDF | People details and authorized formula details |
 
 ## Stories
 

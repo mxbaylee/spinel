@@ -128,13 +128,18 @@ become complete ordinary native tables with wrapping and pagination. They never
 use the live editor adapter's atomic-table size limit. Source expressions and
 range properties are removed from the owned model; unavailable results contain
 the fixed word **Unavailable**, with no source name, identity or explanation.
-Every custom range requires an explicit prepared result. Nothing is evaluated.
+Every Formula custom range requires an explicit prepared result. Nothing is evaluated.
+Native hyperlink text retains its light-paper blue/underline appearance, rich
+text and authored text-color/style modes. Its destination and annotation metadata
+are removed before layout; the PDF contains the readable link text rather than
+an active external action. Hyperlink and Formula ranges may coexist without
+retaining either private source annotation. Overlapping or malformed ranges fail.
 Scalar and unavailable results can appear inside native table cells. Array/table
 results nested inside a native table currently fail explicitly: guessing the
 cell's auto-fit/span geometry before native layout could clip the generated table.
 
 Doc admission currently rejects nonempty headers/footers/notes, raw OOXML or
-custom rendering payloads, unprepared links/mentions/plugin resources, page
+custom rendering payloads, unprepared mentions/plugin resources, page
 backgrounds/borders, custom text effects and tab leaders, paragraph frames,
 heterogeneous section geometry, odd/even section parity, repeated table headers,
 wrapped/floating tables, sparse table grids, rotated cell text, column groups,

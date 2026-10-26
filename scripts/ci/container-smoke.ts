@@ -4,6 +4,7 @@ import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
+import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 const version = readFileSync('.nvmrc', 'utf8').trim();
 assert.match(version, /^\d+\.\d+\.\d+$/);
@@ -167,6 +168,64 @@ function stop(name: string) {
   run('docker', ['rm', name]);
 }
 
+async function checkPdfExports(name: string) {
+  // Seed a synthetic everyday account through the existing stores. Its private
+  // cookie stays inside this process and never enters logs or assertion output.
+  const seed = JSON.parse(run('docker', ['exec', '-i', name, 'node', '--input-type=module'], {
+    input: String.raw`
+import { randomUUID } from 'node:crypto';
+import { openDatabase } from './server/database.ts';
+import { AuthStore } from './src/server/auth/store.ts';
+import { WorkspaceStore } from './src/server/workspace/store.ts';
+import { DocumentStore } from './src/server/workspace/documents.ts';
+import { SheetStore } from './src/server/workspace/sheets.ts';
+const db = openDatabase(process.env.DATABASE_PATH);
+try {
+  const auth = new AuthStore(db), workspace = new WorkspaceStore(auth);
+  const owner = auth.createUser('Synthetic PDF owner');
+  const doc = workspace.create(owner.id, {name:'PDF document',kind:'doc',parentId:null});
+  const sheet = workspace.create(owner.id, {name:'PDF sheet',kind:'sheet',parentId:null});
+  const lines = Array.from({length:35},(_,i)=>'Container paragraph '+(i+1)+'.');
+  let at = 0;
+  new DocumentStore(workspace).save(owner.id,doc.id,{revision:0,writeId:randomUUID(),snapshot:{
+    id:doc.id,documentStyle:{pageSize:{width:450,height:280},marginTop:32,marginBottom:32,marginLeft:32,marginRight:32},
+    body:{dataStream:lines.join('\r')+'\r\n',paragraphs:lines.map((line,i)=>{at+=line.length;return {startIndex:at++,paragraphId:'p'+i};})}
+  }});
+  new SheetStore(workspace).save(owner.id,sheet.id,{revision:0,writeId:randomUUID(),snapshot:{
+    id:sheet.id,name:'PDF sheet',appVersion:'1.1.0',locale:'enUS',styles:{},sheetOrder:['one'],
+    sheets:{one:{id:'one',name:'One',rowCount:100,columnCount:4,cellData:{0:{0:{v:'Container sheet'},1:{f:'=20+22',v:-1}}}}}
+  }});
+  const session=auth.createSession(owner.id);
+  console.log(JSON.stringify({token:session.token,doc:doc.id,sheet:sheet.id}));
+} finally { db.close(); }
+`, timeout: 20_000,
+  }));
+  assert.ok(typeof seed.token === 'string' && typeof seed.doc === 'string' && typeof seed.sheet === 'string', 'PDF fixture setup failed.');
+  const { COOKIE_NAME } = await import('../../src/server/auth/store.ts');
+  for (const [id, expected] of [[seed.doc, 'Container paragraph 35.'], [seed.sheet, '42']]) {
+    const response = await fetch(`${base}/api/items/${id}/pdf`, {
+      method: 'POST', headers: { Cookie: `${COOKIE_NAME}=${seed.token}`, Origin: origin, 'Content-Type': 'application/json' },
+      body: '{}', signal: AbortSignal.timeout(60_000),
+    });
+    assert.equal(response.status, 200, 'Production PDF export did not succeed within the existing 512 MiB limit.');
+    assert.match(response.headers.get('content-type') ?? '', /^application\/pdf\b/);
+    const task = getDocument({data:new Uint8Array(await response.arrayBuffer()),useSystemFonts:false});
+    try {
+      const pdf = await task.promise;
+      let text = '';
+      for (let page = 1; page <= pdf.numPages; page++) {
+        const content = await (await pdf.getPage(page)).getTextContent();
+        text += content.items.map((item) => 'str' in item ? item.str : '').join(' ');
+      }
+      assert.ok(text.includes(expected), 'The production PDF omitted confirmed content.');
+      assert.ok(!JSON.stringify(await pdf.getMetadata()).includes('Synthetic PDF owner'), 'PDF metadata exposed an account.');
+    } finally { await task.destroy(); }
+  }
+  const peak = run('docker', ['exec', name, 'cat', '/sys/fs/cgroup/memory.peak']).trim();
+  console.log(`Production Sheet and multipage Doc PDFs passed; container peak ${(Number(peak) / 1024 / 1024).toFixed(1)} MiB.`);
+  await checkServer();
+}
+
 try {
   console.log('Building the final production image.');
   const imageFile = join(directory, 'image-id');
@@ -252,7 +311,10 @@ console.log('Spinel native bindings OK');
       image,
     ]);
     await checkServer();
-    if (!setupId) setupId = issueSetup(name);
+    if (!setupId) {
+      setupId = issueSetup(name);
+      await checkPdfExports(name);
+    }
     const hash = databaseHash(name, setupId);
     if (firstHash)
       assert.equal(hash, firstHash, 'The setup record did not survive container recreation.');

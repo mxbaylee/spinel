@@ -476,23 +476,19 @@ export function paginateDocument(
       check();
       let end = Math.min(start + contentHeight, bottom);
       if (end < bottom) {
-        // Move the seam backwards until it crosses no line or ordinary row. The
-        // bounded work budget prevents adversarial overlapping keep regions from
-        // making seam search quadratic without admission.
-        let moved = true;
-        while (moved) {
-          moved = false;
-          for (const interval of atomic) {
-            visit();
-            if (
-              interval.top < end - 0.001 &&
-              interval.bottom > end + 0.001 &&
-              interval.top > start + 0.001
-            ) {
-              end = interval.top;
-              moved = true;
-            }
-          }
+        // A backwards pass reaches the same earliest safe seam as repeated
+        // forwards scans. Once the seam moves, previously visited intervals
+        // start at or after it and cannot cross it. This also bounds overlapping
+        // glyph/row/keep intervals to one visit each per physical page.
+        for (let index = atomic.length - 1; index >= 0; index--) {
+          visit();
+          const interval = atomic[index];
+          if (
+            interval.top < end - 0.001 &&
+            interval.bottom > end + 0.001 &&
+            interval.top > start + 0.001
+          )
+            end = interval.top;
         }
       }
       if (end <= start) end = Math.min(start + contentHeight, bottom);

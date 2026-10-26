@@ -1,14 +1,13 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
-import { createCanvas } from '@napi-rs/canvas';
 import sharp from 'sharp';
-import { getDocument, OPS } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import { inspectPdf } from './pdfEvidence.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 
 for (const kind of ['sheet', 'doc'] as const) {
-  test(`${kind} downloads current native content, imports by folder drop and opens its printed PDF`, async ({
+  test(`${kind} downloads current native content, imports by folder drop and opens its direct PDF download`, async ({
     page,
     context,
     baseURL,
@@ -39,34 +38,8 @@ for (const kind of ['sheet', 'doc'] as const) {
     const errors: string[] = [];
     let phase = 'open source editor';
     page.on('pageerror', (error) => errors.push(`${phase}: ${error.stack ?? error.message}`));
-    let printHtml = '';
-    await context.exposeBinding('captureNativePrint', (_source, html: string) => {
-      printHtml = html;
-    });
-    // Intercept only the browser's print entry point. Keep the plugin's licensed
-    // rendering, page selection and watermarks intact; never inspect Pro internals.
     await context.addInitScript(() => {
-      window.print = () => {
-        window.dispatchEvent(new Event('beforeprint'));
-        const clone = document.documentElement.cloneNode(true) as HTMLElement;
-        const original = [...document.querySelectorAll('canvas')];
-        clone.querySelectorAll('canvas').forEach((canvas, index) => {
-          const image = document.createElement('img');
-          image.src = original[index].toDataURL();
-          image.style.cssText = canvas.style.cssText;
-          image.width = original[index].width;
-          image.height = original[index].height;
-          canvas.replaceWith(image);
-        });
-        clone.querySelectorAll('script').forEach((script) => script.remove());
-        const base = document.createElement('base');
-        base.href = document.baseURI;
-        clone.querySelector('head')!.prepend(base);
-        void (
-          window as unknown as { captureNativePrint: (html: string) => Promise<void> }
-        ).captureNativePrint(clone.outerHTML);
-        window.dispatchEvent(new Event('afterprint'));
-      };
+      window.print = () => { throw new Error('Browser print must not be called.'); };
     });
     try {
       await page.goto(`/?item=${item.id}`);
@@ -134,74 +107,16 @@ for (const kind of ['sheet', 'doc'] as const) {
           ? snapshot.sheets[snapshot.sheetOrder[0]].cellData[0][0].v
           : snapshot.body.dataStream,
       ).toContain('Portable proof 314');
-      // Exercise the actual app export control and plugin print UI.
-      phase = 'open native print';
-      await page.getByRole('button', { name: 'Print / save PDF', exact: true }).click();
-      await expect(page.getByRole('dialog', { name: 'Export', exact: true })).not.toBeVisible();
-      await expect(region.getByRole('alert')).toHaveCount(0);
-      phase = 'print native document';
-      if (kind === 'sheet') await page.getByRole('button', { name: /^next$/i }).click();
-      await expect.poll(() => printHtml.includes('<img'), { timeout: 20_000 }).toBe(true);
-      const printed = await context.newPage();
-      try {
-        await printed.emulateMedia({ media: 'print' });
-        await printed.setContent(printHtml, { waitUntil: 'networkidle' });
-        // Native printing retains the app DOM and hides it with @media print.
-        // Assert printed visibility, not absence from the serialized HTML.
-        await expect(printed.getByText('Your workspace', { exact: true })).toBeHidden();
-        await printed.evaluate(() =>
-          Promise.all([...document.images].map((image) => image.decode().catch(() => {}))),
-        );
-        const pdf = await printed.pdf({
-          path: info.outputPath(`${kind}-export.pdf`),
-          printBackground: true,
-          preferCSSPageSize: true,
-        });
-        expect(pdf.subarray(0, 5).toString()).toBe('%PDF-');
-        const loading = getDocument({ data: new Uint8Array(pdf), useSystemFonts: true });
-        const reopened = await loading.promise;
-        try {
-          expect(reopened.numPages).toBeGreaterThan(0);
-          const first = await reopened.getPage(1),
-            viewport = first.getViewport({ scale: 1 });
-          const text = (await first.getTextContent()).items
-            .map((item) => ('str' in item ? item.str : ''))
-            .join(' ');
-          expect(text).not.toContain('Your workspace');
-          const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
-          await first.render({
-            canvas: canvas as unknown as HTMLCanvasElement,
-            canvasContext: canvas.getContext('2d') as unknown as CanvasRenderingContext2D,
-            viewport,
-          }).promise;
-          const pixels = canvas
-            .getContext('2d')
-            .getImageData(0, 0, canvas.width, canvas.height).data;
-          let ink = 0;
-          for (let index = 0; index < pixels.length; index += 4)
-            if (
-              pixels[index + 3] &&
-              Math.min(pixels[index], pixels[index + 1], pixels[index + 2]) < 240
-            )
-              ink++;
-          await writeFile(info.outputPath(`${kind}-export-opened.png`), await canvas.encode('png'));
-          expect(ink, 'The reopened PDF must contain visible printed content').toBeGreaterThan(50);
-          // An empty page would have no image painting operations for Univer's canvas output.
-          expect(
-            (await first.getOperatorList()).fnArray.some((operation) =>
-              [
-                OPS.paintImageXObject,
-                OPS.paintInlineImageXObject,
-                OPS.paintImageMaskXObject,
-              ].includes(operation),
-            ),
-          ).toBe(true);
-        } finally {
-          await loading.destroy();
-        }
-      } finally {
-        await printed.close();
-      }
+      phase = 'download complete PDF';
+      const pdfDownload = page.waitForEvent('download');
+      await page.getByRole('button', { name: 'Export as PDF', exact: true }).click();
+      await inspectPdf(await pdfDownload, info, kind, {
+        text: ['Portable proof 314'],
+        forbidden: [user.name, 'Your workspace'],
+        image: kind === 'doc',
+      });
+      await expect(page.getByRole('dialog', { name: 'Export', exact: true }))
+        .toContainText('PDF download started.');
       phase = 'leave source editor and import';
       await page.goto(`/?item=${folder.id}`);
       await page.getByRole('button', { name: 'New', exact: true }).click();

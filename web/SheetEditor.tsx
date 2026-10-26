@@ -5,13 +5,6 @@ import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { sheetPreset, useMobileSheetControls } from './sheetPreset.ts';
-import {
-  SheetPrintOpenOperation,
-  UniverSheetsPrintPlugin,
-  UniverSheetsPrintMobileUIPlugin,
-} from '@univerjs-pro/sheets-print';
-import printEnglish from '@univerjs-pro/sheets-print/locale/en-US';
-import '@univerjs-pro/sheets-print/lib/index.css';
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { IPermissionService, InterceptorEffectEnum } from '@univerjs/core';
 import {
@@ -64,7 +57,6 @@ export function SheetEditor({
 }) {
   const chrome = useEditorChrome();
   const mobile = useRef(useMobileSheetControls()).current;
-  const print = useRef<(() => Promise<void>) | null>(null);
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
@@ -110,7 +102,6 @@ export function SheetEditor({
             enUS,
             ClientEnglish,
             UIEnglish,
-            printEnglish,
             sheetDrawingEnglish,
           ),
         },
@@ -122,13 +113,9 @@ export function SheetEditor({
             false,
             spaceId ? { spaceId, itemId: id } : undefined,
           ),
-          mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
         ],
         presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
       });
-      print.current = async () => {
-        await univerAPI.executeCommand(SheetPrintOpenOperation.id);
-      };
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => univer.dispose();
@@ -283,10 +270,6 @@ export function SheetEditor({
         name={name}
         people={people}
         saved={!status.dirty && !status.failed && Boolean(controller.current)}
-        print={async () => {
-          if (!print.current) throw new Error('Wait for the spreadsheet to load.');
-          await print.current();
-        }}
       />
       <div className="univer-container" ref={container} />
     </section>

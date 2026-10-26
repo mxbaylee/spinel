@@ -27,6 +27,15 @@ Their SIL Open Font License 1.1 texts and copyrights are retained beside the
 files in `Atkinson-OFL.txt` and `NotoSymbols-OFL.txt`. These are explicit test
 inputs for prepared-font validation, not production font substitutions.
 
+The PDF runtime assets in `src/server/pdf/fonts/` include unmodified Liberation
+Sans/Serif/Mono 2.1.5 regular, bold, italic and bold-italic faces from the
+[official Liberation release](https://github.com/liberationfonts/liberation-fonts/releases/tag/2.1.5),
+with SIL OFL 1.1 notices in `Liberation-OFL.txt`. The same pinned Atkinson and Noto
+Sans Symbols 2 files above are also bundled explicitly for production PDF use.
+Their original OFL texts remain beside them. Source URLs, archive hash and the
+substitution policy are in [the runtime font notice](src/server/pdf/fonts/README.md).
+No font bytes have been modified.
+
 Code from [mxbaylee/circus-health](https://github.com/mxbaylee/circus-health) isn't listed:
 Baylee Schmeisser, Spinel's owner, wrote it.
 

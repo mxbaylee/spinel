@@ -22,6 +22,7 @@ import type { PrintLimits } from './contract.ts';
 import type { PreparedFonts } from './fonts.ts';
 import { inspectSnapshot } from './preflight.ts';
 import { projectDocFormulas } from './doc-formulas.ts';
+import { projectDocHyperlinks } from './doc-hyperlinks.ts';
 import type { PreparedDocFormula } from './doc-formulas.ts';
 export type {
   PreparedDocFormula,
@@ -642,6 +643,7 @@ export function prepareDocSnapshot(
   }
   documentStyle(owned.documentStyle);
   validateBody(owned, limits, check);
+  projectDocHyperlinks(owned, limits, check);
   projectDocFormulas(owned, prepared, limits, check);
   validateBody(owned, limits, check);
   const sources = imageSources(owned, limits);

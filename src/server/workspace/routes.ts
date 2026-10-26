@@ -16,6 +16,7 @@ import { documentIdentity } from '../collaboration/identity.ts';
 import { historyRoutes } from '../history/routes.ts';
 import { admitTransfer, transfers } from './transfers.ts';
 import { archiveRoutes } from './archive-routes.ts';
+import { pdfRoutes } from '../pdf/routes.ts';
 
 export function workspaceRoutes(
   auth: AuthStore,
@@ -60,6 +61,7 @@ export function workspaceRoutes(
     next();
   });
   router.use(archiveRoutes(store, files));
+  if (collaboration) router.use('/:id/pdf', pdfRoutes(store, collaboration, account));
   if (collaboration)
     router.use(
       '/:id/formulas',

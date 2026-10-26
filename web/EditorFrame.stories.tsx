@@ -13,13 +13,11 @@ import { OfflineAvailability } from './offline/OfflineAvailability.tsx';
 
 function Fixture({
   dialog = false,
-  printFailure = false,
   saved = true,
   presence = false,
   formulas = false,
 }: {
   dialog?: boolean;
-  printFailure?: boolean;
   saved?: boolean;
   presence?: boolean;
   formulas?: boolean;
@@ -61,9 +59,6 @@ function Fixture({
           { id: 'b', name: 'Sam Rivera', color: '#087f5b' },
         ]}
         saved={saved}
-        print={async () => {
-          if (printFailure) throw new Error('Could not open printing.');
-        }}
         formulas={
           formulas
             ? (close) => (
@@ -327,6 +322,7 @@ export const VersionsLoading: Story = {
   },
 };
 export const ExportDialog: Story = {
+  parameters: { api: { 'GET /api/items/fixture/pdf': { kind: 'doc' } } },
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
     await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Export' }));
@@ -334,7 +330,7 @@ export const ExportDialog: Story = {
     await expect(
       within(dialog).getByRole('button', { name: 'Download Univer file' }),
     ).toBeEnabled();
-    await expect(within(dialog).getByRole('button', { name: 'Print / save PDF' })).toBeEnabled();
+    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Export as PDF' })).toBeEnabled());
     await assertDialogTargets(dialog);
   },
 };
@@ -344,20 +340,26 @@ export const ExportWaitingForSave: Story = {
     const dialog = await openTool(canvasElement, 'Export'),
       scope = within(dialog);
     await expect(scope.getByRole('button', { name: 'Download Univer file' })).toBeDisabled();
-    await expect(scope.getByRole('button', { name: 'Print / save PDF' })).toBeDisabled();
+    await expect(scope.getByRole('button', { name: 'Export as PDF' })).toBeDisabled();
     await expect(scope.getByText('Wait until changes are saved before exporting.')).toBeVisible();
     await assertDialogTargets(dialog);
   },
 };
-export const PrintFailure: Story = {
-  args: { children: <Fixture printFailure /> },
+export const PdfFailure: Story = {
+  parameters: {
+    api: {
+      'GET /api/items/fixture/pdf': { kind: 'doc' },
+      'POST /api/items/fixture/pdf': failure('Could not export this PDF. Try again.', 422),
+    },
+  },
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Document actions' }));
     await userEvent.click(await within(document.body).findByRole('menuitem', { name: 'Export' }));
     const dialog = await within(document.body).findByRole('dialog', { name: 'Export' });
-    await userEvent.click(within(dialog).getByRole('button', { name: 'Print / save PDF' }));
+    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Export as PDF' })).toBeEnabled());
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Export as PDF' }));
     await expect(await within(document.body).findByRole('alert')).toHaveTextContent(
-      'Could not open printing.',
+      'Could not export this PDF. Try again.',
     );
     await expect(within(document.body).getByRole('dialog', { name: 'Export' })).toBeVisible();
     await assertDialogTargets(within(document.body).getByRole('dialog', { name: 'Export' }));
@@ -521,5 +523,17 @@ export const ActionsOverPresence: Story = {
     await expect(Number(getComputedStyle(label).zIndex)).toBeLessThan(
       Number(getComputedStyle(positioner).zIndex),
     );
+  },
+};
+
+export const GuestPdf: Story = {
+  args: { guest: true, onBack: undefined, access: 'View only' },
+  parameters: { api: { 'GET /api/items/fixture/pdf': { kind: 'doc' } } },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Export as PDF' }));
+    const dialog = await within(document.body).findByRole('dialog', { name: 'Export as PDF' });
+    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Export as PDF' })).toBeEnabled());
+    await expect(within(dialog).queryByRole('button', { name: 'Download Univer file' })).toBeNull();
+    await assertDialogTargets(dialog);
   },
 };

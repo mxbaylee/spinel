@@ -1,3 +1,4 @@
+import { inspectPdf } from './pdfEvidence.ts';
 import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -788,7 +789,7 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
     const exportPanel = page.getByRole('dialog', { name: 'Export', exact: true });
     await expect(
-      exportPanel.getByRole('button', { name: 'Print / save PDF', exact: true }),
+      exportPanel.getByRole('button', { name: 'Export as PDF', exact: true }),
     ).toBeEnabled();
     const download = page.waitForEvent('download');
     const exported = page.waitForResponse((response) =>
@@ -806,6 +807,11 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     ) as IDocumentData;
     expect(snapshot.id).toBe(doc.id);
     expect(snapshot.body?.dataStream).toContain('Native notes in a Space.');
+    const pdfDownload = page.waitForEvent('download');
+    const pdfResponse = page.waitForResponse((response) => response.url().endsWith(`${prefix}/pdf`) && response.request().method() === 'POST');
+    await exportPanel.getByRole('button', { name: 'Export as PDF', exact: true }).click();
+    expect((await pdfResponse).status()).toBe(200);
+    await inspectPdf(await pdfDownload, info, 'space-doc', { text: ['Native notes in a Space.'] });
     // Outer document services remain closed: activation never widens ordinary lookup.
     expect((await f.context.request.get(`/api/items/${sheet.id}/sheet`)).status()).toBe(404);
     expect((await f.context.request.get(`/api/items/${doc.id}/history`)).status()).toBe(404);

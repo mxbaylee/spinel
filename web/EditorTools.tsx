@@ -7,6 +7,7 @@ import { Collaborators } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
 import { VersionNames } from './VersionNames.tsx';
 import { FileExports } from './FileExports.tsx';
+import { PdfExport } from './PdfExport.tsx';
 import { guestItemId } from './documentAccess.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import './fileDialog.css';
@@ -17,7 +18,6 @@ export function EditorTools({
   spaceId,
   people,
   saved,
-  print,
   insertFormula,
   formulas,
 }: {
@@ -26,13 +26,11 @@ export function EditorTools({
   spaceId?: string;
   people: Collaborator[];
   saved: boolean;
-  print(): Promise<void>;
   insertFormula?: () => void;
   formulas?: (close: () => void) => ReactNode;
 }) {
   const chrome = useEditorChrome();
-  const [panel, setPanel] = useState<'Versions' | 'Export' | 'Formulas' | null>(null);
-  const [exportError, setExportError] = useState('');
+  const [panel, setPanel] = useState<'Versions' | 'Export' | 'Export as PDF' | 'Formulas' | null>(null);
   const guest = chrome?.guest ?? Boolean(guestItemId());
   const controls = (
     <>
@@ -59,6 +57,9 @@ export function EditorTools({
               <ProfileIcon icon="lucide:list" />
             </button>
           )}
+          <button className="sp-control guest-pdf" onClick={() => setPanel('Export as PDF')}>
+            Export as PDF
+          </button>
         </>
       ) : (
         <ActionMenu
@@ -81,7 +82,7 @@ export function EditorTools({
         <Modal
           title={panel}
           onBack={() => setPanel(null)}
-          icon={panel === 'Versions' ? 'history' : panel === 'Export' ? 'upload' : 'info'}
+          icon={panel === 'Versions' ? 'history' : panel === 'Formulas' ? 'info' : 'download'}
           open
           onOpenChange={(open) => {
             if (!open) setPanel(null);
@@ -90,28 +91,11 @@ export function EditorTools({
           {panel === 'Versions' && !guest && (
             <VersionNames id={id} spaceId={spaceId} saved={saved} embedded />
           )}
-          {panel === 'Export' && exportError && <p role="alert">{exportError}</p>}
           {panel === 'Export' && !guest && (
-            <FileExports
-              id={id}
-              name={name}
-              spaceId={spaceId}
-              saved={saved}
-              print={async () => {
-                setExportError('');
-                setPanel(null);
-                await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-                try {
-                  await print();
-                } catch (cause) {
-                  setExportError(
-                    cause instanceof Error ? cause.message : 'Could not open printing.',
-                  );
-                  setPanel('Export');
-                }
-              }}
-              embedded
-            />
+            <FileExports id={id} name={name} spaceId={spaceId} saved={saved} embedded />
+          )}
+          {panel === 'Export as PDF' && guest && (
+            <PdfExport id={id} name={name} spaceId={spaceId} saved={saved} />
           )}
           {panel === 'Formulas' && (
             <div className="file-dialog">{formulas?.(() => setPanel(null))}</div>

@@ -73,9 +73,6 @@ function GuestEditor({ item, access, onDirty }: SpaceEditorProps) {
         spaceId={item.spaceId}
         people={[]}
         saved
-        print={async () => {
-          throw new Error('Native printing is covered by browser tests.');
-        }}
       />
       <p className="sp-muted">
         {item.kind === 'doc' ? 'Doc' : 'Sheet'} body fixture · native editing is verified in the

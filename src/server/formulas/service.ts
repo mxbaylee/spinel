@@ -303,7 +303,7 @@ export class DocFormulas {
           0,
         );
         if (bytes > 8 * 1024 * 1024) return { ok: false, reason: 'too-large' };
-        const result = await this.calculate(definition, sources);
+        const result = await this.calculate(definition, sources, undefined, signal);
         check();
         return result;
       } catch (error) {
