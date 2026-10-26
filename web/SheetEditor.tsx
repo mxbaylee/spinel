@@ -68,6 +68,7 @@ export function SheetEditor({
   const mobile = useRef(useMobileSheetControls()).current;
   const print = useRef<(() => Promise<void>) | null>(null);
   const [people, setPeople] = useState<Collaborator[]>([]);
+  const [ready, setReady] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [reloadGeneration, reload] = useState(0);
@@ -80,6 +81,9 @@ export function SheetEditor({
   });
   useEffect(() => {
     let disposed = false;
+    let initialized = false;
+    setReady(false);
+    if (container.current) container.current.inert = true;
     const loading = new AbortController();
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
@@ -93,24 +97,25 @@ export function SheetEditor({
     let editing = false;
     let disposeEditor: (() => void) | undefined;
     let save: ReturnType<typeof watchCollaboration> | undefined;
-    let lastState = status;
+    let lastState: SaveState = { dirty: false, failed: false, message: 'Loading spreadsheet…' };
     const publish = (state: SaveState) => {
       lastState = state;
       if (disposed) return;
       const dirty = editing || state.dirty;
-      if (dirty) syncNotice.current = undefined;
+      if (dirty && initialized) syncNotice.current = undefined;
       onDirty(dirty);
       setStatus({
         ...state,
         dirty,
-        failed: state.failed || Boolean(syncNotice.current),
+        failed: state.failed || (initialized && Boolean(syncNotice.current)),
         message: editing
           ? `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
           : state.failed
             ? state.message
-            : (syncNotice.current ?? state.message),
+            : ((initialized ? syncNotice.current : undefined) ?? state.message),
       });
     };
+    publish(lastState);
     void (async () => {
       const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
@@ -189,8 +194,17 @@ export function SheetEditor({
           signal: loading.signal,
           isCurrent: () => !disposed,
           initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
+          onInitialPending: () =>
+            publish({
+              dirty: true,
+              failed: false,
+              message: 'Changes not saved yet — keep this tab open.',
+            }),
           reload: () => {
             if (disposed) return;
+            initialized = false;
+            setReady(false);
+            if (container.current) container.current.inert = true;
             syncNotice.current =
               'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
             publish({
@@ -264,18 +278,6 @@ export function SheetEditor({
         univer.dispose();
       };
       if (data.access === 'viewer') await readOnly();
-      save = watchCollaboration(
-        univer,
-        univerAPI,
-        data.unitId,
-        id,
-        data.access,
-        publish,
-        readOnly,
-        publishConnection,
-        spaceId,
-      );
-      controller.current = save;
       stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) {
         stopPresence();
@@ -291,11 +293,26 @@ export function SheetEditor({
         if (chrome) chrome.editing.current = false;
         publish(lastState);
       });
+      initialized = true;
+      save = watchCollaboration(
+        univer,
+        univerAPI,
+        data.unitId,
+        id,
+        data.access,
+        publish,
+        readOnly,
+        publishConnection,
+        spaceId,
+      );
+      controller.current = save;
+      setReady(true);
+      if (container.current) container.current.inert = false;
     })().catch((error) => {
       publishConnection('offline');
       if (!disposed)
         publish({
-          dirty: false,
+          dirty: lastState.dirty,
           message:
             error instanceof Error
               ? error.message
@@ -305,6 +322,7 @@ export function SheetEditor({
     });
     return () => {
       disposed = true;
+      if (container.current) container.current.inert = true;
       loading.abort();
       registerGuestEditor?.(null);
       stopPresence?.();
@@ -336,7 +354,7 @@ export function SheetEditor({
           await print.current();
         }}
       />
-      <div className="univer-container" ref={container} />
+      <div className="univer-container" ref={container} inert={!ready} />
     </section>
   );
 }

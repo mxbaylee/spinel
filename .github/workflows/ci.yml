@@ -308,6 +308,8 @@ jobs:
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
       - name: Build
+        env:
+          VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}
         run: npm run build
       - name: Playwright smoke
         env:

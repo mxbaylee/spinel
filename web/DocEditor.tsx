@@ -112,6 +112,7 @@ export function DocEditor({
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
+  const [ready, setReady] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [reloadGeneration, reload] = useState(0);
@@ -124,6 +125,9 @@ export function DocEditor({
   });
   useEffect(() => {
     let disposed = false;
+    let initialized = false;
+    setReady(false);
+    if (container.current) container.current.inert = true;
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
     lastRoom.current = room;
@@ -144,25 +148,26 @@ export function DocEditor({
     let uploaded = 0;
     let disposeEditor: (() => void) | undefined;
     let save: ReturnType<typeof watchCollaboration> | undefined;
-    let lastState = status;
+    let lastState: SaveState = { dirty: false, failed: false, message: 'Loading document…' };
     const publish = (state: SaveState) => {
       lastState = state;
       if (disposed) return;
       const busy = uploads > 0 || insertions > 0;
       const dirty = busy || state.dirty;
-      if (dirty) syncNotice.current = undefined;
+      if (dirty && initialized) syncNotice.current = undefined;
       onDirty(dirty);
       setStatus({
         ...state,
         dirty,
-        failed: state.failed || Boolean(syncNotice.current),
+        failed: state.failed || (initialized && Boolean(syncNotice.current)),
         message: busy
           ? 'Inserting image — keep this tab open.'
           : state.failed
             ? state.message
-            : (syncNotice.current ?? state.message),
+            : ((initialized ? syncNotice.current : undefined) ?? state.message),
       });
     };
+    publish(lastState);
     void (async () => {
       const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
@@ -362,8 +367,17 @@ export function DocEditor({
           signal: loading.signal,
           isCurrent: () => !disposed,
           initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
+          onInitialPending: () =>
+            publish({
+              dirty: true,
+              failed: false,
+              message: 'Changes not saved yet — keep this tab open.',
+            }),
           reload: () => {
             if (disposed) return;
+            initialized = false;
+            setReady(false);
+            if (container.current) container.current.inert = true;
             syncNotice.current =
               'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
             publish({
@@ -425,6 +439,7 @@ export function DocEditor({
         stopPresence();
         return;
       }
+      initialized = true;
       save = watchCollaboration(
         univer,
         univerAPI,
@@ -444,11 +459,13 @@ export function DocEditor({
             ),
       );
       controller.current = save;
+      setReady(true);
+      if (container.current) container.current.inert = false;
     })().catch((error) => {
       publishConnection('offline');
       if (!disposed)
         publish({
-          dirty: false,
+          dirty: lastState.dirty,
           message:
             error instanceof Error
               ? error.message
@@ -458,6 +475,7 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
+      if (container.current) container.current.inert = true;
       registerGuestEditor?.(null);
       canEditFormulas.current = false;
       clearInterval(formulaInterval);
@@ -577,7 +595,7 @@ export function DocEditor({
           ? `${uploadError} Try inserting the file again.`
           : formulaError || (editable ? 'Click the page to write. Type / for commands.' : '')}
       </p>
-      <div className="univer-container" ref={container} />
+      <div className="univer-container" ref={container} inert={!ready} />
     </section>
   );
 }

@@ -1,5 +1,5 @@
-import { createNativeSyncClient } from '@spinel/sync-client';
-import type { ClientState, ClientFailure, OutgoingFrame } from '@spinel/sync-client';
+import { createNativeSyncClient, hashTouched, nativeSnapshot } from '@spinel/sync-client';
+import type { ClientState, ClientFailure, OutgoingFrame, Touched } from '@spinel/sync-client';
 import { UniverInstanceType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData, Univer } from '@univerjs/core';
 import type { SaveState } from '../src/shared/autosave.ts';
@@ -26,6 +26,7 @@ interface Options {
   signal: AbortSignal;
   isCurrent(): boolean;
   initializeAccess?(): void | Promise<void>;
+  onInitialPending?(): void;
   reload(reason: ClientFailure): void;
 }
 
@@ -123,7 +124,13 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     for (const listener of presenceListeners) listener(next);
   };
   const report = () => {
-    if (!active() || !watcher) return;
+    if (!active()) return;
+    if (!watcher) {
+      // Capture starts before native layout/readiness. Protect early typing
+      // from navigation without applying remote edits to an unready renderer.
+      if (state.pending) options.onInitialPending?.();
+      return;
+    }
     const connected = roomReady && state.connected && !accessUnreachable && navigator.onLine;
     watcher.connection(
       denied || !navigator.onLine || accessUnreachable
@@ -165,6 +172,17 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       reconnect();
     }
   };
+  // Compiled out of normal builds. Tests observe the actual public native
+  // snapshot without exposing an editor, command service or writable global.
+  const evidence = import.meta.env.VITE_SYNC_EVIDENCE === '1';
+  const observe = (snapshot: IWorkbookData | IDocumentData) => {
+    if (evidence)
+      window.dispatchEvent(
+        new CustomEvent('spinel-sync-native-snapshot', {
+          detail: { unitId, revision: state.revision, snapshot: structuredClone(snapshot) },
+        }),
+      );
+  };
   const client = createNativeSyncClient({
     univer,
     unitId,
@@ -172,6 +190,14 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     snapshot,
     revision,
     send,
+    ...(evidence
+      ? {
+          hash: (snapshot: IWorkbookData | IDocumentData, touched: Touched) => {
+            observe(snapshot);
+            return hashTouched(snapshot, touched);
+          },
+        }
+      : {}),
     onState(next) {
       state = next;
       if (active() && next.resyncing) void watcher?.readonly().catch(() => {});
@@ -400,6 +426,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   const binding = {
     watch(next: Watch) {
       watcher = next;
+      if (evidence && !state.pending) observe(nativeSnapshot(univer, unitId));
       if (!started) {
         started = true;
         window.addEventListener('online', online);

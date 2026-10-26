@@ -23,7 +23,6 @@ import {
 } from '@univerjs-pro/collaboration-client-ui';
 import ClientEnglish from '@univerjs-pro/collaboration-client/locale/en-US';
 import UIEnglish from '@univerjs-pro/collaboration-client-ui/locale/en-US';
-import '@univerjs-pro/collaboration-client/facade';
 import '@univerjs-pro/collaboration-client-ui/lib/index.css';
 import type { SaveState } from '../src/shared/autosave.ts';
 import type { ItemAccess } from '../src/shared/workspace.ts';
@@ -36,6 +35,7 @@ import { getSpinelSync } from './spinelSync.ts';
 export { loadSpinelDocument, disposeSpinelSync } from './spinelSync.ts';
 
 export { ClientEnglish, UIEnglish };
+let legacyFacadeStarted = false;
 export function collaborationPlugins(
   unitID: string,
   override?: DependencyOverride,
@@ -102,6 +102,15 @@ export async function prepareCollaboration(
   if (isCurrent() && [401, 403, 404].includes(response.status)) revokeGuestView();
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Could not open live editing.');
+  // Facade mixins are global and run when each FUniver is created. Loading the
+  // legacy initializer in a native-only editor asks for omitted Pro services.
+  if (data.syncVersion === 1) {
+    if (legacyFacadeStarted)
+      throw new Error('Reload this page to use the updated collaboration service.');
+  } else {
+    legacyFacadeStarted = true;
+    await import('@univerjs-pro/collaboration-client/facade');
+  }
   return data as {
     unitId: string;
     access: ItemAccess;

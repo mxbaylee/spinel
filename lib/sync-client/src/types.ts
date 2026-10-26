@@ -89,6 +89,7 @@ export interface SyncClientOptions {
   unitId: string;
   revision: number;
   confirmed: SyncReplica;
+  /** Every accepted remote revision, even when rebasing removes all visible edits. */
   applyRemote(mutations: readonly Mutation[]): void;
   visibleSnapshot(): NativeSnapshot;
   send(frame: OutgoingFrame): void;

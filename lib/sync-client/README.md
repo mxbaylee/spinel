@@ -93,10 +93,13 @@ insertion and inserts carry `PRESERVE_INSERTED_PARAGRAPH_IDS`. Sender-provided
 `applyNative` copies params before each public synchronous handler invocation and
 uses `{ onlyLocal: true, fromCollab: true }`. This prevents capture echo and lets
 native formula handlers recalculate. The native adapter clears local undo/redo
-history after a nonempty remote change, including the Doc history manager's
-debounced cache: OSS history contains inverse coordinates that a remote row or
-text insertion can make stale. Local undo/redo works until another person's
-change arrives; this package does not claim to rebase native history.
+history after every accepted remote revision, including the Doc history
+manager's debounced cache. A remote edit hidden by an optimistic deletion still
+invalidates its saved inverse: undoing that deletion could restore pre-peer
+content. OSS history also contains inverse coordinates that a remote row or text
+insertion can make stale. Own acknowledgments preserve local history. Local
+undo/redo works until another person's change arrives; this package does not
+claim to rebase native history.
 
 `NativeReplica` creates the same OSS headless handlers and resource-loading
 boundary as the server. It preserves unknown resources, reads inline native
@@ -112,6 +115,14 @@ of splitting a required tail. Snapshot admission, style expansion, native cell
 reads and lazy intermediate cell caches have 10 MiB budgets checked before
 cloning or retaining expanded values. Long identifiers are charged as part of
 addresses, not merely once in the source snapshot.
+
+The capture before-hook also checks compact local native geometry before its
+handler runs. It enforces the server's 250,000-cell range and aggregate merge
+cache budgets, axis dimensions and 1,024-sheet limit. Merge additions and sheet
+insertions include the current workbook's existing merges in that budget, so an
+earlier removal can free capacity without letting a compact request allocate an
+oversized native `SpanModel`. `syncOnly` emissions do not execute this handler,
+so this check does not count a second structural effect for them.
 
 When pending work is empty, the client hashes the **visible** native model over
 the last acknowledged/applied revision's declared footprint. Browser Web Crypto

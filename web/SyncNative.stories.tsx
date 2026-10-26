@@ -122,8 +122,36 @@ function NativeDrawingCapture() {
       const observe = () => {
         if (disposed || !client) return;
         const checkpoint = client.checkpoint();
-        const drawings = collectDocDrawings(document.save()).drawings;
+        const snapshot = document.save();
+        const drawings = collectDocDrawings(snapshot).drawings;
         const ids = Object.keys(drawings);
+        const image = ids.length
+          ? render.scene.getObject(
+              getDrawingShapeKeyByDrawingSearch({ unitId, subUnitId: unitId, drawingId: ids[0] }),
+            )
+          : undefined;
+        // An inline image is a structural control character, so text-range bounds skip it.
+        // Read the actual scene object and project its bounds into client coordinates instead.
+        const imageRect = image?.visible ? image.getRealBound() : undefined;
+        const viewport = render.scene.getViewport('viewMain');
+        const canvasRect = render.engine.getCanvasElement().getBoundingClientRect();
+        const scale = render.scene.getAncestorScale();
+        const scaleX = (scale.scaleX * canvasRect.width) / render.engine.width;
+        const scaleY = (scale.scaleY * canvasRect.height) / render.engine.height;
+        const imageBounds =
+          imageRect && viewport && render.engine.width > 0 && render.engine.height > 0
+            ? {
+                left: canvasRect.left + (imageRect.left - viewport.viewportScrollX) * scaleX,
+                right:
+                  canvasRect.left +
+                  (imageRect.left + imageRect.width - viewport.viewportScrollX) * scaleX,
+                top: canvasRect.top + (imageRect.top - viewport.viewportScrollY) * scaleY,
+                bottom:
+                  canvasRect.top +
+                  (imageRect.top + imageRect.height - viewport.viewportScrollY) * scaleY,
+              }
+            : undefined;
+        const textOffset = snapshot.body?.dataStream.indexOf('place') ?? -1;
         setObservation(
           JSON.stringify({
             raw,
@@ -143,30 +171,20 @@ function NativeDrawingCapture() {
             ).length,
             focused: drawingManager.getFocusDrawings().length,
             controls: render.scene.getTransformer()?.getSelectedObjectMap().size ?? 0,
-            imageBounds: ids.length
-              ? geometry.getRangeBounds(
-                  {
-                    startOffset: 0,
-                    endOffset: 1,
-                    collapsed: false,
-                    segmentId: '',
-                    segmentPage: -1,
-                  },
-                  unitId,
-                )?.[0]
-              : undefined,
-            textBounds: ids.length
-              ? geometry.getRangeBounds(
-                  {
-                    startOffset: 2,
-                    endOffset: 3,
-                    collapsed: false,
-                    segmentId: '',
-                    segmentPage: -1,
-                  },
-                  unitId,
-                )?.[0]
-              : undefined,
+            imageBounds,
+            textBounds:
+              ids.length && textOffset >= 0
+                ? geometry.getRangeBounds(
+                    {
+                      startOffset: textOffset,
+                      endOffset: textOffset + 1,
+                      collapsed: false,
+                      segmentId: '',
+                      segmentPage: -1,
+                    },
+                    unitId,
+                  )?.[0]
+                : undefined,
           }),
         );
       };
@@ -311,24 +329,36 @@ export const DocDrawingCapture: Story = {
     expect(read().pendingIds).toContain('doc.mutation.rich-text-editing');
     const pending = read().pending;
     const nativeCanvas = canvasElement.querySelector('canvas[aria-label="Document canvas"]')!;
-    const clickRange = async (bounds: {
-      left: number;
-      right: number;
-      top: number;
-      bottom: number;
-    }) => {
+    const clickRange = async (key: 'imageBounds' | 'textBounds') => {
+      // Rendering the object and publishing text layout are asynchronous. Re-read the
+      // geometry after each layout change, and click only the visible part of the target.
+      const coords = await waitFor(
+        () => {
+          const bounds = read()[key];
+          if (!bounds) throw new Error(`Native ${key} are not available yet.`);
+          expect(
+            [bounds.left, bounds.right, bounds.top, bounds.bottom].every(Number.isFinite),
+          ).toBe(true);
+          const visible = nativeCanvas.getBoundingClientRect();
+          const left = Math.max(bounds.left, visible.left + 1);
+          const right = Math.min(bounds.right, visible.right - 1);
+          const top = Math.max(bounds.top, visible.top + 1);
+          const bottom = Math.min(bounds.bottom, visible.bottom - 1);
+          expect(right).toBeGreaterThan(left);
+          expect(bottom).toBeGreaterThan(top);
+          return { clientX: (left + right) / 2, clientY: (top + bottom) / 2 };
+        },
+        { timeout: 10_000 },
+      );
       await userEvent.pointer({
         target: nativeCanvas,
         keys: '[MouseLeft]',
-        coords: {
-          clientX: (bounds.left + bounds.right) / 2,
-          clientY: (bounds.top + bounds.bottom) / 2,
-        },
+        coords,
       });
     };
-    await clickRange(read().textBounds);
+    await clickRange('textBounds');
     await waitFor(() => expect(read().focused).toBe(0));
-    await clickRange(read().imageBounds);
+    await clickRange('imageBounds');
     await waitFor(() => {
       expect(read().focused).toBe(1);
       expect(read().controls).toBe(1);
@@ -341,8 +371,10 @@ export const DocDrawingCapture: Story = {
       expect(read().controlsCreated).toBeGreaterThan(controlsCreated);
     });
     expect(read().pending).toBe(pending);
+    const narrowed = read().resized;
     await userEvent.click(canvas.getByRole('button', { name: 'Restore editor width' }));
-    await clickRange(read().textBounds);
+    await waitFor(() => expect(read().resized).toBeGreaterThan(narrowed));
+    await clickRange('textBounds');
     await waitFor(() => expect(read().focused).toBe(0));
     expect(read().pending).toBe(pending);
     expect(read().pendingIds).not.toContain('doc.operation.clear-drawing-transformer');

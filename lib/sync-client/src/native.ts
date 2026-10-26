@@ -23,44 +23,9 @@ import type { BaseCells, Mutation } from '@spinel/sync-transform';
 import { SyncClient } from './client.ts';
 import { captureNative } from './capture.ts';
 import { byteBudget } from './hash.ts';
+import { admitSnapshot } from './admission.ts';
 import { ClientError } from './types.ts';
 import type { DocumentKind, NativeSnapshot, NativeSyncOptions, SyncReplica } from './types.ts';
-
-/** Compact native merge ranges must be bounded before SpanModel expands them. */
-function admitSnapshot(snapshot: NativeSnapshot, kind: DocumentKind) {
-  byteBudget()(snapshot);
-  if (kind !== 'sheet') return;
-  const sheets = Object.values((snapshot as IWorkbookData).sheets);
-  if (sheets.length > 1024) throw new ClientError('capacity');
-  const span = (start: number, end: number, maximum: number) => {
-    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || end < start)
-      throw new ClientError('malformed');
-    if (end > maximum) throw new ClientError('capacity');
-    return end - start + 1;
-  };
-  let mergeCells = 0;
-  for (const sheet of sheets) {
-    for (const [count, maximum] of [
-      [sheet.rowCount, 1_048_576],
-      [sheet.columnCount, 16_384],
-    ] as const) {
-      if (count === undefined) continue;
-      if (!Number.isSafeInteger(count) || count < 1) throw new ClientError('malformed');
-      if (count > maximum) throw new ClientError('capacity');
-    }
-    if (sheet.mergeData !== undefined && !Array.isArray(sheet.mergeData))
-      throw new ClientError('malformed');
-    for (const range of sheet.mergeData ?? []) {
-      const type = range.rangeType ?? 0;
-      if (![0, 1, 2, 3].includes(type)) throw new ClientError('malformed');
-      const rows = type === 0 || type === 1 ? span(range.startRow, range.endRow, 1_048_575) : 1;
-      const columns =
-        type === 0 || type === 2 ? span(range.startColumn, range.endColumn, 16_383) : 1;
-      mergeCells += rows * columns;
-      if (mergeCells > 250_000) throw new ClientError('capacity');
-    }
-  }
-}
 
 /** Save resources through the public loader, including plugin-owned names/drawings. */
 export function nativeSnapshot(univer: Univer, unitId: string): NativeSnapshot {
@@ -182,10 +147,10 @@ export function createNativeSyncClient(options: NativeSyncOptions): SyncClient {
     ...options,
     confirmed: new NativeReplica(options.snapshot, options.kind),
     applyRemote: (mutations) => {
-      if (!mutations.length) return;
       applyNative(options.univer, mutations);
       // OSS history stores native inverse coordinates, not rebased operations.
-      // A peer's structural/text edit can otherwise make Undo change another cell.
+      // Even a peer write hidden by an optimistic deletion invalidates its saved
+      // inverse: Undo would restore pre-peer content. Own acks do not call here.
       options.univer.__getInjector().get(IUndoRedoService).clearUndoRedo(options.unitId);
       if (options.kind === 'doc')
         options.univer

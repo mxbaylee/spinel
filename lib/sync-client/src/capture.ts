@@ -20,6 +20,7 @@ import type { Mutation } from '@spinel/sync-transform';
 import { ClientError, MAX_PENDING_BYTES } from './types.ts';
 import type { ClientFailure } from './types.ts';
 import { byteBudget, encodedBytes } from './hash.ts';
+import { admitNativeMutation } from './admission.ts';
 
 const supported = new Set(supportedMutationIds);
 // The pinned public ClearSheet/DocDrawingTransformerOperation handlers refresh
@@ -97,6 +98,9 @@ export function captureNative(options: NativeCaptureOptions) {
     if (!params || params.unitId !== options.unitId) return fail('malformed');
     try {
       assertSenderParams(params);
+      // syncOnly skips this handler; do not count a second structural effect.
+      // A handler that executes locally must be bounded before it can allocate.
+      if (!execution?.syncOnly) admitNativeMutation({ id: info.id, params }, workbook() ?? null);
       if (info.id === 'sheet.mutation.remove-sheet') {
         const index = workbook()?.getSheetOrders().indexOf(params.subUnitId);
         if (index === undefined || index < 0) throw new ClientError('malformed');

@@ -101,7 +101,14 @@ rebasing, an accepted write with a deliberately lost acknowledgment, visible-mod
 verification, drawing insertion and scoped Space guest presence. These projects
 use independent disposable databases; the ordinary projects retain the default
 legacy path. For a focused run, use
+`VITE_SYNC_EVIDENCE=1 npm run build` followed by
 `SPINEL_E2E_PROJECT=sync-production npx playwright test --project=sync-production`.
+The sync test builds enable a read-only snapshot event through
+`VITE_SYNC_EVIDENCE=1`. Playwright records the actual pending-free public native
+snapshot from each browser and compares complete normalized snapshots before
+and after reload. Ordinary builds eliminate that observer; there is no production
+editor/command handle or writable global. This evidence flag does not select the
+collaboration backend. `npm run e2e` supplies it for its disposable test build.
 
 The container smoke builds the actual Dockerfile, checks the production native
 dependencies, serves the built sign-in page and JavaScript as the image's default

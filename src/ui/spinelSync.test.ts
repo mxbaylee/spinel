@@ -94,7 +94,15 @@ async function fixture({
   guest = false,
   space = false,
   initializeAccess,
-}: { guest?: boolean; space?: boolean; initializeAccess?(): void | Promise<void> } = {}) {
+  onInitialPending,
+  beforeWatch,
+}: {
+  guest?: boolean;
+  space?: boolean;
+  initializeAccess?(): void | Promise<void>;
+  onInitialPending?(): void;
+  beforeWatch?(): void;
+} = {}) {
   vi.useFakeTimers();
   vi.stubGlobal('navigator', { onLine: true });
   vi.stubGlobal('location', {
@@ -138,8 +146,10 @@ async function fixture({
     signal: abort.signal,
     isCurrent: () => current,
     initializeAccess,
+    onInitialPending,
     reload,
   });
+  beforeWatch?.();
   const saves: SaveState[] = [];
   const connections: ConnectionState[] = [];
   const readonly = vi.fn(async () => {});
@@ -222,6 +232,24 @@ test('a socket open is not room readiness or a durable save, and reconnect retai
     duplicate: true,
   });
   expect(f.saves.at(-1)).toMatchObject({ dirty: false, failed: false });
+});
+
+test('pending work publishes before the readiness watcher or socket can start', async () => {
+  let guarded = false;
+  const f = await fixture({
+    onInitialPending() {
+      guarded = true;
+    },
+    beforeWatch() {
+      expect(Socket.instances).toHaveLength(0);
+      const client = native.clients.at(-1)!;
+      client.state = { ...client.state, pending: true, pendingMutations: 1 };
+      client.options.onState(client.state);
+      expect(guarded).toBe(true);
+      expect(Socket.instances).toHaveLength(0);
+    },
+  });
+  expect(f.saves.at(-1)?.dirty).toBe(true);
 });
 
 test('initial access completes before capture or socket startup even when readiness is delayed', async () => {

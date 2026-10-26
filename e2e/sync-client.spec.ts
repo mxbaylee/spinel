@@ -8,6 +8,7 @@ import { Profiles } from '../src/server/auth/profile.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { syncNetwork } from './sync-network.ts';
+import { recordNativeSnapshots, expectNativeSnapshots } from './sync-snapshot.ts';
 
 const saved = (page: Page) =>
   expect(page.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
@@ -73,6 +74,7 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, kind: 
       permissions: ['clipboard-read', 'clipboard-write'],
     });
     contexts.push(context);
+    await recordNativeSnapshots(context);
     await context.addCookies([
       {
         name: COOKIE_NAME,
@@ -143,6 +145,28 @@ test('native Sheets deliver within a second, rebase offline edits, and retry one
     await Promise.all([f.page.goto(`/?item=${f.item.id}`), f.other.goto(`/?item=${f.item.id}`)]);
     await Promise.all([saved(f.page), saved(f.other)]);
     await Promise.all([selectCell(f.page, 'A1'), selectCell(f.other, 'B1')]);
+    await expect(
+      f.page.locator('[data-presence-label]').filter({ hasText: 'Sync collaborator' }),
+    ).toBeVisible();
+    await expect(
+      f.other.locator('[data-presence-label]').filter({ hasText: 'Sync owner' }),
+    ).toBeVisible();
+    // A real multi-cell native selection must reach the peer's canvas as well.
+    await selectCell(f.page, 'A1:A2');
+    await expect
+      .poll(
+        () =>
+          f.otherNetwork.incoming
+            .filter((frame) => frame.type === 'presence')
+            .at(-1)
+            ?.members.find((member: { name: string }) => member.name === 'Sync owner')?.selection,
+      )
+      .toMatch(/!A1:A2$/);
+    await expect(
+      f.other.locator('[data-presence-label]').filter({ hasText: 'Sync owner' }),
+    ).toBeVisible();
+    await selectCell(f.page, 'A1');
+    await f.page.screenshot({ path: info.outputPath('sheet-light-sync-presence.png') });
     await Promise.all([f.page.keyboard.type('41'), f.other.keyboard.type('73')]);
     const started = Date.now();
     await Promise.all([f.page.keyboard.press('Enter'), f.other.keyboard.press('Enter')]);
@@ -196,8 +220,10 @@ test('native Sheets deliver within a second, rebase offline edits, and retry one
           ),
         )
         .toBe(true);
+    await expectNativeSnapshots([f.page, f.other], committed);
     await Promise.all([f.page.reload(), f.other.reload()]);
     await Promise.all([saved(f.page), saved(f.other)]);
+    await expectNativeSnapshots([f.page, f.other], committed);
     expect(await copyCell(f.page, 'A3')).toBe('one durable edit');
     expect(await copyCell(f.other, 'A3')).toBe('one durable edit');
     expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
@@ -304,8 +330,10 @@ test('native Docs preserve concurrent text and undo across reconnect, render pro
           ),
         )
         .toBe(true);
+    await expectNativeSnapshots([f.page, f.other], committed);
     await Promise.all([f.page.reload(), f.other.reload()]);
     await Promise.all([saved(f.page), saved(f.other)]);
+    await expectNativeSnapshots([f.page, f.other], committed);
     expect(await copyDoc(f.page)).toBe(await copyDoc(f.other));
     expect((await f.read()).snapshot.drawingsOrder).toEqual(committed.snapshot.drawingsOrder);
     expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);

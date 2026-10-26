@@ -2,6 +2,7 @@ import {
   CommandType,
   DrawingTypeEnum,
   ICommandService,
+  IUndoRedoService,
   IUniverInstanceService,
   JSONX,
   LocaleService,
@@ -454,6 +455,124 @@ test.each(['sheet', 'doc'] as const)(
       local.dispose();
       f.close();
       vi.useRealTimers();
+    }
+  },
+);
+
+test.each([false, true])(
+  'native row-deletion undo after reconnect accounts for a peer edit in the removed row: %s',
+  async (withPeer) => {
+    const f = fixture();
+    const snapshot = f.storage.unit.snapshot;
+    const local = new NativeReplica(snapshot, 'sheet');
+    const injector = local.univer.__getInjector();
+    const commands = injector.get(ICommandService);
+    const history = injector.get(IUndoRedoService);
+    const workbook = injector
+      .get(IUniverInstanceService)
+      .getUnit<Workbook>('book', UniverInstanceType.UNIVER_SHEET)!;
+    injector.get(LocaleService).load({ [LocaleType.EN_US]: {} });
+    injector.get(IUniverInstanceService).focusUnit('book');
+    const outgoing: OutgoingFrame[] = [];
+    const failures: ClientFailure[] = [];
+    const visibleRemote: string[] = [];
+    const observed = commands.beforeCommandExecuted((info, options) => {
+      if (options?.fromCollab) visibleRemote.push(info.id);
+    });
+    const sync = createNativeSyncClient({
+      univer: local.univer,
+      unitId: 'book',
+      kind: 'sheet',
+      snapshot,
+      revision: 1,
+      send: (frame) => outgoing.push(frame),
+      onState() {},
+      onResync: (reason) => failures.push(reason),
+      batchDelayMs: 100_000,
+    });
+    try {
+      sync.setConnected(true);
+      sync.receive({
+        type: 'resume',
+        version: 1,
+        unitId: 'book',
+        fromRevision: 1,
+        revision: 1,
+        edits: [],
+      });
+      await turns();
+      expect(
+        await commands.executeCommand('sheet.command.remove-row', {
+          unitId: 'book',
+          subUnitId: 'one',
+          range: { startRow: 1, endRow: 1, startColumn: 0, endColumn: 5 },
+        }),
+      ).toBe(true);
+      expect(history.getUndoRedoStatus('book').undos).toBeGreaterThan(0);
+      sync.retry();
+      await turns();
+      const request = outgoing.find((frame): frame is SubmitFrame => frame.type === 'submit')!;
+      expect(request).toBeDefined();
+      if (withPeer) {
+        const peer = await f.accept(
+          {
+            type: 'submit',
+            mutationId: '00000000-0000-4000-8000-000000000099',
+            baseRevision: 1,
+            mutations: [write({ v: 'peer-new-value' }, 1)],
+          },
+          'peer',
+        );
+        expect(peer.edit.mutations).toHaveLength(1);
+      }
+      await f.accept(request);
+      // Lose both edit and ack, then replay the peer and our accepted deletion.
+      sync.setConnected(false);
+      sync.setConnected(true);
+      sync.receive({
+        type: 'resume',
+        version: 1,
+        unitId: 'book',
+        fromRevision: 1,
+        revision: f.storage.unit.revision,
+        edits: f.storage.history.map(wire),
+      });
+      await turns();
+      const retry = outgoing
+        .filter((frame): frame is SubmitFrame => frame.type === 'submit')
+        .at(-1)!;
+      expect(retry).toEqual(request);
+      const acknowledged = await f.accept(retry);
+      expect(acknowledged.duplicate).toBe(true);
+      sync.receive({
+        type: 'ack',
+        mutationId: request.mutationId,
+        duplicate: true,
+        ...wire(acknowledged.edit),
+      });
+      expect(sync.state.pending).toBe(false);
+      expect(failures).toEqual([]);
+      expect(comparable(local.snapshot())).toEqual(comparable(f.storage.unit.snapshot));
+      // The peer's nonempty edit rebases to nothing behind our row deletion.
+      expect(visibleRemote).toEqual([]);
+      const undone = await commands.executeCommand('univer.command.undo', { unitId: 'book' });
+      const sheet = workbook.getSheetBySheetId('one')!;
+      expect({
+        undone,
+        rowCount: sheet.getRowCount(),
+        value: sheet.getCellRaw(1, 0)?.v ?? null,
+      }).toEqual(
+        withPeer
+          ? { undone: false, rowCount: 11, value: null }
+          : { undone: true, rowCount: 12, value: 'below' },
+      );
+      if (withPeer)
+        expect(comparable(local.snapshot())).toEqual(comparable(f.storage.unit.snapshot));
+    } finally {
+      observed.dispose();
+      sync.dispose();
+      local.dispose();
+      f.close();
     }
   },
 );
