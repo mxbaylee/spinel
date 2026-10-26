@@ -15,7 +15,7 @@ export function ImportFile({
   onDialogOpenChange,
 }: {
   parentId: string | null;
-  dropTarget: RefObject<HTMLElement>;
+  dropTarget: RefObject<HTMLElement | null>;
   enabled: boolean;
   onImported: (item: WorkspaceItem) => void;
   dialogOpen?: boolean;

@@ -4,6 +4,8 @@ import { AuthStore } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 
 test('public identity assets load and preview clearly in light, dark and phone layouts', async ({
+  browser,
+  baseURL,
   page,
 }, info) => {
   await page.goto('/sign-in');
@@ -18,6 +20,8 @@ test('public identity assets load and preview clearly in light, dark and phone l
   const auth = new AuthStore(database),
     workspace = new WorkspaceStore(auth);
   const owner = auth.createUser(`Branding ${info.testId}`);
+  // Social crawlers inspect server metadata without opening a guest editor.
+  const preview = await browser.newPage({ baseURL, javaScriptEnabled: false });
   const cards = [
     {
       label: 'generic',
@@ -36,15 +40,26 @@ test('public identity assets load and preview clearly in light, dark and phone l
       const item = workspace.create(owner.id, { kind, name, parentId: null });
       const link = workspace.links.begin(item.id, 'viewer');
       workspace.links.finish(item.id, link.epoch, true);
-      await page.goto(`/share/${item.id}?preview=${link.previewToken}`);
-      await expect(page).toHaveTitle(`${name} — Spinel`);
-      const description = await page.locator('meta[name="description"]').getAttribute('content');
+      const address = `/share/${item.id}?preview=${link.previewToken}`;
+      await preview.goto(address);
+      await expect(preview).toHaveTitle(`${name} — Spinel`);
+      const description = await preview.locator('meta[name="description"]').getAttribute('content');
       cards.push({
         label,
-        image: (await page.locator('meta[property="og:image"]').getAttribute('content'))!,
+        image: (await preview.locator('meta[property="og:image"]').getAttribute('content'))!,
         title: name,
         description: description!,
       });
+      if (label === 'doc') {
+        // A metadata-only capability grants no editor session. Hydration must
+        // clear the title and show the same generic denial as any invalid link.
+        await page.goto(address);
+        await expect(
+          page.getByRole('heading', { name: 'This link no longer works.', exact: true }),
+        ).toBeVisible();
+        await expect(page).toHaveTitle('Spinel');
+        await expect(page.locator('body')).not.toContainText(name);
+      }
     }
     // Review fixture only: actual public assets, not a new product/chat screen.
     for (const card of cards)
@@ -72,6 +87,7 @@ test('public identity assets load and preview clearly in light, dark and phone l
         });
       }
   } finally {
+    await preview.close();
     database.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
     database.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);
     database.close();

@@ -8,6 +8,41 @@ import {
 
 afterEach(() => vi.unstubAllGlobals());
 
+test.each([401, 403, 404])(
+  'guest Space response %i stays scoped to its requesting controller',
+  async (status) => {
+    const root = '11111111-1111-4111-8111-111111111111';
+    vi.stubGlobal('location', { pathname: `/share/${root}` });
+    const dispatchEvent = vi.fn();
+    vi.stubGlobal('window', { dispatchEvent });
+    let release!: (response: Response) => void;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        () =>
+          new Promise<Response>((resolve) => {
+            release = resolve;
+          }),
+      ),
+    );
+    const controller = new AbortController();
+    const reading = spacesRequest(`/${root}`, { signal: controller.signal });
+    controller.abort();
+    release(Response.json({ error: 'Unavailable' }, { status }));
+    await expect(reading).rejects.toMatchObject({ status });
+    expect(dispatchEvent).not.toHaveBeenCalled();
+    // A missing child is not authority over its still-accessible root. The
+    // controller refreshes that root and owns the terminal privacy decision.
+    const active = spacesRequest(`/${root}/items/missing-child`, {
+      method: 'PATCH',
+      body: { name: 'Changed elsewhere' },
+    });
+    release(Response.json({ error: 'Unavailable' }, { status }));
+    await expect(active).rejects.toMatchObject({ status });
+    expect(dispatchEvent).not.toHaveBeenCalled();
+  },
+);
+
 test('Space requests preserve scoped paths, JSON mutations, session cookies and cancellation', async () => {
   const signal = new AbortController().signal;
   const body = { name: 'Planning', kind: 'doc', parentId: 'parent' };

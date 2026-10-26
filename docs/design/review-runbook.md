@@ -25,12 +25,22 @@ regression check when a concrete repeated defect makes one worthwhile.
    cancellation and recovery as applicable. Record exactly what ran. Check the
    actual canvas/editor when the change affects Univer, not only its shell.
 
-After `npm run build-storybook`, run `npm run screenshots -- <story IDs>` for all
-five existing variants, or add `--viewport desktop`, `tablet` or `mobile` for one
-partition. Each CI artifact (`design-review-desktop`, `design-review-tablet`,
-`design-review-mobile-light`, `design-review-mobile-dark`) contains its own gallery
-and manifest. Mobile CI splits the themes; `--viewport mobile --theme light|dark`
-reproduces one partition while the default captures both. See
+Use the PR's **`visual-review`** label to request screenshots when a changed
+screen needs visual review. A manual Storybook run can also set
+`capture_screenshots=true` and optional focused story IDs. Routine captures are
+not required for unrelated PRs; applicable rendering, play functions, native
+editor proofs and interaction assertions still run, with failure diagnostics.
+The label requests evidence and does not grant visual approval.
+
+After `npm run build-storybook` when local workloads are permitted, run
+`npm run screenshots -- <story IDs>` for all five existing variants, or add
+`--viewport desktop`, `tablet` or `mobile` for one partition. Add
+`--no-screenshots` to retain checks without routine PNGs. Capture artifacts
+(`design-review-desktop-light`, `design-review-desktop-dark`,
+`design-review-tablet`, `design-review-mobile-light`,
+`design-review-mobile-dark`) contain their own gallery and manifest.
+`--viewport desktop|mobile --theme light|dark` reproduces one theme partition
+while the default captures both. See
 [capture details](redesign.md#review-and-screenshots). Retain the fixed fixture
 time, and link the actual artifacts rather than calling captures approved
 regression baselines.

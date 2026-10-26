@@ -77,12 +77,15 @@ import { editorReady } from './editorReady.ts';
 import { documentReady } from './documentReady.ts';
 import type { ConnectionState } from './connectionState.ts';
 import { docPendingChanges } from './docPending.ts';
+import { guestPendingBuffer } from './guestPendingBuffer.ts';
+import type { RegisterGuestEditor } from './guestRevocation.ts';
 
 export function DocEditor({
   id,
   name,
   spaceId,
   onDirty,
+  registerGuestEditor,
   onConnectionState,
   saveStatusTarget,
 }: {
@@ -91,6 +94,7 @@ export function DocEditor({
   spaceId?: string;
   saveStatusTarget: HTMLElement | null;
   onDirty: (dirty: boolean) => void;
+  registerGuestEditor?: RegisterGuestEditor;
   onConnectionState?: (state: ConnectionState | null) => void;
 }) {
   const chrome = useEditorChrome();
@@ -146,7 +150,7 @@ export function DocEditor({
       });
     };
     void (async () => {
-      const data = await prepareCollaboration(id, spaceId);
+      const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
       let drawingReady!: () => void;
       const drawingsRendered = new Promise<void>((resolve) => {
@@ -299,6 +303,23 @@ export function DocEditor({
         stopTheme();
         univer.dispose();
       };
+      registerGuestEditor?.((retain) => {
+        try {
+          return retain ? guestPendingBuffer(univer) : null;
+        } finally {
+          disposed = true;
+          canEditFormulas.current = false;
+          loading.abort();
+          clearInterval(formulaInterval);
+          stopFormulaVisibility?.();
+          formulas.current?.dispose();
+          formulas.current = null;
+          stopPresence?.();
+          save?.dispose();
+          disposeEditor?.();
+          disposeEditor = undefined;
+        }
+      });
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const document = await univerAPI.getCollaboration().loadDocAsync(data.unitId);
@@ -391,6 +412,7 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
+      registerGuestEditor?.(null);
       canEditFormulas.current = false;
       clearInterval(formulaInterval);
       stopFormulaVisibility?.();

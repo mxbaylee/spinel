@@ -126,7 +126,7 @@ export function ActionMenu({
   children?: ReactNode;
   actions: Action[];
   primary?: boolean;
-  triggerRef?: RefObject<HTMLButtonElement>;
+  triggerRef?: RefObject<HTMLButtonElement | null>;
   finalFocus?: () => HTMLElement | boolean | null;
 }) {
   const ownTrigger = useRef<HTMLButtonElement>(null);

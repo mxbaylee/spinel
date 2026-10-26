@@ -376,7 +376,7 @@ export function NativeEditor({
         ref={host}
         className="rd-native-host"
         aria-hidden={(readOnly && state !== 'ready') || state === 'error'}
-        {...(readOnly && state !== 'ready' ? { inert: '' } : {})}
+        {...(readOnly && state !== 'ready' ? { inert: true } : {})}
       />
       {state !== 'ready' && (
         <div

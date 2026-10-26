@@ -50,7 +50,10 @@ of that input, ask once with the linked decision record or exact verification st
 save a draft PR/checkpoint. Continue with the next eligible ticket while waiting.
 A UI PR waits on the owner's approval of its light, dark and phone-width
 screenshots ([process](todo/process.md#picking-the-next-ticket)); treat it the
-same way.
+same way unless the owner explicitly delegates that review for the current run.
+Use `visual-review` to request the affected screen evidence. The label does not
+grant approval; PRs without it still run applicable Storybook rendering and
+interaction checks, with failure diagnostics retained.
 Keep a run-local list of blocked tickets and reasons so picking does not repeatedly
 select the same blocked item. Do not change product dependencies merely to hide
 an external blocker. Reconsider it when new input or evidence arrives.

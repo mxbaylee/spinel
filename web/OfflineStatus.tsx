@@ -1,3 +1,5 @@
+import { AccessState } from './AccessState.tsx';
+
 /** Row badge for an item kept on this device, or one that can't open offline. */
 export function OfflineBadge({
   state,
@@ -19,13 +21,5 @@ export function OfflineBadge({
 
 /** No connection and no local data for this device's account: nothing to show. */
 export function OfflineUnreachable() {
-  return (
-    <section className="welcome">
-      <h1>You're offline</h1>
-      <p>Connect to the internet, then try again to open Spinel.</p>
-      <button className="primary" onClick={() => location.reload()}>
-        Try again
-      </button>
-    </section>
-  );
+  return <AccessState kind="offline" embedded onRetry={() => location.reload()} />;
 }

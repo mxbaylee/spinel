@@ -245,6 +245,23 @@ jobs:
               ;;
           esac
 
+  container-smoke:
+    name: Container smoke
+    needs: changes
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Build and exercise the final image
+        run: node scripts/ci/container-smoke.ts
+
   playwright-run:
     needs: changes
     if: needs.changes.outputs.docs_only != 'true'
@@ -305,24 +322,30 @@ jobs:
           if-no-files-found: warn
 
   # The ruleset requires a check named "Playwright smoke", so this job carries
-  # the name. Only classified docs-only changes may omit the browser matrix.
+  # the name. Only classified docs-only changes may omit browsers and containers.
   playwright:
     name: Playwright smoke
-    needs: [changes, playwright-run]
+    needs: [changes, playwright-run, container-smoke]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Required browser validation
+      - name: Required browser and container validation
         env:
           CLASSIFICATION: ${{ needs.changes.result }}
           DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
-          RESULT: ${{ needs.playwright-run.result }}
+          BROWSER: ${{ needs.playwright-run.result }}
+          CONTAINER: ${{ needs.container-smoke.result }}
         run: |
-          test "$CLASSIFICATION" = success
-          if [ "$DOCS_ONLY" = true ] && [ "$RESULT" = skipped ]; then
-            echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
-          else
-            echo "Playwright runs: $RESULT"
-            test "$RESULT" = success
-          fi
+          case "$CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER" in
+            success:true:skipped:skipped)
+              echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
+              ;;
+            success:false:success:success)
+              echo 'All browser partitions and the production container passed.'
+              ;;
+            *)
+              echo "Browser/container validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER"
+              exit 1
+              ;;
+          esac

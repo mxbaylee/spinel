@@ -260,3 +260,62 @@ Collaborator gets compatibility and editing checks before upgrades land. Link
 guest retains access/privacy validation for dependency changes; this workflow
 decision changes no guest capability. No package or lockfile is updated by this
 record.
+
+## On-demand Storybook captures
+
+**Date:** 2026-10-25. **Status:** accepted. **Authority:** Owner, current
+Dependabot and backlog-grooming chat, followed by explicit approval.
+
+**Question:** Should every PR generate the full screenshot catalogue, and should
+the desktop review keep both themes in its longest job?
+
+The final SPN-084 [Storybook run](https://github.com/mxbaylee/spinel/actions/runs/40255440330)
+spent 18m15s on desktop, 7m43s on tablet and 9m24s on phone light. Desktop's main
+loop produced 2,142 routine captures and took about 17m08s. These timings include
+rendering and interactions as well as PNG generation; they do not establish how
+much time PNG writes alone consume. The existing library partitions and removal
+of duplicate simulator work are already delivered, and SPN-087 owns the separate
+fixture/CSS cleanup.
+
+**Options:** retain unconditional captures; skip the entire review unless
+requested; or retain rendering/assertions and request routine captures when
+visual review needs them. The owner chose to do the improvement in this grooming
+PR, without a new ticket, and suggested a visual PR tag. The approved design
+uses the third option and splits desktop themes in the existing runner.
+
+**Outcome:** `visual-review` enables routine Storybook PNGs on a PR. A manual run
+can request them with `capture_screenshots=true`, including focused story IDs.
+An explicit capture request overrides documentation-only applicability. Ordinary
+code PRs and main pushes still render every story at every existing variant,
+require successful play functions, check runtime errors and retain native,
+keyboard, touch, focus, overflow and shared-control assertions. They omit routine
+PNG writes and galleries; diagnostic screenshots and bounded failure evidence
+remain. `--no-screenshots` exposes that mode while the existing CLI still captures
+by default. This does not disable application browser tests or pixel assertions.
+
+The build is shared by desktop light/dark, tablet and phone light/dark jobs.
+Desktop light owns the once-only native input proofs and icon/integration suite;
+fixed-light auxiliary journeys retain one owner, and tablet retains 613px mouse
+coverage. The stable aggregate still rejects failed, cancelled or missing
+required partitions. The `storybook-preview` label continues to control Pages
+preview publishing independently. Main Pages publishing follows the build and
+interaction gate without generating a second routine screenshot catalogue.
+
+Add `visual-review` for changes to layout, theme, typography, icons and visible
+interaction states, including visually relevant dependency updates. The label
+requests current evidence; approval still belongs to the owner or a reviewer
+they explicitly delegate for the current run. Omitting or removing a label does
+not satisfy a changed screen's review requirement. Captures are review evidence,
+not stored pixel baselines or proof that a product flow works.
+
+**Personas:** Operator gets shorter, inspectable jobs and measured runner cost.
+Owner retains actual affected-screen evidence without redundant catalogues for
+unrelated changes. Collaborator retains keyboard, focus, access and recovery
+checks. Link guest retains scoped navigation, privacy and revocation checks.
+No product permission, dependency, deployment target or approval authority changes.
+
+**Verification:** selection/policy and aggregate regressions cover capture
+requests, documentation-only handling, desktop ownership and rejected incomplete
+results. The grooming PR must verify both labelled and unlabelled CI behavior,
+inspect manifests/artifacts for honest capture counts and record comparable
+timings. Source changes alone do not claim those checks passed.

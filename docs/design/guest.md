@@ -59,6 +59,12 @@ and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-co
   the gem, "This link no longer works.", "Ask the person who shared it for a new
   link." and no button. No document name, because the link may have been revoked
   to hide it.
+- Authoritative revocation also disposes a dirty guest editor, including native
+  menus and keyboard handlers. Pending input remains only in inaccessible memory;
+  show a generic unsaved warning, with no copy, export or recovery action. Network
+  outages alone do not revoke access. Account draft recovery is unchanged.
+  Owner chose immediate hiding, chat 2026-10-23;
+  [decision](../implementation/SPN-084.md#dirty-space-guest-revocation-needs-a-privacyrecovery-decision).
 - **Connection interrupted:** the connection slot, not a paragraph. The
   unsaved-edit warning on leaving stays.
 
@@ -69,6 +75,13 @@ and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-co
 | Name, status cluster, View only / Guest editor badge, People, theatre toggle; Export as PDF remains SPN-075 | People details and authorized formula details |
 
 ## Stories
+
+SPN-084's [implementation record](../implementation/SPN-084.md) preserves the generic
+loading/offline/unavailable contract and its decisions. The owner chose
+immediate hiding after revocation, including dirty Space guests. The native
+Doc/Sheet regressions and revoked-unsaved story cover that behavior. Exact-commit
+CI evidence and independent screenshot review are recorded in
+[PR #180](https://github.com/mxbaylee/spinel/pull/180).
 
 `Guest/GuestApp` (loading and link-revoked states; the editor itself boots
 Univer and is covered by Playwright).

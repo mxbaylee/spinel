@@ -5,31 +5,8 @@
   "personas": "docs/product/personas.md",
   "grooming": {
     "every": 7,
-    "last": "2026-10-21",
-    "completed_since": [
-      "SPN-042",
-      "SPN-078",
-      "SPN-091",
-      "SPN-064",
-      "SPN-092",
-      "SPN-079",
-      "SPN-043",
-      "SPN-061",
-      "SPN-050",
-      "SPN-096",
-      "SPN-097",
-      "SPN-045",
-      "SPN-100",
-      "SPN-048",
-      "SPN-082",
-      "SPN-083",
-      "SPN-032",
-      "SPN-081",
-      "SPN-103",
-      "SPN-104",
-      "SPN-049",
-      "SPN-101"
-    ]
+    "last": "2026-10-25",
+    "completed_since": []
   },
   "size": {
     "soft": 10000,
@@ -45,5 +22,8 @@
       "docs/todo/readme.md"
     ]
   },
-  "pr_title_exceptions": ["🧹 Groom backlog", "⬆️ Bump"]
+  "pr_title_exceptions": [
+    "\ud83e\uddf9 Groom backlog",
+    "\u2b06\ufe0f Bump"
+  ]
 }

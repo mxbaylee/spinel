@@ -5,6 +5,7 @@ type ReviewResults = {
   classification?: string;
   build?: string;
   docsOnly?: string;
+  captureScreenshots?: string;
   viewports: Partial<Record<ReviewViewport, string>>;
 };
 
@@ -15,7 +16,11 @@ export function checkStorybookReviewResults(results: ReviewResults): string {
   if (results.docsOnly !== 'true' && results.docsOnly !== 'false') {
     throw new Error('Storybook change classification is missing.');
   }
-  const expected = results.docsOnly === 'true' ? 'skipped' : 'success';
+  if (results.captureScreenshots !== 'true' && results.captureScreenshots !== 'false') {
+    throw new Error('Storybook screenshot policy is missing.');
+  }
+  const skip = results.docsOnly === 'true' && results.captureScreenshots === 'false';
+  const expected = skip ? 'skipped' : 'success';
   for (const viewport of reviewViewports) {
     if (results.viewports[viewport] !== expected) {
       throw new Error(
@@ -23,9 +28,11 @@ export function checkStorybookReviewResults(results: ReviewResults): string {
       );
     }
   }
-  return results.docsOnly === 'true'
+  return skip
     ? 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'
-    : 'All desktop, tablet, and mobile Storybook captures and interactions passed.';
+    : results.captureScreenshots === 'true'
+      ? 'All desktop, tablet, and mobile Storybook captures and interactions passed.'
+      : 'All desktop, tablet, and mobile Storybook checks passed; routine screenshots were not requested.';
 }
 
 if (import.meta.main) {
@@ -34,6 +41,7 @@ if (import.meta.main) {
       classification: process.env.CLASSIFICATION_RESULT,
       build: process.env.BUILD_RESULT,
       docsOnly: process.env.DOCS_ONLY,
+      captureScreenshots: process.env.CAPTURE_SCREENSHOTS,
       viewports: {
         desktop: process.env.DESKTOP_RESULT,
         tablet: process.env.TABLET_RESULT,

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { GuestApp } from './GuestApp.tsx';
 
@@ -59,16 +60,34 @@ type Story = StoryObj<typeof meta>;
 export const Loading: Story = {
   decorators: [guestLocation()],
   parameters: { api: { [guest]: pending() } },
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).getByRole('status')).toHaveTextContent(
+      'Opening shared document…',
+    );
+  },
 };
 /** The link was revoked or replaced: any 401, 403 or 404 ends the page. */
 export const LinkRevoked: Story = {
   decorators: [guestLocation()],
   parameters: { api: { [guest]: failure('Not found.', 404) } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent('This link no longer works.');
+    await expect(canvas.getByText('Ask the person who shared it for a new link.')).toBeVisible();
+    await expect(canvas.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
+  },
 };
 /** A server error is treated as a dropped connection. The page keeps retrying every second. */
 export const ConnectionInterrupted: Story = {
   decorators: [guestLocation()],
   parameters: { api: { [guest]: failure('Try again later.', 503) } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('heading', { name: "You're offline" })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Try again' })).toBeEnabled();
+    await expect(canvas.queryByText('Opening shared document…')).not.toBeInTheDocument();
+  },
 };
 /** A link with a token needs Web Locks to open safely across tabs; without them the page stops. */
 export const UnsupportedBrowser: Story = {
