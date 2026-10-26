@@ -41,3 +41,10 @@ diff, and require the seven CI gates plus every applicable Storybook build,
 rendering and interaction partition at each PR's final head. The PR review records
 the committed SHA, actual evidence and independent grade; this note does not
 claim pending checks or human visual approval.
+
+The first validation run timed out waiting for Tags after reload; its failure
+image showed the document menu closed. Both reload paths could open the header
+before native-editor readiness, and now await the same saved/view-only status
+already required on first entry. Keep the 90-second test deadline, flaky-test
+failure policy, tag persistence and personal-privacy assertions unchanged. This
+synchronizes the existing test precondition and changes no production UI behavior.
