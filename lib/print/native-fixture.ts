@@ -93,6 +93,8 @@ process.once('message', async (message) => {
       },
     });
   }
-  process.send!(results);
+  if (!process.send || !process.disconnect)
+    throw new Error('Native fixture requires an IPC channel.');
+  process.send(results);
   process.disconnect();
 });
