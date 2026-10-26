@@ -23,6 +23,28 @@ async function capture(page: Page, info: TestInfo, state: string) {
   });
 }
 
+test('generic guest states retain 44px appearance targets at 620px with a fine pointer', async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 620, height: 900 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.route('**' + path, (route) => route.fulfill({ status: 503, json: {} }));
+  await page.goto('/share/' + id);
+  await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
+  expect(await page.evaluate(() => matchMedia('(any-pointer: coarse)').matches)).toBe(false);
+  const radios = page.getByRole('radio');
+  await expect(radios).toHaveCount(3);
+  for (const radio of await radios.all()) {
+    const box = await radio.boundingBox();
+    expect(box?.width).toBeGreaterThanOrEqual(44);
+    expect(box?.height).toBeGreaterThanOrEqual(44);
+    await radio.click();
+    await expect(radio).toHaveAttribute('aria-checked', 'true');
+  }
+  await radios.first().click();
+  await capture(page, info, '620px-fine-pointer');
+});
+
 test('guest launch distinguishes offline, retry and authoritative denial without private metadata', async ({
   page,
 }, info) => {

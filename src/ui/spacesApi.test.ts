@@ -9,7 +9,7 @@ import {
 afterEach(() => vi.unstubAllGlobals());
 
 test.each([401, 403, 404])(
-  'aborted guest Space response %i cannot revoke its successor',
+  'guest Space response %i stays scoped to its requesting controller',
   async (status) => {
     const root = '11111111-1111-4111-8111-111111111111';
     vi.stubGlobal('location', { pathname: `/share/${root}` });
@@ -31,10 +31,15 @@ test.each([401, 403, 404])(
     release(Response.json({ error: 'Unavailable' }, { status }));
     await expect(reading).rejects.toMatchObject({ status });
     expect(dispatchEvent).not.toHaveBeenCalled();
-    const active = spacesRequest(`/${root}`);
+    // A missing child is not authority over its still-accessible root. The
+    // controller refreshes that root and owns the terminal privacy decision.
+    const active = spacesRequest(`/${root}/items/missing-child`, {
+      method: 'PATCH',
+      body: { name: 'Changed elsewhere' },
+    });
     release(Response.json({ error: 'Unavailable' }, { status }));
     await expect(active).rejects.toMatchObject({ status });
-    expect(dispatchEvent).toHaveBeenCalledOnce();
+    expect(dispatchEvent).not.toHaveBeenCalled();
   },
 );
 

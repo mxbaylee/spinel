@@ -595,6 +595,94 @@ test('a View Space link covers nested and future pages without outer access or p
   }
 });
 
+test('a stale missing sibling action preserves a valid guest root and pending native input', async ({
+  browser,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, info);
+  let release = () => {};
+  try {
+    const link = (await f.link('editor'))!;
+    await f.page.goto(deepLink(link, f.overview.id));
+    await saved(f.page);
+    await (
+      await pages(f.page)
+    )
+      .getByRole('button', { name: `Expand ${f.section.name}`, exact: true })
+      .click();
+    const native = await f.page
+      .getByRole('region', { name: 'Doc document', exact: true })
+      .locator('.univer-container')
+      .elementHandle();
+    expect(native).not.toBeNull();
+    let received = 0;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await f.guest.route('**/universer-api/comb/**/new_changes', async (route) => {
+      received++;
+      await held;
+      await route.continue();
+    });
+    const draft = 'Pending input survives a missing sibling.';
+    await focusDoc(f.page);
+    await f.page.keyboard.type(draft);
+    await expect.poll(() => received).toBeGreaterThan(0);
+    await expect(f.page.getByRole('status', { name: 'Save status', exact: true })).toContainText(
+      'not saved',
+    );
+    const rename = await action(f, f.nested.name, 'Rename');
+    await rename.getByLabel('Name', { exact: true }).fill('A stale rename');
+    const removed = await f.account.request.delete(
+      `/api/spaces/${f.root.id}/items/${f.nested.id}`,
+      { headers: { Origin: f.origin }, data: {} },
+    );
+    expect(removed.status()).toBe(200);
+    let sawFailure = false;
+    const refreshed = f.page.waitForResponse((response) => {
+      const requestPath = new URL(response.url()).pathname;
+      if (
+        requestPath === endpoint(f.root.id, f.nested.id) &&
+        response.request().method() === 'PATCH' &&
+        response.status() === 404
+      )
+        sawFailure = true;
+      return sawFailure && requestPath === `/api/guest-spaces/${f.root.id}`;
+    });
+    const failed = f.page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === endpoint(f.root.id, f.nested.id) &&
+        response.request().method() === 'PATCH',
+    );
+    await rename.getByRole('button', { name: 'Save', exact: true }).click();
+    expect((await failed).status()).toBe(404);
+    expect((await refreshed).status()).toBe(200);
+    await expect(rename.getByRole('alert')).toBeVisible();
+    await rename.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(f.page).toHaveURL(f.origin + guestPath(f.root.id, f.overview.id));
+    expect(await native?.evaluate((element) => element.isConnected)).toBe(true);
+    await expect(f.page.getByRole('status', { name: 'Save status', exact: true })).toContainText(
+      'not saved',
+    );
+    await expect(
+      f.page.getByRole('heading', { name: 'This link no longer works.', exact: true }),
+    ).toHaveCount(0);
+    await guestOnly(f);
+    release();
+    await saved(f.page);
+    expect((await f.snapshot<IDocumentData>(f.overview.id)).body?.dataStream).toContain(draft);
+    expect(f.errors).toEqual([]);
+    await native?.dispose();
+  } finally {
+    release();
+    try {
+      await f.guest.unrouteAll({ behavior: 'wait' });
+    } finally {
+      await f.close();
+    }
+  }
+});
+
 for (const kind of ['doc', 'sheet'] as const) {
   test(`revoked dirty guest ${kind} loses native content, portals and keyboard access across Space children`, async ({
     browser,

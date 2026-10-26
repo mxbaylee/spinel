@@ -19,7 +19,7 @@ const meta = {
       const rect = control.getBoundingClientRect();
       await expect(rect.left).toBeGreaterThanOrEqual(0);
       await expect(rect.right).toBeLessThanOrEqual(width);
-      if (width <= 600 || window.matchMedia('(any-pointer: coarse)').matches) {
+      if (width <= 640 || window.matchMedia('(any-pointer: coarse)').matches) {
         await expect(rect.width).toBeGreaterThanOrEqual(44);
         await expect(rect.height).toBeGreaterThanOrEqual(44);
       }
