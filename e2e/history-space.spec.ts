@@ -128,7 +128,7 @@ for (const kind of ['doc', 'sheet'] as const) {
               title: child.name,
               body: {
                 dataStream: text,
-                paragraphs: [{ startIndex: text.length - 2 }],
+                paragraphs: [{ startIndex: text.length - 2, paragraphId: 'history-paragraph' }],
                 customBlocks: [{ startIndex: 0, blockId: 'cell' }],
               },
               drawingsOrder: embedded.drawingsOrder,

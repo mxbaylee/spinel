@@ -34,7 +34,7 @@ const versions: HistoryVersion[] = [
 const snapshot = getDocsEmptySnapshot(itemId);
 snapshot.body = {
   dataStream: 'A saved plan\r\n',
-  paragraphs: [{ startIndex: 12 }],
+  paragraphs: [{ startIndex: 12, paragraphId: 'history-paragraph' }],
 };
 const item = {
   id: itemId,
