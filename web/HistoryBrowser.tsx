@@ -175,7 +175,7 @@ export function HistoryBrowser() {
     }
   }
   const selectionLabel = current
-    ? `${historyDay(current.capturedAt)} ${historyVersionLabel(current)}`
+    ? `Selected ${historyDay(current.capturedAt)} ${historyVersionLabel(current)}`
     : 'No version selected';
   return (
     <section aria-label="Browse history" className="history-browser">
@@ -204,7 +204,7 @@ export function HistoryBrowser() {
         </div>
       </header>
       <p className="history-selection" role="status">
-        Selected {selectionLabel}
+        {selectionLabel}
       </p>
       {error && (
         <div className="sp-ui history-notice">
