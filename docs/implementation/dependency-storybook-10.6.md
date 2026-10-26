@@ -48,3 +48,18 @@ before native-editor readiness, and now await the same saved/view-only status
 already required on first entry. Keep the 90-second test deadline, flaky-test
 failure policy, tag persistence and personal-privacy assertions unchanged. This
 synchronizes the existing test precondition and changes no production UI behavior.
+
+## Complete the React/Vite adapter family
+
+**2026-10-26 — accepted, agent judgment within the same owner-authorized sequence.**
+After [#172](https://github.com/mxbaylee/spinel/pull/172) lands core 10.6.2,
+[#168](https://github.com/mxbaylee/spinel/pull/168) updates the React/Vite adapter,
+Vite builder, React renderer and React DOM shim to 10.6.2. The new core peer
+requirement is now satisfied by the root installation. Retain React 19, Vite 8,
+esbuild 0.28.2 and the existing TypeScript API hook.
+
+Regenerate the adapter graph against the merged core baseline and preserve
+compatible existing transitive resolutions, including browserslist 4.29.4.
+Only the upstream adapter family's obsolete dependencies are removed; all native
+platform metadata remains intact. The persona and verification decisions above
+apply to this second PR as well, with no intended product or access change.
