@@ -400,8 +400,6 @@ export class McpDocuments {
     );
     this.verify(identity, true);
     resolveDocument(this.workspace, identity.userId, id, 'edit', custom);
-    if (result.status === 'rejected' || result.status === 'retry')
-      throw new AuthError(409, result.error.message);
     if (this.collaboration.generations.active(id).unitId !== unitId) throw changed();
     return {
       unitId,

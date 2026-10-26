@@ -1,12 +1,10 @@
+import { syncNetwork } from './sync-network.ts';
 import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Dialog, Locator, Page, TestInfo } from '@playwright/test';
-import { JSONX } from '@univerjs/core';
-import type { IDocumentData, JSONXActions } from '@univerjs/core';
-import { ErrorCode } from '@univerjs/protocol';
-import type { IGetUnitOnRevResponse } from '@univerjs/protocol';
+import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { quoteFormulaName } from '@spinel/doc-formulas';
 import { startApp } from './app-process.ts';
 import { openDatabase } from '../server/database.ts';
@@ -18,8 +16,8 @@ import { SpaceLifecycleStore } from '../src/server/workspace/space-lifecycle.ts'
 import type { SpaceNode, SpaceRoot, SpaceTreeData } from '../src/shared/spaces.ts';
 import type { SpaceFile } from '../src/shared/workspace.ts';
 
-// The server/Pro SDK stays in startApp's child process. The collector uses the
-// public core JSONX operation reader only to verify persisted native Doc data.
+// Native materialization stays in startApp's child process. The collector reads
+// the server-confirmed native snapshot through the exact child boundary.
 async function fixture(browser: Browser, info: TestInfo) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-spaces-e2e-'));
   const databasePath = join(directory, 'app.sqlite');
@@ -59,6 +57,7 @@ async function fixture(browser: Browser, info: TestInfo) {
       isMobile: phone,
       permissions: ['clipboard-read', 'clipboard-write'],
     });
+    await syncNetwork(context);
     contexts.push(context);
     await context.addCookies([session(id)]);
     const page = await context.newPage();
@@ -345,58 +344,20 @@ async function nativeState(
   expect(metadata.ok()).toBe(true);
   const unitID = (await metadata.json()).live.unitId as string;
   const response = await context.request.get(
-    `/space-api/${spaceId}/items/${itemId}/universer-api/snapshot/${type}/unit/${unitID}/rev/0`,
+    `/sync-api/spaces/${spaceId}/items/${itemId}/snapshot?unitId=${unitID}`,
   );
   expect(response.ok()).toBe(true);
-  const { snapshot, changesets, error } = (await response.json()) as IGetUnitOnRevResponse;
-  // The public protocol returns an error envelope even on success: OK is 1.
-  expect(error?.code).toBe(ErrorCode.OK);
-  expect(snapshot).toMatchObject({ unitID, type });
-  return { unitID, snapshot, changesets };
+  const state = (await response.json()) as { unitId: string; revision: number; snapshot: IDocumentData | IWorkbookData };
+  expect(state.unitId).toBe(unitID);
+  expect(state.snapshot.id).toBe(unitID);
+  expect(type === 1 ? 'body' in state.snapshot : 'sheets' in state.snapshot).toBe(true);
+  return { unitID, snapshot: state.snapshot, revision: state.revision };
 }
 function nativeHead(state: Awaited<ReturnType<typeof nativeState>>) {
-  // Automatic snapshots may compact the representation after acknowledgement;
-  // the live unit and current revision remain the authoritative commit identity.
-  return {
-    unitID: state.unitID,
-    revision: Math.max(state.snapshot!.rev, ...state.changesets.map((change) => change.revision)),
-  };
+  return { unitID: state.unitID, revision: state.revision };
 }
 function nativeDocText(state: Awaited<ReturnType<typeof nativeState>>) {
-  // The public snapshot protocol carries the original document JSON as bytes;
-  // HTTP JSON represents those bytes either as base64 or a numeric byte object.
-  const meta = state.snapshot?.doc?.originalMeta as Uint8Array | string | undefined;
-  expect(meta).toBeDefined();
-  const bytes =
-    typeof meta === 'string' ? Buffer.from(meta, 'base64') : Buffer.from(Object.values(meta!));
-  let document = JSON.parse(bytes.toString('utf8')) as IDocumentData;
-  for (const changeset of state.changesets) {
-    for (const mutation of changeset.mutations) {
-      expect(mutation.id).toBe('doc.mutation.rich-text-editing');
-      const { unitId, actions } = JSON.parse(mutation.data) as {
-        unitId: string;
-        actions: JSONXActions;
-      };
-      expect(unitId).toBe(state.unitID);
-      // JSONX.apply returns undefined for a no-op; a non-no-op must produce the
-      // actual resulting document rather than falling back to its prior text.
-      if (!JSONX.isNoop(actions)) {
-        const replayed = JSONX.apply(document, actions);
-        if (
-          replayed === null ||
-          typeof replayed !== 'object' ||
-          Array.isArray(replayed) ||
-          replayed.id !== document.id ||
-          replayed.documentStyle === null ||
-          typeof replayed.documentStyle !== 'object' ||
-          Array.isArray(replayed.documentStyle)
-        )
-          throw new Error('Native Doc replay did not preserve document identity and structure.');
-        document = replayed as unknown as IDocumentData;
-      }
-    }
-  }
-  return document.body?.dataStream.trim();
+  return (state.snapshot as IDocumentData).body?.dataStream.trim();
 }
 function nativeDocState(state: Awaited<ReturnType<typeof nativeState>>) {
   return { ...nativeHead(state), text: nativeDocText(state) };
@@ -444,13 +405,13 @@ async function holdNativeWrites(context: BrowserContext) {
   });
   let received = 0;
   let returned = 0;
-  await context.route('**/universer-api/comb/**/new_changes', async (route) => {
+  const network = await syncNetwork(context);
+  network.interceptWrites(async (write) => {
     received++;
     await held;
-    const response = await route.fetch();
-    // A transport receipt is not proof of a native commit. Callers compare the
-    // authoritative snapshot after every held request has reached the server.
-    await route.fulfill({ response });
+    // A revoked connection is closed. A live one forwards to the real server;
+    // callers compare authoritative state, never treating forwarding as commit.
+    write.forward();
     returned++;
   });
   return {
@@ -460,7 +421,7 @@ async function holdNativeWrites(context: BrowserContext) {
     // On the assertion path, call after the native page has left to include
     // retries in the persisted-state proof. Also drain on failure while the
     // server is still alive, so fixture shutdown cannot mask the first failure.
-    drain: () => context.unrouteAll({ behavior: 'wait' }),
+    drain: () => network.drainWrites(),
   };
 }
 async function writeCell(page: Page, address: string, text: string, commit = true) {

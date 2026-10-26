@@ -260,23 +260,20 @@ for (const width of [1280, 390]) {
         const writeGate = new Promise<void>((resolve) => {
           releaseWrite = resolve;
         });
-        await page.route('**/universer-api/comb/*/unit/*/new_changes', async (route) => {
+        network.interceptWrites(async (write) => {
           if (holdWrite) {
             writeHeld = true;
             await writeGate;
           }
           if (failWrites) {
-            // Reject exactly once; repeated 503s would test a reconnect storm,
-            // rather than the save control's failure and user-triggered recovery.
+            // A real transport disconnect leaves the native envelope unconfirmed.
+            // Reconnect/retry must recover it; no document or save state is mocked.
             failWrites = false;
             rejectedWrites++;
-            await route.fulfill({
-              status: 503,
-              json: { error: 'Save unavailable for this acceptance test.' },
-            });
+            write.disconnect();
           } else {
             if (rejectedWrites && recoveryHeld) await recoveryGate;
-            await route.continue();
+            write.forward();
           }
         });
         const captureEditor = async (state: ConnectionState) => {
@@ -335,14 +332,10 @@ for (const width of [1280, 390]) {
           await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
           await page.keyboard.press('Escape');
           await connection(page, 'Online');
-          // A real rejected save remains unconfirmed; no production state is mocked.
-          const rejectedResponse = page.waitForResponse(
-            (response) => response.url().includes('/new_changes') && response.status() === 503,
-          );
+          // A real disconnected save remains unconfirmed; no production state is mocked.
           failWrites = true;
           holdWrite = false;
           releaseWrite();
-          await (await rejectedResponse).finished();
           await expect.poll(() => rejectedWrites).toBeGreaterThan(0);
           await expect(save).toContainText(/not saved|keep this tab open/i);
           await expect(save).toHaveAttribute('aria-live', 'polite');

@@ -1,3 +1,4 @@
+import { syncNetwork } from './sync-network.ts';
 import { expect, test } from '@playwright/test';
 import { interruptibleNetwork } from './live-network.ts';
 import { openDatabase } from '../server/database.ts';
@@ -380,6 +381,7 @@ test('revoking one login preserves another login’s queued edit and stops later
   });
   const sessions = [auth.createSession(owner.id), auth.createSession(owner.id)];
   const second = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+  const network = await syncNetwork(second);
   const other = await second.newPage();
   let release!: () => void;
   const pending = new Promise<void>((resolve) => {
@@ -435,10 +437,10 @@ test('revoking one login preserves another login’s queued edit and stops later
         target.getByRole('status', { name: 'Connection status', exact: true }),
       ).toHaveText('Online');
     }
-    await second.route('**/universer-api/comb/**/new_changes', async (route) => {
+    network.interceptWrites(async (write) => {
       held = true;
       await pending;
-      await route.continue();
+      write.forward();
     });
     const box = other
       .getByRole('region', { name: 'Sheet document', exact: true })

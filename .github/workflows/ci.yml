@@ -297,6 +297,8 @@ jobs:
           - { project: mobile-https, shard: '' }
           - { project: sync-development, shard: '' }
           - { project: sync-production, shard: '' }
+          - { project: sync-soak-sheet, shard: '' }
+          - { project: sync-soak-doc, shard: '' }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -340,15 +342,45 @@ jobs:
             test-results/**/*-export-opened.png
             test-results/**/*-sync-presence.png
             test-results/**/sync-diagnostics.json
+            test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
           retention-days: 7
           if-no-files-found: warn
+
+  sync-transition:
+    name: Retained sync transition
+    needs: changes
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install current application
+        run: npm ci
+      # The exporter uses public APIs from this immutable pre-cutover checkout.
+      # It is a test/transition tool, never a final application dependency.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: 81cc0774bda11f9bf65942ef84cf7d847bd08029
+          path: legacy-sync-source
+          persist-credentials: false
+      - name: Install pinned legacy export environment
+        working-directory: legacy-sync-source
+        run: npm ci
+      - name: Retain, interrupt, resume and verify real legacy data
+        run: node scripts/sync-transition/integration.ts --legacy-checkout "$GITHUB_WORKSPACE/legacy-sync-source"
 
   # The ruleset requires a check named "Playwright smoke", so this job carries
   # the name. Only classified docs-only changes may omit browsers and containers.
   playwright:
     name: Playwright smoke
-    needs: [changes, playwright-run, container-smoke]
+    needs: [changes, playwright-run, container-smoke, sync-transition]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -359,16 +391,17 @@ jobs:
           DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
           BROWSER: ${{ needs.playwright-run.result }}
           CONTAINER: ${{ needs.container-smoke.result }}
+          TRANSITION: ${{ needs.sync-transition.result }}
         run: |
-          case "$CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER" in
-            success:true:skipped:skipped)
+          case "$CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION" in
+            success:true:skipped:skipped:skipped)
               echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
               ;;
-            success:false:success:success)
-              echo 'All browser partitions and the production container passed.'
+            success:false:success:success:success)
+              echo 'All browser partitions, sync soaks, retained transition and the production container passed.'
               ;;
             *)
-              echo "Browser/container validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER"
+              echo "Browser/container validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION"
               exit 1
               ;;
           esac

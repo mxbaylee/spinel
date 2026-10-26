@@ -1,279 +1,72 @@
-import { Profiles } from '../auth/profile.ts';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import type { AddressInfo } from 'node:net';
-import { test, expect } from 'vitest';
+import { expect, test } from 'vitest';
 import WebSocket from 'ws';
-import { CombCmd, CmdRspCode, UniverType } from '@univerjs/protocol';
-import { SetRangeValuesMutation } from '@univerjs/sheets';
-import { createApp } from '../../../server/app.ts';
-import { openDatabase } from '../../../server/database.ts';
-import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
-import { WorkspaceStore } from '../workspace/store.ts';
+import { Profiles } from '../auth/profile.ts';
+import { transportFixture } from './transport.fixture.ts';
 
-test('guest HTTP and socket identities are scoped; link transitions evict pending joins and reject stale commits', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'spinel-guest-'));
-  await writeFile(join(directory, 'index.html'), 'Fixture');
-  const filename = join(directory, 'app.sqlite'),
-    origin = 'http://localhost:3000';
-  const app = await createApp({ databasePath: filename, staticDirectory: directory, origin });
-  const db = openDatabase(filename),
-    sockets: WebSocket[] = [];
-  try {
-    await new Promise<void>((resolve) => app.server.listen(0, '127.0.0.1', resolve));
-    const root = `http://127.0.0.1:${(app.server.address() as AddressInfo).port}`;
-    const auth = new AuthStore(db),
-      workspace = new WorkspaceStore(auth);
-    const owner = auth.createUser('Private Person Name'),
-      item = workspace.create(owner.id, { kind: 'sheet', name: 'Shared budget', parentId: null });
-    const other = workspace.create(owner.id, {
-      kind: 'sheet',
-      name: 'Never shared',
-      parentId: null,
-    });
-    const ownerCookie = `${COOKIE_NAME}=${auth.createSession(owner.id).token}`;
-    const send = (
-      path: string,
-      cookie = '',
-      body?: unknown,
-      method = body === undefined ? 'GET' : 'POST',
-    ) =>
-      fetch(root + path, {
-        method,
-        headers: {
-          Cookie: cookie,
-          Origin: origin,
-          ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-        },
-        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-      });
-    expect((await send(`/api/items/${item.id}/collaboration`, ownerCookie, {})).ok).toBe(true);
-    const base = `/guest-api/${item.id}/universer-api`;
-    const ticket = async (prefix: string, cookie: string) => {
-      const response = await send(`${prefix}/user/session-ticket?unitID=${item.id}`, cookie);
-      expect(response.status).toBe(200);
-      return (await response.json()).ticket as string;
-    };
-    const open = async (
-      prefix: string,
-      cookie: string,
-      joinRoom = true,
-      existingTicket?: string,
-    ) => {
-      const token = existingTicket ?? (await ticket(prefix, cookie));
-      const socket = new WebSocket(
-        `${root.replace('http:', 'ws:')}${prefix}/comb/connect?sessionTicket=${encodeURIComponent(token)}&unitID=${item.id}`,
-        { headers: { Cookie: cookie, Origin: origin } },
-      );
-      sockets.push(socket);
-      const messages: {
-        cmd: number;
-        code?: number;
-        infoRsp?: { memberID: string };
-        [key: string]: unknown;
-      }[] = [];
-      socket.on('message', (data) => messages.push(JSON.parse(data.toString())));
-      await new Promise<void>((resolve, reject) => {
-        socket.once('open', resolve);
-        socket.once('error', reject);
-      });
-      socket.send(JSON.stringify({ cmd: CombCmd.HELLO, routeKey: '', routeType: '' }));
-      await expect
-        .poll(() => messages.find((m) => m.cmd === CombCmd.HELLO)?.infoRsp?.memberID)
-        .toBeTypeOf('string');
-      const memberID = messages.find((m) => m.cmd === CombCmd.HELLO)!.infoRsp!.memberID;
-      if (joinRoom) {
-        socket.send(
-          JSON.stringify({
-            cmd: CombCmd.JOIN,
-            routeKey: item.id,
-            routeType: '',
-            joinReq: { rooms: [{ roomID: item.id }] },
-          }),
-        );
-        await expect
-          .poll(() => messages.find((m) => m.cmd === CombCmd.JOIN)?.code)
-          .toBe(CmdRspCode.OK);
-      }
-      return { socket, messages, memberID };
-    };
-    // This connection has a personal label but has not joined: activation must close it too.
-    const pending = await open('/universer-api', ownerCookie, false);
-    const oldOwnerTicket = await ticket('/universer-api', ownerCookie);
-    const enabled = await send(
-      `/api/items/${item.id}/link`,
-      ownerCookie,
-      { role: 'editor' },
-      'PUT',
-    );
-    expect(enabled.status).toBe(200);
-    const link = await enabled.json();
-    await expect.poll(() => pending.socket.readyState).toBe(WebSocket.CLOSED);
-    const entered = await send(`/api/guest/${item.id}/session`, '', {
-      token: new URL(link.url).hash.slice(1),
-    });
-    expect(entered.status).toBe(204);
-    expect(entered.headers.get('set-cookie')).toContain('HttpOnly');
-    const cookie = entered.headers.get('set-cookie')!.split(';')[0];
-    expect((await send(`/api/guest/${item.id}/collaboration`, cookie, {})).ok).toBe(true);
-    const metadata = await (await send(`/api/guest/${item.id}`, cookie)).json();
-    expect(Object.keys(metadata.item).sort()).toEqual(['access', 'id', 'kind', 'name']);
-    for (const path of [
-      '/api/items',
-      '/api/auth/session',
-      `/api/items/${item.id}/history`,
-      `/api/items/${item.id}/sharing`,
-      `/api/items/${item.id}/export`,
-      `/api/guest/${other.id}`,
-    ])
-      expect((await send(path, cookie)).status).toBeGreaterThanOrEqual(400);
-    expect(
-      (await send(`${base}/snapshot/2/unit/${other.id}/rev/0`, cookie)).status,
-    ).toBeGreaterThanOrEqual(400);
-    const snapshot = await send(`${base}/snapshot/2/unit/${item.id}/rev/0`, cookie);
-    expect(snapshot.status, await snapshot.text()).toBe(200);
-    new Profiles(auth).save(owner.id, {
-      name: owner.name,
-      icon: 'lucide:flower',
-      color: 'info-strong',
-    });
-    const account = await open('/universer-api', ownerCookie),
-      guest = await open(base, cookie);
-    expect(JSON.stringify(guest.messages)).not.toContain(owner.name);
-    expect(JSON.stringify(guest.messages)).not.toContain('/profile-avatar/');
-    expect(JSON.stringify(guest.messages)).not.toContain('Private Person');
-    await expect.poll(() => JSON.stringify(account.messages)).toContain('Guest');
-    const cursor = (selection: string) =>
-      guest.socket.send(
-        JSON.stringify({
-          cmd: 4,
-          routeKey: item.id,
-          collaMsg: {
-            eventID: 'update_cursor',
-            updateCursorEvent: {
-              unitID: item.id,
-              memberID: guest.memberID,
-              selection,
-            },
-          },
-        }),
-      );
-    cursor('first!B2');
-    await expect.poll(() => JSON.stringify(account.messages)).toContain('first!B2');
-    cursor('secret@example.com');
-    cursor('first!D4');
-    await expect.poll(() => JSON.stringify(account.messages)).toContain('first!D4');
-    expect(JSON.stringify(account.messages)).not.toContain('secret@example.com');
-    const permission = await send(`${base}/authz/-/object/-/batch_allowed`, cookie, {
-      requests: [
-        { unitID: item.id, objectID: item.id, actions: [0, 1] },
-        { unitID: other.id, objectID: other.id, actions: [0] },
-      ],
-    });
-    expect((await permission.json()).objectActions[1].actions[0].allowed).toBe(false);
-    // A pre-transition account ticket cannot reconnect with its old personal label.
-    const staleSocket = new WebSocket(
-      `${root.replace('http:', 'ws:')}/universer-api/comb/connect?sessionTicket=${encodeURIComponent(oldOwnerTicket)}&unitID=${item.id}`,
-      { headers: { Cookie: ownerCookie, Origin: origin } },
-    );
-    sockets.push(staleSocket);
-    staleSocket.on('error', () => {});
-    await expect.poll(() => staleSocket.readyState).toBe(WebSocket.CLOSED);
-    // View-only links must reject a forged owner ID through the actual protocol boundary.
-    const viewerLink = await (
-      await send(`/api/items/${item.id}/link`, ownerCookie, { role: 'viewer' }, 'PUT')
-    ).json();
-    const viewerSession = await send(`/api/guest/${item.id}/session`, '', {
-      token: new URL(viewerLink.url).hash.slice(1),
-    });
-    expect(viewerSession.status).toBe(204);
-    const viewerCookie = viewerSession.headers.get('set-cookie')!.split(';')[0];
-    const viewer = await open(base, viewerCookie);
-    const before = await (await send(`/api/items/${item.id}/sheet`, ownerCookie)).json();
-    const submit = await send(`${base}/comb/2/unit/${item.id}/new_changes`, viewerCookie, {
-      unitID: item.id,
-      type: UniverType.UNIVER_SHEET,
-      memberID: viewer.memberID,
-      changeset: {
-        unitID: item.id,
-        type: UniverType.UNIVER_SHEET,
-        userID: owner.id,
-        memberID: viewer.memberID,
-        sid: 'forged-viewer',
-        reqId: 1,
-        baseRev: 1,
-        revision: 0,
-        mutations: [
-          {
-            id: SetRangeValuesMutation.id,
-            data: JSON.stringify({
-              unitId: item.id,
-              subUnitId: before.snapshot.sheetOrder[0],
-              cellValue: { 0: { 0: { v: 'Forged owner write' } } },
-            }),
-          },
-        ],
-      },
-    });
-    expect(submit.status).toBe(200); // Receipt is acknowledged; rejection arrives on the socket.
-    await expect.poll(() => JSON.stringify(viewer.messages)).toContain('permission_rej');
-    expect(await (await send(`/api/items/${item.id}/sheet`, ownerCookie)).json()).toEqual(before);
-    for (const suffix of ['rev/0', 'block/foreign', 'fetchmissing?from=1&to=1']) {
-      const deniedRead = await send(`${base}/snapshot/2/unit/${other.id}/${suffix}`, viewerCookie);
-      expect(await deniedRead.text()).not.toContain('Never shared');
-      expect(deniedRead.status).toBeGreaterThanOrEqual(400);
-    }
-    expect(
-      (await send(`${base}/snapshot/2/unit/${item.id}/fetchmissing?from=1&to=1`, viewerCookie)).ok,
-    ).toBe(true);
-    const staleGuestTicket = await ticket(base, viewerCookie);
-    const disabled = await send(`/api/items/${item.id}/link`, ownerCookie, { role: null }, 'PUT');
-    expect(disabled.status).toBe(200);
-    await expect.poll(() => guest.socket.readyState).toBe(WebSocket.CLOSED);
-    await expect.poll(() => viewer.socket.readyState).toBe(WebSocket.CLOSED);
-    expect((await send(`/api/guest/${item.id}`, cookie)).status).toBe(404);
-    expect((await send(`${base}/snapshot/2/unit/${item.id}/rev/0`, cookie)).status).toBe(401);
-    const rejected = await send(`${base}/comb/2/unit/${item.id}/new_changes`, cookie, {
-      unitID: item.id,
-      type: UniverType.UNIVER_SHEET,
-      memberID: guest.memberID,
-      changeset: {
-        unitID: item.id,
-        type: UniverType.UNIVER_SHEET,
-        userID: owner.id,
-        memberID: guest.memberID,
-        sid: 'guest-stale',
-        reqId: 1,
-        baseRev: 1,
-        revision: 0,
-        mutations: [
-          {
-            id: SetRangeValuesMutation.id,
-            data: JSON.stringify({
-              unitId: item.id,
-              subUnitId: 'first',
-              cellValue: { 0: { 0: { v: 'Rejected guest write' } } },
-            }),
-          },
-        ],
-      },
-    });
-    expect(rejected.status).toBe(401);
-    const revokedSocket = new WebSocket(
-      `${root.replace('http:', 'ws:')}${base}/comb/connect?sessionTicket=${encodeURIComponent(staleGuestTicket)}&unitID=${item.id}`,
-      { headers: { Cookie: viewerCookie, Origin: origin } },
-    );
-    sockets.push(revokedSocket);
-    revokedSocket.on('error', () => {});
-    await expect.poll(() => revokedSocket.readyState).toBe(WebSocket.CLOSED);
-    expect(await (await send(`/api/items/${item.id}/sheet`, ownerCookie)).text()).not.toContain(
-      'Rejected guest write',
-    );
-  } finally {
-    for (const socket of sockets) socket.terminate();
-    await app.close();
-    db.close();
-    await rm(directory, { recursive: true, force: true });
-  }
+test('guest native HTTP and socket identities stay scoped and link transitions revoke readers, writers and unused tickets', async () => {
+  const f = await transportFixture();
+  const id = f.sheet.id;
+  await f.prepare();
+  const base = `/sync-api/guest/${id}`;
+  const link = async (role: 'editor' | 'viewer' | null) => {
+    const response = await f.send(`/api/items/${id}/link`, f.cookie(), { role }, 'PUT');
+    expect(response.status).toBe(200);
+    return response.json() as Promise<{ url: string | null }>;
+  };
+  const exchange = async (url: string) => {
+    const response = await f.send(`/api/guest/${id}/session`, '', { token: new URL(url).hash.slice(1) });
+    expect(response.status).toBe(204);
+    expect(response.headers.get('set-cookie')).toContain('HttpOnly');
+    return response.headers.get('set-cookie')!.split(';')[0];
+  };
+  new Profiles(f.auth).save(f.owner.id, { name: f.owner.name, icon: 'lucide:flower', color: 'info-strong' });
+  const personal = await f.connect();
+  const unusedAccount = await f.ticket();
+  const credential = await exchange((await link('editor')).url!);
+  await expect.poll(() => personal.socket.readyState).toBe(WebSocket.CLOSED);
+  expect((await f.open({ ticket: unusedAccount })).status).toBe(403);
+  expect((await f.send(`/api/guest/${id}/collaboration`, credential, {})).status).toBe(200);
+  const metadata = await (await f.send(`/api/guest/${id}`, credential)).json();
+  expect(Object.keys(metadata.item).sort()).toEqual(['access', 'id', 'kind', 'name']);
+  for (const path of [
+    '/api/items', '/api/auth/session', `/api/items/${id}/history`, `/api/items/${id}/sharing`,
+    `/api/items/${id}/export`, `/api/guest/${f.doc.id}`, `${base}/snapshot?unitId=${f.doc.id}`,
+  ]) expect((await f.send(path, credential)).status, path).toBeGreaterThanOrEqual(400);
+  const account = await f.connect();
+  const guest = await f.connect({ prefix: base, credential });
+  expect(JSON.stringify(guest.messages)).not.toContain(f.owner.name);
+  expect(JSON.stringify(guest.messages)).not.toContain('/profile-avatar/');
+  await expect.poll(() => JSON.stringify(account.messages)).toContain('Guest');
+  guest.socket.send(JSON.stringify({ type: 'cursor', selection: 'first!B2' }));
+  await expect.poll(() => JSON.stringify(account.messages)).toContain('first!B2');
+  guest.socket.send(JSON.stringify({ type: 'cursor', selection: 'secret@example.com' }));
+  await expect.poll(() => guest.socket.readyState).toBe(WebSocket.CLOSED);
+  expect(JSON.stringify(account.messages)).not.toContain('secret@example.com');
+  const editGuest = await f.connect({ prefix: base, credential });
+  editGuest.socket.send(JSON.stringify({ type: 'cursor', selection: 'first!D4' }));
+  await expect.poll(() => JSON.stringify(account.messages)).toContain('first!D4');
+  expect((await f.submit(editGuest, 'Guest editor positive control'))?.type).toBe('ack');
+  const saved = await (await f.snapshot()).json();
+  expect(saved.snapshot.sheets.first.cellData[0][0].v).toBe('Guest editor positive control');
+  const unusedGuest = await f.ticket({ prefix: base, credential });
+  const viewerCookie = await exchange((await link('viewer')).url!);
+  for (const client of [account, editGuest]) await expect.poll(() => client.socket.readyState).toBe(WebSocket.CLOSED);
+  expect((await f.open({ prefix: base, credential, ticket: unusedGuest })).status).toBe(403);
+  // Namespace-selected guest credentials cannot borrow a privileged account cookie.
+  expect((await f.send(`${base}/snapshot?unitId=${id}`, credential + '; ' + f.cookie())).status).toBe(403);
+  const viewer = await f.connect({ prefix: base, credential: viewerCookie });
+  expect((await f.submit(viewer, 'Viewer cannot edit', 2))?.type).toBe('resync');
+  expect((await f.submit(viewer, 'Forged owner write', 2, id, { userID: f.owner.id }))?.type).toBe('resync');
+  expect(await (await f.snapshot()).json()).toEqual(saved);
+  expect((await f.snapshot(id, viewerCookie, id, base)).status).toBe(200);
+  const resumed = await f.connect({ prefix: base, credential: viewerCookie, afterRevision: 1 });
+  const resume = resumed.messages.find(frame => frame.type === 'resume');
+  expect(resume).toMatchObject({ fromRevision: 1, revision: 2, edits: [expect.objectContaining({ revision: 2 })] });
+  const unusedViewer = await f.ticket({ prefix: base, credential: viewerCookie });
+  await link(null);
+  for (const client of [viewer, resumed]) await expect.poll(() => client.socket.readyState).toBe(WebSocket.CLOSED);
+  expect((await f.send(`/api/guest/${id}`, credential)).status).toBe(404);
+  expect((await f.snapshot(id, viewerCookie, id, base)).status).toBe(403);
+  expect((await f.open({ prefix: base, credential: viewerCookie, ticket: unusedViewer })).status).toBe(403);
+  expect(await (await f.snapshot()).json()).toEqual(saved);
 }, 60_000);

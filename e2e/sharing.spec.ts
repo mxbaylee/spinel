@@ -1,3 +1,4 @@
+import { syncNetwork } from './sync-network.ts';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import type { IWorkbookData, ICellData } from '@univerjs/core';
@@ -31,6 +32,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
   });
   await context.addCookies([cookie(owner.id)]);
   const second = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1100 } });
+  const network = await syncNetwork(second);
   await second.addCookies([cookie(collaborator.id)]);
   const other = await second.newPage();
   other.setDefaultTimeout(10000);
@@ -202,10 +204,10 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     const pending = new Promise<void>((resolve) => {
       releasePending = resolve;
     });
-    await second.route('**/universer-api/comb/**/new_changes', async (route) => {
+    network.interceptWrites(async (write) => {
       heldChanges++;
       await pending;
-      await route.continue();
+      write.forward();
     });
     await openDoc.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await openDoc.keyboard.type('Rejected edit');

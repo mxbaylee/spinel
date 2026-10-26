@@ -7,6 +7,8 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { Profiles } from '../src/server/auth/profile.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { SheetStore } from '../src/server/workspace/sheets.ts';
+import { syncSheetMenuFixture } from '../src/ui/syncSheetMenus.fixture.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { syncNetwork } from './sync-network.ts';
 import {
@@ -28,8 +30,7 @@ async function focusDoc(page: Page) {
 async function selectCell(page: Page, address: string) {
   const box = page
     .getByRole('region', { name: 'Sheet document', exact: true })
-    .getByRole('textbox')
-    .nth(2);
+    .locator('[data-u-comp="defined-name"] input');
   await box.fill(address);
   await box.press('Enter');
 }
@@ -67,6 +68,7 @@ async function fixture(
   info: TestInfo,
   kind: 'sheet' | 'doc',
   mobile = false,
+  snapshot?: IWorkbookData,
 ) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db);
@@ -78,6 +80,12 @@ async function fixture(
   profiles.save(editor.id, { name: editor.name, color: 'info-strong', icon: 'lucide:leaf' });
   const item = workspace.create(owner.id, { kind, name: `Native ${kind} sync`, parentId: null });
   workspace.share(owner.id, item.id, editor.id, 'editor');
+  if (snapshot)
+    new SheetStore(workspace).save(owner.id, item.id, {
+      snapshot: { ...snapshot, id: item.id },
+      revision: 0,
+      writeId: crypto.randomUUID(),
+    });
   const contexts: BrowserContext[] = [];
   async function account(user: string) {
     const context = await browser.newContext({
@@ -539,4 +547,227 @@ for (const kind of ['sheet', 'doc'] as const) {
       await f.close();
     }
   });
+}
+
+for (const mobile of [false, true]) {
+  test(`native sync sheet menus preserve supported commands on ${mobile ? 'phone' : 'desktop'}`, async ({
+    browser,
+    baseURL,
+  }, info) => {
+    test.setTimeout(150_000);
+    const f = await fixture(browser, baseURL!, info, 'sheet', mobile, syncSheetMenuFixture());
+    const openSheetMenu = async (name: string) => {
+      const tab = f.page.getByRole('tab', { name, exact: mobile ? false : true });
+      await tab.click();
+      if (mobile)
+        await f.page.getByRole('button', { name: 'Open sheet menu', exact: true }).click();
+      else await tab.click({ button: 'right' });
+      await expect(f.page.getByText('Rename', { exact: true })).toBeVisible();
+      for (const text of [
+        'Protect Worksheet',
+        'Unprotect Worksheet',
+        'Change permissions',
+        'Remove protection',
+        'View All Protection Ranges',
+      ])
+        await expect(f.page.getByText(text, { exact: true })).toHaveCount(0);
+    };
+    try {
+      await f.page.goto(`/?item=${f.item.id}`);
+      await saved(f.page);
+      await expect(
+        f.page.locator('[data-u-command="sheet.command.add-range-protection-from-toolbar"]'),
+      ).toHaveCount(0);
+      await openSheetMenu('Small sheet');
+      await expect(f.page.getByText('Copy', { exact: true })).toBeVisible();
+      await f.page.getByText('Copy', { exact: true }).click();
+      await saved(f.page);
+      await expect.poll(async () => (await f.read()).snapshot.sheetOrder.length).toBe(3);
+      const copied = (await f.read()).snapshot;
+      const copiedId = copied.sheetOrder.find((id) => !['small', 'large'].includes(id))!;
+      expect(copied.sheets[copiedId].cellData?.[0]?.[1]?.v).toBe(5);
+      expect(copied.sheets[copiedId].cellData?.[0]?.[2]?.f).toBe('=B1*2');
+      await openSheetMenu('Large sheet');
+      await expect(f.page.getByText('Copy', { exact: true })).toHaveCount(0);
+      await f.page.screenshot({
+        path: info.outputPath(`spn-059-sheet-menu-${mobile ? 'phone' : 'light'}.png`),
+      });
+      await f.page.keyboard.press('Escape');
+      if (!mobile) {
+        await f.page.emulateMedia({ colorScheme: 'dark' });
+        await openSheetMenu('Large sheet');
+        await f.page.screenshot({ path: info.outputPath('spn-059-sheet-menu-dark.png') });
+        await f.page.keyboard.press('Escape');
+        await f.page.getByRole('tab', { name: 'Formulas', exact: true }).click();
+        await expect(f.page.getByRole('button', { name: /Calculation options/i })).toHaveCount(0);
+        const region = f.page.getByRole('region', { name: 'Sheet document', exact: true });
+        await expect(
+          region.locator('[data-u-command="sheet.command.add-range-protection-from-toolbar"]'),
+        ).toHaveCount(0);
+        await selectCell(f.page, 'A1');
+        const nameBox = region.locator('[data-u-comp="defined-name"]');
+        await nameBox.locator('input').fill('CutoverRange');
+        await nameBox.locator('input').press('Enter');
+        await saved(f.page);
+        await nameBox.locator('a').click();
+        await f.page.getByText('Manager named', { exact: true }).click();
+        await expect(f.page.locator('[data-u-comp="defined-name-container"]')).toBeVisible();
+        await expect(f.page.getByText('CutoverRange', { exact: true })).toBeVisible();
+        await selectCell(f.page, 'D1');
+        await f.page.keyboard.type('=CutoverRange+1');
+        await f.page.keyboard.press('Enter');
+        await saved(f.page);
+        await expect
+          .poll(async () => (await f.read()).snapshot.sheets.large.cellData?.[0]?.[3]?.f)
+          .toBe('=CutoverRange+1');
+        await editCell(f.page, 'F1', '79');
+        await saved(f.page);
+        await selectCell(f.page, 'F1');
+        await f.page.evaluate(() => navigator.clipboard.writeText('pending cut'));
+        await f.page.keyboard.press('Control+x');
+        await expect
+          .poll(async () => (await f.page.evaluate(() => navigator.clipboard.readText())).trim())
+          .toBe('79');
+        await f.page.getByRole('tab', { name: 'Small sheet', exact: true }).click();
+        await selectCell(f.page, 'G1');
+        await f.page.keyboard.press('Control+v');
+        await saved(f.page);
+        await expect
+          .poll(async () => (await f.read()).snapshot.sheets.small.cellData?.[0]?.[6]?.v)
+          .toBe(79);
+        expect((await f.read()).snapshot.sheets.large.cellData?.[0]?.[5]?.v ?? null).toBeNull();
+      }
+      await f.page.reload();
+      await saved(f.page);
+      await openSheetMenu('Small sheet');
+      await expect(f.page.getByText('Copy', { exact: true })).toBeVisible();
+      expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
+}
+
+// This transport soak complements the broad native mutation matrix: random
+// real keyboard edits cross live/offline/lost-ack boundaries in two browsers,
+// with independent authored-content checks as well as full-model convergence.
+for (const kind of ['sheet', 'doc'] as const) {
+  test(
+    `seeded two-editor ${kind} sync soak survives repeated reconnect and reload`,
+    { tag: '@sync-soak' },
+    async ({ browser, baseURL }, info) => {
+      test.setTimeout(10 * 60_000);
+      const seed = kind === 'sheet' ? 0x5901 : 0x5902;
+      let state = seed;
+      const random = (limit: number) => {
+        state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        return state % limit;
+      };
+      const f = await fixture(browser, baseURL!, info, kind);
+      const expected = new Map<string, number>();
+      const tokens: string[] = [];
+      const rounds = 150;
+      let reconnects = 0,
+        lostAcks = 0;
+      try {
+        await Promise.all([
+          f.page.goto(`/?item=${f.item.id}`),
+          f.other.goto(`/?item=${f.item.id}`),
+        ]);
+        await Promise.all([saved(f.page), saved(f.other)]);
+        if (kind === 'doc') await Promise.all([focusDoc(f.page), focusDoc(f.other)]);
+        for (let round = 0; round < rounds; round++) {
+          if (round % 30 === 5) await f.network.setOffline(true);
+          const losingAck = round % 50 === 40;
+          if (losingAck) f.network.loseAcknowledgment();
+          if (kind === 'sheet') {
+            const rows = [random(30), random(30)];
+            const values = [random(10000), random(10000)];
+            const formulas = [random(4) === 0, random(4) === 0];
+            await Promise.all(
+              [f.page, f.other].map((page, index) => {
+                const address = `${index === 0 ? 'A' : 'B'}${rows[index] + 1}`;
+                expected.set(address, values[index]);
+                return editCell(
+                  page,
+                  address,
+                  formulas[index] ? `=${values[index]}+0` : String(values[index]),
+                );
+              }),
+            );
+          } else {
+            const additions = [
+              `[owner-${round.toString().padStart(3, '0')}]`,
+              `[peer-${round.toString().padStart(3, '0')}]`,
+            ];
+            tokens.push(...additions);
+            const positions = [random(2), random(2)];
+            await Promise.all(
+              [f.page, f.other].map(async (page, index) => {
+                await nativeInput(page).focus();
+                await page.keyboard.press(positions[index] ? 'Control+End' : 'Control+Home');
+                await page.keyboard.insertText(additions[index]);
+              }),
+            );
+          }
+          if (round % 30 === 8) {
+            await f.network.setOffline(false);
+            reconnects++;
+          }
+          if (losingAck) {
+            await expect.poll(f.network.lostMutationId).toBeTruthy();
+            await f.network.setOffline(false);
+            lostAcks++;
+          }
+          if (round % 10 === 9) {
+            await Promise.all([saved(f.page), saved(f.other)]);
+            const checkpoint = await f.read();
+            await expectNativeSnapshots([f.page, f.other], checkpoint);
+            if (kind === 'sheet') {
+              const sheet = checkpoint.snapshot.sheets[checkpoint.snapshot.sheetOrder[0]];
+              for (const [address, value] of expected) {
+                const column = address[0] === 'A' ? 0 : 1;
+                expect(sheet.cellData?.[Number(address.slice(1)) - 1]?.[column]?.v, address).toBe(
+                  value,
+                );
+              }
+            } else {
+              const stream = checkpoint.snapshot.body!.dataStream;
+              for (const token of tokens) expect(stream.split(token).length - 1, token).toBe(1);
+            }
+          }
+        }
+        await Promise.all([saved(f.page), saved(f.other)]);
+        const committed = await f.read();
+        await Promise.all([f.page.reload(), f.other.reload()]);
+        await Promise.all([saved(f.page), saved(f.other)]);
+        await expectNativeSnapshots([f.page, f.other], committed);
+        expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
+        expect(f.otherNetwork.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
+        expect(f.errors).toEqual([]);
+        await writeFile(
+          info.outputPath(`spn-059-${kind}-soak.json`),
+          JSON.stringify(
+            {
+              seed,
+              rounds,
+              authoredEdits: rounds * 2,
+              reconnects,
+              lostAcks,
+              revision: committed.revision,
+              outgoingSubmissions: [f.network, f.otherNetwork].map(
+                (wire) => wire.outgoing.filter((frame) => frame.type === 'submit').length,
+              ),
+              fullSnapshotCheckpoints: rounds / 10 + 1,
+            },
+            null,
+            2,
+          ),
+        );
+      } finally {
+        await f.close();
+      }
+    },
+  );
 }

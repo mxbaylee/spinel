@@ -20,15 +20,12 @@ import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { printDocument } from './documentPrint.ts';
 import { UniverDocsPrintPlugin } from '@univerjs-pro/docs-print';
+import { UniverLicensePlugin } from '@univerjs-pro/license';
 import printEnglish from '@univerjs-pro/docs-print/locale/en-US';
 import '@univerjs-pro/docs-print/lib/index.css';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
-import {
-  DocStateChangeManagerService,
-  DocStateEmitService,
-  setDocumentPermissionValue,
-} from '@univerjs/docs';
+import { setDocumentPermissionValue } from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
 import { watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
@@ -66,20 +63,16 @@ import { UniverDocsCorePreset, UniverDocsUIPlugin } from '@univerjs/preset-docs-
 import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
 import {
-  collaborationPlugins,
   prepareCollaboration,
   identifyCollaborator,
   watchCollaboration,
   loadSpinelDocument,
   disposeSpinelSync,
-  ClientEnglish,
-  UIEnglish,
 } from './collaboration.ts';
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
 import { documentReady } from './documentReady.ts';
 import type { ConnectionState } from './connectionState.ts';
-import { docPendingChanges } from './docPending.ts';
 import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
@@ -170,8 +163,7 @@ export function DocEditor({
     void (async () => {
       const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
-      const nativePermissions =
-        data.syncVersion === 1 ? nativeSyncPermissions(data.unitId, data.access) : undefined;
+      const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
       let drawingReady!: () => void;
       const drawingsRendered = new Promise<void>((resolve) => {
         drawingReady = resolve;
@@ -265,27 +257,14 @@ export function DocEditor({
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
-          [LocaleType.EN_US]: mergeLocales(
-            enUS,
-            drawingEnUS,
-            linkEnUS,
-            ClientEnglish,
-            UIEnglish,
-            printEnglish,
-          ),
+          [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, printEnglish),
         },
-        ...(data.syncVersion !== 1 ? { collaboration: true as const } : {}),
-        override: [
-          ...(nativePermissions?.override ?? []),
-          [IImageIoService, { useClass: StoredImages }],
-        ],
+        override: [...nativePermissions.override, [IImageIoService, { useClass: StoredImages }]],
         plugins: [
           [
             UniverDrawingPlugin,
             {
-              override: [
-                [IImageIoService, data.syncVersion === 1 ? { useClass: StoredImages } : null],
-              ],
+              override: [[IImageIoService, { useClass: StoredImages }]],
               allowImageSize: 5 * 1024 * 1024,
             },
           ],
@@ -294,13 +273,8 @@ export function DocEditor({
           UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
           UniverDocsPrintPlugin,
-          ...collaborationPlugins(
-            data.unitId,
-            [[IImageIoService, { useClass: StoredImages }]],
-            true,
-            spaceId ? { spaceId, itemId: id } : undefined,
-            data.syncVersion === 1,
-          ),
+          // Retained only for the print plugin until SPN-075.
+          UniverLicensePlugin,
         ],
         presets: [
           UniverDocsCorePreset({
@@ -351,7 +325,7 @@ export function DocEditor({
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const readonly = async () => {
-        nativePermissions?.readonly();
+        nativePermissions.readonly();
         canEditFormulas.current = false;
         setFormulaEdit(null);
         formulas.current?.clear();
@@ -362,40 +336,36 @@ export function DocEditor({
         setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Edit, false);
         setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Copy, true);
       };
-      if (data.syncVersion === 1)
-        await loadSpinelDocument({
-          univer,
-          unitId: data.unitId,
-          itemId: id,
-          spaceId,
-          access: data.access,
-          kind: 'doc',
-          signal: loading.signal,
-          isCurrent: () => !disposed,
-          initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
-          onInitialPending: () =>
-            publish({
-              dirty: true,
-              failed: false,
-              message: 'Changes not saved yet — keep this tab open.',
-            }),
-          reload: () => {
-            if (disposed) return;
-            initialized = false;
-            syncNotice.current =
-              'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
-            publish({
-              dirty: false,
-              failed: true,
-              message: 'Reloading after a synchronization problem…',
-            });
-            reload((generation) => generation + 1);
-          },
-        });
-      const document =
-        data.syncVersion === 1
-          ? univerAPI.getActiveDocument()
-          : await univerAPI.getCollaboration().loadDocAsync(data.unitId);
+      await loadSpinelDocument({
+        univer,
+        unitId: data.unitId,
+        itemId: id,
+        spaceId,
+        access: data.access,
+        kind: 'doc',
+        signal: loading.signal,
+        isCurrent: () => !disposed,
+        initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
+        onInitialPending: () =>
+          publish({
+            dirty: true,
+            failed: false,
+            message: 'Changes not saved yet — keep this tab open.',
+          }),
+        reload: () => {
+          if (disposed) return;
+          initialized = false;
+          syncNotice.current =
+            'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
+          publish({
+            dirty: false,
+            failed: true,
+            message: 'Reloading after a synchronization problem…',
+          });
+          reload((generation) => generation + 1);
+        },
+      });
+      const document = univerAPI.getActiveDocument();
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
       // A document-type plugin can initialize after the global Rendered stage.
@@ -444,24 +414,7 @@ export function DocEditor({
         return;
       }
       initialized = true;
-      save = watchCollaboration(
-        univer,
-        univerAPI,
-        data.unitId,
-        id,
-        data.access,
-        publish,
-        readonly,
-        publishConnection,
-        spaceId,
-        data.syncVersion === 1
-          ? undefined
-          : docPendingChanges(
-              data.unitId,
-              univer.__getInjector().get(DocStateEmitService),
-              univer.__getInjector().get(DocStateChangeManagerService),
-            ),
-      );
+      save = watchCollaboration(univer, publish, readonly, publishConnection);
       controller.current = save;
     })().catch((error) => {
       publishConnection('offline');

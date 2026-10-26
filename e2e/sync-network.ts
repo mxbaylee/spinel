@@ -1,12 +1,33 @@
 import type { BrowserContext, WebSocketRoute } from '@playwright/test';
 
-/** Control the real versioned socket without changing any document or server response. */
-export async function syncNetwork(context: BrowserContext) {
+export interface NativeWrite {
+  /** False means this exact server connection was already closed. */
+  forward(): boolean;
+  disconnect(): void;
+}
+const networks = new WeakMap<BrowserContext, Promise<Awaited<ReturnType<typeof install>>>>();
+
+/** Install before navigation; later calls share controls for existing sockets. */
+export function syncNetwork(context: BrowserContext) {
+  let network = networks.get(context);
+  if (!network) {
+    network = install(context);
+    networks.set(context, network);
+  }
+  return network;
+}
+
+/** Control the real versioned socket without changing document data or acknowledgments. */
+async function install(context: BrowserContext) {
   type Connection = { client: WebSocketRoute; server: WebSocketRoute };
   const sockets = new Set<Connection>();
   const outgoing: Record<string, any>[] = [];
   const incoming: Record<string, any>[] = [];
   const resumes: { connection: Connection; message: string | Buffer }[] = [];
+  let connectionCount = 0;
+  let intercept: ((write: NativeWrite) => Promise<void> | void) | undefined;
+  const pending = new Set<Promise<void>>();
+  const failures: unknown[] = [];
   let offline = false;
   let holdResume = false;
   let loseNext = false;
@@ -29,6 +50,7 @@ export async function syncNetwork(context: BrowserContext) {
       return;
     }
     const server = client.connectToServer();
+    connectionCount++;
     const connection = { client, server };
     sockets.add(connection);
     client.onMessage((message) => {
@@ -38,7 +60,21 @@ export async function syncNetwork(context: BrowserContext) {
         loseNext = false;
         losing = frame.mutationId;
       }
-      server.send(message);
+      if (frame.type === 'submit' && intercept) {
+        const task = Promise.resolve().then(() => intercept?.({
+          forward: () => {
+            if (!sockets.has(connection)) return false;
+            server.send(message);
+            return true;
+          },
+          disconnect: () => {
+            sockets.delete(connection);
+            void client.close();
+            void server.close();
+          },
+        })).catch((error) => { failures.push(error); }).finally(() => pending.delete(task));
+        pending.add(task);
+      } else server.send(message);
     });
     server.onMessage((message) => {
       const frame = JSON.parse(String(message));
@@ -71,6 +107,14 @@ export async function syncNetwork(context: BrowserContext) {
   return {
     outgoing,
     incoming,
+    connectionCount: () => connectionCount,
+    interceptWrites(handler: ((write: NativeWrite) => Promise<void> | void) | undefined) {
+      intercept = handler;
+    },
+    async drainWrites() {
+      await Promise.all([...pending]);
+      if (failures.length) throw new AggregateError(failures, 'Native write interception failed.');
+    },
     setOffline,
     loseAcknowledgment() {
       loseNext = true;

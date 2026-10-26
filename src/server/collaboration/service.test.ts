@@ -10,7 +10,7 @@ import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { UniverType } from '@univerjs/protocol';
 import type { IChangeset } from '@univerjs/protocol';
 import { SetRangeValuesMutation } from '@univerjs/sheets';
-import { RevertRevisionMutation } from '@univerjs-pro/collaboration';
+import { SQLiteSyncStorage } from '../sync/store.ts';
 import { openDatabase } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
@@ -20,7 +20,7 @@ import { makeArchive, restoreArchive } from '../backup/archive.ts';
 import { CollaborationStore } from './service.ts';
 import { TrashStore } from '../workspace/trash.ts';
 
-// SDK materializer cold startup is slower while the separate 25-hour browser soak runs.
+// Native materializer cold startup is slower while the separate 25-hour browser soak runs.
 vi.setConfig({ testTimeout: 20_000 });
 
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
@@ -79,15 +79,8 @@ async function fixture() {
     }
   };
   cleanup.push(stop);
-  const load = (id = sheet.id, userID = owner.id) =>
-    collab.service.getUnitLoadDataWithBlocks(
-      {
-        unitID: id,
-        type: id === sheet.id ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC,
-        revision: 0,
-      },
-      { userID },
-    );
+  const load = async (id = sheet.id, userID = owner.id) =>
+    collab.sync.load(id, { userID, customData: {} });
   const edit = (userID = owner.id): IChangeset => ({
     unitID: sheet.id,
     type: UniverType.UNIVER_SHEET,
@@ -133,7 +126,7 @@ async function fixture() {
 test('raw sheet revision revert cannot bypass the application restore transaction', async () => {
   const f = await fixture();
   await f.collab.prepare(f.owner.id, f.sheet.id);
-  await f.collab.service.submitChangeset(
+  await f.collab.submitChangeset(
     { changeset: f.edit() },
     { userID: f.owner.id, memberID: 'test-member' },
   );
@@ -143,23 +136,17 @@ test('raw sheet revision revert cannot bypass the application restore transactio
     reqId: 2,
     mutations: [
       {
-        id: RevertRevisionMutation.id,
+        id: 'univer.mutation.revert-version',
         data: JSON.stringify({ unitId: f.sheet.id, revision: 1 }),
       },
     ],
   };
   await expect(
-    f.collab.service.submitChangeset(
+    f.collab.submitChangeset(
       { changeset },
       { userID: f.owner.id, memberID: 'test-member' },
     ),
-  ).resolves.toMatchObject({
-    status: 'rejected',
-    error: {
-      code: 'PERMISSION_DENIED',
-      message: 'Restore versions through Spinel so the current state is kept.',
-    },
-  });
+  ).rejects.toThrow('Restore versions through Spinel so the current state is kept.');
   const current = await f.collab.load(f.owner.id, f.sheet.id);
   expect(current.revision).toBe(2);
   expect((current.snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]?.v).toBe(99);
@@ -186,14 +173,14 @@ test('raw document revision revert cannot bypass the application restore transac
     ],
   };
   const context = { userID: f.owner.id, memberID: 'test-member' };
-  expect(await f.collab.service.submitChangeset({ changeset }, context)).toMatchObject({
+  expect(await f.collab.submitChangeset({ changeset }, context)).toMatchObject({
     status: 'committed',
   });
   expect(
     ((await f.collab.load(f.owner.id, f.doc.id)).snapshot as IDocumentData).body?.dataStream,
   ).toBe(changedBody.dataStream);
   await expect(
-    f.collab.service.submitChangeset(
+    f.collab.submitChangeset(
       {
         changeset: {
           ...changeset,
@@ -201,7 +188,7 @@ test('raw document revision revert cannot bypass the application restore transac
           reqId: 2,
           mutations: [
             {
-              id: RevertRevisionMutation.id,
+              id: 'univer.mutation.revert-version',
               data: JSON.stringify({ unitId: f.doc.id, revision: 1 }),
             },
           ],
@@ -209,56 +196,21 @@ test('raw document revision revert cannot bypass the application restore transac
       },
       context,
     ),
-  ).resolves.toMatchObject({
-    status: 'rejected',
-    error: {
-      code: 'PERMISSION_DENIED',
-      message: 'Restore versions through Spinel so the current state is kept.',
-    },
-  });
+  ).rejects.toThrow('Restore versions through Spinel so the current state is kept.');
   const current = await f.collab.load(f.owner.id, f.doc.id);
   expect(current.revision).toBe(2);
   expect((current.snapshot as IDocumentData).body).toEqual(changedBody);
 });
 
-test('permanent purge waits for in-flight migration before acknowledging deletion', async () => {
+test('permanent purge after atomic preparation removes the unit and acknowledges its outbox', async () => {
   const f = await fixture();
-  let enter!: () => void, release!: () => void;
-  const entered = new Promise<void>((resolve) => {
-    enter = resolve;
-  });
-  const gate = new Promise<void>((resolve) => {
-    release = resolve;
-  });
-  f.collab.service.use('createUnit', async (_context, next) => {
-    enter();
-    await gate;
-    await next();
-  });
-  const preparing = f.collab.prepare(f.owner.id, f.doc.id).catch((error) => error);
-  await entered;
+  await f.collab.prepare(f.owner.id, f.doc.id);
+  expect(f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(f.doc.id)).toBeDefined();
   f.db.prepare('DELETE FROM workspace_items WHERE id=?').run(f.doc.id);
-  let finished = false;
-  const purge = f.collab.purgeDeleted().then(() => {
-    finished = true;
-  });
-  await new Promise((resolve) => setTimeout(resolve, 10));
-  expect(finished).toBe(false);
-  expect(
-    f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id),
-  ).toBeDefined();
-  release();
-  expect(await preparing).toBeInstanceOf(Error);
-  await purge;
-  expect(
-    await f.collab.service.dbAdapter.getUnit(
-      { userID: f.owner.id, customData: {}, request: {} },
-      f.doc.id,
-    ),
-  ).toBeNull();
-  expect(
-    f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id),
-  ).toBeUndefined();
+  expect(f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id)).toBeDefined();
+  await f.collab.purgeDeleted();
+  expect(f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(f.doc.id)).toBeUndefined();
+  expect(f.db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(f.doc.id)).toBeUndefined();
 });
 
 test('foreign and external image mutations are permanently rejected before persistence', async () => {
@@ -289,22 +241,22 @@ test('foreign and external image mutations are permanently rejected before persi
       ],
     };
     await expect(
-      f.collab.service.submitChangeset(
+      f.collab.submitChangeset(
         { changeset },
         { userID: f.owner.id, memberID: 'test-member' },
       ),
-    ).resolves.toMatchObject({ status: 'rejected', error: { code: 'INVALID_REQUEST' } });
+    ).rejects.toThrow();
     const saved = await f.collab.load(f.owner.id, f.doc.id);
     expect(saved.revision).toBe(1);
     expect((saved.snapshot as IDocumentData).drawings).toEqual({});
   }
 });
 
-test('permanent purge is durable across an interrupted SDK deletion and soft restore preserves changes', async () => {
+test('permanent purge is durable across an interrupted sync deletion and soft restore preserves changes', async () => {
   const f = await fixture();
   const trash = new TrashStore(f.workspace);
   await f.collab.prepare(f.owner.id, f.sheet.id);
-  await f.collab.service.submitChangeset(
+  await f.collab.submitChangeset(
     { changeset: f.edit() },
     { userID: f.owner.id, memberID: 'test-member' },
   );
@@ -320,9 +272,9 @@ test('permanent purge is durable across an interrupted SDK deletion and soft res
   expect(f.db.prepare('SELECT item_id FROM collaboration_purge').all()).toEqual([
     { item_id: f.sheet.id },
   ]);
-  const remove = vi
-    .spyOn(f.collab.service, 'deleteUnits')
-    .mockRejectedValueOnce(new Error('interrupted'));
+  const remove = vi.spyOn(SQLiteSyncStorage.prototype, 'remove').mockImplementationOnce(() => {
+    throw new Error('interrupted');
+  });
   await expect(f.collab.purgeDeleted()).rejects.toThrow('interrupted');
   expect(f.db.prepare('SELECT count(*) AS n FROM collaboration_purge').get()?.n).toBe(1);
   remove.mockRestore();
@@ -330,11 +282,8 @@ test('permanent purge is durable across an interrupted SDK deletion and soft res
   expect(f.db.prepare('SELECT count(*) AS n FROM collaboration_purge').get()?.n).toBe(0);
   // Inspect through the public adapter to prove bytes were hard-deleted, not merely hidden by ACL.
   expect(
-    await f.collab.service.dbAdapter.getUnit(
-      { userID: f.owner.id, customData: {}, request: {} },
-      f.sheet.id,
-    ),
-  ).toBeNull();
+    f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(f.sheet.id),
+  ).toBeUndefined();
 });
 
 test('expired network sessions cannot submit and cross-unit mutations cannot modify another document', async () => {
@@ -343,7 +292,7 @@ test('expired network sessions cannot submit and cross-unit mutations cannot mod
   const session = f.auth.createSession(f.owner.id);
   f.auth.revokeSession(session.session.token_hash);
   await expect(
-    f.collab.service.submitChangeset(
+    f.collab.submitChangeset(
       { changeset: f.edit() },
       {
         userID: f.owner.id,
@@ -351,7 +300,7 @@ test('expired network sessions cannot submit and cross-unit mutations cannot mod
         customData: { sessionHash: session.session.token_hash },
       },
     ),
-  ).resolves.toMatchObject({ status: 'rejected', error: { code: 'PERMISSION_DENIED' } });
+  ).rejects.toThrow();
   const changeset = f.edit();
   changeset.mutations[0].data = JSON.stringify({
     unitId: f.doc.id,
@@ -359,12 +308,12 @@ test('expired network sessions cannot submit and cross-unit mutations cannot mod
     cellValue: { 0: { 0: { v: 'foreign' } } },
   });
   await expect(
-    f.collab.service.submitChangeset(
+    f.collab.submitChangeset(
       { changeset },
       { userID: f.owner.id, memberID: 'test-member' },
     ),
-  ).resolves.toMatchObject({ status: 'rejected', error: { code: 'PERMISSION_DENIED' } });
-  expect((await f.load()).targetRevision).toBe(1);
+  ).rejects.toThrow();
+  expect((await f.load()).revision).toBe(1);
 });
 
 test('migration is idempotent, preserves legacy snapshots and fences stale-tab saves', async () => {
@@ -376,8 +325,8 @@ test('migration is idempotent, preserves legacy snapshots and fences stale-tab s
   await f.collab.prepare(f.owner.id, f.doc.id);
   const sheetBefore = await f.load();
   const docBefore = await f.load(f.doc.id);
-  expect(sheetBefore.targetRevision).toBe(1);
-  expect(docBefore.targetRevision).toBe(1);
+  expect(sheetBefore.revision).toBe(1);
+  expect(docBefore.revision).toBe(1);
   const native = (await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData;
   expect(native.sheets.first.cellData).toEqual(f.snapshot.sheets.first.cellData);
   expect(native.sheetOrder).toEqual(f.snapshot.sheetOrder);
@@ -398,68 +347,60 @@ test('migration is idempotent, preserves legacy snapshots and fences stale-tab s
   expect(await f.load(f.doc.id)).toEqual(docBefore);
 });
 
-test('an interrupted migration stays fenced and retries without overwriting an existing unit', async () => {
+test('interrupted atomic preparation rolls back both unit and fence and retries without overwriting saved work', async () => {
   const f = await fixture();
-  const create = vi
-    .spyOn(f.collab.service, 'createUnitFromData')
-    .mockRejectedValueOnce(new Error('interrupted'));
+  const original = SQLiteSyncStorage.prototype.create;
+  const create = vi.spyOn(SQLiteSyncStorage.prototype, 'create').mockImplementationOnce(function (this: SQLiteSyncStorage, unit, guard) {
+    return original.call(this, unit, () => {
+      guard();
+      throw new Error('interrupted');
+    });
+  });
   await expect(f.collab.prepare(f.owner.id, f.sheet.id)).rejects.toThrow('interrupted');
-  expect(
-    f.db.prepare('SELECT state FROM workspace_collaboration WHERE item_id=?').get(f.sheet.id)
-      ?.state,
-  ).toBe('preparing');
-  expect(() =>
-    f.sheets.save(f.owner.id, f.sheet.id, {
-      snapshot: f.snapshot,
-      revision: 1,
-      writeId: randomUUID(),
-    }),
-  ).toThrow('live collaboration');
+  expect(f.db.prepare('SELECT state FROM workspace_collaboration WHERE item_id=?').get(f.sheet.id)).toBeUndefined();
+  expect(f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(f.sheet.id)).toBeUndefined();
+  expect(f.sheets.load(f.owner.id, f.sheet.id).snapshot).toEqual(f.snapshot);
   create.mockRestore();
   await f.collab.prepare(f.owner.id, f.sheet.id);
+  await f.collab.submitChangeset({ changeset: f.edit() }, { userID: f.owner.id, memberID: 'test-member' });
   const before = await f.load();
-  f.db
-    .prepare("UPDATE workspace_collaboration SET state='preparing' WHERE item_id=?")
-    .run(f.sheet.id);
   await f.collab.prepare(f.owner.id, f.sheet.id);
   expect(await f.load()).toEqual(before);
+  expect((await f.load()).revision).toBe(2);
+  expect(() => f.sheets.save(f.owner.id, f.sheet.id, { snapshot: f.snapshot, revision: 1, writeId: randomUUID() })).toThrow('live collaboration');
 });
 
 test('service read, edit and lifecycle boundaries reuse current workspace grants', async () => {
   const f = await fixture();
   await f.collab.prepare(f.owner.id, f.sheet.id);
-  expect((await f.load(f.sheet.id, f.viewer.id)).targetRevision).toBe(1);
+  expect((await f.load(f.sheet.id, f.viewer.id)).revision).toBe(1);
   for (const user of [f.other, f.admin]) {
     await expect(f.collab.prepare(user.id, f.sheet.id)).rejects.toThrow('not available');
     await expect(f.load(f.sheet.id, user.id)).rejects.toThrow('not available');
   }
   const before = f.workspace.get(f.owner.id, f.sheet.id).updatedAt;
   f.auth.now = () => before + 1000;
-  const result = await f.collab.service.submitChangeset(
+  await expect(f.collab.submitChangeset(
     { changeset: f.edit(f.viewer.id) },
     { userID: f.viewer.id, memberID: 'test-member' },
-  );
-  expect(result.status).toBe('rejected');
+  )).rejects.toThrow();
   expect(f.workspace.get(f.owner.id, f.sheet.id).updatedAt).toBe(before);
-  if (result.status === 'rejected') expect(result.error.code).toBe('PERMISSION_DENIED');
-  expect((await f.load()).targetRevision).toBe(1);
-  await expect(
-    f.collab.service.deleteUnits(
-      { unitIDs: [f.sheet.id], hardDelete: true },
-      { userID: f.owner.id },
-    ),
-  ).rejects.toThrow('through Spinel');
+  expect((await f.load()).revision).toBe(1);
+  // No raw deletion API remains; only the application purge outbox may delete.
+  f.db.prepare('INSERT INTO collaboration_purge VALUES(?)').run(f.sheet.id);
+  await expect(f.collab.purgeDeleted()).rejects.toThrow('active generation');
+  f.db.prepare('DELETE FROM collaboration_purge WHERE item_id=?').run(f.sheet.id);
   f.workspace.share(f.owner.id, f.sheet.id, f.viewer.id, null);
   await expect(f.load(f.sheet.id, f.viewer.id)).rejects.toThrow('not available');
 });
 
-test('actual collaboration changes survive encrypted application backup, fresh restore and SDK reopen', async () => {
+test('actual collaboration changes survive encrypted application backup, fresh restore and sync reopen', async () => {
   const f = await fixture();
   await f.collab.prepare(f.owner.id, f.sheet.id);
   await f.collab.prepare(f.owner.id, f.doc.id);
   const savedAt = f.workspace.get(f.owner.id, f.sheet.id).updatedAt + 1000;
   f.auth.now = () => savedAt;
-  const result = await f.collab.service.submitChangeset(
+  const result = await f.collab.submitChangeset(
     { changeset: f.edit() },
     { userID: f.owner.id, memberID: 'test-member' },
   );
@@ -467,7 +408,7 @@ test('actual collaboration changes survive encrypted application backup, fresh r
   expect(f.workspace.get(f.owner.id, f.sheet.id).updatedAt).toBe(savedAt);
   const expectedSheet = await f.load(),
     expectedDoc = await f.load(f.doc.id);
-  expect(expectedSheet.targetRevision).toBe(2);
+  expect(expectedSheet.revision).toBe(2);
   expect(
     ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
       .cellData?.[0]?.[0]?.v,
@@ -489,16 +430,13 @@ test('actual collaboration changes survive encrypted application backup, fresh r
   const workspace = new WorkspaceStore(new AuthStore(db));
   const collab = new CollaborationStore(workspace, path);
   cleanup.push(() => collab.close());
-  for (const [id, type, expected] of [
-    [f.sheet.id, UniverType.UNIVER_SHEET, expectedSheet],
-    [f.doc.id, UniverType.UNIVER_DOC, expectedDoc],
+  for (const [id, expected] of [
+    [f.sheet.id, expectedSheet],
+    [f.doc.id, expectedDoc],
   ] as const) {
     await collab.prepare(f.owner.id, id);
     expect(
-      await collab.service.getUnitLoadDataWithBlocks(
-        { unitID: id, type, revision: 0 },
-        { userID: f.owner.id },
-      ),
+      collab.sync.load(id, { userID: f.owner.id, customData: {} }),
     ).toEqual(expected);
   }
   expect(workspace.get(f.viewer.id, f.sheet.id).access).toBe('viewer');
@@ -506,7 +444,7 @@ test('actual collaboration changes survive encrypted application backup, fresh r
     ((await collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
       .cellData?.[0]?.[0]?.v,
   ).toBe(99);
-  // Two SDK runtimes plus authenticated archive/restore need headroom on loaded CI hosts.
+  // Two native runtimes plus authenticated archive/restore need headroom on loaded CI hosts.
 }, 20_000);
 
 test('a different SQLite file is rejected before collaboration schema can be created there', async () => {
@@ -526,23 +464,21 @@ test('access revoked during mutation application is checked again before durable
   const audit = vi.spyOn(console, 'warn').mockImplementation(() => {});
   f.workspace.share(f.owner.id, f.sheet.id, f.viewer.id, 'editor');
   await f.collab.prepare(f.owner.id, f.sheet.id);
-  f.collab.service.use('applyChangeset', async (_context, next) => {
+  f.collab.onSubmitting(async () => {
     f.workspace.share(f.owner.id, f.sheet.id, f.viewer.id, null);
-    await next();
+    await Promise.resolve();
   });
   const before = f.workspace.get(f.owner.id, f.sheet.id).updatedAt;
   f.auth.now = () => before + 1000;
-  const result = await f.collab.service.submitChangeset(
+  await expect(f.collab.submitChangeset(
     { changeset: f.edit(f.viewer.id) },
     { userID: f.viewer.id, memberID: 'test-member' },
-  );
-  expect(result.status).toBe('rejected');
+  )).rejects.toThrow();
   expect(f.workspace.get(f.owner.id, f.sheet.id).updatedAt).toBe(before);
-  if (result.status === 'rejected') expect(result.error.code).toBe('PERMISSION_DENIED');
   expect(audit.mock.calls.map((call) => String(call[0])).join('\n')).toContain(
     'collaboration.edit_denied',
   );
-  expect((await f.load()).targetRevision).toBe(1);
+  expect((await f.load()).revision).toBe(1);
   expect(
     ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
       .cellData?.[0]?.[0]?.v,
@@ -557,7 +493,7 @@ test('guest viewer mutations are denied while the same editor mutation commits',
     f.workspace.links.finish(f.sheet.id, link.epoch, true);
     const guest = f.workspace.links.exchange(f.sheet.id, link.token);
     const credential = f.workspace.links.access(guest.userId)!;
-    const result = await f.collab.service.submitChangeset(
+    const result = f.collab.submitChangeset(
       { changeset: f.edit(guest.userId) },
       {
         userID: guest.userId,
@@ -568,9 +504,9 @@ test('guest viewer mutations are denied while the same editor mutation commits',
         },
       },
     );
-    if (role === 'viewer')
-      expect(result).toMatchObject({ status: 'rejected', error: { code: 'PERMISSION_DENIED' } });
-    expect((await f.load()).targetRevision).toBe(role === 'viewer' ? 1 : 2);
+    if (role === 'viewer') await expect(result).rejects.toThrow();
+    else await expect(result).resolves.toMatchObject({ status: 'committed' });
+    expect((await f.load()).revision).toBe(role === 'viewer' ? 1 : 2);
     expect(
       ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
         .cellData?.[0]?.[0]?.v,
@@ -592,16 +528,16 @@ test('revoking a guest link during mutation application prevents the durable com
   const gate = new Promise<void>((resolve) => {
     release = resolve;
   });
-  const blocker = f.collab.service.use('applyChangeset', async (_context, next) => {
+  const blocker = f.collab.onSubmitting(async () => {
     entered();
     await gate;
-    await next();
+    await Promise.resolve();
   });
   cleanup.push(() => {
     release();
     blocker.dispose();
   });
-  const submitted = f.collab.service.submitChangeset(
+  const submitted = f.collab.submitChangeset(
     { changeset: f.edit(guest.userId) },
     {
       userID: guest.userId,
@@ -615,12 +551,9 @@ test('revoking a guest link during mutation application prevents the durable com
   await applying;
   const revoked = f.workspace.links.begin(f.sheet.id, null);
   release();
-  await expect(submitted).resolves.toMatchObject({
-    status: 'rejected',
-    error: { code: 'PERMISSION_DENIED' },
-  });
+  await expect(submitted).rejects.toThrow();
   f.workspace.links.finish(f.sheet.id, revoked.epoch, false);
-  expect((await f.load()).targetRevision).toBe(1);
+  expect((await f.load()).revision).toBe(1);
   expect(
     ((await f.collab.load(f.owner.id, f.sheet.id)).snapshot as IWorkbookData).sheets.first
       .cellData?.[0]?.[0]?.v,
@@ -641,16 +574,16 @@ test('retained native restore drains accepted edits, fences old IDs and keeps ex
   const gate = new Promise<void>((resolve) => {
     release = resolve;
   });
-  const blocker = f.collab.service.use('commitChangeset', async (_context, next) => {
+  const blocker = f.collab.onSubmitting(async () => {
     entered();
     await gate;
-    await next();
+    await Promise.resolve();
   });
   cleanup.push(() => {
     release();
     blocker.dispose();
   });
-  const accepted = f.collab.service.submitChangeset(
+  const accepted = f.collab.submitChangeset(
     { changeset: f.edit() },
     { userID: f.owner.id, memberID: 'test-member' },
   );
@@ -659,11 +592,11 @@ test('retained native restore drains accepted edits, fences old IDs and keeps ex
   const restored = history.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, requestId);
   await vi.waitFor(() => expect(f.collab.generations.restoring(f.sheet.id)).toBe(true));
   await expect(
-    f.collab.service.submitChangeset(
+    f.collab.submitChangeset(
       { changeset: { ...f.edit(), reqId: 2 } },
       { userID: f.owner.id, memberID: 'test-member' },
     ),
-  ).resolves.toMatchObject({ status: 'rejected', error: { code: 'PERMISSION_DENIED' } });
+  ).rejects.toThrow();
   release();
   await accepted;
   const receipt = await restored;
@@ -681,11 +614,11 @@ test('retained native restore drains accepted edits, fences old IDs and keeps ex
   ).toBe(99);
   await expect(f.load()).rejects.toThrow('not available');
   await expect(
-    f.collab.service.submitChangeset(
+    f.collab.submitChangeset(
       { changeset: { ...f.edit(), reqId: 3 } },
       { userID: f.owner.id, memberID: 'test-member' },
     ),
-  ).resolves.toMatchObject({ status: 'rejected', error: { code: 'PERMISSION_DENIED' } });
+  ).rejects.toThrow();
   const edit = f.edit();
   edit.unitID = receipt.nextUnit;
   edit.mutations[0].data = JSON.stringify({
@@ -693,7 +626,7 @@ test('retained native restore drains accepted edits, fences old IDs and keeps ex
     subUnitId: 'first',
     cellValue: { 0: { 0: { v: 123 } } },
   });
-  await f.collab.service.submitChangeset(
+  await f.collab.submitChangeset(
     { changeset: edit },
     { userID: f.owner.id, memberID: 'test-member' },
   );
@@ -775,7 +708,7 @@ test('document restore validates retained image references and rolls back sessio
   ).rejects.toThrow();
 });
 
-test('SDK generation restore retains multi-tab formulas, styles, resources and stored Doc images after later edits', async () => {
+test('sync generation restore retains multi-tab formulas, styles, resources and stored Doc images after later edits', async () => {
   const f = await fixture();
   const { HistoryStore } = await import('../history/store.ts');
   const history = new HistoryStore(f.workspace, f.collab);
@@ -795,7 +728,7 @@ test('SDK generation restore retains multi-tab formulas, styles, resources and s
   f.sheets.save(f.owner.id, f.sheet.id, { snapshot: rich, revision: 1, writeId: randomUUID() });
   const sheetTarget = await history.nameCurrent(f.owner.id, f.sheet.id, 'Rich native sheet');
   await f.collab.prepare(f.owner.id, f.sheet.id);
-  await f.collab.service.submitChangeset(
+  await f.collab.submitChangeset(
     { changeset: f.edit() },
     { userID: f.owner.id, memberID: 'test-member' },
   );
@@ -822,7 +755,7 @@ test('SDK generation restore retains multi-tab formulas, styles, resources and s
     subUnitId: 'second',
     cellValue: { 1: { 0: { v: 'After restore' } } },
   });
-  await f.collab.service.submitChangeset(
+  await f.collab.submitChangeset(
     { changeset: edit },
     { userID: f.owner.id, memberID: 'test-member' },
   );
@@ -885,7 +818,7 @@ test('SDK generation restore retains multi-tab formulas, styles, resources and s
       },
     ],
   };
-  await f.collab.service.submitChangeset(
+  await f.collab.submitChangeset(
     { changeset },
     { userID: f.owner.id, memberID: 'test-member' },
   );
@@ -895,7 +828,7 @@ test('SDK generation restore retains multi-tab formulas, styles, resources and s
   expect(Buffer.from(f.docs.image(f.owner.id, f.doc.id, image.id).data)).toEqual(bytes);
 });
 
-test('file-backed restart cancels a staged SDK replacement and preserves a completed restore and receipt', async () => {
+test('file-backed restart cancels a staged sync replacement and preserves a completed restore and receipt', async () => {
   const f = await fixture();
   const step = async <T>(name: string, action: () => Promise<T>) => {
     try {
@@ -917,11 +850,11 @@ test('file-backed restart cancels a staged SDK replacement and preserves a compl
   });
   const target = await history.nameCurrent(f.owner.id, f.sheet.id, 'Original');
   await f.collab.prepare(f.owner.id, f.sheet.id);
-  await f.collab.service.submitChangeset(
+  await f.collab.submitChangeset(
     { changeset: f.edit() },
     { userID: f.owner.id, memberID: 'test-member' },
   );
-  // Fault injection models termination after the SDK stage is durable but before
+  // Fault injection models termination after the native stage is durable but before
   // the application switch; process death cannot run the normal catch cleanup.
   vi.spyOn(f.collab.generations, 'finish').mockImplementation(() => {
     throw new Error('power lost before switch');
@@ -934,16 +867,13 @@ test('file-backed restart cancels a staged SDK replacement and preserves a compl
     .prepare("SELECT next_unit FROM spinel_restore_jobs WHERE status='staging'")
     .get()!;
   expect(
-    await f.collab.service.dbAdapter.getUnit(
-      { userID: f.owner.id, customData: {}, request: {} },
-      String(staged.next_unit),
-    ),
-  ).not.toBeNull();
+    f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(String(staged.next_unit)),
+  ).toBeDefined();
   await history.close();
   historyClosed = true;
   integrity(f.db, 'before closing staged fixture');
   await f.stop();
-  integrity(f.db, 'after closing staged SDK');
+  integrity(f.db, 'after closing staged sync');
   f.db.close();
   const db = openDatabase(f.path);
   integrity(db, 'reopened staged database');
@@ -975,20 +905,17 @@ test('file-backed restart cancels a staged SDK replacement and preserves a compl
   await step('purge abandoned stage', () => collab.purgeDeleted());
   integrity(db, 'after purging abandoned stage');
   expect(
-    await collab.service.dbAdapter.getUnit(
-      { userID: f.owner.id, customData: {}, request: {} },
-      String(staged.next_unit),
-    ),
-  ).toBeNull();
+    db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(String(staged.next_unit)),
+  ).toBeUndefined();
   const request = randomUUID();
   const completed = await step('complete restore after first restart', () =>
     reopened.restore(f.owner.id, f.sheet.id, target.id, f.sheet.id, request),
   );
   await reopened.close();
   reopenedClosed = true;
-  integrity(db, 'before closing completed SDK');
+  integrity(db, 'before closing completed sync');
   await collab.close();
-  integrity(db, 'after closing completed SDK');
+  integrity(db, 'after closing completed sync');
   stopped = true;
   db.close();
   const lastDb = openDatabase(f.path);
@@ -1036,14 +963,11 @@ test('Sheet image validation fences live mutations and preserved resources', asy
     cellValue: { 1: { 0: { p: cellDoc } } },
   });
   await expect(
-    f.collab.service.submitChangeset(
+    f.collab.submitChangeset(
       { changeset: change },
       { userID: f.owner.id, memberID: 'test-member' },
     ),
-  ).resolves.toMatchObject({
-    status: 'rejected',
-    error: { code: 'INVALID_REQUEST', message: expect.stringContaining('Insert images') },
-  });
+  ).rejects.toThrow('Insert images');
   expect((await f.collab.load(f.owner.id, f.sheet.id)).revision).toBe(1);
   const unsafeResource = {
     name: 'SHEET_DRAWING_PLUGIN',
@@ -1108,7 +1032,7 @@ test('moving and restoring an existing Sheet cell image preserves its identity a
     subUnitId: 'first',
     cellValue: { 0: { 0: null }, 1: { 0: preserved } },
   });
-  const committed = await f.collab.service.submitChangeset(
+  const committed = await f.collab.submitChangeset(
     { changeset: change },
     { userID: f.owner.id, memberID: 'test-member' },
   );
@@ -1140,16 +1064,13 @@ test('moving and restoring an existing Sheet cell image preserves its identity a
       mutations: [{ id: SetRangeValuesMutation.id, data: JSON.stringify(data) }],
     };
     await expect(
-      f.collab.service.submitChangeset(
+      f.collab.submitChangeset(
         { changeset: bad },
         { userID: f.owner.id, memberID: 'test-member' },
       ),
-    ).resolves.toMatchObject({
-      status: 'rejected',
-      error: { code: 'PERMISSION_DENIED', message: 'Cross-document changes are not allowed.' },
-    });
+    ).rejects.toThrow('Cross-document changes are not allowed.');
   }
-  const removal = await f.collab.service.submitChangeset(
+  const removal = await f.collab.submitChangeset(
     {
       changeset: {
         ...change,
@@ -1194,7 +1115,7 @@ test('cell images and plain cell rich text travel through every cell-data mutati
   const original = (await f.collab.load(f.owner.id, imported.id)).snapshot as IWorkbookData;
   let revision = 1;
   const submit = (id: string, data: unknown) =>
-    f.collab.service.submitChangeset(
+    f.collab.submitChangeset(
       {
         changeset: {
           ...f.edit(),
@@ -1256,10 +1177,7 @@ test('cell images and plain cell rich text travel through every cell-data mutati
         from: { subUnitId: 'first', value: { 2: { 0: null } } },
         to: { subUnitId: 'first', value: { 4: { 0: { p } } } },
       }),
-    ).resolves.toMatchObject({
-      status: 'rejected',
-      error: { code: 'PERMISSION_DENIED', message: 'Cross-document changes are not allowed.' },
-    });
+    ).rejects.toThrow('Cross-document changes are not allowed.');
   // Only cell rich text (`<row>.<column>.p`) may name its own Doc. An `id` anywhere
   // else, or a `p` without a row and column above it, can't retarget the unit.
   for (const extra of [
@@ -1273,8 +1191,5 @@ test('cell images and plain cell rich text travel through every cell-data mutati
         cellValue: { 5: { 0: { v: 1 } } },
         ...extra,
       }),
-    ).resolves.toMatchObject({
-      status: 'rejected',
-      error: { code: 'PERMISSION_DENIED', message: 'Cross-document changes are not allowed.' },
-    });
+    ).rejects.toThrow('Cross-document changes are not allowed.');
 });

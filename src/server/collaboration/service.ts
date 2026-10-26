@@ -12,22 +12,8 @@ import { auditDeniedEdit } from './audit.ts';
 import { realpathSync } from 'node:fs';
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
-import { UniverType } from '@univerjs/protocol';
-import { SQLiteDatabaseAdapter } from '@univerjs-pro/collaboration-database-sqlite';
-import {
-  CollabError,
-  UniverCollabService,
-  UnitSnapshotMaterializer,
-} from '@univerjs-pro/collaboration-service';
-import type {
-  MiddlewareNext,
-  SubmitChangesetMiddlewareContext,
-} from '@univerjs-pro/collaboration-service';
-import {
-  RevertRevisionMutation,
-  transformSnapshotToDocumentData,
-  transformSnapshotToWorkbookData,
-} from '@univerjs-pro/collaboration';
+import { CollaborationError } from './errors.ts';
+import { assertSyncTransitionReady } from '../sync/transition.ts';
 import { AuthError } from '../auth/store.ts';
 import { AccessTokens } from '../auth/tokens.ts';
 import type { WorkspaceStore } from '../workspace/store.ts';
@@ -54,7 +40,8 @@ type CommittedChange = { unitID: string; revision: number; syncRevision?: SyncRe
 function validateTargets(changeset: Readonly<IChangeset>) {
   const isIndex = (key: string) => /^\d+$/.test(key);
   const walk = (value: unknown, path: string[], allowedUnit = changeset.unitID) => {
-    if (path.length > 64) throw new CollabError('INVALID_REQUEST', 'Change is nested too deeply.');
+    if (path.length > 64)
+      throw new CollaborationError('INVALID_REQUEST', 'Change is nested too deeply.');
     if (!value || typeof value !== 'object') return;
     // Cell rich text (`<row>.<column>.p`) is an embedded Doc payload, not a mutation
     // target, wherever cell data travels: set values, move ranges, insert or duplicate
@@ -66,13 +53,16 @@ function validateTargets(changeset: Readonly<IChangeset>) {
     }
     for (const [key, child] of Object.entries(value)) {
       if ((key === 'unitId' || key === 'unitID') && child !== allowedUnit)
-        throw new CollabError('PERMISSION_DENIED', 'Cross-document changes are not allowed.');
+        throw new CollaborationError(
+          'PERMISSION_DENIED',
+          'Cross-document changes are not allowed.',
+        );
       walk(child, [...path, key], allowedUnit);
     }
   };
   for (const mutation of changeset.mutations) {
-    if (mutation.id === RevertRevisionMutation.id)
-      throw new CollabError(
+    if (mutation.id === 'univer.mutation.revert-version')
+      throw new CollaborationError(
         'PERMISSION_DENIED',
         'Restore versions through Spinel so the current state is kept.',
       );
@@ -80,31 +70,25 @@ function validateTargets(changeset: Readonly<IChangeset>) {
     try {
       data = JSON.parse(mutation.data);
     } catch {
-      throw new CollabError('INVALID_REQUEST', 'Invalid mutation data.');
+      throw new CollaborationError('INVALID_REQUEST', 'Invalid mutation data.');
     }
     walk(data, []);
   }
 }
 
-/** Public SDK boundary. HTTP/WebSocket integration must supply trusted identities. */
+/** Application boundary. HTTP/WebSocket integration supplies trusted identities. */
 export class CollaborationStore {
-  readonly service: UniverCollabService;
   readonly generations: CollaborationGenerations;
-  readonly sync?: SyncServer<SyncIdentity>;
-  private readonly syncStorage?: SQLiteSyncStorage;
+  readonly sync: SyncServer<SyncIdentity>;
+  private readonly syncStorage: SQLiteSyncStorage;
   private readonly submitListeners = new Set<
     (identity: SyncIdentity, unitId: string) => Promise<void>
   >();
   private readonly commitListeners = new Set<(change: CommittedChange) => void>();
   private readonly admitted = new Map<string, Set<Promise<void>>>();
   private readonly restores = new Map<string, Promise<RestoreJob>>();
-  private readonly database: SQLiteDatabaseAdapter;
   private readonly workspace: WorkspaceStore;
-  private readonly migration = Symbol('trusted snapshot migration');
   private readonly preparing = new Map<string, Promise<void>>();
-  private readonly materializer: UnitSnapshotMaterializer;
-  private readonly validator = new UnitSnapshotMaterializer(runtimeLimits);
-  private readonly lifecycle = Symbol('trusted permanent deletion');
   private purging: Promise<void> | undefined;
   private readonly observePurge?: ObserveJob;
   private readonly prepareListeners = new Set<
@@ -117,7 +101,6 @@ export class CollaborationStore {
     options: {
       spaceReview?: boolean;
       observePurge?: ObserveJob;
-      syncServer?: boolean;
       diagnostics?: (event: DiagnosticEvent, context: DiagnosticContext, actorId: string) => void;
     } = {},
   ) {
@@ -128,6 +111,7 @@ export class CollaborationStore {
       .find((row) => row.name === 'main');
     if (!main?.file || realpathSync(String(main.file)) !== realpathSync(filename))
       throw new Error('Collaboration must use the application database file.');
+    assertSyncTransitionReady(workspace.auth.database);
     this.workspace = workspace;
     new AccessTokens(workspace.auth);
     this.generations = new CollaborationGenerations(workspace);
@@ -145,160 +129,24 @@ export class CollaborationStore {
     CREATE TRIGGER IF NOT EXISTS collaboration_deleted BEFORE DELETE ON workspace_items
     WHEN EXISTS(SELECT 1 FROM workspace_collaboration WHERE item_id=OLD.id)
     BEGIN INSERT OR IGNORE INTO collaboration_purge VALUES(OLD.id); END;`);
-    // One physical file keeps application and collaboration data in the same online backup.
-    this.database = new SQLiteDatabaseAdapter({ filename, busyTimeoutMs: 5_000 });
-    this.service = new UniverCollabService({ dbAdapter: this.database, runtime: runtimeLimits });
-    this.materializer = new UnitSnapshotMaterializer(runtimeLimits);
-    // Serving can be disabled without forgetting ownership or orphaning purge
-    // work from units already accepted by the new backend.
-    if (
-      options.syncServer ||
-      workspace.auth.database
-        .prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='spinel_sync_units'")
-        .get()
-    )
-      this.syncStorage = new SQLiteSyncStorage(workspace.auth);
-    if (options.syncServer) {
-      this.sync = new SyncServer(this.syncStorage!, {
-        ...runtimeLimits,
-        authorize: (unitId, identity, edit) => this.authorizeSync(unitId, identity, edit),
-        beforeSubmit: async (unitId, identity) => {
-          for (const listener of this.submitListeners) await listener(identity, unitId);
-        },
-        validateSnapshot: (unitId, snapshot) =>
-          new DocumentStore(workspace).validateImages(this.itemForUnit(unitId), snapshot),
-        diagnosticsFor: (identity) => (event, context) =>
-          options.diagnostics?.(event, context, identity.userID),
-        diagnosticContext: (unitId, identity) => ({
-          component: 'server',
-          fileId: this.itemForUnit(unitId),
-          ...(typeof identity.customData.spaceId === 'string' && {
-            spaceId: identity.customData.spaceId,
-          }),
+    this.syncStorage = new SQLiteSyncStorage(workspace.auth);
+    this.sync = new SyncServer(this.syncStorage, {
+      ...runtimeLimits,
+      authorize: (unitId, identity, edit) => this.authorizeSync(unitId, identity, edit),
+      beforeSubmit: async (unitId, identity) => {
+        for (const listener of this.submitListeners) await listener(identity, unitId);
+      },
+      validateSnapshot: (unitId, snapshot) =>
+        new DocumentStore(workspace).validateImages(this.itemForUnit(unitId), snapshot),
+      diagnosticsFor: (identity) => (event, context) =>
+        options.diagnostics?.(event, context, identity.userID),
+      diagnosticContext: (unitId, identity) => ({
+        component: 'server',
+        fileId: this.itemForUnit(unitId),
+        ...(typeof identity.customData.spaceId === 'string' && {
+          spaceId: identity.customData.spaceId,
         }),
-      });
-    }
-    // Modification time is derived metadata; only durable SDK commits advance it.
-    this.service.on('changesetCommitted', (event) => {
-      const active = this.generations.resolve(event.changeset.unitID);
-      if (!active) return;
-      workspace.auth.database
-        .prepare('UPDATE workspace_items SET updated_at=max(updated_at,?) WHERE id=?')
-        .run(workspace.auth.now(), active.itemId);
-    });
-    this.service.use('readUnitData', async (context, next) => {
-      this.session(context.userID, context.customData);
-      this.readAccess(context.userID, context.request.unitID, context.customData);
-      await next();
-      this.session(context.userID, context.customData);
-      this.readAccess(context.userID, context.request.unitID, context.customData);
-    });
-    for (const action of ['submitChangeset', 'applyChangeset', 'commitChangeset'] as const) {
-      this.service.use(
-        action,
-        async (context: SubmitChangesetMiddlewareContext, next: MiddlewareNext) => {
-          let release: (() => void) | undefined;
-          let pending: Promise<void> | undefined;
-          const unitId = context.request.changeset.unitID;
-          try {
-            const generation = this.generations.resolve(unitId);
-            if (action === 'submitChangeset') {
-              if (!generation || this.generations.restoring(generation.itemId))
-                throw new CollabError(
-                  'PERMISSION_DENIED',
-                  'Restoring a version. Copy unsaved changes and reload.',
-                );
-              // Admission and the restore fence are synchronous. Existing submissions drain normally.
-              pending = new Promise<void>((resolve) => {
-                release = resolve;
-              });
-              const active = this.admitted.get(unitId) ?? new Set<Promise<void>>();
-              active.add(pending);
-              this.admitted.set(unitId, active);
-            }
-            this.access(context.userID, context.request.changeset.unitID, true, context.customData);
-            this.session(context.userID, context.customData, true);
-            validateTargets(context.request.changeset);
-            await next();
-          } catch (error) {
-            if (
-              action === 'submitChangeset' &&
-              error instanceof CollabError &&
-              error.code === 'PERMISSION_DENIED'
-            )
-              auditDeniedEdit(context.userID, context.request.changeset.unitID, action);
-            throw error;
-          } finally {
-            if (pending) {
-              this.admitted.get(unitId)?.delete(pending);
-              if (!this.admitted.get(unitId)?.size) this.admitted.delete(unitId);
-              release!();
-            }
-          }
-        },
-      );
-    }
-    this.service.use('commitChangeset', async (context, next) => {
-      if (
-        Object.hasOwn(context.customData, 'mcpTokenHash') &&
-        context.expectedHeadRevision !== context.request.changeset.baseRev
-      )
-        throw new CollabError(
-          'REVISION_MISMATCH',
-          'The document changed. Read it again before editing.',
-        );
-      const id = context.changeset.unitID;
-      validateTargets(context.changeset);
-      if (context.requiredUnitPermissions.some((permission) => permission.unitID !== id))
-        throw new CollabError('PERMISSION_DENIED', 'Cross-document changes are not allowed.');
-      // Validate the aligned candidate with the public materializer before durable commit.
-      const data = await this.service.getUnitLoadDataWithBlocks(
-        { unitID: id, type: context.changeset.type, revision: 0 },
-        { userID: context.userID, customData: context.customData },
-      );
-      const materialized = await this.validator.materializeSnapshot({
-        ...data,
-        changesets: [...data.changesets, context.changeset],
-        targetRevision: context.expectedHeadRevision + 1,
-      });
-      const rendered =
-        context.changeset.type === UniverType.UNIVER_DOC
-          ? transformSnapshotToDocumentData(materialized.snapshot)
-          : await transformSnapshotToWorkbookData(materialized.snapshot, materialized.sheetBlocks);
-      const native = this.preservedResources(id, rendered);
-      if (Buffer.byteLength(JSON.stringify(native)) > 10 * 1024 * 1024)
-        throw new CollabError('PERMISSION_DENIED', 'This document is too large to save.');
-      try {
-        new DocumentStore(workspace).validateImages(this.itemForUnit(id), native);
-      } catch (error) {
-        if (error instanceof AuthError) throw new CollabError('INVALID_REQUEST', error.message);
-        throw error;
-      }
-      this.session(context.userID, context.customData, true);
-      this.access(context.userID, id, true, context.customData);
-      await next();
-    });
-    this.service.use('createUnit', async (context, next) => {
-      if (context.customData.migration !== this.migration)
-        throw new CollabError('PERMISSION_DENIED', 'Create documents through Spinel.');
-      const item = this.readAccess(
-        context.userID,
-        context.request.snapshot.unitID,
-        context.customData,
-      );
-      const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
-      if (context.request.snapshot.type !== type)
-        throw new CollabError('PERMISSION_DENIED', 'Document type does not match.');
-      await next();
-    });
-    // Lifecycle changes need coordination with the workspace tree, never raw protocol calls.
-    this.service.use('deleteUnits', async (context, next) => {
-      if (context.customData.lifecycle !== this.lifecycle || !context.request.hardDelete)
-        throw new CollabError('PERMISSION_DENIED', 'Manage documents through Spinel.');
-      await next();
-    });
-    this.service.use('recoverUnits', () => {
-      throw new CollabError('PERMISSION_DENIED', 'Manage documents through Spinel.');
+      }),
     });
   }
 
@@ -306,7 +154,7 @@ export class CollaborationStore {
     try {
       validateDocumentCredentials(this.workspace, user, custom, edit);
     } catch {
-      throw new CollabError(
+      throw new CollaborationError(
         'PERMISSION_DENIED',
         'This document credential is no longer available.',
       );
@@ -322,43 +170,30 @@ export class CollaborationStore {
     if (Object.hasOwn(identity.customData, 'privacyEpoch'))
       this.workspace.links.assertEpoch(root, identity.customData.privacyEpoch);
     if (identity.customData.unitID !== undefined && identity.customData.unitID !== unitId)
-      throw new CollabError('PERMISSION_DENIED', 'This document is not available.');
+      throw new CollaborationError('PERMISSION_DENIED', 'This document is not available.');
   }
 
   onSubmitting(listener: (identity: SyncIdentity, unitId: string) => Promise<void>) {
     this.submitListeners.add(listener);
-    const legacy = this.service.use('submitChangeset', async (context, next) => {
-      await listener(
-        { userID: context.userID, customData: context.customData },
-        context.request.changeset.unitID,
-      );
-      await next();
-    });
     return {
       dispose: () => {
         this.submitListeners.delete(listener);
-        legacy.dispose();
       },
     };
   }
 
   onCommitted(listener: (change: CommittedChange) => void) {
     this.commitListeners.add(listener);
-    const legacy = this.service.on('changesetCommitted', ({ changeset }) => listener(changeset));
     return {
       dispose: () => {
         this.commitListeners.delete(listener);
-        legacy.dispose();
       },
     };
   }
 
   async headRevision(userID: string, unitId: string, customData: Record<string, unknown>) {
     this.authorizeSync(unitId, { userID, customData }, false);
-    if (this.sync) return this.syncStorage!.load(unitId)?.revision;
-    const unit = await this.service.dbAdapter.getUnit({ userID, customData, request: {} }, unitId);
-    this.authorizeSync(unitId, { userID, customData }, false);
-    return unit?.headRevision;
+    return this.syncStorage.load(unitId)?.revision;
   }
 
   /** Stable actor identity comes from authenticated ingress, never from the request body. */
@@ -366,7 +201,6 @@ export class CollaborationStore {
     request: Omit<SubmitRequest, 'actorId' | 'exactRevision'>,
     identity: SyncIdentity,
   ) {
-    if (!this.sync) throw new SyncError('unavailable');
     let item: WorkspaceItem;
     try {
       item = this.access(identity.userID, request.unitId, true, identity.customData);
@@ -427,7 +261,7 @@ export class CollaborationStore {
       }
       return result;
     } catch (error) {
-      if (error instanceof AuthError || error instanceof CollabError)
+      if (error instanceof AuthError || error instanceof CollaborationError)
         auditDeniedEdit(identity.userID, request.unitId, 'submitChangeset');
       throw error;
     } finally {
@@ -438,12 +272,11 @@ export class CollaborationStore {
     }
   }
 
-  /** Assistant ingress shares its existing wire representation with the legacy backend. */
+  /** Assistant ingress retains its public mutation and retry representation. */
   async submitChangeset(
     request: { changeset: IChangeset },
     context: { userID: string; memberID: string; customData?: Record<string, unknown> },
   ) {
-    if (!this.sync) return this.service.submitChangeset(request, context);
     const changeset = request.changeset;
     validateTargets(changeset);
     let result;
@@ -484,24 +317,15 @@ export class CollaborationStore {
       }[];
       for (const row of rows) {
         // Creation may have passed its access check before workspace deletion.
-        // Wait for it to settle before treating an absent SDK unit as purged.
+        // Wait for it to settle before treating an absent native unit as purged.
         await this.preparing.get(row.item_id)?.catch(() => {});
         await this.restores.get(row.item_id)?.catch(() => {});
-        if (
-          this.generations.resolve(row.item_id)?.unitId === row.item_id &&
-          this.workspace.auth.database
-            .prepare('SELECT 1 FROM spinel_live_units WHERE unit_id=?')
-            .get(row.item_id)
-        )
+        if (this.generations.resolve(row.item_id))
           throw new Error('Refusing to purge an active generation.');
-        if (this.syncStorage?.has(row.item_id)) {
-          this.sync?.invalidate(row.item_id);
+        if (this.syncStorage.has(row.item_id)) {
+          this.sync.invalidate(row.item_id);
           this.syncStorage.remove(row.item_id);
         }
-        const context = { userID: 'spinel-lifecycle', customData: { lifecycle: this.lifecycle } };
-        // A crash can leave a preparing fence before the SDK has created any unit.
-        if (await this.database.getUnit({ ...context, request: {} }, row.item_id))
-          await this.service.deleteUnits({ unitIDs: [row.item_id], hardDelete: true }, context);
         db.prepare('DELETE FROM spinel_generation_resources WHERE unit_id=?').run(row.item_id);
         db.prepare('DELETE FROM collaboration_purge WHERE item_id=?').run(row.item_id);
       }
@@ -521,21 +345,6 @@ export class CollaborationStore {
     return this.purging;
   }
 
-  /** Native plugins omit unknown resources when serializing. Preserve only those names,
-   * never a stale copy of resources managed by the live SDK. */
-  private rememberResources(
-    unitId: string,
-    itemId: string,
-    source: IWorkbookData | IDocumentData | null,
-    rendered: IWorkbookData | IDocumentData,
-  ) {
-    const known = new Set((rendered.resources ?? []).map((resource) => resource.name));
-    const opaque = (source?.resources ?? []).filter((resource) => !known.has(resource.name));
-    this.workspace.auth.database
-      .prepare('INSERT OR IGNORE INTO spinel_generation_resources VALUES(?,?,?)')
-      .run(unitId, itemId, JSON.stringify(opaque));
-  }
-
   private storedResources(unitId: string): NonNullable<IWorkbookData['resources']> {
     const row = this.workspace.auth.database
       .prepare('SELECT resources FROM spinel_generation_resources WHERE unit_id=?')
@@ -552,46 +361,21 @@ export class CollaborationStore {
     });
   }
 
-  private preservedResources<T extends IWorkbookData | IDocumentData>(
-    unitId: string,
-    snapshot: T,
-  ): T {
-    const stored = this.storedResources(unitId) as NonNullable<T['resources']>;
-    if (!stored.length) return snapshot;
-    const known = new Set((snapshot.resources ?? []).map((resource) => resource.name));
-    const missing = stored.filter((resource) => !known.has(resource.name));
-    return missing.length
-      ? { ...snapshot, resources: [...(snapshot.resources ?? []), ...missing] }
-      : snapshot;
-  }
-
   itemForUnit(unitId: string) {
     const active = this.generations.resolve(unitId);
     if (!active)
-      throw new CollabError(
+      throw new CollaborationError(
         'PERMISSION_DENIED',
         'This version is no longer live. Reload to continue.',
       );
     return active.itemId;
   }
 
-  private readAccess(user: string, unitId: string, custom: Record<string, unknown>) {
-    if (
-      custom.migration === this.migration &&
-      custom.stagedUnit === unitId &&
-      typeof custom.itemId === 'string'
-    )
-      return this.workspaceAccess(user, custom.itemId, 'edit', custom);
-    return this.access(user, unitId, false, custom);
-  }
-
   access(user: string, id: string, edit = false, custom: Record<string, unknown> = {}) {
     try {
-      if (!this.sync && this.syncStorage?.has(id))
-        throw new AuthError(409, 'This document requires the Spinel sync server.');
       return this.workspaceAccess(user, this.itemForUnit(id), edit ? 'edit' : 'read', custom);
     } catch {
-      throw new CollabError('PERMISSION_DENIED', 'This document is not available.');
+      throw new CollaborationError('PERMISSION_DENIED', 'This document is not available.');
     }
   }
 
@@ -606,7 +390,7 @@ export class CollaborationStore {
       if (item.kind !== 'sheet' && item.kind !== 'doc') throw new AuthError(404, 'Not a document.');
       return item;
     } catch {
-      throw new CollabError('PERMISSION_DENIED', 'This document is not available.');
+      throw new CollaborationError('PERMISSION_DENIED', 'This document is not available.');
     }
   }
 
@@ -651,195 +435,84 @@ export class CollaborationStore {
   private async prepareUnit(user: string, id: string, custom: Record<string, unknown>) {
     const item = this.workspaceAccess(user, id, 'read', custom);
     const unitId = this.generations.active(id).unitId;
-    const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
     const auth = this.workspace.auth;
-    if (!this.sync && this.syncStorage?.has(unitId))
-      throw new AuthError(409, 'This document requires the Spinel sync server.');
-    if (this.syncStorage && this.sync) {
-      if (!this.syncStorage.has(unitId)) {
-        if (auth.database.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id))
-          throw new AuthError(
-            409,
-            'This document needs the collaboration migration before using the new server.',
-          );
-        const table = item.kind === 'sheet' ? 'sheet_snapshots' : 'doc_snapshots';
-        const row = auth.database.prepare(`SELECT snapshot FROM ${table} WHERE item_id=?`).get(id);
-        const initial: IWorkbookData | IDocumentData = row
-          ? JSON.parse(String(row.snapshot))
-          : item.kind === 'sheet'
-            ? {
-                id: unitId,
-                name: item.name,
-                appVersion: '1.1.0',
-                locale: LocaleType.EN_US,
-                sheetOrder: ['first'],
-                styles: {},
-                sheets: {
-                  first: {
-                    id: 'first',
-                    name: 'Sheet1',
-                    rowCount: 1000,
-                    columnCount: 26,
-                    cellData: {},
-                  },
+    if (!this.syncStorage.has(unitId)) {
+      if (auth.database.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id))
+        throw new AuthError(
+          409,
+          'This document needs the collaboration migration before using the new server.',
+        );
+      const table = item.kind === 'sheet' ? 'sheet_snapshots' : 'doc_snapshots';
+      const row = auth.database.prepare(`SELECT snapshot FROM ${table} WHERE item_id=?`).get(id);
+      const initial: IWorkbookData | IDocumentData = row
+        ? JSON.parse(String(row.snapshot))
+        : item.kind === 'sheet'
+          ? {
+              id: unitId,
+              name: item.name,
+              appVersion: '1.1.0',
+              locale: LocaleType.EN_US,
+              sheetOrder: ['first'],
+              styles: {},
+              sheets: {
+                first: {
+                  id: 'first',
+                  name: 'Sheet1',
+                  rowCount: 1000,
+                  columnCount: 26,
+                  cellData: {},
                 },
-              }
-            : { ...getDocsEmptySnapshot(unitId), title: item.name };
-        const native = materialize(
-          { ...snapshotIdentity(initial, unitId), rev: 1 },
-          item.kind as 'sheet' | 'doc',
-        );
-        new DocumentStore(this.workspace).validateImages(id, native);
-        this.syncStorage.create(
-          {
-            unitId,
-            kind: item.kind as 'sheet' | 'doc',
-            revision: 1,
-            retainedFrom: 1,
-            snapshot: native,
-          },
-          () => {
-            this.workspaceAccess(user, id, 'read', custom);
-            if (this.generations.active(id).unitId !== unitId || this.generations.restoring(id))
-              throw new AuthError(409, 'This document was restored. Reload to continue.');
-            if (
-              auth.database.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id)
-            )
-              throw new AuthError(
-                409,
-                'This document is already using another collaboration backend.',
-              );
-            // The preparation fence and initial unit are one transaction, so a
-            // failed native materialization or create can be retried after restart.
-            auth.database.prepare("INSERT INTO workspace_collaboration VALUES(?,'ready')").run(id);
-          },
-        );
-      }
-      this.authorizeSync(unitId, { userID: user, customData: custom }, false);
-      return;
-    }
-    // Fence legacy saves before yielding. On interruption the next open retries this migration;
-    // it must not clear the fence and allow an old tab to overwrite a collaboration unit.
-    const snapshot = auth.transaction(() => {
-      this.workspaceAccess(user, id, 'read', custom);
-      auth.database
-        .prepare("INSERT OR IGNORE INTO workspace_collaboration VALUES(?,'preparing')")
-        .run(id);
-      if (hasSpaceContext(custom)) {
-        // The explicit scope was resolved inside this transaction. Read the same
-        // native rows without admitting Space IDs to legacy document services.
-        const table = item.kind === 'sheet' ? 'sheet_snapshots' : 'doc_snapshots';
-        const row = auth.database.prepare(`SELECT snapshot FROM ${table} WHERE item_id=?`).get(id);
-        const native = row
-          ? (JSON.parse(String(row.snapshot)) as IWorkbookData | IDocumentData)
-          : null;
-        if (native) new DocumentStore(this.workspace).validateImages(id, native);
-        return native;
-      }
-      return item.kind === 'sheet'
-        ? new SheetStore(this.workspace).load(user, id).snapshot
-        : new DocumentStore(this.workspace).load(user, id).snapshot;
-    });
-    try {
-      await this.service.getUnitLoadData(
-        { unitID: unitId, type, revision: 0 },
-        { userID: user, customData: custom },
+              },
+            }
+          : { ...getDocsEmptySnapshot(unitId), title: item.name };
+      const native = materialize(
+        { ...snapshotIdentity(initial, unitId), rev: 1 },
+        item.kind as 'sheet' | 'doc',
       );
-    } catch (error) {
-      if (!(error instanceof CollabError) || error.code !== 'UNIT_NOT_FOUND') throw error;
-      const context = { userID: user, customData: { ...custom, migration: this.migration } };
-      if (item.kind === 'sheet') {
-        const initial: IWorkbookData = (snapshot as IWorkbookData | null) ?? {
-          id,
-          name: item.name,
-          appVersion: '1.1.0',
-          locale: LocaleType.EN_US,
-          sheetOrder: ['first'],
-          sheets: {
-            first: {
-              id: 'first',
-              name: 'Sheet1',
-              rowCount: 1000,
-              columnCount: 26,
-              cellData: {},
-            },
-          },
-          styles: {},
-        };
-        await this.service.createUnitFromData(
-          { type: UniverType.UNIVER_SHEET, data: { ...initial, id: unitId, rev: 1 } },
-          context,
-        );
-      } else {
-        const initial = (snapshot as IDocumentData | null) ?? {
-          ...getDocsEmptySnapshot(id),
-          title: item.name,
-        };
-        await this.service.createUnitFromData(
-          { type: UniverType.UNIVER_DOC, data: { ...initial, id: unitId, rev: 1 } },
-          context,
-        );
-      }
+      new DocumentStore(this.workspace).validateImages(id, native);
+      this.syncStorage.create(
+        {
+          unitId,
+          kind: item.kind as 'sheet' | 'doc',
+          revision: 1,
+          retainedFrom: 1,
+          snapshot: native,
+        },
+        () => {
+          this.workspaceAccess(user, id, 'read', custom);
+          if (this.generations.active(id).unitId !== unitId || this.generations.restoring(id))
+            throw new AuthError(409, 'This document was restored. Reload to continue.');
+          if (
+            auth.database.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id)
+          )
+            throw new AuthError(
+              409,
+              'This document is already using another collaboration backend.',
+            );
+          // The preparation fence and initial unit are one transaction, so a
+          // failed native materialization or create can be retried after restart.
+          auth.database.prepare("INSERT INTO workspace_collaboration VALUES(?,'ready')").run(id);
+        },
+      );
     }
-    // Loading the public materializer is expensive on a cold process. Finish it
-    // before the browser can edit so the first change pays no initialization
-    // penalty. This validates only existing data; every candidate is still
-    // checked independently by the commit middleware above.
-    const current = await this.service.getUnitLoadDataWithBlocks(
-      { unitID: unitId, type, revision: 0 },
-      { userID: user, customData: custom },
-    );
-    const prepared = await this.validator.materializeSnapshot(current);
-    const native =
-      item.kind === 'sheet'
-        ? await transformSnapshotToWorkbookData(prepared.snapshot, prepared.sheetBlocks)
-        : transformSnapshotToDocumentData(prepared.snapshot);
-    this.workspaceAccess(user, id, 'read', custom);
-    if (this.generations.active(id).unitId !== unitId || this.generations.restoring(id))
-      throw new AuthError(409, 'This document was restored. Reload to continue.');
-    this.validateImages(id, unitId, native);
-    this.rememberResources(unitId, id, snapshot, native);
-    auth.database
-      .prepare("UPDATE workspace_collaboration SET state='ready' WHERE item_id=?")
-      .run(id);
+    this.validateImages(id, unitId, this.syncStorage.load(unitId)!.snapshot);
+    this.authorizeSync(unitId, { userID: user, customData: custom }, false);
   }
 
   async load(user: string, id: string, customData: Record<string, unknown> = {}) {
     validateDocumentCredentials(this.workspace, user, customData);
     const custom = Object.freeze({ ...customData });
-    const item = this.workspaceAccess(user, id, 'read', custom);
+    this.workspaceAccess(user, id, 'read', custom);
     const unitId = this.generations.active(id).unitId;
-    if (this.sync) {
-      const data = await this.sync.load(unitId, { userID: user, customData: custom });
-      const generation = this.generations.active(id);
-      const current = this.workspaceAccess(user, id, 'read', custom);
-      if (generation.unitId !== unitId)
-        throw new AuthError(409, 'This document was restored. Reload to continue.');
-      this.validateImages(id, unitId, data.snapshot);
-      return {
-        snapshot: snapshotIdentity(data.snapshot, id),
-        revision: data.revision + generation.offset,
-        access: current.access,
-      };
-    }
-    const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
-    const data = await this.service.getUnitLoadDataWithBlocks(
-      { unitID: unitId, type, revision: 0 },
-      { userID: user, customData: custom },
-    );
-    const materialized = await this.materializer.materializeSnapshot(data);
-    const snapshot =
-      item.kind === 'sheet'
-        ? await transformSnapshotToWorkbookData(materialized.snapshot, materialized.sheetBlocks)
-        : transformSnapshotToDocumentData(materialized.snapshot);
-    this.validateImages(id, unitId, snapshot);
-    const current = this.workspaceAccess(user, id, 'read', custom);
+    const data = await this.sync.load(unitId, { userID: user, customData: custom });
     const generation = this.generations.active(id);
+    const current = this.workspaceAccess(user, id, 'read', custom);
     if (generation.unitId !== unitId)
       throw new AuthError(409, 'This document was restored. Reload to continue.');
+    this.validateImages(id, unitId, data.snapshot);
     return {
-      snapshot: snapshotIdentity(this.preservedResources(unitId, snapshot), id),
-      revision: data.targetRevision + generation.offset,
+      snapshot: snapshotIdentity(data.snapshot, id),
+      revision: data.revision + generation.offset,
       access: current.access,
     };
   }
@@ -935,8 +608,8 @@ export class CollaborationStore {
       // Preserve the route's signed-out response even when a deeper read
       // discovers the expired session before returning to this boundary.
       verify();
-      if (!(error instanceof CollabError) || error.code !== 'PERMISSION_DENIED') throw error;
-      // The SDK also refuses a read of a unit that a restore replaced or is
+      if (!(error instanceof CollaborationError) || error.code !== 'PERMISSION_DENIED') throw error;
+      // The native server also refuses a read of a unit that a restore replaced or is
       // replacing. With access intact that is a version change the device can
       // retry; any other denial stays indistinguishable from no access.
       let readable = true;
@@ -992,52 +665,22 @@ export class CollaborationStore {
         checkSession();
         this.workspaceAccess(user, id, 'edit', custom);
         new DocumentStore(this.workspace).validateImages(id, snapshot);
-        const type = item.kind === 'sheet' ? UniverType.UNIVER_SHEET : UniverType.UNIVER_DOC;
-        const context = {
-          userID: user,
-          customData: {
-            ...custom,
-            migration: this.migration,
-            itemId: id,
-            stagedUnit: job.nextUnit,
-          },
-        };
         const replacement = { ...snapshotIdentity(snapshot, job.nextUnit), rev: 1 };
-        if (this.sync && this.syncStorage) {
-          const native = materialize(replacement, item.kind as 'sheet' | 'doc');
-          new DocumentStore(this.workspace).validateImages(id, native);
-          this.syncStorage.create(
-            {
-              unitId: job.nextUnit,
-              kind: item.kind as 'sheet' | 'doc',
-              revision: 1,
-              retainedFrom: 1,
-              snapshot: native,
-            },
-            () => {
-              checkSession();
-              this.workspaceAccess(user, id, 'edit', custom);
-            },
-          );
-          return this.generations.finish(job.id, before.revision, preserve, checkSession, custom);
-        }
-        await this.service.createUnitFromData(
-          type === UniverType.UNIVER_SHEET
-            ? { type, data: replacement as IWorkbookData }
-            : { type, data: replacement as IDocumentData },
-          context,
+        const native = materialize(replacement, item.kind as 'sheet' | 'doc');
+        new DocumentStore(this.workspace).validateImages(id, native);
+        this.syncStorage.create(
+          {
+            unitId: job.nextUnit,
+            kind: item.kind as 'sheet' | 'doc',
+            revision: 1,
+            retainedFrom: 1,
+            snapshot: native,
+          },
+          () => {
+            checkSession();
+            this.workspaceAccess(user, id, 'edit', custom);
+          },
         );
-        const staged = await this.service.getUnitLoadDataWithBlocks(
-          { unitID: job.nextUnit, type, revision: 0 },
-          context,
-        );
-        const checked = await this.validator.materializeSnapshot(staged);
-        const native =
-          type === UniverType.UNIVER_SHEET
-            ? await transformSnapshotToWorkbookData(checked.snapshot, checked.sheetBlocks)
-            : transformSnapshotToDocumentData(checked.snapshot);
-        this.workspaceAccess(user, id, 'edit', custom);
-        this.rememberResources(job.nextUnit, id, replacement, native);
         return this.generations.finish(job.id, before.revision, preserve, checkSession, custom);
       } catch (error) {
         // All awaited creation work has settled; cancellation cannot race a late create.
@@ -1053,14 +696,7 @@ export class CollaborationStore {
 
   async close() {
     await Promise.allSettled([...this.preparing.values(), ...this.restores.values()]);
-    try {
-      await this.purging;
-      await this.sync?.close();
-      await this.validator.dispose();
-      await this.materializer.dispose();
-      await this.service.dispose();
-    } finally {
-      await this.database.dispose();
-    }
+    await this.purging;
+    await this.sync.close();
   }
 }
