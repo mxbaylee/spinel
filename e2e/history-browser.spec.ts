@@ -97,7 +97,9 @@ test('touch history timeline and calendar preview retained choices without chang
     await ready();
     const chooser = page.getByRole('button', { name: /^Choose version/ });
     await expect(chooser).toHaveAttribute('aria-expanded', 'false');
-    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Saved 4');
+    await expect(page.getByRole('status').filter({ hasText: /^Selected / })).toContainText(
+      'Saved 4',
+    );
     await chooser.tap();
     const slider = page.getByRole('slider', { name: 'Snapshot timeline', exact: true });
     await slider.scrollIntoViewIfNeeded();
@@ -119,7 +121,9 @@ test('touch history timeline and calendar preview retained choices without chang
     await page.touchscreen.tap(box.x + box.width - 3, box.y + box.height / 2);
     // The header portal must not retain the old preview's restore action while
     // the newly selected checkpoint is waiting for its authorized snapshot.
-    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Saved 5');
+    await expect(page.getByRole('status').filter({ hasText: /^Selected / })).toContainText(
+      'Saved 5',
+    );
     await expect(
       page.getByRole('button', { name: 'Restore this version', exact: true }),
     ).toHaveCount(0);
@@ -127,7 +131,9 @@ test('touch history timeline and calendar preview retained choices without chang
     expect((await (await nextResponse).json()).snapshot.body.dataStream).toContain('Checkpoint 5');
     await page.unroute(selectedRoute);
     await ready();
-    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText('Saved 5');
+    await expect(page.getByRole('status').filter({ hasText: /^Selected / })).toContainText(
+      'Saved 5',
+    );
     await slider.focus();
     const firstResponse = page.waitForResponse(
       (response) =>
@@ -191,7 +197,7 @@ test('touch history timeline and calendar preview retained choices without chang
     await naming.getByRole('button', { name: 'Save version name', exact: true }).click();
     await expect(naming).not.toBeVisible();
     await ready();
-    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText(
+    await expect(page.getByRole('status').filter({ hasText: /^Selected / })).toContainText(
       'Chosen older checkpoint',
     );
     await expect(
@@ -202,7 +208,7 @@ test('touch history timeline and calendar preview retained choices without chang
       .click();
     await page.getByRole('menuitem', { name: 'Remove name', exact: true }).click();
     await ready();
-    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText(
+    await expect(page.getByRole('status').filter({ hasText: /^Selected / })).toContainText(
       'Unnamed version',
     );
     await expect(versions.locator('option')).toHaveCount(2);
@@ -215,7 +221,7 @@ test('touch history timeline and calendar preview retained choices without chang
     await currentName.getByRole('button', { name: 'Save version name', exact: true }).click();
     await expect(currentName).not.toBeVisible();
     await ready();
-    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText(
+    await expect(page.getByRole('status').filter({ hasText: /^Selected / })).toContainText(
       'Current confirmed content',
     );
     const namedHistory = await (await context.request.get(`/api/items/${item.id}/history`)).json();
@@ -225,7 +231,7 @@ test('touch history timeline and calendar preview retained choices without chang
     expect(new URL(page.url()).searchParams.get('version')).toBe(namedCurrent.id);
     await page.reload();
     await ready();
-    await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText(
+    await expect(page.getByRole('status').filter({ hasText: /^Selected / })).toContainText(
       'Current confirmed content',
     );
     expect(await (await context.request.get(`/api/items/${item.id}/doc`)).json()).toEqual(live);

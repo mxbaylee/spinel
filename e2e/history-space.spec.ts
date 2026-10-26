@@ -303,7 +303,7 @@ for (const kind of ['doc', 'sheet'] as const) {
         page.getByRole('button', { name: 'Restore this version', exact: true }),
       ).toBeEnabled({ timeout: 30_000 });
       await imageVisible(page);
-      await expect(page.getByRole('status').filter({ hasText: 'Selected' })).toContainText(
+      await expect(page.getByRole('status').filter({ hasText: /^Selected / })).toContainText(
         'Before restore',
       );
     } finally {
