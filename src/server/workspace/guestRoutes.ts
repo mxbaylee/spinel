@@ -7,6 +7,7 @@ import type { CollaborationStore } from '../collaboration/service.ts';
 import { DocumentStore } from './documents.ts';
 import { guestCookie, guestCookieName, linkGone } from './links.ts';
 import { formulaRoutes } from '../formulas/routes.ts';
+import { pdfRoutes } from '../pdf/routes.ts';
 import { documentIdentity } from '../collaboration/identity.ts';
 import { SpaceStore } from './spaces.ts';
 import { WorkspaceFiles } from './files.ts';
@@ -49,6 +50,7 @@ export function guestRoutes(
   router.use('/api/guest', guard);
   router.use('/api/guest-spaces', guard);
   router.use('/api/guest/:id/formulas', formulaRoutes(workspace, collaboration, identity, true));
+  router.use('/api/guest/:id/pdf', pdfRoutes(workspace, collaboration, identity));
   router.use('/api/items/:id/link', guard);
   const attempts = new Map<string, { until: number; count: number }>();
   router.post('/api/guest/:id/session', json, (request, response) => {

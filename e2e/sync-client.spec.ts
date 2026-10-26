@@ -9,6 +9,7 @@ import { Profiles } from '../src/server/auth/profile.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { syncNetwork } from './sync-network.ts';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import {
   recordNativeSnapshots,
   expectNativeSnapshots,
@@ -21,6 +22,30 @@ const saved = (page: Page) =>
     timeout: 30_000,
   });
 const nativeInput = (page: Page) => page.locator('[contenteditable="true"][data-u-comp="editor"]');
+
+async function exportConfirmedPdf(
+  page: Page,
+  info: TestInfo,
+  kind: 'sheet' | 'doc',
+  text: string[],
+) {
+  await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Export', exact: true });
+  const download = await downloadPdf(
+    page,
+    dialog.getByRole('button', { name: 'Export as PDF', exact: true }),
+  );
+  // PDF preparation must read the same acknowledged native head as the new
+  // client, including reconnected edits and an image inserted through the UI.
+  await inspectPdf(download, info, `native-sync-${kind}`, {
+    text,
+    forbidden: ['Sync owner', 'Sync collaborator'],
+    ...(kind === 'doc' ? { image: true, colors: [[255, 153, 0]] } : {}),
+  });
+  await expect(dialog).toContainText('PDF download started.');
+}
+
 async function focusDoc(page: Page) {
   await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
   await nativeInput(page).focus();
@@ -295,6 +320,13 @@ test('native Sheets deliver within a second, rebase offline edits, and retry one
     await expectNativeSnapshots([f.page, f.other], committed);
     expect(await copyCell(f.page, 'A3')).toBe('one durable edit');
     expect(await copyCell(f.other, 'A3')).toBe('one durable edit');
+    await exportConfirmedPdf(f.page, info, 'sheet', [
+      '41',
+      '73',
+      'offline owner',
+      'online collaborator',
+      'one durable edit',
+    ]);
     expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
     expect(f.errors).toEqual([]);
   } finally {
@@ -408,6 +440,10 @@ test('native Docs preserve concurrent text and undo across reconnect, render pro
     await expectNativeSnapshots([f.page, f.other], committed);
     expect(await copyDoc(f.page)).toBe(await copyDoc(f.other));
     expect((await f.read()).snapshot.drawingsOrder).toEqual(committed.snapshot.drawingsOrder);
+    await exportConfirmedPdf(f.page, info, 'doc', [
+      'Owner Shared anchor CollaboratXX',
+      'after image',
+    ]);
     expect(f.network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
     expect(f.errors).toEqual([]);
   } finally {

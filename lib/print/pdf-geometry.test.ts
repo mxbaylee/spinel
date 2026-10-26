@@ -1,7 +1,7 @@
 import { PDFDocument } from '@napi-rs/canvas';
 import { expect, test } from 'vitest';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
-import { preservePdfPageGeometry } from './pdf-geometry.ts';
+import { preservePdfPageGeometries, preservePdfPageGeometry } from './pdf-geometry.ts';
 import { retainPdf } from './native-test-support.ts';
 
 function pdfBytes(width = 451, height = 526) {
@@ -48,4 +48,27 @@ test('does not change an integral frame and refuses mismatched or malformed nati
   } finally {
     await loading.destroy();
   }
+});
+
+test('preserves each section frame in physical page-tree order', async () => {
+  const frames = [
+    { width: 450.375, height: 300.1875 },
+    { width: 600.1875, height: 375.375 },
+  ];
+  const pdf = new PDFDocument({ title: '', author: '', creator: '@spinel/print' });
+  for (const [index, frame] of frames.entries()) {
+    const page = pdf.beginPage(Math.ceil(frame.width), Math.ceil(frame.height));
+    page.translate(0, Math.ceil(frame.height) - frame.height);
+    page.fillStyle = index ? '#2040d0' : '#d02040';
+    page.fillRect(10, 10, 20, 20);
+    pdf.endPage();
+  }
+  const original = pdf.close();
+  const adjusted = preservePdfPageGeometries(original, frames);
+  expect(Buffer.from(adjusted.subarray(0, original.length))).toEqual(Buffer.from(original));
+  const pages = await retainPdf('heterogeneous-frames', adjusted, 'output/pdf/spn-102');
+  expect(pages.map((page) => page.view)).toEqual(
+    frames.map(({ width, height }) => [0, 0, width, height]),
+  );
+  expect(() => preservePdfPageGeometries(original, [...frames].reverse())).toThrow();
 });

@@ -251,6 +251,89 @@ test('shrinks wide content once across and never enlarges narrow content', () =>
   expect(wide[1].source.bottom).toBe(4000);
 });
 
+test('ordinary rows and fitting merged/image regions break at visible native edges', () => {
+  const book = workbook();
+  book.sheetOrder = ['first'];
+  book.sheets = { first: book.sheets.first };
+  Object.assign(book.sheets.first, {
+    rowCount: 110,
+    columnCount: 1,
+    defaultRowHeight: 24,
+    rowData: { 41: { hd: 1 } },
+    cellData: { 0: { 0: { v: 'First' } }, 109: { 0: { v: 'Last' } } },
+    mergeData: [{ startRow: 40, endRow: 43, startColumn: 0, endColumn: 0 }],
+  });
+  const sheet = preflightSheets(book).sheets[0];
+  const frame = { width: 595, height: 842 };
+  const ordinary = paginateSheet(sheet.id, sheet.cellBounds, frame, 100, {
+    rows: sheet.rows,
+    spans: [],
+  });
+  expect(ordinary.map((page) => [page.source.top, page.source.bottom])).toEqual([
+    [0, 1008],
+    [1008, 2016],
+    [2016, 2616],
+  ]);
+  const merged = paginateSheet(sheet.id, sheet.cellBounds, frame, 100, {
+    rows: sheet.rows,
+    spans: sheet.mergeSpans,
+  });
+  expect(merged[0].source.bottom).toBe(960);
+  expect(merged[1].source.top).toBe(960);
+  expect(merged[1].source.bottom).toBeGreaterThan(sheet.mergeSpans[0].bottom);
+  // A small image spans part of two ordinary rows. Its complete row footprint
+  // moves together so retaining the image cannot bisect neighboring text.
+  const image = paginateSheet(sheet.id, sheet.cellBounds, frame, 100, {
+    rows: sheet.rows,
+    spans: [{ top: 990, bottom: 1110 }],
+  });
+  expect(image[0].source.bottom).toBe(984);
+  for (const pages of [ordinary, merged, image]) {
+    for (const [index, page] of pages.entries()) {
+      expect([...sheet.rows]).toContain(page.source.bottom);
+      if (index) expect(page.source.top).toBe(pages[index - 1].source.bottom);
+    }
+    expect(pages.at(-1)!.source.bottom).toBe(sheet.cellBounds!.bottom);
+  }
+  expect(() =>
+    paginateSheet(sheet.id, sheet.cellBounds, frame, 2, {
+      rows: sheet.rows,
+      spans: sheet.mergeSpans,
+    }),
+  ).toThrow('page budget');
+});
+
+test('row-aware cuts retain oversize and off-grid continuation without gaps or empty leading pages', () => {
+  const frame = { width: 595, height: 842 };
+  const bounds = { left: 0, top: -0.5, right: 200, bottom: 3100.5 };
+  const rows = Float64Array.of(0, 24, 24, 2076, 2100, 3100);
+  const pages = paginateSheet('sheet', bounds, frame, 100, {
+    rows,
+    spans: [
+      { top: 24, bottom: 2076 },
+      { top: 2500, bottom: 6000 },
+    ],
+  });
+  expect(pages[0].source.top).toBe(-0.5);
+  expect(pages[0].source.bottom).toBeCloseTo(-0.5 + 770 / 0.75);
+  expect(pages.at(-1)!.source.bottom).toBe(3100.5);
+  for (const [index, page] of pages.entries()) {
+    expect(page.source.bottom).toBeGreaterThan(page.source.top);
+    expect((page.source.bottom - page.source.top) * page.scale).toBeLessThanOrEqual(770 + 0.000001);
+    if (index) expect(page.source.top).toBe(pages[index - 1].source.bottom);
+  }
+  expect(
+    pages.reduce((total, page) => total + page.source.bottom - page.source.top, 0),
+  ).toBeCloseTo(3101);
+  const floating = paginateSheet('sheet', { ...bounds, top: 30, bottom: 3030 }, frame, 100, {
+    rows: Float64Array.of(0, 20, 40, 60),
+    spans: [{ top: 30, bottom: 3030 }],
+  });
+  expect(floating).toHaveLength(3);
+  expect(floating[0].source.bottom).toBeCloseTo(30 + 770 / 0.75);
+  expect(floating.at(-1)!.source.bottom).toBe(3030);
+});
+
 test('continues oversized row/merge/image pixel slices, with zero overlap or missing tail', () => {
   const source = { left: 0, top: 42, right: 200, bottom: 3042 };
   const pages = paginateSheet('first', source, { width: 595, height: 842 }, 100);

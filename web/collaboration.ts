@@ -43,9 +43,9 @@ export function collaborationPlugins(
   space?: { spaceId: string; itemId: string },
   spinel = false,
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
-  // The retained print plugins still use the license service until SPN-075.
-  // The disabled replacement path registers no Pro collaboration plugin.
-  if (spinel) return [UniverLicensePlugin];
+  // Direct PDF export needs no editor plugin. The native sync path has no
+  // remaining Pro consumer; the legacy collaboration path keeps its license.
+  if (spinel) return [];
   const guest = guestItemId();
   const base = location.origin + documentProtocolPath(space);
   // Public URL extension point: scope is checked before the server accepts a socket.

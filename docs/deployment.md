@@ -160,8 +160,13 @@ preserved edits. Do not roll back across an incompatible schema migration withou
 an explicit data-restore plan; reverting an image alone cannot reverse schema.
 
 Record `docker stats --no-stream` for app/Caddy and `free -m` on the target at idle
-and with two active editors. Current caps are 512 MiB for Node and 128 MiB for Caddy;
-these are caps, not measured usage or proof of headroom. Acceptance requires
+and with two active editors and during PDF export. Current caps are 1 GiB for the
+app (including its PDF child) and 128 MiB for Caddy. The app starts with a 256 MiB
+V8 old-generation heap ceiling and an 8 MiB semi-space ceiling; native memory is
+also accounted for by the container and PDF admission checks. The three legacy
+collaboration runtime owners use the SDK's public in-process mode to avoid
+duplicated startup runtimes. See [SPN-075's measured budget decision](implementation/SPN-075.md#deployment-budget-and-portable-fonts).
+These are caps, not proof of target-host headroom. Acceptance still requires
 measured target-host results, including total OS/Tailscale overhead.
 
 ## Acceptance record

@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
+import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 const version = readFileSync('.nvmrc', 'utf8').trim();
 assert.match(version, /^\d+\.\d+\.\d+$/);
@@ -18,7 +20,7 @@ const limits = [
   '--cap-drop=ALL',
   '--security-opt=no-new-privileges:true',
   '--tmpfs=/tmp:size=16m,mode=1777',
-  '--memory=512m',
+  '--memory=1024m',
   '--cpus=0.75',
   '--pids-limit=128',
 ];
@@ -167,6 +169,203 @@ function stop(name: string) {
   run('docker', ['rm', name]);
 }
 
+async function checkPdfMemoryRefusal(name: string, requestPdf: () => Promise<Response>) {
+  // Hold a bounded, touched allocation in this disposable container. It shares
+  // the real cgroup with the app, proving admission accounts for other processes
+  // before starting native work. Closing stdin releases only this helper.
+  const pressure = spawn(
+    'docker',
+    [
+      'exec',
+      '-i',
+      name,
+      'node',
+      '--input-type=module',
+      '-e',
+      String.raw`
+import { readFileSync } from 'node:fs';
+const allocations = [];
+const limit = Number(readFileSync('/sys/fs/cgroup/memory.max', 'utf8'));
+// Cross the actual 192 MiB worker + 32 MiB headroom admission threshold,
+// retaining 208 MiB so the helper itself never approaches the cgroup ceiling.
+const target = limit - (192 + 32 - 16) * 1024 * 1024;
+for (let chunk = 0; chunk < 64; chunk++) {
+  const current = Number(readFileSync('/sys/fs/cgroup/memory.current', 'utf8'));
+  const stat = readFileSync('/sys/fs/cgroup/memory.stat', 'utf8');
+  const inactive = Number(stat.match(/^inactive_file\s+(\d+)$/m)?.[1] ?? 0);
+  const needed = target - Math.max(0, current - inactive);
+  if (needed <= 0) break;
+  allocations.push(Buffer.alloc(Math.min(8 * 1024 * 1024, needed), 0x5a));
+}
+globalThis.spinelPdfPressure = allocations;
+process.stdin.on('end', () => process.exit(0));
+process.stdin.resume();
+setTimeout(() => process.exit(1), 20_000);
+console.log('ready');
+`,
+    ],
+    { stdio: ['pipe', 'pipe', 'inherit'] },
+  );
+  const completion = new Promise<number | null>((resolve, reject) => {
+    pressure.once('error', reject);
+    pressure.once('close', resolve);
+  });
+  // Attach the rejection immediately even if startup fails before the ready wait.
+  void completion.catch(() => {});
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error('PDF memory fixture was not ready.')),
+        10_000,
+      );
+      pressure.stdout.once('data', (chunk: Buffer) => {
+        clearTimeout(timer);
+        if (chunk.toString().trim() === 'ready') resolve();
+        else reject(new Error('PDF memory fixture did not report readiness.'));
+      });
+      completion.then(() => {
+        clearTimeout(timer);
+        reject(new Error('PDF memory fixture exited before its check.'));
+      }, reject);
+    });
+    const response = await requestPdf();
+    assert.equal(response.status, 413, 'PDF admission ignored the real container memory pressure.');
+    assert.match(response.headers.get('content-type') ?? '', /^application\/json\b/);
+    assert.equal(response.headers.has('content-disposition'), false);
+    assert.equal(typeof (await response.json()).error, 'string');
+    await checkServer();
+  } finally {
+    pressure.stdin.end();
+    assert.equal(await completion, 0, 'PDF memory fixture did not release its allocation.');
+  }
+  const recovery = await requestPdf();
+  assert.equal(recovery.status, 200, 'PDF capacity did not recover after releasing memory.');
+  assert.match(recovery.headers.get('content-type') ?? '', /^application\/pdf\b/);
+  assert.ok((await recovery.arrayBuffer()).byteLength > 0);
+}
+
+async function checkPdfExports(name: string) {
+  // Seed a synthetic everyday account through the existing stores. Its private
+  // cookie stays inside this process and never enters logs or assertion output.
+  const seed = JSON.parse(
+    run('docker', ['exec', '-i', name, 'node', '--input-type=module'], {
+      input: String.raw`
+import { randomUUID } from 'node:crypto';
+import { openDatabase } from './server/database.ts';
+import { AuthStore } from './src/server/auth/store.ts';
+import { WorkspaceStore } from './src/server/workspace/store.ts';
+import { DocumentStore } from './src/server/workspace/documents.ts';
+import { SheetStore } from './src/server/workspace/sheets.ts';
+const db = openDatabase(process.env.DATABASE_PATH);
+try {
+  const auth = new AuthStore(db), workspace = new WorkspaceStore(auth);
+  const owner = auth.createUser('Synthetic PDF owner');
+  const doc = workspace.create(owner.id, {name:'PDF document',kind:'doc',parentId:null});
+  const sheet = workspace.create(owner.id, {name:'PDF sheet',kind:'sheet',parentId:null});
+  const lines = Array.from({length:35},(_,i)=>'Container paragraph '+(i+1)+'.');
+  let at = 0;
+  new DocumentStore(workspace).save(owner.id,doc.id,{revision:0,writeId:randomUUID(),snapshot:{
+    id:doc.id,documentStyle:{pageSize:{width:450,height:280},marginTop:32,marginBottom:32,marginLeft:32,marginRight:32},
+    body:{dataStream:lines.join('\r')+'\r\n',paragraphs:lines.map((line,i)=>{at+=line.length;return {startIndex:at++,paragraphId:'p'+i};})}
+  }});
+  new SheetStore(workspace).save(owner.id,sheet.id,{revision:0,writeId:randomUUID(),snapshot:{
+    id:sheet.id,name:'PDF sheet',appVersion:'1.1.0',locale:'enUS',styles:{},sheetOrder:['one'],
+    // Keep the label fully visible beside the formula; native cell clipping is
+    // deliberately refused by the renderer and covered separately in lib tests.
+    sheets:{one:{id:'one',name:'One',rowCount:100,columnCount:4,defaultColumnWidth:180,cellData:{0:{0:{v:'Container sheet'},1:{f:'=20+22',v:-1}}}}}
+  }});
+  const session=auth.createSession(owner.id);
+  console.log(JSON.stringify({token:session.token,doc:doc.id,sheet:sheet.id}));
+} finally { db.close(); }
+`,
+      timeout: 20_000,
+    }),
+  );
+  assert.ok(
+    typeof seed.token === 'string' &&
+      typeof seed.doc === 'string' &&
+      typeof seed.sheet === 'string',
+    'PDF fixture setup failed.',
+  );
+  const { COOKIE_NAME } = await import('../../src/server/auth/store.ts');
+  const headers = {
+    Cookie: `${COOKIE_NAME}=${seed.token}`,
+    Origin: origin,
+    'Content-Type': 'application/json',
+  };
+  const requestPdf = (id: string) =>
+    fetch(`${base}/api/items/${id}/pdf`, {
+      method: 'POST',
+      headers,
+      body: '{}',
+      signal: AbortSignal.timeout(60_000),
+    });
+  async function verifyPdf(id: string, expected: string) {
+    const response = await requestPdf(id);
+    assert.equal(
+      response.status,
+      200,
+      'Production PDF export did not succeed within the 1 GiB app limit.',
+    );
+    assert.match(response.headers.get('content-type') ?? '', /^application\/pdf\b/);
+    const task = getDocument({
+      data: new Uint8Array(await response.arrayBuffer()),
+      useSystemFonts: false,
+    });
+    try {
+      const pdf = await task.promise;
+      let text = '';
+      for (let page = 1; page <= pdf.numPages; page++) {
+        const content = await (await pdf.getPage(page)).getTextContent();
+        text += content.items.map((item) => ('str' in item ? item.str : '')).join(' ');
+      }
+      assert.ok(text.includes(expected), 'The production PDF omitted confirmed content.');
+      assert.ok(
+        !JSON.stringify(await pdf.getMetadata()).includes('Synthetic PDF owner'),
+        'PDF metadata exposed an account.',
+      );
+    } finally {
+      await task.destroy();
+    }
+  }
+  await verifyPdf(seed.doc, 'Container paragraph 35.');
+  await verifyPdf(seed.sheet, '42');
+  // Real history restores give the SDK's empty pivot wrapper a new generation
+  // identity. Only the server-proved generation may be normalized for export.
+  const history = `${base}/api/items/${seed.sheet}/history`;
+  const named = await fetch(history, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ name: 'Before PDF restore' }),
+  });
+  assert.equal(named.status, 201, 'Could not name the PDF restore checkpoint.');
+  const checkpoint = (await named.json()).version?.id;
+  assert.equal(typeof checkpoint, 'string', 'PDF checkpoint identity is missing.');
+  const inspected = await fetch(`${history}/${checkpoint}`, { headers });
+  assert.equal(inspected.status, 200, 'Could not inspect the PDF restore checkpoint.');
+  let unitId = (await inspected.json()).unitId;
+  assert.equal(typeof unitId, 'string', 'PDF restore generation is missing.');
+  for (let restore = 0; restore < 2; restore++) {
+    const restored = await fetch(`${history}/${checkpoint}/restore`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ requestId: randomUUID(), unitId }),
+    });
+    assert.equal(restored.status, 200, 'The Sheet PDF fixture could not be restored.');
+    const nextUnit = (await restored.json()).unitId;
+    assert.equal(typeof nextUnit, 'string', 'Restored PDF generation is missing.');
+    assert.notEqual(nextUnit, unitId, 'Restore did not advance the active generation.');
+    unitId = nextUnit;
+    await verifyPdf(seed.sheet, '42');
+  }
+  await checkPdfMemoryRefusal(name, () => requestPdf(seed.doc));
+  const peak = run('docker', ['exec', name, 'cat', '/sys/fs/cgroup/memory.peak']).trim();
+  console.log(
+    `Production PDFs, two history restores, memory refusal and recovery passed; container peak ${(Number(peak) / 1024 / 1024).toFixed(1)} MiB.`,
+  );
+  await checkServer();
+}
+
 try {
   console.log('Building the final production image.');
   const imageFile = join(directory, 'image-id');
@@ -180,7 +379,12 @@ try {
     run('docker', ['image', 'inspect', '--format', '{{json .Config}}', image]),
   );
   assert.equal(config.User, 'node');
-  assert.deepEqual(config.Cmd, ['node', 'server/index.ts']);
+  assert.deepEqual(config.Cmd, [
+    'node',
+    '--max-old-space-size=256',
+    '--max-semi-space-size=8',
+    'server/index.ts',
+  ]);
 
   const native = run(
     'docker',
@@ -252,7 +456,10 @@ console.log('Spinel native bindings OK');
       image,
     ]);
     await checkServer();
-    if (!setupId) setupId = issueSetup(name);
+    if (!setupId) {
+      setupId = issueSetup(name);
+      await checkPdfExports(name);
+    }
     const hash = databaseHash(name, setupId);
     if (firstHash)
       assert.equal(hash, firstHash, 'The setup record did not survive container recreation.');

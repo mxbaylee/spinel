@@ -56,44 +56,53 @@ uses the same layout budgets so a successful native download remains importable;
 it never truncates an oversized file. Decisions [#69](implementation/SPN-031.md#legacy-decision-69-bounded-native-file-transfer)
 and [#23](implementation/grooming-2026-10-17.md#legacy-decision-23-first-integration-grooming), 2026-10-17/18.
 
-Today, for an account read-only copy choose **Print / save PDF**, adjust Univer's
-print options if shown, and choose **Save as PDF** in the browser print dialog. Spinel uses the
-public Univer Pro print plugins as supplied. Printed page limits and watermarks
-depend on the installed license; the export panel explains this before printing.
-Check the output before sharing. A PDF is not an editable backup, and it may not
-include every page under the current license. Decision
-[#70](implementation/SPN-031.md#legacy-decision-70-original-browser-printing), 2026-10-18.
+## Export as PDF
 
-**Planned in SPN-075:** replace that flow with **Export as PDF**, a direct
-PDF download with complete pages and no watermark. It will be available to
-anyone with current read access: owners, collaborators, account viewers and
-view-only or editing link guests. There will be no Spinel Print action or
-browser print dialog. Guest output must not add owner/account identity; revoked
-access must prevent a new export. PDF is the exception to account-only native
-and Office exports, not permission to download those formats. This consolidates
-retired SPN-073; owner, chat 2026-10-20, decision [#103](implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
-Pagination defaults are recorded in decision [#106](implementation/SPN-075.md#legacy-decision-106-deterministic-pdf-pagination).
-Until SPN-075 lands, the limitations and
-account-only UI described above still apply.
+After changes are saved, accounts choose **Document actions → Export → PDF**.
+Guests use the labelled **Export as PDF** action beside their read/edit status.
+Owners, collaborators, account viewers and view/edit guests download the same
+watermark-free PDF under their current read access. There is no Spinel Print
+action or browser print dialog. Native JSON remains account-only; PDF is a
+read-only copy, not an editable backup.
 
-[SPN-097's feasibility record](implementation/SPN-097.md#native-pdf-recommendation-and-delivery-boundaries)
-recommends public native layout with a Canvas PDF backend in bounded server work.
-The standalone [`@spinel/print` package](../lib/print/README.md) includes the Sheet
-renderer from [SPN-101](implementation/SPN-101.md) and Doc renderer from
-[SPN-102](implementation/SPN-102.md). The Sheet entry accepts a prepared workbook, authorized
-image bytes and licensed fonts. It preserves visible worksheet order and subsets,
-complete used ranges, native text and image continuation, and light A4 pages with
-12.7 mm margins and no enlargement. Unsupported or over-budget models fail without
-partial bytes. Its retained synthetic PDFs and measured resource failures do not
-establish production export completeness or a safe 2 GB capacity limit. The Doc
-entry accepts public document data, licensed fonts, authorized raster bytes and
-prepared Formula values or whole-value unavailable placeholders. It preserves
-stored geometry, explicit breaks and complete long text/table/image continuation,
-using finite pages for modern Docs and exact A4/12.7 mm defaults when absent.
-Unsupported models fail explicitly under the package's documented acceptance gaps.
-Both entries share native resource admission, atomic output and cleanup;
-SPN-075 retains complete access, Formula-source
-privacy, hard process isolation, direct-download and Pro-removal acceptance.
+Sheets default to every visible worksheet in workbook order and offer a subset.
+Hidden sheets, rows and columns are omitted. Used ranges include image extents;
+wide ranges shrink to one A4 portrait page across without enlargement and continue
+vertically. Margins are 12.7 mm. Docs retain stored page dimensions, margins and
+explicit breaks, with A4/12.7 mm fallback when absent. Paper stays light in every
+theme. See [pagination decisions](implementation/SPN-075.md#legacy-decision-106-deterministic-pdf-pagination).
+
+The server loads confirmed collaboration content and recalculates Sheet formulas.
+Doc Formula values and complete tables are evaluated under the requesting reader's
+current permissions. An unavailable source replaces the whole Formula with the
+neutral word **Unavailable**, with no source name, expression, account identity or
+partial aggregate. Host/session/link loss aborts generation. Source loss after
+rendering discards every old PDF byte and rebuilds once with the whole Formula
+unavailable; another change fails with a retry message. Every image and exact
+Space-child scope is revalidated immediately before download. Copies already
+downloaded cannot be recalled.
+
+Rendering uses the public [`@spinel/print` API](../lib/print/README.md) in one
+disposable Node process, with prepared images and bundled licensed fonts. The
+worker receives no credentials or network URLs to fetch. Liberation Sans/Serif/Mono
+provide documented substitutes for Arial/Times New Roman/Courier New; other known
+family aliases follow the [runtime font policy](../src/server/pdf/fonts/README.md).
+Native layout recalculates using these fonts; unsupported glyphs or appearance
+models fail the whole export rather than hiding content. Imported plugin models
+outside the renderer's supported public model also fail explicitly.
+
+The shared transfer reservation spans preparation, isolated work and response
+completion; native work also serializes against Formula calculations. Snapshot,
+image, page, output, wall-time and sampled native RSS limits apply. Cancellation
+terminates the child and waits for its close before releasing capacity. A resource
+or formatting failure downloads no partial file. Limits and their operational
+tradeoffs are recorded in [SPN-075](implementation/SPN-075.md#production-integration-and-atomic-authorization).
+
+Both Pro print packages have been removed. Collaboration still uses Pro and owns
+the remaining license package until SPN-059 removes the last Pro dependencies and
+adds the repository-wide no-Pro check. This supersedes
+[the licensed printing flow](implementation/SPN-031.md#legacy-decision-70-original-browser-printing)
+and implements [direct PDF for every current reader](implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
 
 Native downloads require current read access. Import requires an everyday
 account and an owned destination folder. Operators and signed-out visitors cannot use these
@@ -106,10 +115,11 @@ commit together or roll back together.
 
 Verification includes native snapshot and image-byte round trips, malformed and
 oversized input rejection, HTTP auth/CSRF and aborted-transfer admission checks,
-and browser downloads/imports of live edits. Browser tests capture the native
-print output at the browser print call, generate a PDF, reopen and render it, and
-retain PDF/PNG evidence in CI. They do not override license checks or print pages
-the plugin did not produce.
+and browser downloads/imports of live edits. PDF browser tests download actual
+server output, reopen every page, assert late content and privacy, and retain the
+PDF plus all-page PNG evidence. Native worker and access tests cover formula-source
+revocation, host/session/link loss, exact child scope, cancellation and resource
+failures. No Pro license or browser print call participates in these downloads.
 
 ## Export all my files
 
@@ -175,7 +185,7 @@ plugins and PDF retain their separate ticket scopes. See the
 
 [Live formulas](formulas.md) store expressions and bindings, never calculated
 results. Native imports detach source-bound formulas into ordinary expression
-text; source-free formulas remain active. Current printing uses unavailable
-formula output. SPN-075 will render freshly authorized values/tables in PDFs;
+text; source-free formulas remain active. PDF export renders freshly authorized
+values and complete tables, including the 30-row Formula result;
 SPN-094 retains the same source-access boundary for optional format plugins,
 and owned workspace archives use the deliberate reference remapping described above.

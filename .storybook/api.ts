@@ -1,7 +1,13 @@
 // Stand-in API responses for stories, keyed by `METHOD /path` without the query.
 // A value is the JSON body of a 200 response unless it is one of these helpers.
 const marker = Symbol('story reply');
-type Reply = { [marker]: true; status: number; body?: unknown; pending?: boolean };
+type Reply = {
+  [marker]: true;
+  status: number;
+  body?: unknown;
+  pending?: boolean;
+  file?: { bytes: string; type: string; filename: string };
+};
 export type ApiMock = Record<string, unknown>;
 
 /** A response that never arrives, for loading states. */
@@ -11,6 +17,12 @@ export const failure = (error: string, status = 400): Reply => ({
   [marker]: true,
   status,
   body: { error },
+});
+/** A small synthetic response exercises the browser download control in a story. */
+export const fileReply = (bytes: string, type: string, filename: string): Reply => ({
+  [marker]: true,
+  status: 200,
+  file: { bytes, type, filename },
 });
 
 export function mockFetch(mock: ApiMock = {}): typeof fetch {
@@ -28,6 +40,14 @@ export function mockFetch(mock: ApiMock = {}): typeof fetch {
     ) as Reply;
     if (reply.pending) return new Promise<Response>(() => {});
     if (reply.status === 204) return new Response(null, { status: 204 });
+    if (reply.file)
+      return new Response(reply.file.bytes, {
+        status: reply.status,
+        headers: {
+          'Content-Type': reply.file.type,
+          'Content-Disposition': `attachment; filename="${reply.file.filename}"`,
+        },
+      });
     return new Response(JSON.stringify(reply.body ?? {}), {
       status: reply.status,
       headers: { 'Content-Type': 'application/json' },

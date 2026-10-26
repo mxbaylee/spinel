@@ -7,8 +7,11 @@ import {
   DocStyleType,
   ListGlyphType,
   LocaleType,
+  NumberUnitType,
+  ObjectRelativeFromH,
   ObjectRelativeFromV,
   PositionedObjectLayoutType,
+  SpacingRule,
 } from '@univerjs/core';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { expect, test } from 'vitest';
@@ -543,7 +546,7 @@ test('Doc and Sheet operations share one native registry lock', async () => {
   await retainDocPdf('shared-native-lock', result.bytes!);
 }, 60_000);
 
-test('supported tall image anchors continue completely and broken native anchors fail without bytes', async () => {
+test('tall image-only and captioned anchors continue completely and invalid native anchors fail without bytes', async () => {
   const canvas = createCanvas(12, 90),
     context = canvas.getContext('2d');
   for (const [index, color] of ['#d02040', '#20a040', '#2040d0'].entries()) {
@@ -588,6 +591,14 @@ test('supported tall image anchors continue completely and broken native anchors
     return input;
   };
   const bare = anchorVariant('\b');
+  // Match the public editor's buildDocTransform defaults (page horizontal,
+  // paragraph vertical, zero wrap distances), then switch only the wrap mode.
+  bare.snapshot.drawings!.image.docTransform.positionH = {
+    relativeFrom: ObjectRelativeFromH.PAGE,
+    posOffset: 60,
+  };
+  const overlapping = structuredClone(bare);
+  overlapping.snapshot.drawings!.image.docTransform.positionV.posOffset = -10;
   const invisible = anchorVariant('\b\u200b');
   const line = anchorVariant('\bAnchor caption');
   line.snapshot.drawings!.image.docTransform.positionV.relativeFrom = ObjectRelativeFromV.LINE;
@@ -604,21 +615,30 @@ test('supported tall image anchors continue completely and broken native anchors
   multiple.snapshot.drawingsOrder!.push('second-image');
   const fullColumn = anchorVariant('\b');
   fullColumn.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_SQUARE;
-  fullColumn.snapshot.drawings!.image.distL = 600;
-  fullColumn.snapshot.drawings!.image.distR = 600;
+  fullColumn.snapshot.drawings!.image.docTransform.size.width = 480;
+  fullColumn.snapshot.drawings!.image.distL = 20;
+  fullColumn.snapshot.drawings!.image.distR = 20;
   const square = anchorVariant('\b');
   square.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_SQUARE;
-  inputs.push(square);
-  const badAnchors = [bare, invisible, line, nonLeading, multiple, fullColumn];
-  const allResults = await runDocJobs([...badAnchors, ...inputs].map((input) => ({ input })));
+  const bareLine = structuredClone(bare);
+  bareLine.snapshot.drawings!.image.docTransform.positionV.relativeFrom = ObjectRelativeFromV.LINE;
+  inputs.push(square, bare, nonLeading, fullColumn, bareLine, line, multiple, overlapping);
+  const badAnchors = [invisible];
+  const allResults = await runDocJobs(
+    [...badAnchors, ...inputs].map((input) => ({
+      input,
+      nativeGeometry: input === overlapping,
+    })),
+  );
   for (const rejected of allResults.slice(0, badAnchors.length)) {
-    expect(rejected, JSON.stringify(rejected)).toMatchObject({
+    const { bytes, ...diagnostic } = rejected;
+    expect(diagnostic, JSON.stringify(diagnostic)).toMatchObject({
       ok: false,
       code: 'unsupported',
       restored: true,
       remainingFonts: 0,
     });
-    expect(rejected.bytes).toBeUndefined();
+    expect(bytes).toBeUndefined();
   }
   const results = allResults.slice(badAnchors.length);
   for (const [index, result] of results.entries()) {
@@ -627,27 +647,344 @@ test('supported tall image anchors continue completely and broken native anchors
       JSON.stringify(result, (key, value) => (key === 'bytes' ? '<bytes>' : value)),
     ).toMatchObject({ ok: true, restored: true, remainingFonts: 0 });
     const pages = await retainDocPdf(
-      ['tall-inline-image', 'tall-floating-image', 'tall-square-image'][index],
+      [
+        'tall-inline-image',
+        'tall-floating-image',
+        'tall-square-image',
+        'tall-image-only-top-bottom',
+        'tall-nonleading-top-bottom',
+        'tall-full-column-square',
+        'tall-line-relative-image-only',
+        'tall-line-relative-caption',
+        'tall-interleaved-multiple-images',
+        'tall-negative-native-image',
+      ][index],
       result.bytes!,
     );
     expect(pages.length).toBeGreaterThanOrEqual(3);
     expect(pages.map((page) => page.text).join(' ')).toContain('AFTER-IMAGE-SENTINEL');
-    if (index === 1) expect(pages.map((page) => page.text).join(' ')).toContain('Anchor caption');
-    // An omitted or displaced anchor can retain every pixel while adding blank pages.
-    expect(pages.every((page) => page.pixels.some((value, i) => i % 4 !== 3 && value < 250))).toBe(
-      true,
-    );
+    const text = pages.map((page) => page.text).join(' ');
+    if ([1, 4, 7, 8].includes(index)) expect(text.split('Anchor caption')).toHaveLength(2);
+    if (index === 8) {
+      expect(pages.length).toBeGreaterThanOrEqual(6);
+      expect(pages.at(-1)!.text).toContain('AFTER-IMAGE-SENTINEL');
+    }
+    if (index === 4) {
+      expect(text.split('Leading text')).toHaveLength(2);
+      expect(pages[0].text).toContain('Leading text');
+      expect(pages.at(-1)!.text).toContain('Anchor caption');
+    }
+    // Default and corrected anchors cannot manufacture empty pages. A negative
+    // offset can itself move the native exclusion backwards into earlier flow;
+    // that exact source layout is checked independently below, including its gap.
+    if (!result.nativeGeometry)
+      expect(
+        pages.every((page) => page.pixels.some((value, i) => i % 4 !== 3 && value < 250)),
+      ).toBe(true);
     const colors = [0, 0, 0];
-    for (const page of pages)
-      for (let n = 0; n < page.pixels.length; n += 4) {
-        const [r, g, b] = page.pixels.slice(n, n + 3);
-        if (r > 150 && g < 80 && b < 100) colors[0]++;
-        if (g > 100 && r < 80 && b < 100) colors[1]++;
-        if (b > 150 && r < 80 && g < 100) colors[2]++;
+    const bands: number[] = [];
+    let firstImage: { page: number; x: number; y: number } | undefined;
+    for (const [pageIndex, page] of pages.entries())
+      for (let y = 0; y < page.height; y++) {
+        const row = [0, 0, 0];
+        for (let x = 0; x < page.width; x++) {
+          const n = (y * page.width + x) * 4;
+          const [r, g, b] = page.pixels.slice(n, n + 3);
+          if (r > 150 && g < 80 && b < 100) {
+            row[0]++;
+            firstImage ??= { page: pageIndex, x, y };
+          }
+          if (g > 100 && r < 80 && b < 100) row[1]++;
+          if (b > 150 && r < 80 && g < 100) row[2]++;
+        }
+        for (const [color, count] of row.entries()) colors[color] += count;
+        const dominant = row.indexOf(Math.max(...row));
+        if (row[dominant] > 3 && bands.at(-1) !== dominant) bands.push(dominant);
       }
-    // Each band is 48×300 source px at 0.75 pt/px: 8,100 colored pixels.
+    // Each band retains its complete authored width and one third of its height.
     // A repeated/clipped source slice changes this area, even if all colors occur.
-    for (const count of colors) expect(Math.abs(count - 8100)).toBeLessThan(200);
+    const size = inputs[index].snapshot.drawings!.image.docTransform.size;
+    const count = inputs[index].snapshot.body!.customBlocks!.length;
+    const bandArea = size.width! * (size.height! / 3) * 0.75 ** 2 * count;
+    for (const count of colors) expect(Math.abs(count - bandArea)).toBeLessThan(200);
+    expect(bands).toEqual(Array.from({ length: count }, () => [0, 1, 2]).flat());
+    if (result.nativeGeometry) {
+      const native = result.nativeGeometry;
+      await writeFile(
+        resolve(docEvidenceDirectory, 'negative-tall-native-geometry.json'),
+        JSON.stringify(native, null, 2),
+      );
+      expect(native.sourceFlavor).toBeNull(); // This saved fixture has no explicit flavor.
+      expect(native.layoutFlavor).toBe(DocumentFlavor.TRADITIONAL);
+      expect(native.logical).toHaveLength(1);
+      const source = native.logical[0];
+      const image = source.images.find((drawing) => drawing.id === 'image')!;
+      const before = source.lines.find((line) => line.text.includes('Before image'))!;
+      const after = source.lines.find((line) => line.text.includes('AFTER-IMAGE-SENTINEL'))!;
+      const capacity = native.frame.height - native.frame.top - native.frame.bottom;
+      expect(image).toMatchObject({ left: 60, width: 48, height: 900 });
+      expect(native.finite.flatMap((page) => page.images)).toEqual([image]);
+      expect(image.top - (before.top + before.height)).toBeGreaterThan(capacity * 2);
+      expect(after.top).toBeGreaterThanOrEqual(image.top + image.height - 0.01);
+      // No source ink exists between the first text paragraph and the native
+      // image. Its absolute logical origin therefore maps through full, empty
+      // paper bodies without any text seam adjustment.
+      const imagePage = Math.floor((image.top - native.frame.top) / capacity);
+      expect(firstImage!.page).toBe(imagePage);
+      expect(Math.abs(firstImage!.x - image.left * 0.75)).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(firstImage!.y - (image.top - imagePage * capacity) * 0.75),
+      ).toBeLessThanOrEqual(1);
+      for (const page of pages.slice(1, imagePage))
+        expect(page.pixels.every((value, offset) => offset % 4 === 3 || value === 255)).toBe(true);
+      // The final plain line is the sole atomic text interval after the image.
+      // Native glyph metrics determine whether its ink crosses the next paper
+      // edge; keep the whole line at its native baseline relative to that ink.
+      const candidatePage = Math.floor((after.ink!.top - native.frame.top) / capacity);
+      const crosses = after.ink!.bottom > native.frame.top + (candidatePage + 1) * capacity;
+      const afterPage = candidatePage + Number(crosses);
+      const afterBaseline = crosses
+        ? native.frame.top + after.baseline - after.ink!.top
+        : after.baseline - candidatePage * capacity;
+      const item = pages[afterPage].items.find((item) =>
+        item.str.includes('AFTER-IMAGE-SENTINEL'),
+      )!;
+      expect(item).toBeDefined();
+      expect(Math.abs(item.transform[4] - native.frame.left * 0.75)).toBeLessThan(0.001);
+      // The native PDF font painter snaps its baseline within one source pixel.
+      // Measure that shared font offset on the unaffected first paragraph;
+      // compare the final line's relative position without relaxing its bound.
+      const firstText = pages[0].items.find((item) => item.str.includes('Before image'))!;
+      const paintOffset = pages[0].height - firstText.transform[5] - before.baseline * 0.75;
+      expect(Math.abs(paintOffset)).toBeLessThan(0.75);
+      expect(
+        Math.abs(pages[afterPage].height - item.transform[5] - afterBaseline * 0.75 - paintOffset),
+      ).toBeLessThan(0.001);
+      expect(pages.findIndex((page) => page.text.includes('AFTER-IMAGE-SENTINEL'))).toBe(afterPage);
+      expect(pages.length).toBe(afterPage + 1);
+    }
+  }
+}, 90_000);
+
+test('nonleading Top-and-bottom and LINE captions retain complete flow and measured origins with repeated headers', async () => {
+  const canvas = createCanvas(12, 12);
+  const context = canvas.getContext('2d');
+  context.fillStyle = '#2040d0';
+  context.fillRect(0, 0, 12, 12);
+  const snapshot = textDoc([
+    'BEFORE-IMAGE',
+    'PREFIX-BEFORE-IMAGE\bCAPTION-AFTER-IMAGE',
+    'AFTER-IMAGE-SENTINEL',
+  ]);
+  snapshot.headers = {
+    header: { headerId: 'header', body: textDoc(['REPEATED-HEADER']).body! },
+  };
+  snapshot.documentStyle.defaultHeaderId = 'header';
+  snapshot.documentStyle.marginHeader = 12;
+  snapshot.body!.customBlocks = [
+    { startIndex: snapshot.body!.dataStream.indexOf('\b'), blockId: 'image' },
+  ];
+  snapshot.drawingsOrder = ['image'];
+  snapshot.drawings = {
+    image: {
+      drawingId: 'image',
+      unitId: snapshot.id,
+      subUnitId: snapshot.id,
+      drawingType: 0,
+      source: 'authorized-image',
+      layoutType: PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM,
+      docTransform: {
+        size: { width: 48, height: 90 },
+        positionH: { relativeFrom: ObjectRelativeFromH.PAGE, posOffset: 60 },
+        positionV: { relativeFrom: ObjectRelativeFromV.PARAGRAPH, posOffset: 0 },
+        angle: 0,
+      },
+    },
+  } as typeof snapshot.drawings;
+  const inputs = await Promise.all(
+    [undefined, 0, 20, -90].map(async (offset) => {
+      const source = structuredClone(snapshot);
+      if (offset !== undefined)
+        source.drawings!.image.docTransform.positionV = {
+          relativeFrom: ObjectRelativeFromV.LINE,
+          posOffset: offset,
+        };
+      const input = await docInput(source);
+      input.images = [{ source: 'authorized-image', bytes: await canvas.encode('png') }];
+      return input;
+    }),
+  );
+  const originals = inputs.map((input) => structuredClone(input.snapshot));
+  const results = await runDocJobs(inputs.map((input) => ({ input })));
+  const pages: Awaited<ReturnType<typeof retainDocPdf>> = [];
+  const tops: number[] = [];
+  for (const [index, result] of results.entries()) {
+    expect(
+      result,
+      JSON.stringify(result, (key, value) => (key === 'bytes' ? '<bytes>' : value)),
+    ).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+    const [page] = await retainDocPdf(
+      [
+        'nonleading-image-physical-header',
+        'line-zero-physical-header',
+        'line-offset-physical-header',
+        'line-compensated-physical-header',
+      ][index],
+      result.bytes!,
+    );
+    pages.push(page);
+    for (const marker of [
+      'REPEATED-HEADER',
+      'BEFORE-IMAGE',
+      'PREFIX-BEFORE-IMAGE',
+      'CAPTION-AFTER-IMAGE',
+      'AFTER-IMAGE-SENTINEL',
+    ])
+      expect(
+        page.items.filter((item) => item.str === marker),
+        marker,
+      ).toHaveLength(1);
+    let top = page.height;
+    let bottom = 0;
+    let area = 0;
+    for (let offset = 0; offset < page.pixels.length; offset += 4) {
+      const [red, green, blue] = page.pixels.slice(offset, offset + 3);
+      if (blue > 150 && red < 80 && green < 100) {
+        const y = Math.floor(offset / 4 / page.width);
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y);
+        area++;
+      }
+    }
+    tops.push(top);
+    const prefix = page.items.find((item) => item.str === 'PREFIX-BEFORE-IMAGE')!;
+    const caption = page.items.find((item) => item.str === 'CAPTION-AFTER-IMAGE')!;
+    expect(page.height - prefix.transform[5]).toBeLessThan(top);
+    expect(page.height - caption.transform[5] - caption.height).toBeGreaterThan(bottom - 1);
+    expect(Math.abs(area - 48 * 90 * 0.75 ** 2)).toBeLessThan(100);
+  }
+  expect(Buffer.from(pages[1].pixels).equals(Buffer.from(pages[0].pixels))).toBe(true);
+  expect(tops[2] - tops[0]).toBe(20 * 0.75);
+  // The public native LINE reference-switch compensation resolves -90 to a
+  // measured +2.586665px offset in this saved fixture, not -90px above its line.
+  expect(Math.abs(tops[3] - tops[0] - 2.586665 * 0.75)).toBeLessThan(1);
+  expect(inputs.map((input) => input.snapshot)).toEqual(originals);
+}, 60_000);
+
+test('image-only Top-and-bottom flow retains native origins, relative paragraph spacing and small-image struts', async () => {
+  const canvas = createCanvas(12, 12);
+  const context = canvas.getContext('2d');
+  context.fillStyle = '#2040d0';
+  context.fillRect(0, 0, 12, 12);
+  const bytes = await canvas.encode('png');
+  const make = async (height: number, offset = 0) => {
+    const snapshot = textDoc(['Before image', '\b', 'AFTER-IMAGE-SENTINEL']);
+    snapshot.body!.customBlocks = [{ startIndex: 'Before image\r'.length, blockId: 'image' }];
+    snapshot.drawingsOrder = ['image'];
+    snapshot.drawings = {
+      image: {
+        drawingId: 'image',
+        unitId: snapshot.id,
+        subUnitId: snapshot.id,
+        drawingType: 0,
+        source: 'authorized-image',
+        layoutType: PositionedObjectLayoutType.WRAP_TOP_AND_BOTTOM,
+        docTransform: {
+          size: { width: 48, height },
+          positionH: { relativeFrom: 3, posOffset: 12 },
+          positionV: { relativeFrom: ObjectRelativeFromV.PARAGRAPH, posOffset: offset },
+          angle: 0,
+        },
+      },
+    } as typeof snapshot.drawings;
+    const input = await docInput(snapshot);
+    input.images = [{ source: 'authorized-image', bytes }];
+    return input;
+  };
+  const normal = await docInput(textDoc(['Before image', 'AFTER-IMAGE-SENTINEL']));
+  const spaced = await make(90, 20);
+  spaced.snapshot.body!.paragraphs![1].paragraphStyle = {
+    spaceAbove: { v: 15, u: NumberUnitType.PIXEL },
+    spaceBelow: { v: 2, u: NumberUnitType.LINE },
+  };
+  const small = await make(10);
+  const smallReference = structuredClone(small);
+  smallReference.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_NONE;
+  const exact = await make(90);
+  exact.snapshot.body!.paragraphs![1].paragraphStyle = {
+    lineSpacing: 180,
+    spacingRule: SpacingRule.EXACT,
+    spaceBelow: { v: 24, u: NumberUnitType.PIXEL },
+  };
+  const exactReference = structuredClone(exact);
+  exactReference.snapshot.drawings!.image.layoutType = PositionedObjectLayoutType.WRAP_NONE;
+  const inputs = [normal, spaced, small, smallReference, exact, exactReference];
+  const originals = structuredClone(inputs);
+  const results = await runDocJobs(inputs.map((input) => ({ input })));
+  const pages: Awaited<ReturnType<typeof retainDocPdf>> = [];
+  for (const [index, result] of results.entries()) {
+    expect(
+      result,
+      JSON.stringify(result, (key, value) => (key === 'bytes' ? '<bytes>' : value)),
+    ).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+    pages.push(
+      (
+        await retainDocPdf(
+          [
+            'anchor-normal-strut',
+            'anchor-relative-spacing',
+            'anchor-small-image',
+            'anchor-small-reference',
+            'anchor-exact-spacing',
+            'anchor-exact-reference',
+          ][index],
+          result.bytes!,
+        )
+      )[0],
+    );
+  }
+  const baselineGap = (page: (typeof pages)[number]) => {
+    const before = page.items.find((item) => item.str.includes('Before image'))!;
+    const after = page.items.find((item) => item.str.includes('AFTER-IMAGE-SENTINEL'))!;
+    expect(before).toBeDefined();
+    expect(after).toBeDefined();
+    return before.transform[5] - after.transform[5];
+  };
+  const strut = baselineGap(pages[0]);
+  // The saved two-line after-spacing is based on the original paragraph strut,
+  // not on the image's enlarged 110px flow reservation.
+  expect(baselineGap(pages[1])).toBeCloseTo(strut * 3 + 110 * 0.75, 2);
+  expect(baselineGap(pages[2])).toBeCloseTo(baselineGap(pages[3]), 5);
+  expect(baselineGap(pages[4])).toBeCloseTo(baselineGap(pages[5]), 5);
+  expect(Buffer.from(pages[2].pixels).equals(Buffer.from(pages[3].pixels))).toBe(true);
+  expect(Buffer.from(pages[4].pixels).equals(Buffer.from(pages[5].pixels))).toBe(true);
+  const blue = (page: (typeof pages)[number]) => {
+    let count = 0,
+      top = page.height,
+      left = page.width;
+    for (let index = 0; index < page.pixels.length; index += 4) {
+      const [r, g, b] = page.pixels.slice(index, index + 3);
+      if (b > 150 && r < 80 && g < 100) {
+        count++;
+        top = Math.min(top, Math.floor(index / 4 / page.width));
+        left = Math.min(left, (index / 4) % page.width);
+      }
+    }
+    return { count, top, left };
+  };
+  expect(Math.abs(blue(pages[1]).count - 48 * 90 * 0.75 ** 2)).toBeLessThan(100);
+  expect(blue(pages[1]).left).toBe(45);
+  expect(Math.abs(blue(pages[1]).top - (48 + 20) * 0.75 - strut)).toBeLessThan(1);
+  expect(inputs.map((input) => input.snapshot)).toEqual(originals.map((input) => input.snapshot));
+  for (const [index, input] of inputs.entries()) {
+    for (const [imageIndex, image] of input.images.entries())
+      expect(
+        Buffer.from(image.bytes).equals(Buffer.from(originals[index].images[imageIndex].bytes)),
+      ).toBe(true);
+    for (const [fontIndex, font] of input.fonts.entries())
+      expect(
+        Buffer.from(font.bytes).equals(Buffer.from(originals[index].fonts[fontIndex].bytes)),
+      ).toBe(true);
   }
 }, 90_000);
 
