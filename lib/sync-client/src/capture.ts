@@ -215,20 +215,29 @@ function assertSenderParams(params: unknown) {
   if (encodedBytes(params) > MAX_PENDING_BYTES) throw new ClientError('capacity');
 }
 
-function preserveParagraphs(value: unknown, existing?: Set<string>) {
-  if (!value || typeof value !== 'object') return;
-  const action = value as Record<string, any>;
-  if (action.t === 'i' && action.body && typeof action.body === 'object') {
-    for (const paragraph of action.body.paragraphs ?? []) {
-      // Realize once before the local apply, not independently on every peer.
-      if (existing && (!paragraph.paragraphId || existing.has(paragraph.paragraphId)))
-        paragraph.paragraphId = createParagraphId(existing);
-      if (!paragraph.paragraphId) throw new ClientError('malformed');
-      existing?.add(paragraph.paragraphId);
+function preserveParagraphs(op: unknown, existing?: Set<string>) {
+  if (!Array.isArray(op)) return;
+  // JSON1 branches are arrays; component payloads are document data. Traverse
+  // only branches, then actual text-x actions, never inserted values or the
+  // opaque custom-range properties nested inside a TextX body.
+  for (const component of op) {
+    if (Array.isArray(component)) {
+      preserveParagraphs(component, existing);
+      continue;
     }
-    action.body[PRESERVE_INSERTED_PARAGRAPH_IDS] = true;
+    if (component?.et !== 'text-x' || !Array.isArray(component.e)) continue;
+    for (const action of component.e) {
+      if (action?.t !== 'i' || !action.body || typeof action.body !== 'object') continue;
+      for (const paragraph of action.body.paragraphs ?? []) {
+        // Realize once before the local apply, not independently on every peer.
+        if (existing && (!paragraph.paragraphId || existing.has(paragraph.paragraphId)))
+          paragraph.paragraphId = createParagraphId(existing);
+        if (!paragraph.paragraphId) throw new ClientError('malformed');
+        existing?.add(paragraph.paragraphId);
+      }
+      action.body[PRESERVE_INSERTED_PARAGRAPH_IDS] = true;
+    }
   }
-  for (const child of Object.values(value)) preserveParagraphs(child, existing);
 }
 
 function inlineStyles(mutation: Mutation, resolve: (id: string) => unknown) {
