@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { ProfileIcon } from './ProfileIcon.tsx';
+import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 
 // Regression samples for Lucide 1.59.0. Retain saved names beside their current
 // names so the real renderer remains visible in every theme and viewport.
