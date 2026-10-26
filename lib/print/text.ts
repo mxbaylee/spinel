@@ -464,17 +464,19 @@ function intersect(a: PrintBox | null, b: PrintBox): PrintBox | null {
 }
 
 /** Measure native paint coordinates without allocating a worksheet-size raster. */
-class InkContext extends UniverPrintingContext {
+export class InkContext extends UniverPrintingContext {
   bounds: PrintBox | null = null;
   private clipBox: PrintBox | null = null;
   private path: PrintBox | null = null;
   private saved: (PrintBox | null)[] = [];
   readonly raw: SKRSContext2D;
   readonly check: () => void;
-  constructor(raw: SKRSContext2D, check: () => void) {
+  readonly onTextInk: ((box: PrintBox) => void) | undefined;
+  constructor(raw: SKRSContext2D, check: () => void, onTextInk?: (box: PrintBox) => void) {
     super(raw as unknown as CanvasRenderingContext2D);
     this.raw = raw;
     this.check = check;
+    this.onTextInk = onTextInk;
   }
   private box(left: number, top: number, right: number, bottom: number): PrintBox {
     const matrix = this.raw.getTransform();
@@ -603,6 +605,7 @@ class InkContext extends UniverPrintingContext {
         box.bottom > this.clipBox.bottom + 0.01)
     )
       unsupported();
+    this.onTextInk?.(box);
     this.bounds = unionBox(this.bounds, box);
   }
   override setLineDash(segments: number[]) {

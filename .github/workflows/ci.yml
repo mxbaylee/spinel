@@ -216,6 +216,18 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+      - name: Synthetic Doc PDF evidence
+        if: always() && matrix.suite == 'remaining'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: doc-pdf-evidence
+          path: |
+            output/pdf/spn-102/*.pdf
+            output/pdf/spn-102/*.png
+            output/pdf/spn-102/*.json
+          retention-days: 7
+          if-no-files-found: warn
+
   # Keep the policy-required check available for branch protection, including
   # explicit non-applicable runs. Every required partition must succeed.
   lib-tests:

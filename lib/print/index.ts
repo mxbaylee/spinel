@@ -12,3 +12,6 @@ export { preflightSheets, paginateSheet } from './preflight.ts';
 export type { SheetGeometry, SheetPreflight } from './preflight.ts';
 export { renderSheetPdfCandidate as renderSheetPdf } from './native.ts';
 export type { NativeSheetInput as SheetPrintInput } from './native.ts';
+export { renderDocPdf } from './doc-native.ts';
+export type { NativeDocInput as DocPrintInput, DocPrintOptions } from './doc-native.ts';
+export type { PreparedDocFormula } from './doc-preparation.ts';

@@ -50,9 +50,9 @@ export async function runNativeJobs(
 }
 
 /** Reopen and retain every page, including pages preceding a later failed assertion. */
-export async function retainPdf(name: string, bytes: Uint8Array) {
-  await mkdir(evidenceDirectory, { recursive: true });
-  await writeFile(resolve(evidenceDirectory, `${name}.pdf`), bytes);
+export async function retainPdf(name: string, bytes: Uint8Array, directory = evidenceDirectory) {
+  await mkdir(directory, { recursive: true });
+  await writeFile(resolve(directory, `${name}.pdf`), bytes);
   const loading = getDocument({ data: new Uint8Array(bytes), useSystemFonts: false });
   try {
     const pdf = await loading.promise;
@@ -67,10 +67,7 @@ export async function retainPdf(name: string, bytes: Uint8Array) {
         canvasContext: context as unknown as CanvasRenderingContext2D,
         viewport,
       }).promise;
-      await writeFile(
-        resolve(evidenceDirectory, `${name}-${index}.png`),
-        await canvas.encode('png'),
-      );
+      await writeFile(resolve(directory, `${name}-${index}.png`), await canvas.encode('png'));
       const items = (await page.getTextContent()).items.flatMap((item) =>
         'str' in item ? [item] : [],
       );

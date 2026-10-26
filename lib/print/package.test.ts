@@ -7,6 +7,7 @@ import { expect, test } from 'vitest';
 import { LocaleType } from '@univerjs/core';
 import { fixtureFonts } from './font-fixtures.ts';
 import { retainPdf, runNativeJobs } from './native-test-support.ts';
+import { docInput, retainDocPdf, runDocJobs, textDoc } from './doc-native-test-support.ts';
 
 test('renders from an isolated standalone source package with only its declared runtime dependencies', async () => {
   const source = fileURLToPath(new URL('.', import.meta.url));
@@ -84,6 +85,13 @@ test('renders from an isolated standalone source package with only its declared 
     const pages = await retainPdf('standalone-package', result.bytes!);
     expect(pages).toHaveLength(1);
     expect(pages[0].text).toContain('Independent package output');
+    const [document] = await runDocJobs(
+      [{ input: await docInput(textDoc(['Independent Doc package output'])) }],
+      pathToFileURL(join(target, manifest.exports)).href,
+    );
+    expect(document).toMatchObject({ ok: true, pages: 1, restored: true, remainingFonts: 0 });
+    const docPages = await retainDocPdf('standalone-doc-package', document.bytes!);
+    expect(docPages[0].text).toContain('Independent Doc package output');
   } finally {
     await rm(isolated, { recursive: true, force: true });
   }

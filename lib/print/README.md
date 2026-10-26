@@ -1,11 +1,11 @@
 # @spinel/print
 
-Private standalone Sheet PDF renderer. Public Univer 1.1.0 layout and drawing run
+Private standalone Sheet and Doc PDF renderer. Public Univer 1.1.0 layout and drawing run
 against the native `@napi-rs/canvas` PDF backend. The package owns no user identity,
 database, HTTP client, cookies, credentials or source evaluation. It imports no
 Spinel application code and uses no Pro packages or browser Print.
 
-SPN-101 supplies this package. SPN-102 extends it for Docs. SPN-075 retains the
+SPN-101 supplies the Sheet renderer; SPN-102 extends it for Docs. SPN-075 retains the
 complete production export contract: current authorized snapshots, prepared
 sources, final access revalidation, process isolation/admission and download UI.
 This package alone does not make production PDF export available.
@@ -60,7 +60,7 @@ geometry. Preflight's cell/merge bounds are not final output bounds: rendering
 adds actual text/border ink and image extents. Do not publish based only on an
 initial plan.
 
-## Layout and completeness
+## Sheet layout and completeness
 
 - A4 portrait uses the backend's actual **595 × 842 pt** MediaBox. The public
   backend quantizes fractional A4 dimensions; every clip uses that same frame.
@@ -86,6 +86,61 @@ initial plan.
 - Finite negative ink extents from rotation or outer border strokes are included
   inside the margins. Invalid geometry and overlapping/nonfinite merge models
   fail before native indexing.
+
+## Doc layout and prepared Formula results
+
+`renderDocPdf` accepts `DocPrintInput`: a public `IDocumentData` snapshot, prepared
+font/image bytes and optional `PreparedDocFormula[]`. Its options contain only
+`limits` and `signal`; it returns the same bytes/page-count/MediaBox/duration
+shape as the Sheet renderer. Doc and Sheet calls share one native-operation lock.
+
+Stored page width, height and margins are preserved, including fractional values
+and explicit zero margins. Missing dimensions fall back individually to exact
+A4 portrait (210 × 297 mm); missing margins to 12.7 mm. Continuous/modern Docs
+receive this finite print geometry. Authored page breaks remain explicit, while
+`renderedPageBreaks` marks stay soft. Paper is white.
+
+Native public layout shapes the complete model in bounded virtual pages before
+physical pagination. This avoids its ordinary-page clamp on oversized table rows.
+Physical source slices are contiguous, preserve explicit native breaks and avoid
+text ink, ordinary rows, merged regions and paragraph keep groups when they fit
+an empty page. Tall rows, merged cells and images continue in the same coordinate
+system, without independent scaling or omitted late content. Saved minimum/exact
+row heights must survive native layout; clipped text or an oversized plan fails.
+
+Native output page canvases use ceiling integer points. A narrowly validated
+incremental page-dictionary update restores the exact stored MediaBox without
+rewriting streams. The drawing origin accounts for the native rounding excess.
+Unexpected backend PDF structure fails explicitly instead of rounding silently.
+
+Heading and named character/paragraph styles, rich text, nested lists and their
+generated markers use the prepared licensed faces. Source coverage, actual ink
+bounds and per-face glyph coverage must pass before PDF bytes can be returned.
+Raster drawings use only supplied bytes and the public native placement model.
+
+Each prepared Formula entry identifies a whole-entity `CUSTOM` range by `rangeId`.
+The result is a scalar (`string | number | boolean | null`), a rectangular array
+or table of those values, or `{ kind: 'unavailable' }`. Optional column widths
+are positive layout-pixel widths within the content width. Arrays and tables
+become complete ordinary native tables with wrapping and pagination. They never
+use the live editor adapter's atomic-table size limit. Source expressions and
+range properties are removed from the owned model; unavailable results contain
+the fixed word **Unavailable**, with no source name, identity or explanation.
+Every custom range requires an explicit prepared result. Nothing is evaluated.
+
+Doc admission currently rejects nonempty headers/footers/notes, raw OOXML or
+custom rendering payloads, unprepared links/mentions/plugin resources, page
+backgrounds/borders, custom text effects and tab leaders, paragraph frames,
+heterogeneous section geometry, odd/even section parity, repeated table headers,
+wrapped/floating tables, sparse table grids, rotated cell text, column groups,
+nonimage/grouped/contour drawings and unsupported floating anchors. These remain
+explicit acceptance gaps for SPN-075; ignoring them would change visible content.
+Malformed indexes, merges, geometry or unprepared glyphs also fail without bytes.
+
+Doc limits cover both the original and projected model, generated list/Formula
+text, native layout work, repeated drawing across physical slices and all shared
+font/image/page/output/time budgets. Complete source admission precedes native
+work. The shared cleanup and hard-process-isolation limitations below apply.
 
 ## Prepared images
 
@@ -130,7 +185,7 @@ accents, combining text and symbol fallback; they do not prove universal script
 support or silently substitute production fonts. Actual shaping remains native
 and depends on the supplied licensed faces.
 
-Embedded rich tables, lists/named paragraph styles, generated tab leaders, extra document sections,
+For Sheet rich cells, embedded rich tables, lists/named paragraph styles, generated tab leaders, extra document sections,
 document backgrounds, document-level fallback maps, custom render extensions and
 document-only glow/shadow/outline/fill/symbol effects require an explicitly
 prepared representation and currently fail. Ordinary Sheet rich text is retained.
@@ -168,7 +223,8 @@ Small fixture measurements cannot select safe limits for the 2 GB host.
 ## CI evidence and licenses
 
 CI runs the package in the library partition and retains synthetic PDFs, a PNG
-for every reopened page, and resource metrics in `sheet-pdf-evidence`. Successful
+for every reopened page, and resource metrics in `sheet-pdf-evidence` and
+`doc-pdf-evidence`. Successful
 extraction alone is insufficient: review every page for late content, boundaries,
 image bands, fonts, colors, margins and no watermark. Missing artifacts are not a
 pass. The implementation record and commit-anchored PR review identify the actual
