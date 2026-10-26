@@ -234,8 +234,9 @@ see [the process](todo/process.md#pull-requests-and-main).
 - React and React DOM are pinned together to 19.3.1, with React and React DOM
   types at 19.3.0. The installed Univer 1.1.0, Base UI 1.9.0 and Storybook 10.3.5
   peer ranges allow React 19. The presence workspace follows the tested runtime;
-  DOM ref types explicitly include their unmounted null state. Keep these four
-  packages coordinated when upgrading and verify native editor lifecycle, portals,
+  DOM ref types explicitly include their unmounted null state, and a guarded
+  open-source Univer UI repair ignores resize callbacks after that ref detaches.
+  Keep these four packages coordinated when upgrading and verify native editor lifecycle, portals,
   focus and save/access behavior. The [React 19 upgrade record](implementation/dependency-react-19.md)
   supersedes the initial [React 18 scaffold baseline](implementation/SPN-001.md#legacy-decision-1-react-version).
 - Oxlint works alongside the existing TypeScript 7 compiler; typescript-eslint

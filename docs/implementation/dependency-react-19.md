@@ -27,7 +27,44 @@ empty-string attribute. Preserve the historical [scaffold choice](SPN-001.md#leg
 which expressly allows later reviewed upgrades.
 
 The primary migration reference is the [React 19 upgrade guide](https://react.dev/blog/2024/04/25/react-19-upgrade-guide).
-No compatibility shim, peer-check bypass or new rendering abstraction is added.
+No peer-check bypass or new rendering abstraction is added.
+
+## Native print resize callback repair
+
+The migration exposed a reproducible browser exception during native Sheet
+printing. Both development and production failed all three attempts of the
+existing export/import test. Instrumented [CI run 40271852866](https://github.com/mxbaylee/spinel/actions/runs/40271852866)
+identified `ResizeObserver.getSize` while printing; the test still retained its
+PDF-content, import, persistence and no-browser-errors assertions.
+
+The open-source [Univer UI 1.1.0 virtual-list hook](https://github.com/dream-num/univer/blob/v1.1.0/packages/ui/src/views/hooks/virtual-list.ts)
+checks the ref when installing an observer, then dereferences it again in each
+callback without checking. A queued resize callback can arrive after React has
+cleared the ref and before passive cleanup disconnects the observer. Executing
+the installed ES and CJS hook regions with that lifecycle reproduces the same
+null `clientWidth` exception while ordinary resizing succeeds.
+
+`scripts/dependencies/patch-univer-ui.ts` narrowly repairs both pinned open-source
+builds: snapshot the ref inside the callback, return if detached, and read both
+dimensions from the captured node. It validates the package version and original
+file hashes, accepts its own already-applied repair, and validates both builds
+before writing either. Unknown versions or edits fail installation for review.
+The existing core repair remains independent; neither helper reads or changes a
+Pro package. Apache provenance is retained in the helper and third-party notices.
+
+Regression tests execute the actual installed hook in each format, verify initial
+and subsequent attached sizes, deliver a queued callback after ref detachment,
+and verify observer cleanup. An unpatched negative control must reproduce the
+original failure. Guard tests cover idempotence, unknown bytes/versions and
+validation before writes. The full browser export/import test remains the
+integration proof; its error diagnostics now preserve the stack and flow phase.
+
+On the next coordinated Univer upgrade, check upstream's current virtual-list
+implementation and remove this UI helper, its postinstall command and notices
+when the stock hook passes the retained regression. Do not remove it implicitly
+while completing SPN-099's separate core cleanup. The Operator accepts this
+small, fail-closed maintenance cost so the Owner and Collaborator keep working
+print/export flows and Link guests retain their existing scoped interactions.
 
 ## Persona effects
 
