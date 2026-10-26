@@ -123,8 +123,8 @@ image digests and Actions commit SHAs immutable, with review of each replacement
 The [Node 26 update](implementation/dependency-node-26.md) keeps `.nvmrc`, both
 Docker stages and the application engine declaration aligned. CI runs the actual
 production image alongside the application suites; a Docker-only pin would not
-prove the new runtime through host-based browser tests. Node types follow in
-their own dependency PR.
+prove the new runtime through host-based browser tests. Runtime and Node type
+updates are validated in separate dependency PRs.
 
 The literal `⬆️ Bump ` title prefix includes its trailing space. Dependency PRs
 use the normal review and applicable CI gates. This configuration change also

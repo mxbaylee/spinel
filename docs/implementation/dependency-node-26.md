@@ -48,3 +48,19 @@ existing authentication and sharing boundaries. No visual design change is inten
 applicable Storybook rendering and interaction checks at the final head, followed
 by independent review. Local Docker is unavailable in this workspace; only the
 hosted container result may be recorded as container execution evidence.
+
+## Align the Node API declarations
+
+**2026-10-26 — accepted, agent judgment within the same owner-authorized sequence.**
+After runtime [#165](https://github.com/mxbaylee/spinel/pull/165),
+[#171](https://github.com/mxbaylee/spinel/pull/171) updates `@types/node` to 26.6.5
+and its required `undici-types` dependency to 8.9.0. Preserve all other package
+resolutions and native platform metadata.
+
+The new declarations correctly make `process.disconnect` optional outside a
+forked child. The native print test fixture requires IPC to return its results
+and terminate, so check both completion functions before calling them. Fail
+explicitly if the required channel API is absent; do not silently skip completion.
+The existing native print tests exercise the real child-process path. This adds
+no Node 26-only library API and retains the print package's Node 24+ contract.
+The persona and verification decisions above apply to this second phase as well.
