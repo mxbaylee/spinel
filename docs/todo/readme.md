@@ -31,7 +31,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 17 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🌿 M | 💜 M | 4 | Higher impact | — | — |
 | 18 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 4 | — | — | Approve the implementation screenshots |
 | 19 | ✨ [SPN-051](SPN-051.md) Create new documents while offline | 🌳 L | 💜 M | 3 | Lower ID | [SPN-053](SPN-053.md) | — |
-| 20 | 🗃️ [SPN-067](SPN-067.md) Export all my files at once | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
+| 20 | 🗃️ [SPN-067](SPN-067.md) Export all my files at once | 🌳 L | 💜 M | 3 | Lower ID | — | — |
 | 21 | 📱 [SPN-072](SPN-072.md) Edit Docs comfortably on a phone | 🌳 L | 💜 M | 3 | Lower ID | — | Approve the PR's screenshots |
 | 22 | 🎨 [SPN-086](SPN-086.md) Personalize icons, folder colors, covers and Space accents | 🌳 L | 💜 M | 3 | Higher impact | — | Approve the refined artwork and implementation screenshots |
 | 23 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 3 | Lower ID | — | Approve the PR's screenshots |
