@@ -66,6 +66,20 @@ while completing SPN-099's separate core cleanup. The Operator accepts this
 small, fail-closed maintenance cost so the Owner and Collaborator keep working
 print/export flows and Link guests retain their existing scoped interactions.
 
+## Prototype connection disclosure
+
+The current-head Storybook review also caught the prototype dashboard's
+connection explanation failing its retained phone and tablet tap journeys in
+[run 40272688221](https://github.com/mxbaylee/spinel/actions/runs/40272688221).
+The stories rendered successfully, but the manually opened Tooltip did not
+display the explanation. Base UI's [documented touch behavior](https://base-ui.com/react/components/tooltip#alternatives-to-tooltips)
+disables tooltips for touch and recommends a Popover for a control whose purpose
+is to reveal information. Align the prototype `NetworkStatus` with the existing
+production `ConnectionStatus` Popover pattern: built-in tap and hover, explicit
+keyboard focus, and no forced focus transfer. Keep the copy, styling and retained
+tap/Escape assertions. This fixes the observed review interaction without
+changing production connection-state or save-status semantics.
+
 ## Persona effects
 
 - Operator: one coherent locked runtime avoids failed installs and duplicate React
