@@ -224,7 +224,8 @@ function pairCore(
   if (peer === 'sheet-order') {
     const gone = b.id === structureIds.removeSheet && sheetOf(a) === sheetOf(b);
     if (gone && a.id !== drawingIds.apply) {
-      observeTransform(observe, { kind: 'dropped', rule: 'removed-sheet', value: 1 });
+      if (isReal(a))
+        observeTransform(observe, { kind: 'dropped', rule: 'removed-sheet', value: 1 });
       return [];
     }
     return [a];

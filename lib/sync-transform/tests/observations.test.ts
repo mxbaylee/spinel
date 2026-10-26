@@ -34,6 +34,17 @@ const named = (name: string): Mutation => ({
     trigger: 'sheet.command.set-defined-name',
   },
 });
+const move: Mutation = {
+  id: cellIds.moveRange,
+  params: {
+    unitId: target.unitId,
+    fromRange: { startRow: 1, endRow: 2, startColumn: 0, endColumn: 0 },
+    toRange: { startRow: 2, endRow: 3, startColumn: 0, endColumn: 0 },
+    from: { subUnitId: target.subUnitId, value: { 1: { 0: null }, 2: { 0: null } } },
+    to: { subUnitId: target.subUnitId, value: { 2: { 0: { v: 'Private' } } } },
+    shift: { axis: 'row', kind: 'insert', at: 1, count: 1 },
+  },
+};
 const capture = (a: Mutation[], b: Mutation[], side: 'right' | 'left' = 'right') => {
   const events: TransformObservation[] = [];
   const result = transform(a, b, side, {
@@ -110,17 +121,6 @@ test('competing native Formula entities report their loss without expression or 
 });
 
 test('a clipped shift reports candidate offsets beside its band, without coordinates', () => {
-  const move: Mutation = {
-    id: cellIds.moveRange,
-    params: {
-      unitId: target.unitId,
-      fromRange: { startRow: 1, endRow: 2, startColumn: 0, endColumn: 0 },
-      toRange: { startRow: 2, endRow: 3, startColumn: 0, endColumn: 0 },
-      from: { subUnitId: target.subUnitId, value: { 1: { 0: null }, 2: { 0: null } } },
-      to: { subUnitId: target.subUnitId, value: { 2: { 0: { v: 'Private' } } } },
-      shift: { axis: 'row', kind: 'insert', at: 1, count: 1 },
-    },
-  };
   expect(capture([cell(2, 1, 'Private')], [move]).events).toContainEqual({
     kind: 'offset',
     value: 1,
@@ -128,6 +128,34 @@ test('a clipped shift reports candidate offsets beside its band, without coordin
   expect(
     capture([cell(0, 1, 'Private')], [move]).events.some((event) => event.kind === 'offset'),
   ).toBe(false);
+});
+
+test('overwritten-cell ghosts produce no later offset or duplicate removed-sheet loss', () => {
+  for (const later of [move, removeSheet('s1', 'One', 0)]) {
+    const { result, events } = capture([cell(2, 1, 'mine')], [cell(2, 1, 'winner'), later]);
+    expect(result).toEqual([]);
+    expect(events.filter((event) => event.kind !== 'growth')).toEqual([
+      { kind: 'dropped', rule: 'cell-overwritten', value: 1 },
+    ]);
+  }
+  // Reversed bookkeeping can carry a ghost as the peer of a delivered move.
+  const incoming = [cell(2, 1, 'winner'), move];
+  const { result, events } = capture(incoming, [cell(2, 1, 'mine')], 'left');
+  expect(result).toEqual(incoming);
+  expect(events.filter((event) => event.kind !== 'growth')).toEqual([]);
+});
+
+test('overwritten-cell ghosts still refuse moves through their cells without delivered losses', () => {
+  const events: TransformObservation[] = [];
+  const incoming = [cell(2, 0, 'mine')];
+  const concurrent = [cell(2, 0, 'winner'), move];
+  for (const observe of [undefined, (event: TransformObservation) => events.push(event)]) {
+    expect(() => transform(incoming, concurrent, 'right', { cells: () => null, observe })).toThrow(
+      expect.objectContaining({ reason: 'moved-cells' }),
+    );
+  }
+  expect(events.some((event) => event.kind === 'growth')).toBe(true);
+  expect(events.filter((event) => event.kind !== 'growth')).toEqual([]);
 });
 
 test('refusals identify mutation types and malformed errors carry stable codes', () => {

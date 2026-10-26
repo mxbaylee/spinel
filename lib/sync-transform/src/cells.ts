@@ -420,7 +420,8 @@ function transform(
   // A move and an edit in its area are refused (see shifts.movesMeet).
   if (isMove(a) || isMove(b)) {
     if (movesMeet(a, b)) throw new RefusedEditError('moved-cells');
-    const offset = clippedShiftWrites(a, b);
+    // Ghosts preserve refusal safety after an overwrite, but deliver no writes.
+    const offset = isGhost(a) || isGhost(b) ? 0 : clippedShiftWrites(a, b);
     if (offset) observeTransform(observe, { kind: 'offset', value: offset });
     return [a];
   }
