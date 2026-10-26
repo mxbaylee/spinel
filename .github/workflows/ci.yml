@@ -291,6 +291,8 @@ jobs:
           - { project: production, shard: 1/2 }
           - { project: production, shard: 2/2 }
           - { project: mobile-https, shard: '' }
+          - { project: sync-development, shard: '' }
+          - { project: sync-production, shard: '' }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -330,6 +332,7 @@ jobs:
             test-results/**/*-restore-preview.png
             test-results/**/*-export.pdf
             test-results/**/*-export-opened.png
+            test-results/**/*-sync-presence.png
             test-results/**/error-context.md
           retention-days: 7
           if-no-files-found: warn

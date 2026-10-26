@@ -1,6 +1,8 @@
 import { ThemeService, type Univer } from '@univerjs/core';
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { ISheetSelectionRenderService, BaseSelectionRenderService } from '@univerjs/sheets-ui';
+import { DocSelectionManagerService } from '@univerjs/docs';
+import { DocIMEInputManagerService, DocSelectionRenderService } from '@univerjs/docs-ui';
 import type { PresenceRenderColors } from './renderColors.ts';
 
 const selectionThemeColors = new WeakMap<BaseSelectionRenderService, string>();
@@ -43,5 +45,52 @@ export function setLocalSelectionColor(
       rowHeaderFill: fill,
       columnHeaderFill: fill,
     });
+  }
+}
+
+const stylingDocSelections = new WeakSet<DocSelectionRenderService>();
+
+/** Rebuild only local text controls, preserving offsets, direction and keyboard focus. */
+export function setLocalDocSelectionColor(
+  univer: Univer,
+  unitId: string,
+  color: string,
+  renderColors?: PresenceRenderColors,
+) {
+  const injector = univer.__getInjector();
+  const render = injector.get(IRenderManagerService).getRenderUnitById(unitId);
+  if (!render) return;
+  const selections = render.with(DocSelectionRenderService);
+  // Restyling cannot interrupt a drag, IME composition or a layout-restoration selection.
+  if (
+    stylingDocSelections.has(selections) ||
+    selections.isOnPointerEvent ||
+    selections.hasPendingSelection ||
+    render.with(DocIMEInputManagerService).getCompositionRange()
+  )
+    return;
+  const info = injector
+    .get(DocSelectionManagerService)
+    .getSelectionInfo({ unitId, subUnitId: unitId });
+  if (info?.textRanges.length !== 1 || info.rectRanges.length) return;
+  const { stroke, fill } = renderColors ?? { stroke: color, fill: color + '18' };
+  if (
+    info.textRanges.every(
+      (range) => range.style?.strokeActive === stroke && range.style.fill === fill,
+    )
+  )
+    return;
+  stylingDocSelections.add(selections);
+  try {
+    selections.replaceDocRanges(
+      info.textRanges.map((range) => ({
+        ...range,
+        style: { ...(range.style ?? info.style), strokeActive: stroke, fill },
+      })),
+      info.isEditing,
+      { ...info.options, shouldFocus: false },
+    );
+  } finally {
+    stylingDocSelections.delete(selections);
   }
 }

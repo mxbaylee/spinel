@@ -8,6 +8,9 @@ import type { WorkspaceStore } from '../workspace/store.ts';
 import type { CollaborationStore, SyncIdentity } from '../collaboration/service.ts';
 import { documentIdentity, validateIdentity } from '../collaboration/identity.ts';
 import { auditDeniedEdit } from '../collaboration/audit.ts';
+import { safeGuestRoomPresence } from '../collaboration/guestPresence.ts';
+import { Profiles } from '../auth/profile.ts';
+import { profileAvatar } from '../../profile/profile.ts';
 
 const TICKET_TTL = 30_000;
 const MAX_TICKETS = 256;
@@ -15,6 +18,10 @@ const MAX_CONNECTIONS = 64;
 const MAX_MESSAGE_BYTES = 64 * 1024;
 const MAX_BUFFERED_BYTES = 16 * 1024 * 1024;
 const MAX_PENDING = 8;
+const MAX_CURSOR_BYTES = 512;
+const CURSOR_BURST = 20;
+const CURSORS_PER_SECOND = 10;
+const HEARTBEAT_MS = 15_000;
 interface Scope {
   itemId: string;
   spaceId?: string;
@@ -38,6 +45,13 @@ interface Connection {
   queue: Promise<void>;
   pending: number;
   revision: number;
+  synchronized: boolean;
+  memberId: string;
+  selection?: string;
+  cursorTokens: number;
+  cursorAt: number;
+  alive: boolean;
+  heartbeatAt: number;
 }
 
 /** The route itself selects credentials and the exact document. Request bodies cannot broaden it. */
@@ -67,7 +81,7 @@ export function wireRevision(edit: SyncRevision) {
   };
 }
 
-/** A small, versioned JSON protocol for SPN-058; no browser activation or presence here. */
+/** Versioned edits and ephemeral authenticated presence, behind the shared opt-in flag. */
 export function attachSync(
   server: Server,
   app: Express,
@@ -78,6 +92,10 @@ export function attachSync(
   const sync = collaboration.sync!;
   const tickets = new Map<string, Ticket>();
   const live = new Set<Connection>();
+  const profiles = new Profiles(workspace.auth);
+  const dirtyPresence = new Set<string>();
+  let presenceScheduled = false;
+  let closing = false;
   const wss = new WebSocketServer({
     noServer: true,
     maxPayload: MAX_MESSAGE_BYTES,
@@ -136,14 +154,71 @@ export function attachSync(
     current(session);
     return session;
   }
-  function send(entry: Connection, value: unknown) {
-    if (entry.socket.readyState !== WebSocket.OPEN) return;
+  function presenceChanged(unitId: string) {
+    dirtyPresence.add(unitId);
+    if (presenceScheduled || closing) return;
+    presenceScheduled = true;
+    queueMicrotask(() => {
+      presenceScheduled = false;
+      const units = [...dirtyPresence];
+      dirtyPresence.clear();
+      if (!closing) for (const unit of units) broadcastPresence(unit);
+    });
+  }
+  function remove(entry: Connection, code?: number, reason?: string, terminate = false) {
+    if (!live.delete(entry)) return;
+    entry.selection = undefined;
+    if (terminate) entry.socket.terminate();
+    else if (code !== undefined) entry.socket.close(code, reason);
+    presenceChanged(entry.session.unitId);
+  }
+  function send(entry: Connection, value: unknown): boolean {
+    if (!live.has(entry) || entry.socket.readyState !== WebSocket.OPEN) return false;
+    try {
+      current(entry.session);
+    } catch {
+      remove(entry, 1008, 'Access changed. Reload to continue.');
+      return false;
+    }
     const data = JSON.stringify(value);
     if (entry.socket.bufferedAmount + Buffer.byteLength(data) > MAX_BUFFERED_BYTES) {
-      entry.socket.close(1009, 'Reload to continue.');
-      return;
+      remove(entry, 1009, 'Reload to continue.');
+      return false;
     }
     entry.socket.send(data);
+    return true;
+  }
+  function broadcastPresence(unitId: string) {
+    for (const recipient of live) {
+      if (recipient.session.unitId !== unitId) continue;
+      try {
+        current(recipient.session);
+        const anonymous = workspace.links.state(recipient.session.rootId)?.state === 'active';
+        const members = [];
+        for (const member of live) {
+          if (member.session.unitId !== unitId || member.socket.readyState !== WebSocket.OPEN)
+            continue;
+          try {
+            // Every included member proves current access, not only the recipient.
+            current(member.session);
+            const guest = typeof member.session.identity.customData.guestHash === 'string';
+            const profile =
+              anonymous || guest ? undefined : profiles.get(member.session.identity.userID);
+            members.push({
+              id: member.memberId,
+              name: guest ? 'Guest' : anonymous ? 'Collaborator' : profile!.name,
+              avatar: profile ? profileAvatar(profile) : '',
+              ...(member.selection && { selection: member.selection }),
+            });
+          } catch {
+            remove(member, 1008, 'Access changed. Reload to continue.');
+          }
+        }
+        send(recipient, { type: 'presence', selfId: recipient.memberId, members });
+      } catch {
+        remove(recipient, 1008, 'Access changed. Reload to continue.');
+      }
+    }
   }
   function revalidate() {
     pruneTickets();
@@ -151,8 +226,7 @@ export function attachSync(
       try {
         current(entry.session);
       } catch {
-        live.delete(entry);
-        entry.socket.close(1008, 'Access changed. Reload to continue.');
+        remove(entry, 1008, 'Access changed. Reload to continue.');
       }
     }
     return Promise.resolve();
@@ -163,18 +237,19 @@ export function attachSync(
   const committed = collaboration.onCommitted((change) => {
     if (!change.syncRevision) return;
     for (const recipient of live) {
-      if (recipient.session.unitId !== change.unitID) continue;
+      if (recipient.session.unitId !== change.unitID || !recipient.synchronized) continue;
       try {
         current(recipient.session);
         if (change.revision <= recipient.revision) continue;
         if (change.revision !== recipient.revision + 1) {
+          recipient.synchronized = false;
           send(recipient, { type: 'resync', reason: 'stale' });
           continue;
         }
-        send(recipient, { type: 'edit', ...wireRevision(change.syncRevision) });
-        recipient.revision = change.revision;
+        if (send(recipient, { type: 'edit', ...wireRevision(change.syncRevision) }))
+          recipient.revision = change.revision;
       } catch {
-        recipient.socket.close(1008, 'Access changed. Reload to continue.');
+        remove(recipient, 1008, 'Access changed. Reload to continue.');
       }
     }
   });
@@ -240,13 +315,22 @@ export function attachSync(
         reject();
         return;
       }
+      const after = url.searchParams.get('afterRevision');
+      const afterRevision = after === null ? undefined : Number(after);
+      if (
+        url.searchParams.getAll('afterRevision').length > 1 ||
+        (after !== null && (!/^[1-9]\d{0,15}$/.test(after) || !Number.isSafeInteger(afterRevision)))
+      ) {
+        reject();
+        return;
+      }
       const supplied = identify(request.headers, url, target);
       const key = url.searchParams.get('ticket') ?? '';
       const ticket = tickets.get(key);
       if (
         !ticket ||
         ticket.expires <= Date.now() ||
-        live.size >= MAX_CONNECTIONS ||
+        wss.clients.size >= MAX_CONNECTIONS ||
         JSON.stringify(supplied) !== JSON.stringify(ticket.session)
       ) {
         reject();
@@ -254,58 +338,158 @@ export function attachSync(
       }
       tickets.delete(key);
       current(ticket.session);
-      wss.handleUpgrade(request, socket, head, (ws) => connected(ws, ticket.session));
+      wss.handleUpgrade(request, socket, head, (ws) =>
+        connected(ws, ticket.session, afterRevision),
+      );
     } catch {
       reject();
     }
   };
   server.on('upgrade', onUpgrade);
 
-  function connected(socket: WebSocket, session: Session) {
+  function connected(socket: WebSocket, session: Session, afterRevision?: number) {
     const entry: Connection = {
       socket,
       session,
       queue: Promise.resolve(),
       pending: 0,
       revision: 0,
+      synchronized: false,
+      memberId: randomBytes(18).toString('base64url'),
+      cursorTokens: CURSOR_BURST,
+      cursorAt: Date.now(),
+      alive: true,
+      heartbeatAt: Date.now() + HEARTBEAT_MS,
     };
     live.add(entry);
     socket.on('error', () => {
-      live.delete(entry);
-      socket.terminate();
+      remove(entry, undefined, undefined, true);
     });
-    socket.on('close', () => live.delete(entry));
+    socket.on('close', () => remove(entry));
+    socket.on('pong', () => {
+      entry.alive = true;
+    });
     try {
-      const data = sync.load(session.unitId, session.identity);
-      current(session);
-      entry.revision = data.revision;
-      send(entry, {
-        type: 'snapshot',
-        version: 1,
-        unitId: data.unitId,
-        revision: data.revision,
-        snapshot: data.snapshot,
-      });
+      // Subscribe before this synchronous read. No commit can land between the
+      // returned head and activating subsequent broadcasts for this connection.
+      if (afterRevision === undefined) {
+        const data = sync.load(session.unitId, session.identity);
+        current(session);
+        entry.revision = data.revision;
+        entry.synchronized = true;
+        send(entry, {
+          type: 'snapshot',
+          version: 1,
+          unitId: data.unitId,
+          revision: data.revision,
+          snapshot: data.snapshot,
+        });
+      } else {
+        try {
+          const data = sync.replay(session.unitId, afterRevision, session.identity);
+          current(session);
+          entry.revision = data.revision;
+          entry.synchronized = true;
+          send(entry, {
+            type: 'resume',
+            version: 1,
+            unitId: session.unitId,
+            fromRevision: afterRevision,
+            revision: data.revision,
+            edits: data.edits.map(wireRevision),
+          });
+        } catch (error) {
+          if (!(error instanceof SyncError) || error.code !== 'stale') throw error;
+          current(session);
+          // Keep the receipt channel open: an accepted inflight edit may be
+          // older than replay retention, and its immutable retry still succeeds.
+          send(entry, { type: 'resync', reason: 'stale' });
+        }
+      }
     } catch {
-      socket.close(1008, 'Reload to continue.');
+      remove(entry, 1008, 'Reload to continue.');
       return;
     }
+    presenceChanged(session.unitId);
+    function failure(error: unknown, mutationId?: string) {
+      try {
+        current(session);
+      } catch {
+        remove(entry, 1008, 'Access changed. Reload to continue.');
+        return;
+      }
+      send(entry, {
+        type: 'resync',
+        reason: error instanceof SyncError ? error.code : 'unavailable',
+        ...(mutationId && { mutationId }),
+      });
+    }
     socket.on('message', (bytes, binary) => {
-      if (binary || ++entry.pending > MAX_PENDING) {
-        socket.close(1009, 'Too many pending edits.');
+      if (!live.has(entry)) return;
+      if (binary) {
+        remove(entry, 1009, 'Use JSON messages.');
+        return;
+      }
+      let message: Record<string, unknown>;
+      let mutationId: string | undefined;
+      try {
+        try {
+          message = JSON.parse(bytes.toString());
+        } catch {
+          throw new SyncError('malformed');
+        }
+        if (!message || typeof message !== 'object' || Array.isArray(message))
+          throw new SyncError('malformed');
+        if (
+          message.type === 'submit' &&
+          typeof message.mutationId === 'string' &&
+          /^[A-Za-z0-9:_-]{1,128}$/.test(message.mutationId)
+        )
+          mutationId = message.mutationId;
+        try {
+          current(session);
+        } catch (error) {
+          if (message.type === 'submit')
+            auditDeniedEdit(session.identity.userID, session.unitId, 'submitChangeset');
+          throw error;
+        }
+        if (message.type === 'cursor') {
+          const now = Date.now();
+          entry.cursorTokens = Math.min(
+            CURSOR_BURST,
+            entry.cursorTokens + (Math.max(0, now - entry.cursorAt) * CURSORS_PER_SECOND) / 1000,
+          );
+          entry.cursorAt = now;
+          if (
+            Buffer.byteLength(bytes.toString()) > MAX_CURSOR_BYTES ||
+            Object.keys(message).some((key) => !['type', 'selection'].includes(key)) ||
+            !safeGuestRoomPresence(
+              { unitID: session.unitId, memberID: entry.memberId, selection: message.selection },
+              session.unitId,
+              entry.memberId,
+            ) ||
+            entry.cursorTokens < 1
+          ) {
+            remove(entry, 1008, 'Invalid or excessive presence.');
+            return;
+          }
+          entry.cursorTokens--;
+          entry.selection = (message.selection as string) || undefined;
+          presenceChanged(session.unitId);
+          return;
+        }
+      } catch (error) {
+        failure(error, mutationId);
+        return;
+      }
+      if (++entry.pending > MAX_PENDING) {
+        entry.pending--;
+        remove(entry, 1009, 'Too many pending edits.');
         return;
       }
       entry.queue = entry.queue
         .then(async () => {
-          if (socket.readyState !== WebSocket.OPEN) return;
-          let message: Record<string, unknown>;
-          try {
-            message = JSON.parse(bytes.toString());
-          } catch {
-            throw new SyncError('malformed');
-          }
-          if (!message || typeof message !== 'object' || Array.isArray(message))
-            throw new SyncError('malformed');
+          if (!live.has(entry) || socket.readyState !== WebSocket.OPEN) return;
           try {
             current(session);
           } catch (error) {
@@ -350,20 +534,21 @@ export function attachSync(
           );
           // Authorization is checked independently for each recipient immediately before sending.
           for (const recipient of live) {
-            if (recipient.session.unitId !== session.unitId) continue;
+            if (recipient.session.unitId !== session.unitId || !recipient.synchronized) continue;
             try {
               current(recipient.session);
               const edits = result.missing.filter((edit) => edit.revision > recipient.revision);
               if (edits.length && edits[0].revision !== recipient.revision + 1) {
+                recipient.synchronized = false;
                 send(recipient, { type: 'resync', reason: 'stale' });
                 continue;
               }
               for (const edit of edits) {
-                send(recipient, { type: 'edit', ...wireRevision(edit) });
-                recipient.revision = edit.revision;
+                if (send(recipient, { type: 'edit', ...wireRevision(edit) }))
+                  recipient.revision = edit.revision;
               }
             } catch {
-              recipient.socket.close(1008, 'Access changed. Reload to continue.');
+              remove(recipient, 1008, 'Access changed. Reload to continue.');
             }
           }
           current(session);
@@ -374,18 +559,7 @@ export function attachSync(
             ...wireRevision(result.edit),
           });
         })
-        .catch((error: unknown) => {
-          try {
-            current(session);
-          } catch {
-            socket.close(1008, 'Access changed. Reload to continue.');
-            return;
-          }
-          send(entry, {
-            type: 'resync',
-            reason: error instanceof SyncError ? error.code : 'unavailable',
-          });
-        })
+        .catch((error: unknown) => failure(error, mutationId))
         .finally(() => {
           entry.pending--;
         });
@@ -394,6 +568,19 @@ export function attachSync(
   type SubmitParameters = Parameters<CollaborationStore['submitSync']>[0];
   const timer = setInterval(() => {
     void revalidate();
+    const now = Date.now();
+    for (const entry of live) {
+      if (entry.socket.readyState !== WebSocket.OPEN) {
+        remove(entry);
+      } else if (now >= entry.heartbeatAt) {
+        if (!entry.alive) remove(entry, undefined, undefined, true);
+        else {
+          entry.alive = false;
+          entry.heartbeatAt = now + HEARTBEAT_MS;
+          entry.socket.ping();
+        }
+      }
+    }
   }, 500);
   timer.unref();
   return {
@@ -404,18 +591,19 @@ export function attachSync(
         if (ticket.session.rootId === itemId) tickets.delete(key);
       for (const entry of live)
         if (entry.session.rootId === itemId) {
-          live.delete(entry);
-          entry.socket.close(1008, 'Sharing changed. Reload to continue.');
+          remove(entry, 1008, 'Sharing changed. Reload to continue.');
         }
       await revalidate();
     },
     async close() {
+      closing = true;
       clearInterval(timer);
       submission.dispose();
       committed.dispose();
       server.off('upgrade', onUpgrade);
-      for (const entry of live) entry.socket.terminate();
-      await Promise.allSettled([...live].map((entry) => entry.queue));
+      const connections = [...live];
+      for (const entry of connections) remove(entry, undefined, undefined, true);
+      await Promise.allSettled(connections.map((entry) => entry.queue));
       live.clear();
       tickets.clear();
       await new Promise<void>((resolve) => wss.close(() => resolve()));

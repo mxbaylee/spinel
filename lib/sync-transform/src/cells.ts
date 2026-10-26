@@ -314,10 +314,11 @@ function isTailOf(tail: Mutation, next: Mutation | undefined): boolean {
  * one tail, rebuilt from the final cell. Not taken: a tail yielding to any
  * other write, which dropped tails a later write still read as landed.
  */
-export function withoutTails(mutations: Mutation[]): Mutation[] {
-  const result: Mutation[] = [];
+export function atomicMutationGroups(mutations: readonly Mutation[]): Mutation[][] {
+  const result: Mutation[][] = [];
   for (let i = 0; i < mutations.length; i++) {
-    result.push(mutations[i]);
+    const group = [mutations[i]];
+    result.push(group);
     const tail = tailOf(mutations[i]);
     if (!tail) continue;
     if (!isTailOf(tail, mutations[i + 1])) {
@@ -326,10 +327,14 @@ export function withoutTails(mutations: Mutation[]): Mutation[] {
         'An absolute write that names ft or fd Univer drops needs its tail after it.',
       );
     }
+    group.push(mutations[i + 1]);
     i++;
   }
   return result;
 }
+
+export const withoutTails = (mutations: Mutation[]): Mutation[] =>
+  atomicMutationGroups(mutations).map(([mutation]) => mutation);
 
 /** `mutations`, each absolute write followed by its tail where it needs one (see `withoutTails`). */
 export const withTails = (mutations: Mutation[]): Mutation[] =>

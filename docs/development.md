@@ -1,10 +1,9 @@
 # Developing Spinel
 
-For the SPN-057 server protocol integration, `SPINEL_SYNC_SERVER=1` selects the
-new server; it defaults off. Use newly prepared test documents. Each backend
+For the SPN-057/SPN-058 integration, `SPINEL_SYNC_SERVER=1` selects the
+new server, native browser client and ephemeral presence; it defaults off. Use newly prepared test documents. Each backend
 refuses documents already owned by the other, so changing the flag cannot create
-a separate edit history. This is not the browser-client cutover: SPN-058 supplies
-the client, SPN-056 reviews the integrated path, and SPN-059 owns activation and
+a separate edit history. SPN-056 reviews the integrated path, and SPN-059 owns default activation and
 retained-data conversion. See [the protocol and limits](collaboration.md#spinel-server-integration-flag).
 
 Use the Node version in `.nvmrc` (26.12.1). From a fresh checkout:
@@ -89,12 +88,20 @@ npm run backlog:check
 
 `npm test` runs the existing Node backlog tests and Vitest server tests.
 `npm run e2e` builds the frontend, then Playwright starts isolated development and
-production servers on ports 3100 and 3101, then a disposable mobile HTTPS server
-on port 3103, with databases in `test-results/`. Projects run sequentially to
+production servers on ports 3100 and 3101, a disposable mobile HTTPS server
+on port 3103, and flag-on native sync servers on ports 3104 and 3105, with databases in `test-results/`. Projects run sequentially to
 avoid keeping several SDK server processes in memory. CI instead runs each
 project on its own runner, splitting development and production in two with
 `--shard`, and the **Playwright smoke** check passes only when every run and the
 container smoke do.
+
+`sync-development` and `sync-production` run `e2e/sync-client.spec.ts` with
+`SPINEL_SYNC_SERVER=1`. They exercise actual native Sheet/Doc editing, offline
+rebasing, an accepted write with a deliberately lost acknowledgment, visible-model
+verification, drawing insertion and scoped Space guest presence. These projects
+use independent disposable databases; the ordinary projects retain the default
+legacy path. For a focused run, use
+`SPINEL_E2E_PROJECT=sync-production npx playwright test --project=sync-production`.
 
 The container smoke builds the actual Dockerfile, checks the production native
 dependencies, serves the built sign-in page and JavaScript as the image's default

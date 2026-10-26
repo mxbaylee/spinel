@@ -10,6 +10,22 @@ export function parseSheetSelection(value: string) {
   return { sheetId, address };
 }
 
+/** Body insertion offsets only: headers, footers and table rectangles are not guessed. */
+export function parseDocSelection(value: string, bodyLength: number) {
+  const match = /^(\d+):(\d+):\d+:TEXT::-1$/.exec(value);
+  if (!match || !Number.isSafeInteger(bodyLength) || bodyLength < 2) return;
+  const startOffset = Number(match[1]);
+  const endOffset = Number(match[2]);
+  if (
+    !Number.isSafeInteger(startOffset) ||
+    !Number.isSafeInteger(endOffset) ||
+    startOffset > endOffset ||
+    endOffset > bodyLength - 2
+  )
+    return;
+  return { startOffset, endOffset };
+}
+
 /** Header selections use NaN for their unbounded axis in Univer's public range. */
 export function boundedSheetRange(
   range: { startRow: number; endRow: number; startColumn: number; endColumn: number },

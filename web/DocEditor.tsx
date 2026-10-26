@@ -69,6 +69,8 @@ import {
   prepareCollaboration,
   identifyCollaborator,
   watchCollaboration,
+  loadSpinelDocument,
+  disposeSpinelSync,
   ClientEnglish,
   UIEnglish,
 } from './collaboration.ts';
@@ -112,6 +114,9 @@ export function DocEditor({
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
+  const [reloadGeneration, reload] = useState(0);
+  const syncNotice = useRef<string | undefined>(undefined);
+  const lastRoom = useRef('');
   const [status, setStatus] = useState<SaveState>({
     dirty: false,
     message: 'Loading document…',
@@ -119,6 +124,9 @@ export function DocEditor({
   });
   useEffect(() => {
     let disposed = false;
+    const room = `${spaceId ?? ''}/${id}`;
+    if (lastRoom.current !== room) syncNotice.current = undefined;
+    lastRoom.current = room;
     onConnectionState?.('reconnecting');
     const publishConnection = (state: ConnectionState) => {
       if (!disposed) onConnectionState?.(state);
@@ -142,11 +150,17 @@ export function DocEditor({
       if (disposed) return;
       const busy = uploads > 0 || insertions > 0;
       const dirty = busy || state.dirty;
+      if (dirty) syncNotice.current = undefined;
       onDirty(dirty);
       setStatus({
         ...state,
         dirty,
-        message: busy ? 'Inserting image — keep this tab open.' : state.message,
+        failed: state.failed || Boolean(syncNotice.current),
+        message: busy
+          ? 'Inserting image — keep this tab open.'
+          : state.failed
+            ? state.message
+            : (syncNotice.current ?? state.message),
       });
     };
     void (async () => {
@@ -253,13 +267,15 @@ export function DocEditor({
             printEnglish,
           ),
         },
-        collaboration: true,
+        ...(data.syncVersion !== 1 ? { collaboration: true as const } : {}),
         override: [[IImageIoService, { useClass: StoredImages }]],
         plugins: [
           [
             UniverDrawingPlugin,
             {
-              override: [[IImageIoService, null]],
+              override: [
+                [IImageIoService, data.syncVersion === 1 ? { useClass: StoredImages } : null],
+              ],
               allowImageSize: 5 * 1024 * 1024,
             },
           ],
@@ -273,6 +289,7 @@ export function DocEditor({
             [[IImageIoService, { useClass: StoredImages }]],
             true,
             spaceId ? { spaceId, itemId: id } : undefined,
+            data.syncVersion === 1,
           ),
         ],
         presets: [
@@ -300,6 +317,7 @@ export function DocEditor({
       };
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
+        disposeSpinelSync(univer);
         stopTheme();
         univer.dispose();
       };
@@ -322,7 +340,44 @@ export function DocEditor({
       });
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
-      const document = await univerAPI.getCollaboration().loadDocAsync(data.unitId);
+      const readonly = async () => {
+        canEditFormulas.current = false;
+        setFormulaEdit(null);
+        formulas.current?.clear();
+        setEditable(false);
+        // Local UI state only: changing the shared document's permission rules
+        // would also make still-authorized collaborators read-only.
+        const permissions = univer.__getInjector().get(IPermissionService);
+        setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Edit, false);
+        setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Copy, true);
+      };
+      if (data.syncVersion === 1)
+        await loadSpinelDocument({
+          univer,
+          unitId: data.unitId,
+          itemId: id,
+          spaceId,
+          access: data.access,
+          kind: 'doc',
+          signal: loading.signal,
+          isCurrent: () => !disposed,
+          initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
+          reload: () => {
+            if (disposed) return;
+            syncNotice.current =
+              'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
+            publish({
+              dirty: false,
+              failed: true,
+              message: 'Reloading after a synchronization problem…',
+            });
+            reload((generation) => generation + 1);
+          },
+        });
+      const document =
+        data.syncVersion === 1
+          ? univerAPI.getActiveDocument()
+          : await univerAPI.getCollaboration().loadDocAsync(data.unitId);
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
       // A document-type plugin can initialize after the global Rendered stage.
@@ -359,17 +414,6 @@ export function DocEditor({
       formulaInterval = setInterval(() => {
         if (globalThis.document.visibilityState === 'visible') void formulas.current?.refresh();
       }, 5000);
-      const readonly = async () => {
-        canEditFormulas.current = false;
-        setFormulaEdit(null);
-        formulas.current?.clear();
-        setEditable(false);
-        // Local UI state only: changing the shared document's permission rules
-        // would also make still-authorized collaborators read-only.
-        const permissions = univer.__getInjector().get(IPermissionService);
-        setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Edit, false);
-        setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Copy, true);
-      };
       if (data.access === 'viewer') await readonly();
       else {
         canEditFormulas.current = true;
@@ -391,11 +435,13 @@ export function DocEditor({
         readonly,
         publishConnection,
         spaceId,
-        docPendingChanges(
-          data.unitId,
-          univer.__getInjector().get(DocStateEmitService),
-          univer.__getInjector().get(DocStateChangeManagerService),
-        ),
+        data.syncVersion === 1
+          ? undefined
+          : docPendingChanges(
+              data.unitId,
+              univer.__getInjector().get(DocStateEmitService),
+              univer.__getInjector().get(DocStateChangeManagerService),
+            ),
       );
       controller.current = save;
     })().catch((error) => {
@@ -429,7 +475,7 @@ export function DocEditor({
       onConnectionState?.(null);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
-  }, [id, spaceId]);
+  }, [id, spaceId, reloadGeneration]);
   return (
     <section className="sheet-editor" aria-label="Doc document">
       <SaveStatus

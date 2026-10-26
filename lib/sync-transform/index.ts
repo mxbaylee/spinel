@@ -15,3 +15,11 @@ export type {
   MalformedCheck,
 } from './src/types.ts';
 export type { BaseCells } from './src/state.ts';
+export { atomicMutationGroups } from './src/cells.ts';
+export {
+  canonical,
+  inlineSnapshotCell,
+  normalizedCell,
+  normalizedDocBody,
+  cellsAfter,
+} from './src/native-values.ts';

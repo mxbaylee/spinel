@@ -58,6 +58,7 @@
     "@spinel/doc-formulas": "*",
     "@spinel/presence-ui": "^0.0.0",
     "@spinel/print": "*",
+    "@spinel/sync-client": "*",
     "@spinel/sync-server": "*",
     "@univerjs-pro/collaboration": "1.1.0",
     "@univerjs-pro/collaboration-client": "1.1.0",

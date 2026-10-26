@@ -31,6 +31,9 @@ import { createEditorConnection, reduceEditorConnection } from './connectionStat
 import type { ConnectionState, RoomConnectionStatus } from './connectionState.ts';
 import type { DocPendingChanges } from './docPending.ts';
 import { revokeGuestView } from './guestRevocation.ts';
+import { getSpinelSync } from './spinelSync.ts';
+
+export { loadSpinelDocument, disposeSpinelSync } from './spinelSync.ts';
 
 export { ClientEnglish, UIEnglish };
 export function collaborationPlugins(
@@ -38,7 +41,11 @@ export function collaborationPlugins(
   override?: DependencyOverride,
   keepDocumentUI = false,
   space?: { spaceId: string; itemId: string },
+  spinel = false,
 ): NonNullable<Parameters<typeof createUniver>[0]['plugins']> {
+  // The retained print plugins still use the license service until SPN-075.
+  // The disabled replacement path registers no Pro collaboration plugin.
+  if (spinel) return [UniverLicensePlugin];
   const guest = guestItemId();
   const base = location.origin + documentProtocolPath(space);
   // Public URL extension point: scope is checked before the server accepts a socket.
@@ -95,7 +102,12 @@ export async function prepareCollaboration(
   if (isCurrent() && [401, 403, 404].includes(response.status)) revokeGuestView();
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Could not open live editing.');
-  return data as { unitId: string; access: ItemAccess; user: { id: string; name: string } };
+  return data as {
+    unitId: string;
+    access: ItemAccess;
+    user: { id: string; name: string };
+    syncVersion?: 1;
+  };
 }
 export function identifyCollaborator(univer: Univer, user: { id: string; name: string }) {
   univer
@@ -115,6 +127,8 @@ export function watchCollaboration(
   spaceId?: string,
   native?: DocPendingChanges,
 ) {
+  const spinel = getSpinelSync(univer);
+  if (spinel) return spinel.watch({ publish, readonly, connection: publishConnection });
   const collaboration = api.getCollaboration();
   let denied = false;
   // Until synchronization and the recovery-cache barrier both complete, the

@@ -21,6 +21,13 @@ vi.mock('@univerjs/core', () => ({
   ICommandService: Symbol('commands'),
 }));
 vi.mock('../../web/CollaborationSessions.ts', () => ({ CollaborationSessions: class {} }));
+// The replacement socket lifecycle has its own tests; these fixtures exercise
+// the unchanged legacy watcher without constructing either native runtime.
+vi.mock('../../web/spinelSync.ts', () => ({
+  getSpinelSync: () => undefined,
+  loadSpinelDocument: vi.fn(),
+  disposeSpinelSync: vi.fn(),
+}));
 vi.mock('@univerjs-pro/license', () => ({ UniverLicensePlugin: class {} }));
 vi.mock('@univerjs-pro/collaboration', () => ({ UniverCollaborationPlugin: class {} }));
 vi.mock('@univerjs-pro/collaboration-client', () => ({

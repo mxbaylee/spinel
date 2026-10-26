@@ -17,9 +17,10 @@ inactive until the server/client work and integrated review pass.
 
 SPN-057 supplies `@spinel/sync-server` and the application SQLite adapter behind
 `SPINEL_SYNC_SERVER=1` (`createApp({syncServer:true})` in tests). The flag defaults
-off. It exposes a versioned JSON protocol for SPN-058; it does not activate a
-browser client, presence, retained-data conversion or Pro removal. SPN-056's
-integrated review and SPN-059 still gate activation.
+off. SPN-058 connects the native browser client and ephemeral presence to that
+same flag: preparation returns `syncVersion: 1` only for this backend. There is
+no separate frontend flag. Retained-data conversion and Pro removal remain
+SPN-059; SPN-056's integrated review still gates activation by default.
 
 With the flag enabled, newly prepared native documents use one durable revision
 log. An incoming edit is transformed past each accepted edit using the cells at
@@ -56,14 +57,19 @@ The protocol uses these route prefixes followed by `/ticket`, `/snapshot` or
 
 `POST /ticket` requires the configured Origin and returns a single-use, 30-second
 ticket. The socket URL supplies that ticket as `ticket`; upgrade requires the same
-cookie, scope and privacy epoch. `GET /snapshot` and the initial socket frame return
-the native snapshot and current revision. Socket submissions carry
+cookie, scope and privacy epoch. `GET /snapshot` returns the native snapshot and
+current revision. A socket without `afterRevision` retains its initial snapshot
+frame. The browser always supplies `afterRevision=<confirmed-revision>`, including
+on its first connection, and receives a versioned `resume` containing every
+ordered revision since that base. Replay and subscription are synchronous, so
+edits cannot fall between loading the snapshot and joining the room. Socket submissions carry
 `{type:'submit',mutationId,baseRevision,mutations}`. The server sends ordered `edit`
 frames and a durable `ack`; the sender must account for its own revision appearing
 in both. Retries return the original ack without rebroadcasting the edit. Frames
 never contain internal before-images, actor identities or payload fingerprints.
-Refusal sends `resync` with a fixed reason; SPN-058 owns pending-edit disposal and
-the user-facing reload behavior.
+Refusal sends `resync` with a fixed reason and a validated `mutationId` only when
+it answers that submission. An expired replay window leaves the socket open for
+an immutable retry to recover its original durable receipt before resync.
 
 A client with no pending edits sends `{type:'verify',revision,hash}` for its latest
 applied revision, using the shared touched-footprint hash contract. A mismatch
@@ -72,6 +78,70 @@ have strict allowlists; no document values or diagnostic replay shapes are
 collected. Guest activity is excluded from the diagnostics collector. See the
 [package contract](../lib/sync-server/README.md) and
 [implementation decisions and evidence](implementation/SPN-057.md).
+
+### Native client and save state
+
+`@spinel/sync-client` owns an acknowledged native replica, one immutable sent
+envelope, and an unsent optimistic buffer. It rebases against the exact confirmed
+cells, using confirmed-plus-old-inflight cells for the buffer. Ordered broadcasts
+can include the sender's edit before its acknowledgment; the receipt identifies
+that revision without applying the optimistic edit twice. A reconnect retries the
+same mutation ID, original base and original bytes. Opening a socket does not
+clear pending state: the ordered resume must complete, and each pending write
+needs its durable acknowledgment. The optional checkpoint persistence hook is
+the boundary for SPN-053; this ticket does not provide an offline disk outbox.
+
+The public native collaboration mutation event is the only outgoing capture
+source. Capture ignores `onlyLocal`, `fromCollab` and `fromChangeset`, keeps
+`syncOnly`, and excludes only the two exact renderer-control refresh IDs. Every
+other mutation receives strict admission, including unknown operation-shaped IDs.
+Sender normalization preserves triggers, inlines styles, records worksheet order,
+marks inserted paragraph IDs and supplies shift context. Atomic transform groups,
+cell claims and tails stay together under the wire bounds. Remote application
+copies params and sets `onlyLocal` and `fromCollab`, preventing echo while retaining
+native formula recalculation. Native undo services remain enabled; the legacy
+Pro collaboration preset is not used to create this client. A nonempty remote
+change clears local undo/redo history because Univer's local inverse mutations
+retain old positions. Normal local undo remains available until another editor's
+change arrives; collaborative undo-history rebasing is not implemented. This
+prevents an old inverse from changing the wrong cell or text offset.
+
+An edit refusal freezes editing and waits for the answer to any already-sent
+request before discarding rejected/later pending edits. Reloading the authoritative
+snapshot displays a persistent explanation that those edits were discarded; it
+does not report them saved or offer to retry a discarded queue. Pending-free
+verification hashes the visible native model and fences obsolete async hash
+results. Access changes, restoration, page switches and disposal fence callbacks,
+timers, cursor state and sockets belonging to the previous editor.
+
+See the [client contract](../lib/sync-client/README.md) and
+[SPN-058 decisions](implementation/SPN-058.md), including the distinction between
+actual Doc drawing UI behavior and the SDK's registered refresh handler.
+
+### Native ephemeral presence
+
+Each live connection has its own generated identity, including separate tabs for
+the same account. The server supplies saved profile names and catalog avatars;
+clients can submit only a cursor selection. An active anonymous link anonymizes
+the entire root's rooms for all recipients: accounts appear as “Collaborator”,
+guests as “Guest”, and avatars are empty. These labels are independent of which
+child page of a Space is open.
+
+Cursor frames use `{type:'cursor',selection}`, the existing Sheet/Doc selection
+grammar, at most 160 characters and 512 wire bytes, and a 10/second token bucket
+with burst 20. The UI coalesces updates at 150 ms. Invalid or flooded cursors close
+that connection without resyncing document edits. Presence is never persisted or
+included in diagnostics. Current sender, member and recipient access is checked
+before publication; the 500 ms access scan, close/error cleanup and 15-second
+heartbeat remove stale sessions. The 64-connection room cap includes sockets
+still closing.
+
+The shared header, Sheet canvas and new Doc canvas use saved profile colors and
+icon/name labels. Doc remote ranges have independent public canvas objects and
+never replace local selection. Following a supported body-text range moves the
+local selection and focuses the editor only after the user chooses that action.
+Unsupported cursor encodings remain in the people list without a jump action.
+Disconnected and disposed editors clear membership and remote drawings.
 
 The following sections describe the default legacy transport and shared access,
 lifecycle and editor behavior until SPN-059 performs the cutover.
@@ -178,7 +248,7 @@ wait is cancelled on navigation and fails visibly after 30 seconds.
 Spinel renders Sheet presence with matching profile colours and icon/name labels;
 header badges reveal the person's name on hover/focus without shifting layout.
 Following a Sheet range reveals it without replacing the local selection. Docs
-retain native canvas presence; supported body-text selections can still be selected
+retain native canvas presence on the default legacy path; supported body-text selections can still be selected
 from the header, while unsupported encodings remain presence without a jump.
 See [profile behaviour](design/account.md#saved-profile-behaviour-spn-036) and
 [decision #127](implementation/SPN-036.md#legacy-decision-127-profiles-and-public-sheet-following).
@@ -221,7 +291,7 @@ re-patching. Never bypass the guard just to make an install pass.
 
 ## Verification completed
 
-`npm run e2e` builds once and runs development and production sequentially, with
+`npm run e2e` builds once and runs the configured projects sequentially, with
 only the matching app server alive and one browser worker. Development retains
 Vite modules and HMR but omits Node’s server-file watcher: fixed-source tests do
 not exercise autorestart, and watching adds import-tracking IPC, including worker

@@ -76,6 +76,11 @@ export interface SubmitResult {
   /** Revisions after the caller's base through this receipt, in durable order. */
   missing: SyncRevision[];
 }
+export interface ReplayResult {
+  revision: number;
+  /** Every retained edit after the requested revision, in durable order. */
+  edits: SyncRevision[];
+}
 export interface SyncOptions<Context> {
   authorize(unitId: string, context: Context, edit: boolean): void;
   /** Async history preparation and recipient eviction run before the final synchronous boundary. */

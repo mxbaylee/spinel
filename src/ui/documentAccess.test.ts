@@ -1,5 +1,10 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { documentPath, documentProtocolPath, guestItemId } from '../../web/documentAccess.ts';
+import {
+  documentPath,
+  documentProtocolPath,
+  documentSyncPath,
+  guestItemId,
+} from '../../web/documentAccess.ts';
 import { readSpaceLocation, spaceHref } from '../../web/spaceNavigation.ts';
 import { spacesRequest } from '../../web/spacesApi.ts';
 
@@ -18,6 +23,8 @@ test.each(['/spaces', '/review/spaces', '/'])(
       `/space-api/${root}/items/${child}/universer-api`,
     );
     expect(documentPath(child)).toBe(`/api/items/${child}`);
+    expect(documentSyncPath(child)).toBe(`/sync-api/items/${child}`);
+    expect(documentSyncPath(child, root)).toBe(`/sync-api/spaces/${root}/items/${child}`);
     expect(documentProtocolPath()).toBe('/universer-api');
   },
 );
@@ -34,6 +41,8 @@ test.each([`/share/${root}`, `/share/${root}/`, `/share/${root.toUpperCase()}/`]
     expect(readSpaceLocation(location)).toMatchObject({ kind: 'space', spaceId: root });
     expect(documentPath(root)).toBe(`/api/guest/${root}`);
     expect(documentPath(child, root)).toBe(`/api/guest-spaces/${root}/items/${child}`);
+    expect(documentSyncPath(root)).toBe(`/sync-api/guest/${root}`);
+    expect(documentSyncPath(child, root)).toBe(`/sync-api/guest-spaces/${root}/items/${child}`);
     expect(documentProtocolPath({ spaceId: root, itemId: child })).toBe(
       `/guest-space-api/${root}/items/${child}/universer-api`,
     );
@@ -41,6 +50,8 @@ test.each([`/share/${root}`, `/share/${root}/`, `/share/${root.toUpperCase()}/`]
     expect(spaceHref(root, { kind: 'page', id: child })).toBe(`/share/${root}?item=${child}`);
     expect(() => documentPath(other)).toThrow('not available');
     expect(() => documentPath(child, other)).toThrow('not available');
+    expect(() => documentSyncPath(other)).toThrow('not available');
+    expect(() => documentSyncPath(child, other)).toThrow('not available');
     expect(() => documentProtocolPath({ spaceId: other, itemId: child })).toThrow('not available');
     expect(() => spaceHref(other)).toThrow('not available');
     await expect(spacesRequest('/' + other)).rejects.toThrow('not available');

@@ -36,6 +36,8 @@ import {
   prepareCollaboration,
   identifyCollaborator,
   watchCollaboration,
+  loadSpinelDocument,
+  disposeSpinelSync,
   ClientEnglish,
   UIEnglish,
 } from './collaboration.ts';
@@ -68,6 +70,9 @@ export function SheetEditor({
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
+  const [reloadGeneration, reload] = useState(0);
+  const syncNotice = useRef<string | undefined>(undefined);
+  const lastRoom = useRef('');
   const [status, setStatus] = useState<SaveState>({
     dirty: false,
     message: 'Loading spreadsheet…',
@@ -75,6 +80,10 @@ export function SheetEditor({
   });
   useEffect(() => {
     let disposed = false;
+    const loading = new AbortController();
+    const room = `${spaceId ?? ''}/${id}`;
+    if (lastRoom.current !== room) syncNotice.current = undefined;
+    lastRoom.current = room;
     onConnectionState?.('reconnecting');
     const publishConnection = (state: ConnectionState) => {
       if (!disposed) onConnectionState?.(state);
@@ -89,13 +98,17 @@ export function SheetEditor({
       lastState = state;
       if (disposed) return;
       const dirty = editing || state.dirty;
+      if (dirty) syncNotice.current = undefined;
       onDirty(dirty);
       setStatus({
         ...state,
         dirty,
+        failed: state.failed || Boolean(syncNotice.current),
         message: editing
           ? `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
-          : state.message,
+          : state.failed
+            ? state.message
+            : (syncNotice.current ?? state.message),
       });
     };
     void (async () => {
@@ -114,24 +127,31 @@ export function SheetEditor({
             sheetDrawingEnglish,
           ),
         },
-        collaboration: true,
+        ...(data.syncVersion !== 1 ? { collaboration: true as const } : {}),
         plugins: [
           ...collaborationPlugins(
             data.unitId,
             [[...sheetImageOverride]],
             false,
             spaceId ? { spaceId, itemId: id } : undefined,
+            data.syncVersion === 1,
           ),
           mobile ? UniverSheetsPrintMobileUIPlugin : UniverSheetsPrintPlugin,
         ],
-        presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
+        presets: [
+          sheetPreset(container.current!, mobile),
+          sheetImages(mobile, data.syncVersion !== 1),
+        ],
       });
       print.current = async () => {
         await univerAPI.executeCommand(SheetPrintOpenOperation.id);
       };
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
-      disposeEditor = () => univer.dispose();
+      disposeEditor = () => {
+        disposeSpinelSync(univer);
+        univer.dispose();
+      };
       registerGuestEditor?.((retain) => {
         try {
           return retain ? guestPendingBuffer(univer) : null;
@@ -145,7 +165,46 @@ export function SheetEditor({
       });
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
-      const workbook = await univerAPI.getCollaboration().loadSheetAsync(data.unitId);
+      const readOnly = async () => {
+        // This tab's presentation follows its grant; never change shared permissions.
+        const permissions = univer.__getInjector().get(IPermissionService);
+        for (const Point of getAllWorkbookPermissionPoint()) {
+          const point = new Point(data.unitId);
+          if (!permissions.getPermissionPoint(point.id)) permissions.addPermissionPoint(point);
+          permissions.updatePermissionPoint(
+            point.id,
+            [UnitAction.View, UnitAction.Copy, UnitAction.Print].includes(point.subType),
+          );
+        }
+        readOnlySheetDrawings(univer, data.unitId);
+      };
+      if (data.syncVersion === 1)
+        await loadSpinelDocument({
+          univer,
+          unitId: data.unitId,
+          itemId: id,
+          spaceId,
+          access: data.access,
+          kind: 'sheet',
+          signal: loading.signal,
+          isCurrent: () => !disposed,
+          initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
+          reload: () => {
+            if (disposed) return;
+            syncNotice.current =
+              'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
+            publish({
+              dirty: false,
+              failed: true,
+              message: 'Reloading after a synchronization problem…',
+            });
+            reload((generation) => generation + 1);
+          },
+        });
+      const workbook =
+        data.syncVersion === 1
+          ? univerAPI.getActiveWorkbook()
+          : await univerAPI.getCollaboration().loadSheetAsync(data.unitId);
       if (!workbook) throw new Error('Could not load this spreadsheet.');
       await editorReady(univerAPI);
       if (disposed) return;
@@ -198,23 +257,11 @@ export function SheetEditor({
         univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
       });
       disposeEditor = () => {
+        disposeSpinelSync(univer);
         stopTheme();
         interceptor.dispose();
         stopEditingTheme();
         univer.dispose();
-      };
-      const readOnly = async () => {
-        // This tab's presentation follows its grant; never change shared permissions.
-        const permissions = univer.__getInjector().get(IPermissionService);
-        for (const Point of getAllWorkbookPermissionPoint()) {
-          const point = new Point(data.unitId);
-          if (!permissions.getPermissionPoint(point.id)) permissions.addPermissionPoint(point);
-          permissions.updatePermissionPoint(
-            point.id,
-            [UnitAction.View, UnitAction.Copy, UnitAction.Print].includes(point.subType),
-          );
-        }
-        readOnlySheetDrawings(univer, data.unitId);
       };
       if (data.access === 'viewer') await readOnly();
       save = watchCollaboration(
@@ -258,6 +305,7 @@ export function SheetEditor({
     });
     return () => {
       disposed = true;
+      loading.abort();
       registerGuestEditor?.(null);
       stopPresence?.();
       save?.dispose();
@@ -269,7 +317,7 @@ export function SheetEditor({
       onConnectionState?.(null);
     };
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
-  }, [id, spaceId]);
+  }, [id, spaceId, reloadGeneration]);
   return (
     <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
       <SaveStatus
