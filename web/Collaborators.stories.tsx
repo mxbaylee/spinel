@@ -101,8 +101,11 @@ export const GuestLabelsOpen: Story = {
 export const LongNamesOpen: Story = {
   args: {
     people: [
-      person('long', 'Alexandria Nakamura-Fernandez — a long collaborator name', () => {}),
-      person('self', 'Sam Rivera'),
+      {
+        ...person('long', 'Alexandria Nakamura-Fernandez — a long collaborator name', () => {}),
+        icon: 'lucide:music',
+      },
+      { ...person('self', 'Sam Rivera'), icon: 'lucide:plant-pot' },
     ],
   },
   play: async ({ canvasElement }) => {
