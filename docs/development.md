@@ -1,6 +1,6 @@
 # Developing Spinel
 
-Use the Node version in `.nvmrc` (24.19.0). From a fresh checkout:
+Use the Node version in `.nvmrc` (26.12.1). From a fresh checkout:
 
 ```sh
 nvm use
@@ -86,7 +86,15 @@ production servers on ports 3100 and 3101, then a disposable mobile HTTPS server
 on port 3103, with databases in `test-results/`. Projects run sequentially to
 avoid keeping several SDK server processes in memory. CI instead runs each
 project on its own runner, splitting development and production in two with
-`--shard`, and the **Playwright smoke** check passes only when every run does.
+`--shard`, and the **Playwright smoke** check passes only when every run and the
+container smoke do.
+
+The container smoke builds the actual Dockerfile, checks the production native
+dependencies, serves the built sign-in page and JavaScript as the image's default
+non-root user, and verifies database integrity and setup-record persistence after
+container recreation. It uses disposable data and the deployment's resource and
+filesystem constraints; it does not deploy or replace the host preflight.
+
 To repeat one run locally, build first, then use
 `SPINEL_E2E_PROJECT=production npx playwright test --project=production --shard=1/2`.
 The HTTPS fixture uses a
@@ -111,6 +119,12 @@ are grouped separately for version and security updates. The updater changes
 existing dependencies; it does not authorize adding Pro packages. Keep Docker
 image digests and Actions commit SHAs immutable, with review of each replacement.
 `SPINEL_IMAGE` remains the Operator's selected built artifact.
+
+The [Node 26 update](implementation/dependency-node-26.md) keeps `.nvmrc`, both
+Docker stages and the application engine declaration aligned. CI runs the actual
+production image alongside the application suites; a Docker-only pin would not
+prove the new runtime through host-based browser tests. Node types follow in
+their own dependency PR.
 
 The literal `⬆️ Bump ` title prefix includes its trailing space. Dependency PRs
 use the normal review and applicable CI gates. This configuration change also
