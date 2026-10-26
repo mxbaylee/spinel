@@ -29,6 +29,8 @@ import { seededWorkbook } from './generate.ts';
 export class Replica {
   readonly univer = new Univer({ locale: LocaleType.EN_US });
   private readonly commands: ICommandService;
+  /** Every delivery, including an empty peer revision, invalidates native history. */
+  applicationEpoch = 0;
 
   constructor(document: { workbook?: IWorkbookData; doc?: IDocumentData }) {
     // The rich-text handler looks up the render manager; nothing is rendered.
@@ -55,6 +57,7 @@ export class Replica {
 
   /** Applies mutations as a remote change. Handlers may rewrite params, so each gets a copy. */
   apply(mutations: Mutation[]) {
+    this.applicationEpoch++;
     for (const mutation of mutations) {
       let ok: boolean;
       try {

@@ -1,4 +1,5 @@
 import { SaveStatus } from './SaveStatus.tsx';
+import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import { readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages, sheetImageOverride } from './sheetImages.ts';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
@@ -111,6 +112,7 @@ export function SheetEditor({
       if (disposed) return;
       const nativePermissions =
         data.syncVersion === 1 ? nativeSyncPermissions(data.unitId, data.access) : undefined;
+      recordNativeMutationInventory();
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
         darkMode: getTheme() === 'dark',

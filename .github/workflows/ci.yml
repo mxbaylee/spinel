@@ -164,20 +164,21 @@ jobs:
         if: needs.changes.outputs.docs_only == 'true'
         run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
 
-  # Separate runners retain maxWorkers: 1 and every seed/assertion. Dense cells,
-  # other cells plus mixed fuzz, and the complement balance the measured work.
+  # Separate runners retain maxWorkers: 1 and every seed/assertion. The mixed
+  # native-history/intent matrix has its own runner so it does not consume the
+  # ordinary cell suite's time budget (SPN-056 integrated verification).
   lib-test-run:
     name: Lib tests (${{ matrix.suite }})
     needs: changes
     if: needs.changes.outputs.lib_run == 'true'
     runs-on: ubuntu-latest
-    # Existing test timings project roughly 5–7 minutes per partition; leave
-    # headroom for the substantial speed variation between hosted runners.
+    # Ordinary cells measured 255s; the stronger mixed matrix projects over
+    # eight minutes locally. Keep the same hosted cap for every full partition.
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        suite: [dense-cells, cells-and-fuzz, remaining]
+        suite: [dense-cells, cells, mixed-fuzz, remaining]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -196,8 +197,11 @@ jobs:
             dense-cells)
               npx vitest run lib/sync-transform/tests/cells-dense.test.ts
               ;;
-            cells-and-fuzz)
-              npx vitest run lib/sync-transform/tests/cells.test.ts lib/sync-transform/tests/fuzz.test.ts
+            cells)
+              npx vitest run lib/sync-transform/tests/cells.test.ts
+              ;;
+            mixed-fuzz)
+              npx vitest run lib/sync-transform/tests/fuzz.test.ts
               ;;
             remaining)
               # Exact exclusions keep future lib test files in this partition.

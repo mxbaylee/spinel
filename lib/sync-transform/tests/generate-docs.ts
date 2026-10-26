@@ -30,6 +30,7 @@ import type { Mutation } from '../index.ts';
 import type { Replica } from './harness.ts';
 import type { Generate } from './simulate.ts';
 import { pick } from './generate.ts';
+import { textMarker } from './content-intent.ts';
 
 const unitId = 'doc';
 
@@ -68,9 +69,10 @@ const range = (startOffset: number, endOffset: number): ITextRange => ({
 });
 
 /** As InsertTextCommand: retain to the caret, insert a body with optional runs and a paragraph. */
-function insertText(body: IDocumentBody, next: () => number): unknown {
+function insertText(body: IDocumentBody, next: () => number, marked = false): unknown {
   const at = next() % (body.dataStream.length - 1);
-  const word = pick(next, ['x', 'yz', 'abc']);
+  const length = pick(next, ['x', 'yz', 'abc']);
+  const word = marked ? Array.from({ length: length.length }, () => textMarker()).join('') : length;
   const paragraph = next() % 4 === 0;
   const insert: IDocumentBody = {
     // Univer gives an inserted paragraph, and the one it splits, fresh random
@@ -257,7 +259,12 @@ export const docFormulaInsert = (
 const cellOf = (next: () => number) => `A${1 + (next() % 9)}`;
 
 /** Random rich-text edits, links, formulas and renames, built the way Univer's doc commands build them. */
-export const docEdit: Generate = (replica, next) => {
+export const docEdit: Generate = (replica, next) => generateDocEdit(replica, next);
+
+/** The mixed fuzz's ordinary text has identities independent of its transformed positions. */
+export const markedDocEdit: Generate = (replica, next) => generateDocEdit(replica, next, true);
+
+function generateDocEdit(replica: Replica, next: () => number, marked = false) {
   const doc = model(replica);
   const body = doc.getBody()!;
   // The final "\r\n" (paragraph and section break) always stays.
@@ -266,7 +273,7 @@ export const docEdit: Generate = (replica, next) => {
   if (kind === 0) {
     return [{ id: docIds.rename, params: { unitId, name: `Doc ${next() % 100}` } }];
   }
-  if (kind <= 3) return edit(insertText(body, next));
+  if (kind <= 3) return edit(insertText(body, next, marked));
   const blocks = body.customBlocks ?? [];
   if (kind === 7) return edit(insertDrawing(doc, next() % (content + 1), next));
   if (kind === 8 && blocks.length > 0) {
@@ -304,7 +311,7 @@ export const docEdit: Generate = (replica, next) => {
     return actions ? edit(actions) : null;
   }
   return edit(kind <= 5 ? deleteRange(doc, body, start, end) : styleRange(start, end, next));
-};
+}
 
 /** A text-run style key's falsy value, where its type has one, and set values. */
 interface Values {

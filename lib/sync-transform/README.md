@@ -307,6 +307,67 @@ Univer also registers `sheet.mutation.empty`, which no command sends, and
 `sheet.mutation.mark-dirty-filter-change`, from filters, which Spinel does not
 load. Both are rejected like any other unsupported id.
 
+### Loaded preset mutation exclusions
+
+The actual Sheet, mobile Sheet and Doc editors are inventoried in browser CI by
+observing public command registration before their normal presets start. Every
+mutation-typed registration, including IDs named `.operation.`, must either be
+in `supportedMutationIds` or explicitly listed here. The inventory is evidence
+only and never changes outgoing admission. An unexpected ID fails the test.
+
+These native cache/service entries are local or worker coordination. They have
+no transform and are refused if submitted as document edits:
+
+- `formula.mutation.register-function`
+- `formula.mutation.remove-feature-calculation`
+- `formula.mutation.remove-other-formula`
+- `formula.mutation.remove-super-table`
+- `formula.mutation.set-array-formula-data`
+- `formula.mutation.set-cell-formula-dependency-calculation`
+- `formula.mutation.set-cell-formula-dependency-calculation-result`
+- `formula.mutation.set-feature-calculation`
+- `formula.mutation.set-formula-calculation-notification`
+- `formula.mutation.set-formula-calculation-result`
+- `formula.mutation.set-formula-calculation-start`
+- `formula.mutation.set-formula-calculation-stop`
+- `formula.mutation.set-formula-data`
+- `formula.mutation.set-formula-dependency-calculation`
+- `formula.mutation.set-formula-dependency-calculation-result`
+- `formula.mutation.set-formula-string-batch-calculation`
+- `formula.mutation.set-formula-string-batch-calculation-result`
+- `formula.mutation.set-image-formula-data`
+- `formula.mutation.set-other-formula`
+- `formula.mutation.set-query-formula-dependency`
+- `formula.mutation.set-query-formula-dependency-all`
+- `formula.mutation.set-query-formula-dependency-all-result`
+- `formula.mutation.set-query-formula-dependency-result`
+- `formula.mutation.set-super-table`
+- `formula.mutation.set-super-table-option`
+- `formula.mutation.set-trigger-formula-calculation-start`
+- `sheet.mutation.data-validation-formula-mark-dirty`
+
+The preset packages also contain unsupported document features. Registering a
+handler does not enable it for collaboration. Range/worksheet protection and
+permission changes, range themes/sort, large-sheet copy completion, calculation
+settings and right-to-left worksheets remain refused. SPN-059 owns their final
+menu audit before activation:
+
+- `doc.mutation.set-permission-rule`, `doc.mutation.set-permission-rules`
+- `sheet.mutation.add-range-protection`, `sheet.mutation.set-range-protection`,
+  `sheet.mutation.delete-range-protection`
+- `sheet.mutation.add-worksheet-protection`, `sheet.mutation.set-worksheet-protection`,
+  `sheet.mutation.delete-worksheet-protection`, `sheet.mutation.set-worksheet-permission-points`
+- `sheet.mutation.add-range-theme`, `sheet.mutation.set-range-theme`, `sheet.mutation.remove-range-theme`
+- `sheet.mutation.register-worksheet-range-theme-style`, `sheet.mutation.unregister-worksheet-range-theme-style`,
+  `sheet.mutation.set-worksheet-range-theme-style`, `sheet.mutation.remove-worksheet-range-theme-style`
+- `sheet.mutation.reorder-range`, `sheet.mutation.copy-worksheet-end`
+- `sheet.mutation.set-workbook-calculation-settings`, `sheet.mutation.set-worksheet-right-to-left`
+
+Finally, `sheet.operation.clear-drawing-transformer` and
+`doc.operation.clear-drawing-transformer` are native mutation-typed renderer
+refreshes. Exact-ID sender exclusions keep these two local; they are still
+unsupported if received over the wire. Actual drawing writes remain supported.
+
 ## Known limits
 
 Invariants over the whole workbook cannot be kept by transforming two edits
@@ -338,10 +399,17 @@ Also:
   commands send their own SetFrozen from the sender's layout, and two of those
   conflict like any setting. Both screens agree; the frozen line may sit one
   row off from where the sender meant it.
-- Univer 1.1.0's own row and column commands can leave a sheet drawing with a
-  zero or negative size, and its resize listener then throws on the next row
-  or column change. The size comes from the sender's command, not a transform,
-  so the fuzz skips those edits.
+- Univer 1.1.0 can retain a sheet drawing with zero or negative size after
+  structural work. Spinel's pinned open-source drawing patch preserves that
+  finite geometry through native resize and queued refresh, so following edits
+  continue. It does not clamp the image, remove its identity, or allow invalid
+  new placement requests. The mixed native-command fuzz no longer skips these
+  states; focused native queue/reopen and ES/CJS patch controls cover the repair.
+  Reopen assertions verify the saved model. The browser's separate activation
+  renderer catches invalid-extent preparation per image and omits its rendered
+  object/selection while leaving the model intact. A collapsed image may thus
+  be invisible and unselectable after a tab switch or reopen; automatic visual
+  recovery is not implemented. Other drawings continue through preparation.
 - Locked SDT blocks and footnote edits in docs depend on document state and are
   not fuzz-tested. Clear contents, clear formats, clear all and pasting a style
   act on the selection or clipboard, so the fuzz builds their mutations by hand
@@ -350,10 +418,15 @@ Also:
   painter does), bullets, paragraph styles,
   hyperlinks (added and removed with Univer's own link builders), formulas
   (inserted at the caret or over a selection, and edited in place, as
-  SPN-033's adapter does), doc drawings and the doc's name. It checks only that
-  clients converge: typing inside a formula or deleting part of it breaks the
-  formula on both screens, as it would for one person alone. Headers, footers and notes travel in the same ot-json1 op
-  and transform the same way, but no test edits them.
+  SPN-033's adapter does), doc drawings and the doc's name. Alongside convergence,
+  the mixed fuzz independently checks ordinary text identities, deletion intent,
+  surviving order and the sender's insertion anchors. Entity/style semantics
+  retain their dedicated regressions, including concurrent native hyperlink and
+  Formula copy through client/server queues and raw snapshot reopen. Typing
+  inside a formula or deleting part of it can still break the formula on both
+  screens, as it would for one person alone. Headers, footers and notes travel in
+  the same ot-json1 op, but no test edits them; this is not a verification claim
+  for those regions.
 - A name set or removal is refused against any concurrent edit that could make
   Univer rewrite names, wherever the name points, so a rename on one sheet and
   a row insert on another are refused though they would merge. Two people

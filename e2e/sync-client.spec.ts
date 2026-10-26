@@ -14,6 +14,7 @@ import {
   recordNativeSnapshots,
   expectNativeSnapshots,
   expectNativeCellDelivery,
+  expectNativeMutationInventory,
 } from './sync-snapshot.ts';
 
 const saved = (page: Page) =>
@@ -85,7 +86,13 @@ async function copyDoc(page: Page) {
   return copySelection(page);
 }
 
-async function fixture(browser: Browser, baseURL: string, info: TestInfo, kind: 'sheet' | 'doc') {
+async function fixture(
+  browser: Browser,
+  baseURL: string,
+  info: TestInfo,
+  kind: 'sheet' | 'doc',
+  mobile = false,
+) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db);
   const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
@@ -100,7 +107,9 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, kind: 
   async function account(user: string) {
     const context = await browser.newContext({
       baseURL,
-      viewport: { width: 1440, height: 1100 },
+      viewport: mobile ? { width: 390, height: 844 } : { width: 1440, height: 1100 },
+      isMobile: mobile,
+      hasTouch: mobile,
       permissions: ['clipboard-read', 'clipboard-write'],
     });
     contexts.push(context);
@@ -197,6 +206,27 @@ async function fixture(browser: Browser, baseURL: string, info: TestInfo, kind: 
       db.close();
     },
   };
+}
+
+for (const kind of ['sheet', 'doc'] as const) {
+  test(`the actual mobile ${kind} preset has a complete mutation classification`, async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, kind, true);
+    try {
+      await Promise.all([f.page.goto(`/?item=${f.item.id}`), f.other.goto(`/?item=${f.item.id}`)]);
+      await Promise.all([saved(f.page), saved(f.other)]);
+      expect(
+        await f.page.evaluate(() => matchMedia('(pointer: coarse) and (max-width: 900px)').matches),
+      ).toBe(true);
+      await expectNativeMutationInventory(f.page, f.unitId);
+      await expectNativeMutationInventory(f.other, f.unitId);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
 }
 
 test('native Sheets deliver within a second, rebase offline edits, and retry one durable write after a lost acknowledgment', async ({

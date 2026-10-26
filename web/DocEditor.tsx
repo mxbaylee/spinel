@@ -1,4 +1,5 @@
 import { SaveStatus } from './SaveStatus.tsx';
+import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import {
   installDocFormulas,
   type DocFormula,
@@ -253,6 +254,7 @@ export function DocEditor({
         }
       }
       Inject(Injector)(TrackedImageInsertion, undefined, 1);
+      recordNativeMutationInventory();
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
         darkMode: getTheme() === 'dark',

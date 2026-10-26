@@ -14,6 +14,7 @@ import {
   ClearSheetDrawingTransformerOperation,
   ISheetDrawingService,
 } from '@univerjs/sheets-drawing';
+import type { ISheetDrawing } from '@univerjs/sheets-drawing';
 import { SetNumfmtCommand } from '@univerjs/sheets-numfmt';
 import type { Mutation } from '../index.ts';
 import { structureIds } from '../src/structure.ts';
@@ -55,6 +56,48 @@ export function randomSheet(replica: Replica, next: () => number): Worksheet {
 
 /** Params as they arrive over the wire, as JSON: a key set to undefined is gone. */
 export const wire = (params: unknown) => JSON.parse(JSON.stringify(params));
+
+type CollapsedDrawingSample = {
+  seed: number;
+  command: string;
+  params: unknown;
+  before: unknown;
+  after: unknown;
+};
+const drawingCaptures = {
+  withCollapsedDrawing: 0,
+  creatingCollapsedDrawing: 0,
+  firstCreated: undefined as CollapsedDrawingSample | undefined,
+};
+let captureSeed = 0;
+
+export function resetDrawingCaptureCoverage() {
+  drawingCaptures.withCollapsedDrawing = 0;
+  drawingCaptures.creatingCollapsedDrawing = 0;
+  drawingCaptures.firstCreated = undefined;
+}
+export const setDrawingCaptureSeed = (seed: number) => {
+  captureSeed = seed;
+};
+export const drawingCaptureCoverage = () => structuredClone(drawingCaptures);
+
+function drawings(replica: Replica, unitId: string) {
+  return new Map(
+    Object.entries(
+      replica.injector.get(ISheetDrawingService).getDrawingDataForUnit(unitId),
+    ).flatMap(([sheetId, sheet]) =>
+      Object.entries(sheet.data ?? {}).map(
+        ([id, drawing]) => [`${sheetId}/${id}`, drawing] as const,
+      ),
+    ),
+  );
+}
+
+function collapsed(drawing: ISheetDrawing) {
+  return [drawing.transform?.width, drawing.transform?.height].some(
+    (extent) => typeof extent === 'number' && Number.isFinite(extent) && extent <= 0,
+  );
+}
 
 export type ObservedMutation = { id: string; options?: IExecutionOptions };
 
@@ -110,16 +153,12 @@ export function capture(
       throw new Error(`${command} failed before ${id}`);
     }
   }
+  const before = structuredClone(drawings(copy, unitId));
   const recording = recordWire(commands);
   const sent = recording.mutations;
-  let ok: boolean;
-  let skip = false;
+  let ok = false;
   try {
     ok = commands.syncExecuteCommand(id, params);
-    // Univer 1.1.0's own row and column commands can leave a drawing with a
-    // zero or negative size, and its resize listener then throws on the next
-    // row or column change. Such edits are skipped (README, "Known limits").
-    skip = hasEmptyDrawing(copy, unitId);
   } catch (error) {
     // Commands throw on some edits they refuse, such as an out-of-range anchor.
     // The range insert and delete commands are async with nothing to await,
@@ -127,21 +166,26 @@ export function capture(
     ok = String(error).includes('should not return a promise') && sent.length > 0;
   } finally {
     recording.dispose();
+    const after = drawings(copy, unitId);
+    const empty =
+      ok && sent.length > 0 ? [...after].filter(([, drawing]) => collapsed(drawing)) : [];
+    if (empty.length > 0) drawingCaptures.withCollapsedDrawing++;
+    const created = empty.find(([id]) => !before.has(id) || !collapsed(before.get(id)!));
+    if (created) {
+      drawingCaptures.creatingCollapsedDrawing++;
+      drawingCaptures.firstCreated ??= {
+        seed: captureSeed,
+        command: id,
+        params: wire(params),
+        before: structuredClone(before.get(created[0])),
+        after: structuredClone(created[1]),
+      };
+    }
     copy.univer.dispose();
   }
   if (!ok && sent.length > 0)
     throw new Error(`${id} failed after sending ${sent.length} mutations`);
-  return ok && !skip && sent.length > 0 ? sent : null;
-}
-
-function hasEmptyDrawing(replica: Replica, unitId: string): boolean {
-  const sheets = replica.injector.get(ISheetDrawingService).getDrawingDataForUnit(unitId);
-  const positive = (size: number | undefined) => (size ?? 0) > 0;
-  return Object.values(sheets).some((sheet) =>
-    Object.values(sheet.data ?? {}).some(
-      ({ transform }) => !positive(transform?.width) || !positive(transform?.height),
-    ),
-  );
+  return ok && sent.length > 0 ? sent : null;
 }
 
 /** Whole rows or columns `start` to `start + count - 1`, as a header selection gives. */
