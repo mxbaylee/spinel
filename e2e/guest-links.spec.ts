@@ -152,6 +152,7 @@ for (const kind of ['sheet', 'doc'] as const) {
         .locator('header .editor-access');
       await expect(viewOnlyAccess).toHaveText('View only');
       await expect(viewOnlyAccess).toBeVisible();
+      await expect(first).toHaveTitle(`${item.name} — Spinel`);
       await captureGuest('viewer');
       await expect(first.getByText('Your workspace', { exact: true })).toHaveCount(0);
       await expect(first.getByRole('navigation', { name: 'Workspace' })).toHaveCount(0);
@@ -173,10 +174,13 @@ for (const kind of ['sheet', 'doc'] as const) {
         .inputValue();
       expect(editLink).not.toBe(viewLink);
       await expect(first.getByRole('alert')).toHaveText('This link no longer works.');
+      await expect(first).toHaveTitle('Spinel');
       // Both tabs exchange at once; Web Locks + valid-cookie reuse must produce one identity.
       await Promise.all([first.goto(editLink), second.goto(editLink)]);
       await saved(first);
       await saved(second);
+      await expect(first).toHaveTitle(`${item.name} — Spinel`);
+      await expect(second).toHaveTitle(`${item.name} — Spinel`);
       await captureGuest('editor');
       expect(
         db
@@ -203,6 +207,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await expect.poll(async () => JSON.stringify(await live())).toContain('Guest two 159');
       await first.reload();
       await saved(first);
+      await expect(first).toHaveTitle(`${item.name} — Spinel`);
       // A failed metadata poll must preserve the existing editor, including an unfinished edit.
       await first.route(`**/api/guest/${item.id}`, (route) => route.abort('failed'));
       if (kind === 'sheet') {
@@ -258,6 +263,8 @@ for (const kind of ['sheet', 'doc'] as const) {
       await page.getByRole('menuitem', { name: 'Turn off link', exact: true }).click();
       await expect(first.getByRole('alert')).toHaveText('This link no longer works.');
       await expect(second.getByRole('alert')).toHaveText('This link no longer works.');
+      await expect(first).toHaveTitle('Spinel');
+      await expect(second).toHaveTitle('Spinel');
       await expect(region(first)).toHaveCount(0);
       await second.goto(editLink);
       await expect(second.getByRole('alert')).toHaveText('This link no longer works.');

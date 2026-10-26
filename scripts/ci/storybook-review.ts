@@ -24,6 +24,7 @@ export function selectStorybookReview(
   let viewportSpecified = false;
   let theme: 'all' | 'light' | 'dark' = 'all';
   let themeSpecified = false;
+  let captureScreenshots = true;
   const storyIds: string[] = [];
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -43,14 +44,17 @@ export function selectStorybookReview(
       }
       theme = value;
       themeSpecified = true;
+    } else if (arg === '--no-screenshots') {
+      if (!captureScreenshots) throw new Error('Specify --no-screenshots only once.');
+      captureScreenshots = false;
     } else if (arg.startsWith('-')) {
       throw new Error(`Unknown review option: ${arg}`);
     } else {
       storyIds.push(arg);
     }
   }
-  if (theme !== 'all' && viewport !== 'mobile') {
-    throw new Error('Theme splitting requires --viewport mobile.');
+  if (theme !== 'all' && viewport !== 'mobile' && viewport !== 'desktop') {
+    throw new Error('Theme splitting requires --viewport desktop or mobile.');
   }
   const requested = storyIds.length
     ? storyIds
@@ -62,13 +66,16 @@ export function selectStorybookReview(
   return {
     viewport,
     theme,
+    captureScreenshots,
     requested,
     variants: variants.filter(
       ([variantTheme, width]) =>
         includesWidth(width) && (theme === 'all' || theme === variantTheme),
     ),
     nativeEditorKinds:
-      viewport === 'all' || viewport === 'desktop' ? (['sheet', 'doc'] as const) : [],
+      theme !== 'dark' && (viewport === 'all' || viewport === 'desktop')
+        ? (['sheet', 'doc'] as const)
+        : [],
     dashboardViewports: (
       [
         [1280, false],

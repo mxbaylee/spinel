@@ -1,4 +1,4 @@
-/** npm run screenshots -- [--viewport desktop|tablet|mobile] [--theme all|light|dark] <story ids>. Build Storybook first. Theme splitting is mobile-only. */
+/** Review built stories. --no-screenshots keeps every check and failure diagnostic; desktop/mobile may split --theme. */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -21,6 +21,7 @@ const index = JSON.parse(await readFile('storybook-static/index.json', 'utf8')) 
 };
 const review = selectStorybookReview(process.argv.slice(2), index.entries);
 const { requested, variants } = review;
+const startedAt = Date.now();
 const directory = resolve(process.env.SPINEL_SCREENSHOT_DIR ?? 'test-results/design-review');
 await mkdir(directory, { recursive: true });
 const server = await preview({
@@ -32,6 +33,7 @@ const server = await preview({
 const browser = await chromium.launch();
 const captures: { id: string; variant: string; filename: string; title: string }[] = [];
 const verifications: string[] = [];
+const checked: { id: string; variant: string }[] = [];
 const nativeFailures: unknown[] = [];
 const captureFailures: { id: string; variant: string; message: string; filename?: string }[] = [];
 try {
@@ -108,7 +110,7 @@ try {
         }
 
         await page.locator('.rd-native-review-tools summary').click();
-        await page.screenshot({
+        await captureScreenshot(page, {
           path: resolve(directory, `native-${kind}-${readOnly ? 'viewer' : 'edited'}.png`),
         });
         verifications.push(
@@ -134,7 +136,7 @@ try {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     for (const id of requested) {
-      console.log(`Capture ${variant}: ${id}`);
+      console.log(`Review ${variant}: ${id}`);
       try {
         errors.length = 0;
         await page.goto(
@@ -298,7 +300,7 @@ try {
           expect(await page.evaluate(() => window.scrollY), 'Only editor content scrolls').toBe(0);
           await expect(toolbar).toBeInViewport();
           if (width === 390) {
-            await page.screenshot({
+            await captureScreenshot(page, {
               path: resolve(directory, `${id}-${variant}-short-scrolled.png`),
             });
           }
@@ -355,17 +357,20 @@ try {
         }
         expect(errors, `Runtime errors in ${id}`).toEqual([]);
         const filename = `${id}-${variant}.png`;
-        await page.screenshot({
-          path: resolve(directory, filename),
-          fullPage: true,
-          animations: 'disabled',
-        });
-        captures.push({
-          id,
-          variant,
-          filename,
-          title: `${index.entries[id].title} / ${index.entries[id].name}`,
-        });
+        if (
+          await captureScreenshot(page, {
+            path: resolve(directory, filename),
+            fullPage: true,
+            animations: 'disabled',
+          })
+        ) {
+          captures.push({
+            id,
+            variant,
+            filename,
+            title: `${index.entries[id].title} / ${index.entries[id].name}`,
+          });
+        }
         if (id === 'redesign-screens--empty-folder') {
           await page.getByRole('button', { name: 'New file', exact: true }).click();
           await page.getByRole('menuitem', { name: 'Doc', exact: true }).click();
@@ -392,7 +397,7 @@ try {
           const retryButtons = page.getByRole('button', { name: 'Retry saving', exact: true });
           await expect(retryButtons).toHaveCount(1);
           for (const retry of await retryButtons.all()) await expect(retry).toBeDisabled();
-          await page.screenshot({
+          await captureScreenshot(page, {
             path: resolve(directory, `${id}-details-${variant}.png`),
             fullPage: true,
           });
@@ -444,6 +449,7 @@ try {
             );
           }
         }
+        checked.push({ id, variant });
       } catch (error) {
         await recordCaptureFailure(page, id, variant, error);
       }
@@ -472,7 +478,9 @@ try {
             exact: true,
           }),
         ).toBeVisible();
-        await page.screenshot({ path: resolve(directory, `network-explanation-${width}.png`) });
+        await captureScreenshot(page, {
+          path: resolve(directory, `network-explanation-${width}.png`),
+        });
         await page.keyboard.press('Escape');
         await expect(
           page.getByText('Connected to Spinel. Open save status for details about this document.', {
@@ -540,7 +548,9 @@ try {
           await expect(
             page.getByRole('dialog', { name: 'Browse files', exact: true }),
           ).toBeVisible();
-          await page.screenshot({ path: resolve(directory, `navigation-open-${width}.png`) });
+          await captureScreenshot(page, {
+            path: resolve(directory, `navigation-open-${width}.png`),
+          });
           await page
             .getByRole('dialog')
             .getByRole('button', { name: 'Shared with me', exact: true })
@@ -569,7 +579,9 @@ try {
         await expect(
           appearance.getByRole('radio', { name: 'Follow system', exact: true }),
         ).toBeChecked();
-        await page.screenshot({ path: resolve(directory, `appearance-system-${width}.png`) });
+        await captureScreenshot(page, {
+          path: resolve(directory, `appearance-system-${width}.png`),
+        });
         verifications.push(
           `${width}px: navigation/focus, list/grid parity and segmented appearance/system response`,
         );
@@ -683,7 +695,7 @@ try {
           await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
           `Walkthrough overflow: ${name} ${width}`,
         ).toBe(true);
-        await page.screenshot({
+        await captureScreenshot(page, {
           path: resolve(directory, `journey-${name}-${width}.png`),
           fullPage: true,
         });
@@ -1021,12 +1033,15 @@ await writeFile(
   resolve(directory, 'manifest.json'),
   JSON.stringify(
     {
-      capturedAt: new Date().toISOString(),
+      reviewedAt: new Date().toISOString(),
+      durationMs: Date.now() - startedAt,
+      captureScreenshots: review.captureScreenshots,
       fixtureTime: '2026-10-20T16:00:00Z',
       viewport: review.viewport,
       theme: review.theme,
       variants: variants.map(([, , variant]) => variant),
       requested,
+      checked,
       captures,
       verifications,
       failures: captureFailures,
@@ -1035,44 +1050,46 @@ await writeFile(
     2,
   ),
 );
-const pairs = [
-  ['dashboard-dashboard--populated', 'dashboard'],
-  ['dashboard-dashboard--empty-workspace', 'empty-folder'],
-  ['dashboard-searchpanel--results', 'search'],
-  ['dashboard-trash--with-items', 'trash'],
-  ['settings-themesettings--default', 'profile'],
-  ['settings-assistantconnections--loaded', 'connections'],
-  ['settings-connectassistant--consent', 'consent'],
-  ['editor-versionnames--open', 'history'],
-  ['sharing-sharing--with-people', 'sharing'],
-  ['sharing-sharelink--link-on-view-only', 'sharing-existing-link'],
-  ['admin-adminusers--loaded', 'admin'],
-  ['admin-admininvites--loaded', 'admin-invites'],
-  ['admin-backupstatus--healthy', 'admin-health'],
-  ['guest-guestapp--link-revoked', 'revoked-link'],
-];
-const paired = pairs
-  .map(([oldId, suffix]) => {
-    const newId = `redesign-screens--${suffix}`;
-    if (!requested.includes(oldId) || !requested.includes(newId)) return '';
-    return `<section><h2>Before / proposed · ${escape(index.entries[newId].name)}</h2>${variants.map(([, , variant]) => `<h3>${variant}</h3><div class="shots">${[oldId, newId].map((id, i) => `<figure><a href="${id}-${variant}.png"><img loading="lazy" src="${id}-${variant}.png" alt="${i ? 'Proposed' : 'Before'} ${escape(index.entries[id].name)}"></a><figcaption>${i ? 'Proposed' : 'Before'} · ${escape(index.entries[id].title)}</figcaption></figure>`).join('')}</div>`).join('')}</section>`;
-  })
-  .join('');
-await writeFile(
-  resolve(directory, 'index.html'),
-  `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Spinel design review</title><style>body{font:16px system-ui;margin:32px;background:#fafafa;color:#222}nav{display:flex;gap:16px;flex-wrap:wrap}section{margin:40px 0} .shots{display:flex;gap:16px;overflow:auto;align-items:start}figure{margin:0;flex:0 0 480px}img{width:100%;border:1px solid #ddd}figcaption{padding:12px}a{color:#8a1d3f}</style><h1>Spinel · SPN-047 design review</h1><p>Proposed screens are Storybook mockups, not production routes. Current screens are labelled by their existing story title. Space and delegated file Admin are planned.</p><h2>Paired comparisons</h2>${paired}<h2>All states and sizes</h2><nav>${requested.map((id) => `<a href="#${escape(id)}">${escape(index.entries[id].name)}</a>`).join('')}</nav>${requested
-    .map(
-      (id) =>
-        `<section id="${escape(id)}"><h2>${escape(index.entries[id].title)} / ${escape(index.entries[id].name)}</h2><div class="shots">${captures
-          .filter((c) => c.id === id)
-          .map(
-            (c) =>
-              `<figure><a href="${escape(c.filename)}"><img loading="lazy" src="${escape(c.filename)}" alt="${escape(c.title + ' · ' + c.variant)}"></a><figcaption>${escape(c.variant)}</figcaption></figure>`,
-          )
-          .join('')}</div></section>`,
-    )
-    .join('')}</html>`,
-);
+if (review.captureScreenshots) {
+  const pairs = [
+    ['dashboard-dashboard--populated', 'dashboard'],
+    ['dashboard-dashboard--empty-workspace', 'empty-folder'],
+    ['dashboard-searchpanel--results', 'search'],
+    ['dashboard-trash--with-items', 'trash'],
+    ['settings-themesettings--default', 'profile'],
+    ['settings-assistantconnections--loaded', 'connections'],
+    ['settings-connectassistant--consent', 'consent'],
+    ['editor-versionnames--open', 'history'],
+    ['sharing-sharing--with-people', 'sharing'],
+    ['sharing-sharelink--link-on-view-only', 'sharing-existing-link'],
+    ['admin-adminusers--loaded', 'admin'],
+    ['admin-admininvites--loaded', 'admin-invites'],
+    ['admin-backupstatus--healthy', 'admin-health'],
+    ['guest-guestapp--link-revoked', 'revoked-link'],
+  ];
+  const paired = pairs
+    .map(([oldId, suffix]) => {
+      const newId = `redesign-screens--${suffix}`;
+      if (!requested.includes(oldId) || !requested.includes(newId)) return '';
+      return `<section><h2>Before / proposed · ${escape(index.entries[newId].name)}</h2>${variants.map(([, , variant]) => `<h3>${variant}</h3><div class="shots">${[oldId, newId].map((id, i) => `<figure><a href="${id}-${variant}.png"><img loading="lazy" src="${id}-${variant}.png" alt="${i ? 'Proposed' : 'Before'} ${escape(index.entries[id].name)}"></a><figcaption>${i ? 'Proposed' : 'Before'} · ${escape(index.entries[id].title)}</figcaption></figure>`).join('')}</div>`).join('')}</section>`;
+    })
+    .join('');
+  await writeFile(
+    resolve(directory, 'index.html'),
+    `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Spinel design review</title><style>body{font:16px system-ui;margin:32px;background:#fafafa;color:#222}nav{display:flex;gap:16px;flex-wrap:wrap}section{margin:40px 0} .shots{display:flex;gap:16px;overflow:auto;align-items:start}figure{margin:0;flex:0 0 480px}img{width:100%;border:1px solid #ddd}figcaption{padding:12px}a{color:#8a1d3f}</style><h1>Spinel · SPN-047 design review</h1><p>Proposed screens are Storybook mockups, not production routes. Current screens are labelled by their existing story title. Space and delegated file Admin are planned.</p><h2>Paired comparisons</h2>${paired}<h2>All states and sizes</h2><nav>${requested.map((id) => `<a href="#${escape(id)}">${escape(index.entries[id].name)}</a>`).join('')}</nav>${requested
+      .map(
+        (id) =>
+          `<section id="${escape(id)}"><h2>${escape(index.entries[id].title)} / ${escape(index.entries[id].name)}</h2><div class="shots">${captures
+            .filter((c) => c.id === id)
+            .map(
+              (c) =>
+                `<figure><a href="${escape(c.filename)}"><img loading="lazy" src="${escape(c.filename)}" alt="${escape(c.title + ' · ' + c.variant)}"></a><figcaption>${escape(c.variant)}</figcaption></figure>`,
+            )
+            .join('')}</div></section>`,
+      )
+      .join('')}</html>`,
+  );
+}
 // The mockup chunk is isolated from production. Report actual emitted bytes, not npm unpacked size.
 const { readdir } = await import('node:fs/promises');
 const assets = await readdir('storybook-static/assets');
@@ -1096,8 +1113,14 @@ if (nativeFailures.length || captureFailures.length)
     'Design review validation failed; see manifest.json and failed-* evidence',
   );
 console.log(
-  `Captured ${captures.length} screenshots in ${directory}; ${verifications.length} interaction passes.`,
+  `Checked ${checked.length} story states; captured ${captures.length} catalog/error screenshots in ${directory}; ${verifications.length} additional interaction passes.`,
 );
+
+async function captureScreenshot(page: Page, options: Parameters<Page['screenshot']>[0]) {
+  if (!review.captureScreenshots) return false;
+  await page.screenshot(options);
+  return true;
+}
 
 async function waitForStory(page: Page, id: string) {
   // Images and intentionally empty components are valid stories. Require
@@ -1295,7 +1318,7 @@ async function verifyControls(page: Page, variant: string, output: string) {
   await menu.focus();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('menu')).toBeVisible();
-  await page.screenshot({ path: resolve(output, `menu-open-${variant}.png`) });
+  await captureScreenshot(page, { path: resolve(output, `menu-open-${variant}.png`) });
   await page.keyboard.press('ArrowDown');
   await expect(page.getByRole('menuitem', { name: 'Move', exact: true })).toBeFocused();
   await page.keyboard.press('Escape');
@@ -1315,7 +1338,7 @@ async function verifyControls(page: Page, variant: string, output: string) {
   await expect(appearance.getByRole('radio', { name: 'Light', exact: true })).toBeChecked();
   await page.keyboard.press('ArrowRight');
   await expect(appearance.getByRole('radio', { name: 'Dark', exact: true })).toBeChecked();
-  await page.screenshot({ path: resolve(output, `appearance-choice-${variant}.png`) });
+  await captureScreenshot(page, { path: resolve(output, `appearance-choice-${variant}.png`) });
   const trigger = page.getByRole('button', { name: 'Open confirmation' });
   await trigger.click();
   const dialog = page.getByRole('dialog', { name: 'Move this file?' });
@@ -1326,7 +1349,7 @@ async function verifyControls(page: Page, variant: string, output: string) {
     'color',
     await dialog.evaluate((node) => getComputedStyle(node).color),
   );
-  await page.screenshot({ path: resolve(output, `dialog-select-open-${variant}.png`) });
+  await captureScreenshot(page, { path: resolve(output, `dialog-select-open-${variant}.png`) });
   await page.keyboard.press('Escape');
   await expect(dialog).toBeVisible();
   await expect(page.getByRole('combobox', { name: 'Destination folder' })).toBeFocused();

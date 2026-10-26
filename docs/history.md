@@ -172,11 +172,20 @@ UTC retention buckets. Stored timestamps and pruning rules are unchanged. A name
 version is never hidden just because an unnamed daily checkpoint exists. The UTC
 day updates across midnight; Refresh history reloads the permitted checkpoint list.
 
+The SPN-085 presentation places the chooser beside the preview on desktop and
+behind **Choose version** on narrower screens. The selected UTC checkpoint remains
+visible with the chooser closed. Checkpoint rows preserve names and **Before
+restore** labels; their actions use the existing naming API. **Name current
+version** names the latest confirmed saved content, excluding unsaved work in
+another tab. See the [implementation and verification record](implementation/SPN-085.md).
+
 Selection only changes an isolated read-only native viewer, never the live editor.
 Rapid slider changes are debounced and the previous viewer is disposed. The previous
 preview is hidden while a different selection is loading, so its restore button
-cannot be confused with the newly selected timestamp. While a confirmed restore
-is running, history selection and refresh controls are disabled. An unavailable
+cannot be confused with the newly selected timestamp. While restore confirmation
+is open or restore is running, history selection and refresh controls are disabled.
+The semantic confirmation names the exact UTC checkpoint and explains the
+**Before restore** copy and other editors' required refresh. An unavailable
 requested checkpoint produces an error instead of silently choosing another restore
 target. Current viewers can browse; only editors may restore through the existing
 confirmation and generation guard. No history route is added for Link guests.

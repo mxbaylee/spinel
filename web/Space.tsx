@@ -1,4 +1,5 @@
 import { EditorFrame } from './EditorFrame.tsx';
+import { revokeGuestView } from './guestRevocation.ts';
 import type { SpaceRootActionMode } from './SpaceRootActions.tsx';
 import { canAdminister, accessLabel } from '../src/shared/workspace.ts';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -46,6 +47,7 @@ import {
 import type { SpaceLocation } from './spaceNavigation.ts';
 import { SpaceRootActions } from './SpaceRootActions.tsx';
 import { SpaceOfflineActions } from './SpaceOfflineActions.tsx';
+import { AccessState } from './AccessState.tsx';
 
 export interface SpaceEditorProps {
   spaceId: string;
@@ -259,6 +261,10 @@ export function Space({
         setFresh(false);
         setLoadError(spaceRequestMessage(error));
         if (spaceAccessDenied(error)) {
+          if (guest) {
+            revokeGuestView();
+            if (disposed) return;
+          }
           setDenied(true);
           setTree(null);
           setBootstrap(null);
@@ -901,6 +907,24 @@ export function Space({
         rootControls}
     </SpaceShell>
   );
+  // A guest with no loaded tree receives no Space identity or account navigation.
+  // GuestApp disposes even dirty guest editors on authoritative revocation.
+  // Account draft recovery remains a separate, unchanged boundary.
+  if (guest && !currentTree && !visiblePage)
+    return (
+      <AccessState
+        kind={
+          denied
+            ? 'revoked'
+            : route.kind === 'unavailable'
+              ? 'missing'
+              : loadError
+                ? 'offline'
+                : 'loading'
+        }
+        onRetry={() => void refresh.current(true)}
+      />
+    );
   return visiblePage ? (
     <EditorFrame
       documentKey={editorKey!}

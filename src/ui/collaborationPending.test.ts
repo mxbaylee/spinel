@@ -12,7 +12,7 @@ import {
 } from '@univerjs-pro/collaboration-client';
 import type { SaveState } from '../shared/autosave.ts';
 import type { DocPendingChanges } from '../../web/docPending.ts';
-import { watchCollaboration } from '../../web/collaboration.ts';
+import { prepareCollaboration, watchCollaboration } from '../../web/collaboration.ts';
 
 // Exercise Spinel's watcher through public SDK tokens/observables without
 // starting a native editor or loading any Pro implementation.
@@ -50,6 +50,37 @@ vi.mock('@univerjs-pro/collaboration-client/locale/en-US', () => ({ default: {} 
 vi.mock('@univerjs-pro/collaboration-client-ui/locale/en-US', () => ({ default: {} }));
 vi.mock('@univerjs-pro/collaboration-client/facade', () => ({}));
 vi.mock('@univerjs-pro/collaboration-client-ui/lib/index.css', () => ({}));
+
+test.each([401, 403, 404])(
+  'late preparation denial %i cannot revoke a replacement guest editor',
+  async (status) => {
+    const root = '11111111-1111-4111-8111-111111111111';
+    vi.stubGlobal('location', { pathname: `/share/${root}` });
+    const dispatchEvent = vi.fn();
+    vi.stubGlobal('window', { dispatchEvent });
+    let release!: (response: Response) => void;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        () =>
+          new Promise<Response>((resolve) => {
+            release = resolve;
+          }),
+      ),
+    );
+    let current = true;
+    const opening = prepareCollaboration('old-child', root, () => current);
+    current = false;
+    release(Response.json({ error: 'Unavailable' }, { status }));
+    await expect(opening).rejects.toThrow('Unavailable');
+    expect(dispatchEvent).not.toHaveBeenCalled();
+    const active = prepareCollaboration('current-child', root, () => true);
+    release(Response.json({ error: 'Unavailable' }, { status }));
+    await expect(active).rejects.toThrow('Unavailable');
+    expect(dispatchEvent).toHaveBeenCalledOnce();
+    expect(dispatchEvent.mock.calls[0][0].type).toBe('spinel-guest-revoked');
+  },
+);
 
 function stream<T>() {
   const listeners = new Set<(value: T) => void>();

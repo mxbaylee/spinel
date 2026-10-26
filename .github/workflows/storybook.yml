@@ -1,20 +1,25 @@
 name: 📚 Storybook
 
-# Documentation-only PRs avoid rebuilding an unchanged catalogue. Main always
+# Keep checks on every applicable change; review PNGs are opt-in. Main always
 # publishes: a later docs push can replace a queued code push in Actions.
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
     inputs:
       story_ids:
-        description: 'Optional space-separated story IDs for a focused manual review (empty captures all)'
+        description: 'Optional space-separated story IDs for a focused manual review (empty reviews all)'
         required: false
         default: ''
         type: string
+      capture_screenshots:
+        description: 'Save review screenshots as well as running all selected checks'
+        required: false
+        default: true
+        type: boolean
       publish_preview:
         description: 'Publish this branch to the shared Pages site (latest deployment wins)'
         required: false
@@ -36,6 +41,8 @@ jobs:
     timeout-minutes: 5
     outputs:
       docs_only: ${{ steps.changes.outputs.docs_only }}
+      capture_screenshots: ${{ steps.review.outputs.capture_screenshots }}
+      review_required: ${{ steps.review.outputs.review_required }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -52,6 +59,13 @@ jobs:
           else
             echo 'docs_only=false' >> "$GITHUB_OUTPUT"
           fi
+      - id: review
+        name: Choose screenshot evidence
+        env:
+          DOCS_ONLY: ${{ steps.changes.outputs.docs_only }}
+          VISUAL_REVIEW: ${{ contains(github.event.pull_request.labels.*.name, 'visual-review') }}
+          MANUAL_CAPTURE: ${{ inputs.capture_screenshots == true }}
+        run: node scripts/ci/storybook-review-policy.ts
 
   build:
     name: Build Storybook
@@ -61,22 +75,22 @@ jobs:
     env:
       STORYBOOK_DISABLE_TELEMETRY: 1
     steps:
-      - if: needs.changes.outputs.docs_only != 'true'
+      - if: needs.changes.outputs.review_required == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - if: needs.changes.outputs.docs_only != 'true'
+      - if: needs.changes.outputs.review_required == 'true'
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
       - name: Install
-        if: needs.changes.outputs.docs_only != 'true'
+        if: needs.changes.outputs.review_required == 'true'
         run: npm ci
       # A preset that fails to load is only a warning, but without the React
       # preset no story renders, so fail on it, and on a missing manager page.
       - name: Build
-        if: needs.changes.outputs.docs_only != 'true'
+        if: needs.changes.outputs.review_required == 'true'
         shell: bash
         run: |
           npm run build-storybook 2>&1 | tee storybook-build.log
@@ -88,7 +102,7 @@ jobs:
             test -s "storybook-static/$file" || { echo "::error::storybook-static/$file is missing"; exit 1; }
           done
       - name: Upload interactive review build
-        if: needs.changes.outputs.docs_only != 'true'
+        if: needs.changes.outputs.review_required == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: storybook-review
@@ -97,7 +111,7 @@ jobs:
           retention-days: 7
       - name: Upload for Pages
         if: >-
-          needs.changes.outputs.docs_only != 'true' &&
+          needs.changes.outputs.review_required == 'true' &&
           ((github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')) ||
           (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'storybook-preview')) ||
           (github.event_name == 'workflow_dispatch' && inputs.publish_preview && github.ref != 'refs/heads/main'))
@@ -105,102 +119,13 @@ jobs:
         with:
           path: storybook-static
       - name: Documentation-only change
-        if: needs.changes.outputs.docs_only == 'true'
+        if: needs.changes.outputs.review_required == 'false'
         run: echo 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'
 
   review_desktop:
-    name: Review Storybook desktop
+    name: Review Storybook desktop (${{ matrix.theme }})
     needs: [changes, build]
-    if: needs.changes.outputs.docs_only != 'true'
-    runs-on: ubuntu-latest
-    # Each viewport downloads the same build and keeps its complete review coverage.
-    # Slow runner dependency mirrors can consume 12 minutes before this viewport's
-    # extra icon suite and full catalogue start. Keep all assertions and captures.
-    timeout-minutes: 25
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version-file: .nvmrc
-          package-manager-cache: false
-      # The upstream build retains the registry audit invocation for this lockfile.
-      # Keep duplicate audit requests outside the viewport budget (decision #138).
-      - run: npm ci --no-audit
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: storybook-review
-          path: storybook-static
-      - name: Capture icon and integration stories
-        # This separate icon suite still runs once, including its phone captures.
-        run: |
-          npx playwright install --with-deps chromium
-          node scripts/ci/icon-screenshots.ts
-      - name: Upload visual review
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: entity-icon-screenshots
-          path: test-results/entity-icons
-          if-no-files-found: error
-      - name: Capture redesign review and verify shared controls
-        env:
-          # PR validation always covers the full catalog; only manual runs can narrow it.
-          STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
-        run: |
-          read -r -a stories <<< "$STORY_IDS"
-          npm run screenshots -- --viewport desktop "${stories[@]}"
-      - name: Upload redesign review
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: design-review-desktop
-          path: test-results/design-review
-          if-no-files-found: error
-          retention-days: 14
-
-  review_tablet:
-    name: Review Storybook tablet
-    needs: [changes, build]
-    if: needs.changes.outputs.docs_only != 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version-file: .nvmrc
-          package-manager-cache: false
-      # The upstream build retains the registry audit invocation (decision #138).
-      - run: npm ci --no-audit
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: storybook-review
-          path: storybook-static
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
-      - name: Capture redesign review and verify shared controls
-        env:
-          STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
-        run: |
-          read -r -a stories <<< "$STORY_IDS"
-          npm run screenshots -- --viewport tablet "${stories[@]}"
-      - name: Upload redesign review
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: design-review-tablet
-          path: test-results/design-review
-          if-no-files-found: error
-          retention-days: 14
-
-  review_mobile:
-    name: Review Storybook mobile (${{ matrix.theme }})
-    needs: [changes, build]
-    if: needs.changes.outputs.docs_only != 'true'
+    if: needs.changes.outputs.review_required == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -223,18 +148,123 @@ jobs:
           path: storybook-static
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Capture redesign review and verify shared controls
+      - name: Check icon and integration stories
+        # This suite, including its phone checks, belongs to desktop light once.
+        if: matrix.theme == 'light'
         env:
+          CAPTURE_SCREENSHOTS: ${{ needs.changes.outputs.capture_screenshots }}
+        run: |
+          options=()
+          if [ "$CAPTURE_SCREENSHOTS" = false ]; then options+=(--no-screenshots); fi
+          node scripts/ci/icon-screenshots.ts "${options[@]}"
+      - name: Upload icon evidence
+        if: always() && matrix.theme == 'light'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ needs.changes.outputs.capture_screenshots == 'true' && 'entity-icon-screenshots' || 'entity-icon-checks' }}
+          path: test-results/entity-icons
+          if-no-files-found: error
+      - name: Review stories and verify shared controls
+        env:
+          # Every PR reviews the full catalog; only manual runs can narrow it.
           STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
-          MOBILE_THEME: ${{ matrix.theme }}
+          REVIEW_THEME: ${{ matrix.theme }}
+          CAPTURE_SCREENSHOTS: ${{ needs.changes.outputs.capture_screenshots }}
         run: |
           read -r -a stories <<< "$STORY_IDS"
-          npm run screenshots -- --viewport mobile --theme "$MOBILE_THEME" "${stories[@]}"
-      - name: Upload redesign review
+          options=()
+          if [ "$CAPTURE_SCREENSHOTS" = false ]; then options+=(--no-screenshots); fi
+          npm run screenshots -- --viewport desktop --theme "$REVIEW_THEME" "${options[@]}" "${stories[@]}"
+      - name: Upload review evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: design-review-mobile-${{ matrix.theme }}
+          name: ${{ needs.changes.outputs.capture_screenshots == 'true' && 'design-review' || 'storybook-check' }}-desktop-${{ matrix.theme }}
+          path: test-results/design-review
+          if-no-files-found: error
+          retention-days: 14
+
+  review_tablet:
+    name: Review Storybook tablet
+    needs: [changes, build]
+    if: needs.changes.outputs.review_required == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      # The upstream build retains the registry audit invocation (decision #138).
+      - run: npm ci --no-audit
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: storybook-review
+          path: storybook-static
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Review stories and verify shared controls
+        env:
+          STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
+          CAPTURE_SCREENSHOTS: ${{ needs.changes.outputs.capture_screenshots }}
+        run: |
+          read -r -a stories <<< "$STORY_IDS"
+          options=()
+          if [ "$CAPTURE_SCREENSHOTS" = false ]; then options+=(--no-screenshots); fi
+          npm run screenshots -- --viewport tablet "${options[@]}" "${stories[@]}"
+      - name: Upload review evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ needs.changes.outputs.capture_screenshots == 'true' && 'design-review' || 'storybook-check' }}-tablet
+          path: test-results/design-review
+          if-no-files-found: error
+          retention-days: 14
+
+  review_mobile:
+    name: Review Storybook mobile (${{ matrix.theme }})
+    needs: [changes, build]
+    if: needs.changes.outputs.review_required == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        theme: [light, dark]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      # The upstream build retains the registry audit invocation (decision #138).
+      - run: npm ci --no-audit
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: storybook-review
+          path: storybook-static
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Review stories and verify shared controls
+        env:
+          STORY_IDS: ${{ github.event_name == 'workflow_dispatch' && inputs.story_ids || '' }}
+          MOBILE_THEME: ${{ matrix.theme }}
+          CAPTURE_SCREENSHOTS: ${{ needs.changes.outputs.capture_screenshots }}
+        run: |
+          read -r -a stories <<< "$STORY_IDS"
+          options=()
+          if [ "$CAPTURE_SCREENSHOTS" = false ]; then options+=(--no-screenshots); fi
+          npm run screenshots -- --viewport mobile --theme "$MOBILE_THEME" "${options[@]}" "${stories[@]}"
+      - name: Upload review evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ needs.changes.outputs.capture_screenshots == 'true' && 'design-review' || 'storybook-check' }}-mobile-${{ matrix.theme }}
           path: test-results/design-review
           if-no-files-found: error
           retention-days: 14
@@ -259,6 +289,7 @@ jobs:
           CLASSIFICATION_RESULT: ${{ needs.changes.result }}
           BUILD_RESULT: ${{ needs.build.result }}
           DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
+          CAPTURE_SCREENSHOTS: ${{ needs.changes.outputs.capture_screenshots }}
           DESKTOP_RESULT: ${{ needs.review_desktop.result }}
           TABLET_RESULT: ${{ needs.review_tablet.result }}
           MOBILE_RESULT: ${{ needs.review_mobile.result }}
@@ -270,7 +301,7 @@ jobs:
     # Preview is for owner feedback, independent of merge/visual approval gates.
     # No ownership lock: a subsequent main or preview deployment replaces it.
     if: >-
-      needs.changes.outputs.docs_only != 'true' &&
+      needs.changes.outputs.review_required == 'true' &&
       ((github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'storybook-preview')) ||
       (github.event_name == 'workflow_dispatch' && inputs.publish_preview && github.ref != 'refs/heads/main'))
     runs-on: ubuntu-latest
@@ -291,7 +322,7 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: [changes, build, review]
-    if: needs.changes.outputs.docs_only != 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')
+    if: needs.changes.outputs.review_required == 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.story_ids == '')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:

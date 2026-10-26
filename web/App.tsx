@@ -497,11 +497,11 @@ function AccountApp() {
     );
   return (
     <div
-      className={`workspace${settings ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
+      className={`workspace${settings || location.pathname === '/preview' ? ' profile-workspace' : user?.isAdmin ? ' admin-workspace' : ''}${location.pathname === '/preview' ? ' history-workspace' : ''}${filePlaces ? ' files-workspace' : ''}`}
     >
       <Rail
         user={user}
-        compact={settings || !!user?.isAdmin}
+        compact={settings || location.pathname === '/preview' || !!user?.isAdmin}
         files={filePlaces}
         navigation={navigation}
         onSignOut={() => void signOut()}

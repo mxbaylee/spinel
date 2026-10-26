@@ -110,9 +110,12 @@ and future Space placement; `Identity/Social cards` uses the real PNG renderer
 at build time, including the static Space sample. No new dependency or rendering
 service is needed. The app's heart logo and favicon remain unchanged.
 
-Storybook CI captures these stories and the actual dashboard integration stories
-in light, dark and phone layouts as the `entity-icon-screenshots` artifact. The
-same ticket implements both artwork and current-surface integration ([#122](../implementation/SPN-077.md#legacy-decision-122-consistent-gem-icon-family)).
+Storybook CI checks these stories and the actual dashboard integration stories
+in light, dark and phone layouts on every applicable run. The `visual-review`
+label or a manual capture request also produces the `entity-icon-screenshots`
+artifact. Without routine capture, `entity-icon-checks` retains the check manifest
+and any failure evidence. The same ticket implements both artwork and
+current-surface integration ([#122](../implementation/SPN-077.md#legacy-decision-122-consistent-gem-icon-family)).
 
 ## Optional file identity (SPN-047 owner refinement)
 

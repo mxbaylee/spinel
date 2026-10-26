@@ -12,8 +12,8 @@ import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import type { SpaceNode, SpaceRoot, SpaceTreeData } from '../src/shared/spaces.ts';
 import { startApp } from './app-process.ts';
 
-// Native SDKs stay in the disposable server. Each case keeps only one browser
-// editor open; account setup and verification use HTTP without another editor.
+// Native SDKs stay in the disposable server. Account setup and verification use
+// HTTP. The revocation case additionally opens one sibling to prove root scope.
 async function fixture(browser: Browser, info: TestInfo) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-space-guests-'));
   const databasePath = join(directory, 'app.sqlite');
@@ -594,6 +594,254 @@ test('a View Space link covers nested and future pages without outer access or p
     await f.close();
   }
 });
+
+test('a stale missing sibling action preserves a valid guest root and pending native input', async ({
+  browser,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, info);
+  let release = () => {};
+  try {
+    const link = (await f.link('editor'))!;
+    await f.page.goto(deepLink(link, f.overview.id));
+    await saved(f.page);
+    const activeAddress = f.page.url();
+    const activeUrl = new URL(activeAddress);
+    expect(activeUrl.origin + activeUrl.pathname).toBe(f.origin + `/share/${f.root.id}`);
+    expect(activeUrl.searchParams.get('item')).toBe(f.overview.id);
+    expect(activeUrl.hash).toBe('');
+    await (
+      await pages(f.page)
+    )
+      .getByRole('button', { name: `Expand ${f.section.name}`, exact: true })
+      .click();
+    const native = await f.page
+      .getByRole('region', { name: 'Doc document', exact: true })
+      .locator('.univer-container')
+      .elementHandle();
+    expect(native).not.toBeNull();
+    let received = 0;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await f.guest.route('**/universer-api/comb/**/new_changes', async (route) => {
+      received++;
+      await held;
+      await route.continue();
+    });
+    const draft = 'Pending input survives a missing sibling.';
+    await focusDoc(f.page);
+    await f.page.keyboard.type(draft);
+    await expect.poll(() => received).toBeGreaterThan(0);
+    await expect(f.page.getByRole('status', { name: 'Save status', exact: true })).toContainText(
+      'not saved',
+    );
+    const rename = await action(f, f.nested.name, 'Rename');
+    await rename.getByLabel('Name', { exact: true }).fill('A stale rename');
+    const removed = await f.account.request.delete(
+      `/api/spaces/${f.root.id}/items/${f.nested.id}`,
+      { headers: { Origin: f.origin }, data: {} },
+    );
+    expect(removed.status()).toBe(200);
+    let sawFailure = false;
+    const refreshed = f.page.waitForResponse((response) => {
+      const requestPath = new URL(response.url()).pathname;
+      if (
+        requestPath === endpoint(f.root.id, f.nested.id) &&
+        response.request().method() === 'PATCH' &&
+        response.status() === 404
+      )
+        sawFailure = true;
+      return sawFailure && requestPath === `/api/guest-spaces/${f.root.id}`;
+    });
+    const failed = f.page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === endpoint(f.root.id, f.nested.id) &&
+        response.request().method() === 'PATCH',
+    );
+    await rename.getByRole('button', { name: 'Save', exact: true }).click();
+    expect((await failed).status()).toBe(404);
+    expect((await refreshed).status()).toBe(200);
+    await expect(rename.getByRole('alert')).toBeVisible();
+    await rename.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(f.page).toHaveURL(activeAddress);
+    expect(await native?.evaluate((element) => element.isConnected)).toBe(true);
+    await expect(f.page.getByRole('status', { name: 'Save status', exact: true })).toContainText(
+      'not saved',
+    );
+    await expect(
+      f.page.getByRole('heading', { name: 'This link no longer works.', exact: true }),
+    ).toHaveCount(0);
+    await guestOnly(f);
+    release();
+    await saved(f.page);
+    expect((await f.snapshot<IDocumentData>(f.overview.id)).body?.dataStream).toContain(draft);
+    expect(f.errors).toEqual([]);
+    await native?.dispose();
+  } finally {
+    release();
+    try {
+      await f.guest.unrouteAll({ behavior: 'wait' });
+    } finally {
+      await f.close();
+    }
+  }
+});
+
+for (const kind of ['doc', 'sheet'] as const) {
+  test(`revoked dirty guest ${kind} loses native content, portals and keyboard access across Space children`, async ({
+    browser,
+  }, info) => {
+    test.setTimeout(150_000);
+    const f = await fixture(browser, info);
+    let release = () => {};
+    try {
+      const child = kind === 'doc' ? f.overview : f.source;
+      const sibling = kind === 'doc' ? f.source : f.nested;
+      const link = (await f.link('editor'))!;
+      await f.page.goto(deepLink(link, child.id));
+      await saved(f.page);
+      const other = await f.guest.newPage();
+      await other.goto(guestPath(f.root.id, sibling.id));
+      await saved(other);
+      await f.page.bringToFront();
+      const before = await f.snapshot(child.id);
+      const siblingBefore = await f.snapshot(sibling.id);
+      let received = 0;
+      const returned: number[] = [];
+      const held = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      await f.guest.route('**/universer-api/comb/**/new_changes', async (route) => {
+        received++;
+        await held;
+        const response = await route.fetch();
+        returned.push(response.status());
+        // Native disposal can cancel the original browser request. Still send
+        // its captured write to the server and verify the authoritative refusal.
+        try {
+          await route.fulfill({ response });
+        } catch {
+          /* Browser request was cancelled. */
+        }
+      });
+      const privateDraft = `Unsent ${kind} private contribution`;
+      if (kind === 'doc') {
+        await focusDoc(f.page);
+        await f.page.keyboard.type(privateDraft);
+      } else {
+        const address = f.page
+          .getByRole('region', { name: 'Sheet document', exact: true })
+          .locator('[data-u-comp="defined-name"]')
+          .getByRole('textbox');
+        await address.fill('B2');
+        await address.press('Enter');
+        await f.page.keyboard.type(privateDraft);
+        await f.page.keyboard.press('Enter');
+      }
+      await expect.poll(() => received).toBeGreaterThan(0);
+      await expect(f.page.getByRole('status', { name: 'Save status', exact: true })).toContainText(
+        'not saved',
+      );
+      if (kind === 'doc') {
+        await f.page.getByRole('button', { name: /^People/ }).click();
+        await expect(
+          f.page.getByRole('dialog', { name: 'People in this document', exact: true }),
+        ).toBeVisible();
+      } else {
+        // This second cell remains actively edited, not yet in the workbook.
+        // Capture must include the cell editor's Doc model/composition input.
+        const address = f.page
+          .getByRole('region', { name: 'Sheet document', exact: true })
+          .locator('[data-u-comp="defined-name"]')
+          .getByRole('textbox');
+        await address.fill('C3');
+        await address.press('Enter');
+        await f.page.keyboard.type('Active cell draft before revocation');
+        await expect(
+          f.page.getByRole('status', { name: 'Save status', exact: true }),
+        ).toContainText('Editing cell');
+      }
+      const oldInput = await f.page.evaluateHandle(() => document.activeElement);
+      // Make the root bootstrap/tree probes unreachable in this tab. Its exact
+      // child access watcher must enforce denial independently of those polls.
+      await f.page.route(`**/api/guest/${f.root.id}`, (route) => route.abort('failed'));
+      await f.page.route(`**/api/guest-spaces/${f.root.id}`, (route) => route.abort('failed'));
+      await f.link(null);
+      for (const target of [f.page, other]) {
+        await expect(
+          target.getByRole('heading', { name: 'This link no longer works.', exact: true }),
+        ).toBeVisible({ timeout: 15_000 });
+        await expect(target.locator('.univer-container, canvas, a.space-page-link')).toHaveCount(0);
+        await expect(target.getByRole('dialog')).toHaveCount(0);
+        await expect(target.getByRole('menu')).toHaveCount(0);
+        await expect(
+          target.getByRole('button', {
+            name: /People|theatre|Formulas|Retry saving|Export|Copy|Recover/i,
+          }),
+        ).toHaveCount(0);
+        await expect(target.getByRole('textbox')).toHaveCount(0);
+        await expect(target).toHaveTitle('Spinel');
+        const text = await target.locator('body').innerText();
+        for (const value of [
+          f.root.name,
+          child.name,
+          sibling.name,
+          f.owner.name,
+          privateDraft,
+          'Active cell draft before revocation',
+        ])
+          expect(text).not.toContain(value);
+      }
+      await expect(
+        f.page.getByText('Some changes were not saved. This document is no longer accessible.', {
+          exact: true,
+        }),
+      ).toBeVisible();
+      expect(await oldInput.evaluate((element) => element?.isConnected)).toBe(false);
+      await oldInput.dispose();
+      await f.page.locator('h1').click();
+      await f.page.keyboard.type('Cannot reenter the old editor');
+      await f.page.keyboard.press('Control+a');
+      await f.page.keyboard.press('Control+c');
+      const copied = await f.page.evaluate(() => navigator.clipboard.readText());
+      expect(copied).not.toContain(privateDraft);
+      expect(copied).not.toContain('Active cell draft before revocation');
+      await expect(f.page.locator('canvas, [contenteditable="true"]')).toHaveCount(0);
+      const count = received;
+      release();
+      await expect.poll(() => returned.length).toBeGreaterThanOrEqual(count);
+      expect(returned.every((status) => status === 401 || status === 403 || status === 404)).toBe(
+        true,
+      );
+      expect(await f.snapshot(child.id)).toEqual(before);
+      expect(await f.snapshot(sibling.id)).toEqual(siblingBefore);
+      for (const target of [child, sibling])
+        expect((await f.guest.request.get(endpoint(f.root.id, target.id))).status()).toBe(404);
+      await mkdir('test-results/theme-screenshots', { recursive: true });
+      for (const mode of [
+        { name: 'light', colorScheme: 'light', width: 1280 },
+        { name: 'dark', colorScheme: 'dark', width: 1280 },
+        { name: 'phone', colorScheme: 'light', width: 390 },
+      ] as const) {
+        await f.page.emulateMedia({ colorScheme: mode.colorScheme });
+        await f.page.setViewportSize({ width: mode.width, height: 844 });
+        await f.page.screenshot({
+          path: `test-results/theme-screenshots/spn-084-dirty-${kind}-${mode.name}-${info.project.name}.png`,
+          fullPage: true,
+        });
+      }
+      expect(f.errors).toEqual([]);
+    } finally {
+      release();
+      try {
+        await f.guest.unrouteAll({ behavior: 'wait' });
+      } finally {
+        await f.close();
+      }
+    }
+  });
+}
 
 test('an Edit Space guest manages native pages and loses every child on rotation, downgrade and revocation', async ({
   browser,

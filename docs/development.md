@@ -152,15 +152,25 @@ publishes `main` to <https://mxbaylee.github.io/spinel/> (Owner, chat
 is in the [design playbook](design/README.md#storybook); use the
 [manual design review runbook](design/review-runbook.md) when a design changes.
 
-The workflow builds once, then runs desktop, tablet and two mobile theme reviews
-in parallel. Desktop has a 25-minute timeout; tablet and each mobile job have
-15 minutes. Desktop retains light/dark and native
-editor interaction proofs; the mobile jobs cover light and dark separately; tablet retains its light
-captures and the intermediate 613 px mouse interaction checks. The icon suite
-runs once on desktop. The stable **Review Storybook states and interactions**
-gate requires every viewport and both mobile jobs to pass before main deploys to Pages. Explicitly
-classified documentation-only PRs skip the captures; failed or missing results
-cannot pass as documentation-only.
+The workflow builds once, then reviews desktop light, desktop dark, tablet,
+phone light and phone dark in parallel. Every applicable PR retains full-catalog
+rendering, story play/error checks and the existing native, keyboard, touch,
+focus and shared-control assertions. Desktop light owns the once-only native
+input proofs and icon/integration suite; tablet retains the intermediate 613 px
+mouse checks. The stable **Review Storybook states and interactions** gate
+requires every applicable partition before main deploys to Pages. Failed,
+cancelled or missing results cannot pass as skipped work.
+
+Routine PNG capture is opt-in: add **`visual-review`** to a PR, or set
+**`capture_screenshots=true`** on a manual Storybook run. Add the label for changes
+to layout, themes, fonts, icons or visible interaction states, including relevant
+dependency updates. It requests evidence, not approval; the owner or explicitly
+delegated reviewer still approves affected screens. An explicit capture request
+also runs for a documentation-only PR. Without a capture request, code PRs and
+main pushes retain rendering and interaction checks, semantic/JSON evidence and
+failure screenshots while omitting routine PNGs. Ordinary documentation-only
+PRs report the unchanged catalogue as not applicable. The separate
+`storybook-preview` label still publishes an interactive review build.
 
 The shared build keeps its ordinary `npm ci` and registry-audit invocation. The
 viewport installs use `npm ci --no-audit` so duplicate advisory requests
@@ -170,21 +180,22 @@ five-minute installs is recorded in [decision #138](implementation/SPN-091.md#le
 2026-10-22; a retained audit invocation is not evidence that an unavailable
 registry completed a security audit.
 
-Download `design-review-desktop`, `design-review-tablet`, `design-review-mobile-light`
-and `design-review-mobile-dark` for self-contained galleries. `storybook-review` is the
-shared interactive build, and `entity-icon-screenshots` is the icon gallery.
-After building locally, `npm run screenshots` runs the full review;
-`npm run screenshots -- --viewport mobile <story IDs>` runs one viewport and
-optional focused stories. Only manual CI runs can narrow story IDs; PRs always
-review the full catalog.
-Add `--theme light` or `--theme dark` with the mobile viewport to reproduce one
-CI partition; default `all` retains both. Both jobs run every requested story
-and the shared-control checks for their theme. Fixed-light auxiliary journeys
-run once in the light job. The split preserves coverage after repeated catalog
-timeouts; see [the SPN-081 decision](implementation/SPN-081.md#split-mobile-review-by-theme).
+With captures enabled, download `design-review-desktop-light`,
+`design-review-desktop-dark`, `design-review-tablet`, `design-review-mobile-light`
+and `design-review-mobile-dark` for galleries. Without routine capture, the
+corresponding `storybook-check-*` artifacts retain verification and failure
+evidence. `storybook-review` is the shared interactive build. The once-only icon
+suite produces `entity-icon-screenshots` or `entity-icon-checks` respectively.
+After building locally when local workloads are permitted, `npm run screenshots`
+still captures the full review. Add `--no-screenshots` to keep the checks without
+routine PNGs. `--viewport desktop|tablet|mobile` selects one viewport;
+`--theme light|dark` partitions desktop or mobile. Default `all` retains both
+themes. Fixed-light auxiliary journeys run once in the light job. Only manual CI
+runs can narrow story IDs; PRs always review the full catalog. See the
+[capture and partition decision](implementation/backlog-workflow.md#on-demand-storybook-captures).
 
-CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**
-and **Playwright smoke**. These are required by the active default-branch ruleset;
+CI requires **Backlog**, **Pull request**, **Lint**, **Typecheck**, **Unit tests**,
+**Lib tests** and **Playwright smoke**. These seven checks are required by the active default-branch ruleset;
 see [the process](todo/process.md#pull-requests-and-main).
 
 ## Architecture decisions
@@ -220,12 +231,13 @@ see [the process](todo/process.md#pull-requests-and-main).
   The original safe sequencing is [decision #137](implementation/SPN-091.md#legacy-decision-137-default-off-space-review-stage);
   the completed boundary is [decision #143](implementation/SPN-092.md#legacy-decision-143-exact-space-capabilities-across-integrations)
   and the [SPN-092 implementation contract](implementation/SPN-092.md).
-- React and React DOM are pinned to 18.3.1. On 2026-10-17, published
-  `@univerjs/ui@1.1.0` and `@univerjs/design@1.1.0` peer dependencies support
-  React 16–19; [Univer's UI package](https://github.com/dream-num/univer/blob/dev/packages/ui/package.json)
-  uses 18.3.1 in development. Matching that baseline and the existing React 18
-  types reduces editor integration work. Decided 2026-10-17 in
-  [#1](implementation/SPN-001.md#legacy-decision-1-react-version). Recheck when adding editors.
+- React and React DOM are pinned together to 19.3.1, with React and React DOM
+  types at 19.3.0. The installed Univer 1.1.0, Base UI 1.9.0 and Storybook 10.3.5
+  peer ranges allow React 19. The presence workspace follows the tested runtime;
+  DOM ref types explicitly include their unmounted null state. Keep these four
+  packages coordinated when upgrading and verify native editor lifecycle, portals,
+  focus and save/access behavior. The [React 19 upgrade record](implementation/dependency-react-19.md)
+  supersedes the initial [React 18 scaffold baseline](implementation/SPN-001.md#legacy-decision-1-react-version).
 - Oxlint works alongside the existing TypeScript 7 compiler; typescript-eslint
   8.71.2 requires TypeScript below 6.1. Prettier handles scaffold formatting.
   Decided 2026-10-17 in [#3](implementation/SPN-001.md#legacy-decision-3-compiler-compatible-linting).

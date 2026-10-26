@@ -97,7 +97,7 @@ reviewable in the screenshots before consumer migration.
 
 ## Base UI foundation
 
-`@base-ui/react` 1.9.0 (MIT) is pinned. It supports the existing React 18 setup.
+`@base-ui/react` 1.9.0 (MIT) is pinned. Its peer range supports the React 19 setup.
 Button, Menu, Select, Dialog, Popover and RadioGroup/Radio are used. There is no second
 primitive library, no Tailwind, and no production consumer migration here.
 
@@ -135,17 +135,25 @@ reduced motion, light/dark desktop, light/dark phone and light tablet. It checks
 runtime failures, horizontal page overflow and visible 44 px touch targets for proposed screens. Base UI’s aria-hidden form inputs are excluded from target checks.
 
 Output: `test-results/design-review/index.html`, PNGs, `manifest.json`, control
-semantics and bundle sizes. Storybook CI builds once and captures in parallel:
-**design-review-desktop** (light/dark), **design-review-tablet** (light),
-**design-review-mobile-light** and **design-review-mobile-dark**. Each artifact is a complete gallery for
-its selected variants. `--viewport desktop|tablet|mobile` selects the same local
-partition; omitting it retains the full review.
-For mobile only, `--theme light|dark` selects one CI theme; default `all` preserves
-both and all requested story IDs. Fixed-light auxiliary journeys run once in
-the light job; per-theme story and shared-control checks run in both.
-Native editor interaction proofs and the icon suite run once on desktop;
-tablet retains the 613 px mouse checks.
-The aggregate review gate requires every partition before main Pages deployment.
+semantics and bundle sizes. Routine CI captures require the **`visual-review`**
+PR label or a manual `capture_screenshots=true` request. Applicable full-catalog
+rendering and interaction checks continue without that request; add
+`--no-screenshots` to reproduce that mode. Failure diagnostics remain available.
+
+Storybook CI builds once and reviews five parallel partitions. Capture artifacts
+are **design-review-desktop-light**, **design-review-desktop-dark**,
+**design-review-tablet**, **design-review-mobile-light** and
+**design-review-mobile-dark**. Without routine PNGs, **storybook-check-***
+artifacts retain verification and failure evidence. `--viewport
+desktop|tablet|mobile` selects the same local partition; omitting it retains the
+full review. For desktop and mobile, `--theme light|dark` selects one CI theme;
+default `all` preserves both and all requested story IDs. Fixed-light auxiliary
+journeys run once in the light job; per-theme story and shared-control checks run
+in both. Native editor input proofs and the icon suite run once on desktop light;
+tablet retains the 613 px mouse checks. The aggregate review gate requires every
+applicable partition before main Pages deployment. The
+[capture policy](../implementation/backlog-workflow.md#on-demand-storybook-captures)
+does not waive approval for changed screens.
 Open the downloaded index for paired current/proposed stories, followed by every state across sizes. The PR links
 this artifact and embeds representative before/after images. These are review
 captures, not approved regression baselines.
