@@ -7,16 +7,20 @@ export async function historyRequest<T>(
   method = 'GET',
   body?: unknown,
   spaceId?: string,
+  signal?: AbortSignal,
 ): Promise<T> {
   const response = await fetch(`${documentPath(id, spaceId)}/history${path}`, {
     method,
     credentials: 'same-origin',
+    signal,
     ...(body === undefined
       ? {}
       : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
   });
+  signal?.throwIfAborted();
   if (response.status === 401) location.assign('/sign-in');
   const result = await response.json();
+  signal?.throwIfAborted();
   if (!response.ok) throw new Error(result.error ?? 'Could not load history. Try again.');
   return result;
 }

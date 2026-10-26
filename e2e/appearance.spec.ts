@@ -4,28 +4,14 @@ import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { mkdir } from 'node:fs/promises';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { ColorKit, invertColorByMatrix } from '@univerjs/core';
-import type { ICellData, IWorkbookData } from '@univerjs/core';
+import type { IWorkbookData } from '@univerjs/core';
 import { editorNeutrals } from '../src/ui/palette.ts';
 import { presetStyle } from '../src/ui/presetStyles.ts';
 import { defaultProfile } from '../src/profile/profile.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
-
-// Collaboration materialization allocates fresh style IDs on every read.
-// Resolve each cell's complete style before comparing all workbook content;
-// incidental dictionary keys are not formatting changes (see sheets.spec.ts).
-function resolvedWorkbook(snapshot: IWorkbookData) {
-  const { styles, ...workbook } = structuredClone(snapshot);
-  for (const sheet of Object.values(workbook.sheets))
-    for (const row of Object.values(sheet.cellData ?? {}))
-      for (const cell of Object.values(row ?? {}) as (ICellData | null)[])
-        if (cell && typeof cell.s === 'string') {
-          expect(styles[cell.s], `Style ${cell.s} must resolve`).toBeDefined();
-          cell.s = styles[cell.s];
-        }
-  return workbook;
-}
+import { resolvedWorkbook } from './workbook-state.ts';
 
 test('themes persist, follow the system, and recolour sheet presets without editing documents', async ({
   page,
