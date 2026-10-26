@@ -61,9 +61,11 @@ that isn't waiting on another is next.
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 - **CI may be the default for validation**, including typecheck, lint, backlog,
   unit and browser checks. Draft pushes do not require local checks to pass first.
-  Keep unverified work draft; all seven CI gates, independent review >=95 with no
-  blockers and required visual approval remain merge requirements. Local workloads
-  still obey the memory watchdog. Owner, chat 2026-10-23;
+  Keep unverified work draft; all seven CI gates, two independent nonimplementing
+  subagents each scoring **above 95/100 on the same current commit**, no unresolved
+  blockers and required visual approval remain merge requirements. Owner, chat
+  2026-10-26; [review gate](docs/implementation/backlog-workflow.md#two-independent-grades-on-the-same-commit).
+  Local workloads still obey the memory watchdog. Owner, chat 2026-10-23;
   [decision](docs/implementation/backlog-workflow.md#ci-as-the-default-validation-environment).
   The seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
   tests changed. Owner, chat 2026-10-22.

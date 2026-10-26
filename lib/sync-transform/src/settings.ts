@@ -1,6 +1,8 @@
 import type { AxisEdit } from './axis.ts';
 import type { Axis, Family } from './family.ts';
-import type { Mutation, Side } from './types.ts';
+import { observeTransform } from './types.ts';
+import type { Mutation, Side, TransformObserver } from './types.ts';
+import type { Cells } from './state.ts';
 
 /**
  * Mutations that each set one value of a sheet, or of the workbook. Two of the
@@ -44,8 +46,16 @@ function remap(mutation: Mutation, axis: Axis, edit: AxisEdit): Mutation[] {
   ];
 }
 
-// Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule 'setting-first-accepted'.
-const transform = (a: Mutation, b: Mutation, side: Side): Mutation[] =>
-  a.id === b.id && side === 'right' ? [] : [a];
+const transform = (
+  a: Mutation,
+  b: Mutation,
+  side: Side,
+  _state: Cells,
+  observe?: TransformObserver,
+): Mutation[] => {
+  if (a.id !== b.id || side !== 'right') return [a];
+  observeTransform(observe, { kind: 'dropped', rule: 'setting-first-accepted', value: 1 });
+  return [];
+};
 
 export const settings: Family = { ids: Object.values(settingIds), remap, transform };

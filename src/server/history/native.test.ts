@@ -80,7 +80,8 @@ function nativeHistory(workspace: WorkspaceStore, observe?: ObserveJob) {
   const subscribe = () => ({ dispose() {} });
   const collaboration = {
     onPrepared: subscribe,
-    service: { use: subscribe, on: subscribe },
+    onSubmitting: subscribe,
+    onCommitted: subscribe,
     load: () => {
       throw new Error('A native save must not call the collaboration runtime.');
     },

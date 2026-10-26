@@ -1,3 +1,25 @@
+import { isSyncDiagnosticEvent, syncDiagnosticMessage } from './sync.ts';
+import type { SyncDiagnosticEvent } from './sync.ts';
+export {
+  observeSync,
+  syncMutationId,
+  SYNC_MUTATION_IDS,
+  SYNC_REFUSAL_REASONS,
+  SYNC_DROP_RULES,
+  SYNC_MALFORMED_CHECKS,
+  SYNC_INVARIANTS,
+  SYNC_RESYNC_REASONS,
+} from './sync.ts';
+export type {
+  SyncDiagnosticEvent,
+  SyncObservation,
+  SyncMutationId,
+  SyncRefusalReason,
+  SyncDropRule,
+  SyncMalformedCheck,
+  SyncInvariant,
+} from './sync.ts';
+
 /** Optional observations, never edit delivery. No storage, clocks or transport here. */
 export const JOBS = ['history-prune', 'trash-expiry', 'collaboration-purge', 'backup'] as const;
 export const OPERATIONS = [
@@ -25,6 +47,7 @@ export type Route = (typeof ROUTES)[number];
 export type Level = (typeof LEVELS)[number];
 
 export type DiagnosticEvent =
+  | SyncDiagnosticEvent
   | {
       name: 'job.result';
       details: { job: Job; outcome: 'success' | 'failure'; durationMs: number; count?: number };
@@ -185,6 +208,7 @@ export function isDiagnosticContext(value: unknown): value is DiagnosticContext 
 }
 
 export function isDiagnosticEvent(value: unknown): value is DiagnosticEvent {
+  if (isSyncDiagnosticEvent(value)) return true;
   if (!isObject(value) || !isObject(value.details)) return false;
   const d = value.details;
   if (value.name === 'job.result')
@@ -267,7 +291,11 @@ export function isDiagnosticEvent(value: unknown): value is DiagnosticEvent {
 }
 
 export function diagnosticMessage(event: DiagnosticEvent): string | null {
-  return event.name === 'operation.failed' ? 'An operation failed.' : null;
+  return event.name === 'operation.failed'
+    ? 'An operation failed.'
+    : isSyncDiagnosticEvent(event)
+      ? syncDiagnosticMessage(event)
+      : null;
 }
 
 export interface DiagnosticRecord {
