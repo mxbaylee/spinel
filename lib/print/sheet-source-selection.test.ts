@@ -1,10 +1,69 @@
 import { expect, test, vi } from 'vitest';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { ImageSourceType, LocaleType } from '@univerjs/core';
 import type { ICellData, IWorkbookData } from '@univerjs/core';
 import sharp from 'sharp';
 import { PrintError } from './contract.ts';
 import { selectSheetImageSources } from './index.ts';
 import { prepareSheetLayout } from './layout.ts';
+
+test('adversarial uncached wildcards finish before host byte preparation and retain matching images', async () => {
+  const book: IWorkbookData = {
+    id: 'wildcard-probe',
+    name: 'Probe',
+    appVersion: '1.1.0',
+    locale: LocaleType.EN_US,
+    styles: {},
+    sheetOrder: ['one'],
+    sheets: {
+      one: {
+        id: 'one',
+        name: 'One',
+        rowCount: 2,
+        columnCount: 2,
+        cellData: {
+          0: { 0: { v: 'Header' } },
+          1: { 0: { v: 'a'.repeat(48) }, 1: picture('kept') },
+        },
+      },
+    },
+    resources: [
+      {
+        name: 'SHEET_FILTER_PLUGIN',
+        data: JSON.stringify({
+          one: {
+            ref: { startRow: 0, endRow: 1, startColumn: 0, endColumn: 1 },
+            filterColumns: [
+              { colId: 0, customFilters: { customFilters: [{ val: '*a'.repeat(24) + 'b' }] } },
+            ],
+          },
+        }),
+      },
+    ],
+  };
+  // A process deadline makes a regression fail safely even if synchronous
+  // matching stops cooperating with the public selector's own deadline.
+  const { stdout } = await promisify(execFile)(
+    process.execPath,
+    [
+      '--input-type=module',
+      '--eval',
+      `
+      const { selectSheetImageSources } = await import(process.argv[1]);
+      const book = JSON.parse(process.argv[2]);
+      const hidden = selectSheetImageSources(book, { limits: { durationMs: 1000 } });
+      book.sheets.one.cellData[1][0].v += 'b';
+      const visible = selectSheetImageSources(book, { limits: { durationMs: 1000 } });
+      console.log(JSON.stringify({ hidden, visible }));
+    `,
+      new URL('./index.ts', import.meta.url).href,
+      JSON.stringify(book),
+    ],
+    { timeout: 5_000, maxBuffer: 65_536 },
+  );
+  expect(JSON.parse(stdout)).toEqual({ hidden: [], visible: ['kept'] });
+}, 10_000);
 
 function picture(source: string): ICellData {
   return {

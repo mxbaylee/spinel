@@ -53,6 +53,12 @@ Saved filter-row caches are authoritative. If an uncached filter may depend on
 formula values or range-theme styles that still need isolated preparation, Sheet
 selection conservatively retains those rows' image references until the renderer
 has the prepared values. Those possible sources remain subject to the byte budget.
+Uncached wildcard filters use native-compatible literal, star and question-mark
+matching with explicit work accounting, rather than a backtracking regular
+expression on the host. All criteria and rows in a worksheet share at most four
+times `gridCells` matching steps, including pattern preparation and suffix
+retries; existing cancellation/deadline checkpoints run during long matches.
+Exhaustion refuses the complete export. Saved caches keep their native precedence.
 
 The single public entry loads only metadata code until a render function is
 called. Native loading happens synchronously at that call so the existing input

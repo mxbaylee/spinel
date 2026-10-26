@@ -3,7 +3,7 @@ import { CellValueType, LocaleType, Styles } from '@univerjs/core';
 import type { IWorkbookData } from '@univerjs/core';
 import { CustomFilterOperator, FilterModel } from '@univerjs/sheets-filter';
 import type { IAutoFilter, IFilterColumn } from '@univerjs/sheets-filter';
-import { PRINT_LIMITS } from './contract.ts';
+import { PRINT_LIMITS, PrintError } from './contract.ts';
 import { filteredSheetRows } from './sheet-filter.ts';
 import { PrintWorksheet } from './worksheet.ts';
 
@@ -166,3 +166,133 @@ test.each([undefined, [], [1, 3]])(
     }
   },
 );
+
+function textWorksheet(values: string[]) {
+  const book: IWorkbookData = {
+    id: 'wildcard-parity',
+    name: 'Wildcard parity',
+    appVersion: '1.1.0',
+    locale: LocaleType.EN_US,
+    styles: {},
+    sheetOrder: ['one'],
+    sheets: {
+      one: {
+        id: 'one',
+        rowCount: values.length + 1,
+        columnCount: 1,
+        cellData: Object.fromEntries(values.map((v, index) => [index + 1, { 0: { v } }])),
+      },
+    },
+  };
+  return new PrintWorksheet(book, book.sheets.one, new Styles(book.styles));
+}
+
+function textFilter(values: string[], val: string, operator?: CustomFilterOperator): IAutoFilter {
+  return {
+    ref: { startRow: 0, endRow: values.length, startColumn: 0, endColumn: 0 },
+    filterColumns: [{ colId: 0, customFilters: { customFilters: [{ val, operator }] } }],
+  };
+}
+
+test.each([
+  '',
+  '*',
+  '?',
+  '**a*b',
+  '*a*a*b',
+  'a?b',
+  '.*',
+  '[a]',
+  '~*',
+  '(a)+',
+  '\\*',
+  '*\n*',
+  '?\r?',
+  '*\u2028*',
+  '*\u2029*',
+  'Σ*',
+  'k',
+  's',
+  'ß',
+  'é',
+  '\ud83d?',
+])('bounded wildcard %j retains native literal, newline and UTF-16 semantics', (pattern) => {
+  const values = [
+    '',
+    'a',
+    'b',
+    'AAb',
+    'abc',
+    'aab',
+    'axbyb',
+    'a\nb',
+    'a\rb',
+    'a\r\nb',
+    'a\u2028b',
+    'a\u2029b',
+    'a\n',
+    '.*',
+    '.xyz',
+    '[a]',
+    '~',
+    '~literal',
+    '(a)+',
+    '\\abc',
+    'Σ',
+    'σ',
+    'ς',
+    'K',
+    'K',
+    'S',
+    'ſ',
+    'ß',
+    'SS',
+    'É',
+    '😀',
+  ];
+  for (const operator of [undefined, CustomFilterOperator.NOT_EQUALS]) {
+    const filter = textFilter(values, pattern, operator);
+    const native = FilterModel.deserialize('wildcard-parity', 'one', textWorksheet(values), filter);
+    try {
+      expect([...filteredSheetRows(textWorksheet(values), filter, PRINT_LIMITS, () => {})]).toEqual(
+        [...native.filteredOutRows],
+      );
+    } finally {
+      native.dispose();
+    }
+  }
+});
+
+test('wildcard work is shared across rows and fails without a partial filter result', () => {
+  const values = ['a'.repeat(40), 'a'.repeat(40)];
+  const limits = { ...PRINT_LIMITS, gridCells: 24 };
+  expect(
+    filteredSheetRows(
+      textWorksheet(values.slice(0, 1)),
+      textFilter(values.slice(0, 1), '*a'),
+      limits,
+      () => {},
+    ),
+  ).toEqual(new Set());
+  expect(() =>
+    filteredSheetRows(textWorksheet(values), textFilter(values, '*a'), limits, () => {}),
+  ).toThrow('wildcard work budget');
+});
+
+test('wildcard matching reaches the deadline/cancellation checkpoint within one long cell', () => {
+  const values = ['a'.repeat(8_000)];
+  let checks = 0;
+  expect(() =>
+    filteredSheetRows(textWorksheet(values), textFilter(values, '*a'), PRINT_LIMITS, () => {
+      if (++checks > 10) throw new PrintError('cancelled', 'Cancelled during filtering');
+    }),
+  ).toThrow('Cancelled during filtering');
+});
+
+test('a saved filter cache does not spend work on an unused wildcard', () => {
+  const values = ['a'];
+  const filter = { ...textFilter(values, '*a'.repeat(100)), cachedFilteredOut: [] };
+  expect(
+    filteredSheetRows(textWorksheet(values), filter, { ...PRINT_LIMITS, gridCells: 1 }, () => {}),
+  ).toEqual(new Set());
+});

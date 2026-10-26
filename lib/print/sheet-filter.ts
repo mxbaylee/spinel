@@ -17,13 +17,7 @@
  * filter evaluation used by saved PDF snapshots, with bounded admission and
  * checkpoints. No reactive model, editor services or rendering imports.
  */
-import {
-  CellValueType,
-  ColorKit,
-  extractPureTextFromCell,
-  isNumeric,
-  regexp,
-} from '@univerjs/core';
+import { CellValueType, ColorKit, extractPureTextFromCell, isNumeric } from '@univerjs/core';
 import type { ICellData, IStyleData, Worksheet } from '@univerjs/core';
 import type { IAutoFilter, ICustomFilter, IFilterColumn } from '@univerjs/sheets-filter';
 import { PrintError } from './contract.ts';
@@ -66,8 +60,68 @@ function stringValue(value: unknown): string | null {
   return typeof value === 'string' ? value : String(value);
 }
 
-function customPredicate(filter: ICustomFilter): (value: unknown) => boolean {
+// Match the native non-Unicode /i behavior one UTF-16 unit at a time. In
+// particular, multi-unit uppercase expansions and non-ASCII → ASCII folds do
+// not match in that mode (ß/SS, long s/S and Kelvin sign/K).
+function foldUnit(value: string): number {
+  const original = value.charCodeAt(0);
+  const upper = value.toUpperCase();
+  const folded = upper.charCodeAt(0);
+  return upper.length !== 1 || (original >= 128 && folded < 128) ? original : folded;
+}
+
+function isLineEnd(value: string): boolean {
+  return value === '\n' || value === '\r' || value === '\u2028' || value === '\u2029';
+}
+
+/**
+ * The native wildcard regex can backtrack exponentially before an isolated PDF
+ * worker starts. Keep its literal, star and question-mark semantics with charged steps.
+ * Remembering the latest star is sufficient; even repeated suffix scans share
+ * the worksheet's finite work ledger and cancellation/deadline checkpoints.
+ */
+function wildcardPredicate(pattern: unknown, step: () => void): (text: string) => boolean {
+  let units: number[] | undefined;
+  return (text) => {
+    if (!units) {
+      if (typeof pattern !== 'string')
+        throw new PrintError('invalid-input', 'PDF worksheet filtering failed.');
+      units = [];
+      for (let index = 0; index < pattern.length; index++) {
+        step();
+        const unit = pattern[index];
+        units.push(unit === '*' ? -1 : unit === '?' ? -2 : foldUnit(unit));
+      }
+    }
+    let source = 0;
+    let criterion = 0;
+    let star = -1;
+    let starEnd = 0;
+    while (source < text.length) {
+      step();
+      const unit = units[criterion];
+      if (unit === -1) {
+        star = criterion++;
+        starEnd = source;
+      } else if (unit === -2 ? !isLineEnd(text[source]) : unit === foldUnit(text[source])) {
+        source++;
+        criterion++;
+      } else if (star !== -1 && !isLineEnd(text[starEnd])) {
+        source = ++starEnd;
+        criterion = star + 1;
+      } else return false;
+    }
+    while (units[criterion] === -1) {
+      step();
+      criterion++;
+    }
+    return criterion === units.length;
+  };
+}
+
+function customPredicate(filter: ICustomFilter, step: () => void): (value: unknown) => boolean {
   const compare = filter.val;
+  const wildcard = wildcardPredicate(compare, step);
   const numeric =
     typeof compare === 'number' || (typeof compare === 'string' && isNumeric(compare));
   if (filter.operator === 'notEqual' && !numeric) {
@@ -75,7 +129,7 @@ function customPredicate(filter: ICustomFilter): (value: unknown) => boolean {
       if (compare === ' ') return value !== undefined && value !== null;
       const text = stringValue(value);
       if (text && typeof compare === 'string' && (compare.includes('*') || compare.includes('?')))
-        return !regexp.createFromWildcard(compare).test(text);
+        return !wildcard(text);
       return text !== compare;
     };
   }
@@ -105,11 +159,11 @@ function customPredicate(filter: ICustomFilter): (value: unknown) => boolean {
   return (value) => {
     const text = stringValue(value);
     if (text === null) return compare === '';
-    return regexp.createFromWildcard(compare as string).test(text);
+    return wildcard(text);
   };
 }
 
-function columnPredicate(column: IFilterColumn): (value: unknown) => boolean {
+function columnPredicate(column: IFilterColumn, step: () => void): (value: unknown) => boolean {
   if (column.filters) {
     const includeBlank = !!column.filters.blank;
     const values = new Set(column.filters.filters);
@@ -138,7 +192,7 @@ function columnPredicate(column: IFilterColumn): (value: unknown) => boolean {
     throw new PrintError('invalid-input', 'PDF worksheet filtering failed.');
   }
   const custom = column.customFilters!;
-  const predicates = custom.customFilters.map(customPredicate);
+  const predicates = custom.customFilters.map((filter) => customPredicate(filter, step));
   return custom.and
     ? (value) => predicates.every((predicate) => predicate(value))
     : (value) => predicates.some((predicate) => predicate(value));
@@ -154,13 +208,19 @@ export function filteredSheetRows(
   if (value === undefined) return new Set();
   const filter = validateFilter(value, worksheet.getRowCount(), worksheet.getColumnCount(), limits);
   check();
+  let work = 0;
+  const step = () => {
+    if (++work > limits.gridCells * 4)
+      throw new PrintError('limit', 'PDF filter exceeds its wildcard work budget.');
+    if (work % 256 === 0) check();
+  };
   try {
     // Native deserialization builds every predicate before accepting its cache.
     const columns = (filter.filterColumns ?? []).map((column) => {
       check();
       if (column.colId < filter.ref.startColumn || column.colId > filter.ref.endColumn)
         throw new PrintError('invalid-input', 'PDF worksheet filtering failed.');
-      return { column, predicate: columnPredicate(column) };
+      return { column, predicate: columnPredicate(column, step) };
     });
     if (filter.cachedFilteredOut) return new Set(filter.cachedFilteredOut);
     const excluded = new Set<number>();
