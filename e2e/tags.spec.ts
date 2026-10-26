@@ -59,6 +59,11 @@ test('personal tags work in the dashboard and editor, suggest earlier names and 
     );
     await dialog.getByRole('button', { name: 'Done', exact: true }).click();
     await page.reload();
+    // Require the same native-editor readiness boundary as first entry before opening the menu.
+    await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
+      'All changes saved.',
+      { timeout: 30000 },
+    );
     await page.getByRole('button', { name: 'Document actions', exact: true }).click();
     await page.getByRole('menuitem', { name: 'Tags…', exact: true }).click();
     await expect(
@@ -91,6 +96,10 @@ test('personal tags work in the dashboard and editor, suggest earlier names and 
     ).toBeVisible();
     await ownDialog.getByRole('button', { name: 'Done', exact: true }).click();
     await otherPage.reload();
+    await expect(otherPage.getByRole('status', { name: 'Save status' })).toContainText(
+      'View only',
+      { timeout: 30000 },
+    );
     await otherPage.getByRole('button', { name: 'Document actions', exact: true }).click();
     await otherPage.getByRole('menuitem', { name: 'Tags…', exact: true }).click();
     await expect(
