@@ -17,10 +17,12 @@ change".
 
 ## Independent review
 
-Score out of 100 (minimum 95), independent subagent, reviewed commit SHA and
-rubric/deductions. No unresolved blockers. List each finding as fixed, linked to
-a follow-up ticket with the scope reason, or accepted as non-actionable with why.
-Record re-review after changes; do not replace an acceptance gap with a follow-up.
+Two independent nonimplementing subagents, each scoring above 95/100 on the same
+current commit. Record each reviewer, individual score, reviewed SHA and
+rubric/deductions; do not average scores. Neither review may have unresolved
+blockers. List each finding as fixed, linked to a follow-up ticket with the scope
+reason, or accepted as non-actionable with why. Record both reviewers' revalidation
+after changes; do not replace an acceptance gap with a follow-up.
 
 ## Split out and decided
 

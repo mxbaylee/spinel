@@ -6,7 +6,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { DocumentStore } from '../src/server/workspace/documents.ts';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
-import { inspectPdf } from './pdfEvidence.ts';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 
 for (const kind of ['sheet', 'doc'] as const) {
   test(`${kind} PDF downloads for every current reader with worksheet selection and guest privacy`, async ({
@@ -133,6 +133,11 @@ for (const kind of ['sheet', 'doc'] as const) {
             { timeout: 30_000 },
           );
           const guest = role.startsWith('guest-');
+          const pdfPath = `/api/${guest ? 'guest' : 'items'}/${item.id}/pdf`;
+          const optionsResponse = page.waitForResponse(
+            (response) =>
+              new URL(response.url()).pathname === pdfPath && response.request().method() === 'GET',
+          );
           if (guest) {
             await expect(
               page.getByRole('button', { name: 'Document actions', exact: true }),
@@ -146,6 +151,11 @@ for (const kind of ['sheet', 'doc'] as const) {
             name: guest ? 'Export as PDF' : 'Export',
             exact: true,
           });
+          const options = await optionsResponse;
+          expect(
+            options.status(),
+            options.ok() ? 'PDF options loaded.' : `PDF options refused: ${await options.text()}`,
+          ).toBe(200);
           const button = dialog.getByRole('button', { name: 'Export as PDF', exact: true });
           await expect(button).toBeEnabled();
           if (guest)
@@ -183,9 +193,8 @@ for (const kind of ['sheet', 'doc'] as const) {
               });
             }
           }
-          const download = page.waitForEvent('download');
-          await button.click();
-          const evidence = await inspectPdf(await download, info, `${kind}-${role}`, {
+          const download = await downloadPdf(page, button, pdfPath);
+          const evidence = await inspectPdf(download, info, `${kind}-${role}`, {
             text:
               kind === 'doc'
                 ? ['PUBLIC-DOC-001', 'PUBLIC-DOC-090']

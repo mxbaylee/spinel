@@ -163,17 +163,20 @@ the next eligible ticket. Owner, chat 2026-10-19 and 2026-10-25;
    are exempt: their changes are low effort, such as scaffolding or generated
    code, so a large diff is still easy to review. CI reads the effort from the
    base branch's copy of the ticket.
-5. **Independent review.** Have a subagent that did not implement the change
-   inspect and verify it, using the original ticket, full diff and evidence,
-   without a prior or hoped-for grade. Require **at least 95/100 and no unresolved
-   blockers**, following the [rubric and repair/split rules](../run-backlog.md#3-get-an-independent-grade).
+5. **Independent review.** Have two subagents that did not implement the change
+   independently inspect and verify it, using the original ticket, full diff and
+   evidence, without a prior or hoped-for grade. Require **each score above 95/100
+   on the same current commit and no unresolved blockers**; an average does not
+   satisfy the gate. Follow the [rubric and repair/split rules](../run-backlog.md#3-get-two-independent-grades)
+   and the [owner's review decision](../implementation/backlog-workflow.md#two-independent-grades-on-the-same-commit).
    Explicitly assess over-complexity within the rubric's 10 maintainability points,
    with actionable deductions for unnecessary abstractions, dependencies or
    speculative flexibility (owner, chat 2026-10-20,
    [#105](../implementation/backlog-workflow.md#legacy-decision-105-deduct-unnecessary-complexity)).
    Weigh scope overlap before changed-line limits: fix acceptance gaps here;
-   ticket separable work without hiding a blocker. Re-review repairs, and put
-   the score, reviewed SHA and every finding’s disposition in the PR.
+   ticket separable work without hiding a blocker. Both reviewers revalidate
+   repairs; put both scores, the shared reviewed SHA and every finding's
+   disposition in the PR.
 6. **Prepare to land.** In the same PR:
    - Delete the ticket file.
    - Move its Rules and their reasons into the maintained docs under `docs/`,
@@ -184,7 +187,7 @@ the next eligible ticket. Owner, chat 2026-10-19 and 2026-10-25;
    - Run `npm run backlog:index`.
    - Title the PR `<ticket emoji> SPN-NNN <ticket title>`, the ticket's own
      heading.
-7. **Merge when authorized.** With independent review complete, all required
+7. **Merge when authorized.** With both independent reviews complete, all required
    checks passing for the current head, an up-to-date base, and required owner
    input/verification resolved, squash-merge the verified SHA. Confirm the merge.
    During a [backlog run](../run-backlog.md), continue from current main to the next eligible

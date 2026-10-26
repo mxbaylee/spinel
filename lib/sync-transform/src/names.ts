@@ -5,7 +5,9 @@ import type { Family } from './family.ts';
 import { settingIds } from './settings.ts';
 import { axisIds, structureIds } from './structure.ts';
 import { refuseRaces } from './types.ts';
-import type { Mutation, Side } from './types.ts';
+import { observeTransform } from './types.ts';
+import type { Mutation, Side, TransformObserver } from './types.ts';
+import type { Cells } from './state.ts';
 import { cellIds, matrixWrites, writesOf } from './writes.ts';
 
 /** Defined names: workbook-wide, each a whole record that a set replaces by its `id`. */
@@ -320,9 +322,17 @@ export function markRewrites(mutations: Mutation[]): Mutation[] {
  * Not taken: keeping the loser's fields the winner did not change, which would
  * need the sender to send the record as it was before the edit.
  */
-// Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule 'name-first-accepted'.
-const transform = (a: Mutation, b: Mutation, side: Side): Mutation[] =>
-  a.params.id === b.params.id && side === 'right' ? [] : [a];
+const transform = (
+  a: Mutation,
+  b: Mutation,
+  side: Side,
+  _state: Cells,
+  observe?: TransformObserver,
+): Mutation[] => {
+  if (a.params.id !== b.params.id || side !== 'right') return [a];
+  observeTransform(observe, { kind: 'dropped', rule: 'name-first-accepted', value: 1 });
+  return [];
+};
 
 // Names hold no row or column positions of their own; see `racesName`.
 export const names: Family = { ids: Object.values(nameIds), remap: unaffected, transform };

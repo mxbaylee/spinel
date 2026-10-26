@@ -2,14 +2,7 @@ import { fork, execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import type { DocPrintInput, SheetPrintInput } from '@spinel/print';
-import {
-  PDF_LIMITS,
-  PDF_DEADLINE_MS,
-  PDF_WORKER_RSS_BYTES,
-  PDF_COMBINED_RSS_BYTES,
-  PDF_MEMORY_SAMPLE_MS,
-  PdfError,
-} from './limits.ts';
+import { PDF_LIMITS, PDF_DEADLINE_MS, PDF_MEMORY_SAMPLE_MS, PdfError } from './limits.ts';
 import type { PdfErrorCode } from './limits.ts';
 import { checkPdfCapacity, pdfMemory, pdfMemoryExceeded } from './capacity.ts';
 
@@ -114,8 +107,6 @@ async function residentBytes(pid: number): Promise<number | null> {
 export async function runPdf(job: PdfJob, signal?: AbortSignal): Promise<PdfResult> {
   if (signal?.aborted) throw new PdfError('cancelled');
   if (active) throw new PdfError('busy');
-  if (process.memoryUsage().rss > PDF_COMBINED_RSS_BYTES - PDF_WORKER_RSS_BYTES)
-    throw new PdfError('limit');
   active = true;
   try {
     admitJob(job);

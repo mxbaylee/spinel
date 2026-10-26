@@ -8,6 +8,7 @@ COPY lib/doc-formulas/package.json ./lib/doc-formulas/package.json
 COPY lib/presence-ui/package.json ./lib/presence-ui/package.json
 COPY lib/print/package.json ./lib/print/package.json
 COPY lib/sync-transform/package.json ./lib/sync-transform/package.json
+COPY lib/sync-server/package.json ./lib/sync-server/package.json
 COPY scripts/dependencies ./scripts/dependencies
 RUN npm ci
 COPY . .

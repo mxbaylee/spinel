@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import sharp from 'sharp';
-import { inspectPdf } from './pdfEvidence.ts';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -110,9 +110,11 @@ for (const kind of ['sheet', 'doc'] as const) {
           : snapshot.body.dataStream,
       ).toContain('Portable proof 314');
       phase = 'download complete PDF';
-      const pdfDownload = page.waitForEvent('download');
-      await page.getByRole('button', { name: 'Export as PDF', exact: true }).click();
-      await inspectPdf(await pdfDownload, info, kind, {
+      const pdfDownload = await downloadPdf(
+        page,
+        page.getByRole('button', { name: 'Export as PDF', exact: true }),
+      );
+      await inspectPdf(pdfDownload, info, kind, {
         text: ['Portable proof 314'],
         forbidden: [user.name, 'Your workspace'],
         image: kind === 'doc',

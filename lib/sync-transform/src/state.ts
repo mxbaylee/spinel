@@ -4,6 +4,7 @@ import { mapIndex } from './axis.ts';
 import type { AxisEdit } from './axis.ts';
 import { cellIds, writesOf } from './writes.ts';
 import { axisEdit, structureIds } from './structure.ts';
+import { MalformedEditError } from './types.ts';
 import type { Mutation } from './types.ts';
 
 export type CellData = Record<string, any>;
@@ -399,7 +400,10 @@ export class Cells {
   static of(base?: BaseCells): Cells {
     if (!base) {
       return new Cells(() => {
-        throw new TypeError('Two writes to one cell need the base cells (`options.cells`).');
+        throw new MalformedEditError(
+          'base-cells',
+          'Two writes to one cell need the base cells (`options.cells`).',
+        );
       });
     }
     return new Cells((unitId, subUnitId, row, col) =>

@@ -99,9 +99,10 @@ either or enforce the 2 GiB limit.
 The owner permits and prefers CI when convenient, including for typecheck, lint
 and backlog checks. This is always available, not conditional on a watchdog abort.
 Keep the PR draft until verified and record deferred or resource-aborted local
-checks honestly. All seven required CI gates, independent review of at least 95 with
-no blockers, and the other merge gates still apply. This changes where validation
-runs, not acceptance, and does not authorize paid test hosts. Owner, chat
+checks honestly. All seven required CI gates, two independent scores each above
+95 on the same current commit with no blockers, and the other merge gates still
+apply. This changes where validation runs, not acceptance, and does not authorize
+paid test hosts. Owner, chat
 2026-10-23, [decision](implementation/backlog-workflow.md#ci-as-the-default-validation-environment),
 superseding the local prerequisite in the earlier
 [decision #52](implementation/backlog-workflow.md#legacy-decision-52-memory-watchdog-ci-first-exception).
@@ -112,16 +113,18 @@ append its ID to `grooming.completed_since`, and run `npm run backlog:index`.
 Run the PR checker against `origin/main` with the ticket's exact heading as title.
 Do not call the ticket landed until GitHub confirms the merge.
 
-## 3. Get an independent grade
+## 3. Get two independent grades
 
-Use a subagent that did not implement the change, preferably with fresh context.
-Give it the original ticket from the base branch, the full diff, relevant docs,
-all four personas, and reproducible test/CI evidence. Ask it to inspect the code
+Use two subagents that did not implement the change, preferably with fresh context.
+Give each the original ticket from the base branch, the full diff, relevant docs,
+all four personas, and reproducible test/CI evidence. Ask each to inspect the code
 and independently verify important outcomes; passing checks alone are not review.
-Give it no prior grade or desired result. Review is read-only; the implementing
-agent owns fixes. If independent review is unavailable, keep the PR unmerged.
+Give neither a prior grade, the other reviewer's score, or a desired result.
+Reviewers may share concrete findings and evidence, but each assesses the full
+rubric and issues their own grade. Review is read-only; the implementing agent
+owns fixes. If either independent review is unavailable, keep the PR unmerged.
 
-Ask for a score out of 100 using this rubric:
+Ask each reviewer for a score out of 100 using this rubric:
 
 - **35:** ticket scope and acceptance criteria.
 - **25:** correctness, data integrity and access boundaries.
@@ -140,10 +143,13 @@ file/line references where relevant, reproduction evidence, severity, and a
 recommended fix or follow-up scope. Do not deduct for a feature the ticket
 explicitly defers, but do deduct if the delivered slice is unsafe or incomplete.
 
-The merge gate is **at least 95/100 AND no unresolved blocking findings**.
-An average of several scores does not satisfy it. Record the reviewer, reviewed
-commit SHA, rubric, deductions and each finding's disposition in the PR. Review
-uncommitted work only provisionally; tie the final assessment to the committed diff.
+The merge gate is **two independent scores each above 95/100 on the same current
+commit AND no unresolved blocking findings in either review**. Exactly 95 does
+not pass. An average, an older commit's grade, or a single review does not satisfy
+it. Record both reviewers, their individual scores and rubrics, the shared reviewed
+commit SHA, deductions and each finding's disposition in the PR. Review uncommitted
+work only provisionally; tie both final assessments to the committed diff.
+Owner, chat 2026-10-26; [decision](implementation/backlog-workflow.md#two-independent-grades-on-the-same-commit).
 
 ## 4. Fix here or file separately
 
@@ -176,14 +182,15 @@ the review evidence, and record why each remainder can ship separately. A depend
 follow-up may name the current ticket only while that ticket is still open; remove
 completed dependency IDs when landing, keeping provenance in the ticket body.
 
-Below 95, implement the appropriate repairs or scoped split and send the revised
-change and finding dispositions back to the independent reviewer. Repeat until
-the gate is met or an actual blocker/limit requires a checkpoint. Filing a ticket
-alone does not resolve an in-scope blocker or erase a deduction. The reviewer must
+If either score is 95 or below, implement the appropriate repairs or scoped split
+and send the revised change and finding dispositions back to both independent
+reviewers. Repeat until the gate is met or an actual blocker/limit requires a
+checkpoint. Filing a ticket
+alone does not resolve an in-scope blocker or erase a deduction. Both reviewers must
 assess the resulting slice. Do not shop for a more generous reviewer or round up.
 
-At 95 or above, fix or ticket any remaining actionable finding according to the
-same scope rules; a non-actionable observation may be explicitly accepted with
+Even when both scores are above 95, fix or ticket any remaining actionable finding
+according to the same scope rules; a non-actionable observation may be explicitly accepted with
 its reason. All blockers still prevent merging, regardless of the numerical score.
 
 New tickets must exist on `main` before their implementation PRs can land. File
@@ -195,9 +202,9 @@ the checker or reuse an ID to avoid this prerequisite.
 
 ## 5. Publish, wait for CI, and merge
 
-Open one PR with the exact ticket heading, review grade, final behavior, evidence,
+Open one PR with the exact ticket heading, both review grades, final behavior, evidence,
 changed-line count and finding dispositions. A draft is appropriate while blocked;
-mark it ready only when its acceptance criteria and independent review are complete.
+mark it ready only when its acceptance criteria and both independent reviews are complete.
 Publish early if helpful, but do not treat opening the PR as completing the ticket.
 
 Wait for all required checks on the current head to finish successfully. The
@@ -216,11 +223,11 @@ Inspect failures, fix their causes, run the affected checks and the pre-push che
 and push again. Retry a transient infrastructure failure only with evidence.
 
 Fetch main before merging. If it advanced, update the branch and resolve conflicts,
-then recheck the combined change and wait for fresh CI. Have the reviewer assess
+then recheck the combined change and wait for fresh CI. Have both reviewers assess
 material source, acceptance, test or workflow changes, including conflict fixes;
-record a revalidation of the new SHA even for a mechanically unchanged rebase.
-Check the final grade and CI against the same head. Do not merge while a required
-owner decision/manual check, blocking review, or repository protection is unresolved.
+record both reviewers' revalidation of the new SHA even for a mechanically unchanged
+rebase. Check both final grades and CI against the same head. Do not merge while a
+required owner decision/manual check, blocking review, or repository protection is unresolved.
 
 Squash-merge using the verified head SHA as a guard (for example,
 `gh pr merge <number> --squash --match-head-commit <reviewed-sha>`). Never use admin
@@ -248,7 +255,7 @@ work complete or merge it just to reach a stopping point. Keep useful worktrees.
 
 Put a **Run checkpoint** in the current PR body when one exists, and in the chat's
 final response. Include merged ticket IDs/PRs; current branch, head SHA and local
-path; dirty/unpushed work; last review score and unresolved findings; exact checks
+path; dirty/unpushed work; last review scores and unresolved findings; exact checks
 passed/failed/pending; blocked tickets with decision links; and the next concrete
 action. No secrets. Update the checkpoint after each merged ticket in the PR body
 so an abrupt interruption still leaves a useful trail.
@@ -260,8 +267,11 @@ an entire backlog will finish in one chat or survive an abrupt limit automatical
 
 ## Why these gates
 
-The owner chose independent review, the 95% threshold, CI-gated merges and
-continued backlog execution on 2026-10-17 (SPN-037). Scope-first repair/splitting
+The owner chose independent review, the original 95% threshold, CI-gated merges and
+continued backlog execution on 2026-10-17 (SPN-037), then required two independent
+scores each above 95 on the same commit on 2026-10-26 after a second SPN-057 review
+found a missed blocker. The [current review gate](implementation/backlog-workflow.md#two-independent-grades-on-the-same-commit)
+supersedes the earlier single-review threshold. Scope-first repair/splitting
 and the rubric were recorded in [decision #6](implementation/backlog-workflow.md#legacy-decision-6-independent-review-and-coherent-scope).
 They favour predictable operations for the Operator, complete work and preserved
 documents for the Owner, safe edits and permissions for the Collaborator, and

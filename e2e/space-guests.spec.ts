@@ -1,4 +1,4 @@
-import { inspectPdf } from './pdfEvidence.ts';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -473,14 +473,12 @@ test('a View Space link covers nested and future pages without outer access or p
     const host = endpoint(f.root.id, f.nested.id);
     await f.page.getByRole('button', { name: 'Export as PDF', exact: true }).click();
     const pdfPanel = f.page.getByRole('dialog', { name: 'Export as PDF', exact: true });
-    const pdfDownload = f.page.waitForEvent('download');
-    const pdfResponse = f.page.waitForResponse(
-      (response) =>
-        response.url().endsWith(`${host}/pdf`) && response.request().method() === 'POST',
+    const pdfDownload = await downloadPdf(
+      f.page,
+      pdfPanel.getByRole('button', { name: 'Export as PDF', exact: true }),
+      `${host}/pdf`,
     );
-    await pdfPanel.getByRole('button', { name: 'Export as PDF', exact: true }).click();
-    expect((await pdfResponse).status()).toBe(200);
-    await inspectPdf(await pdfDownload, info, 'space-guest-doc', {
+    await inspectPdf(pdfDownload, info, 'space-guest-doc', {
       forbidden: ['Changed private identity', 'Changed private outer location', f.external.name],
     });
     await pdfPanel.getByRole('button', { name: 'Close dialog', exact: true }).click();

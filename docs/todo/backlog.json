@@ -9,6 +9,7 @@
     "completed_since": [
       "SPN-102",
       "SPN-067",
+      "SPN-057",
       "SPN-075"
     ]
   },
@@ -27,7 +28,7 @@
     ]
   },
   "pr_title_exceptions": [
-    "🧹 Groom backlog",
-    "⬆️ Bump"
+    "\ud83e\uddf9 Groom backlog",
+    "\u2b06\ufe0f Bump"
   ]
 }

@@ -36,11 +36,10 @@ function fixture() {
   });
   const collaboration = {
     onPrepared: () => ({ dispose() {} }),
-    service: {
-      use: () => ({ dispose() {} }),
-      on: () => ({ dispose() {} }),
-      dbAdapter: { getUnit },
-    },
+    onSubmitting: () => ({ dispose() {} }),
+    onCommitted: () => ({ dispose() {} }),
+    headRevision: async (user: string, unit: string, custom: Record<string, unknown>) =>
+      (await getUnit({ userID: user, customData: custom, request: {} }, unit))?.headRevision,
     generations: { active: (id: string) => ({ itemId: id, unitId: id, offset: 0 }) },
     load,
   } as unknown as CollaborationStore;

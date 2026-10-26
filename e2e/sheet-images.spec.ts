@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import sharp from 'sharp';
 import { sheetImageFixture } from './sheet-image-fixture.ts';
-import { inspectPdf } from './pdfEvidence.ts';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 
@@ -339,9 +339,11 @@ test('Sheet images survive browser export/import and restore, with scoped revoca
     ).tab.data.floating;
     expect(floating.subUnitId).toBe('tab');
     expect(floating.transform).toEqual(originalDrawing.transform);
-    const pdfDownload = page.waitForEvent('download');
-    await page.getByRole('button', { name: 'Export as PDF', exact: true }).click();
-    await inspectPdf(await pdfDownload, info, 'sheet-images', {
+    const pdfDownload = await downloadPdf(
+      page,
+      page.getByRole('button', { name: 'Export as PDF', exact: true }),
+    );
+    await inspectPdf(pdfDownload, info, 'sheet-images', {
       image: true,
       colors: [
         [255, 153, 0],

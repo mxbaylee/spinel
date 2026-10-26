@@ -390,7 +390,7 @@ export class McpDocuments {
       reqId: 1,
       mutations: [mutation],
     };
-    const result = await this.collaboration.service.submitChangeset(
+    const result = await this.collaboration.submitChangeset(
       { changeset },
       {
         userID: identity.userId,

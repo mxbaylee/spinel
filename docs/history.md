@@ -28,6 +28,16 @@ as a duplicate of revision 1 in the other. A capture that overlaps another edit
 does not mark the newer revision as captured. Shutdown waits for running capture
 work before closing the collaboration service and database.
 
+The disabled-by-default [Spinel sync server](collaboration.md#spinel-server-integration-flag)
+uses the same initial-capture, durable-commit notification and revision-reconciliation
+hooks. History materializes the new log through headless OSS Univer and preserves
+Doc Formula metadata and opaque resources. Restore fences new admissions, drains
+already admitted writes, preserves the exact Before restore snapshot, and atomically
+switches the active generation with its completion receipt and purge outbox. A failed
+or interrupted staged generation remains eligible for cleanup; disabling the server
+flag does not discard that cleanup work or reopen stale native data. The checkpoint
+schedule and retention below are unchanged.
+
 ## Retention and storage
 
 The owner approved this schedule in

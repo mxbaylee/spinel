@@ -73,6 +73,22 @@ test('holds completed bytes and admission until the child closes successfully', 
   await expect(next).resolves.toMatchObject({ pages: 1 });
 });
 
+test('a larger parent uses the dynamic remaining allowance instead of reserving the maximum worker size', async () => {
+  const original = process.memoryUsage();
+  const parent = vi
+    .spyOn(process, 'memoryUsage')
+    .mockReturnValue({ ...original, rss: 900 * 1024 * 1024 });
+  try {
+    const pending = runPdf(job());
+    expect(mocks.fork).toHaveBeenCalledOnce();
+    child.complete();
+    child.close(0);
+    await expect(pending).resolves.toMatchObject({ pages: 1 });
+  } finally {
+    parent.mockRestore();
+  }
+});
+
 test('cancellation discards an already buffered PDF and retains admission until close', async () => {
   const controller = new AbortController();
   const pending = runPdf(job(), controller.signal);

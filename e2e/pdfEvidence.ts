@@ -2,7 +2,44 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createCanvas } from '@napi-rs/canvas';
 import { getDocument, OPS } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { expect } from '@playwright/test';
-import type { Download, TestInfo } from '@playwright/test';
+import type { Download, Locator, Page, TestInfo } from '@playwright/test';
+
+/** Fail on the real endpoint response instead of hiding a rejection behind a download timeout. */
+export async function downloadPdf(page: Page, button: Locator, path?: string) {
+  const download = page.waitForEvent('download', { timeout: 65_000 }).then(
+    (value) => ({ value }),
+    (error: unknown) => ({ error }),
+  );
+  const response = page
+    .waitForResponse(
+      (value) =>
+        value.request().method() === 'POST' &&
+        (path
+          ? new URL(value.url()).pathname === path
+          : new URL(value.url()).pathname.endsWith('/pdf')),
+      { timeout: 65_000 },
+    )
+    .then(
+      (value) => ({ value }),
+      (error: unknown) => ({ error }),
+    );
+  await button.click();
+  const returned = await response;
+  if ('error' in returned) throw returned.error;
+  const endpoint = new URL(returned.value.url()).pathname;
+  const diagnostic = returned.value.ok()
+    ? ''
+    : await returned.value.text().catch(() => 'Response body unavailable.');
+  expect(
+    returned.value.status(),
+    `PDF POST ${endpoint} returned ${returned.value.status()}: ${diagnostic.slice(0, 2000)}`,
+  ).toBe(200);
+  expect(returned.value.headers()['content-type']).toMatch(/^application\/pdf(?:;|$)/);
+  const received = await download;
+  if ('error' in received) throw received.error;
+  expect(await received.value.failure()).toBeNull();
+  return received.value;
+}
 
 /** Reopen the actual downloaded bytes and retain every page, not an editor screenshot. */
 export async function inspectPdf(

@@ -35,11 +35,13 @@ async function checked(
     clearDashboardNavigation();
     location.assign('/sign-in');
   }
-  const body = await response.json().catch(() => ({}));
+  const body: unknown = await response.json().catch(() => null);
   signal.throwIfAborted();
   verifyCurrent();
   throw new Error(
-    typeof body.error === 'string' ? body.error : 'Could not export this PDF. Try again.',
+    body && typeof body === 'object' && 'error' in body && typeof body.error === 'string'
+      ? body.error
+      : 'Could not export this PDF. Try again.',
   );
 }
 

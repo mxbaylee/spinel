@@ -85,9 +85,9 @@ const areaOf = (range: IRange): Area => ({
  * "Known limits"). Not taken: a `shift` mark that carries the command's whole
  * band and is sent even with no MoveRange, which would make SPN-058's sender
  * read Univer's command params rather than only its mutations.
- * Diagnostics (SPN-057, not built): `sync.edit.offset`, a counter of writes
- * merged in the part of a shift's band its MoveRange leaves out, would show
- * whether that mark is worth building.
+ * `sync.edit.offset` counts candidate writes beside the clipped band. The
+ * original command's wider band is unavailable, so this is an upper bound
+ * on actual off-place writes, not proof that an omitted column was selected.
  */
 function areasOf(move: Mutation): Area[] {
   const shift = shiftOf(move);
@@ -128,6 +128,19 @@ export function movesMeet(a: Mutation, b: Mutation): boolean {
   const [area] = areasOf(strips[0]);
   if (strips.length === 2) return meet(area, areasOf(strips[1])[0]);
   return writesOf(strips[0] === a ? b : a).some((write) => inArea(area, write));
+}
+
+/** Count possible offsets only; the full, pre-clipping command band is not on the wire. */
+export function clippedShiftWrites(a: Mutation, b: Mutation): number {
+  const move = shiftOf(a) ? a : shiftOf(b) ? b : undefined;
+  if (!move) return 0;
+  const write = move === a ? b : a;
+  if (isMove(write)) return 0;
+  const shift = shiftOf(move)!;
+  const band = areasOf(move)[0];
+  return writesOf(write).filter(
+    (cell) => (shift.axis === 'row' ? cell.row : cell.col) >= shift.at && !inArea(band, cell),
+  ).length;
 }
 
 /** Whether a shift and a concurrent merge edit meet: a merged range in its area. */

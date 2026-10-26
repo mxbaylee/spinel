@@ -7,7 +7,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { DocumentStore } from '../src/server/workspace/documents.ts';
-import { inspectPdf } from './pdfEvidence.ts';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 
 test('Doc readers and host-only guests see literal formulas without receiving private source values', async ({
   page,
@@ -168,9 +168,11 @@ test('Doc readers and host-only guests see literal formulas without receiving pr
       name: account ? 'Export' : 'Export as PDF',
       exact: true,
     });
-    const downloaded = view.waitForEvent('download');
-    await pdf.getByRole('button', { name: 'Export as PDF', exact: true }).click();
-    await inspectPdf(await downloaded, info, `${account ? 'account' : 'guest'}-private-formulas`, {
+    const downloaded = await downloadPdf(
+      view,
+      pdf.getByRole('button', { name: 'Export as PDF', exact: true }),
+    );
+    await inspectPdf(downloaded, info, `${account ? 'account' : 'guest'}-private-formulas`, {
       text: ['42', 'Unavailable'],
       forbidden: [secret, source.name, source.id, expression, owner.name, reader.name],
     });

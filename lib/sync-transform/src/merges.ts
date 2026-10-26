@@ -4,7 +4,8 @@ import { mapIndex } from './axis.ts';
 import type { AxisEdit } from './axis.ts';
 import { axisKeys } from './family.ts';
 import type { Axis, Family } from './family.ts';
-import type { Mutation, Side } from './types.ts';
+import { observeTransform } from './types.ts';
+import type { Mutation, Side, TransformObserver } from './types.ts';
 
 export const mergeIds = {
   add: 'sheet.mutation.add-worksheet-merge',
@@ -61,11 +62,17 @@ export function cuts(range: IRange, axis: Axis, edit: AxisEdit): boolean {
  * edit is dropped on both screens rather than grown or shrunk. Univer's merge
  * listener leaves a cut merge in place, so resizing it would differ from what
  * Univer does for one person; losing the new merge beats screens that differ.
- * Diagnostics (SPN-057, not built): `sync.edit.dropped`, rule 'merge-cut'.
  */
-export function cutBy(mutation: Mutation, axis: Axis, edit: AxisEdit): Mutation[] {
+export function cutBy(
+  mutation: Mutation,
+  axis: Axis,
+  edit: AxisEdit,
+  observe?: TransformObserver,
+): Mutation[] {
   if (mutation.id !== mergeIds.add) return [];
   const ranges = (mutation.params.ranges as IRange[]).filter((range) => cuts(range, axis, edit));
+  if (ranges.length)
+    observeTransform(observe, { kind: 'dropped', rule: 'merge-cut', value: ranges.length });
   return withRanges(mutation, mergeIds.remove, ranges);
 }
 
@@ -97,11 +104,20 @@ function moved(range: IRange, axis: Axis, edit: AxisEdit): IRange {
 }
 
 /** The listener drops single-cell merges, and `cutBy` removes cut ones, so neither is added. */
-function remap(mutation: Mutation, axis: Axis, edit: AxisEdit): Mutation[] {
+function remap(
+  mutation: Mutation,
+  axis: Axis,
+  edit: AxisEdit,
+  observe?: TransformObserver,
+): Mutation[] {
+  let dropped = 0;
   const ranges = (mutation.params.ranges as IRange[]).flatMap((range) => {
     if (mutation.id === mergeIds.remove) return retarget(range, axis, edit);
-    return isCell(range) || cuts(range, axis, edit) ? [] : [moved(range, axis, edit)];
+    const cut = cuts(range, axis, edit);
+    if (cut && !isCell(range)) dropped++;
+    return isCell(range) || cut ? [] : [moved(range, axis, edit)];
   });
+  if (dropped) observeTransform(observe, { kind: 'dropped', rule: 'merge-cut', value: dropped });
   return withRanges(mutation, mutation.id, ranges);
 }
 

@@ -1,5 +1,5 @@
 import { mkdir } from 'node:fs/promises';
-import { inspectPdf } from './pdfEvidence.ts';
+import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { LocaleType } from '@univerjs/core';
@@ -379,9 +379,11 @@ test('native Doc formulas render live cells, tables and cross-document totals wi
     await formulaPanel(page).getByRole('button', { name: 'Close dialog', exact: true }).click();
     await page.getByRole('button', { name: 'Document actions', exact: true }).click();
     await page.getByRole('menuitem', { name: 'Export', exact: true }).click();
-    const pdfDownload = page.waitForEvent('download');
-    await page.getByRole('button', { name: 'Export as PDF', exact: true }).click();
-    await inspectPdf(await pdfDownload, info, 'formulas', {
+    const pdfDownload = await downloadPdf(
+      page,
+      page.getByRole('button', { name: 'Export as PDF', exact: true }),
+    );
+    await inspectPdf(pdfDownload, info, 'formulas', {
       text: ['314159', '314166', ...Array.from({ length: 30 }, (_, row) => String(row + 201))],
       forbidden: [owner.name, friend.name],
     });

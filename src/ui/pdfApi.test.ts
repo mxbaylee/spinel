@@ -179,6 +179,20 @@ test('an HTML or JSON success response cannot become a mislabeled PDF download',
   ).rejects.toThrow('Could not export this PDF. Try again.');
 });
 
+test.each([null, false, 'Gateway failed', { error: 7 }])(
+  'a malformed error response retains the neutral PDF failure (%j)',
+  async (body) => {
+    vi.stubGlobal('location', { pathname: '/' });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json(body, { status: 500 })),
+    );
+    await expect(
+      preparePdfDownload('id', 'Doc', undefined, new AbortController().signal),
+    ).rejects.toThrow('Could not export this PDF. Try again.');
+  },
+);
+
 test('download filename keeps visible Unicode but strips path/control characters and fixes extension', () => {
   expect(pdfFilename("attachment; filename*=UTF-8''Caf%C3%A9.pdf", 'fallback')).toBe('Café.pdf');
   expect(pdfFilename('attachment; filename="../../private.pdf"', 'fallback')).toBe(
