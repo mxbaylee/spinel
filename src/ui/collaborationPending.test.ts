@@ -14,6 +14,8 @@ import type { SaveState } from '../shared/autosave.ts';
 import type { DocPendingChanges } from '../../web/docPending.ts';
 import { prepareCollaboration, watchCollaboration } from '../../web/collaboration.ts';
 
+const bootstrap = vi.hoisted(() => ({ legacyFacadeLoads: 0 }));
+
 // Exercise Spinel's watcher through public SDK tokens/observables without
 // starting a native editor or loading any Pro implementation.
 vi.mock('@univerjs/core', () => ({
@@ -21,6 +23,13 @@ vi.mock('@univerjs/core', () => ({
   ICommandService: Symbol('commands'),
 }));
 vi.mock('../../web/CollaborationSessions.ts', () => ({ CollaborationSessions: class {} }));
+// The replacement socket lifecycle has its own tests; these fixtures exercise
+// the unchanged legacy watcher without constructing either native runtime.
+vi.mock('../../web/spinelSync.ts', () => ({
+  getSpinelSync: () => undefined,
+  loadSpinelDocument: vi.fn(),
+  disposeSpinelSync: vi.fn(),
+}));
 vi.mock('@univerjs-pro/license', () => ({ UniverLicensePlugin: class {} }));
 vi.mock('@univerjs-pro/collaboration', () => ({ UniverCollaborationPlugin: class {} }));
 vi.mock('@univerjs-pro/collaboration-client', () => ({
@@ -48,7 +57,10 @@ vi.mock('@univerjs-pro/collaboration-client-ui', () => ({
 }));
 vi.mock('@univerjs-pro/collaboration-client/locale/en-US', () => ({ default: {} }));
 vi.mock('@univerjs-pro/collaboration-client-ui/locale/en-US', () => ({ default: {} }));
-vi.mock('@univerjs-pro/collaboration-client/facade', () => ({}));
+vi.mock('@univerjs-pro/collaboration-client/facade', () => {
+  bootstrap.legacyFacadeLoads++;
+  return {};
+});
 vi.mock('@univerjs-pro/collaboration-client-ui/lib/index.css', () => ({}));
 
 test.each([401, 403, 404])(
@@ -81,6 +93,29 @@ test.each([401, 403, 404])(
     expect(dispatchEvent.mock.calls[0][0].type).toBe('spinel-guest-revoked');
   },
 );
+
+test('native preparation never installs the global legacy facade, and a backend change requires a new page', async () => {
+  vi.stubGlobal('location', { pathname: '/' });
+  const response = { unitId: 'unit', access: 'editor', user: { id: 'person', name: 'Person' } };
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => Response.json({ ...response, syncVersion: 1 })),
+  );
+  expect(bootstrap.legacyFacadeLoads).toBe(0);
+  expect((await prepareCollaboration('item')).syncVersion).toBe(1);
+  expect(bootstrap.legacyFacadeLoads).toBe(0);
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => Response.json(response)),
+  );
+  await prepareCollaboration('item');
+  expect(bootstrap.legacyFacadeLoads).toBe(1);
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => Response.json({ ...response, syncVersion: 1 })),
+  );
+  await expect(prepareCollaboration('item')).rejects.toThrow('Reload this page');
+});
 
 function stream<T>() {
   const listeners = new Set<(value: T) => void>();

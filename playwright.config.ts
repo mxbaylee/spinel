@@ -1,8 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const project = process.env.SPINEL_E2E_PROJECT;
-if (project && !['development', 'production', 'mobile-https'].includes(project))
-  throw new Error('SPINEL_E2E_PROJECT must be development, production or mobile-https.');
+if (
+  project &&
+  !['development', 'production', 'mobile-https', 'sync-development', 'sync-production'].includes(
+    project,
+  )
+)
+  throw new Error('SPINEL_E2E_PROJECT must name a configured browser project.');
 
 export default defineConfig({
   testDir: './e2e',
@@ -15,8 +20,9 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   failOnFlakyTests: Boolean(process.env.CI),
-  // Stop repeated downstream failures early; a failed run still fails the gate.
-  maxFailures: process.env.CI ? 1 : 0,
+  // Keep all five independent native-client acceptance scenarios observable;
+  // ordinary large suites still stop repeated downstream failures early.
+  maxFailures: process.env.CI && !project?.startsWith('sync-') ? 1 : 0,
   reporter: 'line',
   // Recording every action/DOM snapshot distorts the real-time latency checks.
   // Keep CI failure diagnostics on its first retry; all assertions still run.
@@ -25,13 +31,23 @@ export default defineConfig({
     {
       name: 'development',
       // Offline downloads need the production build's app-shell manifest.
-      testIgnore: ['**/pwa.spec.ts', '**/offline.spec.ts'],
+      testIgnore: ['**/pwa.spec.ts', '**/offline.spec.ts', '**/sync-client.spec.ts'],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
     },
     {
       name: 'production',
-      testIgnore: '**/pwa.spec.ts',
+      testIgnore: ['**/pwa.spec.ts', '**/sync-client.spec.ts'],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' },
+    },
+    {
+      name: 'sync-development',
+      testMatch: '**/sync-client.spec.ts',
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3104' },
+    },
+    {
+      name: 'sync-production',
+      testMatch: '**/sync-client.spec.ts',
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3105' },
     },
     {
       name: 'mobile-https',
@@ -54,13 +70,45 @@ export default defineConfig({
         PORT: '3100',
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/development/app.sqlite',
+        SPINEL_SYNC_SERVER: '0',
+        VITE_SYNC_EVIDENCE: '0',
       },
       reuseExistingServer: false,
     },
     {
       command: 'npm start',
       url: 'http://localhost:3101/sign-in',
-      env: { PORT: '3101', HOST: '127.0.0.1', DATABASE_PATH: 'test-results/production/app.sqlite' },
+      env: {
+        PORT: '3101',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/production/app.sqlite',
+        SPINEL_SYNC_SERVER: '0',
+        VITE_SYNC_EVIDENCE: '0',
+      },
+      reuseExistingServer: false,
+    },
+    {
+      command: 'node server/index.ts --dev --no-open',
+      url: 'http://localhost:3104/sign-in',
+      env: {
+        PORT: '3104',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/sync-development/app.sqlite',
+        SPINEL_SYNC_SERVER: '1',
+        VITE_SYNC_EVIDENCE: '1',
+      },
+      reuseExistingServer: false,
+    },
+    {
+      command: 'npm start',
+      url: 'http://localhost:3105/sign-in',
+      env: {
+        PORT: '3105',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/sync-production/app.sqlite',
+        SPINEL_SYNC_SERVER: '1',
+        VITE_SYNC_EVIDENCE: '1',
+      },
       reuseExistingServer: false,
     },
     {
@@ -73,7 +121,15 @@ export default defineConfig({
     (server) =>
       !project ||
       server.url.includes(
-        project === 'development' ? ':3100/' : project === 'production' ? ':3101/' : ':3103/',
+        project === 'development'
+          ? ':3100/'
+          : project === 'production'
+            ? ':3101/'
+            : project === 'sync-development'
+              ? ':3104/'
+              : project === 'sync-production'
+                ? ':3105/'
+                : ':3103/',
       ),
   ),
 });

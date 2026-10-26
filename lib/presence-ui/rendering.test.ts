@@ -5,7 +5,21 @@ import { BaseSelectionRenderService } from '@univerjs/sheets-ui';
 import { drawPresence, setLocalSelectionColor } from './index.ts';
 
 vi.mock('@univerjs/sheets-ui/facade', () => ({}));
-vi.mock('@univerjs/engine-render', () => ({ IRenderManagerService: Symbol('render') }));
+vi.mock('@univerjs/engine-render', () => ({
+  IRenderManagerService: Symbol('render'),
+  Documents: class {},
+}));
+vi.mock('@univerjs/docs', () => ({
+  DocSelectionManagerService: Symbol('doc-selections'),
+  DocSkeletonManagerService: Symbol('doc-skeleton'),
+}));
+vi.mock('@univerjs/docs-ui', () => ({
+  DocCanvasPopManagerService: Symbol('doc-popups'),
+  DocSelectionRenderService: Symbol('doc-selection-render'),
+  DocIMEInputManagerService: Symbol('doc-ime'),
+  getTextRangeFromCharIndex: vi.fn(),
+}));
+vi.mock('@univerjs/ui', () => ({ ComponentManager: Symbol('components') }));
 vi.mock('@univerjs/sheets-ui', () => ({
   BaseSelectionRenderService: class {},
   ISheetSelectionRenderService: Symbol('selection'),

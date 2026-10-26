@@ -391,13 +391,19 @@ function before(edit: AxisEdit, index: number): number | null {
 export class Cells {
   private readonly kept = new Map<string, CellData | null>();
   private readonly read: Read;
+  private readonly charge?: (value: unknown) => void;
 
-  private constructor(read: Read) {
+  private constructor(read: Read, charge?: (value: unknown) => void) {
     this.read = read;
+    this.charge = charge;
+  }
+
+  private next(read: Read): Cells {
+    return new Cells(read, this.charge);
   }
 
   /** The base, or one that throws when read, for a transform given none. */
-  static of(base?: BaseCells): Cells {
+  static of(base?: BaseCells, charge?: (value: unknown) => void): Cells {
     if (!base) {
       return new Cells(() => {
         throw new MalformedEditError(
@@ -406,14 +412,21 @@ export class Cells {
         );
       });
     }
-    return new Cells((unitId, subUnitId, row, col) =>
-      normalize(Tools.deepClone(base(unitId, subUnitId, row, col) ?? null)),
-    );
+    return new Cells((unitId, subUnitId, row, col) => {
+      const value = base(unitId, subUnitId, row, col) ?? null;
+      charge?.(value);
+      return normalize(Tools.deepClone(value));
+    }, charge);
   }
 
   get(unitId: string, subUnitId: string, row: number, col: number): CellData | null {
     const key = `${unitId} ${subUnitId} ${row}:${col}`;
-    if (!this.kept.has(key)) this.kept.set(key, this.read(unitId, subUnitId, row, col));
+    if (!this.kept.has(key)) {
+      this.charge?.([unitId, subUnitId, row, col]);
+      const value = this.read(unitId, subUnitId, row, col);
+      this.charge?.(value);
+      this.kept.set(key, value);
+    }
     return this.kept.get(key)!;
   }
 
@@ -428,7 +441,7 @@ export class Cells {
     const line = axisEdit(mutation);
     if (line) {
       const { axis, edit } = line;
-      return new Cells((unitId, subUnitId, row, col) => {
+      return this.next((unitId, subUnitId, row, col) => {
         if (unitId !== p.unitId || subUnitId !== p.subUnitId)
           return read(unitId, subUnitId, row, col);
         const was = before(edit, axis === 'row' ? row : col);
@@ -441,26 +454,31 @@ export class Cells {
     if (mutation.id === structureIds.insertSheet) {
       // Its styles are inline: `check` rejects a style id in a sheet mutation.
       const { cellData = {} } = p.sheet;
-      return new Cells((unitId, subUnitId, row, col) => {
+      return this.next((unitId, subUnitId, row, col) => {
         if (unitId !== p.unitId || subUnitId !== p.sheet.id)
           return read(unitId, subUnitId, row, col);
-        return normalize(Tools.deepClone(cellData[row]?.[col] ?? null));
+        const value = cellData[row]?.[col] ?? null;
+        this.charge?.(value);
+        return normalize(Tools.deepClone(value));
       });
     }
     if (mutation.id === structureIds.removeSheet) {
-      return new Cells((unitId, subUnitId, row, col) =>
+      return this.next((unitId, subUnitId, row, col) =>
         unitId === p.unitId && subUnitId === p.subUnitId ? null : read(unitId, subUnitId, row, col),
       );
     }
     if (mutation.id === cellIds.moveRange) {
       // Univer's handler writes `from` on its sheet, then `to` on its own, each cell whole.
       const sides = [p.to, p.from] as { subUnitId: string; value: any }[];
-      return new Cells((unitId, subUnitId, row, col) => {
+      return this.next((unitId, subUnitId, row, col) => {
         if (unitId === p.unitId) {
           for (const side of sides) {
             if (side.subUnitId !== subUnitId) continue;
             const cell = side.value?.[row]?.[col];
-            if (cell !== undefined) return normalize(Tools.deepClone(cell));
+            if (cell !== undefined) {
+              this.charge?.(cell);
+              return normalize(Tools.deepClone(cell));
+            }
           }
         }
         return read(unitId, subUnitId, row, col);
@@ -469,10 +487,12 @@ export class Cells {
     const ids: string[] = [cellIds.setRangeValues, cellIds.setNumfmt, cellIds.removeNumfmt];
     if (!ids.includes(mutation.id)) return this;
     const writes = new Map(writesOf(mutation).map((write) => [`${write.row}:${write.col}`, write]));
-    return new Cells((unitId, subUnitId, row, col) => {
+    return this.next((unitId, subUnitId, row, col) => {
       const cell = read(unitId, subUnitId, row, col);
       const write = unitId === p.unitId && subUnitId === p.subUnitId && writes.get(`${row}:${col}`);
       if (!write) return cell;
+      this.charge?.(cell);
+      this.charge?.(write.value);
       return tails ? lands(mutation, write.value, cell) : effect(mutation, write.value, cell);
     });
   }

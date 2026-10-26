@@ -140,6 +140,34 @@ export const AccessChanged: Story = {
     ).not.toBeInTheDocument();
   },
 };
+export const WaitingToResync: Story = {
+  args: {
+    state: {
+      dirty: true,
+      failed: true,
+      message: 'An edit could not be applied. Waiting for the server before reloading.',
+    },
+  },
+  play: details,
+};
+export const RejectedEdits: Story = {
+  args: {
+    state: {
+      dirty: false,
+      failed: true,
+      message:
+        'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.',
+    },
+  },
+  play: async (context) => {
+    await details(context);
+    await expect(
+      within(context.canvasElement.ownerDocument.body).queryByRole('button', {
+        name: 'Retry saving',
+      }),
+    ).not.toBeInTheDocument();
+  },
+};
 export const LongError: Story = {
   args: {
     state: {

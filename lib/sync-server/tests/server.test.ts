@@ -19,6 +19,8 @@ import {
   SyncServer,
   validateSnapshot,
   MAX_WORKSHEETS,
+  MAX_RETAINED_BYTES,
+  MAX_RETAINED_REVISIONS,
 } from '../index.ts';
 import type { SubmitRequest, SyncCommit, SyncRevision, SyncStorage, SyncUnit } from '../index.ts';
 import { cellsAt } from '../src/cells.ts';
@@ -559,6 +561,98 @@ test('expired transform retention resyncs new submissions while old receipts sta
     code: 'stale',
   });
   expect(await f.server.submit(sent, undefined)).toMatchObject({ duplicate: true, missing: [] });
+});
+
+test('replay returns each exact accepted edit in durable order and supports an empty current-head replay', async () => {
+  const f = fixture();
+  const first = await f.server.submit(
+    request('replay-first', [
+      {
+        ...write({ v: 101 }),
+        params: { ...write({ v: 101 }).params, trigger: 'sheet.command.set-range-values' },
+      },
+    ]),
+    undefined,
+  );
+  const second = await f.server.submit(
+    request('replay-second', [write({ s: { it: 1 } })]),
+    undefined,
+  );
+  expect(f.server.replay('book', 1, undefined)).toEqual({
+    revision: 3,
+    edits: [first.edit, second.edit],
+  });
+  expect(f.server.replay('book', 2, undefined)).toEqual({ revision: 3, edits: [second.edit] });
+  expect(f.server.replay('book', 3, undefined)).toEqual({ revision: 3, edits: [] });
+});
+
+test('replay fails closed on missing, out-of-order, foreign or pruned retained rows', async () => {
+  const f = fixture();
+  await f.server.submit(request('replay-first'), undefined);
+  await f.server.submit(request('replay-second', [write({ v: 2 })], 2), undefined);
+  const edits = structuredClone(f.storage.edits);
+  const revisions = vi.spyOn(f.storage, 'revisions');
+  for (const invalid of [
+    [edits[1]],
+    [edits[1], edits[0]],
+    [edits[0], { ...edits[1], unitId: 'foreign' }],
+    [{ ...edits[0], beforeCells: null }, edits[1]],
+  ]) {
+    revisions.mockReturnValueOnce(invalid);
+    expect(() => f.server.replay('book', 1, undefined)).toThrow(/stale/);
+  }
+});
+
+test('replay validates revisions and enforces retained count and byte bounds before delivery', async () => {
+  const f = fixture();
+  for (const invalid of [0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1])
+    expect(() => f.server.replay('book', invalid, undefined)).toThrow(/malformed/);
+  expect(() => f.server.replay('', 1, undefined)).toThrow(/malformed/);
+  expect(() => f.server.replay('x'.repeat(129), 1, undefined)).toThrow(/malformed/);
+  expect(() => f.server.replay('book', 2, undefined)).toThrow(/stale/);
+  f.storage.units.get('book')!.revision = MAX_RETAINED_REVISIONS + 2;
+  const revisions = vi.spyOn(f.storage, 'revisions');
+  expect(() => f.server.replay('book', 1, undefined)).toThrow(/stale/);
+  expect(revisions).not.toHaveBeenCalled();
+  f.storage.units.get('book')!.revision = 1;
+  await f.server.submit(request('large-replay'), undefined);
+  f.storage.edits[0].mutations[0].params.padding = 'x'.repeat(MAX_RETAINED_BYTES);
+  expect(() => f.server.replay('book', 1, undefined)).toThrow(/stale/);
+});
+
+test('replay retention expiry leaves immutable old receipts retryable', async () => {
+  const f = fixture();
+  const sent = request('lost-ack');
+  const accepted = await f.server.submit(sent, undefined);
+  f.storage.units.get('book')!.retainedFrom = 2;
+  f.storage.edits[0].beforeCells = null;
+  expect(() => f.server.replay('book', 1, undefined)).toThrow(/stale/);
+  expect(f.server.replay('book', 2, undefined)).toEqual({ revision: 2, edits: [] });
+  expect(await f.server.submit(sent, undefined)).toMatchObject({
+    duplicate: true,
+    edit: { revision: accepted.edit.revision, hash: accepted.edit.hash },
+    missing: [],
+  });
+});
+
+test('replay rechecks read authorization after its storage read and refuses after shutdown', async () => {
+  let allowed = true;
+  const authorize = vi.fn((_unitId: string, _context: void, edit: boolean) => {
+    expect(edit).toBe(false);
+    if (!allowed) throw new Error('Read access changed');
+  });
+  const f = fixture({ authorize });
+  const revisions = vi.spyOn(f.storage, 'revisions').mockImplementation(() => {
+    allowed = false;
+    return [];
+  });
+  expect(() => f.server.replay('book', 1, undefined)).toThrow('Read access changed');
+  expect(authorize).toHaveBeenCalledTimes(2);
+  revisions.mockClear();
+  expect(() => f.server.replay('book', 1, undefined)).toThrow('Read access changed');
+  expect(revisions).not.toHaveBeenCalled();
+  await f.server.close();
+  expect(() => f.server.replay('book', 1, undefined)).toThrow(/unavailable/);
 });
 
 test.each(

@@ -13,12 +13,14 @@ import { InvariantError, NativeModel } from './native.ts';
 import { applySheetOrder, sheetOrderAt } from './order.ts';
 import {
   MAX_BATCH_MUTATIONS,
+  MAX_RETAINED_BYTES,
   MAX_RETAINED_REVISIONS,
   MAX_SNAPSHOT_BYTES,
   MAX_WORKSHEETS,
   SyncError,
 } from './types.ts';
 import type {
+  ReplayResult,
   SubmitRequest,
   SubmitResult,
   SyncOptions,
@@ -337,6 +339,47 @@ export class SyncServer<Context = unknown> {
     this.options.validateSnapshot?.(unitId, snapshot, context);
     this.options.authorize(unitId, context, false);
     return { ...unit, snapshot };
+  }
+
+  /** Synchronous with subscription: a transport can join without a read/broadcast gap. */
+  replay(unitId: string, afterRevision: number, context: Context): ReplayResult {
+    if (this.closed) throw new SyncError('unavailable');
+    if (
+      typeof unitId !== 'string' ||
+      !unitId ||
+      unitId.length > 128 ||
+      !Number.isSafeInteger(afterRevision) ||
+      afterRevision < 1
+    )
+      throw new SyncError('malformed');
+    this.options.authorize(unitId, context, false);
+    const unit = this.unit(unitId);
+    if (
+      afterRevision < unit.retainedFrom ||
+      afterRevision > unit.revision ||
+      unit.revision - afterRevision > MAX_RETAINED_REVISIONS
+    )
+      throw new SyncError('stale');
+    const edits = this.storage.revisions(unitId, afterRevision, unit.revision);
+    if (
+      edits.length !== unit.revision - afterRevision ||
+      edits.some(
+        (edit, index) =>
+          edit.unitId !== unitId ||
+          edit.revision !== afterRevision + index + 1 ||
+          edit.beforeCells === null,
+      )
+    )
+      throw new SyncError('stale');
+    let bytes = 0;
+    for (const edit of edits) {
+      // Include receipt metadata as conservative framing headroom. The adapter
+      // strips it from the wire; oversized retained sets require a snapshot.
+      bytes += Buffer.byteLength(JSON.stringify(edit));
+      if (bytes > MAX_RETAINED_BYTES) throw new SyncError('stale');
+    }
+    this.options.authorize(unitId, context, false);
+    return { revision: unit.revision, edits };
   }
 
   /** An old receipt remains valid after reconnect, restart and before-image pruning. */

@@ -185,6 +185,7 @@ export function spaceNativeRoutes(
       );
       response.json({
         unitId: collaboration.generations.active(id).unitId,
+        ...(collaboration.sync && { syncVersion: 1 }),
         access: item.access,
         user: {
           id: account.userId,
