@@ -2,7 +2,13 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { test } from 'node:test';
-import { TextX, UpdateDocsAttributeType, composeBody } from '@univerjs/core';
+import {
+  BuildTextUtils,
+  CustomRangeType,
+  TextX,
+  UpdateDocsAttributeType,
+  composeBody,
+} from '@univerjs/core';
 import type { IDocumentBody, IParagraph } from '@univerjs/core';
 import { patchCore } from './patch-univer-core.ts';
 
@@ -95,6 +101,21 @@ test('install patch is idempotent and rejects changed upstream bytes', async () 
   }
 });
 
+test("both builds let a REPLACE style's falsy keys win in transformTextRuns", async () => {
+  for (const format of ['es', 'cjs'] as const) {
+    const source = await readFile(
+      new URL(`../../node_modules/@univerjs/core/lib/${format}/index.js`, import.meta.url),
+      'utf8',
+    );
+    const start = source.indexOf('function transformTextRuns(');
+    const body = source.slice(start, source.indexOf('function transformCustomRanges(', start));
+    assert.ok(
+      body.includes('for (const key of keys) if (originStyle[key] !== void 0) delete newTs[key];'),
+      format,
+    );
+  }
+});
+
 test('explicit replacement arrays clear omitted paragraphs while absent arrays preserve them', () => {
   const base: IDocumentBody = {
     dataStream: '\r\r\n',
@@ -124,5 +145,91 @@ test('explicit replacement arrays clear omitted paragraphs while absent arrays p
       TextX.compose(structuredClone(first), structuredClone(second)),
     );
     assert.deepEqual(composed, sequential);
+  }
+});
+
+const require = createRequire(import.meta.url);
+const builds = [
+  { name: 'es', core: { BuildTextUtils, TextX } },
+  { name: 'cjs', core: require('@univerjs/core') as typeof import('@univerjs/core') },
+];
+const linked = (ranges: [string, number, number][]): IDocumentBody => ({
+  dataStream: 'abcdef\rghij\r\n',
+  paragraphs: [
+    { startIndex: 6, paragraphId: 'p1' },
+    { startIndex: 11, paragraphId: 'p2' },
+  ],
+  sectionBreaks: [{ startIndex: 12, sectionId: 's1' }],
+  customRanges: ranges.map(([rangeId, startIndex, endIndex]) => ({
+    rangeId,
+    rangeType: CustomRangeType.HYPERLINK,
+    startIndex,
+    endIndex,
+    properties: { url: 'https://example.test' },
+  })),
+});
+const rangesOf = (body: IDocumentBody) =>
+  body.customRanges?.map(({ rangeId, startIndex, endIndex }) => [rangeId, startIndex, endIndex]);
+
+test('a style inside a link leaves it whole, so apply order cannot split it', () => {
+  for (const { name, core } of builds) {
+    const bold = new core.TextX()
+      .retain(4)
+      .retain(2, { dataStream: '', textRuns: [{ st: 0, ed: 2, ts: { bl: 1 } }] })
+      .serialize();
+    const styled = core.TextX.apply(linked([['L', 3, 8]]), bold);
+    assert.deepEqual(rangesOf(styled), [['L', 3, 8]], name);
+    // A paragraph edit's retain splits the same way.
+    const indent = new core.TextX()
+      .retain(6)
+      .retain(1, {
+        dataStream: '',
+        paragraphs: [update({ startIndex: 0, paragraphStyle: { indentStart: { v: 10 } } })],
+      })
+      .serialize();
+    assert.deepEqual(
+      rangesOf(core.TextX.apply(linked([['L', 3, 8]]), indent)),
+      [['L', 3, 8]],
+      name,
+    );
+  }
+});
+
+test('a lone piece of a split range takes its root id back', () => {
+  for (const { name, core } of builds) {
+    const bold = new core.TextX()
+      .retain(1, { dataStream: '', textRuns: [{ st: 0, ed: 1, ts: { bl: 1 } }] })
+      .serialize();
+    assert.deepEqual(
+      rangesOf(core.TextX.apply(linked([['L$1', 3, 8]]), bold)),
+      [['L', 3, 8]],
+      name,
+    );
+  }
+});
+
+test('adding a link across a paragraph that an existing link spans emits no negative retain', () => {
+  for (const { name, core } of builds) {
+    for (const [startOffset, endOffset, expected] of [
+      [0, 10, [['N', 0, 9]]],
+      [4, 10, [['N', 3, 9]]],
+      [7, 8, [['N', 3, 8]]],
+    ] as const) {
+      const body = linked([['L', 3, 8]]);
+      const textX = core.BuildTextUtils.customRange.add({
+        ranges: [{ startOffset, endOffset, collapsed: false }],
+        rangeId: 'N',
+        rangeType: CustomRangeType.HYPERLINK,
+        properties: { url: 'https://new.test' },
+        body,
+      });
+      assert.ok(textX, name);
+      const actions = textX.serialize();
+      assert.ok(
+        actions.every((action) => action.t !== 'r' || action.len >= 0),
+        `${name} ${startOffset}..${endOffset}: ${JSON.stringify(actions)}`,
+      );
+      assert.deepEqual(rangesOf(core.TextX.apply(body, actions)), expected, name);
+    }
   }
 });

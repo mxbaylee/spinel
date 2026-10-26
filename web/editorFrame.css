@@ -171,7 +171,7 @@
 }
 .workspace:has(.editor-frame) > .workspace-body,
 .workspace:has(.editor-frame) > .workspace-body > main,
-.guest-workspace:has(.editor-frame),
+.workspace.guest-workspace:has(.editor-frame),
 .dashboard-content:has(.editor-frame) {
   padding: 0;
   margin: 0;
@@ -221,7 +221,7 @@
   padding: 0;
   border: 2px solid var(--sp-border);
 }
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .editor-header {
     position: relative;
     flex-wrap: wrap;

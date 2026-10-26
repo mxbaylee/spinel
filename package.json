@@ -7,7 +7,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "test": "node --test scripts/backlog/tests/*.test.ts scripts/deploy/*.test.ts scripts/dependencies/*.test.ts scripts/ci/*.test.ts && vitest run",
+    "test": "node --test scripts/serial.test.ts scripts/backlog/tests/*.test.ts scripts/deploy/*.test.ts scripts/dependencies/*.test.ts scripts/ci/*.test.ts && vitest run",
     "typecheck": "tsc -p .",
     "backlog:check": "node scripts/backlog/cli.ts check",
     "backlog:index": "node scripts/backlog/cli.ts index",
@@ -19,8 +19,8 @@
     "build-storybook": "NODE_OPTIONS='--import ./.storybook/typescript-api.ts' storybook build -o storybook-static && node scripts/ci/storybook-identity.ts",
     "start": "node server/index.ts",
     "lint": "oxlint --deny-warnings . && npm run format:check",
-    "format": "prettier --write web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/ci scripts/pdf-feasibility *.config.ts",
-    "format:check": "prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/ci scripts/pdf-feasibility *.config.ts",
+    "format": "prettier --write web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts",
+    "format:check": "prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts",
     "setup": "node server/setup.ts",
     "passkey:check": "npm run build && node scripts/passkey-check.ts",
     "e2e": "npm run build && node scripts/e2e.ts",
@@ -56,6 +56,7 @@
     "@spinel/diagnostics": "*",
     "@spinel/doc-formulas": "*",
     "@spinel/presence-ui": "^0.0.0",
+    "@spinel/print": "*",
     "@univerjs-pro/collaboration": "1.1.0",
     "@univerjs-pro/collaboration-client": "1.1.0",
     "@univerjs-pro/collaboration-client-ui": "1.1.0",

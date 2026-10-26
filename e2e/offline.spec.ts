@@ -68,6 +68,94 @@ test('downloaded Sheets and Docs open read-only offline with local images; nothi
         { timeout: 120_000 },
       );
     }
+    // Editor feedback must announce the result without moving or remounting the
+    // viewport-sized native editor. Listing feedback remains inline above.
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.getByRole('button', { name: `${doc.name} Doc`, exact: true }).click();
+    await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+      'All changes saved.',
+      { timeout: 30_000 },
+    );
+    const nativeCanvas = await page.locator('.editor-frame canvas').first().elementHandle();
+    expect(nativeCanvas).not.toBeNull();
+    const stableEditor = async () => {
+      expect(
+        await page
+          .locator('.editor-frame canvas')
+          .first()
+          .evaluate((node, original) => node === original, nativeCanvas!),
+      ).toBe(true);
+      expect(
+        await page.locator('.editor-frame').evaluate((node) => {
+          const box = node.getBoundingClientRect();
+          return box.top === 0 && box.bottom <= innerHeight;
+        }),
+      ).toBe(true);
+      expect(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight)).toBe(
+        true,
+      );
+    };
+    const offlineAction = async (name: string) => {
+      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await page.getByRole('menuitem', { name, exact: true }).click();
+    };
+    const availability = page.getByRole('dialog', { name: 'Offline availability', exact: true });
+    await stableEditor();
+    await offlineAction('Remove from device');
+    await expect(availability.getByRole('status')).toHaveText(
+      `${doc.name} was removed from this device.`,
+    );
+    await stableEditor();
+    await availability.getByRole('button', { name: 'Done', exact: true }).click();
+    await expect(availability).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Document actions', exact: true })).toBeFocused();
+    const bundlePath = `**/api/items/${doc.id}/offline-bundle`;
+    await page.route(bundlePath, (route) =>
+      route.fulfill({
+        status: 503,
+        json: { error: 'Offline download is temporarily unavailable.' },
+      }),
+    );
+    await offlineAction('Available offline on this device');
+    await expect(availability.getByRole('alert')).toHaveText(
+      'Offline download is temporarily unavailable.',
+    );
+    await stableEditor();
+    await mkdir('test-results/theme-screenshots', { recursive: true });
+    await page.screenshot({
+      path: `test-results/theme-screenshots/spn-049-offline-failure-phone-${info.project.name}.png`,
+      fullPage: true,
+      animations: 'disabled',
+    });
+    await page.keyboard.press('Escape');
+    await expect(availability).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Document actions', exact: true })).toBeFocused();
+    await page.unroute(bundlePath);
+    await offlineAction('Available offline on this device');
+    await expect(availability.getByRole('status')).toHaveText(
+      `${doc.name} is available offline on this device.`,
+      { timeout: 120_000 },
+    );
+    for (const [theme, width] of [
+      ['light', 1440],
+      ['dark', 1440],
+      ['light', 390],
+    ] as const) {
+      await page.emulateMedia({ colorScheme: theme });
+      await page.setViewportSize({ width, height: 844 });
+      await stableEditor();
+      await page.screenshot({
+        path: `test-results/theme-screenshots/spn-049-offline-success-${theme}-${width}-${info.project.name}.png`,
+        fullPage: true,
+        animations: 'disabled',
+      });
+    }
+    await availability.getByRole('button', { name: 'Done', exact: true }).click();
+    await expect(availability).toHaveCount(0);
+    await stableEditor();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.setViewportSize({ width: 1440, height: 1100 });
     // Only the public app shell is cached; documents live in IndexedDB.
     const cached = await page.evaluate(async () => {
       const names = await caches.keys();

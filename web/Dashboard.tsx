@@ -40,6 +40,7 @@ import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import type { LocalStart } from './offline/localStart.ts';
 import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
+import { OfflineAvailability } from './offline/OfflineAvailability.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
@@ -143,6 +144,8 @@ export function Dashboard({
   const [viewMissing, setViewMissing] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
+  const sharingFocus = useRef<HTMLButtonElement | null>(null);
+  const offlineFocus = useRef<HTMLButtonElement | null>(null);
   const [spaceAction, setSpaceAction] = useState<{
     item: SpaceFile;
     mode: SpaceRootActionMode;
@@ -367,6 +370,7 @@ export function Dashboard({
   }
   function navigate(id: string | null, check = true) {
     if (check && id !== currentId && !navigation.allow()) return;
+    offline.clearMessage();
     if (check) returnContext.current = null;
     setQuery({ ...emptySearch });
     setDraft('');
@@ -508,7 +512,8 @@ export function Dashboard({
           ],
           destructive: mode === 'trash',
           disabled: busy,
-          onClick: () => {
+          onClick: (trigger) => {
+            if (mode === 'share') sharingFocus.current = trigger ?? null;
             if (item.kind === 'space') setSpaceAction({ item, mode });
             else if (mode === 'share') setSharing(item);
             else if (mode === 'trash') void trashItem(item);
@@ -526,7 +531,8 @@ export function Dashboard({
               ? 'Remove from device'
               : 'Available offline on this device',
         disabled: offline.busy !== null,
-        onClick: () => {
+        onClick: (trigger) => {
+          offlineFocus.current = trigger ?? null;
           void offline.toggle(item);
         },
       });
@@ -746,8 +752,15 @@ export function Dashboard({
           )}
         </>
       ) : null}
-      {offline.message && (
+      {!framedEditor && offline.message && (
         <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+      )}
+      {framedEditor && offline.message && (
+        <OfflineAvailability
+          message={offline.message}
+          onDismiss={offline.clearMessage}
+          finalFocus={() => (offlineFocus.current?.isConnected ? offlineFocus.current : true)}
+        />
       )}
       {!framedEditor && sharedFailure}
       {!loaded || viewLoading || currentId !== viewId ? (
@@ -1023,24 +1036,19 @@ export function Dashboard({
         </>
       )}
       {sharing && (
-        <Modal
-          title={`Share ${sharing.name}`}
-          icon="share"
-          open
-          onOpenChange={(open) => {
-            if (!open) setSharing(null);
-          }}
-        >
-          <div className="file-dialog">
-            <Sharing key={sharing.id} item={sharing} onClose={() => setSharing(null)} />
-          </div>
-        </Modal>
+        <Sharing
+          key={sharing.id}
+          item={sharing}
+          onClose={() => setSharing(null)}
+          finalFocus={() => (sharingFocus.current?.isConnected ? sharingFocus.current : true)}
+        />
       )}
       {spaceAction && (
         <SpaceRootActions
           key={`${spaceAction.item.id}:${spaceAction.mode}`}
           item={spaceAction.item}
           initialMode={spaceAction.mode}
+          finalFocus={() => (sharingFocus.current?.isConnected ? sharingFocus.current : true)}
           onClose={() => setSpaceAction(null)}
           folders={items.filter(
             (entry): entry is WorkspaceItem => entry.kind === 'folder' && entry.access === 'owner',
