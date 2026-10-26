@@ -152,6 +152,10 @@ publishes `main` to <https://mxbaylee.github.io/spinel/> (Owner, chat
 is in the [design playbook](design/README.md#storybook); use the
 [manual design review runbook](design/review-runbook.md) when a design changes.
 
+Keep Storybook's loopback development-server and origin restrictions enabled.
+The [10.6 dependency decision](implementation/dependency-storybook-10.6.md)
+records the core-before-adapter sequence and related esbuild security update.
+
 The workflow builds once, then reviews desktop light, desktop dark, tablet,
 phone light and phone dark in parallel. Every applicable PR retains full-catalog
 rendering, story play/error checks and the existing native, keyboard, touch,
@@ -232,7 +236,7 @@ see [the process](todo/process.md#pull-requests-and-main).
   the completed boundary is [decision #143](implementation/SPN-092.md#legacy-decision-143-exact-space-capabilities-across-integrations)
   and the [SPN-092 implementation contract](implementation/SPN-092.md).
 - React and React DOM are pinned together to 19.3.1, with React and React DOM
-  types at 19.3.0. The installed Univer 1.1.0, Base UI 1.9.0 and Storybook 10.3.5
+  types at 19.3.0. The installed Univer 1.1.0, Base UI 1.9.0 and Storybook 10.6.2
   peer ranges allow React 19. The presence workspace follows the tested runtime;
   DOM ref types explicitly include their unmounted null state, and a guarded
   open-source Univer UI repair ignores resize callbacks after that ref detaches.
