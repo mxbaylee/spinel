@@ -1,5 +1,8 @@
 import { expect, test, vi } from 'vitest';
 import { execFile } from 'node:child_process';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { promisify } from 'node:util';
 import { ImageSourceType, LocaleType } from '@univerjs/core';
 import type { ICellData, IWorkbookData } from '@univerjs/core';
@@ -44,25 +47,38 @@ test('adversarial uncached wildcards finish before host byte preparation and ret
   };
   // A process deadline makes a regression fail safely even if synchronous
   // matching stops cooperating with the public selector's own deadline.
-  const { stdout } = await promisify(execFile)(
-    process.execPath,
-    [
-      '--input-type=module',
-      '--eval',
-      `
+  const directory = await mkdtemp(join(tmpdir(), 'spinel-filter-'));
+  const completion = join(directory, 'result.json');
+  try {
+    await promisify(execFile)(
+      process.execPath,
+      [
+        '--input-type=module',
+        '--eval',
+        `
+      import { writeFile } from 'node:fs/promises';
       const { selectSheetImageSources } = await import(process.argv[1]);
       const book = JSON.parse(process.argv[2]);
       const hidden = selectSheetImageSources(book, { limits: { durationMs: 1000 } });
       book.sheets.one.cellData[1][0].v += 'b';
       const visible = selectSheetImageSources(book, { limits: { durationMs: 1000 } });
-      console.log(JSON.stringify({ hidden, visible }));
+      await writeFile(process.argv[3], JSON.stringify({ hidden, visible }));
     `,
-      new URL('./index.ts', import.meta.url).href,
-      JSON.stringify(book),
-    ],
-    { timeout: 5_000, maxBuffer: 65_536 },
-  );
-  expect(JSON.parse(stdout)).toEqual({ hidden: [], visible: ['kept'] });
+        new URL('./index.ts', import.meta.url).href,
+        JSON.stringify(book),
+        completion,
+      ],
+      { timeout: 5_000, maxBuffer: 65_536 },
+    );
+    // Fresh awaited completion also works when the test worker's child stdout
+    // capture is empty; a missing file or partial JSON still fails this proof.
+    expect(JSON.parse(await readFile(completion, 'utf8'))).toEqual({
+      hidden: [],
+      visible: ['kept'],
+    });
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 }, 10_000);
 
 function picture(source: string): ICellData {
