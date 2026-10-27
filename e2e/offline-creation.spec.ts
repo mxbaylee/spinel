@@ -128,14 +128,11 @@ async function capture(page: Page, info: TestInfo, state: string, phone = false)
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
       .toBe(true);
-    if (phone)
-      await nativeTheme(
-        page,
-        page
-          .getByRole('region', { name: 'Doc document', exact: true })
-          .getByLabel('Document canvas', { exact: true }),
-        theme,
-      );
+    if (phone) {
+      const region = page.getByRole('region', { name: 'Doc document', exact: true });
+      await expect(region.getByRole('button', { name: 'Edit', exact: true })).toBeVisible();
+      await nativeTheme(page, region.getByLabel('Document canvas', { exact: true }), theme);
+    }
     await page.screenshot({
       path: `test-results/theme-screenshots/spn-051-${state}-${theme}-${width}-${info.project.name}.png`,
       animations: 'disabled',

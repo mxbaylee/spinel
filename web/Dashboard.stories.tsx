@@ -483,7 +483,7 @@ const blockedCreation = {
     parentId: household.id,
     createdAt: synced,
     problem:
-      'The chosen folder is no longer available. Choose another folder for this device copy.',
+      'The chosen folder is no longer available. Use Back to files, then choose another folder from this document’s menu.',
     canRelocate: true,
   },
 };

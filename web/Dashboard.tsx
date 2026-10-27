@@ -988,6 +988,8 @@ export function Dashboard({
                 offlineState={offlineState}
                 details={(item) => {
                   const creation = offline.downloads.get(item.id)?.creation;
+                  if (creation?.canRelocate)
+                    return 'The chosen folder is no longer available. Choose another folder from this document’s menu.';
                   return creation
                     ? (creation.problem ?? 'Saved on this device. Open to upload when connected.')
                     : null;
