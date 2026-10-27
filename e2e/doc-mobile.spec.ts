@@ -49,14 +49,14 @@ async function recordPhoneInput(context: BrowserContext) {
       records.push(value);
       if (records.length > 200) records.shift();
     };
-    for (const type of ['beforeinput', 'input', 'keydown', 'focusin', 'focusout'])
+    for (const type of ['beforeinput', 'input', 'keydown', 'focusin', 'focusout', 'click'])
       document.addEventListener(
         type,
         (event) => {
           const target = event.target;
           if (!(target instanceof HTMLElement)) return;
           const editor = target.matches('[contenteditable="true"][data-u-comp="editor"]');
-          if (!editor && !(event instanceof KeyboardEvent)) return;
+          if (!editor && !(event instanceof KeyboardEvent) && type !== 'click') return;
           const input = event as InputEvent;
           const keyboard = event as KeyboardEvent;
           const observe = (phase: string) => {
@@ -66,7 +66,8 @@ async function recordPhoneInput(context: BrowserContext) {
               type,
               phase,
               target: target.tagName,
-              component: target.dataset.uComp,
+              component: target.closest('[data-u-comp]')?.getAttribute('data-u-comp'),
+              label: target.closest('[aria-label]')?.getAttribute('aria-label'),
               editor,
               key: keyboard.key,
               code: keyboard.code,
@@ -193,6 +194,24 @@ async function beginWriting(page: Page) {
 async function selectFirstWord(page: Page) {
   const point = await textPoint(page);
   const touch = await page.context().newCDPSession(page);
+  const observeSelection = (phase: string) =>
+    page.evaluate((phase) => {
+      const ranges: DocSelectionEvidence[] = [];
+      const receive = (event: Event) =>
+        ranges.push((event as CustomEvent<DocSelectionEvidence>).detail);
+      window.addEventListener('spinel-doc-selection-evidence', receive);
+      try {
+        window.dispatchEvent(new Event('spinel-doc-selection-read'));
+      } finally {
+        window.removeEventListener('spinel-doc-selection-evidence', receive);
+      }
+      (window as InputEvidenceWindow).phoneInputEvidence?.push({
+        phase,
+        selection: ranges[0],
+        drawer: Boolean(document.querySelector('[data-u-comp="mobile-menu-drawer"]')),
+        focused: document.activeElement?.matches('[data-u-comp="editor"]'),
+      });
+    }, phase);
   try {
     await touch.send('Input.dispatchTouchEvent', {
       type: 'touchStart',
@@ -201,7 +220,9 @@ async function selectFirstWord(page: Page) {
     // A genuine held touch crosses the native long-press threshold; do not
     // substitute a programmatic text range for this selection interaction.
     await page.waitForTimeout(650);
+    await observeSelection('held-touch-before-release');
     await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await observeSelection('held-touch-after-release');
   } finally {
     await touch.detach();
   }

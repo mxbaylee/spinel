@@ -59,6 +59,7 @@ import drawingEnUS from '@univerjs/preset-docs-drawing/locales/en-US';
 import '@univerjs/preset-docs-drawing/lib/index.css';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import { BuiltInUIPart, IRenderManagerService } from '@univerjs/preset-docs-core';
+import { IContextMenuService } from '@univerjs/ui';
 import { docPreset, mobileDocPlugins, useMobileDocControls } from './docPreset.ts';
 import { guardPhoneDocInput } from './docPhoneView.ts';
 import enUS from '@univerjs/preset-docs-core/locales/en-US';
@@ -340,9 +341,9 @@ export function DocEditor({
       identifyCollaborator(univer, data.user);
       const readonly = async () => {
         phoneInputLocked = true;
-        phoneInput?.stopEditing();
         nativePermissions.readonly();
         canEditFormulas.current = false;
+        phoneInput?.stopEditing();
         setFormulaEdit(null);
         formulas.current?.clear();
         setEditable(false);
@@ -423,6 +424,7 @@ export function DocEditor({
                 end,
                 hasAnchor: Boolean(range?.getAnchor()),
                 editing: selection.isEditing,
+                contextMenuVisible: univer.__getInjector().get(IContextMenuService).visible,
                 bounds:
                   start !== undefined && end !== undefined
                     ? calcDocRangePositions(

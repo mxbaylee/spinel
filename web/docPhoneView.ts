@@ -29,14 +29,60 @@ export function guardPhoneDocInput(
 ) {
   const mobile = selection as MobileDocSelectionRenderService;
   const stopEditing = () => mobile.exitMobileEditMode();
+  // These public streams replay their last events; compare timestamps so a
+  // previous composition-end replay cannot hide a currently active composition.
+  let compositionStartedAt = -Infinity;
+  let compositionEndedAt = -Infinity;
+  const compositionStart = mobile.onCompositionstart$.subscribe((config) => {
+    if (config) compositionStartedAt = config.event.timeStamp;
+  });
+  const compositionEnd = mobile.onCompositionend$.subscribe((config) => {
+    if (config) compositionEndedAt = config.event.timeStamp;
+  });
   // The native touch controller can focus input independently of the root
   // Edit permission. Keep read-only readers out of keyboard mode as well;
   // the existing permission service remains the mutation boundary.
-  const focus = mobile.onFocus$.subscribe(() => {
-    if (isReadOnly()) stopEditing();
+  const focus = mobile.onFocus$.subscribe((config) => {
+    if (isReadOnly()) {
+      stopEditing();
+      return;
+    }
+    const input = mobile.inputElement;
+    const ownerDocument = input.ownerDocument;
+    if (
+      compositionStartedAt > compositionEndedAt ||
+      !mobile.isEditing ||
+      !input.isConnected ||
+      !input.isContentEditable ||
+      ownerDocument.activeElement !== input ||
+      config.content ||
+      input.textContent
+    )
+      return;
+    const browserSelection = ownerDocument.getSelection();
+    if (!browserSelection) return;
+    if (
+      browserSelection.anchorNode &&
+      browserSelection.focusNode &&
+      input.contains(browserSelection.anchorNode) &&
+      input.contains(browserSelection.focusNode)
+    )
+      return;
+    // Native focus can leave this empty input without a browser caret, so keys
+    // never produce input events. Repair only that DOM caret; the native canvas
+    // range still owns the document insertion point. The focus config retains
+    // pre-focus content even though the SDK clears input.innerHTML before emit.
+    browserSelection.collapse(input, 0);
   });
   if (isReadOnly()) stopEditing();
-  return { stopEditing, dispose: () => focus.unsubscribe() };
+  return {
+    stopEditing,
+    dispose() {
+      focus.unsubscribe();
+      compositionStart.unsubscribe();
+      compositionEnd.unsubscribe();
+    },
+  };
 }
 
 class PhoneDocViewScaleService extends DocViewScaleService {
