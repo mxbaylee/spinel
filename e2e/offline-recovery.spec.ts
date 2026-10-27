@@ -33,6 +33,7 @@ import {
 } from './offline-fixture.ts';
 import type { Kind, OfflineFixture } from './offline-fixture.ts';
 import { beginWriting, textPoint } from './doc-touch.ts';
+import { nativeTheme } from './native-theme.ts';
 
 type Change = 'concurrent' | 'restored' | 'trashed' | 'revoked' | 'viewer';
 const endpoint = '**/api/items/offline-recovery';
@@ -319,6 +320,14 @@ async function capture(page: Page, info: TestInfo, state: string, phone = false)
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
       .toBe(true);
     await details(page);
+    if (phone)
+      await nativeTheme(
+        page,
+        page
+          .getByRole('region', { name: 'Doc document', exact: true })
+          .getByLabel('Document canvas', { exact: true }),
+        theme,
+      );
     await page.screenshot({
       path: `test-results/theme-screenshots/spn-054-${state}-${theme}-${width}-${info.project.name}.png`,
       animations: 'disabled',
