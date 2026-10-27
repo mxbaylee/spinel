@@ -1,5 +1,6 @@
 import { AuthEntry } from './AuthEntry.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
+import { PasskeySettings } from './PasskeySettings.tsx';
 import { DiagnosticsProvider, useAccountDiagnostics } from './useDiagnostics.tsx';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -21,6 +22,7 @@ import { ConnectAssistant } from './ConnectAssistant.tsx';
 import { Dashboard } from './Dashboard.tsx';
 import { Space } from './Space.tsx';
 import { OfflineSpace } from './OfflineSpace.tsx';
+import { OfflineRecoveryEntry } from './OfflineRecoveryEntry.tsx';
 import { spaceHref } from './spaceNavigation.ts';
 import { clearDashboardNavigation, dashboardSession } from './dashboardNavigation.ts';
 import { rememberedFileHref } from './fileNavigation.ts';
@@ -53,7 +55,6 @@ const SpaceSheetEditor = lazy(() =>
 );
 
 type User = { id: string; name: string; isAdmin: boolean; icon?: string; color?: string };
-type Passkey = { id: string; name: string; provider: string };
 
 export function App() {
   return (
@@ -107,7 +108,9 @@ function AccountApp() {
     user && loaded && !local && !signOutPending() ? user.id : null,
     browserOnline && (editorConnection ?? serverConnection) === 'online',
   );
-  const [keys, setKeys] = useState<Passkey[]>([]);
+  const [passkeyRevision, setPasskeyRevision] = useState(0);
+  const [passkeyProofReset, setPasskeyProofReset] = useState(0);
+  const [passkeyAccountReset, setPasskeyAccountReset] = useState(0);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
@@ -139,8 +142,6 @@ function AccountApp() {
   const [inviteName, setInviteName] = useState('');
   const [setupLink] = useState(() => (consoleClaim ? location.hash.slice(1).split('.') : []));
   const [setupId, setupSecret] = setupLink;
-  const refreshKeys = async () =>
-    setKeys((await api<{ passkeys: Passkey[] }>('passkeys')).passkeys);
   useEffect(() => {
     if (invitation) {
       history.replaceState(null, '', '/invite');
@@ -225,11 +226,6 @@ function AccountApp() {
         if (connectRequest && location.pathname === '/sign-in')
           location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
         else if (spaceReturn && !user.isAdmin) location.assign(spaceReturn);
-        if (settings) {
-          const result = await api<{ passkeys: Passkey[] }>('passkeys', undefined, verifyClaim);
-          verifyClaim();
-          setKeys(result.passkeys);
-        }
       } catch (failure) {
         // StrictMode and route changes can retire an earlier request. It must
         // not cancel the current account or reload a newer sign-in attempt.
@@ -325,7 +321,7 @@ function AccountApp() {
     setBusy(false);
     setNotice('Passkey request cancelled.');
   }
-  async function ceremony(register: boolean) {
+  async function ceremony(register: boolean, verifyAccount: () => void = () => {}) {
     if (adminRecovery && attempt.current && !attempt.current.cancelled) return;
     const current: { cancelled: boolean; challengeId?: string; finishing?: boolean } = {
       cancelled: false,
@@ -334,6 +330,10 @@ function AccountApp() {
     setBusy(true);
     setError('');
     setNotice('');
+    const check = () => {
+      if (current.cancelled) throw new DOMException('Passkey request cancelled.', 'AbortError');
+      verifyAccount();
+    };
     try {
       if (!window.PublicKeyCredential || !window.isSecureContext)
         throw new Error('Passkeys need a supported browser at Spinel’s secure address.');
@@ -346,18 +346,24 @@ function AccountApp() {
             : register
               ? 'registration'
               : 'authentication';
+      const requestOptions = { accountId: kind === 'registration' ? user?.id : undefined };
       const { options, challengeId } = await api<{
         options: PublicKeyCredentialCreationOptionsJSON & PublicKeyCredentialRequestOptionsJSON;
         challengeId: string;
       }>(
         `${kind}/options`,
         consoleClaim ? { setupId } : invitation ? { token: inviteToken, name: inviteName } : {},
+        // A cancelled options request still returns the challenge to retire.
+        // Keep the account fence; cancellation stops work after that cleanup.
+        verifyAccount,
+        requestOptions,
       );
       current.challengeId = challengeId;
       if (current.cancelled) {
         void api('cancel', { challengeId }).catch(() => {});
         return;
       }
+      check();
       const response = register
         ? await startRegistration({ optionsJSON: options })
         : await startAuthentication({ optionsJSON: options });
@@ -378,14 +384,19 @@ function AccountApp() {
         current.finishing = true;
         setFinishingRecovery(true);
       }
-      const result = await api<{ redirect?: string; name?: string }>(`${kind}/verify`, {
-        challengeId,
-        response,
-        ...(consoleClaim ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
-      });
+      const result = await api<{ redirect?: string; name?: string }>(
+        `${kind}/verify`,
+        {
+          challengeId,
+          response,
+          ...(consoleClaim ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
+        },
+        check,
+        requestOptions,
+      );
       if (current.cancelled) return;
       if (register && !consoleClaim && !invitation) {
-        await refreshKeys();
+        setPasskeyRevision((revision) => revision + 1);
         setNotice(`${result.name} added. You can use it to sign in.`);
       } else
         location.assign(
@@ -397,6 +408,10 @@ function AccountApp() {
         );
     } catch (failure) {
       if (!current.cancelled) {
+        if (register && (failure as { code?: string }).code === 'account_changed')
+          setPasskeyAccountReset((revision) => revision + 1);
+        if (register && (failure as { status?: number }).status === 428)
+          setPasskeyProofReset((revision) => revision + 1);
         // Browser exception names vary across providers; keep the retry action clear.
         setError(
           failure instanceof DOMException ||
@@ -580,27 +595,22 @@ function AccountApp() {
               onSaved={(profile) => setUser({ ...user, ...profile })}
               onSignOut={() => void signOut()}
               passkeys={
-                <section aria-labelledby="passkeys-heading">
-                  <h2 id="passkeys-heading">Your passkeys</h2>
-                  <p>
-                    Add a passkey from another device or password manager so you can sign in there
-                    too.
-                  </p>
-                  {keys.length ? (
-                    <ul className="profile-passkeys">
-                      {keys.map((key) => (
-                        <li key={key.id}>
-                          <strong>{key.name}</strong>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No passkeys added yet.</p>
-                  )}
-                  <button className="primary" disabled={busy} onClick={() => void ceremony(true)}>
-                    Add a passkey
-                  </button>
-                </section>
+                <PasskeySettings
+                  key={user.id}
+                  accountId={user.id}
+                  adding={busy}
+                  isAdmin={user.isAdmin}
+                  revision={passkeyRevision}
+                  verificationRequired={passkeyProofReset}
+                  accountChange={passkeyAccountReset}
+                  onAdd={(verifyAccount) => void ceremony(true, verifyAccount)}
+                  onSignedOut={() => {
+                    stopDiagnostics();
+                    clearDashboardNavigation();
+                    setPreparedAccount(null);
+                    location.assign(signInPath());
+                  }}
+                />
               }
             />
           ) : user.isAdmin ? (
@@ -609,6 +619,16 @@ function AccountApp() {
             <Suspense fallback={<p>Loading preview…</p>}>
               <HistoryBrowser />
             </Suspense>
+          ) : location.pathname === '/' &&
+            new URLSearchParams(location.search).has('offlineRecovery') ? (
+            <OfflineRecoveryEntry
+              key={`${user.id}:${new URLSearchParams(location.search).get('offlineRecovery')}`}
+              accountId={user.id}
+              itemId={new URLSearchParams(location.search).get('offlineRecovery') ?? ''}
+              navigation={navigation}
+              connection={browserOnline ? (editorConnection ?? serverConnection) : 'offline'}
+              onConnectionState={setEditorConnection}
+            />
           ) : (
             <Dashboard
               key={user.id}

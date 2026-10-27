@@ -41,6 +41,11 @@ session. An active admin's last passkey cannot be removed; add a replacement
 first. A member's last key can be removed, then recovered through an invite.
 Removing the key that authenticated your own session sends you to sign-in.
 
+People can also remove their own credentials in Your profile → Passkeys after a
+recent passkey verification. Self-service removal always retains at least one key,
+including for members; the Operator-only recovery exception above is unchanged.
+See [self-service decisions](implementation/SPN-070.md).
+
 ## Disable an account
 
 In People, choose the account’s **Actions → Disable account** and confirm. Its sessions end and live editors are

@@ -44,6 +44,7 @@ import type { LocalStart } from './offline/localStart.ts';
 import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability } from './offline/OfflineAvailability.tsx';
+import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 import type { ItemAppearance } from '../src/shared/appearance.ts';
 const SheetEditor = lazy(() =>
@@ -228,6 +229,11 @@ export function Dashboard({
       ? { syncedAt, items, shared: shared.items, views: views.current }
       : null;
   const offline = useOfflineDownloads(user, local, catalog);
+  useEffect(() => {
+    // Returning from the native editor reuses this Dashboard. Read its newly
+    // committed pending state before showing the account recovery entries.
+    if (!currentId) void offline.refreshSummaries().catch(() => {});
+  }, [currentId, user.id]);
   useEffect(() => {
     if (local) {
       setItems(local.catalog.items);
@@ -725,6 +731,10 @@ export function Dashboard({
             </div>
           </header>
 
+          {!currentId && (
+            <OfflineRecoveryList downloads={offline.downloads.values()} navigation={navigation} />
+          )}
+
           {local && (
             <div className="dashboard-view-choice">
               <SegmentedChoice
@@ -932,21 +942,16 @@ export function Dashboard({
                 {!local && <button onClick={() => openFile(current)}>Open Space</button>}
               </p>
             ) : local && offlineKind(current) ? (
-              offline.downloads.has(current.id) ? (
-                <Suspense fallback={<p role="status">Loading offline copy…</p>}>
-                  <OfflineViewer
-                    key={current.id}
-                    accountId={user.id}
-                    itemId={current.id}
-                    onDirty={navigation.dirty}
-                    onConnectionState={onConnectionState}
-                  />
-                </Suspense>
-              ) : (
-                <p role="status">
-                  {current.name} needs a connection. It isn’t downloaded on this device.
-                </p>
-              )
+              <Suspense fallback={<p role="status">Loading offline copy…</p>}>
+                <OfflineViewer
+                  key={current.id}
+                  accountId={user.id}
+                  itemId={current.id}
+                  name={current.name}
+                  onDirty={navigation.dirty}
+                  onConnectionState={onConnectionState}
+                />
+              </Suspense>
             ) : current.kind === 'sheet' ? (
               <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
                 <SheetEditor

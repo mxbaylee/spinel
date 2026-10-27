@@ -7,7 +7,7 @@ import type {
   VerifiedAuthenticationResponse,
 } from '@simplewebauthn/server';
 import { AuthStore, CHALLENGE_MS, SESSION_MS, hashToken } from './store.ts';
-import { AuthService, authOrigin } from './service.ts';
+import { AuthService, authOrigin, saveRegistration } from './service.ts';
 import { passkeyProviderName, availablePasskeyName } from './passkey-names.ts';
 import { AdminStore } from './admin.ts';
 import { InvitationService } from './invitations.ts';
@@ -45,6 +45,12 @@ function fixture() {
       rpID: 'localhost',
     },
   };
+  saveRegistration(store, user.id, {
+    ...registration.registrationInfo!,
+    aaguid: '',
+    credential: { ...registration.registrationInfo!.credential, id: 'zz-bootstrap' },
+  });
+  store.markVerified(signed.session, 'zz-bootstrap');
   const authentication: VerifiedAuthenticationResponse = {
     verified: true,
     authenticationInfo: {
@@ -156,6 +162,7 @@ test('registration and discoverable sign-in require user verification and fixed 
   const second = await f.service.registrationOptions(f.signed.session);
   expect(second.options.excludeCredentials).toEqual([
     { id: 'credential', type: 'public-key', transports: ['internal'] },
+    { id: 'zz-bootstrap', type: 'public-key', transports: ['internal'] },
   ]);
   const signin = await f.service.authenticationOptions(f.anonymous.session);
   expect(signin.options.allowCredentials).toBeUndefined();
@@ -177,6 +184,7 @@ test('registration and discoverable sign-in require user verification and fixed 
   expect(f.store.session(f.anonymous.token)).toBeUndefined();
   expect(f.store.session(result.token)?.user_id).toBe(f.user.id);
   expect(f.store.session(result.token)?.passkey_id).toBe('credential');
+  expect(f.store.verifiedUntil(result.session)).toBe(f.store.now() + CHALLENGE_MS);
 });
 
 test('duplicate registration and wrong user handles fail without a session', async () => {
@@ -210,7 +218,7 @@ test.each(['cancel', 'expire', 'revoke', 'disable'] as const)(
     await expect(
       f.service.register(f.signed.session, challengeId, f.registerResponse),
     ).rejects.toThrow('expired');
-    expect(f.store.passkeys(f.user.id)).toHaveLength(0);
+    expect(f.store.passkeys(f.user.id).map((key) => key.id)).toEqual(['zz-bootstrap']);
   },
 );
 

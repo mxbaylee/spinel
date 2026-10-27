@@ -1,11 +1,23 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import type { NativeSyncOptions, ClientState, IncomingFrame } from '@spinel/sync-client';
+import type {
+  NativeSyncOptions,
+  ClientState,
+  IncomingFrame,
+  ClientCheckpoint,
+} from '@spinel/sync-client';
 import type { Univer } from '@univerjs/core';
 import { disposeSpinelSync, getSpinelSync, loadSpinelDocument } from '../../web/spinelSync.ts';
 import { getSyncPresence } from '../../web/syncPresence.ts';
 import type { SaveState } from '../shared/autosave.ts';
 import type { ConnectionState } from '../../web/connectionState.ts';
 import type { OfflineSession } from '../../web/offline/OfflineSession.ts';
+import type { OfflineRecoveryRequest } from '../shared/offlineRecovery.ts';
+
+const downloadOfflineFile = vi.hoisted(() => vi.fn());
+vi.mock('../../web/offline/recovery.ts', () => ({
+  downloadOfflineFile,
+  offlineCopyName: (title: string) => `${title} (offline copy, 2026-10-27 14:35)`,
+}));
 
 const native = vi.hoisted(() => ({
   clients: [] as {
@@ -68,6 +80,9 @@ vi.mock('@spinel/sync-client', () => ({
           throw error;
         }
       },
+      retry() {
+        void this.persistNow().catch(() => {});
+      },
       refuse(reason: import('@spinel/sync-client').ClientFailure) {
         entry.state = { ...entry.state, resyncing: true };
         options.onState(entry.state);
@@ -116,6 +131,7 @@ afterEach(() => {
   for (const stop of stops.splice(0).reverse()) stop();
   vi.useRealTimers();
   vi.unstubAllGlobals();
+  downloadOfflineFile.mockClear();
   native.clients.length = 0;
   Socket.instances.length = 0;
 });
@@ -129,6 +145,7 @@ async function fixture({
   onInitialPending,
   beforeWatch,
   downloaded = false,
+  canRecover = false,
   canRefresh,
 }: {
   guest?: boolean;
@@ -137,6 +154,7 @@ async function fixture({
   onInitialPending?(): void;
   beforeWatch?(): void;
   downloaded?: boolean;
+  canRecover?: boolean;
   canRefresh?(): boolean;
 } = {}) {
   vi.useFakeTimers();
@@ -173,20 +191,53 @@ async function fixture({
     return metadata();
   });
   vi.stubGlobal('fetch', requests);
+  const recoveryRequest: OfflineRecoveryRequest = {
+    recoveryId: '33333333-3333-4333-8333-333333333333',
+    filename: 'Offline notes (offline copy, 2026-10-27 14:35).univer.json',
+    snapshot: {
+      id: space ? child : item,
+      title: 'Offline notes (offline copy, 2026-10-27 14:35)',
+      documentStyle: {},
+      body: { dataStream: 'Retained local notes\r\n' },
+    },
+    possibleReplayCrash: false,
+  };
+  const copyItem = {
+    id: '44444444-4444-4444-8444-444444444444',
+    name: 'Offline notes (offline copy, 2026-10-27 14:35)',
+  };
   const offline = {
     enabled: true,
+    canRecover,
     current: true,
     pending: false,
     online: false,
     problem: '',
     accountId: 'owner',
     itemId: space ? child : item,
-    bundle: { access: 'editor', unitId: 'unit' },
+    bundle: { access: 'editor', unitId: 'unit', name: 'Offline notes' },
+    recoveryRequest: undefined as OfflineRecoveryRequest | undefined,
+    onChange: undefined as (() => void) | undefined,
     initial: () => ({ snapshot: { id: 'unit', body: { dataStream: '\r\n' } }, revision: 8 }),
     toVisible: <T>(value: T) => value,
     toCanonical: <T>(value: T) => value,
     fetch: requests,
-    persist: vi.fn(async () => {}),
+    persist: vi.fn(async (_checkpoint: ClientCheckpoint) => {}),
+    prepareRecovery: vi.fn(
+      async (_checkpoint: ClientCheckpoint): Promise<OfflineRecoveryRequest> => {
+        offline.recoveryRequest ??= structuredClone(recoveryRequest);
+        return structuredClone(offline.recoveryRequest);
+      },
+    ),
+    publishRecovery: vi.fn(
+      async (_request: OfflineRecoveryRequest, _signal: AbortSignal) => copyItem,
+    ),
+    exportSnapshot: vi.fn(async (_checkpoint: ClientCheckpoint) =>
+      structuredClone(recoveryRequest.snapshot),
+    ),
+    finishRecovery: vi.fn(async (_recoveryId?: string) => {
+      offline.pending = false;
+    }),
     prepareImages: vi.fn(async (_value: unknown, _signal?: AbortSignal) => {}),
     refreshClean: vi.fn(async (verify: () => void) => {
       verify();
@@ -250,6 +301,8 @@ async function fixture({
     dispatched,
     client,
     offline,
+    recoveryRequest,
+    copyItem,
     socket: () => Socket.instances.at(-1)!,
     leave() {
       current = false;
@@ -260,10 +313,334 @@ async function fixture({
     pending() {
       client.state.pending = true;
       client.state.pendingMutations = 1;
+      if (downloaded) offline.pending = true;
       client.options.onState(client.state);
+    },
+    conflict() {
+      offline.stopRemote('The live document changed. Your saved device copy is retained.');
+      offline.onChange?.();
     },
   };
 }
+
+test('recovery freezes and drains before publication, then removes local work only after the durable response', async () => {
+  const f = await fixture({ downloaded: true, canRecover: true, space: true });
+  const order: string[] = [];
+  let release!: () => void;
+  const acknowledged = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const prepare = f.offline.prepareRecovery.getMockImplementation()!;
+  const finish = f.offline.finishRecovery.getMockImplementation()!;
+  f.readonly.mockImplementationOnce(async (preserve) => {
+    expect(preserve).toBe(true);
+    order.push('freeze');
+  });
+  f.offline.persist.mockImplementationOnce(async () => {
+    order.push('drain');
+  });
+  f.offline.prepareRecovery.mockImplementationOnce(async (checkpoint) => {
+    order.push('prepare');
+    expect(checkpoint).toEqual(f.offline.persist.mock.calls[0][0]);
+    return prepare(checkpoint);
+  });
+  f.offline.publishRecovery.mockImplementationOnce(async (request, signal) => {
+    order.push('publish');
+    expect(request).toEqual(f.recoveryRequest);
+    expect(signal.aborted).toBe(false);
+    await acknowledged;
+    return f.copyItem;
+  });
+  f.offline.finishRecovery.mockImplementationOnce(async (recoveryId) => {
+    order.push('cleanup');
+    expect(f.client.disposed).toBe(false);
+    expect(f.offline.pending).toBe(true);
+    await finish(recoveryId);
+  });
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(order).toEqual(['freeze', 'drain', 'prepare', 'publish']);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'creating',
+    originalHref: `/spaces/${item}?item=${child}`,
+  });
+  expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  expect(f.offline.pending).toBe(true);
+  expect(f.client.disposed).toBe(false);
+  f.handle.recover();
+  f.handle.exportRecovery();
+  f.handle.discardRecovery();
+  f.offline.onChange?.();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery).toHaveBeenCalledOnce();
+  expect(f.offline.exportSnapshot).not.toHaveBeenCalled();
+  expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  release();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(order).toEqual(['freeze', 'drain', 'prepare', 'publish', 'cleanup']);
+  expect(f.offline.finishRecovery).toHaveBeenCalledWith(f.recoveryRequest.recoveryId);
+  expect(f.offline.pending).toBe(false);
+  expect(f.client.disposed).toBe(true);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'created',
+    copyHref: `/?item=${f.copyItem.id}`,
+    copyName: f.copyItem.name,
+    originalHref: `/spaces/${item}?item=${child}`,
+  });
+  expect(f.offline.removeClean).not.toHaveBeenCalled();
+  expect(f.reload).not.toHaveBeenCalled();
+  f.handle.recover();
+  f.offline.onChange?.();
+  await vi.advanceTimersByTimeAsync(5000);
+  expect(f.offline.publishRecovery).toHaveBeenCalledOnce();
+  expect(f.offline.finishRecovery).toHaveBeenCalledOnce();
+});
+
+test('failed recovery retains the client and outbox, makes one automatic attempt, and retries the same stored request explicitly', async () => {
+  const f = await fixture({ downloaded: true, canRecover: true });
+  f.offline.publishRecovery.mockRejectedValueOnce(
+    new Error('Recovery is temporarily unavailable.'),
+  );
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'failed',
+    message: 'Recovery is temporarily unavailable.',
+  });
+  expect(f.client.disposed).toBe(false);
+  expect(f.offline.pending).toBe(true);
+  expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  f.offline.onChange?.();
+  window.dispatchEvent(new Event('online'));
+  await vi.advanceTimersByTimeAsync(5000);
+  expect(f.offline.prepareRecovery).toHaveBeenCalledOnce();
+  expect(f.offline.publishRecovery).toHaveBeenCalledOnce();
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery).toHaveBeenCalledTimes(2);
+  expect(f.offline.publishRecovery.mock.calls.map(([request]) => request)).toEqual([
+    f.recoveryRequest,
+    f.recoveryRequest,
+  ]);
+  expect(f.offline.finishRecovery).toHaveBeenCalledWith(f.recoveryRequest.recoveryId);
+  expect(f.client.disposed).toBe(true);
+  expect(f.offline.pending).toBe(false);
+});
+
+test('failed recovery cleanup retains the exact request and retries the already-created copy', async () => {
+  const f = await fixture({ downloaded: true, canRecover: true });
+  f.offline.finishRecovery.mockRejectedValueOnce(new Error('Local recovery cleanup failed.'));
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'failed',
+    message: 'Local recovery cleanup failed.',
+  });
+  expect(f.offline.recoveryRequest).toEqual(f.recoveryRequest);
+  expect(f.offline.pending).toBe(true);
+  expect(f.client.disposed).toBe(false);
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery.mock.calls.map(([request]) => request)).toEqual([
+    f.recoveryRequest,
+    f.recoveryRequest,
+  ]);
+  expect(f.offline.finishRecovery.mock.calls).toEqual([
+    [f.recoveryRequest.recoveryId],
+    [f.recoveryRequest.recoveryId],
+  ]);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'created',
+    copyHref: `/?item=${f.copyItem.id}`,
+  });
+  expect(f.offline.pending).toBe(false);
+  expect(f.client.disposed).toBe(true);
+});
+
+test('explicit discard after a failed copy clears only local work and never republishes the request', async () => {
+  const f = await fixture({ downloaded: true, canRecover: true });
+  f.offline.publishRecovery.mockRejectedValueOnce(new Error('Copy permission denied.'));
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  const requests = f.requests.mock.calls.length;
+  f.handle.discardRecovery();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery).toHaveBeenCalledOnce();
+  expect(f.offline.prepareRecovery).toHaveBeenCalledOnce();
+  expect(f.offline.finishRecovery).toHaveBeenCalledExactlyOnceWith();
+  expect(f.requests.mock.calls).toHaveLength(requests);
+  expect(f.offline.pending).toBe(false);
+  expect(f.client.disposed).toBe(true);
+  expect(f.saves.at(-1)?.recovery).toMatchObject({
+    phase: 'discarded',
+    originalHref: `/?item=${item}`,
+  });
+});
+
+test('unfinished host input blocks automatic copy and every explicit recovery action until the input is dismissed', async () => {
+  let unfinished = true;
+  const f = await fixture({ downloaded: true, canRecover: true, canRefresh: () => !unfinished });
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.saves.at(-1)?.recovery?.phase).toBe('ready');
+  expect(f.offline.prepareRecovery).not.toHaveBeenCalled();
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  f.handle.exportRecovery();
+  await vi.advanceTimersByTimeAsync(0);
+  f.handle.discardRecovery();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.readonly).toHaveBeenCalledWith(true);
+  expect(f.saves.at(-1)?.recovery?.message).toBe(
+    'Copy or finish the unfinished input before recovering these changes.',
+  );
+  expect(f.offline.persist).not.toHaveBeenCalled();
+  expect(f.offline.prepareRecovery).not.toHaveBeenCalled();
+  expect(f.offline.publishRecovery).not.toHaveBeenCalled();
+  expect(f.offline.exportSnapshot).not.toHaveBeenCalled();
+  expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  expect(downloadOfflineFile).not.toHaveBeenCalled();
+  expect(f.offline.pending).toBe(true);
+  expect(f.client.disposed).toBe(false);
+  unfinished = false;
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.publishRecovery).toHaveBeenCalledOnce();
+  expect(f.saves.at(-1)?.recovery?.phase).toBe('created');
+});
+
+test('a failed local drain cannot publish a recovery snapshot or remove the pending outbox', async () => {
+  const f = await fixture({ downloaded: true, canRecover: true });
+  f.offline.persist.mockRejectedValueOnce(new Error('Device storage is full.'));
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.saves.at(-1)).toMatchObject({
+    dirty: true,
+    local: 'failed',
+    recovery: { phase: 'failed', message: 'Device storage is full.' },
+  });
+  expect(f.offline.prepareRecovery).not.toHaveBeenCalled();
+  expect(f.offline.publishRecovery).not.toHaveBeenCalled();
+  expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  expect(f.offline.pending).toBe(true);
+  expect(f.client.disposed).toBe(false);
+  f.handle.retry();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.persist).toHaveBeenCalledTimes(2);
+  expect(f.offline.publishRecovery).not.toHaveBeenCalled();
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.offline.persist).toHaveBeenCalledTimes(3);
+  expect(f.offline.publishRecovery).toHaveBeenCalledOnce();
+  expect(f.saves.at(-1)?.recovery?.phase).toBe('created');
+});
+
+test('a session without recovery ownership never exposes or starts the copy workflow', async () => {
+  const f = await fixture({ downloaded: true, canRecover: false });
+  f.pending();
+  f.conflict();
+  await vi.advanceTimersByTimeAsync(0);
+  f.handle.recover();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.saves.at(-1)?.recovery).toBeUndefined();
+  expect(f.offline.prepareRecovery).not.toHaveBeenCalled();
+  expect(f.offline.publishRecovery).not.toHaveBeenCalled();
+  expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  expect(f.offline.pending).toBe(true);
+  expect(f.client.disposed).toBe(false);
+});
+
+test.each(['metadata', 'publication'] as const)(
+  'a 401 from %s holds durable work for local export until the explicit sign-in action',
+  async (source) => {
+    const f = await fixture({ downloaded: true, canRecover: true });
+    f.pending();
+    if (source === 'metadata') {
+      f.metadata(async () => Response.json({}, { status: 401 }));
+      await vi.advanceTimersByTimeAsync(1000);
+    } else {
+      f.offline.publishRecovery.mockRejectedValueOnce(
+        Object.assign(new Error('Your sign-in ended.'), { status: 401 }),
+      );
+      f.conflict();
+      await vi.advanceTimersByTimeAsync(0);
+    }
+    expect(f.offline.endAuthentication).toHaveBeenCalledOnce();
+    expect(f.saves.at(-1)).toMatchObject({
+      retained: true,
+      signInRequired: true,
+      local: 'attention',
+    });
+    expect(f.saves.at(-1)?.recovery).toBeDefined();
+    expect(f.signIn).not.toHaveBeenCalled();
+    expect(f.client.disposed).toBe(false);
+    expect(f.offline.pending).toBe(true);
+    expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+    const publications = f.offline.publishRecovery.mock.calls.length;
+    f.handle.exportRecovery();
+    await vi.waitFor(() => expect(downloadOfflineFile).toHaveBeenCalledOnce());
+    expect(downloadOfflineFile).toHaveBeenCalledWith(
+      f.recoveryRequest.snapshot,
+      'Offline notes (offline copy, 2026-10-27 14:35).univer.json',
+    );
+    expect(f.offline.publishRecovery).toHaveBeenCalledTimes(publications);
+    expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+    expect(f.offline.pending).toBe(true);
+    expect(f.client.disposed).toBe(false);
+    expect(f.signIn).not.toHaveBeenCalled();
+    f.handle.retry();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.signIn).toHaveBeenCalledExactlyOnceWith('/sign-in');
+    expect(f.client.disposed).toBe(true);
+    expect(f.offline.pending).toBe(true);
+    expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+  },
+);
+
+test.each(['freeze', 'drain', 'prepare', 'publish'] as const)(
+  'account invalidation while recovery waits for %s fences every later publication and local cleanup',
+  async (stage) => {
+    const f = await fixture({ downloaded: true, canRecover: true });
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    if (stage === 'freeze') f.readonly.mockImplementationOnce(() => held);
+    if (stage === 'drain') f.offline.persist.mockImplementationOnce(() => held);
+    if (stage === 'prepare')
+      f.offline.prepareRecovery.mockImplementationOnce(async () => {
+        await held;
+        return f.recoveryRequest;
+      });
+    if (stage === 'publish')
+      f.offline.publishRecovery.mockImplementationOnce(async () => {
+        await held;
+        return f.copyItem;
+      });
+    f.pending();
+    f.conflict();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+    const reports = f.saves.length;
+    f.offline.current = false;
+    release();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.offline.publishRecovery).toHaveBeenCalledTimes(stage === 'publish' ? 1 : 0);
+    expect(f.offline.finishRecovery).not.toHaveBeenCalled();
+    expect(downloadOfflineFile).not.toHaveBeenCalled();
+    expect(f.offline.pending).toBe(true);
+    expect(f.signIn).not.toHaveBeenCalled();
+    expect(f.saves).toHaveLength(reports);
+    expect(f.reload).not.toHaveBeenCalled();
+  },
+);
 
 test('a socket open is not room readiness or a durable save, and reconnect retains pending status', async () => {
   const f = await fixture();
@@ -356,7 +733,7 @@ test.each([403, 404])(
 );
 
 test.each([false, true])(
-  'a 401 immediately expires preparation, then drains every retained device copy before signing in (pending: %s)',
+  'a 401 expires preparation and drains locally, retaining pending work before explicit sign-in (pending: %s)',
   async (pending) => {
     const f = await fixture({ downloaded: true });
     if (pending) f.pending();
@@ -378,8 +755,21 @@ test.each([false, true])(
     expect(f.offline.removeClean).not.toHaveBeenCalled();
     expect(f.offline.refreshClean).not.toHaveBeenCalled();
     expect(f.client.state.resyncing).toBe(false);
-    expect(f.client.disposed).toBe(true);
-    expect(f.signIn).toHaveBeenCalledWith('/sign-in');
+    expect(f.client.disposed).toBe(!pending);
+    if (pending) {
+      expect(f.offline.pending).toBe(true);
+      expect(f.signIn).not.toHaveBeenCalled();
+      expect(f.saves.at(-1)).toMatchObject({
+        retained: true,
+        signInRequired: true,
+        local: 'attention',
+      });
+      f.handle.retry();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(f.signIn).toHaveBeenCalledWith('/sign-in');
+      expect(f.offline.pending).toBe(true);
+      expect(f.client.disposed).toBe(true);
+    } else expect(f.signIn).toHaveBeenCalledWith('/sign-in');
   },
 );
 
@@ -671,6 +1061,7 @@ test('a clean downloaded copy has no retained-work flag and a completed queue cl
     pendingMutations: 0,
     localPersistence: 'saved',
   };
+  f.offline.pending = false;
   f.client.options.onState(f.client.state);
   expect(f.saves.at(-1)).toMatchObject({ dirty: false, retained: false });
 });

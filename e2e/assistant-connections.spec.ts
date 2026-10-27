@@ -3,6 +3,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { mkdir } from 'node:fs/promises';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+import { InvitationService } from '../src/server/auth/invitations.ts';
 
 test('an assistant returns through passkey sign-in and consent, then can be disconnected', async ({
   page,
@@ -12,8 +13,9 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
 }, info) => {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db);
-  const user = auth.createUser(`OAuth owner ${info.testId}`);
   const operator = auth.createUser(`OAuth operator ${info.testId}`, true);
+  const invite = new InvitationService(auth, baseURL!).create(operator.id);
+  let userId: string | undefined;
   const adminContext = await browser.newContext();
   await adminContext.addCookies([
     {
@@ -28,16 +30,6 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
   const callback = 'https://assistant.example/callback';
   const verifier = randomBytes(32).toString('base64url');
   const challenge = createHash('sha256').update(verifier).digest('base64url');
-  await context.addCookies([
-    {
-      name: COOKIE_NAME,
-      value: auth.createSession(user.id).token,
-      url: baseURL!.replace('http:', 'https:'),
-      secure: true,
-      httpOnly: true,
-      sameSite: 'Strict',
-    },
-  ]);
   const cdp = await context.newCDPSession(page);
   await cdp.send('WebAuthn.enable');
   await cdp.send('WebAuthn.addVirtualAuthenticator', {
@@ -54,9 +46,16 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
     route.fulfill({ contentType: 'text/html', body: '<h1>Assistant callback</h1>' }),
   );
   try {
-    // Use the actual passkey ceremony after the opaque authorization request survives sign-out.
+    // First enrollment uses the invitation ceremony, not an unverified session
+    // with no existing credential. The OAuth return still uses real passkey sign-in.
+    await page.goto(invite.url);
+    await page.getByLabel('Your name').fill(`OAuth owner ${info.testId}`);
+    await page.getByRole('button', { name: 'Join with a passkey' }).click();
+    await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    const cookie = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!;
+    userId = auth.session(cookie.value)!.user_id!;
+    const user = auth.user(userId)!;
     await page.goto('/settings#passkeys');
-    await page.getByRole('button', { name: 'Add a passkey' }).click();
     await expect(page.getByRole('listitem').filter({ hasText: 'Passkey' })).toHaveCount(1);
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(page).toHaveURL(/\/sign-in$/);
@@ -213,6 +212,8 @@ test('an assistant returns through passkey sign-in and consent, then can be disc
     expect(after.connections).toHaveLength(1);
   } finally {
     await adminContext.close();
+    if (userId) db.prepare('DELETE FROM auth_users WHERE id=?').run(userId);
+    db.prepare('DELETE FROM auth_users WHERE id=?').run(operator.id);
     db.close();
   }
 });

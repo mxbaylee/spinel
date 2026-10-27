@@ -105,6 +105,19 @@ export function useOfflineDownloads(
     });
   }
 
+  async function refreshSummaries() {
+    const scope = preparation();
+    if (!scope || preparedAccount() !== user.id) return;
+    const store = await openOfflineStore(user.id);
+    try {
+      const known = await store.downloads();
+      if (scope.isCurrent())
+        setDownloads(new Map(known.map((download) => [download.itemId, download])));
+    } finally {
+      store.close();
+    }
+  }
+
   useLayoutEffect(() => {
     const lifetime = { accountId: user.id };
     mounted.current = lifetime;
@@ -119,8 +132,14 @@ export function useOfflineDownloads(
     setBusy(null);
     setMessage(null);
     const stopWatching = watchOfflineAccount();
+    const changed = (event: Event) => {
+      if ((event as CustomEvent<{ accountId: string }>).detail?.accountId === user.id)
+        void refreshSummaries().catch(() => {});
+    };
+    window.addEventListener('spinel-offline-changed', changed);
     const close = () => {
       if (mounted.current === lifetime) mounted.current = null;
+      window.removeEventListener('spinel-offline-changed', changed);
       stopWatching();
     };
     if (local || preparedAccount() !== user.id) return close;
@@ -131,11 +150,12 @@ export function useOfflineDownloads(
       if (!scope.isCurrent()) return;
       setDownloads(new Map(known.map((download) => [download.itemId, download])));
       // Keep the shell current after an update or eviction, then refresh each
-      // copy. A failed refresh keeps the last complete copy. A document this
-      // account can no longer open is removed: SPN-039's copies hold no edits.
+      // clean copy. Pending copies are retained even when live access is gone,
+      // so My files can offer their independent recovery entry.
       await prepareShell();
       for (const download of known) {
         if (!scope.isCurrent()) return;
+        if (download.pending) continue;
         try {
           set(
             await downloadForOffline(store, download.itemId, download.spaceId, verify(scope)),
@@ -239,5 +259,6 @@ export function useOfflineDownloads(
     clearMessage: () => setMessage(null),
     toggle,
     saveCatalog,
+    refreshSummaries,
   };
 }

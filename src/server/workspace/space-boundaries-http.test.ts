@@ -222,8 +222,10 @@ test('with Spaces disabled, ordinary HTTP discovery and direct-ID content, grant
       ] as const) {
         const response = await f.send('/api/items/' + id + suffix, cookie, body, method);
         expect(response.status, method + ' ' + suffix).toBe(
-          suffix === '/collaboration' ? 400 : 404,
+          suffix === '/collaboration' ? 403 : 404,
         );
+        if (suffix === '/collaboration')
+          expect(await response.json()).toEqual({ error: 'This document is not available.' });
       }
     }
     for (const path of [

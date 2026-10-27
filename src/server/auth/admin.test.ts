@@ -52,6 +52,9 @@ test('legacy session schema is migrated idempotently without losing active sessi
   db.prepare('INSERT INTO auth_sessions VALUES(?,?,?)').run('old', null, Date.now() + 60_000);
   const auth = new AuthStore(db);
   expect(auth.sessionByHash('old')?.passkey_id).toBeNull();
+  expect(auth.sessionByHash('old')?.verified_at).toBeNull();
+  expect(auth.sessionByHash('old')?.verified_passkey_id).toBeNull();
+  expect(auth.verifiedUntil(auth.sessionByHash('old')!)).toBeNull();
   new AuthStore(db);
   expect(db.prepare('SELECT COUNT(*) AS n FROM auth_sessions').get()?.n).toBe(1);
   expect(
