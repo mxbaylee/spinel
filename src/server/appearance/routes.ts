@@ -75,19 +75,17 @@ export function appearanceRoutes(
     const status =
       error instanceof AuthError
         ? error.status
-        : (error as { status?: number })?.status === 413
-          ? 413
+        : [400, 413].includes((error as { status?: number })?.status ?? 0)
+          ? (error as { status: number }).status
           : 500;
-    response
-      .status(status)
-      .json({
-        error:
-          error instanceof AuthError
-            ? error.message
-            : status === 413
-              ? 'Choose a smaller cover image.'
-              : 'Could not save appearance. Try again.',
-      });
+    response.status(status).json({
+      error:
+        error instanceof AuthError
+          ? error.message
+          : status === 413
+            ? 'Choose a smaller cover image.'
+            : 'Could not save appearance. Try again.',
+    });
   });
   return router;
 }

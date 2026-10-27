@@ -21,6 +21,7 @@ import { getTheme, watchTheme } from '../src/ui/theme.ts';
 import { spaceAccentPalettes, fillPresets, palettes } from '../src/ui/palette.ts';
 import { gemCoverSources } from '../src/ui/redesign/gemCovers.ts';
 import './appearance.css';
+type AppearanceFocus = () => HTMLElement | boolean | null;
 export type AppearanceTarget = {
   id: string;
   name: string;
@@ -156,12 +157,14 @@ export function useAppearance(target: AppearanceTarget | undefined, disabled = f
     canEdit: false,
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
   const epoch = useRef(0),
     serial = useRef(0);
   useEffect(() => {
     const generation = ++epoch.current;
     setState({ appearance: target?.appearance ?? emptyAppearance(), canEdit: false });
     setError('');
+    setLoading(Boolean(path) && !disabled);
     if (!path || disabled) return;
     const controller = new AbortController();
     let pending = false;
@@ -180,9 +183,9 @@ export function useAppearance(target: AppearanceTarget | undefined, disabled = f
           return;
         if ([401, 403, 404].includes((cause as { status?: number }).status ?? 0))
           setState({ appearance: emptyAppearance(), canEdit: false });
-        else setState((value) => ({ ...value, canEdit: false }));
         setError(cause instanceof Error ? cause.message : 'Reconnect to change appearance.');
       } finally {
+        if (epoch.current === generation) setLoading(false);
         pending = false;
       }
     };
@@ -200,14 +203,28 @@ export function useAppearance(target: AppearanceTarget | undefined, disabled = f
   async function save(patch: Record<string, unknown>) {
     const generation = epoch.current;
     ++serial.current;
-    const result = await appearanceRequest(path, { revision: state.appearance.revision, ...patch });
-    if (generation !== epoch.current) throw new Error('This item is no longer open.');
-    ++serial.current;
-    setState(result);
-    setError('');
-    window.dispatchEvent(new Event('spinel-appearance-changed'));
+    try {
+      const result = await appearanceRequest(path, {
+        revision: state.appearance.revision,
+        ...patch,
+      });
+      if (generation !== epoch.current) throw new Error('This item is no longer open.');
+      ++serial.current;
+      setState(result);
+      setError('');
+      window.dispatchEvent(new Event('spinel-appearance-changed'));
+    } catch (cause) {
+      if (
+        generation === epoch.current &&
+        [401, 403, 404].includes((cause as { status?: number }).status ?? 0)
+      ) {
+        setState({ appearance: emptyAppearance(), canEdit: false });
+        setError('Your access to this item changed.');
+      }
+      throw cause;
+    }
   }
-  return { ...state, error, save, path };
+  return { ...state, error, save, path, loading };
 }
 export function CoverArt({
   cover,
@@ -225,6 +242,10 @@ export function CoverArt({
   const hash = cover.source === 'upload' ? coverVariant(cover.images, mode) : undefined;
   if (offline && photo)
     return <div className="appearance-offline-cover">Connect to view the Unsplash cover.</div>;
+  if (offline && hash && !assets?.[hash])
+    return (
+      <div className="appearance-offline-cover">This cover is not available in the saved copy.</div>
+    );
   const src =
     cover.source === 'gem'
       ? gemCoverSources[cover.gem][cover.mode ?? mode]
@@ -239,23 +260,26 @@ export function CoverArt({
           objectPosition: cover.source === 'gem' ? 'left center' : `50% ${cover.position}%`,
         }}
       />
-      {photo && (
-        <p className="appearance-credit">
-          Photo by{' '}
-          <a href={photo.profile} target="_blank" rel="noreferrer">
-            {photo.photographer}
-          </a>{' '}
-          on{' '}
-          <a
-            href="https://unsplash.com/?utm_source=spinel&utm_medium=referral"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Unsplash
-          </a>
-        </p>
-      )}
+      {photo && <PhotoAttribution photo={photo} />}
     </>
+  );
+}
+function PhotoAttribution({ photo }: { photo: UnsplashPhoto }) {
+  return (
+    <p className="appearance-credit">
+      Photo by{' '}
+      <a href={photo.profile} target="_blank" rel="noreferrer">
+        {photo.photographer}
+      </a>{' '}
+      on{' '}
+      <a
+        href="https://unsplash.com/?utm_source=spinel&utm_medium=referral"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Unsplash
+      </a>
+    </p>
   );
 }
 export function AppearanceDialog({
@@ -264,12 +288,16 @@ export function AppearanceDialog({
   path,
   save,
   close,
+  finalFocus,
+  assets,
 }: {
   target: AppearanceTarget;
   value: ItemAppearance;
   path: string;
   save(patch: Record<string, unknown>): Promise<void>;
   close(): void;
+  finalFocus?: AppearanceFocus;
+  assets?: Record<string, string>;
 }) {
   const [icon, setIcon] = useState(value.icon),
     [color, setColor] = useState(value.folderColor),
@@ -298,6 +326,7 @@ export function AppearanceDialog({
   if (cover)
     return (
       <CoverDialog
+        assets={assets}
         initial={value.cover}
         path={path}
         save={async (patch) => {
@@ -309,6 +338,7 @@ export function AppearanceDialog({
     );
   return (
     <Modal
+      finalFocus={finalFocus}
       title={`Appearance · ${target.name}`}
       icon="palette"
       open
@@ -391,11 +421,15 @@ export function CoverDialog({
   path,
   save,
   close,
+  finalFocus,
+  assets,
 }: {
   initial: PageCover | null;
   path: string;
   save(patch: Record<string, unknown>): Promise<void>;
   close(): void;
+  finalFocus?: AppearanceFocus;
+  assets?: Record<string, string>;
 }) {
   const mode = useSyncExternalStore(watchTheme, getTheme);
   const [source, setSource] = useState<'gem' | 'upload' | 'unsplash'>(initial?.source ?? 'gem');
@@ -439,7 +473,7 @@ export function CoverDialog({
       : source === 'unsplash'
         ? photos[key]?.url
         : typeof upload === 'string'
-          ? `${path}/assets/${upload}`
+          ? (assets?.[upload] ?? `${path}/assets/${upload}`)
           : upload
             ? `data:image/webp;base64,${upload.data}`
             : undefined;
@@ -527,6 +561,7 @@ export function CoverDialog({
   }
   return (
     <Modal
+      finalFocus={finalFocus}
       title="Page cover"
       icon="palette"
       open
@@ -546,6 +581,7 @@ export function CoverDialog({
           ) : (
             <span>Choose a cover</span>
           )}
+          {source === 'unsplash' && photos[key] && <PhotoAttribution photo={photos[key]} />}
         </div>
         <div className="appearance-source-buttons" role="group" aria-label="Cover source">
           {(['gem', 'upload', 'unsplash'] as const).map((value) => (
@@ -730,9 +766,11 @@ export function accentStyle(
 export function ConnectedAppearanceDialog({
   target,
   close,
+  finalFocus,
 }: {
   target: AppearanceTarget;
   close(): void;
+  finalFocus?: AppearanceFocus;
 }) {
   const state = useAppearance(target);
   return state.canEdit ? (
@@ -742,16 +780,23 @@ export function ConnectedAppearanceDialog({
       path={state.path}
       save={state.save}
       close={close}
+      finalFocus={finalFocus}
     />
   ) : (
     <Modal
+      finalFocus={finalFocus}
       title="Appearance"
       open
       onOpenChange={(open) => {
         if (!open) close();
       }}
     >
-      <p role="status">{state.error || 'Checking appearance access…'}</p>
+      <p role="status">
+        {state.error ||
+          (state.loading
+            ? 'Checking appearance access…'
+            : 'You can view this item, but cannot change its appearance.')}
+      </p>
       <Button onClick={close}>Close</Button>
     </Modal>
   );

@@ -333,6 +333,8 @@ jobs:
         run: npm run build
       - name: Playwright smoke
         env:
+          # Server-only provider credential; never passed to the Vite build.
+          UNSPLASH_ACCESS_KEY: ${{ vars.UNSPLASH_ACCESS_KEY }}
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
           SHARD: ${{ matrix.shard }}
         run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}

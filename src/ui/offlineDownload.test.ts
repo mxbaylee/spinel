@@ -232,3 +232,33 @@ test('only a failed round trip counts as a network failure', () => {
   );
   expect(isNetworkFailure(new SyntaxError('Unexpected token <'))).toBe(false);
 });
+
+test('cover bytes are verified independently and rejected before incomplete offline storage', async () => {
+  const { verifyCoverAssets } = await import('../../web/offline/download.ts');
+  const { emptyAppearance, validImageBase64 } = await import('../shared/appearance.ts');
+  const bytes = new Uint8Array([1, 2, 3]),
+    hash = await sha256(bytes);
+  const saved = bundle({
+    images: [],
+    appearance: {
+      ...emptyAppearance(),
+      cover: { source: 'upload', images: { shared: hash }, position: 50 },
+    },
+    coverAssets: { [hash]: 'AQID' },
+  });
+  await expect(verifyCoverAssets(saved)).resolves.toBeUndefined();
+  await expect(verifyCoverAssets({ ...saved, coverAssets: {} })).rejects.toThrow('incomplete');
+  await expect(verifyCoverAssets({ ...saved, coverAssets: { [hash]: 'AAAA' } })).rejects.toThrow(
+    'damaged',
+  );
+  await expect(
+    verifyCoverAssets({ ...saved, coverAssets: { [hash]: 'https://other.example' } }),
+  ).rejects.toThrow('invalid');
+  // Multi-megabyte valid input must be a linear scan, not repeated regex groups.
+  expect(validImageBase64('A'.repeat(Math.floor((8 * 1024 * 1024) / 3) * 4), 8 * 1024 * 1024)).toBe(
+    true,
+  );
+  expect(
+    validImageBase64('A'.repeat(Math.ceil((8 * 1024 * 1024) / 3) * 4 + 4), 8 * 1024 * 1024),
+  ).toBe(false);
+});

@@ -1,4 +1,9 @@
-import { appearanceSchema, readAppearance, initialIcon } from '../appearance/data.ts';
+import {
+  appearanceSchema,
+  readAppearance,
+  readAppearances,
+  initialIcon,
+} from '../appearance/data.ts';
 import { LinkAccess, linkGone } from './links.ts';
 import { randomUUID } from 'node:crypto';
 import { AuthError, AuthStore } from '../auth/store.ts';
@@ -248,11 +253,15 @@ export class WorkspaceStore {
         'live',
       );
       if (!ordinary) throw new AuthError(413, 'This item list is too large to process at once.');
+      const appearances = readAppearances(
+        this.auth.database,
+        items.filter((item) => ordinary.has(item.id)).map((item) => item.id),
+      );
       return items
         .filter((item) => ordinary.has(item.id))
         .map((item) => ({
           ...item,
-          appearance: readAppearance(this.auth.database, item.id),
+          appearance: appearances.get(item.id),
           tags: this.assignedTags(ownerId, item.id),
         }));
     });

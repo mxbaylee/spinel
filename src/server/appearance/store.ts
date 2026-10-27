@@ -7,7 +7,12 @@ import { resolveSpaceScope } from '../workspace/space-scope.ts';
 import { validateDocumentCredentials } from '../workspace/document-access.ts';
 import { readAppearance } from './data.ts';
 import { UnsplashProvider } from './unsplash.ts';
-import { validIdentityIcon, validColor, validGem } from '../../shared/appearance.ts';
+import {
+  validIdentityIcon,
+  validColor,
+  validGem,
+  validImageBase64,
+} from '../../shared/appearance.ts';
 import type { CoverVariants, ItemAppearance, PageCover } from '../../shared/appearance.ts';
 export type AppearanceActor = { userId: string; customData: Record<string, unknown> };
 let decoding = 0;
@@ -150,11 +155,7 @@ export class AppearanceStore {
             } else {
               const file = object(images[name]);
               keys(file, ['data']);
-              if (
-                typeof file.data !== 'string' ||
-                file.data.length > 12_000_000 ||
-                !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(file.data)
-              )
+              if (!validImageBase64(file.data, 8 * 1024 * 1024))
                 throw bad('Choose a PNG, JPEG or WebP up to 8 MB.');
               const bytes = Buffer.from(file.data, 'base64');
               if (!bytes.length || bytes.length > 8 * 1024 * 1024)

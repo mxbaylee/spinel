@@ -93,6 +93,32 @@ for (const variant of [
       const saved = await (await context.request.get(`/api/appearance/items/${item.id}`)).json();
       expect(saved.appearance.cover).toEqual({ source: 'gem', gem: 'bismuth' });
       expect(saved.appearance.icon).toBe('🍋');
+      if (
+        info.project.name === 'production' &&
+        variant.name === 'light' &&
+        process.env.UNSPLASH_ACCESS_KEY
+      ) {
+        await page.getByRole('button', { name: 'Change appearance', exact: true }).click();
+        await page.getByRole('button', { name: 'Change cover', exact: true }).click();
+        await page.getByRole('button', { name: 'Unsplash', exact: true }).click();
+        await page.getByRole('textbox', { name: 'Search Unsplash', exact: true }).fill('mountains');
+        await page.getByRole('button', { name: 'Search', exact: true }).click();
+        const choice = page.getByRole('button', { name: /Select photo by/ }).first();
+        await expect(choice).toBeVisible({ timeout: 15000 });
+        await choice.click();
+        await expect(page.locator('.appearance-cover-preview .appearance-credit')).toBeVisible();
+        await page.getByRole('button', { name: 'Save cover', exact: true }).click();
+        await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+        await expect(page.locator('.appearance-banner .appearance-credit')).toBeVisible();
+        await expect
+          .poll(() =>
+            page
+              .locator('.appearance-banner img')
+              .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
+          )
+          .toBe(true);
+        await capture('unsplash-live');
+      }
       await page.locator('.editor-frame').evaluate((element) => {
         element.scrollTop = 200;
       });

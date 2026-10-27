@@ -1,3 +1,4 @@
+import { validImageBase64 } from '../../src/shared/appearance.ts';
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
 import { offlineScope } from './OfflineAccess.ts';
 import { checkImageList, verifyImages } from './PreparedImages.ts';
@@ -124,9 +125,7 @@ export async function verifyCoverAssets(bundle: OfflineBundle) {
     if (
       !required.has(hash) ||
       !/^[a-f0-9]{64}$/.test(hash) ||
-      typeof value !== 'string' ||
-      value.length > 24_000_000 ||
-      !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value)
+      !validImageBase64(value, 16 * 1024 * 1024)
     )
       throw new DownloadError('The cover image is invalid.');
     const bytes = Uint8Array.from(atob(value), (character) => character.charCodeAt(0));

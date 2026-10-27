@@ -1,12 +1,13 @@
 # SPN-086 paired banner artwork
 
-Artwork refinement only; SPN-086 remains open for production personalization.
+This folder retains the artwork refinement evidence. Current production acceptance
+and the reviewed commit are recorded separately on PR #195.
 Final artwork approval belongs to the owner after local Storybook review.
 
 Run `npm run storybook`, then open **Redesign → Appearance → Gems Light And Dark**
-for side-by-side light/dark pairs with wide and phone crops. **Gems Collection**,
-the individual **Space Ruby** through **Space Bismuth** stories, and **Gem Picker**
-follow the toolbar's light/dark theme choice.
+for side-by-side light/dark pairs with wide and phone crops. **Playground** uses
+the production controls, with item kind and starting gem in Controls and light/dark
+mode in the theme toolbar. Redundant per-gem stories have been removed.
 
 - Standalone SVGs: `src/ui/redesign/assets/gems/<gem>-light.svg` and `-dark.svg`.
 - Source geometry and palettes: `src/ui/redesign/gemCovers.ts`.
@@ -25,7 +26,7 @@ lava identity; its focal stone is an interpretation awaiting owner review.
 
 ![Light and dark overview](pairs.png)
 
-## Verified handoff
+## Historical artwork handoff (before production integration)
 
 Independent art review: all twelve pairs passed at **95–100/100**, with no
 blockers. Independent integration review: **10/10 for every pair**. Reports retain

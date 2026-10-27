@@ -29,3 +29,15 @@ export function initialIcon(db: DatabaseSync, id: string, icon: unknown) {
     JSON.stringify({ ...emptyAppearance(), revision: 1, icon }),
   );
 }
+/** Authorized catalogs batch metadata so deep lists keep their existing query budget. */
+export function readAppearances(db: DatabaseSync, ids: readonly string[]) {
+  const rows = db
+    .prepare(
+      'SELECT item_id,value,revision FROM item_appearance WHERE item_id IN (SELECT value FROM json_each(?))',
+    )
+    .all(JSON.stringify(ids)) as { item_id: string; value: string; revision: number }[];
+  const result = new Map(ids.map((id) => [id, emptyAppearance()]));
+  for (const row of rows)
+    result.set(row.item_id, { ...JSON.parse(row.value), revision: row.revision });
+  return result;
+}

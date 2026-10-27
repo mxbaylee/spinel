@@ -1,3 +1,4 @@
+import { ItemIcon, useSpaceAccent } from './Appearance.tsx';
 import { EditorFrame } from './EditorFrame.tsx';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -82,6 +83,7 @@ export function OfflineSpaceView({
   viewer: ReactNode;
 }) {
   const { root, spaceId, copies, selected, problem } = selection;
+  const nativeStyle = useSpaceAccent(root?.appearance?.accent);
   const shell = (
     <SpaceShell
       user={user}
@@ -105,7 +107,12 @@ export function OfflineSpaceView({
                           aria-current={copy.itemId === selected?.itemId ? 'page' : undefined}
                           onClick={close}
                         >
-                          <EntityIcon kind={copy.kind} size={20} />
+                          <ItemIcon
+                            name={copy.name}
+                            kind={copy.kind}
+                            appearance={copy.appearance}
+                            size={20}
+                          />
                           <span>{copy.name}</span>
                         </a>
                       </li>
@@ -141,7 +148,9 @@ export function OfflineSpaceView({
               Prepared {new Date(selected.downloadedAt).toLocaleString()}. Reconnect to get the
               latest changes.
             </p>
-            <div className="space-native-editor space-offline-viewer">{viewer}</div>
+            <div className="space-native-editor space-offline-viewer" style={nativeStyle}>
+              {viewer}
+            </div>
           </>
         )
       )}

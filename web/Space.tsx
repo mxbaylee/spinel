@@ -106,6 +106,7 @@ export function Space({
   const [operationError, setOperationError] = useState('');
   const [notice, setNotice] = useState('');
   const [action, setAction] = useState<SpaceDialogAction | null>(null);
+  const appearanceFocus = useRef<HTMLButtonElement | null>(null);
   const pagesButton = useRef<HTMLButtonElement>(null);
   const returnToPages = useRef(false);
   const [actionError, setActionError] = useState('');
@@ -616,7 +617,8 @@ export function Space({
               if (accepted) close();
               return accepted;
             }}
-            onAction={(value) => {
+            onAction={(value, trigger) => {
+              appearanceFocus.current = trigger ?? null;
               returnToPages.current = window.matchMedia('(max-width: 900px)').matches;
               close();
               setActionError('');
@@ -726,6 +728,11 @@ export function Space({
         <ConnectedAppearanceDialog
           key={appearanceItem.id}
           target={appearanceItem}
+          finalFocus={() =>
+            appearanceFocus.current?.isConnected
+              ? appearanceFocus.current
+              : (pagesButton.current ?? true)
+          }
           close={() => setAppearanceItem(null)}
         />
       )}

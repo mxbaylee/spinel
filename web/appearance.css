@@ -205,7 +205,10 @@
   outline: 2px solid var(--sp-text);
   outline-offset: 2px;
 }
-::selection {
-  background: var(--appearance-selection-bg, var(--sp-accent));
-  color: var(--appearance-selection-fg, var(--sp-on-accent));
+
+@media (max-width: 600px), (pointer: coarse) {
+  .appearance-colors button {
+    width: 44px;
+    height: 44px;
+  }
 }

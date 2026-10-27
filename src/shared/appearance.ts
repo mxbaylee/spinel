@@ -62,3 +62,13 @@ export function coverVariant<T>(images: CoverVariants<T>, mode: 'light' | 'dark'
 export function appearancePath(id: string, spaceId?: string, guest = false) {
   return `/api/appearance/${guest ? 'guest/' : ''}${spaceId ? `spaces/${spaceId}/items/${id}` : `items/${id}`}`;
 }
+/** Linear character scan: repeated four-character groups can exhaust regexp stacks on images. */
+export function validImageBase64(value: unknown, maxBytes: number): value is string {
+  return (
+    typeof value === 'string' &&
+    value.length > 0 &&
+    value.length <= Math.ceil(maxBytes / 3) * 4 &&
+    value.length % 4 === 0 &&
+    /^[A-Za-z0-9+/]*={0,2}$/.test(value)
+  );
+}

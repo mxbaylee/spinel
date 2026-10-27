@@ -1,4 +1,4 @@
-import { initialIcon, readAppearance } from '../appearance/data.ts';
+import { initialIcon, readAppearances } from '../appearance/data.ts';
 import { randomUUID } from 'node:crypto';
 import { ITEM_KINDS } from '../../shared/workspace.ts';
 import type { ItemKind } from '../../shared/workspace.ts';
@@ -318,11 +318,15 @@ export class SpaceStore {
     this.guestEnabled(actorId);
     const scope = resolveSpaceScope(this.workspace.auth, actorId, spaceId, spaceId, capability);
     const structure = readSpaceStructure(this.workspace.auth.database, spaceId, scope.ownerId);
+    const appearances = readAppearances(
+      this.workspace.auth.database,
+      structure.items.filter((item) => item.trashedAt === null).map((item) => item.id),
+    );
     const items: LiveMember[] = structure.items
       .filter((item) => item.trashedAt === null)
       .map(({ trashedAt: _trashedAt, trashBatch: _trashBatch, ...item }) => ({
         ...item,
-        appearance: readAppearance(this.workspace.auth.database, item.id),
+        appearance: appearances.get(item.id),
       }));
     const byId = new Map(items.map((item) => [item.id, item]));
     const children = new Map<string, LiveMember[]>();

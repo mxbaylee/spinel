@@ -52,6 +52,7 @@ function Playground({
       </div>
       {dialog && (
         <AppearanceDialog
+          assets={assets}
           target={target}
           value={value}
           path="/storybook-fixture"

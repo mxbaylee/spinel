@@ -149,6 +149,7 @@ export function Dashboard({
   const [viewMissing, setViewMissing] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
+  const appearanceFocus = useRef<HTMLButtonElement | null>(null);
   const sharingFocus = useRef<HTMLButtonElement | null>(null);
   const offlineFocus = useRef<HTMLButtonElement | null>(null);
   const [spaceAction, setSpaceAction] = useState<{
@@ -527,7 +528,14 @@ export function Dashboard({
         });
     }
     if (canAdminister(item.access)) {
-      result.push({ label: 'Appearance…', onClick: () => setAppearanceItem(item), disabled: busy });
+      result.push({
+        label: 'Appearance…',
+        onClick: (trigger) => {
+          appearanceFocus.current = trigger ?? null;
+          setAppearanceItem(item);
+        },
+        disabled: busy,
+      });
       for (const mode of ['share', 'rename', 'move', 'trash'] as const) {
         result.push({
           label: { share: 'Share…', rename: 'Rename…', move: 'Move…', trash: 'Move to Trash' }[
@@ -941,6 +949,7 @@ export function Dashboard({
         <ConnectedAppearanceDialog
           key={appearanceItem.id}
           target={appearanceItem}
+          finalFocus={() => (appearanceFocus.current?.isConnected ? appearanceFocus.current : true)}
           close={() => setAppearanceItem(null)}
         />
       )}

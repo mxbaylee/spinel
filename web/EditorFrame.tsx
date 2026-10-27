@@ -94,6 +94,7 @@ export function EditorFrame({
     Object.entries(palettes[mode]).map(([key, value]) => [`--${key}`, value]),
   ) as CSSProperties;
   const header = useRef<HTMLElement>(null);
+  const appearanceButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     setAppearanceOpen(false);
   }, [appearanceTarget?.id, appearanceTarget?.spaceId]);
@@ -300,6 +301,7 @@ export function EditorFrame({
             target={appearanceTarget}
             value={appearance.appearance}
             path={appearance.path}
+            finalFocus={() => appearanceButton.current}
             save={appearance.save}
             close={() => setAppearanceOpen(false)}
           />

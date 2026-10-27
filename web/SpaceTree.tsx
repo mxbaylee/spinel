@@ -29,7 +29,7 @@ export function SpaceTree({
   expandedIds: ReadonlySet<string>;
   onToggle(id: string): void;
   onOpen(id: string): boolean;
-  onAction(action: SpaceTreeAction): void;
+  onAction(action: SpaceTreeAction, trigger?: HTMLButtonElement): void;
   canEdit: boolean;
   disabled?: boolean;
 }) {
@@ -147,7 +147,8 @@ export function SpaceTree({
                       {
                         label: 'Appearance…',
                         disabled: !canEdit || disabled,
-                        onClick: () => onAction({ mode: 'appearance', item }),
+                        onClick: (trigger) =>
+                          onAction({ mode: 'appearance', item }, trigger ?? undefined),
                       },
                       {
                         label: 'Rename',
