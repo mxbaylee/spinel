@@ -38,6 +38,7 @@ export class WorkspaceFiles {
       throw new AuthError(404, 'This item is not available.');
     return {
       id: space.id,
+      appearance: space.appearance,
       parentId: space.parentId,
       kind: 'space',
       name: space.name,
@@ -146,7 +147,16 @@ export class WorkspaceFiles {
     return [...this.workspace.ancestors(user, parent.id), parent];
   }
 
-  create(user: string, input: { name?: unknown; kind?: unknown; parentId?: unknown }): FileItem {
+  create(
+    user: string,
+    input: {
+      name?: unknown;
+      kind?: unknown;
+      parentId?: unknown;
+      iconColor?: unknown;
+      icon?: unknown;
+    },
+  ): FileItem {
     if (input.kind !== 'space') return this.workspace.create(user, input);
     this.enabled();
     return this.workspace.auth.transaction(() =>

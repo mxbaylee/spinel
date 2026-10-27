@@ -452,6 +452,16 @@ export const NewOfflineDoc: Story = {
     await userEvent.click(menu.getByRole('menuitem', { name: 'Doc' }));
     const dialog = within(await body.findByRole('dialog', { name: 'New doc' }));
     await userEvent.type(dialog.getByRole('textbox', { name: 'Name' }), 'Notes for the journey');
+    await userEvent.click(dialog.getByRole('button', { name: 'Choose icon or emoji' }));
+    const picker = within(await body.findByRole('dialog', { name: 'Choose an icon or emoji' }));
+    await userEvent.type(picker.getByRole('textbox', { name: 'Search icons and emojis' }), 'book');
+    await userEvent.click(picker.getByRole('button', { name: /^Book Open$/ }));
+    const colors = within(dialog.getByRole('group', { name: 'Icon color' }));
+    await userEvent.click(colors.getByRole('button', { name: 'Info, strong' }));
+    await expect(colors.getByRole('button', { name: 'Info, strong' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await expect(dialog.getAllByRole('option').map((option) => option.textContent)).toEqual([
       'Sheet',
       'Doc',

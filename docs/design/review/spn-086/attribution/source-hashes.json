@@ -1,0 +1,6 @@
+{
+  "src/ui/redesign/AppearanceReview.tsx": "b2b8aaf6d0fe20aa74e0e6b970f1d86d5f2861d0c8fdf078b2353d8230083935",
+  "src/ui/redesign/AppearanceReview.stories.tsx": "eca8cd6d332d351afed9ae85532c79ed6fc125e6aa0d55128cc557ba5c0086a8",
+  "src/ui/redesign/appearanceReview.css": "3f028cb458a19e1667f37770ca691f7cc2f05e63e5814dfa9ba74e33c2e2c770",
+  "docs/implementation/SPN-086.md": "124eae616e97e085d8ea41e9449663079fa862517490ae27f2fca829f8b2311b"
+}

@@ -39,6 +39,7 @@ impact_owner: L # S | M | L, one line per persona it affects:
 impact_guest: S #   impact_operator, impact_owner, impact_collaborator, impact_guest
 score: 31 # written by npm run backlog:index; never edit by hand
 depends_on: [SPN-004]
+# upstream_prs: [https://github.com/example/repo/pull/123] # optional external prerequisites
 decisions: [7] # legacy issue numbers only; new decisions link to docs/implementation/SPN-NNN.md
 ---
 
@@ -136,7 +137,7 @@ Within each phase, the highest score comes first, with
 ties going to the ticket that unblocks another, then higher impact, then larger
 effort, then lower ID. Each row shows the tie-break that put it ahead of the
 next. Take the first ticket in the current phase that isn't waiting on an open
-`depends_on`. Dependency inheritance is unchanged. A
+`depends_on` or a listed `upstream_prs` prerequisite. Dependency inheritance is unchanged. A
 prerequisite must be in the same or an earlier phase; the checker rejects a
 dependency on later-phase work. SPN-093/094 also name SPN-038 as an explicit
 launch sequencing dependency. These are timing constraints, not technical
@@ -145,8 +146,11 @@ requirements for a converter or document-type plugin.
 Agents decide; tickets have no `owner_input` field or human approval gate.
 Record a real external prerequisite (for example, device access, credentials or
 an upstream fix) in Rules and the PR checkpoint, with evidence and the next action.
+List blocking upstream PRs as HTTPS GitHub pull request URLs in optional `upstream_prs`; the generated Waiting on column links them without changing scores. Recheck upstream status when picking the ticket and remove resolved entries; the offline checker validates URLs, not live merge or release status. Rules must retain any release-suitability checks after a PR merges.
 Complete all work possible and continue another eligible ticket if that capability
 is unavailable. Do not disguise an unavailable check as approval or completion.
+
+**UI tickets migrate their Storybook examples.** Follow the [production migration rule](../implementation/storybook-production-migration.md#migrate-stories-with-their-ui-tickets): shipped UI uses production components; every retained Redesign example names an open owning ticket. Replace or retire it when that ticket lands. The final migration removes the Redesign group. Unowned obsolete examples are retired rather than kept as a second UI.
 
 **UI changes require independent visual review.** Use `visual-review` for layout,
 theme, typography, icons and visible interaction-state changes, including relevant

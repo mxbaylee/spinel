@@ -1,14 +1,18 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { Tabs } from '@base-ui/react/tabs';
 import type { FileItem, GrantRole, SharePerson } from '../src/shared/workspace.ts';
 import type { SourceSharingOutcome, SourceSharingReview } from '../src/shared/sourceSharing.ts';
 import { accessLabel } from '../src/shared/workspace.ts';
 import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
+import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ShareLink } from './ShareLink.tsx';
 import { SharingAddress } from './SharingAddress.tsx';
 import { SharingSources } from './SharingSources.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import { spaceHref } from './spaceNavigation.ts';
 import './sharing.css';
+
+type Draft = { personId: string; role: GrantRole | null };
 
 export function Sharing({
   item,
@@ -20,59 +24,59 @@ export function Sharing({
   finalFocus?: () => HTMLElement | boolean | null;
 }) {
   const [people, setPeople] = useState<SharePerson[]>([]);
-  const [choices, setChoices] = useState<Record<string, string>>({});
+  const [draft, setDraft] = useState<Draft | null>(null);
+  const [tab, setTab] = useState<string>('people');
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [linkBusy, setLinkBusy] = useState(false);
   const [error, setError] = useState('');
-  const [failedPerson, setFailedPerson] = useState<string | null>(null);
   const [message, setMessage] = useState('');
-  const [sourceReviews, setSourceReviews] = useState<Record<string, SourceSharingReview | null>>(
-    {},
-  );
-  const [sourceChoices, setSourceChoices] = useState<Record<string, boolean>>({});
-  const [sourceResults, setSourceResults] = useState<Record<string, SourceSharingOutcome>>({});
+  const [sourceReview, setSourceReview] = useState<SourceSharingReview | null>(null);
+  const [includeSources, setIncludeSources] = useState(false);
   const [sourceRefresh, setSourceRefresh] = useState(0);
-  const [reviewAgain, setReviewAgain] = useState<string | null>(null);
   const generation = useRef(0);
   const mutation = useRef(false);
-  const personRows = useRef(new Map<string, HTMLDivElement>());
-  const focusAfterLoad = useRef<string | null>(null);
-  const doneButton = useRef<HTMLButtonElement | null>(null);
+  const personRows = useRef(new Map<string, HTMLButtonElement>());
+  const editor = useRef<HTMLFormElement>(null);
+  const peoplePanel = useRef<HTMLDivElement>(null);
+  const focusAfterChange = useRef<{ personId: string; editor: boolean } | null>(null);
   const hasSources = item.kind === 'doc' || item.kind === 'space';
-  const recordSourceReview = useCallback((personId: string, review: SourceSharingReview | null) => {
-    setSourceReviews((previous) => ({ ...previous, [personId]: review }));
-    // Every replacement preview requires a fresh explicit source choice.
-    setSourceChoices((previous) => ({ ...previous, [personId]: false }));
+  const busy = saving || linkBusy;
+  const recordSourceReview = useCallback((review: SourceSharingReview | null) => {
+    setSourceReview(review);
+    // Every fresh identity/role-bound preview needs a new explicit opt-in.
+    setIncludeSources(false);
   }, []);
   const verify = (request: number) => () => {
     if (request !== generation.current) throw new Error('This sharing view is no longer current.');
   };
   useLayoutEffect(() => {
-    if (loading || !focusAfterLoad.current) return;
-    const personId = focusAfterLoad.current;
+    if (loading || saving || !focusAfterChange.current) return;
+    const next = focusAfterChange.current;
     const request = generation.current;
-    // The dialog restores containment when the loading rows remove the focused
-    // button. Hand focus back after that restoration, using the current row.
+    // Let the dialog finish restoring containment after a focused control is removed.
     const frame = requestAnimationFrame(() => {
-      if (request !== generation.current || focusAfterLoad.current !== personId) return;
-      const select = personRows.current.get(personId)?.querySelector<HTMLSelectElement>('select');
-      (select ?? doneButton.current)?.focus();
-      focusAfterLoad.current = null;
+      if (request !== generation.current || focusAfterChange.current !== next) return;
+      const target = next.editor
+        ? editor.current?.querySelector<HTMLSelectElement>('select')
+        : personRows.current.get(next.personId);
+      (target ?? peoplePanel.current)?.focus();
+      focusAfterChange.current = null;
     });
     return () => cancelAnimationFrame(frame);
-  }, [loading, people]);
-  async function load(preserveChoices = false, focusPerson: string | null = null) {
-    focusAfterLoad.current = focusPerson;
+  }, [loading, saving, people, draft]);
+
+  function discardDraft() {
+    setDraft(null);
+    setSourceReview(null);
+    setIncludeSources(false);
+    setError('');
+    setMessage('');
+  }
+  async function load() {
     const request = ++generation.current;
     setLoading(true);
-    setError('');
-    setFailedPerson(null);
-    setSourceReviews({});
-    setSourceChoices({});
-    setSourceResults({});
-    setReviewAgain(null);
-    setMessage('');
+    discardDraft();
     try {
       const body = await itemsRequest<{ people: SharePerson[] }>(
         `/${item.id}/sharing`,
@@ -80,18 +84,7 @@ export function Sharing({
         undefined,
         verify(request),
       );
-      if (request !== generation.current) return;
-      setPeople(body.people);
-      setChoices((previous) =>
-        Object.fromEntries(
-          body.people.map((person) => [
-            person.id,
-            preserveChoices
-              ? (previous[person.id] ?? person.directRole ?? '')
-              : (person.directRole ?? ''),
-          ]),
-        ),
-      );
+      if (request === generation.current) setPeople(body.people);
     } catch (cause) {
       if (request === generation.current) {
         setPeople([]);
@@ -103,40 +96,43 @@ export function Sharing({
   }
   useLayoutEffect(() => {
     setPeople([]);
-    setChoices({});
-    setSaving(null);
+    setTab('people');
+    setSaving(false);
     setLinkBusy(false);
-    setMessage('');
+    focusAfterChange.current = null;
     mutation.current = false;
     void load();
     return () => {
       generation.current++;
     };
   }, [item.id, item.access]);
+
+  function edit(person: SharePerson) {
+    if (mutation.current || busy) return;
+    discardDraft();
+    const closing = draft?.personId === person.id;
+    focusAfterChange.current = { personId: person.id, editor: !closing };
+    if (!closing) setDraft({ personId: person.id, role: person.directRole });
+  }
   async function apply(person: SharePerson) {
-    if (mutation.current) return;
-    const role = (choices[person.id] || null) as GrantRole | null;
-    const sourceReview = sourceChoices[person.id] ? sourceReviews[person.id] : null;
+    if (mutation.current || busy || !draft || draft.personId !== person.id) return;
+    const { role } = draft;
+    const review = includeSources ? sourceReview : null;
     if (
-      sourceChoices[person.id] &&
-      (!sourceReview ||
-        sourceReview.userId !== person.id ||
-        sourceReview.hostRole !== role ||
-        !sourceReview.hostAccess)
+      includeSources &&
+      (!review ||
+        review.userId !== person.id ||
+        review.hostRole !== role ||
+        !review.hostAccess ||
+        !review.targets.some((target) => target.state === 'grant'))
     )
       return;
+    if (role === person.directRole && !review) return;
     mutation.current = true;
     const request = ++generation.current;
-    setSaving(person.id);
+    setSaving(true);
     setError('');
-    setFailedPerson(null);
     setMessage('');
-    setReviewAgain(null);
-    setSourceResults((previous) => {
-      const next = { ...previous };
-      delete next[person.id];
-      return next;
-    });
     try {
       const body = await itemsRequest<{
         people: SharePerson[];
@@ -144,151 +140,146 @@ export function Sharing({
       }>(
         `/${item.id}/sharing`,
         'PUT',
-        {
-          userId: person.id,
-          role,
-          ...(sourceReview ? { sourceReview: sourceReview.version } : {}),
-        },
+        { userId: person.id, role, ...(review ? { sourceReview: review.version } : {}) },
         verify(request),
       );
       if (request !== generation.current) return;
-      if (sourceReview && !body.sourceOutcome)
+      if (review && !body.sourceOutcome)
         throw new Error('The source-sharing result was not received.');
       setPeople(body.people);
-      // Saving one person's grant must not discard another person's staged choice.
-      setChoices((previous) =>
-        Object.fromEntries(
-          body.people.map((row) => [
-            row.id,
-            row.id === person.id
-              ? (row.directRole ?? '')
-              : (previous[row.id] ?? row.directRole ?? ''),
-          ]),
-        ),
-      );
-      setSourceChoices((previous) => ({ ...previous, [person.id]: false }));
-      setSourceRefresh((value) => value + 1);
-      if (body.sourceOutcome) {
-        setSourceResults((previous) => ({ ...previous, [person.id]: body.sourceOutcome! }));
-        if (!body.sourceOutcome.complete) setReviewAgain(person.id);
-      } else setMessage(`Access updated for ${person.name}.`);
+      setIncludeSources(false);
+      setSourceReview(null);
+      const outcome = body.sourceOutcome;
+      if (outcome && !outcome.complete) {
+        const host = item.kind === 'space' ? 'Space' : 'Report';
+        setDraft({
+          personId: person.id,
+          role: body.people.find((row) => row.id === person.id)?.directRole ?? null,
+        });
+        setMessage(
+          `${host} access ${outcome.host === 'updated' ? 'updated' : 'kept'}. ${outcome.shared.length} ${outcome.shared.length === 1 ? 'source' : 'sources'} shared; some sources still need access or review.`,
+        );
+        setSourceRefresh((value) => value + 1);
+        focusAfterChange.current = { personId: person.id, editor: true };
+      } else {
+        setDraft(null);
+        setMessage(
+          outcome
+            ? `${outcome.host === 'updated' ? 'Access and formula sources updated' : 'Formula sources shared'} for ${person.name}.`
+            : `Access updated for ${person.name}.`,
+        );
+        focusAfterChange.current = { personId: person.id, editor: false };
+      }
     } catch (cause) {
-      if (request === generation.current) {
-        setFailedPerson(person.id);
-        const detail = cause instanceof Error ? cause.message : 'Could not update access.';
-        if (!hasSources) setError(detail);
-        else {
-          // A lost acknowledgement may follow any committed sharing write.
-          // Recheck host/source access even when sources were left unchecked:
-          // a refusal may also mean the previous source names are now private.
-          setError(`Could not confirm the update. ${detail} Review current access and try again.`);
-          setSourceChoices((previous) => ({ ...previous, [person.id]: false }));
-          setSourceReviews((previous) => ({ ...previous, [person.id]: null }));
-          setReviewAgain(person.id);
-          setSourceRefresh((value) => value + 1);
-          try {
-            const current = await itemsRequest<{ people: SharePerson[] }>(
-              `/${item.id}/sharing`,
-              'GET',
-              undefined,
-              verify(request),
-            );
-            if (request !== generation.current) return;
-            setPeople(current.people);
-          } catch {
-            if (request === generation.current) {
-              // A revoked host cannot retain the previous source/name inventory.
-              setPeople([]);
-              setChoices({});
-              setSourceResults({});
-              setSourceReviews({});
-              setFailedPerson(null);
-              setError(
-                'Could not confirm the update or refresh access. Reopen sharing to review current permissions.',
-              );
-            }
-          }
+      if (request !== generation.current) return;
+      const detail = cause instanceof Error ? cause.message : '';
+      setError(
+        detail.startsWith('Formula sources changed.')
+          ? detail
+          : 'Could not confirm the update. Review current access and try again.',
+      );
+      setIncludeSources(false);
+      setSourceReview(null);
+      setSourceRefresh((value) => value + 1);
+      focusAfterChange.current = { personId: person.id, editor: true };
+      // Even unchecked writes may commit before the reply is lost, or reveal that
+      // the actor's host/source authority was revoked. Read, never replay, the write.
+      try {
+        const current = await itemsRequest<{ people: SharePerson[] }>(
+          `/${item.id}/sharing`,
+          'GET',
+          undefined,
+          verify(request),
+        );
+        if (request !== generation.current) return;
+        setPeople(current.people);
+        if (!current.people.some((row) => row.id === person.id)) setDraft(null);
+      } catch {
+        if (request === generation.current) {
+          setPeople([]);
+          setDraft(null);
+          setSourceReview(null);
+          setError(
+            'Could not confirm the update or refresh access. Reopen sharing to review current permissions.',
+          );
         }
       }
     } finally {
       if (request === generation.current) {
         mutation.current = false;
-        setSaving(null);
+        setSaving(false);
       }
     }
   }
-  return (
-    <Modal
-      open
-      finalFocus={finalFocus}
-      title={`Share ${item.name}`}
-      icon="share"
-      dismissDisabled={!!saving || linkBusy}
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-    >
-      <div className="sharing-content">
-        <p className="sp-muted">
-          Choose who can open this {item.kind === 'space' ? 'Space' : 'item'}.
-        </p>
-        <div className="sharing-owner">
-          <strong>{item.access === 'owner' ? 'You' : (item.ownerName ?? 'File owner')}</strong>
-          <span>Owner</span>
-        </div>
-        {item.access === 'admin' && (
-          <p className="sp-muted">
-            You are a File admin. The Owner and your own direct grant are protected.
-          </p>
-        )}
-        <section aria-label="People with access" aria-busy={loading || !!saving}>
-          {loading ? (
-            <p role="status">Loading access…</p>
-          ) : (
-            <>
-              {people.map((person) => (
-                <div
-                  className="sharing-person"
-                  key={person.id}
+
+  const peopleView = (
+    <div ref={peoplePanel} className="sharing-people" tabIndex={-1}>
+      <div className="sharing-owner">
+        <strong>{item.access === 'owner' ? 'You' : (item.ownerName ?? 'File owner')}</strong>
+        <span>Owner</span>
+      </div>
+      <section aria-label="People with access" aria-busy={loading || saving}>
+        {loading ? (
+          <p role="status">Loading access…</p>
+        ) : (
+          <>
+            {people.map((person) => (
+              <div className="sharing-person" key={person.id}>
+                <button
+                  className="sharing-person-trigger"
                   ref={(element) => {
                     if (element) personRows.current.set(person.id, element);
                     else personRows.current.delete(person.id);
                   }}
+                  aria-label={`Edit access for ${person.name}`}
+                  aria-expanded={draft?.personId === person.id}
+                  aria-controls={
+                    draft?.personId === person.id ? `sharing-editor-${person.id}` : undefined
+                  }
+                  disabled={busy}
+                  onClick={() => edit(person)}
                 >
-                  <div className="sharing-person-row">
-                    <div>
-                      <strong>
-                        {person.name}
-                        {person.disabled ? ' · Disabled account' : ''}
-                      </strong>
-                      <p className="sp-muted">
-                        Effective access:{' '}
-                        {person.effectiveRole ? accessLabel(person.effectiveRole) : 'none'}
-                        {person.effectiveRole && person.effectiveRole !== person.directRole
-                          ? ' (from a folder)'
-                          : ''}
-                        .
-                      </p>
-                      {person.disabled ? (
-                        <p className="sp-muted">
-                          This account cannot sign in. You can remove its direct access.
-                        </p>
-                      ) : null}
-                    </div>
-                    <label className="sharing-choice">
-                      Access for {person.name}
+                  <strong>
+                    {person.name}
+                    {person.disabled ? ' · Disabled account' : ''}
+                  </strong>
+                  <span>
+                    {person.effectiveRole ? accessLabel(person.effectiveRole) : 'Not shared'}
+                  </span>
+                  <ProfileIcon
+                    icon={
+                      draft?.personId === person.id ? 'lucide:chevron-up' : 'lucide:chevron-down'
+                    }
+                    size={16}
+                  />
+                </button>
+                {draft?.personId === person.id && (
+                  <form
+                    ref={editor}
+                    id={`sharing-editor-${person.id}`}
+                    className="sharing-editor"
+                    aria-label={`Edit ${person.name}’s access`}
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      void apply(person);
+                    }}
+                  >
+                    <label className="sharing-role">
+                      Access
                       <select
                         className="sp-control"
-                        disabled={!!saving}
-                        value={choices[person.id] ?? ''}
+                        aria-label={`Access for ${person.name}`}
+                        disabled={busy}
+                        value={draft.role ?? ''}
                         onChange={(event) => {
-                          setChoices({ ...choices, [person.id]: event.target.value });
-                          setSourceChoices((previous) => ({ ...previous, [person.id]: false }));
-                          setSourceResults((previous) => {
-                            const next = { ...previous };
-                            delete next[person.id];
-                            return next;
+                          setDraft({
+                            personId: person.id,
+                            role: (event.target.value || null) as GrantRole | null,
                           });
+                          setIncludeSources(false);
+                          setSourceReview(null);
+                          setError('');
+                          setMessage('');
                         }}
                       >
                         <option value="">No direct access</option>
@@ -303,134 +294,146 @@ export function Sharing({
                         </option>
                       </select>
                     </label>
-                  </div>
-                  {hasSources && !person.disabled && (
-                    <SharingSources
-                      itemId={item.id}
-                      person={person}
-                      role={(choices[person.id] || null) as GrantRole | null}
-                      busy={!!saving}
-                      checked={!!sourceChoices[person.id]}
-                      refresh={sourceRefresh}
-                      onChecked={(checked) =>
-                        setSourceChoices((previous) => ({ ...previous, [person.id]: checked }))
-                      }
-                      onReview={recordSourceReview}
-                    />
-                  )}
-                  <Button
-                    disabled={
-                      !!saving ||
-                      ((choices[person.id] ?? '') === (person.directRole ?? '') &&
-                        !(
-                          sourceChoices[person.id] &&
-                          sourceReviews[person.id]?.hostAccess &&
-                          sourceReviews[person.id]?.targets.some(
-                            (target) => target.state === 'grant',
-                          )
-                        ))
-                    }
-                    aria-label={
-                      failedPerson === person.id
-                        ? `Retry access update for ${person.name}`
-                        : `Apply access for ${person.name}`
-                    }
-                    onClick={() => void apply(person)}
-                  >
-                    {saving === person.id
-                      ? 'Updating access…'
-                      : failedPerson === person.id
-                        ? 'Retry access update'
-                        : 'Apply access'}
-                  </Button>
-                  {failedPerson === person.id && (
-                    <p role="alert">
-                      {error} Confirmed access is shown above; your selected{' '}
-                      {item.kind === 'space' ? 'Space' : item.kind === 'doc' ? 'report' : 'access'}{' '}
-                      role is kept.
-                    </p>
-                  )}
-                  {sourceResults[person.id] && (
-                    <div className="sharing-source-result">
-                      <p role="status">
-                        {item.kind === 'space' ? 'Space' : 'Report'} access{' '}
-                        {sourceResults[person.id].host === 'updated' ? 'updated.' : 'kept.'} Source
-                        access updated: {sourceResults[person.id].shared.length}{' '}
-                        {sourceResults[person.id].shared.length === 1
-                          ? 'target shared'
-                          : 'targets shared'}
-                        .{' '}
-                        {sourceResults[person.id].complete
-                          ? 'Existing source access is kept.'
-                          : 'Some sources still need access or could not be reviewed. Successful grants are kept.'}
+                    {person.disabled ? (
+                      <p className="sp-muted">
+                        This account cannot sign in. You can remove its direct access.
                       </p>
-                      {sourceReviews[person.id]?.targets.some((target) =>
-                        sourceResults[person.id].shared.includes(target.id),
-                      ) && (
-                        <ul aria-label="Sources shared">
-                          {sourceReviews[person.id]?.targets
-                            .filter((target) => sourceResults[person.id].shared.includes(target.id))
-                            .map((target) => (
-                              <li key={target.id}>
-                                {target.name} — Can view
-                                {target.kind === 'space' ? ' · Entire Space' : ''}
-                              </li>
-                            ))}
-                        </ul>
-                      )}
+                    ) : (
+                      person.effectiveRole &&
+                      person.effectiveRole !== person.directRole && (
+                        <p className="sp-muted">
+                          {accessLabel(person.effectiveRole)} through a folder.
+                        </p>
+                      )
+                    )}
+                    {draft.role === 'admin' && !person.disabled && (
+                      <p className="sp-muted">
+                        File admins manage sharing and organization, without ownership.
+                      </p>
+                    )}
+                    {item.kind === 'space' && (
+                      <p className="sp-muted">
+                        Applies to every current and future page and folder in this Space.
+                      </p>
+                    )}
+                    {item.kind === 'folder' && (
+                      <p className="sp-muted">
+                        Applies to this folder’s contents and future additions.
+                      </p>
+                    )}
+                    {hasSources && !person.disabled && (
+                      <SharingSources
+                        key={person.id}
+                        itemId={item.id}
+                        person={person}
+                        role={draft.role}
+                        busy={busy}
+                        checked={includeSources}
+                        refresh={sourceRefresh}
+                        onChecked={setIncludeSources}
+                        onReview={recordSourceReview}
+                      />
+                    )}
+                    {error && <p role="alert">{error}</p>}
+                    {message && <p role="status">{message}</p>}
+                    <div className="sharing-editor-actions">
+                      <Button
+                        disabled={busy}
+                        onClick={() => {
+                          focusAfterChange.current = { personId: person.id, editor: false };
+                          discardDraft();
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        primary
+                        type="submit"
+                        disabled={
+                          busy ||
+                          (draft.role === person.directRole &&
+                            !(
+                              includeSources &&
+                              sourceReview?.hostAccess &&
+                              sourceReview.targets.some((target) => target.state === 'grant')
+                            ))
+                        }
+                      >
+                        {saving ? 'Saving…' : person.effectiveRole ? 'Save changes' : 'Share'}
+                      </Button>
                     </div>
-                  )}
-                  {reviewAgain === person.id && (
-                    <Button disabled={!!saving} onClick={() => void load(true, person.id)}>
-                      Review remaining sources
-                    </Button>
-                  )}
-                </div>
-              ))}
-              {!people.length && !error && <p>No other everyday accounts are available.</p>}
-              {error && !failedPerson && (
-                <>
-                  <p role="alert">{error}</p>
-                  <Button onClick={() => void load()}>Retry loading access</Button>
-                </>
-              )}
-            </>
-          )}
-          {message && <p role="status">{message}</p>}
-        </section>
-        <p className="sp-muted">
-          {item.kind === 'space'
-            ? 'Access applies to every current and future page and folder in this Space.'
-            : item.kind === 'folder'
-              ? 'Folder access includes its contents and future additions. Folders cannot have guest links.'
-              : 'Direct and folder access combine; the most generous grant wins.'}{' '}
-          File admins manage sharing and file organization, without ownership or server
-          administration.
-        </p>
-        {hasSources && (
-          <p className="sp-muted">
-            {item.kind === 'space'
-              ? 'Sources in this Space are included. Sources outside this Space remain unavailable to link guests.'
-              : 'This link shares only the document. Formulas that need other files are unavailable to link guests.'}
-          </p>
+                  </form>
+                )}
+              </div>
+            ))}
+            {!people.length && !error && <p>No other everyday accounts are available.</p>}
+            {error && !draft && (
+              <>
+                <p role="alert">{error}</p>
+                <Button disabled={busy} onClick={() => void load()}>
+                  Retry loading access
+                </Button>
+              </>
+            )}
+          </>
         )}
-        {item.kind !== 'folder' && (
-          <ShareLink
-            key={`${item.id}:${item.access}`}
-            id={item.id}
-            space={item.kind === 'space'}
-            onBusyChange={setLinkBusy}
-          />
-        )}
+        {message && !draft && <p role="status">{message}</p>}
+      </section>
+      {!draft && (
         <div className="sharing-footer">
           <SharingAddress
             value={`${location.origin}${item.kind === 'space' ? spaceHref(item.id) : '/?item=' + encodeURIComponent(item.id)}`}
           />
-          <Button ref={doneButton} disabled={!!saving || linkBusy} onClick={onClose}>
-            Done
-          </Button>
         </div>
-      </div>
+      )}
+    </div>
+  );
+  return (
+    <Modal
+      open
+      finalFocus={finalFocus}
+      title={`Share ${item.name}`}
+      icon="share"
+      dismissDisabled={busy}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      {item.kind === 'folder' ? (
+        <div className="sharing-content">{peopleView}</div>
+      ) : (
+        <Tabs.Root
+          className="sharing-content"
+          value={tab}
+          onValueChange={(value) => {
+            if (mutation.current || busy || (value !== 'people' && value !== 'link')) return;
+            focusAfterChange.current = null;
+            discardDraft();
+            setTab(value);
+          }}
+        >
+          <Tabs.List className="sharing-tabs" aria-label="Sharing options">
+            <Tabs.Tab value="people" disabled={busy}>
+              People
+            </Tabs.Tab>
+            <Tabs.Tab value="link" disabled={busy}>
+              Link
+            </Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="people" className="sharing-panel">
+            {peopleView}
+          </Tabs.Panel>
+          <Tabs.Panel value="link" className="sharing-panel" keepMounted>
+            <ShareLink
+              key={`${item.id}:${item.access}`}
+              id={item.id}
+              space={item.kind === 'space'}
+              sourceKind={hasSources ? (item.kind as 'doc' | 'space') : undefined}
+              onBusyChange={setLinkBusy}
+            />
+          </Tabs.Panel>
+        </Tabs.Root>
+      )}
     </Modal>
   );
 }

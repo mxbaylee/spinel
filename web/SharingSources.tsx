@@ -5,14 +5,57 @@ import type { SourceSharingReview, SourceSharingTarget } from '../src/shared/sou
 import { Button } from '../src/ui/redesign/Controls.tsx';
 import { itemsRequest } from './itemsApi.ts';
 
-function targetStatus(target: SourceSharingTarget, checked: boolean) {
-  if (target.state === 'included') return 'Included with this Space';
-  if (target.state === 'requires-owner') return 'Owner or File admin must share';
-  if (target.state === 'grant') return checked ? 'Can view · Proposed' : 'No access';
-  return `${target.access === 'viewer' ? 'Can view' : accessLabel(target.access!)} · Kept`;
+function SourceList({
+  targets,
+  proposed = false,
+}: {
+  targets: SourceSharingTarget[];
+  proposed?: boolean;
+}) {
+  return (
+    <ul
+      className="sharing-source-list"
+      aria-label={proposed ? 'Proposed source access' : 'Reviewed source access'}
+      tabIndex={0}
+    >
+      {targets.map((target) => (
+        <li key={target.id}>
+          <div>
+            <strong>{target.name}</strong>
+            {target.kind === 'space' && (
+              <>
+                <span className="sp-muted">Entire Space</span>
+                <ul aria-label={`Source spreadsheets in ${target.name}`}>
+                  {target.sources.map((source) => (
+                    <li key={source.id}>{source.name}</li>
+                  ))}
+                </ul>
+                {target.state === 'grant' && (
+                  <span className="sp-muted">
+                    Can view every current and future page and folder in this Space.
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+          <span className="sharing-source-status">
+            {target.state === 'included'
+              ? 'Included with this Space'
+              : target.state === 'requires-owner'
+                ? 'Owner or File admin must share'
+                : target.state === 'grant'
+                  ? proposed
+                    ? 'Can view · Proposed'
+                    : 'No access'
+                  : accessLabel(target.access!)}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
-/** A source review belongs to one recipient and one staged host-role choice. */
+/** Only the active recipient owns a current identity/role-bound source review. */
 export function SharingSources({
   itemId,
   person,
@@ -30,26 +73,30 @@ export function SharingSources({
   checked: boolean;
   refresh: number;
   onChecked: (checked: boolean) => void;
-  onReview: (personId: string, review: SourceSharingReview | null) => void;
+  onReview: (review: SourceSharingReview | null) => void;
 }) {
   const [review, setReview] = useState<SourceSharingReview | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(false);
   const [retry, setRetry] = useState(0);
   const generation = useRef(0);
-  const heading = useRef<HTMLElement | null>(null);
-  const retryFocus = useRef<HTMLElement | null>(null);
+  const retryFocus = useRef<HTMLSelectElement | null>(null);
   useLayoutEffect(() => {
     if (loading || !retryFocus.current) return;
-    (heading.current ?? retryFocus.current.querySelector<HTMLSelectElement>('select'))?.focus();
-    retryFocus.current = null;
+    const request = generation.current;
+    const frame = requestAnimationFrame(() => {
+      if (request !== generation.current) return;
+      retryFocus.current?.focus();
+      retryFocus.current = null;
+    });
+    return () => cancelAnimationFrame(frame);
   }, [loading]);
   useLayoutEffect(() => {
     const request = ++generation.current;
     setReview(null);
     setLoading(true);
-    setError('');
-    onReview(person.id, null);
+    setError(false);
+    onReview(null);
     const current = () => {
       if (request !== generation.current)
         throw new Error('This source review is no longer current.');
@@ -65,11 +112,10 @@ export function SharingSources({
         if (body.review.userId !== person.id || body.review.hostRole !== role)
           throw new Error('Review the selected person’s source access again.');
         setReview(body.review);
-        onReview(person.id, body.review);
+        onReview(body.review);
       })
-      .catch((cause) => {
-        if (request === generation.current)
-          setError(cause instanceof Error ? cause.message : 'Could not check formula sources.');
+      .catch(() => {
+        if (request === generation.current) setError(true);
       })
       .finally(() => {
         if (request === generation.current) setLoading(false);
@@ -80,15 +126,21 @@ export function SharingSources({
   }, [itemId, person.id, role, refresh, retry, onReview]);
 
   if (!loading && !error && review && !review.unavailable && !review.targets.length) return null;
-  const canInclude =
-    !!review?.hostAccess && review.targets.some((target) => target.state === 'grant');
-  const missing = review?.targets.some(
-    (target) => target.state === 'grant' || target.state === 'requires-owner',
-  );
+  const grants = review?.targets.filter((target) => target.state === 'grant') ?? [];
+  const blocked = review?.targets.some((target) => target.state === 'requires-owner');
+  const canInclude = !!review?.hostAccess && grants.length > 0;
+  const proposed = checked && canInclude;
+  const details = review?.targets.filter((target) => !proposed || target.state !== 'grant') ?? [];
+  const accessible =
+    details.length > 0 &&
+    details.every((target) => target.state === 'kept' || target.state === 'included');
   const onlyIncluded =
     !!review?.targets.length &&
     !review.unavailable &&
     review.targets.every((target) => target.state === 'included');
+  const warning = blocked
+    ? `Some formulas need source access from the Owner or File admin.${review?.unavailable ? ' Other sources are unavailable to you.' : ''}`
+    : `${grants.length && !proposed ? 'Some formulas won’t work without source access.' : ''}${review?.unavailable ? `${grants.length && !proposed ? ' ' : ''}Some sources are unavailable to you.` : ''}`;
   return (
     <div
       className="sharing-sources"
@@ -96,21 +148,20 @@ export function SharingSources({
       aria-label={`Formula sources for ${person.name}`}
       aria-busy={loading}
     >
-      <strong ref={heading} tabIndex={-1}>
-        Formula sources
-      </strong>
       {loading ? (
-        <p role="status">Checking formula sources… You can share the report alone.</p>
+        <p role="status" className="sp-muted">
+          Checking sources…
+        </p>
       ) : error ? (
         <>
           <p role="alert">
-            Could not check formula sources. {error} Source permissions will stay unchanged when
-            sharing the report alone.
+            Could not check formula sources. Sharing without them leaves source access unchanged.
           </p>
           <Button
             disabled={busy}
             onClick={(event) => {
-              retryFocus.current = event.currentTarget.closest<HTMLElement>('.sharing-person');
+              retryFocus.current =
+                event.currentTarget.closest('.sharing-editor')?.querySelector('select') ?? null;
               setRetry((value) => value + 1);
             }}
           >
@@ -118,87 +169,37 @@ export function SharingSources({
           </Button>
         </>
       ) : (
-        review && (
+        review &&
+        (onlyIncluded ? (
+          <p className="sp-muted">Sources in this Space inherit access.</p>
+        ) : (
           <>
-            {onlyIncluded ? (
-              <p className="sp-muted">
-                Sources in this Space inherit access. No separate sharing is needed.
-              </p>
-            ) : (
-              <>
-                {missing && (
-                  <p className="sp-muted">
-                    Some formulas will be unavailable to {person.name} without access to their
-                    sources.
-                  </p>
-                )}
-                {review.unavailable && (
-                  <p className="sp-muted">
-                    Another source is unavailable to you. Its name is hidden; check its access or
-                    whether it still exists.
-                  </p>
-                )}
-                {canInclude && (
-                  <label className="sharing-source-choice">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      disabled={busy}
-                      onChange={(event) => onChecked(event.target.checked)}
-                    />
-                    <span>Also share source spreadsheets</span>
-                  </label>
-                )}
-                {!!review.targets.length && (
-                  <ul
-                    className="sharing-source-list"
-                    aria-label="Reviewed source access"
-                    tabIndex={0}
-                  >
-                    {review.targets.map((target) => (
-                      <li key={target.id}>
-                        <div>
-                          <strong>{target.name}</strong>
-                          <span className="sp-muted">
-                            {target.kind === 'space' ? 'Entire Space' : 'Spreadsheet'}
-                          </span>
-                          {target.kind === 'space' && (
-                            <>
-                              <ul aria-label={`Source spreadsheets in ${target.name}`}>
-                                {target.sources.map((source) => (
-                                  <li key={source.id}>{source.name}</li>
-                                ))}
-                              </ul>
-                              {target.state === 'grant' && (
-                                <span className="sp-muted">
-                                  Can view every current and future page and folder in this Space.
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </div>
-                        <span className="sharing-source-status">
-                          {targetStatus(target, checked && canInclude)}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {checked && canInclude && (
-                  <p className="sp-muted">
-                    Only the listed targets marked Proposed will be shared with {person.name}.
-                    Existing access is kept.
-                  </p>
-                )}
-                {!review.hostAccess && missing && (
-                  <p className="sp-muted">
-                    Choose access to the report before also sharing sources.
-                  </p>
-                )}
-              </>
+            {canInclude && (
+              <label className="sharing-source-choice">
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  disabled={busy}
+                  onChange={(event) => onChecked(event.target.checked)}
+                />
+                <span>Include formula sources</span>
+              </label>
+            )}
+            {warning && <p className="sp-muted">{warning}</p>}
+            {!review.hostAccess && grants.length > 0 && (
+              <p className="sp-muted">Choose access to the report to include its sources.</p>
+            )}
+            {proposed && <SourceList targets={grants} proposed />}
+            {!!details.length && (
+              <details className="sharing-details" key={`${review.version}:${proposed}`}>
+                <summary>
+                  {accessible ? `Already accessible (${details.length})` : 'Source details'}
+                </summary>
+                <SourceList targets={details} />
+              </details>
             )}
           </>
-        )
+        ))
       )}
     </div>
   );

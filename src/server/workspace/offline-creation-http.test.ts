@@ -73,45 +73,50 @@ async function fixture() {
   };
 }
 
-test('offline-create HTTP commits one native document after an ignored acknowledgement and reordered retry', async () => {
-  const f = await fixture();
-  try {
-    const first = await f.create();
-    expect(first.status).toBe(201);
-    expect(first.headers.get('cache-control')).toBe('no-store');
-    await first.body!.cancel();
-    const response = await f.create(Object.fromEntries(Object.entries(f.input).reverse()));
-    expect(response.status).toBe(201);
-    const result = await response.json();
-    expect(result).toMatchObject({
-      item: {
-        id: f.input.itemId,
-        name: f.input.name,
+test.each([{}, { icon: 'lucide:book-open', iconColor: 'info-strong' }])(
+  'offline-create HTTP commits one native document and identity after an ignored acknowledgement and reordered retry: %j',
+  async (identity) => {
+    const f = await fixture();
+    Object.assign(f.input, identity);
+    try {
+      const first = await f.create();
+      expect(first.status).toBe(201);
+      expect(first.headers.get('cache-control')).toBe('no-store');
+      await first.body!.cancel();
+      const response = await f.create(Object.fromEntries(Object.entries(f.input).reverse()));
+      expect(response.status).toBe(201);
+      const result = await response.json();
+      expect(result).toMatchObject({
+        item: {
+          id: f.input.itemId,
+          name: f.input.name,
+          kind: 'sheet',
+          parentId: null,
+          access: 'owner',
+          appearance: identity,
+        },
+        unitId: f.input.unitId,
+        revision: 1,
+        revisionOffset: 0,
+        syncVersion: 1,
+      });
+      expect(f.workspace.list(f.owner.id)).toEqual([result.item]);
+      expect(new SQLiteSyncStorage(f.auth).load(f.input.unitId)).toMatchObject({
+        revision: 1,
         kind: 'sheet',
-        parentId: null,
-        access: 'owner',
-      },
-      unitId: f.input.unitId,
-      revision: 1,
-      revisionOffset: 0,
-      syncVersion: 1,
-    });
-    expect(f.workspace.list(f.owner.id)).toEqual([result.item]);
-    expect(new SQLiteSyncStorage(f.auth).load(f.input.unitId)).toMatchObject({
-      revision: 1,
-      kind: 'sheet',
-    });
-    expect((await f.create({ ...f.input, name: 'Changed' })).status).toBe(409);
-    const conflict = await f.create({ ...f.input, parentId: randomUUID() });
-    expect(await conflict.json()).toMatchObject({ code: 'creation-conflict' });
-    expect(f.db.prepare('SELECT count(*) AS count FROM workspace_items').get()!.count).toBe(1);
-    expect(
-      f.db.prepare('SELECT count(*) AS count FROM workspace_offline_creations').get()!.count,
-    ).toBe(1);
-  } finally {
-    await f.close();
-  }
-});
+      });
+      expect((await f.create({ ...f.input, name: 'Changed' })).status).toBe(409);
+      const conflict = await f.create({ ...f.input, parentId: randomUUID() });
+      expect(await conflict.json()).toMatchObject({ code: 'creation-conflict' });
+      expect(f.db.prepare('SELECT count(*) AS count FROM workspace_items').get()!.count).toBe(1);
+      expect(
+        f.db.prepare('SELECT count(*) AS count FROM workspace_offline_creations').get()!.count,
+      ).toBe(1);
+    } finally {
+      await f.close();
+    }
+  },
+);
 
 test('offline-create is cookie/account fenced before permission checks and refuses guests, operators, CSRF and disabled accounts', async () => {
   const f = await fixture();

@@ -71,6 +71,33 @@ test('the shared Doc base preserves deterministic identities through native norm
   ).toEqual(snapshot.body!.sectionBreaks);
 });
 
+test.each([
+  { icon: 'lucide:book-open', iconColor: 'info-strong' },
+  { icon: '🍋', iconColor: null },
+])('offline identity persists atomically and is immutable on retry: $icon', async (identity) => {
+  const f = await fixture();
+  const request = { ...f.input('doc'), ...identity };
+  const first = f.creations.create(f.owner.id, request, () => {});
+  expect(first.item.appearance).toMatchObject({ ...identity, revision: 1 });
+  expect(f.workspace.get(f.owner.id, request.itemId).appearance).toEqual(first.item.appearance);
+  expect(f.creations.create(f.owner.id, structuredClone(request), () => {})).toEqual(first);
+  for (const change of [{ icon: '🍂' }, { iconColor: 'primary-soft' }])
+    expect(() => f.creations.create(f.owner.id, { ...request, ...change }, () => {})).toThrow(
+      expect.objectContaining({ status: 409, code: 'creation-conflict' }),
+    );
+  expect(f.workspace.get(f.owner.id, request.itemId).appearance).toEqual(first.item.appearance);
+});
+
+test('legacy creation receipts treat omitted and null identity as the same automatic icon', async () => {
+  const f = await fixture();
+  const request = f.input();
+  const first = f.creations.create(f.owner.id, request, () => {});
+  expect(first.item.appearance).toMatchObject({ icon: null, iconColor: null, revision: 0 });
+  expect(
+    f.creations.create(f.owner.id, { ...request, icon: null, iconColor: null }, () => {}),
+  ).toEqual(first);
+});
+
 test.each(['sheet', 'doc'] as const)(
   '%s creation admits the exact shared blank base once and inherits folder visibility',
   async (kind) => {
@@ -304,6 +331,10 @@ test('invalid kinds, names, routing and snapshots are rejected before native all
     { parentId: undefined },
     { spaceId: randomUUID() },
     { snapshot: { id: request.itemId } },
+    { icon: 'lucide:not-a-real-icon' },
+    { icon: 'multiple words' },
+    { iconColor: '#ff0000' },
+    { cover: { source: 'gem', gem: 'spinel' } },
   ]) {
     const input = { ...request, ...change };
     expect(isOfflineCreationRequest(input)).toBe(false);
@@ -313,6 +344,8 @@ test('invalid kinds, names, routing and snapshots are rejected before native all
   }
   expect(f.db.prepare('SELECT * FROM workspace_offline_creations').all()).toEqual([]);
   expect(f.db.prepare('SELECT * FROM spinel_sync_units').all()).toEqual([]);
+  expect(f.db.prepare('SELECT * FROM workspace_items').all()).toEqual([]);
+  expect(f.db.prepare('SELECT * FROM item_appearance').all()).toEqual([]);
 });
 
 test('operators, disabled accounts and a session lost at final admission cannot publish', async () => {

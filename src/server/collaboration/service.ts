@@ -1,3 +1,4 @@
+import { readAppearance } from '../appearance/data.ts';
 import { snapshotIdentity } from './snapshotIdentity.ts';
 import type { OfflineBundle, OfflineBundleImage } from '../../shared/offlineBundle.ts';
 import packageInfo from '../../../package.json' with { type: 'json' };
@@ -634,7 +635,25 @@ export class CollaborationStore {
         images.set(source, { source, sha256, mime: image.mime, byteLength: image.data.byteLength });
         return source;
       });
+      const appearance = readAppearance(this.workspace.auth.database, id);
+      const coverAssets: Record<string, string> = {};
+      if (appearance.cover?.source === 'upload')
+        for (const hash of Object.values(appearance.cover.images)) {
+          const asset = this.workspace.auth.database
+            .prepare('SELECT data FROM cover_assets WHERE item_id=? AND id=?')
+            .get(id, hash);
+          if (
+            !asset ||
+            createHash('sha256')
+              .update(asset.data as Uint8Array)
+              .digest('hex') !== hash
+          )
+            throw new AuthError(500, 'A cover image is damaged. Nothing was downloaded.');
+          coverAssets[hash] = Buffer.from(asset.data as Uint8Array).toString('base64');
+        }
       const fields = {
+        appearance,
+        coverAssets,
         version: 1 as const,
         accountId: user,
         itemId: id,

@@ -1,3 +1,4 @@
+import type { ItemAppearance } from './appearance.ts';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { ItemAccess } from './workspace.ts';
 
@@ -23,6 +24,8 @@ type OfflineBundleFields = {
   readOnly: boolean;
   sdkVersion: string;
   images: OfflineBundleImage[];
+  appearance?: ItemAppearance;
+  coverAssets?: Record<string, string>;
 };
 
 /**

@@ -101,11 +101,12 @@ test('shared files are filed by pointer and keyboard, remove only personal place
     await ownerPage.getByRole('menuitem', { name: 'Share…', exact: true }).click();
     const sharing = ownerPage.getByRole('dialog', { name: 'Share Shared journal', exact: true });
     await sharing
+      .getByRole('button', { name: `Edit access for ${viewer.name}`, exact: true })
+      .click();
+    await sharing
       .getByRole('combobox', { name: `Access for ${viewer.name}`, exact: true })
       .selectOption('');
-    await sharing
-      .getByRole('button', { name: `Apply access for ${viewer.name}`, exact: true })
-      .click();
+    await sharing.getByRole('button', { name: /^(Share|Save changes)$/ }).click();
     await expect(
       sharing.getByRole('status').filter({ hasText: `Access updated for ${viewer.name}.` }),
     ).toHaveText(`Access updated for ${viewer.name}.`);

@@ -401,9 +401,9 @@ for (const development of [false, true]) {
         'property="og:description"',
         'content="https://spinel.example/social-preview.png"',
         'name="twitter:card" content="summary_large_image"',
-        'href="/favicon.svg"',
-        'href="/favicon-32.png"',
-        'href="/favicon.ico"',
+        'href="/favicon.svg?v=2"',
+        'href="/favicon-32.png?v=2"',
+        'href="/favicon.ico?v=2"',
       ])
         expect(html).toContain(text);
       expect(html).not.toMatch(/Private sentinel|secret-token|attacker\.example|__SPINEL_/);

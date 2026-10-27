@@ -148,18 +148,23 @@ async function sharing(page: Page, f: ReturnType<typeof fixture>, shared = false
   await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: `Share ${f.host.name}`, exact: true });
   const row = dialog.locator('.sharing-person').filter({
-    has: page.getByRole('combobox', { name: `Access for ${f.recipient.name}`, exact: true }),
+    has: page.getByRole('button', { name: `Edit access for ${f.recipient.name}`, exact: true }),
   });
+  const trigger = row.getByRole('button', {
+    name: `Edit access for ${f.recipient.name}`,
+    exact: true,
+  });
+  await trigger.click();
   const choice = row.getByRole('combobox');
   const checkbox = row.getByRole('checkbox', {
-    name: 'Also share source spreadsheets',
+    name: 'Include formula sources',
     exact: true,
   });
   const apply = row.getByRole('button', {
-    name: `Apply access for ${f.recipient.name}`,
+    name: /^(Share|Save changes)$/,
     exact: true,
   });
-  return { dialog, row, choice, checkbox, apply };
+  return { dialog, row, trigger, choice, checkbox, apply };
 }
 
 async function capture(page: Page, row: Locator, info: TestInfo, state: string) {
@@ -208,11 +213,31 @@ test('Doc sharing defaults to host-only, then explicitly adds view sources witho
     await view.choice.selectOption('viewer');
     await expect(view.checkbox).toBeEnabled();
     await expect(view.checkbox).not.toBeChecked();
+    await view.row.getByText('Source details', { exact: true }).click();
     await expect(view.row.getByText(f.source.name, { exact: true })).toBeVisible();
-    await expect(view.row.getByText('Can edit · Kept', { exact: true })).toBeVisible();
+    await expect(
+      view.row
+        .getByRole('list', { name: 'Reviewed source access' })
+        .getByText('Can edit', { exact: true }),
+    ).toBeVisible();
     await capture(page, view.row, info, 'unchecked');
+    await view.checkbox.check();
+    await view.row.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(view.trigger).toBeFocused();
+    await view.trigger.click();
+    await expect(view.choice).toHaveValue('');
+    await view.choice.selectOption('viewer');
+    await expect(view.checkbox).not.toBeChecked();
+    await view.checkbox.check();
+    await view.dialog.getByRole('tab', { name: 'Link', exact: true }).click();
+    await view.dialog.getByRole('tab', { name: 'People', exact: true }).click();
+    await view.trigger.click();
+    await expect(view.choice).toHaveValue('');
+    await view.choice.selectOption('viewer');
+    await expect(view.checkbox).not.toBeChecked();
     await view.apply.click();
-    await expect(view.row.getByText('Effective access: View only.', { exact: true })).toBeVisible();
+    await expect(view.trigger).toContainText('View only');
+    await expect(view.choice).toHaveCount(0);
     expect(f.grant(f.source.id)).toBeUndefined();
     expect(f.grant(f.second.id)).toEqual(existing);
     const evaluate = () =>
@@ -221,6 +246,7 @@ test('Doc sharing defaults to host-only, then explicitly adds view sources witho
         data: { definition: f.definition },
       });
     expect(await (await evaluate()).json()).toEqual({ ok: false, reason: 'private-source' });
+    await view.trigger.click();
     await expect(view.checkbox).not.toBeChecked();
     await view.checkbox.check();
     await expect(view.apply).toBeEnabled();
@@ -228,15 +254,20 @@ test('Doc sharing defaults to host-only, then explicitly adds view sources witho
     await capture(page, view.row, info, 'confirmed-targets');
     await view.apply.click();
     await expect(
-      view.row.getByRole('status').filter({ hasText: 'Source access updated' }),
+      view.dialog.getByRole('status').filter({ hasText: 'Formula sources shared' }),
     ).toBeVisible();
     expect(f.grant(f.source.id)?.role).toBe('viewer');
     expect(f.grant(f.second.id)).toEqual(existing);
     expect(await (await evaluate()).json()).toMatchObject({ ok: true, kind: 'scalar', value: 42 });
     expect(f.workspace.links.state(f.source.id)).toBeUndefined();
-    await view.dialog.getByRole('button', { name: 'Done', exact: true }).click();
+    await view.dialog.getByRole('button', { name: 'Close dialog', exact: true }).click();
     const reopened = await sharing(page, f);
-    await expect(reopened.row.getByText('Can view · Kept', { exact: true })).toBeVisible();
+    await reopened.row.getByText('Already accessible (2)', { exact: true }).click();
+    await expect(
+      reopened.row
+        .getByRole('list', { name: 'Reviewed source access' })
+        .getByText('View only', { exact: true }),
+    ).toBeVisible();
     await expect(reopened.checkbox).toHaveCount(0);
   } finally {
     await reader.close();
@@ -264,24 +295,24 @@ test('source sharing discloses an entire external Space, refreshes a changed rev
     f.spaces.updateChild(f.owner.id, f.space!.id, f.source.id, { name: 'Survey results revised' });
     await view.apply.click();
     await expect(view.row.getByRole('alert')).toContainText('Formula sources changed');
+    await view.row.getByText('Source details', { exact: true }).click();
     await expect(view.row.getByText('Survey results revised', { exact: true })).toBeVisible();
     await expect(view.checkbox).not.toBeChecked();
     expect(f.grant(f.host.id)).toBeUndefined();
     expect(f.grant(f.space!.id)).toBeUndefined();
     await view.checkbox.check();
-    await view.row.getByRole('button', { name: /access.*for / }).click();
+    await view.apply.click();
     await expect(
-      view.row.getByRole('status').filter({ hasText: 'Some sources still need access' }),
+      view.row.getByRole('status').filter({ hasText: 'some sources still need access or review' }),
     ).toBeVisible();
     expect(f.grant(f.host.id)?.role).toBe('viewer');
     expect(f.grant(f.space!.id)?.role).toBe('viewer');
     expect(f.grant(f.source.id)).toBeUndefined();
     expect(f.grant(f.second.id)).toBeUndefined();
     await capture(page, view.row, info, 'partial');
-    await expect(
-      view.row.getByRole('button', { name: 'Review remaining sources', exact: true }),
-    ).toBeVisible();
+    await expect(view.apply).toBeDisabled();
     const before = f.db.prepare('SELECT * FROM workspace_grants ORDER BY item_id,user_id').all();
+    await view.dialog.getByRole('tab', { name: 'Link', exact: true }).click();
     await view.dialog.getByRole('button', { name: 'Create link', exact: true }).click();
     await expect(view.dialog.getByLabel('Guest link address', { exact: true })).toBeVisible();
     expect(f.db.prepare('SELECT * FROM workspace_grants ORDER BY item_id,user_id').all()).toEqual(
@@ -320,26 +351,25 @@ for (const includeSources of [false, true]) {
       if (includeSources) await view.checkbox.check();
       await view.apply.click();
       await expect(view.row.getByRole('alert')).toContainText('Could not confirm the update');
+      await expect(view.trigger).toContainText('View only');
+      await expect(view.choice).toBeFocused();
+      await expect(view.apply).toBeDisabled();
+      const detailLabel = includeSources ? 'Already accessible (2)' : 'Source details';
+      await view.row.getByText(detailLabel, { exact: true }).click();
       await expect(
-        view.row.getByText('Effective access: View only.', { exact: true }),
-      ).toBeVisible();
-      await expect(
-        view.row.getByText(includeSources ? 'Can view · Kept' : 'No access', { exact: true }),
+        view.row
+          .getByRole('list', { name: 'Reviewed source access' })
+          .getByText(includeSources ? 'View only' : 'No access', { exact: true }),
       ).toBeVisible();
       expect(f.grant(f.host.id)?.role).toBe('viewer');
       expect(f.grant(f.source.id)?.role).toBe(includeSources ? 'viewer' : undefined);
       if (includeSources) await expect(view.checkbox).toHaveCount(0);
       else await expect(view.checkbox).not.toBeChecked();
-      const review = view.row.getByRole('button', {
-        name: 'Review remaining sources',
-        exact: true,
-      });
-      await review.focus();
-      await page.keyboard.press('Enter');
-      await expect(
-        view.row.getByText(includeSources ? 'Can view · Kept' : 'No access', { exact: true }),
-      ).toBeVisible();
-      await expect(view.choice).toBeFocused();
+      await view.row.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(view.trigger).toBeFocused();
+      await view.trigger.click();
+      await expect(view.choice).toHaveValue('viewer');
+      await expect(view.apply).toBeDisabled();
       expect(writes).toBe(1);
     } finally {
       await page.goto('/sign-in').catch(() => {});
@@ -369,6 +399,7 @@ test('host-only refusal after File admin revocation removes previously reviewed 
   try {
     const view = await sharing(page, f, true);
     await view.choice.selectOption('viewer');
+    await view.row.getByText('Source details', { exact: true }).click();
     await expect(view.row.getByText(f.source.name, { exact: true })).toBeVisible();
     await expect(view.checkbox).not.toBeChecked();
     await view.apply.click();

@@ -146,9 +146,9 @@ test('two authenticated editors receive each other’s sheet edits without reloa
       .locator('[data-presence-label]')
       .filter({ hasText: 'Collaboration editor' });
     await expect(marker).toBeVisible();
-    expect(personColor).toBe(
-      await marker.evaluate((node) => getComputedStyle(node).backgroundColor),
-    );
+    // Following scrolls the native scene, whose presence redraw replaces labels.
+    // Resolve the live label until its exact color matches, rather than reading a disposed node.
+    await expect(marker).toHaveCSS('background-color', personColor, { timeout: 5_000 });
 
     await network.setOffline(true);
     const disconnectedAt = Date.now();

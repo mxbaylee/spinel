@@ -10,10 +10,12 @@ type Change = { role: Role | null; replacing: boolean };
 export function ShareLink({
   id,
   space = false,
+  sourceKind,
   onBusyChange,
 }: {
   id: string;
   space?: boolean;
+  sourceKind?: 'doc' | 'space';
   onBusyChange?: (busy: boolean) => void;
 }) {
   const [state, setState] = useState<State>({ enabled: false, role: 'viewer' });
@@ -28,6 +30,9 @@ export function ShareLink({
   const [failed, setFailed] = useState<Change | null>(null);
   const generation = useRef(0);
   const actionTrigger = useRef<HTMLButtonElement>(null);
+  const confirmationTrigger = useRef<HTMLButtonElement | null>(null);
+  const confirmedChange = useRef(false);
+  const focusAfterChange = useRef(false);
   const section = useRef<HTMLElement>(null);
   const mutation = useRef(false);
   const verify = (request: number) => () => {
@@ -37,6 +42,17 @@ export function ShareLink({
     onBusyChange?.(busy);
     return () => onBusyChange?.(false);
   }, [busy, onBusyChange]);
+  function primaryAction() {
+    return section.current?.querySelector<HTMLButtonElement>(
+      '.sharing-copy, .sharing-link-primary',
+    );
+  }
+  useLayoutEffect(() => {
+    if (!busy && focusAfterChange.current) {
+      focusAfterChange.current = false;
+      primaryAction()?.focus();
+    }
+  }, [state, busy]);
   async function load() {
     const request = ++generation.current;
     setLoading(true);
@@ -65,6 +81,9 @@ export function ShareLink({
     setFailed(null);
     setNotice('');
     mutation.current = false;
+    confirmationTrigger.current = null;
+    confirmedChange.current = false;
+    focusAfterChange.current = false;
     void load();
     return () => {
       generation.current++;
@@ -73,6 +92,10 @@ export function ShareLink({
   async function change(action: Change) {
     if (mutation.current) return;
     mutation.current = true;
+    const restoreFocus =
+      !confirmationOpen &&
+      (!!section.current?.contains(document.activeElement) ||
+        !!confirmationTrigger.current?.isConnected);
     const request = ++generation.current;
     setBusy(true);
     setError('');
@@ -86,19 +109,23 @@ export function ShareLink({
         verify(request),
       );
       if (request !== generation.current) return;
+      confirmedChange.current = true;
+      focusAfterChange.current = restoreFocus;
       setState(value);
+      setRole(value.role);
       setConfirmationOpen(false);
       setNotice(
         action.role === null
           ? 'Guest link turned off.'
           : action.replacing
-            ? 'Replacement link created. The previous link and its guest sessions have ended.'
-            : 'Guest link created. Copy its address now; it is shown only once.',
+            ? 'Link replaced. Copy it before closing this dialog.'
+            : 'Guest link created. Copy it before closing this dialog.',
       );
     } catch (cause) {
       if (request === generation.current) {
         setError(cause instanceof Error ? cause.message : 'Could not change the link.');
         setFailed(action);
+        focusAfterChange.current = restoreFocus;
       }
     } finally {
       if (request === generation.current) {
@@ -107,10 +134,12 @@ export function ShareLink({
       }
     }
   }
-  function requestChange(next: Role | null) {
+  function requestChange(next: Role | null, trigger?: HTMLButtonElement | null) {
     const action = { role: next, replacing: state.enabled && next !== null };
     setError('');
     setFailed(null);
+    confirmationTrigger.current = trigger ?? actionTrigger.current;
+    confirmedChange.current = false;
     if (space || action.replacing) {
       setPending(action);
       setConfirmationOpen(true);
@@ -123,7 +152,38 @@ export function ShareLink({
       aria-label="Guest link"
       aria-busy={loading || busy}
     >
-      <h3>Anyone with the link</h3>
+      <div className="sharing-link-heading">
+        <h3>Anyone with the link</h3>
+        {loaded && state.enabled && (
+          <ActionMenu
+            triggerRef={actionTrigger}
+            label="More guest link actions"
+            finalFocus={() =>
+              confirmationOpen ? false : (actionTrigger.current ?? primaryAction() ?? true)
+            }
+            actions={[
+              ...(state.url
+                ? [
+                    {
+                      label: 'Replace link…',
+                      disabled: busy,
+                      onClick: (trigger?: HTMLButtonElement | null) =>
+                        requestChange(state.role, trigger),
+                    },
+                  ]
+                : []),
+              {
+                label: 'Turn off link',
+                disabled: busy,
+                destructive: true,
+                onClick: (trigger) => requestChange(null, trigger),
+              },
+            ]}
+          >
+            More
+          </ActionMenu>
+        )}
+      </div>
       {loading ? (
         <p role="status">Loading guest link…</p>
       ) : !loaded ? (
@@ -140,86 +200,81 @@ export function ShareLink({
           </p>
           {space && (
             <p className="sp-muted">
-              The link covers every current and future page and folder in this Space. Can edit
-              includes adding, renaming, moving and deleting its contents. Guests cannot manage
-              sharing or use account history and recovery.
+              Applies to every current and future page and folder in this Space.
             </p>
           )}
-          <label className="sharing-choice">
-            Link access
-            <select
-              className="sp-control"
-              value={role}
-              disabled={busy}
-              onChange={(event) => setRole(event.target.value as Role)}
-            >
-              <option value="viewer">Can view</option>
-              <option value="editor">Can edit</option>
-            </select>
-          </label>
-          {state.enabled && state.role !== role && (
-            <p className="sp-muted">The current link stays unchanged until you replace it.</p>
+          {sourceKind && (
+            <p className="sp-muted">
+              {sourceKind === 'space'
+                ? 'Includes sources in this Space. External sources remain unavailable to guests.'
+                : 'Shares this document only. Formulas using other files are unavailable to guests.'}
+            </p>
           )}
-          {state.enabled &&
-            (state.url ? (
-              <>
-                <SharingAddress key={state.url} value={state.url} guest />
-                <p className="sp-muted">Copy this address now. It is shown only once.</p>
-              </>
-            ) : (
-              <p className="sp-muted">Replace the link to copy a new address.</p>
-            ))}
-          <div className="sharing-link-actions">
-            {state.enabled ? (
-              <ActionMenu
-                triggerRef={actionTrigger}
-                label="Guest link actions"
-                actions={[
-                  { label: 'Replace link…', disabled: busy, onClick: () => requestChange(role) },
-                  {
-                    label: 'Turn off link',
-                    disabled: busy,
-                    destructive: true,
-                    onClick: () => requestChange(null),
-                  },
-                ]}
-              />
+          {state.enabled ? (
+            state.url ? (
+              <SharingAddress key={state.url} value={state.url} guest primary disabled={busy} />
             ) : (
               <Button
-                className="sharing-create"
+                primary
+                className="sharing-link-primary"
                 disabled={busy}
-                onClick={() => requestChange(role)}
+                onClick={(event) => requestChange(state.role, event.currentTarget)}
+              >
+                Replace link…
+              </Button>
+            )
+          ) : (
+            <>
+              <label className="sharing-choice">
+                Link access
+                <select
+                  className="sp-control"
+                  value={role}
+                  disabled={busy}
+                  onChange={(event) => setRole(event.target.value as Role)}
+                >
+                  <option value="viewer">Can view</option>
+                  <option value="editor">Can edit</option>
+                </select>
+              </label>
+              <Button
+                primary
+                className="sharing-link-primary"
+                disabled={busy}
+                onClick={(event) => requestChange(role, event.currentTarget)}
               >
                 Create link
               </Button>
-            )}
-          </div>
+            </>
+          )}
           {busy && <p role="status">Saving guest link…</p>}
           {notice && <p role="status">{notice}</p>}
           {error && !confirmationOpen && (
-            <>
-              <p role="alert">{error} The last confirmed link access is shown above.</p>
-              {failed && (
-                <Button disabled={busy} onClick={() => void change(failed)}>
-                  Retry link update
-                </Button>
-              )}
-            </>
+            <p role="alert">{error} The last confirmed link access is shown above.</p>
           )}
-          <p className="sp-muted">
-            Collaborator names are hidden while link sharing is on. Guest sessions last 24 hours.
-            Social previews show only the {space ? 'Space' : 'file'} title and type.
-          </p>
+          <details className="sharing-details sharing-link-details">
+            <summary>Guest link details</summary>
+            <p className="sp-muted">
+              Collaborator names are hidden while link sharing is on. Guest sessions last 24 hours.
+              Social previews show only the {space ? 'Space' : 'file'} title and type. Guests cannot
+              manage sharing or use account history and recovery.
+            </p>
+            {space && (
+              <p className="sp-muted">
+                Can edit includes adding, renaming, moving and deleting the Space’s contents.
+              </p>
+            )}
+          </details>
         </>
       )}
       {/* Keep the controller mounted while its popup closes, so focus resolves
-          after successful link changes replace Create link / Guest link actions. */}
+          after successful link changes replace the primary action. */}
       <Modal
         open={confirmationOpen}
         finalFocus={() =>
-          actionTrigger.current ??
-          section.current?.querySelector<HTMLButtonElement>('.sharing-create') ??
-          true
+          !confirmedChange.current && confirmationTrigger.current?.isConnected
+            ? confirmationTrigger.current
+            : (primaryAction() ?? actionTrigger.current ?? true)
         }
         icon={space ? 'space' : 'share'}
         dismissDisabled={busy}
@@ -245,6 +300,24 @@ export function ShareLink({
               : 'Child pages cannot have separate guest access.'
         }
       >
+        {pending.replacing && pending.role !== null && (
+          <label className="sharing-choice">
+            Link access
+            <select
+              className="sp-control"
+              value={pending.role}
+              disabled={busy}
+              onChange={(event) => {
+                setPending({ ...pending, role: event.target.value as Role });
+                setError('');
+                setFailed(null);
+              }}
+            >
+              <option value="viewer">Can view</option>
+              <option value="editor">Can edit</option>
+            </select>
+          </label>
+        )}
         {pending.role !== null && (
           <p>
             {space

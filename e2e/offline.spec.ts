@@ -1,12 +1,63 @@
+import { AppearanceStore } from '../src/server/appearance/store.ts';
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
-import type { Locator } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import sharp from 'sharp';
 import { sheetImageFixture } from './sheet-image-fixture.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
+
+const coverImage = async (background: string) => ({
+  data: (
+    await sharp({ create: { width: 32, height: 32, channels: 3, background } })
+      .png()
+      .toBuffer()
+  ).toString('base64'),
+});
+async function assertLiveOfflineCover(page: Page, menuAppearance = false) {
+  await expect(page.locator('.editor-frame')).toHaveCount(1);
+  await expect(page.getByRole('button', { name: 'Change appearance', exact: true })).toHaveCount(0);
+  await expect(page.locator('.appearance-banner img')).toHaveAttribute(
+    'src',
+    /^data:image\/webp;base64,/,
+  );
+  if (menuAppearance) {
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await expect(page.getByRole('menuitem', { name: 'Appearance…', exact: true })).toBeDisabled();
+    await page.keyboard.press('Escape');
+  }
+  const requests: string[] = [];
+  const observe = (request: import('@playwright/test').Request) => {
+    if (new URL(request.url()).pathname.startsWith('/api/appearance/'))
+      requests.push(request.url());
+  };
+  page.on('request', observe);
+  const original = await page.evaluate(() => localStorage.getItem('spinel-theme'));
+  const images: string[] = [];
+  for (const theme of ['light', 'dark']) {
+    await page.evaluate((theme) => {
+      localStorage.setItem('spinel-theme', theme);
+      window.dispatchEvent(new StorageEvent('storage', { key: 'spinel-theme', newValue: theme }));
+      window.dispatchEvent(new Event('focus'));
+    }, theme);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute(
+      'src',
+      /^data:image\/webp;base64,/,
+    );
+    images.push((await page.locator('.appearance-banner img').getAttribute('src'))!);
+  }
+  expect(images[0]).not.toBe(images[1]);
+  expect(requests).toEqual([]);
+  page.off('request', observe);
+  await page.evaluate((original) => {
+    if (original === null) localStorage.removeItem('spinel-theme');
+    else localStorage.setItem('spinel-theme', original);
+    window.dispatchEvent(new StorageEvent('storage', { key: 'spinel-theme', newValue: original }));
+  }, original);
+}
 
 // Offline downloads need the production build's shell manifest (docs/offline.md).
 test('downloaded Sheets and Docs open offline with local images; nothing else does', async ({
@@ -21,6 +72,18 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     workspace = new WorkspaceStore(auth);
   const user = auth.createUser(`Offline ${info.testId}`);
   const doc = workspace.create(user.id, { name: 'Offline notes', kind: 'doc', parentId: null });
+  const appearance = new AppearanceStore(workspace);
+  await appearance.update({ userId: user.id, customData: {} }, doc.id, {
+    revision: 0,
+    icon: 'lucide:book-open',
+    iconColor: 'primary-soft',
+    cover: {
+      source: 'upload',
+      images: { light: await coverImage('#ffd2e2'), dark: await coverImage('#382233') },
+      position: 50,
+    },
+  });
+
   workspace.create(user.id, { name: 'Online only', kind: 'sheet', parentId: null });
   await context.addCookies([
     {
@@ -227,11 +290,24 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     await page.unrouteAll({ behavior: 'wait' });
     expect(await stored()).toEqual(before);
 
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.goto(`/?item=${doc.id}`);
+    await expect(
+      page.getByRole('button', { name: 'Save details: Synced', exact: true }),
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Appearance…', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Save appearance', exact: true })).toBeVisible();
+    await context.setOffline(true);
+    await expect(page.getByText('Connect to change appearance.', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Close', exact: true }).click();
+    await assertLiveOfflineCover(page, true);
     const api: string[] = [];
     page.on('request', (request) => {
-      if (new URL(request.url()).pathname.startsWith('/api/items')) api.push(request.url());
+      if (/^\/api\/(items|appearance)(\/|$)/.test(new URL(request.url()).pathname))
+        api.push(request.url());
     });
-    await context.setOffline(true);
+    await page.goto('/');
     // A catalog saved by an older app may still contain pins. Opening it must
     // preserve the downloaded files without restoring the removed feature.
     await page.evaluate(
@@ -377,6 +453,38 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
       'Saved on this device — waiting to sync.',
       { timeout: 30_000 },
     );
+    await page.evaluate(() => {
+      localStorage.setItem('spinel-theme', 'light');
+      window.dispatchEvent(new StorageEvent('storage', { key: 'spinel-theme', newValue: 'light' }));
+    });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute(
+      'src',
+      /^data:image\/webp;base64,/,
+    );
+    const coverLight = await page.locator('.appearance-banner img').getAttribute('src');
+    await page.evaluate(() => {
+      localStorage.setItem('spinel-theme', 'dark');
+      window.dispatchEvent(new StorageEvent('storage', { key: 'spinel-theme', newValue: 'dark' }));
+    });
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute(
+      'src',
+      /^data:image\/webp;base64,/,
+    );
+    await expect
+      .poll(() => page.locator('.appearance-banner img').getAttribute('src'))
+      .not.toBe(coverLight);
+    await expect(
+      page.locator('.editor-identity [data-profile-icon="lucide:book-open"]'),
+    ).toBeVisible();
+    await expect(page.locator('.editor-identity .item-icon')).toHaveAttribute(
+      'style',
+      /--fill-primary-soft-fg/,
+    );
+    await expect(page.locator('.editor-identity .item-icon')).toHaveAttribute(
+      'style',
+      /--fill-primary-soft-bg/,
+    );
     await page.goBack();
     await row('Online only')
       .getByRole('button', { name: 'Online only Sheet', exact: true })
@@ -491,6 +599,21 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
       return (await response.json()).item as { id: string; name: string };
     };
     const doc = await child('Prepared field notes');
+    const coverResponse = await context.request.patch(
+      `/api/appearance/spaces/${root.id}/items/${doc.id}`,
+      {
+        headers: { Origin: baseURL! },
+        data: {
+          revision: 0,
+          cover: {
+            source: 'upload',
+            images: { light: await coverImage('#ffd2e2'), dark: await coverImage('#382233') },
+            position: 50,
+          },
+        },
+      },
+    );
+    expect(coverResponse.status()).toBe(200);
     const missing = await child('Unprepared field notes');
     const rootHref = `/spaces/${root.id}`;
     const docHref = `${rootHref}?item=${doc.id}`;
@@ -499,6 +622,7 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
 
     // Preparing a directly opened child must also retain its outer Space root,
     // even when this browser has never visited My files to cache a catalog.
+    await page.emulateMedia({ colorScheme: 'light' });
     await page.goto(docHref);
     await expect(page).toHaveURL(baseURL! + docHref);
     await expect
@@ -597,6 +721,7 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
     };
 
     await context.setOffline(true);
+    await assertLiveOfflineCover(page);
     await page.reload();
     await expect(page).toHaveURL(baseURL! + docHref);
     await assertPreparedDoc();

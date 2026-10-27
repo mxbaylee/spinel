@@ -96,6 +96,12 @@ const meta = {
 } satisfies Meta<typeof Sharing>;
 export default meta;
 type Story = StoryObj<typeof meta>;
+async function openPerson(body: ReturnType<typeof within>, name: string) {
+  await userEvent.click(await body.findByRole('button', { name: `Edit access for ${name}` }));
+  return body.findByRole('combobox', { name: `Access for ${name}` });
+}
+const saveAccess = (body: ReturnType<typeof within>) =>
+  body.getByRole('button', { name: /^(Share|Save changes)$/ });
 
 export const Loading: Story = {
   parameters: { api: { [sharing(doc)]: pending(), [link(doc)]: noLink } },
@@ -165,12 +171,15 @@ export const GrantFileAdmin: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await canvas.findByLabelText('Access for Alex Kim'), 'admin');
-    await userEvent.click(canvas.getByRole('button', { name: 'Apply access for Alex Kim' }));
+    await userEvent.selectOptions(await openPerson(canvas, 'Alex Kim'), 'admin');
+    await userEvent.click(saveAccess(canvas));
     await expect(
       await canvas.findByText('Access updated for Alex Kim.', { exact: true }),
     ).toBeVisible();
-    await expect(canvas.getByLabelText('Access for Alex Kim')).toHaveValue('admin');
+    await expect(
+      canvas.getByRole('button', { name: 'Edit access for Alex Kim' }),
+    ).toHaveTextContent('File admin');
+    await userEvent.click(canvas.getByRole('tab', { name: 'Link' }));
     await expect(
       canvas.getByLabelText('Link access').querySelector('option[value="admin"]'),
     ).toBeNull();
@@ -190,13 +199,15 @@ export const AdminRevokedWhileApplying: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await canvas.findByLabelText('Access for Alex Kim'), 'admin');
-    await userEvent.click(canvas.getByRole('button', { name: 'Apply access for Alex Kim' }));
+    await userEvent.selectOptions(await openPerson(canvas, 'Alex Kim'), 'admin');
+    await userEvent.click(saveAccess(canvas));
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
-      'Only the owner or a file admin',
+      'Could not confirm the update.',
     );
     await expect(canvas.getByLabelText('Access for Alex Kim')).toHaveValue('admin');
-    await expect(canvas.getByText('Effective access: Can edit.')).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Edit access for Alex Kim' }),
+    ).toHaveTextContent('Can edit');
   },
 };
 
@@ -212,10 +223,9 @@ export const Composed: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const dialog = await body.findByRole('dialog', { name: 'Share Trip plan' });
     await expect(within(dialog).getByRole('button', { name: 'Copy account link' })).toBeVisible();
-    await expect(within(dialog).getByRole('button', { name: 'Done' })).toBeEnabled();
-    await expect(
-      await within(dialog).findByText('Effective access: File admin (from a folder).'),
-    ).toBeVisible();
+    await expect(within(dialog).getByRole('button', { name: 'Close dialog' })).toBeEnabled();
+    await openPerson(body, 'Alex Kim');
+    await expect(await within(dialog).findByText('File admin through a folder.')).toBeVisible();
     await expect(body.getAllByRole('dialog')).toHaveLength(1);
   },
 };
@@ -229,11 +239,13 @@ export const AccessSaving: Story = {
   },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await body.findByLabelText('Access for Alex Kim'), 'viewer');
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Alex Kim' }));
-    await expect(body.getByText('Effective access: Can edit.')).toBeVisible();
+    await userEvent.selectOptions(await openPerson(body, 'Alex Kim'), 'viewer');
+    await userEvent.click(saveAccess(body));
+    await expect(body.getByRole('button', { name: 'Edit access for Alex Kim' })).toHaveTextContent(
+      'Can edit',
+    );
     await expect(body.getByLabelText('Access for Alex Kim')).toBeDisabled();
-    await expect(body.getByRole('button', { name: 'Done' })).toBeDisabled();
+    await expect(body.getByRole('button', { name: 'Close dialog' })).toBeDisabled();
     await userEvent.keyboard('{Escape}');
     await expect(body.getByRole('dialog', { name: 'Share Trip plan' })).toBeVisible();
   },
@@ -248,11 +260,11 @@ export const DisabledAccount: Story = {
   },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const select = await body.findByLabelText('Access for Taylor Brooks');
+    const select = await openPerson(body, 'Taylor Brooks');
     await expect(within(select).getByRole('option', { name: 'Can edit' })).toBeDisabled();
     await expect(within(select).getByRole('option', { name: 'File admin' })).toBeDisabled();
     await userEvent.selectOptions(select, '');
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Taylor Brooks' }));
+    await userEvent.click(saveAccess(body));
     await expect(await body.findByText('Access updated for Taylor Brooks.')).toBeVisible();
     await expect(body.queryByLabelText('Access for Taylor Brooks')).not.toBeInTheDocument();
   },
@@ -261,7 +273,7 @@ export const DisabledAccountBeforeRemoval: Story = {
   parameters: DisabledAccount.parameters,
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const select = await body.findByLabelText('Access for Taylor Brooks');
+    const select = await openPerson(body, 'Taylor Brooks');
     await expect(select).toHaveValue('viewer');
     for (const name of ['Can view', 'Can edit', 'File admin']) {
       await expect(within(select).getByRole('option', { name })).toBeDisabled();
@@ -270,24 +282,27 @@ export const DisabledAccountBeforeRemoval: Story = {
     await expect(body.getByText('Taylor Brooks · Disabled account')).toBeVisible();
   },
 };
-export const KeepsOtherDrafts: Story = {
-  parameters: {
-    api: {
-      [sharing(doc)]: { people: people.slice(0, 2) },
-      [link(doc)]: noLink,
-      [`PUT /api/items/${doc.id}/sharing`]: {
-        people: [{ ...people[0], directRole: 'viewer', effectiveRole: 'viewer' }, people[1]],
-      },
-    },
-  },
+export const OneRecipientDraft: Story = {
+  parameters: { api: { [sharing(doc)]: { people: people.slice(0, 2) }, [link(doc)]: noLink } },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await body.findByLabelText('Access for Alex Kim'), 'viewer');
-    await userEvent.selectOptions(body.getByLabelText('Access for Jordan Lee'), 'admin');
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Alex Kim' }));
-    await body.findByText('Access updated for Alex Kim.');
-    await expect(body.getByLabelText('Access for Jordan Lee')).toHaveValue('admin');
-    await expect(body.getByRole('button', { name: 'Apply access for Jordan Lee' })).toBeEnabled();
+    await userEvent.selectOptions(await openPerson(body, 'Alex Kim'), 'viewer');
+    await expect(body.getByRole('button', { name: 'Edit access for Alex Kim' })).toHaveTextContent(
+      'Can edit',
+    );
+    await userEvent.selectOptions(await openPerson(body, 'Jordan Lee'), 'admin');
+    await expect(
+      body.queryByRole('combobox', { name: 'Access for Alex Kim' }),
+    ).not.toBeInTheDocument();
+    await expect(await openPerson(body, 'Alex Kim')).toHaveValue('editor');
+    await expect(
+      body.queryByRole('combobox', { name: 'Access for Jordan Lee' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(body.getByRole('button', { name: 'Cancel' }));
+    await waitFor(() =>
+      expect(body.getByRole('button', { name: 'Edit access for Alex Kim' })).toHaveFocus(),
+    );
+    await expect(await openPerson(body, 'Jordan Lee')).toHaveValue('viewer');
   },
 };
 
@@ -342,12 +357,12 @@ function DeferredAccess({ replace = false }: { replace?: boolean }) {
 }
 async function staleAccess(canvasElement: HTMLElement, replace: boolean) {
   const body = within(canvasElement.ownerDocument.body);
-  await userEvent.selectOptions(await body.findByLabelText('Access for Alex Kim'), 'admin');
-  await userEvent.click(body.getByRole('button', { name: 'Apply access for Alex Kim' }));
+  await userEvent.selectOptions(await openPerson(body, 'Alex Kim'), 'admin');
+  await userEvent.click(saveAccess(body));
   await body.findByText('Access response held');
   // Navigation is external to the modal; fireEvent simulates the route unmount directly.
   fireEvent.click(body.getByTestId('leave-access'));
-  if (replace) await body.findByLabelText('Access for Jordan Lee');
+  if (replace) await openPerson(body, 'Jordan Lee');
   const href = location.href;
   fireEvent.click(body.getByTestId('release-access'));
   await body.findByText('Access response released');
@@ -399,14 +414,19 @@ export const FailedWriteRetry: Story = {
   render: () => <RetryAccess />,
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await body.findByLabelText('Access for Alex Kim'), 'viewer');
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Alex Kim' }));
-    await expect(await body.findByRole('alert')).toHaveTextContent('Temporary write failure.');
-    await expect(body.getByText('Effective access: Can edit.')).toBeVisible();
+    await userEvent.selectOptions(await openPerson(body, 'Alex Kim'), 'viewer');
+    await userEvent.click(saveAccess(body));
+    await expect(await body.findByRole('alert')).toHaveTextContent('Could not confirm the update.');
+    await expect(body.getByRole('button', { name: 'Edit access for Alex Kim' })).toHaveTextContent(
+      'Can edit',
+    );
     await expect(body.getByLabelText('Access for Alex Kim')).toHaveValue('viewer');
-    await userEvent.click(body.getByRole('button', { name: 'Retry access update for Alex Kim' }));
+    await userEvent.click(saveAccess(body));
     await waitFor(() => expect(body.queryByRole('alert')).not.toBeInTheDocument());
-    await expect(body.getByText('Effective access: View only.')).toBeVisible();
+    await expect(body.getByRole('button', { name: 'Edit access for Alex Kim' })).toHaveTextContent(
+      'View only',
+    );
+    await expect(body.queryByRole('combobox')).not.toBeInTheDocument();
   },
 };
 
@@ -424,6 +444,7 @@ export const GuestLinkCreated: Story = {
   },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await body.findByRole('tab', { name: 'Link' }));
     await userEvent.click(await body.findByRole('button', { name: 'Create link' }));
     await expect(await body.findByLabelText('Guest link address')).toHaveValue(
       'https://spinel.example/share/trip#only-shown-now',
@@ -431,6 +452,13 @@ export const GuestLinkCreated: Story = {
   },
 };
 export const ExistingGuestLink: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement.ownerDocument.body).findByRole('tab', {
+        name: 'Link',
+      }),
+    );
+  },
   parameters: {
     api: {
       [sharing(doc)]: { people: [people[0]] },
@@ -442,8 +470,8 @@ export const ReplaceGuestLink: Story = {
   parameters: ExistingGuestLink.parameters,
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(await body.findByRole('button', { name: 'Guest link actions' }));
-    await userEvent.click(await body.findByRole('menuitem', { name: 'Replace link…' }));
+    await userEvent.click(await body.findByRole('tab', { name: 'Link' }));
+    await userEvent.click(await body.findByRole('button', { name: 'Replace link…' }));
     await expect(await body.findByRole('dialog', { name: 'Replace the link?' })).toBeVisible();
   },
 };

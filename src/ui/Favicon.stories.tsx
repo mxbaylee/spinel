@@ -16,14 +16,17 @@ function FaviconSamples({ mode }: { mode: ThemeMode | 'auto' }) {
       <h1>Spinel browser icon</h1>
       <p>
         {mode === 'auto'
-          ? 'Follows the browser color scheme.'
-          : `${mode === 'dark' ? 'Dark' : 'Light'} color scheme.`}
+          ? 'Transparent background; follows the browser color scheme.'
+          : `Transparent background; ${mode === 'dark' ? 'dark' : 'light'} color scheme.`}
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'end', gap: 24 }}>
         {[16, 32, 64].map((size) => (
           <figure key={size} style={{ margin: 0 }}>
             <img
               src={`data:image/svg+xml,${encodeURIComponent(faviconSvg(mode))}`}
+              style={{
+                background: `repeating-conic-gradient(${palette['sp-panel']} 0% 25%, ${palette['sp-border']} 0% 50%) 0 / 8px 8px`,
+              }}
               width={size}
               height={size}
               alt={`Spinel favicon at ${size} pixels`}

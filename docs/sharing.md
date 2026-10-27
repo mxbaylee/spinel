@@ -1,8 +1,9 @@
 # Sharing
 
 Items are private by default. The Owner or a File admin can choose **Share** on a document, folder or
-Space, select Can view, Can edit or File admin for an active everyday account, and
-choose **Apply access**. **Copy account link** copies the authenticated address;
+Space. In **People**, open a person’s row, choose Can view, Can edit or File admin,
+then choose **Share** or **Save changes**. Rows show confirmed access. Only one
+recipient is edited at a time; Cancel or switching people/tabs discards that draft. **Copy account link** copies the authenticated address;
 if the clipboard is unavailable, a selectable address appears for manual copying.
 Give that address to the person. They must sign in; the address alone does not grant access. Server Operator accounts cannot receive grants or access
 workspace content.
@@ -80,13 +81,15 @@ the document or Space title and type. Previews never show the owner or contents;
 a Space card also excludes child titles and Formula values. Private pages and
 older fragment-only links use the generic Spinel card.
 
-For a Sheet or Doc, the Owner or a File admin uses **Share → Anyone with the link**,
+For a Sheet or Doc, the Owner or a File admin uses **Share → Link**,
 chooses Can view or Can edit, then **Create link**. Anyone holding that address gets
 only that document. Folder links are unsupported. Copy the guest address while it
-is shown; closing and reopening sharing cannot reveal it again. **Guest link actions
-→ Replace link…** confirms before creating a replacement that immediately invalidates
-the old link. **Guest link actions → Turn off link** removes access from open guest
-editors too. Changing the role selector alone leaves the current link unchanged.
+is shown; switching to People preserves it, but closing and reopening sharing cannot
+reveal it again. An existing link shows **Replace link…** when its address is no
+longer available; a freshly created link has replacement under **More**. Replacement
+confirms its role and immediately invalidates the old link. **More → Turn off link**
+removes access from open guest editors too. Enabled links show their confirmed role;
+role editing happens only when creating or confirming a replacement.
 Link changes briefly reconnect open account editors so old personal labels cannot
 remain in the shared room. Already delivered content cannot be recalled.
 
@@ -177,10 +180,11 @@ Every input must be readable by the viewer; otherwise the whole formula is
 unavailable, including aggregates. Stable bindings, formatting and unavailable
 results keep the existing Formula behavior; no cached value bypasses access checks.
 
-The Sharing dialog reviews formula sources separately for each recipient. **Also
-share source spreadsheets** starts unchecked. Leaving it unchecked changes only
-the selected host access. Selecting it lists the exact authorized source Sheets
-and proposed **Can view** grants before **Apply access**. Existing View, Edit,
+The active recipient editor reviews formula sources. **Include formula sources**
+starts unchecked. Leaving it unchecked changes only the selected host access;
+**Source details** can reveal the inventory. Selecting it visibly lists every exact
+authorized source target marked **Can view · Proposed** before **Share** or
+**Save changes**. Existing View, Edit,
 File admin, ownership and inherited access are kept; the operation never adds
 editing or downgrades a source. Sources can be added even when the recipient
 already reads the report and its selected role is unchanged.
@@ -207,7 +211,10 @@ host/source grants are reported separately from sources still requiring another
 owner's help. A failed source check permits host-only sharing with a warning,
 without pretending that no dependencies exist. After an uncertain network result,
 review current access before trying again; a lost response does not prove that
-no permissions changed.
+no permissions changed. The editor stays open with the selected role, refreshed
+confirmed access and sources unchecked. An unchanged role without a fresh source
+opt-in keeps Save disabled. Complete success returns to the person’s row; partial
+results keep the same editor and action.
 
 Source review is bounded: at most 128 live Docs, 256 unique source Sheets, 32 MiB
 of serialized committed Doc snapshots in total, 1,024 custom ranges per Doc,

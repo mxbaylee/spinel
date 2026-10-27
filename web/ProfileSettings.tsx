@@ -11,17 +11,27 @@ export function IconPicker({
   value,
   choose,
   close,
+  includeEmojis = false,
 }: {
   value: string;
   choose: (value: string) => void;
   close: () => void;
+  includeEmojis?: boolean;
 }) {
   const [query, setQuery] = useState(''),
     [category, setCategory] = useState('All'),
     [limit, setLimit] = useState(60);
   const dialog = useRef<HTMLDialogElement>(null),
     grid = useRef<HTMLDivElement>(null);
-  const results = searchPersonIcons(query, category),
+  const select = (next: string) => {
+    dialog.current?.close();
+    choose(next);
+  };
+  const dismiss = () => {
+    dialog.current?.close();
+    close();
+  };
+  const results = searchPersonIcons(query, category, includeEmojis),
     visible = results.slice(0, limit);
   useEffect(() => {
     dialog.current?.showModal();
@@ -31,20 +41,29 @@ export function IconPicker({
   return (
     <dialog
       ref={dialog}
-      className="profile-icon-dialog"
-      onCancel={close}
+      className="profile-icon-dialog sp-ui"
+      onCancel={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        dismiss();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') event.stopPropagation();
+      }}
       aria-labelledby="icon-picker-title"
     >
       <h2 id="icon-picker-title" className="sp-modal-title">
         <span className="sp-modal-title-icon" aria-hidden="true">
           <ProfileIcon icon="lucide:shapes" size={20} />
         </span>
-        <span>Choose your icon</span>
+        <span>{includeEmojis ? 'Choose an icon or emoji' : 'Choose your icon'}</span>
       </h2>
       <label>
-        Search icons
+        {includeEmojis ? 'Search icons and emojis' : 'Search icons'}
         <input
           autoFocus
+          maxLength={100}
+          placeholder={includeEmojis ? 'Search a word or paste an emoji' : undefined}
           value={query}
           onChange={(event) => {
             setQuery(event.target.value);
@@ -57,7 +76,7 @@ export function IconPicker({
             }
             if (event.key === 'Enter' && results.length === 1) {
               event.preventDefault();
-              choose(results[0].value);
+              select(results[0].value);
             }
           }}
         />
@@ -72,17 +91,22 @@ export function IconPicker({
           }}
         >
           <option>All</option>
+          {includeEmojis && <option>Emojis</option>}
           {ICON_CATEGORIES.map((name) => (
             <option key={name}>{name}</option>
           ))}
         </select>
       </label>
       <p role="status">{results.length} results</p>
-      {!results.length && <p>No icons match. Try another name or description.</p>}
+      {!results.length && (
+        <p>
+          No {includeEmojis ? 'icons or emojis' : 'icons'} match. Try another name or description.
+        </p>
+      )}
       <div
         ref={grid}
         className="profile-icon-grid"
-        aria-label="Icons"
+        aria-label={includeEmojis ? 'Icons and emojis' : 'Icons'}
         onKeyDown={(event) => {
           const all = buttons(),
             index = all.indexOf(document.activeElement as HTMLButtonElement);
@@ -107,22 +131,29 @@ export function IconPicker({
         {visible.map((icon) => (
           <button
             key={icon.value}
+            className="sp-control"
             type="button"
             title={icon.label}
             aria-label={icon.label}
             aria-pressed={value === icon.value}
-            onClick={() => choose(icon.value)}
+            onClick={() => select(icon.value)}
           >
-            <ProfileIcon icon={icon.value} />
+            {icon.value.startsWith('lucide:') ? (
+              <ProfileIcon icon={icon.value} />
+            ) : (
+              <span className="profile-picker-emoji" aria-hidden="true">
+                {icon.value}
+              </span>
+            )}
           </button>
         ))}
       </div>
       {results.length > limit && (
-        <button type="button" onClick={() => setLimit(limit + 60)}>
+        <button className="sp-control" type="button" onClick={() => setLimit(limit + 60)}>
           Show more
         </button>
       )}
-      <button type="button" onClick={close}>
+      <button className="sp-control" type="button" onClick={dismiss}>
         Cancel
       </button>
     </dialog>

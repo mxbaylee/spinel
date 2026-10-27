@@ -1,3 +1,4 @@
+import type { ItemAppearance } from './appearance.ts';
 import type { ItemAccess, ItemKind } from './workspace.ts';
 
 /** Browser projections only. Every server operation resolves current access again. */
@@ -8,6 +9,7 @@ export interface SpaceRoot {
   kind: 'space';
   position: null;
   name: string;
+  appearance?: ItemAppearance;
   createdAt: number;
   updatedAt: number;
 }
@@ -19,6 +21,7 @@ export interface SpaceNode {
   kind: ItemKind;
   position: number;
   name: string;
+  appearance?: ItemAppearance;
   createdAt: number;
   updatedAt: number;
 }

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { initialIcon } from '../appearance/data.ts';
 import { materialize } from '@spinel/sync-server';
 import type { OfflineCreationResponse } from '../../shared/offlineCreation.ts';
 import { blankOfflineSnapshot, isOfflineCreationRequest } from '../../shared/offlineCreation.ts';
@@ -59,6 +60,10 @@ export class OfflineCreations {
           input.kind,
           input.name,
           input.parentId,
+          // Preserve receipts made before optional identity fields existed.
+          ...(input.icon != null || input.iconColor != null
+            ? [input.icon ?? null, input.iconColor ?? null]
+            : []),
         ]),
       )
       .digest('hex');
@@ -143,6 +148,7 @@ export class OfflineCreations {
           'INSERT INTO workspace_items(id,owner_id,parent_id,kind,name,created_at,updated_at) VALUES(?,?,?,?,?,?,?)',
         )
         .run(input.itemId, user, parentId, input.kind, input.name, now, now);
+      initialIcon(database, input.itemId, input.icon, input.iconColor);
       database
         .prepare('INSERT INTO spinel_live_units VALUES(?,?,0)')
         .run(input.itemId, input.unitId);

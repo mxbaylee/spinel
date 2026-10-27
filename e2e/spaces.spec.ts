@@ -585,6 +585,7 @@ test('ordinary My files creates and opens one Space root while preserving its pr
     await expect((await pages(page)).getByText(child.name, { exact: true })).toBeVisible();
     await chooseRoot('Share', 'Research collection');
     const sharing = page.getByRole('dialog', { name: 'Share Research collection', exact: true });
+    await sharing.getByRole('tab', { name: 'Link', exact: true }).click();
     const link = sharing.getByRole('region', { name: 'Guest link', exact: true });
     await expect(link).toContainText('every current and future page and folder in this Space');
     await link.getByRole('button', { name: 'Create link', exact: true }).click();

@@ -222,9 +222,17 @@ const meta = {
 } satisfies Meta<typeof SourceScenario>;
 export default meta;
 type Story = StoryObj<typeof meta>;
-const sourceChoice = 'Also share source spreadsheets';
-async function checkSources(canvasElement: HTMLElement) {
+const sourceChoice = 'Include formula sources';
+async function openEditor(canvasElement: HTMLElement) {
   const body = within(canvasElement.ownerDocument.body);
+  await userEvent.click(await body.findByRole('button', { name: 'Edit access for Avery Chen' }));
+  await body.findByRole('combobox', { name: 'Access for Avery Chen' });
+  return body;
+}
+const save = (body: ReturnType<typeof within>) =>
+  body.getByRole('button', { name: /^(Share|Save changes)$/ });
+async function checkSources(canvasElement: HTMLElement) {
+  const body = await openEditor(canvasElement);
   const checkbox = await body.findByRole('checkbox', { name: sourceChoice });
   await expect(checkbox).not.toBeChecked();
   await userEvent.click(checkbox);
@@ -238,12 +246,23 @@ function writes(body: ReturnType<typeof within>) {
     sourceReview?: string;
   }[];
 }
-export const Unchecked: Story = {
+export const Overview: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
+    await body.findByRole('button', { name: 'Edit access for Avery Chen' });
+    await expect(body.queryByRole('combobox')).not.toBeInTheDocument();
+    await expect(body.queryByRole('checkbox')).not.toBeInTheDocument();
+    await expect(body.getByRole('button', { name: 'Copy account link' })).toBeVisible();
+    await expect(writes(body)).toHaveLength(0);
+  },
+};
+export const Unchecked: Story = {
+  play: async ({ canvasElement }) => {
+    const body = await openEditor(canvasElement);
     await expect(await body.findByRole('checkbox', { name: sourceChoice })).not.toBeChecked();
-    await expect(body.getByText('Can edit · Kept')).toBeVisible();
-    await expect(body.getByRole('button', { name: 'Apply access for Avery Chen' })).toBeDisabled();
+    await expect(body.getByText('Some formulas won’t work without source access.')).toBeVisible();
+    await expect(body.getByText('Household budget')).not.toBeVisible();
+    await expect(save(body)).toBeDisabled();
     await expect(writes(body)).toHaveLength(0);
   },
 };
@@ -251,72 +270,98 @@ export const Checked: Story = {
   play: async ({ canvasElement }) => {
     const body = await checkSources(canvasElement);
     await expect(body.getByText('Can view · Proposed')).toBeVisible();
-    await expect(body.getByText('Can edit · Kept')).toBeVisible();
-    await expect(body.getByRole('button', { name: 'Apply access for Avery Chen' })).toBeEnabled();
+    await expect(body.getByText('Household budget')).toBeVisible();
+    await expect(body.getByText('Forecast')).not.toBeVisible();
+    await expect(save(body)).toBeEnabled();
     await expect(writes(body)).toHaveLength(0);
   },
 };
 export const ChooseReportAccessFirst: Story = {
   args: { scenario: 'new-recipient' },
   play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-    await body.findByText('Choose access to the report before also sharing sources.');
+    const body = await openEditor(canvasElement);
+    await body.findByText('Choose access to the report to include its sources.');
     await expect(body.queryByRole('checkbox')).not.toBeInTheDocument();
   },
 };
 export const HostOnly: Story = {
   args: { scenario: 'new-recipient' },
   play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await body.findByLabelText('Access for Avery Chen'), 'viewer');
+    const body = await openEditor(canvasElement);
+    await userEvent.selectOptions(body.getByRole('combobox'), 'viewer');
     await expect(await body.findByRole('checkbox', { name: sourceChoice })).not.toBeChecked();
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
+    await userEvent.click(save(body));
     await body.findByText('Access updated for Avery Chen.');
     await expect(writes(body)).toEqual([{ userId: 'avery', role: 'viewer' }]);
-    await expect(await body.findByText('No access', { exact: true })).toBeVisible();
+    await waitFor(() =>
+      expect(body.getByRole('button', { name: 'Edit access for Avery Chen' })).toHaveFocus(),
+    );
+    await expect(body.queryByRole('combobox')).not.toBeInTheDocument();
+    await openEditor(canvasElement);
+    await expect(await body.findByRole('checkbox', { name: sourceChoice })).not.toBeChecked();
   },
 };
 export const SourceOnly: Story = {
   play: async ({ canvasElement }) => {
     const body = await checkSources(canvasElement);
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
-    await body.findByText(/Report access kept\. Source access updated: 1 target shared/);
-    await expect(await body.findByText('Can view · Kept')).toBeVisible();
-    await expect(body.getByText('Can edit · Kept')).toBeVisible();
+    await userEvent.click(save(body));
+    await body.findByText('Formula sources shared for Avery Chen.');
     await expect(writes(body)).toEqual([
       { userId: 'avery', role: 'viewer', sourceReview: expect.any(String) },
     ]);
+    await openEditor(canvasElement);
+    await userEvent.click(await body.findByText('Already accessible (2)'));
+    const list = within(body.getByRole('list', { name: 'Reviewed source access' }));
+    await expect(list.getByText('View only')).toBeVisible();
+    await expect(list.getByText('Can edit')).toBeVisible();
     await expect(body.queryByRole('checkbox')).not.toBeInTheDocument();
   },
 };
-export const Checking: Story = { args: { scenario: 'pending-review' } };
+export const Checking: Story = {
+  args: { scenario: 'pending-review' },
+  play: async ({ canvasElement }) => {
+    await openEditor(canvasElement);
+  },
+};
 export const CheckFailed: Story = {
   args: { scenario: 'failed-review' },
   play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
+    const body = await openEditor(canvasElement);
     const retry = await body.findByRole('button', { name: 'Retry source check' });
     retry.focus();
     await userEvent.keyboard('{Enter}');
-    await waitFor(() => expect(body.getByText('Formula sources', { exact: true })).toHaveFocus());
+    await waitFor(() => expect(body.getByRole('combobox')).toHaveFocus());
   },
 };
 export const Applying: Story = {
   args: { scenario: 'pending-write' },
   play: async ({ canvasElement }) => {
     const body = await checkSources(canvasElement);
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
-    await expect(body.getByText('Updating access…')).toBeDisabled();
+    await userEvent.click(save(body));
+    await expect(body.getByRole('button', { name: 'Saving…' })).toBeDisabled();
     await expect(body.getByRole('checkbox')).toBeDisabled();
-    await expect(body.getByRole('button', { name: 'Done' })).toBeDisabled();
+    await expect(body.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await expect(body.getByRole('button', { name: 'Close dialog' })).toBeDisabled();
+    for (const tab of body.getAllByRole('tab')) await expect(tab).toBeDisabled();
+    await userEvent.keyboard('{Escape}');
+    await expect(body.getByRole('dialog')).toBeVisible();
   },
 };
-export const ExistingAccessKept: Story = { args: { scenario: 'already-shared' } };
+export const ExistingAccessKept: Story = {
+  args: { scenario: 'already-shared' },
+  play: async ({ canvasElement }) => {
+    const body = await openEditor(canvasElement);
+    await userEvent.click(await body.findByText('Already accessible (2)'));
+    await expect(body.queryByRole('checkbox')).not.toBeInTheDocument();
+  },
+};
 export const SameSpace: Story = {
   args: { scenario: 'same-space' },
   play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
+    const body = await openEditor(canvasElement);
+    await expect(await body.findByText('Sources in this Space inherit access.')).toBeVisible();
     await expect(
-      await body.findByText('Sources in this Space inherit access. No separate sharing is needed.'),
+      body.getByText('Applies to every current and future page and folder in this Space.'),
     ).toBeVisible();
     await expect(body.queryByRole('checkbox')).not.toBeInTheDocument();
   },
@@ -332,39 +377,55 @@ export const ExternalSpace: Story = {
     ).toBeVisible();
   },
 };
-export const ProtectedAndUnavailable: Story = { args: { scenario: 'restricted' } };
+export const ProtectedAndUnavailable: Story = {
+  args: { scenario: 'restricted' },
+  play: async ({ canvasElement }) => {
+    const body = await openEditor(canvasElement);
+    await body.findByText(
+      'Some formulas need source access from the Owner or File admin. Other sources are unavailable to you.',
+    );
+    await expect(body.queryByRole('checkbox')).not.toBeInTheDocument();
+  },
+};
 export const Partial: Story = {
   args: { scenario: 'partial' },
   play: async ({ canvasElement }) => {
     const body = await checkSources(canvasElement);
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
-    await body.findByText(/Some sources still need access or could not be reviewed/);
-    await expect(await body.findByText('Can view · Kept')).toBeVisible();
+    await userEvent.click(save(body));
+    await body.findByText(/some sources still need access or review/);
+    await userEvent.click(await body.findByText('Source details'));
     await expect(body.getByText('Owner or File admin must share')).toBeVisible();
-    await expect(body.getByRole('button', { name: 'Review remaining sources' })).toBeEnabled();
+    await expect(save(body)).toBeDisabled();
+    await expect(
+      body.queryByRole('button', { name: 'Review remaining sources' }),
+    ).not.toBeInTheDocument();
+    await expect(writes(body)).toHaveLength(1);
   },
 };
 export const ChangedAfterReview: Story = {
   args: { scenario: 'changed' },
   play: async ({ canvasElement }) => {
     const body = await checkSources(canvasElement);
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
+    await userEvent.click(save(body));
     await expect(await body.findByRole('alert')).toHaveTextContent('Formula sources changed.');
-    await body.findByText('Household budget · revised');
-    await expect(body.getByRole('checkbox')).not.toBeChecked();
+    await expect(await body.findByRole('checkbox')).not.toBeChecked();
+    await userEvent.click(body.getByText('Source details'));
+    await expect(body.getByText('Household budget · revised')).toBeVisible();
     await expect(writes(body)).toHaveLength(1);
   },
 };
 async function uncertain(canvasElement: HTMLElement) {
   const body = await checkSources(canvasElement);
-  await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
+  await userEvent.click(save(body));
   await expect(await body.findByRole('alert')).toHaveTextContent('Could not confirm the update.');
-  await expect(await body.findByText('Can view · Kept')).toBeVisible();
+  await body.findByText('Already accessible (2)');
+  await waitFor(() => expect(body.getByRole('combobox')).toHaveFocus());
+  await expect(save(body)).toBeDisabled();
   await expect(body.queryByRole('checkbox')).not.toBeInTheDocument();
-  body.getByRole('button', { name: 'Review remaining sources' }).focus();
-  await userEvent.keyboard('{Enter}');
-  await body.findByText('Can view · Kept');
-  await waitFor(() => expect(body.getByLabelText('Access for Avery Chen')).toHaveFocus());
+  await userEvent.click(body.getByText('Already accessible (2)'));
+  await expect(
+    within(body.getByRole('list', { name: 'Reviewed source access' })).getByText('View only'),
+  ).toBeVisible();
   await expect(writes(body)).toHaveLength(1);
 }
 export const LostAcknowledgement: Story = {
@@ -378,23 +439,26 @@ export const MissingResult: Story = {
 export const HostOnlyLostAcknowledgement: Story = {
   args: { scenario: 'uncertain' },
   play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await body.findByLabelText('Access for Avery Chen'), 'admin');
+    const body = await openEditor(canvasElement);
+    await userEvent.selectOptions(body.getByRole('combobox'), 'admin');
     await body.findByRole('checkbox', { name: sourceChoice });
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
+    await userEvent.click(save(body));
     await expect(await body.findByRole('alert')).toHaveTextContent('Could not confirm the update.');
-    await expect(await body.findByText('Effective access: File admin.')).toBeVisible();
+    await expect(
+      body.getByRole('button', { name: 'Edit access for Avery Chen' }),
+    ).toHaveTextContent('File admin');
     await expect(await body.findByRole('checkbox', { name: sourceChoice })).not.toBeChecked();
+    await expect(save(body)).toBeDisabled();
     await expect(writes(body)).toEqual([{ userId: 'avery', role: 'admin' }]);
   },
 };
 export const HostOnlyAuthorityLost: Story = {
   args: { scenario: 'revoked' },
   play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await body.findByLabelText('Access for Avery Chen'), 'admin');
+    const body = await openEditor(canvasElement);
+    await userEvent.selectOptions(body.getByRole('combobox'), 'admin');
     await body.findByRole('checkbox', { name: sourceChoice });
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
+    await userEvent.click(save(body));
     await expect(await body.findByRole('alert')).toHaveTextContent(
       'Could not confirm the update or refresh access.',
     );
@@ -405,11 +469,11 @@ export const HostOnlyAuthorityLost: Story = {
 export const HostOnlySourceBecamePrivate: Story = {
   args: { scenario: 'source-revoked' },
   play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await body.findByLabelText('Access for Avery Chen'), 'admin');
+    const body = await openEditor(canvasElement);
+    await userEvent.selectOptions(body.getByRole('combobox'), 'admin');
     await body.findByRole('checkbox', { name: sourceChoice });
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
-    await body.findByText(/Another source is unavailable to you/);
+    await userEvent.click(save(body));
+    await body.findByText('Some sources are unavailable to you.');
     await expect(body.queryByText(/Household budget/)).not.toBeInTheDocument();
     await expect(writes(body)).toEqual([{ userId: 'avery', role: 'admin' }]);
   },
@@ -418,7 +482,7 @@ export const HostRevoked: Story = {
   args: { scenario: 'revoked' },
   play: async ({ canvasElement }) => {
     const body = await checkSources(canvasElement);
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
+    await userEvent.click(save(body));
     await expect(await body.findByRole('alert')).toHaveTextContent(
       'Could not confirm the update or refresh access.',
     );
@@ -430,24 +494,58 @@ export const NoStaleSourceNames: Story = {
   args: { scenario: 'redacted-after-save' },
   play: async ({ canvasElement }) => {
     const body = await checkSources(canvasElement);
-    await userEvent.click(body.getByRole('button', { name: 'Apply access for Avery Chen' }));
-    await body.findByText(/Another source is unavailable to you/);
+    await userEvent.click(save(body));
+    await body.findByText('Formula sources shared for Avery Chen.');
+    await openEditor(canvasElement);
+    await body.findByText('Some sources are unavailable to you.');
     await expect(body.queryByText(/Household budget/)).not.toBeInTheDocument();
-    await expect(body.queryByRole('list', { name: 'Sources shared' })).not.toBeInTheDocument();
+  },
+};
+export const ConsentAndDraftReset: Story = {
+  play: async ({ canvasElement }) => {
+    const body = await checkSources(canvasElement);
+    await userEvent.selectOptions(body.getByRole('combobox'), 'editor');
+    await expect(await body.findByRole('checkbox', { name: sourceChoice })).not.toBeChecked();
+    await userEvent.click(body.getByRole('checkbox'));
+    await userEvent.click(body.getByRole('button', { name: 'Cancel' }));
+    await waitFor(() =>
+      expect(body.getByRole('button', { name: 'Edit access for Avery Chen' })).toHaveFocus(),
+    );
+    await openEditor(canvasElement);
+    await expect(body.getByRole('combobox')).toHaveValue('viewer');
+    await expect(await body.findByRole('checkbox')).not.toBeChecked();
+    await userEvent.click(body.getByRole('checkbox'));
+    await userEvent.selectOptions(body.getByRole('combobox'), 'admin');
+    await userEvent.click(body.getByRole('tab', { name: 'Link' }));
+    await expect(
+      body.queryByRole('combobox', { name: 'Access for Avery Chen' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(body.getByRole('tab', { name: 'People' }));
+    await openEditor(canvasElement);
+    await expect(body.getByRole('combobox')).toHaveValue('viewer');
+    await expect(await body.findByRole('checkbox')).not.toBeChecked();
+    await expect(writes(body)).toHaveLength(0);
   },
 };
 export const PublicLinkIsolation: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    await body.findByRole('checkbox', { name: sourceChoice });
-    await userEvent.click(body.getByRole('button', { name: 'Create link' }));
-    await body.findByLabelText('Guest link address');
+    await userEvent.click(await body.findByRole('tab', { name: 'Link' }));
+    await userEvent.click(await body.findByRole('button', { name: 'Create link' }));
+    const address = await body.findByLabelText('Guest link address');
+    await expect(address).toHaveValue('https://spinel.example/share/report#guest-key');
     await expect(writes(body)).toHaveLength(0);
     await expect(
       body.getByText(
-        'This link shares only the document. Formulas that need other files are unavailable to link guests.',
+        'Shares this document only. Formulas using other files are unavailable to guests.',
       ),
     ).toBeVisible();
+    await userEvent.click(body.getByRole('tab', { name: 'People' }));
+    await expect(address).not.toBeVisible();
+    await userEvent.click(body.getByRole('tab', { name: 'Link' }));
+    await expect(body.getByLabelText('Guest link address')).toHaveValue(
+      'https://spinel.example/share/report#guest-key',
+    );
   },
 };
 
@@ -512,9 +610,14 @@ function DeferredReview({ replace = false }: { replace?: boolean }) {
 }
 async function staleReview(canvasElement: HTMLElement, replace: boolean) {
   const body = within(canvasElement.ownerDocument.body);
-  await body.findByText('Checking formula sources… You can share the report alone.');
+  await openEditor(canvasElement);
+  await body.findByText('Checking sources…');
   fireEvent.click(body.getByTestId('leave-source-review'));
-  if (replace) await body.findByText('Can edit · Kept');
+  if (replace) {
+    await body.findByRole('dialog', { name: 'Share Next report' });
+    await openEditor(canvasElement);
+    await body.findByText('Already accessible (1)');
+  }
   const href = location.href;
   fireEvent.click(body.getByTestId('release-source-review'));
   await waitFor(() => expect(body.getByTestId('source-released')).toHaveTextContent('true'));

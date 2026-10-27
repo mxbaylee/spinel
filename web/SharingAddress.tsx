@@ -2,7 +2,17 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { Button } from '../src/ui/redesign/Controls.tsx';
 
 /** A copy failure leaves a selectable address; secrets exist only in the owning dialog. */
-export function SharingAddress({ value, guest = false }: { value: string; guest?: boolean }) {
+export function SharingAddress({
+  value,
+  guest = false,
+  primary = false,
+  disabled = false,
+}: {
+  value: string;
+  guest?: boolean;
+  primary?: boolean;
+  disabled?: boolean;
+}) {
   const [fallback, setFallback] = useState(false);
   const [notice, setNotice] = useState('');
   const generation = useRef(0);
@@ -28,7 +38,14 @@ export function SharingAddress({ value, guest = false }: { value: string; guest?
   }
   return (
     <div className="sharing-address">
-      <Button onClick={() => void copy()}>{guest ? 'Copy guest link' : 'Copy account link'}</Button>
+      <Button
+        className="sharing-copy"
+        primary={primary}
+        disabled={disabled}
+        onClick={() => void copy()}
+      >
+        {guest ? 'Copy guest link' : 'Copy account link'}
+      </Button>
       {(guest || fallback) && (
         <label>
           {guest ? 'Guest link address' : 'Share address'}
