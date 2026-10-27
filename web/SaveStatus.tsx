@@ -5,6 +5,23 @@ import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import type { SaveState } from '../src/shared/autosave.ts';
 import './saveStatus.css';
 
+export function UnfinishedDocText({ value, onDiscard }: { value: string; onDiscard(): void }) {
+  return (
+    <section className="save-unfinished-text" aria-label="Unfinished text recovery">
+      <label>
+        Unfinished text
+        <textarea readOnly value={value} rows={3} />
+      </label>
+      <p>
+        This text may not be in your saved device copy. Copy it before discarding it to continue.
+      </p>
+      <button type="button" onClick={onDiscard}>
+        Discard unfinished text
+      </button>
+    </section>
+  );
+}
+
 /** Keep the editor's live announcement and save controller together, while
  * presenting its fixed-size control in the shell's title-adjacent slot. */
 export function SaveStatus({
@@ -14,6 +31,7 @@ export function SaveStatus({
   onRecover,
   onExportRecovery,
   onDiscardRecovery,
+  unfinishedText,
 }: {
   state: SaveState;
   target: HTMLElement | null;
@@ -21,6 +39,7 @@ export function SaveStatus({
   onRecover?(): void;
   onExportRecovery?(): void;
   onDiscardRecovery?(): void;
+  unfinishedText?: { value: string; onDiscard(): void };
 }) {
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const recovery = state.recovery;
@@ -86,6 +105,7 @@ export function SaveStatus({
                 <Popover.Popup className="save-detail" aria-label="Save details">
                   <Popover.Title>Save details</Popover.Title>
                   <p>{state.message}</p>
+                  {unfinishedText && <UnfinishedDocText {...unfinishedText} />}
                   {recovery && (
                     <section className="save-recovery" aria-label="Offline recovery">
                       {recovery.message && <p role="status">{recovery.message}</p>}

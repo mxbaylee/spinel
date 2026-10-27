@@ -56,6 +56,7 @@ const meta = {
   render: function Example(args) {
     const [target, setTarget] = useState<HTMLSpanElement | null>(null);
     const [state, setState] = useState(args.state);
+    const [unfinishedText, setUnfinishedText] = useState(args.unfinishedText);
     return (
       <>
         <header className="editor-title-status">
@@ -67,7 +68,7 @@ const meta = {
           state={state}
           onRetry={() => {
             args.onRetry();
-            if (!state.signInRequired) setState(saved);
+            if (!state.signInRequired && !unfinishedText) setState(saved);
           }}
           onRecover={args.onRecover}
           onExportRecovery={args.onExportRecovery}
@@ -81,6 +82,23 @@ const meta = {
               recovery: { ...current.recovery!, phase: 'discarded' },
             }));
           }}
+          unfinishedText={
+            unfinishedText && {
+              value: unfinishedText.value,
+              onDiscard: () => {
+                unfinishedText.onDiscard();
+                setUnfinishedText(undefined);
+                setState((current) => ({
+                  ...current,
+                  local: 'attention',
+                  dirty: false,
+                  message: current.signInRequired
+                    ? 'Your sign-in ended. Your saved device copy is retained.'
+                    : 'Needs attention. The live document changed. Your saved device copy is retained.',
+                }));
+              },
+            }
+          }
         />
         <div
           aria-label="Editor geometry fixture"
@@ -360,6 +378,117 @@ export const RecoveryUnfinishedInput: Story = {
     await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
   },
 };
+
+const unfinishedDocValue =
+  '家族旅行の最終予定 518 — keep every word ✈\nThe last composition event supplied this complete text.';
+const unfinishedDocState: SaveState = {
+  ...recoveryFailed,
+  local: undefined,
+  dirty: true,
+  message: 'Copy the unfinished text before recovering your offline changes.',
+  recovery: { phase: 'ready', originalHref },
+};
+async function unfinishedDocDetails(context: Parameters<NonNullable<Story['play']>>[0]) {
+  const panel = await recoveryDetails(context);
+  const text = panel.getByRole('textbox', { name: 'Unfinished text' });
+  await expect(text).toHaveAttribute('readonly');
+  await expect(text).toHaveValue(unfinishedDocValue);
+  await userEvent.click(text);
+  await userEvent.type(text, 'This must not replace the retained draft.');
+  await expect(text).toHaveValue(unfinishedDocValue);
+  for (const name of ['Export as Univer file', 'Discard offline changes…']) {
+    const action = panel.getByRole('button', { name });
+    await expect(action).toBeDisabled();
+    await userEvent.click(action);
+  }
+  if (context.args.state.signInRequired)
+    await expect(
+      panel.queryByRole('button', { name: 'Retry creating copy' }),
+    ).not.toBeInTheDocument();
+  else {
+    const copy = panel.getByRole('button', { name: 'Retry creating copy' });
+    await expect(copy).toBeDisabled();
+    await userEvent.click(copy);
+  }
+  await expect(panel.queryByRole('link', { name: 'Open copy' })).not.toBeInTheDocument();
+  await expect(
+    panel.queryByRole('button', { name: 'Continue to sign-in' }),
+  ).not.toBeInTheDocument();
+  await expect(context.args.onRecover).not.toHaveBeenCalled();
+  await expect(context.args.onExportRecovery).not.toHaveBeenCalled();
+  await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+  await expect(context.args.unfinishedText?.onDiscard).not.toHaveBeenCalled();
+  await expect(panel.getByRole('button', { name: 'Discard unfinished text' })).toBeEnabled();
+  await noPageOverflow(context.canvasElement.ownerDocument);
+  return panel;
+}
+
+export const RecoveryUnfinishedDocText: Story = {
+  args: {
+    state: unfinishedDocState,
+    unfinishedText: { value: unfinishedDocValue, onDiscard: fn() },
+  },
+  play: async (context) => {
+    const geometry = within(context.canvasElement).getByLabelText('Editor geometry fixture');
+    const before = geometry.getBoundingClientRect().toJSON();
+    const panel = await unfinishedDocDetails(context);
+    await userEvent.click(panel.getByRole('button', { name: 'Retry saving' }));
+    await expect(context.args.onRetry).toHaveBeenCalledOnce();
+    await expect(panel.getByRole('textbox', { name: 'Unfinished text' })).toHaveValue(
+      unfinishedDocValue,
+    );
+    await expect(panel.getByRole('button', { name: 'Retry creating copy' })).toBeDisabled();
+    await expect(geometry.getBoundingClientRect().toJSON()).toEqual(before);
+  },
+};
+
+export const RecoveryUnfinishedDocTextDiscarded: Story = {
+  args: {
+    state: unfinishedDocState,
+    unfinishedText: { value: unfinishedDocValue, onDiscard: fn() },
+  },
+  play: async (context) => {
+    const geometry = within(context.canvasElement).getByLabelText('Editor geometry fixture');
+    const before = geometry.getBoundingClientRect().toJSON();
+    const panel = await unfinishedDocDetails(context);
+    await userEvent.click(panel.getByRole('button', { name: 'Discard unfinished text' }));
+    await expect(context.args.unfinishedText?.onDiscard).toHaveBeenCalledOnce();
+    await expect(panel.queryByRole('textbox', { name: 'Unfinished text' })).not.toBeInTheDocument();
+    for (const name of ['Retry creating copy', 'Export as Univer file', 'Discard offline changes…'])
+      await expect(panel.getByRole('button', { name })).toBeEnabled();
+    await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+    await expect(context.args.onRecover).not.toHaveBeenCalled();
+    await expect(geometry.getBoundingClientRect().toJSON()).toEqual(before);
+    await noPageOverflow(context.canvasElement.ownerDocument);
+  },
+};
+
+export const ExpiredUnfinishedDocText: Story = {
+  args: {
+    state: {
+      ...unfinishedDocState,
+      signInRequired: true,
+      message: 'Your sign-in ended. Copy the unfinished text before signing in again.',
+    },
+    unfinishedText: { value: unfinishedDocValue, onDiscard: fn() },
+  },
+  play: async (context) => {
+    const geometry = within(context.canvasElement).getByLabelText('Editor geometry fixture');
+    const before = geometry.getBoundingClientRect().toJSON();
+    const panel = await unfinishedDocDetails(context);
+    await userEvent.click(panel.getByRole('button', { name: 'Discard unfinished text' }));
+    await expect(context.args.unfinishedText?.onDiscard).toHaveBeenCalledOnce();
+    await expect(panel.queryByRole('textbox', { name: 'Unfinished text' })).not.toBeInTheDocument();
+    await expect(panel.getByRole('button', { name: 'Export as Univer file' })).toBeEnabled();
+    await userEvent.click(panel.getByRole('button', { name: 'Continue to sign-in' }));
+    await expect(context.args.onRetry).toHaveBeenCalledOnce();
+    await expect(context.args.onDiscardRecovery).not.toHaveBeenCalled();
+    await expect(context.args.onRecover).not.toHaveBeenCalled();
+    await expect(geometry.getBoundingClientRect().toJSON()).toEqual(before);
+    await noPageOverflow(context.canvasElement.ownerDocument);
+  },
+};
+
 export const DeviceSaveFailed: Story = {
   args: {
     state: {

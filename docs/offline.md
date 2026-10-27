@@ -428,6 +428,13 @@ available to copy. The native cross-sheet formula flow hides its input before
 the cell actually commits, so Spinel does not treat hiding as proof of a safe
 save. The notice asks the person to copy the text before signing in again;
 Escape explicitly discards only that unfinished input.
+For a Doc composition interrupted by a conflict or ended sign-in, save details
+retains the final unfinished text in a read-only field. Native composition-end
+can clear its own field before a refused mutation finishes, so closing the IME
+does not mean the text was saved. Copy that field, then explicitly **Discard
+unfinished text** before recovery/export or sign-in can continue. This action
+discards only the held text; the durable checkpoint remains protected by its
+separate recovery flow.
 Save details then offers **Continue to sign-in** even when the retained queue is
 already durable. The action rechecks local saving and unfinished host input
 before navigation; the queue is not falsely marked unsaved just to expose it.
