@@ -176,11 +176,18 @@ export class PreparedImages implements IURLImageService {
       (source) => originals.get(source) ?? source,
     );
   }
-  async add(images: readonly OfflineBundleImage[], bytes: ReadonlyMap<string, Uint8Array>) {
+  async add(
+    images: readonly OfflineBundleImage[],
+    bytes: ReadonlyMap<string, Uint8Array>,
+    verifyAdmission: () => void = () => {},
+  ) {
     this.assertAllowed();
-    const blobs = await verifyImages(this.access.scope.itemId, images, bytes, () =>
-      this.assertAllowed(),
-    );
+    verifyAdmission();
+    const blobs = await verifyImages(this.access.scope.itemId, images, bytes, () => {
+      this.assertAllowed();
+      verifyAdmission();
+    });
+    verifyAdmission();
     for (const [source, blob] of blobs) this.blobs.set(source, blob);
   }
   async getImage(url: string) {

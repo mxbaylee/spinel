@@ -54,12 +54,19 @@ const pending = (checkpoint?: ClientCheckpoint) =>
   Boolean(checkpoint?.sent || checkpoint?.buffer.length || checkpoint?.failure);
 
 async function usableCanvas(page: Page) {
-  const canvas = page.locator('.univer-container canvas').first();
   await expect
-    .poll(async () => (await canvas.boundingBox())?.height ?? 0, {
-      message: 'The restored native canvas must have a visible layout height.',
-      timeout: 15_000,
-    })
+    .poll(
+      () =>
+        page.locator('.univer-container canvas').evaluateAll((canvases) =>
+          // Sheets also renders its short formula-bar input as a canvas. Check
+          // the document surface, independent of those auxiliary canvas nodes.
+          Math.max(0, ...canvases.map((canvas) => canvas.getBoundingClientRect().height)),
+        ),
+      {
+        message: 'The restored native canvas must have a visible layout height.',
+        timeout: 15_000,
+      },
+    )
     .toBeGreaterThan(100);
 }
 
@@ -744,6 +751,9 @@ test.describe('downloaded native editors', () => {
       await edit(f.page, 'doc', 'Formula context');
       await f.page.keyboard.press('Control+End');
       await f.page.keyboard.press('Enter');
+      await expect
+        .poll(async () => (await f.read()).snapshot.body?.dataStream)
+        .toContain('Formula context\r');
       await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
       await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
       await f.page.getByRole('menuitem', { name: 'Insert formula', exact: true }).click();
@@ -751,6 +761,7 @@ test.describe('downloaded native editors', () => {
       await insert.getByLabel('Formula', { exact: true }).fill('=OfflineInputs.Summary.A1');
       await insert.getByRole('button', { name: 'Insert formula', exact: true }).click();
       await expect(insert).not.toBeVisible({ timeout: 20_000 });
+      await expect.poll(async () => docFormulas((await f.read()).snapshot.body).length).toBe(1);
       await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
       await f.download();
       const baseline = await f.read();
@@ -884,6 +895,97 @@ test.describe('downloaded native editors', () => {
           .prepare('SELECT count(*) AS n FROM spinel_sync_revisions WHERE unit_id=?')
           .get(f.unitId)!.n,
       ).toBe(1);
+    } finally {
+      await f.close();
+    }
+  });
+
+  test('expired sign-in retains an unfinished cross-sheet formula for copying without submitting it', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'sheet');
+    try {
+      await f.download();
+      const sheet = f.page.getByRole('region', { name: 'Sheet document', exact: true });
+      await sheet.locator('[data-u-comp="sheet-bar-append-button"]').first().click();
+      await expect(sheet.getByRole('tablist', { name: 'Sheet tabs' }).getByRole('tab')).toHaveCount(
+        2,
+      );
+      await synced(f.page);
+      const baseline = await f.read();
+      const [first, second] = baseline.snapshot.sheetOrder.map(
+        (id) => baseline.snapshot.sheets[id]!,
+      );
+      await sheet.getByRole('tab', { name: first.name, exact: true }).click();
+      await f.network.setOffline(true);
+      await edit(f.page, 'sheet', '730', 'E1');
+      await savedLocally(f.page);
+      const retained = (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint;
+      const submitted = f.network.outgoing.filter((frame) => frame.type === 'submit').length;
+      await selectCell(f.page, 'D1');
+      await f.page.keyboard.insertText('=SUM(');
+      await sheet.getByRole('tab', { name: second.name, exact: true }).click();
+      await expect(sheet.getByRole('tab', { name: second.name, exact: true })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+      await nativeInput(f.page).focus();
+      await f.page.keyboard.insertText('A1)');
+      const copyDraft = async () => {
+        const sentinel = `not-copied-${randomUUID()}`;
+        await f.page.evaluate((text) => navigator.clipboard.writeText(text), sentinel);
+        await nativeInput(f.page).focus();
+        await f.page.keyboard.press('Control+a');
+        await f.page.keyboard.press('Control+c');
+        await expect
+          .poll(() => f.page.evaluate(() => navigator.clipboard.readText()))
+          .not.toBe(sentinel);
+        return f.page.evaluate(() => navigator.clipboard.readText());
+      };
+      const draft = await copyDraft();
+      expect(draft).toContain('=SUM(');
+      await f.page.keyboard.press('End');
+      const cookie = (await f.context.cookies()).find((entry) => entry.name === COOKIE_NAME)!;
+      f.auth.revokeSession(f.auth.session(cookie.value)!.token_hash);
+      await f.network.setOffline(false);
+      const warning = 'Your sign-in ended. Copy the unfinished cell text before signing in again.';
+      await expect(saveStatus(f.page)).toHaveText(warning);
+      await expect
+        .poll(() => f.page.evaluate(() => localStorage.getItem('spinel.offline.account')))
+        .toBeNull();
+      // Confirming while on the other sheet must not hide and then lose the
+      // original draft when native sheet activation completes asynchronously.
+      await nativeInput(f.page).focus();
+      await f.page.keyboard.press('Enter');
+      await expect(saveStatus(f.page)).toHaveText(warning);
+      expect(await copyDraft()).toBe(draft);
+      expect((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer).toEqual(
+        retained.buffer,
+      );
+      expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toHaveLength(submitted);
+      expect(await f.read()).toEqual(baseline);
+      await f.page.screenshot({
+        path: info.outputPath('spn-053-offline-expired-cell-input.png'),
+        animations: 'disabled',
+      });
+      await f.network.setOffline(true);
+      const blocked = await f.context.newPage();
+      await blocked.goto(f.href);
+      await expect(
+        blocked.getByRole('heading', { name: "You're offline", exact: true }),
+      ).toBeVisible();
+      await expect(blocked.locator('.univer-container canvas')).toHaveCount(0);
+      await blocked.close();
+      await f.network.setOffline(false);
+      // After copying, Escape explicitly discards only the unfinished draft.
+      // The earlier durable queue remains and can finish the sign-in handoff.
+      await nativeInput(f.page).focus();
+      await f.page.keyboard.press('Escape');
+      await f.page.getByRole('button', { name: /^Save details:/ }).click();
+      await f.page.getByRole('button', { name: 'Continue to sign-in', exact: true }).click();
+      await expect(f.page).toHaveURL(/\/sign-in(?:\?|$)/);
+      expect(pending((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint)).toBe(true);
     } finally {
       await f.close();
     }

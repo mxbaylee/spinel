@@ -380,6 +380,25 @@ unacknowledged entry across failure or restart. Do not add a separate Pro queue
 or treat a connection/status transition as proof of durability. Items that are
 not downloaded keep the online behavior and make no on-device durability claim.
 
+**Expired sign-in.** A verified 401 stops replay and clears preparation for new
+offline launches. Downloaded documents and their queues remain on the device.
+The current editor freezes input and attempts to finish its local save before
+opening sign-in. If storage fails or takes too long, or cell/IME/Formula input
+has not finished, Spinel keeps that frozen tab open with the navigation warning
+and local-save retry. This exception permits only finishing local recovery; it
+cannot contact the server or prepare another download, and a later sign-out or
+account change cancels it. Repeated 401s for the same expired session do not close
+the held tab. A failed local save takes priority over Needs attention in the save
+status so unsaved visible work is never described as safely retained.
+For an unfinished Sheet cell, expiry blocks confirmation and keeps its text
+available to copy. The native cross-sheet formula flow hides its input before
+the cell actually commits, so Spinel does not treat hiding as proof of a safe
+save. The notice asks the person to copy the text before signing in again;
+Escape explicitly discards only that unfinished input.
+Save details then offers **Continue to sign-in** even when the retained queue is
+already durable. The action rechecks local saving and unfinished host input
+before navigation; the queue is not falsely marked unsaved just to expose it.
+
 **Refused visible edits.** A supported native mutation can change the canvas
 before exceeding the transport budget. Such a local refusal retains a bounded,
 validated canonical `recoverySnapshot` alongside the failure and the original

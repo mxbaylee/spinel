@@ -115,6 +115,7 @@ const ACCOUNT_KEY = 'spinel.offline.account';
 const ONLINE_ACCOUNT_KEY = 'spinel.offline.online-account';
 const SIGN_OUT_KEY = 'spinel.offline.sign-out';
 const CANCELLATION_KEY = 'spinel.offline.cancellation';
+const EXPIRED_SESSION_KEY = 'spinel.offline.expired-session';
 const databaseName = (accountId: string) => `spinel-offline-${accountId}`;
 let preparationEpoch = 0;
 
@@ -169,6 +170,24 @@ export function setPreparedAccount(accountId: string | null) {
   window.dispatchEvent(new Event('spinel-offline-account-changed'));
 }
 
+/** Repeated answers about the same ended sign-in must not close a recovery tab. */
+export function expirePreparedAccount() {
+  const local = storage();
+  const before = local?.getItem(CANCELLATION_KEY);
+  if (!preparedAccount() && before && local?.getItem(EXPIRED_SESSION_KEY) === before) return;
+  // The first 401 also cancels a download that has not written its account
+  // marker yet. An absent marker alone is not proof that expiry was handled.
+  setPreparedAccount(null);
+  const cancellation = local?.getItem(CANCELLATION_KEY);
+  if (cancellation) {
+    try {
+      local?.setItem(EXPIRED_SESSION_KEY, cancellation);
+    } catch {
+      // Losing this optimization cannot leave offline access enabled.
+    }
+  }
+}
+
 /** Online identity is independent of whether this account has any downloads. */
 export function claimOnlineAccount(accountId: string) {
   const local = storage();
@@ -178,6 +197,9 @@ export function claimOnlineAccount(accountId: string) {
   // Reopening the same signed-in account must not rotate its cancellation
   // token: ordinary live editors may still hold memory-only pending work.
   if (local.getItem(ONLINE_ACCOUNT_KEY) !== accountId) local.setItem(ONLINE_ACCOUNT_KEY, accountId);
+  // A newly verified sign-in needs its own first-expiry fence, even for the
+  // same account. This does not invalidate a frozen tab's pending local write.
+  local.removeItem(EXPIRED_SESSION_KEY);
 }
 
 /** Serialize download insertion against the final empty-catalog marker check. */

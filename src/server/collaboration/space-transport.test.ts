@@ -30,6 +30,22 @@ test('explicitly disabled Spaces refuse metadata, preparation and every native p
   expect((await f.send(f.api() + '/collaboration', f.cookie(), {})).status).toBeGreaterThanOrEqual(
     400,
   );
+  // A disabled feature's 404 still cannot authorize deleting another account's
+  // prepared child when this tab observes a newly switched cookie.
+  for (const user of [f.editor, f.operator])
+    for (const suffix of ['/collaboration', '/offline-bundle']) {
+      const response = await fetch(f.root + f.api() + suffix, {
+        method: suffix === '/collaboration' ? 'POST' : 'GET',
+        headers: {
+          Cookie: f.cookie(user.id),
+          Origin: f.origin,
+          'Content-Type': 'application/json',
+          'X-Spinel-Offline-Account': f.owner.id,
+        },
+        ...(suffix === '/collaboration' ? { body: '{}' } : {}),
+      });
+      expect(response.status).toBe(409);
+    }
 }, 20_000);
 
 test('scoped native HTTP integrations retain ordinary-route denial and exact child permissions', async () => {

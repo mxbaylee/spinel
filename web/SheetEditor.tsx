@@ -95,6 +95,7 @@ export function SheetEditor({
     let stopPresence: (() => void) | undefined;
     setPeople([]);
     let editing = false;
+    let freezeAfterEditing = false;
     let disposeEditor: (() => void) | undefined;
     let save: ReturnType<typeof watchCollaboration> | undefined;
     let lastState: SaveState = { dirty: false, failed: false, message: 'Loading spreadsheet…' };
@@ -110,7 +111,9 @@ export function SheetEditor({
         dirty,
         failed: state.failed || (initialized && Boolean(syncNotice.current)),
         message: editing
-          ? `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
+          ? freezeAfterEditing
+            ? 'Your sign-in ended. Copy the unfinished cell text before signing in again.'
+            : `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
           : state.failed
             ? state.message
             : ((initialized ? syncNotice.current : undefined) ?? state.message),
@@ -178,11 +181,25 @@ export function SheetEditor({
       };
       univerAPI.addEvent(univerAPI.Event.SheetEditStarted, editingCell);
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, editingCell);
+      univerAPI.addEvent(univerAPI.Event.BeforeSheetEditStart, (event) => {
+        if (freezeAfterEditing) event.cancel = true;
+      });
+      univerAPI.addEvent(univerAPI.Event.BeforeSheetEditEnd, (event) => {
+        // Hiding the native editor is not a commit barrier: cross-sheet formula
+        // submission awaits sheet activation. After expiry retain that draft
+        // for copying instead of freezing permissions ahead of its submission.
+        // Escape remains an explicit discard of the unfinished input.
+        if (freezeAfterEditing && event.isConfirm) event.cancel = true;
+      });
       univerAPI.addEvent(univerAPI.Event.SheetEditEnded, () => {
         if (disposed) return;
         editing = false;
         if (chrome) chrome.editing.current = false;
         publish(lastState);
+        if (freezeAfterEditing)
+          queueMicrotask(() => {
+            if (!disposed && freezeAfterEditing) void readOnly();
+          });
       });
       registerGuestEditor?.((retain) => {
         try {
@@ -197,7 +214,15 @@ export function SheetEditor({
       });
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
-      const readOnly = async () => {
+      const readOnly = async (preserveInput = false) => {
+        if (preserveInput && editing) {
+          // A current native cell editor has not emitted its mutation yet.
+          // Keep it available for copying; the expired binding sends no frames.
+          freezeAfterEditing = true;
+          publish(lastState);
+          return;
+        }
+        freezeAfterEditing = false;
         nativePermissions.readonly();
         // This tab's presentation follows its grant; never change shared permissions.
         const permissions = univer.__getInjector().get(IPermissionService);

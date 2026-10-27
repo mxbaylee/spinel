@@ -2,13 +2,21 @@ import { afterEach, expect, test, vi } from 'vitest';
 import type { ClientCheckpoint } from '@spinel/sync-client';
 import type { OfflineBundle } from '../shared/offlineBundle.ts';
 import { OfflineSession } from '../../web/offline/OfflineSession.ts';
-import { OfflineStore } from '../../web/offline/offlineStore.ts';
+import * as offlineStorage from '../../web/offline/offlineStore.ts';
+import {
+  OfflineStore,
+  offlineAccountRead,
+  setPreparedAccount,
+} from '../../web/offline/offlineStore.ts';
 import { downloadForOffline } from '../../web/offline/download.ts';
 import { OFFLINE_SDK_VERSION } from '../../web/offline/OfflineAccess.ts';
+import { sha256 } from '../../web/offline/PreparedImages.ts';
+import { openLocalStart } from '../../web/offline/localStart.ts';
 
 vi.mock('../../web/offline/download.ts', () => ({ downloadForOffline: vi.fn(async () => {}) }));
 
 afterEach(() => {
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
   vi.clearAllMocks();
 });
@@ -54,10 +62,13 @@ function session(writer = true) {
       localStorage: {
         getItem: (key: string) => values.get(key) ?? null,
         setItem: (key: string, value: string) => values.set(key, value),
+        removeItem: (key: string) => values.delete(key),
       },
     }),
   );
   const store = {
+    accountId: scope.account,
+    downloads: vi.fn(async () => []),
     removeClean: vi.fn(async (_scope: unknown, verify: () => void) => verify()),
   };
   const value = new OfflineSession(scope.account, scope.item, scope.spaceId, () => true);
@@ -66,16 +77,212 @@ function session(writer = true) {
     download: { bundle: { ...bundle, readOnly: !writer } },
     releaseWriter: writer ? vi.fn() : undefined,
   });
-  return { value, store };
+  return { value, store, values };
 }
 
+test('immediate expiry keeps a held local save alive through a repeated 401 while rejecting all HTTP', async () => {
+  const f = session();
+  setPreparedAccount(scope.account);
+  let answer!: (response: Response) => void;
+  const fetcher = vi.fn(
+    () =>
+      new Promise<Response>((resolve) => {
+        answer = resolve;
+      }),
+  );
+  vi.stubGlobal('fetch', fetcher);
+  const oldRequest = f.value.fetch('/api/items/item/collaboration');
+  const rejected = expect(oldRequest).rejects.toThrow('no longer current');
+  let finishWrite!: () => void;
+  const waiting = new Promise<void>((resolve) => {
+    finishWrite = resolve;
+  });
+  const save = vi.fn(async (_scope: unknown, _checkpoint: unknown, verify: () => void) => {
+    await waiting;
+    verify();
+  });
+  Object.assign(f.store, { saveCheckpoint: save });
+  f.value.stopAuthenticationHTTP();
+  f.value.endAuthentication();
+  const locked = vi.fn();
+  f.value.onLock = locked;
+  const drain = f.value.persist(checkpoint);
+  await vi.waitFor(() => expect(save).toHaveBeenCalledOnce());
+  expect(f.values.has('spinel.offline.account')).toBe(false);
+  offlineStorage.expirePreparedAccount();
+  expect(f.value.current).toBe(true);
+  expect(locked).not.toHaveBeenCalled();
+  await expect(f.value.fetch('/api/items/item')).rejects.toThrow('no longer current');
+  answer(Response.json({}));
+  await rejected;
+  expect(fetcher).toHaveBeenCalledOnce();
+  // The held write still completes under this tab's narrow recovery fence.
+  finishWrite();
+  await drain;
+  expect(f.value.current).toBe(true);
+});
+
+test.each(['body', 'hash', 'blob'] as const)(
+  'a remote image %s completion cannot be admitted after authentication stops',
+  async (stage) => {
+    const f = session();
+    const bytes = new Uint8Array([1, 2, 3]);
+    const hash = await sha256(bytes);
+    const source = `/api/items/item/images/${hash}`;
+    const response = new Response(bytes, { headers: { 'Content-Type': 'image/png' } });
+    let finish!: () => void;
+    const waiting = new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    const reached = vi.fn();
+    if (stage === 'body')
+      vi.spyOn(response, 'arrayBuffer').mockImplementation(async () => {
+        reached();
+        await waiting;
+        return bytes.buffer;
+      });
+    else if (stage === 'blob')
+      vi.spyOn(response, 'blob').mockImplementation(async () => {
+        reached();
+        await waiting;
+        return new Blob([bytes]);
+      });
+    else {
+      const digest = crypto.subtle.digest.bind(crypto.subtle);
+      vi.spyOn(crypto.subtle, 'digest').mockImplementationOnce(async (algorithm, input) => {
+        reached();
+        await waiting;
+        return digest(algorithm, input);
+      });
+    }
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => response),
+    );
+    const download = { bundle: { ...bundle }, bytes: new Map() };
+    const add = vi.fn();
+    if (stage !== 'blob') Object.assign(f.value, { download, images: { add } });
+    const preparing =
+      stage === 'blob' ? f.value.downloadImage(source) : f.value.prepareImages(source);
+    const rejected = expect(preparing).rejects.toThrow('no longer current');
+    await vi.waitFor(() => expect(reached).toHaveBeenCalledOnce());
+    f.value.stopAuthenticationHTTP();
+    finish();
+    await rejected;
+    expect(download.bytes.size).toBe(0);
+    expect(add).not.toHaveBeenCalled();
+    expect(f.value.current).toBe(true);
+  },
+);
+
+test('ended authentication blocks all cold starts and HTTP while the frozen tab can save local image recovery', async () => {
+  const { values } = session();
+  vi.stubGlobal('location', { origin: 'https://spinel.test' });
+  vi.stubGlobal('navigator', {
+    locks: {
+      request: async (_name: string, _options: unknown, work: (lock: object) => Promise<void>) =>
+        work({}),
+    },
+  });
+  offlineStorage.claimOnlineAccount(scope.account);
+  setPreparedAccount(scope.account);
+  const before = offlineAccountRead(scope.account);
+  const bytes = new Uint8Array([1, 2, 3]);
+  const hash = await sha256(bytes);
+  const source = `/api/items/${scope.item}/images/${hash}`;
+  const imageFiles = [{ source, sha256: hash, mime: 'image/png', byteLength: bytes.length }];
+  const download = { bundle: { ...bundle, images: imageFiles }, bytes: new Map([[source, bytes]]) };
+  const saved: ClientCheckpoint[] = [];
+  const store = {
+    bundle: vi.fn(async () => download),
+    close: vi.fn(),
+    saveCheckpoint: vi.fn(async (_scope: unknown, value: ClientCheckpoint, verify: () => void) => {
+      verify();
+      saved.push(structuredClone(value));
+    }),
+  };
+  const opened = vi
+    .spyOn(offlineStorage, 'openOfflineStore')
+    .mockResolvedValue(store as unknown as OfflineStore);
+  const active = new OfflineSession(scope.account, scope.item, scope.spaceId, () => true);
+  const locked = vi.fn();
+  active.onLock = locked;
+  try {
+    await active.activate();
+    const local = active.toVisible(source);
+    expect(local).toMatch(/^blob:/);
+    let answer!: (response: Response) => void;
+    const fetcher = vi.fn(
+      () =>
+        new Promise<Response>((resolve) => {
+          answer = resolve;
+        }),
+    );
+    vi.stubGlobal('fetch', fetcher);
+    const oldRequest = active.fetch(
+      `/api/spaces/${scope.spaceId}/items/${scope.item}/collaboration`,
+    );
+    const rejected = expect(oldRequest).rejects.toThrow('no longer current');
+    active.endAuthentication();
+    answer(Response.json({}));
+    await rejected;
+    expect(values.has('spinel.offline.account')).toBe(false);
+    expect(before()).toBe(false);
+    expect(await openLocalStart()).toBeNull();
+    expect(locked).not.toHaveBeenCalled();
+    expect(active.current).toBe(true);
+    offlineStorage.expirePreparedAccount();
+    expect(active.current).toBe(true);
+    expect(active.toCanonical(local)).toBe(source);
+    expect(await active.getImage(source)).toBe(local);
+    await active.persist(checkpoint);
+    expect(saved).toEqual([checkpoint]);
+    expect(opened).toHaveBeenCalledOnce();
+    await expect(active.fetch(`/api/spaces/${scope.spaceId}/items/${scope.item}`)).rejects.toThrow(
+      'no longer current',
+    );
+    await expect(active.refreshClean(() => {})).rejects.toThrow('no longer current');
+    expect(fetcher).toHaveBeenCalledOnce();
+    expect(values.has('spinel.offline.account')).toBe(false);
+    // A verified different account always ends the narrow retained-tab fence.
+    offlineStorage.claimOnlineAccount('other');
+    expect(active.current).toBe(false);
+    expect(locked).toHaveBeenCalledOnce();
+    expect(() => active.toCanonical(local)).toThrow();
+    await expect(active.persist(checkpoint)).rejects.toThrow('no longer current');
+    expect(saved).toEqual([checkpoint]);
+  } finally {
+    active.dispose();
+  }
+});
+
+test('clean removal clears final preparation only after scoped deletion has completed', async () => {
+  const f = session();
+  setPreparedAccount(scope.account);
+  Object.assign(f.value, { readCurrent: offlineAccountRead(scope.account) });
+  const locked = vi.fn();
+  f.value.onLock = locked;
+  f.store.removeClean.mockImplementationOnce(async (_scope, verify) => {
+    verify();
+    expect(f.values.get('spinel.offline.account')).toBe(scope.account);
+    expect(locked).not.toHaveBeenCalled();
+  });
+  await f.value.removeClean(() => {});
+  expect(f.values.has('spinel.offline.account')).toBe(false);
+  expect(locked).toHaveBeenCalledOnce();
+});
+
 test('clean access removal reuses the mounted writer and checks exact native scope', async () => {
-  const request = vi.fn();
+  const request = vi.fn(async (_name: string, work: () => Promise<void>) => work());
   vi.stubGlobal('navigator', { locks: { request } });
   const f = session();
   const verify = vi.fn();
   await f.value.removeClean(verify);
-  expect(request).not.toHaveBeenCalled();
+  expect(request).not.toHaveBeenCalledWith(
+    'spinel-offline:owner:item',
+    expect.anything(),
+    expect.anything(),
+  );
   expect(f.store.removeClean).toHaveBeenCalledWith(scope, expect.any(Function));
   expect(verify.mock.calls.length).toBeGreaterThanOrEqual(2);
 });
@@ -85,9 +292,10 @@ test.each(['remove', 'refresh'] as const)(
   async (action) => {
     let held = false;
     const request = vi.fn(
-      async (_name: string, _options: unknown, work: (lock: object) => Promise<void>) => {
+      async (name: string, options: unknown, work?: (lock: object) => Promise<void>) => {
+        if (name.startsWith('spinel-offline-catalog:')) return (options as () => Promise<void>)();
         held = true;
-        await work({});
+        await work!({});
         held = false;
       },
     );

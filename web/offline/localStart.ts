@@ -62,14 +62,18 @@ async function hasDatabase(accountId: string) {
  * account, and only when it holds that account's downloads. Another account's
  * local data is never opened in its place.
  */
-export async function claimDevice(user: OfflineUser & { isAdmin: boolean }) {
+export async function claimDevice(
+  user: OfflineUser & { isAdmin: boolean },
+  current: () => boolean = () => true,
+) {
   let scope: OfflinePreparation;
   try {
+    if (!current()) return;
     claimOnlineAccount(user.id);
     if (user.isAdmin) return;
     // Startup may outlive its timeout or another tab's sign-out. Capture the
     // same persisted fence as downloads before any database work can wait.
-    scope = offlinePreparation(user.id, () => true);
+    scope = offlinePreparation(user.id, current);
   } catch {
     // Preparing local access is best effort; blocked storage must not stop sign-in.
     return;

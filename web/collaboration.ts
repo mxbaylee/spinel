@@ -103,7 +103,7 @@ export function identifyCollaborator(univer: Univer, user: { id: string; name: s
 export function watchCollaboration(
   univer: Univer,
   publish: (state: SaveState) => void,
-  readonly: () => Promise<void>,
+  readonly: (preserveInput?: boolean) => Promise<void>,
   publishConnection: (state: ConnectionState) => void = () => {},
 ) {
   const sync = getSpinelSync(univer);

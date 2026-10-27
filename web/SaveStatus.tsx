@@ -76,9 +76,12 @@ export function SaveStatus({
                 <Popover.Popup className="save-detail" aria-label="Save details">
                   <Popover.Title>Save details</Popover.Title>
                   <p>{state.message}</p>
-                  {state.failed && state.dirty && state.local !== 'attention' && (
+                  {(state.signInRequired ||
+                    (state.failed && state.dirty && state.local !== 'attention')) && (
                     <button type="button" onClick={onRetry}>
-                      Retry saving
+                      {state.signInRequired && !state.dirty
+                        ? 'Continue to sign-in'
+                        : 'Retry saving'}
                     </button>
                   )}
                   <Popover.Close aria-label="Close save details">Close</Popover.Close>

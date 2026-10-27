@@ -64,6 +64,31 @@ test('verified local image bytes render and export without fetching', async () =
   }
 });
 
+test('an image admission cancelled during hashing never publishes the new local blob', async () => {
+  const f = await fixture();
+  const service = await PreparedImages.prepare(f.access, [], new Map(), () => 'owner');
+  let admitted = true;
+  const digest = crypto.subtle.digest.bind(crypto.subtle);
+  const hashing = vi
+    .spyOn(crypto.subtle, 'digest')
+    .mockImplementationOnce(async (algorithm, input) => {
+      const result = await digest(algorithm, input);
+      admitted = false;
+      return result;
+    });
+  try {
+    await expect(
+      service.add(f.images, f.bytes, () => {
+        if (!admitted) throw new Error('Remote access ended');
+      }),
+    ).rejects.toThrow('Remote access ended');
+    expect(await service.getImage(f.source)).toBe('data:image/png;base64,');
+  } finally {
+    hashing.mockRestore();
+    service.dispose();
+  }
+});
+
 test('localize rewrites only verified sources and leaves the stored snapshot unchanged', async () => {
   const f = await fixture();
   const service = await f.prepare();

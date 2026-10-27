@@ -27,7 +27,7 @@ vi.mock('@spinel/sync-client', () => ({
         pendingMutations: 0,
         connected: false,
         resyncing: false,
-      },
+      } as ClientState,
       disposed: false,
       received: [] as IncomingFrame[],
     };
@@ -58,7 +58,15 @@ vi.mock('@spinel/sync-client', () => ({
         };
       },
       async persistNow() {
-        await options.persist?.(this.checkpoint());
+        try {
+          await options.persist?.(this.checkpoint());
+          if (options.persist) entry.state.localPersistence = 'saved';
+          options.onState(entry.state);
+        } catch (error) {
+          entry.state.localPersistence = 'failed';
+          options.onState(entry.state);
+          throw error;
+        }
       },
       refuse(reason: import('@spinel/sync-client').ClientFailure) {
         entry.state = { ...entry.state, resyncing: true };
@@ -133,10 +141,13 @@ async function fixture({
 } = {}) {
   vi.useFakeTimers();
   vi.stubGlobal('navigator', { onLine: true });
+  const signIn = vi.fn();
   vi.stubGlobal('location', {
     pathname: guest ? `/share/${item}` : '/',
     origin: 'https://spinel.test',
     protocol: 'https:',
+    search: '',
+    assign: signIn,
   });
   const events = new EventTarget();
   const dispatched = vi.spyOn(events, 'dispatchEvent');
@@ -183,6 +194,8 @@ async function fixture({
     removeClean: vi.fn(async (verify: () => void) => {
       verify();
     }),
+    endAuthentication: vi.fn(),
+    stopAuthenticationHTTP: vi.fn(),
     stopRemote: vi.fn((reason: string) => {
       offline.problem = reason;
     }),
@@ -215,7 +228,7 @@ async function fixture({
   beforeWatch?.();
   const saves: SaveState[] = [];
   const connections: ConnectionState[] = [];
-  const readonly = vi.fn(async () => {});
+  const readonly = vi.fn(async (_preserveInput?: boolean) => {});
   const handle = getSpinelSync(univer)!.watch({
     publish: (state) => saves.push(state),
     connection: (state) => connections.push(state),
@@ -233,6 +246,7 @@ async function fixture({
     requests,
     reload,
     lock,
+    signIn,
     dispatched,
     client,
     offline,
@@ -312,7 +326,7 @@ test('a clean downloaded base outside replay retention refreshes without retaini
   expect(f.reload).toHaveBeenCalledWith('stale', true);
 });
 
-test.each([401, 403, 404])(
+test.each([403, 404])(
   'verified %s removes a clean downloaded child after freezing and draining, without inventing edits',
   async (status) => {
     const f = await fixture({ downloaded: true, space: true });
@@ -340,6 +354,95 @@ test.each([401, 403, 404])(
     );
   },
 );
+
+test.each([false, true])(
+  'a 401 immediately expires preparation, then drains every retained device copy before signing in (pending: %s)',
+  async (pending) => {
+    const f = await fixture({ downloaded: true });
+    if (pending) f.pending();
+    const order: string[] = [];
+    f.readonly.mockImplementationOnce(async (preserveInput) => {
+      expect(f.offline.stopAuthenticationHTTP).toHaveBeenCalledOnce();
+      expect(preserveInput).toBe(true);
+      order.push('freeze');
+    });
+    f.offline.persist.mockImplementationOnce(async () => {
+      order.push('persist');
+    });
+    f.offline.endAuthentication.mockImplementationOnce(() => {
+      order.push('expire');
+    });
+    f.metadata(async () => Response.json({}, { status: 401 }));
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(order).toEqual(['expire', 'freeze', 'persist']);
+    expect(f.offline.removeClean).not.toHaveBeenCalled();
+    expect(f.offline.refreshClean).not.toHaveBeenCalled();
+    expect(f.client.state.resyncing).toBe(false);
+    expect(f.client.disposed).toBe(true);
+    expect(f.signIn).toHaveBeenCalledWith('/sign-in');
+  },
+);
+
+test.each(['disk', 'recovery', 'host input', 'timeout'] as const)(
+  'a 401 disables offline reopening but retains the visible editor after %s prevents a safe exit',
+  async (failure) => {
+    const f = await fixture({ downloaded: true, canRefresh: () => failure !== 'host input' });
+    f.pending();
+    if (failure === 'disk') f.offline.persist.mockRejectedValueOnce(new Error('Disk full'));
+    if (failure === 'recovery') f.client.state.recoveryMissing = true;
+    if (failure === 'timeout')
+      f.offline.persist.mockImplementationOnce(() => new Promise(() => {}));
+    f.metadata(async () => Response.json({}, { status: 401 }));
+    await vi.advanceTimersByTimeAsync(4001);
+    expect(f.offline.endAuthentication).toHaveBeenCalledOnce();
+    expect(f.offline.removeClean).not.toHaveBeenCalled();
+    expect(f.client.disposed).toBe(false);
+    expect(f.signIn).not.toHaveBeenCalled();
+    expect(f.readonly).toHaveBeenCalledWith(true);
+    expect(f.socket().readyState).toBe(3);
+    if (failure === 'disk') {
+      expect(f.saves.at(-1)).toMatchObject({ dirty: true, local: 'failed' });
+      f.handle.retry();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(f.signIn).toHaveBeenCalledWith('/sign-in');
+      expect(f.client.disposed).toBe(true);
+    }
+  },
+);
+
+test('durable expired work exposes a sign-in handoff that still waits for unfinished host input', async () => {
+  let unfinished = true;
+  const f = await fixture({ downloaded: true, canRefresh: () => !unfinished });
+  f.pending();
+  f.metadata(async () => Response.json({}, { status: 401 }));
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(f.saves.at(-1)).toMatchObject({
+    dirty: false,
+    local: 'attention',
+    retained: true,
+    signInRequired: true,
+  });
+  f.handle.retry();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.signIn).not.toHaveBeenCalled();
+  unfinished = false;
+  f.handle.retry();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.signIn).toHaveBeenCalledOnce();
+  expect(f.client.state.pending).toBe(true);
+  expect(f.offline.removeClean).not.toHaveBeenCalled();
+});
+
+test('an account change during the 401 local drain cannot clear or redirect the new account', async () => {
+  const f = await fixture({ downloaded: true });
+  f.offline.persist.mockImplementationOnce(async () => {
+    f.offline.current = false;
+  });
+  f.metadata(async () => Response.json({}, { status: 401 }));
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(f.offline.endAuthentication).toHaveBeenCalledOnce();
+  expect(f.signIn).not.toHaveBeenCalled();
+});
 
 test.each(['viewer', 'generation'] as const)(
   'a clean authorized %s change refreshes the download and reopens without a failure checkpoint',
@@ -398,7 +501,7 @@ test.each(['queue', 'durable queue', 'recovery', 'host input'] as const)(
     expect(f.offline.refreshClean).not.toHaveBeenCalled();
     expect(f.client.disposed).toBe(false);
     expect(f.client.state.resyncing).toBe(true);
-    expect(f.saves.at(-1)?.local).toBe('attention');
+    expect(f.saves.at(-1)?.local).toBe(work === 'recovery' ? 'failed' : 'attention');
     expect(f.readonly).toHaveBeenCalled();
   },
 );
@@ -513,9 +616,32 @@ test('uncaptured visible recovery edits keep the navigation warning after a fail
     resyncing: true,
     localPersistence: 'saved',
   });
-  expect(f.saves.at(-1)).toMatchObject({ dirty: true, failed: true, local: 'attention' });
+  expect(f.saves.at(-1)).toMatchObject({ dirty: true, failed: true, local: 'failed' });
   expect(f.saves.at(-1)?.message).toContain('Keep this tab open');
 });
+
+test.each(['saving', 'failed'] as const)(
+  'attention never conceals a %s local checkpoint or its navigation warning',
+  async (localPersistence) => {
+    const f = await fixture({ downloaded: true });
+    f.client.state = {
+      ...f.client.state,
+      pending: true,
+      resyncing: true,
+      localPersistence,
+    };
+    f.client.options.onState(f.client.state);
+    expect(f.saves.at(-1)).toMatchObject({ dirty: true, failed: true, local: localPersistence });
+    expect(f.saves.at(-1)?.message).toContain('attention');
+    if (localPersistence === 'failed') {
+      expect(f.saves.at(-1)?.message).toContain('Keep this tab open and retry saving');
+      expect(f.saves.at(-1)?.message).not.toContain('saved device copy is retained');
+    }
+    f.client.state.localPersistence = 'saved';
+    f.client.options.onState(f.client.state);
+    expect(f.saves.at(-1)).toMatchObject({ dirty: false, failed: true, local: 'attention' });
+  },
+);
 
 test('durable offline work retains an unavailable page without marking it unsaved', async () => {
   const f = await fixture({ downloaded: true, space: true });

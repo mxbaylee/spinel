@@ -16,11 +16,15 @@ import { setSyncPresence } from './syncPresence.ts';
 import type { SyncPresenceState, SyncPresenceMember } from './syncPresence.ts';
 import { nativeMutationInventory } from './nativeMutationInventory.ts';
 import type { OfflineSession } from './offline/OfflineSession.ts';
+import { expirePreparedAccount } from './offline/offlineStore.ts';
+import { within } from './offline/shell.ts';
+import { signInPath } from './api.ts';
+import { clearDashboardNavigation } from './dashboardNavigation.ts';
 
 interface Watch {
   publish(state: SaveState): void;
   connection(state: ConnectionState): void;
-  readonly(): Promise<void>;
+  readonly(preserveInput?: boolean): Promise<void>;
 }
 
 interface Options {
@@ -132,6 +136,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   let retryDelay = 250;
   let denialMessage = '';
   let refreshingClean = false;
+  let authenticationEnded = false;
+  let endingAuthentication = false;
   let clearMessages = () => {};
   let state: ClientState = {
     revision,
@@ -172,19 +178,21 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     );
     if (options.offline?.enabled) {
       const attention = denied || state.resyncing || Boolean(options.offline.problem);
-      const local = attention
-        ? 'attention'
-        : state.localPersistence === 'failed'
+      const local =
+        state.recoveryMissing || state.localPersistence === 'failed'
           ? 'failed'
           : state.localPersistence === 'saving'
             ? 'saving'
-            : state.pending
-              ? 'saved'
-              : connected
-                ? 'synced'
-                : 'saved';
+            : attention
+              ? 'attention'
+              : state.pending
+                ? 'saved'
+                : connected
+                  ? 'synced'
+                  : 'saved';
       watcher.publish({
         local,
+        ...(authenticationEnded ? { signInRequired: true } : {}),
         retained: state.pending || Boolean(state.recoveryMissing),
         dirty:
           Boolean(state.recoveryMissing) ||
@@ -192,15 +200,15 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
           state.localPersistence === 'failed',
         failed: attention || local === 'failed',
         message: state.recoveryMissing
-          ? 'The latest visible changes could not be saved on this device. Keep this tab open.'
-          : attention
-            ? `Needs attention. ${options.offline.problem || denialMessage || 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.'}`
-            : access === 'viewer'
-              ? 'View only on this device.'
-              : local === 'failed'
-                ? 'Changes could not be saved on this device. Keep this tab open and retry saving.'
-                : local === 'saving'
-                  ? 'Saving on this device…'
+          ? 'The latest visible changes could not be saved on this device. Keep this tab open and retry saving.'
+          : local === 'failed'
+            ? `Changes could not be saved on this device. Keep this tab open and retry saving.${attention ? ' Synchronization also needs attention.' : ''}`
+            : local === 'saving'
+              ? `Saving on this device…${attention ? ' Synchronization needs attention.' : ''}`
+              : attention
+                ? `Needs attention. ${options.offline.problem || denialMessage || 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.'}`
+                : access === 'viewer'
+                  ? 'View only on this device.'
                   : local === 'synced'
                     ? 'Synced. All changes are saved on the server and this device.'
                     : 'Saved on this device — waiting to sync.',
@@ -208,6 +216,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       return;
     }
     watcher.publish({
+      ...(authenticationEnded ? { signInRequired: true } : {}),
       dirty: state.pending,
       failed: denied || state.resyncing || Boolean(state.failure) || !connected,
       message: denied
@@ -282,7 +291,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       : {}),
     onState(next) {
       state = next;
-      if (active() && next.resyncing) void watcher?.readonly().catch(() => {});
+      if (active() && next.resyncing) void watcher?.readonly(authenticationEnded).catch(() => {});
       report();
     },
     onResync(reason) {
@@ -292,7 +301,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
           'The live document changed or an edit could not be synchronized. Your saved device copy is retained.',
         );
         endConnection();
-        void watcher?.readonly();
+        void watcher?.readonly(authenticationEnded);
         report();
         return;
       }
@@ -302,7 +311,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   });
   if (options.offline) {
     options.offline.onChange = () => {
-      if (options.offline?.readOnly) void watcher?.readonly();
+      if (options.offline?.readOnly) void watcher?.readonly(authenticationEnded);
       report();
     };
     options.offline.onLock = () => {
@@ -365,6 +374,53 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     !options.offline!.pending &&
     options.canRefresh?.() !== false;
 
+  async function endAuthentication() {
+    if (!active() || endingAuthentication) return;
+    endingAuthentication = true;
+    authenticationEnded = true;
+    denied = true;
+    options.offline?.stopAuthenticationHTTP();
+    endConnection();
+    denialMessage = 'Your sign-in ended. Keep this tab open until your changes are saved.';
+    options.offline?.stopRemote(denialMessage);
+    let durable = false;
+    try {
+      clearDashboardNavigation();
+      // Install this tab's local-recovery fence before yielding. A second
+      // confirmed 401 then sees the same expired epoch instead of disposing
+      // this tab while its native input or disk transaction is still pending.
+      if (options.offline) options.offline.endAuthentication();
+      else expirePreparedAccount();
+      if (!active()) return;
+      try {
+        await within(
+          (async () => {
+            await watcher?.readonly(true);
+            if (!active()) throw closed();
+            await client.persistNow();
+          })(),
+          3000,
+          'Local saving did not finish. Keep this tab open and retry saving.',
+        );
+        durable =
+          !state.recoveryMissing &&
+          state.localPersistence !== 'failed' &&
+          state.localPersistence !== 'saving' &&
+          options.canRefresh?.() !== false &&
+          (!state.pending || Boolean(options.offline?.enabled));
+      } catch {
+        // Retain this frozen native model, including work that never reached IDB.
+      }
+      if (!active()) return;
+      if (durable) {
+        dispose();
+        location.assign(signInPath());
+      } else report();
+    } finally {
+      endingAuthentication = false;
+    }
+  }
+
   /** A clean lifecycle change must not manufacture a retained edit checkpoint. */
   async function transitionClean(action: 'refresh' | 'remove') {
     if (!cleanDownloaded()) return false;
@@ -419,6 +475,10 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       );
       const data = response.ok ? await response.json() : undefined;
       if (!active() || refreshingClean) return;
+      if (response.status === 401 && !guestItemId()) {
+        await endAuthentication();
+        return;
+      }
       const lost = [401, 403, 404, 409].includes(response.status);
       const accountChanged =
         options.offline?.enabled &&
@@ -727,6 +787,10 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       report();
       return {
         retry() {
+          if (authenticationEnded) {
+            void endAuthentication();
+            return;
+          }
           client.retry();
           retryDelay = 250;
           reconnect();

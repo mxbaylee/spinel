@@ -11,6 +11,8 @@ export interface SaveState {
   local?: 'saving' | 'saved' | 'synced' | 'attention' | 'failed';
   /** Downloaded work keeps an unavailable page mounted without a dirty warning. */
   retained?: boolean;
+  /** Retained work can continue to sign-in once local saving and host input finish. */
+  signInRequired?: boolean;
 }
 export class SaveFailure extends Error {
   status: number;

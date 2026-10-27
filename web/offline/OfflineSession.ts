@@ -11,7 +11,9 @@ import { ScopedHTTP } from './ScopedHTTP.ts';
 import { downloadForOffline } from './download.ts';
 import {
   hasOfflineEdits,
+  expirePreparedAccount,
   offlineAccountRead,
+  offlineEpoch,
   offlinePreparation,
   openOfflineStore,
   preparedAccount,
@@ -58,6 +60,9 @@ export class OfflineSession implements IURLImageService {
   private disposed = false;
   private download?: Download;
   private attention = '';
+  private endingAuthentication = false;
+  private authenticationHTTPStopped = false;
+  private recoveryCurrent?: () => boolean;
   onChange?: () => void;
   onLock?: () => void;
   online = false;
@@ -103,14 +108,20 @@ export class OfflineSession implements IURLImageService {
     return (
       !this.disposed &&
       this.mounted() &&
-      this.preparationCurrent() &&
-      (!this.readCurrent || this.readCurrent())
+      (this.recoveryCurrent
+        ? this.recoveryCurrent()
+        : this.preparationCurrent() && (!this.readCurrent || this.readCurrent()))
     );
   }
   verify = () => {
     if (!this.current) throw closed();
   };
+  verifyRemote = () => {
+    this.verify();
+    if (this.authenticationHTTPStopped || this.recoveryCurrent) throw closed();
+  };
   private accountChanged = () => {
+    if (this.endingAuthentication) return;
     if (!this.current) {
       this.access?.lock('You signed out or changed accounts on this device.');
       this.onLock?.();
@@ -121,7 +132,39 @@ export class OfflineSession implements IURLImageService {
     this.attention = reason;
     this.onChange?.();
   }
+  /** End remote access immediately, before the bounded local save can yield. */
+  stopAuthenticationHTTP() {
+    this.authenticationHTTPStopped = true;
+    this.online = false;
+  }
+  /**
+   * A verified ended sign-in disables every offline launch. Only this mounted,
+   * frozen tab may finish its existing local write; the next account epoch
+   * invalidates that exception. It cannot prepare data or make HTTP requests.
+   */
+  endAuthentication() {
+    this.verify();
+    this.stopAuthenticationHTTP();
+    if (this.recoveryCurrent) return;
+    this.endingAuthentication = true;
+    try {
+      expirePreparedAccount();
+      const verify = offlineEpoch();
+      this.recoveryCurrent = () => {
+        try {
+          verify();
+          const account = preparedAccount();
+          return account === null || account === this.accountId;
+        } catch {
+          return false;
+        }
+      };
+    } finally {
+      this.endingAuthentication = false;
+    }
+  }
   async activate() {
+    if (this.recoveryCurrent) return;
     if (this.enabled || preparedAccount() !== this.accountId) return;
     if (this.activation) return this.activation;
     this.activation = this.open().finally(() => {
@@ -171,7 +214,7 @@ export class OfflineSession implements IURLImageService {
           this.stopRemote(state.reason ?? 'The downloaded images need attention.');
       });
       const images = await PreparedImages.prepare(access, bundle.images, bytes, () =>
-        current() && this.current ? this.accountId : null,
+        this.current && (this.recoveryCurrent || current()) ? this.accountId : null,
       );
       if (bundle.readOnly) {
         release?.();
@@ -218,6 +261,7 @@ export class OfflineSession implements IURLImageService {
     verifyClean: () => void,
     operation: (verify: () => void) => Promise<void>,
   ) {
+    if (this.authenticationHTTPStopped || this.recoveryCurrent) throw closed();
     if (!this.store || !this.download || this.pending)
       throw new Error('This device copy cannot be changed while it has local changes.');
     // Editable sessions already hold this lock. Viewer copies acquire it for
@@ -227,6 +271,7 @@ export class OfflineSession implements IURLImageService {
       throw new Error('Close this document in every other tab before updating its device copy.');
     const verify = () => {
       this.verify();
+      if (this.authenticationHTTPStopped || this.recoveryCurrent) throw closed();
       verifyClean();
       if (this.pending) throw new Error('Local changes must be retained.');
     };
@@ -246,6 +291,7 @@ export class OfflineSession implements IURLImageService {
   }
   /** A verified access denial can remove a clean copy without releasing its writer. */
   async removeClean(verifyClean: () => void) {
+    const store = this.store;
     await this.withCleanWriter(verifyClean, async (verify) => {
       await this.store!.removeClean(
         {
@@ -258,10 +304,17 @@ export class OfflineSession implements IURLImageService {
         verify,
       );
     });
+    // Finish scoped deletion and its post-commit check before clearing the
+    // last preparation marker: clearing it intentionally locks local readers.
+    await offlinePreparation(this.accountId, this.mounted).clearIfEmpty(store!);
   }
   async fetch(path: string, init: RequestInit = {}) {
-    this.verify();
-    if (this.http) return this.http.fetch(path, init);
+    this.verifyRemote();
+    if (this.http) {
+      const response = await this.http.fetch(path, init);
+      this.verifyRemote();
+      return response;
+    }
     const headers = new Headers(init.headers);
     headers.set('X-Spinel-Offline-Account', this.accountId);
     const response = await fetch(path, {
@@ -270,7 +323,7 @@ export class OfflineSession implements IURLImageService {
       credentials: 'same-origin',
       cache: 'no-store',
     });
-    this.verify();
+    this.verifyRemote();
     return response;
   }
   toCanonical = <T>(value: T): T =>
@@ -310,7 +363,7 @@ export class OfflineSession implements IURLImageService {
       if (size > 5 * 1024 * 1024) throw new Error('This image exceeds the offline image budget.');
       const bytes = new Uint8Array(await response.arrayBuffer());
       signal?.throwIfAborted();
-      this.verify();
+      this.verifyRemote();
       const image: OfflineBundleImage = {
         source,
         sha256: hash,
@@ -321,9 +374,13 @@ export class OfflineSession implements IURLImageService {
       checkImageList(this.itemId, images);
       if ((await sha256(bytes)) !== hash) throw new Error('An image failed its integrity check.');
       signal?.throwIfAborted();
-      this.verify();
-      await this.images.add([image], new Map([[source, bytes]]));
+      this.verifyRemote();
+      await this.images.add([image], new Map([[source, bytes]]), () => {
+        signal?.throwIfAborted();
+        this.verifyRemote();
+      });
       signal?.throwIfAborted();
+      this.verifyRemote();
       this.download.bytes.set(source, bytes);
       this.download.bundle.images = images;
     }
@@ -392,7 +449,9 @@ export class OfflineSession implements IURLImageService {
     if (this.images) return this.images.downloadImage(url);
     const response = await this.fetch(url);
     if (!response.ok) throw new Error('The image could not be opened.');
-    return response.blob();
+    const blob = await response.blob();
+    this.verifyRemote();
+    return blob;
   }
   registerURLImageDownloader(): never {
     throw new Error('Offline images cannot install a fallback downloader.');

@@ -116,6 +116,7 @@ export function DocEditor({
   const canEditFormulas = useRef(false);
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
+  const [preserveFormulaInput, setPreserveFormulaInput] = useState(false);
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
@@ -151,11 +152,13 @@ export function DocEditor({
     let stopFormulaVisibility: (() => void) | undefined;
     setFormulaStates([]);
     editFormula(null);
+    setPreserveFormulaInput(false);
     setFormulaError('');
     setPeople([]);
     let uploads = 0;
     let insertions = 0;
     let composing = false;
+    let finishReadonly: (() => void) | undefined;
     let uploaded = 0;
     let disposeEditor: (() => void) | undefined;
     let save: ReturnType<typeof watchCollaboration> | undefined;
@@ -194,6 +197,9 @@ export function DocEditor({
       queueMicrotask(() => {
         composing = false;
         publish(lastState);
+        const freeze = finishReadonly;
+        finishReadonly = undefined;
+        freeze?.();
       });
     };
     editorElement?.addEventListener('compositionstart', compositionStart, true);
@@ -208,7 +214,7 @@ export function DocEditor({
       }
       if (data.offline) {
         const verify = () => {
-          data.offline!.verify();
+          data.offline!.verifyRemote();
           if (data.offline!.enabled && !data.offline!.online)
             throw new FormulaSaveError('unavailable');
         };
@@ -248,8 +254,10 @@ export function DocEditor({
               },
             );
             const image = await response.json();
+            data.offline?.verifyRemote();
             if (!response.ok) throw new Error(image.error ?? 'Image upload failed.');
             await data.offline?.prepareImages(image.url);
+            data.offline?.verifyRemote();
             uploaded++;
             return {
               imageId: crypto.randomUUID(),
@@ -386,12 +394,20 @@ export function DocEditor({
       });
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
-      const readonly = async () => {
-        nativePermissions.readonly();
+      const readonly = async (preserveInput = false) => {
         canEditFormulas.current = false;
-        editFormula(null);
+        setPreserveFormulaInput(preserveInput);
+        if (!preserveInput) editFormula(null);
         formulas.current?.clear();
         setEditable(false);
+        if (preserveInput && composing) {
+          finishReadonly = () => {
+            if (!disposed) void readonly(true);
+          };
+          return;
+        }
+        finishReadonly = undefined;
+        nativePermissions.readonly();
         // Local UI state only: changing the shared document's permission rules
         // would also make still-authorized collaborators read-only.
         const permissions = univer.__getInjector().get(IPermissionService);
@@ -411,6 +427,8 @@ export function DocEditor({
         canRefresh: () =>
           uploads === 0 && insertions === 0 && !composing && !formulaDraftOpen.current,
         lock: () => {
+          setPreserveFormulaInput(false);
+          editFormula(null);
           formulas.current?.clear();
           disposeEditor?.();
           disposeEditor = undefined;
@@ -627,7 +645,7 @@ export function DocEditor({
         />
       )}
       {localAccountId && <FormulaReadout states={formulaStates} target={chrome?.toolsTarget} />}
-      {formulaEdit && editable && (
+      {formulaEdit && (editable || preserveFormulaInput) && (
         <FormulaDialog
           id={id}
           spaceId={spaceId}

@@ -9,6 +9,13 @@ export interface SpaceDocumentScope {
   spaceItem: string;
 }
 
+/** Bind offline requests before any role or document-access denial. */
+export function checkOfflineAccount(headers: IncomingHttpHeaders, userId: string) {
+  const expectedAccount = headers['x-spinel-offline-account'];
+  if (expectedAccount !== undefined && expectedAccount !== userId)
+    throw new AuthError(409, 'The signed-in account changed. Reopen Spinel.');
+}
+
 export function documentIdentity(
   workspace: WorkspaceStore,
   headers: IncomingHttpHeaders,
@@ -25,13 +32,12 @@ export function documentIdentity(
     };
   }
   const session = workspace.auth.session(cookieToken({ headers }));
-  if (!session?.user_id || workspace.auth.user(session.user_id)?.is_admin)
-    throw new AuthError(401, 'Sign in with your everyday account.');
+  if (!session?.user_id) throw new AuthError(401, 'Sign in with your everyday account.');
   // An offline refresh must never interpret another account's 404 as removal
   // of the downloading account's copy. Check before document authorization.
-  const expectedAccount = headers['x-spinel-offline-account'];
-  if (expectedAccount !== undefined && expectedAccount !== session.user_id)
-    throw new AuthError(409, 'The signed-in account changed. Reopen Spinel.');
+  checkOfflineAccount(headers, session.user_id);
+  if (workspace.auth.user(session.user_id)?.is_admin)
+    throw new AuthError(401, 'Sign in with your everyday account.');
   return {
     userId: session.user_id,
     customData: { sessionHash: session.token_hash, ...space },

@@ -141,10 +141,60 @@ export const DeviceSaveFailed: Story = {
   },
   play: details,
 };
+export const AttentionSaveFailed: Story = {
+  args: {
+    state: {
+      local: 'failed',
+      dirty: true,
+      failed: true,
+      message:
+        'Changes could not be saved on this device. Keep this tab open and retry saving. Synchronization also needs attention.',
+    },
+  },
+  play: async (context) => {
+    await details(context);
+    await expect(
+      within(context.canvasElement.ownerDocument.body).getByRole('button', {
+        name: 'Retry saving',
+      }),
+    ).toBeVisible();
+  },
+};
 export const Saving: Story = { args: { state: saving }, play: details };
 export const EditingCell: Story = {
   args: { state: { dirty: true, failed: false, message: 'Editing cell — changes not saved yet.' } },
   play: details,
+};
+export const ExpiredCellInput: Story = {
+  args: {
+    state: {
+      dirty: true,
+      failed: true,
+      signInRequired: true,
+      message: 'Your sign-in ended. Copy the unfinished cell text before signing in again.',
+    },
+  },
+  play: details,
+};
+export const ExpiredSavedWork: Story = {
+  args: {
+    state: {
+      dirty: false,
+      failed: true,
+      local: 'attention',
+      retained: true,
+      signInRequired: true,
+      message: 'Your sign-in ended. Your saved device copy is retained.',
+    },
+  },
+  play: async (context) => {
+    await details(context);
+    await expect(
+      within(context.canvasElement.ownerDocument.body).getByRole('button', {
+        name: 'Continue to sign-in',
+      }),
+    ).toBeVisible();
+  },
 };
 export const EditingFormula: Story = {
   args: {

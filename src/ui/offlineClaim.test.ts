@@ -73,6 +73,25 @@ test('startup claims existing downloads without rewriting their catalog', async 
   expect(f.close).toHaveBeenCalledTimes(1);
 });
 
+test('an obsolete sign-in attempt cannot prepare the device after a delayed database read', async () => {
+  const f = fixture();
+  const entered = deferred();
+  const held = deferred();
+  let current = true;
+  f.downloads.mockImplementationOnce(async () => {
+    entered.resolve();
+    await held.promise;
+    return [download];
+  });
+  const claim = claimDevice(user, () => current);
+  await entered.promise;
+  current = false;
+  held.resolve();
+  await claim;
+  expect(preparedAccount()).toBeNull();
+  expect(f.close).toHaveBeenCalledTimes(1);
+});
+
 test('same-account startup with no downloads preserves an existing live editor fence', async () => {
   const f = fixture();
   f.downloads.mockResolvedValue([]);

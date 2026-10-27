@@ -274,6 +274,17 @@ test('offline account headers fence refresh, preparation and socket tickets befo
         ? 'This document is not available.'
         : 'The signed-in account changed. Reopen Spinel.',
     });
+    // An Operator cookie is still a different identity, not evidence that the
+    // downloading account lost access to its clean copy.
+    const operator = await f.send(
+      path,
+      f.cookie(f.operator.id),
+      method,
+      method === 'POST' ? {} : undefined,
+      undefined,
+      bound,
+    );
+    expect(operator.status).toBe(privateTransport ? 403 : 409);
   }
   const unrelated = f.auth.createUser('Other account without this item');
   const session = f.auth.createSession(unrelated.id);
