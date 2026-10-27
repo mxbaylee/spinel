@@ -29,16 +29,24 @@ export function guardPhoneDocInput(
 ) {
   const mobile = selection as MobileDocSelectionRenderService;
   const stopEditing = () => mobile.exitMobileEditMode();
-  // These public streams replay their last events; compare timestamps so a
-  // previous composition-end replay cannot hide a currently active composition.
+  // These public streams separately replay their last events. Bootstrap that
+  // state conservatively, then follow delivery order: event timestamps can tie.
   let compositionStartedAt = -Infinity;
   let compositionEndedAt = -Infinity;
+  let bootstrappingComposition = true;
+  let composing = false;
   const compositionStart = mobile.onCompositionstart$.subscribe((config) => {
-    if (config) compositionStartedAt = config.event.timeStamp;
+    if (!config) return;
+    if (bootstrappingComposition) compositionStartedAt = config.event.timeStamp;
+    else composing = true;
   });
   const compositionEnd = mobile.onCompositionend$.subscribe((config) => {
-    if (config) compositionEndedAt = config.event.timeStamp;
+    if (!config) return;
+    if (bootstrappingComposition) compositionEndedAt = config.event.timeStamp;
+    else composing = false;
   });
+  composing = compositionStartedAt !== -Infinity && compositionStartedAt >= compositionEndedAt;
+  bootstrappingComposition = false;
   // The native touch controller can focus input independently of the root
   // Edit permission. Keep read-only readers out of keyboard mode as well;
   // the existing permission service remains the mutation boundary.
@@ -50,7 +58,7 @@ export function guardPhoneDocInput(
     const input = mobile.inputElement;
     const ownerDocument = input.ownerDocument;
     if (
-      compositionStartedAt > compositionEndedAt ||
+      composing ||
       !mobile.isEditing ||
       !input.isConnected ||
       !input.isContentEditable ||

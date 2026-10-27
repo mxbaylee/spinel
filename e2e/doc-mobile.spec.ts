@@ -49,7 +49,16 @@ async function recordPhoneInput(context: BrowserContext) {
       records.push(value);
       if (records.length > 200) records.shift();
     };
-    for (const type of ['beforeinput', 'input', 'keydown', 'focusin', 'focusout', 'click'])
+    let measuredKey = false;
+    for (const type of [
+      'beforeinput',
+      'input',
+      'keydown',
+      'keypress',
+      'focusin',
+      'focusout',
+      'click',
+    ])
       document.addEventListener(
         type,
         (event) => {
@@ -59,8 +68,41 @@ async function recordPhoneInput(context: BrowserContext) {
           if (!editor && !(event instanceof KeyboardEvent) && type !== 'click') return;
           const input = event as InputEvent;
           const keyboard = event as KeyboardEvent;
+          if (type === 'focusin') measuredKey = false;
+          const measure = editor && (type === 'focusin' || (type === 'keydown' && !measuredKey));
+          if (type === 'keydown') measuredKey = true;
           const observe = (phase: string) => {
             const selection = window.getSelection();
+            const layout = (element: HTMLElement) => {
+              const style = getComputedStyle(element);
+              const rect = element.getBoundingClientRect();
+              return {
+                tag: element.tagName,
+                id: element.id,
+                component: element.dataset.uComp,
+                editable: element.isContentEditable,
+                inert: element.inert,
+                rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+                display: style.display,
+                visibility: style.visibility,
+                position: style.position,
+                overflow: [style.overflowX, style.overflowY],
+                contain: style.contain,
+                transform: style.transform,
+                userSelect: style.userSelect,
+                userModify: style.getPropertyValue('-webkit-user-modify'),
+                fontSize: style.fontSize,
+                lineHeight: style.lineHeight,
+              };
+            };
+            const ancestors = [];
+            if (measure)
+              for (
+                let node: HTMLElement | null = target;
+                node && ancestors.length < 8;
+                node = node.parentElement
+              )
+                ancestors.push(layout(node));
             record({
               time: performance.now(),
               type,
@@ -77,10 +119,27 @@ async function recordPhoneInput(context: BrowserContext) {
               composing: input.isComposing,
               prevented: input.defaultPrevented,
               focused: document.activeElement === target,
+              documentFocused: document.hasFocus(),
+              visible: document.visibilityState,
               content: editor ? target.textContent : undefined,
               anchorInside: Boolean(selection?.anchorNode && target.contains(selection.anchorNode)),
               focusInside: Boolean(selection?.focusNode && target.contains(selection.focusNode)),
               rangeCount: selection?.rangeCount,
+              layout: measure
+                ? {
+                    ancestors,
+                    anchor: [selection?.anchorNode?.nodeName, selection?.anchorOffset],
+                    focus: [selection?.focusNode?.nodeName, selection?.focusOffset],
+                    rangeRects: selection?.rangeCount
+                      ? Array.from(selection.getRangeAt(0).getClientRects(), (rect) => ({
+                          x: rect.x,
+                          y: rect.y,
+                          width: rect.width,
+                          height: rect.height,
+                        }))
+                      : [],
+                  }
+                : undefined,
             });
           };
           observe('capture');
