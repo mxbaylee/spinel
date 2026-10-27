@@ -142,8 +142,8 @@ async function signIn(context: BrowserContext, baseURL: string, auth: AuthStore,
   ]);
 }
 
-async function sharing(page: Page, f: ReturnType<typeof fixture>) {
-  await page.goto('/');
+async function sharing(page: Page, f: ReturnType<typeof fixture>, shared = false) {
+  await page.goto(shared ? '/?shared=1' : '/');
   await page.getByRole('button', { name: `More actions for ${f.host.name}`, exact: true }).click();
   await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: `Share ${f.host.name}`, exact: true });
@@ -227,7 +227,9 @@ test('Doc sharing defaults to host-only, then explicitly adds view sources witho
     await expect(view.row.getByText('Can view · Proposed', { exact: true })).toBeVisible();
     await capture(page, view.row, info, 'confirmed-targets');
     await view.apply.click();
-    await expect(view.row.getByRole('status')).toContainText('Source access updated');
+    await expect(
+      view.row.getByRole('status').filter({ hasText: 'Source access updated' }),
+    ).toBeVisible();
     expect(f.grant(f.source.id)?.role).toBe('viewer');
     expect(f.grant(f.second.id)).toEqual(existing);
     expect(await (await evaluate()).json()).toMatchObject({ ok: true, kind: 'scalar', value: 42 });
@@ -268,7 +270,9 @@ test('source sharing discloses an entire external Space, refreshes a changed rev
     expect(f.grant(f.space!.id)).toBeUndefined();
     await view.checkbox.check();
     await view.row.getByRole('button', { name: /access.*for / }).click();
-    await expect(view.row.getByRole('status')).toContainText('Some sources still need access');
+    await expect(
+      view.row.getByRole('status').filter({ hasText: 'Some sources still need access' }),
+    ).toBeVisible();
     expect(f.grant(f.host.id)?.role).toBe('viewer');
     expect(f.grant(f.space!.id)?.role).toBe('viewer');
     expect(f.grant(f.source.id)).toBeUndefined();
@@ -363,7 +367,7 @@ test('host-only refusal after File admin revocation removes previously reviewed 
     await route.continue();
   });
   try {
-    const view = await sharing(page, f);
+    const view = await sharing(page, f, true);
     await view.choice.selectOption('viewer');
     await expect(view.row.getByText(f.source.name, { exact: true })).toBeVisible();
     await expect(view.checkbox).not.toBeChecked();

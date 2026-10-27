@@ -50,11 +50,17 @@ export function Sharing({
   };
   useLayoutEffect(() => {
     if (loading || !focusAfterLoad.current) return;
-    const select = personRows.current
-      .get(focusAfterLoad.current)
-      ?.querySelector<HTMLSelectElement>('select');
-    (select ?? doneButton.current)?.focus();
-    focusAfterLoad.current = null;
+    const personId = focusAfterLoad.current;
+    const request = generation.current;
+    // The dialog restores containment when the loading rows remove the focused
+    // button. Hand focus back after that restoration, using the current row.
+    const frame = requestAnimationFrame(() => {
+      if (request !== generation.current || focusAfterLoad.current !== personId) return;
+      const select = personRows.current.get(personId)?.querySelector<HTMLSelectElement>('select');
+      (select ?? doneButton.current)?.focus();
+      focusAfterLoad.current = null;
+    });
+    return () => cancelAnimationFrame(frame);
   }, [loading, people]);
   async function load(preserveChoices = false, focusPerson: string | null = null) {
     focusAfterLoad.current = focusPerson;
@@ -339,7 +345,9 @@ export function Sharing({
                   </Button>
                   {failedPerson === person.id && (
                     <p role="alert">
-                      {error} Confirmed access is shown above; your choice is kept.
+                      {error} Confirmed access is shown above; your selected{' '}
+                      {item.kind === 'space' ? 'Space' : item.kind === 'doc' ? 'report' : 'access'}{' '}
+                      role is kept.
                     </p>
                   )}
                   {sourceResults[person.id] && (

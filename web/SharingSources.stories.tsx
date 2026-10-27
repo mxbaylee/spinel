@@ -364,7 +364,7 @@ async function uncertain(canvasElement: HTMLElement) {
   body.getByRole('button', { name: 'Review remaining sources' }).focus();
   await userEvent.keyboard('{Enter}');
   await body.findByText('Can view · Kept');
-  await expect(body.getByLabelText('Access for Avery Chen')).toHaveFocus();
+  await waitFor(() => expect(body.getByLabelText('Access for Avery Chen')).toHaveFocus());
   await expect(writes(body)).toHaveLength(1);
 }
 export const LostAcknowledgement: Story = {
