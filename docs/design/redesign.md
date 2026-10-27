@@ -1,5 +1,10 @@
 # SPN-047 design review
 
+**Current review policy:** historical owner approvals and run-specific limits below
+retain provenance. New decisions use [standing agent authority](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review),
+with independent theme/persona inspection of designs and screenshots embedded on
+the PR; human sign-off is not required.
+
 Status: owner approved as-is and merge authorized on 2026-10-21 in chat,
 recorded in [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits) and [PR #125](https://github.com/mxbaylee/spinel/pull/125).
 The owner authorized this redesign on 2026-10-20. These are review mockups;

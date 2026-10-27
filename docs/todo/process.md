@@ -1,7 +1,8 @@
 # How the Spinel backlog works
 
 The backlog lives in this folder and is run by agents. The owner (@mxbaylee) sets
-direction and answers the questions only they can answer. The owner may merge,
+direction; agents make product, design and implementation decisions by weighing
+all four personas and recording the evidence and tradeoffs. The owner may merge,
 or authorize agents to merge through the [backlog runbook](../run-backlog.md).
 `npm run backlog:check` and the CI pull-request job enforce ticket/index shape,
 IDs, PR titles and size rules. Review scores, finding disposition and merge
@@ -36,10 +37,9 @@ effort: M # S | M | L | XL
 # phase: pre_launch # optional; pre_launch (default) | launch | post_launch
 impact_owner: L # S | M | L, one line per persona it affects:
 impact_guest: S #   impact_operator, impact_owner, impact_collaborator, impact_guest
-score: 5 # written by npm run backlog:index; never edit by hand
+score: 31 # written by npm run backlog:index; never edit by hand
 depends_on: [SPN-004]
 decisions: [7] # legacy issue numbers only; new decisions link to docs/implementation/SPN-NNN.md
-owner_input: "Approve the restore wording" # optional; shown in the index
 ---
 
 # 🪞 SPN-012 Restore a document from yesterday's checkpoint
@@ -96,17 +96,22 @@ reserved.
   main job. A ticket's impact is the highest of its persona impacts. Judge at
   least one; leave out personas it doesn't touch. Owner, chat 2026-10-19.
 
-|        | 3 points | 2 points | 1 point | 0 points |
-| ------ | -------- | -------- | ------- | -------- |
-| Impact | 🩷 L     | 💜 M     | 🤍 S    | —        |
-| Effort | 🌱 S     | 🌿 M     | 🌳 L    | 🏔️ XL    |
+| Factor | S | M | L | XL |
+| --- | --- | --- | --- | --- |
+| Impact | 🤍 10 | 💜 20 | 🩷 30 | — |
+| Effort | 🌱 0 | 🌿 1 | 🌳 2 | 🏔️ 3 |
 
-A ticket's own points run from 1 to 6. Its **score** is the higher of its own
+A ticket's own points are impact plus effort, from **10 to 33**. Impact is weighted
+one order of magnitude higher than before, and larger effort comes first within
+the same impact. Even S effort at M impact outranks XL effort at S impact.
+Owner, chat 2026-10-26; [scoring decision](../implementation/grooming-2026-10-26.md#impact-first-larger-effort-first).
+Its **score** is the higher of its own
 points and one more than the score of any ticket that depends on it, applied up
 the whole chain. A prerequisite therefore always outranks what waits on it, and
 working highest-first never skips one. Owner, chat 2026-10-19. The score is
 stored in the ticket's frontmatter; `npm run backlog:index` rewrites it and the
-checker fails when it is stale. The index shows a raised score as `5 (own 3)`.
+checker fails when it is stale. The index shows a raised score as `32 (own 13)`. Dependency promotion can cross
+impact tiers; preserving prerequisite order takes precedence over own points.
 
 Sizes are estimates: when starting a ticket shows one is wrong, fix it in the
 same PR. Size the expected reasoning and verification as well as implementation;
@@ -128,28 +133,33 @@ three-phase implementation and persona tradeoffs are recorded in
 [decision #129](../implementation/backlog-workflow.md#legacy-decision-129-fixed-lifecycle-phases).
 
 Within each phase, the highest score comes first, with
-ties going to the ticket that unblocks another, then higher impact, then lower
+ties going to the ticket that unblocks another, then higher impact, then larger
 effort, then lower ID. Each row shows the tie-break that put it ahead of the
 next. Take the first ticket in the current phase that isn't waiting on an open
-`depends_on`. Score calculation and dependency inheritance are unchanged. A
+`depends_on`. Dependency inheritance is unchanged. A
 prerequisite must be in the same or an earlier phase; the checker rejects a
 dependency on later-phase work. SPN-093/094 also name SPN-038 as an explicit
 launch sequencing dependency. These are timing constraints, not technical
 requirements for a converter or document-type plugin.
 
-Tickets that need owner input still rank normally. Do all the preparation, ask
-once for exactly that input, and work the next ticket while waiting.
+Agents decide; tickets have no `owner_input` field or human approval gate.
+Record a real external prerequisite (for example, device access, credentials or
+an upstream fix) in Rules and the PR checkpoint, with evidence and the next action.
+Complete all work possible and continue another eligible ticket if that capability
+is unavailable. Do not disguise an unavailable check as approval or completion.
 
-**UI changes need the owner's eye.** A PR that changes what a screen looks like
-includes light, dark and phone-width screenshots of every changed screen, and
-uses the `visual-review` label to request current Storybook captures. Add it for
-layout, theme, typography, icons and visible interaction-state changes, including
-dependency updates that affect those surfaces. Record approval by the owner or
-their explicitly delegated reviewer in the PR. The label requests evidence; it
-does not grant approval. PRs without a visual change keep the applicable rendering
-and interaction checks without routine PNG capture. While approval waits, start
-the next eligible ticket. Owner, chat 2026-10-19 and 2026-10-25;
-[capture policy](../implementation/backlog-workflow.md#on-demand-storybook-captures).
+**UI changes require independent visual review.** Use `visual-review` for layout,
+theme, typography, icons and visible interaction-state changes, including relevant
+dependency updates. Embed all proposed designs and actual current light, dark and
+phone screenshots of affected screens in the PR body/conversation; durable,
+commit-pinned image embeds are acceptable. CI artifact links supplement those
+visible designs. An independent nonimplementing subagent must inspect the images
+against [the playbook/theme](../design/README.md), weigh all personas, record
+findings and approve the visual result on the reviewed commit. State **agent review
+only**. A label or passing capture is not review. The two independent grades remain
+required; a grading reviewer may also perform the visual review. Nonvisual PRs keep
+applicable rendering/interaction checks without routine PNG capture. Owner, chat
+2026-10-26; [standing policy](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
 
 ## Working a ticket
 
@@ -188,8 +198,8 @@ the next eligible ticket. Owner, chat 2026-10-19 and 2026-10-25;
    - Title the PR `<ticket emoji> SPN-NNN <ticket title>`, the ticket's own
      heading.
 7. **Merge when authorized.** With both independent reviews complete, all required
-   checks passing for the current head, an up-to-date base, and required owner
-   input/verification resolved, squash-merge the verified SHA. Confirm the merge.
+   checks passing for the current head, an up-to-date base, required independent
+   visual review and actual acceptance evidence complete, squash-merge the verified SHA. Confirm the merge.
    During a [backlog run](../run-backlog.md), continue from current main to the next eligible
    ticket without another permission prompt. Outside a run, follow the owner's
    requested scope; do not infer a whole-backlog run from a single-ticket request.
@@ -200,7 +210,7 @@ there is no current ticket to land. Never bypass the base-ticket check.
 
 ## Decisions
 
-Agents make routine decisions themselves. Weigh **every** persona, not only the
+Agents make product, design and implementation decisions themselves. Weigh **every** persona, not only the
 one the ticket is for, and preserve the rationale alongside implementation notes.
 
 - **New decisions:** create or extend `docs/implementation/SPN-NNN.md`, following
@@ -208,9 +218,12 @@ one the ticket is for, and preserve the rationale alongside implementation notes
   ticket's Rules. Record date/status, question, context, options, outcome/reason,
   all four persona effects, and the deciding person/source. No new decision issue
   is required. Owner, chat 2026-10-22.
-- **Needs the owner:** record `needs-owner`, add the precise question to the ticket's
-  `owner_input`, ask the owner, and keep working on independent work. The Markdown
-  record does not grant approval. Update it and the Rules when the answer arrives.
+- **Decision or external prerequisite:** select the best supported option using all
+  personas and document assumptions. If execution needs unavailable access, real
+  devices, credentials or separately authorized external actions, record that
+  concrete prerequisite and next action in Rules and the PR checkpoint. Continue
+  independent work; there is no product/design decision waiting for human sign-off.
+  Historical `needs-owner` records retain provenance but do not reinstate that gate.
 - **Cross-ticket policy:** use one named record under `docs/implementation/` and
   link related tickets to it; do not duplicate competing decisions.
 - **Legacy decisions:** use [SPN-096's inventory](../implementation/SPN-096.md) to
@@ -225,8 +238,8 @@ note or agent recommendation is never evidence of owner approval or a completed 
 
 ## Grooming
 
-After **7** landed tickets, show a nonblocking reminder for the next manual
-grooming with the owner. The count never fails checks, blocks a ticket/merge or
+After **7** landed tickets, show a nonblocking reminder for the next requested
+grooming. The count never fails checks, blocks a ticket/merge or
 forces an agent to groom. Keep recording completions past seven; the owner chooses
 when to review. Owner, chat 2026-10-22. Grooming captures context learned while building.
 
@@ -236,7 +249,7 @@ updates that need follow-up; review does not imply automatic merge. Existing PRs
 remain open for that review. Owner, chat 2026-10-23;
 [decision](../implementation/backlog-workflow.md#review-dependabot-prs-at-every-backlog-grooming).
 
-A full owner-led grooming, recorded in a PR titled `🧹 Groom backlog …`:
+A full requested grooming, recorded in a PR titled `🧹 Groom backlog …`:
 
 - Rechecks every ticket against the code: still true, still needed, sized right.
 - Captures context learned since the last grooming into the tickets it affects.
@@ -249,7 +262,7 @@ A full owner-led grooming, recorded in a PR titled `🧹 Groom backlog …`:
 
 A focused backlog maintenance PR can use the same title without claiming a full
 grooming: preserve both the completion list and last-groomed date. Reset them only
-when the manual review is complete. Grooming isn't a ticket and doesn't count
+when the full review is complete. Grooming isn't a ticket and doesn't count
 toward the reminder.
 
 ## Pull requests and `main`

@@ -1,5 +1,10 @@
 # Component, section and journey review
 
+**Current review policy:** historical owner approvals and run-specific limits below
+retain provenance. New decisions use [standing agent authority](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review),
+with independent theme/persona inspection of designs and screenshots embedded on
+the PR; human sign-off is not required.
+
 Status: **rendered component and section inspections completed for the evidence sets below; full stricter interaction CI passed on reviewed source; owner approved the proposal as-is on 2026-10-21**. This is not whole-product acceptance. The earlier 96 scores applied to sampled composed views and must not be used as catalog-wide completion. Owner requested this stricter review in chat, 2026-10-20.
 
 Current source inventory after pin removal and loading additions: **59 families and 632 exported story specimens**. App CI **39567404022 passed** for `dc9170fa68243fa10ad34d700e0e8f9cf4471c40`, including all required gates. Focused final-source run **39567463871 passed 25 captures / 7 explicit checks**; reset run **39566541453 passed 10 captures / 10 checks** on `6a627c2`. Full Storybook run **39567403971 passed 3,160 captures and 118 explicit checks with zero failures** on the same source. The refreshed gallery contains 269 curated images, including 66 explicitly older comparison captures; per-image provenance is preserved. Earlier failed runs and superseded grades below remain historical evidence, not current interaction passes.
