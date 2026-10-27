@@ -1,4 +1,5 @@
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
+import { offlineErrorMessage } from '../../src/shared/offlineError.ts';
 import { offlineScope } from './OfflineAccess.ts';
 import { checkImageList, verifyImages } from './PreparedImages.ts';
 import type { OfflineStore } from './offlineStore.ts';
@@ -66,9 +67,7 @@ export function checkBundle(
   try {
     checkImageList(itemId, bundle.images);
   } catch (error) {
-    throw new DownloadError(
-      error instanceof Error ? error.message : 'The image list is malformed.',
-    );
+    throw new DownloadError(offlineErrorMessage(error, 'The image list is malformed.'));
   }
 }
 
@@ -90,7 +89,10 @@ export async function downloadForOffline(
   const bundle = (await response.json().catch(() => ({}))) as OfflineBundle & { error?: string };
   verifyCurrent();
   if (!response.ok)
-    throw new DownloadError(bundle.error ?? 'Could not download. Try again.', response.status);
+    throw new DownloadError(
+      offlineErrorMessage(bundle.error, 'Could not download. Try again.'),
+      response.status,
+    );
   checkBundle(bundle, store.accountId, itemId, spaceId);
   const bytes = new Map<string, Uint8Array>();
   for (const image of bundle.images) {
@@ -124,12 +126,8 @@ export async function downloadForOffline(
     });
   } catch (error) {
     verifyCurrent();
-    if (error instanceof DOMException && error.name === 'QuotaExceededError')
-      throw new DownloadError('This device is out of space for offline documents.');
     throw new DownloadError(
-      error instanceof Error
-        ? error.message
-        : 'Could not save this document on this device. Try again.',
+      offlineErrorMessage(error, 'Could not save this document on this device. Try again.'),
     );
   }
 }

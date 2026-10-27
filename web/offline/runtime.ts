@@ -11,6 +11,7 @@ import type {
   RuntimeReply,
   ShellManifest,
 } from '../../src/shared/offlineShell.ts';
+import { offlineErrorMessage } from '../../src/shared/offlineError.ts';
 export type {
   AccountRuntimeRequirement,
   RuntimeCompatibility,
@@ -89,7 +90,7 @@ export async function runtimeRequest(
   try {
     const result = await reply;
     if (!result || result.ok !== true)
-      throw new Error(result?.error ?? 'Offline app storage is unavailable.');
+      throw new Error(offlineErrorMessage(result?.error, 'Offline app storage is unavailable.'));
     if (result.manifest) parseShellManifest(JSON.stringify(result.manifest));
     return result;
   } finally {

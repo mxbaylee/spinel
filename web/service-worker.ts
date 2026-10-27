@@ -1,5 +1,6 @@
 /// <reference lib="webworker" />
 import { faviconSvg } from '../src/ui/favicon.ts';
+import { offlineErrorMessage } from '../src/shared/offlineError.ts';
 import {
   LEGACY_COMPATIBILITY,
   needsServer,
@@ -303,7 +304,7 @@ self.addEventListener('message', (event) => {
       } catch (error) {
         port.postMessage({
           ok: false,
-          error: error instanceof Error ? error.message : 'Offline app storage is unavailable.',
+          error: offlineErrorMessage(error, 'Offline app storage is unavailable.'),
         });
       }
     })(),

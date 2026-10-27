@@ -144,40 +144,60 @@ async function accountDatabases(cdp: CDPSession, origin: string) {
     .filter((name: string) => /^spinel-offline-[a-f\d-]{36}$/i.test(name))
     .sort();
 }
-async function probeQuota(page: Page, databaseName: string) {
-  return page.evaluate((databaseName) => {
-    const bytes = new Uint8Array(256 * 1024);
-    for (let offset = 0; offset < bytes.length; offset += 64 * 1024)
-      crypto.getRandomValues(bytes.subarray(offset, offset + 64 * 1024));
-    return new Promise<'committed' | 'QuotaExceededError'>((resolve, reject) => {
-      const opening = indexedDB.open(databaseName);
-      opening.onupgradeneeded = () => opening.transaction?.abort();
-      opening.onerror = () => reject(opening.error);
-      opening.onsuccess = () => {
-        const db = opening.result;
-        try {
-          const tx = db.transaction('probe', 'readwrite');
-          const store = tx.objectStore('probe');
-          store.put(bytes, 'quota');
-          store.delete('quota');
-          const count = store.count();
-          tx.oncomplete = () => {
+async function probeQuota(page: Page, databaseName: string, byteLength = 256 * 1024) {
+  return page.evaluate(
+    ({ databaseName, byteLength }) => {
+      const bytes = new Uint8Array(byteLength);
+      for (let offset = 0; offset < bytes.length; offset += 64 * 1024)
+        crypto.getRandomValues(bytes.subarray(offset, offset + 64 * 1024));
+      return new Promise<'committed' | 'QuotaExceededError'>((resolve, reject) => {
+        const opening = indexedDB.open(databaseName);
+        opening.onupgradeneeded = () => opening.transaction?.abort();
+        opening.onerror = () => reject(opening.error);
+        opening.onsuccess = () => {
+          const db = opening.result;
+          try {
+            const tx = db.transaction('probe', 'readwrite', { durability: 'strict' });
+            const store = tx.objectStore('probe');
+            const key = crypto.randomUUID();
+            const before = store.count();
+            store.add(bytes, key);
+            const count = store.count();
+            tx.oncomplete = () => {
+              db.close();
+              if (count.result !== before.result + 1 || count.result > 48)
+                reject(new Error('Quota probe did not retain one bounded record.'));
+              else resolve('committed');
+            };
+            tx.onabort = () => {
+              if (tx.error?.name !== 'QuotaExceededError') {
+                db.close();
+                reject(tx.error ?? new Error('Quota probe aborted unexpectedly.'));
+                return;
+              }
+              const check = db.transaction('probe');
+              const absent = check.objectStore('probe').getKey(key);
+              const retained = check.objectStore('probe').count();
+              check.oncomplete = () => {
+                db.close();
+                if (absent.result !== undefined || retained.result !== before.result)
+                  reject(new Error('Failed quota probe changed retained records.'));
+                else resolve('QuotaExceededError');
+              };
+              check.onabort = () => {
+                db.close();
+                reject(check.error ?? new Error('Could not verify the failed quota probe.'));
+              };
+            };
+          } catch (error) {
             db.close();
-            if (count.result !== 0) reject(new Error('Quota probe retained a value.'));
-            else resolve('committed');
-          };
-          tx.onabort = () => {
-            db.close();
-            if (tx.error?.name === 'QuotaExceededError') resolve('QuotaExceededError');
-            else reject(tx.error ?? new Error('Quota probe aborted unexpectedly.'));
-          };
-        } catch (error) {
-          db.close();
-          reject(error);
-        }
-      };
-    });
-  }, databaseName);
+            reject(error);
+          }
+        };
+      });
+    },
+    { databaseName, byteLength },
+  );
 }
 async function importImages(f: OfflineFixture, origin: string, name: string, large = false) {
   // Portable import prefers the native title over the filename. Give this
@@ -392,24 +412,39 @@ test('real browser quota failure retains pending work and images without a parti
       probeName,
     );
     const usage = await cdp.send('Storage.getUsageAndQuota', { origin: baseURL! });
-    const quotaSize = usage.usage + 64 * 1024;
+    const initialQuota = usage.usage + 64 * 1024;
     await cdp.send('Storage.overrideQuotaForOrigin', {
       origin: baseURL!,
-      quotaSize,
+      quotaSize: initialQuota,
     });
     expect(await cdp.send('Storage.getUsageAndQuota', { origin: baseURL! })).toMatchObject({
       overrideActive: true,
-      quota: quotaSize,
+      quota: initialQuota,
     });
-    // Chromium caches available bucket space for 30 seconds. Observe a real
-    // commit-time quota abort; successful put+delete probes leave no values.
+    // Chromium caches available bucket space for 30 seconds. Successful probes
+    // stay stored until cleanup, keeping the filler bytes present for the test.
     // https://github.com/chromium/chromium/blob/156.0.8078.4/content/browser/indexed_db/instance/bucket_context.h
     await expect
       .poll(() => probeQuota(f.page, probeName), {
         timeout: 45_000,
-        intervals: [250, 500, 1000],
+        intervals: [1000],
       })
       .toBe('QuotaExceededError');
+    // Cached allowance can let the initial probes exceed the original limit.
+    // Re-measure, leaving room for the small runtime reservation but less than
+    // the real 1.23 MB image. Prove the final limit rejects a smaller payload.
+    const exhausted = await cdp.send('Storage.getUsageAndQuota', { origin: baseURL! });
+    const quotaSize = exhausted.usage + 512 * 1024;
+    await cdp.send('Storage.overrideQuotaForOrigin', { origin: baseURL!, quotaSize });
+    expect(await probeQuota(f.page, probeName, 768 * 1024)).toBe('QuotaExceededError');
+    const armed = await cdp.send('Storage.getUsageAndQuota', { origin: baseURL! });
+    expect(armed).toMatchObject({ overrideActive: true, quota: quotaSize });
+    expect(armed.quota - armed.usage).toBeGreaterThanOrEqual(256 * 1024);
+    expect(armed.quota - armed.usage).toBeLessThan(768 * 1024);
+    await info.attach('spn-055-quota-boundary', {
+      body: Buffer.from(JSON.stringify({ before: usage, exhausted, armed }, null, 2)),
+      contentType: 'application/json',
+    });
     await listDownload(f.page, target.name);
     await expect(f.page.getByRole('alert').filter({ hasText: /space/i })).toBeVisible({
       timeout: 120_000,

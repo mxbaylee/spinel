@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { SpaceFile, WorkspaceItem } from '../../src/shared/workspace.ts';
+import { offlineErrorMessage } from '../../src/shared/offlineError.ts';
 import { DownloadError, downloadForOffline } from './download.ts';
 import type { LocalStart } from './localStart.ts';
 import {
@@ -71,7 +72,7 @@ export function useOfflineDownloads(
     } catch (error) {
       if (reportFailure)
         setMessage({
-          text: error instanceof Error ? error.message : 'Could not prepare offline storage.',
+          text: offlineErrorMessage(error, 'Could not prepare offline storage.'),
           failed: true,
         });
       return null;
@@ -364,10 +365,7 @@ export function useOfflineDownloads(
         await serially(scope, (store) => scope.clearIfEmpty(store)).catch(() => {});
       if (scope.isCurrent())
         setMessage({
-          text:
-            error instanceof Error && error.message
-              ? error.message
-              : 'Could not change offline availability. Try again.',
+          text: offlineErrorMessage(error, 'Could not change offline availability. Try again.'),
           failed: true,
         });
     } finally {

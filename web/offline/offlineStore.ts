@@ -637,8 +637,10 @@ function done(transaction: IDBTransaction) {
   return new Promise<void>((resolve, reject) => {
     transaction.oncomplete = () => resolve();
     // While a request's error event dispatches, transaction.error is still null.
-    transaction.onerror = (event) =>
-      reject((event.target as IDBRequest | null)?.error ?? transaction.error);
+    transaction.onerror = (event) => {
+      const error = (event.target as IDBRequest | null)?.error ?? transaction.error;
+      if (error) reject(error);
+    };
     transaction.onabort = () => reject(transaction.error ?? new Error('Storage write cancelled.'));
   });
 }

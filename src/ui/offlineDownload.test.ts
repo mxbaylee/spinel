@@ -149,6 +149,62 @@ test('a mismatched Space response is refused before fetching images or replacing
   expect(saveDownload).not.toHaveBeenCalled();
 });
 
+for (const stage of ['runtime preparation', 'private write'] as const)
+  test.each([
+    {
+      label: 'quota without a message',
+      error: new DOMException('', 'QuotaExceededError'),
+      message: 'This device is out of space for offline documents.',
+    },
+    {
+      label: 'a blank failure',
+      error: new Error(' \n '),
+      message: 'Could not save this document on this device. Try again.',
+    },
+    {
+      label: 'a specific failure',
+      error: new Error('This device store is blocked.'),
+      message: 'This device store is blocked.',
+    },
+  ])(`${stage} reports $label without publishing a download`, async ({ error, message }) => {
+    vi.stubGlobal('location', { origin: 'https://spinel.example' });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json(bundle({ images: [] }))),
+    );
+    if (stage === 'runtime preparation') vi.mocked(prepareShell).mockRejectedValueOnce(error);
+    const committed = vi.fn();
+    const store = {
+      accountId: 'owner',
+      runtimeRequirement: async () => ({ kind: 'empty' }),
+      saveDownload: async (
+        _bundle: OfflineBundle,
+        _bytes: ReadonlyMap<string, Uint8Array>,
+        verify: () => void,
+        beforeCommit: () => Promise<unknown>,
+      ) => {
+        await beforeCommit();
+        verify();
+        if (stage === 'private write') throw error;
+        committed();
+      },
+    } as unknown as OfflineStore;
+    await expect(downloadForOffline(store, 'item')).rejects.toMatchObject({ message });
+    expect(committed).not.toHaveBeenCalled();
+  });
+
+test('an empty server error retains its HTTP status and gives a download-specific fallback', async () => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => Response.json({ error: '' }, { status: 503 })),
+  );
+  const saveDownload = vi.fn();
+  await expect(
+    downloadForOffline({ accountId: 'owner', saveDownload } as unknown as OfflineStore, 'item'),
+  ).rejects.toMatchObject({ status: 503, message: 'Could not download. Try again.' });
+  expect(saveDownload).not.toHaveBeenCalled();
+});
+
 test.each(['bundle', 'shell'] as const)(
   'leaving the account during %s preparation never writes the delayed offline copy',
   async (stage) => {

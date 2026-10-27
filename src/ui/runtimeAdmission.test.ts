@@ -1,6 +1,6 @@
 import { afterEach, expect, test, vi } from 'vitest';
 import { ensureDeviceRuntime } from '../../web/offline/localStart.ts';
-import { installRuntimeHost } from '../../web/offline/runtime.ts';
+import { installRuntimeHost, runtimeRequest } from '../../web/offline/runtime.ts';
 import {
   openExistingOfflineStore,
   withOfflineCatalogLock,
@@ -183,5 +183,51 @@ test('a failed empty-account release retains its holds without blocking compatib
     kind: 'ready',
     buildId: manifest.version,
   });
+  expect(f.read()).toEqual(before);
+});
+
+test.each([
+  {
+    name: 'an empty quota exception',
+    failure: new DOMException('', 'QuotaExceededError'),
+    message: 'This device is out of space for offline documents.',
+  },
+  {
+    name: 'an empty error',
+    failure: new Error(''),
+    message: 'Offline app storage is unavailable.',
+  },
+  {
+    name: 'a whitespace-only error',
+    failure: new Error(' \t\n '),
+    message: 'Offline app storage is unavailable.',
+  },
+  {
+    name: 'a meaningful error',
+    failure: new Error('The public control write failed.'),
+    message: 'The public control write failed.',
+  },
+])('worker reports $name without changing durable control state', async ({ failure, message }) => {
+  const f = await fixture();
+  const before = f.read();
+  f.write.mockRejectedValueOnce(failure);
+  await expect(runtimeRequest('release', manifest.version, 'owner')).rejects.toMatchObject({
+    message,
+  });
+  expect(f.write).toHaveBeenCalledOnce();
+  expect(f.read()).toEqual(before);
+});
+
+test('an empty error reply from an older worker receives an actionable fallback', async () => {
+  const f = await fixture();
+  const before = f.read();
+  f.post.mockImplementationOnce((_data, transferred) => {
+    ports.push(...transferred);
+    transferred[0].postMessage({ ok: false, error: '' });
+  });
+  await expect(runtimeRequest('release', manifest.version, 'owner')).rejects.toMatchObject({
+    message: 'Offline app storage is unavailable.',
+  });
+  expect(f.write).not.toHaveBeenCalled();
   expect(f.read()).toEqual(before);
 });

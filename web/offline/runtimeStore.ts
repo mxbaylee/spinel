@@ -155,7 +155,13 @@ export async function writeRuntimeState(state: RuntimeState, verify: () => void)
     const transaction = database.transaction('runtime', 'readwrite');
     const completion = new Promise<void>((resolve, reject) => {
       transaction.oncomplete = () => resolve();
-      transaction.onabort = transaction.onerror = () =>
+      // A bubbled request error can precede transaction.error. If neither is
+      // available yet, retain the transaction until abort supplies its cause.
+      transaction.onerror = (event) => {
+        const error = (event.target as IDBRequest | null)?.error ?? transaction.error;
+        if (error) reject(error);
+      };
+      transaction.onabort = () =>
         reject(transaction.error ?? new Error('Offline runtime write failed.'));
     });
     transaction.objectStore('runtime').put(state, 'state');
