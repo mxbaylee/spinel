@@ -16,12 +16,17 @@ const coverImage = async (background: string) => ({
       .toBuffer()
   ).toString('base64'),
 });
-async function assertLiveOfflineCover(page: Page) {
+async function assertLiveOfflineCover(page: Page, menuAppearance = false) {
   await expect(page.getByRole('button', { name: 'Change appearance', exact: true })).toHaveCount(0);
   await expect(page.locator('.appearance-banner img')).toHaveAttribute(
     'src',
     /^data:image\/webp;base64,/,
   );
+  if (menuAppearance) {
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await expect(page.getByRole('menuitem', { name: 'Appearance…', exact: true })).toBeDisabled();
+    await page.keyboard.press('Escape');
+  }
   const requests: string[] = [];
   const observe = (request: import('@playwright/test').Request) => {
     if (new URL(request.url()).pathname.startsWith('/api/appearance/'))
@@ -286,10 +291,15 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     await page.emulateMedia({ colorScheme: 'light' });
     await page.goto(`/?item=${doc.id}`);
     await expect(
-      page.getByRole('button', { name: 'Save details: Saved', exact: true }),
+      page.getByRole('button', { name: 'Save details: Synced', exact: true }),
     ).toBeVisible();
+    await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Appearance…', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Save appearance', exact: true })).toBeVisible();
     await context.setOffline(true);
-    await assertLiveOfflineCover(page);
+    await expect(page.getByText('Connect to change appearance.', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Close', exact: true }).click();
+    await assertLiveOfflineCover(page, true);
     const api: string[] = [];
     page.on('request', (request) => {
       if (/^\/api\/(items|appearance)(\/|$)/.test(new URL(request.url()).pathname))

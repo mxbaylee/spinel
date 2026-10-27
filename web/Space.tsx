@@ -735,6 +735,7 @@ export function Space({
         <ConnectedAppearanceDialog
           key={appearanceItem.id}
           target={appearanceItem}
+          disabled={connection === 'offline'}
           finalFocus={() =>
             appearanceFocus.current?.isConnected
               ? appearanceFocus.current

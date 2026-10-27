@@ -546,7 +546,7 @@ export function Dashboard({
           appearanceFocus.current = trigger ?? null;
           setAppearanceItem(item);
         },
-        disabled: busy,
+        disabled: busy || connection === 'offline',
       });
       for (const mode of ['share', 'rename', 'move', 'trash'] as const) {
         result.push({
@@ -969,6 +969,7 @@ export function Dashboard({
         <ConnectedAppearanceDialog
           key={appearanceItem.id}
           target={appearanceItem}
+          disabled={!!local || connection === 'offline'}
           finalFocus={() => (appearanceFocus.current?.isConnected ? appearanceFocus.current : true)}
           close={() => setAppearanceItem(null)}
         />

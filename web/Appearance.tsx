@@ -193,6 +193,7 @@ export function useAppearance(target: AppearanceTarget | undefined, disabled = f
     // Scope identity, rather than projection object identity, owns this request lifetime.
   }, [path, disabled]);
   async function save(patch: Record<string, unknown>) {
+    if (disabled) throw new Error('Connect to change appearance.');
     const generation = epoch.current;
     ++serial.current;
     try {
@@ -736,13 +737,15 @@ export function ConnectedAppearanceDialog({
   target,
   close,
   finalFocus,
+  disabled = false,
 }: {
   target: AppearanceTarget;
   close(): void;
   finalFocus?: AppearanceFocus;
+  disabled?: boolean;
 }) {
-  const state = useAppearance(target);
-  return state.canEdit ? (
+  const state = useAppearance(target, disabled);
+  return state.canEdit && !disabled ? (
     <AppearanceDialog
       target={target}
       value={state.appearance}
@@ -761,10 +764,12 @@ export function ConnectedAppearanceDialog({
       }}
     >
       <p role="status">
-        {state.error ||
-          (state.loading
-            ? 'Checking appearance access…'
-            : 'You can view this item, but cannot change its appearance.')}
+        {disabled
+          ? 'Connect to change appearance.'
+          : state.error ||
+            (state.loading
+              ? 'Checking appearance access…'
+              : 'You can view this item, but cannot change its appearance.')}
       </p>
       <Button onClick={close}>Close</Button>
     </Modal>
