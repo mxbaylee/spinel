@@ -427,21 +427,26 @@ export class BackupService {
       );
     } finally {
       clearInterval(heartbeat);
+      let cleanupFailed = false;
       try {
         const closed = await Promise.allSettled([
           Promise.resolve().then(() => remote?.close?.()),
           Promise.resolve().then(() => archive?.dispose()),
         ]);
         if (directory) await rm(directory, { recursive: true, force: true });
-        if (closed.some((result) => result.status === 'rejected'))
-          throw new Error('Cleanup failed.');
+        cleanupFailed = closed.some((result) => result.status === 'rejected');
       } catch {
-        success = false;
-        this.recordError(
-          job,
-          owner,
-          'Recovery staging cleanup failed. Check private staging permissions and free space.',
-        );
+        cleanupFailed = true;
+      }
+      try {
+        if (cleanupFailed) {
+          success = false;
+          this.recordError(
+            job,
+            owner,
+            'Recovery staging cleanup failed. Check private staging permissions and free space.',
+          );
+        }
       } finally {
         if (job === 'verify')
           this.db

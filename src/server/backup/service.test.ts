@@ -262,6 +262,33 @@ test('backup and verifier share a real lease, and shutdown drains active retriev
   expect(verifier.status().verification.running).toBe(false);
 }, 60_000);
 
+test('a destination cleanup failure releases the lease and keeps the published backup recoverable', async () => {
+  const f = await fixture();
+  const service = new BackupService(f.db, {
+    ...f.options,
+    remote(config) {
+      const destination = createDestination(config);
+      const close = destination.close.bind(destination);
+      destination.close = async () => {
+        await close();
+        throw new Error('Private destination details must stay hidden');
+      };
+      return destination;
+    },
+  });
+  cleanups.push(() => service.close());
+  expect(await service.run()).toBe(false);
+  expect(service.status()).toMatchObject({
+    running: false,
+    lastGood: f.options.now(),
+    error: expect.stringContaining('Recovery staging cleanup failed'),
+  });
+  expect(service.state()).toMatchObject({ lease: 0, owner: null, job: null });
+  expect(JSON.stringify(service.status())).not.toContain('Private destination details');
+  expect(await f.files()).toHaveLength(1);
+  expect(await f.service.verify()).toBe(true);
+}, 60_000);
+
 test('expired verification is visible, retry reconciles only owned staging and preserves foreign paths', async () => {
   const f = await fixture();
   expect(await f.service.run()).toBe(true);
