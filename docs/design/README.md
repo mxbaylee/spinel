@@ -117,7 +117,7 @@ SPN-077's icon assets/current-surface integration can land first.
 
 Docs, Sheets and planned Spaces use the [entity iconography pattern](entity-icons.md).
 SPN-077 implemented the blue/green/purple facet family before the wider redesign;
-Space examples remain in Storybook until the feature exists.
+Space behavior is covered by the current production Space stories.
 
 ## Shell layout (SPN-047 proposal)
 
@@ -266,10 +266,11 @@ production-wide replacement.
 
 ## Storybook
 
-The [covers and Space accents exploration](appearance.md) is under
-**Redesign → Appearance**. These drafts require independent theme/persona review on the implementation PR; they do not
-constitute final artwork approval. SPN-086 now owns the pre-launch personalization
-scope and requires a further design iteration.
+Shipped UI lives under **Current production**, using the real components with
+local fixtures. Appearance includes the shared icon/emoji/color picker, covers
+and the paired gem gallery. **Native fixtures** isolates SDK regression tests.
+**Redesign** contains only the remaining ticket-owned proposal, currently
+SPN-066 guest-link management. Follow the [migration rule and ownership inventory](../implementation/storybook-production-migration.md).
 
 ```bash
 npm run storybook
@@ -295,7 +296,7 @@ redirect to sign-in.
 
 Every reusable component has a story for each state it really has: empty,
 loading, error and disabled. A PR that adds a component or a state adds the
-story. Native-editor fixtures and connected journeys already run in Storybook.
+story. Native-editor fixtures and production-component interactions run in Storybook.
 Use the existing Playwright application flows for real editor, routing, sign-in,
 setup, invite and recovery behavior as appropriate; a proposal fixture cannot
 prove the corresponding runtime route is implemented. A ticket that extracts

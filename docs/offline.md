@@ -668,3 +668,6 @@ Offline copies retain [Formula definitions](formulas.md), never calculated
 source values. They show unavailable results and make no formula requests.
 Reconnect must verify source access before rendering results; queued offline
 edits and recovery copies must preserve definitions without baking in values.
+
+
+Offline creation also saves the chosen icon or emoji and icon color through reload and upload, using the same creation controls and validation as online creation. An automatic icon remains name-derived when no choice is made. The identity belongs to the immutable creation request; existing receipt retries and account/destination checks still apply. See [SPN-086 integration](implementation/SPN-086.md#appearance-on-offline-creation).

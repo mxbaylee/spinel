@@ -74,6 +74,7 @@
     "@univerjs/protocol": "1.1.0",
     "@univerjs/sheets": "1.1.0",
     "@univerjs/sheets-formula": "1.1.0",
+    "emojibase-data": "17.0.0",
     "express": "5.3.0",
     "libsql": "0.5.29",
     "lucide": "1.59.0",

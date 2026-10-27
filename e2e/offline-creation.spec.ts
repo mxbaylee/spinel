@@ -61,7 +61,7 @@ async function deviceCatalog(f: OfflineFixture) {
   );
 }
 
-async function newDocument(page: Page, kind: Kind, name: string) {
+async function newDocument(page: Page, kind: Kind, name: string, customIdentity = false) {
   await page.getByRole('button', { name: 'New', exact: true }).click();
   const menu = page.getByRole('menu');
   await expect(menu.getByRole('menuitem')).toHaveText(['Sheet', 'Doc']);
@@ -71,6 +71,21 @@ async function newDocument(page: Page, kind: Kind, name: string) {
   const dialog = page.getByRole('dialog', { name: `New ${kind}`, exact: true });
   await dialog.getByRole('textbox', { name: 'Name' }).fill(name);
   await expect(dialog.getByRole('option')).toHaveText(['Sheet', 'Doc']);
+  if (customIdentity) {
+    await dialog.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();
+    const picker = page.getByRole('dialog', { name: 'Choose an icon or emoji', exact: true });
+    await picker
+      .getByRole('textbox', { name: 'Search icons and emojis', exact: true })
+      .fill(kind === 'doc' ? 'book' : 'lemon');
+    await picker
+      .getByRole('button', { name: kind === 'doc' ? 'Book Open' : 'Lemon emoji', exact: true })
+      .click();
+    if (kind === 'doc')
+      await dialog
+        .getByRole('group', { name: 'Icon color', exact: true })
+        .getByRole('button', { name: 'Info, strong', exact: true })
+        .click();
+  }
   await dialog.getByRole('button', { name: 'Create', exact: true }).click();
   await expect(page).toHaveURL(/\?item=[a-f\d-]{36}$/);
   await usableCanvas(page);
@@ -152,6 +167,18 @@ test.describe('documents created offline', () => {
     }, info) => {
       const f = await fixture(browser, baseURL!, info, kind);
       let disconnected = false;
+      let holdAdmission = false;
+      let admissionStarted = false;
+      let releaseAdmission!: () => void;
+      const admission = new Promise<void>((resolve) => {
+        releaseAdmission = resolve;
+      });
+      const appearanceRequests: string[] = [];
+      let createdId: string | undefined;
+      f.page.on('request', (request) => {
+        if (createdId && new URL(request.url()).pathname === `/api/appearance/items/${createdId}`)
+          appearanceRequests.push(request.url());
+      });
       const setDisconnected = async (value: boolean) => {
         disconnected = value;
         await f.network.setOffline(value);
@@ -159,9 +186,14 @@ test.describe('documents created offline', () => {
       try {
         // Keep an explicit creation HTTP outage across cached-shell reloads,
         // alongside syncNetwork's socket outage. Online uses the real route.
-        await f.context.route(endpoint, (route) =>
-          disconnected ? route.abort('internetdisconnected') : route.fallback(),
-        );
+        await f.context.route(endpoint, async (route) => {
+          if (disconnected) return route.abort('internetdisconnected');
+          if (holdAdmission) {
+            admissionStarted = true;
+            await admission;
+          }
+          return route.fallback();
+        });
         const folder = f.workspace.create(f.actor.id, {
           name: 'Prepared destination',
           kind: 'folder',
@@ -186,7 +218,23 @@ test.describe('documents created offline', () => {
           f.page.getByRole('button', { name: 'Offline — not connected to Spinel' }),
         ).toBeVisible();
         const name = `New offline ${kind}`;
-        const id = await newDocument(f.page, kind, name);
+        const id = await newDocument(f.page, kind, name, true);
+        createdId = id;
+        const identity = {
+          icon: kind === 'doc' ? 'lucide:book-open' : '🍋',
+          iconColor: kind === 'doc' ? 'info-strong' : null,
+        };
+        const expectIdentity = async () => {
+          const header = f.page.locator('.editor-header');
+          if (kind === 'doc') {
+            await expect(header.locator('[data-profile-icon="lucide:book-open"]')).toBeVisible();
+            await expect(header.locator('.item-icon')).toHaveAttribute(
+              'style',
+              /--fill-info-strong-bg/,
+            );
+          } else await expect(header).toContainText('🍋');
+        };
+        await expectIdentity();
         expect(uploaded(f, id)).toBeUndefined();
         const blank = (await deviceCreation(f, id))!;
         expect(blank.creation?.request).toMatchObject({
@@ -195,6 +243,8 @@ test.describe('documents created offline', () => {
           kind,
           name,
         });
+        expect(blank.creation?.request).toMatchObject(identity);
+        expect(blank.bundle.appearance).toMatchObject(identity);
         expect(blank.outbox).toMatchObject({ account: f.actor.id, item: id });
         const text = kind === 'sheet' ? '851' : 'Written before the connection returned 851';
         await edit(f.page, kind, text);
@@ -209,6 +259,8 @@ test.describe('documents created offline', () => {
           expect(await copy(f.page, kind)).toContain(text);
           const restored = (await deviceCreation(f, id))!;
           expect(restored.creation).toEqual(before.creation);
+          expect(restored.bundle.appearance).toMatchObject(identity);
+          await expectIdentity();
           expect(restored.outbox!.checkpoint).toEqual(before.outbox!.checkpoint);
           expect(uploaded(f, id)).toBeUndefined();
         }
@@ -233,6 +285,8 @@ test.describe('documents created offline', () => {
             before.outbox!.checkpoint,
           );
         }
+        // The Doc reopened online has no cold-offline local flag: only its pending creation fences appearance.
+        holdAdmission = kind === 'doc';
         await row
           .getByRole('button', {
             name: `${name} ${kind === 'sheet' ? 'Sheet' : 'Doc'}`,
@@ -252,7 +306,17 @@ test.describe('documents created offline', () => {
               .first()
               .evaluate((node, previous) => node === previous, canvas!),
           ).toBe(true);
-        } else await synced(f.page);
+        } else {
+          await expect.poll(() => admissionStarted).toBe(true);
+          await expectIdentity();
+          await expect(
+            f.page.getByRole('button', { name: 'Change appearance', exact: true }),
+          ).toHaveCount(0);
+          expect(appearanceRequests).toEqual([]);
+          holdAdmission = false;
+          releaseAdmission();
+          await synced(f.page);
+        }
         expect(uploaded(f, id)).toMatchObject({
           id,
           parent_id: folder.id,
@@ -260,6 +324,8 @@ test.describe('documents created offline', () => {
           kind,
           name,
         });
+        expect(f.workspace.get(f.actor.id, id).appearance).toMatchObject(identity);
+        await expectIdentity();
         expect(receipts(f)).toHaveLength(1);
         expect(receipts(f)[0]).toMatchObject({
           item_id: id,
@@ -283,6 +349,7 @@ test.describe('documents created offline', () => {
         await f.page.reload();
         await synced(f.page);
         await matchesServer(f.page, result);
+        await expectIdentity();
         if (movedTo) {
           const acceptedRevision = (await deviceCreation(f, id))?.createdFileRevision;
           expect(acceptedRevision).toEqual(expect.any(Number));
@@ -347,6 +414,7 @@ test.describe('documents created offline', () => {
         expect(receipts(f)).toHaveLength(1);
         expect(f.errors).toEqual([]);
       } finally {
+        releaseAdmission();
         await f.close();
       }
     });

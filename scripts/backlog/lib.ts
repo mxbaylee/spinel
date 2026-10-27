@@ -38,6 +38,7 @@ export interface Ticket {
   // As written in the file. `npm run backlog:index` keeps it equal to scores().
   score: number;
   depends_on: string[];
+  upstream_prs: string[];
   decisions: number[];
   body: string;
   lineCount: number;
@@ -105,8 +106,11 @@ const FIELDS = [
   ...Object.keys(PERSONA_FIELDS),
   'score',
   'depends_on',
+  'upstream_prs',
   'decisions',
 ];
+const UPSTREAM_PR =
+  /^https:\/\/github\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)\/pull\/([1-9]\d*)$/;
 const SINGLE_EMOJI = /^\p{RGI_Emoji}$/v;
 const INDEX_FILES = new Set(['readme.md', 'process.md', 'backlog.json']);
 
@@ -207,6 +211,7 @@ export function parseTicket(file: string, text: string): Ticket {
     impact: sizes.sort((a, b) => IMPACT_POINTS[b] - IMPACT_POINTS[a])[0],
     score: d.score as number,
     depends_on: (d.depends_on ?? []) as string[],
+    upstream_prs: (d.upstream_prs ?? []) as string[],
     decisions: (d.decisions ?? []) as number[],
     body: fm.body,
     lineCount: text.replace(/\n$/, '').split('\n').length,
@@ -307,6 +312,11 @@ function validateTicket(t: Ticket, ctx: Context): void {
     for (const dep of t.depends_on)
       if (idNumber(dep, prefix) === null)
         t.errors.push(`depends_on "${dep}" is not a ${prefix}-NNN ID`);
+  if (
+    !Array.isArray(t.upstream_prs) ||
+    t.upstream_prs.some((url) => typeof url !== 'string' || !UPSTREAM_PR.test(url))
+  )
+    t.errors.push('upstream_prs must be a [list] of HTTPS GitHub pull request URLs');
   if (!Array.isArray(t.decisions) || t.decisions.some((x) => !Number.isInteger(x) || x < 1))
     t.errors.push('decisions must be a [list] of GitHub issue numbers');
 
@@ -539,7 +549,7 @@ export function withScore(text: string, value: number): string {
 
 // Every open ticket in phase then priority order. Validation prevents a
 // prerequisite from belonging to a later phase; within a phase its inherited
-// score puts it ahead of what depends on it, so the first row is never waiting.
+// score puts it ahead of what depends on it. External upstream PRs may still block it.
 export interface Ranked {
   ticket: Ticket;
   score: number;
@@ -580,7 +590,12 @@ export function rank(tickets: Ticket[], prefix: string): Ranked[] {
       else if (k.effort !== next.k.effort) tieBreak = 'Larger effort';
       else tieBreak = 'Lower ID';
     }
-    return { ticket: t, score: k.score, tieBreak, waiting: t.depends_on.filter((d) => ids.has(d)) };
+    return {
+      ticket: t,
+      score: k.score,
+      tieBreak,
+      waiting: [...t.depends_on.filter((d) => ids.has(d)), ...t.upstream_prs],
+    };
   });
 }
 
@@ -616,8 +631,8 @@ export function renderIndex(backlog: Backlog): string {
     ];
     out.push(
       phased
-        ? "Complete each phase before the next. Within a phase, take the highest-ranked ticket that isn't waiting on another."
-        : "Highest score first. Take the first ticket that isn't waiting on another.",
+        ? 'Complete each phase before the next. Within a phase, take the highest-ranked ticket that has no listed prerequisites.'
+        : 'Highest score first. Take the first ticket that has no listed prerequisites.',
       '',
     );
     if (!phased) out.push(...tableHeader);
@@ -627,7 +642,14 @@ export function renderIndex(backlog: Backlog): string {
         if (i > 0) out.push('');
         out.push(`### ${PHASE_LABELS[t.phase]}`, '', ...tableHeader);
       }
-      const waiting = r.waiting.length ? r.waiting.map((d) => `[${d}](${d}.md)`).join(', ') : '—';
+      const waiting = r.waiting.length
+        ? r.waiting
+            .map((d) => {
+              const pr = UPSTREAM_PR.exec(d);
+              return pr ? `[${pr[1]}/${pr[2]}#${pr[3]}](${d})` : `[${d}](${d}.md)`;
+            })
+            .join(', ')
+        : '—';
       out.push(
         `| ${i + 1} | ${link(t)} | ${EFFORT_EMOJI[t.effort]} ${t.effort} | ${IMPACT_EMOJI[t.impact]} ${t.impact} | ` +
           `${shown(r)} | ${r.tieBreak} | ${waiting} |`,

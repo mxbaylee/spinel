@@ -233,9 +233,18 @@ test('XL effort is accepted without expanding persona impact sizes', () => {
 test('impact is weighted tenfold and larger effort comes first within each impact', () => {
   // Owner, 2026-10-26: impact dominates own priority; reverse the effort preference.
   const efforts = ['S', 'M', 'L', 'XL'] as const;
-  assert.deepEqual(efforts.map((effort) => baseScore({ impact: 'S', effort })), [10, 11, 12, 13]);
-  assert.deepEqual(efforts.map((effort) => baseScore({ impact: 'M', effort })), [20, 21, 22, 23]);
-  assert.deepEqual(efforts.map((effort) => baseScore({ impact: 'L', effort })), [30, 31, 32, 33]);
+  assert.deepEqual(
+    efforts.map((effort) => baseScore({ impact: 'S', effort })),
+    [10, 11, 12, 13],
+  );
+  assert.deepEqual(
+    efforts.map((effort) => baseScore({ impact: 'M', effort })),
+    [20, 21, 22, 23],
+  );
+  assert.deepEqual(
+    efforts.map((effort) => baseScore({ impact: 'L', effort })),
+    [30, 31, 32, 33],
+  );
   assert.ok(baseScore({ impact: 'L', effort: 'S' }) > baseScore({ impact: 'M', effort: 'XL' }));
   assert.ok(baseScore({ impact: 'M', effort: 'S' }) > baseScore({ impact: 'S', effort: 'XL' }));
 });
@@ -370,6 +379,48 @@ test('lifecycle phases precede scores while preserving priority and dependency i
   assert.equal(index.split('| # | Ticket |').length - 1, 3);
   assert.match(index, /\| 3 \| 🧭 \[SPN-002\]/);
   assert.match(index, /\| 4 \| 🧪 \[SPN-003\]/);
+});
+
+test('external upstream PRs remain visible after launch without affecting dependency scores', () => {
+  const url = 'https://github.com/dream-num/univer/pull/7938';
+  const b = backlog([
+    ticket('SPN-001', { phase: 'launch' }),
+    ticket('SPN-002', {
+      phase: 'post_launch',
+      emoji: '🧭',
+      depends_on: '[SPN-001]',
+      upstream_prs: `[${url}]`,
+    }),
+  ]);
+  assert.deepEqual(validateBacklog(b).errors, []);
+  const ranked = rank(b.tickets, 'SPN');
+  assert.deepEqual(
+    ranked.map((r) => [r.ticket.id, r.score, r.waiting]),
+    [
+      ['SPN-001', 22, []],
+      ['SPN-002', 21, ['SPN-001', url]],
+    ],
+  );
+  const row = renderIndex(b).split('### After launch')[1];
+  assert.ok(row.includes(`[SPN-001](SPN-001.md), [dream-num/univer#7938](${url})`));
+  assert.deepEqual(parseTicket('SPN-001.md', ticket('SPN-001').text).upstream_prs, []);
+});
+
+test('external prerequisites reject non-PR URLs and malformed lists', () => {
+  for (const value of [
+    'true',
+    '[42]',
+    '[https://github.com/dream-num/univer/issues/7938]',
+    '[http://github.com/dream-num/univer/pull/7938]',
+    '[https://example.com/a/b/pull/1]',
+    '[https://github.com/a/b/pull/0]',
+    '[https://github.com/a/b/pull/1?x=y]',
+  ]) {
+    assert.match(
+      check([ticket('SPN-001', { upstream_prs: value })]).errors.join(),
+      /upstream_prs must be/,
+    );
+  }
 });
 
 test('phase boundaries do not report misleading score tie-breaks', () => {
@@ -649,5 +700,7 @@ test('repeated frontmatter keys are an error', () => {
 
 test('retired owner-input gates are rejected instead of hidden from the index', () => {
   const result = check([ticket('SPN-001', { owner_input: '"Approve screenshots"' })]);
-  assert.ok(result.errors.some((error) => error.includes('unknown frontmatter field "owner_input"')));
+  assert.ok(
+    result.errors.some((error) => error.includes('unknown frontmatter field "owner_input"')),
+  );
 });

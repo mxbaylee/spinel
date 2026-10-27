@@ -11,7 +11,7 @@ test('public identity assets load and preview clearly in light, dark and phone l
   await page.goto('/sign-in');
   await expect(page).toHaveTitle('Spinel');
   const icon = page.locator('link[rel="icon"][type="image/svg+xml"]');
-  await expect(icon).toHaveAttribute('href', '/favicon.svg');
+  await expect(icon).toHaveAttribute('href', '/favicon.svg?v=2');
   expect((await page.request.get((await icon.getAttribute('href'))!)).status()).toBe(200);
   const image = page.locator('meta[property="og:image"]');
   const imageUrl = (await image.getAttribute('content'))!;

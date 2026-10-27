@@ -1,3 +1,4 @@
+import { IdentityChoice } from './Appearance.tsx';
 import { useId, useMemo, useState } from 'react';
 import type { SpaceBootstrap, SpaceNode, SpaceTreeData } from '../src/shared/spaces.ts';
 import type { ItemKind } from '../src/shared/workspace.ts';
@@ -11,6 +12,8 @@ export type SpaceDialogAction =
   | { mode: 'move'; item: SpaceNode }
   | { mode: 'trash'; item: SpaceNode };
 export type SpaceDialogValue = {
+  icon?: string | null;
+  iconColor?: string | null;
   name?: string;
   kind?: ItemKind;
   parentId?: string | null;
@@ -39,6 +42,8 @@ export function SpaceItemDialog({
   const item = 'item' in action ? action.item : null;
   const positionDescription = useId();
   const [name, setName] = useState(item?.name ?? '');
+  const [iconColor, setIconColor] = useState<string | null>(null);
+  const [icon, setIcon] = useState<string | null>(null);
   const [parentId, setParentId] = useState(
     action.mode === 'root' ? '' : (item?.parentId ?? tree?.space.id ?? ''),
   );
@@ -124,12 +129,23 @@ export function SpaceItemDialog({
                 : action.mode === 'rename'
                   ? { name }
                   : action.mode === 'root'
-                    ? { name, parentId: parentId || null }
-                    : { name, kind: action.kind, parentId },
+                    ? { name, icon, iconColor, parentId: parentId || null }
+                    : { name, icon, iconColor, kind: action.kind, parentId },
           );
         }}
       >
         <div className="space-form-fields">
+          {(action.mode === 'root' || action.mode === 'add') && (
+            <IdentityChoice
+              name={name}
+              kind={action.mode === 'root' ? 'space' : action.kind}
+              value={icon}
+              onChange={setIcon}
+              color={iconColor}
+              onColorChange={setIconColor}
+              disabled={busy || disabled}
+            />
+          )}
           {action.mode === 'trash' ? (
             <p>
               Move {item!.name}

@@ -49,6 +49,11 @@ describe('public installation assets', () => {
         height: size,
         format: 'png',
       });
+      if (size === 32) {
+        const pixels = await sharp(icon).ensureAlpha().raw().toBuffer();
+        expect(pixels[3]).toBe(0); // favicon corner is transparent
+        expect(pixels[(16 * 32 + 16) * 4 + 3]).toBe(255); // visible gem remains opaque
+      }
     }
     const svg = await fetch(`${origin}/favicon.svg`);
     expect(svg.headers.get('content-type')).toContain('image/svg+xml');
@@ -60,6 +65,7 @@ describe('public installation assets', () => {
     expect(ico.readUInt32LE(14)).toBe(ico.length - 22);
     expect(ico.readUInt32LE(18)).toBe(22);
     expect(await sharp(ico.subarray(22)).metadata()).toMatchObject({ width: 32, height: 32 });
+    expect((await sharp(ico.subarray(22)).ensureAlpha().raw().toBuffer())[3]).toBe(0);
     const card = await fetch(`${origin}/social-preview.png?title=private-title-928`);
     expect(card.headers.get('content-type')).toContain('image/png');
     const bytes = Buffer.from(await card.arrayBuffer());

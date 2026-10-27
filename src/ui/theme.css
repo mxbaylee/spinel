@@ -777,3 +777,9 @@ dialog {
   padding: 8px;
   border-radius: 8px;
 }
+
+/* Browser selection follows the current Space, or the site accent outside it. */
+::selection {
+  background: var(--appearance-selection-bg, var(--sp-accent));
+  color: var(--appearance-selection-fg, var(--sp-on-accent));
+}

@@ -1,3 +1,15 @@
+import {
+  AppearanceDialog,
+  CoverArt,
+  ItemIcon,
+  useAppearance,
+  useOfflineAppearance,
+} from './Appearance.tsx';
+import type { AppearanceTarget } from './Appearance.tsx';
+import { palettes } from '../src/ui/palette.ts';
+import { getTheme, watchTheme } from '../src/ui/theme.ts';
+import { useSyncExternalStore } from 'react';
+import type { CSSProperties } from 'react';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Action } from '../src/ui/redesign/Controls.tsx';
@@ -51,6 +63,9 @@ export function EditorFrame({
   contextLabel,
   backLabel = 'Back to files',
   documentKey,
+  appearanceTarget,
+  appearanceDisabled = false,
+  offlineAccountId,
 }: {
   name: string;
   connection: ConnectionState;
@@ -64,7 +79,42 @@ export function EditorFrame({
   contextLabel?: string;
   backLabel?: string;
   documentKey?: string;
+  appearanceTarget?: AppearanceTarget;
+  appearanceDisabled?: boolean;
+  offlineAccountId?: string;
 }) {
+  const appearanceOffline = appearanceDisabled || connection === 'offline';
+  const appearance = useAppearance(appearanceTarget, appearanceOffline);
+  const offline = useOfflineAppearance(
+    appearanceOffline ? offlineAccountId : undefined,
+    appearanceTarget,
+  );
+  const visibleAppearance = appearanceOffline
+    ? (offline?.appearance ?? appearanceTarget?.appearance ?? appearance.appearance)
+    : appearance.appearance;
+  const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const mode = useSyncExternalStore(watchTheme, getTheme);
+  const nativeStyle = Object.fromEntries(
+    Object.entries(palettes[mode]).map(([key, value]) => [`--${key}`, value]),
+  ) as CSSProperties;
+  const header = useRef<HTMLElement>(null);
+  const appearanceButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    setAppearanceOpen(false);
+  }, [appearanceTarget?.id, appearanceTarget?.spaceId]);
+  useEffect(() => {
+    const element = header.current;
+    if (!element) return;
+    const resize = () =>
+      frame.current?.style.setProperty(
+        '--appearance-header-height',
+        `${element.getBoundingClientRect().height}px`,
+      );
+    const observer = new ResizeObserver(resize);
+    observer.observe(element);
+    resize();
+    return () => observer.disconnect();
+  }, []);
   const [theatre, setTheatre] = useState(() => {
     try {
       return localStorage.getItem(preferenceKey) === 'true';
@@ -123,9 +173,20 @@ export function EditorFrame({
         ref={frame}
         className="editor-frame"
         data-theatre={theatre}
+        data-cover={Boolean(visibleAppearance.cover) && !theatre}
         aria-label="Document workspace"
       >
-        <header className="editor-header sp-ui">
+        {!theatre && visibleAppearance.cover && (
+          <div className="appearance-banner">
+            <CoverArt
+              cover={visibleAppearance.cover}
+              assets={offline?.assets}
+              path={appearance.path}
+              offline={appearanceOffline}
+            />
+          </div>
+        )}
+        <header ref={header} className="editor-header sp-ui">
           <div className="editor-identity">
             {onBack ? (
               <button className="sp-control sp-quiet" aria-label={backLabel} onClick={onBack}>
@@ -136,6 +197,23 @@ export function EditorFrame({
             ) : (
               <GemLogo size={24} />
             )}
+            {appearanceTarget &&
+              (appearance.canEdit ? (
+                <button
+                  className="sp-control sp-quiet"
+                  ref={appearanceButton}
+                  aria-label="Change appearance"
+                  onClick={() => setAppearanceOpen(true)}
+                >
+                  <ItemIcon
+                    name={name}
+                    kind={appearanceTarget.kind}
+                    appearance={visibleAppearance}
+                  />
+                </button>
+              ) : (
+                <ItemIcon name={name} kind={appearanceTarget.kind} appearance={visibleAppearance} />
+              ))}
             <div className="editor-name">
               {contextLabel && <span className="editor-context">{contextLabel}</span>}
               {renaming && onRename ? (
@@ -195,7 +273,7 @@ export function EditorFrame({
                         setRenaming(true);
                       }}
                     >
-                      {name}
+                      <span className="editor-rename-text">{name}</span>
                       <ProfileIcon icon="lucide:pencil" size={16} />
                     </button>
                   ) : (
@@ -219,7 +297,20 @@ export function EditorFrame({
           </button>
         </header>
         {canRename && error && <p role="alert">{error}</p>}
-        <div className="editor-content">{children}</div>
+        <div className="editor-content" style={appearanceTarget?.spaceId ? undefined : nativeStyle}>
+          {children}
+        </div>
+        {appearanceOpen && appearance.canEdit && appearanceTarget && (
+          <AppearanceDialog
+            key={appearanceTarget.id}
+            target={appearanceTarget}
+            value={appearance.appearance}
+            path={appearance.path}
+            finalFocus={() => appearanceButton.current}
+            save={appearance.save}
+            close={() => setAppearanceOpen(false)}
+          />
+        )}
       </section>
     </Chrome.Provider>
   );

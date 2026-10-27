@@ -3,7 +3,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal } from './Controls.tsx';
 import './mockups.css';
-import { AppearanceChoice } from './Mockups.tsx';
+import { AppearanceChoice } from './ThemeMenu.tsx';
 function Controls({ disabled = false, error = false }: { disabled?: boolean; error?: boolean }) {
   const [value, setValue] = useState('system');
   const [kind, setKind] = useState('doc');
@@ -93,7 +93,8 @@ function Controls({ disabled = false, error = false }: { disabled?: boolean; err
   );
 }
 const meta = {
-  title: 'Redesign/Controls',
+  id: 'redesign-controls',
+  title: 'Current production/Controls',
   component: Controls,
   parameters: { shell: 'none' },
 } satisfies Meta<typeof Controls>;

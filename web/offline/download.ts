@@ -1,3 +1,4 @@
+import { validImageBase64 } from '../../src/shared/appearance.ts';
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
 import { offlineErrorMessage } from '../../src/shared/offlineError.ts';
 import { offlineScope } from './OfflineAccess.ts';
@@ -94,6 +95,8 @@ export async function downloadForOffline(
       response.status,
     );
   checkBundle(bundle, store.accountId, itemId, spaceId);
+  await verifyCoverAssets(bundle);
+  verifyCurrent();
   const bytes = new Map<string, Uint8Array>();
   for (const image of bundle.images) {
     // Native snapshots and local image keys remain canonical. The HTTP read
@@ -129,5 +132,31 @@ export async function downloadForOffline(
     throw new DownloadError(
       offlineErrorMessage(error, 'Could not save this document on this device. Try again.'),
     );
+  }
+}
+
+export async function verifyCoverAssets(bundle: OfflineBundle) {
+  const assets = bundle.coverAssets ?? {},
+    cover = bundle.appearance?.cover;
+  const required = new Set(cover?.source === 'upload' ? Object.values(cover.images) : []);
+  if (Object.keys(assets).length !== required.size || required.size > 2)
+    throw new DownloadError('The cover images are incomplete.');
+  let total = 0;
+  for (const [hash, value] of Object.entries(assets)) {
+    if (
+      !required.has(hash) ||
+      !/^[a-f0-9]{64}$/.test(hash) ||
+      !validImageBase64(value, 16 * 1024 * 1024)
+    )
+      throw new DownloadError('The cover image is invalid.');
+    const bytes = Uint8Array.from(atob(value), (character) => character.charCodeAt(0));
+    total += bytes.length;
+    if (total > 16 * 1024 * 1024) throw new DownloadError('The cover images are too large.');
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    if (
+      [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('') !==
+      hash
+    )
+      throw new DownloadError('The cover image is damaged.');
   }
 }
