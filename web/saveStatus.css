@@ -30,17 +30,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 8px;
+  gap: 4px;
   width: 144px;
   height: 44px;
   padding: 8px;
+  padding-inline-end: 4px;
   border: 0;
   border-radius: 8px;
   background: transparent;
   color: var(--sp-text);
   font: inherit;
   font-size: 0.875rem;
-  white-space: normal;
+  white-space: nowrap;
   line-height: 1.15;
   cursor: pointer;
 }

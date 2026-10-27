@@ -325,7 +325,7 @@ this existing queue instead of a second independently updated log:
 
 Unsent groups have no server delivery identity yet. Reconstruction does not
 invent another delivery or duplicate the native queue.
-**Saved on this device** appears only once that IndexedDB transaction has
+**Saved locally** appears only once that IndexedDB transaction has
 committed. Reopening applies the outbox, in order, on top of the stored snapshot,
 without capturing those replays again. A mobile termination callback is not the
 durability mechanism. Warnings for active, uncommitted cell or text input stay.
@@ -374,7 +374,7 @@ SPN-058 acknowledgement and retry contracts.
 
 **One queue owner.** SPN-058's pending queue is authoritative; SPN-053 persists it
 as the downloaded item's outbox, including while online. A mutation must commit
-locally before **Saved on this device** is claimed. Server acknowledgements
+locally before **Saved locally** is claimed. Server acknowledgements
 identify the durably accepted edits; local cleanup and rebasing preserve every
 unacknowledged entry across failure or restart. Do not add a separate Pro queue
 or treat a connection/status transition as proof of durability. Items that are
@@ -446,8 +446,10 @@ Grooming, 2026-10-25; implemented by SPN-053.
 
 ## Save states
 
-Distinguish **Saving on this device**, **Saved on this device — waiting to sync**,
-**Synced**, and **Needs attention**. Only successful local persistence earns a
+The compact save control distinguishes **Saving locally**, **Saved locally**,
+**Synced**, and **Needs attention** on one line. Save details and the live
+announcement retain the full messages, including **Saving on this device** and
+**Saved on this device — waiting to sync**. Only successful local persistence earns a
 local-save claim. **Synced** requires durable server acknowledgements for every
 pending edit and successful local outbox cleanup/rebasing. These are SPN-057/
 SPN-058 semantics, independent of the server database; neither an open connection

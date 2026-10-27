@@ -16,8 +16,8 @@ export function SaveStatus({
   onRetry(): void;
 }) {
   const localLabels = {
-    saving: 'Saving on this device',
-    saved: 'Saved on this device',
+    saving: 'Saving locally',
+    saved: 'Saved locally',
     synced: 'Synced',
     attention: 'Needs attention',
     failed: 'Not saved',
@@ -44,7 +44,7 @@ export function SaveStatus({
     ? 'circle-alert'
     : label === 'Saved' || label === 'Synced'
       ? 'check'
-      : label === 'Saved on this device'
+      : label === 'Saved locally'
         ? 'hard-drive'
         : label === 'View only'
           ? 'eye'

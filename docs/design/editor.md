@@ -206,10 +206,13 @@ a save confirmation. See [decision #148](../implementation/SPN-043.md#legacy-dec
 2026-10-22, and the [implementation contract](../implementation/SPN-043.md).
 
 Saved stays visible. Loading, Editing, Saving, Not saved, View only and Check
-status use the same footprint. SPN-053 adds **Saving on this device**, **Saved on
-this device**, **Synced** and **Needs attention** in that existing slot. These
-short labels may use two lines within its fixed height; full warnings remain in
-the popover and never change editor bounds. A click,
+status use the same footprint. SPN-053 adds **Saving locally**, **Saved locally**,
+**Synced** and **Needs attention** in that existing slot. Keep these compact labels
+on one line without clipping, ellipsis or reducing the text/touch size. Full
+on-device durability explanations remain in the popover and live announcement;
+they never change editor bounds. The owner requested this single-line treatment
+on 2026-10-26; see [the decision](../implementation/SPN-053.md#single-line-save-labels).
+A click,
 tap or keyboard activation opens full detail. Failed dirty saves retain Retry
 in that popover; clean access/load failures do not acquire a spurious Retry.
 Escape, Close or an outside click dismisses it. Base UI restores keyboard focus
