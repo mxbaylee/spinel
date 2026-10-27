@@ -424,6 +424,7 @@ The temporary PR Pages exception was removed during merge preparation.
 
 Owner refinement, chat 2026-10-20: the dark browser favicon rotates the heart
 180 degrees to match the dark UI logo; the light favicon remains upright.
+Owner refinement, chat 2026-10-27: website and Storybook favicons have a transparent background in every variant, including PNG/ICO fallbacks ([decision](../implementation/SPN-086.md#transparent-browser-icons)).
 The automatic SVG follows the browser color scheme. Both retain tight framing.
 
 Owner refinements, chat 2026-10-20: document actions use **Share** with a matching
