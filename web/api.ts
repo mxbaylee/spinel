@@ -27,14 +27,20 @@ export async function api<T>(
   path: string,
   body?: unknown,
   verifyCurrent: () => void = () => {},
+  options: { signal?: AbortSignal; accountId?: string } = {},
 ): Promise<T> {
+  verifyCurrent();
+  const headers: Record<string, string> = {};
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  if (options.accountId) headers['X-Spinel-Account'] = options.accountId;
   const response = await fetch(
     `/api/auth/${path}`,
     body === undefined
-      ? {}
+      ? { signal: options.signal, headers }
       : {
+          signal: options.signal,
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(body),
         },
   );
@@ -52,6 +58,7 @@ export async function api<T>(
   if (!response.ok)
     throw Object.assign(new Error(data.error ?? 'Something went wrong. Try again.'), {
       status: response.status,
+      code: data.code,
     });
   return data;
 }

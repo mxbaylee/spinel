@@ -3,6 +3,7 @@ import { claimDevice, openLocalStart } from '../../web/offline/localStart.ts';
 import { api } from '../../web/api.ts';
 import {
   OfflineStore,
+  claimOnlineAccount,
   offlinePreparation,
   offlineEpoch,
   preparedAccount,
@@ -276,4 +277,58 @@ test('a local catalog retains its cancellation check after the read completes', 
   otherTab.setPreparedAccount(null);
   otherTab.setPreparedAccount(user.id);
   expect(start?.isCurrent()).toBe(false);
+});
+
+test('an account-bound security action checks its epoch before sending', async () => {
+  claimOnlineAccount(user.id);
+  const check = offlineEpoch();
+  const fetch = vi.fn();
+  vi.stubGlobal('fetch', fetch);
+  claimOnlineAccount('another-account');
+  await expect(api('sign-out-others', {}, check, { accountId: user.id })).rejects.toMatchObject({
+    name: 'AbortError',
+  });
+  expect(fetch).not.toHaveBeenCalled();
+});
+
+test('a retired passkey read cannot redirect a newer sign-in when its headers arrive', async () => {
+  const held = deferred();
+  const assign = vi.fn();
+  vi.stubGlobal('location', { pathname: '/profile', search: '', assign });
+  let current = true;
+  const check = () => {
+    if (!current) throw new DOMException('Retired profile read.', 'AbortError');
+  };
+  const fetch = vi.fn<typeof globalThis.fetch>(async () => {
+    await held.promise;
+    return Response.json({ error: 'Expired' }, { status: 401 });
+  });
+  vi.stubGlobal('fetch', fetch);
+  const pending = api('passkeys', undefined, check, { accountId: user.id });
+  current = false;
+  held.resolve();
+  await expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+  expect(assign).not.toHaveBeenCalled();
+  expect(new Headers(fetch.mock.calls[0]![1]?.headers).get('X-Spinel-Account')).toBe(user.id);
+});
+
+test('a passkey response body cannot publish after the account changes', async () => {
+  const held = deferred();
+  claimOnlineAccount(user.id);
+  const check = offlineEpoch();
+  const publish = vi.fn();
+  vi.stubGlobal('fetch', async () => ({
+    ok: true,
+    status: 200,
+    json: async () => {
+      await held.promise;
+      return { passkeys: [{ name: 'Old account key' }] };
+    },
+  }));
+  const pending = api('passkeys', undefined, check, { accountId: user.id }).then(publish);
+  await Promise.resolve();
+  claimOnlineAccount('another-account');
+  held.resolve();
+  await expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+  expect(publish).not.toHaveBeenCalled();
 });

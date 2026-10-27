@@ -104,7 +104,8 @@ export class SetupService {
         expectedRPID: this.rpID,
         requireUserVerification: true,
       });
-      if (!result.verified) throw new AuthError(400, 'Could not verify this passkey. Try again.');
+      if (!result.verified || !result.registrationInfo?.userVerified)
+        throw new AuthError(400, 'Could not verify this passkey. Try again.');
       return this.store.transaction(() => {
         // Recheck after asynchronous verification and while holding the write lock.
         this.active(id);
@@ -119,6 +120,7 @@ export class SetupService {
           undefined,
           result.registrationInfo!.credential.id,
         );
+        this.store.markVerified(next.session, result.registrationInfo!.credential.id);
         this.store.revokeSession(session.token_hash);
         return next;
       });

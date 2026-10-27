@@ -3,6 +3,7 @@ import type { DatabaseSync } from '../../../server/database.ts';
 import type { AuthenticatorTransport } from '@simplewebauthn/server';
 
 export const CHALLENGE_MS = 5 * 60_000;
+export const VERIFICATION_MS = 5 * 60_000;
 export const SESSION_MS = 30 * 24 * 60 * 60_000;
 export const COOKIE_NAME = '__Host-spinel-session';
 export const hashToken = (token: string) => createHash('sha256').update(token).digest('hex');
@@ -26,11 +27,14 @@ export interface Session {
   user_id: string | null;
   expires_at: number;
   passkey_id: string | null;
+  verified_at?: number | null;
+  verified_passkey_id?: string | null;
 }
 export interface Challenge {
   id: string;
   session_hash: string;
-  kind: 'authentication' | 'registration' | 'setup' | 'invite' | 'admin-recovery';
+  kind:
+    'authentication' | 'reauthentication' | 'registration' | 'setup' | 'invite' | 'admin-recovery';
   challenge: string;
   expires_at: number;
   used: number;
@@ -89,6 +93,19 @@ export class AuthStore {
       database.exec(
         'ALTER TABLE auth_sessions ADD COLUMN passkey_id TEXT REFERENCES auth_passkeys(id) ON DELETE CASCADE',
       );
+    // Old sessions must prove possession again; migration never grants recent verification.
+    for (const [name, declaration] of [
+      ['verified_at', 'INTEGER'],
+      ['verified_passkey_id', 'TEXT REFERENCES auth_passkeys(id) ON DELETE SET NULL'],
+    ]) {
+      if (
+        !database
+          .prepare('PRAGMA table_info(auth_sessions)')
+          .all()
+          .some((column) => column.name === name)
+      )
+        database.exec(`ALTER TABLE auth_sessions ADD COLUMN ${name} ${declaration}`);
+    }
   }
   userCount() {
     return Number(this.database.prepare('SELECT COUNT(*) AS total FROM auth_users').get()!.total);
@@ -142,6 +159,8 @@ export class AuthStore {
       user_id: userId,
       expires_at: this.now() + lifetime,
       passkey_id: passkeyId,
+      verified_at: null,
+      verified_passkey_id: null,
     };
     this.database
       .prepare(
@@ -162,6 +181,67 @@ export class AuthStore {
   }
   revokeSession(hash: string) {
     this.database.prepare('DELETE FROM auth_sessions WHERE token_hash=?').run(hash);
+  }
+  verifiedUntil(session: Session): number | null {
+    const current = this.sessionByHash(session.token_hash);
+    if (
+      !current?.user_id ||
+      current.user_id !== session.user_id ||
+      current.verified_at == null ||
+      current.verified_at > this.now() ||
+      !current.verified_passkey_id ||
+      this.passkey(current.verified_passkey_id)?.user_id !== current.user_id
+    )
+      return null;
+    const until = current.verified_at + VERIFICATION_MS;
+    return until > this.now() ? until : null;
+  }
+  requireVerified(session: Session): Session {
+    const current = this.sessionByHash(session.token_hash);
+    if (!current?.user_id || current.user_id !== session.user_id)
+      throw new AuthError(401, 'Your session expired. Sign in again.');
+    if (!this.verifiedUntil(current))
+      throw new AuthError(428, 'Verify with a passkey before changing account access.');
+    return current;
+  }
+  markVerified(session: Session, keyId: string) {
+    const current = this.sessionByHash(session.token_hash);
+    if (
+      !current?.user_id ||
+      current.user_id !== session.user_id ||
+      this.passkey(keyId)?.user_id !== current.user_id
+    )
+      throw new AuthError(401, 'Your session expired. Sign in again.');
+    this.database
+      .prepare('UPDATE auth_sessions SET verified_at=?,verified_passkey_id=? WHERE token_hash=?')
+      .run(this.now(), keyId, current.token_hash);
+  }
+  /** Caller authorizes this operation and holds a transaction for any last-key guard. */
+  removePasskey(userId: string, keyId: string) {
+    // Bound sessions cascade with the credential. Legacy sessions cannot be attributed safely.
+    this.database
+      .prepare('DELETE FROM auth_sessions WHERE user_id=? AND passkey_id IS NULL')
+      .run(userId);
+    this.database.prepare('DELETE FROM auth_passkeys WHERE id=? AND user_id=?').run(keyId, userId);
+  }
+  removeOwnPasskey(session: Session, keyId: string) {
+    return this.transaction(() => {
+      const current = this.requireVerified(session);
+      if (this.passkey(keyId)?.user_id !== current.user_id)
+        throw new AuthError(404, 'Passkey not found.');
+      if (this.passkeys(current.user_id!).length <= 1)
+        throw new AuthError(409, 'Add another passkey before removing your last passkey.');
+      this.removePasskey(current.user_id!, keyId);
+      return { signedOut: !this.sessionByHash(current.token_hash) };
+    });
+  }
+  signOutOthers(session: Session) {
+    this.transaction(() => {
+      const current = this.requireVerified(session);
+      this.database
+        .prepare('DELETE FROM auth_sessions WHERE user_id=? AND token_hash<>?')
+        .run(current.user_id, current.token_hash);
+    });
   }
   prune() {
     this.database.prepare('DELETE FROM auth_challenges WHERE expires_at<=?').run(this.now());

@@ -122,13 +122,7 @@ export class AdminStore {
           409,
           'Add another passkey before removing an active admin’s last passkey.',
         );
-      // Bound sessions cascade with the credential. Legacy sessions cannot be attributed safely.
-      this.auth.database
-        .prepare('DELETE FROM auth_sessions WHERE user_id=? AND passkey_id IS NULL')
-        .run(user);
-      this.auth.database
-        .prepare('DELETE FROM auth_passkeys WHERE id=? AND user_id=?')
-        .run(id, user);
+      this.auth.removePasskey(user, id);
     });
   }
 }

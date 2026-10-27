@@ -155,6 +155,9 @@ async function fixture(
   const read = async () => {
     const response = await first.request.get(
       `/sync-api/items/${item.id}/snapshot?unitId=${encodeURIComponent(data.unitId)}`,
+      // Repeat only this read-only observation after ECONNRESET. HTTP failures,
+      // authored writes and native/content assertions retain their failure gates.
+      { maxRetries: 1 },
     );
     expect(response.ok()).toBe(true);
     return (await response.json()) as { revision: number; snapshot: IWorkbookData & IDocumentData };

@@ -84,7 +84,7 @@ client provenance, origin, capabilities and account visible. See the
 
 | Always visible                                                   | Behind a menu                                                       |
 | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Navigation: appearance segments, account control                 | Future, not built: passkey row More → Remove (needs its own ticket) |
+| Navigation: appearance segments, account control                 | Passkey row More → Remove, with a named confirmation (SPN-070) |
 | Settings: identity, Passkeys, This device, Connections, Sign out |                                                                     |
 | Sign-in: one primary button                                      |                                                                     |
 
@@ -149,3 +149,18 @@ Docker command. This page displays commands and never executes them.
 
 The arrival-screen gem reuses the existing brief `gem-wiggle` on hover or keyboard
 focus. Respect reduced motion; the wordmark stays still. Owner, chat 2026-10-20.
+
+## Passkey security controls (SPN-070)
+
+Named rows show last use, current-session attribution where known and More →
+Remove. Use the existing confirmation modal and key title icon. A final-key
+attempt explains Add another passkey; removal is unavailable in that dialog.
+Sign out other devices is a separate secondary control and explains that passkeys
+can sign in again. Recent verification appears inside the same confirmation,
+with a cancellable authenticator prompt followed by an explicit action. After
+submission, wait for the result; an uncertain result offers Reload profile rather
+than automatic retry. These are compositions of the existing rows, menus,
+confirmation, pending and error patterns, not a new component vocabulary.
+
+See [scope, persona reasoning and verification](../implementation/SPN-070.md).
+Stories: Current production/Account/Passkey security.

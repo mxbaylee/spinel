@@ -16,7 +16,10 @@ export function Button({
   primary,
   className = '',
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { primary?: boolean }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  primary?: boolean;
+  ref?: RefObject<HTMLButtonElement | null>;
+}) {
   return (
     <BaseButton {...props} className={`sp-control ${primary ? 'sp-primary' : ''} ${className}`} />
   );
