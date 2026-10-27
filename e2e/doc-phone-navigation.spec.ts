@@ -114,7 +114,11 @@ for (const role of ['editor', 'guest-viewer'] as const) {
     context,
     baseURL,
   }, info) => {
-    test.setTimeout(150_000);
+    // Development serves cold native modules and this journey types the full
+    // fixture, then compares many canvas rasters in two themes. CI on main
+    // exhausts 150s at different steps; retain each bounded assertion while
+    // budgeting the complete development journey separately from production.
+    test.setTimeout(info.project.name === 'development' ? 300_000 : 150_000);
     const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
     const auth = new AuthStore(db),
       store = new WorkspaceStore(auth);
