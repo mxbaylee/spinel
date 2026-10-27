@@ -134,6 +134,9 @@ one event is at most 8 KiB, one batch 64 events/64 KiB. Ingest accepts at most
 120 events per actor/minute and 600 globally. Writes require 256 MiB free reserve;
 export staging requires 352 MiB. At capacity, observations drop until space is
 available or the Operator clears records. There is no automatic age deletion.
+The [SPN-063 backup-options proposal](implementation/SPN-063-backup-options.md#three-independent-retention-policies)
+discusses seven-day live-event expiry and independent optional archive retention;
+neither is implemented by that writeup.
 Loss counters reset with the process. Diagnostics initialization failure disables
 collection without preventing app startup. See the
 [implementation limits](implementation/SPN-032.md#concrete-bounds-and-lifecycle)

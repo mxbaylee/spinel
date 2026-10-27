@@ -4,15 +4,19 @@
 
 Spinel is [pre-production](development.md#deployment-stage) until SPN-038 launches
 `spinel.baylee.dev`. The SQLite/Spaces procedure below is the current working
-implementation. It may be replaced before launch if another database and recovery
-setup is simpler; the requirement is a tested way to recover the whole workspace,
-not a permanent SQLite dependency. Owner, chat 2026-10-21.
+implementation and the selected path for SPN-063. The owner asked to retain
+SQLite without database adapters if capacity is acceptable; the
+[accepted decision](implementation/SPN-063.md#accepted-decision-keep-sqlite-without-database-adapters)
+and [capacity writeup](implementation/SPN-063-capacity.md) support that choice for
+the intended deployment (owner direction and agent assessment, 2026-10-27).
+This resolves the earlier open comparison from 2026-10-21 while preserving the
+requirement to demonstrate recovery of the whole workspace.
 
 Keep an inventory of accounts and grants, document snapshots and history, images,
 and the configuration/credentials needed to restore service. Set an acceptable
 recovery point and recovery time for the selected deployment, then demonstrate
 them with an isolated restore. SPN-063 adds recurring verification and visible
-last-success/failure status for whichever recovery method is selected.
+last-success/failure status for the selected SQLite recovery path.
 
 DigitalOcean offers different kinds of protection, which cover different failures:
 
@@ -28,6 +32,14 @@ and [PostgreSQL features](https://docs.digitalocean.com/products/databases/postg
 Recheck current plans and costs when choosing a deployment. These options do not
 change the browser storage/eviction and pending-edit requirements in SPN-055.
 No cloud resources are provisioned by this grooming decision.
+
+The [SPN-063 storage and recovery plan](implementation/SPN-063.md) retains the
+alternative-backend comparison and specifies direct SQLite recovery work without
+database adapters. The later [backup-options proposal](implementation/SPN-063-backup-options.md)
+adds manual encrypted downloads, configurable S3-compatible destinations,
+separate diagnostics retention and staged UI restore/maintenance. Those remain
+design work; the current commands below are unchanged, and recurring verification
+is not yet available.
 
 ## Current SQLite and Spaces implementation
 
