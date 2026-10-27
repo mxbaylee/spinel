@@ -1,41 +1,14 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
-import type { CDPSession, Locator, Page, TestInfo } from '@playwright/test';
+import type { Locator, Page, TestInfo } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { nativeTheme } from './native-theme.ts';
 
-const profileDocTransition = process.env.SPINEL_DOC_PROFILE === '1';
-// Keep the original failing attempt, plus the successful single profiling run.
-// This fixture has no per-keystroke latency assertion.
-test.use({ trace: profileDocTransition ? 'on' : 'retain-on-failure' });
-
-async function observeBrowserWork(page: Page, role: 'owner-seed' | 'guest-viewer') {
-  if (process.env.VITE_DOC_SELECTION_EVIDENCE !== '1') return;
-  // Timing-only investigation of renderer work versus a delayed protocol call;
-  // this does not wait for readiness or alter the five-second theme assertion.
-  page.on('console', (message) => {
-    if (message.text().startsWith('SPN-072 browser long task:')) console.info(message.text());
-  });
-  await page.addInitScript((role) => {
-    if (!PerformanceObserver.supportedEntryTypes.includes('longtask')) return;
-    new PerformanceObserver((list) => {
-      for (const entry of list.getEntries())
-        if (entry.duration >= 1000)
-          console.info(
-            'SPN-072 browser long task:',
-            JSON.stringify({
-              role,
-              timeOrigin: performance.timeOrigin,
-              start: entry.startTime,
-              duration: entry.duration,
-            }),
-          );
-    }).observe({ type: 'longtask', buffered: true });
-  }, role);
-}
+// Keep the original failing attempt; this fixture has no per-keystroke latency assertion.
+test.use({ trace: 'retain-on-failure' });
 
 async function nativeSelectionEvidence(page: Page) {
   return page.evaluate(() => {
@@ -71,8 +44,10 @@ async function nativeSelectionEvidence(page: Page) {
   });
 }
 
-// These exercise the shipped desktop Doc preset at phone width. Wheel input is
-// intentional: physical touch/pinch and the software keyboard remain SPN-072/090.
+// These retain desktop-preset wheel coverage at phone width. doc-mobile.spec.ts
+// separately exercises the coarse-pointer preset with browser touch input.
+// Physical-device touch, keyboard, and IME checks remain unrun under the owner's
+// browser-only acceptance.
 async function changedContent(before: Buffer, after: Buffer) {
   const first = await sharp(before).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const second = await sharp(after).removeAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -210,62 +185,15 @@ for (const role of ['editor', 'guest-viewer'] as const) {
     const page = guest ? await guest.newPage() : seed;
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
-    await observeBrowserWork(seed, 'owner-seed');
-    if (guest) await observeBrowserWork(page, 'guest-viewer');
-    const profileThisAttempt = profileDocTransition && role === 'editor';
-    const phases: Array<{ phase: string; epochMs: number }> = [];
-    let profileSession: CDPSession | undefined;
-    let profileStarted = false;
-    let profileFinished = false;
-    let testFailed = false;
-    const phase = (name: string) => {
-      if (!profileThisAttempt || profileFinished) return;
-      const entry = { phase: name, epochMs: Date.now() };
-      phases.push(entry);
-      console.info('SPN-072 Doc transition phase:', JSON.stringify(entry));
-    };
-    const finishProfile = async () => {
-      const session = profileSession;
-      profileSession = undefined;
-      if (!session) return;
-      try {
-        if (profileStarted) {
-          phase('profile-stop-request');
-          const { profile } = await session.send('Profiler.stop');
-          profileStarted = false;
-          phase('profile-stopped');
-          await writeFile(
-            info.outputPath('phone-doc-transition.cpuprofile'),
-            JSON.stringify(profile),
-          );
-        }
-      } finally {
-        profileStarted = false;
-        try {
-          await session.detach();
-        } finally {
-          profileFinished = true;
-          await writeFile(
-            info.outputPath('phone-doc-transition-phases.json'),
-            JSON.stringify({ phases }, null, 2),
-          );
-        }
-      }
-    };
     try {
       // Seed through the real editor; the viewer subsequently opens populated
       // content, rather than proving only that a blank canvas can be resized.
-      phase('seed-viewport-before');
       await seed.setViewportSize({ width: 1440, height: 1000 });
-      phase('seed-viewport-after');
-      phase('seed-navigation-before');
       await seed.goto(`/?item=${item.id}`);
-      phase('seed-navigation-after');
       await expect(seed.getByRole('status', { name: 'Save status' })).toHaveText(
         'All changes saved.',
         { timeout: 30_000 },
       );
-      phase('seed-ready');
       await seed.locator('.univer-container').click({ position: { x: 130, y: 200 } });
       await expect(seed.locator('[contenteditable="true"][data-u-comp="editor"]')).toBeFocused();
       const paragraphs = Array.from(
@@ -274,24 +202,14 @@ for (const role of ['editor', 'guest-viewer'] as const) {
           `Line ${index + 1}: Read the whole paragraph, including the far right edge. ` +
           'Keep the original page size and all of this text when navigating.',
       );
-      if (profileThisAttempt) {
-        // Attach to the ready document before dense typing and the subsequent
-        // transition, including browser-injected tracing/selector work.
-        phase('profile-connect-before');
-        profileSession = await context.newCDPSession(seed);
-        await profileSession.send('Profiler.enable');
-        await profileSession.send('Profiler.setSamplingInterval', { interval: 1000 });
-        phase('profile-start-request');
-        await profileSession.send('Profiler.start');
-        profileStarted = true;
-        phase('profile-started');
-      }
-      phase('seed-typing-before');
+      // Insert each prepared paragraph through native browser input events.
+      // insertText sends no per-character keydown/keyup/keypress events. This
+      // reduces seed history transactions; it is not a product latency repair.
+      // Prefix/suffix and forbidden-write checks below retain keyboard.type.
       for (const [index, paragraph] of paragraphs.entries()) {
         if (index > 0) await seed.keyboard.press('Enter');
-        await seed.keyboard.type(paragraph);
+        await seed.keyboard.insertText(paragraph);
       }
-      phase('seed-typing-after');
       // The visible native text can precede room acknowledgement and the
       // recovery-cache flush. Observe that lifecycle before reading its saved
       // snapshot; this seed is not a per-keystroke latency measurement.
@@ -299,14 +217,12 @@ for (const role of ['editor', 'guest-viewer'] as const) {
         'All changes saved.',
         { timeout: 30_000 },
       );
-      phase('seed-saved');
       // As in the collaboration tests, the first API read may cold-materialize
       // the native snapshot. Require every paragraph, not just the final marker.
       await expect
         .poll(async () => (await read()).body.dataStream, { timeout: 30_000 })
         .toBe(paragraphs.join('\r') + '\r\n');
       const original = await read();
-      phase('seed-snapshot-ready');
       let expectedText: string = original.body.dataStream;
       let expectedBody = original.body;
       if (guest) {
@@ -318,18 +234,14 @@ for (const role of ['editor', 'guest-viewer'] as const) {
         await page.goto((await link.json()).url);
         await seed.close();
       } else {
-        phase('phone-resize-before');
         await page.setViewportSize({ width: 390, height: 844 });
-        phase('phone-resize-after');
       }
       const editor = page.getByRole('region', { name: 'Doc document', exact: true });
       await expect(page.getByRole('status', { name: 'Connection status', exact: true })).toHaveText(
         'Online',
         { timeout: 30_000 },
       );
-      phase('theatre-before');
       await page.getByRole('button', { name: 'Enter theatre mode', exact: true }).click();
-      phase('theatre-after');
       const exit = page.getByRole('button', { name: 'Exit theatre mode', exact: true });
       expect(await page.evaluate(() => devicePixelRatio)).toBe(1);
       const canvas = editor.locator('canvas').first();
@@ -359,13 +271,8 @@ for (const role of ['editor', 'guest-viewer'] as const) {
         await page.mouse.wheel(x, y);
       };
       for (const theme of ['light', 'dark'] as const) {
-        phase(`${theme}-media-before`);
         await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
-        phase(`${theme}-media-after`);
-        phase(`${theme}-native-theme-before`);
         await nativeTheme(page, canvas, theme);
-        phase(`${theme}-native-theme-after`);
-        if (theme === 'light' && profileSession) await finishProfile();
         await setZoom(100);
         await pan(-10_000, -10_000);
         await settledCanvas(canvas);
@@ -479,10 +386,6 @@ for (const role of ['editor', 'guest-viewer'] as const) {
             'All changes saved.',
           );
           expectedBody = (await read()).body;
-          await writeFile(
-            info.outputPath(`phone-doc-selection-evidence-${theme}.json`),
-            JSON.stringify({ theme, phase: 'complete', nativeEvidence }, null, 2),
-          );
           await input.dispose();
         } else {
           await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
@@ -514,21 +417,9 @@ for (const role of ['editor', 'guest-viewer'] as const) {
       await expect(zoom).toHaveValue('100%');
       expect((await read()).body).toEqual(expectedBody);
       expect(errors).toEqual([]);
-    } catch (error) {
-      testFailed = true;
-      throw error;
     } finally {
-      try {
-        // Preserve the original assertion error if collecting an unfinished
-        // profile also fails during teardown. A missing profile fails a green run.
-        if (profileSession) await finishProfile();
-      } catch (error) {
-        if (!testFailed) throw error;
-        console.info('SPN-072 Doc profile cleanup failed:', String(error));
-      } finally {
-        await guest?.close();
-        db.close();
-      }
+      await guest?.close();
+      db.close();
     }
   });
 }
