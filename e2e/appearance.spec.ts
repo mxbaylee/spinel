@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { ColorKit, invertColorByMatrix } from '@univerjs/core';
 import type { IWorkbookData } from '@univerjs/core';
@@ -12,6 +12,7 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { resolvedWorkbook } from './workbook-state.ts';
+import { expectNativeSheetValue } from './native-sheet-value.ts';
 
 test('themes persist, follow the system, and recolour sheet presets without editing documents', async ({
   page,
@@ -22,6 +23,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
   page.setDefaultTimeout(10_000);
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db),
     store = new WorkspaceStore(auth);
@@ -82,7 +84,35 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     },
   ]);
   const errors: string[] = [];
+  const syncFrames: object[] = [];
+  const resyncs: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  page.on('websocket', (socket) => {
+    if (!socket.url().includes('/sync-api/')) return;
+    const record =
+      (direction: string) =>
+      ({ payload }: { payload: string | Buffer }) => {
+        try {
+          const frame = JSON.parse(String(payload));
+          if (frame.type === 'resync') resyncs.push(frame.reason);
+          syncFrames.push({
+            direction,
+            type: frame.type,
+            revision: frame.revision,
+            baseRevision: frame.baseRevision,
+            mutationId: frame.mutationId,
+            hash: frame.hash,
+            reason: frame.reason,
+            mutations: frame.mutations?.map((mutation: { id: string }) => mutation.id),
+          });
+          if (syncFrames.length > 200) syncFrames.shift();
+        } catch {
+          syncFrames.push({ direction, malformed: true });
+        }
+      };
+    socket.on('framesent', record('sent'));
+    socket.on('framereceived', record('received'));
+  });
   const saved = () =>
     expect(page.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
       timeout: 20000,
@@ -200,7 +230,7 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     const cells = before.snapshot.sheets[before.snapshot.sheetOrder[0]].cellData![0]!;
     expect(cells[0]?.v).toBe(12);
     expect(cells[1]?.f).toBe('=A1*2');
-    expect(cells[1]?.v).toBe(24);
+    await expectNativeSheetValue(page, 'B1', '24');
     const style = cells[0]!.s;
     const resolved = typeof style === 'string' ? before.snapshot.styles[style] : style;
     expect(resolved?.bl).toBe(1);
@@ -220,6 +250,8 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     expect((await read()).snapshot.sheets.first.cellData?.[4]?.[0]?.v).toBe('Plain text');
     await expect.poll(() => colouredPixels([255, 255, 255])).toBeGreaterThan(5);
     await expect.poll(() => colouredPixels([255, 156, 198])).toBeGreaterThan(5);
+    await expectNativeSheetValue(page, 'B1', '24');
+    await select('C3');
     await page.getByRole('button', { name: 'People in this document', exact: true }).click();
     const people = page.getByRole('dialog', { name: 'People in this document', exact: true });
     const badge = people.locator('.collaborator-badge').first();
@@ -240,7 +272,9 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     await page.reload();
     await saved();
     await expect.poll(() => colouredPixels([255, 181, 71])).toBeGreaterThan(100);
+    await expectNativeSheetValue(page, 'B1', '24');
     expect((await read()).revision).toBe(before.revision);
+    expect(resolvedWorkbook((await read()).snapshot)).toEqual(resolvedWorkbook(before.snapshot));
     await select('A3');
     await page.keyboard.press('F2');
     await page.keyboard.press('End');
@@ -303,6 +337,13 @@ test('themes persist, follow the system, and recolour sheet presets without edit
     expect(docAfterTheme.snapshot).toEqual(docBeforeTheme.snapshot);
     await capture('doc-light');
     expect(errors).toEqual([]);
+    expect(resyncs).toEqual([]);
+  } catch (error) {
+    await writeFile(
+      info.outputPath('sync-diagnostics.json'),
+      JSON.stringify({ errors, syncFrames }),
+    );
+    throw error;
   } finally {
     db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
     db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);

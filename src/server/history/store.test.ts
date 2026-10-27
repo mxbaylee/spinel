@@ -43,7 +43,7 @@ async function fixture() {
   let request = 0;
   const edit = async (value: string, user = owner.id) => {
     const data = await collaboration.load(user, item.id);
-    const result = await collaboration.service.submitChangeset(
+    const result = await collaboration.submitChangeset(
       {
         changeset: {
           unitID: item.id,
@@ -210,12 +210,11 @@ test('migration preserves native history and starts a separate collaboration rev
   ).toThrow('live collaboration');
 }, 30_000);
 
-test('a generation switch during metadata scan cannot mix an old SDK head with the new offset', async () => {
+test('a generation switch during metadata scan cannot mix an old sync head with the new offset', async () => {
   const f = await fixture();
   await f.edit('Before restoration');
   const baseline = f.history.list(f.owner.id, f.item.id).at(-1)!;
-  const adapter = f.collaboration.service.dbAdapter;
-  const original = adapter.getUnit.bind(adapter);
+  const original = f.collaboration.headRevision.bind(f.collaboration);
   let entered!: () => void, release!: () => void;
   const reading = new Promise<void>((resolve) => {
     entered = resolve;
@@ -224,7 +223,7 @@ test('a generation switch during metadata scan cannot mix an old SDK head with t
     release = resolve;
   });
   let once = true;
-  vi.spyOn(adapter, 'getUnit').mockImplementation(async (...args) => {
+  vi.spyOn(f.collaboration, 'headRevision').mockImplementation(async (...args) => {
     const result = await original(...args);
     if (once && args[1] === f.item.id) {
       once = false;

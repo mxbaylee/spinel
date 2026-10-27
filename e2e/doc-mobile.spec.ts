@@ -13,7 +13,6 @@ import {
   validateDocumentStructure,
 } from '@univerjs/core';
 import type { ICustomRange, IDocumentData } from '@univerjs/core';
-import { CombCmd } from '@univerjs/protocol';
 import { formulaBody } from '@spinel/doc-formulas';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
@@ -29,6 +28,17 @@ const saved = (page: Page) =>
 const input = (page: Page) => page.locator('[contenteditable="true"][data-u-comp="editor"]');
 
 type InputEvidenceWindow = Window & { phoneInputEvidence?: unknown[] };
+
+interface DocSelectionEvidence {
+  unitId: string;
+  start?: number;
+  end?: number;
+  hasAnchor: boolean;
+  editing: boolean;
+  bounds?: { left: number; right: number; top: number; bottom: number };
+  scroll: number;
+  text: string;
+}
 
 /** Observe the native input boundary without creating or changing a selection. */
 async function recordPhoneInput(context: BrowserContext) {
@@ -337,10 +347,10 @@ async function fixture(
     socket.on('framereceived', ({ payload }) => {
       try {
         const frame = JSON.parse(String(payload));
-        if (frame.cmd === CombCmd.RECV || ['ack', 'edit', 'resume', 'resync'].includes(frame.type))
+        if (['ack', 'edit', 'resume', 'resync'].includes(frame.type))
           diagnostics.push({ received: JSON.stringify(frame).slice(0, 6000) });
       } catch {
-        // Binary frames are unrelated to this legacy protocol observation.
+        // Other sockets may use binary payloads.
       }
     });
     socket.on('framesent', ({ payload }) => {
@@ -356,15 +366,12 @@ async function fixture(
     socket.on('socketerror', (error) => diagnostics.push({ socketError: error }));
   });
   page.on('response', async (response) => {
+    if (response.status() < 400) return;
     const path = new URL(response.url()).pathname;
-    if (!path.includes('new_changes') && response.status() < 400) return;
     diagnostics.push({
       path,
       status: response.status(),
       body: (await response.text().catch(() => '')).slice(0, 1000),
-      ...(path.includes('new_changes') && {
-        submitted: response.request().postData()?.slice(0, 6000),
-      }),
     });
   });
   const read = async () => {
@@ -554,6 +561,107 @@ for (const zoomRatio of [1, 0.5, 2])
       await f.close();
     }
   });
+
+test('phone Doc typing keeps the rendered caret above the emulated keyboard', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.skip(
+    !['sync-development', 'sync-production'].includes(info.project.name),
+    'Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.',
+  );
+  test.setTimeout(150_000);
+  const f = await fixture(browser, baseURL!, info);
+  const { page } = f;
+  try {
+    const original = await f.read();
+    await page.goto(`/?item=${f.item.id}`);
+    await saved(page);
+    await expect(page.getByRole('status', { name: 'Connection status', exact: true })).toHaveText(
+      'Online',
+      { timeout: 30_000 },
+    );
+    const region = page.getByRole('region', { name: 'Doc document', exact: true });
+    await expect(region).toHaveAttribute('data-mobile', 'true');
+    const canvas = region.getByLabel('Document canvas', { exact: true });
+    await expect(canvas).toBeVisible();
+    const mounted = (await canvas.elementHandle())!;
+    await beginWriting(page);
+    await keyboardOcclusion(page, 320);
+    const hideKeyboard = region.getByRole('button', { name: 'Hide keyboard', exact: true });
+    await expect(hideKeyboard).toBeVisible();
+    await expect(input(page)).toBeFocused();
+    const prefix = 'Keep the final sentence visible while writing on a phone. '.repeat(24);
+    const expectedText = prefix + original.body!.dataStream;
+    await page.keyboard.type(prefix);
+    await saved(page);
+    await expect.poll(async () => (await f.read()).body!.dataStream).toBe(expectedText);
+
+    await expect(async () => {
+      const observed = await hideKeyboard.evaluate(
+        (button, { canvas, unitId }) => {
+          const responses: DocSelectionEvidence[] = [];
+          const receive = (event: Event) => {
+            const evidence = (event as CustomEvent<DocSelectionEvidence>).detail;
+            if (evidence.unitId === unitId) responses.push(evidence);
+          };
+          window.addEventListener('spinel-doc-selection-evidence', receive);
+          try {
+            // This event only reads the current native range. All selection and
+            // text changes above came from real touch and keyboard input.
+            window.dispatchEvent(new Event('spinel-doc-selection-read'));
+          } finally {
+            window.removeEventListener('spinel-doc-selection-evidence', receive);
+          }
+          const bounds = (element: Element) => {
+            const { left, right, top, bottom } = element.getBoundingClientRect();
+            return { left, right, top, bottom };
+          };
+          const viewport = window.visualViewport;
+          return {
+            selection: responses[0],
+            canvas: bounds(canvas),
+            toolbar: bounds(button.parentElement!),
+            connected: canvas.isConnected,
+            viewportBottom: viewport ? viewport.offsetTop + viewport.height : undefined,
+          };
+        },
+        { canvas: mounted, unitId: original.id },
+      );
+      expect(observed.selection).toMatchObject({
+        unitId: original.id,
+        start: prefix.length,
+        end: prefix.length,
+        hasAnchor: true,
+        editing: true,
+        text: expectedText,
+      });
+      expect(observed.connected).toBe(true);
+      expect(observed.selection!.scroll).toBeGreaterThan(0);
+      const caret = observed.selection!.bounds;
+      expect(caret).toBeDefined();
+      expect(caret!.top).toBeGreaterThanOrEqual(observed.canvas.top - 1);
+      expect(caret!.bottom).toBeLessThanOrEqual(observed.canvas.bottom + 1);
+      expect(caret!.left).toBeGreaterThanOrEqual(observed.canvas.left - 1);
+      expect(caret!.right).toBeLessThanOrEqual(observed.canvas.right + 1);
+      expect(caret!.bottom).toBeGreaterThan(caret!.top);
+      expect(caret!.bottom).toBeLessThanOrEqual(observed.toolbar.top + 1);
+      expect(observed.viewportBottom).toBeDefined();
+      expect(observed.toolbar.bottom).toBeLessThanOrEqual(observed.viewportBottom! + 1);
+    }).toPass({ timeout: 20_000 });
+
+    const written = await f.read();
+    expect(written.body!.dataStream).toBe(expectedText);
+    expect(validateDocumentStructure(written)).toEqual([]);
+    expect(written.documentStyle).toEqual(original.documentStyle);
+    expect(written.settings).toEqual(original.settings);
+    await capture(page, info, 'keyboard-caret');
+    expect(f.errors).toEqual([]);
+  } finally {
+    await keyboardOcclusion(page, 0).catch(() => undefined);
+    await f.close();
+  }
+});
 
 test('phone Doc formulas preserve scalar values, all table rows and usable edit dialogs', async ({
   browser,
@@ -773,3 +881,290 @@ for (const role of ['owner', 'guest-editor'] as const) {
     }
   });
 }
+
+test('a peer-protocol page-layout change preserves queued phone writing and the owner grant', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.skip(
+    !['sync-development', 'sync-production'].includes(info.project.name),
+    'Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.',
+  );
+  test.setTimeout(150_000);
+  // There is no page-mode control in the app. This authenticated protocol peer
+  // uses the same snapshot/ticket/socket contract as another live editor.
+  const { JSONX } = await import('@univerjs/core');
+  const { RichTextEditingMutation } = await import('@univerjs/docs');
+  const { default: WebSocket } = await import('ws');
+  const { syncNetwork } = await import('./sync-network.ts');
+  const f = await fixture(browser, baseURL!, info, true);
+  const network = await syncNetwork(f.account);
+  const { page } = f;
+  const region = page.getByRole('region', { name: 'Doc document', exact: true });
+  const canvas = region.getByLabel('Document canvas', { exact: true });
+  const status = page.getByRole('status', { name: 'Save status', exact: true });
+  const connection = page.getByRole('status', { name: 'Connection status', exact: true });
+  const note = 'This Doc’s page layout changed. Reopen it to continue.';
+  const message = 'View only on this phone. Reopen after the page layout change.';
+  const pending = 'Changes not saved yet — keep this tab open.';
+  const prefixText = 'Pending ';
+  const peerFrames: {
+    type: string;
+    revision?: number;
+    mutationId?: string;
+    unitId?: string;
+    fromRevision?: number;
+    edits?: unknown[];
+    reason?: string;
+  }[] = [];
+  const peerErrors: string[] = [];
+  let peerSocket: InstanceType<typeof WebSocket> | undefined;
+  let heldWrites = 0;
+  const forwarded: boolean[] = [];
+  let releaseHeld = () => {};
+  const gate = new Promise<void>((resolve) => {
+    releaseHeld = resolve;
+  });
+  const releaseWrites = async () => {
+    network.interceptWrites(undefined);
+    releaseHeld();
+    await network.drainWrites();
+  };
+  try {
+    await page.goto(`/?item=${f.item.id}`);
+    await saved(page);
+    await expect(connection).toHaveText('Online');
+    await expect(region).toHaveAttribute('data-mobile', 'true');
+    await expect(canvas).toBeVisible();
+    const initialCanvas = (await canvas.elementHandle())!;
+
+    // Connect before holding a phone write: the client's normal receipt retry
+    // deadline must not depend on fixture setup or screenshot speed.
+    const peer = await f.phone(true);
+    const prepared = await peer.request.post(`/api/items/${f.item.id}/collaboration`, {
+      headers: { Origin: baseURL! },
+      data: {},
+    });
+    expect(prepared.ok(), await prepared.text()).toBe(true);
+    const metadata = await prepared.json();
+    expect(metadata.syncVersion).toBe(1);
+    const unitId = metadata.unitId as string;
+    const prefix = `/sync-api/items/${f.item.id}`;
+    const snapshotResponse = await peer.request.get(
+      `${prefix}/snapshot?unitId=${encodeURIComponent(unitId)}`,
+    );
+    expect(snapshotResponse.ok()).toBe(true);
+    const head = (await snapshotResponse.json()) as {
+      version: number;
+      unitId: string;
+      revision: number;
+      snapshot: IDocumentData;
+    };
+    expect(head.version).toBe(1);
+    expect(head.unitId).toBe(unitId);
+    const original = head.snapshot;
+    expect(original.id).toBe(unitId);
+    expect(original.documentStyle.documentFlavor).toBe(DocumentFlavor.MODERN);
+    const ticketResponse = await peer.request.post(
+      `${prefix}/ticket?unitId=${encodeURIComponent(unitId)}`,
+      { headers: { Origin: baseURL! } },
+    );
+    expect(ticketResponse.ok()).toBe(true);
+    const ticket = (await ticketResponse.json()).ticket as string;
+    const credential = (await peer.cookies()).find((cookie) => cookie.name === COOKIE_NAME);
+    expect(credential).toBeDefined();
+    const socketUrl = new URL(`${prefix}/socket`, baseURL);
+    socketUrl.protocol = socketUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+    socketUrl.search = new URLSearchParams({
+      unitId,
+      ticket,
+      afterRevision: String(head.revision),
+    }).toString();
+    const socket = new WebSocket(socketUrl, {
+      headers: { Cookie: `${COOKIE_NAME}=${credential!.value}`, Origin: baseURL! },
+      // The mobile HTTPS project uses a local self-signed test certificate.
+      rejectUnauthorized: false,
+      handshakeTimeout: 10_000,
+    });
+    peerSocket = socket;
+    socket.on('message', (data) => peerFrames.push(JSON.parse(data.toString())));
+    socket.on('error', (error) => peerErrors.push(error.message));
+    await new Promise<void>((resolve, reject) => {
+      socket.once('open', resolve);
+      socket.once('error', reject);
+    });
+    await expect
+      .poll(() => peerFrames.find((frame) => frame.type === 'resume'))
+      .toMatchObject({
+        unitId,
+        revision: head.revision,
+        fromRevision: head.revision,
+        edits: [],
+      });
+    const selection = () =>
+      page.evaluate((id) => {
+        let observed: DocSelectionEvidence | undefined;
+        const receive = (event: Event) => {
+          const evidence = (event as CustomEvent<DocSelectionEvidence>).detail;
+          if (evidence.unitId === id) observed = evidence;
+        };
+        window.addEventListener('spinel-doc-selection-evidence', receive);
+        try {
+          // Read the current public native range/model only. The sync snapshot
+          // observer intentionally waits until pending edits have settled.
+          window.dispatchEvent(new Event('spinel-doc-selection-read'));
+        } finally {
+          window.removeEventListener('spinel-doc-selection-evidence', receive);
+        }
+        return observed;
+      }, unitId);
+    await beginWriting(page);
+    network.interceptWrites(async (write) => {
+      heldWrites++;
+      await gate;
+      forwarded.push(write.forward());
+    });
+    await page.keyboard.type(prefixText);
+    await expect.poll(() => heldWrites).toBeGreaterThan(0);
+    await expect(status).toHaveText(pending);
+    await expect
+      .poll(async () => (await selection())?.text)
+      .toBe(prefixText + original.body!.dataStream);
+    expect((await f.read()).body).toEqual(original.body);
+
+    const mutationId = crypto.randomUUID();
+    socket.send(
+      JSON.stringify({
+        type: 'submit',
+        mutationId,
+        baseRevision: head.revision,
+        mutations: [
+          {
+            id: RichTextEditingMutation.id,
+            params: {
+              unitId,
+              actions: new JSONX().replaceOp(
+                ['documentStyle', 'documentFlavor'],
+                DocumentFlavor.MODERN,
+                DocumentFlavor.TRADITIONAL,
+              ),
+              textRanges: [],
+            },
+          },
+        ],
+      }),
+    );
+    await expect
+      .poll(
+        () => peerFrames.find((frame) => frame.type === 'ack' && frame.mutationId === mutationId),
+        { timeout: 5_000 },
+      )
+      .toMatchObject({ revision: head.revision + 1 });
+    await expect(region.getByText(note, { exact: true })).toBeVisible({ timeout: 5_000 });
+    await expect(input(page)).not.toBeFocused();
+    await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+    await expect(region.getByRole('button', { name: 'Format', exact: true })).toHaveCount(0);
+    await expect(connection).toHaveText('Online');
+    // The local fallback must not replace an actual unsaved state with a clean
+    // View only announcement, or recreate the canvas and its pending queue.
+    await expect(status).toHaveText(pending);
+    expect(await canvas.evaluate((current, initial) => current === initial, initialCanvas)).toBe(
+      true,
+    );
+    expect(await selection()).toMatchObject({
+      unitId,
+      editing: false,
+      text: prefixText + original.body!.dataStream,
+    });
+    const beforeRelease = await f.read();
+    expect(beforeRelease.documentStyle.documentFlavor).toBe(DocumentFlavor.TRADITIONAL);
+    expect(beforeRelease.body).toEqual(original.body);
+    await releaseWrites();
+    expect(forwarded).toHaveLength(heldWrites);
+    expect(forwarded.every(Boolean)).toBe(true);
+    await expect(status).toHaveText(message, { timeout: 30_000 });
+    await expect
+      .poll(async () => (await f.read()).body?.dataStream)
+      .toBe(prefixText + original.body!.dataStream);
+    const committed = await f.read();
+    expect(committed.id).toBe(unitId);
+    expect(committed.documentStyle).toEqual({
+      ...original.documentStyle,
+      documentFlavor: DocumentFlavor.TRADITIONAL,
+    });
+    expect(committed.settings).toEqual(original.settings);
+    expect(committed.body!.customRanges).toEqual(
+      original.body!.customRanges!.map((range) => ({
+        ...range,
+        startIndex: range.startIndex + prefixText.length,
+        endIndex: range.endIndex + prefixText.length,
+      })),
+    );
+
+    const point = await textPoint(page);
+    await page.touchscreen.tap(point.x, point.y);
+    await page.touchscreen.tap(point.x, point.y);
+    await expect(input(page)).not.toBeFocused();
+    await page.keyboard.type('FORBIDDEN AFTER PAGE LAYOUT CHANGE');
+    await page.getByRole('button', { name: 'Document actions', exact: true }).tap();
+    await expect(page.getByRole('menuitem', { name: 'Insert formula', exact: true })).toHaveCount(
+      0,
+    );
+    await page.getByRole('menuitem', { name: 'Formulas', exact: true }).tap();
+    const formulas = page.getByRole('dialog', { name: 'Formulas', exact: true });
+    await expect(formulas.locator('output')).toHaveText('42', { timeout: 20_000 });
+    await expect(formulas.locator('tbody tr')).toHaveCount(30);
+    await expect(formulas.getByText('=40+2', { exact: true })).toBeVisible();
+    await expect(formulas.getByRole('button', { name: '=40+2', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('dialog', { name: 'Edit formula', exact: true })).toHaveCount(0);
+    await formulas.getByRole('button', { name: 'Close dialog', exact: true }).tap();
+    for (let check = 0; check < 2; check++) {
+      const response = await page.waitForResponse(
+        (response) =>
+          response.request().method() === 'GET' &&
+          new URL(response.url()).pathname === `/api/items/${f.item.id}`,
+        { timeout: 10_000 },
+      );
+      expect(response.status()).toBe(200);
+      expect((await response.json()).item.access).toBe('owner');
+    }
+    await expect(connection).toHaveText('Online');
+    await expect(status).toHaveText(message);
+    await expect(region.getByText(note, { exact: true })).toBeVisible();
+    expect(await canvas.evaluate((current, initial) => current === initial, initialCanvas)).toBe(
+      true,
+    );
+    const unchanged = await f.read();
+    expect(unchanged.body).toEqual(committed.body);
+    expect(unchanged.documentStyle).toEqual(committed.documentStyle);
+    expect(unchanged.settings).toEqual(committed.settings);
+    for (const theme of ['light', 'dark'] as const) {
+      await page.emulateMedia({ colorScheme: theme });
+      await capture(page, info, `live-layout-changed-${theme}`);
+    }
+    expect(peerErrors).toEqual([]);
+    expect(f.errors).toEqual([]);
+  } finally {
+    try {
+      await releaseWrites();
+      await writeFile(
+        info.outputPath('live-layout-peer-protocol.json'),
+        JSON.stringify(
+          {
+            heldWrites,
+            forwarded,
+            peerErrors,
+            peerFrames,
+            outgoing: network.outgoing,
+            incoming: network.incoming,
+          },
+          null,
+          2,
+        ),
+      );
+    } finally {
+      peerSocket?.terminate();
+      await f.close();
+    }
+  }
+});

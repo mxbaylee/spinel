@@ -42,34 +42,3 @@ export function validateIdentity(
   if (family === 'trusted' || family === 'history')
     throw new AuthError(401, 'This document credential is no longer available.');
 }
-
-/** Transport middleware runs before route params are populated. Select credentials from the URL. */
-export function protocolGuestItem(url: string | undefined, origin: string) {
-  const path = new URL(url ?? '/', origin).pathname;
-  if (path.startsWith('/guest-space-api/')) {
-    const match =
-      /^\/guest-space-api\/([a-f\d-]{36})\/items\/([a-f\d-]{36})\/universer-api(?:\/|$)/.exec(path);
-    if (!match) throw new AuthError(401, 'This document is not available.');
-    return match[1];
-  }
-  if (!path.startsWith('/guest-api/')) return undefined;
-  const match = /^\/guest-api\/([a-f\d-]{36})\/universer-api(?:\/|$)/.exec(path);
-  if (!match) throw new AuthError(401, 'This document is not available.');
-  return match[1];
-}
-
-/** Exact scope selected by the server URL, never a body or query flag. */
-export function protocolSpaceScope(
-  url: string | undefined,
-  origin: string,
-  enabled = false,
-): SpaceDocumentScope | undefined {
-  const path = new URL(url ?? '/', origin).pathname;
-  if (!path.startsWith('/space-api/') && !path.startsWith('/guest-space-api/')) return undefined;
-  const match =
-    /^\/(?:space-api|guest-space-api)\/([a-f\d-]{36})\/items\/([a-f\d-]{36})\/universer-api(?:\/|$)/.exec(
-      path,
-    );
-  if (!enabled || !match) throw new AuthError(401, 'This document is not available.');
-  return { spaceId: match[1], spaceItem: match[2] };
-}

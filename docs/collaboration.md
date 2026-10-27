@@ -1,51 +1,71 @@
 # Live collaboration
 
-Sheets and Docs use Univer collaboration in the application server with SQLite
-storage, authenticated access, presence and offline recovery. The integration
-uses public SDK interfaces behind a TypeScript boundary. The owner chose this
-approach on 2026-10-17 (decision [#31](implementation/SPN-012.md#legacy-decision-31-collaboration-independent-of-the-soak)), then on 2026-10-19 chose to replace it
-with Spinel's own sync, originally scoped as SPN-056 through SPN-059. That
-grooming retired the SPN-010 limits experiment and the SPN-013 queue.
+Sheets and Docs use Spinel's own transform library, native browser client and
+SQLite sync server. Every prepared document uses this one path; there is no
+rollout flag or legacy transport fallback. The open-source Univer editor remains
+responsible for rendering and native commands. The reusable implementation lives
+in `@spinel/sync-transform`, `@spinel/sync-client` and `@spinel/sync-server`.
 
-The [staged landing](implementation/sync-staged-landing-2026-10-25.md#land-the-library-and-retain-spn-056-for-integrated-review)
-now separates SPN-104 (the transform library), SPN-057 (the sync server),
-SPN-058 (the client), the retained SPN-056 (independent integrated review), and
-SPN-059 (cutover and removal of Univer collaboration). The
-[integrated verification record](implementation/SPN-056.md#integrated-verification-2026-10-26)
-contains the acceptance evidence and adopted conflict policies. The replacement
-remains inactive until SPN-059 completes cutover.
+The [SPN-056 integrated review](implementation/SPN-056.md#integrated-verification-2026-10-26)
+records accepted conflict/refusal and undo policies. [SPN-059](implementation/SPN-059.md)
+records activation, retained-data transition and verification. SPN-075 supplies
+native PDF export. The application has no Univer Pro dependency or license
+registration. `npm run dependencies:check`, enforced by the required Lint gate,
+checks dependency declarations in the root and every workspace plus the complete
+resolved lockfile, including aliases and transitive packages. The independently
+installed legacy checkout used by the offline exporter remains outside this graph.
+The [integration decision](implementation/SPN-059.md#coordinate-the-two-pro-removal-prs)
+records how the two replacement PRs were combined.
 
-## Spinel server integration flag
+## Storage and retained-data transition
 
-SPN-057 supplies `@spinel/sync-server` and the application SQLite adapter behind
-`SPINEL_SYNC_SERVER=1` (`createApp({syncServer:true})` in tests). The flag defaults
-off. SPN-058 connects the native browser client and ephemeral presence to that
-same flag: preparation returns `syncVersion: 1` only for this backend. There is
-no separate frontend flag. Retained-data conversion and Pro removal remain
-SPN-059; SPN-056's integrated review does not activate the replacement.
+The application and sync log share the same SQLite file and connection. Sessions,
+grants, Space topology, root privacy epochs, images, history and restore receipts
+remain in their existing application stores. Final authorization and the edit,
+receipt and snapshot write happen in one transaction. Acknowledgments follow
+that commit. A failed validation or write discards the candidate native runtime.
 
-With the flag enabled, newly prepared native documents use one durable revision
-log. An incoming edit is transformed past each accepted edit using the cells at
-their exact common base and `side: 'right'`. Sparse cell before-images reconstruct
-those bases from the current snapshot; whole snapshots are not stored for every
-revision. The working window is at most 128 revisions and 16 MiB per unit. Older
-submissions resync. Accepted edits and immutable retry identities remain durable.
-The server keeps at most eight headless OSS Univer units and evicts idle units
-after 60 seconds.
+Each document has one current native snapshot, a durable accepted-revision log,
+and immutable retry receipts. Sparse before-images reconstruct exact common-base
+cells for transformation. At most 128 revisions and 16 MiB per unit remain in the
+transform window; older submissions resync. Durable accepted edits and retry
+identities survive that window. At most eight native units are cached and idle
+units are evicted after 60 seconds. Snapshots are bounded to 10 MiB, with additional
+geometry and expanded-work limits in the [server contract](../lib/sync-server/README.md).
 
-Final credential, grant, exact Space scope, ancestry, root privacy epoch and
-generation checks run inside the same SQLite transaction as the revision, receipt
-and current snapshot write. Acknowledgements follow that commit. A failed
-validation or write discards the candidate runtime. Stale assistant writes retain
-exact-revision rejection and OAuth refresh retains the original connection's retry
-identity. Each broadcast recipient proves current access immediately before send;
-the 500 ms scan and precommit scan close revoked sockets.
+Fresh documents initialize atomically from their native snapshot. The initial
+sync unit and application preparation fence commit together, so failed creation
+can retry without permitting an old whole-snapshot save. A prepared legacy
+collaboration document cannot silently fall back to its obsolete native row.
+The application refuses incomplete transitions and legacy prepared units that
+have not been imported.
 
-Backend ownership survives restarting with a different flag. The new server
-refuses existing legacy collaboration units; the legacy path refuses units owned
-by the new log. Neither path falls back to an obsolete native snapshot. Purge
-continues to remove owned generations even with the new serving flag disabled.
-Conversion remains SPN-059.
+The explicit [transition tools](../scripts/sync-transition/README.md) retain all
+source documents by default and operate on a separate database copy. They export
+current materialized snapshots through public APIs from a pinned pre-cutover
+checkout, verify them, and import into a full copy of the source database.
+Checkpoints, named versions, Formula definitions, restore IDs/offsets, images,
+Spaces, internal trash/deletion batches, grants and handover state are preserved.
+No children are flattened and no child grants are manufactured. Progress is
+restart-safe and tied to a source fingerprint; the source stays recoverable.
+Fresh disposable databases and actual legacy exports have separate checks.
+
+Before switching a deployment, stop old writers and retain its source database
+and verified backup. Do not use the old application against the converted copy.
+Old `/universer-api`, `/guest-api`, `/space-api` and `/guest-space-api` protocol
+routes are retired with 404 responses, and old sockets cannot upgrade. Copy
+unsaved old-tab work before reloading; it cannot be submitted to a second backend.
+This repository remains pre-production; this implementation does not itself
+operate on any real user dataset or deploy a replacement service.
+
+## Native protocol and consistency
+
+Incoming edits transform past accepted edits using the cells at their exact common
+base and `side: 'right'`. Final credentials, grant, exact Space root/child, ancestry,
+privacy epoch and restore generation are checked in the write transaction.
+MCP writes require an exact revision, and OAuth refresh retains the original
+connection's retry identity. Each broadcast recipient proves current access
+immediately before publication. No client-provided actor field grants authority.
 
 The protocol uses these route prefixes followed by `/ticket`, `/snapshot` or
 `/socket`, always with `?unitId=<active-generation>`:
@@ -91,7 +111,7 @@ that revision without applying the optimistic edit twice. A reconnect retries th
 same mutation ID, original base and original bytes. Opening a socket does not
 clear pending state: the ordered resume must complete, and each pending write
 needs its durable acknowledgment. The optional checkpoint persistence hook is
-the boundary for SPN-053; this ticket does not provide an offline disk outbox.
+the boundary for SPN-053; native sync does not provide an offline disk outbox.
 
 The public native collaboration mutation event is the only outgoing capture
 source. Capture ignores `onlyLocal`, `fromCollab` and `fromChangeset`, keeps
@@ -100,9 +120,10 @@ other mutation receives strict admission, including unknown operation-shaped IDs
 Sender normalization preserves triggers, inlines styles, records worksheet order,
 marks inserted paragraph IDs and supplies shift context. Atomic transform groups,
 cell claims and tails stay together under the wire bounds. Remote application
-copies params and sets `onlyLocal` and `fromCollab`, preventing echo while retaining
-native formula recalculation. Native undo services remain enabled; the legacy
-Pro collaboration preset is not used to create this client. Every accepted peer
+copies params and sets `fromCollab` on the live editor, preventing echo while
+retaining native formula registration and dependent recalculation. Its confirmed
+revision replica retains a separate local-only application path. Native undo
+services remain enabled; no Pro collaboration preset is used. Every accepted peer
 revision clears local undo/redo history, including one whose transformed edit
 is empty, because Univer's local inverse mutations retain old positions.
 Own acknowledgments preserve history. Normal local undo remains available until another editor's
@@ -146,119 +167,57 @@ local selection and focuses the editor only after the user chooses that action.
 Unsupported cursor encodings remain in the people list without a jump action.
 Disconnected and disposed editors clear membership and remote drawings.
 
-The following sections describe the default legacy transport and shared access,
-lifecycle and editor behavior until SPN-059 performs the cutover.
+## Access, lifecycle and recovery
 
-## Storage boundary
+Current account sessions and document-scoped guest credentials authenticate every
+snapshot request, ticket and socket upgrade. Tickets are one-use, expire after
+30 seconds, and bind the cookie, active generation and exact route scope.
+Operators and unrelated accounts cannot read, viewers cannot submit, and a guest
+credential never becomes account authority. Mutation targets cannot escape their
+unit; images must have been uploaded into that exact document. Invalid candidates
+are refused before a durable write.
 
-`src/server/collaboration/service.ts` is the TypeScript boundary around Univer's
-public collaboration service and SQLite adapter. Versions are pinned to 1.1.0;
-closed-source package implementations are not modified or inspected. Normal SDK
-license and watermark behavior remains intact.
+A 500 ms access scan and precommit revalidation close revoked sessions. Local
+permission points make editors read-only without writing shared permission rules.
+Account users with unsaved work retain the existing copy/recovery guidance;
+revoked guests lose the entire document surface and its private content.
+Credentials, names, mutations and document contents never appear in the fixed
+`collaboration.edit_denied` audit event. [Sharing](sharing.md) and
+[history](history.md) define the existing role and recovery rules.
 
-The adapter uses the exact application SQLite file. It owns its collaboration
-tables; workspace ownership, grants, accounts and images retain their existing
-stores. This keeps the online backup from SPN-030 consistent across all data,
-without a second database archive or cross-database snapshot protocol. The
-constructor refuses a different database path. This choice is recorded in
-[decision #37](implementation/SPN-012.md#legacy-decision-37-one-database-for-collaboration-recovery): it simplifies
-recovery for the Operator, preserves the Owner's documents, gives the Collaborator
-durable shared state and keeps Link guests behind the same access rules.
+Soft Trash keeps live content. Permanent deletion atomically queues the relevant
+native generations before metadata cascades. Purge invalidates loaded runtimes,
+removes their snapshots/revision receipts, and acknowledges the queue afterward;
+startup and a minute timer retry interruptions. A live generation is never
+purged. Raw protocol lifecycle calls cannot invoke deletion or version restore.
 
-Opening an existing Sheet or Doc will migrate its complete native snapshot once.
-A persisted `preparing` marker fences old snapshot writes before asynchronous SDK
-work starts. A retry uses an existing unit without replacing its edits; an
-interrupted creation stays fenced and can be retried. The old snapshot remains
-available as migration input. Old tabs must copy unsaved changes before reloading;
-they cannot overwrite the new collaboration state. Native reads use the SDK's
-public snapshot materializer/converters so confirmed changesets are included.
+Restore drains admitted edits, preserves a permanent Before restore checkpoint,
+validates the target, creates a new generation and atomically switches the active
+ID. Logical revision offsets keep history monotonic. Stale tabs cannot edit the
+replacement generation; failed staging remains recoverable through the existing
+restore receipt and purge process.
 
-## Access and lifecycle
+## Editor controls
 
-The transport authenticates every protocol HTTP request and WebSocket upgrade
-against the current Spinel session. Mutation requests and upgrades require the
-configured Origin. Tickets expire after 30 seconds, are single-use and are bound
-to the same session cookie and one document. Ticket issuance and upgrade require
-current read access to that Sheet or Doc; absent scope, missing/revoked grants,
-Operator accounts and invalid sessions are refused before the HTTP 101 upgrade.
-The browser supplies scope through the public socket URL extension point.
-The SDK's connect hook compares ticket and upgrade cookie/scope after upgrade
-but before HELLO or JOIN; a mismatch closes with no messages or document data.
-Thus an account authorized for both scopes can receive HTTP 101 for a mismatched
-ticket, but cannot enter either room with it. JOIN and presence recheck both scope and current access; no client-supplied user ID
-can replace the authenticated session. Public links use the document-scoped guest identity described in [sharing](sharing.md);
-they grant no account session or unrelated document access. Credentials do not
-become a query-token authentication fallback.
-HTTP payloads are capped at 10 MiB and socket frames at 64 KiB. At most 64 live
-connections are tracked; connections without a room expire after 30 seconds.
+The existing save and connection controls use native sync acknowledgments, never
+socket reachability alone. Pending edits survive a temporary disconnect in the
+open tab; a stable envelope retries after reconnect without duplicate application.
+Offline persistence remains the separate SPN-053 responsibility.
 
-[Decision #49](implementation/SPN-017.md#legacy-decision-49-document-bound-websocket-admission) records the scoped
-connection and audit policy. Permission-denied edits emit a structured stderr
-`collaboration.edit_denied` event with a timestamp, stage and UUID-shaped account
-and document identifiers. Requests, mutation contents, names, cookie values,
-session hashes and tickets are never included in this audit. Treat the event as
-access-denial evidence, not as a copy of the rejected change. Transport-level
-unauthenticated requests are refused before they can reach the edit service.
+The toolbar lock, Protect range, Protect sheet, Change permissions, Remove
+protection and Calculation options are hidden because their mutations are outside
+the transform contract. Sheet-tab Copy is hidden for a sheet with 6,000 or more
+stored cell entries, matching the native split-copy boundary. The command guard
+also checks the actual target before mutation, so a stale menu cannot bypass it.
+Small-sheet Copy, the name box, defined names, formula editing and cross-sheet
+cut-and-paste remain available.
 
-Service middleware checks current sessions and workspace grants on reads,
-submissions, application and final commit. Viewers cannot submit; Operators and
-unrelated accounts cannot read. Cross-unit mutation targets are rejected. A
-separate public materializer validates the aligned candidate before persistence:
-the native document must stay within 10 MiB, and Doc drawing sources must refer
-to images uploaded into that same document. Invalid content is a permanent
-validation error, never a retryable database failure.
-
-A serialized access scan runs every 500 ms and before final commits. It closes
-revoked sessions and invalidates their room memberships before the next change
-can broadcast. The SDK's public invalidation API is scoped to a user and unit,
-not an individual login: revoking one login can also disconnect that user's
-other tabs in the document. Those tabs must reconnect; stale access is never
-retained to avoid that inconvenience. Access changes make editors read-only and
-ask users to copy unsaved work before reloading. Read-only presentation uses local
-permission points, never commands that modify shared document permission rules.
-
-Trash and inherited grants remain governed by workspace access. Permanent
-workspace deletion atomically queues an application-owned purge record before
-its metadata cascades away. A trusted service call hard-deletes SDK data and
-acknowledges the queue only afterward. Startup and a minute timer retry pending
-purges; interruption leaves the record for retry. Raw protocol lifecycle calls
-cannot invoke this trusted path. Soft trash/restore retains the live state.
-These boundaries and the retryable purge were recorded in
-[decision #43](implementation/SPN-012.md#legacy-decision-43-authenticated-collaboration-boundary).
-
-## Editor behavior
-
-Sheets and Docs load through the public collaboration client. The public
-synchronization status stream drives save messages and navigation warnings;
-pending or disconnected changes never report saved. Offline editing is enabled
-and a synchronized editor remains guarded until the public recovery-cache flush
-finishes. A newer edit or access change invalidates an older flush completion;
-pending recovery data is never cleared. Preparation warms the candidate validator
-before opening the editor without dropping validation of subsequent changes
-([decision #47](implementation/SPN-012.md#legacy-decision-47-truthful-saved-acknowledgement)). Reconnect retries every second. A public session-service override returns
-forwarding handles that omit only ephemeral cursor sends while offline; durable
-changes, joins and status streams retain SDK behavior. SDK instances and prototypes
-are untouched ([decision #45](implementation/SPN-012.md#legacy-decision-45-offline-ephemeral-cursor-handling)). Renderer language dictionaries are bundled
-with the renderer in development and production so first-time text layout never
-needs a late network download ([decision #44](implementation/SPN-012.md#legacy-decision-44-cold-offline-layout-assets)). Image insertion retains its upload and
-insertion guard until the drawing mutation has entered synchronization.
-
-Docs also wait for their own page layout, viewport and attached text input before
-initial selection and readiness. The global plugin Rendered stage is earlier
-than that work; an unresolved selection can intentionally blur the input. The
-wait is cancelled on navigation and fails visibly after 30 seconds.
-
-Spinel renders Sheet presence with matching profile colours and icon/name labels;
-header badges reveal the person's name on hover/focus without shifting layout.
-Following a Sheet range reveals it without replacing the local selection. Docs
-retain native canvas presence on the default legacy path; supported body-text selections can still be selected
-from the header, while unsupported encodings remain presence without a jump.
-See [profile behaviour](design/account.md#saved-profile-behaviour-spn-036) and
-[decision #127](implementation/SPN-036.md#legacy-decision-127-profiles-and-public-sheet-following).
-
-Each service/materializer runtime is capped at eight loaded units and evicts
-idle units after a minute. This is a cache bound, not a measured capacity claim
-for the production host. SDK licence checks and watermarks remain intact.
+Doc startup still waits for its own layout, viewport and attached native input;
+this wait cancels on navigation and fails visibly after 30 seconds. Bundled layout
+assets avoid a late network dependency for cold offline layout. Image upload and
+insertion remain guarded until the drawing mutation enters synchronization.
+Presence uses the same saved account profiles and anonymous guest-root rules as
+before; [profile behavior](design/account.md#saved-profile-behaviour-spn-036) applies.
 
 ## Pinned open-source paragraph repair
 
@@ -318,59 +277,6 @@ package. SPN-099 independently reviews removal on upgrade; unfamiliar bytes
 must be investigated instead of bypassing the guard. See the
 [decision and evidence](implementation/SPN-056.md#retain-collapsed-drawing-geometry-through-native-refresh).
 
-## Verification completed
-
-`npm run e2e` builds once and runs the configured projects sequentially, with
-only the matching app server alive and one browser worker. Development retains
-Vite modules and HMR but omits Node’s server-file watcher: fixed-source tests do
-not exercise autorestart, and watching adds import-tracking IPC, including worker
-imports. The normal `npm run dev` command still watches server files. Each build retains
-its own traces and disposable database. Tests that need a fresh setup/admin
-instance launch and close a real server child rather than retaining a second
-SDK/Vite module graph inside Playwright. These controls bound test resources;
-both builds still enforce the first committed edit arriving within one second
-([decision #48](implementation/SPN-012.md#legacy-decision-48-bounded-strict-browser-validation)).
-
-For a focused run after building, use
-`SPINEL_E2E_PROJECT=production npx playwright test e2e/collaboration.spec.ts --project production`;
-substitute `development` in both places for the development server. The npm
-wrapper deliberately rejects `--project` because it verifies both builds.
-Traces are recorded on the first CI retry rather than every successful action,
-following [Playwright's performance guidance](https://playwright.dev/docs/best-practices#debugging-on-ci).
-A focused development first-edit test exceeded one second while recording every
-action, then passed unchanged with tracing off. This is diagnostic evidence of
-instrumentation overhead, not a relaxation of the limit: retries still enforce
-the same assertions, and CI fails tests that pass only on a retry. Add `--trace on`
-to a focused command when debugging locally.
-
-The focused integration tests use the actual pinned service and SQLite adapter:
-
-- Existing Sheet values/formulas and Doc text survive idempotent migration;
-  stale snapshot writes are rejected.
-- Interrupted migration retries preserve the existing unit and retain its fence.
-- Viewer, unrelated-user, Operator, revoked-grant and direct lifecycle checks fail
-  closed at the service boundary.
-- A real Sheet mutation is committed, materialized as value 99, encrypted through
-  SPN-030's archive, restored into a fresh database, reopened through the SDK and
-  materialized as the same value. Native Doc data and grants survive as well.
-
-Browser tests separately verify simultaneous Sheet and Doc edits through two
-authenticated contexts, strictly within one second from committed input to both
-peer views. They also verify name/colour/selection navigation, a full minute of
-socket and HTTP disconnection, queued-edit merging in both open views, and
-read-only/revocation behavior. The broader suite covers rich text and images,
-formulas/formatting/tabs, reload persistence, sharing, trash and authentication.
-Both development and production must pass; CI fails flaky-only successes.
-Earlier local runs under additional instrumentation/resource pressure exceeded
-the latency limit; retain those failures and the subsequent clean-run evidence
-in the PR rather than treating the limit as a universal hardware guarantee.
-
-The Sheet browser regression also loses both the HTTP submission response and
-the corresponding socket acknowledgement after a real server commit. The client
-stays offline and reports unsaved work until explicitly reconnected. Recovery
-and a subsequent reload preserve the edit with exactly one durable revision
-increment, so an idempotent cell value cannot conceal duplicate application.
-
 ## Merging concurrent edits
 
 [`lib/sync-transform/`](../lib/sync-transform/README.md) (SPN-104, originally SPN-056) merges two
@@ -402,8 +308,7 @@ mutation definitions only; `@univerjs-pro/collaboration` was never read.
   match the server's state at that revision exactly; the live document
   including all optimistic edits is not that base (SPN-057 and SPN-058).
 - **Unsupported mutations are rejected, never guessed at.** A wrong guess makes
-  two screens drift silently; a rejection is visible and SPN-059 hides the menus
-  that produce one. The package README lists them.
+  two screens drift silently; a rejection is visible and unsupported menus are hidden. The package README lists them.
 - **Conflicts go to the side the server accepted first**, per cell, index or
   key, so the other person's unrelated changes to the same cell survive.
 - **Senders inline styles, keep doc paragraph ids, send a removed sheet's
@@ -424,43 +329,33 @@ mutation definitions only; `@univerjs-pro/collaboration` was never read.
   100,000-mutation run of two clients and a server, are checked with the real
   open-source handlers running headless.
 
-## Related work and limits
+## Verification
 
-This integration does not establish an unlimited editor count or a
-more-than-a-day soak. Rather than measure Univer's limits (the retired SPN-010)
-or queue editors past them (the retired SPN-013), the staged library, server,
-client, integrated review and cutover tickets above replace it.
-SPN-017's raw socket tests cover missing cookies, missing/foreign document scope,
-stale sessions, hostile origins, single-use tickets, a second-document JOIN,
-viewer edits with a forged owner ID, and downgrade/removal after JOIN. A positive
-raw edit control commits the same mutation when authorized; denied writes leave
-both the revision and native document unchanged. Mid-application revocation is
-also tested before durable commit. Browser tests verify that the affected editor
-becomes read-only and revoked sockets receive no later document changes. The SDK
-submits durable changes over authenticated HTTP associated with the socket's
-member ID; that ID is not an authorization credential. Public link access and history are implemented under [sharing](sharing.md) and
-[history](history.md); profile customization is available in Settings. The one-second browser
-acceptance checks do not replace fresh-host capacity/deployment verification.
+The seven required CI gates remain Backlog, Pull request, Lint, Typecheck, Unit
+tests, Lib tests and Playwright smoke. Browser projects exercise the default native
+path in development, production and mobile HTTPS. Separate native evidence
+projects compare complete confirmed browser snapshots against the server through
+edits, reconnect, lost acknowledgments and reload. Two seeded browser soak jobs
+exercise repeated Sheet and Doc edits with independent intent assertions. The
+Playwright aggregate also requires actual retained-data transition and production
+container checks. No pending, skipped or aborted workload counts as a pass.
 
-Public references:
-[storage](https://docs.univer.ai/server/collaboration/database-adapters),
-[identity](https://docs.univer.ai/server/collaboration/identity-and-authorization),
-[middleware](https://docs.univer.ai/server/collaboration/middleware-and-events),
-[presence](https://docs.univer.ai/server/collaboration/presence).
+Regression coverage retains account/guest/Space scope, revocation, one-use tickets,
+origin protection, history checkpoints, restore generations, permanent purge,
+MCP credential/exact-base/retry identity, Formula privacy, and backup restoration.
+Protocol-specific tests now exercise native snapshot/replay instead of retired
+SDK block or permission-batch endpoints. Retired routes are explicitly refused.
 
-### Profile appearance and following
+The native browser snapshot observer is enabled only in disposable test builds
+with `VITE_SYNC_EVIDENCE=1`. It is read-only and ordinary builds omit it; there is
+no production global that can issue editor commands. Browser tests retain the
+one-second peer-delivery criterion and fail flaky-only successes. The broader
+headless mixed matrix keeps all 100 seeds and at least 100,000 mutations; it is
+separate from actual browser-soak evidence.
 
-SPN-036 uses server-issued catalog avatar URLs in account-only membership to carry
-validated icons and palette choices. Active guest-link rooms still receive empty
-avatars and generic names. The Sheet renderer uses public range highlights and
-canvas-contained labels, and applies the same colour to normal local selection
-controls. It only draws remote markers on their actual active tab; row/column
-selections are sent as explicit bounded cell ranges. Changed selections publish within 150 ms; idle cursors refresh every two seconds
-so peers that finish mounting after the join event still receive them. This uses
-the existing cursor-only message without server retention or new payload fields.
-
-Following a Sheet collaborator uses the public reveal-range controller without
-changing the local active range. Already-visible cells stay in place. Profile
-saves take effect in editor membership on reopening the editor. Docs retain native
-canvas presence until SPN-058; disabling the entire collaboration UI caused missing
-Docs dependencies in the prototype. Owner scope decision [#127](implementation/SPN-036.md#legacy-decision-127-profiles-and-public-sheet-following).
+A passing suite does not establish unrestricted editor capacity. The intended
+workspace remains small, and deployment capacity verification remains separate.
+Headers, footers, notes, locked SDT blocks and footnotes remain outside the proven
+mixed fuzz coverage; the [SPN-056 evidence and limitations](implementation/SPN-056.md#recommendation-and-remaining-limits-for-spn-059)
+remain authoritative. Current cutover results and both independent grades belong
+in the SPN-059 PR; the previous integration reviews do not approve this change.

@@ -17,7 +17,27 @@ interface Evidence {
   observedAt: number;
   mutations: string[];
 }
-type RecordedWindow = Window & { nativeSyncEvidence?: Record<string, Evidence> };
+interface DeliveryTiming {
+  unitId: string;
+  expectedValues: [number, number];
+  armedAt: number;
+  keydownAt: number | null;
+  firstObservedAt: number | null;
+  firstObservedRevision: number | null;
+  observations: number;
+  peerKeydownAt: number | null;
+  elapsedMs: number | null;
+}
+type RecordedWindow = Window & {
+  nativeSyncEvidence?: Record<string, Evidence>;
+  nativeSyncDelivery?: { timing: DeliveryTiming; stop(): void };
+};
+// One bounded record per page survives reloads for the fixture's final diagnostics.
+const deliveryTimings = new WeakMap<Page, DeliveryTiming>();
+
+export function nativeCellDeliveryTiming(page: Page) {
+  return deliveryTimings.get(page);
+}
 
 const unsupportedSection =
   readFileSync(new URL('../lib/sync-transform/README.md', import.meta.url), 'utf8')
@@ -54,24 +74,111 @@ export async function recordNativeSnapshots(context: BrowserContext) {
   });
 }
 
-/** Measure native delivery itself; clipboard/selection automation is separate proof. */
-export async function expectNativeCellDelivery(pages: Page[], unitId: string, started: number) {
-  await Promise.all(
-    pages.map(async (page) => {
-      const read = () =>
+/** Commit prepared edits and measure each peer from the sender's actual Enter event. */
+export async function expectNativeCellDelivery(pages: readonly [Page, Page], unitId: string) {
+  for (const page of pages) deliveryTimings.delete(page);
+  try {
+    const armed = await Promise.allSettled(
+      pages.map((page) =>
         page.evaluate((id) => {
-          const evidence = (window as RecordedWindow).nativeSyncEvidence?.[id];
-          if (!evidence || !('sheets' in evidence.snapshot)) return null;
-          const sheet = evidence.snapshot.sheets[evidence.snapshot.sheetOrder[0]];
-          return {
-            values: [sheet.cellData?.[0]?.[0]?.v, sheet.cellData?.[0]?.[1]?.v],
-            observedAt: evidence.observedAt,
+          const recorded = window as RecordedWindow;
+          recorded.nativeSyncDelivery?.stop();
+          const controller = new AbortController();
+          const timing: DeliveryTiming = {
+            unitId: id,
+            expectedValues: [41, 73],
+            armedAt: Date.now(),
+            keydownAt: null,
+            firstObservedAt: null,
+            firstObservedRevision: null,
+            observations: 0,
+            peerKeydownAt: null,
+            elapsedMs: null,
           };
-        }, unitId);
-      await expect.poll(async () => (await read())?.values, { intervals: [10] }).toEqual([41, 73]);
-      expect((await read())!.observedAt - started).toBeLessThan(1000);
-    }),
-  );
+          recorded.nativeSyncDelivery = { timing, stop: () => controller.abort() };
+          window.addEventListener(
+            'keydown',
+            (event) => {
+              if (event.key === 'Enter' && timing.keydownAt === null) timing.keydownAt = Date.now();
+            },
+            { capture: true, signal: controller.signal },
+          );
+          window.addEventListener(
+            'spinel-sync-native-snapshot',
+            (event) => {
+              const observedAt = Date.now();
+              const value = (event as CustomEvent<Omit<Evidence, 'observedAt'>>).detail;
+              if (value.unitId !== id || !('sheets' in value.snapshot)) return;
+              timing.observations++;
+              const sheet = value.snapshot.sheets[value.snapshot.sheetOrder[0]];
+              if (
+                timing.firstObservedAt === null &&
+                sheet.cellData?.[0]?.[0]?.v === timing.expectedValues[0] &&
+                sheet.cellData?.[0]?.[1]?.v === timing.expectedValues[1]
+              ) {
+                timing.firstObservedAt = observedAt;
+                timing.firstObservedRevision = value.revision;
+              }
+            },
+            { capture: true, signal: controller.signal },
+          );
+        }, unitId),
+      ),
+    );
+    for (const result of armed) if (result.status === 'rejected') throw result.reason;
+    // Both capture listeners are armed before either Playwright input request.
+    const committed = await Promise.allSettled(pages.map((page) => page.keyboard.press('Enter')));
+    for (const result of committed) if (result.status === 'rejected') throw result.reason;
+    const delivered = await Promise.allSettled(
+      pages.map((page) =>
+        expect
+          .poll(
+            () =>
+              page.evaluate(
+                () => (window as RecordedWindow).nativeSyncDelivery?.timing.firstObservedAt != null,
+              ),
+            { intervals: [10] },
+          )
+          .toBe(true),
+      ),
+    );
+    for (const result of delivered) if (result.status === 'rejected') throw result.reason;
+  } finally {
+    // Preserve partial timing on failure, remove listeners, and keep evidence
+    // outside the page so later reloads cannot erase a completed measurement.
+    const observed = await Promise.allSettled(
+      pages.map((page) =>
+        page.evaluate(() => {
+          const recorded = window as RecordedWindow;
+          const delivery = recorded.nativeSyncDelivery;
+          delivery?.stop();
+          delete recorded.nativeSyncDelivery;
+          return delivery?.timing;
+        }),
+      ),
+    );
+    for (const [index, result] of observed.entries())
+      if (result.status === 'fulfilled' && result.value)
+        deliveryTimings.set(pages[index], result.value);
+    for (const [index, page] of pages.entries()) {
+      const timing = deliveryTimings.get(page);
+      const peer = deliveryTimings.get(pages[1 - index]);
+      if (timing && peer) {
+        timing.peerKeydownAt = peer.keydownAt;
+        if (timing.firstObservedAt !== null && peer.keydownAt !== null)
+          timing.elapsedMs = timing.firstObservedAt - peer.keydownAt;
+      }
+    }
+  }
+  for (const page of pages) {
+    const timing = deliveryTimings.get(page);
+    expect(timing?.armedAt).toBeGreaterThan(0);
+    expect(timing?.keydownAt).toBeGreaterThan(0);
+    expect(timing?.peerKeydownAt).toBeGreaterThan(0);
+    expect(timing?.firstObservedAt).toBeGreaterThan(0);
+    expect(timing?.elapsedMs).toBeGreaterThanOrEqual(0);
+    expect(timing?.elapsedMs).toBeLessThan(1000);
+  }
 }
 
 /** Only documented native defaults/style indirection and revision are normalized. */

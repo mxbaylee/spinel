@@ -166,8 +166,9 @@ same collaborator dialog; authorized Share remains in More.
 
 Docs select the corresponding public mobile UI once when opened with a coarse
 pointer at up to 900 px. Modern Doc text reflows locally; its native Edit control
-opens the keyboard and compact formatting controls. Read-only viewers omit edit
-controls. Traditional page-layout Docs retain their layout with the existing
+enters edit mode, and touching the text opens the keyboard and compact formatting
+controls. Read-only viewers omit edit controls. Traditional page-layout Docs
+retain their layout with the existing
 help-slot instruction, “Edit on a larger screen. This Doc keeps its page layout.”
 No second application toolbar or CSS-scaled canvas is added. Formula dialogs and
 full table readouts retain [the existing pattern](formulas.md). See

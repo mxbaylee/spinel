@@ -20,13 +20,9 @@ import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
-import {
-  DocStateChangeManagerService,
-  DocStateEmitService,
-  setDocumentPermissionValue,
-} from '@univerjs/docs';
+import { RichTextEditingMutation, setDocumentPermissionValue } from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
-import { DocSelectionRenderService } from '@univerjs/docs-ui';
+import { calcDocRangePositions, DocSelectionRenderService } from '@univerjs/docs-ui';
 import { watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
@@ -68,20 +64,16 @@ import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
 import '@univerjs/ui/facade';
 import {
-  collaborationPlugins,
   prepareCollaboration,
   identifyCollaborator,
   watchCollaboration,
   loadSpinelDocument,
   disposeSpinelSync,
-  ClientEnglish,
-  UIEnglish,
 } from './collaboration.ts';
 import type { SaveState } from '../src/shared/autosave.ts';
 import { editorReady } from './editorReady.ts';
 import { documentReady } from './documentReady.ts';
 import type { ConnectionState } from './connectionState.ts';
-import { docPendingChanges } from './docPending.ts';
 import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
@@ -108,6 +100,7 @@ export function DocEditor({
   const [mobile] = useState(useMobileDocControls);
   const [phoneReady, setPhoneReady] = useState(false);
   const [phoneReadOnly, setPhoneReadOnly] = useState(false);
+  const [phoneLayoutChanged, setPhoneLayoutChanged] = useState(false);
   const formulas = useRef<DocFormulaController | null>(null);
   const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
   const [formulaError, setFormulaError] = useState('');
@@ -144,11 +137,14 @@ export function DocEditor({
     let formulaInterval: ReturnType<typeof setInterval> | undefined;
     let stopFormulaVisibility: (() => void) | undefined;
     let stopInputEvidence: (() => void) | undefined;
+    let stopDocumentLayout: (() => void) | undefined;
+    let phoneOnlyMessage: string | undefined;
     setFormulaStates([]);
     setFormulaEdit(null);
     setFormulaError('');
     setPeople([]);
     setPhoneReadOnly(false);
+    setPhoneLayoutChanged(false);
     setPhoneReady(false);
     let uploads = 0;
     let insertions = 0;
@@ -171,15 +167,15 @@ export function DocEditor({
           ? 'Inserting image — keep this tab open.'
           : state.failed
             ? state.message
-            : ((initialized ? syncNotice.current : undefined) ?? state.message),
+            : ((initialized ? syncNotice.current : undefined) ??
+              (initialized && !dirty && phoneOnlyMessage ? phoneOnlyMessage : state.message)),
       });
     };
     publish(lastState);
     void (async () => {
       const data = await prepareCollaboration(id, spaceId, () => !disposed);
       if (disposed) return;
-      const nativePermissions =
-        data.syncVersion === 1 ? nativeSyncPermissions(data.unitId, data.access) : undefined;
+      const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
       let drawingReady!: () => void;
       const drawingsRendered = new Promise<void>((resolve) => {
         drawingReady = resolve;
@@ -273,20 +269,14 @@ export function DocEditor({
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: {
-          [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS, ClientEnglish, UIEnglish),
+          [LocaleType.EN_US]: mergeLocales(enUS, drawingEnUS, linkEnUS),
         },
-        ...(data.syncVersion !== 1 ? { collaboration: true as const } : {}),
-        override: [
-          ...(nativePermissions?.override ?? []),
-          [IImageIoService, { useClass: StoredImages }],
-        ],
+        override: [...nativePermissions.override, [IImageIoService, { useClass: StoredImages }]],
         plugins: [
           [
             UniverDrawingPlugin,
             {
-              override: [
-                [IImageIoService, data.syncVersion === 1 ? { useClass: StoredImages } : null],
-              ],
+              override: [[IImageIoService, { useClass: StoredImages }]],
               allowImageSize: 5 * 1024 * 1024,
             },
           ],
@@ -294,13 +284,6 @@ export function DocEditor({
           UniverDocsDrawingPlugin,
           mobile ? UniverDocsDrawingMobileUIPlugin : UniverDocsDrawingUIPlugin,
           TrackedImageInsertion,
-          ...collaborationPlugins(
-            data.unitId,
-            [[IImageIoService, { useClass: StoredImages }]],
-            true,
-            spaceId ? { spaceId, itemId: id } : undefined,
-            data.syncVersion === 1,
-          ),
         ],
         presets: [
           docPreset(
@@ -325,6 +308,8 @@ export function DocEditor({
       disposeEditor = () => {
         stopInputEvidence?.();
         stopInputEvidence = undefined;
+        stopDocumentLayout?.();
+        stopDocumentLayout = undefined;
         disposeSpinelSync(univer);
         stopTheme();
         univer.dispose();
@@ -349,7 +334,7 @@ export function DocEditor({
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const readonly = async () => {
-        nativePermissions?.readonly();
+        nativePermissions.readonly();
         canEditFormulas.current = false;
         setFormulaEdit(null);
         formulas.current?.clear();
@@ -365,40 +350,36 @@ export function DocEditor({
         setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Edit, false);
         setDocumentPermissionValue(permissions, data.unitId, data.unitId, UnitAction.Copy, true);
       };
-      if (data.syncVersion === 1)
-        await loadSpinelDocument({
-          univer,
-          unitId: data.unitId,
-          itemId: id,
-          spaceId,
-          access: data.access,
-          kind: 'doc',
-          signal: loading.signal,
-          isCurrent: () => !disposed,
-          initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
-          onInitialPending: () =>
-            publish({
-              dirty: true,
-              failed: false,
-              message: 'Changes not saved yet — keep this tab open.',
-            }),
-          reload: () => {
-            if (disposed) return;
-            initialized = false;
-            syncNotice.current =
-              'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
-            publish({
-              dirty: false,
-              failed: true,
-              message: 'Reloading after a synchronization problem…',
-            });
-            reload((generation) => generation + 1);
-          },
-        });
-      const document =
-        data.syncVersion === 1
-          ? univerAPI.getActiveDocument()
-          : await univerAPI.getCollaboration().loadDocAsync(data.unitId);
+      await loadSpinelDocument({
+        univer,
+        unitId: data.unitId,
+        itemId: id,
+        spaceId,
+        access: data.access,
+        kind: 'doc',
+        signal: loading.signal,
+        isCurrent: () => !disposed,
+        initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
+        onInitialPending: () =>
+          publish({
+            dirty: true,
+            failed: false,
+            message: 'Changes not saved yet — keep this tab open.',
+          }),
+        reload: () => {
+          if (disposed) return;
+          initialized = false;
+          syncNotice.current =
+            'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
+          publish({
+            dirty: false,
+            failed: true,
+            message: 'Reloading after a synchronization problem…',
+          });
+          reload((generation) => generation + 1);
+        },
+      });
+      const document = univerAPI.getActiveDocument();
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
       // A document-type plugin can initialize after the global Rendered stage.
@@ -418,6 +399,38 @@ export function DocEditor({
         const emit = (detail: unknown) =>
           window.dispatchEvent(new CustomEvent('spinel-doc-input-evidence', { detail }));
         const selection = render.with(DocSelectionRenderService);
+        const observeSelection = () => {
+          const range = selection.getActiveTextRange();
+          const start = range?.startOffset;
+          const end = range?.endOffset;
+          window.dispatchEvent(
+            new CustomEvent('spinel-doc-selection-evidence', {
+              detail: {
+                unitId: data.unitId,
+                start,
+                end,
+                hasAnchor: Boolean(range?.getAnchor()),
+                editing: selection.isEditing,
+                bounds:
+                  start !== undefined && end !== undefined
+                    ? calcDocRangePositions(
+                        {
+                          startOffset: start,
+                          endOffset: end,
+                          collapsed: start === end,
+                          segmentId: range!.segmentId,
+                          segmentPage: range!.segmentPage,
+                        },
+                        render,
+                      )?.[0]
+                    : undefined,
+                scroll: render.scene.getViewport('viewMain')?.viewportScrollY ?? 0,
+                text: document.getDocumentDataModel().getSnapshot().body?.dataStream,
+              },
+            }),
+          );
+        };
+        window.addEventListener('spinel-doc-selection-read', observeSelection);
         const subscription = selection.onInput$.subscribe((config) =>
           emit({
             stage: 'input',
@@ -445,6 +458,7 @@ export function DocEditor({
             });
         });
         stopInputEvidence = () => {
+          window.removeEventListener('spinel-doc-selection-read', observeSelection);
           subscription.unsubscribe();
           before.dispose();
           after.dispose();
@@ -453,11 +467,48 @@ export function DocEditor({
       // Modern Docs reflow through device-local layout options. Paginated Docs
       // only scale to fit, so retain their original layout and use the ticket's
       // read-only phone fallback instead of rewriting shared page geometry.
-      const deviceReadOnly =
-        mobile &&
-        document.getDocumentDataModel().getSnapshot().documentStyle?.documentFlavor !==
-          DocumentFlavor.MODERN;
+      const model = document.getDocumentDataModel();
+      const initialFlavor = model.getSnapshot().documentStyle?.documentFlavor;
+      const deviceReadOnly = mobile && initialFlavor !== DocumentFlavor.MODERN;
       setPhoneReadOnly(deviceReadOnly);
+      if (deviceReadOnly) phoneOnlyMessage = 'View only on this phone. Edit on a larger screen.';
+      let layoutChanged = false;
+      if (mobile) {
+        const layout = univer
+          .__getInjector()
+          .get(ICommandService)
+          .onCommandExecuted((command) => {
+            if (
+              command.id !== RichTextEditingMutation.id ||
+              (command.params as { unitId?: string } | undefined)?.unitId !== data.unitId ||
+              disposed ||
+              layoutChanged ||
+              model.getSnapshot().documentStyle?.documentFlavor === initialFlavor
+            )
+              return;
+            // Native gesture/resize controllers depend on the initial page mode.
+            // Retain the unit and its pending queue, but require reopening before
+            // further local edits if a peer changes that mode. Never change the
+            // shared snapshot or the server-authorized grant to fit this device.
+            layoutChanged = true;
+            setPhoneLayoutChanged(true);
+            phoneOnlyMessage = 'View only on this phone. Reopen after the page layout change.';
+            render?.with(DocSelectionRenderService).exitEditing();
+            void readonly().then(
+              () => publish(lastState),
+              (error) =>
+                publish({
+                  ...lastState,
+                  failed: true,
+                  message:
+                    error instanceof Error
+                      ? error.message
+                      : 'Could not update document access. Reload to try again.',
+                }),
+            );
+          });
+        stopDocumentLayout = () => layout.dispose();
+      }
       // Apply the fence before loading Formula code, which can wait on network.
       if (data.access === 'viewer' || deviceReadOnly) await readonly();
       const installedFormulas = await installDocFormulas({
@@ -488,7 +539,7 @@ export function DocEditor({
       formulaInterval = setInterval(() => {
         if (globalThis.document.visibilityState === 'visible') void formulas.current?.refresh();
       }, 5000);
-      if (data.access !== 'viewer' && !deviceReadOnly) {
+      if (data.access !== 'viewer' && !deviceReadOnly && !layoutChanged) {
         canEditFormulas.current = true;
         setEditable(true);
         if (!mobile) document.setSelection(0, 0);
@@ -499,29 +550,7 @@ export function DocEditor({
         return;
       }
       initialized = true;
-      save = watchCollaboration(
-        univer,
-        univerAPI,
-        data.unitId,
-        id,
-        data.access,
-        (state) =>
-          publish(
-            deviceReadOnly && !state.dirty && !state.failed
-              ? { ...state, message: 'View only on this phone. Edit on a larger screen.' }
-              : state,
-          ),
-        readonly,
-        publishConnection,
-        spaceId,
-        data.syncVersion === 1
-          ? undefined
-          : docPendingChanges(
-              data.unitId,
-              univer.__getInjector().get(DocStateEmitService),
-              univer.__getInjector().get(DocStateChangeManagerService),
-            ),
-      );
+      save = watchCollaboration(univer, publish, readonly, publishConnection);
       controller.current = save;
       setPhoneReady(true);
     })().catch((error) => {
@@ -652,13 +681,15 @@ export function DocEditor({
         {uploadError
           ? `${uploadError} Try inserting the file again.`
           : formulaError ||
-            (phoneReadOnly
-              ? 'Edit on a larger screen. This Doc keeps its page layout.'
-              : editable
-                ? mobile
-                  ? 'Tap Edit, then tap the text to write.'
-                  : 'Click the page to write. Type / for commands.'
-                : '')}
+            (phoneLayoutChanged
+              ? 'This Doc’s page layout changed. Reopen it to continue.'
+              : phoneReadOnly
+                ? 'Edit on a larger screen. This Doc keeps its page layout.'
+                : editable
+                  ? mobile
+                    ? 'Tap Edit, then tap the text to write.'
+                    : 'Click the page to write. Type / for commands.'
+                  : '')}
       </p>
       <div className="univer-container" ref={container} inert={mobile && !phoneReady} />
     </section>

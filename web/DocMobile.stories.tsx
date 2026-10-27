@@ -35,6 +35,7 @@ import { SaveStatus } from './SaveStatus.tsx';
 interface MobileDocProps {
   viewer?: boolean;
   traditional?: boolean;
+  layoutChanged?: boolean;
   zoomRatio?: number;
 }
 
@@ -84,12 +85,22 @@ const paragraphs = [
 ];
 
 /** Local fixture using the production preset; live persistence is tested in Playwright. */
-function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: MobileDocProps) {
+function MobileCanvas({
+  viewer = false,
+  traditional = false,
+  layoutChanged = false,
+  zoomRatio = 1,
+}: MobileDocProps) {
   const chrome = useEditorChrome();
   const host = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
-  const readOnly = viewer || traditional;
+  const readOnly = viewer || traditional || layoutChanged;
+  const savedMessage = layoutChanged
+    ? 'View only on this phone. Reopen after the page layout change.'
+    : readOnly
+      ? 'View only.'
+      : 'All changes saved.';
   useEffect(() => {
     const abort = new AbortController();
     const cleanups: (() => void)[] = [];
@@ -265,20 +276,20 @@ function MobileCanvas({ viewer = false, traditional = false, zoomRatio = 1 }: Mo
         state={{
           dirty: false,
           failed: Boolean(error),
-          message:
-            error ||
-            (ready ? (readOnly ? 'View only.' : 'All changes saved.') : 'Loading document…'),
+          message: error || (ready ? savedMessage : 'Loading document…'),
         }}
         onRetry={() => {}}
       />
       <EditorTools id="mobile-doc-review" name="Autumn notes" people={[]} saved={ready} />
       <p className="editor-help" role={error ? 'alert' : undefined}>
         {error ||
-          (traditional
-            ? 'Edit on a larger screen. This Doc keeps its page layout.'
-            : viewer
-              ? ''
-              : 'Tap Edit, then tap the text to write.')}
+          (layoutChanged
+            ? 'This Doc’s page layout changed. Reopen it to continue.'
+            : traditional
+              ? 'Edit on a larger screen. This Doc keeps its page layout.'
+              : viewer
+                ? ''
+                : 'Tap Edit, then tap the text to write.')}
       </p>
       <div className="univer-container" ref={host} />
     </section>
@@ -411,6 +422,43 @@ export const Traditional: Story = {
     await expect(
       within(canvasElement).queryByRole('button', { name: 'Edit' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const LayoutChanged: Story = {
+  args: { layoutChanged: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Fixture for the rendered local read-only state, using a modern native canvas, the viewer permission fence, and reopen guidance. The account keeps its grant. Peer changes and pending saves are verified separately in E2E.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement, false, true);
+    const screen = within(canvasElement);
+    await expect(
+      screen.getByText('This Doc’s page layout changed. Reopen it to continue.', { exact: true }),
+    ).toBeVisible();
+    await expect(screen.getByRole('status', { name: 'Save status' }).textContent).toBe(
+      'View only on this phone. Reopen after the page layout change.',
+    );
+    await expect(screen.getByRole('button', { name: 'Save details: View only' })).toHaveAttribute(
+      'data-failed',
+      'false',
+    );
+    for (const name of ['Edit', 'Format', 'Heading', 'Insert formula'])
+      await expect(screen.queryByRole('button', { name })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Document actions' }));
+    const body = within(canvasElement.ownerDocument.body);
+    const menu = await body.findByRole('menu');
+    await expect(
+      within(menu).queryByRole('menuitem', { name: 'Insert formula' }),
+    ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('menu')).not.toBeInTheDocument());
+    expect(observe(canvasElement).unchanged).toBe(true);
   },
 };
 

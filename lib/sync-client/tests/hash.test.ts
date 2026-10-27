@@ -1,4 +1,6 @@
 import { createHash } from 'node:crypto';
+import { BooleanNumber, FormulaType } from '@univerjs/core';
+import type { ICellData } from '@univerjs/core';
 import { expect, test } from 'vitest';
 import { hashTouched as serverHash } from '@spinel/sync-server';
 import { hashTouched } from '../index.ts';
@@ -54,6 +56,59 @@ test('Doc rich text and formula ranges survive shared normalization', async () =
   expect(await hashTouched(snapshot, touched)).toBe(hash);
   snapshot.body!.customRanges![0].rangeId = 'different-formula';
   expect(await hashTouched(snapshot, touched)).not.toBe(hash);
+});
+
+test.each<ICellData>([
+  { f: '=A1*2' },
+  { si: 'shared-formula' },
+  { f: '={1,2;3,4}', ft: FormulaType.ARRAY, fd: BooleanNumber.TRUE, ref: 'B1:C2' },
+])('formula calculation caches do not change authored-cell verification: %j', async (formula) => {
+  const stored = book();
+  stored.sheets.one.cellData = {
+    0: { 1: { ...formula, s: { bl: 1 }, custom: { retained: 'authored' } } },
+  };
+  const touched: Touched = { kind: 'sheet', cells: [{ sheetId: 'one', row: 0, column: 1 }] };
+  const expected = serverHash(stored, touched);
+  const calculated = structuredClone(stored);
+  calculated.sheets.one.cellData![0][1].v = 24;
+  calculated.sheets.one.cellData![0][1].t = 2;
+  const original = structuredClone(calculated);
+  expect(await hashTouched(calculated, touched)).toBe(expected);
+  expect(serverHash(calculated, touched)).toBe(expected);
+  expect(calculated).toEqual(original);
+
+  // Excluding a derived scalar must not hide a changed formula, shared identity,
+  // array extent, authored style, rich text, or opaque application metadata.
+  for (const changed of [
+    { f: '=A1*3' },
+    { si: 'different-shared-formula' },
+    { ref: 'B1:D3' },
+    { fd: BooleanNumber.FALSE },
+    { s: { bl: 0 } },
+    { p: { id: 'rich', documentStyle: {}, body: { dataStream: 'Authored text\r\n' } } },
+    { custom: { retained: 'changed' } },
+  ]) {
+    const different = structuredClone(calculated);
+    Object.assign(different.sheets.one.cellData![0][1], changed);
+    expect(await hashTouched(different, touched)).not.toBe(expected);
+    expect(serverHash(different, touched)).not.toBe(expected);
+  }
+});
+
+test.each<ICellData>([
+  {},
+  { f: '', si: '' },
+  { f: 'literal text' },
+  { ft: FormulaType.ARRAY, fd: BooleanNumber.TRUE, ref: 'B1:C2' },
+  { p: { id: 'rich', documentStyle: {}, body: { dataStream: 'Authored text\r\n' } } },
+])('nonformula values remain part of cell verification: %j', async (metadata) => {
+  const stored = book();
+  stored.sheets.one.cellData = { 0: { 1: { ...metadata, v: 24 } } };
+  const touched: Touched = { kind: 'sheet', cells: [{ sheetId: 'one', row: 0, column: 1 }] };
+  const expected = serverHash(stored, touched);
+  stored.sheets.one.cellData![0][1].v = 42;
+  expect(await hashTouched(stored, touched)).not.toBe(expected);
+  expect(serverHash(stored, touched)).not.toBe(expected);
 });
 
 test('both hashing implementations bound shared-style expansion', async () => {

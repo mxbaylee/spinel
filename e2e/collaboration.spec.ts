@@ -1,3 +1,4 @@
+import { syncNetwork } from './sync-network.ts';
 import { expect, test } from '@playwright/test';
 import { interruptibleNetwork } from './live-network.ts';
 import { openDatabase } from '../server/database.ts';
@@ -380,6 +381,7 @@ test('revoking one login preserves another login’s queued edit and stops later
   });
   const sessions = [auth.createSession(owner.id), auth.createSession(owner.id)];
   const second = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+  const network = await syncNetwork(second);
   const other = await second.newPage();
   let release!: () => void;
   const pending = new Promise<void>((resolve) => {
@@ -391,14 +393,18 @@ test('revoking one login preserves another login’s queued edit and stops later
   });
   let catalogDenialHeld = false;
   let held = false,
-    closed = 0;
+    revokedClosed = 0,
+    otherClosed = 0;
   const revokedMessages: string[] = [];
-  page.on('websocket', (socket) =>
-    socket.on('framereceived', (frame) => revokedMessages.push(String(frame.payload))),
-  );
+  page.on('websocket', (socket) => {
+    socket.on('framereceived', (frame) => revokedMessages.push(String(frame.payload)));
+    socket.on('close', () => {
+      revokedClosed++;
+    });
+  });
   other.on('websocket', (socket) =>
     socket.on('close', () => {
-      closed++;
+      otherClosed++;
     }),
   );
   for (const [index, c] of [context, second].entries())
@@ -435,10 +441,10 @@ test('revoking one login preserves another login’s queued edit and stops later
         target.getByRole('status', { name: 'Connection status', exact: true }),
       ).toHaveText('Online');
     }
-    await second.route('**/universer-api/comb/**/new_changes', async (route) => {
+    network.interceptWrites(async (write) => {
       held = true;
       await pending;
-      await route.continue();
+      write.forward();
     });
     const box = other
       .getByRole('region', { name: 'Sheet document', exact: true })
@@ -449,9 +455,11 @@ test('revoking one login preserves another login’s queued edit and stops later
     await other.keyboard.type('private-after-revoke');
     await other.keyboard.press('Enter');
     await expect.poll(() => held).toBe(true);
-    const closedBeforeRevocation = closed;
+    const revokedClosedBefore = revokedClosed;
+    const otherClosedBefore = otherClosed;
     auth.revokeSession(sessions[0].session.token_hash);
-    await expect.poll(() => closed).toBeGreaterThan(closedBeforeRevocation);
+    await expect.poll(() => revokedClosed).toBeGreaterThan(revokedClosedBefore);
+    expect(otherClosed).toBe(otherClosedBefore);
     await expect(page.getByRole('status', { name: 'Save status' })).toContainText('Access changed');
     await expect(page.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
     expect((await context.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status()).toBe(401);
@@ -483,10 +491,15 @@ test('revoking one login preserves another login’s queued edit and stops later
   } finally {
     release();
     releaseCatalogDenial();
-    await page.unrouteAll({ behavior: 'wait' });
-    await second.close();
-    db.prepare('DELETE FROM workspace_items WHERE id=?').run(item.id);
-    db.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);
-    db.close();
+    network.interceptWrites(undefined);
+    try {
+      await network.drainWrites();
+    } finally {
+      await page.unrouteAll({ behavior: 'wait' });
+      await second.close();
+      db.prepare('DELETE FROM workspace_items WHERE id=?').run(item.id);
+      db.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);
+      db.close();
+    }
   }
 });

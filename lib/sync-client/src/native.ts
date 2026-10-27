@@ -39,8 +39,7 @@ export function nativeSnapshot(univer: Univer, unitId: string): NativeSnapshot {
   return structuredClone(snapshot);
 }
 
-/** Remote styles need onlyLocal for native formula recalculation; fromCollab prevents echo. */
-export function applyNative(univer: Univer, mutations: readonly Mutation[]) {
+function executeNative(univer: Univer, mutations: readonly Mutation[], onlyLocal: boolean) {
   const injector = univer.__getInjector();
   const commands = injector.get(ICommandService);
   const instances = injector.get(IUniverInstanceService);
@@ -51,12 +50,19 @@ export function applyNative(univer: Univer, mutations: readonly Mutation[]) {
       mutation,
       instances.getUnit<Workbook>(mutation.params.unitId, UniverInstanceType.UNIVER_SHEET) ?? null,
     );
-    const accepted = commands.syncExecuteCommand(mutation.id, structuredClone(mutation.params), {
-      onlyLocal: true,
-      fromCollab: true,
-    });
+    const accepted = commands.syncExecuteCommand(
+      mutation.id,
+      structuredClone(mutation.params),
+      onlyLocal ? { onlyLocal: true, fromCollab: true } : { fromCollab: true },
+    );
     if (!accepted) throw new ClientError('malformed');
   }
+}
+
+/** Live peer edits need native formula registration and dirty-range calculation.
+ * fromCollab prevents capture echo; onlyLocal would suppress that calculation. */
+export function applyNative(univer: Univer, mutations: readonly Mutation[]) {
+  executeNative(univer, mutations, false);
 }
 
 /** A bounded, disposable confirmed copy using the same OSS native handlers as the server. */
@@ -135,7 +141,8 @@ export class NativeReplica implements SyncReplica {
   }
 
   apply(mutations: readonly Mutation[]) {
-    applyNative(this.univer, mutations);
+    // Keep confirmed authored-state application separate from live calculation.
+    executeNative(this.univer, mutations, true);
   }
 
   snapshot(): NativeSnapshot {

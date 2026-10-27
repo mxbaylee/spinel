@@ -1,16 +1,9 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createRequire } from 'node:module';
 import Sqlite from 'libsql';
 import { expect, test } from 'vitest';
 import { openDatabase, DatabaseSync, backup } from './database.ts';
-
-test('application and SDK adapter resolve the same native SQLite package', () => {
-  const require = createRequire(import.meta.url);
-  const sdk = createRequire(require.resolve('@univerjs-pro/collaboration-database-sqlite'));
-  expect(sdk.resolve('libsql')).toBe(require.resolve('libsql'));
-});
 
 test('single-row reads expose only SQL columns, consistently with multi-row reads', () => {
   const database = new DatabaseSync(':memory:');
@@ -28,11 +21,11 @@ test('single-row reads expose only SQL columns, consistently with multi-row read
   }
 });
 
-test('app and SDK-runtime connections preserve integrity through paired writes, closes and repeated reopen', async () => {
+test('two application connections preserve integrity through paired writes, closes and repeated reopen', async () => {
   const directory = mkdtempSync(join(tmpdir(), 'spinel-database-reopen-'));
   try {
-    // Two SQLite implementations in one process failed this sequence (#68).
-    // Exercise the same public libsql connection boundary as the SDK adapter.
+    // Retain the paired-connection WAL/backup regression from #68 even though
+    // sync now shares the application's own SQLite connection.
     for (let round = 0; round < 5; round++) {
       const app = openDatabase(join(directory, 'data.sqlite'));
       const sdk = new Sqlite(join(directory, 'data.sqlite'));

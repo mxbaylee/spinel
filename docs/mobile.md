@@ -33,6 +33,11 @@ remain readable in their existing dialog, including all rows of table results;
 insertion and editing require an editable modern Doc. History and downloaded
 offline copies use the same mobile renderer and remain read-only.
 
+If a collaborator changes the Doc's page mode while it is open, the phone keeps
+pending edits and switches to a local view-only state. Wait for those edits to
+save, then reopen the Doc as the on-screen note requests. Reopening initializes
+the native controls for its current page mode.
+
 See the [SPN-072 decision and evidence boundaries](implementation/SPN-072.md).
 Physical iPhone and Android acceptance is **pending** for this candidate; browser
 emulation is not an OS keyboard or IME test.
