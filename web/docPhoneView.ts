@@ -14,16 +14,24 @@ import {
   DocFloatMenuService,
   DocSelectionRenderService,
   DocViewScaleService,
+  EnterCommand,
   ItalicMenuItemFactory,
   OrderListCommand,
   SetInlineFormatBoldCommand,
   SetInlineFormatItalicCommand,
+  whenDocAndEditorFocused,
 } from '@univerjs/docs-ui';
 import type { MobileDocSelectionRenderService } from '@univerjs/docs-ui/lib/types/services/mobile/doc-selection-render.service.d.ts';
 import type { IRender } from '@univerjs/engine-render';
 import { IRenderManagerService, UniverRenderEnginePlugin } from '@univerjs/engine-render';
 import type { IContextMenuService } from '@univerjs/ui';
-import { ContextMenuGroup, ContextMenuPosition, IMenuManagerService } from '@univerjs/ui';
+import {
+  ContextMenuGroup,
+  ContextMenuPosition,
+  IMenuManagerService,
+  IShortcutService,
+  KeyCode,
+} from '@univerjs/ui';
 
 /** Only call for the public mobile preset's selection-service registration. */
 export function guardPhoneDocInput(
@@ -144,6 +152,17 @@ export class DocPhoneViewPlugin extends Plugin {
   }
 
   override onStarting() {
+    // OSS 1.1.0's mobile plugin registers EnterCommand but omits its shortcut.
+    // Use the desktop-equivalent public route: native focus, IME exclusion and
+    // mutation permission checks still apply. Browser insertParagraph has null
+    // input data and is otherwise ignored by the shared native input controller.
+    this.disposeWithMe(
+      this._injector.get(IShortcutService).registerShortcut({
+        id: EnterCommand.id,
+        binding: KeyCode.ENTER,
+        preconditions: whenDocAndEditorFocused,
+      }),
+    );
     // Render modules retain the first registration for an identifier. Register
     // before the mobile Docs plugin supplies its default in onReady.
     this.disposeWithMe(

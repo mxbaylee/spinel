@@ -31,6 +31,7 @@ export const JOBS = [
 export const OPERATIONS = [
   'document-open',
   'document-save',
+  'doc-compose',
   'formula-parse',
   'formula-evaluate',
   'search',

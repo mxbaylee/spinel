@@ -671,11 +671,45 @@ test('phone guest Doc reader cannot write and loses its document when the link i
     });
     await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Insert formula', exact: true })).toHaveCount(0);
+    const currentNativeText = () =>
+      page.evaluate((id) => {
+        let observed: string | undefined;
+        const receive = (event: Event) => {
+          const evidence = (event as CustomEvent<DocSelectionEvidence>).detail;
+          if (evidence.unitId === id) observed = evidence.text;
+        };
+        window.addEventListener('spinel-doc-selection-evidence', receive);
+        try {
+          // Read the mounted model now; settled sync snapshots can be stale
+          // after a local-only mutation and cannot prove this denial boundary.
+          window.dispatchEvent(new Event('spinel-doc-selection-read'));
+        } finally {
+          window.removeEventListener('spinel-doc-selection-evidence', receive);
+        }
+        return observed;
+      }, original.id);
+    // Sync partitions build this read-only native observer for mobile. Keep
+    // keyboard, focus and saved-document denial checks in every partition.
+    const hasNativeEvidence = ['sync-development', 'sync-production'].includes(info.project.name);
+    if (hasNativeEvidence) await expect.poll(currentNativeText).toBe(original.body!.dataStream);
     const point = await textPoint(page);
     for (let tap = 0; tap < 2; tap++) await page.touchscreen.tap(point.x, point.y);
     await expect(input(page)).not.toBeFocused();
     await page.keyboard.type('FORBIDDEN PHONE EDIT');
+    await page.keyboard.press('Enter');
+    // Exercise the still-mounted native input target as well as the keyboard
+    // route. Read-only focus/permission guards must refuse a new paragraph.
+    await input(page).dispatchEvent('keydown', {
+      key: 'Enter',
+      code: 'Enter',
+      keyCode: 13,
+      which: 13,
+      bubbles: true,
+      cancelable: true,
+    });
     await expect(page.getByRole('status', { name: 'Save status' })).toContainText('View only');
+    await expect(input(page)).not.toBeFocused();
+    if (hasNativeEvidence) expect(await currentNativeText()).toBe(original.body!.dataStream);
     await page.getByRole('button', { name: 'Formulas', exact: true }).tap();
     const panel = page.getByRole('dialog', { name: 'Formulas', exact: true });
     await expect(panel.locator('output')).toHaveText('42', { timeout: 20_000 });
