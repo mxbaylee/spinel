@@ -28,7 +28,7 @@ type Row = {
 const fields = `i.id,i.owner_id AS ownerId,i.parent_id AS parentId,i.kind,i.name,
   i.created_at AS createdAt,i.updated_at AS updatedAt,i.trashed_at AS trashedAt,
   i.trash_batch AS trashBatch,i.space_id AS spaceId,i.space_position AS position`;
-type Graph = { rows: Row[]; spaces: Map<string, SpaceStructure>; retained: Set<string> };
+type Graph = { rows: Row[]; spaces: Map<string, SpaceStructure> };
 
 /** Account-only outer lifecycle. Traversal stops at a Space for trash/restore,
  * while explicit permanent deletion validates its complete retained graph. */
@@ -53,7 +53,7 @@ export class FileTrash {
   private graph(user: string, ids: string[]): Graph {
     if (ids.length > MAX_ITEMS) throw overBudget();
     const db = this.workspace.auth.database;
-    if (!ids.length) return { rows: [], spaces: new Map(), retained: new Set() };
+    if (!ids.length) return { rows: [], spaces: new Map() };
     const rows = db
       .prepare(
         `WITH RECURSIVE graph(id) AS (
@@ -83,24 +83,7 @@ export class FileTrash {
       for (const item of structure.items) members.add(item.id);
     }
     if (rows.some((row) => row.spaceId !== null && !members.has(row.id))) throw unavailable();
-    const retained = new Set<string>();
-    const stored = db.prepare('SELECT 1 FROM workspace_retained_trash_batches WHERE batch=?');
-    for (const batch of new Set(rows.flatMap((row) => (row.trashBatch ? [row.trashBatch] : []))))
-      if (stored.get(batch)) retained.add(batch);
-    // Derive retention for old groups too. Each ancestor is visited once across
-    // all Spaces, rather than repeating a deep walk for every root.
-    const byId = new Map(rows.map((row) => [row.id, row]));
-    const pending = [...spaces.keys()];
-    const seen = new Set<string>();
-    while (pending.length) {
-      const id = pending.pop()!;
-      if (seen.has(id)) continue;
-      seen.add(id);
-      const row = byId.get(id)!;
-      if (row.trashBatch) retained.add(row.trashBatch);
-      if (row.parentId && byId.has(row.parentId)) pending.push(row.parentId);
-    }
-    return { rows, spaces, retained };
+    return { rows, spaces };
   }
 
   private view(user: string) {
@@ -149,10 +132,7 @@ export class FileTrash {
           access: 'owner',
           tags: names.map((tag) => String(tag.name)),
           trashedAt: row.trashedAt!,
-          expiresAt:
-            row.kind === 'space' || view.retained.has(row.trashBatch!)
-              ? null
-              : row.trashedAt! + this.retention,
+          expiresAt: row.trashedAt! + this.retention,
         };
       });
       return {
@@ -196,8 +176,6 @@ export class FileTrash {
       const batch = randomUUID();
       const now = this.workspace.auth.now();
       const db = this.workspace.auth.database;
-      if (graph.spaces.size)
-        db.prepare('INSERT INTO workspace_retained_trash_batches VALUES(?)').run(batch);
       const update = db.prepare(`UPDATE workspace_items SET trashed_at=?,trash_batch=?,updated_at=?
         WHERE id=? AND owner_id=? AND trashed_at IS NULL AND space_id IS NULL AND space_position IS NULL`);
       let count = 0;
@@ -229,10 +207,7 @@ export class FileTrash {
         this.cleanGroups();
         return this.files.get(user, id);
       }
-      if (
-        !graph.retained.has(root.trashBatch) &&
-        root.trashedAt + this.retention <= this.workspace.auth.now()
-      )
+      if (root.trashedAt + this.retention <= this.workspace.auth.now())
         throw new AuthError(409, 'The 30-day recovery period has ended.');
       let parentId = root.parentId;
       if (parentId) {
@@ -249,6 +224,7 @@ export class FileTrash {
       while (pending.length) {
         const row = pending.pop()!;
         if (row.trashBatch !== root.trashBatch) continue;
+        if (row.trashedAt === null || row.trashedAt !== root.trashedAt) throw unavailable();
         change.push(row);
         if (row.kind !== 'space') pending.push(...(children.get(row.id) ?? []));
       }

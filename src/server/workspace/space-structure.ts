@@ -46,8 +46,9 @@ const position = (value: unknown): value is number =>
 
 /**
  * Internal structural validation, not authorization. The caller must authorize
- * the live Space or its owner's explicit outer recovery action first and keep
- * this read and any subsequent writes in the same AuthStore transaction.
+ * the live Space, its owner's explicit outer recovery action, or a system
+ * expiry candidate first. Keep this read and subsequent writes in the same
+ * AuthStore transaction.
  * Never expose this all-status result through an ordinary/live collection.
  */
 export function readSpaceStructure(
@@ -168,4 +169,23 @@ export function readSpaceStructure(
   }
   if (items.length !== rows.length) throw unavailable();
   return { items, byId, children, recovery };
+}
+
+/** Delete a complete validated subtree in reverse DFS order, in its read transaction.
+ * Identity guards and restrictive FKs keep both manual and scheduled purges atomic.
+ */
+export function deleteSpaceItems(
+  database: DatabaseSync,
+  spaceId: string,
+  ownerId: string,
+  items: readonly SpaceStructureItem[],
+) {
+  const remove = database.prepare(`DELETE FROM workspace_items
+    WHERE id=? AND space_id=? AND owner_id=? AND trash_batch IS ? AND trashed_at IS ?
+      AND NOT EXISTS(SELECT 1 FROM workspace_items child WHERE child.parent_id=workspace_items.id)`);
+  for (let index = items.length - 1; index >= 0; index--) {
+    const item = items[index];
+    if (remove.run(item.id, spaceId, ownerId, item.trashBatch, item.trashedAt).changes !== 1)
+      throw unavailable();
+  }
 }

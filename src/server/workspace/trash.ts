@@ -4,11 +4,12 @@ import type { TrashListing, TrashedItem } from '../../shared/workspace.ts';
 import type { WorkspaceStore } from './store.ts';
 import { classifyOrdinaryItems, isOrdinaryItem } from './ordinary-scope.ts';
 import { FileTrash } from './file-trash.ts';
+import { SpaceExpiry } from './space-expiry.ts';
+import { DAY_MS, TRASH_RETENTION_MS } from './trash-retention.ts';
 import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
 
-export const DAY_MS = 24 * 60 * 60 * 1000;
-export const TRASH_RETENTION_MS = 30 * DAY_MS;
+export { DAY_MS, TRASH_RETENTION_MS } from './trash-retention.ts';
 type TrashRow = { id: string; parent_id: string | null; trash_batch: string; trashed_at: number };
 type TreeRow = { id: string; parentId: string | null };
 const MAX_TRASH_ITEMS = 10_000;
@@ -18,9 +19,11 @@ const overBudget = () =>
 export class TrashStore {
   workspace: WorkspaceStore;
   private readonly files: FileTrash;
+  private readonly spaces: SpaceExpiry;
   constructor(workspace: WorkspaceStore) {
     this.workspace = workspace;
     this.files = new FileTrash(workspace, TRASH_RETENTION_MS);
+    this.spaces = new SpaceExpiry(workspace);
   }
   list(owner: string): TrashListing {
     if (this.workspace.spacesEnabled) return this.files.list(owner);
@@ -135,17 +138,24 @@ export class TrashStore {
       return { count: this.deleteRows(listing.items.map((item) => item.id)) };
     });
   }
-  purgeExpired() {
+  purgeExpired(observeSpaces?: ObserveJob) {
     const { auth } = this.workspace;
-    return auth.transaction(() => {
+    const spaces = this.spaces.purgeExpired(observeSpaces);
+    const ordinary = auth.transaction(() => {
+      // Explicit Space members never consume ordinary cleanup's candidate limit.
+      // Complete subtree validation still protects malformed/unmarked members.
+      const membership = this.membership('workspace_items');
       const expired = auth.database
         .prepare(
-          `SELECT id FROM workspace_items WHERE trashed_at<=?
-          AND NOT EXISTS(SELECT 1 FROM workspace_retained_trash_batches b WHERE b.batch=workspace_items.trash_batch) LIMIT ?`,
+          `SELECT id FROM workspace_items WHERE trashed_at<=? AND kind<>'space' ${membership}
+          ${this.workspace.spacesEnabled ? '' : 'AND NOT EXISTS(SELECT 1 FROM workspace_retained_trash_batches b WHERE b.batch=workspace_items.trash_batch)'} LIMIT ?`,
         )
         .all(auth.now() - TRASH_RETENTION_MS, MAX_TRASH_ITEMS + 1) as { id: string }[];
       return this.deleteRows(expired.map((item) => item.id));
     });
+    if (spaces.failed)
+      throw new Error(`Trash cleanup retained ${spaces.failed} invalid Space groups.`);
+    return ordinary + spaces.count;
   }
   private deleteRows(ids: string[]) {
     const db = this.workspace.auth.database;
@@ -181,7 +191,7 @@ export class TrashStore {
     }
     // Retain the entire requested outer subtree if it contains a hidden Space.
     // Unrelated ordinary trash can still expire or be emptied. In particular,
-    // internal tombstones never inherit ordinary Trash's 30-day deletion policy.
+    // internal tombstones are handled only by the dedicated Space cleanup.
     const eligible = new Set(ids.filter((id) => ordinary.has(id) && !blocked.has(id)));
     const childCounts = new Map([...eligible].map((id) => [id, children.get(id)?.length ?? 0]));
     const leaves = [...eligible].filter((id) => childCounts.get(id) === 0);
@@ -216,6 +226,8 @@ export class TrashStore {
           SELECT id FROM workspace_items WHERE id IN (${ids.map(() => '?').join(',')})
           UNION
           SELECT c.id FROM workspace_items c JOIN subtree p ON c.parent_id=p.id
+          JOIN workspace_items parent ON parent.id=p.id
+          WHERE parent.kind<>'space' ${this.membership('parent')}
           LIMIT ?
         ) SELECT i.id,i.parent_id AS parentId FROM subtree JOIN workspace_items i ON i.id=subtree.id`,
       )
@@ -228,6 +240,12 @@ export class TrashStore {
     if (!ordinary) throw overBudget();
     return ordinary;
   }
+  private membership(alias: string) {
+    const columns = this.workspace.auth.database
+      .prepare("SELECT 1 FROM pragma_table_info('workspace_items') WHERE name='space_id'")
+      .get();
+    return columns ? `AND ${alias}.space_id IS NULL AND ${alias}.space_position IS NULL` : '';
+  }
   private requireOrdinarySubtree(id: string) {
     const subtree = this.subtree([id]);
     if (this.ordinary(subtree.map((row) => row.id)).size !== subtree.length)
@@ -235,18 +253,19 @@ export class TrashStore {
   }
 }
 
-export function startTrashCleanup(store: TrashStore, observe?: ObserveJob) {
+export function startTrashCleanup(
+  store: TrashStore,
+  observe?: ObserveJob,
+  observeSpaces?: ObserveJob,
+) {
   const run = () => {
     const finish = observeJob(observe);
     try {
-      store.purgeExpired();
+      store.purgeExpired(observeSpaces);
       finish(true);
-    } catch (error) {
+    } catch {
       finish(false);
-      console.error(
-        'Trash cleanup failed; retained items will be retried on the next daily run.',
-        error,
-      );
+      console.error('Trash cleanup failed; retained items will be retried on the next daily run.');
     }
   };
   run();

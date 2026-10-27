@@ -147,7 +147,13 @@ be completed. A supported capture or metadata read admits that child's history
 to the existing checkpoint retention schedule for the current maintenance pass;
 pruning still resolves current live access again. Space and ordinary candidate
 batches are separate so unsupported Space work cannot consume the ordinary batch.
-This is checkpoint retention only: no automatic Space Trash expiry is introduced.
+This is checkpoint retention only. The separate [30-day Trash policy](trash.md)
+preserves history during recovery, then removes checkpoints, including named and
+Before restore versions, when their Space or internal batch is permanently
+deleted. Disabling an owner stops that owner's Space history access and capture,
+but does not pause Trash expiry. Disabling Space exposure retains hidden groups;
+neither restoring the outer Space nor handing it over renews an earlier internal
+deletion deadline. Encrypted backup retention remains independent of both jobs.
 
 `src/server/history/space.test.ts` covers account-only routes, each coalesced
 caller's authorization and bounded maintenance. Native restore and the

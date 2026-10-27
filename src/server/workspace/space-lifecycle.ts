@@ -2,9 +2,10 @@ import { createHash, randomUUID } from 'node:crypto';
 import { AuthError } from '../auth/store.ts';
 import { resolveSpaceScope } from './space-scope.ts';
 import type { SpaceScopeItem } from './space-scope.ts';
-import { readSpaceStructure } from './space-structure.ts';
+import { deleteSpaceItems, readSpaceStructure } from './space-structure.ts';
 import type { SpaceStructure } from './space-structure.ts';
 import type { WorkspaceStore } from './store.ts';
+import { TRASH_RETENTION_MS } from './trash-retention.ts';
 
 interface DeletedSpace {
   space: SpaceScopeItem;
@@ -25,8 +26,8 @@ const unavailable = () => new AuthError(404, 'This Space is not in your trash.')
 /**
  * Explicit owner-only outer lifecycle. Whole-Space trash marks only the root,
  * leaving native content, internal order and earlier recovery batches intact.
- * No route or expiration job is enabled here. Ordinary Trash must not erase
- * hidden Spaces or assign its retention period to their internal tombstones.
+ * Recovery uses the same 30-day window as internal and ordinary Trash. Scheduled
+ * deletion uses the same validated cascade without impersonating an account.
  */
 export class SpaceLifecycleStore {
   private readonly workspace: WorkspaceStore;
@@ -64,6 +65,8 @@ export class SpaceLifecycleStore {
     const { auth } = this.workspace;
     return auth.transaction(() => {
       const view = this.deleted(actorId, spaceId);
+      if (view.trashedAt + TRASH_RETENTION_MS <= auth.now())
+        throw new AuthError(409, 'The 30-day recovery period has ended.');
       let parentId = view.space.parentId;
       let original = true;
       if (parentId !== null) {
@@ -111,11 +114,7 @@ export class SpaceLifecycleStore {
       // The complete validated graph includes live children and every internal
       // deletion batch. Reverse DFS is leaf-first, so restrictive parent/scope
       // FKs and native cleanup triggers are retained rather than disabled.
-      const remove = auth.database.prepare(
-        'DELETE FROM workspace_items WHERE id=? AND space_id=? AND owner_id=?',
-      );
-      for (const item of [...view.structure.items].reverse())
-        if (remove.run(item.id, spaceId, actorId).changes !== 1) throw unavailable();
+      deleteSpaceItems(auth.database, spaceId, actorId, view.structure.items);
       const root = auth.database
         .prepare(
           `

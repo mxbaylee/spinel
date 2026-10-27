@@ -14,6 +14,7 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const deletionCount = confirmation?.deletion?.count ?? confirmation?.items.length ?? 0;
+  const now = Date.now();
   async function reload() {
     setListing(await itemsRequest<TrashListing>('/trash'));
   }
@@ -41,8 +42,8 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
     <section aria-label="Trash">
       <h2>Trash</h2>
       <p>
-        Ordinary files can be restored for 30 days before daily cleanup removes them permanently.
-        Spaces and deletion groups containing a Space stay here until you explicitly delete them.
+        Files, folders and Spaces can be restored for 30 days before daily cleanup removes them
+        permanently.
       </p>
       {listing ? (
         <>
@@ -98,17 +99,12 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
                   <br />
                   <small>
                     Deleted {new Date(item.trashedAt).toLocaleString()} ·{' '}
-                    {item.expiresAt === null
-                      ? 'Kept until you permanently delete it'
-                      : `Recover until ${new Date(item.expiresAt).toLocaleString()}`}
+                    {item.expiresAt <= now ? 'Recovery ended' : 'Recover until'}{' '}
+                    {new Date(item.expiresAt).toLocaleString()}
                   </small>
                 </div>
                 <button
-                  disabled={
-                    busy ||
-                    !!confirmation ||
-                    (item.expiresAt !== null && item.expiresAt <= Date.now())
-                  }
+                  disabled={busy || !!confirmation || item.expiresAt <= now}
                   aria-label={`Restore ${item.name}`}
                   onClick={() => void change(`/${item.id}/restore`, {}, `Restored ${item.name}.`)}
                 >
