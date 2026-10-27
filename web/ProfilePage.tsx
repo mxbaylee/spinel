@@ -5,6 +5,7 @@ import { ProfileSettings } from './ProfileSettings.tsx';
 import { ThemeSettings } from '../src/ui/ThemeSettings.tsx';
 import { AssistantConnections } from './AssistantConnections.tsx';
 import { AccessTokens } from './AccessTokens.tsx';
+import { DeviceStorage } from './DeviceStorage.tsx';
 import { rememberedFileHref } from './fileNavigation.ts';
 import './profile.css';
 
@@ -80,6 +81,9 @@ export function ProfilePage({
           </div>
           <div hidden={section !== 'device'}>
             <ThemeSettings />
+            {section === 'device' && !user.isAdmin && (
+              <DeviceStorage key={user.id} accountId={user.id} />
+            )}
           </div>
           {!user.isAdmin && (
             <div hidden={section !== 'connections'}>

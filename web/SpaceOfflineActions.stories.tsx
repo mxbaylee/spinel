@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
+import type { ShellManifest } from '../src/shared/offlineShell.ts';
 import type { SpaceNode } from '../src/shared/spaces.ts';
 import type { SpaceFile } from '../src/shared/workspace.ts';
 import { SpaceOfflineActions } from './SpaceOfflineActions.tsx';
@@ -14,6 +15,7 @@ import {
   spaceOfflineCatalog,
 } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
+import { currentRuntime, installRuntimeHost } from './offline/runtime.ts';
 import './space.css';
 
 const id = (value: number) => value.toString(16).padStart(8, '0') + '-0000-4000-8000-000000000092';
@@ -185,6 +187,9 @@ export const PreparedPages: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await canvas.findByRole('button', { name: 'Remove Project notes from this device' });
+    // These records deliberately have no complete public app shell. Their
+    // presence alone must not become an availability claim.
+    await expect(await canvas.findByText('Device copy needs attention')).toBeVisible();
     await userEvent.click(await canvas.findByText('On this device (2)'));
     const pages = canvas.getByRole('list', { name: 'Prepared pages in this Space' });
     await expect(within(pages).getAllByRole('button')).toHaveLength(2);
@@ -234,6 +239,22 @@ function DelayedDownload({ change }: { change: 'unmount' | 'account' | 'sign-out
     const previousFetch = globalThis.fetch;
     const previousAccount = preparedAccount();
     const previousWorker = Object.getOwnPropertyDescriptor(navigator, 'serviceWorker');
+    const previousRuntime = currentRuntime();
+    const manifest: ShellManifest = {
+      protocol: 1,
+      version: '0123456789abcdef',
+      compatibility: { format: 1, sdkVersion: OFFLINE_SDK_VERSION },
+      entry: '/assets/story-runtime.js',
+      css: [],
+      files: ['/assets/story-runtime.js'],
+    };
+    installRuntimeHost({
+      manifest,
+      compatibility: manifest.compatibility,
+      switchTo: async () => {
+        throw new Error('This fixture does not switch runtimes.');
+      },
+    });
     // Let a wrongly admitted download reach durable publication, so this
     // regression fails rather than passing because Storybook has no app worker.
     Object.defineProperty(navigator, 'serviceWorker', {
@@ -242,7 +263,7 @@ function DelayedDownload({ change }: { change: 'unmount' | 'account' | 'sign-out
         ready: Promise.resolve({
           active: {
             postMessage(_message: unknown, ports: MessagePort[]) {
-              ports[0].postMessage({ ok: true });
+              ports[0].postMessage({ ok: true, prepared: true, manifest });
             },
           },
         }),
@@ -264,6 +285,8 @@ function DelayedDownload({ change }: { change: 'unmount' | 'account' | 'sign-out
       if (globalThis.fetch === delayed) globalThis.fetch = previousFetch;
       if (previousWorker) Object.defineProperty(navigator, 'serviceWorker', previousWorker);
       else Reflect.deleteProperty(navigator, 'serviceWorker');
+      if (previousRuntime) installRuntimeHost(previousRuntime);
+      else delete window.__spinelRuntimeHost;
       setPreparedAccount(previousAccount);
     };
   }, []);

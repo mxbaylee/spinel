@@ -45,13 +45,19 @@ export function initializeTheme() {
   }
   apply();
   const media = matchMedia('(prefers-color-scheme: dark)');
-  media.addEventListener('change', () => {
+  const changed = () => {
     if (preference === 'system') apply();
-  });
-  window.addEventListener('storage', (event) => {
+  };
+  const stored = (event: StorageEvent) => {
     if (event.key === key || event.key === null) {
       preference = valid(event.newValue);
       apply();
     }
-  });
+  };
+  media.addEventListener('change', changed);
+  window.addEventListener('storage', stored);
+  return () => {
+    media.removeEventListener('change', changed);
+    window.removeEventListener('storage', stored);
+  };
 }

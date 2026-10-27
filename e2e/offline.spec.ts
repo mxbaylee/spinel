@@ -103,7 +103,7 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     await stableEditor();
     await offlineAction('Remove from device');
     await expect(availability.getByRole('alert')).toHaveText(
-      'Close this document in every tab before removing its device copy.',
+      'Close this document in every tab before changing its device copy.',
     );
     await stableEditor();
     await availability.getByRole('button', { name: 'Done', exact: true }).click();
@@ -389,7 +389,8 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     await page.goto('/share/offline-link');
     await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
 
-    // Another tab releasing the device closes local data here too.
+    // Another tab releasing the device closes local data here too. Reopening
+    // requires an explicit action so a changed cookie cannot remount private UI.
     await page.goto('/');
     await expect(connection).toBeVisible({ timeout: 30_000 });
     await connection.hover();
@@ -400,7 +401,10 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     const other = await context.newPage();
     await other.goto('/');
     await other.evaluate(() => localStorage.removeItem('spinel.offline.account'));
-    await expect(page.getByRole('heading', { name: "You're offline" })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'This tab is locked.', exact: true }),
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Reopen Spinel', exact: true })).toBeVisible();
     await expect(page.getByText(sheet.name)).toHaveCount(0);
     await other.close();
 

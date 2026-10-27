@@ -29,6 +29,14 @@ type Story = StoryObj<typeof meta>;
 export const SignIn: Story = {};
 export const Loading: Story = { args: { loading: true } };
 export const Pending: Story = { args: { busy: true } };
+export const Finishing: Story = {
+  args: { busy: true, finishing: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('status')).toHaveTextContent('Finishing the passkey request…');
+    await expect(canvas.queryByRole('button', { name: 'Cancel' })).toBeNull();
+  },
+};
 export const Cancelled: Story = { args: { notice: 'Passkey request cancelled.' } };
 export const Failed: Story = {
   args: { error: 'Passkey request did not finish. Try again and choose your passkey manager.' },

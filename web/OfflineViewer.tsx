@@ -4,8 +4,10 @@ import { DocEditor } from './DocEditor.tsx';
 import {
   offlineAccountEvent,
   offlineAccountRead,
-  openOfflineStore,
+  openExistingOfflineStore,
 } from './offline/offlineStore.ts';
+import { checkBundle } from './offline/download.ts';
+import { isRuntimeCompatible } from './offline/runtime.ts';
 import type { ConnectionState } from './connectionState.ts';
 
 /**
@@ -44,7 +46,11 @@ export function OfflineViewer({
     };
     window.addEventListener('storage', changed);
     void (async () => {
-      const store = await openOfflineStore(accountId);
+      const store = await openExistingOfflineStore(accountId);
+      if (!store) {
+        if (mounted && current()) setItem('missing');
+        return;
+      }
       const download = await store.bundle(itemId).finally(() => store.close());
       if (!mounted) return;
       if (!current()) throw new Error('This offline session is no longer current.');
@@ -58,6 +64,16 @@ export function OfflineViewer({
         download.bundle.spaceId !== spaceId
       )
         throw new Error('This document is not prepared in this account or Space on this device.');
+      if (
+        !isRuntimeCompatible({
+          format: download.bundle.version,
+          sdkVersion: download.bundle.sdkVersion,
+        })
+      )
+        throw new Error(
+          'This saved copy needs a compatible version of Spinel. Its data is retained.',
+        );
+      checkBundle(download.bundle, accountId, itemId, spaceId);
       setItem({ kind: download.bundle.kind, name: download.bundle.name });
     })().catch((error) => {
       if (mounted)

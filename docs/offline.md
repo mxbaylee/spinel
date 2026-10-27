@@ -16,13 +16,14 @@ SPN-053 adds native Sheet/Doc editing, durable local checkpoints and conservativ
 replay through Spinel's own sync client, including prepared Space children.
 SPN-054 adds account-owned recovery copies, retry-safe publication, local Univer
 export and explicit discard when replay cannot safely continue.
+SPN-055 adds verified device inventory, explicit storage protection/removal,
+immediate local account locking and compatible public runtimes across updates
+([implementation decisions](implementation/SPN-055.md)).
 [SPN-092](implementation/SPN-092.md) extends preparation and local opening to
 one account-authorized Space child at a time, with its verified images.
 The remaining parts of this contract are open, split by the Owner in chat on 2026-10-19 so
 every unmet requirement stays on a ticket:
 
-- [SPN-055](todo/SPN-055.md): shared device storage, pending-edit protection,
-  honest persistence limits and account/sign-out lifecycle.
 - [SPN-090](todo/SPN-090.md): actual Android/iPhone installed launches, stable
   home-screen links and the recorded device/browser verification matrix.
 - [SPN-052](todo/SPN-052.md): desktop browser-tab compatibility using SPN-055's
@@ -165,7 +166,8 @@ device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
    routes, within the 5 MB per-image and 50 MB per-document budgets, before any
    image is fetched.
 2. Fetches every listed image and checks each one's size and SHA-256.
-3. Prepares the app shell (below).
+3. Reserves a complete compatible public runtime (below) under the account's
+   catalog lock, after checking the retained private format.
 4. Writes the bundle and image bytes in one IndexedDB transaction.
 5. Saves the account's catalog before marking that account prepared for local launch.
 
@@ -175,10 +177,14 @@ Transfers run one at a time, because the server
 admits one transfer at a time (429). **Remove from device** deletes the local copy
 only. Close an editable downloaded document in every tab before removing its
 copy: the removal transaction must acquire its writer Web Lock, so uncaptured
-cell input or a not-yet-committed checkpoint cannot be erased. Pending or retained
-failure checkpoints also block removal after the editor closes. A browser
+cell input or a not-yet-committed checkpoint cannot be erased. Pending or uncertain
+retained data hands off to recovery/This device without mutation. Explicit discard
+requires a separate confirmation and the same writer and account checks. A browser
 without Web Locks cannot edit or safely remove a copy through the application.
 A full device shows "This device is out of space for offline documents."
+Explicit preparation requests browser storage protection and reports the actual
+result separately from download success. A denied/unsupported request does not
+mean a complete download failed, and a granted request is not a backup guarantee.
 
 **Local data.** Each account has its own IndexedDB database,
 `spinel-offline-<account id>` (`web/offline/offlineStore.ts`), holding the user's
@@ -195,6 +201,11 @@ can no longer open (404) is removed only if it has no pending checkpoint or
 retained failure. Every refresh carries the expected downloading account; a
 different signed-in cookie fails before document access is checked, so its 404
 cannot delete the prior account's copy.
+Background refresh acquires the item's writer lock and preserves pending,
+unknown-format, damaged-queue and orphan-recovery data. Observation opens only an
+existing database and aborts attempted first creation, including browsers without
+`indexedDB.databases()`. An absent or unreadable store is never inferred to be a
+complete download or permission to replace retained bytes.
 The last observed online account is separate from the prepared-download marker:
 opening another tab for the same account does not cancel ordinary pending live
 edits when there are no downloads. A real account switch still cancels them.
@@ -221,15 +232,25 @@ still permits deliberate navigation; a missing explicit child never substitutes
 another page.
 
 **App shell.** Nothing is cached until the first download has fetched and
-verified its bundle and images (`web/service-worker.ts`).
-The production build writes a manifest of every built `/assets/` file, without
-source maps, into the service worker with a content version (`vite.config.ts`).
-Preparing caches those files (19 files, about 21 MB at SPN-039) and then the page
-HTML under `/`, fetched from the public `/sign-in` page without credentials. The
-page is written last, so its presence marks a complete shell. A new service worker
-on a prepared device prepares its own shell, and activation deletes older ones. No
-`/api` response is ever cached. Development builds have no manifest, so a download
-there says "Offline downloads need a production build of Spinel."
+verified its bundle and images (`web/service-worker.ts`). The production build
+emits a public manifest containing its content-derived ID, compatibility pair,
+application entry, CSS and built `/assets/` files without source maps. A small
+bootstrap selects a compatible runtime before importing React/native editors.
+Preparation fetches allowlisted assets and public `/sign-in` HTML without
+credentials, verifies response types and the matching descriptor, then writes
+HTML last. Redirects, missing assets and HTML masquerading as code fail the whole
+candidate; a failed refresh preserves previous complete builds.
+
+SPN-055 bounds retention to two complete published builds plus one candidate.
+Account compatibility holds survive sign-out, and actual browser client IDs pin
+the exact lazy assets needed by live tabs. Uncertain legacy accounts retain a
+conservative compatibility requirement. When protected builds consume the slots,
+preparation refuses rather than deleting a needed editor. Activation neither
+deletes old caches nor reloads active input. The public control database contains
+only runtime metadata, never documents, names, credentials or entry tokens. No
+`/api` response is cached. Private storage remains version 1 and SDK 1.1.0.
+Development builds have no manifest, so a download there says "Offline downloads
+need a production build of Spinel."
 
 **Launch.** Navigations are network-first. When the network fails, the service
 worker serves the cached shell, except for pages that need the server (`/share/`,
@@ -260,9 +281,12 @@ bytes stay intact. New image insertion needs a connection. Sheet formula
 definitions survive; initial local loading does not recalculate, and derived
 `IMAGE()` output is cancelled while offline because the OSS plugin loads it
 directly. Doc Formula results are unavailable offline, are never stored with the
-document, and require live source authorization after reconnect. Signing out offline ends the
-local session at once and revokes the server session the next time Spinel opens
-online.
+document, and require live source authorization after reconnect. Once an account
+departure is accepted, signing out locks private access immediately and shows a
+separate choice to keep or explicitly delete the original account's device data.
+A durable noncredential intent blocks new authentication until remote logout
+returns an actual 204, including normal, setup and invitation startup. Offline
+sign-out does not claim the remote session has already ended.
 Another tab signing out or switching account closes local mode and locks any
 open copy.
 
@@ -504,6 +528,24 @@ and [collaboration](collaboration.md) contracts.
 
 ## Device data and storage lifecycle
 
+**Implemented by SPN-055.** Profile → This device shows the current everyday
+account's documents, stable original links, pending/read-only/attention states and
+logical stored bytes. UTF-8 snapshot/metadata/queue/recovery data and stored image
+bytes are included; unknown sizes stay unknown. Browser-wide usage/quota is a
+separate estimate that also includes other accounts and public app files. A row
+claims offline availability only after its private identity, image references,
+verified image bytes and complete compatible runtime pass inspection. Foreground
+and manual refreshes detect external eviction; committed pending transitions
+update known rows without rehashing all images on each keystroke. The active
+editor is retained for recovery even if its inventory row becomes incomplete.
+
+The explicit protection action reports granted, denied, unsupported or failed.
+Inventory observation never requests persistence. A false initial `persisted()`
+result is **not requested**, not a claimed denial. Missing/unreadable stores and
+damaged data are visible; they never trigger automatic deletion of pending work.
+See [the implementation record](implementation/SPN-055.md) for transaction,
+runtime retention and account-exit decisions and verification boundaries.
+
 - Offline setup/download is explicit and scoped to the instance, account and
   device/browser context. The Operator gains no document access; Link guests get
   no offline private catalog or documents. Never persist authentication responses,
@@ -539,10 +581,10 @@ and [collaboration](collaboration.md) contracts.
 The current HTTP `no-store` rules in authentication, sharing and image routes do
 not authorize a catch-all response cache. Explicitly downloaded private application
 data is a separate policy. SPN-039 caches only the public shell on a prepared
-device; an unprepared one keeps SPN-028's empty CacheStorage. As editing lands,
-update docs/mobile.md, authentication, sharing, spreadsheets and documents to
-describe verified behavior, and keep account-isolation and guest/token-exclusion
-checks beside the authorization tests.
+device; a never-prepared one keeps SPN-028's empty CacheStorage. Signing out may
+retain bounded public app assets for kept private work, without granting private
+access. Account-isolation and guest/token-exclusion checks remain beside the
+authorization tests.
 
 ## Home-screen links and completion checks
 

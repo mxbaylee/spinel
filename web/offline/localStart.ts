@@ -2,10 +2,14 @@ import {
   offlineAccountRead,
   claimOnlineAccount,
   offlinePreparation,
-  openOfflineStore,
+  openExistingOfflineStore,
   preparedAccount,
   setPreparedAccount,
+  withOfflineCatalogLock,
 } from './offlineStore.ts';
+import { ensureAccountRuntime, isRuntimeCompatible } from './runtime.ts';
+import type { AccountRuntimeRequirement } from './runtime.ts';
+import { readDeviceInventory } from './deviceStorage.ts';
 import type {
   OfflineCatalog,
   OfflineDownload,
@@ -29,32 +33,69 @@ export function isNetworkFailure(error: unknown) {
 }
 
 /** Reads local mode's starting point; null when this device was not prepared. */
-export async function openLocalStart(): Promise<(LocalStart & { isCurrent(): boolean }) | null> {
+export async function ensureDeviceRuntime(accountId: string, verifyCurrent: () => void) {
+  return withOfflineCatalogLock(accountId, async () => {
+    verifyCurrent();
+    let requirement: AccountRuntimeRequirement = { kind: 'unknown' };
+    let store;
+    try {
+      store = await openExistingOfflineStore(accountId);
+      verifyCurrent();
+      requirement = store ? await store.runtimeRequirement() : { kind: 'empty' };
+      verifyCurrent();
+    } catch {
+      verifyCurrent();
+      // Failure cannot be interpreted as permission to retire retained runtimes.
+    } finally {
+      store?.close();
+    }
+    return ensureAccountRuntime(accountId, requirement, verifyCurrent);
+  });
+}
+
+export async function openLocalStart(
+  current: () => boolean = () => true,
+): Promise<(LocalStart & { isCurrent(): boolean }) | null> {
   const accountId = preparedAccount();
   if (!accountId) return null;
   const isCurrent = offlineAccountRead(accountId);
-  if (!isCurrent()) return null;
-  const store = await openOfflineStore(accountId);
+  const verify = () => {
+    if (!current() || !isCurrent())
+      throw new DOMException('This offline startup is no longer current.', 'AbortError');
+  };
+  if (!current() || !isCurrent()) return null;
   try {
-    if (!isCurrent()) return null;
-    const [user, catalog, downloads] = await Promise.all([
+    if ((await ensureDeviceRuntime(accountId, verify)).kind !== 'ready') return null;
+    verify();
+  } catch {
+    return null;
+  }
+  const store = await openExistingOfflineStore(accountId);
+  if (!store) return null;
+  try {
+    if (!current() || !isCurrent()) return null;
+    const [user, catalog, inventory] = await Promise.all([
       store.user(),
       store.catalog(),
-      store.downloads(),
+      readDeviceInventory(accountId, verify),
     ]);
-    if (!isCurrent() || !user || user.id !== accountId || !catalog) return null;
-    return { user, catalog, downloads, isCurrent };
+    if (
+      !current() ||
+      !isCurrent() ||
+      !user ||
+      user.id !== accountId ||
+      typeof user.name !== 'string' ||
+      !catalog ||
+      inventory.state === 'unavailable' ||
+      inventory.state === 'missing'
+    )
+      return null;
+    // The short admission lifetime ends at publication. Local mode thereafter
+    // retains only the durable account fence, never that retired startup flag.
+    return { user, catalog, downloads: inventory.items, isCurrent };
   } finally {
     store.close();
   }
-}
-
-async function hasDatabase(accountId: string) {
-  // Avoid creating an empty database for every account that signs in here.
-  if (!indexedDB.databases) return true;
-  return (await indexedDB.databases()).some(
-    (database) => database.name === `spinel-offline-${accountId}`,
-  );
 }
 
 /**
@@ -78,12 +119,18 @@ export async function claimDevice(
     // Preparing local access is best effort; blocked storage must not stop sign-in.
     return;
   }
-  if (!(await hasDatabase(user.id)) || !scope.isCurrent()) return;
-  const store = await openOfflineStore(user.id);
+  if (!scope.isCurrent()) return;
+  const store = await openExistingOfflineStore(user.id);
+  if (!store) return;
   try {
     if (!scope.isCurrent()) return;
-    const downloads = await store.downloads();
-    if (downloads.length && scope.isCurrent()) setPreparedAccount(user.id);
+    const requirement = await store.runtimeRequirement();
+    if (
+      requirement.kind === 'retained' &&
+      isRuntimeCompatible(requirement.compatibility) &&
+      scope.isCurrent()
+    )
+      setPreparedAccount(user.id);
   } finally {
     store.close();
   }

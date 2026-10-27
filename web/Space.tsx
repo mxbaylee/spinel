@@ -684,6 +684,11 @@ export function Space({
         root={rootFile}
         item={selection.item}
         saved={!dirty && fresh && connection === 'online'}
+        allowNavigation={() => {
+          if (!allow()) return false;
+          navigationRef.current.dirty(false);
+          return true;
+        }}
         onOpen={(id) => {
           go(spaceHref(rootFile.id, { kind: 'page', id }));
         }}

@@ -1,6 +1,16 @@
 import { AuthEntry } from './AuthEntry.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
 import { PasskeySettings } from './PasskeySettings.tsx';
+import { AccountAccessChanged, AccountExitScreen } from './AccountExit.tsx';
+import {
+  accountExitPending,
+  beginAccountExit,
+  restoreAccountExit,
+  watchAccountExit,
+  withAccountRead,
+  withAuthentication,
+} from './offline/accountExit.ts';
+import type { AccountExit } from './offline/accountExit.ts';
 import { DiagnosticsProvider, useAccountDiagnostics } from './useDiagnostics.tsx';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -32,16 +42,18 @@ import { Rail } from './Rail.tsx';
 import { useBrowserOnline, useServerConnection } from './useConnectionStatus.ts';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
-import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
+import {
+  claimDevice,
+  ensureDeviceRuntime,
+  isNetworkFailure,
+  openLocalStart,
+} from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
 import {
   claimOnlineAccount,
   expirePreparedAccount,
   offlineAccountEvent,
   offlineEpoch,
-  setPreparedAccount,
-  setSignOutPending,
-  signOutPending,
 } from './offline/offlineStore.ts';
 
 const HistoryBrowser = lazy(() =>
@@ -104,8 +116,12 @@ function AccountApp() {
   const [local, setLocal] = useState<Awaited<ReturnType<typeof openLocalStart>>>(null);
   const [unreachable, setUnreachable] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [exit, setExit] = useState<AccountExit | 'unknown' | null>(null);
+  const [bootstrap, setBootstrap] = useState(0);
+  const [accountLocked, setAccountLocked] = useState(false);
+  const accountRetired = useRef(false);
   const stopDiagnostics = useAccountDiagnostics(
-    user && loaded && !local && !signOutPending() ? user.id : null,
+    user && loaded && !local && !accountExitPending() ? user.id : null,
     browserOnline && (editorConnection ?? serverConnection) === 'online',
   );
   const [passkeyRevision, setPasskeyRevision] = useState(0);
@@ -143,129 +159,180 @@ function AccountApp() {
   const [setupLink] = useState(() => (consoleClaim ? location.hash.slice(1).split('.') : []));
   const [setupId, setupSecret] = setupLink;
   useEffect(() => {
-    if (invitation) {
-      history.replaceState(null, '', '/invite');
-      void api<{ recovery: boolean; name: string }>('invite/details', { token: inviteToken })
-        .then((details) => {
-          setInviteDetails(details);
-          setInviteName(details.name);
-        })
-        .catch((failure) => setError(failure.message))
-        .finally(() => setLoaded(true));
-      return;
-    }
-    if (adminRecovery) {
-      history.replaceState(null, '', '/recover-admin');
-      if (!setupId || !setupSecret) {
-        setLoaded(true);
-        return;
-      }
-      void api<{ name: string }>('recover-admin/details', { setupId })
-        .then(({ name }) => setRecoveryName(name))
-        .catch((failure) => setError(failure.message))
-        .finally(() => setLoaded(true));
-      return;
-    }
-    if (setup) {
-      history.replaceState(null, '', '/setup');
-      setLoaded(true);
-      return;
-    }
+    if (accountRetired.current && !accountExitPending()) return;
     let current = true;
+    let admitting = true;
     const verifyCurrent = () => {
-      if (!current) throw new DOMException('This sign-in attempt ended.', 'AbortError');
+      if (!current || accountRetired.current)
+        throw new DOMException('This sign-in attempt ended.', 'AbortError');
     };
+    const epoch = () => {
+      let verifyEpoch = () => {};
+      try {
+        verifyEpoch = offlineEpoch();
+      } catch {
+        // Blocked browser storage does not prevent an ordinary online sign-in.
+      }
+      return () => {
+        verifyCurrent();
+        verifyEpoch();
+      };
+    };
+    setLoaded(false);
+    setUnreachable(false);
+    if (invitation) history.replaceState(null, '', '/invite');
+    if (adminRecovery) history.replaceState(null, '', '/recover-admin');
+    if (setup) history.replaceState(null, '', '/setup');
     void (async () => {
       try {
-        if (signOutPending()) {
+        const pendingExit = await restoreAccountExit();
+        verifyCurrent();
+        if (pendingExit) {
           clearDashboardNavigation();
-          // A sign-out made offline: revoke the session before anything else.
-          // Any server answer settles it, including a session that already ended.
-          await api('sign-out', {}, verifyCurrent).catch((failure) => {
-            if (isNetworkFailure(failure)) throw failure;
-          });
-          verifyCurrent();
-          setSignOutPending(false);
-          if (location.pathname !== '/sign-in') location.assign(signInPath());
+          setUser(null);
+          setLocal(null);
+          setExit(pendingExit);
           return;
         }
-        const epoch = () => {
-          let verifyEpoch = () => {};
-          try {
-            verifyEpoch = offlineEpoch();
-          } catch {
-            // Blocked browser storage must not prevent an online sign-in.
+        await withAccountRead(verifyCurrent, async (verifyTransition) => {
+          if (invitation) {
+            const details = await api<{ recovery: boolean; name: string }>(
+              'invite/details',
+              { token: inviteToken },
+              verifyTransition,
+            );
+            setInviteDetails(details);
+            setInviteName(details.name);
+            return;
           }
-          return () => {
-            verifyCurrent();
-            verifyEpoch();
+          if (adminRecovery) {
+            if (setupId && setupSecret) {
+              const details = await api<{ name: string }>(
+                'recover-admin/details',
+                { setupId },
+                verifyTransition,
+              );
+              setRecoveryName(details.name);
+            }
+            return;
+          }
+          if (setup) return;
+          const verifySessionEpoch = epoch();
+          const verifySession = () => {
+            verifyTransition();
+            verifySessionEpoch();
           };
-        };
-        const verifySession = epoch();
-        const { user } = await api<{ user: User }>('session', undefined, verifySession);
-        verifySession();
-        // A verified different account intentionally rotates the epoch. Capture
-        // that new fence before the asynchronous device claim, not before it.
-        try {
-          claimOnlineAccount(user.id);
-        } catch {
-          // Offline preparation below remains best effort when storage is blocked.
-        }
-        const verifyClaim = epoch();
-        // Claim the device first: the dashboard reads the pointer when it mounts.
-        // IndexedDB can fail to answer at all; never hold sign-in on it.
-        await within(
-          claimDevice(user, () => current),
-          3000,
-          'Offline data did not answer.',
-        ).catch(() => {});
-        verifyClaim();
-        if (user.isAdmin) clearDashboardNavigation();
-        else dashboardSession(user.id);
-        setUser(user);
-        if (connectRequest && location.pathname === '/sign-in')
-          location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
-        else if (spaceReturn && !user.isAdmin) location.assign(spaceReturn);
+          const { user } = await api<{ user: User }>('session', undefined, verifySession);
+          verifySession();
+          try {
+            claimOnlineAccount(user.id);
+          } catch {
+            /* Online use remains available. */
+          }
+          // A verified different account intentionally rotates the offline fence.
+          const verifyClaimEpoch = epoch();
+          const verifyClaim = () => {
+            verifyTransition();
+            verifyClaimEpoch();
+          };
+          const verifyAdmission = () => {
+            verifyClaim();
+            if (!admitting) throw new DOMException('Offline admission ended.', 'AbortError');
+          };
+          if (!user.isAdmin) {
+            let ready = false;
+            try {
+              const runtime = await within(
+                ensureDeviceRuntime(user.id, verifyAdmission),
+                3000,
+                'Offline data did not answer.',
+              );
+              verifyAdmission();
+              if (runtime.kind === 'switching') return;
+              ready = runtime.kind === 'ready';
+            } catch {
+              verifyClaim();
+            }
+            if (ready) {
+              await within(
+                claimDevice(user, () => current && admitting && !accountRetired.current),
+                3000,
+                'Offline data did not answer.',
+              ).catch(() => {});
+              verifyClaim();
+            } else {
+              setNotice(
+                'Offline copies need attention. Saved changes were kept. Review This device in your profile.',
+              );
+            }
+          }
+          // A late runtime/IndexedDB result can no longer switch over this UI.
+          admitting = false;
+          verifyClaim();
+          if (user.isAdmin) clearDashboardNavigation();
+          else dashboardSession(user.id);
+          setUser(user);
+          if (connectRequest && location.pathname === '/sign-in')
+            location.assign(`/connect?request=${encodeURIComponent(connectRequest)}`);
+          else if (spaceReturn && !user.isAdmin) location.assign(spaceReturn);
+        });
       } catch (failure) {
-        // StrictMode and route changes can retire an earlier request. It must
-        // not cancel the current account or reload a newer sign-in attempt.
         if (!current) return;
-        if (failure instanceof DOMException && failure.name === 'AbortError') {
-          location.reload();
+        if (accountExitPending()) {
+          const pendingExit = await restoreAccountExit();
+          if (current && pendingExit) setExit(pendingExit);
           return;
         }
-        // Only an unreachable server opens local data; a 401 still signs in.
+        if (failure instanceof DOMException && failure.name === 'AbortError') return;
+        if (consoleClaim || invitation) {
+          setError(
+            failure instanceof Error ? failure.message : 'Could not open this entry. Try again.',
+          );
+          return;
+        }
         if (!isNetworkFailure(failure)) {
-          // The server ended this session (sign-out, revocation): stop offline
-          // access too. claimDevice restores it after the next sign-in.
           if ((failure as { status?: number }).status === 401) {
             clearDashboardNavigation();
             expirePreparedAccount();
+            if (location.pathname !== '/sign-in') location.assign(signInPath());
+          } else {
+            setError(
+              failure instanceof Error
+                ? failure.message
+                : 'Could not check your sign-in. Try again.',
+            );
           }
-          if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
         }
-        // Authorizing an assistant always needs a live, verified session.
         if (connecting || connectRequest) {
           setUnreachable(true);
           return;
         }
-        const start = await openLocalStart().catch(() => null);
-        if (!current) return;
-        if (!start || !start.isCurrent()) {
+        const start = await within(
+          openLocalStart(
+            () => current && admitting && !accountRetired.current && !accountExitPending(),
+          ),
+          3000,
+          'Offline data did not answer.',
+        ).catch(() => null);
+        if (!current || accountRetired.current) return;
+        if (!start || !start.isCurrent() || accountExitPending()) {
           setUnreachable(true);
           return;
         }
+        admitting = false;
         if (location.pathname === '/sign-in') history.replaceState(null, '', spaceReturn ?? '/');
         dashboardSession(start.user.id);
         setLocal(start);
         setUser({ ...start.user, isAdmin: false });
       } finally {
+        admitting = false;
         if (current) setLoaded(true);
       }
     })();
     return () => {
       current = false;
+      admitting = false;
     };
   }, [
     settings,
@@ -279,7 +346,31 @@ function AccountApp() {
     connectRequest,
     spaceReview,
     spaceReturn,
+    bootstrap,
+    accountLocked,
   ]);
+  useEffect(
+    () =>
+      watchAccountExit(() => {
+        if (accountExitPending()) {
+          accountRetired.current = false;
+          setAccountLocked(false);
+          stopDiagnostics();
+          clearDashboardNavigation();
+          setUser(null);
+          setLocal(null);
+          const current = attempt.current;
+          if (current) {
+            current.cancelled = true;
+            if (!current.finishing) WebAuthnAbortService.cancelCeremony();
+          }
+          if (!exit) setBootstrap((value) => value + 1);
+        } else if (!accountRetired.current && !user && !exit && !attempt.current) {
+          setBootstrap((value) => value + 1);
+        }
+      }),
+    [user, exit, stopDiagnostics],
+  );
   useEffect(() => {
     // Account cancellation also invalidates old history in an online tab.
     const changed = (event: StorageEvent) => {
@@ -289,10 +380,49 @@ function AccountApp() {
         (event.key === 'spinel.offline.account' && event.newValue !== user?.id)
       )
         clearDashboardNavigation();
+      if (
+        event.key === null ||
+        event.key === 'spinel.auth.generation' ||
+        (user &&
+          offlineAccountEvent(event, user.id) &&
+          // Removing the last clean copy does not end an ordinary online
+          // account or its unrelated memory-only editor. Its nonce is intact.
+          !(event.key === 'spinel.offline.account' && event.newValue === null && !local))
+      ) {
+        stopDiagnostics();
+        const active = attempt.current;
+        if (active) {
+          active.cancelled = true;
+          if (!active.finishing) WebAuthnAbortService.cancelCeremony();
+        }
+        if (accountExitPending()) {
+          accountRetired.current = false;
+          setAccountLocked(false);
+          setUser(null);
+          setLocal(null);
+          setLoaded(false);
+          if (!exit) setBootstrap((value) => value + 1);
+          return;
+        }
+        if (!user) return;
+        // A passive fence closes this tab; it never authorizes a new session
+        // claim or remount. In particular, do not reopen a retained conflict
+        // queue immediately after the native editor has scrubbed held input.
+        accountRetired.current = true;
+        setAccountLocked(true);
+        setUser(null);
+        setLocal(null);
+        setFilePlaces(null);
+        setEditorConnection(null);
+        setCatalogStatus(null);
+        setError('');
+        setNotice('');
+        unsaved.current = false;
+      }
     };
     window.addEventListener('storage', changed);
     return () => window.removeEventListener('storage', changed);
-  }, [user?.id]);
+  }, [user?.id, local, exit, stopDiagnostics]);
   useLayoutEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
@@ -316,13 +446,11 @@ function AccountApp() {
     if (!current || current.finishing) return;
     current.cancelled = true;
     WebAuthnAbortService.cancelCeremony();
-    if (current.challengeId)
-      void api('cancel', { challengeId: current.challengeId }).catch(() => {});
     setBusy(false);
     setNotice('Passkey request cancelled.');
   }
   async function ceremony(register: boolean, verifyAccount: () => void = () => {}) {
-    if (adminRecovery && attempt.current && !attempt.current.cancelled) return;
+    if (attempt.current && !attempt.current.cancelled) return;
     const current: { cancelled: boolean; challengeId?: string; finishing?: boolean } = {
       cancelled: false,
     };
@@ -330,89 +458,108 @@ function AccountApp() {
     setBusy(true);
     setError('');
     setNotice('');
-    const check = () => {
-      if (current.cancelled) throw new DOMException('Passkey request cancelled.', 'AbortError');
+    const verifyAttempt = () => {
+      if (current.cancelled || attempt.current !== current)
+        throw new DOMException('This passkey request ended.', 'AbortError');
       verifyAccount();
     };
     try {
-      if (!window.PublicKeyCredential || !window.isSecureContext)
-        throw new Error('Passkeys need a supported browser at Spinel’s secure address.');
-      const kind = adminRecovery
-        ? 'recover-admin'
-        : setup
-          ? 'setup'
-          : invitation
-            ? 'invite'
-            : register
-              ? 'registration'
-              : 'authentication';
-      const requestOptions = { accountId: kind === 'registration' ? user?.id : undefined };
-      const { options, challengeId } = await api<{
-        options: PublicKeyCredentialCreationOptionsJSON & PublicKeyCredentialRequestOptionsJSON;
-        challengeId: string;
-      }>(
-        `${kind}/options`,
-        consoleClaim ? { setupId } : invitation ? { token: inviteToken, name: inviteName } : {},
-        // A cancelled options request still returns the challenge to retire.
-        // Keep the account fence; cancellation stops work after that cleanup.
-        verifyAccount,
-        requestOptions,
-      );
-      current.challengeId = challengeId;
-      if (current.cancelled) {
-        void api('cancel', { challengeId }).catch(() => {});
-        return;
-      }
-      check();
-      const response = register
-        ? await startRegistration({ optionsJSON: options })
-        : await startAuthentication({ optionsJSON: options });
-      if (current.cancelled) return;
-      const proof = consoleClaim
-        ? await signSetupProof(
-            setupSecret,
-            setupId,
-            options.challenge,
-            response as RegistrationResponseJSON,
-            adminRecovery,
-          )
-        : undefined;
-      if (current.cancelled) return;
-      // Verification may commit even if the browser stops waiting. Recovery cannot
-      // be cancelled after submitting the credential swap. Keep its result authoritative.
-      if (adminRecovery) {
-        current.finishing = true;
-        setFinishingRecovery(true);
-      }
-      const result = await api<{ redirect?: string; name?: string }>(
-        `${kind}/verify`,
-        {
-          challengeId,
-          response,
-          ...(consoleClaim ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
+      await withAuthentication(
+        !register || consoleClaim || invitation,
+        verifyAttempt,
+        async (verify, prompt) => {
+          try {
+            if (!window.PublicKeyCredential || !window.isSecureContext)
+              throw new Error('Passkeys need a supported browser at Spinel’s secure address.');
+            const kind = adminRecovery
+              ? 'recover-admin'
+              : setup
+                ? 'setup'
+                : invitation
+                  ? 'invite'
+                  : register
+                    ? 'registration'
+                    : 'authentication';
+            const requestOptions = { accountId: kind === 'registration' ? user?.id : undefined };
+            const { options, challengeId } = await api<{
+              options: PublicKeyCredentialCreationOptionsJSON &
+                PublicKeyCredentialRequestOptionsJSON;
+              challengeId: string;
+            }>(
+              `${kind}/options`,
+              consoleClaim
+                ? { setupId }
+                : invitation
+                  ? { token: inviteToken, name: inviteName }
+                  : {},
+              verify,
+              {
+                ...requestOptions,
+                onAbandonedChallenge: (challengeId) => {
+                  current.challengeId = challengeId;
+                },
+              },
+            );
+            current.challengeId = challengeId;
+            // Options have fully settled. Only the local credential prompt and
+            // local proof run in the phase that a later lock owner may retire.
+            const { response, proof } = await prompt(async () => {
+              const response = register
+                ? await startRegistration({ optionsJSON: options })
+                : await startAuthentication({ optionsJSON: options });
+              verify();
+              const proof = consoleClaim
+                ? await signSetupProof(
+                    setupSecret,
+                    setupId,
+                    options.challenge,
+                    response as RegistrationResponseJSON,
+                    adminRecovery,
+                  )
+                : undefined;
+              return { response, proof };
+            });
+            verify();
+            // Keep the transition owned until the dispatched response settles.
+            // Cancelling JavaScript cannot undo the server swap or its Set-Cookie.
+            current.finishing = true;
+            setFinishingRecovery(true);
+            const result = await api<{ redirect?: string; name?: string }>(
+              `${kind}/verify`,
+              {
+                challengeId,
+                response,
+                ...(consoleClaim ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
+              },
+              verify,
+              requestOptions,
+            );
+            verify();
+            if (register && !consoleClaim && !invitation) {
+              setPasskeyRevision((revision) => revision + 1);
+              setNotice(`${result.name} added. You can use it to sign in.`);
+            } else {
+              location.assign(
+                connectRequest && !consoleClaim && !invitation
+                  ? `/connect?request=${encodeURIComponent(connectRequest)}`
+                  : spaceReturn && !consoleClaim && !invitation && result.redirect !== '/admin'
+                    ? spaceReturn
+                    : (result.redirect ?? '/'),
+              );
+            }
+          } catch (failure) {
+            if (current.challengeId)
+              await api('cancel', { challengeId: current.challengeId }).catch(() => {});
+            throw failure;
+          }
         },
-        check,
-        requestOptions,
       );
-      if (current.cancelled) return;
-      if (register && !consoleClaim && !invitation) {
-        setPasskeyRevision((revision) => revision + 1);
-        setNotice(`${result.name} added. You can use it to sign in.`);
-      } else
-        location.assign(
-          connectRequest && !consoleClaim && !invitation
-            ? `/connect?request=${encodeURIComponent(connectRequest)}`
-            : spaceReturn && !consoleClaim && !invitation && result.redirect !== '/admin'
-              ? spaceReturn
-              : (result.redirect ?? '/'),
-        );
     } catch (failure) {
       if (!current.cancelled) {
         if (register && (failure as { code?: string }).code === 'account_changed')
           setPasskeyAccountReset((revision) => revision + 1);
         if (register && (failure as { status?: number }).status === 428)
           setPasskeyProofReset((revision) => revision + 1);
-        // Browser exception names vary across providers; keep the retry action clear.
         setError(
           failure instanceof DOMException ||
             (failure instanceof Error &&
@@ -423,8 +570,6 @@ function AccountApp() {
               : 'Could not use this passkey. Try again or contact the operator.',
         );
       }
-      if (current.challengeId)
-        void api('cancel', { challengeId: current.challengeId }).catch(() => {});
     } finally {
       if (attempt.current === current) {
         attempt.current = null;
@@ -433,31 +578,46 @@ function AccountApp() {
       }
     }
   }
-  async function signOut() {
-    const hadUnsavedChanges = unsaved.current;
-    if (!navigation.allow()) return;
+  function signOut() {
+    if (!user || !navigation.allow()) return;
+    lockAccountExit();
+  }
+  // A confirmed passkey revocation has already ended access and cannot be
+  // cancelled by a voluntary-departure prompt. Keep the same local-copy choice.
+  function lockAccountExit() {
+    if (!user) return;
     stopDiagnostics();
     clearDashboardNavigation();
-    cancel();
-    // Lock this device's offline data at once; it opens again only for the
-    // account that next signs in online.
-    setPreparedAccount(null);
-    if (local) {
-      // Offline, the server session can't be revoked yet: do it on the next start.
-      setSignOutPending(true);
-      location.assign('/sign-in');
-      return;
+    const active = attempt.current;
+    if (active) {
+      active.cancelled = true;
+      if (!active.finishing) WebAuthnAbortService.cancelCeremony();
     }
-    try {
-      await api('sign-out', {});
-      // Switching to an everyday account from consent retains only its validated
-      // opaque transaction ID, never a client-provided callback URL.
-      location.assign(connecting ? signInPath() : '/sign-in');
-    } catch {
-      unsaved.current ||= hadUnsavedChanges;
-      setError('Could not sign out. Check your connection and try again.');
-    }
+    // No request or inventory read precedes local locking.
+    setUser(null);
+    setLocal(null);
+    setFilePlaces(null);
+    setEditorConnection(null);
+    setCatalogStatus(null);
+    setError('');
+    const next = beginAccountExit(user.id, !user.isAdmin);
+    history.replaceState(null, '', connecting ? signInPath() : '/sign-in');
+    setExit(next);
   }
+  if (exit)
+    return (
+      <AccountExitScreen
+        key={exit === 'unknown' ? 'unknown' : exit.intent.id}
+        exit={exit}
+        onReplace={setExit}
+        onContinue={() => {
+          setExit(null);
+          setError('');
+          setBootstrap((value) => value + 1);
+        }}
+      />
+    );
+  if (accountLocked) return <AccountAccessChanged onReopen={() => location.reload()} />;
   if (adminRecovery)
     return (
       <ConsoleRecovery
@@ -503,6 +663,7 @@ function AccountApp() {
     return (
       <>
         {error && <p role="alert">{error}</p>}
+        {notice && <p role="status">{notice}</p>}
         <Space
           key={user.id}
           user={user}
@@ -549,6 +710,7 @@ function AccountApp() {
         name={inviteName}
         onName={setInviteName}
         busy={busy}
+        finishing={finishingRecovery}
         error={error}
         notice={notice}
         unreachable={unreachable}
@@ -604,12 +766,7 @@ function AccountApp() {
                   verificationRequired={passkeyProofReset}
                   accountChange={passkeyAccountReset}
                   onAdd={(verifyAccount) => void ceremony(true, verifyAccount)}
-                  onSignedOut={() => {
-                    stopDiagnostics();
-                    clearDashboardNavigation();
-                    setPreparedAccount(null);
-                    location.assign(signInPath());
-                  }}
+                  onSignedOut={lockAccountExit}
                 />
               }
             />
@@ -647,8 +804,14 @@ function AccountApp() {
           )}
           {!adminRecovery && busy && (
             <p role="status">
-              Follow the instructions from your passkey manager.{' '}
-              <button onClick={cancel}>Cancel</button>
+              {finishingRecovery ? (
+                'Finishing the passkey request… Keep this page open.'
+              ) : (
+                <>
+                  Follow the instructions from your passkey manager.{' '}
+                  <button onClick={cancel}>Cancel</button>
+                </>
+              )}
             </p>
           )}
           {!adminRecovery && error && <p role="alert">{error}</p>}

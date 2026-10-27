@@ -9,17 +9,21 @@ export async function startApp(options: {
   databasePath: string;
   origin: string;
   development: boolean;
+  staticDirectory?: string;
+  /** Upgrade acceptance keeps one public origin while swapping its fixture backend. */
+  listenPort?: number;
   spaceReview?: boolean;
 }) {
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     DATABASE_PATH: options.databasePath,
     APP_ORIGIN: options.origin,
-    PORT: new URL(options.origin).port,
+    PORT: String(options.listenPort ?? new URL(options.origin).port),
     HOST: '127.0.0.1',
     // Exercise the normal enabled application unless a fixture explicitly
     // verifies disabled Space boundaries; ignore ambient developer overrides.
     SPINEL_SPACE_REVIEW: options.spaceReview === false ? '0' : '1',
+    ...(options.staticDirectory ? { SPINEL_STATIC_DIRECTORY: options.staticDirectory } : {}),
   };
   delete env.BACKUP_CONFIG_PATH;
   const child = spawn(

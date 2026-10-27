@@ -42,7 +42,7 @@ import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import type { LocalStart } from './offline/localStart.ts';
 import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
-import { OfflineAvailability } from './offline/OfflineAvailability.tsx';
+import { OfflineAvailability, OfflineAvailabilityActions } from './offline/OfflineAvailability.tsx';
 import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 const SheetEditor = lazy(() =>
@@ -496,10 +496,16 @@ export function Dashboard({
     }
   }
   function offlineState(item: FileItem) {
-    if (item.kind === 'space' && spaceCopies(offline.downloads.values(), item.id).length)
+    if (
+      item.kind === 'space' &&
+      spaceCopies(offline.downloads.values(), item.id).some((copy) => copy.available !== false)
+    )
       return 'pages-available';
-    if (offline.downloads.has(item.id)) return 'available';
-    return local && (offlineKind(item) || item.kind === 'space') ? 'needs-connection' : null;
+    const copy = offline.downloads.get(item.id);
+    if (copy && copy.available !== false) return 'available';
+    return (copy || local) && (offlineKind(item) || item.kind === 'space')
+      ? 'needs-connection'
+      : null;
   }
   function rowActions(item: FileItem): MenuAction[] {
     if (local) return [];
@@ -791,13 +797,21 @@ export function Dashboard({
         </>
       ) : null}
       {!framedEditor && offline.message && (
-        <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+        <>
+          <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
+          {offline.message.detail && <p>{offline.message.detail}</p>}
+          <OfflineAvailabilityActions
+            message={offline.message}
+            allowNavigation={navigation.allow}
+          />
+        </>
       )}
       {framedEditor && offline.message && (
         <OfflineAvailability
           message={offline.message}
           onDismiss={offline.clearMessage}
           finalFocus={() => (offlineFocus.current?.isConnected ? offlineFocus.current : true)}
+          allowNavigation={navigation.allow}
         />
       )}
       {!framedEditor && sharedFailure}

@@ -52,8 +52,12 @@ export function selectOfflineSpace(
   if (selection.kind === 'trash') return { ...scoped, problem: 'trash' };
   if (selection.kind === 'page') {
     const selected = copies.find((copy) => copy.itemId === selection.id) ?? null;
-    return { ...scoped, selected, problem: selected ? null : 'missing' };
+    return {
+      ...scoped,
+      selected: selected?.available === false ? null : selected,
+      problem: selected && selected.available !== false ? null : 'missing',
+    };
   }
-  const selected = copies[0] ?? null;
+  const selected = copies.find((copy) => copy.available !== false) ?? null;
   return { ...scoped, selected, problem: selected ? null : 'empty' };
 }

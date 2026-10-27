@@ -17,8 +17,26 @@ requests send `X-Spinel-Offline-Account`. The server rejects a different cookie
 account before document access/404 checks; current document/Space access and
 generation are still required. Delayed HTTP bodies and socket callbacks also
 check the mounted epoch. A different account's 404 cannot delete the original
-account's copy, and pending work remains bound to that account. Broader storage
-and sign-out recovery UI remains SPN-055.
+account's copy, and pending work remains bound to that account.
+
+SPN-055 locks private access synchronously once departure is accepted, then shows
+the original account's device-copy counts and explicit Keep/Delete choices. It
+records a strictly validated, noncredential exit intent, never an authentication
+response or cookie. Network failure keeps remote sign-out visibly unconfirmed;
+only an actual HTTP 204 clears the exact matching intent. Normal, setup, invite,
+recovery and assistant-connection entry all drain that barrier before beginning
+new authentication. A later account/exit invalidates the old deletion capability.
+Operators skip private inventory; unknown legacy intents preserve data without
+inferring permission to inspect it.
+
+Authentication transitions own their requests through response-body settlement.
+Web Locks serialize them across tabs; without Web Locks, separate scoped operation
+markers refuse overlapping or unknown transitions while permitting isolated online
+passkeys. A dispatched passkey verification cannot be cancelled until its response
+settles. Logout carries the expected original account, revokes only the matching
+presented session and sends no `Set-Cookie`, so a delayed response cannot erase a
+newer ceremony/session cookie. The server retains origin/JSON/`no-store` checks.
+See [the account-exit decision](implementation/SPN-055.md#immediate-local-lock-and-truthful-deferred-logout).
 
 Entry screens use the quiet single-task layout with one passkey action, explicit
 pending/cancellation/retry feedback and shared Need help guidance. Help displays
