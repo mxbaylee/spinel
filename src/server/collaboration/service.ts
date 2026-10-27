@@ -519,6 +519,52 @@ export class CollaborationStore {
   }
 
   /**
+   * Bounded committed Doc read for an account's sharing transaction. It neither
+   * prepares a native unit nor awaits work: grant confirmation can inspect the
+   * current durable source bindings under the same SQLite writer lock.
+   */
+  committedDocumentSnapshot(
+    user: string,
+    id: string,
+    customData: Record<string, unknown>,
+    maxBytes: number,
+  ): { snapshot: IDocumentData | null; unitId: string; byteLength: number } {
+    return this.workspace.auth.transaction(() => {
+      const item = resolveDocument(this.workspace, user, id, 'read', customData);
+      if (item.kind !== 'doc') throw new AuthError(400, 'Choose a Doc to review formula sources.');
+      if (this.generations.restoring(id))
+        throw new AuthError(409, 'A version is being restored. Try again shortly.');
+      const generation = this.generations.active(id);
+      const db = this.workspace.auth.database;
+      const native = Boolean(
+        db.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id),
+      );
+      const table = native ? 'spinel_sync_units' : 'doc_snapshots';
+      const key = native ? 'unit_id' : 'item_id';
+      const storedId = native ? generation.unitId : id;
+      const size = db
+        .prepare(`SELECT length(CAST(snapshot AS BLOB)) AS bytes FROM ${table} WHERE ${key}=?`)
+        .get(storedId);
+      if (!size && native)
+        throw new AuthError(
+          409,
+          'This document is not ready for source review. Try again shortly.',
+        );
+      const byteLength = Number(size?.bytes ?? 0);
+      if (!Number.isSafeInteger(maxBytes) || maxBytes < 0 || byteLength > maxBytes)
+        throw new AuthError(413, 'Formula source review is too large. Share the report alone.');
+      const row = size
+        ? db.prepare(`SELECT snapshot FROM ${table} WHERE ${key}=?`).get(storedId)
+        : undefined;
+      return {
+        snapshot: row ? (JSON.parse(String(row.snapshot)) as IDocumentData) : null,
+        unitId: generation.unitId,
+        byteLength,
+      };
+    });
+  }
+
+  /**
    * One authorized read of the live generation for a device to keep offline
    * (docs/offline.md). Nothing partial is returned: a change of session, access
    * or generation while the read is in flight fails the whole bundle.

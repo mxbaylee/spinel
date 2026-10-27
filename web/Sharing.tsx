@@ -1,9 +1,11 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import type { FileItem, GrantRole, SharePerson } from '../src/shared/workspace.ts';
+import type { SourceSharingOutcome, SourceSharingReview } from '../src/shared/sourceSharing.ts';
 import { accessLabel } from '../src/shared/workspace.ts';
 import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { ShareLink } from './ShareLink.tsx';
 import { SharingAddress } from './SharingAddress.tsx';
+import { SharingSources } from './SharingSources.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import { spaceHref } from './spaceNavigation.ts';
 import './sharing.css';
@@ -25,16 +27,46 @@ export function Sharing({
   const [error, setError] = useState('');
   const [failedPerson, setFailedPerson] = useState<string | null>(null);
   const [message, setMessage] = useState('');
+  const [sourceReviews, setSourceReviews] = useState<Record<string, SourceSharingReview | null>>(
+    {},
+  );
+  const [sourceChoices, setSourceChoices] = useState<Record<string, boolean>>({});
+  const [sourceResults, setSourceResults] = useState<Record<string, SourceSharingOutcome>>({});
+  const [sourceRefresh, setSourceRefresh] = useState(0);
+  const [reviewAgain, setReviewAgain] = useState<string | null>(null);
   const generation = useRef(0);
   const mutation = useRef(false);
+  const personRows = useRef(new Map<string, HTMLDivElement>());
+  const focusAfterLoad = useRef<string | null>(null);
+  const doneButton = useRef<HTMLButtonElement | null>(null);
+  const hasSources = item.kind === 'doc' || item.kind === 'space';
+  const recordSourceReview = useCallback((personId: string, review: SourceSharingReview | null) => {
+    setSourceReviews((previous) => ({ ...previous, [personId]: review }));
+    // Every replacement preview requires a fresh explicit source choice.
+    setSourceChoices((previous) => ({ ...previous, [personId]: false }));
+  }, []);
   const verify = (request: number) => () => {
     if (request !== generation.current) throw new Error('This sharing view is no longer current.');
   };
-  async function load() {
+  useLayoutEffect(() => {
+    if (loading || !focusAfterLoad.current) return;
+    const select = personRows.current
+      .get(focusAfterLoad.current)
+      ?.querySelector<HTMLSelectElement>('select');
+    (select ?? doneButton.current)?.focus();
+    focusAfterLoad.current = null;
+  }, [loading, people]);
+  async function load(preserveChoices = false, focusPerson: string | null = null) {
+    focusAfterLoad.current = focusPerson;
     const request = ++generation.current;
     setLoading(true);
     setError('');
     setFailedPerson(null);
+    setSourceReviews({});
+    setSourceChoices({});
+    setSourceResults({});
+    setReviewAgain(null);
+    setMessage('');
     try {
       const body = await itemsRequest<{ people: SharePerson[] }>(
         `/${item.id}/sharing`,
@@ -44,12 +76,21 @@ export function Sharing({
       );
       if (request !== generation.current) return;
       setPeople(body.people);
-      setChoices(
-        Object.fromEntries(body.people.map((person) => [person.id, person.directRole ?? ''])),
+      setChoices((previous) =>
+        Object.fromEntries(
+          body.people.map((person) => [
+            person.id,
+            preserveChoices
+              ? (previous[person.id] ?? person.directRole ?? '')
+              : (person.directRole ?? ''),
+          ]),
+        ),
       );
     } catch (cause) {
-      if (request === generation.current)
+      if (request === generation.current) {
+        setPeople([]);
         setError(cause instanceof Error ? cause.message : 'Could not load access.');
+      }
     } finally {
       if (request === generation.current) setLoading(false);
     }
@@ -68,23 +109,45 @@ export function Sharing({
   }, [item.id, item.access]);
   async function apply(person: SharePerson) {
     if (mutation.current) return;
+    const role = (choices[person.id] || null) as GrantRole | null;
+    const sourceReview = sourceChoices[person.id] ? sourceReviews[person.id] : null;
+    if (
+      sourceChoices[person.id] &&
+      (!sourceReview ||
+        sourceReview.userId !== person.id ||
+        sourceReview.hostRole !== role ||
+        !sourceReview.hostAccess)
+    )
+      return;
     mutation.current = true;
     const request = ++generation.current;
     setSaving(person.id);
     setError('');
     setFailedPerson(null);
     setMessage('');
+    setReviewAgain(null);
+    setSourceResults((previous) => {
+      const next = { ...previous };
+      delete next[person.id];
+      return next;
+    });
     try {
-      const body = await itemsRequest<{ people: SharePerson[] }>(
+      const body = await itemsRequest<{
+        people: SharePerson[];
+        sourceOutcome?: SourceSharingOutcome;
+      }>(
         `/${item.id}/sharing`,
         'PUT',
         {
           userId: person.id,
-          role: (choices[person.id] || null) as GrantRole | null,
+          role,
+          ...(sourceReview ? { sourceReview: sourceReview.version } : {}),
         },
         verify(request),
       );
       if (request !== generation.current) return;
+      if (sourceReview && !body.sourceOutcome)
+        throw new Error('The source-sharing result was not received.');
       setPeople(body.people);
       // Saving one person's grant must not discard another person's staged choice.
       setChoices((previous) =>
@@ -97,11 +160,49 @@ export function Sharing({
           ]),
         ),
       );
-      setMessage(`Access updated for ${person.name}.`);
+      setSourceChoices((previous) => ({ ...previous, [person.id]: false }));
+      setSourceRefresh((value) => value + 1);
+      if (body.sourceOutcome) {
+        setSourceResults((previous) => ({ ...previous, [person.id]: body.sourceOutcome! }));
+        if (!body.sourceOutcome.complete) setReviewAgain(person.id);
+      } else setMessage(`Access updated for ${person.name}.`);
     } catch (cause) {
       if (request === generation.current) {
         setFailedPerson(person.id);
-        setError(cause instanceof Error ? cause.message : 'Could not update access.');
+        const detail = cause instanceof Error ? cause.message : 'Could not update access.';
+        if (!hasSources) setError(detail);
+        else {
+          // A lost acknowledgement may follow any committed sharing write.
+          // Recheck host/source access even when sources were left unchecked:
+          // a refusal may also mean the previous source names are now private.
+          setError(`Could not confirm the update. ${detail} Review current access and try again.`);
+          setSourceChoices((previous) => ({ ...previous, [person.id]: false }));
+          setSourceReviews((previous) => ({ ...previous, [person.id]: null }));
+          setReviewAgain(person.id);
+          setSourceRefresh((value) => value + 1);
+          try {
+            const current = await itemsRequest<{ people: SharePerson[] }>(
+              `/${item.id}/sharing`,
+              'GET',
+              undefined,
+              verify(request),
+            );
+            if (request !== generation.current) return;
+            setPeople(current.people);
+          } catch {
+            if (request === generation.current) {
+              // A revoked host cannot retain the previous source/name inventory.
+              setPeople([]);
+              setChoices({});
+              setSourceResults({});
+              setSourceReviews({});
+              setFailedPerson(null);
+              setError(
+                'Could not confirm the update or refresh access. Reopen sharing to review current permissions.',
+              );
+            }
+          }
+        }
       }
     } finally {
       if (request === generation.current) {
@@ -140,7 +241,14 @@ export function Sharing({
           ) : (
             <>
               {people.map((person) => (
-                <div className="sharing-person" key={person.id}>
+                <div
+                  className="sharing-person"
+                  key={person.id}
+                  ref={(element) => {
+                    if (element) personRows.current.set(person.id, element);
+                    else personRows.current.delete(person.id);
+                  }}
+                >
                   <div className="sharing-person-row">
                     <div>
                       <strong>
@@ -167,9 +275,15 @@ export function Sharing({
                         className="sp-control"
                         disabled={!!saving}
                         value={choices[person.id] ?? ''}
-                        onChange={(event) =>
-                          setChoices({ ...choices, [person.id]: event.target.value })
-                        }
+                        onChange={(event) => {
+                          setChoices({ ...choices, [person.id]: event.target.value });
+                          setSourceChoices((previous) => ({ ...previous, [person.id]: false }));
+                          setSourceResults((previous) => {
+                            const next = { ...previous };
+                            delete next[person.id];
+                            return next;
+                          });
+                        }}
                       >
                         <option value="">No direct access</option>
                         <option value="viewer" disabled={!!person.disabled}>
@@ -184,8 +298,32 @@ export function Sharing({
                       </select>
                     </label>
                   </div>
+                  {hasSources && !person.disabled && (
+                    <SharingSources
+                      itemId={item.id}
+                      person={person}
+                      role={(choices[person.id] || null) as GrantRole | null}
+                      busy={!!saving}
+                      checked={!!sourceChoices[person.id]}
+                      refresh={sourceRefresh}
+                      onChecked={(checked) =>
+                        setSourceChoices((previous) => ({ ...previous, [person.id]: checked }))
+                      }
+                      onReview={recordSourceReview}
+                    />
+                  )}
                   <Button
-                    disabled={!!saving || (choices[person.id] ?? '') === (person.directRole ?? '')}
+                    disabled={
+                      !!saving ||
+                      ((choices[person.id] ?? '') === (person.directRole ?? '') &&
+                        !(
+                          sourceChoices[person.id] &&
+                          sourceReviews[person.id]?.hostAccess &&
+                          sourceReviews[person.id]?.targets.some(
+                            (target) => target.state === 'grant',
+                          )
+                        ))
+                    }
                     aria-label={
                       failedPerson === person.id
                         ? `Retry access update for ${person.name}`
@@ -203,6 +341,41 @@ export function Sharing({
                     <p role="alert">
                       {error} Confirmed access is shown above; your choice is kept.
                     </p>
+                  )}
+                  {sourceResults[person.id] && (
+                    <div className="sharing-source-result">
+                      <p role="status">
+                        {item.kind === 'space' ? 'Space' : 'Report'} access{' '}
+                        {sourceResults[person.id].host === 'updated' ? 'updated.' : 'kept.'} Source
+                        access updated: {sourceResults[person.id].shared.length}{' '}
+                        {sourceResults[person.id].shared.length === 1
+                          ? 'target shared'
+                          : 'targets shared'}
+                        .{' '}
+                        {sourceResults[person.id].complete
+                          ? 'Existing source access is kept.'
+                          : 'Some sources still need access or could not be reviewed. Successful grants are kept.'}
+                      </p>
+                      {sourceReviews[person.id]?.targets.some((target) =>
+                        sourceResults[person.id].shared.includes(target.id),
+                      ) && (
+                        <ul aria-label="Sources shared">
+                          {sourceReviews[person.id]?.targets
+                            .filter((target) => sourceResults[person.id].shared.includes(target.id))
+                            .map((target) => (
+                              <li key={target.id}>
+                                {target.name} — Can view
+                                {target.kind === 'space' ? ' · Entire Space' : ''}
+                              </li>
+                            ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                  {reviewAgain === person.id && (
+                    <Button disabled={!!saving} onClick={() => void load(true, person.id)}>
+                      Review remaining sources
+                    </Button>
                   )}
                 </div>
               ))}
@@ -226,6 +399,13 @@ export function Sharing({
           File admins manage sharing and file organization, without ownership or server
           administration.
         </p>
+        {hasSources && (
+          <p className="sp-muted">
+            {item.kind === 'space'
+              ? 'Sources in this Space are included. Sources outside this Space remain unavailable to link guests.'
+              : 'This link shares only the document. Formulas that need other files are unavailable to link guests.'}
+          </p>
+        )}
         {item.kind !== 'folder' && (
           <ShareLink
             key={`${item.id}:${item.access}`}
@@ -238,7 +418,7 @@ export function Sharing({
           <SharingAddress
             value={`${location.origin}${item.kind === 'space' ? spaceHref(item.id) : '/?item=' + encodeURIComponent(item.id)}`}
           />
-          <Button disabled={!!saving || linkBusy} onClick={onClose}>
+          <Button ref={doneButton} disabled={!!saving || linkBusy} onClick={onClose}>
             Done
           </Button>
         </div>

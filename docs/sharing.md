@@ -172,14 +172,55 @@ trash, and browser filing/removal/revocation. [Search](search.md) includes these
 
 ## Doc formula sources
 
-A Doc grant never grants access to its [Formula sources](formulas.md). Every
-input must be readable by the viewer; otherwise the whole formula is unavailable,
-including aggregates. A standalone Doc guest link grants no source access. A
-Space guest link covers same-Space sources, including future additions, but no
-external source. Account and MCP callers need their own current access to every
-external source. Stable bindings, formatting and unavailable results keep the
-existing Formula behavior; no cached value bypasses access checks. SPN-076 tracks
-explicit dependency sharing outside the existing permission boundary.
+A Doc grant alone never grants access to its [Formula sources](formulas.md).
+Every input must be readable by the viewer; otherwise the whole formula is
+unavailable, including aggregates. Stable bindings, formatting and unavailable
+results keep the existing Formula behavior; no cached value bypasses access checks.
+
+The Sharing dialog reviews formula sources separately for each recipient. **Also
+share source spreadsheets** starts unchecked. Leaving it unchecked changes only
+the selected host access. Selecting it lists the exact authorized source Sheets
+and proposed **Can view** grants before **Apply access**. Existing View, Edit,
+File admin, ownership and inherited access are kept; the operation never adds
+editing or downgrades a source. Sources can be added even when the recipient
+already reads the report and its selected role is unchanged.
+
+A source the sharer can read but cannot administer says that its Owner or File
+admin must grant access. A source the sharer cannot discover stays generic: no
+source name, ID or private parent is revealed. That limitation does not establish
+whether the recipient can read the hidden source. Sharing the eligible sources
+must not be described as making every formula available.
+
+Sharing a Space reviews direct formula references from every live Doc in it,
+consistently from the dashboard and editor. Same-Space sources already inherit
+the root grant and require no separate checkbox or child grant. An external
+source inside another Space is grouped under that **Entire Space**, with its
+exact authorized source Sheets and the explicit consequence: access to every
+current and future page and folder. Only that outer root can be granted; the
+dialog never offers a fabricated grant to one child. Source references are not
+followed transitively into unrelated documents.
+
+Confirmation rechecks the current account, host and source authority, recipient
+access, source identities and names, and Space boundaries. A changed review
+requires a fresh list and another opt-in before any source grant. Successful
+host/source grants are reported separately from sources still requiring another
+owner's help. A failed source check permits host-only sharing with a warning,
+without pretending that no dependencies exist. After an uncertain network result,
+review current access before trying again; a lost response does not prove that
+no permissions changed.
+
+Source review is bounded: at most 128 live Docs, 256 unique source Sheets, 32 MiB
+of serialized committed Doc snapshots in total, 1,024 custom ranges per Doc,
+and 10,000 accumulated ancestry reads. A limit refuses the complete review rather
+than omitting later sources. Host-only sharing remains available.
+
+A standalone Doc guest link grants no source access. A Space guest link covers
+same-Space sources, including future additions, but no external source. Creating
+or replacing a host link never creates a source link or changes account grants.
+Account and MCP callers still need their own current access to every external
+source. Automatic requests, notifications, copied source values and public source
+publication are outside this flow. See the
+[SPN-076 design and implementation record](implementation/SPN-076.md).
 
 ## Space sharing
 
@@ -214,8 +255,8 @@ A root link's privacy epoch covers every child room and outstanding admission.
 Rotation, revocation and role changes fence and evict affected connections;
 generic **Guest**/**Collaborator** labels hide account names and avatars. Guest
 navigation, source discovery and metadata stay within that root. The same-Space
-Formula rule follows [decision #117](implementation/SPN-078.md#legacy-decision-117-whole-space-guest-capability);
-SPN-076 remains for deliberate external dependency sharing, disclosing the whole
+Formula rule follows [decision #117](implementation/SPN-078.md#legacy-decision-117-whole-space-guest-capability).
+[Deliberate external dependency sharing](#doc-formula-sources) discloses the whole
 source Space when that is its permission boundary. Internal Trash and whole-Space
 recovery remain preserved without automatic Space Trash expiry.
 

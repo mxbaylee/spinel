@@ -19,6 +19,7 @@ import { admitTransfer, transfers } from './transfers.ts';
 import { archiveRoutes } from './archive-routes.ts';
 import { pdfRoutes } from '../pdf/routes.ts';
 import { OfflineCreationError, OfflineCreations } from './offline-creation.ts';
+import { SourceSharing } from './source-sharing.ts';
 
 export function workspaceRoutes(
   auth: AuthStore,
@@ -35,6 +36,7 @@ export function workspaceRoutes(
   const documents = new DocumentStore(store);
   const files = new PortableFiles(store, collaboration);
   const creations = collaboration ? new OfflineCreations(store, collaboration) : undefined;
+  const sourceSharing = new SourceSharing(store, collaboration);
   const account = (request: Request) => documentIdentity(store, request.headers);
   const owner = (request: Request) => {
     const id = auth.session(cookieToken(request))?.user_id;
@@ -350,11 +352,38 @@ export function workspaceRoutes(
   router.get('/:id/sharing', (request, response) =>
     response.json({ people: catalog.sharing(owner(request), String(request.params.id)) }),
   );
+  router.post('/:id/sharing/review', (request, response) => {
+    const body = payload(request, ['userId', 'role']);
+    const identity = account(request);
+    response.json({
+      review: sourceSharing.review(
+        identity.userId,
+        String(request.params.id),
+        body.userId,
+        body.role,
+        identity.customData,
+      ),
+    });
+  });
   router.get('/:id/destinations', (request, response) =>
     response.json({ items: catalog.moveDestinations(owner(request), String(request.params.id)) }),
   );
   router.put('/:id/sharing', (request, response) => {
-    const body = payload(request, ['userId', 'role']);
+    const body = payload(request, ['userId', 'role', 'sourceReview']);
+    if (Object.hasOwn(body, 'sourceReview')) {
+      const identity = account(request);
+      response.json(
+        sourceSharing.apply(
+          identity.userId,
+          String(request.params.id),
+          body.userId,
+          body.role,
+          body.sourceReview,
+          identity.customData,
+        ),
+      );
+      return;
+    }
     response.json({
       people: catalog.share(owner(request), String(request.params.id), body.userId, body.role),
     });

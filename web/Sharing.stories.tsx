@@ -47,6 +47,37 @@ const people: SharePerson[] = [
   },
 ];
 
+/** These existing report fixtures have no formulas. Keep their source review
+ * explicit so they continue exercising the ordinary sharing states. */
+function EmptySourceReview({ children }: { children: React.ReactNode }) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const previous = globalThis.fetch;
+    const intercepted: typeof fetch = async (input, init) => {
+      if (String(input).endsWith('/sharing/review') && init?.method === 'POST') {
+        const { userId, role } = JSON.parse(String(init.body));
+        return Response.json({
+          review: {
+            version: 'empty-report',
+            userId,
+            hostRole: role,
+            hostAccess: role,
+            targets: [],
+            unavailable: false,
+          },
+        });
+      }
+      return previous(input, init);
+    };
+    globalThis.fetch = intercepted;
+    setReady(true);
+    return () => {
+      if (globalThis.fetch === intercepted) globalThis.fetch = previous;
+    };
+  }, []);
+  return ready ? children : null;
+}
+
 // Each story sets `parameters.api` in full: Storybook deep-merges parameters, which
 // would fold a failure() or pending() reply into the plain body set on the meta.
 
@@ -54,6 +85,13 @@ const meta = {
   id: 'sharing-sharing',
   title: 'Current production/Sharing/Sharing',
   component: Sharing,
+  decorators: [
+    (Story) => (
+      <EmptySourceReview>
+        <Story />
+      </EmptySourceReview>
+    ),
+  ],
   args: { item: doc as FileItem, onClose: () => {} },
 } satisfies Meta<typeof Sharing>;
 export default meta;
