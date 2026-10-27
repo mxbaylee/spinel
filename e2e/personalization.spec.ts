@@ -70,6 +70,7 @@ for (const variant of [
             .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
         )
         .toBe(true);
+      await expect(page.getByRole('tab', { name: 'Start', exact: true })).toBeVisible();
       await capture('editor');
       await page.getByRole('button', { name: 'Change appearance', exact: true }).click();
       await page.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();

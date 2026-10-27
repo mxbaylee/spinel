@@ -23,6 +23,14 @@ export function IconPicker({
     [limit, setLimit] = useState(60);
   const dialog = useRef<HTMLDialogElement>(null),
     grid = useRef<HTMLDivElement>(null);
+  const select = (next: string) => {
+    dialog.current?.close();
+    choose(next);
+  };
+  const dismiss = () => {
+    dialog.current?.close();
+    close();
+  };
   const results = searchPersonIcons(query, category, includeEmojis),
     visible = results.slice(0, limit);
   useEffect(() => {
@@ -37,7 +45,7 @@ export function IconPicker({
       onCancel={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        close();
+        dismiss();
       }}
       onKeyDown={(event) => {
         if (event.key === 'Escape') event.stopPropagation();
@@ -68,7 +76,7 @@ export function IconPicker({
             }
             if (event.key === 'Enter' && results.length === 1) {
               event.preventDefault();
-              choose(results[0].value);
+              select(results[0].value);
             }
           }}
         />
@@ -128,7 +136,7 @@ export function IconPicker({
             title={icon.label}
             aria-label={icon.label}
             aria-pressed={value === icon.value}
-            onClick={() => choose(icon.value)}
+            onClick={() => select(icon.value)}
           >
             {icon.value.startsWith('lucide:') ? (
               <ProfileIcon icon={icon.value} />
@@ -145,7 +153,7 @@ export function IconPicker({
           Show more
         </button>
       )}
-      <button className="sp-control" type="button" onClick={close}>
+      <button className="sp-control" type="button" onClick={dismiss}>
         Cancel
       </button>
     </dialog>
