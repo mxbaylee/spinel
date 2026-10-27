@@ -2,16 +2,50 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '../src/ui/redesign/Controls.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import './administration.css';
-interface Status {
-  configured: boolean;
+export interface BackupCheckStatus {
   lastGood: number | null;
   lastAttempt: number | null;
   error: string | null;
   running: boolean;
   overdue: boolean;
+  keyId: string | null;
 }
+export interface BackupStatusResponse {
+  configured: boolean;
+  destination: 'filesystem' | 'spaces' | null;
+  offsite: boolean;
+  keyId: string | null;
+  lastGood: number | null;
+  lastAttempt: number | null;
+  error: string | null;
+  running: boolean;
+  overdue: boolean;
+  verification: BackupCheckStatus;
+}
+const timestamp = (value: number | null) =>
+  value === null ? 'None yet' : new Date(value).toLocaleString();
+
+function StateLabel({ label }: { label: string }) {
+  return (
+    <p className="admin-health-state">
+      <ProfileIcon
+        icon={
+          label === 'OK' || label === 'Verified'
+            ? 'lucide:circle-check'
+            : label === 'Running'
+              ? 'lucide:clock'
+              : label === 'Local backup saved'
+                ? 'lucide:hard-drive'
+                : 'lucide:triangle-alert'
+        }
+      />
+      <strong>{label}</strong>
+    </p>
+  );
+}
+
 export function BackupStatus() {
-  const [status, setStatus] = useState<Status | null>(null);
+  const [status, setStatus] = useState<BackupStatusResponse | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const mounted = useRef(false);
@@ -22,7 +56,7 @@ export function BackupStatus() {
     try {
       const response = await fetch('/api/admin/backups');
       if (!response.ok) throw new Error('Could not load backup status. Refresh to try again.');
-      const result = (await response.json()) as Status;
+      const result = (await response.json()) as BackupStatusResponse;
       if (mounted.current && request === generation.current) {
         setStatus(result);
         setError('');
@@ -54,9 +88,27 @@ export function BackupStatus() {
           ? 'Failed'
           : status.overdue
             ? 'Overdue'
-            : !status.lastGood
+            : status.lastGood === null
               ? 'No backups yet'
-              : 'OK';
+              : status.destination === 'filesystem'
+                ? 'Local backup saved'
+                : status.offsite
+                  ? 'OK'
+                  : 'Offsite unverified';
+  const verification = status?.verification;
+  const verificationLabel = !status?.configured
+    ? 'Not configured'
+    : !verification
+      ? 'Unavailable'
+      : verification.running
+        ? 'Running'
+        : verification.error
+          ? 'Failed'
+          : verification.overdue
+            ? 'Overdue'
+            : verification.lastGood === null
+              ? 'Not verified yet'
+              : 'Verified';
   return (
     <section aria-label="Backups" className="admin-health-card sp-ui">
       <div className="admin-section-heading">
@@ -70,38 +122,56 @@ export function BackupStatus() {
         <p role="alert">{error}</p>
       ) : status ? (
         <>
-          <p className="admin-health-state">
-            <ProfileIcon
-              icon={
-                label === 'OK'
-                  ? 'lucide:circle-check'
-                  : label === 'Running'
-                    ? 'lucide:clock'
-                    : 'lucide:triangle-alert'
-              }
-            />
-            <strong>{label}</strong>
+          <StateLabel label={label} />
+          <p>
+            Destination:{' '}
+            {status.destination === 'filesystem'
+              ? 'Local filesystem'
+              : status.destination === 'spaces'
+                ? 'DigitalOcean Spaces'
+                : status.configured
+                  ? 'Unavailable'
+                  : 'Not configured'}
           </p>
           {!status.configured && (
             <p role="alert">
               Offsite backups are not configured. Follow the backup setup guide on the server.
             </p>
           )}
+          {status.destination === 'filesystem' && (
+            <p role="alert">
+              This backup is stored locally. Keep an independent offsite copy to recover if the host
+              is lost.
+            </p>
+          )}
+          {status.configured && status.destination !== 'filesystem' && !status.offsite && (
+            <p role="alert">Offsite protection has not been established for this configuration.</p>
+          )}
           {status.error && <p role="alert">{status.error}</p>}
-          {status.overdue && <p role="alert">A successful offsite backup is overdue.</p>}
+          {status.overdue && <p role="alert">A successful backup is overdue.</p>}
           {status.running && <p role="status">Backup in progress…</p>}
-          <p>
-            Last successful backup:{' '}
-            {status.lastGood ? new Date(status.lastGood).toLocaleString() : 'None yet'}
-          </p>
-          <p>
-            Last attempt:{' '}
-            {status.lastAttempt ? new Date(status.lastAttempt).toLocaleString() : 'None yet'}
-          </p>
-          <p className="sp-muted">Backup verification results are not available here yet.</p>
+          <p>Last successful backup: {timestamp(status.lastGood)}</p>
+          <p>Last backup attempt: {timestamp(status.lastAttempt)}</p>
+          {status.keyId && <p>Encryption key: {status.keyId}</p>}
+          <section aria-label="Restore verification" className="admin-backup-verification">
+            <h4>Restore verification</h4>
+            <StateLabel label={verificationLabel} />
+            <p className="sp-muted">
+              A weekly isolated restore checks the backup without replacing the live workspace.
+            </p>
+            {verification?.error && <p role="alert">{verification.error}</p>}
+            {verification?.overdue && (
+              <p role="alert">A successful restore verification is overdue.</p>
+            )}
+            {verification?.running && <p role="status">Checking recovery…</p>}
+            <p>Last successful restore check: {timestamp(verification?.lastGood ?? null)}</p>
+            <p>Last restore check attempt: {timestamp(verification?.lastAttempt ?? null)}</p>
+            {verification?.keyId && <p>Verified encryption key: {verification.keyId}</p>}
+          </section>
         </>
       ) : null}
       <a
+        className="admin-backup-guide"
         href="https://github.com/mxbaylee/spinel/blob/main/docs/backups.md"
         target="_blank"
         rel="noopener noreferrer"

@@ -1,0 +1,323 @@
+{
+  "schema": 2,
+  "candidateGroupLimit": 44,
+  "protocolRevision": 3,
+  "preset": "desktop",
+  "physicalDevice": false,
+  "status": "failed",
+  "passed": false,
+  "timingValid": false,
+  "baselineRedoOutcome": [
+    {
+      "sample": "profile",
+      "outcome": "baseline-capacity-refusal",
+      "integrityEvidenceValid": true
+    },
+    {
+      "sample": "plain-3",
+      "outcome": "baseline-capacity-refusal",
+      "integrityEvidenceValid": true
+    },
+    {
+      "sample": "plain-2",
+      "outcome": "baseline-capacity-refusal",
+      "integrityEvidenceValid": true
+    },
+    {
+      "sample": "plain-1",
+      "outcome": "baseline-capacity-refusal",
+      "integrityEvidenceValid": true
+    }
+  ],
+  "candidateIntegrity": true,
+  "failures": [
+    "baseline-observation/plain-1: invalid long-task timeline.",
+    "candidate/profile: invalid long-task timeline.",
+    "candidate/plain-3: old schema, incomplete or repeated attempt.",
+    "candidate/plain-3: an absolute responsiveness budget failed.",
+    "candidate/plain-2: old schema, incomplete or repeated attempt.",
+    "candidate/plain-2: an absolute responsiveness budget failed."
+  ],
+  "unavailable": [],
+  "summaries": [
+    {
+      "role": "baseline-observation",
+      "sample": "profile",
+      "source": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+      "inputP95Ms": 58.800000000046566,
+      "longestTaskMs": 10116,
+      "pairedFlushMs": null,
+      "nativeDrainUpperBoundMs": 20865.199999999953,
+      "typingWallMs": 95794.46642800001,
+      "initialIntegrity": true,
+      "redoOutcome": "baseline-capacity-refusal",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "baseline-observation",
+      "sample": "plain-3",
+      "source": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+      "inputP95Ms": 58.09999999997672,
+      "longestTaskMs": 10175,
+      "pairedFlushMs": null,
+      "nativeDrainUpperBoundMs": 20630.600000000035,
+      "typingWallMs": 93717.30776200001,
+      "initialIntegrity": true,
+      "redoOutcome": "baseline-capacity-refusal",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "baseline-observation",
+      "sample": "plain-2",
+      "source": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+      "inputP95Ms": 58.5,
+      "longestTaskMs": 9887,
+      "pairedFlushMs": null,
+      "nativeDrainUpperBoundMs": 20200.70000000001,
+      "typingWallMs": 92511.293098,
+      "initialIntegrity": true,
+      "redoOutcome": "baseline-capacity-refusal",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "baseline-observation",
+      "sample": "plain-1",
+      "source": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+      "inputP95Ms": 58,
+      "longestTaskMs": 9949,
+      "pairedFlushMs": null,
+      "nativeDrainUpperBoundMs": 20255.5,
+      "typingWallMs": 93760.120709,
+      "initialIntegrity": true,
+      "redoOutcome": "baseline-capacity-refusal",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "profile",
+      "source": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+      "inputP95Ms": 57.300000000046566,
+      "longestTaskMs": 122,
+      "pairedFlushMs": {
+        "count": 47,
+        "p50": 10.70000000006985,
+        "p95": 17.900000000023283,
+        "max": 36.5,
+        "sum": 567.0999999999767
+      },
+      "nativeDrainUpperBoundMs": 933.6000000000931,
+      "typingWallMs": 90550.493122,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-3",
+      "source": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+      "inputP95Ms": 57.29999999993015,
+      "longestTaskMs": 109,
+      "pairedFlushMs": {
+        "count": 47,
+        "p50": 9.70000000006985,
+        "p95": 17.699999999953434,
+        "max": 25.599999999976717,
+        "sum": 526.2000000001863
+      },
+      "nativeDrainUpperBoundMs": 932.5999999999767,
+      "typingWallMs": 89573.759375,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-2",
+      "source": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+      "inputP95Ms": 56.800000000046566,
+      "longestTaskMs": 88,
+      "pairedFlushMs": {
+        "count": 47,
+        "p50": 9.899999999906868,
+        "p95": 16.20000000006985,
+        "max": 19.099999999976717,
+        "sum": 508.3999999992084
+      },
+      "nativeDrainUpperBoundMs": 858.7000000000698,
+      "typingWallMs": 88200.01040399999,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-1",
+      "source": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+      "inputP95Ms": 57.59999999997672,
+      "longestTaskMs": 120,
+      "pairedFlushMs": {
+        "count": 47,
+        "p50": 9.800000000046566,
+        "p95": 14.599999999976717,
+        "max": 20.29999999993015,
+        "sum": 488.09999999962747
+      },
+      "nativeDrainUpperBoundMs": 847.2999999999302,
+      "typingWallMs": 88815.462942,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 48
+    }
+  ],
+  "improvement": {
+    "history": {
+      "baselineContainingTaskMs": 9879,
+      "candidateEntireTaskUpperBoundMs": 122,
+      "reductionPercent": 98.76505719202349,
+      "status": "registered-relative-gate-applied",
+      "candidateAttribution": "sampled-native-reducer",
+      "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+    },
+    "collaboration": {
+      "baselineContainingTaskMs": 10116,
+      "candidateEntireTaskUpperBoundMs": 122,
+      "reductionPercent": 98.79398971925663,
+      "status": "registered-relative-gate-applied",
+      "candidateAttribution": "sampled-native-reducer",
+      "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+    }
+  },
+  "unprofiledImprovement": {
+    "metric": "whole-browser-longest-task-reduction",
+    "samples": [
+      {
+        "sample": "plain-3",
+        "baselineLongestTaskMs": 10175,
+        "candidateEntireTaskUpperBoundMs": 122,
+        "reductionPercent": 98.80098280098281
+      },
+      {
+        "sample": "plain-2",
+        "baselineLongestTaskMs": 9887,
+        "candidateEntireTaskUpperBoundMs": 122,
+        "reductionPercent": 98.76605643774654
+      },
+      {
+        "sample": "plain-1",
+        "baselineLongestTaskMs": 9949,
+        "candidateEntireTaskUpperBoundMs": 122,
+        "reductionPercent": 98.7737461051362
+      }
+    ],
+    "conservativeAggregateReductionPercent": 98.76605643774654,
+    "qualification": "All three plain baseline samples must corroborate a >1,000 ms browser task. Reductions use the worst candidate task across plain and profiled samples; native reducer attribution is a separate profile gate."
+  },
+  "profilingVariation": [
+    {
+      "role": "baseline-observation",
+      "plainTypingMs": {
+        "count": 3,
+        "p50": 93717.30776200001,
+        "p95": 93760.120709,
+        "max": 93760.120709,
+        "sum": 279988.721569
+      },
+      "profileTypingMs": 95794.46642800001,
+      "profileMinusPlainMedianMs": 2077.158666000003,
+      "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+    },
+    {
+      "role": "candidate",
+      "plainTypingMs": {
+        "count": 3,
+        "p50": 88815.462942,
+        "p95": 89573.759375,
+        "max": 89573.759375,
+        "sum": 266589.232721
+      },
+      "profileTypingMs": 90550.493122,
+      "profileMinusPlainMedianMs": 1735.0301800000016,
+      "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+    }
+  ],
+  "composition": {
+    "baseline": {
+      "sampleIntervalUs": 1000,
+      "negativeDeltaCount": 1,
+      "reorderedSampleCount": 2,
+      "clock": {
+        "beforeMs": 2437.9000000000233,
+        "afterMs": 2884.2999999999884,
+        "uncertaintyMs": 446.3999999999651,
+        "profileStartTimeUs": 493317039,
+        "profileEndTimeUs": 610375368
+      },
+      "history": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 1,
+        "sampleCount": 8265,
+        "sampledCpuMs": 8901.02299999993,
+        "certainContainingTasks": [
+          {
+            "index": 129,
+            "startedAt": 99410.80000000005,
+            "durationMs": 9879,
+            "sampleCount": 7869
+          }
+        ],
+        "maxContainingTaskMs": 9879,
+        "taskAttribution": "certain-whole-containing-task"
+      },
+      "collaboration": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 1,
+        "sampleCount": 8517,
+        "sampledCpuMs": 9210.118999999928,
+        "certainContainingTasks": [
+          {
+            "index": 130,
+            "startedAt": 109291.19999999995,
+            "durationMs": 10116,
+            "sampleCount": 8139
+          }
+        ],
+        "maxContainingTaskMs": 10116,
+        "taskAttribution": "certain-whole-containing-task"
+      }
+    },
+    "candidate": {
+      "sampleIntervalUs": 1000,
+      "negativeDeltaCount": 0,
+      "reorderedSampleCount": 0,
+      "clock": {
+        "beforeMs": 2494.1999999999534,
+        "afterMs": 2928.4000000000233,
+        "uncertaintyMs": 434.20000000006985,
+        "profileStartTimeUs": 963887483,
+        "profileEndTimeUs": 1055687795
+      },
+      "history": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 3,
+        "sampleCount": 282,
+        "sampledCpuMs": 283.1849999999999,
+        "certainContainingTasks": [],
+        "maxContainingTaskMs": null,
+        "taskAttribution": "unavailable"
+      },
+      "collaboration": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 3,
+        "sampleCount": 223,
+        "sampledCpuMs": 242.20399999999992,
+        "certainContainingTasks": [],
+        "maxContainingTaskMs": null,
+        "taskAttribution": "unavailable"
+      }
+    }
+  }
+}

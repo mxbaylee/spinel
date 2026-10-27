@@ -211,9 +211,12 @@ need.
 
 Use pre_launch default, launch and post_launch ahead of existing score/tie-break ordering, and
 reject dependencies on later phases. Complete the current phase or record its blocker before
-advancing. SPN-038 is the public-launch milestone; optional CSV/plugins follow it. Current grooming
-also places SPN-063 recovery verification in launch, after concrete deployment/database selection
-and before SPN-038 public exposure. Keep impact/scoring, dependency inheritance, split/review and
+advancing. SPN-038 is the public-launch milestone; optional CSV/plugins follow it. The original grooming
+placed SPN-063 recovery verification in launch, after concrete deployment/database selection
+and before SPN-038 public exposure. That ticket-specific timing is superseded by the
+[2026-10-27 pre-deployment decision](SPN-063.md#accepted-decision-implement-recovery-before-deployment):
+SPN-063 implementation/local acceptance is pre_launch; SPN-038 retains provider/target-host
+acceptance before public exposure. The three-phase policy remains accepted. Keep impact/scoring, dependency inheritance, split/review and
 size rules unchanged. These are timing constraints, not a technical claim that CSV/plugins require
 HTTPS or permission to provision resources.
 

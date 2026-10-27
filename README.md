@@ -5,24 +5,20 @@ for [PR #202](https://github.com/mxbaylee/spinel/pull/202). The
 [measurement contract](https://github.com/mxbaylee/spinel/blob/53df5a842b61c9cddb19c2c074d2c4ce240aabca/docs/implementation/SPN-108.md)
 defines acceptance. Raw failed records are not retrospectively relabeled.
 
-## Current checkpoint: fresh cap-44 collection pending
+## Current checkpoint: cap-44 rejected; cap-32 preparation
 
-- Candidate: `53df5a842b61c9cddb19c2c074d2c4ce240aabca`.
+- Rejected candidate: `53df5a842b61c9cddb19c2c074d2c4ce240aabca`.
 - Actual CI source: `09cce1d160d5b03a20c7ba106c11a806ba90facb`.
 - Both source trees: `151cd8c1d607a1534ee0aed7d3811da5e0c886a5`.
-- Immutable uncapped baseline: `3fdac69f413d2fd423bc7ded41acbd67a177739c`.
+- Its immutable uncapped baseline: `3fdac69f413d2fd423bc7ded41acbd67a177739c`.
 - Main matched through `0a9cd200a5a457a6160f9dfaa86c49460ccc24e2`.
 - Fresh [CI run 40597044138](https://github.com/mxbaylee/spinel/actions/runs/40597044138)
   and [Storybook run 40597044076](https://github.com/mxbaylee/spinel/actions/runs/40597044076).
-- No accepted browser comparison or final grade yet.
+- Desktop cap-44 is rejected: plain paired-flush p95 14.6 / 16.2 / 17.7 ms, with two misses against 16 ms. All candidate integrity and mounted boundary checks passed. Mobile collection was still in progress when this checkpoint was written.
+- [Rejected desktop observations](attempt-53df/result-summary.json), [recomputed rejection](attempt-53df/desktop-comparison-rejected.json), and [artifact checksums](attempt-53df/desktop-artifact-manifest.json) remain preserved. No accepted comparison or final grade yet.
+- This updated uncapped source incorporates all 56 paths from main commit `9b42229b130c0e4e305c34d54a28b33f376113f8` (SPN-063 backup-recovery runtime), without the capacity policy. The next candidate will pin this immutable source.
 
-The first measured cap-64 candidate failed the unchanged desktop paired-flush
-p95 target: 27.4 / 29.6 / 29.5 ms against 16 ms. The current bound of 44 keeps the original
-2,086-input continuous workload within 48 groups at unchanged native retention of 50.
-Its latency remains to be established by fresh complete pairs. Local native
-regressions passed all 48 Undo/Redo groups through actual sync admission,
-acknowledgments, hash verification and peer delivery; 19 analyzer cases passed.
-Both independent reviewers cleared source preflight, without final grades.
+Both the cap-64 and cap-44 candidates failed the unchanged 16 ms desktop paired-flush p95 target. The next policy is 32-state flushes with the supported public Doc constructor retention of 100 groups. The original 2,086-input fixture occupies 66 groups, with 34 spare slots. This explicitly amends the earlier 50-group design choice; no latency or content-integrity requirement changes. Local native regressions passed all 66 Undo/Redo groups through actual sync and a separate 101-group finite-eviction replay. All 11 native cases and 22 analyzer cases passed; source preflight remains separate from fresh performance acceptance.
 
 The same failed run exposed a signed CPU-profile timestamp reader error and a
 synthetic composition sequence that omitted Chromium's final converted-text
@@ -32,6 +28,8 @@ uses Chromium's public composition input commands, verifies all 70 observed
 provisional updates plus actual finalization event order, and retains exact
 content/selection/replay/revocation assertions. Physical OS IMEs and the old
 changed-final-end synthetic path without a converted update are not claimed fixed.
+
+The rejected cap-44 data also includes two genuine browser-reported 49 ms long tasks. The measured Chromium revision coarsens endpoints and truncates the duration after threshold admission. The next analyzer keeps finite nonnegative raw observations, all window checks and the `max(50, observed tasks)` comparison floor. This interpretation repair does not rescue the failed flush budgets.
 
 The evidence tree remains uncapped. Its additional commit parents retain actual
 measured candidate source commits for provenance; they do not change the pinned
@@ -64,7 +62,7 @@ current harness and pinned dependencies run on both sources. The original
 | CI 40586732900, `d099a22` | All eight baseline initial-content windows completed then failed Redo; no candidate; separate Sheet preview flake also failed despite passing retry; [record](attempt-d099/result-summary.json) |
 | CI 40591775224, `993bafa` | Interrupted by current-main integration after three complete desktop baseline-only schema 3 cases; no accepted comparison; [record](attempt-993/disposition.json) |
 | CI 40592509873, `2c33dec` | Cap 64 desktop p95 misses, incomplete signed-profile cases and synthetic composition Redo failure; ordinary current CI/Storybook components passed, responsiveness and aggregate failed; [record](attempt-2c33/result-summary.json) |
-| CI 40597044138, `53df5a8` | Fresh cap 44 collection pending; no accepted result |
+| CI 40597044138, `53df5a8` | Desktop rejected for two p95 budget misses; all candidate integrity/boundary checks passed; mobile still collecting at checkpoint; [record](attempt-53df/result-summary.json) |
 
 The baseline collection deadline is 600 seconds per case and the job deadline is
 60 minutes. Candidate cases retain 300 seconds. These are collection windows;

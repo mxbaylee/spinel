@@ -14,7 +14,10 @@ import {
 import { join } from 'node:path';
 import { backup, DatabaseSync } from '../../../server/database.ts';
 import { pipeline } from 'node:stream/promises';
+import { Transform } from 'node:stream';
 import { createGzip, createGunzip } from 'node:zlib';
+import { verifyInventory, writeInventory } from './inventory.ts';
+import { RecoveryResourceError } from './resource-error.ts';
 
 const MAGIC = Buffer.from('SPINEL01');
 const HEADER_SIZE = 20;
@@ -24,6 +27,7 @@ export interface Recovery {
   origin: string;
   image: string;
   runtimeEnvironment: string;
+  keyId?: string;
 }
 export function validateRecovery(value: unknown): asserts value is Recovery {
   const r = value as Recovery;
@@ -35,7 +39,9 @@ export function validateRecovery(value: unknown): asserts value is Recovery {
     new URL(r.origin).origin !== r.origin ||
     typeof r.image !== 'string' ||
     !/^(sha256:[a-f0-9]{64}|\S+@sha256:[a-f0-9]{64})$/.test(r.image) ||
-    typeof r.runtimeEnvironment !== 'string'
+    typeof r.runtimeEnvironment !== 'string' ||
+    (r.keyId !== undefined &&
+      (typeof r.keyId !== 'string' || !/^[a-zA-Z0-9_-]{1,80}$/.test(r.keyId)))
   )
     throw new Error('Invalid recovery metadata.');
 }
@@ -81,10 +87,10 @@ export async function makeArchive(
   const pageSize = Number(db.prepare('PRAGMA page_size').get()!.page_size);
   const space = await statfs(stagingRoot);
   if (space.bavail * space.bsize < pages * pageSize * 2.1 + 256 * 1024 ** 2)
-    throw new Error('Insufficient staging space for backup and encrypted output.');
+    throw new RecoveryResourceError('disk-space');
   const directory = await mkdtemp(join(stagingRoot, '.backup-'));
-  await chmod(directory, 0o700);
   try {
+    await chmod(directory, 0o700);
     const copy = join(directory, 'snapshot.sqlite');
     await backup(db, copy);
     await chmod(copy, 0o600);
@@ -94,9 +100,10 @@ export async function makeArchive(
         'PRAGMA journal_mode=DELETE; CREATE TABLE IF NOT EXISTS spinel_recovery (id INTEGER PRIMARY KEY CHECK(id=1), metadata TEXT NOT NULL) STRICT',
       );
       snapshot
-        .prepare('INSERT OR REPLACE INTO spinel_recovery VALUES (1, ?)')
+        .prepare('INSERT OR REPLACE INTO spinel_recovery (id,metadata) VALUES (1, ?)')
         .run(JSON.stringify(recovery));
       checkDatabase(snapshot);
+      writeInventory(snapshot);
     } finally {
       snapshot.close();
     }
@@ -129,11 +136,25 @@ export async function restoreArchive(
   key: Buffer,
   stagingRoot: string,
   destination: string,
+  options: {
+    requireInventory?: boolean;
+    maxDatabaseBytes?: number;
+    signal?: AbortSignal;
+    preserveJobState?: boolean;
+  } = {},
 ) {
+  options.signal?.throwIfAborted();
+  const maximum = options.maxDatabaseBytes ?? 8 * 1024 ** 3;
+  if (!Number.isSafeInteger(maximum) || maximum < 4096 || maximum > 64 * 1024 ** 3)
+    throw new Error('Invalid recovery size limit.');
+  const space = await statfs(stagingRoot);
+  const available = space.bavail * space.bsize - 256 * 1024 ** 2;
+  if (available < 4096) throw new RecoveryResourceError('disk-space');
+  const limit = Math.min(maximum, available);
   const directory = await mkdtemp(join(stagingRoot, '.restore-'));
-  await chmod(directory, 0o700);
   let created = false;
   try {
+    await chmod(directory, 0o700);
     const handle = await open(archive, 'r');
     let header: Buffer, tag: Buffer, size: number;
     try {
@@ -151,24 +172,63 @@ export async function restoreArchive(
     decipher.setAAD(header);
     decipher.setAuthTag(tag);
     const copy = join(directory, 'spinel.sqlite');
+    let expanded = 0;
+    let nextSpaceCheck = 0;
+    const bounded = new Transform({
+      transform(chunk: Buffer, _encoding, callback) {
+        expanded += chunk.length;
+        if (expanded > limit) {
+          callback(new RecoveryResourceError(limit === maximum ? 'database-size' : 'disk-space'));
+          return;
+        }
+        // Other jobs can consume the same volume after the initial budget. Check
+        // again while streaming, retaining a reserve larger than queued writes.
+        if (expanded >= nextSpaceCheck) {
+          nextSpaceCheck = expanded + 4 * 1024 ** 2;
+          statfs(directory).then(
+            (current) =>
+              callback(
+                current.bavail * current.bsize < 256 * 1024 ** 2 + 4 * 1024 ** 2
+                  ? new RecoveryResourceError('disk-space')
+                  : null,
+                chunk,
+              ),
+            (error: Error) => callback(error),
+          );
+        } else callback(null, chunk);
+      },
+    });
     await pipeline(
       createReadStream(archive, { start: HEADER_SIZE, end: size - 17 }),
       decipher,
       createGunzip(),
+      bounded,
       createWriteStream(copy, { flags: 'wx', mode: 0o600 }),
+      { signal: options.signal },
     );
     const db = new DatabaseSync(copy);
     let recovery: Recovery;
     try {
+      db.exec('PRAGMA trusted_schema=OFF');
       checkDatabase(db);
+      verifyInventory(db, options.requireInventory === true);
       recovery = JSON.parse(
         String(db.prepare('SELECT metadata FROM spinel_recovery WHERE id=1').get()?.metadata),
       );
       validateRecovery(recovery);
-      if (
-        db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='backup_state'").get()
-      )
-        db.exec('UPDATE backup_state SET lease=0, owner=NULL, last_attempt=NULL, error=NULL');
+      if (!options.preserveJobState)
+        for (const table of ['backup_state', 'verification_state'])
+          if (db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?").get(table)) {
+            db.exec(`UPDATE ${table} SET lease=0, owner=NULL, last_attempt=NULL, error=NULL`);
+            if (
+              table === 'backup_state' &&
+              db
+                .prepare('PRAGMA table_info(backup_state)')
+                .all()
+                .some((field) => field.name === 'job')
+            )
+              db.exec('UPDATE backup_state SET job=NULL');
+          }
     } finally {
       db.close();
     }

@@ -151,7 +151,9 @@ creation. Backups & health shows the existing configuration, running/error/overd
 state and last-success/attempt timestamps, with refresh and a backup-guide link.
 Server health adds memory, connections, storage and real job observations;
 [diagnostics](diagnostics.md) documents interpretation and export/clear. Backup
-restore verification remains SPN-063. [SPN-082](implementation/SPN-082.md) records the
+restore verification shows its own last success, current failure and key identifier;
+[the backup guide](backups.md#recurring-isolated-recovery-verification) explains the
+isolated check and its limits. [SPN-082](implementation/SPN-082.md) records the
 layout and asynchronous lifetime decisions without changing authorization.
 
 ## API and storage

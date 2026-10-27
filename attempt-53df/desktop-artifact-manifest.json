@@ -1,0 +1,143 @@
+{
+  "runId": 40597044138,
+  "jobId": 122515690436,
+  "artifactId": 12777029470,
+  "sourceHead": "53df5a842b61c9cddb19c2c074d2c4ce240aabca",
+  "ciSource": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+  "zipBytes": 2001863,
+  "zipSha256": "3f9fbe69cee4eaf8ce78cabd02bd215fda407f6e2a22231951c19d4c58c5cc90",
+  "files": [
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 117821,
+      "sha256": "a971e6a5462f345161c44aac81acb9e9b1433fa6158e705155f84a42425cc400",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 120280,
+      "sha256": "e233d526a6826731243a3b2e41cfb44147a81dcefdb91c5d63de62ca7af7caa0",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 121521,
+      "sha256": "843ee7ae5edb01d73eb8883cbe0ad85d242a1f0408c7c826452ed991c767f189",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 124367,
+      "sha256": "2c4e9b8b5dd69a39b74e9e9dc782838110265ffe187208ba3f06c3988e29421d",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 240,
+      "sha256": "e2b46d131ca2e1052079e76a74dc23008ce92df9efa89b7c20ca04842046a47f",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 3832281,
+      "sha256": "487538ad8f75c12917aec3ef8cc0876b74ac312c3a2bb7340d4f86d965ed2b03",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 1201772,
+      "sha256": "b34524d8030f237327dc0124f9444207266f9848ee5edfeb50fa692f1e5592a8",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 134617,
+      "sha256": "4dfe93b72dd7fd371cbaceb9d93cfa412c2bb54f702e932dcf54c3e42f6e8128",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/error-context.md",
+      "bytes": 8443,
+      "sha256": "1e730683f0f53e3a2b81051cc38694a503f7e7be79c87a3c26e011342b6c7c37",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 134129,
+      "sha256": "239a126f041ae3b3b3d0548d666dc38a859a55607bcf4750d1049f3dbc8b7a6d",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/test-failed-1.png",
+      "bytes": 153424,
+      "sha256": "ad5eb8e69807250e6bc6201a6e4cb21604b7c587a9ebd2b2e088307d79681dc8",
+      "retainedInPrivateBundle": false
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/test-failed-2.png",
+      "bytes": 153437,
+      "sha256": "74683ab3dc97b3a1a1d194a17d095056db6dcf67172805a762f901671adfc636",
+      "retainedInPrivateBundle": false
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/error-context.md",
+      "bytes": 8444,
+      "sha256": "1bca0429a8d9445565e952120bdcda42d062e75c266a59533c2878fe1acb6a9e",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 133208,
+      "sha256": "88a1ce6b5c2027d12834b7ef27b0c6bc295b91a77407bf47282ecc78e161feb1",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/test-failed-1.png",
+      "bytes": 153705,
+      "sha256": "1f90fe43f8b6a46baa91dab438972fea0ccd179b4541db413f5761663dfe21be",
+      "retainedInPrivateBundle": false
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 137209,
+      "sha256": "ec916f713f1f2350ba395f12e8c64256969ff040fabf485ecd39d9bd2069ac1c",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/test-failed-2.png",
+      "bytes": 153424,
+      "sha256": "ad5eb8e69807250e6bc6201a6e4cb21604b7c587a9ebd2b2e088307d79681dc8",
+      "retainedInPrivateBundle": false
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 241,
+      "sha256": "b73a282e1abdb4c32b70828020178215a866bfd25d6e45eee1008d214867829c",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 3505417,
+      "sha256": "bfdffa2dcdab4a4c0b30030838b4ed5f7dfebf917a478cbcccae8a90cba9b355",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 2307,
+      "sha256": "4b612599ef409b84a71cda3ea5fa702b905f4ae23e3a7f470dd2c720578590ab",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 65965,
+      "sha256": "f07e388eaf164f49dc40a4a9621b82a8402888e0ed24e5bdfa776c17e574d79a",
+      "retainedInPrivateBundle": true
+    },
+    {
+      "path": "playwright-report/doc-responsiveness.json",
+      "bytes": 1165135,
+      "sha256": "e9325ed6f9002aaf935cd98b27960334248ac52bbb026e05b26a64060236dbde",
+      "retainedInPrivateBundle": true
+    }
+  ]
+}

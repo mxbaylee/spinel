@@ -55,6 +55,12 @@ Persona effects:
 
 Date: 2026-10-23. Status: accepted. Decider: owner, chat 2026-10-23.
 
+**Later supersession:** the [2026-10-27 SPN-063 decision](SPN-063.md#accepted-decision-implement-recovery-before-deployment)
+replaces this section's launch-only recovery implementation timing with pre-launch
+filesystem-backed implementation/local acceptance. SPN-038 retains actual provider
+and target-host acceptance before public exposure. The SPN-062 cancellation and
+SPN-100 updater decisions below are unchanged; the original rationale is retained.
+
 Question: which operational tasks are appropriate before a new deployment exists
 and while the database may change? The owner said SPN-062 need not exist because
 there is no current deployment, and requested moving SPN-063 into launch work.

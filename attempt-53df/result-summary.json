@@ -1,0 +1,306 @@
+{
+  "schema": 1,
+  "candidateHead": "53df5a842b61c9cddb19c2c074d2c4ce240aabca",
+  "ciSource": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+  "baseline": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+  "runId": 40597044138,
+  "status": "rejected; mobile collection still in progress at record creation",
+  "accepted": false,
+  "policy": {
+    "groupLimit": 44,
+    "historyLimit": 50
+  },
+  "desktopResult": "Two plain samples exceed 16 ms paired-flush p95. All requested candidate replay/integrity checks and both mounted boundary cases passed. Reanalysis also reveals two genuine 49 ms browser entries rejected by the old validator; those findings do not waive the latency failures.",
+  "records": [
+    {
+      "role": "baseline-observation",
+      "sample": "plain-1",
+      "source": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+      "completed": true,
+      "timingComplete": true,
+      "inputCount": 2086,
+      "groups": 1,
+      "highWater": {
+        "history": 2086,
+        "collaboration": 2086
+      },
+      "flushCount": 0,
+      "flushP95Ms": null,
+      "flushMaxMs": null,
+      "flushesOver16Ms": null,
+      "longestReportedTaskMs": 9949,
+      "reportedTasksUnder50Ms": [
+        {
+          "startedAt": 81343.9,
+          "durationMs": 49
+        }
+      ],
+      "nativeDrainUpperBoundMs": 20255.5,
+      "redoOutcome": "baseline-capacity-refusal",
+      "requestedUndoRedoGroups": 1,
+      "heapBefore": {
+        "usedSize": 47394004,
+        "totalSize": 71745536,
+        "embedderHeapUsedSize": 9522680,
+        "backingStorageSize": 13279469
+      },
+      "heapAfter": {
+        "usedSize": 207377888,
+        "totalSize": 268713984,
+        "embedderHeapUsedSize": 6417848,
+        "backingStorageSize": 13401145
+      },
+      "metricsSha256": "a971e6a5462f345161c44aac81acb9e9b1433fa6158e705155f84a42425cc400"
+    },
+    {
+      "role": "baseline-observation",
+      "sample": "plain-2",
+      "source": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+      "completed": true,
+      "timingComplete": true,
+      "inputCount": 2086,
+      "groups": 1,
+      "highWater": {
+        "history": 2086,
+        "collaboration": 2086
+      },
+      "flushCount": 0,
+      "flushP95Ms": null,
+      "flushMaxMs": null,
+      "flushesOver16Ms": null,
+      "longestReportedTaskMs": 9887,
+      "reportedTasksUnder50Ms": [],
+      "nativeDrainUpperBoundMs": 20200.70000000001,
+      "redoOutcome": "baseline-capacity-refusal",
+      "requestedUndoRedoGroups": 1,
+      "heapBefore": {
+        "usedSize": 47221840,
+        "totalSize": 72007680,
+        "embedderHeapUsedSize": 9247664,
+        "backingStorageSize": 13279399
+      },
+      "heapAfter": {
+        "usedSize": 203142364,
+        "totalSize": 268521472,
+        "embedderHeapUsedSize": 6655184,
+        "backingStorageSize": 13380643
+      },
+      "metricsSha256": "e233d526a6826731243a3b2e41cfb44147a81dcefdb91c5d63de62ca7af7caa0"
+    },
+    {
+      "role": "baseline-observation",
+      "sample": "plain-3",
+      "source": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+      "completed": true,
+      "timingComplete": true,
+      "inputCount": 2086,
+      "groups": 1,
+      "highWater": {
+        "history": 2086,
+        "collaboration": 2086
+      },
+      "flushCount": 0,
+      "flushP95Ms": null,
+      "flushMaxMs": null,
+      "flushesOver16Ms": null,
+      "longestReportedTaskMs": 10175,
+      "reportedTasksUnder50Ms": [],
+      "nativeDrainUpperBoundMs": 20630.600000000035,
+      "redoOutcome": "baseline-capacity-refusal",
+      "requestedUndoRedoGroups": 1,
+      "heapBefore": {
+        "usedSize": 45635700,
+        "totalSize": 73842688,
+        "embedderHeapUsedSize": 9363464,
+        "backingStorageSize": 13279693
+      },
+      "heapAfter": {
+        "usedSize": 223747876,
+        "totalSize": 289492992,
+        "embedderHeapUsedSize": 6937856,
+        "backingStorageSize": 13404389
+      },
+      "metricsSha256": "843ee7ae5edb01d73eb8883cbe0ad85d242a1f0408c7c826452ed991c767f189"
+    },
+    {
+      "role": "baseline-observation",
+      "sample": "profile",
+      "source": "3fdac69f413d2fd423bc7ded41acbd67a177739c",
+      "completed": true,
+      "timingComplete": true,
+      "inputCount": 2086,
+      "groups": 1,
+      "highWater": {
+        "history": 2086,
+        "collaboration": 2086
+      },
+      "flushCount": 0,
+      "flushP95Ms": null,
+      "flushMaxMs": null,
+      "flushesOver16Ms": null,
+      "longestReportedTaskMs": 10116,
+      "reportedTasksUnder50Ms": [],
+      "nativeDrainUpperBoundMs": 20865.199999999953,
+      "redoOutcome": "baseline-capacity-refusal",
+      "requestedUndoRedoGroups": 1,
+      "heapBefore": {
+        "usedSize": 47212460,
+        "totalSize": 70434816,
+        "embedderHeapUsedSize": 9415080,
+        "backingStorageSize": 13279383
+      },
+      "heapAfter": {
+        "usedSize": 197102100,
+        "totalSize": 240664576,
+        "embedderHeapUsedSize": 6956088,
+        "backingStorageSize": 13403935
+      },
+      "metricsSha256": "2c4e9b8b5dd69a39b74e9e9dc782838110265ffe187208ba3f06c3988e29421d"
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-1",
+      "source": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+      "completed": true,
+      "timingComplete": true,
+      "inputCount": 2086,
+      "groups": 48,
+      "highWater": {
+        "history": 44,
+        "collaboration": 44
+      },
+      "flushCount": 47,
+      "flushP95Ms": 14.599999999976717,
+      "flushMaxMs": 20.29999999993015,
+      "flushesOver16Ms": 2,
+      "longestReportedTaskMs": 120,
+      "reportedTasksUnder50Ms": [],
+      "nativeDrainUpperBoundMs": 847.2999999999302,
+      "redoOutcome": "passed",
+      "requestedUndoRedoGroups": 48,
+      "heapBefore": {
+        "usedSize": 48747048,
+        "totalSize": 72531968,
+        "embedderHeapUsedSize": 9789576,
+        "backingStorageSize": 13280065
+      },
+      "heapAfter": {
+        "usedSize": 67568792,
+        "totalSize": 137973760,
+        "embedderHeapUsedSize": 37993768,
+        "backingStorageSize": 40258470
+      },
+      "metricsSha256": "4dfe93b72dd7fd371cbaceb9d93cfa412c2bb54f702e932dcf54c3e42f6e8128"
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-2",
+      "source": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+      "completed": null,
+      "timingComplete": true,
+      "inputCount": 2086,
+      "groups": 48,
+      "highWater": {
+        "history": 44,
+        "collaboration": 44
+      },
+      "flushCount": 47,
+      "flushP95Ms": 16.20000000006985,
+      "flushMaxMs": 19.099999999976717,
+      "flushesOver16Ms": 3,
+      "longestReportedTaskMs": 88,
+      "reportedTasksUnder50Ms": [],
+      "nativeDrainUpperBoundMs": 858.7000000000698,
+      "redoOutcome": "passed",
+      "requestedUndoRedoGroups": 1,
+      "heapBefore": {
+        "usedSize": 47210076,
+        "totalSize": 70696960,
+        "embedderHeapUsedSize": 9481632,
+        "backingStorageSize": 13280145
+      },
+      "heapAfter": {
+        "usedSize": 80760004,
+        "totalSize": 138690560,
+        "embedderHeapUsedSize": 35705648,
+        "backingStorageSize": 34695050
+      },
+      "metricsSha256": "239a126f041ae3b3b3d0548d666dc38a859a55607bcf4750d1049f3dbc8b7a6d"
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-3",
+      "source": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+      "completed": null,
+      "timingComplete": true,
+      "inputCount": 2086,
+      "groups": 48,
+      "highWater": {
+        "history": 44,
+        "collaboration": 44
+      },
+      "flushCount": 47,
+      "flushP95Ms": 17.699999999953434,
+      "flushMaxMs": 25.599999999976717,
+      "flushesOver16Ms": 5,
+      "longestReportedTaskMs": 109,
+      "reportedTasksUnder50Ms": [],
+      "nativeDrainUpperBoundMs": 932.5999999999767,
+      "redoOutcome": "passed",
+      "requestedUndoRedoGroups": 1,
+      "heapBefore": {
+        "usedSize": 47439800,
+        "totalSize": 70696960,
+        "embedderHeapUsedSize": 9648696,
+        "backingStorageSize": 13280131
+      },
+      "heapAfter": {
+        "usedSize": 59906556,
+        "totalSize": 139808768,
+        "embedderHeapUsedSize": 17289112,
+        "backingStorageSize": 13404965
+      },
+      "metricsSha256": "88a1ce6b5c2027d12834b7ef27b0c6bc295b91a77407bf47282ecc78e161feb1"
+    },
+    {
+      "role": "candidate",
+      "sample": "profile",
+      "source": "09cce1d160d5b03a20c7ba106c11a806ba90facb",
+      "completed": true,
+      "timingComplete": true,
+      "inputCount": 2086,
+      "groups": 48,
+      "highWater": {
+        "history": 44,
+        "collaboration": 44
+      },
+      "flushCount": 47,
+      "flushP95Ms": 17.900000000023283,
+      "flushMaxMs": 36.5,
+      "flushesOver16Ms": 5,
+      "longestReportedTaskMs": 122,
+      "reportedTasksUnder50Ms": [
+        {
+          "startedAt": 79626.09999999998,
+          "durationMs": 49
+        }
+      ],
+      "nativeDrainUpperBoundMs": 933.6000000000931,
+      "redoOutcome": "passed",
+      "requestedUndoRedoGroups": 1,
+      "heapBefore": {
+        "usedSize": 46012652,
+        "totalSize": 70434816,
+        "embedderHeapUsedSize": 9971432,
+        "backingStorageSize": 13279993
+      },
+      "heapAfter": {
+        "usedSize": 84772036,
+        "totalSize": 143572992,
+        "embedderHeapUsedSize": 25557432,
+        "backingStorageSize": 15082642
+      },
+      "metricsSha256": "ec916f713f1f2350ba395f12e8c64256969ff040fabf485ecd39d9bd2069ac1c"
+    }
+  ]
+}
