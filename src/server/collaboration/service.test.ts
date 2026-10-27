@@ -17,7 +17,7 @@ import { WorkspaceStore } from '../workspace/store.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { DocumentStore } from '../workspace/documents.ts';
 import { makeArchive, restoreArchive } from '../backup/archive.ts';
-import { CollaborationStore } from './service.ts';
+import { CollaborationStore, MAX_PURGE_GENERATIONS } from './service.ts';
 import { TrashStore } from '../workspace/trash.ts';
 
 // Native materializer cold startup is slower while the separate 25-hour browser soak runs.
@@ -286,6 +286,49 @@ test('permanent purge is durable across an interrupted sync deletion and soft re
   expect(
     f.db.prepare('SELECT unit_id FROM spinel_sync_units WHERE unit_id=?').get(f.sheet.id),
   ).toBeUndefined();
+});
+
+test('native purge bounds each page and progresses beyond a refused active generation', async () => {
+  const f = await fixture();
+  await f.collab.prepare(f.owner.id, f.sheet.id);
+  const queue = f.db.prepare('INSERT INTO collaboration_purge VALUES(?)');
+  // The retained active generation sorts before all expired queue entries.
+  queue.run(f.sheet.id);
+  for (let index = 0; index <= MAX_PURGE_GENERATIONS; index++)
+    queue.run('zz-expired-' + String(index).padStart(4, '0'));
+  const count = () =>
+    Number(f.db.prepare('SELECT count(*) AS n FROM collaboration_purge').get()!.n);
+  await expect(f.collab.purgeDeleted()).rejects.toThrow('active generation');
+  expect(count()).toBe(MAX_PURGE_GENERATIONS + 2);
+  await f.collab.purgeDeleted();
+  // A single call cannot drain more than its bounded page, even when deletion is cheap.
+  expect(count()).toBeGreaterThanOrEqual(2);
+  expect(count()).toBeLessThan(MAX_PURGE_GENERATIONS + 2);
+  for (let attempt = 0; attempt < MAX_PURGE_GENERATIONS + 1 && count() > 1; attempt++)
+    await f.collab.purgeDeleted();
+  expect(f.db.prepare('SELECT item_id FROM collaboration_purge').all()).toEqual([
+    { item_id: f.sheet.id },
+  ]);
+  expect(
+    f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(f.sheet.id),
+  ).toBeTruthy();
+  expect((await f.collab.load(f.owner.id, f.sheet.id)).snapshot.id).toBe(f.sheet.id);
+});
+
+test('native purge yields between generations and retries the retained remainder', async () => {
+  const f = await fixture();
+  for (const id of ['expired-a', 'expired-b', 'expired-c'])
+    f.db.prepare('INSERT INTO collaboration_purge VALUES(?)').run(id);
+  let elapsed = 0;
+  const clock = vi.spyOn(performance, 'now').mockImplementation(() => (elapsed += 1_001));
+  await f.collab.purgeDeleted();
+  clock.mockRestore();
+  expect(f.db.prepare('SELECT item_id FROM collaboration_purge ORDER BY item_id').all()).toEqual([
+    { item_id: 'expired-b' },
+    { item_id: 'expired-c' },
+  ]);
+  await f.collab.purgeDeleted();
+  expect(f.db.prepare('SELECT item_id FROM collaboration_purge').all()).toEqual([]);
 });
 
 test('expired network sessions cannot submit and cross-unit mutations cannot modify another document', async () => {

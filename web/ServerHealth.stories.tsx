@@ -16,9 +16,31 @@ export const Healthy: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByText('No warning in this sample')).toBeVisible();
-    await expect(canvas.getByText('Not configured')).toBeVisible();
+    await expect(canvas.queryByText('Not configured')).not.toBeInTheDocument();
     await expect(canvas.getByText('-1 MiB')).toBeVisible();
     await expect(canvas.getByText('Unavailable')).toBeVisible();
+  },
+};
+export const SpacesDisabled: Story = {
+  parameters: {
+    api: {
+      'GET /api/admin/health': {
+        ...healthStory,
+        jobs: healthStory.jobs.map((job) =>
+          job.name === 'space-trash-expiry'
+            ? {
+                ...job,
+                configured: false,
+                lastAttempt: null,
+                lastSuccess: null,
+              }
+            : job,
+        ),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await expect(await within(canvasElement).findByText('Not configured')).toBeVisible();
   },
 };
 export const Warning: Story = {

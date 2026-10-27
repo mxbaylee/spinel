@@ -97,3 +97,16 @@ Interrupted run dispositions are in `attempt-6f/` and `attempt-dbb/`.
 The failed schema-2 set's inspected numeric observations and artifact checksums
 are in [attempt-d099/result-summary.json](attempt-d099/result-summary.json).
 No accepted browser improvement or final review grade is asserted yet.
+
+
+## Matching concurrent main changes
+
+The next immutable baseline incorporates every file change from main
+`a9893ce3c72d0a707f97e4444f9b3f48a65dd226` through
+`0a9cd200a5a457a6160f9dfaa86c49460ccc24e2`, including SPN-063 documentation and
+SPN-095 Space Trash expiry runtime/server changes. None overlaps the baseline's
+application observation or mobile compatibility files. The uncapped grouping,
+identical read-only observer and Enter repair remain intact. This matching source
+update preserves the original workload, budgets and schema-3 outcome gates.
+The interrupted `993bafa` run is retained; its replacement follows current-main
+integration and is not a retry waiver.

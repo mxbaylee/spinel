@@ -42,6 +42,7 @@ export interface SpaceRecoveryItem {
   kind: ItemKind;
   name: string;
   trashedAt: number;
+  expiresAt: number;
   descendantCount: number;
   originalLocation: { id: string; name: string } | null;
 }

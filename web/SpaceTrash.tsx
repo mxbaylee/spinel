@@ -35,11 +35,10 @@ export function SpaceTrash({
   onCancelDelete(): void;
   onConfirmDelete(preview: SpaceDeletePreview): void;
 }) {
+  const now = Date.now();
   return (
     <section className="space-trash" aria-label="Deleted Space contents">
-      <p>
-        Restore pages, Sheets and folders to their original location. Their contents stay together.
-      </p>
+      <p>Pages, Sheets and folders can be restored for 30 days. Their contents stay together.</p>
       {disabled && <p role="status">Reconnect to restore or permanently delete Space contents.</p>}
       {notice && (
         <p className="space-notice" role="status">
@@ -78,14 +77,18 @@ export function SpaceTrash({
                     ? 'From ' + item.originalLocation.name
                     : 'Original location unavailable.'}
                 </span>
-                <span>Deleted {new Date(item.trashedAt).toLocaleString()}</span>
-                {!item.originalLocation && (
+                <span>
+                  Deleted {new Date(item.trashedAt).toLocaleString()} ·{' '}
+                  {item.expiresAt <= now ? 'Recovery ended' : 'Recover until'}{' '}
+                  {new Date(item.expiresAt).toLocaleString()}
+                </span>
+                {!item.originalLocation && item.expiresAt > now && (
                   <span>Restores to {spaceName} because its original location is unavailable.</span>
                 )}
               </div>
               <div className="space-trash-actions">
                 <Button
-                  disabled={disabled || busy}
+                  disabled={disabled || busy || item.expiresAt <= now}
                   aria-label={`Restore ${item.name}`}
                   onClick={() => onRestore(item)}
                 >

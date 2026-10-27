@@ -265,7 +265,13 @@ navigation, source discovery and metadata stay within that root. The same-Space
 Formula rule follows [decision #117](implementation/SPN-078.md#legacy-decision-117-whole-space-guest-capability).
 [Deliberate external dependency sharing](#doc-formula-sources) discloses the whole
 source Space when that is its permission boundary. Internal Trash and whole-Space
-recovery remain preserved without automatic Space Trash expiry.
+recovery use the same [30-day deadline as ordinary Trash](trash.md). Account
+Editors and File admins can restore internal batches before expiry; outer recovery
+remains Owner-only. Ownership handover and account disablement do not restart
+the original deletion clock. Disabled owners cannot recover content, but bounded
+system expiry still removes expired batches. Guests gain no recovery collection.
+Explicitly disabling Space exposure retains hidden Spaces and containing groups
+instead of admitting them through ordinary cleanup.
 
 The [SPN-092 implementation record](implementation/SPN-092.md) tracks native,
 HTTP/socket, MCP and recovery acceptance separately from final-head CI and merge

@@ -52,6 +52,16 @@ stage. Preserve any data deliberately selected for retention; disposable fixture
 can be reseeded. Do not build several backend adapters just for possible future
 choices. Owner, chat 2026-10-21.
 
+The 2026-10-27 [SPN-063 decision](implementation/SPN-063.md#accepted-decision-keep-sqlite-without-database-adapters)
+resolves this comparison for the intended deployment: retain local SQLite with
+one application instance and introduce no database-engine adapters. Backup
+destinations are a separate [proposed configuration boundary](implementation/SPN-063-backup-options.md).
+The
+[capacity writeup](implementation/SPN-063-capacity.md) records engine limits,
+current application budgets and measurements still required before publishing
+supported document/concurrency counts. This selection preserves dependency
+maintenance and the launch recovery/performance gates.
+
 Browser offline storage remains a separate concern: changing the server database
 cannot make browser-local pending edits durable on the server before they are
 uploaded and acknowledged. See [offline storage](offline.md) and

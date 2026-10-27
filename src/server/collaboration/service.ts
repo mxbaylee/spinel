@@ -31,6 +31,7 @@ import type { IChangeset } from '@univerjs/protocol';
 import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
 const runtimeLimits = { maxLoadedUnits: 8, idleTimeoutMs: 60_000 };
+export const MAX_PURGE_GENERATIONS = 100;
 
 export interface SyncIdentity {
   userID: string;
@@ -91,6 +92,7 @@ export class CollaborationStore {
   private readonly workspace: WorkspaceStore;
   private readonly preparing = new Map<string, Promise<void>>();
   private purging: Promise<void> | undefined;
+  private purgeAfter = '';
   private readonly observePurge?: ObserveJob;
   private readonly prepareListeners = new Set<
     (user: string, id: string, custom: Record<string, unknown>) => Promise<void>
@@ -314,10 +316,21 @@ export class CollaborationStore {
     const finish = observeJob(this.observePurge);
     this.purging = (async () => {
       const db = this.workspace.auth.database;
-      const rows = db.prepare('SELECT item_id FROM collaboration_purge').all() as {
-        item_id: string;
-      }[];
+      const select = db.prepare(`SELECT item_id FROM collaboration_purge
+        WHERE item_id>? ORDER BY item_id LIMIT ?`);
+      let rows = select.all(this.purgeAfter, MAX_PURGE_GENERATIONS) as { item_id: string }[];
+      if (!rows.length && this.purgeAfter) {
+        this.purgeAfter = '';
+        rows = select.all('', MAX_PURGE_GENERATIONS) as { item_id: string }[];
+      }
+      const started = performance.now();
+      let checked = 0;
       for (const row of rows) {
+        if (checked && performance.now() - started >= 1_000) break;
+        checked++;
+        // Advance even on failure: a bad retained generation must not starve
+        // unrelated cleanup. The minute retry wraps around to it after this page.
+        this.purgeAfter = row.item_id;
         // Creation may have passed its access check before workspace deletion.
         // Wait for it to settle before treating an absent native unit as purged.
         await this.preparing.get(row.item_id)?.catch(() => {});
@@ -331,6 +344,7 @@ export class CollaborationStore {
         db.prepare('DELETE FROM spinel_generation_resources WHERE unit_id=?').run(row.item_id);
         db.prepare('DELETE FROM collaboration_purge WHERE item_id=?').run(row.item_id);
       }
+      if (checked === rows.length && rows.length < MAX_PURGE_GENERATIONS) this.purgeAfter = '';
     })()
       .then(
         () => {

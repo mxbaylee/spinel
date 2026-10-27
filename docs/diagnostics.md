@@ -34,8 +34,24 @@ card cannot promise an upload will fit. See [backups](backups.md).
 
 History maintenance includes both capture and pruning. Trash expiry and the
 collaboration purge queue report their actual runs; the latter also performs
-restore-generation cleanup. A failure keeps its first observed failure time
-until a successful run. Unimplemented Space trash expiry is **Not configured**.
+restore-generation cleanup. **Space Trash expiry** is configured when Space
+exposure is enabled and reports its actual startup/daily attempts, last success
+and failure state. With `SPINEL_SPACE_REVIEW=0` it remains **Not configured** and
+hidden Space groups are retained. A failure keeps its first observed failure
+time until a successful run. Successful bounded work does not mean all expired
+content or every queued generation has already been removed.
+
+Space cleanup scans an indexed page of at most 256 root metadata rows, validates
+at most 16 eligible graphs per pass and bounds each graph to 10,000 members.
+Collaboration cleanup processes at most 100 ordered queued generations per pass.
+Both check a one-second elapsed budget between units of work; an in-progress
+transaction or generation can take longer. Failed Space graphs stay intact while
+unrelated eligible roots continue; cursors advance past failures for later retry.
+Native purge failures at startup or on the minute retry leave the application
+available and preserve durable queue entries. A final shutdown attempt also
+retains unfinished entries for the next startup. These jobs log only static status
+or counts, never names, locations, content or arbitrary exception text.
+
 Backup configuration, running state, last attempt/success, errors and overdue
 status use the existing backup controller. Recurring restore verification remains
 SPN-063 in the launch phase.
@@ -126,6 +142,9 @@ one event is at most 8 KiB, one batch 64 events/64 KiB. Ingest accepts at most
 120 events per actor/minute and 600 globally. Writes require 256 MiB free reserve;
 export staging requires 352 MiB. At capacity, observations drop until space is
 available or the Operator clears records. There is no automatic age deletion.
+The [SPN-063 backup-options proposal](implementation/SPN-063-backup-options.md#three-independent-retention-policies)
+discusses seven-day live-event expiry and independent optional archive retention;
+neither is implemented by that writeup.
 Loss counters reset with the process. Diagnostics initialization failure disables
 collection without preventing app startup. See the
 [implementation limits](implementation/SPN-032.md#concrete-bounds-and-lifecycle)

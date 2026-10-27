@@ -25,6 +25,8 @@ const user = {
   color: 'primary-strong',
 };
 const timestamp = Date.UTC(2026, 9, 20, 14, 5);
+const day = 86_400_000;
+const trashNow = Date.now();
 const item = (
   value: number,
   name: string,
@@ -71,7 +73,8 @@ const listing = (access: 'owner' | 'editor' = 'owner'): SpaceTrashListing => ({
       id: id(20),
       kind: 'folder',
       name: 'Earlier plan',
-      trashedAt: timestamp,
+      trashedAt: trashNow - 2 * day,
+      expiresAt: trashNow + 28 * day,
       descendantCount: 2,
       originalLocation: { id: id(1), name: 'Welcome' },
     },
@@ -79,7 +82,8 @@ const listing = (access: 'owner' | 'editor' = 'owner'): SpaceTrashListing => ({
       id: id(21),
       kind: 'doc',
       name: 'Rough notes',
-      trashedAt: timestamp,
+      trashedAt: trashNow - 11 * day,
+      expiresAt: trashNow + 19 * day,
       descendantCount: 0,
       originalLocation: null,
     },
@@ -100,6 +104,19 @@ const trashApi = (access: 'owner' | 'editor' = 'owner') => ({
   ...treeApi(tree(access)),
   ['GET /api/spaces/' + root + '/trash']: listing(access),
   ['GET /api/spaces/' + root + '/trash/' + id(20) + '/delete-preview']: preview,
+});
+const expiredListing = (access: 'owner' | 'editor' = 'owner'): SpaceTrashListing => ({
+  ...listing(access),
+  items: listing(access).items.map((entry, index) =>
+    index === 0
+      ? {
+          ...entry,
+          trashedAt: trashNow - 30 * day,
+          expiresAt: trashNow,
+          originalLocation: null,
+        }
+      : entry,
+  ),
 });
 
 /** The controller uses real URLs. Restore the preview's own URL after each story. */
@@ -837,11 +854,15 @@ export const TrashSubtreeConfirmation: Story = {
 export const TrashOwner: Story = {
   parameters: { spacePath: spaceHref(root, { kind: 'trash' }), api: trashApi() },
   play: async ({ canvasElement }) => {
-    await within(canvasElement).findByRole('button', { name: 'Restore Earlier plan' });
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('button', { name: 'Restore Earlier plan' })).toBeEnabled();
+    const row = within(canvas.getByRole('listitem', { name: 'Earlier plan' }));
+    await expect(row.getByText(/Folder · 2 descendants/)).toBeVisible();
+    await expect(row.getByText(/Recover until/)).toHaveTextContent(
+      new Date(listing().items[0].expiresAt).toLocaleString(),
+    );
     await expect(
-      within(canvasElement).getByText(
-        'Restores to Project Atlas because its original location is unavailable.',
-      ),
+      canvas.getByText('Restores to Project Atlas because its original location is unavailable.'),
     ).toBeVisible();
   },
 };
@@ -850,10 +871,81 @@ export const TrashEditor: Story = {
   parameters: { spacePath: spaceHref(root, { kind: 'trash' }), api: trashApi('editor') },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByRole('button', { name: 'Restore Earlier plan' });
+    await expect(await canvas.findByRole('button', { name: 'Restore Earlier plan' })).toBeEnabled();
+    await expect(
+      within(canvas.getByRole('listitem', { name: 'Earlier plan' })).getByText(/Recover until/),
+    ).toHaveTextContent(new Date(listing().items[0].expiresAt).toLocaleString());
     await expect(
       canvas.queryByRole('button', { name: /^Actions for deleted/ }),
     ).not.toBeInTheDocument();
+  },
+};
+
+/** Expiry closes recovery for the whole batch; younger independent deletions keep their date. */
+export const TrashExpired: Story = {
+  parameters: {
+    spacePath: spaceHref(root, { kind: 'trash' }),
+    api: { ...trashApi(), ['GET /api/spaces/' + root + '/trash']: expiredListing() },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByRole('button', { name: 'Restore Earlier plan' }),
+    ).toBeDisabled();
+    const row = within(canvas.getByRole('listitem', { name: 'Earlier plan' }));
+    await expect(row.getByText(/Recovery ended/)).toHaveTextContent(
+      new Date(trashNow).toLocaleString(),
+    );
+    await expect(row.getByText('Original location unavailable.')).toBeVisible();
+    await expect(row.queryByText(/^Restores to /)).not.toBeInTheDocument();
+    await expect(canvas.getByRole('button', { name: 'Restore Rough notes' })).toBeEnabled();
+    await userEvent.click(row.getByRole('button', { name: 'Actions for deleted Earlier plan' }));
+    const page = within(canvasElement.ownerDocument.body);
+    await expect(await page.findByRole('menuitem', { name: 'Delete permanently' })).toBeEnabled();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const TrashExpiredEditor: Story = {
+  parameters: {
+    spacePath: spaceHref(root, { kind: 'trash' }),
+    api: {
+      ...trashApi('editor'),
+      ['GET /api/spaces/' + root + '/trash']: expiredListing('editor'),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByRole('button', { name: 'Restore Earlier plan' }),
+    ).toBeDisabled();
+    await expect(canvas.getByText(/Recovery ended/)).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Restore Rough notes' })).toBeEnabled();
+    await expect(
+      canvas.queryByRole('button', { name: /^Actions for deleted/ }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+/** The server clock remains authoritative if a recovery window ends after the listing loads. */
+export const TrashRecoveryEnded: Story = {
+  parameters: {
+    spacePath: spaceHref(root, { kind: 'trash' }),
+    api: {
+      ...trashApi(),
+      ['POST /api/spaces/' + root + '/trash/' + id(20) + '/restore']: failure(
+        'The 30-day recovery period has ended.',
+        409,
+      ),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Restore Earlier plan' }));
+    await expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'The 30-day recovery period has ended.',
+    );
+    await expect(canvas.getByRole('listitem', { name: 'Earlier plan' })).toBeVisible();
   },
 };
 

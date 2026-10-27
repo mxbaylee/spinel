@@ -14,8 +14,13 @@ import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { SpaceRecoveryStore } from '../src/server/workspace/space-recovery.ts';
 import { SpaceLifecycleStore } from '../src/server/workspace/space-lifecycle.ts';
-import type { SpaceNode, SpaceRoot, SpaceTreeData } from '../src/shared/spaces.ts';
-import type { SpaceFile } from '../src/shared/workspace.ts';
+import type {
+  SpaceNode,
+  SpaceRoot,
+  SpaceTrashListing,
+  SpaceTreeData,
+} from '../src/shared/spaces.ts';
+import type { SpaceFile, TrashListing } from '../src/shared/workspace.ts';
 
 // Native materialization stays in startApp's child process. The collector reads
 // the server-confirmed native snapshot through the exact child boundary.
@@ -455,10 +460,10 @@ async function copyCell(page: Page, address: string) {
   await cell(page, address);
   return copySelection(page);
 }
-async function screenshot(page: Page, info: TestInfo, name: string) {
+async function screenshot(page: Page, info: TestInfo, name: string, ticket = 'spn-091') {
   await mkdir('test-results/theme-screenshots', { recursive: true });
   await page.screenshot({
-    path: `test-results/theme-screenshots/spn-091-${name}-${info.project.name}.png`,
+    path: `test-results/theme-screenshots/${ticket}-${name}-${info.project.name}.png`,
     fullPage: true,
   });
 }
@@ -1063,6 +1068,236 @@ test('pending edits survive cancelled navigation and whole-subtree Trash support
         console.error('Could not attach Space native recovery diagnostics.');
       });
     throw error;
+  } finally {
+    await f.close();
+  }
+});
+
+test('SPN-095 internal Trash shows the same deadline to owners and editors, refuses expired recovery and preserves independent batches', async ({
+  browser,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, info);
+  const day = 86_400_000;
+  try {
+    const { space, child } = seed(f, 'Recovery notebook');
+    const live = child('Current notes', 'doc');
+    const recent = child('Recent project', 'folder');
+    const outline = child('Project outline', 'doc', recent.id);
+    const estimates = child('Project estimates', 'sheet', outline.id);
+    const expired = child('Old research', 'folder', recent.id);
+    const oldDraft = child('Old draft', 'doc', expired.id);
+    const recovery = new SpaceRecoveryStore(f.workspace);
+    // Deleting this nested batch first detaches it from the later parent batch.
+    // Its earlier deadline must not be extended when that parent is restored.
+    recovery.trash(f.owner.id, space.id, expired.id);
+    recovery.trash(f.owner.id, space.id, recent.id);
+    const deletedAt = { expired: Date.now() - 31 * day, recent: Date.now() - 2 * day };
+    f.auth.transaction(() => {
+      for (const [item, timestamp] of [
+        [expired, deletedAt.expired],
+        [recent, deletedAt.recent],
+      ] as const) {
+        f.db
+          .prepare(
+            `UPDATE workspace_items SET trashed_at=? WHERE trash_batch=(
+            SELECT trash_batch FROM workspace_space_trash WHERE item_id=?)`,
+          )
+          .run(timestamp, item.id);
+        expect(
+          f.db
+            .prepare('UPDATE workspace_space_trash SET trashed_at=? WHERE item_id=?')
+            .run(timestamp, item.id).changes,
+        ).toBe(1);
+      }
+    });
+    f.spaces.share(f.owner.id, space.id, f.editor.id, 'editor');
+    const endpoint = `/api/spaces/${space.id}/trash`;
+    const response = await f.context.request.get(endpoint);
+    expect(response.status()).toBe(200);
+    const listing = (await response.json()) as SpaceTrashListing;
+    expect(listing.items).toHaveLength(2);
+    expect(listing.items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expired.id,
+          descendantCount: 1,
+          trashedAt: deletedAt.expired,
+          expiresAt: deletedAt.expired + 30 * day,
+        }),
+        expect.objectContaining({
+          id: recent.id,
+          descendantCount: 2,
+          trashedAt: deletedAt.recent,
+          expiresAt: deletedAt.recent + 30 * day,
+        }),
+      ]),
+    );
+    await f.page.goto(normalHref(space.id) + '?trash=1');
+    const recentRow = await deleted(f.page, recent.name);
+    const expiredRow = await deleted(f.page, expired.name);
+    const dates = await f.page.evaluate(
+      (values) => values.map((value) => new Date(value).toLocaleString()),
+      [deletedAt.recent + 30 * day, deletedAt.expired + 30 * day],
+    );
+    await expect(recentRow).toContainText('Recover until ' + dates[0]);
+    await expect(recentRow.getByRole('button', { name: `Restore ${recent.name}` })).toBeEnabled();
+    await expect(expiredRow).toContainText('Recovery ended ' + dates[1]);
+    await expect(
+      expiredRow.getByRole('button', { name: `Restore ${expired.name}` }),
+    ).toBeDisabled();
+    const deniedOwner = await f.context.request.post(`${endpoint}/${expired.id}/restore`, {
+      data: {},
+      headers: { Origin: f.origin },
+    });
+    expect(deniedOwner.status()).toBe(409);
+    expect(await deniedOwner.json()).toEqual({ error: 'The 30-day recovery period has ended.' });
+    for (const theme of ['light', 'dark'] as const) {
+      await f.page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+      await expect(f.page.locator('html')).toHaveAttribute('data-theme', theme);
+      await screenshot(f.page, info, `internal-owner-${theme}`, 'spn-095');
+    }
+    // The Owner checks are complete; release the unused browser context before
+    // opening the Editor's phone session within the small test-host budget.
+    await f.context.close();
+
+    const editor = await f.open(f.editor.id, true);
+    const editorResponse = await editor.context.request.get(endpoint);
+    expect(editorResponse.status()).toBe(200);
+    expect((await editorResponse.json()).items).toEqual(listing.items);
+    await editor.page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+    await editor.page.goto(normalHref(space.id) + '?trash=1');
+    const editorRecent = await deleted(editor.page, recent.name);
+    const editorExpired = await deleted(editor.page, expired.name);
+    await expect(editorRecent).toContainText('Recover until ' + dates[0]);
+    await expect(editorExpired).toContainText('Recovery ended ' + dates[1]);
+    await expect(
+      editorRecent.getByRole('button', { name: `Restore ${recent.name}` }),
+    ).toBeEnabled();
+    await expect(
+      editorExpired.getByRole('button', { name: `Restore ${expired.name}` }),
+    ).toBeDisabled();
+    await expect(editor.page.getByRole('button', { name: /^Actions for deleted/ })).toHaveCount(0);
+    const deniedEditor = await editor.context.request.post(`${endpoint}/${expired.id}/restore`, {
+      data: {},
+      headers: { Origin: f.origin },
+    });
+    expect(deniedEditor.status()).toBe(409);
+    expect(await deniedEditor.json()).toEqual({ error: 'The 30-day recovery period has ended.' });
+    await expect(editor.page.locator('html')).toHaveAttribute('data-theme', 'light');
+    expect(
+      await editor.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    ).toBe(true);
+    await screenshot(editor.page, info, 'internal-editor-phone-light', 'spn-095');
+    await editorRecent.getByRole('button', { name: `Restore ${recent.name}` }).tap();
+    await expect(editorRecent).toHaveCount(0);
+    await expect(editorExpired).toBeVisible();
+    const restoredResponse = await editor.context.request.get(`/api/spaces/${space.id}`);
+    expect(restoredResponse.status()).toBe(200);
+    const restoredTree = (await restoredResponse.json()) as SpaceTreeData;
+    expect(restoredTree.items.map((item) => item.id).sort()).toEqual(
+      [live.id, recent.id, outline.id, estimates.id].sort(),
+    );
+    expect(
+      f.db.prepare('SELECT trashed_at FROM workspace_items WHERE id=?').get(oldDraft.id),
+    ).toEqual({
+      trashed_at: deletedAt.expired,
+    });
+    expect(f.errors).toEqual([]);
+  } finally {
+    await f.close();
+  }
+});
+
+test('SPN-095 outer Trash expires whole Spaces and their enclosing folders without closing younger recovery windows', async ({
+  browser,
+}, info) => {
+  test.setTimeout(90_000);
+  const f = await fixture(browser, info);
+  const day = 86_400_000;
+  try {
+    const { space: expired, child } = seed(f, 'Old project Space');
+    const retainedChild = child('Retained project notes', 'doc');
+    const recent = f.spaces.createRoot(f.owner.id, { name: 'Recent Space', parentId: null }).space;
+    const unrelated = f.workspace.create(f.owner.id, {
+      name: 'Keep this file',
+      kind: 'doc',
+      parentId: null,
+    });
+    for (const id of [f.folder.id, recent.id]) {
+      const result = await f.context.request.post(`/api/items/${id}/trash`, {
+        data: {},
+        headers: { Origin: f.origin },
+      });
+      expect(result.status()).toBe(200);
+    }
+    const expiredAt = Date.now() - day;
+    f.auth.transaction(() => {
+      expect(
+        f.db
+          .prepare(
+            `UPDATE workspace_items SET trashed_at=? WHERE trash_batch=(
+            SELECT trash_batch FROM workspace_items WHERE id=?)`,
+          )
+          .run(expiredAt - 30 * day, f.folder.id).changes,
+      ).toBe(2);
+    });
+    const response = await f.context.request.get('/api/items/trash');
+    expect(response.status()).toBe(200);
+    const listing = (await response.json()) as TrashListing;
+    for (const id of [f.folder.id, expired.id])
+      expect(listing.items.find((item) => item.id === id)?.expiresAt).toBe(expiredAt);
+    const recentExpiry = listing.items.find((item) => item.id === recent.id)!.expiresAt;
+    expect(recentExpiry).toBeGreaterThan(Date.now());
+    await f.page.goto('/?trash=1');
+    const trash = f.page.getByRole('region', { name: 'Trash', exact: true });
+    const expiredDate = await f.page.evaluate(
+      (value) => new Date(value).toLocaleString(),
+      expiredAt,
+    );
+    for (const item of [f.folder, expired]) {
+      const row = trash.getByRole('listitem').filter({ hasText: item.name });
+      const restore = row.getByRole('button', { name: `Restore ${item.name}`, exact: true });
+      await expect(restore).toBeDisabled();
+      await expect(row).toContainText('Recovery ended ' + expiredDate);
+      const refused = await f.context.request.post(`/api/items/${item.id}/restore`, {
+        data: {},
+        headers: { Origin: f.origin },
+      });
+      expect(refused.status()).toBe(409);
+      expect(await refused.json()).toEqual({ error: 'The 30-day recovery period has ended.' });
+    }
+    const restoreRecent = trash.getByRole('button', {
+      name: `Restore ${recent.name}`,
+      exact: true,
+    });
+    await expect(restoreRecent).toBeEnabled();
+    await expect(trash.getByRole('listitem').filter({ hasText: recent.name })).toContainText(
+      'Recover until',
+    );
+    for (const [theme, width, height, variant] of [
+      ['light', 1440, 1100, 'light'],
+      ['dark', 1440, 1100, 'dark'],
+      ['light', 390, 844, 'phone-light'],
+    ] as const) {
+      await f.page.setViewportSize({ width, height });
+      await f.page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+      await expect(f.page.locator('html')).toHaveAttribute('data-theme', theme);
+      expect(await f.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+        true,
+      );
+      await screenshot(f.page, info, `outer-owner-${variant}`, 'spn-095');
+    }
+    await restoreRecent.click();
+    await expect(restoreRecent).toHaveCount(0);
+    expect((await f.tree(recent.id)).space.id).toBe(recent.id);
+    expect(f.workspace.get(f.owner.id, unrelated.id).id).toBe(unrelated.id);
+    expect(f.db.prepare('SELECT id FROM workspace_items WHERE id=?').get(retainedChild.id)).toEqual(
+      {
+        id: retainedChild.id,
+      },
+    );
+    expect(f.errors).toEqual([]);
   } finally {
     await f.close();
   }

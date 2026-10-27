@@ -189,8 +189,8 @@ test('deleting and restoring a mixed subtree retains native bytes, bindings, IDs
     id: parent.id,
     name: 'Current location name',
   });
-  // Internal recovery has no inherited ordinary-Trash retention deadline.
-  f.advance(90 * 24 * 60 * 60 * 1_000);
+  // SPN-095: native recovery stays exact throughout the common 30-day window.
+  f.advance(29 * 24 * 60 * 60 * 1_000);
   expect(f.recovery.restore(f.editor.id, f.space.id, doc.id)).toMatchObject({
     item: { id: doc.id, parentId: parent.id, position: 1 },
     restoredCount: 3,

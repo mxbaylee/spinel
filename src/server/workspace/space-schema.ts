@@ -128,6 +128,8 @@ export function migrateSpaceSchema(database: DatabaseSync): void {
         ON workspace_items(space_id,parent_id,space_position,id);
       CREATE INDEX IF NOT EXISTS workspace_items_owner_kind
         ON workspace_items(owner_id,kind,space_id,trashed_at);
+      CREATE INDEX IF NOT EXISTS workspace_space_expiry_roots ON workspace_items(id)
+        WHERE kind='space' AND space_id IS NULL AND space_position IS NULL;
       CREATE INDEX IF NOT EXISTS workspace_space_discovery_children
         ON workspace_items(owner_id,parent_id)
         WHERE space_id IS NULL AND space_position IS NULL AND trashed_at IS NULL

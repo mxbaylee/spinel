@@ -71,10 +71,15 @@ foreign-key cascades and cleanup hooks; a late failure rolls everything back.
 The complete-tree validator bounds each request to 10,000 retained members,
 including tombstones, and bounded recovery records. It refuses malformed or
 oversized graphs rather than truncating them. This is a resource guard, not a
-presentation depth limit. Ordinary Trash excludes internal nodes and retains a
-whole ordinary subtree containing a Space, while unrelated ordinary trash
-can still expire. **No automatic Space expiry is enabled.** Record a retention
-decision before enabling it; the ordinary 30-day policy does not silently apply.
+presentation depth limit. Ordinary Trash excludes internal nodes; internal
+recovery stays in Space Trash. [SPN-095](../implementation/SPN-095.md) applies the
+same 30 elapsed UTC days to outer Spaces, enclosing folder batches and internal
+deletion batches. Each deadline comes from that batch's original deletion time;
+restoring an outer group or transferring ownership does not renew older internal
+deadlines. Both collections show the recovery date and disable Restore after it.
+Bounded startup/daily cleanup validates the complete graph before deletion.
+When Space exposure is explicitly disabled, hidden Spaces and containing groups
+remain protected from ordinary cleanup.
 
 Startup performs the transactional schema migration before the collaboration SDK
 opens its connection. Migration/reopen and SQLite snapshot-copy tests preserve
@@ -152,7 +157,9 @@ independent account/MCP access and is unavailable to a Space guest. No cached
 value can bypass a source check. Existing account native export, MCP and version
 history use the same scoped native services. Automatic history capture/retention
 only processes supported, currently authorized children and preserves deferred
-or unsupported checkpoints; Space Trash still has no automatic expiry.
+or unsupported checkpoints. The separate [30-day Trash expiry](../trash.md)
+removes checkpoints, images and queued collaboration generations with permanently
+deleted Space content; it does not change live-document history retention.
 
 Offline preparation downloads one selected account-authorized child, with its
 images, root identity and current generation. Prepared pages stay available in
