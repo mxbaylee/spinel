@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, fn, userEvent, waitFor, within } from 'storybook/test';
 import type { SpaceFile, WorkspaceItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
+import { assertDialogControls } from '../.storybook/dialogBounds.ts';
 import { SpaceRootActions } from './SpaceRootActions.tsx';
 
 const item: SpaceFile = {
@@ -107,6 +108,16 @@ export const ShareWholeSpace: Story = {
         ],
       },
       [`GET /api/items/${item.id}/link`]: { enabled: false, role: 'viewer' },
+      [`POST /api/items/${item.id}/sharing/review`]: {
+        review: {
+          version: 'a'.repeat(64),
+          userId: 'collaborator',
+          hostRole: 'editor',
+          hostAccess: 'editor',
+          targets: [],
+          unavailable: false,
+        },
+      },
     },
   },
   play: async ({ canvasElement }) => {
@@ -114,12 +125,23 @@ export const ShareWholeSpace: Story = {
     const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
       name: 'Share Research Space',
     });
-    await themedTarget(await within(dialog).findByLabelText('Access for Alex Kim'), dialog);
-    await themedTarget(
-      within(dialog).getByRole('button', { name: 'Apply access for Alex Kim' }),
-      dialog,
+    const sharing = within(dialog);
+    await expect(sharing.getByRole('tab', { name: 'People' })).toHaveAttribute(
+      'aria-selected',
+      'true',
     );
-    await themedTarget(within(dialog).getByLabelText('Link access'), dialog);
+    await userEvent.click(await sharing.findByRole('button', { name: 'Edit access for Alex Kim' }));
+    await themedTarget(sharing.getByLabelText('Access for Alex Kim'), dialog);
+    await expect(sharing.getByRole('button', { name: 'Save changes' })).toBeDisabled();
+    await assertDialogControls(dialog);
+    await userEvent.click(sharing.getByRole('tab', { name: 'Link' }));
+    await themedTarget(await sharing.findByLabelText('Link access'), dialog);
+    await expect(sharing.getByRole('button', { name: 'Create link' })).toBeEnabled();
+    await assertDialogControls(dialog);
+    await userEvent.click(sharing.getByRole('tab', { name: 'People' }));
+    await userEvent.click(sharing.getByRole('button', { name: 'Edit access for Alex Kim' }));
+    await expect(sharing.getByLabelText('Access for Alex Kim')).toHaveValue('editor');
+    await expect(sharing.queryByRole('alert')).not.toBeInTheDocument();
   },
 };
 export const SaveFailure: Story = {

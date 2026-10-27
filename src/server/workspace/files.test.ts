@@ -105,6 +105,88 @@ test('direct root sharing redacts outer locations and grants current root roles 
   expect(() => f.files.get(f.other.id, f.root.id)).toThrow('not available');
 });
 
+test.each([
+  ['editor', 'viewer', 'editor'],
+  ['viewer', 'viewer', 'viewer'],
+  ['viewer', 'admin', 'admin'],
+] as const)(
+  'Space sharing previews direct %s and inherited %s before direct removal',
+  (direct, inherited, effective) => {
+    const f = fixture();
+    f.workspace.share(f.owner.id, f.outer.id, f.other.id, inherited);
+    f.files.share(f.owner.id, f.root.id, f.other.id, direct);
+    const grants = () =>
+      f.db.prepare('SELECT * FROM workspace_grants ORDER BY item_id,user_id').all();
+    const before = grants();
+    const preview = f.files.sharing(f.owner.id, f.root.id)[0];
+    expect(preview).toMatchObject({
+      id: f.other.id,
+      directRole: direct,
+      effectiveRole: effective,
+      inheritedRole: inherited,
+    });
+    expect(grants()).toEqual(before);
+    expect(f.files.share(f.owner.id, f.root.id, f.other.id, null)[0]).toMatchObject({
+      directRole: null,
+      effectiveRole: preview.inheritedRole,
+      inheritedRole: preview.inheritedRole,
+    });
+    expect(f.files.get(f.other.id, f.root.id).access).toBe(preview.inheritedRole);
+    expect(f.spaces.get(f.other.id, f.root.id, f.child.id).access).toBe(preview.inheritedRole);
+  },
+);
+
+test('Space inherited previews reveal no private locations and never use child grants or disabled access', () => {
+  const f = fixture();
+  const delegate = f.auth.createUser('File admin');
+  f.files.share(f.owner.id, f.root.id, delegate.id, 'admin');
+  f.workspace.share(f.owner.id, f.outer.id, f.other.id, 'viewer');
+  f.files.share(f.owner.id, f.root.id, f.other.id, 'editor');
+  expect(f.files.get(delegate.id, f.root.id).parentId).toBeNull();
+  const preview = f.files.sharing(delegate.id, f.root.id);
+  expect(preview).toEqual([
+    {
+      id: f.other.id,
+      name: f.other.name,
+      disabled: 0,
+      directRole: 'editor',
+      effectiveRole: 'editor',
+      inheritedRole: 'viewer',
+    },
+  ]);
+  for (const secret of [f.outer.id, f.outer.name, f.child.id, f.child.name])
+    expect(JSON.stringify(preview)).not.toContain(secret);
+  // A stale or imported internal grant does not affect the outer sharing boundary.
+  f.db
+    .prepare('INSERT INTO workspace_grants(item_id,user_id,role,shared_at) VALUES(?,?,?,?)')
+    .run(f.child.id, f.other.id, 'admin', 1);
+  f.workspace.share(f.owner.id, f.outer.id, f.other.id, null);
+  expect(f.files.sharing(delegate.id, f.root.id)[0]).toMatchObject({
+    directRole: 'editor',
+    effectiveRole: 'editor',
+    inheritedRole: null,
+  });
+  f.files.share(f.owner.id, f.root.id, f.other.id, null);
+  expect(f.files.sharing(delegate.id, f.root.id)[0]).toMatchObject({
+    directRole: null,
+    effectiveRole: null,
+    inheritedRole: null,
+  });
+  for (const id of [f.child.id, f.internal.id])
+    expect(() => f.files.sharing(f.owner.id, id)).toThrow('not available');
+  f.workspace.share(f.owner.id, f.outer.id, f.other.id, 'viewer');
+  f.files.share(f.owner.id, f.root.id, f.other.id, 'editor');
+  f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.other.id);
+  expect(f.files.sharing(delegate.id, f.root.id)[0]).toMatchObject({
+    disabled: 1,
+    directRole: 'editor',
+    effectiveRole: null,
+    inheritedRole: null,
+  });
+  f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.owner.id);
+  expect(() => f.files.sharing(delegate.id, f.root.id)).toThrow('not available');
+});
+
 test('root filing survives ordinary cleanup, never moves the canonical root, and disappears on revocation', () => {
   const f = fixture();
   const destination = f.workspace.create(f.other.id, {

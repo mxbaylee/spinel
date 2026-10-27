@@ -145,8 +145,13 @@ test('Space theatre fills the window and restores its own page navigation', asyn
           'false',
         );
         await expect(
-          sharing.getByRole('button', { name: 'Create link', exact: true }),
+          sharing.getByRole('button', { name: 'Copy account link', exact: true }),
         ).toBeVisible();
+        await expect(sharing.getByRole('tab', { name: 'People', exact: true })).toHaveAttribute(
+          'aria-selected',
+          'true',
+        );
+        await expect(sharing.getByRole('tab', { name: 'Link', exact: true })).toBeVisible();
         await expect(sharing.getByRole('alert')).toHaveCount(0);
         await capture(page, info, `space-${item.kind}-${variant.name}-sharing`);
         await page.keyboard.press('Escape');
@@ -154,7 +159,7 @@ test('Space theatre fills the window and restores its own page navigation', asyn
         await expect(actions).toBeFocused();
         await actions.press('Enter');
         await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
-        await sharing.getByRole('button', { name: 'Done', exact: true }).click();
+        await sharing.getByRole('button', { name: 'Close dialog', exact: true }).click();
         await expect(sharing).toBeHidden();
         await expect(actions).toBeFocused();
         const canvas = await editor.locator('canvas').first().elementHandle();

@@ -73,6 +73,77 @@ test('direct and inherited grants combine by strongest access; revocation and mo
   f.grant(f.folder.id, null);
   expect(() => f.store.get(who, id)).toThrow('not available');
 });
+test.each([
+  ['editor', 'viewer', 'editor'],
+  ['viewer', 'viewer', 'viewer'],
+  ['viewer', 'admin', 'admin'],
+] as const)(
+  'sharing previews direct %s and inherited %s before direct removal',
+  (direct, inherited, effective) => {
+    const f = fixture();
+    // The grant is on a grandparent, so the preview must use the full live ancestry.
+    f.store.share(f.owner.id, f.root.id, f.collaborator.id, inherited);
+    f.store.share(f.owner.id, f.doc.id, f.collaborator.id, direct);
+    const grants = () =>
+      f.db.prepare('SELECT * FROM workspace_grants ORDER BY item_id,user_id').all();
+    const before = grants();
+    const preview = f.store
+      .sharing(f.owner.id, f.doc.id)
+      .find((row) => row.id === f.collaborator.id)!;
+    expect(preview).toMatchObject({
+      directRole: direct,
+      effectiveRole: effective,
+      inheritedRole: inherited,
+    });
+    // Reading the staged-removal information does not touch roles or shared_at.
+    expect(grants()).toEqual(before);
+    const removed = f.store.share(f.owner.id, f.doc.id, f.collaborator.id, null);
+    expect(removed.find((row) => row.id === f.collaborator.id)).toMatchObject({
+      directRole: null,
+      effectiveRole: preview.inheritedRole,
+      inheritedRole: preview.inheritedRole,
+    });
+    expect(f.store.get(f.collaborator.id, f.doc.id).access).toBe(preview.inheritedRole);
+  },
+);
+test('inherited sharing previews redact a File admin’s private ancestors and keep disabled accounts unreadable', () => {
+  const f = fixture();
+  f.store.update(f.owner.id, f.folder.id, { name: 'Private ancestor name' });
+  f.grant(f.folder.id, 'viewer');
+  f.grant(f.doc.id, 'editor');
+  f.store.share(f.owner.id, f.doc.id, f.outsider.id, 'admin');
+  expect(f.store.get(f.outsider.id, f.doc.id).parentId).toBeNull();
+  const preview = f.store.sharing(f.outsider.id, f.doc.id);
+  expect(preview).toEqual([
+    {
+      id: f.collaborator.id,
+      name: f.collaborator.name,
+      disabled: 0,
+      directRole: 'editor',
+      effectiveRole: 'editor',
+      inheritedRole: 'viewer',
+    },
+  ]);
+  for (const secret of [f.root.id, f.folder.id, 'Private ancestor name'])
+    expect(JSON.stringify(preview)).not.toContain(secret);
+  // Neither ownership nor a descendant's grant becomes inherited access to a root.
+  const rootPeople = f.store.sharing(f.owner.id, f.root.id);
+  expect(rootPeople.some((row) => row.id === f.owner.id)).toBe(false);
+  expect(rootPeople.find((row) => row.id === f.collaborator.id)).toMatchObject({
+    directRole: null,
+    effectiveRole: null,
+    inheritedRole: null,
+  });
+  f.db.prepare('UPDATE auth_users SET disabled=1 WHERE id=?').run(f.collaborator.id);
+  expect(f.store.sharing(f.outsider.id, f.doc.id)[0]).toMatchObject({
+    disabled: 1,
+    directRole: 'editor',
+    effectiveRole: null,
+    inheritedRole: null,
+  });
+  f.grant(f.doc.id, null);
+  expect(f.store.sharing(f.outsider.id, f.doc.id)).toEqual([]);
+});
 test('sharing does not grant organization, onward sharing, account access or ancestor disclosure', () => {
   const f = fixture(),
     who = f.collaborator.id;

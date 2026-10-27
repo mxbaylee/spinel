@@ -26,6 +26,14 @@ export const Loading: Story = { parameters: { api: { [link]: pending() } } };
 export const LinkOff: Story = {
   parameters: { api: { [link]: { enabled: false, role: 'viewer' } } },
 };
+export const DocSourceLimit: Story = {
+  args: { sourceKind: 'doc' },
+  parameters: LinkOff.parameters,
+};
+export const SpaceSourceLimit: Story = {
+  args: { space: true, sourceKind: 'space' },
+  parameters: LinkOff.parameters,
+};
 export const LinkOnViewOnly: Story = {
   parameters: { api: { [link]: { enabled: true, role: 'viewer', url } } },
 };
@@ -65,19 +73,15 @@ export const ConfirmReplacementEditLink: Story = {
   parameters: { api: { [link]: { enabled: true, role: 'viewer', url } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const access = await canvas.findByLabelText('Link access');
-    await waitFor(() => expect(access).toBeEnabled());
-    await userEvent.selectOptions(access, 'editor');
-    await expect(access).toHaveValue('editor');
-    await userEvent.click(canvas.getByRole('button', { name: 'Guest link actions' }));
-    await userEvent.click(
-      await within(canvasElement.ownerDocument.body).findByRole('menuitem', {
-        name: 'Replace link…',
-      }),
-    );
+    const replace = await canvas.findByRole('button', { name: 'Replace link…' });
+    await expect(canvas.queryByLabelText('Link access')).not.toBeInTheDocument();
+    await userEvent.click(replace);
     const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
       name: 'Replace the link?',
     });
+    const access = within(dialog).getByLabelText('Link access');
+    await userEvent.selectOptions(access, 'editor');
+    await expect(access).toHaveValue('editor');
     await expect(within(dialog).getByRole('button', { name: 'Replace link' })).toBeVisible();
   },
 };
@@ -86,7 +90,7 @@ export const ConfirmTurnOffSpaceLink: Story = {
   parameters: { api: { [link]: { enabled: true, role: 'editor', url } } },
   play: async ({ canvasElement }) => {
     const actions = await within(canvasElement).findByRole('button', {
-      name: 'Guest link actions',
+      name: 'More guest link actions',
     });
     await userEvent.click(actions);
     const turnOff = await within(canvasElement.ownerDocument.body).findByRole('menuitem', {
@@ -198,6 +202,75 @@ export const CreatedLink: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'Create link' }));
     await expect(await canvas.findByLabelText('Guest link address')).toHaveValue(url);
     await expect(canvas.getByRole('button', { name: 'Copy guest link' })).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Copy guest link' })).toHaveFocus(),
+    );
+    await expect(canvas.queryByLabelText('Link access')).not.toBeInTheDocument();
+  },
+};
+export const ReplaceFreshLink: Story = {
+  parameters: CreatedLink.parameters,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Create link' }));
+    await canvas.findByLabelText('Guest link address');
+    await userEvent.click(canvas.getByRole('button', { name: 'More guest link actions' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Replace link…' }));
+    const dialog = await body.findByRole('dialog', { name: 'Replace the link?' });
+    await expect(within(dialog).getByLabelText('Link access')).toHaveValue('viewer');
+    await userEvent.selectOptions(within(dialog).getByLabelText('Link access'), 'editor');
+    await expect(canvas.getByText('Guests can view.')).toBeInTheDocument();
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await expect(canvas.getByLabelText('Guest link address')).toHaveValue(url);
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'More guest link actions' })).toHaveFocus(),
+    );
+  },
+};
+export const ReplacedLink: Story = {
+  parameters: {
+    api: {
+      [link]: { enabled: true, role: 'viewer' },
+      [`PUT /api/items/${id}/link`]: { enabled: true, role: 'editor', url },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Replace link…' }));
+    const dialog = await body.findByRole('dialog', { name: 'Replace the link?' });
+    await userEvent.selectOptions(within(dialog).getByLabelText('Link access'), 'editor');
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Replace link' }));
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await expect(canvas.getByText('Guests can edit.')).toBeVisible();
+    await expect(canvas.getByLabelText('Guest link address')).toHaveValue(url);
+    await expect(canvas.queryByLabelText('Link access')).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Copy guest link' })).toHaveFocus(),
+    );
+  },
+};
+export const Replacing: Story = {
+  parameters: {
+    api: {
+      [link]: { enabled: true, role: 'viewer' },
+      [`PUT /api/items/${id}/link`]: pending(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Replace link…' }));
+    const dialog = within(await body.findByRole('dialog', { name: 'Replace the link?' }));
+    await userEvent.selectOptions(dialog.getByLabelText('Link access'), 'editor');
+    await userEvent.click(dialog.getByRole('button', { name: 'Replace link' }));
+    await expect(dialog.getByLabelText('Link access')).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Saving…' })).toBeDisabled();
+    await expect(canvas.getByText('Guests can view.')).toBeInTheDocument();
+    await expect(canvas.queryByLabelText('Guest link address')).not.toBeInTheDocument();
   },
 };
 export const CreatedSpaceLinkFocus: Story = {
@@ -217,7 +290,7 @@ export const CreatedSpaceLinkFocus: Story = {
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await expect(await canvas.findByLabelText('Guest link address')).toHaveValue(url);
     await waitFor(() =>
-      expect(canvas.getByRole('button', { name: 'Guest link actions' })).toHaveFocus(),
+      expect(canvas.getByRole('button', { name: 'Copy guest link' })).toHaveFocus(),
     );
   },
 };
@@ -232,7 +305,7 @@ export const TurnedOffSpaceLinkFocus: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Guest link actions' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'More guest link actions' }));
     await userEvent.click(await body.findByRole('menuitem', { name: 'Turn off link' }));
     const dialog = await body.findByRole('dialog', { name: 'Turn off this Space link?' });
     await userEvent.click(within(dialog).getByRole('button', { name: 'Turn off link' }));
@@ -247,7 +320,7 @@ export const NoSecretReadback: Story = {
   parameters: { api: { [link]: { enabled: true, role: 'viewer', url } } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Replace the link to copy a new address.');
+    await canvas.findByRole('button', { name: 'Replace link…' });
     await expect(canvas.queryByLabelText('Guest link address')).not.toBeInTheDocument();
     await expect(canvas.queryByRole('button', { name: 'Copy guest link' })).not.toBeInTheDocument();
   },
@@ -278,7 +351,7 @@ export const FailedCreate: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'Create link' }));
     await expect(await canvas.findByRole('alert')).toHaveTextContent('Could not create a link.');
     await expect(canvas.queryByLabelText('Guest link address')).not.toBeInTheDocument();
-    await expect(canvas.getByRole('button', { name: 'Retry link update' })).toBeEnabled();
+    await expect(canvas.getByRole('button', { name: 'Create link' })).toBeEnabled();
   },
 };
 export const FailedReplacement: Story = {
@@ -294,20 +367,20 @@ export const FailedReplacement: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await canvas.findByLabelText('Link access'), 'editor');
-    await userEvent.click(canvas.getByRole('button', { name: 'Guest link actions' }));
-    await userEvent.click(await body.findByRole('menuitem', { name: 'Replace link…' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Replace link…' }));
     const dialog = within(await body.findByRole('dialog', { name: 'Replace the link?' }));
+    await userEvent.selectOptions(dialog.getByLabelText('Link access'), 'editor');
     await userEvent.click(dialog.getByRole('button', { name: /^Replace link$/ }));
     await expect(await dialog.findByRole('alert')).toHaveTextContent(
       'Only the owner or a file admin',
     );
     await expect(canvas.getByText('Guests can view.')).toBeInTheDocument();
-    await expect(canvas.getByLabelText('Link access')).toHaveValue('editor');
+    await expect(dialog.getByLabelText('Link access')).toHaveValue('editor');
+    await expect(canvas.queryByLabelText('Link access')).not.toBeInTheDocument();
     await expect(canvas.queryByLabelText('Guest link address')).not.toBeInTheDocument();
     await userEvent.click(dialog.getByRole('button', { name: 'Cancel' }));
     await waitFor(() =>
-      expect(canvas.getByRole('button', { name: 'Guest link actions' })).toHaveFocus(),
+      expect(canvas.getByRole('button', { name: 'Replace link…' })).toHaveFocus(),
     );
   },
 };
@@ -316,16 +389,16 @@ export const FailedReplacementVisible: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
-    await userEvent.selectOptions(await canvas.findByLabelText('Link access'), 'editor');
-    await userEvent.click(canvas.getByRole('button', { name: 'Guest link actions' }));
-    await userEvent.click(await body.findByRole('menuitem', { name: 'Replace link…' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Replace link…' }));
     const dialog = within(await body.findByRole('dialog', { name: 'Replace the link?' }));
+    await userEvent.selectOptions(dialog.getByLabelText('Link access'), 'editor');
     await userEvent.click(dialog.getByRole('button', { name: /^Replace link$/ }));
     await expect(await dialog.findByRole('alert')).toHaveTextContent(
       'Only the owner or a file admin',
     );
     await expect(canvas.getByText('Guests can view.')).toBeInTheDocument();
-    await expect(canvas.getByLabelText('Link access')).toHaveValue('editor');
+    await expect(dialog.getByLabelText('Link access')).toHaveValue('editor');
+    await expect(canvas.queryByLabelText('Link access')).not.toBeInTheDocument();
     await expect(canvas.queryByLabelText('Guest link address')).not.toBeInTheDocument();
     await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeEnabled();
   },
@@ -340,7 +413,7 @@ export const FailedTurnOff: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Guest link actions' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'More guest link actions' }));
     await userEvent.click(await body.findByRole('menuitem', { name: 'Turn off link' }));
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
       'Could not turn off the link.',

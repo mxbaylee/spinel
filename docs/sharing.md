@@ -1,8 +1,9 @@
 # Sharing
 
 Items are private by default. The Owner or a File admin can choose **Share** on a document, folder or
-Space, select Can view, Can edit or File admin for an active everyday account, and
-choose **Apply access**. **Copy account link** copies the authenticated address;
+Space. In **People**, open a person’s row, choose Can view, Can edit or File admin,
+then choose **Share** or **Save changes**. Rows show confirmed access. Only one
+recipient is edited at a time; Cancel or switching people/tabs discards that draft. **Copy account link** copies the authenticated address;
 if the clipboard is unavailable, a selectable address appears for manual copying.
 Give that address to the person. They must sign in; the address alone does not grant access. Server Operator accounts cannot receive grants or access
 workspace content.
@@ -80,13 +81,15 @@ the document or Space title and type. Previews never show the owner or contents;
 a Space card also excludes child titles and Formula values. Private pages and
 older fragment-only links use the generic Spinel card.
 
-For a Sheet or Doc, the Owner or a File admin uses **Share → Anyone with the link**,
+For a Sheet or Doc, the Owner or a File admin uses **Share → Link**,
 chooses Can view or Can edit, then **Create link**. Anyone holding that address gets
 only that document. Folder links are unsupported. Copy the guest address while it
-is shown; closing and reopening sharing cannot reveal it again. **Guest link actions
-→ Replace link…** confirms before creating a replacement that immediately invalidates
-the old link. **Guest link actions → Turn off link** removes access from open guest
-editors too. Changing the role selector alone leaves the current link unchanged.
+is shown; switching to People preserves it, but closing and reopening sharing cannot
+reveal it again. An existing link shows **Replace link…** when its address is no
+longer available; a freshly created link has replacement under **More**. Replacement
+confirms its role and immediately invalidates the old link. **More → Turn off link**
+removes access from open guest editors too. Enabled links show their confirmed role;
+role editing happens only when creating or confirming a replacement.
 Link changes briefly reconnect open account editors so old personal labels cannot
 remain in the shared room. Already delivered content cannot be recalled.
 
@@ -172,14 +175,59 @@ trash, and browser filing/removal/revocation. [Search](search.md) includes these
 
 ## Doc formula sources
 
-A Doc grant never grants access to its [Formula sources](formulas.md). Every
-input must be readable by the viewer; otherwise the whole formula is unavailable,
-including aggregates. A standalone Doc guest link grants no source access. A
-Space guest link covers same-Space sources, including future additions, but no
-external source. Account and MCP callers need their own current access to every
-external source. Stable bindings, formatting and unavailable results keep the
-existing Formula behavior; no cached value bypasses access checks. SPN-076 tracks
-explicit dependency sharing outside the existing permission boundary.
+A Doc grant alone never grants access to its [Formula sources](formulas.md).
+Every input must be readable by the viewer; otherwise the whole formula is
+unavailable, including aggregates. Stable bindings, formatting and unavailable
+results keep the existing Formula behavior; no cached value bypasses access checks.
+
+The active recipient editor reviews formula sources. **Include formula sources**
+starts unchecked. Leaving it unchecked changes only the selected host access;
+**Source details** can reveal the inventory. Selecting it visibly lists every exact
+authorized source target marked **Can view · Proposed** before **Share** or
+**Save changes**. Existing View, Edit,
+File admin, ownership and inherited access are kept; the operation never adds
+editing or downgrades a source. Sources can be added even when the recipient
+already reads the report and its selected role is unchanged.
+
+A source the sharer can read but cannot administer says that its Owner or File
+admin must grant access. A source the sharer cannot discover stays generic: no
+source name, ID or private parent is revealed. That limitation does not establish
+whether the recipient can read the hidden source. Sharing the eligible sources
+must not be described as making every formula available.
+
+Sharing a Space reviews direct formula references from every live Doc in it,
+consistently from the dashboard and editor. Same-Space sources already inherit
+the root grant and require no separate checkbox or child grant. An external
+source inside another Space is grouped under that **Entire Space**, with its
+exact authorized source Sheets and the explicit consequence: access to every
+current and future page and folder. Only that outer root can be granted; the
+dialog never offers a fabricated grant to one child. Source references are not
+followed transitively into unrelated documents.
+
+Confirmation rechecks the current account, host and source authority, recipient
+access, source identities and names, and Space boundaries. A changed review
+requires a fresh list and another opt-in before any source grant. Successful
+host/source grants are reported separately from sources still requiring another
+owner's help. A failed source check permits host-only sharing with a warning,
+without pretending that no dependencies exist. After an uncertain network result,
+review current access before trying again; a lost response does not prove that
+no permissions changed. The editor stays open with the selected role, refreshed
+confirmed access and sources unchecked. An unchanged role without a fresh source
+opt-in keeps Save disabled. Complete success returns to the person’s row; partial
+results keep the same editor and action.
+
+Source review is bounded: at most 128 live Docs, 256 unique source Sheets, 32 MiB
+of serialized committed Doc snapshots in total, 1,024 custom ranges per Doc,
+and 10,000 accumulated ancestry reads. A limit refuses the complete review rather
+than omitting later sources. Host-only sharing remains available.
+
+A standalone Doc guest link grants no source access. A Space guest link covers
+same-Space sources, including future additions, but no external source. Creating
+or replacing a host link never creates a source link or changes account grants.
+Account and MCP callers still need their own current access to every external
+source. Automatic requests, notifications, copied source values and public source
+publication are outside this flow. See the
+[SPN-076 design and implementation record](implementation/SPN-076.md).
 
 ## Space sharing
 
@@ -214,8 +262,8 @@ A root link's privacy epoch covers every child room and outstanding admission.
 Rotation, revocation and role changes fence and evict affected connections;
 generic **Guest**/**Collaborator** labels hide account names and avatars. Guest
 navigation, source discovery and metadata stay within that root. The same-Space
-Formula rule follows [decision #117](implementation/SPN-078.md#legacy-decision-117-whole-space-guest-capability);
-SPN-076 remains for deliberate external dependency sharing, disclosing the whole
+Formula rule follows [decision #117](implementation/SPN-078.md#legacy-decision-117-whole-space-guest-capability).
+[Deliberate external dependency sharing](#doc-formula-sources) discloses the whole
 source Space when that is its permission boundary. Internal Trash and whole-Space
 recovery remain preserved without automatic Space Trash expiry.
 

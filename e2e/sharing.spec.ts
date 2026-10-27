@@ -68,11 +68,12 @@ test('owner shares future folder contents, collaborator edits, and open editors 
   const shareRegion = page.getByRole('dialog', { name: 'Share Shared plans', exact: true });
   async function grant(role: string) {
     await shareRegion
+      .getByRole('button', { name: `Edit access for ${collaborator.name}`, exact: true })
+      .click();
+    await shareRegion
       .getByRole('combobox', { name: `Access for ${collaborator.name}`, exact: true })
       .selectOption(role);
-    await shareRegion
-      .getByRole('button', { name: `Apply access for ${collaborator.name}`, exact: true })
-      .click();
+    await shareRegion.getByRole('button', { name: /^(Share|Save changes)$/ }).click();
     await expect(
       shareRegion
         .getByRole('status')
@@ -101,7 +102,7 @@ test('owner shares future folder contents, collaborator edits, and open editors 
     await expect(other.getByRole('menuitem', { name: 'Share…', exact: true })).toHaveCount(0);
     await other.keyboard.press('Escape');
     await expect(folderMenu).toBeHidden();
-    await shareRegion.getByRole('button', { name: 'Done' }).click();
+    await shareRegion.getByRole('button', { name: 'Close dialog', exact: true }).click();
     await page.getByRole('button', { name: 'Shared plans Folder', exact: true }).click();
     // Create both documents after the grant to prove inheritance applies to future children.
     await create('Nested', 'Folder');

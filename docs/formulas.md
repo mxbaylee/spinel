@@ -42,7 +42,22 @@ A Space View or Edit guest link permits sources in the same Space, including
 newly added Sheets. It grants no access to ordinary files or other Spaces, even
 when the browser also has a signed-in account. Account and MCP credentials may
 read external sources only through their own independent current access.
-The separate source-sharing flow is tracked in SPN-076.
+The [explicit source-sharing flow](sharing.md#doc-formula-sources) adds only
+reviewed account grants: the per-recipient option starts unchecked and lists
+exact source targets before confirmation. Existing source access is kept. An
+external Space is disclosed and granted as a whole; same-Space sources inherit
+their host Space's access. Unreadable sources stay generic, and another source's
+Owner or File admin may still need to act. Public links never acquire external
+source capabilities through this account-sharing option.
+
+Source review reads stable references from current committed Doc snapshots,
+including all live Docs when sharing a Space. It does not use a stale legacy
+checkpoint after native collaboration starts, recurse through source formulas,
+or copy source values into the host. Changed dependencies, authority, names or
+Space boundaries require refreshed review and explicit confirmation. A sharing
+result confirms access only; invalid expressions, missing worksheets and other
+calculation errors retain their own states. Protocol and capacity limits are
+recorded in [SPN-076](implementation/SPN-076.md#runtime-protocol-and-bounds).
 
 The host and every source retain the credential selected when the request began.
 Permissions and the live source generation are checked before materialization,
