@@ -507,13 +507,12 @@ test.describe('documents created offline', () => {
         ),
       ).toBeVisible();
       await details.getByRole('button', { name: 'Close save details', exact: true }).click();
-      await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
-      const actions = f.page.getByRole('menu', { name: 'Document actions', exact: true });
-      await expect(actions).toBeVisible();
       await expect(
-        actions.getByRole('menuitem', { name: 'Choose another folder…', exact: true }),
+        f.page.getByRole('button', { name: 'Document actions', exact: true }),
       ).toHaveCount(0);
-      await f.page.keyboard.press('Escape');
+      await expect(
+        f.page.getByRole('menuitem', { name: 'Choose another folder…', exact: true }),
+      ).toHaveCount(0);
       await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
       await expect(
         f.page.getByRole('button', { name: `${name} Sheet`, exact: true }),
