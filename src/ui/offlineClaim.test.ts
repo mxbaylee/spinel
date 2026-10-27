@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { claimDevice, openLocalStart } from '../../web/offline/localStart.ts';
+import { api } from '../../web/api.ts';
 import {
   OfflineStore,
   offlinePreparation,
+  offlineEpoch,
   preparedAccount,
   setPreparedAccount,
 } from '../../web/offline/offlineStore.ts';
@@ -22,13 +24,16 @@ let values: Map<string, string>;
 
 beforeEach(() => {
   values = new Map();
-  vi.stubGlobal('window', {
-    localStorage: {
-      getItem: (key: string) => values.get(key) ?? null,
-      setItem: (key: string, value: string) => values.set(key, value),
-      removeItem: (key: string) => values.delete(key),
-    },
-  });
+  vi.stubGlobal(
+    'window',
+    Object.assign(new EventTarget(), {
+      localStorage: {
+        getItem: (key: string) => values.get(key) ?? null,
+        setItem: (key: string, value: string) => values.set(key, value),
+        removeItem: (key: string) => values.delete(key),
+      },
+    }),
+  );
   setPreparedAccount(null);
 });
 afterEach(() => {
@@ -67,6 +72,78 @@ test('startup claims existing downloads without rewriting their catalog', async 
   expect(f.saveCatalog).not.toHaveBeenCalled();
   expect(f.close).toHaveBeenCalledTimes(1);
 });
+
+test('an obsolete sign-in attempt cannot prepare the device after a delayed database read', async () => {
+  const f = fixture();
+  const entered = deferred();
+  const held = deferred();
+  let current = true;
+  f.downloads.mockImplementationOnce(async () => {
+    entered.resolve();
+    await held.promise;
+    return [download];
+  });
+  const claim = claimDevice(user, () => current);
+  await entered.promise;
+  current = false;
+  held.resolve();
+  await claim;
+  expect(preparedAccount()).toBeNull();
+  expect(f.close).toHaveBeenCalledTimes(1);
+});
+
+test('same-account startup with no downloads preserves an existing live editor fence', async () => {
+  const f = fixture();
+  f.downloads.mockResolvedValue([]);
+  await claimDevice(user);
+  const live = offlinePreparation(user.id, () => true);
+  const token = values.get('spinel.offline.cancellation');
+  await claimDevice(user);
+  expect(preparedAccount()).toBeNull();
+  expect(values.get('spinel.offline.cancellation')).toBe(token);
+  expect(live.isCurrent()).toBe(true);
+});
+
+test('another online account cancels live editors even when there are no downloads', async () => {
+  const f = fixture();
+  f.downloads.mockResolvedValue([]);
+  await claimDevice(user);
+  const live = offlinePreparation(user.id, () => true);
+  await claimDevice({ id: 'another-account', name: 'Other', isAdmin: false });
+  expect(preparedAccount()).toBeNull();
+  expect(live.isCurrent()).toBe(false);
+});
+
+test.each(['headers', 'body'] as const)(
+  'a session response held at %s cannot reclaim an earlier account after another tab switches',
+  async (boundary) => {
+    fixture();
+    const held = deferred();
+    const verify = offlineEpoch();
+    vi.stubGlobal('fetch', async () => {
+      if (boundary === 'headers') await held.promise;
+      return {
+        ok: true,
+        status: 200,
+        json: async () => {
+          if (boundary === 'body') await held.promise;
+          return { user };
+        },
+      };
+    });
+    const pending = api<{ user: typeof user }>('session', undefined, verify).then(({ user }) =>
+      claimDevice(user),
+    );
+    await Promise.resolve();
+    vi.resetModules();
+    const otherTab = await import('../../web/offline/offlineStore.ts');
+    otherTab.claimOnlineAccount('another-account');
+    otherTab.setPreparedAccount('another-account');
+    held.resolve();
+    await expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+    expect(preparedAccount()).toBe('another-account');
+  },
+);
 
 test.each([
   ['database discovery', 'sign-out'],

@@ -56,7 +56,7 @@ export interface SpaceEditorProps {
   saveStatusTarget: HTMLElement | null;
   item: SpaceNode;
   access: ItemAccess;
-  onDirty(dirty: boolean): void;
+  onDirty(dirty: boolean, retained?: boolean): void;
   onConnectionState(state: ConnectionState | null): void;
 }
 
@@ -120,6 +120,8 @@ export function Space({
   const [openPage, setOpenPage] = useState<OpenPage | null>(null);
   const [dirty, setDirty] = useState(false);
   const dirtyRef = useRef(false);
+  const [retained, setRetained] = useState(false);
+  const retainedRef = useRef(false);
   const mounted = useRef(true);
 
   useEffect(() => {
@@ -147,6 +149,8 @@ export function Space({
     routeRef.current = next;
     dirtyRef.current = false;
     setDirty(false);
+    retainedRef.current = false;
+    setRetained(false);
     navigationRef.current.dirty(false);
     setRoute(next);
     setAction(null);
@@ -348,17 +352,17 @@ export function Space({
         item: selection.item,
         access: currentTree.access,
       });
-    } else if (!dirtyRef.current) {
+    } else if (!dirtyRef.current && !retainedRef.current) {
       setOpenPage(null);
     }
-  }, [currentTree, selectedId, trashView, spaceId, dirty]);
+  }, [currentTree, selectedId, trashView, spaceId, dirty, retained]);
   const pageMatchesRoute =
     openPage &&
     route.kind === 'space' &&
     openPage.spaceId === route.spaceId &&
     route.selection.kind !== 'trash' &&
     (route.selection.kind === 'default' || route.selection.id === openPage.item.id);
-  const visiblePage = pageMatchesRoute && (selection.item || dirty) ? openPage : null;
+  const visiblePage = pageMatchesRoute && (selection.item || dirty || retained) ? openPage : null;
   const editorKey = visiblePage ? visiblePage.spaceId + '/' + visiblePage.item.id : null;
   useEffect(() => {
     setRootAction(null);
@@ -367,13 +371,15 @@ export function Space({
   const activeEditor = useRef(editorKey);
   activeEditor.current = editorKey;
   const onDirty = useCallback(
-    (value: boolean) => {
+    (value: boolean, keepVisible = false) => {
       if (activeEditor.current !== editorKey) return;
       dirtyRef.current = value;
       setDirty(value);
+      retainedRef.current = !guest && keepVisible;
+      setRetained(!guest && keepVisible);
       navigationRef.current.dirty(value);
     },
-    [editorKey],
+    [editorKey, guest],
   );
   const publishConnection = useCallback(
     (value: ConnectionState | null) => {
@@ -901,7 +907,11 @@ export function Space({
       {selection.missing && !loading && (
         <p className="space-notice" role="alert">
           This page is not available.{' '}
-          {dirty ? 'Copy unsaved changes before leaving.' : 'Choose another page from Pages.'}
+          {dirty
+            ? 'Copy unsaved changes before leaving.'
+            : retained
+              ? 'Your changes saved on this device are retained below.'
+              : 'Choose another page from Pages.'}
         </p>
       )}
       {visiblePage && (

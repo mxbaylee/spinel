@@ -7,7 +7,15 @@ import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { sheetPreset, useMobileSheetControls } from './sheetPreset.ts';
 import { IRenderManagerService } from '@univerjs/engine-render';
-import { IPermissionService, InterceptorEffectEnum } from '@univerjs/core';
+import {
+  CustomCommandExecutionError,
+  ICommandService,
+  IPermissionService,
+  InterceptorEffectEnum,
+} from '@univerjs/core';
+import { SetImageFormulaDataMutation } from '@univerjs/engine-formula';
+import { CalculationMode } from '@univerjs/preset-sheets-core';
+import type { OfflineSession } from './offline/OfflineSession.ts';
 import {
   getAllWorkbookPermissionPoint,
   SheetInterceptorService,
@@ -26,7 +34,7 @@ import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import enUS from '@univerjs/preset-sheets-core/locales/en-US';
 import '@univerjs/preset-sheets-core/lib/index.css';
 import {
-  prepareCollaboration,
+  prepareEditor,
   identifyCollaborator,
   watchCollaboration,
   loadSpinelDocument,
@@ -47,14 +55,16 @@ export function SheetEditor({
   onConnectionState,
   saveStatusTarget,
   registerGuestEditor,
+  localAccountId,
 }: {
   id: string;
   name: string;
   spaceId?: string;
   saveStatusTarget: HTMLElement | null;
-  onDirty: (dirty: boolean) => void;
+  onDirty: (dirty: boolean, retained?: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
   registerGuestEditor?: RegisterGuestEditor;
+  localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
   const mobile = useRef(useMobileSheetControls()).current;
@@ -71,7 +81,9 @@ export function SheetEditor({
   });
   useEffect(() => {
     let disposed = false;
+    let offlineSession: OfflineSession | undefined;
     let initialized = false;
+    let captureReady = false;
     const loading = new AbortController();
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
@@ -83,6 +95,7 @@ export function SheetEditor({
     let stopPresence: (() => void) | undefined;
     setPeople([]);
     let editing = false;
+    let freezeAfterEditing = false;
     let disposeEditor: (() => void) | undefined;
     let save: ReturnType<typeof watchCollaboration> | undefined;
     let lastState: SaveState = { dirty: false, failed: false, message: 'Loading spreadsheet…' };
@@ -91,13 +104,16 @@ export function SheetEditor({
       if (disposed) return;
       const dirty = editing || state.dirty;
       if (dirty && initialized) syncNotice.current = undefined;
-      onDirty(dirty);
+      onDirty(dirty, Boolean(state.retained));
       setStatus({
         ...state,
+        ...(editing ? { local: undefined } : {}),
         dirty,
         failed: state.failed || (initialized && Boolean(syncNotice.current)),
         message: editing
-          ? `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
+          ? freezeAfterEditing
+            ? 'Your sign-in ended. Copy the unfinished cell text before signing in again.'
+            : `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
           : state.failed
             ? state.message
             : ((initialized ? syncNotice.current : undefined) ?? state.message),
@@ -105,8 +121,12 @@ export function SheetEditor({
     };
     publish(lastState);
     void (async () => {
-      const data = await prepareCollaboration(id, spaceId, () => !disposed);
-      if (disposed) return;
+      const data = await prepareEditor(id, spaceId, () => !disposed, localAccountId);
+      offlineSession = data.offline;
+      if (disposed) {
+        offlineSession?.dispose();
+        return;
+      }
       const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
       recordNativeMutationInventory();
       const { univer, univerAPI } = createUniver({
@@ -117,11 +137,37 @@ export function SheetEditor({
           [LocaleType.EN_US]: mergeLocales(enUS, sheetDrawingEnglish),
         },
         override: nativePermissions.override,
-        presets: [sheetPreset(container.current!, mobile), sheetImages(mobile)],
+        presets: [
+          sheetPreset(
+            container.current!,
+            mobile,
+            data.offline?.enabled
+              ? { initialFormulaComputing: CalculationMode.NO_CALCULATION }
+              : undefined,
+          ),
+          sheetImages(mobile, data.offline),
+        ],
       });
+      // IMAGE formula results use a direct browser Image loader in the OSS
+      // plugin. Stop only that derived result while local; ordinary formula
+      // calculation and lazy native command registration remain untouched.
+      const offlineImages = data.offline
+        ? univer
+            .__getInjector()
+            .get(ICommandService)
+            .beforeCommandExecuted((command) => {
+              if (
+                command.id === SetImageFormulaDataMutation.id &&
+                data.offline!.enabled &&
+                !data.offline!.online
+              )
+                throw new CustomCommandExecutionError('Formula images are unavailable offline.');
+            })
+        : undefined;
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => {
+        offlineImages?.dispose();
         disposeSpinelSync(univer);
         univer.dispose();
       };
@@ -135,11 +181,25 @@ export function SheetEditor({
       };
       univerAPI.addEvent(univerAPI.Event.SheetEditStarted, editingCell);
       univerAPI.addEvent(univerAPI.Event.SheetEditChanging, editingCell);
+      univerAPI.addEvent(univerAPI.Event.BeforeSheetEditStart, (event) => {
+        if (freezeAfterEditing) event.cancel = true;
+      });
+      univerAPI.addEvent(univerAPI.Event.BeforeSheetEditEnd, (event) => {
+        // Hiding the native editor is not a commit barrier: cross-sheet formula
+        // submission awaits sheet activation. After expiry retain that draft
+        // for copying instead of freezing permissions ahead of its submission.
+        // Escape remains an explicit discard of the unfinished input.
+        if (freezeAfterEditing && event.isConfirm) event.cancel = true;
+      });
       univerAPI.addEvent(univerAPI.Event.SheetEditEnded, () => {
         if (disposed) return;
         editing = false;
         if (chrome) chrome.editing.current = false;
         publish(lastState);
+        if (freezeAfterEditing)
+          queueMicrotask(() => {
+            if (!disposed && freezeAfterEditing) void readOnly();
+          });
       });
       registerGuestEditor?.((retain) => {
         try {
@@ -154,7 +214,15 @@ export function SheetEditor({
       });
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
-      const readOnly = async () => {
+      const readOnly = async (preserveInput = false) => {
+        if (preserveInput && editing) {
+          // A current native cell editor has not emitted its mutation yet.
+          // Keep it available for copying; the expired binding sends no frames.
+          freezeAfterEditing = true;
+          publish(lastState);
+          return;
+        }
+        freezeAfterEditing = false;
         nativePermissions.readonly();
         // This tab's presentation follows its grant; never change shared permissions.
         const permissions = univer.__getInjector().get(IPermissionService);
@@ -177,6 +245,18 @@ export function SheetEditor({
         kind: 'sheet',
         signal: loading.signal,
         isCurrent: () => !disposed,
+        offline: data.offline,
+        canRefresh: () => !editing,
+        lock: () => {
+          disposeEditor?.();
+          disposeEditor = undefined;
+          publish({
+            dirty: false,
+            failed: true,
+            local: 'attention',
+            message: 'Offline access changed on this device. Reopen the document to continue.',
+          });
+        },
         initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
         onInitialPending: () =>
           publish({
@@ -184,21 +264,25 @@ export function SheetEditor({
             failed: false,
             message: 'Changes not saved yet — keep this tab open.',
           }),
-        reload: () => {
+        reload: (_reason, clean) => {
           if (disposed) return;
           initialized = false;
-          syncNotice.current =
-            'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
+          syncNotice.current = clean
+            ? undefined
+            : 'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
           publish({
             dirty: false,
-            failed: true,
-            message: 'Reloading after a synchronization problem…',
+            failed: !clean,
+            message: clean
+              ? 'Loading the current saved document…'
+              : 'Reloading after a synchronization problem…',
           });
           reload((generation) => generation + 1);
         },
       });
       const workbook = univerAPI.getActiveWorkbook();
       if (!workbook) throw new Error('Could not load this spreadsheet.');
+      captureReady = true;
       await editorReady(univerAPI);
       if (disposed) return;
       const interceptor = univer
@@ -266,6 +350,13 @@ export function SheetEditor({
       save = watchCollaboration(univer, publish, readOnly, publishConnection);
       controller.current = save;
     })().catch((error) => {
+      // Failed checkpoint/SDK initialization must not leave a writable canvas
+      // without native capture. A bound client may already own pending input.
+      if (!captureReady) {
+        disposeEditor?.();
+        disposeEditor = undefined;
+        offlineSession?.dispose();
+      }
       publishConnection('offline');
       if (!disposed)
         publish({
@@ -285,6 +376,7 @@ export function SheetEditor({
       save?.dispose();
       // Univer owns a separate React root; unmount it after our cleanup commit.
       if (disposeEditor) queueMicrotask(disposeEditor);
+      offlineSession?.dispose();
       controller.current = null;
       if (chrome) chrome.editing.current = false;
       onDirty(false);
@@ -299,13 +391,20 @@ export function SheetEditor({
         target={chrome?.saveTarget ?? saveStatusTarget}
         onRetry={() => controller.current?.retry()}
       />
-      <EditorTools
-        id={id}
-        spaceId={spaceId}
-        name={name}
-        people={people}
-        saved={!status.dirty && !status.failed && Boolean(controller.current)}
-      />
+      {!localAccountId && (
+        <EditorTools
+          id={id}
+          spaceId={spaceId}
+          name={name}
+          people={people}
+          saved={
+            !status.dirty &&
+            !status.failed &&
+            (!status.local || status.local === 'synced') &&
+            Boolean(controller.current)
+          }
+        />
+      )}
       <div className="univer-container" ref={container} />
     </section>
   );

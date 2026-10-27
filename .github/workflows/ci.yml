@@ -359,6 +359,7 @@ jobs:
             test-results/**/*-permission-notices.json
             test-results/**/*-sync-presence.png
             test-results/**/spn-059-sheet-menu-*.png
+            test-results/**/spn-053-offline-*.png
             test-results/**/sync-diagnostics.json
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md

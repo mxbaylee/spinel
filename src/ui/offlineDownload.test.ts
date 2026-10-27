@@ -120,7 +120,11 @@ test('a Space download fetches images through the exact child scope and stores t
     '/api/spaces/project/items/item/offline-bundle',
     `/api/spaces/project/items/item/images/${hash}`,
   ]);
-  expect(saveDownload).toHaveBeenCalledWith(value, new Map([[source, bytes]]));
+  expect(saveDownload).toHaveBeenCalledWith(
+    value,
+    new Map([[source, bytes]]),
+    expect.any(Function),
+  );
 });
 
 test('a mismatched Space response is refused before fetching images or replacing a prepared copy', async () => {

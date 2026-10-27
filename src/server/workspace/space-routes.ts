@@ -7,7 +7,7 @@ import type { WorkspaceStore } from './store.ts';
 import type { SpaceScopeItem } from './space-scope.ts';
 import { SpaceStore } from './spaces.ts';
 import { SpaceRecoveryStore } from './space-recovery.ts';
-import { documentIdentity } from '../collaboration/identity.ts';
+import { checkOfflineAccount, documentIdentity } from '../collaboration/identity.ts';
 
 function root(item: SpaceScopeItem): SpaceRoot {
   if (item.kind !== 'space' || item.spaceId !== null || item.position !== null)
@@ -63,11 +63,14 @@ export function spaceRoutes(
     }
     const id = workspace.auth.session(cookieToken(request))?.user_id;
     if (!id) throw new AuthError(401, 'Sign in to continue.');
+    checkOfflineAccount(request.headers, id);
     workspace.owner(id);
     return id;
   };
   router.use((request, response, next) => {
     response.set('Cache-Control', 'no-store');
+    if (!options.guest && request.headers['x-spinel-offline-account'] !== undefined)
+      documentIdentity(workspace, request.headers);
     if (options.spaceReview !== true || !workspace.spacesEnabled)
       throw new AuthError(404, 'Not found.');
     actor(request);

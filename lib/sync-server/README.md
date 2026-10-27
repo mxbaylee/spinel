@@ -1,5 +1,14 @@
 # @spinel/sync-server
 
+Offline replay may supply an optional `expectedRevision` admission fence. It
+must equal the current durable head after asynchronous preparation and before
+native application or receipt lookup. The field is excluded from the durable
+retry hash, so adding a reconnect fence does not invent a different edit. An
+advanced head rejects conservatively even when an existing receipt explains
+the advance; the host retains that offline work for attention. This differs
+from the existing `exactRevision` assistant policy, which remains part of the
+original request and still permits idempotent receipt retries.
+
 Durable ordering for native Univer 1.1.0 Sheet and Doc edits. This package owns
 the queue, transform, open-source materializer and convergence check. It imports
 no Spinel application code. The application supplies one storage adapter and the

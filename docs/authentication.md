@@ -7,6 +7,19 @@ create everyday accounts. There is no public signup or password
 fallback. Recovery is an Operator-issued invite. Sign-in does not use PRF or encryption key wrapping.
 These are the owner’s SPN-002 rules, 2026-10-17.
 
+SPN-053's [downloaded editors](offline.md) store no authentication response,
+credential, session token, OAuth consent or guest capability. IndexedDB is
+partitioned by the downloading account. The prepared-account pointer and local
+cancellation epoch gate local access; they are not credentials. Same-tab
+cancellation and another tab's sign-out/account switch close the old editor.
+Offline refresh, preparation, socket tickets, image reads and Doc Formula
+requests send `X-Spinel-Offline-Account`. The server rejects a different cookie
+account before document access/404 checks; current document/Space access and
+generation are still required. Delayed HTTP bodies and socket callbacks also
+check the mounted epoch. A different account's 404 cannot delete the original
+account's copy, and pending work remains bound to that account. Broader storage
+and sign-out recovery UI remains SPN-055.
+
 Entry screens use the quiet single-task layout with one passkey action, explicit
 pending/cancellation/retry feedback and shared Need help guidance. Help displays
 Operator commands without running them. Setup, invitation validation and recovery

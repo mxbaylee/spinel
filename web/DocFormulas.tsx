@@ -37,6 +37,11 @@ export const formulaPaperColors = {
   text: palettes.light['sp-text']!,
 };
 
+export type FormulaTransport = {
+  fetch(url: string, init: RequestInit): Promise<Response>;
+  verify(): void;
+};
+
 export async function formulaRequest<T>(
   id: string,
   path: string,
@@ -44,21 +49,27 @@ export async function formulaRequest<T>(
   signal?: AbortSignal,
   spaceId?: string,
   runId?: string,
+  transport?: FormulaTransport,
 ): Promise<T> {
-  return requestFormula<T>(`${documentPath(id, spaceId)}/formulas/${path}`, {
-    method: body === undefined ? 'GET' : 'POST',
-    credentials: 'same-origin',
-    signal,
-    ...(body === undefined
-      ? {}
-      : {
-          headers: {
-            'Content-Type': 'application/json',
-            ...(isUuid(runId) ? { 'X-Spinel-Diagnostic-Run': runId } : {}),
-          },
-          body: JSON.stringify(body),
-        }),
-  });
+  return requestFormula<T>(
+    `${documentPath(id, spaceId)}/formulas/${path}`,
+    {
+      method: body === undefined ? 'GET' : 'POST',
+      credentials: 'same-origin',
+      signal,
+      ...(body === undefined
+        ? {}
+        : {
+            headers: {
+              'Content-Type': 'application/json',
+              ...(isUuid(runId) ? { 'X-Spinel-Diagnostic-Run': runId } : {}),
+            },
+            body: JSON.stringify(body),
+          }),
+    },
+    transport?.fetch,
+    transport?.verify,
+  );
 }
 
 export function FormulaResultView({
@@ -101,12 +112,16 @@ export function FormulaDialog({
   id,
   spaceId,
   initial,
+  transport,
+  remoteAvailable = true,
   onSave,
   onClose,
 }: {
   id: string;
   spaceId?: string;
   initial?: DocFormula;
+  transport?: FormulaTransport;
+  remoteAvailable?: boolean;
   onSave: (definition: FormulaDefinition, signal: AbortSignal) => Promise<void>;
   onClose: () => void;
 }) {
@@ -179,17 +194,29 @@ export function FormulaDialog({
     setSources([]);
     setSource('');
     setLoadingSources(true);
-    void formulaRequest<{ sources: Source[] }>(id, 'sources', undefined, abort.signal, spaceId)
-      .then((data) => {
-        if (!abort.signal.aborted) setSources(data.sources);
-      })
-      .catch(() => {
-        if (!abort.signal.aborted)
-          setError('Could not load source suggestions. You can still type a formula.');
-      })
-      .finally(() => {
-        if (!abort.signal.aborted) setLoadingSources(false);
-      });
+    if (!remoteAvailable) {
+      setLoadingSources(false);
+      setError(FORMULA_MESSAGES.unavailable);
+    } else
+      void formulaRequest<{ sources: Source[] }>(
+        id,
+        'sources',
+        undefined,
+        abort.signal,
+        spaceId,
+        undefined,
+        transport,
+      )
+        .then((data) => {
+          if (!abort.signal.aborted) setSources(data.sources);
+        })
+        .catch(() => {
+          if (!abort.signal.aborted)
+            setError('Could not load source suggestions. You can still type a formula.');
+        })
+        .finally(() => {
+          if (!abort.signal.aborted) setLoadingSources(false);
+        });
     return () => {
       active.current = false;
       attempt.current++;
@@ -197,11 +224,14 @@ export function FormulaDialog({
       abort.abort();
       modal?.close();
     };
-  }, [id, spaceId]);
+  }, [id, spaceId, transport, remoteAvailable]);
   useEffect(() => {
     setSheets([]);
     setSheet('');
-    if (!source) return;
+    if (!source || !remoteAvailable) {
+      setLoadingSheets(false);
+      return;
+    }
     const abort = new AbortController();
     setLoadingSheets(true);
     void formulaRequest<{ sheets: Sheet[] }>(
@@ -210,6 +240,8 @@ export function FormulaDialog({
       undefined,
       abort.signal,
       spaceId,
+      undefined,
+      transport,
     )
       .then((data) => {
         if (!abort.signal.aborted) setSheets(data.sheets);
@@ -222,7 +254,7 @@ export function FormulaDialog({
         if (!abort.signal.aborted) setLoadingSheets(false);
       });
     return () => abort.abort();
-  }, [id, source, spaceId]);
+  }, [id, source, spaceId, transport, remoteAvailable]);
   const update = (value: string) => {
     setBindings((current) => moveFormulaBindings(expression, value, current));
     setChosen((current) => {
@@ -291,6 +323,8 @@ export function FormulaDialog({
         },
         signal,
         spaceId,
+        undefined,
+        transport,
       )
     ).definition;
   }
@@ -309,6 +343,10 @@ export function FormulaDialog({
   async function run(save: boolean) {
     // A second submit in the same event turn must not start another native save.
     if (operation.current || !active.current) return;
+    if (!remoteAvailable && !save) {
+      setError(FORMULA_MESSAGES.unavailable);
+      return;
+    }
     const observation = diagnostics.begin();
     const runId = observation?.runId;
     const current = ++attempt.current;
@@ -336,6 +374,7 @@ export function FormulaDialog({
             controller.signal,
             spaceId,
             runId,
+            transport,
           );
           if (!active.current || current !== attempt.current || controller.signal.aborted) return;
           observeOperation(

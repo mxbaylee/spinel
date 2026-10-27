@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { watchServerConnection } from './connectionState.ts';
 import type { ConnectionState } from './connectionState.ts';
-import { setPreparedAccount } from './offline/offlineStore.ts';
+import { expirePreparedAccount } from './offline/offlineStore.ts';
 import { signInPath } from './api.ts';
 
 /** Only account shells without a live editor use the authenticated health probe. */
@@ -14,7 +14,7 @@ export function useServerConnection(enabled: boolean) {
     }
     return watchServerConnection(setState, () => {
       // A confirmed ended session locks local data; it never opens local mode.
-      setPreparedAccount(null);
+      expirePreparedAccount();
       location.assign(signInPath());
     });
   }, [enabled]);

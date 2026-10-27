@@ -69,6 +69,8 @@ export interface SubmitRequest {
   mutations: Mutation[];
   /** Assistant writes require an exact revision, never a transform. */
   exactRevision?: boolean;
+  /** Admission-only offline replay fence, excluded from the durable retry identity. */
+  expectedRevision?: number;
 }
 export interface SubmitResult {
   duplicate: boolean;

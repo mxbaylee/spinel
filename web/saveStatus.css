@@ -30,10 +30,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 8px;
+  gap: 4px;
   width: 144px;
   height: 44px;
   padding: 8px;
+  padding-inline-end: 4px;
   border: 0;
   border-radius: 8px;
   background: transparent;
@@ -41,7 +42,11 @@
   font: inherit;
   font-size: 0.875rem;
   white-space: nowrap;
+  line-height: 1.15;
   cursor: pointer;
+}
+.save-trigger svg {
+  flex-shrink: 0;
 }
 .workspace button.save-trigger:not(.univer-container *)[data-failed='true'],
 .sp-ui button.save-trigger[data-failed='true'],

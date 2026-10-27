@@ -1,21 +1,29 @@
 import { FormulaSaveError } from '@spinel/doc-formulas';
 
 /** Retry only read-only busy/overflow responses, never an expired admission wait. */
-export async function requestFormula<T>(url: string, init: RequestInit): Promise<T> {
+export async function requestFormula<T>(
+  url: string,
+  init: RequestInit,
+  request: (url: string, init: RequestInit) => Promise<Response> = fetch,
+  verifyCurrent: () => void = () => {},
+): Promise<T> {
   const delays = [200, 400, 800, 1200, 1600, 2000];
   for (let attempt = 0; ; attempt++) {
     init.signal?.throwIfAborted();
+    verifyCurrent();
     let response: Response;
     let result;
     try {
-      response = await fetch(url, init);
+      response = await request(url, init);
       result = await response.json();
+      verifyCurrent();
     } catch (error) {
       init.signal?.throwIfAborted();
       if (error instanceof Error && error.name === 'AbortError') throw error;
       throw new FormulaSaveError('unavailable');
     }
     init.signal?.throwIfAborted();
+    verifyCurrent();
     const busy = response.status === 429 || (result?.ok === false && result.reason === 'busy');
     if (busy && attempt < delays.length) {
       await new Promise<void>((resolve, reject) => {
