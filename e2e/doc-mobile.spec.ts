@@ -49,36 +49,41 @@ async function recordPhoneInput(context: BrowserContext) {
       records.push(value);
       if (records.length > 200) records.shift();
     };
-    for (const type of ['beforeinput', 'input'])
+    for (const type of ['beforeinput', 'input', 'keydown', 'focusin', 'focusout'])
       document.addEventListener(
         type,
         (event) => {
           const target = event.target;
-          if (
-            !(target instanceof HTMLElement) ||
-            !target.matches('[contenteditable="true"][data-u-comp="editor"]')
-          )
-            return;
+          if (!(target instanceof HTMLElement)) return;
+          const editor = target.matches('[contenteditable="true"][data-u-comp="editor"]');
+          if (!editor && !(event instanceof KeyboardEvent)) return;
           const input = event as InputEvent;
+          const keyboard = event as KeyboardEvent;
           const observe = (phase: string) => {
             const selection = window.getSelection();
             record({
               time: performance.now(),
               type,
               phase,
+              target: target.tagName,
+              component: target.dataset.uComp,
+              editor,
+              key: keyboard.key,
+              code: keyboard.code,
+              modifiers: [keyboard.ctrlKey, keyboard.altKey, keyboard.shiftKey, keyboard.metaKey],
               data: input.data,
               inputType: input.inputType,
               composing: input.isComposing,
               prevented: input.defaultPrevented,
               focused: document.activeElement === target,
-              content: target.textContent,
+              content: editor ? target.textContent : undefined,
               anchorInside: Boolean(selection?.anchorNode && target.contains(selection.anchorNode)),
               focusInside: Boolean(selection?.focusNode && target.contains(selection.focusNode)),
               rangeCount: selection?.rangeCount,
             });
           };
           observe('capture');
-          queueMicrotask(() => observe('after'));
+          setTimeout(() => observe('after'), 0);
         },
         true,
       );
@@ -462,8 +467,36 @@ for (const zoomRatio of [1, 0.5, 2])
       await format.tap();
       const drawer = page.locator('[data-u-comp="mobile-doc-toolbar-drawer"]');
       await expect(drawer).toBeVisible();
+      await expect(input(page)).not.toBeFocused();
+      // Native drawers blur the input and await the OS viewport expansion to
+      // finish their keyboard-hidden transition. Emulate both halves of it.
+      await keyboardOcclusion(page, 0);
       await page.getByRole('button', { name: 'Bold', exact: true }).tap();
       await page.getByRole('button', { name: 'Show keyboard', exact: true }).tap();
+      await expect(drawer).not.toBeVisible();
+      await expect(input(page)).toBeFocused();
+      await keyboardOcclusion(page, 320);
+      const hideKeyboard = region.getByRole('button', { name: 'Hide keyboard', exact: true });
+      await expect(hideKeyboard).toBeVisible();
+      await expect(async () => {
+        const layout = await hideKeyboard.evaluate((button) => {
+          const toolbar = button.parentElement!.getBoundingClientRect();
+          const viewport = window.visualViewport;
+          return {
+            top: toolbar.top,
+            bottom: toolbar.bottom,
+            viewportBottom: viewport ? viewport.offsetTop + viewport.height : undefined,
+            focused: document.activeElement?.matches(
+              '[contenteditable="true"][data-u-comp="editor"]',
+            ),
+          };
+        });
+        expect(layout.focused).toBe(true);
+        expect(layout.top).toBeGreaterThanOrEqual(0);
+        expect(layout.bottom).toBeGreaterThan(layout.top);
+        expect(layout.viewportBottom).toBeDefined();
+        expect(layout.bottom).toBeLessThanOrEqual(layout.viewportBottom! + 1);
+      }).toPass({ timeout: 5_000 });
       await expect(input(page)).toBeFocused();
       await page.keyboard.type('Mobile ');
       await saved(page);
@@ -528,6 +561,8 @@ for (const zoomRatio of [1, 0.5, 2])
         .toBe(NamedStyleType.HEADING_1);
       await page.getByRole('button', { name: 'More', exact: true }).tap();
       await expect(drawer).toBeVisible();
+      await expect(input(page)).not.toBeFocused();
+      await keyboardOcclusion(page, 0);
       await expect(drawer.getByRole('button', { name: 'Ordered list', exact: true })).toBeEnabled();
       const unordered = drawer.getByRole('button', { name: 'Unordered list', exact: true });
       await expect(unordered).toBeEnabled();
@@ -750,6 +785,7 @@ test('phone guest Doc reader cannot write and loses its document when the link i
     await expect(page.getByRole('button', { name: 'Insert formula', exact: true })).toHaveCount(0);
     const point = await textPoint(page);
     for (let tap = 0; tap < 2; tap++) await page.touchscreen.tap(point.x, point.y);
+    await expect(input(page)).not.toBeFocused();
     await page.keyboard.type('FORBIDDEN PHONE EDIT');
     await expect(page.getByRole('status', { name: 'Save status' })).toContainText('View only');
     await page.getByRole('button', { name: 'Formulas', exact: true }).tap();
@@ -827,6 +863,7 @@ for (const role of ['owner', 'guest-editor'] as const) {
       const point = await textPoint(page);
       await page.touchscreen.tap(point.x, point.y);
       await page.touchscreen.tap(point.x, point.y);
+      await expect(input(page)).not.toBeFocused();
       await page.keyboard.type('FORBIDDEN TRADITIONAL PHONE EDIT');
       await expect(status).toHaveText(message);
       const afterInput = await f.read();

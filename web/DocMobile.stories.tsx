@@ -25,6 +25,7 @@ import '@univerjs/preset-docs-hyper-link/lib/index.css';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
 import { docPreset, mobileDocPlugins } from './docPreset.ts';
+import { guardPhoneDocInput } from './docPhoneView.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 import { documentReady } from './documentReady.ts';
 import { editorReady } from './editorReady.ts';
@@ -166,6 +167,8 @@ function MobileCanvas({
       canvas.setAttribute('aria-label', 'Document canvas');
       const skeletons = render.with(DocSkeletonManagerService);
       const selections = render.with(DocSelectionRenderService);
+      const phoneInput = guardPhoneDocInput(selections, () => readOnly);
+      cleanups.push(() => phoneInput.dispose());
       const contextMenus = univer.__getInjector().get(IContextMenuService);
       const layout = JSON.stringify([data.documentStyle, data.settings]);
       const fixtureHost = host.current!;
@@ -487,8 +490,10 @@ export const SelectionFormatting: Story = {
           const selection = fixture.caret();
           expect(selection.start).toBe(0);
           expect(selection.end).toBe('Autumn'.length);
-          expect(selection.hasAnchor).toBe(true);
+          // getAnchor() is the collapsed caret; a selected word renders a range.
           expect(selection.bounds).toBeDefined();
+          expect(selection.bounds!.right).toBeGreaterThan(selection.bounds!.left);
+          expect(selection.bounds!.bottom).toBeGreaterThan(selection.bounds!.top);
         },
         { timeout: 10_000 },
       );

@@ -29,6 +29,8 @@ import { displayPresetCell } from '../src/ui/presetStyles.ts';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import type { IPreset } from '@univerjs/presets';
 import { docPreset, mobileDocPlugins, useMobileDocControls } from './docPreset.ts';
+import { guardPhoneDocInput } from './docPhoneView.ts';
+import { DocSelectionRenderService } from '@univerjs/docs-ui';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 import { UniverDocsDrawingPreset } from '@univerjs/preset-docs-drawing';
 import { UniverDocsHyperLinkPreset } from '@univerjs/preset-docs-hyper-link';
@@ -124,7 +126,9 @@ export async function openSnapshotViewer({
   let formulas: DocFormulaController | undefined;
   let interval: ReturnType<typeof setInterval> | undefined;
   let stopVisibility: (() => void) | undefined;
+  let phoneInput: ReturnType<typeof guardPhoneDocInput> | undefined;
   const closeFormulas = () => {
+    phoneInput?.dispose();
     clearInterval(interval);
     stopVisibility?.();
     formulas?.dispose();
@@ -144,6 +148,9 @@ export async function openSnapshotViewer({
     if (!sheet) {
       await documentReady(univer, unitId, signal);
       if (signal.aborted) throw aborted();
+      const render = univer.__getInjector().get(IRenderManagerService).getRenderUnitById(unitId);
+      if (mobile && render)
+        phoneInput = guardPhoneDocInput(render.with(DocSelectionRenderService), () => true);
       formulas = await installDocFormulas({
         univer,
         unitId,

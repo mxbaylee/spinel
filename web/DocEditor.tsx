@@ -60,6 +60,7 @@ import '@univerjs/preset-docs-drawing/lib/index.css';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import { BuiltInUIPart, IRenderManagerService } from '@univerjs/preset-docs-core';
 import { docPreset, mobileDocPlugins, useMobileDocControls } from './docPreset.ts';
+import { guardPhoneDocInput } from './docPhoneView.ts';
 import enUS from '@univerjs/preset-docs-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
 import '@univerjs/ui/facade';
@@ -138,6 +139,8 @@ export function DocEditor({
     let stopFormulaVisibility: (() => void) | undefined;
     let stopInputEvidence: (() => void) | undefined;
     let stopDocumentLayout: (() => void) | undefined;
+    let phoneInput: ReturnType<typeof guardPhoneDocInput> | undefined;
+    let phoneInputLocked = false;
     let phoneOnlyMessage: string | undefined;
     setFormulaStates([]);
     setFormulaEdit(null);
@@ -310,6 +313,8 @@ export function DocEditor({
         stopInputEvidence = undefined;
         stopDocumentLayout?.();
         stopDocumentLayout = undefined;
+        phoneInput?.dispose();
+        phoneInput = undefined;
         disposeSpinelSync(univer);
         stopTheme();
         univer.dispose();
@@ -334,6 +339,8 @@ export function DocEditor({
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const readonly = async () => {
+        phoneInputLocked = true;
+        phoneInput?.stopEditing();
         nativePermissions.readonly();
         canEditFormulas.current = false;
         setFormulaEdit(null);
@@ -393,6 +400,11 @@ export function DocEditor({
         .get(IRenderManagerService)
         .getRenderUnitById(data.unitId);
       render?.engine.getCanvasElement().setAttribute('aria-label', 'Document canvas');
+      if (mobile && render)
+        phoneInput = guardPhoneDocInput(
+          render.with(DocSelectionRenderService),
+          () => phoneInputLocked,
+        );
       if (mobile && render && import.meta.env.VITE_SYNC_EVIDENCE === '1') {
         // Evidence builds observe the public input and command boundary. They
         // never alter the range, input event, command, or document.
@@ -493,7 +505,6 @@ export function DocEditor({
             layoutChanged = true;
             setPhoneLayoutChanged(true);
             phoneOnlyMessage = 'View only on this phone. Reopen after the page layout change.';
-            render?.with(DocSelectionRenderService).exitEditing();
             void readonly().then(
               () => publish(lastState),
               (error) =>

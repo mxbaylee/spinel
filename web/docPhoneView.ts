@@ -17,8 +17,27 @@ import {
   SetInlineFormatBoldCommand,
   SetInlineFormatItalicCommand,
 } from '@univerjs/docs-ui';
+import type { DocSelectionRenderService } from '@univerjs/docs-ui';
+import type { MobileDocSelectionRenderService } from '@univerjs/docs-ui/lib/types/services/mobile/doc-selection-render.service.d.ts';
 import { IRenderManagerService, UniverRenderEnginePlugin } from '@univerjs/engine-render';
 import { ContextMenuGroup, ContextMenuPosition, IMenuManagerService } from '@univerjs/ui';
+
+/** Only call for the public mobile preset's selection-service registration. */
+export function guardPhoneDocInput(
+  selection: DocSelectionRenderService,
+  isReadOnly: () => boolean,
+) {
+  const mobile = selection as MobileDocSelectionRenderService;
+  const stopEditing = () => mobile.exitMobileEditMode();
+  // The native touch controller can focus input independently of the root
+  // Edit permission. Keep read-only readers out of keyboard mode as well;
+  // the existing permission service remains the mutation boundary.
+  const focus = mobile.onFocus$.subscribe(() => {
+    if (isReadOnly()) stopEditing();
+  });
+  if (isReadOnly()) stopEditing();
+  return { stopEditing, dispose: () => focus.unsubscribe() };
+}
 
 class PhoneDocViewScaleService extends DocViewScaleService {
   private usesPhoneLayout() {
