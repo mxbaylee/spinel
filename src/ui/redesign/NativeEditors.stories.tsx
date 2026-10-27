@@ -1,3 +1,5 @@
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { syncSheetMenuFixture } from '../syncSheetMenus.fixture.ts';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { NativeEditor } from './NativeEditors.tsx';
@@ -98,4 +100,46 @@ export const SheetFormula: Story = {
       }}
     />
   ),
+};
+
+function inspectCopyMenu(available: boolean): NonNullable<Story['play']> {
+  return async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(
+      () => {
+        expect(canvasElement.querySelector('[data-native-stage="ready"]')).toBeInTheDocument();
+      },
+      { timeout: 30_000 },
+    );
+    const mobile = canvas.queryByRole('button', { name: 'Open sheet menu' });
+    if (mobile) await userEvent.click(mobile);
+    else
+      await userEvent.pointer({
+        target: canvas.getByRole('tab', {
+          name: available ? 'Small sheet' : 'Large sheet',
+        }),
+        keys: '[MouseRight]',
+      });
+    const body = within(canvasElement.ownerDocument.body);
+    await waitFor(() => expect(body.getByText('Rename', { exact: true })).toBeVisible());
+    if (available)
+      await waitFor(() => expect(body.getByText('Copy', { exact: true })).toBeVisible());
+    else expect(body.queryByText('Copy', { exact: true })).not.toBeInTheDocument();
+    for (const label of [
+      'Protect Worksheet',
+      'Unprotect Worksheet',
+      'Change permissions',
+      'Remove protection',
+    ])
+      expect(body.queryByText(label, { exact: true })).not.toBeInTheDocument();
+  };
+}
+
+export const SheetCopyAvailable: Story = {
+  args: { kind: 'sheet', getSnapshot: () => syncSheetMenuFixture() },
+  play: inspectCopyMenu(true),
+};
+export const SheetCopyUnavailable: Story = {
+  args: { kind: 'sheet', getSnapshot: () => syncSheetMenuFixture(true) },
+  play: inspectCopyMenu(false),
 };

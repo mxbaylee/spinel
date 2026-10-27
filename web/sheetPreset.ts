@@ -1,3 +1,4 @@
+import { SyncSheetMenuPlugin, syncSheetMenuConfig } from './syncSheetMenus.ts';
 import {
   UniverSheetsCorePreset,
   UniverUIPlugin,
@@ -22,7 +23,8 @@ export function sheetPreset(
   mobile: boolean,
   formula?: IUniverSheetsCorePresetConfig['formula'],
 ): IPreset {
-  const preset = UniverSheetsCorePreset({ container, formula });
+  const preset = UniverSheetsCorePreset({ container, formula, menu: syncSheetMenuConfig });
+  preset.plugins.push(SyncSheetMenuPlugin);
   if (!mobile) return preset;
   // Select mobile UI before creating the instance. Retain the public preset's
   // model/engine configuration, including Docs UI for the sheet's text editor.

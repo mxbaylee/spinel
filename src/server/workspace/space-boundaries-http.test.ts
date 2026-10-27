@@ -1,15 +1,15 @@
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { request } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test } from 'vitest';
+import WebSocket from 'ws';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
-import { UniverType } from '@univerjs/protocol';
-import type { IGetDeserializedSheetBlockResponse, ISnapshot } from '@univerjs/protocol';
+import { openSyncSocket } from '../collaboration/transport.fixture.ts';
+import type { SocketClient } from '../collaboration/transport.fixture.ts';
 import { createApp } from '../../../server/app.ts';
 import { openDatabase } from '../../../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../auth/store.ts';
@@ -102,7 +102,7 @@ async function fixture() {
   const cookies = [cookie(owner.id), cookie(editor.id), cookie(viewer.id)];
   const token = new AccessTokens(auth).create(owner.id, 'Space boundary fixture').token;
   const spaceId = randomUUID();
-  migrateSpaceSchema(seed); // Before the application/SDK opens another connection.
+  migrateSpaceSchema(seed); // Before the application opens another connection.
   seed.close();
 
   const origin = 'http://localhost:3000';
@@ -117,6 +117,10 @@ async function fixture() {
   cleanup.push(() => app.close());
   const db = openDatabase(filename);
   cleanup.push(() => db.close());
+  const sockets: WebSocket[] = [];
+  cleanup.push(() => {
+    for (const socket of sockets) if (socket.readyState !== WebSocket.CLOSED) socket.terminate();
+  });
   await new Promise<void>((resolve) => app.server.listen(0, '127.0.0.1', resolve));
   const root = 'http://127.0.0.1:' + (app.server.address() as AddressInfo).port;
   const send = (
@@ -134,14 +138,20 @@ async function fixture() {
       },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
+  const open = (path: string, credential = cookies[0]) =>
+    openSyncSocket(root.replace('http:', 'ws:') + path, credential, origin, sockets);
   const nativeRows = () =>
-    ['doc_snapshots', 'sheet_snapshots', 'doc_images'].map((table) =>
-      db.prepare('SELECT * FROM ' + table).all(),
-    );
+    [
+      'doc_snapshots',
+      'sheet_snapshots',
+      'doc_images',
+      'spinel_sync_units',
+      'spinel_sync_revisions',
+    ].map((table) => db.prepare('SELECT * FROM ' + table).all());
   let before: ReturnType<typeof nativeRows> | undefined;
   const attachToSpace = () =>
     new AuthStore(db).transaction(() => {
-      // Preparation may initialize or restore SDK units first. Isolate the
+      // Preparation may initialize or restore native units first. Isolate the
       // preservation assertion to membership changes and rejected operations.
       before = nativeRows();
       db.prepare(
@@ -164,6 +174,7 @@ async function fixture() {
     origin,
     root,
     send,
+    open,
     cookies,
     owner,
     editor,
@@ -248,32 +259,33 @@ test('with Spaces disabled, ordinary HTTP discovery and direct-ID content, grant
   f.unchanged();
 }, 30_000);
 
-test('with Spaces disabled, protocol permissions, snapshots, session tickets and guest capabilities close at the real application boundary', async () => {
+test('with Spaces disabled, native snapshots, replay, tickets and guest capabilities close at the real application boundary', async () => {
   const f = await fixture();
-  const snapshotPath = (id: string, type: UniverType) =>
-    '/universer-api/snapshot/' + type + '/unit/' + id + '/rev/0';
-  const readSnapshot = async (id: string, type: UniverType) => {
-    const response = await f.send(snapshotPath(id, type));
+  const base = (id: string, guest = false) => `/sync-api/${guest ? 'guest' : 'items'}/${id}`;
+  const snapshotPath = (id: string, unitId = id, guest = false) =>
+    `${base(id, guest)}/snapshot?unitId=${unitId}`;
+  const readSnapshot = async (id: string, unitId = id) => {
+    const response = await f.send(snapshotPath(id, unitId));
     expect(response.status).toBe(200);
-    const { snapshot } = (await response.json()) as { snapshot: ISnapshot };
-    expect(snapshot).toMatchObject({ unitID: id, type });
-    return snapshot;
+    const result = await response.json();
+    expect(result).toMatchObject({ version: 1, unitId, snapshot: { id: unitId } });
+    return result;
   };
   // Initialize these exact ordinary files through the application before hiding
-  // them, so a missing SDK unit or the wrong document type cannot explain denial.
+  // them, so a missing native unit or the wrong document cannot explain denial.
   for (const item of [f.doc, f.sheet]) {
     const response = await f.send('/api/items/' + item.id + '/collaboration', f.cookies[0], {});
     expect(response.status).toBe(200);
-    expect(await response.json()).toMatchObject({ unitId: item.id });
+    expect(await response.json()).toMatchObject({ unitId: item.id, syncVersion: 1 });
   }
-  expect(await readSnapshot(f.doc.id, UniverType.UNIVER_DOC)).toMatchObject({
-    doc: { name: f.doc.name },
+  expect(await readSnapshot(f.doc.id)).toMatchObject({
+    snapshot: { title: f.doc.name, body: { dataStream: 'Hidden native text\r\n' } },
   });
-  expect(await readSnapshot(f.sheet.id, UniverType.UNIVER_SHEET)).toMatchObject({
-    workbook: { name: f.sheet.name, sheets: { first: { name: 'Secret tab' } } },
+  expect(await readSnapshot(f.sheet.id)).toMatchObject({
+    snapshot: { name: f.sheet.name, sheets: { first: { name: 'Secret tab' } } },
   });
 
-  // A real restore gives the same Sheet a live SDK alias. Its positive control
+  // A real restore gives the same Sheet a live generation. Its positive control
   // prevents rejection of only the obsolete stable ID from masking an escape.
   const named = await f.send('/api/items/' + f.sheet.id + '/history', f.cookies[0], {
     name: 'Before Space membership',
@@ -288,16 +300,68 @@ test('with Spaces disabled, protocol permissions, snapshots, session tickets and
   expect(restored.status).toBe(200);
   const activeSheet = (await restored.json()).unitId as string;
   expect(activeSheet).not.toBe(f.sheet.id);
-  const snapshot = await readSnapshot(activeSheet, UniverType.UNIVER_SHEET);
+  const snapshot = await readSnapshot(f.sheet.id, activeSheet);
   expect(snapshot).toMatchObject({
-    workbook: { name: f.sheet.name, sheets: { first: { name: 'Secret tab' } } },
+    snapshot: {
+      name: f.sheet.name,
+      sheets: { first: { name: 'Secret tab', cellData: { 0: { 0: { v: 'Hidden cell' } } } } },
+    },
   });
-  const blocks = snapshot.workbook?.blockMeta.first?.blocks ?? [];
-  expect(blocks.length).toBeGreaterThan(0);
-  const blockPath = '/universer-api/snapshot/block/2/unit/' + activeSheet + '/block/' + blocks[0];
+  const ticket = async (id: string, unitId = id, credential = f.cookies[0], guest = false) => {
+    const response = await f.send(`${base(id, guest)}/ticket?unitId=${unitId}`, credential, {});
+    expect(response.status).toBe(200);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    const value = (await response.json()).ticket as string;
+    expect(typeof value).toBe('string');
+    return value;
+  };
+  const open = (
+    id: string,
+    unitId: string,
+    value: string,
+    credential = f.cookies[0],
+    guest = false,
+    afterRevision?: number,
+  ) =>
+    f.open(
+      `${base(id, guest)}/socket?unitId=${unitId}&ticket=${encodeURIComponent(value)}${afterRevision === undefined ? '' : `&afterRevision=${afterRevision}`}`,
+      credential,
+    );
+  const live: SocketClient[] = [];
+  const writer = await open(f.sheet.id, activeSheet, await ticket(f.sheet.id, activeSheet));
+  live.push(writer);
+  expect(writer.status).toBe(101);
+  await expect.poll(() => writer.messages.some((frame) => frame.type === 'snapshot')).toBe(true);
+  expect(writer.messages.find((frame) => frame.type === 'snapshot')).toMatchObject(snapshot);
+  const mutationId = randomUUID();
+  writer.socket.send(
+    JSON.stringify({
+      type: 'submit',
+      mutationId,
+      baseRevision: snapshot.revision,
+      mutations: [
+        {
+          id: 'sheet.mutation.set-range-values',
+          params: {
+            unitId: activeSheet,
+            subUnitId: 'first',
+            cellValue: { 0: { 1: { v: 'Hidden replay cell' } } },
+          },
+        },
+      ],
+    }),
+  );
+  await expect
+    .poll(
+      () =>
+        writer.messages.find((frame) => frame.type === 'ack' && frame.mutationId === mutationId)
+          ?.revision,
+    )
+    .toBe(snapshot.revision + 1);
+
   const reads = [
-    [snapshotPath(f.doc.id, UniverType.UNIVER_DOC), f.doc.name],
-    [snapshotPath(activeSheet, UniverType.UNIVER_SHEET), f.sheet.name],
+    [snapshotPath(f.doc.id), f.doc.name],
+    [snapshotPath(f.sheet.id, activeSheet), f.sheet.name],
   ];
   for (const cookie of f.cookies) {
     for (const [path, content] of reads) {
@@ -305,99 +369,93 @@ test('with Spaces disabled, protocol permissions, snapshots, session tickets and
       expect(response.status, path).toBe(200);
       expect(await response.text(), path).toContain(content);
     }
-    const response = await f.send(blockPath, cookie);
-    expect(response.status, blockPath).toBe(200);
-    const { block } = (await response.json()) as IGetDeserializedSheetBlockResponse;
-    expect(block).toMatchObject({ id: blocks[0], data: expect.any(Object) });
-    expect(JSON.stringify(block?.data)).toContain('"Hidden cell"');
+    const client = await open(
+      f.sheet.id,
+      activeSheet,
+      await ticket(f.sheet.id, activeSheet, cookie),
+      cookie,
+      false,
+      snapshot.revision,
+    );
+    live.push(client);
+    expect(client.status).toBe(101);
+    await expect.poll(() => client.messages.some((frame) => frame.type === 'resume')).toBe(true);
+    const replay = client.messages.find((frame) => frame.type === 'resume');
+    expect(replay).toMatchObject({
+      unitId: activeSheet,
+      fromRevision: snapshot.revision,
+      revision: snapshot.revision + 1,
+      edits: [{ revision: snapshot.revision + 1 }],
+    });
+    expect(JSON.stringify(replay)).toContain('Hidden replay cell');
   }
-  const guestSnapshotPath =
-    '/guest-api/' + f.doc.id + snapshotPath(f.doc.id, UniverType.UNIVER_DOC);
+  const guestSnapshotPath = snapshotPath(f.doc.id, f.doc.id, true);
   const guestSnapshot = await f.send(guestSnapshotPath, f.guestCookie);
   expect(guestSnapshot.status).toBe(200);
   expect(await guestSnapshot.text()).toContain(f.doc.name);
 
-  const ticket = async () => {
-    const response = await f.send('/universer-api/user/session-ticket?unitID=' + activeSheet);
-    expect(response.status).toBe(200);
-    const value = (await response.json()).ticket as string;
-    expect(typeof value).toBe('string');
-    return value;
-  };
-  const upgrade = (value: string) =>
-    new Promise<number>((resolve, reject) => {
-      const req = request(
-        f.root +
-          '/universer-api/comb/connect?unitID=' +
-          activeSheet +
-          '&sessionTicket=' +
-          encodeURIComponent(value),
-        {
-          headers: {
-            Cookie: f.cookies[0],
-            Origin: f.origin,
-            Connection: 'Upgrade',
-            Upgrade: 'websocket',
-            'Sec-WebSocket-Version': '13',
-            'Sec-WebSocket-Key': Buffer.alloc(16).toString('base64'),
-          },
-        },
-        (response) => {
-          response.resume();
-          resolve(response.statusCode!);
-        },
-      );
-      req.on('upgrade', (response, socket) => {
-        socket.destroy();
-        resolve(response.statusCode!);
-      });
-      req.on('error', reject);
-      req.setTimeout(5000, () => req.destroy(new Error('Space upgrade timeout')));
-      req.end();
-    });
-  expect(await upgrade(await ticket())).toBe(101);
-  const staleTicket = await ticket();
+  const guestClient = await open(
+    f.doc.id,
+    f.doc.id,
+    await ticket(f.doc.id, f.doc.id, f.guestCookie, true),
+    f.guestCookie,
+    true,
+  );
+  live.push(guestClient);
+  expect(guestClient.status).toBe(101);
+  await expect
+    .poll(() => guestClient.messages.some((frame) => frame.type === 'snapshot'))
+    .toBe(true);
+  expect(JSON.stringify(guestClient.messages)).toContain('Hidden native text');
+  const staleTicket = await ticket(f.sheet.id, activeSheet);
+  const staleReplayTicket = await ticket(f.sheet.id, activeSheet);
+  const staleGuestTicket = await ticket(f.doc.id, f.doc.id, f.guestCookie, true);
   f.attachToSpace();
   // The credential, active generation and ticket scope are identical; only
   // Space membership changed after this unused ticket was issued.
-  expect(await upgrade(staleTicket)).toBe(403);
+  for (const client of [
+    await open(f.sheet.id, activeSheet, staleTicket),
+    await open(f.sheet.id, activeSheet, staleReplayTicket, f.cookies[0], false, snapshot.revision),
+    await open(f.doc.id, f.doc.id, staleGuestTicket, f.guestCookie, true),
+  ]) {
+    expect(client.status).toBe(403);
+    expect(client.messages).toEqual([]);
+  }
+  await expect
+    .poll(() => live.every((client) => client.socket.readyState === WebSocket.CLOSED))
+    .toBe(true);
 
-  const ids = [f.spaceId, f.doc.id, f.sheet.id, activeSheet];
+  const targets = [
+    [f.spaceId, f.spaceId],
+    [f.doc.id, f.doc.id],
+    [f.sheet.id, f.sheet.id],
+    [f.sheet.id, activeSheet],
+    [activeSheet, activeSheet],
+  ];
   for (const cookie of f.cookies) {
-    const allowed = await f.send('/universer-api/authz/-/object/-/batch_allowed', cookie, {
-      requests: ids.map((id) => ({ unitID: id, objectID: id, actions: [0, 1, 2, 34] })),
-    });
-    expect(allowed.status).toBe(200);
-    const body = await allowed.json();
-    expect(body.objectActions).toHaveLength(ids.length);
-    for (const row of body.objectActions)
-      expect(row.actions.every((action: { allowed: boolean }) => !action.allowed)).toBe(true);
-    for (const id of ids) {
-      expect(
-        (await f.send('/universer-api/user/session-ticket?unitID=' + id, cookie)).status,
-      ).toBeGreaterThanOrEqual(400);
-    }
-    for (const path of [
-      snapshotPath(f.spaceId, UniverType.UNIVER_SHEET),
-      snapshotPath(f.sheet.id, UniverType.UNIVER_SHEET),
-      ...reads.map(([path]) => path),
-      blockPath,
-    ]) {
-      const response = await f.send(path, cookie);
-      expect(response.status, path).toBeGreaterThanOrEqual(400);
-      expect(await response.text(), path).not.toContain('Hidden');
+    for (const [id, unitId] of targets) {
+      for (const prefix of [base(id), `/sync-api/spaces/${f.spaceId}/items/${id}`]) {
+        for (const action of ['snapshot', 'ticket']) {
+          const path = `${prefix}/${action}?unitId=${unitId}`;
+          const response = await f.send(path, cookie, action === 'ticket' ? {} : undefined);
+          expect(response.status, path).toBe(403);
+          expect(await response.text(), path).not.toContain('Hidden');
+        }
+      }
     }
   }
   for (const path of [
     '/api/guest/' + f.doc.id,
     '/api/items/' + f.doc.id + '/images/' + f.imageId,
-    '/guest-api/' + f.doc.id + '/universer-api/user/session-ticket?unitID=' + f.doc.id,
     guestSnapshotPath,
   ]) {
     const response = await f.send(path, f.guestCookie);
     expect(response.status, path).toBeGreaterThanOrEqual(400);
     expect(await response.text()).not.toContain('Hidden');
   }
+  expect(
+    (await f.send(`${base(f.doc.id, true)}/ticket?unitId=${f.doc.id}`, f.guestCookie, {})).status,
+  ).toBe(403);
   expect(
     (await f.send('/api/guest/' + f.doc.id + '/session', '', { token: f.link.token })).status,
   ).toBe(404);

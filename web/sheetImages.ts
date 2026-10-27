@@ -21,13 +21,13 @@ class ExistingSheetImages extends ImageIoService {
   }
 }
 export const sheetImageOverride = [IImageIoService, { useClass: ExistingSheetImages }] as const;
-export function sheetImages(mobile: boolean, collaboration = true): IPreset {
-  const preset = UniverSheetsDrawingPreset({ collaboration });
+export function sheetImages(mobile: boolean): IPreset {
+  const preset = UniverSheetsDrawingPreset();
   return {
     ...preset,
     plugins: preset.plugins.map((entry) => {
       const [plugin, config] = Array.isArray(entry) ? entry : [entry, undefined];
-      if (plugin === UniverDrawingPlugin && !collaboration)
+      if (plugin === UniverDrawingPlugin)
         return [plugin, { ...config, override: [[...sheetImageOverride]] }];
       if (plugin === UniverDrawingUIPlugin && mobile) return [UniverDrawingMobileUIPlugin, config];
       if (plugin !== UniverSheetsDrawingUIPlugin) return entry;

@@ -18,6 +18,8 @@ for (const project of [
   'mobile-https',
   'sync-development',
   'sync-production',
+  'sync-soak-sheet',
+  'sync-soak-doc',
 ]) {
   const result = spawnSync(
     process.execPath,

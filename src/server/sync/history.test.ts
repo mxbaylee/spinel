@@ -66,7 +66,7 @@ async function fixture(space = false) {
     sessionHash: sessions.get(user)!.session.token_hash,
     ...(root && { spaceId: root.id, spaceItem: id }),
   });
-  let collab = new CollaborationStore(workspace, path, { syncServer: true });
+  let collab = new CollaborationStore(workspace, path);
   let history = new HistoryStore(workspace, collab);
   let closed = false;
   const close = async () => {
@@ -76,9 +76,9 @@ async function fixture(space = false) {
     await collab.close();
   };
   cleanup.push(close);
-  const restart = async (enabled = true) => {
+  const restart = async () => {
     await close();
-    collab = new CollaborationStore(workspace, path, { syncServer: enabled });
+    collab = new CollaborationStore(workspace, path);
     history = new HistoryStore(workspace, collab);
     closed = false;
     return { collab, history };
@@ -425,18 +425,18 @@ test('restart cancels an unpublished restore and purges its staged own-server ge
   expect((await f.load()).revision).toBe(1);
 });
 
-test('a legacy document can restore with the own server disabled in a database containing owned generations', async () => {
+test('a newly prepared document can restore after restart alongside existing native generations', async () => {
   const f = await fixture();
-  const disabled = await f.restart(false);
+  const reopened = await f.restart();
   const legacy = f.workspace.create(f.owner.id, {
     name: 'Legacy Sheet',
     kind: 'sheet',
     parentId: null,
   });
   const custom = f.custom(f.owner.id, legacy.id);
-  await disabled.collab.prepare(f.owner.id, legacy.id, custom);
-  const baseline = disabled.history.list(f.owner.id, legacy.id, custom)[0];
-  const result = await disabled.collab.submitChangeset(
+  await reopened.collab.prepare(f.owner.id, legacy.id, custom);
+  const baseline = reopened.history.list(f.owner.id, legacy.id, custom)[0];
+  const result = await reopened.collab.submitChangeset(
     {
       changeset: {
         unitID: legacy.id,
@@ -462,7 +462,7 @@ test('a legacy document can restore with the own server disabled in a database c
     { userID: f.owner.id, memberID: 'legacy-restore', customData: custom },
   );
   expect(result.status).toBe('committed');
-  await disabled.history.restore(
+  await reopened.history.restore(
     f.owner.id,
     legacy.id,
     baseline.id,
@@ -471,14 +471,14 @@ test('a legacy document can restore with the own server disabled in a database c
     () => {},
     custom,
   );
-  const generation = disabled.collab.generations.active(legacy.id);
-  const restored = await disabled.collab.load(f.owner.id, legacy.id, custom);
+  const generation = reopened.collab.generations.active(legacy.id);
+  const restored = await reopened.collab.load(f.owner.id, legacy.id, custom);
   expect(restored.revision).toBe(3);
   expect((restored.snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]?.v).toBeUndefined();
-  expect(disabled.collab.sync).toBeUndefined();
+  expect(reopened.collab.sync).toBeDefined();
   expect(
     f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(generation.unitId),
-  ).toBeUndefined();
+  ).toBeTruthy();
   expect(
     f.db.prepare('SELECT 1 FROM spinel_sync_units WHERE unit_id=?').get(f.item.id),
   ).toBeTruthy();

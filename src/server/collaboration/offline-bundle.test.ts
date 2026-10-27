@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import sharp from 'sharp';
 import { afterEach, expect, test, vi } from 'vitest';
 import { LocaleType } from '@univerjs/core';
-import { CollabError } from '@univerjs-pro/collaboration-service';
+import { CollaborationError } from './errors.ts';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { openDatabase } from '../../../server/database.ts';
 import type { OfflineBundle } from '../../shared/offlineBundle.ts';
@@ -430,7 +430,7 @@ test('a revoke while the bundle prepares the document is 404, not a save error',
   });
 });
 
-test('an SDK denial is 409 when the unit was replaced and 404 when access is gone', async () => {
+test('a sync denial is 409 when the unit was replaced and 404 when access is gone', async () => {
   const f = await fixture();
   const history = new HistoryStore(f.workspace, f.collab);
   cleanup.push(() => history.close());
@@ -438,8 +438,11 @@ test('an SDK denial is 409 when the unit was replaced and 404 when access is gon
   const checkpoint = await history.nameCurrent(f.owner.id, f.doc.id, 'Before');
   const unit = f.collab.generations.active(f.doc.id).unitId;
   const stale = () =>
-    new CollabError('PERMISSION_DENIED', 'This version is no longer live. Reload to continue.');
-  // The SDK refuses a read of a unit that a restore replaced mid-read.
+    new CollaborationError(
+      'PERMISSION_DENIED',
+      'This version is no longer live. Reload to continue.',
+    );
+  // The sync service refuses a read of a unit that a restore replaced mid-read.
   vi.spyOn(f.collab, 'load').mockImplementationOnce(async () => {
     await history.restore(f.owner.id, f.doc.id, checkpoint.id, unit, randomUUID());
     throw stale();
@@ -448,12 +451,12 @@ test('an SDK denial is 409 when the unit was replaced and 404 when access is gon
   await expect(f.bundle(f.owner.id, f.doc.id)).rejects.toMatchObject({ status: 409 });
   // Any other denial is 404, even while the account keeps access and nothing was replaced.
   vi.spyOn(f.collab, 'load').mockRejectedValueOnce(
-    new CollabError('PERMISSION_DENIED', 'Your session expired.'),
+    new CollaborationError('PERMISSION_DENIED', 'Your session expired.'),
   );
   await expect(f.bundle(f.owner.id, f.doc.id)).rejects.toMatchObject({ status: 404 });
   vi.spyOn(f.collab, 'load').mockImplementationOnce(async () => {
     f.workspace.share(f.owner.id, f.doc.id, f.editor.id, null);
-    throw new CollabError('PERMISSION_DENIED', 'This document is not available.');
+    throw new CollaborationError('PERMISSION_DENIED', 'This document is not available.');
   });
   // Why 404: a revoked account learns no more than one that never had access (#91).
   await expect(f.bundle(f.editor.id, f.doc.id)).rejects.toMatchObject({ status: 404 });

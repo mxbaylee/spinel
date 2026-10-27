@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { FormulaDialog, FormulaResultView } from './DocFormulas.tsx';
@@ -53,6 +53,73 @@ export const Edit: Story = {
   parameters: { api: { ...formulaApi, ...availableSources } },
   play: ({ canvasElement }) => sourcesReady(canvasElement),
 };
+
+function FormulaFocusReturn(args: ComponentProps<typeof FormulaDialog>) {
+  const [open, setOpen] = useState(true);
+  const editor = useRef<HTMLDivElement>(null);
+  return (
+    <section aria-label="Formula focus return">
+      <div
+        ref={editor}
+        contentEditable
+        suppressContentEditableWarning
+        role="textbox"
+        aria-label="Document editor"
+        tabIndex={0}
+      >
+        Document text.
+      </div>
+      {open && (
+        <FormulaDialog
+          {...args}
+          onClose={() => {
+            args.onClose();
+            setOpen(false);
+            // Match DocEditor's restoration after the modal closes.
+            requestAnimationFrame(() => editor.current?.focus());
+          }}
+        />
+      )}
+    </section>
+  );
+}
+
+function returnsDocumentFocus(action: 'save' | 'cancel'): Story {
+  const save = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {});
+  const close = fn();
+  return {
+    args: { onSave: save, onClose: close },
+    parameters: { api: { ...formulaApi, ...availableSources } },
+    render: (args) => <FormulaFocusReturn {...args} />,
+    play: async ({ canvasElement }) => {
+      save.mockClear();
+      close.mockReset();
+      close.mockImplementation(() => {
+        // The browser modal must release focus before the parent's callback,
+        // even before React has committed the dialog's unmount.
+        expect(canvasElement.querySelector('dialog')?.open).toBe(false);
+      });
+      await sourcesReady(canvasElement);
+      const canvas = within(canvasElement);
+      const dialog = canvas.getByRole('dialog', { name: 'Insert formula' });
+      if (action === 'save') {
+        const expression = canvas.getByRole('combobox', { name: 'Formula' });
+        await userEvent.clear(expression);
+        await userEvent.type(expression, definition.expression);
+        await userEvent.click(canvas.getByRole('button', { name: /^Insert formula$/ }));
+      } else await userEvent.click(canvas.getByRole('button', { name: /^Cancel$/ }));
+      await waitFor(() => expect(close).toHaveBeenCalledTimes(1));
+      await expect(save).toHaveBeenCalledTimes(action === 'save' ? 1 : 0);
+      await waitFor(() => expect(dialog).not.toBeInTheDocument());
+      const editor = canvas.getByRole('textbox', { name: 'Document editor' });
+      await waitFor(() => expect(editor).toHaveFocus());
+      await userEvent.keyboard('Continue writing');
+      await expect(editor).toHaveTextContent('Continue writing');
+    },
+  };
+}
+export const SaveReturnsFocus: Story = returnsDocumentFocus('save');
+export const CancelReturnsFocus: Story = returnsDocumentFocus('cancel');
 
 function saveFailure(reason: FormulaFailureReason): Story {
   const save = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {

@@ -109,7 +109,7 @@ export async function openSnapshotViewer({
             mobile,
             images ? { initialFormulaComputing: CalculationMode.NO_CALCULATION } : undefined,
           ),
-          drawings(sheetImages(mobile, false)),
+          drawings(sheetImages(mobile)),
         ]
       : [
           UniverDocsCorePreset({ container }),

@@ -1,4 +1,4 @@
-import { normalizeTextRuns } from '@univerjs/core';
+import { isFormulaId, isFormulaString, normalizeTextRuns } from '@univerjs/core';
 import type { ICellData, IDocumentData, IWorkbookData } from '@univerjs/core';
 import { Cells } from './state.ts';
 import type { BaseCells } from './state.ts';
@@ -36,6 +36,11 @@ export function normalizedCell(cell: ICellData | null | undefined) {
   if (!cell) return null;
   const value = structuredClone(cell) as Record<string, any>;
   delete value.t;
+  // Native calculation writes a local scalar cache into formula/shared-formula
+  // cells. Its timing must not change authored-content verification. Array
+  // spills live in a display interceptor, so ordinary raw cells retain v even
+  // when they carry array metadata. Keep rich text, styles and formula identity.
+  if (isFormulaString(value.f) || isFormulaId(value.si)) delete value.v;
   for (const field of Object.keys(value)) if (value[field] == null) delete value[field];
   if (value.s && typeof value.s === 'object') {
     for (const decoration of ['ul', 'ol', 'st']) {

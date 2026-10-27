@@ -223,7 +223,7 @@ export function workspaceRoutes(
     const item = store.get(owner(request), id);
     response.json({
       unitId: collaboration.generations.active(id).unitId,
-      ...(collaboration.sync && { syncVersion: 1 }),
+      syncVersion: 1,
       access: item.access,
       user: { id: user, name: auth.user(user)!.name },
     });

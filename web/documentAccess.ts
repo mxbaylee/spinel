@@ -18,12 +18,3 @@ export function documentPath(id: string, spaceId?: string) {
 export function documentSyncPath(id: string, spaceId?: string) {
   return documentPath(id, spaceId).replace(/^\/api\//, '/sync-api/');
 }
-
-/** A stable child ID remains separate from the native SDK's active generation ID. */
-export function documentProtocolPath(space?: { spaceId: string; itemId: string }) {
-  const guest = guestItemId();
-  if (guest && space && space.spaceId !== guest) throw new Error('This document is not available.');
-  if (space)
-    return `/${guest ? 'guest-space-api' : 'space-api'}/${encodeURIComponent(space.spaceId)}/items/${encodeURIComponent(space.itemId)}/universer-api`;
-  return `${guest ? `/guest-api/${guest}` : ''}/universer-api`;
-}

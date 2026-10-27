@@ -55,7 +55,7 @@ async function fixture(space = false) {
     sessionHash: sessions.get(user)!.token_hash,
     ...(root && { spaceId: root.id, spaceItem: item.id }),
   });
-  const collab = new CollaborationStore(workspace, path, { syncServer: true });
+  const collab = new CollaborationStore(workspace, path);
   cleanup.push(() => collab.close());
   const documents = new McpDocuments(workspace, collab);
   const oauth = new AssistantOAuth(auth, 'https://spinel.example');

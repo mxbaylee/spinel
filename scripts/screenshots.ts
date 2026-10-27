@@ -139,6 +139,9 @@ try {
       console.log(`Review ${variant}: ${id}`);
       try {
         errors.length = 0;
+        // A failed short-viewport check must not make the next story compare
+        // the same 600px height against itself instead of exercising a resize.
+        await page.setViewportSize({ width, height: 900 });
         await page.goto(
           `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`,
         );
@@ -261,7 +264,12 @@ try {
             await expect(
               editor.getByRole('button', { name: 'Clear All', exact: true }),
             ).toBeVisible();
-            await expect(editor.getByRole('button', { name: 'More', exact: true })).toBeVisible();
+            // The pinned mobile More group contained only range protection,
+            // which native sync deliberately excludes from the supported menu.
+            await expect(editor.getByRole('button', { name: 'More', exact: true })).toHaveCount(0);
+            await expect(
+              editor.locator('[data-u-command="sheet.command.add-range-protection-from-toolbar"]'),
+            ).toHaveCount(0);
           }
           await expect(toolbar).toBeVisible();
           const before = await toolbar.boundingBox();

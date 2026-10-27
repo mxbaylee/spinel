@@ -1,10 +1,9 @@
 # Developing Spinel
 
-For the SPN-057/SPN-058 integration, `SPINEL_SYNC_SERVER=1` selects the
-new server, native browser client and ephemeral presence; it defaults off. Use newly prepared test documents. Each backend
-refuses documents already owned by the other, so changing the flag cannot create
-a separate edit history. SPN-056 reviews the integrated path, and SPN-059 owns default activation and
-retained-data conversion. See [the protocol and limits](collaboration.md#spinel-server-integration-flag).
+Every document uses Spinel's native sync server, client and presence. There is no
+collaboration rollout flag. Retained pre-cutover databases need the explicit
+[verified transition](../scripts/sync-transition/README.md) before serving; fresh
+disposable databases initialize normally. See [collaboration](collaboration.md).
 
 Use the Node version in `.nvmrc` (26.12.1). From a fresh checkout:
 
@@ -89,18 +88,19 @@ npm run backlog:check
 `npm test` runs the existing Node backlog tests and Vitest server tests.
 `npm run e2e` builds the frontend, then Playwright starts isolated development and
 production servers on ports 3100 and 3101, a disposable mobile HTTPS server
-on port 3103, and flag-on native sync servers on ports 3104 and 3105, with databases in `test-results/`. Projects run sequentially to
+on port 3103, native snapshot evidence servers on ports 3104 and 3105, and dedicated
+Sheet/Doc soak servers on ports 3106 and 3107, with databases in `test-results/`. Projects run sequentially to
 avoid keeping several SDK server processes in memory. CI instead runs each
 project on its own runner, splitting development and production in two with
 `--shard`, and the **Playwright smoke** check passes only when every run and the
 container smoke do.
 
-`sync-development` and `sync-production` run `e2e/sync-client.spec.ts` with
-`SPINEL_SYNC_SERVER=1`. They exercise actual native Sheet/Doc editing, offline
+`sync-development` and `sync-production` run the native UI scenarios in
+`e2e/sync-client.spec.ts`; `sync-soak-sheet` and `sync-soak-doc` run its seeded
+longer browser checks on separate workers. They exercise actual native Sheet/Doc editing, offline
 rebasing, an accepted write with a deliberately lost acknowledgment, visible-model
 verification, drawing insertion and scoped Space guest presence. These projects
-use independent disposable databases; the ordinary projects retain the default
-legacy path. For a focused run, use
+use independent disposable databases; every project uses the same default native sync path. For a focused run, use
 `VITE_SYNC_EVIDENCE=1 npm run build` followed by
 `SPINEL_E2E_PROJECT=sync-production npx playwright test --project=sync-production`.
 The sync test builds enable a read-only snapshot event through

@@ -1,3 +1,4 @@
+import { syncNetwork } from './sync-network.ts';
 import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -105,6 +106,7 @@ async function fixture(browser: Browser, info: TestInfo) {
     viewport: { width: 1440, height: 1050 },
     permissions: ['clipboard-read', 'clipboard-write'],
   });
+  const network = await syncNetwork(guest);
   const page = await guest.newPage();
   page.setDefaultTimeout(15_000);
   const errors: string[] = [];
@@ -153,6 +155,7 @@ async function fixture(browser: Browser, info: TestInfo) {
       );
   };
   return {
+    network,
     db,
     workspace,
     spaces,
@@ -636,10 +639,10 @@ test('a stale missing sibling action preserves a valid guest root and pending na
     const held = new Promise<void>((resolve) => {
       release = resolve;
     });
-    await f.guest.route('**/universer-api/comb/**/new_changes', async (route) => {
+    f.network.interceptWrites(async (write) => {
       received++;
       await held;
-      await route.continue();
+      write.forward();
     });
     const draft = 'Pending input survives a missing sibling.';
     await focusDoc(f.page);
@@ -693,7 +696,7 @@ test('a stale missing sibling action preserves a valid guest root and pending na
   } finally {
     release();
     try {
-      await f.guest.unrouteAll({ behavior: 'wait' });
+      await f.network.drainWrites();
     } finally {
       await f.close();
     }
@@ -720,22 +723,14 @@ for (const kind of ['doc', 'sheet'] as const) {
       const before = await f.snapshot(child.id);
       const siblingBefore = await f.snapshot(sibling.id);
       let received = 0;
-      const returned: number[] = [];
+      const forwarded: boolean[] = [];
       const held = new Promise<void>((resolve) => {
         release = resolve;
       });
-      await f.guest.route('**/universer-api/comb/**/new_changes', async (route) => {
+      f.network.interceptWrites(async (write) => {
         received++;
         await held;
-        const response = await route.fetch();
-        returned.push(response.status());
-        // Native disposal can cancel the original browser request. Still send
-        // its captured write to the server and verify the authoritative refusal.
-        try {
-          await route.fulfill({ response });
-        } catch {
-          /* Browser request was cancelled. */
-        }
+        forwarded.push(write.forward());
       });
       const privateDraft = `Unsent ${kind} private contribution`;
       if (kind === 'doc') {
@@ -822,10 +817,9 @@ for (const kind of ['doc', 'sheet'] as const) {
       await expect(f.page.locator('canvas, [contenteditable="true"]')).toHaveCount(0);
       const count = received;
       release();
-      await expect.poll(() => returned.length).toBeGreaterThanOrEqual(count);
-      expect(returned.every((status) => status === 401 || status === 403 || status === 404)).toBe(
-        true,
-      );
+      await expect.poll(() => forwarded.length).toBeGreaterThanOrEqual(count);
+      // Revocation closed every captured native channel before held writes were released.
+      expect(forwarded).toEqual(Array(count).fill(false));
       expect(await f.snapshot(child.id)).toEqual(before);
       expect(await f.snapshot(sibling.id)).toEqual(siblingBefore);
       for (const target of [child, sibling])
@@ -847,7 +841,7 @@ for (const kind of ['doc', 'sheet'] as const) {
     } finally {
       release();
       try {
-        await f.guest.unrouteAll({ behavior: 'wait' });
+        await f.network.drainWrites();
       } finally {
         await f.close();
       }

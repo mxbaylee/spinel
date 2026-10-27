@@ -3,9 +3,15 @@ import { defineConfig, devices } from '@playwright/test';
 const project = process.env.SPINEL_E2E_PROJECT;
 if (
   project &&
-  !['development', 'production', 'mobile-https', 'sync-development', 'sync-production'].includes(
-    project,
-  )
+  ![
+    'development',
+    'production',
+    'mobile-https',
+    'sync-development',
+    'sync-production',
+    'sync-soak-sheet',
+    'sync-soak-doc',
+  ].includes(project)
 )
   throw new Error('SPINEL_E2E_PROJECT must name a configured browser project.');
 
@@ -42,13 +48,24 @@ export default defineConfig({
     {
       name: 'sync-development',
       testMatch: '**/sync-client.spec.ts',
+      grepInvert: /@sync-soak/,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3104' },
     },
     {
       name: 'sync-production',
       testMatch: '**/sync-client.spec.ts',
+      grepInvert: /@sync-soak/,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3105' },
     },
+    ...(['sheet', 'doc'] as const).map((kind) => ({
+      name: `sync-soak-${kind}`,
+      testMatch: '**/sync-client.spec.ts',
+      grep: new RegExp(`seeded two-editor ${kind} sync soak`),
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: kind === 'sheet' ? 'http://localhost:3106' : 'http://localhost:3107',
+      },
+    })),
     {
       name: 'mobile-https',
       testMatch: '**/pwa.spec.ts',
@@ -71,7 +88,6 @@ export default defineConfig({
         PORT: '3100',
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/development/app.sqlite',
-        SPINEL_SYNC_SERVER: '0',
         VITE_SYNC_EVIDENCE: '0',
       },
       reuseExistingServer: false,
@@ -83,7 +99,6 @@ export default defineConfig({
         PORT: '3101',
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/production/app.sqlite',
-        SPINEL_SYNC_SERVER: '0',
         VITE_SYNC_EVIDENCE: '0',
       },
       reuseExistingServer: false,
@@ -96,7 +111,6 @@ export default defineConfig({
         PORT: '3104',
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/sync-development/app.sqlite',
-        SPINEL_SYNC_SERVER: '1',
         VITE_SYNC_EVIDENCE: '1',
       },
       reuseExistingServer: false,
@@ -108,11 +122,21 @@ export default defineConfig({
         PORT: '3105',
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/sync-production/app.sqlite',
-        SPINEL_SYNC_SERVER: '1',
         VITE_SYNC_EVIDENCE: '1',
       },
       reuseExistingServer: false,
     },
+    ...(['sheet', 'doc'] as const).map((kind) => ({
+      command: 'npm start',
+      url: `http://localhost:${kind === 'sheet' ? 3106 : 3107}/sign-in`,
+      env: {
+        PORT: kind === 'sheet' ? '3106' : '3107',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: `test-results/sync-soak-${kind}/app.sqlite`,
+        VITE_SYNC_EVIDENCE: '1',
+      },
+      reuseExistingServer: false,
+    })),
     {
       command: 'node --max-old-space-size=256 --max-semi-space-size=8 scripts/e2e-https.ts',
       url: 'https://localhost:3103/sign-in',
@@ -131,7 +155,11 @@ export default defineConfig({
               ? ':3104/'
               : project === 'sync-production'
                 ? ':3105/'
-                : ':3103/',
+                : project === 'sync-soak-sheet'
+                  ? ':3106/'
+                  : project === 'sync-soak-doc'
+                    ? ':3107/'
+                    : ':3103/',
       ),
   ),
 });

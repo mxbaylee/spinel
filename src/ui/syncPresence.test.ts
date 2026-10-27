@@ -16,10 +16,6 @@ import {
 import { palettes } from './palette.ts';
 import { profileAvatar } from '../profile/profile.ts';
 
-vi.mock('@univerjs-pro/collaboration-client', () => ({
-  CollaborationSessionService: Symbol('legacy-session'),
-  SessionStatus: { ONLINE: 1 },
-}));
 vi.mock('@univerjs/docs', () => ({
   DocSelectionManagerService: Symbol('doc-selection'),
   DocSkeletonManagerService: Symbol('doc-skeleton'),
@@ -112,7 +108,7 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
         if (token === IRenderManagerService) return { getRenderUnitById: () => render };
         if (token === DocSelectionManagerService)
           return { textSelection$: input, getSelectionInfo: () => selection(0, 0) };
-        throw new Error('The flagged path must not acquire a legacy session');
+        throw new Error('Unexpected presence service');
       },
     }),
   } as unknown as Univer;
@@ -232,7 +228,7 @@ function selection(startOffset: number, endOffset: number) {
   };
 }
 
-test('flagged Doc presence keeps sessions distinct, uses catalog profiles and follows only on request', async () => {
+test('Doc presence keeps sessions distinct, uses catalog profiles and follows only on request', async () => {
   const f = await fixture();
   expect(f.people().map((person) => person.id)).toEqual(['self', 'peer1', 'peer2']);
   expect(f.people()[1]).toMatchObject({

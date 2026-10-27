@@ -81,7 +81,7 @@ export function wireRevision(edit: SyncRevision) {
   };
 }
 
-/** Versioned edits and ephemeral authenticated presence, behind the shared opt-in flag. */
+/** Versioned edits and ephemeral authenticated presence, for every live document. */
 export function attachSync(
   server: Server,
   app: Express,
@@ -89,7 +89,7 @@ export function attachSync(
   collaboration: CollaborationStore,
   origin: string,
 ) {
-  const sync = collaboration.sync!;
+  const sync = collaboration.sync;
   const tickets = new Map<string, Ticket>();
   const live = new Set<Connection>();
   const profiles = new Profiles(workspace.auth);

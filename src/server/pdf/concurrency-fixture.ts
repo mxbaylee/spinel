@@ -10,8 +10,6 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import WebSocket from 'ws';
-import { CombCmd, CmdRspCode, ErrorCode, UniverType } from '@univerjs/protocol';
-import type { ICollaMsg } from '@univerjs/protocol';
 import { SetRangeValuesMutation } from '@univerjs/sheets';
 import { createApp } from '../../../server/app.ts';
 import { openDatabase } from '../../../server/database.ts';
@@ -20,10 +18,10 @@ import { WorkspaceStore } from '../workspace/store.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 
 type Message = {
-  cmd: number;
-  code?: number;
-  infoRsp?: { memberID: string };
-  collaMsg?: ICollaMsg;
+  type: string;
+  mutationId?: string;
+  revision?: number;
+  [key: string]: unknown;
 };
 
 async function until(check: () => unknown | Promise<unknown>, message: string) {
@@ -111,16 +109,19 @@ async function main() {
       });
     const prepare = await post(`/api/items/${item.id}/collaboration`, {});
     assert.equal(prepare.status, 200);
-    const { unitId } = (await prepare.json()) as { unitId: string };
+    const { unitId, syncVersion } = (await prepare.json()) as {
+      unitId: string;
+      syncVersion: number;
+    };
+    assert.equal(syncVersion, 1);
+    const syncPath = `/sync-api/items/${item.id}`;
     const connect = async (credential: typeof ownerHeaders) => {
-      const ticketResponse = await fetch(
-        `${root}/universer-api/user/session-ticket?unitID=${unitId}`,
-        { headers: credential },
-      );
+      const ticketResponse = await post(`${syncPath}/ticket?unitId=${unitId}`, {}, credential);
       assert.equal(ticketResponse.status, 200);
+      assert.equal(ticketResponse.headers.get('cache-control'), 'no-store');
       const { ticket } = (await ticketResponse.json()) as { ticket: string };
       const socket = new WebSocket(
-        `${root.replace('http:', 'ws:')}/universer-api/comb/connect?sessionTicket=${encodeURIComponent(ticket)}&unitID=${unitId}`,
+        `${root.replace('http:', 'ws:')}${syncPath}/socket?unitId=${unitId}&ticket=${encodeURIComponent(ticket)}&afterRevision=1`,
         { headers: credential },
       );
       sockets.push(socket);
@@ -129,77 +130,78 @@ async function main() {
       await new Promise<void>((accept, reject) => {
         socket.once('open', accept);
         socket.once('error', reject);
+        socket.once('unexpected-response', (_request, response) => {
+          response.resume();
+          reject(new Error(`Native synchronization upgrade failed (${response.statusCode}).`));
+        });
       });
-      socket.send(JSON.stringify({ cmd: CombCmd.HELLO, routeKey: '', routeType: '' }));
       await until(
-        () => messages.find((message) => message.cmd === CombCmd.HELLO)?.infoRsp?.memberID,
-        'Editor did not receive HELLO.',
+        () =>
+          messages.some((message) => ['resume', 'resync'].includes(message.type)) ||
+          socket.readyState === WebSocket.CLOSED,
+        'Editor did not receive the confirmed native revision.',
       );
-      const memberID = messages.find((message) => message.cmd === CombCmd.HELLO)!.infoRsp!.memberID;
-      socket.send(
-        JSON.stringify({
-          cmd: CombCmd.JOIN,
-          routeKey: unitId,
-          routeType: '',
-          joinReq: { rooms: [{ roomID: unitId }] },
-        }),
+      assert.deepEqual(
+        messages.find((message) => message.type === 'resume'),
+        {
+          type: 'resume',
+          version: 1,
+          unitId,
+          fromRevision: 1,
+          revision: 1,
+          edits: [],
+        },
       );
-      await until(
-        () => messages.find((message) => message.cmd === CombCmd.JOIN)?.code === CmdRspCode.OK,
-        'Editor did not join the document.',
-      );
-      return { socket, messages, memberID, credential };
+      return { socket, messages };
     };
     const first = await connect(ownerHeaders),
       second = await connect(editorHeaders);
-    const submit = (
+    const submit = async (
       client: typeof first,
-      user: string,
-      baseRev: number,
+      baseRevision: number,
       row: number,
       value: string,
-    ) =>
-      post(
-        `/universer-api/comb/${UniverType.UNIVER_SHEET}/unit/${unitId}/new_changes`,
-        {
-          unitID: unitId,
-          type: UniverType.UNIVER_SHEET,
-          memberID: client.memberID,
-          changeset: {
-            unitID: unitId,
-            type: UniverType.UNIVER_SHEET,
-            userID: user,
-            memberID: client.memberID,
-            sid: `pdf-overlap-${user}`,
-            reqId: 1,
-            baseRev,
-            revision: 0,
-            mutations: [
-              {
-                id: SetRangeValuesMutation.id,
-                data: JSON.stringify({
-                  unitId,
-                  subUnitId: 'first',
-                  cellValue: { [row]: { 0: { v: value } } },
-                }),
+    ) => {
+      const mutationId = randomUUID();
+      client.socket.send(
+        JSON.stringify({
+          type: 'submit',
+          mutationId,
+          baseRevision,
+          mutations: [
+            {
+              id: SetRangeValuesMutation.id,
+              params: {
+                unitId,
+                subUnitId: 'first',
+                cellValue: { [row]: { 0: { v: value } } },
               },
-            ],
-          },
-        },
-        client.credential,
+            },
+          ],
+        }),
       );
+      await until(
+        () =>
+          client.messages.some(
+            (message) =>
+              message.mutationId === mutationId && ['ack', 'resync'].includes(message.type),
+          ) || client.socket.readyState === WebSocket.CLOSED,
+        'Native edit was not acknowledged.',
+      );
+      const acknowledged = client.messages.find(
+        (message) => message.mutationId === mutationId && message.type === 'ack',
+      );
+      assert.ok(acknowledged, 'Native edit did not receive a successful acknowledgment.');
+      assert.equal(acknowledged.duplicate, false);
+      return acknowledged;
+    };
     const read = async () => {
       const response = await fetch(`${root}/api/items/${item.id}/sheet`, { headers: ownerHeaders });
       assert.equal(response.status, 200);
       return response.json();
     };
-    const firstEdit = await submit(first, owner.id, 1, 0, ownerValue);
-    assert.equal(firstEdit.status, 200);
-    assert.equal((await firstEdit.json()).error.code, ErrorCode.OK);
-    await until(
-      () => first.messages.some((message) => message.collaMsg?.csAckEvent?.cs?.revision === 2),
-      'Owner edit was not acknowledged.',
-    );
+    const firstEdit = await submit(first, 1, 0, ownerValue);
+    assert.equal(firstEdit.revision, 2);
     await until(
       async () => (await read()).snapshot.sheets.first.cellData[0][0].v === ownerValue,
       'Owner edit was not saved.',
@@ -265,23 +267,18 @@ async function main() {
 
     const sentAt = performance.now();
     const [edited, health] = await Promise.all([
-      submit(second, editor.id, 2, 1, editorValue),
+      submit(second, 2, 1, editorValue),
       fetch(`${root}/api/health`, { headers: editorHeaders }),
     ]);
-    assert.equal(edited.status, 200);
-    assert.equal((await edited.json()).error.code, ErrorCode.OK);
+    assert.equal(edited.revision, 3);
     assert.equal(health.status, 200);
     assert.deepEqual(await health.json(), { status: 'ok' });
     await until(
-      () => second.messages.some((message) => message.collaMsg?.csAckEvent?.cs?.revision === 3),
-      'Overlapping editor edit was not acknowledged.',
-    );
-    await until(
-      () => first.messages.some((message) => message.collaMsg?.newCsEvent?.cs?.revision === 3),
+      () => first.messages.some((message) => message.type === 'edit' && message.revision === 3),
       'Owner did not receive the overlapping peer edit.',
     );
     const peer = first.messages.find(
-      (message) => message.collaMsg?.newCsEvent?.cs?.revision === 3,
+      (message) => message.type === 'edit' && message.revision === 3,
     )!;
     assert.ok(JSON.stringify(peer).includes(editorValue));
     peerEditAndHealthMs = performance.now() - sentAt;
@@ -311,6 +308,11 @@ async function main() {
     assert.equal(recovered.status, 200, recovered.ok ? 'Recovered PDF' : await recovered.text());
     assert.match(recovered.headers.get('content-type') ?? '', /^application\/pdf(?:;|$)/);
     recoveredBytes = new Uint8Array(await recovered.arrayBuffer());
+    assert.deepEqual(
+      [...first.messages, ...second.messages].filter((message) => message.type === 'resync'),
+      [],
+      'The overlapping edit required an unexpected synchronization reload.',
+    );
   } finally {
     childProcess.fork = originalFork;
     syncBuiltinESMExports();

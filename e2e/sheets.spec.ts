@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
+import { writeFile } from 'node:fs/promises';
 import { interruptibleNetwork } from './live-network.ts';
+import { expectNativeSheetValue } from './native-sheet-value.ts';
 import type { IWorkbookData, ICellData } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
@@ -14,6 +16,7 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
 }, testInfo) => {
   test.setTimeout(90_000);
   const network = await interruptibleNetwork(context);
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.setViewportSize({ width: 1440, height: 1100 });
   const db = openDatabase(
     testInfo.project.name === 'development'
@@ -37,7 +40,10 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
     sameSite: 'Strict' as const,
   };
   await context.addCookies([cookie]);
-  const second = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+  const second = await browser.newContext({
+    viewport: { width: 1440, height: 1100 },
+    permissions: ['clipboard-read', 'clipboard-write'],
+  });
   await second.addCookies([cookie]);
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -74,7 +80,8 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
     await saved();
     await type(page, 'B1', '=A1*2');
     await saved();
-    await expect.poll(async () => cell((await read()).snapshot, 1)?.v).toBe(24);
+    expect(cell((await read()).snapshot, 1)?.f).toBe('=A1*2');
+    await expectNativeSheetValue(page, 'B1', '24');
     await select(page, 'A1');
     await sheet.getByRole('button', { name: 'Bold', exact: true }).click();
     await saved();
@@ -110,6 +117,7 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
       return sheets;
     };
     expect(resolvedSheets(after)).toEqual(resolvedSheets(before));
+    await expectNativeSheetValue(page, 'B1', '24');
     const other = await second.newPage();
     await other.goto(`${baseURL}/?item=${item.id}`);
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
@@ -133,7 +141,9 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
     await expect(sheet.getByRole('status', { name: 'Save status' })).toContainText('not saved');
     await network.setOffline(false);
     await saved();
-    await expect.poll(async () => cell((await read()).snapshot, 1)?.v).toBe(42);
+    expect(cell((await read()).snapshot, 1)?.f).toBe('=A1*2');
+    await expectNativeSheetValue(page, 'B1', '42');
+    await expectNativeSheetValue(other, 'B1', '42');
     // Lose both acknowledgement paths after a real commit. A repeated cell value
     // alone could hide a duplicate, so also require exactly one durable revision.
     const priorRevision = (await read()).revision;
@@ -150,6 +160,7 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
     await page.reload();
     await saved();
     expect((await read()).revision).toBe(priorRevision + 1);
+    await expectNativeSheetValue(page, 'B1', '42');
     // A second editor merges its UI edit instead of replacing the newer snapshot.
     await type(other, 'C1', 'concurrent edit');
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
@@ -158,6 +169,13 @@ test('spreadsheet UI saves values, formulas, formatting and tabs; recovers offli
     expect(cell((await read()).snapshot, 2)?.v).toBe('concurrent edit');
     expect(cell((await read()).snapshot, 0)?.v).toBe(21);
     expect(errors).toEqual([]);
+    expect(network.incoming.filter((frame) => frame.type === 'resync')).toEqual([]);
+  } catch (error) {
+    await writeFile(
+      testInfo.outputPath('sync-diagnostics.json'),
+      JSON.stringify({ errors, outgoing: network.outgoing, incoming: network.incoming }),
+    );
+    throw error;
   } finally {
     await network.setOffline(false);
     await second.close();

@@ -119,7 +119,7 @@ async function fixture(spaceReview = true) {
     changeset: IChangeset,
     custom: Record<string, unknown> = context(changeset.userID, changeset.unitID),
   ) =>
-    collab.service.submitChangeset(
+    collab.submitChangeset(
       { changeset },
       { userID: changeset.userID, memberID: changeset.memberID, customData: custom },
     );
@@ -266,7 +266,7 @@ test('ownership transfer keeps real native Space units and scoped account histor
     ],
   };
   expect(
-    await f.collab.service.submitChangeset(
+    await f.collab.submitChangeset(
       { changeset },
       {
         userID: f.owner.id,
@@ -415,10 +415,7 @@ test('one native engine preserves subtree recovery and deferred checkpoints befo
   );
   expect((doc.snapshot as IDocumentData).body?.dataStream).toBe('Space notes persist\r\n');
   expect(sheet.access).toBe('viewer');
-  expect(await f.submit(f.sheetEdit(f.viewer.id, 2))).toMatchObject({
-    status: 'rejected',
-    error: { code: 'PERMISSION_DENIED' },
-  });
+  await expect(f.submit(f.sheetEdit(f.viewer.id, 2))).rejects.toThrow();
   f.spaces.updateChild(f.editor.id, f.space.id, f.sheet.id, { name: 'Renamed budget' });
   const recovery = new SpaceRecoveryStore(f.workspace);
   expect(recovery.trash(f.editor.id, f.space.id, f.sheet.id).count).toBe(2);
@@ -510,30 +507,22 @@ test('exact account context refuses wrong Space/child, missing or mixed credenti
 test('permissions changed during materialization refuse the read and prevent a native commit', async () => {
   const f = await fixture();
   await f.collab.prepare(f.owner.id, f.sheet.id, f.context());
-  const original = f.collab.service.getUnitLoadDataWithBlocks.bind(f.collab.service);
-  const read = vi
-    .spyOn(f.collab.service, 'getUnitLoadDataWithBlocks')
-    .mockImplementationOnce(async (...args) => {
-      const data = await original(...args);
-      f.spaces.share(f.owner.id, f.space.id, f.editor.id, null);
-      return data;
-    });
+  const original = f.collab.sync.load.bind(f.collab.sync);
+  const read = vi.spyOn(f.collab.sync, 'load').mockImplementationOnce((...args) => {
+    const data = original(...args);
+    f.spaces.share(f.owner.id, f.space.id, f.editor.id, null);
+    return data;
+  });
   await expect(f.collab.load(f.editor.id, f.sheet.id, f.context(f.editor.id))).rejects.toThrow(
     'not available',
   );
   read.mockRestore();
   f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'editor');
-  vi.spyOn(f.collab.service, 'getUnitLoadDataWithBlocks').mockImplementationOnce(
-    async (...args) => {
-      const data = await original(...args);
-      f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'viewer');
-      return data;
-    },
-  );
-  expect(await f.submit(f.sheetEdit())).toMatchObject({
-    status: 'rejected',
-    error: { code: 'PERMISSION_DENIED' },
+  f.collab.onSubmitting(async () => {
+    await Promise.resolve();
+    f.spaces.share(f.owner.id, f.space.id, f.editor.id, 'viewer');
   });
+  await expect(f.submit(f.sheetEdit())).rejects.toThrow();
   const current = await f.collab.load(f.owner.id, f.sheet.id, f.context());
   expect(current.revision).toBe(1);
   expect((current.snapshot as IWorkbookData).sheets.first.cellData?.[0]?.[0]).toBeUndefined();
