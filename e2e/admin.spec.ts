@@ -74,7 +74,7 @@ test('operator removes a passkey from an open editor, then disables the account 
       (await editorContext.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status(),
     ).toBe(401);
   };
-  let testFailure: unknown;
+  const failures: unknown[] = [];
   try {
     await editor.goto(`${baseURL}/?item=${item.id}`);
     await expect(saved).toHaveText('All changes saved.', { timeout: 30_000 });
@@ -152,19 +152,21 @@ test('operator removes a passkey from an open editor, then disables the account 
     expect((await context.request.get(`/api/items/${item.id}/sheet`)).status()).toBe(403);
     expect((await context.request.get('/api/auth/invites')).status()).toBe(200);
   } catch (error) {
-    testFailure = error;
-    throw error;
-  } finally {
-    try {
-      await editorContext.close();
-    } catch (error) {
-      if (testFailure !== undefined)
-        throw new AggregateError([testFailure, error], 'Revocation and editor cleanup failed.', {
-          cause: testFailure,
-        });
-      throw error;
-    } finally {
-      db.close();
-    }
+    failures.push(error);
   }
+  try {
+    await editorContext.close();
+  } catch (error) {
+    failures.push(error);
+  }
+  try {
+    db.close();
+  } catch (error) {
+    failures.push(error);
+  }
+  if (failures.length === 1) throw failures[0];
+  if (failures.length > 1)
+    throw new AggregateError(failures, 'Revocation or resource cleanup failed.', {
+      cause: failures[0],
+    });
 });
