@@ -898,21 +898,16 @@ export function Dashboard({
                 {!local && <button onClick={() => openFile(current)}>Open Space</button>}
               </p>
             ) : local && offlineKind(current) ? (
-              offline.downloads.has(current.id) ? (
-                <Suspense fallback={<p role="status">Loading offline copy…</p>}>
-                  <OfflineViewer
-                    key={current.id}
-                    accountId={user.id}
-                    itemId={current.id}
-                    onDirty={navigation.dirty}
-                    onConnectionState={onConnectionState}
-                  />
-                </Suspense>
-              ) : (
-                <p role="status">
-                  {current.name} needs a connection. It isn’t downloaded on this device.
-                </p>
-              )
+              <Suspense fallback={<p role="status">Loading offline copy…</p>}>
+                <OfflineViewer
+                  key={current.id}
+                  accountId={user.id}
+                  itemId={current.id}
+                  name={current.name}
+                  onDirty={navigation.dirty}
+                  onConnectionState={onConnectionState}
+                />
+              </Suspense>
             ) : current.kind === 'sheet' ? (
               <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
                 <SheetEditor

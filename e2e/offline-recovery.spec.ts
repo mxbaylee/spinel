@@ -379,6 +379,21 @@ test.describe('offline recovery copies', () => {
             ).toHaveAttribute('href', result.href);
             expect(receipts(f)).toHaveLength(1);
             expect(originalState(f, activeUnit)).toEqual(before);
+            if (change === 'concurrent' && !space && kind === 'doc') {
+              // Keep the mounted completion links, but never advertise a new
+              // offline launch after the recovered device bundle was removed.
+              await f.network.setOffline(true);
+              await f.page.reload();
+              await expect(
+                f.page
+                  .getByRole('status')
+                  .filter({ hasText: `${f.item.name} needs a connection.` }),
+              ).toHaveText(
+                `${f.item.name} needs a connection. It isn’t downloaded on this device.`,
+              );
+              await expect(f.page.locator('.univer-container canvas')).toHaveCount(0);
+              await f.network.setOffline(false);
+            }
             // Open the actual new account file and compare its native visible
             // content too; its original Space route must not leak into the copy.
             await f.page.goto(result.href);
