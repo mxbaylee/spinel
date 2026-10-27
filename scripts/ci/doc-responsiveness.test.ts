@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { test } from 'node:test';
-import { compositionCpu, DOC_RESPONSIVENESS_BUDGETS } from '../../e2e/doc-responsiveness.ts';
+import {
+  compositionCpu,
+  DOC_RESPONSIVENESS_BUDGETS,
+  DOC_RESPONSIVENESS_GROUP_LIMIT,
+} from '../../e2e/doc-responsiveness.ts';
 import type { CpuProfile, DocIntegritySnapshot } from '../../e2e/doc-responsiveness.ts';
 import { compareDocResponsiveness } from './doc-responsiveness.ts';
 import type { BenchmarkArtifact, BenchmarkMetrics } from './doc-responsiveness.ts';
@@ -95,6 +99,85 @@ test('a reducer witness requires its complete uncertain sample interval inside a
     () => compositionCpu(profile(), { beforeMs: 2, afterMs: 1 }, longTasks),
     /clock bracket/,
   );
+});
+
+test('signed CPU deltas keep sample IDs paired with cumulative timestamps without changing raw data', () => {
+  const raw = profile();
+  raw.endTime = raw.startTime + 10_000;
+  raw.samples = [1, 1, 2, 3, 1];
+  // The history sample is at +7 ms and collaboration at +4 ms. Sorting only
+  // timestamps would incorrectly put the history ID at +6 ms instead.
+  raw.timeDeltas = [2000, 4000, 1000, -3000, 5000];
+  const original = JSON.stringify(raw);
+  const tasks = [
+    { startedAt: 102, durationMs: 3 },
+    { startedAt: 106, durationMs: 2 },
+  ];
+  const result = compositionCpu(raw, { beforeMs: 100, afterMs: 100.1 }, tasks);
+  assert.equal(result.negativeDeltaCount, 1);
+  assert.equal(result.reorderedSampleCount, 3);
+  assert.equal(result.history.sampleCount, 1);
+  assert.equal(result.history.sampledCpuMs, 1);
+  assert.deepEqual(result.history.certainContainingTasks, [
+    { index: 1, ...tasks[1], sampleCount: 1 },
+  ]);
+  assert.equal(result.collaboration.sampleCount, 1);
+  assert.equal(result.collaboration.sampledCpuMs, 2);
+  assert.deepEqual(result.collaboration.certainContainingTasks, [
+    { index: 0, ...tasks[0], sampleCount: 1 },
+  ]);
+  assert.equal(JSON.stringify(raw), original);
+
+  // Reordering does not waive full interval containment or clock uncertainty.
+  const uncertain = compositionCpu(raw, { beforeMs: 100, afterMs: 110 }, tasks);
+  assert.equal(uncertain.history.maxContainingTaskMs, null);
+  assert.equal(uncertain.collaboration.maxContainingTaskMs, null);
+  const pointOnly = compositionCpu(raw, { beforeMs: 100, afterMs: 100.1 }, [
+    { startedAt: 106.5, durationMs: 1 },
+  ]);
+  assert.equal(pointOnly.history.maxContainingTaskMs, null);
+  assert.equal(JSON.stringify(raw), original);
+});
+
+test('equal CPU timestamps keep their original sample order after a signed-delta inversion', () => {
+  const raw = profile();
+  raw.endTime = raw.startTime + 4000;
+  raw.samples = [1, 2, 3, 1];
+  raw.timeDeltas = [1000, 2000, 0, -1000];
+  const result = compositionCpu(raw, clock, []);
+  assert.equal(result.negativeDeltaCount, 1);
+  assert.equal(result.reorderedSampleCount, 3);
+  assert.equal(result.history.sampledCpuMs, 1);
+  assert.equal(result.collaboration.sampledCpuMs, 0);
+  assert.equal(result.collaboration.status, 'sampled');
+});
+
+test('every cumulative CPU timestamp must stay inside the profile, even if its final sum is valid', () => {
+  for (const deltas of [
+    [2000, -3000, 3000, 2000],
+    [2000, 9000, -3000, 1000],
+  ]) {
+    const raw = profile();
+    raw.endTime = raw.startTime + 10_000;
+    raw.timeDeltas = deltas;
+    const original = JSON.stringify(raw);
+    assert.throws(() => compositionCpu(raw, clock, []), /timestamp outside the profile time range/);
+    assert.equal(JSON.stringify(raw), original);
+  }
+});
+
+test('nonfinite CPU deltas and malformed sample associations remain unavailable', () => {
+  for (const invalid of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+    const raw = profile();
+    raw.timeDeltas![2] = invalid;
+    assert.throws(() => compositionCpu(raw, clock, []), /invalid samples or clock bracket/);
+  }
+  const mismatched = profile();
+  mismatched.timeDeltas!.pop();
+  assert.throws(() => compositionCpu(mismatched, clock, []), /invalid samples or clock bracket/);
+  const unknownSample = profile();
+  unknownSample.samples![1] = 999;
+  assert.throws(() => compositionCpu(unknownSample, clock, []), /invalid profile call tree/);
 });
 
 test('missing reducer names are unavailable, never zero-time improvements', () => {
@@ -210,7 +293,10 @@ function fixture() {
           mobile: false,
           observedAt: keys.at(-1)! + 500,
           pending: { history: 0, collaboration: 0 },
-          highWater: { history: before ? 2086 : 64, collaboration: before ? 2086 : 64 },
+          highWater: {
+            history: before ? 2086 : DOC_RESPONSIVENESS_GROUP_LIMIT,
+            collaboration: before ? 2086 : DOC_RESPONSIVENESS_GROUP_LIMIT,
+          },
           flushes: before
             ? []
             : [
@@ -218,17 +304,19 @@ function fixture() {
                   reason: 'capacity',
                   startedAt: 2000,
                   durationMs: 4,
-                  history: 64,
-                  collaboration: 64,
+                  history: DOC_RESPONSIVENESS_GROUP_LIMIT,
+                  collaboration: DOC_RESPONSIVENESS_GROUP_LIMIT,
                 },
               ],
-          history: { undos: before ? 1 : 33, redos: 0 },
+          history: { undos: before ? 1 : 48, redos: 0 },
           selection: { start: 2086, end: 2086 },
         },
       };
       const groups = metrics.native.history.undos;
       const count = sample === 'plain-1' ? groups : 1;
-      const firstText = before ? '\r\n' : text.slice(0, 2048) + '\r\n';
+      const firstText = before
+        ? '\r\n'
+        : text.slice(0, (groups - 1) * DOC_RESPONSIVENESS_GROUP_LIMIT) + '\r\n';
       metrics.preUndoIntegrity = {
         ...integrity(metrics, text, 21_600, groups, 0, 1),
         passed: true,
@@ -269,6 +357,17 @@ test('paired proof uses the worst entire candidate task and each certain baselin
   assert.equal(result.improvement.collaboration!.baselineContainingTaskMs, 8000);
   assert.equal(result.improvement.history!.candidateEntireTaskUpperBoundMs, 80);
   assert.equal(result.improvement.history!.reductionPercent, 100 * (1 - 80 / 7000));
+  assert.equal(result.candidateGroupLimit, 44);
+});
+
+test('a superseded candidate capacity cannot pass on fast timing alone', () => {
+  const f = fixture();
+  for (const { metrics } of f.candidate) {
+    metrics.native.highWater = { history: 64, collaboration: 64 };
+    metrics.native.flushes[0]!.history = 64;
+    metrics.native.flushes[0]!.collaboration = 64;
+  }
+  assert.equal(compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed, false);
 });
 
 test('schema 3 labels the specifically observed baseline redo defect without weakening candidate integrity', () => {

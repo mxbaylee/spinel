@@ -29,7 +29,7 @@ prevents automatic replacement of an otherwise clean cached document.
 
 Docs apply edits locally while the existing sync client sends them in the
 background. Native history and collaboration composition are separate browser
-work: Spinel closes a pending native group at 64 completed state changes so an
+work: Spinel closes a pending native group at 44 completed state changes so an
 uninterrupted typing session cannot grow one unbounded composition batch. Ordinary
 300 ms idle, segment-switch, undo and IME boundaries remain controlled by Univer.
 A completed composition stays atomic. Undo/redo retains native content and caret

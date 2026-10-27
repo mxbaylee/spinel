@@ -7,6 +7,7 @@ import type { Page, TestInfo } from '@playwright/test';
 import {
   compositionCpu,
   DOC_RESPONSIVENESS_BUDGETS,
+  DOC_RESPONSIVENESS_GROUP_LIMIT,
   DOC_RESPONSIVENESS_SCHEMA,
   distribution,
   observeDocReloads,
@@ -488,8 +489,8 @@ for (const preset of ['desktop', 'mobile'] as const)
           longestTask: longTasks.max <= budgets[preset].longTaskMaxMs,
           flushP95: flush ? flush.p95 <= budgets[preset].flushP95Ms : null,
           flushMaximum: flush ? flush.max <= budgets[preset].flushMaxMs : null,
-          boundedHistory: native.highWater.history <= 64,
-          boundedCollaboration: native.highWater.collaboration <= 64,
+          boundedHistory: native.highWater.history <= DOC_RESPONSIVENESS_GROUP_LIMIT,
+          boundedCollaboration: native.highWater.collaboration <= DOC_RESPONSIVENESS_GROUP_LIMIT,
           observedBoundedFlushes: native.flushes.length > 0,
           drainedWithinOneSecond: drainUpperBoundMs <= 1000,
         };
@@ -559,8 +560,10 @@ for (const preset of ['desktop', 'mobile'] as const)
         // No production policy changes. Schema 3 records the strict baseline
         // history outcome; candidate integrity and responsiveness gates remain full.
         if (!baseline) {
-          expect(native.highWater.history).toBeLessThanOrEqual(64);
-          expect(native.highWater.collaboration).toBeLessThanOrEqual(64);
+          expect(native.highWater.history).toBeLessThanOrEqual(DOC_RESPONSIVENESS_GROUP_LIMIT);
+          expect(native.highWater.collaboration).toBeLessThanOrEqual(
+            DOC_RESPONSIVENESS_GROUP_LIMIT,
+          );
           expect(native.flushes.length).toBeGreaterThan(0);
           if (!profiled) {
             expect(frame.p95).toBeLessThanOrEqual(budgets[preset].inputP95Ms);

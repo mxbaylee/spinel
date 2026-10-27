@@ -2,9 +2,10 @@ import type { Univer } from '@univerjs/core';
 import { DocStateChangeManagerService, DocStateEmitService } from '@univerjs/docs';
 
 // A long uninterrupted burst must not become one quadratic composition task.
-// Keep useful phrases together and the 2,086-input reproducer inside the SDK's
-// normal 50-group undo capacity. Idle/segment/IME boundaries remain native.
-export const DOC_HISTORY_GROUP_LIMIT = 64;
+// The measured 64-state candidate missed the paired-flush p95 budget. Forty-four
+// keeps the 2,086-input reproducer at 48 groups inside native 50-group retention.
+// Idle/segment/IME boundaries remain native.
+export const DOC_HISTORY_GROUP_LIMIT = 44;
 
 export interface DocFlushObservation {
   reason: 'capacity';

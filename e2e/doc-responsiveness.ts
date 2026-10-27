@@ -2,6 +2,10 @@ import type { Page } from '@playwright/test';
 
 export const DOC_RESPONSIVENESS_SCHEMA = 3;
 
+// Candidate policy after the 64-state experiment missed the unchanged p95 budget.
+// Keep this explicit in the independent harness, including the uncapped checkout.
+export const DOC_RESPONSIVENESS_GROUP_LIMIT = 44;
+
 // Preregistered before the production fix; all values are milliseconds.
 export const DOC_RESPONSIVENESS_BUDGETS = {
   desktop: { inputP95Ms: 100, longTaskMaxMs: 200, flushP95Ms: 16, flushMaxMs: 50 },
@@ -255,6 +259,11 @@ export interface ProfilerClockBracket {
  * sample counts as a certain task witness only when its complete accounting
  * interval, including that clock uncertainty, fits inside the observed task.
  * The task's whole duration is reported, never attributed entirely to the reducer.
+ * sampledCpuMs is a sample-weighted estimate using preceding intervals, not an
+ * exact measurement of reducer CPU time.
+ * Chrome can return signed deltas with samples out of timestamp order. Follow
+ * DevTools' cumulative timestamp / paired sample sorting, retaining the raw data:
+ * https://chromium.googlesource.com/devtools/devtools-frontend/+/9a696c4e723caa3c7e1f78886da353f1f06a79b0/front_end/core/sdk/CPUProfileDataModel.ts
  */
 export function compositionCpu(
   profile: CpuProfile,
@@ -268,13 +277,34 @@ export function compositionCpu(
     clock.afterMs < clock.beforeMs ||
     !Number.isFinite(profile.startTime) ||
     !Number.isFinite(profile.endTime) ||
+    !Number.isFinite(profile.endTime - profile.startTime) ||
     profile.endTime < profile.startTime ||
     !profile.samples?.length ||
     !profile.timeDeltas ||
     profile.samples.length !== profile.timeDeltas.length ||
-    profile.timeDeltas.some((delta) => !Number.isFinite(delta) || delta < 0)
+    profile.timeDeltas.some((delta) => !Number.isFinite(delta))
   )
     throw new Error('Unavailable CPU attribution: invalid samples or clock bracket.');
+  let timestampUs = profile.startTime;
+  let negativeDeltaCount = 0;
+  const timeline = profile.samples.map((sample, originalIndex) => {
+    const delta = profile.timeDeltas![originalIndex]!;
+    if (delta < 0) negativeDeltaCount++;
+    timestampUs += delta;
+    if (
+      !Number.isFinite(timestampUs) ||
+      timestampUs < profile.startTime ||
+      timestampUs > profile.endTime
+    )
+      throw new Error(
+        'Unavailable CPU attribution: sample timestamp outside the profile time range.',
+      );
+    return { sample, originalIndex, timestampUs };
+  });
+  timeline.sort((a, b) => a.timestampUs - b.timestampUs || a.originalIndex - b.originalIndex);
+  const reorderedSampleCount = timeline.filter(
+    (sample, index) => sample.originalIndex !== index,
+  ).length;
   const parents = new Map<number, number>();
   const names = new Map(profile.nodes.map((node) => [node.id, node.callFrame.functionName]));
   for (const node of profile.nodes)
@@ -293,10 +323,12 @@ export function compositionCpu(
       tasks: new Map<number, number>(),
     },
   };
-  let elapsedUs = 0;
-  for (const [index, sample] of profile.samples.entries()) {
-    const previousUs = elapsedUs;
-    elapsedUs += profile.timeDeltas[index]!;
+  let previousTimestampUs = profile.startTime;
+  for (const { sample, timestampUs } of timeline) {
+    const previousUs = previousTimestampUs - profile.startTime;
+    const elapsedUs = timestampUs - profile.startTime;
+    const durationUs = timestampUs - previousTimestampUs;
+    previousTimestampUs = timestampUs;
     const earliestStartMs = clock.beforeMs + previousUs / 1000;
     const latestEndMs = clock.afterMs + elapsedUs / 1000;
     let node: number | undefined = sample;
@@ -312,14 +344,12 @@ export function compositionCpu(
     for (const family of Object.values(families)) {
       if (!stack.has(family.name)) continue;
       family.sampleCount++;
-      family.sampledCpuMs += profile.timeDeltas[index]! / 1000;
+      family.sampledCpuMs += durationUs / 1000;
       for (const [taskIndex, task] of longTasks.entries())
         if (earliestStartMs >= task.startedAt && latestEndMs <= task.startedAt + task.durationMs)
           family.tasks.set(taskIndex, (family.tasks.get(taskIndex) ?? 0) + 1);
     }
   }
-  if (elapsedUs > profile.endTime - profile.startTime)
-    throw new Error('Unavailable CPU attribution: samples exceed the profile time range.');
   const describe = (family: (typeof families)['history']) => {
     const functionNodes = [...names.values()].filter((name) => name === family.name).length;
     const tasks = [...family.tasks].map(([index, sampleCount]) => ({
@@ -344,6 +374,8 @@ export function compositionCpu(
   };
   return {
     sampleIntervalUs: 1000,
+    negativeDeltaCount,
+    reorderedSampleCount,
     clock: {
       ...clock,
       uncertaintyMs: clock.afterMs - clock.beforeMs,

@@ -6,6 +6,7 @@ import {
   compositionCpu,
   distribution,
   DOC_RESPONSIVENESS_BUDGETS,
+  DOC_RESPONSIVENESS_GROUP_LIMIT,
   DOC_RESPONSIVENESS_SCHEMA,
 } from '../../e2e/doc-responsiveness.ts';
 import type {
@@ -458,7 +459,8 @@ export function compareDocResponsiveness(
     );
     if (value.role === 'candidate') {
       check(
-        value.native.highWater.history <= 64 && value.native.highWater.collaboration <= 64,
+        value.native.highWater.history <= DOC_RESPONSIVENESS_GROUP_LIMIT &&
+          value.native.highWater.collaboration <= DOC_RESPONSIVENESS_GROUP_LIMIT,
         `${label}: native cache exceeded the capacity limit.`,
       );
       check(
@@ -468,7 +470,7 @@ export function compareDocResponsiveness(
               finite(entry.durationMs) &&
               entry.history >= 0 &&
               entry.collaboration >= 0 &&
-              Math.max(entry.history, entry.collaboration) === 64,
+              Math.max(entry.history, entry.collaboration) === DOC_RESPONSIVENESS_GROUP_LIMIT,
           ),
         `${label}: paired flush evidence missing or unbounded.`,
       );
@@ -487,7 +489,10 @@ export function compareDocResponsiveness(
       }
     } else {
       check(!value.budgetEnforced, `${label}: baseline must be observational.`);
-      if (value.native.highWater.history <= 64 || value.native.highWater.collaboration <= 64)
+      if (
+        value.native.highWater.history <= DOC_RESPONSIVENESS_GROUP_LIMIT ||
+        value.native.highWater.collaboration <= DOC_RESPONSIVENESS_GROUP_LIMIT
+      )
         unavailable.push(`${label}: the sustained native queues did not exceed the candidate cap.`);
     }
     summaries.push({
@@ -658,6 +663,7 @@ export function compareDocResponsiveness(
   failures.push(...integrityFailures);
   return {
     schema: 2,
+    candidateGroupLimit: DOC_RESPONSIVENESS_GROUP_LIMIT,
     protocolRevision: DOC_RESPONSIVENESS_SCHEMA,
     preset,
     physicalDevice: false,
