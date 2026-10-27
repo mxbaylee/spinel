@@ -14,6 +14,17 @@ import './sharing.css';
 
 type Draft = { personId: string; role: GrantRole | null };
 
+function inheritedAccess(person: SharePerson, role: GrantRole | null) {
+  const inherited =
+    person.inheritedRole === undefined
+      ? person.effectiveRole !== person.directRole
+        ? person.effectiveRole
+        : null
+      : person.inheritedRole;
+  const rank = { viewer: 1, editor: 2, admin: 3 };
+  return inherited && (!role || rank[inherited] >= rank[role]) ? inherited : null;
+}
+
 export function Sharing({
   item,
   onClose,
@@ -34,6 +45,7 @@ export function Sharing({
   const [sourceReview, setSourceReview] = useState<SourceSharingReview | null>(null);
   const [includeSources, setIncludeSources] = useState(false);
   const [sourceRefresh, setSourceRefresh] = useState(0);
+  const [sharedSources, setSharedSources] = useState<string[]>([]);
   const generation = useRef(0);
   const mutation = useRef(false);
   const personRows = useRef(new Map<string, HTMLButtonElement>());
@@ -54,13 +66,18 @@ export function Sharing({
     if (loading || saving || !focusAfterChange.current) return;
     const next = focusAfterChange.current;
     const request = generation.current;
-    // Let the dialog finish restoring containment after a focused control is removed.
-    const frame = requestAnimationFrame(() => {
-      if (request !== generation.current || focusAfterChange.current !== next) return;
+    const focus = () => {
       const target = next.editor
         ? editor.current?.querySelector<HTMLSelectElement>('select')
         : personRows.current.get(next.personId);
       (target ?? peoplePanel.current)?.focus();
+    };
+    // Move focus before the dialog observes a removed control, then finish after
+    // its containment restoration. Both moves belong to this exact view/change.
+    focus();
+    const frame = requestAnimationFrame(() => {
+      if (request !== generation.current || focusAfterChange.current !== next) return;
+      focus();
       focusAfterChange.current = null;
     });
     return () => cancelAnimationFrame(frame);
@@ -70,6 +87,7 @@ export function Sharing({
     setDraft(null);
     setSourceReview(null);
     setIncludeSources(false);
+    setSharedSources([]);
     setError('');
     setMessage('');
   }
@@ -131,6 +149,7 @@ export function Sharing({
     mutation.current = true;
     const request = ++generation.current;
     setSaving(true);
+    setSharedSources([]);
     setError('');
     setMessage('');
     try {
@@ -156,8 +175,9 @@ export function Sharing({
           personId: person.id,
           role: body.people.find((row) => row.id === person.id)?.directRole ?? null,
         });
+        setSharedSources(outcome.shared);
         setMessage(
-          `${host} access ${outcome.host === 'updated' ? 'updated' : 'kept'}. ${outcome.shared.length} ${outcome.shared.length === 1 ? 'source' : 'sources'} shared; some sources still need access or review.`,
+          `${host} access ${outcome.host === 'updated' ? 'updated' : 'kept'}; some sources still need access or review.`,
         );
         setSourceRefresh((value) => value + 1);
         focusAfterChange.current = { personId: person.id, editor: true };
@@ -232,6 +252,7 @@ export function Sharing({
                     else personRows.current.delete(person.id);
                   }}
                   aria-label={`Edit access for ${person.name}`}
+                  aria-describedby={`sharing-role-${person.id}${person.disabled ? ` sharing-disabled-${person.id}` : ''}`}
                   aria-expanded={draft?.personId === person.id}
                   aria-controls={
                     draft?.personId === person.id ? `sharing-editor-${person.id}` : undefined
@@ -241,9 +262,11 @@ export function Sharing({
                 >
                   <strong>
                     {person.name}
-                    {person.disabled ? ' · Disabled account' : ''}
+                    {person.disabled ? (
+                      <span id={`sharing-disabled-${person.id}`}> · Disabled account</span>
+                    ) : null}
                   </strong>
-                  <span>
+                  <span id={`sharing-role-${person.id}`}>
                     {person.effectiveRole ? accessLabel(person.effectiveRole) : 'Not shared'}
                   </span>
                   <ProfileIcon
@@ -278,6 +301,7 @@ export function Sharing({
                           });
                           setIncludeSources(false);
                           setSourceReview(null);
+                          setSharedSources([]);
                           setError('');
                           setMessage('');
                         }}
@@ -299,10 +323,9 @@ export function Sharing({
                         This account cannot sign in. You can remove its direct access.
                       </p>
                     ) : (
-                      person.effectiveRole &&
-                      person.effectiveRole !== person.directRole && (
+                      inheritedAccess(person, draft.role) && (
                         <p className="sp-muted">
-                          {accessLabel(person.effectiveRole)} through a folder.
+                          {accessLabel(inheritedAccess(person, draft.role)!)} through a folder.
                         </p>
                       )
                     )}
@@ -321,6 +344,8 @@ export function Sharing({
                         Applies to this folder’s contents and future additions.
                       </p>
                     )}
+                    {error && <p role="alert">{error}</p>}
+                    {message && <p role="status">{message}</p>}
                     {hasSources && !person.disabled && (
                       <SharingSources
                         key={person.id}
@@ -330,12 +355,11 @@ export function Sharing({
                         busy={busy}
                         checked={includeSources}
                         refresh={sourceRefresh}
+                        sharedIds={sharedSources}
                         onChecked={setIncludeSources}
                         onReview={recordSourceReview}
                       />
                     )}
-                    {error && <p role="alert">{error}</p>}
-                    {message && <p role="status">{message}</p>}
                     <div className="sharing-editor-actions">
                       <Button
                         disabled={busy}
@@ -406,13 +430,19 @@ export function Sharing({
           className="sharing-content"
           value={tab}
           onValueChange={(value) => {
-            if (mutation.current || busy || (value !== 'people' && value !== 'link')) return;
+            if (
+              mutation.current ||
+              busy ||
+              value === tab ||
+              (value !== 'people' && value !== 'link')
+            )
+              return;
             focusAfterChange.current = null;
             discardDraft();
             setTab(value);
           }}
         >
-          <Tabs.List className="sharing-tabs" aria-label="Sharing options">
+          <Tabs.List className="sharing-tabs" aria-label="Sharing options" activateOnFocus>
             <Tabs.Tab value="people" disabled={busy}>
               People
             </Tabs.Tab>

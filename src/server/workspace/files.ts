@@ -204,17 +204,25 @@ export class WorkspaceFiles {
       WHERE u.is_admin=0 AND u.id<>? AND u.id<>(SELECT owner_id FROM workspace_items WHERE id=?) AND (u.disabled=0 OR g.role IS NOT NULL)
       ORDER BY u.name COLLATE NOCASE,u.id`,
       )
-      .all(id, user, id) as unknown as Omit<SharePerson, 'effectiveRole'>[];
+      .all(id, user, id) as unknown as Omit<SharePerson, 'effectiveRole' | 'inheritedRole'>[];
     return rows.map((person) => {
       let access: ItemAccess | null = null;
+      let inheritedRole: SharePerson['effectiveRole'] = null;
       if (!person.disabled) {
         try {
-          access = resolveSpaceScope(this.workspace.auth, person.id, id, id).access;
+          const scope = resolveSpaceScope(this.workspace.auth, person.id, id, id);
+          access = scope.access;
+          // This recipient's live scope reveals a parent only when its ordinary
+          // folder grants apply. Never return the parent's identity or name.
+          if (scope.space.parentId) {
+            const inherited = this.workspace.get(person.id, scope.space.parentId).access;
+            inheritedRole = inherited === 'owner' ? null : inherited;
+          }
         } catch (error) {
           if (!(error instanceof AuthError) || error.status !== 404) throw error;
         }
       }
-      return { ...person, effectiveRole: access === 'owner' ? null : access };
+      return { ...person, effectiveRole: access === 'owner' ? null : access, inheritedRole };
     });
   }
 

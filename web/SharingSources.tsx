@@ -8,9 +8,11 @@ import { itemsRequest } from './itemsApi.ts';
 function SourceList({
   targets,
   proposed = false,
+  sharedIds = [],
 }: {
   targets: SourceSharingTarget[];
   proposed?: boolean;
+  sharedIds?: string[];
 }) {
   return (
     <ul
@@ -47,7 +49,7 @@ function SourceList({
                   ? proposed
                     ? 'Can view · Proposed'
                     : 'No access'
-                  : accessLabel(target.access!)}
+                  : `${accessLabel(target.access!)}${sharedIds.includes(target.id) ? ' · Shared' : ''}`}
           </span>
         </li>
       ))}
@@ -63,6 +65,7 @@ export function SharingSources({
   busy,
   checked,
   refresh,
+  sharedIds,
   onChecked,
   onReview,
 }: {
@@ -72,6 +75,7 @@ export function SharingSources({
   busy: boolean;
   checked: boolean;
   refresh: number;
+  sharedIds: string[];
   onChecked: (checked: boolean) => void;
   onReview: (review: SourceSharingReview | null) => void;
 }) {
@@ -191,11 +195,15 @@ export function SharingSources({
             )}
             {proposed && <SourceList targets={grants} proposed />}
             {!!details.length && (
-              <details className="sharing-details" key={`${review.version}:${proposed}`}>
+              <details
+                className="sharing-details"
+                key={`${review.version}:${proposed}`}
+                open={sharedIds.length > 0}
+              >
                 <summary>
                   {accessible ? `Already accessible (${details.length})` : 'Source details'}
                 </summary>
-                <SourceList targets={details} />
+                <SourceList targets={details} sharedIds={sharedIds} />
               </details>
             )}
           </>

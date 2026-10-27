@@ -279,7 +279,12 @@ export const DisabledAccountBeforeRemoval: Story = {
       await expect(within(select).getByRole('option', { name })).toBeDisabled();
     }
     await expect(within(select).getByRole('option', { name: 'No direct access' })).toBeEnabled();
-    await expect(body.getByText('Taylor Brooks · Disabled account')).toBeVisible();
+    await expect(
+      body.getByRole('button', { name: 'Edit access for Taylor Brooks' }),
+    ).toHaveTextContent('Taylor Brooks · Disabled account');
+    await expect(
+      body.getByRole('button', { name: 'Edit access for Taylor Brooks' }),
+    ).toHaveAccessibleDescription('Not shared · Disabled account');
   },
 };
 export const OneRecipientDraft: Story = {
@@ -473,5 +478,38 @@ export const ReplaceGuestLink: Story = {
     await userEvent.click(await body.findByRole('tab', { name: 'Link' }));
     await userEvent.click(await body.findByRole('button', { name: 'Replace link…' }));
     await expect(await body.findByRole('dialog', { name: 'Replace the link?' })).toBeVisible();
+  },
+};
+
+/** The direct role masks a private folder's retained access until the draft removes it. */
+export const InheritedAccessAfterRemoval: Story = {
+  args: { item: { ...folder, access: 'admin', ownerName: 'Owner' } },
+  parameters: {
+    api: { [sharing(folder)]: { people: [{ ...people[0], inheritedRole: 'viewer' }] } },
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const select = await openPerson(body, 'Alex Kim');
+    await expect(body.queryByText('View only through a folder.')).not.toBeInTheDocument();
+    await userEvent.selectOptions(select, '');
+    await expect(body.getByText('View only through a folder.')).toBeVisible();
+    await expect(
+      body.getByRole('button', { name: 'Edit access for Alex Kim' }),
+    ).toHaveAccessibleDescription('Can edit');
+    await expect(saveAccess(body)).toBeEnabled();
+  },
+};
+export const EqualInheritedAccessAfterDowngrade: Story = {
+  args: { item: folder },
+  parameters: {
+    api: { [sharing(folder)]: { people: [{ ...people[0], inheritedRole: 'editor' }] } },
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.selectOptions(await openPerson(body, 'Alex Kim'), 'viewer');
+    await expect(body.getByText('Can edit through a folder.')).toBeVisible();
+    await expect(
+      body.getByRole('button', { name: 'Edit access for Alex Kim' }),
+    ).toHaveAccessibleDescription('Can edit');
   },
 };

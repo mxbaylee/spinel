@@ -96,7 +96,9 @@ function SourceScenario({ scenario = 'ordinary' }: { scenario?: Scenario }) {
         ];
       if (scenario === 'partial' || scenario === 'restricted') {
         targets = [
-          ...(scenario === 'partial' ? targets : []),
+          ...(scenario === 'partial'
+            ? [targets[0], { ...forecast, access: 'viewer' as const }]
+            : []),
           {
             ...forecast,
             state: 'requires-owner',
@@ -393,7 +395,9 @@ export const Partial: Story = {
     const body = await checkSources(canvasElement);
     await userEvent.click(save(body));
     await body.findByText(/some sources still need access or review/);
-    await userEvent.click(await body.findByText('Source details'));
+    await expect(await body.findByText('View only · Shared')).toBeVisible();
+    const reviewed = within(body.getByRole('list', { name: 'Reviewed source access' }));
+    await expect(reviewed.getByText('View only', { exact: true })).toBeVisible();
     await expect(body.getByText('Owner or File admin must share')).toBeVisible();
     await expect(save(body)).toBeDisabled();
     await expect(
@@ -516,11 +520,18 @@ export const ConsentAndDraftReset: Story = {
     await expect(await body.findByRole('checkbox')).not.toBeChecked();
     await userEvent.click(body.getByRole('checkbox'));
     await userEvent.selectOptions(body.getByRole('combobox'), 'admin');
-    await userEvent.click(body.getByRole('tab', { name: 'Link' }));
+    const peopleTab = body.getByRole('tab', { name: 'People' });
+    const linkTab = body.getByRole('tab', { name: 'Link' });
+    peopleTab.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(linkTab).toHaveAttribute('aria-selected', 'true');
+    await expect(linkTab).toHaveFocus();
     await expect(
       body.queryByRole('combobox', { name: 'Access for Avery Chen' }),
     ).not.toBeInTheDocument();
-    await userEvent.click(body.getByRole('tab', { name: 'People' }));
+    await userEvent.keyboard('{ArrowLeft}');
+    await expect(peopleTab).toHaveAttribute('aria-selected', 'true');
+    await expect(peopleTab).toHaveFocus();
     await openEditor(canvasElement);
     await expect(body.getByRole('combobox')).toHaveValue('viewer');
     await expect(await body.findByRole('checkbox')).not.toBeChecked();

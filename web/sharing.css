@@ -121,6 +121,9 @@
   justify-items: end;
   width: 100%;
 }
+.sharing-footer .sharing-address > button {
+  justify-self: end;
+}
 .sharing-address label {
   display: grid;
   gap: 8px;

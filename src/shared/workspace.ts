@@ -20,6 +20,8 @@ export interface SharePerson {
   disabled: number;
   directRole: GrantRole | null;
   effectiveRole: GrantRole | null;
+  /** Access retained without this item's direct grant; contains no ancestor metadata. */
+  inheritedRole?: GrantRole | null;
 }
 export interface WorkspaceItem {
   access: ItemAccess;

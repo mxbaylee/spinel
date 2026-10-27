@@ -500,6 +500,11 @@ export class WorkspaceStore {
   }
   sharing(userId: string, id: string): SharePerson[] {
     this.get(userId, id, 'admin');
+    // A File admin's projected parent may be redacted. Resolve the recipient's
+    // retained access from the authorized item's real parent, returning only a role.
+    const parentId = this.auth.database
+      .prepare('SELECT parent_id FROM workspace_items WHERE id=?')
+      .get(id)!.parent_id as string | null;
     return (
       this.auth.database
         .prepare(
@@ -508,12 +513,16 @@ export class WorkspaceStore {
       WHERE u.is_admin=0 AND u.id<>? AND u.id<>(SELECT owner_id FROM workspace_items WHERE id=?) AND (u.disabled=0 OR g.role IS NOT NULL)
       ORDER BY u.name COLLATE NOCASE,u.id`,
         )
-        .all(id, userId, id) as unknown as Omit<SharePerson, 'effectiveRole'>[]
+        .all(id, userId, id) as unknown as Omit<SharePerson, 'effectiveRole' | 'inheritedRole'>[]
     ).map((person) => ({
       ...person,
       effectiveRole: person.disabled
         ? null
         : (this.role(person.id, id) as SharePerson['effectiveRole']),
+      inheritedRole:
+        person.disabled || !parentId
+          ? null
+          : (this.role(person.id, parentId) as SharePerson['effectiveRole']),
     }));
   }
   share(userId: string, id: string, recipient: unknown, role: unknown) {
