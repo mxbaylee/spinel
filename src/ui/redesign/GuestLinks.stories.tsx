@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ActionMenu } from './Controls.tsx';
 import './mockups.css';
 
@@ -62,9 +62,11 @@ export const Preview: Story = {
     for (const name of ['Profile', 'Passkeys', 'This device', 'Connected assistants'])
       await expect(canvas.queryByRole('button', { name })).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Autumn plans guest link actions' }));
-    await userEvent.click(within(document.body).getByRole('menuitem', { name: 'Change expiry…' }));
-    await expect(canvas.getByRole('status')).toHaveTextContent(
-      'Changing expiry keeps the same link.',
+    await userEvent.click(
+      await within(document.body).findByRole('menuitem', { name: 'Change expiry…' }),
+    );
+    await waitFor(() =>
+      expect(canvas.getByRole('status')).toHaveTextContent('Changing expiry keeps the same link.'),
     );
   },
 };
