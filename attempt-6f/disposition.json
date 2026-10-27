@@ -1,0 +1,50 @@
+{
+  "repository": "mxbaylee/spinel",
+  "evidenceSavedAt": "2026-10-27T21:29:25.425Z",
+  "measurementAcceptance": "No accepted measurements. Supersession cancellations are retained as interrupted first attempts, not passes or replacement retries.",
+  "sourceSha": "6f219b8bf687e322b9b3283f771e95f95a281a9d",
+  "pullRequestMergeCheckoutSha": "bcf747ca05a9479f87e7354d8c7e3bdbef6c6a0e",
+  "uncappedBaselineCheckoutSha": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+  "runId": 40586200654,
+  "runNumber": 1316,
+  "runUrl": "https://github.com/mxbaylee/spinel/actions/runs/40586200654",
+  "status": "completed",
+  "conclusion": "cancelled",
+  "benchmarkJobs": [
+    {
+      "preset": "desktop",
+      "jobId": 122478582878,
+      "jobUrl": "https://github.com/mxbaylee/spinel/actions/runs/40586200654/job/122478582878",
+      "conclusion": "cancelled",
+      "baselineBuild": "success",
+      "firstTest": "desktop sustained native typing plain-1",
+      "firstTestStartedAt": "2026-10-27T21:24:18.5683012Z",
+      "cancelledAt": "2026-10-27T21:25:52.7011940Z",
+      "typingPhaseKnown": false,
+      "completedCases": 0,
+      "candidateBuild": "skipped",
+      "candidateTests": "skipped",
+      "comparison": "skipped",
+      "artifactUploadStep": "success with no matching files",
+      "benchmarkArtifacts": []
+    },
+    {
+      "preset": "mobile",
+      "jobId": 122478582851,
+      "jobUrl": "https://github.com/mxbaylee/spinel/actions/runs/40586200654/job/122478582851",
+      "conclusion": "cancelled",
+      "baselineBuild": "success",
+      "firstTest": "mobile sustained native typing plain-1",
+      "firstTestStartedAt": "2026-10-27T21:24:24.1906740Z",
+      "cancelledAt": "2026-10-27T21:25:53.3304368Z",
+      "typingPhaseKnown": false,
+      "completedCases": 0,
+      "candidateBuild": "skipped",
+      "candidateTests": "skipped",
+      "comparison": "skipped",
+      "artifactUploadStep": "success with no matching files",
+      "benchmarkArtifacts": []
+    }
+  ],
+  "qualification": "Logs establish entry into each first test case, not the start or completion of the measured key stream. No spn108 metrics, CPU profiles, or Playwright report files matched the always-upload paths after cancellation. Other unrelated workflow artifacts are listed in the raw artifact response."
+}

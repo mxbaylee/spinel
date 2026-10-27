@@ -1,0 +1,15 @@
+{
+  "repository": "mxbaylee/spinel",
+  "evidenceSavedAt": "2026-10-27T21:29:25.425Z",
+  "measurementAcceptance": "No accepted measurements. Supersession cancellations are retained as interrupted first attempts, not passes or replacement retries.",
+  "sourceSha": "dbb2207f4981d230fc236c7b3e1612fffd344826",
+  "runId": 40586541181,
+  "runNumber": 1317,
+  "runUrl": "https://github.com/mxbaylee/spinel/actions/runs/40586541181",
+  "status": "completed",
+  "conclusion": "cancelled",
+  "jobs": [],
+  "artifacts": [],
+  "measurementBegan": false,
+  "qualification": "GitHub's job and artifact responses are empty. This superseded run was cancelled before any job or benchmark case began."
+}

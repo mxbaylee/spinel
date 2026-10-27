@@ -1,0 +1,318 @@
+{
+  "schema": 1,
+  "disposition": "failed under schema 2; no retroactive acceptance under amended schema 3",
+  "runId": 40586732900,
+  "candidateHead": "d099a224c983d4c38c9de5f0dec2be32aba265f1",
+  "matchedTree": "6ab84fc28915fad0eac91eff8a1f5f384be65219",
+  "baselineSource": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+  "candidateSamplesCollected": 0,
+  "presets": {
+    "desktop": {
+      "artifactId": 12772349996,
+      "originalZipSha256": "c1f51b6f275c51dddd8ef12765598bda6e7ae2db8e40f95ff6589ea9bd350599",
+      "result": "all four baseline cases failed first exact sender restoration after Ctrl+Y; initial sender/saved/peer content had passed",
+      "records": [
+        {
+          "sample": "plain-1",
+          "schema": 2,
+          "source": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+          "attempt": 0,
+          "completed": false,
+          "keydownCount": 2086,
+          "frameCount": 2086,
+          "inputP95Ms": 57.29999999998836,
+          "longestTaskMs": 9982,
+          "typingWallMs": 90397.35473199999,
+          "nativeDrainUpperBoundMs": 20383.29999999999,
+          "largestKeyGapMs": 131.59999999997672,
+          "gapsAtLeast300Ms": 0,
+          "beforeUndoHistory": {
+            "undos": 1,
+            "redos": 0
+          },
+          "beforeUndoHighWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "finalHistory": {
+            "undos": 0,
+            "redos": 0
+          },
+          "finalHighWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "pageErrors": 0,
+          "rawMetricsSha256": "5039ab9a38c65f925079a251b51a1034bfdcf74996eb09d0ebb8d546fe48646d",
+          "rawProfileSha256": null
+        },
+        {
+          "sample": "plain-2",
+          "schema": 2,
+          "source": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+          "attempt": 0,
+          "completed": false,
+          "keydownCount": 2086,
+          "frameCount": 2086,
+          "inputP95Ms": 56.40000000002328,
+          "longestTaskMs": 9838,
+          "typingWallMs": 89502.395368,
+          "nativeDrainUpperBoundMs": 20024.29999999999,
+          "largestKeyGapMs": 188.79999999998836,
+          "gapsAtLeast300Ms": 0,
+          "beforeUndoHistory": {
+            "undos": 1,
+            "redos": 0
+          },
+          "beforeUndoHighWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "finalHistory": {
+            "undos": 0,
+            "redos": 0
+          },
+          "finalHighWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "pageErrors": 0,
+          "rawMetricsSha256": "f40fd50816dd092e6982a2027369924d0fb26fedf031f26743fb98c81d928f0a",
+          "rawProfileSha256": null
+        },
+        {
+          "sample": "plain-3",
+          "schema": 2,
+          "source": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+          "attempt": 0,
+          "completed": false,
+          "keydownCount": 2086,
+          "frameCount": 2086,
+          "inputP95Ms": 54.09999999997672,
+          "longestTaskMs": 9558,
+          "typingWallMs": 83391.934354,
+          "nativeDrainUpperBoundMs": 19631.300000000047,
+          "largestKeyGapMs": 126.20000000001164,
+          "gapsAtLeast300Ms": 0,
+          "beforeUndoHistory": {
+            "undos": 1,
+            "redos": 0
+          },
+          "beforeUndoHighWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "finalHistory": {
+            "undos": 0,
+            "redos": 0
+          },
+          "finalHighWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "pageErrors": 0,
+          "rawMetricsSha256": "fc6b55d9f8ce7c56e03f3e479610ccad81d5cecb89449263e68c5dd5ab5961ca",
+          "rawProfileSha256": null
+        },
+        {
+          "sample": "profile",
+          "schema": 2,
+          "source": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+          "attempt": 0,
+          "completed": false,
+          "keydownCount": 2086,
+          "frameCount": 2086,
+          "inputP95Ms": 57.20000000006985,
+          "longestTaskMs": 10146,
+          "typingWallMs": 89756.22283799999,
+          "nativeDrainUpperBoundMs": 20840.699999999953,
+          "largestKeyGapMs": 148.39999999990687,
+          "gapsAtLeast300Ms": 0,
+          "beforeUndoHistory": {
+            "undos": 1,
+            "redos": 0
+          },
+          "beforeUndoHighWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "finalHistory": {
+            "undos": 0,
+            "redos": 0
+          },
+          "finalHighWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "pageErrors": 0,
+          "rawMetricsSha256": "09150b8824cab207d08d02b33f997b65b45129487650d938527147ec4d281c3d",
+          "rawProfileSha256": "723b4a6a69d81165dbbd3de8b44e44050be726480c61022f9558d3974d2c82a5"
+        }
+      ]
+    },
+    "mobile": {
+      "artifactId": 12773066719,
+      "originalZipSha256": "39f8002a5dc709b8c68a99402a17b71ce564afb33a294110aac12756bc561eb2",
+      "result": "all four baseline cases failed first exact sender restoration after Ctrl+Y; initial sender/saved/peer content had passed",
+      "records": [
+        {
+          "sample": "plain-1",
+          "schema": 2,
+          "source": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+          "attempt": 0,
+          "completed": false,
+          "keydownCount": 2086,
+          "frameCount": 2086,
+          "inputP95Ms": 121.5,
+          "longestTaskMs": 21588,
+          "typingWallMs": 163831.146082,
+          "nativeDrainUpperBoundMs": 43890.90000000002,
+          "largestKeyGapMs": 250.20000000001164,
+          "gapsAtLeast300Ms": 0,
+          "beforeUndoHistory": {
+            "undos": 1,
+            "redos": 0
+          },
+          "beforeUndoHighWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "finalHistory": {
+            "undos": 0,
+            "redos": 0
+          },
+          "finalHighWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "pageErrors": 0,
+          "rawMetricsSha256": "ac8d0492b587bc4f4300c10d53832f331402f126a80bddfacc38b0095cf7ad46",
+          "rawProfileSha256": null
+        },
+        {
+          "sample": "plain-2",
+          "schema": 2,
+          "source": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+          "attempt": 0,
+          "completed": false,
+          "keydownCount": 2086,
+          "frameCount": 2086,
+          "inputP95Ms": 120.90000000002328,
+          "longestTaskMs": 20968,
+          "typingWallMs": 162720.58380300002,
+          "nativeDrainUpperBoundMs": 43615.5,
+          "largestKeyGapMs": 280.20000000001164,
+          "gapsAtLeast300Ms": 0,
+          "beforeUndoHistory": {
+            "undos": 1,
+            "redos": 0
+          },
+          "beforeUndoHighWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "finalHistory": {
+            "undos": 0,
+            "redos": 0
+          },
+          "finalHighWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "pageErrors": 0,
+          "rawMetricsSha256": "af0a93157891511b57a3899e2a21036c78021a7c484386e1892c6d396da2b3ad",
+          "rawProfileSha256": null
+        },
+        {
+          "sample": "plain-3",
+          "schema": 2,
+          "source": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+          "attempt": 0,
+          "completed": false,
+          "keydownCount": 2086,
+          "frameCount": 2086,
+          "inputP95Ms": 119.29999999993015,
+          "longestTaskMs": 21022,
+          "typingWallMs": 161014.970979,
+          "nativeDrainUpperBoundMs": 42840.69999999995,
+          "largestKeyGapMs": 261.79999999993015,
+          "gapsAtLeast300Ms": 0,
+          "beforeUndoHistory": {
+            "undos": 1,
+            "redos": 0
+          },
+          "beforeUndoHighWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "finalHistory": {
+            "undos": 0,
+            "redos": 0
+          },
+          "finalHighWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "pageErrors": 0,
+          "rawMetricsSha256": "c4744fe48052781fde6391b20aba8483866a8b3b4d4ff6f06b8b91ff218b5d65",
+          "rawProfileSha256": null
+        },
+        {
+          "sample": "profile",
+          "schema": 2,
+          "source": "161b9874f3ac0e89a277c713ceb965e5ac39ca05",
+          "attempt": 0,
+          "completed": false,
+          "keydownCount": 2086,
+          "frameCount": 2086,
+          "inputP95Ms": 121.19999999995343,
+          "longestTaskMs": 21552,
+          "typingWallMs": 167499.143807,
+          "nativeDrainUpperBoundMs": 43686.19999999995,
+          "largestKeyGapMs": 221.29999999993015,
+          "gapsAtLeast300Ms": 0,
+          "beforeUndoHistory": {
+            "undos": 1,
+            "redos": 0
+          },
+          "beforeUndoHighWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "finalHistory": {
+            "undos": 0,
+            "redos": 0
+          },
+          "finalHighWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "pageErrors": 0,
+          "rawMetricsSha256": "bd32b934babcb8792b4de37c18afd9a398d9feeea64614b63a5533351f673539",
+          "rawProfileSha256": "cda1ecc873c1ca67c67530759c03a9484a565ca82035637aef90ff0d2bfdf79f"
+        }
+      ]
+    }
+  },
+  "nativeDiagnosis": {
+    "fixtureInputChanges": 2086,
+    "fixtureUnitId": "doc",
+    "redoMutationArrayBytes": 166056,
+    "redoReservedEnvelopeBytes": 166206,
+    "wireLimitBytes": 65536,
+    "rawEvidenceSha256": "3904259ab292be8f52c42e428d02b901342d98411284e592972ad266286b3424",
+    "observedFailure": "capacity",
+    "typingAndUndoVerified": true,
+    "browserReloadReasonRecorded": false,
+    "qualification": "Exact capacity refusal is proven in native replay; the old browser artifacts show counter reset but did not record the reload reason. Fresh schema-3 browser observations are required."
+  },
+  "otherRequiredCI": {
+    "developmentShard2": "failed: existing Sheet preview permission-notice assertion flaky; retry passed but is not accepted",
+    "artifactId": 12773381981,
+    "originalZipSha256": "ee2fe7e3684b1496f28ce75c0c47a22c847e5a2e9988fd2df4d244e85fbf5491",
+    "cause": "not established; no changed Sheet snapshot-viewer production path",
+    "otherOrdinaryJobs": "passed",
+    "storybook": "passed"
+  },
+  "ciMergeSource": "b2b65d7d94cbd101757442f78e1569d0c201cf30"
+}

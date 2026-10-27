@@ -60,8 +60,8 @@ ran, and no accepted improvement is asserted by these attempts.
 ## Schema 3 amendment before candidate measurement
 
 After those baseline failures, an exact 2,086-input native replay established
-the cause: the uncapped redo mutation is 166,056 bytes and its reserved envelope
-is 166,206 bytes, exceeding the unchanged 65,536-byte sync limit. Typing and Undo
+the cause: the exact-input native reproduction has a 166,056-byte redo mutation array and a
+166,206-byte reserved envelope (fixture unit ID `doc`), exceeding the unchanged 65,536-byte sync limit. Typing and Undo
 pass real client/server/peer ACK and hash verification. Redo applies locally,
 then SyncClient refuses with `capacity`; confirmed/server/peer content stays
 empty. The mounted recovery reloads that saved state.
@@ -88,3 +88,12 @@ The `d099a22` development browser shard also failed on one flaky existing Sheet
 preview permission-notice assertion. Its retry passed, but the gate remains
 failed. This record does not substitute a retry or an older revision for required
 current-commit CI.
+
+
+The schema-3 matched baseline is pinned at
+`64770ad962c543d6eb9d855e51bae994e457377d`. The fresh candidate is
+`993bafa92826e95b2d187c035a72936cdb66e8d9`; its collection is pending.
+Interrupted run dispositions are in `attempt-6f/` and `attempt-dbb/`.
+The failed schema-2 set's inspected numeric observations and artifact checksums
+are in [attempt-d099/result-summary.json](attempt-d099/result-summary.json).
+No accepted browser improvement or final review grade is asserted yet.
