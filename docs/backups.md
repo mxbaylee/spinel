@@ -40,11 +40,11 @@ adds manual encrypted downloads, configurable S3-compatible destinations,
 separate diagnostics retention and staged UI restore/maintenance. The accepted
 [pre-deployment implementation decision](implementation/SPN-063.md#accepted-decision-implement-recovery-before-deployment)
 adds a supported filesystem destination to build and test the shared workflow
-locally. SPN-063 now belongs before launch; selected-provider and target-host
-acceptance remain in SPN-038 before public exposure. A same-host backup must be
-reported separately from independent offsite protection. These are implementation
-plans: the current commands below are unchanged, and the filesystem destination,
-recurring verifier and new UI controls are not yet available.
+locally. SPN-063 implements that destination and the recurring isolated verifier
+before deployment; selected-provider and target-host acceptance remain in SPN-038
+before public exposure. Admin separates publication, restore verification and
+offsite coverage. Manual Admin exports, diagnostics expiry, maintenance and
+assisted live restore remain separate work in SPN-109–112; CLI recovery is available.
 
 ## Current SQLite and Spaces implementation
 
@@ -74,8 +74,14 @@ membership/order and recovery records after reopen and a SQLite snapshot copy.
 round trip and SPN-064 ownership handover with freshly reopened native services,
 described in the verification record below. Continue restoring the recorded
 immutable application version; an older image cannot be assumed to understand a
-newer Space schema. Space Trash and recovery groups containing Space data have
-no automatic expiry; backup retention does not change that application policy.
+newer Space schema. Space Trash and recovery groups containing Space data use
+the [same 30-day recovery window as ordinary Trash](trash.md). Backup retention
+is separate: keeping an archive does not extend an application's recovery
+deadline, and application cleanup does not rewrite old backup objects. Restored
+deletion timestamps keep their original age, including after ownership handover.
+Before starting a new server against deliberately retained or restored test data,
+follow the [read-only expiry inventory](implementation/SPN-095.md#previously-retained-data-and-activation);
+startup cleanup can remove content already past its original deadline.
 
 The encrypted copy also contains the canonical origin, immutable application
 image reference and runtime environment file. Host-specific Tailscale identity,
@@ -110,7 +116,7 @@ Operator's ordinary application account cannot open documents.
    Disable object versioning for this retention policy; deleting current objects
    does not delete historical versions. Use a unique, permanent prefix per instance.
    Do not change prefixes casually: old backups then need deliberate retention.
-3. Generate a key on a secure operator machine with Node 24.19.0:
+3. Generate a key on a secure operator machine with the Node version in `.nvmrc`:
 
    ```bash
    node scripts/deploy/backup.ts keygen /private/recovery/spinel.key
@@ -156,13 +162,19 @@ Operator's ordinary application account cannot open documents.
 
 ## Schedule, retention and failures
 
-The app runs at 02:00 UTC, catches up after downtime, and retries unsuccessful
-attempts hourly. It must be running on an unlocked volume. A restarted process
+The default backup time is 02:00 UTC; `backupHourUtc` selects another whole UTC
+hour. Weekly verification defaults to Sunday at 03:00 UTC; configure
+`verificationDayUtc` (0 Sunday through 6 Saturday) and `verificationHourUtc`
+(0–23). The app catches up missed backup/verification runs and retries failed
+attempts hourly. A first startup creates a backup and then verifies it in the
+same scheduling cycle. It must be running on an unlocked volume. A restarted process
 waits up to one hour for an interrupted process's lease to expire. Graceful
-shutdown waits for an in-flight backup, but a forced container stop can interrupt
-it; the next eligible run retries. Private staging from a killed process stays
-on encrypted storage; remove only abandoned `.backup-*`/`.restore-*` directories
-while no backup or restore is running. Never remove the live database or sidecars.
+shutdown drains the active job. Backup and verification share the same lease;
+they cannot compete for staging or prune a source during verification. A forced
+stop leaves private staging on encrypted storage. The next lease holder reconciles
+only generated, private `.recovery-job-*` directories owned by this service. Old
+standalone `.backup-*`/`.restore-*` directories require inspection while no recovery
+command is running; never remove the live database or sidecars.
 
 A streaming upload uses a `.pending` object, downloads it to verify SHA-256,
 then publishes it with a server-side copy. Unverified pending objects are never
@@ -175,17 +187,136 @@ multipart support before the encrypted backup reaches that limit.
 Retention keeps the newest backup in each of the last **7 UTC days, 4 Monday-based
 weeks and 6 calendar months**, including the current period. Overlapping periods
 share a recovery point; missing periods cannot be manufactured. It always keeps
-the newest recognized backup, the current successful upload and future-dated
+the newest recognized backup, the current successful upload, the last inspected
+source (including a failed verification) and future-dated
 objects. This is a calendar window, not a promise of 17 distinct objects.
 
-Admin shows configured/missing setup, running state, the last attempt, the last
-verified upload, failures and an overdue warning after 26 hours without success.
+Admin shows the configured destination, publication time, current failure and an
+overdue warning after 26 hours without publication. Restore verification has its
+own attempt, last success, current failure, verified key and eight-day overdue
+warning. A failed check keeps the last successful verification visible. Local
+publication says **Local backup saved** and continues to request an independent
+offsite copy. A verification pass does not establish host-loss independence.
 Retention failure still shows an error even if the new upload succeeded. SDK
 messages are deliberately not exposed because they may include request secrets.
 Check private configuration permissions, available space, key length, immutable
 image, Spaces credentials/network access and bucket policy, then retry. Status
 is persisted in SQLite and available only to active admins. It is not an external
 alert service and cannot report while the whole instance is down.
+
+## Filesystem destination for local operation
+
+The filesystem destination is supported on **Linux local filesystems**, including
+a locally run production container. It stores the same encrypted `.spinel`
+bundles as Spaces and needs no cloud account or credentials. A directory on the
+application host does not satisfy the offsite-before-daily-use requirement.
+Other operating systems can exercise this profile in a Linux container; network
+shares and synchronization folders are not certified by these tests.
+
+Prepare a private, canonical directory owned by the app's UID, with mode 0700.
+For deployment, validate its intended mounted volume before configuring it. Run
+the identity command **in the environment that will run the backup**:
+
+```bash
+node scripts/deploy/backup.ts identity /private/spinel-backups
+```
+
+Copy its exact `root`, `rootDevice` and `rootInode` values into a private 0600
+configuration file. The values below are examples, not a valid identity for your
+directory:
+
+```json
+{
+  "type": "filesystem",
+  "root": "/private/spinel-backups",
+  "rootDevice": "2049",
+  "rootInode": "12345",
+  "prefix": "spinel-local",
+  "keyFile": "/private/spinel-backup.key",
+  "keyId": "workspace-2026-01",
+  "runtimeEnvironmentFile": "/private/recovery-runtime.env",
+  "backupHourUtc": 2,
+  "verificationDayUtc": 0,
+  "verificationHourUtc": 3
+}
+```
+
+Set `BACKUP_CONFIG_PATH`, `DATABASE_PATH`, `APP_ORIGIN` and immutable `SPINEL_IMAGE`
+in the app/CLI environment. The existing `run`, `list`, `download` and `restore`
+commands work with this destination; `verify` runs the same isolated check used
+by the scheduler:
+
+```bash
+node scripts/deploy/backup.ts run
+node scripts/deploy/backup.ts verify
+node scripts/deploy/backup.ts list /private/backup.json
+```
+
+Missing/replaced roots, changed device/inode identity, unsafe permissions,
+symlinks, traversal and foreign prefixes fail closed. The adapter never creates
+a fallback root. Reconfirm the intended storage before recording a legitimate
+new identity after a host/volume change; do not automatically accept a changed
+mount. Payload and namespace handles remain bound to verified private directories.
+Publication writes an exclusive temporary file, reads back its checksum, flushes
+it and publishes with a no-replace hard link plus directory synchronization.
+Only complete names enter the catalog. The next leased job removes abandoned
+pending files; collisions preserve the existing artifact.
+
+Transfers are capped at 5 GiB and filesystem catalog scans at 10,000 entries.
+These are explicit resource limits, not an advertised workspace capacity. Keep
+the key and reviewed image independently recoverable even for local practice.
+
+## Recurring isolated recovery verification
+
+New archives contain a snapshot-bound schema/table inventory with exact typed
+row digests inside the authenticated encrypted bundle. Verification downloads the
+newest published point, restores it in a private disposable target and checks
+SQLite integrity/foreign keys, inventory, native snapshots/models, images,
+history, Space structure, generations and access-state invariants. It does not
+activate the database, start application jobs or send notifications. A corrupt
+newest point fails visibly instead of silently substituting an older good one.
+
+The child process uses the same pinned SQLite runtime, a 256 MiB JavaScript heap,
+a 512 MiB Linux RSS guard and a two-minute deadline. Before launch it requires
+640 MiB of available cgroup capacity and 768 MiB of available host memory; while
+running it stops below 128/256 MiB respectively. Missing cgroup probes retain
+the available host, RSS, heap and time protections. It has scoped file
+permissions and no Node network permission. Decompression defaults to an 8 GiB
+ceiling. Artifact retrieval and local publication check available destination
+space before and during transfer; decompression also retains a 256 MiB reserve.
+Memory, disk, size and time refusals have fixed actionable Operator messages and
+do not retry every retained key. Semantic admission is bounded at
+100,000 workspace items, 256 tables and 32 MiB per inventory row. Exceeding a limit
+is a failed check, not successful partial coverage. Record actual host budgets
+and timings at launch; the local limits are not a performance guarantee.
+
+The parent removes its owned verification target even after killing the worker.
+The source artifact and last good verification remain available on failure.
+Older SPINEL01 bundles still work with offline `restore`; bundles without the new
+inventory cannot claim complete weekly verification and are reported as failed.
+Verification requires the recorded origin and current compatible image metadata;
+test an older image separately rather than silently accepting a version mismatch.
+
+## Credential and encryption-key rotation
+
+Use a unique nonsecret `keyId` for each encryption key. To rotate, create a new
+private 32-byte key and independent recovery copy, then change `keyFile`/`keyId`
+in the deployment config. Add old IDs and private key paths to `retainedKeyFiles`,
+for example `{"workspace-2026-01":"/private/old-backup.key"}`. At most 16 retained
+keys are supported. Do not map the active ID again or reuse an ID for different
+bytes. Run a new backup and verification, and verify a retained old archive before
+removing any old-key access. The verifier records the authenticated key identifier
+that actually recovered the selected archive. Key files never accompany downloads.
+
+Rotating Spaces access credentials does not change the archive encryption key;
+replace the dedicated scoped credential and test publication/retrieval with it.
+For suspected compromise, revoke the compromised storage credential, preserve
+incident evidence, rotate encryption keys and recovery authority as applicable,
+and follow the fresh-host procedure. New encryption cannot retract plaintext or
+old ciphertext already obtained with a stolen old key. Keep retained backups
+recoverable until their retention expires; if policy requires retiring a key
+earlier, explicitly account for the backups made unreadable. Live session/guest
+reconciliation for assisted activation belongs to SPN-111/112, not this verifier.
 
 Sources: [SQLite VACUUM INTO](https://www.sqlite.org/lang_vacuum.html#vacuuminto),
 [DigitalOcean AWS SDK configuration](https://docs.digitalocean.com/products/spaces/reference/aws-sdks/).

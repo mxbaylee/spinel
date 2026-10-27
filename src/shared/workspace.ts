@@ -51,8 +51,8 @@ export const fileKindLabel: Record<FileKind, string> = { ...kindLabel, space: 'S
 
 export type TrashedItem = FileItem & {
   trashedAt: number;
-  /** Space recovery groups are retained until explicitly deleted. */
-  expiresAt: number | null;
+  /** Every recovery window ends 30 elapsed UTC days after its own deletion. */
+  expiresAt: number;
 };
 export interface TrashListing {
   items: TrashedItem[];

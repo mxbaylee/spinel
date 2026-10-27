@@ -10,6 +10,7 @@ import { createDestination } from './destination.ts';
 import type { RemoteStore } from './destination.ts';
 import { backupTime, expiredBackups } from './spaces.ts';
 import { verifyArchive } from './verification.ts';
+import { RecoveryResourceError } from './resource-error.ts';
 import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
 
@@ -226,6 +227,7 @@ export class BackupService {
     );
     if (
       (!!verification.error ||
+        (state.owner && state.job === 'verify') ||
         !this.status().verification.lastGood ||
         verification.last_good! < verifyDue) &&
       (!verification.last_attempt || this.now() - verification.last_attempt >= HOUR)
@@ -366,6 +368,7 @@ export class BackupService {
           if (old !== key && old !== held) await remote.remove(old, signal);
         }
       } else {
+        if (!this.options.image) throw new Error('Application image is required for verification.');
         if (!remote.download) throw new Error('Destination does not support recovery retrieval.');
         const keys = (await remote.list(signal))
           .map((key) => ({ key, time: backupTime(key, config.prefix) }))
@@ -396,8 +399,10 @@ export class BackupService {
             if (result.keyId !== undefined && result.keyId !== id) continue;
             verifiedKey = id;
             break;
-          } catch {
+          } catch (error) {
             signal.throwIfAborted();
+            // Resource refusal cannot improve by trying another retained key.
+            if (error instanceof RecoveryResourceError) throw error;
           }
         }
         if (!verifiedKey) throw new Error('Recovery could not be verified with configured keys.');
@@ -409,9 +414,17 @@ export class BackupService {
           .run(this.now(), verifiedKey, this.identity!, owner);
       }
       success = true;
-    } catch {
+    } catch (error) {
       // Errors can contain credentials, SQL or document data. Persist safe text only.
-      this.recordError(job, owner, job === 'backup' ? BACKUP_FAILURE : VERIFY_FAILURE);
+      this.recordError(
+        job,
+        owner,
+        error instanceof RecoveryResourceError
+          ? new RecoveryResourceError(error.code).message
+          : job === 'backup'
+            ? BACKUP_FAILURE
+            : VERIFY_FAILURE,
+      );
     } finally {
       clearInterval(heartbeat);
       try {

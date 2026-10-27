@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import type { ItemKind, TrashedItem } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { Trash } from './Trash.tsx';
@@ -45,7 +45,17 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const WithItems: Story = { parameters: { api: loaded } };
+export const WithItems: Story = {
+  parameters: { api: loaded },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('button', { name: 'Restore Old budget' })).toBeEnabled();
+    await expect(canvas.getByRole('button', { name: 'Restore Scratch notes' })).toBeDisabled();
+    await expect(canvas.getByText(/Recovery ended/)).toHaveTextContent(
+      new Date(items[3].expiresAt).toLocaleString(),
+    );
+  },
+};
 /** Empty trash is disabled when there is nothing to delete. */
 export const Empty: Story = {
   parameters: { api: { 'GET /api/items/trash': { items: [], version: 'v0' } } },
@@ -65,17 +75,17 @@ export const ConfirmEmpty: Story = {
     );
   },
 };
-const retained: TrashedItem[] = [
-  { ...trashed(5, 'Archived projects', 'folder', 95), expiresAt: null },
-  { ...trashed(6, 'Research Space', 'doc', 95), kind: 'space', expiresAt: null },
+const spaceGroup: TrashedItem[] = [
+  trashed(5, 'Archived projects', 'folder', 29),
+  { ...trashed(6, 'Research Space', 'doc', 29), kind: 'space' },
 ];
-const retainedListing = {
-  items: [...retained, items[0]],
-  version: 'retained-group',
+const spaceListing = {
+  items: [...spaceGroup, items[0]],
+  version: 'space-group',
   deletion: {
     count: 6,
     items: [
-      ...retained.map(({ id, name, kind }) => ({ id, name, kind })),
+      ...spaceGroup.map(({ id, name, kind }) => ({ id, name, kind })),
       { id: 'page-1', name: 'Research notes', kind: 'doc' },
       { id: 'page-2', name: 'Old draft already in Space Trash', kind: 'doc' },
       { id: 'page-3', name: 'Sources', kind: 'sheet' },
@@ -83,11 +93,42 @@ const retainedListing = {
     ],
   },
 };
-export const RetainedSpaceGroup: Story = {
-  parameters: { api: { 'GET /api/items/trash': retainedListing } },
+export const SpaceRecoveryWindow: Story = {
+  parameters: { api: { 'GET /api/items/trash': spaceListing } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByRole('button', { name: 'Restore Archived projects' }),
+    ).toBeEnabled();
+    await expect(canvas.getByRole('button', { name: 'Restore Research Space' })).toBeEnabled();
+    await expect(canvas.getAllByText(/Recover until/)).toHaveLength(3);
+    await expect(canvas.queryByText(/Kept until/)).not.toBeInTheDocument();
+  },
+};
+export const ExpiredSpaceGroup: Story = {
+  parameters: {
+    api: {
+      'GET /api/items/trash': {
+        ...spaceListing,
+        items: [
+          ...spaceGroup.map((item) => ({ ...item, trashedAt: now - 30 * day, expiresAt: now })),
+          items[0],
+        ],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByRole('button', { name: 'Restore Archived projects' }),
+    ).toBeDisabled();
+    await expect(canvas.getByRole('button', { name: 'Restore Research Space' })).toBeDisabled();
+    await expect(canvas.getByRole('button', { name: 'Restore Old budget' })).toBeEnabled();
+    await expect(canvas.getAllByText(/Recovery ended/)).toHaveLength(2);
+  },
 };
 export const ConfirmCompleteSpaceGraph: Story = {
-  ...RetainedSpaceGroup,
+  parameters: SpaceRecoveryWindow.parameters,
   play: async ({ canvasElement }) => {
     await userEvent.click(
       await within(canvasElement).findByRole('button', { name: 'Empty trash' }),
@@ -97,7 +138,7 @@ export const ConfirmCompleteSpaceGraph: Story = {
 export const SpaceGraphChanged: Story = {
   parameters: {
     api: {
-      'GET /api/items/trash': retainedListing,
+      'GET /api/items/trash': spaceListing,
       'POST /api/items/trash/empty': failure(
         'Your trash changed. Review the complete contents before deleting.',
         409,

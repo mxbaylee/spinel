@@ -171,6 +171,7 @@ export function BackupStatus() {
         </>
       ) : null}
       <a
+        className="admin-backup-guide"
         href="https://github.com/mxbaylee/spinel/blob/main/docs/backups.md"
         target="_blank"
         rel="noopener noreferrer"

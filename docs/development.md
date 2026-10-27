@@ -61,7 +61,8 @@ moves SPN-063 implementation/local acceptance before launch, using a supported
 filesystem destination and disposable processes/containers. New backup and
 restore controls can be developed locally; real-provider and target-host checks
 remain launch acceptance under SPN-038. The filesystem destination and recurring
-verifier are planned, not shipped.
+verifier are implemented by SPN-063; the broader controls are registered in
+SPN-109–112. See the [local setup and verification runbook](backups.md#filesystem-destination-for-local-operation).
 The
 [capacity writeup](implementation/SPN-063-capacity.md) records engine limits,
 current application budgets and measurements still required before publishing

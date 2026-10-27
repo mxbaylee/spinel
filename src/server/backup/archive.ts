@@ -17,6 +17,7 @@ import { pipeline } from 'node:stream/promises';
 import { Transform } from 'node:stream';
 import { createGzip, createGunzip } from 'node:zlib';
 import { verifyInventory, writeInventory } from './inventory.ts';
+import { RecoveryResourceError } from './resource-error.ts';
 
 const MAGIC = Buffer.from('SPINEL01');
 const HEADER_SIZE = 20;
@@ -86,10 +87,10 @@ export async function makeArchive(
   const pageSize = Number(db.prepare('PRAGMA page_size').get()!.page_size);
   const space = await statfs(stagingRoot);
   if (space.bavail * space.bsize < pages * pageSize * 2.1 + 256 * 1024 ** 2)
-    throw new Error('Insufficient staging space for backup and encrypted output.');
+    throw new RecoveryResourceError('disk-space');
   const directory = await mkdtemp(join(stagingRoot, '.backup-'));
-  await chmod(directory, 0o700);
   try {
+    await chmod(directory, 0o700);
     const copy = join(directory, 'snapshot.sqlite');
     await backup(db, copy);
     await chmod(copy, 0o600);
@@ -148,12 +149,12 @@ export async function restoreArchive(
     throw new Error('Invalid recovery size limit.');
   const space = await statfs(stagingRoot);
   const available = space.bavail * space.bsize - 256 * 1024 ** 2;
-  if (available < 4096) throw new Error('Insufficient recovery staging space.');
+  if (available < 4096) throw new RecoveryResourceError('disk-space');
   const limit = Math.min(maximum, available);
   const directory = await mkdtemp(join(stagingRoot, '.restore-'));
-  await chmod(directory, 0o700);
   let created = false;
   try {
+    await chmod(directory, 0o700);
     const handle = await open(archive, 'r');
     let header: Buffer, tag: Buffer, size: number;
     try {
@@ -177,7 +178,7 @@ export async function restoreArchive(
       transform(chunk: Buffer, _encoding, callback) {
         expanded += chunk.length;
         if (expanded > limit) {
-          callback(new Error('Recovery exceeds the database size or free-space limit.'));
+          callback(new RecoveryResourceError(limit === maximum ? 'database-size' : 'disk-space'));
           return;
         }
         // Other jobs can consume the same volume after the initial budget. Check
@@ -188,7 +189,7 @@ export async function restoreArchive(
             (current) =>
               callback(
                 current.bavail * current.bsize < 256 * 1024 ** 2 + 4 * 1024 ** 2
-                  ? new Error('Insufficient recovery staging space.')
+                  ? new RecoveryResourceError('disk-space')
                   : null,
                 chunk,
               ),

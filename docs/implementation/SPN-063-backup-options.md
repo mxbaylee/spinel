@@ -5,7 +5,10 @@ follow-up: manual admin downloads, automatic S3/DigitalOcean destinations,
 per-database retention/backup settings, UI restore and scheduled maintenance
 messaging. The [SQLite decision](SPN-063.md#accepted-decision-keep-sqlite-without-database-adapters)
 and later [filesystem/pre-deployment direction](SPN-063.md#accepted-decision-implement-recovery-before-deployment)
-are accepted; the capabilities below are not yet shipped. This discussion permits
+are accepted. SPN-063 implements the filesystem destination, shared scheduler,
+isolated verifier and read-only admin status. The wider configuration/export,
+diagnostics-expiry, maintenance and assisted-restore proposal is tracked in
+SPN-109–112. This discussion permits
 a narrow **backup-destination** boundary; it does not reopen database-engine adapters.
 
 **Recommendation:** one SQLite application dataset and one encrypted recovery
@@ -15,12 +18,13 @@ operation. Deployment configuration owns storage credentials and policy. The UI
 shows effective configuration and starts bounded actions. Implement assisted live
 restore only after the isolated verifier and maintenance/restart lifecycle work.
 
-These are proposed capabilities, not shipped controls. They do not complete
-SPN-063 or silently add every feature below to its original weekly-verification
-acceptance. The main record contains the persona decision and implementation
-staging; this appendix makes the owner's proposed operating model reviewable.
+The [runtime implementation record](SPN-063.md#runtime-implementation) and
+[runbook](../backups.md#filesystem-destination-for-local-operation) identify the
+delivered controls and actual JSON configuration. This appendix retains the
+wider operating model without treating every proposed feature as completed by
+the weekly verifier. Its baseline audit and test matrix preserve their original scope.
 
-## What already exists
+## Baseline before SPN-063 implementation
 
 Audit baseline:
 [`a9893ce3c72d0a707f97e4444f9b3f48a65dd226`](https://github.com/mxbaylee/spinel/commit/a9893ce3c72d0a707f97e4444f9b3f48a65dd226).
@@ -147,23 +151,24 @@ manual download means browser handoff, not proof that someone retained the file.
 
 ## Filesystem destination and local acceptance
 
-**Accepted direction:** implement a real supported filesystem destination first,
-then run the same backup, scheduling, retention, verification and restore services
-through it. It is useful for development, recovery practice and operator-managed
+**Implemented foundation:** the supported filesystem destination now runs the same
+backup, scheduling, retention, isolated verification and CLI restore services.
+It is useful for development, recovery practice and operator-managed
 copies. Keep a single concrete SQLite snapshot/restore path. Destination adapters
 only publish, list, retrieve and remove encrypted artifacts; they do not own
 schedules, encryption, semantic verification, retention policy or live cutover.
 
 Separate shared recovery settings (key references, image/origin metadata, dataset,
-schedule and retention) from destination-specific settings. Today
-[`loadConfig`](../../src/server/backup/spaces.ts) requires Spaces fields even when
-tests inject a local transport into [BackupService](../../src/server/backup/service.ts).
-Remove that dependency for filesystem and manual-only operation. Keep configuration
-validated at startup, with safe error/status output and no fake cloud credentials.
+schedule and retention) from destination-specific settings. The baseline loader
+required Spaces fields even with an injected local transport. The implemented
+[configuration loader](../../src/server/backup/config.ts) removes that dependency
+for filesystem operation, validates shared settings and preserves old Spaces files.
+The proposed manual-only Admin workflow remains SPN-109.
 
 For a development configuration, select `local` as the workspace automatic
-destination and replace the cloud destination entry with this **illustrative,
-unimplemented** entry; retain the shared recovery settings above:
+destination in the future multi-dataset schema with this **illustrative,
+unimplemented** entry. For the supported single-destination JSON, including exact
+root device/inode identity, use the [current runbook](../backups.md#filesystem-destination-for-local-operation):
 
 ```yaml
 destinations:
@@ -217,8 +222,8 @@ key, compatible immutable application image and recovery configuration.
 
 Expose destination identity/type, latest successful publication, latest successful
 isolated restore verification, and current failures. Track independent offsite
-coverage separately. Today's service labels a successful transport publication an
-offsite recovery point; that assumption must change when adding filesystem storage.
+coverage separately. The baseline service labeled every transport success an
+offsite recovery point; SPN-063 removes that assumption from the service and UI.
 A same-host file or container bind mount may disappear with the live database.
 Neither an adapter name nor a configuration boolean proves host-loss independence.
 
@@ -468,8 +473,10 @@ available independently of its SQLite file, without exposing private job details
 Each increment needs its own concrete implementation scope when work starts.
 Steps 1–5 can be implemented and validated before deployment; real-provider
 contract checks can also run early when authorized access is available.
-The current preparation changes documentation only; no runtime configuration
-schema, destination, expiry job, UI action or maintenance controller is installed.
+SPN-063 implements steps 1–2, including read-only status presentation and the
+independent CLI. SPN-109 owns step 3's Admin exports/configuration, with diagnostics
+expiry in SPN-110; SPN-111 owns step 4 and notices; SPN-112 owns step 5. The later
+steps remain unimplemented, with real-provider/target-host acceptance in SPN-038.
 
 Acceptance must cover both manual-only and automatic configurations; wrong/old
 keys; private AWS/Spaces access; interrupted transfer and bounded staging;

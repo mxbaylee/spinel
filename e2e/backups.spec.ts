@@ -4,6 +4,7 @@ import { mkdir, mkdtemp, readFile, readdir, realpath, rm, writeFile } from 'node
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
+import type { Browser, Page } from '@playwright/test';
 import { projectRoot, startApp } from './app-process.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
@@ -11,8 +12,7 @@ import { filesystemIdentity } from '../src/server/backup/filesystem.ts';
 import type { BackupStatusResponse } from '../web/BackupStatus.tsx';
 
 test('operator sees missing configuration, backup failure and the last good backup after reopening Admin', async ({
-  page,
-  context,
+  playwright,
 }, testInfo) => {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-backup-e2e-'));
   const databasePath = join(directory, 'spinel.sqlite');
@@ -27,17 +27,22 @@ test('operator sees missing configuration, backup failure and the last good back
     auth = new AuthStore(db);
   const admin = auth.createUser('Operator', true),
     session = auth.createSession(admin.id);
-  await context.addCookies([
-    {
-      name: COOKIE_NAME,
-      value: session.token,
-      url: origin.replace('http:', 'https:'),
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Strict',
-    },
-  ]);
+  let browser: Browser | undefined;
+  let page: Page | undefined;
   try {
+    browser = await playwright.chromium.launch(testInfo.project.use.launchOptions);
+    const context = await browser.newContext();
+    page = await context.newPage();
+    await context.addCookies([
+      {
+        name: COOKIE_NAME,
+        value: session.token,
+        url: origin.replace('http:', 'https:'),
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+      },
+    ]);
     await page.goto(`${origin}/admin#health`);
     const panel = page.getByRole('region', { name: 'Backups' });
     await expect(
@@ -86,7 +91,16 @@ test('operator sees missing configuration, backup failure and the last good back
     await expect(
       verification.getByText('Restore verification failed', { exact: false }),
     ).toHaveCount(0);
+  } catch (error) {
+    const screenshot = await page?.screenshot({ fullPage: true }).catch(() => undefined);
+    if (screenshot)
+      await testInfo.attach('backup-status-failure', {
+        body: screenshot,
+        contentType: 'image/png',
+      });
+    throw error;
   } finally {
+    await browser?.close();
     db.close();
     await app.close();
     await rm(directory, { recursive: true, force: true });
@@ -94,9 +108,8 @@ test('operator sees missing configuration, backup failure and the last good back
 });
 
 test('a real scheduled filesystem backup is verified locally and never presented as offsite protection', async ({
-  page,
-  context,
-  browser,
+  playwright,
+  request,
 }, info) => {
   test.skip(
     process.platform !== 'linux',
@@ -152,12 +165,14 @@ test('a real scheduled filesystem backup is verified locally and never presented
       secure: true,
       sameSite: 'Strict' as const,
     });
-    await context.addCookies([cookie(operatorToken)]);
+    const operatorHeaders = { Cookie: `${COOKIE_NAME}=${operatorToken}` };
     let status: BackupStatusResponse | undefined;
     await expect
       .poll(
         async () => {
-          const response = await context.request.get(`${origin}/api/admin/backups`);
+          const response = await request.get(`${origin}/api/admin/backups`, {
+            headers: operatorHeaders,
+          });
           expect(response.status()).toBe(200);
           status = (await response.json()) as BackupStatusResponse;
           return (
@@ -186,43 +201,80 @@ test('a real scheduled filesystem backup is verified locally and never presented
       (await readFile(join(root, 'browser-recovery', archives[0]))).subarray(0, 8).toString(),
     ).toBe('SPINEL01');
 
-    const member = await browser.newContext();
-    try {
-      await member.addCookies([cookie(memberToken)]);
-      expect((await member.request.get(`${origin}/api/admin/backups`)).status()).toBe(404);
-    } finally {
-      await member.close();
-    }
-    await page.goto(`${origin}/admin#health`);
-    const panel = page.getByRole('region', { name: 'Backups', exact: true });
-    await expect(panel.getByText('Local backup saved', { exact: true })).toBeVisible();
-    await expect(panel.getByRole('alert')).toContainText('independent offsite copy');
-    await expect(panel.getByText('OK', { exact: true })).toHaveCount(0);
-    const verification = panel.getByRole('region', { name: 'Restore verification' });
-    await expect(verification.getByText('Verified', { exact: true })).toBeVisible();
-    await expect(verification.getByText(/Last successful restore check:/)).not.toContainText(
-      'None yet',
-    );
+    expect(
+      (
+        await request.get(`${origin}/api/admin/backups`, {
+          headers: { Cookie: `${COOKIE_NAME}=${memberToken}` },
+        })
+      ).status(),
+    ).toBe(404);
 
     async function capture(state: 'verified' | 'failed') {
-      await mkdir('test-results/theme-screenshots', { recursive: true });
-      for (const variant of [
-        { name: 'light', theme: 'light', width: 1440 },
-        { name: 'dark', theme: 'dark', width: 1440 },
-        { name: 'phone', theme: 'light', width: 390 },
-      ] as const) {
-        await page.evaluate((theme) => localStorage.setItem('spinel-theme', theme), variant.theme);
-        await page.setViewportSize({ width: variant.width, height: 1000 });
-        await page.reload();
+      // Start the browser only after the recovery job finishes. Keeping an idle
+      // browser beside the app and isolated verifier wastes the local 2 GiB budget.
+      const browser = await playwright.chromium.launch(info.project.use.launchOptions);
+      let page: Page | undefined;
+      try {
+        const context = await browser.newContext();
+        const currentPage = await context.newPage();
+        page = currentPage;
+        await context.addCookies([cookie(operatorToken)]);
+        await page.goto(`${origin}/admin#health`);
+        const panel = page.getByRole('region', { name: 'Backups', exact: true });
+        const verification = panel.getByRole('region', { name: 'Restore verification' });
+        await expect(panel.getByText('Local backup saved', { exact: true })).toBeVisible();
+        await expect(panel.getByText('OK', { exact: true })).toHaveCount(0);
         await expect(
-          verification.getByText(state === 'verified' ? 'Verified' : 'Failed', { exact: true }),
+          panel.getByRole('alert').filter({ hasText: 'independent offsite copy' }),
         ).toBeVisible();
-        await expect
-          .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
-          .toBe(true);
-        await panel.screenshot({
-          path: `test-results/theme-screenshots/spn-063-local-${state}-${variant.name}-${info.project.name}.png`,
-        });
+        await expect(verification.getByText(/Last successful restore check:/)).not.toContainText(
+          'None yet',
+        );
+        if (state === 'failed') await expect(verification.getByRole('alert')).toBeVisible();
+        await mkdir('test-results/theme-screenshots', { recursive: true });
+        for (const variant of [
+          { name: 'light', theme: 'light', width: 1440 },
+          { name: 'dark', theme: 'dark', width: 1440 },
+          { name: 'phone', theme: 'light', width: 390 },
+        ] as const) {
+          await page.evaluate(
+            (theme) => localStorage.setItem('spinel-theme', theme),
+            variant.theme,
+          );
+          await page.setViewportSize({ width: variant.width, height: 1000 });
+          await page.reload();
+          await expect(
+            verification.getByText(state === 'verified' ? 'Verified' : 'Failed', { exact: true }),
+          ).toBeVisible();
+          await expect
+            .poll(() =>
+              currentPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+            )
+            .toBe(true);
+          if (variant.name === 'phone') {
+            for (const target of [
+              panel.getByRole('button', { name: 'Refresh backup status' }),
+              panel.getByRole('link', { name: 'Open backup guide' }),
+            ]) {
+              const bounds = await target.boundingBox();
+              expect(bounds!.height).toBeGreaterThanOrEqual(44);
+              expect(bounds!.width).toBeGreaterThanOrEqual(44);
+            }
+          }
+          await panel.screenshot({
+            path: `test-results/theme-screenshots/spn-063-local-${state}-${variant.name}-${info.project.name}.png`,
+          });
+        }
+      } catch (error) {
+        const screenshot = await page?.screenshot({ fullPage: true }).catch(() => undefined);
+        if (screenshot)
+          await info.attach(`backup-${state}-failure`, {
+            body: screenshot,
+            contentType: 'image/png',
+          });
+        throw error;
+      } finally {
+        await browser.close();
       }
     }
     await capture('verified');
@@ -258,17 +310,11 @@ test('a real scheduled filesystem backup is verified locally and never presented
     });
     expect(code).toBe(1);
     const failed = (await (
-      await context.request.get(`${origin}/api/admin/backups`)
+      await request.get(`${origin}/api/admin/backups`, { headers: operatorHeaders })
     ).json()) as BackupStatusResponse;
     expect(failed.verification.lastGood).toBe(status!.verification.lastGood);
     expect(failed.verification.error).not.toBeNull();
     expect(await readFile(archivePath)).toEqual(damaged);
-    await page.reload();
-    await expect(verification.getByText('Failed', { exact: true })).toBeVisible();
-    await expect(verification.getByRole('alert')).toBeVisible();
-    await expect(verification.getByText(/Last successful restore check:/)).not.toContainText(
-      'None yet',
-    );
     await capture('failed');
   } finally {
     await app?.close();

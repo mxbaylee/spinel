@@ -34,14 +34,31 @@ card cannot promise an upload will fit. See [backups](backups.md).
 
 History maintenance includes both capture and pruning. Trash expiry and the
 collaboration purge queue report their actual runs; the latter also performs
-restore-generation cleanup. A failure keeps its first observed failure time
-until a successful run. Unimplemented Space trash expiry is **Not configured**.
+restore-generation cleanup. **Space Trash expiry** is configured when Space
+exposure is enabled and reports its actual startup/daily attempts, last success
+and failure state. With `SPINEL_SPACE_REVIEW=0` it remains **Not configured** and
+hidden Space groups are retained. A failure keeps its first observed failure
+time until a successful run. Successful bounded work does not mean all expired
+content or every queued generation has already been removed.
+
+Space cleanup scans an indexed page of at most 256 root metadata rows, validates
+at most 16 eligible graphs per pass and bounds each graph to 10,000 members.
+Collaboration cleanup processes at most 100 ordered queued generations per pass.
+Both check a one-second elapsed budget between units of work; an in-progress
+transaction or generation can take longer. Failed Space graphs stay intact while
+unrelated eligible roots continue; cursors advance past failures for later retry.
+Native purge failures at startup or on the minute retry leave the application
+available and preserve durable queue entries. A final shutdown attempt also
+retains unfinished entries for the next startup. These jobs log only static status
+or counts, never names, locations, content or arbitrary exception text.
+
 Backup configuration, running state, last attempt/success, errors and overdue
-status use the existing backup controller. Recurring restore verification remains
-SPN-063, now scheduled before launch under the
+status use the shared backup controller. SPN-063 implements recurring isolated
+restore verification before deployment under the
 [pre-deployment recovery decision](implementation/SPN-063.md#accepted-decision-implement-recovery-before-deployment).
 Provider and target-host acceptance remain required in SPN-038 before public
-exposure; local backup success must not imply independent offsite protection.
+exposure. Admin reports current verification failure and its last successful
+check separately from publication; local backup success does not imply offsite protection.
 
 ## Reproduce and download
 

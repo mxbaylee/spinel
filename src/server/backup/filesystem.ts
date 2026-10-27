@@ -5,6 +5,7 @@ import type { FileHandle } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import type { FilesystemConfig } from './config.ts';
 import type { BackupDestination } from './destination.ts';
+import { RecoveryResourceError } from './resource-error.ts';
 import { backupTime } from './spaces.ts';
 import { fileChunks, fileDigest, MAX_ARCHIVE_BYTES, transferArchive } from './transfer.ts';
 
@@ -124,7 +125,8 @@ export class FilesystemStore implements BackupDestination {
     try {
       input = await open(source, constants.O_RDONLY | constants.O_NOFOLLOW);
       const info = await input.stat();
-      if (!info.isFile() || info.size > MAX_ARCHIVE_BYTES) throw new Error('Invalid backup size.');
+      if (!info.isFile()) throw new Error('Invalid backup file.');
+      if (info.size > MAX_ARCHIVE_BYTES) throw new RecoveryResourceError('archive-size');
       output = await open(pending, 'wx+', 0o600);
       created = true;
       const checksum = await transferArchive(
@@ -132,6 +134,7 @@ export class FilesystemStore implements BackupDestination {
         output,
         bounded,
         info.size,
+        pending,
       );
       if (checksum !== expectedDigest) throw new Error('Backup checksum mismatch.');
       await output.sync();
@@ -191,8 +194,9 @@ export class FilesystemStore implements BackupDestination {
     try {
       input = await open(join(directory.path, name), constants.O_RDONLY | constants.O_NOFOLLOW);
       const info = await input.stat();
-      if (!info.isFile() || info.size > MAX_ARCHIVE_BYTES || (info.mode & 0o077) !== 0)
+      if (!info.isFile() || (info.mode & 0o077) !== 0)
         throw new Error('Invalid published backup file.');
+      if (info.size > MAX_ARCHIVE_BYTES) throw new RecoveryResourceError('archive-size');
       output = await open(destination, 'wx', 0o600);
       created = true;
       const checksum = await transferArchive(
@@ -200,6 +204,7 @@ export class FilesystemStore implements BackupDestination {
         output,
         bounded,
         info.size,
+        destination,
       );
       await directory.check();
       await output.sync();

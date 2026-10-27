@@ -1,12 +1,23 @@
 {
   "name": "Spinel",
   "prefix": "SPN",
-  "next_id": 109,
+  "next_id": 113,
   "personas": "docs/product/personas.md",
   "grooming": {
     "every": 7,
     "last": "2026-10-26",
-    "completed_since": ["SPN-053", "SPN-072", "SPN-054", "SPN-070", "SPN-055", "SPN-051", "SPN-086", "SPN-076"]
+    "completed_since": [
+      "SPN-053",
+      "SPN-072",
+      "SPN-054",
+      "SPN-070",
+      "SPN-055",
+      "SPN-051",
+      "SPN-086",
+      "SPN-076",
+      "SPN-095",
+      "SPN-063"
+    ]
   },
   "size": {
     "soft": 10000,
@@ -22,5 +33,8 @@
       "docs/todo/readme.md"
     ]
   },
-  "pr_title_exceptions": ["🧹 Groom backlog", "⬆️ Bump"]
+  "pr_title_exceptions": [
+    "🧹 Groom backlog",
+    "⬆️ Bump"
+  ]
 }

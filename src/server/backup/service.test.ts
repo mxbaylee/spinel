@@ -2,7 +2,7 @@ import { randomBytes, randomUUID } from 'node:crypto';
 import { chmod, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { openDatabase } from '../../../server/database.ts';
 import { AuthStore } from '../auth/store.ts';
 import { WorkspaceStore } from '../workspace/store.ts';
@@ -12,10 +12,13 @@ import { filesystemIdentity } from './filesystem.ts';
 import { createDestination } from './destination.ts';
 import { BackupService } from './service.ts';
 import type { BackupConfig } from './config.ts';
+import * as verification from './verification.ts';
+import { RecoveryResourceError } from './resource-error.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
   for (const close of cleanups.splice(0).reverse()) await close();
+  vi.restoreAllMocks();
 });
 const image = `sha256:${'a'.repeat(64)}`;
 async function fixture() {
@@ -104,6 +107,20 @@ async function fixture() {
   };
 }
 
+test('verification requires the running application image and preserves its source when absent', async () => {
+  const f = await fixture();
+  expect(await f.service.run()).toBe(true);
+  const files = await f.files();
+  const unknownImage = new BackupService(f.db, { ...f.options, image: undefined });
+  cleanups.push(() => unknownImage.close());
+  expect(await unknownImage.verify()).toBe(false);
+  expect(unknownImage.status().verification).toMatchObject({
+    lastGood: null,
+    error: expect.stringContaining('Recovery verification failed'),
+  });
+  expect(await f.files()).toEqual(files);
+});
+
 test('actual scheduling publishes and verifies encrypted local archives, catches up and avoids duplicate jobs', async () => {
   const f = await fixture();
   await f.service.start();
@@ -174,6 +191,34 @@ test('failed newest recovery retains source and last success; old and new keys r
   expect(f.service.status().verification).toMatchObject({ keyId: 'second', error: null });
 }, 60_000);
 
+test('resource refusal reports a safe reason, stops key retries and preserves the last recovery point', async () => {
+  const f = await fixture();
+  expect(await f.service.run()).toBe(true);
+  expect(await f.service.verify()).toBe(true);
+  const good = f.service.status().verification.lastGood;
+  const path = join(f.root, f.config.prefix, (await f.files())[0]);
+  const source = await readFile(path);
+  await writeFile(
+    f.configPath,
+    JSON.stringify({ ...f.config, retainedKeyFiles: { older: f.keyFile } }),
+  );
+  const attempt = vi.spyOn(verification, 'verifyArchive');
+  for (const code of ['memory-headroom', 'memory-limit', 'time-limit', 'disk-space'] as const) {
+    attempt.mockClear().mockRejectedValue(new RecoveryResourceError(code));
+    expect(await f.service.verify()).toBe(false);
+    expect(attempt).toHaveBeenCalledTimes(1);
+    expect(f.service.status().verification).toMatchObject({
+      lastGood: good,
+      running: false,
+      error: new RecoveryResourceError(code).message,
+    });
+  }
+  expect(await readFile(path)).toEqual(source);
+  expect((await readdir(f.directory)).filter((name) => name.startsWith('.recovery-job-'))).toEqual(
+    [],
+  );
+}, 60_000);
+
 test('backup and verifier share a real lease, and shutdown drains active retrieval', async () => {
   const f = await fixture();
   expect(await f.service.run()).toBe(true);
@@ -220,6 +265,9 @@ test('backup and verifier share a real lease, and shutdown drains active retriev
 test('expired verification is visible, retry reconciles only owned staging and preserves foreign paths', async () => {
   const f = await fixture();
   expect(await f.service.run()).toBe(true);
+  expect(await f.service.verify()).toBe(true);
+  const previousGood = f.service.status().verification.lastGood;
+  f.advance(30 * 60_000);
   const abandoned = await mkdtemp(join(f.directory, `.recovery-job-${randomUUID()}-`));
   await chmod(abandoned, 0o700);
   await writeFile(join(abandoned, 'partial'), 'not a recovery point');
@@ -235,6 +283,7 @@ test('expired verification is visible, retry reconciles only owned staging and p
     .prepare("UPDATE verification_state SET owner='interrupted',lease=?,last_attempt=? WHERE id=1")
     .run(f.options.now() - 1, f.options.now() - 2 * 3600_000);
   expect(f.service.status().verification.error).toContain('interrupted');
+  expect(f.service.status().verification.lastGood).toBe(previousGood);
   await f.service.tick();
   expect(f.service.status().verification).toMatchObject({
     lastGood: f.options.now(),

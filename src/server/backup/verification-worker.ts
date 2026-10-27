@@ -3,6 +3,7 @@ import { DatabaseSync } from '../../../server/database.ts';
 import { readKey, restoreArchive } from './archive.ts';
 import { verifyInventory } from './inventory.ts';
 import { verifySemantics } from './verification-semantics.ts';
+import { RecoveryResourceError } from './resource-error.ts';
 
 const disconnected = () => process.exit(1);
 process.once('disconnect', disconnected);
@@ -42,9 +43,12 @@ process.once(
         ok: true,
         result: { ...inventory, ...semantics, ...(recovery.keyId && { keyId: recovery.keyId }) },
       });
-    } catch {
+    } catch (error) {
       // Raw SQLite/native errors can contain document content and credentials.
-      process.send?.({ ok: false });
+      process.send?.({
+        ok: false,
+        ...(error instanceof RecoveryResourceError && { resourceCode: error.code }),
+      });
       process.exitCode = 1;
     } finally {
       database?.close();

@@ -38,6 +38,29 @@ export async function verifySemantics(db: DatabaseSync) {
   ])
     if (!exists(db, table)) throw invalid();
   db.exec('PRAGMA query_only=ON');
+  const hasTransition = exists(db, 'spinel_sync_transition_state');
+  if (hasTransition || exists(db, 'spinel_sync_transition_units')) {
+    if (!hasTransition || !exists(db, 'spinel_sync_transition_units')) throw invalid();
+    const transition = db.prepare('SELECT * FROM spinel_sync_transition_state WHERE id=1').get();
+    if (
+      transition?.status !== 'complete' ||
+      !/^[a-f0-9]{64}$/.test(String(transition.source_hash)) ||
+      !/^[a-f0-9]{64}$/.test(String(transition.manifest_hash))
+    )
+      throw invalid();
+    // Receipts intentionally outlive purged/replaced generations. They establish
+    // an authenticated initial native revision only after a completed cutover.
+    for (const receipt of db.iterate('SELECT * FROM spinel_sync_transition_units'))
+      if (
+        typeof receipt.unit_id !== 'string' ||
+        !receipt.unit_id ||
+        !Number.isSafeInteger(receipt.revision) ||
+        Number(receipt.revision) < 1 ||
+        Number(receipt.revision) >= Number.MAX_SAFE_INTEGER ||
+        !/^[a-f0-9]{64}$/.test(String(receipt.snapshot_hash))
+      )
+        throw invalid();
+  }
   const rows = db.prepare('SELECT * FROM workspace_items LIMIT 100001').all() as unknown as Item[];
   if (rows.length > 100_000) throw new Error('Recovery exceeds the item verification budget.');
   const items = new Map(rows.map((item) => [item.id, item]));
@@ -256,17 +279,37 @@ export async function verifySemantics(db: DatabaseSync) {
     )
       throw invalid();
   }
+  const stagedUnits = new Map<string, Item>();
+  if (exists(db, 'spinel_restore_jobs'))
+    for (const job of db.iterate("SELECT * FROM spinel_restore_jobs WHERE status='staging'")) {
+      const item = items.get(String(job.item_id));
+      if (
+        !item ||
+        activeUnits.get(String(job.previous_unit)) !== item ||
+        typeof job.next_unit !== 'string' ||
+        !job.next_unit ||
+        activeUnits.has(job.next_unit) ||
+        stagedUnits.has(job.next_unit) ||
+        job.revision !== null
+      )
+        throw invalid();
+      stagedUnits.set(job.next_unit, item);
+    }
   if (exists(db, 'spinel_sync_units'))
     for (const unit of db.iterate('SELECT * FROM spinel_sync_units')) {
-      const item = activeUnits.get(String(unit.unit_id));
+      let item = activeUnits.get(String(unit.unit_id));
       if (!item) {
         // A committed restore/deletion can leave an old unit for the purge outbox.
         if (
-          !exists(db, 'collaboration_purge') ||
-          !db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(unit.unit_id)
+          exists(db, 'collaboration_purge') &&
+          db.prepare('SELECT 1 FROM collaboration_purge WHERE item_id=?').get(unit.unit_id)
         )
-          throw invalid();
-        continue;
+          continue;
+        // An online copy can also fall between creation of a staged generation
+        // and its activation transaction. Validate it without completing the job;
+        // the normal startup recovery will cancel this uncommitted replacement.
+        item = stagedUnits.get(String(unit.unit_id));
+        if (!item || unit.revision !== 1 || unit.retained_from !== 1) throw invalid();
       }
       if (
         item.kind !== unit.kind ||
@@ -284,18 +327,37 @@ export async function verifySemantics(db: DatabaseSync) {
         String(unit.unit_id),
         true,
       );
-      if (exists(db, 'spinel_sync_revisions')) {
-        const revisions = db
+      let initialRevision = 1;
+      if (hasTransition) {
+        const receipt = db
           .prepare(
-            'SELECT count(*) AS n,min(revision) AS lo,max(revision) AS hi FROM spinel_sync_revisions WHERE unit_id=?',
+            'SELECT revision,snapshot_hash FROM spinel_sync_transition_units WHERE unit_id=?',
           )
-          .get(unit.unit_id)!;
-        if (
-          Number(revisions.n) !== Number(unit.revision) - 1 ||
-          (Number(unit.revision) > 1 && (revisions.lo !== 2 || revisions.hi !== unit.revision))
-        )
-          throw invalid();
+          .get(unit.unit_id);
+        if (receipt) {
+          initialRevision = Number(receipt.revision);
+          if (
+            initialRevision > Number(unit.revision) ||
+            initialRevision > Number(unit.retained_from) ||
+            (initialRevision === unit.revision &&
+              createHash('sha256').update(String(unit.snapshot)).digest('hex') !==
+                receipt.snapshot_hash)
+          )
+            throw invalid();
+        }
       }
+      if (!exists(db, 'spinel_sync_revisions')) throw invalid();
+      const revisions = db
+        .prepare(
+          'SELECT count(*) AS n,min(revision) AS lo,max(revision) AS hi FROM spinel_sync_revisions WHERE unit_id=?',
+        )
+        .get(unit.unit_id)!;
+      if (
+        Number(revisions.n) !== Number(unit.revision) - initialRevision ||
+        (Number(unit.revision) > initialRevision &&
+          (revisions.lo !== initialRevision + 1 || revisions.hi !== unit.revision))
+      )
+        throw invalid();
     }
   if (exists(db, 'history_checkpoints'))
     for (const row of db.iterate('SELECT item_id,source,snapshot FROM history_checkpoints')) {

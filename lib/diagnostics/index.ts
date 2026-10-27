@@ -21,7 +21,13 @@ export type {
 } from './sync.ts';
 
 /** Optional observations, never edit delivery. No storage, clocks or transport here. */
-export const JOBS = ['history-prune', 'trash-expiry', 'collaboration-purge', 'backup'] as const;
+export const JOBS = [
+  'history-prune',
+  'trash-expiry',
+  'space-trash-expiry',
+  'collaboration-purge',
+  'backup',
+] as const;
 export const OPERATIONS = [
   'document-open',
   'document-save',

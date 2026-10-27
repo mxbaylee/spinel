@@ -163,7 +163,7 @@ test('a killed publisher leaves no visible point and restart cleanup removes its
   // before the parent observes the real pending-file creation and kills the child.
   const source = join(f.directory, 'large-source');
   const handle = await open(source, 'wx', 0o600);
-  await handle.truncate(5 * 1024 ** 3);
+  await handle.truncate(64 * 1024 ** 2);
   await handle.close();
   const configPath = join(f.directory, 'config');
   await writeFile(configPath, JSON.stringify(f.config), { mode: 0o600 });

@@ -201,6 +201,11 @@
   margin-top: 0;
   font-size: inherit;
 }
+.admin-backup-guide {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
 @media (max-width: 900px) {
   .admin-layout {
     grid-template-columns: 176px minmax(0, 1fr);
