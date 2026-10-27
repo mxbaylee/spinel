@@ -301,8 +301,9 @@ Verified by:
 Download and launch work as [described above](#offline-launch-and-read-only-viewing).
 SPN-053 implements this section through Spinel's own sync server/client contracts
 ([SPN-057](implementation/SPN-057.md), [SPN-058](implementation/SPN-058.md) and
-[SPN-059](implementation/SPN-059.md)). The separate conflicted-copy/export outcome
-remains SPN-054. See the [implementation decisions](implementation/SPN-053.md).
+[SPN-059](implementation/SPN-059.md)). SPN-054 implements the separate
+conflicted-copy/export outcome. See the [editing decisions](implementation/SPN-053.md)
+and [recovery decisions](implementation/SPN-054.md).
 
 **Edit offline.** A downloaded item opens in an open-source Univer editor created
 from the stored snapshot, with no collaboration plugins. Images come from the
