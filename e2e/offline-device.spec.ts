@@ -653,8 +653,20 @@ test('browsers without database enumeration create account stores only through e
         sameSite: 'Strict',
       },
     ]);
-    await page.goto('/profile#device');
+    // Repeating a fragment URL can keep the previous account's mounted App.
+    // Cookie replacement needs a new document to admit the requested account.
+    if ((await page.goto('/profile#device')) === null) await page.reload();
     await expect(page.getByRole('heading', { name: 'Your profile', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Your profile', exact: true })).toHaveAttribute(
+      'title',
+      `${user.name} — Your profile`,
+    );
+    await expect(
+      page.getByRole('link', {
+        name: user.is_admin ? 'Back to administration' : 'Back to files',
+        exact: true,
+      }),
+    ).toBeVisible();
     expect(await page.evaluate(() => typeof indexedDB.databases)).toBe('undefined');
   };
   try {
