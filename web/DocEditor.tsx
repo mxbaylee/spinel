@@ -425,7 +425,7 @@ export function DocEditor({
         );
       if (
         render &&
-        (import.meta.env.VITE_SYNC_EVIDENCE === '1' ||
+        ((mobile && import.meta.env.VITE_SYNC_EVIDENCE === '1') ||
           import.meta.env.VITE_DOC_SELECTION_EVIDENCE === '1')
       ) {
         // Evidence builds expose a read-only snapshot of the public native

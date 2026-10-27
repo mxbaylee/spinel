@@ -380,6 +380,10 @@ for (const role of ['editor', 'guest-viewer'] as const) {
             'All changes saved.',
           );
           expectedBody = (await read()).body;
+          await writeFile(
+            info.outputPath(`phone-doc-selection-evidence-${theme}.json`),
+            JSON.stringify({ theme, phase: 'complete', nativeEvidence }, null, 2),
+          );
           await input.dispose();
         } else {
           await expect(editor.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();

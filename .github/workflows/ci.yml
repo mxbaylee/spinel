@@ -360,7 +360,7 @@ jobs:
             test-results/**/*-sync-presence.png
             test-results/**/spn-059-sheet-menu-*.png
             test-results/**/sync-diagnostics.json
-            test-results/**/phone-doc-selection-evidence.json
+            test-results/**/phone-doc-selection-evidence*.json
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
             test-results/**/trace.zip
