@@ -3,6 +3,14 @@ import { writeFile } from 'node:fs/promises';
 import { expect } from '@playwright/test';
 import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
+import {
+  createParagraphId,
+  createSectionId,
+  DocumentFlavor,
+  getDocsEmptySnapshot,
+  LocaleType,
+  validateDocumentStructure,
+} from '@univerjs/core';
 import type { ClientCheckpoint, NativeSnapshot } from '@spinel/sync-client';
 import {
   canonical,
@@ -13,6 +21,7 @@ import {
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { DocumentStore } from '../src/server/workspace/documents.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { PortableFiles } from '../src/server/workspace/portable.ts';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
@@ -255,6 +264,9 @@ export async function fixture(
     actor?: 'owner' | 'editor' | 'viewer';
     images?: boolean;
     seed?: NativeSnapshot;
+    phone?: boolean;
+    flavor?: DocumentFlavor;
+    zoomRatio?: number;
   } = {},
 ) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
@@ -278,11 +290,21 @@ export async function fixture(
     httpOnly: true,
     sameSite: 'Strict' as const,
   });
-  const account = async (id: string) => {
+  const account = async (id: string, phone = false) => {
     const context = await browser.newContext({
       baseURL,
       viewport: { width: 1440, height: 1100 },
       permissions: ['clipboard-read', 'clipboard-write'],
+      ...(phone
+        ? {
+            viewport: { width: 390, height: 844 },
+            deviceScaleFactor: 1,
+            isMobile: true,
+            hasTouch: true,
+            colorScheme: 'light' as const,
+            reducedMotion: 'reduce' as const,
+          }
+        : {}),
     });
     contexts.push(context);
     await context.addCookies([cookie(id)]);
@@ -341,6 +363,29 @@ export async function fixture(
       ? spaces.createChild(owner.id, root.id, { name: `Offline ${kind}`, kind, parentId: root.id })
           .item
       : workspace.create(owner.id, { name: `Offline ${kind}`, kind, parentId: null });
+  if (kind === 'doc' && options.flavor !== undefined) {
+    // Visible, valid text lets a real touch choose the native insertion point.
+    // Keep a non-default saved zoom to catch a phone view changing shared data.
+    const snapshot = getDocsEmptySnapshot(item.id, LocaleType.EN_US, item.name, options.flavor);
+    snapshot.settings = { ...snapshot.settings, zoomRatio: options.zoomRatio ?? 1 };
+    const stream = 'Phone journal\rOffline writing keeps the whole saved document.\r';
+    const paragraphIds = new Set<string>();
+    snapshot.body = {
+      ...snapshot.body,
+      dataStream: stream + '\n',
+      paragraphs: Array.from(stream.matchAll(/\r/g), (match) => ({
+        startIndex: match.index!,
+        paragraphId: createParagraphId(paragraphIds),
+      })),
+      sectionBreaks: [{ startIndex: stream.length, sectionId: createSectionId(new Set()) }],
+    };
+    expect(validateDocumentStructure(snapshot)).toEqual([]);
+    new DocumentStore(workspace).save(owner.id, item.id, {
+      snapshot,
+      revision: 0,
+      writeId: randomUUID(),
+    });
+  }
   for (const [user, role] of [
     [editor, 'editor'],
     [viewer, 'viewer'],
@@ -358,7 +403,7 @@ export async function fixture(
   });
   expect(prepared.status(), await prepared.text()).toBe(200);
   const unitId = (await prepared.json()).unitId as string;
-  const context = await account(actor.id);
+  const context = await account(actor.id, options.phone);
   await recordNativeSnapshots(context);
   const network = await syncNetwork(context);
   const page = await context.newPage();
@@ -382,10 +427,15 @@ export async function fixture(
   };
   const download = async () => {
     await page.goto(href);
+    const phoneReadOnly =
+      options.flavor === DocumentFlavor.TRADITIONAL &&
+      (await page.evaluate(() => matchMedia('(pointer: coarse) and (max-width: 900px)').matches));
     await expect(saveStatus(page)).toHaveText(
-      options.actor === 'viewer'
-        ? 'View only — reload after your access changes.'
-        : 'All changes saved.',
+      phoneReadOnly
+        ? 'View only on this phone. Edit on a larger screen.'
+        : options.actor === 'viewer'
+          ? 'View only — reload after your access changes.'
+          : 'All changes saved.',
       { timeout: 30_000 },
     );
     await expect

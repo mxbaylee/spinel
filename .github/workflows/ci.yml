@@ -330,11 +330,13 @@ jobs:
       - name: Build
         env:
           VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
         run: npm run build
       - name: Playwright smoke
         env:
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
           SHARD: ${{ matrix.shard }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
         run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
       - name: Artifact name
         if: always()
@@ -360,6 +362,7 @@ jobs:
             test-results/**/spn-053-offline-*.png
             test-results/**/sync-diagnostics.json
             test-results/**/phone-doc-caret-events*.json
+            test-results/**/phone-doc-selection-evidence*.json
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
             test-results/**/trace.zip

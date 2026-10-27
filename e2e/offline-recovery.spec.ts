@@ -2,7 +2,12 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Page, TestInfo } from '@playwright/test';
-import { DOCS_NORMAL_EDITOR_UNIT_ID_KEY, getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
+import {
+  DOCS_NORMAL_EDITOR_UNIT_ID_KEY,
+  DocumentFlavor,
+  getDocsEmptySnapshot,
+  LocaleType,
+} from '@univerjs/core';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import { docFormulas } from '@spinel/doc-formulas';
 import type { NativeSnapshot } from '@spinel/sync-client';
@@ -27,6 +32,7 @@ import {
   usableCanvas,
 } from './offline-fixture.ts';
 import type { Kind, OfflineFixture } from './offline-fixture.ts';
+import { beginWriting, textPoint } from './doc-touch.ts';
 
 type Change = 'concurrent' | 'restored' | 'trashed' | 'revoked' | 'viewer';
 const endpoint = '**/api/items/offline-recovery';
@@ -186,9 +192,27 @@ async function changeLive(
   return f.unitId;
 }
 
-async function localEdit(f: OfflineFixture, kind: Kind, reopen = true) {
+async function focusDocStart(page: Page, phone = false) {
+  if (phone) {
+    const region = page.getByRole('region', { name: 'Doc document', exact: true });
+    await expect(region).toHaveAttribute('data-mobile', 'true');
+    const editButton = region.getByRole('button', { name: 'Edit', exact: true });
+    if (await editButton.isVisible()) await editButton.tap();
+    await beginWriting(page);
+  } else {
+    await page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+    await nativeInput(page).focus();
+  }
+  await page.keyboard.press('Control+Home');
+}
+
+async function localEdit(f: OfflineFixture, kind: Kind, reopen = true, phone = false) {
   await f.network.setOffline(true);
-  await edit(f.page, kind, offlineText(kind));
+  if (phone) {
+    expect(kind).toBe('doc');
+    await focusDocStart(f.page, true);
+    await f.page.keyboard.insertText(offlineText(kind));
+  } else await edit(f.page, kind, offlineText(kind));
   await expect
     .poll(async () => pending((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint))
     .toBe(true);
@@ -196,7 +220,13 @@ async function localEdit(f: OfflineFixture, kind: Kind, reopen = true) {
   if (reopen) await f.page.reload();
   await usableCanvas(f.page);
   await savedLocally(f.page);
-  expect(await copy(f.page, kind)).toContain(offlineText(kind).trim());
+  if (phone)
+    // Observe the native capture without replacing phone touch input with a
+    // desktop selection. The final recovered/exported body is compared exactly.
+    expect(JSON.stringify((await stored(f.page, f.actor.id, f.item.id))!.outbox)).toContain(
+      offlineText(kind),
+    );
+  else expect(await copy(f.page, kind)).toContain(offlineText(kind).trim());
   expect(pending((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint)).toBe(true);
 }
 
@@ -270,13 +300,19 @@ async function composeDocText(
   );
 }
 
-async function capture(page: Page, info: TestInfo, state: string) {
+async function capture(page: Page, info: TestInfo, state: string, phone = false) {
   await mkdir('test-results/theme-screenshots', { recursive: true });
-  for (const [theme, width] of [
-    ['light', 1440],
-    ['dark', 1440],
-    ['light', 390],
-  ] as const) {
+  const views = phone
+    ? ([
+        ['light', 390],
+        ['dark', 390],
+      ] as const)
+    : ([
+        ['light', 1440],
+        ['dark', 1440],
+        ['light', 390],
+      ] as const);
+  for (const [theme, width] of views) {
     await page.emulateMedia({ colorScheme: theme });
     await page.setViewportSize({ width, height: 844 });
     await expect
@@ -473,181 +509,207 @@ test.describe('offline recovery copies', () => {
     }
   });
 
-  for (const interruption of ['conflict', 'expired sign-in'] as const)
-    test(`native Doc IME final text survives ${interruption} until explicit unfinished-text discard`, async ({
-      browser,
-      baseURL,
-    }, info) => {
-      const f = await fixture(browser, baseURL!, info, 'doc', { actor: 'editor' });
-      try {
-        await f.download();
-        const baseline = await f.read();
-        await localEdit(f, 'doc', false);
-        const beforeComposition = (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint;
-        const intermediate = '旅行の下書き 517 ';
-        const finalText = '家族旅行の最終予定 518 — keep every word ✈ ';
-        const durableText = intermediate + offlineText('doc') + baseline.snapshot.body!.dataStream;
-        let recoveryPosts = 0;
-        const downloads: string[] = [];
-        f.context.on('request', (request) => {
-          if (
-            request.method() === 'POST' &&
-            new URL(request.url()).pathname === '/api/items/offline-recovery'
-          )
-            recoveryPosts++;
+  for (const phone of [false, true]) {
+    for (const interruption of ['conflict', 'expired sign-in'] as const)
+      test(`native ${phone ? 'phone ' : ''}Doc IME final text survives ${interruption} until explicit unfinished-text discard`, async ({
+        browser,
+        baseURL,
+      }, info) => {
+        const f = await fixture(browser, baseURL!, info, 'doc', {
+          actor: 'editor',
+          phone,
+          ...(phone ? { flavor: DocumentFlavor.MODERN } : {}),
         });
-        f.page.on('download', (download) => downloads.push(download.suggestedFilename()));
-        await f.page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
-        await nativeInput(f.page).focus();
-        await f.page.keyboard.press('Control+Home');
-        await composeDocText(f.page, 'start', '');
-        await composeDocText(f.page, 'update', intermediate);
-        await expect(saveStatus(f.page)).toHaveText('Editing text — changes not saved yet.');
-        // This durable checkpoint is emitted by the real native capture. The
-        // public settled-snapshot observer intentionally stays stale offline.
-        await expect
-          .poll(async () =>
-            JSON.stringify(
-              (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer,
-            ),
-          )
-          .toContain(intermediate);
-        const captured = (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint;
-        expect(captured.buffer).not.toEqual(beforeComposition.buffer);
-        if (interruption === 'conflict') await changeLive(f, 'doc', 'concurrent', baseURL!);
-        else {
-          const cookie = (await f.context.cookies()).find((entry) => entry.name === COOKIE_NAME)!;
-          f.auth.revokeSession(f.auth.session(cookie.value)!.token_hash);
-        }
-        const original = originalState(f, f.unitId);
-        await f.network.setOffline(false);
-        const warning =
-          interruption === 'conflict'
-            ? 'Copy the unfinished text before recovering your offline changes.'
-            : 'Your sign-in ended. Copy the unfinished text before signing in again.';
-        await expect(saveStatus(f.page)).toHaveText(warning, { timeout: 30_000 });
-        expect(recoveryPosts).toBe(0);
-        expect(receipts(f)).toEqual([]);
-        // The final IME value deliberately differs from the last captured
-        // update. Composition ending must not release the held host draft.
-        await composeDocText(f.page, 'end', finalText);
-        await expect(saveStatus(f.page)).toHaveText(warning);
-        // A conflict refuses further native mutations; a 401 still lets an
-        // already-started composition finish in the local checkpoint. Both
-        // retain the independent host text until its explicit discard.
-        const retainedBody =
-          interruption === 'conflict'
-            ? durableText
-            : finalText + offlineText('doc') + baseline.snapshot.body!.dataStream;
-        if (interruption === 'expired sign-in')
+        try {
+          await f.download();
+          const baseline = await f.read();
+          await localEdit(f, 'doc', false, phone);
+          const beforeComposition = (await stored(f.page, f.actor.id, f.item.id))!.outbox!
+            .checkpoint;
+          const intermediate = '旅行の下書き 517 ';
+          const finalText = '家族旅行の最終予定 518 — keep every word ✈ ';
+          const durableText =
+            intermediate + offlineText('doc') + baseline.snapshot.body!.dataStream;
+          let recoveryPosts = 0;
+          const downloads: string[] = [];
+          f.context.on('request', (request) => {
+            if (
+              request.method() === 'POST' &&
+              new URL(request.url()).pathname === '/api/items/offline-recovery'
+            )
+              recoveryPosts++;
+          });
+          f.page.on('download', (download) => downloads.push(download.suggestedFilename()));
+          await focusDocStart(f.page, phone);
+          await composeDocText(f.page, 'start', '');
+          await composeDocText(f.page, 'update', intermediate);
+          await expect(saveStatus(f.page)).toHaveText('Editing text — changes not saved yet.');
+          // This durable checkpoint is emitted by the real native capture. The
+          // public settled-snapshot observer intentionally stays stale offline.
           await expect
             .poll(async () =>
               JSON.stringify(
                 (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer,
               ),
             )
-            .toContain(finalText);
-        await expect(
-          f.page.getByRole('button', { name: 'Save details: Not saved', exact: true }),
-        ).toBeVisible();
-        const panel = await details(f.page);
-        const retainedText = panel.getByRole('textbox', { name: 'Unfinished text', exact: true });
-        await expect(retainedText).toHaveValue(finalText);
-        await expect(retainedText).toHaveAttribute('readonly', '');
-        if (interruption === 'conflict') {
-          // Frozen input ignores a new composition. Its later end event must
-          // not overwrite the already-held final text from the tracked one.
-          await composeDocText(f.page, 'start', '');
-          await composeDocText(f.page, 'end', 'Ignored later composition 520');
-          await expect(retainedText).toHaveValue(finalText);
-        }
-        for (const name of ['Export as Univer file', 'Discard offline changes…'])
-          await expect(panel.getByRole('button', { name, exact: true })).toBeDisabled();
-        if (interruption === 'conflict')
-          await expect(
-            panel.getByRole('button', { name: 'Retry creating copy', exact: true }),
-          ).toBeDisabled();
-        else
-          await expect(
-            panel.getByRole('button', { name: 'Retry creating copy', exact: true }),
-          ).toHaveCount(0);
-        await expect(panel.getByRole('link', { name: 'Open copy', exact: true })).toHaveCount(0);
-        await expect(
-          panel.getByRole('button', { name: 'Continue to sign-in', exact: true }),
-        ).toHaveCount(0);
-        // Even Retry saving must retain the host draft instead of quietly
-        // creating a copy or navigating away after compositionend.
-        await panel.getByRole('button', { name: 'Retry saving', exact: true }).click();
-        await expect(saveStatus(f.page)).toHaveText(warning);
-        await expect(retainedText).toHaveValue(finalText);
-        const sentinel = `not-copied-${randomUUID()}`;
-        await f.page.evaluate((text) => navigator.clipboard.writeText(text), sentinel);
-        await retainedText.focus();
-        await f.page.keyboard.press('Control+a');
-        await f.page.keyboard.press('Control+c');
-        await expect
-          .poll(() => f.page.evaluate(() => navigator.clipboard.readText()))
-          .toBe(finalText);
-        const held = (await stored(f.page, f.actor.id, f.item.id))!;
-        expect(held.recovery).toBeUndefined();
-        if (interruption === 'conflict') {
-          expect(held.outbox!.checkpoint.buffer).toEqual(captured.buffer);
-          expect(JSON.stringify(held.outbox)).not.toContain(finalText);
-        } else {
-          expect(held.outbox!.checkpoint.buffer).not.toEqual(captured.buffer);
-          expect(JSON.stringify(held.outbox)).toContain(finalText);
-        }
-        expect(held.outbox!.checkpoint.inflight).toEqual(captured.inflight);
-        expect(recoveryPosts).toBe(0);
-        expect(receipts(f)).toEqual([]);
-        expect(downloads).toEqual([]);
-        expect(originalState(f, f.unitId)).toEqual(original);
-        if (interruption === 'conflict') {
-          // The refused native command can show its own temporary toast. Let
-          // it dismiss normally so the phone capture also shows the header.
-          await expect(
-            f.page.getByText('This content is protected. This action is not allowed.', {
-              exact: true,
-            }),
-          ).toBeHidden({ timeout: 10_000 });
-          await capture(f.page, info, 'unfinished-doc-ime');
-        }
-        expect(recoveryPosts).toBe(0);
-        await panel.getByRole('button', { name: 'Discard unfinished text', exact: true }).click();
-        await expect(retainedText).toHaveCount(0);
-        if (interruption === 'conflict') {
-          const result = await recovered(f);
-          const snapshot = (await copySnapshot(f, result.id, baseURL!)) as IDocumentData;
-          expect(snapshot.body?.dataStream).toBe(durableText);
-          expect(snapshot.body?.dataStream).not.toContain(finalText);
-          expect(recoveryPosts).toBe(1);
-        } else {
-          await expect(
-            panel.getByRole('button', { name: 'Continue to sign-in', exact: true }),
-          ).toBeEnabled();
-          const downloading = f.page.waitForEvent('download');
-          await panel.getByRole('button', { name: 'Export as Univer file', exact: true }).click();
-          const download = await downloading;
-          expect(await download.failure()).toBeNull();
-          const snapshot = JSON.parse(
-            await readFile((await download.path())!, 'utf8'),
-          ) as IDocumentData;
-          expect(snapshot.body?.dataStream).toBe(retainedBody);
+            .toContain(intermediate);
+          const captured = (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint;
+          expect(captured.buffer).not.toEqual(beforeComposition.buffer);
+          if (interruption === 'conflict') await changeLive(f, 'doc', 'concurrent', baseURL!);
+          else {
+            const cookie = (await f.context.cookies()).find((entry) => entry.name === COOKIE_NAME)!;
+            f.auth.revokeSession(f.auth.session(cookie.value)!.token_hash);
+          }
+          const original = originalState(f, f.unitId);
+          await f.network.setOffline(false);
+          const warning =
+            interruption === 'conflict'
+              ? 'Copy the unfinished text before recovering your offline changes.'
+              : 'Your sign-in ended. Copy the unfinished text before signing in again.';
+          await expect(saveStatus(f.page)).toHaveText(warning, { timeout: 30_000 });
           expect(recoveryPosts).toBe(0);
           expect(receipts(f)).toEqual([]);
-          await panel.getByRole('button', { name: 'Continue to sign-in', exact: true }).click();
-          await expect(f.page).toHaveURL(/\/sign-in(?:\?|$)/);
-          expect((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer).toEqual(
-            held.outbox!.checkpoint.buffer,
-          );
+          // The final IME value deliberately differs from the last captured
+          // update. Composition ending must not release the held host draft.
+          await composeDocText(f.page, 'end', finalText);
+          await expect(saveStatus(f.page)).toHaveText(warning);
+          if (phone) {
+            // The deferred mobile keyboard fence runs after the real native end
+            // handler. A new touch must not reopen editing over the retained draft.
+            const region = f.page.getByRole('region', { name: 'Doc document', exact: true });
+            await expect(nativeInput(f.page)).not.toBeFocused();
+            await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+            await expect(region.getByRole('button', { name: 'Format', exact: true })).toHaveCount(
+              0,
+            );
+            const point = await textPoint(f.page);
+            await f.page.touchscreen.tap(point.x, point.y);
+            await f.page.touchscreen.tap(point.x, point.y);
+            await expect(nativeInput(f.page)).not.toBeFocused();
+            await f.page.keyboard.type('FORBIDDEN AFTER HELD PHONE COMPOSITION');
+          }
+          // A conflict refuses further native mutations; a 401 still lets an
+          // already-started composition finish in the local checkpoint. Both
+          // retain the independent host text until its explicit discard.
+          const retainedBody =
+            interruption === 'conflict'
+              ? durableText
+              : finalText + offlineText('doc') + baseline.snapshot.body!.dataStream;
+          if (interruption === 'expired sign-in')
+            await expect
+              .poll(async () =>
+                JSON.stringify(
+                  (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer,
+                ),
+              )
+              .toContain(finalText);
+          await expect(
+            f.page.getByRole('button', { name: 'Save details: Not saved', exact: true }),
+          ).toBeVisible();
+          const panel = await details(f.page);
+          const retainedText = panel.getByRole('textbox', { name: 'Unfinished text', exact: true });
+          await expect(retainedText).toHaveValue(finalText);
+          await expect(retainedText).toHaveAttribute('readonly', '');
+          if (interruption === 'conflict') {
+            // Frozen input ignores a new composition. Its later end event must
+            // not overwrite the already-held final text from the tracked one.
+            await composeDocText(f.page, 'start', '');
+            await composeDocText(f.page, 'end', 'Ignored later composition 520');
+            await expect(retainedText).toHaveValue(finalText);
+          }
+          for (const name of ['Export as Univer file', 'Discard offline changes…'])
+            await expect(panel.getByRole('button', { name, exact: true })).toBeDisabled();
+          if (interruption === 'conflict')
+            await expect(
+              panel.getByRole('button', { name: 'Retry creating copy', exact: true }),
+            ).toBeDisabled();
+          else
+            await expect(
+              panel.getByRole('button', { name: 'Retry creating copy', exact: true }),
+            ).toHaveCount(0);
+          await expect(panel.getByRole('link', { name: 'Open copy', exact: true })).toHaveCount(0);
+          await expect(
+            panel.getByRole('button', { name: 'Continue to sign-in', exact: true }),
+          ).toHaveCount(0);
+          // Even Retry saving must retain the host draft instead of quietly
+          // creating a copy or navigating away after compositionend.
+          await panel.getByRole('button', { name: 'Retry saving', exact: true }).click();
+          await expect(saveStatus(f.page)).toHaveText(warning);
+          await expect(retainedText).toHaveValue(finalText);
+          const sentinel = `not-copied-${randomUUID()}`;
+          await f.page.evaluate((text) => navigator.clipboard.writeText(text), sentinel);
+          await retainedText.focus();
+          await f.page.keyboard.press('Control+a');
+          await f.page.keyboard.press('Control+c');
+          await expect
+            .poll(() => f.page.evaluate(() => navigator.clipboard.readText()))
+            .toBe(finalText);
+          const held = (await stored(f.page, f.actor.id, f.item.id))!;
+          expect(held.recovery).toBeUndefined();
+          if (interruption === 'conflict') {
+            expect(held.outbox!.checkpoint.buffer).toEqual(captured.buffer);
+            expect(JSON.stringify(held.outbox)).not.toContain(finalText);
+          } else {
+            expect(held.outbox!.checkpoint.buffer).not.toEqual(captured.buffer);
+            expect(JSON.stringify(held.outbox)).toContain(finalText);
+          }
+          expect(held.outbox!.checkpoint.inflight).toEqual(captured.inflight);
+          expect(recoveryPosts).toBe(0);
+          expect(receipts(f)).toEqual([]);
+          expect(downloads).toEqual([]);
+          expect(originalState(f, f.unitId)).toEqual(original);
+          if (interruption === 'conflict') {
+            // The refused native command can show its own temporary toast. Let
+            // it dismiss normally so the phone capture also shows the header.
+            await expect(
+              f.page.getByText('This content is protected. This action is not allowed.', {
+                exact: true,
+              }),
+            ).toBeHidden({ timeout: 10_000 });
+            await capture(
+              f.page,
+              info,
+              phone ? 'unfinished-doc-ime-mobile' : 'unfinished-doc-ime',
+              phone,
+            );
+          }
+          expect(recoveryPosts).toBe(0);
+          await panel.getByRole('button', { name: 'Discard unfinished text', exact: true }).click();
+          await expect(retainedText).toHaveCount(0);
+          if (interruption === 'conflict') {
+            const result = await recovered(f);
+            const snapshot = (await copySnapshot(f, result.id, baseURL!)) as IDocumentData;
+            expect(snapshot.body?.dataStream).toBe(durableText);
+            expect(snapshot.body?.dataStream).not.toContain(finalText);
+            expect(recoveryPosts).toBe(1);
+          } else {
+            await expect(
+              panel.getByRole('button', { name: 'Continue to sign-in', exact: true }),
+            ).toBeEnabled();
+            const downloading = f.page.waitForEvent('download');
+            await panel.getByRole('button', { name: 'Export as Univer file', exact: true }).click();
+            const download = await downloading;
+            expect(await download.failure()).toBeNull();
+            const snapshot = JSON.parse(
+              await readFile((await download.path())!, 'utf8'),
+            ) as IDocumentData;
+            expect(snapshot.body?.dataStream).toBe(retainedBody);
+            expect(recoveryPosts).toBe(0);
+            expect(receipts(f)).toEqual([]);
+            await panel.getByRole('button', { name: 'Continue to sign-in', exact: true }).click();
+            await expect(f.page).toHaveURL(/\/sign-in(?:\?|$)/);
+            expect(
+              (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer,
+            ).toEqual(held.outbox!.checkpoint.buffer);
+          }
+          expect(originalState(f, f.unitId)).toEqual(original);
+          expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
+          expect(f.errors).toEqual([]);
+        } finally {
+          await f.close();
         }
-        expect(originalState(f, f.unitId)).toEqual(original);
-        expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
-        expect(f.errors).toEqual([]);
-      } finally {
-        await f.close();
-      }
-    });
+      });
+  }
 
   test('native Doc IME capacity refusal retains the exact final text before recovering its applied snapshot', async ({
     browser,
@@ -745,84 +807,96 @@ test.describe('offline recovery copies', () => {
     }
   });
 
-  test('native Doc composition-end account lock retires queued freeze work without leaking held text or deleting edits', async ({
-    browser,
-    baseURL,
-  }, info) => {
-    const f = await fixture(browser, baseURL!, info, 'doc', { actor: 'editor' });
-    try {
-      await f.download();
-      await localEdit(f, 'doc', false);
-      const intermediate = 'Account-scoped IME draft 521 ';
-      const finalText = 'Final private IME text 522 — do not show after locking';
-      let recoveryPosts = 0;
-      const downloads: string[] = [];
-      f.context.on('request', (request) => {
-        if (
-          request.method() === 'POST' &&
-          new URL(request.url()).pathname === '/api/items/offline-recovery'
-        )
-          recoveryPosts++;
+  for (const phone of [false, true])
+    test(`native ${phone ? 'phone ' : ''}Doc composition-end account lock retires queued freeze work without leaking held text or deleting edits`, async ({
+      browser,
+      baseURL,
+    }, info) => {
+      const f = await fixture(browser, baseURL!, info, 'doc', {
+        actor: 'editor',
+        phone,
+        ...(phone ? { flavor: DocumentFlavor.MODERN } : {}),
       });
-      f.page.on('download', (download) => downloads.push(download.suggestedFilename()));
-      await f.page.locator('.univer-container').click({ position: { x: 130, y: 200 } });
-      await nativeInput(f.page).focus();
-      await f.page.keyboard.press('Control+Home');
-      await composeDocText(f.page, 'start', '');
-      await composeDocText(f.page, 'update', intermediate);
-      await expect
-        .poll(async () =>
-          JSON.stringify((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer),
-        )
-        .toContain(intermediate);
-      await changeLive(f, 'doc', 'concurrent', baseURL!);
-      const original = originalState(f, f.unitId);
-      await f.network.setOffline(false);
-      await expect(saveStatus(f.page)).toHaveText(
-        'Copy the unfinished text before recovering your offline changes.',
-        { timeout: 30_000 },
-      );
-      const panel = await details(f.page);
-      const retainedText = panel.getByRole('textbox', { name: 'Unfinished text', exact: true });
-      await expect(retainedText).toHaveValue(intermediate);
-      await expect
-        .poll(async () => (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.failure)
-        .toBeDefined();
-      const held = (await stored(f.page, f.actor.id, f.item.id))!;
-      expect(pending(held.outbox!.checkpoint)).toBe(true);
-      expect(held.recovery).toBeUndefined();
-      // This is the first end event for the tracked composition. The helper
-      // performs both dispatches before yielding to its queued freeze callback.
-      const rejections = await composeDocText(f.page, 'end', finalText, true);
-      expect(rejections).toEqual([]);
-      await expect(saveStatus(f.page)).toHaveText(
-        'Offline access changed on this device. Reopen the document to continue.',
-      );
-      await expect(retainedText).toHaveCount(0);
-      await expect(
-        panel.getByRole('button', { name: 'Discard unfinished text', exact: true }),
-      ).toHaveCount(0);
-      await expect(
-        panel.getByRole('button', { name: 'Export as Univer file', exact: true }),
-      ).toHaveCount(0);
-      await expect(panel.getByRole('link', { name: 'Open copy', exact: true })).toHaveCount(0);
-      await expect(f.page.locator('.univer-container canvas')).toHaveCount(0);
-      await expect(f.page.getByText(finalText, { exact: true })).toHaveCount(0);
-      await expect
-        .poll(() => f.page.evaluate(() => localStorage.getItem('spinel.offline.account')))
-        .toBeNull();
-      expect((await stored(f.page, f.actor.id, f.item.id))!.outbox).toEqual(held.outbox);
-      expect((await stored(f.page, f.actor.id, f.item.id))!.recovery).toBeUndefined();
-      expect(recoveryPosts).toBe(0);
-      expect(receipts(f)).toEqual([]);
-      expect(downloads).toEqual([]);
-      expect(originalState(f, f.unitId)).toEqual(original);
-      expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
-      expect(f.errors).toEqual([]);
-    } finally {
-      await f.close();
-    }
-  });
+      try {
+        await f.download();
+        await localEdit(f, 'doc', false, phone);
+        const intermediate = 'Account-scoped IME draft 521 ';
+        const finalText = 'Final private IME text 522 — do not show after locking';
+        let recoveryPosts = 0;
+        const downloads: string[] = [];
+        f.context.on('request', (request) => {
+          if (
+            request.method() === 'POST' &&
+            new URL(request.url()).pathname === '/api/items/offline-recovery'
+          )
+            recoveryPosts++;
+        });
+        f.page.on('download', (download) => downloads.push(download.suggestedFilename()));
+        await focusDocStart(f.page, phone);
+        await composeDocText(f.page, 'start', '');
+        await composeDocText(f.page, 'update', intermediate);
+        await expect
+          .poll(async () =>
+            JSON.stringify(
+              (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer,
+            ),
+          )
+          .toContain(intermediate);
+        await changeLive(f, 'doc', 'concurrent', baseURL!);
+        const original = originalState(f, f.unitId);
+        await f.network.setOffline(false);
+        await expect(saveStatus(f.page)).toHaveText(
+          'Copy the unfinished text before recovering your offline changes.',
+          { timeout: 30_000 },
+        );
+        const panel = await details(f.page);
+        const retainedText = panel.getByRole('textbox', { name: 'Unfinished text', exact: true });
+        await expect(retainedText).toHaveValue(intermediate);
+        await expect
+          .poll(
+            async () => (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.failure,
+          )
+          .toBeDefined();
+        const held = (await stored(f.page, f.actor.id, f.item.id))!;
+        expect(pending(held.outbox!.checkpoint)).toBe(true);
+        expect(held.recovery).toBeUndefined();
+        // This is the first end event for the tracked composition. The helper
+        // performs both dispatches before yielding to its queued freeze callback.
+        const rejections = await composeDocText(f.page, 'end', finalText, true);
+        expect(rejections).toEqual([]);
+        await expect(saveStatus(f.page)).toHaveText(
+          'Offline access changed on this device. Reopen the document to continue.',
+        );
+        await expect(retainedText).toHaveCount(0);
+        await expect(
+          panel.getByRole('button', { name: 'Discard unfinished text', exact: true }),
+        ).toHaveCount(0);
+        await expect(
+          panel.getByRole('button', { name: 'Export as Univer file', exact: true }),
+        ).toHaveCount(0);
+        await expect(panel.getByRole('link', { name: 'Open copy', exact: true })).toHaveCount(0);
+        await expect(f.page.locator('.univer-container canvas')).toHaveCount(0);
+        if (phone) {
+          await expect(nativeInput(f.page)).toHaveCount(0);
+          await expect(f.page.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+          await expect(f.page.getByRole('button', { name: 'Format', exact: true })).toHaveCount(0);
+        }
+        await expect(f.page.getByText(finalText, { exact: true })).toHaveCount(0);
+        await expect
+          .poll(() => f.page.evaluate(() => localStorage.getItem('spinel.offline.account')))
+          .toBeNull();
+        expect((await stored(f.page, f.actor.id, f.item.id))!.outbox).toEqual(held.outbox);
+        expect((await stored(f.page, f.actor.id, f.item.id))!.recovery).toBeUndefined();
+        expect(recoveryPosts).toBe(0);
+        expect(receipts(f)).toEqual([]);
+        expect(downloads).toEqual([]);
+        expect(originalState(f, f.unitId)).toEqual(original);
+        expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
+        expect(f.errors).toEqual([]);
+      } finally {
+        await f.close();
+      }
+    });
 
   for (const kind of ['sheet', 'doc'] as const)
     test(`${kind}: ${kind === 'sheet' ? 'permission-denied' : 'oversized'} copy exports the complete local version and requires explicit discard`, async ({

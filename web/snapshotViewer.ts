@@ -28,7 +28,10 @@ import { getTheme } from '../src/ui/theme.ts';
 import { displayPresetCell } from '../src/ui/presetStyles.ts';
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets';
 import type { IPreset } from '@univerjs/presets';
-import { UniverDocsCorePreset, UniverDocsUIPlugin } from '@univerjs/preset-docs-core';
+import { docPreset, mobileDocPlugins, useMobileDocControls } from './docPreset.ts';
+import { guardPhoneDocInput } from './docPhoneView.ts';
+import { IContextMenuService } from '@univerjs/ui';
+import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 import { UniverDocsDrawingPreset } from '@univerjs/preset-docs-drawing';
 import { UniverDocsHyperLinkPreset } from '@univerjs/preset-docs-hyper-link';
 import sheetsEnglish from '@univerjs/preset-sheets-core/locales/en-US';
@@ -62,8 +65,9 @@ const aborted = () => new DOMException('The viewer was closed.', 'AbortError');
 
 /**
  * An isolated, read-only native viewer for a stored snapshot: no collaboration
- * client, autosave or live mutation transport. Used by version previews and
- * offline copies. Resolves with a dispose function once the viewer is ready;
+ * client, autosave or live mutation transport. Used by version previews;
+ * downloaded copies use the live editors and their durable local queue.
+ * Resolves with a dispose function once the viewer is ready;
  * if `signal` aborts first it disposes itself and rejects.
  */
 export async function openSnapshotViewer({
@@ -72,7 +76,7 @@ export async function openSnapshotViewer({
   snapshot,
   signal,
   images,
-  mobile = false,
+  mobile = kind === 'doc' && useMobileDocControls(),
   evaluateFormula,
   onFormulaChange,
 }: {
@@ -100,6 +104,9 @@ export async function openSnapshotViewer({
         sheetDrawingEnglish,
       ),
     },
+    ...(mobile && !sheet
+      ? { override: nativeSyncPermissions(snapshot.id, 'viewer').override }
+      : {}),
     presets: sheet
       ? [
           // Offline (local images), show stored values only: computing IMAGE()
@@ -112,16 +119,17 @@ export async function openSnapshotViewer({
           drawings(sheetImages(mobile)),
         ]
       : [
-          UniverDocsCorePreset({ container }),
-          { plugins: [[UniverDocsUIPlugin, { placeholder: false }]] },
-          drawings(UniverDocsDrawingPreset()),
-          UniverDocsHyperLinkPreset(),
+          docPreset(container, mobile, true),
+          mobileDocPlugins(drawings(UniverDocsDrawingPreset()), mobile),
+          mobileDocPlugins(UniverDocsHyperLinkPreset(), mobile),
         ],
   });
   let formulas: DocFormulaController | undefined;
   let interval: ReturnType<typeof setInterval> | undefined;
   let stopVisibility: (() => void) | undefined;
+  let phoneInput: ReturnType<typeof guardPhoneDocInput> | undefined;
   const closeFormulas = () => {
+    phoneInput?.dispose();
     clearInterval(interval);
     stopVisibility?.();
     formulas?.dispose();
@@ -141,6 +149,13 @@ export async function openSnapshotViewer({
     if (!sheet) {
       await documentReady(univer, unitId, signal);
       if (signal.aborted) throw aborted();
+      const render = univer.__getInjector().get(IRenderManagerService).getRenderUnitById(unitId);
+      if (mobile && render)
+        phoneInput = guardPhoneDocInput(
+          render,
+          univer.__getInjector().get(IContextMenuService),
+          () => true,
+        );
       formulas = await installDocFormulas({
         univer,
         unitId,
@@ -197,9 +212,9 @@ export async function openSnapshotViewer({
           })
       : undefined;
     const render = univer.__getInjector().get(IRenderManagerService).getRenderUnitById(unitId);
-    if (sheet && render) {
+    if (render) {
       const canvas = render.engine.getCanvasElement();
-      canvas.setAttribute('aria-label', 'Spreadsheet grid');
+      canvas.setAttribute('aria-label', sheet ? 'Spreadsheet grid' : 'Document canvas');
     }
     const stopTheme = bindEditorTheme(
       univer,

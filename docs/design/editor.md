@@ -29,10 +29,11 @@ editor and status controllers while changing only its viewport. The compact
 People dialog replaces hidden name tooltips. Space Pages remains the sole
 internal tree and hides only during theatre. The native Doc zoom control changes
 the snapshot's zoom setting; the separate public `fitToWidth`/`DocViewScaleService`
-route computes view scale independently. This implementation retains native
-zoom/pan; evaluating that separate fit integration and further mobile layout work
-remain in SPN-072. Native browser and visual acceptance are recorded separately
-from these source choices.
+route computes view scale independently. SPN-049 retained native zoom/pan;
+[SPN-072's public mobile integration](../implementation/SPN-072.md) now supplies
+readable modern Doc reflow and the traditional-page fallback described below.
+Native browser and visual acceptance are recorded separately from these source
+choices.
 
 SPN-085 applies the approved History and HistoryCalendar hierarchy to the isolated
 native history browser: desktop chooser beside preview, phone chooser disclosure,
@@ -163,6 +164,17 @@ Under 900 px with a coarse pointer, Sheets use Univer's mobile controls
 (docs/mobile.md). On phones, the title has a full first row and status/More use
 the second row. The compact people/count control stays available and opens the
 same collaborator dialog; authorized Share remains in More.
+
+Docs select the corresponding public mobile UI once when opened with a coarse
+pointer at up to 900 px. Modern Doc text reflows locally; its native Edit control
+enters edit mode, and touching the text opens the keyboard and compact formatting
+controls. Read-only viewers omit edit controls. Traditional page-layout Docs
+retain their layout with the existing
+help-slot instruction, “Edit on a larger screen. This Doc keeps its page layout.”
+No second application toolbar or CSS-scaled canvas is added. Formula dialogs and
+full table readouts retain [the existing pattern](formulas.md). See
+[SPN-072](../implementation/SPN-072.md) for the public API choice and verification
+boundary.
 
 ## Stories
 
