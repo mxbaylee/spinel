@@ -131,31 +131,39 @@ function FormulaConnectivity(args: ComponentProps<typeof FormulaDialog>) {
   return <FormulaDialog {...args} remoteAvailable={online} />;
 }
 
-export const OfflineKeepsDraft: Story = {
-  args: { onClose: fn() },
-  parameters: { api: { ...formulaApi, ...availableSources } },
-  render: (args) => <FormulaConnectivity {...args} />,
-  play: async ({ canvasElement, args }) => {
-    await sourcesReady(canvasElement);
-    const canvas = within(canvasElement);
-    const expression = canvas.getByRole('combobox', { name: /^Formula$/ });
-    await userEvent.clear(expression);
-    await userEvent.type(expression, definition.expression);
-    await userEvent.selectOptions(canvas.getByLabelText('Number format'), 'currency');
-    await userEvent.click(canvas.getByRole('button', { name: /^Preview$/ }));
-    await expect(await canvas.findByText('$1,234.56')).toBeVisible();
-    window.dispatchEvent(new CustomEvent('storybook-formula-connection', { detail: false }));
-    await waitFor(() => expect(canvas.queryByText('$1,234.56')).not.toBeInTheDocument());
-    await expect(expression).toHaveValue(definition.expression);
-    await expect(canvas.getByLabelText('Number format')).toHaveValue('currency');
-    await expect(canvas.getByRole('dialog', { name: 'Insert formula' })).toBeVisible();
-    await expect(args.onClose).not.toHaveBeenCalled();
-    window.dispatchEvent(new CustomEvent('storybook-formula-connection', { detail: true }));
-    await sourcesReady(canvasElement);
-    await expect(expression).toHaveValue(definition.expression);
-    await expect(canvas.getByLabelText('Number format')).toHaveValue('currency');
-  },
-};
+function offlineKeepsDraft(reconnect: boolean): Story {
+  return {
+    args: { onClose: fn() },
+    parameters: { api: { ...formulaApi, ...availableSources } },
+    render: (args) => <FormulaConnectivity {...args} />,
+    play: async ({ canvasElement, args }) => {
+      await sourcesReady(canvasElement);
+      const canvas = within(canvasElement);
+      const expression = canvas.getByRole('combobox', { name: /^Formula$/ });
+      await userEvent.clear(expression);
+      await userEvent.type(expression, definition.expression);
+      await userEvent.selectOptions(canvas.getByLabelText('Number format'), 'currency');
+      await userEvent.click(canvas.getByRole('button', { name: /^Preview$/ }));
+      await expect(await canvas.findByText('$1,234.56')).toBeVisible();
+      window.dispatchEvent(new CustomEvent('storybook-formula-connection', { detail: false }));
+      await waitFor(() => expect(canvas.queryByText('$1,234.56')).not.toBeInTheDocument());
+      await expect(canvas.getByRole('alert')).toHaveTextContent('Result unavailable');
+      await expect(expression).toHaveValue(definition.expression);
+      await expect(canvas.getByLabelText('Number format')).toHaveValue('currency');
+      await expect(canvas.getByRole('dialog', { name: 'Insert formula' })).toBeVisible();
+      await expect(args.onClose).not.toHaveBeenCalled();
+      if (reconnect) {
+        window.dispatchEvent(new CustomEvent('storybook-formula-connection', { detail: true }));
+        await sourcesReady(canvasElement);
+        await expect(expression).toHaveValue(definition.expression);
+        await expect(canvas.getByLabelText('Number format')).toHaveValue('currency');
+      }
+    },
+  };
+}
+/** Leave the offline draft visible for the light, dark, and phone captures. */
+export const OfflineKeepsDraft: Story = offlineKeepsDraft(false);
+export const ReconnectKeepsDraft: Story = offlineKeepsDraft(true);
 
 function saveFailure(reason: FormulaFailureReason): Story {
   const save = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {

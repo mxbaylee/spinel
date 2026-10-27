@@ -103,7 +103,8 @@ while offline. See [SPN-053](implementation/SPN-053.md).
   The Storybook review captures them in light, dark and phone variants.
 
 These are verification contracts; the PR records the actual executed commands,
-results, resource limits, independent review and owner screenshot approval.
+results, resource limits, independent review and independent theme/persona screenshot review on the PR under the
+[standing policy](implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
 The all-persona tradeoff and S-to-M effort reassessment are in decision [#132](implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation).
 The [SPN-042 screenshot review index](design/review/spn-042/README.md) links the
 production browser artifacts and preserves their exact capture provenance.

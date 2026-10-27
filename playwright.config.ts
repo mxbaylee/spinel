@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const project = process.env.SPINEL_E2E_PROJECT;
+const shard = process.env.SHARD?.replaceAll('/', '-of-');
 if (
   project &&
   ![
@@ -29,7 +30,17 @@ export default defineConfig({
   // Keep all five independent native-client acceptance scenarios observable;
   // ordinary large suites still stop repeated downstream failures early.
   maxFailures: process.env.CI && !project?.startsWith('sync-') ? 1 : 0,
-  reporter: 'line',
+  // Keep per-project/shard CI results outside outputDir, which Playwright clears.
+  // The existing artifact upload preserves these alongside failure traces.
+  reporter: process.env.CI
+    ? [
+        ['line'],
+        [
+          'json',
+          { outputFile: `playwright-report/${project ?? 'all'}${shard ? `-${shard}` : ''}.json` },
+        ],
+      ]
+    : 'line',
   // Recording every action/DOM snapshot distorts the real-time latency checks.
   // Keep CI failure diagnostics on its first retry; all assertions still run.
   use: { trace: 'on-first-retry', screenshot: 'only-on-failure' },

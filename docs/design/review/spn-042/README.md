@@ -8,7 +8,9 @@ Both production browser shards passed without retries: 23 and 22 tests.
 viewport, actual image size and SHA-256. The 40 original PNGs were inspected and
 matched byte-for-byte to these artifacts; this repository index contains no PNG
 copies. Final current-head checks, independent review and owner approval are
-recorded in [PR #133](https://github.com/mxbaylee/spinel/pull/133).
+recorded in [PR #133](https://github.com/mxbaylee/spinel/pull/133). This is historical
+provenance; future changes use [standing independent subagent review](../../../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review)
+without human sign-off.
 
 ## Download the original screenshots
 

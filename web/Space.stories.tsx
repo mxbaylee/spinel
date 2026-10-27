@@ -513,52 +513,58 @@ export const Unavailable: Story = {
   },
 };
 
+function retainedDevicePage(navigateAway: boolean): Story {
+  return {
+    parameters: { api: treeApi() },
+    render: (args) => (
+      <RouteFixture href={spaceHref(root, { kind: 'page', id: id(1) })}>
+        <Space
+          {...args}
+          renderEditor={(props) => (
+            <EditorFixture {...props} offline={false} retained={props.item.id === id(1)} />
+          )}
+        />
+      </RouteFixture>
+    ),
+    play: async ({ canvasElement, args }) => {
+      await ready(canvasElement);
+      const canvas = within(canvasElement);
+      const original = canvas.getByRole('textbox', { name: 'Page content fixture' });
+      const previous = globalThis.fetch;
+      globalThis.fetch = async (input, init) =>
+        input === '/api/spaces/' + root
+          ? Response.json(
+              tree(
+                'owner',
+                items.filter((item) => ![id(1), id(2), id(3)].includes(item.id)),
+              ),
+            )
+          : previous(input, init);
+      try {
+        window.dispatchEvent(new Event('focus'));
+        await expect(await canvas.findByRole('alert')).toHaveTextContent(
+          'Your changes saved on this device are retained below.',
+        );
+        await expect(canvas.getByRole('textbox', { name: 'Page content fixture' })).toBe(original);
+        await expect(args.navigation.dirty).toHaveBeenLastCalledWith(false);
+        if (navigateAway) {
+          const navigation = await contents(canvasElement);
+          await userEvent.click(navigation.getByRole('link', { name: 'Schedule' }));
+          await waitFor(() => expect(canvas.queryByRole('alert')).not.toBeInTheDocument());
+          await expect(
+            canvas.getByRole('status', { name: 'Save status fixture' }),
+          ).toHaveTextContent('No pending fixture edits.');
+          await expect(args.navigation.dirty).toHaveBeenLastCalledWith(false);
+        }
+      } finally {
+        globalThis.fetch = previous;
+      }
+    },
+  };
+}
 /** The shell keeps a durable local copy; its navigation guard remains clean. */
-export const RetainedDevicePage: Story = {
-  parameters: { api: treeApi() },
-  render: (args) => (
-    <RouteFixture href={spaceHref(root, { kind: 'page', id: id(1) })}>
-      <Space
-        {...args}
-        renderEditor={(props) => (
-          <EditorFixture {...props} offline={false} retained={props.item.id === id(1)} />
-        )}
-      />
-    </RouteFixture>
-  ),
-  play: async ({ canvasElement, args }) => {
-    await ready(canvasElement);
-    const canvas = within(canvasElement);
-    const original = canvas.getByRole('textbox', { name: 'Page content fixture' });
-    const previous = globalThis.fetch;
-    globalThis.fetch = async (input, init) =>
-      input === '/api/spaces/' + root
-        ? Response.json(
-            tree(
-              'owner',
-              items.filter((item) => ![id(1), id(2), id(3)].includes(item.id)),
-            ),
-          )
-        : previous(input, init);
-    try {
-      window.dispatchEvent(new Event('focus'));
-      await expect(await canvas.findByRole('alert')).toHaveTextContent(
-        'Your changes saved on this device are retained below.',
-      );
-      await expect(canvas.getByRole('textbox', { name: 'Page content fixture' })).toBe(original);
-      await expect(args.navigation.dirty).toHaveBeenLastCalledWith(false);
-      const navigation = await contents(canvasElement);
-      await userEvent.click(navigation.getByRole('link', { name: 'Schedule' }));
-      await waitFor(() => expect(canvas.queryByRole('alert')).not.toBeInTheDocument());
-      await expect(canvas.getByRole('status', { name: 'Save status fixture' })).toHaveTextContent(
-        'No pending fixture edits.',
-      );
-      await expect(args.navigation.dirty).toHaveBeenLastCalledWith(false);
-    } finally {
-      globalThis.fetch = previous;
-    }
-  },
-};
+export const RetainedDevicePage: Story = retainedDevicePage(false);
+export const RetainedDevicePageNavigation: Story = retainedDevicePage(true);
 
 export const Unreachable: Story = {
   parameters: {

@@ -23,17 +23,19 @@ tickets link to the same canonical decision instead of copying it.
 For each consequential choice, record:
 
 - A descriptive heading (stable link target), date and status: proposed,
-  needs-owner, accepted, rejected or superseded.
+  accepted, rejected or superseded (`needs-owner` is historical only).
 - The question, relevant evidence/context, options and tradeoff.
-- The chosen outcome and why, or the unresolved owner question and work that can proceed.
+- The chosen outcome and why, or a concrete unavailable execution prerequisite and work that can proceed.
 - Owner, Collaborator, Link guest and Operator effects; explicitly say when a
   persona is unaffected rather than inventing an impact.
 - Who decided and the source: owner chat/date, PR/comment link, or agent judgment.
   Link source issues for migrated decisions and link any superseding entry.
 
-A record is not approval by itself. Ask the owner when required, leave its status
-truthful, and update `owner_input` on the active ticket while waiting. Once settled,
-update the ticket Rules and the relevant maintained docs. Keep routine code notes
+Agents decide using every persona under the [standing delegation](grooming-2026-10-26.md#agent-decisions-and-visual-review).
+A record is not evidence that an unperformed check passed. Keep unavailable access,
+physical-device verification and external-action authorization explicit in ticket
+Rules and PR checkpoints; no `owner_input` field or human product/design sign-off
+is required. Update the ticket Rules and maintained docs when a decision is made. Keep routine code notes
 brief; do not turn this into a transcript or another general documentation system.
 The CLI retains compatibility with legacy `decisions: [123]` issue-number lists
 on older branches and in history. Migrated active tickets use ordinary Markdown
