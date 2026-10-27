@@ -384,6 +384,85 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+  # Pair each preset's immutable pre-fix baseline and candidate on one hosted
+  # runner. The constrained local host aborted two-editor startup at its 2 GiB
+  # watchdog limit; that aborted attempt is not acceptance evidence.
+  doc-responsiveness:
+    name: Doc responsiveness (${{ matrix.preset }})
+    needs: changes
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [desktop, mobile]
+    env:
+      PRESET: ${{ matrix.preset }}
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '0'
+      VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
+      SPINEL_E2E_PROJECT: doc-responsiveness
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install candidate
+        run: npm ci
+      - name: Install Chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Immutable pre-fix source with read-only observations
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: a0c3154ae6b548d68ba8be9d143df781e47dc623
+          path: baseline-doc-source
+          persist-credentials: false
+      - name: Use identical browser workload on both sources
+        run: |
+          cp e2e/doc-responsiveness*.ts baseline-doc-source/e2e/
+          cp playwright.config.ts baseline-doc-source/playwright.config.ts
+      - name: Install and build baseline
+        working-directory: baseline-doc-source
+        run: |
+          npm ci
+          npm run build
+      - name: Observe baseline first attempts
+        working-directory: baseline-doc-source
+        env:
+          SPN108_BASELINE: '1'
+        run: npx playwright test --project=doc-responsiveness --grep "$PRESET sustained native typing"
+      - name: Build candidate
+        run: npm run build
+      - name: Verify candidate responsiveness and boundaries
+        env:
+          SPN108_BASELINE: '0'
+        run: npx playwright test --project=doc-responsiveness --grep "$PRESET "
+      - name: Retain every baseline and candidate attempt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: doc-responsiveness-${{ matrix.preset }}
+          path: |
+            baseline-doc-source/test-results/**/spn108-*.json
+            baseline-doc-source/test-results/**/spn108-profile.cpuprofile
+            baseline-doc-source/test-results/**/test-failed-*.png
+            baseline-doc-source/test-results/**/error-context.md
+            baseline-doc-source/playwright-report/*.json
+            test-results/**/spn108-*.json
+            test-results/**/spn108-profile.cpuprofile
+            test-results/**/test-failed-*.png
+            test-results/**/error-context.md
+            test-results/**/trace.zip
+            playwright-report/*.json
+          retention-days: 7
+          if-no-files-found: warn
+
   sync-transition:
     name: Retained sync transition
     needs: changes
@@ -417,7 +496,7 @@ jobs:
   # the name. Only classified docs-only changes may omit browsers and containers.
   playwright:
     name: Playwright smoke
-    needs: [changes, playwright-run, container-smoke, sync-transition]
+    needs: [changes, playwright-run, container-smoke, sync-transition, doc-responsiveness]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -429,16 +508,17 @@ jobs:
           BROWSER: ${{ needs.playwright-run.result }}
           CONTAINER: ${{ needs.container-smoke.result }}
           TRANSITION: ${{ needs.sync-transition.result }}
+          RESPONSIVENESS: ${{ needs.doc-responsiveness.result }}
         run: |
-          case "$CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION" in
-            success:true:skipped:skipped:skipped)
+          case "$CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION:$RESPONSIVENESS" in
+            success:true:skipped:skipped:skipped:skipped)
               echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
               ;;
-            success:false:success:success:success)
-              echo 'All browser partitions, offline upgrades, sync soaks, retained transition and the production container passed.'
+            success:false:success:success:success:success)
+              echo 'All browser partitions, offline upgrades, sync soaks, retained transition, paired Doc responsiveness and the production container passed.'
               ;;
             *)
-              echo "Browser/container validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION"
+              echo "Browser/container validation incomplete: $CLASSIFICATION:$DOCS_ONLY:$BROWSER:$CONTAINER:$TRANSITION:$RESPONSIVENESS"
               exit 1
               ;;
           esac

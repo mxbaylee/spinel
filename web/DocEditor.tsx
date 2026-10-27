@@ -101,6 +101,9 @@ import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 import { observeDocResponsiveness } from './docResponsivenessEvidence.ts';
+import { boundDocHistory } from '../src/ui/boundedDocHistory.ts';
+import { observeOperation } from '@spinel/diagnostics';
+import { useDiagnostics } from './useDiagnostics.tsx';
 
 export function DocEditor({
   id,
@@ -122,6 +125,7 @@ export function DocEditor({
   localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
+  const diagnostics = useDiagnostics();
   // Rotation or a keyboard resize must not remount an editor with pending edits.
   const [mobile] = useState(useMobileDocControls);
   const [phoneReady, setPhoneReady] = useState(false);
@@ -185,6 +189,7 @@ export function DocEditor({
     let stopSelectionEvidence: (() => void) | undefined;
     let stopDocumentLayout: (() => void) | undefined;
     let responsivenessEvidence: ReturnType<typeof observeDocResponsiveness> | undefined;
+    let boundedHistory: ReturnType<typeof boundDocHistory> | undefined;
     let phoneInput: ReturnType<typeof guardPhoneDocInput> | undefined;
     let phoneInputLocked = false;
     let phoneOnlyMessage: string | undefined;
@@ -450,6 +455,8 @@ export function DocEditor({
       });
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
+        boundedHistory?.dispose();
+        boundedHistory = undefined;
         responsivenessEvidence?.dispose();
         responsivenessEvidence = undefined;
         stopSelectionEvidence?.();
@@ -596,6 +603,25 @@ export function DocEditor({
         },
       });
       captureReady = true;
+      if (import.meta.env.VITE_DOC_RESPONSIVENESS_EVIDENCE === '1')
+        responsivenessEvidence = observeDocResponsiveness(univer, data.unitId, mobile);
+      boundedHistory = boundDocHistory(univer, data.unitId, (flush) => {
+        responsivenessEvidence?.flushed(flush);
+        const operation = diagnostics.begin();
+        if (operation)
+          observeOperation(
+            operation.sink,
+            {
+              component: 'editor',
+              fileId: id,
+              ...(spaceId ? { spaceId } : {}),
+              runId: operation.runId,
+            },
+            'doc-compose',
+            'success',
+            flush.durationMs,
+          );
+      });
       const document = univerAPI.getActiveDocument();
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
@@ -609,8 +635,6 @@ export function DocEditor({
         .__getInjector()
         .get(IRenderManagerService)
         .getRenderUnitById(data.unitId);
-      if (import.meta.env.VITE_DOC_RESPONSIVENESS_EVIDENCE === '1')
-        responsivenessEvidence = observeDocResponsiveness(univer, data.unitId, mobile);
       render?.engine.getCanvasElement().setAttribute('aria-label', 'Document canvas');
       if (mobile && render)
         phoneInput = guardPhoneDocInput(

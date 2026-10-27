@@ -25,6 +25,25 @@ after that account scope ends. A connection change clears live previews but keep
 an unfinished Formula expression and format in the open dialog; that draft also
 prevents automatic replacement of an otherwise clean cached document.
 
+## Sustained typing and undo
+
+Docs apply edits locally while the existing sync client sends them in the
+background. Native history and collaboration composition are separate browser
+work: Spinel closes a pending native group at 64 completed state changes so an
+uninterrupted typing session cannot grow one unbounded composition batch. Ordinary
+300 ms idle, segment-switch, undo and IME boundaries remain controlled by Univer.
+A completed composition stays atomic. Undo/redo retains native content and caret
+endpoints; long uninterrupted input intentionally becomes several useful chunks.
+The native 50-group history limit and the existing safety policy that invalidates
+stale local history after a peer edit remain in place.
+
+This uses public queue/flush APIs and does not replace saving, grant access,
+clear history to hide work, or postpone a hidden backlog. The
+[measurement contract and evidence](implementation/SPN-108.md) preserve the
+original per-character reproducer, before/after profiles, desktop/mobile
+emulation boundaries and independent-review rubric. A successful Save status
+does not by itself establish that native history work has finished.
+
 ## Images
 
 Insert a local PNG, JPEG or static WebP file. The server fully decodes and

@@ -6,13 +6,7 @@ import {
   DocStateEmitService,
 } from '@univerjs/docs';
 
-export interface DocFlushObservation {
-  reason: 'capacity';
-  startedAt: number;
-  durationMs: number;
-  history: number;
-  collaboration: number;
-}
+import type { DocFlushObservation } from '../src/ui/boundedDocHistory.ts';
 
 /** Opt-in benchmark observations. No commands, timers, or per-edit snapshot copies. */
 export function observeDocResponsiveness(univer: Univer, unitId: string, mobile: boolean) {
@@ -21,12 +15,14 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
   const manager = injector.get(DocStateChangeManagerService);
   const highWater = { history: 0, collaboration: 0 };
   const flushes: DocFlushObservation[] = [];
-  const subscription = injector.get(DocStateEmitService).docStateChangeParams$.subscribe((state) => {
-    if (!state || state.unitId !== unitId) return;
-    const pending = manager.getStateCache(unitId);
-    highWater.history = Math.max(highWater.history, pending.history.length);
-    highWater.collaboration = Math.max(highWater.collaboration, pending.collaboration.length);
-  });
+  const subscription = injector
+    .get(DocStateEmitService)
+    .docStateChangeParams$.subscribe((state) => {
+      if (!state || state.unitId !== unitId) return;
+      const pending = manager.getStateCache(unitId);
+      highWater.history = Math.max(highWater.history, pending.history.length);
+      highWater.collaboration = Math.max(highWater.collaboration, pending.collaboration.length);
+    });
   const read = (event: Event) => {
     const pending = manager.getStateCache(unitId);
     const selection = injector

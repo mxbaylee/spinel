@@ -25,6 +25,7 @@ export const JOBS = ['history-prune', 'trash-expiry', 'collaboration-purge', 'ba
 export const OPERATIONS = [
   'document-open',
   'document-save',
+  'doc-compose',
   'formula-parse',
   'formula-evaluate',
   'search',
