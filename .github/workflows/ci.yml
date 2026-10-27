@@ -330,11 +330,13 @@ jobs:
       - name: Build
         env:
           VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && matrix.shard == '1/2' && '1' || '0' }}
         run: npm run build
       - name: Playwright smoke
         env:
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
           SHARD: ${{ matrix.shard }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && matrix.shard == '1/2' && '1' || '0' }}
         run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
       - name: Artifact name
         if: always()
@@ -358,10 +360,59 @@ jobs:
             test-results/**/*-sync-presence.png
             test-results/**/spn-059-sheet-menu-*.png
             test-results/**/sync-diagnostics.json
+            test-results/**/phone-doc-selection-evidence.json
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
             test-results/**/trace.zip
             playwright-report/*.json
+          retention-days: 7
+          if-no-files-found: warn
+
+  doc-caret-diagnostics:
+    name: Retained Doc caret diagnostics
+    needs: changes
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Temporary investigation: preserve every original attempt without retries.
+    # This supplements the ordinary shards; any failure still blocks landing.
+    env:
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install
+        run: npm ci
+      - name: Install Chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Build diagnostic application
+        run: npm run build
+      - name: Observe six independent original attempts
+        env:
+          SPINEL_E2E_PROJECT: production
+          SHARD: caret-diagnostics
+        run: >-
+          npx playwright test e2e/doc-phone-navigation.spec.ts
+          --project=production
+          --grep "native pan, zoom and editor behavior"
+          --repeat-each=6 --retries=0 --max-failures=0
+          --output=test-results/production-caret-diagnostics
+      - name: Preserve every diagnostic result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: retained-doc-caret-diagnostics
+          path: |
+            test-results/production-caret-diagnostics/**
+            playwright-report/production-caret-diagnostics.json
           retention-days: 7
           if-no-files-found: warn
 

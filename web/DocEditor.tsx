@@ -20,14 +20,30 @@ import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
 import { getTheme } from '../src/ui/theme.ts';
-import { RichTextEditingMutation, setDocumentPermissionValue } from '@univerjs/docs';
+import {
+  DocSelectionManagerService,
+  DocSkeletonManagerService,
+  RichTextEditingMutation,
+  setDocumentPermissionValue,
+} from '@univerjs/docs';
 import { UnitAction } from '@univerjs/protocol';
-import { calcDocRangePositions, DocSelectionRenderService } from '@univerjs/docs-ui';
+import {
+  calcDocRangePositions,
+  DocBackScrollRenderController,
+  DocSelectionRenderService,
+} from '@univerjs/docs-ui';
 import { watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
 import {
   IPermissionService,
+  IContextService,
+  IUniverInstanceService,
+  FOCUSING_DOC,
+  FOCUSING_UNIVER_EDITOR,
+  FOCUSING_COMMON_DRAWINGS,
+  EDITOR_ACTIVATED,
+  FOCUSING_FX_BAR_EDITOR,
   IImageIoService,
   ImageSourceType,
   ImageUploadStatusType,
@@ -407,21 +423,131 @@ export function DocEditor({
           univer.__getInjector().get(IContextMenuService),
           () => phoneInputLocked,
         );
-      if (mobile && render && import.meta.env.VITE_SYNC_EVIDENCE === '1') {
+      if (
+        render &&
+        (import.meta.env.VITE_SYNC_EVIDENCE === '1' ||
+          import.meta.env.VITE_DOC_SELECTION_EVIDENCE === '1')
+      ) {
         // Evidence builds expose a read-only snapshot of the public native
         // caret after real input; they cannot alter the range or document.
         const selection = render.with(DocSelectionRenderService);
+        const injector = univer.__getInjector();
+        const logicalSelection = injector.get(DocSelectionManagerService);
+        const units = injector.get(IUniverInstanceService);
+        const contexts = injector.get(IContextService);
+        const rangeEvidence = (
+          range:
+            | ReturnType<typeof selection.getActiveTextRange>
+            | ReturnType<typeof logicalSelection.getActiveTextRange>,
+        ) =>
+          range
+            ? {
+                start: range.startOffset,
+                end: range.endOffset,
+                collapsed: range.collapsed,
+                segmentId: range.segmentId,
+                segmentPage: range.segmentPage,
+              }
+            : null;
+        const commands: Array<{
+          at: number;
+          id: string;
+          unitId?: string;
+          direction?: number;
+          granularity?: string;
+          zoomRatio?: number;
+        }> = [];
+        const relevantCommands = new Set([
+          'doc.operation.move-cursor',
+          'doc.operation.set-selections',
+          'doc.operation.set-zoom-ratio',
+        ]);
+        const stopCommands = injector.get(ICommandService).onCommandExecuted((command) => {
+          if (!relevantCommands.has(command.id)) return;
+          const params = command.params as
+            | { unitId?: string; direction?: number; granularity?: string; zoomRatio?: number }
+            | undefined;
+          commands.push({
+            at: performance.now(),
+            id: command.id,
+            unitId: params?.unitId,
+            direction: params?.direction,
+            granularity: params?.granularity,
+            zoomRatio: params?.zoomRatio,
+          });
+          if (commands.length > 20) commands.shift();
+        });
         const observeSelection = () => {
           const range = selection.getActiveTextRange();
           const start = range?.startOffset;
           const end = range?.endOffset;
+          const anchor = range?.getAnchor();
+          const viewport = selection.activeViewPort;
+          const skeleton = render.with(DocSkeletonManagerService).getSkeleton();
+          const progress = skeleton.getLayoutProgress();
           window.dispatchEvent(
             new CustomEvent('spinel-doc-selection-evidence', {
               detail: {
                 unitId: data.unitId,
+                mobile,
+                observedAt: performance.now(),
+                currentUnitId: units
+                  .getCurrentUnitOfType(UniverInstanceType.UNIVER_DOC)
+                  ?.getUnitId(),
+                currentLogicalRange: rangeEvidence(logicalSelection.getActiveTextRange()),
+                unitLogicalRanges:
+                  logicalSelection
+                    .getTextRanges({ unitId: data.unitId, subUnitId: data.unitId })
+                    ?.map(rangeEvidence) ?? null,
+                nativeRange: rangeEvidence(range),
                 start,
                 end,
-                hasAnchor: Boolean(range?.getAnchor()),
+                hasAnchor: Boolean(anchor),
+                anchor: anchor
+                  ? {
+                      visible: anchor.visible,
+                      left: anchor.left,
+                      top: anchor.top,
+                      width: anchor.width,
+                      height: anchor.height,
+                    }
+                  : null,
+                inputConnected: selection.inputElement.isConnected,
+                inputFocused: selection.isFocusing,
+                pointerSelection: selection.isOnPointerEvent,
+                pendingSelection: selection.hasPendingSelection,
+                shortcutContext: {
+                  doc: contexts.getContextValue(FOCUSING_DOC),
+                  editor: contexts.getContextValue(FOCUSING_UNIVER_EDITOR),
+                  drawing: contexts.getContextValue(FOCUSING_COMMON_DRAWINGS),
+                  activated: contexts.getContextValue(EDITOR_ACTIVATED),
+                  formulaBar: contexts.getContextValue(FOCUSING_FX_BAR_EDITOR),
+                },
+                viewport: viewport
+                  ? {
+                      key: viewport.viewportKey,
+                      active: viewport.isActive,
+                      width: viewport.width,
+                      height: viewport.height,
+                      scrollX: viewport.viewportScrollX,
+                      scrollY: viewport.viewportScrollY,
+                      bounds: viewport.calcViewportInfo().viewBound,
+                    }
+                  : null,
+                scale: { x: render.scene.scaleX, y: render.scene.scaleY },
+                layout: {
+                  viewportReady: render.with(DocBackScrollRenderController).isViewportReady(),
+                  firstNode: skeleton.findNodePositionByCharIndex(0) ?? null,
+                  progress: progress
+                    ? {
+                        reason: progress.reason,
+                        anchorReady: progress.anchorReady,
+                        complete: progress.complete,
+                        cancelled: progress.cancelled,
+                      }
+                    : null,
+                },
+                commands: [...commands],
                 editing: selection.isEditing,
                 bounds:
                   start !== undefined && end !== undefined
@@ -445,6 +571,7 @@ export function DocEditor({
         window.addEventListener('spinel-doc-selection-read', observeSelection);
         stopSelectionEvidence = () => {
           window.removeEventListener('spinel-doc-selection-read', observeSelection);
+          stopCommands.dispose();
         };
       }
       // Modern Docs reflow through device-local layout options. Paginated Docs
