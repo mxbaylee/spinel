@@ -569,7 +569,7 @@ export function CoverDialog({
         if (!open) close();
       }}
     >
-      <div className="appearance-cover-picker">
+      <div className="appearance-cover-picker" data-source={source}>
         <div className="appearance-cover-preview">
           {preview ? (
             <img
@@ -700,8 +700,8 @@ export function CoverDialog({
             </>
           )}
         </div>
-        <div className="appearance-cover-position">
-          {source !== 'gem' && (
+        {source !== 'gem' && (
+          <div className="appearance-cover-position">
             <label>
               Vertical position
               <input
@@ -713,8 +713,8 @@ export function CoverDialog({
                 onChange={(event) => setPosition(Number(event.target.value))}
               />
             </label>
-          )}
-        </div>
+          </div>
+        )}
         <div className="appearance-cover-footer">
           {error && <p role="alert">{error}</p>}
           <div className="sp-actions">

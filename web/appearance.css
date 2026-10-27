@@ -72,6 +72,9 @@
   flex: 1;
   overflow: auto;
 }
+.appearance-cover-picker[data-source='gem'] {
+  grid-template-rows: 96px auto minmax(96px, 1fr) auto;
+}
 .appearance-cover-preview {
   position: relative;
   overflow: hidden;
@@ -151,7 +154,11 @@
 }
 .appearance-cover-position input {
   width: 100%;
+  margin: 0;
   accent-color: var(--sp-accent);
+}
+.appearance-cover-footer .sp-actions {
+  margin-top: 0;
 }
 .appearance-cover-footer p {
   font-size: 13px;

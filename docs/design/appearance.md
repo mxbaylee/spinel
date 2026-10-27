@@ -96,3 +96,7 @@ the application. **Gems Light And Dark** displays every artwork pair with deskto
 and phone crops. Production browser tests capture current editor and picker
 screens in light, dark and phone widths. Agent visual review is independent of
 owner approval; the PR records current-commit scores and findings.
+
+The cover modal keeps the same height across sources. Gem choices expand into
+the space used by photo positioning controls, with only the normal layout gap
+before the footer. Photo sliders fit the content width without horizontal scrolling.

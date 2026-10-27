@@ -179,6 +179,28 @@ for (const variant of [
         expect(Math.abs((await dialog.boundingBox())!.height - initial)).toBeLessThanOrEqual(1);
         if (source !== 'Gems')
           await expect(dialog.locator('.appearance-pairing')).toHaveCSS('display', 'flex');
+        const overflow = await dialog.evaluate((root) =>
+          [
+            root,
+            ...root.querySelectorAll<HTMLElement>(
+              '.appearance-cover-picker, .appearance-cover-options, .appearance-cover-position, .appearance-search, .appearance-photo-grid',
+            ),
+          ]
+            .filter((element) => element.scrollWidth > element.clientWidth + 1)
+            .map((element) => ({
+              className: element.className,
+              scrollWidth: element.scrollWidth,
+              clientWidth: element.clientWidth,
+            })),
+        );
+        expect(overflow).toEqual([]);
+        if (source === 'Gems') {
+          const options = (await dialog.locator('.appearance-cover-options').boundingBox())!;
+          const actions = (await dialog
+            .locator('.appearance-cover-footer .sp-actions')
+            .boundingBox())!;
+          expect(actions.y - options.y - options.height).toBeLessThanOrEqual(16);
+        }
         await capture(`picker-${source.toLowerCase()}`);
       }
       await dialog.getByRole('button', { name: 'Bismuth', exact: true }).click();
