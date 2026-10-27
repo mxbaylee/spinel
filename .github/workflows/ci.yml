@@ -392,9 +392,10 @@ jobs:
     needs: changes
     if: needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
-    # Two installs/builds, eight measured cases (300 s each) and two boundary
-    # cases need their own collection window. No per-case or latency gate grows.
-    timeout-minutes: 40
+    # Four baseline observations allow 600 s each after the first throttled
+    # baseline took 255–266 s just to type. Candidate cases retain 300 s and all
+    # latency gates. This paired job also installs/builds twice and runs boundaries.
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -419,10 +420,10 @@ jobs:
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
-      - name: Immutable pre-fix source with read-only observations
+      - name: Immutable uncapped source with matched mobile Enter compatibility
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: a0c3154ae6b548d68ba8be9d143df781e47dc623
+          ref: 161b9874f3ac0e89a277c713ceb965e5ac39ca05
           path: baseline-doc-source
           persist-credentials: false
       - name: Use identical browser workload on both sources

@@ -671,11 +671,41 @@ test('phone guest Doc reader cannot write and loses its document when the link i
     });
     await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Insert formula', exact: true })).toHaveCount(0);
+    const localSnapshot = () =>
+      page.evaluate(
+        (id) =>
+          (
+            window as Window & {
+              nativeSyncEvidence?: Record<string, { snapshot: IDocumentData }>;
+            }
+          ).nativeSyncEvidence?.[id]?.snapshot,
+        original.id,
+      );
+    await expect
+      .poll(async () => (await localSnapshot())?.body?.dataStream)
+      .toBe(original.body!.dataStream);
+    const localBeforeInput = (await localSnapshot())!;
     const point = await textPoint(page);
     for (let tap = 0; tap < 2; tap++) await page.touchscreen.tap(point.x, point.y);
     await expect(input(page)).not.toBeFocused();
     await page.keyboard.type('FORBIDDEN PHONE EDIT');
+    await page.keyboard.press('Enter');
+    // Exercise the still-mounted native input target as well as the keyboard
+    // route. Read-only focus/permission guards must refuse a new paragraph.
+    await input(page).dispatchEvent('keydown', {
+      key: 'Enter',
+      code: 'Enter',
+      keyCode: 13,
+      which: 13,
+      bubbles: true,
+      cancelable: true,
+    });
     await expect(page.getByRole('status', { name: 'Save status' })).toContainText('View only');
+    await expect(input(page)).not.toBeFocused();
+    const localAfterInput = (await localSnapshot())!;
+    expect(localAfterInput.body).toEqual(localBeforeInput.body);
+    expect(localAfterInput.documentStyle).toEqual(localBeforeInput.documentStyle);
+    expect(localAfterInput.settings).toEqual(localBeforeInput.settings);
     await page.getByRole('button', { name: 'Formulas', exact: true }).tap();
     const panel = page.getByRole('dialog', { name: 'Formulas', exact: true });
     await expect(panel.locator('output')).toHaveText('42', { timeout: 20_000 });

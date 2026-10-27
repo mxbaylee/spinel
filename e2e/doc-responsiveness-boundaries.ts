@@ -86,6 +86,30 @@ export function registerDocResponsivenessBoundaries() {
           expect(intermediate.history.undos).toBeLessThanOrEqual(before.history.undos + 1);
           expect(intermediate.highWater.history).toBeLessThanOrEqual(64);
           expect(intermediate.highWater.collaboration).toBeLessThanOrEqual(64);
+          // Let only the preceding completed typing reach its native idle
+          // boundary, so an unrelated timer cannot mask an Enter history change.
+          // The provisional composition remains mounted and active throughout.
+          await expect
+            .poll(async () => (await readDocResponsiveness(f.page))?.pending)
+            .toEqual({ history: 0, collaboration: 0 });
+          const beforeEnter = (await readDocResponsiveness(f.page, true))!;
+          expect(beforeEnter.text).toBe(prefix + '仮69\r\n');
+          await nativeInput(f.page).dispatchEvent('keydown', {
+            key: 'Enter',
+            code: 'Enter',
+            keyCode: 13,
+            which: 13,
+            bubbles: true,
+            cancelable: true,
+            isComposing: true,
+          });
+          await exactText(f.page, prefix + '仮69\r\n');
+          const afterEnter = (await readDocResponsiveness(f.page, true))!;
+          expect(afterEnter.text).toBe(beforeEnter.text);
+          expect(afterEnter.history).toEqual(beforeEnter.history);
+          expect(afterEnter.pending).toEqual(beforeEnter.pending);
+          expect(afterEnter.selection).toEqual(beforeEnter.selection);
+          evidence.composingEnter = { before: beforeEnter, after: afterEnter };
           await compose(f.page, 'end', '');
           await saved(f.page);
           await exactText(f.page, prefix + '\r\n');
@@ -123,7 +147,8 @@ export function registerDocResponsivenessBoundaries() {
             start: prefix.length,
             end: prefix.length,
           });
-          await f.page.keyboard.press('Control+Shift+z');
+          // Use the pinned full-document non-Mac redo binding, as in the benchmark.
+          await f.page.keyboard.press('Control+y');
           await saved(f.page);
           await exactText(f.page, finalText);
           await exactText(f.other, finalText);
@@ -131,7 +156,7 @@ export function registerDocResponsivenessBoundaries() {
           expect(f.errors).toEqual([]);
           evidence.final = await readDocResponsiveness(f.page);
           evidence.correctness =
-            'cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text';
+            'composing Enter preserves provisional text and history; cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text';
           complete = true;
         } finally {
           await f.first.tracing.stop(complete ? {} : { path: info.outputPath('trace.zip') });

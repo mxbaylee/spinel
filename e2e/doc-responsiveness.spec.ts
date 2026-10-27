@@ -89,7 +89,9 @@ async function verifyUndoRedo(
     await exactText(other, '\r\n');
     expect((await readDocResponsiveness(page))?.selection).toMatchObject({ start: 0, end: 0 });
   }
-  for (let group = 0; group < groups; group++) await page.keyboard.press('Control+Shift+z');
+  // Pinned Univer's full-document SharedController binds Ctrl+Y off macOS;
+  // the Shift+Z alternative is registered only for macOS.
+  for (let group = 0; group < groups; group++) await page.keyboard.press('Control+y');
   await saved(page);
   await exactText(page, expectedText);
   await exactText(other, expectedText);
@@ -102,7 +104,10 @@ async function verifyUndoRedo(
 for (const preset of ['desktop', 'mobile'] as const)
   for (const sample of ['plain-1', 'plain-2', 'plain-3', 'profile'] as const)
     test(`${preset} sustained native typing ${sample}`, async ({ browser, baseURL }, info) => {
-      test.setTimeout(300_000);
+      // The first throttled baseline spent 255–266 s typing before its existing
+      // native stall. Preserve that workload and allow collection to finish;
+      // candidate case limits and all responsiveness budgets stay unchanged.
+      test.setTimeout(baseline ? 600_000 : 300_000);
       const mobile = preset === 'mobile',
         profiled = sample === 'profile';
       const f = await fixture(browser, baseURL!, info, mobile);
@@ -117,6 +122,7 @@ for (const preset of ['desktop', 'mobile'] as const)
         preset,
         sample,
         attempt: info.retry,
+        caseObservationTimeoutMs: baseline ? 600_000 : 300_000,
         nativeDrainObservationTimeoutMs: baseline ? 120_000 : 30_000,
         source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
         dirtyPaths: execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(),
