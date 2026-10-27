@@ -120,6 +120,9 @@ for (const variant of [
       ).toContainText('🍋');
       await page.reload();
       await expect(
+        page.getByRole('button', { name: 'Save details: Saved', exact: true }),
+      ).toBeVisible();
+      await expect(
         page.getByRole('button', { name: 'Change appearance', exact: true }),
       ).toContainText('🍋');
       await page.getByRole('button', { name: 'Change appearance', exact: true }).click();
@@ -288,6 +291,9 @@ test('Space accents follow preference changes, spare native formatting and resto
   try {
     await page.goto(`/spaces/${root.id}?item=${child.id}`);
     await expect(page.getByRole('button', { name: 'Space appearance', exact: true })).toBeEnabled();
+    await expect(
+      page.getByRole('button', { name: 'Save details: Saved', exact: true }),
+    ).toBeVisible();
     const read = async () =>
       (
         await (
