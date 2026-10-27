@@ -285,6 +285,8 @@ test.describe('documents created offline', () => {
             before.outbox!.checkpoint,
           );
         }
+        // The Doc reopened online has no cold-offline local flag: only its pending creation fences appearance.
+        holdAdmission = kind === 'doc';
         await row
           .getByRole('button', {
             name: `${name} ${kind === 'sheet' ? 'Sheet' : 'Doc'}`,
@@ -295,17 +297,7 @@ test.describe('documents created offline', () => {
         if (kind === 'sheet') {
           await savedLocally(f.page);
           const canvas = await f.page.locator('.univer-container canvas').first().elementHandle();
-          holdAdmission = true;
           await setDisconnected(false);
-          await expect.poll(() => admissionStarted).toBe(true);
-          await expectIdentity();
-          await expect(
-            f.page.getByRole('button', { name: 'Change appearance', exact: true }),
-          ).toHaveCount(0);
-          expect(appearanceRequests).toEqual([]);
-          // The saved identity stays local until the item exists on the server.
-          holdAdmission = false;
-          releaseAdmission();
           await synced(f.page);
           // Removing the pending-create marker cannot remount the native editor.
           expect(
@@ -314,7 +306,17 @@ test.describe('documents created offline', () => {
               .first()
               .evaluate((node, previous) => node === previous, canvas!),
           ).toBe(true);
-        } else await synced(f.page);
+        } else {
+          await expect.poll(() => admissionStarted).toBe(true);
+          await expectIdentity();
+          await expect(
+            f.page.getByRole('button', { name: 'Change appearance', exact: true }),
+          ).toHaveCount(0);
+          expect(appearanceRequests).toEqual([]);
+          holdAdmission = false;
+          releaseAdmission();
+          await synced(f.page);
+        }
         expect(uploaded(f, id)).toMatchObject({
           id,
           parent_id: folder.id,
