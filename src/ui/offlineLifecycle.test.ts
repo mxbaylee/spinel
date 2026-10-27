@@ -1,5 +1,6 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import type { IDocumentData } from '@univerjs/core';
+import { LocaleType } from '@univerjs/core';
+import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { ClientCheckpoint } from '@spinel/sync-client';
 import type { OfflineBundle } from '../shared/offlineBundle.ts';
 import type { OfflineRecoveryRequest } from '../shared/offlineRecovery.ts';
@@ -604,7 +605,7 @@ test.each(['acknowledged', 'explicit discard'] as const)(
   },
 );
 
-async function publishingSession() {
+async function publishingSession(kind: 'doc' | 'sheet' = 'doc') {
   const f = session();
   setPreparedAccount(scope.account);
   const data = recoveryItem();
@@ -612,8 +613,42 @@ async function publishingSession() {
     ...data.saved.snapshot,
     body: { dataStream: 'Saved offline work\r\n' },
   };
+  if (kind === 'sheet') {
+    data.saved.snapshot = {
+      id: scope.unitId,
+      name: bundle.name,
+      appVersion: OFFLINE_SDK_VERSION,
+      locale: LocaleType.EN_US,
+      styles: {},
+      sheetOrder: ['one'],
+      sheets: {
+        one: { id: 'one', name: 'One', rowCount: 12, columnCount: 6, cellData: {} },
+      },
+    };
+    data.saved.buffer = [
+      [
+        {
+          id: 'sheet.mutation.set-range-values',
+          params: {
+            unitId: scope.unitId,
+            subUnitId: 'one',
+            cellValue: { 0: { 3: { v: 731, s: { cl: { rgb: '#221832' } } } } },
+            trigger: 'sheet.command.set-range-values',
+          },
+        },
+      ],
+    ];
+  }
+  const downloaded: OfflineBundle =
+    kind === 'sheet'
+      ? {
+          ...structuredClone(bundle),
+          kind,
+          snapshot: { ...structuredClone(data.saved.snapshot as IWorkbookData), id: scope.item },
+        }
+      : structuredClone(bundle);
   const download = {
-    bundle: structuredClone(bundle),
+    bundle: downloaded,
     bytes: new Map<string, Uint8Array>(),
     outbox: { version: 1 as const, ...scope, checkpoint: data.saved },
     recovery: undefined as OfflineRecoveryRequest | undefined,
@@ -642,8 +677,8 @@ async function publishingSession() {
   const recovery = await f.value.prepareRecovery(data.saved);
   const copy = {
     id: '22222222-2222-4222-8222-222222222222',
-    name: (recovery.snapshot as IDocumentData).title!,
-    kind: 'doc',
+    name: 'sheets' in recovery.snapshot ? recovery.snapshot.name : recovery.snapshot.title!,
+    kind,
     parentId: null,
     access: 'owner',
     tags: [],
@@ -691,6 +726,59 @@ test('prepared recovery publishes the exact account-bound request on retry and o
     f.value.dispose();
   }
 });
+
+test.each(['same tab', 'reopened tab'] as const)(
+  'a Sheet recovery retries its immutable request after aborted cleanup in the %s',
+  async (mode) => {
+    const f = await publishingSession('sheet');
+    const fetcher = vi.fn(async () => Response.json({ item: f.copy }, { status: 201 }));
+    vi.stubGlobal('fetch', fetcher);
+    f.finish.mockRejectedValueOnce(new DOMException('Local cleanup aborted', 'AbortError'));
+    let active = f.value;
+    try {
+      expect(await active.publishRecovery(f.recovery, new AbortController().signal)).toEqual(
+        f.copy,
+      );
+      await expect(active.finishRecovery(f.recovery.recoveryId)).rejects.toThrow(
+        'Local cleanup aborted',
+      );
+      expect(active.pending).toBe(true);
+      expect(f.download.outbox.checkpoint).toEqual(f.saved);
+      expect(f.download.recovery).toEqual(f.recovery);
+      if (mode === 'reopened tab') {
+        active.dispose();
+        active = new OfflineSession(scope.account, scope.item, scope.spaceId, () => true);
+        Object.assign(active, {
+          store: f.store,
+          download: structuredClone(f.download),
+          releaseWriter: vi.fn(),
+        });
+      }
+      const retry = await active.prepareRecovery(structuredClone(f.saved));
+      expect(retry).toEqual(f.recovery);
+      expect(await active.publishRecovery(retry, new AbortController().signal)).toEqual(f.copy);
+      await active.finishRecovery(retry.recoveryId);
+      expect(active.pending).toBe(false);
+      expect(f.begin).toHaveBeenCalledOnce();
+      expect(fetcher).toHaveBeenCalledTimes(2);
+      for (const [, init] of fetcher.mock.calls as unknown as Array<[string, RequestInit]>)
+        expect(JSON.parse(String(init.body))).toEqual(f.recovery);
+      expect(f.finish).toHaveBeenCalledTimes(2);
+      for (const call of f.finish.mock.calls)
+        expect(call).toEqual([
+          scope,
+          f.recovery.recoveryId,
+          expect.any(Function),
+          {
+            recovery: f.recovery,
+            checkpoint: f.saved,
+          },
+        ]);
+    } finally {
+      active.dispose();
+    }
+  },
+);
 
 test.each(['response', 'body'] as const)(
   'a late recovery %s after an account switch cannot authorize device cleanup',

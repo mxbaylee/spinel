@@ -79,7 +79,7 @@ const meta = {
               dirty: false,
               message:
                 'Your offline changes were discarded from this device. The original was not changed.',
-              recovery: { ...current.recovery!, phase: 'discarded' },
+              recovery: { ...current.recovery!, phase: 'discarded', message: undefined },
             }));
           }}
           unfinishedText={
@@ -323,6 +323,7 @@ export const RecoveryDiscarded: Story = {
     await expect(
       panel.queryByRole('button', { name: 'Export as Univer file' }),
     ).not.toBeInTheDocument();
+    await expect(panel.queryByText(recoveryFailed.recovery!.message!)).not.toBeInTheDocument();
     await expect(context.args.onRecover).not.toHaveBeenCalled();
   },
 };

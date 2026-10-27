@@ -153,10 +153,13 @@ async function changeLive(
     if (f.root) f.spaces.share(f.owner.id, f.root.id, f.editor.id, role);
     else f.workspace.share(f.owner.id, f.item.id, f.editor.id, role);
   } else if (change === 'trashed') {
-    const response = await f.control.request.delete(f.prefix, {
+    const options = {
       headers: { Origin: baseURL },
       data: {},
-    });
+    };
+    const response = f.root
+      ? await f.control.request.delete(f.prefix, options)
+      : await f.control.request.post(`${f.prefix}/trash`, options);
     expect(response.status(), await response.text()).toBe(200);
   } else if (change === 'restored') {
     const response = await f.control.request.post(`${f.prefix}/history/${versionId}/restore`, {
@@ -599,7 +602,16 @@ test.describe('offline recovery copies', () => {
         expect(receipts(f)).toEqual([]);
         expect(downloads).toEqual([]);
         expect(originalState(f, f.unitId)).toEqual(original);
-        if (interruption === 'conflict') await capture(f.page, info, 'unfinished-doc-ime');
+        if (interruption === 'conflict') {
+          // The refused native command can show its own temporary toast. Let
+          // it dismiss normally so the phone capture also shows the header.
+          await expect(
+            f.page.getByText('This content is protected. This action is not allowed.', {
+              exact: true,
+            }),
+          ).toBeHidden({ timeout: 10_000 });
+          await capture(f.page, info, 'unfinished-doc-ime');
+        }
         expect(recoveryPosts).toBe(0);
         await panel.getByRole('button', { name: 'Discard unfinished text', exact: true }).click();
         await expect(retainedText).toHaveCount(0);

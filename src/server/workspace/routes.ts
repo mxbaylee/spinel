@@ -8,6 +8,7 @@ import { SheetStore } from './sheets.ts';
 import { DocumentStore } from './documents.ts';
 import { TrashStore } from './trash.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
+import { CollaborationError } from '../collaboration/errors.ts';
 import type { HistoryStore } from '../history/store.ts';
 import { PortableFiles, PORTABLE_LIMIT } from './portable.ts';
 import { formulaRoutes } from '../formulas/routes.ts';
@@ -356,23 +357,30 @@ export function workspaceRoutes(
     }),
   );
   router.use((error: unknown, request: Request, response: Response, _next: NextFunction) => {
+    // Offline reconnect distinguishes an observed denial from a transient
+    // request failure. Preserve the collaboration layer's access result.
+    const accessDenied = error instanceof CollaborationError && error.code === 'PERMISSION_DENIED';
     const status =
       error instanceof AuthError
         ? error.status
-        : (error as { status?: number })?.status === 413
-          ? 413
-          : 400;
+        : accessDenied
+          ? 403
+          : (error as { status?: number })?.status === 413
+            ? 413
+            : 400;
     response.status(status).json({
       error:
         error instanceof AuthError
           ? error.message
-          : status === 413
-            ? request.path === '/import' || request.path === '/offline-recovery'
-              ? 'Univer files must be at most 20 MiB.'
-              : request.path.endsWith('/images')
-                ? 'Choose an image no larger than 5 MiB.'
-                : 'This document is too large to save. Changes have not been saved.'
-            : 'Could not save this change. Try again.',
+          : accessDenied
+            ? 'This document is not available.'
+            : status === 413
+              ? request.path === '/import' || request.path === '/offline-recovery'
+                ? 'Univer files must be at most 20 MiB.'
+                : request.path.endsWith('/images')
+                  ? 'Choose an image no larger than 5 MiB.'
+                  : 'This document is too large to save. Changes have not been saved.'
+              : 'Could not save this change. Try again.',
     });
   });
   return router;

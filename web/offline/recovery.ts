@@ -107,6 +107,58 @@ export function offlineCopyName(title: string, at = new Date()) {
   return titlePrefix(title, suffix) + suffix;
 }
 
+const canonical = (value: unknown) =>
+  JSON.stringify(value, (_key, child) =>
+    child && typeof child === 'object' && !Array.isArray(child)
+      ? Object.fromEntries(
+          Object.keys(child)
+            .sort()
+            .map((key) => [key, child[key]]),
+        )
+      : child,
+  );
+
+/** Native replay allocates fresh style IDs; their values and uses must still agree. */
+function comparableRecoverySnapshot(snapshot: NativeSnapshot, checkpoint: ClientCheckpoint) {
+  if (!('sheets' in snapshot)) return canonical(snapshot);
+  const copy = structuredClone(snapshot);
+  const object = (value: unknown): value is Record<string, unknown> =>
+    Boolean(value && typeof value === 'object' && !Array.isArray(value));
+  if (!object(copy.styles) || !object(copy.sheets)) return canonical(copy);
+  const source = checkpoint.recoverySnapshot ?? checkpoint.snapshot;
+  const retained = 'sheets' in source && object(source.styles) ? source.styles : {};
+  const generated = new Map(
+    Object.entries(copy.styles)
+      .filter(([id]) => !Object.hasOwn(retained, id))
+      .map(([id, style]) => [id, canonical(style)]),
+  );
+  // Keep unused styles and duplicate definitions, and index values instead of
+  // expanding a large shared style into every cell. Existing IDs stay exact.
+  const values = [...generated.values()].sort();
+  const indexes = new Map(values.map((value, index) => [value, index]));
+  const styleSlot = (value: unknown, key: string) => {
+    if (!object(value) || !Object.hasOwn(value, key)) return;
+    const style = value[key];
+    value[key] =
+      typeof style === 'string' && generated.has(style)
+        ? { generated: indexes.get(generated.get(style)!) }
+        : { retained: style };
+  };
+  // Only these native slots refer to workbook styles. Opaque custom data,
+  // resources, rich text and every authored style property remain untouched.
+  styleSlot(copy, 'defaultStyle');
+  for (const sheet of Object.values(copy.sheets)) {
+    if (!object(sheet)) continue;
+    styleSlot(sheet, 'defaultStyle');
+    for (const data of [sheet.rowData, sheet.columnData])
+      for (const entry of Object.values(data ?? {})) styleSlot(entry, 's');
+    for (const row of Object.values(sheet.cellData ?? {}))
+      for (const cell of Object.values(row ?? {})) styleSlot(cell, 's');
+  }
+  for (const id of generated.keys()) delete copy.styles[id];
+  return canonical({ snapshot: copy, generatedStyles: values });
+}
+
 /** A stored retry request never outranks the native checkpoint and verified bytes. */
 export function verifyRecoveryRequest(
   bundle: OfflineBundle,
@@ -141,18 +193,11 @@ export function verifyRecoveryRequest(
   const expected = structuredClone(rebuilt);
   if ('sheets' in expected) expected.name = name;
   else expected.title = name;
-  // JSON object order is immaterial, but every persisted value must agree.
-  const canonical = (value: unknown) =>
-    JSON.stringify(value, (_key, child) =>
-      child && typeof child === 'object' && !Array.isArray(child)
-        ? Object.fromEntries(
-            Object.keys(child)
-              .sort()
-              .map((key) => [key, child[key]]),
-          )
-        : child,
-    );
-  if (canonical(expected) !== canonical(recovery.snapshot)) throw mismatch();
+  if (
+    comparableRecoverySnapshot(expected, checkpoint) !==
+    comparableRecoverySnapshot(recovery.snapshot, checkpoint)
+  )
+    throw mismatch();
 }
 
 export function downloadOfflineFile(snapshot: NativeSnapshot, filename: string) {

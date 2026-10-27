@@ -471,6 +471,150 @@ test('a saved request keeps its original timestamp across reload and object-key 
   expect(f.recovery.filename).toContain('2026-10-26 21:07');
 });
 
+test('independent native Sheet reconstructions verify the same request despite newly allocated style IDs', async () => {
+  const saved = checkpoint(sheet());
+  saved.failure = 'stale';
+  const edit = write('Styled offline work');
+  edit.params.cellValue[0][0].s = { cl: { rgb: '#221832' } };
+  saved.buffer = [[edit]];
+  const downloaded = bundle(saved.snapshot);
+  const first = (await portableOfflineSnapshot(
+    downloaded,
+    saved,
+    new Map(),
+    () => {},
+  )) as IWorkbookData;
+  const rebuilt = (await portableOfflineSnapshot(
+    downloaded,
+    saved,
+    new Map(),
+    () => {},
+  )) as IWorkbookData;
+  const firstStyle = first.sheets.one.cellData![0][0].s as string;
+  const nextStyle = rebuilt.sheets.one.cellData![0][0].s as string;
+  expect(firstStyle).not.toBe(nextStyle);
+  expect(first.styles[firstStyle]).toEqual({ cl: { rgb: '#221832' } });
+  expect(rebuilt.styles[nextStyle]).toEqual(first.styles[firstStyle]);
+  first.name = offlineCopyName(downloaded.name, new Date(2026, 9, 26, 21, 7));
+  const recovery: OfflineRecoveryRequest = {
+    recoveryId: '11111111-1111-4111-8111-111111111111',
+    filename: `${first.name}.univer.json`,
+    snapshot: first,
+    possibleReplayCrash: false,
+  };
+  const before = structuredClone({ saved, recovery, rebuilt });
+  expect(() => verifyRecoveryRequest(downloaded, saved, recovery, rebuilt)).not.toThrow();
+  expect({ saved, recovery, rebuilt }).toEqual(before);
+  first.styles[firstStyle]!.cl = { rgb: '#ff0000' };
+  expect(() => verifyRecoveryRequest(downloaded, saved, recovery, rebuilt)).toThrow(
+    'does not match',
+  );
+});
+
+function styledRequest() {
+  const saved = checkpoint(sheet());
+  (saved.snapshot as IWorkbookData).styles = { original: { bl: 1 } };
+  const downloaded = bundle(saved.snapshot);
+  const rebuilt = snapshotIdentity(saved.snapshot, downloaded.itemId) as IWorkbookData;
+  rebuilt.styles = {
+    ...rebuilt.styles,
+    generated: { cl: { rgb: '#221832' }, ul: { s: 1, cl: { rgb: '#123456' } } },
+    other: { fs: 18 },
+    unused: { it: 1 },
+  };
+  rebuilt.defaultStyle = 'generated';
+  Object.assign(rebuilt.sheets.one, {
+    defaultStyle: 'other',
+    rowData: { 0: { s: 'generated' } },
+    columnData: { 0: { s: 'other' } },
+    cellData: { 0: { 0: { v: 'work', s: 'generated', custom: { s: 'literal' } } } },
+  });
+  rebuilt.resources = [{ name: 'OPAQUE', data: '{"s":"literal","authored":true}' }];
+  const snapshot = structuredClone(rebuilt);
+  snapshot.name = offlineCopyName(downloaded.name, new Date(2026, 9, 26, 21, 7));
+  for (const id of ['generated', 'other', 'unused']) {
+    snapshot.styles[`saved-${id}`] = snapshot.styles[id];
+    delete snapshot.styles[id];
+  }
+  snapshot.defaultStyle = 'saved-generated';
+  snapshot.sheets.one.defaultStyle = 'saved-other';
+  snapshot.sheets.one.rowData![0].s = 'saved-generated';
+  snapshot.sheets.one.columnData![0].s = 'saved-other';
+  snapshot.sheets.one.cellData![0][0].s = 'saved-generated';
+  const recovery: OfflineRecoveryRequest = {
+    recoveryId: '11111111-1111-4111-8111-111111111111',
+    filename: `${snapshot.name}.univer.json`,
+    snapshot,
+    possibleReplayCrash: false,
+  };
+  return { saved, downloaded, rebuilt, recovery, snapshot };
+}
+
+test('generated style aliases compare through every native slot while the saved request stays unchanged', () => {
+  const f = styledRequest();
+  const before = structuredClone(f);
+  expect(() => verifyRecoveryRequest(f.downloaded, f.saved, f.recovery, f.rebuilt)).not.toThrow();
+  expect(f).toEqual(before);
+});
+
+test.each([
+  [
+    'authored style',
+    (book: IWorkbookData) => {
+      book.styles['saved-generated']!.ul!.cl = { rgb: '#ff0000' };
+    },
+  ],
+  [
+    'style reference',
+    (book: IWorkbookData) => {
+      book.sheets.one.rowData![0].s = 'saved-other';
+    },
+  ],
+  [
+    'missing reference',
+    (book: IWorkbookData) => {
+      book.sheets.one.cellData![0][0].s = 'missing';
+    },
+  ],
+  [
+    'unused style',
+    (book: IWorkbookData) => {
+      delete book.styles['saved-unused'];
+    },
+  ],
+  [
+    'duplicate style',
+    (book: IWorkbookData) => {
+      book.styles.duplicate = structuredClone(book.styles['saved-unused']);
+    },
+  ],
+  [
+    'retained style identity',
+    (book: IWorkbookData) => {
+      book.styles.renamed = book.styles.original;
+      delete book.styles.original;
+    },
+  ],
+  [
+    'opaque cell data',
+    (book: IWorkbookData) => {
+      book.sheets.one.cellData![0][0].custom = { s: 'saved-generated' };
+    },
+  ],
+  [
+    'opaque resource',
+    (book: IWorkbookData) => {
+      book.resources![0].data = '{"s":"saved-generated","authored":true}';
+    },
+  ],
+] as const)('style alias comparison still rejects changed %s', (_label, change) => {
+  const f = styledRequest();
+  change(f.snapshot);
+  expect(() => verifyRecoveryRequest(f.downloaded, f.saved, f.recovery, f.rebuilt)).toThrow(
+    'does not match',
+  );
+});
+
 test.each([
   [
     'content',
