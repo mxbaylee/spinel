@@ -5,6 +5,21 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { AppearanceStore } from '../src/server/appearance/store.ts';
+
+function contrastRatio(foreground: string, background: string) {
+  const luminance = (color: string) => {
+    // These controls use opaque colors; do not treat transparency as black.
+    const rgb = /^rgb\((\d+), (\d+), (\d+)\)$/.exec(color);
+    if (!rgb) throw new Error(`Expected an opaque computed color, received ${color}`);
+    const [r, g, b] = rgb.slice(1).map((part) => {
+      const channel = Number(part) / 255;
+      return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const [low, high] = [luminance(foreground), luminance(background)].sort((a, b) => a - b);
+  return (high + 0.05) / (low + 0.05);
+}
 for (const variant of [
   { name: 'light', width: 1440, height: 1000 },
   { name: 'dark', width: 1440, height: 1000 },
@@ -175,7 +190,26 @@ for (const variant of [
       await expect(dialog).toBeVisible();
       const initial = (await dialog.boundingBox())!.height;
       for (const source of ['Upload', 'Unsplash', 'Gems']) {
-        await dialog.getByRole('button', { name: source, exact: true }).click();
+        const sourceButton = dialog.getByRole('button', { name: source, exact: true });
+        await sourceButton.click();
+        await expect(sourceButton).toHaveAttribute('aria-pressed', 'true');
+        // Shared hover CSS must not replace only half of the selected color pair.
+        for (const hovered of [false, true]) {
+          if (hovered) await sourceButton.hover();
+          else await page.mouse.move(0, 0);
+          await expect
+            .poll(
+              async () => {
+                const colors = await sourceButton.evaluate((button) => {
+                  const style = getComputedStyle(button);
+                  return { foreground: style.color, background: style.backgroundColor };
+                });
+                return contrastRatio(colors.foreground, colors.background);
+              },
+              { message: `${source} selected label contrast (${hovered ? 'hover' : 'rest'})` },
+            )
+            .toBeGreaterThanOrEqual(4.5);
+        }
         expect(Math.abs((await dialog.boundingBox())!.height - initial)).toBeLessThanOrEqual(1);
         if (source !== 'Gems')
           await expect(dialog.locator('.appearance-pairing')).toHaveCSS('display', 'flex');

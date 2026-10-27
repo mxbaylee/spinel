@@ -56,6 +56,9 @@ test('console recovery replaces a lost admin passkey on the existing account and
 
     // Lose the authenticator while its registered key and session still exist server-side.
     await cdp.send('WebAuthn.removeVirtualAuthenticator', { authenticatorId: oldAuthenticator });
+    // Close the mounted admin document before dropping its cookie. Otherwise a
+    // late admin request can redirect to sign-in during recovery navigation.
+    await page.goto('about:blank');
     await context.clearCookies();
     await cdp.send('WebAuthn.addVirtualAuthenticator', { options });
     const recovery = await run(process.execPath, ['server/setup.ts', '--recover-admin'], {
