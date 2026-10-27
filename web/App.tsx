@@ -35,6 +35,7 @@ import { within } from './offline/shell.ts';
 import {
   claimOnlineAccount,
   expirePreparedAccount,
+  offlineAccountEvent,
   offlineEpoch,
   setPreparedAccount,
   setSignOutPending,
@@ -299,7 +300,8 @@ function AccountApp() {
   useLayoutEffect(() => {
     if (!local) return;
     // Another tab signed out or another account signed in: close local data.
-    const watch = () => {
+    const watch = (event?: StorageEvent) => {
+      if (event && !offlineAccountEvent(event, local.user.id)) return;
       if (local.isCurrent()) return;
       clearDashboardNavigation();
       setLocal(null);

@@ -146,6 +146,20 @@ export function offlineAccountRead(accountId: string) {
     }
   };
 }
+
+/** Shells close for identity changes, not unrelated preferences after local expiry. */
+export function offlineAccountEvent(
+  event: Pick<StorageEvent, 'key' | 'newValue'>,
+  accountId: string,
+) {
+  return (
+    event.key === null ||
+    event.key === CANCELLATION_KEY ||
+    (event.key === SIGN_OUT_KEY && event.newValue === '1') ||
+    ((event.key === ACCOUNT_KEY || event.key === ONLINE_ACCOUNT_KEY) &&
+      event.newValue !== accountId)
+  );
+}
 export function setPreparedAccount(accountId: string | null) {
   // Clearing an already-empty pointer still cancels a first preparation that
   // was in flight when sign-out began, before its component can unmount.

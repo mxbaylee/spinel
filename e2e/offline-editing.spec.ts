@@ -900,7 +900,7 @@ test.describe('downloaded native editors', () => {
     }
   });
 
-  test('expired sign-in retains an unfinished cross-sheet formula for copying without submitting it', async ({
+  test('a cold offline editor retains its expired cross-sheet draft through unrelated storage events', async ({
     browser,
     baseURL,
   }, info) => {
@@ -919,6 +919,10 @@ test.describe('downloaded native editors', () => {
       );
       await sheet.getByRole('tab', { name: first.name, exact: true }).click();
       await f.network.setOffline(true);
+      await f.page.reload();
+      await usableCanvas(f.page);
+      await savedLocally(f.page);
+      await sheet.getByRole('tab', { name: first.name, exact: true }).click();
       await edit(f.page, 'sheet', '730', 'E1');
       await savedLocally(f.page);
       const retained = (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint;
@@ -954,6 +958,20 @@ test.describe('downloaded native editors', () => {
       await expect
         .poll(() => f.page.evaluate(() => localStorage.getItem('spinel.offline.account')))
         .toBeNull();
+      const other = await f.context.newPage();
+      await other.goto('/sign-in');
+      await expect(other.getByRole('button', { name: 'Sign in with a passkey' })).toBeVisible();
+      await f.page.evaluate(() => {
+        const changed = (event: StorageEvent) => {
+          if (event.key !== 'spinel-test-benign-preference') return;
+          window.removeEventListener('storage', changed);
+          document.documentElement.setAttribute('data-spinel-storage-observed', 'true');
+        };
+        window.addEventListener('storage', changed);
+      });
+      await other.evaluate(() => localStorage.setItem('spinel-test-benign-preference', 'dark'));
+      await expect(f.page.locator('html')).toHaveAttribute('data-spinel-storage-observed', 'true');
+      await other.close();
       // Confirming while on the other sheet must not hide and then lose the
       // original draft when native sheet activation completes asynchronously.
       await nativeInput(f.page).focus();

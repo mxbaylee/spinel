@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { SheetEditor } from './SheetEditor.tsx';
 import { DocEditor } from './DocEditor.tsx';
-import { offlineAccountRead, openOfflineStore } from './offline/offlineStore.ts';
+import {
+  offlineAccountEvent,
+  offlineAccountRead,
+  openOfflineStore,
+} from './offline/offlineStore.ts';
 import type { ConnectionState } from './connectionState.ts';
 
 /** The same native editors restore their own durable queue on an offline launch. */
@@ -23,7 +27,8 @@ export function OfflineViewer({
   useEffect(() => {
     let mounted = true;
     const current = offlineAccountRead(accountId);
-    const changed = () => {
+    const changed = (event: StorageEvent) => {
+      if (!offlineAccountEvent(event, accountId)) return;
       if (!current()) {
         setItem(null);
         setProblem('You signed out or changed accounts on this device.');
