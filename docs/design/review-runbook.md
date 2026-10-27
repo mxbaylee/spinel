@@ -36,6 +36,9 @@ using attachments or durable commit-pinned image embeds. Include source SHA,
 theme/viewport/state captions and the design/playbook links. Artifact links and
 local galleries supplement those PR-visible images; they do not replace them.
 No human sign-off is needed under the [standing delegation](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
+Publishing these sample-data review captures to public `mxbaylee/spinel` and its
+PRs has [standing owner authorization](../implementation/grooming-2026-10-26.md#standing-screenshot-publication-authority);
+do not ask again for that routine publication.
 
 After `npm run build-storybook` when local workloads are permitted, run
 `npm run screenshots -- <story IDs>` for all five existing variants, or add
