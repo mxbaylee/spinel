@@ -147,5 +147,11 @@ assistant consent. Migrated sessions start without fresh proof. Cancellation doe
 not apply the action. If a submitted change's outcome cannot be confirmed, reload
 the profile before trying again; it may already have been saved.
 
+If another tab changes accounts, an old profile must reload before making a
+security change. The browser fences delayed responses, and these requests carry
+the displayed account as an expectation that the server checks against the
+authenticated cookie. That expectation grants no authority. This also protects
+the account when browser storage is unavailable.
+
 See [decisions and verification](implementation/SPN-070.md). These controls use
 cookie authentication and same-origin JSON requests, not assistant credentials.

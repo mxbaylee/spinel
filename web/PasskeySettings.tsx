@@ -3,6 +3,7 @@ import { startAuthentication, WebAuthnAbortService } from '@simplewebauthn/brows
 import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/browser';
 import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { api } from './api.ts';
+import { offlineEpoch } from './offline/offlineStore.ts';
 import './profile.css';
 
 type Passkey = {
@@ -16,32 +17,56 @@ type Passkey = {
 type Keys = { passkeys: Passkey[]; verifiedUntil: number | null };
 type Action = { kind: 'remove'; key: Passkey } | { kind: 'others' | 'add' };
 
-/** The server owns freshness and scope. This presentation never supplies a user ID. */
+const accountChanged = 'Your account changed. Reload your profile before changing access.';
+
+/** The displayed account is a consistency check; the cookie alone grants authority. */
 export function PasskeySettings({
+  accountId,
   onAdd,
   onSignedOut,
   adding = false,
   isAdmin = false,
   revision = 0,
   verificationRequired = 0,
+  accountChange = 0,
   authenticate = startAuthentication,
 }: {
-  onAdd: () => void;
+  accountId: string;
+  onAdd: (verifyAccount: () => void) => void;
   onSignedOut: () => void;
   adding?: boolean;
   isAdmin?: boolean;
   revision?: number;
   verificationRequired?: number;
+  accountChange?: number;
   authenticate?: typeof startAuthentication;
 }) {
   const [data, setData] = useState<Keys | null>(null);
   const [loading, setLoading] = useState(true);
   const [action, setAction] = useState<Action | null>(null);
-  const [phase, setPhase] = useState<'idle' | 'verifying' | 'saving' | 'uncertain'>('idle');
+  const [phase, setPhase] = useState<'idle' | 'verifying' | 'saving' | 'uncertain' | 'changed'>(
+    'idle',
+  );
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [needsProof, setNeedsProof] = useState(false);
   const [forceProof, setForceProof] = useState(false);
+  const [verifyAccount] = useState(() => {
+    let verifyEpoch = () => {};
+    try {
+      verifyEpoch = offlineEpoch();
+    } catch {
+      // Online security remains available with blocked storage. The server also
+      // compares the displayed account with its current authenticated cookie.
+    }
+    return () => {
+      try {
+        verifyEpoch();
+      } catch {
+        throw Object.assign(new Error(accountChanged), { code: 'account_changed' });
+      }
+    };
+  });
   useEffect(() => {
     if (verificationRequired) setForceProof(true);
   }, [verificationRequired]);
@@ -54,7 +79,29 @@ export function PasskeySettings({
   const readRequest = useRef<AbortController | null>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
   const addButton = useRef<HTMLButtonElement>(null);
-  const busy = adding || phase === 'verifying' || phase === 'saving' || phase === 'uncertain';
+  const reloadRequired = phase === 'uncertain' || phase === 'changed';
+  const busy = adding || phase === 'verifying' || phase === 'saving' || reloadRequired;
+
+  function blockChangedAccount(failure: unknown) {
+    if ((failure as { code?: string })?.code !== 'account_changed') return false;
+    refreshSequence.current++;
+    readRequest.current?.abort();
+    setLoading(false);
+    setData(null);
+    setNotice('');
+    setError(accountChanged);
+    setPhase('changed');
+    return true;
+  }
+  function accountIsCurrent() {
+    try {
+      verifyAccount();
+      return true;
+    } catch (failure) {
+      blockChangedAccount(failure);
+      return false;
+    }
+  }
 
   async function refresh() {
     const sequence = ++refreshSequence.current;
@@ -62,17 +109,27 @@ export function PasskeySettings({
     const controller = new AbortController();
     readRequest.current = controller;
     const timeout = setTimeout(() => controller.abort(), 15_000);
+    const check = () => {
+      if (!mounted.current || sequence !== refreshSequence.current || controller.signal.aborted)
+        throw new DOMException('This passkey request ended.', 'AbortError');
+      verifyAccount();
+    };
     setLoading(true);
     try {
-      const next = await api<Keys>('passkeys', undefined, () => {}, controller.signal);
+      const next = await api<Keys>('passkeys', undefined, check, {
+        signal: controller.signal,
+        accountId,
+      });
       if (!next || !Array.isArray(next.passkeys)) throw new Error('Could not load passkeys.');
       if (mounted.current && sequence === refreshSequence.current) {
         setData(next);
         setError('');
       }
     } catch (failure) {
-      if (mounted.current && sequence === refreshSequence.current)
-        setError(failure instanceof Error ? failure.message : 'Could not load passkeys.');
+      if (mounted.current && sequence === refreshSequence.current) {
+        if (!blockChangedAccount(failure))
+          setError(failure instanceof Error ? failure.message : 'Could not load passkeys.');
+      }
     } finally {
       clearTimeout(timeout);
       if (mounted.current && sequence === refreshSequence.current) setLoading(false);
@@ -96,20 +153,23 @@ export function PasskeySettings({
       cancelVerification();
     };
   }, [revision]);
+  useEffect(() => {
+    if (accountChange) blockChangedAccount({ code: 'account_changed' });
+  }, [accountChange]);
 
   function open(next: Action, trigger?: HTMLElement | null) {
-    if (locked.current || busy) return;
+    if (locked.current || busy || !accountIsCurrent()) return;
     returnFocus.current = trigger ?? (document.activeElement as HTMLElement);
     const stale = forceProof || !data?.verifiedUntil || data.verifiedUntil <= Date.now();
     setError('');
     setNotice('');
     setPhase('idle');
     setNeedsProof(stale);
-    if (next.kind === 'add' && !stale) onAdd();
+    if (next.kind === 'add' && !stale) onAdd(verifyAccount);
     else setAction(next);
   }
   async function verify() {
-    if (locked.current) return;
+    if (locked.current || reloadRequired || !accountIsCurrent()) return;
     locked.current = true;
     const current = ++serial.current;
     const controller = new AbortController();
@@ -122,6 +182,7 @@ export function PasskeySettings({
     const check = () => {
       if (!mounted.current || current !== serial.current || controller.signal.aborted)
         throw new Error('Passkey verification did not finish. Try again.');
+      verifyAccount();
     };
     setPhase('verifying');
     setError('');
@@ -129,7 +190,7 @@ export function PasskeySettings({
       const result = await api<{
         options: PublicKeyCredentialRequestOptionsJSON;
         challengeId: string;
-      }>('reauthentication/options', {}, check, controller.signal);
+      }>('reauthentication/options', {}, check, { signal: controller.signal, accountId });
       challenge.current = result.challengeId;
       const response = await authenticate({ optionsJSON: result.options });
       check();
@@ -137,14 +198,14 @@ export function PasskeySettings({
         'reauthentication/verify',
         { challengeId: result.challengeId, response },
         check,
-        controller.signal,
+        { signal: controller.signal, accountId },
       );
       setData((previous) => previous && { ...previous, verifiedUntil: proof.verifiedUntil });
       setNeedsProof(false);
       setForceProof(false);
       setNotice('Passkey verified. Confirm the change below.');
-    } catch {
-      if (mounted.current && current === serial.current)
+    } catch (failure) {
+      if (mounted.current && current === serial.current && !blockChangedAccount(failure))
         setError(
           'Passkey verification did not finish. Try again and choose a passkey for this account.',
         );
@@ -155,15 +216,15 @@ export function PasskeySettings({
           void api('cancel', { challengeId: challenge.current }).catch(() => {});
         challenge.current = null;
         locked.current = false;
-        if (mounted.current) setPhase('idle');
+        if (mounted.current) setPhase((previous) => (previous === 'changed' ? previous : 'idle'));
       }
     }
   }
   async function perform() {
-    if (!action || locked.current || phase === 'uncertain') return;
+    if (!action || locked.current || reloadRequired || !accountIsCurrent()) return;
     if (action.kind === 'add') {
       setAction(null);
-      onAdd();
+      onAdd(verifyAccount);
       return;
     }
     locked.current = true;
@@ -173,6 +234,7 @@ export function PasskeySettings({
     const timeout = setTimeout(() => controller.abort(), 30_000);
     const check = () => {
       if (!mounted.current || current !== serial.current) throw new Error('Closed');
+      verifyAccount();
     };
     setPhase('saving');
     setError('');
@@ -183,7 +245,7 @@ export function PasskeySettings({
           : 'sign-out-others',
         {},
         check,
-        controller.signal,
+        { signal: controller.signal, accountId },
       );
       if (action.kind === 'remove' && typeof result?.signedOut !== 'boolean')
         throw new Error('The removal result could not be confirmed.');
@@ -204,6 +266,7 @@ export function PasskeySettings({
       addButton.current?.focus();
     } catch (failure) {
       if (!mounted.current || current !== serial.current) return;
+      if (blockChangedAccount(failure)) return;
       const status = (failure as { status?: number }).status;
       if (status === 428) {
         setNeedsProof(true);
@@ -228,13 +291,13 @@ export function PasskeySettings({
     if (phase === 'saving') return;
     if (phase === 'verifying') cancelVerification();
     setAction(null);
-    if (phase !== 'uncertain') {
+    if (!reloadRequired) {
       setPhase('idle');
       setError('');
       setNotice('');
     }
   }
-  const last = action?.kind === 'remove' && (data?.passkeys.length ?? 0) <= 1;
+  const last = action?.kind === 'remove' && data !== null && data.passkeys.length <= 1;
   return (
     <section className="profile-key-settings sp-ui" aria-labelledby="passkeys-heading">
       <h2 id="passkeys-heading">Your passkeys</h2>
@@ -242,7 +305,7 @@ export function PasskeySettings({
       {loading && <p role="status">Loading passkeys…</p>}
       {!action && error && <p role="alert">{error}</p>}
       {!action && notice && <p role="status">{notice}</p>}
-      {!action && phase === 'uncertain' && (
+      {!action && reloadRequired && (
         <Button onClick={() => location.reload()}>Reload profile</Button>
       )}
       {data &&
@@ -288,7 +351,7 @@ export function PasskeySettings({
         <Button disabled={busy || loading || !data} onClick={() => open({ kind: 'others' })}>
           Sign out other devices
         </Button>
-        {!loading && !action && error && phase !== 'uncertain' && (
+        {!loading && !action && error && !reloadRequired && (
           <Button onClick={() => void refresh()}>Retry</Button>
         )}
       </div>
@@ -354,7 +417,7 @@ export function PasskeySettings({
               </>
             )}
             <div className="profile-key-actions">
-              {!last && phase !== 'uncertain' && (
+              {!last && !reloadRequired && (
                 <Button
                   primary
                   disabled={busy}
@@ -373,13 +436,13 @@ export function PasskeySettings({
                             : 'Sign out other devices'}
                 </Button>
               )}
-              {phase === 'uncertain' && (
+              {reloadRequired && (
                 <Button primary onClick={() => location.reload()}>
                   Reload profile
                 </Button>
               )}
               <Button disabled={phase === 'saving'} onClick={close}>
-                {last || phase === 'uncertain' ? 'Close' : 'Cancel'}
+                {last || reloadRequired ? 'Close' : 'Cancel'}
               </Button>
             </div>
           </div>

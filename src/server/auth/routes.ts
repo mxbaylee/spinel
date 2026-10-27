@@ -13,6 +13,8 @@ import { OwnershipTransfer } from './ownership.ts';
 import { AccessTokens } from './tokens.ts';
 import { AssistantOAuth } from './oauth.ts';
 
+class AccountChangedError extends AuthError {}
+
 export function cookieToken(request: Pick<Request, 'headers'>) {
   const tokens = (request.headers.cookie ?? '')
     .split(';')
@@ -48,6 +50,18 @@ export function authRoutes(
     const session = store.session(cookieToken(request));
     if (!session || (authenticated && !session.user_id))
       throw new AuthError(401, 'Your session expired. Sign in again.');
+    return session;
+  };
+  const requireAccount = (request: Request): Session => {
+    const session = requireSession(request, true);
+    // The cookie owns authority. This header only binds the request to the
+    // account displayed by its initiating tab, including a cookie-switch race.
+    const expected = request.headers['x-spinel-account'];
+    if (expected !== session.user_id)
+      throw new AccountChangedError(
+        expected === undefined ? 400 : 409,
+        'Your account changed. Reload your profile before changing access.',
+      );
     return session;
   };
   router.use((_request, response, next) => {
@@ -306,17 +320,17 @@ export function authRoutes(
   }
   router.post('/reauthentication/options', async (request, response) => {
     emptyConfirmation(request);
-    response.json(await service.reauthenticationOptions(requireSession(request, true)));
+    response.json(await service.reauthenticationOptions(requireAccount(request)));
   });
   router.post('/reauthentication/verify', async (request, response) => {
     const body = payload(request);
     response.json(
-      await service.reauthenticate(requireSession(request, true), body.challengeId, body.response),
+      await service.reauthenticate(requireAccount(request), body.challengeId, body.response),
     );
   });
   router.post('/passkeys/:id/remove', async (request, response) => {
     emptyConfirmation(request);
-    const result = store.removeOwnPasskey(requireSession(request, true), String(request.params.id));
+    const result = store.removeOwnPasskey(requireAccount(request), String(request.params.id));
     try {
       await accessChanged();
     } catch {
@@ -329,7 +343,7 @@ export function authRoutes(
   });
   router.post('/sign-out-others', async (request, response) => {
     emptyConfirmation(request);
-    store.signOutOthers(requireSession(request, true));
+    store.signOutOthers(requireAccount(request));
     try {
       await accessChanged();
     } catch {
@@ -341,7 +355,7 @@ export function authRoutes(
     response.json({ signedOutOthers: true });
   });
   router.post('/registration/options', async (request, response) => {
-    response.json(await service.registrationOptions(requireSession(request, true)));
+    response.json(await service.registrationOptions(requireAccount(request)));
   });
   function payload(request: Request) {
     const body = request.body;
@@ -362,9 +376,7 @@ export function authRoutes(
   }
   router.post('/registration/verify', async (request, response) => {
     const body = payload(request);
-    response.json(
-      await service.register(requireSession(request, true), body.challengeId, body.response),
-    );
+    response.json(await service.register(requireAccount(request), body.challengeId, body.response));
   });
   router.post('/authentication/verify', async (request, response) => {
     const body = payload(request);
@@ -394,7 +406,7 @@ export function authRoutes(
     response.sendStatus(204);
   });
   router.get('/passkeys', (request, response) => {
-    const session = requireSession(request, true);
+    const session = requireAccount(request);
     response.json({
       verifiedUntil: store.verifiedUntil(session),
       passkeys: store
@@ -411,9 +423,10 @@ export function authRoutes(
   });
   router.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
     const status = error instanceof AuthError ? error.status : 400;
-    response
-      .status(status)
-      .json({ error: error instanceof AuthError ? error.message : 'Invalid request. Try again.' });
+    response.status(status).json({
+      error: error instanceof AuthError ? error.message : 'Invalid request. Try again.',
+      ...(error instanceof AccountChangedError ? { code: 'account_changed' } : {}),
+    });
   });
   return router;
 }

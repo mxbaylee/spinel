@@ -25,6 +25,26 @@ async function capture(page: Page, info: TestInfo, state: string) {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    if (state === 'passkey-list') {
+      const primary = page.getByRole('button', { name: 'Add a passkey', exact: true });
+      await expect
+        .poll(() =>
+          primary.evaluate((button) => {
+            const probe = document.createElement('span');
+            probe.style.backgroundColor = 'var(--sp-accent)';
+            probe.style.color = 'var(--sp-on-accent)';
+            button.append(probe);
+            const expected = getComputedStyle(probe);
+            const actual = getComputedStyle(button);
+            const matches =
+              actual.backgroundColor === expected.backgroundColor &&
+              actual.color === expected.color;
+            probe.remove();
+            return matches;
+          }),
+        )
+        .toBe(true);
+    }
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
       .toBe(true);
@@ -177,7 +197,7 @@ test('profile signs out another browser, then verifies and removes its passkey w
     expect(
       (
         await context.request.post('/api/auth/registration/options', {
-          headers: { Origin: baseURL! },
+          headers: { Origin: baseURL!, 'X-Spinel-Account': userId },
           data: {},
         })
       ).status(),
@@ -241,7 +261,7 @@ test('profile signs out another browser, then verifies and removes its passkey w
     expect(
       (
         await context.request.post(`/api/auth/passkeys/${encodeURIComponent(firstKey.id)}/remove`, {
-          headers: { Origin: baseURL! },
+          headers: { Origin: baseURL!, 'X-Spinel-Account': userId },
           data: {},
         })
       ).status(),
@@ -266,3 +286,86 @@ test('profile signs out another browser, then verifies and removes its passkey w
     db.close();
   }
 });
+
+for (const boundary of ['account epoch', 'cookie race'] as const) {
+  test(`an old profile cannot end a different account's sessions after an ${boundary} change`, async ({
+    page,
+    context,
+    baseURL,
+  }, info) => {
+    const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+    const auth = new AuthStore(db);
+    const users = [auth.createUser('Original profile'), auth.createUser('New account')];
+    const sessions = users.map((user) => {
+      const key = `${user.id}-key`;
+      db.prepare('INSERT INTO auth_passkeys VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(
+        key,
+        user.id,
+        new Uint8Array([1]),
+        0,
+        '[]',
+        'Retained key',
+        'Passkey',
+        Date.now(),
+        null,
+        0,
+        'singleDevice',
+      );
+      const active = auth.createSession(user.id, undefined, key);
+      auth.markVerified(active.session, key);
+      return { active, other: auth.createSession(user.id, undefined, key) };
+    });
+    const useCookie = (token: string) =>
+      context.addCookies([
+        {
+          name: COOKIE_NAME,
+          value: token,
+          url: baseURL!.replace('http:', 'https:'),
+          secure: true,
+          httpOnly: true,
+          sameSite: 'Strict',
+        },
+      ]);
+    try {
+      await useCookie(sessions[0].active.token);
+      await page.goto('/profile#passkeys');
+      const trigger = page.getByRole('button', { name: 'Sign out other devices', exact: true });
+      await expect(trigger).toBeEnabled();
+      await trigger.click();
+      const dialog = page.getByRole('dialog', { name: 'Sign out other devices?', exact: true });
+      await expect(dialog).toBeVisible();
+      // Rotation can happen after a confirmation is already open. Both sessions
+      // have fresh proof, so only the displayed-account boundary prevents harm.
+      await useCookie(sessions[1].active.token);
+      if (boundary === 'account epoch')
+        await page.evaluate(
+          (id) => localStorage.setItem('spinel.offline.online-account', id),
+          users[1].id,
+        );
+      const requests: string[] = [];
+      page.on('request', (request) => {
+        if (new URL(request.url()).pathname === '/api/auth/sign-out-others')
+          requests.push(request.headers()['x-spinel-account']);
+      });
+      await dialog.getByRole('button', { name: 'Sign out other devices', exact: true }).click();
+      await expect(dialog.getByRole('alert')).toContainText('Your account changed.');
+      await expect(dialog.getByRole('button', { name: 'Reload profile' })).toBeVisible();
+      await expect(
+        dialog.getByRole('button', { name: 'Sign out other devices', exact: true }),
+      ).toHaveCount(0);
+      expect(requests).toEqual(boundary === 'account epoch' ? [] : [users[0].id]);
+      for (const { active, other } of sessions) {
+        expect(auth.session(active.token)).toBeDefined();
+        expect(auth.session(other.token)).toBeDefined();
+      }
+      const current = await context.request.get('/api/auth/session');
+      expect((await current.json()).user.id).toBe(users[1].id);
+      await dialog.getByRole('button', { name: 'Close' }).click();
+      await expect(trigger).toBeDisabled();
+      await expect(page.getByRole('button', { name: 'Add a passkey', exact: true })).toBeDisabled();
+    } finally {
+      for (const user of users) db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+      db.close();
+    }
+  });
+}

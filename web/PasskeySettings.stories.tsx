@@ -28,7 +28,7 @@ const staleRead = { 'GET /api/auth/passkeys': stale };
 const meta = {
   title: 'Current production/Account/Passkey security',
   component: PasskeySettings,
-  args: { onAdd: fn(), onSignedOut: fn() },
+  args: { accountId: 'owner', onAdd: fn(), onSignedOut: fn() },
 } satisfies Meta<typeof PasskeySettings>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -325,5 +325,80 @@ export const ReadRetryRecovered: Story = {
     } finally {
       globalThis.fetch = previous;
     }
+  },
+};
+
+export const AccountChangedBeforeAction: Story = {
+  parameters: { api: read },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const action = await canvas.findByRole('button', { name: 'Sign out other devices' });
+    await expect(action).toBeEnabled();
+    const key = 'spinel.offline.online-account';
+    const previousAccount = localStorage.getItem(key);
+    const previousFetch = globalThis.fetch;
+    const requests = fn(previousFetch);
+    globalThis.fetch = requests;
+    try {
+      // Simulate another tab's durable account change without a storage event.
+      localStorage.setItem(key, 'a-different-account');
+      await userEvent.click(action);
+      await expect(await canvas.findByRole('alert')).toHaveTextContent(/Your account changed/);
+      await expect(canvas.getByRole('button', { name: 'Reload profile' })).toBeVisible();
+      await expect(action).toBeDisabled();
+      await expect(canvas.queryByRole('list')).toBeNull();
+      await expect(requests).not.toHaveBeenCalled();
+    } finally {
+      globalThis.fetch = previousFetch;
+      if (previousAccount === null) localStorage.removeItem(key);
+      else localStorage.setItem(key, previousAccount);
+    }
+  },
+};
+
+export const CookieChangedDuringConfirmation: Story = {
+  parameters: { api: read },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Sign out other devices' }));
+    const dialog = within(
+      await within(document.body).findByRole('dialog', { name: 'Sign out other devices?' }),
+    );
+    const previous = globalThis.fetch;
+    const requests = fn<typeof fetch>(async (_input, init) => {
+      await expect(new Headers(init?.headers).get('X-Spinel-Account')).toBe(args.accountId);
+      return Response.json(
+        {
+          error: 'Your account changed. Reload your profile before changing access.',
+          code: 'account_changed',
+        },
+        { status: 409 },
+      );
+    });
+    globalThis.fetch = requests;
+    try {
+      await userEvent.click(dialog.getByRole('button', { name: 'Sign out other devices' }));
+      await expect(await dialog.findByRole('alert')).toHaveTextContent(/Your account changed/);
+      await expect(dialog.getByRole('button', { name: 'Reload profile' })).toBeVisible();
+      await expect(dialog.queryByRole('button', { name: 'Sign out other devices' })).toBeNull();
+      await userEvent.click(dialog.getByRole('button', { name: 'Close' }));
+      await expect(canvas.getByRole('button', { name: 'Add a passkey' })).toBeDisabled();
+      await expect(requests).toHaveBeenCalledOnce();
+    } finally {
+      globalThis.fetch = previous;
+    }
+  },
+};
+
+export const AccountChangedDuringRegistration: Story = {
+  args: { accountChange: 1 },
+  parameters: { api: read },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent(/Your account changed/);
+    await expect(canvas.getByRole('button', { name: 'Reload profile' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Add a passkey' })).toBeDisabled();
+    await expect(canvas.queryByRole('list')).toBeNull();
+    await expect(args.onAdd).not.toHaveBeenCalled();
   },
 };

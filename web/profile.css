@@ -309,6 +309,11 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+.workspace .profile-key-settings button.sp-primary {
+  background: var(--sp-accent);
+  color: var(--sp-on-accent);
+  border-color: var(--sp-accent);
+}
 .profile-key-confirmation {
   display: grid;
   gap: 16px;

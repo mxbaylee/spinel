@@ -110,6 +110,7 @@ function AccountApp() {
   );
   const [passkeyRevision, setPasskeyRevision] = useState(0);
   const [passkeyProofReset, setPasskeyProofReset] = useState(0);
+  const [passkeyAccountReset, setPasskeyAccountReset] = useState(0);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
@@ -320,7 +321,7 @@ function AccountApp() {
     setBusy(false);
     setNotice('Passkey request cancelled.');
   }
-  async function ceremony(register: boolean) {
+  async function ceremony(register: boolean, verifyAccount: () => void = () => {}) {
     if (adminRecovery && attempt.current && !attempt.current.cancelled) return;
     const current: { cancelled: boolean; challengeId?: string; finishing?: boolean } = {
       cancelled: false,
@@ -329,6 +330,10 @@ function AccountApp() {
     setBusy(true);
     setError('');
     setNotice('');
+    const check = () => {
+      if (current.cancelled) throw new DOMException('Passkey request cancelled.', 'AbortError');
+      verifyAccount();
+    };
     try {
       if (!window.PublicKeyCredential || !window.isSecureContext)
         throw new Error('Passkeys need a supported browser at Spinel’s secure address.');
@@ -341,12 +346,15 @@ function AccountApp() {
             : register
               ? 'registration'
               : 'authentication';
+      const requestOptions = { accountId: kind === 'registration' ? user?.id : undefined };
       const { options, challengeId } = await api<{
         options: PublicKeyCredentialCreationOptionsJSON & PublicKeyCredentialRequestOptionsJSON;
         challengeId: string;
       }>(
         `${kind}/options`,
         consoleClaim ? { setupId } : invitation ? { token: inviteToken, name: inviteName } : {},
+        check,
+        requestOptions,
       );
       current.challengeId = challengeId;
       if (current.cancelled) {
@@ -373,11 +381,16 @@ function AccountApp() {
         current.finishing = true;
         setFinishingRecovery(true);
       }
-      const result = await api<{ redirect?: string; name?: string }>(`${kind}/verify`, {
-        challengeId,
-        response,
-        ...(consoleClaim ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
-      });
+      const result = await api<{ redirect?: string; name?: string }>(
+        `${kind}/verify`,
+        {
+          challengeId,
+          response,
+          ...(consoleClaim ? { setupId, proof } : invitation ? { token: inviteToken } : {}),
+        },
+        check,
+        requestOptions,
+      );
       if (current.cancelled) return;
       if (register && !consoleClaim && !invitation) {
         setPasskeyRevision((revision) => revision + 1);
@@ -392,6 +405,8 @@ function AccountApp() {
         );
     } catch (failure) {
       if (!current.cancelled) {
+        if (register && (failure as { code?: string }).code === 'account_changed')
+          setPasskeyAccountReset((revision) => revision + 1);
         if (register && (failure as { status?: number }).status === 428)
           setPasskeyProofReset((revision) => revision + 1);
         // Browser exception names vary across providers; keep the retry action clear.
@@ -579,11 +594,13 @@ function AccountApp() {
               passkeys={
                 <PasskeySettings
                   key={user.id}
+                  accountId={user.id}
                   adding={busy}
                   isAdmin={user.isAdmin}
                   revision={passkeyRevision}
                   verificationRequired={passkeyProofReset}
-                  onAdd={() => void ceremony(true)}
+                  accountChange={passkeyAccountReset}
+                  onAdd={(verifyAccount) => void ceremony(true, verifyAccount)}
                   onSignedOut={() => {
                     stopDiagnostics();
                     clearDashboardNavigation();
