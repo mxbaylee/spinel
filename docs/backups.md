@@ -37,9 +37,14 @@ The [SPN-063 storage and recovery plan](implementation/SPN-063.md) retains the
 alternative-backend comparison and specifies direct SQLite recovery work without
 database adapters. The later [backup-options proposal](implementation/SPN-063-backup-options.md)
 adds manual encrypted downloads, configurable S3-compatible destinations,
-separate diagnostics retention and staged UI restore/maintenance. Those remain
-design work; the current commands below are unchanged, and recurring verification
-is not yet available.
+separate diagnostics retention and staged UI restore/maintenance. The accepted
+[pre-deployment implementation decision](implementation/SPN-063.md#accepted-decision-implement-recovery-before-deployment)
+adds a supported filesystem destination to build and test the shared workflow
+locally. SPN-063 now belongs before launch; selected-provider and target-host
+acceptance remain in SPN-038 before public exposure. A same-host backup must be
+reported separately from independent offsite protection. These are implementation
+plans: the current commands below are unchanged, and the filesystem destination,
+recurring verifier and new UI controls are not yet available.
 
 ## Current SQLite and Spaces implementation
 

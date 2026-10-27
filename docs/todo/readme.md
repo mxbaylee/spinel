@@ -12,26 +12,26 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 
 | # | Ticket | Effort | Impact | Score | Tie-break | Waiting on |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 🔗 [SPN-066](SPN-066.md) See and expire every guest link in one place | 🌿 M | 🩷 L | 31 | — | — |
-| 2 | 🛡️ [SPN-105](SPN-105.md) Update the vulnerable request body parser | 🌱 S | 🩷 L | 30 | — | — |
-| 3 | 🗑️ [SPN-095](SPN-095.md) Expire Space Trash after 30 days | 🌳 L | 💜 M | 22 | Lower ID | — |
-| 4 | ⌨️ [SPN-108](SPN-108.md) Keep Docs responsive after sustained typing | 🌳 L | 💜 M | 22 | — | — |
-| 5 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 6 | 📑 [SPN-065](SPN-065.md) Make a copy of a Sheet or Doc | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 7 | 📂 [SPN-069](SPN-069.md) Create items in a folder shared with me as an editor | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 8 | 🧺 [SPN-071](SPN-071.md) Hide shares and see where my access comes from | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 9 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 10 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 11 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — | — |
-| 12 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 11 | Lower ID | — |
-| 13 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — | — |
-| 14 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 10 | — | — |
+| 1 | 🧯 [SPN-063](SPN-063.md) Regularly prove Spinel can recover from its backups | 🌳 L | 🩷 L | 32 | — | — |
+| 2 | 🔗 [SPN-066](SPN-066.md) See and expire every guest link in one place | 🌿 M | 🩷 L | 31 | — | — |
+| 3 | 🛡️ [SPN-105](SPN-105.md) Update the vulnerable request body parser | 🌱 S | 🩷 L | 30 | — | — |
+| 4 | 🗑️ [SPN-095](SPN-095.md) Expire Space Trash after 30 days | 🌳 L | 💜 M | 22 | Lower ID | — |
+| 5 | ⌨️ [SPN-108](SPN-108.md) Keep Docs responsive after sustained typing | 🌳 L | 💜 M | 22 | — | — |
+| 6 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 7 | 📑 [SPN-065](SPN-065.md) Make a copy of a Sheet or Doc | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 8 | 📂 [SPN-069](SPN-069.md) Create items in a folder shared with me as an editor | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 9 | 🧺 [SPN-071](SPN-071.md) Hide shares and see where my access comes from | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 10 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 11 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 12 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — | — |
+| 13 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 11 | Lower ID | — |
+| 14 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — | — |
+| 15 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 10 | — | — |
 
 ### Launch
 
 | # | Ticket | Effort | Impact | Score | Tie-break | Waiting on |
 | --- | --- | --- | --- | --- | --- | --- |
-| 15 | 🧯 [SPN-063](SPN-063.md) Regularly prove Spinel can recover from its backups | 🌳 L | 🩷 L | 32 | — | — |
 | 16 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🌳 L | 💜 M | 22 | — | [SPN-063](SPN-063.md) |
 
 ### After launch

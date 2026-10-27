@@ -38,7 +38,10 @@ restore-generation cleanup. A failure keeps its first observed failure time
 until a successful run. Unimplemented Space trash expiry is **Not configured**.
 Backup configuration, running state, last attempt/success, errors and overdue
 status use the existing backup controller. Recurring restore verification remains
-SPN-063 in the launch phase.
+SPN-063, now scheduled before launch under the
+[pre-deployment recovery decision](implementation/SPN-063.md#accepted-decision-implement-recovery-before-deployment).
+Provider and target-host acceptance remain required in SPN-038 before public
+exposure; local backup success must not imply independent offsite protection.
 
 ## Reproduce and download
 
