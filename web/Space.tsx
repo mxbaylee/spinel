@@ -981,6 +981,7 @@ export function Space({
     );
   return visiblePage ? (
     <EditorFrame
+      offlineAccountId={!guest ? user?.id : undefined}
       appearanceTarget={
         !denied
           ? { ...visiblePage.item, spaceId: visiblePage.spaceId, guest: Boolean(guest) }

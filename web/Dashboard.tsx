@@ -883,7 +883,7 @@ export function Dashboard({
           <EditorFrame
             appearanceTarget={current}
             appearanceDisabled={!!local}
-            offlineAccountId={local ? user.id : undefined}
+            offlineAccountId={user.id}
             key={current.id}
             name={current.name}
             connection={local ? 'offline' : connection}

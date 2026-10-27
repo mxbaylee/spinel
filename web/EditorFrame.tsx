@@ -83,9 +83,13 @@ export function EditorFrame({
   appearanceDisabled?: boolean;
   offlineAccountId?: string;
 }) {
-  const appearance = useAppearance(appearanceTarget, appearanceDisabled);
-  const offline = useOfflineAppearance(offlineAccountId, appearanceTarget);
-  const visibleAppearance = appearanceDisabled
+  const appearanceOffline = appearanceDisabled || connection === 'offline';
+  const appearance = useAppearance(appearanceTarget, appearanceOffline);
+  const offline = useOfflineAppearance(
+    appearanceOffline ? offlineAccountId : undefined,
+    appearanceTarget,
+  );
+  const visibleAppearance = appearanceOffline
     ? (offline?.appearance ?? appearanceTarget?.appearance ?? appearance.appearance)
     : appearance.appearance;
   const [appearanceOpen, setAppearanceOpen] = useState(false);
@@ -178,7 +182,7 @@ export function EditorFrame({
               cover={visibleAppearance.cover}
               assets={offline?.assets}
               path={appearance.path}
-              offline={appearanceDisabled}
+              offline={appearanceOffline}
             />
           </div>
         )}
