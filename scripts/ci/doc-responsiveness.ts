@@ -6,10 +6,16 @@ import {
   compositionCpu,
   distribution,
   DOC_RESPONSIVENESS_BUDGETS,
+  DOC_RESPONSIVENESS_SCHEMA,
 } from '../../e2e/doc-responsiveness.ts';
 import type {
   CpuProfile,
   DocResponsivenessEvidence,
+  DocIntegritySnapshot,
+  DocPreUndoIntegrity,
+  DocReloadEvidence,
+  DocReloadObserverStatus,
+  DocUndoRedoEvidence,
   InputObservation,
   ProfilerClockBracket,
 } from '../../e2e/doc-responsiveness.ts';
@@ -34,7 +40,12 @@ export interface BenchmarkMetrics {
   attempt: number;
   source: string;
   completed?: boolean;
-  correctness?: string;
+  timingComplete?: boolean;
+  timingCompleteAt?: number;
+  preUndoIntegrity?: DocPreUndoIntegrity;
+  undoRedo?: DocUndoRedoEvidence;
+  reloadObservers?: DocReloadObserverStatus[];
+  finalReloads?: DocReloadEvidence[];
   errors: unknown[];
   budgetEnforced: boolean;
   fixture: Record<string, unknown>;
@@ -67,6 +78,197 @@ export interface BenchmarkArtifact {
 }
 
 const finite = (value: number) => Number.isFinite(value) && value >= 0;
+const canonicalText =
+  Array.from(
+    { length: 16 },
+    (_, index) =>
+      `Line ${index + 1}: Read the whole paragraph, including the far right edge. ` +
+      'Keep the original page size and all of this text when navigating.',
+  ).join('\r') + '\r\n';
+const hash = (text: string) => createHash('sha256').update(text).digest('hex');
+
+/** Schema 3 never turns an arbitrary old-product failure into valid evidence. */
+function validateIntegrity(value: BenchmarkMetrics) {
+  const failures: string[] = [];
+  const check = (condition: boolean, message: string) => {
+    if (!condition) failures.push(`${value.role}/${value.sample}: ${message}`);
+  };
+  const initial = value.preUndoIntegrity;
+  const replay = value.undoRedo;
+  if (!initial || !replay) return [`${value.role}/${value.sample}: structured integrity missing.`];
+  const unitId = value.native.unitId;
+  check(
+    value.reloadObservers?.length === 2 &&
+      ['sender', 'peer'].every(
+        (surface) =>
+          value.reloadObservers!.filter((observer) => observer.surface === surface).length === 1,
+      ) &&
+      value.reloadObservers.every(
+        (observer) =>
+          observer.dropped === 0 &&
+          observer.malformed === 0 &&
+          finite(observer.installedAt) &&
+          observer.installedAt <= value.input.startedAt &&
+          finite(observer.sourceInstalledAt) &&
+          finite(observer.sourceTimeOrigin) &&
+          Math.abs(
+            observer.installedAt -
+              (observer.sourceInstalledAt + observer.sourceTimeOrigin - value.input.timeOrigin),
+          ) <= 1,
+      ),
+    'complete sender/peer reload observers must precede primary timing.',
+  );
+  check(
+    Array.isArray(value.finalReloads) && isDeepStrictEqual(value.finalReloads, replay.reloads),
+    'reload observations changed after the verified outcome.',
+  );
+  const selection = (snapshot: DocIntegritySnapshot, position: number) =>
+    snapshot.sender.selection?.start === position &&
+    snapshot.sender.selection.end === position &&
+    !snapshot.sender.selection.segmentId &&
+    snapshot.peer.selection?.start === 0 &&
+    snapshot.peer.selection.end === 0 &&
+    !snapshot.peer.selection.segmentId;
+  const content = (snapshot: DocIntegritySnapshot, text: string) => {
+    const digest = hash(text);
+    return [snapshot.sender, snapshot.peer, snapshot.saved].every(
+      (part) => part.textLength === text.length && part.textSha256 === digest,
+    );
+  };
+  const snapshots = [initial, replay.firstUndo, replay.undo, replay.final];
+  if (snapshots.some((snapshot) => !snapshot?.sender || !snapshot.peer || !snapshot.saved))
+    return [`${value.role}/${value.sample}: a required integrity phase is missing.`];
+  for (const snapshot of snapshots) {
+    check(
+      finite(snapshot.observedAt) &&
+        Number.isInteger(snapshot.saved.revision) &&
+        snapshot.saved.revision >= 0 &&
+        [snapshot.sender, snapshot.peer].every(
+          (part) =>
+            part.unitId === unitId &&
+            finite(part.observedAt) &&
+            part.observedAt <= snapshot.observedAt + 1 &&
+            part.pending?.history === 0 &&
+            part.pending.collaboration === 0 &&
+            Number.isInteger(part.textLength) &&
+            part.textLength >= 2 &&
+            /^[a-f0-9]{64}$/.test(part.textSha256),
+        ),
+      'invalid unit, content, revision, native drain or snapshot clock.',
+    );
+  }
+  const groups = initial.sender.history.undos;
+  const all = value.sample === 'plain-1';
+  check(
+    initial.passed === true &&
+      Array.isArray(initial.reloads) &&
+      initial.reloads.length === 0 &&
+      content(initial, canonicalText) &&
+      selection(initial, canonicalText.length - 2) &&
+      initial.sender.history.redos === 0 &&
+      Number.isInteger(groups) &&
+      groups > 0 &&
+      groups <= 50 &&
+      isDeepStrictEqual(initial.sender.history, value.native.history),
+    'initial exact integrity or native history did not pass.',
+  );
+  const freshSince = (snapshot: DocIntegritySnapshot, at: number) =>
+    [snapshot.sender, snapshot.peer].every((part) => part.observedAt >= at - 1);
+  check(
+    freshSince(initial, value.timingCompleteAt!) &&
+      freshSince(replay.firstUndo, replay.beforeUndoAt) &&
+      freshSince(replay.undo, replay.beforeUndoAt) &&
+      freshSince(replay.final, replay.beforeRedoAt),
+    'native content observations must be fresh within their integrity phase.',
+  );
+  check(replay.requestedGroups === (all ? groups : 1), 'registered undo coverage changed.');
+  const firstLength = replay.firstUndo.sender.textLength;
+  check(
+    firstLength < canonicalText.length &&
+      content(replay.firstUndo, canonicalText.slice(0, firstLength - 2) + '\r\n') &&
+      selection(replay.firstUndo, firstLength - 2) &&
+      replay.firstUndo.sender.history.undos === groups - 1 &&
+      replay.firstUndo.sender.history.redos === 1 &&
+      replay.firstUndo.saved.revision > initial.saved.revision,
+    'first Undo did not preserve the exact prefix, caret, history and saved/peer state.',
+  );
+  const undoText = all ? '\r\n' : canonicalText.slice(0, firstLength - 2) + '\r\n';
+  check(
+    content(replay.undo, undoText) &&
+      selection(replay.undo, undoText.length - 2) &&
+      replay.undo.sender.history.undos === groups - replay.requestedGroups &&
+      replay.undo.sender.history.redos === replay.requestedGroups &&
+      replay.undo.saved.revision >= replay.firstUndo.saved.revision,
+    'requested Undo groups did not converge exactly.',
+  );
+  const phases = [
+    value.input.endedAt,
+    value.timingCompleteAt!,
+    initial.observedAt,
+    replay.beforeUndoAt,
+    replay.firstUndo.observedAt,
+    replay.undo.observedAt,
+    replay.afterUndoAt,
+    replay.beforeRedoAt,
+    replay.afterRedoAt,
+    replay.finalObservedAt,
+  ];
+  check(
+    phases.every(finite) &&
+      phases.every((at, index) => !index || at >= phases[index - 1]!) &&
+      replay.finalObservedAt === replay.final.observedAt,
+    'integrity phases are missing, unordered or overlap primary timing.',
+  );
+  check(Array.isArray(replay.reloads), 'complete reload observations are missing.');
+  if (replay.outcome === 'passed') {
+    check(
+      replay.reloads?.length === 0 &&
+        content(replay.final, canonicalText) &&
+        selection(replay.final, canonicalText.length - 2) &&
+        replay.final.sender.history.undos === groups &&
+        replay.final.sender.history.redos === 0 &&
+        replay.final.saved.revision > replay.undo.saved.revision,
+      'successful Redo requires exact saved/peer restoration and no reload.',
+    );
+  } else {
+    const event = replay.reloads?.[0];
+    check(
+      value.role === 'baseline-observation' &&
+        replay.outcome === 'baseline-capacity-refusal' &&
+        groups === 1 &&
+        replay.requestedGroups === 1 &&
+        content(replay.undo, '\r\n') &&
+        selection(replay.undo, 0) &&
+        replay.reloads?.length === 1 &&
+        event?.surface === 'sender' &&
+        event.unitId === unitId &&
+        event.reason === 'capacity' &&
+        event.clean === false &&
+        finite(event.observedAt) &&
+        finite(event.sourceObservedAt) &&
+        finite(event.sourceTimeOrigin) &&
+        Math.abs(
+          event.observedAt -
+            (event.sourceObservedAt + event.sourceTimeOrigin - value.input.timeOrigin),
+        ) <= 1 &&
+        event.observedAt >= replay.beforeRedoAt &&
+        event.observedAt <= replay.afterRedoAt &&
+        freshSince(replay.final, event.observedAt) &&
+        finite(replay.recoveredAt!) &&
+        replay.recoveredAt! >= replay.afterRedoAt &&
+        replay.recoveredAt! <= replay.finalObservedAt &&
+        content(replay.final, '\r\n') &&
+        selection(replay.final, 0) &&
+        replay.final.saved.revision === replay.undo.saved.revision &&
+        replay.final.sender.history.undos === 0 &&
+        replay.final.sender.history.redos === 0 &&
+        replay.final.sender.highWater.history === 0 &&
+        replay.final.sender.highWater.collaboration === 0,
+      'only the specifically observed post-Undo baseline capacity refusal is admissible.',
+    );
+  }
+  return failures;
+}
 const requiredHashes = [
   'e2e/doc-responsiveness.ts',
   'e2e/doc-responsiveness.spec.ts',
@@ -83,21 +285,25 @@ export function compareDocResponsiveness(
   preset: Preset,
 ) {
   const failures: string[] = [],
-    unavailable: string[] = [];
-  const require = (condition: boolean, message: string) => {
+    unavailable: string[] = [],
+    integrityFailures: string[] = [];
+  const check = (condition: boolean, message: string) => {
     if (!condition) failures.push(message);
   };
   const selected = (artifacts: BenchmarkArtifact[], role: BenchmarkMetrics['role']) => {
     const matching = artifacts.filter((artifact) => artifact.metrics.preset === preset);
-    require(matching.length ===
-      4, `${role}: expected exactly three plain samples and one profile.`);
+    check(matching.length === 4, `${role}: expected exactly three plain samples and one profile.`);
     for (const sample of samples)
-      require(matching.filter((artifact) => artifact.metrics.sample === sample).length ===
-        1, `${role}: missing or duplicated ${sample}.`);
-    for (const { metrics } of matching) require(metrics.role === role, `${role}: role mismatch.`);
-    require(matching.every(({ metrics }) => /^[a-f0-9]{40}$/.test(metrics.source)) &&
-      new Set(matching.map(({ metrics }) => metrics.source)).size ===
-        1, `${role}: samples must share one valid immutable source SHA.`);
+      check(
+        matching.filter((artifact) => artifact.metrics.sample === sample).length === 1,
+        `${role}: missing or duplicated ${sample}.`,
+      );
+    for (const { metrics } of matching) check(metrics.role === role, `${role}: role mismatch.`);
+    check(
+      matching.every(({ metrics }) => /^[a-f0-9]{40}$/.test(metrics.source)) &&
+        new Set(matching.map(({ metrics }) => metrics.source)).size === 1,
+      `${role}: samples must share one valid immutable source SHA.`,
+    );
     return matching;
   };
   const first = selected(baseline, 'baseline-observation'),
@@ -107,18 +313,27 @@ export function compareDocResponsiveness(
   const summaries: Array<Record<string, unknown>> = [];
   for (const { metrics: value } of all) {
     const label = `${value.role}/${value.sample}`;
-    require(value.schema === 2 &&
-      value.attempt === 0 &&
-      value.completed === true, `${label}: incomplete or repeated attempt.`);
-    require(Boolean(value.correctness) &&
-      Array.isArray(value.errors) &&
-      value.errors.length === 0, `${label}: correctness did not finish successfully.`);
-    require(value.fixture.paragraphs === 16 &&
-      value.fixture.typedCharacters === 2071 &&
-      value.fixture.enterKeys === 15 &&
-      value.fixture.nativeTextLength === 2088 &&
-      typeof value.fixture.sha256 === 'string' &&
-      /^[a-f0-9]{64}$/.test(value.fixture.sha256), `${label}: canonical workload changed.`);
+    check(
+      value.schema === DOC_RESPONSIVENESS_SCHEMA &&
+        value.attempt === 0 &&
+        value.completed === true &&
+        value.timingComplete === true &&
+        finite(value.timingCompleteAt!),
+      `${label}: old schema, incomplete or repeated attempt.`,
+    );
+    check(
+      Array.isArray(value.errors) && value.errors.length === 0,
+      `${label}: unexpected page errors.`,
+    );
+    integrityFailures.push(...validateIntegrity(value));
+    check(
+      value.fixture.paragraphs === 16 &&
+        value.fixture.typedCharacters === 2071 &&
+        value.fixture.enterKeys === 15 &&
+        value.fixture.nativeTextLength === 2088 &&
+        value.fixture.sha256 === hash(canonicalText),
+      `${label}: canonical workload changed.`,
+    );
     const browser = value.browserEnvironment as {
       configured?: {
         viewport?: { width: number; height: number };
@@ -137,30 +352,34 @@ export function compareDocResponsiveness(
       };
     };
     const mobile = preset === 'mobile';
-    require(browser?.configured?.isMobile === mobile &&
-      browser.configured.hasTouch === mobile &&
-      browser.configured.deviceScaleFactor === 1 &&
-      isDeepStrictEqual(
-        browser.configured.viewport,
-        mobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 },
-      ) &&
-      browser.observed?.devicePixelRatio === 1 &&
-      browser.observed.coarsePointer === mobile &&
-      typeof browser.observed.touchEvent === 'boolean' &&
-      typeof browser.observed.maxTouchPoints === 'number' &&
-      (mobile ? browser.observed.maxTouchPoints > 0 : browser.observed.maxTouchPoints === 0) &&
-      Boolean(browser.observed.userAgent) &&
-      (browser.observed.viewport?.width ?? 0) > 0 &&
-      (browser.observed.viewport?.height ?? 0) > 0 &&
-      (browser.observed.screen?.width ?? 0) > 0 &&
-      (browser.observed.screen?.height ?? 0) >
-        0, `${label}: actual browser viewport, scale, pointer, touch or user agent is unavailable.`);
-    require(Boolean(value.browser) &&
-      Boolean(value.playwright) &&
-      Boolean(value.runtime), `${label}: browser, Playwright or Node version unavailable.`);
-    require(requiredHashes.every((path) =>
-      /^[a-f0-9]{64}$/.test(value.harnessSha256[path] ?? ''),
-    ), `${label}: missing harness or lockfile hash.`);
+    check(
+      browser?.configured?.isMobile === mobile &&
+        browser.configured.hasTouch === mobile &&
+        browser.configured.deviceScaleFactor === 1 &&
+        isDeepStrictEqual(
+          browser.configured.viewport,
+          mobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 },
+        ) &&
+        browser.observed?.devicePixelRatio === 1 &&
+        browser.observed.coarsePointer === mobile &&
+        typeof browser.observed.touchEvent === 'boolean' &&
+        typeof browser.observed.maxTouchPoints === 'number' &&
+        (mobile ? browser.observed.maxTouchPoints > 0 : browser.observed.maxTouchPoints === 0) &&
+        Boolean(browser.observed.userAgent) &&
+        (browser.observed.viewport?.width ?? 0) > 0 &&
+        (browser.observed.viewport?.height ?? 0) > 0 &&
+        (browser.observed.screen?.width ?? 0) > 0 &&
+        (browser.observed.screen?.height ?? 0) > 0,
+      `${label}: actual browser viewport, scale, pointer, touch or user agent is unavailable.`,
+    );
+    check(
+      Boolean(value.browser) && Boolean(value.playwright) && Boolean(value.runtime),
+      `${label}: browser, Playwright or Node version unavailable.`,
+    );
+    check(
+      requiredHashes.every((path) => /^[a-f0-9]{64}$/.test(value.harnessSha256[path] ?? '')),
+      `${label}: missing harness or lockfile hash.`,
+    );
     for (const field of [
       'fixture',
       'harnessSha256',
@@ -172,68 +391,102 @@ export function compareDocResponsiveness(
       'browserEnvironment',
       'budgets',
     ] as const) {
-      require(value[field] !== undefined &&
-        isDeepStrictEqual(
-          value[field],
-          reference?.[field],
-        ), `${label}: ${field} differs from the paired baseline.`);
+      check(
+        value[field] !== undefined && isDeepStrictEqual(value[field], reference?.[field]),
+        `${label}: ${field} differs from the paired baseline.`,
+      );
     }
-    require(isDeepStrictEqual(
-      value.budgets,
-      DOC_RESPONSIVENESS_BUDGETS[preset],
-    ), `${label}: preregistered budget changed.`);
-    require(isDeepStrictEqual(value.instrumentation, {
-      profiler: value.sample === 'profile',
-      cpuThrottle: preset === 'mobile' ? 4 : 1,
-      longTaskObserver: true,
-      perKeyRequestAnimationFrame: true,
-      playwrightTrace: false,
-      perMutationSnapshot: false,
-      physicalDevice: false,
-    }), `${label}: instrumentation or CPU throttle changed.`);
-    require(value.input.keydownAt.length === 2086 &&
-      value.input.keyToFrameMs.length === 2086 &&
-      value.input.keydownAt.every(finite) &&
-      value.input.keyToFrameMs.every(finite) &&
-      value.input.keydownAt.every(
-        (at, index, list) => !index || at >= list[index - 1]!,
-      ), `${label}: incomplete native input/frame observations.`);
-    require(value.input.longTasks.every(
-      (task) => finite(task.startedAt) && task.durationMs >= 50 && Number.isFinite(task.durationMs),
-    ), `${label}: invalid long-task timeline.`);
+    check(
+      isDeepStrictEqual(value.budgets, DOC_RESPONSIVENESS_BUDGETS[preset]),
+      `${label}: preregistered budget changed.`,
+    );
+    check(
+      isDeepStrictEqual(value.instrumentation, {
+        profiler: value.sample === 'profile',
+        cpuThrottle: preset === 'mobile' ? 4 : 1,
+        longTaskObserver: true,
+        perKeyRequestAnimationFrame: true,
+        playwrightTrace: false,
+        perMutationSnapshot: false,
+        physicalDevice: false,
+      }),
+      `${label}: instrumentation or CPU throttle changed.`,
+    );
+    check(
+      value.input.keydownAt.length === 2086 &&
+        value.input.keyToFrameMs.length === 2086 &&
+        value.input.keydownAt.every(finite) &&
+        value.input.keyToFrameMs.every(finite) &&
+        value.input.keydownAt.every((at, index, list) => !index || at >= list[index - 1]!),
+      `${label}: incomplete native input/frame observations.`,
+    );
+    check(
+      value.input.longTasks.every(
+        (task) =>
+          finite(task.startedAt) && task.durationMs >= 50 && Number.isFinite(task.durationMs),
+      ),
+      `${label}: invalid long-task timeline.`,
+    );
+    check(
+      finite(value.input.startedAt) &&
+        finite(value.input.endedAt) &&
+        value.input.startedAt <= value.input.endedAt &&
+        value.input.keydownAt.every(
+          (at, index) =>
+            at >= value.input.startedAt &&
+            at + value.input.keyToFrameMs[index]! <= value.input.endedAt + 1,
+        ) &&
+        value.input.longTasks.every(
+          (task) =>
+            task.startedAt >= value.input.startedAt &&
+            task.startedAt + task.durationMs <= value.input.endedAt + 1,
+        ) &&
+        value.input.endedAt <= value.native.observedAt &&
+        value.native.observedAt <= value.timingCompleteAt!,
+      `${label}: observations fall outside the completed primary timing window.`,
+    );
     const frame = distribution(value.input.keyToFrameMs);
     const longestTask = Math.max(0, ...value.input.longTasks.map((task) => task.durationMs));
     const flush = value.native.flushes.length
       ? distribution(value.native.flushes.map((entry) => entry.durationMs))
       : null;
     const drain = value.native.observedAt - value.input.keydownAt.at(-1)!;
-    require(finite(drain) && finite(value.typingWallMs), `${label}: invalid phase timing.`);
-    require(value.native.pending.history === 0 &&
-      value.native.pending.collaboration === 0, `${label}: native work did not drain.`);
+    check(finite(drain) && finite(value.typingWallMs), `${label}: invalid phase timing.`);
+    check(
+      value.native.pending.history === 0 && value.native.pending.collaboration === 0,
+      `${label}: native work did not drain.`,
+    );
     if (value.role === 'candidate') {
-      require(value.native.highWater.history <= 64 &&
-        value.native.highWater.collaboration <=
-          64, `${label}: native cache exceeded the capacity limit.`);
-      require(Boolean(flush) &&
-        value.native.flushes.every(
-          (entry) =>
-            finite(entry.durationMs) &&
-            entry.history >= 0 &&
-            entry.collaboration >= 0 &&
-            Math.max(entry.history, entry.collaboration) === 64,
-        ), `${label}: paired flush evidence missing or unbounded.`);
+      check(
+        value.native.highWater.history <= 64 && value.native.highWater.collaboration <= 64,
+        `${label}: native cache exceeded the capacity limit.`,
+      );
+      check(
+        Boolean(flush) &&
+          value.native.flushes.every(
+            (entry) =>
+              finite(entry.durationMs) &&
+              entry.history >= 0 &&
+              entry.collaboration >= 0 &&
+              Math.max(entry.history, entry.collaboration) === 64,
+          ),
+        `${label}: paired flush evidence missing or unbounded.`,
+      );
       if (value.sample !== 'profile') {
         const limits = DOC_RESPONSIVENESS_BUDGETS[preset];
-        require(value.budgetEnforced &&
-          frame.p95 <= limits.inputP95Ms &&
-          longestTask <= limits.longTaskMaxMs &&
-          Boolean(flush) &&
-          flush!.p95 <= limits.flushP95Ms &&
-          flush!.max <= limits.flushMaxMs &&
-          drain <= 1000, `${label}: an absolute responsiveness budget failed.`);
+        check(
+          value.budgetEnforced &&
+            frame.p95 <= limits.inputP95Ms &&
+            longestTask <= limits.longTaskMaxMs &&
+            Boolean(flush) &&
+            flush!.p95 <= limits.flushP95Ms &&
+            flush!.max <= limits.flushMaxMs &&
+            drain <= 1000,
+          `${label}: an absolute responsiveness budget failed.`,
+        );
       }
     } else {
-      require(!value.budgetEnforced, `${label}: baseline must be observational.`);
+      check(!value.budgetEnforced, `${label}: baseline must be observational.`);
       if (value.native.highWater.history <= 64 || value.native.highWater.collaboration <= 64)
         unavailable.push(`${label}: the sustained native queues did not exceed the candidate cap.`);
     }
@@ -246,6 +499,9 @@ export function compareDocResponsiveness(
       pairedFlushMs: flush,
       nativeDrainUpperBoundMs: drain,
       typingWallMs: value.typingWallMs,
+      initialIntegrity: value.preUndoIntegrity?.passed === true,
+      redoOutcome: value.undoRedo?.outcome ?? 'missing',
+      undoRedoGroups: value.undoRedo?.requestedGroups ?? null,
     });
   }
 
@@ -260,12 +516,14 @@ export function compareDocResponsiveness(
       unavailable.push(`${role}: raw CPU profile or clock bracket unavailable.`);
       return null;
     }
-    require(artifact.metrics.profileSha256 === artifact.profileBytesSha256 &&
-      artifact.profileClock.sha256 === artifact.profileBytesSha256 &&
-      isDeepStrictEqual(artifact.profileClock.bracket, artifact.metrics.profilerStartBracket) &&
-      artifact.profileClock.profileStartTimeUs === artifact.profile.startTime &&
-      artifact.profileClock.profileEndTimeUs ===
-        artifact.profile.endTime, `${role}: raw CPU profile/clock integrity check failed.`);
+    check(
+      artifact.metrics.profileSha256 === artifact.profileBytesSha256 &&
+        artifact.profileClock.sha256 === artifact.profileBytesSha256 &&
+        isDeepStrictEqual(artifact.profileClock.bracket, artifact.metrics.profilerStartBracket) &&
+        artifact.profileClock.profileStartTimeUs === artifact.profile.startTime &&
+        artifact.profileClock.profileEndTimeUs === artifact.profile.endTime,
+      `${role}: raw CPU profile/clock integrity check failed.`,
+    );
     try {
       return compositionCpu(
         artifact.profile,
@@ -304,8 +562,10 @@ export function compareDocResponsiveness(
           `baseline ${metrics.sample}: no >1,000 ms unprofiled whole-browser task reproduced.`,
         );
       else
-        require(reductionPercent! >=
-          90, `${metrics.sample}: unprofiled whole-browser longest-task reduction is below 90%.`);
+        check(
+          reductionPercent! >= 90,
+          `${metrics.sample}: unprofiled whole-browser longest-task reduction is below 90%.`,
+        );
       return {
         sample: metrics.sample,
         baselineLongestTaskMs,
@@ -342,8 +602,10 @@ export function compareDocResponsiveness(
         : null;
       if (large) {
         largeStallWitnesses++;
-        require(reductionPercent! >=
-          90, `${family}: maximum containing-task reduction is below 90%.`);
+        check(
+          reductionPercent! >= 90,
+          `${family}: maximum containing-task reduction is below 90%.`,
+        );
       }
       return [
         family,
@@ -383,12 +645,31 @@ export function compareDocResponsiveness(
         'Observed sample difference includes run-to-run variation; it does not isolate profiler overhead.',
     };
   });
+  // A timing window is usable only with its phase/content prerequisites; report
+  // conservatively when any structured integrity observation is invalid.
+  const timingValid =
+    failures.length === 0 && unavailable.length === 0 && integrityFailures.length === 0;
+  const candidateIntegrity =
+    second.length === 4 &&
+    second.every(
+      ({ metrics }) =>
+        metrics.undoRedo?.outcome === 'passed' && validateIntegrity(metrics).length === 0,
+    );
+  failures.push(...integrityFailures);
   return {
-    schema: 1,
+    schema: 2,
+    protocolRevision: DOC_RESPONSIVENESS_SCHEMA,
     preset,
     physicalDevice: false,
     status: failures.length ? 'failed' : unavailable.length ? 'needs-evidence' : 'passed',
     passed: failures.length === 0 && unavailable.length === 0,
+    timingValid,
+    baselineRedoOutcome: first.map(({ metrics }) => ({
+      sample: metrics.sample,
+      outcome: metrics.undoRedo?.outcome ?? 'missing',
+      integrityEvidenceValid: validateIntegrity(metrics).length === 0,
+    })),
+    candidateIntegrity,
     failures,
     unavailable,
     summaries,

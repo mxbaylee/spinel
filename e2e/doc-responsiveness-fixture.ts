@@ -91,10 +91,10 @@ export async function fixture(browser: Browser, baseURL: string, info: TestInfo,
     other = await second.newPage();
   const errors: string[] = [];
   for (const target of [page, other]) target.on('pageerror', (error) => errors.push(error.message));
-  const read = async () => {
+  const readState = async () => {
     const response = await first.request.get(`/api/items/${item.id}/doc`);
     expect(response.ok()).toBe(true);
-    return (await response.json()).snapshot as IDocumentData;
+    return (await response.json()) as { snapshot: IDocumentData; revision: number };
   };
   return {
     first,
@@ -107,7 +107,8 @@ export async function fixture(browser: Browser, baseURL: string, info: TestInfo,
     page,
     other,
     errors,
-    read,
+    read: async () => (await readState()).snapshot,
+    readState,
     async close() {
       await Promise.all(contexts.map((context) => context.close()));
       db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);

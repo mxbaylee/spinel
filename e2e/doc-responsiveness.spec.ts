@@ -7,13 +7,21 @@ import type { Page, TestInfo } from '@playwright/test';
 import {
   compositionCpu,
   DOC_RESPONSIVENESS_BUDGETS,
+  DOC_RESPONSIVENESS_SCHEMA,
   distribution,
+  observeDocReloads,
   observeInput,
   readDocResponsiveness,
 } from './doc-responsiveness.ts';
 import type {
   CpuProfile,
+  DocIntegritySnapshot,
+  DocNativeIntegrity,
+  DocPreUndoIntegrity,
+  DocReloadEvidence,
+  DocReloadObserverStatus,
   DocResponsivenessEvidence,
+  DocUndoRedoEvidence,
   ProfilerClockBracket,
 } from './doc-responsiveness.ts';
 import { registerDocResponsivenessBoundaries } from './doc-responsiveness-boundaries.ts';
@@ -62,18 +70,123 @@ async function retainProfile(
   return sha256;
 }
 
+type DocFixture = Awaited<ReturnType<typeof fixture>>;
+type ReloadObservers = Record<'sender' | 'peer', Awaited<ReturnType<typeof observeDocReloads>>>;
+type ClockOrigins = Record<'sender' | 'peer', number>;
+const now = (page: Page) => page.evaluate(() => performance.now());
+const fingerprint = (text: string) => ({
+  textLength: text.length,
+  textSha256: createHash('sha256').update(text).digest('hex'),
+});
+
+async function readReloads(observers: ReloadObservers) {
+  const [sender, peer] = await Promise.all([observers.sender.read(), observers.peer.read()]);
+  const reloads: DocReloadEvidence[] = [];
+  const status: DocReloadObserverStatus[] = [];
+  for (const [surface, value] of [
+    ['sender', sender],
+    ['peer', peer],
+  ] as const) {
+    const offset = value.timeOrigin - sender.timeOrigin;
+    status.push({
+      surface,
+      installedAt: value.installedAt + offset,
+      sourceInstalledAt: value.installedAt,
+      sourceTimeOrigin: value.timeOrigin,
+      dropped: value.dropped,
+      malformed: value.malformed,
+    });
+    for (const event of value.events)
+      reloads.push({
+        ...event,
+        surface,
+        observedAt: event.observedAt + offset,
+        sourceObservedAt: event.observedAt,
+        sourceTimeOrigin: value.timeOrigin,
+      });
+  }
+  return {
+    reloads: reloads.toSorted((a, b) => a.observedAt - b.observedAt),
+    status,
+    origins: { sender: sender.timeOrigin, peer: peer.timeOrigin },
+  };
+}
+
+function completeReloadObservation(value: Awaited<ReturnType<typeof readReloads>>) {
+  for (const status of value.status) {
+    expect(status.dropped).toBe(0);
+    expect(status.malformed).toBe(0);
+  }
+}
+
+async function integrity(f: DocFixture, origins: ClockOrigins): Promise<DocIntegritySnapshot> {
+  const [sender, peer, stored] = await Promise.all([
+    readDocResponsiveness(f.page, true),
+    readDocResponsiveness(f.other, true),
+    f.readState(),
+  ]);
+  const native = (value: DocResponsivenessEvidence | null, offset: number): DocNativeIntegrity => {
+    expect(value).not.toBeNull();
+    expect(typeof value!.text).toBe('string');
+    return {
+      unitId: value!.unitId,
+      observedAt: value!.observedAt + offset,
+      ...fingerprint(value!.text!),
+      selection: value!.selection,
+      history: value!.history,
+      pending: value!.pending,
+      highWater: value!.highWater,
+    };
+  };
+  expect(Number.isSafeInteger(stored.revision)).toBe(true);
+  return {
+    observedAt: await now(f.page),
+    sender: native(sender, 0),
+    peer: native(peer, origins.peer - origins.sender),
+    saved: { revision: stored.revision, ...fingerprint(stored.snapshot.body!.dataStream) },
+  };
+}
+
+function exactIntegrity(value: DocIntegritySnapshot, text: string, selection: number) {
+  const expected = fingerprint(text);
+  for (const current of [value.sender, value.peer, value.saved])
+    expect(current).toMatchObject(expected);
+  expect(value.sender.unitId).toBe(value.peer.unitId);
+  expect(value.sender.selection).toMatchObject({ start: selection, end: selection });
+  expect(value.peer.selection).toMatchObject({ start: 0, end: 0 });
+  expect(value.sender.pending).toEqual({ history: 0, collaboration: 0 });
+  expect(value.peer.pending).toEqual({ history: 0, collaboration: 0 });
+}
+
+async function converge(f: DocFixture, text: string, origins: ClockOrigins) {
+  await saved(f.page);
+  await exactText(f.page, text);
+  await exactText(f.other, text);
+  await expect.poll(async () => (await f.read()).body!.dataStream, { timeout: 30_000 }).toBe(text);
+  const value = await integrity(f, origins);
+  exactIntegrity(value, text, text.length - 2);
+  return value;
+}
+
 async function verifyUndoRedo(
-  page: Page,
-  other: Page,
-  native: DocResponsivenessEvidence,
+  f: DocFixture,
+  initial: DocPreUndoIntegrity,
   all: boolean,
-) {
-  const groups = all ? native.history.undos : 1;
+  observers: ReloadObservers,
+  origins: ClockOrigins,
+  progress: Record<string, unknown>,
+): Promise<DocUndoRedoEvidence> {
+  const groups = all ? initial.sender.history.undos : 1;
   expect(groups).toBeGreaterThan(0);
-  expect(native.history.undos).toBeLessThanOrEqual(50);
-  await page.keyboard.press('Control+z');
-  await saved(page);
-  const undone = (await readDocResponsiveness(page, true))!;
+  expect(initial.sender.history.undos).toBeLessThanOrEqual(50);
+  expect(initial.sender.history.redos).toBe(0);
+  progress.requestedGroups = groups;
+  progress.phase = 'before-undo';
+  const beforeUndoAt = await now(f.page);
+  progress.beforeUndoAt = beforeUndoAt;
+  await f.page.keyboard.press('Control+z');
+  await saved(f.page);
+  const undone = (await readDocResponsiveness(f.page, true))!;
   expect(undone.text).not.toBe(expectedText);
   expect(undone.text!.endsWith('\r\n')).toBe(true);
   expect(expectedText.startsWith(undone.text!.slice(0, -2))).toBe(true);
@@ -81,24 +194,111 @@ async function verifyUndoRedo(
     start: undone.text!.length - 2,
     end: undone.text!.length - 2,
   });
-  await exactText(other, undone.text!);
-  for (let group = 1; group < groups; group++) await page.keyboard.press('Control+z');
-  await saved(page);
+  const firstUndo = await converge(f, undone.text!, origins);
+  expect(firstUndo.sender.history).toEqual({
+    undos: initial.sender.history.undos - 1,
+    redos: 1,
+  });
+  progress.firstUndo = firstUndo;
+  for (let group = 1; group < groups; group++) await f.page.keyboard.press('Control+z');
+  await saved(f.page);
+  let undo = firstUndo;
   if (all) {
-    await exactText(page, '\r\n');
-    await exactText(other, '\r\n');
-    expect((await readDocResponsiveness(page))?.selection).toMatchObject({ start: 0, end: 0 });
+    undo = await converge(f, '\r\n', origins);
+    expect((await readDocResponsiveness(f.page))?.selection).toMatchObject({ start: 0, end: 0 });
   }
+  expect(undo.sender.history).toEqual({
+    undos: initial.sender.history.undos - groups,
+    redos: groups,
+  });
+  progress.undo = undo;
+  const afterUndoAt = await now(f.page);
+  progress.afterUndoAt = afterUndoAt;
+  const beforeRedoReloads = await readReloads(observers);
+  completeReloadObservation(beforeRedoReloads);
+  expect(beforeRedoReloads.reloads).toEqual([]);
+  progress.phase = 'redo';
+  const beforeRedoAt = await now(f.page);
+  progress.beforeRedoAt = beforeRedoAt;
   // Pinned Univer's full-document SharedController binds Ctrl+Y off macOS;
   // the Shift+Z alternative is registered only for macOS.
-  for (let group = 0; group < groups; group++) await page.keyboard.press('Control+y');
-  await saved(page);
-  await exactText(page, expectedText);
-  await exactText(other, expectedText);
-  expect((await readDocResponsiveness(page))?.selection).toMatchObject({
-    start: expectedText.length - 2,
-    end: expectedText.length - 2,
-  });
+  for (let group = 0; group < groups; group++) await f.page.keyboard.press('Control+y');
+  // Observe a concrete outcome. A timeout or generic assertion error can never
+  // select the documented baseline-only capacity-refusal branch.
+  await expect
+    .poll(
+      async () => {
+        const reloads = await readReloads(observers);
+        completeReloadObservation(reloads);
+        progress.reloads = reloads.reloads;
+        if (reloads.reloads.length) return 'reload';
+        const [sender, peer, stored] = await Promise.all([
+          readDocResponsiveness(f.page, true),
+          readDocResponsiveness(f.other, true),
+          f.read(),
+        ]);
+        return sender?.text === expectedText &&
+          sender.history.redos === 0 &&
+          peer?.text === expectedText &&
+          stored.body!.dataStream === expectedText
+          ? 'converged'
+          : 'pending';
+      },
+      { timeout: 30_000 },
+    )
+    .not.toBe('pending');
+  const afterRedoAt = await now(f.page);
+  progress.afterRedoAt = afterRedoAt;
+  const observed = await readReloads(observers);
+  completeReloadObservation(observed);
+  let outcome: DocUndoRedoEvidence['outcome'] = 'passed';
+  let final: DocIntegritySnapshot;
+  if (observed.reloads.length) {
+    expect(baseline, 'Candidate history must never reload or refuse an edit').toBe(true);
+    expect(groups).toBe(1);
+    expect(initial.sender.history.undos).toBe(1);
+    expect(observed.reloads).toHaveLength(1);
+    const [event] = observed.reloads;
+    expect(event).toMatchObject({
+      surface: 'sender',
+      unitId: initial.sender.unitId,
+      reason: 'capacity',
+      clean: false,
+    });
+    expect(event!.observedAt).toBeGreaterThanOrEqual(beforeRedoAt);
+    expect(event!.observedAt).toBeLessThanOrEqual(afterRedoAt);
+    exactIntegrity(undo, '\r\n', 0);
+    expect(undo.sender.history).toEqual({ undos: 0, redos: 1 });
+    progress.phase = 'baseline-capacity-recovery';
+    final = await converge(f, '\r\n', origins);
+    expect(final.saved.revision).toBe(undo.saved.revision);
+    expect(final.sender.history).toEqual({ undos: 0, redos: 0 });
+    expect(final.sender.highWater).toEqual({ history: 0, collaboration: 0 });
+    outcome = 'baseline-capacity-refusal';
+  } else {
+    final = await converge(f, expectedText, origins);
+    expect(final.sender.history).toEqual({ undos: initial.sender.history.undos, redos: 0 });
+  }
+  progress.final = final;
+  const last = await readReloads(observers);
+  completeReloadObservation(last);
+  expect(last.reloads).toEqual(observed.reloads);
+  const result: DocUndoRedoEvidence = {
+    outcome,
+    requestedGroups: groups,
+    beforeUndoAt,
+    afterUndoAt,
+    beforeRedoAt,
+    afterRedoAt,
+    finalObservedAt: final.observedAt,
+    ...(outcome === 'baseline-capacity-refusal' ? { recoveredAt: final.observedAt } : {}),
+    firstUndo,
+    undo,
+    final,
+    reloads: last.reloads,
+  };
+  progress.phase = outcome;
+  return result;
 }
 
 for (const preset of ['desktop', 'mobile'] as const)
@@ -115,8 +315,10 @@ for (const preset of ['desktop', 'mobile'] as const)
       let finishInput: Awaited<ReturnType<typeof observeInput>> | undefined;
       let profiling = false;
       let profilerClock: ProfilerClockBracket | undefined;
+      let reloadObservers: ReloadObservers | undefined;
+      let clockOrigins: ClockOrigins | undefined;
       const evidence: Record<string, unknown> = {
-        schema: 2,
+        schema: DOC_RESPONSIVENESS_SCHEMA,
         role: baseline ? 'baseline-observation' : 'candidate',
         budgetEnforced: !baseline && !profiled,
         preset,
@@ -189,6 +391,16 @@ for (const preset of ['desktop', 'mobile'] as const)
           f.page.goto(`/?item=${f.item.id}`),
           f.other.goto(`/?item=${f.item.id}`),
         ]);
+        const [senderReloads, peerReloads] = await Promise.all([
+          observeDocReloads(f.page),
+          observeDocReloads(f.other),
+        ]);
+        reloadObservers = { sender: senderReloads, peer: peerReloads };
+        const installed = await readReloads(reloadObservers);
+        completeReloadObservation(installed);
+        expect(installed.reloads).toEqual([]);
+        evidence.reloadObservers = installed.status;
+        clockOrigins = installed.origins;
         await Promise.all([saved(f.page), saved(f.other), online(f.page), online(f.other)]);
         await focusEmptyDoc(f.other, mobile);
         await f.page.bringToFront();
@@ -288,6 +500,8 @@ for (const preset of ['desktop', 'mobile'] as const)
           evidence.profileSha256 = await retainProfile(profile, profilerClock, info);
           evidence.compositionCpu = compositionCpu(profile, profilerClock!, input.longTasks);
         }
+        evidence.timingCompleteAt = await now(f.page);
+        evidence.timingComplete = true;
         const savedStarted = performance.now();
         await saved(f.page);
         evidence.postFinalKeySavedUpperBoundMs =
@@ -308,16 +522,42 @@ for (const preset of ['desktop', 'mobile'] as const)
           start: 0,
           end: 0,
         });
-        await verifyUndoRedo(f.page, f.other, native, sample === 'plain-1');
-        await expect.poll(async () => (await f.read()).body!.dataStream).toBe(expectedText);
+        const initial = await integrity(f, clockOrigins);
+        exactIntegrity(initial, expectedText, expectedInputCount);
+        expect(initial.sender.history).toEqual(native.history);
+        const initialReloads = await readReloads(reloadObservers);
+        completeReloadObservation(initialReloads);
+        expect(initialReloads.reloads).toEqual([]);
+        const preUndoIntegrity: DocPreUndoIntegrity = {
+          ...initial,
+          passed: true,
+          reloads: initialReloads.reloads,
+        };
+        evidence.preUndoIntegrity = preUndoIntegrity;
+        const historyProgress: Record<string, unknown> = { phase: 'not-started' };
+        evidence.undoRedoObservation = historyProgress;
+        const undoRedo = await verifyUndoRedo(
+          f,
+          preUndoIntegrity,
+          sample === 'plain-1',
+          reloadObservers,
+          clockOrigins,
+          historyProgress,
+        );
+        evidence.undoRedo = undoRedo;
+        await expect
+          .poll(async () => (await f.read()).body!.dataStream)
+          .toBe(undoRedo.outcome === 'passed' ? expectedText : '\r\n');
         await Promise.all([online(f.page), online(f.other)]);
         expect(f.errors).toEqual([]);
         expect(input.keydownAt).toHaveLength(expectedInputCount);
         expect(input.keyToFrameMs).toHaveLength(expectedInputCount);
         evidence.correctness =
-          'exact saved/live peer text, sender/peer selections, undo/redo and Online passed';
-        // Baselines deliberately retain failed-budget numbers as observations;
-        // this environment flag changes no production policy or correctness gate.
+          undoRedo.outcome === 'passed'
+            ? 'exact saved/live peer text, sender/peer selections, undo/redo and Online passed'
+            : 'baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state';
+        // No production policy changes. Schema 3 records the strict baseline
+        // history outcome; candidate integrity and responsiveness gates remain full.
         if (!baseline) {
           expect(native.highWater.history).toBeLessThanOrEqual(64);
           expect(native.highWater.collaboration).toBeLessThanOrEqual(64);
@@ -330,6 +570,10 @@ for (const preset of ['desktop', 'mobile'] as const)
             expect(drainUpperBoundMs).toBeLessThanOrEqual(1000);
           }
         }
+        const finalReloads = await readReloads(reloadObservers);
+        completeReloadObservation(finalReloads);
+        expect(finalReloads.reloads).toEqual(undoRedo.reloads);
+        evidence.reloadObservers = finalReloads.status;
         evidence.completed = true;
       } finally {
         if (finishInput)
@@ -341,6 +585,14 @@ for (const preset of ['desktop', 'mobile'] as const)
         }
         evidence.errors = f.errors;
         evidence.finalNative = await readDocResponsiveness(f.page).catch(() => null);
+        if (reloadObservers) {
+          const finalReloads = await readReloads(reloadObservers).catch(() => null);
+          if (finalReloads) {
+            evidence.reloadObservers = finalReloads.status;
+            evidence.finalReloads = finalReloads.reloads;
+          }
+          await Promise.all([reloadObservers.sender.dispose(), reloadObservers.peer.dispose()]);
+        }
         await writeFile(info.outputPath('spn108-metrics.json'), JSON.stringify(evidence, null, 2));
         await cdp.detach().catch(() => {});
         await f.close();

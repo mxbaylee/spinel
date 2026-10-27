@@ -586,8 +586,19 @@ export function DocEditor({
             failed: false,
             message: 'Changes not saved yet — keep this tab open.',
           }),
-        reload: (_reason, clean) => {
+        reload: (reason, clean) => {
           if (disposed) return;
+          if (import.meta.env.VITE_DOC_RESPONSIVENESS_EVIDENCE === '1')
+            window.dispatchEvent(
+              new CustomEvent('spinel-doc-responsiveness-reload', {
+                detail: {
+                  unitId: data.unitId,
+                  reason,
+                  clean: clean ?? false,
+                  observedAt: performance.now(),
+                },
+              }),
+            );
           initialized = false;
           syncNotice.current = clean
             ? undefined

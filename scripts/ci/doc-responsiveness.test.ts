@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { test } from 'node:test';
 import { compositionCpu, DOC_RESPONSIVENESS_BUDGETS } from '../../e2e/doc-responsiveness.ts';
-import type { CpuProfile } from '../../e2e/doc-responsiveness.ts';
+import type { CpuProfile, DocIntegritySnapshot } from '../../e2e/doc-responsiveness.ts';
 import { compareDocResponsiveness } from './doc-responsiveness.ts';
 import type { BenchmarkArtifact, BenchmarkMetrics } from './doc-responsiveness.ts';
 
@@ -25,6 +25,61 @@ const longTasks = [
   { startedAt: 2000, durationMs: 7000 },
   { startedAt: 10_000, durationMs: 8000 },
 ];
+const text =
+  Array.from(
+    { length: 16 },
+    (_, index) =>
+      `Line ${index + 1}: Read the whole paragraph, including the far right edge. ` +
+      'Keep the original page size and all of this text when navigating.',
+  ).join('\r') + '\r\n';
+const hash = (value: string) => createHash('sha256').update(value).digest('hex');
+
+function integrity(
+  value: BenchmarkMetrics,
+  content: string,
+  observedAt: number,
+  undos: number,
+  redos: number,
+  revision: number,
+): DocIntegritySnapshot {
+  const body = { textLength: content.length, textSha256: hash(content) };
+  const native = {
+    ...body,
+    unitId: value.native.unitId,
+    observedAt: observedAt - 1,
+    pending: { history: 0, collaboration: 0 },
+    highWater: { ...value.native.highWater },
+  };
+  return {
+    observedAt,
+    sender: {
+      ...native,
+      selection: { start: content.length - 2, end: content.length - 2 },
+      history: { undos, redos },
+    },
+    peer: { ...native, selection: { start: 0, end: 0 }, history: { undos: 0, redos: 0 } },
+    saved: { ...body, revision },
+  };
+}
+
+function capacityRefusal(value: BenchmarkMetrics) {
+  value.undoRedo!.outcome = 'baseline-capacity-refusal';
+  value.undoRedo!.reloads = [
+    {
+      surface: 'sender',
+      unitId: value.native.unitId,
+      reason: 'capacity',
+      clean: false,
+      observedAt: 22_150,
+      sourceObservedAt: 22_150,
+      sourceTimeOrigin: value.input.timeOrigin,
+    },
+  ];
+  value.undoRedo!.recoveredAt = 22_250;
+  value.undoRedo!.final = integrity(value, '\r\n', 22_300, 0, 0, 3);
+  value.undoRedo!.final.sender.highWater = { history: 0, collaboration: 0 };
+  value.finalReloads = structuredClone(value.undoRedo!.reloads);
+}
 
 test('a reducer witness requires its complete uncertain sample interval inside a whole task', () => {
   const certain = compositionCpu(profile(), clock, longTasks);
@@ -72,14 +127,24 @@ function fixture() {
       const before = role === 'baseline-observation';
       const keys = Array.from({ length: 2086 }, (_, index) => 100 + index * 10);
       const metrics: BenchmarkMetrics = {
-        schema: 2,
+        schema: 3,
         role,
         preset: 'desktop',
         sample,
         attempt: 0,
         source: before ? 'a'.repeat(40) : 'b'.repeat(40),
         completed: true,
-        correctness: 'exact content and selections passed',
+        timingComplete: true,
+        timingCompleteAt: 21_500,
+        reloadObservers: ['sender', 'peer'].map((surface) => ({
+          surface: surface as 'sender' | 'peer',
+          installedAt: 0,
+          sourceInstalledAt: 0,
+          sourceTimeOrigin: 1_000_000,
+          dropped: 0,
+          malformed: 0,
+        })),
+        finalReloads: [],
         errors: [],
         budgetEnforced: !before && sample !== 'profile',
         fixture: {
@@ -87,7 +152,7 @@ function fixture() {
           typedCharacters: 2071,
           enterKeys: 15,
           nativeTextLength: 2088,
-          sha256: 'c'.repeat(64),
+          sha256: hash(text),
         },
         harnessSha256: Object.fromEntries(
           [
@@ -135,7 +200,7 @@ function fixture() {
         input: {
           timeOrigin: 1_000_000,
           startedAt: 0,
-          endedAt: keys.at(-1)! + 350,
+          endedAt: keys.at(-1)! + 450,
           keydownAt: keys,
           keyToFrameMs: keys.map(() => (before ? 24 : 16)),
           longTasks: structuredClone(before ? longTasks : [{ startedAt: 2000, durationMs: 80 }]),
@@ -143,7 +208,7 @@ function fixture() {
         native: {
           unitId: 'fixture',
           mobile: false,
-          observedAt: keys.at(-1)! + 400,
+          observedAt: keys.at(-1)! + 500,
           pending: { history: 0, collaboration: 0 },
           highWater: { history: before ? 2086 : 64, collaboration: before ? 2086 : 64 },
           flushes: before
@@ -161,6 +226,34 @@ function fixture() {
           selection: { start: 2086, end: 2086 },
         },
       };
+      const groups = metrics.native.history.undos;
+      const count = sample === 'plain-1' ? groups : 1;
+      const firstText = before ? '\r\n' : text.slice(0, 2048) + '\r\n';
+      metrics.preUndoIntegrity = {
+        ...integrity(metrics, text, 21_600, groups, 0, 1),
+        passed: true,
+        reloads: [],
+      };
+      metrics.undoRedo = {
+        outcome: 'passed',
+        requestedGroups: count,
+        beforeUndoAt: 21_700,
+        afterUndoAt: 22_000,
+        beforeRedoAt: 22_100,
+        afterRedoAt: 22_200,
+        finalObservedAt: 22_300,
+        firstUndo: integrity(metrics, firstText, 21_800, groups - 1, 1, 2),
+        undo: integrity(
+          metrics,
+          sample === 'plain-1' ? '\r\n' : firstText,
+          21_900,
+          groups - count,
+          count,
+          3,
+        ),
+        final: integrity(metrics, text, 22_300, groups, 0, 4),
+        reloads: [],
+      };
       const artifact: BenchmarkArtifact = { metrics };
       if (sample === 'profile') attachProfile(artifact);
       return artifact;
@@ -176,6 +269,146 @@ test('paired proof uses the worst entire candidate task and each certain baselin
   assert.equal(result.improvement.collaboration!.baselineContainingTaskMs, 8000);
   assert.equal(result.improvement.history!.candidateEntireTaskUpperBoundMs, 80);
   assert.equal(result.improvement.history!.reductionPercent, 100 * (1 - 80 / 7000));
+});
+
+test('schema 3 labels the specifically observed baseline redo defect without weakening candidate integrity', () => {
+  const f = fixture();
+  for (const { metrics } of f.baseline) capacityRefusal(metrics);
+  const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+  assert.equal(result.passed, true, JSON.stringify(result));
+  assert.equal(result.timingValid, true);
+  assert.equal(result.candidateIntegrity, true);
+  assert.ok(
+    result.baselineRedoOutcome.every(
+      (entry) => entry.outcome === 'baseline-capacity-refusal' && entry.integrityEvidenceValid,
+    ),
+  );
+  capacityRefusal(f.candidate[0]!.metrics);
+  const rejected = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+  assert.equal(rejected.passed, false);
+  assert.equal(rejected.candidateIntegrity, false);
+});
+
+test('baseline exceptions require the exact reason, unit, phase, recovery and complete reload record', () => {
+  for (const mutate of [
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.reloads[0]!.reason = 'malformed';
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.reloads[0]!.unitId = 'other';
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.reloads[0]!.surface = 'peer';
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.reloads[0]!.clean = true;
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.reloads[0]!.observedAt = 20_000;
+      m.undoRedo!.reloads[0]!.sourceObservedAt = 20_000;
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.reloads = [];
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.reloads.push({ ...m.undoRedo!.reloads[0]! });
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.final.saved.textSha256 = hash(text);
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.final.saved.revision++;
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.undo.sender.history.redos = 0;
+    },
+    (m: BenchmarkMetrics) => {
+      m.timingCompleteAt = 22_150;
+    },
+  ]) {
+    const f = fixture();
+    const value = f.baseline[0]!.metrics;
+    capacityRefusal(value);
+    mutate(value);
+    assert.equal(compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed, false);
+  }
+});
+
+test('legacy success strings, failed schema-2 records and incomplete full-group replay cannot be accepted', () => {
+  for (const mutate of [
+    (m: BenchmarkMetrics) => {
+      m.schema = 2;
+    },
+    (m: BenchmarkMetrics) => {
+      delete m.preUndoIntegrity;
+    },
+    (m: BenchmarkMetrics) => {
+      delete m.undoRedo;
+    },
+    (m: BenchmarkMetrics) => {
+      m.timingComplete = false;
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.requestedGroups = 1;
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.final.peer.textSha256 = hash('\r\n');
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.firstUndo.sender.selection!.start--;
+    },
+    (m: BenchmarkMetrics) => {
+      m.reloadObservers![0]!.dropped = 1;
+    },
+    (m: BenchmarkMetrics) => {
+      m.reloadObservers![1]!.malformed = 1;
+    },
+    (m: BenchmarkMetrics) => {
+      m.reloadObservers![0]!.installedAt = 22_000;
+    },
+    (m: BenchmarkMetrics) => {
+      delete m.finalReloads;
+    },
+  ]) {
+    const f = fixture();
+    mutate(f.candidate[0]!.metrics);
+    assert.equal(compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed, false);
+  }
+});
+
+test('stale native snapshots and post-measurement tasks cannot supply an accepted timing window', () => {
+  for (const mutate of [
+    (m: BenchmarkMetrics) => {
+      m.preUndoIntegrity!.sender.textSha256 = hash('wrong');
+    },
+    (m: BenchmarkMetrics) => {
+      m.preUndoIntegrity!.sender.observedAt = 20_000;
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.firstUndo.peer.observedAt = 20_000;
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.undo.sender.observedAt = 20_000;
+    },
+    (m: BenchmarkMetrics) => {
+      m.undoRedo!.final.peer.observedAt = 20_000;
+    },
+    (m: BenchmarkMetrics) => {
+      m.input.longTasks.push({ startedAt: 30_000, durationMs: 8000 });
+    },
+    (m: BenchmarkMetrics) => {
+      m.input.keyToFrameMs[2085] = 10_000;
+    },
+    (m: BenchmarkMetrics) => {
+      m.input.startedAt = m.input.endedAt + 1;
+    },
+  ]) {
+    const f = fixture();
+    mutate(f.baseline[0]!.metrics);
+    const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+    assert.equal(result.passed, false);
+    assert.equal(result.timingValid, false);
+  }
 });
 
 test('an expensive profiled candidate cannot hide behind three fast plain samples', () => {

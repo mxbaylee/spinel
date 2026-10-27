@@ -1,5 +1,7 @@
 import type { Page } from '@playwright/test';
 
+export const DOC_RESPONSIVENESS_SCHEMA = 3;
+
 // Preregistered before the production fix; all values are milliseconds.
 export const DOC_RESPONSIVENESS_BUDGETS = {
   desktop: { inputP95Ms: 100, longTaskMaxMs: 200, flushP95Ms: 16, flushMaxMs: 50 },
@@ -22,6 +24,124 @@ export interface DocResponsivenessEvidence {
   history: { undos: number; redos: number };
   selection: { start: number; end: number; segmentId?: string } | null;
   text?: string;
+}
+
+export interface DocNativeIntegrity {
+  unitId: string;
+  observedAt: number;
+  textLength: number;
+  textSha256: string;
+  selection: DocResponsivenessEvidence['selection'];
+  history: DocResponsivenessEvidence['history'];
+  pending: DocResponsivenessEvidence['pending'];
+  highWater: DocResponsivenessEvidence['highWater'];
+}
+
+export interface DocSavedIntegrity {
+  revision: number;
+  textLength: number;
+  textSha256: string;
+}
+
+/** observedAt and native observations use the sender's performance.now clock. */
+export interface DocIntegritySnapshot {
+  observedAt: number;
+  sender: DocNativeIntegrity;
+  peer: DocNativeIntegrity;
+  saved: DocSavedIntegrity;
+}
+
+export interface DocReloadEvidence {
+  surface: 'sender' | 'peer';
+  unitId: string;
+  reason: string;
+  clean: boolean;
+  /** Normalized to the sender's performance.now clock. */
+  observedAt: number;
+  sourceObservedAt: number;
+  sourceTimeOrigin: number;
+}
+
+export interface DocReloadObserverStatus {
+  surface: 'sender' | 'peer';
+  /** Normalized to the sender's performance.now clock. */
+  installedAt: number;
+  sourceInstalledAt: number;
+  sourceTimeOrigin: number;
+  dropped: number;
+  malformed: number;
+}
+
+export interface DocPreUndoIntegrity extends DocIntegritySnapshot {
+  passed: true;
+  reloads: DocReloadEvidence[];
+}
+
+export interface DocUndoRedoEvidence {
+  outcome: 'passed' | 'baseline-capacity-refusal';
+  requestedGroups: number;
+  beforeUndoAt: number;
+  afterUndoAt: number;
+  beforeRedoAt: number;
+  afterRedoAt: number;
+  finalObservedAt: number;
+  recoveredAt?: number;
+  firstUndo: DocIntegritySnapshot;
+  undo: DocIntegritySnapshot;
+  final: DocIntegritySnapshot;
+  /** Every reload since installation, including events before Undo/Redo. */
+  reloads: DocReloadEvidence[];
+}
+
+/** Installed before typing; the callback runs only on the read-only reload event. */
+export async function observeDocReloads(page: Page) {
+  const handle = await page.evaluateHandle(() => {
+    const events: Array<{
+      unitId: string;
+      reason: string;
+      clean: boolean;
+      observedAt: number;
+    }> = [];
+    const timeOrigin = performance.timeOrigin;
+    const installedAt = performance.now();
+    let dropped = 0;
+    let malformed = 0;
+    const observe = (event: Event) => {
+      const detail = (event as CustomEvent).detail;
+      if (
+        !detail ||
+        typeof detail.unitId !== 'string' ||
+        typeof detail.reason !== 'string' ||
+        typeof detail.clean !== 'boolean' ||
+        !Number.isFinite(detail.observedAt)
+      ) {
+        malformed++;
+        return;
+      }
+      if (events.length >= 64) {
+        dropped++;
+        return;
+      }
+      events.push({
+        unitId: detail.unitId,
+        reason: detail.reason,
+        clean: detail.clean,
+        observedAt: detail.observedAt,
+      });
+    };
+    window.addEventListener('spinel-doc-responsiveness-reload', observe);
+    return {
+      read: () => ({ timeOrigin, installedAt, events, dropped, malformed }),
+      dispose: () => window.removeEventListener('spinel-doc-responsiveness-reload', observe),
+    };
+  });
+  return {
+    read: () => handle.evaluate((value) => value.read()),
+    async dispose() {
+      await handle.evaluate((value) => value.dispose()).catch(() => {});
+      await handle.dispose();
+    },
+  };
 }
 
 /** The evidence build reads public state; it cannot flush, edit or select anything. */
