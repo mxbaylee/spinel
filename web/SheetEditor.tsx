@@ -7,8 +7,13 @@ import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { sheetPreset, useMobileSheetControls } from './sheetPreset.ts';
 import { IRenderManagerService } from '@univerjs/engine-render';
-import { IPermissionService, InterceptorEffectEnum, ICommandService } from '@univerjs/core';
-import { SetFormulaCalculationStartMutation } from '@univerjs/engine-formula';
+import {
+  CustomCommandExecutionError,
+  ICommandService,
+  IPermissionService,
+  InterceptorEffectEnum,
+} from '@univerjs/core';
+import { SetImageFormulaDataMutation } from '@univerjs/engine-formula';
 import { CalculationMode } from '@univerjs/preset-sheets-core';
 import type { OfflineSession } from './offline/OfflineSession.ts';
 import {
@@ -56,7 +61,7 @@ export function SheetEditor({
   name: string;
   spaceId?: string;
   saveStatusTarget: HTMLElement | null;
-  onDirty: (dirty: boolean) => void;
+  onDirty: (dirty: boolean, retained?: boolean) => void;
   onConnectionState?: (state: ConnectionState | null) => void;
   registerGuestEditor?: RegisterGuestEditor;
   localAccountId?: string;
@@ -78,6 +83,7 @@ export function SheetEditor({
     let disposed = false;
     let offlineSession: OfflineSession | undefined;
     let initialized = false;
+    let captureReady = false;
     const loading = new AbortController();
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
@@ -97,7 +103,7 @@ export function SheetEditor({
       if (disposed) return;
       const dirty = editing || state.dirty;
       if (dirty && initialized) syncNotice.current = undefined;
-      onDirty(dirty);
+      onDirty(dirty, Boolean(state.retained));
       setStatus({
         ...state,
         ...(editing ? { local: undefined } : {}),
@@ -114,7 +120,10 @@ export function SheetEditor({
     void (async () => {
       const data = await prepareEditor(id, spaceId, () => !disposed, localAccountId);
       offlineSession = data.offline;
-      if (disposed) return;
+      if (disposed) {
+        offlineSession?.dispose();
+        return;
+      }
       const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
       recordNativeMutationInventory();
       const { univer, univerAPI } = createUniver({
@@ -136,20 +145,26 @@ export function SheetEditor({
           sheetImages(mobile, data.offline),
         ],
       });
-      if (data.offline) {
-        const commands = univer.__getInjector().get(ICommandService);
-        commands.unregisterCommand(SetFormulaCalculationStartMutation.id);
-        commands.registerCommand({
-          ...SetFormulaCalculationStartMutation,
-          handler: (accessor, params) =>
-            data.offline!.enabled && !data.offline!.online
-              ? true
-              : SetFormulaCalculationStartMutation.handler(accessor, params),
-        });
-      }
+      // IMAGE formula results use a direct browser Image loader in the OSS
+      // plugin. Stop only that derived result while local; ordinary formula
+      // calculation and lazy native command registration remain untouched.
+      const offlineImages = data.offline
+        ? univer
+            .__getInjector()
+            .get(ICommandService)
+            .beforeCommandExecuted((command) => {
+              if (
+                command.id === SetImageFormulaDataMutation.id &&
+                data.offline!.enabled &&
+                !data.offline!.online
+              )
+                throw new CustomCommandExecutionError('Formula images are unavailable offline.');
+            })
+        : undefined;
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => {
+        offlineImages?.dispose();
         disposeSpinelSync(univer);
         univer.dispose();
       };
@@ -206,6 +221,7 @@ export function SheetEditor({
         signal: loading.signal,
         isCurrent: () => !disposed,
         offline: data.offline,
+        canRefresh: () => !editing,
         lock: () => {
           disposeEditor?.();
           disposeEditor = undefined;
@@ -213,7 +229,7 @@ export function SheetEditor({
             dirty: false,
             failed: true,
             local: 'attention',
-            message: 'You signed out or changed accounts. Reopen Spinel to continue.',
+            message: 'Offline access changed on this device. Reopen the document to continue.',
           });
         },
         initializeAccess: () => (data.access === 'viewer' ? readOnly() : undefined),
@@ -223,21 +239,25 @@ export function SheetEditor({
             failed: false,
             message: 'Changes not saved yet — keep this tab open.',
           }),
-        reload: () => {
+        reload: (_reason, clean) => {
           if (disposed) return;
           initialized = false;
-          syncNotice.current =
-            'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
+          syncNotice.current = clean
+            ? undefined
+            : 'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
           publish({
             dirty: false,
-            failed: true,
-            message: 'Reloading after a synchronization problem…',
+            failed: !clean,
+            message: clean
+              ? 'Loading the current saved document…'
+              : 'Reloading after a synchronization problem…',
           });
           reload((generation) => generation + 1);
         },
       });
       const workbook = univerAPI.getActiveWorkbook();
       if (!workbook) throw new Error('Could not load this spreadsheet.');
+      captureReady = true;
       await editorReady(univerAPI);
       if (disposed) return;
       const interceptor = univer
@@ -305,6 +325,13 @@ export function SheetEditor({
       save = watchCollaboration(univer, publish, readOnly, publishConnection);
       controller.current = save;
     })().catch((error) => {
+      // Failed checkpoint/SDK initialization must not leave a writable canvas
+      // without native capture. A bound client may already own pending input.
+      if (!captureReady) {
+        disposeEditor?.();
+        disposeEditor = undefined;
+        offlineSession?.dispose();
+      }
       publishConnection('offline');
       if (!disposed)
         publish({

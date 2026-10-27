@@ -6,7 +6,16 @@
   "grooming": {
     "every": 7,
     "last": "2026-10-25",
-    "completed_since": ["SPN-102", "SPN-067", "SPN-057", "SPN-058", "SPN-056", "SPN-075", "SPN-059"]
+    "completed_since": [
+      "SPN-102",
+      "SPN-067",
+      "SPN-057",
+      "SPN-058",
+      "SPN-056",
+      "SPN-075",
+      "SPN-059",
+      "SPN-053"
+    ]
   },
   "size": {
     "soft": 10000,
@@ -22,5 +31,5 @@
       "docs/todo/readme.md"
     ]
   },
-  "pr_title_exceptions": ["🧹 Groom backlog", "⬆️ Bump"]
+  "pr_title_exceptions": ["\ud83e\uddf9 Groom backlog", "\u2b06\ufe0f Bump"]
 }

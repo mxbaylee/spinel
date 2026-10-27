@@ -1,11 +1,14 @@
 import type { ClientCheckpoint, NativeSnapshot } from '@spinel/sync-client';
+import { validateRecoverySnapshot } from '@spinel/sync-client';
 import type { IURLImageService } from '@univerjs/core';
 import type { OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
+import { mapNativeImageSources } from '../../src/shared/nativeImageSources.ts';
 import { snapshotIdentity } from '../../src/shared/snapshotIdentity.ts';
 import { documentPath } from '../documentAccess.ts';
 import { OfflineAccess, offlineScope } from './OfflineAccess.ts';
 import { PreparedImages, checkImageList, sha256 } from './PreparedImages.ts';
 import { ScopedHTTP } from './ScopedHTTP.ts';
+import { downloadForOffline } from './download.ts';
 import {
   hasOfflineEdits,
   offlineAccountRead,
@@ -71,6 +74,7 @@ export class OfflineSession implements IURLImageService {
     this.mounted = mounted;
     this.preparationCurrent = offlinePreparation(accountId, mounted).isCurrent;
     window.addEventListener('storage', this.accountChanged);
+    window.addEventListener('spinel-offline-account-changed', this.accountChanged);
   }
   get enabled() {
     return Boolean(this.download);
@@ -200,11 +204,60 @@ export class OfflineSession implements IURLImageService {
   }
   initial() {
     if (!this.bundle) return undefined;
+    if (this.checkpoint) validateRecoverySnapshot(this.checkpoint);
     return {
       snapshot:
-        this.checkpoint?.snapshot ?? snapshotIdentity(this.bundle.snapshot, this.bundle.unitId),
+        this.checkpoint?.recoverySnapshot ??
+        this.checkpoint?.snapshot ??
+        snapshotIdentity(this.bundle.snapshot, this.bundle.unitId),
       revision: this.checkpoint?.revision ?? this.bundle.revision - this.bundle.revisionOffset,
     };
+  }
+  /** Frozen clean transitions keep exclusive ownership through the disk commit. */
+  private async withCleanWriter(
+    verifyClean: () => void,
+    operation: (verify: () => void) => Promise<void>,
+  ) {
+    if (!this.store || !this.download || this.pending)
+      throw new Error('This device copy cannot be changed while it has local changes.');
+    // Editable sessions already hold this lock. Viewer copies acquire it for
+    // the transition, so another tab cannot begin writing during replacement.
+    const release = this.releaseWriter ? undefined : await writerLock(this.accountId, this.itemId);
+    if (!this.releaseWriter && !release)
+      throw new Error('Close this document in every other tab before updating its device copy.');
+    const verify = () => {
+      this.verify();
+      verifyClean();
+      if (this.pending) throw new Error('Local changes must be retained.');
+    };
+    try {
+      verify();
+      await operation(verify);
+      verify();
+    } finally {
+      release?.();
+    }
+  }
+  /** Only a frozen, clean native client may replace an expired replay base. */
+  async refreshClean(verifyClean: () => void) {
+    await this.withCleanWriter(verifyClean, async (verify) => {
+      await downloadForOffline(this.store!, this.itemId, this.spaceId, verify);
+    });
+  }
+  /** A verified access denial can remove a clean copy without releasing its writer. */
+  async removeClean(verifyClean: () => void) {
+    await this.withCleanWriter(verifyClean, async (verify) => {
+      await this.store!.removeClean(
+        {
+          account: this.accountId,
+          item: this.itemId,
+          spaceId: this.spaceId,
+          unitId: this.bundle!.unitId,
+          revisionOffset: this.bundle!.revisionOffset,
+        },
+        verify,
+      );
+    });
   }
   async fetch(path: string, init: RequestInit = {}) {
     this.verify();
@@ -226,39 +279,37 @@ export class OfflineSession implements IURLImageService {
     this.images ? this.images.localize(value) : structuredClone(value);
 
   /** Fetch new live images before applying/persisting a native frame. */
-  async prepareImages(value: unknown) {
+  async prepareImages(value: unknown, signal?: AbortSignal) {
     if (!this.download || !this.images) return;
     this.verify();
+    signal?.throwIfAborted();
     const prefix = `/api/items/${this.itemId}/images/`;
     const sources = new Set<string>();
-    const visit = (entry: unknown, key?: string) => {
-      if (typeof entry === 'string') {
-        if (entry.startsWith(prefix) && /^[a-f\d]{64}$/.test(entry.slice(prefix.length)))
-          sources.add(entry);
-        if (key === 'data') {
-          try {
-            visit(JSON.parse(entry));
-          } catch {
-            /* Non-JSON resources are opaque. */
-          }
-        }
-      } else if (Array.isArray(entry)) for (const child of entry) visit(child);
-      else if (entry && typeof entry === 'object')
-        for (const [name, child] of Object.entries(entry)) visit(child, name);
-    };
-    visit(value);
+    const origin = this.access?.scope.origin;
+    mapNativeImageSources(value, (source) => {
+      const path = origin && source.startsWith(origin + '/') ? source.slice(origin.length) : source;
+      if (path.startsWith(prefix) && /^[a-f\d]{64}$/.test(path.slice(prefix.length)))
+        sources.add(path);
+      return source;
+    });
     for (const source of sources) {
+      signal?.throwIfAborted();
       if (this.download.bytes.has(source)) continue;
       const hash = source.slice(prefix.length);
       const response = await this.fetch(
         `${documentPath(this.itemId, this.spaceId)}/images/${hash}`,
-        { signal: AbortSignal.timeout(15_000) },
+        {
+          signal: signal
+            ? AbortSignal.any([signal, AbortSignal.timeout(15_000)])
+            : AbortSignal.timeout(15_000),
+        },
       );
       if (!response.ok)
         throw new Error('An image could not be saved on this device. Keep this tab open.');
       const size = Number(response.headers.get('Content-Length'));
       if (size > 5 * 1024 * 1024) throw new Error('This image exceeds the offline image budget.');
       const bytes = new Uint8Array(await response.arrayBuffer());
+      signal?.throwIfAborted();
       this.verify();
       const image: OfflineBundleImage = {
         source,
@@ -269,8 +320,10 @@ export class OfflineSession implements IURLImageService {
       const images = [...this.download.bundle.images, image];
       checkImageList(this.itemId, images);
       if ((await sha256(bytes)) !== hash) throw new Error('An image failed its integrity check.');
+      signal?.throwIfAborted();
       this.verify();
       await this.images.add([image], new Map([[source, bytes]]));
+      signal?.throwIfAborted();
       this.download.bytes.set(source, bytes);
       this.download.bundle.images = images;
     }
@@ -348,6 +401,7 @@ export class OfflineSession implements IURLImageService {
     if (this.disposed) return;
     this.disposed = true;
     window.removeEventListener('storage', this.accountChanged);
+    window.removeEventListener('spinel-offline-account-changed', this.accountChanged);
     this.images?.dispose();
     this.access?.dispose();
     this.store?.close();

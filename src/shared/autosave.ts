@@ -9,6 +9,8 @@ export interface SaveState {
   failed: boolean;
   /** Explicit durability meanings for opted-in downloaded documents. */
   local?: 'saving' | 'saved' | 'synced' | 'attention' | 'failed';
+  /** Downloaded work keeps an unavailable page mounted without a dirty warning. */
+  retained?: boolean;
 }
 export class SaveFailure extends Error {
   status: number;

@@ -172,18 +172,20 @@ function EditorFixture({
   onDirty,
   onConnectionState,
   offline,
-}: SpaceEditorProps & { offline: boolean }) {
+  retained = false,
+}: SpaceEditorProps & { offline: boolean; retained?: boolean }) {
   const [value, setValue] = useState(
     'Keep related work together. A page can contain other Docs, Sheets and folders.',
   );
   const [dirty, setDirty] = useState(false);
   useEffect(() => {
+    onDirty(false, retained);
     onConnectionState(offline ? 'offline' : 'online');
     return () => {
       onDirty(false);
       onConnectionState(null);
     };
-  }, [offline, onDirty, onConnectionState]);
+  }, [offline, retained, onDirty, onConnectionState]);
   return (
     <section aria-label="Editor body fixture" style={{ padding: 24 }}>
       <EditorTools
@@ -220,9 +222,11 @@ function EditorFixture({
       <p role="status" aria-label="Save status fixture">
         {dirty
           ? 'Changes not saved yet — keep this tab open.'
-          : access === 'viewer' || offline
-            ? 'Read only.'
-            : 'No pending fixture edits.'}
+          : retained
+            ? 'Needs attention. Changes saved on this device are retained.'
+            : access === 'viewer' || offline
+              ? 'Read only.'
+              : 'No pending fixture edits.'}
       </p>
     </section>
   );
@@ -506,6 +510,53 @@ export const Unavailable: Story = {
     await expect(
       within(canvasElement).queryByRole('region', { name: 'Editor body fixture' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+/** The shell keeps a durable local copy; its navigation guard remains clean. */
+export const RetainedDevicePage: Story = {
+  parameters: { api: treeApi() },
+  render: (args) => (
+    <RouteFixture href={spaceHref(root, { kind: 'page', id: id(1) })}>
+      <Space
+        {...args}
+        renderEditor={(props) => (
+          <EditorFixture {...props} offline={false} retained={props.item.id === id(1)} />
+        )}
+      />
+    </RouteFixture>
+  ),
+  play: async ({ canvasElement, args }) => {
+    await ready(canvasElement);
+    const canvas = within(canvasElement);
+    const original = canvas.getByRole('textbox', { name: 'Page content fixture' });
+    const previous = globalThis.fetch;
+    globalThis.fetch = async (input, init) =>
+      input === '/api/spaces/' + root
+        ? Response.json(
+            tree(
+              'owner',
+              items.filter((item) => ![id(1), id(2), id(3)].includes(item.id)),
+            ),
+          )
+        : previous(input, init);
+    try {
+      window.dispatchEvent(new Event('focus'));
+      await expect(await canvas.findByRole('alert')).toHaveTextContent(
+        'Your changes saved on this device are retained below.',
+      );
+      await expect(canvas.getByRole('textbox', { name: 'Page content fixture' })).toBe(original);
+      await expect(args.navigation.dirty).toHaveBeenLastCalledWith(false);
+      const navigation = await contents(canvasElement);
+      await userEvent.click(navigation.getByRole('link', { name: 'Schedule' }));
+      await waitFor(() => expect(canvas.queryByRole('alert')).not.toBeInTheDocument());
+      await expect(canvas.getByRole('status', { name: 'Save status fixture' })).toHaveTextContent(
+        'No pending fixture edits.',
+      );
+      await expect(args.navigation.dirty).toHaveBeenLastCalledWith(false);
+    } finally {
+      globalThis.fetch = previous;
+    }
   },
 };
 

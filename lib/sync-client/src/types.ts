@@ -71,6 +71,8 @@ export interface ClientState {
   failure?: ClientFailure;
   /** Present only with persistence; `saved` means its transaction completed. */
   localPersistence?: 'saving' | 'saved' | 'failed';
+  /** The latest visible edit could not be captured; it is not durably recoverable. */
+  recoveryMissing?: boolean;
 }
 
 export interface ClientCheckpoint {
@@ -84,6 +86,10 @@ export interface ClientCheckpoint {
   buffer: Mutation[][];
   /** A retained queue needs explicit recovery, never an automatic replay. */
   failure?: ClientFailure;
+  /** Complete visible state after a local post-apply refusal; never used for replay. */
+  recoverySnapshot?: NativeSnapshot;
+  /** A refusal marker alone does not mean its latest visible edit was saved. */
+  recoveryMissing?: boolean;
 }
 export interface SyncReplica {
   cells(): BaseCells;

@@ -146,6 +146,12 @@ export const EditingCell: Story = {
   args: { state: { dirty: true, failed: false, message: 'Editing cell — changes not saved yet.' } },
   play: details,
 };
+export const EditingFormula: Story = {
+  args: {
+    state: { dirty: true, failed: false, message: 'Editing formula — changes not saved yet.' },
+  },
+  play: details,
+};
 export const Loading: Story = {
   args: { state: { dirty: false, failed: false, message: 'Loading document…' } },
   play: details,

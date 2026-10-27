@@ -1,8 +1,12 @@
 import { randomUUID } from 'node:crypto';
+import { writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
+import { LocaleType } from '@univerjs/core';
+import { docFormulas } from '@spinel/doc-formulas';
 import type { ClientCheckpoint, NativeSnapshot } from '@spinel/sync-client';
+import { SyncServer } from '@spinel/sync-server';
 import {
   canonical,
   inlineSnapshotCell,
@@ -13,11 +17,14 @@ import sharp from 'sharp';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { SpaceStore } from '../src/server/workspace/spaces.ts';
+import { SQLiteSyncStorage } from '../src/server/sync/store.ts';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
 import { sheetImageFixture } from './sheet-image-fixture.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
 import { syncNetwork } from './sync-network.ts';
+import type { NativeWrite } from './sync-network.ts';
 
 type Kind = 'sheet' | 'doc';
 type Stored = {
@@ -46,14 +53,35 @@ const attention = (page: Page) =>
 const pending = (checkpoint?: ClientCheckpoint) =>
   Boolean(checkpoint?.sent || checkpoint?.buffer.length || checkpoint?.failure);
 
+async function usableCanvas(page: Page) {
+  const canvas = page.locator('.univer-container canvas').first();
+  await expect
+    .poll(async () => (await canvas.boundingBox())?.height ?? 0, {
+      message: 'The restored native canvas must have a visible layout height.',
+      timeout: 15_000,
+    })
+    .toBeGreaterThan(100);
+}
+
 async function stored(page: Page, accountId: string, itemId: string) {
   return page.evaluate(
-    ({ accountId, itemId }) =>
-      new Promise<Stored | undefined>((resolve, reject) => {
+    async ({ accountId, itemId }) => {
+      const name = `spinel-offline-${accountId}`;
+      if (!(await indexedDB.databases()).some((database) => database.name === name)) return;
+      return new Promise<Stored | undefined>((resolve, reject) => {
         const opening = indexedDB.open(`spinel-offline-${accountId}`);
         opening.onerror = () => reject(opening.error);
+        opening.onupgradeneeded = () => {
+          opening.transaction?.abort();
+          reject(new Error('The device database was removed during observation.'));
+        };
         opening.onsuccess = () => {
           const database = opening.result;
+          if (!database.objectStoreNames.contains('items')) {
+            database.close();
+            resolve(undefined);
+            return;
+          }
           const read = database.transaction('items').objectStore('items').get(itemId);
           read.onerror = () => {
             database.close();
@@ -64,7 +92,8 @@ async function stored(page: Page, accountId: string, itemId: string) {
             resolve(read.result);
           };
         };
-      }),
+      });
+    },
     { accountId, itemId },
   );
 }
@@ -233,8 +262,16 @@ async function fixture(
   const network = await syncNetwork(context);
   const page = await context.newPage();
   const errors: string[] = [];
-  context.on('page', (target) => target.on('pageerror', (error) => errors.push(error.message)));
-  page.on('pageerror', (error) => errors.push(error.message));
+  const consoleErrors: { page: string; message: string }[] = [];
+  const observeErrors = (target: Page) => {
+    target.on('pageerror', (error) => errors.push(error.message));
+    target.on('console', (message) => {
+      if (message.type() === 'error')
+        consoleErrors.push({ page: target.url(), message: message.text() });
+    });
+  };
+  context.on('page', observeErrors);
+  observeErrors(page);
   const read = async (id = unitId) => {
     const response = await control.request.get(
       `${syncPrefix}/snapshot?unitId=${encodeURIComponent(id)}`,
@@ -314,23 +351,47 @@ async function fixture(
     async close() {
       const pages = context.pages();
       const observed = await Promise.allSettled(
-        pages.map((target) =>
-          target.evaluate(() => ({
+        pages.map(async (target) => ({
+          ...(await target.evaluate(() => ({
+            url: location.href,
+            online: navigator.onLine,
+            preparedAccount: localStorage.getItem('spinel.offline.account'),
             native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
             status: document.querySelector('[aria-label="Save status"]')?.textContent,
+            focus: document.activeElement?.outerHTML,
+            layout: [
+              ...document.querySelectorAll(
+                '.editor-content, [aria-label="Offline copy"], .sheet-editor, .univer-container',
+              ),
+            ].map((node) => ({
+              element: node.tagName,
+              className: node.className,
+              label: node.getAttribute('aria-label'),
+              bounds: node.getBoundingClientRect().toJSON(),
+              canvases: node.querySelectorAll('canvas').length,
+            })),
+          }))),
+          stored: await stored(target, actor.id, item.id).catch((error) => ({
+            error: String(error),
           })),
+        })),
+      );
+      // The CI artifact glob retains this filename on both success and failure.
+      // Attachments alone were absent from the archived browser diagnostics.
+      await writeFile(
+        info.outputPath('sync-diagnostics.json'),
+        JSON.stringify(
+          {
+            observed,
+            errors,
+            consoleErrors,
+            outgoing: network.outgoing,
+            incoming: network.incoming,
+          },
+          null,
+          2,
         ),
       );
-      await info.attach('offline-editing-evidence', {
-        body: Buffer.from(
-          JSON.stringify(
-            { observed, errors, outgoing: network.outgoing, incoming: network.incoming },
-            null,
-            2,
-          ),
-        ),
-        contentType: 'application/json',
-      });
       for (const context of contexts) await context.close();
       db.close();
     },
@@ -339,6 +400,217 @@ async function fixture(
 
 test.describe('downloaded native editors', () => {
   test.setTimeout(180_000);
+
+  test('last-copy removal waits for its editor to close and preserves another live editor with pending input', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'sheet');
+    try {
+      await f.download();
+      const before = await f.read();
+      const other = f.workspace.create(f.owner.id, {
+        name: 'Undownloaded live Doc',
+        kind: 'doc',
+        parentId: null,
+      });
+      const prepared = await f.control.request.post(`/api/items/${other.id}/collaboration`, {
+        headers: { Origin: baseURL! },
+        data: {},
+      });
+      expect(prepared.status(), await prepared.text()).toBe(200);
+      const otherUnitId = (await prepared.json()).unitId as string;
+      const readOther = async () => {
+        const response = await f.control.request.get(
+          `/sync-api/items/${other.id}/snapshot?unitId=${encodeURIComponent(otherUnitId)}`,
+        );
+        expect(response.status(), await response.text()).toBe(200);
+        return (await response.json()) as { revision: number; snapshot: IDocumentData };
+      };
+      const otherPage = await f.context.newPage();
+      await otherPage.goto(`/?item=${other.id}`);
+      await expect(saveStatus(otherPage)).toHaveText('All changes saved.', { timeout: 30_000 });
+      const otherBefore = await readOther();
+      const otherCanvas = await otherPage
+        .locator('.univer-container canvas')
+        .first()
+        .elementHandle();
+      const held: NativeWrite[] = [];
+      f.network.interceptWrites((write) => {
+        held.push(write);
+      });
+      const text = 'Pending in another editor 628';
+      await edit(otherPage, 'doc', text);
+      await expect.poll(() => held.length).toBeGreaterThan(0);
+      await expect(saveStatus(otherPage)).not.toHaveText('All changes saved.');
+
+      const canvas = await f.page.locator('.univer-container canvas').first().elementHandle();
+      await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await f.page.getByRole('menuitem', { name: 'Remove from device', exact: true }).click();
+      const dialog = f.page.getByRole('dialog', { name: 'Offline availability', exact: true });
+      await expect(dialog.getByRole('alert')).toHaveText(
+        'Close this document in every tab before removing its device copy.',
+      );
+      expect(
+        await f.page
+          .locator('.univer-container canvas')
+          .first()
+          .evaluate((node, original) => node === original, canvas!),
+      ).toBe(true);
+      await dialog.getByRole('button', { name: 'Done', exact: true }).click();
+      await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      await f.page
+        .getByRole('button', { name: `More actions for ${f.item.name}`, exact: true })
+        .click();
+      await f.page.getByRole('menuitem', { name: 'Remove from device', exact: true }).click();
+      await expect(
+        f.page.getByRole('status').filter({ hasText: `${f.item.name} was removed` }),
+      ).toHaveText(`${f.item.name} was removed from this device.`);
+      expect(
+        await f.page.evaluate(() => localStorage.getItem('spinel.offline.account')),
+      ).toBeNull();
+      expect(await stored(f.page, f.actor.id, f.item.id)).toBeUndefined();
+      // Starting another same-account tab after the last removal must not
+      // rotate the account cancellation token under a live pending editor.
+      const thirdPage = await f.context.newPage();
+      await thirdPage.goto('/');
+      await expect(
+        thirdPage.getByRole('button', { name: `More actions for ${other.name}`, exact: true }),
+      ).toBeVisible();
+      expect(
+        await otherPage
+          .locator('.univer-container canvas')
+          .first()
+          .evaluate((node, original) => node === original, otherCanvas!),
+      ).toBe(true);
+      expect(await copy(otherPage, 'doc')).toContain(text);
+      expect(await readOther()).toEqual(otherBefore);
+      await f.network.drainWrites();
+      f.network.interceptWrites(undefined);
+      for (const write of held) expect(write.forward()).toBe(true);
+      await expect(saveStatus(otherPage)).toHaveText('All changes saved.', { timeout: 30_000 });
+      const otherCommitted = await readOther();
+      expect(otherCommitted.revision).toBe(otherBefore.revision + 1);
+      expect(otherCommitted.snapshot.body!.dataStream.split(text)).toHaveLength(2);
+      await matchesServer(otherPage, otherCommitted);
+      await f.page.goto(f.href);
+      await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
+      await edit(f.page, 'sheet', '753');
+      await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
+      await expect.poll(async () => (await f.read()).revision).toBe(before.revision + 1);
+      const committed = await f.read();
+      const firstSheet = committed.snapshot.sheetOrder[0];
+      expect(committed.snapshot.sheets[firstSheet].cellData?.[0]?.[3]?.v).toBe(753);
+      await matchesServer(f.page, committed);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
+
+  test('editing IMAGE formulas offline makes no external image request while normal formulas still calculate', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'sheet');
+    const requests: string[] = [];
+    f.context.on('request', (request) => {
+      if (new URL(request.url()).hostname === 'tracker.invalid') requests.push(request.url());
+    });
+    try {
+      await f.download();
+      const baseline = await f.read();
+      await f.network.setOffline(true);
+      await edit(f.page, 'sheet', 'Offline before IMAGE', 'D1');
+      await savedLocally(f.page);
+      const formula = `=IMAGE("https://tracker.invalid/offline-${randomUUID()}.png")`;
+      await edit(f.page, 'sheet', formula, 'E1');
+      await savedLocally(f.page);
+      // A later ordinary calculation proves the native calculation pipeline
+      // ran after the image edit. Only derived external image loading is blocked.
+      await edit(f.page, 'sheet', '=1+2', 'F1');
+      await savedLocally(f.page);
+      await expect.poll(async () => (await copy(f.page, 'sheet', 'F1')).trim()).toBe('3');
+      const checkpoint = (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint;
+      expect(
+        checkpoint.buffer
+          .flat()
+          .some(
+            (mutation) =>
+              mutation.id === 'sheet.mutation.set-range-values' &&
+              mutation.params.cellValue?.[0]?.[4]?.f === formula,
+          ),
+      ).toBe(true);
+      expect(requests).toEqual([]);
+      await f.page.reload();
+      await savedLocally(f.page);
+      await expect.poll(async () => (await copy(f.page, 'sheet', 'F1')).trim()).toBe('3');
+      expect(requests).toEqual([]);
+      expect(await f.read()).toEqual(baseline);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
+
+  test('a clean downloaded editor refreshes after more than 128 durable revisions and accepts the next edit', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'sheet');
+    const store = new SQLiteSyncStorage(f.auth);
+    // Another writer commits through the actual native engine and SQLite
+    // retention adapter while this browser is offline, without UI debug writes.
+    const writer = new SyncServer(store, { authorize() {} });
+    try {
+      await f.download();
+      const baseline = await f.read();
+      const firstSheet = baseline.snapshot.sheetOrder[0];
+      await f.network.setOffline(true);
+      for (let index = 1; index <= 129; index++)
+        await writer.submit(
+          {
+            unitId: f.unitId,
+            actorId: f.owner.id,
+            mutationId: `offline-retention-${index}`,
+            baseRevision: baseline.revision + index - 1,
+            mutations: [
+              {
+                id: 'sheet.mutation.set-range-values',
+                params: {
+                  unitId: f.unitId,
+                  subUnitId: firstSheet,
+                  cellValue: { 0: { 0: { v: index } } },
+                },
+              },
+            ],
+          },
+          undefined,
+        );
+      expect(store.load(f.unitId)!.retainedFrom).toBeGreaterThan(baseline.revision);
+      const advanced = await f.read();
+      expect(advanced.revision).toBe(baseline.revision + 129);
+      expect(pending((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint)).toBe(
+        false,
+      );
+      await f.network.setOffline(false);
+      await synced(f.page);
+      await matchesServer(f.page, advanced);
+      const refreshed = (await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint;
+      expect(refreshed.revision).toBe(advanced.revision);
+      expect(pending(refreshed)).toBe(false);
+      await edit(f.page, 'sheet', '624');
+      await synced(f.page);
+      const committed = await f.read();
+      expect(committed.revision).toBe(advanced.revision + 1);
+      expect(committed.snapshot.sheets[firstSheet].cellData?.[0]?.[3]?.v).toBe(624);
+      await matchesServer(f.page, committed);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await writer.close();
+      await f.close();
+    }
+  });
 
   for (const kind of ['sheet', 'doc'] as const)
     test(`${kind}: durable edits survive two offline reloads and reconnect exactly once`, async ({
@@ -364,8 +636,13 @@ test.describe('downloaded native editors', () => {
         });
         for (let reload = 0; reload < 2; reload++) {
           await f.page.reload();
+          await usableCanvas(f.page);
           await savedLocally(f.page);
           expect(await copy(f.page, kind)).toContain(text);
+          await f.page.screenshot({
+            path: info.outputPath(`spn-053-offline-${kind}-reload-${reload + 1}.png`),
+            animations: 'disabled',
+          });
           expect((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint.buffer).toEqual(
             beforeReload.checkpoint.buffer,
           );
@@ -427,6 +704,122 @@ test.describe('downloaded native editors', () => {
         await f.close();
       }
     });
+
+  test('Doc Formula definitions survive offline edits and reloads while reconnect rechecks source access', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'doc');
+    try {
+      const source = f.workspace.create(f.editor.id, {
+        name: 'OfflineInputs',
+        kind: 'sheet',
+        parentId: null,
+      });
+      const secret = 784512309;
+      new SheetStore(f.workspace).save(f.editor.id, source.id, {
+        revision: 0,
+        writeId: randomUUID(),
+        snapshot: {
+          id: source.id,
+          name: source.name,
+          appVersion: '1.1.0',
+          locale: LocaleType.EN_US,
+          styles: {},
+          sheetOrder: ['summary'],
+          sheets: {
+            summary: {
+              id: 'summary',
+              name: 'Summary',
+              rowCount: 100,
+              columnCount: 10,
+              cellData: { 0: { 0: { v: secret } } },
+            },
+          },
+        },
+      });
+      f.workspace.share(f.editor.id, source.id, f.owner.id, 'viewer');
+      await f.page.goto(f.href);
+      await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
+      await edit(f.page, 'doc', 'Formula context');
+      await f.page.keyboard.press('Control+End');
+      await f.page.keyboard.press('Enter');
+      await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
+      await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await f.page.getByRole('menuitem', { name: 'Insert formula', exact: true }).click();
+      const insert = f.page.getByRole('dialog', { name: 'Insert formula', exact: true });
+      await insert.getByLabel('Formula', { exact: true }).fill('=OfflineInputs.Summary.A1');
+      await insert.getByRole('button', { name: 'Insert formula', exact: true }).click();
+      await expect(insert).not.toBeVisible({ timeout: 20_000 });
+      await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
+      await f.download();
+      const baseline = await f.read();
+      const definitions = docFormulas(baseline.snapshot.body).map((formula) => formula.definition);
+      expect(definitions).toHaveLength(1);
+      const openPanel = async () => {
+        const panel = f.page.getByRole('dialog', { name: 'Formulas', exact: true });
+        if (!(await panel.isVisible())) {
+          const localButton = f.page.getByRole('button', { name: 'Formulas', exact: true });
+          if (await localButton.count()) await localButton.click();
+          else {
+            await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
+            await f.page.getByRole('menuitem', { name: 'Formulas', exact: true }).click();
+          }
+        }
+        return panel;
+      };
+      let panel = await openPanel();
+      await expect(panel.getByText(String(secret), { exact: true })).toBeVisible({
+        timeout: 20_000,
+      });
+      await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+      await f.network.setOffline(true);
+      const text = 'Offline Formula note 605 ';
+      await edit(f.page, 'doc', text);
+      await savedLocally(f.page);
+      for (let reload = 0; reload < 2; reload++) {
+        await f.page.reload();
+        await usableCanvas(f.page);
+        await savedLocally(f.page);
+        expect(await copy(f.page, 'doc')).toContain(text);
+        panel = await openPanel();
+        await expect(panel.getByText('Result unavailable', { exact: true })).toBeVisible();
+        await expect(panel.getByText(String(secret), { exact: true })).toHaveCount(0);
+        expect(JSON.stringify(await stored(f.page, f.actor.id, f.item.id))).not.toContain(
+          String(secret),
+        );
+        await f.page.screenshot({
+          path: info.outputPath(`spn-053-offline-formulas-reload-${reload + 1}.png`),
+          animations: 'disabled',
+        });
+        await panel.getByRole('button', { name: 'Close dialog', exact: true }).click();
+      }
+      f.workspace.share(f.editor.id, source.id, f.owner.id, null);
+      await f.network.setOffline(false);
+      await synced(f.page);
+      const committed = await f.read();
+      expect(committed.revision).toBe(baseline.revision + 1);
+      expect(docFormulas(committed.snapshot.body).map((formula) => formula.definition)).toEqual(
+        definitions,
+      );
+      await matchesServer(f.page, committed);
+      panel = await openPanel();
+      await expect(
+        panel.getByText('You need access to this formula’s sources', { exact: true }),
+      ).toBeVisible({ timeout: 20_000 });
+      await expect(panel.getByText(String(secret), { exact: true })).toHaveCount(0);
+      f.workspace.share(f.editor.id, source.id, f.owner.id, 'viewer');
+      await expect(panel.getByText(String(secret), { exact: true })).toBeVisible({
+        timeout: 20_000,
+      });
+      expect(JSON.stringify(await stored(f.page, f.actor.id, f.item.id))).not.toContain(
+        String(secret),
+      );
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
 
   test('a crash after durable acknowledgement but before local cleanup retains attention without duplicate replay', async ({
     browser,
@@ -623,8 +1016,13 @@ test.describe('downloaded native editors', () => {
       await edit(f.page, 'doc', 'Prepared child local edit');
       await savedLocally(f.page);
       await f.page.reload();
+      await usableCanvas(f.page);
       await savedLocally(f.page);
       expect(await copy(f.page, 'doc')).toContain('Prepared child local edit');
+      await f.page.screenshot({
+        path: info.outputPath('spn-053-offline-space-doc-reload.png'),
+        animations: 'disabled',
+      });
       const record = (await stored(f.page, f.actor.id, f.item.id))!.outbox!;
       expect(record).toMatchObject({
         account: f.editor.id,

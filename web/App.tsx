@@ -32,7 +32,13 @@ import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import { claimDevice, isNetworkFailure, openLocalStart } from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
-import { setPreparedAccount, setSignOutPending, signOutPending } from './offline/offlineStore.ts';
+import {
+  claimOnlineAccount,
+  offlineEpoch,
+  setPreparedAccount,
+  setSignOutPending,
+  signOutPending,
+} from './offline/offlineStore.ts';
 
 const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
@@ -175,10 +181,29 @@ function AccountApp() {
           if (location.pathname !== '/sign-in') location.assign(signInPath());
           return;
         }
-        const { user } = await api<{ user: User }>('session');
+        const epoch = () => {
+          try {
+            return offlineEpoch();
+          } catch {
+            // Blocked browser storage must not prevent an online sign-in.
+            return () => {};
+          }
+        };
+        const verifySession = epoch();
+        const { user } = await api<{ user: User }>('session', undefined, verifySession);
+        verifySession();
+        // A verified different account intentionally rotates the epoch. Capture
+        // that new fence before the asynchronous device claim, not before it.
+        try {
+          claimOnlineAccount(user.id);
+        } catch {
+          // Offline preparation below remains best effort when storage is blocked.
+        }
+        const verifyClaim = epoch();
         // Claim the device first: the dashboard reads the pointer when it mounts.
         // IndexedDB can fail to answer at all; never hold sign-in on it.
         await within(claimDevice(user), 3000, 'Offline data did not answer.').catch(() => {});
+        verifyClaim();
         if (user.isAdmin) clearDashboardNavigation();
         else dashboardSession(user.id);
         setUser(user);
@@ -187,6 +212,10 @@ function AccountApp() {
         else if (spaceReturn && !user.isAdmin) location.assign(spaceReturn);
         if (settings) await refreshKeys();
       } catch (failure) {
+        if (failure instanceof DOMException && failure.name === 'AbortError') {
+          location.reload();
+          return;
+        }
         // Only an unreachable server opens local data; a 401 still signs in.
         if (!isNetworkFailure(failure)) {
           // The server ended this session (sign-out, revocation): stop offline

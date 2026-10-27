@@ -1,6 +1,13 @@
 import { expect, test, vi } from 'vitest';
+import { DrawingTypeEnum, ICommandService, LocaleType } from '@univerjs/core';
+import { ISheetDrawingService } from '@univerjs/sheets-drawing';
+import type { IDrawingJsonUndo1 } from '@univerjs/drawing';
+import { captureNative, NativeReplica } from '@spinel/sync-client';
+import type { Mutation } from '@spinel/sync-transform';
 import { OfflineAccess } from '../../web/offline/OfflineAccess.ts';
+import { OfflineSession } from '../../web/offline/OfflineSession.ts';
 import { checkImageList, PreparedImages, sha256 } from '../../web/offline/PreparedImages.ts';
+import { mapNativeImageSources } from '../shared/nativeImageSources.ts';
 import type { OfflineBundleImage } from '../shared/offlineBundle.ts';
 
 async function fixture() {
@@ -63,7 +70,7 @@ test('localize rewrites only verified sources and leaves the stored snapshot unc
   try {
     const snapshot = {
       drawings: {
-        a: { source: f.source },
+        a: { source: f.source, custom: { source: f.source } },
         b: { source: f.access.scope.origin + f.source },
         c: { source: 'https://elsewhere.example/tracker.png' },
         d: { source: '/api/items/other/images/abc' },
@@ -73,7 +80,10 @@ test('localize rewrites only verified sources and leaves the stored snapshot unc
       other: '/api/items/other/images/abc',
       list: [f.source, 3, null],
       resources: [
-        { name: 'SHEET_DRAWING_PLUGIN', data: JSON.stringify({ s: { d: { source: f.source } } }) },
+        {
+          name: 'SHEET_DRAWING_PLUGIN',
+          data: JSON.stringify({ s: { data: { d: { source: f.source } } } }),
+        },
         { name: 'plain', data: 'not json' },
       ],
     };
@@ -82,7 +92,7 @@ test('localize rewrites only verified sources and leaves the stored snapshot unc
     const url = await service.getImage(f.source);
     expect(local).toEqual({
       drawings: {
-        a: { source: url },
+        a: { source: url, custom: { source: f.source } },
         b: { source: url },
         c: { source: 'data:image/png;base64,' },
         d: { source: 'data:image/png;base64,' },
@@ -90,9 +100,12 @@ test('localize rewrites only verified sources and leaves the stored snapshot unc
       },
       text: 'Not an image',
       other: '/api/items/other/images/abc',
-      list: [url, 3, null],
+      list: [f.source, 3, null],
       resources: [
-        { name: 'SHEET_DRAWING_PLUGIN', data: JSON.stringify({ s: { d: { source: url } } }) },
+        {
+          name: 'SHEET_DRAWING_PLUGIN',
+          data: JSON.stringify({ s: { data: { d: { source: url } } } }),
+        },
         { name: 'plain', data: 'not json' },
       ],
     });
@@ -100,6 +113,249 @@ test('localize rewrites only verified sources and leaves the stored snapshot unc
   } finally {
     service.dispose();
   }
+});
+
+test('image round trips preserve authored strings, custom source metadata and opaque resource spelling', async () => {
+  const f = await fixture();
+  const service = await f.prepare();
+  try {
+    const url = await service.getImage(f.source);
+    const opaque = {
+      name: 'UNKNOWN_PLUGIN',
+      data: ` { "source" : "${f.source}", "local" : "${url}" }\n`,
+    };
+    const unchanged = { name: 'DOC_DRAWING_PLUGIN', data: ' { "data" : {}, "order" : [] }\n' };
+    const original = {
+      id: 'book',
+      sheets: {
+        one: {
+          backgroundImage: { source: f.source, custom: { source: url } },
+          cellData: {
+            0: {
+              0: { v: f.source, custom: { source: f.source } },
+              1: { v: url },
+              2: {
+                p: { body: { dataStream: f.source }, drawings: { image: { source: f.source } } },
+              },
+            },
+          },
+        },
+      },
+      resources: [opaque, unchanged],
+    };
+    const local = service.localize(original);
+    expect(local.sheets.one.backgroundImage.source).toBe(url);
+    expect(local.sheets.one.backgroundImage.custom.source).toBe(url);
+    expect(local.sheets.one.cellData[0][0]).toEqual(original.sheets.one.cellData[0][0]);
+    expect(local.sheets.one.cellData[0][1].v).toBe(url);
+    expect(local.sheets.one.cellData[0][2].p.body.dataStream).toBe(f.source);
+    expect(local.sheets.one.cellData[0][2].p.drawings.image.source).toBe(url);
+    expect(local.resources).toEqual(original.resources);
+    expect(service.localize(local)).toEqual(local);
+    expect(service.canonicalize(local)).toEqual(original);
+    expect(service.canonicalize(original)).toEqual(original);
+  } finally {
+    service.dispose();
+  }
+});
+
+test.each(['sheet', 'doc'] as const)(
+  '%s JSON1 image payloads map by native path while metadata stays opaque',
+  async (kind) => {
+    const f = await fixture();
+    const service = await f.prepare();
+    try {
+      const url = await service.getImage(f.source);
+      const path = kind === 'sheet' ? ['book', 'one', 'data', 'image'] : ['drawings', 'image'];
+      const op = [
+        ...path,
+        ['source', { i: f.source, r: f.source }],
+        ['custom', 'source', { i: f.source, r: url }],
+        ['transform', { i: { left: 10, top: 20, width: 30, height: 40 } }],
+      ];
+      const payload = kind === 'sheet' ? { op } : { actions: op };
+      const mutation = {
+        id:
+          kind === 'sheet' ? 'sheet.mutation.set-drawing-apply' : 'doc.mutation.rich-text-editing',
+        params: { unitId: 'book', ...payload },
+      };
+      const local = service.localize(mutation);
+      const mapped = ('op' in local.params ? local.params.op : local.params.actions) as unknown[];
+      expect(mapped[path.length]).toEqual(['source', { i: url, r: url }]);
+      expect(mapped[path.length + 1]).toEqual(['custom', 'source', { i: f.source, r: url }]);
+      expect(service.canonicalize(local)).toEqual(mutation);
+      const discovered: string[] = [];
+      mapNativeImageSources({ type: 'resume', edits: [{ mutations: [mutation] }] }, (source) => {
+        discovered.push(source);
+        return source;
+      });
+      expect(discovered).toEqual([f.source, f.source]);
+    } finally {
+      service.dispose();
+    }
+  },
+);
+
+test('actual native image insertion and move/resize preserve canonical sources through capture', async () => {
+  const f = await fixture();
+  const service = await f.prepare();
+  const visible = new NativeReplica(
+    {
+      id: 'book',
+      name: 'Images',
+      appVersion: '1.1.0',
+      locale: LocaleType.EN_US,
+      sheetOrder: ['one'],
+      styles: {},
+      sheets: { one: { id: 'one', name: 'One', rowCount: 20, columnCount: 10, cellData: {} } },
+    },
+    'sheet',
+  );
+  const captured: Mutation[] = [];
+  const capture = captureNative({
+    univer: visible.univer,
+    unitId: 'book',
+    onMutation: (mutation) => captured.push(service.canonicalize(mutation)),
+    onFailure: (reason) => {
+      throw new Error(reason);
+    },
+  });
+  try {
+    const local = service.localize({
+      drawings: {
+        image: {
+          unitId: 'book',
+          subUnitId: 'one',
+          drawingId: 'image',
+          drawingType: DrawingTypeEnum.DRAWING_IMAGE,
+          imageSourceType: 'URL' as const,
+          source: f.source,
+          transform: { left: 0, top: 0, width: 20, height: 20 },
+          custom: { source: f.source },
+        },
+      },
+    }).drawings.image;
+    const drawings = visible.univer.__getInjector().get(ISheetDrawingService);
+    const commands = visible.univer.__getInjector().get(ICommandService);
+    const apply = (image: typeof local, update: boolean) => {
+      const result = (
+        update
+          ? drawings.getBatchUpdateOp([image as never])
+          : drawings.getBatchAddOp([image as never])
+      ) as IDrawingJsonUndo1;
+      expect(
+        commands.syncExecuteCommand('sheet.mutation.set-drawing-apply', {
+          unitId: 'book',
+          subUnitId: 'one',
+          op: result.redo,
+          objects: result.objects,
+          type: update ? 1 : 0,
+        }),
+      ).toBe(true);
+    };
+    apply(local, false);
+    const moved = { ...local, transform: { left: 30, top: 40, width: 50, height: 60 } };
+    apply(moved, true);
+    expect(captured).toHaveLength(2);
+    expect(JSON.stringify(captured)).not.toContain('blob:');
+    const saved = service.canonicalize(visible.snapshot());
+    const resource = saved.resources!.find((entry) => entry.name === 'SHEET_DRAWING_PLUGIN')!;
+    expect(JSON.parse(resource.data).one.data.image).toMatchObject({
+      source: f.source,
+      transform: moved.transform,
+      custom: { source: f.source },
+    });
+    const replay = new NativeReplica(
+      {
+        ...saved,
+        resources: saved.resources!.map((entry) =>
+          entry.name === 'SHEET_DRAWING_PLUGIN' ? { ...entry, data: '{}' } : entry,
+        ),
+      },
+      'sheet',
+    );
+    try {
+      replay.apply(captured);
+      const restored = replay
+        .snapshot()
+        .resources!.find((entry) => entry.name === 'SHEET_DRAWING_PLUGIN')!;
+      expect(JSON.parse(restored.data)).toEqual(JSON.parse(resource.data));
+    } finally {
+      replay.dispose();
+    }
+  } finally {
+    capture.dispose();
+    visible.dispose();
+    service.dispose();
+  }
+});
+
+test('offline checkpoint image preparation ignores URL-looking cell text and unknown resources', async () => {
+  const f = await fixture();
+  const fetch = vi.fn().mockRejectedValue(new Error('Offline'));
+  const session = {
+    itemId: 'item',
+    access: f.access,
+    verify() {},
+    fetch,
+    download: { bytes: new Map(), bundle: { images: [] } },
+    images: {},
+  } as unknown as OfflineSession;
+  const snapshot = {
+    id: 'book',
+    sheets: { one: { cellData: { 0: { 0: { v: f.source, custom: { source: f.source } } } } } },
+    resources: [{ name: 'UNKNOWN_PLUGIN', data: ` { "source" : "${f.source}" }\n` }],
+  };
+  const checkpoint = {
+    version: 1,
+    snapshot,
+    recoverySnapshot: snapshot,
+    sent: null,
+    inflight: [],
+    buffer: [
+      [
+        {
+          id: 'sheet.mutation.set-range-values',
+          params: { cellValue: { 0: { 0: { v: f.source } } } },
+        },
+      ],
+    ],
+  };
+  const before = structuredClone(checkpoint);
+  await OfflineSession.prototype.prepareImages.call(session, checkpoint);
+  expect(fetch).not.toHaveBeenCalled();
+  expect(checkpoint).toEqual(before);
+});
+
+test('connection cancellation aborts image preparation without publishing bytes', async () => {
+  const f = await fixture();
+  const controller = new AbortController();
+  const download = { bytes: new Map(), bundle: { images: [] } };
+  const add = vi.fn();
+  const fetch = vi.fn(
+    (_path: string, init: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init.signal!.addEventListener('abort', () => reject(init.signal!.reason), { once: true });
+      }),
+  );
+  const session = {
+    itemId: 'item',
+    access: f.access,
+    verify() {},
+    fetch,
+    download,
+    images: { add },
+  } as unknown as OfflineSession;
+  const preparing = OfflineSession.prototype.prepareImages.call(
+    session,
+    f.source,
+    controller.signal,
+  );
+  expect(fetch).toHaveBeenCalledTimes(1);
+  controller.abort(new DOMException('Connection ended', 'AbortError'));
+  await expect(preparing).rejects.toMatchObject({ name: 'AbortError' });
+  expect(download.bytes.size).toBe(0);
+  expect(add).not.toHaveBeenCalled();
 });
 
 test.each([

@@ -62,8 +62,9 @@ unfinished editor input. This follows the library's
 
 When a catalog is local, offline or a refresh failed, the detail includes
 **Files as of**. SPN-042 removes `OfflineBanner`; it does not add another status
-row. A local session remains read-only after verified connectivity returns,
-and keeps its timestamp and read-only explanation until reopened online.
+row. A local catalog keeps that timestamp after connectivity returns. Downloaded
+editors retain their saved viewer/editor permissions and revalidate the current
+account, grant, generation and live revision before replaying pending work.
 The dashboard never claims **Saved on this device**. See [offline behavior](offline.md).
 
 The fixed title-adjacent save slot keeps a persistent short label while its
@@ -73,8 +74,16 @@ editor so the delayed polling failure cannot push the document down. In the
 file list it retains its existing placement above the list. The compact editor
 header composes that slot and this connection control without replacing either
 controller, including its slim theatre strip (SPN-049).
-SPN-053 later adds local/pending-sync durability states, without treating an
+SPN-053 adds local/pending-sync durability states, without treating an
 open connection as persistence evidence.
+
+The native sync checkpoint must commit to IndexedDB before **Saved on this
+device** appears. **Synced** also requires every durable server acknowledgement
+and committed local cleanup. **Needs attention** retains work after changed
+access/generation/revision or refused edits; an uncaptured visible edit keeps the
+explicit keep-this-tab-open warning. Viewers remain **View only**. A second save
+row is not added, and local persistence failure has a retry action that works
+while offline. See [SPN-053](implementation/SPN-053.md).
 
 ## Verification and decision record
 
@@ -88,7 +97,7 @@ open connection as persistence evidence.
   already good, then releases it. It compares the complete editor bounds through
   Offline, Reconnecting and Online, including the delayed shared-list poll failure.
 - Existing guest and offline end-to-end tests preserve revocation/privacy,
-  unfinished guest input, local read-only copies and the catalog timestamp.
+  unfinished guest input, local viewer restrictions and the catalog timestamp.
 - `Current production/Shell/ConnectionStatus` stories cover all three states,
   keyboard/touch detail, stale/local catalogs and Online with an unsaved warning.
   The Storybook review captures them in light, dark and phone variants.

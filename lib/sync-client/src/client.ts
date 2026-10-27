@@ -8,6 +8,7 @@ import {
 } from '@spinel/sync-transform';
 import type { Mutation } from '@spinel/sync-transform';
 import { byteBudget, encodedBytes, hashTouched } from './hash.ts';
+import { validateRecoverySnapshot } from './recovery.ts';
 import {
   ClientError,
   MAX_BATCH_MUTATIONS,
@@ -77,6 +78,8 @@ export class SyncClient {
   private replayBase?: number;
   private processingCheckpoint?: ClientCheckpoint;
   private retainedCheckpoint?: ClientCheckpoint;
+  /** Only this live renderer can retry a failed capture of its latest edit. */
+  private recoveryCapturePending = false;
 
   constructor(options: SyncClientOptions) {
     if (!validRevision(options.revision)) throw new ClientError('malformed');
@@ -93,23 +96,35 @@ export class SyncClient {
   get accepting() {
     return !this.disposed && !this.reason;
   }
+  private preserving(): boolean {
+    // A persisted failure is terminal even if the caller later disables the
+    // opt-in policy. Changing policy cannot authorize replay of retained work.
+    return Boolean(this.retainedCheckpoint) || enabled(this.options.preservePendingOnFailure);
+  }
   get state(): ClientState {
     return {
       revision: this.revision,
       pending: Boolean(
-        this.sent || this.buffer.length || this.pendingPersistence || this.persistenceFailed,
+        this.sent ||
+        this.buffer.length ||
+        this.pendingPersistence ||
+        this.persistenceFailed ||
+        this.retainedCheckpoint?.recoverySnapshot ||
+        this.retainedCheckpoint?.recoveryMissing,
       ),
       pendingMutations: this.inflight.length + this.buffer.flat().length,
       connected: this.connected,
       resyncing: Boolean(this.reason),
       ...((this.reason || this.persistenceFailed) && { failure: this.reason ?? 'unavailable' }),
       ...(this.options.persist && {
-        localPersistence: this.persistenceFailed
-          ? ('failed' as const)
-          : this.pendingPersistence
-            ? ('saving' as const)
-            : ('saved' as const),
+        localPersistence:
+          this.persistenceFailed || this.retainedCheckpoint?.recoveryMissing
+            ? ('failed' as const)
+            : this.pendingPersistence
+              ? ('saving' as const)
+              : ('saved' as const),
       }),
+      ...(this.retainedCheckpoint?.recoveryMissing && { recoveryMissing: true }),
     };
   }
 
@@ -154,13 +169,18 @@ export class SyncClient {
 
   retry(): void {
     if (this.disposed || this.pendingPersistence) return;
+    if (this.recoveryCapturePending) {
+      this.captureRecovery();
+      void this.changed();
+      return;
+    }
     if (this.persistenceFailed) {
       void this.changed().then(() => {
         if (!this.persistenceFailed) this.retry();
       });
       return;
     }
-    if (!this.connected || (this.reason && enabled(this.options.preservePendingOnFailure))) return;
+    if (!this.connected || (this.reason && this.preserving())) return;
     if (this.awaitingResume && enabled(this.options.requireUnchangedResume)) return;
     if (this.sent) this.write(this.sent);
     else if (!this.awaitingResume && !this.reason) this.pump();
@@ -168,16 +188,15 @@ export class SyncClient {
 
   receive(frame: IncomingFrame): void {
     if (this.disposed) return;
-    if (this.reason && enabled(this.options.preservePendingOnFailure)) return;
+    if (this.reason && this.preserving()) return;
     try {
-      if (enabled(this.options.preservePendingOnFailure))
-        this.processingCheckpoint = this.checkpoint();
+      if (this.preserving()) this.processingCheckpoint = this.checkpoint();
       if (!frame || typeof frame !== 'object') throw new ClientError('malformed');
       if (frame.type === 'resync') {
         if (!failures.has(frame.reason)) throw new ClientError('malformed');
         if (frame.mutationId !== undefined) {
           if (frame.mutationId !== this.sent?.mutationId) return;
-          if (!enabled(this.options.preservePendingOnFailure)) {
+          if (!this.preserving()) {
             this.sent = null;
             this.inflight = [];
           }
@@ -210,13 +229,14 @@ export class SyncClient {
   /** An unrelated resync cannot answer a write that may already be durable. */
   refuse(reason: ClientFailure): void {
     if (this.disposed) return;
-    if (enabled(this.options.preservePendingOnFailure)) {
+    if (this.preserving()) {
       if (this.reason) return;
       // Incoming application can fail after an earlier native handler ran.
       // Keep the coherent pre-frame base+queue, not a partially rebased model.
       this.retainedCheckpoint = clone(this.processingCheckpoint ?? this.checkpoint());
       this.reason = reason;
       this.retainedCheckpoint.failure = reason;
+      if (!this.processingCheckpoint) this.captureRecovery();
       this.sent = clone(this.retainedCheckpoint.sent);
       this.inflight = clone(this.retainedCheckpoint.inflight);
       this.buffer = clone(this.retainedCheckpoint.buffer);
@@ -263,8 +283,28 @@ export class SyncClient {
   /** Checkpoint an editor newly opted into storage; also usable while offline. */
   async persistNow(): Promise<void> {
     if (this.disposed) throw new ClientError('unavailable');
+    if (this.recoveryCapturePending) this.captureRecovery();
     await this.changed();
-    if (this.disposed || this.persistenceFailed) throw new ClientError('unavailable');
+    if (this.disposed || this.persistenceFailed || this.retainedCheckpoint?.recoveryMissing)
+      throw new ClientError('unavailable');
+  }
+
+  private captureRecovery(): void {
+    const checkpoint = this.retainedCheckpoint!;
+    try {
+      const recoverySnapshot = this.options.visibleSnapshot();
+      // Native capture happens after the edit applied. A bounded supported
+      // edit can exceed the wire envelope, so the queue alone is insufficient.
+      const candidate = { ...checkpoint, recoverySnapshot, recoveryMissing: false };
+      validateRecoverySnapshot(candidate);
+      checkpoint.recoverySnapshot = clone(recoverySnapshot);
+      delete checkpoint.recoveryMissing;
+      this.recoveryCapturePending = false;
+    } catch {
+      delete checkpoint.recoverySnapshot;
+      checkpoint.recoveryMissing = true;
+      this.recoveryCapturePending = true;
+    }
   }
 
   private restore(checkpoint: ClientCheckpoint): void {
@@ -281,6 +321,7 @@ export class SyncClient {
       (checkpoint.failure !== undefined && !failures.has(checkpoint.failure))
     )
       throw new ClientError('malformed');
+    validateRecoverySnapshot(checkpoint);
     byteBudget()(checkpoint.snapshot);
     if (
       checkpoint.inflight.length > 8192 ||
@@ -595,7 +636,7 @@ export class SyncClient {
       void this.changed();
       this.schedule();
     } catch (error) {
-      if (enabled(this.options.preservePendingOnFailure)) throw error;
+      if (this.preserving()) throw error;
       // This ack answers the sent request even when a later buffered edit cannot
       // be rebased. Reload can now retain the accepted request safely.
       this.sent = null;
@@ -688,7 +729,7 @@ export class SyncClient {
     if (
       this.notified ||
       this.disposed ||
-      (this.sent && !enabled(this.options.preservePendingOnFailure)) ||
+      (this.sent && !this.preserving()) ||
       this.pendingPersistence ||
       this.persistenceFailed ||
       !this.reason

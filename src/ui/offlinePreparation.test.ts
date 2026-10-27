@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import {
   offlinePreparation,
+  offlineAccountRead,
   preparedAccount,
   setPreparedAccount,
   watchOfflineAccount,
@@ -160,6 +161,35 @@ test('removing the final current-account copy clears only its own marker and all
   await scope.clearIfEmpty({ accountId: user.id, downloads: async () => [] });
   expect(preparedAccount()).toBeNull();
   expect(scope.isCurrent()).toBe(true);
+});
+
+test('removing the final download does not cancel unrelated live editor queues in either tab', async () => {
+  setPreparedAccount(user.id);
+  const live = offlinePreparation(user.id, () => true);
+  const local = offlineAccountRead(user.id);
+  const stop = watchOfflineAccount();
+  try {
+    await offlinePreparation(user.id, () => true).clearIfEmpty({
+      accountId: user.id,
+      downloads: async () => [],
+    });
+    expect(preparedAccount()).toBeNull();
+    expect(live.isCurrent()).toBe(true);
+    expect(local()).toBe(false);
+    // The other tab observes only a clean-marker removal, not a sign-out nonce.
+    surface.dispatchEvent(
+      Object.assign(new Event('storage'), {
+        key: 'spinel.offline.account',
+        oldValue: user.id,
+        newValue: null,
+      }),
+    );
+    expect(live.isCurrent()).toBe(true);
+    setPreparedAccount(null); // Actual sign-out still invalidates every editor.
+    expect(live.isCurrent()).toBe(false);
+  } finally {
+    stop();
+  }
 });
 
 test('failed catalog persistence never marks a device prepared', async () => {

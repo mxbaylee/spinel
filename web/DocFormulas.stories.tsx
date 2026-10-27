@@ -121,6 +121,42 @@ function returnsDocumentFocus(action: 'save' | 'cancel'): Story {
 export const SaveReturnsFocus: Story = returnsDocumentFocus('save');
 export const CancelReturnsFocus: Story = returnsDocumentFocus('cancel');
 
+function FormulaConnectivity(args: ComponentProps<typeof FormulaDialog>) {
+  const [online, setOnline] = useState(true);
+  useEffect(() => {
+    const change = (event: Event) => setOnline((event as CustomEvent<boolean>).detail);
+    window.addEventListener('storybook-formula-connection', change);
+    return () => window.removeEventListener('storybook-formula-connection', change);
+  }, []);
+  return <FormulaDialog {...args} remoteAvailable={online} />;
+}
+
+export const OfflineKeepsDraft: Story = {
+  args: { onClose: fn() },
+  parameters: { api: { ...formulaApi, ...availableSources } },
+  render: (args) => <FormulaConnectivity {...args} />,
+  play: async ({ canvasElement, args }) => {
+    await sourcesReady(canvasElement);
+    const canvas = within(canvasElement);
+    const expression = canvas.getByRole('combobox', { name: /^Formula$/ });
+    await userEvent.clear(expression);
+    await userEvent.type(expression, definition.expression);
+    await userEvent.selectOptions(canvas.getByLabelText('Number format'), 'currency');
+    await userEvent.click(canvas.getByRole('button', { name: /^Preview$/ }));
+    await expect(await canvas.findByText('$1,234.56')).toBeVisible();
+    window.dispatchEvent(new CustomEvent('storybook-formula-connection', { detail: false }));
+    await waitFor(() => expect(canvas.queryByText('$1,234.56')).not.toBeInTheDocument());
+    await expect(expression).toHaveValue(definition.expression);
+    await expect(canvas.getByLabelText('Number format')).toHaveValue('currency');
+    await expect(canvas.getByRole('dialog', { name: 'Insert formula' })).toBeVisible();
+    await expect(args.onClose).not.toHaveBeenCalled();
+    window.dispatchEvent(new CustomEvent('storybook-formula-connection', { detail: true }));
+    await sourcesReady(canvasElement);
+    await expect(expression).toHaveValue(definition.expression);
+    await expect(canvas.getByLabelText('Number format')).toHaveValue('currency');
+  },
+};
+
 function saveFailure(reason: FormulaFailureReason): Story {
   const save = fn(async (_definition: FormulaDefinition, _signal: AbortSignal) => {
     throw new FormulaSaveError(reason);

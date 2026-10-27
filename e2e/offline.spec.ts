@@ -76,7 +76,7 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
       'Synced. All changes are saved on the server and this device.',
       { timeout: 30_000 },
     );
-    const nativeCanvas = await page.locator('.editor-frame canvas').first().elementHandle();
+    let nativeCanvas = await page.locator('.editor-frame canvas').first().elementHandle();
     expect(nativeCanvas).not.toBeNull();
     const stableEditor = async () => {
       expect(
@@ -102,13 +102,29 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     const availability = page.getByRole('dialog', { name: 'Offline availability', exact: true });
     await stableEditor();
     await offlineAction('Remove from device');
-    await expect(availability.getByRole('status')).toHaveText(
-      `${doc.name} was removed from this device.`,
+    await expect(availability.getByRole('alert')).toHaveText(
+      'Close this document in every tab before removing its device copy.',
     );
     await stableEditor();
     await availability.getByRole('button', { name: 'Done', exact: true }).click();
     await expect(availability).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Document actions', exact: true })).toBeFocused();
+    // An open writable copy may have uncaptured native input. Close it before
+    // removing, then preserve the next mounted editor through download feedback.
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Remove from device', exact: true }).click();
+    await expect(
+      page.getByRole('status').filter({ hasText: `${doc.name} was removed` }),
+    ).toHaveText(`${doc.name} was removed from this device.`);
+    await page.getByRole('button', { name: `${doc.name} Doc`, exact: true }).click();
+    await expect(page.getByRole('status', { name: 'Save status', exact: true })).toHaveText(
+      'All changes saved.',
+      { timeout: 30_000 },
+    );
+    await nativeCanvas!.dispose();
+    nativeCanvas = await page.locator('.editor-frame canvas').first().elementHandle();
+    expect(nativeCanvas).not.toBeNull();
     const bundlePath = `**/api/items/${doc.id}/offline-bundle`;
     await page.route(bundlePath, (route) =>
       route.fulfill({

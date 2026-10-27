@@ -1,4 +1,5 @@
 import type { IURLImageService } from '@univerjs/core';
+import { mapNativeImageSources } from '../../src/shared/nativeImageSources.ts';
 import type { OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
 import type { OfflineAccess } from './OfflineAccess.ts';
 
@@ -151,65 +152,29 @@ export class PreparedImages implements IURLImageService {
    * Returns a copy of a snapshot with every verified image source replaced by
    * its local object URL. Univer's document renderer loads drawing sources
    * directly rather than through this service, so this covers Doc and cell images.
-   * Resource data (such as sheet drawings) is JSON inside a string; it is parsed,
-   * rewritten and serialized again. Any other image `source` that could make a
-   * request becomes an empty local image, so nothing falls back to the network.
+   * Known drawing resource JSON is rewritten only when an image changes. Other
+   * resource bytes and authored text remain intact. An unavailable native image
+   * becomes an empty local image, so nothing falls back to the network.
    */
   localize<T>(snapshot: T): T {
     this.assertAllowed();
-    const visit = (value: unknown, key?: string): unknown => {
-      if (key === 'resources' && Array.isArray(value)) return value.map(resource);
-      if (typeof value === 'string') {
-        const source = value.startsWith(this.access.scope.origin + '/')
-          ? value.slice(this.access.scope.origin.length)
-          : value;
-        if (this.blobs.has(source)) return this.local(source).url;
-        return key === 'source' && !value.startsWith('data:') ? EMPTY_IMAGE : value;
-      }
-      if (Array.isArray(value)) return value.map((entry) => visit(entry));
-      if (value && typeof value === 'object')
-        return Object.fromEntries(
-          Object.entries(value).map(([name, entry]) => [name, visit(entry, name)]),
-        );
-      return value;
-    };
-    const resource = (entry: unknown): unknown => {
-      const copy = visit(entry) as { data?: unknown };
-      if (!copy || typeof copy.data !== 'string') return copy;
-      let data: unknown;
-      try {
-        data = JSON.parse(copy.data);
-      } catch {
-        return copy; // Not JSON, so it cannot hold an image.
-      }
-      return { ...copy, data: JSON.stringify(visit(data)) };
-    };
-    return visit(snapshot) as T;
+    return mapNativeImageSources(structuredClone(snapshot), (value) => {
+      if (this.issued.has(value)) return value;
+      const source = value.startsWith(this.access.scope.origin + '/')
+        ? value.slice(this.access.scope.origin.length)
+        : value;
+      if (this.blobs.has(source)) return this.local(source).url;
+      return value.startsWith('data:') ? value : EMPTY_IMAGE;
+    });
   }
   /** Only URLs issued by this adapter are reversed; authored text stays intact. */
   canonicalize<T>(value: T): T {
     this.assertAllowed();
     const originals = new Map([...this.urls].map(([source, url]) => [url, source]));
-    const visit = (entry: unknown, key?: string): unknown => {
-      if (key === 'resources' && Array.isArray(entry))
-        return entry.map((resource) => {
-          const copy = visit(resource) as { data?: unknown };
-          if (typeof copy?.data !== 'string') return copy;
-          try {
-            return { ...copy, data: JSON.stringify(visit(JSON.parse(copy.data))) };
-          } catch {
-            return copy;
-          }
-        });
-      if (typeof entry === 'string') return originals.get(entry) ?? entry;
-      if (Array.isArray(entry)) return entry.map((child) => visit(child));
-      if (entry && typeof entry === 'object')
-        return Object.fromEntries(
-          Object.entries(entry).map(([name, child]) => [name, visit(child, name)]),
-        );
-      return entry;
-    };
-    return visit(value) as T;
+    return mapNativeImageSources(
+      structuredClone(value),
+      (source) => originals.get(source) ?? source,
+    );
   }
   async add(images: readonly OfflineBundleImage[], bytes: ReadonlyMap<string, Uint8Array>) {
     this.assertAllowed();

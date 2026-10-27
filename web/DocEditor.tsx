@@ -2,6 +2,7 @@ import { SaveStatus } from './SaveStatus.tsx';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import {
   installDocFormulas,
+  FormulaSaveError,
   type DocFormula,
   type DocFormulaController,
   type DocFormulaSelection,
@@ -12,12 +13,13 @@ import {
 import {
   FormulaDialog,
   FormulaResultView,
+  FormulaReadout,
   formulaRequest,
   formulaPaperColors,
+  type FormulaTransport,
 } from './DocFormulas.tsx';
 import { documentPath } from './documentAccess.ts';
 import type { OfflineSession } from './offline/OfflineSession.ts';
-import { requestFormula } from '../src/shared/formulaRequest.ts';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
 import { editorTheme, bindEditorTheme, installCanvasColors } from '../src/ui/editorTheme.ts';
@@ -89,19 +91,28 @@ export function DocEditor({
   name: string;
   spaceId?: string;
   saveStatusTarget: HTMLElement | null;
-  onDirty: (dirty: boolean) => void;
+  onDirty: (dirty: boolean, retained?: boolean) => void;
   registerGuestEditor?: RegisterGuestEditor;
   onConnectionState?: (state: ConnectionState | null) => void;
   localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
   const formulas = useRef<DocFormulaController | null>(null);
+  const formulaTransport = useRef<FormulaTransport | undefined>(undefined);
   const [formulaStates, setFormulaStates] = useState<FormulaState[]>([]);
   const [formulaError, setFormulaError] = useState('');
   const [formulaEdit, setFormulaEdit] = useState<{
     formula?: DocFormula;
     selection?: DocFormulaSelection;
   } | null>(null);
+  const formulaDraftOpen = useRef(false);
+  const formulaDraftChanged = useRef<(() => void) | undefined>(undefined);
+  const [formulaOnline, setFormulaOnline] = useState(false);
+  const editFormula = (value: typeof formulaEdit) => {
+    formulaDraftOpen.current = Boolean(value);
+    setFormulaEdit(value);
+    formulaDraftChanged.current?.();
+  };
   const canEditFormulas = useRef(false);
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
@@ -120,23 +131,31 @@ export function DocEditor({
     let disposed = false;
     let offlineSession: OfflineSession | undefined;
     let initialized = false;
+    let captureReady = false;
     const room = `${spaceId ?? ''}/${id}`;
     if (lastRoom.current !== room) syncNotice.current = undefined;
     lastRoom.current = room;
     onConnectionState?.('reconnecting');
+    let lastConnection: ConnectionState = 'reconnecting';
     const publishConnection = (state: ConnectionState) => {
-      if (!disposed) onConnectionState?.(state);
+      if (disposed) return;
+      setFormulaOnline(state === 'online');
+      if (state !== 'online' && lastConnection === 'online') formulas.current?.clear();
+      else if (state === 'online' && lastConnection !== 'online') void formulas.current?.refresh();
+      lastConnection = state;
+      onConnectionState?.(state);
     };
     const loading = new AbortController();
     let stopPresence: (() => void) | undefined;
     let formulaInterval: ReturnType<typeof setInterval> | undefined;
     let stopFormulaVisibility: (() => void) | undefined;
     setFormulaStates([]);
-    setFormulaEdit(null);
+    editFormula(null);
     setFormulaError('');
     setPeople([]);
     let uploads = 0;
     let insertions = 0;
+    let composing = false;
     let uploaded = 0;
     let disposeEditor: (() => void) | undefined;
     let save: ReturnType<typeof watchCollaboration> | undefined;
@@ -144,27 +163,63 @@ export function DocEditor({
     const publish = (state: SaveState) => {
       lastState = state;
       if (disposed) return;
-      const busy = uploads > 0 || insertions > 0;
+      const busy = uploads > 0 || insertions > 0 || composing || formulaDraftOpen.current;
       const dirty = busy || state.dirty;
       if (dirty && initialized) syncNotice.current = undefined;
-      onDirty(dirty);
+      onDirty(dirty, Boolean(state.retained));
       setStatus({
         ...state,
         ...(busy ? { local: undefined } : {}),
         dirty,
         failed: state.failed || (initialized && Boolean(syncNotice.current)),
-        message: busy
-          ? 'Inserting image — keep this tab open.'
-          : state.failed
-            ? state.message
-            : ((initialized ? syncNotice.current : undefined) ?? state.message),
+        message: formulaDraftOpen.current
+          ? 'Editing formula — changes not saved yet.'
+          : composing
+            ? 'Editing text — changes not saved yet.'
+            : busy
+              ? 'Inserting image — keep this tab open.'
+              : state.failed
+                ? state.message
+                : ((initialized ? syncNotice.current : undefined) ?? state.message),
       });
     };
+    formulaDraftChanged.current = () => publish(lastState);
+    const editorElement = container.current;
+    const compositionStart = () => {
+      composing = true;
+      publish(lastState);
+    };
+    const compositionEnd = () => {
+      // Let the native composition-end handler capture its edit first.
+      queueMicrotask(() => {
+        composing = false;
+        publish(lastState);
+      });
+    };
+    editorElement?.addEventListener('compositionstart', compositionStart, true);
+    editorElement?.addEventListener('compositionend', compositionEnd, true);
     publish(lastState);
     void (async () => {
       const data = await prepareEditor(id, spaceId, () => !disposed, localAccountId);
       offlineSession = data.offline;
-      if (disposed) return;
+      if (disposed) {
+        offlineSession?.dispose();
+        return;
+      }
+      if (data.offline) {
+        const verify = () => {
+          data.offline!.verify();
+          if (data.offline!.enabled && !data.offline!.online)
+            throw new FormulaSaveError('unavailable');
+        };
+        formulaTransport.current = {
+          verify,
+          fetch: (url, init) => {
+            verify();
+            return data.offline!.fetch(url, init);
+          },
+        };
+      } else formulaTransport.current = undefined;
       const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
       let drawingReady!: () => void;
       const drawingsRendered = new Promise<void>((resolve) => {
@@ -334,7 +389,7 @@ export function DocEditor({
       const readonly = async () => {
         nativePermissions.readonly();
         canEditFormulas.current = false;
-        setFormulaEdit(null);
+        editFormula(null);
         formulas.current?.clear();
         setEditable(false);
         // Local UI state only: changing the shared document's permission rules
@@ -353,6 +408,8 @@ export function DocEditor({
         signal: loading.signal,
         isCurrent: () => !disposed,
         offline: data.offline,
+        canRefresh: () =>
+          uploads === 0 && insertions === 0 && !composing && !formulaDraftOpen.current,
         lock: () => {
           formulas.current?.clear();
           disposeEditor?.();
@@ -362,7 +419,7 @@ export function DocEditor({
             dirty: false,
             failed: true,
             local: 'attention',
-            message: 'You signed out or changed accounts. Reopen Spinel to continue.',
+            message: 'Offline access changed on this device. Reopen the document to continue.',
           });
         },
         initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
@@ -372,19 +429,23 @@ export function DocEditor({
             failed: false,
             message: 'Changes not saved yet — keep this tab open.',
           }),
-        reload: () => {
+        reload: (_reason, clean) => {
           if (disposed) return;
           initialized = false;
-          syncNotice.current =
-            'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
+          syncNotice.current = clean
+            ? undefined
+            : 'The document was reloaded after a synchronization problem. Edits the server did not accept were discarded.';
           publish({
             dirty: false,
-            failed: true,
-            message: 'Reloading after a synchronization problem…',
+            failed: !clean,
+            message: clean
+              ? 'Loading the current saved document…'
+              : 'Reloading after a synchronization problem…',
           });
           reload((generation) => generation + 1);
         },
       });
+      captureReady = true;
       const document = univerAPI.getActiveDocument();
       if (!document) throw new Error('Could not load this document.');
       await editorReady(univerAPI);
@@ -401,21 +462,18 @@ export function DocEditor({
         evaluate: (definition, signal) => {
           if (data.offline?.enabled && !data.offline.online)
             return Promise.resolve({ ok: false as const, reason: 'unavailable' as const });
-          return data.offline
-            ? requestFormula<FormulaResult>(
-                `${documentPath(id, spaceId)}/formulas/evaluate`,
-                {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ definition }),
-                  signal,
-                },
-                data.offline.fetch.bind(data.offline),
-              )
-            : formulaRequest<FormulaResult>(id, 'evaluate', { definition }, signal, spaceId);
+          return formulaRequest<FormulaResult>(
+            id,
+            'evaluate',
+            { definition },
+            signal,
+            spaceId,
+            undefined,
+            formulaTransport.current,
+          );
         },
         onActivate: (formula) => {
-          if (canEditFormulas.current) setFormulaEdit({ formula });
+          if (canEditFormulas.current) editFormula({ formula });
         },
         onChange: (states) => {
           if (!disposed) setFormulaStates([...states]);
@@ -451,6 +509,13 @@ export function DocEditor({
       save = watchCollaboration(univer, publish, readonly, publishConnection);
       controller.current = save;
     })().catch((error) => {
+      // Failed checkpoint/SDK initialization must not leave a writable canvas
+      // without native capture. A bound client may already own pending input.
+      if (!captureReady) {
+        disposeEditor?.();
+        disposeEditor = undefined;
+        offlineSession?.dispose();
+      }
       publishConnection('offline');
       if (!disposed)
         publish({
@@ -464,12 +529,16 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
+      formulaDraftChanged.current = undefined;
+      editorElement?.removeEventListener('compositionstart', compositionStart, true);
+      editorElement?.removeEventListener('compositionend', compositionEnd, true);
       registerGuestEditor?.(null);
       canEditFormulas.current = false;
       clearInterval(formulaInterval);
       stopFormulaVisibility?.();
       formulas.current?.dispose();
       formulas.current = null;
+      formulaTransport.current = undefined;
       loading.abort();
       stopPresence?.();
       save?.dispose();
@@ -508,7 +577,7 @@ export function DocEditor({
                   try {
                     if (!formulas.current) throw new Error('Wait for the document to load.');
                     setFormulaError('');
-                    setFormulaEdit({ selection: formulas.current.selection() });
+                    editFormula({ selection: formulas.current.selection() });
                   } catch (cause) {
                     setFormulaError(
                       cause instanceof Error
@@ -534,7 +603,7 @@ export function DocEditor({
                             <button
                               onClick={() => {
                                 close();
-                                setFormulaEdit({ formula });
+                                editFormula({ formula });
                               }}
                             >
                               {formula.definition.expression}
@@ -557,13 +626,16 @@ export function DocEditor({
           }
         />
       )}
+      {localAccountId && <FormulaReadout states={formulaStates} target={chrome?.toolsTarget} />}
       {formulaEdit && editable && (
         <FormulaDialog
           id={id}
           spaceId={spaceId}
           initial={formulaEdit.formula}
+          transport={formulaTransport.current}
+          remoteAvailable={formulaOnline}
           onClose={() => {
-            setFormulaEdit(null);
+            editFormula(null);
             // Wait for dialog cleanup before returning keyboard input to the native document.
             requestAnimationFrame(() => formulas.current?.focus());
           }}

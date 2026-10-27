@@ -110,7 +110,7 @@ export async function downloadForOffline(
   await prepareShell();
   verifyCurrent();
   try {
-    return await store.saveDownload(bundle, bytes);
+    return await store.saveDownload(bundle, bytes, verifyCurrent);
   } catch (error) {
     if (error instanceof DOMException && error.name === 'QuotaExceededError')
       throw new DownloadError('This device is out of space for offline documents.');

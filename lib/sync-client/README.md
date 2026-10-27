@@ -164,17 +164,33 @@ cross-tab ownership remain the host's responsibility.
 
 ### Restoring an offline queue
 
-Open the visible unit from `checkpoint.snapshot`, then pass the checkpoint,
+Call `validateRecoverySnapshot(checkpoint)` and choose
+`checkpoint.recoverySnapshot ?? checkpoint.snapshot` for the visible unit.
+Before creating any visible native unit, call `validateNativeSnapshot(snapshot, kind)`
+to bound its bytes and compact geometry before the SDK allocates a model.
+Pass the checkpoint,
 its `revision`, and `preservePendingOnFailure: true` plus
 `requireUnchangedResume: true` to `createNativeSyncClient`. The adapter validates
 identity and queue budgets, creates the canonical confirmed replica, and applies
 the saved inflight/buffer mutations once before capture is installed. Never
-pre-apply those mutations in the host. Invalid checkpoints fail closed.
+pre-apply those mutations in the host. A complete recovery snapshot already
+contains the optimistic edits, so the adapter skips queue application for it.
+The confirmed replica always starts from `checkpoint.snapshot`. Invalid
+checkpoints fail closed.
 
 The preserve policy retains a coherent base and every pending group on refusal,
 persists a `failure` marker and stops capture/transport. If an incoming native
 application partially fails, recovery uses the checkpoint from before that
-frame. A restored failure is attention state and never replays automatically.
+frame. A local refusal can happen after a supported native edit has applied but
+before its queue admission, such as an edit larger than a wire envelope. In
+that case the same checkpoint write retains a canonical, bounded complete
+`recoverySnapshot` and the failure marker. If capturing it fails,
+`checkpoint.recoveryMissing` and `state.recoveryMissing` remain true and
+`state.localPersistence` stays `failed`, even when the marker itself was saved.
+Only the original live renderer can retry that capture; a restarted editor
+cannot claim that the missing edit was recovered. The host must keep its
+unsaved-change warning active while recovery is missing. A restored failure is
+attention state and never replays automatically.
 The host owns its recovery UI; this does not provide a conflict-copy operation.
 
 An unchanged-resume policy refuses any advanced pending base, including a

@@ -1,5 +1,6 @@
 import {
   offlineAccountRead,
+  claimOnlineAccount,
   offlinePreparation,
   openOfflineStore,
   preparedAccount,
@@ -62,10 +63,10 @@ async function hasDatabase(accountId: string) {
  * local data is never opened in its place.
  */
 export async function claimDevice(user: OfflineUser & { isAdmin: boolean }) {
-  if (preparedAccount() !== user.id) setPreparedAccount(null);
-  if (user.isAdmin) return;
   let scope: OfflinePreparation;
   try {
+    claimOnlineAccount(user.id);
+    if (user.isAdmin) return;
     // Startup may outlive its timeout or another tab's sign-out. Capture the
     // same persisted fence as downloads before any database work can wait.
     scope = offlinePreparation(user.id, () => true);

@@ -1,4 +1,9 @@
-import { createNativeSyncClient, hashTouched, nativeSnapshot } from '@spinel/sync-client';
+import {
+  createNativeSyncClient,
+  hashTouched,
+  nativeSnapshot,
+  validateNativeSnapshot,
+} from '@spinel/sync-client';
 import type { ClientState, ClientFailure, OutgoingFrame, Touched } from '@spinel/sync-client';
 import { ICommandService, UniverInstanceType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData, Univer } from '@univerjs/core';
@@ -29,7 +34,8 @@ interface Options {
   isCurrent(): boolean;
   initializeAccess?(): void | Promise<void>;
   onInitialPending?(): void;
-  reload(reason: ClientFailure): void;
+  canRefresh?(): boolean;
+  reload(reason: ClientFailure, clean?: boolean): void;
   offline?: OfflineSession;
   lock?(): void;
 }
@@ -41,6 +47,7 @@ const closed = () => new DOMException('The editor was closed.', 'AbortError');
 /** Load the exact durable base before creating the native capture/confirmed-state pair. */
 export async function loadSpinelDocument(options: Options) {
   const { univer, unitId, itemId, spaceId, kind, signal, isCurrent } = options;
+  const current = () => isCurrent() && !signal.aborted && (options.offline?.current ?? true);
   const path = documentSyncPath(itemId, spaceId);
   const local = options.offline?.initial();
   const response = local
@@ -52,7 +59,7 @@ export async function loadSpinelDocument(options: Options) {
           signal: AbortSignal.any([signal, AbortSignal.timeout(15_000)]),
         },
       );
-  if (!isCurrent() || signal.aborted) throw closed();
+  if (!current()) throw closed();
   if (response && [401, 403, 404].includes(response.status)) revokeGuestView();
   if (response && !response.ok)
     throw new Error('Could not load this document. Reload to try again.');
@@ -62,7 +69,7 @@ export async function loadSpinelDocument(options: Options) {
     revision: number;
     snapshot: IWorkbookData | IDocumentData;
   };
-  if (!isCurrent() || signal.aborted) throw closed();
+  if (!current()) throw closed();
   if (
     data.version !== 1 ||
     data.unitId !== unitId ||
@@ -72,6 +79,9 @@ export async function loadSpinelDocument(options: Options) {
     data.snapshot.id !== unitId
   )
     throw new Error('This document needs to be reloaded.');
+  // Persisted storage is not trusted native input. Check compact geometry
+  // before the visible SDK can allocate its row/column/merge caches.
+  validateNativeSnapshot(data.snapshot, kind);
   if (kind === 'sheet')
     univer.createUnit(
       UniverInstanceType.UNIVER_SHEET,
@@ -87,7 +97,7 @@ export async function loadSpinelDocument(options: Options) {
   // Install viewer permissions in the same turn as unit creation, before the
   // canvas can take input or native capture can record a local mutation.
   await options.initializeAccess?.();
-  if (!isCurrent() || signal.aborted) throw closed();
+  if (!current()) throw closed();
   const binding = bind(options, data.snapshot, data.revision);
   bindings.set(univer, binding);
 }
@@ -121,6 +131,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   let requestId: string | undefined;
   let retryDelay = 250;
   let denialMessage = '';
+  let refreshingClean = false;
+  let clearMessages = () => {};
   let state: ClientState = {
     revision,
     pending: false,
@@ -173,19 +185,25 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
                 : 'saved';
       watcher.publish({
         local,
-        dirty: state.localPersistence === 'saving' || state.localPersistence === 'failed',
+        retained: state.pending || Boolean(state.recoveryMissing),
+        dirty:
+          Boolean(state.recoveryMissing) ||
+          state.localPersistence === 'saving' ||
+          state.localPersistence === 'failed',
         failed: attention || local === 'failed',
-        message: attention
-          ? `Needs attention. ${options.offline.problem || denialMessage || 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.'}`
-          : access === 'viewer'
-            ? 'View only on this device.'
-            : local === 'failed'
-              ? 'Changes could not be saved on this device. Keep this tab open and retry saving.'
-              : local === 'saving'
-                ? 'Saving on this device…'
-                : local === 'synced'
-                  ? 'Synced. All changes are saved on the server and this device.'
-                  : 'Saved on this device — waiting to sync.',
+        message: state.recoveryMissing
+          ? 'The latest visible changes could not be saved on this device. Keep this tab open.'
+          : attention
+            ? `Needs attention. ${options.offline.problem || denialMessage || 'The live document changed or an edit could not be synchronized. Your saved device copy is retained.'}`
+            : access === 'viewer'
+              ? 'View only on this device.'
+              : local === 'failed'
+                ? 'Changes could not be saved on this device. Keep this tab open and retry saving.'
+                : local === 'saving'
+                  ? 'Saving on this device…'
+                  : local === 'synced'
+                    ? 'Synced. All changes are saved on the server and this device.'
+                    : 'Saved on this device — waiting to sync.',
       });
       return;
     }
@@ -306,6 +324,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
 
   function endConnection() {
     generation++;
+    clearMessages();
     connecting = false;
     roomReady = false;
     clearTimeout(readinessTimer);
@@ -338,8 +357,52 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
     schedule();
   }
 
+  const cleanDownloaded = () =>
+    Boolean(options.offline?.enabled) &&
+    !state.pending &&
+    !state.resyncing &&
+    !state.recoveryMissing &&
+    !options.offline!.pending &&
+    options.canRefresh?.() !== false;
+
+  /** A clean lifecycle change must not manufacture a retained edit checkpoint. */
+  async function transitionClean(action: 'refresh' | 'remove') {
+    if (!cleanDownloaded()) return false;
+    refreshingClean = true;
+    endConnection();
+    const verifyClean = () => {
+      if (!active() || !cleanDownloaded()) throw closed();
+    };
+    try {
+      await watcher?.readonly();
+      verifyClean();
+      // This also drains an acknowledgement whose queue cleanup is still
+      // being committed. Recheck the host and durable queue at each boundary.
+      await client.persistNow();
+      verifyClean();
+      if (action === 'remove') await options.offline!.removeClean(verifyClean);
+      else await options.offline!.refreshClean(verifyClean);
+      if (!active()) return true;
+      dispose();
+      if (action === 'remove') options.lock?.();
+      else options.reload('stale', true);
+    } catch {
+      if (!active()) return true;
+      options.offline!.stopRemote(
+        action === 'remove'
+          ? 'Access changed. This device copy could not be removed. Reopen the document when connected.'
+          : 'This saved copy needs a fresh download. Reopen the document when connected.',
+      );
+      // Native input may have completed while it was being frozen. Preserve
+      // that work; a network or disk failure with no edits only needs a notice.
+      if (!cleanDownloaded()) client.refuse('stale');
+      report();
+    }
+    return true;
+  }
+
   async function checkAccess() {
-    if (!active() || checking || denied || !navigator.onLine) return;
+    if (!active() || checking || denied || refreshingClean || !navigator.onLine) return;
     checking = true;
     try {
       const response = await request(
@@ -355,8 +418,11 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
         },
       );
       const data = response.ok ? await response.json() : undefined;
-      if (!active()) return;
+      if (!active() || refreshingClean) return;
       const lost = [401, 403, 404, 409].includes(response.status);
+      const accountChanged =
+        options.offline?.enabled &&
+        (response.status === 409 || (data && data.user?.id !== options.offline.accountId));
       const changed =
         data &&
         (options.offline?.enabled
@@ -377,10 +443,13 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
           ? 'A version is being restored or has been restored. Copy unsaved changes, then reload to continue.'
           : 'Access changed. Copy unsaved changes before reloading.';
         if (options.offline?.enabled) {
+          // The expected-account check precedes document authorization on the
+          // server. A mismatch says nothing about the prior account's access.
+          if (!accountChanged && (await transitionClean(lost ? 'remove' : 'refresh'))) return;
           options.offline.stopRemote(
             'Access or the document version changed. Your saved device copy is retained.',
           );
-          client.refuse('stale');
+          if (!cleanDownloaded()) client.refuse('stale');
         }
         report();
         await watcher?.readonly();
@@ -403,6 +472,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       !active() ||
       denied ||
       state.resyncing ||
+      refreshingClean ||
       options.offline?.problem ||
       connecting ||
       socket ||
@@ -449,13 +519,21 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
         client.setConnected(true);
         report();
       };
-      let messages = Promise.resolve();
-      const receiveMessage = async (event: MessageEvent) => {
+      const messages: string[] = [];
+      let messageBytes = 0;
+      let readingMessages = false;
+      const imageAbort = new AbortController();
+      clearMessages = () => {
+        messages.length = 0;
+        messageBytes = 0;
+        imageAbort.abort();
+      };
+      const receiveMessage = async (data: unknown) => {
         if (!same()) return;
         try {
-          if (typeof event.data !== 'string' || event.data.length > 20 * 1024 * 1024)
+          if (typeof data !== 'string' || data.length > 20 * 1024 * 1024)
             throw new Error('Invalid room message');
-          const frame = JSON.parse(event.data);
+          const frame = JSON.parse(data);
           if (!frame || typeof frame !== 'object' || Array.isArray(frame))
             throw new Error('Invalid room message');
           if (frame.type === 'presence') {
@@ -472,8 +550,29 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
           if (frame.type === 'verified') return;
           if (!['resume', 'edit', 'ack', 'resync'].includes(frame.type))
             throw new Error('Invalid room message');
+          // A clean cached base can outlive the server's replay window. Freeze
+          // native input and drain disk writes before replacing it; do not turn
+          // this read-only refresh into a durable conflict marker.
+          if (
+            frame.type === 'resync' &&
+            frame.reason === 'stale' &&
+            !state.pending &&
+            !state.resyncing &&
+            !state.recoveryMissing &&
+            options.offline?.enabled &&
+            !options.offline.pending
+          ) {
+            // Native cell input, IME and image insertion can be dirty before
+            // the sync capture hook emits a mutation. Keep that editor intact.
+            if (options.canRefresh?.() === false) {
+              reconnect();
+              return;
+            }
+            await transitionClean('refresh');
+            return;
+          }
           if (options.offline?.enabled) {
-            await options.offline.prepareImages(frame);
+            await options.offline.prepareImages(frame, imageAbort.signal);
             if (!same()) return;
           }
           if (frame.type === 'resume') {
@@ -505,8 +604,36 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
         }
       };
       opened.onmessage = (event) => {
-        if (options.offline?.enabled) messages = messages.then(() => receiveMessage(event));
-        else void receiveMessage(event);
+        if (!same()) return;
+        if (!options.offline?.enabled) {
+          void receiveMessage(event.data);
+          return;
+        }
+        // Bound before retaining transport data: native inbox limits run only
+        // after image preparation, which can await a slow network response.
+        if (
+          typeof event.data !== 'string' ||
+          messages.length >= 128 ||
+          messageBytes + event.data.length * 2 > 20 * 1024 * 1024
+        ) {
+          reconnect();
+          return;
+        }
+        messages.push(event.data);
+        messageBytes += event.data.length * 2;
+        if (readingMessages) return;
+        readingMessages = true;
+        void (async () => {
+          try {
+            while (same() && messages.length) {
+              const message = messages.shift()!;
+              messageBytes -= message.length * 2;
+              await receiveMessage(message);
+            }
+          } finally {
+            readingMessages = false;
+          }
+        })();
       };
       opened.onerror = () => opened.close();
       opened.onclose = () => {
@@ -542,7 +669,8 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       !options.offline ||
       detail?.accountId !== options.offline.accountId ||
       detail?.itemId !== itemId ||
-      !active()
+      !active() ||
+      refreshingClean
     )
       return;
     void options.offline

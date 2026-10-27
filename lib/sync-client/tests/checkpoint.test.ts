@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from 'vitest';
 import { ICommandService, JSONX, TextX } from '@univerjs/core';
 import type { Mutation } from '@spinel/sync-transform';
-import { createNativeSyncClient, NativeReplica } from '../index.ts';
+import { createNativeSyncClient, NativeReplica, validateRecoverySnapshot } from '../index.ts';
 import type {
   ClientCheckpoint,
   ClientFailure,
@@ -22,7 +22,8 @@ function restore(
   kind: DocumentKind = 'sheet',
   overrides: Partial<NativeSyncOptions> = {},
 ) {
-  const visible = new NativeReplica(checkpoint.snapshot, kind);
+  validateRecoverySnapshot(checkpoint);
+  const visible = new NativeReplica(checkpoint.recoverySnapshot ?? checkpoint.snapshot, kind);
   cleanup.push(() => visible.dispose());
   const outgoing: OutgoingFrame[] = [];
   const failures: ClientFailure[] = [];
@@ -67,9 +68,9 @@ function restore(
   };
 }
 
-function insertText(): Mutation {
+function insertText(value = 'Offline '): Mutation {
   const text = new TextX();
-  text.push({ t: 'i' as never, len: 8, body: { dataStream: 'Offline ' } });
+  text.push({ t: 'i' as never, len: value.length, body: { dataStream: value } });
   return {
     id: 'doc.mutation.rich-text-editing',
     params: {
@@ -155,6 +156,39 @@ test('a lost acknowledgement retains the original queue as attention after resta
   expect(attention.submits()).toEqual([]);
   expect(attention.sync.state).toMatchObject({ resyncing: true, pending: true, failure: 'stale' });
   expect(comparable(attention.visible.snapshot())).toEqual(comparable(source.live.snapshot()));
+});
+
+test('a restored failure blocks replay even after the host disables its preservation policy', async () => {
+  const f = fixture();
+  cleanup.push(() => f.close());
+  const source = f.client();
+  source.resume();
+  source.edit([write({ v: 'Retained original' })]);
+  source.sync.retry();
+  await turns();
+  const checkpoint = { ...source.sync.checkpoint(), failure: 'capacity' as const };
+  expect(checkpoint.sent).not.toBeNull();
+  const reopened = restore(checkpoint, 'sheet', {
+    preservePendingOnFailure: false,
+    requireUnchangedResume: false,
+  });
+  reopened.resume();
+  reopened.sync.retry();
+  reopened.sync.receive({
+    type: 'ack',
+    mutationId: checkpoint.sent!.mutationId,
+    duplicate: false,
+    revision: 2,
+    mutations: checkpoint.sent!.mutations,
+    touched: { kind: 'sheet', cells: [{ sheetId: 'one', row: 0, column: 0 }] },
+    hash: 'a'.repeat(64),
+  });
+  await turns();
+  expect(reopened.outgoing).toEqual([]);
+  expect(reopened.failures).toEqual(['capacity']);
+  expect(reopened.sync.checkpoint()).toEqual(checkpoint);
+  expect(reopened.sync.accepting).toBe(false);
+  expect(f.storage.history).toEqual([]);
 });
 
 test('a peer committing after equal resume but before initial send stops replay', async () => {
@@ -256,6 +290,194 @@ test('failed local persistence is visible and can retry while disconnected', asy
   });
   expect(saved.at(-1)!.buffer.flat()).toEqual([write({ v: 'Disk first' })]);
   expect(source.submits()).toEqual([]);
+});
+
+test.each(['sheet', 'doc'] as const)(
+  '%s native post-apply wire refusal retains its complete visible state through two restores',
+  async (kind) => {
+    const f = fixture(kind === 'sheet' ? book() : doc(), kind);
+    cleanup.push(() => f.close());
+    const snapshot = f.storage.unit.snapshot;
+    const initial: ClientCheckpoint = {
+      version: 1,
+      unitId: snapshot.id,
+      revision: 1,
+      snapshot,
+      sent: null,
+      inflight: [],
+      buffer: [],
+    };
+    const source = restore(initial, kind);
+    const confirmed = source.sync.checkpoint().snapshot;
+    const commands = source.visible.univer.__getInjector().get(ICommandService);
+    // An existing buffered operation must not be applied again on top of the
+    // complete recovery snapshot. The Doc insertion makes duplication visible.
+    const pending = kind === 'sheet' ? write({ v: 'Earlier edit' }, 1) : insertText();
+    expect(commands.syncExecuteCommand(pending.id, pending.params)).toBeTruthy();
+    const value = 'x'.repeat(70 * 1024);
+    const oversized = kind === 'sheet' ? write({ v: value }) : insertText(value);
+    expect(commands.syncExecuteCommand(oversized.id, oversized.params)).toBeTruthy();
+    await turns();
+    const intended = comparable(source.visible.snapshot());
+    const persisted = source.saved.at(-1)!;
+    expect(source.sync.state).toMatchObject({
+      pending: true,
+      resyncing: true,
+      failure: 'capacity',
+      localPersistence: 'saved',
+    });
+    expect(source.sync.state.recoveryMissing).toBeUndefined();
+    expect(persisted).toMatchObject({ revision: 1, failure: 'capacity', sent: null });
+    expect(persisted.buffer.flat()).toHaveLength(1);
+    expect(persisted.snapshot).toEqual(confirmed);
+    expect(comparable(persisted.recoverySnapshot!)).toEqual(intended);
+    if (kind === 'sheet')
+      expect(
+        (persisted.recoverySnapshot as ReturnType<typeof book>).sheets.one.cellData![0][0].v,
+      ).toBe(value);
+    else
+      expect((persisted.recoverySnapshot as ReturnType<typeof doc>).body!.dataStream).toBe(
+        value + 'Offline Hello\r\n',
+      );
+    for (let checkpoint = persisted, count = 0; count < 2; count++) {
+      const reopened = restore(checkpoint, kind);
+      expect(comparable(reopened.visible.snapshot())).toEqual(intended);
+      expect(reopened.sync.state.pendingMutations).toBe(1);
+      reopened.resume();
+      reopened.sync.retry();
+      await reopened.sync.persistNow();
+      checkpoint = reopened.saved.at(-1)!;
+      expect(checkpoint).toEqual(persisted);
+      expect(reopened.submits()).toEqual([]);
+      expect(reopened.failures).toEqual(['capacity']);
+    }
+    expect(source.submits()).toEqual([]);
+  },
+);
+
+test('a missing recovery capture stays undurable after its marker is written or restored', async () => {
+  const f = fixture();
+  cleanup.push(() => f.close());
+  let failCapture = true;
+  const saved: ClientCheckpoint[] = [];
+  const source = f.client({
+    preservePendingOnFailure: true,
+    visibleSnapshot: () => {
+      if (failCapture) throw new Error('Snapshot unavailable');
+      return source.live.snapshot();
+    },
+    persist: async (checkpoint) => {
+      saved.push(structuredClone(checkpoint));
+    },
+  });
+  const value = 'x'.repeat(70 * 1024);
+  source.edit([write({ v: value })]);
+  await turns();
+  const missing = saved.at(-1)!;
+  expect(missing).toMatchObject({ failure: 'capacity', recoveryMissing: true, buffer: [] });
+  expect(missing).not.toHaveProperty('recoverySnapshot');
+  expect(source.sync.state).toMatchObject({
+    pending: true,
+    recoveryMissing: true,
+    localPersistence: 'failed',
+  });
+  const reopened = restore(missing);
+  reopened.sync.retry();
+  await expect(reopened.sync.persistNow()).rejects.toThrow();
+  expect(reopened.sync.state).toMatchObject({ recoveryMissing: true, localPersistence: 'failed' });
+  expect(reopened.sync.checkpoint()).toEqual(missing);
+  // Only the original live renderer still has the latest value to capture.
+  failCapture = false;
+  source.sync.retry();
+  await turns();
+  expect(source.sync.state.recoveryMissing).toBeUndefined();
+  expect(source.sync.state.localPersistence).toBe('saved');
+  const recovered = saved.at(-1)!;
+  expect((recovered.recoverySnapshot as ReturnType<typeof book>).sheets.one.cellData![0][0].v).toBe(
+    value,
+  );
+  expect(source.submits()).toEqual([]);
+});
+
+test.each([
+  [
+    'without a failure marker',
+    (checkpoint: ClientCheckpoint) => {
+      delete checkpoint.failure;
+    },
+  ],
+  [
+    'wrong unit',
+    (checkpoint: ClientCheckpoint) => {
+      checkpoint.recoverySnapshot!.id = 'another';
+    },
+  ],
+  [
+    'wrong native kind',
+    (checkpoint: ClientCheckpoint) => {
+      checkpoint.recoverySnapshot = { ...doc(), id: 'book' };
+    },
+  ],
+  [
+    'invalid worksheet order',
+    (checkpoint: ClientCheckpoint) => {
+      (checkpoint.recoverySnapshot as ReturnType<typeof book>).sheetOrder = null as never;
+    },
+  ],
+  [
+    'missing and present recovery',
+    (checkpoint: ClientCheckpoint) => {
+      checkpoint.recoveryMissing = true;
+    },
+  ],
+  [
+    'oversize snapshot',
+    (checkpoint: ClientCheckpoint) => {
+      (checkpoint.recoverySnapshot as ReturnType<typeof book>).name = 'x'.repeat(10 * 1024 * 1024);
+    },
+  ],
+  [
+    'oversize compact geometry',
+    (checkpoint: ClientCheckpoint) => {
+      (checkpoint.recoverySnapshot as ReturnType<typeof book>).sheets.one.mergeData = [
+        { startRow: 0, endRow: 1000, startColumn: 0, endColumn: 1000 },
+      ];
+    },
+  ],
+] as const)(
+  'refuses recovery data %s before constructing a visible native unit',
+  (_name, damage) => {
+    const checkpoint: ClientCheckpoint = {
+      version: 1,
+      unitId: 'book',
+      revision: 1,
+      snapshot: book(),
+      sent: null,
+      inflight: [],
+      buffer: [],
+      failure: 'capacity',
+      recoverySnapshot: book(),
+    };
+    damage(checkpoint);
+    expect(() => validateRecoverySnapshot(checkpoint)).toThrow();
+    expect(() => restore(checkpoint)).toThrow();
+  },
+);
+
+test('refuses malformed Doc recovery body before native construction', () => {
+  const checkpoint: ClientCheckpoint = {
+    version: 1,
+    unitId: 'doc',
+    revision: 1,
+    snapshot: doc(),
+    sent: null,
+    inflight: [],
+    buffer: [],
+    failure: 'capacity',
+    recoverySnapshot: doc(),
+  };
+  (checkpoint.recoverySnapshot as ReturnType<typeof doc>).body!.dataStream = null as never;
+  expect(() => validateRecoverySnapshot(checkpoint)).toThrow();
 });
 
 test('failure after a native confirmed apply preserves the coherent pre-frame checkpoint', async () => {

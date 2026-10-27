@@ -47,6 +47,7 @@ export async function prepareEditor(
     const offline = new OfflineSession(localAccountId, id, spaceId, isCurrent);
     try {
       await offline.activate();
+      if (!isCurrent()) throw new DOMException('The editor was closed.', 'AbortError');
       if (!offline.bundle) throw new Error('This document is no longer on this device.');
       return {
         unitId: offline.bundle.unitId,
@@ -70,6 +71,7 @@ export async function prepareEditor(
   }
   try {
     await offline.activate();
+    if (!isCurrent()) throw new DOMException('The editor was closed.', 'AbortError');
     if (
       offline.bundle &&
       (offline.bundle.unitId !== live.unitId || offline.bundle.access !== live.access)

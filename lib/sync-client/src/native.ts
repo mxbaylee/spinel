@@ -23,6 +23,7 @@ import { UniverSheetsNumfmtPlugin } from '@univerjs/sheets-numfmt';
 import type { BaseCells, Mutation } from '@spinel/sync-transform';
 import { SyncClient } from './client.ts';
 import { captureNative } from './capture.ts';
+import { validateRecoverySnapshot } from './recovery.ts';
 import { byteBudget } from './hash.ts';
 import { admitNativeMutation, admitSnapshot } from './admission.ts';
 import { ClientError } from './types.ts';
@@ -162,6 +163,7 @@ export class NativeReplica implements SyncReplica {
 
 /** The host owns the visible unit, sockets, access policy and reload UI. */
 export function createNativeSyncClient(options: NativeSyncOptions): SyncClient {
+  if (options.checkpoint) validateRecoverySnapshot(options.checkpoint);
   const snapshot = options.checkpoint?.snapshot ?? options.snapshot;
   if (
     !snapshot ||
@@ -191,9 +193,9 @@ export function createNativeSyncClient(options: NativeSyncOptions): SyncClient {
       },
       visibleSnapshot: () => canonical(nativeSnapshot(options.univer, options.unitId)),
     });
-    // The host opened the confirmed snapshot. Restore optimistic edits once,
-    // before installing capture, with the same native geometry admission.
-    if (options.checkpoint) {
+    // The host opened either the confirmed base or a complete local recovery
+    // snapshot. Only the base needs its optimistic queue applied before capture.
+    if (options.checkpoint && !options.checkpoint.recoverySnapshot) {
       const restored = client.checkpoint();
       applyNative(options.univer, visible([...restored.inflight, ...restored.buffer.flat()]));
     }

@@ -265,9 +265,14 @@ test('offline account headers fence refresh, preparation and socket tickets befo
       undefined,
       bound,
     );
-    expect(switched.status).toBe(409);
+    const privateTransport = path.startsWith('/sync-api/');
+    // The native transport deliberately normalizes access failures, while the
+    // application refresh route reports the account mismatch explicitly.
+    expect(switched.status).toBe(privateTransport ? 403 : 409);
     expect(await switched.json()).toMatchObject({
-      error: 'The signed-in account changed. Reopen Spinel.',
+      error: privateTransport
+        ? 'This document is not available.'
+        : 'The signed-in account changed. Reopen Spinel.',
     });
   }
   const unrelated = f.auth.createUser('Other account without this item');
