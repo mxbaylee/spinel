@@ -625,9 +625,17 @@ export const Personalization: Story = {
     await userEvent.clear(input);
     await userEvent.type(input, 'Autumn planning');
     await userEvent.click(canvas.getByRole('button', { name: 'Save name' }));
-    await expect(
-      await canvas.findByRole('button', { name: 'Rename Autumn planning' }),
-    ).toBeVisible();
+    const rename = await canvas.findByRole('button', { name: 'Rename Autumn planning' });
+    await expect(rename).toBeVisible();
+    const pencil = rename.querySelector('svg')!.getBoundingClientRect();
+    const title = rename.querySelector('.editor-rename-text')!.getBoundingClientRect();
+    const button = rename.getBoundingClientRect();
+    // Font metrics vary across CI and local browsers; the pencil must remain
+    // fully visible beside the bounded title at every reviewed viewport.
+    await expect(title.width).toBeGreaterThan(0);
+    await expect(pencil.width).toBeGreaterThanOrEqual(16);
+    await expect(title.right).toBeLessThanOrEqual(pencil.left);
+    await expect(pencil.right).toBeLessThanOrEqual(button.right);
     await userEvent.click(canvas.getByRole('button', { name: 'Change appearance' }));
     await expect(body.getByRole('button', { name: 'Primary, soft' })).toHaveAttribute(
       'aria-pressed',

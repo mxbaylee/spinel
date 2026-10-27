@@ -273,7 +273,7 @@ export function EditorFrame({
                         setRenaming(true);
                       }}
                     >
-                      {name}
+                      <span className="editor-rename-text">{name}</span>
                       <ProfileIcon icon="lucide:pencil" size={16} />
                     </button>
                   ) : (
