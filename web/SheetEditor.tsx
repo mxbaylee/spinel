@@ -112,7 +112,9 @@ export function SheetEditor({
         failed: state.failed || (initialized && Boolean(syncNotice.current)),
         message: editing
           ? freezeAfterEditing
-            ? 'Your sign-in ended. Copy the unfinished cell text before signing in again.'
+            ? state.signInRequired
+              ? 'Your sign-in ended. Copy the unfinished cell text before signing in again.'
+              : 'Copy the unfinished cell text before recovering your offline changes.'
             : `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
           : state.failed
             ? state.message
@@ -390,6 +392,9 @@ export function SheetEditor({
         state={status}
         target={chrome?.saveTarget ?? saveStatusTarget}
         onRetry={() => controller.current?.retry()}
+        onRecover={() => controller.current?.recover()}
+        onExportRecovery={() => controller.current?.exportRecovery()}
+        onDiscardRecovery={() => controller.current?.discardRecovery()}
       />
       {!localAccountId && (
         <EditorTools

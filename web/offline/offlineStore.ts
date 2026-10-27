@@ -3,6 +3,7 @@ import { FILE_KINDS } from '../../src/shared/workspace.ts';
 import type { FileItem, SpaceFile } from '../../src/shared/workspace.ts';
 import { offlineScope } from './OfflineAccess.ts';
 import type { ClientCheckpoint } from '@spinel/sync-client';
+import type { OfflineRecoveryRequest } from '../../src/shared/offlineRecovery.ts';
 
 /**
  * Account-scoped IndexedDB storage for documents downloaded on this device
@@ -37,7 +38,11 @@ export type OfflineOutbox = {
   /** The native client's sole queue, including its immutable retry envelope. */
   checkpoint: ClientCheckpoint;
 };
-type StoredItem = OfflineDownload & { bundle: OfflineBundle; outbox?: OfflineOutbox };
+type StoredItem = OfflineDownload & {
+  bundle: OfflineBundle;
+  outbox?: OfflineOutbox;
+  recovery?: OfflineRecoveryRequest;
+};
 type StoredImage = { itemId: string; source: string; bytes: Uint8Array };
 
 export function hasOfflineEdits(outbox: OfflineOutbox | undefined) {
@@ -409,6 +414,7 @@ export class OfflineStore {
       bundle: item.bundle,
       bytes: new Map(images.map((image) => [image.source, image.bytes])),
       outbox: item.outbox,
+      recovery: item.recovery,
     };
   }
   /**
@@ -511,6 +517,8 @@ export class OfflineStore {
         item.bundle.revisionOffset !== scope.revisionOffset
       )
         throw new Error('This download changed. Keep this tab open to preserve your changes.');
+      if (item.recovery && JSON.stringify(item.outbox?.checkpoint) !== JSON.stringify(checkpoint))
+        throw new Error('This offline copy is already being recovered. Keep its original changes.');
       item.outbox = { version: 1, ...scope, checkpoint };
       if (imageFiles) {
         item.bundle.images = imageFiles.images;
@@ -533,6 +541,74 @@ export class OfflineStore {
     }
     await completion;
     verifyCurrent();
+  }
+  /** Fix retry identity, title and bytes before any request can publish a copy. */
+  async beginRecovery(
+    scope: Pick<OfflineOutbox, 'account' | 'item' | 'spaceId' | 'unitId' | 'revisionOffset'>,
+    checkpoint: ClientCheckpoint,
+    recovery: OfflineRecoveryRequest,
+    verifyCurrent: () => void,
+  ) {
+    verifyCurrent();
+    const transaction = this.database.transaction('items', 'readwrite');
+    const completion = done(transaction);
+    let result: OfflineRecoveryRequest;
+    try {
+      const items = transaction.objectStore('items');
+      const item = (await request(items.get(scope.item))) as StoredItem | undefined;
+      verifyCurrent();
+      this.verifyRecoveryScope(item, scope);
+      if (!hasOfflineEdits(item!.outbox) ||
+        JSON.stringify(item!.outbox!.checkpoint) !== JSON.stringify(checkpoint))
+        throw new Error('The saved offline changes changed. Retry saving before recovery.');
+      result = item!.recovery ?? recovery;
+      item!.recovery = result;
+      items.put(item);
+    } catch (error) {
+      try { transaction.abort(); } catch { /* The request may already have aborted. */ }
+      await completion.catch(() => {});
+      throw error;
+    }
+    await completion;
+    verifyCurrent();
+    return structuredClone(result!);
+  }
+  private verifyRecoveryScope(
+    item: StoredItem | undefined,
+    scope: Pick<OfflineOutbox, 'account' | 'item' | 'spaceId' | 'unitId' | 'revisionOffset'>,
+  ) {
+    if (scope.account !== this.accountId || !item ||
+      item.bundle.accountId !== scope.account || item.bundle.itemId !== scope.item ||
+      item.bundle.spaceId !== scope.spaceId || item.bundle.unitId !== scope.unitId ||
+      item.bundle.revisionOffset !== scope.revisionOffset)
+      throw new Error('This device copy changed before recovery could finish.');
+  }
+  /** Caller owns the frozen writer. Undefined recoveryId means explicit discard. */
+  async finishRecovery(
+    scope: Pick<OfflineOutbox, 'account' | 'item' | 'spaceId' | 'unitId' | 'revisionOffset'>,
+    recoveryId: string | undefined,
+    verifyCurrent: () => void,
+  ) {
+    verifyCurrent();
+    const transaction = this.database.transaction(['items', 'images'], 'readwrite');
+    const completion = done(transaction);
+    try {
+      const items = transaction.objectStore('items');
+      const item = (await request(items.get(scope.item))) as StoredItem | undefined;
+      verifyCurrent();
+      this.verifyRecoveryScope(item, scope);
+      if (recoveryId !== undefined && item!.recovery?.recoveryId !== recoveryId)
+        throw new Error('This offline recovery changed. Keep its saved work.');
+      items.delete(scope.item);
+      transaction.objectStore('images').delete(IDBKeyRange.bound([scope.item, ''], [scope.item, '\uffff']));
+    } catch (error) {
+      try { transaction.abort(); } catch { /* The request may already have aborted. */ }
+      await completion.catch(() => {});
+      throw error;
+    }
+    await completion;
+    verifyCurrent();
+    offlineChanged(this.accountId, scope.item);
   }
   async remove(itemId: string) {
     if (!navigator.locks)

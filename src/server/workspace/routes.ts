@@ -135,6 +135,31 @@ export function workspaceRoutes(
       .send(Buffer.from(image.data));
   });
   router.post(
+    '/offline-recovery',
+    admitTransfer,
+    express.json({ limit: PORTABLE_LIMIT + 4096, strict: true }),
+    async (request, response) => {
+      const transfer = transfers.get(response)!;
+      transfer.start();
+      try {
+        const user = owner(request);
+        if (request.headers['x-spinel-offline-account'] !== user)
+          throw new AuthError(409, 'The signed-in account changed. Reopen Spinel.');
+        const item = await files.recover(
+          user,
+          payload(request, ['recoveryId', 'filename', 'snapshot', 'possibleReplayCrash']),
+          () => {
+            if (owner(request) !== user || response.destroyed)
+              throw new AuthError(401, 'Sign in to continue.');
+          },
+        );
+        response.status(201).json({ item });
+      } finally {
+        transfer.finish();
+      }
+    },
+  );
+  router.post(
     '/import',
     admitTransfer,
     express.json({ limit: PORTABLE_LIMIT + 4096, strict: true }),
@@ -342,7 +367,7 @@ export function workspaceRoutes(
         error instanceof AuthError
           ? error.message
           : status === 413
-            ? request.path === '/import'
+            ? request.path === '/import' || request.path === '/offline-recovery'
               ? 'Univer files must be at most 20 MiB.'
               : request.path.endsWith('/images')
                 ? 'Choose an image no larger than 5 MiB.'

@@ -576,6 +576,9 @@ export function DocEditor({
         state={status}
         target={chrome?.saveTarget ?? saveStatusTarget}
         onRetry={() => controller.current?.retry()}
+        onRecover={() => controller.current?.recover()}
+        onExportRecovery={() => controller.current?.exportRecovery()}
+        onDiscardRecovery={() => controller.current?.discardRecovery()}
       />
       {!localAccountId && (
         <EditorTools

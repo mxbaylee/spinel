@@ -52,13 +52,19 @@ export default defineConfig({
         '**/pwa.spec.ts',
         '**/offline.spec.ts',
         '**/offline-editing.spec.ts',
+        '**/offline-recovery.spec.ts',
         '**/sync-client.spec.ts',
       ],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
     },
     {
       name: 'production',
-      testIgnore: ['**/pwa.spec.ts', '**/offline-editing.spec.ts', '**/sync-client.spec.ts'],
+      testIgnore: [
+        '**/pwa.spec.ts',
+        '**/offline-editing.spec.ts',
+        '**/offline-recovery.spec.ts',
+        '**/sync-client.spec.ts',
+      ],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' },
     },
     {
@@ -71,7 +77,11 @@ export default defineConfig({
       name: 'sync-production',
       // Offline editing needs both the production shell and the read-only
       // native snapshot observer already enabled in this browser partition.
-      testMatch: ['**/sync-client.spec.ts', '**/offline-editing.spec.ts'],
+      testMatch: [
+        '**/sync-client.spec.ts',
+        '**/offline-editing.spec.ts',
+        '**/offline-recovery.spec.ts',
+      ],
       grepInvert: /@sync-soak/,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3105' },
     },

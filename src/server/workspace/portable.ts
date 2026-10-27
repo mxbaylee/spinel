@@ -12,6 +12,7 @@ import { validatePortableLayout } from './portableValidation.ts';
 import { removeImportedSourceBindings } from '../formulas/import.ts';
 import { resolveDocument, validateDocumentCredentials } from './document-access.ts';
 import { mapArchiveFormulaSources } from './archive-formulas.ts';
+import { isUuid } from '@spinel/diagnostics';
 
 import { PORTABLE_LIMIT } from '../../shared/portable.ts';
 export { PORTABLE_LIMIT };
@@ -94,6 +95,18 @@ export class PortableFiles {
     this.collaboration = collaboration;
     this.docs = new DocumentStore(workspace);
     this.sheets = new SheetStore(workspace);
+    // A deleted/transferred copy must not make a lost-response retry create a
+    // second document. Retain its receipt until the original account is deleted.
+    workspace.auth.database.exec(`
+      CREATE TABLE IF NOT EXISTS workspace_offline_recoveries (
+        user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        recovery_id TEXT NOT NULL,
+        request_hash TEXT NOT NULL,
+        item_id TEXT NOT NULL,
+        possible_replay_crash INTEGER NOT NULL CHECK(possible_replay_crash IN (0,1)),
+        PRIMARY KEY(user_id,recovery_id)
+      ) STRICT;
+    `);
   }
   async import(
     user: string,
@@ -105,20 +118,86 @@ export class PortableFiles {
     const prepared = await this.prepare(input);
     return this.workspace.auth.transaction(() => {
       verify();
-      const item = this.workspace.create(user, {
-        name: prepared.name,
-        kind: prepared.kind,
-        parentId: input.parentId,
-      });
-      const native = this.materialize(prepared, item.id);
-      for (const image of prepared.images.values())
-        this.workspace.auth.database
-          .prepare('INSERT OR IGNORE INTO doc_images VALUES(?,?,?,?)')
-          .run(item.id, image.id, image.mime, image.data);
-      const store = prepared.kind === 'doc' ? this.docs : this.sheets;
-      store.save(user, item.id, { snapshot: native, revision: 0, writeId: randomUUID() });
+      return this.publish(user, prepared, input.parentId);
+    });
+  }
+  /** Same-instance recovery publishes only already-downloaded bytes, never the original. */
+  async recover(
+    user: string,
+    input: {
+      recoveryId?: unknown;
+      filename?: unknown;
+      snapshot?: unknown;
+      possibleReplayCrash?: unknown;
+    },
+    verify: () => void,
+  ) {
+    verify();
+    this.workspace.owner(user);
+    if (
+      !isUuid(input.recoveryId) ||
+      typeof input.filename !== 'string' ||
+      !/\.(?:json|univer)$/i.test(input.filename) ||
+      (input.possibleReplayCrash !== undefined && typeof input.possibleReplayCrash !== 'boolean')
+    )
+      throw new AuthError(400, 'Use the saved offline recovery request.');
+    const recoveryId = input.recoveryId.toLowerCase();
+    const possibleReplayCrash = input.possibleReplayCrash === true;
+    bounded(input.snapshot);
+    const text = JSON.stringify(input.snapshot) ?? '';
+    if (Buffer.byteLength(text) > PORTABLE_LIMIT)
+      throw new AuthError(413, 'Univer files must be at most 20 MiB.');
+    const requestHash = createHash('sha256')
+      .update(JSON.stringify([input.filename, possibleReplayCrash, text]))
+      .digest('hex');
+    const previous = () => {
+      verify();
+      this.workspace.owner(user);
+      const receipt = this.workspace.auth.database
+        .prepare(
+          'SELECT request_hash,item_id FROM workspace_offline_recoveries WHERE user_id=? AND recovery_id=?',
+        )
+        .get(user, recoveryId);
+      if (!receipt) return undefined;
+      if (receipt.request_hash !== requestHash)
+        throw new AuthError(409, 'This recovery request changed. Your offline work is still on this device.');
+      try {
+        return this.workspace.get(user, String(receipt.item_id), 'owner');
+      } catch {
+        throw new AuthError(409, 'The recovery copy is no longer available. Export the saved offline work.');
+      }
+    };
+    const existing = previous();
+    if (existing) return existing;
+    // Unlike foreign-file import, this is the account's same-instance checkpoint.
+    // Keep only validated definitions; calculating them reauthorizes every source.
+    const prepared = await this.prepare(input, (sourceId) => sourceId);
+    return this.workspace.auth.transaction(() => {
+      // Includes the session/account check after asynchronous image decoding and
+      // the receipt recheck before this transaction publishes any native state.
+      const existing = previous();
+      if (existing) return existing;
+      const item = this.publish(user, prepared, null);
+      this.workspace.auth.database
+        .prepare('INSERT INTO workspace_offline_recoveries VALUES(?,?,?,?,?)')
+        .run(user, recoveryId, requestHash, item.id, Number(possibleReplayCrash));
       return item;
     });
+  }
+  private publish(user: string, prepared: PreparedPortableFile, parentId: unknown) {
+    const item = this.workspace.create(user, {
+      name: prepared.name,
+      kind: prepared.kind,
+      parentId,
+    });
+    const native = this.materialize(prepared, item.id);
+    for (const image of prepared.images.values())
+      this.workspace.auth.database
+        .prepare('INSERT OR IGNORE INTO doc_images VALUES(?,?,?,?)')
+        .run(item.id, image.id, image.mime, image.data);
+    const store = prepared.kind === 'doc' ? this.docs : this.sheets;
+    store.save(user, item.id, { snapshot: native, revision: 0, writeId: randomUUID() });
+    return this.workspace.get(user, item.id, 'owner');
   }
   /** Decode one bounded native member before either import publishes anything. */
   async prepare(
