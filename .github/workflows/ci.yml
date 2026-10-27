@@ -330,13 +330,13 @@ jobs:
       - name: Build
         env:
           VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}
-          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && matrix.shard == '1/2' && '1' || '0' }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
         run: npm run build
       - name: Playwright smoke
         env:
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
           SHARD: ${{ matrix.shard }}
-          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && matrix.shard == '1/2' && '1' || '0' }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
         run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
       - name: Artifact name
         if: always()
@@ -370,16 +370,18 @@ jobs:
           if-no-files-found: warn
 
   doc-caret-diagnostics:
-    name: Retained Doc caret diagnostics
+    name: Retained Doc transition profile
     needs: changes
     if: needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Temporary investigation: preserve every original attempt without retries.
-    # This supplements the ordinary shards; any failure still blocks landing.
+    # The six repaired original attempts are already preserved. This single
+    # profile locates the remaining transition work and supplements all ordinary
+    # shards; their assertions and strict failure policy still apply.
     env:
       VITE_SYNC_EVIDENCE: '0'
       VITE_DOC_SELECTION_EVIDENCE: '1'
+      SPINEL_DOC_PROFILE: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -396,7 +398,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Build diagnostic application
         run: npm run build
-      - name: Observe six independent original attempts
+      - name: Profile one original transition without retries
         env:
           SPINEL_E2E_PROJECT: production
           SHARD: caret-diagnostics
@@ -404,7 +406,7 @@ jobs:
           npx playwright test e2e/doc-phone-navigation.spec.ts
           --project=production
           --grep "native pan, zoom and editor behavior"
-          --repeat-each=6 --retries=0 --max-failures=0
+          --repeat-each=1 --retries=0 --max-failures=0
           --output=test-results/production-caret-diagnostics
       - name: Preserve every diagnostic result
         if: always()
