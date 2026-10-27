@@ -1,0 +1,19 @@
+{
+  "source": "49a86ad8a96815532e7962b57e3407aac3b9a29a",
+  "run": 40579224187,
+  "result": "registration-failed-before-workload",
+  "records": [
+    {
+      "preset": "desktop",
+      "artifactId": 12768901732,
+      "reportSha256": "e0ca9e3e42c40bb1a3c77995b73d08cf1371c34c04f657a8fd806c3b7f2787ea",
+      "downloadZipSha256": "a055ea320006858abe797a9395d8a8d53a3a6a34f6b2b9ba1a0f2216fbf6998e"
+    },
+    {
+      "preset": "mobile",
+      "artifactId": 12768363839,
+      "reportSha256": "45d14789884ce91b4fc4800574962ebd99fb4eead2c68a486ff710156d5190bf",
+      "downloadZipSha256": "3fafae74438c72025e3ee33a9e11c8b0ef8eb41e84c9afe18a891e5fd882cbfa"
+    }
+  ]
+}
