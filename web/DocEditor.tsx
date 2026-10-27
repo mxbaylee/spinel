@@ -146,6 +146,8 @@ export function DocEditor({
   const [uploadError, setUploadError] = useState('');
   const [editable, setEditable] = useState(false);
   const [preserveFormulaInput, setPreserveFormulaInput] = useState(false);
+  const [unfinishedText, setUnfinishedText] = useState<string | null>(null);
+  const discardUnfinishedText = useRef<(() => void) | undefined>(undefined);
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
@@ -187,6 +189,7 @@ export function DocEditor({
     setFormulaStates([]);
     editFormula(null);
     setPreserveFormulaInput(false);
+    setUnfinishedText(null);
     setFormulaError('');
     setPeople([]);
     setPhoneReadOnly(false);
@@ -195,6 +198,9 @@ export function DocEditor({
     let uploads = 0;
     let insertions = 0;
     let composing = false;
+    let compositionText = '';
+    let heldComposition = false;
+    let inputFrozen = false;
     let finishReadonly: (() => void) | undefined;
     let uploaded = 0;
     let disposeEditor: (() => void) | undefined;
@@ -203,7 +209,8 @@ export function DocEditor({
     const publish = (state: SaveState) => {
       lastState = state;
       if (disposed) return;
-      const busy = uploads > 0 || insertions > 0 || composing || formulaDraftOpen.current;
+      const busy =
+        uploads > 0 || insertions > 0 || composing || heldComposition || formulaDraftOpen.current;
       const dirty = busy || state.dirty;
       if (dirty && initialized) syncNotice.current = undefined;
       onDirty(dirty, Boolean(state.retained));
@@ -212,31 +219,48 @@ export function DocEditor({
         ...(busy ? { local: undefined } : {}),
         dirty,
         failed: state.failed || (initialized && Boolean(syncNotice.current)),
-        message: formulaDraftOpen.current
-          ? 'Editing formula — changes not saved yet.'
-          : composing
-            ? 'Editing text — changes not saved yet.'
-            : busy
-              ? 'Inserting image — keep this tab open.'
-              : state.failed
-                ? state.message
-                : ((initialized ? syncNotice.current : undefined) ??
-                  // Keep explicit device durability and attention announcements.
-                  // The phone layout fallback remains visible in the help text.
-                  (initialized && !dirty && !state.local && phoneOnlyMessage
-                    ? phoneOnlyMessage
-                    : state.message)),
+        message: heldComposition
+          ? state.signInRequired
+            ? 'Your sign-in ended. Copy the unfinished text before signing in again.'
+            : 'Copy the unfinished text before recovering your offline changes.'
+          : formulaDraftOpen.current
+            ? 'Editing formula — changes not saved yet.'
+            : composing
+              ? 'Editing text — changes not saved yet.'
+              : busy
+                ? 'Inserting image — keep this tab open.'
+                : state.failed
+                  ? state.message
+                  : ((initialized ? syncNotice.current : undefined) ??
+                    // Keep explicit device durability and attention announcements.
+                    // The phone layout fallback remains visible in the help text.
+                    (initialized && !dirty && !state.local && phoneOnlyMessage
+                      ? phoneOnlyMessage
+                      : state.message)),
       });
     };
     formulaDraftChanged.current = () => publish(lastState);
     const editorElement = container.current;
     const compositionStart = () => {
+      if (disposed || inputFrozen) return;
       composing = true;
+      compositionText = '';
       publish(lastState);
     };
-    const compositionEnd = () => {
+    const compositionUpdate = (event: CompositionEvent) => {
+      if (!composing || disposed) return;
+      compositionText = event.data;
+      if (heldComposition) setUnfinishedText(compositionText);
+    };
+    const compositionEnd = (event: CompositionEvent) => {
+      if (disposed || !composing) return;
+      // Refused native capture may reject a final IME update. Preserve its text
+      // before the native handler: that handler can itself start the hold.
+      compositionText = event.data || compositionText;
+      if (heldComposition) setUnfinishedText(compositionText);
       // Let the native composition-end handler capture its edit first.
       queueMicrotask(() => {
+        if (disposed) return;
         composing = false;
         publish(lastState);
         const freeze = finishReadonly;
@@ -244,7 +268,19 @@ export function DocEditor({
         freeze?.();
       });
     };
+    discardUnfinishedText.current = () => {
+      if (disposed || !heldComposition) return;
+      heldComposition = false;
+      composing = false;
+      compositionText = '';
+      setUnfinishedText(null);
+      const freeze = finishReadonly;
+      finishReadonly = undefined;
+      freeze?.();
+      publish(lastState);
+    };
     editorElement?.addEventListener('compositionstart', compositionStart, true);
+    editorElement?.addEventListener('compositionupdate', compositionUpdate, true);
     editorElement?.addEventListener('compositionend', compositionEnd, true);
     publish(lastState);
     void (async () => {
@@ -441,15 +477,28 @@ export function DocEditor({
       });
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
-      const readonly = async (preserveInput = false) => {
+      const readonly = async (
+        preserveInput = false,
+        options: { holdComposition?: boolean } = {},
+      ) => {
+        if (disposed) return;
+        inputFrozen = true;
         canEditFormulas.current = false;
         setPreserveFormulaInput(preserveInput);
         if (!preserveInput) editFormula(null);
         formulas.current?.clear();
         setEditable(false);
         if (preserveInput && composing) {
+          // Recovery may refuse the final native edit, so retain its text by
+          // default. A phone-only layout fence lets that edit finish normally;
+          // it must never clear a hold already established by recovery.
+          if (options.holdComposition !== false) {
+            heldComposition = true;
+            setUnfinishedText(compositionText);
+            publish(lastState);
+          }
           finishReadonly = () => {
-            if (!disposed) void readonly(true);
+            if (!disposed) void readonly(true, options);
           };
           return;
         }
@@ -481,20 +530,43 @@ export function DocEditor({
         isCurrent: () => !disposed,
         offline: data.offline,
         canRefresh: () =>
-          uploads === 0 && insertions === 0 && !composing && !formulaDraftOpen.current,
+          uploads === 0 &&
+          insertions === 0 &&
+          !composing &&
+          !heldComposition &&
+          !formulaDraftOpen.current,
         lock: () => {
+          heldComposition = false;
+          composing = false;
+          compositionText = '';
+          finishReadonly = undefined;
+          inputFrozen = true;
+          setUnfinishedText(null);
           setPreserveFormulaInput(false);
           editFormula(null);
-          formulas.current?.clear();
-          disposeEditor?.();
-          disposeEditor = undefined;
-          setEditable(false);
           publish({
             dirty: false,
             failed: true,
             local: 'attention',
             message: 'Offline access changed on this device. Reopen the document to continue.',
           });
+          // Retire queued native composition callbacks before destroying Univer.
+          disposed = true;
+          loading.abort();
+          canEditFormulas.current = false;
+          clearInterval(formulaInterval);
+          stopFormulaVisibility?.();
+          formulas.current?.dispose();
+          formulas.current = null;
+          formulaTransport.current = undefined;
+          setFormulaStates([]);
+          stopPresence?.();
+          setPeople([]);
+          save?.dispose();
+          controller.current = null;
+          disposeEditor?.();
+          disposeEditor = undefined;
+          setEditable(false);
         },
         initializeAccess: () => (data.access === 'viewer' ? readonly() : undefined),
         onInitialPending: () =>
@@ -732,7 +804,7 @@ export function DocEditor({
             phoneOnlyMessage = 'View only on this phone. Reopen after the page layout change.';
             // A local presentation fence must retain an unfinished Formula
             // draft and let active native composition capture before freezing.
-            void readonly(true).then(
+            void readonly(true, { holdComposition: false }).then(
               () => publish(lastState),
               (error) =>
                 publish({
@@ -823,8 +895,10 @@ export function DocEditor({
     });
     return () => {
       disposed = true;
+      discardUnfinishedText.current = undefined;
       formulaDraftChanged.current = undefined;
       editorElement?.removeEventListener('compositionstart', compositionStart, true);
+      editorElement?.removeEventListener('compositionupdate', compositionUpdate, true);
       editorElement?.removeEventListener('compositionend', compositionEnd, true);
       registerGuestEditor?.(null);
       canEditFormulas.current = false;
@@ -852,6 +926,17 @@ export function DocEditor({
         state={status}
         target={chrome?.saveTarget ?? saveStatusTarget}
         onRetry={() => controller.current?.retry()}
+        onRecover={() => controller.current?.recover()}
+        onExportRecovery={() => controller.current?.exportRecovery()}
+        onDiscardRecovery={() => controller.current?.discardRecovery()}
+        unfinishedText={
+          unfinishedText === null
+            ? undefined
+            : {
+                value: unfinishedText,
+                onDiscard: () => discardUnfinishedText.current?.(),
+              }
+        }
       />
       {!localAccountId && (
         <EditorTools

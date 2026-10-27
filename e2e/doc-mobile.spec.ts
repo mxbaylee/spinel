@@ -27,6 +27,39 @@ const saved = (page: Page) =>
   });
 const input = (page: Page) => page.locator('[contenteditable="true"][data-u-comp="editor"]');
 
+async function composeText(page: Page, phase: 'start' | 'update' | 'end', text: string) {
+  await input(page).evaluate(
+    (node, { phase, text }) => {
+      if (phase === 'start') {
+        node.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true, data: '' }));
+        return;
+      }
+      // Exercise the mounted native input controller through public DOM events,
+      // including the browser-owned input text. This is not a physical OS IME run.
+      node.textContent = text;
+      const selection = window.getSelection();
+      selection?.selectAllChildren(node);
+      selection?.collapseToEnd();
+      node.dispatchEvent(
+        new CompositionEvent(phase === 'update' ? 'compositionupdate' : 'compositionend', {
+          bubbles: true,
+          data: text,
+        }),
+      );
+      if (phase === 'update')
+        node.dispatchEvent(
+          new InputEvent('input', {
+            bubbles: true,
+            inputType: 'insertCompositionText',
+            data: text,
+            isComposing: true,
+          }),
+        );
+    },
+    { phase, text },
+  );
+}
+
 interface DocSelectionEvidence {
   unitId: string;
   start?: number;
@@ -776,366 +809,419 @@ for (const role of ['owner', 'guest-editor'] as const) {
   });
 }
 
-test('a peer-protocol page-layout change preserves queued phone writing and the owner grant', async ({
-  browser,
-  baseURL,
-}, info) => {
-  test.skip(
-    !['sync-development', 'sync-production'].includes(info.project.name),
-    'Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.',
-  );
-  test.setTimeout(150_000);
-  // There is no page-mode control in the app. This authenticated protocol peer
-  // uses the same snapshot/ticket/socket contract as another live editor.
-  const { JSONX } = await import('@univerjs/core');
-  const { RichTextEditingMutation } = await import('@univerjs/docs');
-  const { default: WebSocket } = await import('ws');
-  const { syncNetwork } = await import('./sync-network.ts');
-  const f = await fixture(browser, baseURL!, info, true);
-  const network = await syncNetwork(f.account);
-  const { page } = f;
-  const region = page.getByRole('region', { name: 'Doc document', exact: true });
-  const canvas = region.getByLabel('Document canvas', { exact: true });
-  const status = page.getByRole('status', { name: 'Save status', exact: true });
-  const connection = page.getByRole('status', { name: 'Connection status', exact: true });
-  const note = 'This Doc’s page layout changed. Reopen it to continue.';
-  const message = 'View only on this phone. Reopen after the page layout change.';
-  const pending = 'Changes not saved yet — keep this tab open.';
-  const prefixText = 'Pending ';
-  const firstPrefix = prefixText.slice(0, 1);
-  const peerFrames: {
-    type: string;
-    revision?: number;
-    mutationId?: string;
-    unitId?: string;
-    fromRevision?: number;
-    edits?: unknown[];
-    reason?: string;
-  }[] = [];
-  const peerErrors: string[] = [];
-  let peerSocket: InstanceType<typeof WebSocket> | undefined;
-  let heldWrites = 0;
-  const forwarded: boolean[] = [];
-  let releaseFirstWrite = () => {};
-  const firstGate = new Promise<void>((resolve) => {
-    releaseFirstWrite = resolve;
-  });
-  let releaseHeld = () => {};
-  const gate = new Promise<void>((resolve) => {
-    releaseHeld = resolve;
-  });
-  const releaseWrites = async () => {
-    network.interceptWrites(undefined);
-    releaseFirstWrite();
-    releaseHeld();
-    await network.drainWrites();
-  };
-  try {
-    await page.goto(`/?item=${f.item.id}`);
-    await saved(page);
-    await expect(connection).toHaveText('Online');
-    await expect(region).toHaveAttribute('data-mobile', 'true');
-    await expect(canvas).toBeVisible();
-    const initialCanvas = (await canvas.elementHandle())!;
-
-    // Connect before holding a phone write: the client's normal receipt retry
-    // deadline must not depend on fixture setup or screenshot speed.
-    const peer = await f.phone(true);
-    const prepared = await peer.request.post(`/api/items/${f.item.id}/collaboration`, {
-      headers: { Origin: baseURL! },
-      data: {},
-    });
-    expect(prepared.ok(), await prepared.text()).toBe(true);
-    const metadata = await prepared.json();
-    expect(metadata.syncVersion).toBe(1);
-    const unitId = metadata.unitId as string;
-    const prefix = `/sync-api/items/${f.item.id}`;
-    const snapshotResponse = await peer.request.get(
-      `${prefix}/snapshot?unitId=${encodeURIComponent(unitId)}`,
+for (const ime of [false, true])
+  test(`a peer-protocol page-layout change preserves ${ime ? 'native phone composition' : 'queued phone writing'} and the owner grant`, async ({
+    browser,
+    baseURL,
+  }, info) => {
+    test.skip(
+      !['sync-development', 'sync-production'].includes(info.project.name),
+      'Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.',
     );
-    expect(snapshotResponse.ok()).toBe(true);
-    const head = (await snapshotResponse.json()) as {
-      version: number;
-      unitId: string;
-      revision: number;
-      snapshot: IDocumentData;
-    };
-    expect(head.version).toBe(1);
-    expect(head.unitId).toBe(unitId);
-    const original = head.snapshot;
-    expect(original.id).toBe(unitId);
-    expect(original.documentStyle.documentFlavor).toBe(DocumentFlavor.MODERN);
-    const ticketResponse = await peer.request.post(
-      `${prefix}/ticket?unitId=${encodeURIComponent(unitId)}`,
-      { headers: { Origin: baseURL! } },
-    );
-    expect(ticketResponse.ok()).toBe(true);
-    const ticket = (await ticketResponse.json()).ticket as string;
-    const credential = (await peer.cookies()).find((cookie) => cookie.name === COOKIE_NAME);
-    expect(credential).toBeDefined();
-    const socketUrl = new URL(`${prefix}/socket`, baseURL);
-    socketUrl.protocol = socketUrl.protocol === 'https:' ? 'wss:' : 'ws:';
-    socketUrl.search = new URLSearchParams({
-      unitId,
-      ticket,
-      afterRevision: String(head.revision),
-    }).toString();
-    const socket = new WebSocket(socketUrl, {
-      headers: { Cookie: `${COOKIE_NAME}=${credential!.value}`, Origin: baseURL! },
-      // The mobile HTTPS project uses a local self-signed test certificate.
-      rejectUnauthorized: false,
-      handshakeTimeout: 10_000,
-    });
-    peerSocket = socket;
-    socket.on('message', (data) => peerFrames.push(JSON.parse(data.toString())));
-    socket.on('error', (error) => peerErrors.push(error.message));
-    await new Promise<void>((resolve, reject) => {
-      socket.once('open', resolve);
-      socket.once('error', reject);
-    });
-    await expect
-      .poll(() => peerFrames.find((frame) => frame.type === 'resume'))
-      .toMatchObject({
-        unitId,
-        revision: head.revision,
-        fromRevision: head.revision,
-        edits: [],
-      });
-    const selection = () =>
-      page.evaluate((id) => {
-        let observed: DocSelectionEvidence | undefined;
-        const receive = (event: Event) => {
-          const evidence = (event as CustomEvent<DocSelectionEvidence>).detail;
-          if (evidence.unitId === id) observed = evidence;
-        };
-        window.addEventListener('spinel-doc-selection-evidence', receive);
-        try {
-          // Read the current public native range/model only. The sync snapshot
-          // observer intentionally waits until pending edits have settled.
-          window.dispatchEvent(new Event('spinel-doc-selection-read'));
-        } finally {
-          window.removeEventListener('spinel-doc-selection-evidence', receive);
-        }
-        return observed;
-      }, unitId);
-    await beginWriting(page);
-    network.interceptWrites(async (write) => {
-      heldWrites++;
-      await (heldWrites === 1 ? firstGate : gate);
-      forwarded.push(write.forward());
-    });
-    // Establish an immutable inflight submit before creating the unsent suffix.
-    // The client holds senderless peer edits until its own ack identifies them.
-    await page.keyboard.type(firstPrefix);
-    await expect.poll(() => heldWrites).toBe(1);
-    await page.keyboard.type(prefixText.slice(firstPrefix.length));
-    await expect(status).toHaveText(pending);
-    await expect
-      .poll(async () => (await selection())?.text)
-      .toBe(prefixText + original.body!.dataStream);
-    expect((await f.read()).body).toEqual(original.body);
-
-    // A local page-layout fence must retain an open, unsaved Formula draft
-    // as well as the native mutations already waiting for acknowledgment.
-    await page.getByRole('button', { name: 'Document actions', exact: true }).tap();
-    await page.getByRole('menuitem', { name: 'Insert formula', exact: true }).tap();
-    const draft = page.getByRole('dialog', { name: 'Insert formula', exact: true });
-    const expression = '=51+2';
-    await draft.getByLabel('Formula', { exact: true }).fill(expression);
-    const draftStatus = page.locator('[role="status"][aria-label="Save status"]');
-    await expect(draftStatus).toHaveText('Editing formula — changes not saved yet.');
-
-    const mutationId = crypto.randomUUID();
-    socket.send(
-      JSON.stringify({
-        type: 'submit',
-        mutationId,
-        baseRevision: head.revision,
-        mutations: [
-          {
-            id: RichTextEditingMutation.id,
-            params: {
-              unitId,
-              actions: new JSONX().replaceOp(
-                ['documentStyle', 'documentFlavor'],
-                DocumentFlavor.MODERN,
-                DocumentFlavor.TRADITIONAL,
-              ),
-              textRanges: [],
-            },
-          },
-        ],
-      }),
-    );
-    await expect
-      .poll(
-        () => peerFrames.find((frame) => frame.type === 'ack' && frame.mutationId === mutationId),
-        { timeout: 5_000 },
+    test.setTimeout(150_000);
+    // There is no page-mode control in the app. This authenticated protocol peer
+    // uses the same snapshot/ticket/socket contract as another live editor.
+    const { JSONX } = await import('@univerjs/core');
+    const { RichTextEditingMutation } = await import('@univerjs/docs');
+    const { default: WebSocket } = await import('ws');
+    const { syncNetwork } = await import('./sync-network.ts');
+    const f = await fixture(browser, baseURL!, info, true);
+    const network = await syncNetwork(f.account);
+    const { page } = f;
+    const region = page.getByRole('region', { name: 'Doc document', exact: true });
+    const canvas = region.getByLabel('Document canvas', { exact: true });
+    const status = page.getByRole('status', { name: 'Save status', exact: true });
+    const connection = page.getByRole('status', { name: 'Connection status', exact: true });
+    const note = 'This Doc’s page layout changed. Reopen it to continue.';
+    const message = 'View only on this phone. Reopen after the page layout change.';
+    const pending = 'Changes not saved yet — keep this tab open.';
+    const prefixText = 'Pending ';
+    const firstPrefix = prefixText.slice(0, 1);
+    const intermediateComposition = '旅行の下書き 671 ';
+    const finalComposition = '家族旅行の最終予定 672 — keep all final text ';
+    const finalPrefix = prefixText + (ime ? finalComposition : '');
+    let recoveryPosts = 0;
+    const downloads: string[] = [];
+    f.account.on('request', (request) => {
+      if (
+        request.method() === 'POST' &&
+        new URL(request.url()).pathname === '/api/items/offline-recovery'
       )
-      .toMatchObject({ revision: head.revision + 1 });
-    // Resolve only the first submit. Its ack applies the earlier peer revision,
-    // while a second gate keeps the already-written suffix pending throughout
-    // the local page-layout fence and unchanged-canvas assertions.
-    releaseFirstWrite();
-    await expect.poll(() => heldWrites).toBeGreaterThan(1);
-    // The dialog makes its background inaccessible until Cancel; read the
-    // existing note/status DOM while checking the actual visible draft.
-    await expect(page.getByText(note, { exact: true })).toBeVisible({ timeout: 5_000 });
-    await expect(draft).toBeVisible();
-    await expect(draft.getByLabel('Formula', { exact: true })).toHaveValue(expression);
-    await expect(draftStatus).toHaveText('Editing formula — changes not saved yet.');
-    expect((await selection())?.text).toBe(prefixText + original.body!.dataStream);
-    expect((await f.read()).body!.dataStream).not.toContain(expression);
-    await capture(page, info, 'peer-layout-formula-draft');
-    await draft.getByRole('button', { name: 'Cancel', exact: true }).tap();
-    await expect(draft).not.toBeVisible();
-    await expect(region.getByText(note, { exact: true })).toBeVisible();
-    await expect(input(page)).not.toBeFocused();
-    await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
-    await expect(region.getByRole('button', { name: 'Format', exact: true })).toHaveCount(0);
-    await expect(connection).toHaveText('Online');
-    // The local fallback must not replace an actual unsaved state with a clean
-    // View only announcement, or recreate the canvas and its pending queue.
-    await expect(status).toHaveText(pending);
-    expect(await canvas.evaluate((current, initial) => current === initial, initialCanvas)).toBe(
-      true,
-    );
-    expect(await selection()).toMatchObject({
-      unitId,
-      editing: false,
-      text: prefixText + original.body!.dataStream,
+        recoveryPosts++;
     });
-    const beforeRelease = await f.read();
-    expect(beforeRelease.documentStyle.documentFlavor).toBe(DocumentFlavor.TRADITIONAL);
-    expect(beforeRelease.body!.dataStream).toBe(firstPrefix + original.body!.dataStream);
-    expect(beforeRelease.settings).toEqual(original.settings);
-    expect(forwarded).toEqual([true]);
-    await releaseWrites();
-    expect(forwarded).toHaveLength(heldWrites);
-    expect(forwarded.every(Boolean)).toBe(true);
-    await expect(status).toHaveText(message, { timeout: 30_000 });
-    await expect
-      .poll(async () => (await f.read()).body?.dataStream)
-      .toBe(prefixText + original.body!.dataStream);
-    const committed = await f.read();
-    expect(committed.id).toBe(unitId);
-    expect(committed.documentStyle).toEqual({
-      ...original.documentStyle,
-      documentFlavor: DocumentFlavor.TRADITIONAL,
+    page.on('download', (download) => downloads.push(download.suggestedFilename()));
+    const peerFrames: {
+      type: string;
+      revision?: number;
+      mutationId?: string;
+      unitId?: string;
+      fromRevision?: number;
+      edits?: unknown[];
+      reason?: string;
+    }[] = [];
+    const peerErrors: string[] = [];
+    let peerSocket: InstanceType<typeof WebSocket> | undefined;
+    let heldWrites = 0;
+    const forwarded: boolean[] = [];
+    let releaseFirstWrite = () => {};
+    const firstGate = new Promise<void>((resolve) => {
+      releaseFirstWrite = resolve;
     });
-    expect(committed.settings).toEqual(original.settings);
-    expect(committed.body!.customRanges).toEqual(
-      original.body!.customRanges!.map((range) => ({
-        ...range,
-        startIndex: range.startIndex + prefixText.length,
-        endIndex: range.endIndex + prefixText.length,
-      })),
-    );
-
-    // The preserved 960px page now fits as a tiny read-only fallback. Its
-    // glyphs are below the editable-text raster helper's readability threshold.
-    // Read the retained native caret to target real text without changing it.
-    let fallbackPoint: { x: number; y: number } | undefined;
-    await expect(async () => {
-      const current = await selection();
-      expect(current).toMatchObject({
-        unitId,
-        start: prefixText.length,
-        end: prefixText.length,
-        editing: false,
-        text: prefixText + original.body!.dataStream,
-      });
-      const bounds = current!.bounds;
-      expect(bounds).toBeDefined();
-      expect(Object.values(bounds!).every(Number.isFinite)).toBe(true);
-      expect(bounds!.bottom).toBeGreaterThan(bounds!.top);
-      expect(bounds!.right).toBeGreaterThanOrEqual(bounds!.left);
-      const point = { x: bounds!.left, y: (bounds!.top + bounds!.bottom) / 2 };
-      expect(
-        await canvas.evaluate(
-          (node, { point, bounds }) => {
-            const box = node.getBoundingClientRect();
-            const target = document.elementFromPoint(point.x, point.y);
-            return (
-              bounds.left >= box.left &&
-              bounds.right <= box.right &&
-              bounds.top >= box.top &&
-              bounds.bottom <= box.bottom &&
-              (target === node || Boolean(target && node.parentElement?.contains(target)))
-            );
-          },
-          { point, bounds: bounds! },
-        ),
-      ).toBe(true);
-      fallbackPoint = point;
-    }).toPass({ timeout: 5_000 });
-    await page.touchscreen.tap(fallbackPoint!.x, fallbackPoint!.y);
-    await page.touchscreen.tap(fallbackPoint!.x, fallbackPoint!.y);
-    await expect(input(page)).not.toBeFocused();
-    await page.keyboard.type('FORBIDDEN AFTER PAGE LAYOUT CHANGE');
-    await page.getByRole('button', { name: 'Document actions', exact: true }).tap();
-    await expect(page.getByRole('menuitem', { name: 'Insert formula', exact: true })).toHaveCount(
-      0,
-    );
-    await page.getByRole('menuitem', { name: 'Formulas', exact: true }).tap();
-    const formulas = page.getByRole('dialog', { name: 'Formulas', exact: true });
-    await expect(formulas.locator('output')).toHaveText('42', { timeout: 20_000 });
-    await expect(formulas.locator('tbody tr')).toHaveCount(30);
-    await expect(formulas.getByText('=40+2', { exact: true })).toBeVisible();
-    await expect(formulas.getByRole('button', { name: '=40+2', exact: true })).toHaveCount(0);
-    await expect(page.getByRole('dialog', { name: 'Edit formula', exact: true })).toHaveCount(0);
-    await formulas.getByRole('button', { name: 'Close dialog', exact: true }).tap();
-    for (let check = 0; check < 2; check++) {
-      const response = await page.waitForResponse(
-        (response) =>
-          response.request().method() === 'GET' &&
-          new URL(response.url()).pathname === `/api/items/${f.item.id}`,
-        { timeout: 10_000 },
-      );
-      expect(response.status()).toBe(200);
-      expect((await response.json()).item.access).toBe('owner');
-    }
-    await expect(connection).toHaveText('Online');
-    await expect(status).toHaveText(message);
-    await expect(region.getByText(note, { exact: true })).toBeVisible();
-    expect(await canvas.evaluate((current, initial) => current === initial, initialCanvas)).toBe(
-      true,
-    );
-    const unchanged = await f.read();
-    expect(unchanged.body).toEqual(committed.body);
-    expect(unchanged.documentStyle).toEqual(committed.documentStyle);
-    expect(unchanged.settings).toEqual(committed.settings);
-    for (const theme of ['light', 'dark'] as const) {
-      await page.emulateMedia({ colorScheme: theme });
-      await capture(page, info, `live-layout-changed-${theme}`);
-    }
-    expect(peerErrors).toEqual([]);
-    expect(f.errors).toEqual([]);
-  } finally {
+    let releaseHeld = () => {};
+    const gate = new Promise<void>((resolve) => {
+      releaseHeld = resolve;
+    });
+    const releaseWrites = async () => {
+      network.interceptWrites(undefined);
+      releaseFirstWrite();
+      releaseHeld();
+      await network.drainWrites();
+    };
     try {
+      await page.goto(`/?item=${f.item.id}`);
+      await saved(page);
+      await expect(connection).toHaveText('Online');
+      await expect(region).toHaveAttribute('data-mobile', 'true');
+      await expect(canvas).toBeVisible();
+      const initialCanvas = (await canvas.elementHandle())!;
+
+      // Connect before holding a phone write: the client's normal receipt retry
+      // deadline must not depend on fixture setup or screenshot speed.
+      const peer = await f.phone(true);
+      const prepared = await peer.request.post(`/api/items/${f.item.id}/collaboration`, {
+        headers: { Origin: baseURL! },
+        data: {},
+      });
+      expect(prepared.ok(), await prepared.text()).toBe(true);
+      const metadata = await prepared.json();
+      expect(metadata.syncVersion).toBe(1);
+      const unitId = metadata.unitId as string;
+      const prefix = `/sync-api/items/${f.item.id}`;
+      const snapshotResponse = await peer.request.get(
+        `${prefix}/snapshot?unitId=${encodeURIComponent(unitId)}`,
+      );
+      expect(snapshotResponse.ok()).toBe(true);
+      const head = (await snapshotResponse.json()) as {
+        version: number;
+        unitId: string;
+        revision: number;
+        snapshot: IDocumentData;
+      };
+      expect(head.version).toBe(1);
+      expect(head.unitId).toBe(unitId);
+      const original = head.snapshot;
+      expect(original.id).toBe(unitId);
+      expect(original.documentStyle.documentFlavor).toBe(DocumentFlavor.MODERN);
+      const ticketResponse = await peer.request.post(
+        `${prefix}/ticket?unitId=${encodeURIComponent(unitId)}`,
+        { headers: { Origin: baseURL! } },
+      );
+      expect(ticketResponse.ok()).toBe(true);
+      const ticket = (await ticketResponse.json()).ticket as string;
+      const credential = (await peer.cookies()).find((cookie) => cookie.name === COOKIE_NAME);
+      expect(credential).toBeDefined();
+      const socketUrl = new URL(`${prefix}/socket`, baseURL);
+      socketUrl.protocol = socketUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+      socketUrl.search = new URLSearchParams({
+        unitId,
+        ticket,
+        afterRevision: String(head.revision),
+      }).toString();
+      const socket = new WebSocket(socketUrl, {
+        headers: { Cookie: `${COOKIE_NAME}=${credential!.value}`, Origin: baseURL! },
+        // The mobile HTTPS project uses a local self-signed test certificate.
+        rejectUnauthorized: false,
+        handshakeTimeout: 10_000,
+      });
+      peerSocket = socket;
+      socket.on('message', (data) => peerFrames.push(JSON.parse(data.toString())));
+      socket.on('error', (error) => peerErrors.push(error.message));
+      await new Promise<void>((resolve, reject) => {
+        socket.once('open', resolve);
+        socket.once('error', reject);
+      });
+      await expect
+        .poll(() => peerFrames.find((frame) => frame.type === 'resume'))
+        .toMatchObject({
+          unitId,
+          revision: head.revision,
+          fromRevision: head.revision,
+          edits: [],
+        });
+      const selection = () =>
+        page.evaluate((id) => {
+          let observed: DocSelectionEvidence | undefined;
+          const receive = (event: Event) => {
+            const evidence = (event as CustomEvent<DocSelectionEvidence>).detail;
+            if (evidence.unitId === id) observed = evidence;
+          };
+          window.addEventListener('spinel-doc-selection-evidence', receive);
+          try {
+            // Read the current public native range/model only. The sync snapshot
+            // observer intentionally waits until pending edits have settled.
+            window.dispatchEvent(new Event('spinel-doc-selection-read'));
+          } finally {
+            window.removeEventListener('spinel-doc-selection-evidence', receive);
+          }
+          return observed;
+        }, unitId);
+      await beginWriting(page);
+      network.interceptWrites(async (write) => {
+        heldWrites++;
+        await (heldWrites === 1 ? firstGate : gate);
+        forwarded.push(write.forward());
+      });
+      // Establish an immutable inflight submit before creating the unsent suffix.
+      // The client holds senderless peer edits until its own ack identifies them.
+      await page.keyboard.type(firstPrefix);
+      await expect.poll(() => heldWrites).toBe(1);
+      await page.keyboard.type(prefixText.slice(firstPrefix.length));
+      await expect(status).toHaveText(pending);
+      await expect
+        .poll(async () => (await selection())?.text)
+        .toBe(prefixText + original.body!.dataStream);
+      expect((await f.read()).body).toEqual(original.body);
+
+      const draft = page.getByRole('dialog', { name: 'Insert formula', exact: true });
+      const expression = '=51+2';
+      const draftStatus = page.locator('[role="status"][aria-label="Save status"]');
+      if (ime) {
+        // The later final event differs from this actual native capture. The
+        // local layout fence must wait for that existing composition to finish.
+        await composeText(page, 'start', '');
+        await composeText(page, 'update', intermediateComposition);
+        await expect(status).toHaveText('Editing text — changes not saved yet.');
+        await expect
+          .poll(async () => (await selection())?.text)
+          .toBe(prefixText + intermediateComposition + original.body!.dataStream);
+      } else {
+        // A local page-layout fence must retain an open, unsaved Formula draft
+        // as well as the native mutations already waiting for acknowledgment.
+        await page.getByRole('button', { name: 'Document actions', exact: true }).tap();
+        await page.getByRole('menuitem', { name: 'Insert formula', exact: true }).tap();
+        await draft.getByLabel('Formula', { exact: true }).fill(expression);
+        await expect(draftStatus).toHaveText('Editing formula — changes not saved yet.');
+      }
+
+      const mutationId = crypto.randomUUID();
+      socket.send(
+        JSON.stringify({
+          type: 'submit',
+          mutationId,
+          baseRevision: head.revision,
+          mutations: [
+            {
+              id: RichTextEditingMutation.id,
+              params: {
+                unitId,
+                actions: new JSONX().replaceOp(
+                  ['documentStyle', 'documentFlavor'],
+                  DocumentFlavor.MODERN,
+                  DocumentFlavor.TRADITIONAL,
+                ),
+                textRanges: [],
+              },
+            },
+          ],
+        }),
+      );
+      await expect
+        .poll(
+          () => peerFrames.find((frame) => frame.type === 'ack' && frame.mutationId === mutationId),
+          { timeout: 5_000 },
+        )
+        .toMatchObject({ revision: head.revision + 1 });
+      // Resolve only the first submit. Its ack applies the earlier peer revision,
+      // while a second gate keeps the already-written suffix pending throughout
+      // the local page-layout fence and unchanged-canvas assertions.
+      releaseFirstWrite();
+      await expect.poll(() => heldWrites).toBeGreaterThan(1);
+      // The dialog makes its background inaccessible until Cancel; read the
+      // existing note/status DOM while checking the actual visible draft.
+      await expect(page.getByText(note, { exact: true })).toBeVisible({ timeout: 5_000 });
+      if (ime) {
+        await expect(status).toHaveText('Editing text — changes not saved yet.');
+        expect((await selection())?.text).toBe(
+          prefixText + intermediateComposition + original.body!.dataStream,
+        );
+        await composeText(page, 'end', finalComposition);
+        await expect
+          .poll(async () => (await selection())?.text)
+          .toBe(finalPrefix + original.body!.dataStream);
+        await expect(status).toHaveText(pending);
+        await page.getByRole('button', { name: /^Save details:/ }).tap();
+        const details = page.getByRole('dialog', { name: 'Save details', exact: true });
+        await expect(details).toBeVisible();
+        for (const name of [
+          'Discard unfinished text',
+          'Retry creating copy',
+          'Discard offline changes…',
+        ])
+          await expect(details.getByRole('button', { name, exact: true })).toHaveCount(0);
+        await expect(
+          details.getByRole('textbox', { name: 'Unfinished text', exact: true }),
+        ).toHaveCount(0);
+        await expect(details.getByRole('link', { name: 'Open copy', exact: true })).toHaveCount(0);
+        await details.getByRole('button', { name: 'Close save details', exact: true }).tap();
+      } else {
+        await expect(draft).toBeVisible();
+        await expect(draft.getByLabel('Formula', { exact: true })).toHaveValue(expression);
+        await expect(draftStatus).toHaveText('Editing formula — changes not saved yet.');
+        expect((await selection())?.text).toBe(prefixText + original.body!.dataStream);
+        expect((await f.read()).body!.dataStream).not.toContain(expression);
+        await capture(page, info, 'peer-layout-formula-draft');
+        await draft.getByRole('button', { name: 'Cancel', exact: true }).tap();
+        await expect(draft).not.toBeVisible();
+      }
+      await expect(region.getByText(note, { exact: true })).toBeVisible();
+      await expect(input(page)).not.toBeFocused();
+      await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
+      await expect(region.getByRole('button', { name: 'Format', exact: true })).toHaveCount(0);
+      await expect(connection).toHaveText('Online');
+      // The local fallback must not replace an actual unsaved state with a clean
+      // View only announcement, or recreate the canvas and its pending queue.
+      await expect(status).toHaveText(pending);
+      expect(await canvas.evaluate((current, initial) => current === initial, initialCanvas)).toBe(
+        true,
+      );
+      expect(await selection()).toMatchObject({
+        unitId,
+        editing: false,
+        text: finalPrefix + original.body!.dataStream,
+      });
+      const beforeRelease = await f.read();
+      expect(beforeRelease.documentStyle.documentFlavor).toBe(DocumentFlavor.TRADITIONAL);
+      expect(beforeRelease.body!.dataStream).toBe(firstPrefix + original.body!.dataStream);
+      expect(beforeRelease.settings).toEqual(original.settings);
+      expect(forwarded).toEqual([true]);
       await releaseWrites();
+      expect(forwarded).toHaveLength(heldWrites);
+      expect(forwarded.every(Boolean)).toBe(true);
+      await expect(status).toHaveText(message, { timeout: 30_000 });
+      await expect
+        .poll(async () => (await f.read()).body?.dataStream)
+        .toBe(finalPrefix + original.body!.dataStream);
+      const committed = await f.read();
+      expect(committed.id).toBe(unitId);
+      expect(committed.documentStyle).toEqual({
+        ...original.documentStyle,
+        documentFlavor: DocumentFlavor.TRADITIONAL,
+      });
+      expect(committed.settings).toEqual(original.settings);
+      expect(committed.body!.customRanges).toEqual(
+        original.body!.customRanges!.map((range) => ({
+          ...range,
+          startIndex: range.startIndex + finalPrefix.length,
+          endIndex: range.endIndex + finalPrefix.length,
+        })),
+      );
+
+      // The preserved 960px page now fits as a tiny read-only fallback. Its
+      // glyphs are below the editable-text raster helper's readability threshold.
+      // Read the retained native caret to target real text without changing it.
+      let fallbackPoint: { x: number; y: number } | undefined;
+      await expect(async () => {
+        const current = await selection();
+        expect(current).toMatchObject({
+          unitId,
+          start: finalPrefix.length,
+          end: finalPrefix.length,
+          editing: false,
+          text: finalPrefix + original.body!.dataStream,
+        });
+        const bounds = current!.bounds;
+        expect(bounds).toBeDefined();
+        expect(Object.values(bounds!).every(Number.isFinite)).toBe(true);
+        expect(bounds!.bottom).toBeGreaterThan(bounds!.top);
+        expect(bounds!.right).toBeGreaterThanOrEqual(bounds!.left);
+        const point = { x: bounds!.left, y: (bounds!.top + bounds!.bottom) / 2 };
+        expect(
+          await canvas.evaluate(
+            (node, { point, bounds }) => {
+              const box = node.getBoundingClientRect();
+              const target = document.elementFromPoint(point.x, point.y);
+              return (
+                bounds.left >= box.left &&
+                bounds.right <= box.right &&
+                bounds.top >= box.top &&
+                bounds.bottom <= box.bottom &&
+                (target === node || Boolean(target && node.parentElement?.contains(target)))
+              );
+            },
+            { point, bounds: bounds! },
+          ),
+        ).toBe(true);
+        fallbackPoint = point;
+      }).toPass({ timeout: 5_000 });
+      await page.touchscreen.tap(fallbackPoint!.x, fallbackPoint!.y);
+      await page.touchscreen.tap(fallbackPoint!.x, fallbackPoint!.y);
+      await expect(input(page)).not.toBeFocused();
+      await page.keyboard.type('FORBIDDEN AFTER PAGE LAYOUT CHANGE');
+      await page.getByRole('button', { name: 'Document actions', exact: true }).tap();
+      await expect(page.getByRole('menuitem', { name: 'Insert formula', exact: true })).toHaveCount(
+        0,
+      );
+      await page.getByRole('menuitem', { name: 'Formulas', exact: true }).tap();
+      const formulas = page.getByRole('dialog', { name: 'Formulas', exact: true });
+      await expect(formulas.locator('output')).toHaveText('42', { timeout: 20_000 });
+      await expect(formulas.locator('tbody tr')).toHaveCount(30);
+      await expect(formulas.getByText('=40+2', { exact: true })).toBeVisible();
+      await expect(formulas.getByRole('button', { name: '=40+2', exact: true })).toHaveCount(0);
+      await expect(page.getByRole('dialog', { name: 'Edit formula', exact: true })).toHaveCount(0);
+      await formulas.getByRole('button', { name: 'Close dialog', exact: true }).tap();
+      for (let check = 0; check < 2; check++) {
+        const response = await page.waitForResponse(
+          (response) =>
+            response.request().method() === 'GET' &&
+            new URL(response.url()).pathname === `/api/items/${f.item.id}`,
+          { timeout: 10_000 },
+        );
+        expect(response.status()).toBe(200);
+        expect((await response.json()).item.access).toBe('owner');
+      }
+      await expect(connection).toHaveText('Online');
+      await expect(status).toHaveText(message);
+      await expect(region.getByText(note, { exact: true })).toBeVisible();
+      expect(await canvas.evaluate((current, initial) => current === initial, initialCanvas)).toBe(
+        true,
+      );
+      const unchanged = await f.read();
+      expect(unchanged.body).toEqual(committed.body);
+      expect(unchanged.documentStyle).toEqual(committed.documentStyle);
+      expect(unchanged.settings).toEqual(committed.settings);
+      for (const theme of ['light', 'dark'] as const) {
+        await page.emulateMedia({ colorScheme: theme });
+        await capture(page, info, `live-layout-changed-${ime ? 'ime-' : ''}${theme}`);
+      }
+      expect(recoveryPosts).toBe(0);
+      expect(downloads).toEqual([]);
+      expect(peerErrors).toEqual([]);
+      expect(f.errors).toEqual([]);
     } finally {
       try {
-        await mkdir(info.outputPath('peer-protocol'), { recursive: true });
-        await writeFile(
-          info.outputPath('peer-protocol', 'sync-diagnostics.json'),
-          JSON.stringify(
-            {
-              heldWrites,
-              forwarded,
-              peerErrors,
-              peerFrames,
-              outgoing: network.outgoing,
-              incoming: network.incoming,
-            },
-            null,
-            2,
-          ),
-        );
+        await releaseWrites();
       } finally {
-        peerSocket?.terminate();
-        await f.close();
+        try {
+          await mkdir(info.outputPath('peer-protocol'), { recursive: true });
+          await writeFile(
+            info.outputPath('peer-protocol', 'sync-diagnostics.json'),
+            JSON.stringify(
+              {
+                heldWrites,
+                forwarded,
+                peerErrors,
+                peerFrames,
+                outgoing: network.outgoing,
+                incoming: network.incoming,
+              },
+              null,
+              2,
+            ),
+          );
+        } finally {
+          peerSocket?.terminate();
+          await f.close();
+        }
       }
     }
-  }
-});
+  });

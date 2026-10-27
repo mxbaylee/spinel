@@ -361,6 +361,7 @@ jobs:
             test-results/**/spn-059-sheet-menu-*.png
             test-results/**/spn-053-offline-*.png
             test-results/**/sync-diagnostics.json
+            test-results/**/phone-doc-caret-events*.json
             test-results/**/phone-doc-selection-evidence*.json
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
