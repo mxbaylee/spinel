@@ -629,14 +629,14 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
   async function checkAccess() {
     if (!active() || checking || denied || refreshingClean || !navigator.onLine) return;
     checking = true;
+    let recheck = false;
     try {
+      const bundle = options.offline?.enabled ? options.offline.bundle : undefined;
       const response = await request(
-        options.offline?.enabled
-          ? `${documentPath(itemId, spaceId)}/collaboration`
-          : documentPath(itemId, spaceId),
+        bundle ? `${documentPath(itemId, spaceId)}/collaboration` : documentPath(itemId, spaceId),
         {
           cache: 'no-store',
-          ...(options.offline?.enabled
+          ...(bundle
             ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
             : {}),
           signal: AbortSignal.any([abort.signal, signal, AbortSignal.timeout(2500)]),
@@ -644,21 +644,27 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       );
       const data = response.ok ? await response.json() : undefined;
       if (!active() || refreshingClean) return;
+      // Preparing or removing a copy can change the response contract while
+      // this read is in flight. Check the new scope before acting on access;
+      // an ordinary { item, live } response is not a collaboration response.
+      if (bundle !== (options.offline?.enabled ? options.offline.bundle : undefined)) {
+        recheck = true;
+        return;
+      }
       if (response.status === 401 && !guestItemId()) {
         await endAuthentication();
         return;
       }
       const lost = [401, 403, 404, 409].includes(response.status);
       const accountChanged =
-        options.offline?.enabled &&
-        (response.status === 409 || (data && data.user?.id !== options.offline.accountId));
+        bundle &&
+        (response.status === 409 || (data && data.user?.id !== options.offline!.accountId));
       const changed =
         data &&
-        (options.offline?.enabled
-          ? data.access !== options.offline.bundle!.access ||
-            data.user?.id !== options.offline.accountId
+        (bundle
+          ? data.access !== bundle.access || data.user?.id !== options.offline!.accountId
           : data.item.access !== access);
-      const restored = options.offline?.enabled
+      const restored = bundle
         ? data && data.unitId !== unitId
         : data?.live && (data.live.unitId !== unitId || data.live.restoring);
       if (lost || changed || restored) {
@@ -693,6 +699,7 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       }
     } finally {
       checking = false;
+      if (recheck) await checkAccess();
     }
   }
 

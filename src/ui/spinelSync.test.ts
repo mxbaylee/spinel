@@ -145,6 +145,7 @@ async function fixture({
   onInitialPending,
   beforeWatch,
   downloaded = false,
+  preparing = false,
   canRecover = false,
   canRefresh,
 }: {
@@ -154,6 +155,7 @@ async function fixture({
   onInitialPending?(): void;
   beforeWatch?(): void;
   downloaded?: boolean;
+  preparing?: boolean;
   canRecover?: boolean;
   canRefresh?(): boolean;
 } = {}) {
@@ -173,13 +175,13 @@ async function fixture({
   vi.stubGlobal('document', Object.assign(new EventTarget(), { visibilityState: 'visible' }));
   vi.stubGlobal('WebSocket', Socket);
   let current = true;
-  let metadata: () => Promise<Response> = async () =>
+  let metadata: (input: string) => Promise<Response> = async (input) =>
     Response.json(
-      downloaded
+      input.endsWith('/collaboration')
         ? { access: 'editor', unitId: 'unit', user: { id: 'owner' } }
         : { item: { access: 'editor' }, live: { unitId: 'unit' } },
     );
-  const requests = vi.fn(async (input: string) => {
+  const requests = vi.fn(async (input: string, _init?: RequestInit) => {
     if (input.includes('/snapshot?'))
       return Response.json({
         version: 1,
@@ -188,7 +190,7 @@ async function fixture({
         snapshot: { id: 'unit', body: { dataStream: '\r\n' } },
       });
     if (input.includes('/ticket?')) return Response.json({ version: 1, ticket: 'one-use-ticket' });
-    return metadata();
+    return metadata(input);
   });
   vi.stubGlobal('fetch', requests);
   const recoveryRequest: OfflineRecoveryRequest = {
@@ -207,7 +209,7 @@ async function fixture({
     name: 'Offline notes (offline copy, 2026-10-27 14:35)',
   };
   const offline = {
-    enabled: true,
+    enabled: downloaded,
     canRecover,
     current: true,
     pending: false,
@@ -218,10 +220,14 @@ async function fixture({
     bundle: { access: 'editor', unitId: 'unit', name: 'Offline notes' },
     recoveryRequest: undefined as OfflineRecoveryRequest | undefined,
     onChange: undefined as (() => void) | undefined,
-    initial: () => ({ snapshot: { id: 'unit', body: { dataStream: '\r\n' } }, revision: 8 }),
+    initial: () =>
+      downloaded
+        ? { snapshot: { id: 'unit', body: { dataStream: '\r\n' } }, revision: 8 }
+        : undefined,
     toVisible: <T>(value: T) => value,
     toCanonical: <T>(value: T) => value,
     fetch: requests,
+    reconcileAvailability: vi.fn(async (_checkpoint: ClientCheckpoint) => {}),
     persist: vi.fn(async (_checkpoint: ClientCheckpoint) => {}),
     prepareRecovery: vi.fn(
       async (_checkpoint: ClientCheckpoint): Promise<OfflineRecoveryRequest> => {
@@ -273,7 +279,7 @@ async function fixture({
     onInitialPending,
     reload,
     lock,
-    offline: downloaded ? (offline as unknown as OfflineSession) : undefined,
+    offline: downloaded || preparing ? (offline as unknown as OfflineSession) : undefined,
     canRefresh,
   });
   beforeWatch?.();
@@ -307,13 +313,13 @@ async function fixture({
     leave() {
       current = false;
     },
-    metadata(reply: () => Promise<Response>) {
+    metadata(reply: (input: string) => Promise<Response>) {
       metadata = reply;
     },
     pending() {
       client.state.pending = true;
       client.state.pendingMutations = 1;
-      if (downloaded) offline.pending = true;
+      if (downloaded || preparing) offline.pending = true;
       client.options.onState(client.state);
     },
     conflict() {
@@ -689,6 +695,103 @@ test('a socket open is not room readiness or a durable save, and reconnect retai
   });
   expect(f.saves.at(-1)).toMatchObject({ dirty: false, failed: false });
 });
+
+test.each(['response', 'body'] as const)(
+  'preparing a Space child during its metadata %s rechecks access without freezing the editor',
+  async (stage) => {
+    const f = await fixture({ preparing: true, space: true });
+    f.socket().open();
+    f.socket().frame({
+      type: 'resume',
+      version: 1,
+      unitId: 'unit',
+      fromRevision: 8,
+      revision: 8,
+      edits: [],
+    });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.saves.at(-1)?.message).toBe('All changes saved.');
+
+    const metadata = { item: { access: 'editor' }, live: { unitId: 'unit' } };
+    const response = Response.json(metadata);
+    let release!: () => void;
+    if (stage === 'response') {
+      const held = new Promise<Response>((resolve) => {
+        release = () => resolve(response);
+      });
+      f.metadata(() => held);
+    } else {
+      const held = new Promise<typeof metadata>((resolve) => {
+        release = () => resolve(metadata);
+      });
+      vi.spyOn(response, 'json').mockImplementationOnce(() => held);
+      f.metadata(async () => response);
+    }
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(f.requests.mock.calls.at(-1)?.[0]).toBe(`/api/spaces/${item}/items/${child}`);
+    expect(f.requests.mock.calls.at(-1)?.[1]?.method).toBeUndefined();
+
+    // Preparation activates the existing native binding through its real
+    // event/persistence path while the ordinary metadata read is still held.
+    f.offline.persist.mockImplementationOnce(async () => {
+      f.offline.enabled = true;
+      f.offline.onChange?.();
+    });
+    window.dispatchEvent(
+      new CustomEvent('spinel-offline-prepared', { detail: { accountId: 'owner' } }),
+    );
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.offline.reconcileAvailability).toHaveBeenCalledOnce();
+    expect(f.offline.persist).toHaveBeenCalledOnce();
+    expect(f.offline.persist.mock.calls[0][0]).toMatchObject({ sent: null, buffer: [] });
+    expect(f.offline.persist.mock.calls[0][0].failure).toBeUndefined();
+
+    let confirm!: (response: Response) => void;
+    const confirmation = new Promise<Response>((resolve) => {
+      confirm = resolve;
+    });
+    f.metadata(() => confirmation);
+    const requests = f.requests.mock.calls.length;
+    release();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.requests).toHaveBeenCalledTimes(requests + 1);
+    expect(f.requests.mock.calls.at(-1)).toEqual([
+      `/api/spaces/${item}/items/${child}/collaboration`,
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      }),
+    ]);
+    expect(f.readonly).not.toHaveBeenCalled();
+    expect(f.offline.stopRemote).not.toHaveBeenCalled();
+    expect(f.offline.refreshClean).not.toHaveBeenCalled();
+    expect(f.offline.removeClean).not.toHaveBeenCalled();
+    expect(f.client.state.resyncing).toBe(false);
+
+    confirm(Response.json({ access: 'editor', unitId: 'unit', user: { id: 'owner' } }));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(f.saves.at(-1)).toMatchObject({
+      local: 'synced',
+      failed: false,
+      message: 'Synced. All changes are saved on the server and this device.',
+    });
+    expect(f.socket().readyState).toBe(Socket.OPEN);
+    expect(f.reload).not.toHaveBeenCalled();
+
+    // The obsolete response does not weaken the next real access denial or
+    // allow it to delete an edit made after preparation completed.
+    f.pending();
+    f.metadata(async () => Response.json({}, { status: 403 }));
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(f.saves.at(-1)).toMatchObject({ local: 'attention', retained: true });
+    expect(f.client.state.resyncing).toBe(true);
+    expect(f.readonly).toHaveBeenCalled();
+    expect(f.offline.pending).toBe(true);
+    expect(f.offline.removeClean).not.toHaveBeenCalled();
+    expect(f.offline.refreshClean).not.toHaveBeenCalled();
+  },
+);
 
 test('a clean downloaded base outside replay retention refreshes without retaining a failure', async () => {
   const f = await fixture({ downloaded: true });

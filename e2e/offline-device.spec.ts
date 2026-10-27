@@ -144,6 +144,41 @@ async function accountDatabases(cdp: CDPSession, origin: string) {
     .filter((name: string) => /^spinel-offline-[a-f\d-]{36}$/i.test(name))
     .sort();
 }
+async function probeQuota(page: Page, databaseName: string) {
+  return page.evaluate((databaseName) => {
+    const bytes = new Uint8Array(256 * 1024);
+    for (let offset = 0; offset < bytes.length; offset += 64 * 1024)
+      crypto.getRandomValues(bytes.subarray(offset, offset + 64 * 1024));
+    return new Promise<'committed' | 'QuotaExceededError'>((resolve, reject) => {
+      const opening = indexedDB.open(databaseName);
+      opening.onupgradeneeded = () => opening.transaction?.abort();
+      opening.onerror = () => reject(opening.error);
+      opening.onsuccess = () => {
+        const db = opening.result;
+        try {
+          const tx = db.transaction('probe', 'readwrite');
+          const store = tx.objectStore('probe');
+          store.put(bytes, 'quota');
+          store.delete('quota');
+          const count = store.count();
+          tx.oncomplete = () => {
+            db.close();
+            if (count.result !== 0) reject(new Error('Quota probe retained a value.'));
+            else resolve('committed');
+          };
+          tx.onabort = () => {
+            db.close();
+            if (tx.error?.name === 'QuotaExceededError') resolve('QuotaExceededError');
+            else reject(tx.error ?? new Error('Quota probe aborted unexpectedly.'));
+          };
+        } catch (error) {
+          db.close();
+          reject(error);
+        }
+      };
+    });
+  }, databaseName);
+}
 async function importImages(f: OfflineFixture, origin: string, name: string, large = false) {
   // Portable import prefers the native title over the filename. Give this
   // second item its intended identity instead of reusing "Sheet images".
@@ -325,6 +360,7 @@ test('real browser quota failure retains pending work and images without a parti
   test.setTimeout(240_000);
   const f = await fixture(browser, baseURL!, info, 'sheet', { images: true });
   const cdp = await f.context.newCDPSession(f.page);
+  const probeName = `spinel-e2e-quota-${f.actor.id}`;
   try {
     await f.download();
     const original = await f.read();
@@ -342,17 +378,46 @@ test('real browser quota failure retains pending work and images without a parti
       if (response.url().includes(`/api/items/${target.id}/images/`) && response.ok())
         fetchedImages++;
     });
+    await f.page.evaluate(
+      (databaseName) =>
+        new Promise<void>((resolve, reject) => {
+          const opening = indexedDB.open(databaseName);
+          opening.onupgradeneeded = () => opening.result.createObjectStore('probe');
+          opening.onerror = () => reject(opening.error);
+          opening.onsuccess = () => {
+            opening.result.close();
+            resolve();
+          };
+        }),
+      probeName,
+    );
     const usage = await cdp.send('Storage.getUsageAndQuota', { origin: baseURL! });
+    const quotaSize = usage.usage + 64 * 1024;
     await cdp.send('Storage.overrideQuotaForOrigin', {
       origin: baseURL!,
-      quotaSize: usage.usage + 64 * 1024,
+      quotaSize,
     });
+    expect(await cdp.send('Storage.getUsageAndQuota', { origin: baseURL! })).toMatchObject({
+      overrideActive: true,
+      quota: quotaSize,
+    });
+    // Chromium caches available bucket space for 30 seconds. Observe a real
+    // commit-time quota abort; successful put+delete probes leave no values.
+    // https://github.com/chromium/chromium/blob/156.0.8078.4/content/browser/indexed_db/instance/bucket_context.h
+    await expect
+      .poll(() => probeQuota(f.page, probeName), {
+        timeout: 45_000,
+        intervals: [250, 500, 1000],
+      })
+      .toBe('QuotaExceededError');
     await listDownload(f.page, target.name);
     await expect(f.page.getByRole('alert').filter({ hasText: /space/i })).toBeVisible({
       timeout: 120_000,
     });
     expect(fetchedImages).toBeGreaterThan(0);
-    expect((await deviceCopy(f.page, f.actor.id, target.id))?.item).toBeUndefined();
+    const failedCopy = await deviceCopy(f.page, f.actor.id, target.id);
+    expect(failedCopy?.item).toBeUndefined();
+    expect(failedCopy?.images).toEqual([]);
     expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);
     assertImageBytes(retained!);
     expect(await f.read()).toEqual(original);
@@ -366,6 +431,9 @@ test('real browser quota failure retains pending work and images without a parti
     expect(f.errors).toEqual([]);
   } finally {
     await cdp.send('Storage.overrideQuotaForOrigin', { origin: baseURL! }).catch(() => {});
+    await cdp
+      .send('IndexedDB.deleteDatabase', { securityOrigin: baseURL!, databaseName: probeName })
+      .catch(() => {});
     await f.close();
   }
 });

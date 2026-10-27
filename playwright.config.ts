@@ -28,9 +28,10 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   failOnFlakyTests: Boolean(process.env.CI),
-  // Keep independent native-client and phone acceptance scenarios observable;
-  // ordinary large suites still stop repeated downstream failures early.
-  maxFailures: process.env.CI && !project?.startsWith('sync-') ? 1 : 0,
+  // Keep independent native-client and offline lifecycle scenarios observable;
+  // the production fixtures do not depend on earlier cases succeeding.
+  // Other suites still stop repeated downstream failures early.
+  maxFailures: process.env.CI && project !== 'production' && !project?.startsWith('sync-') ? 1 : 0,
   // Keep per-project/shard CI results outside outputDir, which Playwright clears.
   // The existing artifact upload preserves these alongside failure traces.
   reporter: process.env.CI
