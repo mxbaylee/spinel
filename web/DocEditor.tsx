@@ -138,7 +138,7 @@ export function DocEditor({
     let stopPresence: (() => void) | undefined;
     let formulaInterval: ReturnType<typeof setInterval> | undefined;
     let stopFormulaVisibility: (() => void) | undefined;
-    let stopInputEvidence: (() => void) | undefined;
+    let stopSelectionEvidence: (() => void) | undefined;
     let stopDocumentLayout: (() => void) | undefined;
     let phoneInput: ReturnType<typeof guardPhoneDocInput> | undefined;
     let phoneInputLocked = false;
@@ -310,8 +310,8 @@ export function DocEditor({
       });
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
-        stopInputEvidence?.();
-        stopInputEvidence = undefined;
+        stopSelectionEvidence?.();
+        stopSelectionEvidence = undefined;
         stopDocumentLayout?.();
         stopDocumentLayout = undefined;
         phoneInput?.dispose();
@@ -403,14 +403,13 @@ export function DocEditor({
       render?.engine.getCanvasElement().setAttribute('aria-label', 'Document canvas');
       if (mobile && render)
         phoneInput = guardPhoneDocInput(
-          render.with(DocSelectionRenderService),
+          render,
+          univer.__getInjector().get(IContextMenuService),
           () => phoneInputLocked,
         );
       if (mobile && render && import.meta.env.VITE_SYNC_EVIDENCE === '1') {
-        // Evidence builds observe the public input and command boundary. They
-        // never alter the range, input event, command, or document.
-        const emit = (detail: unknown) =>
-          window.dispatchEvent(new CustomEvent('spinel-doc-input-evidence', { detail }));
+        // Evidence builds expose a read-only snapshot of the public native
+        // caret after real input; they cannot alter the range or document.
         const selection = render.with(DocSelectionRenderService);
         const observeSelection = () => {
           const range = selection.getActiveTextRange();
@@ -424,7 +423,6 @@ export function DocEditor({
                 end,
                 hasAnchor: Boolean(range?.getAnchor()),
                 editing: selection.isEditing,
-                contextMenuVisible: univer.__getInjector().get(IContextMenuService).visible,
                 bounds:
                   start !== undefined && end !== undefined
                     ? calcDocRangePositions(
@@ -445,37 +443,8 @@ export function DocEditor({
           );
         };
         window.addEventListener('spinel-doc-selection-read', observeSelection);
-        const subscription = selection.onInput$.subscribe((config) =>
-          emit({
-            stage: 'input',
-            content: config.content,
-            data: (config.event as InputEvent).data,
-            prevented: config.event.defaultPrevented,
-            editing: selection.isEditing,
-            activeRange: config.activeRange && {
-              start: config.activeRange.startOffset,
-              end: config.activeRange.endOffset,
-            },
-          }),
-        );
-        const commands = univer.__getInjector().get(ICommandService);
-        const relevant = (id: string) => /^doc\.(command|mutation)\./.test(id);
-        const before = commands.beforeCommandExecuted((command) => {
-          if (relevant(command.id)) emit({ stage: 'before', id: command.id });
-        });
-        const after = commands.onCommandExecuted((command) => {
-          if (relevant(command.id))
-            emit({
-              stage: 'after',
-              id: command.id,
-              text: document.getDocumentDataModel().getSnapshot().body?.dataStream,
-            });
-        });
-        stopInputEvidence = () => {
+        stopSelectionEvidence = () => {
           window.removeEventListener('spinel-doc-selection-read', observeSelection);
-          subscription.unsubscribe();
-          before.dispose();
-          after.dispose();
         };
       }
       // Modern Docs reflow through device-local layout options. Paginated Docs

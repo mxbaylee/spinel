@@ -11,84 +11,97 @@ import {
   BoldMenuItemFactory,
   BulletListCommand,
   DOC_PARAGRAPH_T_EDIT_MENU_ID,
+  DocFloatMenuService,
+  DocSelectionRenderService,
   DocViewScaleService,
   ItalicMenuItemFactory,
   OrderListCommand,
   SetInlineFormatBoldCommand,
   SetInlineFormatItalicCommand,
 } from '@univerjs/docs-ui';
-import type { DocSelectionRenderService } from '@univerjs/docs-ui';
 import type { MobileDocSelectionRenderService } from '@univerjs/docs-ui/lib/types/services/mobile/doc-selection-render.service.d.ts';
+import type { IRender } from '@univerjs/engine-render';
 import { IRenderManagerService, UniverRenderEnginePlugin } from '@univerjs/engine-render';
+import type { IContextMenuService } from '@univerjs/ui';
 import { ContextMenuGroup, ContextMenuPosition, IMenuManagerService } from '@univerjs/ui';
 
 /** Only call for the public mobile preset's selection-service registration. */
 export function guardPhoneDocInput(
-  selection: DocSelectionRenderService,
+  render: IRender,
+  contextMenus: IContextMenuService,
   isReadOnly: () => boolean,
 ) {
-  const mobile = selection as MobileDocSelectionRenderService;
+  const mobile = render.with(DocSelectionRenderService) as MobileDocSelectionRenderService;
+  const selectionMenus = render.with(DocFloatMenuService);
+  const input = mobile.inputElement;
+  const oldMinHeight = input.style.getPropertyValue('min-height');
+  const oldMinHeightPriority = input.style.getPropertyPriority('min-height');
+  // Initialization makes the host inert. Keep the empty native input's line
+  // box nonzero so focus can establish its browser caret after loading ends.
+  input.style.setProperty('min-height', '1px');
   const stopEditing = () => mobile.exitMobileEditMode();
-  // These public streams separately replay their last events. Bootstrap that
-  // state conservatively, then follow delivery order: event timestamps can tie.
-  let compositionStartedAt = -Infinity;
-  let compositionEndedAt = -Infinity;
-  let bootstrappingComposition = true;
-  let composing = false;
-  const compositionStart = mobile.onCompositionstart$.subscribe((config) => {
-    if (!config) return;
-    if (bootstrappingComposition) compositionStartedAt = config.event.timeStamp;
-    else composing = true;
-  });
-  const compositionEnd = mobile.onCompositionend$.subscribe((config) => {
-    if (!config) return;
-    if (bootstrappingComposition) compositionEndedAt = config.event.timeStamp;
-    else composing = false;
-  });
-  composing = compositionStartedAt !== -Infinity && compositionStartedAt >= compositionEndedAt;
-  bootstrappingComposition = false;
   // The native touch controller can focus input independently of the root
   // Edit permission. Keep read-only readers out of keyboard mode as well;
   // the existing permission service remains the mutation boundary.
-  const focus = mobile.onFocus$.subscribe((config) => {
-    if (isReadOnly()) {
-      stopEditing();
-      return;
-    }
-    const input = mobile.inputElement;
-    const ownerDocument = input.ownerDocument;
-    if (
-      composing ||
-      !mobile.isEditing ||
-      !input.isConnected ||
-      !input.isContentEditable ||
-      ownerDocument.activeElement !== input ||
-      config.content ||
-      input.textContent
-    )
-      return;
-    const browserSelection = ownerDocument.getSelection();
-    if (!browserSelection) return;
-    if (
-      browserSelection.anchorNode &&
-      browserSelection.focusNode &&
-      input.contains(browserSelection.anchorNode) &&
-      input.contains(browserSelection.focusNode)
-    )
-      return;
-    // Native focus can leave this empty input without a browser caret, so keys
-    // never produce input events. Repair only that DOM caret; the native canvas
-    // range still owns the document insertion point. The focus config retains
-    // pre-focus content even though the SDK clears input.innerHTML before emit.
-    browserSelection.collapse(input, 0);
+  const focus = mobile.onFocus$.subscribe(() => {
+    if (isReadOnly()) stopEditing();
   });
+  const canvas = render.engine.getCanvasElement();
+  let touchIdentifier: number | null = null;
+  const touchStart = (event: TouchEvent) => {
+    touchIdentifier =
+      !isReadOnly() && !contextMenus.visible && event.touches.length === 1
+        ? event.touches[0].identifier
+        : null;
+    // A deliberate backdrop dismissal closes the drawer but leaves the native
+    // menu's cached range. A new gesture must be able to select that word again.
+    if (touchIdentifier !== null) selectionMenus.hideFloatMenu();
+  };
+  const touchMove = (event: TouchEvent) => {
+    if (event.touches.length !== 1) touchIdentifier = null;
+  };
+  const touchEnd = (event: TouchEvent) => {
+    const endedIdentifier = touchIdentifier;
+    touchIdentifier = null;
+    const range = mobile.getActiveTextRange();
+    if (
+      endedIdentifier !== null &&
+      event.touches.length === 0 &&
+      event.changedTouches.length === 1 &&
+      event.changedTouches[0].identifier === endedIdentifier &&
+      !isReadOnly() &&
+      contextMenus.visible &&
+      range &&
+      !range.collapsed &&
+      event.cancelable
+    )
+      // The held touch has opened a drawer over its canvas target. Suppress
+      // only this release's compatibility click onto the new Cancel backdrop.
+      event.preventDefault();
+  };
+  const touchCancel = () => {
+    touchIdentifier = null;
+  };
+  canvas.addEventListener('touchstart', touchStart, { passive: true });
+  canvas.addEventListener('touchmove', touchMove, { passive: true });
+  canvas.addEventListener('touchend', touchEnd, { passive: false });
+  canvas.addEventListener('touchcancel', touchCancel, { passive: true });
   if (isReadOnly()) stopEditing();
   return {
     stopEditing,
     dispose() {
       focus.unsubscribe();
-      compositionStart.unsubscribe();
-      compositionEnd.unsubscribe();
+      canvas.removeEventListener('touchstart', touchStart);
+      canvas.removeEventListener('touchmove', touchMove);
+      canvas.removeEventListener('touchend', touchEnd);
+      canvas.removeEventListener('touchcancel', touchCancel);
+      if (
+        input.style.getPropertyValue('min-height') === '1px' &&
+        !input.style.getPropertyPriority('min-height')
+      ) {
+        if (oldMinHeight) input.style.setProperty('min-height', oldMinHeight, oldMinHeightPriority);
+        else input.style.removeProperty('min-height');
+      }
     },
   };
 }

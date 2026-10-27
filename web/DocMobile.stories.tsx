@@ -167,9 +167,9 @@ function MobileCanvas({
       canvas.setAttribute('aria-label', 'Document canvas');
       const skeletons = render.with(DocSkeletonManagerService);
       const selections = render.with(DocSelectionRenderService);
-      const phoneInput = guardPhoneDocInput(selections, () => readOnly);
-      cleanups.push(() => phoneInput.dispose());
       const contextMenus = univer.__getInjector().get(IContextMenuService);
+      const phoneInput = guardPhoneDocInput(render, contextMenus, () => readOnly);
+      cleanups.push(() => phoneInput.dispose());
       const layout = JSON.stringify([data.documentStyle, data.settings]);
       const fixtureHost = host.current!;
       mobileDocFixtures.set(fixtureHost, {
@@ -294,7 +294,7 @@ function MobileCanvas({
                 ? ''
                 : 'Tap Edit, then tap the text to write.')}
       </p>
-      <div className="univer-container" ref={host} />
+      <div className="univer-container" ref={host} inert={!ready} />
     </section>
   );
 }
@@ -479,6 +479,7 @@ export const SelectionFormatting: Story = {
     const host = canvasElement.querySelector<HTMLElement>('.univer-container')!;
     const fixture = mobileDocFixtures.get(host)!;
     const originalText = fixture.caret().text;
+    const overlays = canvasElement.ownerDocument.body;
     expect(fixture.caret().italicText).toEqual([]);
     await userEvent.click(within(host).getByRole('button', { name: 'Edit' }));
 
@@ -499,10 +500,10 @@ export const SelectionFormatting: Story = {
       );
       fixture.openSelectionMenu(fixture.caret().bounds!);
       await waitFor(
-        () => expect(host.querySelector('[data-u-comp="mobile-menu-drawer"]')).toBeVisible(),
+        () => expect(overlays.querySelector('[data-u-comp="mobile-menu-drawer"]')).toBeVisible(),
         { timeout: 10_000 },
       );
-      const drawer = host.querySelector<HTMLElement>('[data-u-comp="mobile-menu-drawer"]')!;
+      const drawer = overlays.querySelector<HTMLElement>('[data-u-comp="mobile-menu-drawer"]')!;
       await userEvent.click(within(drawer).getByRole('button', { name: 'More' }));
       await waitFor(
         () => {

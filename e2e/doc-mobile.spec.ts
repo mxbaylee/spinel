@@ -27,8 +27,6 @@ const saved = (page: Page) =>
   });
 const input = (page: Page) => page.locator('[contenteditable="true"][data-u-comp="editor"]');
 
-type InputEvidenceWindow = Window & { phoneInputEvidence?: unknown[] };
-
 interface DocSelectionEvidence {
   unitId: string;
   start?: number;
@@ -40,123 +38,10 @@ interface DocSelectionEvidence {
   text: string;
 }
 
-/** Observe the native input boundary without creating or changing a selection. */
-async function recordPhoneInput(context: BrowserContext) {
-  await context.addInitScript(() => {
-    const records: unknown[] = [];
-    (window as InputEvidenceWindow).phoneInputEvidence = records;
-    const record = (value: unknown) => {
-      records.push(value);
-      if (records.length > 200) records.shift();
-    };
-    let measuredKey = false;
-    for (const type of [
-      'beforeinput',
-      'input',
-      'keydown',
-      'keypress',
-      'focusin',
-      'focusout',
-      'click',
-    ])
-      document.addEventListener(
-        type,
-        (event) => {
-          const target = event.target;
-          if (!(target instanceof HTMLElement)) return;
-          const editor = target.matches('[contenteditable="true"][data-u-comp="editor"]');
-          if (!editor && !(event instanceof KeyboardEvent) && type !== 'click') return;
-          const input = event as InputEvent;
-          const keyboard = event as KeyboardEvent;
-          if (type === 'focusin') measuredKey = false;
-          const measure = editor && (type === 'focusin' || (type === 'keydown' && !measuredKey));
-          if (type === 'keydown') measuredKey = true;
-          const observe = (phase: string) => {
-            const selection = window.getSelection();
-            const layout = (element: HTMLElement) => {
-              const style = getComputedStyle(element);
-              const rect = element.getBoundingClientRect();
-              return {
-                tag: element.tagName,
-                id: element.id,
-                component: element.dataset.uComp,
-                editable: element.isContentEditable,
-                inert: element.inert,
-                rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-                display: style.display,
-                visibility: style.visibility,
-                position: style.position,
-                overflow: [style.overflowX, style.overflowY],
-                contain: style.contain,
-                transform: style.transform,
-                userSelect: style.userSelect,
-                userModify: style.getPropertyValue('-webkit-user-modify'),
-                fontSize: style.fontSize,
-                lineHeight: style.lineHeight,
-              };
-            };
-            const ancestors = [];
-            if (measure)
-              for (
-                let node: HTMLElement | null = target;
-                node && ancestors.length < 8;
-                node = node.parentElement
-              )
-                ancestors.push(layout(node));
-            record({
-              time: performance.now(),
-              type,
-              phase,
-              target: target.tagName,
-              component: target.closest('[data-u-comp]')?.getAttribute('data-u-comp'),
-              label: target.closest('[aria-label]')?.getAttribute('aria-label'),
-              editor,
-              key: keyboard.key,
-              code: keyboard.code,
-              modifiers: [keyboard.ctrlKey, keyboard.altKey, keyboard.shiftKey, keyboard.metaKey],
-              data: input.data,
-              inputType: input.inputType,
-              composing: input.isComposing,
-              prevented: input.defaultPrevented,
-              focused: document.activeElement === target,
-              documentFocused: document.hasFocus(),
-              visible: document.visibilityState,
-              content: editor ? target.textContent : undefined,
-              anchorInside: Boolean(selection?.anchorNode && target.contains(selection.anchorNode)),
-              focusInside: Boolean(selection?.focusNode && target.contains(selection.focusNode)),
-              rangeCount: selection?.rangeCount,
-              layout: measure
-                ? {
-                    ancestors,
-                    anchor: [selection?.anchorNode?.nodeName, selection?.anchorOffset],
-                    focus: [selection?.focusNode?.nodeName, selection?.focusOffset],
-                    rangeRects: selection?.rangeCount
-                      ? Array.from(selection.getRangeAt(0).getClientRects(), (rect) => ({
-                          x: rect.x,
-                          y: rect.y,
-                          width: rect.width,
-                          height: rect.height,
-                        }))
-                      : [],
-                  }
-                : undefined,
-            });
-          };
-          observe('capture');
-          setTimeout(() => observe('after'), 0);
-        },
-        true,
-      );
-    window.addEventListener('spinel-doc-input-evidence', (event) =>
-      record({ time: performance.now(), native: (event as CustomEvent).detail }),
-    );
-  });
-}
-
 // The renderer caches glyphs on offscreen canvases, so fillText interception
 // cannot locate their final screen positions. Find the first real text line in
 // the visible raster instead. The fixture starts with "Phone journal"; its
-// neutral, high-contrast ink is distinct from the pale SDK watermark.
+// neutral, high-contrast ink identifies the document text.
 async function textPoint(page: Page) {
   const canvas = page
     .getByRole('region', { name: 'Doc document', exact: true })
@@ -253,24 +138,6 @@ async function beginWriting(page: Page) {
 async function selectFirstWord(page: Page) {
   const point = await textPoint(page);
   const touch = await page.context().newCDPSession(page);
-  const observeSelection = (phase: string) =>
-    page.evaluate((phase) => {
-      const ranges: DocSelectionEvidence[] = [];
-      const receive = (event: Event) =>
-        ranges.push((event as CustomEvent<DocSelectionEvidence>).detail);
-      window.addEventListener('spinel-doc-selection-evidence', receive);
-      try {
-        window.dispatchEvent(new Event('spinel-doc-selection-read'));
-      } finally {
-        window.removeEventListener('spinel-doc-selection-evidence', receive);
-      }
-      (window as InputEvidenceWindow).phoneInputEvidence?.push({
-        phase,
-        selection: ranges[0],
-        drawer: Boolean(document.querySelector('[data-u-comp="mobile-menu-drawer"]')),
-        focused: document.activeElement?.matches('[data-u-comp="editor"]'),
-      });
-    }, phase);
   try {
     await touch.send('Input.dispatchTouchEvent', {
       type: 'touchStart',
@@ -279,9 +146,7 @@ async function selectFirstWord(page: Page) {
     // A genuine held touch crosses the native long-press threshold; do not
     // substitute a programmatic text range for this selection interaction.
     await page.waitForTimeout(650);
-    await observeSelection('held-touch-before-release');
     await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-    await observeSelection('held-touch-after-release');
   } finally {
     await touch.detach();
   }
@@ -400,7 +265,6 @@ async function fixture(
     });
     contexts.push(context);
     await recordNativeSnapshots(context);
-    await recordPhoneInput(context);
     if (account)
       await context.addCookies([
         {
@@ -483,7 +347,6 @@ async function fixture(
               connection: document.querySelector('[role="status"][aria-label="Connection status"]')
                 ?.textContent,
               native: (window as Window & { nativeSyncEvidence?: unknown }).nativeSyncEvidence,
-              input: (window as InputEvidenceWindow).phoneInputEvidence,
             })),
           ),
       );
@@ -598,8 +461,17 @@ for (const zoomRatio of [1, 0.5, 2])
       await expect(selectionDrawer).toBeVisible();
       await expect(input(page)).not.toBeFocused();
       // Held-touch selection dismisses the native input. Restore the emulated
-      // keyboard viewport, then expand the drawer through its visible handle.
+      // keyboard viewport before interacting with the drawer.
       await keyboardOcclusion(page, 0);
+      // The opening touch's release must not activate the new backdrop, while
+      // a later deliberate backdrop tap must still dismiss the native drawer.
+      await page
+        .getByRole('button', { name: 'Cancel', exact: true })
+        .first()
+        .tap({ position: { x: 8, y: 8 } });
+      await expect(selectionDrawer).not.toBeVisible();
+      await selectFirstWord(page);
+      await expect(selectionDrawer).toBeVisible();
       await selectionDrawer.getByRole('button', { name: 'More', exact: true }).tap();
       await expect(selectionDrawer).toHaveAttribute('data-snap', 'expanded');
       const selectedBold = selectionDrawer.getByRole('button', { name: 'Bold', exact: true });

@@ -1,5 +1,9 @@
 /* Style the host and controls, never scale or alter the native canvas. */
-.spinel-mobile-doc button {
+.spinel-mobile-doc button,
+/* Native drawers mount under body, outside their Doc host. Keep their touch
+   targets usable while a mobile Doc is open without changing desktop menus. */
+body:has(.spinel-mobile-doc) [data-u-comp='mobile-menu-drawer'] button,
+body:has(.spinel-mobile-doc) [data-u-comp='mobile-doc-toolbar-drawer'] button {
   min-width: 44px;
   min-height: 44px;
 }
