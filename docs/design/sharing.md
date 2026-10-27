@@ -80,15 +80,102 @@ the acting account’s direct grant remain protected by the existing API.
 | Link status, role, Create link or Copy link             |                                             |
 | Done                                                    |                                             |
 
-## Formula sources (SPN-033 / SPN-076)
+## Formula sources (SPN-076 design prerequisite)
 
-Sharing a document never shares its formula sources. A formula with any
-inaccessible input shows an access placeholder, never a cached value or partial
-aggregate. See [formulas.md](formulas.md). SPN-076 separately adds dependency
-awareness and an unchecked option to share the exact listed source Sheets with
-view access, subject to the sharer’s authority. It must not silently publish
-sources when making a public host link. That dialog pattern requires its own
-design PR before implementation.
+The adopted extension keeps one Sharing dialog, with a **Formula sources**
+section inside each person's row, before **Apply access**. This is a design
+contract; SPN-076 implements it after this prerequisite lands. The rationale
+and all four persona effects are recorded in
+[SPN-076](../implementation/SPN-076.md#explicit-recipient-source-review).
+
+Sharing a Doc alone leaves every source permission unchanged. A formula with
+any inaccessible input retains the SPN-033 unavailable state, never a saved value
+or partial aggregate. See [formulas.md](formulas.md).
+
+### Review and confirmation
+
+1. Show confirmed host access and the staged host role as today. Discover direct
+   formula references from the current saved Doc, deduplicated by stable identity.
+   Sharing a Space reviews all live Docs inside it, consistently from dashboard
+   or editor. Sharing always acts on the outer Space, never a child grant. Do
+   not traverse source formulas or include unrelated documents.
+2. Where the recipient lacks source access, explain: **Some formulas will be
+   unavailable to Alex without access to their sources.** Offer **Also share
+   source spreadsheets**, unchecked on entry. The full label is a 44 px touch
+   target. It is offered only when there are eligible sources and the proposed
+   host access allows the recipient to read the report. Removing a direct grant
+   can still leave inherited host access; explain the effective outcome.
+3. List current authorized source names and their status. Selecting the option
+   marks the exact eligible targets **Can view · Proposed** before Apply access.
+   Already accessible sources say **Can view / Can edit / File admin / Owner ·
+   Kept** as appropriate; their existing direct and inherited access is untouched.
+   Source-only sharing stays actionable when the host role is unchanged.
+4. A readable source the actor cannot share says **Owner or File admin must
+   share**. An unreadable, missing or otherwise undiscoverable source gets one
+   generic explanation without its name, identity, parent or saved expression
+   label. These sources are excluded from proposed grants; do not imply that
+   every formula will become available. Operator accounts gain no source access.
+5. Same-Space sources say **Included with this Space** and need no checkbox or
+   child grant. Group external Space sources by their actual outer grant target:
+   show its authorized name, each exact source Sheet, **Entire Space**, and
+   **Can view every current and future page and folder in this Space.** A single
+   opt-in covers only this visibly reviewed set; there is no fabricated child grant.
+6. Apply access confirms the staged host role and, only if checked, those exact
+   source targets. Recheck current host/source authority, recipient access,
+   dependency identity and Space membership before mutation. Source grants can
+   only add Can view where access is missing; never downgrade or add editing.
+   A changed dependency set, name or grant boundary refreshes review and clears
+   opt-in before granting sources. Never silently expand a Sheet into a whole Space.
+
+### Loading, changes and outcomes
+
+Use the existing muted/status/error patterns, with a bounded source section and
+wrapping rows rather than a wide table. Source controls, duplicate Apply and
+dialog dismissal are disabled during mutation; confirmed access stays visible.
+Opening another host, changing the host role or replacing a material source
+preview clears the opt-in. A response for an earlier view cannot restore it.
+
+| State | Message and next action |
+| --- | --- |
+| Checking | **Checking formula sources…**; no opt-in until the current review succeeds. |
+| Check failed | **Could not check formula sources. Try again.** / **Retry source check**. Host-only sharing may proceed with an explicit warning that sources were not checked. |
+| Source list or boundary changed | **Formula sources changed. Review the updated list before sharing them.** Show the refreshed list, unchecked. |
+| Source authority revoked | Explain that the Owner or File admin must grant access, using only currently authorized names. Never reuse the stale name as proof of authorization. |
+| Complete | Confirm the host outcome and source outcome separately; only confirmed grants are described as shared. |
+| Partial success | Say which host/source grants succeeded and which still need access. Keep successful grants, show no false all-success message, and offer **Review remaining sources**. Refresh before another opt-in. |
+| Response lost | **Could not confirm the update. Review current access and try again.** Refresh confirmed permissions before claiming an outcome; do not claim that nothing changed. |
+
+No new background access requests or notifications are sent. There is no
+automatic retry of source grants after a failed or uncertain confirmation.
+
+### Public links
+
+The existing **Anyone with the link** section remains separate. It has a concise
+warning, never a source opt-in or source-publication action:
+
+- Doc: **This link shares only the document. Formulas that need other files are
+  unavailable to link guests.**
+- Space: **Sources in this Space are included. Sources outside this Space remain
+  unavailable to link guests.**
+
+Creating/replacing a host link never creates a source link or changes account
+grants. Guest pages get no source inventory or account identities. Existing
+whole-Space confirmation and immediate link revocation remain intact.
+
+### Evidence required for implementation
+
+Proposal screenshots use the actual theme, shared modal and controls with
+clearly labelled fixture data. The prerequisite PR embeds current light/dark/phone
+Sharing captures plus the proposed unchecked, explicit targets, external Space,
+restricted, stale, partial and guest-link states. Independent review is **agent
+review only** and does not claim the proposal implements authorization.
+
+Implementation adds production stories for these states, source-only sharing,
+existing stronger access, same-Space inheritance, check failure, pending and
+uncertain results. Browser tests prove real grants and formula availability,
+unchecked defaults, no implicit source grants, changed/revoked authority,
+partial outcomes and public-link isolation. Actual current light/dark/phone
+captures and independent theme/persona approval accompany its PR.
 
 ## Stories
 
