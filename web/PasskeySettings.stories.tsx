@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending, mockFetch } from '../.storybook/api.ts';
 import { PasskeySettings } from './PasskeySettings.tsx';
 
@@ -333,7 +333,7 @@ export const AccountChangedBeforeAction: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const action = await canvas.findByRole('button', { name: 'Sign out other devices' });
-    await expect(action).toBeEnabled();
+    await waitFor(() => expect(action).toBeEnabled());
     const key = 'spinel.offline.online-account';
     const previousAccount = localStorage.getItem(key);
     const previousFetch = globalThis.fetch;
