@@ -260,6 +260,9 @@ test('retained history and its removed image survive pruning and an authenticate
   expect(restored.prepare('SELECT count(*) AS n FROM doc_images').get()?.n).toBe(0);
 });
 
+// Exercise all 2,016 checkpoint intervals. This is a storage acceptance test,
+// not a latency SLA: hosted runs of the same tree ranged from 16.5s to over 30s.
+// Keep a bounded 60s budget without reducing the workload or storage assertions.
 test('a busy week of 64 KiB native documents stays below the documented history storage budget', async () => {
   const f = await fixture();
   const text = Array.from({ length: 1024 }, (_, i) =>
@@ -280,7 +283,7 @@ test('a busy week of 64 KiB native documents stays below the documented history 
   f.db.exec('PRAGMA wal_checkpoint(TRUNCATE)');
   // This is a representative history-overhead budget, not a limit on SDK operational data or images.
   expect((await stat(join(dirname(f.path), 'app.sqlite'))).size).toBeLessThan(8 * 1024 * 1024);
-}, 30_000);
+}, 60_000);
 
 test('naming captures the current confirmed state, renaming pins history, and unname returns to pruning', async () => {
   const f = await fixture();

@@ -95,6 +95,21 @@ project on its own runner, splitting development and production in two with
 `--shard`, and the **Playwright smoke** check passes only when every run and the
 container smoke do.
 
+CI keeps the line log and a JSON result report for each browser project/shard in
+`playwright-report/`. The existing `theme-screenshots-<project>[-<shard>]` artifact
+retains that report, failure screenshots/context and first-retry `trace.zip`
+files for seven days. Extracted artifacts preserve `test-results/` and
+`playwright-report/` prefixes. A passing run without retries has no trace.
+Investigate the first failed attempt and its durations before rerunning;
+`failOnFlakyTests` deliberately keeps a retry-only success red.
+
+PR title/body/base edits queue full validation without cancelling an active CI
+run; new code pushes still supersede older PR runs. Edits can still replace a
+pending run. PR policy checks use the event's immutable base SHA, so an advancing
+`main` cannot silently change their baseline. See the
+[main CI audit and bounded resilience changes](implementation/ci-reliability-2026-10-26.md)
+for observed causes, existing mitigations and remaining phone-Doc investigation.
+
 `sync-development` and `sync-production` run the native UI scenarios in
 `e2e/sync-client.spec.ts`; `sync-soak-sheet` and `sync-soak-doc` run its seeded
 longer browser checks on separate workers. They exercise actual native Sheet/Doc editing, offline
