@@ -29,6 +29,11 @@ Recheck current plans and costs when choosing a deployment. These options do not
 change the browser storage/eviction and pending-edit requirements in SPN-055.
 No cloud resources are provisioned by this grooming decision.
 
+The [SPN-063 storage and recovery plan](implementation/SPN-063.md) compares SQLite,
+managed databases and recovery adapters, including requirements that remain to be
+implemented. It does not change the current commands or claim recurring restore
+verification is already available.
+
 ## Current SQLite and Spaces implementation
 
 Spinel backs up to a **private DigitalOcean Space**. It uses SQLite's `VACUUM INTO`
