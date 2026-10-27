@@ -255,6 +255,9 @@ export const UncertainCannotRepeat: Story = {
     await userEvent.click(dialog.getByRole('button', { name: 'Close' }));
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('button', { name: 'Reload profile' })).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Reload profile' })).toHaveFocus(),
+    );
     await expect(canvas.getByRole('button', { name: 'Sign out other devices' })).toBeDisabled();
     await userEvent.click(canvas.getByRole('button', { name: 'More actions for Laptop' }));
     await expect(
@@ -276,6 +279,10 @@ export const MalformedAcknowledgement: Story = {
     );
     await userEvent.click(dialog.getByRole('button', { name: 'Sign out other devices' }));
     await expect(dialog.getByRole('alert')).toHaveTextContent(/result could not be confirmed/);
+    await userEvent.click(dialog.getByRole('button', { name: 'Close' }));
+    await waitFor(() =>
+      expect(within(canvasElement).getByRole('button', { name: 'Reload profile' })).toHaveFocus(),
+    );
   },
 };
 
@@ -383,6 +390,9 @@ export const CookieChangedDuringConfirmation: Story = {
       await expect(dialog.queryByRole('button', { name: 'Sign out other devices' })).toBeNull();
       await userEvent.click(dialog.getByRole('button', { name: 'Close' }));
       await expect(canvas.getByRole('button', { name: 'Add a passkey' })).toBeDisabled();
+      await waitFor(() =>
+        expect(canvas.getByRole('button', { name: 'Reload profile' })).toHaveFocus(),
+      );
       await expect(requests).toHaveBeenCalledOnce();
     } finally {
       globalThis.fetch = previous;

@@ -363,6 +363,7 @@ for (const boundary of ['account epoch', 'cookie race'] as const) {
       await dialog.getByRole('button', { name: 'Close', exact: true }).click();
       await expect(trigger).toBeDisabled();
       await expect(page.getByRole('button', { name: 'Add a passkey', exact: true })).toBeDisabled();
+      await expect(page.getByRole('button', { name: 'Reload profile', exact: true })).toBeFocused();
     } finally {
       for (const user of users) db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
       db.close();

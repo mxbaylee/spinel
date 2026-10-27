@@ -79,8 +79,14 @@ export function PasskeySettings({
   const readRequest = useRef<AbortController | null>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
   const addButton = useRef<HTMLButtonElement>(null);
+  const reloadButton = useRef<HTMLButtonElement>(null);
   const reloadRequired = phase === 'uncertain' || phase === 'changed';
   const busy = adding || phase === 'verifying' || phase === 'saving' || reloadRequired;
+  useEffect(() => {
+    // The original action is disabled. Wait until the inline recovery button is
+    // mounted after closing the dialog before restoring keyboard focus.
+    if (!action && reloadRequired) reloadButton.current?.focus();
+  }, [action, reloadRequired]);
 
   function blockChangedAccount(failure: unknown) {
     if ((failure as { code?: string })?.code !== 'account_changed') return false;
@@ -306,7 +312,9 @@ export function PasskeySettings({
       {!action && error && <p role="alert">{error}</p>}
       {!action && notice && <p role="status">{notice}</p>}
       {!action && reloadRequired && (
-        <Button onClick={() => location.reload()}>Reload profile</Button>
+        <Button ref={reloadButton} onClick={() => location.reload()}>
+          Reload profile
+        </Button>
       )}
       {data &&
         (data.passkeys.length ? (
@@ -372,7 +380,11 @@ export function PasskeySettings({
           icon="key"
           dismissDisabled={phase === 'saving'}
           finalFocus={() =>
-            returnFocus.current?.isConnected ? returnFocus.current : addButton.current
+            reloadRequired
+              ? false
+              : returnFocus.current?.isConnected
+                ? returnFocus.current
+                : addButton.current
           }
           onOpenChange={(next) => {
             if (!next) close();

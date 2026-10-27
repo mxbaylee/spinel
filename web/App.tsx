@@ -353,7 +353,9 @@ function AccountApp() {
       }>(
         `${kind}/options`,
         consoleClaim ? { setupId } : invitation ? { token: inviteToken, name: inviteName } : {},
-        check,
+        // A cancelled options request still returns the challenge to retire.
+        // Keep the account fence; cancellation stops work after that cleanup.
+        verifyAccount,
         requestOptions,
       );
       current.challengeId = challengeId;
@@ -361,6 +363,7 @@ function AccountApp() {
         void api('cancel', { challengeId }).catch(() => {});
         return;
       }
+      check();
       const response = register
         ? await startRegistration({ optionsJSON: options })
         : await startAuthentication({ optionsJSON: options });
