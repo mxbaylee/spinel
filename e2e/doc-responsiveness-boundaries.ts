@@ -49,7 +49,6 @@ async function compose(page: Page, phase: 'start' | 'update' | 'end', text: stri
 export function registerDocResponsivenessBoundaries() {
   test.describe('native boundary checks', () => {
     test.describe.configure({ retries: 0 });
-    test.use({ trace: 'retain-on-failure' });
     for (const preset of ['desktop', 'mobile'] as const) {
       test(`${preset} pending composition crosses the group limit without partial history`, async ({
         browser,
@@ -59,6 +58,8 @@ export function registerDocResponsivenessBoundaries() {
         const mobile = preset === 'mobile';
         const f = await fixture(browser, baseURL!, info, mobile);
         const evidence: Record<string, unknown> = { preset, physicalIme: false };
+        let complete = false;
+        await f.first.tracing.start({ screenshots: true, snapshots: true, sources: true });
         try {
           await Promise.all([
             f.page.goto(`/?item=${f.item.id}`),
@@ -131,7 +132,9 @@ export function registerDocResponsivenessBoundaries() {
           evidence.final = await readDocResponsiveness(f.page);
           evidence.correctness =
             'cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text';
+          complete = true;
         } finally {
+          await f.first.tracing.stop(complete ? {} : { path: info.outputPath('trace.zip') });
           evidence.errors = f.errors;
           await writeFile(
             info.outputPath('spn108-boundaries.json'),
@@ -159,6 +162,8 @@ export function registerDocResponsivenessBoundaries() {
         let held = 0;
         const forwarded: boolean[] = [];
         const evidence: Record<string, unknown> = { preset, physicalIme: false };
+        let complete = false;
+        await guestContext.tracing.start({ screenshots: true, snapshots: true, sources: true });
         try {
           await f.page.goto(`/?item=${f.item.id}`);
           await saved(f.page);
@@ -232,7 +237,9 @@ export function registerDocResponsivenessBoundaries() {
             'pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied';
           evidence.heldWrites = held;
           evidence.forwardedAfterRevocation = forwarded;
+          complete = true;
         } finally {
+          await guestContext.tracing.stop(complete ? {} : { path: info.outputPath('trace.zip') });
           release();
           await network.drainWrites();
           evidence.errors = f.errors;

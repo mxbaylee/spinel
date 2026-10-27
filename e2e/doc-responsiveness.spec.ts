@@ -1,25 +1,27 @@
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
-import { cpus, platform, release, totalmem } from 'node:os';
+import { arch, cpus, platform, release, totalmem } from 'node:os';
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { Page, TestInfo } from '@playwright/test';
 import {
   compositionCpu,
+  DOC_RESPONSIVENESS_BUDGETS,
   distribution,
   observeInput,
   readDocResponsiveness,
 } from './doc-responsiveness.ts';
-import type { DocResponsivenessEvidence } from './doc-responsiveness.ts';
+import type {
+  CpuProfile,
+  DocResponsivenessEvidence,
+  ProfilerClockBracket,
+} from './doc-responsiveness.ts';
 import { registerDocResponsivenessBoundaries } from './doc-responsiveness-boundaries.ts';
 import { fixture, focusEmptyDoc, exactText, saved, online } from './doc-responsiveness-fixture.ts';
 
 // Recorded before the production fix. These are responsiveness budgets for this
 // fixed workload/runtime, not physical-device, INP, or arbitrary-document claims.
-const budgets = {
-  desktop: { inputP95Ms: 100, longTaskMaxMs: 200, flushP95Ms: 16, flushMaxMs: 50 },
-  mobile: { inputP95Ms: 200, longTaskMaxMs: 500, flushP95Ms: 50, flushMaxMs: 100 },
-} as const;
+const budgets = DOC_RESPONSIVENESS_BUDGETS;
 const paragraphs = Array.from(
   { length: 16 },
   (_, index) =>
@@ -33,6 +35,32 @@ const baseline = process.env.SPN108_BASELINE === '1';
 // overhead never contaminates the primary frame-latency measurements.
 test.use({ trace: 'off', screenshot: 'only-on-failure' });
 test.describe.configure({ retries: 0, mode: 'default' });
+
+async function retainProfile(
+  profile: CpuProfile,
+  clock: ProfilerClockBracket | undefined,
+  info: TestInfo,
+) {
+  const json = JSON.stringify(profile);
+  const sha256 = createHash('sha256').update(json).digest('hex');
+  await Promise.all([
+    writeFile(info.outputPath('spn108-profile.cpuprofile'), json),
+    writeFile(
+      info.outputPath('spn108-profile-clock.json'),
+      JSON.stringify(
+        {
+          bracket: clock ?? null,
+          profileStartTimeUs: profile.startTime,
+          profileEndTimeUs: profile.endTime,
+          sha256,
+        },
+        null,
+        2,
+      ),
+    ),
+  ]);
+  return sha256;
+}
 
 async function verifyUndoRedo(
   page: Page,
@@ -81,13 +109,15 @@ for (const preset of ['desktop', 'mobile'] as const)
       const cdp = await f.page.context().newCDPSession(f.page);
       let finishInput: Awaited<ReturnType<typeof observeInput>> | undefined;
       let profiling = false;
+      let profilerClock: ProfilerClockBracket | undefined;
       const evidence: Record<string, unknown> = {
-        schema: 1,
+        schema: 2,
         role: baseline ? 'baseline-observation' : 'candidate',
         budgetEnforced: !baseline && !profiled,
         preset,
         sample,
         attempt: info.retry,
+        nativeDrainObservationTimeoutMs: baseline ? 120_000 : 30_000,
         source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
         dirtyPaths: execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(),
         harnessSha256: Object.fromEntries(
@@ -108,13 +138,23 @@ for (const preset of ['desktop', 'mobile'] as const)
           ),
         ),
         browser: browser.version(),
+        playwright: JSON.parse(await readFile('node_modules/@playwright/test/package.json', 'utf8'))
+          .version,
         runtime: process.version,
         system: {
           platform: platform(),
+          architecture: arch(),
           release: release(),
           cpu: cpus()[0]?.model,
           cpus: cpus().length,
           totalmem: totalmem(),
+        },
+        runner: {
+          name: process.env.RUNNER_NAME ?? 'local',
+          os: process.env.RUNNER_OS ?? platform(),
+          arch: process.env.RUNNER_ARCH ?? arch(),
+          run: process.env.GITHUB_RUN_ID ?? null,
+          attempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
         },
         fixture: {
           paragraphs: 16,
@@ -153,13 +193,34 @@ for (const preset of ['desktop', 'mobile'] as const)
             () => matchMedia('(pointer: coarse) and (max-width: 900px)').matches,
           ),
         ).toBe(mobile);
+        evidence.browserEnvironment = {
+          configured: {
+            viewport: f.page.viewportSize(),
+            isMobile: mobile,
+            hasTouch: mobile,
+            deviceScaleFactor: 1,
+          },
+          observed: await f.page.evaluate(() => ({
+            viewport: { width: innerWidth, height: innerHeight },
+            screen: { width: screen.width, height: screen.height },
+            devicePixelRatio,
+            coarsePointer: matchMedia('(pointer: coarse)').matches,
+            touchEvent: 'ontouchstart' in window,
+            maxTouchPoints: navigator.maxTouchPoints,
+            userAgent: navigator.userAgent,
+          })),
+        };
         await cdp.send('Emulation.setCPUThrottlingRate', { rate: mobile ? 4 : 1 });
         evidence.heapBefore = await cdp.send('Runtime.getHeapUsage');
         if (profiled) {
           await cdp.send('Profiler.enable');
           await cdp.send('Profiler.setSamplingInterval', { interval: 1000 });
+          const beforeMs = await f.page.evaluate(() => performance.now());
           await cdp.send('Profiler.start');
           profiling = true;
+          const afterMs = await f.page.evaluate(() => performance.now());
+          profilerClock = { beforeMs, afterMs };
+          evidence.profilerStartBracket = profilerClock;
         }
         finishInput = await observeInput(f.page);
         const typingStarted = performance.now();
@@ -172,7 +233,10 @@ for (const preset of ['desktop', 'mobile'] as const)
         const drainStarted = performance.now();
         await expect
           .poll(async () => (await readDocResponsiveness(f.page))?.pending, {
-            timeout: 30_000,
+            // A 4×-throttled observation of the existing 14.857 s pair may
+            // exceed 30 s. Only baseline collection has this wider window;
+            // candidate acceptance remains the separate <=1,000 ms drain gate.
+            timeout: baseline ? 120_000 : 30_000,
             intervals: [25],
           })
           .toEqual({ history: 0, collaboration: 0 });
@@ -185,7 +249,9 @@ for (const preset of ['desktop', 'mobile'] as const)
         const frame = distribution(input.keyToFrameMs);
         const gaps = input.keydownAt.slice(1).map((at, index) => at - input.keydownAt[index]!);
         const longTasks = distribution(input.longTasks.map((task) => task.durationMs));
-        const flush = distribution(native.flushes.map((entry) => entry.durationMs));
+        const flush = native.flushes.length
+          ? distribution(native.flushes.map((entry) => entry.durationMs))
+          : null;
         const drainUpperBoundMs = native.observedAt - input.keydownAt.at(-1)!;
         evidence.summary = {
           frameOpportunityMs: frame,
@@ -202,8 +268,8 @@ for (const preset of ['desktop', 'mobile'] as const)
         evidence.budgetResults = {
           inputP95: frame.p95 <= budgets[preset].inputP95Ms,
           longestTask: longTasks.max <= budgets[preset].longTaskMaxMs,
-          flushP95: flush.p95 <= budgets[preset].flushP95Ms,
-          flushMaximum: flush.max <= budgets[preset].flushMaxMs,
+          flushP95: flush ? flush.p95 <= budgets[preset].flushP95Ms : null,
+          flushMaximum: flush ? flush.max <= budgets[preset].flushMaxMs : null,
           boundedHistory: native.highWater.history <= 64,
           boundedCollaboration: native.highWater.collaboration <= 64,
           observedBoundedFlushes: native.flushes.length > 0,
@@ -213,8 +279,8 @@ for (const preset of ['desktop', 'mobile'] as const)
         if (profiling) {
           const { profile } = await cdp.send('Profiler.stop');
           profiling = false;
-          evidence.compositionCpu = compositionCpu(profile);
-          await writeFile(info.outputPath('spn108-profile.cpuprofile'), JSON.stringify(profile));
+          evidence.profileSha256 = await retainProfile(profile, profilerClock, info);
+          evidence.compositionCpu = compositionCpu(profile, profilerClock!, input.longTasks);
         }
         const savedStarted = performance.now();
         await saved(f.page);
@@ -253,21 +319,19 @@ for (const preset of ['desktop', 'mobile'] as const)
           if (!profiled) {
             expect(frame.p95).toBeLessThanOrEqual(budgets[preset].inputP95Ms);
             expect(longTasks.max).toBeLessThanOrEqual(budgets[preset].longTaskMaxMs);
-            expect(flush.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
-            expect(flush.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+            expect(flush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+            expect(flush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
             expect(drainUpperBoundMs).toBeLessThanOrEqual(1000);
           }
         }
+        evidence.completed = true;
       } finally {
         if (finishInput)
           evidence.partialInput = await finishInput().catch((error) => ({ error: String(error) }));
         if (profiling) {
           const result = await cdp.send('Profiler.stop').catch(() => null);
           if (result)
-            await writeFile(
-              info.outputPath('spn108-profile.cpuprofile'),
-              JSON.stringify(result.profile),
-            );
+            evidence.profileSha256 = await retainProfile(result.profile, profilerClock, info);
         }
         evidence.errors = f.errors;
         evidence.finalNative = await readDocResponsiveness(f.page).catch(() => null);

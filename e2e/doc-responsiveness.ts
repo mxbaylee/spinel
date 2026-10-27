@@ -1,5 +1,11 @@
 import type { Page } from '@playwright/test';
 
+// Preregistered before the production fix; all values are milliseconds.
+export const DOC_RESPONSIVENESS_BUDGETS = {
+  desktop: { inputP95Ms: 100, longTaskMaxMs: 200, flushP95Ms: 16, flushMaxMs: 50 },
+  mobile: { inputP95Ms: 200, longTaskMaxMs: 500, flushP95Ms: 50, flushMaxMs: 100 },
+} as const;
+
 export interface DocResponsivenessEvidence {
   unitId: string;
   mobile: boolean;
@@ -47,7 +53,7 @@ export function distribution(values: readonly number[]) {
   };
 }
 
-interface InputObservation {
+export interface InputObservation {
   timeOrigin: number;
   startedAt: number;
   endedAt: number;
@@ -110,7 +116,7 @@ export async function observeInput(page: Page) {
   };
 }
 
-interface CpuProfile {
+export interface CpuProfile {
   nodes: Array<{ id: number; callFrame: { functionName: string }; children?: number[] }>;
   samples?: number[];
   timeDeltas?: number[];
@@ -118,25 +124,113 @@ interface CpuProfile {
   endTime: number;
 }
 
-/** Inclusive CPU samples identify both reducers without instrumenting SDK methods. */
-export function compositionCpu(profile: CpuProfile) {
+export interface ProfilerClockBracket {
+  beforeMs: number;
+  afterMs: number;
+}
+
+/**
+ * CPU timestamps are not browser performance.now timestamps. The actual start
+ * lies between the two browser observations around Profiler.start. A reducer
+ * sample counts as a certain task witness only when its complete accounting
+ * interval, including that clock uncertainty, fits inside the observed task.
+ * The task's whole duration is reported, never attributed entirely to the reducer.
+ */
+export function compositionCpu(
+  profile: CpuProfile,
+  clock: ProfilerClockBracket,
+  longTasks: InputObservation['longTasks'],
+) {
+  if (
+    !Number.isFinite(clock.beforeMs) ||
+    !Number.isFinite(clock.afterMs) ||
+    clock.beforeMs < 0 ||
+    clock.afterMs < clock.beforeMs ||
+    !Number.isFinite(profile.startTime) ||
+    !Number.isFinite(profile.endTime) ||
+    profile.endTime < profile.startTime ||
+    !profile.samples?.length ||
+    !profile.timeDeltas ||
+    profile.samples.length !== profile.timeDeltas.length ||
+    profile.timeDeltas.some((delta) => !Number.isFinite(delta) || delta < 0)
+  )
+    throw new Error('Unavailable CPU attribution: invalid samples or clock bracket.');
   const parents = new Map<number, number>();
   const names = new Map(profile.nodes.map((node) => [node.id, node.callFrame.functionName]));
   for (const node of profile.nodes)
     for (const child of node.children ?? []) parents.set(child, node.id);
-  const totals = { historyMs: 0, collaborationMs: 0, sampleIntervalUs: 1000 };
-  for (const [index, sample] of (profile.samples ?? []).entries()) {
+  const families = {
+    history: {
+      name: '_pushHistory',
+      sampleCount: 0,
+      sampledCpuMs: 0,
+      tasks: new Map<number, number>(),
+    },
+    collaboration: {
+      name: '_emitChangeState',
+      sampleCount: 0,
+      sampledCpuMs: 0,
+      tasks: new Map<number, number>(),
+    },
+  };
+  let elapsedUs = 0;
+  for (const [index, sample] of profile.samples.entries()) {
+    const previousUs = elapsedUs;
+    elapsedUs += profile.timeDeltas[index]!;
+    const earliestStartMs = clock.beforeMs + previousUs / 1000;
+    const latestEndMs = clock.afterMs + elapsedUs / 1000;
     let node: number | undefined = sample;
-    let history = false,
-      collaboration = false;
+    const stack = new Set<string>();
+    const visited = new Set<number>();
     while (node !== undefined) {
-      history ||= names.get(node) === '_pushHistory';
-      collaboration ||= names.get(node) === '_emitChangeState';
+      if (visited.has(node) || !names.has(node))
+        throw new Error('Unavailable CPU attribution: invalid profile call tree.');
+      visited.add(node);
+      stack.add(names.get(node)!);
       node = parents.get(node);
     }
-    const duration = (profile.timeDeltas?.[index] ?? 0) / 1000;
-    if (history) totals.historyMs += duration;
-    if (collaboration) totals.collaborationMs += duration;
+    for (const family of Object.values(families)) {
+      if (!stack.has(family.name)) continue;
+      family.sampleCount++;
+      family.sampledCpuMs += profile.timeDeltas[index]! / 1000;
+      for (const [taskIndex, task] of longTasks.entries())
+        if (earliestStartMs >= task.startedAt && latestEndMs <= task.startedAt + task.durationMs)
+          family.tasks.set(taskIndex, (family.tasks.get(taskIndex) ?? 0) + 1);
+    }
   }
-  return totals;
+  if (elapsedUs > profile.endTime - profile.startTime)
+    throw new Error('Unavailable CPU attribution: samples exceed the profile time range.');
+  const describe = (family: (typeof families)['history']) => {
+    const functionNodes = [...names.values()].filter((name) => name === family.name).length;
+    const tasks = [...family.tasks].map(([index, sampleCount]) => ({
+      index,
+      ...longTasks[index]!,
+      sampleCount,
+    }));
+    return {
+      status: family.sampleCount ? ('sampled' as const) : ('unavailable' as const),
+      reason: family.sampleCount
+        ? null
+        : functionNodes
+          ? 'function-not-sampled'
+          : 'function-not-found',
+      functionNodes,
+      sampleCount: family.sampleCount,
+      sampledCpuMs: family.sampleCount ? family.sampledCpuMs : null,
+      certainContainingTasks: tasks,
+      maxContainingTaskMs: tasks.length ? Math.max(...tasks.map((task) => task.durationMs)) : null,
+      taskAttribution: tasks.length ? 'certain-whole-containing-task' : 'unavailable',
+    };
+  };
+  return {
+    sampleIntervalUs: 1000,
+    clock: {
+      ...clock,
+      uncertaintyMs: clock.afterMs - clock.beforeMs,
+      profileStartTimeUs: profile.startTime,
+      profileEndTimeUs: profile.endTime,
+    },
+    history: describe(families.history),
+    collaboration: describe(families.collaboration),
+  };
 }

@@ -392,7 +392,9 @@ jobs:
     needs: changes
     if: needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Two installs/builds, eight measured cases (300 s each) and two boundary
+    # cases need their own collection window. No per-case or latency gate grows.
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
@@ -443,6 +445,12 @@ jobs:
         env:
           SPN108_BASELINE: '0'
         run: npx playwright test --project=doc-responsiveness --grep "$PRESET "
+      - name: Prove paired responsiveness improvement
+        run: >-
+          node scripts/ci/doc-responsiveness.ts "$PRESET"
+          baseline-doc-source/test-results/doc-responsiveness
+          test-results/doc-responsiveness
+          "test-results/spn108-comparison-$PRESET.json"
       - name: Retain every baseline and candidate attempt
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
