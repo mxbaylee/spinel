@@ -1,8 +1,9 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { lstat, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { Readable } from 'node:stream';
 import { createHash } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
@@ -106,4 +107,31 @@ test('listing follows every continuation page and fails closed on incomplete/err
   await expect(f.remote.list(AbortSignal.timeout(1000))).rejects.toThrow('Incomplete');
   send.mockRejectedValue(new Error('network failure'));
   await expect(f.remote.list(AbortSignal.timeout(1000))).rejects.toThrow('network');
+});
+test('download streams bounded private bytes and preserves an existing destination', async () => {
+  const f = await fixture();
+  const id = `test/2026-10-27T02-00-00.000Z-${randomUUID()}.spinel`;
+  const send = vi.spyOn(f.remote.client, 'send').mockImplementation(async (command) => {
+    expect(command).toBeInstanceOf(GetObjectCommand);
+    expect((command as GetObjectCommand).input.Key).toBe(id);
+    return { Body: Readable.from([f.bytes]), ContentLength: f.bytes.length };
+  });
+  const destination = `${f.path}-download`;
+  expect(await f.remote.download(id, destination, AbortSignal.timeout(1000))).toBe(f.hash);
+  expect(await readFile(destination)).toEqual(f.bytes);
+  expect((await lstat(destination)).mode & 0o777).toBe(0o600);
+  await expect(f.remote.download(id, destination)).rejects.toThrow();
+  expect(await readFile(destination)).toEqual(f.bytes);
+  send.mockImplementation(async () => ({
+    Body: Readable.from([f.bytes]),
+    ContentLength: f.bytes.length + 1,
+  }));
+  await expect(f.remote.download(id, `${destination}-partial`)).rejects.toThrow('incomplete');
+  await expect(lstat(`${destination}-partial`)).rejects.toThrow();
+  send.mockImplementation(async () => ({
+    Body: Readable.from([f.bytes]),
+    ContentLength: 5 * 1024 ** 3 + 1,
+  }));
+  await expect(f.remote.download(id, `${destination}-oversize`)).rejects.toThrow('size limit');
+  await expect(lstat(`${destination}-oversize`)).rejects.toThrow();
 });

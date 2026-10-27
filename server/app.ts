@@ -455,7 +455,7 @@ export async function createApp(options: AppOptions) {
       }
       response.status(404).type('text').send('Not found');
     });
-    backups.start();
+    await backups.start();
     history.start();
   } catch (error) {
     stopCleanup();

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
-import { createReadStream, createWriteStream } from 'node:fs';
-import { stat } from 'node:fs/promises';
-import { pipeline } from 'node:stream/promises';
+import { createReadStream } from 'node:fs';
+import { open, stat, unlink } from 'node:fs/promises';
+import type { FileHandle } from 'node:fs/promises';
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
@@ -11,41 +11,17 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import type { Readable } from 'node:stream';
-import { digest, privateFile } from './archive.ts';
-
-export interface BackupConfig {
-  region: string;
-  bucket: string;
-  prefix: string;
-  accessKeyId: string;
-  secretAccessKey: string;
-  keyFile: string;
-  runtimeEnvironmentFile: string;
-}
-export async function loadConfig(path: string): Promise<BackupConfig> {
-  const c = JSON.parse((await privateFile(path)).toString()) as BackupConfig;
-  if (
-    !c ||
-    !/^[a-z]{3}[0-9]+$/.test(c.region) ||
-    !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(c.bucket) ||
-    !/^[a-zA-Z0-9_-]{1,80}$/.test(c.prefix) ||
-    !['accessKeyId', 'secretAccessKey', 'keyFile', 'runtimeEnvironmentFile'].every(
-      (k) =>
-        typeof c[k as keyof BackupConfig] === 'string' && c[k as keyof BackupConfig].length > 0,
-    )
-  )
-    throw new Error('Invalid backup configuration.');
-  return c;
-}
-export interface RemoteStore {
-  put(key: string, path: string, sha256: string, signal: AbortSignal): Promise<void>;
-  list(signal: AbortSignal): Promise<string[]>;
-  remove(key: string, signal: AbortSignal): Promise<void>;
-}
+import { addAbortSignal } from 'node:stream';
+import type { SpacesConfig } from './config.ts';
+import type { RemoteStore } from './destination.ts';
+import { MAX_ARCHIVE_BYTES, transferArchive } from './transfer.ts';
+export { loadConfig } from './config.ts';
+export type { BackupConfig } from './config.ts';
+export type { RemoteStore } from './destination.ts';
 export class SpacesStore implements RemoteStore {
   client: S3Client;
-  config: BackupConfig;
-  constructor(config: BackupConfig) {
+  config: SpacesConfig;
+  constructor(config: SpacesConfig) {
     this.config = config;
     this.client = new S3Client({
       region: 'us-east-1',
@@ -122,19 +98,34 @@ export class SpacesStore implements RemoteStore {
       abortSignal: signal,
     });
   }
-  async download(key: string, destination: string) {
+  async download(key: string, destination: string, signal = AbortSignal.timeout(30 * 60_000)) {
     if (!backupTime(key, this.config.prefix))
       throw new Error('Not a backup in this instance prefix.');
+    const bounded = AbortSignal.any([signal, AbortSignal.timeout(30 * 60_000)]);
+    bounded.throwIfAborted();
     const result = await this.client.send(
       new GetObjectCommand({ Bucket: this.config.bucket, Key: key }),
-      { abortSignal: AbortSignal.timeout(30 * 60_000) },
+      { abortSignal: bounded },
     );
     if (!result.Body) throw new Error('Backup is empty.');
-    await pipeline(
-      result.Body as Readable,
-      createWriteStream(destination, { mode: 0o600, flags: 'wx' }),
-    );
-    return digest(destination);
+    const body = addAbortSignal(bounded, result.Body as Readable);
+    let output: FileHandle | undefined;
+    let created = false;
+    try {
+      if (result.ContentLength !== undefined && result.ContentLength > MAX_ARCHIVE_BYTES)
+        throw new Error('Backup exceeds download size limit.');
+      output = await open(destination, 'wx', 0o600);
+      created = true;
+      const checksum = await transferArchive(body, output, bounded, result.ContentLength);
+      await output.sync();
+      return checksum;
+    } catch (error) {
+      if (created) await unlink(destination);
+      throw error;
+    } finally {
+      body.destroy();
+      await output?.close();
+    }
   }
   close() {
     this.client.destroy();

@@ -192,6 +192,15 @@
   color: var(--sp-text);
   text-underline-offset: 3px;
 }
+.admin-backup-verification {
+  border-top: 1px solid var(--sp-border);
+  margin-top: 24px;
+  padding-top: 20px;
+}
+.admin-backup-verification h4 {
+  margin-top: 0;
+  font-size: inherit;
+}
 @media (max-width: 900px) {
   .admin-layout {
     grid-template-columns: 176px minmax(0, 1fr);
