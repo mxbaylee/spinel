@@ -836,6 +836,8 @@ for (const role of ['owner', 'guest-editor'] as const) {
         await page.getByRole('button', { name: 'Formulas', exact: true }).tap();
       }
       const formulas = page.getByRole('dialog', { name: 'Formulas', exact: true });
+      await expect(formulas.locator('output')).toHaveText('42', { timeout: 20_000 });
+      await expect(formulas.locator('tbody tr')).toHaveCount(30);
       await expect(formulas.getByText('=40+2', { exact: true })).toBeVisible();
       await expect(formulas.getByRole('button', { name: '=40+2', exact: true })).toHaveCount(0);
       await expect(page.getByRole('dialog', { name: 'Edit formula', exact: true })).toHaveCount(0);
@@ -897,6 +899,7 @@ test('a peer-protocol page-layout change preserves queued phone writing and the 
   const message = 'View only on this phone. Reopen after the page layout change.';
   const pending = 'Changes not saved yet — keep this tab open.';
   const prefixText = 'Pending ';
+  const firstPrefix = prefixText.slice(0, 1);
   const peerFrames: {
     type: string;
     revision?: number;
@@ -910,12 +913,17 @@ test('a peer-protocol page-layout change preserves queued phone writing and the 
   let peerSocket: InstanceType<typeof WebSocket> | undefined;
   let heldWrites = 0;
   const forwarded: boolean[] = [];
+  let releaseFirstWrite = () => {};
+  const firstGate = new Promise<void>((resolve) => {
+    releaseFirstWrite = resolve;
+  });
   let releaseHeld = () => {};
   const gate = new Promise<void>((resolve) => {
     releaseHeld = resolve;
   });
   const releaseWrites = async () => {
     network.interceptWrites(undefined);
+    releaseFirstWrite();
     releaseHeld();
     await network.drainWrites();
   };
@@ -1010,11 +1018,14 @@ test('a peer-protocol page-layout change preserves queued phone writing and the 
     await beginWriting(page);
     network.interceptWrites(async (write) => {
       heldWrites++;
-      await gate;
+      await (heldWrites === 1 ? firstGate : gate);
       forwarded.push(write.forward());
     });
-    await page.keyboard.type(prefixText);
-    await expect.poll(() => heldWrites).toBeGreaterThan(0);
+    // Establish an immutable inflight submit before creating the unsent suffix.
+    // The client holds senderless peer edits until its own ack identifies them.
+    await page.keyboard.type(firstPrefix);
+    await expect.poll(() => heldWrites).toBe(1);
+    await page.keyboard.type(prefixText.slice(firstPrefix.length));
     await expect(status).toHaveText(pending);
     await expect
       .poll(async () => (await selection())?.text)
@@ -1049,6 +1060,11 @@ test('a peer-protocol page-layout change preserves queued phone writing and the 
         { timeout: 5_000 },
       )
       .toMatchObject({ revision: head.revision + 1 });
+    // Resolve only the first submit. Its ack applies the earlier peer revision,
+    // while a second gate keeps the already-written suffix pending throughout
+    // the local page-layout fence and unchanged-canvas assertions.
+    releaseFirstWrite();
+    await expect.poll(() => heldWrites).toBeGreaterThan(1);
     await expect(region.getByText(note, { exact: true })).toBeVisible({ timeout: 5_000 });
     await expect(input(page)).not.toBeFocused();
     await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
@@ -1067,7 +1083,9 @@ test('a peer-protocol page-layout change preserves queued phone writing and the 
     });
     const beforeRelease = await f.read();
     expect(beforeRelease.documentStyle.documentFlavor).toBe(DocumentFlavor.TRADITIONAL);
-    expect(beforeRelease.body).toEqual(original.body);
+    expect(beforeRelease.body!.dataStream).toBe(firstPrefix + original.body!.dataStream);
+    expect(beforeRelease.settings).toEqual(original.settings);
+    expect(forwarded).toEqual([true]);
     await releaseWrites();
     expect(forwarded).toHaveLength(heldWrites);
     expect(forwarded.every(Boolean)).toBe(true);
@@ -1136,24 +1154,28 @@ test('a peer-protocol page-layout change preserves queued phone writing and the 
   } finally {
     try {
       await releaseWrites();
-      await writeFile(
-        info.outputPath('live-layout-peer-protocol.json'),
-        JSON.stringify(
-          {
-            heldWrites,
-            forwarded,
-            peerErrors,
-            peerFrames,
-            outgoing: network.outgoing,
-            incoming: network.incoming,
-          },
-          null,
-          2,
-        ),
-      );
     } finally {
-      peerSocket?.terminate();
-      await f.close();
+      try {
+        await mkdir(info.outputPath('peer-protocol'), { recursive: true });
+        await writeFile(
+          info.outputPath('peer-protocol', 'sync-diagnostics.json'),
+          JSON.stringify(
+            {
+              heldWrites,
+              forwarded,
+              peerErrors,
+              peerFrames,
+              outgoing: network.outgoing,
+              incoming: network.incoming,
+            },
+            null,
+            2,
+          ),
+        );
+      } finally {
+        peerSocket?.terminate();
+        await f.close();
+      }
     }
   }
 });
