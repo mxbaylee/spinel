@@ -112,14 +112,11 @@ export class AppearanceStore {
       else {
         const cover = object(body.cover);
         if (cover.source === 'gem') {
-          keys(cover, ['source', 'gem', 'mode']);
-          if (cover.mode !== undefined && cover.mode !== 'light' && cover.mode !== 'dark')
-            throw bad();
+          keys(cover, ['source', 'gem']);
           if (!validGem(cover.gem)) throw bad('Choose a gem.');
           next.cover = {
             source: 'gem',
             gem: cover.gem,
-            ...(cover.mode ? { mode: cover.mode } : {}),
           };
         } else if (cover.source === 'upload' || cover.source === 'unsplash') {
           keys(cover, ['source', 'images', 'position']);

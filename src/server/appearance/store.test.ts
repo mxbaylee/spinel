@@ -140,7 +140,7 @@ test('stale revisions, invalid colors and invalid paired variants leave all appe
     actor = f.actor();
   await f.store.update(actor, f.item.id, {
     revision: 0,
-    cover: { source: 'gem', gem: 'ruby', mode: 'light' },
+    cover: { source: 'gem', gem: 'ruby' },
   });
   await expect(f.store.update(actor, f.item.id, { revision: 0, icon: '🍋' })).rejects.toMatchObject(
     { status: 409 },
@@ -149,12 +149,13 @@ test('stale revisions, invalid colors and invalid paired variants leave all appe
     { source: 'upload', images: { light: await image() }, position: 50 },
     { source: 'upload', images: { shared: await image(), dark: await image() }, position: 50 },
     { source: 'gem', gem: 'missing' },
+    // Gem artwork always follows the active theme; only photo sources offer variants.
+    { source: 'gem', gem: 'ruby', mode: 'light' },
   ])
     await expect(f.store.update(actor, f.item.id, { revision: 1, cover })).rejects.toThrow();
   expect(f.store.get(actor, f.item.id).appearance.cover).toEqual({
     source: 'gem',
     gem: 'ruby',
-    mode: 'light',
   });
   const folder = f.workspace.create(f.owner.id, { name: 'Folder', kind: 'folder', parentId: null });
   await expect(

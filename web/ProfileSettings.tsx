@@ -11,17 +11,19 @@ export function IconPicker({
   value,
   choose,
   close,
+  includeEmojis = false,
 }: {
   value: string;
   choose: (value: string) => void;
   close: () => void;
+  includeEmojis?: boolean;
 }) {
   const [query, setQuery] = useState(''),
     [category, setCategory] = useState('All'),
     [limit, setLimit] = useState(60);
   const dialog = useRef<HTMLDialogElement>(null),
     grid = useRef<HTMLDivElement>(null);
-  const results = searchPersonIcons(query, category),
+  const results = searchPersonIcons(query, category, includeEmojis),
     visible = results.slice(0, limit);
   useEffect(() => {
     dialog.current?.showModal();
@@ -39,12 +41,14 @@ export function IconPicker({
         <span className="sp-modal-title-icon" aria-hidden="true">
           <ProfileIcon icon="lucide:shapes" size={20} />
         </span>
-        <span>Choose your icon</span>
+        <span>{includeEmojis ? 'Choose an icon or emoji' : 'Choose your icon'}</span>
       </h2>
       <label>
-        Search icons
+        {includeEmojis ? 'Search icons and emojis' : 'Search icons'}
         <input
           autoFocus
+          maxLength={100}
+          placeholder={includeEmojis ? 'Search a word or paste an emoji' : undefined}
           value={query}
           onChange={(event) => {
             setQuery(event.target.value);
@@ -72,17 +76,22 @@ export function IconPicker({
           }}
         >
           <option>All</option>
+          {includeEmojis && <option>Emojis</option>}
           {ICON_CATEGORIES.map((name) => (
             <option key={name}>{name}</option>
           ))}
         </select>
       </label>
       <p role="status">{results.length} results</p>
-      {!results.length && <p>No icons match. Try another name or description.</p>}
+      {!results.length && (
+        <p>
+          No {includeEmojis ? 'icons or emojis' : 'icons'} match. Try another name or description.
+        </p>
+      )}
       <div
         ref={grid}
         className="profile-icon-grid"
-        aria-label="Icons"
+        aria-label={includeEmojis ? 'Icons and emojis' : 'Icons'}
         onKeyDown={(event) => {
           const all = buttons(),
             index = all.indexOf(document.activeElement as HTMLButtonElement);
@@ -113,7 +122,13 @@ export function IconPicker({
             aria-pressed={value === icon.value}
             onClick={() => choose(icon.value)}
           >
-            <ProfileIcon icon={icon.value} />
+            {icon.value.startsWith('lucide:') ? (
+              <ProfileIcon icon={icon.value} />
+            ) : (
+              <span className="profile-picker-emoji" aria-hidden="true">
+                {icon.value}
+              </span>
+            )}
           </button>
         ))}
       </div>

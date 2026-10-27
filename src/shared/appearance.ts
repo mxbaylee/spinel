@@ -1,5 +1,6 @@
 import { validIcon, validColor } from '../profile/profile.ts';
 import { spaceAccentPalettes } from '../ui/palette.ts';
+import { validEmoji } from './emoji.ts';
 export const gemNames = Object.keys(spaceAccentPalettes) as GemName[];
 export type GemName = keyof typeof spaceAccentPalettes;
 export type CoverVariants<T> =
@@ -12,7 +13,7 @@ export type UnsplashPhoto = {
   page: string;
 };
 export type PageCover =
-  | { source: 'gem'; gem: GemName; mode?: 'light' | 'dark' }
+  | { source: 'gem'; gem: GemName }
   | { source: 'upload'; images: CoverVariants<string>; position: number }
   | { source: 'unsplash'; images: CoverVariants<UnsplashPhoto>; position: number };
 export interface ItemAppearance {
@@ -37,21 +38,7 @@ export function filenameEmoji(name: string) {
   return choices[hash % choices.length];
 }
 export function validIdentityIcon(value: unknown): value is string {
-  if (validIcon(value)) return true;
-  if (
-    typeof value !== 'string' ||
-    value.length > 32 ||
-    !/\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(value)
-  )
-    return false;
-  return (
-    [...new Intl.Segmenter('en', { granularity: 'grapheme' }).segment(value)].length === 1 &&
-    // Emoji modifiers and joiners intentionally share a grapheme with the base.
-    // eslint-disable-next-line no-misleading-character-class
-    /^[\p{Extended_Pictographic}\p{Regional_Indicator}\p{Emoji_Modifier}\u200d\ufe0f\u20e3\u{e0020}-\u{e007f}]+$/u.test(
-      value,
-    )
-  );
+  return validIcon(value) || validEmoji(value);
 }
 export { validColor };
 export const validGem = (value: unknown): value is GemName =>

@@ -72,7 +72,16 @@ for (const variant of [
         .toBe(true);
       await capture('editor');
       await page.getByRole('button', { name: 'Change appearance', exact: true }).click();
-      await page.getByRole('textbox', { name: 'Emoji', exact: true }).fill('🍋');
+      await page.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();
+      const identityPicker = page.getByRole('dialog', {
+        name: 'Choose an icon or emoji',
+        exact: true,
+      });
+      await identityPicker
+        .getByRole('textbox', { name: 'Search icons and emojis', exact: true })
+        .fill('lemon');
+      await capture('identity-picker');
+      await identityPicker.getByRole('button', { name: 'Lemon emoji', exact: true }).click();
       if (variant.name === 'light') {
         const path = `**/api/appearance/items/${item.id}`;
         await page.route(path, (route) =>
@@ -87,7 +96,7 @@ for (const variant of [
         );
         await page.evaluate(() => window.dispatchEvent(new Event('focus')));
         await failedPoll;
-        await expect(page.getByRole('textbox', { name: 'Emoji', exact: true })).toHaveValue('🍋');
+        await expect(page.locator('.identity-choice-current')).toContainText('🍋');
         await page.unroute(path);
       }
 
@@ -167,7 +176,23 @@ for (const variant of [
           await expect(
             create.getByRole('button', { name: 'Reset icon', exact: true }),
           ).toBeDisabled();
-          if (icon) await create.getByRole('textbox', { name: 'Emoji', exact: true }).fill(icon);
+          if (icon) {
+            await create.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();
+            const picker = page.getByRole('dialog', {
+              name: 'Choose an icon or emoji',
+              exact: true,
+            });
+            await picker
+              .getByRole('textbox', { name: 'Search icons and emojis', exact: true })
+              .fill('book');
+            await picker.getByRole('button', { name: 'Book Open', exact: true }).click();
+            await expect(create.locator('[data-profile-icon="lucide:book-open"]')).toBeVisible();
+            await create.getByRole('button', { name: 'Choose icon or emoji', exact: true }).click();
+            await picker
+              .getByRole('textbox', { name: 'Search icons and emojis', exact: true })
+              .fill(icon);
+            await picker.getByRole('button', { name: 'Sunflower emoji', exact: true }).click();
+          }
           await create.getByRole('button', { name: 'Create', exact: true }).click();
           await expect(
             page.getByRole('button', { name: 'Change appearance', exact: true }),
@@ -294,23 +319,45 @@ test('Space accents follow preference changes, spare native formatting and resto
     // A deliberately shared cover stays fixed when the surrounding theme changes.
     await page.getByRole('button', { name: 'Change appearance', exact: true }).click();
     await page.getByRole('button', { name: 'Change cover', exact: true }).click();
-    await page.getByRole('combobox', { name: 'Gem artwork', exact: true }).click();
-    await page.getByRole('option', { name: 'Light artwork in both modes', exact: true }).click();
+    await expect(page.getByRole('combobox', { name: 'Gem artwork', exact: true })).toHaveCount(0);
+    await expect(
+      page.getByRole('checkbox', { name: 'Separate light and dark images' }),
+    ).toHaveCount(0);
+    await page.getByRole('button', { name: 'Upload', exact: true }).click();
+    await expect(
+      page.getByRole('checkbox', { name: 'Separate light and dark images' }),
+    ).not.toBeChecked();
+    const { default: sharp } = await import('sharp');
+    await page.getByLabel(/Upload cover image/).setInputFiles({
+      name: 'field-marker.png',
+      mimeType: 'image/png',
+      buffer: await sharp({ create: { width: 8, height: 8, channels: 3, background: '#5e8fc9' } })
+        .png()
+        .toBuffer(),
+    });
     await page.getByRole('button', { name: 'Save cover', exact: true }).click();
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
-    await expect(page.locator('.appearance-banner img')).toHaveAttribute('src', lightArt!);
     const shared = await read();
-    expect(shared.cover).toEqual({ source: 'gem', gem: 'spinel', mode: 'light' });
+    expect(shared.cover.source).toBe('upload');
+    expect(Object.keys(shared.cover.images)).toEqual(['shared']);
+    const sharedArt = await page.locator('.appearance-banner img').getAttribute('src');
+    await expect
+      .poll(() =>
+        page
+          .locator('.appearance-banner img')
+          .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
+      )
+      .toBe(true);
     await preference('light');
     await expect
       .poll(() => variable('.space-navigation', '--sp-accent'))
       .toBe(spaceAccentPalettes.sapphire.light.accent);
-    await expect(page.locator('.appearance-banner img')).toHaveAttribute('src', lightArt!);
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute('src', sharedArt!);
     await preference('dark');
     await expect
       .poll(() => variable('.space-navigation', '--sp-accent'))
       .toBe(spaceAccentPalettes.sapphire.dark.accent);
-    await expect(page.locator('.appearance-banner img')).toHaveAttribute('src', lightArt!);
+    await expect(page.locator('.appearance-banner img')).toHaveAttribute('src', sharedArt!);
     expect(await read()).toEqual(shared);
     // The real SPA exit must clean up the override, without relying on a page reload.
     await page.getByRole('button', { name: 'My files', exact: true }).first().click();

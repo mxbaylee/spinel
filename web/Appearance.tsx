@@ -6,7 +6,6 @@ import {
   emptyAppearance,
   filenameEmoji,
   gemNames,
-  validIdentityIcon,
 } from '../src/shared/appearance.ts';
 import type {
   ItemAppearance,
@@ -73,8 +72,7 @@ export function IdentityChoice({
   onChange(value: string | null): void;
   disabled?: boolean;
 }) {
-  const [picker, setPicker] = useState(false),
-    [emoji, setEmoji] = useState('');
+  const [picker, setPicker] = useState(false);
   return (
     <div className="identity-choice">
       <div className="identity-choice-current">
@@ -82,41 +80,24 @@ export function IdentityChoice({
         <span>{value ? 'Custom icon' : 'Automatic icon'}</span>
       </div>
       <Button type="button" disabled={disabled} onClick={() => setPicker(true)}>
-        Choose icon
+        Choose icon or emoji
       </Button>
-      <label>
-        Emoji
-        <input
-          aria-label="Emoji"
-          value={emoji}
-          disabled={disabled}
-          maxLength={32}
-          placeholder="🌷"
-          onChange={(event) => {
-            const next = event.target.value;
-            setEmoji(next);
-            if (validIdentityIcon(next)) onChange(next);
-          }}
-        />
-      </label>
-      {emoji && !validIdentityIcon(emoji) && <span role="status">Enter one emoji.</span>}
       <Button
         type="button"
         disabled={disabled || value === null}
         onClick={() => {
           onChange(null);
-          setEmoji('');
         }}
       >
         Reset icon
       </Button>
       {picker && (
         <IconPicker
+          includeEmojis
           value={value ?? ''}
           close={() => setPicker(false)}
           choose={(next) => {
             onChange(next);
-            setEmoji('');
             setPicker(false);
           }}
         />
@@ -212,7 +193,11 @@ export function useAppearance(target: AppearanceTarget | undefined, disabled = f
       ++serial.current;
       setState(result);
       setError('');
-      window.dispatchEvent(new Event('spinel-appearance-changed'));
+      window.dispatchEvent(
+        new CustomEvent('spinel-appearance-changed', {
+          detail: { id: target?.id, appearance: result.appearance },
+        }),
+      );
     } catch (cause) {
       if (
         generation === epoch.current &&
@@ -248,7 +233,7 @@ export function CoverArt({
     );
   const src =
     cover.source === 'gem'
-      ? gemCoverSources[cover.gem][cover.mode ?? mode]
+      ? gemCoverSources[cover.gem][mode]
       : (photo?.url ?? assets?.[hash!] ?? `${path}/assets/${hash}`);
   return (
     <>
@@ -425,9 +410,6 @@ export function CoverDialog({
   const mode = useSyncExternalStore(watchTheme, getTheme);
   const [source, setSource] = useState<'gem' | 'upload' | 'unsplash'>(initial?.source ?? 'gem');
   const [gem, setGem] = useState<GemName>(initial?.source === 'gem' ? initial.gem : 'spinel');
-  const [gemMode, setGemMode] = useState<'auto' | 'light' | 'dark'>(
-    initial?.source === 'gem' ? (initial.mode ?? 'auto') : 'auto',
-  );
   const [paired, setPaired] = useState(initial?.source !== 'gem' && !!initial?.images.light);
   const [variant, setVariant] = useState<'light' | 'dark'>(mode);
   const [uploads, setUploads] = useState<Partial<Record<string, UploadImage>>>(
@@ -460,7 +442,7 @@ export function CoverDialog({
   const upload = uploads[key];
   const preview =
     source === 'gem'
-      ? gemCoverSources[gem][gemMode === 'auto' ? mode : gemMode]
+      ? gemCoverSources[gem][mode]
       : source === 'unsplash'
         ? photos[key]?.url
         : typeof upload === 'string'
@@ -527,7 +509,7 @@ export function CoverDialog({
         cover: remove
           ? null
           : source === 'gem'
-            ? { source, gem, ...(gemMode === 'auto' ? {} : { mode: gemMode }) }
+            ? { source, gem }
             : {
                 source,
                 position,
@@ -591,32 +573,19 @@ export function CoverDialog({
         </div>
         <div className="appearance-cover-options">
           {source === 'gem' ? (
-            <>
-              <Choice
-                label="Gem artwork"
-                value={gemMode}
-                disabled={busy}
-                onChange={(value) => setGemMode(value as 'auto' | 'light' | 'dark')}
-                options={[
-                  { value: 'auto', label: 'Match light and dark mode' },
-                  { value: 'light', label: 'Light artwork in both modes' },
-                  { value: 'dark', label: 'Dark artwork in both modes' },
-                ]}
-              />
-              <div className="appearance-gem-grid">
-                {gemNames.map((value) => (
-                  <button
-                    key={value}
-                    disabled={busy}
-                    aria-pressed={gem === value}
-                    onClick={() => setGem(value)}
-                  >
-                    <img src={gemCoverSources[value][gemMode === 'auto' ? mode : gemMode]} alt="" />
-                    <span>{spaceAccentPalettes[value].label}</span>
-                  </button>
-                ))}
-              </div>
-            </>
+            <div className="appearance-gem-grid">
+              {gemNames.map((value) => (
+                <button
+                  key={value}
+                  disabled={busy}
+                  aria-pressed={gem === value}
+                  onClick={() => setGem(value)}
+                >
+                  <img src={gemCoverSources[value][mode]} alt="" />
+                  <span>{spaceAccentPalettes[value].label}</span>
+                </button>
+              ))}
+            </div>
           ) : (
             <>
               <label>

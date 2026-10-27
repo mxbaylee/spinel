@@ -1,5 +1,8 @@
-// Copied unchanged from mxbaylee/circus-health src/shared/person-icon-search.ts at 2ab77af.
+// Adapted from mxbaylee/circus-health src/shared/person-icon-search.ts at 2ab77af.
+// Spinel adds optional emoji choices to the same weighted, typo-tolerant search.
 import catalog from './person-icon-catalog.json' with { type: 'json' };
+import emojis from 'emojibase-data/en/compact.json' with { type: 'json' };
+import { validEmoji } from '../shared/emoji.ts';
 
 import { ICON_EXTRA_TAGS, ICON_SEARCH_ALIASES } from './person-icon-vocabulary.ts';
 
@@ -43,6 +46,34 @@ export const ICON_CATALOG = catalog.icons.map((icon) => {
 });
 export type IconChoice = (typeof ICON_CATALOG)[number];
 export const ICON_CATEGORIES = [...new Set(ICON_CATALOG.flatMap((icon) => icon.categories))].sort();
+type EmojiEntry = {
+  unicode: string;
+  label: string;
+  hexcode: string;
+  tags?: string[];
+  group?: number;
+  skins?: EmojiEntry[];
+};
+export const EMOJI_CATALOG: IconChoice[] = (emojis as EmojiEntry[])
+  .filter((emoji) => emoji.group !== undefined)
+  .flatMap((emoji) => [
+    emoji,
+    ...(emoji.skins ?? []).map((skin) => ({ ...skin, tags: emoji.tags })),
+  ])
+  .filter((emoji) => validEmoji(emoji.unicode))
+  .map((emoji) => ({
+    value: emoji.unicode,
+    name: `emoji-${emoji.hexcode}`,
+    canonicalName: `emoji-${emoji.hexcode}`,
+    label: `${emoji.label[0].toUpperCase()}${emoji.label.slice(1)} emoji`,
+    categories: ['Emojis'],
+    tags: emoji.tags ?? [],
+    searchWords: [
+      ...words(emoji.label).map((word): [string, number] => [word, 40]),
+      ...words((emoji.tags ?? []).join(' ')).map((word): [string, number] => [word, 20]),
+    ],
+  }));
+const identityCatalog = [...EMOJI_CATALOG, ...ICON_CATALOG];
 
 /** Adjacent transpositions count as one typo; short words require exact/prefix matches. */
 function distance(a: string, b: string): number {
@@ -60,10 +91,28 @@ function distance(a: string, b: string): number {
     }
   return rows[a.length][b.length];
 }
-export function searchPersonIcons(query: string, category = 'All'): IconChoice[] {
+export function searchPersonIcons(
+  query: string,
+  category = 'All',
+  includeEmojis = false,
+): IconChoice[] {
+  const trimmed = query.trim();
+  if (includeEmojis && (category === 'All' || category === 'Emojis') && validEmoji(trimmed)) {
+    return [
+      EMOJI_CATALOG.find((emoji) => emoji.value === trimmed) ?? {
+        value: trimmed,
+        name: trimmed,
+        canonicalName: trimmed,
+        label: `${trimmed} emoji`,
+        categories: ['Emojis'],
+        tags: [],
+        searchWords: [],
+      },
+    ];
+  }
   const tokens = words(query).slice(0, 8);
   if (query.trim() && !tokens.length) return [];
-  const candidates = ICON_CATALOG.filter(
+  const candidates = (includeEmojis ? identityCatalog : ICON_CATALOG).filter(
     (icon) => category === 'All' || icon.categories.includes(category),
   );
   if (!tokens.length) return candidates.filter((icon) => icon.name === icon.canonicalName);

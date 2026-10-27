@@ -1,4 +1,8 @@
 /* SPN-045: account placement follows the approved composed profile screen. */
+.profile-picker-emoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}
 .profile-workspace {
   flex-direction: column;
 }

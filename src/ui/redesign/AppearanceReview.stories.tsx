@@ -6,6 +6,7 @@ import { emptyAppearance, gemNames } from '../../shared/appearance.ts';
 import type { GemName, ItemAppearance } from '../../shared/appearance.ts';
 import { GemPairs } from './AppearanceReview.tsx';
 import { Button } from './Controls.tsx';
+import { spaceAccentPalettes } from '../palette.ts';
 
 function Playground({
   kind,
@@ -103,6 +104,14 @@ export const PlaygroundStory: Story = {
     const body = within(canvasElement.ownerDocument.body);
     if (!args.open) await userEvent.click(body.getByRole('button', { name: 'Appearance' }));
     await expect(body.getByRole('button', { name: 'Reset icon' })).toBeDisabled();
+    await userEvent.click(body.getByRole('button', { name: 'Choose icon or emoji' }));
+    await userEvent.type(body.getByRole('textbox', { name: 'Search icons and emojis' }), 'flower');
+    await expect(body.getByRole('button', { name: 'Flower' })).toBeVisible();
+    await userEvent.click(body.getByRole('button', { name: 'Sunflower emoji' }));
+    await expect(
+      canvasElement.ownerDocument.querySelector('.identity-choice-current'),
+    ).toHaveTextContent('🌻');
+    await userEvent.click(body.getByRole('button', { name: 'Reset icon' }));
     if (args.kind === 'folder' || args.kind === 'space') return;
     await userEvent.click(body.getByRole('button', { name: 'Change cover' }));
     const height = body.getByRole('dialog').getBoundingClientRect().height;
@@ -112,7 +121,7 @@ export const PlaygroundStory: Story = {
         Math.abs(body.getByRole('dialog').getBoundingClientRect().height - height),
       ).toBeLessThanOrEqual(1);
     }
-    await userEvent.click(body.getByRole('button', { name: 'Jasper' }));
+    await userEvent.click(body.getByRole('button', { name: spaceAccentPalettes[args.gem].label }));
     await userEvent.click(body.getByRole('button', { name: 'Save cover' }));
     if (args.failSave) {
       await expect(body.getByRole('alert')).toHaveTextContent('Save failed');

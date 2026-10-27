@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 import { icons } from 'lucide';
-import { ICON_CATALOG, searchPersonIcons } from './person-icon-search.ts';
+import { EMOJI_CATALOG, ICON_CATALOG, searchPersonIcons } from './person-icon-search.ts';
+import { validIdentityIcon } from '../shared/appearance.ts';
 import { avatarProfile, defaultProfile, profileAvatar, validIcon } from './profile.ts';
 import { iconNodes } from './iconNodes.ts';
 
@@ -13,6 +14,32 @@ const renamedIcons = [
   ['music-3', 'half-note'],
   ['music-4', 'sixteenth-notes'],
 ] as const;
+
+test('item identity search combines icons and emoji names, keywords, typos and pasted sequences', () => {
+  const flower = searchPersonIcons('flower', 'All', true).map((choice) => choice.value);
+  expect(flower).toContain('lucide:flower');
+  expect(flower).toContain('🌻');
+  expect(searchPersonIcons('flowre', 'All', true).some((choice) => choice.value === '🌻')).toBe(
+    true,
+  );
+  expect(
+    searchPersonIcons('book', 'Emojis', true).every(
+      (choice) => !choice.value.startsWith('lucide:'),
+    ),
+  ).toBe(true);
+  for (const emoji of ['🌻', '👩🏽‍💻', '🇨🇦', '1️⃣']) {
+    expect(searchPersonIcons(emoji, 'All', true).map((choice) => choice.value)).toEqual([emoji]);
+    expect(validIdentityIcon(emoji)).toBe(true);
+  }
+  expect(searchPersonIcons('🌻🌷', 'All', true)).toEqual([]);
+  expect(searchPersonIcons('zzzzzzzzzzzz', 'All', true)).toEqual([]);
+  expect(new Set(EMOJI_CATALOG.map((choice) => choice.value)).size).toBe(EMOJI_CATALOG.length);
+  expect(EMOJI_CATALOG.every((choice) => validIdentityIcon(choice.value))).toBe(true);
+  // Profile avatar URLs still require Lucide; item emoji support is explicitly enabled.
+  expect(searchPersonIcons('flower').every((choice) => choice.value.startsWith('lucide:'))).toBe(
+    true,
+  );
+});
 
 test('catalog names resolve to the pinned Lucide pack without falling back', () => {
   const catalogNames = ICON_CATALOG.map((icon) =>

@@ -32,6 +32,12 @@ inputs for prepared-font validation, not production font substitutions.
 Code from [mxbaylee/circus-health](https://github.com/mxbaylee/circus-health) isn't listed:
 Baylee Schmeisser, Spinel's owner, wrote it.
 
+Item identity search imports the English compact dataset from
+[`emojibase-data` 17.0.0](https://github.com/milesj/emojibase/tree/master/packages/data),
+MIT, copyright 2017–2019 Miles Johnson. The dependency retains its license text;
+Spinel projects labels, keywords and Unicode sequences into the existing search
+index. Emoji glyphs are rendered by the device's fonts, with no remote artwork.
+
 When adding an entry:
 
 - Keep the original copyright and license header in each copied file.

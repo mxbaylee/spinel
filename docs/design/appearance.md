@@ -1,7 +1,10 @@
 # Item appearance
 
 Docs, Sheets and Spaces always have an identity icon. Creation offers the same
-searchable icon catalog and emoji choice as editing appearance later. Leaving it
+searchable picker for icons and emojis as editing appearance later. Names,
+keywords and common typos search both kinds together; pasting one emoji selects
+that exact character, including skin tones and joined sequences. The Emojis
+category narrows browsing. Leaving the choice
 untouched, or using Reset icon, uses the NFC-normalized filename hash and the
 existing flower/plant palette. A custom icon persists through rename. Folders
 keep a folder glyph by default and offer the existing theme-aware fill presets;
@@ -24,8 +27,8 @@ native editor stays mounted. The picker has one viewport-bounded height across
 Only the options scroll on ordinary-height screens; the complete picker can
 scroll on short screens. Failed replacements preserve the saved cover.
 
-Gems follow the active light/dark mode by default. A user can instead keep the
-light or dark artwork in both modes. Uploads and Unsplash offer one shared
+Gems always follow the active light/dark mode; the only choice is the gem name.
+Uploads and Unsplash offer one shared
 image or a light/dark pair, with deliberate colors and a vertical crop control.
 Theme changes select an existing variant and never rewrite saved appearance.
 

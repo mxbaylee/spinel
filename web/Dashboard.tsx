@@ -45,6 +45,7 @@ import type { OfflineCatalog, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability } from './offline/OfflineAvailability.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
+import type { ItemAppearance } from '../src/shared/appearance.ts';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
@@ -170,7 +171,18 @@ export function Dashboard({
   const [newIcon, setNewIcon] = useState<string | null>(null);
   const [appearanceItem, setAppearanceItem] = useState<FileItem | null>(null);
   useEffect(() => {
-    const changed = () => setRefresh((value) => value + 1);
+    const changed = (event: Event) => {
+      const { id, appearance } = (event as CustomEvent<{ id: string; appearance: ItemAppearance }>)
+        .detail;
+      const update = (items: FileItem[]) =>
+        items.map((item) => (item.id === id ? { ...item, appearance } : item));
+      // Metadata saves must not remount a live native editor or discard an open draft.
+      setItems(update);
+      setViewed(update);
+      views.current = Object.fromEntries(
+        Object.entries(views.current).map(([key, items]) => [key, update(items)]),
+      );
+    };
     window.addEventListener('spinel-appearance-changed', changed);
     return () => window.removeEventListener('spinel-appearance-changed', changed);
   }, []);
