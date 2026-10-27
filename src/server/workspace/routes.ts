@@ -8,11 +8,12 @@ import { SheetStore } from './sheets.ts';
 import { DocumentStore } from './documents.ts';
 import { TrashStore } from './trash.ts';
 import type { CollaborationStore } from '../collaboration/service.ts';
+import { CollaborationError } from '../collaboration/errors.ts';
 import type { HistoryStore } from '../history/store.ts';
 import { PortableFiles, PORTABLE_LIMIT } from './portable.ts';
 import { formulaRoutes } from '../formulas/routes.ts';
 import type { FormulaDiagnostics } from '../formulas/routes.ts';
-import { documentIdentity } from '../collaboration/identity.ts';
+import { checkOfflineAccount, documentIdentity } from '../collaboration/identity.ts';
 import { historyRoutes } from '../history/routes.ts';
 import { admitTransfer, transfers } from './transfers.ts';
 import { archiveRoutes } from './archive-routes.ts';
@@ -36,6 +37,7 @@ export function workspaceRoutes(
   const owner = (request: Request) => {
     const id = auth.session(cookieToken(request))?.user_id;
     if (!id) throw new AuthError(401, 'Sign in to continue.');
+    checkOfflineAccount(request.headers, id);
     store.owner(id);
     return id;
   };
@@ -133,6 +135,31 @@ export function workspaceRoutes(
       .type(image.mime)
       .send(Buffer.from(image.data));
   });
+  router.post(
+    '/offline-recovery',
+    admitTransfer,
+    express.json({ limit: PORTABLE_LIMIT + 4096, strict: true }),
+    async (request, response) => {
+      const transfer = transfers.get(response)!;
+      transfer.start();
+      try {
+        const user = owner(request);
+        if (request.headers['x-spinel-offline-account'] !== user)
+          throw new AuthError(409, 'The signed-in account changed. Reopen Spinel.');
+        const item = await files.recover(
+          user,
+          payload(request, ['recoveryId', 'filename', 'snapshot', 'possibleReplayCrash']),
+          () => {
+            if (owner(request) !== user || response.destroyed)
+              throw new AuthError(401, 'Sign in to continue.');
+          },
+        );
+        response.status(201).json({ item });
+      } finally {
+        transfer.finish();
+      }
+    },
+  );
   router.post(
     '/import',
     admitTransfer,
@@ -330,23 +357,30 @@ export function workspaceRoutes(
     }),
   );
   router.use((error: unknown, request: Request, response: Response, _next: NextFunction) => {
+    // Offline reconnect distinguishes an observed denial from a transient
+    // request failure. Preserve the collaboration layer's access result.
+    const accessDenied = error instanceof CollaborationError && error.code === 'PERMISSION_DENIED';
     const status =
       error instanceof AuthError
         ? error.status
-        : (error as { status?: number })?.status === 413
-          ? 413
-          : 400;
+        : accessDenied
+          ? 403
+          : (error as { status?: number })?.status === 413
+            ? 413
+            : 400;
     response.status(status).json({
       error:
         error instanceof AuthError
           ? error.message
-          : status === 413
-            ? request.path === '/import'
-              ? 'Univer files must be at most 20 MiB.'
-              : request.path.endsWith('/images')
-                ? 'Choose an image no larger than 5 MiB.'
-                : 'This document is too large to save. Changes have not been saved.'
-            : 'Could not save this change. Try again.',
+          : accessDenied
+            ? 'This document is not available.'
+            : status === 413
+              ? request.path === '/import' || request.path === '/offline-recovery'
+                ? 'Univer files must be at most 20 MiB.'
+                : request.path.endsWith('/images')
+                  ? 'Choose an image no larger than 5 MiB.'
+                  : 'This document is too large to save. Changes have not been saved.'
+              : 'Could not save this change. Try again.',
     });
   });
   return router;

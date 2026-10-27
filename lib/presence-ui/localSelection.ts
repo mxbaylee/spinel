@@ -82,7 +82,8 @@ export function setLocalDocSelectionColor(
     return;
   stylingDocSelections.add(selections);
   try {
-    selections.replaceDocRanges(
+    const hadFocus = selections.hasFocus();
+    const replaced = selections.replaceDocRanges(
       info.textRanges.map((range) => ({
         ...range,
         style: { ...(range.style ?? info.style), strokeActive: stroke, fill },
@@ -90,6 +91,10 @@ export function setLocalDocSelectionColor(
       info.isEditing,
       { ...info.options, shouldFocus: false },
     );
+    // Native replacement deactivates the DOM host even when focus is preserved.
+    // Recompute its position from the new range only while this editor still
+    // owns focus; external controls and mobile reading must not regain it.
+    if (replaced && hadFocus && selections.hasFocus()) selections.sync();
   } finally {
     stylingDocSelections.delete(selections);
   }

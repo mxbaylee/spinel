@@ -4,7 +4,9 @@ import { createPortal } from 'react-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { getDocsEmptySnapshot, LocaleType, type Univer } from '@univerjs/core';
 import { DocSelectionManagerService } from '@univerjs/docs';
+import { calcDocRangePositions, DocSelectionRenderService } from '@univerjs/docs-ui';
 import { IRenderManagerService, Rect, RegularPolygon } from '@univerjs/engine-render';
+import { setLocalDocSelectionColor } from '@spinel/presence-ui';
 import { createUniver } from '@univerjs/presets';
 import { UniverDocsCorePreset } from '@univerjs/preset-docs-core';
 import docsEnglish from '@univerjs/preset-docs-core/locales/en-US';
@@ -26,6 +28,53 @@ interface PresenceStoryProps {
   guest?: boolean;
   disconnected?: boolean;
 }
+
+function localSelectionObservation(
+  native: DocSelectionRenderService,
+  logical: ReturnType<DocSelectionManagerService['getSelectionInfo']>,
+  snapshot: unknown,
+) {
+  const range = native.getActiveTextRange();
+  const anchor = range?.getAnchor();
+  const box = native.selectionContainer.getBoundingClientRect();
+  return {
+    focused: native.hasFocus(),
+    pointer: native.isOnPointerEvent,
+    pending: native.hasPendingSelection,
+    host: { x: box.x, y: box.y },
+    native: range ? { start: range.startOffset, end: range.endOffset } : null,
+    anchor: anchor
+      ? { visible: anchor.visible, left: anchor.left, top: anchor.top, height: anchor.height }
+      : null,
+    logical: logical?.textRanges.map((value) => ({
+      start: value.startOffset,
+      end: value.endOffset,
+      direction: value.direction,
+      collapsed: value.collapsed,
+      segmentId: value.segmentId,
+      segmentPage: value.segmentPage,
+    })),
+    style: {
+      stroke: logical?.textRanges[0]?.style?.strokeActive,
+      fill: logical?.textRanges[0]?.style?.fill,
+    },
+    snapshot: JSON.stringify(snapshot),
+  };
+}
+
+// Story-local access to the real adapter and read-only native geometry. The
+// application exposes no selection setter or test mutation hook.
+const localColorFixtures = new WeakMap<
+  HTMLElement,
+  {
+    input: HTMLDivElement;
+    textBounds(): ReturnType<typeof calcDocRangePositions>;
+    restyle(color: string): {
+      before: ReturnType<typeof localSelectionObservation>;
+      after: ReturnType<typeof localSelectionObservation>;
+    };
+  }
+>();
 
 /** Uses the production adapter and actual OSS canvas/popup APIs with local room frames. */
 function NativePresenceCanvas({
@@ -87,7 +136,7 @@ function NativePresenceCanvas({
         textRuns: [{ st: 0, ed: paragraphs[0]!.length, ts: { fs: 24, bl: 1 } }],
         sectionBreaks: [{ sectionId: 'presence-section', startIndex: stream.length - 1 }],
       };
-      created.univerAPI.createDocument(data);
+      const doc = created.univerAPI.createDocument(data);
       await editorReady(created.univerAPI);
       if (disposed) return;
       await documentReady(univer, id, abort.signal);
@@ -97,6 +146,30 @@ function NativePresenceCanvas({
       render.engine.getCanvasElement().setAttribute('aria-label', 'Document canvas');
       created.univerAPI.getActiveDocument()!.setSelection(0, 0);
       const selections = univer.__getInjector().get(DocSelectionManagerService);
+      const nativeSelections = render.with(DocSelectionRenderService);
+      const fixtureHost = host.current!;
+      const observeLocal = () =>
+        localSelectionObservation(
+          nativeSelections,
+          selections.getSelectionInfo({ unitId: id, subUnitId: id }),
+          doc.getDocumentDataModel().getSnapshot(),
+        );
+      localColorFixtures.set(fixtureHost, {
+        input: nativeSelections.inputElement,
+        textBounds: () =>
+          calcDocRangePositions(
+            { startOffset: 0, endOffset: 1, collapsed: false, segmentId: '', segmentPage: -1 },
+            render,
+          ),
+        restyle(color) {
+          // Keep both observations in the same task: a later layout publication
+          // must not rescue a host that the color replacement moved to (0, 0).
+          const before = observeLocal();
+          setLocalDocSelectionColor(created.univer, id, color);
+          return { before, after: observeLocal() };
+        },
+      });
+      cleanups.push(() => localColorFixtures.delete(fixtureHost));
       const listeners = new Set<(state: SyncPresenceState) => void>();
       let state: SyncPresenceState = {
         selfId: 'self-session',
@@ -302,5 +375,83 @@ export const DocLifecycle: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Reconnect room' }));
     await rendered(canvasElement, 'Alex Kim');
     await userEvent.click(canvas.getByText('Presence review controls'));
+  },
+};
+
+export const DocLocalColors: Story = {
+  // Isolate the immediate adapter call from the room's periodic color update.
+  // This uses the desktop preset, including in narrow Storybook viewports.
+  args: { disconnected: true },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    const canvas = within(canvasElement);
+    const fixture = localColorFixtures.get(
+      canvasElement.querySelector<HTMLElement>('.rd-native-host')!,
+    )!;
+    const nativeCanvas = canvas.getByLabelText('Document canvas') as HTMLCanvasElement;
+
+    // Move focus out of the fixture's initial selection before the real canvas
+    // click, so that click cannot inherit focus from fixture setup.
+    await userEvent.click(canvas.getByText('Presence review controls'));
+    const external = canvas.getByRole('button', { name: 'Disconnect room' });
+    await userEvent.click(external);
+    await expect(external).toHaveFocus();
+    const unfocused = fixture.restyle('#654321');
+    expect(unfocused.before.focused).toBe(false);
+    expect(unfocused.before.style.stroke).not.toBe('#654321');
+    expect(unfocused.after).toMatchObject({
+      focused: false,
+      native: unfocused.before.native,
+      logical: unfocused.before.logical,
+      snapshot: unfocused.before.snapshot,
+      style: { stroke: '#654321', fill: '#65432118' },
+    });
+    await expect(external).toHaveFocus();
+    await userEvent.click(canvas.getByText('Presence review controls'));
+    await expect(fixture.input).not.toHaveFocus();
+
+    const coords = await waitFor(() => {
+      const bounds = fixture.textBounds()?.[0];
+      if (!bounds) throw new Error('The first native glyph has not been laid out.');
+      const visible = nativeCanvas.getBoundingClientRect();
+      const left = Math.max(bounds.left, visible.left + 1);
+      const right = Math.min(bounds.right, visible.right - 1);
+      const top = Math.max(bounds.top, visible.top + 1);
+      const bottom = Math.min(bounds.bottom, visible.bottom - 1);
+      expect(right).toBeGreaterThan(left);
+      expect(bottom).toBeGreaterThan(top);
+      const clientX = (left + right) / 2;
+      const clientY = (top + bottom) / 2;
+      return {
+        clientX,
+        clientY,
+        offsetX: ((clientX - visible.left) * nativeCanvas.clientWidth) / visible.width,
+        offsetY: ((clientY - visible.top) * nativeCanvas.clientHeight) / visible.height,
+        pageX: clientX + window.scrollX,
+        pageY: clientY + window.scrollY,
+      };
+    });
+    await userEvent.pointer({ target: nativeCanvas, keys: '[MouseLeft]', coords });
+    await expect(fixture.input).toHaveFocus();
+
+    const { before, after } = fixture.restyle('#123456');
+    const visible = nativeCanvas.getBoundingClientRect();
+    expect(before).toMatchObject({ focused: true, pointer: false, pending: false });
+    expect(before.native).not.toBeNull();
+    expect(before.anchor?.visible).toBe(true);
+    expect(before.host.x).toBeGreaterThanOrEqual(visible.left);
+    expect(before.host.x).toBeLessThan(visible.right);
+    expect(before.host.y).toBeGreaterThanOrEqual(visible.top);
+    expect(before.host.y).toBeLessThan(visible.bottom);
+    expect(before.style.stroke).not.toBe('#123456');
+    expect(after).toMatchObject({
+      focused: true,
+      host: before.host,
+      native: before.native,
+      anchor: before.anchor,
+      logical: before.logical,
+      snapshot: before.snapshot,
+      style: { stroke: '#123456', fill: '#12345618' },
+    });
   },
 };

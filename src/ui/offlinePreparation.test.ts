@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import {
   offlinePreparation,
+  offlineAccountRead,
+  offlineEpoch,
+  claimOnlineAccount,
+  expirePreparedAccount,
   preparedAccount,
   setPreparedAccount,
   watchOfflineAccount,
@@ -162,6 +166,35 @@ test('removing the final current-account copy clears only its own marker and all
   expect(scope.isCurrent()).toBe(true);
 });
 
+test('removing the final download does not cancel unrelated live editor queues in either tab', async () => {
+  setPreparedAccount(user.id);
+  const live = offlinePreparation(user.id, () => true);
+  const local = offlineAccountRead(user.id);
+  const stop = watchOfflineAccount();
+  try {
+    await offlinePreparation(user.id, () => true).clearIfEmpty({
+      accountId: user.id,
+      downloads: async () => [],
+    });
+    expect(preparedAccount()).toBeNull();
+    expect(live.isCurrent()).toBe(true);
+    expect(local()).toBe(false);
+    // The other tab observes only a clean-marker removal, not a sign-out nonce.
+    surface.dispatchEvent(
+      Object.assign(new Event('storage'), {
+        key: 'spinel.offline.account',
+        oldValue: user.id,
+        newValue: null,
+      }),
+    );
+    expect(live.isCurrent()).toBe(true);
+    setPreparedAccount(null); // Actual sign-out still invalidates every editor.
+    expect(live.isCurrent()).toBe(false);
+  } finally {
+    stop();
+  }
+});
+
 test('failed catalog persistence never marks a device prepared', async () => {
   const fixture = delayedCatalog();
   const completion = offlinePreparation(user.id, () => true).finish(fixture.store, user, catalog);
@@ -306,4 +339,66 @@ test('a full localStorage cannot stop sign-out from clearing the prepared accoun
   expect(() => setPreparedAccount(null)).not.toThrow();
   expect(preparedAccount()).toBeNull();
   expect(scope.isCurrent()).toBe(false);
+});
+
+test('the first verified 401 cancels an unfinished first download before its account marker exists', async () => {
+  const scope = offlinePreparation(user.id, () => true);
+  const fixture = delayedCatalog();
+  const completion = scope.finish(fixture.store, user, catalog);
+  const before = values.get('spinel.offline.cancellation');
+  expect(preparedAccount()).toBeNull();
+  expirePreparedAccount();
+  expect(values.get('spinel.offline.cancellation')).not.toBe(before);
+  expect(scope.isCurrent()).toBe(false);
+  fixture.committed.resolve();
+  expect(await completion).toBe(false);
+  expect(preparedAccount()).toBeNull();
+});
+
+test('repeated verified 401 responses preserve the first expiry recovery epoch', () => {
+  claimOnlineAccount(user.id);
+  setPreparedAccount(user.id);
+  expirePreparedAccount();
+  const verifyRecovery = offlineEpoch();
+  const nonce = values.get('spinel.offline.cancellation');
+  expirePreparedAccount();
+  expirePreparedAccount();
+  expect(preparedAccount()).toBeNull();
+  expect(values.get('spinel.offline.cancellation')).toBe(nonce);
+  expect(verifyRecovery).not.toThrow();
+});
+
+test('a successful same-account sign-in preserves the held tab and permits a fresh first expiry', () => {
+  claimOnlineAccount(user.id);
+  expirePreparedAccount();
+  const verifyRecovery = offlineEpoch();
+  const nonce = values.get('spinel.offline.cancellation');
+  claimOnlineAccount(user.id);
+  expect(verifyRecovery).not.toThrow();
+  const newDownload = offlinePreparation(user.id, () => true);
+  expirePreparedAccount();
+  expect(values.get('spinel.offline.cancellation')).not.toBe(nonce);
+  expect(newDownload.isCurrent()).toBe(false);
+});
+
+test.each(['sign-out', 'different account'] as const)(
+  '%s still invalidates a recovery epoch after a verified expiry',
+  (change) => {
+    claimOnlineAccount(user.id);
+    expirePreparedAccount();
+    const verifyRecovery = offlineEpoch();
+    if (change === 'sign-out') setPreparedAccount(null);
+    else claimOnlineAccount('other-account');
+    expect(verifyRecovery).toThrow('account changed');
+    expect(preparedAccount()).toBeNull();
+  },
+);
+
+test('an expiry marker for an older nonce cannot admit a first download after sign-out', () => {
+  expirePreparedAccount();
+  setPreparedAccount(null);
+  const newDownload = offlinePreparation(user.id, () => true);
+  expirePreparedAccount();
+  expect(newDownload.isCurrent()).toBe(false);
+  expect(preparedAccount()).toBeNull();
 });

@@ -6,6 +6,25 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+it('fences delayed formula bodies after the downloading account epoch changes', async () => {
+  let release!: (value: unknown) => void;
+  const body = new Promise((resolve) => {
+    release = resolve;
+  });
+  const request = vi.fn(async () => ({ ok: true, status: 200, json: () => body }) as Response);
+  let current = true;
+  const verify = () => {
+    if (!current) throw new DOMException('Account changed', 'AbortError');
+  };
+  const pending = requestFormula('/formulas/evaluate', {}, request, verify);
+  const rejected = expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+  await Promise.resolve();
+  current = false;
+  release({ ok: true, kind: 'scalar', value: 'private source value' });
+  await rejected;
+  expect(request).toHaveBeenCalledOnce();
+});
+
 it('waits through source loading and evaluator contention before returning a current value', async () => {
   vi.useFakeTimers();
   const fetch = vi

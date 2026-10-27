@@ -167,6 +167,11 @@ test('an unbound consent request survives Operator sign-out and permits only the
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(page).toHaveURL(`${baseURL}/sign-in?connect=${request}`);
     await expect(page.getByRole('heading', { name: 'Your workspace.', exact: true })).toBeVisible();
+    // Settle the signed-out bootstrap before installing the next session cookie;
+    // otherwise its automatic redirect can race the fixture's reload.
+    await expect(
+      page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+    ).toBeVisible();
     expect((await context.request.get('/api/auth/session')).status()).toBe(401);
 
     // Session fixtures isolate the account-switch contract. The existing OAuth
@@ -254,6 +259,11 @@ test('viewed consent stays bound after account switching and requires a fresh as
     expect(bound).toBeTruthy();
     await page.getByRole('button', { name: 'Sign out', exact: true }).click();
     await expect(page).toHaveURL(`${baseURL}/sign-in?connect=${request}`);
+    // Settle the signed-out bootstrap before installing the next session cookie;
+    // otherwise its automatic redirect can race the fixture's reload.
+    await expect(
+      page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+    ).toBeVisible();
     expect(auth.session(firstSession.token)).toBeUndefined();
     await context.addCookies([
       {

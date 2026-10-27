@@ -101,13 +101,23 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+async function readOnlyPreview(canvasElement: HTMLElement) {
+  const canvas = within(canvasElement);
+  const paper = await canvas.findByLabelText('Document canvas', {}, { timeout: 30000 });
+  if (paper.closest('.spinel-mobile-doc')) {
+    // Phone viewers hide native editing controls; desktop keeps them disabled.
+    await expect(canvas.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button', { name: 'Bold' })).not.toBeInTheDocument();
+  } else await expect(await canvas.findByRole('button', { name: 'Bold' })).toBeDisabled();
+}
+
 async function ready(canvasElement: HTMLElement) {
   const canvas = within(canvasElement);
   await waitFor(
     () => expect(canvas.getByRole('button', { name: 'Restore this version' })).toBeEnabled(),
     { timeout: 30000 },
   );
-  await expect(await canvas.findByRole('button', { name: 'Bold' })).toBeDisabled();
+  await readOnlyPreview(canvasElement);
   return canvas;
 }
 async function choose(canvasElement: HTMLElement) {
@@ -261,9 +271,7 @@ export const Viewer: Story = {
   parameters: { api: api({ viewer: true }) },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole('button', { name: 'Bold' }, { timeout: 30000 }),
-    ).toBeDisabled();
+    await readOnlyPreview(canvasElement);
     await expect(canvas.queryByRole('button', { name: 'Restore this version' })).toBeNull();
     await expect(canvas.queryByRole('button', { name: 'Name current version…' })).toBeNull();
     await bounds(canvasElement);

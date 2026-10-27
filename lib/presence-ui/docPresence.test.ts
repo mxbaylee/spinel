@@ -74,8 +74,11 @@ function fixture() {
   const selections = {
     isOnPointerEvent: false,
     hasPendingSelection: false,
+    hasFocus: vi.fn(() => true),
+    sync: vi.fn(),
     replaceDocRanges: vi.fn((ranges: typeof info.textRanges) => {
       info.textRanges = ranges;
+      return true;
     }),
   };
   const composition = { getCompositionRange: vi.fn(() => null) };
@@ -241,8 +244,32 @@ test('local Doc colors preserve selection, direction and focus without document 
     { preserveCaret: true, shouldFocus: false },
   );
   expect(f.setSelection).not.toHaveBeenCalled();
+  expect(f.selections.sync).toHaveBeenCalledOnce();
   setLocalDocSelectionColor(f.univer, 'doc', '#123456', colors);
   expect(f.selections.replaceDocRanges).toHaveBeenCalledTimes(1);
+  expect(f.selections.sync).toHaveBeenCalledOnce();
+});
+
+test('local Doc restyling cannot reclaim focus or sync a rejected replacement', () => {
+  for (const { focused, replaced } of [
+    { focused: false, replaced: true },
+    { focused: true, replaced: false },
+  ]) {
+    const f = fixture();
+    f.selections.hasFocus.mockReturnValue(focused);
+    f.selections.replaceDocRanges.mockReturnValue(replaced);
+    setLocalDocSelectionColor(f.univer, 'doc', '#123456');
+    expect(f.selections.sync).not.toHaveBeenCalled();
+    expect(f.setSelection).not.toHaveBeenCalled();
+  }
+});
+
+test('a synchronous selection listener can move focus away during local Doc restyling', () => {
+  const f = fixture();
+  f.selections.hasFocus.mockReturnValueOnce(true).mockReturnValue(false);
+  setLocalDocSelectionColor(f.univer, 'doc', '#123456');
+  expect(f.selections.replaceDocRanges).toHaveBeenCalledOnce();
+  expect(f.selections.sync).not.toHaveBeenCalled();
 });
 
 test('local Doc restyling waits for pointer, pending layout and IME ranges', () => {
@@ -256,4 +283,5 @@ test('local Doc restyling waits for pointer, pending layout and IME ranges', () 
   f.composition.getCompositionRange.mockReturnValue({} as never);
   setLocalDocSelectionColor(f.univer, 'doc', '#123456');
   expect(f.selections.replaceDocRanges).not.toHaveBeenCalled();
+  expect(f.selections.sync).not.toHaveBeenCalled();
 });

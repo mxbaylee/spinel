@@ -52,7 +52,9 @@ function validateRequest(request: SubmitRequest) {
     request.baseRevision < 1 ||
     !Array.isArray(request.mutations) ||
     request.mutations.length > MAX_BATCH_MUTATIONS ||
-    (request.exactRevision !== undefined && typeof request.exactRevision !== 'boolean')
+    (request.exactRevision !== undefined && typeof request.exactRevision !== 'boolean') ||
+    (request.expectedRevision !== undefined &&
+      (!Number.isSafeInteger(request.expectedRevision) || request.expectedRevision < 1))
   )
     throw new SyncError('malformed');
   const bytes = JSON.stringify(request);
@@ -414,7 +416,12 @@ export class SyncServer<Context = unknown> {
     // form one event-loop turn. The storage adapter repeats authorization in SQL.
     this.options.authorize(unitId, context, true);
     const unit = this.unit(unitId);
-    const requestHash = digest(request);
+    // A reconnect fence is admission context, not a different edit. Removing it
+    // retains receipt identity for requests first sent before a disconnection.
+    const { expectedRevision, ...identity } = request;
+    if (expectedRevision !== undefined && expectedRevision !== unit.revision)
+      throw new SyncError('stale');
+    const requestHash = digest(identity);
     const receipt = this.storage.receipt(unitId, request.actorId, request.mutationId);
     if (receipt) {
       if (receipt.requestHash !== requestHash) throw new SyncError('retry-conflict');

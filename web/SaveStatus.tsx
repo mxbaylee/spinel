@@ -1,8 +1,26 @@
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Popover } from '@base-ui/react/popover';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import type { SaveState } from '../src/shared/autosave.ts';
 import './saveStatus.css';
+
+export function UnfinishedDocText({ value, onDiscard }: { value: string; onDiscard(): void }) {
+  return (
+    <section className="save-unfinished-text" aria-label="Unfinished text recovery">
+      <label>
+        Unfinished text
+        <textarea readOnly value={value} rows={3} />
+      </label>
+      <p>
+        This text may not be in your saved device copy. Copy it before discarding it to continue.
+      </p>
+      <button type="button" onClick={onDiscard}>
+        Discard unfinished text
+      </button>
+    </section>
+  );
+}
 
 /** Keep the editor's live announcement and save controller together, while
  * presenting its fixed-size control in the shell's title-adjacent slot. */
@@ -10,31 +28,56 @@ export function SaveStatus({
   state,
   target,
   onRetry,
+  onRecover,
+  onExportRecovery,
+  onDiscardRecovery,
+  unfinishedText,
 }: {
   state: SaveState;
   target: HTMLElement | null;
   onRetry(): void;
+  onRecover?(): void;
+  onExportRecovery?(): void;
+  onDiscardRecovery?(): void;
+  unfinishedText?: { value: string; onDiscard(): void };
 }) {
-  const label = state.failed
-    ? state.dirty
-      ? 'Not saved'
-      : 'Check status'
-    : state.dirty
-      ? state.message.startsWith('Editing cell')
-        ? 'Editing…'
-        : 'Saving…'
-      : state.message.startsWith('View only')
-        ? 'View only'
-        : state.message === 'All changes saved.'
-          ? 'Saved'
-          : 'Loading…';
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const recovery = state.recovery;
+  const busy = state.dirty || recovery?.phase === 'creating';
+  const localLabels = {
+    saving: 'Saving locally',
+    saved: 'Saved locally',
+    synced: 'Synced',
+    attention: 'Needs attention',
+    failed: 'Not saved',
+  };
+  const label =
+    state.message.startsWith('View only') && !state.failed
+      ? 'View only'
+      : state.local
+        ? localLabels[state.local]
+        : state.failed
+          ? state.dirty
+            ? 'Not saved'
+            : 'Check status'
+          : state.dirty
+            ? state.message.startsWith('Editing cell')
+              ? 'Editing…'
+              : 'Saving…'
+            : state.message.startsWith('View only')
+              ? 'View only'
+              : state.message === 'All changes saved.'
+                ? 'Saved'
+                : 'Loading…';
   const icon = state.failed
     ? 'circle-alert'
-    : label === 'Saved'
+    : label === 'Saved' || label === 'Synced'
       ? 'check'
-      : label === 'View only'
-        ? 'eye'
-        : 'clock-3';
+      : label === 'Saved locally'
+        ? 'hard-drive'
+        : label === 'View only'
+          ? 'eye'
+          : 'clock-3';
   return (
     <>
       <span
@@ -62,9 +105,69 @@ export function SaveStatus({
                 <Popover.Popup className="save-detail" aria-label="Save details">
                   <Popover.Title>Save details</Popover.Title>
                   <p>{state.message}</p>
-                  {state.failed && state.dirty && (
+                  {unfinishedText && <UnfinishedDocText {...unfinishedText} />}
+                  {recovery && (
+                    <section className="save-recovery" aria-label="Offline recovery">
+                      {recovery.message && <p role="status">{recovery.message}</p>}
+                      {recovery.phase === 'created' ? (
+                        <div className="save-recovery-actions">
+                          <a href={recovery.copyHref}>Open copy</a>
+                          <a href={recovery.originalHref}>Open original</a>
+                        </div>
+                      ) : recovery.phase === 'discarded' ? (
+                        <a href={recovery.originalHref}>Open original</a>
+                      ) : confirmDiscard ? (
+                        <div>
+                          <p>
+                            Discard all offline changes to this document from this device? This
+                            cannot be undone. The original and any copy already created stay
+                            unchanged.
+                          </p>
+                          <div className="save-recovery-actions">
+                            <button
+                              type="button"
+                              disabled={busy}
+                              onClick={() => {
+                                setConfirmDiscard(false);
+                                onDiscardRecovery?.();
+                              }}
+                            >
+                              Discard offline changes
+                            </button>
+                            <button type="button" onClick={() => setConfirmDiscard(false)}>
+                              Keep changes
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="save-recovery-actions">
+                          {!state.signInRequired && (
+                            <button type="button" disabled={busy} onClick={onRecover}>
+                              {recovery.phase === 'creating'
+                                ? 'Creating copy…'
+                                : 'Retry creating copy'}
+                            </button>
+                          )}
+                          <button type="button" disabled={busy} onClick={onExportRecovery}>
+                            Export as Univer file
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => setConfirmDiscard(true)}
+                          >
+                            Discard offline changes…
+                          </button>
+                        </div>
+                      )}
+                    </section>
+                  )}
+                  {(state.signInRequired ||
+                    (state.failed && state.dirty && state.local !== 'attention')) && (
                     <button type="button" onClick={onRetry}>
-                      Retry saving
+                      {state.signInRequired && !state.dirty
+                        ? 'Continue to sign-in'
+                        : 'Retry saving'}
                     </button>
                   )}
                   <Popover.Close aria-label="Close save details">Close</Popover.Close>

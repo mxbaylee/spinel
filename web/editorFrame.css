@@ -81,6 +81,7 @@
   flex-direction: column;
 }
 .editor-content > .sheet-editor,
+.editor-content section[aria-label='Offline copy'] > .sheet-editor,
 .editor-content section[aria-label='Offline copy'] {
   display: flex;
   flex-direction: column;

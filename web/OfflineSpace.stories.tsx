@@ -51,7 +51,7 @@ const selection = (href: string, accountId = user.id) =>
 /** Native loading and image verification have separate browser and service proofs. */
 function NativeViewerFixture() {
   return (
-    <section aria-label="Read-only document fixture" style={{ padding: 24 }}>
+    <section aria-label="Downloaded document fixture" style={{ padding: 24 }}>
       <p className="sp-muted">
         Doc body fixture · the application opens the verified native copy here.
       </p>
@@ -71,7 +71,7 @@ function NativeViewerFixture() {
         <h3 style={{ marginTop: 24 }}>Before the workshop</h3>
         <p>Review the research notes and write down the questions we want to answer together.</p>
         <p style={{ marginTop: 24 }} className="sp-muted">
-          Read only on this device. Reconnect to edit.
+          Saved on this device — waiting to sync.
         </p>
       </article>
     </section>
@@ -91,7 +91,7 @@ function RouteFixture({ href, children }: { href: string; children: ReactNode })
 
 const meta = {
   id: 'space-offline-view',
-  title: 'Current production/Spaces/Offline reading',
+  title: 'Current production/Spaces/Offline documents',
   component: OfflineSpaceView,
   parameters: { shell: 'none' },
   args: {

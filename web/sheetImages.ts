@@ -1,4 +1,5 @@
-import { IImageIoService, ImageUploadStatusType } from '@univerjs/core';
+import { IImageIoService, IURLImageService, ImageUploadStatusType } from '@univerjs/core';
+import type { IURLImageService as URLImages } from '@univerjs/core';
 import type { IPreset } from '@univerjs/presets';
 import {
   ImageIoService,
@@ -21,14 +22,23 @@ class ExistingSheetImages extends ImageIoService {
   }
 }
 export const sheetImageOverride = [IImageIoService, { useClass: ExistingSheetImages }] as const;
-export function sheetImages(mobile: boolean): IPreset {
+export function sheetImages(mobile: boolean, images?: URLImages): IPreset {
   const preset = UniverSheetsDrawingPreset();
   return {
     ...preset,
     plugins: preset.plugins.map((entry) => {
       const [plugin, config] = Array.isArray(entry) ? entry : [entry, undefined];
       if (plugin === UniverDrawingPlugin)
-        return [plugin, { ...config, override: [[...sheetImageOverride]] }];
+        return [
+          plugin,
+          {
+            ...config,
+            override: [
+              [...sheetImageOverride],
+              ...(images ? [[IURLImageService, { useValue: images }]] : []),
+            ],
+          },
+        ];
       if (plugin === UniverDrawingUIPlugin && mobile) return [UniverDrawingMobileUIPlugin, config];
       if (plugin !== UniverSheetsDrawingUIPlugin) return entry;
       return [

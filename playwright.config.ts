@@ -27,7 +27,7 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   failOnFlakyTests: Boolean(process.env.CI),
-  // Keep all five independent native-client acceptance scenarios observable;
+  // Keep independent native-client and phone acceptance scenarios observable;
   // ordinary large suites still stop repeated downstream failures early.
   maxFailures: process.env.CI && !project?.startsWith('sync-') ? 1 : 0,
   // Keep per-project/shard CI results outside outputDir, which Playwright clears.
@@ -48,23 +48,41 @@ export default defineConfig({
     {
       name: 'development',
       // Offline downloads need the production build's app-shell manifest.
-      testIgnore: ['**/pwa.spec.ts', '**/offline.spec.ts', '**/sync-client.spec.ts'],
+      testIgnore: [
+        '**/pwa.spec.ts',
+        '**/offline.spec.ts',
+        '**/offline-editing.spec.ts',
+        '**/offline-recovery.spec.ts',
+        '**/sync-client.spec.ts',
+      ],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
     },
     {
       name: 'production',
-      testIgnore: ['**/pwa.spec.ts', '**/sync-client.spec.ts'],
+      testIgnore: [
+        '**/pwa.spec.ts',
+        '**/offline-editing.spec.ts',
+        '**/offline-recovery.spec.ts',
+        '**/sync-client.spec.ts',
+      ],
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' },
     },
     {
       name: 'sync-development',
-      testMatch: '**/sync-client.spec.ts',
+      testMatch: ['**/sync-client.spec.ts', '**/doc-mobile.spec.ts'],
       grepInvert: /@sync-soak/,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3104' },
     },
     {
       name: 'sync-production',
-      testMatch: '**/sync-client.spec.ts',
+      // Offline editing needs both the production shell and the read-only
+      // native snapshot observer already enabled in this browser partition.
+      testMatch: [
+        '**/sync-client.spec.ts',
+        '**/doc-mobile.spec.ts',
+        '**/offline-editing.spec.ts',
+        '**/offline-recovery.spec.ts',
+      ],
       grepInvert: /@sync-soak/,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3105' },
     },
@@ -79,7 +97,7 @@ export default defineConfig({
     })),
     {
       name: 'mobile-https',
-      testMatch: '**/pwa.spec.ts',
+      testMatch: ['**/pwa.spec.ts', '**/doc-mobile.spec.ts'],
       use: {
         ...devices['Pixel 7'],
         baseURL: 'https://localhost:3103',
@@ -100,6 +118,7 @@ export default defineConfig({
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/development/app.sqlite',
         VITE_SYNC_EVIDENCE: '0',
+        VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '0',
       },
       reuseExistingServer: false,
     },
@@ -111,6 +130,7 @@ export default defineConfig({
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/production/app.sqlite',
         VITE_SYNC_EVIDENCE: '0',
+        VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '0',
       },
       reuseExistingServer: false,
     },
@@ -123,6 +143,7 @@ export default defineConfig({
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/sync-development/app.sqlite',
         VITE_SYNC_EVIDENCE: '1',
+        VITE_DOC_SELECTION_EVIDENCE: '0',
       },
       reuseExistingServer: false,
     },
@@ -134,6 +155,7 @@ export default defineConfig({
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/sync-production/app.sqlite',
         VITE_SYNC_EVIDENCE: '1',
+        VITE_DOC_SELECTION_EVIDENCE: '0',
       },
       reuseExistingServer: false,
     },
@@ -145,6 +167,7 @@ export default defineConfig({
         HOST: '127.0.0.1',
         DATABASE_PATH: `test-results/sync-soak-${kind}/app.sqlite`,
         VITE_SYNC_EVIDENCE: '1',
+        VITE_DOC_SELECTION_EVIDENCE: '0',
       },
       reuseExistingServer: false,
     })),

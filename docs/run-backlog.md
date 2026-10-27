@@ -52,6 +52,12 @@ the playbook/theme and personas, records findings and approval at the reviewed S
 and discloses **agent review only**. A grading reviewer may do this review too.
 The label alone does not grant approval; unrelated PRs retain rendering/interaction
 checks without routine captures. See the [standing policy](implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review).
+Publishing useful PR images is already authorized, including attachments and
+durable repository-hosted images on public PRs. Choose representative images
+covering the proposed designs, changed states and required light/dark/phone views;
+omit redundant captures and retain complete CI artifacts as supplementary evidence.
+Do not pause for separate image-publication permission. See the owner's
+[standing image permission](implementation/grooming-2026-10-26.md#standing-permission-to-publish-pr-images).
 If real-device evidence, upstream compatibility or authorized external access is
 unavailable, finish all independent work and save the concrete prerequisite,
 evidence and next action in the ticket Rules and PR checkpoint. Work the next

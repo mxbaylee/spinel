@@ -85,6 +85,7 @@ async function fixture() {
     method = 'GET',
     body?: unknown,
     suppliedOrigin = origin,
+    extraHeaders: Record<string, string> = {},
   ) =>
     fetch(root + path, {
       method,
@@ -92,6 +93,7 @@ async function fixture() {
         Cookie: credential,
         Origin: suppliedOrigin,
         ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...extraHeaders,
       },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
@@ -190,6 +192,142 @@ test('the native protocol is available by default and the old protocol is retire
   expect(
     f.db.prepare("SELECT 1 FROM sqlite_master WHERE name='spinel_sync_units'").get(),
   ).toBeTruthy();
+});
+
+test('offline replay sends an atomic head fence through the authorized native socket', async () => {
+  const f = await fixture();
+  await f.prepare();
+  const connection = await f.connect();
+  const original = {
+    type: 'submit',
+    mutationId: randomUUID(),
+    baseRevision: 1,
+    mutations: [f.mutation('Offline once')],
+  };
+  connection.socket.send(JSON.stringify({ ...original, expectedRevision: 1 }));
+  await expect.poll(() => connection.frames.filter((frame) => frame.type === 'ack').length).toBe(1);
+  connection.socket.send(JSON.stringify({ ...original, expectedRevision: 1 }));
+  await expect
+    .poll(() => connection.frames.find((frame) => frame.type === 'resync')?.reason)
+    .toBe('stale');
+  connection.socket.send(JSON.stringify(original));
+  await expect.poll(() => connection.frames.filter((frame) => frame.type === 'ack').length).toBe(2);
+  expect(connection.frames.filter((frame) => frame.type === 'ack').at(-1)?.duplicate).toBe(true);
+  const stale = {
+    ...original,
+    mutationId: randomUUID(),
+    expectedRevision: 1,
+    mutations: [f.mutation('Must not overwrite')],
+  };
+  connection.socket.send(JSON.stringify(stale));
+  await expect
+    .poll(
+      () =>
+        connection.frames.find(
+          (frame) => frame.type === 'resync' && frame.mutationId === stale.mutationId,
+        )?.reason,
+    )
+    .toBe('stale');
+  expect(f.db.prepare('SELECT count(*) AS n FROM spinel_sync_revisions').get()!.n).toBe(1);
+  expect(
+    (await (await f.send(`${f.prefix}/snapshot?unitId=${f.sheet.id}`)).json()).snapshot,
+  ).toMatchObject({
+    sheets: { first: { cellData: { 0: { 0: { v: 'Offline once' } } } } },
+  });
+});
+
+test('offline account headers fence refresh, preparation and socket tickets before document access', async () => {
+  const f = await fixture();
+  await f.prepare();
+  const bound = { 'X-Spinel-Offline-Account': f.owner.id };
+  for (const [path, method] of [
+    [`/api/items/${f.sheet.id}/offline-bundle`, 'GET'],
+    [`/api/items/${f.sheet.id}/collaboration`, 'POST'],
+    [`${f.prefix}/snapshot?unitId=${f.sheet.id}`, 'GET'],
+    [`${f.prefix}/ticket?unitId=${f.sheet.id}`, 'POST'],
+  ] as const) {
+    const original = await f.send(
+      path,
+      f.cookie(),
+      method,
+      method === 'POST' ? {} : undefined,
+      undefined,
+      bound,
+    );
+    expect(original.status, await original.text()).toBe(200);
+    // The second user can edit this same item. Merely checking its access
+    // would let it accidentally replay private work from the first account.
+    const switched = await f.send(
+      path,
+      f.cookie(f.editor.id),
+      method,
+      method === 'POST' ? {} : undefined,
+      undefined,
+      bound,
+    );
+    const privateTransport = path.startsWith('/sync-api/');
+    // The native transport deliberately normalizes access failures, while the
+    // application refresh route reports the account mismatch explicitly.
+    expect(switched.status).toBe(privateTransport ? 403 : 409);
+    expect(await switched.json()).toMatchObject({
+      error: privateTransport
+        ? 'This document is not available.'
+        : 'The signed-in account changed. Reopen Spinel.',
+    });
+    // An Operator cookie is still a different identity, not evidence that the
+    // downloading account lost access to its clean copy.
+    const operator = await f.send(
+      path,
+      f.cookie(f.operator.id),
+      method,
+      method === 'POST' ? {} : undefined,
+      undefined,
+      bound,
+    );
+    expect(operator.status).toBe(privateTransport ? 403 : 409);
+  }
+  const unrelated = f.auth.createUser('Other account without this item');
+  const session = f.auth.createSession(unrelated.id);
+  const missing = await f.send(
+    `/api/items/${f.sheet.id}/offline-bundle`,
+    `${COOKIE_NAME}=${session.token}`,
+    'GET',
+    undefined,
+    undefined,
+    bound,
+  );
+  // A cross-account 404 must never be mistaken for revocation/removal of the
+  // downloading account's clean copy.
+  expect(missing.status).toBe(409);
+});
+
+test('ordinary offline preparation reports revoked and trashed access as a denial', async () => {
+  const f = await fixture();
+  await f.prepare();
+  const path = `/api/items/${f.sheet.id}`;
+  const bound = { 'X-Spinel-Offline-Account': f.editor.id };
+  const prepare = () =>
+    f.send(`${path}/collaboration`, f.cookie(f.editor.id), 'POST', {}, undefined, bound);
+  expect((await prepare()).status).toBe(200);
+  f.workspace.share(f.owner.id, f.sheet.id, f.editor.id, null);
+  const denied = await prepare();
+  // A generic 400 looks like a retryable outage and strands durable offline
+  // edits. A confirmed 403 freezes the original and enables copy recovery.
+  expect(denied.status).toBe(403);
+  expect(denied.headers.get('cache-control')).toBe('no-store');
+  expect(await denied.json()).toEqual({ error: 'This document is not available.' });
+  f.workspace.share(f.owner.id, f.sheet.id, f.editor.id, 'editor');
+  expect((await prepare()).status).toBe(200);
+  expect((await f.send(`${path}/trash`, f.cookie(), 'POST', {})).status).toBe(200);
+  const trashed = await prepare();
+  expect(trashed.status).toBe(403);
+  expect(trashed.headers.get('cache-control')).toBe('no-store');
+  expect(await trashed.json()).toEqual({ error: 'This document is not available.' });
+  const switched = await f.send(`${path}/collaboration`, f.cookie(), 'POST', {}, undefined, bound);
+  expect(switched.status).toBe(409);
+  expect(await switched.json()).toEqual({
+    error: 'The signed-in account changed. Reopen Spinel.',
+  });
 });
 
 test('two real sockets converge through durable ordering, retry, divergence resync and no duplicate broadcasts', async () => {

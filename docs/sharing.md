@@ -200,7 +200,7 @@ create, rename, reorder, nest and trash internal content; a View guest reads it.
 Guests receive no outer folders, account identities, sharing controls, recovery
 collection, public history, native-file export or offline preparation. Existing
 native Print policy is unchanged. Account readers can export one authorized native
-child, browse its history and prepare its read-only offline copy; account Editors
+child, browse its history and prepare its offline copy; account Editors
 and the Owner can also name and restore versions.
 
 Every content, collaboration, Formula, image, export and MCP boundary checks the

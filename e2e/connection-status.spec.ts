@@ -324,6 +324,18 @@ for (const width of [1280, 390]) {
             await address.press('Enter');
             await page.keyboard.type('Train tickets');
             await page.keyboard.press('Enter');
+          } else if (width === 390) {
+            await expect(editor).toHaveAttribute('data-mobile', 'true');
+            await editor.getByRole('button', { name: 'Edit', exact: true }).tap();
+            // The native 20px page inset plus its 66.7px modern top margin places
+            // the first body line near y100; y40 only touches the page margin.
+            const paper = editor.getByLabel('Document canvas', { exact: true });
+            const box = (await paper.boundingBox())!;
+            await page.touchscreen.tap(box.x + 40, box.y + 100);
+            await expect(
+              editor.locator('[contenteditable="true"][data-u-comp="editor"]'),
+            ).toBeFocused();
+            await page.keyboard.type('Reserve train tickets and pack a picnic.');
           } else {
             await canvas.click({ position: { x: 130, y: 200 } });
             await page.keyboard.type('Reserve train tickets and pack a picnic.');

@@ -10,6 +10,7 @@ import { selectOfflineSpace } from './offline/spaceCopies.ts';
 import type { OfflineSpaceSelection } from './offline/spaceCopies.ts';
 import { readSpaceLocation, spaceHref } from './spaceNavigation.ts';
 import './spaceOffline.css';
+import type { ConnectionState } from './connectionState.ts';
 
 const OfflineViewer = lazy(() =>
   import('./OfflineViewer.tsx').then((module) => ({ default: module.OfflineViewer })),
@@ -27,6 +28,17 @@ export function OfflineSpace({
   onProfile(): void;
 }) {
   const [route, setRoute] = useState(() => readSpaceLocation(location));
+  const [connection, setConnection] = useState<ConnectionState | null>(null);
+  const [dirty, setDirty] = useState(false);
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
   useEffect(() => {
     const changed = () => setRoute(readSpaceLocation(location));
     window.addEventListener('popstate', changed);
@@ -39,6 +51,7 @@ export function OfflineSpace({
       selection={selection}
       onExit={onExit}
       onProfile={onProfile}
+      connection={connection ?? 'offline'}
       viewer={
         selection.selected && selection.spaceId ? (
           <Suspense fallback={<p role="status">Opening offline copy…</p>}>
@@ -47,6 +60,8 @@ export function OfflineSpace({
               accountId={user.id}
               itemId={selection.selected.itemId}
               spaceId={selection.spaceId}
+              onDirty={setDirty}
+              onConnectionState={setConnection}
             />
           </Suspense>
         ) : null
@@ -74,18 +89,20 @@ export function OfflineSpaceView({
   onExit,
   onProfile,
   viewer,
+  connection = 'offline',
 }: {
   user: SpaceUser;
   selection: OfflineSpaceSelection;
   onExit(): void;
   onProfile(): void;
   viewer: ReactNode;
+  connection?: ConnectionState;
 }) {
   const { root, spaceId, copies, selected, problem } = selection;
   const shell = (
     <SpaceShell
       user={user}
-      connection="offline"
+      connection={connection}
       documentOpen={Boolean(selected)}
       onExit={onExit}
       onProfile={onProfile}
@@ -127,7 +144,9 @@ export function OfflineSpaceView({
               (problem === 'index' ? 'Your Spaces' : (root?.name ?? 'Space unavailable'))}
           </h1>
         </div>
-        {selected && <span className="space-access">Read only</span>}
+        {selected && (
+          <span className="space-access">{selected.readOnly ? 'Read only' : 'On this device'}</span>
+        )}
       </header>
       {problem ? (
         <div className="space-content space-offline-empty">
@@ -151,8 +170,8 @@ export function OfflineSpaceView({
     <EditorFrame
       name={selected.name}
       contextLabel={root ? `Space · ${root.name}` : undefined}
-      connection="offline"
-      access="Read only"
+      connection={connection}
+      access={selected.readOnly ? 'Read only' : 'On this device'}
       onBack={onExit}
       backLabel="My files"
     >
