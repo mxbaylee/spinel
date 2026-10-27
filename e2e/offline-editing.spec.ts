@@ -973,6 +973,16 @@ test.describe('downloaded native editors', () => {
       await f.page.reload();
       await usableCanvas(f.page);
       await savedLocally(f.page);
+      // Native first-visit selection during formula reference mode belongs to
+      // IRefSelectionsService, while typing checks the ordinary sheet selection.
+      // Establish that normal selection through the real UI before the draft.
+      await sheet.getByRole('tab', { name: second.name, exact: true }).click();
+      await expect(sheet.getByRole('tab', { name: second.name, exact: true })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+      await selectCell(f.page, 'A1');
+      await expect(sheet.locator('[data-u-comp="defined-name"] input')).toHaveValue('A1');
       await sheet.getByRole('tab', { name: first.name, exact: true }).click();
       await edit(f.page, 'sheet', '730', 'E1');
       await savedLocally(f.page);
@@ -988,6 +998,12 @@ test.describe('downloaded native editors', () => {
       await cellInput.focus();
       await expect(cellInput).toBeFocused();
       await f.page.keyboard.insertText('A1)');
+      await expect(
+        f.page.getByText(
+          'The range is protected, and you do not have edit permission. To edit, please contact the creator.',
+          { exact: true },
+        ),
+      ).toHaveCount(0);
       const copyDraft = async () => {
         const sentinel = `not-copied-${randomUUID()}`;
         await f.page.evaluate((text) => navigator.clipboard.writeText(text), sentinel);
@@ -1001,6 +1017,7 @@ test.describe('downloaded native editors', () => {
       };
       const draft = await copyDraft();
       expect(draft).toContain('=SUM(');
+      expect(draft).toContain('A1)');
       await f.page.keyboard.press('End');
       const cookie = (await f.context.cookies()).find((entry) => entry.name === COOKIE_NAME)!;
       f.auth.revokeSession(f.auth.session(cookie.value)!.token_hash);
