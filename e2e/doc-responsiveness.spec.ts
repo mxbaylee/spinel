@@ -6,7 +6,9 @@ import { expect, test } from '@playwright/test';
 import type { Page, TestInfo } from '@playwright/test';
 import {
   compositionCpu,
+  DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT,
   DOC_RESPONSIVENESS_BUDGETS,
+  DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT,
   DOC_RESPONSIVENESS_GROUP_LIMIT,
   DOC_RESPONSIVENESS_SCHEMA,
   distribution,
@@ -179,7 +181,11 @@ async function verifyUndoRedo(
 ): Promise<DocUndoRedoEvidence> {
   const groups = all ? initial.sender.history.undos : 1;
   expect(groups).toBeGreaterThan(0);
-  expect(initial.sender.history.undos).toBeLessThanOrEqual(50);
+  expect(initial.sender.history.undos).toBeLessThanOrEqual(
+    baseline
+      ? DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT
+      : DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT,
+  );
   expect(initial.sender.history.redos).toBe(0);
   progress.requestedGroups = groups;
   progress.phase = 'before-undo';

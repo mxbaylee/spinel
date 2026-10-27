@@ -101,7 +101,7 @@ import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 import { observeDocResponsiveness } from './docResponsivenessEvidence.ts';
-import { boundDocHistory } from '../src/ui/boundedDocHistory.ts';
+import { boundDocHistory, DOC_HISTORY_RETENTION_LIMIT } from '../src/ui/boundedDocHistory.ts';
 import { observeOperation } from '@spinel/diagnostics';
 import { useDiagnostics } from './useDiagnostics.tsx';
 
@@ -411,6 +411,7 @@ export function DocEditor({
       Inject(Injector)(TrackedImageInsertion, undefined, 1);
       recordNativeMutationInventory();
       const { univer, univerAPI } = createUniver({
+        undoRedoHistoryLimit: DOC_HISTORY_RETENTION_LIMIT,
         theme: editorTheme(),
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,

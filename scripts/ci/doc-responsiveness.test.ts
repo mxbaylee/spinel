@@ -3,7 +3,9 @@ import { createHash } from 'node:crypto';
 import { test } from 'node:test';
 import {
   compositionCpu,
+  DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT,
   DOC_RESPONSIVENESS_BUDGETS,
+  DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT,
   DOC_RESPONSIVENESS_GROUP_LIMIT,
 } from '../../e2e/doc-responsiveness.ts';
 import type { CpuProfile, DocIntegritySnapshot } from '../../e2e/doc-responsiveness.ts';
@@ -308,7 +310,7 @@ function fixture() {
                   collaboration: DOC_RESPONSIVENESS_GROUP_LIMIT,
                 },
               ],
-          history: { undos: before ? 1 : 48, redos: 0 },
+          history: { undos: before ? 1 : 66, redos: 0 },
           selection: { start: 2086, end: 2086 },
         },
       };
@@ -357,17 +359,55 @@ test('paired proof uses the worst entire candidate task and each certain baselin
   assert.equal(result.improvement.collaboration!.baselineContainingTaskMs, 8000);
   assert.equal(result.improvement.history!.candidateEntireTaskUpperBoundMs, 80);
   assert.equal(result.improvement.history!.reductionPercent, 100 * (1 - 80 / 7000));
-  assert.equal(result.candidateGroupLimit, 44);
+  assert.equal(result.candidateGroupLimit, 32);
+  assert.equal(result.candidateHistoryLimit, 100);
+  assert.equal(result.baselineHistoryLimit, 50);
+  assert.equal(
+    result.summaries.find((value) => value.role === 'candidate' && value.sample === 'plain-1')!
+      .undoRedoGroups,
+    66,
+  );
 });
 
 test('a superseded candidate capacity cannot pass on fast timing alone', () => {
-  const f = fixture();
-  for (const { metrics } of f.candidate) {
-    metrics.native.highWater = { history: 64, collaboration: 64 };
-    metrics.native.flushes[0]!.history = 64;
-    metrics.native.flushes[0]!.collaboration = 64;
+  for (const superseded of [44, 64]) {
+    const f = fixture();
+    for (const { metrics } of f.candidate) {
+      metrics.native.highWater = { history: superseded, collaboration: superseded };
+      metrics.native.flushes[0]!.history = superseded;
+      metrics.native.flushes[0]!.collaboration = superseded;
+    }
+    assert.equal(compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed, false);
   }
-  assert.equal(compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed, false);
+});
+
+test('native history retention is checked separately for candidate and baseline roles', () => {
+  const setGroups = (metrics: BenchmarkMetrics, groups: number) => {
+    metrics.native.history.undos = groups;
+    metrics.preUndoIntegrity!.sender.history.undos = groups;
+    metrics.undoRedo!.requestedGroups = groups;
+    metrics.undoRedo!.firstUndo.sender.history.undos = groups - 1;
+    metrics.undoRedo!.undo.sender.history.redos = groups;
+    metrics.undoRedo!.final.sender.history.undos = groups;
+  };
+  const f = fixture();
+  setGroups(f.candidate[0]!.metrics, DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT);
+  assert.equal(compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed, true);
+  setGroups(f.candidate[0]!.metrics, DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT + 1);
+  const candidate = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+  assert.equal(candidate.passed, false);
+  assert.ok(
+    candidate.failures.some((reason) =>
+      reason.includes('initial exact integrity or native history'),
+    ),
+  );
+  const baseline = fixture();
+  setGroups(baseline.baseline[0]!.metrics, DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT + 1);
+  const result = compareDocResponsiveness(baseline.baseline, baseline.candidate, 'desktop');
+  assert.equal(result.passed, false);
+  assert.ok(
+    result.failures.some((reason) => reason.includes('initial exact integrity or native history')),
+  );
 });
 
 test('schema 3 labels the specifically observed baseline redo defect without weakening candidate integrity', () => {
@@ -606,6 +646,34 @@ test('the 50 ms long-task reporting floor is not misreported as zero candidate w
   assert.equal(result.passed, true);
   assert.equal(result.improvement.history!.candidateEntireTaskUpperBoundMs, 50);
   assert.ok(result.improvement.history!.reductionPercent! < 100);
+});
+
+test('quantized 49 ms long-task entries are retained while the comparison floor stays 50 ms', () => {
+  const f = fixture();
+  f.baseline[0]!.metrics.input.longTasks.push({ startedAt: 19_000, durationMs: 49 });
+  for (const artifact of f.candidate)
+    artifact.metrics.input.longTasks = [{ startedAt: 2000, durationMs: 49 }];
+  const raw = structuredClone(f);
+  const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+  assert.equal(result.passed, true, JSON.stringify(result));
+  assert.equal(result.improvement.history!.candidateEntireTaskUpperBoundMs, 50);
+  assert.equal(result.improvement.collaboration!.candidateEntireTaskUpperBoundMs, 50);
+  assert.ok(
+    result.summaries
+      .filter((value) => value.role === 'candidate')
+      .every((value) => value.longestTaskMs === 49),
+  );
+  assert.deepEqual(f, raw);
+});
+
+test('negative and nonfinite raw long-task durations remain invalid', () => {
+  for (const durationMs of [-1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+    const f = fixture();
+    f.candidate[0]!.metrics.input.longTasks.push({ startedAt: 19_000, durationMs });
+    const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+    assert.equal(result.passed, false);
+    assert.ok(result.failures.some((reason) => reason.includes('invalid long-task timeline')));
+  }
 });
 
 test('mismatched lockfiles, incomplete samples and raw profile tampering each block acceptance', () => {

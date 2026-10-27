@@ -30,6 +30,7 @@ import { SpaceLifecycleStore } from '../workspace/space-lifecycle.ts';
 import { HistoryStore } from '../history/store.ts';
 import { DocFormulas } from '../formulas/service.ts';
 import { digest, readKey, restoreArchive } from '../backup/archive.ts';
+import { verifyArchive } from '../backup/verification.ts';
 import { BackupService } from '../backup/service.ts';
 import type { RemoteStore } from '../backup/spaces.ts';
 import { CollaborationStore } from './service.ts';
@@ -933,6 +934,7 @@ test('BackupService restores complete native Space data and SPN-064 transfers it
     origin: 'https://spinel.example',
     image: `sha256:${'a'.repeat(64)}`,
     runtimeEnvironment: 'NODE_ENV=production\n',
+    keyId: 'default',
   };
   const backup = new BackupService(f.db, {
     databasePath: f.path,
@@ -945,6 +947,16 @@ test('BackupService restores complete native Space data and SPN-064 transfers it
   cleanup.push(() => backup.close());
   const before = persistentRows(f.db);
   expect(await backup.run()).toBe(true);
+  const verified = await verifyArchive({
+    archive: remoteArchive,
+    keyFile: keyPath,
+    stagingRoot: f.directory,
+    expectedOrigin: metadata.origin,
+    expectedImage: metadata.image,
+  });
+  expect(verified.snapshots).toBeGreaterThan(0);
+  expect(verified.images).toBeGreaterThan(0);
+  expect(verified.keyId).toBe('default');
   expect(backup.status()).toMatchObject({ lastGood: now, running: false, error: null });
   expect(uploadedKey).toMatch(/^space-instance\/2026-10-22T02-00-00\.000Z-[a-f0-9-]+\.spinel$/);
   expect(remove).not.toHaveBeenCalled();

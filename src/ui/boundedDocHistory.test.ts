@@ -16,7 +16,11 @@ import {
 import { NativeReplica, captureNative } from '@spinel/sync-client';
 import { NORMAL_TEXT_SELECTION_PLUGIN_STYLE } from '@univerjs/engine-render';
 import { afterEach, expect, test, vi } from 'vitest';
-import { boundDocHistory, DOC_HISTORY_GROUP_LIMIT } from './boundedDocHistory.ts';
+import {
+  boundDocHistory,
+  DOC_HISTORY_GROUP_LIMIT,
+  DOC_HISTORY_RETENTION_LIMIT,
+} from './boundedDocHistory.ts';
 import type { DocFlushObservation } from './boundedDocHistory.ts';
 import { nativeSession } from '../../lib/sync-client/tests/native-session.ts';
 import { turns, wire } from '../../lib/sync-client/tests/fixture.ts';
@@ -26,7 +30,9 @@ const limit = DOC_HISTORY_GROUP_LIMIT;
 afterEach(() => vi.useRealTimers());
 
 function fixture(snapshot = getDocsEmptySnapshot('doc'), throws = false) {
-  const replica = new NativeReplica(snapshot, 'doc');
+  const replica = new NativeReplica(snapshot, 'doc', {
+    undoRedoHistoryLimit: DOC_HISTORY_RETENTION_LIMIT,
+  });
   const injector = replica.univer.__getInjector();
   injector.get(IUniverInstanceService).focusUnit('doc');
   const commands = injector.get(ICommandService);
@@ -135,6 +141,43 @@ test('real native edits bound both caches and undo/redo exact ordered groups and
     expect(f.text()).toBe(value + '\r\n');
   } finally {
     subscription.unsubscribe();
+    f.close();
+  }
+});
+
+test('the configured native retention remains finite and evicts only the oldest completed group', async () => {
+  const f = fixture();
+  const retained = DOC_HISTORY_RETENTION_LIMIT;
+  const value = Array.from({ length: (retained + 1) * limit }, (_, i) =>
+    String.fromCharCode(97 + (i % 26)),
+  ).join('');
+  try {
+    await f.type(value);
+    // Smaller flushes need more retained groups; native eviction still bounds
+    // the count at 100 rather than retaining the entire continuous edit forever.
+    expect(f.observations).toHaveLength(retained + 1);
+    expect(f.history.getUndoRedoStatus('doc')).toEqual({ undos: retained, redos: 0 });
+    for (let remaining = retained - 1; remaining >= 0; remaining--) {
+      await f.historyCommand('undo');
+      const length = (remaining + 1) * limit;
+      expect(f.text()).toBe(value.slice(0, length) + '\r\n');
+      expect(f.selection()).toMatchObject({ startOffset: length, endOffset: length });
+      expect(f.history.getUndoRedoStatus('doc')).toEqual({
+        undos: remaining,
+        redos: retained - remaining,
+      });
+    }
+    // The evicted first group is still content; it cannot silently disappear.
+    expect(f.text()).toBe(value.slice(0, limit) + '\r\n');
+    for (let restored = 1; restored <= retained; restored++) {
+      await f.historyCommand('redo');
+      const length = (restored + 1) * limit;
+      expect(f.text()).toBe(value.slice(0, length) + '\r\n');
+      expect(f.selection()).toMatchObject({ startOffset: length, endOffset: length });
+    }
+    expect(f.history.getUndoRedoStatus('doc')).toEqual({ undos: retained, redos: 0 });
+    expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });
+  } finally {
     f.close();
   }
 });
@@ -297,7 +340,7 @@ test('a permission fence denies new native input while bounded maintenance retai
 
 test('bounded groups retain exact lost-ack replay and local undo until a real peer edit invalidates it', async () => {
   const f = nativeSession(getDocsEmptySnapshot('doc'), 'doc');
-  const a = f.client('owner'),
+  const a = f.client('owner', { undoRedoHistoryLimit: DOC_HISTORY_RETENTION_LIMIT }),
     b = f.client('collaborator');
   const cap = boundDocHistory(a.live.univer, 'doc');
   const manager = a.live.univer.__getInjector().get(DocStateChangeManagerService);
@@ -327,7 +370,8 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
     expect(a.live.snapshot()).toEqual(b.live.snapshot());
     expect((f.reopen() as IDocumentData).body!.dataStream).toBe('0123456789'.repeat(7) + '\r\n');
     const history = a.live.univer.__getInjector().get(IUndoRedoService);
-    expect(history.getUndoRedoStatus('doc').undos).toBe(2);
+    // The unchanged 70-character replay now forms 32 + 32 + 6 native changes.
+    expect(history.getUndoRedoStatus('doc').undos).toBe(3);
     expect(
       await b.commands.executeCommand('doc.command.insert-text', {
         unitId: 'doc',

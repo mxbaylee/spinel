@@ -11,7 +11,11 @@ import type { NativePeer } from '../../lib/sync-client/tests/native-session.ts';
 import { turns, wire } from '../../lib/sync-client/tests/fixture.ts';
 import { envelopeBytes } from '../../lib/sync-client/src/budget.ts';
 import { MAX_WIRE_BYTES } from '../../lib/sync-client/src/types.ts';
-import { boundDocHistory, DOC_HISTORY_GROUP_LIMIT } from './boundedDocHistory.ts';
+import {
+  boundDocHistory,
+  DOC_HISTORY_GROUP_LIMIT,
+  DOC_HISTORY_RETENTION_LIMIT,
+} from './boundedDocHistory.ts';
 
 // Exact SPN-072/SPN-108 text. The mounted benchmark uses keyboard.type + Enter;
 // this native regression isolates history/capture/ACK/verification without UI.
@@ -37,7 +41,10 @@ test.each([false, true])(
       getDocsEmptySnapshot('doc', LocaleType.EN_US, 'History sync', DocumentFlavor.MODERN),
       'doc',
     );
-    const writer = f.client('writer'),
+    const writer = f.client(
+        'writer',
+        bounded ? { undoRedoHistoryLimit: DOC_HISTORY_RETENTION_LIMIT } : undefined,
+      ),
       peer = f.client('peer');
     const injector = writer.live.univer.__getInjector();
     const history = injector.get(IUndoRedoService);
@@ -135,7 +142,7 @@ test.each([false, true])(
       await converge(text.length);
       const originalBody = structuredClone(body(writer));
       const groups = Math.ceil(text.length / DOC_HISTORY_GROUP_LIMIT);
-      expect(groups).toBe(48);
+      expect(groups).toBe(66);
       expect(history.getUndoRedoStatus('doc')).toEqual({ undos: bounded ? groups : 1, redos: 0 });
       if (!bounded) {
         const entry = history.pitchTopUndoElement()!;

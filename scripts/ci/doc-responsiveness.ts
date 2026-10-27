@@ -5,7 +5,9 @@ import { isDeepStrictEqual } from 'node:util';
 import {
   compositionCpu,
   distribution,
+  DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT,
   DOC_RESPONSIVENESS_BUDGETS,
+  DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT,
   DOC_RESPONSIVENESS_GROUP_LIMIT,
   DOC_RESPONSIVENESS_SCHEMA,
 } from '../../e2e/doc-responsiveness.ts';
@@ -159,6 +161,10 @@ function validateIntegrity(value: BenchmarkMetrics) {
     );
   }
   const groups = initial.sender.history.undos;
+  const historyLimit =
+    value.role === 'candidate'
+      ? DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT
+      : DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT;
   const all = value.sample === 'plain-1';
   check(
     initial.passed === true &&
@@ -169,7 +175,7 @@ function validateIntegrity(value: BenchmarkMetrics) {
       initial.sender.history.redos === 0 &&
       Number.isInteger(groups) &&
       groups > 0 &&
-      groups <= 50 &&
+      groups <= historyLimit &&
       isDeepStrictEqual(initial.sender.history, value.native.history),
     'initial exact integrity or native history did not pass.',
   );
@@ -421,11 +427,15 @@ export function compareDocResponsiveness(
         value.input.keydownAt.every((at, index, list) => !index || at >= list[index - 1]!),
       `${label}: incomplete native input/frame observations.`,
     );
+    // The threshold applies before endpoint coarsening and integer truncation;
+    // a genuine raw long-task entry can therefore report 49 ms. Validate the
+    // exposed timeline without dropping or clamping entries. Keep the separate
+    // 50 ms censored-task comparison floor below unchanged.
+    // https://www.w3.org/TR/2026/DISC-longtasks-1-20261020/#report-long-tasks
+    // Pinned Chrome: performance.cc AddLongTaskTiming, revision
+    // f842f52ef39fd97b449eb27cff414bf05a98ddce, lines 819-838.
     check(
-      value.input.longTasks.every(
-        (task) =>
-          finite(task.startedAt) && task.durationMs >= 50 && Number.isFinite(task.durationMs),
-      ),
+      value.input.longTasks.every((task) => finite(task.startedAt) && finite(task.durationMs)),
       `${label}: invalid long-task timeline.`,
     );
     check(
@@ -664,6 +674,8 @@ export function compareDocResponsiveness(
   return {
     schema: 2,
     candidateGroupLimit: DOC_RESPONSIVENESS_GROUP_LIMIT,
+    candidateHistoryLimit: DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT,
+    baselineHistoryLimit: DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT,
     protocolRevision: DOC_RESPONSIVENESS_SCHEMA,
     preset,
     physicalDevice: false,

@@ -2,9 +2,13 @@ import type { Page } from '@playwright/test';
 
 export const DOC_RESPONSIVENESS_SCHEMA = 3;
 
-// Candidate policy after the 64-state experiment missed the unchanged p95 budget.
+// Candidate policy after the 64- and 44-state experiments missed the unchanged
+// p95 budget. The public Doc constructor retains enough native history groups
+// for the original workload; the uncapped baseline keeps its original default.
 // Keep this explicit in the independent harness, including the uncapped checkout.
-export const DOC_RESPONSIVENESS_GROUP_LIMIT = 44;
+export const DOC_RESPONSIVENESS_GROUP_LIMIT = 32;
+export const DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT = 100;
+export const DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT = 50;
 
 // Preregistered before the production fix; all values are milliseconds.
 export const DOC_RESPONSIVENESS_BUDGETS = {

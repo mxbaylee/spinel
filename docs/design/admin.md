@@ -10,7 +10,7 @@ Stories: `Redesign/Screens` — Admin, AdminLoading, AdminError.
 | --- | --- | --- |
 | Nested passkeys, invites, connections and backups create a long page with repeated destructive controls. | The applicable pattern is grouped navigation and contextual actions from Dropbox/Notion; consumer editors offer no evidence for Spinel’s content-blind Operator permissions. | Administration section navigation: People, Invites, Connections, Backups & health. |
 
-This proposal supersedes the earlier stack of equal cards. People rows disclose passkeys and destructive actions; confirmations retain their consequences. Backups/health show text status, timestamps and recovery guidance. Verification results remain a separate SPN-063 delivery; this screen does not invent them. Loading never masquerades as an empty list. Server Operator remains content-blind and distinct from delegated file Admin.
+This proposal supersedes the earlier stack of equal cards. People rows disclose passkeys and destructive actions; confirmations retain their consequences. Backups/health show text status, timestamps and recovery guidance. SPN-063 supplies real recurring verification status within that read-only pattern. Loading never masquerades as an empty list. Server Operator remains content-blind and distinct from delegated file Admin.
 
 The approved proposal above governs placement during implementation. Existing behavioral and
 permission rules below still apply; production migrations remain separate tickets.
@@ -41,7 +41,13 @@ Connections shows read-only assistant metadata with token activity in a disclosu
 Health retains existing backup facts and adds measured memory, connections,
 physical storage and actual job status. Diagnostics offers download and confirmed
 clear; its runtime/visual validation is tracked in
-[SPN-032](../implementation/SPN-032.md). Restore verification remains SPN-063.
+[SPN-032](../implementation/SPN-032.md). The SPN-063 backup card distinguishes
+successful publication from its recurring isolated restore check. Each preserves
+the last success alongside a new failure. A filesystem destination says **Local
+backup saved** and keeps the independent-offsite-copy warning visible even after
+verification passes; it never presents a local copy as offsite protection. Show
+the configured and successfully verified nonsecret key identifiers separately
+when rotation means they differ. No document details or storage paths appear.
 See [the section lifetime decision](../implementation/SPN-082.md#section-lifetime-and-recovery-handoff).
 
 ## Adopted pattern
@@ -63,7 +69,7 @@ See [the section lifetime decision](../implementation/SPN-082.md#section-lifetim
   Recovery), More → Revoke. Copy invite link is visible only right after
 creation, with the manual-copy fallback.
 - **Backups and health:** read-only cards. Each states one status word with an
-  icon (OK, Overdue, Running, Not configured), the last success time, and a link
+  icon (OK, Local backup saved, Verified, Failed, Overdue, Running, Not configured), the last success time, and a link
   to the guide in docs/. Counts and sizes only.
 
 ### Always visible / behind a menu

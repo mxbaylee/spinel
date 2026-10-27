@@ -53,8 +53,12 @@ retains unfinished entries for the next startup. These jobs log only static stat
 or counts, never names, locations, content or arbitrary exception text.
 
 Backup configuration, running state, last attempt/success, errors and overdue
-status use the existing backup controller. Recurring restore verification remains
-SPN-063 in the launch phase.
+status use the shared backup controller. SPN-063 implements recurring isolated
+restore verification before deployment under the
+[pre-deployment recovery decision](implementation/SPN-063.md#accepted-decision-implement-recovery-before-deployment).
+Provider and target-host acceptance remain required in SPN-038 before public
+exposure. Admin reports current verification failure and its last successful
+check separately from publication; local backup success does not imply offsite protection.
 
 ## Reproduce and download
 

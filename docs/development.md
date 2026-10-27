@@ -55,7 +55,14 @@ choices. Owner, chat 2026-10-21.
 The 2026-10-27 [SPN-063 decision](implementation/SPN-063.md#accepted-decision-keep-sqlite-without-database-adapters)
 resolves this comparison for the intended deployment: retain local SQLite with
 one application instance and introduce no database-engine adapters. Backup
-destinations are a separate [proposed configuration boundary](implementation/SPN-063-backup-options.md).
+destinations are a separate [configuration boundary](implementation/SPN-063-backup-options.md).
+The later [pre-deployment decision](implementation/SPN-063.md#accepted-decision-implement-recovery-before-deployment)
+moves SPN-063 implementation/local acceptance before launch, using a supported
+filesystem destination and disposable processes/containers. New backup and
+restore controls can be developed locally; real-provider and target-host checks
+remain launch acceptance under SPN-038. The filesystem destination and recurring
+verifier are implemented by SPN-063; the broader controls are registered in
+SPN-109–112. See the [local setup and verification runbook](backups.md#filesystem-destination-for-local-operation).
 The
 [capacity writeup](implementation/SPN-063-capacity.md) records engine limits,
 current application budgets and measurements still required before publishing

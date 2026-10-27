@@ -29,13 +29,16 @@ prevents automatic replacement of an otherwise clean cached document.
 
 Docs apply edits locally while the existing sync client sends them in the
 background. Native history and collaboration composition are separate browser
-work: Spinel closes a pending native group at 44 completed state changes so an
+work: Spinel closes a pending native group at 32 completed state changes so an
 uninterrupted typing session cannot grow one unbounded composition batch. Ordinary
 300 ms idle, segment-switch, undo and IME boundaries remain controlled by Univer.
 A completed composition stays atomic. Undo/redo retains native content and caret
 endpoints; long uninterrupted input intentionally becomes several useful chunks.
-The native 50-group history limit and the existing safety policy that invalidates
-stale local history after a peer edit remain in place.
+Docs configure the supported native history limit to 100 groups, so the original
+2,086-input workload remains fully undoable across its 66 chunks. Native eviction
+still bounds the group count; it is not a byte limit or a promise of unlimited
+undo. Sheets keep their existing setting. The existing safety policy that
+invalidates stale local history after a peer edit remains in place.
 
 This uses public queue/flush APIs and does not replace saving, grant access,
 clear history to hide work, or postpone a hidden backlog. The

@@ -2,10 +2,12 @@ import type { Univer } from '@univerjs/core';
 import { DocStateChangeManagerService, DocStateEmitService } from '@univerjs/docs';
 
 // A long uninterrupted burst must not become one quadratic composition task.
-// The measured 64-state candidate missed the paired-flush p95 budget. Forty-four
-// keeps the 2,086-input reproducer at 48 groups inside native 50-group retention.
-// Idle/segment/IME boundaries remain native.
-export const DOC_HISTORY_GROUP_LIMIT = 44;
+// Both 64- and 44-state candidates missed the paired-flush p95 budget. Smaller
+// native groups keep composition bounded; the public constructor retention
+// option preserves the original 2,086-input fixture across all 66 groups.
+// Idle/segment/IME boundaries and finite native eviction remain native.
+export const DOC_HISTORY_GROUP_LIMIT = 32;
+export const DOC_HISTORY_RETENTION_LIMIT = 100;
 
 export interface DocFlushObservation {
   reason: 'capacity';

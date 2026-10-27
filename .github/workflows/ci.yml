@@ -423,7 +423,7 @@ jobs:
       - name: Immutable uncapped source with matched compatibility and recovery observation
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 3fdac69f413d2fd423bc7ded41acbd67a177739c
+          ref: 8b87d322252db77ba738c339bbdfb2f115e9fb64
           path: baseline-doc-source
           persist-credentials: false
       - name: Use identical browser workload on both sources
