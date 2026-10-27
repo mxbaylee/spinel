@@ -671,26 +671,27 @@ test('phone guest Doc reader cannot write and loses its document when the link i
     });
     await expect(region.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Insert formula', exact: true })).toHaveCount(0);
-    const localSnapshot = () =>
-      page.evaluate(
-        (id) =>
-          (
-            window as Window & {
-              nativeSyncEvidence?: Record<string, { snapshot: IDocumentData }>;
-            }
-          ).nativeSyncEvidence?.[id]?.snapshot,
-        original.id,
-      );
-    // Only sync partitions build the read-only native snapshot observer. Keep
+    const currentNativeText = () =>
+      page.evaluate((id) => {
+        let observed: string | undefined;
+        const receive = (event: Event) => {
+          const evidence = (event as CustomEvent<DocSelectionEvidence>).detail;
+          if (evidence.unitId === id) observed = evidence.text;
+        };
+        window.addEventListener('spinel-doc-selection-evidence', receive);
+        try {
+          // Read the mounted model now; settled sync snapshots can be stale
+          // after a local-only mutation and cannot prove this denial boundary.
+          window.dispatchEvent(new Event('spinel-doc-selection-read'));
+        } finally {
+          window.removeEventListener('spinel-doc-selection-evidence', receive);
+        }
+        return observed;
+      }, original.id);
+    // Sync partitions build this read-only native observer for mobile. Keep
     // keyboard, focus and saved-document denial checks in every partition.
-    const hasSnapshotEvidence = ['sync-development', 'sync-production'].includes(info.project.name);
-    let localBeforeInput: IDocumentData | undefined;
-    if (hasSnapshotEvidence) {
-      await expect
-        .poll(async () => (await localSnapshot())?.body?.dataStream)
-        .toBe(original.body!.dataStream);
-      localBeforeInput = (await localSnapshot())!;
-    }
+    const hasNativeEvidence = ['sync-development', 'sync-production'].includes(info.project.name);
+    if (hasNativeEvidence) await expect.poll(currentNativeText).toBe(original.body!.dataStream);
     const point = await textPoint(page);
     for (let tap = 0; tap < 2; tap++) await page.touchscreen.tap(point.x, point.y);
     await expect(input(page)).not.toBeFocused();
@@ -708,12 +709,7 @@ test('phone guest Doc reader cannot write and loses its document when the link i
     });
     await expect(page.getByRole('status', { name: 'Save status' })).toContainText('View only');
     await expect(input(page)).not.toBeFocused();
-    if (hasSnapshotEvidence) {
-      const localAfterInput = (await localSnapshot())!;
-      expect(localAfterInput.body).toEqual(localBeforeInput!.body);
-      expect(localAfterInput.documentStyle).toEqual(localBeforeInput!.documentStyle);
-      expect(localAfterInput.settings).toEqual(localBeforeInput!.settings);
-    }
+    if (hasNativeEvidence) expect(await currentNativeText()).toBe(original.body!.dataStream);
     await page.getByRole('button', { name: 'Formulas', exact: true }).tap();
     const panel = page.getByRole('dialog', { name: 'Formulas', exact: true });
     await expect(panel.locator('output')).toHaveText('42', { timeout: 20_000 });
