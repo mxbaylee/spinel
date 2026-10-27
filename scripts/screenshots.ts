@@ -169,6 +169,96 @@ try {
             `Page overflow: ${id} ${variant}`,
           ).toBe(true);
         }
+        if (['redesign-native-editors--sheet', 'redesign-native-editors--doc'].includes(id)) {
+          const testHeight = width === 390 ? 600 : 900;
+          const editor = page.locator('.rd-native-editor');
+          const canvas = editor.locator('canvas[aria-label]');
+          const canvasSize = () =>
+            canvas.evaluate((node) => ({
+              width: node.getBoundingClientRect().width,
+              height: node.getBoundingClientRect().height,
+              pixelsWide: (node as HTMLCanvasElement).width,
+              pixelsHigh: (node as HTMLCanvasElement).height,
+            }));
+          const initialCanvasSize = await canvasSize();
+          await page.setViewportSize({ width, height: testHeight });
+          if (width === 390) {
+            await expect
+              .poll(async () => (await canvasSize()).height)
+              .toBeLessThan(initialCanvasSize.height);
+          }
+          // Responsive Sheets replaces the ribbon with a compact row of buttons
+          // (no toolbar role). Its Paint format button anchors that same row.
+          const compactSheet = id.includes('--sheet') && width <= 768;
+          const toolbar = compactSheet
+            ? editor.getByRole('button', { name: 'Paint format', exact: true })
+            : editor.getByRole('toolbar', { name: 'Start', exact: true });
+          if (compactSheet) {
+            await expect(
+              editor.getByRole('button', { name: 'Clear All', exact: true }),
+            ).toBeVisible();
+            // The pinned mobile More group contained only range protection,
+            // which native sync deliberately excludes from the supported menu.
+            await expect(editor.getByRole('button', { name: 'More', exact: true })).toHaveCount(0);
+            await expect(
+              editor.locator('[data-u-command="sheet.command.add-range-protection-from-toolbar"]'),
+            ).toHaveCount(0);
+          }
+          await expect(toolbar).toBeVisible();
+          const before = await toolbar.boundingBox();
+          expect(before).not.toBeNull();
+          const frame = await editor.boundingBox();
+          expect(frame).not.toBeNull();
+          expect(
+            frame!.y + frame!.height,
+            'Native editor fits below site chrome',
+          ).toBeLessThanOrEqual(testHeight + 1);
+          const layout = editor.locator(
+            '[data-u-comp="app-layout"], [data-u-comp="workbench-layout"]',
+          );
+          await expect(layout).toHaveCount(1);
+          await expect
+            .poll(
+              async () => {
+                const bounds = await layout.boundingBox();
+                const host = await editor.boundingBox();
+                return bounds && host
+                  ? bounds.y + bounds.height - (host.y + host.height)
+                  : Infinity;
+              },
+              { message: 'Native workbench stays inside its resized host before pointer input' },
+            )
+            .toBeLessThanOrEqual(1);
+          await editor.locator('canvas[aria-label]').hover();
+          await page.mouse.wheel(0, 600);
+          await page.evaluate(
+            () =>
+              new Promise<void>((resolve) =>
+                requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+              ),
+          );
+          await expect.poll(async () => (await toolbar.boundingBox())?.y).toBe(before!.y);
+          expect(await page.evaluate(() => window.scrollY), 'Only editor content scrolls').toBe(0);
+          await expect(toolbar).toBeInViewport();
+          if (width === 390) {
+            await captureScreenshot(page, {
+              path: resolve(directory, `${id}-${variant}-short-scrolled.png`),
+            });
+          }
+          await page.setViewportSize({ width, height: 900 });
+          // The OSS renderer resizes in requestIdleCallback; layout alone can settle
+          // before its canvas does. Capture only after both return to their full size.
+          await expect.poll(canvasSize).toEqual(initialCanvasSize);
+          await page.evaluate(
+            () =>
+              new Promise<void>((resolve) =>
+                requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+              ),
+          );
+          verifications.push(
+            `${variant}: ${id} native toolbar remains visible after content scroll`,
+          );
+        }
         if (id.startsWith('redesign-') && width <= 768) {
           const smallTargets = await page
             .locator(

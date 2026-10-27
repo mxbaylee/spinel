@@ -30,9 +30,41 @@ alone cannot establish artwork quality. Owner approval remains separate.
 - **Integration and maintainability — 10:** 24 local SVG assets reproducible from
   readable TypeScript; stories expose both variants; active theme switches the
   displayed artwork without changing selection; photos retain shared-image behavior.
-  No external requests or new dependencies; changes confined to artwork exploration.
+  Artwork needs no external requests or new dependencies. This category grades the
+  banner assets; the full production implementation is graded separately below.
 
 Pass: **at least 95/100 for every pair, no blocking findings**. Report category
 scores and concrete evidence for each pair. Every deduction, especially any score
 below 95, must include actionable feedback. Re-review changed pairs after repairs.
 Do not assume a desired result; an honest lower grade is necessary when warranted.
+
+
+## Full ticket review
+
+Final production scope, including owner-requested follow-ups, is independently
+reviewed by two nonimplementing reviewers against the original ticket, full diff,
+current CI and actual light/dark/phone captures on the same commit. Each reviewer
+must score **above 95/100 with no unresolved blockers** before the authorized
+squash merge. These are agent reviews, not a claim of owner visual approval.
+
+- **Scope — 35:** persisted icons/emojis and icon colors at creation and edit;
+  deterministic defaults, folder identity, paired automatic gem covers, photo
+  variants/attribution, consistent modal geometry, Space accents; production
+  Storybook controls and retirement of unowned mocks; UI-ticket migration rules;
+  SPN-099 after-launch sequencing with a visible upstream PR prerequisite.
+- **Correctness and access — 25:** permission/revocation boundaries, exact asset
+  scope, validation/quotas, revision conflicts, offline identity and verified
+  covers, editor/draft preservation, theme isolation, keyboard/focus/touch use.
+- **Verification — 20:** meaningful unit/browser coverage, production persistence
+  and offline flows, all retained Storybook interactions and native checks,
+  current source-attributed light/dark/phone screenshots inspected independently.
+- **CI and operations — 10:** required checks pass on the reviewed commit;
+  bounded provider/upload work, safe credential handling, reproducible local
+  assets, honest source and preview identities, documented unavailable checks.
+- **Maintainability and complexity — 10:** one authoritative production UI,
+  understandable modules, bounded fixtures and backlog fields; deduct for
+  unnecessary abstractions, dependencies or speculative flexibility.
+
+Report category totals, actionable feedback for every deduction, evidence and
+finding disposition. Revalidate repairs on the final commit; do not average
+scores or carry forward approval of changed code without reviewing it.
