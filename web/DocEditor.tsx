@@ -596,6 +596,10 @@ export function DocEditor({
         });
         const observeSelection = () => {
           const range = selection.getActiveTextRange();
+          const logical = logicalSelection.getSelectionInfo({
+            unitId: data.unitId,
+            subUnitId: data.unitId,
+          });
           const start = range?.startOffset;
           const end = range?.endOffset;
           const anchor = range?.getAnchor();
@@ -616,6 +620,12 @@ export function DocEditor({
                   logicalSelection
                     .getTextRanges({ unitId: data.unitId, subUnitId: data.unitId })
                     ?.map(rangeEvidence) ?? null,
+                unitSelectionOptions: logical?.options ? { ...logical.options } : null,
+                unitSelectionStyles:
+                  logical?.textRanges.map(({ style }) => ({
+                    stroke: style?.strokeActive,
+                    fill: style?.fill,
+                  })) ?? null,
                 nativeRange: rangeEvidence(range),
                 start,
                 end,

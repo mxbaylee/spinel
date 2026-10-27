@@ -10,6 +10,31 @@ import { nativeTheme } from './native-theme.ts';
 // Keep the original failing attempt; this fixture has no per-keystroke latency assertion.
 test.use({ trace: 'retain-on-failure' });
 
+async function observeBrowserWork(page: Page, role: 'owner-seed' | 'guest-viewer') {
+  if (process.env.VITE_DOC_SELECTION_EVIDENCE !== '1') return;
+  // Timing-only investigation of renderer work versus a delayed protocol call;
+  // this does not wait for readiness or alter the five-second theme assertion.
+  page.on('console', (message) => {
+    if (message.text().startsWith('SPN-072 browser long task:')) console.info(message.text());
+  });
+  await page.addInitScript((role) => {
+    if (!PerformanceObserver.supportedEntryTypes.includes('longtask')) return;
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries())
+        if (entry.duration >= 1000)
+          console.info(
+            'SPN-072 browser long task:',
+            JSON.stringify({
+              role,
+              timeOrigin: performance.timeOrigin,
+              start: entry.startTime,
+              duration: entry.duration,
+            }),
+          );
+    }).observe({ type: 'longtask', buffered: true });
+  }, role);
+}
+
 async function nativeSelectionEvidence(page: Page) {
   return page.evaluate(() => {
     let native: unknown = null;
@@ -183,6 +208,8 @@ for (const role of ['editor', 'guest-viewer'] as const) {
     const page = guest ? await guest.newPage() : seed;
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
+    await observeBrowserWork(seed, 'owner-seed');
+    if (guest) await observeBrowserWork(page, 'guest-viewer');
     try {
       // Seed through the real editor; the viewer subsequently opens populated
       // content, rather than proving only that a blank canvas can be resized.

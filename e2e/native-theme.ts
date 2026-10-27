@@ -1,10 +1,16 @@
 import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { expect } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
 /** Wait for the rendered SDK surface, not just the earlier app theme update. */
 export async function nativeTheme(page: Page, target: Locator, scheme: 'light' | 'dark') {
   await expect(page.locator('html')).toHaveAttribute('data-theme', scheme);
+  const eventLoop =
+    process.env.VITE_DOC_SELECTION_EVIDENCE === '1'
+      ? monitorEventLoopDelay({ resolution: 20 })
+      : undefined;
+  eventLoop?.enable();
   let attempt = 0;
   let lastMeasurement:
     | {
@@ -60,7 +66,18 @@ export async function nativeTheme(page: Page, target: Locator, scheme: 'light' |
       })
       .toBeGreaterThan(0.8);
   } catch (error) {
-    console.info('Native theme measurement:', JSON.stringify({ scheme, lastMeasurement }));
+    console.info(
+      'Native theme measurement:',
+      JSON.stringify({
+        scheme,
+        lastMeasurement,
+        nodeEventLoopDelayMs: eventLoop
+          ? { max: eventLoop.max / 1e6, mean: eventLoop.mean / 1e6 }
+          : null,
+      }),
+    );
     throw error;
+  } finally {
+    eventLoop?.disable();
   }
 }
