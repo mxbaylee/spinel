@@ -86,7 +86,8 @@ function Playground({
   );
 }
 const meta = {
-  title: 'Redesign/Appearance',
+  id: 'redesign-appearance',
+  title: 'Current production/Appearance',
   component: Playground,
   parameters: { shell: 'none', layout: 'fullscreen' },
   args: { kind: 'doc', gem: 'spinel', open: false, failSave: false },
