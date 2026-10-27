@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
+import { emptyAppearance } from '../src/shared/appearance.ts';
+import type { ItemAppearance } from '../src/shared/appearance.ts';
 import { createPortal } from 'react-dom';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { EditorFrame, useEditorChrome } from './EditorFrame.tsx';
@@ -541,5 +543,96 @@ export const GuestPdf: Story = {
     );
     await expect(within(dialog).queryByRole('button', { name: 'Download Univer file' })).toBeNull();
     await assertDialogTargets(dialog);
+  },
+};
+
+/** Only the service boundary is local; header, rename and appearance are production components. */
+function AppearanceFrameFixture() {
+  const [name, setName] = useState('Quarterly planning');
+  const [ready, setReady] = useState(false);
+  useLayoutEffect(() => {
+    const original = globalThis.fetch;
+    const path = '/api/appearance/items/header-fixture';
+    let appearance: ItemAppearance = {
+      ...emptyAppearance(),
+      icon: 'lucide:book-open',
+      iconColor: 'info-strong',
+      cover: { source: 'gem', gem: 'spinel' },
+    };
+    const fixture: typeof fetch = async (input, init) => {
+      const url = new URL(
+        typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
+        location.href,
+      );
+      if (url.pathname !== path) return original(input, init);
+      if (init?.method === 'PATCH') {
+        const patch = JSON.parse(String(init.body));
+        // This header fixture has no file/provider service. The separate Appearance
+        // playground previews uploads; application tests exercise real photo storage.
+        if (patch.cover && patch.cover.source !== 'gem')
+          return Response.json(
+            { error: 'Photo storage is unavailable in this header preview.' },
+            { status: 503 },
+          );
+        appearance = { ...appearance, ...patch, revision: appearance.revision + 1 };
+      }
+      return Response.json({ appearance, canEdit: true });
+    };
+    globalThis.fetch = fixture;
+    setReady(true);
+    return () => {
+      if (globalThis.fetch === fixture) globalThis.fetch = original;
+    };
+  }, []);
+  return ready ? (
+    <EditorFrame
+      name={name}
+      connection="online"
+      access="Can edit"
+      onBack={fn()}
+      onRename={async (next) => setName(next)}
+      appearanceTarget={{ id: 'header-fixture', name, kind: 'doc' }}
+    >
+      <Fixture />
+    </EditorFrame>
+  ) : null;
+}
+export const Personalization: Story = {
+  render: () => <AppearanceFrameFixture />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The production editor header with local metadata responses. Rename, icons, colors and gem covers are interactive. The body is a geometry fixture; photo storage and full editor persistence are covered by application tests.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(document.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Change appearance' }));
+    await userEvent.click(body.getByRole('button', { name: 'Primary, soft' }));
+    await userEvent.click(body.getByRole('button', { name: 'Save appearance' }));
+    await waitFor(() => expect(body.queryByRole('dialog')).not.toBeInTheDocument());
+    const iconStyle = canvas
+      .getByRole('button', { name: 'Change appearance' })
+      .querySelector('.item-icon')
+      ?.getAttribute('style');
+    await expect(iconStyle).toContain('var(--fill-primary-soft-fg)');
+    await expect(iconStyle).toContain('var(--fill-primary-soft-bg)');
+    await userEvent.click(canvas.getByRole('button', { name: 'Rename Quarterly planning' }));
+    const input = canvas.getByRole('textbox', { name: 'Document name' });
+    await userEvent.clear(input);
+    await userEvent.type(input, 'Autumn planning');
+    await userEvent.click(canvas.getByRole('button', { name: 'Save name' }));
+    await expect(
+      await canvas.findByRole('button', { name: 'Rename Autumn planning' }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Change appearance' }));
+    await expect(body.getByRole('button', { name: 'Primary, soft' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await userEvent.click(body.getByRole('button', { name: 'Cancel' }));
   },
 };

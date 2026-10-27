@@ -1,3 +1,4 @@
+import { emptyAppearance } from '../shared/appearance.ts';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import {
   downloadSummary,
@@ -547,4 +548,16 @@ test('compatible-runtime reservation and private completion stay within one acco
     `spinel-offline-catalog:${account}`,
     expect.any(Function),
   );
+});
+
+test('download summaries retain appearance only within the verified account and item scope', () => {
+  const copy = cleanCopy();
+  copy.bundle.appearance = {
+    ...emptyAppearance(),
+    icon: 'lucide:book-open',
+    iconColor: 'primary-soft',
+  };
+  expect(downloadSummary(copy, account, itemId).appearance).toEqual(copy.bundle.appearance);
+  expect(downloadSummary(copy, 'another-account', itemId).appearance).toBeUndefined();
+  expect(downloadSummary(copy, account, 'another-item').appearance).toBeUndefined();
 });

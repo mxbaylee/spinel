@@ -1,134 +1,43 @@
-# Review the Spinel walkthrough
+# Review current Spinel UI
 
-This is the connected SPN-047 design proposal in [PR #125](https://github.com/mxbaylee/spinel/pull/125).
-It uses rendered Storybook screens and local fixture state. It does not sign in,
-change a real account, or save a document to the server. Production migration remains separate.
+The [Storybook catalog](https://mxbaylee.github.io/spinel/) opens production
+components and local API fixtures. The old SPN-047 connected walkthrough and
+its duplicate screen mockups have been retired because their controls drifted
+from the application. Historical design evidence remains in [the review gallery](review/README.md).
 
-Connected Sheet and Doc screens embed actual open-source Univer editors with
-sample content. Their toolbar, selection, formulas, editing, tabs and scrolling
-are real. Only the active editor is mounted; local snapshots preserve edits when
-you visit settings or return to My files. Reload, sign-out or Restart clears them.
-Viewer examples apply the application's local read-only permission fence.
-Passkeys, connectivity, save status, history and sharing remain simulated.
-Standalone structural screen stories (including planned Spaces/formulas/history)
-retain schematic content; use **Walkthrough → Sheet / Doc** to judge native editing.
-Native Doc at phone width currently needs horizontal panning or zoom. The
-schematic page reflows and must not be treated as evidence of native mobile
-reflow; SPN-049/072 own that migration constraint.
+## Where to review
 
-The [visual gallery](review/README.md) records the captured commit, workflow result
-and unchanged PNG sources. Its **Before** images are explicitly labeled as either
-production routes or existing Storybook components. They are comparison evidence,
-not the new walkthrough. The proposed homepage is also the sign-in screen: its passkey button starts
-sign-in directly, and Need help? includes access and recovery guidance. Production
-retains its existing sign-in presentation until migration.
+- **Current production → Appearance:** the actual icon/emoji/color and cover
+  controls, plus all paired gem artwork. Change item type in Controls and use
+  the theme toolbar for light/dark. This is local preview state.
+- **Current production → Editor → Frame:** the real editor header, rename,
+  identity, save/status, modal and responsive geometry states. Its labelled
+  geometry fixture does not simulate the document service.
+- **Current production → Dashboard, Spaces, Account, Admin and Guest:** the
+  respective shipped components with success, pending, error and permission
+  fixtures. These do not sign in or modify a real account.
+- **Native fixtures → Editors:** isolated Univer input, selection, menu and
+  viewer regression cases. They are not a full application or a claim of mobile
+  Doc wrapper parity. Production Playwright journeys verify the real routes,
+  editors, permissions, persistence and offline behavior.
+- **Redesign → SPN-066 Guest links:** the only unfinished proposal. Its ticket
+  replaces it with the production component and removes the last Redesign group.
 
-## Open and navigate
+Every UI ticket follows the [production migration rule](../implementation/storybook-production-migration.md).
+The merged SPN-055 device-storage stories now use DeviceStoragePanel; its old
+This device mock is retired. Shared controls under the `src/ui/redesign/`
+source folder still used by the app are production components regardless of
+that historical directory name.
 
-The [interactive Storybook catalog](https://mxbaylee.github.io/spinel/?path=/story/redesign-walkthrough--owner)
-opens the Owner journey. The catalog groups the proposal under **Redesign** and
-older baseline specimens under **Current production**, keeping their deep links.
-Main publishes after the complete visual/interaction checks pass. For live design
-review, add `storybook-preview` to a same-repository PR: its successful build
-publishes to the same URL without waiting for visual approval. The latest main
-or preview deployment wins; rerun the PR's Storybook workflow to reclaim it.
-The [build identity endpoint](https://mxbaylee.github.io/spinel/sha.json) identifies
-the live source SHA, branch/PR, checkout SHA, workflow and build time. Owner, chat
-2026-10-22. See [publishing details](redesign.md#interactive-review-publishing).
+## Published preview and verification
 
-Alternatively, download **storybook-review** from the proposal workflow linked in the gallery,
-extract it, and serve the extracted static files locally without rebuilding.
-Open **Redesign → Walkthrough** in Storybook. Start with Owner, Collaborator,
-Operator or LinkGuest. The **design-review** artifact contains all rendered states
-and its HTML screenshot index. A capture can exist even when a later journey
-assertion fails; check the workflow result independently.
+The shared URL can be replaced by a newer main or PR deployment. Check
+[build identity](https://mxbaylee.github.io/spinel/sha.json) for its source SHA,
+branch, PR and workflow. PR descriptions carry durable commit-pinned images.
+A successful preview build is not itself an independent visual review.
 
-Use the product's buttons, file rows and navigation to move between screens.
-Expand **Design walkthrough · … · local preview** only to choose a **Preview
-event**, such as a passkey succeeding or a connection failing. These event
-controls are review tools, not proposed product controls. Use **×** to hide them
-for the full editor; reload restores them. The editor fills the available screen
-height so its toolbar stays visible while document content scrolls. **Restart walkthrough**
-resets the fixture. Edits and uploads do not persist outside the preview.
-
-## Four journeys to try
-
-1. **Owner:** start at the [homepage / sign-in](review/homepage-light.png),
-   choose Sign in with a passkey, and simulate Passkey succeeded. Find a
-   file using search, switch List/Grid, collapse navigation, open a
-   [Doc](review/journey-owner-doc-1280.png) or [Sheet](review/sheet-light.png), and return to
-   the same file context. Visit [Settings](review/journey-device-settings-390.png), change
-   profile identity, and return. Open history and inspect restore confirmation.
-   Simulate a failed save before leaving to inspect the
-   [unsaved-work warning](review/journey-save-failed-390.png).
-2. **Collaborator:** sign in to the shared file and read its Can edit role. Edit,
-   inspect save state, visit settings, and return. Look for a clear distinction
-   between content editing and owner-controlled sharing or deletion. Profile
-   changes stay separate from browser appearance.
-3. **Operator:** begin at [setup](review/setup-phone.png). Read the account
-   separation, simulate passkey success, and follow the first-run everyday-account
-   invitation into [Administration](review/journey-operator-first-run-1280.png). Choose
-   [invitation purpose and expiry](review/journey-operator-invite-form-390.png),
-   inspect the once-only address/copy result, and explore
-   recovery, passkeys, disable confirmation and backups. Check the
-   [unavailable setup link](review/invalid-setup-phone.png) and
-   [Operator help](review/operator-help-phone.png). Help shows commands and
-   prerequisites; the page never executes them. Operators gain no document access.
-4. **Link guest:** start at the [shared Doc](review/guest-viewer-phone.png), then
-   use preview events to open the [shared Sheet](review/guest-sheet-phone.png)
-   and switch Viewer/Editor access. Simulate [connection loss](review/journey-guest-disconnected-390.png) while the document
-   is open, then reopening while offline: these are different states. Finally,
-   [turn off the link](review/journey-guest-revoked-390.png) and check that document identity, content and actions all
-   disappear. Guests have no account navigation or private offline catalog.
-
-## What to judge
-
-Can each person identify their next action, understand their access and tell
-whether work is safe? Does returning preserve useful context? Is navigation
-worth the space it occupies on desktop, and reachable on a phone? Remove
-redundant controls and repeated labels rather than only restyling them. Compact
-headers use icon-only My files; Space page headers omit a redundant Back button. Check light,
-dark and phone captures from the same proposal source before approving.
-
-System / Light / Dark stays directly visible as a three-segment control. It is
-24 px per segment in a 30 px pill on pointer desktops. Touch keeps 44 px hit areas around the same small visible circles; collapsed
-desktop rails stack it vertically, while headers and expanded navigation use a
-horizontal group. It defaults to System and affects this browser only. **This
-device** explains that scope; saving profile identity does not change appearance.
-
-Trash and folders have a My files breadcrumb. Pages opens a Space's internal
-tree, with a separate My files exit. The gem wiggles on hover, keyboard focus or every tap
-unless reduced motion is preferred. Folder creation, tags and moving files update
-local fixtures; unavailable passkey removal actions are explicitly disabled.
-Personal pinning and pinned-item UI are removed (owner, 2026-10-21,
-[decision #128](../implementation/SPN-047.md#legacy-decision-128-remove-personal-pinning)).
-
-Expand navigation reopens the collapsed sidebar; My files is the destination.
-Connection status uses a hover/focus tooltip (tap on touch), without a close
-button. Profile, permission badges and header menu controls share a 32 px visual
-height on desktop. Univer's toolbar and menus follow appearance; document paper
-and authored cell colors retain their content colors.
-
-Approve the composed direction and its screenshots in the PR when ready, or
-identify the screen and task that still feels awkward. The gallery is review
-evidence, not owner approval or proof that every CI gate passed.
-
-### Owner refinements, October 20
-
-The expanded file sidebar centers the device theme picker without a visible
-Appearance label. Profile uses the display name, truncates long names, exposes
-the full name on hover, and has a visible whole-row hover/focus state. Collapsed
-navigation uses matching expand/collapse chevrons without a visible Expand label.
-Connection details remain a tooltip with the normal cursor.
-
-The document ellipsis contains Share for owners, Versions and Export; Doc
-formula insertion remains available to editors. Version naming belongs inside
-Versions, with Back immediately left of its title. Remove the routine editable
-access explanation and About your access entry; keep meaningful view-only and
-unsaved/offline feedback. Remove the extra Fill presets entry: the native Sheet
-owns its fill controls. These placement changes simplify the Owner and
-Collaborator's editor while preserving Guest restrictions and Operator isolation.
-
-Spaces use a top site header and a dedicated left content tree. Both folders and
-pages with children are represented; a page title opens content independently of
-its expansion chevron. See [Spaces](spaces.md) for the proposed hierarchy.
+Run `npm run storybook` locally. Review production states at light/dark desktop,
+phone and tablet sizes; the screenshot workflow also executes story interactions.
+Use `npm run screenshots -- <story ids>` after building Storybook for focused
+captures. Local API fixtures model responses; end-to-end application tests
+remain the evidence for actual backend behavior.

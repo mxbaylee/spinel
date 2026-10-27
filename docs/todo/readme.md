@@ -6,7 +6,7 @@ How this backlog works: [process.md](process.md). Next ID: **SPN-109**. Grooming
 
 ## Open tickets (21)
 
-Complete each phase before the next. Within a phase, take the highest-ranked ticket that isn't waiting on another.
+Complete each phase before the next. Within a phase, take the highest-ranked ticket that has no listed prerequisites.
 
 ### Before launch
 
@@ -17,29 +17,29 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 3 | ✨ [SPN-051](SPN-051.md) Create new documents while offline | 🌳 L | 💜 M | 22 | Lower ID | — |
 | 4 | 🧷 [SPN-076](SPN-076.md) Share a Doc with its formula sources | 🌳 L | 💜 M | 22 | Lower ID | — |
 | 5 | 🗑️ [SPN-095](SPN-095.md) Expire Space Trash after 30 days | 🌳 L | 💜 M | 22 | Lower ID | — |
-| 6 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🌳 L | 💜 M | 22 | Lower ID | — |
-| 7 | ⌨️ [SPN-108](SPN-108.md) Keep Docs responsive after sustained typing | 🌳 L | 💜 M | 22 | — | — |
-| 8 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 9 | 📑 [SPN-065](SPN-065.md) Make a copy of a Sheet or Doc | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 10 | 📂 [SPN-069](SPN-069.md) Create items in a folder shared with me as an editor | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 11 | 🧺 [SPN-071](SPN-071.md) Hide shares and see where my access comes from | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 12 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 13 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌿 M | 💜 M | 21 | Lower ID | — |
-| 14 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — | — |
-| 15 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 11 | Lower ID | — |
-| 16 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — | — |
-| 17 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 10 | — | — |
+| 6 | ⌨️ [SPN-108](SPN-108.md) Keep Docs responsive after sustained typing | 🌳 L | 💜 M | 22 | — | — |
+| 7 | 💻 [SPN-052](SPN-052.md) Use offline documents in a desktop browser tab | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 8 | 📑 [SPN-065](SPN-065.md) Make a copy of a Sheet or Doc | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 9 | 📂 [SPN-069](SPN-069.md) Create items in a folder shared with me as an editor | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 10 | 🧺 [SPN-071](SPN-071.md) Hide shares and see where my access comes from | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 11 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 12 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌿 M | 💜 M | 21 | Lower ID | — |
+| 13 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — | — |
+| 14 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌿 M | 🤍 S | 11 | Lower ID | — |
+| 15 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — | — |
+| 16 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌱 S | 🤍 S | 10 | — | — |
 
 ### Launch
 
 | # | Ticket | Effort | Impact | Score | Tie-break | Waiting on |
 | --- | --- | --- | --- | --- | --- | --- |
-| 18 | 🧯 [SPN-063](SPN-063.md) Regularly prove Spinel can recover from its backups | 🌳 L | 🩷 L | 32 | — | — |
-| 19 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🌳 L | 💜 M | 22 | — | [SPN-063](SPN-063.md) |
+| 17 | 🧯 [SPN-063](SPN-063.md) Regularly prove Spinel can recover from its backups | 🌳 L | 🩷 L | 32 | — | — |
+| 18 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🌳 L | 💜 M | 22 | — | [SPN-063](SPN-063.md) |
 
 ### After launch
 
 | # | Ticket | Effort | Impact | Score | Tie-break | Waiting on |
 | --- | --- | --- | --- | --- | --- | --- |
+| 19 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🌳 L | 💜 M | 22 | — | [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
 | 20 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | — | [SPN-038](SPN-038.md) |
 | 21 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | — | [SPN-038](SPN-038.md) |
