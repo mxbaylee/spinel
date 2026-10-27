@@ -66,7 +66,10 @@ export function PasskeySettings({
     try {
       const next = await api<Keys>('passkeys', undefined, () => {}, controller.signal);
       if (!next || !Array.isArray(next.passkeys)) throw new Error('Could not load passkeys.');
-      if (mounted.current && sequence === refreshSequence.current) setData(next);
+      if (mounted.current && sequence === refreshSequence.current) {
+        setData(next);
+        setError('');
+      }
     } catch (failure) {
       if (mounted.current && sequence === refreshSequence.current)
         setError(failure instanceof Error ? failure.message : 'Could not load passkeys.');

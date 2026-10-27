@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { failure, pending } from '../.storybook/api.ts';
+import { failure, pending, mockFetch } from '../.storybook/api.ts';
 import { PasskeySettings } from './PasskeySettings.tsx';
 
 const keys = [
@@ -66,8 +66,8 @@ export const LastPasskey: Story = {
   parameters: { api: { 'GET /api/auth/passkeys': { ...fresh, passkeys: keys.slice(0, 1) } } },
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement, 'Phone');
-    await expect(dialog.getByRole('alert')).toHaveText(/Add another passkey/);
-    await expect(dialog.queryByRole('button', { name: 'Remove passkey', exact: true })).toBeNull();
+    await expect(dialog.getByRole('alert')).toHaveTextContent(/Add another passkey/);
+    await expect(dialog.queryByRole('button', { name: 'Remove passkey' })).toBeNull();
   },
 };
 export const FreshVerificationRequired: Story = {
@@ -94,8 +94,8 @@ export const VerificationPending: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement);
     await userEvent.click(dialog.getByRole('button', { name: 'Verify with a passkey' }));
-    await expect(dialog.getByRole('button', { name: 'Cancel', exact: true })).toBeEnabled();
-    await expect(dialog.getByRole('status')).toHaveText(/Follow the instructions/);
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeEnabled();
+    await expect(dialog.getByRole('status')).toHaveTextContent(/Follow the instructions/);
   },
 };
 export const VerificationFailed: Story = {
@@ -105,15 +105,15 @@ export const VerificationFailed: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement);
     await userEvent.click(dialog.getByRole('button', { name: 'Verify with a passkey' }));
-    await expect(dialog.getByRole('alert')).toHaveText(/verification did not finish/);
+    await expect(dialog.getByRole('alert')).toHaveTextContent(/verification did not finish/);
   },
 };
 export const Saving: Story = {
   parameters: { api: { ...read, 'POST /api/auth/passkeys/laptop/remove': pending() } },
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement);
-    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey', exact: true }));
-    await expect(dialog.getByRole('button', { name: 'Cancel', exact: true })).toBeDisabled();
+    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey' }));
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
   },
 };
 export const Refused: Story = {
@@ -128,8 +128,8 @@ export const Refused: Story = {
   },
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement);
-    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey', exact: true }));
-    await expect(dialog.getByRole('alert')).toHaveText(/Add another passkey/);
+    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey' }));
+    await expect(dialog.getByRole('alert')).toHaveTextContent(/Add another passkey/);
   },
 };
 export const ProofExpired: Story = {
@@ -138,7 +138,7 @@ export const ProofExpired: Story = {
   },
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement);
-    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey', exact: true }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey' }));
     await expect(dialog.getByRole('button', { name: 'Verify with a passkey' })).toBeVisible();
   },
 };
@@ -151,9 +151,9 @@ export const Uncertain: Story = {
   },
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement);
-    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey', exact: true }));
-    await expect(dialog.getByRole('alert')).toHaveText(/may already be saved/);
-    await expect(dialog.queryByRole('button', { name: 'Remove passkey', exact: true })).toBeNull();
+    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey' }));
+    await expect(dialog.getByRole('alert')).toHaveTextContent(/may already be saved/);
+    await expect(dialog.queryByRole('button', { name: 'Remove passkey' })).toBeNull();
   },
 };
 export const SignOutOthers: Story = {
@@ -176,7 +176,9 @@ export const OthersSignedOut: Story = {
       await within(document.body).findByRole('dialog', { name: 'Sign out other devices?' }),
     );
     await userEvent.click(dialog.getByRole('button', { name: 'Sign out other devices' }));
-    await expect(await canvas.findByRole('status')).toHaveText(/This browser stays signed in/);
+    await expect(await canvas.findByRole('status')).toHaveTextContent(
+      /This browser stays signed in/,
+    );
   },
 };
 export const RemovalCancelled: Story = {
@@ -220,11 +222,13 @@ export const VerifiedThenConfirmed: Story = {
       await within(document.body).findByRole('dialog', { name: 'Sign out other devices?' }),
     );
     await userEvent.click(dialog.getByRole('button', { name: 'Verify with a passkey' }));
-    await expect(await dialog.findByRole('status')).toHaveText(/Confirm the change below/);
+    await expect(await dialog.findByRole('status')).toHaveTextContent(/Confirm the change below/);
     await expect(args.authenticate).toHaveBeenCalledTimes(1);
     // Successful verification leaves the confirmation open; no automatic revocation.
     await userEvent.click(dialog.getByRole('button', { name: 'Sign out other devices' }));
-    await expect(await canvas.findByRole('status')).toHaveText(/This browser stays signed in/);
+    await expect(await canvas.findByRole('status')).toHaveTextContent(
+      /This browser stays signed in/,
+    );
   },
 };
 export const VerificationCancelled: Story = {
@@ -232,7 +236,7 @@ export const VerificationCancelled: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement);
     await userEvent.click(dialog.getByRole('button', { name: 'Verify with a passkey' }));
-    await userEvent.click(dialog.getByRole('button', { name: 'Cancel', exact: true }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Cancel' }));
     await expect(within(document.body).queryByRole('dialog')).toBeNull();
     await expect(
       within(canvasElement).getByRole('button', { name: 'Add a passkey' }),
@@ -246,9 +250,9 @@ export const UncertainCannotRepeat: Story = {
   },
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement);
-    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey', exact: true }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey' }));
     await expect(dialog.getByRole('button', { name: 'Reload profile' })).toBeVisible();
-    await userEvent.click(dialog.getByRole('button', { name: 'Close', exact: true }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Close' }));
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('button', { name: 'Reload profile' })).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Sign out other devices' })).toBeDisabled();
@@ -271,7 +275,7 @@ export const MalformedAcknowledgement: Story = {
       await within(document.body).findByRole('dialog', { name: 'Sign out other devices?' }),
     );
     await userEvent.click(dialog.getByRole('button', { name: 'Sign out other devices' }));
-    await expect(dialog.getByRole('alert')).toHaveText(/result could not be confirmed/);
+    await expect(dialog.getByRole('alert')).toHaveTextContent(/result could not be confirmed/);
   },
 };
 
@@ -301,5 +305,25 @@ export const RegistrationProofInvalidated: Story = {
     );
     await expect(dialog.getByRole('button', { name: 'Verify with a passkey' })).toBeVisible();
     await expect(args.onAdd).not.toHaveBeenCalled();
+  },
+};
+
+export const ReadRetryRecovered: Story = {
+  parameters: { api: { 'GET /api/auth/passkeys': failure('Could not load passkeys.') } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('alert')).toHaveTextContent('Could not load passkeys.');
+    const previous = globalThis.fetch;
+    globalThis.fetch = mockFetch(read);
+    try {
+      await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+      await expect(
+        await canvas.findByRole('button', { name: 'More actions for Laptop' }),
+      ).toBeVisible();
+      await expect(canvas.queryByRole('alert')).toBeNull();
+      await expect(canvas.queryByRole('button', { name: 'Retry' })).toBeNull();
+    } finally {
+      globalThis.fetch = previous;
+    }
   },
 };
