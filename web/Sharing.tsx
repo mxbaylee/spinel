@@ -383,7 +383,11 @@ export function Sharing({
                             ))
                         }
                       >
-                        {saving ? 'Saving…' : person.effectiveRole ? 'Save changes' : 'Share'}
+                        {saving
+                          ? 'Saving…'
+                          : person.effectiveRole || person.directRole
+                            ? 'Save changes'
+                            : 'Share'}
                       </Button>
                     </div>
                   </form>

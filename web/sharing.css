@@ -32,7 +32,7 @@
   border-bottom-color: var(--sp-accent);
   font-weight: 600;
 }
-.sharing-tabs button:disabled,
+.sharing-tabs button[data-disabled],
 .sharing-person-trigger:disabled {
   cursor: default;
 }

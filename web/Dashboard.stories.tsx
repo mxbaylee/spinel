@@ -971,10 +971,24 @@ export const SharingDialog: Story = {
     const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
       name: `Share ${budget.name}`,
     });
-    await expect(await within(dialog).findByLabelText('Access for Morgan Lee')).toBeEnabled();
-    await expect(
-      within(dialog).getByRole('button', { name: 'Apply access for Morgan Lee' }),
-    ).toBeDisabled();
+    const sharing = within(dialog);
+    await expect(sharing.getByRole('tab', { name: 'People' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await userEvent.click(
+      await sharing.findByRole('button', { name: 'Edit access for Morgan Lee' }),
+    );
+    await expect(sharing.getByLabelText('Access for Morgan Lee')).toBeEnabled();
+    await expect(sharing.getByRole('button', { name: 'Save changes' })).toBeDisabled();
+    await assertDialogControls(dialog);
+    await userEvent.click(sharing.getByRole('tab', { name: 'Link' }));
+    await expect(await sharing.findByLabelText('Link access')).toBeEnabled();
+    await expect(sharing.getByRole('button', { name: 'Create link' })).toBeEnabled();
+    await assertDialogControls(dialog);
+    await userEvent.click(sharing.getByRole('tab', { name: 'People' }));
+    await expect(sharing.queryByLabelText('Access for Morgan Lee')).not.toBeInTheDocument();
+    await expect(sharing.getByRole('button', { name: 'Copy account link' })).toBeVisible();
     await assertDialogControls(dialog);
   },
 };

@@ -1,4 +1,5 @@
 import { mkdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { expect, test } from '@playwright/test';
 import type { BrowserContext, Locator, Page, TestInfo } from '@playwright/test';
 import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
@@ -18,7 +19,11 @@ function fixture(info: TestInfo, externalSpace = false) {
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db);
   const owner = auth.createUser('Source sharing owner ' + info.testId);
-  const recipient = auth.createUser('Avery · source sharing ' + info.retry);
+  // Sharing lists every everyday account in the shared test database. Give each
+  // scenario/retry a distinct recipient so role controls cannot match old fixtures.
+  const recipient = auth.createUser(
+    `Avery · sources ${createHash('sha256').update(info.testId).digest('hex').slice(0, 10)}-${info.retry}`,
+  );
   const other = auth.createUser('Other source owner ' + info.testId);
   const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
   const files = new WorkspaceFiles(workspace);
@@ -118,13 +123,19 @@ function fixture(info: TestInfo, externalSpace = false) {
     definition,
     grant,
     close() {
-      db.prepare('DELETE FROM workspace_items WHERE owner_id IN (?,?)').run(owner.id, other.id);
-      db.prepare('DELETE FROM auth_users WHERE id IN (?,?,?)').run(
-        owner.id,
-        recipient.id,
-        other.id,
-      );
-      db.close();
+      try {
+        // Space parent/membership references are restricted: delete this fixture's
+        // only child before its root, keeping foreign-key enforcement enabled.
+        if (space) db.prepare('DELETE FROM workspace_items WHERE id=?').run(source.id);
+        db.prepare('DELETE FROM workspace_items WHERE owner_id IN (?,?)').run(owner.id, other.id);
+        db.prepare('DELETE FROM auth_users WHERE id IN (?,?,?)').run(
+          owner.id,
+          recipient.id,
+          other.id,
+        );
+      } finally {
+        db.close();
+      }
     },
   };
 }

@@ -41,11 +41,12 @@ its verification status is separate from the approved design.
 
 ## Adopted pattern
 
-**2026-10-27 · Accepted composition refinement; implementation pending.** The
+**2026-10-27 · Accepted composition refinement; implemented in SPN-076.** The
 owner asked: “The share dialog is confusing with a ton of stuff. Can we simplify
 it? Less text and buttons more abstraction of the common paths”. The
 [decision record](../implementation/SPN-076.md#simpler-people-and-link-sharing)
-preserves provenance, alternatives and all four persona effects. This refinement
+preserves provenance, alternatives and all four persona effects. Production behavior
+and current validation are recorded in [PR #200](https://github.com/mxbaylee/spinel/pull/200). This refinement
 supersedes the stacked composition from [PR #199](https://github.com/mxbaylee/spinel/pull/199),
 not its source-sharing or privacy contract.
 

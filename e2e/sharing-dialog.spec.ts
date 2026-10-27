@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import type { Locator } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -58,6 +59,14 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
   const linkGate = new Promise<void>((resolve) => {
     releaseLink = resolve;
   });
+  async function switchTab(from: Locator, to: Locator, key: 'ArrowLeft' | 'ArrowRight') {
+    await expect(from).toBeEnabled();
+    // Target the key at the tab in one action, after any write guard clears.
+    // A separate focus/keyboard pair can race an editor's focus restoration.
+    await from.press(key);
+    await expect(to).toHaveAttribute('aria-selected', 'true');
+    await expect(to).toBeFocused();
+  }
   await page.route(`**/api/items/${item.id}/sharing`, async (route) => {
     if (route.request().method() === 'PUT') {
       if (++writes === 1) {
@@ -152,17 +161,12 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
     // Real arrow-key tab activation discards an unfinished editor draft.
     await edit.click();
     await choice.selectOption('editor');
-    await peopleTab.focus();
-    await page.keyboard.press('ArrowRight');
-    await expect(linkTab).toHaveAttribute('aria-selected', 'true');
-    await expect(linkTab).toBeFocused();
-    await page.keyboard.press('ArrowLeft');
-    await expect(peopleTab).toHaveAttribute('aria-selected', 'true');
+    await switchTab(peopleTab, linkTab, 'ArrowRight');
+    await switchTab(linkTab, peopleTab, 'ArrowLeft');
     await edit.click();
     await expect(choice).toHaveValue('viewer');
     await row.getByRole('button', { name: 'Cancel', exact: true }).click();
-    await peopleTab.focus();
-    await page.keyboard.press('ArrowRight');
+    await switchTab(peopleTab, linkTab, 'ArrowRight');
     const link = dialog.getByRole('region', {
       name: 'Guest link',
       exact: true,
@@ -189,9 +193,7 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
     const address = await link.getByLabel('Guest link address', { exact: true }).inputValue();
     expect(address).toMatch(/#.+$/);
     // The inactive panel is inaccessible, but its controller keeps the once-only URL.
-    await linkTab.focus();
-    await page.keyboard.press('ArrowLeft');
-    await expect(peopleTab).toHaveAttribute('aria-selected', 'true');
+    await switchTab(linkTab, peopleTab, 'ArrowLeft');
     await expect(link).toBeHidden();
     await expect(dialog.getByRole('button', { name: 'Copy guest link', exact: true })).toHaveCount(
       0,
@@ -199,8 +201,7 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
     await expect(
       dialog.getByRole('textbox', { name: 'Guest link address', exact: true }),
     ).toHaveCount(0);
-    await page.keyboard.press('ArrowRight');
-    await expect(linkTab).toHaveAttribute('aria-selected', 'true');
+    await switchTab(peopleTab, linkTab, 'ArrowRight');
     await expect(link.getByLabel('Guest link address', { exact: true })).toHaveValue(address);
     expect(linkWrites).toBe(1);
     await dialog.getByRole('button', { name: 'Close dialog', exact: true }).click();

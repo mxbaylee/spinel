@@ -43,7 +43,7 @@ const people: SharePerson[] = [
     name: 'Taylor Brooks',
     disabled: 1,
     directRole: 'viewer',
-    effectiveRole: 'viewer',
+    effectiveRole: null,
   },
 ];
 
@@ -264,6 +264,7 @@ export const DisabledAccount: Story = {
     await expect(within(select).getByRole('option', { name: 'Can edit' })).toBeDisabled();
     await expect(within(select).getByRole('option', { name: 'File admin' })).toBeDisabled();
     await userEvent.selectOptions(select, '');
+    await expect(body.getByRole('button', { name: 'Save changes' })).toBeEnabled();
     await userEvent.click(saveAccess(body));
     await expect(await body.findByText('Access updated for Taylor Brooks.')).toBeVisible();
     await expect(body.queryByLabelText('Access for Taylor Brooks')).not.toBeInTheDocument();

@@ -344,7 +344,14 @@ export const Applying: Story = {
     await expect(body.getByRole('checkbox')).toBeDisabled();
     await expect(body.getByRole('button', { name: 'Cancel' })).toBeDisabled();
     await expect(body.getByRole('button', { name: 'Close dialog' })).toBeDisabled();
-    for (const tab of body.getAllByRole('tab')) await expect(tab).toBeDisabled();
+    for (const tab of body.getAllByRole('tab'))
+      await expect(tab).toHaveAttribute('aria-disabled', 'true');
+    body.getByRole('tab', { name: 'People' }).focus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(body.getByRole('tab', { name: 'People' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
     await userEvent.keyboard('{Escape}');
     await expect(body.getByRole('dialog')).toBeVisible();
   },
@@ -363,7 +370,9 @@ export const SameSpace: Story = {
     const body = await openEditor(canvasElement);
     await expect(await body.findByText('Sources in this Space inherit access.')).toBeVisible();
     await expect(
-      body.getByText('Applies to every current and future page and folder in this Space.'),
+      within(body.getByRole('tabpanel', { name: 'People' })).getByText(
+        'Applies to every current and future page and folder in this Space.',
+      ),
     ).toBeVisible();
     await expect(body.queryByRole('checkbox')).not.toBeInTheDocument();
   },
@@ -551,9 +560,18 @@ export const PublicLinkIsolation: Story = {
         'Shares this document only. Formulas using other files are unavailable to guests.',
       ),
     ).toBeVisible();
-    await userEvent.click(body.getByRole('tab', { name: 'People' }));
-    await expect(address).not.toBeVisible();
-    await userEvent.click(body.getByRole('tab', { name: 'Link' }));
+    const peopleTab = body.getByRole('tab', { name: 'People' });
+    const linkTab = body.getByRole('tab', { name: 'Link' });
+    // The URL can render before the parent's write guard clears. Wait for the
+    // tab to accept navigation, then assert the mounted Link panel is hidden.
+    await waitFor(() => expect(peopleTab).not.toHaveAttribute('aria-disabled', 'true'));
+    await userEvent.click(peopleTab);
+    await waitFor(() => {
+      expect(peopleTab).toHaveAttribute('aria-selected', 'true');
+      expect(address).not.toBeVisible();
+    });
+    await userEvent.click(linkTab);
+    await waitFor(() => expect(linkTab).toHaveAttribute('aria-selected', 'true'));
     await expect(body.getByLabelText('Guest link address')).toHaveValue(
       'https://spinel.example/share/report#guest-key',
     );
