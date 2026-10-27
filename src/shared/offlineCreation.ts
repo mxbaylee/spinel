@@ -62,11 +62,11 @@ export function blankOfflineSnapshot(
     // Offline peers need identical native identities before replaying edits.
     snapshot.body!.paragraphs = snapshot.body!.paragraphs!.map((paragraph, index) => ({
       ...paragraph,
-      paragraphId: `${input.itemId}-paragraph-${index}`,
+      paragraphId: `para_${input.itemId}_${index}`,
     }));
     snapshot.body!.sectionBreaks = snapshot.body!.sectionBreaks!.map((section, index) => ({
       ...section,
-      sectionId: `${input.itemId}-section-${index}`,
+      sectionId: `section_${input.itemId}_${index}`,
     }));
     return { ...snapshot, title: input.name, rev: 1 };
   }

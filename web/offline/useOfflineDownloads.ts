@@ -269,6 +269,27 @@ export function useOfflineDownloads(
     await serially(scope, (store) => store.saveCatalog({ id: user.id, name: user.name }, value));
   }
 
+  /** Capture the ordering cutoff immediately, without waiting for queued downloads. */
+  async function catalogRevision() {
+    const scope = preparation();
+    if (!scope?.isCurrent() || preparedAccount() !== user.id) return 0;
+    let store: OfflineStore | null = null;
+    try {
+      store = await openExistingOfflineStore(user.id);
+      verify(scope)();
+      if (!store) return 0;
+      const revision = await store.creationRevision();
+      verify(scope)();
+      return revision;
+    } catch {
+      // A conservative cutoff keeps newly accepted files discoverable when
+      // storage is unavailable; it never claims a later creation was listed.
+      return 0;
+    } finally {
+      store?.close();
+    }
+  }
+
   async function create(name: string, kind: 'sheet' | 'doc', parentId: string | null) {
     const scope = preparation();
     if (!scope || preparedAccount() !== user.id)
@@ -412,6 +433,7 @@ export function useOfflineDownloads(
     create,
     relocateCreation,
     saveCatalog,
+    catalogRevision,
     refreshSummaries,
   };
 }

@@ -391,7 +391,7 @@ export class OfflineSession implements IURLImageService {
             ...creation,
             problem:
               error.code === 'folder-unavailable'
-                ? 'The chosen folder is no longer available. Return to files and choose another folder for this document.'
+                ? 'The chosen folder is no longer available. Use Back to files, then choose another folder from this document’s menu.'
                 : 'The original upload could not be confirmed. Keep this device copy and export your work before removing it.',
             canRelocate: error.code === 'folder-unavailable',
           };

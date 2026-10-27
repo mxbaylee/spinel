@@ -84,6 +84,7 @@ export function DashboardFiles<T extends FileItem>({
       >
         {items.map((item, index) => {
           const date = dateMode === 'shared' ? item.sharedAt : item.updatedAt;
+          const detail = details?.(item);
           // Legacy grants use zero for unknown dates, never a Unix-epoch share date.
           const validDate =
             date !== undefined &&
@@ -139,7 +140,7 @@ export function DashboardFiles<T extends FileItem>({
                       )}
                     </span>
                   )}
-                  {details && <span className="dashboard-file-details">{details(item)}</span>}
+                  {detail != null && <span className="dashboard-file-details">{detail}</span>}
                 </span>
               </button>
               <span className="dashboard-file-date">

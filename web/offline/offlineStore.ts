@@ -20,6 +20,8 @@ import type { AccountRuntimeRequirement } from './runtime.ts';
 export type OfflineUser = { id: string; name: string };
 export type OfflineCatalog = {
   syncedAt: number;
+  /** Creation acknowledgements committed before the full-list request began; absent means zero. */
+  creationRevision?: number;
   items: FileItem[];
   shared: FileItem[];
   /** The last-loaded ancestors, item and children for each opened folder or item. */
@@ -47,6 +49,8 @@ export type OfflineDownload = {
   };
   /** Last acknowledged metadata for a locally created file, independent of stale catalogs. */
   createdFile?: WorkspaceItem;
+  /** Monotonic local acknowledgement order; later full-list requests supersede this fallback. */
+  createdFileRevision?: number;
 };
 export type OfflineCreation = {
   request: OfflineCreationRequest;
@@ -129,12 +133,16 @@ function storedBaseKnown(item: Record<string, unknown>, bundle: Record<string, u
 
 function storedCreationKnown(item: Record<string, unknown>, bundle: Record<string, unknown>) {
   if (
-    item.createdFile !== undefined &&
-    (!object(item.createdFile) ||
-      item.createdFile.id !== bundle.itemId ||
-      item.createdFile.kind !== bundle.kind ||
-      item.createdFile.access !== 'owner' ||
-      !isOfflineCatalog({ syncedAt: 0, items: [item.createdFile], shared: [], views: {} }))
+    (item.createdFile === undefined && item.createdFileRevision !== undefined) ||
+    (item.createdFile !== undefined &&
+      (!object(item.createdFile) ||
+        typeof item.createdFileRevision !== 'number' ||
+        !Number.isSafeInteger(item.createdFileRevision) ||
+        item.createdFileRevision <= 0 ||
+        item.createdFile.id !== bundle.itemId ||
+        item.createdFile.kind !== bundle.kind ||
+        item.createdFile.access !== 'owner' ||
+        !isOfflineCatalog({ syncedAt: 0, items: [item.createdFile], shared: [], views: {} })))
   )
     return false;
   if (item.creation === undefined)
@@ -402,7 +410,10 @@ export function downloadSummary(
         }
       : {}),
     ...(!uncertain && item.createdFile !== undefined
-      ? { createdFile: item.createdFile as WorkspaceItem }
+      ? {
+          createdFile: item.createdFile as WorkspaceItem,
+          createdFileRevision: item.createdFileRevision as number,
+        }
       : {}),
     ...(uncertain
       ? {
@@ -449,6 +460,8 @@ export function isOfflineCatalog(value: unknown): value is OfflineCatalog {
     typeof catalog.syncedAt === 'number' &&
     Number.isFinite(catalog.syncedAt) &&
     catalog.syncedAt >= 0 &&
+    (catalog.creationRevision === undefined ||
+      (Number.isSafeInteger(catalog.creationRevision) && catalog.creationRevision >= 0)) &&
     files(catalog.items) &&
     files(catalog.shared) &&
     Boolean(catalog.views) &&
@@ -764,6 +777,13 @@ function done(transaction: IDBTransaction) {
   });
 }
 
+function readCreationRevision(value: unknown): number {
+  if (value === undefined) return 0;
+  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0)
+    throw new Error('The saved creation order could not be verified. Keep the device copies.');
+  return value;
+}
+
 export async function openOfflineStore(accountId: string) {
   if (!accountId) throw new Error('An account is required.');
   const opening = indexedDB.open(databaseName(accountId), 1);
@@ -816,14 +836,40 @@ export class OfflineStore {
     const catalog: unknown = await request(transaction.objectStore('meta').get('catalog'));
     return isOfflineCatalog(catalog) ? catalog : undefined;
   }
+  async creationRevision() {
+    const transaction = this.database.transaction('meta');
+    return readCreationRevision(
+      await request(transaction.objectStore('meta').get('creationRevision')),
+    );
+  }
   async saveCatalog(user: OfflineUser, catalog: OfflineCatalog) {
     if (user.id !== this.accountId) throw new Error('This catalog belongs to another account.');
     if (!isOfflineCatalog(catalog)) throw new Error('This file list is incomplete. Try again.');
     const transaction = this.database.transaction('meta', 'readwrite');
+    const completion = done(transaction);
     const meta = transaction.objectStore('meta');
-    meta.put(user, 'user');
-    meta.put(catalog, 'catalog');
-    await done(transaction);
+    try {
+      const previous = await request(meta.get('catalog'));
+      // A slow request can finish after a newer list has already observed a
+      // creation or its deletion. Never downgrade that authoritative cutoff,
+      // including when a failed counter read conservatively supplied zero.
+      if (
+        !isOfflineCatalog(previous) ||
+        (catalog.creationRevision ?? 0) >= (previous.creationRevision ?? 0)
+      ) {
+        meta.put(user, 'user');
+        meta.put(catalog, 'catalog');
+      }
+    } catch (error) {
+      try {
+        transaction.abort();
+      } catch {
+        /* A failed request may already have aborted it. */
+      }
+      await completion.catch(() => {});
+      throw error;
+    }
+    await completion;
   }
   async downloads() {
     const result: OfflineDownload[] = [];
@@ -1002,6 +1048,10 @@ export class OfflineStore {
         verifyCurrent();
         if (!isOfflineCatalog(catalog))
           throw new Error('The saved file list could not be updated.');
+        const revision = readCreationRevision(await request(meta.get('creationRevision')));
+        verifyCurrent();
+        if (revision === Number.MAX_SAFE_INTEGER)
+          throw new Error('The saved creation order is full. Keep the device copy.');
         // Preserve an acknowledged file in a cold local catalog as well as the
         // native queue; a later online refresh may replace this metadata normally.
         catalog.items = [...catalog.items.filter((row) => row.id !== itemId), accepted];
@@ -1011,7 +1061,9 @@ export class OfflineStore {
         if (accepted.parentId && catalog.views[accepted.parentId])
           catalog.views[accepted.parentId].push(accepted);
         meta.put(catalog, 'catalog');
+        meta.put(revision + 1, 'creationRevision');
         item.createdFile = accepted;
+        item.createdFileRevision = revision + 1;
         delete item.creation;
         if (item.outbox) delete item.outbox.creation;
       }

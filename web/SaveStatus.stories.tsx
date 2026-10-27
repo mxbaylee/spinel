@@ -200,12 +200,15 @@ export const CreationNeedsAttention: Story = {
     state: {
       ...recoveryFailed,
       message:
-        'Needs attention. The chosen folder is no longer available. Choose another folder from My files.',
+        'Needs attention. The chosen folder is no longer available. Use Back to files, then choose another folder from this document’s menu.',
       recovery: { phase: 'ready', originalHref: '/', creation: true },
     },
   },
   play: async (context) => {
     const panel = await recoveryDetails(context);
+    await expect(
+      panel.getByText(/Use Back to files, then choose another folder from this document’s menu\./),
+    ).toBeVisible();
     await expect(
       panel.queryByRole('button', { name: 'Retry creating copy' }),
     ).not.toBeInTheDocument();

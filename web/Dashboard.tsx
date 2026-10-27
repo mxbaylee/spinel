@@ -211,6 +211,8 @@ export function Dashboard({
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [syncedAt, setSyncedAt] = useState(local?.catalog.syncedAt ?? 0);
+  const [catalogRevision, setCatalogRevision] = useState(local?.catalog.creationRevision ?? 0);
+  const catalogRevisionRef = useRef(catalogRevision);
   useEffect(() => {
     onCatalogStatus?.({ syncedAt, local: Boolean(local), stale: Boolean(error || shared.error) });
   }, [syncedAt, local, error, shared.error, onCatalogStatus]);
@@ -221,6 +223,7 @@ export function Dashboard({
     loaded && shared.loaded
       ? {
           syncedAt,
+          creationRevision: catalogRevision,
           items: [
             ...new Map(
               [
@@ -238,15 +241,12 @@ export function Dashboard({
     const item = creationFile(copy);
     return item ? [item] : [];
   });
-  const rememberedCreations = useRef({ account: user.id, files: new Map<string, FileItem>() });
-  if (rememberedCreations.current.account !== user.id)
-    rememberedCreations.current = { account: user.id, files: new Map() };
-  for (const copy of offline.downloads.values())
-    if (copy.createdFile) rememberedCreations.current.files.set(copy.itemId, copy.createdFile);
-  for (const item of creationItems) rememberedCreations.current.files.set(item.id, item);
-  for (const id of rememberedCreations.current.files.keys())
-    if (!offline.downloads.has(id)) rememberedCreations.current.files.delete(id);
-  const deviceCreatedFiles = [...rememberedCreations.current.files.values()];
+  const deviceCreatedFiles = [...offline.downloads.values()].flatMap((copy) => {
+    const item =
+      creationFile(copy) ??
+      (catalogRevision < (copy.createdFileRevision ?? 0) ? copy.createdFile : undefined);
+    return item ? [item] : [];
+  });
   const currentCreation = creationItems.find((item) => item.id === currentId);
   // Publication must not replace a mounted editor with a different component:
   // it may still hold unfinished input or an unacknowledged native checkpoint.
@@ -264,15 +264,11 @@ export function Dashboard({
     if (local) {
       setItems(local.catalog.items);
       setLoaded(true);
-    } else
-      void itemsRequest<{ items: FileItem[]; spacesEnabled?: boolean }>()
-        .then((result) => {
-          setItems(result.items);
-          setSpacesEnabled(result.spacesEnabled === true);
-          setSyncedAt(Date.now());
-          setLoaded(true);
-        })
+    } else {
+      void reloadItems()
+        .then(() => setLoaded(true))
         .catch((failure) => setError(failure.message));
+    }
     const back = () => {
       if (!navigation.allow()) {
         history.pushState(null, '', viewUrl(currentRef.current));
@@ -424,15 +420,16 @@ export function Dashboard({
             ),
             ...shared.items.filter((item) => item.placementParentId === currentId),
             ...deviceCreatedFiles
+              .map((item) => byId.get(item.id) ?? item)
               .filter(
                 (item) =>
                   item.parentId === currentId ||
                   (!currentId &&
                     (!item.parentId ||
-                      !byId.has(item.parentId) ||
+                      byId.get(item.parentId)?.kind !== 'folder' ||
+                      byId.get(item.parentId)?.access !== 'owner' ||
                       Boolean(offline.downloads.get(item.id)?.creation?.problem))),
-              )
-              .map((item) => byId.get(item.id) ?? item),
+              ),
           ].map((item) => [item.id, item]),
         ).values(),
       ]
@@ -568,9 +565,18 @@ export function Dashboard({
     }
   }
   async function reloadItems() {
+    const observed = await offline.catalogRevision();
+    // An admitted cutoff remains a lower bound if this storage read fails.
+    const revision = Math.max(observed, catalogRevisionRef.current);
+    const requestedAt = Date.now();
     const result = await itemsRequest<{ items: FileItem[]; spacesEnabled?: boolean }>();
+    // A delayed pre-acknowledgement list must not revive a retired fallback.
+    if (revision < catalogRevisionRef.current) return;
+    catalogRevisionRef.current = revision;
     setItems(result.items);
     setSpacesEnabled(result.spacesEnabled === true);
+    setSyncedAt(requestedAt);
+    setCatalogRevision(revision);
   }
   async function trashItem(item: FileItem) {
     if (!navigation.allow()) return;
@@ -603,10 +609,10 @@ export function Dashboard({
       ? 'needs-connection'
       : null;
   }
-  function rowActions(item: FileItem): MenuAction[] {
+  function rowActions(item: FileItem, placement: 'row' | 'editor' = 'row'): MenuAction[] {
     const creation = offline.downloads.get(item.id)?.creation;
     if (creation)
-      return creation.canRelocate
+      return creation.canRelocate && placement === 'row'
         ? [
             {
               label: 'Choose another folder…',
@@ -1009,7 +1015,7 @@ export function Dashboard({
                   : accessLabel(current.access)
             }
             onBack={returnToFiles}
-            actions={rowActions(current).filter((action) => action.label !== 'Rename…')}
+            actions={rowActions(current, 'editor').filter((action) => action.label !== 'Rename…')}
             onRename={
               !local && !currentCreation && canAdminister(current.access)
                 ? async (name) => {

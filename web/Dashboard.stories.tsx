@@ -522,6 +522,47 @@ export const ChooseCreationFolder: Story = {
     await assertDialogControls(body.getByRole('dialog', { name: 'Choose another folder' }));
   },
 };
+/** A cached destination later shared back to us cannot hide an unuploaded draft. */
+export const CreationParentNowShared: Story = {
+  args: {
+    local: {
+      ...local,
+      catalog: {
+        ...local.catalog,
+        items: local.catalog.items.filter((item) => item.id !== household.id),
+        shared: [
+          ...local.catalog.shared,
+          { ...household, access: 'editor', ownerName: 'Alex Kim', placementParentId: null },
+        ],
+      },
+      downloads: [
+        ...local.downloads,
+        {
+          ...pendingCreation,
+          creation: { ...pendingCreation.creation, parentId: household.id },
+        },
+      ],
+    },
+  },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await expect(
+      await canvas.findByRole('button', { name: `${pendingCreation.name} Doc` }),
+    ).toBeVisible();
+    await expect(canvas.getByText('Not synced yet')).toBeVisible();
+    await expect(
+      canvas.getByText('Saved on this device. Open to upload when connected.'),
+    ).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole('button', { name: `More actions for ${pendingCreation.name}` }),
+    );
+    const menu = within(await body.findByRole('menu'));
+    await expect(menu.getAllByRole('menuitem').map((item) => item.textContent)).toEqual(['Open']);
+    await userEvent.keyboard('{Escape}');
+  },
+};
 /** Offline, a Doc that wasn't downloaded stays listed but can't open. */
 export const LocalNeedsConnection: Story = {
   ...LocalMode,

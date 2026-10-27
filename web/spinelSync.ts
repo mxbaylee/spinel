@@ -171,10 +171,13 @@ function bind(options: Options, snapshot: IWorkbookData | IDocumentData, revisio
       if (state.pending) options.onInitialPending?.();
       return;
     }
-    if (mayRecover() && !recovery)
+    if (mayRecover() && !recovery) recovery = { phase: 'ready', originalHref: '/' };
+    if (recovery && !recoveryResolved)
       recovery = {
-        phase: 'ready',
-        ...(options.offline?.creation ? { creation: true } : {}),
+        ...recovery,
+        // Admission can complete after a native failure exposed recovery. Keep
+        // the available actions aligned with the now-existing server original.
+        creation: options.offline?.creation ? true : undefined,
         originalHref: options.offline?.creation
           ? '/'
           : spaceId

@@ -4,6 +4,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
 import { materialize } from '@spinel/sync-server';
+import {
+  cloneParagraphWithId,
+  cloneSectionBreakWithId,
+  validateDocumentStructure,
+} from '@univerjs/core';
+import type { IDocumentData } from '@univerjs/core';
 import { openDatabase } from '../../../server/database.ts';
 import { blankOfflineSnapshot, isOfflineCreationRequest } from '../../shared/offlineCreation.ts';
 import type { OfflineCreationRequest } from '../../shared/offlineCreation.ts';
@@ -49,6 +55,21 @@ async function fixture() {
   });
   return { path, db, auth, workspace, owner, other, operator, collaboration, creations, input };
 }
+
+test('the shared Doc base preserves deterministic identities through native normalization', () => {
+  const request = { itemId: randomUUID(), kind: 'doc' as const, name: 'Offline journal' };
+  const snapshot = blankOfflineSnapshot(request) as IDocumentData;
+  expect(blankOfflineSnapshot(request)).toEqual(snapshot);
+  expect(validateDocumentStructure(snapshot)).toEqual([]);
+  const paragraphIds = new Set<string>();
+  const sectionIds = new Set<string>();
+  expect(
+    snapshot.body!.paragraphs!.map((paragraph) => cloneParagraphWithId(paragraph, paragraphIds)),
+  ).toEqual(snapshot.body!.paragraphs);
+  expect(
+    snapshot.body!.sectionBreaks!.map((section) => cloneSectionBreakWithId(section, sectionIds)),
+  ).toEqual(snapshot.body!.sectionBreaks);
+});
 
 test.each(['sheet', 'doc'] as const)(
   '%s creation admits the exact shared blank base once and inherits folder visibility',

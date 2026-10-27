@@ -10,6 +10,8 @@ import {
   hasOfflineEdits,
   hasStoredEdits,
   isKnownOfflineOutbox,
+  isOfflineCatalog,
+  OfflineStore,
   setPreparedAccount,
 } from '../../web/offline/offlineStore.ts';
 import type { OfflineCreation, OfflineOutbox, StoredItem } from '../../web/offline/offlineStore.ts';
@@ -18,7 +20,6 @@ import {
   relocateOfflineCreation,
   uploadOfflineCreation,
 } from '../../web/offline/creation.ts';
-import type { OfflineStore } from '../../web/offline/offlineStore.ts';
 
 const account = 'offline-creator';
 const input: OfflineCreationRequest = {
@@ -134,6 +135,205 @@ function accepted() {
     { status: 201 },
   );
 }
+
+test('accepted metadata carries a verified local acknowledgement revision without marking clean edits pending', () => {
+  const item = stored();
+  item.createdFile = creationFile(item.creation!);
+  item.createdFileRevision = 2;
+  delete item.creation;
+  delete item.outbox!.creation;
+  expect(downloadSummary(item, account, input.itemId)).toMatchObject({
+    createdFile: item.createdFile,
+    createdFileRevision: 2,
+    pending: false,
+  });
+  delete item.createdFileRevision;
+  expect(downloadSummary(item, account, input.itemId)).toMatchObject({
+    uncertain: true,
+    pending: true,
+  });
+});
+
+test('catalog cutoffs accept legacy zero and reject invalid creation ordering', () => {
+  const catalog = { syncedAt: 1000, items: [], shared: [], views: {} };
+  expect(isOfflineCatalog(catalog)).toBe(true);
+  for (const creationRevision of [0, 1, Number.MAX_SAFE_INTEGER])
+    expect(isOfflineCatalog({ ...catalog, creationRevision })).toBe(true);
+  for (const creationRevision of [-1, 0.5, '1', null, Infinity, Number.MAX_SAFE_INTEGER + 1])
+    expect(isOfflineCatalog({ ...catalog, creationRevision })).toBe(false);
+
+  const item = stored();
+  item.createdFile = creationFile(item.creation!);
+  delete item.creation;
+  delete item.outbox!.creation;
+  for (const createdFileRevision of [0, -1, 0.5, '1', Infinity, Number.MAX_SAFE_INTEGER + 1])
+    expect(downloadSummary({ ...item, createdFileRevision }, account, input.itemId)).toMatchObject({
+      uncertain: true,
+      pending: true,
+    });
+});
+
+/** Exercise the real store's read/write ordering; browser tests prove native IDB atomicity. */
+function creationStorage(revision?: unknown) {
+  vi.stubGlobal('window', new EventTarget());
+  const record = stored();
+  const values = {
+    items: new Map<string, unknown>([[input.itemId, record]]),
+    meta: new Map<string, unknown>([
+      ['catalog', { syncedAt: 10_000, creationRevision: 7, items: [], shared: [], views: {} }],
+      ...(revision === undefined ? [] : [['creationRevision', revision] as [string, unknown]]),
+    ]),
+  };
+  const database = {
+    transaction() {
+      const writes: { store: 'items' | 'meta'; key: string; value: unknown }[] = [];
+      let aborted = false;
+      let completing = false;
+      const complete = () => {
+        if (completing) return;
+        completing = true;
+        setTimeout(() => {
+          if (aborted) return;
+          for (const write of writes) values[write.store].set(write.key, write.value);
+          transaction.oncomplete?.();
+        }, 0);
+      };
+      const transaction = {
+        oncomplete: undefined as (() => void) | undefined,
+        onabort: undefined as (() => void) | undefined,
+        error: null,
+        objectStore(store: 'items' | 'meta') {
+          return {
+            get(key: string) {
+              const reading = {
+                result: structuredClone(values[store].get(key)),
+                onsuccess: undefined as (() => void) | undefined,
+              };
+              queueMicrotask(() => reading.onsuccess?.());
+              complete();
+              return reading;
+            },
+            put(value: unknown, key?: string) {
+              writes.push({
+                store,
+                key: key ?? (value as StoredItem).itemId,
+                value: structuredClone(value),
+              });
+              complete();
+            },
+          };
+        },
+        abort() {
+          aborted = true;
+          transaction.onabort?.();
+        },
+      };
+      return transaction;
+    },
+  };
+  return { values, record, store: new OfflineStore(account, database as unknown as IDBDatabase) };
+}
+
+test('a delayed older catalog cannot restore a file omitted by an authoritative post-creation list', async () => {
+  const f = creationStorage(1);
+  f.values.meta.delete('catalog');
+  const file = creationFile(f.record.creation!);
+  f.record.createdFile = file;
+  f.record.createdFileRevision = 1;
+  delete f.record.creation;
+  delete f.record.outbox!.creation;
+  const user = { id: account, name: 'Creator' };
+  const authoritative = { syncedAt: 2000, creationRevision: 1, items: [], shared: [], views: {} };
+  await f.store.saveCatalog(user, authoritative);
+  // These earlier requests finish later. Their newer wall clocks do not grant
+  // authority to undo an observed deletion or reactivate the metadata fallback.
+  await f.store.saveCatalog(user, {
+    syncedAt: 3000,
+    creationRevision: 0,
+    items: [file],
+    shared: [],
+    views: { [file.id]: [file] },
+  });
+  await f.store.saveCatalog(user, { syncedAt: 4000, items: [file], shared: [], views: {} });
+  expect(await f.store.catalog()).toEqual(authoritative);
+  const summary = downloadSummary(f.record, account, input.itemId);
+  expect(summary.createdFileRevision! > (await f.store.catalog())!.creationRevision!).toBe(false);
+});
+
+test('missing and legacy catalogs accept zero cutoffs and equally or newer ordered replacements', async () => {
+  const f = creationStorage();
+  f.values.meta.delete('catalog');
+  const user = { id: account, name: 'Creator' };
+  const legacy = { syncedAt: 1000, items: [], shared: [], views: {} };
+  await f.store.saveCatalog(user, legacy);
+  expect(await f.store.catalog()).toEqual(legacy);
+  const equal = {
+    ...legacy,
+    syncedAt: 2000,
+    creationRevision: 0,
+    items: [creationFile(f.record.creation!)],
+  };
+  await f.store.saveCatalog(user, equal);
+  expect(await f.store.catalog()).toEqual(equal);
+  const newer = { ...legacy, syncedAt: 3000, creationRevision: 1 };
+  await f.store.saveCatalog(user, newer);
+  expect(await f.store.catalog()).toEqual(newer);
+});
+
+test('creation acknowledgement orders metadata without the wall clock and preserves the full-list cutoff', async () => {
+  const f = creationStorage(8);
+  const acceptedFile = creationFile(f.record.creation!);
+  vi.spyOn(Date, 'now').mockReturnValue(-1000);
+  await f.store.updateCreation(input.itemId, f.record.creation!, undefined, () => {}, acceptedFile);
+  expect(await f.store.creationRevision()).toBe(9);
+  expect(f.values.items.get(input.itemId)).toMatchObject({
+    createdFile: acceptedFile,
+    createdFileRevision: 9,
+  });
+  expect((f.values.items.get(input.itemId) as StoredItem).creation).toBeUndefined();
+  expect(f.values.meta.get('catalog')).toMatchObject({
+    creationRevision: 7,
+    items: [acceptedFile],
+  });
+  // The stored ordering survives a new reader and cannot go backward with time.
+  expect(await f.store.creationRevision()).toBe(9);
+});
+
+test('legacy creation counters begin at zero and invalid or exhausted counters retain the pending draft', async () => {
+  const legacy = creationStorage();
+  expect(await legacy.store.creationRevision()).toBe(0);
+  await legacy.store.updateCreation(
+    input.itemId,
+    legacy.record.creation!,
+    undefined,
+    () => {},
+    creationFile(legacy.record.creation!),
+  );
+  expect(await legacy.store.creationRevision()).toBe(1);
+  for (const revision of [
+    -1,
+    0.5,
+    '2',
+    Infinity,
+    Number.MAX_SAFE_INTEGER + 1,
+    Number.MAX_SAFE_INTEGER,
+  ]) {
+    const f = creationStorage(revision);
+    if (revision !== Number.MAX_SAFE_INTEGER)
+      await expect(f.store.creationRevision()).rejects.toThrow('could not be verified');
+    await expect(
+      f.store.updateCreation(
+        input.itemId,
+        f.record.creation!,
+        undefined,
+        () => {},
+        creationFile(f.record.creation!),
+      ),
+    ).rejects.toThrow();
+    expect(f.values.items.get(input.itemId)).toEqual(f.record);
+    expect(f.values.meta.get('creationRevision')).toBe(revision);
+  }
+});
 
 test.each(['sheet', 'doc'] as const)(
   'an unedited new %s is durable pending work, including its old-reader marker',
